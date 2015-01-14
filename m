@@ -1,103 +1,44 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v4 2/2] ARM: dts: Add HS400 support for exynos5420 and
- exynos5800
-Date: Wed, 14 Jan 2015 16:00:46 +0530
-Message-ID: <1421231446-4776-3-git-send-email-alim.akhtar@samsung.com>
-References: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59896 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752426AbbANKjO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 05:39:14 -0500
-In-reply-to: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: exynos: Add AUDIO pin controller for exynos7
+Date: Wed, 14 Jan 2015 12:40:58 +0100
+Message-ID: <CACRpkdZopjCN_GMEPQFd_NWa0Ddocqt3aViLrZ7Yh3ui_YcBAg@mail.gmail.com>
+References: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
+	<1418994659-5222-2-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1418994659-5222-2-git-send-email-padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: chris@printf.net, ulf.hansson@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, dianders@chromium.org, alim.akhtar@gmail.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.kesavan@samsung.com
 
-From: Seungwon Jeon <tgih.jun@samsung.com>
+On Fri, Dec 19, 2014 at 2:10 PM, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
 
-HS400 timing values are added for SMDK5420, exynos5420-peach-pit
-and exynos5800-peach-pi boards.
-This also adds RCLK GPIO line, this gpio should be in pull-down
-state.
+> Audio IPs on Exynos7 require gpios available in AUDIO
+> pin controller block. So adding the AUDIO pinctrl support.
+>
+> Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+(...)
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> @@ -181,6 +181,7 @@ Aliases for controllers compatible with "samsung,exynos7-pinctrl":
+>  - pinctrl6: pin controller of FSYS0 block,
+>  - pinctrl7: pin controller of FSYS1 block,
+>  - pinctrl8: pin controller of BUS1 block,
+> +- pinctrl9: pin controller of AUDIO block,
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-[Alim: addressed review comments]
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 +++-
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
- arch/arm/boot/dts/exynos5420-smdk5420.dts  |    4 +++-
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |    4 +++-
- 4 files changed, 16 insertions(+), 3 deletions(-)
+This doesn't apply at all, the list has never been in the document merged
+upstream.
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 9a050e1..7ffaba8 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -569,8 +569,10 @@
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	read-strobe-delay = <90>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
- 	bus-width = <8>;
- };
- 
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index ba686e4..8b15316 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -201,6 +201,13 @@
- 			samsung,pin-drv = <3>;
- 		};
- 
-+		sd0_rclk: sd0-rclk {
-+			samsung,pins = "gpc0-7";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <1>;
-+			samsung,pin-drv = <3>;
-+		};
-+
- 		sd1_cmd: sd1-cmd {
- 			samsung,pins = "gpc1-1";
- 			samsung,pin-function = <2>;
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 8be3d7b..5290e79 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -80,8 +80,10 @@
- 		samsung,dw-mshc-ciu-div = <3>;
- 		samsung,dw-mshc-sdr-timing = <0 4>;
- 		samsung,dw-mshc-ddr-timing = <0 2>;
-+		samsung,dw-mshc-hs400-timing = <0 2>;
-+		read-strobe-delay = <90>;
- 		pinctrl-names = "default";
--		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
- 		bus-width = <8>;
- 		cap-mmc-highspeed;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index e8fdda8..fa1c858 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -557,8 +557,10 @@
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	read-strobe-delay = <90>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
- 	bus-width = <8>;
- };
- 
--- 
-1.7.9.5
+Please prepare this patch rebased on a *CLEAN* upstream tree
+and resend.
+
+Include Tomasz ACK on your repost.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
