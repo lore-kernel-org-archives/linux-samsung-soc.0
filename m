@@ -1,181 +1,77 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v2 1/8] thermal: Provide stub for
- thermal_of_cooling_device_register() function
-Date: Wed, 14 Jan 2015 14:32:13 -0400
-Message-ID: <20150114183211.GB3672@developer>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
- <1419265668-32283-2-git-send-email-l.majewski@samsung.com>
- <20150102185426.GC12485@developer>
- <20150102190339.GA22356@developer>
- <20150114160106.20aa160b@amdc2363>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150114160106.20aa160b@amdc2363>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH V3 00/15] ASoC: samsung: Add clk provider for I2S internal
+ clocks
+Date: Wed, 14 Jan 2015 19:42:27 +0100
+Message-ID: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:19907 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752876AbbANSnF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jan 2015 13:43:05 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org, kgene@kernel.org
+Cc: padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
+This series is an attempt to resolve the CDCLK clock gating issue on Odroid
+X2/U3 as reported by Daniel Drake [1], by exposing the CDCLK gate clock
+(and the two other clocks) through clk API. The upside is we can switch
+Odroid X2/U3 to the simple-card, once the CDCLK clock is taken care of by
+the clk core and DT.
 
---1UWUbFP1cBYEclgG
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since v2:
+ - skipped the first, already merged patch,
+ - modified description of the patch moving clk_prepare_enable() from DAI
+   to the platform device probe(),
+ - the last patch marked for stable.
 
-On Wed, Jan 14, 2015 at 04:01:06PM +0100, Lukasz Majewski wrote:
-> Hi Eduardo,
->=20
-> > On Fri, Jan 02, 2015 at 02:54:28PM -0400, Eduardo Valentin wrote:
-> > > On Mon, Dec 22, 2014 at 05:27:41PM +0100, Lukasz Majewski wrote:
-> > > > Odroid U3 fan can work without being registered as OF cooling
-> > > > device (with CONFIG_THERMAL_OF disabled).
-> > > > In this situation it can be controlled via PWM entry at
-> > > > /sys/class/hwmon/hwmon0/pwm1.
-> > > >=20
-> > > > Therefore, the thermal_of_cooling_device_register() function
-> > > > needs a stub to allow clean compilation.
-> > > >=20
-> > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > >=20
-> > > Acked-by: Eduardo Valentin <edubezval@gmail.com>
-> >=20
-> > Sorry, too fast,
-> >=20
-> > This is actually
-> > Nacked-by: Eduardo Valentin <edubezval@gmail.com>
-> >=20
-> > :-)
-> >=20
-> > I get this error:
-> > drivers/thermal/thermal_core.c:1210:1: error: redefinition of
-> > =E2=80=98thermal_of_cooling_device_register=E2=80=99
-> >  thermal_of_cooling_device_register(struct device_node *np,
-> >   ^
-> >   In file included from drivers/thermal/thermal_core.c:34:0:
-> >   include/linux/thermal.h:321:1: note: previous definition of
-> >   =E2=80=98thermal_of_cooling_device_register=E2=80=99 was here
-> >    thermal_of_cooling_device_register(struct device_node *np,
-> >     ^
-> >=20
-> >=20
-> > We provide the function in thermal core even if CONFIG_THERMAL_OF is
-> > not set.
->=20
-> Unfortunately the PWM fan subsystem can work perfectly fine without
-> CONFIG_THERMAL.
->=20
+The patch series has been created on top of branch:
+git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git topic/samsung
 
-Now I understand what you are trying to do.
+Changes since the first version:
+ - removed check for the i2s_opclk1 mux input clock while creating the mux
+   and div clocks,
+ - the DT binding documentation changes reworked (addressing review comments),
+ - added include/dt-bindings/sound/samsung-i2s.h header file defining
+   the clk indices, it's been put into a separate patch together with the I2S
+   DT binding documentation updates to make merging of the ASoC and the dts
+   patches separately easier,
+ - a patch fixing compatible strings of I2S1, I2S2 in exynos4.dtsi is included
+   in this series.
 
-> I think that it would be enough to make something like this in
-> the ./include/linux/thermal.h:
->=20
-> #ifdef CONFIG_THERMAL
-Well, I think it should be the opposite here:
+This whole series may need more testing on other SoCs, so far I only tested
+it on Odroid Exynos4412 X2, with the I2S working in slave mode.
 
-#ifndef CONFIG_THERMAL
+[1] http://mailman.alsa-project.org/pipermail/alsa-devel/2014-September/081753.html
 
-that is, if no config thermal, then you provide the stub not the other
-way around.
+Sylwester Nawrocki (15):
+  ASoC: samsung: i2s: samsung_i2s_get_driver_data() cleanup
+  ASoC: samsung: i2s: Add return value checks in probe()
+  ASoC: samsung: i2s: Request memory region in driver probe()
+  ASoC: samsung: i2s: Move clk_get() to platform driver probe()
+  ASoC: samsung: i2s: Move clk enable to the platform driver probe()
+  ASoC: samsung: i2s: Add get_other_dai helper function
+  ASoC: samsung: i2s: Remove an unneeded goto usage
+  ASoC: samsung: i2s: Add spinlock in place of local_irq_* calls
+  ASoC: samsung: i2s: Protect more registers with a spinlock
+  ASoC: samsung: odroidx2: Handle I2S CDCLK clock conditionally
+  ASoC: samsung: i2s: Add clk provider DT binding documentation
+  ASoC: samsung: i2s: Add clock provider for the I2S internal clocks
+  ARM: dts: Exynos4 and Odroid X2/U3 sound device nodes update
+  ARM: dts: Switch Odroid X2/U2 to simple-audio-card
+  ARM: dts: Fix I2S1, I2S2 compatible for exynos4 SoCs
 
-> 	static inline struct thermal_cooling_device *
-> 		thermal_of_cooling_device_register(struct device_node
-> 		*np, char *type, void *devdata,
-> 				   const struct
-> 		thermal_cooling_device_ops *ops) {
-> 		return NULL;
-> 	}
-> #else
-> 	[ already present declaration of
-> 	thermal_of_cooling_device_register() ]
-> #endif /* CONFIG_THERMAL */
+ .../devicetree/bindings/sound/samsung-i2s.txt      |   22 ++
+ arch/arm/boot/dts/exynos4.dtsi                     |   13 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |   27 +-
+ arch/arm/boot/dts/exynos4412-odroidu3.dts          |    8 +-
+ arch/arm/boot/dts/exynos4412-odroidx2.dts          |    8 +-
+ include/dt-bindings/sound/samsung-i2s.h            |    8 +
+ sound/soc/samsung/i2s.c                            |  361 ++++++++++++--------
+ sound/soc/samsung/odroidx2_max98090.c              |    6 +-
+ 8 files changed, 295 insertions(+), 158 deletions(-)
+ create mode 100644 include/dt-bindings/sound/samsung-i2s.h
 
-
->=20
->=20
->=20
-> > >=20
-> > > > ---
-> > > > Changes for v2:
-> > > > - None
-> > > > ---
-> > > >  include/linux/thermal.h | 14 +++++++++++---
-> > > >  1 file changed, 11 insertions(+), 3 deletions(-)
-> > > >=20
-> > > > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> > > > index 2de3d9e..871123c 100644
-> > > > --- a/include/linux/thermal.h
-> > > > +++ b/include/linux/thermal.h
-> > > > @@ -328,6 +328,10 @@ thermal_zone_of_sensor_register(struct
-> > > > device *dev, int id, void *data, const struct
-> > > > thermal_zone_of_device_ops *ops); void
-> > > > thermal_zone_of_sensor_unregister(struct device *dev, struct
-> > > > thermal_zone_device *tz); +struct thermal_cooling_device *
-> > > > +thermal_of_cooling_device_register(struct device_node *np,
-> > > > +				   char *type, void *devdata,
-> > > > +				   const struct
-> > > > thermal_cooling_device_ops *); #else
-> > > >  static inline struct thermal_zone_device *
-> > > >  thermal_zone_of_sensor_register(struct device *dev, int id, void
-> > > > *data, @@ -342,6 +346,13 @@ void
-> > > > thermal_zone_of_sensor_unregister(struct device *dev, {
-> > > >  }
-> > > > =20
-> > > > +static inline struct thermal_cooling_device *
-> > > > +thermal_of_cooling_device_register(struct device_node *np,
-> > > > +				   char *type, void *devdata,
-> > > > +				   const struct
-> > > > thermal_cooling_device_ops *ops) +{
-> > > > +	return NULL;
-> > > > +}
-> > > >  #endif
-> > > >  struct thermal_zone_device *thermal_zone_device_register(const
-> > > > char *, int, int, void *, struct thermal_zone_device_ops *,
-> > > > @@ -357,9 +368,6 @@ void thermal_zone_device_update(struct
-> > > > thermal_zone_device *);=20
-> > > >  struct thermal_cooling_device
-> > > > *thermal_cooling_device_register(char *, void *, const struct
-> > > > thermal_cooling_device_ops *); -struct thermal_cooling_device *
-> > > > -thermal_of_cooling_device_register(struct device_node *np, char
-> > > > *, void *,
-> > > > -				   const struct
-> > > > thermal_cooling_device_ops *); void
-> > > > thermal_cooling_device_unregister(struct thermal_cooling_device
-> > > > *); struct thermal_zone_device
-> > > > *thermal_zone_get_zone_by_name(const char *name); int
-> > > > thermal_zone_get_temp(struct thermal_zone_device *tz, unsigned
-> > > > long *temp); -- 2.0.0.rc2
-> > > >=20
-> >=20
-> >=20
->=20
->=20
->=20
-> --=20
-> Best regards,
->=20
-> Lukasz Majewski
->=20
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
-
---1UWUbFP1cBYEclgG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUtrYMAAoJEMLUO4d9pOJW/vAH+wcTwVCWNNUyLqf6XB5rf44Q
-nGW1m48ZjXoHub4us1T5PBvhufYGImK/vAGEXoJOMRzKmu9rHPd58pAqTozLPFWA
-AlqYuwu9u7yxkn1DCQMZtPIKXNoxxvlltbUl+uujE/Qx2/xNl9rVNWEE/MLfIPBR
-VNeb9Bxyk1riq8C8SmUgBCIADX1v06WEZmBKtbwqs67RupPyctIO9MbEOQ4bUC87
-QBIC4WozI/FcmLRPW6viWvX8Gxi0v+g9v4CHkYJwwcFXV9VKXN0HPg4AFQgHSpz7
-P52ne5UG1QRef+Jv/xTlhSNESQTM+njwuHeYpQyE4hNayx3c0P6yObbeOBHABtY=
-=kIs0
------END PGP SIGNATURE-----
-
---1UWUbFP1cBYEclgG--
+--
+1.7.9.5
