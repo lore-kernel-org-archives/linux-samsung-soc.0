@@ -1,59 +1,62 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [RFC 0/3] mmc: Add dynamic frequency scaling
-Date: Thu, 15 Jan 2015 11:04:04 +0100
-Message-ID: <CAPDyKFqe7UxSrQxuvGw7UWFQhvX0NZ83rvLrAEMZFpA4n0GcNg@mail.gmail.com>
-References: <1421054585-9032-1-git-send-email-k.kozlowski@samsung.com>
-	<CAPDyKFpGiaDJ3zjCSSbcia6iLS2+FLBRjGAheQAzvFsAkJax+A@mail.gmail.com>
-	<1421313626.19448.8.camel@AMDC1943>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Thu, 15 Jan 2015 11:06:27 +0100
+Message-ID: <54B79123.4090200@samsung.com>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+ <54B68A74.8070405@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:43513 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392AbbAOKEG (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:47490 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751470AbbAOKGd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 05:04:06 -0500
-Received: by mail-qc0-f171.google.com with SMTP id b13so7328500qcw.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Jan 2015 02:04:04 -0800 (PST)
-In-Reply-To: <1421313626.19448.8.camel@AMDC1943>
+	Thu, 15 Jan 2015 05:06:33 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NI7004UVQXIOR70@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Jan 2015 10:10:30 +0000 (GMT)
+In-reply-to: <54B68A74.8070405@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chris Ball <chris@printf.net>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On 15 January 2015 at 10:20, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On czw, 2015-01-15 at 09:20 +0100, Ulf Hansson wrote:
->> + Mike, Stephen (Clock maintainers)
->>
->> On 12 January 2015 at 10:23, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->> > Hi,
->> >
->> >
->> > I would like to hear some comments about idea of scaling MMC clock
->> > frequency. The basic idea is to lower the clock when device is
->> > completely idle or not busy enough.
->>
->> We already have host drivers that implements runtime PM support.
->> Typically that would mean the clock will be gated once the device
->> becomes runtime PM suspended.
->>
->> Why should we decrease the frequency of an already gated clock?
+Hello,
+
+On 2015-01-14 16:25, Tobias Jakobi wrote:
+> Hello,
 >
-> In case of idle state you're right that clkgate would be better. But
-> what about finding a compromise between high performance (high
-> frequency) and energy saving for different loads on MMC?
-
-I guess a compromise could be beneficial for some SOC and use cases.
-At least I remember, ST-Ericsson's UX500 SOC had such an out of tree
-hack to track MMC load.
-
+> I've applied v6 of the HDMI patchset (together with the patches the set
+> depends on) onto torvalds/master, but I'm seeing a lot of warnings
+> (coming from __clk_{unprepare,disable}) that seem to originate from the
+> fimc subsystem.
 >
-> The frequency scaling could help in that case. Anyway I should prepare
-> some more benchmarks for such conditions.
+> Since the patchset also changes PM domain handling (which shows up in
+> the log as well), I was wondering if this is related?
+>
+> Full boot log here:
+> http://www.math.uni-bielefeld.de/~tjakobi/archive/clk_warnings.txt
+>
+> That's the tree I'm currently using:
+> https://github.com/tobiasjakobi/linux-odroid/commits/odroid-3.19.y
+> (maybe I'm missing something here?)
+>
+>
+> With best wishes,
+> Tobias
+>
+> PS: This is on a ODROID-X2.
 
-Seems reasonable and please do!
+The issues with FIMC / DRM FIMC are not related to HDMI patches. They will
+be handled separately. For the time being simply please disable Exynos IPP
+(or Exynos DRM FIMC) feature in your kernel configuration.
 
-Kind regards
-Uffe
+I hope that HDMI display works fine for you.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
