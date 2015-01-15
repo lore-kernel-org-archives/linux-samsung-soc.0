@@ -1,104 +1,60 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
- Exynos 64bit SoC
-Date: Thu, 15 Jan 2015 13:34:04 +0000
-Message-ID: <20150115133404.GF16217@leverpostej>
-References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
- <54B69072.4080607@kernel.org>
- <54B692FB.7030703@linaro.org>
- <54B7024C.4020407@samsung.com>
- <20150115112938.GB16217@leverpostej>
- <CAGTfZH0Ve+icxc6FpMJhfNMRMqQASrcUmnrZw-6sYQz8rabC_A@mail.gmail.com>
- <CAGTfZH0SQRyTMTmge6x2fXFBdVwtgJ_wcxK36mFrf6ZNPBn85w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in
+ exynos4x12.dtsi
+Date: Thu, 15 Jan 2015 14:51:10 +0100
+Message-ID: <1421329871-18819-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:34701 "EHLO
-	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753801AbbAONec (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:20213 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754266AbbAONvr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 08:34:32 -0500
-Content-Disposition: inline
-In-Reply-To: <CAGTfZH0SQRyTMTmge6x2fXFBdVwtgJ_wcxK36mFrf6ZNPBn85w@mail.gmail.com>
+	Thu, 15 Jan 2015 08:51:47 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NI8006VH1698L30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Jan 2015 22:51:45 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cwchoi00@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "inki.dae@samsung.com" <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: kgene@kernel.org
+Cc: olof@lixom.net, arnd@arndb.de, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Jan 15, 2015 at 12:52:38PM +0000, Chanwoo Choi wrote:
-> On Thu, Jan 15, 2015 at 9:46 PM, Chanwoo Choi <cwchoi00@gmail.com> wrote:
-> > Hi Mark,
-> >
-> > On Thu, Jan 15, 2015 at 8:29 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> On Wed, Jan 14, 2015 at 11:57:00PM +0000, Chanwoo Choi wrote:
-> >>> Hi Kukjin,
-> >>>
-> >>> On 01/15/2015 01:02 AM, Daniel Lezcano wrote:
-> >>> > On 01/14/2015 04:51 PM, Kukjin Kim wrote:
-> >>> >> On 01/14/15 14:33, Chanwoo Choi wrote:
-> >>> >>
-> >>> >> Hi,
-> >>> >>
-> >>> >> + Doug, Olof
-> >>> >>
-> >>> >>> This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
-> >>> >>> for Exynos 32bit SoC.
-> >>> >>>
-> >>> >> Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is available
-> >>> >> on 64bit exynos SoC such as exynos7. But basically ARMv8 architecture is
-> >>> >> including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
-> >>> >> implemented it and additionally its access is faster than using memory
-> >>> >> mapped register called SFR for MCT...so Doug submitted patch to use MCT
-> >>> >> on 32bit exynos SoCs before.
-> >>>
-> >>> I know arch_timer. As you comment, ARCH timer would be used for system timer for ARMv8.
-> >>> But, Exynos5433/Exynos7 (ARMv8) include MCT (Multi-Core Timer) IP. I checked it on
-> >>> Exynos5433/EXynos7 User-manaual and tested it.
-> >>>
-> >>> I think that exynos_mct.c should support the Exynos 64-bit SoC
-> >>> because Exynos5433/Exynos7 include already MCT (Multi-Core Timer) IP.
-> >>>
-> >>> Also, I have a problem to verify ARCH timer on Exynos SoC. Exynos User-manual never includes
-> >>> the detailed information about for ARCH timer(e.g, clock for ARCH timer). I knew that
-> >>> I can get the document of ARCH timer for ARM official site but I think it is insufficient
-> >>> to implement ARCH timer on Exynos SoC.
-> >>
-> >> What do you mean by "insufficient to implement ARCH timer"?
-> >
-> > As I knew, timer must need the source clock. The clock for ARCH timer
-> > has dependency on Exynos SoC, But I cannot find
-> 
-> I'm so sorry about this mistake. I pressed the send button before
-> completing reply.
-> 
-> As I knew, timer must need the source clock. The clock for ARCH timer
-> has dependency on Exynos SoC, But I cannot find the clock information
-> for ARCH timer on Exynos SoC user-manual.
-> 
-> When I tried to use ARCH timer on Exynos3250, It is not working. We
-> can check this ARCH timer issue of Exynos3250
-> on following patch[1]:
-> [1] http://www.spinics.net/lists/arm-kernel/msg322943.html
+Assign proper FIMC-IS UART gate clock in the device DT node and not
+use the SRC_MASK gate. This fixes regression introduced in commit
+a37c82a3b3c0910019abfd22a97be1f ("clk: samsung: exynos4: Remove
+SRC_MASK_ISP gates").
 
-Hmm. That is annoying. Your boot code should have been initialising this
-already.
+Without this change exynos4 fimc-is driver fails to probe with an
+error log:
 
-> >> The architected timer is mandatory in ARMv8, and required by the arm64
-> >> kernel.
-> >>
-> >> Additional timers may be requried if you want to put all CPUs into low
-> >> power states where the timer logic may be disabled and/or lose state,
-> >> but regardless the architected timers are necessary.
-> 
-> I agree that ARCH timer is mandatory.
-> 
-> I just think that existing exynos-mct.c driver should support the Exynos5/7 SoC
-> because released Exynos5/7 SoC includes already MCT IP for system timer.
+[    1.842447] ERROR: could not get clock /camera/fimc-is@12000000:uart(13)
+[    1.848529] exynos4-fimc-is 12000000.fimc-is: failed to get clock: uart
+[    1.855275] exynos4-fimc-is: probe of 12000000.fimc-is failed with error -2
 
-I'm not opposed to the MCT. My only concern is that a configured and
-enabled architected timer is mandated by the boot protocol, and is a
-prerequisite for a functioning kernel. Your initial response made it
-sound like you expected the MCT alone to be sufficient.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+
+Kukjin, could you take this patch into your tree ? I have been applying it
+for several kernel releases now to get the Exynos4 FIMC driver even passing
+probing.
 
 Thanks,
-Mark.
+Sylwester
+ arch/arm/boot/dts/exynos4x12.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 93b7040..86e1800 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -225,7 +225,7 @@
+ 				 <&clock CLK_DIV_ISP0>,<&clock CLK_DIV_ISP1>,
+ 				 <&clock CLK_DIV_MCUISP0>,
+ 				 <&clock CLK_DIV_MCUISP1>,
+-				 <&clock CLK_SCLK_UART_ISP>,
++				 <&clock CLK_UART_ISP_SCLK>,
+ 				 <&clock CLK_ACLK200>, <&clock CLK_DIV_ACLK200>,
+ 				 <&clock CLK_ACLK400_MCUISP>,
+ 				 <&clock CLK_DIV_ACLK400_MCUISP>;
+--
+1.7.9.5
