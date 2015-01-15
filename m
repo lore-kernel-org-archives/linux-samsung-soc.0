@@ -1,304 +1,50 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v3 13/16] thermal: exynos: dts: Provide device tree
- bindings identical to the one in exynos_tmu_data.c
-Date: Thu, 15 Jan 2015 17:03:36 +0100
-Message-ID: <20150115170336.3bfc1fab@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421242874-3425-1-git-send-email-l.majewski@samsung.com>
- <1421242874-3425-14-git-send-email-l.majewski@samsung.com>
- <20150114190550.GB4105@developer>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v2] hwmon: (ina2xx) Add ina231 compatible
+	string
+Date: Thu, 15 Jan 2015 08:56:55 -0800
+Message-ID: <7hegqwouco.fsf@deeprootsystems.com>
+References: <1421285699-8469-1-git-send-email-khilman@kernel.org>
+	<54B745B4.2040807@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150114190550.GB4105@developer>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <lm-sensors-bounces@lm-sensors.org>
+In-Reply-To: <54B745B4.2040807@roeck-us.net> (Guenter Roeck's message of "Wed,
+	14 Jan 2015 20:44:36 -0800")
+List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
+List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
+List-Post: <mailto:lm-sensors@lm-sensors.org>
+List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
+List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
+Sender: lm-sensors-bounces@lm-sensors.org
+Errors-To: lm-sensors-bounces@lm-sensors.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, DOCUMENTATION <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Eduardo,
+Guenter Roeck <linux@roeck-us.net> writes:
 
-> On Wed, Jan 14, 2015 at 02:41:11PM +0100, Lukasz Majewski wrote:
-> > Presented device tree bindings provide data already hardcoded in the
-> > exynos_tmu_data.c file.
-> > After this commit, it should be possible to reuse common thermal
-> > core framework in Exynos SoCs.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> > Changes for v2:
-> > - Add proper TMU entries for exynos3250.dtsi
-> > Changes for v3:
-> > - Remove "type" DT properties, which will be extracted from
-> > compatible
-> > - "samsung,tmu_" prefix for TMU specific properties has been added
-> > 
-> > ---
-> >  arch/arm/boot/dts/exynos3250.dtsi |  2 ++
-> >  arch/arm/boot/dts/exynos4.dtsi    |  4 ++++
-> >  arch/arm/boot/dts/exynos4210.dtsi | 21 ++++++++++++++++++++-
-> >  arch/arm/boot/dts/exynos4x12.dtsi |  1 +
-> >  arch/arm/boot/dts/exynos5250.dtsi |  5 +++--
-> >  arch/arm/boot/dts/exynos5420.dtsi | 28 ++++++++++++++++++++++++++++
-> >  arch/arm/boot/dts/exynos5440.dtsi | 18 ++++++++++++++++++
-> >  7 files changed, 76 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos3250.dtsi
-> > b/arch/arm/boot/dts/exynos3250.dtsi index 2246549..8cc078c 100644
-> > --- a/arch/arm/boot/dts/exynos3250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> > @@ -18,6 +18,7 @@
-> >   */
-> >  
-> >  #include "skeleton.dtsi"
-> > +#include "exynos4-cpu-thermal.dtsi"
-> >  #include <dt-bindings/clock/exynos3250.h>
-> >  
-> >  / {
-> > @@ -188,6 +189,7 @@
-> >  			interrupts = <0 216 0>;
-> >  			clocks = <&cmu CLK_TMU_APBIF>;
-> >  			clock-names = "tmu_apbif";
-> > +			#include "exynos4412-tmu-sensor-conf.dtsi"
-> >  			status = "disabled";
-> >  		};
-> >  
-> > diff --git a/arch/arm/boot/dts/exynos4.dtsi
-> > b/arch/arm/boot/dts/exynos4.dtsi index b8168f1..f18d746 100644
-> > --- a/arch/arm/boot/dts/exynos4.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4.dtsi
-> > @@ -645,4 +645,8 @@
-> >  		samsung,sysreg = <&sys_reg>;
-> >  		status = "disabled";
-> >  	};
-> > +
-> > +	tmu: tmu@100C0000 {
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> > +	};
-> >  };
-> > diff --git a/arch/arm/boot/dts/exynos4210.dtsi
-> > b/arch/arm/boot/dts/exynos4210.dtsi index 2e66df8..7f0e012 100644
-> > --- a/arch/arm/boot/dts/exynos4210.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> > @@ -21,6 +21,7 @@
-> >  
-> >  #include "exynos4.dtsi"
-> >  #include "exynos4210-pinctrl.dtsi"
-> > +#include "exynos4-cpu-thermal.dtsi"
-> >  
-> >  / {
-> >  	compatible = "samsung,exynos4210", "samsung,exynos4";
-> > @@ -146,16 +147,34 @@
-> >  		reg = <0x03860000 0x1000>;
-> >  	};
-> >  
-> > -	tmu@100C0000 {
-> > +	tmu: tmu@100C0000 {
-> >  		compatible = "samsung,exynos4210-tmu";
-> >  		interrupt-parent = <&combiner>;
-> >  		reg = <0x100C0000 0x100>;
-> >  		interrupts = <2 4>;
-> >  		clocks = <&clock CLK_TMU_APBIF>;
-> >  		clock-names = "tmu_apbif";
-> > +		samsung,tmu_gain = <15>;
-> > +		samsung,tmu_reference_voltage = <7>;
-> >  		status = "disabled";
-> >  	};
-> >  
-> > +	thermal-zones {
-> > +		cpu_thermal: cpu-thermal {
-> > +			trips {
-> > +			      cpu_alert0: cpu-alert-0 {
-> > +				      temperature = <85000>; /*
-> > millicelsius */
-> > +			      };
-> > +			      cpu_alert1: cpu-alert-1 {
-> > +				      temperature = <100000>; /*
-> > millicelsius */
-> > +			      };
-> > +			      cpu_alert2: cpu-alert-2 {
-> > +				      temperature = <110000>; /*
-> > millicelsius */
-> > +			      };
-> > +			};
-> > +		};
-> > +	};
-> > +
-> >  	g2d@12800000 {
-> >  		compatible = "samsung,s5pv210-g2d";
-> >  		reg = <0x12800000 0x1000>;
-> > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
-> > b/arch/arm/boot/dts/exynos4x12.dtsi index 93b7040..3ee2031 100644
-> > --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> > @@ -19,6 +19,7 @@
-> >  
-> >  #include "exynos4.dtsi"
-> >  #include "exynos4x12-pinctrl.dtsi"
-> > +#include "exynos4-cpu-thermal.dtsi"
-> >  
-> >  / {
-> >  	aliases {
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> > b/arch/arm/boot/dts/exynos5250.dtsi index dd5c3a0..07fd73a 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -20,7 +20,7 @@
-> >  #include <dt-bindings/clock/exynos5250.h>
-> >  #include "exynos5.dtsi"
-> >  #include "exynos5250-pinctrl.dtsi"
-> > -
-> > +#include "exynos4-cpu-thermal.dtsi"
-> >  #include <dt-bindings/clock/exynos-audss-clk.h>
-> >  
-> >  / {
-> > @@ -236,12 +236,13 @@
-> >  		status = "disabled";
-> >  	};
-> >  
-> > -	tmu@10060000 {
-> > +	tmu: tmu@10060000 {
-> >  		compatible = "samsung,exynos5250-tmu";
-> >  		reg = <0x10060000 0x100>;
-> >  		interrupts = <0 65 0>;
-> >  		clocks = <&clock CLK_TMU>;
-> >  		clock-names = "tmu_apbif";
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	thermal-zones {
-> > diff --git a/arch/arm/boot/dts/exynos5420.dtsi
-> > b/arch/arm/boot/dts/exynos5420.dtsi index 517e50f..f5771e5 100644
-> > --- a/arch/arm/boot/dts/exynos5420.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> > @@ -761,6 +761,7 @@
-> >  		interrupts = <0 65 0>;
-> >  		clocks = <&clock CLK_TMU>;
-> >  		clock-names = "tmu_apbif";
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	tmu_cpu1: tmu@10064000 {
-> > @@ -769,6 +770,7 @@
-> >  		interrupts = <0 183 0>;
-> >  		clocks = <&clock CLK_TMU>;
-> >  		clock-names = "tmu_apbif";
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	tmu_cpu2: tmu@10068000 {
-> > @@ -777,6 +779,7 @@
-> >  		interrupts = <0 184 0>;
-> >  		clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
-> >  		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	tmu_cpu3: tmu@1006c000 {
-> > @@ -785,6 +788,7 @@
-> >  		interrupts = <0 185 0>;
-> >  		clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
-> >  		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	tmu_gpu: tmu@100a0000 {
-> > @@ -793,6 +797,30 @@
-> >  		interrupts = <0 215 0>;
-> >  		clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
-> >  		clock-names = "tmu_apbif", "tmu_triminfo_apbif";
-> > +		#include "exynos4412-tmu-sensor-conf.dtsi"
-> > +	};
-> > +
-> > +	thermal-zones {
-> > +		cpu0_thermal: cpu0-thermal {
-> > +			thermal-sensors = <&tmu_cpu0>;
-> > +			#include "exynos5420-trip-points.dtsi"
-> > +		};
-> > +		cpu1_thermal: cpu1-thermal {
-> > +		       thermal-sensors = <&tmu_cpu1>;
-> > +		       #include "exynos5420-trip-points.dtsi"
-> > +		};
-> > +		cpu2_thermal: cpu2-thermal {
-> > +		       thermal-sensors = <&tmu_cpu2>;
-> > +		       #include "exynos5420-trip-points.dtsi"
-> > +		};
-> > +		cpu3_thermal: cpu3-thermal {
-> > +		       thermal-sensors = <&tmu_cpu3>;
-> > +		       #include "exynos5420-trip-points.dtsi"
-> > +		};
-> > +		gpu_thermal: gpu-thermal {
-> > +		       thermal-sensors = <&tmu_gpu>;
-> > +		       #include "exynos5420-trip-points.dtsi"
-> > +		};
-> >  	};
-> >  
-> >          watchdog: watchdog@101D0000 {
-> > diff --git a/arch/arm/boot/dts/exynos5440.dtsi
-> > b/arch/arm/boot/dts/exynos5440.dtsi index 8f3373c..59d9416 100644
-> > --- a/arch/arm/boot/dts/exynos5440.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> > @@ -219,6 +219,7 @@
-> >  		interrupts = <0 58 0>;
-> >  		clocks = <&clock CLK_B_125>;
-> >  		clock-names = "tmu_apbif";
-> > +		#include "exynos5440-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	tmuctrl_1: tmuctrl@16011C {
-> > @@ -227,6 +228,7 @@
-> >  		interrupts = <0 58 0>;
-> >  		clocks = <&clock CLK_B_125>;
-> >  		clock-names = "tmu_apbif";
-> > +		#include "exynos5440-tmu-sensor-conf.dtsi"
-> >  	};
-> >  
-> >  	tmuctrl_2: tmuctrl@160120 {
-> > @@ -235,6 +237,22 @@
-> >  		interrupts = <0 58 0>;
-> >  		clocks = <&clock CLK_B_125>;
-> >  		clock-names = "tmu_apbif";
-> > +		#include "exynos5440-tmu-sensor-conf.dtsi"
-> > +	};
-> > +
-> > +	thermal-zones {
-> > +		cpu0_thermal: cpu0-thermal {
-> > +			thermal-sensors = <&tmuctrl_0>;
-> > +			#include "exynos5440-trip-points.dtsi"
-> > +		};
-> > +		cpu1_thermal: cpu1-thermal {
-> > +		       thermal-sensors = <&tmuctrl_1>;
-> > +		       #include "exynos5440-trip-points.dtsi"
-> > +		};
-> > +		cpu2_thermal: cpu2-thermal {
-> > +		       thermal-sensors = <&tmuctrl_2>;
-> > +		       #include "exynos5440-trip-points.dtsi"
-> > +		};
-> 
-> For all thermal zones added in this patch, can you please make sure
-> they all've got the mandatory fields?
+> On 01/14/2015 05:34 PM, Kevin Hilman wrote:
+>> From: Kevin Hilman <khilman@linaro.org>
+>>
+>> Add support for "ina231" as compatible string, and update
+>> Documentation and Kconfig accordingly.
+>>
+>> Tested with the Exynos5422-based odroid-xu3 board which has on-board
+>> INA231 sensors.
+>>
+>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+>
+> Applied to -next after minor cleanup (see below).
+>
 
-This is a better place to put all mandatory fields - not the patch
-06/16 - for two reasons:
+Thanks,
 
-1. tmu alias (as the sensor) is defined here
-2. Here the "real" support (not only for cpu cooling) for thermal-zones
-is added.
+Kevin
 
-> 
-> >  	};
-> >  
-> >  	sata@210000 {
-> > -- 
-> > 2.0.0.rc2
-> > 
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+_______________________________________________
+lm-sensors mailing list
+lm-sensors@lm-sensors.org
+http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
