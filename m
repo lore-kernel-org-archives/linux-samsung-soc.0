@@ -1,41 +1,71 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 0/3] ARM: dts: Regulator changes and fuel gauge for
- exynos4412-trats2
-Date: Thu, 15 Jan 2015 09:41:32 +0100
-Message-ID: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 1/3] ARM: dts: exynos4412-trats2: Add Maxim 77693 fuel gauge
+ node
+Date: Thu, 15 Jan 2015 09:41:33 +0100
+Message-ID: <1421311295-18960-2-git-send-email-k.kozlowski@samsung.com>
+References: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+Add node for fuel gauge present in Maxim 77693 PMIC. This allows control
+over battery charging state on Trats2 board.
 
+The fuel gauge is compatible with max17042 battery driver (Maxim
+17042/17047/17050).  Although datasheet rev 2.2 for MAX77693 describes
+fuel gauge as Maxim 17042-like, the chip on Trats2 board identifies
+itself as Maxim 17047-like.
 
-I grouped into one patchset already posted patches for Trats2 board:
-1. Fuel gauge:
-   https://lkml.org/lkml/2015/1/7/167
-2. Suspend configuration for max77686 regulators:
-   https://lkml.org/lkml/2014/10/29/262
-3. GPIO control for max77686 regulators:
-   https://lkml.org/lkml/2015/1/5/230
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-trats2.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-
-The necessary changes in max77686 regulator driver were already
-applied by Mark Brown.
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (3):
-  ARM: dts: exynos4412-trats2: Add Maxim 77693 fuel gauge node
-  ARM: dts: exynos4412-trats2: Add suspend configuration for max77686
-    regulators
-  ARM: dts: exynos4412-trats: Switch max77686 regulators to GPIO control
-
- arch/arm/boot/dts/exynos4412-trats2.dts | 115 ++++++++++++++++++--------------
- 1 file changed, 65 insertions(+), 50 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 29231b452643..595ad4ba6977 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -15,6 +15,7 @@
+ /dts-v1/;
+ #include "exynos4412.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "Samsung Trats 2 based on Exynos4412";
+@@ -24,6 +25,7 @@
+ 		i2c9 = &i2c_ak8975;
+ 		i2c10 = &i2c_cm36651;
+ 		i2c11 = &i2c_max77693;
++		i2c12 = &i2c_max77693_fuel;
+ 	};
+ 
+ 	memory {
+@@ -552,6 +554,22 @@
+ 		};
+ 	};
+ 
++	i2c_max77693_fuel: i2c-gpio-3 {
++		compatible = "i2c-gpio";
++		gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>, <&gpf1 4 GPIO_ACTIVE_HIGH>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		max77693-fuel-gauge@36 {
++			compatible = "maxim,max17047";
++			interrupt-parent = <&gpx2>;
++			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++			reg = <0x36>;
++		};
++	};
++
+ 	mmc@12550000 {
+ 		num-slots = <1>;
+ 		broken-cd;
 -- 
 1.9.1
