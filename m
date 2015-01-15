@@ -1,57 +1,63 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
-Date: Thu, 15 Jan 2015 19:41:56 +0900
-Message-ID: <54B79974.5000005@samsung.com>
-References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
- <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com>
- <54B79202.80209@math.uni-bielefeld.de> <54B795D0.9070708@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
+ Exynos 64bit SoC
+Date: Thu, 15 Jan 2015 11:29:38 +0000
+Message-ID: <20150115112938.GB16217@leverpostej>
+References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
+ <54B69072.4080607@kernel.org>
+ <54B692FB.7030703@linaro.org>
+ <54B7024C.4020407@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26045 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751385AbbAOKll (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 05:41:41 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NI700GWYSDFF8D0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Jan 2015 19:41:39 +0900 (KST)
-In-reply-to: <54B795D0.9070708@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54B7024C.4020407@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?IifrjIDsnbjquLAvTW9iaWxlIFMvVyBQbGF0Zm9ybSBMYWIuKO2GteyLoOyXsCk=?= =?UTF-8?B?L0UzKOyCrOybkCkv7IK87ISx7KCE7J6QJyI=?= <inki.dae@samsung.com>
 
-+Cc Inki Dae.
-
-Hi,
-
-On 01/15/2015 07:26 PM, Marek Szyprowski wrote:
-> Hello,
+On Wed, Jan 14, 2015 at 11:57:00PM +0000, Chanwoo Choi wrote:
+> Hi Kukjin,
 > 
-> On 2015-01-15 11:10, Tobias Jakobi wrote:
->> Marek Szyprowski wrote: This is on a ODROID-X2.
->>> The issues with FIMC / DRM FIMC are not related to HDMI patches. They will
->>> be handled separately. For the time being simply please disable Exynos IPP
->>> (or Exynos DRM FIMC) feature in your kernel configuration.
->>>
->>> I hope that HDMI display works fine for you.
->> OK, I'll check without FIMC again later this day, but what about the
->> warning (?) from the mixer:
->> exynos-mixer 12c10000.mixer: Unbalanced pm_runtime_enable!
->>
->> Should this go away as well, when I disable the FIMC?
+> On 01/15/2015 01:02 AM, Daniel Lezcano wrote:
+> > On 01/14/2015 04:51 PM, Kukjin Kim wrote:
+> >> On 01/14/15 14:33, Chanwoo Choi wrote:
+> >>
+> >> Hi,
+> >>
+> >> + Doug, Olof
+> >>
+> >>> This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
+> >>> for Exynos 32bit SoC.
+> >>>
+> >> Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is available
+> >> on 64bit exynos SoC such as exynos7. But basically ARMv8 architecture is
+> >> including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
+> >> implemented it and additionally its access is faster than using memory
+> >> mapped register called SFR for MCT...so Doug submitted patch to use MCT
+> >> on 32bit exynos SoCs before.
 > 
-> Well, I also got this warning. It looks that pm_runtime in Exynos DRM got changed
-> recently and the bug is somewhere there. We will also check this issue.
+> I know arch_timer. As you comment, ARCH timer would be used for system timer for ARMv8.
+> But, Exynos5433/Exynos7 (ARMv8) include MCT (Multi-Core Timer) IP. I checked it on
+> Exynos5433/EXynos7 User-manaual and tested it.
 > 
+> I think that exynos_mct.c should support the Exynos 64-bit SoC
+> because Exynos5433/Exynos7 include already MCT (Multi-Core Timer) IP.
+> 
+> Also, I have a problem to verify ARCH timer on Exynos SoC. Exynos User-manual never includes
+> the detailed information about for ARCH timer(e.g, clock for ARCH timer). I knew that
+> I can get the document of ARCH timer for ARM official site but I think it is insufficient
+> to implement ARCH timer on Exynos SoC. 
 
-I posted a patch to fix it already.
+What do you mean by "insufficient to implement ARCH timer"?
 
-http://www.spinics.net/lists/dri-devel/msg75039.html
+The architected timer is mandatory in ARMv8, and required by the arm64
+kernel.
 
-Thanks.
+Additional timers may be requried if you want to put all CPUs into low
+power states where the timer logic may be disabled and/or lose state,
+but regardless the architected timers are necessary.
+
+Thanks,
+Mark.
