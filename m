@@ -1,37 +1,35 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL RE-SEND] Samsung fixes for v3.19
-Date: Thu, 15 Jan 2015 15:46:00 -0800
-Message-ID: <20150115234600.GA23775@quad.lixom.net>
-References: <54B38550.6010707@kernel.org>
- <20150112221131.GC22090@quad.lixom.net>
- <54B685AE.5080508@kernel.org>
+Subject: Re: [GIT PULL RE-SEND] Samsung exynos7 updates for v3.20
+Date: Thu, 15 Jan 2015 15:49:34 -0800
+Message-ID: <20150115234934.GB23775@quad.lixom.net>
+References: <54B38628.5090902@kernel.org>
+ <54B68624.8000706@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:51606 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753135AbbAOXps (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:62412 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752368AbbAOXtV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 18:45:48 -0500
-Received: by mail-pd0-f176.google.com with SMTP id r10so19132137pdi.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Jan 2015 15:45:47 -0800 (PST)
+	Thu, 15 Jan 2015 18:49:21 -0500
+Received: by mail-pa0-f43.google.com with SMTP id kx10so20556796pab.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Jan 2015 15:49:21 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <54B685AE.5080508@kernel.org>
+In-Reply-To: <54B68624.8000706@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Thu, Jan 15, 2015 at 12:05:18AM +0900, Kukjin Kim wrote:
+On Thu, Jan 15, 2015 at 12:07:16AM +0900, Kukjin Kim wrote:
 > Hi,
 > 
-> Oops, it's totally my fault and mistake. Actually my git command for
-> pull-request was correct but the git tool was old version :-( because
-> there are two git in my laptop, anyway sorry for that and I'm resending
-> with signed tag has been created before.
+> Sorry, I'm resending this pull-request because of missing signed-tag.
 > 
-> Please pull if you're OK with my comments on your questions below.
+> Please pull. If any problems, please let me know.
 > 
+> Thanks,
+> Kukjin
 > 
 > The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
 > 
@@ -40,28 +38,11 @@ On Thu, Jan 15, 2015 at 12:05:18AM +0900, Kukjin Kim wrote:
 > are available in the git repository at:
 > 
 >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-fixes-3.19
+> tags/samsung-dt-64
 > 
-> for you to fetch changes up to 26d13bf77b8e59adf4953577ba48e1903545bf7f:
+> for you to fetch changes up to 6f56eef1f9aba3747c811780a4768618167d5c97:
 > 
->   ARM: exynos_defconfig: Enable LM90 driver (2015-01-12 17:16:32 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung fixes for v3.19
-> - exynos_defconfig: enable LM90 driver and display panel support
->    - HWMON
->    - SENSORS_LM90
->    - Direct Rendering Manager (DRM)
->    - DRM bridge registration and lookup framework
->    - Parade ps8622/ps8625 eDP/LVDS bridge
->    - NXP ptn3460 eDP/LVDS bridge
->    - Exynos Fully Interactive Mobile Display controller (FIMD)
->    - Panel registration and lookup framework
->    - Simple panels
->    - Backlight & LCD device support
-> 
-> - use pmu_system_controller phandle for dp phy
->   : DP PHY requires pmu_system_controller to handle PMU reg. now
+>   arm64: Enable ARMv8 based exynos7 SoC support (2014-12-23 00:19:08 +0900)
 
 Merged.
 
