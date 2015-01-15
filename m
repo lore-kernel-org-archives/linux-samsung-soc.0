@@ -1,50 +1,35 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL RE-SEND] Samsung exynos7 updates for v3.20
-Date: Thu, 15 Jan 2015 15:49:34 -0800
-Message-ID: <20150115234934.GB23775@quad.lixom.net>
-References: <54B38628.5090902@kernel.org>
- <54B68624.8000706@kernel.org>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Fri, 16 Jan 2015 00:54:36 +0100
+Message-ID: <54B8533C.3070000@math.uni-bielefeld.de>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com> <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:62412 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752368AbbAOXtV (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59842 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752054AbbAOXyk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 18:49:21 -0500
-Received: by mail-pa0-f43.google.com with SMTP id kx10so20556796pab.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Jan 2015 15:49:21 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <54B68624.8000706@kernel.org>
+	Thu, 15 Jan 2015 18:54:40 -0500
+In-Reply-To: <54B79123.4090200@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On Thu, Jan 15, 2015 at 12:07:16AM +0900, Kukjin Kim wrote:
-> Hi,
-> 
-> Sorry, I'm resending this pull-request because of missing signed-tag.
-> 
-> Please pull. If any problems, please let me know.
-> 
-> Thanks,
-> Kukjin
-> 
-> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-> 
->   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-dt-64
-> 
-> for you to fetch changes up to 6f56eef1f9aba3747c811780a4768618167d5c97:
-> 
->   arm64: Enable ARMv8 based exynos7 SoC support (2014-12-23 00:19:08 +0900)
+Hello!
 
-Merged.
+Marek Szyprowski wrote:
+> I hope that HDMI display works fine for you.
+I checked with my panel just now and played around a bit with the DRM
+(opening, vsync, etc.). However on deinitialization the entire system
+locked up. I currently haven't hooked the board up to the serial
+console, otherwise I would've tried to extract some more meaningful
+information.
 
+Going to check again more thoroughly on the weekend what exactly
+triggers the lockup.
 
--Olof
+With best wishes,
+Tobias
