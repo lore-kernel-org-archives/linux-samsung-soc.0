@@ -1,91 +1,106 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
- Exynos 64bit SoC
-Date: Thu, 15 Jan 2015 21:52:38 +0900
-Message-ID: <CAGTfZH0SQRyTMTmge6x2fXFBdVwtgJ_wcxK36mFrf6ZNPBn85w@mail.gmail.com>
-References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
-	<54B69072.4080607@kernel.org>
-	<54B692FB.7030703@linaro.org>
-	<54B7024C.4020407@samsung.com>
-	<20150115112938.GB16217@leverpostej>
-	<CAGTfZH0Ve+icxc6FpMJhfNMRMqQASrcUmnrZw-6sYQz8rabC_A@mail.gmail.com>
-Reply-To: cw00.choi@samsung.com
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH RESEND] pwm: samsung: Fix output race on disabling
+Date: Thu, 15 Jan 2015 21:54:24 +0900
+Message-ID: <CA+Ln22E3QpH_F8DU==z7b_Ju8txcx5uSOnYv2RMf4b1ha-1tOA@mail.gmail.com>
+References: <1420671497-25270-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGTfZH0Ve+icxc6FpMJhfNMRMqQASrcUmnrZw-6sYQz8rabC_A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "inki.dae@samsung.com" <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1420671497-25270-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 15, 2015 at 9:46 PM, Chanwoo Choi <cwchoi00@gmail.com> wrote:
-> Hi Mark,
+Hi Sjoerd,
+
+Thanks for the patch. I posted some comments inline, though.
+
+2015-01-08 7:58 GMT+09:00 Sjoerd Simons <sjoerd.simons@collabora.co.uk>:
+> When disabling the samsung PWM the output state remains at the level it
+> was in the end of a pwm cycle. In other words, calling pwm_disable when
+> at 100% duty will keep the output active, while at all other setting the
+> output will go/stay inactive. On top of that the samsung PWM settings are
+> double-buffered, which means the new settings only get applied at the
+> start of a new PWM cycle.
 >
-> On Thu, Jan 15, 2015 at 8:29 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->> On Wed, Jan 14, 2015 at 11:57:00PM +0000, Chanwoo Choi wrote:
->>> Hi Kukjin,
->>>
->>> On 01/15/2015 01:02 AM, Daniel Lezcano wrote:
->>> > On 01/14/2015 04:51 PM, Kukjin Kim wrote:
->>> >> On 01/14/15 14:33, Chanwoo Choi wrote:
->>> >>
->>> >> Hi,
->>> >>
->>> >> + Doug, Olof
->>> >>
->>> >>> This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
->>> >>> for Exynos 32bit SoC.
->>> >>>
->>> >> Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is available
->>> >> on 64bit exynos SoC such as exynos7. But basically ARMv8 architecture is
->>> >> including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
->>> >> implemented it and additionally its access is faster than using memory
->>> >> mapped register called SFR for MCT...so Doug submitted patch to use MCT
->>> >> on 32bit exynos SoCs before.
->>>
->>> I know arch_timer. As you comment, ARCH timer would be used for system timer for ARMv8.
->>> But, Exynos5433/Exynos7 (ARMv8) include MCT (Multi-Core Timer) IP. I checked it on
->>> Exynos5433/EXynos7 User-manaual and tested it.
->>>
->>> I think that exynos_mct.c should support the Exynos 64-bit SoC
->>> because Exynos5433/Exynos7 include already MCT (Multi-Core Timer) IP.
->>>
->>> Also, I have a problem to verify ARCH timer on Exynos SoC. Exynos User-manual never includes
->>> the detailed information about for ARCH timer(e.g, clock for ARCH timer). I knew that
->>> I can get the document of ARCH timer for ARM official site but I think it is insufficient
->>> to implement ARCH timer on Exynos SoC.
->>
->> What do you mean by "insufficient to implement ARCH timer"?
+> This results in a race if the PWM is at 100% duty and a driver calls:
+>   pwm_config (pwm, 0, period);
+>   pwm_disable (pwm);
 >
-> As I knew, timer must need the source clock. The clock for ARCH timer
-> has dependency on Exynos SoC, But I cannot find
-
-I'm so sorry about this mistake. I pressed the send button before
-completing reply.
-
-As I knew, timer must need the source clock. The clock for ARCH timer
-has dependency on Exynos SoC, But I cannot find the clock information
-for ARCH timer on Exynos SoC user-manual.
-
-When I tried to use ARCH timer on Exynos3250, It is not working. We
-can check this ARCH timer issue of Exynos3250
-on following patch[1]:
-[1] http://www.spinics.net/lists/arm-kernel/msg322943.html
-
+> In this case the PWMs output will unexpectedly stay active, unless a new
+> PWM cycle happened to start between the register writes in _config and
+> _disable. As far as i can tell this is a regression introduced by 3bdf878,
+> before that a call to pwm_config would call pwm_samsung_enable which,
+> while heavy-handed, made sure the expected settings were live.
 >
->>
->> The architected timer is mandatory in ARMv8, and required by the arm64
->> kernel.
->>
->> Additional timers may be requried if you want to put all CPUs into low
->> power states where the timer logic may be disabled and/or lose state,
->> but regardless the architected timers are necessary.
+> To resolve this, while not re-introducing the issues 3bdf878 (flickering
+> as the PWM got reset while in a PWM cycle). Only force an update of the
+> settings when at 100% duty, which shouldn't have a noticeable effect on
+> the output but is enough to ensure the behaviour is as expected on
+> disable.
+>
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> ---
+>  drivers/pwm/pwm-samsung.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index 3e9b583..3e252dc 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -335,6 +335,27 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>         writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
+>         writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
+>
+> +       /* In case the PWM is currently at 100% duty, trigger a manual update to
+> +        * prevent unexpected results when disabling the pwm */
 
-I agree that ARCH timer is mandatory.
+IMHO it wouldn't be a bad idea to specify exactly what those
+unexpected results are and why a manual update helps instead of
+repeating the same thing that can be understood from reading the code.
 
-I just think that existing exynos-mct.c driver should support the Exynos5/7 SoC
-because released Exynos5/7 SoC includes already MCT IP for system timer.
+nit: According to CodingStyle multi-line comments should start and end
+with empty line, i.e.
 
-Best Regards,
-Chanwoo Choi
+/*
+ * Line 1
+ * Line 2
+ */
+
+nit: s/pwm/PWM/
+nit: Missing dot at the end of the sentence.
+
+> +       if (chan->period_ns/chan->tin_ns == chan->duty_ns/chan->tin_ns) {
+
+This check looks really heavy weight and is not really obvious at
+first look (especially the need to divide both sides by chan->tin_ns
+to account for integer rounding). Maybe instead you could read back
+tcmp before writing the new one and compare it with -1U?
+
+Also nit (if you decide to keep the condition as is): There should be
+spaces on both sides of the slash.
+
+> +               unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
+> +               u32 tcon;
+> +               unsigned long flags;
+> +
+> +               dev_dbg(our_chip->chip.dev, "Forcing manual update");
+> +
+> +               spin_lock_irqsave(&samsung_pwm_lock, flags);
+> +
+> +               tcon = readl(our_chip->base + REG_TCON);
+> +               tcon |= TCON_MANUALUPDATE(tcon_chan);
+> +               writel(tcon, our_chip->base + REG_TCON);
+> +
+> +               tcon &= ~TCON_MANUALUPDATE(tcon_chan);
+> +               writel(tcon, our_chip->base + REG_TCON);
+> +
+> +               spin_unlock_irqrestore(&samsung_pwm_lock, flags);
+> +       }
+
+I would move out the contents of the if block above to a separate
+helper function, e.g. pwm_samsung_manual_update().
+
+Best regards,
+Tomasz
