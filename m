@@ -1,43 +1,82 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] hwmon: (ina2xx) Add ina231 compatible string
-Date: Wed, 14 Jan 2015 17:30:15 -0800
-Message-ID: <7hppagq194.fsf@deeprootsystems.com>
-References: <1421279852-27965-1-git-send-email-khilman@kernel.org>
-	<20150115005642.GA31033@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:37870 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751354AbbAOBaS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 20:30:18 -0500
-Received: by mail-pa0-f45.google.com with SMTP id lf10so14131985pab.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2015 17:30:18 -0800 (PST)
-In-Reply-To: <20150115005642.GA31033@roeck-us.net> (Guenter Roeck's message of
-	"Wed, 14 Jan 2015 16:56:42 -0800")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v2] hwmon: (ina2xx) Add ina231 compatible string
+Date: Wed, 14 Jan 2015 17:34:58 -0800
+Message-ID: <1421285699-8469-1-git-send-email-khilman@kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org
+Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Jean Delvare <jdelvare@suse.de>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: lm-sensors@lm-sensors.org, linux-samsung-soc@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, open list <linux-kernel@vger.kernel.org>
 
-Guenter Roeck <linux@roeck-us.net> writes:
+From: Kevin Hilman <khilman@linaro.org>
 
-> On Wed, Jan 14, 2015 at 03:57:32PM -0800, Kevin Hilman wrote:
->> From: Kevin Hilman <khilman@linaro.org>
->> 
->> Add support for "ina231" as compatible string.
->> 
->> Tested with the Exynos5422-based odroid-xu3 board which has on-board
->> INA231 sensors.
->> 
->> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->
-> Hi Kevin,
->
-> can you also update Documentation/hwmon/ina2xx and Documentation/hwmon/Kconfig ?
->
+Add support for "ina231" as compatible string, and update
+Documentation and Kconfig accordingly.
 
-Sure... coming right up.
+Tested with the Exynos5422-based odroid-xu3 board which has on-board
+INA231 sensors.
 
-Kevin
+Signed-off-by: Kevin Hilman <khilman@linaro.org>
+---
+ Documentation/hwmon/ina2xx | 9 +++++++++
+ drivers/hwmon/Kconfig      | 4 ++--
+ drivers/hwmon/ina2xx.c     | 1 +
+ 3 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/hwmon/ina2xx b/Documentation/hwmon/ina2xx
+index 4223c2d3b508..c2f838f65ee4 100644
+--- a/Documentation/hwmon/ina2xx
++++ b/Documentation/hwmon/ina2xx
+@@ -26,6 +26,12 @@ Supported chips:
+     Datasheet: Publicly available at the Texas Instruments website
+                http://www.ti.com/
+ 
++  * Texas Instruments INA231
++    Prefix: 'ina231'
++    Addresses: I2C 0x40 - 0x4f
++    Datasheet: Publicly available at the Texas Instruments website
++               http://www.ti.com/
++
+ Author: Lothar Felten <l-felten@ti.com>
+ 
+ Description
+@@ -44,6 +50,9 @@ The INA226 monitors both a shunt voltage drop and bus supply voltage.
+ The INA230 is a high or low side current shunt and power monitor with an I2C
+ interface. The INA230 monitors both a shunt voltage drop and bus supply voltage.
+ 
++The INA231 is a high or low side current shunt and power monitor with an I2C
++interface. The INA230 monitors both a shunt voltage drop and bus supply voltage.
++
+ The shunt value in micro-ohms can be set via platform data or device tree.
+ Please refer to the Documentation/devicetree/bindings/i2c/ina2xx.txt for bindings
+ if the device tree is used.
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 6529c09c46f0..408fb6f5f055 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1420,8 +1420,8 @@ config SENSORS_INA2XX
+ 	tristate "Texas Instruments INA219 and compatibles"
+ 	depends on I2C
+ 	help
+-	  If you say yes here you get support for INA219, INA220, INA226, and
+-	  INA230 power monitor chips.
++	  If you say yes here you get support for INA219, INA220, INA226,
++	  INA230, and INA231 power monitor chips.
+ 
+ 	  The INA2xx driver is configured for the default configuration of
+ 	  the part as described in the datasheet.
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index e01feba909c3..8c4a29bd2eaf 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -287,6 +287,7 @@ static const struct i2c_device_id ina2xx_id[] = {
+ 	{ "ina220", ina219 },
+ 	{ "ina226", ina226 },
+ 	{ "ina230", ina226 },
++	{ "ina231", ina226 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, ina2xx_id);
+-- 
+2.1.3
+
