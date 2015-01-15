@@ -1,60 +1,36 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in
- exynos4x12.dtsi
-Date: Thu, 15 Jan 2015 14:51:10 +0100
-Message-ID: <1421329871-18819-1-git-send-email-s.nawrocki@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Thu, 15 Jan 2015 14:57:27 +0100
+Message-ID: <851b4e62046aa7e3a43e0c8fc1c685d7@math.uni-bielefeld.de>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+ <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com>
+ <54B79202.80209@math.uni-bielefeld.de> <54B795D0.9070708@samsung.com>
+ <54B79974.5000005@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20213 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754266AbbAONvr (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59112 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752094AbbAON53 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 08:51:47 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NI8006VH1698L30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Jan 2015 22:51:45 +0900 (KST)
+	Thu, 15 Jan 2015 08:57:29 -0500
+In-Reply-To: <54B79974.5000005@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: olof@lixom.net, arnd@arndb.de, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?Q?=27=EB=8C=80=EC=9D=B8=EA=B8=B0/Mobile_S/W_Platform_Lab=2E=28?= =?UTF-8?Q?=ED=86=B5=EC=8B=A0=EC=97=B0=29/E3=28=EC=82=AC=EC=9B=90=29/?= =?UTF-8?Q?=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=27?= <inki.dae@samsung.com>
 
-Assign proper FIMC-IS UART gate clock in the device DT node and not
-use the SRC_MASK gate. This fixes regression introduced in commit
-a37c82a3b3c0910019abfd22a97be1f ("clk: samsung: exynos4: Remove
-SRC_MASK_ISP gates").
+On 2015-01-15 11:41, Joonyoung Shim wrote:
+> I posted a patch to fix it already.
+> 
+> http://www.spinics.net/lists/dri-devel/msg75039.html
+> 
+> Thanks.
 
-Without this change exynos4 fimc-is driver fails to probe with an
-error log:
+Thanks for heads up, I can confirm that applying the patch removes the 
+warning from the mixer.
 
-[    1.842447] ERROR: could not get clock /camera/fimc-is@12000000:uart(13)
-[    1.848529] exynos4-fimc-is 12000000.fimc-is: failed to get clock: uart
-[    1.855275] exynos4-fimc-is: probe of 12000000.fimc-is failed with error -2
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-
-Kukjin, could you take this patch into your tree ? I have been applying it
-for several kernel releases now to get the Exynos4 FIMC driver even passing
-probing.
-
-Thanks,
-Sylwester
- arch/arm/boot/dts/exynos4x12.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 93b7040..86e1800 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -225,7 +225,7 @@
- 				 <&clock CLK_DIV_ISP0>,<&clock CLK_DIV_ISP1>,
- 				 <&clock CLK_DIV_MCUISP0>,
- 				 <&clock CLK_DIV_MCUISP1>,
--				 <&clock CLK_SCLK_UART_ISP>,
-+				 <&clock CLK_UART_ISP_SCLK>,
- 				 <&clock CLK_ACLK200>, <&clock CLK_DIV_ACLK200>,
- 				 <&clock CLK_ACLK400_MCUISP>,
- 				 <&clock CLK_DIV_ACLK400_MCUISP>;
---
-1.7.9.5
+With best wishes,
+Tobias
