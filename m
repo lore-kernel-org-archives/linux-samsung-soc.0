@@ -1,44 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: power: reset: add driver for Hardkernel's Odroid boards
-Date: Thu, 15 Jan 2015 07:46:50 +0100
-Message-ID: <54B7625A.50400@samsung.com>
-References: <54B6886D.4070105@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] clk: exynos-audss: Fix memory leak on driver unbind or
+ probe failure
+Date: Thu, 15 Jan 2015 09:14:23 +0100
+Message-ID: <1421309663.12511.2.camel@AMDC1943>
+References: <1420451561-12360-1-git-send-email-k.kozlowski@samsung.com>
+ <1420451561-12360-2-git-send-email-k.kozlowski@samsung.com>
+ <54AEF541.1090700@codeaurora.org> <20150114222504.22722.49023@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38786 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751079AbbAOGqy (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43934 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751656AbbAOIO1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 01:46:54 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NI700BTGHOVK420@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Jan 2015 06:50:55 +0000 (GMT)
-In-reply-to: <54B6886D.4070105@math.uni-bielefeld.de>
+	Thu, 15 Jan 2015 03:14:27 -0500
+In-reply-to: <20150114222504.22722.49023@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello,
+On =C5=9Bro, 2015-01-14 at 14:25 -0800, Mike Turquette wrote:
+> Quoting Stephen Boyd (2015-01-08 13:23:13)
+> > On 01/05/2015 01:52 AM, Krzysztof Kozlowski wrote:
+> > > The memory allocated by basic clock divider/gate/mux (struct clk_=
+gate,
+> > > clk_divider and clk_mux) was leaking. During driver unbind or pro=
+be
+> > > failure the driver only unregistered the clocks.
+> > >
+> > > Use clk_unregister_{gate,divider,mux} to release all resources.
+> > >
+> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > >
+> >=20
+> > Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+>=20
+> I've applied both patches to clk-next. Krzysztof, let me know if you
+> would prefer to take the audss patch through the samsung clock branch
+> instead (to include it in a later pull request).
 
-On 2015-01-14 16:17, Tobias Jakobi wrote:
-> Hello,
->
-> I've applied the two patches of this set onto torvalds/master (together
-> with some other patches), but I now encounter an 'internal error' when
-> doing a system reboot.
->
-> Here's the corresponding part of the kernel log:
-> http://www.math.uni-bielefeld.de/~tjakobi/archive/odroid_power_reset.txt
+Thanks! I'm fine with applying them to clk-next.
 
-Right. This patch was posted some time ago and reboot handling on ARM SoCs
-have been changed recently in v3.19-rc1. I will post an updated version of
-this patch soon.
+Best regards,
+Krzysztof
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+
+>=20
+> Regards,
+> Mike
+>=20
+> >=20
+> > --=20
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
+> >=20
