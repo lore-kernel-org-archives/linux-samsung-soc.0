@@ -1,82 +1,227 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: [PATCH v2] hwmon: (ina2xx) Add ina231 compatible string
-Date: Wed, 14 Jan 2015 17:34:58 -0800
-Message-ID: <1421285699-8469-1-git-send-email-khilman@kernel.org>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org
-Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Jean Delvare <jdelvare@suse.de>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v4 2/9] devfreq: exynos: Add documentation for generic exynos
+ memory bus frequency driver
+Date: Thu, 15 Jan 2015 10:50:50 +0900
+Message-ID: <1421286657-4720-3-git-send-email-cw00.choi@samsung.com>
+References: <1421286657-4720-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:58732 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751314AbbAOBvI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jan 2015 20:51:08 -0500
+In-reply-to: <1421286657-4720-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Kevin Hilman <khilman@linaro.org>
+This patch adds the documentation for generic exynos memory bus frequency
+driver.
 
-Add support for "ina231" as compatible string, and update
-Documentation and Kconfig accordingly.
-
-Tested with the Exynos5422-based odroid-xu3 board which has on-board
-INA231 sensors.
-
-Signed-off-by: Kevin Hilman <khilman@linaro.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 ---
- Documentation/hwmon/ina2xx | 9 +++++++++
- drivers/hwmon/Kconfig      | 4 ++--
- drivers/hwmon/ina2xx.c     | 1 +
- 3 files changed, 12 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/devfreq/exynos-bus.txt     | 188 +++++++++++++++++++++
+ 1 file changed, 188 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/devfreq/exynos-bus.txt
 
-diff --git a/Documentation/hwmon/ina2xx b/Documentation/hwmon/ina2xx
-index 4223c2d3b508..c2f838f65ee4 100644
---- a/Documentation/hwmon/ina2xx
-+++ b/Documentation/hwmon/ina2xx
-@@ -26,6 +26,12 @@ Supported chips:
-     Datasheet: Publicly available at the Texas Instruments website
-                http://www.ti.com/
- 
-+  * Texas Instruments INA231
-+    Prefix: 'ina231'
-+    Addresses: I2C 0x40 - 0x4f
-+    Datasheet: Publicly available at the Texas Instruments website
-+               http://www.ti.com/
+diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+new file mode 100644
+index 0000000..6323dcf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+@@ -0,0 +1,188 @@
 +
- Author: Lothar Felten <l-felten@ti.com>
- 
- Description
-@@ -44,6 +50,9 @@ The INA226 monitors both a shunt voltage drop and bus supply voltage.
- The INA230 is a high or low side current shunt and power monitor with an I2C
- interface. The INA230 monitors both a shunt voltage drop and bus supply voltage.
- 
-+The INA231 is a high or low side current shunt and power monitor with an I2C
-+interface. The INA230 monitors both a shunt voltage drop and bus supply voltage.
++* Generic Exynos Memory Bus device
 +
- The shunt value in micro-ohms can be set via platform data or device tree.
- Please refer to the Documentation/devicetree/bindings/i2c/ina2xx.txt for bindings
- if the device tree is used.
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 6529c09c46f0..408fb6f5f055 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1420,8 +1420,8 @@ config SENSORS_INA2XX
- 	tristate "Texas Instruments INA219 and compatibles"
- 	depends on I2C
- 	help
--	  If you say yes here you get support for INA219, INA220, INA226, and
--	  INA230 power monitor chips.
-+	  If you say yes here you get support for INA219, INA220, INA226,
-+	  INA230, and INA231 power monitor chips.
- 
- 	  The INA2xx driver is configured for the default configuration of
- 	  the part as described in the datasheet.
-diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
-index e01feba909c3..8c4a29bd2eaf 100644
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -287,6 +287,7 @@ static const struct i2c_device_id ina2xx_id[] = {
- 	{ "ina220", ina219 },
- 	{ "ina226", ina226 },
- 	{ "ina230", ina226 },
-+	{ "ina231", ina226 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, ina2xx_id);
++The Samsung Exynos SoCs have many memory buses for data transfer between DRAM
++memory and MMC/sub-IP in SoC. Almost Exynos SoCs have the common architecture
++for memory buses. Generally, Exynos SoC express the memory bus by using memory
++bus group and block. The memory bus group has one more memory bus blocks and
++OPP table (including frequency and voltage for DVFS), regulator, devfreq-event
++devices. Each memory bus block has a clock for own memory bus speen and
++frequency table for DVFS. There are a little different among Exynos SoCs
++because each Exynos SoC has the different sub-IP and differnt memory bus.
++So, this difference should be specified in devicetree file.
++
++Required properties for memory bus group:
++- compatible: Should be "samsung,exynos-memory-bus".
++- operating-points: the OPP table including frequency/voltage information to
++                  support DVFS (Dynamic Voltage/Frequency Scaling) feature.
++- devfreq-events: the devfreq-event device to monitor the curret state of
++                  memory bus group.
++- vdd-mem-supply: the regulator to provide memory bus group with the voltage.
++
++Optional properties for memory bus group:
++- exynos,saturation-ratio: the percentage value which is used to calibrate
++                   the memory performance count againt memory cycle count.
++
++Required properties for memory bus block:
++- clock-names : the name of clock used by the memory bus, "memory-bus".
++- clocks : phandles for clock specified in "clock-names" property.
++- #clock-cells: should be 1.
++- frequency: the frequency table to support DVFS feature.
++
++Example1 : Memory bus group/block in exynos3250.dtsi are listed below.
++	Exynos3250 has two memory bus group (MIF, INT group). MIF (Memory
++	Interface) memory bus group includes one memory bus block between
++	DRAM and eMMC. Also, INT (Internal) memory bus group includes eight
++	memory bus blocks which support each sub-IP between DRAM and sub-IP.
++
++	memory_bus_mif: memory_bus@0 {
++		compatible = "samsung,exynos-memory-bus";
++
++		operating-points = <
++			400000 875000
++			200000 800000
++			133000 800000
++			100000 800000
++			50000  800000>;
++		status = "disabled";
++
++		blocks {
++			dmc_block: memory_bus_block1 {
++				clocks = <&cmu_dmc CLK_DIV_DMC>;
++				clock-names = "memory-bus";
++				frequency = <
++					400000
++					200000
++					133000
++					100000
++					50000>;
++			};
++		};
++	};
++
++	memory_bus_int: memory_bus@1 {
++		compatible = "samsung,exynos-memory-bus";
++
++		operating-points = <
++			400000 950000
++			200000 950000
++			133000 925000
++			100000 850000
++			80000  850000
++			50000  850000>;
++
++		status = "disabled";
++
++		blocks {
++			peri_block: memory_bus_block1 {
++				clocks = <&cmu CLK_DIV_ACLK_100>;
++				clock-names = "memory-bus";
++				frequency = <
++					100000
++					100000
++					100000
++					100000
++					50000
++					50000>;
++			};
++
++			display_block: memory_bus_block2 {
++				clocks = <&cmu CLK_DIV_ACLK_160>;
++				clock-names = "memory-bus";
++				frequency = <
++					200000
++					160000
++					100000
++					80000
++					80000
++					50000>;
++			};
++
++			isp_block: memory_bus_block3 {
++				clocks = <&cmu CLK_DIV_ACLK_200>;
++				clock-names = "memory-bus";
++				frequency = <
++					200000
++					200000
++					100000
++					80000
++					50000
++					50000>;
++			};
++
++			gps_block: memory_bus_block4 {
++				clocks = <&cmu CLK_DIV_ACLK_266>;
++				clock-names = "memory-bus";
++				frequency = <
++					300000
++					200000
++					133000
++					100000
++					50000
++					50000>;
++			};
++
++			mcuisp_block: memory_bus_block5 {
++				clocks = <&cmu CLK_DIV_ACLK_400_MCUISP>;
++				clock-names = "memory-bus";
++				frequency = <
++					400000
++					200000
++					50000
++					50000
++					50000
++					50000>;
++			};
++
++			leftbus_block: memory_bus_block6 {
++				clocks = <&cmu CLK_DIV_GDL>;
++				clock-names = "memory-bus";
++				frequency = <
++					200000
++					200000
++					133000
++					100000
++					100000
++					100000>;
++			};
++
++			rightbus_block: memory_bus_block7 {
++				clocks = <&cmu CLK_DIV_GDR>;
++				clock-names = "memory-bus";
++				frequency = <
++					200000
++					200000
++					133000
++					100000
++					100000
++					100000>;
++			};
++
++			mfc_block: memory_bus_block8 {
++				clocks = <&cmu CLK_SCLK_MFC>;
++				clock-names = "memory-bus";
++				frequency = <
++					200000
++					200000
++					200000
++					133000
++					100000
++					80000>;
++			};
++		};
++	};
++
++Example2 : Usage case to handle the frequency/voltage of memory bus on runtime
++	in exynos3250-rinato.dts are listed below.
++
++	&memory_bus_mif {
++		devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
++		vdd-mem-supply = <&buck1_reg>;
++		status = "okay";
++	};
++
++	&memory_bus_int {
++		devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
++		vdd-mem-supply = <&buck3_reg>;
++		status = "okay";
++	};
 -- 
-2.1.3
-
+1.8.5.5
