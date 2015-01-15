@@ -1,78 +1,51 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] hwmon: (ina2xx) Add ina231 compatible
-	string
-Date: Wed, 14 Jan 2015 20:44:36 -0800
-Message-ID: <54B745B4.2040807@roeck-us.net>
-References: <1421285699-8469-1-git-send-email-khilman@kernel.org>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 3/4] clk: samsung: exynos7: add clocks for audio block
+Date: Thu, 15 Jan 2015 11:19:14 +0530
+Message-ID: <CAAgF-Bf-p7idwX+C+Z56AaRKrHA=2yn5eZiQKJAYU3mq-ej=uw@mail.gmail.com>
+References: <1418995427-7712-1-git-send-email-padma.v@samsung.com>
+	<1418995427-7712-4-git-send-email-padma.v@samsung.com>
+	<CAFp+6iEJ48tbec7VqWYmdN-Zb-7zB+xUWaECd5EFZO1eMxEpVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <lm-sensors-bounces@lm-sensors.org>
-In-Reply-To: <1421285699-8469-1-git-send-email-khilman@kernel.org>
-List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
-List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
-List-Post: <mailto:lm-sensors@lm-sensors.org>
-List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
-List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
-Sender: lm-sensors-bounces@lm-sensors.org
-Errors-To: lm-sensors-bounces@lm-sensors.org
-To: Kevin Hilman <khilman@kernel.org>, lm-sensors@lm-sensors.org
-Cc: linux-samsung-soc@vger.kernel.org, DOCUMENTATION <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, open list <linux-kernel@vger.kernel.org>, linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f41.google.com ([209.85.213.41]:64942 "EHLO
+	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751045AbbAOFtP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Jan 2015 00:49:15 -0500
+In-Reply-To: <CAFp+6iEJ48tbec7VqWYmdN-Zb-7zB+xUWaECd5EFZO1eMxEpVA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 01/14/2015 05:34 PM, Kevin Hilman wrote:
-> From: Kevin Hilman <khilman@linaro.org>
->
-> Add support for "ina231" as compatible string, and update
-> Documentation and Kconfig accordingly.
->
-> Tested with the Exynos5422-based odroid-xu3 board which has on-board
-> INA231 sensors.
->
-> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+Hi Vivek,
 
-Applied to -next after minor cleanup (see below).
-
-> ---
->   Documentation/hwmon/ina2xx | 9 +++++++++
->   drivers/hwmon/Kconfig      | 4 ++--
->   drivers/hwmon/ina2xx.c     | 1 +
->   3 files changed, 12 insertions(+), 2 deletions(-)
+On 1/13/15, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+> Hi Padma,
 >
-> diff --git a/Documentation/hwmon/ina2xx b/Documentation/hwmon/ina2xx
-> index 4223c2d3b508..c2f838f65ee4 100644
-> --- a/Documentation/hwmon/ina2xx
-> +++ b/Documentation/hwmon/ina2xx
-> @@ -26,6 +26,12 @@ Supported chips:
->       Datasheet: Publicly available at the Texas Instruments website
->                  http://www.ti.com/
 >
-> +  * Texas Instruments INA231
-> +    Prefix: 'ina231'
-> +    Addresses: I2C 0x40 - 0x4f
-> +    Datasheet: Publicly available at the Texas Instruments website
-> +               http://www.ti.com/
-> +
->   Author: Lothar Felten <l-felten@ti.com>
+> On Fri, Dec 19, 2014 at 6:53 PM, Padmavathi Venna <padma.v@samsung.com>
+> wrote:
+>> Add required clk support for I2S,PCM amd SPDIF
+>>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
 >
->   Description
-> @@ -44,6 +50,9 @@ The INA226 monitors both a shunt voltage drop and bus supply voltage.
->   The INA230 is a high or low side current shunt and power monitor with an I2C
->   interface. The INA230 monitors both a shunt voltage drop and bus supply voltage.
+> verified from Exynos7 datasheet. The patch looks good.
+> Reviewed-by: Vivek Gautam <gautam.vivek@samsung.com>
 >
-> +The INA231 is a high or low side current shunt and power monitor with an I2C
-> +interface. The INA230 monitors both a shunt voltage drop and bus supply voltage.
-> +
-		The INA231 ...
 
-I fixed this up and merged above two paragraphs into one.
+Thanks for the review.
 
-Guenter
+Hi Sylwester,
 
+I posted patches after re-basing on your tree and after incorporating
+all comments from Vivek.
+Below is the link
+http://www.spinics.net/lists/linux-samsung-soc/msg40992.html
 
-_______________________________________________
-lm-sensors mailing list
-lm-sensors@lm-sensors.org
-http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
+Can you pick the patches?
+
+Thanks
+Padma
