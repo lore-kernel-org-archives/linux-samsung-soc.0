@@ -1,24 +1,38 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [v3,06/16] arm: dts: Adding CPU cooling binding for Exynos SoCs
-Date: Thu, 15 Jan 2015 15:17:45 +0100
-Message-ID: <17171dd7c4c659b45e1869d2f07c9160@math.uni-bielefeld.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 3/4] clk: samsung: exynos7: add clocks for audio block
+Date: Thu, 15 Jan 2015 15:24:33 +0100
+Message-ID: <54B7CDA1.2050504@samsung.com>
+References: <1418995427-7712-1-git-send-email-padma.v@samsung.com>
+ <1418995427-7712-4-git-send-email-padma.v@samsung.com>
+ <CAFp+6iEJ48tbec7VqWYmdN-Zb-7zB+xUWaECd5EFZO1eMxEpVA@mail.gmail.com>
+ <CAAgF-Bf-p7idwX+C+Z56AaRKrHA=2yn5eZiQKJAYU3mq-ej=uw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59142 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754334AbbAOORr (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:8842 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751565AbbAOOYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jan 2015 09:17:47 -0500
+	Thu, 15 Jan 2015 09:24:39 -0500
+In-reply-to: <CAAgF-Bf-p7idwX+C+Z56AaRKrHA=2yn5eZiQKJAYU3mq-ej=uw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Padma Venkat <padma.kvr@gmail.com>, Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hello,
+Hi,
 
-I noticed that this patch mixes spaces and tabs a lot for indentation.
+On 15/01/15 06:49, Padma Venkat wrote:
+> I posted patches after re-basing on your tree and after incorporating
+> all comments from Vivek.
+> Below is the link
+> http://www.spinics.net/lists/linux-samsung-soc/msg40992.html
+> 
+> Can you pick the patches?
 
-With best wishes,
-Tobias
+Sure, I'm not forgetting it. I've updated the exynos7 branch with your
+v2 patches.
+
+Thanks!
+Sylwester
