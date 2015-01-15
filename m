@@ -1,326 +1,175 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/3] ARM: dts: exynos4412-trats2: Add suspend configuration for
- max77686 regulators
-Date: Thu, 15 Jan 2015 09:41:34 +0100
-Message-ID: <1421311295-18960-3-git-send-email-k.kozlowski@samsung.com>
-References: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 1/8] thermal: Provide stub for
+ thermal_of_cooling_device_register() function
+Date: Thu, 15 Jan 2015 09:43:00 +0100
+Message-ID: <20150115094300.7019081d@amdc2363>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-2-git-send-email-l.majewski@samsung.com>
+ <20150102185426.GC12485@developer> <20150102190339.GA22356@developer>
+ <20150114160106.20aa160b@amdc2363> <20150114183211.GB3672@developer>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20150114183211.GB3672@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add suspend to RAM configuration for max77686 regulators. Some LDOs and
-bucks are disabled. This reduces energy consumption during S2R,
-approximately from 17 mA to 9 mA.
+Hi Eduardo,
 
-Additionally remove old and not supported bindings:
- - regulator-mem-off
- - regulator-mem-idle
- - regulator-mem-on
-The max77686 driver does not parse them and they are not documented
-anywere.
+> On Wed, Jan 14, 2015 at 04:01:06PM +0100, Lukasz Majewski wrote:
+> > Hi Eduardo,
+> >=20
+> > > On Fri, Jan 02, 2015 at 02:54:28PM -0400, Eduardo Valentin wrote:
+> > > > On Mon, Dec 22, 2014 at 05:27:41PM +0100, Lukasz Majewski wrote=
+:
+> > > > > Odroid U3 fan can work without being registered as OF cooling
+> > > > > device (with CONFIG_THERMAL_OF disabled).
+> > > > > In this situation it can be controlled via PWM entry at
+> > > > > /sys/class/hwmon/hwmon0/pwm1.
+> > > > >=20
+> > > > > Therefore, the thermal_of_cooling_device_register() function
+> > > > > needs a stub to allow clean compilation.
+> > > > >=20
+> > > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > > >=20
+> > > > Acked-by: Eduardo Valentin <edubezval@gmail.com>
+> > >=20
+> > > Sorry, too fast,
+> > >=20
+> > > This is actually
+> > > Nacked-by: Eduardo Valentin <edubezval@gmail.com>
+> > >=20
+> > > :-)
+> > >=20
+> > > I get this error:
+> > > drivers/thermal/thermal_core.c:1210:1: error: redefinition of
+> > > =E2=80=98thermal_of_cooling_device_register=E2=80=99
+> > >  thermal_of_cooling_device_register(struct device_node *np,
+> > >   ^
+> > >   In file included from drivers/thermal/thermal_core.c:34:0:
+> > >   include/linux/thermal.h:321:1: note: previous definition of
+> > >   =E2=80=98thermal_of_cooling_device_register=E2=80=99 was here
+> > >    thermal_of_cooling_device_register(struct device_node *np,
+> > >     ^
+> > >=20
+> > >=20
+> > > We provide the function in thermal core even if CONFIG_THERMAL_OF
+> > > is not set.
+> >=20
+> > Unfortunately the PWM fan subsystem can work perfectly fine without
+> > CONFIG_THERMAL.
+> >=20
+>=20
+> Now I understand what you are trying to do.
+>=20
+> > I think that it would be enough to make something like this in
+> > the ./include/linux/thermal.h:
+> >=20
+> > #ifdef CONFIG_THERMAL
+> Well, I think it should be the opposite here:
+>=20
+> #ifndef CONFIG_THERMAL
+>=20
+> that is, if no config thermal, then you provide the stub not the othe=
+r
+> way around.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+This seems like a better solution :-).
 
----
+Thanks.
 
-Previously this was part of [1] patchset. There were no changes in this
-patch since last version (v6) of that patchset.
+>=20
+> > 	static inline struct thermal_cooling_device *
+> > 		thermal_of_cooling_device_register(struct
+> > device_node *np, char *type, void *devdata,
+> > 				   const struct
+> > 		thermal_cooling_device_ops *ops) {
+> > 		return NULL;
+> > 	}
+> > #else
+> > 	[ already present declaration of
+> > 	thermal_of_cooling_device_register() ]
+> > #endif /* CONFIG_THERMAL */
+>=20
+>=20
+> >=20
+> >=20
+> >=20
+> > > >=20
+> > > > > ---
+> > > > > Changes for v2:
+> > > > > - None
+> > > > > ---
+> > > > >  include/linux/thermal.h | 14 +++++++++++---
+> > > > >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > > > >=20
+> > > > > diff --git a/include/linux/thermal.h b/include/linux/thermal.=
+h
+> > > > > index 2de3d9e..871123c 100644
+> > > > > --- a/include/linux/thermal.h
+> > > > > +++ b/include/linux/thermal.h
+> > > > > @@ -328,6 +328,10 @@ thermal_zone_of_sensor_register(struct
+> > > > > device *dev, int id, void *data, const struct
+> > > > > thermal_zone_of_device_ops *ops); void
+> > > > > thermal_zone_of_sensor_unregister(struct device *dev, struct
+> > > > > thermal_zone_device *tz); +struct thermal_cooling_device *
+> > > > > +thermal_of_cooling_device_register(struct device_node *np,
+> > > > > +				   char *type, void *devdata,
+> > > > > +				   const struct
+> > > > > thermal_cooling_device_ops *); #else
+> > > > >  static inline struct thermal_zone_device *
+> > > > >  thermal_zone_of_sensor_register(struct device *dev, int id,
+> > > > > void *data, @@ -342,6 +346,13 @@ void
+> > > > > thermal_zone_of_sensor_unregister(struct device *dev, {
+> > > > >  }
+> > > > > =20
+> > > > > +static inline struct thermal_cooling_device *
+> > > > > +thermal_of_cooling_device_register(struct device_node *np,
+> > > > > +				   char *type, void *devdata,
+> > > > > +				   const struct
+> > > > > thermal_cooling_device_ops *ops) +{
+> > > > > +	return NULL;
+> > > > > +}
+> > > > >  #endif
+> > > > >  struct thermal_zone_device
+> > > > > *thermal_zone_device_register(const char *, int, int, void *,
+> > > > > struct thermal_zone_device_ops *, @@ -357,9 +368,6 @@ void
+> > > > > thermal_zone_device_update(struct thermal_zone_device *);=20
+> > > > >  struct thermal_cooling_device
+> > > > > *thermal_cooling_device_register(char *, void *, const struct
+> > > > > thermal_cooling_device_ops *); -struct thermal_cooling_device
+> > > > > * -thermal_of_cooling_device_register(struct device_node *np,
+> > > > > char *, void *,
+> > > > > -				   const struct
+> > > > > thermal_cooling_device_ops *); void
+> > > > > thermal_cooling_device_unregister(struct
+> > > > > thermal_cooling_device *); struct thermal_zone_device
+> > > > > *thermal_zone_get_zone_by_name(const char *name); int
+> > > > > thermal_zone_get_temp(struct thermal_zone_device *tz, unsigne=
+d
+> > > > > long *temp); -- 2.0.0.rc2
+> > > > >=20
+> > >=20
+> > >=20
+> >=20
+> >=20
+> >=20
+> > --=20
+> > Best regards,
+> >=20
+> > Lukasz Majewski
+> >=20
+> > Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
 
-[1] https://lkml.org/lkml/2014/10/29/261
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 30 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 595ad4ba6977..ef05139506e6 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -227,7 +227,6 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo2_reg: ldo2 {
-@@ -236,7 +235,9 @@
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo3_reg: ldo3 {
-@@ -245,7 +246,6 @@
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo4_reg: ldo4 {
-@@ -254,7 +254,6 @@
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo5_reg: ldo5 {
-@@ -263,7 +262,6 @@
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo6_reg: ldo6 {
-@@ -272,7 +270,9 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo7_reg: ldo7 {
-@@ -281,7 +281,9 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo8_reg: ldo8 {
-@@ -289,7 +291,9 @@
- 					regulator-name = "VMIPI_1.0V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo9_reg: ldo9 {
-@@ -297,7 +301,6 @@
- 					regulator-name = "CAM_ISP_MIPI_1.2V";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo10_reg: ldo10 {
-@@ -305,7 +308,9 @@
- 					regulator-name = "VMIPI_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo11_reg: ldo11 {
-@@ -314,7 +319,9 @@
- 					regulator-min-microvolt = <1950000>;
- 					regulator-max-microvolt = <1950000>;
- 					regulator-always-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo12_reg: ldo12 {
-@@ -322,7 +329,9 @@
- 					regulator-name = "VUOTG_3.0V";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo13_reg: ldo13 {
-@@ -330,7 +339,6 @@
- 					regulator-name = "NFC_AVDD_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo14_reg: ldo14 {
-@@ -339,7 +347,9 @@
- 					regulator-min-microvolt = <1950000>;
- 					regulator-max-microvolt = <1950000>;
- 					regulator-always-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo15_reg: ldo15 {
-@@ -347,7 +357,9 @@
- 					regulator-name = "VHSIC_1.0V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo16_reg: ldo16 {
-@@ -355,7 +367,9 @@
- 					regulator-name = "VHSIC_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo17_reg: ldo17 {
-@@ -363,7 +377,6 @@
- 					regulator-name = "CAM_SENSOR_CORE_1.2V";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo18_reg: ldo18 {
-@@ -371,7 +384,6 @@
- 					regulator-name = "CAM_ISP_SEN_IO_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo19_reg: ldo19 {
-@@ -379,7 +391,6 @@
- 					regulator-name = "VT_CAM_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo20_reg: ldo20 {
-@@ -387,7 +398,6 @@
- 					regulator-name = "VDDQ_PRE_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo21_reg: ldo21 {
-@@ -395,7 +405,6 @@
- 					regulator-name = "VTF_2.8V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo22_reg: ldo22 {
-@@ -410,7 +419,6 @@
- 					regulator-name = "TSP_AVDD_3.3V";
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo24_reg: ldo24 {
-@@ -418,7 +426,6 @@
- 					regulator-name = "TSP_VDD_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo25_reg: ldo25 {
-@@ -426,7 +433,6 @@
- 					regulator-name = "LCD_VCC_3.3V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo26_reg: ldo26 {
-@@ -434,7 +440,6 @@
- 					regulator-name = "MOTOR_VCC_3.0V";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
--					regulator-mem-idle;
- 				};
- 
- 				buck1_reg: buck1 {
-@@ -444,7 +449,9 @@
- 					regulator-max-microvolt = <1100000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck2_reg: buck2 {
-@@ -454,7 +461,9 @@
- 					regulator-max-microvolt = <1500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				buck3_reg: buck3 {
-@@ -464,7 +473,9 @@
- 					regulator-max-microvolt = <1150000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck4_reg: buck4 {
-@@ -473,7 +484,9 @@
- 					regulator-min-microvolt = <850000>;
- 					regulator-max-microvolt = <1150000>;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck5_reg: buck5 {
-@@ -512,7 +525,6 @@
- 					regulator-name = "CAM_ISP_CORE_1.2V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-off;
- 				};
- 			};
- 		};
--- 
-1.9.1
+
+--=20
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
