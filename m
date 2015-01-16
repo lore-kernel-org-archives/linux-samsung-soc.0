@@ -1,49 +1,99 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
-	DMA-mapping subsystem
-Date: Fri, 16 Jan 2015 11:33:40 +0100
-Message-ID: <54B8E904.6090107@samsung.com>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
-	<1417514366.21830.22.camel@collabora.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Resend][PATCH v2 2/3] drm/panel: add s6e63j0x03 LCD panel driver
+Date: Fri, 16 Jan 2015 12:30:29 +0100
+Message-ID: <20150116113028.GD4885@ulmo.nvidia.com>
+References: <1418117346-9078-3-git-send-email-human.hwang@samsung.com>
+ <54AAAD96.2050004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1417514366.21830.22.camel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XvKFcGCOAo53UbWW"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:54304 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754541AbbAPLae (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Jan 2015 06:30:34 -0500
+Content-Disposition: inline
+In-Reply-To: <54AAAD96.2050004@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello,
 
-On 2014-12-02 10:59, Sjoerd Simons wrote:
-> Hey Marek, Inki,
->
-> On Wed, 2014-11-19 at 12:15 +0100, Marek Szyprowski wrote:
->> Hello Everyone,
->>
->> This is another attempt to finally make Exynos SYSMMU driver fully
->> integrated with DMA-mapping subsystem. The main change from previous
->> version is a rebase onto latest "automatic DMA configuration for IOMMU
->> masters" patches from Will Deacon.
-> Do you happen to know if anyone is working on iommu/dma-mapping patches
-> for Exynos 5 based on this patchset?
+--XvKFcGCOAo53UbWW
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just to let all of You know - I posted a new version of this patchset with
-Exynos 5250 & 5420/5422/5800 DTS patches:
+On Tue, Jan 06, 2015 at 12:28:22AM +0900, Inki Dae wrote:
+[...]
+> -------- Original Message --------
+> Subject: [PATCH v2 2/3] drm/panel: add s6e63j0x03 LCD panel driver
+> Date: Tue, 09 Dec 2014 18:29:05 +0900
+> From: Hyungwon Hwang <human.hwang@samsung.com>
+> To: dri-devel@lists.freedesktop.org
+> CC: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org,
+> pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+> galak@codeaurora.org, linux-samsung-soc@vger.kernel.org,
+> kyungmin.park@samsung.com, inki.dae@samsung.com, a.hajda@samsung.com,
+> kgene.kim@samsung.com, thierry.reding@gmail.com, Hyungwon Hwang
+> <human.hwang@samsung.com>
+>=20
+> From: Inki Dae <inki.dae@samsung.com>
+>=20
+> This patch adds MIPI-DSI based S6E63J0X03 AMOLED LCD panel driver
+> which uses mipi_dsi bus to communicate with panel. The panel has
+> 320=C3=97320 resolution in 1.63-inch physical panel. This panel is used in
+> Samsung Galaxy Gear 2.
+>=20
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> Changes for v2:
+> - Change the gamma table to 2-dimensional array
+> - Change the way to make index for brightness
+> - Make command functions to an array so that it can be called simply
+> - Change command id for reading device ID
+> - Change the way to handle the error condition
+> - Remove power variable, and use the same name variable in bl_dev
+> - Add the state FB_BLANK_NORMAL to represent the state which the panel
+> is working but blanked
+> - Miscellaneous changes to increase the readability and follow the
+>   coding-style standard
+>=20
+>  drivers/gpu/drm/panel/Kconfig            |   6 +
+>  drivers/gpu/drm/panel/Makefile           |   1 +
+>  drivers/gpu/drm/panel/panel-s6e63j0x03.c | 549
+> +++++++++++++++++++++++++++++++
+>  3 files changed, 556 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-s6e63j0x03.c
 
-http://lists.linaro.org/pipermail/linaro-mm-sig/2015-January/004327.html
+I thought I had mentioned this before, but this is missing device tree
+binding documentation.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thierry
+
+--XvKFcGCOAo53UbWW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUuPZTAAoJEN0jrNd/PrOhG9gQAMJinnyb/4M/+XcMqQd0TCz/
+VrjpNg8txuFNtCwXKXSglxyw7XP563U4areRAMCyYkqKjiCHCCKjcSUCvXLBLftu
+cSjCmQWcA36LNq8aaPVcVYEYsGtNxQtzrGE6RhlRjeviUkT/sc5+lbk1u3WZ7OOR
+HCMVg+j5MZ59irbR12gVqJpvMmCBQlIoGLdifuRgvE4knzXHF68avg0YjdlmOeF6
+YSsk9MK6lNpPqqVeQgjM2wcLJ2XLADqBNQOSasl0HHJEejrwcPGWVD3x8GD4XF7G
+v+r+B/SrrUfRkwYJ9zA+BGdux1gLjnswNQUPUt085hukyyUKRvyvf/ORAFVBVCci
+j42PH6XZCri/3d5QWqEIiNkzCy+71w6gwHGAsaeaTrP9N6GcQn7ch8S35SCycWks
+q4aYUwtqJrErlnkLKuV2StlPJepumPv3JXP7Xp/DnI4wBYec1gZPHhnBOb2FoRUV
+39vhSaQOSkShf6llzZfXdSWgm5z4oKvBY7dBHO/lrm1K3Mhwv/XP+isAhzVYW1EW
+IdWITV0w9zDJKEEh0SD12AHoj+s/cuLvsjZZlsiQmWjZ2Nyyf5LP8NQVn4ckkXBQ
+dJozKkkCLljxvPjTvBTcJdLBlEc5aK4qCoQO92roIMRholanj8dutYMnoLGxZ/M8
+au157/WM1hke/8+vxTtt
+=H7mJ
+-----END PGP SIGNATURE-----
+
+--XvKFcGCOAo53UbWW--
