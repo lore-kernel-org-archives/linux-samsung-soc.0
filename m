@@ -1,105 +1,149 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 2/7] ARM: Exynos: add support for sub-power domains
-Date: Fri, 16 Jan 2015 13:47:50 +0100
-Message-ID: <CAPDyKFpOvUBcEfk_DM_r83b2DLNgQv6stMrOhEj0gAMu2R3_2g@mail.gmail.com>
-References: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
-	<1421243091-10778-3-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Paul Osmialowski <p.osmialowsk@samsung.com>
+Subject: [RFC 3/3] i2c: s3c2410: Adopt i2c-s3c2410 driver for new enhancement
+ of i2c API
+Date: Fri, 16 Jan 2015 15:39:54 +0100
+Message-ID: <1421419194-1849-3-git-send-email-p.osmialowsk@samsung.com>
+References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:53935 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751662AbbAPMru (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51752 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756316AbbAPOkX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jan 2015 07:47:50 -0500
-Received: by mail-qg0-f42.google.com with SMTP id q107so2551161qgd.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Jan 2015 04:47:50 -0800 (PST)
-In-Reply-To: <1421243091-10778-3-git-send-email-m.szyprowski@samsung.com>
+	Fri, 16 Jan 2015 09:40:23 -0500
+In-reply-to: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Drake <drake@endlessm.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>, Jonathan Corbet <corbet@lwn.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Paul Osmialowski <p.osmialowsk@samsung.com>
 
-On 14 January 2015 at 14:44, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> This patch adds support for making one power domain a sub-domain of
-> other domain. This is useful for modeling power dependences for devices
-> like TV Mixer or Camera ISP, which needs to have more than one power
-> domain enabled to be operational.
->
-> Based on previous work by Amit Daniel Kachhap <amit.daniel@samsung.com>
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+This adopts i2c-s3c2410 driver for new enhancement of i2c API that
+exposes preparation and unpreparation stages of i2c transfer.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Paul Osmialowski <p.osmialowsk@samsung.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 69 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 63 insertions(+), 6 deletions(-)
 
-I also had a look at the other patches in this patchset from a PM
-domain DT point of view. They looks good.
-
-Kind regards
-Uffe
-
-> ---
->  .../bindings/arm/exynos/power_domain.txt           |  2 ++
->  arch/arm/mach-exynos/pm_domains.c                  | 28 ++++++++++++++++++++++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> index f4445e5..1e09703 100644
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> @@ -22,6 +22,8 @@ Optional Properties:
->         - pclkN, clkN: Pairs of parent of input clock and input clock to the
->                 devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
->                 are supported currently.
-> +- power-domains: phandle pointing to the parent power domain, for more details
-> +                see Documentation/devicetree/bindings/power/power_domain.txt
->
->  Node of a device using power domains must have a power-domains property
->  defined with a phandle to respective power domain.
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index 20f2671..37266a8 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -161,6 +161,34 @@ no_clk:
->                 of_genpd_add_provider_simple(np, &pd->pd);
->         }
->
-> +       /* Assign the child power domains to their parents */
-> +       for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-> +               struct generic_pm_domain *child_domain, *parent_domain;
-> +               struct of_phandle_args args;
-> +
-> +               args.np = np;
-> +               args.args_count = 0;
-> +               child_domain = of_genpd_get_from_provider(&args);
-> +               if (!child_domain)
-> +                       continue;
-> +
-> +               if (of_parse_phandle_with_args(np, "power-domains",
-> +                                        "#power-domain-cells", 0, &args) != 0)
-> +                       continue;
-> +
-> +               parent_domain = of_genpd_get_from_provider(&args);
-> +               if (!parent_domain)
-> +                       continue;
-> +
-> +               if (pm_genpd_add_subdomain(parent_domain, child_domain))
-> +                       pr_warn("%s failed to add subdomain: %s\n",
-> +                               parent_domain->name, child_domain->name);
-> +               else
-> +                       pr_info("%s has as child subdomain: %s.\n",
-> +                               parent_domain->name, child_domain->name);
-> +               of_node_put(np);
-> +       }
-> +
->         return 0;
->  }
->  arch_initcall(exynos4_pm_init_power_domain);
-> --
-> 1.9.2
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index bff20a5..4af8a9c 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -130,6 +130,8 @@ struct s3c24xx_i2c {
+ #endif
+ 	struct regmap		*sysreg;
+ 	unsigned int		sys_i2c_cfg;
++
++	int			xfer_prepared;
+ };
+ 
+ static struct platform_device_id s3c24xx_driver_ids[] = {
+@@ -771,6 +773,58 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+ 	return ret;
+ }
+ 
++/* s3c24xx_i2c_prepare_xfer
++ *
++ * prepare for transferring message across the i2c bus (may sleep)
++ *
++ * returns 0 on success
++ */
++
++static int s3c24xx_i2c_prepare_xfer(struct i2c_adapter *adap)
++{
++	struct s3c24xx_i2c *i2c = (struct s3c24xx_i2c *)adap->algo_data;
++
++	if (i2c->xfer_prepared == 0) {
++		int ret;
++
++		pm_runtime_get_sync(&adap->dev);
++
++		ret = clk_prepare_enable(i2c->clk);
++		if (ret) {
++			pm_runtime_put(&adap->dev);
++			return ret;
++		}
++
++	}
++
++	i2c->xfer_prepared++;
++
++	return 0;
++}
++
++/* s3c24xx_i2c_unprepare_xfer
++ *
++ * unprepare after transferring message across the i2c bus (may sleep)
++ */
++
++static void s3c24xx_i2c_unprepare_xfer(struct i2c_adapter *adap)
++{
++	struct s3c24xx_i2c *i2c = (struct s3c24xx_i2c *)adap->algo_data;
++
++	if (i2c->xfer_prepared == 1) {
++		clk_disable_unprepare(i2c->clk);
++		pm_runtime_put(&adap->dev);
++	}
++
++	i2c->xfer_prepared--;
++
++	if (unlikely(i2c->xfer_prepared < 0)) {
++		pr_err("%s: i2c->xfer_prepared = %d < 0\n",
++			__func__, i2c->xfer_prepared);
++		i2c->xfer_prepared = 0;
++	}
++}
++
+ /* s3c24xx_i2c_xfer
+  *
+  * first port of call from the i2c bus code when an message needs
+@@ -784,16 +838,16 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 	int retry;
+ 	int ret;
+ 
+-	pm_runtime_get_sync(&adap->dev);
+-	clk_prepare_enable(i2c->clk);
++	ret = s3c24xx_i2c_prepare_xfer(adap);
++	if (ret)
++		return ret;
+ 
+ 	for (retry = 0; retry < adap->retries; retry++) {
+ 
+ 		ret = s3c24xx_i2c_doxfer(i2c, msgs, num);
+ 
+ 		if (ret != -EAGAIN) {
+-			clk_disable_unprepare(i2c->clk);
+-			pm_runtime_put(&adap->dev);
++			s3c24xx_i2c_unprepare_xfer(adap);
+ 			return ret;
+ 		}
+ 
+@@ -802,8 +856,8 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 		udelay(100);
+ 	}
+ 
+-	clk_disable_unprepare(i2c->clk);
+-	pm_runtime_put(&adap->dev);
++	s3c24xx_i2c_unprepare_xfer(adap);
++
+ 	return -EREMOTEIO;
+ }
+ 
+@@ -818,6 +872,8 @@ static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
+ 
+ static const struct i2c_algorithm s3c24xx_i2c_algorithm = {
+ 	.master_xfer		= s3c24xx_i2c_xfer,
++	.master_prepare_xfer	= s3c24xx_i2c_prepare_xfer,
++	.master_unprepare_xfer	= s3c24xx_i2c_unprepare_xfer,
+ 	.functionality		= s3c24xx_i2c_func,
+ };
+ 
+@@ -1152,6 +1208,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.retries = 2;
+ 	i2c->adap.class = I2C_CLASS_DEPRECATED;
+ 	i2c->tx_setup = 50;
++	i2c->xfer_prepared = 0;
+ 
+ 	init_waitqueue_head(&i2c->wait);
+ 
+-- 
+1.9.1
