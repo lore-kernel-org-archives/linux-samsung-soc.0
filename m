@@ -1,201 +1,120 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v3 00/16] thermal: exynos: Thermal code rework to use
- device tree
-Date: Fri, 16 Jan 2015 09:29:46 +0100
-Message-ID: <20150116092946.38860303@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421242874-3425-1-git-send-email-l.majewski@samsung.com>
- <54B8549F.60707@gmx.net>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 00/18] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Fri, 16 Jan 2015 10:12:54 +0100
+Message-ID: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:18436 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752336AbbAPI36 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jan 2015 03:29:58 -0500
-In-reply-to: <54B8549F.60707@gmx.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, tomasz.figa@gmail.com
 
-Hi Tobias,
+Hello Everyone,
 
-> Hello,
-> 
-> while looking through the patchset I noticed the following. In patch
-> 07/16 code is added to drivers/cpufreq/exynos-cpufreq.c, which
-> reminded me of the cpufreq patchset by Thomas Abraham. 
+This is yet another attempt to get Exynos SYSMMU driver with integrated
+with IOMMU & DMA-mapping subsystems. The main change from previous
+version is a rebase onto latest v3.19-rc4 kernel base, which includes
+"automatic DMA configuration for IOMMU masters" patches developed by
+Will Deacon. The other change is long avaited addition of DTS patches
+for Exynos 5250 and 5420/5422/5800.
 
-We all know that this code is floating around - early version of this
-work was posted in the Q3 2013.
+Merge plan for this patchset:
 
-To be fair - this code is both needed and welcome, but new problems
-with it are found (please search for recent comment from Kevin
-Hilman).
+1. All iommu related patches (with 'iommu: exynos') can be merged to
+iommu tree. They don't have any direct dependencies on the DTS, DRM and
+power domain initialization change - without them the driver will simply
+not initialize, when no exynos,sysmmu nodes are provided in device tree.
+Joerg, could you merge those patches?
 
->From my side, I focus on the code which is in Eduardo Valentin's next
-(3.19-rc3), since I don't know when and if eventually cpufreq rework
-would be merged.
+2. DTS and power domain patches should go to Samsung Exynos tree. Those
+patches depends on my earlier DTS patches for Exynos SoCs, which make
+this patchset really complete:
+- 'ARM: DTS: Exynos: convert to generic power domain bindings'
+  (http://www.spinics.net/lists/linux-samsung-soc/msg40584.html)
+- '[PATCH v3 0/7] Enable HDMI support on Exynos platforms'
+  (http://www.spinics.net/lists/arm-kernel/msg391148.html)
+Kukjin, could you merge those patches?
 
-> If I remember
-> correctly then the ultimate goal of the cpufreq 'conversion' is to
-> get rid of the exynos-cpufreq driver is use the cpufreq-cpu0 (now
-> cpufreq-dt) driver for everything.
-
-The code which touches exynos-cpufreq.c is around 30 LOC, only for
-preserving cpu cooling functionality.
-
-Is it worth to wait for code developed for so long to happily apply 30
-LOC and delay removal of around 400 LOC in other subsystem (thermal)?
-
-I rise my hand as a volunteer to fix any thermal related issues which
-show up after cpufreq rework code applying to Exynos.
-
-> 
-> Now, this cpufreq patchset hasn't been updated in a while, 
-
-As I've stated before, development of this code is done for long time.
-
-> so I'm not
-> sure if maybe plans have changed already. But if the goal still is to
-> remove exynos-cpufreq in the end, wouldn't it be better to not add new
-> (functionality-providing) code to it, like this series does?
-
-This series is NOT providing any NEW functionality. It in fact
-preserves functionality, which allows using CPU frequency as a mean to
-cool the device.
-
-> 
-> With best wishes,
-> Tobias
-> 
-> 
-> Lukasz Majewski wrote:
-> > 1. Introduction
-> > 
-> > Following patches aim to clean up the current implementation of the
-> > thermal framework on Exynos devices.
-> > 
-> > The main goal was to use a generic code for reading thermal
-> > configuration (of-thermal.c). Due to that redundant
-> > exynos_thermal_common.[h|c] files were removed.
-> > 
-> > Around 400 lines of code (LOC) were removed directly by this patch,
-> > which is around 20% of the Exynos thermal code base.
-> > 
-> > This work should NOT bring any functional changes to Exynos thermal 
-> > subsystem.
-> > 
-> > 2. Patch-set structure
-> > 
-> > Then the cpu_cooling functionality has been preserved to allow
-> > cooling devices by reducing operating frequency. Definition of trip
-> > points and cpufreq's cooling properties were moved to device tree.
-> > 
-> > Then the rework of the way in which configuration data is provided
-> > to the Exynos thermal subsystem was performed. Now device tree is
-> > used for configuration.
-> > 
-> > 3. Dead code removal
-> > 
-> > Thermal support for some SoCs, previously available in the
-> > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc3,
-> > they didn't have TMU bindings.
-> > 
-> > Moreover, support for cpu_cooling devices was preserved only on
-> > those SoCs which had available and working cpufreq driver.
-> > 
-> > 4. Testing
-> > 
-> > Test devices:
-> > - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> > - Exynos5420 - Arndale-octa (only TMU zones)
-> > 
-> > Unfortunately, I don't posses Exynos5440 for testing. Its
-> > functionality has been preserved in the code, but not tested on the
-> > hardware. I would be grateful for help in testing.
-> > 
-> > 
-> > 5. This work apply on the following tree:
-> > 
-> > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> > SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
-> > 
-> > Lukasz Majewski (16):
-> >   thermal: exynos: cosmetic: Correct comment format
-> >   thermal: exynos: Provide thermal_exynos.h file to be included in
-> >     device tree files
-> >   arm: dts: trats: Enable TMU on the Exynos4210 trats device
-> >   arm: dts: odroid: Add LD010 regulator node necessary for TMU on
-> > Odroid thermal: dts: Enable TMU at Exynos4412 based Odroid U3 device
-> >   arm: dts: Adding CPU cooling binding for Exynos SoCs
-> >   thermal: exynos: Modify exynos thermal code to use device tree
-> > for cpu cooling configuration
-> >   thermal: exynos: dts: Add default definition of the TMU sensor
-> >     parameter
-> >   dts: Documentation: Extending documentation entry for
-> > exynos-thermal thermal: dts: Default trip points definition for
-> > Exynos5420 SoCs thermal: exynos: dts: Define default thermal-zones
-> > for Exynos4 thermal: dts: exynos: Trip points and sensor
-> > configuration data for Exynos5440
-> >   thermal: exynos: dts: Provide device tree bindings identical to
-> > the one in exynos_tmu_data.c
-> >   thermal: samsung: core: Exynos TMU rework to use device tree for
-> >     configuration
-> >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
-> >   thermal: exynos: Remove exynos_tmu_data.c file
-> > 
-> >  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
-> >  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
-> >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
-> >  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
-> >  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |  26 +-
-> >  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
-> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
-> >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
-> >  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
-> >  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
-> >  arch/arm/boot/dts/exynos5250.dtsi                  |  25 +-
-> >  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
-> >  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
-> >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
-> >  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
-> >  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
-> >  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
-> >  drivers/thermal/samsung/Makefile                   |   2 -
-> >  drivers/thermal/samsung/exynos_thermal_common.c    | 427
-> > ---------------------
-> > drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
-> > drivers/thermal/samsung/exynos_tmu.c               | 354
-> > +++++++++++------
-> > drivers/thermal/samsung/exynos_tmu.h               |  68 +---
-> > drivers/thermal/samsung/exynos_tmu_data.c          | 264
-> > ------------- include/dt-bindings/thermal/thermal_exynos.h       |
-> > 28 ++ 26 files changed, 630 insertions(+), 1001 deletions(-) create
-> > mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi create mode
-> > 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create
-> > mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create
-> > mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-> > create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
-> > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
-> > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
-> > delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c create
-> > mode 100644 include/dt-bindings/thermal/thermal_exynos.h
-> > 
-> 
+3. Exynos DRM fix. This patch in my opinion should go Exynos DRM tree.
+Inki, could you merge it?
 
 
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Changelog:
+v4:
+- rebased onto v3.19-rc4 and other Exynos DTS queued patches
+- added DTS patch for Exynos 5250 & 5420/5422/5800
+
+
+v3: http://www.spinics.net/lists/linux-samsung-soc/msg39168.html
+- rebased onto "[RFC PATCH v4 0/8] Introduce automatic DMA
+  configuration for IOMMU masters"
+- added some minor fixes for iommu and dma-mapping frameworks
+
+v2: http://thread.gmane.org/gmane.linux.kernel.iommu/6472/
+- rebased onto "[RFC PATCH v3 0/7] Introduce automatic DMA
+  configuration for IOMMU masters" patches:
+  http://www.spinics.net/lists/arm-kernel/msg362076.html
+- changed initialization from bus notifiers to DT related callbacks
+- removed support for separate IO address spaces - this will be
+  discussed separately after the basic support gets merged
+- removed support for power domain notifier-based runtime power
+  management - this also will be discussed separately later
+
+v1: https://lkml.org/lkml/2014/8/5/183
+- initial version, feature complete, completely rewrote integration
+  approach
+
+
+Patch summary:
+
+Marek Szyprowski (18):
+  drm: exynos: detach from default dma-mapping domain on init
+  arm: exynos: pm_domains: add support for devices registered before
+    arch_initcall
+  ARM: dts: exynos4: add sysmmu nodes
+  ARM: dts: exynos5250: add sysmmu nodes
+  ARM: dts: exynos5420: add sysmmu nodes
+  iommu: exynos: don't read version register on every tlb operation
+  iommu: exynos: remove unused functions
+  iommu: exynos: remove useless spinlock
+  iommu: exynos: refactor function parameters to simplify code
+  iommu: exynos: remove unused functions, part 2
+  iommu: exynos: remove useless device_add/remove callbacks
+  iommu: exynos: add support for binding more than one sysmmu to master
+    device
+  iommu: exynos: add support for runtime_pm
+  iommu: exynos: rename variables to reflect their purpose
+  iommu: exynos: document internal structures
+  iommu: exynos: remove excessive includes and sort others
+    alphabetically
+  iommu: exynos: init from dt-specific callback instead of initcall
+  iommu: exynos: add callback for initializing devices from device tree
+
+ arch/arm/boot/dts/exynos4.dtsi            | 118 +++++++
+ arch/arm/boot/dts/exynos4210.dtsi         |  23 ++
+ arch/arm/boot/dts/exynos4x12.dtsi         |  82 +++++
+ arch/arm/boot/dts/exynos5250.dtsi         | 250 +++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi         | 178 +++++++++++
+ arch/arm/mach-exynos/pm_domains.c         |   9 +-
+ drivers/gpu/drm/exynos/exynos_drm_iommu.c |   3 +
+ drivers/iommu/exynos-iommu.c              | 490 ++++++++++++++----------------
+ 8 files changed, 884 insertions(+), 269 deletions(-)
 
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+1.9.2
