@@ -1,149 +1,281 @@
 From: Paul Osmialowski <p.osmialowsk@samsung.com>
-Subject: [RFC 3/3] i2c: s3c2410: Adopt i2c-s3c2410 driver for new enhancement
- of i2c API
-Date: Fri, 16 Jan 2015 15:39:54 +0100
-Message-ID: <1421419194-1849-3-git-send-email-p.osmialowsk@samsung.com>
-References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
+Subject: [RFC 1/3] i2c: Enhancement of i2c API to address circular lock
+ dependency problem
+Date: Fri, 16 Jan 2015 15:39:52 +0100
+Message-ID: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51752 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756316AbbAPOkX (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51082 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756184AbbAPOkW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jan 2015 09:40:23 -0500
-In-reply-to: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
+	Fri, 16 Jan 2015 09:40:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Wolfram Sang <wsa@the-dreams.de>, Jonathan Corbet <corbet@lwn.net>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Paul Osmialowski <p.osmialowsk@samsung.com>
 
-This adopts i2c-s3c2410 driver for new enhancement of i2c API that
-exposes preparation and unpreparation stages of i2c transfer.
+This enhancement of i2c API is designed to address following problem
+caused by circular lock dependency:
+
+-> #1 (prepare_lock){+.+.+.}:
+[    2.730502]        [<c0061e50>] __lock_acquire+0x3c0/0x8a4
+[    2.735970]        [<c0062868>] lock_acquire+0x6c/0x8c
+[    2.741090]        [<c04a2724>] mutex_lock_nested+0x68/0x464
+[    2.746733]        [<c0395e84>] clk_prepare_lock+0x40/0xe8
+[    2.752201]        [<c0397698>] clk_unprepare+0x18/0x28
+[    2.757409]        [<c034cbb0>] s3c24xx_i2c_xfer+0xc8/0x124
+[    2.762964]        [<c03457e0>] __i2c_transfer+0x74/0x8c
+[    2.768259]        [<c0347234>] i2c_transfer+0x78/0xec
+[    2.773380]        [<c02a177c>] regmap_i2c_read+0x48/0x64
+[    2.778761]        [<c029d5c0>] _regmap_raw_read+0xa8/0xfc
+[    2.784230]        [<c029d920>] _regmap_bus_read+0x28/0x48
+[    2.789699]        [<c029ce00>] _regmap_read+0x74/0xdc
+[    2.794819]        [<c029d0ec>] _regmap_update_bits+0x24/0x70
+[    2.800549]        [<c029e348>] regmap_update_bits+0x40/0x5c
+[    2.806190]        [<c024c3c4>] _regulator_do_disable+0x68/0x7c
+[    2.812093]        [<c024f4d8>] _regulator_disable+0x90/0x12c
+[    2.817822]        [<c024f5a8>] regulator_disable+0x34/0x60
+[    2.823377]        [<c0363070>] mmc_regulator_set_ocr+0x74/0xdc
+[    2.829279]        [<c03783e8>] sdhci_set_power+0x38/0x20c
+[    2.834748]        [<c0379c10>] sdhci_do_set_ios+0x180/0x450
+[    2.840389]        [<c0379f00>] sdhci_set_ios+0x20/0x2c
+[    2.845597]        [<c0364978>] mmc_set_initial_state+0x5c/0xbc
+[    2.851500]        [<c0364f48>] mmc_power_off+0x2c/0x60
+[    2.856708]        [<c0365c00>] mmc_rescan+0x268/0x27c
+[    2.861829]        [<c003a128>] process_one_work+0x18c/0x3f8
+[    2.867471]        [<c003a400>] worker_thread+0x38/0x2f8
+[    2.872766]        [<c003f66c>] kthread+0xe4/0x104
+[    2.877540]        [<c000f0a8>] ret_from_fork+0x14/0x2c
+[    2.882749]
+-> #0 (&map->mutex){+.+...}:
+[    2.886828]        [<c0061224>] validate_chain.isra.25+0x3bc/0x548
+[    2.892990]        [<c0061e50>] __lock_acquire+0x3c0/0x8a4
+[    2.898459]        [<c0062868>] lock_acquire+0x6c/0x8c
+[    2.903580]        [<c04a2724>] mutex_lock_nested+0x68/0x464
+[    2.909222]        [<c029ce9c>] regmap_read+0x34/0x5c
+[    2.914257]        [<c039a994>] max_gen_clk_is_prepared+0x1c/0x38
+[    2.920333]        [<c0396ec4>] clk_unprepare_unused_subtree+0x64/0x98
+[    2.926842]        [<c0396f78>] clk_disable_unused+0x80/0xd8
+[    2.932484]        [<c00089d0>] do_one_initcall+0xac/0x1f0
+[    2.937953]        [<c068bd44>] do_basic_setup+0x90/0xc8
+[    2.943248]        [<c068be00>] kernel_init_freeable+0x84/0x120
+[    2.949150]        [<c0491248>] kernel_init+0x8/0xec
+[    2.954097]        [<c000f0a8>] ret_from_fork+0x14/0x2c
+[    2.959307]
+[    2.959307] other info that might help us debug this:
+[    2.959307]
+[    2.967293]  Possible unsafe locking scenario:
+[    2.967293]
+[    2.973194]        CPU0                    CPU1
+[    2.977708]        ----                    ----
+[    2.982221]   lock(prepare_lock);
+[    2.985520]                                lock(&map->mutex);
+[    2.991248]                                lock(prepare_lock);
+[    2.997063]   lock(&map->mutex);
+[    3.000276]
+[    3.000276]  *** DEADLOCK ***
+
+Apparently regulator and clock try to acquire lock which is protecting the
+same regmap. Communication over i2c requires clock to be started. Both things
+require access to the same regmap in order to complete.
+To solve this, i2c clock should be started before attempting operation on
+regulator (which requires locked regmap).
+Exposing preparation and unpreparation stage of i2c transfer serves this
+purpose.
+Note that this change does not require modifications in other places:
+old behaviour is kept preserved. Anyone who requires this new way of using i2c
+transfer can adapt their drivers voluntarily.
+Separate commit adapts regmap to use this new feature.
 
 Signed-off-by: Paul Osmialowski <p.osmialowsk@samsung.com>
 ---
- drivers/i2c/busses/i2c-s3c2410.c | 69 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 63 insertions(+), 6 deletions(-)
+ Documentation/i2c/writing-clients |  15 ++++++
+ drivers/i2c/i2c-core.c            | 105 ++++++++++++++++++++++++++++++++++++++
+ include/linux/i2c.h               |  16 ++++++
+ 3 files changed, 136 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index bff20a5..4af8a9c 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -130,6 +130,8 @@ struct s3c24xx_i2c {
- #endif
- 	struct regmap		*sysreg;
- 	unsigned int		sys_i2c_cfg;
+diff --git a/Documentation/i2c/writing-clients b/Documentation/i2c/writing-clients
+index a755b14..d6732a8 100644
+--- a/Documentation/i2c/writing-clients
++++ b/Documentation/i2c/writing-clients
+@@ -343,6 +343,21 @@ stop bit is sent between transaction. The i2c_msg structure contains
+ for each message the client address, the number of bytes of the message
+ and the message data itself.
+ 
++	int i2c_transfer_prepare(struct i2c_adapter *adap);
++	void i2c_transfer_unprepare(struct i2c_adapter *adap);
 +
-+	int			xfer_prepared;
- };
++These routines are used for calling exposed prepare and unprepare stages of
++the i2c_transfer() function. Normally i2c_transfer() does some operations
++(e.g. clock preparation) before actual transfer. These operations are undone
++when transfer is finished. Unfortunately these preparations may take locks,
++even causing circular lock dependency. Sometimes the only way to avoid this
++is to call i2c_transfer_prepare() earlier. Note that these routines do
++nothing when bus driver does not implement `master_prepare_xfer' nor
++`master_unprepare_xfer' callbacks pointed by struct i2c_algorithm.
++Note that underlying bus driver implementing `master_xfer` callback
++should be aware of the fact that preparation stage was or was not invoked
++before i2c_transfer() function call and act accordingly.
++
+ You can read the file `i2c-protocol' for more information about the
+ actual I2C protocol.
  
- static struct platform_device_id s3c24xx_driver_ids[] = {
-@@ -771,6 +773,58 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	return ret;
- }
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index 39d25a8..d649475 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -2064,6 +2064,111 @@ module_exit(i2c_exit);
+  */
  
-+/* s3c24xx_i2c_prepare_xfer
+ /**
++ * __i2c_transfer_prepare - unlocked flavor of prepare stage of transfer of
++ *                          a single or combined I2C message (may sleep).
++ * @adap: Handle to I2C bus
 + *
-+ * prepare for transferring message across the i2c bus (may sleep)
++ * This stage, if exposed by underlying driver, can be called before transfer
++ * in order to avoid deadlock caused by circular lock dependency.
 + *
-+ * returns 0 on success
++ * Returns 0 on success.
++ *
++ * Adapter lock must be held when calling this function. No debug logging
++ * takes place.
 + */
-+
-+static int s3c24xx_i2c_prepare_xfer(struct i2c_adapter *adap)
++int __i2c_transfer_prepare(struct i2c_adapter *adap)
 +{
-+	struct s3c24xx_i2c *i2c = (struct s3c24xx_i2c *)adap->algo_data;
-+
-+	if (i2c->xfer_prepared == 0) {
-+		int ret;
-+
-+		pm_runtime_get_sync(&adap->dev);
-+
-+		ret = clk_prepare_enable(i2c->clk);
-+		if (ret) {
-+			pm_runtime_put(&adap->dev);
-+			return ret;
-+		}
-+
-+	}
-+
-+	i2c->xfer_prepared++;
++	if (adap->algo->master_prepare_xfer)
++		return adap->algo->master_prepare_xfer(adap);
 +
 +	return 0;
 +}
++EXPORT_SYMBOL(__i2c_transfer_prepare);
 +
-+/* s3c24xx_i2c_unprepare_xfer
++/**
++ * i2c_transfer_prepare - prepare transfer of a single or combined I2C message
++ *                        (may sleep).
++ * @adap: Handle to I2C bus
 + *
-+ * unprepare after transferring message across the i2c bus (may sleep)
++ * Returns 0 on success.
++ *
++ * This stage, if exposed by underlying driver, can be called before transfer
++ * in order to avoid deadlock caused by circular lock dependency.
 + */
-+
-+static void s3c24xx_i2c_unprepare_xfer(struct i2c_adapter *adap)
++int i2c_transfer_prepare(struct i2c_adapter *adap)
 +{
-+	struct s3c24xx_i2c *i2c = (struct s3c24xx_i2c *)adap->algo_data;
++	int ret = 0;
 +
-+	if (i2c->xfer_prepared == 1) {
-+		clk_disable_unprepare(i2c->clk);
-+		pm_runtime_put(&adap->dev);
++	if (adap->algo->master_prepare_xfer) {
++		if (in_atomic() || irqs_disabled()) {
++			ret = i2c_trylock_adapter(adap);
++			if (!ret)
++				/* I2C activity is ongoing. */
++				return -EAGAIN;
++		} else {
++			i2c_lock_adapter(adap);
++		}
++		ret = __i2c_transfer_prepare(adap);
++		i2c_unlock_adapter(adap);
 +	}
 +
-+	i2c->xfer_prepared--;
++	return ret;
++}
++EXPORT_SYMBOL(i2c_transfer_prepare);
 +
-+	if (unlikely(i2c->xfer_prepared < 0)) {
-+		pr_err("%s: i2c->xfer_prepared = %d < 0\n",
-+			__func__, i2c->xfer_prepared);
-+		i2c->xfer_prepared = 0;
++/**
++ * __i2c_transfer_unprepare - unlocked flavor of prepare stage of transfer of
++ *                          a single or combined I2C message (may sleep).
++ * @adap: Handle to I2C bus
++ *
++ * This stage, if exposed by underlying driver, can be called afrer transfer
++ * in order to avoid deadlock caused by circular lock dependency.
++ *
++ * Adapter lock must be held when calling this function. No debug logging
++ * takes place.
++ */
++void __i2c_transfer_unprepare(struct i2c_adapter *adap)
++{
++	if (adap->algo->master_unprepare_xfer)
++		adap->algo->master_unprepare_xfer(adap);
++}
++EXPORT_SYMBOL(__i2c_transfer_unprepare);
++
++/**
++ * i2c_transfer_unprepare - unprepare after transfer of a single or combined
++ *                          I2C message (may sleep).
++ * @adap: Handle to I2C bus
++ *
++ * This stage, if exposed by underlying driver, can be called afrer transfer
++ * in order to avoid deadlock caused by circular lock dependency.
++ */
++void i2c_transfer_unprepare(struct i2c_adapter *adap)
++{
++	if (adap->algo->master_unprepare_xfer) {
++		if (in_atomic() || irqs_disabled()) {
++			/* Wait max 20 ms */
++			int timeout = 20;
++
++			while (!(i2c_trylock_adapter(adap))) {
++				if (timeout == 0) {
++					/* I2C activity is still ongoing. */
++					pr_err("%s: can't unprepare transfer\n",
++					__func__);
++					return;
++				}
++				timeout--;
++				mdelay(1);
++			}
++		} else {
++			i2c_lock_adapter(adap);
++		}
++		__i2c_transfer_unprepare(adap);
++		i2c_unlock_adapter(adap);
 +	}
 +}
++EXPORT_SYMBOL(i2c_transfer_unprepare);
 +
- /* s3c24xx_i2c_xfer
-  *
-  * first port of call from the i2c bus code when an message needs
-@@ -784,16 +838,16 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 	int retry;
- 	int ret;
++/**
+  * __i2c_transfer - unlocked flavor of i2c_transfer
+  * @adap: Handle to I2C bus
+  * @msgs: One or more messages to execute before STOP is issued to
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index e3a1721..fce2a5a 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -64,6 +64,14 @@ extern int i2c_master_send(const struct i2c_client *client, const char *buf,
+ extern int i2c_master_recv(const struct i2c_client *client, char *buf,
+ 			   int count);
  
--	pm_runtime_get_sync(&adap->dev);
--	clk_prepare_enable(i2c->clk);
-+	ret = s3c24xx_i2c_prepare_xfer(adap);
-+	if (ret)
-+		return ret;
- 
- 	for (retry = 0; retry < adap->retries; retry++) {
- 
- 		ret = s3c24xx_i2c_doxfer(i2c, msgs, num);
- 
- 		if (ret != -EAGAIN) {
--			clk_disable_unprepare(i2c->clk);
--			pm_runtime_put(&adap->dev);
-+			s3c24xx_i2c_unprepare_xfer(adap);
- 			return ret;
- 		}
- 
-@@ -802,8 +856,8 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 		udelay(100);
- 	}
- 
--	clk_disable_unprepare(i2c->clk);
--	pm_runtime_put(&adap->dev);
-+	s3c24xx_i2c_unprepare_xfer(adap);
++/* Transfer prepare/unprepare stage (if needed/exposed).
++ */
++extern int i2c_transfer_prepare(struct i2c_adapter *adap);
++extern void i2c_transfer_unprepare(struct i2c_adapter *adap);
++/* Unlocked flavor */
++extern int __i2c_transfer_prepare(struct i2c_adapter *adap);
++extern void __i2c_transfer_unprepare(struct i2c_adapter *adap);
 +
- 	return -EREMOTEIO;
- }
- 
-@@ -818,6 +872,8 @@ static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
- 
- static const struct i2c_algorithm s3c24xx_i2c_algorithm = {
- 	.master_xfer		= s3c24xx_i2c_xfer,
-+	.master_prepare_xfer	= s3c24xx_i2c_prepare_xfer,
-+	.master_unprepare_xfer	= s3c24xx_i2c_unprepare_xfer,
- 	.functionality		= s3c24xx_i2c_func,
- };
- 
-@@ -1152,6 +1208,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	i2c->adap.retries = 2;
- 	i2c->adap.class = I2C_CLASS_DEPRECATED;
- 	i2c->tx_setup = 50;
-+	i2c->xfer_prepared = 0;
- 
- 	init_waitqueue_head(&i2c->wait);
- 
+ /* Transfer num messages.
+  */
+ extern int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+@@ -371,6 +379,12 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
+  *   defined by the msgs array, with num messages available to transfer via
+  *   the adapter specified by adap.
++ * @master_prepare_xfer: Exposed preparation stage of @master_xfer - use when
++ *   master_xfer must be split into stages: prepare, xfer, unprepare.
++ *   Set to NULL when not exposed.
++ * @master_unprepare_xfer: Exposed unpreparation stage of @master_xfer -
++ *   use when master_xfer must be split into stages: prepare, xfer, unprepare.
++ *   Set to NULL when not exposed.
+  * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
+  *   is not present, then the bus layer will try and convert the SMBus calls
+  *   into I2C transfers instead.
+@@ -397,6 +411,8 @@ struct i2c_algorithm {
+ 	   processed, or a negative value on error */
+ 	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 			   int num);
++	int (*master_prepare_xfer)(struct i2c_adapter *adap);
++	void (*master_unprepare_xfer)(struct i2c_adapter *adap);
+ 	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
+ 			   unsigned short flags, char read_write,
+ 			   u8 command, int size, union i2c_smbus_data *data);
 -- 
 1.9.1
