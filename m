@@ -1,99 +1,134 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Resend][PATCH v2 2/3] drm/panel: add s6e63j0x03 LCD panel driver
-Date: Fri, 16 Jan 2015 12:30:29 +0100
-Message-ID: <20150116113028.GD4885@ulmo.nvidia.com>
-References: <1418117346-9078-3-git-send-email-human.hwang@samsung.com>
- <54AAAD96.2050004@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XvKFcGCOAo53UbWW"
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use device
+ tree
+Date: Fri, 16 Jan 2015 12:30:44 +0100
+Message-ID: <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:54304 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754541AbbAPLae (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50410 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754077AbbAPLbS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jan 2015 06:30:34 -0500
-Content-Disposition: inline
-In-Reply-To: <54AAAD96.2050004@samsung.com>
+	Fri, 16 Jan 2015 06:31:18 -0500
+In-reply-to: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+
+1. Introduction
+
+Following patches aim to clean up the current implementation of the thermal
+framework on Exynos devices.
+
+The main goal was to use a generic code for reading thermal configuration
+(of-thermal.c). Due to that redundant exynos_thermal_common.[h|c] files
+were removed.
+
+Around 400 lines of code (LOC) were removed directly by this patch, which
+is around 20% of the Exynos thermal code base.
+
+This work should NOT bring any functional changes to Exynos thermal 
+subsystem.
+
+2. Patch-set structure
+
+Then the cpu_cooling functionality has been preserved to allow cooling
+devices by reducing operating frequency. Definition of trip points and
+cpufreq's cooling properties were moved to device tree.
+
+Then the rework of the way in which configuration data is provided to
+the Exynos thermal subsystem was performed. Now device tree is used for
+configuration.
+
+3. Dead code removal
+
+Thermal support for some SoCs, previously available in the exynos_tmu_data.c 
+file, was removed since, as of (almost) 3.19-rc3, they didn't have TMU bindings.
+
+Moreover, support for cpu_cooling devices was preserved only on those
+SoCs which had available and working cpufreq driver.
+
+4. Testing
+
+Test devices:
+- Exynos4210 - Trats (TMU zone + cpu_cooling)
+- Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+- Exynos5250 - Arndale (TMU zone + cpu_cooling)
+- Exynos5420 - Arndale-octa (only TMU zones)
+
+Unfortunately, I don't posses Exynos5440 for testing. Its functionality
+has been preserved in the code, but not tested on the hardware. I would
+be grateful for help in testing.
 
 
---XvKFcGCOAo53UbWW
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+5. This work apply on the following tree:
 
-On Tue, Jan 06, 2015 at 12:28:22AM +0900, Inki Dae wrote:
-[...]
-> -------- Original Message --------
-> Subject: [PATCH v2 2/3] drm/panel: add s6e63j0x03 LCD panel driver
-> Date: Tue, 09 Dec 2014 18:29:05 +0900
-> From: Hyungwon Hwang <human.hwang@samsung.com>
-> To: dri-devel@lists.freedesktop.org
-> CC: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org,
-> pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-> galak@codeaurora.org, linux-samsung-soc@vger.kernel.org,
-> kyungmin.park@samsung.com, inki.dae@samsung.com, a.hajda@samsung.com,
-> kgene.kim@samsung.com, thierry.reding@gmail.com, Hyungwon Hwang
-> <human.hwang@samsung.com>
->=20
-> From: Inki Dae <inki.dae@samsung.com>
->=20
-> This patch adds MIPI-DSI based S6E63J0X03 AMOLED LCD panel driver
-> which uses mipi_dsi bus to communicate with panel. The panel has
-> 320=C3=97320 resolution in 1.63-inch physical panel. This panel is used in
-> Samsung Galaxy Gear 2.
->=20
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> Changes for v2:
-> - Change the gamma table to 2-dimensional array
-> - Change the way to make index for brightness
-> - Make command functions to an array so that it can be called simply
-> - Change command id for reading device ID
-> - Change the way to handle the error condition
-> - Remove power variable, and use the same name variable in bl_dev
-> - Add the state FB_BLANK_NORMAL to represent the state which the panel
-> is working but blanked
-> - Miscellaneous changes to increase the readability and follow the
->   coding-style standard
->=20
->  drivers/gpu/drm/panel/Kconfig            |   6 +
->  drivers/gpu/drm/panel/Makefile           |   1 +
->  drivers/gpu/drm/panel/panel-s6e63j0x03.c | 549
-> +++++++++++++++++++++++++++++++
->  3 files changed, 556 insertions(+)
->  create mode 100644 drivers/gpu/drm/panel/panel-s6e63j0x03.c
+kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
+SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
 
-I thought I had mentioned this before, but this is missing device tree
-binding documentation.
 
-Thierry
+Lukasz Majewski (17):
+  thermal: exynos: cosmetic: Correct comment format
+  thermal: exynos: Provide thermal_exynos.h file to be included in
+    device tree files
+  arm: dts: trats: Enable TMU on the Exynos4210 trats device
+  arm: dts: odroid: Add LD010 regulator node necessary for TMU on Odroid
+  arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3 device
+  arm: dts: Adding CPU cooling binding for Exynos SoCs
+  thermal: exynos: Modify exynos thermal code to use device tree for cpu
+    cooling configuration
+  thermal: exynos: dts: Add default definition of the TMU sensor
+    parameter
+  dts: Documentation: Extending documentation entry for exynos-thermal
+  thermal: dts: Default trip points definition for Exynos5420 SoCs
+  thermal: exynos: dts: Define default thermal-zones for Exynos4
+  thermal: dts: exynos: Trip points and sensor configuration data for
+    Exynos5440
+  dts: Documentation: Update exynos-thermal.txt example for Exynos5440
+  thermal: exynos: dts: Provide device tree bindings identical to the
+    one in exynos_tmu_data.c
+  thermal: samsung: core: Exynos TMU rework to use device tree for
+    configuration
+  thermal: exynos: Remove exynos_thermal_common.[c|h] files
+  thermal: exynos: Remove exynos_tmu_data.c file
 
---XvKFcGCOAo53UbWW
-Content-Type: application/pgp-signature
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
+ arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
+ arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
+ arch/arm/boot/dts/exynos4.dtsi                     |   4 +
+ arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
+ arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
+ arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
+ arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
+ arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
+ arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
+ arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
+ arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
+ drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
+ drivers/thermal/samsung/Makefile                   |   2 -
+ drivers/thermal/samsung/exynos_thermal_common.c    | 427 ---------------------
+ drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
+ drivers/thermal/samsung/exynos_tmu.c               | 354 +++++++++++------
+ drivers/thermal/samsung/exynos_tmu.h               |  68 +---
+ drivers/thermal/samsung/exynos_tmu_data.c          | 264 -------------
+ include/dt-bindings/thermal/thermal_exynos.h       |  28 ++
+ 26 files changed, 638 insertions(+), 1001 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+ delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+ delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+ create mode 100644 include/dt-bindings/thermal/thermal_exynos.h
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUuPZTAAoJEN0jrNd/PrOhG9gQAMJinnyb/4M/+XcMqQd0TCz/
-VrjpNg8txuFNtCwXKXSglxyw7XP563U4areRAMCyYkqKjiCHCCKjcSUCvXLBLftu
-cSjCmQWcA36LNq8aaPVcVYEYsGtNxQtzrGE6RhlRjeviUkT/sc5+lbk1u3WZ7OOR
-HCMVg+j5MZ59irbR12gVqJpvMmCBQlIoGLdifuRgvE4knzXHF68avg0YjdlmOeF6
-YSsk9MK6lNpPqqVeQgjM2wcLJ2XLADqBNQOSasl0HHJEejrwcPGWVD3x8GD4XF7G
-v+r+B/SrrUfRkwYJ9zA+BGdux1gLjnswNQUPUt085hukyyUKRvyvf/ORAFVBVCci
-j42PH6XZCri/3d5QWqEIiNkzCy+71w6gwHGAsaeaTrP9N6GcQn7ch8S35SCycWks
-q4aYUwtqJrErlnkLKuV2StlPJepumPv3JXP7Xp/DnI4wBYec1gZPHhnBOb2FoRUV
-39vhSaQOSkShf6llzZfXdSWgm5z4oKvBY7dBHO/lrm1K3Mhwv/XP+isAhzVYW1EW
-IdWITV0w9zDJKEEh0SD12AHoj+s/cuLvsjZZlsiQmWjZ2Nyyf5LP8NQVn4ckkXBQ
-dJozKkkCLljxvPjTvBTcJdLBlEc5aK4qCoQO92roIMRholanj8dutYMnoLGxZ/M8
-au157/WM1hke/8+vxTtt
-=H7mJ
------END PGP SIGNATURE-----
-
---XvKFcGCOAo53UbWW--
+-- 
+2.0.0.rc2
