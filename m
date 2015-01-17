@@ -1,109 +1,143 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH V3 09/15] ASoC: samsung: i2s: Protect more registers with
- a spinlock
-Date: Sat, 17 Jan 2015 14:21:46 +0900
-Message-ID: <CAC5m3BxTkS3KtwUC6itMRF=545PoWJw1gYV6av3p7QjtVMFXTQ@mail.gmail.com>
-References: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
-	<1421260962-16892-10-git-send-email-s.nawrocki@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use
+ device tree
+Date: Sat, 17 Jan 2015 12:47:42 +0530
+Message-ID: <CAM4voa=VmdX343zQ_wSwUQyiNN+z0ioBqjChqeNKnfhYV50hsA@mail.gmail.com>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+	<1421407861-25099-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:44277 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750797AbbAQFVr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 17 Jan 2015 00:21:47 -0500
-In-Reply-To: <1421260962-16892-10-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, padma.v@samsung.com, drake@endlessm.com, Kim Sangbeom <sbkim73@samsung.com>, Linux-ALSA <alsa-devel@alsa-project.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Jan 15, 2015 at 3:42 AM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Ensure the I2SMOD, I2SPSR registers, which are also exposed through
-> clk API are only accessed with the i2s->spinlock spinlock held.
+Hi Lukasz,
+
+On Fri, Jan 16, 2015 at 5:00 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> 1. Introduction
 >
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c |   81 +++++++++++++++++++++++++++++------------------
->  1 file changed, 51 insertions(+), 30 deletions(-)
+> Following patches aim to clean up the current implementation of the thermal
+> framework on Exynos devices.
 >
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 20cc51f..05fc2f0 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -472,17 +472,22 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->  {
->         struct i2s_dai *i2s = to_info(dai);
->         struct i2s_dai *other = get_other_dai(i2s);
-> -       u32 mod = readl(i2s->addr + I2SMOD);
->         const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
->         unsigned int cdcon_mask = 1 << i2s_regs->cdclkcon_off;
->         unsigned int rsrc_mask = 1 << i2s_regs->rclksrc_off;
-> +       u32 mod, mask, val = 0;
-> +
-> +       spin_lock(i2s->lock);
-> +       mod = readl(i2s->addr + I2SMOD);
-> +       spin_unlock(i2s->lock);
+> The main goal was to use a generic code for reading thermal configuration
+> (of-thermal.c). Due to that redundant exynos_thermal_common.[h|c] files
+> were removed.
 >
-
-'mod' is now updated only at the bottom of this function. The above
-readl can be omitted.
-
->         switch (clk_id) {
->         case SAMSUNG_I2S_OPCLK:
-> -               mod &= ~MOD_OPCLK_MASK;
-> -               mod |= dir;
-> +               mask = MOD_OPCLK_MASK;
-> +               val = dir;
->                 break;
->         case SAMSUNG_I2S_CDCLK:
-> +               mask = 1 << i2s_regs->cdclkcon_off;
-
-Use BIT() macro instead?
-
->                 /* Shouldn't matter in GATING(CLOCK_IN) mode */
->                 if (dir == SND_SOC_CLOCK_IN)
->                         rfs = 0;
-> @@ -499,15 +504,15 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->                 }
+> Around 400 lines of code (LOC) were removed directly by this patch, which
+> is around 20% of the Exynos thermal code base.
 >
->                 if (dir == SND_SOC_CLOCK_IN)
-> -                       mod |= 1 << i2s_regs->cdclkcon_off;
-> -               else
-> -                       mod &= ~(1 << i2s_regs->cdclkcon_off);
-> +                       val = 1 << i2s_regs->cdclkcon_off;
+> This work should NOT bring any functional changes to Exynos thermal
+> subsystem.
 >
-
-Same as above.
-
->                 i2s->rfs = rfs;
->                 break;
+> 2. Patch-set structure
 >
->         case SAMSUNG_I2S_RCLKSRC_0: /* clock corrsponding to IISMOD[10] := 0 */
->         case SAMSUNG_I2S_RCLKSRC_1: /* clock corrsponding to IISMOD[10] := 1 */
-> +               mask = 1 << i2s_regs->rclksrc_off;
-> +
-
-Same as above.
-
->                 if ((i2s->quirks & QUIRK_NO_MUXPSR)
->                                 || (clk_id == SAMSUNG_I2S_RCLKSRC_0))
->                         clk_id = 0;
-> @@ -557,18 +562,19 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->                         return 0;
->                 }
+> Then the cpu_cooling functionality has been preserved to allow cooling
+> devices by reducing operating frequency. Definition of trip points and
+> cpufreq's cooling properties were moved to device tree.
 >
-> -               if (clk_id == 0)
-> -                       mod &= ~(1 << i2s_regs->rclksrc_off);
-> -               else
-> -                       mod |= 1 << i2s_regs->rclksrc_off;
-> -
-> +               if (clk_id == 1)
-> +                       val = 1 << i2s_regs->rclksrc_off;
+> Then the rework of the way in which configuration data is provided to
+> the Exynos thermal subsystem was performed. Now device tree is used for
+> configuration.
+>
+> 3. Dead code removal
+>
+> Thermal support for some SoCs, previously available in the exynos_tmu_data.c
+> file, was removed since, as of (almost) 3.19-rc3, they didn't have TMU bindings.
+>
+> Moreover, support for cpu_cooling devices was preserved only on those
+> SoCs which had available and working cpufreq driver.
+>
+> 4. Testing
+>
+> Test devices:
+> - Exynos4210 - Trats (TMU zone + cpu_cooling)
+> - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+> - Exynos5250 - Arndale (TMU zone + cpu_cooling)
+> - Exynos5420 - Arndale-octa (only TMU zones)
+>
+> Unfortunately, I don't posses Exynos5440 for testing. Its functionality
+> has been preserved in the code, but not tested on the hardware. I would
+> be grateful for help in testing.
+>
+>
+> 5. This work apply on the following tree:
+>
+> kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
+> SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
+>
+>
+> Lukasz Majewski (17):
+>   thermal: exynos: cosmetic: Correct comment format
+>   thermal: exynos: Provide thermal_exynos.h file to be included in
+>     device tree files
+>   arm: dts: trats: Enable TMU on the Exynos4210 trats device
+>   arm: dts: odroid: Add LD010 regulator node necessary for TMU on Odroid
+>   arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3 device
+>   arm: dts: Adding CPU cooling binding for Exynos SoCs
+>   thermal: exynos: Modify exynos thermal code to use device tree for cpu
+>     cooling configuration
+>   thermal: exynos: dts: Add default definition of the TMU sensor
+>     parameter
+>   dts: Documentation: Extending documentation entry for exynos-thermal
+>   thermal: dts: Default trip points definition for Exynos5420 SoCs
+>   thermal: exynos: dts: Define default thermal-zones for Exynos4
+>   thermal: dts: exynos: Trip points and sensor configuration data for
+>     Exynos5440
+>   dts: Documentation: Update exynos-thermal.txt example for Exynos5440
+>   thermal: exynos: dts: Provide device tree bindings identical to the
+>     one in exynos_tmu_data.c
+>   thermal: samsung: core: Exynos TMU rework to use device tree for
+>     configuration
+>   thermal: exynos: Remove exynos_thermal_common.[c|h] files
+>   thermal: exynos: Remove exynos_tmu_data.c file
+>
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
+>  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
+>  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
+>  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
+>  arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
+>  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
+>  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
+>  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
+>  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
+>  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
+>  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
+>  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
+>  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
+>  drivers/thermal/samsung/Makefile                   |   2 -
+>  drivers/thermal/samsung/exynos_thermal_common.c    | 427 ---------------------
+>  drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
+>  drivers/thermal/samsung/exynos_tmu.c               | 354 +++++++++++------
+>  drivers/thermal/samsung/exynos_tmu.h               |  68 +---
+>  drivers/thermal/samsung/exynos_tmu_data.c          | 264 -------------
+>  include/dt-bindings/thermal/thermal_exynos.h       |  28 ++
+>  26 files changed, 638 insertions(+), 1001 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+>  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+>  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+>  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+>  create mode 100644 include/dt-bindings/thermal/thermal_exynos.h
 
-Same as above.
+Other than my earlier comments on the extra exynos_tmu_initialize()
+and sysfs "mode" disabled entry, I noticed that there are some unused
+extern declarations for default_tmu_data in exynos_tmu.h. Otherwise, I
+have tested this on a 5420 and it look good.
 
--- 
-Tushar Behera
+I will be posting my exynos7 driver modifications based on this patch
+set soon, do take a look.
+
+Thanks,
+Abhilash
