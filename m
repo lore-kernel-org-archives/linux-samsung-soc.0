@@ -1,95 +1,109 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/2] exynos: remove DRM_EXYNOS_GEM_{MAP_OFFSET/MMAP} ioctls
-Date: Fri, 16 Jan 2015 23:57:34 +0100
-Message-ID: <1421449054-2808-3-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1421449054-2808-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH V3 09/15] ASoC: samsung: i2s: Protect more registers with
+ a spinlock
+Date: Sat, 17 Jan 2015 14:21:46 +0900
+Message-ID: <CAC5m3BxTkS3KtwUC6itMRF=545PoWJw1gYV6av3p7QjtVMFXTQ@mail.gmail.com>
+References: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
+	<1421260962-16892-10-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49763 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750983AbbAPW6D (ORCPT
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:44277 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750797AbbAQFVr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jan 2015 17:58:03 -0500
-In-Reply-To: <1421449054-2808-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Sat, 17 Jan 2015 00:21:47 -0500
+In-Reply-To: <1421260962-16892-10-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Hyungwon Hwang <human.hwang@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, padma.v@samsung.com, drake@endlessm.com, Kim Sangbeom <sbkim73@samsung.com>, Linux-ALSA <alsa-devel@alsa-project.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>
 
-From: Hyungwon Hwang <human.hwang@samsung.com>
+On Thu, Jan 15, 2015 at 3:42 AM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Ensure the I2SMOD, I2SPSR registers, which are also exposed through
+> clk API are only accessed with the i2s->spinlock spinlock held.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  sound/soc/samsung/i2s.c |   81 +++++++++++++++++++++++++++++------------------
+>  1 file changed, 51 insertions(+), 30 deletions(-)
+>
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 20cc51f..05fc2f0 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -472,17 +472,22 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>  {
+>         struct i2s_dai *i2s = to_info(dai);
+>         struct i2s_dai *other = get_other_dai(i2s);
+> -       u32 mod = readl(i2s->addr + I2SMOD);
+>         const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
+>         unsigned int cdcon_mask = 1 << i2s_regs->cdclkcon_off;
+>         unsigned int rsrc_mask = 1 << i2s_regs->rclksrc_off;
+> +       u32 mod, mask, val = 0;
+> +
+> +       spin_lock(i2s->lock);
+> +       mod = readl(i2s->addr + I2SMOD);
+> +       spin_unlock(i2s->lock);
+>
 
-This patch removes the ioctls which are removed from the linux kernel.
+'mod' is now updated only at the bottom of this function. The above
+readl can be omitted.
 
-Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- exynos/exynos_drm.h | 40 ----------------------------------------
- 1 file changed, 40 deletions(-)
+>         switch (clk_id) {
+>         case SAMSUNG_I2S_OPCLK:
+> -               mod &= ~MOD_OPCLK_MASK;
+> -               mod |= dir;
+> +               mask = MOD_OPCLK_MASK;
+> +               val = dir;
+>                 break;
+>         case SAMSUNG_I2S_CDCLK:
+> +               mask = 1 << i2s_regs->cdclkcon_off;
 
-diff --git a/exynos/exynos_drm.h b/exynos/exynos_drm.h
-index c3c6579..256c02f 100644
---- a/exynos/exynos_drm.h
-+++ b/exynos/exynos_drm.h
-@@ -47,38 +47,6 @@ struct drm_exynos_gem_create {
- };
- 
- /**
-- * A structure for getting buffer offset.
-- *
-- * @handle: a pointer to gem object created.
-- * @pad: just padding to be 64-bit aligned.
-- * @offset: relatived offset value of the memory region allocated.
-- *	- this value should be set by user.
-- */
--struct drm_exynos_gem_map_off {
--	unsigned int handle;
--	unsigned int pad;
--	uint64_t offset;
--};
--
--/**
-- * A structure for mapping buffer.
-- *
-- * @handle: a handle to gem object created.
-- * @pad: just padding to be 64-bit aligned.
-- * @size: memory size to be mapped.
-- * @mapped: having user virtual address mmaped.
-- *	- this variable would be filled by exynos gem module
-- *	of kernel side with user virtual address which is allocated
-- *	by do_mmap().
-- */
--struct drm_exynos_gem_mmap {
--	unsigned int handle;
--	unsigned int pad;
--	uint64_t size;
--	uint64_t mapped;
--};
--
--/**
-  * A structure to gem information.
-  *
-  * @handle: a handle to gem object created.
-@@ -164,8 +132,6 @@ struct drm_exynos_g2d_exec {
- };
- 
- #define DRM_EXYNOS_GEM_CREATE		0x00
--#define DRM_EXYNOS_GEM_MAP_OFFSET	0x01
--#define DRM_EXYNOS_GEM_MMAP		0x02
- /* Reserved 0x04 ~ 0x05 for exynos specific gem ioctl */
- #define DRM_EXYNOS_GEM_GET		0x04
- #define DRM_EXYNOS_VIDI_CONNECTION	0x07
-@@ -178,12 +144,6 @@ struct drm_exynos_g2d_exec {
- #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
- 		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
- 
--#define DRM_IOCTL_EXYNOS_GEM_MAP_OFFSET	DRM_IOWR(DRM_COMMAND_BASE + \
--		DRM_EXYNOS_GEM_MAP_OFFSET, struct drm_exynos_gem_map_off)
--
--#define DRM_IOCTL_EXYNOS_GEM_MMAP	DRM_IOWR(DRM_COMMAND_BASE + \
--		DRM_EXYNOS_GEM_MMAP, struct drm_exynos_gem_mmap)
--
- #define DRM_IOCTL_EXYNOS_GEM_GET	DRM_IOWR(DRM_COMMAND_BASE + \
- 		DRM_EXYNOS_GEM_GET,	struct drm_exynos_gem_info)
- 
+Use BIT() macro instead?
+
+>                 /* Shouldn't matter in GATING(CLOCK_IN) mode */
+>                 if (dir == SND_SOC_CLOCK_IN)
+>                         rfs = 0;
+> @@ -499,15 +504,15 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>                 }
+>
+>                 if (dir == SND_SOC_CLOCK_IN)
+> -                       mod |= 1 << i2s_regs->cdclkcon_off;
+> -               else
+> -                       mod &= ~(1 << i2s_regs->cdclkcon_off);
+> +                       val = 1 << i2s_regs->cdclkcon_off;
+>
+
+Same as above.
+
+>                 i2s->rfs = rfs;
+>                 break;
+>
+>         case SAMSUNG_I2S_RCLKSRC_0: /* clock corrsponding to IISMOD[10] := 0 */
+>         case SAMSUNG_I2S_RCLKSRC_1: /* clock corrsponding to IISMOD[10] := 1 */
+> +               mask = 1 << i2s_regs->rclksrc_off;
+> +
+
+Same as above.
+
+>                 if ((i2s->quirks & QUIRK_NO_MUXPSR)
+>                                 || (clk_id == SAMSUNG_I2S_RCLKSRC_0))
+>                         clk_id = 0;
+> @@ -557,18 +562,19 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>                         return 0;
+>                 }
+>
+> -               if (clk_id == 0)
+> -                       mod &= ~(1 << i2s_regs->rclksrc_off);
+> -               else
+> -                       mod |= 1 << i2s_regs->rclksrc_off;
+> -
+> +               if (clk_id == 1)
+> +                       val = 1 << i2s_regs->rclksrc_off;
+
+Same as above.
+
 -- 
-2.0.5
+Tushar Behera
