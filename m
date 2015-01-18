@@ -1,30 +1,52 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: remove unused DMA infrastructure
-Date: Sun, 18 Jan 2015 19:59:52 +0530
-Message-ID: <20150118142952.GP15411@intel.com>
-References: <2398692.KpvgzHd6no@wuerfel>
+From: Sten Spans <sten@blinkenlights.nl>
+Subject: Bug#774896: Exynos4 CONFIG_HZ
+Date: Sun, 18 Jan 2015 17:57:39 +0100 (CET)
+Message-ID: <alpine.DEB.0.99999.1501181744400.30567@zem.blinkenlights.nl>
+Reply-To: Sten Spans <sten@blinkenlights.nl>, 774896@bugs.debian.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:19200 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750857AbbARObS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Jan 2015 09:31:18 -0500
-Content-Disposition: inline
-In-Reply-To: <2398692.KpvgzHd6no@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; format=flowed; charset=US-ASCII
+Return-path: <bounce-debian-bugs-dist=glddb-debian-bugs-dist=m.gmane.org@lists.debian.org>
+Resent-To: debian-bugs-dist@lists.debian.org
+Resent-Message-ID: <handler.774896.B774896.14216002634997@bugs.debian.org>
+List-URL: <http://lists.debian.org/debian-bugs-dist/>
+List-Post: <mailto:debian-bugs-dist@lists.debian.org>
+List-Help: <mailto:debian-bugs-dist-request@lists.debian.org?subject=help>
+List-Subscribe: <mailto:debian-bugs-dist-request@lists.debian.org?subject=subscribe>
+List-Unsubscribe: <mailto:debian-bugs-dist-request@lists.debian.org?subject=unsubscribe>
+To: linux-samsung-soc@vger.kernel.org
+Cc: 774896@bugs.debian.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, tomasz.figa@gmail.com, heiko@sntech.de, ben-linux@fluff.org, padma.v@samsung.com
 
-On Thu, Jan 15, 2015 at 04:16:03PM +0100, Arnd Bergmann wrote:
-> Everything uses dmaengine now, so there is no reason to
-> keep this around any longer. Thanks to everyone who was involved
-> in moving the users over to use the dmaengine APIs.
-Very good indeed :)
 
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+With the  improvements in upstream support for exynos4 devices
+I've been looking into adding support odroid devices to Debian's
+armmp kernel. The kernel config changes needed are quite minimal
+as can be seen here:
+
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=774896
+
+Mostly enabling support and various modules.
+
+However as Ian Campbell notes, enabling ARCH_EXYNOS4 triggers
+the following from arch/arm/Kconfig:
+         config HZ_FIXED
+                 int
+                 default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
+                         ARCH_S5PV210 || ARCH_EXYNOS4
+                 default AT91_TIMER_HZ if ARCH_AT91
+                 default SHMOBILE_TIMER_HZ if ARCH_SHMOBILE_LEGACY
+                 default 0
+
+This forces CONFIG_HZ=200 for the entire armmp kernel, which is
+undesirable. The reason for this setting isn't very clear to either
+me or Ian. I personally have verified that HZ=250 (the default for debian
+armmp kernels) boots fine.
+
+Is there a particular reason for this setting?
+Would a patch removing this requirement for ARCH_EXYNOS4 be accepted?
 
 -- 
-~Vinod
+Sten Spans
+
+"There is a crack in everything, that's how the light gets in."
+Leonard Cohen - Anthem
