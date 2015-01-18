@@ -1,52 +1,53 @@
-From: Sten Spans <sten@blinkenlights.nl>
-Subject: Bug#774896: Exynos4 CONFIG_HZ
-Date: Sun, 18 Jan 2015 17:57:39 +0100 (CET)
-Message-ID: <alpine.DEB.0.99999.1501181744400.30567@zem.blinkenlights.nl>
-Reply-To: Sten Spans <sten@blinkenlights.nl>, 774896@bugs.debian.org
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH 12/23] ohci-s3c2410: use HUB_CHAR_*
+Date: Mon, 19 Jan 2015 01:44:12 +0300
+Message-ID: <2189806.lsQmK0PScD@wasted.cogentembedded.com>
+References: <4018572.5hhhepRR0W@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; format=flowed; charset=US-ASCII
-Return-path: <bounce-debian-bugs-dist=glddb-debian-bugs-dist=m.gmane.org@lists.debian.org>
-Resent-To: debian-bugs-dist@lists.debian.org
-Resent-Message-ID: <handler.774896.B774896.14216002634997@bugs.debian.org>
-List-URL: <http://lists.debian.org/debian-bugs-dist/>
-List-Post: <mailto:debian-bugs-dist@lists.debian.org>
-List-Help: <mailto:debian-bugs-dist-request@lists.debian.org?subject=help>
-List-Subscribe: <mailto:debian-bugs-dist-request@lists.debian.org?subject=subscribe>
-List-Unsubscribe: <mailto:debian-bugs-dist-request@lists.debian.org?subject=unsubscribe>
-To: linux-samsung-soc@vger.kernel.org
-Cc: 774896@bugs.debian.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4018572.5hhhepRR0W-gHKXc3Y1Z8zGSmamagVegGFoWSdPRAKMAL8bYrjMMd8@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Fix  using the  bare numbers to set the 'wHubCharacteristics' field of the Hub
+Descriptor while the values are #define'd in <linux/usb/ch11.h>.
 
-With the  improvements in upstream support for exynos4 devices
-I've been looking into adding support odroid devices to Debian's
-armmp kernel. The kernel config changes needed are quite minimal
-as can be seen here:
+While at it, stop setting already set HUB_CHAR_INDV_PORT_LPSM once again.
 
-https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=774896
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
 
-Mostly enabling support and various modules.
+---
+ drivers/usb/host/ohci-s3c2410.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-However as Ian Campbell notes, enabling ARCH_EXYNOS4 triggers
-the following from arch/arm/Kconfig:
-         config HZ_FIXED
-                 int
-                 default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
-                         ARCH_S5PV210 || ARCH_EXYNOS4
-                 default AT91_TIMER_HZ if ARCH_AT91
-                 default SHMOBILE_TIMER_HZ if ARCH_SHMOBILE_LEGACY
-                 default 0
+Index: usb/drivers/usb/host/ohci-s3c2410.c
+===================================================================
+--- usb.orig/drivers/usb/host/ohci-s3c2410.c
++++ usb/drivers/usb/host/ohci-s3c2410.c
+@@ -249,14 +249,14 @@ static int ohci_s3c2410_hub_control(
+ 		 */
+ 
+ 		desc->wHubCharacteristics &= ~cpu_to_le16(HUB_CHAR_LPSM);
+-		desc->wHubCharacteristics |= cpu_to_le16(0x0001);
++		desc->wHubCharacteristics |= cpu_to_le16(
++			HUB_CHAR_INDV_PORT_LPSM);
+ 
+ 		if (info->enable_oc) {
+ 			desc->wHubCharacteristics &= ~cpu_to_le16(
+ 				HUB_CHAR_OCPM);
+ 			desc->wHubCharacteristics |=  cpu_to_le16(
+-				0x0008 |
+-				0x0001);
++				HUB_CHAR_INDV_PORT_OCPM);
+ 		}
+ 
+ 		dev_dbg(hcd->self.controller, "wHubCharacteristics after 0x%04x\n",
 
-This forces CONFIG_HZ=200 for the entire armmp kernel, which is
-undesirable. The reason for this setting isn't very clear to either
-me or Ian. I personally have verified that HZ=250 (the default for debian
-armmp kernels) boots fine.
-
-Is there a particular reason for this setting?
-Would a patch removing this requirement for ARCH_EXYNOS4 be accepted?
-
--- 
-Sten Spans
-
-"There is a crack in everything, that's how the light gets in."
-Leonard Cohen - Anthem
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
