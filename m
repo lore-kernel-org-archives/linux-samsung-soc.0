@@ -1,80 +1,124 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [RFC 0/3] mmc: Add dynamic frequency scaling
-Date: Sat, 17 Jan 2015 15:52:22 -0800
-Message-ID: <20150117235222.22722.904@quantum>
-References: <1421054585-9032-1-git-send-email-k.kozlowski@samsung.com>
- <CAPDyKFpGiaDJ3zjCSSbcia6iLS2+FLBRjGAheQAzvFsAkJax+A@mail.gmail.com>
- <1421313626.19448.8.camel@AMDC1943>
- <CAPDyKFqe7UxSrQxuvGw7UWFQhvX0NZ83rvLrAEMZFpA4n0GcNg@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 1/3] i2c: Enhancement of i2c API to address circular lock
+ dependency problem
+Date: Sun, 18 Jan 2015 15:30:32 +0900
+Message-ID: <CA+Ln22GrsCj0291dVccFPzPW8pmxyc8JHtPo5ijsAdDXw6RC1Q@mail.gmail.com>
+References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFqe7UxSrQxuvGw7UWFQhvX0NZ83rvLrAEMZFpA4n0GcNg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chris Ball <chris@printf.net>, Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1421419194-1849-1-git-send-email-p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Ulf Hansson (2015-01-15 02:04:04)
-> On 15 January 2015 at 10:20, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
-> > On czw, 2015-01-15 at 09:20 +0100, Ulf Hansson wrote:
-> >> + Mike, Stephen (Clock maintainers)
-> >>
-> >> On 12 January 2015 at 10:23, Krzysztof Kozlowski
-> >> <k.kozlowski@samsung.com> wrote:
-> >> > Hi,
-> >> >
-> >> >
-> >> > I would like to hear some comments about idea of scaling MMC clock
-> >> > frequency. The basic idea is to lower the clock when device is
-> >> > completely idle or not busy enough.
-> >>
-> >> We already have host drivers that implements runtime PM support.
-> >> Typically that would mean the clock will be gated once the device
-> >> becomes runtime PM suspended.
-> >>
-> >> Why should we decrease the frequency of an already gated clock?
-> >
-> > In case of idle state you're right that clkgate would be better. But
-> > what about finding a compromise between high performance (high
-> > frequency) and energy saving for different loads on MMC?
-> 
-> I guess a compromise could be beneficial for some SOC and use cases.
-> At least I remember, ST-Ericsson's UX500 SOC had such an out of tree
-> hack to track MMC load.
+Hi,
 
-It is very important to model when resources are not needed, since this
-has some system-wide effects. There are two main use-cases I have in
-mind:
+[CCing more people]
 
-1) MMC clk is a leaf clock of some complex hierarchy (e.g. a PLL at the
-top of a clock sub-tree). If MMC is always "locked" at some fast rate
-(e.g. 48MHz instead of 24MHz or 12MHz) then that constraint prevents
-the rest of the hierarchy from transitioning to a lower frequency. Even
-if the MMC clock is aggressively gating, maximum system-level power
-savings may not be achieved since the rest of the clock sub-tree
-(starting at the PLL) will be "stuck" at a higher frequency than
-necessary. Thus, aggressive clock gating might give good power savings
-for the MMC case, but may be a blocker for other system components.
+2015-01-16 23:39 GMT+09:00 Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+> This enhancement of i2c API is designed to address following problem
+> caused by circular lock dependency:
+>
+> -> #1 (prepare_lock){+.+.+.}:
+> [    2.730502]        [<c0061e50>] __lock_acquire+0x3c0/0x8a4
+> [    2.735970]        [<c0062868>] lock_acquire+0x6c/0x8c
+> [    2.741090]        [<c04a2724>] mutex_lock_nested+0x68/0x464
+> [    2.746733]        [<c0395e84>] clk_prepare_lock+0x40/0xe8
+> [    2.752201]        [<c0397698>] clk_unprepare+0x18/0x28
+> [    2.757409]        [<c034cbb0>] s3c24xx_i2c_xfer+0xc8/0x124
+> [    2.762964]        [<c03457e0>] __i2c_transfer+0x74/0x8c
+> [    2.768259]        [<c0347234>] i2c_transfer+0x78/0xec
+> [    2.773380]        [<c02a177c>] regmap_i2c_read+0x48/0x64
+> [    2.778761]        [<c029d5c0>] _regmap_raw_read+0xa8/0xfc
+> [    2.784230]        [<c029d920>] _regmap_bus_read+0x28/0x48
+> [    2.789699]        [<c029ce00>] _regmap_read+0x74/0xdc
+> [    2.794819]        [<c029d0ec>] _regmap_update_bits+0x24/0x70
+> [    2.800549]        [<c029e348>] regmap_update_bits+0x40/0x5c
+> [    2.806190]        [<c024c3c4>] _regulator_do_disable+0x68/0x7c
+> [    2.812093]        [<c024f4d8>] _regulator_disable+0x90/0x12c
+> [    2.817822]        [<c024f5a8>] regulator_disable+0x34/0x60
+> [    2.823377]        [<c0363070>] mmc_regulator_set_ocr+0x74/0xdc
+> [    2.829279]        [<c03783e8>] sdhci_set_power+0x38/0x20c
+> [    2.834748]        [<c0379c10>] sdhci_do_set_ios+0x180/0x450
+> [    2.840389]        [<c0379f00>] sdhci_set_ios+0x20/0x2c
+> [    2.845597]        [<c0364978>] mmc_set_initial_state+0x5c/0xbc
+> [    2.851500]        [<c0364f48>] mmc_power_off+0x2c/0x60
+> [    2.856708]        [<c0365c00>] mmc_rescan+0x268/0x27c
+> [    2.861829]        [<c003a128>] process_one_work+0x18c/0x3f8
+> [    2.867471]        [<c003a400>] worker_thread+0x38/0x2f8
+> [    2.872766]        [<c003f66c>] kthread+0xe4/0x104
+> [    2.877540]        [<c000f0a8>] ret_from_fork+0x14/0x2c
+> [    2.882749]
+> -> #0 (&map->mutex){+.+...}:
+> [    2.886828]        [<c0061224>] validate_chain.isra.25+0x3bc/0x548
+> [    2.892990]        [<c0061e50>] __lock_acquire+0x3c0/0x8a4
+> [    2.898459]        [<c0062868>] lock_acquire+0x6c/0x8c
+> [    2.903580]        [<c04a2724>] mutex_lock_nested+0x68/0x464
+> [    2.909222]        [<c029ce9c>] regmap_read+0x34/0x5c
+> [    2.914257]        [<c039a994>] max_gen_clk_is_prepared+0x1c/0x38
+> [    2.920333]        [<c0396ec4>] clk_unprepare_unused_subtree+0x64/0x98
+> [    2.926842]        [<c0396f78>] clk_disable_unused+0x80/0xd8
+> [    2.932484]        [<c00089d0>] do_one_initcall+0xac/0x1f0
+> [    2.937953]        [<c068bd44>] do_basic_setup+0x90/0xc8
+> [    2.943248]        [<c068be00>] kernel_init_freeable+0x84/0x120
+> [    2.949150]        [<c0491248>] kernel_init+0x8/0xec
+> [    2.954097]        [<c000f0a8>] ret_from_fork+0x14/0x2c
+> [    2.959307]
+> [    2.959307] other info that might help us debug this:
+> [    2.959307]
+> [    2.967293]  Possible unsafe locking scenario:
+> [    2.967293]
+> [    2.973194]        CPU0                    CPU1
+> [    2.977708]        ----                    ----
+> [    2.982221]   lock(prepare_lock);
+> [    2.985520]                                lock(&map->mutex);
+> [    2.991248]                                lock(prepare_lock);
+> [    2.997063]   lock(&map->mutex);
+> [    3.000276]
+> [    3.000276]  *** DEADLOCK ***
+>
+> Apparently regulator and clock try to acquire lock which is protecting the
+> same regmap. Communication over i2c requires clock to be started. Both things
+> require access to the same regmap in order to complete.
 
-2) Wake-up latency constraints might make it impossible to clock gate,
-and thus the only power-saving option is to run at a lower frequency.
-This is not quite what is described above, but the point is that clock
-frequency scaling and clock gating are complementary power saving
-options, but we rely on the driver to model resource requirements
-accurately to get the best results.
+I stumbled upon this issue (and reported it) quite long time ago
+already, but apparently nobody cared too much (including myself,
+unfortunately). Please see [1] for details.
 
-Regards,
-Mike
+[1] https://lkml.org/lkml/2014/7/2/171
 
-> 
-> >
-> > The frequency scaling could help in that case. Anyway I should prepare
-> > some more benchmarks for such conditions.
-> 
-> Seems reasonable and please do!
-> 
-> Kind regards
-> Uffe
+We have here a typical ABBA deadlock scenario, between I2C clock
+providers and other (logical) devices on the same (physical) I2C
+device, for which a regmap is used to share the registers between
+drivers. Remaining factor here is I2C controller driver, which must
+perform clock gating in I2C ops to trigger this deadlock.
+
+The problem is that any operation on such I2C clock will first try to
+acquire clk_prepare_mutex and then, through driver's callback, access
+the regmap, acquiring its mutex (then an I2C transfer will happen, but
+it irrelevant in this context). On opposite side we have drivers for
+other functionality exposed by this I2C device, which will access the
+regmap, acquiring its mutex and causing I2C transfers to happen.
+
+The key here is that I2C transfers might require some clocks to be
+prepared, so clk_prepare() might get called from this context and
+cause a deadlock, because clk_prepare_mutex might have been already
+acquired by another context, waiting for regmap mutex, which has been
+already acquired by this context.
+
+Now, for the solution, the approach proposed by Paul, as far as I
+could understand it by reading the code (it's definitely lacking a
+cover letter with detailed explanation), should solve the issue by
+enforcing correct locking order at regmap level. However I wonder if
+we really need a heavy solution like this or we could just make I2C
+drivers not require clock preparation in I2C transfers, as suggested
+by Peter De Schrijver in [1], which should fix the issue as well.
+
+So, the question is, do we actually have hardware that _really_
+requires _actual_ preparation or all the clk_prepare_enable()s in I2C
+drivers (at least in i2c-s3c2410) are just to simplify the code?
+
+Best regards,
+Tomasz
