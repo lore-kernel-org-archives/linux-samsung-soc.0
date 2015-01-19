@@ -1,162 +1,54 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv8 7/9] ARM: dts: Add PPMU dt node for Exynos5260 SoC
-Date: Mon, 19 Jan 2015 19:01:40 +0900
-Message-ID: <54BCD604.3030105@samsung.com>
-References: <1421066097-26237-1-git-send-email-cw00.choi@samsung.com>
- <1421066097-26237-8-git-send-email-cw00.choi@samsung.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: exynos: Add AUDIO pin controller for exynos7
+Date: Mon, 19 Jan 2015 11:05:27 +0100
+Message-ID: <CACRpkdaE8fY1OWy6VPucWVDRmTCRuE4fENZwsu6M3oSYv0DTvQ@mail.gmail.com>
+References: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
+	<1418994659-5222-2-git-send-email-padma.v@samsung.com>
+	<CACRpkdZopjCN_GMEPQFd_NWa0Ddocqt3aViLrZ7Yh3ui_YcBAg@mail.gmail.com>
+	<CA+Ln22GhnW5jcXdQfYaJ_aM4Wq9OHXvShHHaxLKjJi+dp6Afcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51133 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751357AbbASKB4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 05:01:56 -0500
-In-reply-to: <1421066097-26237-8-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+Ln22GhnW5jcXdQfYaJ_aM4Wq9OHXvShHHaxLKjJi+dp6Afcg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>
 
-Dear all,
+On Wed, Jan 14, 2015 at 3:27 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> 2015-01-14 20:40 GMT+09:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
+>> On Fri, Dec 19, 2014 at 2:10 PM, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>
+>>> Audio IPs on Exynos7 require gpios available in AUDIO
+>>> pin controller block. So adding the AUDIO pinctrl support.
+>>>
+>>> Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> (...)
+>>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>>> @@ -181,6 +181,7 @@ Aliases for controllers compatible with "samsung,exynos7-pinctrl":
+>>>  - pinctrl6: pin controller of FSYS0 block,
+>>>  - pinctrl7: pin controller of FSYS1 block,
+>>>  - pinctrl8: pin controller of BUS1 block,
+>>> +- pinctrl9: pin controller of AUDIO block,
+>>
+>> This doesn't apply at all, the list has never been in the document merged
+>> upstream.
+>
+> I believe this patch depends on patch [1], which was mentioned in
+> cover letter and which you seem to have applied two days ago. If it
+> still doesn't apply, please let me know if I should collect the
+> patches myself and prepare a pull request for you.
+>
+> [1] https://patchwork.kernel.org/patch/5467321/
 
-I'll drop this patch because I can't test it on Exynos5260-based board.
+It applied when I tried it now, sorry I must have screwed up or something :(
 
-Best Regards,
-Chanwoo Choi
+Patch applied!
 
-On 01/12/2015 09:34 PM, Chanwoo Choi wrote:
-> This patch adds PPMU (Performance Profiling Monitoring Unit) dt node
-> Exynos5260 SoC.
-> 
-> Exynos5260 SoC has following PPMU IPs:
-> - PPMU_DREX0_S0 0x10c60000
-> - PPMU_DREX0_S1 0x10c70000
-> - PPMU_DREX1_S0 0x10c80000
-> - PPMU_DREX1_S1 0x10c90000
-> - PPMU_EAGLE    0x10cc0000
-> - PPMU_KFC      0x10cd0000
-> - PPMU_MFC      0x11040000
-> - PPMU_G3D      0x11880000
-> - PPMU_FSYS     0x12220000
-> - PPMU_ISP      0x13370000
-> - PPMU_FICM     0x13cb0000
-> - PPMU_GSCL     0x13e60000
-> - PPMU_MSCL     0x13ee0000
-> - PPMU_FIMD0X   0x145b0000
-> - PPMU_FIMD1X   0x145c0000
-> 
-> The drivers/devfreq/exynos/exynos5_bus.c supports the memory bus frequency/
-> voltage scaling of Exynos5260 SoC with DEVFREQ framework.
-> 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-> Cc: Jonghwan Choi <jhbird.choi@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5260.dtsi | 90 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 90 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-> index 36da38e..26f3074 100644
-> --- a/arch/arm/boot/dts/exynos5260.dtsi
-> +++ b/arch/arm/boot/dts/exynos5260.dtsi
-> @@ -307,6 +307,96 @@
->  			fifo-depth = <64>;
->  			status = "disabled";
->  		};
-> +
-> +		ppmu_drex0_s0: ppmu_drex0_s0@10c60000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10c60000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_drex0_s1: ppmu_drex0_s1@10c70000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10c70000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_drex1_s0: ppmu_drex1_s0@10c80000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10c80000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_drex1_s1: ppmu_drex1_s1@10c90000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10c90000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_eagle: ppmu_eagle@10cc0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10cc0000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_kfc: ppmu_kfc@10cd0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x10cd0000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_mfc: ppmu_mfc@11040000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x11040000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_g3d: ppmu_g3d@11880000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x11880000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_fsys: ppmu_fsys@12220000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x12220000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_isp: ppmu_isp@13370000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x13370000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_fimc: ppmu_fimc@13cb0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x13cb0000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_gscl: ppmu_gscl@13e60000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x13e60000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_mscl: ppmu_gscl@13ee0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x13ee0000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_fimd0x: ppmu_fimd0x@145b0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x145b0000 0x2000>;
-> +			status = "disabled";
-> +		};
-> +
-> +		ppmu_fimd1x: ppmu_fimd1x@145c0000 {
-> +			compatible = "samsung,exynos-ppmu";
-> +			reg = <0x145c0000 0x2000>;
-> +			status = "disabled";
-> +		};
->  	};
->  };
->  
-> 
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
