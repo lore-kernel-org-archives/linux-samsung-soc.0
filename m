@@ -1,88 +1,88 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] usb: dwc2: rework initialization of host and gadget in
- dual-role mode
-Date: Mon, 19 Jan 2015 15:44:36 +0100
-Message-ID: <1421678676-31266-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, John Youn <johnyoun-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
+	devices from device tree
+Date: Mon, 19 Jan 2015 16:27:47 +0100
+Message-ID: <CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
+References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
+	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1421399592-7482-19-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-If device is configured to work only in HOST or DEVICE mode, there is
-no point in initializing both subdrivers. This patch also fixes
-resource leakage if host subdriver fails to initialize.
+Hello Marek,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/dwc2/core.h     |  2 ++
- drivers/usb/dwc2/platform.c | 29 +++++++++++++++++++++--------
- 2 files changed, 23 insertions(+), 8 deletions(-)
+I wanted to test your IOMMU series on an Exynos5420 Peach Pit but the
+kernel hangs with your series + dependencies on top of 3.19-rc5.
 
-diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-index 7a70a1349334..f93b06daef97 100644
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -570,6 +570,8 @@ struct dwc2_hsotg {
- 	struct dwc2_core_params *core_params;
- 	enum usb_otg_state op_state;
- 	enum usb_dr_mode dr_mode;
-+	unsigned int hcd_enabled:1;
-+	unsigned int gadget_enabled:1;
- 
- 	struct phy *phy;
- 	struct usb_phy *uphy;
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 6a795aa2ff05..ee0b0b06d0fc 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -121,8 +121,10 @@ static int dwc2_driver_remove(struct platform_device *dev)
- {
- 	struct dwc2_hsotg *hsotg = platform_get_drvdata(dev);
- 
--	dwc2_hcd_remove(hsotg);
--	s3c_hsotg_remove(hsotg);
-+	if (hsotg->hcd_enabled)
-+		dwc2_hcd_remove(hsotg);
-+	if (hsotg->gadget_enabled)
-+		s3c_hsotg_remove(hsotg);
- 
- 	return 0;
- }
-@@ -214,12 +216,23 @@ static int dwc2_driver_probe(struct platform_device *dev)
- 
- 	spin_lock_init(&hsotg->lock);
- 	mutex_init(&hsotg->init_mutex);
--	retval = dwc2_gadget_init(hsotg, irq);
--	if (retval)
--		return retval;
--	retval = dwc2_hcd_init(hsotg, irq, params);
--	if (retval)
--		return retval;
-+
-+	if (hsotg->dr_mode != USB_DR_MODE_HOST) {
-+		retval = dwc2_gadget_init(hsotg, irq);
-+		if (retval)
-+			return retval;
-+		hsotg->gadget_enabled = 1;
-+	}
-+
-+	if (hsotg->dr_mode != USB_DR_MODE_PERIPHERAL) {
-+		retval = dwc2_hcd_init(hsotg, irq, params);
-+		if (retval) {
-+			if (hsotg->gadget_enabled)
-+				s3c_hsotg_remove(hsotg);
-+			return retval;
-+		}
-+		hsotg->hcd_enabled = 1;
-+	}
- 
- 	platform_set_drvdata(dev, hsotg);
- 
--- 
-1.9.2
+Bisecting I found that $subject is the offending commit. I've pushed
+my test branch [0] in case I missed something.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Fri, Jan 16, 2015 at 10:13 AM, Marek Szyprowski
+<m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch adds implementation of of_xlate callback, which prepares
+> masters device for attaching to IOMMU. This callback is called during
+> creating devices from device tree.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index ea2659159e63..5432b443abfc 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -1077,6 +1077,33 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
+>         return phys;
+>  }
+>
+> +static int exynos_iommu_of_xlate(struct device *dev,
+> +                                struct of_phandle_args *spec)
+> +{
+> +       struct exynos_iommu_owner *owner = dev->archdata.iommu;
+> +       struct platform_device *sysmmu = of_find_device_by_node(spec->np);
+> +       struct sysmmu_drvdata *data;
+> +
+> +       if (!sysmmu)
+> +               return -ENODEV;
+> +
+> +       data = platform_get_drvdata(sysmmu);
+> +       if (!data)
+> +               return -ENODEV;
+> +
+> +       if (!owner) {
+> +               owner = kzalloc(sizeof(*owner), GFP_KERNEL);
+> +               if (!owner)
+> +                       return -ENOMEM;
+> +
+> +               INIT_LIST_HEAD(&owner->clients);
+> +               dev->archdata.iommu = owner;
+> +       }
+> +
+> +       list_add_tail(&data->owner_node, &owner->clients);
+
+This is the line that causes the kernel to hang, if I comment the
+list_add_tail() call then the kernel boots.
+
+I checked that neither data nor owner are NULL and that the
+owner->clients list_head is initialized. Do you have any ideas what
+could be happening?
+
+Thanks a lot and best regards,
+Javier
+
+[0]: git://git.collabora.co.uk/git/user/javier/linux.git exynos-sysmmu-3.19-rc5
