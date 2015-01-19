@@ -1,60 +1,176 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: fix UART address selection for DEBUG_LL
-Date: Mon, 19 Jan 2015 15:55:47 +0900
-Message-ID: <54BCAA73.5080404@samsung.com>
-References: <1411728234-29705-1-git-send-email-jy0922.shim@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use
+ device tree
+Date: Mon, 19 Jan 2015 08:57:35 +0100
+Message-ID: <20150119085735.48f443ee@amdc2363>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
+ <CAM4voa=VmdX343zQ_wSwUQyiNN+z0ioBqjChqeNKnfhYV50hsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10078 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:24235 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180AbbASGzb (ORCPT
+	with ESMTP id S1751066AbbASH6A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 01:55:31 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NIE00IJDWKCDE70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Jan 2015 15:55:24 +0900 (KST)
-In-reply-to: <1411728234-29705-1-git-send-email-jy0922.shim@samsung.com>
+	Mon, 19 Jan 2015 02:58:00 -0500
+In-reply-to: <CAM4voa=VmdX343zQ_wSwUQyiNN+z0ioBqjChqeNKnfhYV50hsA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: cw00.choi@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com, kgene@kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi kukjin,
+Hi Abhilash,
 
-On 09/26/2014 07:43 PM, Joonyoung Shim wrote:
-> The exynos5 SoCs using A15+A7 can boot to A15 or A7. If it boots using
-> A7, it can't detect right UART physical address only the part number of
-> CP15. It's possible to solve as checking Cluster ID additionally.
+> Hi Lukasz,
 > 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> ---
->  arch/arm/include/debug/exynos.S | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> On Fri, Jan 16, 2015 at 5:00 PM, Lukasz Majewski
+> <l.majewski@samsung.com> wrote:
+> > 1. Introduction
+> >
+> > Following patches aim to clean up the current implementation of the
+> > thermal framework on Exynos devices.
+> >
+> > The main goal was to use a generic code for reading thermal
+> > configuration (of-thermal.c). Due to that redundant
+> > exynos_thermal_common.[h|c] files were removed.
+> >
+> > Around 400 lines of code (LOC) were removed directly by this patch,
+> > which is around 20% of the Exynos thermal code base.
+> >
+> > This work should NOT bring any functional changes to Exynos thermal
+> > subsystem.
+> >
+> > 2. Patch-set structure
+> >
+> > Then the cpu_cooling functionality has been preserved to allow
+> > cooling devices by reducing operating frequency. Definition of trip
+> > points and cpufreq's cooling properties were moved to device tree.
+> >
+> > Then the rework of the way in which configuration data is provided
+> > to the Exynos thermal subsystem was performed. Now device tree is
+> > used for configuration.
+> >
+> > 3. Dead code removal
+> >
+> > Thermal support for some SoCs, previously available in the
+> > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc3,
+> > they didn't have TMU bindings.
+> >
+> > Moreover, support for cpu_cooling devices was preserved only on
+> > those SoCs which had available and working cpufreq driver.
+> >
+> > 4. Testing
+> >
+> > Test devices:
+> > - Exynos4210 - Trats (TMU zone + cpu_cooling)
+> > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+> > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
+> > - Exynos5420 - Arndale-octa (only TMU zones)
+> >
+> > Unfortunately, I don't posses Exynos5440 for testing. Its
+> > functionality has been preserved in the code, but not tested on the
+> > hardware. I would be grateful for help in testing.
+> >
+> >
+> > 5. This work apply on the following tree:
+> >
+> > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
+> > SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
+> >
+> >
+> > Lukasz Majewski (17):
+> >   thermal: exynos: cosmetic: Correct comment format
+> >   thermal: exynos: Provide thermal_exynos.h file to be included in
+> >     device tree files
+> >   arm: dts: trats: Enable TMU on the Exynos4210 trats device
+> >   arm: dts: odroid: Add LD010 regulator node necessary for TMU on
+> > Odroid arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3
+> > device arm: dts: Adding CPU cooling binding for Exynos SoCs
+> >   thermal: exynos: Modify exynos thermal code to use device tree
+> > for cpu cooling configuration
+> >   thermal: exynos: dts: Add default definition of the TMU sensor
+> >     parameter
+> >   dts: Documentation: Extending documentation entry for
+> > exynos-thermal thermal: dts: Default trip points definition for
+> > Exynos5420 SoCs thermal: exynos: dts: Define default thermal-zones
+> > for Exynos4 thermal: dts: exynos: Trip points and sensor
+> > configuration data for Exynos5440
+> >   dts: Documentation: Update exynos-thermal.txt example for
+> > Exynos5440 thermal: exynos: dts: Provide device tree bindings
+> > identical to the one in exynos_tmu_data.c
+> >   thermal: samsung: core: Exynos TMU rework to use device tree for
+> >     configuration
+> >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
+> >   thermal: exynos: Remove exynos_tmu_data.c file
+> >
+> >  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
+> >  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
+> >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
+> >  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
+> >  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
+> >  arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
+> >  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
+> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
+> >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
+> >  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
+> >  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
+> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
+> >  arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
+> >  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
+> >  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
+> >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
+> >  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
+> >  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
+> >  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
+> >  drivers/thermal/samsung/Makefile                   |   2 -
+> >  drivers/thermal/samsung/exynos_thermal_common.c    | 427
+> > ---------------------
+> > drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
+> > drivers/thermal/samsung/exynos_tmu.c               | 354
+> > +++++++++++------
+> > drivers/thermal/samsung/exynos_tmu.h               |  68 +---
+> > drivers/thermal/samsung/exynos_tmu_data.c          | 264
+> > ------------- include/dt-bindings/thermal/thermal_exynos.h       |
+> > 28 ++ 26 files changed, 638 insertions(+), 1001 deletions(-) create
+> > mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi create mode
+> > 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create
+> > mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create
+> > mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+> > create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+> > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+> > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+> > delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c create
+> > mode 100644 include/dt-bindings/thermal/thermal_exynos.h
 > 
-> diff --git a/arch/arm/include/debug/exynos.S b/arch/arm/include/debug/exynos.S
-> index b17fdb7..60bf3c2 100644
-> --- a/arch/arm/include/debug/exynos.S
-> +++ b/arch/arm/include/debug/exynos.S
-> @@ -24,7 +24,11 @@
->  		mrc	p15, 0, \tmp, c0, c0, 0
->  		and	\tmp, \tmp, #0xf0
->  		teq	\tmp, #0xf0		@@ A15
-> -		ldreq	\rp, =EXYNOS5_PA_UART
-> +		beq	100f
-> +		mrc	p15, 0, \tmp, c0, c0, 5
-> +		and	\tmp, \tmp, #0xf00
-> +		teq	\tmp, #0x100		@@ A15 + A7 but boot to A7
-> +100:		ldreq	\rp, =EXYNOS5_PA_UART
->  		movne	\rp, #EXYNOS4_PA_UART	@@ EXYNOS4
->  		ldr	\rv, =S3C_VA_UART
->  #if CONFIG_DEBUG_S3C_UART != 0
+> Other than my earlier comments on the extra exynos_tmu_initialize()
+> and sysfs "mode" disabled entry, I noticed that there are some unused
+> extern declarations for default_tmu_data in exynos_tmu.h. Otherwise, I
+> have tested this on a 5420 and it look good.
+
+I will look into those problems and prepare another version of the
+patch.
+
+Regarding that those seems rather easy to fix, those shouldn't prevent
+you from posting TMU support for Exynos7.
+
 > 
+> I will be posting my exynos7 driver modifications based on this patch
+> set soon, do take a look.
 
-Any comments?
+If you don't mind, I will review your patch for Exynos7 and share some
+thoughts.
 
-Thanks.
+> 
+> Thanks,
+> Abhilash
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
