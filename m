@@ -1,139 +1,83 @@
 From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: DTS: Exynos: add 'dr_mode' property to hsotg devices
-Date: Mon, 19 Jan 2015 15:32:45 +0100
-Message-ID: <1421677965-30821-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH] usb: dwc2: rework initialization of host and gadget in
+ dual-role mode
+Date: Mon, 19 Jan 2015 15:44:36 +0100
+Message-ID: <1421678676-31266-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, John Youn <johnyoun-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All currently supported boards use hsotg/dwc2 controller in device
-('peripheral') mode, so add property which sets correct operation mode.
-This patch fixes support in recent changes in dwc2 driver, which added
-support for dual-role devices.
+If device is configured to work only in HOST or DEVICE mode, there is
+no point in initializing both subdrivers. This patch also fixes
+resource leakage if host subdriver fails to initialize.
 
-Suggested-by: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
 Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos3250-monk.dts           | 1 +
- arch/arm/boot/dts/exynos3250-rinato.dts         | 1 +
- arch/arm/boot/dts/exynos4210-trats.dts          | 1 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 1 +
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
- arch/arm/boot/dts/exynos4412-trats2.dts         | 1 +
- arch/arm/boot/dts/s5pv210-aquila.dts            | 1 +
- arch/arm/boot/dts/s5pv210-goni.dts              | 1 +
- arch/arm/boot/dts/s5pv210-smdkv210.dts          | 1 +
- 9 files changed, 9 insertions(+)
+ drivers/usb/dwc2/core.h     |  2 ++
+ drivers/usb/dwc2/platform.c | 29 +++++++++++++++++++++--------
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 5e4a471faee1..683596844ef3 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -140,6 +140,7 @@
- &hsotg {
- 	vusb_d-supply = <&ldo15_reg>;
- 	vusb_a-supply = <&ldo12_reg>;
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
+diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+index 7a70a1349334..f93b06daef97 100644
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -570,6 +570,8 @@ struct dwc2_hsotg {
+ 	struct dwc2_core_params *core_params;
+ 	enum usb_otg_state op_state;
+ 	enum usb_dr_mode dr_mode;
++	unsigned int hcd_enabled:1;
++	unsigned int gadget_enabled:1;
  
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index c7f4fab6dfd9..5121954579ad 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -131,6 +131,7 @@
- &hsotg {
- 	vusb_d-supply = <&ldo15_reg>;
- 	vusb_a-supply = <&ldo12_reg>;
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
+ 	struct phy *phy;
+ 	struct usb_phy *uphy;
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index 6a795aa2ff05..ee0b0b06d0fc 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -121,8 +121,10 @@ static int dwc2_driver_remove(struct platform_device *dev)
+ {
+ 	struct dwc2_hsotg *hsotg = platform_get_drvdata(dev);
  
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 720836205546..1c0c7be02616 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -91,6 +91,7 @@
- 	hsotg@12480000 {
- 		vusb_d-supply = <&vusb_reg>;
- 		vusb_a-supply = <&vusbdac_reg>;
-+		dr_mode = "peripheral";
- 		status = "okay";
- 	};
+-	dwc2_hcd_remove(hsotg);
+-	s3c_hsotg_remove(hsotg);
++	if (hsotg->hcd_enabled)
++		dwc2_hcd_remove(hsotg);
++	if (hsotg->gadget_enabled)
++		s3c_hsotg_remove(hsotg);
  
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 01f7d3cfdd02..1d7643288569 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -71,6 +71,7 @@
- 	hsotg@12480000 {
- 		vusb_d-supply = <&ldo3_reg>;
- 		vusb_a-supply = <&ldo8_reg>;
-+		dr_mode = "peripheral";
- 		status = "okay";
- 	};
+ 	return 0;
+ }
+@@ -214,12 +216,23 @@ static int dwc2_driver_probe(struct platform_device *dev)
  
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 4a11e84b036e..9329135342a6 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -401,6 +401,7 @@
- 	};
+ 	spin_lock_init(&hsotg->lock);
+ 	mutex_init(&hsotg->init_mutex);
+-	retval = dwc2_gadget_init(hsotg, irq);
+-	if (retval)
+-		return retval;
+-	retval = dwc2_hcd_init(hsotg, irq, params);
+-	if (retval)
+-		return retval;
++
++	if (hsotg->dr_mode != USB_DR_MODE_HOST) {
++		retval = dwc2_gadget_init(hsotg, irq);
++		if (retval)
++			return retval;
++		hsotg->gadget_enabled = 1;
++	}
++
++	if (hsotg->dr_mode != USB_DR_MODE_PERIPHERAL) {
++		retval = dwc2_hcd_init(hsotg, irq, params);
++		if (retval) {
++			if (hsotg->gadget_enabled)
++				s3c_hsotg_remove(hsotg);
++			return retval;
++		}
++		hsotg->hcd_enabled = 1;
++	}
  
- 	hsotg@12480000 {
-+		dr_mode = "peripheral";
- 		status = "okay";
- 		vusb_d-supply = <&ldo15_reg>;
- 		vusb_a-supply = <&ldo12_reg>;
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 29231b452643..c81c4769411d 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -845,6 +845,7 @@
- 	hsotg@12480000 {
- 		vusb_d-supply = <&ldo15_reg>;
- 		vusb_a-supply = <&ldo12_reg>;
-+		dr_mode = "peripheral";
- 		status = "okay";
- 	};
- 
-diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
-index aa31b84a707a..f00cea7aca2f 100644
---- a/arch/arm/boot/dts/s5pv210-aquila.dts
-+++ b/arch/arm/boot/dts/s5pv210-aquila.dts
-@@ -355,6 +355,7 @@
- &hsotg {
- 	vusb_a-supply = <&ldo3_reg>;
- 	vusb_d-supply = <&ldo8_reg>;
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index 6387c77a6f7b..a3d4643b202e 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -333,6 +333,7 @@
- &hsotg {
- 	vusb_a-supply = <&ldo3_reg>;
- 	vusb_d-supply = <&ldo8_reg>;
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/s5pv210-smdkv210.dts b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-index cb8521899ec8..da7d210df670 100644
---- a/arch/arm/boot/dts/s5pv210-smdkv210.dts
-+++ b/arch/arm/boot/dts/s5pv210-smdkv210.dts
-@@ -181,6 +181,7 @@
- };
- 
- &hsotg {
-+	dr_mode = "peripheral";
- 	status = "okay";
- };
+ 	platform_set_drvdata(dev, hsotg);
  
 -- 
 1.9.2
