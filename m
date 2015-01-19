@@ -1,72 +1,44 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] clk: more Exynos7 clock tree definitions
-Date: Mon, 19 Jan 2015 09:15:21 -0800
-Message-ID: <20150119171521.22722.84999@quantum>
-References: <54B95A44.50105@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v3 7/7] ARM: dts: exynos5250: add display power domain
+Date: Mon, 19 Jan 2015 18:26:57 +0100
+Message-ID: <CABxcv=m7Q5v3wH1FU9S0E-dMgebZ_+M_dLELr39h7_VA0Oc8cw@mail.gmail.com>
+References: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
+	<1421243091-10778-8-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <54B95A44.50105@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:64549 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751694AbbASR07 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Jan 2015 12:26:59 -0500
+Received: by mail-we0-f179.google.com with SMTP id q59so9100281wes.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jan 2015 09:26:57 -0800 (PST)
+In-Reply-To: <1421243091-10778-8-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Quoting Sylwester Nawrocki (2015-01-16 10:36:52)
-> 
-> Hi Mike,
-> 
-> Please find below a few clk updates for exynos7 SoC. I kept them on
-> a separate branch as there will likely be depending dts patches.
-> Please pull for 3.20.
-> 
-> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-> 
->   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/for-v3.20-exynos7-clk
+Hello Marek and Andrzej,
 
-Pulled.
+On Wed, Jan 14, 2015 at 2:44 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> From: Andrzej Hajda <a.hajda@samsung.com>
+>
+> The patch adds domain definition and references to it in appropriate devices.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> [mszyprow: rebased onto generic power domains dt bindings]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
-Regards,
-Mike
+This patch makes HDMI to work on my Exynos5250 Snow Chromebook:
 
-> 
-> for you to fetch changes up to 9f930a39e135d370d17e7a1ab73ddebcfb896f98:
-> 
->   clk: samsung: exynos7: add clocks for audio block (2015-01-15 15:18:51 +0100)
-> 
-> ----------------------------------------------------------------
-> - Clock definitions for Exynos7 SoC peripheral devices:
->   video scaler, USB, DMA, SPI and the audio subsystem.
-> 
-> ----------------------------------------------------------------
-> Padmavathi Venna (3):
->       clk: samsung: exynos7: add gate clock for DMA block
->       clk: samsung: exynos7: add clocks for SPI block
->       clk: samsung: exynos7: add clocks for audio block
-> 
-> Tony K Nadackal (1):
->       clk: samsung: exynos7: Add clocks for MSCL block
-> 
-> Vivek Gautam (1):
->       clk: samsung: exynos7: Add required clock tree for USB
-> 
->  .../devicetree/bindings/clock/exynos7-clock.txt    |   15 +
->  drivers/clk/samsung/clk-exynos7.c                  |  408 +++++++++++++++++++-
->  include/dt-bindings/clock/exynos7-clk.h            |   88 ++++-
->  3 files changed, 505 insertions(+), 6 deletions(-)
-> 
-> Thanks,
-> Sylwester
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
