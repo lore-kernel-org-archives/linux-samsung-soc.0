@@ -1,7 +1,7 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 2/8] [media] exynos-gsc: Convert gsc_m2m_resume() from int to void
-Date: Mon, 19 Jan 2015 14:22:34 +0100
-Message-ID: <1421673760-2600-3-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH V2 7/8] [media] exynos-gsc: Make system PM callbacks available for CONFIG_PM_SLEEP
+Date: Mon, 19 Jan 2015 14:22:39 +0100
+Message-ID: <1421673760-2600-8-git-send-email-ulf.hansson@linaro.org>
 References: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
@@ -10,45 +10,40 @@ To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since gsc_m2m_resume() always returns 0, convert it to a void instead.
+There are no need to set up the system PM callbacks unless they are
+being used. It also causes compiler warnings about unused functions.
+
+Silence the warnings by making them available for CONFIG_PM_SLEEP.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index bd769d4..1865738 100644
+index 0b126eb..194f9fc 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1025,7 +1025,7 @@ static int gsc_m2m_suspend(struct gsc_dev *gsc)
- 	return timeout == 0 ? -EAGAIN : 0;
+@@ -1188,6 +1188,7 @@ static int gsc_runtime_suspend(struct device *dev)
  }
+ #endif
  
--static int gsc_m2m_resume(struct gsc_dev *gsc)
-+static void gsc_m2m_resume(struct gsc_dev *gsc)
++#ifdef CONFIG_PM_SLEEP
+ static int gsc_resume(struct device *dev)
  {
- 	struct gsc_ctx *ctx;
- 	unsigned long flags;
-@@ -1038,8 +1038,6 @@ static int gsc_m2m_resume(struct gsc_dev *gsc)
+ 	struct gsc_dev *gsc = dev_get_drvdata(dev);
+@@ -1224,10 +1225,10 @@ static int gsc_suspend(struct device *dev)
  
- 	if (test_and_clear_bit(ST_M2M_SUSPENDED, &gsc->state))
- 		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
--
--	return 0;
+ 	return 0;
  }
++#endif
  
- static int gsc_probe(struct platform_device *pdev)
-@@ -1168,8 +1166,9 @@ static int gsc_runtime_resume(struct device *dev)
+ static const struct dev_pm_ops gsc_pm_ops = {
+-	.suspend		= gsc_suspend,
+-	.resume			= gsc_resume,
++	SET_SYSTEM_SLEEP_PM_OPS(gsc_suspend, gsc_resume)
+ 	SET_RUNTIME_PM_OPS(gsc_runtime_suspend, gsc_runtime_resume, NULL)
+ };
  
- 	gsc_hw_set_sw_reset(gsc);
- 	gsc_wait_reset(gsc);
-+	gsc_m2m_resume(gsc);
- 
--	return gsc_m2m_resume(gsc);
-+	return 0;
- }
- 
- static int gsc_runtime_suspend(struct device *dev)
 -- 
 1.9.1
