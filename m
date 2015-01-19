@@ -1,66 +1,70 @@
 From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
-Date: Tue, 20 Jan 2015 00:03:45 +0100
-Message-ID: <54BD8D51.3050202@gmx.net>
-References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com> <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com> <54B8533C.3070000@math.uni-bielefeld.de> <54B99178.1060006@gmx.net> <54BD3129.5090305@samsung.com>
+Subject: Re: [PATCH v3 00/16] thermal: exynos: Thermal code rework to
+ use device tree
+Date: Tue, 20 Jan 2015 00:29:59 +0100
+Message-ID: <54BD9377.30606@gmx.net>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com> <1421242874-3425-1-git-send-email-l.majewski@samsung.com> <54B8549F.60707@gmx.net> <20150116092946.38860303@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.19]:61437 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751374AbbASXEA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 18:04:00 -0500
-In-Reply-To: <54BD3129.5090305@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150116092946.38860303@amdc2363>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
 Hello!
 
-Marek Szyprowski wrote:
-> Thanks for you tests and pointing this issue. I turned out that the
-> initial fix proposed
-> by Andrzej Hajda
-> (http://www.spinics.net/lists/linux-samsung-soc/msg38915.html) worked
-> fine, while the final version merged to clock fixes ('clk: samsung:
-> exynos4: set parent
-> of sclk_hdmiphy to hdmi' - commit
-> df019a5c0f7083001cb694f44821ca506425bda2) doesn't work
-> properly.
-I should thank you for pushing all this code to mainline. It's really
-nice to see how all the pieces now come together.
-
-
-> Please check the following kernel tree - instead of hacking around hdmi
-> clock I've added
-> handling of it directly to drm mixer driver:
-> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git/shortlog/refs/heads/v3.19-odroid-hdmi
+Lukasz Majewski wrote:
+> We all know that this code is floating around - early version of this
+> work was posted in the Q3 2013.
 > 
-> I hope that this will finally solve all mixer initialization related
-> issues (also for
-> Odroid XU3, discussed recently in the other thread). If it works fine, I
-> will resend
-> exynos4 hdmi patches to include this change.
-I have picked the additional patches to my tree, which currently has a
-bunch of other stuff in it, in particular v4 of the IOMMU series.
+> To be fair - this code is both needed and welcome, but new problems
+> with it are found (please search for recent comment from Kevin
+> Hilman).
+> 
+> From my side, I focus on the code which is in Eduardo Valentin's next
+> (3.19-rc3), since I don't know when and if eventually cpufreq rework
+> would be merged.
+I'm sorry, my wording wasn't the best here. I'm not critizing the work
+done here, merely voicing my concern (and also interest!) about how the
+new stuff interacts with code that may eventually get merged.
+You're aware of it, that's enough for me to know.
 
-Anyway, now the 'modetest' application immediately crashes the system,
-but I get a least something on the serial console:
-http://www.math.uni-bielefeld.de/~tjakobi/archive/odroid_modetest_crash_sysmmu.txt
 
-So this is probably due to the IOMMU. Please note that DRM IOMMU support
-(CONFIG_DRM_EXYNOS_IOMMU) was disabled (!) in my config.
-CONFIG_EXYNOS_IOMMU however was on.
+> The code which touches exynos-cpufreq.c is around 30 LOC, only for
+> preserving cpu cooling functionality.
+> 
+> Is it worth to wait for code developed for so long to happily apply 30
+> LOC and delay removal of around 400 LOC in other subsystem (thermal)?
+No, of course not. That was pretty stupid of me :(
 
-I'm going to retest with the IOMMU series removed and
-CONFIG_EXYNOS_IOMMU disabled as well.
 
-Just posting this already since you're probably interested in these
-'side-issues' as well.
+> I rise my hand as a volunteer to fix any thermal related issues which
+> show up after cpufreq rework code applying to Exynos.
+That's certainly good to hear!
+
+
+> This series is NOT providing any NEW functionality. It in fact
+> preserves functionality, which allows using CPU frequency as a mean to
+> cool the device.
+I've got a question concerning this. Is this only needed for
+exynos-cpufreq, or does cpufreq-dt also need something like that.
+
+The point is that I'm still working with a rather old version of the
+cpufreq series, a version which still had the Exynos4x12 code in it
+(this was removed later, if I remember correctly because of problems
+with how to properly describe boost configuration in DT).
+
+
+Anyway, to not get completly off-topic here, I noticed some small issue
+with v3 of the thermal series. I've enabled CONFIG_THERMAL_HWMON so that
+I can use lm_sensors to query temperature of the board. However while
+the thermal_zone is created, there is no hwmon node to be found. This
+was working properly without the thermal series.
 
 
 With best wishes,
 Tobias
+
