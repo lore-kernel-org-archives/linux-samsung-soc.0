@@ -1,88 +1,152 @@
-From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
-	devices from device tree
-Date: Mon, 19 Jan 2015 16:27:47 +0100
-Message-ID: <CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
-References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
-	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1421399592-7482-19-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] i2c: s3c2410: fix ABBA deadlock by keeping clock prepared
+Date: Mon, 19 Jan 2015 17:03:33 +0100
+Message-ID: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Marek,
+This patch solves deadlock between clock prepare mutex and regmap mutex reported
+by Tomasz Figa in [1] by implementing solution from [2]: "always leave the clock
+of the i2c controller in a prepared state".
 
-I wanted to test your IOMMU series on an Exynos5420 Peach Pit but the
-kernel hangs with your series + dependencies on top of 3.19-rc5.
+[1] https://lkml.org/lkml/2014/7/2/171
+[2] https://lkml.org/lkml/2014/7/2/207
 
-Bisecting I found that $subject is the offending commit. I've pushed
-my test branch [0] in case I missed something.
+On each i2c transfer handled by s3c24xx_i2c_xfer(), clk_prepare_enable() was
+called, which calls clk_prepare() then clk_enable(). clk_prepare() takes
+prepare_lock mutex before proceeding. Note that i2c transfer functions are
+invoked from many places in kernel, typically with some other additional lock
+held.
 
-On Fri, Jan 16, 2015 at 10:13 AM, Marek Szyprowski
-<m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This patch adds implementation of of_xlate callback, which prepares
-> masters device for attaching to IOMMU. This callback is called during
-> creating devices from device tree.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/iommu/exynos-iommu.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index ea2659159e63..5432b443abfc 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -1077,6 +1077,33 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
->         return phys;
->  }
->
-> +static int exynos_iommu_of_xlate(struct device *dev,
-> +                                struct of_phandle_args *spec)
-> +{
-> +       struct exynos_iommu_owner *owner = dev->archdata.iommu;
-> +       struct platform_device *sysmmu = of_find_device_by_node(spec->np);
-> +       struct sysmmu_drvdata *data;
-> +
-> +       if (!sysmmu)
-> +               return -ENODEV;
-> +
-> +       data = platform_get_drvdata(sysmmu);
-> +       if (!data)
-> +               return -ENODEV;
-> +
-> +       if (!owner) {
-> +               owner = kzalloc(sizeof(*owner), GFP_KERNEL);
-> +               if (!owner)
-> +                       return -ENOMEM;
-> +
-> +               INIT_LIST_HEAD(&owner->clients);
-> +               dev->archdata.iommu = owner;
-> +       }
-> +
-> +       list_add_tail(&data->owner_node, &owner->clients);
+It may happen that function on CPU1 (e.g. regmap_update_bits()) has taken a
+mutex (i.e. regmap lock mutex) then it attempts i2c communication in order to
+proceed (so it needs to obtain clock related prepare_lock mutex during transfer
+preparation stage due to clk_prepare() call). At the same time other task on
+CPU0 wants to operate on clock (e.g. to (un)prepare clock for some other reason)
+so it has taken prepare_lock mutex.
 
-This is the line that causes the kernel to hang, if I comment the
-list_add_tail() call then the kernel boots.
+CPU0:                        CPU1:
+clk_disable_unused()         regulator_disable()
+  clk_prepare_lock()           map->lock(map->lock_arg)
+  regmap_read()                s3c24xx_i2c_xfer()
+    map->lock(map->lock_arg)     clk_prepare_lock()
 
-I checked that neither data nor owner are NULL and that the
-owner->clients list_head is initialized. Do you have any ideas what
-could be happening?
+Implemented solution from [2] leaves i2c clock prepared. Preparation is done in
+s3c24xx_i2c_probe() function. Without this patch, it is immediately unprepared
+by clk_disable_unprepare() call. I've replaced this call with clk_disable() and
+I've added clk_unprepare() call in s3c24xx_i2c_remove().
 
-Thanks a lot and best regards,
-Javier
+The s3c24xx_i2c_xfer() function now uses clk_enable() instead of
+clk_prepare_enable() (and clk_disable() instead of clk_unprepare_disable()).
 
-[0]: git://git.collabora.co.uk/git/user/javier/linux.git exynos-sysmmu-3.19-rc5
+Signed-off-by: Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index bff20a5..958c8db 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -785,14 +785,16 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 	int ret;
+ 
+ 	pm_runtime_get_sync(&adap->dev);
+-	clk_prepare_enable(i2c->clk);
++	ret = clk_enable(i2c->clk);
++	if (ret)
++		return ret;
+ 
+ 	for (retry = 0; retry < adap->retries; retry++) {
+ 
+ 		ret = s3c24xx_i2c_doxfer(i2c, msgs, num);
+ 
+ 		if (ret != -EAGAIN) {
+-			clk_disable_unprepare(i2c->clk);
++			clk_disable(i2c->clk);
+ 			pm_runtime_put(&adap->dev);
+ 			return ret;
+ 		}
+@@ -802,7 +804,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 		udelay(100);
+ 	}
+ 
+-	clk_disable_unprepare(i2c->clk);
++	clk_disable(i2c->clk);
+ 	pm_runtime_put(&adap->dev);
+ 	return -EREMOTEIO;
+ }
+@@ -1197,7 +1199,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	clk_prepare_enable(i2c->clk);
+ 	ret = s3c24xx_i2c_init(i2c);
+-	clk_disable_unprepare(i2c->clk);
++	clk_disable(i2c->clk);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "I2C controller init failed\n");
+ 		return ret;
+@@ -1210,6 +1212,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		i2c->irq = ret = platform_get_irq(pdev, 0);
+ 		if (ret <= 0) {
+ 			dev_err(&pdev->dev, "cannot find IRQ\n");
++			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+ 
+@@ -1218,6 +1221,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 		if (ret != 0) {
+ 			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
++			clk_unprepare(i2c->clk);
+ 			return ret;
+ 		}
+ 	}
+@@ -1225,6 +1229,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
++		clk_unprepare(i2c->clk);
+ 		return ret;
+ 	}
+ 
+@@ -1241,6 +1246,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
+ 		s3c24xx_i2c_deregister_cpufreq(i2c);
++		clk_unprepare(i2c->clk);
+ 		return ret;
+ 	}
+ 
+@@ -1262,6 +1268,8 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+ 
++	clk_unprepare(i2c->clk);
++
+ 	pm_runtime_disable(&i2c->adap.dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+@@ -1293,13 +1301,16 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
++	int ret;
+ 
+ 	if (!IS_ERR(i2c->sysreg))
+ 		regmap_write(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, i2c->sys_i2c_cfg);
+ 
+-	clk_prepare_enable(i2c->clk);
++	ret = clk_enable(i2c->clk);
++	if (ret)
++		return ret;
+ 	s3c24xx_i2c_init(i2c);
+-	clk_disable_unprepare(i2c->clk);
++	clk_disable(i2c->clk);
+ 	i2c->suspended = 0;
+ 
+ 	return 0;
+-- 
+1.9.1
