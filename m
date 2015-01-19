@@ -1,152 +1,89 @@
-From: Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] i2c: s3c2410: fix ABBA deadlock by keeping clock prepared
-Date: Mon, 19 Jan 2015 17:03:33 +0100
-Message-ID: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Mon, 19 Jan 2015 17:30:33 +0100
+Message-ID: <54BD3129.5090305@samsung.com>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+ <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com>
+ <54B8533C.3070000@math.uni-bielefeld.de> <54B99178.1060006@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:9508 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751426AbbASQah (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Jan 2015 11:30:37 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NIF002CMNDRS220@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Jan 2015 16:34:39 +0000 (GMT)
+In-reply-to: <54B99178.1060006@gmx.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <liquid.acid@gmx.net>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-This patch solves deadlock between clock prepare mutex and regmap mutex reported
-by Tomasz Figa in [1] by implementing solution from [2]: "always leave the clock
-of the i2c controller in a prepared state".
+Hello,
 
-[1] https://lkml.org/lkml/2014/7/2/171
-[2] https://lkml.org/lkml/2014/7/2/207
+On 2015-01-16 23:32, Tobias Jakobi wrote:
+> Hello,
+>
+> so OK, this doesn't look too good.
+>
+> Tobias Jakobi wrote:
+>> I checked with my panel just now and played around a bit with the DRM
+>> (opening, vsync, etc.). However on deinitialization the entire system
+>> locked up. I currently haven't hooked the board up to the serial
+>> console, otherwise I would've tried to extract some more meaningful
+>> information.
+>>
+>> Going to check again more thoroughly on the weekend what exactly
+>> triggers the lockup.
+> So, first of all I did my initial test with the exynos video backend of
+> RetroArch. But it turns out that there's no fancy application needed. I
+> now tested this with the 'modetest' application from libdrm, and did this:
+>
+> ./modetest -M exynos -s 16@13:1920x1080
+> setting mode 1920x1080-60Hz@XR24 on connectors 16, crtc 13
+> ^C
+> ./modetest -M exynos -s 16@13:640x480
+> setting mode 640x480-60Hz@XR24 on connectors 16, crtc 13
+> ^C
+> ./modetest -M exynos -s 16@13:640x480
+> setting mode 640x480-60Hz@XR24 on connectors 16, crtc 13
+> ^C
+> ./modetest -M exynos -s 16@13:640x480
+>
+> The board instantly died then. No kernel log output from the serial
+> console, the heartbeat just stops and the board is dead. Need to
+> power-cycle to get it running again.
+>
+> I'm unsure how to triage this at all.
 
-On each i2c transfer handled by s3c24xx_i2c_xfer(), clk_prepare_enable() was
-called, which calls clk_prepare() then clk_enable(). clk_prepare() takes
-prepare_lock mutex before proceeding. Note that i2c transfer functions are
-invoked from many places in kernel, typically with some other additional lock
-held.
+Thanks for you tests and pointing this issue. I turned out that the 
+initial fix proposed
+by Andrzej Hajda 
+(http://www.spinics.net/lists/linux-samsung-soc/msg38915.html) worked
+fine, while the final version merged to clock fixes ('clk: samsung: 
+exynos4: set parent
+of sclk_hdmiphy to hdmi' - commit 
+df019a5c0f7083001cb694f44821ca506425bda2) doesn't work
+properly.
 
-It may happen that function on CPU1 (e.g. regmap_update_bits()) has taken a
-mutex (i.e. regmap lock mutex) then it attempts i2c communication in order to
-proceed (so it needs to obtain clock related prepare_lock mutex during transfer
-preparation stage due to clk_prepare() call). At the same time other task on
-CPU0 wants to operate on clock (e.g. to (un)prepare clock for some other reason)
-so it has taken prepare_lock mutex.
+Please check the following kernel tree - instead of hacking around hdmi 
+clock I've added
+handling of it directly to drm mixer driver:
+https://git.linaro.org/people/marek.szyprowski/linux-srpol.git/shortlog/refs/heads/v3.19-odroid-hdmi
+I hope that this will finally solve all mixer initialization related 
+issues (also for
+Odroid XU3, discussed recently in the other thread). If it works fine, I 
+will resend
+exynos4 hdmi patches to include this change.
 
-CPU0:                        CPU1:
-clk_disable_unused()         regulator_disable()
-  clk_prepare_lock()           map->lock(map->lock_arg)
-  regmap_read()                s3c24xx_i2c_xfer()
-    map->lock(map->lock_arg)     clk_prepare_lock()
 
-Implemented solution from [2] leaves i2c clock prepared. Preparation is done in
-s3c24xx_i2c_probe() function. Without this patch, it is immediately unprepared
-by clk_disable_unprepare() call. I've replaced this call with clk_disable() and
-I've added clk_unprepare() call in s3c24xx_i2c_remove().
-
-The s3c24xx_i2c_xfer() function now uses clk_enable() instead of
-clk_prepare_enable() (and clk_disable() instead of clk_unprepare_disable()).
-
-Signed-off-by: Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/i2c/busses/i2c-s3c2410.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index bff20a5..958c8db 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -785,14 +785,16 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 	int ret;
- 
- 	pm_runtime_get_sync(&adap->dev);
--	clk_prepare_enable(i2c->clk);
-+	ret = clk_enable(i2c->clk);
-+	if (ret)
-+		return ret;
- 
- 	for (retry = 0; retry < adap->retries; retry++) {
- 
- 		ret = s3c24xx_i2c_doxfer(i2c, msgs, num);
- 
- 		if (ret != -EAGAIN) {
--			clk_disable_unprepare(i2c->clk);
-+			clk_disable(i2c->clk);
- 			pm_runtime_put(&adap->dev);
- 			return ret;
- 		}
-@@ -802,7 +804,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
- 		udelay(100);
- 	}
- 
--	clk_disable_unprepare(i2c->clk);
-+	clk_disable(i2c->clk);
- 	pm_runtime_put(&adap->dev);
- 	return -EREMOTEIO;
- }
-@@ -1197,7 +1199,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 
- 	clk_prepare_enable(i2c->clk);
- 	ret = s3c24xx_i2c_init(i2c);
--	clk_disable_unprepare(i2c->clk);
-+	clk_disable(i2c->clk);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "I2C controller init failed\n");
- 		return ret;
-@@ -1210,6 +1212,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		i2c->irq = ret = platform_get_irq(pdev, 0);
- 		if (ret <= 0) {
- 			dev_err(&pdev->dev, "cannot find IRQ\n");
-+			clk_unprepare(i2c->clk);
- 			return ret;
- 		}
- 
-@@ -1218,6 +1221,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 
- 		if (ret != 0) {
- 			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
-+			clk_unprepare(i2c->clk);
- 			return ret;
- 		}
- 	}
-@@ -1225,6 +1229,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	ret = s3c24xx_i2c_register_cpufreq(i2c);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
-+		clk_unprepare(i2c->clk);
- 		return ret;
- 	}
- 
-@@ -1241,6 +1246,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
- 		s3c24xx_i2c_deregister_cpufreq(i2c);
-+		clk_unprepare(i2c->clk);
- 		return ret;
- 	}
- 
-@@ -1262,6 +1268,8 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- {
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
- 
-+	clk_unprepare(i2c->clk);
-+
- 	pm_runtime_disable(&i2c->adap.dev);
- 	pm_runtime_disable(&pdev->dev);
- 
-@@ -1293,13 +1301,16 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
-+	int ret;
- 
- 	if (!IS_ERR(i2c->sysreg))
- 		regmap_write(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, i2c->sys_i2c_cfg);
- 
--	clk_prepare_enable(i2c->clk);
-+	ret = clk_enable(i2c->clk);
-+	if (ret)
-+		return ret;
- 	s3c24xx_i2c_init(i2c);
--	clk_disable_unprepare(i2c->clk);
-+	clk_disable(i2c->clk);
- 	i2c->suspended = 0;
- 
- 	return 0;
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
