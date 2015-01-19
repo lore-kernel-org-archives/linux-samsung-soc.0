@@ -1,176 +1,63 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use
- device tree
-Date: Mon, 19 Jan 2015 08:57:35 +0100
-Message-ID: <20150119085735.48f443ee@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
- <CAM4voa=VmdX343zQ_wSwUQyiNN+z0ioBqjChqeNKnfhYV50hsA@mail.gmail.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v4 1/9] devfreq: exynos: Add generic exynos memory bus
+ frequency driver
+Date: Mon, 19 Jan 2015 09:20:17 +0000 (GMT)
+Message-ID: <27342443.1253691421659213933.JavaMail.weblogic@epmlwas05d>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24235 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751066AbbASH6A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 02:58:00 -0500
-In-reply-to: <CAM4voa=VmdX343zQ_wSwUQyiNN+z0ioBqjChqeNKnfhYV50hsA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Abhilash,
-
-> Hi Lukasz,
-> 
-> On Fri, Jan 16, 2015 at 5:00 PM, Lukasz Majewski
-> <l.majewski@samsung.com> wrote:
-> > 1. Introduction
-> >
-> > Following patches aim to clean up the current implementation of the
-> > thermal framework on Exynos devices.
-> >
-> > The main goal was to use a generic code for reading thermal
-> > configuration (of-thermal.c). Due to that redundant
-> > exynos_thermal_common.[h|c] files were removed.
-> >
-> > Around 400 lines of code (LOC) were removed directly by this patch,
-> > which is around 20% of the Exynos thermal code base.
-> >
-> > This work should NOT bring any functional changes to Exynos thermal
-> > subsystem.
-> >
-> > 2. Patch-set structure
-> >
-> > Then the cpu_cooling functionality has been preserved to allow
-> > cooling devices by reducing operating frequency. Definition of trip
-> > points and cpufreq's cooling properties were moved to device tree.
-> >
-> > Then the rework of the way in which configuration data is provided
-> > to the Exynos thermal subsystem was performed. Now device tree is
-> > used for configuration.
-> >
-> > 3. Dead code removal
-> >
-> > Thermal support for some SoCs, previously available in the
-> > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc3,
-> > they didn't have TMU bindings.
-> >
-> > Moreover, support for cpu_cooling devices was preserved only on
-> > those SoCs which had available and working cpufreq driver.
-> >
-> > 4. Testing
-> >
-> > Test devices:
-> > - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> > - Exynos5420 - Arndale-octa (only TMU zones)
-> >
-> > Unfortunately, I don't posses Exynos5440 for testing. Its
-> > functionality has been preserved in the code, but not tested on the
-> > hardware. I would be grateful for help in testing.
-> >
-> >
-> > 5. This work apply on the following tree:
-> >
-> > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> > SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
-> >
-> >
-> > Lukasz Majewski (17):
-> >   thermal: exynos: cosmetic: Correct comment format
-> >   thermal: exynos: Provide thermal_exynos.h file to be included in
-> >     device tree files
-> >   arm: dts: trats: Enable TMU on the Exynos4210 trats device
-> >   arm: dts: odroid: Add LD010 regulator node necessary for TMU on
-> > Odroid arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3
-> > device arm: dts: Adding CPU cooling binding for Exynos SoCs
-> >   thermal: exynos: Modify exynos thermal code to use device tree
-> > for cpu cooling configuration
-> >   thermal: exynos: dts: Add default definition of the TMU sensor
-> >     parameter
-> >   dts: Documentation: Extending documentation entry for
-> > exynos-thermal thermal: dts: Default trip points definition for
-> > Exynos5420 SoCs thermal: exynos: dts: Define default thermal-zones
-> > for Exynos4 thermal: dts: exynos: Trip points and sensor
-> > configuration data for Exynos5440
-> >   dts: Documentation: Update exynos-thermal.txt example for
-> > Exynos5440 thermal: exynos: dts: Provide device tree bindings
-> > identical to the one in exynos_tmu_data.c
-> >   thermal: samsung: core: Exynos TMU rework to use device tree for
-> >     configuration
-> >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
-> >   thermal: exynos: Remove exynos_tmu_data.c file
-> >
-> >  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
-> >  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
-> >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
-> >  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
-> >  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
-> >  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
-> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
-> >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
-> >  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
-> >  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
-> >  arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
-> >  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
-> >  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
-> >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
-> >  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
-> >  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
-> >  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
-> >  drivers/thermal/samsung/Makefile                   |   2 -
-> >  drivers/thermal/samsung/exynos_thermal_common.c    | 427
-> > ---------------------
-> > drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
-> > drivers/thermal/samsung/exynos_tmu.c               | 354
-> > +++++++++++------
-> > drivers/thermal/samsung/exynos_tmu.h               |  68 +---
-> > drivers/thermal/samsung/exynos_tmu_data.c          | 264
-> > ------------- include/dt-bindings/thermal/thermal_exynos.h       |
-> > 28 ++ 26 files changed, 638 insertions(+), 1001 deletions(-) create
-> > mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi create mode
-> > 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create
-> > mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create
-> > mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-> > create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
-> > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
-> > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
-> > delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c create
-> > mode 100644 include/dt-bindings/thermal/thermal_exynos.h
-> 
-> Other than my earlier comments on the extra exynos_tmu_initialize()
-> and sysfs "mode" disabled entry, I noticed that there are some unused
-> extern declarations for default_tmu_data in exynos_tmu.h. Otherwise, I
-> have tested this on a 5420 and it look good.
-
-I will look into those problems and prepare another version of the
-patch.
-
-Regarding that those seems rather easy to fix, those shouldn't prevent
-you from posting TMU support for Exynos7.
-
-> 
-> I will be posting my exynos7 driver modifications based on this patch
-> set soon, do take a look.
-
-If you don't mind, I will review your patch for Exynos7 and share some
-thoughts.
-
-> 
-> Thanks,
-> Abhilash
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGRzIHRoZSBnZW5lcmljIGV4eW5vcyBidXMgZnJlcXVlbmN5
+IGRyaXZlciBmb3IgbWVtb3J5IGJ1cw0KPiB3aXRoIERFVkZSRVEgZnJhbWV3b3JrLiBUaGUgU2Ft
+c3VuZyBFeHlub3MgU29DcyBoYXZlIHRoZSBjb21tb24gYXJjaGl0ZWN0dXJlDQo+IGZvciBtZW1v
+cnkgYnVzIGJldHdlZW4gRFJBTSBtZW1vcnkgYW5kIE1NQy9zdWIgSVAgaW4gU29DLiBUaGlzIGRy
+aXZlciBjYW4NCj4gc3VwcG9ydCB0aGUgbWVtb3J5IGJ1cyBmcmVxdWVuY3kgZHJpdmVyIGZvciBF
+eHlub3MgU29Dcy4NCj4gDQo+IEVhY2ggbWVtb3J5IGJ1cyBibG9jayBoYXMgYSBjbG9jayBmb3Ig
+bWVtb3J5IGJ1cyBzcGVlZCBhbmQgZnJlcXVlbmN5DQo+IHRhYmxlIHdoaWNoIGlzIGNoYW5nZWQg
+YWNjb3JkaW5nIHRvIHRoZSB1dGlsaXphdGlvbiBvZiBtZW1vcnkgYnVzIG9uIHJ1bnRpbWUuDQo+
+IEFuZCB0aGVuIGVhY2ggbWVtb3J5IGJ1cyBncm91cCBoYXMgdGhlIG9uZSBtb3JlIG1lbW9yeSBi
+dXMgYmxvY2tzIGFuZA0KPiBPUFAgdGFibGUgKGluY2x1ZGluZyBmcmVxdWVuY3kgYW5kIHZvbHRh
+Z2UpLCByZWd1bGF0b3IsIGRldmZyZXEtZXZlbnQNCj4gZGV2aWNlcy4NCj4gDQo+IFRoZXJlIGFy
+ZSBhIGxpdHRsZSBkaWZmZXJlbmNlIGFib3V0IHRoZSBudW1iZXIgb2YgbWVtb3J5IGJ1cyBiZWNh
+dXNlIGVhY2ggRXh5bm9zDQo+IFNvQyBoYXZlIHRoZSBkaWZmZXJlbnQgc3ViLUlQIGFuZCBkaWZm
+ZXJlbnQgbWVtb3J5IGJ1cyBzcGVlZC4gSW4gc3BpdGUgb2YgdGhpcw0KPiBkaWZmZXJlbmNlIGFt
+b25nIEV4eW5vcyBTb0NzLCB3ZSBjYW4gc3VwcG9ydCBhbG1vc3QgRXh5bm9zIFNvQyBieSBhZGRp
+bmcNCj4gdW5pcXVlIGRhdGEgb2YgbWVtb3J5IGJ1cyB0byBkZXZpY2V0cmVlIGZpbGUuDQo+IA0K
+PiBDYzogTXl1bmdqb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQo+IENjOiBLeXVu
+Z21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPg0KPiBDYzogS3VramluIEtpbSA8
+a2dlbmVAa2VybmVsLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNo
+b2lAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgICAgICAg
+ICAgICAgfCAgMTUgKw0KPiAgZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlICAgICAgICAgICAgfCAg
+IDEgKw0KPiAgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9NYWtlZmlsZSAgICAgfCAgIDEgKw0KPiAg
+ZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9leHlub3MtYnVzLmMgfCA1OTggKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDYxNSBpbnNlcnRpb25z
+KCspDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9leHlub3Mt
+YnVzLmMNCj4gDQoNCltdDQoNCj4gK3N0YXRpYyB2b2lkIGV4eW5vc19idXNfZXhpdChzdHJ1Y3Qg
+ZGV2aWNlICpkZXYpDQo+ICt7DQo+ICsJc3RydWN0IGV4eW5vc19tZW1vcnlfYnVzICpidXMgPSBk
+ZXZfZ2V0X2RydmRhdGEoZGV2KTsNCj4gKwlpbnQgaSwgcmV0Ow0KPiArDQo+ICsJcmV0ID0gZXh5
+bm9zX2J1c19kaXNhYmxlX2VkZXYoYnVzKTsNCj4gKwlpZiAocmV0IDwgMCkNCj4gKwkJZGV2X3dh
+cm4oZGV2LCAiZmFpbGVkIHRvIGRpc2FibGUgdGhlIGRldmZyZXEtZXZlbnQgZGV2aWNlc1xuIik7
+DQo+ICsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgYnVzLT5ibG9ja19jb3VudDsgaSsrKQ0KPiArCQlj
+bGtfZGlzYWJsZV91bnByZXBhcmUoYnVzLT5ibG9ja1tpXS5jbGspOw0KPiArDQo+ICsJaWYgKHJl
+Z3VsYXRvcl9pc19lbmFibGVkKGJ1cy0+cmVndWxhdG9yKSkNCj4gKwkJcmVndWxhdG9yX2Rpc2Fi
+bGUoYnVzLT5yZWd1bGF0b3IpOw0KDQpUaGlzIGlzX2VuYWJsZWQgY2hlY2sgaXMgaXRjaHkuDQoN
+CldoeSBkbyB5b3UgbmVlZCB0aGlzIGhlcmU/DQpQbGVhc2UgbGV0IG1lIGtub3cgd2hhdCBraW5k
+IG9mIGVycm9ycyBoZXJlLg0KKG5vdGUgdGhhdCB0aGlzIG1heSBzaW1wbHkgaGlkZSBlcnJvcnMg
+bWFkZSBieSBvdGhlciBkcml2ZXJzKQ0KDQpBZGRpbmcgdGhpcyBjb25kaXRpb24gZG9lcyBub3Qg
+aW50cm9kdWNlIGFkZGl0aW9uYWwgZXJyb3IsIGJ1dA0KY291bGQgeW91IHBsZWFzZSBsZXQgbWUg
+a25vdyB3aHkgaXQgaXMgaGVyZT8gVGhpcyBpcyBzdXBwb3NlZCB0byBiZQ0KcGFpcmVkIHdpdGgg
+cHJvYmUuDQoNCg0KRXhjZXB0IHRoaXMgcG9pbnQgKHZhbGlkIGlmIGFkZHJlc3NlZCBvciB7ZXhw
+bGFpbmVkIGFuZCB1bmRlcnN0b29kfSksDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxteXVuZ2pv
+by5oYW1Ac2Ftc3VuZy5jb20+DQoNCg0KQ2hlZXJzLA0KTXl1bmdKb28NCg0KPiArDQo+ICsJb2Zf
+ZnJlZV9vcHBfdGFibGUoZGV2KTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHN0cnVjdCBkZXZmcmVx
+X2Rldl9wcm9maWxlIGV4eW5vc19tZW1vcnlfYnVzX3Byb2ZpbGUgPSB7DQo+ICsJLnBvbGxpbmdf
+bXMJPSAxMDAsDQo+ICsJLnRhcmdldAkJPSBleHlub3NfYnVzX3RhcmdldCwNCj4gKwkuZ2V0X2Rl
+dl9zdGF0dXMJPSBleHlub3NfYnVzX2dldF9kZXZfc3RhdHVzLA0KPiArCS5leGl0CQk9IGV4eW5v
+c19idXNfZXhpdCwNCj4gK307DQo+ICsNCg0KW10NCg==
