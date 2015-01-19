@@ -1,63 +1,86 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v4 1/9] devfreq: exynos: Add generic exynos memory bus
- frequency driver
-Date: Mon, 19 Jan 2015 09:20:17 +0000 (GMT)
-Message-ID: <27342443.1253691421659213933.JavaMail.weblogic@epmlwas05d>
-Reply-To: myungjoo.ham@samsung.com
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
+ Exynos 64bit SoC
+Date: Mon, 19 Jan 2015 10:27:50 +0100
+Message-ID: <54BCCE16.8050607@linaro.org>
+References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com> <54B69072.4080607@kernel.org> <54B692FB.7030703@linaro.org> <54BC55BB.7050809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
+In-Reply-To: <54BC55BB.7050809@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
-Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: tglx@linutronix.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGRzIHRoZSBnZW5lcmljIGV4eW5vcyBidXMgZnJlcXVlbmN5
-IGRyaXZlciBmb3IgbWVtb3J5IGJ1cw0KPiB3aXRoIERFVkZSRVEgZnJhbWV3b3JrLiBUaGUgU2Ft
-c3VuZyBFeHlub3MgU29DcyBoYXZlIHRoZSBjb21tb24gYXJjaGl0ZWN0dXJlDQo+IGZvciBtZW1v
-cnkgYnVzIGJldHdlZW4gRFJBTSBtZW1vcnkgYW5kIE1NQy9zdWIgSVAgaW4gU29DLiBUaGlzIGRy
-aXZlciBjYW4NCj4gc3VwcG9ydCB0aGUgbWVtb3J5IGJ1cyBmcmVxdWVuY3kgZHJpdmVyIGZvciBF
-eHlub3MgU29Dcy4NCj4gDQo+IEVhY2ggbWVtb3J5IGJ1cyBibG9jayBoYXMgYSBjbG9jayBmb3Ig
-bWVtb3J5IGJ1cyBzcGVlZCBhbmQgZnJlcXVlbmN5DQo+IHRhYmxlIHdoaWNoIGlzIGNoYW5nZWQg
-YWNjb3JkaW5nIHRvIHRoZSB1dGlsaXphdGlvbiBvZiBtZW1vcnkgYnVzIG9uIHJ1bnRpbWUuDQo+
-IEFuZCB0aGVuIGVhY2ggbWVtb3J5IGJ1cyBncm91cCBoYXMgdGhlIG9uZSBtb3JlIG1lbW9yeSBi
-dXMgYmxvY2tzIGFuZA0KPiBPUFAgdGFibGUgKGluY2x1ZGluZyBmcmVxdWVuY3kgYW5kIHZvbHRh
-Z2UpLCByZWd1bGF0b3IsIGRldmZyZXEtZXZlbnQNCj4gZGV2aWNlcy4NCj4gDQo+IFRoZXJlIGFy
-ZSBhIGxpdHRsZSBkaWZmZXJlbmNlIGFib3V0IHRoZSBudW1iZXIgb2YgbWVtb3J5IGJ1cyBiZWNh
-dXNlIGVhY2ggRXh5bm9zDQo+IFNvQyBoYXZlIHRoZSBkaWZmZXJlbnQgc3ViLUlQIGFuZCBkaWZm
-ZXJlbnQgbWVtb3J5IGJ1cyBzcGVlZC4gSW4gc3BpdGUgb2YgdGhpcw0KPiBkaWZmZXJlbmNlIGFt
-b25nIEV4eW5vcyBTb0NzLCB3ZSBjYW4gc3VwcG9ydCBhbG1vc3QgRXh5bm9zIFNvQyBieSBhZGRp
-bmcNCj4gdW5pcXVlIGRhdGEgb2YgbWVtb3J5IGJ1cyB0byBkZXZpY2V0cmVlIGZpbGUuDQo+IA0K
-PiBDYzogTXl1bmdqb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQo+IENjOiBLeXVu
-Z21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPg0KPiBDYzogS3VramluIEtpbSA8
-a2dlbmVAa2VybmVsLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNo
-b2lAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgICAgICAg
-ICAgICAgfCAgMTUgKw0KPiAgZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlICAgICAgICAgICAgfCAg
-IDEgKw0KPiAgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9NYWtlZmlsZSAgICAgfCAgIDEgKw0KPiAg
-ZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9leHlub3MtYnVzLmMgfCA1OTggKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDYxNSBpbnNlcnRpb25z
-KCspDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy9leHlub3Mt
-YnVzLmMNCj4gDQoNCltdDQoNCj4gK3N0YXRpYyB2b2lkIGV4eW5vc19idXNfZXhpdChzdHJ1Y3Qg
-ZGV2aWNlICpkZXYpDQo+ICt7DQo+ICsJc3RydWN0IGV4eW5vc19tZW1vcnlfYnVzICpidXMgPSBk
-ZXZfZ2V0X2RydmRhdGEoZGV2KTsNCj4gKwlpbnQgaSwgcmV0Ow0KPiArDQo+ICsJcmV0ID0gZXh5
-bm9zX2J1c19kaXNhYmxlX2VkZXYoYnVzKTsNCj4gKwlpZiAocmV0IDwgMCkNCj4gKwkJZGV2X3dh
-cm4oZGV2LCAiZmFpbGVkIHRvIGRpc2FibGUgdGhlIGRldmZyZXEtZXZlbnQgZGV2aWNlc1xuIik7
-DQo+ICsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgYnVzLT5ibG9ja19jb3VudDsgaSsrKQ0KPiArCQlj
-bGtfZGlzYWJsZV91bnByZXBhcmUoYnVzLT5ibG9ja1tpXS5jbGspOw0KPiArDQo+ICsJaWYgKHJl
-Z3VsYXRvcl9pc19lbmFibGVkKGJ1cy0+cmVndWxhdG9yKSkNCj4gKwkJcmVndWxhdG9yX2Rpc2Fi
-bGUoYnVzLT5yZWd1bGF0b3IpOw0KDQpUaGlzIGlzX2VuYWJsZWQgY2hlY2sgaXMgaXRjaHkuDQoN
-CldoeSBkbyB5b3UgbmVlZCB0aGlzIGhlcmU/DQpQbGVhc2UgbGV0IG1lIGtub3cgd2hhdCBraW5k
-IG9mIGVycm9ycyBoZXJlLg0KKG5vdGUgdGhhdCB0aGlzIG1heSBzaW1wbHkgaGlkZSBlcnJvcnMg
-bWFkZSBieSBvdGhlciBkcml2ZXJzKQ0KDQpBZGRpbmcgdGhpcyBjb25kaXRpb24gZG9lcyBub3Qg
-aW50cm9kdWNlIGFkZGl0aW9uYWwgZXJyb3IsIGJ1dA0KY291bGQgeW91IHBsZWFzZSBsZXQgbWUg
-a25vdyB3aHkgaXQgaXMgaGVyZT8gVGhpcyBpcyBzdXBwb3NlZCB0byBiZQ0KcGFpcmVkIHdpdGgg
-cHJvYmUuDQoNCg0KRXhjZXB0IHRoaXMgcG9pbnQgKHZhbGlkIGlmIGFkZHJlc3NlZCBvciB7ZXhw
-bGFpbmVkIGFuZCB1bmRlcnN0b29kfSksDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxteXVuZ2pv
-by5oYW1Ac2Ftc3VuZy5jb20+DQoNCg0KQ2hlZXJzLA0KTXl1bmdKb28NCg0KPiArDQo+ICsJb2Zf
-ZnJlZV9vcHBfdGFibGUoZGV2KTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHN0cnVjdCBkZXZmcmVx
-X2Rldl9wcm9maWxlIGV4eW5vc19tZW1vcnlfYnVzX3Byb2ZpbGUgPSB7DQo+ICsJLnBvbGxpbmdf
-bXMJPSAxMDAsDQo+ICsJLnRhcmdldAkJPSBleHlub3NfYnVzX3RhcmdldCwNCj4gKwkuZ2V0X2Rl
-dl9zdGF0dXMJPSBleHlub3NfYnVzX2dldF9kZXZfc3RhdHVzLA0KPiArCS5leGl0CQk9IGV4eW5v
-c19idXNfZXhpdCwNCj4gK307DQo+ICsNCg0KW10NCg==
+On 01/19/2015 01:54 AM, Chanwoo Choi wrote:
+> Dear Daniel and Kukjin,
+>
+> On 01/15/2015 01:02 AM, Daniel Lezcano wrote:
+>> On 01/14/2015 04:51 PM, Kukjin Kim wrote:
+>>> On 01/14/15 14:33, Chanwoo Choi wrote:
+>>>
+>>> Hi,
+>>>
+>>> + Doug, Olof
+>>>
+>>>> This patch adds the support for Exynos 64bit SoC. The delay_timer =
+is only used
+>>>> for Exynos 32bit SoC.
+>>>>
+>>> Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is avai=
+lable
+>>> on 64bit exynos SoC such as exynos7. But basically ARMv8 architectu=
+re is
+>>> including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
+>>> implemented it and additionally its access is faster than using mem=
+ory
+>>> mapped register called SFR for MCT...so Doug submitted patch to use=
+ MCT
+>>> on 32bit exynos SoCs before.
+>>>
+>>> I know using MCT on 64bit exynos is usefulness for Power Management=
+ and
+>>> I need to talk to relevant guys in office again. If anything, I'll =
+let
+>>> you know.
+>>
+>> I will wait for your answer before digging more the patch.
+
+Hi Chanwoo,
+
+[ ... ]
+
+> Do you have any comment about this patch?
+
+Yes, a similar patch has been posted for the tegra2 timer to run on=20
+arm64. The patch in question put macros #ifdef CONFIG_ARM64 to disable=20
+some parts of the code. That ended, the tegra2 timer was not needed for=
+=20
+the moment because of the arch timer present, so it has been disabled=20
+from the compilation until a proper fix without macros could be propose=
+d.
+
+It is happening exactly the same with this patch. As Kukjin pointed it,=
+=20
+the exynos_mct may not be needed (at least until a backup timer is=20
+needed at PM time).
+
+I suggest you look at a nicer way to fix that instead of introducing=20
+macros (which is by the way valid but not recommended by the CodingStyl=
+e=20
+rules) and perhaps sync with Paul and Thierry [cc'ed] to find a common=20
+solution.
+
+   -- Daniel
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
