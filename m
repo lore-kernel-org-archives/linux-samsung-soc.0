@@ -1,70 +1,40 @@
 From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH v3 00/16] thermal: exynos: Thermal code rework to
- use device tree
-Date: Tue, 20 Jan 2015 00:29:59 +0100
-Message-ID: <54BD9377.30606@gmx.net>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com> <1421242874-3425-1-git-send-email-l.majewski@samsung.com> <54B8549F.60707@gmx.net> <20150116092946.38860303@amdc2363>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Tue, 20 Jan 2015 00:33:20 +0100
+Message-ID: <54BD9440.1040907@gmx.net>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com> <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com> <54B8533C.3070000@math.uni-bielefeld.de> <54B99178.1060006@gmx.net> <54BD3129.5090305@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150116092946.38860303@amdc2363>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, tomasz.figa@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.17.20]:56774 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751514AbbASXdY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Jan 2015 18:33:24 -0500
+In-Reply-To: <54BD3129.5090305@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hello!
-
-Lukasz Majewski wrote:
-> We all know that this code is floating around - early version of this
-> work was posted in the Q3 2013.
+Marek Szyprowski wrote:
+> Please check the following kernel tree - instead of hacking around hdmi
+> clock I've added
+> handling of it directly to drm mixer driver:
+> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git/shortlog/refs/heads/v3.19-odroid-hdmi
 > 
-> To be fair - this code is both needed and welcome, but new problems
-> with it are found (please search for recent comment from Kevin
-> Hilman).
-> 
-> From my side, I focus on the code which is in Eduardo Valentin's next
-> (3.19-rc3), since I don't know when and if eventually cpufreq rework
-> would be merged.
-I'm sorry, my wording wasn't the best here. I'm not critizing the work
-done here, merely voicing my concern (and also interest!) about how the
-new stuff interacts with code that may eventually get merged.
-You're aware of it, that's enough for me to know.
+> I hope that this will finally solve all mixer initialization related
+> issues (also for
+> Odroid XU3, discussed recently in the other thread). If it works fine, I
+> will resend
+> exynos4 hdmi patches to include this change.
+OK, I can verify that with the additional patches the lockup issues no
+longer occur.
 
-
-> The code which touches exynos-cpufreq.c is around 30 LOC, only for
-> preserving cpu cooling functionality.
-> 
-> Is it worth to wait for code developed for so long to happily apply 30
-> LOC and delay removal of around 400 LOC in other subsystem (thermal)?
-No, of course not. That was pretty stupid of me :(
-
-
-> I rise my hand as a volunteer to fix any thermal related issues which
-> show up after cpufreq rework code applying to Exynos.
-That's certainly good to hear!
-
-
-> This series is NOT providing any NEW functionality. It in fact
-> preserves functionality, which allows using CPU frequency as a mean to
-> cool the device.
-I've got a question concerning this. Is this only needed for
-exynos-cpufreq, or does cpufreq-dt also need something like that.
-
-The point is that I'm still working with a rather old version of the
-cpufreq series, a version which still had the Exynos4x12 code in it
-(this was removed later, if I remember correctly because of problems
-with how to properly describe boost configuration in DT).
-
-
-Anyway, to not get completly off-topic here, I noticed some small issue
-with v3 of the thermal series. I've enabled CONFIG_THERMAL_HWMON so that
-I can use lm_sensors to query temperature of the board. However while
-the thermal_zone is created, there is no hwmon node to be found. This
-was working properly without the thermal series.
-
+When doing the vsync tests though there are still the drm_vblank_put
+warnings. I have yet to check if patch by Joonyoung (thanks Joonyoung
+for the hint!) fixes these warnings.
 
 With best wishes,
 Tobias
-
