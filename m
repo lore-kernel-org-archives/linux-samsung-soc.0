@@ -1,37 +1,54 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 0/8] [media] exynos-gsc: Fixup PM support
-Date: Mon, 19 Jan 2015 14:22:32 +0100
-Message-ID: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH V2 2/8] [media] exynos-gsc: Convert gsc_m2m_resume() from int to void
+Date: Mon, 19 Jan 2015 14:22:34 +0100
+Message-ID: <1421673760-2600-3-git-send-email-ulf.hansson@linaro.org>
+References: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
 Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-media-owner@vger.kernel.org
 To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Changes in v2:
-	- Rebase patches.
-	- Adapt to changes for the PM core. Especially, the Kconfig option for
-	  CONFIG_PM_RUNTIME has been removed and the runtime PM core is now
-	  build for CONFIG_PM.
+Since gsc_m2m_resume() always returns 0, convert it to a void instead.
 
-This patchset fixup the PM support and adds some minor improvements to
-potentially save some more power at runtime PM suspend.
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/media/platform/exynos-gsc/gsc-core.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-
-Ulf Hansson (8):
-  [media] exynos-gsc: Simplify clock management
-  [media] exynos-gsc: Convert gsc_m2m_resume() from int to void
-  [media] exynos-gsc: Make driver functional when CONFIG_PM is unset
-  [media] exynos-gsc: Make runtime PM callbacks available for CONFIG_PM
-  [media] exynos-gsc: Fixup clock management at ->remove()
-  [media] exynos-gsc: Do full clock gating at runtime PM suspend
-  [media] exynos-gsc: Make system PM callbacks available for
-    CONFIG_PM_SLEEP
-  [media] exynos-gsc: Simplify system PM
-
- drivers/media/platform/exynos-gsc/gsc-core.c | 183 +++++++++++----------------
- drivers/media/platform/exynos-gsc/gsc-core.h |   3 -
- 2 files changed, 72 insertions(+), 114 deletions(-)
-
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index bd769d4..1865738 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1025,7 +1025,7 @@ static int gsc_m2m_suspend(struct gsc_dev *gsc)
+ 	return timeout == 0 ? -EAGAIN : 0;
+ }
+ 
+-static int gsc_m2m_resume(struct gsc_dev *gsc)
++static void gsc_m2m_resume(struct gsc_dev *gsc)
+ {
+ 	struct gsc_ctx *ctx;
+ 	unsigned long flags;
+@@ -1038,8 +1038,6 @@ static int gsc_m2m_resume(struct gsc_dev *gsc)
+ 
+ 	if (test_and_clear_bit(ST_M2M_SUSPENDED, &gsc->state))
+ 		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
+-
+-	return 0;
+ }
+ 
+ static int gsc_probe(struct platform_device *pdev)
+@@ -1168,8 +1166,9 @@ static int gsc_runtime_resume(struct device *dev)
+ 
+ 	gsc_hw_set_sw_reset(gsc);
+ 	gsc_wait_reset(gsc);
++	gsc_m2m_resume(gsc);
+ 
+-	return gsc_m2m_resume(gsc);
++	return 0;
+ }
+ 
+ static int gsc_runtime_suspend(struct device *dev)
 -- 
 1.9.1
