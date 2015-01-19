@@ -1,58 +1,69 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: Exynos4 CONFIG_HZ
-Date: Mon, 19 Jan 2015 11:23:04 +0100
-Message-ID: <CAJKOXPfHBEKFKo=eYgDK_8zsPk4+23yDQQj7e07GhHFhS80ZDw@mail.gmail.com>
-References: <alpine.DEB.0.99999.1501181744400.30567@zem.blinkenlights.nl>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
+ Exynos 64bit SoC
+Date: Mon, 19 Jan 2015 19:24:32 +0900
+Message-ID: <54BCDB60.1020509@samsung.com>
+References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
+ <54B69072.4080607@kernel.org> <54B692FB.7030703@linaro.org>
+ <54BC55BB.7050809@samsung.com> <54BCCE16.8050607@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:51279 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426AbbASKXG (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:23247 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751412AbbASKYe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 05:23:06 -0500
-Received: by mail-vc0-f173.google.com with SMTP id kv19so9854689vcb.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jan 2015 02:23:04 -0800 (PST)
-In-Reply-To: <alpine.DEB.0.99999.1501181744400.30567@zem.blinkenlights.nl>
+	Mon, 19 Jan 2015 05:24:34 -0500
+In-reply-to: <54BCCE16.8050607@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sten Spans <sten@blinkenlights.nl>
-Cc: linux-samsung-soc@vger.kernel.org, 774896@bugs.debian.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, tglx@linutronix.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>
 
-2015-01-18 17:57 GMT+01:00 Sten Spans <sten@blinkenlights.nl>:
->
-> With the  improvements in upstream support for exynos4 devices
-> I've been looking into adding support odroid devices to Debian's
-> armmp kernel. The kernel config changes needed are quite minimal
-> as can be seen here:
->
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=774896
->
-> Mostly enabling support and various modules.
->
-> However as Ian Campbell notes, enabling ARCH_EXYNOS4 triggers
-> the following from arch/arm/Kconfig:
->         config HZ_FIXED
->                 int
->                 default 200 if ARCH_EBSA110 || ARCH_S3C24XX || \
->                         ARCH_S5PV210 || ARCH_EXYNOS4
->                 default AT91_TIMER_HZ if ARCH_AT91
->                 default SHMOBILE_TIMER_HZ if ARCH_SHMOBILE_LEGACY
->                 default 0
->
-> This forces CONFIG_HZ=200 for the entire armmp kernel, which is
-> undesirable. The reason for this setting isn't very clear to either
-> me or Ian. I personally have verified that HZ=250 (the default for debian
-> armmp kernels) boots fine.
->
-> Is there a particular reason for this setting?
-> Would a patch removing this requirement for ARCH_EXYNOS4 be accepted?
+Hi Daniel,
 
-+Cc Kukjin Kim
+On 01/19/2015 06:27 PM, Daniel Lezcano wrote:
+> On 01/19/2015 01:54 AM, Chanwoo Choi wrote:
+>> Dear Daniel and Kukjin,
+>>
+>> On 01/15/2015 01:02 AM, Daniel Lezcano wrote:
+>>> On 01/14/2015 04:51 PM, Kukjin Kim wrote:
+>>>> On 01/14/15 14:33, Chanwoo Choi wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> + Doug, Olof
+>>>>
+>>>>> This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
+>>>>> for Exynos 32bit SoC.
+>>>>>
+>>>> Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is available
+>>>> on 64bit exynos SoC such as exynos7. But basically ARMv8 architecture is
+>>>> including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
+>>>> implemented it and additionally its access is faster than using memory
+>>>> mapped register called SFR for MCT...so Doug submitted patch to use MCT
+>>>> on 32bit exynos SoCs before.
+>>>>
+>>>> I know using MCT on 64bit exynos is usefulness for Power Management and
+>>>> I need to talk to relevant guys in office again. If anything, I'll let
+>>>> you know.
+>>>
+>>> I will wait for your answer before digging more the patch.
+> 
+> Hi Chanwoo,
+> 
+> [ ... ]
+> 
+>> Do you have any comment about this patch?
+> 
+> Yes, a similar patch has been posted for the tegra2 timer to run on arm64. The patch in question put macros #ifdef CONFIG_ARM64 to disable some parts of the code. That ended, the tegra2 timer was not needed for the moment because of the arch timer present, so it has been disabled from the compilation until a proper fix without macros could be proposed.
+> 
+> It is happening exactly the same with this patch. As Kukjin pointed it, the exynos_mct may not be needed (at least until a backup timer is needed at PM time).
+> 
+> I suggest you look at a nicer way to fix that instead of introducing macros (which is by the way valid but not recommended by the CodingStyle rules) and perhaps sync with Paul and Thierry [cc'ed] to find a common solution.
 
-I cannot find a valid reason for fixed 200 Hz, especially that other
-values (<100, 1000>) are working. Maybe Kukjin will share some light
-on this?
+OK, I understand your opinion. I'll try to consider it without adding '#ifdef'.
 
-Best regards,
-Krzysztof
+Best Regards,
+Chanwoo Choi
