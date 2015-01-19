@@ -1,69 +1,56 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
- Exynos 64bit SoC
-Date: Mon, 19 Jan 2015 19:24:32 +0900
-Message-ID: <54BCDB60.1020509@samsung.com>
-References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
- <54B69072.4080607@kernel.org> <54B692FB.7030703@linaro.org>
- <54BC55BB.7050809@samsung.com> <54BCCE16.8050607@linaro.org>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Mon, 19 Jan 2015 11:27:52 +0100
+Message-ID: <54BCDC28.7080003@collabora.co.uk>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com> <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon> <54914D7D.9060108@collabora.co.uk> <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com> <20150105135015.GA12010@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23247 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751412AbbASKYe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 05:24:34 -0500
-In-reply-to: <54BCCE16.8050607@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150105135015.GA12010-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Stone <daniel-rLtY4a/8tF1rovVCs/uTlw@public.gmane.org>
+Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pannaga Bhushan Reddy Patel <bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prashanth G <prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, tglx@linutronix.de, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Paul Walmsley <pwalmsley@nvidia.com>
 
-Hi Daniel,
+Hello Thierry,
 
-On 01/19/2015 06:27 PM, Daniel Lezcano wrote:
-> On 01/19/2015 01:54 AM, Chanwoo Choi wrote:
->> Dear Daniel and Kukjin,
->>
->> On 01/15/2015 01:02 AM, Daniel Lezcano wrote:
->>> On 01/14/2015 04:51 PM, Kukjin Kim wrote:
->>>> On 01/14/15 14:33, Chanwoo Choi wrote:
->>>>
->>>> Hi,
->>>>
->>>> + Doug, Olof
->>>>
->>>>> This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
->>>>> for Exynos 32bit SoC.
->>>>>
->>>> Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is available
->>>> on 64bit exynos SoC such as exynos7. But basically ARMv8 architecture is
->>>> including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
->>>> implemented it and additionally its access is faster than using memory
->>>> mapped register called SFR for MCT...so Doug submitted patch to use MCT
->>>> on 32bit exynos SoCs before.
->>>>
->>>> I know using MCT on 64bit exynos is usefulness for Power Management and
->>>> I need to talk to relevant guys in office again. If anything, I'll let
->>>> you know.
->>>
->>> I will wait for your answer before digging more the patch.
+On 01/05/2015 02:50 PM, Thierry Reding wrote:
+> On Fri, Jan 02, 2015 at 01:10:14PM +0000, Daniel Stone wrote:
+>> >
+>> > Ajay's series don't apply cleanly anymore because it has been a while since
+>> > he posted it but he can rebase on top of 3.19-rc1 once it is released and
+>> > re-resend.
+>> >
+>> 
+>> Do you have any plans to rebase this so it's ready for merging?
+>> 
+>> Thierry, Daniel, Dave - whose tree would this be best to merge through?
 > 
-> Hi Chanwoo,
-> 
-> [ ... ]
-> 
->> Do you have any comment about this patch?
-> 
-> Yes, a similar patch has been posted for the tegra2 timer to run on arm64. The patch in question put macros #ifdef CONFIG_ARM64 to disable some parts of the code. That ended, the tegra2 timer was not needed for the moment because of the arch timer present, so it has been disabled from the compilation until a proper fix without macros could be proposed.
-> 
-> It is happening exactly the same with this patch. As Kukjin pointed it, the exynos_mct may not be needed (at least until a backup timer is needed at PM time).
-> 
-> I suggest you look at a nicer way to fix that instead of introducing macros (which is by the way valid but not recommended by the CodingStyle rules) and perhaps sync with Paul and Thierry [cc'ed] to find a common solution.
+> The plan is for me to take the bridge patches through the drm/panel
+> tree. I'm going to look at these patches again later this week but from
+> a very quick peek there don't seem to be any major issues left.
+>
 
-OK, I understand your opinion. I'll try to consider it without adding '#ifdef'.
+I know you probably are very busy but it would be great if you can take a look
+to this series to avoid another kernel release to be missed since we are already
+at v3.19-rc5.
 
-Best Regards,
-Chanwoo Choi
+Only this version was posted 2 months ago and the first version of the series
+was sent on May, 2014 so it has been on the list for almost a year now...
+
+Tomi and Laurent had already agreed with the DT binging so I think that we can
+already merge these and if there are any remaining issues, those can be fixed
+during the 3.20 -rc cycle.
+
+> Thierry
+>
+
+Thanks a lot and best regards,
+Javier
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
