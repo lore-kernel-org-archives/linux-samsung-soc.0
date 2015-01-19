@@ -1,108 +1,154 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Mon, 19 Jan 2015 17:30:45 +0100
-Message-ID: <20150119163043.GB7751@ulmo.nvidia.com>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <548ABAB6.6010200@collabora.co.uk>
- <3197445.qizQc0zeRb@avalon>
- <54914D7D.9060108@collabora.co.uk>
- <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
- <20150105135015.GA12010@ulmo.nvidia.com>
- <54BCDC28.7080003@collabora.co.uk>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH 01/29] drm/exynos/fimd: only finish pageflip if START ==
+ START_S
+Date: Mon, 19 Jan 2015 16:35:07 +0000
+Message-ID: <CAPj87rPgZ6RvjP2H6VZL-FMCLzBWm2QSByR+7duF7mU2jid8rQ@mail.gmail.com>
+References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
+ <1418911135-5207-2-git-send-email-gustavo@padovan.org>
+ <54A2B13F.1030908@samsung.com> <20150112211327.GF2001@joana>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:34763 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426AbbASQau (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 11:30:50 -0500
-Content-Disposition: inline
-In-Reply-To: <54BCDC28.7080003@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0135256930=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150112211327.GF2001@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Daniel Stone <daniel@fooishbar.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ajay kumar <ajaynumb@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+--===============0135256930==
+Content-Type: multipart/alternative; boundary=001a11c223a2bcd3af050d03e749
 
---zx4FCpZtqtKETZ7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--001a11c223a2bcd3af050d03e749
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 19, 2015 at 11:27:52AM +0100, Javier Martinez Canillas wrote:
-> Hello Thierry,
->=20
-> On 01/05/2015 02:50 PM, Thierry Reding wrote:
-> > On Fri, Jan 02, 2015 at 01:10:14PM +0000, Daniel Stone wrote:
-> >> >
-> >> > Ajay's series don't apply cleanly anymore because it has been a whil=
-e since
-> >> > he posted it but he can rebase on top of 3.19-rc1 once it is release=
-d and
-> >> > re-resend.
-> >> >
-> >>=20
-> >> Do you have any plans to rebase this so it's ready for merging?
-> >>=20
-> >> Thierry, Daniel, Dave - whose tree would this be best to merge through?
-> >=20
-> > The plan is for me to take the bridge patches through the drm/panel
-> > tree. I'm going to look at these patches again later this week but from
-> > a very quick peek there don't seem to be any major issues left.
-> >
->=20
-> I know you probably are very busy but it would be great if you can take a=
- look
-> to this series to avoid another kernel release to be missed since we are =
-already
-> at v3.19-rc5.
->=20
-> Only this version was posted 2 months ago and the first version of the se=
-ries
-> was sent on May, 2014 so it has been on the list for almost a year now...
->=20
-> Tomi and Laurent had already agreed with the DT binging so I think that w=
-e can
-> already merge these and if there are any remaining issues, those can be f=
-ixed
-> during the 3.20 -rc cycle.
+Hi,
 
-I see only a single Tested-by on this series and that seems to be with a
-bunch of out-of-tree patches applied on top. Does this now actually work
-applied on top of upstream? Also it seems like many people actually want
-this to get merged but there's been no Reviewed-bys and only a single
-Tested-by? Is that as good as it's going to get?
+On 12 January 2015 at 21:13, Gustavo Padovan <gustavo@padovan.org> wrote:
 
-Also I think the last update was that Ajay was going to resend this
-based on v3.19-rc1 or something. Is that still going to happen?
-Otherwise I can probably try to apply as-is, but not sure how well it
-will.
+> 2014-12-30 Inki Dae <inki.dae@samsung.com>:
+> > On 2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 22:58, Gustavo Padovan wrote:
+> > > +    * This works around a race between a page_flip request and the
+> latency
+> > > +    * between vblank interrupt and this irq_handler:
+> > > +    *   =3D> FIMD vblank: BUF_START_S[0] :=3D BUF_START[0], and asse=
+rts
+> irq
+> > > +    *   | =3D> fimd_win_commit(0) writes new BUF_START[0]
+> > > +    *   |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepar=
+ed
+> > > +    *   =3D> fimd_irq_handler()
+> > > +    *       exynos_drm_crtc_finish_pageflip() sees prepared exynos_f=
+b,
+> > > +    *           and unmaps "old" fb
+> > > +    *   =3D=3D> but, since BUF_START_S[0] still points to that "old"=
+ fb...
+> > > +    *   =3D=3D> FIMD iommu fault
+> > > +    */
+> > > +   start =3D readl(ctx->regs + VIDWx_BUF_START(0, 0));
+> > > +   start_s =3D readl(ctx->regs + VIDWx_BUF_START_S(0, 0));
+> > > +   if (start =3D=3D start_s)
+> > >             exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
+> > And what if 'start_s' has a value different from one of 'start'? Is it
+> > ok to skip finish_pageflip request this time? Shouldn't it ensure to
+> > wait for that until 'start_s' has a value same as one of 'start'?
+>
+> I think it is okay to skip finish_pageflip, but we could return directly
+> if they are different, so we keep the wait_vsync_queue running until the
+> next
+> irq happens or it timeouts. How does this look to you?
+>
 
-Thierry
+Right, you'd need to keep the vblank IRQ alive until start =3D=3D start_s.
 
---zx4FCpZtqtKETZ7O
-Content-Type: application/pgp-signature
+As an aside, there is currently some refcounting code (e.g. in the DPMS off
+and/or framebuffer final-unref paths if I remember correctly) which assumes
+that waiting one vblank is enough to be able to unpin resources. Obviously,
+as this patch shows, this is not actually true. This patch doesn't make
+this any better or worse; just something to bear in mind. (I have WIP code
+which fixes this.)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Cheers,
+Daniel
 
-iQIcBAEBAgAGBQJUvTEzAAoJEN0jrNd/PrOhdhkQALMBzkN1mDndgqsU3OQdXFwL
-yYdJE4PbjbQFro2E8aVUR/hcAP/U7dyC41QtZfQODlExmbAn8oHcejORdRnihmCq
-axMTCECHYjeXgivLOhrRqTCLTZa2CzQ+LHwsYcOcKXb4cz8E+NB6O4zrSJGP0S2c
-DavYziQsZqAch9LwDsmty6pWAGleLBExyg7RnTqM5A4YnpHnQwYcoTqCXR3HUX5G
-fjj+VTm9ld8ioAJw3FzcyosYFlHzw3dkECcDODW1YWJF1qqegP4xaGLJ9RIv0bHA
-h7AddhOrOOBh++EgQ2aI/oE/cuocGGNLMuCy3R1ucRWeEPUh88oQBjeRYTzcCESa
-+CrFgWm8UcxOD5HJcsaj5zSU1+Xdr3Z4R/laCMiZbF5aMoCg2/ZGff5iz71guC12
-duvvlxYTjnJpAAfWr6K13YxLpJnvJdWDMrLfl/WGMcHG9F6/LnW8qZQhyoI/H+sH
-0gcWZ31rK/D/N41rq73obfShbhc64o2ITEqHfWUcl+z1iAPvc+gwl5c4hycek+fq
-jImHO+rvKlb5WumI021gsjVuKU/fI2dKWHVfdbTOnx8h1F4acADdh5BsDoD1s41J
-Kns07xqm7ntFmOvrWfZaKeDzEUXKoWo2NKHIpvwKpY1dwdMH6XZVNZODvBgBiGwZ
-m1ZUDcuP0E3HTo2ZvwBp
-=YISN
------END PGP SIGNATURE-----
+--001a11c223a2bcd3af050d03e749
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
---zx4FCpZtqtKETZ7O--
+<div dir=3D"ltr">Hi,<div class=3D"gmail_extra"><br><div class=3D"gmail_quot=
+e">On 12 January 2015 at 21:13, Gustavo Padovan <span dir=3D"ltr">&lt;<a hr=
+ef=3D"mailto:gustavo@padovan.org" target=3D"_blank">gustavo@padovan.org</a>=
+&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0=
+ 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">2014-12-30 Inki Dae &l=
+t;<a href=3D"mailto:inki.dae@samsung.com">inki.dae@samsung.com</a>&gt;:<div=
+><div class=3D"h5">
+&gt; On 2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 22:58, Gustavo Padovan wrote:=
+<br>&gt; &gt; +=C2=A0 =C2=A0 * This works around a race between a page_flip=
+ request and the latency<br>
+&gt; &gt; +=C2=A0 =C2=A0 * between vblank interrupt and this irq_handler:<b=
+r>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D&gt; FIMD vblank: BUF_START_S[0] =
+:=3D BUF_START[0], and asserts irq<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0| =3D&gt; fimd_win_commit(0) writes =
+new BUF_START[0]<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0|=C2=A0 =C2=A0 exynos_drm_crtc_try_d=
+o_flip() marks exynos_fb as prepared<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D&gt; fimd_irq_handler()<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0 =C2=A0 =C2=A0exynos_drm_crtc_finish=
+_pageflip() sees prepared exynos_fb,<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0and unma=
+ps &quot;old&quot; fb<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D=3D&gt; but, since BUF_START_S[0]=
+ still points to that &quot;old&quot; fb...<br>
+&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D=3D&gt; FIMD iommu fault<br>
+&gt; &gt; +=C2=A0 =C2=A0 */<br>
+&gt; &gt; +=C2=A0 =C2=A0start =3D readl(ctx-&gt;regs + VIDWx_BUF_START(0, 0=
+));<br>
+&gt; &gt; +=C2=A0 =C2=A0start_s =3D readl(ctx-&gt;regs + VIDWx_BUF_START_S(=
+0, 0));<br>
+&gt; &gt; +=C2=A0 =C2=A0if (start =3D=3D start_s)<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0exynos_drm_crtc_fi=
+nish_pageflip(ctx-&gt;drm_dev, ctx-&gt;pipe);<br>
+&gt;<span style=3D"color:rgb(34,34,34)">=C2=A0And what if &#39;start_s&#39;=
+ has a value different from one of &#39;start&#39;? Is it</span><br></div><=
+/div><span class=3D"">
+&gt; ok to skip finish_pageflip request this time? Shouldn&#39;t it ensure =
+to<br>
+&gt; wait for that until &#39;start_s&#39; has a value same as one of &#39;=
+start&#39;?<br>
+<br>
+</span>I think it is okay to skip finish_pageflip, but we could return dire=
+ctly<br>
+if they are different, so we keep the wait_vsync_queue running until the ne=
+xt<br>
+irq happens or it timeouts. How does this look to you?<br></blockquote><div=
+><br></div><div>Right, you&#39;d need to keep the vblank IRQ alive until st=
+art =3D=3D start_s.</div><div><br></div><div>As an aside, there is currentl=
+y some refcounting code (e.g. in the DPMS off and/or framebuffer final-unre=
+f paths if I remember correctly) which assumes that waiting one vblank is e=
+nough to be able to unpin resources. Obviously, as this patch shows, this i=
+s not actually true. This patch doesn&#39;t make this any better or worse; =
+just something to bear in mind. (I have WIP code which fixes this.)</div><d=
+iv><br></div><div>Cheers,</div><div>Daniel</div></div></div></div>
+
+--001a11c223a2bcd3af050d03e749--
+
+--===============0135256930==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0135256930==--
