@@ -1,80 +1,162 @@
-From: Inha Song <ideal.song@samsung.com>
-Subject: [alsa-devel] [PATCH v2 3/3] ARM: dts: Add sound nodes for
- exynos4412-trats2
-Date: Mon, 19 Jan 2015 18:48:22 +0900
-Message-ID: <1421660902-29679-4-git-send-email-ideal.song@samsung.com>
-References: <1421660902-29679-1-git-send-email-ideal.song@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1421660902-29679-1-git-send-email-ideal.song@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: alsa-devel@alsa-project.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, s.nawrocki@samsung.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, kgene@kernel.org, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv8 7/9] ARM: dts: Add PPMU dt node for Exynos5260 SoC
+Date: Mon, 19 Jan 2015 19:01:40 +0900
+Message-ID: <54BCD604.3030105@samsung.com>
+References: <1421066097-26237-1-git-send-email-cw00.choi@samsung.com>
+ <1421066097-26237-8-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:51133 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751357AbbASKB4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Jan 2015 05:01:56 -0500
+In-reply-to: <1421066097-26237-8-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>
 
-This patch add WM1811 audio codec, I2S interface and the sound
-machine nodes to enable audio on exynos4412-trats2 board.
+Dear all,
 
-Signed-off-by: Inha Song <ideal.song@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 39 +++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+I'll drop this patch because I can't test it on Exynos5260-based board.
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 29231b4..7a52cca 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -203,6 +203,25 @@
- 		};
- 	};
- 
-+	i2c@138A0000 {
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-slave-addr = <0x10>;
-+		samsung,i2c-max-bus-freq = <100000>;
-+		pinctrl-0 = <&i2c4_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+
-+		wm1811: wm1811@1a {
-+			compatible = "wlf,wm1811";
-+			reg = <0x1a>;
-+			clocks = <&pmu_system_controller 0>;
-+			clock-names = "MCLK1";
-+			DCVDD-supply = <&ldo3_reg>;
-+			DBVDD1-supply = <&ldo3_reg>;
-+			wlf,ldo1ena = <&gpj0 4 0>;
-+		};
-+	};
-+
- 	i2c@138D0000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-slave-addr = <0x10>;
-@@ -838,6 +857,26 @@
- 		};
- 	};
- 
-+	i2s0: i2s@03830000 {
-+		pinctrl-0 = <&i2s0_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
-+
-+	sound {
-+		compatible = "samsung,trats2-audio";
-+		assigned-clocks = <&pmu_system_controller 0>;
-+		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,model = "Trats2";
-+		samsung,audio-codec = <&wm1811>;
-+		samsung,audio-routing =
-+			"SPK", "SPKOUTLN",
-+			"SPK", "SPKOUTLP",
-+			"SPK", "SPKOUTRN",
-+			"SPK", "SPKOUTRP";
-+	};
-+
- 	exynos-usbphy@125B0000 {
- 		status = "okay";
- 	};
--- 
-2.0.0.390.gcb682f8
+Best Regards,
+Chanwoo Choi
+
+On 01/12/2015 09:34 PM, Chanwoo Choi wrote:
+> This patch adds PPMU (Performance Profiling Monitoring Unit) dt node
+> Exynos5260 SoC.
+> 
+> Exynos5260 SoC has following PPMU IPs:
+> - PPMU_DREX0_S0 0x10c60000
+> - PPMU_DREX0_S1 0x10c70000
+> - PPMU_DREX1_S0 0x10c80000
+> - PPMU_DREX1_S1 0x10c90000
+> - PPMU_EAGLE    0x10cc0000
+> - PPMU_KFC      0x10cd0000
+> - PPMU_MFC      0x11040000
+> - PPMU_G3D      0x11880000
+> - PPMU_FSYS     0x12220000
+> - PPMU_ISP      0x13370000
+> - PPMU_FICM     0x13cb0000
+> - PPMU_GSCL     0x13e60000
+> - PPMU_MSCL     0x13ee0000
+> - PPMU_FIMD0X   0x145b0000
+> - PPMU_FIMD1X   0x145c0000
+> 
+> The drivers/devfreq/exynos/exynos5_bus.c supports the memory bus frequency/
+> voltage scaling of Exynos5260 SoC with DEVFREQ framework.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+> Cc: Jonghwan Choi <jhbird.choi@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5260.dtsi | 90 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+> index 36da38e..26f3074 100644
+> --- a/arch/arm/boot/dts/exynos5260.dtsi
+> +++ b/arch/arm/boot/dts/exynos5260.dtsi
+> @@ -307,6 +307,96 @@
+>  			fifo-depth = <64>;
+>  			status = "disabled";
+>  		};
+> +
+> +		ppmu_drex0_s0: ppmu_drex0_s0@10c60000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x10c60000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_drex0_s1: ppmu_drex0_s1@10c70000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x10c70000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_drex1_s0: ppmu_drex1_s0@10c80000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x10c80000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_drex1_s1: ppmu_drex1_s1@10c90000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x10c90000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_eagle: ppmu_eagle@10cc0000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x10cc0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_kfc: ppmu_kfc@10cd0000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x10cd0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_mfc: ppmu_mfc@11040000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x11040000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_g3d: ppmu_g3d@11880000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x11880000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_fsys: ppmu_fsys@12220000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x12220000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_isp: ppmu_isp@13370000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x13370000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_fimc: ppmu_fimc@13cb0000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x13cb0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_gscl: ppmu_gscl@13e60000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x13e60000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_mscl: ppmu_gscl@13ee0000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x13ee0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_fimd0x: ppmu_fimd0x@145b0000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x145b0000 0x2000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ppmu_fimd1x: ppmu_fimd1x@145c0000 {
+> +			compatible = "samsung,exynos-ppmu";
+> +			reg = <0x145c0000 0x2000>;
+> +			status = "disabled";
+> +		};
+>  	};
+>  };
+>  
+> 
