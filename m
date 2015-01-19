@@ -1,154 +1,509 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH 01/29] drm/exynos/fimd: only finish pageflip if START ==
- START_S
-Date: Mon, 19 Jan 2015 16:35:07 +0000
-Message-ID: <CAPj87rPgZ6RvjP2H6VZL-FMCLzBWm2QSByR+7duF7mU2jid8rQ@mail.gmail.com>
-References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
- <1418911135-5207-2-git-send-email-gustavo@padovan.org>
- <54A2B13F.1030908@samsung.com> <20150112211327.GF2001@joana>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v3] thermal: exynos: Add TMU support for Exynos7 SoC
+Date: Mon, 19 Jan 2015 22:05:41 +0530
+Message-ID: <CAM4voamn6UEC3dndL54raGEssA7HjannKrmoywkzfEQpO4BjfA@mail.gmail.com>
+References: <1421479164-30055-1-git-send-email-a.kesavan@samsung.com>
+	<20150119140422.7a2c4fe6@amdc2363>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0135256930=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150112211327.GF2001@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150119140422.7a2c4fe6@amdc2363>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Amit Kachhap <amit.daniel@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============0135256930==
-Content-Type: multipart/alternative; boundary=001a11c223a2bcd3af050d03e749
+Hi Lukasz,
 
---001a11c223a2bcd3af050d03e749
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On 12 January 2015 at 21:13, Gustavo Padovan <gustavo@padovan.org> wrote:
-
-> 2014-12-30 Inki Dae <inki.dae@samsung.com>:
-> > On 2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 22:58, Gustavo Padovan wrote:
-> > > +    * This works around a race between a page_flip request and the
-> latency
-> > > +    * between vblank interrupt and this irq_handler:
-> > > +    *   =3D> FIMD vblank: BUF_START_S[0] :=3D BUF_START[0], and asse=
-rts
-> irq
-> > > +    *   | =3D> fimd_win_commit(0) writes new BUF_START[0]
-> > > +    *   |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepar=
-ed
-> > > +    *   =3D> fimd_irq_handler()
-> > > +    *       exynos_drm_crtc_finish_pageflip() sees prepared exynos_f=
-b,
-> > > +    *           and unmaps "old" fb
-> > > +    *   =3D=3D> but, since BUF_START_S[0] still points to that "old"=
- fb...
-> > > +    *   =3D=3D> FIMD iommu fault
-> > > +    */
-> > > +   start =3D readl(ctx->regs + VIDWx_BUF_START(0, 0));
-> > > +   start_s =3D readl(ctx->regs + VIDWx_BUF_START_S(0, 0));
-> > > +   if (start =3D=3D start_s)
-> > >             exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
-> > And what if 'start_s' has a value different from one of 'start'? Is it
-> > ok to skip finish_pageflip request this time? Shouldn't it ensure to
-> > wait for that until 'start_s' has a value same as one of 'start'?
+On Mon, Jan 19, 2015 at 6:34 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Hi Abhilash,
 >
-> I think it is okay to skip finish_pageflip, but we could return directly
-> if they are different, so we keep the wait_vsync_queue running until the
-> next
-> irq happens or it timeouts. How does this look to you?
+>> Add registers, bit fields and compatible strings for Exynos7 TMU
+>> (Thermal Management Unit). Following are a few of the differences
+>> in the Exynos7 TMU from earlier SoCs:
+>>         - 8 trigger levels
+>>         - Different bit offsets and more registers for the rising
+>>         and falling thresholds.
+>>         - New power down detection bit in the TMU_CONTROL register
+>>         which does not update the CURRENT_TEMP0 when tmu power down
+>>         is detected.
+>>         - Change in bit offset for the NEXT_DATA field of EMUL_CON
+>>         register. EMUL_CON register address has also changed.
+>>         - INTSTAT and INTCLEAR registers present in earlier SoCs
+>>         have been combined into one INTPEND register. The register
+>>         address for INTCLEAR and INTPEND is also different.
+>>         - Since there are 8 rising/falling interrupts as against
+>>         at most 4 in earlier SoCs the INTEN bit offsets are different.
+>>         - Multiple probe support which is handled by a TMU_CONTROL1
+>>         register (No support for this in the current patch).
+>>
+>> This patch adds special clock support required only for Exynos7
+>> and updates the bindings documentation appropriately. It also updates
+>> the "code_to_temp" prototype as Exynos7 has 9 bit code-temp mapping.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> ---
+>> This patch is based on Lukasz Majewski's Exynos TMU v4 patchset:
+>> http://www.spinics.net/lists/linux-samsung-soc/msg41183.html
+>>
+>> Changes since v2:
+>>       - Rebased on top of Lukasz' latest exynos tmu series (v4).
+>>       - Added new exynos7 soc_type.
+>> Changes since v1:
+>>       - Rebased on top of Lukasz' latest exynos tmu series (v2).
+>>       - Added sclk support to patch adding Exynos7 tmu support.
+>>       Previously, it was a separate patch.
+>>       - Used the SOC type to decide if sclk is present.
+>>
+>>  .../devicetree/bindings/thermal/exynos-thermal.txt |    4 +
+>>  drivers/thermal/samsung/exynos_tmu.c               |  203
+>> +++++++++++++++++++-
+>> drivers/thermal/samsung/exynos_tmu.h               |    1 + 3 files
+>> changed, 199 insertions(+), 9 deletions(-)
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt index
+>> 0f44932..695150a 100644 ---
+>> a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt +++
+>> b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt @@
+>> -12,6 +12,7 @@ "samsung,exynos5420-tmu-ext-triminfo" for TMU channels
+>> 2, 3 and 4 Exynos5420 (Must pass triminfo base and triminfo clock)
+>> "samsung,exynos5440-tmu"
+>> +            "samsung,exynos7-tmu"
+>>  - interrupt-parent : The phandle for the interrupt controller
+>>  - reg : Address range of the thermal registers. For soc's which has
+>> multiple instances of TMU and some registers are shared across all
+>> TMU's like @@ -32,10 +33,13 @@
+>>  - clocks : The main clocks for TMU device
+>>       -- 1. operational clock for TMU channel
+>>       -- 2. optional clock to access the shared registers of TMU
+>> channel
+>> +     -- 3. optional special clock for functional operation
+>>  - clock-names : Thermal system clock name
+>>       -- "tmu_apbif" operational clock for current TMU channel
+>>       -- "tmu_triminfo_apbif" clock to access the shared triminfo
+>> register for current TMU channel
+>> +     -- "tmu_sclk" clock for functional operation of the current
+>> TMU
+>> +             channel
+>>  - vtmu-supply: This entry is optional and provides the regulator
+>> node supplying voltage to TMU. If needed this entry can be placed
+>> inside board/platform specific dts file.
 >
+> I would recommend splitting the documentation from the code. IMHO it
+> would be more readable.
 
-Right, you'd need to keep the vblank IRQ alive until start =3D=3D start_s.
+I will split the documentation out into a separate patch.
 
-As an aside, there is currently some refcounting code (e.g. in the DPMS off
-and/or framebuffer final-unref paths if I remember correctly) which assumes
-that waiting one vblank is enough to be able to unpin resources. Obviously,
-as this patch shows, this is not actually true. This patch doesn't make
-this any better or worse; just something to bear in mind. (I have WIP code
-which fixes this.)
+>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+>> b/drivers/thermal/samsung/exynos_tmu.c index 633a9e2..8b26acb 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -119,6 +119,26 @@
+>>  #define EXYNOS5440_TMU_TH_RISE4_SHIFT                24
+>>  #define EXYNOS5440_EFUSE_SWAP_OFFSET         8
+>>
+>> +/* Exynos7 specific registers */
+>> +#define EXYNOS7_THD_TEMP_RISE7_6             0x50
+>> +#define EXYNOS7_THD_TEMP_FALL7_6             0x60
+>> +#define EXYNOS7_TMU_REG_INTEN                        0x110
+>> +#define EXYNOS7_TMU_REG_INTPEND                      0x118
+>                                                 ^^^^^ I suppose that
+>                                                 this misalignment is
+>                                                 only done by my mail
+>                                                 client and checkpatch
+>                                                 is not complaining.
 
-Cheers,
-Daniel
+I re-ran checkpatch and it did not report any warnings, so perhaps it
+is your e-mail client.
 
---001a11c223a2bcd3af050d03e749
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+>> +#define EXYNOS7_TMU_REG_EMUL_CON             0x160
+>> +
+>> +#define EXYNOS7_TMU_TEMP_MASK                        0x1ff
+>> +#define EXYNOS7_PD_DET_EN_SHIFT                      23
+>> +#define EXYNOS7_TMU_INTEN_RISE0_SHIFT                0
+>> +#define EXYNOS7_TMU_INTEN_RISE1_SHIFT                1
+>> +#define EXYNOS7_TMU_INTEN_RISE2_SHIFT                2
+>> +#define EXYNOS7_TMU_INTEN_RISE3_SHIFT                3
+>> +#define EXYNOS7_TMU_INTEN_RISE4_SHIFT                4
+>> +#define EXYNOS7_TMU_INTEN_RISE5_SHIFT                5
+>> +#define EXYNOS7_TMU_INTEN_RISE6_SHIFT                6
+>> +#define EXYNOS7_TMU_INTEN_RISE7_SHIFT                7
+>> +#define EXYNOS7_EMUL_DATA_SHIFT                      7
+>> +#define EXYNOS7_EMUL_DATA_MASK                       0x1ff
+>> +
+>>  #define MCELSIUS     1000
+>>  /**
+>>   * struct exynos_tmu_data : A structure to hold the private data of
+>> the TMU @@ -133,6 +153,7 @@
+>>   * @lock: lock to implement synchronization.
+>>   * @clk: pointer to the clock structure.
+>>   * @clk_sec: pointer to the clock structure for accessing the
+>> base_second.
+>> + * @sclk: pointer to the clock structure for accessing the tmu
+>> special clk.
+>>   * @temp_error1: fused value of the first point trim.
+>>   * @temp_error2: fused value of the second point trim.
+>>   * @regulator: pointer to the TMU regulator structure.
+>> @@ -152,8 +173,8 @@ struct exynos_tmu_data {
+>>       enum soc_type soc;
+>>       struct work_struct irq_work;
+>>       struct mutex lock;
+>> -     struct clk *clk, *clk_sec;
+>> -     u8 temp_error1, temp_error2;
+>> +     struct clk *clk, *clk_sec, *sclk;
+>> +     u16 temp_error1, temp_error2;
+>>       struct regulator *regulator;
+>>       struct thermal_zone_device *tzd;
+>>
+>> @@ -223,7 +244,7 @@ static int temp_to_code(struct exynos_tmu_data
+>> *data, u8 temp)
+>>   * Calculate a temperature value from a temperature code.
+>>   * The unit of the temperature is degree Celsius.
+>>   */
+>> -static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
+>> +static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+>>  {
+>>       struct exynos_tmu_platform_data *pdata = data->pdata;
+>>       int temp;
+>> @@ -513,6 +534,81 @@ static int exynos5440_tmu_initialize(struct
+>> platform_device *pdev) return ret;
+>>  }
+>>
+>> +static int exynos7_tmu_initialize(struct platform_device *pdev)
+>> +{
+>> +     struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>> +     struct thermal_zone_device *tz = data->tzd;
+>> +     struct exynos_tmu_platform_data *pdata = data->pdata;
+>> +     unsigned int status, trim_info;
+>> +     unsigned int rising_threshold = 0, falling_threshold = 0;
+>> +     int ret = 0, threshold_code, i;
+>> +     unsigned long temp, temp_hist;
+>> +     unsigned int reg_off, bit_off;
+>> +
+>> +     status = readb(data->base + EXYNOS_TMU_REG_STATUS);
+>> +     if (!status) {
+>> +             ret = -EBUSY;
+>> +             goto out;
+>> +     }
+>> +
+>> +     trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+>> +
+>> +     data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+>> +     if (!data->temp_error1 ||
+>> +             (pdata->min_efuse_value > data->temp_error1) ||
+>> +             (data->temp_error1 > pdata->max_efuse_value))
+>> +             data->temp_error1 = pdata->efuse_value &
+>> EXYNOS_TMU_TEMP_MASK; +
+>> +     /* Write temperature code for rising and falling threshold */
+>> +     for (i = (of_thermal_get_ntrips(tz) - 1); i >= 0; i--) {
+>> +             /*
+>> +              * On exynos7 there are 4 rising and 4 falling
+>> threshold
+>> +              * registers (0x50-0x5c and 0x60-0x6c respectively).
+>> Each
+>> +              * register holds the value of two threshold levels
+>> (at bit
+>> +              * offsets 0 and 16). Based on the fact that there
+>> are atmost
+>> +              * eight possible trigger levels, calculate the
+>> register and
+>> +              * bit offsets where the threshold levels are to be
+>> written.
+>> +              *
+>> +              * e.g. EXYNOS7_THD_TEMP_RISE7_6 (0x50)
+>> +              * [24:16] - Threshold level 7
+>> +              * [8:0] - Threshold level 6
+>> +              * e.g. EXYNOS7_THD_TEMP_RISE5_4 (0x54)
+>> +              * [24:16] - Threshold level 5
+>> +              * [8:0] - Threshold level 4
+>> +              *
+>> +              * and similarly for falling thresholds.
+>> +              */
+>> +             reg_off = ((7 - i) / 2) * 4;
+>> +             bit_off = ((8 - i) % 2);
+>                           I guess that above code is for setting proper
+>                           offsets for storing thresholds. A comment
+>                           would clarify the potential doubts.
 
-<div dir=3D"ltr">Hi,<div class=3D"gmail_extra"><br><div class=3D"gmail_quot=
-e">On 12 January 2015 at 21:13, Gustavo Padovan <span dir=3D"ltr">&lt;<a hr=
-ef=3D"mailto:gustavo@padovan.org" target=3D"_blank">gustavo@padovan.org</a>=
-&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0=
- 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">2014-12-30 Inki Dae &l=
-t;<a href=3D"mailto:inki.dae@samsung.com">inki.dae@samsung.com</a>&gt;:<div=
-><div class=3D"h5">
-&gt; On 2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 22:58, Gustavo Padovan wrote:=
-<br>&gt; &gt; +=C2=A0 =C2=A0 * This works around a race between a page_flip=
- request and the latency<br>
-&gt; &gt; +=C2=A0 =C2=A0 * between vblank interrupt and this irq_handler:<b=
-r>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D&gt; FIMD vblank: BUF_START_S[0] =
-:=3D BUF_START[0], and asserts irq<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0| =3D&gt; fimd_win_commit(0) writes =
-new BUF_START[0]<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0|=C2=A0 =C2=A0 exynos_drm_crtc_try_d=
-o_flip() marks exynos_fb as prepared<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D&gt; fimd_irq_handler()<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0 =C2=A0 =C2=A0exynos_drm_crtc_finish=
-_pageflip() sees prepared exynos_fb,<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0and unma=
-ps &quot;old&quot; fb<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D=3D&gt; but, since BUF_START_S[0]=
- still points to that &quot;old&quot; fb...<br>
-&gt; &gt; +=C2=A0 =C2=A0 *=C2=A0 =C2=A0=3D=3D&gt; FIMD iommu fault<br>
-&gt; &gt; +=C2=A0 =C2=A0 */<br>
-&gt; &gt; +=C2=A0 =C2=A0start =3D readl(ctx-&gt;regs + VIDWx_BUF_START(0, 0=
-));<br>
-&gt; &gt; +=C2=A0 =C2=A0start_s =3D readl(ctx-&gt;regs + VIDWx_BUF_START_S(=
-0, 0));<br>
-&gt; &gt; +=C2=A0 =C2=A0if (start =3D=3D start_s)<br>
-&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0exynos_drm_crtc_fi=
-nish_pageflip(ctx-&gt;drm_dev, ctx-&gt;pipe);<br>
-&gt;<span style=3D"color:rgb(34,34,34)">=C2=A0And what if &#39;start_s&#39;=
- has a value different from one of &#39;start&#39;? Is it</span><br></div><=
-/div><span class=3D"">
-&gt; ok to skip finish_pageflip request this time? Shouldn&#39;t it ensure =
-to<br>
-&gt; wait for that until &#39;start_s&#39; has a value same as one of &#39;=
-start&#39;?<br>
-<br>
-</span>I think it is okay to skip finish_pageflip, but we could return dire=
-ctly<br>
-if they are different, so we keep the wait_vsync_queue running until the ne=
-xt<br>
-irq happens or it timeouts. How does this look to you?<br></blockquote><div=
-><br></div><div>Right, you&#39;d need to keep the vblank IRQ alive until st=
-art =3D=3D start_s.</div><div><br></div><div>As an aside, there is currentl=
-y some refcounting code (e.g. in the DPMS off and/or framebuffer final-unre=
-f paths if I remember correctly) which assumes that waiting one vblank is e=
-nough to be able to unpin resources. Obviously, as this patch shows, this i=
-s not actually true. This patch doesn&#39;t make this any better or worse; =
-just something to bear in mind. (I have WIP code which fixes this.)</div><d=
-iv><br></div><div>Cheers,</div><div>Daniel</div></div></div></div>
+Sure, I will make the comment above more descriptive.
 
---001a11c223a2bcd3af050d03e749--
+>
+>> +
+>> +             tz->ops->get_trip_temp(tz, i, &temp);
+>> +             temp /= MCELSIUS;
+>> +
+>> +             tz->ops->get_trip_hyst(tz, i, &temp_hist);
+>> +             temp_hist = temp - (temp_hist / MCELSIUS);
+>> +
+>> +             threshold_code = temp_to_code(data, temp);
+>> +             rising_threshold = readl(data->base +
+>> +                     EXYNOS7_THD_TEMP_RISE7_6 + reg_off);
+>> +             rising_threshold &= ~(0x1ff << (16 * bit_off));
+>                                       It would be probably enough to
+>                                       explain what does the 0x1ff mean
+>                                       in a comment.
 
---===============0135256930==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+OK, will do.
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+>> +             rising_threshold |= threshold_code << (16 * bit_off);
+>> +             writel(rising_threshold,
+>> +                     data->base + EXYNOS7_THD_TEMP_RISE7_6 +
+>> reg_off); +
+>> +             threshold_code = temp_to_code(data, temp_hist);
+>> +             falling_threshold = readl(data->base +
+>> +                     EXYNOS7_THD_TEMP_FALL7_6 + reg_off);
+>> +             falling_threshold &= ~(0x1ff << (16 * bit_off));
+>                                        ^^^^^
+>                                        The same as above.
 
---===============0135256930==--
+OK.
+
+>
+>> +             falling_threshold |= threshold_code << (16 *
+>> bit_off);
+>> +             writel(falling_threshold,
+>> +                     data->base + EXYNOS7_THD_TEMP_FALL7_6 +
+>> reg_off);
+>> +     }
+>> +
+>> +     data->tmu_clear_irqs(data);
+>> +out:
+>> +     return ret;
+>> +}
+>> +
+>>  static void exynos4210_tmu_control(struct platform_device *pdev,
+>> bool on) {
+>>       struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>> @@ -573,6 +669,46 @@ static void exynos5440_tmu_control(struct
+>> platform_device *pdev, bool on) writel(con, data->base +
+>> EXYNOS5440_TMU_S0_7_CTRL); }
+>>
+>> +static void exynos7_tmu_control(struct platform_device *pdev, bool
+>> on) +{
+>> +     struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>> +     struct thermal_zone_device *tz = data->tzd;
+>> +     unsigned int con, interrupt_en;
+>> +
+>> +     con = get_con_reg(data, readl(data->base +
+>> EXYNOS_TMU_REG_CONTROL)); +
+>> +     if (on) {
+>> +             con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+>> +             interrupt_en =
+>> +                     (of_thermal_is_trip_valid(tz, 7)
+>> +                     << EXYNOS7_TMU_INTEN_RISE7_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 6)
+>> +                     << EXYNOS7_TMU_INTEN_RISE6_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 5)
+>> +                     << EXYNOS7_TMU_INTEN_RISE5_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 4)
+>> +                     << EXYNOS7_TMU_INTEN_RISE4_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 3)
+>> +                     << EXYNOS7_TMU_INTEN_RISE3_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 2)
+>> +                     << EXYNOS7_TMU_INTEN_RISE2_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 1)
+>> +                     << EXYNOS7_TMU_INTEN_RISE1_SHIFT) |
+>> +                     (of_thermal_is_trip_valid(tz, 0)
+>> +                     << EXYNOS7_TMU_INTEN_RISE0_SHIFT);
+>> +
+>> +             interrupt_en |=
+>> +                     interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
+>> +     } else {
+>> +             con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+>> +             interrupt_en = 0; /* Disable all interrupts */
+>> +     }
+>> +     con |= 1 << EXYNOS7_PD_DET_EN_SHIFT;
+>> +
+>> +     writel(interrupt_en, data->base + EXYNOS7_TMU_REG_INTEN);
+>> +     writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+>> +}
+>> +
+>>  int exynos_get_temp(void *p, long *temp)
+>>  {
+>>       struct exynos_tmu_data *data = p;
+>> @@ -602,9 +738,19 @@ static u32 get_emul_con_reg(struct
+>> exynos_tmu_data *data, unsigned int val, val &=
+>> ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT); val |=
+>> (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT); }
+>> -             val &= ~(EXYNOS_EMUL_DATA_MASK <<
+>> EXYNOS_EMUL_DATA_SHIFT);
+>> -             val |= (temp_to_code(data, temp) <<
+>> EXYNOS_EMUL_DATA_SHIFT) |
+>> -                     EXYNOS_EMUL_ENABLE;
+>> +             if (data->soc == SOC_ARCH_EXYNOS7) {
+>> +                     val &= ~(EXYNOS7_EMUL_DATA_MASK <<
+>> +                             EXYNOS7_EMUL_DATA_SHIFT);
+>> +                     val |= (temp_to_code(data, temp) <<
+>> +                             EXYNOS7_EMUL_DATA_SHIFT) |
+>> +                             EXYNOS_EMUL_ENABLE;
+>> +             } else {
+>> +                     val &= ~(EXYNOS_EMUL_DATA_MASK <<
+>> +                             EXYNOS_EMUL_DATA_SHIFT);
+>> +                     val |= (temp_to_code(data, temp) <<
+>> +                             EXYNOS_EMUL_DATA_SHIFT) |
+>> +                             EXYNOS_EMUL_ENABLE;
+>> +             }
+>>       } else {
+>>               val &= ~EXYNOS_EMUL_ENABLE;
+>>       }
+>> @@ -620,6 +766,8 @@ static void exynos4412_tmu_set_emulation(struct
+>> exynos_tmu_data *data,
+>>       if (data->soc == SOC_ARCH_EXYNOS5260)
+>>               emul_con = EXYNOS5260_EMUL_CON;
+>> +     else if (data->soc == SOC_ARCH_EXYNOS7)
+>> +             emul_con = EXYNOS7_TMU_REG_EMUL_CON;
+>>       else
+>>               emul_con = EXYNOS_EMUL_CON;
+>>
+>> @@ -683,6 +831,12 @@ static int exynos5440_tmu_read(struct
+>> exynos_tmu_data *data) return readb(data->base +
+>> EXYNOS5440_TMU_S0_7_TEMP); }
+>>
+>> +static int exynos7_tmu_read(struct exynos_tmu_data *data)
+>> +{
+>> +     return readw(data->base + EXYNOS_TMU_REG_CURRENT_TEMP) &
+>> +             EXYNOS7_TMU_TEMP_MASK;
+>> +}
+>> +
+>>  static void exynos_tmu_work(struct work_struct *work)
+>>  {
+>>       struct exynos_tmu_data *data = container_of(work,
+>> @@ -721,6 +875,8 @@ static void exynos4210_tmu_clear_irqs(struct
+>> exynos_tmu_data *data) if (data->soc == SOC_ARCH_EXYNOS5260) {
+>>               tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
+>>               tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
+>> +     } else if (data->soc == SOC_ARCH_EXYNOS7) {
+>> +             tmu_intstat = tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
+>>       } else {
+>>               tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
+>>               tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
+>> @@ -782,6 +938,9 @@ static const struct of_device_id
+>> exynos_tmu_match[] = { {
+>>               .compatible = "samsung,exynos5440-tmu",
+>>       },
+>> +     {
+>> +             .compatible = "samsung,exynos7-tmu",
+>
+>                                 I'm a bit concerned with this
+>                                 "exynos7-tmu" name.
+>                                 From the exynos4 history (and since we
+>                                 extract tmu type from the compatible) I
+>                                 can predict that it would be better to
+>                                 give the full name of the SoC to be
+>                                 supported - e.g. exynos7XXX-tmu.
+
+Exynos7 is the name of the 64-bit arm SoC for which I am adding TMU
+support, this has been previously discussed here:
+http://www.spinics.net/lists/linux-samsung-soc/msg36765.html and in a
+few other threads.
+
+
+>> +     },
+>>       {},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, exynos_tmu_match);
+>> @@ -805,6 +964,8 @@ static int exynos_of_get_soc_type(struct
+>> device_node *np) return SOC_ARCH_EXYNOS5420_TRIMINFO;
+>>       else if (of_device_is_compatible(np,
+>> "samsung,exynos5440-tmu")) return SOC_ARCH_EXYNOS5440;
+>> +     else if (of_device_is_compatible(np, "samsung,exynos7-tmu"))
+>> +             return SOC_ARCH_EXYNOS7;
+>>
+>>       return -EINVAL;
+>>  }
+>> @@ -928,6 +1089,13 @@ static int exynos_map_dt_data(struct
+>> platform_device *pdev) data->tmu_set_emulation =
+>> exynos5440_tmu_set_emulation; data->tmu_clear_irqs =
+>> exynos5440_tmu_clear_irqs; break;
+>> +     case SOC_ARCH_EXYNOS7:
+>> +             data->tmu_initialize = exynos7_tmu_initialize;
+>> +             data->tmu_control = exynos7_tmu_control;
+>> +             data->tmu_read = exynos7_tmu_read;
+>> +             data->tmu_set_emulation =
+>> exynos4412_tmu_set_emulation;
+>> +             data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
+>> +             break;
+>>       default:
+>>               dev_err(&pdev->dev, "Platform not supported\n");
+>>               return -EINVAL;
+>> @@ -1017,27 +1185,43 @@ static int exynos_tmu_probe(struct
+>> platform_device *pdev) goto err_clk_sec;
+>>       }
+>>
+>> +     if (data->soc == SOC_ARCH_EXYNOS7) {
+>> +             data->sclk = devm_clk_get(&pdev->dev, "tmu_sclk");
+>> +             if (IS_ERR(data->sclk)) {
+>> +                     dev_err(&pdev->dev, "Failed to get sclk\n");
+>> +                     goto err_clk;
+>> +             } else {
+>> +                     ret = clk_prepare_enable(data->sclk);
+>> +                     if (ret) {
+>> +                             dev_err(&pdev->dev, "Failed to
+>> enable sclk\n");
+>> +                             goto err_clk;
+>> +                     }
+>> +             }
+>> +     }
+>> +
+>>       ret = exynos_tmu_initialize(pdev);
+>>       if (ret) {
+>>               dev_err(&pdev->dev, "Failed to initialize TMU\n");
+>> -             goto err_clk;
+>> +             goto err_sclk;
+>>       }
+>>
+>>       ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
+>>               IRQF_TRIGGER_RISING | IRQF_SHARED,
+>> dev_name(&pdev->dev), data); if (ret) {
+>>               dev_err(&pdev->dev, "Failed to request irq: %d\n",
+>> data->irq);
+>> -             goto err_clk;
+>> +             goto err_sclk;
+>>       }
+>>
+>>       ret = exynos_tmu_initialize(pdev);
+>>       if (ret) {
+>>               dev_err(&pdev->dev, "Failed to initialize TMU\n");
+>> -             goto err_clk;
+>> +             goto err_sclk;
+>>       }
+>>       exynos_tmu_control(pdev, true);
+>>       return 0;
+>>
+>> +err_sclk:
+>> +     clk_disable_unprepare(data->sclk);
+>>  err_clk:
+>>       clk_unprepare(data->clk);
+>>  err_clk_sec:
+>> @@ -1057,6 +1241,7 @@ static int exynos_tmu_remove(struct
+>> platform_device *pdev) thermal_zone_of_sensor_unregister(&pdev->dev,
+>> tzd); exynos_tmu_control(pdev, false);
+>>
+>> +     clk_disable_unprepare(data->sclk);
+>>       clk_unprepare(data->clk);
+>>       if (!IS_ERR(data->clk_sec))
+>>               clk_unprepare(data->clk_sec);
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.h
+>> b/drivers/thermal/samsung/exynos_tmu.h index d876d4c..d7c34bd 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -34,6 +34,7 @@ enum soc_type {
+>>       SOC_ARCH_EXYNOS5420,
+>>       SOC_ARCH_EXYNOS5420_TRIMINFO,
+>>       SOC_ARCH_EXYNOS5440,
+>> +     SOC_ARCH_EXYNOS7,
+>>  };
+>>
+>>  /**
+>
+> I think that the code is OK, despite some minor comments.
+>
+> Thanks Abhilash !
+
+Thanks much for the review. I will re-spin addressing your comments soon.
+
+Regards,
+Abhilash
