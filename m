@@ -1,58 +1,44 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 5/8] [media] exynos-gsc: Fixup clock management at
- ->remove()
-Date: Mon, 19 Jan 2015 14:22:37 +0100
-Message-ID: <1421673760-2600-6-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH V2 6/8] [media] exynos-gsc: Do full clock gating at runtime PM suspend
+Date: Mon, 19 Jan 2015 14:22:38 +0100
+Message-ID: <1421673760-2600-7-git-send-email-ulf.hansson@linaro.org>
 References: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-media-owner@vger.kernel.org
 To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To make sure the clock is fully gated in ->remove(), we first need to
-to bring the device into full power by invoking pm_runtime_get_sync().
-
-Then, let's both unprepare and disable the clock.
+To potentially save more power in runtime PM suspend state, let's also
+prepare/unprepare the clock from the runtime PM callbacks.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index e84bc35..5d3cfe8 100644
+index 5d3cfe8..0b126eb 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1104,12 +1104,15 @@ static int gsc_remove(struct platform_device *pdev)
- {
- 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
+@@ -1163,7 +1163,7 @@ static int gsc_runtime_resume(struct device *dev)
  
-+	pm_runtime_get_sync(&pdev->dev);
-+
- 	gsc_unregister_m2m_device(gsc);
- 	v4l2_device_unregister(&gsc->v4l2_dev);
--
- 	vb2_dma_contig_cleanup_ctx(gsc->alloc_ctx);
-+	clk_disable_unprepare(gsc->clock);
-+
- 	pm_runtime_disable(&pdev->dev);
--	clk_unprepare(gsc->clock);
-+	pm_runtime_put_noidle(&pdev->dev);
+ 	pr_debug("gsc%d: state: 0x%lx", gsc->id, gsc->state);
  
- 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
- 	return 0;
+-	ret = clk_enable(gsc->clock);
++	ret = clk_prepare_enable(gsc->clock);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1181,7 +1181,7 @@ static int gsc_runtime_suspend(struct device *dev)
+ 
+ 	ret = gsc_m2m_suspend(gsc);
+ 	if (!ret)
+-		clk_disable(gsc->clock);
++		clk_disable_unprepare(gsc->clock);
+ 
+ 	pr_debug("gsc%d: state: 0x%lx", gsc->id, gsc->state);
+ 	return ret;
 -- 
 1.9.1
