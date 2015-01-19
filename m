@@ -1,184 +1,60 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
-Date: Mon, 19 Jan 2015 15:04:00 +0900
-Message-ID: <54BC9E50.5010804@samsung.com>
-References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
- <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com>
- <54B8533C.3070000@math.uni-bielefeld.de> <54B99178.1060006@gmx.net>
- <54B99462.6020609@gmx.net>
+Subject: Re: [PATCH] ARM: exynos: fix UART address selection for DEBUG_LL
+Date: Mon, 19 Jan 2015 15:55:47 +0900
+Message-ID: <54BCAA73.5080404@samsung.com>
+References: <1411728234-29705-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36516 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750733AbbASGDk (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:10078 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751180AbbASGzb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jan 2015 01:03:40 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 19 Jan 2015 01:55:31 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NIE00KIHU624940@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Jan 2015 15:03:38 +0900 (KST)
-In-reply-to: <54B99462.6020609@gmx.net>
+ with ESMTP id <0NIE00IJDWKCDE70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Jan 2015 15:55:24 +0900 (KST)
+In-reply-to: <1411728234-29705-1-git-send-email-jy0922.shim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: cw00.choi@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com, kgene@kernel.org
 
-Hi Tobias,
+Hi kukjin,
 
-On 01/17/2015 07:44 AM, Tobias Jakobi wrote:
-> Tobias Jakobi wrote:
->> Hello,
->>
->> so OK, this doesn't look too good.
->>
->> Tobias Jakobi wrote:
->>> I checked with my panel just now and played around a bit with the DRM
->>> (opening, vsync, etc.). However on deinitialization the entire system
->>> locked up. I currently haven't hooked the board up to the serial
->>> console, otherwise I would've tried to extract some more meaningful
->>> information.
->>>
->>> Going to check again more thoroughly on the weekend what exactly
->>> triggers the lockup.
->>
->> So, first of all I did my initial test with the exynos video backend of
->> RetroArch. But it turns out that there's no fancy application needed. I
->> now tested this with the 'modetest' application from libdrm, and did this:
->>
->> ./modetest -M exynos -s 16@13:1920x1080
->> setting mode 1920x1080-60Hz@XR24 on connectors 16, crtc 13
->> ^C
->> ./modetest -M exynos -s 16@13:640x480
->> setting mode 640x480-60Hz@XR24 on connectors 16, crtc 13
->> ^C
->> ./modetest -M exynos -s 16@13:640x480
->> setting mode 640x480-60Hz@XR24 on connectors 16, crtc 13
->> ^C
->> ./modetest -M exynos -s 16@13:640x480
->>
->> The board instantly died then. No kernel log output from the serial
->> console, the heartbeat just stops and the board is dead. Need to
->> power-cycle to get it running again.
->>
->> I'm unsure how to triage this at all.
->>
->> @Marek: Could you check if this also happens for you?
+On 09/26/2014 07:43 PM, Joonyoung Shim wrote:
+> The exynos5 SoCs using A15+A7 can boot to A15 or A7. If it boots using
+> A7, it can't detect right UART physical address only the part number of
+> CP15. It's possible to solve as checking Cluster ID additionally.
+> 
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  arch/arm/include/debug/exynos.S | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/include/debug/exynos.S b/arch/arm/include/debug/exynos.S
+> index b17fdb7..60bf3c2 100644
+> --- a/arch/arm/include/debug/exynos.S
+> +++ b/arch/arm/include/debug/exynos.S
+> @@ -24,7 +24,11 @@
+>  		mrc	p15, 0, \tmp, c0, c0, 0
+>  		and	\tmp, \tmp, #0xf0
+>  		teq	\tmp, #0xf0		@@ A15
+> -		ldreq	\rp, =EXYNOS5_PA_UART
+> +		beq	100f
+> +		mrc	p15, 0, \tmp, c0, c0, 5
+> +		and	\tmp, \tmp, #0xf00
+> +		teq	\tmp, #0x100		@@ A15 + A7 but boot to A7
+> +100:		ldreq	\rp, =EXYNOS5_PA_UART
+>  		movne	\rp, #EXYNOS4_PA_UART	@@ EXYNOS4
+>  		ldr	\rv, =S3C_VA_UART
+>  #if CONFIG_DEBUG_S3C_UART != 0
 > 
 
-Could you test after apply IOMMU v4 patchset of Marek and enable with
-CONFIG_DRM_EXYNOS_IOMMU?
-
-> In addition to the simple 'set mode' test, I also tried the 'vsync page
-> flip' one:
-> 
-> ./modetest -M exynos -v -s 16@13:1280x720
-> 
-> While I haven't managed to lock up the system that way (I didn't try to
-> repeatedly kill and start this test), I managed to produce kernel
-> warnings that way.
-> 
-
-Hmm please refer below posted patch, same issue?
-
-http://www.spinics.net/lists/dri-devel/msg75181.html
+Any comments?
 
 Thanks.
-
-> Relevant parts here:
-> [  108.173644] lcd0-power-domain: Power-on latency exceeded, new value
-> 364958 ns
-> [  108.174010] tv-power-domain: Power-on latency exceeded, new value
-> 350083 ns
-> [  192.632246] lcd0-power-domain: Power-on latency exceeded, new value
-> 419499 ns
-> [  192.632695] tv-power-domain: Power-on latency exceeded, new value
-> 408167 ns
-> [  195.257343] ------------[ cut here ]------------
-> [  195.257379] WARNING: CPU: 0 PID: 0 at drivers/gpu/drm/drm_irq.c:1072
-> drm_vblank_put+0xd8/0xf0()
-> [  195.257385] Modules linked in: bridge stp llc bnep btrfs xor xor_neon
-> zlib_inflate zlib_deflate raid6_pq ecb btusb bluetooth usb_storage
-> [  195.257429] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 3.19.0-rc4+ #3
-> [  195.257435] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [  195.257440] Backtrace:
-> [  195.257462] [<c001212c>] (dump_backtrace) from [<c0012344>]
-> (show_stack+0x18/0x1c)
-> [  195.257468]  r6:c0595c30 r5:00000000 r4:c063ba90 r3:00000000
-> [  195.257494] [<c001232c>] (show_stack) from [<c048f8f8>]
-> (dump_stack+0x98/0xd8)
-> [  195.257507] [<c048f860>] (dump_stack) from [<c0028f9c>]
-> (warn_slowpath_common+0x88/0xb8)
-> [  195.257512]  r5:00000430 r4:00000000
-> [  195.257525] [<c0028f14>] (warn_slowpath_common) from [<c0029070>]
-> (warn_slowpath_null+0x24/0x2c)
-> [  195.257530]  r8:00200200 r7:ee3a9c00 r6:00000000 r5:ed89e380 r4:ed89e380
-> [  195.257552] [<c002904c>] (warn_slowpath_null) from [<c0268fac>]
-> (drm_vblank_put+0xd8/0xf0)
-> [  195.257570] [<c0268ed4>] (drm_vblank_put) from [<c028156c>]
-> (exynos_drm_crtc_finish_pageflip+0xc0/0xf0)
-> [  195.257586] [<c02814ac>] (exynos_drm_crtc_finish_pageflip) from
-> [<c0290358>] (mixer_irq_handler+0xdc/0x104)
-> [  195.257591]  r10:c06527ee r9:ee1e26c0 r8:00000041 r7:00000801
-> r6:ed804e68 r5:00000801
-> [  195.257607]  r4:ed804e10
-> [  195.257622] [<c029027c>] (mixer_irq_handler) from [<c00610b0>]
-> (handle_irq_event_percpu+0x3c/0x138)
-> [  195.257627]  r7:00000000 r6:00000000 r5:ee1e2720 r4:ed89e9c0
-> [  195.257644] [<c0061074>] (handle_irq_event_percpu) from [<c00611f0>]
-> (handle_irq_event+0x44/0x64)
-> [  195.257649]  r10:00000000 r9:f0020000 r8:ee008000 r7:00000001
-> r6:ed89e9c0 r5:ee1e2720
-> [  195.257664]  r4:ee1e26c0
-> [  195.257677] [<c00611ac>] (handle_irq_event) from [<c0063d84>]
-> (handle_fasteoi_irq+0xb8/0x188)
-> [  195.257683]  r6:c063be14 r5:ee1e2720 r4:ee1e26c0 r3:00000000
-> [  195.257701] [<c0063ccc>] (handle_fasteoi_irq) from [<c0060748>]
-> (generic_handle_irq+0x34/0x44)
-> [  195.257706]  r6:00000000 r5:00000000 r4:00000041 r3:c0063ccc
-> [  195.257723] [<c0060714>] (generic_handle_irq) from [<c0060a28>]
-> (__handle_domain_irq+0x64/0xb8)
-> [  195.257728]  r4:c0620a38 r3:00000062
-> [  195.257741] [<c00609c4>] (__handle_domain_irq) from [<c0008604>]
-> (gic_handle_irq+0x38/0x70)
-> [  195.257746]  r8:c0625f08 r7:c062c944 r6:0000006b r5:0000007b
-> r4:f002000c r3:c0625f08
-> [  195.257769] [<c00085cc>] (gic_handle_irq) from [<c0012ec0>]
-> (__irq_svc+0x40/0x74)
-> [  195.257775] Exception stack(0xc0625f08 to 0xc0625f50)
-> [  195.257785] 5f00:                   ffffffed 00000000 00000000
-> c001fa80 c062c510 c062c4c4
-> [  195.257794] 5f20: 00000000 00000000 c0625f60 c0624000 00000000
-> c0625f5c c0625f60 c0625f50
-> [  195.257801] 5f40: c000f780 c000f784 600f0053 ffffffff
-> [  195.257806]  r9:c0624000 r8:c0625f60 r7:c0625f3c r6:ffffffff
-> r5:600f0053 r4:c000f784
-> [  195.257832] [<c000f744>] (arch_cpu_idle) from [<c0057ccc>]
-> (cpu_startup_entry+0x19c/0x264)
-> [  195.257845] [<c0057b30>] (cpu_startup_entry) from [<c048bba8>]
-> (rest_init+0x8c/0x90)
-> [  195.257850]  r7:ffffffff
-> [  195.257863] [<c048bb1c>] (rest_init) from [<c05f0cd8>]
-> (start_kernel+0x37c/0x388)
-> [  195.257868]  r4:c062c5d8 r3:c0624000
-> [  195.257882] [<c05f095c>] (start_kernel) from [<40008070>] (0x40008070)
-> [  195.257888] ---[ end trace 540e9ba1a4f64db4 ]---
-> [  204.079572] lcd0-power-domain: Power-on latency exceeded, new value
-> 470417 ns
-> [  204.080079] tv-power-domain: Power-on latency exceeded, new value
-> 449208 ns
-> 
-> 
-> So something is fishy...
-> 
-> With best wishes,
-> Tobias
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
