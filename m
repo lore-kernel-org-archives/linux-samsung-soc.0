@@ -1,76 +1,58 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 8/8] [media] exynos-gsc: Simplify system PM
-Date: Mon, 19 Jan 2015 14:22:40 +0100
-Message-ID: <1421673760-2600-9-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH V2 5/8] [media] exynos-gsc: Fixup clock management at
+ ->remove()
+Date: Mon, 19 Jan 2015 14:22:37 +0100
+Message-ID: <1421673760-2600-6-git-send-email-ulf.hansson@linaro.org>
 References: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-media-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-media-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-It's not needed to keep a local flag about the current system PM state.
-Let's just remove that code and the corresponding debug print.
+To make sure the clock is fully gated in ->remove(), we first need to
+to bring the device into full power by invoking pm_runtime_get_sync().
+
+Then, let's both unprepare and disable the clock.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 21 ---------------------
- drivers/media/platform/exynos-gsc/gsc-core.h |  3 ---
- 2 files changed, 24 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 194f9fc..71b227c 100644
+index e84bc35..5d3cfe8 100644
 --- a/drivers/media/platform/exynos-gsc/gsc-core.c
 +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1191,20 +1191,6 @@ static int gsc_runtime_suspend(struct device *dev)
- #ifdef CONFIG_PM_SLEEP
- static int gsc_resume(struct device *dev)
+@@ -1104,12 +1104,15 @@ static int gsc_remove(struct platform_device *pdev)
  {
--	struct gsc_dev *gsc = dev_get_drvdata(dev);
--	unsigned long flags;
--
--	pr_debug("gsc%d: state: 0x%lx", gsc->id, gsc->state);
--
--	/* Do not resume if the device was idle before system suspend */
--	spin_lock_irqsave(&gsc->slock, flags);
--	if (!test_and_clear_bit(ST_SUSPEND, &gsc->state) ||
--	    !gsc_m2m_opened(gsc)) {
--		spin_unlock_irqrestore(&gsc->slock, flags);
--		return 0;
--	}
--	spin_unlock_irqrestore(&gsc->slock, flags);
--
- 	if (!pm_runtime_suspended(dev))
- 		return gsc_runtime_resume(dev);
+ 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
  
-@@ -1213,13 +1199,6 @@ static int gsc_resume(struct device *dev)
++	pm_runtime_get_sync(&pdev->dev);
++
+ 	gsc_unregister_m2m_device(gsc);
+ 	v4l2_device_unregister(&gsc->v4l2_dev);
+-
+ 	vb2_dma_contig_cleanup_ctx(gsc->alloc_ctx);
++	clk_disable_unprepare(gsc->clock);
++
+ 	pm_runtime_disable(&pdev->dev);
+-	clk_unprepare(gsc->clock);
++	pm_runtime_put_noidle(&pdev->dev);
  
- static int gsc_suspend(struct device *dev)
- {
--	struct gsc_dev *gsc = dev_get_drvdata(dev);
--
--	pr_debug("gsc%d: state: 0x%lx", gsc->id, gsc->state);
--
--	if (test_and_set_bit(ST_SUSPEND, &gsc->state))
--		return 0;
--
- 	if (!pm_runtime_suspended(dev))
- 		return gsc_runtime_suspend(dev);
- 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.h b/drivers/media/platform/exynos-gsc/gsc-core.h
-index fa572aa..2f62271 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.h
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.h
-@@ -48,9 +48,6 @@
- #define	GSC_CTX_ABORT			(1 << 7)
- 
- enum gsc_dev_flags {
--	/* for global */
--	ST_SUSPEND,
--
- 	/* for m2m node */
- 	ST_M2M_OPEN,
- 	ST_M2M_RUN,
+ 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
+ 	return 0;
 -- 
 1.9.1
