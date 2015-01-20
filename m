@@ -1,93 +1,61 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 4/5] mfd/regulator: dt-bindings: max77686: Document
- gpio properties
-Date: Tue, 20 Jan 2015 15:43:11 +0000
-Message-ID: <20150120154311.GE13701@x1>
-References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
- <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
- <20150120134111.GI13701@x1>
- <1421763703.8855.10.camel@AMDC1943>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH RESEND v2 3/7] mfd: cros_ec: Add cros_ec_lpc driver for
+ x86 devices
+Date: Tue, 20 Jan 2015 16:58:00 +0100
+Message-ID: <54BE7B08.1010900@collabora.co.uk>
+References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-4-git-send-email-javier.martinez@collabora.co.uk> <20150120081104.GT21886@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421763703.8855.10.camel@AMDC1943>
+In-Reply-To: <20150120081104.GT21886@x1>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 20 Jan 2015, Krzysztof Kozlowski wrote:
+Hello Lee,
 
-> On wto, 2015-01-20 at 13:41 +0000, Lee Jones wrote:
-> > On Mon, 05 Jan 2015, Krzysztof Kozlowski wrote:
-> >=20
-> > > Document usage of maxim,ena-gpios properties which turn on extern=
-al/GPIO
-> > > control over regulator.
-> > >=20
-> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/mfd/max77686.txt | 14 ++++++++=
-++++++
-> > >  1 file changed, 14 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b=
-/Documentation/devicetree/bindings/mfd/max77686.txt
-> > > index 75fdfaf41831..e39f0bc1f55e 100644
-> > > --- a/Documentation/devicetree/bindings/mfd/max77686.txt
-> > > +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> > > @@ -39,6 +39,12 @@ to get matched with their hardware counterpart=
-s as follow:
-> > >  	-BUCKn	:	1-4.
-> > >    Use standard regulator bindings for it ('regulator-off-in-susp=
-end').
-> > > =20
-> > > +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO=
- enable
-> > > +  control. To turn this feature on this property must be added t=
-o the regulator
-> > > +  sub-node:
-> > > +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-> > > +				flags are actually ignored and always
-> > > +				ACTIVE_HIGH is used)
-> >=20
-> > How does this differ to the 'enable-gpio' property which has alread=
-y
-> > been defined?
->=20
-> Strictly speaking - no difference, just a GPIO specifier.
->=20
-> However the 'enable-gpio' property exists only for gpio-regulator. Th=
-e
-> regulator core does not support generic enable-gpio property and each
-> driver implements it on its own.
->=20
-> Anyway Mark Brown already applied this patch to his regulator tree.
+On 01/20/2015 09:11 AM, Lee Jones wrote:
+> On Fri, 02 Jan 2015, Javier Martinez Canillas wrote:
+> 
+>> From: Bill Richardson <wfrichar@chromium.org>
+>> 
+>> This adds the LPC interface to the Chrome OS EC. Like the
+>> I2C and SPI drivers, this allows userspace access to the EC.
+> 
+> I'm fairly certain that this is _not_ an MFD device.  Please locate it
+> to the proper subsystem (input?).
+> 
 
-Well if he has no issue with it, then I guess I don't.
+Sorry, it wasn't my intention to use the mfd subsystem as a place to dump
+random drivers. Is that I still find hard to understand what is the line
+between what falls under mfd and what doesn't.
 
-> > >  Example:
-> > > =20
-> > > @@ -65,4 +71,12 @@ Example:
-> > >  				regulator-always-on;
-> > >  				regulator-boot-on;
-> > >  			};
-> > > +
-> > > +			buck9_reg {
-> > > +				regulator-compatible =3D "BUCK9";
-> > > +				regulator-name =3D "CAM_ISP_CORE_1.2V";
-> > > +				regulator-min-microvolt =3D <1000000>;
-> > > +				regulator-max-microvolt =3D <1200000>;
-> > > +				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
-> > > +			};
-> > >  	}
-> >=20
->=20
+For example, I see that mfd drivers are for devices which have multiple
+functions and the mfd driver is the one that spawns the platform devices
+and provide an interface to access the I/O registers used by the different
+platform drivers of the sub-devices.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+So, the Embedded Controller driver (drivers/mfd/cros_ec.c) falls into that
+category and in fact has been in the mfd driver for a long time. Now, if
+an mfd device support different type of buses (e.g: i2c, spi, etc) I see
+that both the core driver and the driver for the transport method are
+in the drivers/mfd directory. As an example:
+
+drivers/mfd/arizona-{core,i2c,spi}.c
+drivers/mfd/da9052-{core,i2c,spi}.c
+drivers/mfd/mc13xxx-{core,i2c,spi}.c
+drivers/mfd/tps65912-{core,i2c,spi}.c
+drivers/mfd/wm831x-{core,i2c,spi,otp}.c
+
+In the cros_ec case, we already have drivers/mfd/cros_ec_{i2c,spi}.c so
+since the Low Pin Count is another transport method I thought that this
+driver belonged to the drivers/mfd directory.
+
+Now, all those drivers may be wrong and the buses don't belong to the mfd
+subsystem but then I think we need to document that since it seems that is
+the correct way to do it just by looking at the other drivers.
+
+Best regards,
+Javier
