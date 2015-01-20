@@ -1,189 +1,158 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V9 06/14] drm/bridge: ptn3460: support drm_panel
-Date: Tue, 20 Jan 2015 22:08:47 +0530
-Message-ID: <1421771935-31618-7-git-send-email-ajaykumar.rs@samsung.com>
+From: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V9 05/14] drm/exynos: dp: support drm_bridge
+Date: Tue, 20 Jan 2015 22:08:46 +0530
+Message-ID: <1421771935-31618-6-git-send-email-ajaykumar.rs@samsung.com>
 References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:27258 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755432AbbATQrC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 11:47:02 -0500
-In-reply-to: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1421771935-31618-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, thierry.reding@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Add drm_panel calls to the driver to make the panel and
-bridge work together in tandem.
+Modify driver to support drm_bridge.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Tested-by: Rahul Sharma <rahul.sharma@samsung.com>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Tested-by: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Tested-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 ---
- .../devicetree/bindings/drm/bridge/ptn3460.txt     |   12 ++++++
- drivers/gpu/drm/bridge/Kconfig                     |    1 +
- drivers/gpu/drm/bridge/ptn3460.c                   |   42 ++++++++++++++++++++
- 3 files changed, 55 insertions(+)
+ .../devicetree/bindings/video/exynos_dp.txt        |   12 +++++++
+ drivers/gpu/drm/exynos/exynos_dp_core.c            |   37 ++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
+ 3 files changed, 44 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt b/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
-index 52b93b2..663fe6c 100644
---- a/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
-+++ b/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
-@@ -17,6 +17,11 @@ Required properties:
- 		|   6   |  1600x900  | ChiMei M215HGE   |
- 		+-------+------------+------------------+
- 
-+	- video interfaces: Device node can contain video interface port
-+			    nodes for panel according to [1].
+diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+index 53dbccf..7a3a9cd 100644
+--- a/Documentation/devicetree/bindings/video/exynos_dp.txt
++++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+@@ -66,6 +66,10 @@ Optional properties for dp-controller:
+ 		Hotplug detect GPIO.
+ 			Indicates which GPIO should be used for hotplug
+ 			detection
++	-video interfaces: Device node can contain video interface port
++			    nodes according to [1].
 +
 +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-+
+ 
  Example:
- 	lvds-bridge@20 {
- 		compatible = "nxp,ptn3460";
-@@ -24,4 +29,11 @@ Example:
- 		powerdown-gpio = <&gpy2 5 1 0 0>;
- 		reset-gpio = <&gpx1 5 1 0 0>;
- 		edid-emulation = <5>;
+ 
+@@ -105,4 +109,12 @@ Board Specific portion:
+ 				vsync-len = <6>;
+ 			};
+ 		};
++
 +		ports {
 +			port@0 {
-+				bridge_out: endpoint {
-+					remote-endpoint = <&panel_in>;
++				dp_out: endpoint {
++					remote-endpoint = <&bridge_in>;
 +				};
 +			};
 +		};
  	};
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 4254c2b..8b426e2 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -3,5 +3,6 @@ config DRM_PTN3460
- 	depends on DRM
- 	depends on OF && I2C
- 	select DRM_KMS_HELPER
-+	select DRM_PANEL
- 	---help---
- 	  ptn3460 eDP-LVDS bridge chip driver.
-diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-index 7adeb60..e6d5ae7 100644
---- a/drivers/gpu/drm/bridge/ptn3460.c
-+++ b/drivers/gpu/drm/bridge/ptn3460.c
-@@ -19,6 +19,9 @@
- #include <linux/module.h>
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 27e3d27..46f1497 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -18,6 +18,7 @@
+ #include <linux/interrupt.h>
  #include <linux/of.h>
  #include <linux/of_gpio.h>
 +#include <linux/of_graph.h>
+ #include <linux/gpio.h>
+ #include <linux/component.h>
+ #include <linux/phy/phy.h>
+@@ -994,9 +995,19 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
+ };
+ 
+ /* returns the number of bridges attached */
+-static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
++static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
+ 		struct drm_encoder *encoder)
+ {
++	int ret;
 +
-+#include <drm/drm_panel.h>
++	encoder->bridge = dp->bridge;
++	dp->bridge->encoder = encoder;
++	ret = drm_bridge_attach(encoder->dev, dp->bridge);
++	if (ret) {
++		DRM_ERROR("Failed to attach bridge to drm\n");
++		return ret;
++	}
++
+ 	return 0;
+ }
  
- #include "bridge/ptn3460.h"
+@@ -1010,9 +1021,11 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
+ 	dp->encoder = encoder;
  
-@@ -38,6 +41,7 @@ struct ptn3460_bridge {
- 	struct i2c_client *client;
- 	struct drm_bridge bridge;
- 	struct edid *edid;
-+	struct drm_panel *panel;
- 	int gpio_pd_n;
- 	int gpio_rst_n;
- 	u32 edid_emulation;
-@@ -137,6 +141,11 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
- 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+ 	/* Pre-empt DP connector creation if there's a bridge */
+-	ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
+-	if (ret)
+-		return 0;
++	if (dp->bridge) {
++		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
++		if (!ret)
++			return 0;
++	}
+ 
+ 	connector->polled = DRM_CONNECTOR_POLL_HPD;
+ 
+@@ -1219,7 +1232,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 		}
  	}
  
-+	if (drm_panel_prepare(ptn_bridge->panel)) {
-+		DRM_ERROR("failed to prepare panel\n");
-+		return;
-+	}
-+
- 	/*
- 	 * There's a bug in the PTN chip where it falsely asserts hotplug before
- 	 * it is fully functional. We're forced to wait for the maximum start up
-@@ -153,6 +162,12 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
- 
- static void ptn3460_enable(struct drm_bridge *bridge)
+-	if (!dp->panel) {
++	if (!dp->panel && !dp->bridge) {
+ 		ret = exynos_dp_dt_parse_panel(dp);
+ 		if (ret)
+ 			return ret;
+@@ -1303,7 +1316,7 @@ static const struct component_ops exynos_dp_ops = {
+ static int exynos_dp_probe(struct platform_device *pdev)
  {
-+	struct ptn3460_bridge *ptn_bridge = bridge_to_ptn3460(bridge);
-+
-+	if (drm_panel_enable(ptn_bridge->panel)) {
-+		DRM_ERROR("failed to enable panel\n");
-+		return;
-+	}
- }
- 
- static void ptn3460_disable(struct drm_bridge *bridge)
-@@ -164,6 +179,11 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 
- 	ptn_bridge->enabled = false;
- 
-+	if (drm_panel_disable(ptn_bridge->panel)) {
-+		DRM_ERROR("failed to disable panel\n");
-+		return;
-+	}
-+
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
- 
-@@ -173,6 +193,12 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 
- static void ptn3460_post_disable(struct drm_bridge *bridge)
- {
-+	struct ptn3460_bridge *ptn_bridge = bridge_to_ptn3460(bridge);
-+
-+	if (drm_panel_unprepare(ptn_bridge->panel)) {
-+		DRM_ERROR("failed to unprepare panel\n");
-+		return;
-+	}
- }
- 
- static int ptn3460_get_modes(struct drm_connector *connector)
-@@ -267,6 +293,9 @@ int ptn3460_bridge_attach(struct drm_bridge *bridge)
- 	drm_mode_connector_attach_encoder(&ptn_bridge->connector,
- 							bridge->encoder);
- 
-+	if (ptn_bridge->panel)
-+		drm_panel_attach(ptn_bridge->panel, &ptn_bridge->connector);
-+
- 	return ret;
- }
- 
-@@ -283,6 +312,7 @@ static int ptn3460_probe(struct i2c_client *client,
- {
- 	struct device *dev = &client->dev;
- 	struct ptn3460_bridge *ptn_bridge;
-+	struct device_node *endpoint, *panel_node;
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *panel_node;
++	struct device_node *panel_node, *bridge_node, *endpoint;
+ 	struct exynos_dp_device *dp;
  	int ret;
  
- 	ptn_bridge = devm_kzalloc(dev, sizeof(*ptn_bridge), GFP_KERNEL);
-@@ -290,6 +320,17 @@ static int ptn3460_probe(struct i2c_client *client,
- 		return -ENOMEM;
+@@ -1329,6 +1342,18 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 			return -EPROBE_DEFER;
  	}
  
 +	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
 +	if (endpoint) {
-+		panel_node = of_graph_get_remote_port_parent(endpoint);
-+		if (panel_node) {
-+			ptn_bridge->panel = of_drm_find_panel(panel_node);
-+			of_node_put(panel_node);
-+			if (!ptn_bridge->panel)
++		bridge_node = of_graph_get_remote_port_parent(endpoint);
++		if (bridge_node) {
++			dp->bridge = of_drm_find_bridge(bridge_node);
++			of_node_put(bridge_node);
++			if (!dp->bridge)
 +				return -EPROBE_DEFER;
-+		}
++		} else
++			return -EPROBE_DEFER;
 +	}
 +
- 	ptn_bridge->client = client;
- 	ptn_bridge->gpio_pd_n = of_get_named_gpio(dev->of_node,
- 							"powerdown-gpio", 0);
-@@ -327,6 +368,7 @@ static int ptn3460_probe(struct i2c_client *client,
- 	}
- 
- 	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
-+	ptn_bridge->bridge.of_node = dev->of_node;
- 	ret = drm_bridge_add(&ptn_bridge->bridge);
- 	if (ret) {
- 		DRM_ERROR("Failed to add bridge\n");
+ 	ret = component_add(&pdev->dev, &exynos_dp_ops);
+ 	if (ret)
+ 		exynos_drm_component_del(&pdev->dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
+index 164f171..a4e7996 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.h
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
+@@ -153,6 +153,7 @@ struct exynos_dp_device {
+ 	struct drm_connector	connector;
+ 	struct drm_encoder	*encoder;
+ 	struct drm_panel	*panel;
++	struct drm_bridge	*bridge;
+ 	struct clk		*clock;
+ 	unsigned int		irq;
+ 	void __iomem		*reg_base;
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
