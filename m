@@ -1,63 +1,56 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 1/2] clk: exynos5420: Add IDs for clocks used in DISP1 power
- domain
-Date: Tue, 20 Jan 2015 09:54:02 -0800
-Message-ID: <20150120175402.22722.84342@quantum>
-References: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk>
- <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk>
- <54BE6050.1090205@samsung.com>
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH 2/2] thermal: of: Enable thermal_zoneX when sensor is
+ correctly added
+Date: Tue, 20 Jan 2015 18:26:09 +0000
+Message-ID: <20150120182608.GA5760@e104805>
+References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
+ <1421667844-13627-3-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:51874 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752547AbbATRyN convert rfc822-to-8bit (ORCPT
+Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:39457 "EHLO
+	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336AbbATS03 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 12:54:13 -0500
-Received: by mail-pd0-f172.google.com with SMTP id v10so22955666pde.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Jan 2015 09:54:12 -0800 (PST)
-In-Reply-To: <54BE6050.1090205@samsung.com>
+	Tue, 20 Jan 2015 13:26:29 -0500
+Content-Disposition: inline
+In-Reply-To: <1421667844-13627-3-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Quoting Sylwester Nawrocki (2015-01-20 06:04:00)
-> Hi,
+On Mon, Jan 19, 2015 at 11:44:04AM +0000, Lukasz Majewski wrote:
+> Up till now the thermal_zone mode was by default "disabled". With this
+> patch the default behavior was changed to "enable".
 > 
-> On 20/01/15 11:35, Javier Martinez Canillas wrote:
-> > When a power domain is powered off on Exynos5420 SoC, the input clocks of
-> > the devices attached to this power domain are re-parented to oscclk and
-> > restored to the original parent after powering on the power domain.
-> > 
-> > So a reference to the input and parent clocks for the devices attached to
-> > a power domain are needed to be able to do the re-parenting. The DISP1 pd
-> > includes modules which uses the following clocks:
-> > 
-> > ACLK_200_DISP1 (MIXER and HDMILINK)
-> > ACLK_300_DISP1 (FIMD1)
-> > ACLK_400_DISP1 (Internal Buses)
-> > 
-> > Each of these clocks are generated as the output of a clock mux so add an
-> > ID for all of these clock muxes and their parents to be referenced in the
-> > DISP1 power domain device node.
-> > 
-> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> One can read the mode at:
+> /sys/class/thermal/thermal_zone0/mode
 > 
-> The patch looks OK to me, I'm fine with it being merged via Kukjin's tree
-> due to the dts dependencies (including other pending dts patches touching
-> the arch/arm/boot/dts/exynos5420.dtsi file).
-> I think we need also Mike ACK for that, I could also queue the patch for
-> the clk tree and create a topic branch, but merging both patches via
-> arm-soc seems a more sane option in this case.
-> 
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 
-Acked-by: Michael Turquette <mturquette@linaro.org>
+We are facing the same issue with Juno.  When registering thermal
+zones from device tree they were coming up disabled.  I've tested it
+on my Juno board and it fixes it.
 
+Tested-by: Javi Merino <javi.merino@arm.com>
+
+> ---
+>  drivers/thermal/of-thermal.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> --
-> Thanks,
-> Sylwester
-> 
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+> index d717f3d..668fb1b 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -497,6 +497,9 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id, void *data,
+>  		if (sensor_specs.np == sensor_np && id == sensor_id) {
+>  			tzd = thermal_zone_of_add_sensor(child, sensor_np,
+>  							 data, ops);
+> +			if (!IS_ERR(tzd))
+> +				tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED);
+> +
+>  			of_node_put(sensor_specs.np);
+>  			of_node_put(child);
+>  			goto exit;
