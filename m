@@ -1,83 +1,93 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND v2 2/7] mfd: cros_ec: Add char dev and virtual
- dev pointers
-Date: Tue, 20 Jan 2015 16:41:01 +0100
-Message-ID: <54BE770D.6030806@collabora.co.uk>
-References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-3-git-send-email-javier.martinez@collabora.co.uk> <20150120075011.GS21886@x1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 4/5] mfd/regulator: dt-bindings: max77686: Document
+ gpio properties
+Date: Tue, 20 Jan 2015 15:43:11 +0000
+Message-ID: <20150120154311.GE13701@x1>
+References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
+ <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
+ <20150120134111.GI13701@x1>
+ <1421763703.8855.10.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150120075011.GS21886@x1>
+Content-Disposition: inline
+In-Reply-To: <1421763703.8855.10.camel@AMDC1943>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+On Tue, 20 Jan 2015, Krzysztof Kozlowski wrote:
 
-Thanks a lot for your feedback.
+> On wto, 2015-01-20 at 13:41 +0000, Lee Jones wrote:
+> > On Mon, 05 Jan 2015, Krzysztof Kozlowski wrote:
+> >=20
+> > > Document usage of maxim,ena-gpios properties which turn on extern=
+al/GPIO
+> > > control over regulator.
+> > >=20
+> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/mfd/max77686.txt | 14 ++++++++=
+++++++
+> > >  1 file changed, 14 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b=
+/Documentation/devicetree/bindings/mfd/max77686.txt
+> > > index 75fdfaf41831..e39f0bc1f55e 100644
+> > > --- a/Documentation/devicetree/bindings/mfd/max77686.txt
+> > > +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
+> > > @@ -39,6 +39,12 @@ to get matched with their hardware counterpart=
+s as follow:
+> > >  	-BUCKn	:	1-4.
+> > >    Use standard regulator bindings for it ('regulator-off-in-susp=
+end').
+> > > =20
+> > > +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO=
+ enable
+> > > +  control. To turn this feature on this property must be added t=
+o the regulator
+> > > +  sub-node:
+> > > +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
+> > > +				flags are actually ignored and always
+> > > +				ACTIVE_HIGH is used)
+> >=20
+> > How does this differ to the 'enable-gpio' property which has alread=
+y
+> > been defined?
+>=20
+> Strictly speaking - no difference, just a GPIO specifier.
+>=20
+> However the 'enable-gpio' property exists only for gpio-regulator. Th=
+e
+> regulator core does not support generic enable-gpio property and each
+> driver implements it on its own.
+>=20
+> Anyway Mark Brown already applied this patch to his regulator tree.
 
-On 01/20/2015 08:50 AM, Lee Jones wrote:
->> @@ -59,9 +60,17 @@ struct cros_ec_command {
->>   *
->>   * @ec_name: name of EC device (e.g. 'chromeos-ec')
->>   * @phys_name: name of physical comms layer (e.g. 'i2c-4')
->> - * @dev: Device pointer
->> + * @dev: Device pointer for physical comms device
->> + * @vdev: Device pointer for virtual comms device
->> + * @cdev: Character device structure for virtual comms device
->>   * @was_wake_device: true if this device was set to wake the system from
->>   * sleep at the last suspend
->> + * @cmd_readmem: direct read of the EC memory-mapped region, if supported
->> + *     @offset is within EC_LPC_ADDR_MEMMAP region.
->> + *     @bytes: number of bytes to read. zero means "read a string" (including
->> + *     the trailing '\0'). At most only EC_MEMMAP_SIZE bytes can be read.
->> + *     Caller must ensure that the buffer is large enough for the result when
->> + *     reading a string.
->>   *
->>   * @priv: Private data
->>   * @irq: Interrupt to use
->> @@ -90,8 +99,12 @@ struct cros_ec_device {
->>  	const char *ec_name;
->>  	const char *phys_name;
->>  	struct device *dev;
->> +	struct device *vdev;
->> +	struct cdev cdev;
->>  	bool was_wake_device;
->>  	struct class *cros_class;
->> +	int (*cmd_readmem)(struct cros_ec_device *ec, unsigned int offset,
->> +			   unsigned int bytes, void *dest);
-> 
-> Is this safe?  Are you sure it's okay to provide an interface from
-> userspace to read (kernel?) memory?
->
+Well if he has no issue with it, then I guess I don't.
 
-This interface is not to read any kernel memory but only the memory mapped
-I/O region for the Low Pin Count (LPC) bus. So user-space only can choose
-and offset and a number of bytes using the CROS_EC_DEV_IOCRDMEM ioctl cmd
-which uses the following structure as argument:
+> > >  Example:
+> > > =20
+> > > @@ -65,4 +71,12 @@ Example:
+> > >  				regulator-always-on;
+> > >  				regulator-boot-on;
+> > >  			};
+> > > +
+> > > +			buck9_reg {
+> > > +				regulator-compatible =3D "BUCK9";
+> > > +				regulator-name =3D "CAM_ISP_CORE_1.2V";
+> > > +				regulator-min-microvolt =3D <1000000>;
+> > > +				regulator-max-microvolt =3D <1200000>;
+> > > +				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> > > +			};
+> > >  	}
+> >=20
+>=20
 
-/*
- * @offset: within EC_LPC_ADDR_MEMMAP region
- * @bytes: number of bytes to read. zero means "read a string" (including '\0')
- *         (at most only EC_MEMMAP_SIZE bytes can be read)
- * @buffer: where to store the result
- * ioctl returns the number of bytes read, negative on error
- */
-struct cros_ec_readmem {
-        uint32_t offset;
-        uint32_t bytes;
-        uint8_t buffer[EC_MEMMAP_SIZE];
-};
-
-The cros_ec_lpc_readmem() handler that the function pointer is set only
-reads bytes from EC_LPC_ADDR_MEMMAP + offset if offset < EC_MEMMAP_SIZE
-and the data is copied to the user-space buffer from the structure passed
-as argument with copy_to_user().
-
-So in that sense is similar to the spidev or i2c-dev interfaces that are
-used to access these buses from user-space.
-
-Best regards,
-Javier
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
