@@ -1,106 +1,163 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCHv3 2/8] devfreq: exynos: Add documentation for generic
- exynos memory bus frequency driver
-Date: Tue, 20 Jan 2015 16:52:19 +0530
-Message-ID: <CAKohpokSuVhH3hHFF+mLtJXvjt=bmJy1oZRBOttCNXORBS1Y0A@mail.gmail.com>
-References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
-	<1420681257-3078-3-git-send-email-cw00.choi@samsung.com>
-	<CAL_Jsq+5sdsm_-VW-ta+qV-NBao-XTHvsYWcbMdZmbP0Nw43Cw@mail.gmail.com>
-	<CAKohpomqosqxeDANC=NLBVmOUHyUoqd7Zhph7r6f7+ufYN48EQ@mail.gmail.com>
-	<54BE108F.8090506@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Tue, 20 Jan 2015 12:25:19 +0100
+Message-ID: <CABxcv=nNKrF45TL3_1BZHMzfKj1xPm6TzUGRSZ3WgJxzyUSmxQ@mail.gmail.com>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+	<54B68A74.8070405@math.uni-bielefeld.de>
+	<54B79123.4090200@samsung.com>
+	<54B8533C.3070000@math.uni-bielefeld.de>
+	<54B99178.1060006@gmx.net>
+	<54BD3129.5090305@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:64519 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755050AbbATLWU (ORCPT
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:34447 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753692AbbATLZV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 06:22:20 -0500
-Received: by mail-ob0-f175.google.com with SMTP id wp4so12391278obc.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Jan 2015 03:22:20 -0800 (PST)
-In-Reply-To: <54BE108F.8090506@samsung.com>
+	Tue, 20 Jan 2015 06:25:21 -0500
+Received: by mail-wi0-f169.google.com with SMTP id bs8so22668530wib.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Jan 2015 03:25:19 -0800 (PST)
+In-Reply-To: <54BD3129.5090305@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Rob Herring <robherring2@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, Mark Rutland <mark.rutland@arm.com>, a.kesavan@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, InKi Dae <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On 20 January 2015 at 13:53, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> But, the frequency of OPPs is only used for devfreq ondemand governor.
-> After deciding the proper frequency of memory bus on ondemand governor,
-> exynos-bus.c (exynos memory bus frequency driver) use the frequency table
-> of memory bus blocks on below to change the clock rate of memory bus block.
+[Adding Inki and Joonyoung to cc list]
 
-> Firs of all,
-> I explain the hierarchy of Exynos memory buses.
->
-> For example of Exynos3250 memory bus,
-> This patch divide the memory bus group according to power rail (regulator).
-> - MIF (Memory Interface ) memory bus group uses the VDD_MIF regulator.
-> - INT (Internal) memory bus group uses the VDD_INT regulator.
->
-> Each memory bus group contains only one power rail(regulator) and one more memory bus blocks as follwing:
->
-> - MIF memory bus group
-> power rail(VDD_MIF)-->|--- memory bus for DMC (Dynamic Memory Controller) block (dmc clock)
->
-> - INT memory bus group
->                       |--- memory bus for PERI block (aclk_100 clock)
->                       |
->                       |--- memory bus for DISPLAY block (aclk_160 clock)
->                       |
->                       |--- memory bus for ISP block (aclk_200 clock)
->                       |
->                       |--- memory bus for GPS block (aclk_266 clock)
-> power rail(VDD_INT)-->|
->                       |--- memory bus for MCUISP block (aclk_400_mcuisp clock)
->                       |
->                       |--- memory bus for Leftbus block (gdl clock)
->                       |
->                       |--- memory bus for Rightbus block (gdr clock)
->                       |
->                       |--- memory bus for MFC block (mfc clock)
+Hello Marek,
+
+On Mon, Jan 19, 2015 at 5:30 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>>
+>> The board instantly died then. No kernel log output from the serial
+>> console, the heartbeat just stops and the board is dead. Need to
+>> power-cycle to get it running again.
+>>
+>> I'm unsure how to triage this at all.
 >
 >
-> Exynos3250 has following table for INT memory bus group:
-> All clocks of INT memory bus group have to contain the same entry count
-> againt the number of 'virtual freqw'. So, each memory bus clock could have duplicate clocks.
+> Thanks for you tests and pointing this issue. I turned out that the initial
+> fix proposed
+> by Andrzej Hajda
+> (http://www.spinics.net/lists/linux-samsung-soc/msg38915.html) worked
+> fine, while the final version merged to clock fixes ('clk: samsung: exynos4:
+> set parent
+> of sclk_hdmiphy to hdmi' - commit df019a5c0f7083001cb694f44821ca506425bda2)
+> doesn't work
+> properly.
 >
-> ------------------------------------------------------------------------
-> Level|virtual freq|PERI's clk|Display's clk|ISP's clk|GPS's clk| voltage|
-> ------------------------------------------------------------------------
-> L6   |400000      |100000    |200000       |200000   |300000   | 95000  |
-> L5   |200000      |100000    |160000       |200000   |200000   | 95000  |
-> L4   |133000      |100000    |100000       |100000   |133000   | 92500  |
-> L3   |100000      |100000    |80000        |80000    |100000   | 85000  |
-> L2   |80000       |50000     |80000        |50000    |50000    | 85000  |
-> L1   |50000       |50000     |50000        |50000    |50000    | 85000  |
-> -------------------------------------------------------------------------
-> (Except for mcuisp, leftbus, rightbus, mfc block)
+
+I was working on adding HDMI support for Exynos5420/5422/5800 and I
+also found that the hdmi clock being gated by the exynos_hdmi driver
+on hdmi_poweroff(), was causing a system hang when the exynos_mixer
+driver tried to access the mixer module registers.
+
+My first approach was to do the same than Andrzej's patch, that is set
+the parent of mixer gate clock to hdmi so when the exynos_mixer driver
+enables its mixer clock, the hdmi clock would be enabled too.
+Unfortunately that didn't work (more on that below)
+
+> Please check the following kernel tree - instead of hacking around hdmi
+> clock I've added
+> handling of it directly to drm mixer driver:
+> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git/shortlog/refs/heads/v3.19-odroid-hdmi
+> I hope that this will finally solve all mixer initialization related issues
+
+My second approach was indeed the same that you are doing, to add a
+phandle to the hdmi clock directly in the exynos_mixer driver to avoid
+having to set the parent of the mixer clock on each exynos clock
+driver.
+
+When dumping the value of the CLK_GATE_IP_DISP1 register I see that
+both CLK_HDMI and CLK_MIXER are set with both approaches but the
+system still crashes. So enabling the hdmi clock seems to be enough to
+make the mixer happy on Exynos4 but unfortunately is not enough on
+Exynos5420.
+
+> (also for
+> Odroid XU3, discussed recently in the other thread). If it works fine, I
+> will resend
+> exynos4 hdmi patches to include this change.
 >
-> This table is used for devfreq ondemand governor as following:
-> 1. ondemand governor in devfreq use the 'virtual freq' to devcide the proper
->    frequency for memory bus.
-> 2. ondemand governor executes the *_target() function to set clock rate and voltage.
-> 3. *_target() function in exynos-bus.c changes the clock rate of {PERIS|Display|ISP|GPS} clk
->    according to decided 'Level' by devfreq ondemand governor.
+>
 
-I see..
+I compared the clock hierarchy when the system is able to turn on and
+off the fb blank and when it crash and I notice this difference:
 
-Please confirm if my understanding is correct.
-- mem-bus-group: all blocks sharing a regulator
-- mem-bus-block: individual blocks managing their clock rate
+Working:
 
-What you do in kernel is register group as a device (with virtual OPPs)
-and then manage blocks within the driver. And so you need to do this
-dummy mapping of virtual to physical frequencies.
+ sclk_pwi                                 0            0    24000000
+       0 0
+ sclk_hdmiphy                             1            1    24000000
+       0 0
+    mout_hdmi                             1            1    24000000
+       0 0
+       sclk_hdmi                          1            1    24000000
+       0 0
+...
+    mout_pixel                            0            0    24000000
+       0 0
+       dout_hdmi_pixel                    0            0    24000000
+       0 0
+          sclk_pixel                      0            0    24000000
+       0 0
 
-It *may* not have done it this way, if I was to design this driver.
 
-Each bus-block is a separately controllable device and so must be registered
-separately. In that case all bus-blocks will have separate OPP tables and
-all this dummy-v2p mapping will go away.
+Not working:
 
-I believe that you are over complicating stuff without any need..
+ sclk_pwi                                 0            0    24000000
+       0 0
+ sclk_hdmiphy                             0            0    24000000
+       0 0
+...
+    mout_pixel                            0            0    24000000
+       0 0
+       dout_hdmi_pixel                    0            0    24000000
+       0 0
+          mout_hdmi                       0            0    24000000
+       0 0
+             sclk_hdmi                    0            0    24000000
+       0 0
+          sclk_pixel                      0            0    24000000
+       0 0
 
---
-viresh
+The difference is because the source clock of the hdmi clock is
+generated by the output of a mux clock (mout_hdmi) that select either
+dout_hdmi_pixel or sclk_hdmiphy as input parent. The exynos5420 clk
+driver defines as:
+
+PNAME(mout_hdmi_p) = {"dout_hdmi_pixel", "sclk_hdmiphy"};
+...
+MUX(CLK_MOUT_HDMI, "mout_hdmi", mout_hdmi_p, SRC_DISP10, 28, 1),
+
+And the exynos_hdmi driver does:
+
+clk_disable_unprepare(hdata->res.sclk_hdmi);
+clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
+clk_prepare_enable(hdata->res.sclk_hdmi);
+
+So is not only that the hdmi clock has to be enabled but also the
+clock hierarchy matters. I don't even know if the hdmi clock is needed
+or is that enabling this clock has the side effect of enabling another
+clock in the hierarchy that is the one that is needed. It would be
+good if someone can compare the clock hierarchy on an Exynos4.
+
+So I would like to understand what is really the root cause here
+instead of trying to only solve the symptoms for each platform.
+
+I have also noticed this patch from Inki - commit 245f98f269714
+("drm/exynos: hdmi: fix power order issue") that forces the
+exynos_mixer to be disabled before exynos_hdmi to prevent a system
+crash but only for DRM_MODE_DPMS_OFF. So I wonder if the same should
+be true for DRM_MODE_DPMS_ON and the exynos_hdmi should be enabled
+before exynos_hdmi.
+
+IOW, I would like to know what is the dependency between the mixer and
+hdmi modules at the module level first and then once that is clear we
+can dig deeper on what clocks are needed and when those must be
+enabled.
+
+Best regards,
+Javier
