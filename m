@@ -1,158 +1,82 @@
-From: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH V9 05/14] drm/exynos: dp: support drm_bridge
-Date: Tue, 20 Jan 2015 22:08:46 +0530
-Message-ID: <1421771935-31618-6-git-send-email-ajaykumar.rs@samsung.com>
-References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1421771935-31618-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH RESEND v2 2/7] mfd: cros_ec: Add char dev and virtual dev
+ pointers
+Date: Tue, 20 Jan 2015 16:51:27 +0000
+Message-ID: <20150120165127.GG30656@x1>
+References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1420205572-2640-3-git-send-email-javier.martinez@collabora.co.uk>
+ <20150120075011.GS21886@x1>
+ <54BE770D.6030806@collabora.co.uk>
+ <20150120163622.GD30656@x1>
+ <54BE8615.7070708@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54BE8615.7070708@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Modify driver to support drm_bridge.
+On Tue, 20 Jan 2015, Javier Martinez Canillas wrote:
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Tested-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Tested-by: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Tested-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
----
- .../devicetree/bindings/video/exynos_dp.txt        |   12 +++++++
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   37 ++++++++++++++++----
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
- 3 files changed, 44 insertions(+), 6 deletions(-)
+> Hello Lee,
+>=20
+> On 01/20/2015 05:36 PM, Lee Jones wrote:
+> >> >=20
+> >> > Is this safe?  Are you sure it's okay to provide an interface fr=
+om
+> >> > userspace to read (kernel?) memory?
+> >> >
+> >>=20
+> >> This interface is not to read any kernel memory but only the memor=
+y mapped
+> >> I/O region for the Low Pin Count (LPC) bus. So user-space only can=
+ choose
+> >> and offset and a number of bytes using the CROS_EC_DEV_IOCRDMEM io=
+ctl cmd
+> >> which uses the following structure as argument:
+> >>=20
+> >> /*
+> >>  * @offset: within EC_LPC_ADDR_MEMMAP region
+> >>  * @bytes: number of bytes to read. zero means "read a string" (in=
+cluding '\0')
+> >>  *         (at most only EC_MEMMAP_SIZE bytes can be read)
+> >>  * @buffer: where to store the result
+> >>  * ioctl returns the number of bytes read, negative on error
+> >>  */
+> >> struct cros_ec_readmem {
+> >>         uint32_t offset;
+> >>         uint32_t bytes;
+> >>         uint8_t buffer[EC_MEMMAP_SIZE];
+> >> };
+> >>=20
+> >> The cros_ec_lpc_readmem() handler that the function pointer is set=
+ only
+> >> reads bytes from EC_LPC_ADDR_MEMMAP + offset if offset < EC_MEMMAP=
+_SIZE
+> >> and the data is copied to the user-space buffer from the structure=
+ passed
+> >> as argument with copy_to_user().
+> >>=20
+> >> So in that sense is similar to the spidev or i2c-dev interfaces th=
+at are
+> >> used to access these buses from user-space.
+> >=20
+> > Very well.  The purpose of my question was to be provocative and to
+> > make you think about the interface.  As long as you're sure it can'=
+t
+> > be abused, then I'm happy.
+> >=20
+>=20
+> Ok, thanks a lot. Does it mean I've your Acked-by for this patch too?
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index 53dbccf..7a3a9cd 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -66,6 +66,10 @@ Optional properties for dp-controller:
- 		Hotplug detect GPIO.
- 			Indicates which GPIO should be used for hotplug
- 			detection
-+	-video interfaces: Device node can contain video interface port
-+			    nodes according to [1].
-+
-+[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
- 
- Example:
- 
-@@ -105,4 +109,12 @@ Board Specific portion:
- 				vsync-len = <6>;
- 			};
- 		};
-+
-+		ports {
-+			port@0 {
-+				dp_out: endpoint {
-+					remote-endpoint = <&bridge_in>;
-+				};
-+			};
-+		};
- 	};
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 27e3d27..46f1497 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -18,6 +18,7 @@
- #include <linux/interrupt.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include <linux/of_graph.h>
- #include <linux/gpio.h>
- #include <linux/component.h>
- #include <linux/phy/phy.h>
-@@ -994,9 +995,19 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
- };
- 
- /* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-+static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- 		struct drm_encoder *encoder)
- {
-+	int ret;
-+
-+	encoder->bridge = dp->bridge;
-+	dp->bridge->encoder = encoder;
-+	ret = drm_bridge_attach(encoder->dev, dp->bridge);
-+	if (ret) {
-+		DRM_ERROR("Failed to attach bridge to drm\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1010,9 +1021,11 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
- 	dp->encoder = encoder;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
--	ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
--	if (ret)
--		return 0;
-+	if (dp->bridge) {
-+		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
-+		if (!ret)
-+			return 0;
-+	}
- 
- 	connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
-@@ -1219,7 +1232,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 		}
- 	}
- 
--	if (!dp->panel) {
-+	if (!dp->panel && !dp->bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -1303,7 +1316,7 @@ static const struct component_ops exynos_dp_ops = {
- static int exynos_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *panel_node;
-+	struct device_node *panel_node, *bridge_node, *endpoint;
- 	struct exynos_dp_device *dp;
- 	int ret;
- 
-@@ -1329,6 +1342,18 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 			return -EPROBE_DEFER;
- 	}
- 
-+	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (endpoint) {
-+		bridge_node = of_graph_get_remote_port_parent(endpoint);
-+		if (bridge_node) {
-+			dp->bridge = of_drm_find_bridge(bridge_node);
-+			of_node_put(bridge_node);
-+			if (!dp->bridge)
-+				return -EPROBE_DEFER;
-+		} else
-+			return -EPROBE_DEFER;
-+	}
-+
- 	ret = component_add(&pdev->dev, &exynos_dp_ops);
- 	if (ret)
- 		exynos_drm_component_del(&pdev->dev,
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index 164f171..a4e7996 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -153,6 +153,7 @@ struct exynos_dp_device {
- 	struct drm_connector	connector;
- 	struct drm_encoder	*encoder;
- 	struct drm_panel	*panel;
-+	struct drm_bridge	*bridge;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
--- 
-1.7.9.5
+Yes: Acked-by: Lee Jones <lee.jones@linaro.org>
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
