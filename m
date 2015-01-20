@@ -1,74 +1,124 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
- DMA-mapping subsystem
-Date: Tue, 20 Jan 2015 20:12:59 +0900
-Message-ID: <54BE383B.5030505@samsung.com>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
- <1417514366.21830.22.camel@collabora.co.uk> <54818768.3080303@samsung.com>
- <CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com>
- <54AC93E0.8010705@samsung.com> <54ACFD69.1020500@collabora.co.uk>
- <54AD0293.70909@samsung.com> <54AEB384.2040005@collabora.co.uk>
- <54B36C5A.6050109@samsung.com> <54B3F1B7.7090307@collabora.co.uk>
- <54B4ABFB.5000501@samsung.com> <54B5B5F6.3030607@collabora.co.uk>
- <54B5B721.4070309@collabora.co.uk>
+From: Paul Osmialowski <p.osmialowsk@samsung.com>
+Subject: Re: [RFC 2/3] regmap: Use the enhancement of i2c API to address
+ circular dependency problem
+Date: Tue, 20 Jan 2015 12:14:31 +0100 (CET)
+Message-ID: <alpine.DEB.2.10.1501201214200.8428@AMDC1262.digital.local>
+References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
+ <1421419194-1849-2-git-send-email-p.osmialowsk@samsung.com>
+ <20150116162314.GB3856@sirena.org.uk>
+ <alpine.DEB.2.10.1501161811280.21618@AMDC1262.digital.local>
+ <20150116183635.GH3856@sirena.org.uk>
+ <alpine.DEB.2.10.1501191031080.13777@AMDC1262.digital.local>
+ <20150119192557.GI2809@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40146 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751817AbbATLMo (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32437 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754377AbbATLOs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 06:12:44 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NIH00BHP350J3D0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Jan 2015 20:12:36 +0900 (KST)
-In-reply-to: <54B5B721.4070309@collabora.co.uk>
+	Tue, 20 Jan 2015 06:14:48 -0500
+In-reply-to: <20150119192557.GI2809@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linaro-mm-sig@lists.linaro.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, iommu@lists.linux-foundation.org, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-On 01/14/2015 09:24 AM, Javier Martinez Canillas wrote:
-> On 01/14/2015 01:19 AM, Javier Martinez Canillas wrote:
->>
->> I dug further on this issue and found that the cause is that the exynos_mixer
->> driver needs some clocks (CLK_HDMI and CLK_SCLK_HDMI) grabbed by exynos_hdmi
->> to be kept enabled after hdmi_poweroff (drivers/gpu/drm/exynos/exynos_hdmi.c).
->>
->> Otherwise, any access to mixer device registers leads to an imprecise external
->> abort error. The following change [0] to the Exynos DRM HDMI driver makes the
->> issue to not happen and I can successfully execute:
->>
->> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->>
 
-Did you execute this operation repeatedly? Still i get error when i
-execute this more than twice with your change [0].
+On Mon, 19 Jan 2015, Mark Brown wrote:
 
-Thanks.
+> On Mon, Jan 19, 2015 at 10:31:22AM +0100, Paul Osmialowski wrote:
+>> On Fri, 16 Jan 2015, Mark Brown wrote:
+>
+>>> What I'm saying is that I want to understand this change from a point of
+>>> view that isn't tied to I2C - at the regmap level what is this doing,
+>
+>> From the regmap point of view, it allows its functions to have a chance to
+>> prepare transfer medium for (synchronous) transfer (no matter what bus
+>> handles it) before it actually start to happen (then unprepare it when it's
+>> done) and crucially before any lock is obtained in functions like
+>> regmap_write(), regmap_read() or regmap_update_bits.
+>
+> OK, so that's what should go in the changelog (along with an explanation
+> of why this preparation is required at all) - but I still don't see the
+> async bit of this I'm afraid.
+>
 
->> Only not disabling the hdmi clock [1]: is enough but doing so makes sometimes the
->> DISP1 power domain disabling fails. It doesn't seem to have side effect though
->> since I also see the signal in the HDMI display to go standby and then on again.
->>
->> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->> [   63.089080] Power domain disp1-power-domain disable failed
->> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->> #
->>
->> That error message when both clocks are not disabled on hdmi_poweroff() though.
->>
-> 
-> This should be: "That error message is not shown when both clocks are disabled".
-> 
-> Best regards,
-> Javier
-> 
+I don't think preparation stage should be exposed for asynchronous 
+transfer. Due to its nature, it shouldn't cause circular lock dependency 
+as we can observe for synchronous io. Since i2c does not support async 
+transfer anyway (so (map->async && map->bus->async_write) will be always 
+false for i2c transfers), let's use spi as an example.
+
+With spi we have curious situation where both sync and async are handled 
+by the same __spi_async() function, though for sync transfer 
+wait_for_completion() is called soon after __spi_async() in order to 
+ensure that transfer is completed.
+
+Actual transfer is handled by spi_transfer_one_message() called from 
+spi_pump_messages(). Note that spi_pump_message() before it calls 
+spi_transfer_one_message() also calls prepare_message() callback (if 
+provided):
+
+ 	if (master->prepare_message) {
+ 		ret = master->prepare_message(master, master->cur_msg);
+
+So we have some candidate to expose if we would like to modify 
+regmap-spi.c similarly to regmap-i2c.c. Thing is, we don't need to expose 
+it for asynchronous transfer. If master->prepare_message() callback 
+obtains some lock, which is unfortunately held by other task that waits 
+for a lock already obtained by regmap_write_async() it will not wait 
+forever since call path started in regmap_write_async() is not blocked by 
+things like wait_for_completion() and should soon end calling 
+map->unlock(map->lock_arg).
+
+>> Maybe adding a pair of callbacks (map->reg_write_sync_prepared(),
+>> map->reg_read_sync_prepared()) would make situation clearer.
+>
+> No, I don't think so - it'd just complicate the callers.
+>
+>>> I2C is a bus that has some properties which you're saying needs some
+>>> changes, what are those properties and those changes?
+>
+>> I'm not saying I2C as a bus requires changes. What I'm saying is that I2C
+>> API can be extended to allow more detailed control on what happens with the
+>> transfer.
+>
+> My point here is that your explanation is in terms of I2C specifics and
+> not really at a generic regmap level.
+>
+>>> Can you be more specific please?  If something needs preparing it seems
+>>> like it'd need preparing over an async transaction just as much as over
+>>> a synchronous one.
+>
+>> Even with those preparation and unpreparation stages, this transfer is still
+>> synchronous. For example, it starts when regmap_read() starts and ends when
+>> regmap_read() ends. Nothing is queued or deferred. Namely, when
+>> max_gen_clk_unprepare() function calls regmap_update_bits() it expects that
+>> when regmap_update_bits() returned, no outstanding transfer are happening
+>> nor waiting to proceed. Everything must be completed before returning to
+>> max_gen_clk_unprepare().
+>
+> That doesn't address my question - all you're saying is that in a
+> synchronous call path things are synchronous which is fine but obviously
+> regmap supports async I/O too.
+>
+>>> Not in this pattern where the caller needs to check too.
+>
+>> I don't persist on that. Apparently, you're the author of this file, though
+>> regmap_init() function was later expanded by other guys. They never assigned
+>> bus callback function pointers directly to map operation callbacks. It is
+>> possible to replace 'map->reg_prepare_sync_io = regmap_bus_prepare_sync_io'
+>> with 'map->reg_prepare_sync_io = map->bus->prepare_sync_io' - this will
+>> compile and this will work properly. But IMHO it wouldn't match with what
+>> the others did.
+>
+> If you look at the other callbacks they're doing other things beyond
+> simply forwarding the functions on.  That's the problem here, the
+> functions just add a layer of indirection and nothing else.
+>
+
+Yes, I added layer of indirection just because the others added layer of 
+indirection - there is no functional requirement behind that. It can be 
+easily removed.
