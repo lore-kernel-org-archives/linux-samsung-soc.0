@@ -1,40 +1,84 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v4 02/21] irqchip: tegra: add DT-based support for legacy
- interrupt controller
-Date: Tue, 20 Jan 2015 09:51:26 +0200
-Message-ID: <20150120075126.GA31060@tbergstrom-lnx.Nvidia.com>
-References: <1421660655-21394-1-git-send-email-marc.zyngier@arm.com>
- <1421660655-21394-3-git-send-email-marc.zyngier@arm.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Tue, 20 Jan 2015 08:54:10 +0100
+Message-ID: <54BE09A2.2020209@samsung.com>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+ <54B68A74.8070405@math.uni-bielefeld.de> <54B79123.4090200@samsung.com>
+ <54B8533C.3070000@math.uni-bielefeld.de> <54B99178.1060006@gmx.net>
+ <54BD3129.5090305@samsung.com> <54BD8D51.3050202@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421660655-21394-3-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stefan Agner <stefan@agner.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:19514 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751293AbbATHyO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 02:54:14 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NIG00684U50CM00@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Jan 2015 07:58:12 +0000 (GMT)
+In-reply-to: <54BD8D51.3050202@gmx.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <liquid.acid@gmx.net>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-On Mon, Jan 19, 2015 at 09:43:56AM +0000, Marc Zyngier wrote:
-> Tegra's LIC (Legacy Interrupt Controller) has been so far only
-> supported as a weird extension of the GIC, which is not exactly
-> pretty.
-> 
-> The stacked IRQ domain framework fits this pretty well, and allows
-> the LIC code to be turned into a standalone irqchip. In the process,
-> make the driver DT aware, something that was sorely missing from
-> the mach-tegra implementation.
-> 
+Hello,
 
-Note that the GIC isn't really stacked on top of the LIC. Each IRQ is
-presented to both the LIC and the GIC (as an SPI). The LIC is only used
-to wakeup the CPU in case the GIC is not powered. The LIC can also
-generate interrupts towards the AVP/ARM7, but that's outside the scope
-of Linux ofcourse. The LIC can also be used to force an IRQ and that
-forced IRQ will be propagated to the GIC. (see also figure 2, page 36
-of the Tegra K1 TRM)
+On 2015-01-20 00:03, Tobias Jakobi wrote:
+> Hello!
+>
+> Marek Szyprowski wrote:
+>> Thanks for you tests and pointing this issue. I turned out that the
+>> initial fix proposed
+>> by Andrzej Hajda
+>> (http://www.spinics.net/lists/linux-samsung-soc/msg38915.html) worked
+>> fine, while the final version merged to clock fixes ('clk: samsung:
+>> exynos4: set parent
+>> of sclk_hdmiphy to hdmi' - commit
+>> df019a5c0f7083001cb694f44821ca506425bda2) doesn't work
+>> properly.
+> I should thank you for pushing all this code to mainline. It's really
+> nice to see how all the pieces now come together.
+>
+>
+>> Please check the following kernel tree - instead of hacking around hdmi
+>> clock I've added
+>> handling of it directly to drm mixer driver:
+>> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git/shortlog/refs/heads/v3.19-odroid-hdmi
+>>
+>> I hope that this will finally solve all mixer initialization related
+>> issues (also for
+>> Odroid XU3, discussed recently in the other thread). If it works fine, I
+>> will resend
+>> exynos4 hdmi patches to include this change.
+> I have picked the additional patches to my tree, which currently has a
+> bunch of other stuff in it, in particular v4 of the IOMMU series.
 
-Cheers,
+This is a known issue. When Exynos IOMMU DRM driver is enabled, you need 
+also
+to enabled CONFIG_DRM_EXYNOS_IOMMU, otherwise the driver will crash on init.
+This also need to be fixed, but for the time being I focused on other 
+issues...
 
-Peter.
+> Anyway, now the 'modetest' application immediately crashes the system,
+> but I get a least something on the serial console:
+> http://www.math.uni-bielefeld.de/~tjakobi/archive/odroid_modetest_crash_sysmmu.txt
+>
+> So this is probably due to the IOMMU. Please note that DRM IOMMU support
+> (CONFIG_DRM_EXYNOS_IOMMU) was disabled (!) in my config.
+> CONFIG_EXYNOS_IOMMU however was on.
+>
+> I'm going to retest with the IOMMU series removed and
+> CONFIG_EXYNOS_IOMMU disabled as well.
+>
+> Just posting this already since you're probably interested in these
+> 'side-issues' as well.
 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
