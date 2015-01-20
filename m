@@ -1,74 +1,55 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 4/5] mfd/regulator: dt-bindings: max77686: Document
- gpio properties
-Date: Tue, 20 Jan 2015 13:41:11 +0000
-Message-ID: <20150120134111.GI13701@x1>
-References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
- <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: exynos5420: Add IDs for clocks used in DISP1
+ power domain
+Date: Tue, 20 Jan 2015 15:04:00 +0100
+Message-ID: <54BE6050.1090205@samsung.com>
+References: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:44817 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750712AbbATOEK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 09:04:10 -0500
+In-reply-to: <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Mike Turquette <mturquette@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, 05 Jan 2015, Krzysztof Kozlowski wrote:
+Hi,
 
-> Document usage of maxim,ena-gpios properties which turn on external/G=
-PIO
-> control over regulator.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/mfd/max77686.txt | 14 ++++++++++++=
-++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Doc=
-umentation/devicetree/bindings/mfd/max77686.txt
-> index 75fdfaf41831..e39f0bc1f55e 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77686.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> @@ -39,6 +39,12 @@ to get matched with their hardware counterparts as=
- follow:
->  	-BUCKn	:	1-4.
->    Use standard regulator bindings for it ('regulator-off-in-suspend'=
-).
-> =20
-> +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO ena=
-ble
-> +  control. To turn this feature on this property must be added to th=
-e regulator
-> +  sub-node:
-> +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-> +				flags are actually ignored and always
-> +				ACTIVE_HIGH is used)
+On 20/01/15 11:35, Javier Martinez Canillas wrote:
+> When a power domain is powered off on Exynos5420 SoC, the input clocks of
+> the devices attached to this power domain are re-parented to oscclk and
+> restored to the original parent after powering on the power domain.
+> 
+> So a reference to the input and parent clocks for the devices attached to
+> a power domain are needed to be able to do the re-parenting. The DISP1 pd
+> includes modules which uses the following clocks:
+> 
+> ACLK_200_DISP1 (MIXER and HDMILINK)
+> ACLK_300_DISP1 (FIMD1)
+> ACLK_400_DISP1 (Internal Buses)
+> 
+> Each of these clocks are generated as the output of a clock mux so add an
+> ID for all of these clock muxes and their parents to be referenced in the
+> DISP1 power domain device node.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-How does this differ to the 'enable-gpio' property which has already
-been defined?
+The patch looks OK to me, I'm fine with it being merged via Kukjin's tree
+due to the dts dependencies (including other pending dts patches touching
+the arch/arm/boot/dts/exynos5420.dtsi file).
+I think we need also Mike ACK for that, I could also queue the patch for
+the clk tree and create a topic branch, but merging both patches via
+arm-soc seems a more sane option in this case.
 
->  Example:
-> =20
-> @@ -65,4 +71,12 @@ Example:
->  				regulator-always-on;
->  				regulator-boot-on;
->  			};
-> +
-> +			buck9_reg {
-> +				regulator-compatible =3D "BUCK9";
-> +				regulator-name =3D "CAM_ISP_CORE_1.2V";
-> +				regulator-min-microvolt =3D <1000000>;
-> +				regulator-max-microvolt =3D <1200000>;
-> +				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
-> +			};
->  	}
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+--
+Thanks,
+Sylwester
