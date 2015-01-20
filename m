@@ -1,126 +1,632 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V9 00/14] drm/exynos: few patches to enhance bridge chip support
-Date: Tue, 20 Jan 2015 22:08:41 +0530
-Message-ID: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:43027 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754519AbbATQqt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 11:46:49 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 03/14] drm/bridge: make bridge registration independent of drm
+ flow
+Date: Tue, 20 Jan 2015 22:08:44 +0530
+Message-ID: <1421771935-31618-4-git-send-email-ajaykumar.rs@samsung.com>
+References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1421771935-31618-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, thierry.reding@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-This series is based on v3.19-rc5 tag of Linux-next tree at:
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Currently, third party bridge drivers(ptn3460) are dependent
+on the corresponding encoder driver init, since bridge driver
+needs a drm_device pointer to finish drm initializations.
+The encoder driver passes the drm_device pointer to the
+bridge driver. Because of this dependency, third party drivers
+like ptn3460 doesn't adhere to the driver model.
 
-Changes since V2:
-	-- Address comments from Jingoo Han for ps8622 driver
-	-- Address comments from Daniel, Rob and Thierry regarding
-	   bridge chaining
-	-- Address comments from Thierry regarding the names for
-	   new drm_panel functions
+In this patch, we reframe the bridge registration framework
+so that bridge initialization is split into 2 steps, and
+bridge registration happens independent of drm flow:
+--Step 1: gather all the bridge settings independent of drm and
+	  add the bridge onto a global list of bridges.
+--Step 2: when the encoder driver is probed, call drm_bridge_attach
+	  for the corresponding bridge so that the bridge receives
+	  drm_device pointer and continues with connector and other
+	  drm initializations.
 
-Changes since V3:
-	-- Remove hotplug based initialization of exynos_dp
-	-- Make exynos_dp work directly with drm_panel, remove
-	   dependency on panel_binder
-	-- Minor cleanups in panel_binder and panel_lvds driver
+The old set of bridge helpers are removed, and a set of new helpers
+are added to accomplish the 2 step initialization.
 
-Changes since V4:
-	-- Use gpiod interface for panel-lvds and ps8622 drivers.
-	-- Address comments from Javier.
-	-- Fix compilation issues when PANEL_BINDER is selected as module.
-	-- Split Documentation patches from driver patches.
-	-- Rebase on top of the tree.
+The bridge devices register themselves onto global list of bridges
+when they get probed by calling "drm_bridge_add".
 
-Changes since V5:
-	-- Modify bridge drivers to support driver model.
-	-- Drop the concept of bridge chain(sincle there are no 2 real bridges)
-	   Hence drop bridge-panel_binder layer.
-	-- Drop panel-lvds driver and accomadate the required changes in
-	   panel-simple driver.
-	-- Use gpiod interface in ptn3460 driver.
-	-- Address all comments by Thierry Reding for V5 series.
-	-- Address comments from Sean Paul for exynos_dp_commit issue.
+The parent encoder driver waits till the bridge is available
+in the lookup table(by calling "of_drm_find_bridge") and then
+continues with its initialization.
 
-Changes since V6:
-	-- Panel patches were separated and they are merged already.
-	-- Fix few issues with ptn3460, before modifying the bridge core.
-	-- Modify drm_bridge as per Thierry's comments for V6 series.
-	-- Add drm_bridge changes minimally without breaking existing code.
-	-- Add new features for ptn3460, step-by-step.
-	-- Address comments from Thierry and Andreas for ptn3460 and ps8622.
-	-- Split documentation patches from driver patches.
+The encoder driver should also call "drm_bridge_attach" to pass
+on the drm_device to the bridge object.
 
-Changes since V7:
-	-- Address comments from Tomi and Laurent:
-		-- Use videoports and endpoints to represent the connection between
-		   encoder, bridge and the panel, instead of using phandles.
-	-- Address comments from Daniel:
-		-- Make the patch description more descriptive.
-		-- remove device pointer from drm_bridge, and just use
-		   device_node instead.
-		-- don't pass encoder pointer to bridge_attach.
-	-- Address comments from Sean Paul:
-		-- Remove bridge from mode_config, and pull out drm_bridge
-		   functions from drm_crtc.c to drm_bridge.c
+drm_bridge_attach inturn calls "bridge->funcs->attach" so that
+bridge can continue with drm related initializations.
 
-Changes since V8:
-	-- Rebase on top of linux-next v3.19-rc5.
-	-- Add Acked-by and Tested-by tags.
-
-Ajay Kumar (13):
-  [PATCH V9 1/14] drm/bridge: ptn3460: Few trivial cleanups
-  [PATCH V9 2/14] drm/bridge: do not pass drm_bridge_funcs to drm_bridge_init
-  [PATCH V9 3/14] drm/bridge: make bridge registration independent of drm flow
-  [PATCH V9 4/14] drm/bridge: ptn3460: Convert to i2c driver model
-  [PATCH V9 5/14] drm/exynos: dp: support drm_bridge
-  [PATCH V9 6/14] drm/bridge: ptn3460: support drm_panel
-  [PATCH V9 7/14] drm/bridge: ptn3460: probe connector at the end of bridge attach
-  [PATCH V9 8/14] drm/bridge: ptn3460: use gpiod interface
-  [PATCH V9 9/14] Documentation: drm: bridge: move to video/bridge
-  [PATCH V9 10/14] Documentation: devicetree: Add vendor prefix for parade
-  [PATCH V9 11/14] Documentation: bridge: Add documentation for ps8622 DT properties
-  [PATCH V9 13/14] ARM: dts: snow: represent the connection between bridge and panel
-    using videoport and endpoints
-  [PATCH V9 14/14] ARM: dts: peach-pit: represent the connection between bridge and
-    panel using videoport and endpoints
-
-Vincent Palatin (1):
-  [PATCH V9 12/14] drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
-
- .../devicetree/bindings/drm/bridge/ptn3460.txt     |   27 -
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- .../devicetree/bindings/video/bridge/ps8622.txt    |   31 +
- .../devicetree/bindings/video/bridge/ptn3460.txt   |   39 ++
- .../devicetree/bindings/video/exynos_dp.txt        |   12 +
- arch/arm/boot/dts/exynos5250-snow.dts              |   30 +-
- arch/arm/boot/dts/exynos5420-peach-pit.dts         |   31 +-
- drivers/gpu/drm/Makefile                           |    2 +-
- drivers/gpu/drm/bridge/Kconfig                     |   12 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/ps8622.c                    |  684 ++++++++++++++++++++
- drivers/gpu/drm/bridge/ptn3460.c                   |  310 +++++----
- drivers/gpu/drm/drm_bridge.c                       |   91 +++
- drivers/gpu/drm/drm_crtc.c                         |   70 --
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   53 +-
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
- drivers/gpu/drm/msm/hdmi/hdmi.c                    |    4 +-
- drivers/gpu/drm/msm/hdmi/hdmi.h                    |    1 +
- drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |    7 +-
- drivers/gpu/drm/sti/sti_hda.c                      |   11 +-
- drivers/gpu/drm/sti/sti_hdmi.c                     |   11 +-
- include/drm/bridge/ptn3460.h                       |    8 +
- include/drm/drm_crtc.h                             |   27 +-
- 23 files changed, 1181 insertions(+), 283 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
- create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
- create mode 100644 Documentation/devicetree/bindings/video/bridge/ptn3460.txt
- create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Tested-by: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Tested-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+---
+ drivers/gpu/drm/Makefile               |    2 +-
+ drivers/gpu/drm/bridge/ptn3460.c       |   27 +++++-----
+ drivers/gpu/drm/drm_bridge.c           |   91 ++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_crtc.c             |   67 -----------------------
+ drivers/gpu/drm/msm/hdmi/hdmi.c        |    4 +-
+ drivers/gpu/drm/msm/hdmi/hdmi.h        |    1 +
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c |    6 +--
+ drivers/gpu/drm/sti/sti_hda.c          |   10 +---
+ drivers/gpu/drm/sti/sti_hdmi.c         |   10 +---
+ include/drm/bridge/ptn3460.h           |    8 +++
+ include/drm/drm_crtc.h                 |   26 ++++-----
+ 11 files changed, 133 insertions(+), 119 deletions(-)
  create mode 100644 drivers/gpu/drm/drm_bridge.c
 
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index e620807..c83ef2d 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -14,7 +14,7 @@ drm-y       :=	drm_auth.o drm_bufs.o drm_cache.o \
+ 		drm_info.o drm_debugfs.o drm_encoder_slave.o \
+ 		drm_trace_points.o drm_global.o drm_prime.o \
+ 		drm_rect.o drm_vma_manager.o drm_flip_work.o \
+-		drm_modeset_lock.o drm_atomic.o
++		drm_modeset_lock.o drm_atomic.o drm_bridge.o
+ 
+ drm-$(CONFIG_COMPAT) += drm_ioc32.o
+ drm-$(CONFIG_DRM_GEM_CMA_HELPER) += drm_gem_cma_helper.o
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index a2ddc8d..4a818c1 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -176,24 +176,11 @@ static void ptn3460_post_disable(struct drm_bridge *bridge)
+ {
+ }
+ 
+-static void ptn3460_bridge_destroy(struct drm_bridge *bridge)
+-{
+-	struct ptn3460_bridge *ptn_bridge = bridge_to_ptn3460(bridge);
+-
+-	drm_bridge_cleanup(bridge);
+-	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
+-		gpio_free(ptn_bridge->gpio_pd_n);
+-	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+-		gpio_free(ptn_bridge->gpio_rst_n);
+-	/* Nothing else to free, we've got devm allocated memory */
+-}
+-
+ static struct drm_bridge_funcs ptn3460_bridge_funcs = {
+ 	.pre_enable = ptn3460_pre_enable,
+ 	.enable = ptn3460_enable,
+ 	.disable = ptn3460_disable,
+ 	.post_disable = ptn3460_post_disable,
+-	.destroy = ptn3460_bridge_destroy,
+ };
+ 
+ static int ptn3460_get_modes(struct drm_connector *connector)
+@@ -314,7 +301,7 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+ 	}
+ 
+ 	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
+-	ret = drm_bridge_init(dev, &ptn_bridge->bridge);
++	ret = drm_bridge_attach(dev, &ptn_bridge->bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to initialize bridge with drm\n");
+ 		goto err;
+@@ -343,3 +330,15 @@ err:
+ 	return ret;
+ }
+ EXPORT_SYMBOL(ptn3460_init);
++
++void ptn3460_destroy(struct drm_bridge *bridge)
++{
++	struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
++
++	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
++		gpio_free(ptn_bridge->gpio_pd_n);
++	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
++		gpio_free(ptn_bridge->gpio_rst_n);
++	/* Nothing else to free, we've got devm allocated memory */
++}
++EXPORT_SYMBOL(ptn3460_destroy);
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+new file mode 100644
+index 0000000..d1187e5
+--- /dev/null
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -0,0 +1,91 @@
++/*
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sub license,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the
++ * next paragraph) shall be included in all copies or substantial portions
++ * of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
++
++#include <linux/err.h>
++#include <linux/module.h>
++
++#include <drm/drm_crtc.h>
++
++#include "drm/drmP.h"
++
++static DEFINE_MUTEX(bridge_lock);
++static LIST_HEAD(bridge_list);
++
++int drm_bridge_add(struct drm_bridge *bridge)
++{
++	mutex_lock(&bridge_lock);
++	list_add_tail(&bridge->list, &bridge_list);
++	mutex_unlock(&bridge_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_bridge_add);
++
++void drm_bridge_remove(struct drm_bridge *bridge)
++{
++	mutex_lock(&bridge_lock);
++	list_del_init(&bridge->list);
++	mutex_unlock(&bridge_lock);
++}
++EXPORT_SYMBOL(drm_bridge_remove);
++
++extern int drm_bridge_attach(struct drm_device *dev, struct drm_bridge *bridge)
++{
++	if (!dev || !bridge)
++		return -EINVAL;
++
++	if (bridge->dev)
++		return -EBUSY;
++
++	bridge->dev = dev;
++
++	if (bridge->funcs->attach)
++		return bridge->funcs->attach(bridge);
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_bridge_attach);
++
++#ifdef CONFIG_OF
++struct drm_bridge *of_drm_find_bridge(struct device_node *np)
++{
++	struct drm_bridge *bridge;
++
++	mutex_lock(&bridge_lock);
++
++	list_for_each_entry(bridge, &bridge_list, list) {
++		if (bridge->of_node == np) {
++			mutex_unlock(&bridge_lock);
++			return bridge;
++		}
++	}
++
++	mutex_unlock(&bridge_lock);
++	return NULL;
++}
++EXPORT_SYMBOL(of_drm_find_bridge);
++#endif
++
++MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
++MODULE_DESCRIPTION("DRM bridge infrastructure");
++MODULE_LICENSE("GPL and additional rights");
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index af57103..bb8e31e 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -1028,58 +1028,6 @@ void drm_connector_unplug_all(struct drm_device *dev)
+ EXPORT_SYMBOL(drm_connector_unplug_all);
+ 
+ /**
+- * drm_bridge_init - initialize a drm transcoder/bridge
+- * @dev: drm device
+- * @bridge: transcoder/bridge to set up
+- *
+- * Initialises a preallocated bridge. Bridges should be
+- * subclassed as part of driver connector objects.
+- *
+- * Returns:
+- * Zero on success, error code on failure.
+- */
+-int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge)
+-{
+-	int ret;
+-
+-	drm_modeset_lock_all(dev);
+-
+-	ret = drm_mode_object_get(dev, &bridge->base, DRM_MODE_OBJECT_BRIDGE);
+-	if (ret)
+-		goto out;
+-
+-	bridge->dev = dev;
+-
+-	list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
+-	dev->mode_config.num_bridge++;
+-
+- out:
+-	drm_modeset_unlock_all(dev);
+-	return ret;
+-}
+-EXPORT_SYMBOL(drm_bridge_init);
+-
+-/**
+- * drm_bridge_cleanup - cleans up an initialised bridge
+- * @bridge: bridge to cleanup
+- *
+- * Cleans up the bridge but doesn't free the object.
+- */
+-void drm_bridge_cleanup(struct drm_bridge *bridge)
+-{
+-	struct drm_device *dev = bridge->dev;
+-
+-	drm_modeset_lock_all(dev);
+-	drm_mode_object_put(dev, &bridge->base);
+-	list_del(&bridge->head);
+-	dev->mode_config.num_bridge--;
+-	drm_modeset_unlock_all(dev);
+-
+-	memset(bridge, 0, sizeof(*bridge));
+-}
+-EXPORT_SYMBOL(drm_bridge_cleanup);
+-
+-/**
+  * drm_encoder_init - Init a preallocated encoder
+  * @dev: drm device
+  * @encoder: the encoder to init
+@@ -1594,7 +1542,6 @@ static int drm_mode_group_init(struct drm_device *dev, struct drm_mode_group *gr
+ 	total_objects += dev->mode_config.num_crtc;
+ 	total_objects += dev->mode_config.num_connector;
+ 	total_objects += dev->mode_config.num_encoder;
+-	total_objects += dev->mode_config.num_bridge;
+ 
+ 	group->id_list = kzalloc(total_objects * sizeof(uint32_t), GFP_KERNEL);
+ 	if (!group->id_list)
+@@ -1603,7 +1550,6 @@ static int drm_mode_group_init(struct drm_device *dev, struct drm_mode_group *gr
+ 	group->num_crtcs = 0;
+ 	group->num_connectors = 0;
+ 	group->num_encoders = 0;
+-	group->num_bridges = 0;
+ 	return 0;
+ }
+ 
+@@ -1623,7 +1569,6 @@ int drm_mode_group_init_legacy_group(struct drm_device *dev,
+ 	struct drm_crtc *crtc;
+ 	struct drm_encoder *encoder;
+ 	struct drm_connector *connector;
+-	struct drm_bridge *bridge;
+ 	int ret;
+ 
+ 	if ((ret = drm_mode_group_init(dev, group)))
+@@ -1640,11 +1585,6 @@ int drm_mode_group_init_legacy_group(struct drm_device *dev,
+ 		group->id_list[group->num_crtcs + group->num_encoders +
+ 			       group->num_connectors++] = connector->base.id;
+ 
+-	list_for_each_entry(bridge, &dev->mode_config.bridge_list, head)
+-		group->id_list[group->num_crtcs + group->num_encoders +
+-			       group->num_connectors + group->num_bridges++] =
+-					bridge->base.id;
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL(drm_mode_group_init_legacy_group);
+@@ -5208,7 +5148,6 @@ void drm_mode_config_init(struct drm_device *dev)
+ 	INIT_LIST_HEAD(&dev->mode_config.fb_list);
+ 	INIT_LIST_HEAD(&dev->mode_config.crtc_list);
+ 	INIT_LIST_HEAD(&dev->mode_config.connector_list);
+-	INIT_LIST_HEAD(&dev->mode_config.bridge_list);
+ 	INIT_LIST_HEAD(&dev->mode_config.encoder_list);
+ 	INIT_LIST_HEAD(&dev->mode_config.property_list);
+ 	INIT_LIST_HEAD(&dev->mode_config.property_blob_list);
+@@ -5249,7 +5188,6 @@ void drm_mode_config_cleanup(struct drm_device *dev)
+ 	struct drm_connector *connector, *ot;
+ 	struct drm_crtc *crtc, *ct;
+ 	struct drm_encoder *encoder, *enct;
+-	struct drm_bridge *bridge, *brt;
+ 	struct drm_framebuffer *fb, *fbt;
+ 	struct drm_property *property, *pt;
+ 	struct drm_property_blob *blob, *bt;
+@@ -5260,11 +5198,6 @@ void drm_mode_config_cleanup(struct drm_device *dev)
+ 		encoder->funcs->destroy(encoder);
+ 	}
+ 
+-	list_for_each_entry_safe(bridge, brt,
+-				 &dev->mode_config.bridge_list, head) {
+-		bridge->funcs->destroy(bridge);
+-	}
+-
+ 	list_for_each_entry_safe(connector, ot,
+ 				 &dev->mode_config.connector_list, head) {
+ 		connector->funcs->destroy(connector);
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index 062c687..95f7b8d 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -247,9 +247,9 @@ int hdmi_modeset_init(struct hdmi *hdmi,
+ 	return 0;
+ 
+ fail:
+-	/* bridge/connector are normally destroyed by drm: */
++	/* bridge is normally destroyed by drm: */
+ 	if (hdmi->bridge) {
+-		hdmi->bridge->funcs->destroy(hdmi->bridge);
++		hdmi_bridge_destroy(hdmi->bridge);
+ 		hdmi->bridge = NULL;
+ 	}
+ 	if (hdmi->connector) {
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+index 43e654f..4d4cad4 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.h
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+@@ -146,6 +146,7 @@ void hdmi_audio_set_sample_rate(struct hdmi *hdmi, int rate);
+  */
+ 
+ struct drm_bridge *hdmi_bridge_init(struct hdmi *hdmi);
++void hdmi_bridge_destroy(struct drm_bridge *bridge);
+ 
+ /*
+  * hdmi connector:
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+index 52ed2b5..d6f8d58 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+@@ -23,10 +23,9 @@ struct hdmi_bridge {
+ };
+ #define to_hdmi_bridge(x) container_of(x, struct hdmi_bridge, base)
+ 
+-static void hdmi_bridge_destroy(struct drm_bridge *bridge)
++void hdmi_bridge_destroy(struct drm_bridge *bridge)
+ {
+ 	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
+-	drm_bridge_cleanup(bridge);
+ 	kfree(hdmi_bridge);
+ }
+ 
+@@ -200,7 +199,6 @@ static const struct drm_bridge_funcs hdmi_bridge_funcs = {
+ 		.disable = hdmi_bridge_disable,
+ 		.post_disable = hdmi_bridge_post_disable,
+ 		.mode_set = hdmi_bridge_mode_set,
+-		.destroy = hdmi_bridge_destroy,
+ };
+ 
+ 
+@@ -222,7 +220,7 @@ struct drm_bridge *hdmi_bridge_init(struct hdmi *hdmi)
+ 	bridge = &hdmi_bridge->base;
+ 	bridge->funcs = &hdmi_bridge_funcs;
+ 
+-	drm_bridge_init(hdmi->dev, bridge);
++	drm_bridge_attach(hdmi->dev, bridge);
+ 
+ 	return bridge;
+ 
+diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+index 6cf145d..a9bbb08 100644
+--- a/drivers/gpu/drm/sti/sti_hda.c
++++ b/drivers/gpu/drm/sti/sti_hda.c
+@@ -508,19 +508,12 @@ static void sti_hda_bridge_nope(struct drm_bridge *bridge)
+ 	/* do nothing */
+ }
+ 
+-static void sti_hda_brigde_destroy(struct drm_bridge *bridge)
+-{
+-	drm_bridge_cleanup(bridge);
+-	kfree(bridge);
+-}
+-
+ static const struct drm_bridge_funcs sti_hda_bridge_funcs = {
+ 	.pre_enable = sti_hda_pre_enable,
+ 	.enable = sti_hda_bridge_nope,
+ 	.disable = sti_hda_disable,
+ 	.post_disable = sti_hda_bridge_nope,
+ 	.mode_set = sti_hda_set_mode,
+-	.destroy = sti_hda_brigde_destroy,
+ };
+ 
+ static int sti_hda_connector_get_modes(struct drm_connector *connector)
+@@ -665,7 +658,7 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	bridge->driver_private = hda;
+ 	bridge->funcs = &sti_hda_bridge_funcs;
+-	drm_bridge_init(drm_dev, bridge);
++	drm_bridge_attach(drm_dev, bridge);
+ 
+ 	encoder->bridge = bridge;
+ 	connector->encoder = encoder;
+@@ -694,7 +687,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+ err_sysfs:
+ 	drm_connector_unregister(drm_connector);
+ err_connector:
+-	drm_bridge_cleanup(bridge);
+ 	drm_connector_cleanup(drm_connector);
+ 	return -EINVAL;
+ }
+diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+index 74e943e..e840ca5d 100644
+--- a/drivers/gpu/drm/sti/sti_hdmi.c
++++ b/drivers/gpu/drm/sti/sti_hdmi.c
+@@ -463,19 +463,12 @@ static void sti_hdmi_bridge_nope(struct drm_bridge *bridge)
+ 	/* do nothing */
+ }
+ 
+-static void sti_hdmi_brigde_destroy(struct drm_bridge *bridge)
+-{
+-	drm_bridge_cleanup(bridge);
+-	kfree(bridge);
+-}
+-
+ static const struct drm_bridge_funcs sti_hdmi_bridge_funcs = {
+ 	.pre_enable = sti_hdmi_pre_enable,
+ 	.enable = sti_hdmi_bridge_nope,
+ 	.disable = sti_hdmi_disable,
+ 	.post_disable = sti_hdmi_bridge_nope,
+ 	.mode_set = sti_hdmi_set_mode,
+-	.destroy = sti_hdmi_brigde_destroy,
+ };
+ 
+ static int sti_hdmi_connector_get_modes(struct drm_connector *connector)
+@@ -636,7 +629,7 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	bridge->driver_private = hdmi;
+ 	bridge->funcs = &sti_hdmi_bridge_funcs;
+-	drm_bridge_init(drm_dev, bridge);
++	drm_bridge_attach(drm_dev, bridge);
+ 
+ 	encoder->bridge = bridge;
+ 	connector->encoder = encoder;
+@@ -668,7 +661,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+ err_sysfs:
+ 	drm_connector_unregister(drm_connector);
+ err_connector:
+-	drm_bridge_cleanup(bridge);
+ 	drm_connector_cleanup(drm_connector);
+ err_adapt:
+ 	put_device(&hdmi->ddc_adapt->dev);
+diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
+index ff62344..b11f8e1 100644
+--- a/include/drm/bridge/ptn3460.h
++++ b/include/drm/bridge/ptn3460.h
+@@ -15,6 +15,7 @@
+ #define _DRM_BRIDGE_PTN3460_H_
+ 
+ struct drm_device;
++struct drm_bridge;
+ struct drm_encoder;
+ struct i2c_client;
+ struct device_node;
+@@ -23,6 +24,9 @@ struct device_node;
+ 
+ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+ 		struct i2c_client *client, struct device_node *node);
++
++void ptn3460_destroy(struct drm_bridge *bridge);
++
+ #else
+ 
+ static inline int ptn3460_init(struct drm_device *dev,
+@@ -32,6 +36,10 @@ static inline int ptn3460_init(struct drm_device *dev,
+ 	return 0;
+ }
+ 
++static inline void ptn3460_destroy(struct drm_bridge *bridge)
++{
++}
++
+ #endif
+ 
+ #endif
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index 5b8f254..cc369f3 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -813,15 +813,16 @@ struct drm_plane {
+ 
+ /**
+  * struct drm_bridge_funcs - drm_bridge control functions
++ * @attach: Called during drm_bridge_attach
+  * @mode_fixup: Try to fixup (or reject entirely) proposed mode for this bridge
+  * @disable: Called right before encoder prepare, disables the bridge
+  * @post_disable: Called right after encoder prepare, for lockstepped disable
+  * @mode_set: Set this mode to the bridge
+  * @pre_enable: Called right before encoder commit, for lockstepped commit
+  * @enable: Called right after encoder commit, enables the bridge
+- * @destroy: make object go away
+  */
+ struct drm_bridge_funcs {
++	int (*attach)(struct drm_bridge *bridge);
+ 	bool (*mode_fixup)(struct drm_bridge *bridge,
+ 			   const struct drm_display_mode *mode,
+ 			   struct drm_display_mode *adjusted_mode);
+@@ -832,22 +833,24 @@ struct drm_bridge_funcs {
+ 			 struct drm_display_mode *adjusted_mode);
+ 	void (*pre_enable)(struct drm_bridge *bridge);
+ 	void (*enable)(struct drm_bridge *bridge);
+-	void (*destroy)(struct drm_bridge *bridge);
+ };
+ 
+ /**
+  * struct drm_bridge - central DRM bridge control structure
+  * @dev: DRM device this bridge belongs to
+- * @head: list management
++ * @of_node: device node pointer to the bridge
++ * @list: to keep track of all added bridges
+  * @base: base mode object
+  * @funcs: control functions
+  * @driver_private: pointer to the bridge driver's internal context
+  */
+ struct drm_bridge {
+ 	struct drm_device *dev;
+-	struct list_head head;
+-
+-	struct drm_mode_object base;
++	struct drm_encoder *encoder;
++#ifdef CONFIG_OF
++	struct device_node *of_node;
++#endif
++	struct list_head list;
+ 
+ 	const struct drm_bridge_funcs *funcs;
+ 	void *driver_private;
+@@ -950,7 +953,6 @@ struct drm_mode_group {
+ 	uint32_t num_crtcs;
+ 	uint32_t num_encoders;
+ 	uint32_t num_connectors;
+-	uint32_t num_bridges;
+ 
+ 	/* list of object IDs for this group */
+ 	uint32_t *id_list;
+@@ -969,8 +971,6 @@ struct drm_mode_group {
+  * @fb_list: list of framebuffers available
+  * @num_connector: number of connectors on this device
+  * @connector_list: list of connector objects
+- * @num_bridge: number of bridges on this device
+- * @bridge_list: list of bridge objects
+  * @num_encoder: number of encoders on this device
+  * @encoder_list: list of encoder objects
+  * @num_overlay_plane: number of overlay planes on this device
+@@ -1015,8 +1015,6 @@ struct drm_mode_config {
+ 
+ 	int num_connector;
+ 	struct list_head connector_list;
+-	int num_bridge;
+-	struct list_head bridge_list;
+ 	int num_encoder;
+ 	struct list_head encoder_list;
+ 
+@@ -1153,8 +1151,10 @@ extern unsigned int drm_connector_index(struct drm_connector *connector);
+ /* helper to unplug all connectors from sysfs for device */
+ extern void drm_connector_unplug_all(struct drm_device *dev);
+ 
+-extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge);
+-extern void drm_bridge_cleanup(struct drm_bridge *bridge);
++extern int drm_bridge_add(struct drm_bridge *bridge);
++extern void drm_bridge_remove(struct drm_bridge *bridge);
++extern struct drm_bridge *of_drm_find_bridge(struct device_node *np);
++extern int drm_bridge_attach(struct drm_device *dev, struct drm_bridge *bridge);
+ 
+ extern int drm_encoder_init(struct drm_device *dev,
+ 			    struct drm_encoder *encoder,
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
