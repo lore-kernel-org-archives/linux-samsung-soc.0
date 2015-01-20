@@ -1,55 +1,65 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: exynos5420: Add IDs for clocks used in DISP1
- power domain
-Date: Tue, 20 Jan 2015 15:04:00 +0100
-Message-ID: <54BE6050.1090205@samsung.com>
-References: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk>
- <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Tue, 20 Jan 2015 15:05:38 +0100
+Message-ID: <54BE60B2.1030707@collabora.co.uk>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+	<1417514366.21830.22.camel@collabora.co.uk>
+	<54818768.3080303@samsung.com>
+	<CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com>
+	<54AC93E0.8010705@samsung.com>
+	<54ACFD69.1020500@collabora.co.uk> <54AD0293.70909@samsung.com>
+	<54AEB384.2040005@collabora.co.uk> <54B36C5A.6050109@samsung.com>
+	<54B3F1B7.7090307@collabora.co.uk> <54B4ABFB.5000501@samsung.com>
+	<54B5B5F6.3030607@collabora.co.uk>
+	<54B5B721.4070309@collabora.co.uk> <54BE383B.5030505@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:44817 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750712AbbATOEK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 09:04:10 -0500
-In-reply-to: <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <54BE383B.5030505-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Mike Turquette <mturquette@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi,
+Hello Joonyoung,
 
-On 20/01/15 11:35, Javier Martinez Canillas wrote:
-> When a power domain is powered off on Exynos5420 SoC, the input clocks of
-> the devices attached to this power domain are re-parented to oscclk and
-> restored to the original parent after powering on the power domain.
+On 01/20/2015 12:12 PM, Joonyoung Shim wrote:
+>>>
+>>> I dug further on this issue and found that the cause is that the exynos_mixer
+>>> driver needs some clocks (CLK_HDMI and CLK_SCLK_HDMI) grabbed by exynos_hdmi
+>>> to be kept enabled after hdmi_poweroff (drivers/gpu/drm/exynos/exynos_hdmi.c).
+>>>
+>>> Otherwise, any access to mixer device registers leads to an imprecise external
+>>> abort error. The following change [0] to the Exynos DRM HDMI driver makes the
+>>> issue to not happen and I can successfully execute:
+>>>
+>>> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>>> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>>>
 > 
-> So a reference to the input and parent clocks for the devices attached to
-> a power domain are needed to be able to do the re-parenting. The DISP1 pd
-> includes modules which uses the following clocks:
-> 
-> ACLK_200_DISP1 (MIXER and HDMILINK)
-> ACLK_300_DISP1 (FIMD1)
-> ACLK_400_DISP1 (Internal Buses)
-> 
-> Each of these clocks are generated as the output of a clock mux so add an
-> ID for all of these clock muxes and their parents to be referenced in the
-> DISP1 power domain device node.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Did you execute this operation repeatedly? Still i get error when i
+> execute this more than twice with your change [0].
+>
 
-The patch looks OK to me, I'm fine with it being merged via Kukjin's tree
-due to the dts dependencies (including other pending dts patches touching
-the arch/arm/boot/dts/exynos5420.dtsi file).
-I think we need also Mike ACK for that, I could also queue the patch for
-the clk tree and create a topic branch, but merging both patches via
-arm-soc seems a more sane option in this case.
+You mean that you are seeing the "Power domain power-domain disable failed"
+message but the system is not crashing or that you are still having the
+system crash?
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+I've seen the former when running multiple times but I have not seen the
+crash when the hdmi clock is not disabled on hdmi_poweroff().
 
---
-Thanks,
-Sylwester
+> Thanks.
+>
+
+Best regards,
+Javier
