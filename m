@@ -1,76 +1,78 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 2/2] ARM: dts: Add DISP1 power domain for exynos5420
-Date: Tue, 20 Jan 2015 11:35:27 +0100
-Message-ID: <1421750127-22536-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Rahul Sharma <rahul.sharma@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Tue, 20 Jan 2015 16:26:08 +0530
+Message-ID: <CAEC9eQNna0nMVWTCUfoiiuAkYzPS8iKXGtfsL1S-MkZXpFi6xA@mail.gmail.com>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
+ <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon>
+ <54914D7D.9060108@collabora.co.uk>
+ <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
+ <20150105135015.GA12010@ulmo.nvidia.com>
+ <54BCDC28.7080003@collabora.co.uk>
+ <20150119163043.GB7751@ulmo.nvidia.com>
+ <54BD3943.80402@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <54BD3943.80402@collabora.co.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The DISP1 power domain on Exynos5420 SoC includes the FIMD1, MIXER
-and HDMI modules. Add a device node for this power domain and mark
-these modules as consumer of the DISP1 power domain.
-
-When a power domain is powered on and off, the input clocks of the
-devices attached to it are reparented. So a reference to the input
-and parent clocks of the devices are needed to manage that.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5420.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e5cb74d2b9f5..9dc2e9773b30 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -274,6 +274,20 @@
- 		#power-domain-cells = <0>;
- 	};
- 
-+	disp_pd: power-domain@100440C0 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x100440C0 0x20>;
-+		#power-domain-cells = <0>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK200>,
-+			 <&clock CLK_MOUT_USER_ACLK200_DISP1>,
-+			 <&clock CLK_MOUT_SW_ACLK300>,
-+			 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
-+			 <&clock CLK_MOUT_SW_ACLK400>,
-+			 <&clock CLK_MOUT_USER_ACLK400_DISP1>;
-+		clock-names = "oscclk", "pclk0", "clk0",
-+			      "pclk1", "clk1", "pclk2", "clk2";
-+	};
-+
- 	pinctrl_0: pinctrl@13400000 {
- 		compatible = "samsung,exynos5420-pinctrl";
- 		reg = <0x13400000 0x1000>;
-@@ -541,6 +555,7 @@
- 	fimd: fimd@14400000 {
- 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
- 		clock-names = "sclk_fimd", "fimd";
-+		power-domains = <&disp_pd>;
- 	};
- 
- 	adc: adc@12D10000 {
-@@ -714,6 +729,7 @@
- 		phy = <&hdmiphy>;
- 		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
-+		power-domains = <&disp_pd>;
- 	};
- 
- 	hdmiphy: hdmiphy@145D0000 {
-@@ -726,6 +742,7 @@
- 		interrupts = <0 94 0>;
- 		clocks = <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>;
- 		clock-names = "mixer", "sclk_hdmi";
-+		power-domains = <&disp_pd>;
- 	};
- 
- 	gsc_0: video-scaler@13e00000 {
--- 
-2.1.3
+T24gTW9uLCBKYW4gMTksIDIwMTUgYXQgMTA6MzUgUE0sIEphdmllciBNYXJ0aW5leiBDYW5pbGxh
+cwo8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4gd3JvdGU6Cj4gSGVsbG8gVGhpZXJy
+eSwKPgo+IE9uIDAxLzE5LzIwMTUgMDU6MzAgUE0sIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4K
+Pj4+IEkga25vdyB5b3UgcHJvYmFibHkgYXJlIHZlcnkgYnVzeSBidXQgaXQgd291bGQgYmUgZ3Jl
+YXQgaWYgeW91IGNhbiB0YWtlIGEgbG9vawo+Pj4gdG8gdGhpcyBzZXJpZXMgdG8gYXZvaWQgYW5v
+dGhlciBrZXJuZWwgcmVsZWFzZSB0byBiZSBtaXNzZWQgc2luY2Ugd2UgYXJlIGFscmVhZHkKPj4+
+IGF0IHYzLjE5LXJjNS4KPj4+Cj4+PiBPbmx5IHRoaXMgdmVyc2lvbiB3YXMgcG9zdGVkIDIgbW9u
+dGhzIGFnbyBhbmQgdGhlIGZpcnN0IHZlcnNpb24gb2YgdGhlIHNlcmllcwo+Pj4gd2FzIHNlbnQg
+b24gTWF5LCAyMDE0IHNvIGl0IGhhcyBiZWVuIG9uIHRoZSBsaXN0IGZvciBhbG1vc3QgYSB5ZWFy
+IG5vdy4uLgo+Pj4KPj4+IFRvbWkgYW5kIExhdXJlbnQgaGFkIGFscmVhZHkgYWdyZWVkIHdpdGgg
+dGhlIERUIGJpbmdpbmcgc28gSSB0aGluayB0aGF0IHdlIGNhbgo+Pj4gYWxyZWFkeSBtZXJnZSB0
+aGVzZSBhbmQgaWYgdGhlcmUgYXJlIGFueSByZW1haW5pbmcgaXNzdWVzLCB0aG9zZSBjYW4gYmUg
+Zml4ZWQKPj4+IGR1cmluZyB0aGUgMy4yMCAtcmMgY3ljbGUuCj4+Cj4+IEkgc2VlIG9ubHkgYSBz
+aW5nbGUgVGVzdGVkLWJ5IG9uIHRoaXMgc2VyaWVzIGFuZCB0aGF0IHNlZW1zIHRvIGJlIHdpdGgg
+YQo+PiBidW5jaCBvZiBvdXQtb2YtdHJlZSBwYXRjaGVzIGFwcGxpZWQgb24gdG9wLiBEb2VzIHRo
+aXMgbm93IGFjdHVhbGx5IHdvcmsKPj4gYXBwbGllZCBvbiB0b3Agb2YgdXBzdHJlYW0/IEFsc28g
+aXQgc2VlbXMgbGlrZSBtYW55IHBlb3BsZSBhY3R1YWxseSB3YW50Cj4+IHRoaXMgdG8gZ2V0IG1l
+cmdlZCBidXQgdGhlcmUncyBiZWVuIG5vIFJldmlld2VkLWJ5cyBhbmQgb25seSBhIHNpbmdsZQo+
+PiBUZXN0ZWQtYnk/IElzIHRoYXQgYXMgZ29vZCBhcyBpdCdzIGdvaW5nIHRvIGdldD8KPj4KPgo+
+IEdvb2QgcG9pbnQsIEkgcHJvdmlkZWQgc29tZSBmZWVkYmFjayBvbiBhbiBlYXJseSB2ZXJzaW9u
+IG9mIHRoZSBzZXJpZXMgYnV0IEknbSBub3QKPiBhbiBEUk0gZXhwZXJ0IHNvIEkgY291bGRuJ3Qg
+cmV2aWV3IGl0IGluIGRldGFpbCB0byBwcm92aWRlIG15IFJldmlld2VkLWJ5Lgo+Cj4gSSBkaWQg
+cHJvdmlkZSBteSBUZXN0ZWQtYnkgYSBsb25nIHRpbWUgYWdvIHRob3VnaCBidXQgbG9va2luZyBh
+dCB0aGUgcGF0Y2hlcyBpdAo+IHNlZW1zIHRob3NlIHdlcmUgZHJvcHBlZCBzbyBoZXJlIGdvZXMg
+YWdhaW46Cj4KPiBGb3IgdGhlIHdob2xlIHNlcmllcyBvbiBhbiBFeHlub3M1NDIwIFBlYWNoIFBp
+dCBhbmQgYW4gRXh5bm9zNTI1MCBTbm93IENocm9tZWJvb2tzOgo+Cj4gVGVzdGVkLWJ5OiBKYXZp
+ZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+Cj4K
+Pj4gQWxzbyBJIHRoaW5rIHRoZSBsYXN0IHVwZGF0ZSB3YXMgdGhhdCBBamF5IHdhcyBnb2luZyB0
+byByZXNlbmQgdGhpcwo+PiBiYXNlZCBvbiB2My4xOS1yYzEgb3Igc29tZXRoaW5nLiBJcyB0aGF0
+IHN0aWxsIGdvaW5nIHRvIGhhcHBlbj8KPj4gT3RoZXJ3aXNlIEkgY2FuIHByb2JhYmx5IHRyeSB0
+byBhcHBseSBhcy1pcywgYnV0IG5vdCBzdXJlIGhvdyB3ZWxsIGl0Cj4+IHdpbGwuCj4+Cj4KPiBB
+amF5LAo+Cj4gQXJlIHlvdSBnb2luZyB0byByZWJhc2UgYW5kIHJlc2VuZCB0aGlzIHNlcmllcyB3
+aXRoIGFsbCB0aGUgcHJvdmlkZWQgdGFncz8gR3VzdGF2bwo+IGFuZCBJIGhhdmUgYSByZWJhc2Vk
+IGJyYW5jaCBvbiB0b3Agb2YgMy4xOS1yYzUgYW5kIG9uZSBvZiB1cyBjYW4gcG9zdCB5b3VyIHNl
+cmllcyBpZgo+IHlvdSBhcmUgbm90IHBsYW5uaW5nIHRvIGRvIGl0LgpZZXMsIGluIGEgZGF5IG9y
+IHNvLiBJIGFtIGN1cnJlbnRseSByZWJhc2luZyBvbiAzLjE5LXJjNSBsaW51eC1uZXh0LgpJIHdp
+bGwgYWRkIFRlc3RlZC1ieSBmcm9tIGZyb20gUmFodWwsIEphdmllciwgSW5raSwgU2pvZXJkLCBh
+bmQgR3VzdGF2by4KT25seSBJbmtpIGhhcyBhY2tlZCB0aGlzIHRpbGwgbm93LiBTbywgSSB3aWxs
+IGFkZCBJbmtpJ3MgQWNrZWQtYnkuCgpBamF5Cgo+IExhdXJlbnQgYW5kIFRvbWksCj4KPiBZb3Ug
+c2FpZCB0aGF0IHlvdSBhcmUgT0sgd2l0aCB0aGUgRFQgYmluZGluZ3Mgbm93LCBkb2VzIHRoYXQg
+Y291bnQgYXMgYW4gQWNrZWQtYnkgb3IKPiBSZXZpZXdlZC1ieSBmb3IgeW91IGF0IGxlYXN0IGZv
+ciB0aGUgRFQgYmluZGluZ3MgY2hhbmdlcyBpbiB0aGUgc2VyaWVzPwo+Cj4+IFRoaWVycnkKPj4K
+Pgo+IEJlc3QgcmVnYXJkcywKPiBKYXZpZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
