@@ -1,59 +1,45 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND v2 3/7] mfd: cros_ec: Add cros_ec_lpc driver for
- x86 devices
-Date: Tue, 20 Jan 2015 17:52:20 +0100
-Message-ID: <54BE87C4.4040108@collabora.co.uk>
-References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-4-git-send-email-javier.martinez@collabora.co.uk> <20150120081104.GT21886@x1> <54BE7B08.1010900@collabora.co.uk> <20150120163410.GC30656@x1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH RESEND v2 5/7] mfd: cros_ec: Instantiate ChromeOS EC
+ character device
+Date: Tue, 20 Jan 2015 16:55:27 +0000
+Message-ID: <20150120165527.GH30656@x1>
+References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1420205572-2640-6-git-send-email-javier.martinez@collabora.co.uk>
+ <20150120082013.GU21886@x1>
+ <54BE7C53.8070605@collabora.co.uk>
+ <20150120162952.GB30656@x1>
+ <54BE83FF.7030709@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150120163410.GC30656@x1>
+Content-Disposition: inline
+In-Reply-To: <54BE83FF.7030709@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+On Tue, 20 Jan 2015, Javier Martinez Canillas wrote:
 
-On 01/20/2015 05:34 PM, Lee Jones wrote:
->> 
->> So, the Embedded Controller driver (drivers/mfd/cros_ec.c) falls into that
->> category and in fact has been in the mfd driver for a long time. Now, if
->> an mfd device support different type of buses (e.g: i2c, spi, etc) I see
->> that both the core driver and the driver for the transport method are
->> in the drivers/mfd directory. As an example:
->> 
->> drivers/mfd/arizona-{core,i2c,spi}.c
->> drivers/mfd/da9052-{core,i2c,spi}.c
->> drivers/mfd/mc13xxx-{core,i2c,spi}.c
->> drivers/mfd/tps65912-{core,i2c,spi}.c
->> drivers/mfd/wm831x-{core,i2c,spi,otp}.c
->> 
->> In the cros_ec case, we already have drivers/mfd/cros_ec_{i2c,spi}.c so
->> since the Low Pin Count is another transport method I thought that this
->> driver belonged to the drivers/mfd directory.
->> 
->> Now, all those drivers may be wrong and the buses don't belong to the mfd
->> subsystem but then I think we need to document that since it seems that is
->> the correct way to do it just by looking at the other drivers.
-> 
-> I don't think the drivers you mentioned above do anything practical.
-> For instance, they are not SPI/IC2/etc drivers.  They should only
-> offer some abstraction layers which are used to communicate with the
-> device.  The driver you are submitting looks a lot more like a device
-> driver, which should live somewhere else.  Don't ask me where though,
-> I'm not even sure what a Low Pin Controller does.
-> 
+> Hello Lee,
+>=20
+> On 01/20/2015 05:29 PM, Lee Jones wrote:
+> >=20
+> > It's not a blocker, but it is a ridiculous name to use inside the
+> > driver/ directory 'cos almost everything is a dev(ice) here.
+> >=20
+>=20
+> Right, do you think that "cros-ec-chardev" will be a more suitable
+> name? Sorry, I'm really bad at naming things...
 
-The driver added by $subject doesn't really do anything practical either.
-LPC [0] is just another transport method like i2c or spi that is used on
-x86 Chromebooks to access the Embedded Controller.
+But is it really a chardev?  Don't chardevs usually live in
+drivers/char?  It probably uses a chardev node in /dev, but what does
+it really do?  What information can/will userspace obtain from this
+memory block?
 
-So the driver is really not that different than the cros_ec_{i2c,spi}.c
-drivers.
-
-Best regards,
-Javier
-
-[0]: http://en.wikipedia.org/wiki/Low_Pin_Count
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
