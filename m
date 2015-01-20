@@ -1,105 +1,180 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: Re: [PATCHv8 1/9] devfreq: event: Add new devfreq_event class to
- provide basic data for devfreq governor
-Date: Tue, 20 Jan 2015 06:59:30 +0000 (GMT)
-Message-ID: <213049974.1319841421737167629.JavaMail.weblogic@epmlwas04a>
-Reply-To: myungjoo.ham@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v9 0/7] devfreq: Add devfreq-event class to provide raw data
+ for devfreq device
+Date: Tue, 20 Jan 2015 16:10:02 +0900
+Message-ID: <1421737809-4010-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
-Cc: "kgene@kernel.org" <kgene@kernel.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PiAgDQo+IERlYXIgTXl1bmdqb28sDQo+DQo+T24gMDEvMjAvMjAxNSAwMTozNCBQTSwgTXl1bmdK
-b28gSGFtIHdyb3RlOg0KPj4+ICAgDQpbXQ0KPj4+ICsNCj4+PiArCW11dGV4X2xvY2soJmVkZXYt
-PmxvY2spOw0KPj4+ICsJaWYgKGVkZXYtPmRlc2MtPm9wcyAmJiBlZGV2LT5kZXNjLT5vcHMtPmVu
-YWJsZSkgew0KPj4+ICsJCXJldCA9IGVkZXYtPmRlc2MtPm9wcy0+ZW5hYmxlKGVkZXYpOw0KPj4+
-ICsJCWlmIChyZXQgPCAwKQ0KPj4+ICsJCQlnb3RvIGVycjsNCj4+PiArCX0NCj4+IA0KPj4gSXMg
-dGhlcmUgYW55IHJlYXNvbiB0byBjYWxsIGVuYWJsZShlZGV2KSBldmVuIHdoZW4gZW5hYmxlX2Nv
-dW50IGlzIGFscmVhZHkgPiAwIA0KPj4gd2hpbGUgeW91IGRvIG5vdCBjYWxsIGRpc2FibGUoZWRl
-dikgd2hpbGUgZW5hYmxlX2NvdW50ID4gMD8NCj4+IA0KPj4gSSB0aGluayB0aGlzIG1heSBpbmN1
-ciBlcnJvcnMgaW4gdGhlIHJlbGF0ZWQgZGV2aWNlIGRyaXZlcnMuDQo+PiAoZS5nLiwgaW5jb3Jy
-ZWN0IHBhaXJpbmcgb2YgY2xrL3J1bnRpbWUtcG0vcmVndWxhdG9yIGVuYWJsZS9kaXNhYmxlDQo+
-PiBhdCB0aGUgZGV2aWNlIGRyaXZlciBzaWRlKQ0KPg0KPllvdSdyZSByaWdodC4gVGhpcyBwYXJ0
-IGhhcyBwb3RlbnRpYWwgZXJyb3JzLiBJJ2xsIGZpeCBpdCBhcyBmb2xsb3dpbmc6DQo+SWYgZWRl
-diBpcyBhbHJlYWR5IGVuYWJsZWQsIGRldmZyZXFfZXZlbnRfZW5hYmxlX2VkZXYoKSB3aWxsIGp1
-c3QgcmV0dXJuDQo+d2l0aG91dCBhbnkgb3BlcmF0aW9uIGJlY2F1c2UgZGV2ZnJlcS1ldmVudChl
-ZGV2KSBjYW4gaGFuZGxlIG9ubHkgb25lIGV2ZW50DQo+YXQgdGhlIHNhbWUgdGltZS4NCj4gDQo+
-CW11dGV4X2xvY2soJmVkZXYtPmxvY2spOw0KPglpZiAoZWRldi0+ZW5hYmxlX2NvdW50KQ0KPgkJ
-ZGV2X3dhcm4oJmVkZXYtPmRldiwgIiVzIGlzIGFscmVhZHkgZW5hYmxlZFxuIiwgZWRldi0+ZGVz
-Yy0+bmFtZSk7DQo+CQlyZXQgPSAtRUlOVkFMOw0KPgkJZ290byBlcnI7DQo+CX0NCj4NCj4JaWYg
-KGVkZXYtPmRlc2MtPm9wcyAmJiBlZGV2LT5kZXNjLT5vcHMtPmVuYWJsZSkgewkJDQo+CQlyZXQg
-PSBlZGV2LT5kZXNjLT5vcHMtPmVuYWJsZShlZGV2KTsNCj4JCWlmIChyZXQgPCAwKQ0KPgkJCWdv
-dG8gZXJyOw0KPgl9DQo+CWVkZXYtPmVuYWJsZV9jb3VudCsrOw0KDQpObywgeW91ciBzdWdnZXN0
-ZWQgbW9kaWZpY2F0aW9uIGNyZWF0ZXMgYW5vdGhlciBidWcuDQoNCkl0IHNob3VsZCBub3QgZW1p
-dCAid2FybiIgd2hlbiBlbmFibGVfY291bnQgPiAwIGF0IGVuYWJsZSgpLg0KSXQgaXMgYSBuYXR1
-cmFsIGJlaGF2aW9yIGZyb20gZHJpdmVycy4NCi0gWW91IG1heSBoYXZlIG11bHRpcGxlIGRyaXZl
-cnMgdXNpbmcgZWRldi4NCi0gWW91IG1heSBoYXZlIG11bHRpcGxlIHRocmVhZHMgdXNpbmcgZWRl
-di4NCg0KVGh1cywgdGhlIGFib3ZlIDEyIGxpbmVzIHNob3VsZCBiZSByZXBsYWNlZCB3aXRoOg0K
-DQoJaWYgKGVkZXYtPmRlc2MtPm9wcyAmJiBlZGV2LT5kZXNjLT5vcHMtPmVuYWJsZSAmJg0KCSAg
-ICBlZGV2LT5lbmFibGVfY291bnQgPT0gMCkgew0KCQlyZXQgPSBlZGV2LT5kZXNjLT5vcHMtPmVu
-YWJsZShlZGV2KTsNCgkJaWYgKHJldCA8IDApDQoJCQlnb3RvIGVycjsNCgl9DQoJZWRldi0+ZW5h
-YmxlX2NvdW50Kys7DQoNCj4JDQo+DQo+PiANCj4+PiArCWVkZXYtPmVuYWJsZV9jb3VudCsrOw0K
-Pj4+ICtlcnI6DQo+Pj4gKwltdXRleF91bmxvY2soJmVkZXYtPmxvY2spOw0KPj4+ICsNCj4+PiAr
-CXJldHVybiByZXQ7DQo+Pj4gK30NCj4+PiArRVhQT1JUX1NZTUJPTF9HUEwoZGV2ZnJlcV9ldmVu
-dF9lbmFibGVfZWRldik7DQo+Pj4gKw0KPj4+ICsvKioNCj4+PiArICogZGV2ZnJlcV9ldmVudF9k
-aXNhYmxlX2VkZXYoKSAtIERpc2FibGUgdGhlIGRldmZyZXEtZXZlbnQgZGV2IGFuZCBkZWNyZWFz
-ZQ0KPj4+ICsgKgkJCQkgIHRoZSBlbmFibGVfY291bnQgb2YgdGhlIGRldmZyZXEtZXZlbnQgZGV2
-Lg0KPj4+ICsgKiBAZWRldgk6IHRoZSBkZXZmcmVxLWV2ZW50IGRldmljZQ0KPj4+ICsgKg0KPj4+
-ICsgKiBOb3RlIHRoYXQgdGhpcyBmdW5jdGlvbiBkZWNyZWFzZSB0aGUgZW5hYmxlX2NvdW50IGFu
-ZCBkaXNhYmxlIHRoZQ0KPj4+ICsgKiBkZXZmcmVxLWV2ZW50IGRldmljZS4gQWZ0ZXIgdGhlIGRl
-dmZyZXEtZXZlbnQgZGV2aWNlIGlzIGRpc2FibGVkLA0KPj4+ICsgKiBkZXZmcmVxIGRldmljZSBj
-YW4ndCB1c2UgdGhlIGRldmZyZXEtZXZlbnQgZGV2aWNlIGZvciBnZXQvc2V0L3Jlc2V0DQo+Pj4g
-KyAqIG9wZXJhdGlvbnMuDQo+Pj4gKyAqLw0KPj4+ICtpbnQgZGV2ZnJlcV9ldmVudF9kaXNhYmxl
-X2VkZXYoc3RydWN0IGRldmZyZXFfZXZlbnRfZGV2ICplZGV2KQ0KPj4+ICt7DQo+Pj4gKwlpbnQg
-cmV0ID0gMDsNCj4+PiArDQo+Pj4gKwlpZiAoIWVkZXYgfHwgIWVkZXYtPmRlc2MpDQo+Pj4gKwkJ
-cmV0dXJuIC1FSU5WQUw7DQo+Pj4gKw0KPj4+ICsJbXV0ZXhfbG9jaygmZWRldi0+bG9jayk7DQo+
-Pj4gKwlpZiAoZWRldi0+ZW5hYmxlX2NvdW50ID4gMCkgew0KPj4+ICsJCWVkZXYtPmVuYWJsZV9j
-b3VudC0tOw0KPj4+ICsJfSBlbHNlIHsNCj4+PiArCQlkZXZfd2FybigmZWRldi0+ZGV2LCAidW5i
-YWxhbmNlZCBlbmFibGVfY291bnRcbiIpOw0KPj4+ICsJCXJldCA9IC1FSU5WQUw7DQo+Pj4gKwkJ
-Z290byBlcnI7DQo+Pj4gKwl9DQo+Pj4gKw0KPj4+ICsJaWYgKGVkZXYtPmRlc2MtPm9wcyAmJiBl
-ZGV2LT5kZXNjLT5vcHMtPmRpc2FibGUpIHsNCj4+PiArCQlyZXQgPSBlZGV2LT5kZXNjLT5vcHMt
-PmRpc2FibGUoZWRldik7DQo+Pj4gKwkJaWYgKHJldCA8IDApIHsNCj4+PiArCQkJZWRldi0+ZW5h
-YmxlX2NvdW50Kys7DQo+Pj4gKwkJCWdvdG8gZXJyOw0KPj4+ICsJCX0NCg0KQW55d2F5LCBoYXZl
-IHlvdSBzZWVuIG90aGVyIHN1YnN5c3RlbXMgZG9pbmcgZmFsbC1iYWNrIG9wZXJhdGlvbnMgYXMg
-eW91J3ZlDQpkb25lIGJ5ICJlZGV2LT5lbmFibGVfY291bnQrKyIgaGVyZT8gT3IgaXMgdGhpcyB5
-b3VyIG93biBpZGVhIG9uIGZhbGxpbmcgYmFjaw0KZnJvbSBlcnJvcnMgd2l0aCBhIGRpc2FibGUg
-Y2FsbGJhY2s/DQoNCj4+PiArCX0NCj4+IA0KPj4gWW91IGRpZCBpdCBjb3JyZWN0bHkgd2l0aCBk
-aXNhYmxlIGhlcmU7DQo+PiBub3QgY2FsbGluZyBpdCB3aGVuIGl0IGlzIG5vdCByZXF1aXJlZC4N
-Cg0KVWguLnllYWguLiB0aGUgb3JpZ2luYWwgcGF0Y2ggd2FzIGluY29ycmVjdC4uDQoNCj4NCj5B
-cyBJIGV4cGxhaW5lZCwgSSdsbCBmaXggaXQgYXMgZm9sbG93aW5nOg0KPg0KPgltdXRleF9sb2Nr
-KCZlZGV2LT5sb2NrKTsNCj4JaWYgKCFlZGV2LT5lbmFibGVfY291bnQpIHsNCj4JCWRldl93YXJu
-KCZlZGV2LT5kZXYsICIlcyBpcyBhbHJlYWR5IGRpc2FibGVkXG4iLCBlZGV2LT5kZXNjLT5uYW1l
-KTsNCj4JCXJldCA9IC1FSU5WQUw7DQo+CQlnb3RvIGVycjsNCj4JfQ0KPg0KPglpZiAoZWRldi0+
-ZGVzYy0+b3BzICYmIGVkZXYtPmRlc2MtPm9wcy0+ZGlzYWJsZSkgew0KPgkJcmV0ID0gZWRldi0+
-ZGVzYy0+b3BzLT5kaXNhYmxlKGVkZXYpOw0KPgkJaWYgKHJldCA8IDApDQo+CQkJZ290byBlcnI7
-CQkNCj4JfQ0KPgllZGV2LT5lbmFibGVfY291bnQtLTsNCg0KVWguLi4uIEknZCBzYXkgaXQgaXMg
-c3RpbGwgaW5jb3JyZWN0Lg0KDQoJbXV0ZXhfbG9jaygmZWRldi0+bG9jayk7DQoJaWYgKCFlZGV2
-LT5lbmFibGVfY291bnQpIHsNCgkJZGV2X3dhcm4oJmVkZXYtPmRldiwgIiVzIGlzIGFscmVhZHkg
-ZGlzYWJsZWRcbiIsIGVkZXYtPmRlc2MtPm5hbWUpOw0KCQlyZXQgPSAtRUlOVkFMOw0KCQlnb3Rv
-IGVycjsNCgl9DQoNCgllZGV2LT5lbmFibGVfY291bnQtLTsNCglpZiAoZWRldi0+ZGVzYy0+b3Bz
-ICYmIGVkZXYtPmRlc2MtPm9wcy0+ZGlzYWJsZSAmJg0KCSAgICAhZWRldi0+ZW5hYmxlX2NvdW50
-KSB7DQoJCXJldCA9IGVkZXYtPmRlc2MtPm9wcy0+ZGlzYWJsZShlZGV2KTsNCgkJaWYgKHJldCA8
-IDApDQoJCQlnb3RvIGVycjsJCQ0KCX0NCg0KDQo+DQo+PiANCj4+PiArZXJyOg0KPj4+ICsJbXV0
-ZXhfdW5sb2NrKCZlZGV2LT5sb2NrKTsNCj4+PiArDQo+Pj4gKwlyZXR1cm4gcmV0Ow0KPj4+ICt9
-DQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGRldmZyZXFfZXZlbnRfZGlzYWJsZV9lZGV2KTsNCj4+
-PiArDQo+PiANCj4+IFtdDQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGRldmZyZXFfZXZlbnRfaXNf
-ZW5hYmxlZCk7DQo+PiBbXQ0KPj4gDQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGRldmZyZXFfZXZl
-bnRfc2V0X2V2ZW50KTsNCj4+IFtdDQo+PiANCltdDQo+Pj4gK2ludCBkZXZmcmVxX2V2ZW50X3Jl
-c2V0X2V2ZW50KHN0cnVjdCBkZXZmcmVxX2V2ZW50X2RldiAqZWRldikNCj4+PiArew0KPj4+ICsJ
-aW50IHJldCA9IDA7DQo+Pj4gKw0KPj4+ICsJaWYgKCFlZGV2IHx8ICFlZGV2LT5kZXNjKQ0KPj4+
-ICsJCXJldHVybiAtRUlOVkFMOw0KPj4+ICsNCj4+PiArCWlmICghZGV2ZnJlcV9ldmVudF9pc19l
-bmFibGVkKGVkZXYpKQ0KPj4+ICsJCXJldHVybiAtRVBFUk07DQo+Pj4gKw0KPj4+ICsJbXV0ZXhf
-bG9jaygmZWRldi0+bG9jayk7DQo+Pj4gKwlpZiAoZWRldi0+ZGVzYy0+b3BzICYmIGVkZXYtPmRl
-c2MtPm9wcy0+cmVzZXQpDQo+Pj4gKwkJcmV0ID0gZWRldi0+ZGVzYy0+b3BzLT5yZXNldChlZGV2
-KTsNCj4+PiArCW11dGV4X3VubG9jaygmZWRldi0+bG9jayk7DQo+PiANCj4+IEluIHRoZSBjb250
-ZXh0IG9mIHRoZSBnZXRfZXZlbnQoKSBoYW5kbGluZyAibG9hZCIsDQo+PiBhcmVuJ3QgeW91IHN1
-cHBvc2VkIHRvIHNldCB0b3RhbF9ldmVudCA9IGV2ZW50ID0gMDsgaGVyZT8NCj4NCj5CdXQsIGRl
-dmZyZXFfZXZlbnRfcmVzZXRfZXZlbnQoKSBmdW5jdGlvbiBjYW5ub3QgaGFuZGxlIGVkYXRhIGlu
-c3RhbmNlDQo+YmVjYXVzZSBlZGF0YSBpcyBub3QgaW5jbHVkZWQgaW4gZWRldi4gVGhlIGVkYXRh
-IGluc3RhbmNlIGlzIG9ubHkgdXNlZCBpbiBkZXZmcmVxX2V2ZW50X2dldF9ldmVudCgpLg0KDQpB
-aC4uIG9rIHRoZW4uDQoNCj4NCltdDQoNCkNoZWVycywNCk15dW5nSm9vDQo=
+This patchset add new devfreq_event class to provide raw data to determine
+current utilization of device  which is used for devfreq governor.
+
+The following description explains the feature of two kind of devfreq class:
+- devfreq class (existing)
+ : devfreq consumer device use raw data from devfreq_event device for
+   determining proper current system state and change voltage/frequency
+   dynamically using various governors.
+- devfreq_event class (new)
+ : Provide measured raw data to devfreq device for governor
+
+Changelog:
+
+Changes from v8:
+(https://lkml.org/lkml/2015/1/12/299)
+- Fix issue of devfreq-event.c driver by Myunjoo's comment
+  : Merge patch2 (resource-managed function) with patch1
+  : Fix bug in devfreq_event_{enable|disable}_edev() about enable_count operation
+  : Simplify error checking code in devfreq_event_get_event()
+  : Define devfreq_event_get_drvdata() as static inline function type
+  : Reduce the time of critical section scope in devfreq_event_remove_edev()
+  : Rename field name of devfreq_event_data structure
+    (total_event / event -> total_count / load_count)
+- Drop following patch[1] because Exynos5260 cannot be tested for exynos-ppmu.c driver
+  [1] [PATCHv8 7/9] ARM: dts: Add PPMU dt node for Exynos5260 SoC
+      - https://lkml.org/lkml/2015/1/12/301
+- Clean-up exynos-ppmu.c without update
+
+Changes from v7:
+(https://lkml.org/lkml/2015/1/7/795)
+- Use EXPORT_SYMBOL_GPL macro instead of EXPORT_SYMBOL
+- Fix the binding document of exynos-ppmu.c driver
+- Drop the devfreq-event type patch because it isnt' clear
+- Fix bug of devfreq_event_add_edev() when fail to execute device_register()
+- Modify resource free operation on following functions:
+  : devfreq_event_remove_edev()
+  : devfreq_event_release_edev()
+
+Changes from v6:
+(https://lkml.org/lkml/2014/12/28/139)
+- This patchset is based on v3.19-rc3.
+1. devfreq-event class driver
+- Fix build break if devfreq-event framework is off
+- Add resource-managed function for devfreq-event device
+: devm_devfreq_event_add_edev()
+: devm_devfreq_event_remove_edev()
+
+Changes from v5:
+(https://lkml.org/lkml/2014/12/22/527)
+- Rebase these patch-set on v3.19-rc1 and Test it.
+1. exynos-ppmu.c
+- Change the error value when of_iomap() fail to map the memory
+- Remove owner setting of platform_driver
+- Add exynos_ppmu_disable() function
+2. exynos dts file
+- Add PPMU node to Exynos3250-based Monk board
+- Remove ppmu_cpu node on Exynos4412-based TRATS2 board and add ppmu_leftbus/rightbus node
+
+Changes from v4:
+(https://lkml.org/lkml/2014/12/16/511)
+1. devfreq-event class driver
+- Add devfreq_event_get_edev_count() function
+- Modify the simple description of devfreq-event framework in devfreq-event.c
+- Minimize the usage range of global lock usage in devfreq_event_add_edev()
+- Remove '_is_enabled()' function pointer in devfreq_event_ops structure
+- Add separte CONFIG_PM_DEVFREQ_EVENT configuration
+- Add new devfreq-event.h header file including devfreq-event helper functions
+2. exynos dts file
+- Add new patch to support PPMU with DEVFREQ-event on Exynos4412-based TRATS2
+
+Changes from v3:
+(https://lkml.org/lkml/2014/12/12/219)
+1. devfreq-event class driver
+- Fix return value of devfreq_event_get_event()
+- Add new structure devfreq_event_data for devfreq_event_get_event()
+- Modify the prototype of devfreq_event_get_event() function
+- Call of_node_put after calling of_parse_phandle() to decrement refcount
+2. exynos-ppmu driver
+- Modify usage of devfreq_event_get_event() function
+  according to new prototype of this funciton
+- Add the additional description to exynos-ppmu.txt how to add PPMU node
+  in board dts file
+- Use 'PPMU_EVENT' macro to remove duplicate codes
+- Add the support of PPMU for Exynos5260
+3. exynos dts file
+- Add missing PPMU_FSYS node to exynos3250.dtsi
+- Fix 'ppmu_mfc_l' node name as 'ppmu_mfc' because exynos3250 has only one MFC IP.
+- Add missing PPMU_ACP/G3D to exynos4.dtsi
+4. etc
+- Fix wrong abbreviation of PPMU (PPMU :Platform Performance Monitoring Unit)
+- Add new patch to support the PPMU of Exynos5260 SoC
+
+Changes from v2:
+(https://lkml.org/lkml/2014/12/9/304)
+1. devfreq-event class driver
+- Rename all the helper functions of devfreq-event device
+- Add devfreq_event_remove_edev() instead of devfreq_put_event_dev()
+- Add devfreq_event_release_edev() to initialize it before put device
+- Add the detailed description of devfreq-event API
+- Add the attributes of devfreq-event class (enable_count)
+- Check the overflow about event/total_event data in devfreq_event_get_event()
+- Remove the 'exclusive flag' feature
+- Set set_event()/get_event() functions as mandary
+- Add missing of_node_put() call
+- Change variable type of 'get_event()' funciton from 'int' to 'u64'
+2. exynos-ppmu driver
+- Remove un-used field (struct devfreq)
+- Use 'of_get_child_by_name()' instead of 'of_find_node_by_name()'
+- Add missing of_node_put() call
+- Fix wrong clock control
+- Use devfreq_event_remove_edev() instead of devfreq_remove_device()
+- Add the documentation for exynos-ppmu driver
+- Remove 'enable/disable/is_enabled/reset' function of exynos-ppmu driver
+3. exynos3250-rinato.dts
+- Add ppmu_{leftbus|rightbus} dt node and remove ppmu_cpu dt node
+
+Changes from v1:
+(https://lkml.org/lkml/2014/9/5/11)
+- Code clean
+- Add the description of devfreq-event structure
+- Add 'is_enabled' function to devfreq_event_ops structure
+- Add 'enable_count' field to devfreq_event_dev structure
+- Check whether devfreq-event device is enabled or not
+  during calling devfreq_event API
+- Define the type of devfreq-event device as following
+  : DEVFREQ_EVENT_TYPE_RAW_DATA
+  : DEVFREQ_EVENT_TYPE_UTILIZATION
+  : DEVFREQ_EVENT_TYPE_BANDWIDTH
+  : DEVFREQ_EVENT_TYPE_LATENCY
+- Add the exclusive feature of devfreq-event device.
+  If devfreq-event device is used on only on devfreq driver,
+  should used 'devfreq_enable_event_dev_exclusive()' function
+- Add new patch6 for test on Exynos3250-based Rinato board
+
+Chanwoo Choi (7):
+  devfreq: event: Add new devfreq_event class to provide basic data for devfreq governor
+  devfreq: event: Add exynos-ppmu devfreq-event driver
+  devfreq: event: Add documentation for exynos-ppmu devfreq-event driver
+  ARM: dts: Add PPMU dt node for Exynos3250 SoC
+  ARM: dts: Add PPMU dt node for Exynos4 SoCs
+  ARM: dts: exynos: Add PPMU node for Exynos3250-based Rinato/Monk board
+  ARM: dts: exynos: Add PPMU node for Exynos4412-based TRATS2 board
+
+ .../bindings/devfreq/event/exynos-ppmu.txt         | 110 +++++
+ arch/arm/boot/dts/exynos3250-monk.dts              |  40 ++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  40 ++
+ arch/arm/boot/dts/exynos3250.dtsi                  |  74 +++
+ arch/arm/boot/dts/exynos4.dtsi                     | 108 +++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   8 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  40 ++
+ drivers/devfreq/Kconfig                            |   2 +
+ drivers/devfreq/Makefile                           |   6 +-
+ drivers/devfreq/devfreq-event.c                    | 498 +++++++++++++++++++++
+ drivers/devfreq/event/Kconfig                      |  25 ++
+ drivers/devfreq/event/Makefile                     |   2 +
+ drivers/devfreq/event/exynos-ppmu.c                | 374 ++++++++++++++++
+ drivers/devfreq/event/exynos-ppmu.h                |  93 ++++
+ include/linux/devfreq-event.h                      | 196 ++++++++
+ 15 files changed, 1615 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+ create mode 100644 drivers/devfreq/devfreq-event.c
+ create mode 100644 drivers/devfreq/event/Kconfig
+ create mode 100644 drivers/devfreq/event/Makefile
+ create mode 100644 drivers/devfreq/event/exynos-ppmu.c
+ create mode 100644 drivers/devfreq/event/exynos-ppmu.h
+ create mode 100644 include/linux/devfreq-event.h
+
+-- 
+1.8.5.5
