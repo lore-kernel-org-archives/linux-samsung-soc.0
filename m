@@ -1,124 +1,35 @@
-From: Paul Osmialowski <p.osmialowsk@samsung.com>
-Subject: Re: [RFC 2/3] regmap: Use the enhancement of i2c API to address
- circular dependency problem
-Date: Tue, 20 Jan 2015 12:14:31 +0100 (CET)
-Message-ID: <alpine.DEB.2.10.1501201214200.8428@AMDC1262.digital.local>
-References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
- <1421419194-1849-2-git-send-email-p.osmialowsk@samsung.com>
- <20150116162314.GB3856@sirena.org.uk>
- <alpine.DEB.2.10.1501161811280.21618@AMDC1262.digital.local>
- <20150116183635.GH3856@sirena.org.uk>
- <alpine.DEB.2.10.1501191031080.13777@AMDC1262.digital.local>
- <20150119192557.GI2809@sirena.org.uk>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v4 14/21] ARM: imx6: convert GPC to stacked domains
+Date: Tue, 20 Jan 2015 19:19:01 +0800
+Message-ID: <20150120111900.GB2766@dragon>
+References: <1421660655-21394-1-git-send-email-marc.zyngier@arm.com>
+ <1421660655-21394-15-git-send-email-marc.zyngier@arm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:32437 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754377AbbATLOs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 06:14:48 -0500
-In-reply-to: <20150119192557.GI2809@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1421660655-21394-15-git-send-email-marc.zyngier@arm.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Stefan Agner <stefan@agner.ch>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
+On Mon, Jan 19, 2015 at 09:44:08AM +0000, Marc Zyngier wrote:
+> IMX6 has been (ab)using the gic_arch_extn to provide
+> wakeup from suspend, and it makes a lot of sense to convert
+> this code to use stacked domains instead.
+> 
+> This patch does just this, updating the DT files to actually
+> reflect what the HW provides.
+> 
+> BIG FAT WARNING: because the DTs were so far lying by not
+> exposing the fact that the GPC block is actually the first
+> interrupt controller in the chain, kernels with this patch
+> applied wont have any suspend-resume facility when booted
+> with old DTs, and old kernels with updated DTs won't even boot.
+> 
+> Tested-by: Stefan Agner <stefan@agner.ch>
+> Acked-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 
-
-On Mon, 19 Jan 2015, Mark Brown wrote:
-
-> On Mon, Jan 19, 2015 at 10:31:22AM +0100, Paul Osmialowski wrote:
->> On Fri, 16 Jan 2015, Mark Brown wrote:
->
->>> What I'm saying is that I want to understand this change from a point of
->>> view that isn't tied to I2C - at the regmap level what is this doing,
->
->> From the regmap point of view, it allows its functions to have a chance to
->> prepare transfer medium for (synchronous) transfer (no matter what bus
->> handles it) before it actually start to happen (then unprepare it when it's
->> done) and crucially before any lock is obtained in functions like
->> regmap_write(), regmap_read() or regmap_update_bits.
->
-> OK, so that's what should go in the changelog (along with an explanation
-> of why this preparation is required at all) - but I still don't see the
-> async bit of this I'm afraid.
->
-
-I don't think preparation stage should be exposed for asynchronous 
-transfer. Due to its nature, it shouldn't cause circular lock dependency 
-as we can observe for synchronous io. Since i2c does not support async 
-transfer anyway (so (map->async && map->bus->async_write) will be always 
-false for i2c transfers), let's use spi as an example.
-
-With spi we have curious situation where both sync and async are handled 
-by the same __spi_async() function, though for sync transfer 
-wait_for_completion() is called soon after __spi_async() in order to 
-ensure that transfer is completed.
-
-Actual transfer is handled by spi_transfer_one_message() called from 
-spi_pump_messages(). Note that spi_pump_message() before it calls 
-spi_transfer_one_message() also calls prepare_message() callback (if 
-provided):
-
- 	if (master->prepare_message) {
- 		ret = master->prepare_message(master, master->cur_msg);
-
-So we have some candidate to expose if we would like to modify 
-regmap-spi.c similarly to regmap-i2c.c. Thing is, we don't need to expose 
-it for asynchronous transfer. If master->prepare_message() callback 
-obtains some lock, which is unfortunately held by other task that waits 
-for a lock already obtained by regmap_write_async() it will not wait 
-forever since call path started in regmap_write_async() is not blocked by 
-things like wait_for_completion() and should soon end calling 
-map->unlock(map->lock_arg).
-
->> Maybe adding a pair of callbacks (map->reg_write_sync_prepared(),
->> map->reg_read_sync_prepared()) would make situation clearer.
->
-> No, I don't think so - it'd just complicate the callers.
->
->>> I2C is a bus that has some properties which you're saying needs some
->>> changes, what are those properties and those changes?
->
->> I'm not saying I2C as a bus requires changes. What I'm saying is that I2C
->> API can be extended to allow more detailed control on what happens with the
->> transfer.
->
-> My point here is that your explanation is in terms of I2C specifics and
-> not really at a generic regmap level.
->
->>> Can you be more specific please?  If something needs preparing it seems
->>> like it'd need preparing over an async transaction just as much as over
->>> a synchronous one.
->
->> Even with those preparation and unpreparation stages, this transfer is still
->> synchronous. For example, it starts when regmap_read() starts and ends when
->> regmap_read() ends. Nothing is queued or deferred. Namely, when
->> max_gen_clk_unprepare() function calls regmap_update_bits() it expects that
->> when regmap_update_bits() returned, no outstanding transfer are happening
->> nor waiting to proceed. Everything must be completed before returning to
->> max_gen_clk_unprepare().
->
-> That doesn't address my question - all you're saying is that in a
-> synchronous call path things are synchronous which is fine but obviously
-> regmap supports async I/O too.
->
->>> Not in this pattern where the caller needs to check too.
->
->> I don't persist on that. Apparently, you're the author of this file, though
->> regmap_init() function was later expanded by other guys. They never assigned
->> bus callback function pointers directly to map operation callbacks. It is
->> possible to replace 'map->reg_prepare_sync_io = regmap_bus_prepare_sync_io'
->> with 'map->reg_prepare_sync_io = map->bus->prepare_sync_io' - this will
->> compile and this will work properly. But IMHO it wouldn't match with what
->> the others did.
->
-> If you look at the other callbacks they're doing other things beyond
-> simply forwarding the functions on.  That's the problem here, the
-> functions just add a layer of indirection and nothing else.
->
-
-Yes, I added layer of indirection just because the others added layer of 
-indirection - there is no functional requirement behind that. It can be 
-easily removed.
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
