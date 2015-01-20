@@ -1,92 +1,105 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: [PATCH] video: treat signal like timeout as failure
-Date: Tue, 20 Jan 2015 06:23:50 +0100
-Message-ID: <1421731430-13207-1-git-send-email-der.herr@hofr.at>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.osadl.org ([62.245.132.105]:50602 "EHLO www.osadl.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750704AbbATFce (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 00:32:34 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [PATCHv8 1/9] devfreq: event: Add new devfreq_event class to
+ provide basic data for devfreq governor
+Date: Tue, 20 Jan 2015 06:59:30 +0000 (GMT)
+Message-ID: <213049974.1319841421737167629.JavaMail.weblogic@epmlwas04a>
+Reply-To: myungjoo.ham@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
+Cc: "kgene@kernel.org" <kgene@kernel.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>
 
-if(!wait_for_completion_interruptible_timeout(...))
-only handles the timeout case - this patch adds handling the
-signal case the same as timeout and cleans up.
-
-Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
----
-
-Only the timeout case was being handled, return of 0 in 
-wait_for_completion_interruptible_timeout, the signal case (-ERESTARTSYS)
-was treated just like the case of successful completion, which is most 
-likely not reasonable.
-
-Note that exynos_mipi_dsi_wr_data/exynos_mipi_dsi_rd_data return values
-are not checked at the call sites in s6e8ax0.c (cmd_read/cmd_write)!
-
-This patch simply treats the signal case the same way as the timeout case,
-by releasing locks and returning 0 - which might not be the right thing to
-do - this needs a review by someone knowing the details of this driver.
-
-Patch is against 3.19.0-rc5 -next-20150119
-
-Patch was only compile-tested with exynos_defconfig
-
- drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-index 2358a2f..55a7a45 100644
---- a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-+++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-@@ -157,6 +157,7 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
- 	const unsigned char *data0, unsigned int data_size)
- {
- 	unsigned int check_rx_ack = 0;
-+	long timeout;
- 
- 	if (dsim->state == DSIM_STATE_ULPS) {
- 		dev_err(dsim->dev, "state is ULPS.\n");
-@@ -244,9 +245,11 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
- 		exynos_mipi_dsi_wr_tx_header(dsim, data_id, data_size & 0xff,
- 			(data_size & 0xff00) >> 8);
- 
--		if (!wait_for_completion_interruptible_timeout(&dsim_wr_comp,
--							MIPI_FIFO_TIMEOUT)) {
--			dev_warn(dsim->dev, "command write timeout.\n");
-+		timeout = wait_for_completion_interruptible_timeout(
-+					&dsim_wr_comp, MIPI_FIFO_TIMEOUT);
-+		if (timeout <= 0) {
-+			dev_warn(dsim->dev,
-+				"command write timed-out/interrupted.\n");
- 			mutex_unlock(&dsim->lock);
- 			return -EAGAIN;
- 		}
-@@ -345,6 +348,7 @@ int exynos_mipi_dsi_rd_data(struct mipi_dsim_device *dsim, unsigned int data_id,
- 	unsigned int rx_data, rcv_pkt, i;
- 	u8 response = 0;
- 	u16 rxsize;
-+	long timeout;
- 
- 	if (dsim->state == DSIM_STATE_ULPS) {
- 		dev_err(dsim->dev, "state is ULPS.\n");
-@@ -380,9 +384,10 @@ int exynos_mipi_dsi_rd_data(struct mipi_dsim_device *dsim, unsigned int data_id,
- 		return -EINVAL;
- 	}
- 
--	if (!wait_for_completion_interruptible_timeout(&dsim_rd_comp,
--				MIPI_FIFO_TIMEOUT)) {
--		pr_err("RX done interrupt timeout\n");
-+	timeout = wait_for_completion_interruptible_timeout(&dsim_rd_comp,
-+				MIPI_FIFO_TIMEOUT);
-+	if (timeout <= 0) {
-+		pr_err("RX done interrupt timeout/interrupted\n");
- 		mutex_unlock(&dsim->lock);
- 		return 0;
- 	}
--- 
-1.7.10.4
+PiAgDQo+IERlYXIgTXl1bmdqb28sDQo+DQo+T24gMDEvMjAvMjAxNSAwMTozNCBQTSwgTXl1bmdK
+b28gSGFtIHdyb3RlOg0KPj4+ICAgDQpbXQ0KPj4+ICsNCj4+PiArCW11dGV4X2xvY2soJmVkZXYt
+PmxvY2spOw0KPj4+ICsJaWYgKGVkZXYtPmRlc2MtPm9wcyAmJiBlZGV2LT5kZXNjLT5vcHMtPmVu
+YWJsZSkgew0KPj4+ICsJCXJldCA9IGVkZXYtPmRlc2MtPm9wcy0+ZW5hYmxlKGVkZXYpOw0KPj4+
+ICsJCWlmIChyZXQgPCAwKQ0KPj4+ICsJCQlnb3RvIGVycjsNCj4+PiArCX0NCj4+IA0KPj4gSXMg
+dGhlcmUgYW55IHJlYXNvbiB0byBjYWxsIGVuYWJsZShlZGV2KSBldmVuIHdoZW4gZW5hYmxlX2Nv
+dW50IGlzIGFscmVhZHkgPiAwIA0KPj4gd2hpbGUgeW91IGRvIG5vdCBjYWxsIGRpc2FibGUoZWRl
+dikgd2hpbGUgZW5hYmxlX2NvdW50ID4gMD8NCj4+IA0KPj4gSSB0aGluayB0aGlzIG1heSBpbmN1
+ciBlcnJvcnMgaW4gdGhlIHJlbGF0ZWQgZGV2aWNlIGRyaXZlcnMuDQo+PiAoZS5nLiwgaW5jb3Jy
+ZWN0IHBhaXJpbmcgb2YgY2xrL3J1bnRpbWUtcG0vcmVndWxhdG9yIGVuYWJsZS9kaXNhYmxlDQo+
+PiBhdCB0aGUgZGV2aWNlIGRyaXZlciBzaWRlKQ0KPg0KPllvdSdyZSByaWdodC4gVGhpcyBwYXJ0
+IGhhcyBwb3RlbnRpYWwgZXJyb3JzLiBJJ2xsIGZpeCBpdCBhcyBmb2xsb3dpbmc6DQo+SWYgZWRl
+diBpcyBhbHJlYWR5IGVuYWJsZWQsIGRldmZyZXFfZXZlbnRfZW5hYmxlX2VkZXYoKSB3aWxsIGp1
+c3QgcmV0dXJuDQo+d2l0aG91dCBhbnkgb3BlcmF0aW9uIGJlY2F1c2UgZGV2ZnJlcS1ldmVudChl
+ZGV2KSBjYW4gaGFuZGxlIG9ubHkgb25lIGV2ZW50DQo+YXQgdGhlIHNhbWUgdGltZS4NCj4gDQo+
+CW11dGV4X2xvY2soJmVkZXYtPmxvY2spOw0KPglpZiAoZWRldi0+ZW5hYmxlX2NvdW50KQ0KPgkJ
+ZGV2X3dhcm4oJmVkZXYtPmRldiwgIiVzIGlzIGFscmVhZHkgZW5hYmxlZFxuIiwgZWRldi0+ZGVz
+Yy0+bmFtZSk7DQo+CQlyZXQgPSAtRUlOVkFMOw0KPgkJZ290byBlcnI7DQo+CX0NCj4NCj4JaWYg
+KGVkZXYtPmRlc2MtPm9wcyAmJiBlZGV2LT5kZXNjLT5vcHMtPmVuYWJsZSkgewkJDQo+CQlyZXQg
+PSBlZGV2LT5kZXNjLT5vcHMtPmVuYWJsZShlZGV2KTsNCj4JCWlmIChyZXQgPCAwKQ0KPgkJCWdv
+dG8gZXJyOw0KPgl9DQo+CWVkZXYtPmVuYWJsZV9jb3VudCsrOw0KDQpObywgeW91ciBzdWdnZXN0
+ZWQgbW9kaWZpY2F0aW9uIGNyZWF0ZXMgYW5vdGhlciBidWcuDQoNCkl0IHNob3VsZCBub3QgZW1p
+dCAid2FybiIgd2hlbiBlbmFibGVfY291bnQgPiAwIGF0IGVuYWJsZSgpLg0KSXQgaXMgYSBuYXR1
+cmFsIGJlaGF2aW9yIGZyb20gZHJpdmVycy4NCi0gWW91IG1heSBoYXZlIG11bHRpcGxlIGRyaXZl
+cnMgdXNpbmcgZWRldi4NCi0gWW91IG1heSBoYXZlIG11bHRpcGxlIHRocmVhZHMgdXNpbmcgZWRl
+di4NCg0KVGh1cywgdGhlIGFib3ZlIDEyIGxpbmVzIHNob3VsZCBiZSByZXBsYWNlZCB3aXRoOg0K
+DQoJaWYgKGVkZXYtPmRlc2MtPm9wcyAmJiBlZGV2LT5kZXNjLT5vcHMtPmVuYWJsZSAmJg0KCSAg
+ICBlZGV2LT5lbmFibGVfY291bnQgPT0gMCkgew0KCQlyZXQgPSBlZGV2LT5kZXNjLT5vcHMtPmVu
+YWJsZShlZGV2KTsNCgkJaWYgKHJldCA8IDApDQoJCQlnb3RvIGVycjsNCgl9DQoJZWRldi0+ZW5h
+YmxlX2NvdW50Kys7DQoNCj4JDQo+DQo+PiANCj4+PiArCWVkZXYtPmVuYWJsZV9jb3VudCsrOw0K
+Pj4+ICtlcnI6DQo+Pj4gKwltdXRleF91bmxvY2soJmVkZXYtPmxvY2spOw0KPj4+ICsNCj4+PiAr
+CXJldHVybiByZXQ7DQo+Pj4gK30NCj4+PiArRVhQT1JUX1NZTUJPTF9HUEwoZGV2ZnJlcV9ldmVu
+dF9lbmFibGVfZWRldik7DQo+Pj4gKw0KPj4+ICsvKioNCj4+PiArICogZGV2ZnJlcV9ldmVudF9k
+aXNhYmxlX2VkZXYoKSAtIERpc2FibGUgdGhlIGRldmZyZXEtZXZlbnQgZGV2IGFuZCBkZWNyZWFz
+ZQ0KPj4+ICsgKgkJCQkgIHRoZSBlbmFibGVfY291bnQgb2YgdGhlIGRldmZyZXEtZXZlbnQgZGV2
+Lg0KPj4+ICsgKiBAZWRldgk6IHRoZSBkZXZmcmVxLWV2ZW50IGRldmljZQ0KPj4+ICsgKg0KPj4+
+ICsgKiBOb3RlIHRoYXQgdGhpcyBmdW5jdGlvbiBkZWNyZWFzZSB0aGUgZW5hYmxlX2NvdW50IGFu
+ZCBkaXNhYmxlIHRoZQ0KPj4+ICsgKiBkZXZmcmVxLWV2ZW50IGRldmljZS4gQWZ0ZXIgdGhlIGRl
+dmZyZXEtZXZlbnQgZGV2aWNlIGlzIGRpc2FibGVkLA0KPj4+ICsgKiBkZXZmcmVxIGRldmljZSBj
+YW4ndCB1c2UgdGhlIGRldmZyZXEtZXZlbnQgZGV2aWNlIGZvciBnZXQvc2V0L3Jlc2V0DQo+Pj4g
+KyAqIG9wZXJhdGlvbnMuDQo+Pj4gKyAqLw0KPj4+ICtpbnQgZGV2ZnJlcV9ldmVudF9kaXNhYmxl
+X2VkZXYoc3RydWN0IGRldmZyZXFfZXZlbnRfZGV2ICplZGV2KQ0KPj4+ICt7DQo+Pj4gKwlpbnQg
+cmV0ID0gMDsNCj4+PiArDQo+Pj4gKwlpZiAoIWVkZXYgfHwgIWVkZXYtPmRlc2MpDQo+Pj4gKwkJ
+cmV0dXJuIC1FSU5WQUw7DQo+Pj4gKw0KPj4+ICsJbXV0ZXhfbG9jaygmZWRldi0+bG9jayk7DQo+
+Pj4gKwlpZiAoZWRldi0+ZW5hYmxlX2NvdW50ID4gMCkgew0KPj4+ICsJCWVkZXYtPmVuYWJsZV9j
+b3VudC0tOw0KPj4+ICsJfSBlbHNlIHsNCj4+PiArCQlkZXZfd2FybigmZWRldi0+ZGV2LCAidW5i
+YWxhbmNlZCBlbmFibGVfY291bnRcbiIpOw0KPj4+ICsJCXJldCA9IC1FSU5WQUw7DQo+Pj4gKwkJ
+Z290byBlcnI7DQo+Pj4gKwl9DQo+Pj4gKw0KPj4+ICsJaWYgKGVkZXYtPmRlc2MtPm9wcyAmJiBl
+ZGV2LT5kZXNjLT5vcHMtPmRpc2FibGUpIHsNCj4+PiArCQlyZXQgPSBlZGV2LT5kZXNjLT5vcHMt
+PmRpc2FibGUoZWRldik7DQo+Pj4gKwkJaWYgKHJldCA8IDApIHsNCj4+PiArCQkJZWRldi0+ZW5h
+YmxlX2NvdW50Kys7DQo+Pj4gKwkJCWdvdG8gZXJyOw0KPj4+ICsJCX0NCg0KQW55d2F5LCBoYXZl
+IHlvdSBzZWVuIG90aGVyIHN1YnN5c3RlbXMgZG9pbmcgZmFsbC1iYWNrIG9wZXJhdGlvbnMgYXMg
+eW91J3ZlDQpkb25lIGJ5ICJlZGV2LT5lbmFibGVfY291bnQrKyIgaGVyZT8gT3IgaXMgdGhpcyB5
+b3VyIG93biBpZGVhIG9uIGZhbGxpbmcgYmFjaw0KZnJvbSBlcnJvcnMgd2l0aCBhIGRpc2FibGUg
+Y2FsbGJhY2s/DQoNCj4+PiArCX0NCj4+IA0KPj4gWW91IGRpZCBpdCBjb3JyZWN0bHkgd2l0aCBk
+aXNhYmxlIGhlcmU7DQo+PiBub3QgY2FsbGluZyBpdCB3aGVuIGl0IGlzIG5vdCByZXF1aXJlZC4N
+Cg0KVWguLnllYWguLiB0aGUgb3JpZ2luYWwgcGF0Y2ggd2FzIGluY29ycmVjdC4uDQoNCj4NCj5B
+cyBJIGV4cGxhaW5lZCwgSSdsbCBmaXggaXQgYXMgZm9sbG93aW5nOg0KPg0KPgltdXRleF9sb2Nr
+KCZlZGV2LT5sb2NrKTsNCj4JaWYgKCFlZGV2LT5lbmFibGVfY291bnQpIHsNCj4JCWRldl93YXJu
+KCZlZGV2LT5kZXYsICIlcyBpcyBhbHJlYWR5IGRpc2FibGVkXG4iLCBlZGV2LT5kZXNjLT5uYW1l
+KTsNCj4JCXJldCA9IC1FSU5WQUw7DQo+CQlnb3RvIGVycjsNCj4JfQ0KPg0KPglpZiAoZWRldi0+
+ZGVzYy0+b3BzICYmIGVkZXYtPmRlc2MtPm9wcy0+ZGlzYWJsZSkgew0KPgkJcmV0ID0gZWRldi0+
+ZGVzYy0+b3BzLT5kaXNhYmxlKGVkZXYpOw0KPgkJaWYgKHJldCA8IDApDQo+CQkJZ290byBlcnI7
+CQkNCj4JfQ0KPgllZGV2LT5lbmFibGVfY291bnQtLTsNCg0KVWguLi4uIEknZCBzYXkgaXQgaXMg
+c3RpbGwgaW5jb3JyZWN0Lg0KDQoJbXV0ZXhfbG9jaygmZWRldi0+bG9jayk7DQoJaWYgKCFlZGV2
+LT5lbmFibGVfY291bnQpIHsNCgkJZGV2X3dhcm4oJmVkZXYtPmRldiwgIiVzIGlzIGFscmVhZHkg
+ZGlzYWJsZWRcbiIsIGVkZXYtPmRlc2MtPm5hbWUpOw0KCQlyZXQgPSAtRUlOVkFMOw0KCQlnb3Rv
+IGVycjsNCgl9DQoNCgllZGV2LT5lbmFibGVfY291bnQtLTsNCglpZiAoZWRldi0+ZGVzYy0+b3Bz
+ICYmIGVkZXYtPmRlc2MtPm9wcy0+ZGlzYWJsZSAmJg0KCSAgICAhZWRldi0+ZW5hYmxlX2NvdW50
+KSB7DQoJCXJldCA9IGVkZXYtPmRlc2MtPm9wcy0+ZGlzYWJsZShlZGV2KTsNCgkJaWYgKHJldCA8
+IDApDQoJCQlnb3RvIGVycjsJCQ0KCX0NCg0KDQo+DQo+PiANCj4+PiArZXJyOg0KPj4+ICsJbXV0
+ZXhfdW5sb2NrKCZlZGV2LT5sb2NrKTsNCj4+PiArDQo+Pj4gKwlyZXR1cm4gcmV0Ow0KPj4+ICt9
+DQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGRldmZyZXFfZXZlbnRfZGlzYWJsZV9lZGV2KTsNCj4+
+PiArDQo+PiANCj4+IFtdDQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGRldmZyZXFfZXZlbnRfaXNf
+ZW5hYmxlZCk7DQo+PiBbXQ0KPj4gDQo+Pj4gK0VYUE9SVF9TWU1CT0xfR1BMKGRldmZyZXFfZXZl
+bnRfc2V0X2V2ZW50KTsNCj4+IFtdDQo+PiANCltdDQo+Pj4gK2ludCBkZXZmcmVxX2V2ZW50X3Jl
+c2V0X2V2ZW50KHN0cnVjdCBkZXZmcmVxX2V2ZW50X2RldiAqZWRldikNCj4+PiArew0KPj4+ICsJ
+aW50IHJldCA9IDA7DQo+Pj4gKw0KPj4+ICsJaWYgKCFlZGV2IHx8ICFlZGV2LT5kZXNjKQ0KPj4+
+ICsJCXJldHVybiAtRUlOVkFMOw0KPj4+ICsNCj4+PiArCWlmICghZGV2ZnJlcV9ldmVudF9pc19l
+bmFibGVkKGVkZXYpKQ0KPj4+ICsJCXJldHVybiAtRVBFUk07DQo+Pj4gKw0KPj4+ICsJbXV0ZXhf
+bG9jaygmZWRldi0+bG9jayk7DQo+Pj4gKwlpZiAoZWRldi0+ZGVzYy0+b3BzICYmIGVkZXYtPmRl
+c2MtPm9wcy0+cmVzZXQpDQo+Pj4gKwkJcmV0ID0gZWRldi0+ZGVzYy0+b3BzLT5yZXNldChlZGV2
+KTsNCj4+PiArCW11dGV4X3VubG9jaygmZWRldi0+bG9jayk7DQo+PiANCj4+IEluIHRoZSBjb250
+ZXh0IG9mIHRoZSBnZXRfZXZlbnQoKSBoYW5kbGluZyAibG9hZCIsDQo+PiBhcmVuJ3QgeW91IHN1
+cHBvc2VkIHRvIHNldCB0b3RhbF9ldmVudCA9IGV2ZW50ID0gMDsgaGVyZT8NCj4NCj5CdXQsIGRl
+dmZyZXFfZXZlbnRfcmVzZXRfZXZlbnQoKSBmdW5jdGlvbiBjYW5ub3QgaGFuZGxlIGVkYXRhIGlu
+c3RhbmNlDQo+YmVjYXVzZSBlZGF0YSBpcyBub3QgaW5jbHVkZWQgaW4gZWRldi4gVGhlIGVkYXRh
+IGluc3RhbmNlIGlzIG9ubHkgdXNlZCBpbiBkZXZmcmVxX2V2ZW50X2dldF9ldmVudCgpLg0KDQpB
+aC4uIG9rIHRoZW4uDQoNCj4NCltdDQoNCkNoZWVycywNCk15dW5nSm9vDQo=
