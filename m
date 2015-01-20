@@ -1,78 +1,74 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Tue, 20 Jan 2015 16:26:08 +0530
-Message-ID: <CAEC9eQNna0nMVWTCUfoiiuAkYzPS8iKXGtfsL1S-MkZXpFi6xA@mail.gmail.com>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon>
- <54914D7D.9060108@collabora.co.uk>
- <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
- <20150105135015.GA12010@ulmo.nvidia.com>
- <54BCDC28.7080003@collabora.co.uk>
- <20150119163043.GB7751@ulmo.nvidia.com>
- <54BD3943.80402@collabora.co.uk>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
+ DMA-mapping subsystem
+Date: Tue, 20 Jan 2015 20:12:59 +0900
+Message-ID: <54BE383B.5030505@samsung.com>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+ <1417514366.21830.22.camel@collabora.co.uk> <54818768.3080303@samsung.com>
+ <CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com>
+ <54AC93E0.8010705@samsung.com> <54ACFD69.1020500@collabora.co.uk>
+ <54AD0293.70909@samsung.com> <54AEB384.2040005@collabora.co.uk>
+ <54B36C5A.6050109@samsung.com> <54B3F1B7.7090307@collabora.co.uk>
+ <54B4ABFB.5000501@samsung.com> <54B5B5F6.3030607@collabora.co.uk>
+ <54B5B721.4070309@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54BD3943.80402@collabora.co.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:40146 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751817AbbATLMo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 06:12:44 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NIH00BHP350J3D0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Jan 2015 20:12:36 +0900 (KST)
+In-reply-to: <54B5B721.4070309@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linaro-mm-sig@lists.linaro.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, iommu@lists.linux-foundation.org, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-T24gTW9uLCBKYW4gMTksIDIwMTUgYXQgMTA6MzUgUE0sIEphdmllciBNYXJ0aW5leiBDYW5pbGxh
-cwo8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4gd3JvdGU6Cj4gSGVsbG8gVGhpZXJy
-eSwKPgo+IE9uIDAxLzE5LzIwMTUgMDU6MzAgUE0sIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4K
-Pj4+IEkga25vdyB5b3UgcHJvYmFibHkgYXJlIHZlcnkgYnVzeSBidXQgaXQgd291bGQgYmUgZ3Jl
-YXQgaWYgeW91IGNhbiB0YWtlIGEgbG9vawo+Pj4gdG8gdGhpcyBzZXJpZXMgdG8gYXZvaWQgYW5v
-dGhlciBrZXJuZWwgcmVsZWFzZSB0byBiZSBtaXNzZWQgc2luY2Ugd2UgYXJlIGFscmVhZHkKPj4+
-IGF0IHYzLjE5LXJjNS4KPj4+Cj4+PiBPbmx5IHRoaXMgdmVyc2lvbiB3YXMgcG9zdGVkIDIgbW9u
-dGhzIGFnbyBhbmQgdGhlIGZpcnN0IHZlcnNpb24gb2YgdGhlIHNlcmllcwo+Pj4gd2FzIHNlbnQg
-b24gTWF5LCAyMDE0IHNvIGl0IGhhcyBiZWVuIG9uIHRoZSBsaXN0IGZvciBhbG1vc3QgYSB5ZWFy
-IG5vdy4uLgo+Pj4KPj4+IFRvbWkgYW5kIExhdXJlbnQgaGFkIGFscmVhZHkgYWdyZWVkIHdpdGgg
-dGhlIERUIGJpbmdpbmcgc28gSSB0aGluayB0aGF0IHdlIGNhbgo+Pj4gYWxyZWFkeSBtZXJnZSB0
-aGVzZSBhbmQgaWYgdGhlcmUgYXJlIGFueSByZW1haW5pbmcgaXNzdWVzLCB0aG9zZSBjYW4gYmUg
-Zml4ZWQKPj4+IGR1cmluZyB0aGUgMy4yMCAtcmMgY3ljbGUuCj4+Cj4+IEkgc2VlIG9ubHkgYSBz
-aW5nbGUgVGVzdGVkLWJ5IG9uIHRoaXMgc2VyaWVzIGFuZCB0aGF0IHNlZW1zIHRvIGJlIHdpdGgg
-YQo+PiBidW5jaCBvZiBvdXQtb2YtdHJlZSBwYXRjaGVzIGFwcGxpZWQgb24gdG9wLiBEb2VzIHRo
-aXMgbm93IGFjdHVhbGx5IHdvcmsKPj4gYXBwbGllZCBvbiB0b3Agb2YgdXBzdHJlYW0/IEFsc28g
-aXQgc2VlbXMgbGlrZSBtYW55IHBlb3BsZSBhY3R1YWxseSB3YW50Cj4+IHRoaXMgdG8gZ2V0IG1l
-cmdlZCBidXQgdGhlcmUncyBiZWVuIG5vIFJldmlld2VkLWJ5cyBhbmQgb25seSBhIHNpbmdsZQo+
-PiBUZXN0ZWQtYnk/IElzIHRoYXQgYXMgZ29vZCBhcyBpdCdzIGdvaW5nIHRvIGdldD8KPj4KPgo+
-IEdvb2QgcG9pbnQsIEkgcHJvdmlkZWQgc29tZSBmZWVkYmFjayBvbiBhbiBlYXJseSB2ZXJzaW9u
-IG9mIHRoZSBzZXJpZXMgYnV0IEknbSBub3QKPiBhbiBEUk0gZXhwZXJ0IHNvIEkgY291bGRuJ3Qg
-cmV2aWV3IGl0IGluIGRldGFpbCB0byBwcm92aWRlIG15IFJldmlld2VkLWJ5Lgo+Cj4gSSBkaWQg
-cHJvdmlkZSBteSBUZXN0ZWQtYnkgYSBsb25nIHRpbWUgYWdvIHRob3VnaCBidXQgbG9va2luZyBh
-dCB0aGUgcGF0Y2hlcyBpdAo+IHNlZW1zIHRob3NlIHdlcmUgZHJvcHBlZCBzbyBoZXJlIGdvZXMg
-YWdhaW46Cj4KPiBGb3IgdGhlIHdob2xlIHNlcmllcyBvbiBhbiBFeHlub3M1NDIwIFBlYWNoIFBp
-dCBhbmQgYW4gRXh5bm9zNTI1MCBTbm93IENocm9tZWJvb2tzOgo+Cj4gVGVzdGVkLWJ5OiBKYXZp
-ZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+Cj4K
-Pj4gQWxzbyBJIHRoaW5rIHRoZSBsYXN0IHVwZGF0ZSB3YXMgdGhhdCBBamF5IHdhcyBnb2luZyB0
-byByZXNlbmQgdGhpcwo+PiBiYXNlZCBvbiB2My4xOS1yYzEgb3Igc29tZXRoaW5nLiBJcyB0aGF0
-IHN0aWxsIGdvaW5nIHRvIGhhcHBlbj8KPj4gT3RoZXJ3aXNlIEkgY2FuIHByb2JhYmx5IHRyeSB0
-byBhcHBseSBhcy1pcywgYnV0IG5vdCBzdXJlIGhvdyB3ZWxsIGl0Cj4+IHdpbGwuCj4+Cj4KPiBB
-amF5LAo+Cj4gQXJlIHlvdSBnb2luZyB0byByZWJhc2UgYW5kIHJlc2VuZCB0aGlzIHNlcmllcyB3
-aXRoIGFsbCB0aGUgcHJvdmlkZWQgdGFncz8gR3VzdGF2bwo+IGFuZCBJIGhhdmUgYSByZWJhc2Vk
-IGJyYW5jaCBvbiB0b3Agb2YgMy4xOS1yYzUgYW5kIG9uZSBvZiB1cyBjYW4gcG9zdCB5b3VyIHNl
-cmllcyBpZgo+IHlvdSBhcmUgbm90IHBsYW5uaW5nIHRvIGRvIGl0LgpZZXMsIGluIGEgZGF5IG9y
-IHNvLiBJIGFtIGN1cnJlbnRseSByZWJhc2luZyBvbiAzLjE5LXJjNSBsaW51eC1uZXh0LgpJIHdp
-bGwgYWRkIFRlc3RlZC1ieSBmcm9tIGZyb20gUmFodWwsIEphdmllciwgSW5raSwgU2pvZXJkLCBh
-bmQgR3VzdGF2by4KT25seSBJbmtpIGhhcyBhY2tlZCB0aGlzIHRpbGwgbm93LiBTbywgSSB3aWxs
-IGFkZCBJbmtpJ3MgQWNrZWQtYnkuCgpBamF5Cgo+IExhdXJlbnQgYW5kIFRvbWksCj4KPiBZb3Ug
-c2FpZCB0aGF0IHlvdSBhcmUgT0sgd2l0aCB0aGUgRFQgYmluZGluZ3Mgbm93LCBkb2VzIHRoYXQg
-Y291bnQgYXMgYW4gQWNrZWQtYnkgb3IKPiBSZXZpZXdlZC1ieSBmb3IgeW91IGF0IGxlYXN0IGZv
-ciB0aGUgRFQgYmluZGluZ3MgY2hhbmdlcyBpbiB0aGUgc2VyaWVzPwo+Cj4+IFRoaWVycnkKPj4K
-Pgo+IEJlc3QgcmVnYXJkcywKPiBKYXZpZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+Hi,
+
+On 01/14/2015 09:24 AM, Javier Martinez Canillas wrote:
+> On 01/14/2015 01:19 AM, Javier Martinez Canillas wrote:
+>>
+>> I dug further on this issue and found that the cause is that the exynos_mixer
+>> driver needs some clocks (CLK_HDMI and CLK_SCLK_HDMI) grabbed by exynos_hdmi
+>> to be kept enabled after hdmi_poweroff (drivers/gpu/drm/exynos/exynos_hdmi.c).
+>>
+>> Otherwise, any access to mixer device registers leads to an imprecise external
+>> abort error. The following change [0] to the Exynos DRM HDMI driver makes the
+>> issue to not happen and I can successfully execute:
+>>
+>> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>>
+
+Did you execute this operation repeatedly? Still i get error when i
+execute this more than twice with your change [0].
+
+Thanks.
+
+>> Only not disabling the hdmi clock [1]: is enough but doing so makes sometimes the
+>> DISP1 power domain disabling fails. It doesn't seem to have side effect though
+>> since I also see the signal in the HDMI display to go standby and then on again.
+>>
+>> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>> [   63.089080] Power domain disp1-power-domain disable failed
+>> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+>> #
+>>
+>> That error message when both clocks are not disabled on hdmi_poweroff() though.
+>>
+> 
+> This should be: "That error message is not shown when both clocks are disabled".
+> 
+> Best regards,
+> Javier
+> 
