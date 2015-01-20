@@ -1,102 +1,216 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCHv3 2/8] devfreq: exynos: Add documentation for generic
- exynos memory bus frequency driver
-Date: Tue, 20 Jan 2015 12:49:15 +0530
-Message-ID: <CAKohpomqosqxeDANC=NLBVmOUHyUoqd7Zhph7r6f7+ufYN48EQ@mail.gmail.com>
-References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
-	<1420681257-3078-3-git-send-email-cw00.choi@samsung.com>
-	<CAL_Jsq+5sdsm_-VW-ta+qV-NBao-XTHvsYWcbMdZmbP0Nw43Cw@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv8 1/9] devfreq: event: Add new devfreq_event class to
+ provide basic data for devfreq governor
+Date: Tue, 20 Jan 2015 16:25:39 +0900
+Message-ID: <54BE02F3.4060808@samsung.com>
+References: <213049974.1319841421737167629.JavaMail.weblogic@epmlwas04a>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAL_Jsq+5sdsm_-VW-ta+qV-NBao-XTHvsYWcbMdZmbP0Nw43Cw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, Mark Rutland <mark.rutland@arm.com>, a.kesavan@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, InKi Dae <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:52233 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751401AbbATHZm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 02:25:42 -0500
+In-reply-to: <213049974.1319841421737167629.JavaMail.weblogic@epmlwas04a>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: myungjoo.ham@samsung.com
+Cc: "kgene@kernel.org" <kgene@kernel.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 9 January 2015 at 02:48, Rob Herring <robherring2@gmail.com> wrote:
-> Adding Viresh.
+Dear Myungjoo,
 
-Sorry for being too late, I was very busy with other cpufreq stuff I was doing
-and saved this thread for later as it required me to understand it properly..
+On 01/20/2015 03:59 PM, MyungJoo Ham wrote:
+>>  
+>> Dear Myungjoo,
+>>
+>> On 01/20/2015 01:34 PM, MyungJoo Ham wrote:
+>>>>   
+> []
+>>>> +
+>>>> +	mutex_lock(&edev->lock);
+>>>> +	if (edev->desc->ops && edev->desc->ops->enable) {
+>>>> +		ret = edev->desc->ops->enable(edev);
+>>>> +		if (ret < 0)
+>>>> +			goto err;
+>>>> +	}
+>>>
+>>> Is there any reason to call enable(edev) even when enable_count is already > 0 
+>>> while you do not call disable(edev) while enable_count > 0?
+>>>
+>>> I think this may incur errors in the related device drivers.
+>>> (e.g., incorrect pairing of clk/runtime-pm/regulator enable/disable
+>>> at the device driver side)
+>>
+>> You're right. This part has potential errors. I'll fix it as following:
+>> If edev is already enabled, devfreq_event_enable_edev() will just return
+>> without any operation because devfreq-event(edev) can handle only one event
+>> at the same time.
+>>
+>> 	mutex_lock(&edev->lock);
+>> 	if (edev->enable_count)
+>> 		dev_warn(&edev->dev, "%s is already enabled\n", edev->desc->name);
+>> 		ret = -EINVAL;
+>> 		goto err;
+>> 	}
+>>
+>> 	if (edev->desc->ops && edev->desc->ops->enable) {		
+>> 		ret = edev->desc->ops->enable(edev);
+>> 		if (ret < 0)
+>> 			goto err;
+>> 	}
+>> 	edev->enable_count++;
+> 
+> No, your suggested modification creates another bug.
+> 
+> It should not emit "warn" when enable_count > 0 at enable().
+> It is a natural behavior from drivers.
+> - You may have multiple drivers using edev.
+> - You may have multiple threads using edev.
 
->> +Required properties for memory bus block:
->> +- clock-names : the name of clock used by the memory bus, "memory-bus".
->> +- clocks : phandles for clock specified in "clock-names" property.
->> +- #clock-cells: should be 1.
->> +- frequency: the frequency table to support DVFS feature.
->
-> So you have just defined a new OPP table format. We already have one
-> and Viresh is working to create a more extendable one. He asked about
-> what's needed in devfreq, so Viresh here you go. :)
+The devfreq-event cannot be used in multiple drivers in current version
+If multiple driver set the event to devfreq-event device by using
+devfreq_event_set_event() at the same time, previous event will be ignored.
 
-I failed to understand what's new here, probably I need more clarity on
-what we are doing here..
+If multiple drivers want to use devfreq-event device at the same time,
+I have to implement additional feature.
 
-So, this is what I see from OPPs point of view, everything else stripped out.
+> 
+> Thus, the above 12 lines should be replaced with:
+> 
+> 	if (edev->desc->ops && edev->desc->ops->enable &&
+> 	    edev->enable_count == 0) {
+> 		ret = edev->desc->ops->enable(edev);
+> 		if (ret < 0)
+> 			goto err;
+> 	}
+> 	edev->enable_count++;
+> 
+>> 	
+>>
+>>>
+>>>> +	edev->enable_count++;
+>>>> +err:
+>>>> +	mutex_unlock(&edev->lock);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(devfreq_event_enable_edev);
+>>>> +
+>>>> +/**
+>>>> + * devfreq_event_disable_edev() - Disable the devfreq-event dev and decrease
+>>>> + *				  the enable_count of the devfreq-event dev.
+>>>> + * @edev	: the devfreq-event device
+>>>> + *
+>>>> + * Note that this function decrease the enable_count and disable the
+>>>> + * devfreq-event device. After the devfreq-event device is disabled,
+>>>> + * devfreq device can't use the devfreq-event device for get/set/reset
+>>>> + * operations.
+>>>> + */
+>>>> +int devfreq_event_disable_edev(struct devfreq_event_dev *edev)
+>>>> +{
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	if (!edev || !edev->desc)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	mutex_lock(&edev->lock);
+>>>> +	if (edev->enable_count > 0) {
+>>>> +		edev->enable_count--;
+>>>> +	} else {
+>>>> +		dev_warn(&edev->dev, "unbalanced enable_count\n");
+>>>> +		ret = -EINVAL;
+>>>> +		goto err;
+>>>> +	}
+>>>> +
+>>>> +	if (edev->desc->ops && edev->desc->ops->disable) {
+>>>> +		ret = edev->desc->ops->disable(edev);
+>>>> +		if (ret < 0) {
+>>>> +			edev->enable_count++;
+>>>> +			goto err;
+>>>> +		}
+> 
+> Anyway, have you seen other subsystems doing fall-back operations as you've
+> done by "edev->enable_count++" here? Or is this your own idea on falling back
+> from errors with a disable callback?
 
->> +       memory_bus_int: memory_bus@1 {
+I removed "edev->enable_count++" when fail to diable devfreq-event
+and modify it as following:
 
->> +               operating-points = <
->> +                       400000 950000
->> +                       200000 950000
->> +                       133000 925000
->> +                       100000 850000
->> +                       80000  850000
->> +                       50000  850000>;
+	+int devfreq_event_disable_edev(struct devfreq_event_dev *edev)
+	+{
+	+	int ret = 0;
+	+
+	+	if (!edev || !edev->desc)
+	+		return -EINVAL;
+	+
+	+	mutex_lock(&edev->lock);
+	+	if (!edev->enable_count) {
+	+		dev_warn(&edev->dev,
+	+			"%s is already disabled\n", edev->desc->name);
+	+		goto err;
+	+	}
+	+	
+	+	if (edev->desc->ops && edev->desc->ops->disable) {
+	+		ret = edev->desc->ops->disable(edev);
+	+		if (ret < 0)
+	+			goto err;
+	+	}
+	+	edev->enable_count--;
+	+err:
+	+	mutex_unlock(&edev->lock);
+	+
+	+	return ret;
+	+}
+	+EXPORT_SYMBOL_GPL(devfreq_event_disable_edev);
 
-So these are the OPPs your "groups" support and below ones are
-the frequencies that each block will support. Right ?
+> 
+>>>> +	}
+>>>
+>>> You did it correctly with disable here;
+>>> not calling it when it is not required.
+> 
+> Uh..yeah.. the original patch was incorrect..
+> 
+>>
+>> As I explained, I'll fix it as following:
+>>
+>> 	mutex_lock(&edev->lock);
+>> 	if (!edev->enable_count) {
+>> 		dev_warn(&edev->dev, "%s is already disabled\n", edev->desc->name);
+>> 		ret = -EINVAL;
+>> 		goto err;
+>> 	}
+>>
+>> 	if (edev->desc->ops && edev->desc->ops->disable) {
+>> 		ret = edev->desc->ops->disable(edev);
+>> 		if (ret < 0)
+>> 			goto err;		
+>> 	}
+>> 	edev->enable_count--;
+> 
+> Uh.... I'd say it is still incorrect.
 
->> +               blocks {
+I explained it about this problem on the upper.
 
->> +                               frequency = <
->> +                                       100000
->> +                                       100000
->> +                                       100000
->> +                                       100000
+> 
+> 	mutex_lock(&edev->lock);
+> 	if (!edev->enable_count) {
+> 		dev_warn(&edev->dev, "%s is already disabled\n", edev->desc->name);
+> 		ret = -EINVAL;
+> 		goto err;
+> 	}
+> 
+> 	edev->enable_count--;
+> 	if (edev->desc->ops && edev->desc->ops->disable &&
+> 	    !edev->enable_count) {
+> 		ret = edev->desc->ops->disable(edev);
+> 		if (ret < 0)
+> 			goto err;		
+> 	}
 
-Why this replication here ?
+[snip]
 
->> +                                       50000
->> +                                       50000>;
->> +                       };
-
-How are the above two tables (operating-points and frequency) related
-here? What about the voltages at which these frequencies are possible ?
-
->> +                       display_block: memory_bus_block2 {
-
->> +                               frequency = <
->> +                                       200000
->> +                                       160000
->> +                                       100000
->> +                                       80000
->> +                                       80000
->> +                                       50000>;
->> +                       };
-
->> +                       isp_block: memory_bus_block3 {
-
->> +                               frequency = <
->> +                                       200000
->> +                                       200000
->> +                                       100000
->> +                                       80000
->> +                                       50000
->> +                                       50000>;
->> +                       };
-
->> +                       gps_block: memory_bus_block4 {
-
->> +                               frequency = <
->> +                                       300000
->> +                                       200000
->> +                                       133000
->> +                                       100000
->> +                                       50000
->> +                                       50000>;
->> +                       };
-
-same for others as well..
+Best Regards,
+Chanwoo Choi
