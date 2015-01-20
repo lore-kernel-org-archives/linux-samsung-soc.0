@@ -1,65 +1,103 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
-	DMA-mapping subsystem
-Date: Tue, 20 Jan 2015 15:05:38 +0100
-Message-ID: <54BE60B2.1030707@collabora.co.uk>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
-	<1417514366.21830.22.camel@collabora.co.uk>
-	<54818768.3080303@samsung.com>
-	<CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com>
-	<54AC93E0.8010705@samsung.com>
-	<54ACFD69.1020500@collabora.co.uk> <54AD0293.70909@samsung.com>
-	<54AEB384.2040005@collabora.co.uk> <54B36C5A.6050109@samsung.com>
-	<54B3F1B7.7090307@collabora.co.uk> <54B4ABFB.5000501@samsung.com>
-	<54B5B5F6.3030607@collabora.co.uk>
-	<54B5B721.4070309@collabora.co.uk> <54BE383B.5030505@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 4/9] clk: samsung: exynos4: Add divider clock id for
+ memory bus frequency
+Date: Tue, 20 Jan 2015 15:17:12 +0100
+Message-ID: <54BE6368.1080609@samsung.com>
+References: <1421286657-4720-1-git-send-email-cw00.choi@samsung.com>
+ <1421286657-4720-5-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <54BE383B.5030505-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1421286657-4720-5-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Joonyoung,
-
-On 01/20/2015 12:12 PM, Joonyoung Shim wrote:
->>>
->>> I dug further on this issue and found that the cause is that the exynos_mixer
->>> driver needs some clocks (CLK_HDMI and CLK_SCLK_HDMI) grabbed by exynos_hdmi
->>> to be kept enabled after hdmi_poweroff (drivers/gpu/drm/exynos/exynos_hdmi.c).
->>>
->>> Otherwise, any access to mixer device registers leads to an imprecise external
->>> abort error. The following change [0] to the Exynos DRM HDMI driver makes the
->>> issue to not happen and I can successfully execute:
->>>
->>> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->>> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
->>>
+On 15/01/15 02:50, Chanwoo Choi wrote:
+> This patch adds the divider clock id for Exynos4 memory bus frequency.
+> The clock id is used fo DVFS (Dynamic Voltage/Frequency Scaling)
+> feature of exynos memory bus frequency.
 > 
-> Did you execute this operation repeatedly? Still i get error when i
-> execute this more than twice with your change [0].
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+I've queued this patch for the clk tree, please let me know if a topic
+branch is needed.
+
+--
+Thanks,
+Sylwester
+
+>  drivers/clk/samsung/clk-exynos4.c   | 10 +++++-----
+>  include/dt-bindings/clock/exynos4.h |  7 ++++++-
+>  2 files changed, 11 insertions(+), 6 deletions(-)
 >
-
-You mean that you are seeing the "Power domain power-domain disable failed"
-message but the system is not crashing or that you are still having the
-system crash?
-
-I've seen the former when running multiple times but I have not seen the
-crash when the hdmi clock is not disabled on hdmi_poweroff().
-
-> Thanks.
+> diff --git a/drivers/clk/samsung/clk-exynos4.c
+b/drivers/clk/samsung/clk-exynos4.c
+> index 88e8c6b..51462e8 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -703,12 +703,12 @@ static struct samsung_mux_clock exynos4x12_mux_clks[]
+__initdata = {
 >
-
-Best regards,
-Javier
+>  /* list of divider clocks supported in all exynos4 soc's */
+>  static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+> -	DIV(0, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
+> +	DIV(CLK_DIV_GDL, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
+>  	DIV(0, "div_gpl", "div_gdl", DIV_LEFTBUS, 4, 3),
+>  	DIV(0, "div_clkout_leftbus", "mout_clkout_leftbus",
+>  			CLKOUT_CMU_LEFTBUS, 8, 6),
+>
+> -	DIV(0, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
+> +	DIV(CLK_DIV_GDR, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
+>  	DIV(0, "div_gpr", "div_gdr", DIV_RIGHTBUS, 4, 3),
+>  	DIV(0, "div_clkout_rightbus", "mout_clkout_rightbus",
+>  			CLKOUT_CMU_RIGHTBUS, 8, 6),
+> @@ -781,10 +781,10 @@ static struct samsung_div_clock exynos4_div_clks[]
+__initdata = {
+>  			CLK_SET_RATE_PARENT, 0),
+>  	DIV(0, "div_clkout_top", "mout_clkout_top", CLKOUT_CMU_TOP, 8, 6),
+>
+> -	DIV(0, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
+> +	DIV(CLK_DIV_ACP, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
+>  	DIV(0, "div_acp_pclk", "div_acp", DIV_DMC0, 4, 3),
+>  	DIV(0, "div_dphy", "mout_dphy", DIV_DMC0, 8, 3),
+> -	DIV(0, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
+> +	DIV(CLK_DIV_DMC, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
+>  	DIV(0, "div_dmcd", "div_dmc", DIV_DMC0, 16, 3),
+>  	DIV(0, "div_dmcp", "div_dmcd", DIV_DMC0, 20, 3),
+>  	DIV(0, "div_pwi", "mout_pwi", DIV_DMC1, 8, 4),
+> @@ -829,7 +829,7 @@ static struct samsung_div_clock exynos4x12_div_clks[]
+__initdata = {
+>  	DIV_F(CLK_DIV_MCUISP1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
+>  						8, 3, CLK_GET_RATE_NOCACHE, 0),
+>  	DIV(CLK_SCLK_FIMG2D, "sclk_fimg2d", "mout_g2d", DIV_DMC1, 0, 4),
+> -	DIV(0, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
+> +	DIV(CLK_DIV_C2C, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
+>  	DIV(0, "div_c2c_aclk", "div_c2c", DIV_DMC1, 12, 3),
+>  };
+>
+> diff --git a/include/dt-bindings/clock/exynos4.h
+b/include/dt-bindings/clock/exynos4.h
+> index 34fe28c..c4b1676 100644
+> --- a/include/dt-bindings/clock/exynos4.h
+> +++ b/include/dt-bindings/clock/exynos4.h
+> @@ -262,8 +262,13 @@
+>  #define CLK_DIV_MCUISP1		453 /* Exynos4x12 only */
+>  #define CLK_DIV_ACLK200		454 /* Exynos4x12 only */
+>  #define CLK_DIV_ACLK400_MCUISP	455 /* Exynos4x12 only */
+> +#define CLK_DIV_ACP		456
+> +#define CLK_DIV_DMC		457
+> +#define CLK_DIV_C2C		458 /* Exynos4x12 only */
+> +#define CLK_DIV_GDL		459
+> +#define CLK_DIV_GDR		460
+>
+>  /* must be greater than maximal clock id */
+> -#define CLK_NR_CLKS		456
+> +#define CLK_NR_CLKS		461
+>
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
+> -- 1.8.5.5
