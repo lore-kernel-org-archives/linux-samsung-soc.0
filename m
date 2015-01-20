@@ -1,103 +1,80 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 4/9] clk: samsung: exynos4: Add divider clock id for
- memory bus frequency
-Date: Tue, 20 Jan 2015 15:17:12 +0100
-Message-ID: <54BE6368.1080609@samsung.com>
-References: <1421286657-4720-1-git-send-email-cw00.choi@samsung.com>
- <1421286657-4720-5-git-send-email-cw00.choi@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 4/5] mfd/regulator: dt-bindings: max77686: Document gpio
+ properties
+Date: Tue, 20 Jan 2015 15:21:43 +0100
+Message-ID: <1421763703.8855.10.camel@AMDC1943>
+References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
+ <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
+ <20150120134111.GI13701@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1421286657-4720-5-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43482 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751235AbbATOVr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 09:21:47 -0500
+In-reply-to: <20150120134111.GI13701@x1>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 15/01/15 02:50, Chanwoo Choi wrote:
-> This patch adds the divider clock id for Exynos4 memory bus frequency.
-> The clock id is used fo DVFS (Dynamic Voltage/Frequency Scaling)
-> feature of exynos memory bus frequency.
+On wto, 2015-01-20 at 13:41 +0000, Lee Jones wrote:
+> On Mon, 05 Jan 2015, Krzysztof Kozlowski wrote:
 > 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Document usage of maxim,ena-gpios properties which turn on external/GPIO
+> > control over regulator.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > ---
+> >  Documentation/devicetree/bindings/mfd/max77686.txt | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
+> > index 75fdfaf41831..e39f0bc1f55e 100644
+> > --- a/Documentation/devicetree/bindings/mfd/max77686.txt
+> > +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
+> > @@ -39,6 +39,12 @@ to get matched with their hardware counterparts as follow:
+> >  	-BUCKn	:	1-4.
+> >    Use standard regulator bindings for it ('regulator-off-in-suspend').
+> >  
+> > +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
+> > +  control. To turn this feature on this property must be added to the regulator
+> > +  sub-node:
+> > +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
+> > +				flags are actually ignored and always
+> > +				ACTIVE_HIGH is used)
+> 
+> How does this differ to the 'enable-gpio' property which has already
+> been defined?
 
-I've queued this patch for the clk tree, please let me know if a topic
-branch is needed.
+Strictly speaking - no difference, just a GPIO specifier.
 
---
-Thanks,
-Sylwester
+However the 'enable-gpio' property exists only for gpio-regulator. The
+regulator core does not support generic enable-gpio property and each
+driver implements it on its own.
 
->  drivers/clk/samsung/clk-exynos4.c   | 10 +++++-----
->  include/dt-bindings/clock/exynos4.h |  7 ++++++-
->  2 files changed, 11 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos4.c
-b/drivers/clk/samsung/clk-exynos4.c
-> index 88e8c6b..51462e8 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -703,12 +703,12 @@ static struct samsung_mux_clock exynos4x12_mux_clks[]
-__initdata = {
->
->  /* list of divider clocks supported in all exynos4 soc's */
->  static struct samsung_div_clock exynos4_div_clks[] __initdata = {
-> -	DIV(0, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
-> +	DIV(CLK_DIV_GDL, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
->  	DIV(0, "div_gpl", "div_gdl", DIV_LEFTBUS, 4, 3),
->  	DIV(0, "div_clkout_leftbus", "mout_clkout_leftbus",
->  			CLKOUT_CMU_LEFTBUS, 8, 6),
->
-> -	DIV(0, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
-> +	DIV(CLK_DIV_GDR, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
->  	DIV(0, "div_gpr", "div_gdr", DIV_RIGHTBUS, 4, 3),
->  	DIV(0, "div_clkout_rightbus", "mout_clkout_rightbus",
->  			CLKOUT_CMU_RIGHTBUS, 8, 6),
-> @@ -781,10 +781,10 @@ static struct samsung_div_clock exynos4_div_clks[]
-__initdata = {
->  			CLK_SET_RATE_PARENT, 0),
->  	DIV(0, "div_clkout_top", "mout_clkout_top", CLKOUT_CMU_TOP, 8, 6),
->
-> -	DIV(0, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
-> +	DIV(CLK_DIV_ACP, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
->  	DIV(0, "div_acp_pclk", "div_acp", DIV_DMC0, 4, 3),
->  	DIV(0, "div_dphy", "mout_dphy", DIV_DMC0, 8, 3),
-> -	DIV(0, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
-> +	DIV(CLK_DIV_DMC, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
->  	DIV(0, "div_dmcd", "div_dmc", DIV_DMC0, 16, 3),
->  	DIV(0, "div_dmcp", "div_dmcd", DIV_DMC0, 20, 3),
->  	DIV(0, "div_pwi", "mout_pwi", DIV_DMC1, 8, 4),
-> @@ -829,7 +829,7 @@ static struct samsung_div_clock exynos4x12_div_clks[]
-__initdata = {
->  	DIV_F(CLK_DIV_MCUISP1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
->  						8, 3, CLK_GET_RATE_NOCACHE, 0),
->  	DIV(CLK_SCLK_FIMG2D, "sclk_fimg2d", "mout_g2d", DIV_DMC1, 0, 4),
-> -	DIV(0, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
-> +	DIV(CLK_DIV_C2C, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
->  	DIV(0, "div_c2c_aclk", "div_c2c", DIV_DMC1, 12, 3),
->  };
->
-> diff --git a/include/dt-bindings/clock/exynos4.h
-b/include/dt-bindings/clock/exynos4.h
-> index 34fe28c..c4b1676 100644
-> --- a/include/dt-bindings/clock/exynos4.h
-> +++ b/include/dt-bindings/clock/exynos4.h
-> @@ -262,8 +262,13 @@
->  #define CLK_DIV_MCUISP1		453 /* Exynos4x12 only */
->  #define CLK_DIV_ACLK200		454 /* Exynos4x12 only */
->  #define CLK_DIV_ACLK400_MCUISP	455 /* Exynos4x12 only */
-> +#define CLK_DIV_ACP		456
-> +#define CLK_DIV_DMC		457
-> +#define CLK_DIV_C2C		458 /* Exynos4x12 only */
-> +#define CLK_DIV_GDL		459
-> +#define CLK_DIV_GDR		460
->
->  /* must be greater than maximal clock id */
-> -#define CLK_NR_CLKS		456
-> +#define CLK_NR_CLKS		461
->
->  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
-> -- 1.8.5.5
+Anyway Mark Brown already applied this patch to his regulator tree.
+
+Best regards,
+Krzysztof
+
+> 
+> >  Example:
+> >  
+> > @@ -65,4 +71,12 @@ Example:
+> >  				regulator-always-on;
+> >  				regulator-boot-on;
+> >  			};
+> > +
+> > +			buck9_reg {
+> > +				regulator-compatible = "BUCK9";
+> > +				regulator-name = "CAM_ISP_CORE_1.2V";
+> > +				regulator-min-microvolt = <1000000>;
+> > +				regulator-max-microvolt = <1200000>;
+> > +				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> > +			};
+> >  	}
+> 
