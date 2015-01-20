@@ -1,90 +1,103 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 2/9] ARM: Exynos: add support for sub-power domains
-Date: Tue, 20 Jan 2015 13:16:52 +0100
-Message-ID: <1421756219-21037-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v4 6/9] ARM: dts: exynos4210-universal_c210: enable hdmi support
+Date: Tue, 20 Jan 2015 13:16:56 +0100
+Message-ID: <1421756219-21037-7-git-send-email-m.szyprowski@samsung.com>
 References: <1421756219-21037-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41666 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753491AbbATMRJ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40504 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753965AbbATMRM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 07:17:09 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
+	Tue, 20 Jan 2015 07:17:12 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NIH00A116BEY570@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Jan 2015 12:21:14 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NIH00D5H6BDAA70@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Jan 2015 12:21:13 +0000 (GMT)
 In-reply-to: <1421756219-21037-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-This patch adds support for making one power domain a sub-domain of
-other domain. This is useful for modeling power dependences for devices
-like TV Mixer or Camera ISP, which needs to have more than one power
-domain enabled to be operational.
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-Based on previous work by Amit Daniel Kachhap <amit.daniel@samsung.com>.
+This patch adds configuration of hw modules required to enable HDMI
+support on Universal C210 board.
 
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- .../bindings/arm/exynos/power_domain.txt           |  2 ++
- arch/arm/mach-exynos/pm_domains.c                  | 28 ++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 57 +++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index f4445e5a2bbb..1e097037349c 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -22,6 +22,8 @@ Optional Properties:
- 	- pclkN, clkN: Pairs of parent of input clock and input clock to the
- 		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
- 		are supported currently.
-+- power-domains: phandle pointing to the parent power domain, for more details
-+		 see Documentation/devicetree/bindings/power/power_domain.txt
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index aaf0cae4f5e8..01f7d3cfdd02 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -503,6 +503,63 @@
+ 			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 	};
++
++	hdmi_en: voltage-regulator-hdmi-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "HDMI_5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpe0 1 0>;
++		enable-active-high;
++	};
++
++	hdmi_ddc: i2c-ddc {
++		compatible = "i2c-gpio";
++		gpios = <&gpe4 2 0 &gpe4 3 0>;
++		i2c-gpio,delay-us = <100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pinctrl-0 = <&i2c_ddc_bus>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	mixer@12C10000 {
++		status = "okay";
++	};
++
++	hdmi@12D00000 {
++		hpd-gpio = <&gpx3 7 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmi_hpd>;
++		hdmi-en-supply = <&hdmi_en>;
++		vdd-supply = <&ldo3_reg>;
++		vdd_osc-supply = <&ldo4_reg>;
++		vdd_pll-supply = <&ldo3_reg>;
++		ddc = <&hdmi_ddc>;
++		status = "okay";
++	};
++
++	i2c@138E0000 {
++		status = "okay";
++	};
++};
++
++&pinctrl_1 {
++	hdmi_hpd: hdmi-hpd {
++		samsung,pins = "gpx3-7";
++		samsung,pin-pud = <0>;
++	};
++};
++
++&pinctrl_0 {
++	i2c_ddc_bus: i2c-ddc-bus {
++		samsung,pins = "gpe4-2", "gpe4-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
+ };
  
- Node of a device using power domains must have a power-domains property
- defined with a phandle to respective power domain.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 20f267121b3e..37266a826437 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -161,6 +161,34 @@ no_clk:
- 		of_genpd_add_provider_simple(np, &pd->pd);
- 	}
- 
-+	/* Assign the child power domains to their parents */
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+		struct generic_pm_domain *child_domain, *parent_domain;
-+		struct of_phandle_args args;
-+
-+		args.np = np;
-+		args.args_count = 0;
-+		child_domain = of_genpd_get_from_provider(&args);
-+		if (!child_domain)
-+			continue;
-+
-+		if (of_parse_phandle_with_args(np, "power-domains",
-+					 "#power-domain-cells", 0, &args) != 0)
-+			continue;
-+
-+		parent_domain = of_genpd_get_from_provider(&args);
-+		if (!parent_domain)
-+			continue;
-+
-+		if (pm_genpd_add_subdomain(parent_domain, child_domain))
-+			pr_warn("%s failed to add subdomain: %s\n",
-+				parent_domain->name, child_domain->name);
-+		else
-+			pr_info("%s has as child subdomain: %s.\n",
-+				parent_domain->name, child_domain->name);
-+		of_node_put(np);
-+	}
-+
- 	return 0;
- }
- arch_initcall(exynos4_pm_init_power_domain);
+ &mdma1 {
 -- 
 1.9.2
