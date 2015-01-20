@@ -1,233 +1,166 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH v2] ARM: dts: exynos5422-odroidxu3: add on-board INA231
- sensors
-Date: Tue, 20 Jan 2015 10:19:46 +0100
-Message-ID: <1421745586.6818.34.camel@collabora.co.uk>
-References: <1421284089-421-1-git-send-email-khilman@kernel.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v4 15/21] ARM: exynos4/5: convert pmu wakeup to stacked  domains
+Date: Tue, 20 Jan 2015 09:43:32 +0000
+Message-ID: <fb800e47e40b0daf7771347e9a6b2482@www.loen.fr>
+References: <1421660655-21394-1-git-send-email-marc.zyngier@arm.com>
+ <1421660655-21394-16-git-send-email-marc.zyngier@arm.com>
+ <54BE06FD.2020702@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-0xSPRf9H6tBAu/pb/5DC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421284089-421-1-git-send-email-khilman@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from inca-roads.misterjones.org ([213.251.177.50]:39265 "EHLO
+	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752543AbbATJnx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 04:43:53 -0500
+In-Reply-To: <54BE06FD.2020702@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Chanwoo Choi <cw00.choi@samsung.com>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stefan Agner <stefan@agner.ch>
 
+Hi Pankaj,
 
---=-0xSPRf9H6tBAu/pb/5DC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 2015-01-20 07:42, Pankaj Dubey wrote:
+> Hi Marc,
+>
+> On Monday 19 January 2015 03:14 PM, Marc Zyngier wrote:
+>> Exynos has been (ab)using the gic_arch_extn to provide
+>> wakeup from suspend, and it makes a lot of sense to convert
+>> this code to use stacked domains instead.
+>>
+>> This patch does just this, updating the DT files to actually
+>> reflect what the HW provides.
+>>
+>> BIG FAT WARNING: because the DTs were so far lying by not
+>> exposing the fact that the PMU block is actually the first
+>> interrupt controller in the chain for RTC, kernels with this patch
+>> applied wont have any suspend-resume facility when booted
+>> with old DTs, and old kernels with updated DTs may not even boot.
+>>
+>> Also, I stronly suspect that there is more than two wake-up
+>> interrupts on these platforms, but I leave it to the maintainers
+>> to fix their mess.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>
+> I tested this patch series on SMDK5250 board.
+>
+> With the addition of "#interrupt-cells = <3>;"in PMU device node S2R
+> is working on Exynos5250 based SMDK board.
 
-On Wed, 2015-01-14 at 17:08 -0800, Kevin Hilman wrote:
-> From: Kevin Hilman <khilman@linaro.org>
->=20
-> The odroid-xu3 has 4 INA231 current sensors on board which can be
-> accessed from the Linux via the hwmon interface.
->=20
-> There is one sensor for each of these power rails:
->=20
-> - A15 cluster: VDD_ARM
-> - A7 cluster: VDD_KFC
-> - GPU: VDD_G3D
-> - memory: VDD_MEM
->=20
-> In addition to adding the sensors, LDO26 from the PMIC needs to be
-> enabled because it's powering these sensor.
+Thanks for letting me know. Can I add your Tested-by tag on this?
 
-I haven't tested whether the sensor values are correct, but based on the
-schematics & the hardkernel dts this describes the hardware correctly.
+>>   arch/arm/boot/dts/exynos4.dtsi    |   4 ++
+>>   arch/arm/boot/dts/exynos5250.dtsi |   4 ++
+>>   arch/arm/boot/dts/exynos5420.dtsi |   4 ++
+>>   arch/arm/mach-exynos/exynos.c     |  14 ++---
+>>   arch/arm/mach-exynos/suspend.c    | 122 
+>> ++++++++++++++++++++++++++++++++++----
+>>   5 files changed, 129 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4.dtsi 
+>> b/arch/arm/boot/dts/exynos4.dtsi
+>> index b8168f1..0e7d74e 100644
+>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>> @@ -141,6 +141,9 @@
+>>   	pmu_system_controller: system-controller@10020000 {
+>>   		compatible = "samsung,exynos4210-pmu", "syscon";
+>>   		reg = <0x10020000 0x4000>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-parent = <&gic>;
+>>   	};
+>>
+>>   	dsi_0: dsi@11C80000 {
+>> @@ -253,6 +256,7 @@
+>>   	rtc@10070000 {
+>>   		compatible = "samsung,s3c6410-rtc";
+>>   		reg = <0x10070000 0x100>;
+>> +		interrupt-parent = <&pmu_system_controller>;
+>>   		interrupts = <0 44 0>, <0 45 0>;
+>>   		clocks = <&clock CLK_RTC>;
+>>   		clock-names = "rtc";
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi 
+>> b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 0a229fc..1dc5f6b 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -194,6 +194,9 @@
+>>   		clock-names = "clkout16";
+>>   		clocks = <&clock CLK_FIN_PLL>;
+>>   		#clock-cells = <1>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-parent = <&gic>;
+>>   	};
+>>
+>>   	sysreg_system_controller: syscon@10050000 {
+>> @@ -230,6 +233,7 @@
+>>   	rtc: rtc@101E0000 {
+>>   		clocks = <&clock CLK_RTC>;
+>>   		clock-names = "rtc";
+>> +		interrupt-parent = <&pmu_system_controller>;
+>>   		status = "disabled";
+>>   	};
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi 
+>> b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 517e50f..35ecd36 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -309,6 +309,7 @@
+>>   	rtc: rtc@101E0000 {
+>>   		clocks = <&clock CLK_RTC>;
+>>   		clock-names = "rtc";
+>> +		interrupt-parent = <&pmu_system_controller>;
+>>   		status = "disabled";
+>>   	};
+>>
+>> @@ -748,6 +749,9 @@
+>>   		clock-names = "clkout16";
+>>   		clocks = <&clock CLK_FIN_PLL>;
+>>   		#clock-cells = <1>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-parent = <&gic>;
+>>   	};
+>>
+>>   	sysreg_system_controller: syscon@10050000 {
+>> diff --git a/arch/arm/mach-exynos/exynos.c 
+>> b/arch/arm/mach-exynos/exynos.c
+>> index c13d083..e417fdc 100644
+>> --- a/arch/arm/mach-exynos/exynos.c
+>> +++ b/arch/arm/mach-exynos/exynos.c
+>> @@ -175,16 +175,15 @@ static void __init exynos_init_io(void)
+>>   	exynos_map_io();
+>>   }
+>>
+>> +/*
+>> + * Apparently, these SoCs are not able to wake-up from suspend 
+>> using
+>> + * the PMU. Too bad. Should they suddenly become capable of such a
+>> + * feat, the matches below should be moved to suspend.c.
+>> + */
+>>   static const struct of_device_id exynos_dt_pmu_match[] = {
+>>   	{ .compatible = "samsung,exynos3250-pmu" },
+>
+> As I know Exynos3250, S2R support has been added in kgene/for-next
+> and should work as expected so we may need to do update
+> "exynos_wkup_irq" for exynos3250 and remove it from this list, so 
+> that
+> it's S2R should not break. I am adding concern engineer (+cc: Chanwoo
+> Choi) in the loop.
 
-Reviewed-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+That would have to be an additional patch, unless we decide to delay 
+this series.
 
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> Signed-off-by: Kevin Hilman <khilman@linaro.org>
-> ---
-> v2: use "ti,ina231" as compatible string.
->=20
-> Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoe=
-rd Simons.
->=20
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++=
-++++++
->  1 file changed, 39 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/d=
-ts/exynos5422-odroidxu3.dts
-> index c29123c0734d..50353d023225 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -174,6 +174,13 @@
->  					regulator-always-on;
->  				};
-> =20
-> +				ldo26_reg: LDO26 {
-> +					regulator-name =3D "vdd_ldo26";
-> +					regulator-min-microvolt =3D <3000000>;
-> +					regulator-max-microvolt =3D <3000000>;
-> +					regulator-always-on;
-> +				};
-> +
->  				buck1_reg: BUCK1 {
->  					regulator-name =3D "vdd_mif";
->  					regulator-min-microvolt =3D <800000>;
-> @@ -257,6 +264,38 @@
->  		};
->  	};
-> =20
-> +	i2c_0: i2c@12C60000 {
-> +		status =3D "okay";
-> +
-> +		/* A15 cluster: VDD_ARM */
-> +		ina231@40 {
-> +			compatible =3D "ti,ina231";
-> +			reg =3D <0x40>;
-> +			shunt-resistor =3D <10000>;
-> +		};
-> +
-> +		/* memory: VDD_MEM */
-> +		ina231@41 {
-> +			compatible =3D "ti,ina231";
-> +			reg =3D <0x41>;
-> +			shunt-resistor =3D <10000>;
-> +		};
-> +
-> +		/* GPU: VDD_G3D */
-> +		ina231@44 {
-> +			compatible =3D "ti,ina231";
-> +			reg =3D <0x44>;
-> +			shunt-resistor =3D <10000>;
-> +		};
-> +
-> +		/* A7 cluster: VDD_KFC */
-> +		ina231@45 {
-> +			compatible =3D "ti,ina231";
-> +			reg =3D <0x45>;
-> +			shunt-resistor =3D <10000>;
-> +		};
-> +	};
-> +
->  	i2c_2: i2c@12C80000 {
->  		samsung,i2c-sda-delay =3D <100>;
->  		samsung,i2c-max-bus-freq =3D <66000>;
+Thanks,
 
-
-
---=-0xSPRf9H6tBAu/pb/5DC
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
-ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
-MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
-LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
-n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
-SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
-P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
-zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
-o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
-KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
-bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
-cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
-dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
-AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
-UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
-AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
-dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
-AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
-AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
-O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
-Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
-c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
-cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
-HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
-tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
-2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
-Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
-qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
-lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
-hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
-d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
-MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
-cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
-CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
-c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
-EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
-CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
-+v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
-RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
-M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
-mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
-gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
-ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
-Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
-YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
-cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
-AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
-ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
-ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
-eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
-AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
-cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
-AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
-cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
-DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
-6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
-cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
-2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
-tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
-AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
-VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
-Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
-MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
-ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
-bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
-fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
-Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
-JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
-rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
-AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
-EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
-dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
-djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
-LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
-MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
-dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
-AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
-YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
-AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
-ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
-AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
-bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
-AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
-Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
-cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
-fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
-Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
-7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
-491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
-yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
-RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
-dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTUwMTIwMDkxOTQ2WjAjBgkqhkiG
-9w0BCQQxFgQUp831Lpn1lOUByQktJ+e8IVpYq1kwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
-BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
-MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
-hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
-A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAK2LrJwweQfKtQVY4nW9ZmhAQNYv
-1RyrKjMATz2DocMmdCHCFxpX/FBQJeIfvgE8q1aSB8bdA5qGME9z5DzpuqrPhtW2kB2/qlmKxCzL
-X2Svk5WVAyDcpHxU8cku+J81TytZuE5QW7ZDOiMhzfLB53hKoRoY0yiq/+OwWT4RWjyOD5ADAg16
-j7YNHs7yCi/ucLSSQk0Rglm+j0O0+FhOgANZZxvo8asdbC7Vcpf4Cr41W8+8RdWI6L4Qykkq0da8
-1QOHF5df8JFzF8HLC9/UbCTjU0FQsQDig6JGiCF8hYmHgi86AQ364jDP2fi9rUSv/+AjjIufAeWT
-F4AjDAhAg0sAAAAAAAA=
-
-
---=-0xSPRf9H6tBAu/pb/5DC--
+         M.
+-- 
+Fast, cheap, reliable. Pick two.
