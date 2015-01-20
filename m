@@ -1,80 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 4/5] mfd/regulator: dt-bindings: max77686: Document gpio
- properties
-Date: Tue, 20 Jan 2015 15:21:43 +0100
-Message-ID: <1421763703.8855.10.camel@AMDC1943>
-References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
- <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
- <20150120134111.GI13701@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: IOMMU support should not be selectable by user
+Date: Tue, 20 Jan 2015 15:31:14 +0100
+Message-ID: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:43482 "EHLO
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:44031 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751235AbbATOVr (ORCPT
+	with ESMTP id S1751537AbbATObW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jan 2015 09:21:47 -0500
-In-reply-to: <20150120134111.GI13701@x1>
+	Tue, 20 Jan 2015 09:31:22 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NIH005L4CIXLMA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Jan 2015 14:35:21 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-On wto, 2015-01-20 at 13:41 +0000, Lee Jones wrote:
-> On Mon, 05 Jan 2015, Krzysztof Kozlowski wrote:
-> 
-> > Document usage of maxim,ena-gpios properties which turn on external/GPIO
-> > control over regulator.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/max77686.txt | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-> > index 75fdfaf41831..e39f0bc1f55e 100644
-> > --- a/Documentation/devicetree/bindings/mfd/max77686.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> > @@ -39,6 +39,12 @@ to get matched with their hardware counterparts as follow:
-> >  	-BUCKn	:	1-4.
-> >    Use standard regulator bindings for it ('regulator-off-in-suspend').
-> >  
-> > +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
-> > +  control. To turn this feature on this property must be added to the regulator
-> > +  sub-node:
-> > +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-> > +				flags are actually ignored and always
-> > +				ACTIVE_HIGH is used)
-> 
-> How does this differ to the 'enable-gpio' property which has already
-> been defined?
+If system provides IOMMU feature, Exynos DRM should use it by default,
+because the Exynos DRM subdrivers don't work correctly when Exynos IOMMU
+driver has been enabled and no IOMMU support has been compiled into Exynos
+DRM driver.
 
-Strictly speaking - no difference, just a GPIO specifier.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/Kconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-However the 'enable-gpio' property exists only for gpio-regulator. The
-regulator core does not support generic enable-gpio property and each
-driver implements it on its own.
-
-Anyway Mark Brown already applied this patch to his regulator tree.
-
-Best regards,
-Krzysztof
-
-> 
-> >  Example:
-> >  
-> > @@ -65,4 +71,12 @@ Example:
-> >  				regulator-always-on;
-> >  				regulator-boot-on;
-> >  			};
-> > +
-> > +			buck9_reg {
-> > +				regulator-compatible = "BUCK9";
-> > +				regulator-name = "CAM_ISP_CORE_1.2V";
-> > +				regulator-min-microvolt = <1000000>;
-> > +				regulator-max-microvolt = <1200000>;
-> > +				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-> > +			};
-> >  	}
-> 
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 7f9f6f9e9b7e..39fe490efcd4 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -13,10 +13,9 @@ config DRM_EXYNOS
+ 	  If M is selected the module will be called exynosdrm.
+ 
+ config DRM_EXYNOS_IOMMU
+-	bool "EXYNOS DRM IOMMU Support"
++	bool
+ 	depends on DRM_EXYNOS && EXYNOS_IOMMU && ARM_DMA_USE_IOMMU
+-	help
+-	  Choose this option if you want to use IOMMU feature for DRM.
++	default y
+ 
+ config DRM_EXYNOS_DMABUF
+ 	bool "EXYNOS DRM DMABUF"
+-- 
+1.9.2
