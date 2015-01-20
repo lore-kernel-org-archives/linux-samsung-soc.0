@@ -1,59 +1,143 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND v2 2/7] mfd: cros_ec: Add char dev and virtual
- dev pointers
-Date: Tue, 20 Jan 2015 17:45:09 +0100
-Message-ID: <54BE8615.7070708@collabora.co.uk>
-References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-3-git-send-email-javier.martinez@collabora.co.uk> <20150120075011.GS21886@x1> <54BE770D.6030806@collabora.co.uk> <20150120163622.GD30656@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150120163622.GD30656@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH V9 02/14] drm/bridge: do not pass drm_bridge_funcs to
+ drm_bridge_init
+Date: Tue, 20 Jan 2015 22:08:43 +0530
+Message-ID: <1421771935-31618-3-git-send-email-ajaykumar.rs@samsung.com>
+References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:43027 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755420AbbATQqy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Jan 2015 11:46:54 -0500
+In-reply-to: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, thierry.reding@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hello Lee,
+Assign the pointer to bridge ops structure(drm_bridge_funcs) in
+the bridge driver itself, instead of passing it to drm_bridge_init.
 
-On 01/20/2015 05:36 PM, Lee Jones wrote:
->> > 
->> > Is this safe?  Are you sure it's okay to provide an interface from
->> > userspace to read (kernel?) memory?
->> >
->> 
->> This interface is not to read any kernel memory but only the memory mapped
->> I/O region for the Low Pin Count (LPC) bus. So user-space only can choose
->> and offset and a number of bytes using the CROS_EC_DEV_IOCRDMEM ioctl cmd
->> which uses the following structure as argument:
->> 
->> /*
->>  * @offset: within EC_LPC_ADDR_MEMMAP region
->>  * @bytes: number of bytes to read. zero means "read a string" (including '\0')
->>  *         (at most only EC_MEMMAP_SIZE bytes can be read)
->>  * @buffer: where to store the result
->>  * ioctl returns the number of bytes read, negative on error
->>  */
->> struct cros_ec_readmem {
->>         uint32_t offset;
->>         uint32_t bytes;
->>         uint8_t buffer[EC_MEMMAP_SIZE];
->> };
->> 
->> The cros_ec_lpc_readmem() handler that the function pointer is set only
->> reads bytes from EC_LPC_ADDR_MEMMAP + offset if offset < EC_MEMMAP_SIZE
->> and the data is copied to the user-space buffer from the structure passed
->> as argument with copy_to_user().
->> 
->> So in that sense is similar to the spidev or i2c-dev interfaces that are
->> used to access these buses from user-space.
-> 
-> Very well.  The purpose of my question was to be provocative and to
-> make you think about the interface.  As long as you're sure it can't
-> be abused, then I'm happy.
-> 
+This will allow bridge driver developer to pack bridge private
+information inside the bridge object and pass only the drm-relevant
+information to drm_bridge_init.
 
-Ok, thanks a lot. Does it mean I've your Acked-by for this patch too?
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Tested-by: Rahul Sharma <rahul.sharma@samsung.com>
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ drivers/gpu/drm/bridge/ptn3460.c       |    3 ++-
+ drivers/gpu/drm/drm_crtc.c             |    5 +----
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c |    3 ++-
+ drivers/gpu/drm/sti/sti_hda.c          |    3 ++-
+ drivers/gpu/drm/sti/sti_hdmi.c         |    3 ++-
+ include/drm/drm_crtc.h                 |    3 +--
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-Best regards,
-Javier
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index 4db38e1..a2ddc8d 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -313,7 +313,8 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+ 		goto err;
+ 	}
+ 
+-	ret = drm_bridge_init(dev, &ptn_bridge->bridge, &ptn3460_bridge_funcs);
++	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
++	ret = drm_bridge_init(dev, &ptn_bridge->bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to initialize bridge with drm\n");
+ 		goto err;
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index caec5c3..4acd693 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -1030,7 +1030,6 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
+  * drm_bridge_init - initialize a drm transcoder/bridge
+  * @dev: drm device
+  * @bridge: transcoder/bridge to set up
+- * @funcs: bridge function table
+  *
+  * Initialises a preallocated bridge. Bridges should be
+  * subclassed as part of driver connector objects.
+@@ -1038,8 +1037,7 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
+  * Returns:
+  * Zero on success, error code on failure.
+  */
+-int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+-		const struct drm_bridge_funcs *funcs)
++int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge)
+ {
+ 	int ret;
+ 
+@@ -1050,7 +1048,6 @@ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+ 		goto out;
+ 
+ 	bridge->dev = dev;
+-	bridge->funcs = funcs;
+ 
+ 	list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
+ 	dev->mode_config.num_bridge++;
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+index 6902ad6..52ed2b5 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+@@ -220,8 +220,9 @@ struct drm_bridge *hdmi_bridge_init(struct hdmi *hdmi)
+ 	hdmi_bridge->hdmi = hdmi;
+ 
+ 	bridge = &hdmi_bridge->base;
++	bridge->funcs = &hdmi_bridge_funcs;
+ 
+-	drm_bridge_init(hdmi->dev, bridge, &hdmi_bridge_funcs);
++	drm_bridge_init(hdmi->dev, bridge);
+ 
+ 	return bridge;
+ 
+diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+index 2ae9a9b..6cf145d 100644
+--- a/drivers/gpu/drm/sti/sti_hda.c
++++ b/drivers/gpu/drm/sti/sti_hda.c
+@@ -664,7 +664,8 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+ 		return -ENOMEM;
+ 
+ 	bridge->driver_private = hda;
+-	drm_bridge_init(drm_dev, bridge, &sti_hda_bridge_funcs);
++	bridge->funcs = &sti_hda_bridge_funcs;
++	drm_bridge_init(drm_dev, bridge);
+ 
+ 	encoder->bridge = bridge;
+ 	connector->encoder = encoder;
+diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+index d032e02..74e943e 100644
+--- a/drivers/gpu/drm/sti/sti_hdmi.c
++++ b/drivers/gpu/drm/sti/sti_hdmi.c
+@@ -635,7 +635,8 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+ 		goto err_adapt;
+ 
+ 	bridge->driver_private = hdmi;
+-	drm_bridge_init(drm_dev, bridge, &sti_hdmi_bridge_funcs);
++	bridge->funcs = &sti_hdmi_bridge_funcs;
++	drm_bridge_init(drm_dev, bridge);
+ 
+ 	encoder->bridge = bridge;
+ 	connector->encoder = encoder;
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index f444263..e43d9e5 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -1209,8 +1209,7 @@ extern unsigned int drm_connector_index(struct drm_connector *connector);
+ /* helper to unplug all connectors from sysfs for device */
+ extern void drm_connector_unplug_all(struct drm_device *dev);
+ 
+-extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
+-			   const struct drm_bridge_funcs *funcs);
++extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge);
+ extern void drm_bridge_cleanup(struct drm_bridge *bridge);
+ 
+ extern int drm_encoder_init(struct drm_device *dev,
+-- 
+1.7.9.5
