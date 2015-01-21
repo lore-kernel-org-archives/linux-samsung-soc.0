@@ -1,81 +1,45 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v5 18/18] thermal: exynos: Remove not needed
- exynos_tmu_init_data declarations from exynos_tmu.h
-Date: Tue, 20 Jan 2015 23:30:35 -0400
-Message-ID: <20150121033034.GC22176@developer.hsd1.ca.comcast.net>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
- <1421666462-7606-19-git-send-email-l.majewski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv3 2/8] devfreq: exynos: Add documentation for generic
+ exynos memory bus frequency driver
+Date: Wed, 21 Jan 2015 13:20:57 +0900
+Message-ID: <54BF2929.3090107@samsung.com>
+References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
+ <1420681257-3078-3-git-send-email-cw00.choi@samsung.com>
+ <CAL_Jsq+5sdsm_-VW-ta+qV-NBao-XTHvsYWcbMdZmbP0Nw43Cw@mail.gmail.com>
+ <CAKohpomqosqxeDANC=NLBVmOUHyUoqd7Zhph7r6f7+ufYN48EQ@mail.gmail.com>
+ <54BE108F.8090506@samsung.com>
+ <CAKohpokSuVhH3hHFF+mLtJXvjt=bmJy1oZRBOttCNXORBS1Y0A@mail.gmail.com>
+ <54BE3E10.2080906@samsung.com>
+ <CAKohpontEntV48XqNcJq+euT9SdEjkgn5Pa=sSUpgM8mfKKCUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NU0Ex4SbNnrxsi6C"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421666462-7606-19-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAKohpontEntV48XqNcJq+euT9SdEjkgn5Pa=sSUpgM8mfKKCUA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rob Herring <robherring2@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, Mark Rutland <mark.rutland@arm.com>, a.kesavan@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, InKi Dae <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On 01/21/2015 12:17 PM, Viresh Kumar wrote:
+> On 20 January 2015 at 17:07, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> If each bus-block has separate regulator independently, each bus-block can be registered
+>> separately. But, exynos bus-blocks in mem-bus-group share the same regulator.
+> 
+> This can be managed easily within the driver. Just stay the highest
+> voltage requested.
 
---NU0Ex4SbNnrxsi6C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If the clock will be stayed on highest voltage, will reduce
+the considerable benefit of power-consumption.
 
-On Mon, Jan 19, 2015 at 12:21:02PM +0100, Lukasz Majewski wrote:
-> After switching to device tree based configuration those declarations are
-> not needed anymore.
->=20
-> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
-> Changes for v5:
-> - New patch
-> ---
->  drivers/thermal/samsung/exynos_tmu.h | 8 --------
->  1 file changed, 8 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsu=
-ng/exynos_tmu.h
-> index d876d4c..9f9b1b8 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -71,12 +71,4 @@ struct exynos_tmu_platform_data {
->  	u32 cal_mode;
->  };
-> =20
-> -extern struct exynos_tmu_init_data const exynos3250_default_tmu_data;
-> -extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
-> -extern struct exynos_tmu_init_data const exynos4412_default_tmu_data;
-> -extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
-> -extern struct exynos_tmu_init_data const exynos5260_default_tmu_data;
-> -extern struct exynos_tmu_init_data const exynos5420_default_tmu_data;
-> -extern struct exynos_tmu_init_data const exynos5440_default_tmu_data;
+I think it is DFS instead of DVFS. Is it right?
 
-Please merge this patch to the one that removes these symbols from
-kernel.
+> I don't think its not manageable. But it will be much more convenient
+> as that will show
+> the correct picture and get rid of unnecessarily virtualizing things..
 
-> -
->  #endif /* _EXYNOS_TMU_H */
-> --=20
-> 2.0.0.rc2
->=20
+What is the correct picture? do you need more detailed explanation
+of Exynos memory bus structure?
 
---NU0Ex4SbNnrxsi6C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUvx1PAAoJEMLUO4d9pOJWDXkH/25HNkZrWIumb03VrkrI7JT3
-w1rZBFzTdXoAKnV+BfMYTmHIzDJE8ItShJz2pknf1wSUdCsFCIEpkQH7wX7S0OaL
-Ju4KYTilk6CfkjFGNoj8CWbBfyZAvan/X/crkRTI7+9j5JEwI8M3g2lMMV1QLkn/
-2adtebWEJahB1SfR2HkooAgOL4FTbhf4dah4+J1x4ogP00CBqv92q99OQouGwW+f
-URylgdzMtesaypjsZMMD3oDPAThXOprYhEYlZ+/FFBuklLS6G/lUx8TJ6cVrkN5O
-IGpt0M8cYSH5QDDmi98aQe0pS9BOWl4Te1/wRaJ2UXxcWuOz9+OF0JPYasmezz4=
-=qPXI
------END PGP SIGNATURE-----
-
---NU0Ex4SbNnrxsi6C--
+Thanks,
+Chanwoo
