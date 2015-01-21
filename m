@@ -1,45 +1,132 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos5422-odroidxu3: reduce total RAM by 22 MiB
-Date: Wed, 21 Jan 2015 13:22:52 +0100
-Message-ID: <1421842972-25807-1-git-send-email-m.szyprowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v4 2/2] ARM: dts: Add HS400 support for exynos5420 and exynos5800
+Date: Wed, 21 Jan 2015 19:42:29 +0530
+Message-ID: <CAGOxZ5186+9U-6eri6OSGw9awsmr0EPP-gdhu-__oCWP1Oyyxg@mail.gmail.com>
+References: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
+ <1421231446-4776-3-git-send-email-alim.akhtar@samsung.com> <54BEDE9C.5060501@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22712 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751462AbbAUMXI (ORCPT
+Received: from mail-qc0-f173.google.com ([209.85.216.173]:33787 "EHLO
+	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752015AbbAUONK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 07:23:08 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NIJ00GMA196VX40@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Jan 2015 12:27:06 +0000 (GMT)
+	Wed, 21 Jan 2015 09:13:10 -0500
+In-Reply-To: <54BEDE9C.5060501@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, Kevin Hilman <khilman@linaro.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, Douglas Anderson <dianders@chromium.org>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Last 22 MiB is RAM is reserved by secure monitor code and cannot be
-accessed from Linux kernel, so adjust total RAM size to 0x7EA00000
-(2 GiB - 22 MiB). This fixes random 'imprecise kernel abort' kernel
-failures.
+Hi Jaehoon
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Jan 21, 2015 at 4:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi,
+>
+> If you want to enable the hs400 mode, need to add "mmc-hs400-1_8v" or "mmc-hs400-1_2v".
+> But this patch didn't add them. do you have any other plan?
+>
+Yes, right, plan is to send separate patch to enable hs400, as of now
+I am not sure if all the 5800-peach-pi boards are populated with
+emmc5.0 device or not. So I will enable HS400 after confirming this
+point.
+> On 01/14/2015 07:30 PM, Alim Akhtar wrote:
+>> From: Seungwon Jeon <tgih.jun@samsung.com>
+>>
+>> HS400 timing values are added for SMDK5420, exynos5420-peach-pit
+>> and exynos5800-peach-pi boards.
+>> This also adds RCLK GPIO line, this gpio should be in pull-down
+>> state.
+>>
+>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> [Alim: addressed review comments]
+>> ---
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 +++-
+>>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    4 +++-
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    4 +++-
+>>  4 files changed, 16 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> index 9a050e1..7ffaba8 100644
+>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> @@ -569,8 +569,10 @@
+>>       samsung,dw-mshc-ciu-div = <3>;
+>>       samsung,dw-mshc-sdr-timing = <0 4>;
+>>       samsung,dw-mshc-ddr-timing = <0 2>;
+>> +     samsung,dw-mshc-hs400-timing = <0 2>;
+>> +     read-strobe-delay = <90>;
+>>       pinctrl-names = "default";
+>> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
+>>       bus-width = <8>;
+>>  };
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> index ba686e4..8b15316 100644
+>> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> @@ -201,6 +201,13 @@
+>>                       samsung,pin-drv = <3>;
+>>               };
+>>
+>> +             sd0_rclk: sd0-rclk {
+>
+> I know it used to "sd0_rdqs", not "sd0_rclk".
+> Change name.
+>
+Ok, I will change as per UM of 5800/5420,
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index f6fc9442f631..50843208860d 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -18,7 +18,7 @@
- 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
- 
- 	memory {
--		reg = <0x40000000 0x80000000>;
-+		reg = <0x40000000 0x7EA00000>;
- 	};
- 
- 	chosen {
+> Best Regards,
+> Jaehoon Chung
+>> +                     samsung,pins = "gpc0-7";
+>> +                     samsung,pin-function = <2>;
+>> +                     samsung,pin-pud = <1>;
+>> +                     samsung,pin-drv = <3>;
+>> +             };
+>> +
+>>               sd1_cmd: sd1-cmd {
+>>                       samsung,pins = "gpc1-1";
+>>                       samsung,pin-function = <2>;
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index 8be3d7b..5290e79 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -80,8 +80,10 @@
+>>               samsung,dw-mshc-ciu-div = <3>;
+>>               samsung,dw-mshc-sdr-timing = <0 4>;
+>>               samsung,dw-mshc-ddr-timing = <0 2>;
+>> +             samsung,dw-mshc-hs400-timing = <0 2>;
+>> +             read-strobe-delay = <90>;
+>>               pinctrl-names = "default";
+>> -             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
+>>               bus-width = <8>;
+>>               cap-mmc-highspeed;
+>>       };
+>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> index e8fdda8..fa1c858 100644
+>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> @@ -557,8 +557,10 @@
+>>       samsung,dw-mshc-ciu-div = <3>;
+>>       samsung,dw-mshc-sdr-timing = <0 4>;
+>>       samsung,dw-mshc-ddr-timing = <0 2>;
+>> +     samsung,dw-mshc-hs400-timing = <0 2>;
+>> +     read-strobe-delay = <90>;
+>>       pinctrl-names = "default";
+>> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
+>>       bus-width = <8>;
+>>  };
+>>
+>>
+>
+
+
+
 -- 
-1.9.2
+Regards,
+Alim
