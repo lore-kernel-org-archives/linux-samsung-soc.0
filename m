@@ -1,87 +1,47 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v4 13/21] ARM: omap: convert wakeupgen to stacked domains
-Date: Wed, 21 Jan 2015 08:30:31 -0800
-Message-ID: <20150121163031.GR7718@atomide.com>
-References: <1421660655-21394-1-git-send-email-marc.zyngier@arm.com>
- <1421660655-21394-14-git-send-email-marc.zyngier@arm.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH RESEND v2 5/7] mfd: cros_ec: Instantiate ChromeOS EC character
+ device
+Date: Wed, 21 Jan 2015 17:56:49 +0100
+Message-ID: <54BFDA51.7020609@collabora.co.uk>
+References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-6-git-send-email-javier.martinez@collabora.co.uk> <20150120082013.GU21886@x1> <54BE7C53.8070605@collabora.co.uk> <20150120162952.GB30656@x1> <54BE83FF.7030709@collabora.co.uk> <20150120165527.GH30656@x1> <54BE8C55.5040606@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1421660655-21394-14-git-send-email-marc.zyngier@arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Nishanth Menon <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Thierry Reding <thierry.reding@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Michal Simek <michal.simek@xilinx.com>, linux-samsung-soc@vger.kernel.org, Benoit Cousson <bcousson@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Simon Horman <horms@verge.net.au>, Santosh Shilimkar <ssantosh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54BE8C55.5040606@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Marc Zyngier <marc.zyngier@arm.com> [150119 01:48]:
-> OMAP4/5 has been (ab)using the gic_arch_extn to provide
-> wakeup from suspend, and it makes a lot of sense to convert
-> this code to use stacked domains instead.
+Hello Lee,
+
+On 01/20/2015 06:11 PM, Javier Martinez Canillas wrote:
+>> 
+>> But is it really a chardev?  Don't chardevs usually live in
+>> drivers/char?  It probably uses a chardev node in /dev, but what does
+>> it really do?  What information can/will userspace obtain from this
+>> memory block?
+>> 
 > 
-> This patch does just this, updating the DT files to actually
-> reflect what the HW provides.
+> Right, is a driver that register a chardev but mostly to expose an ioctl
+> interface to send commands to the Embedded Controller from user-space.
 > 
-> BIG FAT WARNING: because the DTs were so far lying by not
-> exposing the WUGEN HW block, kernels with this patch applied
-> won't have any suspend-resume facility when booted with old DTs,
-> and old kernels with updated DTs won't even boot.
+> The Application Processor communicates with Embedded Controller by sending
+> commands over an interface. This can be either spi or i2c on ARM (depending
+> on the Chromebook model) or LPC on x86 Chromebooks so the platform driver
+> instantiated by the "cros-ec-dev" mfd cell is to allow user-space to send
+> commands to the Embedded Controller (using the correct transport method).
 > 
-> On a platform with this patch applied, the system looks like
-> this:
+> So this chardev is used by the ectool binary in ChromeOS to communicate
+> with the Embedded Controller.
 > 
-> root@bacon-fat:~# cat /proc/interrupts
->             CPU0       CPU1
->  16:          0          0     WUGEN  37  gp_timer
->  19:     233799     155916       GIC  27  arch_timer
->  23:          0          0     WUGEN   9  l3-dbg-irq
->  24:          1          0     WUGEN  10  l3-app-irq
->  27:        282          0     WUGEN  13  omap-dma-engine
->  44:          0          0  4ae10000.gpio  13  DMA
 
-You may want to update this part for the fix :)
+Just FYI, I'll rename it to "cros-ec-ctl" since as you said is not really
+a chardev but that just happens to be the interface chosen to send the ioctl
+commands to the driver.
 
-I gave this a quick boot test on am437x-gp-evm and the
-interrupts look OK with the fix also applied:
+Thanks a lot for your suggestion.
 
-# cat /proc/interrupts 
-            CPU0       
- 16:        657     WUGEN  68  gp_timer
- 18:          0     WUGEN   9  l3-dbg-irq
- 19:          0     WUGEN  10  l3-app-irq
- 20:          5     WUGEN  12  edma
- 22:          0     WUGEN  14  edma_error
- 23:         96     WUGEN  72  OMAP UART0
- 33:          0  44e07000.gpio   6  mmc0
-158:         52     WUGEN  70  44e0b000.i2c
-159:          0     WUGEN  71  4802a000.i2c
-160:         35     WUGEN  64  mmc0
-161:          0     WUGEN  40  4a100000.ethernet
-162:       7739     WUGEN  41  4a100000.ethernet
-163:       7608     WUGEN  42  4a100000.ethernet
-164:          0     WUGEN  43  4a100000.ethernet
-170:          0     WUGEN 100  gpmc
-180:          0     WUGEN   7  tps65218
-IPI0:          0  CPU wakeup interrupts
-IPI1:          0  Timer broadcast interrupts
-IPI2:          0  Rescheduling interrupts
-IPI3:          0  Function call interrupts
-IPI4:          0  Single function call interrupts
-IPI5:          0  CPU stop interrupts
-IPI6:          0  IRQ work interrupts
-IPI7:          0  completion interrupts
-Err:          0
-
-Also verified that suspend and resume to a serial console event
-works on omap4430-sdp. So please feel free to add:
-
-Acked-by: Tony Lindgren <tony@atomide.com>
+Best regards,
+Javier
