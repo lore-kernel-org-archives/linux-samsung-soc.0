@@ -1,51 +1,51 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH V2] ARM: l2c: Maintain CPU endianness for early resume function
-Date: Wed, 21 Jan 2015 19:07:19 +0300
-Message-ID: <1421856440-28097-1-git-send-email-digetx@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH v2 3/3] ARM: dts: Add sound nodes for
+ exynos4412-trats2
+Date: Wed, 21 Jan 2015 17:23:21 +0100
+Message-ID: <54BFD279.7080604@samsung.com>
+References: <1421660902-29679-1-git-send-email-ideal.song@samsung.com>
+ <1421660902-29679-4-git-send-email-ideal.song@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41655 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752259AbbAUQXc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jan 2015 11:23:32 -0500
+In-reply-to: <1421660902-29679-4-git-send-email-ideal.song@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inha Song <ideal.song@samsung.com>
+Cc: alsa-devel@alsa-project.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, kgene@kernel.org, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-In big endian CPU mode l2x0_saved_regs structure stores registers values in BE
-format. In order to maintain BE CPU mode, these values and immediate constants
-must be converted back to LE format before writing them to cache controller.
+Hi,
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-V2: no code change, fixed patch numbering, extended mail recipients list
+On 19/01/15 10:48, Inha Song wrote:
+> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
+> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
 
- arch/arm/mm/l2c-l2x0-resume.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> +	sound {
+> +		compatible = "samsung,trats2-audio";
 
-diff --git a/arch/arm/mm/l2c-l2x0-resume.S b/arch/arm/mm/l2c-l2x0-resume.S
-index fda415e..9f99c7e 100644
---- a/arch/arm/mm/l2c-l2x0-resume.S
-+++ b/arch/arm/mm/l2c-l2x0-resume.S
-@@ -30,6 +30,15 @@ ENTRY(l2c310_early_resume)
- 	teq	r1, #0
- 	reteq	lr
- 
-+	@ Reverse for big endian kernel
-+ARM_BE8(rev	r2, r2)
-+ARM_BE8(rev	r3, r3)
-+ARM_BE8(rev	r4, r4)
-+ARM_BE8(rev	r5, r5)
-+ARM_BE8(rev	r6, r6)
-+ARM_BE8(rev	r7, r7)
-+ARM_BE8(rev	r8, r8)
-+
- 	@ The prefetch and power control registers are revision dependent
- 	@ and can be written whether or not the L2 cache is enabled
- 	ldr	r0, [r1, #L2X0_CACHE_ID]
-@@ -51,6 +60,7 @@ ENTRY(l2c310_early_resume)
- 
- 	str	r2, [r1, #L2X0_AUX_CTRL]
- 	mov	r9, #L2X0_CTRL_EN
-+ARM_BE8(rev	r9, r9)
- 	str	r9, [r1, #L2X0_CTRL]
- 	ret	lr
- ENDPROC(l2c310_early_resume)
+> +		assigned-clocks = <&pmu_system_controller 0>;
+> +		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
+
+How about putting these properties in the pmu_system_controller
+node?  After all the mux clock being configured here belongs to
+the PMU subsystem. Wouldn't it work that way ?
+
+> +		samsung,i2s-controller = <&i2s0>;
+> +		samsung,model = "Trats2";
+> +		samsung,audio-codec = <&wm1811>;
+> +		samsung,audio-routing =
+> +			"SPK", "SPKOUTLN",
+> +			"SPK", "SPKOUTLP",
+> +			"SPK", "SPKOUTRN",
+> +			"SPK", "SPKOUTRP";
+> +	};
+
 -- 
-2.2.1
+Regards,
+Sylwester
