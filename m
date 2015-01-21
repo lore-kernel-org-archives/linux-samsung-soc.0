@@ -1,22 +1,22 @@
 From: Lukasz Majewski <l.majewski@samsung.com>
 Subject: Re: [PATCH v5 15/18] thermal: samsung: core: Exynos TMU rework to use
  device tree for configuration
-Date: Wed, 21 Jan 2015 09:40:55 +0100
-Message-ID: <20150121094055.6b4a7c40@amdc2363>
+Date: Wed, 21 Jan 2015 09:48:08 +0100
+Message-ID: <20150121094808.5f7d4bf6@amdc2363>
 References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
  <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
  <1421666462-7606-16-git-send-email-l.majewski@samsung.com>
- <20150121031816.GA22176@developer.hsd1.ca.comcast.net>
+ <20150121032539.GB22176@developer.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:59218 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750805AbbAUIla (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:21155 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750883AbbAUIsX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 03:41:30 -0500
-In-reply-to: <20150121031816.GA22176@developer.hsd1.ca.comcast.net>
+	Wed, 21 Jan 2015 03:48:23 -0500
+In-reply-to: <20150121032539.GB22176@developer.hsd1.ca.comcast.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Eduardo Valentin <edubezval@gmail.com>
@@ -45,33 +45,6 @@ Hi Eduardo,
 > > - Remove duplicated exynos_tmu_initialize() - reported by Abhilash
 > > Kesavan <a.kesavan@samsung.com>
 > > 
-> 
-> several checkpatch.pl items to be reviewed in this patch:
-> CHECK: No space is necessary after a cast
-> #509: FILE: drivers/thermal/samsung/exynos_tmu.c:821:
-> +       pdata->gain = (u8) value;
-> 
-> CHECK: No space is necessary after a cast
-> #511: FILE: drivers/thermal/samsung/exynos_tmu.c:823:
-> +       pdata->reference_voltage = (u8) value;
-> 
-> 
-> Can you please make sure all of your patches pass:
-> checkpatch.pl --strict
-
-`		^^^^^^^^^ Is now checkpatch.pl required to run with
---strict rule? 
-
-I've tested those patches only with checkpatch with no errors.
-
-Has kernel policy changed recently? Are all developers now obliged to
-use the --strict rule?
-
-
-> 
-> ?
-> 
-> 
 > > ---
 > >  drivers/thermal/samsung/Makefile     |   2 -
 > >  drivers/thermal/samsung/exynos_tmu.c | 339
@@ -404,6 +377,13 @@ use the --strict rule?
 > >  
 > > -static int exynos_tmu_read(struct exynos_tmu_data *data)
 > > +int exynos_get_temp(void *p, long *temp)
+> 
+> exynos_get_temp must be static.
+
+Yes, this should be static.
+Thanks.
+
+> 
 > >  {
 > > -	int ret;
 > > +	struct exynos_tmu_data *data = p;
