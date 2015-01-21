@@ -1,56 +1,65 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v5 07/18] thermal: exynos: Modify exynos thermal code to
- use device tree for cpu cooling configuration
-Date: Wed, 21 Jan 2015 11:09:30 +0100
-Message-ID: <20150121110930.3254fc29@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
- <1421666462-7606-8-git-send-email-l.majewski@samsung.com>
- <20150121093304.7ac02a27@amdc2363>
- <CAKohpomgDrBu1Ug0uk233dSVTTDo4rixJiBEsbnJLRF3PDg0QA@mail.gmail.com>
- <20150121104719.69f20ca8@amdc2363>
- <CAKohpo=1i2Ted4jSovGZr7bVstRiUkKgZ+cJNbEkzqAh644_Ow@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/2] clk: exynos5420: Add IDs for clocks used in DISP1
+ power domain
+Date: Wed, 21 Jan 2015 11:38:58 +0100
+Message-ID: <54BF81C2.3020000@collabora.co.uk>
+References: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk> <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk> <54BE6050.1090205@samsung.com> <20150120175402.22722.84342@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAKohpo=1i2Ted4jSovGZr7bVstRiUkKgZ+cJNbEkzqAh644_Ow@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33531 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751727AbbAUKjE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jan 2015 05:39:04 -0500
+In-Reply-To: <20150120175402.22722.84342@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Viresh,
+Hello,
 
-> On 21 January 2015 at 15:17, Lukasz Majewski <l.majewski@samsung.com>
-> wrote:
-> > In previous versions I've only checked for cpu 0.
-> >
-> > If you think that it is enough to explicitly check only for cpu 0
-> > and forget about above "fail safe" code (when. e.g. CPU3 has defined
-> > cooling-cells), then I'm fine with it.
+On 01/20/2015 06:54 PM, Mike Turquette wrote:
+> Quoting Sylwester Nawrocki (2015-01-20 06:04:00)
+>> Hi,
+>> 
+>> On 20/01/15 11:35, Javier Martinez Canillas wrote:
+>> > When a power domain is powered off on Exynos5420 SoC, the input clocks of
+>> > the devices attached to this power domain are re-parented to oscclk and
+>> > restored to the original parent after powering on the power domain.
+>> > 
+>> > So a reference to the input and parent clocks for the devices attached to
+>> > a power domain are needed to be able to do the re-parenting. The DISP1 pd
+>> > includes modules which uses the following clocks:
+>> > 
+>> > ACLK_200_DISP1 (MIXER and HDMILINK)
+>> > ACLK_300_DISP1 (FIMD1)
+>> > ACLK_400_DISP1 (Internal Buses)
+>> > 
+>> > Each of these clocks are generated as the output of a clock mux so add an
+>> > ID for all of these clock muxes and their parents to be referenced in the
+>> > DISP1 power domain device node.
+>> > 
+>> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> 
+>> The patch looks OK to me, I'm fine with it being merged via Kukjin's tree
+>> due to the dts dependencies (including other pending dts patches touching
+>> the arch/arm/boot/dts/exynos5420.dtsi file).
+>> I think we need also Mike ACK for that, I could also queue the patch for
+>> the clk tree and create a topic branch, but merging both patches via
+>> arm-soc seems a more sane option in this case.
+>> 
+>> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
-> I don't know what bindings are you following, but cpufreq-dt's
-> bindings say that it has to be present in cpu0. Anyway, this driver
-> isn't for a multi-cluster system and so cpu0 should be fine.
-
-Ok.
-
+> Acked-by: Michael Turquette <mturquette@linaro.org>
 > 
-> > As I've mention - it would be maintainer's call if one trades
-> > potential regression for patch separation.
-> 
-> I am just asking it to split into a separate patch, not that I will
-> get it through
-> cpufreq. Eduardo can take it, but it should be a separate patch.
 
-Lets do it in this way :-).
+Thanks a lot Sylwester and Mike for your acks.
 
-Thanks.
+Kukjin, could you please pick $subject and "Patch 2/2 ARM: dts: Add DISP1
+power domain for exynos5420" through your tree?
 
--- 
 Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Javier
