@@ -1,50 +1,53 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/9] clk: samsung: exynos5433: Add clocks for CMU_ATLAS domain
-Date: Thu, 22 Jan 2015 08:44:31 +0900
-Message-ID: <1421883878-4980-3-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 5/9] clk: samsung: exynos5433: Add clocks for CMU_HEVC domain
+Date: Thu, 22 Jan 2015 08:44:34 +0900
+Message-ID: <1421883878-4980-6-git-send-email-cw00.choi@samsung.com>
 References: <1421883878-4980-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:54584 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753917AbbAUXow (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jan 2015 18:44:52 -0500
 In-reply-to: <1421883878-4980-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
 Cc: kgene@kernel.org, pankaj.dubey@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the mux/divider/gate clocks for CMU_ATLAS domain which
-generates the clocks for Cortex-A57 Quad-core processsor, L2 cache controller
-and CoreSight.
+This patch adds the mux/divider/gate clocks for CMU_HEVC domain which
+generates the clocks for HEVC(High Efficiency Video Codec) decoder IP.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos5433-clock.txt |   9 +
- drivers/clk/samsung/clk-exynos5433.c               | 219 +++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h             |  46 +++++
- 3 files changed, 274 insertions(+)
+ .../devicetree/bindings/clock/exynos5433-clock.txt |   8 ++
+ drivers/clk/samsung/clk-exynos5433.c               | 115 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h             |  27 ++++-
+ 3 files changed, 149 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index 18c51c1..414e32c 100644
+index d3deaaf..10908d2 100644
 --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
 +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -34,6 +34,9 @@ Required Properties:
-     which generates clocks for GSCALER IPs.
-   - "samsung,exynos5433-cmu-apollo"- clock controller compatible for CMU_APOLLO
-     which generates clocks for Cortex-A53 Quad-core processor.
-+  - "samsung,exynos5433-cmu-atlas" - clock controller compatible for CMU_ATLAS
-+    which generates clocks for Cortex-A57 Quad-core processor, CoreSight and
-+    L2 cache controller.
+@@ -41,6 +41,8 @@ Required Properties:
+     which generates clocks for M2M (Memory to Memory) scaler and JPEG IPs.
+   - "samsung,exynos5433-cmu-mfc"  - clock controller compatible for CMU_MFC
+     which generates clocks for MFC(Multi-Format Codec) IP.
++  - "samsung,exynos5433-cmu-hevc" - clock controller compatible for CMU_HEVC
++    which generates clocks for HEVC(High Efficiency Video Codec) decoder IP.
  
  - reg: physical base address of the controller and length of memory mapped
    region.
-@@ -139,6 +142,12 @@ Example 1: Examples of clock controller nodes are listed below.
+@@ -164,6 +166,12 @@ Example 1: Examples of clock controller nodes are listed below.
  		#clock-cells = <1>;
  	};
  
-+	cmu_atlas: clock-controller@11800000 {
-+		compatible = "samsung,exynos5433-cmu-atlas";
-+		reg = <0x11800000 0x1088>;
++	cmu_hevc: clock-controller@14f80000 {
++		compatible = "samsung,exynos5433-cmu-hevc";
++		reg = <0x14f80000 0x0b08>;
 +		#clock-cells = <1>;
 +	};
 +
@@ -52,285 +55,177 @@ index 18c51c1..414e32c 100644
  	   controller.
  
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 37a5e78..089c98f 100644
+index b64f703..1c2e5c8 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3586,3 +3586,222 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
+@@ -560,6 +560,9 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
+ 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
+ 			ENABLE_ACLK_TOP, 14,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_HEVC_400, "aclk_hevc_400", "div_aclk_hevc_400",
++			ENABLE_ACLK_TOP, 5,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_MFC_400, "aclk_mfc_400", "div_aclk_mfc_400",
+ 			ENABLE_ACLK_TOP, 3,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -4103,3 +4106,115 @@ static void __init exynos5433_cmu_mfc_init(struct device_node *np)
  }
- CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
- 		exynos5433_cmu_apollo_init);
+ CLK_OF_DECLARE(exynos5433_cmu_mfc, "samsung,exynos5433-cmu-mfc",
+ 		exynos5433_cmu_mfc_init);
 +
 +/*
-+ * Register offset definitions for CMU_ATLAS
++ * Register offset definitions for CMU_HEVC
 + */
-+#define ATLAS_PLL_LOCK				0x0000
-+#define ATLAS_PLL_CON0				0x0100
-+#define ATLAS_PLL_CON1				0x0104
-+#define ATLAS_PLL_FREQ_DET			0x010c
-+#define MUX_SEL_ATLAS0				0x0200
-+#define MUX_SEL_ATLAS1				0x0204
-+#define MUX_SEL_ATLAS2				0x0208
-+#define MUX_ENABLE_ATLAS0			0x0300
-+#define MUX_ENABLE_ATLAS1			0x0304
-+#define MUX_ENABLE_ATLAS2			0x0308
-+#define MUX_STAT_ATLAS0				0x0400
-+#define MUX_STAT_ATLAS1				0x0404
-+#define MUX_STAT_ATLAS2				0x0408
-+#define DIV_ATLAS0				0x0600
-+#define DIV_ATLAS1				0x0604
-+#define DIV_ATLAS_PLL_FREQ_DET			0x0608
-+#define DIV_STAT_ATLAS0				0x0700
-+#define DIV_STAT_ATLAS1				0x0704
-+#define DIV_STAT_ATLAS_PLL_FREQ_DET		0x0708
-+#define ENABLE_ACLK_ATLAS			0x0800
-+#define ENABLE_PCLK_ATLAS			0x0900
-+#define ENABLE_SCLK_ATLAS			0x0a00
-+#define ENABLE_IP_ATLAS0			0x0b00
-+#define ENABLE_IP_ATLAS1			0x0b04
-+#define CLKOUT_CMU_ATLAS			0x0c00
-+#define CLKOUT_CMU_ATLAS_DIV_STAT		0x0c04
-+#define ARMCLK_STOPCTRL				0x1000
-+#define ATLAS_PWR_CTRL				0x1020
-+#define ATLAS_PWR_CTRL2				0x1024
-+#define ATLAS_INTR_SPREAD_ENABLE		0x1080
-+#define ATLAS_INTR_SPREAD_USE_STANDBYWFI	0x1084
-+#define ATLAS_INTR_SPREAD_BLOCKING_DURATION	0x1088
++#define MUX_SEL_HEVC				0x0200
++#define MUX_ENABLE_HEVC				0x0300
++#define MUX_STAT_HEVC				0x0400
++#define DIV_HEVC				0x0600
++#define DIV_STAT_HEVC				0x0700
++#define ENABLE_ACLK_HEVC			0x0800
++#define ENABLE_ACLK_HEVC_SECURE_SMMU_HEVC	0x0804
++#define ENABLE_PCLK_HEVC			0x0900
++#define ENABLE_PCLK_HEVC_SECURE_SMMU_HEVC	0x0904
++#define ENABLE_IP_HEVC0				0x0b00
++#define ENABLE_IP_HEVC1				0x0b04
++#define ENABLE_IP_HEVC_SECURE_SMMU_HEVC		0x0b08
 +
-+static unsigned long atlas_clk_regs[] __initdata = {
-+	ATLAS_PLL_LOCK,
-+	ATLAS_PLL_CON0,
-+	ATLAS_PLL_CON1,
-+	ATLAS_PLL_FREQ_DET,
-+	MUX_SEL_ATLAS0,
-+	MUX_SEL_ATLAS1,
-+	MUX_SEL_ATLAS2,
-+	MUX_ENABLE_ATLAS0,
-+	MUX_ENABLE_ATLAS1,
-+	MUX_ENABLE_ATLAS2,
-+	MUX_STAT_ATLAS0,
-+	MUX_STAT_ATLAS1,
-+	MUX_STAT_ATLAS2,
-+	DIV_ATLAS0,
-+	DIV_ATLAS1,
-+	DIV_ATLAS_PLL_FREQ_DET,
-+	DIV_STAT_ATLAS0,
-+	DIV_STAT_ATLAS1,
-+	DIV_STAT_ATLAS_PLL_FREQ_DET,
-+	ENABLE_ACLK_ATLAS,
-+	ENABLE_PCLK_ATLAS,
-+	ENABLE_SCLK_ATLAS,
-+	ENABLE_IP_ATLAS0,
-+	ENABLE_IP_ATLAS1,
-+	CLKOUT_CMU_ATLAS,
-+	CLKOUT_CMU_ATLAS_DIV_STAT,
-+	ARMCLK_STOPCTRL,
-+	ATLAS_PWR_CTRL,
-+	ATLAS_PWR_CTRL2,
-+	ATLAS_INTR_SPREAD_ENABLE,
-+	ATLAS_INTR_SPREAD_USE_STANDBYWFI,
-+	ATLAS_INTR_SPREAD_BLOCKING_DURATION,
++static unsigned long hevc_clk_regs[] __initdata = {
++	MUX_SEL_HEVC,
++	MUX_ENABLE_HEVC,
++	MUX_STAT_HEVC,
++	DIV_HEVC,
++	DIV_STAT_HEVC,
++	ENABLE_ACLK_HEVC,
++	ENABLE_ACLK_HEVC_SECURE_SMMU_HEVC,
++	ENABLE_PCLK_HEVC,
++	ENABLE_PCLK_HEVC_SECURE_SMMU_HEVC,
++	ENABLE_IP_HEVC0,
++	ENABLE_IP_HEVC1,
++	ENABLE_IP_HEVC_SECURE_SMMU_HEVC,
 +};
 +
-+/* list of all parent clock list */
-+PNAME(mout_atlas_pll_p)			= { "fin_pll", "fout_atlas_pll", };
-+PNAME(mout_bus_pll_atlas_user_p)	= { "fin_pll", "sclk_bus_pll_atlas", };
-+PNAME(mout_atlas_p)			= { "mout_atlas_pll",
-+					    "mout_bus_pll_atlas_user", };
++PNAME(mout_aclk_hevc_400_user_p)	= { "fin_pll", "aclk_hevc_400", };
 +
-+static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
-+	PLL(pll_35xx, CLK_FOUT_ATLAS_PLL, "fout_atlas_pll", "fin_pll",
-+		ATLAS_PLL_LOCK, ATLAS_PLL_CON0, exynos5443_pll_rates),
++static struct samsung_mux_clock hevc_mux_clks[] __initdata = {
++	/* MUX_SEL_HEVC */
++	MUX(CLK_MOUT_ACLK_HEVC_400_USER, "mout_aclk_hevc_400_user",
++			mout_aclk_hevc_400_user_p, MUX_SEL_HEVC, 0, 0),
 +};
 +
-+static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
-+	/* MUX_SEL_ATLAS0 */
-+	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
-+			MUX_SEL_ATLAS0, 0, 1, 0, CLK_MUX_READ_ONLY),
-+
-+	/* MUX_SEL_ATLAS1 */
-+	MUX(CLK_MOUT_BUS_PLL_ATLAS_USER, "mout_bus_pll_atlas_user",
-+			mout_bus_pll_atlas_user_p, MUX_SEL_ATLAS1, 0, 1),
-+
-+	/* MUX_SEL_ATLAS2 */
-+	MUX_F(CLK_MOUT_ATLAS, "mout_atlas", mout_atlas_p, MUX_SEL_ATLAS2,
-+			0, 1, 0, CLK_MUX_READ_ONLY),
++static struct samsung_div_clock hevc_div_clks[] __initdata = {
++	/* DIV_HEVC */
++	DIV(CLK_DIV_PCLK_HEVC, "div_pclk_hevc", "mout_aclk_hevc_400_user",
++			DIV_HEVC, 0, 2),
 +};
 +
-+static struct samsung_div_clock atlas_div_clks[] __initdata = {
-+	/* DIV_ATLAS0 */
-+	DIV_F(CLK_DIV_CNTCLK_ATLAS, "div_cntclk_atlas", "div_atlas2",
-+			DIV_ATLAS0, 24, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_PCLK_DBG_ATLAS, "div_pclk_dbg_atlas", "div_atclk_atlas",
-+			DIV_ATLAS0, 20, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ATCLK_ATLASO, "div_atclk_atlas", "div_atlas2",
-+			DIV_ATLAS0, 16, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_PCLK_ATLAS, "div_pclk_atlas", "div_atlas2",
-+			DIV_ATLAS0, 12, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ACLK_ATLAS, "div_aclk_atlas", "div_atlas2",
-+			DIV_ATLAS0, 8, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ATLAS2, "div_atlas2", "div_atlas1",
-+			DIV_ATLAS0, 4, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ATLAS1, "div_atlas1", "mout_atlas",
-+			DIV_ATLAS0, 0, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
++static struct samsung_gate_clock hevc_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_HEVC */
++	GATE(CLK_ACLK_BTS_HEVC_1, "aclk_bts_hevc_1", "mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC, 6, 0, 0),
++	GATE(CLK_ACLK_BTS_HEVC_0, "aclk_bts_hevc_0", "mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC, 5, 0, 0),
++	GATE(CLK_ACLK_AHB2APB_HEVCP, "aclk_ahb2apb_hevcp", "div_pclk_hevc",
++			ENABLE_ACLK_HEVC, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_HEVCX, "aclk_xiu_hevcx", "mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_HEVCNP_100, "aclk_hevcnp_100", "div_pclk_hevc",
++			ENABLE_ACLK_HEVC, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_HEVCND_400, "aclk_hevcnd_400", "mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_HEVC, "aclk_hevc", "mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC, 0, 0, 0),
 +
-+	/* DIV_ATLAS1 */
-+	DIV_F(CLK_DIV_SCLK_HPM_ATLAS, "div_sclk_hpm_atlas", "mout_atlas",
-+			DIV_ATLAS1, 4, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ATLAS_PLL, "div_atlas_pll", "mout_atlas",
-+			DIV_ATLAS1, 0, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
++	/* ENABLE_ACLK_HEVC_SECURE_SMMU_HEVC */
++	GATE(CLK_ACLK_SMMU_HEVC_1, "aclk_smmu_hevc_1",
++			"mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC_SECURE_SMMU_HEVC,
++			1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_SMMU_HEVC_0, "aclk_smmu_hevc_0",
++			"mout_aclk_hevc_400_user",
++			ENABLE_ACLK_HEVC_SECURE_SMMU_HEVC,
++			0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_HEVC */
++	GATE(CLK_PCLK_BTS_HEVC_1, "pclk_bts_hevc_1", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC, 4, 0, 0),
++	GATE(CLK_PCLK_BTS_HEVC_0, "pclk_bts_hevc_0", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC, 3, 0, 0),
++	GATE(CLK_PCLK_PMU_HEVC, "pclk_pmu_hevc", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SYSREG_HEVC, "pclk_sysreg_hevc", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_HEVC, "pclk_hevc", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC, 4, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_HEVC_SECURE_SMMU_HEVC */
++	GATE(CLK_PCLK_SMMU_HEVC_1, "pclk_smmu_hevc_1", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC_SECURE_SMMU_HEVC,
++			1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SMMU_HEVC_0, "pclk_smmu_hevc_0", "div_pclk_hevc",
++			ENABLE_PCLK_HEVC_SECURE_SMMU_HEVC,
++			0, CLK_IGNORE_UNUSED, 0),
 +};
 +
-+static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
-+	/* ENABLE_ACLK_ATLAS */
-+	GATE(CLK_ACLK_ATB_AUD_CSSYS, "aclk_atb_aud_cssys",
-+			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-+			9, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ATB_APOLLO3_CSSYS, "aclk_atb_apollo3_cssys",
-+			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-+			8, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ATB_APOLLO2_CSSYS, "aclk_atb_apollo2_cssys",
-+			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-+			7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ATB_APOLLO1_CSSYS, "aclk_atb_apollo1_cssys",
-+			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-+			6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ATB_APOLLO0_CSSYS, "aclk_atb_apollo0_cssys",
-+			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-+			5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAHBS_CSSYS_SSS, "aclk_asyncahbs_cssys_sss",
-+			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
-+			4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIS_CSSYS_CCIX, "aclk_asyncaxis_cssys_ccix",
-+			"div_pclk_dbg_atlas", ENABLE_ACLK_ATLAS,
-+			3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCACES_ATLAS_CCI, "aclk_asyncaces_atlas_cci",
-+			"div_aclk_atlas", ENABLE_ACLK_ATLAS,
-+			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AHB2APB_ATLASP, "aclk_ahb2apb_atlasp", "div_pclk_atlas",
-+			ENABLE_ACLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ATLASNP_200, "aclk_atlasnp_200", "div_pclk_atlas",
-+			ENABLE_ACLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_PCLK_ATLAS */
-+	GATE(CLK_PCLK_ASYNCAPB_AUD_CSSYS, "pclk_asyncapb_aud_cssys",
-+			"div_pclk_dbg_atlas", ENABLE_PCLK_ATLAS,
-+			5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ASYNCAPB_ISP_CSSYS, "pclk_asyncapb_isp_cssys",
-+			"div_pclk_dbg_atlas", ENABLE_PCLK_ATLAS,
-+			4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ASYNCAPB_APOLLO_CSSYS, "pclk_asyncapb_apollo_cssys",
-+			"div_pclk_dbg_atlas", ENABLE_PCLK_ATLAS,
-+			3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PMU_ATLAS, "pclk_pmu_atlas", "div_pclk_atlas",
-+			ENABLE_PCLK_ATLAS, 2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SYSREG_ATLAS, "pclk_sysreg_atlas", "div_pclk_atlas",
-+			ENABLE_PCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SECJTAG, "pclk_secjtag", "div_pclk_dbg_atlas",
-+			ENABLE_PCLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_SCLK_ATLAS */
-+	GATE(CLK_CNTCLK_ATLAS, "cntclk_atlas", "div_cntclk_atlas",
-+			ENABLE_SCLK_ATLAS, 10, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_HPM_ATLAS, "sclk_hpm_atlas", "div_sclk_hpm_atlas",
-+			ENABLE_SCLK_ATLAS, 7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_TRACECLK, "traceclk", "div_atclk_atlas",
-+			ENABLE_SCLK_ATLAS, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_CTMCLK, "ctmclk", "div_atclk_atlas",
-+			ENABLE_SCLK_ATLAS, 5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_HCLK_CSSYS, "hclk_cssys", "div_atclk_atlas",
-+			ENABLE_SCLK_ATLAS, 4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_DBG_CSSYS, "pclk_dbg_cssys", "div_pclk_dbg_atlas",
-+			ENABLE_SCLK_ATLAS, 3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_DBG, "pclk_dbg", "div_pclk_dbg_atlas",
-+			ENABLE_SCLK_ATLAS, 2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ATCLK, "atclk", "div_atclk_atlas",
-+			ENABLE_SCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_ATLAS, "sclk_atlas", "div_atlas2",
-+			ENABLE_SCLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
++static struct samsung_cmu_info hevc_cmu_info __initdata = {
++	.mux_clks		= hevc_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(hevc_mux_clks),
++	.div_clks		= hevc_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(hevc_div_clks),
++	.gate_clks		= hevc_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(hevc_gate_clks),
++	.nr_clk_ids		= HEVC_NR_CLK,
++	.clk_regs		= hevc_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(hevc_clk_regs),
 +};
 +
-+static struct samsung_cmu_info atlas_cmu_info __initdata = {
-+	.pll_clks		= atlas_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(atlas_pll_clks),
-+	.mux_clks		= atlas_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(atlas_mux_clks),
-+	.div_clks		= atlas_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(atlas_div_clks),
-+	.gate_clks		= atlas_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(atlas_gate_clks),
-+	.nr_clk_ids		= ATLAS_NR_CLK,
-+	.clk_regs		= atlas_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(atlas_clk_regs),
-+};
-+
-+static void __init exynos5433_cmu_atlas_init(struct device_node *np)
++static void __init exynos5433_cmu_hevc_init(struct device_node *np)
 +{
-+	samsung_cmu_register_one(np, &atlas_cmu_info);
++	samsung_cmu_register_one(np, &hevc_cmu_info);
 +}
-+CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
-+		exynos5433_cmu_atlas_init);
++CLK_OF_DECLARE(exynos5433_cmu_hevc, "samsung,exynos5433-cmu-hevc",
++		exynos5433_cmu_hevc_init);
 diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 9d3b76f..22b02e7 100644
+index dfeb9d6..2b3ac5a 100644
 --- a/include/dt-bindings/clock/exynos5433.h
 +++ b/include/dt-bindings/clock/exynos5433.h
-@@ -891,4 +891,50 @@
+@@ -154,8 +154,9 @@
+ #define CLK_SCLK_JPEG_MSCL		234
+ #define CLK_ACLK_MSCL_400		235
+ #define CLK_ACLK_MFC_400		236
++#define CLK_ACLK_HEVC_400		237
  
- #define APOLLO_NR_CLK					31
+-#define TOP_NR_CLK			237
++#define TOP_NR_CLK			238
  
-+/* CMU_ATLAS */
-+#define CLK_FOUT_ATLAS_PLL				1
+ /* CMU_CPIF */
+ #define CLK_FOUT_MPHY_PLL		1
+@@ -1001,4 +1002,28 @@
+ 
+ #define MFC_NR_CLK					19
+ 
++/* CMU_HEVC */
++#define CLK_MOUT_ACLK_HEVC_400_USER			1
 +
-+#define CLK_MOUT_ATLAS_PLL				2
-+#define CLK_MOUT_BUS_PLL_ATLAS_USER			3
-+#define CLK_MOUT_ATLAS					4
++#define CLK_DIV_PCLK_HEVC				2
 +
-+#define CLK_DIV_CNTCLK_ATLAS				5
-+#define CLK_DIV_PCLK_DBG_ATLAS				6
-+#define CLK_DIV_ATCLK_ATLASO				7
-+#define CLK_DIV_PCLK_ATLAS				8
-+#define CLK_DIV_ACLK_ATLAS				9
-+#define CLK_DIV_ATLAS2					10
-+#define CLK_DIV_ATLAS1					11
-+#define CLK_DIV_SCLK_HPM_ATLAS				12
-+#define CLK_DIV_ATLAS_PLL				13
++#define CLK_ACLK_BTS_HEVC_1				3
++#define CLK_ACLK_BTS_HEVC_0				4
++#define CLK_ACLK_AHB2APB_HEVCP				5
++#define CLK_ACLK_XIU_HEVCX				6
++#define CLK_ACLK_HEVCNP_100				7
++#define CLK_ACLK_HEVCND_400				8
++#define CLK_ACLK_HEVC					9
++#define CLK_ACLK_SMMU_HEVC_1				10
++#define CLK_ACLK_SMMU_HEVC_0				11
++#define CLK_PCLK_BTS_HEVC_1				12
++#define CLK_PCLK_BTS_HEVC_0				13
++#define CLK_PCLK_PMU_HEVC				14
++#define CLK_PCLK_SYSREG_HEVC				15
++#define CLK_PCLK_HEVC					16
++#define CLK_PCLK_SMMU_HEVC_1				17
++#define CLK_PCLK_SMMU_HEVC_0				18
 +
-+#define CLK_ACLK_ATB_AUD_CSSYS				14
-+#define CLK_ACLK_ATB_APOLLO3_CSSYS			15
-+#define CLK_ACLK_ATB_APOLLO2_CSSYS			16
-+#define CLK_ACLK_ATB_APOLLO1_CSSYS			17
-+#define CLK_ACLK_ATB_APOLLO0_CSSYS			18
-+#define CLK_ACLK_ASYNCAHBS_CSSYS_SSS			19
-+#define CLK_ACLK_ASYNCAXIS_CSSYS_CCIX			20
-+#define CLK_ACLK_ASYNCACES_ATLAS_CCI			21
-+#define CLK_ACLK_AHB2APB_ATLASP				22
-+#define CLK_ACLK_ATLASNP_200				23
-+#define CLK_PCLK_ASYNCAPB_AUD_CSSYS			24
-+#define CLK_PCLK_ASYNCAPB_ISP_CSSYS			25
-+#define CLK_PCLK_ASYNCAPB_APOLLO_CSSYS			26
-+#define CLK_PCLK_PMU_ATLAS				27
-+#define CLK_PCLK_SYSREG_ATLAS				28
-+#define CLK_PCLK_SECJTAG				29
-+#define CLK_CNTCLK_ATLAS				30
-+#define CLK_SCLK_FREQ_DET_ATLAS_PLL			31
-+#define CLK_SCLK_HPM_ATLAS				32
-+#define CLK_TRACECLK					33
-+#define CLK_CTMCLK					34
-+#define CLK_HCLK_CSSYS					35
-+#define CLK_PCLK_DBG_CSSYS				36
-+#define CLK_PCLK_DBG					37
-+#define CLK_ATCLK					38
-+#define CLK_SCLK_ATLAS					39
-+
-+#define ATLAS_NR_CLK					40
++#define HEVC_NR_CLK					19
 +
  #endif /* _DT_BINDINGS_CLOCK_EXYNOS5433_H */
 -- 
