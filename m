@@ -1,132 +1,51 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v4 2/2] ARM: dts: Add HS400 support for exynos5420 and exynos5800
-Date: Wed, 21 Jan 2015 19:42:29 +0530
-Message-ID: <CAGOxZ5186+9U-6eri6OSGw9awsmr0EPP-gdhu-__oCWP1Oyyxg@mail.gmail.com>
-References: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
- <1421231446-4776-3-git-send-email-alim.akhtar@samsung.com> <54BEDE9C.5060501@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f173.google.com ([209.85.216.173]:33787 "EHLO
-	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752015AbbAUONK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 09:13:10 -0500
-In-Reply-To: <54BEDE9C.5060501@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH V2] ARM: l2c: Maintain CPU endianness for early resume function
+Date: Wed, 21 Jan 2015 19:07:19 +0300
+Message-ID: <1421856440-28097-1-git-send-email-digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, Bob Mottram <bob.mottram-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, Douglas Anderson <dianders@chromium.org>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hi Jaehoon
+In big endian CPU mode l2x0_saved_regs structure stores registers values in BE
+format. In order to maintain BE CPU mode, these values and immediate constants
+must be converted back to LE format before writing them to cache controller.
 
-On Wed, Jan 21, 2015 at 4:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Hi,
->
-> If you want to enable the hs400 mode, need to add "mmc-hs400-1_8v" or "mmc-hs400-1_2v".
-> But this patch didn't add them. do you have any other plan?
->
-Yes, right, plan is to send separate patch to enable hs400, as of now
-I am not sure if all the 5800-peach-pi boards are populated with
-emmc5.0 device or not. So I will enable HS400 after confirming this
-point.
-> On 01/14/2015 07:30 PM, Alim Akhtar wrote:
->> From: Seungwon Jeon <tgih.jun@samsung.com>
->>
->> HS400 timing values are added for SMDK5420, exynos5420-peach-pit
->> and exynos5800-peach-pi boards.
->> This also adds RCLK GPIO line, this gpio should be in pull-down
->> state.
->>
->> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> [Alim: addressed review comments]
->> ---
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 +++-
->>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    4 +++-
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    4 +++-
->>  4 files changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> index 9a050e1..7ffaba8 100644
->> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -569,8 +569,10 @@
->>       samsung,dw-mshc-ciu-div = <3>;
->>       samsung,dw-mshc-sdr-timing = <0 4>;
->>       samsung,dw-mshc-ddr-timing = <0 2>;
->> +     samsung,dw-mshc-hs400-timing = <0 2>;
->> +     read-strobe-delay = <90>;
->>       pinctrl-names = "default";
->> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->>       bus-width = <8>;
->>  };
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> index ba686e4..8b15316 100644
->> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> @@ -201,6 +201,13 @@
->>                       samsung,pin-drv = <3>;
->>               };
->>
->> +             sd0_rclk: sd0-rclk {
->
-> I know it used to "sd0_rdqs", not "sd0_rclk".
-> Change name.
->
-Ok, I will change as per UM of 5800/5420,
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+V2: no code change, fixed patch numbering, extended mail recipients list
 
-> Best Regards,
-> Jaehoon Chung
->> +                     samsung,pins = "gpc0-7";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <1>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->>               sd1_cmd: sd1-cmd {
->>                       samsung,pins = "gpc1-1";
->>                       samsung,pin-function = <2>;
->> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> index 8be3d7b..5290e79 100644
->> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> @@ -80,8 +80,10 @@
->>               samsung,dw-mshc-ciu-div = <3>;
->>               samsung,dw-mshc-sdr-timing = <0 4>;
->>               samsung,dw-mshc-ddr-timing = <0 2>;
->> +             samsung,dw-mshc-hs400-timing = <0 2>;
->> +             read-strobe-delay = <90>;
->>               pinctrl-names = "default";
->> -             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->>               bus-width = <8>;
->>               cap-mmc-highspeed;
->>       };
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index e8fdda8..fa1c858 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -557,8 +557,10 @@
->>       samsung,dw-mshc-ciu-div = <3>;
->>       samsung,dw-mshc-sdr-timing = <0 4>;
->>       samsung,dw-mshc-ddr-timing = <0 2>;
->> +     samsung,dw-mshc-hs400-timing = <0 2>;
->> +     read-strobe-delay = <90>;
->>       pinctrl-names = "default";
->> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->>       bus-width = <8>;
->>  };
->>
->>
->
+ arch/arm/mm/l2c-l2x0-resume.S | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-
-
+diff --git a/arch/arm/mm/l2c-l2x0-resume.S b/arch/arm/mm/l2c-l2x0-resume.S
+index fda415e..9f99c7e 100644
+--- a/arch/arm/mm/l2c-l2x0-resume.S
++++ b/arch/arm/mm/l2c-l2x0-resume.S
+@@ -30,6 +30,15 @@ ENTRY(l2c310_early_resume)
+ 	teq	r1, #0
+ 	reteq	lr
+ 
++	@ Reverse for big endian kernel
++ARM_BE8(rev	r2, r2)
++ARM_BE8(rev	r3, r3)
++ARM_BE8(rev	r4, r4)
++ARM_BE8(rev	r5, r5)
++ARM_BE8(rev	r6, r6)
++ARM_BE8(rev	r7, r7)
++ARM_BE8(rev	r8, r8)
++
+ 	@ The prefetch and power control registers are revision dependent
+ 	@ and can be written whether or not the L2 cache is enabled
+ 	ldr	r0, [r1, #L2X0_CACHE_ID]
+@@ -51,6 +60,7 @@ ENTRY(l2c310_early_resume)
+ 
+ 	str	r2, [r1, #L2X0_AUX_CTRL]
+ 	mov	r9, #L2X0_CTRL_EN
++ARM_BE8(rev	r9, r9)
+ 	str	r9, [r1, #L2X0_CTRL]
+ 	ret	lr
+ ENDPROC(l2c310_early_resume)
 -- 
-Regards,
-Alim
+2.2.1
