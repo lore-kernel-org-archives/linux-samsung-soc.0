@@ -1,86 +1,88 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND v2 3/7] mfd: cros_ec: Add cros_ec_lpc driver for
- x86 devices
-Date: Wed, 21 Jan 2015 18:05:47 +0100
-Message-ID: <54BFDC6B.30106@collabora.co.uk>
-References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-4-git-send-email-javier.martinez@collabora.co.uk> <20150120081104.GT21886@x1> <54BE7B08.1010900@collabora.co.uk> <20150120163410.GC30656@x1> <54BE87C4.4040108@collabora.co.uk>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v4 13/21] ARM: omap: convert wakeupgen to stacked domains
+Date: Wed, 21 Jan 2015 17:22:38 +0000
+Message-ID: <54BFE05E.9080403@arm.com>
+References: <1421660655-21394-1-git-send-email-marc.zyngier@arm.com> <1421660655-21394-14-git-send-email-marc.zyngier@arm.com> <20150121163031.GR7718@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34109 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754560AbbAURFw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 12:05:52 -0500
-In-Reply-To: <54BE87C4.4040108@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20150121163031.GR7718@atomide.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Stefan Agner <stefan@agner.ch>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-o
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Lee,
-
-On 01/20/2015 05:52 PM, Javier Martinez Canillas wrote:
->>> 
->>> Now, all those drivers may be wrong and the buses don't belong to the mfd
->>> subsystem but then I think we need to document that since it seems that is
->>> the correct way to do it just by looking at the other drivers.
->> 
->> I don't think the drivers you mentioned above do anything practical.
->> For instance, they are not SPI/IC2/etc drivers.  They should only
->> offer some abstraction layers which are used to communicate with the
->> device.  The driver you are submitting looks a lot more like a device
->> driver, which should live somewhere else.  Don't ask me where though,
->> I'm not even sure what a Low Pin Controller does.
->> 
+On 21/01/15 16:30, Tony Lindgren wrote:
+> * Marc Zyngier <marc.zyngier@arm.com> [150119 01:48]:
+>> OMAP4/5 has been (ab)using the gic_arch_extn to provide
+>> wakeup from suspend, and it makes a lot of sense to convert
+>> this code to use stacked domains instead.
+>>
+>> This patch does just this, updating the DT files to actually
+>> reflect what the HW provides.
+>>
+>> BIG FAT WARNING: because the DTs were so far lying by not
+>> exposing the WUGEN HW block, kernels with this patch applied
+>> won't have any suspend-resume facility when booted with old DTs,
+>> and old kernels with updated DTs won't even boot.
+>>
+>> On a platform with this patch applied, the system looks like
+>> this:
+>>
+>> root@bacon-fat:~# cat /proc/interrupts
+>>             CPU0       CPU1
+>>  16:          0          0     WUGEN  37  gp_timer
+>>  19:     233799     155916       GIC  27  arch_timer
+>>  23:          0          0     WUGEN   9  l3-dbg-irq
+>>  24:          1          0     WUGEN  10  l3-app-irq
+>>  27:        282          0     WUGEN  13  omap-dma-engine
+>>  44:          0          0  4ae10000.gpio  13  DMA
 > 
-> The driver added by $subject doesn't really do anything practical either.
-> LPC [0] is just another transport method like i2c or spi that is used on
-> x86 Chromebooks to access the Embedded Controller.
+> You may want to update this part for the fix :)
+
+Ah, yes. Thanks for noticing this.
+
+> I gave this a quick boot test on am437x-gp-evm and the
+> interrupts look OK with the fix also applied:
 > 
-> So the driver is really not that different than the cros_ec_{i2c,spi}.c
-> drivers.
+> # cat /proc/interrupts 
+>             CPU0       
+>  16:        657     WUGEN  68  gp_timer
+>  18:          0     WUGEN   9  l3-dbg-irq
+>  19:          0     WUGEN  10  l3-app-irq
+>  20:          5     WUGEN  12  edma
+>  22:          0     WUGEN  14  edma_error
+>  23:         96     WUGEN  72  OMAP UART0
+>  33:          0  44e07000.gpio   6  mmc0
+> 158:         52     WUGEN  70  44e0b000.i2c
+> 159:          0     WUGEN  71  4802a000.i2c
+> 160:         35     WUGEN  64  mmc0
+> 161:          0     WUGEN  40  4a100000.ethernet
+> 162:       7739     WUGEN  41  4a100000.ethernet
+> 163:       7608     WUGEN  42  4a100000.ethernet
+> 164:          0     WUGEN  43  4a100000.ethernet
+> 170:          0     WUGEN 100  gpmc
+> 180:          0     WUGEN   7  tps65218
+> IPI0:          0  CPU wakeup interrupts
+> IPI1:          0  Timer broadcast interrupts
+> IPI2:          0  Rescheduling interrupts
+> IPI3:          0  Function call interrupts
+> IPI4:          0  Single function call interrupts
+> IPI5:          0  CPU stop interrupts
+> IPI6:          0  IRQ work interrupts
+> IPI7:          0  completion interrupts
+> Err:          0
+
+Interesting. No TWD timer on this one?
+
+> Also verified that suspend and resume to a serial console event
+> works on omap4430-sdp. So please feel free to add:
 > 
-> Best regards,
-> Javier
-> 
-> [0]: http://en.wikipedia.org/wiki/Low_Pin_Count
-> 
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-Maybe the problem is that the commit message didn't explain this clearly?
-I took the patch from the ChromiumOS tree verbatim but I can reword the
-commit message to add something like this instead:
+Thanks,
 
-Author: Bill Richardson <wfrichar@chromium.org>
-Date:   Tue Dec 23 15:13:23 2014 +0100
-
-    mfd: cros_ec: Add cros_ec_lpc driver for x86 devices
-    
-    Chromebooks have an Embedded Controller (EC) that is used to
-    implement various functions such as keyboard, power and battery.
-    
-    The AP can communicate with the EC through different bus types
-    such as I2C, SPI or LPC.
-    
-    The cros_ec mfd driver is then composed of a core driver that
-    register the sub-devices as mfd cells and provide a high level
-    communication interface that is used by the rest of the kernel
-    and bus specific interfaces modules.
-    
-    Each connection method then has its own driver, which register
-    with the EC driver interface-agnostic interface.
-    
-    Currently, there are drivers to communicate with the EC over
-    I2C and SPI and this driver adds support for LPC.
-    
-    Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-    Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-
-If you agree with this commit message then I can change it on the next revision
-but really $subject doesn't do anything special besides providing a transport
-method to access the mfd device using a LPC bus.
-
-Best regards,
-Javier
+	M.
+-- 
+Jazz is not dead. It just smells funny...
