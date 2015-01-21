@@ -1,102 +1,225 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv3 2/8] devfreq: exynos: Add documentation for generic
- exynos memory bus frequency driver
-Date: Wed, 21 Jan 2015 15:12:57 +0900
-Message-ID: <54BF4369.1060900@samsung.com>
-References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
- <1420681257-3078-3-git-send-email-cw00.choi@samsung.com>
- <CAL_Jsq+5sdsm_-VW-ta+qV-NBao-XTHvsYWcbMdZmbP0Nw43Cw@mail.gmail.com>
- <CAKohpomqosqxeDANC=NLBVmOUHyUoqd7Zhph7r6f7+ufYN48EQ@mail.gmail.com>
- <54BE108F.8090506@samsung.com>
- <CAKohpokSuVhH3hHFF+mLtJXvjt=bmJy1oZRBOttCNXORBS1Y0A@mail.gmail.com>
- <54BE3E10.2080906@samsung.com>
- <CAKohpontEntV48XqNcJq+euT9SdEjkgn5Pa=sSUpgM8mfKKCUA@mail.gmail.com>
- <54BF2929.3090107@samsung.com>
- <CAKohpomrAtqedODuzaAe3qO_YppeOU+LYR45eEs0+KcHJKHcQA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAKohpomrAtqedODuzaAe3qO_YppeOU+LYR45eEs0+KcHJKHcQA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rob Herring <robherring2@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, Mark Rutland <mark.rutland@arm.com>, a.kesavan@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, InKi Dae <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH v3 03/12] clk: samsung: exynos5433: Add clocks for CMU_PERIC
+ domain
+Date: Wed, 21 Jan 2015 15:26:52 +0900
+Message-ID: <1421821618-8627-4-git-send-email-cw00.choi@samsung.com>
+References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:26429 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750778AbbAUG1C (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jan 2015 01:27:02 -0500
+In-reply-to: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Inha Song <ideal.song@samsung.com>
 
-On 01/21/2015 01:37 PM, Viresh Kumar wrote:
-> On 21 January 2015 at 09:50, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> If the clock will be stayed on highest voltage, will reduce
->> the considerable benefit of power-consumption.
-> 
-> But this is exactly what you must be doing right now as well..
-> I think I didn't make it clear enough with an example. Let me
-> try..
-> 
-> This is how I feel it should look like:
-> 
->        memory_bus_int: memory_bus@1 {
->                // Regulator is shared for all below
->                blocks {
->                        peri_block: memory_bus_block1 {
->                                 operating-points = <
->                                         100000 850000
->                                         50000  850000>;
->                        };
-> 
->                        display_block: memory_bus_block2 {
->                                 operating-points = <
->                                         200000 950000
->                                         160000 950000
->                                         100000 925000
->                                         80000  850000
->                                         50000  850000>;
->                        };
-> 
->                        isp_block: memory_bus_block3 {
->                                 operating-points = <
->                                         200000 950000
->                                         100000 925000
->                                         80000  850000
->                                         50000  850000>;
->                        };
-> 
->                        gps_block: memory_bus_block4 {
->                                 operating-points = <
->                                         300000 950000
->                                         200000 950000
->                                         133000 925000
->                                         100000 850000
->                                         50000  850000>;
->                        };
-> 
-> 
-> Now suppose these are the requirements from all the blocks
-> at any point of time:
-> - block1: 100000 850000
-> - block2: 100000 925000
-> - block3: 80000  850000
-> - block4: 133000 925000
-> 
-> Now, all of them can control freq separately and we don't need to
-> worry for that. But regulator is shared between them. We can check
-> what's the highest voltage requested at this point of time and can
-> switch to that.
-> 
-> i.e. 925000 in this case. And that's not the highest possible one.
-> And you will reach to similar conclusion with your current code as
-> well I believe.
-> 
+This patch adds missing divider/gate clocks of CMU_PERIC domain
+which includes I2S/PCM/SPDIF/PWM/SLIMBUS IPs. The SPI/I2S may use
+external input clock which has 'ioclk_*' prefix.
 
-OK, I understand.
-I'll try to update exynos memory bus according to your comment.
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+[ideal.song: Change clk flags of to pclk_gpio_* clk, pclk_gpio_* should be always on.]
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c   | 83 +++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/exynos5433.h | 34 +++++++++++++-
+ 2 files changed, 114 insertions(+), 3 deletions(-)
 
-Thanks
-Chanwoo
-
-
-
-
-
-
-
-
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 077fa61..cfc9d69 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -251,6 +251,14 @@ static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
+ 	FRATE(0, "ioclk_audiocdclk0", NULL, CLK_IS_ROOT, 100000000),
+ 	/* Xi2s1SDI input clock for SPDIF */
+ 	FRATE(0, "ioclk_spdif_extclk", NULL, CLK_IS_ROOT, 100000000),
++	/* XspiCLK[4:0] input clock for SPI */
++	FRATE(0, "ioclk_spi4_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi3_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi2_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi1_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi0_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	/* Xi2s1SCLK input clock for I2S1_BCLK */
++	FRATE(0, "ioclk_i2s1_bclk_in", NULL, CLK_IS_ROOT, 12288000),
+ };
+ 
+ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+@@ -756,6 +764,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
+  * Register offset definitions for CMU_PERIC
+  */
+ #define DIV_PERIC			0x0600
++#define DIV_STAT_PERIC			0x0700
+ #define ENABLE_ACLK_PERIC		0x0800
+ #define ENABLE_PCLK_PERIC0		0x0900
+ #define ENABLE_PCLK_PERIC1		0x0904
+@@ -766,6 +775,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
+ 
+ static unsigned long peric_clk_regs[] __initdata = {
+ 	DIV_PERIC,
++	DIV_STAT_PERIC,
+ 	ENABLE_ACLK_PERIC,
+ 	ENABLE_PCLK_PERIC0,
+ 	ENABLE_PCLK_PERIC1,
+@@ -775,14 +785,57 @@ static unsigned long peric_clk_regs[] __initdata = {
+ 	ENABLE_IP_PERIC2,
+ };
+ 
++static struct samsung_div_clock peric_div_clks[] __initdata = {
++	/* DIV_PERIC */
++	DIV(CLK_DIV_SCLK_SCI, "div_sclk_sci", "fin_pll", DIV_PERIC, 4, 4),
++	DIV(CLK_DIV_SCLK_SC_IN, "div_sclk_sc_in", "fin_pll", DIV_PERIC, 0, 4),
++};
++
+ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_PERIC */
++	GATE(CLK_ACLK_AHB2APB_PERIC2P, "aclk_ahb2apb_peric2p", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_PERIC1P, "aclk_ahb2apb_peric1p", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_PERIC0P, "aclk_ahb2apb_peric0p", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PERICNP_66, "aclk_pericnp_66", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 0, CLK_IGNORE_UNUSED, 0),
++
+ 	/* ENABLE_PCLK_PERIC0 */
++	GATE(CLK_PCLK_SCI, "pclk_sci", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			31, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_GPIO_FINGER, "pclk_gpio_finger", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 30, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_GPIO_ESE, "pclk_gpio_ese", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 29, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PWM, "pclk_pwm", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			28, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_SPDIF, "pclk_spdif", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			26, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_PCM1, "pclk_pcm1", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			25, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_I2S1, "pclk_i2s", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			24, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_SPI2, "pclk_spi2", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			23, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_SPI1, "pclk_spi1", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			22, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_SPI0, "pclk_spi0", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			21, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_ADCIF, "pclk_adcif", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_GPIO_TOUCH, "pclk_gpio_touch", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_GPIO_NFC, "pclk_gpio_nfc", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_GPIO_PERIC, "pclk_gpio_peric", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PMU_PERIC, "pclk_pmu_peric", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_SYSREG_PERIC, "pclk_sysreg_peric", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 15,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_UART2, "pclk_uart2", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			14, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_UART1, "pclk_uart1", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+@@ -837,15 +890,39 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 			ENABLE_PCLK_PERIC1, 0, CLK_SET_RATE_PARENT, 0),
+ 
+ 	/* ENABLE_SCLK_PERIC */
++	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
++			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
++			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
+ 			19, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
+ 			18, CLK_SET_RATE_PARENT, 0),
+-
++	GATE(CLK_SCLK_SCI, "sclk_sci", "div_sclk_sci", ENABLE_SCLK_PERIC,
++			17, 0, 0),
++	GATE(CLK_SCLK_SC_IN, "sclk_sc_in", "div_sclk_sc_in", ENABLE_SCLK_PERIC,
++			16, 0, 0),
++	GATE(CLK_SCLK_PWM, "sclk_pwm", "fin_pll", ENABLE_SCLK_PERIC, 15, 0, 0),
++	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
++			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
++			ENABLE_SCLK_PERIC, 12,
++			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
++			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
++			"ioclk_i2s1_bclk_in", ENABLE_SCLK_PERIC, 10,
++			CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "sclk_spdif_peric",
++			ENABLE_SCLK_PERIC, 8, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
++			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
++			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+-			4, CLK_SET_RATE_PARENT, 0),
++			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+ 			3, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+@@ -857,6 +934,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ };
+ 
+ static struct samsung_cmu_info peric_cmu_info __initdata = {
++	.div_clks		= peric_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(peric_div_clks),
+ 	.gate_clks		= peric_gate_clks,
+ 	.nr_gate_clks		= ARRAY_SIZE(peric_gate_clks),
+ 	.nr_clk_ids		= PERIC_NR_CLK,
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 6025006..62d3ec7 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -181,8 +181,40 @@
+ #define CLK_SCLK_UART2			34
+ #define CLK_SCLK_UART1			35
+ #define CLK_SCLK_UART0			36
++#define CLK_ACLK_AHB2APB_PERIC2P	37
++#define CLK_ACLK_AHB2APB_PERIC1P	38
++#define CLK_ACLK_AHB2APB_PERIC0P	39
++#define CLK_ACLK_PERICNP_66		40
++#define CLK_PCLK_SCI			41
++#define CLK_PCLK_GPIO_FINGER		42
++#define CLK_PCLK_GPIO_ESE		43
++#define CLK_PCLK_PWM			44
++#define CLK_PCLK_SPDIF			45
++#define CLK_PCLK_PCM1			46
++#define CLK_PCLK_I2S1			47
++#define CLK_PCLK_ADCIF			48
++#define CLK_PCLK_GPIO_TOUCH		49
++#define CLK_PCLK_GPIO_NFC		50
++#define CLK_PCLK_GPIO_PERIC		51
++#define CLK_PCLK_PMU_PERIC		52
++#define CLK_PCLK_SYSREG_PERIC		53
++#define CLK_SCLK_IOCLK_SPI4		54
++#define CLK_SCLK_IOCLK_SPI3		55
++#define CLK_SCLK_SCI			56
++#define CLK_SCLK_SC_IN			57
++#define CLK_SCLK_PWM			58
++#define CLK_SCLK_IOCLK_SPI2		59
++#define CLK_SCLK_IOCLK_SPI1		60
++#define CLK_SCLK_IOCLK_SPI0		61
++#define CLK_SCLK_IOCLK_I2S1_BCLK	62
++#define CLK_SCLK_SPDIF			63
++#define CLK_SCLK_PCM1			64
++#define CLK_SCLK_I2S1			65
+ 
+-#define PERIC_NR_CLK			37
++#define CLK_DIV_SCLK_SCI		70
++#define CLK_DIV_SCLK_SC_IN		71
++
++#define PERIC_NR_CLK			72
+ 
+ /* CMU_PERIS */
+ #define	CLK_PCLK_HPM_APBIF		1
+-- 
+1.8.5.5
