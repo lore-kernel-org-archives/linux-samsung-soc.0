@@ -1,80 +1,45 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos5422-odroidxu3: add sound nodes
-Date: Wed, 21 Jan 2015 12:41:55 +0100
-Message-ID: <54BF9083.5090708@samsung.com>
-References: <1421819923-27575-1-git-send-email-ideal.song@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1421819923-27575-1-git-send-email-ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos5422-odroidxu3: reduce total RAM by 22 MiB
+Date: Wed, 21 Jan 2015 13:22:52 +0100
+Message-ID: <1421842972-25807-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22712 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751462AbbAUMXI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jan 2015 07:23:08 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NIJ00GMA196VX40@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Jan 2015 12:27:06 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, Kevin Hilman <khilman@linaro.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Hi,
+Last 22 MiB is RAM is reserved by secure monitor code and cannot be
+accessed from Linux kernel, so adjust total RAM size to 0x7EA00000
+(2 GiB - 22 MiB). This fixes random 'imprecise kernel abort' kernel
+failures.
 
-On 21/01/15 06:58, Inha Song wrote:
-> Add MAX98090 audio codec, I2S interface and the sound nodes to support
-> audio on Odroid-XU3 board.
-> 
-> Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 34 ++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index 7874da2..79493d1 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -310,6 +310,40 @@
->  	rtc@101E0000 {
->  		status = "okay";
->  	};
-> +
-> +	sound: sound {
-> +		compatible = "samsung,odroidu3-audio";
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-How about using simple-card instead ? I've been trying to switch
-Odroid X2/U3 to simple card. Here a corresponding dts patch:
-http://www.spinics.net/lists/linux-samsung-soc/msg41083.html
-For that recent patches for the I2S driver which area already in -next
-might be needed.
-
-> +		samsung,model = "Odroid-XU3";
-> +		samsung,i2s-controller = <&i2s0>;
-> +		samsung,audio-codec = <&max98090>;
-> +		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-> +				  <&clock_audss EXYNOS_MOUT_I2S>;
-> +		assigned-clock-parents = <&clock CLK_FIN_PLL>,
-> +				<&clock_audss EXYNOS_MOUT_AUDSS>;
-> +		samsung,audio-routing =
-> +			"Headphone Jack", "HPL",
-> +			"Headphone Jack", "HPR",
-> +			"Headphone Jack", "MICBIAS",
-> +			"IN1", "Headphone Jack",
-> +			"Speakers", "SPKL",
-> +			"Speakers", "SPKR";
-> +	};
-> +};
-> +
-> +&hsi2c_5 {
-> +	status = "okay";
-> +	max98090: max98090@10 {
-> +		compatible = "maxim,max98090";
-> +		reg = <0x10>;
-> +		interrupt-parent = <&gpx3>;
-> +		interrupts = <2 0>;
-> +		clocks = <&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> +		clock-names = "mclk";
-> +	};
-> +};
-
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index f6fc9442f631..50843208860d 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -18,7 +18,7 @@
+ 	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
+ 
+ 	memory {
+-		reg = <0x40000000 0x80000000>;
++		reg = <0x40000000 0x7EA00000>;
+ 	};
+ 
+ 	chosen {
 -- 
-Thanks,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.2
