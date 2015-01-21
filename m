@@ -1,52 +1,47 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: drm: exynos: mixer: fix using usleep() in atomic context
-Date: Wed, 21 Jan 2015 23:46:39 +0100
-Message-ID: <54C02C4F.4080307@math.uni-bielefeld.de>
-References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>	<1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>	<20141201155447.GE11943@ulmo.nvidia.com>	<7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>	<20141217075433.GA2814@ulmo> <CAAQKjZMu=CwXZdUdo505ZLn+eWRPzMwXMJ3zmo0kT+Dji2y33Q@mail.gmail.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH v4 00/18] Exynos SYSMMU (IOMMU) integration with
+ DT and DMA-mapping subsystem
+Date: Thu, 22 Jan 2015 00:37:28 +0100
+Message-ID: <54C03838.4080008@gmx.net>
+References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40390 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752001AbbAUWqr (ORCPT
+Received: from mout.gmx.net ([212.227.15.19]:61375 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751924AbbAUXiN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 17:46:47 -0500
-In-Reply-To: <CAAQKjZMu=CwXZdUdo505ZLn+eWRPzMwXMJ3zmo0kT+Dji2y33Q@mail.gmail.com>
+	Wed, 21 Jan 2015 18:38:13 -0500
+In-Reply-To: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hello!
+Hello,
+
+just some warnings I encountered when compiling this today:
+drivers/iommu/exynos-iommu.c: In function =E2=80=98exynos_iommu_of_setu=
+p=E2=80=99:
+drivers/iommu/exynos-iommu.c:1177:2: warning: passing argument 2 of
+=E2=80=98of_iommu_set_ops=E2=80=99 discards =E2=80=98const=E2=80=99 qua=
+lifier from pointer target type
+[enabled by default]
+  of_iommu_set_ops(np, &exynos_iommu_ops);
+  ^
+In file included from drivers/iommu/exynos-iommu.c:23:0:
+include/linux/of_iommu.h:34:6: note: expected =E2=80=98struct iommu_ops=
+ *=E2=80=99 but
+argument is of type =E2=80=98const struct iommu_ops *=E2=80=99
+ void of_iommu_set_ops(struct device_node *np, struct iommu_ops *ops);
+      ^
 
 
-Inki Dae wrote:
-> The use of spin lock, reg_slock, has been used for a long time and we
-> hadn't some cleanups to spin lock codes so far. The spin lock is also
-> used in here and there of mixer driver. And at least, it seems that
-> the use of spin lock isn't required in mixer_win_reset. I don't see
-> any atomic contexts in mixer module except interrupt handler.
-> 
-> To Seung-Woo,
-> I know that you referred to mixer codes of v4l2 based mixer driver. So
-> was the spin lock used in origin v4l2 driver? or Is there any reason
-> that you used the spin lock?
-> 
-> Anyway, we will have some testing to check hdmi and mixer drivers
-> without spin lock. So we will remove or replace it with mutex if
-> needed.
-> 
-> Thanks,
-> Inki Dae
-
-So it's some weeks later and as far as I can see there has been no
-changes to the spinlock usage. Wouldn't it be better to apply this patch
-_now_ (since the use of 'usleep_range' is just plain wrong while under
-spinlock). When the spinlock setup gets cleaned up later, then we can
-always change back to 'usleep_range' again.
-
-Any thoughts?
+I guess the 'const' should be dropped from exynos_iommu_ops, even thoug=
+h
+I wonder why of_iommu_set_ops wants a non-const pointer (can/does it
+modify the struct later on?).
 
 With best wishes,
 Tobias
