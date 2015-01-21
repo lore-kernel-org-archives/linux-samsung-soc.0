@@ -1,22 +1,17 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/9] clk: samsung: exynos5433: Add clocks for CMU_APOLLO domain
-Date: Thu, 22 Jan 2015 08:44:30 +0900
-Message-ID: <1421883878-4980-2-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 8/9] clk: samsung: exynos5433: Add clocks for CMU_CAM1 domain
+Date: Thu, 22 Jan 2015 08:44:37 +0900
+Message-ID: <1421883878-4980-9-git-send-email-cw00.choi@samsung.com>
 References: <1421883878-4980-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54584 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753451AbbAUXon (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 18:44:43 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1421883878-4980-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
 Cc: kgene@kernel.org, pankaj.dubey@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the mux/divider/gate clocks for CMU_APOLLO domain which
-generates the clocks for Cortex-A53 Quad-core processsor.
+This patch adds the mux/divider/gate clocks for CMU_CAM1 domain which
+generates the clocks for Cortex-A5/MIPI_CSIS2/FIMC-LITE_C/FIMC-FD IPs.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
@@ -24,30 +19,30 @@ Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
  .../devicetree/bindings/clock/exynos5433-clock.txt |   8 +
- drivers/clk/samsung/clk-exynos5433.c               | 193 +++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h             |  37 ++++
- 3 files changed, 238 insertions(+)
+ drivers/clk/samsung/clk-exynos5433.c               | 435 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h             | 147 ++++++-
+ 3 files changed, 588 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index bf72817..18c51c1 100644
+index abef8f5..10e0ba6 100644
 --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
 +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -32,6 +32,8 @@ Required Properties:
-     which generates clocks for 3D Graphics Engine IP.
-   - "samsung,exynos5433-cmu-gscl"  - clock controller compatible for CMU_GSCL
-     which generates clocks for GSCALER IPs.
-+  - "samsung,exynos5433-cmu-apollo"- clock controller compatible for CMU_APOLLO
-+    which generates clocks for Cortex-A53 Quad-core processor.
+@@ -48,6 +48,8 @@ Required Properties:
+   - "samsung,exynos5433-cmu-cam0" - clock controller compatible for CMU_CAM0
+     which generates clocks for MIPI_CSIS{0|1}/FIMC_LITE_{A|B|D}/FIMC_3AA{0|1}
+     IPs.
++  - "samsung,exynos5433-cmu-cam1" - clock controller compatible for CMU_CAM1
++    which generates clocks for Cortex-A5/MIPI_CSIS2/FIMC-LITE_C/FIMC-FD IPs.
  
  - reg: physical base address of the controller and length of memory mapped
    region.
-@@ -131,6 +133,12 @@ Example 1: Examples of clock controller nodes are listed below.
+@@ -189,6 +191,12 @@ Example 1: Examples of clock controller nodes are listed below.
  		#clock-cells = <1>;
  	};
  
-+	cmu_apollo: clock-controller@11900000 {
-+		compatible = "samsung,exynos5433-cmu-apollo";
-+		reg = <0x11900000 0x1088>;
++	cmu_cam1: clock-controller@145d0000 {
++		compatible = "samsung,exynos5433-cmu-cam1";
++		reg = <0x145d0000 0x0b08>;
 +		#clock-cells = <1>;
 +	};
 +
@@ -55,250 +50,644 @@ index bf72817..18c51c1 100644
  	   controller.
  
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 1d8d67a..37a5e78 100644
+index c765fe7..cb5fda1 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3393,3 +3393,196 @@ static void __init exynos5433_cmu_gscl_init(struct device_node *np)
+@@ -405,6 +405,12 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+ 
+ static struct samsung_div_clock top_div_clks[] __initdata = {
+ 	/* DIV_TOP0 */
++	DIV(CLK_DIV_ACLK_CAM1_333, "div_aclk_cam1_333", "mout_aclk_cam1_333",
++			DIV_TOP0, 28, 3),
++	DIV(CLK_DIV_ACLK_CAM1_400, "div_aclk_cam1_400", "mout_bus_pll_user",
++			DIV_TOP0, 24, 3),
++	DIV(CLK_DIV_ACLK_CAM1_552, "div_aclk_cam1_552", "mout_aclk_cam1_552_b",
++			DIV_TOP0, 20, 3),
+ 	DIV(CLK_DIV_ACLK_CAM0_333, "div_aclk_cam0_333", "mout_mfc_pll_user",
+ 			DIV_TOP0, 16, 3),
+ 	DIV(CLK_DIV_ACLK_CAM0_400, "div_aclk_cam0_400", "mout_bus_pll_user",
+@@ -464,6 +470,32 @@ static struct samsung_div_clock top_div_clks[] __initdata = {
+ 	DIV(CLK_DIV_SCLK_JPEG, "div_sclk_jpeg", "mout_sclk_jpeg_c",
+ 			DIV_TOP_MSCL, 0, 4),
+ 
++	/* DIV_TOP_CAM10 */
++	DIV(CLK_DIV_SCLK_ISP_UART, "div_sclk_isp_uart", "mout_sclk_isp_uart",
++			DIV_TOP_CAM10, 24, 5),
++	DIV(CLK_DIV_SCLK_ISP_SPI1_B, "div_sclk_isp_spi1_b",
++			"div_sclk_isp_spi1_a", DIV_TOP_CAM10, 16, 8),
++	DIV(CLK_DIV_SCLK_ISP_SPI1_A, "div_sclk_isp_spi1_a",
++			"mout_sclk_isp_spi1", DIV_TOP_CAM10, 12, 4),
++	DIV(CLK_DIV_SCLK_ISP_SPI0_B, "div_sclk_isp_spi0_b",
++			"div_sclk_isp_spi0_a", DIV_TOP_CAM10, 4, 8),
++	DIV(CLK_DIV_SCLK_ISP_SPI0_A, "div_sclk_isp_spi0_a",
++			"mout_sclk_isp_spi0", DIV_TOP_CAM10, 0, 4),
++
++	/* DIV_TOP_CAM11 */
++	DIV(CLK_DIV_SCLK_ISP_SENSOR2_B, "div_sclk_isp_sensor2_b",
++			"div_sclk_isp_sensor2_a", DIV_TOP_CAM11, 20, 4),
++	DIV(CLK_DIV_SCLK_ISP_SENSOR2_A, "div_sclk_isp_sensor2_a",
++			"mout_sclk_isp_sensor2", DIV_TOP_CAM11, 16, 4),
++	DIV(CLK_DIV_SCLK_ISP_SENSOR1_B, "div_sclk_isp_sensor1_b",
++			"div_sclk_isp_sensor1_a", DIV_TOP_CAM11, 12, 4),
++	DIV(CLK_DIV_SCLK_ISP_SENSOR1_A, "div_sclk_isp_sensor1_a",
++			"mout_sclk_isp_sensor1", DIV_TOP_CAM11, 8, 4),
++	DIV(CLK_DIV_SCLK_ISP_SENSOR0_B, "div_sclk_isp_sensor0_b",
++			"div_sclk_isp_sensor0_a", DIV_TOP_CAM11, 12, 4),
++	DIV(CLK_DIV_SCLK_ISP_SENSOR0_A, "div_sclk_isp_sensor0_a",
++			"mout_sclk_isp_sensor0", DIV_TOP_CAM11, 8, 4),
++
+ 	/* DIV_TOP_FSYS0 */
+ 	DIV(CLK_DIV_SCLK_MMC1_B, "div_sclk_mmc1_b", "div_sclk_mmc1_a",
+ 			DIV_TOP_FSYS0, 16, 8),
+@@ -572,6 +604,15 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
+ 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
+ 			ENABLE_ACLK_TOP, 14,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_CAM1_333, "aclk_cam1_333", "div_aclk_cam1_333",
++			ENABLE_ACLK_TOP, 13,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
++			ENABLE_ACLK_TOP, 12,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
++			ENABLE_ACLK_TOP, 11,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_CAM0_333, "aclk_cam0_333", "div_aclk_cam0_333",
+ 			ENABLE_ACLK_TOP, 10,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -604,6 +645,22 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_JPEG_MSCL, "sclk_jpeg_mscl", "div_sclk_jpeg",
+ 			ENABLE_SCLK_TOP_MSCL, 0, 0, 0),
+ 
++	/* ENABLE_SCLK_TOP_CAM1 */
++	GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "div_sclk_isp_sensor2_b",
++			ENABLE_SCLK_TOP_CAM1, 7, 0, 0),
++	GATE(CLK_SCLK_ISP_SENSOR1, "sclk_isp_sensor1", "div_sclk_isp_sensor1_b",
++			ENABLE_SCLK_TOP_CAM1, 6, 0, 0),
++	GATE(CLK_SCLK_ISP_SENSOR0, "sclk_isp_sensor0", "div_sclk_isp_sensor0_b",
++			ENABLE_SCLK_TOP_CAM1, 5, 0, 0),
++	GATE(CLK_SCLK_ISP_MCTADC_CAM1, "sclk_isp_mctadc_cam1", "fin_pll",
++			ENABLE_SCLK_TOP_CAM1, 4, 0, 0),
++	GATE(CLK_SCLK_ISP_UART_CAM1, "sclk_isp_uart_cam1", "div_sclk_isp_uart",
++			ENABLE_SCLK_TOP_CAM1, 2, 0, 0),
++	GATE(CLK_SCLK_ISP_SPI1_CAM1, "sclk_isp_spi1_cam1", "div_sclk_isp_spi1_b",
++			ENABLE_SCLK_TOP_CAM1, 1, 0, 0),
++	GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
++			ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
++
+ 	/* ENABLE_SCLK_TOP_FSYS */
+ 	GATE(CLK_SCLK_PCIE_100_FSYS, "sclk_pcie_100_fsys", "div_sclk_pcie_100",
+ 			ENABLE_SCLK_TOP_FSYS, 7, 0, 0),
+@@ -4986,3 +5043,381 @@ static void __init exynos5433_cmu_cam0_init(struct device_node *np)
  }
- CLK_OF_DECLARE(exynos5433_cmu_gscl, "samsung,exynos5433-cmu-gscl",
- 		exynos5433_cmu_gscl_init);
+ CLK_OF_DECLARE(exynos5433_cmu_cam0, "samsung,exynos5433-cmu-cam0",
+ 		exynos5433_cmu_cam0_init);
 +
 +/*
-+ * Register offset definitions for CMU_APOLLO
++ * Register offset definitions for CMU_CAM1
 + */
-+#define APOLLO_PLL_LOCK				0x0000
-+#define APOLLO_PLL_CON0				0x0100
-+#define APOLLO_PLL_CON1				0x0104
-+#define APOLLO_PLL_FREQ_DET			0x010c
-+#define MUX_SEL_APOLLO0				0x0200
-+#define MUX_SEL_APOLLO1				0x0204
-+#define MUX_SEL_APOLLO2				0x0208
-+#define MUX_ENABLE_APOLLO0			0x0300
-+#define MUX_ENABLE_APOLLO1			0x0304
-+#define MUX_ENABLE_APOLLO2			0x0308
-+#define MUX_STAT_APOLLO0			0x0400
-+#define MUX_STAT_APOLLO1			0x0404
-+#define MUX_STAT_APOLLO2			0x0408
-+#define DIV_APOLLO0				0x0600
-+#define DIV_APOLLO1				0x0604
-+#define DIV_APOLLO_PLL_FREQ_DET			0x0608
-+#define DIV_STAT_APOLLO0			0x0700
-+#define DIV_STAT_APOLLO1			0x0704
-+#define DIV_STAT_APOLLO_PLL_FREQ_DET		0x0708
-+#define ENABLE_ACLK_APOLLO			0x0800
-+#define ENABLE_PCLK_APOLLO			0x0900
-+#define ENABLE_SCLK_APOLLO			0x0a00
-+#define ENABLE_IP_APOLLO0			0x0b00
-+#define ENABLE_IP_APOLLO1			0x0b04
-+#define CLKOUT_CMU_APOLLO			0x0c00
-+#define CLKOUT_CMU_APOLLO_DIV_STAT		0x0c04
-+#define ARMCLK_STOPCTRL				0x1000
-+#define APOLLO_PWR_CTRL				0x1020
-+#define APOLLO_PWR_CTRL2			0x1024
-+#define APOLLO_INTR_SPREAD_ENABLE		0x1080
-+#define APOLLO_INTR_SPREAD_USE_STANDBYWFI	0x1084
-+#define APOLLO_INTR_SPREAD_BLOCKING_DURATION	0x1088
++#define MUX_SEL_CAM10			0x0200
++#define MUX_SEL_CAM11			0x0204
++#define MUX_SEL_CAM12			0x0208
++#define MUX_ENABLE_CAM10		0x0300
++#define MUX_ENABLE_CAM11		0x0304
++#define MUX_ENABLE_CAM12		0x0308
++#define MUX_STAT_CAM10			0x0400
++#define MUX_STAT_CAM11			0x0404
++#define MUX_STAT_CAM12			0x0408
++#define MUX_IGNORE_CAM11		0x0504
++#define DIV_CAM10			0x0600
++#define DIV_CAM11			0x0604
++#define DIV_STAT_CAM10			0x0700
++#define DIV_STAT_CAM11			0x0704
++#define ENABLE_ACLK_CAM10		0X0800
++#define ENABLE_ACLK_CAM11		0X0804
++#define ENABLE_ACLK_CAM12		0X0808
++#define ENABLE_PCLK_CAM1		0X0900
++#define ENABLE_SCLK_CAM1		0X0a00
++#define ENABLE_IP_CAM10			0X0b00
++#define ENABLE_IP_CAM11			0X0b04
++#define ENABLE_IP_CAM12			0X0b08
 +
-+static unsigned long apollo_clk_regs[] __initdata = {
-+	APOLLO_PLL_LOCK,
-+	APOLLO_PLL_CON0,
-+	APOLLO_PLL_CON1,
-+	APOLLO_PLL_FREQ_DET,
-+	MUX_SEL_APOLLO0,
-+	MUX_SEL_APOLLO1,
-+	MUX_SEL_APOLLO2,
-+	MUX_ENABLE_APOLLO0,
-+	MUX_ENABLE_APOLLO1,
-+	MUX_ENABLE_APOLLO2,
-+	MUX_STAT_APOLLO0,
-+	MUX_STAT_APOLLO1,
-+	MUX_STAT_APOLLO2,
-+	DIV_APOLLO0,
-+	DIV_APOLLO1,
-+	DIV_APOLLO_PLL_FREQ_DET,
-+	DIV_STAT_APOLLO0,
-+	DIV_STAT_APOLLO1,
-+	DIV_STAT_APOLLO_PLL_FREQ_DET,
-+	ENABLE_ACLK_APOLLO,
-+	ENABLE_PCLK_APOLLO,
-+	ENABLE_SCLK_APOLLO,
-+	ENABLE_IP_APOLLO0,
-+	ENABLE_IP_APOLLO1,
-+	CLKOUT_CMU_APOLLO,
-+	CLKOUT_CMU_APOLLO_DIV_STAT,
-+	ARMCLK_STOPCTRL,
-+	APOLLO_PWR_CTRL,
-+	APOLLO_PWR_CTRL2,
-+	APOLLO_INTR_SPREAD_ENABLE,
-+	APOLLO_INTR_SPREAD_USE_STANDBYWFI,
-+	APOLLO_INTR_SPREAD_BLOCKING_DURATION,
++static unsigned long cam1_clk_regs[] __initdata = {
++	MUX_SEL_CAM10,
++	MUX_SEL_CAM11,
++	MUX_SEL_CAM12,
++	MUX_ENABLE_CAM10,
++	MUX_ENABLE_CAM11,
++	MUX_ENABLE_CAM12,
++	MUX_STAT_CAM10,
++	MUX_STAT_CAM11,
++	MUX_STAT_CAM12,
++	MUX_IGNORE_CAM11,
++	DIV_CAM10,
++	DIV_CAM11,
++	DIV_STAT_CAM10,
++	DIV_STAT_CAM11,
++	ENABLE_ACLK_CAM10,
++	ENABLE_ACLK_CAM11,
++	ENABLE_ACLK_CAM12,
++	ENABLE_PCLK_CAM1,
++	ENABLE_SCLK_CAM1,
++	ENABLE_IP_CAM10,
++	ENABLE_IP_CAM11,
++	ENABLE_IP_CAM12,
 +};
 +
-+/* list of all parent clock list */
-+PNAME(mout_apollo_pll_p)		= { "fin_pll", "fout_apollo_pll", };
-+PNAME(mout_bus_pll_apollo_user_p)	= { "fin_pll", "sclk_bus_pll_apollo", };
-+PNAME(mout_apollo_p)			= { "mout_apollo_pll",
-+					    "mout_bus_pll_apollo_user", };
++PNAME(mout_sclk_isp_uart_user_p)	= { "fin_pll", "sclk_isp_uart_cam1", };
++PNAME(mout_sclk_isp_spi1_user_p)	= { "fin_pll", "sclk_isp_spi1_cam1", };
++PNAME(mout_sclk_isp_spi0_user_p)	= { "fin_pll", "sclk_isp_spi0_cam1", };
 +
-+static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
-+	PLL(pll_35xx, CLK_FOUT_APOLLO_PLL, "fout_apollo_pll", "fin_pll",
-+		APOLLO_PLL_LOCK, APOLLO_PLL_CON0, exynos5443_pll_rates),
++PNAME(mout_aclk_cam1_333_user_p)	= { "fin_pll", "aclk_cam1_333", };
++PNAME(mout_aclk_cam1_400_user_p)	= { "fin_pll", "aclk_cam1_400", };
++PNAME(mout_aclk_cam1_552_user_p)	= { "fin_pll", "aclk_cam1_552", };
++
++PNAME(mout_phyclk_rxbyteclkhs0_s2b_user_p) = { "fin_pll",
++					       "phyclk_rxbyteclkhs0_s2b_phy", };
++
++PNAME(mout_aclk_csis2_b_p)		= { "mout_aclk_csis2_a",
++					    "mout_aclk_cam1_333_user", };
++PNAME(mout_aclk_csis2_a_p)		= { "mout_aclk_cam1_552_user",
++					    "mout_aclk_cam1_400_user", };
++
++PNAME(mout_aclk_fd_b_p)			= { "mout_aclk_fd_a",
++					    "mout_aclk_cam1_333_user", };
++PNAME(mout_aclk_fd_a_p)			= { "mout_aclk_cam1_552_user",
++					    "mout_aclk_cam1_400_user", };
++
++PNAME(mout_aclk_lite_c_b_p)		= { "mout_aclk_lite_c_a",
++					    "mout_aclk_cam1_333_user", };
++PNAME(mout_aclk_lite_c_a_p)		= { "mout_aclk_cam1_552_user",
++					    "mout_aclk_cam1_400_user", };
++
++static struct samsung_fixed_rate_clock cam1_fixed_clks[] __initdata = {
++	FRATE(CLK_PHYCLK_RXBYTEECLKHS0_S2B, "phyclk_rxbyteclkhs0_s2b_phy", NULL,
++			CLK_IS_ROOT, 100000000),
 +};
 +
-+static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
-+	/* MUX_SEL_APOLLO0 */
-+	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
-+			MUX_SEL_APOLLO0, 0, 1, 0, CLK_MUX_READ_ONLY),
++static struct samsung_mux_clock cam1_mux_clks[] __initdata = {
++	/* MUX_SEL_CAM10 */
++	MUX(CLK_MOUT_SCLK_ISP_UART_USER, "mout_sclk_isp_uart_user",
++			mout_sclk_isp_uart_user_p, MUX_SEL_CAM10, 20, 1),
++	MUX(CLK_MOUT_SCLK_ISP_SPI1_USER, "mout_sclk_isp_spi1_user",
++			mout_sclk_isp_spi1_user_p, MUX_SEL_CAM10, 16, 1),
++	MUX(CLK_MOUT_SCLK_ISP_SPI0_USER, "mout_sclk_isp_spi0_user",
++			mout_sclk_isp_spi0_user_p, MUX_SEL_CAM10, 12, 1),
++	MUX(CLK_MOUT_ACLK_CAM1_333_USER, "mout_aclk_cam1_333_user",
++			mout_aclk_cam1_333_user_p, MUX_SEL_CAM10, 8, 1),
++	MUX(CLK_MOUT_ACLK_CAM1_400_USER, "mout_aclk_cam1_400_user",
++			mout_aclk_cam1_400_user_p, MUX_SEL_CAM01, 4, 1),
++	MUX(CLK_MOUT_ACLK_CAM1_552_USER, "mout_aclk_cam1_552_user",
++			mout_aclk_cam1_552_user_p, MUX_SEL_CAM01, 0, 1),
 +
-+	/* MUX_SEL_APOLLO1 */
-+	MUX(CLK_MOUT_BUS_PLL_APOLLO_USER, "mout_bus_pll_apollo_user",
-+			mout_bus_pll_apollo_user_p, MUX_SEL_APOLLO1, 0, 1),
++	/* MUX_SEL_CAM11 */
++	MUX(CLK_MOUT_PHYCLK_RXBYTECLKHS0_S2B_USER,
++			"mout_phyclk_rxbyteclkhs0_s2b_user",
++			mout_phyclk_rxbyteclkhs0_s2b_user_p,
++			MUX_SEL_CAM11, 0, 1),
 +
-+	/* MUX_SEL_APOLLO2 */
-+	MUX_F(CLK_MOUT_APOLLO, "mout_apollo", mout_apollo_p, MUX_SEL_APOLLO2,
-+			0, 1, 0, CLK_MUX_READ_ONLY),
++	/* MUX_SEL_CAM12 */
++	MUX(CLK_MOUT_ACLK_CSIS2_B, "mout_aclk_csis2_b", mout_aclk_csis2_b_p,
++			MUX_SEL_CAM12, 20, 1),
++	MUX(CLK_MOUT_ACLK_CSIS2_A, "mout_aclk_csis2_a", mout_aclk_csis2_a_p,
++			MUX_SEL_CAM12, 16, 1),
++	MUX(CLK_MOUT_ACLK_FD_B, "mout_aclk_fd_b", mout_aclk_fd_b_p,
++			MUX_SEL_CAM12, 12, 1),
++	MUX(CLK_MOUT_ACLK_FD_A, "mout_aclk_fd_a", mout_aclk_fd_a_p,
++			MUX_SEL_CAM12, 8, 1),
++	MUX(CLK_MOUT_ACLK_LITE_C_B, "mout_aclk_lite_c_b", mout_aclk_lite_c_b_p,
++			MUX_SEL_CAM12, 4, 1),
++	MUX(CLK_MOUT_ACLK_LITE_C_A, "mout_aclk_lite_c_a", mout_aclk_lite_c_a_p,
++			MUX_SEL_CAM12, 0, 1),
 +};
 +
-+static struct samsung_div_clock apollo_div_clks[] __initdata = {
-+	/* DIV_APOLLO0 */
-+	DIV_F(CLK_DIV_CNTCLK_APOLLO, "div_cntclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 24, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_PCLK_DBG_APOLLO, "div_pclk_dbg_apollo", "div_apollo2",
-+			DIV_APOLLO0, 20, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ATCLK_APOLLO, "div_atclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 16, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_PCLK_APOLLO, "div_pclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 12, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ACLK_APOLLO, "div_aclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 8, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_APOLLO2, "div_apollo2", "div_apollo1",
-+			DIV_APOLLO0, 4, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_APOLLO1, "div_apollo1", "mout_apollo",
-+			DIV_APOLLO0, 0, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
++static struct samsung_div_clock cam1_div_clks[] __initdata = {
++	/* DIV_CAM10 */
++	DIV(CLK_DIV_SCLK_ISP_WPWM, "div_sclk_isp_wpwm",
++			"div_pclk_cam1_83", DIV_CAM10, 16, 2),
++	DIV(CLK_DIV_PCLK_CAM1_83, "div_pclk_cam1_83",
++			"mout_aclk_cam1_333_user", DIV_CAM10, 12, 2),
++	DIV(CLK_DIV_PCLK_CAM1_166, "div_pclk_cam1_166",
++			"mout_aclk_cam1_333_user", DIV_CAM10, 8, 2),
++	DIV(CLK_DIV_PCLK_DBG_CAM1, "div_pclk_dbg_cam1",
++			"mout_aclk_cam1_552_user", DIV_CAM10, 4, 3),
++	DIV(CLK_DIV_ATCLK_CAM1, "div_atclk_cam1", "mout_aclk_cam1_552_user",
++			DIV_CAM10, 0, 3),
 +
-+	/* DIV_APOLLO1 */
-+	DIV_F(CLK_DIV_SCLK_HPM_APOLLO, "div_sclk_hpm_apollo", "mout_apollo",
-+			DIV_APOLLO1, 4, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_APOLLO_PLL, "div_apollo_pll", "mout_apollo",
-+			DIV_APOLLO1, 0, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
++	/* DIV_CAM11 */
++	DIV(CLK_DIV_ACLK_CSIS2, "div_aclk_csis2", "mout_aclk_csis2_b",
++			DIV_CAM11, 16, 3),
++	DIV(CLK_DIV_PCLK_FD, "div_pclk_fd", "div_aclk_fd", DIV_CAM11, 12, 2),
++	DIV(CLK_DIV_ACLK_FD, "div_aclk_fd", "mout_aclk_fd_b", DIV_CAM11, 8, 3),
++	DIV(CLK_DIV_PCLK_LITE_C, "div_pclk_lite_c", "div_aclk_lite_c",
++			DIV_CAM11, 4, 2),
++	DIV(CLK_DIV_ACLK_LITE_C, "div_aclk_lite_c", "mout_aclk_lite_c_b",
++			DIV_CAM11, 0, 3),
 +};
 +
-+static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
-+	/* ENABLE_ACLK_APOLLO */
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_3_CSSYS, "aclk_asatbslv_apollo_3_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-+			6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_2_CSSYS, "aclk_asatbslv_apollo_2_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-+			5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_1_CSSYS, "aclk_asatbslv_apollo_1_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
++static struct samsung_gate_clock cam1_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_CAM10 */
++	GATE(CLK_ACLK_ISP_GIC, "aclk_isp_gic", "mout_aclk_cam1_333_user",
++			ENABLE_ACLK_CAM10, 4, 0, 0),
++	GATE(CLK_ACLK_FD, "aclk_fd", "div_aclk_fd",
++			ENABLE_ACLK_CAM10, 3, 0, 0),
++	GATE(CLK_ACLK_LITE_C, "aclk_lite_c", "div_aclk_lite_c",
++			ENABLE_ACLK_CAM10, 1, 0, 0),
++	GATE(CLK_ACLK_CSIS2, "aclk_csis2", "div_aclk_csis2",
++			ENABLE_ACLK_CAM10, 0, 0, 0),
++
++	/* ENABLE_ACLK_CAM11 */
++	GATE(CLK_ACLK_ASYNCAPBM_FD, "aclk_asyncapbm_fd", "div_pclk_fd",
++			ENABLE_ACLK_CAM11, 29, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAPBS_FD, "aclk_asyncapbs_fd", "div_pclk_cam1_166",
++			ENABLE_ACLK_CAM11, 28, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAPBM_LITE_C, "aclk_asyncapbm_lite_c",
++			"div_pclk_lite_c", ENABLE_ACLK_CAM11,
++			27, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAPBS_LITE_C, "aclk_asyncapbs_lite_c",
++			"div_pclk_cam1_166", ENABLE_ACLK_CAM11,
++			26, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAHBS_SFRISP2H2, "aclk_asyncahbs_sfrisp2h2",
++			"div_pclk_cam1_83", ENABLE_ACLK_CAM11,
++			25, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAHBS_SFRISP2H1, "aclk_asyncahbs_sfrisp2h1",
++			"div_pclk_cam1_83", ENABLE_ACLK_CAM11,
++			24, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIM_CA5, "aclk_asyncaxim_ca5",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM11,
++			23, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_CA5, "aclk_asyncaxis_ca5",
++			"mout_aclk_cam1_552_user", ENABLE_ACLK_CAM11,
++			22, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_ISPX2, "aclk_asyncaxis_ispx2",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM11,
++			21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_ISPX1, "aclk_asyncaxis_ispx1",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM11,
++			20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_ISPX0, "aclk_asyncaxis_ispx0",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM11,
++			19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIM_ISPEX, "aclk_asyncaxim_ispex",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM11,
++			18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIM_ISP3P, "aclk_asyncaxim_isp3p",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM11,
++			17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_ISP3P, "aclk_asyncaxis_isp3p",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM11,
++			16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIM_FD, "aclk_asyncaxim_fd",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM11,
++			15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_FD, "aclk_asyncaxis_fd", "div_aclk_fd",
++			ENABLE_ACLK_CAM11, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIM_LITE_C, "aclk_asyncaxim_lite_c",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM11,
++			13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_LITE_C, "aclk_asyncaxis_lite_c",
++			"div_aclk_lite_c", ENABLE_ACLK_CAM11,
++			12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_ISP5P, "aclk_ahb2apb_isp5p", "div_pclk_cam1_83",
++			ENABLE_ACLK_CAM11, 11, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_ISP3P, "aclk_ahb2apb_isp3p", "div_pclk_cam1_83",
++			ENABLE_ACLK_CAM11, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI2APB_ISP3P, "aclk_axi2apb_isp3p",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM11,
++			9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB_SFRISP2H, "aclk_ahb_sfrisp2h", "div_pclk_cam1_83",
++			ENABLE_ACLK_CAM11, 8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI_ISP_HX_R, "aclk_axi_isp_hx_r", "div_pclk_cam1_166",
++			ENABLE_ACLK_CAM11, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI_ISP_CX_R, "aclk_axi_isp_cx_r", "div_pclk_cam1_166",
++			ENABLE_ACLK_CAM11, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI_ISP_HX, "aclk_axi_isp_hx", "mout_aclk_cam1_333_user",
++			ENABLE_ACLK_CAM11, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI_ISP_CX, "aclk_axi_isp_cx", "mout_aclk_cam1_333_user",
++			ENABLE_ACLK_CAM11, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_ISPX, "aclk_xiu_ispx", "mout_aclk_cam1_333_user",
++			ENABLE_ACLK_CAM11, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_ISPEX, "aclk_xiu_ispex", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM11, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_CAM1NP_333, "aclk_cam1np_333", "mout_aclk_cam1_333_user",
++			ENABLE_ACLK_CAM11, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_CAM1ND_400, "aclk_cam1nd_400", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM11, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_CAM12 */
++	GATE(CLK_ACLK_SMMU_ISPCPU, "aclk_smmu_ispcpu",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM12,
++			10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_SMMU_FD, "aclk_smmu_fd", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM12, 9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_SMMU_LITE_C, "aclk_smmu_lite_c",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM12,
++			8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_ISP3P, "aclk_bts_isp3p", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM12, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_FD, "aclk_bts_fd", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM12, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_LITE_C, "aclk_bts_lite_c", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM12, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHBDN_SFRISP2H, "aclk_ahbdn_sfrisp2h",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM12,
 +			4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_0_CSSYS, "aclk_asatbslv_apollo_0_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
++	GATE(CLK_ACLK_AHBDN_ISP5P, "aclk_aclk-shbdn_isp5p",
++			"mout_aclk_cam1_333_user", ENABLE_ACLK_CAM12,
 +			3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCACES_APOLLO_CCI, "aclk_asyncaces_apollo_cci",
-+			"div_aclk_apollo", ENABLE_ACLK_APOLLO,
++	GATE(CLK_ACLK_AXIUS_ISP3P, "aclk_axius_isp3p",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM12,
 +			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AHB2APB_APOLLOP, "aclk_ahb2apb_apollop",
-+			"div_pclk_apollo", ENABLE_ACLK_APOLLO,
-+			1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_APOLLONP_200, "aclk_apollonp_200",
-+			"div_pclk_apollo", ENABLE_ACLK_APOLLO,
++	GATE(CLK_ACLK_AXIUS_FD, "aclk_axius_fd", "mout_aclk_cam1_400_user",
++			ENABLE_ACLK_CAM12, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIUS_LITE_C, "aclk_axius_lite_c",
++			"mout_aclk_cam1_400_user", ENABLE_ACLK_CAM12,
 +			0, CLK_IGNORE_UNUSED, 0),
 +
-+	/* ENABLE_PCLK_APOLLO */
-+	GATE(CLK_PCLK_ASAPBMST_CSSYS_APOLLO, "pclk_asapbmst_cssys_apollo",
-+			"div_pclk_dbg_apollo", ENABLE_PCLK_APOLLO,
-+			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
-+			ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
-+			"div_pclk_apollo", ENABLE_PCLK_APOLLO,
-+			0, CLK_IGNORE_UNUSED, 0),
++	/* ENABLE_PCLK_CAM1 */
++	GATE(CLK_PCLK_SMMU_ISPCPU, "pclk_smmu_ispcpu", "div_pclk_cam1_166",
++			ENABLE_PCLK_CAM1, 27, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SMMU_FD, "pclk_smmu_fd", "div_pclk_cam1_166",
++			ENABLE_PCLK_CAM1, 26, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SMMU_LITE_C, "pclk_smmu_lite_c", "div_pclk_cam1_166",
++			ENABLE_PCLK_CAM1, 25, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_ISP3P, "pclk_bts_isp3p", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 24, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_FD, "pclk_bts_fd", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 23, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_LITE_C, "pclk_bts_lite_c", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 22, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXIM_CA5, "pclk_asyncaxim_ca5", "div_pclk_cam1_166",
++			ENABLE_PCLK_CAM1, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXIM_ISPEX, "pclk_asyncaxim_ispex",
++			"div_pclk_cam1_83", ENABLE_PCLK_CAM1,
++			20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXIM_ISP3P, "pclk_asyncaxim_isp3p",
++			"div_pclk_cam1_83", ENABLE_PCLK_CAM1,
++			19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXIM_FD, "pclk_asyncaxim_fd", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXIM_LITE_C, "pclk_asyncaxim_lite_c",
++			"div_pclk_cam1_83", ENABLE_PCLK_CAM1,
++			17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PMU_CAM1, "pclk_pmu_cam1", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SYSREG_CAM1, "pclk_sysreg_cam1", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_CMU_CAM1_LOCAL, "pclk_cmu_cam1_local",
++			"div_pclk_cam1_166", ENABLE_PCLK_CAM1,
++			14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_MCTADC, "pclk_isp_mctadc", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_WDT, "pclk_isp_wdt", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_PWM, "pclk_isp_pwm", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 11, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_UART, "pclk_isp_uart", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_MCUCTL, "pclk_isp_mcuctl", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_SPI1, "pclk_isp_spi1", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_SPI0, "pclk_isp_spi0", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_I2C2, "pclk_isp_i2c2", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_I2C1, "pclk_isp_i2c1", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_I2C0, "pclk_isp_i2c0", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ISP_MPWM, "pclk_isp_wpwm", "div_pclk_cam1_83",
++			ENABLE_PCLK_CAM1, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_FD, "pclk_fd", "div_pclk_fd",
++			ENABLE_PCLK_CAM1, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_LITE_C, "pclk_lite_c", "div_pclk_lite_c",
++			ENABLE_PCLK_CAM1, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_CSIS2, "pclk_csis2", "div_pclk_cam1_166",
++			ENABLE_PCLK_CAM1, 0, CLK_IGNORE_UNUSED, 0),
 +
-+	/* ENABLE_SCLK_APOLLO */
-+	GATE(CLK_CNTCLK_APOLLO, "cntclk_apollo", "div_cntclk_apollo",
-+			ENABLE_SCLK_APOLLO, 3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_HPM_APOLLO, "sclk_hpm_apollo", "div_sclk_hpm_apollo",
-+			ENABLE_SCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_APOLLO, "sclk_apollo", "div_apollo_pll",
-+			ENABLE_SCLK_APOLLO, 0, CLK_IGNORE_UNUSED, 0),
++	/* ENABLE_SCLK_CAM1 */
++	GATE(CLK_SCLK_ISP_I2C2, "sclk_isp_i2c2", "fin_pll", ENABLE_SCLK_CAM1,
++			15, 0, 0),
++	GATE(CLK_SCLK_ISP_I2C1, "sclk_isp_i2c1", "fin_pll", ENABLE_SCLK_CAM1,
++			14, 0, 0),
++	GATE(CLK_SCLK_ISP_I2C0, "sclk_isp_i2c0", "fin_pll", ENABLE_SCLK_CAM1,
++			13, 0, 0),
++	GATE(CLK_SCLK_ISP_PWM, "sclk_isp_pwm", "fin_pll", ENABLE_SCLK_CAM1,
++			12, 0, 0),
++	GATE(CLK_PHYCLK_RXBYTECLKHS0_S2B, "phyclk_rxbyteclkhs0_s2b",
++			"mout_phyclk_rxbyteclkhs0_s2b_user",
++			ENABLE_SCLK_CAM1, 11, 0, 0),
++	GATE(CLK_SCLK_LITE_C_FREECNT, "sclk_lite_c_freecnt", "div_pclk_lite_c",
++			ENABLE_SCLK_CAM1, 10, 0, 0),
++	GATE(CLK_SCLK_PIXELASYNCM_FD, "sclk_pixelasyncm_fd", "div_aclk_fd",
++			ENABLE_SCLK_CAM1, 9, 0, 0),
++	GATE(CLK_SCLK_ISP_MCTADC, "sclk_isp_mctadc", "sclk_isp_mctadc_cam1",
++			ENABLE_SCLK_CAM1, 7, 0, 0),
++	GATE(CLK_SCLK_ISP_UART, "sclk_isp_uart", "mout_sclk_isp_uart_user",
++			ENABLE_SCLK_CAM1, 6, 0, 0),
++	GATE(CLK_SCLK_ISP_SPI1, "sclk_isp_spi1", "mout_sclk_isp_spi1_user",
++			ENABLE_SCLK_CAM1, 5, 0, 0),
++	GATE(CLK_SCLK_ISP_SPI0, "sclk_isp_spi0", "mout_sclk_isp_spi0_user",
++			ENABLE_SCLK_CAM1, 4, 0, 0),
++	GATE(CLK_SCLK_ISP_MPWM, "sclk_isp_wpwm", "div_sclk_isp_wpwm",
++			ENABLE_SCLK_CAM1, 3, 0, 0),
++	GATE(CLK_PCLK_DBG_ISP, "sclk_dbg_isp", "div_pclk_dbg_cam1",
++			ENABLE_SCLK_CAM1, 2, 0, 0),
++	GATE(CLK_ATCLK_ISP, "atclk_isp", "div_atclk_cam1",
++			ENABLE_SCLK_CAM1, 1, 0, 0),
++	GATE(CLK_SCLK_ISP_CA5, "sclk_isp_ca5", "mout_aclk_cam1_552_user",
++			ENABLE_SCLK_CAM1, 0, 0, 0),
 +};
 +
-+static struct samsung_cmu_info apollo_cmu_info __initdata = {
-+	.pll_clks		= apollo_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(apollo_pll_clks),
-+	.mux_clks		= apollo_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(apollo_mux_clks),
-+	.div_clks		= apollo_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(apollo_div_clks),
-+	.gate_clks		= apollo_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(apollo_gate_clks),
-+	.nr_clk_ids		= APOLLO_NR_CLK,
-+	.clk_regs		= apollo_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(apollo_clk_regs),
++static struct samsung_cmu_info cam1_cmu_info __initdata = {
++	.mux_clks		= cam1_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(cam1_mux_clks),
++	.div_clks		= cam1_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(cam1_div_clks),
++	.gate_clks		= cam1_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(cam1_gate_clks),
++	.fixed_clks		= cam1_fixed_clks,
++	.nr_fixed_clks		= ARRAY_SIZE(cam1_fixed_clks),
++	.nr_clk_ids		= CAM1_NR_CLK,
++	.clk_regs		= cam1_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(cam1_clk_regs),
 +};
 +
-+static void __init exynos5433_cmu_apollo_init(struct device_node *np)
++static void __init exynos5433_cmu_cam1_init(struct device_node *np)
 +{
-+	samsung_cmu_register_one(np, &apollo_cmu_info);
++	samsung_cmu_register_one(np, &cam1_cmu_info);
 +}
-+CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
-+		exynos5433_cmu_apollo_init);
++CLK_OF_DECLARE(exynos5433_cmu_cam1, "samsung,exynos5433-cmu-cam1",
++		exynos5433_cmu_cam1_init);
 diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index f855859..9d3b76f 100644
+index 863a024..8df9841 100644
 --- a/include/dt-bindings/clock/exynos5433.h
 +++ b/include/dt-bindings/clock/exynos5433.h
-@@ -854,4 +854,41 @@
+@@ -121,6 +121,20 @@
+ #define CLK_DIV_ACLK_CAM0_333		148
+ #define CLK_DIV_ACLK_CAM0_400		149
+ #define CLK_DIV_ACLK_CAM0_552		150
++#define CLK_DIV_ACLK_CAM1_333		151
++#define CLK_DIV_ACLK_CAM1_400		152
++#define CLK_DIV_ACLK_CAM1_552		153
++#define CLK_DIV_SCLK_ISP_UART		154
++#define CLK_DIV_SCLK_ISP_SPI1_B		155
++#define CLK_DIV_SCLK_ISP_SPI1_A		156
++#define CLK_DIV_SCLK_ISP_SPI0_B		157
++#define CLK_DIV_SCLK_ISP_SPI0_A		158
++#define CLK_DIV_SCLK_ISP_SENSOR2_B	159
++#define CLK_DIV_SCLK_ISP_SENSOR2_A	160
++#define CLK_DIV_SCLK_ISP_SENSOR1_B	161
++#define CLK_DIV_SCLK_ISP_SENSOR1_A	162
++#define CLK_DIV_SCLK_ISP_SENSOR0_B	163
++#define CLK_DIV_SCLK_ISP_SENSOR0_A	164
  
- #define GSCL_NR_CLK					29
+ #define CLK_ACLK_PERIC_66		200
+ #define CLK_ACLK_PERIS_66		201
+@@ -165,8 +179,18 @@
+ #define CLK_ACLK_CAM0_333		240
+ #define CLK_ACLK_CAM0_400		241
+ #define CLK_ACLK_CAM0_552		242
+-
+-#define TOP_NR_CLK			243
++#define CLK_ACLK_CAM1_333		243
++#define CLK_ACLK_CAM1_400		244
++#define CLK_ACLK_CAM1_552		245
++#define CLK_SCLK_ISP_SENSOR2		246
++#define CLK_SCLK_ISP_SENSOR1		247
++#define CLK_SCLK_ISP_SENSOR0		248
++#define CLK_SCLK_ISP_MCTADC_CAM1	249
++#define CLK_SCLK_ISP_UART_CAM1		250
++#define CLK_SCLK_ISP_SPI1_CAM1		251
++#define CLK_SCLK_ISP_SPI0_CAM1		252
++
++#define TOP_NR_CLK			253
  
-+/* CMU_APOLLO */
-+#define CLK_FOUT_APOLLO_PLL				1
+ /* CMU_CPIF */
+ #define CLK_FOUT_MPHY_PLL		1
+@@ -1257,4 +1281,123 @@
+ 
+ #define CAM0_NR_CLK					134
+ 
++/* CMU_CAM1 */
++#define CLK_PHYCLK_RXBYTEECLKHS0_S2B			1
 +
-+#define CLK_MOUT_APOLLO_PLL				2
-+#define CLK_MOUT_BUS_PLL_APOLLO_USER			3
-+#define CLK_MOUT_APOLLO					4
++#define CLK_MOUT_SCLK_ISP_UART_USER			2
++#define CLK_MOUT_SCLK_ISP_SPI1_USER			3
++#define CLK_MOUT_SCLK_ISP_SPI0_USER			4
++#define CLK_MOUT_ACLK_CAM1_333_USER			5
++#define CLK_MOUT_ACLK_CAM1_400_USER			6
++#define CLK_MOUT_ACLK_CAM1_552_USER			7
++#define CLK_MOUT_PHYCLK_RXBYTECLKHS0_S2B_USER		8
++#define CLK_MOUT_ACLK_CSIS2_B				9
++#define CLK_MOUT_ACLK_CSIS2_A				10
++#define CLK_MOUT_ACLK_FD_B				11
++#define CLK_MOUT_ACLK_FD_A				12
++#define CLK_MOUT_ACLK_LITE_C_B				13
++#define CLK_MOUT_ACLK_LITE_C_A				14
 +
-+#define CLK_DIV_CNTCLK_APOLLO				5
-+#define CLK_DIV_PCLK_DBG_APOLLO				6
-+#define CLK_DIV_ATCLK_APOLLO				7
-+#define CLK_DIV_PCLK_APOLLO				8
-+#define CLK_DIV_ACLK_APOLLO				9
-+#define CLK_DIV_APOLLO2					10
-+#define CLK_DIV_APOLLO1					11
-+#define CLK_DIV_SCLK_HPM_APOLLO				12
-+#define CLK_DIV_APOLLO_PLL				13
++#define CLK_DIV_SCLK_ISP_WPWM				15
++#define CLK_DIV_PCLK_CAM1_83				16
++#define CLK_DIV_PCLK_CAM1_166				17
++#define CLK_DIV_PCLK_DBG_CAM1				18
++#define CLK_DIV_ATCLK_CAM1				19
++#define CLK_DIV_ACLK_CSIS2				20
++#define CLK_DIV_PCLK_FD					21
++#define CLK_DIV_ACLK_FD					22
++#define CLK_DIV_PCLK_LITE_C				23
++#define CLK_DIV_ACLK_LITE_C				24
 +
-+#define CLK_ACLK_ATBDS_APOLLO_3				14
-+#define CLK_ACLK_ATBDS_APOLLO_2				15
-+#define CLK_ACLK_ATBDS_APOLLO_1				16
-+#define CLK_ACLK_ATBDS_APOLLO_0				17
-+#define CLK_ACLK_ASATBSLV_APOLLO_3_CSSYS		18
-+#define CLK_ACLK_ASATBSLV_APOLLO_2_CSSYS		19
-+#define CLK_ACLK_ASATBSLV_APOLLO_1_CSSYS		20
-+#define CLK_ACLK_ASATBSLV_APOLLO_0_CSSYS		21
-+#define CLK_ACLK_ASYNCACES_APOLLO_CCI			22
-+#define CLK_ACLK_AHB2APB_APOLLOP			23
-+#define CLK_ACLK_APOLLONP_200				24
-+#define CLK_PCLK_ASAPBMST_CSSYS_APOLLO			25
-+#define CLK_PCLK_PMU_APOLLO				26
-+#define CLK_PCLK_SYSREG_APOLLO				27
-+#define CLK_CNTCLK_APOLLO				28
-+#define CLK_SCLK_HPM_APOLLO				29
-+#define CLK_SCLK_APOLLO					30
++#define CLK_ACLK_ISP_GIC				25
++#define CLK_ACLK_FD					26
++#define CLK_ACLK_LITE_C					27
++#define CLK_ACLK_CSIS2					28
++#define CLK_ACLK_ASYNCAPBM_FD				29
++#define CLK_ACLK_ASYNCAPBS_FD				30
++#define CLK_ACLK_ASYNCAPBM_LITE_C			31
++#define CLK_ACLK_ASYNCAPBS_LITE_C			32
++#define CLK_ACLK_ASYNCAHBS_SFRISP2H2			33
++#define CLK_ACLK_ASYNCAHBS_SFRISP2H1			34
++#define CLK_ACLK_ASYNCAXIM_CA5				35
++#define CLK_ACLK_ASYNCAXIS_CA5				36
++#define CLK_ACLK_ASYNCAXIS_ISPX2			37
++#define CLK_ACLK_ASYNCAXIS_ISPX1			38
++#define CLK_ACLK_ASYNCAXIS_ISPX0			39
++#define CLK_ACLK_ASYNCAXIM_ISPEX			40
++#define CLK_ACLK_ASYNCAXIM_ISP3P			41
++#define CLK_ACLK_ASYNCAXIS_ISP3P			42
++#define CLK_ACLK_ASYNCAXIM_FD				43
++#define CLK_ACLK_ASYNCAXIS_FD				44
++#define CLK_ACLK_ASYNCAXIM_LITE_C			45
++#define CLK_ACLK_ASYNCAXIS_LITE_C			46
++#define CLK_ACLK_AHB2APB_ISP5P				47
++#define CLK_ACLK_AHB2APB_ISP3P				48
++#define CLK_ACLK_AXI2APB_ISP3P				49
++#define CLK_ACLK_AHB_SFRISP2H				50
++#define CLK_ACLK_AXI_ISP_HX_R				51
++#define CLK_ACLK_AXI_ISP_CX_R				52
++#define CLK_ACLK_AXI_ISP_HX				53
++#define CLK_ACLK_AXI_ISP_CX				54
++#define CLK_ACLK_XIU_ISPX				55
++#define CLK_ACLK_XIU_ISPEX				56
++#define CLK_ACLK_CAM1NP_333				57
++#define CLK_ACLK_CAM1ND_400				58
++#define CLK_ACLK_SMMU_ISPCPU				59
++#define CLK_ACLK_SMMU_FD				60
++#define CLK_ACLK_SMMU_LITE_C				61
++#define CLK_ACLK_BTS_ISP3P				62
++#define CLK_ACLK_BTS_FD					63
++#define CLK_ACLK_BTS_LITE_C				64
++#define CLK_ACLK_AHBDN_SFRISP2H				65
++#define CLK_ACLK_AHBDN_ISP5P				66
++#define CLK_ACLK_AXIUS_ISP3P				67
++#define CLK_ACLK_AXIUS_FD				68
++#define CLK_ACLK_AXIUS_LITE_C				69
++#define CLK_PCLK_SMMU_ISPCPU				70
++#define CLK_PCLK_SMMU_FD				71
++#define CLK_PCLK_SMMU_LITE_C				72
++#define CLK_PCLK_BTS_ISP3P				73
++#define CLK_PCLK_BTS_FD					74
++#define CLK_PCLK_BTS_LITE_C				75
++#define CLK_PCLK_ASYNCAXIM_CA5				76
++#define CLK_PCLK_ASYNCAXIM_ISPEX			77
++#define CLK_PCLK_ASYNCAXIM_ISP3P			78
++#define CLK_PCLK_ASYNCAXIM_FD				79
++#define CLK_PCLK_ASYNCAXIM_LITE_C			80
++#define CLK_PCLK_PMU_CAM1				81
++#define CLK_PCLK_SYSREG_CAM1				82
++#define CLK_PCLK_CMU_CAM1_LOCAL				83
++#define CLK_PCLK_ISP_MCTADC				84
++#define CLK_PCLK_ISP_WDT				85
++#define CLK_PCLK_ISP_PWM				86
++#define CLK_PCLK_ISP_UART				87
++#define CLK_PCLK_ISP_MCUCTL				88
++#define CLK_PCLK_ISP_SPI1				89
++#define CLK_PCLK_ISP_SPI0				90
++#define CLK_PCLK_ISP_I2C2				91
++#define CLK_PCLK_ISP_I2C1				92
++#define CLK_PCLK_ISP_I2C0				93
++#define CLK_PCLK_ISP_MPWM				94
++#define CLK_PCLK_FD					95
++#define CLK_PCLK_LITE_C					96
++#define CLK_PCLK_CSIS2					97
++#define CLK_SCLK_ISP_I2C2				98
++#define CLK_SCLK_ISP_I2C1				99
++#define CLK_SCLK_ISP_I2C0				100
++#define CLK_SCLK_ISP_PWM				101
++#define CLK_PHYCLK_RXBYTECLKHS0_S2B			102
++#define CLK_SCLK_LITE_C_FREECNT				103
++#define CLK_SCLK_PIXELASYNCM_FD				104
++#define CLK_SCLK_ISP_MCTADC				105
++#define CLK_SCLK_ISP_UART				106
++#define CLK_SCLK_ISP_SPI1				107
++#define CLK_SCLK_ISP_SPI0				108
++#define CLK_SCLK_ISP_MPWM				109
++#define CLK_PCLK_DBG_ISP				110
++#define CLK_ATCLK_ISP					111
++#define CLK_SCLK_ISP_CA5				112
 +
-+#define APOLLO_NR_CLK					31
++#define CAM1_NR_CLK					113
 +
  #endif /* _DT_BINDINGS_CLOCK_EXYNOS5433_H */
 -- 
