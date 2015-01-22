@@ -1,115 +1,99 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH v2] pwm: samsung: Fix output race on disabling
-Date: Thu, 22 Jan 2015 22:41:33 +0100
-Message-ID: <1421962893-23078-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: [PATCH v3] ARM: dts: exynos5422-odroidxu3: add on-board INA231 sensors
+Date: Thu, 22 Jan 2015 13:54:28 -0800
+Message-ID: <1421963668-28359-1-git-send-email-khilman@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36383 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754432AbbAVVlj (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:46960 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754297AbbAVVyb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 16:41:39 -0500
+	Thu, 22 Jan 2015 16:54:31 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-When disabling the samsung PWM the output state remains at the level it
-was in the end of a pwm cycle. In other words, calling pwm_disable when
-at 100% duty will keep the output active, while at all other setting the
-output will go/stay inactive. On top of that the samsung PWM settings are
-double-buffered, which means the new settings only get applied at the
-start of a new PWM cycle.
+From: Kevin Hilman <khilman@linaro.org>
 
-This results in a race if the PWM is at 100% duty and a driver calls:
-  pwm_config (pwm, 0, period);
-  pwm_disable (pwm);
+The odroid-xu3 has 4 INA231 current sensors on board which can be
+accessed from the Linux via the hwmon interface.
 
-In this case the PWMs output will unexpectedly stay active, unless a new
-PWM cycle happened to start between the register writes in _config and
-_disable. As far as i can tell this is a regression introduced by 3bdf878,
-before that a call to pwm_config would call pwm_samsung_enable which,
-while heavy-handed, made sure the expected settings were live.
+There is one sensor for each of these power rails:
 
-To resolve this, while not re-introducing the issues 3bdf878 (flickering
-as the PWM got reset while in a PWM cycle). Only force an update of the
-settings when at 100% duty, which shouldn't have a noticeable effect on
-the output but is enough to ensure the behaviour is as expected on
-disable.
+- A15 cluster: VDD_ARM
+- A7 cluster: VDD_KFC
+- GPU: VDD_G3D
+- memory: VDD_MEM
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+In addition to adding the sensors, LDO26 from the PMIC needs to be
+enabled because it's powering these sensor.
+
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Reviewed-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Kevin Hilman <khilman@linaro.org>
 ---
-Changes since v1:
-  Fix small issues pointed out by Tomasz Figa
-  - Correct various coding style issues
-  - Read the current value of the tcmp register for comparison rather then
-    using a non-trivial comparison to decide whether the current state was
-    100% duty
-  - Move the code to force manual update out into its own function
-  - Clarify the comment indicating why a manual update is sometimes required
+v3: extend existing i2c_0 node 
+v2: use "ti,ina231" as compatible string.
 
- drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoerd Simons.
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 3e9b583..649f6c4 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
- }
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index c29123c0734d..38694a4a5417 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -174,6 +174,13 @@
+ 					regulator-always-on;
+ 				};
  
-+static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
-+				      struct pwm_device *pwm)
-+{
-+	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
-+	u32 tcon;
-+	unsigned long flags;
++				ldo26_reg: LDO26 {
++					regulator-name = "vdd_ldo26";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
 +
-+	spin_lock_irqsave(&samsung_pwm_lock, flags);
+ 				buck1_reg: BUCK1 {
+ 					regulator-name = "vdd_mif";
+ 					regulator-min-microvolt = <800000>;
+@@ -330,3 +337,35 @@
+ &usbdrd_dwc3_1 {
+ 	dr_mode = "otg";
+ };
 +
-+	tcon = readl(chip->base + REG_TCON);
-+	tcon |= TCON_MANUALUPDATE(tcon_chan);
-+	writel(tcon, chip->base + REG_TCON);
++&i2c_0 {
++	status = "okay";
 +
-+	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
-+	writel(tcon, chip->base + REG_TCON);
++	/* A15 cluster: VDD_ARM */
++	ina231@40 {
++		compatible = "ti,ina231";
++		reg = <0x40>;
++		shunt-resistor = <10000>;
++	};
 +
-+	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
-+}
++	/* memory: VDD_MEM */
++	ina231@41 {
++		compatible = "ti,ina231";
++		reg = <0x41>;
++		shunt-resistor = <10000>;
++	};
 +
- static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			      int duty_ns, int period_ns)
- {
- 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
- 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
--	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
-+	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
- 
- 	/*
- 	 * We currently avoid using 64bit arithmetic by using the
-@@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return 0;
- 
- 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
-+	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
- 	/* We need tick count for calculation, not last tick. */
- 	++tcnt;
-@@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
- 	writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
-+	/* In case the PWM is currently at 100% duty, force a manual update
-+	 * to prevent the signal staying high in the pwm is disabled shortly
-+	 * afer this update (before it autoreloaded the new values) .
-+	 */
-+	if (oldtcmp == (u32) -1) {
-+		dev_dbg(our_chip->chip.dev, "Forcing manual update");
-+		pwm_samsung_manual_update(our_chip, pwm);
-+	}
++	/* GPU: VDD_G3D */
++	ina231@44 {
++		compatible = "ti,ina231";
++		reg = <0x44>;
++		shunt-resistor = <10000>;
++	};
 +
- 	chan->period_ns = period_ns;
- 	chan->tin_ns = tin_ns;
- 	chan->duty_ns = duty_ns;
++	/* A7 cluster: VDD_KFC */
++	ina231@45 {
++		compatible = "ti,ina231";
++		reg = <0x45>;
++		shunt-resistor = <10000>;
++	};
++};
 -- 
-2.1.4
+2.1.3
