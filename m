@@ -1,46 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [alsa-devel] [PATCH v3 3/4] ARM: dts: set clock out parent to
- XUSBXTI
-Date: Thu, 22 Jan 2015 13:25:07 +0100
-Message-ID: <54C0EC23.9070209@samsung.com>
-References: <1421925482-15861-1-git-send-email-ideal.song@samsung.com>
- <1421925482-15861-4-git-send-email-ideal.song@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1421925482-15861-4-git-send-email-ideal.song@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inha Song <ideal.song@samsung.com>, alsa-devel@alsa-project.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4 RESEND 9/9] drm/exynos: add support for 'hdmi' clock
+Date: Thu, 22 Jan 2015 13:28:06 +0100
+Message-ID: <1421929686-19709-1-git-send-email-m.szyprowski@samsung.com>
+References: <54BE4F8E.50605@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:14868 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750916AbbAVM2T (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Jan 2015 07:28:19 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NIK007SPW60AK10@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Jan 2015 12:32:24 +0000 (GMT)
+In-reply-to: <54BE4F8E.50605@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-On 22/01/15 12:18, Inha Song wrote:
-> This patch set clock out parent to XUSBXTI.
-> 
-> Signed-off-by: Inha Song <ideal.song@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index b8168f1..020bbaf 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -141,6 +141,8 @@
->  	pmu_system_controller: system-controller@10020000 {
->  		compatible = "samsung,exynos4210-pmu", "syscon";
->  		reg = <0x10020000 0x4000>;
-> +		assigned-clocks = <&pmu_system_controller 0>;
-> +		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
->  	};
+Mixed need to have hdmi clock enabled to properly perform power on/off
+sequences, so add handling of this clock directly to the mixer driver.
+Dependency between hdmi clock and mixer module has been observed on
+Exynos4 based boards.
 
-Looks good, except it needs to be done only for the Trats2 board, i.e.
-the PMU device node including these properties should be added to
-exynos4412-trats2.dts.  I think it's fine to make it a one patch including
-all dts changes.
+Suggested-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ Documentation/devicetree/bindings/video/exynos_mixer.txt | 1 +
+ drivers/gpu/drm/exynos/exynos_mixer.c                    | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-
+diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+index 08b394b..3e38128 100644
+--- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
++++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+@@ -15,6 +15,7 @@ Required properties:
+ 	a) mixer: Gate of Mixer IP bus clock.
+ 	b) sclk_hdmi: HDMI Special clock, one of the two possible inputs of
+                mixer mux.
++	c) hdmi: Gate of HDMI IP bus clock, needed together with sclk_hdmi.
+ 
+ Example:
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 820b762..e5ef1fc 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -72,6 +72,7 @@ struct mixer_resources {
+ 	spinlock_t		reg_slock;
+ 	struct clk		*mixer;
+ 	struct clk		*vp;
++	struct clk		*hdmi;
+ 	struct clk		*sclk_mixer;
+ 	struct clk		*sclk_hdmi;
+ 	struct clk		*mout_mixer;
+@@ -774,6 +775,12 @@ static int mixer_resources_init(struct mixer_context *mixer_ctx)
+ 		return -ENODEV;
+ 	}
+ 
++	mixer_res->hdmi = devm_clk_get(dev, "hdmi");
++	if (IS_ERR(mixer_res->hdmi)) {
++		dev_err(dev, "failed to get clock 'hdmi'\n");
++		return -ENODEV;
++	}
++
+ 	mixer_res->sclk_hdmi = devm_clk_get(dev, "sclk_hdmi");
+ 	if (IS_ERR(mixer_res->sclk_hdmi)) {
+ 		dev_err(dev, "failed to get clock 'sclk_hdmi'\n");
+@@ -1095,6 +1102,7 @@ static void mixer_poweron(struct exynos_drm_manager *mgr)
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+ 	clk_prepare_enable(res->mixer);
++	clk_prepare_enable(res->hdmi);
+ 	if (ctx->vp_enabled) {
+ 		clk_prepare_enable(res->vp);
+ 		if (ctx->has_sclk)
+@@ -1134,6 +1142,7 @@ static void mixer_poweroff(struct exynos_drm_manager *mgr)
+ 	ctx->powered = false;
+ 	mutex_unlock(&ctx->mixer_mutex);
+ 
++	clk_disable_unprepare(res->hdmi);
+ 	clk_disable_unprepare(res->mixer);
+ 	if (ctx->vp_enabled) {
+ 		clk_disable_unprepare(res->vp);
 -- 
-Regards,
-Sylwester
+1.9.2
