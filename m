@@ -1,87 +1,115 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos5422-odroidxu3: add on-board INA231 sensors
-Date: Thu, 22 Jan 2015 11:47:06 -0800
-Message-ID: <7hy4ou61j9.fsf@deeprootsystems.com>
-References: <1421284089-421-1-git-send-email-khilman@kernel.org>
-	<54BF14FB.8050300@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH v2] pwm: samsung: Fix output race on disabling
+Date: Thu, 22 Jan 2015 22:41:33 +0100
+Message-ID: <1421962893-23078-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:53971 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752715AbbAVTrK (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:36383 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754432AbbAVVlj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 14:47:10 -0500
-Received: by mail-pa0-f41.google.com with SMTP id kq14so1210180pab.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2015 11:47:09 -0800 (PST)
-In-Reply-To: <54BF14FB.8050300@samsung.com> (Joonyoung Shim's message of "Wed,
-	21 Jan 2015 11:54:51 +0900")
+	Thu, 22 Jan 2015 16:41:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Joonyoung Shim <jy0922.shim@samsung.com> writes:
+When disabling the samsung PWM the output state remains at the level it
+was in the end of a pwm cycle. In other words, calling pwm_disable when
+at 100% duty will keep the output active, while at all other setting the
+output will go/stay inactive. On top of that the samsung PWM settings are
+double-buffered, which means the new settings only get applied at the
+start of a new PWM cycle.
 
-> Hi Kevin,
->
-> On 01/15/2015 10:08 AM, Kevin Hilman wrote:
->> From: Kevin Hilman <khilman@linaro.org>
->> 
->> The odroid-xu3 has 4 INA231 current sensors on board which can be
->> accessed from the Linux via the hwmon interface.
->> 
->> There is one sensor for each of these power rails:
->> 
->> - A15 cluster: VDD_ARM
->> - A7 cluster: VDD_KFC
->> - GPU: VDD_G3D
->> - memory: VDD_MEM
->> 
->> In addition to adding the sensors, LDO26 from the PMIC needs to be
->> enabled because it's powering these sensor.
->> 
->> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
->> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->> ---
->> v2: use "ti,ina231" as compatible string.
->> 
->> Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoerd Simons.
->> 
->>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++++++++
->>  1 file changed, 39 insertions(+)
->> 
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> index c29123c0734d..50353d023225 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> @@ -174,6 +174,13 @@
->>  					regulator-always-on;
->>  				};
->>  
->> +				ldo26_reg: LDO26 {
->> +					regulator-name = "vdd_ldo26";
->> +					regulator-min-microvolt = <3000000>;
->> +					regulator-max-microvolt = <3000000>;
->> +					regulator-always-on;
->> +				};
->> +
->>  				buck1_reg: BUCK1 {
->>  					regulator-name = "vdd_mif";
->>  					regulator-min-microvolt = <800000>;
->> @@ -257,6 +264,38 @@
->>  		};
->>  	};
->>  
->> +	i2c_0: i2c@12C60000 {
->
-> It's ok but IMHO it can split using label reference, e.g. 
->
-> &i2c_0 {
-> 	...
-> };
+This results in a race if the PWM is at 100% duty and a driver calls:
+  pwm_config (pwm, 0, period);
+  pwm_disable (pwm);
 
-Yes, you're right.  I'll spin a v3.
+In this case the PWMs output will unexpectedly stay active, unless a new
+PWM cycle happened to start between the register writes in _config and
+_disable. As far as i can tell this is a regression introduced by 3bdf878,
+before that a call to pwm_config would call pwm_samsung_enable which,
+while heavy-handed, made sure the expected settings were live.
 
-Kevin
+To resolve this, while not re-introducing the issues 3bdf878 (flickering
+as the PWM got reset while in a PWM cycle). Only force an update of the
+settings when at 100% duty, which shouldn't have a noticeable effect on
+the output but is enough to ensure the behaviour is as expected on
+disable.
+
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+Changes since v1:
+  Fix small issues pointed out by Tomasz Figa
+  - Correct various coding style issues
+  - Read the current value of the tcmp register for comparison rather then
+    using a non-trivial comparison to decide whether the current state was
+    100% duty
+  - Move the code to force manual update out into its own function
+  - Clarify the comment indicating why a manual update is sometimes required
+
+ drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 3e9b583..649f6c4 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
+ }
+ 
++static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
++				      struct pwm_device *pwm)
++{
++	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
++	u32 tcon;
++	unsigned long flags;
++
++	spin_lock_irqsave(&samsung_pwm_lock, flags);
++
++	tcon = readl(chip->base + REG_TCON);
++	tcon |= TCON_MANUALUPDATE(tcon_chan);
++	writel(tcon, chip->base + REG_TCON);
++
++	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
++	writel(tcon, chip->base + REG_TCON);
++
++	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
++}
++
+ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			      int duty_ns, int period_ns)
+ {
+ 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
+ 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
+-	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
++	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
+ 
+ 	/*
+ 	 * We currently avoid using 64bit arithmetic by using the
+@@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		return 0;
+ 
+ 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
++	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
+ 
+ 	/* We need tick count for calculation, not last tick. */
+ 	++tcnt;
+@@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
+ 	writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
+ 
++	/* In case the PWM is currently at 100% duty, force a manual update
++	 * to prevent the signal staying high in the pwm is disabled shortly
++	 * afer this update (before it autoreloaded the new values) .
++	 */
++	if (oldtcmp == (u32) -1) {
++		dev_dbg(our_chip->chip.dev, "Forcing manual update");
++		pwm_samsung_manual_update(our_chip, pwm);
++	}
++
+ 	chan->period_ns = period_ns;
+ 	chan->tin_ns = tin_ns;
+ 	chan->duty_ns = duty_ns;
+-- 
+2.1.4
