@@ -1,109 +1,98 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
-Date: Thu, 22 Jan 2015 18:02:07 +0530
-Message-ID: <CAM4voani1xcgRU3e11_pnYw4d7Yj=QOKun8g_DywmxDxOwEgRQ@mail.gmail.com>
-References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
-	<1421667844-13627-2-git-send-email-l.majewski@samsung.com>
-	<CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
-	<20150122100124.65e7a19e@amdc2363>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v4 9/9] drm/exynos: add support for 'hdmi' clock
+Date: Thu, 22 Jan 2015 13:41:15 +0100
+Message-ID: <54C0EFEB.6080201@samsung.com>
+References: <1421756219-21037-1-git-send-email-m.szyprowski@samsung.com>
+ <1421756219-21037-10-git-send-email-m.szyprowski@samsung.com>
+ <54BE4F8E.50605@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f53.google.com ([209.85.216.53]:49452 "EHLO
-	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752180AbbAVMcI (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:13586 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751128AbbAVMlT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 07:32:08 -0500
-In-Reply-To: <20150122100124.65e7a19e@amdc2363>
+	Thu, 22 Jan 2015 07:41:19 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NIK007YSWRKIU10@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Jan 2015 12:45:20 +0000 (GMT)
+In-reply-to: <54BE4F8E.50605@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-Hi Lukasz,
+Hello,
 
-On Thu, Jan 22, 2015 at 2:31 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Hi Abhilash,
->
->> Hi Lukasz,
+On 2015-01-20 13:52, Javier Martinez Canillas wrote:
+> On 01/20/2015 01:16 PM, Marek Szyprowski wrote:
+>> Mixed need to have hdmi clock enabled to properly perform power on/off
+>> sequences, so add handling of this clock directly to the mixer driver.
+>> Dependency between hdmi clock and mixer module has been observed on
+>> Exynos4 based boards.
 >>
->> On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski
->> <l.majewski@samsung.com> wrote:
->> > The exynos_map_dt_data() function must be called before
->> > thermal_zone_of_sensor_register(), and hence provide tmu_read()
->> > function, before it is needed.
->> >
->> > This change is driven by adding support for enabling thermal_zoneX
->> > when it is properly initialized.
->> >
->> > One can read the mode of operation
->> > at /sys/class/thermal/thermal_zone0/mode Such functionality was
->> > missing in the of-thermal.c code.
->> >
->> > Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->> > ---
->> >  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
->> >  1 file changed, 4 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
->> > b/drivers/thermal/samsung/exynos_tmu.c index 9d2d685..5d946ab 100644
->> > --- a/drivers/thermal/samsung/exynos_tmu.c
->> > +++ b/drivers/thermal/samsung/exynos_tmu.c
->> > @@ -975,15 +975,16 @@ static int exynos_tmu_probe(struct
->> > platform_device *pdev) platform_set_drvdata(pdev, data);
->> >         mutex_init(&data->lock);
->> >
->> > +       ret = exynos_map_dt_data(pdev);
->> > +       if (ret)
->> > +               goto err_sensor;
->> > +
->> >         data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0,
->> > data, &exynos_sensor_ops);
->> >         if (IS_ERR(data->tzd)) {
->> >                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
->> >                 return PTR_ERR(data->tzd);
->> >         }
->> > -       ret = exynos_map_dt_data(pdev);
->> > -       if (ret)
->> > -               goto err_sensor;
->> >
->> >         pdata = data->pdata;
+>> Suggested-by: Andrzej Hajda<a.hajda@samsung.com>
+>> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/exynos_mixer.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
 >>
->> I have been testing this along with your v5 patch set and am seeing
->> incorrect temperature being reported at boot-up on exynos7.
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index 820b76234ef4..e5ef1fccd8fb 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -72,6 +72,7 @@ struct mixer_resources {
+>>   	spinlock_t		reg_slock;
+>>   	struct clk		*mixer;
+>>   	struct clk		*vp;
+>> +	struct clk		*hdmi;
+>>   	struct clk		*sclk_mixer;
+>>   	struct clk		*sclk_hdmi;
+>>   	struct clk		*mout_mixer;
+>> @@ -774,6 +775,12 @@ static int mixer_resources_init(struct mixer_context *mixer_ctx)
+>>   		return -ENODEV;
+>>   	}
+>>   
+>> +	mixer_res->hdmi = devm_clk_get(dev, "hdmi");
+> You need to update the Documentation/devicetree/bindings/video/exynos_mixer.txt
+> DT binding docs to also mention the "hdmi" clock in the list of clocks.
+
+Right, I've send an updated version of the patch.
+
+> But as I mentioned in "[PATCH v2 0/6] Enable HDMI support on Exynos platforms"
+> thread, while this seems to be enough to prevent the issue on Exynos4 is not
+> enough on the Exynos5420/5422/5800 boards I've tested.
 >
-> Does it show a maximal temperature value (0x1FF)?
+> So I wonder if $subject is fixing the root cause or just fixing a symptom and
+> the cause is that the exynos_hdmi DPMS handler has to be executed before the
+> exynos_mixer DPMS handler for DRM_MODE_DPMS_ON like is the case for DPMS_OFF
+> after commit 245f98f269714 ("drm/exynos: hdmi: fix power order issue").
 
-I did not print the current temperature register, but I remember the
-message showing ~105C. Will give you the register value when I test
-with more debug prints tomorrow.
+I'm aware of the issues with Exynos542x, I've tested it with Odroid XU3, 
+but I
+really have no idea how to fix it. The reference manual (both for power 
+domain
+and mixer/hdmi modules) also doesn't provide any useful information for this
+case.
 
->
->>  It looks
->> like exynos_tmu_read gets called from thermal_zone_of_device_update
->> during boot-up, now that we have it populated early. However, as the
->> tmu initialization function has not been called yet it returns a wrong
->> value. Does that sound correct ?
->
-> No, this is a mistake. However, I'm wondering why on Exynos4/5 this
-> error didn't show up...
+The issue with power on/off sequence definitely IS related to clock 
+configuration,
+but we didn't figure out how to solve it in a generic way. This will be 
+handled in
+Exynos HDMI and mixer drivers anyway, so the DTS part (at least for 
+Exynos4 SoC)
+will not change.
 
-I have been lowering the software trip point temperature in the
-exynos7 dts file (to 55C) for testing purposes. Hence, when the
-temperature is read incorrectly as ~105C the board trips at boot-up
-itself. Maybe for exynos4/5 the incorrect value read during boot-up is
-in the non-tripping range and once the tmu is initialized later it
-continues to function properly thereafter ?
+We would really like to have HDMI support for Exynos4 merged, especially 
+that the
+first version of the HDMI patches was posted in v3.16 times and now we 
+are close
+to v3.20 -next merge window end...
 
->
-> The reordering is needed to be able to call set_mode callback at
-> of-thermal.c to set the mode.
->
-> If this change causes problems, then another solution (probably not so
-> neat) must be found.
-
-Please let me know if you need any further details.
-
-Thanks,
-Abhilash
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
