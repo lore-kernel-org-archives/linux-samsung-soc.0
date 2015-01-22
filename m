@@ -1,95 +1,65 @@
-From: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: exynos5422-odroidxu3: add sound nodes
-Date: Thu, 22 Jan 2015 10:01:30 +0900
-Message-ID: <20150122100130.75c20e9b@songinha-Samsung-DeskTop-System>
-References: <1421819923-27575-1-git-send-email-ideal.song@samsung.com>
- <54BF9083.5090708@samsung.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH v3 00/16] thermal: exynos: Thermal code rework to
+ use device tree
+Date: Thu, 22 Jan 2015 02:06:10 +0100
+Message-ID: <54C04D02.90405@gmx.net>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com> <1421242874-3425-1-git-send-email-l.majewski@samsung.com> <54B8549F.60707@gmx.net> <20150116092946.38860303@amdc2363> <54BD9377.30606@gmx.net> <20150120091729.3d01a0cf@amdc2363>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <54BF9083.5090708-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.17.21]:58958 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751939AbbAVBGT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jan 2015 20:06:19 -0500
+In-Reply-To: <20150120091729.3d01a0cf@amdc2363>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, tomasz.figa@gmail.com
 
-Hi,
+Hello!
 
-Thanks for your comment.
 
-On Wed, 21 Jan 2015 12:41:55 +0100
-Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-
-> Hi,
+Lukasz Majewski wrote:
+>> The point is that I'm still working with a rather old version of the
+>> cpufreq series, a version which still had the Exynos4x12 code in it
+>> (this was removed later, if I remember correctly because of problems
+>> with how to properly describe boost configuration in DT).
 > 
-> On 21/01/15 06:58, Inha Song wrote:
-> > Add MAX98090 audio codec, I2S interface and the sound nodes to support
-> > audio on Odroid-XU3 board.
-> > 
-> > Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 34 ++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> > index 7874da2..79493d1 100644
-> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> > @@ -310,6 +310,40 @@
-> >  	rtc@101E0000 {
-> >  		status = "okay";
-> >  	};
-> > +
-> > +	sound: sound {
-> > +		compatible = "samsung,odroidu3-audio";
-> 
-> How about using simple-card instead ? I've been trying to switch
-> Odroid X2/U3 to simple card. Here a corresponding dts patch:
-> http://www.spinics.net/lists/linux-samsung-soc/msg41083.html
-> For that recent patches for the I2S driver which area already in -next
-> might be needed.
+> Is your board Odroid-U3/Trats2 ?
+It's an Odroid-X2, so pretty similar to the U3, except that it doesn't
+have any active cooling device.
 
-Oh, I missed your patchs.
-I will rework this patch based on your patch.
 
-Best Regards,
-Inha Song.
+>> Anyway, to not get completly off-topic here, I noticed some small
+>> issue with v3 of the thermal series. I've enabled
+>> CONFIG_THERMAL_HWMON so that I can use lm_sensors to query
+>> temperature of the board. However while the thermal_zone is created,
+>> there is no hwmon node to be found. 
+> 
+> I'm not surprised, that some use cases (about which I wasn't even
+> aware) show up. 
+> I've already fixed issues reported by Abhilash (with v5 and a following
+> patch) and look closer into the THERMAL_HWMON.
+The problem seems to be that of_parse_thermal_zones always sets
+'no_hwmon' to true, so that thermal_zone_device_register never registers
+a hwmon device when the underlaying thermal zone is setup through DT. I
+don't understand the rationale behind this, even with the comment ('No
+hwmon because there might be hwmon drivers registering').
 
+
+> I've also done some work regarding FAN controlled by hwmon for Odroid
+> U3.
+> Could you look on following series:
+> http://www.spinics.net/lists/linux-samsung-soc/msg40471.html
 > 
-> > +		samsung,model = "Odroid-XU3";
-> > +		samsung,i2s-controller = <&i2s0>;
-> > +		samsung,audio-codec = <&max98090>;
-> > +		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-> > +				  <&clock_audss EXYNOS_MOUT_I2S>;
-> > +		assigned-clock-parents = <&clock CLK_FIN_PLL>,
-> > +				<&clock_audss EXYNOS_MOUT_AUDSS>;
-> > +		samsung,audio-routing =
-> > +			"Headphone Jack", "HPL",
-> > +			"Headphone Jack", "HPR",
-> > +			"Headphone Jack", "MICBIAS",
-> > +			"IN1", "Headphone Jack",
-> > +			"Speakers", "SPKL",
-> > +			"Speakers", "SPKR";
-> > +	};
-> > +};
-> > +
-> > +&hsi2c_5 {
-> > +	status = "okay";
-> > +	max98090: max98090@10 {
-> > +		compatible = "maxim,max98090";
-> > +		reg = <0x10>;
-> > +		interrupt-parent = <&gpx3>;
-> > +		interrupts = <2 0>;
-> > +		clocks = <&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> > +		clock-names = "mclk";
-> > +	};
-> > +};
-> 
-> -- 
-> Thanks,
-> Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I can only guess that your board might need similar entries for your
+> DTS file(s).
+
+Like I said, the X2 only has a passive heatsink, so no fan controlling here.
+
+
+With best wishes,
+Tobias
