@@ -1,138 +1,94 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v4 2/2] ARM: dts: Add HS400 support for exynos5420 and
- exynos5800
-Date: Thu, 22 Jan 2015 11:28:25 +0900
-Message-ID: <54C06049.5070106@samsung.com>
-References: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
- <1421231446-4776-3-git-send-email-alim.akhtar@samsung.com>
- <54BEDE9C.5060501@samsung.com>
- <CAGOxZ5186+9U-6eri6OSGw9awsmr0EPP-gdhu-__oCWP1Oyyxg@mail.gmail.com>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: Re: drm: exynos: mixer: fix using usleep() in atomic context
+Date: Thu, 22 Jan 2015 16:47:25 +0900
+Message-ID: <54C0AB0D.9090209@samsung.com>
+References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20141201155447.GE11943@ulmo.nvidia.com>
+ <7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>
+ <20141217075433.GA2814@ulmo>
+ <CAAQKjZMu=CwXZdUdo505ZLn+eWRPzMwXMJ3zmo0kT+Dji2y33Q@mail.gmail.com>
+ <54C02C4F.4080307@math.uni-bielefeld.de>
+Reply-To: sw0312.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CAGOxZ5186+9U-6eri6OSGw9awsmr0EPP-gdhu-__oCWP1Oyyxg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, Douglas Anderson <dianders@chromium.org>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:10995 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750915AbbAVHrW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Jan 2015 02:47:22 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NIK005WPIYWWX60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Jan 2015 16:47:20 +0900 (KST)
+In-reply-to: <54C02C4F.4080307@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Inki Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hi.
+Hello,
 
-On 01/21/2015 11:12 PM, Alim Akhtar wrote:
-> Hi Jaehoon
-> 
-> On Wed, Jan 21, 2015 at 4:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> Hi,
+On 2015=EB=85=84 01=EC=9B=94 22=EC=9D=BC 07:46, Tobias Jakobi wrote:
+> Hello!
+>=20
+>=20
+> Inki Dae wrote:
+>> The use of spin lock, reg_slock, has been used for a long time and w=
+e
+>> hadn't some cleanups to spin lock codes so far. The spin lock is als=
+o
+>> used in here and there of mixer driver. And at least, it seems that
+>> the use of spin lock isn't required in mixer_win_reset. I don't see
+>> any atomic contexts in mixer module except interrupt handler.
 >>
->> If you want to enable the hs400 mode, need to add "mmc-hs400-1_8v" or "mmc-hs400-1_2v".
->> But this patch didn't add them. do you have any other plan?
->>
-> Yes, right, plan is to send separate patch to enable hs400, as of now
-> I am not sure if all the 5800-peach-pi boards are populated with
-> emmc5.0 device or not. So I will enable HS400 after confirming this
-> point.
+>> To Seung-Woo,
+>> I know that you referred to mixer codes of v4l2 based mixer driver. =
+So
+>> was the spin lock used in origin v4l2 driver? or Is there any reason
+>> that you used the spin lock?
 
-I know if card is not support hs400, then it should be enabled to other bus mode.
+The spinlock usage was originated from Tomasz Stanislawski's s5p-tv.
+
+>>
+>> Anyway, we will have some testing to check hdmi and mixer drivers
+>> without spin lock. So we will remove or replace it with mutex if
+>> needed.
+>>
+>> Thanks,
+>> Inki Dae
+>=20
+> So it's some weeks later and as far as I can see there has been no
+> changes to the spinlock usage. Wouldn't it be better to apply this pa=
+tch
+> _now_ (since the use of 'usleep_range' is just plain wrong while unde=
+r
+> spinlock). When the spinlock setup gets cleaned up later, then we can
+> always change back to 'usleep_range' again.
+>=20
+> Any thoughts?
+
+In s5p-tv, same patch is already applied by Tomasz, so I agree to apply
+this patch also.
 
 Best Regards,
-Jaehoon Chung
+- Seung-Woo Kim
 
->> On 01/14/2015 07:30 PM, Alim Akhtar wrote:
->>> From: Seungwon Jeon <tgih.jun@samsung.com>
->>>
->>> HS400 timing values are added for SMDK5420, exynos5420-peach-pit
->>> and exynos5800-peach-pi boards.
->>> This also adds RCLK GPIO line, this gpio should be in pull-down
->>> state.
->>>
->>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> [Alim: addressed review comments]
->>> ---
->>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 +++-
->>>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
->>>  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    4 +++-
->>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    4 +++-
->>>  4 files changed, 16 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>> index 9a050e1..7ffaba8 100644
->>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>> @@ -569,8 +569,10 @@
->>>       samsung,dw-mshc-ciu-div = <3>;
->>>       samsung,dw-mshc-sdr-timing = <0 4>;
->>>       samsung,dw-mshc-ddr-timing = <0 2>;
->>> +     samsung,dw-mshc-hs400-timing = <0 2>;
->>> +     read-strobe-delay = <90>;
->>>       pinctrl-names = "default";
->>> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->>> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->>>       bus-width = <8>;
->>>  };
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->>> index ba686e4..8b15316 100644
->>> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->>> @@ -201,6 +201,13 @@
->>>                       samsung,pin-drv = <3>;
->>>               };
->>>
->>> +             sd0_rclk: sd0-rclk {
->>
->> I know it used to "sd0_rdqs", not "sd0_rclk".
->> Change name.
->>
-> Ok, I will change as per UM of 5800/5420,
-> 
->> Best Regards,
->> Jaehoon Chung
->>> +                     samsung,pins = "gpc0-7";
->>> +                     samsung,pin-function = <2>;
->>> +                     samsung,pin-pud = <1>;
->>> +                     samsung,pin-drv = <3>;
->>> +             };
->>> +
->>>               sd1_cmd: sd1-cmd {
->>>                       samsung,pins = "gpc1-1";
->>>                       samsung,pin-function = <2>;
->>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->>> index 8be3d7b..5290e79 100644
->>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->>> @@ -80,8 +80,10 @@
->>>               samsung,dw-mshc-ciu-div = <3>;
->>>               samsung,dw-mshc-sdr-timing = <0 4>;
->>>               samsung,dw-mshc-ddr-timing = <0 2>;
->>> +             samsung,dw-mshc-hs400-timing = <0 2>;
->>> +             read-strobe-delay = <90>;
->>>               pinctrl-names = "default";
->>> -             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->>> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->>>               bus-width = <8>;
->>>               cap-mmc-highspeed;
->>>       };
->>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> index e8fdda8..fa1c858 100644
->>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> @@ -557,8 +557,10 @@
->>>       samsung,dw-mshc-ciu-div = <3>;
->>>       samsung,dw-mshc-sdr-timing = <0 4>;
->>>       samsung,dw-mshc-ddr-timing = <0 2>;
->>> +     samsung,dw-mshc-hs400-timing = <0 2>;
->>> +     read-strobe-delay = <90>;
->>>       pinctrl-names = "default";
->>> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->>> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->>>       bus-width = <8>;
->>>  };
->>>
->>>
->>
-> 
-> 
-> 
+>=20
+> With best wishes,
+> Tobias
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
 
+--=20
+Seung-Woo Kim
+Samsung Software R&D Center
+--
