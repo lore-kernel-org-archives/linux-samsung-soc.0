@@ -1,67 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND v2 3/7] mfd: cros_ec: Add cros_ec_lpc driver for
- x86 devices
-Date: Thu, 22 Jan 2015 12:17:02 +0100
-Message-ID: <54C0DC2E.2030701@collabora.co.uk>
-References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk> <1420205572-2640-4-git-send-email-javier.martinez@collabora.co.uk> <20150120081104.GT21886@x1> <54BE7B08.1010900@collabora.co.uk> <20150120163410.GC30656@x1> <54BE87C4.4040108@collabora.co.uk> <20150122084244.GP22024@x1> <54C0BE21.7020008@collabora.co.uk> <20150122094608.GA5769@x1> <54C0D29C.4010904@collabora.co.uk> <20150122105605.GB9129@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:35491 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750727AbbAVLRK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 06:17:10 -0500
-In-Reply-To: <20150122105605.GB9129@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inha Song <ideal.song@samsung.com>
+Subject: [alsa-devel] [PATCH v3 0/4] Sound support for Exynos4412 Trats2 board
+Date: Thu, 22 Jan 2015 20:17:58 +0900
+Message-ID: <1421925482-15861-1-git-send-email-ideal.song@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: alsa-devel@alsa-project.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, s.nawrocki@samsung.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, kgene@kernel.org, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
 
-Hello Lee,
+This patch-set adds basic sound support for the Trats2 boards.
+It just support primary I2s and external speaker playback.
 
-On 01/22/2015 11:56 AM, Lee Jones wrote:
->> >
->> Yes, I completely understand your point, is that I didn't think that a ~300
->> lines driver was that bad specially since the communication bits that reads
->> and writes the register is not a complex logic IMHO.
-> 
-> This has nothing to do with LoC, it's the principle of the matter.
->
+Changes in v3:
+  - Set clock out parent to XUSBXTI in pmu_system_controller DT node.
 
-Ok, got it.
- 
->> >> > Are there any other Low Pin Count drivers in the kernel?
->> >> >
->> >> 
->> >> I don't know tbh, I didn't even know what LPC was before I picked this patch
->> >> to push it upstream. I searched in the Linux codebase for other LPC drivers
->> >> but I didn't find anything, that doesn't mean that it doesn't exist though.
->> > 
->> > I agree.  Perhaps a suitable driver should live in drivers/misc until
->> > there are enough of them to warrant its own subsystem.
->> >
->> 
->> Yes, I can move the driver to drivers/misc if you think that is more suitable
->> to be there.
->> 
->> I've taken another look and AFAICT there are two other mfd drivers that use an
->> LPC bus, these are drivers/mfd/lpc_{i,s}ch.c for Intel's I/O Controller HUB and 
->> System Controller Hub respectively.
-> 
-> These looked like PCI aggregates when I looked at them last?
-> 
+Changes in v2:
+  - Remove unnecessary lines in Trats2 machine driver
+  - move clock enable/disable to .startup / .shutdown
+  - Fix code style issues
+  - Remove mclk DT property in Trats2 sound and add MCLK1 property in WM1811 node.
+    (MCLK1 is optional property in WM8994 node - refer: Document/devicetree/bindings/sound/wm8994.txt)
+  - Use mclk that defined in WM1811 DT node.
+  - Add "samsung,audio-codec" property to required properties.
 
-Yes, it seems the LPC bus is behind a PCI bus on these chips. Or at least
-that's what I understood on a quick read to the Intel SCH datasheet [0].
+Inha Song (4):
+  ASoC: samsung: Add machine driver for Trats2
+  ASoC: samsung: Document Trats2 audio subsystem bindings
+  ARM: dts: set clock out parent to XUSBXTI
+  ARM: dts: Add sound nodes for exynos4412-trats2
 
-Now going back to the Cros EC LPC driver, you are right that this may not
-be suitable to drivers/mfd so I'll move it to drivers/misc instead.
+ .../bindings/sound/samsung,trats2-wm1811.txt       |  25 +++
+ arch/arm/boot/dts/exynos4.dtsi                     |   2 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  37 ++++
+ sound/soc/samsung/Kconfig                          |   8 +
+ sound/soc/samsung/Makefile                         |   2 +
+ sound/soc/samsung/trats2_wm1811.c                  | 218 +++++++++++++++++++++
+ 6 files changed, 292 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,trats2-wm1811.txt
+ create mode 100644 sound/soc/samsung/trats2_wm1811.c
 
-Thanks a lot for your feedback.
-
-Best regards,
-Javier
-
-[0]: http://www.intel.com/content/www/us/en/intelligent-systems/menlow/sch-datasheet.html
+-- 
+2.0.0.390.gcb682f8
