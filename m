@@ -1,76 +1,103 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
-Date: Thu, 22 Jan 2015 13:59:25 +0530
-Message-ID: <CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
-References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
-	<1421667844-13627-2-git-send-email-l.majewski@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH RESEND v2 3/7] mfd: cros_ec: Add cros_ec_lpc driver for
+ x86 devices
+Date: Thu, 22 Jan 2015 08:42:44 +0000
+Message-ID: <20150122084244.GP22024@x1>
+References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1420205572-2640-4-git-send-email-javier.martinez@collabora.co.uk>
+ <20150120081104.GT21886@x1>
+ <54BE7B08.1010900@collabora.co.uk>
+ <20150120163410.GC30656@x1>
+ <54BE87C4.4040108@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f44.google.com ([209.85.192.44]:50631 "EHLO
-	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751494AbbAVI30 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 03:29:26 -0500
-In-Reply-To: <1421667844-13627-2-git-send-email-l.majewski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54BE87C4.4040108@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Lukasz,
+On Tue, 20 Jan 2015, Javier Martinez Canillas wrote:
 
-On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> The exynos_map_dt_data() function must be called before
-> thermal_zone_of_sensor_register(), and hence provide tmu_read() function,
-> before it is needed.
->
-> This change is driven by adding support for enabling thermal_zoneX when
-> it is properly initialized.
->
-> One can read the mode of operation at /sys/class/thermal/thermal_zone0/mode
-> Such functionality was missing in the of-thermal.c code.
->
-> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 9d2d685..5d946ab 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -975,15 +975,16 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->         platform_set_drvdata(pdev, data);
->         mutex_init(&data->lock);
->
-> +       ret = exynos_map_dt_data(pdev);
-> +       if (ret)
-> +               goto err_sensor;
-> +
->         data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
->                                                     &exynos_sensor_ops);
->         if (IS_ERR(data->tzd)) {
->                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
->                 return PTR_ERR(data->tzd);
->         }
-> -       ret = exynos_map_dt_data(pdev);
-> -       if (ret)
-> -               goto err_sensor;
->
->         pdata = data->pdata;
+> Hello Lee,
+>=20
+> On 01/20/2015 05:34 PM, Lee Jones wrote:
+> >>=20
+> >> So, the Embedded Controller driver (drivers/mfd/cros_ec.c) falls i=
+nto that
+> >> category and in fact has been in the mfd driver for a long time. N=
+ow, if
+> >> an mfd device support different type of buses (e.g: i2c, spi, etc)=
+ I see
+> >> that both the core driver and the driver for the transport method =
+are
+> >> in the drivers/mfd directory. As an example:
+> >>=20
+> >> drivers/mfd/arizona-{core,i2c,spi}.c
+> >> drivers/mfd/da9052-{core,i2c,spi}.c
+> >> drivers/mfd/mc13xxx-{core,i2c,spi}.c
+> >> drivers/mfd/tps65912-{core,i2c,spi}.c
+> >> drivers/mfd/wm831x-{core,i2c,spi,otp}.c
+> >>=20
+> >> In the cros_ec case, we already have drivers/mfd/cros_ec_{i2c,spi}=
+=2Ec so
+> >> since the Low Pin Count is another transport method I thought that=
+ this
+> >> driver belonged to the drivers/mfd directory.
+> >>=20
+> >> Now, all those drivers may be wrong and the buses don't belong to =
+the mfd
+> >> subsystem but then I think we need to document that since it seems=
+ that is
+> >> the correct way to do it just by looking at the other drivers.
+> >=20
+> > I don't think the drivers you mentioned above do anything practical=
+=2E
+> > For instance, they are not SPI/IC2/etc drivers.  They should only
+> > offer some abstraction layers which are used to communicate with th=
+e
+> > device.  The driver you are submitting looks a lot more like a devi=
+ce
+> > driver, which should live somewhere else.  Don't ask me where thoug=
+h,
+> > I'm not even sure what a Low Pin Controller does.
+> >=20
+>=20
+> The driver added by $subject doesn't really do anything practical eit=
+her.
+> LPC [0] is just another transport method like i2c or spi that is used=
+ on
+> x86 Chromebooks to access the Embedded Controller.
 
-I have been testing this along with your v5 patch set and am seeing
-incorrect temperature being reported at boot-up on exynos7. It looks
-like exynos_tmu_read gets called from thermal_zone_of_device_update
-during boot-up, now that we have it populated early. However, as the
-tmu initialization function has not been called yet it returns a wrong
-value. Does that sound correct ?
+I'm not sure that's true.  It's pretty simple I grant you, but it
+still looks like a driver, rather than an abstraction layer.
 
-Regards,
-Abhilash
->
-> --
-> 2.0.0.rc2
->
+I would expect to see something more like:
+
+static int cros_ec_lpc_readmem(...)
+{
+	return call_to_driver_to_read_memory(...);
+=09
+}
+
+=2E.. instead of all those memory/register reads/writes.
+
+Are there any other Low Pin Count drivers in the kernel?
+
+> So the driver is really not that different than the cros_ec_{i2c,spi}=
+=2Ec
+> drivers.
+>=20
+> Best regards,
+> Javier
+>=20
+> [0]: http://en.wikipedia.org/wiki/Low_Pin_Count
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
