@@ -1,99 +1,56 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: [PATCH v3] ARM: dts: exynos5422-odroidxu3: add on-board INA231 sensors
-Date: Thu, 22 Jan 2015 13:54:28 -0800
-Message-ID: <1421963668-28359-1-git-send-email-khilman@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46960 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754297AbbAVVyb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 16:54:31 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH] drm/exynos: IOMMU support should not be selectable by user
+Date: Fri, 23 Jan 2015 00:19:26 +0100
+Message-ID: <54C1857E.30503@gmx.net>
+References: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-From: Kevin Hilman <khilman@linaro.org>
-
-The odroid-xu3 has 4 INA231 current sensors on board which can be
-accessed from the Linux via the hwmon interface.
-
-There is one sensor for each of these power rails:
-
-- A15 cluster: VDD_ARM
-- A7 cluster: VDD_KFC
-- GPU: VDD_G3D
-- memory: VDD_MEM
-
-In addition to adding the sensors, LDO26 from the PMIC needs to be
-enabled because it's powering these sensor.
-
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Kevin Hilman <khilman@linaro.org>
----
-v3: extend existing i2c_0 node 
-v2: use "ti,ina231" as compatible string.
-
-Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoerd Simons.
-
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index c29123c0734d..38694a4a5417 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -174,6 +174,13 @@
- 					regulator-always-on;
- 				};
- 
-+				ldo26_reg: LDO26 {
-+					regulator-name = "vdd_ldo26";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+				};
-+
- 				buck1_reg: BUCK1 {
- 					regulator-name = "vdd_mif";
- 					regulator-min-microvolt = <800000>;
-@@ -330,3 +337,35 @@
- &usbdrd_dwc3_1 {
- 	dr_mode = "otg";
- };
-+
-+&i2c_0 {
-+	status = "okay";
-+
-+	/* A15 cluster: VDD_ARM */
-+	ina231@40 {
-+		compatible = "ti,ina231";
-+		reg = <0x40>;
-+		shunt-resistor = <10000>;
-+	};
-+
-+	/* memory: VDD_MEM */
-+	ina231@41 {
-+		compatible = "ti,ina231";
-+		reg = <0x41>;
-+		shunt-resistor = <10000>;
-+	};
-+
-+	/* GPU: VDD_G3D */
-+	ina231@44 {
-+		compatible = "ti,ina231";
-+		reg = <0x44>;
-+		shunt-resistor = <10000>;
-+	};
-+
-+	/* A7 cluster: VDD_KFC */
-+	ina231@45 {
-+		compatible = "ti,ina231";
-+		reg = <0x45>;
-+		shunt-resistor = <10000>;
-+	};
-+};
--- 
-2.1.3
+SGVsbG8hCgpNYXJlayBTenlwcm93c2tpIHdyb3RlOgo+IElmIHN5c3RlbSBwcm92aWRlcyBJT01N
+VSBmZWF0dXJlLCBFeHlub3MgRFJNIHNob3VsZCB1c2UgaXQgYnkgZGVmYXVsdCwKPiBiZWNhdXNl
+IHRoZSBFeHlub3MgRFJNIHN1YmRyaXZlcnMgZG9uJ3Qgd29yayBjb3JyZWN0bHkgd2hlbiBFeHlu
+b3MgSU9NTVUKPiBkcml2ZXIgaGFzIGJlZW4gZW5hYmxlZCBhbmQgbm8gSU9NTVUgc3VwcG9ydCBo
+YXMgYmVlbiBjb21waWxlZCBpbnRvIEV4eW5vcwo+IERSTSBkcml2ZXIuCj4gCj4gU2lnbmVkLW9m
+Zi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgfCA1ICsrLS0tCj4gIDEgZmlsZSBjaGFu
+Z2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2Nv
+bmZpZwo+IGluZGV4IDdmOWY2ZjllOWI3ZS4uMzlmZTQ5MGVmY2Q0IDEwMDY0NAo+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvS2NvbmZpZwo+IEBAIC0xMywxMCArMTMsOSBAQCBjb25maWcgRFJNX0VYWU5PUwo+ICAJICBJ
+ZiBNIGlzIHNlbGVjdGVkIHRoZSBtb2R1bGUgd2lsbCBiZSBjYWxsZWQgZXh5bm9zZHJtLgo+ICAK
+PiAgY29uZmlnIERSTV9FWFlOT1NfSU9NTVUKPiAtCWJvb2wgIkVYWU5PUyBEUk0gSU9NTVUgU3Vw
+cG9ydCIKPiArCWJvb2wKPiAgCWRlcGVuZHMgb24gRFJNX0VYWU5PUyAmJiBFWFlOT1NfSU9NTVUg
+JiYgQVJNX0RNQV9VU0VfSU9NTVUKPiAtCWhlbHAKPiAtCSAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlm
+IHlvdSB3YW50IHRvIHVzZSBJT01NVSBmZWF0dXJlIGZvciBEUk0uCj4gKwlkZWZhdWx0IHkKPiAg
+Cj4gIGNvbmZpZyBEUk1fRVhZTk9TX0RNQUJVRgo+ICAJYm9vbCAiRVhZTk9TIERSTSBETUFCVUYi
+Cj4gCgpJIHRlc3RlZCBFeHlub3MgRFJNIHdpdGggdGhlIElPTU1VIGVuYWJsZWQgdG9kYXkgYW5k
+IGNvdWxkbid0IGZpbmQgYW55Cm9mIHRoZSBwcmV2aW91cyBpc3N1ZXMuCgpBIGZldyB0aGluZ3Mg
+dGhhdCBJIG5vdGljZWQgdGhvdWdoOgoKMSkgV2l0aG91dCB0aGUgSU9NTVUgSSBnZXQgdGhlc2Ug
+cG93ZXJkb21haW4gaW5mb3MgaW4gdGhlIGtlcm5lbCBsb2dzOgoibGNkMC1wb3dlci1kb21haW46
+IFBvd2VyLW9uIGxhdGVuY3kgZXhjZWVkZWQsIG5ldyB2YWx1ZSA0MTYxNjcgbnMiCiJ0di1wb3dl
+ci1kb21haW46IFBvd2VyLW9uIGxhdGVuY3kgZXhjZWVkZWQsIG5ldyB2YWx1ZSA0NTYxMjUgbnMi
+ClRoZXNlIGRvbid0IGFwcGVhciB3aXRoIHRoZSBJT01NVSwgc28gSSB3YXMgd29uZGVyaW5nIGlm
+IHRoZQpwb3dlcmRvbWFpbnMgYXJlIG5vdyBzdGF5aW5nIG9uIHRoZSB3aG9sZSB0aW1lPwoKMikg
+V2l0aCBFeHlub3MgRFJNIG5vdyBoYXZpbmcgYSBkZXBlbmRlbmN5IG9uIElPTU1VICh3aGVuIGl0
+IGlzCmVuYWJsZWQpLCBJIHdhcyB3b25kZXJpbmcgaWYgYW55dGhpbmcgbmVlZHMgdG8gYmUgZG9u
+ZSBmb3IgdGhlIG9sZAonczVwLXR2JyBkcml2ZXIgdG8gd29yayBwcm9wZXJseSBub3c/CgpXaXRo
+IGJlc3Qgd2lzaGVzLApUb2JpYXMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
