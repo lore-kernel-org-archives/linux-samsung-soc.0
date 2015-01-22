@@ -1,67 +1,255 @@
-From: Inha Song <ideal.song@samsung.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ARM: dts: Add sound nodes for
- exynos4412-trats2
-Date: Thu, 22 Jan 2015 10:18:40 +0900
-Message-ID: <20150122101840.24bd93a3@songinha-Samsung-DeskTop-System>
-References: <1421660902-29679-1-git-send-email-ideal.song@samsung.com>
- <1421660902-29679-4-git-send-email-ideal.song@samsung.com>
- <54BFD279.7080604@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/2] power: reset: add driver for Hardkernel's Odroid boards
+Date: Thu, 22 Jan 2015 10:33:39 +0900
+Message-ID: <54C05373.60308@samsung.com>
+References: <1414588409-8065-1-git-send-email-m.szyprowski@samsung.com>
+ <20150122010631.GL13715@earth.universe>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57442 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531AbbAVBSp (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62032 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752692AbbAVBdQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jan 2015 20:18:45 -0500
-In-reply-to: <54BFD279.7080604@samsung.com>
+	Wed, 21 Jan 2015 20:33:16 -0500
+In-reply-to: <20150122010631.GL13715@earth.universe>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org
+To: Sebastian Reichel <sre@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
 Hi,
-Thanks for your comments.
 
-On Wed, 21 Jan 2015 17:23:21 +0100
-Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-
+On 01/22/2015 10:06 AM, Sebastian Reichel wrote:
 > Hi,
 > 
-> On 19/01/15 10:48, Inha Song wrote:
-> > --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+> On Wed, Oct 29, 2014 at 02:13:28PM +0100, Marek Szyprowski wrote:
+>> This patch adds a driver implementing correct reboot and poweroff
+>> procedures for Exynos4412-based Hardkernel's Odroid X/X2/U2/U3/U3+
+>> boards.
 > 
-> > +	sound {
-> > +		compatible = "samsung,trats2-audio";
+> Sorry it took so long. I have a couple of small requests before
+> applying this (comments inline).
 > 
-> > +		assigned-clocks = <&pmu_system_controller 0>;
-> > +		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  .../bindings/power/reset/odroid-reset.txt          |  18 ++++
+>>  drivers/power/reset/Kconfig                        |   6 ++
+>>  drivers/power/reset/Makefile                       |   1 +
+>>  drivers/power/reset/odroid-reboot.c                | 119 +++++++++++++++++++++
+>>  4 files changed, 144 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/power/reset/odroid-reset.txt
+>>  create mode 100644 drivers/power/reset/odroid-reboot.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/power/reset/odroid-reset.txt b/Documentation/devicetree/bindings/power/reset/odroid-reset.txt
+>> new file mode 100644
+>> index 000000000000..86471a463518
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/power/reset/odroid-reset.txt
+>> @@ -0,0 +1,18 @@
+>> +* Device tree bindings for Hardkernel's Exynos4412 based Odroid boards
+>> +
+>> +This node is intended to allow proper system reboot and power off of
+>> +Odroid X/X2/U2/U3/U3+ boards with eMMC storage. Without this node, board
+>> +hangs during standard reset procedure.
+>> +
+>> +Required properties:
+>> +- compatible:			hardkernel,odroid-reboot
+>> +- samsung,pmureg-phandle:	phandle to Exynos PMU node
+>> +- reset-gpios:			phandle and gpio-specifier to the GPIO pin
+>> +				connected to the eMMC_nDET
+>> +
+>> +Example:
+>> +odroid_reboot {
+>> +	compatible = "hardkernel,odroid-reboot";
+>> +	samsung,pmureg-phandle = <&pmu_system_controller>;
+>> +	reset-gpio = <&gpk1 2 0>;
+>> +};
+>> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+>> index f65ff49bb275..f02b13d5344f 100644
+>> --- a/drivers/power/reset/Kconfig
+>> +++ b/drivers/power/reset/Kconfig
+>> @@ -84,6 +84,12 @@ config POWER_RESET_LTC2952
+>>  	  This driver supports an external powerdown trigger and board power
+>>  	  down via the LTC2952. Bindings are made in the device tree.
+>>  
+>> +config POWER_RESET_ODROID
+>> +	bool "Hardkernel's Exynos4412 based Odroid reboot driver"
+>> +	depends on POWER_RESET && ARCH_EXYNOS
 > 
-> How about putting these properties in the pmu_system_controller
-> node?  After all the mux clock being configured here belongs to
-> the PMU subsystem. Wouldn't it work that way ?
-OK, I will move assigned clock properties to pmu_system_controller DT node.
+> once the arm specific restart handler is gone you can add ||
+> COMPILE_TEST
+> 
+>> +	help
+>> +	  Power off and restart support for Odroid boards.
+>> +
+>>  config POWER_RESET_QNAP
+>>  	bool "QNAP power-off driver"
+>>  	depends on OF_GPIO && PLAT_ORION
+>> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+>> index 76ce1c59469b..178ee86eb813 100644
+>> --- a/drivers/power/reset/Makefile
+>> +++ b/drivers/power/reset/Makefile
+>> @@ -8,6 +8,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+>>  obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+>>  obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+>>  obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+>> +obj-$(CONFIG_POWER_RESET_ODROID) += odroid-reboot.o
+>>  obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+>>  obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+>>  obj-$(CONFIG_POWER_RESET_SUN6I) += sun6i-reboot.o
+>> diff --git a/drivers/power/reset/odroid-reboot.c b/drivers/power/reset/odroid-reboot.c
+>> new file mode 100644
+>> index 000000000000..823e93539220
+>> --- /dev/null
+>> +++ b/drivers/power/reset/odroid-reboot.c
+>> @@ -0,0 +1,119 @@
+>> +/*
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + */
+>> +
+>> +#include <linux/delay.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/io.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/reboot.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +#include <asm/system_misc.h>
+>> +
+>> +#define PS_HOLD_CONTROL	0x330C
+>> +
+>> +struct odroid_reboot_data {
+>> +	struct device *dev;
+>> +	int power_gpio;
+>> +	struct regmap *reg_pmu;
+>> +	void (*reboot_func)(enum reboot_mode mode, const char *cmd);
+>> +};
+>> +
+>> +static struct odroid_reboot_data *reboot_data;
+>> +
+>> +static void odroid_reboot(enum reboot_mode mode, const char *cmd)
+>> +{
+>> +	local_irq_disable();
+>> +
+>> +	gpio_set_value(reboot_data->power_gpio, 0);
+>> +	mdelay(150);
+>> +	gpio_set_value(reboot_data->power_gpio, 1);
+>> +
+>> +	reboot_data->reboot_func(mode, cmd);
+>> +
 
-Best Regards,
-Inha Song.
+It is called do_kernel_restart() if arm_pm_restart is NULL from
+machine_restart of arch/arm/kernel/process.c
 
+How about this?
+
+if (reboot_data->reboot_func)
+	reboot_data->reboot_func(mode, cmd);
+else
+	do_kernel_restart(cmd);
+
+>> +	pr_emerg("%s: waiting for reboot\n", __func__);
+>> +	while (1)
+>> +		;
+
+Then this endless loop is also unnecessary.
+
+Thanks.
+
+>> +}
+>> +
+>> +static void odroid_power_off(void)
+>> +{
+>> +	regmap_update_bits(reboot_data->reg_pmu, PS_HOLD_CONTROL, 0xffffffff, 0x5200);
+>> +	while (1) {
+>> +		pr_emerg("%s: should not reach here!\n", __func__);
+>> +		msleep(1000);
+>> +	}
+>> +}
+>> +
+>> +static struct odroid_reboot_data *odroid_reboot_parse_dt(struct device *dev)
+>> +{
+>> +	struct device_node *np = dev->of_node;
+>> +	struct odroid_reboot_data *data;
+>> +
+>> +	data = devm_kzalloc(dev, sizeof(struct odroid_reboot_data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return NULL;
+>> +
+>> +	data->power_gpio = of_get_named_gpio(np, "reset-gpios", 0);
+>> +	if (!gpio_is_valid(data->power_gpio)) {
+>> +		dev_err(dev, "invalid reset gpio pin\n");
+>> +		return NULL;
+>> +	}
+>> +	devm_gpio_request(dev, data->power_gpio, "reset");
 > 
-> > +		samsung,i2s-controller = <&i2s0>;
-> > +		samsung,model = "Trats2";
-> > +		samsung,audio-codec = <&wm1811>;
-> > +		samsung,audio-routing =
-> > +			"SPK", "SPKOUTLN",
-> > +			"SPK", "SPKOUTLP",
-> > +			"SPK", "SPKOUTRN",
-> > +			"SPK", "SPKOUTRP";
-> > +	};
+> please use gpiod interface.
 > 
-> -- 
-> Regards,
-> Sylwester
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+>> +
+>> +	data->reg_pmu = syscon_regmap_lookup_by_phandle(np,
+>> +						"samsung,pmureg-phandle");
+>> +	if (IS_ERR(data->reg_pmu)) {
+>> +		dev_err(dev, "failed to map PMU registers\n");
+>> +		return NULL;
+>> +	}
+>> +
+>> +	return data;
+>> +}
+>> +
+>> +static int odroid_reboot_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	if (pdev->dev.of_node)
+>> +		reboot_data = odroid_reboot_parse_dt(dev);
+>> +
+>> +	if (!reboot_data)
+>> +		return -EINVAL;
+>> +
+>> +	reboot_data->dev = &pdev->dev;
+>> +	reboot_data->reboot_func = arm_pm_restart;
+>> +
+>> +	/* grab reboot arm specific hook */
+>> +	arm_pm_restart = odroid_reboot;
+> 
+> please use register_restart_handler() and
+> unregister_restart_handler() in remove function.
+> 
+>> +	/* register power off function */
+>> +	pm_power_off = odroid_power_off;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct of_device_id odroid_reboot_of_match[] = {
+>> +	{ .compatible = "hardkernel,odroid-reboot", },
+>> +	{ },
+>> +};
+>> +
+>> +static struct platform_driver odroid_reboot_driver = {
+>> +	.probe		= odroid_reboot_probe,
+>> +	.driver		= {
+>> +		.name	= "odroid-reboot",
+>> +		.owner	= THIS_MODULE,
+> 
+> Please remove .owner line (not needed, will trigger a coccinelle
+> warning).
+> 
+>> +		.of_match_table = of_match_ptr(odroid_reboot_of_match),
+>> +	}
+>> +};
+>> +module_platform_driver(odroid_reboot_driver);
+> 
+> -- Sebastian
+> 
