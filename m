@@ -1,89 +1,109 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 RESEND 9/9] drm/exynos: add support for 'hdmi' clock
-Date: Thu, 22 Jan 2015 13:28:06 +0100
-Message-ID: <1421929686-19709-1-git-send-email-m.szyprowski@samsung.com>
-References: <54BE4F8E.50605@collabora.co.uk>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
+Date: Thu, 22 Jan 2015 18:02:07 +0530
+Message-ID: <CAM4voani1xcgRU3e11_pnYw4d7Yj=QOKun8g_DywmxDxOwEgRQ@mail.gmail.com>
+References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
+	<1421667844-13627-2-git-send-email-l.majewski@samsung.com>
+	<CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
+	<20150122100124.65e7a19e@amdc2363>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:14868 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750916AbbAVM2T (ORCPT
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:49452 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752180AbbAVMcI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 07:28:19 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NIK007SPW60AK10@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 Jan 2015 12:32:24 +0000 (GMT)
-In-reply-to: <54BE4F8E.50605@collabora.co.uk>
+	Thu, 22 Jan 2015 07:32:08 -0500
+In-Reply-To: <20150122100124.65e7a19e@amdc2363>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Mixed need to have hdmi clock enabled to properly perform power on/off
-sequences, so add handling of this clock directly to the mixer driver.
-Dependency between hdmi clock and mixer module has been observed on
-Exynos4 based boards.
+Hi Lukasz,
 
-Suggested-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- Documentation/devicetree/bindings/video/exynos_mixer.txt | 1 +
- drivers/gpu/drm/exynos/exynos_mixer.c                    | 9 +++++++++
- 2 files changed, 10 insertions(+)
+On Thu, Jan 22, 2015 at 2:31 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Hi Abhilash,
+>
+>> Hi Lukasz,
+>>
+>> On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski
+>> <l.majewski@samsung.com> wrote:
+>> > The exynos_map_dt_data() function must be called before
+>> > thermal_zone_of_sensor_register(), and hence provide tmu_read()
+>> > function, before it is needed.
+>> >
+>> > This change is driven by adding support for enabling thermal_zoneX
+>> > when it is properly initialized.
+>> >
+>> > One can read the mode of operation
+>> > at /sys/class/thermal/thermal_zone0/mode Such functionality was
+>> > missing in the of-thermal.c code.
+>> >
+>> > Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>> > ---
+>> >  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
+>> >  1 file changed, 4 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
+>> > b/drivers/thermal/samsung/exynos_tmu.c index 9d2d685..5d946ab 100644
+>> > --- a/drivers/thermal/samsung/exynos_tmu.c
+>> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> > @@ -975,15 +975,16 @@ static int exynos_tmu_probe(struct
+>> > platform_device *pdev) platform_set_drvdata(pdev, data);
+>> >         mutex_init(&data->lock);
+>> >
+>> > +       ret = exynos_map_dt_data(pdev);
+>> > +       if (ret)
+>> > +               goto err_sensor;
+>> > +
+>> >         data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0,
+>> > data, &exynos_sensor_ops);
+>> >         if (IS_ERR(data->tzd)) {
+>> >                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
+>> >                 return PTR_ERR(data->tzd);
+>> >         }
+>> > -       ret = exynos_map_dt_data(pdev);
+>> > -       if (ret)
+>> > -               goto err_sensor;
+>> >
+>> >         pdata = data->pdata;
+>>
+>> I have been testing this along with your v5 patch set and am seeing
+>> incorrect temperature being reported at boot-up on exynos7.
+>
+> Does it show a maximal temperature value (0x1FF)?
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-index 08b394b..3e38128 100644
---- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-@@ -15,6 +15,7 @@ Required properties:
- 	a) mixer: Gate of Mixer IP bus clock.
- 	b) sclk_hdmi: HDMI Special clock, one of the two possible inputs of
-                mixer mux.
-+	c) hdmi: Gate of HDMI IP bus clock, needed together with sclk_hdmi.
- 
- Example:
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 820b762..e5ef1fc 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -72,6 +72,7 @@ struct mixer_resources {
- 	spinlock_t		reg_slock;
- 	struct clk		*mixer;
- 	struct clk		*vp;
-+	struct clk		*hdmi;
- 	struct clk		*sclk_mixer;
- 	struct clk		*sclk_hdmi;
- 	struct clk		*mout_mixer;
-@@ -774,6 +775,12 @@ static int mixer_resources_init(struct mixer_context *mixer_ctx)
- 		return -ENODEV;
- 	}
- 
-+	mixer_res->hdmi = devm_clk_get(dev, "hdmi");
-+	if (IS_ERR(mixer_res->hdmi)) {
-+		dev_err(dev, "failed to get clock 'hdmi'\n");
-+		return -ENODEV;
-+	}
-+
- 	mixer_res->sclk_hdmi = devm_clk_get(dev, "sclk_hdmi");
- 	if (IS_ERR(mixer_res->sclk_hdmi)) {
- 		dev_err(dev, "failed to get clock 'sclk_hdmi'\n");
-@@ -1095,6 +1102,7 @@ static void mixer_poweron(struct exynos_drm_manager *mgr)
- 	pm_runtime_get_sync(ctx->dev);
- 
- 	clk_prepare_enable(res->mixer);
-+	clk_prepare_enable(res->hdmi);
- 	if (ctx->vp_enabled) {
- 		clk_prepare_enable(res->vp);
- 		if (ctx->has_sclk)
-@@ -1134,6 +1142,7 @@ static void mixer_poweroff(struct exynos_drm_manager *mgr)
- 	ctx->powered = false;
- 	mutex_unlock(&ctx->mixer_mutex);
- 
-+	clk_disable_unprepare(res->hdmi);
- 	clk_disable_unprepare(res->mixer);
- 	if (ctx->vp_enabled) {
- 		clk_disable_unprepare(res->vp);
--- 
-1.9.2
+I did not print the current temperature register, but I remember the
+message showing ~105C. Will give you the register value when I test
+with more debug prints tomorrow.
+
+>
+>>  It looks
+>> like exynos_tmu_read gets called from thermal_zone_of_device_update
+>> during boot-up, now that we have it populated early. However, as the
+>> tmu initialization function has not been called yet it returns a wrong
+>> value. Does that sound correct ?
+>
+> No, this is a mistake. However, I'm wondering why on Exynos4/5 this
+> error didn't show up...
+
+I have been lowering the software trip point temperature in the
+exynos7 dts file (to 55C) for testing purposes. Hence, when the
+temperature is read incorrectly as ~105C the board trips at boot-up
+itself. Maybe for exynos4/5 the incorrect value read during boot-up is
+in the non-tripping range and once the tmu is initialized later it
+continues to function properly thereafter ?
+
+>
+> The reordering is needed to be able to call set_mode callback at
+> of-thermal.c to set the mode.
+>
+> If this change causes problems, then another solution (probably not so
+> neat) must be found.
+
+Please let me know if you need any further details.
+
+Thanks,
+Abhilash
