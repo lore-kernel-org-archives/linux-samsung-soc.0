@@ -1,113 +1,57 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v3] ARM: dts: exynos5422-odroidxu3: add on-board INA231
- sensors
-Date: Fri, 23 Jan 2015 15:37:50 +0900
-Message-ID: <0b5701d036d7$1bdcad20$53960760$@kernel.org>
-References: <1421963668-28359-1-git-send-email-khilman@kernel.org>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: RE: [alsa-devel] [PATCH v3 3/4] ARM: dts: set clock out parent to
+ XUSBXTI
+Date: Fri, 23 Jan 2015 15:41:22 +0900
+Message-ID: <0b7f01d036d7$9a438850$ceca98f0$@kernel.org>
+References: <1421925482-15861-1-git-send-email-ideal.song@samsung.com>
+ <1421925482-15861-4-git-send-email-ideal.song@samsung.com>
+ <54C0EC23.9070209@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15265 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751009AbbAWGhx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 01:37:53 -0500
-In-reply-to: <1421963668-28359-1-git-send-email-khilman@kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <54C0EC23.9070209-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Inha Song' <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kevin Hilman' <khilman@kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Sjoerd Simons' <sjoerd.simons@collabora.co.uk>, 'Kevin Hilman' <khilman@linaro.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene@kernel.org>, "'open list:OPEN FIRMWARE AND...'" <devicetree@vger.kernel.org>, 'open list' <linux-kernel@vger.kernel.org>
 
-Kevin Hilman wrote:
+Sylwester Nawrocki wrote:
 > 
-> From: Kevin Hilman <khilman@linaro.org>
+> On 22/01/15 12:18, Inha Song wrote:
+> > This patch set clock out parent to XUSBXTI.
+> >
+> > Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > ---
+> >  arch/arm/boot/dts/exynos4.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> > index b8168f1..020bbaf 100644
+> > --- a/arch/arm/boot/dts/exynos4.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4.dtsi
+> > @@ -141,6 +141,8 @@
+> >  	pmu_system_controller: system-controller@10020000 {
+> >  		compatible = "samsung,exynos4210-pmu", "syscon";
+> >  		reg = <0x10020000 0x4000>;
+> > +		assigned-clocks = <&pmu_system_controller 0>;
+> > +		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
+> >  	};
 > 
-> The odroid-xu3 has 4 INA231 current sensors on board which can be
-> accessed from the Linux via the hwmon interface.
+> Looks good, except it needs to be done only for the Trats2 board, i.e.
+> the PMU device node including these properties should be added to
+> exynos4412-trats2.dts.  I think it's fine to make it a one patch including
+> all dts changes.
 > 
-> There is one sensor for each of these power rails:
-> 
-> - A15 cluster: VDD_ARM
-> - A7 cluster: VDD_KFC
-> - GPU: VDD_G3D
-> - memory: VDD_MEM
-> 
-> In addition to adding the sensors, LDO26 from the PMIC needs to be
-> enabled because it's powering these sensor.
-> 
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> Reviewed-By: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> Signed-off-by: Kevin Hilman <khilman@linaro.org>
-> ---
-> v3: extend existing i2c_0 node
-> v2: use "ti,ina231" as compatible string.
-> 
-> Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoerd Simons.
-> 
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index c29123c0734d..38694a4a5417 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -174,6 +174,13 @@
->  					regulator-always-on;
->  				};
-> 
-> +				ldo26_reg: LDO26 {
-> +					regulator-name = "vdd_ldo26";
-> +					regulator-min-microvolt = <3000000>;
-> +					regulator-max-microvolt = <3000000>;
-> +					regulator-always-on;
-> +				};
-> +
->  				buck1_reg: BUCK1 {
->  					regulator-name = "vdd_mif";
->  					regulator-min-microvolt = <800000>;
-> @@ -330,3 +337,35 @@
->  &usbdrd_dwc3_1 {
->  	dr_mode = "otg";
->  };
-> +
-> +&i2c_0 {
-> +	status = "okay";
-> +
-> +	/* A15 cluster: VDD_ARM */
-> +	ina231@40 {
-> +		compatible = "ti,ina231";
-> +		reg = <0x40>;
-> +		shunt-resistor = <10000>;
-> +	};
-> +
-> +	/* memory: VDD_MEM */
-> +	ina231@41 {
-> +		compatible = "ti,ina231";
-> +		reg = <0x41>;
-> +		shunt-resistor = <10000>;
-> +	};
-> +
-> +	/* GPU: VDD_G3D */
-> +	ina231@44 {
-> +		compatible = "ti,ina231";
-> +		reg = <0x44>;
-> +		shunt-resistor = <10000>;
-> +	};
-> +
-> +	/* A7 cluster: VDD_KFC */
-> +	ina231@45 {
-> +		compatible = "ti,ina231";
-> +		reg = <0x45>;
-> +		shunt-resistor = <10000>;
-> +	};
-> +};
-> --
-> 2.1.3
-
-OK, let me replace the applied patch with this in my tree.
+Yeah, I agree with Sylwester's suggestion. Please make a one patch for the
+updating DT for sound support and adding me in Cc for the change for relevant
+driver changes as well.
 
 Thanks,
 Kukjin
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
