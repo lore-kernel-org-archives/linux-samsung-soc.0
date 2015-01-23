@@ -1,32 +1,61 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v6 08/18] cpufreq: exynos: Use device tree to determine if
- cpufreq cooling should be registered
-Date: Fri, 23 Jan 2015 18:29:17 +0530
-Message-ID: <CAKohpok1EacvJ3PCOZYnz81D3=P04apRp7VOxPFE1QxYF4Wydg@mail.gmail.com>
-References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
-	<1422015260-14225-1-git-send-email-l.majewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4 0/2] serial: samsung: add support for early console
+Date: Fri, 23 Jan 2015 14:47:40 +0100
+Message-ID: <1422020862-10169-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57875 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752778AbbAWNrt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Jan 2015 08:47:49 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>
 
-On 23 January 2015 at 17:44, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> +       cpus = of_find_node_by_path("/cpus");
-> +       if (!cpus) {
-> +               pr_err("failed to find cpus node\n");
-> +               return 0;
-> +       }
-> +
-> +       np = of_get_next_child(cpus, NULL);
-> +       if (!np) {
-> +               pr_err("failed to find cpus child node\n");
-> +               of_node_put(cpus);
->                 return 0;
-> +       }
+This patchset adds support for early console defined in device tree. As
+an example, DTS files for all Exynos4 based machines are updated with
+the correct value for common chosen/sdtout property.
 
-Why making it complex? Just get device node for cpu 0 and
-do cpu_dev->np.
+To get it fully functional on ARM architecture, additional improvements
+(support for early_ioremap) are needed in early console code.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Changelog:
+
+v4:
+- added 'tested-by' tags, resend
+
+v3: http://www.spinics.net/lists/linux-samsung-soc/msg37922.html
+- rebased onto v3.18-rc1
+- removed options from documentation (they are not yet supported)
+
+v2: http://www.spinics.net/lists/linux-samsung-soc/msg37278.html
+- added support for command line based initialization
+
+v1: http://www.spinics.net/lists/linux-samsung-soc/msg37094.html
+- initial version
+
+Tomasz Figa (2):
+  serial: samsung: Add support for early console
+  ARM: dts: exynos4: Add stdout-path properties
+
+ Documentation/kernel-parameters.txt             |  12 +++
+ arch/arm/boot/dts/exynos4210-origen.dts         |   1 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |   1 +
+ arch/arm/boot/dts/exynos4210-trats.dts          |   1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |   1 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+ arch/arm/boot/dts/exynos4412-origen.dts         |   1 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |   1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |   4 +
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   1 +
+ drivers/tty/serial/Kconfig                      |   1 +
+ drivers/tty/serial/samsung.c                    | 103 ++++++++++++++++++++++++
+ 12 files changed, 131 insertions(+)
+
+-- 
+1.9.2
