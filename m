@@ -1,95 +1,282 @@
-From: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [alsa-devel] [PATCH v4 3/3] ARM: dts: Add sound nodes for
- exynos4412-trats2
-Date: Fri, 23 Jan 2015 14:03:30 +0900
-Message-ID: <1421989410-12490-4-git-send-email-ideal.song@samsung.com>
+From: Inha Song <ideal.song@samsung.com>
+Subject: [alsa-devel] [PATCH v4 1/3] ASoC: samsung: Add machine driver for
+ Trats2
+Date: Fri, 23 Jan 2015 14:03:28 +0900
+Message-ID: <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
 References: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1421989410-12490-1-git-send-email-ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:11979 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753333AbbAWFDv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Jan 2015 00:03:51 -0500
+In-reply-to: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: alsa-devel@alsa-project.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, s.nawrocki@samsung.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, kgene@kernel.org, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, ideal.song@samsung.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This patch add WM1811 audio codec, I2S interface and the sound
-machine nodes to enable audio on exynos4412-trats2 board.
+This patch add the sound machine driver for Trats2 board.
+The codec operate in master mode.
 
-Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Inha Song <ideal.song@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 42 +++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ sound/soc/samsung/Kconfig         |   9 ++
+ sound/soc/samsung/Makefile        |   2 +
+ sound/soc/samsung/trats2_wm1811.c | 211 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 222 insertions(+)
+ create mode 100644 sound/soc/samsung/trats2_wm1811.c
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 29231b4..6205b98 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -203,6 +203,25 @@
- 		};
- 	};
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index fc67f97..df6734d 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -245,3 +245,12 @@ config SND_SOC_ARNDALE_RT5631_ALC5631
+         depends on SND_SOC_SAMSUNG
+         select SND_SAMSUNG_I2S
+         select SND_SOC_RT5631
++
++config SND_SOC_SAMSUNG_TRATS2_WM1811
++	tristate "SoC I2S Audio support for WM1811 on Tizen Trats2 board"
++	depends on SND_SOC_SAMSUNG
++	select SND_SAMSUNG_I2S
++	select MFD_WM8994
++	select SND_SOC_WM8994
++	help
++	  Say Y if you want to add support for SoC audio on the Tizen Trats2 board.
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 31e3dba..e2b7b1b 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -46,6 +46,7 @@ snd-soc-littlemill-objs := littlemill.o
+ snd-soc-bells-objs := bells.o
+ snd-soc-odroidx2-max98090-objs := odroidx2_max98090.o
+ snd-soc-arndale-rt5631-objs := arndale_rt5631.o
++snd-soc-trats2-wm1811-objs := trats2_wm1811.o
  
-+	i2c@138A0000 {
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-slave-addr = <0x10>;
-+		samsung,i2c-max-bus-freq = <100000>;
-+		pinctrl-0 = <&i2c4_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
+ obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
+@@ -73,3 +74,4 @@ obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
+ obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
+ obj-$(CONFIG_SND_SOC_ODROIDX2) += snd-soc-odroidx2-max98090.o
+ obj-$(CONFIG_SND_SOC_ARNDALE_RT5631_ALC5631) += snd-soc-arndale-rt5631.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_TRATS2_WM1811) += snd-soc-trats2-wm1811.o
+diff --git a/sound/soc/samsung/trats2_wm1811.c b/sound/soc/samsung/trats2_wm1811.c
+new file mode 100644
+index 0000000..e87ea1f
+--- /dev/null
++++ b/sound/soc/samsung/trats2_wm1811.c
+@@ -0,0 +1,211 @@
++/*
++ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
 +
-+		wm1811: wm1811@1a {
-+			compatible = "wlf,wm1811";
-+			reg = <0x1a>;
-+			clocks = <&pmu_system_controller 0>;
-+			clock-names = "MCLK1";
-+			DCVDD-supply = <&ldo3_reg>;
-+			DBVDD1-supply = <&ldo3_reg>;
-+			wlf,ldo1ena = <&gpj0 4 0>;
-+		};
-+	};
++#include <linux/of.h>
++#include <linux/module.h>
++#include <linux/clk.h>
++#include <sound/soc.h>
++#include <sound/pcm_params.h>
++#include "i2s.h"
++#include "../codecs/wm8994.h"
 +
- 	i2c@138D0000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-slave-addr = <0x10>;
-@@ -838,6 +857,24 @@
- 		};
- 	};
- 
-+	i2s0: i2s@03830000 {
-+		pinctrl-0 = <&i2s0_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
-+
-+	sound {
-+		compatible = "samsung,trats2-audio";
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,model = "Trats2";
-+		samsung,audio-codec = <&wm1811>;
-+		samsung,audio-routing =
-+			"SPK", "SPKOUTLN",
-+			"SPK", "SPKOUTLP",
-+			"SPK", "SPKOUTRN",
-+			"SPK", "SPKOUTRP";
-+	};
-+
- 	exynos-usbphy@125B0000 {
- 		status = "okay";
- 	};
-@@ -865,6 +902,11 @@
- 	};
- };
- 
-+&pmu_system_controller {
-+	assigned-clocks = <&pmu_system_controller 0>;
-+	assigned-clock-parents =  <&clock CLK_XUSBXTI>;
++struct trats2_machine_priv {
++	struct clk *clk_mclk;
 +};
 +
- &pinctrl_0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep0>;
++static struct trats2_machine_priv trats2_wm1811_priv;
++
++static const struct snd_kcontrol_new trats2_controls[] = {
++	SOC_DAPM_PIN_SWITCH("SPK"),
++};
++
++static const struct snd_soc_dapm_widget trats2_dapm_widgets[] = {
++	SND_SOC_DAPM_SPK("SPK", NULL),
++};
++
++static int trats2_aif1_hw_params(struct snd_pcm_substream *substream,
++				 struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(rtd->card);
++	unsigned int sysclk_rate;
++	unsigned int mclk_rate =
++			(unsigned int)clk_get_rate(priv->clk_mclk);
++	int ret;
++
++	/* SYSCLK must be greater than 4.096MHz */
++	if (params_rate(params) == 8000 || params_rate(params) == 11025)
++		sysclk_rate = params_rate(params) * 512;
++	else
++		sysclk_rate = params_rate(params) * 256;
++
++	/* Set the codec FLL1 */
++	ret = snd_soc_dai_set_pll(codec_dai, WM8994_FLL1, WM8994_FLL_SRC_MCLK1,
++				  mclk_rate, sysclk_rate);
++	if (ret < 0) {
++		dev_err(codec_dai->dev, "Failed to set FLL1: %d\n", ret);
++		return ret;
++	}
++
++	/* Set the codec SYSCLK */
++	ret = snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_FLL1,
++				     sysclk_rate, SND_SOC_CLOCK_IN);
++	if (ret < 0) {
++		dev_err(codec_dai->dev, "Failed to set SYSCLK: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int trats2_aif1_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(rtd->card);
++	int ret;
++
++	ret = clk_prepare_enable(priv->clk_mclk);
++	if (ret) {
++		dev_err(rtd->card->dev, "Failed to enable mclk: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static void trats2_aif1_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(rtd->card);
++
++	clk_disable_unprepare(priv->clk_mclk);
++}
++
++static const struct snd_soc_ops trats2_aif1_ops = {
++	.startup = trats2_aif1_startup,
++	.shutdown = trats2_aif1_shutdown,
++	.hw_params = trats2_aif1_hw_params,
++};
++
++static struct snd_soc_dai_link trats2_dai[] = {
++	{
++		.name		= "WM1811 AIF1",
++		.stream_name	= "HiFi Primary",
++		.codec_dai_name = "wm8994-aif1",
++		.codec_name	= "wm8994-codec",
++		.ops		= &trats2_aif1_ops,
++		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
++				  SND_SOC_DAIFMT_CBM_CFM,
++	},
++};
++
++static struct snd_soc_card trats2_card = {
++	.owner			= THIS_MODULE,
++
++	.dai_link		= trats2_dai,
++	.num_links		= ARRAY_SIZE(trats2_dai),
++
++	.controls		= trats2_controls,
++	.num_controls		= ARRAY_SIZE(trats2_controls),
++	.dapm_widgets		= trats2_dapm_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(trats2_dapm_widgets),
++
++	.drvdata		= &trats2_wm1811_priv,
++};
++
++static int trats2_audio_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct snd_soc_card *card = &trats2_card;
++	struct device_node *codec_node;
++	struct snd_soc_dai_link *dai_link = card->dai_link;
++	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++	int ret;
++
++	card->dev = &pdev->dev;
++
++	ret = snd_soc_of_parse_card_name(card, "samsung,model");
++	if (ret) {
++		dev_err(&pdev->dev, "Card name is not provided\n");
++		return ret;
++	}
++
++	ret = snd_soc_of_parse_audio_routing(card, "samsung,audio-routing");
++	if (ret) {
++		dev_err(&pdev->dev, "Audio routing is not provided\n");
++		return ret;
++	}
++
++	dai_link->cpu_of_node = of_parse_phandle(np,
++						 "samsung,i2s-controller", 0);
++	if (dai_link->cpu_of_node == NULL) {
++		dev_err(&pdev->dev, "i2s-controller property parse error\n");
++		return -EINVAL;
++	}
++
++	dai_link->platform_of_node = dai_link->cpu_of_node;
++
++	codec_node = of_parse_phandle(np, "samsung,audio-codec", 0);
++	if (codec_node == NULL) {
++		dev_err(&pdev->dev, "audio-codec property parse error\n");
++		return -EINVAL;
++	}
++
++	priv->clk_mclk =  of_clk_get_by_name(codec_node, "MCLK1");
++	if (IS_ERR(priv->clk_mclk)) {
++		dev_err(&pdev->dev, "Failed to get mclk clock\n");
++		of_node_put(codec_node);
++		return PTR_ERR(priv->clk_mclk);
++	}
++	of_node_put(codec_node);
++
++	ret = devm_snd_soc_register_card(&pdev->dev, card);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to register card: %d\n", ret);
++		goto clk_put;
++	}
++	return 0;
++
++clk_put:
++	clk_put(priv->clk_mclk);
++	return ret;
++}
++
++static int trats2_audio_remove(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = platform_get_drvdata(pdev);
++	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(card);
++
++	clk_put(priv->clk_mclk);
++
++	return 0;
++}
++
++static const struct of_device_id trats2_audio_of_match[] = {
++	{ .compatible	= "samsung,trats2-audio", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, trats2_audio_of_match);
++
++static struct platform_driver trats2_audio_driver = {
++	.driver = {
++		.name		= "trats2-audio",
++		.pm		= &snd_soc_pm_ops,
++		.of_match_table	= trats2_audio_of_match,
++	},
++	.probe	= trats2_audio_probe,
++	.remove	= trats2_audio_remove,
++};
++
++module_platform_driver(trats2_audio_driver);
++
++MODULE_AUTHOR("Inha Song <ideal.song@samsung.com>");
++MODULE_DESCRIPTION("ALSA SoC Trats2 Audio Support");
++MODULE_LICENSE("GPL v2");
 -- 
 2.0.0.390.gcb682f8
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
