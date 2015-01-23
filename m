@@ -1,168 +1,173 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use
- device tree
-Date: Fri, 23 Jan 2015 20:00:07 +0900
-Message-ID: <0e1401d036fb$c00a3510$401e9f30$@kernel.org>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
- <0dad01d036e0$2f376c80$8da64580$@kernel.org> <20150123105944.457d6d07@amdc2363>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] power: reset: add driver for Hardkernel's Odroid boards
+Date: Fri, 23 Jan 2015 12:11:22 +0100
+Message-ID: <54C22C5A.9050701@samsung.com>
+References: <1414588409-8065-1-git-send-email-m.szyprowski@samsung.com>
+ <20150122010631.GL13715@earth.universe> <54C05373.60308@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150123105944.457d6d07@amdc2363>
-Content-language: ko
+In-reply-to: <54C05373.60308@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: 'Lukasz Majewski' <l.majewski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Eduardo Valentin' <edubezval@gmail.com>, 'Zhang Rui' <rui.zhang@intel.com>, 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Lukasz Majewski wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
+Hello,
 
-> > Lukasz Majewski wrote:
-> > >
-> > Hi,
-> >
-> > > 1. Introduction
-> > >
-> > > Following patches aim to clean up the current implementation of the
-> > > thermal framework on Exynos devices.
-> > >
-> > > The main goal was to use a generic code for reading thermal
-> > > configuration (of-thermal.c). Due to that redundant
-> > > exynos_thermal_common.[h|c] files were removed.
-> > >
-> > > Around 400 lines of code (LOC) were removed directly by this patch,
-> > > which is around 20% of the Exynos thermal code base.
-> > >
-> > > This work should NOT bring any functional changes to Exynos thermal
-> > > subsystem.
-> > >
-> > Sounds great to use generic some framework in kernel.
-> >
-> > > 2. Patch-set structure
-> > >
-> > > Then the cpu_cooling functionality has been preserved to allow
-> > > cooling devices by reducing operating frequency. Definition of trip
-> > > points and cpufreq's cooling properties were moved to device tree.
-> > >
-> > > Then the rework of the way in which configuration data is provided
-> > > to the Exynos thermal subsystem was performed. Now device tree is
-> > > used for configuration.
-> > >
-> > > 3. Dead code removal
-> > >
-> > > Thermal support for some SoCs, previously available in the
-> > > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc3,
-> > > they didn't have TMU bindings.
-> > >
-> > > Moreover, support for cpu_cooling devices was preserved only on
-> > > those SoCs which had available and working cpufreq driver.
-> > >
-> > > 4. Testing
-> > >
-> > > Test devices:
-> > > - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> > > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> > > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> > > - Exynos5420 - Arndale-octa (only TMU zones)
-> > >
-> > Thanks for your check on the boards...
-> >
-> > > Unfortunately, I don't posses Exynos5440 for testing. Its
-> > > functionality has been preserved in the code, but not tested on the
-> > > hardware. I would be grateful for help in testing.
-> > >
-> > I think, Amit can do it on exynos5440 ;)
-> >
-> > >
-> > > 5. This work apply on the following tree:
-> > >
-> > > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> > > SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
-> > >
-> > >
-> > > Lukasz Majewski (17):
-> > >   thermal: exynos: cosmetic: Correct comment format
-> > >   thermal: exynos: Provide thermal_exynos.h file to be included in
-> > >     device tree files
-> > >   arm: dts: trats: Enable TMU on the Exynos4210 trats device
-> > >   arm: dts: odroid: Add LD010 regulator node necessary for TMU on
-> > > Odroid arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3
-> > > device arm: dts: Adding CPU cooling binding for Exynos SoCs
-> > >   thermal: exynos: Modify exynos thermal code to use device tree
-> > > for cpu cooling configuration
-> > >   thermal: exynos: dts: Add default definition of the TMU sensor
-> > >     parameter
-> > >   dts: Documentation: Extending documentation entry for
-> > > exynos-thermal thermal: dts: Default trip points definition for
-> > > Exynos5420 SoCs thermal: exynos: dts: Define default thermal-zones
-> > > for Exynos4 thermal: dts: exynos: Trip points and sensor
-> > > configuration data for Exynos5440
-> > >   dts: Documentation: Update exynos-thermal.txt example for
-> > > Exynos5440 thermal: exynos: dts: Provide device tree bindings
-> > > identical to the one in exynos_tmu_data.c
-> > >   thermal: samsung: core: Exynos TMU rework to use device tree for
-> > >     configuration
-> > >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
-> > >   thermal: exynos: Remove exynos_tmu_data.c file
-> > >
-> > >  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
-> > >  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
-> > >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
-> > >  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
-> > >  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
-> > >  arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
-> > >  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
-> > >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
-> > >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
-> > >  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
-> > >  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
-> > >  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
-> > >  arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
-> > >  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
-> > >  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
-> > >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
-> > >  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
-> > >  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
-> > >  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
-> > >  drivers/thermal/samsung/Makefile                   |   2 -
-> > >  drivers/thermal/samsung/exynos_thermal_common.c    | 427
-> > > ---------------------
-> > > drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
-> > > drivers/thermal/samsung/exynos_tmu.c               | 354
-> > > +++++++++++------
-> > > drivers/thermal/samsung/exynos_tmu.h               |  68 +---
-> > > drivers/thermal/samsung/exynos_tmu_data.c          | 264
-> > > ------------- include/dt-bindings/thermal/thermal_exynos.h       |
-> > > 28 ++ 26 files changed, 638 insertions(+), 1001 deletions(-) create
-> > > mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi create mode
-> > > 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create
-> > > mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create
-> > > mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-> > > create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
-> > > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
-> > > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
-> > > delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c create
-> > > mode 100644 include/dt-bindings/thermal/thermal_exynos.h
-> > >
-> > > --
-> >
-> > I hope will apply DT changes in Samsung tree. Is it OK to thermal
-> > tree?
-> 
-> I think that it is up to you and Eduardo to decide :-).
-> 
-> I'd personally prefer to add this patch set at once to Eduardo's tree
-> (of course with your ACKs).
-> 
-If so, we could see too many useless merge conflicts. Because your patches
-touch most of exynos DT stuff and that's why DT changes should be handled in
-Samsung tree if there is no problem ;) Let's wait for thermal guys.
+On 2015-01-22 02:33, Joonyoung Shim wrote:
+> On 01/22/2015 10:06 AM, Sebastian Reichel wrote:
+>> On Wed, Oct 29, 2014 at 02:13:28PM +0100, Marek Szyprowski wrote:
+>>> This patch adds a driver implementing correct reboot and poweroff
+>>> procedures for Exynos4412-based Hardkernel's Odroid X/X2/U2/U3/U3+
+>>> boards.
+>> Sorry it took so long. I have a couple of small requests before
+>> applying this (comments inline).
+>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>   .../bindings/power/reset/odroid-reset.txt          |  18 ++++
+>>>   drivers/power/reset/Kconfig                        |   6 ++
+>>>   drivers/power/reset/Makefile                       |   1 +
+>>>   drivers/power/reset/odroid-reboot.c                | 119 +++++++++++++++++++++
+>>>   4 files changed, 144 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/power/reset/odroid-reset.txt
+>>>   create mode 100644 drivers/power/reset/odroid-reboot.c
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/power/reset/odroid-reset.txt b/Documentation/devicetree/bindings/power/reset/odroid-reset.txt
+>>> new file mode 100644
+>>> index 000000000000..86471a463518
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/power/reset/odroid-reset.txt
+>>> @@ -0,0 +1,18 @@
+>>> +* Device tree bindings for Hardkernel's Exynos4412 based Odroid boards
+>>> +
+>>> +This node is intended to allow proper system reboot and power off of
+>>> +Odroid X/X2/U2/U3/U3+ boards with eMMC storage. Without this node, board
+>>> +hangs during standard reset procedure.
+>>> +
+>>> +Required properties:
+>>> +- compatible:			hardkernel,odroid-reboot
+>>> +- samsung,pmureg-phandle:	phandle to Exynos PMU node
+>>> +- reset-gpios:			phandle and gpio-specifier to the GPIO pin
+>>> +				connected to the eMMC_nDET
+>>> +
+>>> +Example:
+>>> +odroid_reboot {
+>>> +	compatible = "hardkernel,odroid-reboot";
+>>> +	samsung,pmureg-phandle = <&pmu_system_controller>;
+>>> +	reset-gpio = <&gpk1 2 0>;
+>>> +};
+>>> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+>>> index f65ff49bb275..f02b13d5344f 100644
+>>> --- a/drivers/power/reset/Kconfig
+>>> +++ b/drivers/power/reset/Kconfig
+>>> @@ -84,6 +84,12 @@ config POWER_RESET_LTC2952
+>>>   	  This driver supports an external powerdown trigger and board power
+>>>   	  down via the LTC2952. Bindings are made in the device tree.
+>>>   
+>>> +config POWER_RESET_ODROID
+>>> +	bool "Hardkernel's Exynos4412 based Odroid reboot driver"
+>>> +	depends on POWER_RESET && ARCH_EXYNOS
+>> once the arm specific restart handler is gone you can add ||
+>> COMPILE_TEST
+>>
+>>> +	help
+>>> +	  Power off and restart support for Odroid boards.
+>>> +
+>>>   config POWER_RESET_QNAP
+>>>   	bool "QNAP power-off driver"
+>>>   	depends on OF_GPIO && PLAT_ORION
+>>> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+>>> index 76ce1c59469b..178ee86eb813 100644
+>>> --- a/drivers/power/reset/Makefile
+>>> +++ b/drivers/power/reset/Makefile
+>>> @@ -8,6 +8,7 @@ obj-$(CONFIG_POWER_RESET_GPIO_RESTART) += gpio-restart.o
+>>>   obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+>>>   obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+>>>   obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+>>> +obj-$(CONFIG_POWER_RESET_ODROID) += odroid-reboot.o
+>>>   obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+>>>   obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
+>>>   obj-$(CONFIG_POWER_RESET_SUN6I) += sun6i-reboot.o
+>>> diff --git a/drivers/power/reset/odroid-reboot.c b/drivers/power/reset/odroid-reboot.c
+>>> new file mode 100644
+>>> index 000000000000..823e93539220
+>>> --- /dev/null
+>>> +++ b/drivers/power/reset/odroid-reboot.c
+>>> @@ -0,0 +1,119 @@
+>>> +/*
+>>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>> + *		http://www.samsung.com
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + */
+>>> +
+>>> +#include <linux/delay.h>
+>>> +#include <linux/gpio.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/mfd/syscon.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of_platform.h>
+>>> +#include <linux/of_gpio.h>
+>>> +#include <linux/reboot.h>
+>>> +#include <linux/regmap.h>
+>>> +
+>>> +#include <asm/system_misc.h>
+>>> +
+>>> +#define PS_HOLD_CONTROL	0x330C
+>>> +
+>>> +struct odroid_reboot_data {
+>>> +	struct device *dev;
+>>> +	int power_gpio;
+>>> +	struct regmap *reg_pmu;
+>>> +	void (*reboot_func)(enum reboot_mode mode, const char *cmd);
+>>> +};
+>>> +
+>>> +static struct odroid_reboot_data *reboot_data;
+>>> +
+>>> +static void odroid_reboot(enum reboot_mode mode, const char *cmd)
+>>> +{
+>>> +	local_irq_disable();
+>>> +
+>>> +	gpio_set_value(reboot_data->power_gpio, 0);
+>>> +	mdelay(150);
+>>> +	gpio_set_value(reboot_data->power_gpio, 1);
+>>> +
+>>> +	reboot_data->reboot_func(mode, cmd);
+>>> +
+> It is called do_kernel_restart() if arm_pm_restart is NULL from
+> machine_restart of arch/arm/kernel/process.c
+>
+> How about this?
+>
+> if (reboot_data->reboot_func)
+> 	reboot_data->reboot_func(mode, cmd);
+> else
+> 	do_kernel_restart(cmd);
 
-- Kukjin
+Frankly, I analyzed this case once again and I came to conclusion that there
+is no need to make a separate reset driver for Odroid boards. There is 
+nothing
+special, specific to whole board about this gpio. It is rather a property of
+MMC host controller and eMMC card that is connected to it. When only gpio
+toggling code is moved to reset handler registered from mmc controller, the
+board properly performs reboot with a generic exynos4 code. The poweroff 
+code
+in above driver is just a generic Exynos4 code, so again there is no need to
+duplicate it.
+
+By moving the code to mmc driver, the same approach can be used for other
+Odroid boards (XU/XU3) and maybe even other boards which need manual 
+resetting
+of eMMC cards to properly perform reboot procedure.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
