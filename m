@@ -1,62 +1,44 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 16/18] iommu: exynos: remove excessive includes and sort
- others alphabetically
-Date: Fri, 23 Jan 2015 16:51:26 +0100
-Message-ID: <1422028288-891-17-git-send-email-m.szyprowski@samsung.com>
-References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] ARM: dts: Add sd0_rst pinctrl node to exynos5420
+Date: Fri, 23 Jan 2015 16:59:24 +0100
+Message-ID: <CABxcv=kARp8xLYCqf8dfdKd9ehs1u=qTEjkn1iujhN77ZjPdTA@mail.gmail.com>
+References: <1422023038-11842-1-git-send-email-jh80.chung@samsung.com>
+	<CABxcv=mJhHTBKes38+6kHi5o3RmBHHN6sVqBUDRc-YyNvkdESQ@mail.gmail.com>
+	<1422028075.15395.92.camel@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:62078 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754615AbbAWPwM (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:35791 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753722AbbAWP7Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 10:52:12 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NIN00FRE09Q4P10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Jan 2015 15:56:14 +0000 (GMT)
-In-reply-to: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+	Fri, 23 Jan 2015 10:59:25 -0500
+Received: by mail-we0-f174.google.com with SMTP id x3so8377329wes.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Jan 2015 07:59:24 -0800 (PST)
+In-Reply-To: <1422028075.15395.92.camel@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Removed following unused includes: <linux/mm.h>, <linux/errno.h>,
-<linux/memblock.h> and <linux/export.h>.
+Hello Sjoerd,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/iommu/exynos-iommu.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+On Fri, Jan 23, 2015 at 4:47 PM, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+>>
+>> If this pin is used by the Odroid XU3 board, shouldn't be defined in
+>> the exynos5422-odroidxu3.dts instead?
+>
+> It's not just used by the XU3 though, it's also hooked up on the peach
+> pi chromebook for example and i would expect it to be hooked up on most
+> board with an eMMC
+>
+> This change is consistent with most of the special purpose GPIO pins
+> defined in that file, so i don't see the problem with including it in
+> that pinctrl file
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index ef71725..c53cc8f 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -12,19 +12,15 @@
- #define DEBUG
- #endif
- 
--#include <linux/io.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/pm_runtime.h>
- #include <linux/clk.h>
- #include <linux/err.h>
--#include <linux/mm.h>
-+#include <linux/io.h>
- #include <linux/iommu.h>
--#include <linux/errno.h>
-+#include <linux/interrupt.h>
- #include <linux/list.h>
--#include <linux/memblock.h>
--#include <linux/export.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/slab.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/pgtable.h>
--- 
-1.9.2
+In that case I completely agree that it should be defined in the .dtsi
+but that is not what the commit message said though :-)
+
+Best regards,
+Javier
