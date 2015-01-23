@@ -1,113 +1,100 @@
-From: Inha Song <ideal.song@samsung.com>
-Subject: Re: [alsa-devel] [PATCH v4 3/3] ARM: dts: Add sound nodes for
- exynos4412-trats2
-Date: Fri, 23 Jan 2015 15:56:49 +0900
-Message-ID: <20150123155649.14fe36a7@songinha-Samsung-DeskTop-System>
-References: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
- <1421989410-12490-4-git-send-email-ideal.song@samsung.com>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: RE: [PATCH V9 13/14] ARM: dts: snow: represent the connection between
+ bridge and panel using videoport and endpoints
+Date: Fri, 23 Jan 2015 16:01:41 +0900
+Message-ID: <0c9401d036da$71046bf0$530d43d0$@kernel.org>
+References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1421771935-31618-14-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39337 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752017AbbAWG4x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 01:56:53 -0500
-In-reply-to: <1421989410-12490-4-git-send-email-ideal.song@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1421771935-31618-14-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-language: ko
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Ajay Kumar' <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: Inha Song <ideal.song@samsung.com>, alsa-devel@alsa-project.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>
 
-Hi Kukjin,
-
-Sorry, I missed to adding in Cc.
-
-Best Regards,
-Inha Song.
-
-On Fri, 23 Jan 2015 14:03:30 +0900
-Inha Song <ideal.song@samsung.com> wrote:
-
-> This patch add WM1811 audio codec, I2S interface and the sound
-> machine nodes to enable audio on exynos4412-trats2 board.
+Ajay Kumar wrote:
 > 
-> Signed-off-by: Inha Song <ideal.song@samsung.com>
+> Define videoports and use endpoints to describe the connection between
+> the encoder, bridge and the panel, instead of using phandles.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+> Tested-by: Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+> Tested-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 > ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 42 +++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
+>  arch/arm/boot/dts/exynos5250-snow.dts |   30 ++++++++++++++++++++++++++++--
+>  1 file changed, 28 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index 29231b4..6205b98 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -203,6 +203,25 @@
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index b9aeec4..1bd5d3a 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -183,7 +183,20 @@
+>  			powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
+>  			reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
+>  			edid-emulation = <5>;
+> -			panel = <&panel>;
+> +
+> +			ports {
+> +				port@0 {
+> +					bridge_out: endpoint {
+> +						remote-endpoint = <&panel_in>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					bridge_in: endpoint {
+> +						remote-endpoint = <&dp_out>;
+> +					};
+> +				};
+> +			};
 >  		};
 >  	};
->  
-> +	i2c@138A0000 {
-> +		samsung,i2c-sda-delay = <100>;
-> +		samsung,i2c-slave-addr = <0x10>;
-> +		samsung,i2c-max-bus-freq = <100000>;
-> +		pinctrl-0 = <&i2c4_bus>;
-> +		pinctrl-names = "default";
-> +		status = "okay";
+> 
+> @@ -228,6 +241,12 @@
+>  		compatible = "auo,b116xw03";
+>  		power-supply = <&fet6>;
+>  		backlight = <&backlight>;
 > +
-> +		wm1811: wm1811@1a {
-> +			compatible = "wlf,wm1811";
-> +			reg = <0x1a>;
-> +			clocks = <&pmu_system_controller 0>;
-> +			clock-names = "MCLK1";
-> +			DCVDD-supply = <&ldo3_reg>;
-> +			DBVDD1-supply = <&ldo3_reg>;
-> +			wlf,ldo1ena = <&gpj0 4 0>;
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint = <&bridge_out>;
+> +			};
 > +		};
-> +	};
-> +
->  	i2c@138D0000 {
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-slave-addr = <0x10>;
-> @@ -838,6 +857,24 @@
->  		};
->  	};
->  
-> +	i2s0: i2s@03830000 {
-> +		pinctrl-0 = <&i2s0_bus>;
-> +		pinctrl-names = "default";
-> +		status = "okay";
-> +	};
-> +
-> +	sound {
-> +		compatible = "samsung,trats2-audio";
-> +		samsung,i2s-controller = <&i2s0>;
-> +		samsung,model = "Trats2";
-> +		samsung,audio-codec = <&wm1811>;
-> +		samsung,audio-routing =
-> +			"SPK", "SPKOUTLN",
-> +			"SPK", "SPKOUTLP",
-> +			"SPK", "SPKOUTRN",
-> +			"SPK", "SPKOUTRP";
-> +	};
-> +
->  	exynos-usbphy@125B0000 {
->  		status = "okay";
->  	};
-> @@ -865,6 +902,11 @@
 >  	};
 >  };
->  
-> +&pmu_system_controller {
-> +	assigned-clocks = <&pmu_system_controller 0>;
-> +	assigned-clock-parents =  <&clock CLK_XUSBXTI>;
-> +};
-> +
->  &pinctrl_0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&sleep0>;
-> -- 
-> 2.0.0.390.gcb682f8
 > 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> @@ -242,7 +261,14 @@
+>  	samsung,link-rate = <0x0a>;
+>  	samsung,lane-count = <2>;
+>  	samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
+> -	bridge = <&ptn3460>;
+> +
+> +	ports {
+> +		port@0 {
+> +			dp_out: endpoint {
+> +				remote-endpoint = <&bridge_in>;
+> +			};
+> +		};
+> +	};
+>  };
+> 
+>  &ehci {
+> --
+> 1.7.9.5
+
+I'm fine on the DT changes in this series, shall I take 13/14 and 14/14 in
+Samsung tree?
+
+- Kukjin
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
