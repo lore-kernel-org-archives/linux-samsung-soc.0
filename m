@@ -1,153 +1,189 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use
- device tree
-Date: Fri, 23 Jan 2015 16:42:48 +0900
-Message-ID: <0dad01d036e0$2f376c80$8da64580$@kernel.org>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 01/12] clk: samsung: exynos5433: Add clocks using common
+ clock framework
+Date: Fri, 23 Jan 2015 16:44:54 +0900
+Message-ID: <54C1FBF6.4040405@samsung.com>
+References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
+ <1421821618-8627-2-git-send-email-cw00.choi@samsung.com>
+ <54C129B0.1090404@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:30565 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752027AbbAWHmv (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:48783 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751432AbbAWHo5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 02:42:51 -0500
-In-reply-to: <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
-Content-language: ko
+	Fri, 23 Jan 2015 02:44:57 -0500
+In-reply-to: <54C129B0.1090404@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Lukasz Majewski' <l.majewski@samsung.com>, 'Eduardo Valentin' <edubezval@gmail.com>, 'Zhang Rui' <rui.zhang@intel.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Lukasz Majewski wrote:
-> 
-Hi,
+Hi Sylwester,
 
-> 1. Introduction
+On 01/23/2015 01:47 AM, Sylwester Nawrocki wrote:
+> Hi Chanwoo,
 > 
-> Following patches aim to clean up the current implementation of the thermal
-> framework on Exynos devices.
+> On 21/01/15 07:26, Chanwoo Choi wrote:
+>> This patch adds the support for CMU (Clock Management Units) of Exynos5433
+>> which is 64bit SoC and has Octa-cores. This patch supports necessary clocks
+>> (PLL/MMC/UART/MCT/I2C/SPI) for kernel boot and includes binding documentation
+>> for Exynos5433 clock controller.
 > 
-> The main goal was to use a generic code for reading thermal configuration
-> (of-thermal.c). Due to that redundant exynos_thermal_common.[h|c] files
-> were removed.
+>> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>> new file mode 100644
+>> index 0000000..72cd0ba
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>> @@ -0,0 +1,106 @@
+>> +* Samsung Exynos5433 CMU (Clock Management Units)
+>> +
+>> +The Exynos5433 clock controller generates and supplies clock to various
+>> +controllers within the Exynos5433 SoC.
+>> +
+>> +Required Properties:
+>> +
+>> +- compatible: should be one of the following.
+>> +  - "samsung,exynos5433-cmu-top"   - clock controller compatible for CMU_TOP
+>> +    which generates clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
+>> +    domains and bus clocks.
+>> +  - "samsung,exynos5433-cmu-cpif"  - clock controller compatible for CMU_CPIF
+>> +    which generates clocks for LLI (Low Latency Interface) IP.
+>> +  - "samsung,exynos5433-cmu-mif"   - clock controller compatible for CMU_MIF
+>> +    which generates clocks for DRAM Memory Controller domain.
+>> +  - "samsung,exynos5433-cmu-peric" - clock controller compatible for CMU_PERIC
+>> +    which generates clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS IPs.
+>> +  - "samsung,exynos5433-cmu-peris" - clock controller compatible for CMU_PERIS
+>> +    which generates clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC IPs.
+>> +  - "samsung,exynos5433-cmu-fsys"  - clock controller compatible for CMU_FSYS
+>> +    which generates clocks for USB/UFS/SDMMC/TSI/PDMA IPs.
+>> +
+>> +- reg: physical base address of the controller and length of memory mapped
+>> +  region.
+>> +
+>> +- #clock-cells: should be 1.
+>> +
+>> +Each clock is assigned an identifier and client nodes can use this identifier
+>> +to specify the clock which they consume.
+>> +
+>> +All available clocks are defined as preprocessor macros in
+>> +dt-bindings/clock/exynos5433.h header and can be used in device
+>> +tree sources.
+>> +
+>> +Example 1: Examples of clock controller nodes are listed below.
+>> +
+>> +	cmu_top: clock-controller@0x10030000 {
+>> +		compatible = "samsung,exynos5433-cmu-top";
+>> +		reg = <0x10030000 0x0c04>;
+>> +		#clock-cells = <1>;
+>> +	};
+>> +
+>> +	cmu_cpif: clock-controller@0x10fc0000 {
+>> +		compatible = "samsung,exynos5433-cmu-cpif";
+>> +		reg = <0x10fc0000 0x0c04>;
+>> +		#clock-cells = <1>;
+>> +	};
+>> +
+>> +	cmu_mif: clock-controller@0x105b0000 {
+>> +		compatible = "samsung,exynos5433-cmu-mif";
+>> +		reg = <0x105b0000 0x100c>;
+>> +		#clock-cells = <1>;
+>> +	};
+>> +
+>> +	cmu_peric: clock-controller@0x14c80000 {
+>> +		compatible = "samsung,exynos5433-cmu-peric";
+>> +		reg = <0x14c80000 0x0b08>;
+>> +		#clock-cells = <1>;
+>> +	};
+>> +
+>> +	cmu_peris: clock-controller@0x10040000 {
+>> +		compatible = "samsung,exynos5433-cmu-peris";
+>> +		reg = <0x10040000 0x0b20>;
+>> +		#clock-cells = <1>;
+>> +	};
+>> +
+>> +	cmu_fsys: clock-controller@0x156e0000 {
+>> +		compatible = "samsung,exynos5433-cmu-fsys";
+>> +		reg = <0x156e0000 0x0b04>;
+>> +		#clock-cells = <1>;
+>> +	};
 > 
-> Around 400 lines of code (LOC) were removed directly by this patch, which
-> is around 20% of the Exynos thermal code base.
-> 
-> This work should NOT bring any functional changes to Exynos thermal
-> subsystem.
-> 
-Sounds great to use generic some framework in kernel.
+> What are the reasons to split the whole clock controller into separate
+> device nodes with different compatible strings like this? I doubt drivers
+> associated with each of those compatible strings could be ever reused on
+> different Exynos SoCs.
 
-> 2. Patch-set structure
-> 
-> Then the cpu_cooling functionality has been preserved to allow cooling
-> devices by reducing operating frequency. Definition of trip points and
-> cpufreq's cooling properties were moved to device tree.
-> 
-> Then the rework of the way in which configuration data is provided to
-> the Exynos thermal subsystem was performed. Now device tree is used for
-> configuration.
-> 
-> 3. Dead code removal
-> 
-> Thermal support for some SoCs, previously available in the exynos_tmu_data.c
-> file, was removed since, as of (almost) 3.19-rc3, they didn't have TMU bindings.
-> 
-> Moreover, support for cpu_cooling devices was preserved only on those
-> SoCs which had available and working cpufreq driver.
-> 
-> 4. Testing
-> 
-> Test devices:
-> - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> - Exynos5420 - Arndale-octa (only TMU zones)
-> 
-Thanks for your check on the boards...
-
-> Unfortunately, I don't posses Exynos5440 for testing. Its functionality
-> has been preserved in the code, but not tested on the hardware. I would
-> be grateful for help in testing.
-> 
-I think, Amit can do it on exynos5440 ;)
+No special reason. I added the clock controller according to clock domain
+separately. As I knew, samsung clk drivers use this way to support various
+clock domains. For exmaple, drivers/clk/samsung/clk-exynos7.c.
 
 > 
-> 5. This work apply on the following tree:
-> 
-> kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
-> 
-> 
-> Lukasz Majewski (17):
->   thermal: exynos: cosmetic: Correct comment format
->   thermal: exynos: Provide thermal_exynos.h file to be included in
->     device tree files
->   arm: dts: trats: Enable TMU on the Exynos4210 trats device
->   arm: dts: odroid: Add LD010 regulator node necessary for TMU on Odroid
->   arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3 device
->   arm: dts: Adding CPU cooling binding for Exynos SoCs
->   thermal: exynos: Modify exynos thermal code to use device tree for cpu
->     cooling configuration
->   thermal: exynos: dts: Add default definition of the TMU sensor
->     parameter
->   dts: Documentation: Extending documentation entry for exynos-thermal
->   thermal: dts: Default trip points definition for Exynos5420 SoCs
->   thermal: exynos: dts: Define default thermal-zones for Exynos4
->   thermal: dts: exynos: Trip points and sensor configuration data for
->     Exynos5440
->   dts: Documentation: Update exynos-thermal.txt example for Exynos5440
->   thermal: exynos: dts: Provide device tree bindings identical to the
->     one in exynos_tmu_data.c
->   thermal: samsung: core: Exynos TMU rework to use device tree for
->     configuration
->   thermal: exynos: Remove exynos_thermal_common.[c|h] files
->   thermal: exynos: Remove exynos_tmu_data.c file
-> 
->  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
->  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
->  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
->  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
->  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
->  arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
->  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
->  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
->  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
->  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
->  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
->  arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
->  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
->  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
->  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
->  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
->  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
->  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
->  drivers/thermal/samsung/Makefile                   |   2 -
->  drivers/thermal/samsung/exynos_thermal_common.c    | 427 ---------------------
->  drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
->  drivers/thermal/samsung/exynos_tmu.c               | 354 +++++++++++------
->  drivers/thermal/samsung/exynos_tmu.h               |  68 +---
->  drivers/thermal/samsung/exynos_tmu_data.c          | 264 -------------
->  include/dt-bindings/thermal/thermal_exynos.h       |  28 ++
->  26 files changed, 638 insertions(+), 1001 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
->  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
->  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
->  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
->  create mode 100644 include/dt-bindings/thermal/thermal_exynos.h
-> 
-> --
+> There are hardware dependencies between these clock domains, which are
+> not currently modelled in DT with your binding.
 
-I hope will apply DT changes in Samsung tree. Is it OK to thermal tree?
+Right. current samsung clock drivers cannot show the hierarchy among clock domains in DT.
 
-Thanks,
-Kukjin
+IOW, there is currently
+> no way to ensure proper registration order of the CMUs (clock domains).
+> This may be important in some cases.
+> 
+> To address this we could either add clocks/clock-names properties in
+> respective CMU device nodes, pointing to any clocks in other CMU(s) or
+> make a single device node for the whole clock controller, with an
+> aggregated reg entry, e.g.
+> 
+>  cmu: clock-controller@0x10030000 {
+> 	compatible = "samsung,exynos5433-cmu";
+> 	reg =   <0x10030000 0x0c04>,
+> 		<0x10fc0000 0x0c04>,
+> 		<0x105b0000 0x100c>,
+> 		<0x14c80000 0x0b08>,
+> 		<0x10040000 0x0b20>,
+> 		<0x156e0000 0x0b04>,
+> 			...
+> 	reg-names = "top", "cpif", "mif", "peric", "peris", "fsys"...
+> 	#clock-cells = <1>;
+>  };
+
+If you make a single device node to support various clock domain,
+How are you indicate the specific clock in some clock domain?
+
+For example,
+The serial dt node in exynos7.dtsi. serial_0 dt node use the uart clocks
+in 'clock_peric0' clock domain and serial_1 dt node use the uart clocks
+in 'clock-peric1' clock domain.
+
+When using the clock in specific clock domain,
+we need to phandle(e.g., clock_peric0, clock_peric1) of clock domain.
+
+		serial_0: serial@13630000 {
+			compatible = "samsung,exynos4210-uart";
+			reg = <0x13630000 0x100>;
+			interrupts = <0 440 0>;
+			clocks = <&clock_peric0 PCLK_UART0>,
+				 <&clock_peric0 SCLK_UART0>;
+			clock-names = "uart", "clk_uart_baud0";
+			status = "disabled";
+		};
+
+		serial_1: serial@14c20000 {
+			compatible = "samsung,exynos4210-uart";
+			reg = <0x14c20000 0x100>;
+			interrupts = <0 456 0>;
+			clocks = <&clock_peric1 PCLK_UART1>,
+				 <&clock_peric1 SCLK_UART1>;
+			clock-names = "uart", "clk_uart_baud0";
+			status = "disabled";
+		};
+
+> 
+> Then we could modify samsung_cmu_register_one() function by adding
+> the reg entry index or name argument. What do you think ?
+
+If there is more reasonable way to show the dependency between clock domains,
+I will agree.
+
+Best Regards,
+Chanwoo Choi
