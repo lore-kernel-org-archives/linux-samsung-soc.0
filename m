@@ -1,149 +1,66 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH v3 3/7] misc: Add cros_ec_lpc driver for x86 devices
-Date: Fri, 23 Jan 2015 09:27:22 +0530
-Message-ID: <CAEUmHyYQ_oOE0Bd2Qi++DdJ2OMg=SuESx_pEJug4Ci=N0uYF0g@mail.gmail.com>
-References: <1421954186-29764-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1421954186-29764-4-git-send-email-javier.martinez@collabora.co.uk>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: add fixed phy support for EXYNOS5440
+Date: Thu, 22 Jan 2015 20:12:58 -0800
+Message-ID: <54C1CA4A.4030703@gmail.com>
+References: <1421980893-14475-1-git-send-email-ming.lei@canonical.com> <1421980893-14475-2-git-send-email-ming.lei@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:49007 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754024AbbAWD5Y (ORCPT
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:53419 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752173AbbAWENC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 22:57:24 -0500
-In-Reply-To: <1421954186-29764-4-git-send-email-javier.martinez@collabora.co.uk>
+	Thu, 22 Jan 2015 23:13:02 -0500
+In-Reply-To: <1421980893-14475-2-git-send-email-ming.lei@canonical.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ming Lei <ming.lei@canonical.com>, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-samsung-soc@vger.kernel.org, Ike Panhc <ike.pan@canonical.com>, netdev@vger.kernel.org, Ming Lei <ming.lei@canoncial.com>, Kukjin Kim <kgene@kernel.org>, Byungho An <bh74.an@samsung.com>
 
-On Fri, Jan 23, 2015 at 12:46 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> From: Bill Richardson <wfrichar@chromium.org>
->
-> Chromebooks have an Embedded Controller (EC) that is used to
-> implement various functions such as keyboard, power and battery.
->
-> The AP can communicate with the EC through different bus types
-> such as I2C, SPI or LPC.
->
-> The cros_ec mfd driver is then composed of a core driver that
-> register the sub-devices as mfd cells and provide a high level
-> communication interface that is used by the rest of the kernel
-> and bus specific interfaces modules.
->
-> Each connection method then has its own driver, which register
-> with the EC driver interface-agnostic interface.
->
-> Currently, there are drivers to communicate with the EC over
-> I2C and SPI and this driver adds support for LPC.
->
-> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->
-> Changes since v2:
->  - Move out from drivers/mfd to drivers/misc. Suggested by Lee Jones.
->
-> Changes since v1: None, new patch.
-> ---
->  drivers/misc/Kconfig       |  10 ++
->  drivers/misc/Makefile      |   1 +
->  drivers/misc/cros_ec_lpc.c | 306 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 317 insertions(+)
->  create mode 100644 drivers/misc/cros_ec_lpc.c
-(...)
-> +static int cros_ec_lpc_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct cros_ec_device *ec_dev;
-> +       int err = -ENOTTY;
-> +
-> +       if (!request_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE, MYNAME)) {
+Le 22/01/2015 18:41, Ming Lei a =E9crit :
+> From: Byungho An <bh74.an@samsung.com>
+>=20
+> This patch adds fixed phy codes for Exynos5440. This patch can
+> support fixed_phy.
+>=20
+> Signed-off-by: Byungho An <bh74.an@samsung.com> Signed-off-by: Ike
+> Panhc <ike.pan@canonical.com> Signed-off-by: Ming Lei
+> <ming.lei@canoncial.com> --- arch/arm/mach-exynos/exynos.c |   15
+> +++++++++++++++ 1 file changed, 15 insertions(+)
+>=20
+> diff --git a/arch/arm/mach-exynos/exynos.c
+> b/arch/arm/mach-exynos/exynos.c index 78eca99b..dfd5699 100644 ---
+> a/arch/arm/mach-exynos/exynos.c +++
+> b/arch/arm/mach-exynos/exynos.c @@ -20,6 +20,8 @@ #include
+> <linux/platform_device.h> #include <linux/pm_domain.h> #include
+> <linux/irqchip.h> +#include <linux/phy.h> +#include
+> <linux/phy_fixed.h>
+>=20
+> #include <asm/cacheflush.h> #include <asm/hardware/cache-l2x0.h> @@
+> -202,8 +204,21 @@ static void __init exynos_init_irq(void)=20
+> exynos_map_pmu(); }
+>=20
+> +static struct fixed_phy_status fixed_phy_status __initdata =3D { +
+> .link           =3D 1, +       .speed          =3D 1000, +
+> .duplex         =3D 1, +}; + static void __init
+> exynos_dt_machine_init(void) { +	struct device_node *gmac_np; +
+> unsigned int tmp; + +	/* add fixed phy in need */ +	gmac_np =3D
+> of_find_compatible_node(NULL, NULL, "snps,dwmac-3.70a"); +	if
+> (of_find_property(gmac_np, "fixed_phy", NULL)) +		tmp =3D
+> fixed_phy_add(PHY_POLL, 1, &fixed_phy_status);
 
-Why dont you use devres API for request_region()... Then maximum of
-your goto label regarding
-release region will gone...
+Is there a particular reason you are doing this and not using
+of_phy_is_fixed_link() and of_phy_register_fixed_link()?
 
-> +               dev_warn(dev, "couldn't reserve memmap region\n");
-> +               goto failed_memmap;
-> +       }
-> +
-> +       if ((inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID) != 'E') ||
-> +           (inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1) != 'C')) {
-> +               dev_warn(dev, "EC ID not detected\n");
-> +               goto failed_ec_probe;
-> +       }
-> +
-> +       if (!request_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE,
-> +                           MYNAME)) {
+See the gianfar and bcmsysport for examples on how to use it in a
+driver along with the relevant Device Tree binding in
+Documentation/devicetree/bindings/net/fixed-link.txt for examples.
 
-same...
-
-> +               dev_warn(dev, "couldn't reserve region0\n");
-> +               goto failed_region0;
-> +       }
-> +       if (!request_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE,
-> +                           MYNAME)) {
-
-same ...
-
-> +               dev_warn(dev, "couldn't reserve region1\n");
-> +               goto failed_region1;
-> +       }
-> +
-> +       ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
-> +       if (!ec_dev) {
-> +               err = -ENOMEM;
-> +               goto failed_ec_dev;
-> +       }
-> +
-> +       platform_set_drvdata(pdev, ec_dev);
-> +       ec_dev->dev = dev;
-> +       ec_dev->ec_name = pdev->name;
-> +       ec_dev->phys_name = dev_name(dev);
-> +       ec_dev->parent = dev;
-> +       ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
-> +       ec_dev->cmd_readmem = cros_ec_lpc_readmem;
-> +
-> +       err = cros_ec_register(ec_dev);
-> +       if (err) {
-> +               dev_warn(dev, "couldn't register ec_dev\n");
-> +               goto failed_ec_dev;
-> +       }
-> +
-> +       return 0;
-> +
-> +failed_ec_dev:
-> +       release_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE);
-> +failed_region1:
-> +       release_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE);
-> +failed_region0:
-> +failed_ec_probe:
-> +       release_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE);
-
-All these goto labels will be gone if you use devres API..
-
-> +failed_memmap:
-> +       return err;
-> +}
-> +
-> +static int cros_ec_lpc_remove(struct platform_device *pdev)
-> +{
-> +       struct cros_ec_device *ec_dev;
-> +
-> +       ec_dev = platform_get_drvdata(pdev);
-> +       cros_ec_remove(ec_dev);
-> +
-> +       release_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE);
-> +       release_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE);
-> +       release_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE);
-> +
-
-These also will be gone....
+> /* * This is called from smp_prepare_cpus if we've built for SMP,
+> but * we still need to set it up for PM and firmware ops if not.
+>=20
 
 
--- 
-Thanks and Regards,
-Varka Bhadram.
+--=20
+=46lorian
