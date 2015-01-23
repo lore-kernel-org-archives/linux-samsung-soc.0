@@ -1,56 +1,75 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH] drm/exynos: IOMMU support should not be selectable by user
-Date: Fri, 23 Jan 2015 00:19:26 +0100
-Message-ID: <54C1857E.30503@gmx.net>
-References: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
+From: Inha Song <ideal.song@samsung.com>
+Subject: Re: [alsa-devel] [PATCH v3 3/4] ARM: dts: set clock out parent to
+ XUSBXTI
+Date: Fri, 23 Jan 2015 09:49:16 +0900
+Message-ID: <20150123094916.32beb50f@songinha-Samsung-DeskTop-System>
+References: <1421925482-15861-1-git-send-email-ideal.song@samsung.com>
+ <1421925482-15861-4-git-send-email-ideal.song@samsung.com>
+ <54C0EC23.9070209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:19949 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752527AbbAWAtU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Jan 2015 19:49:20 -0500
+In-reply-to: <54C0EC23.9070209@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, tiwai@suse.de, broonie@kernel.org, kgene@kernel.org, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org
 
-SGVsbG8hCgpNYXJlayBTenlwcm93c2tpIHdyb3RlOgo+IElmIHN5c3RlbSBwcm92aWRlcyBJT01N
-VSBmZWF0dXJlLCBFeHlub3MgRFJNIHNob3VsZCB1c2UgaXQgYnkgZGVmYXVsdCwKPiBiZWNhdXNl
-IHRoZSBFeHlub3MgRFJNIHN1YmRyaXZlcnMgZG9uJ3Qgd29yayBjb3JyZWN0bHkgd2hlbiBFeHlu
-b3MgSU9NTVUKPiBkcml2ZXIgaGFzIGJlZW4gZW5hYmxlZCBhbmQgbm8gSU9NTVUgc3VwcG9ydCBo
-YXMgYmVlbiBjb21waWxlZCBpbnRvIEV4eW5vcwo+IERSTSBkcml2ZXIuCj4gCj4gU2lnbmVkLW9m
-Zi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgfCA1ICsrLS0tCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2Nv
-bmZpZwo+IGluZGV4IDdmOWY2ZjllOWI3ZS4uMzlmZTQ5MGVmY2Q0IDEwMDY0NAo+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvS2NvbmZpZwo+IEBAIC0xMywxMCArMTMsOSBAQCBjb25maWcgRFJNX0VYWU5PUwo+ICAJICBJ
-ZiBNIGlzIHNlbGVjdGVkIHRoZSBtb2R1bGUgd2lsbCBiZSBjYWxsZWQgZXh5bm9zZHJtLgo+ICAK
-PiAgY29uZmlnIERSTV9FWFlOT1NfSU9NTVUKPiAtCWJvb2wgIkVYWU5PUyBEUk0gSU9NTVUgU3Vw
-cG9ydCIKPiArCWJvb2wKPiAgCWRlcGVuZHMgb24gRFJNX0VYWU5PUyAmJiBFWFlOT1NfSU9NTVUg
-JiYgQVJNX0RNQV9VU0VfSU9NTVUKPiAtCWhlbHAKPiAtCSAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlm
-IHlvdSB3YW50IHRvIHVzZSBJT01NVSBmZWF0dXJlIGZvciBEUk0uCj4gKwlkZWZhdWx0IHkKPiAg
-Cj4gIGNvbmZpZyBEUk1fRVhZTk9TX0RNQUJVRgo+ICAJYm9vbCAiRVhZTk9TIERSTSBETUFCVUYi
-Cj4gCgpJIHRlc3RlZCBFeHlub3MgRFJNIHdpdGggdGhlIElPTU1VIGVuYWJsZWQgdG9kYXkgYW5k
-IGNvdWxkbid0IGZpbmQgYW55Cm9mIHRoZSBwcmV2aW91cyBpc3N1ZXMuCgpBIGZldyB0aGluZ3Mg
-dGhhdCBJIG5vdGljZWQgdGhvdWdoOgoKMSkgV2l0aG91dCB0aGUgSU9NTVUgSSBnZXQgdGhlc2Ug
-cG93ZXJkb21haW4gaW5mb3MgaW4gdGhlIGtlcm5lbCBsb2dzOgoibGNkMC1wb3dlci1kb21haW46
-IFBvd2VyLW9uIGxhdGVuY3kgZXhjZWVkZWQsIG5ldyB2YWx1ZSA0MTYxNjcgbnMiCiJ0di1wb3dl
-ci1kb21haW46IFBvd2VyLW9uIGxhdGVuY3kgZXhjZWVkZWQsIG5ldyB2YWx1ZSA0NTYxMjUgbnMi
-ClRoZXNlIGRvbid0IGFwcGVhciB3aXRoIHRoZSBJT01NVSwgc28gSSB3YXMgd29uZGVyaW5nIGlm
-IHRoZQpwb3dlcmRvbWFpbnMgYXJlIG5vdyBzdGF5aW5nIG9uIHRoZSB3aG9sZSB0aW1lPwoKMikg
-V2l0aCBFeHlub3MgRFJNIG5vdyBoYXZpbmcgYSBkZXBlbmRlbmN5IG9uIElPTU1VICh3aGVuIGl0
-IGlzCmVuYWJsZWQpLCBJIHdhcyB3b25kZXJpbmcgaWYgYW55dGhpbmcgbmVlZHMgdG8gYmUgZG9u
-ZSBmb3IgdGhlIG9sZAonczVwLXR2JyBkcml2ZXIgdG8gd29yayBwcm9wZXJseSBub3c/CgpXaXRo
-IGJlc3Qgd2lzaGVzLApUb2JpYXMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+Hi,
+Thanks for your comment.
+
+On Thu, 22 Jan 2015 13:25:07 +0100
+Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+
+> On 22/01/15 12:18, Inha Song wrote:
+> > This patch set clock out parent to XUSBXTI.
+> > 
+> > Signed-off-by: Inha Song <ideal.song@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos4.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> > index b8168f1..020bbaf 100644
+> > --- a/arch/arm/boot/dts/exynos4.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4.dtsi
+> > @@ -141,6 +141,8 @@
+> >  	pmu_system_controller: system-controller@10020000 {
+> >  		compatible = "samsung,exynos4210-pmu", "syscon";
+> >  		reg = <0x10020000 0x4000>;
+> > +		assigned-clocks = <&pmu_system_controller 0>;
+> > +		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
+> >  	};
+> 
+> Looks good, except it needs to be done only for the Trats2 board, i.e.
+> the PMU device node including these properties should be added to
+> exynos4412-trats2.dts.  I think it's fine to make it a one patch including
+> all dts changes.
+
+Opps! I understand. I will move this node to exynos4412-trats2.dts.
+
+&pmu_system_controller {
+   assigned-clocks = <&pmu_system_controller 0>;
+   assigned-clock-parents =  <&clock CLK_XUSBXTI>;
+};
+
+Thanks!
+
+Best Regards,
+Inha Song.
+
+> 
+> 
+> -- 
+> Regards,
+> Sylwester
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
