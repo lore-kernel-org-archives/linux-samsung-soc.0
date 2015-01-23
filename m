@@ -1,212 +1,98 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v4 00/17] thermal: exynos: Thermal code rework to use
- device tree
-Date: Fri, 23 Jan 2015 10:45:42 -0400
-Message-ID: <20150123144540.GF13468@developer.hsd1.ca.comcast.net>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421407861-25099-1-git-send-email-l.majewski@samsung.com>
- <0dad01d036e0$2f376c80$8da64580$@kernel.org>
- <20150123105944.457d6d07@amdc2363>
- <0e1401d036fb$c00a3510$401e9f30$@kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: s3c2410: fix ABBA deadlock by keeping clock prepared
+Date: Fri, 23 Jan 2015 15:52:47 +0100
+Message-ID: <20150123145247.GD9592@katana>
+References: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uTRFFR9qmiCqR05s"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:38304 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751266AbbAWOps (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 09:45:48 -0500
+	protocol="application/pgp-signature"; boundary="ieNMXl1Fr3cevapt"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <0e1401d036fb$c00a3510$401e9f30$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Osmialowski <p.osmialowsk@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Lukasz Majewski' <l.majewski@samsung.com>, 'Zhang Rui' <rui.zhang@intel.com>, 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
 
---uTRFFR9qmiCqR05s
+--ieNMXl1Fr3cevapt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
-
-On Fri, Jan 23, 2015 at 08:00:07PM +0900, Kukjin Kim wrote:
-> Lukasz Majewski wrote:
-> >=20
-> > Hi Kukjin,
-> >=20
-> Hi,
+On Mon, Jan 19, 2015 at 05:03:33PM +0100, Paul Osmialowski wrote:
+> This patch solves deadlock between clock prepare mutex and regmap mutex r=
+eported
+> by Tomasz Figa in [1] by implementing solution from [2]: "always leave th=
+e clock
+> of the i2c controller in a prepared state".
 >=20
-> > > Lukasz Majewski wrote:
-> > > >
-> > > Hi,
-> > >
-> > > > 1. Introduction
-> > > >
-> > > > Following patches aim to clean up the current implementation of the
-> > > > thermal framework on Exynos devices.
-> > > >
-> > > > The main goal was to use a generic code for reading thermal
-> > > > configuration (of-thermal.c). Due to that redundant
-> > > > exynos_thermal_common.[h|c] files were removed.
-> > > >
-> > > > Around 400 lines of code (LOC) were removed directly by this patch,
-> > > > which is around 20% of the Exynos thermal code base.
-> > > >
-> > > > This work should NOT bring any functional changes to Exynos thermal
-> > > > subsystem.
-> > > >
-> > > Sounds great to use generic some framework in kernel.
-> > >
-> > > > 2. Patch-set structure
-> > > >
-> > > > Then the cpu_cooling functionality has been preserved to allow
-> > > > cooling devices by reducing operating frequency. Definition of trip
-> > > > points and cpufreq's cooling properties were moved to device tree.
-> > > >
-> > > > Then the rework of the way in which configuration data is provided
-> > > > to the Exynos thermal subsystem was performed. Now device tree is
-> > > > used for configuration.
-> > > >
-> > > > 3. Dead code removal
-> > > >
-> > > > Thermal support for some SoCs, previously available in the
-> > > > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc3,
-> > > > they didn't have TMU bindings.
-> > > >
-> > > > Moreover, support for cpu_cooling devices was preserved only on
-> > > > those SoCs which had available and working cpufreq driver.
-> > > >
-> > > > 4. Testing
-> > > >
-> > > > Test devices:
-> > > > - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> > > > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> > > > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> > > > - Exynos5420 - Arndale-octa (only TMU zones)
-> > > >
-> > > Thanks for your check on the boards...
-> > >
-> > > > Unfortunately, I don't posses Exynos5440 for testing. Its
-> > > > functionality has been preserved in the code, but not tested on the
-> > > > hardware. I would be grateful for help in testing.
-> > > >
-> > > I think, Amit can do it on exynos5440 ;)
-> > >
-> > > >
-> > > > 5. This work apply on the following tree:
-> > > >
-> > > > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> > > > SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
-> > > >
-> > > >
-> > > > Lukasz Majewski (17):
-> > > >   thermal: exynos: cosmetic: Correct comment format
-> > > >   thermal: exynos: Provide thermal_exynos.h file to be included in
-> > > >     device tree files
-> > > >   arm: dts: trats: Enable TMU on the Exynos4210 trats device
-> > > >   arm: dts: odroid: Add LD010 regulator node necessary for TMU on
-> > > > Odroid arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3
-> > > > device arm: dts: Adding CPU cooling binding for Exynos SoCs
-> > > >   thermal: exynos: Modify exynos thermal code to use device tree
-> > > > for cpu cooling configuration
-> > > >   thermal: exynos: dts: Add default definition of the TMU sensor
-> > > >     parameter
-> > > >   dts: Documentation: Extending documentation entry for
-> > > > exynos-thermal thermal: dts: Default trip points definition for
-> > > > Exynos5420 SoCs thermal: exynos: dts: Define default thermal-zones
-> > > > for Exynos4 thermal: dts: exynos: Trip points and sensor
-> > > > configuration data for Exynos5440
-> > > >   dts: Documentation: Update exynos-thermal.txt example for
-> > > > Exynos5440 thermal: exynos: dts: Provide device tree bindings
-> > > > identical to the one in exynos_tmu_data.c
-> > > >   thermal: samsung: core: Exynos TMU rework to use device tree for
-> > > >     configuration
-> > > >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
-> > > >   thermal: exynos: Remove exynos_tmu_data.c file
-> > > >
-> > > >  .../devicetree/bindings/thermal/exynos-thermal.txt |  17 +
-> > > >  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
-> > > >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         |  52 +++
-> > > >  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
-> > > >  arch/arm/boot/dts/exynos4210-trats.dts             |  19 +
-> > > >  arch/arm/boot/dts/exynos4210.dtsi                  |  30 +-
-> > > >  arch/arm/boot/dts/exynos4212.dtsi                  |   5 +-
-> > > >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  27 ++
-> > > >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  |  24 ++
-> > > >  arch/arm/boot/dts/exynos4412-trats2.dts            |  15 +
-> > > >  arch/arm/boot/dts/exynos4412.dtsi                  |   5 +-
-> > > >  arch/arm/boot/dts/exynos4x12.dtsi                  |   1 +
-> > > >  arch/arm/boot/dts/exynos5250.dtsi                  |  29 +-
-> > > >  arch/arm/boot/dts/exynos5420-trip-points.dtsi      |  35 ++
-> > > >  arch/arm/boot/dts/exynos5420.dtsi                  |  28 ++
-> > > >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  24 ++
-> > > >  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  25 ++
-> > > >  arch/arm/boot/dts/exynos5440.dtsi                  |  18 +
-> > > >  drivers/cpufreq/exynos-cpufreq.c                   |  30 +-
-> > > >  drivers/thermal/samsung/Makefile                   |   2 -
-> > > >  drivers/thermal/samsung/exynos_thermal_common.c    | 427
-> > > > ---------------------
-> > > > drivers/thermal/samsung/exynos_thermal_common.h    | 106 -----
-> > > > drivers/thermal/samsung/exynos_tmu.c               | 354
-> > > > +++++++++++------
-> > > > drivers/thermal/samsung/exynos_tmu.h               |  68 +---
-> > > > drivers/thermal/samsung/exynos_tmu_data.c          | 264
-> > > > ------------- include/dt-bindings/thermal/thermal_exynos.h       |
-> > > > 28 ++ 26 files changed, 638 insertions(+), 1001 deletions(-) create
-> > > > mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi create mode
-> > > > 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create
-> > > > mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create
-> > > > mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-> > > > create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
-> > > > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
-> > > > delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
-> > > > delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c create
-> > > > mode 100644 include/dt-bindings/thermal/thermal_exynos.h
-> > > >
-> > > > --
-> > >
-> > > I hope will apply DT changes in Samsung tree. Is it OK to thermal
-> > > tree?
-> >=20
-> > I think that it is up to you and Eduardo to decide :-).
-> >=20
-> > I'd personally prefer to add this patch set at once to Eduardo's tree
-> > (of course with your ACKs).
-> >=20
-> If so, we could see too many useless merge conflicts. Because your patches
-> touch most of exynos DT stuff and that's why DT changes should be handled=
- in
-> Samsung tree if there is no problem ;) Let's wait for thermal guys.
-
-Let's target the latest version (v6) of this series. You can add my
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
-
-in the DTS changes. And add them via your tree. I believe we will avoid
-merge conflicts this way. I will handle the patches touching drivers/.
-
-Thanks.
-
+> [1] https://lkml.org/lkml/2014/7/2/171
+> [2] https://lkml.org/lkml/2014/7/2/207
 >=20
-> - Kukjin
+> On each i2c transfer handled by s3c24xx_i2c_xfer(), clk_prepare_enable() =
+was
+> called, which calls clk_prepare() then clk_enable(). clk_prepare() takes
+> prepare_lock mutex before proceeding. Note that i2c transfer functions are
+> invoked from many places in kernel, typically with some other additional =
+lock
+> held.
 >=20
+> It may happen that function on CPU1 (e.g. regmap_update_bits()) has taken=
+ a
+> mutex (i.e. regmap lock mutex) then it attempts i2c communication in orde=
+r to
+> proceed (so it needs to obtain clock related prepare_lock mutex during tr=
+ansfer
+> preparation stage due to clk_prepare() call). At the same time other task=
+ on
+> CPU0 wants to operate on clock (e.g. to (un)prepare clock for some other =
+reason)
+> so it has taken prepare_lock mutex.
+>=20
+> CPU0:                        CPU1:
+> clk_disable_unused()         regulator_disable()
+>   clk_prepare_lock()           map->lock(map->lock_arg)
+>   regmap_read()                s3c24xx_i2c_xfer()
+>     map->lock(map->lock_arg)     clk_prepare_lock()
+>=20
+> Implemented solution from [2] leaves i2c clock prepared. Preparation is d=
+one in
+> s3c24xx_i2c_probe() function. Without this patch, it is immediately unpre=
+pared
+> by clk_disable_unprepare() call. I've replaced this call with clk_disable=
+() and
+> I've added clk_unprepare() call in s3c24xx_i2c_remove().
+>=20
+> The s3c24xx_i2c_xfer() function now uses clk_enable() instead of
+> clk_prepare_enable() (and clk_disable() instead of clk_unprepare_disable(=
+)).
+>=20
+> Signed-off-by: Paul Osmialowski <p.osmialowsk@samsung.com>
 
---uTRFFR9qmiCqR05s
+Applied to for-current, thanks!
+
+
+--ieNMXl1Fr3cevapt
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQEcBAEBAgAGBQJUwl6KAAoJEMLUO4d9pOJWv6YH/i7qsTZoEcoHAbdbDcn9vx0M
-xvK1lG1a31AEdiQ88+Y0ceCcTBkO+2FmekFDpv1hLPaE1eB7VNuBqDz7CkRio8zq
-hEgekxg7Nsji76ImrXQJHdwI7fBfHNj4ORnNUTcG0WQrHRX8Om8xLPya961RFu4o
-+Kn08tsp8BNBJeA89c8Dj6UyVDDBj6bEWM+T4WcWsbLM+iKWH8/XGRbenijFmeGM
-LgC85kQQncw3AsVtbxn3Z0a6Tp3jHPeQEwLRzIYB45yx5lFwqc7fp1cSgP2VD8w+
-0sGz9TrMWM6Dmp6uHsIhX4u57dzv2WWdWHd8P+9DwHPaQUDWkAWoTVDmL3+fOE4=
-=IGfP
+iQIcBAEBAgAGBQJUwmA/AAoJEBQN5MwUoCm2sEkP/iVEyjBUV7/BVkcOxy3+P66e
+IrFKY6XQsfJTdrK8AOo1YqML5f8TbPCDPrc4EV/escY44IpbLUOyhZ4Ub/gcTCZU
+UrdGtHrLFqnmTQKNoZslL117nCdoNLeYtAeH6HVxp1XXq+1PuqyTchoz3aqWYV6H
+037T6SKl7zOsC2x78FJ1E2n0z9Lf/ksfNFS2IemVxu+VNBKkix6zdUB41yanGJdv
+tQqIfyJAntq1EAkiAV11oz/4qjkV6QcdqOF6qbA5dLL/Lsgu3zy6363bIYRV8SAe
+tJXaihe9L8r6ek5vgxKk8Nks0Nr2Rr1UarhEdQH7jKt5OekbOY916rBHscQxbQcU
+mi+ExSAmxggo0e9CNphFa+vxVO5ZhJCHlo2/QFbpUMkYRPQFPG7EXD5M1u/S5BJl
+ZXvxDDh7BAMXifE57cOACw1qJoikNY0b7l56QfFRMRufHVCowv2ECkRRxH39JljS
+Zjx3bHIdVKTa+U67jy5VOhDP3C967GmBc2g/JzNSixEa5zEJ2ojlrU/Ok/nq+gvH
+ODbApKnZjfKvXcOXxhyE4n4XxQRPkkjazH8hahbg4PT+E/VB9b7SRLwD2L05ieDj
+gUdpw1ZbLORd74OzUT5VhIfFahHd9sBPrv+AGscTlXH9iNgVCV5JCodvvj2BHjI3
+wVzFTc7xU3PRgs1P/RJF
+=RjYp
 -----END PGP SIGNATURE-----
 
---uTRFFR9qmiCqR05s--
+--ieNMXl1Fr3cevapt--
