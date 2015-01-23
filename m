@@ -1,59 +1,53 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+From: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 Subject: Re: [PATCH] ARM: dts: Add sd0_rst pinctrl node to exynos5420
-Date: Fri, 23 Jan 2015 16:47:55 +0100
-Message-ID: <1422028075.15395.92.camel@collabora.co.uk>
+Date: Fri, 23 Jan 2015 16:50:08 +0100
+Message-ID: <1422028208.15395.95.camel@collabora.co.uk>
 References: <1422023038-11842-1-git-send-email-jh80.chung@samsung.com>
-	 <CABxcv=mJhHTBKes38+6kHi5o3RmBHHN6sVqBUDRc-YyNvkdESQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-Khz7Rm4Z2gFwQuLEpWu+"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37762 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754553AbbAWPsA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 10:48:00 -0500
-In-Reply-To: <CABxcv=mJhHTBKes38+6kHi5o3RmBHHN6sVqBUDRc-YyNvkdESQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+	boundary="=-0YtquY+ADnVebx8f4IEP"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1422023038-11842-1-git-send-email-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
 
---=-Khz7Rm4Z2gFwQuLEpWu+
+--=-0YtquY+ADnVebx8f4IEP
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2015-01-23 at 15:36 +0100, Javier Martinez Canillas wrote:
-> Hello Jaehoon,
+On Fri, 2015-01-23 at 23:23 +0900, Jaehoon Chung wrote:
+> Add sd0_rst node to exynos5420-pinctrl.dtsi.
+> (It's used on odroid-xu3 board)
 >=20
-> On Fri, Jan 23, 2015 at 3:23 PM, Jaehoon Chung <jh80.chung@samsung.com> w=
-rote:
-> > Add sd0_rst node to exynos5420-pinctrl.dtsi.
-> > (It's used on odroid-xu3 board)
-> >
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    5 +++++
+>  1 file changed, 5 insertions(+)
 >=20
-> It would be good to mention which device needs this pinctrl line.
->=20
-> > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    5 +++++
->=20
-> If this pin is used by the Odroid XU3 board, shouldn't be defined in
-> the exynos5422-odroidxu3.dts instead?
+> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dt=
+s/exynos5420-pinctrl.dtsi
+> index ba686e4..315cad7 100644
+> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> @@ -194,6 +194,11 @@
+>  			samsung,pin-drv =3D <3>;
+>  		};
+> =20
+> +		sd0_rst: sd0-rst {
+> +			samsung,pins =3D "gpd1-0";
+> +			samsung,pin-function =3D <1>;
 
-It's not just used by the XU3 though, it's also hooked up on the peach
-pi chromebook for example and i would expect it to be hooked up on most
-board with an eMMC
+I think this should be samsung,pin-function =3D <2>; for that
+functionality.
 
-This change is consistent with most of the special purpose GPIO pins
-defined in that file, so i don't see the problem with including it in
-that pinctrl file
 --=20
-Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 Collabora Ltd.
 
---=-Khz7Rm4Z2gFwQuLEpWu+
+--=-0YtquY+ADnVebx8f4IEP
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -155,18 +149,22 @@ Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
 yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
 RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
 dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTUwMTIzMTU0NzU1WjAjBgkqhkiG
-9w0BCQQxFgQU/5D/GfJYmiwbRk19Umpd5aO+a/MwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTUwMTIzMTU1MDA4WjAjBgkqhkiG
+9w0BCQQxFgQURilv8qo0wEgmBdGtBKK/2B/+KMEwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
 BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
 MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
 hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
 A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBACnD+JTYCNjsFChe0jb1cs5Nn+4D
-k1rOZwqSw60TZg3LuQjUCZqS7AFtcJUEHfyNDE7mGWFqMjJIBZm91hz8mNqR9n/ZlZoXHhDkZ9Nk
-aj4w86Ry0mR/aD2Ijmbm6KkLKgce9BKAfFsZs0zZe02hB1FkzDA/fY6QIcKJONpe7oQ0pMZeMiSW
-7zqlTb2zMaa8CmLEThnSB9hUcn3HrvREbPKHoPP9lVyWUx3c1HhyVg2ZNEzqEgEaNglJxTVDA1ns
-cE/T/Pxs0d7dYSMENDPdb441SXzUySSW0IDN49chlimcrh/q4+wzeAyTm3pBEotf2N5coD3e8idL
-PVThw4KFKKwAAAAAAAA=
+AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAN1ns/e6G10iFoH+6GkErz77ic0q
+n8YpmZKDCoeS1jVqx/EkGV8z0DcS0y5pzJSR4L15mrFL3ppGOr0XRTeQ3bosmVhdEChSuSPkjHtL
+8fptlDTf1OYWGQOhIUQsYg2cFEILiyHmNOmUTeV/MY9SjNtzsKS3AVG+rfsxquGZCoBkO2vn1+mh
+kLzNH1uTSihxC60JEItmDTz/ZK8UVdJlTpnYvtyckqFQ5t5NWTgAC2MtQd2KdR48zlhGIoiJW6GK
+rd6RJWe+QNnVya2xqpIcfVjwqPrm0C5vjm/5WHPNgkw7V7419eZJ1rnhuSYHgkm3lY4xzcQ/6cAK
+R6XEKS4MlhgAAAAAAAA=
 
 
---=-Khz7Rm4Z2gFwQuLEpWu+--
+--=-0YtquY+ADnVebx8f4IEP--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
