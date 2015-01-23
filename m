@@ -1,44 +1,99 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] ARM: dts: Add sd0_rst pinctrl node to exynos5420
-Date: Fri, 23 Jan 2015 16:59:24 +0100
-Message-ID: <CABxcv=kARp8xLYCqf8dfdKd9ehs1u=qTEjkn1iujhN77ZjPdTA@mail.gmail.com>
-References: <1422023038-11842-1-git-send-email-jh80.chung@samsung.com>
-	<CABxcv=mJhHTBKes38+6kHi5o3RmBHHN6sVqBUDRc-YyNvkdESQ@mail.gmail.com>
-	<1422028075.15395.92.camel@collabora.co.uk>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
+	devices from device tree
+Date: Fri, 23 Jan 2015 17:15:43 +0100
+Message-ID: <54C273AF.1010404@samsung.com>
+References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
+	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
+	<CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
+	<54C2415A.3020508@samsung.com>
+	<CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:35791 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753722AbbAWP7Z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 10:59:25 -0500
-Received: by mail-we0-f174.google.com with SMTP id x3so8377329wes.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Jan 2015 07:59:24 -0800 (PST)
-In-Reply-To: <1422028075.15395.92.camel@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hello Sjoerd,
+Hello Javier,
 
-On Fri, Jan 23, 2015 at 4:47 PM, Sjoerd Simons
-<sjoerd.simons@collabora.co.uk> wrote:
+On 2015-01-23 14:48, Javier Martinez Canillas wrote:
+> On Fri, Jan 23, 2015 at 1:40 PM, Marek Szyprowski
+> <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>> +
+>>>> +       list_add_tail(&data->owner_node, &owner->clients);
+>>> This is the line that causes the kernel to hang, if I comment the
+>>> list_add_tail() call then the kernel boots.
+>>>
+>>> I checked that neither data nor owner are NULL and that the
+>>> owner->clients list_head is initialized. Do you have any ideas what
+>>> could be happening?
 >>
->> If this pin is used by the Odroid XU3 board, shouldn't be defined in
->> the exynos5422-odroidxu3.dts instead?
+>> This is really strange. However the hang is definitely not caused by
+>> adding the controller to the list, but rather the fact that it is later
+>> being initialized, probably in exynos_iommu_attach_device().
+>>
+> Yes, I knew adding to the list was not the issue but a side effect of
+> being in the list. I'm not familiar with Exynos sysmmu/iommu to figure
+> out though.
 >
-> It's not just used by the XU3 though, it's also hooked up on the peach
-> pi chromebook for example and i would expect it to be hooked up on most
-> board with an eMMC
+>> Just a quick question - does bootloader on Exynos5420 Peach Pit sets
+>> any image on the display?
+>>
+> Yes u-boot does initialize the display, I see the boot messages and
+> have an u-boot prompt.
 >
-> This change is consistent with most of the special purpose GPIO pins
-> defined in that file, so i don't see the problem with including it in
-> that pinctrl file
+>> If so then we will get IOMMU page fault on init (DMA engine of FIMD is
+>> left enabled from bootloader) and such case is not yet handled.
+>> Besides that I have no idea for any other reason for such failure.
+>>
+> I see, that's a reasonable explanation and in fact your patch makes at
+> least the kernel to start booting.
+>
+>> To check if this is caused by io page fault, please temporarily add the
+>> following hack:
+>> --->8---
+>> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+>> index 7864797609b3..5e70cf7eb31b 100644
+>> --- a/arch/arm/mm/dma-mapping.c
+>> +++ b/arch/arm/mm/dma-mapping.c
+>> @@ -2011,6 +2011,9 @@ static bool arm_setup_iommu_dma_ops(struct device
+>> *dev, u64 dma_base, u64 size,
+>>           return false;
+>>       }
+>>
+>> +    iommu_map(mapping->domain, 0x40000000, 0x40000000, 0x80000000,
+>> +          IOMMU_READ | IOMMU_WRITE);
+>> +
+>>       if (arm_iommu_attach_device(dev, mapping)) {
+> The kernel still hangs but the boot does indeed go further. Here is my
+> boot log [0] although I couldn't find an evident cause.
 
-In that case I completely agree that it should be defined in the .dtsi
-but that is not what the commit message said though :-)
+Frankly, this freeze looks really strange, because there is no error message
+or any other failure indicator.
 
-Best regards,
-Javier
+Thanks for testing the above hack. It confirmed that the previous boot 
+failure
+was caused by display left enabled in bootloader. Such configuration is 
+not yet
+supported, although I will do my best so find how to add support for it. 
+For the
+time being - please don't enable IOMMU support on Exynos5420 Peach Pit. It
+shouldn't be a big issue, because IOMMU support was already non-functional
+all the time on Exynos platform.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
