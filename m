@@ -1,60 +1,105 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] i2c: s3c2410: fix ABBA deadlock by keeping clock prepared
-Date: Fri, 23 Jan 2015 09:58:16 +0100
-Message-ID: <CAJKOXPfTwkx7A6tjMaANuafsFonAunDv4CV+QPgF6SKbRZ4mzQ@mail.gmail.com>
-References: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 3/7] misc: Add cros_ec_lpc driver for x86 devices
+Date: Fri, 23 Jan 2015 10:55:10 +0100
+Message-ID: <54C21A7E.1050304@collabora.co.uk>
+References: <1421954186-29764-1-git-send-email-javier.martinez@collabora.co.uk>	<1421954186-29764-4-git-send-email-javier.martinez@collabora.co.uk> <CAEUmHyYQ_oOE0Bd2Qi++DdJ2OMg=SuESx_pEJug4Ci=N0uYF0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Osmialowski <p.osmialowsk@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:37252 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754275AbbAWJzQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Jan 2015 04:55:16 -0500
+In-Reply-To: <CAEUmHyYQ_oOE0Bd2Qi++DdJ2OMg=SuESx_pEJug4Ci=N0uYF0g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Varka Bhadram <varkabhadram@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2015-01-19 17:03 GMT+01:00 Paul Osmialowski <p.osmialowsk@samsung.com>:
-> This patch solves deadlock between clock prepare mutex and regmap mutex reported
-> by Tomasz Figa in [1] by implementing solution from [2]: "always leave the clock
-> of the i2c controller in a prepared state".
->
-> [1] https://lkml.org/lkml/2014/7/2/171
-> [2] https://lkml.org/lkml/2014/7/2/207
->
-> On each i2c transfer handled by s3c24xx_i2c_xfer(), clk_prepare_enable() was
-> called, which calls clk_prepare() then clk_enable(). clk_prepare() takes
-> prepare_lock mutex before proceeding. Note that i2c transfer functions are
-> invoked from many places in kernel, typically with some other additional lock
-> held.
->
-> It may happen that function on CPU1 (e.g. regmap_update_bits()) has taken a
-> mutex (i.e. regmap lock mutex) then it attempts i2c communication in order to
-> proceed (so it needs to obtain clock related prepare_lock mutex during transfer
-> preparation stage due to clk_prepare() call). At the same time other task on
-> CPU0 wants to operate on clock (e.g. to (un)prepare clock for some other reason)
-> so it has taken prepare_lock mutex.
->
-> CPU0:                        CPU1:
-> clk_disable_unused()         regulator_disable()
->   clk_prepare_lock()           map->lock(map->lock_arg)
->   regmap_read()                s3c24xx_i2c_xfer()
->     map->lock(map->lock_arg)     clk_prepare_lock()
->
-> Implemented solution from [2] leaves i2c clock prepared. Preparation is done in
-> s3c24xx_i2c_probe() function. Without this patch, it is immediately unprepared
-> by clk_disable_unprepare() call. I've replaced this call with clk_disable() and
-> I've added clk_unprepare() call in s3c24xx_i2c_remove().
->
-> The s3c24xx_i2c_xfer() function now uses clk_enable() instead of
-> clk_prepare_enable() (and clk_disable() instead of clk_unprepare_disable()).
->
-> Signed-off-by: Paul Osmialowski <p.osmialowsk@samsung.com>
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
+Hello Varka,
 
-Looks good to me.
+Thanks a lot for your feedback.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 01/23/2015 04:57 AM, Varka Bhadram wrote:
+> (...)
+>> +static int cros_ec_lpc_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct cros_ec_device *ec_dev;
+>> +       int err = -ENOTTY;
+>> +
+>> +       if (!request_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE, MYNAME)) {
+> 
+> Why dont you use devres API for request_region()... Then maximum of
+> your goto label regarding
+> release region will gone...
+>
+
+Good point, I'll change that on next version.
+ 
+>> +               dev_warn(dev, "couldn't reserve memmap region\n");
+>> +               goto failed_memmap;
+>> +       }
+>> +
+>> +       if ((inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID) != 'E') ||
+>> +           (inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1) != 'C')) {
+>> +               dev_warn(dev, "EC ID not detected\n");
+>> +               goto failed_ec_probe;
+>> +       }
+>> +
+>> +       if (!request_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE,
+>> +                           MYNAME)) {
+> 
+> same...
+> 
+>> +               dev_warn(dev, "couldn't reserve region0\n");
+>> +               goto failed_region0;
+>> +       }
+>> +       if (!request_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE,
+>> +                           MYNAME)) {
+> 
+> same ...
+> 
+>> +               dev_warn(dev, "couldn't reserve region1\n");
+>> +               goto failed_region1;
+>> +       }
+>> +
+>> +       ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+>> +       if (!ec_dev) {
+>> +               err = -ENOMEM;
+>> +               goto failed_ec_dev;
+>> +       }
+>> +
+>> +       platform_set_drvdata(pdev, ec_dev);
+>> +       ec_dev->dev = dev;
+>> +       ec_dev->ec_name = pdev->name;
+>> +       ec_dev->phys_name = dev_name(dev);
+>> +       ec_dev->parent = dev;
+>> +       ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
+>> +       ec_dev->cmd_readmem = cros_ec_lpc_readmem;
+>> +
+>> +       err = cros_ec_register(ec_dev);
+>> +       if (err) {
+>> +               dev_warn(dev, "couldn't register ec_dev\n");
+>> +               goto failed_ec_dev;
+>> +       }
+>> +
+>> +       return 0;
+>> +
+>> +failed_ec_dev:
+>> +       release_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE);
+>> +failed_region1:
+>> +       release_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE);
+>> +failed_region0:
+>> +failed_ec_probe:
+>> +       release_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE);
+> 
+> All these goto labels will be gone if you use devres API..
+> 
+
+Yes, I'll wait a couple more days to see if I get more feedback and re-post.
 
 Best regards,
-Krzysztof
+Javier
