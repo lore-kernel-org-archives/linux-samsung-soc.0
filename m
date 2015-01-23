@@ -1,153 +1,88 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 2/2] ARM: dts: exynos4: Add stdout-path properties
-Date: Fri, 23 Jan 2015 14:47:42 +0100
-Message-ID: <1422020862-10169-3-git-send-email-m.szyprowski@samsung.com>
-References: <1422020862-10169-1-git-send-email-m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
+ devices from device tree
+Date: Fri, 23 Jan 2015 14:48:56 +0100
+Message-ID: <CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA@mail.gmail.com>
+References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
+	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
+	<CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
+	<54C2415A.3020508@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:56045 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755224AbbAWNru (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:41013 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902AbbAWNs5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 08:47:50 -0500
-In-reply-to: <1422020862-10169-1-git-send-email-m.szyprowski@samsung.com>
+	Fri, 23 Jan 2015 08:48:57 -0500
+Received: by mail-wi0-f171.google.com with SMTP id l15so2944233wiw.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Jan 2015 05:48:56 -0800 (PST)
+In-Reply-To: <54C2415A.3020508@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-From: Tomasz Figa <t.figa@samsung.com>
+Hello Marek,
 
-This patch adds stdout-path property to chosen nodes of Exynos4 boards
-to enable use of earlycon feature without the need to hardcode port
-number in kernel itself.
+On Fri, Jan 23, 2015 at 1:40 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>>> +
+>>> +       list_add_tail(&data->owner_node, &owner->clients);
+>>
+>> This is the line that causes the kernel to hang, if I comment the
+>> list_add_tail() call then the kernel boots.
+>>
+>> I checked that neither data nor owner are NULL and that the
+>> owner->clients list_head is initialized. Do you have any ideas what
+>> could be happening?
+>
+>
+> This is really strange. However the hang is definitely not caused by
+> adding the controller to the list, but rather the fact that it is later
+> being initialized, probably in exynos_iommu_attach_device().
+>
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4210-origen.dts         | 1 +
- arch/arm/boot/dts/exynos4210-smdkv310.dts       | 1 +
- arch/arm/boot/dts/exynos4210-trats.dts          | 1 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 1 +
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ++++
- arch/arm/boot/dts/exynos4412-origen.dts         | 1 +
- arch/arm/boot/dts/exynos4412-smdk4412.dts       | 1 +
- arch/arm/boot/dts/exynos4412-tiny4412.dts       | 4 ++++
- arch/arm/boot/dts/exynos4412-trats2.dts         | 1 +
- 9 files changed, 15 insertions(+)
+Yes, I knew adding to the list was not the issue but a side effect of
+being in the list. I'm not familiar with Exynos sysmmu/iommu to figure
+out though.
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f767c425d0b5..b81146141402 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -31,6 +31,7 @@
- 
- 	chosen {
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
-+		stdout-path = &serial_2;
- 	};
- 
- 	regulators {
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 676e6e0c8cf3..86216fff1b4f 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -27,6 +27,7 @@
- 
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+		stdout-path = &serial_1;
- 	};
- 
- 	sdhci@12530000 {
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index f516da9e8b3a..b351c7bddf2d 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -28,6 +28,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
-+		stdout-path = &serial_2;
- 	};
- 
- 	regulators {
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d50eb3aa708e..e65ee3cb36c3 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -26,6 +26,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
-+		stdout-path = &serial_2;
- 	};
- 
- 	sysram@02020000 {
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index c697ff01ae8d..7c49bddf44b6 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -11,6 +11,10 @@
- #include "exynos4412.dtsi"
- 
- / {
-+	chosen {
-+		stdout-path = &serial_1;
-+	};
-+
- 	firmware@0204F000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0204F000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index de15114fd07c..bd8b73077d41 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -26,6 +26,7 @@
- 
- 	chosen {
- 		bootargs ="console=ttySAC2,115200";
-+		stdout-path = &serial_2;
- 	};
- 
- 	firmware@0203F000 {
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index ded0b70f7644..b9256afbcc68 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -25,6 +25,7 @@
- 
- 	chosen {
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+		stdout-path = &serial_1;
- 	};
- 
- 	g2d@10800000 {
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index ea6929d9c621..d46fd4c2aeaa 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -18,6 +18,10 @@
- 	model = "FriendlyARM TINY4412 board based on Exynos4412";
- 	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
- 
-+	chosen {
-+		stdout-path = &serial_0;
-+	};
-+
- 	memory {
- 		reg = <0x40000000 0x40000000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 5e066cd87f66..c8b38359d54e 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -30,6 +30,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
-+		stdout-path = &serial_2;
- 	};
- 
- 	firmware@0204F000 {
--- 
-1.9.2
+> Just a quick question - does bootloader on Exynos5420 Peach Pit sets
+> any image on the display?
+>
+
+Yes u-boot does initialize the display, I see the boot messages and
+have an u-boot prompt.
+
+> If so then we will get IOMMU page fault on init (DMA engine of FIMD is
+> left enabled from bootloader) and such case is not yet handled.
+> Besides that I have no idea for any other reason for such failure.
+>
+
+I see, that's a reasonable explanation and in fact your patch makes at
+least the kernel to start booting.
+
+> To check if this is caused by io page fault, please temporarily add the
+> following hack:
+> --->8---
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 7864797609b3..5e70cf7eb31b 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -2011,6 +2011,9 @@ static bool arm_setup_iommu_dma_ops(struct device
+> *dev, u64 dma_base, u64 size,
+>          return false;
+>      }
+>
+> +    iommu_map(mapping->domain, 0x40000000, 0x40000000, 0x80000000,
+> +          IOMMU_READ | IOMMU_WRITE);
+> +
+>      if (arm_iommu_attach_device(dev, mapping)) {
+
+The kernel still hangs but the boot does indeed go further. Here is my
+boot log [0] although I couldn't find an evident cause.
+
+Best regards,
+Javier
+
+[0]: http://paste.debian.net/plain/141968
