@@ -1,84 +1,127 @@
-From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
-	devices from device tree
-Date: Fri, 23 Jan 2015 17:44:48 +0100
-Message-ID: <CABxcv==S97O84zRwFi6SZy75cvZEVRrFHHY-CvmYfQ+SEX0mTg@mail.gmail.com>
-References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
-	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
-	<CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
-	<54C2415A.3020508@samsung.com>
-	<CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA@mail.gmail.com>
-	<54C273AF.1010404@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 01/12] clk: samsung: exynos5433: Add clocks using common
+ clock framework
+Date: Fri, 23 Jan 2015 18:40:10 +0100
+Message-ID: <54C2877A.3040500@samsung.com>
+References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
+ <1421821618-8627-2-git-send-email-cw00.choi@samsung.com>
+ <54C129B0.1090404@samsung.com> <54C1FBF6.4040405@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <54C273AF.1010404-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <54C1FBF6.4040405@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Marek,
+On 23/01/15 08:44, Chanwoo Choi wrote:
+>>> +	cmu_top: clock-controller@0x10030000 {
+>>> >> +		compatible = "samsung,exynos5433-cmu-top";
+>>> >> +		reg = <0x10030000 0x0c04>;
+>>> >> +		#clock-cells = <1>;
+>>> >> +	};
+>>> >> +
 
-On Fri, Jan 23, 2015 at 5:15 PM, Marek Szyprowski
-<m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>
->>> To check if this is caused by io page fault, please temporarily add the
->>> following hack:
->>> --->8---
->>> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
->>> index 7864797609b3..5e70cf7eb31b 100644
->>> --- a/arch/arm/mm/dma-mapping.c
->>> +++ b/arch/arm/mm/dma-mapping.c
->>> @@ -2011,6 +2011,9 @@ static bool arm_setup_iommu_dma_ops(struct device
->>> *dev, u64 dma_base, u64 size,
->>>           return false;
->>>       }
->>>
->>> +    iommu_map(mapping->domain, 0x40000000, 0x40000000, 0x80000000,
->>> +          IOMMU_READ | IOMMU_WRITE);
->>> +
->>>       if (arm_iommu_attach_device(dev, mapping)) {
->>
->> The kernel still hangs but the boot does indeed go further. Here is my
->> boot log [0] although I couldn't find an evident cause.
+>>> >> +	cmu_fsys: clock-controller@0x156e0000 {
+>>> >> +		compatible = "samsung,exynos5433-cmu-fsys";
+>>> >> +		reg = <0x156e0000 0x0b04>;
+>>> >> +		#clock-cells = <1>;
+>>> >> +	};
+>> > 
+>> > What are the reasons to split the whole clock controller into separate
+>> > device nodes with different compatible strings like this? I doubt drivers
+>> > associated with each of those compatible strings could be ever reused on
+>> > different Exynos SoCs.
 >
+> No special reason. I added the clock controller according to clock domain
+> separately. As I knew, samsung clk drivers use this way to support various
+> clock domains. For exmaple, drivers/clk/samsung/clk-exynos7.c.
+
+I'm afraid exynos7 has that initialization ordering issue, unfortunately I
+didn't notice it before.
+
+>> > There are hardware dependencies between these clock domains, which are
+>> > not currently modelled in DT with your binding.
 >
-> Frankly, this freeze looks really strange, because there is no error message
-> or any other failure indicator.
+> Right. current samsung clock drivers cannot show the hierarchy among clock 
+> domains in DT.
+> 
+>> > IOW, there is currently
+>> > no way to ensure proper registration order of the CMUs (clock domains).
+>> > This may be important in some cases.
+>> > 
+>> > To address this we could either add clocks/clock-names properties in
+>> > respective CMU device nodes, pointing to any clocks in other CMU(s) or
+>> > make a single device node for the whole clock controller, with an
+>> > aggregated reg entry, e.g.
+>> > 
+>> >  cmu: clock-controller@0x10030000 {
+>> > 	compatible = "samsung,exynos5433-cmu";
+>> > 	reg =   <0x10030000 0x0c04>,
+>> > 		<0x10fc0000 0x0c04>,
+>> > 		<0x105b0000 0x100c>,
+>> > 		<0x14c80000 0x0b08>,
+>> > 		<0x10040000 0x0b20>,
+>> > 		<0x156e0000 0x0b04>,
+>> > 			...
+>> > 	reg-names = "top", "cpif", "mif", "peric", "peris", "fsys"...
+>> > 	#clock-cells = <1>;
+>> >  };
 >
-> Thanks for testing the above hack. It confirmed that the previous boot
+> If you make a single device node to support various clock domain,
+> How are you indicate the specific clock in some clock domain?
 
-You are welcome
+This might be an issue, we would need to make all the clk indexes a one
+contiguous set. I'm wondering if there is really any use of having such
+information expressed explicitly in DT, or it would just make the DT
+binding closer resembling the SoC's documentation ?
 
-> failure
-> was caused by display left enabled in bootloader. Such configuration is not
-> yet
-> supported, although I will do my best so find how to add support for it. For
-> the
+Similarly, the clock controller is divided into subdomains in older SoCs,
+like exynos4, yet we do not create separate device nodes for each domain.
+Is reference to each individual clock domain required in any other SoC's
+part in case of exynos5433 ?
 
-Great, thanks a lot.
-
-> time being - please don't enable IOMMU support on Exynos5420 Peach Pit. It
-> shouldn't be a big issue, because IOMMU support was already non-functional
-> all the time on Exynos platform.
+> For example,
+> The serial dt node in exynos7.dtsi. serial_0 dt node use the uart clocks
+> in 'clock_peric0' clock domain and serial_1 dt node use the uart clocks
+> in 'clock-peric1' clock domain.
 >
+> When using the clock in specific clock domain,
+> we need to phandle(e.g., clock_peric0, clock_peric1) of clock domain.
+> 
+> 		serial_0: serial@13630000 {
+> 			compatible = "samsung,exynos4210-uart";
+> 			reg = <0x13630000 0x100>;
+> 			interrupts = <0 440 0>;
+> 			clocks = <&clock_peric0 PCLK_UART0>,
+> 				 <&clock_peric0 SCLK_UART0>;
+> 			clock-names = "uart", "clk_uart_baud0";
+> 			status = "disabled";
+> 		};
+> 
+> 		serial_1: serial@14c20000 {
+> 			compatible = "samsung,exynos4210-uart";
+> 			reg = <0x14c20000 0x100>;
+> 			interrupts = <0 456 0>;
+> 			clocks = <&clock_peric1 PCLK_UART1>,
+> 				 <&clock_peric1 SCLK_UART1>;
+> 			clock-names = "uart", "clk_uart_baud0";
+> 			status = "disabled";
+> 		};
+>
+>> > Then we could modify samsung_cmu_register_one() function by adding
+>> > the reg entry index or name argument. What do you think ?
+>
+> If there is more reasonable way to show the dependency between clock domains,
+> I will agree.
 
-Agreed but keep in mind that CONFIG_EXYNOS_IOMMU is currently enabled
-in arch/arm/configs/exynos_defconfig so you should include in your
-series a patch to disable that config option to prevent the boot hang.
-Or at least add a of_machine_is_compatible("google,peach") check
-although I don't know if there are other Exynos machines that have the
-same issue.
+The other option I mentioned is specifying all parent clocks of a given
+clock domain in its device node with clocks(/clock-names) properties.
+But it might be a bit hard to list all the clock domain dependencies
+this way
 
-Best regards,
-Javier
+--
+Regards,
+Sylwester
