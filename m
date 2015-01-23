@@ -1,51 +1,60 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable CONFIG_FHANDLE
-Date: Fri, 23 Jan 2015 09:56:53 +0100
-Message-ID: <54C20CD5.7060001@collabora.co.uk>
-References: <1417176414-21558-1-git-send-email-sjoerd.simons@collabora.co.uk> <54786C1D.3050306@collabora.co.uk> <54BC9995.4020300@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] i2c: s3c2410: fix ABBA deadlock by keeping clock prepared
+Date: Fri, 23 Jan 2015 09:58:16 +0100
+Message-ID: <CAJKOXPfTwkx7A6tjMaANuafsFonAunDv4CV+QPgF6SKbRZ4mzQ@mail.gmail.com>
+References: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37176 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754386AbbAWI45 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 03:56:57 -0500
-In-Reply-To: <54BC9995.4020300@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1421683413-27075-1-git-send-email-p.osmialowsk@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Osmialowski <p.osmialowsk@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Andreas Faerber <afaerber@suse.de>
 
-Hello Kukjin,
+2015-01-19 17:03 GMT+01:00 Paul Osmialowski <p.osmialowsk@samsung.com>:
+> This patch solves deadlock between clock prepare mutex and regmap mutex reported
+> by Tomasz Figa in [1] by implementing solution from [2]: "always leave the clock
+> of the i2c controller in a prepared state".
+>
+> [1] https://lkml.org/lkml/2014/7/2/171
+> [2] https://lkml.org/lkml/2014/7/2/207
+>
+> On each i2c transfer handled by s3c24xx_i2c_xfer(), clk_prepare_enable() was
+> called, which calls clk_prepare() then clk_enable(). clk_prepare() takes
+> prepare_lock mutex before proceeding. Note that i2c transfer functions are
+> invoked from many places in kernel, typically with some other additional lock
+> held.
+>
+> It may happen that function on CPU1 (e.g. regmap_update_bits()) has taken a
+> mutex (i.e. regmap lock mutex) then it attempts i2c communication in order to
+> proceed (so it needs to obtain clock related prepare_lock mutex during transfer
+> preparation stage due to clk_prepare() call). At the same time other task on
+> CPU0 wants to operate on clock (e.g. to (un)prepare clock for some other reason)
+> so it has taken prepare_lock mutex.
+>
+> CPU0:                        CPU1:
+> clk_disable_unused()         regulator_disable()
+>   clk_prepare_lock()           map->lock(map->lock_arg)
+>   regmap_read()                s3c24xx_i2c_xfer()
+>     map->lock(map->lock_arg)     clk_prepare_lock()
+>
+> Implemented solution from [2] leaves i2c clock prepared. Preparation is done in
+> s3c24xx_i2c_probe() function. Without this patch, it is immediately unprepared
+> by clk_disable_unprepare() call. I've replaced this call with clk_disable() and
+> I've added clk_unprepare() call in s3c24xx_i2c_remove().
+>
+> The s3c24xx_i2c_xfer() function now uses clk_enable() instead of
+> clk_prepare_enable() (and clk_disable() instead of clk_unprepare_disable()).
+>
+> Signed-off-by: Paul Osmialowski <p.osmialowsk@samsung.com>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
 
-On 01/19/2015 06:43 AM, Joonyoung Shim wrote:
->> 
-> 
-> I also hope merge this, already multi_v7_defconfig supports this.
-> 
+Looks good to me.
 
-I would also hope this to be merged since it's required to boot
-using systemd.
-
-> Thanks.
-> 
->> This is certainly required for newer systemd and has to be enabled.
->> 
->> But it would also be great to have enabled all the config symbols
->> that are listed as requirements in the systemd README file:
->> 
->> http://cgit.freedesktop.org/systemd/systemd/tree/README.
->> 
->> Tony added that support to OMAP2+ defconfig in commit 673ce00c
->> ("ARM: omap2plus_defconfig: Add support for distros with systemd")
->> so the same should be done in exynos_defconfig.
->> 
->> That can of course be a follow-up patch though, so for $subject:
->> 
->> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
-Javier
+Krzysztof
