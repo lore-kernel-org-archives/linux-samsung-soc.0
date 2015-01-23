@@ -1,57 +1,68 @@
-From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: RE: [alsa-devel] [PATCH v3 3/4] ARM: dts: set clock out parent to
- XUSBXTI
-Date: Fri, 23 Jan 2015 15:41:22 +0900
-Message-ID: <0b7f01d036d7$9a438850$ceca98f0$@kernel.org>
-References: <1421925482-15861-1-git-send-email-ideal.song@samsung.com>
- <1421925482-15861-4-git-send-email-ideal.song@samsung.com>
- <54C0EC23.9070209@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: DTS: Exynos: convert to generic power domain bindings
+Date: Fri, 23 Jan 2015 15:49:14 +0900
+Message-ID: <0bec01d036d8$b3a11aa0$1ae34fe0$@kernel.org>
+References: <1420191389-1409-1-git-send-email-m.szyprowski@samsung.com>
+ <CABxcv==zC2Sjp+ezO9HBgynbbEqDrv94VO85LPkv02Ok0LUD_Q@mail.gmail.com>
+ <54B6951C.8070807@kernel.org> <54BE404F.5030302@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <54C0EC23.9070209-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:35016 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751448AbbAWGtR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Jan 2015 01:49:17 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NIM003U7AY3TFD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Jan 2015 15:49:15 +0900 (KST)
+In-reply-to: <54BE404F.5030302@samsung.com>
 Content-language: ko
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Inha Song' <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>
+Cc: linux-samsung-soc@vger.kernel.org, 'Inki Dae' <inki.dae@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Geert Uytterhoeven' <geert@linux-m68k.org>, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kevin Hilman' <khilman@kernel.org>
 
-Sylwester Nawrocki wrote:
+Marek Szyprowski wrote:
 > 
-> On 22/01/15 12:18, Inha Song wrote:
-> > This patch set clock out parent to XUSBXTI.
-> >
-> > Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  arch/arm/boot/dts/exynos4.dtsi | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> > index b8168f1..020bbaf 100644
-> > --- a/arch/arm/boot/dts/exynos4.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4.dtsi
-> > @@ -141,6 +141,8 @@
-> >  	pmu_system_controller: system-controller@10020000 {
-> >  		compatible = "samsung,exynos4210-pmu", "syscon";
-> >  		reg = <0x10020000 0x4000>;
-> > +		assigned-clocks = <&pmu_system_controller 0>;
-> > +		assigned-clock-parents =  <&clock CLK_XUSBXTI>;
-> >  	};
+> Hello,
 > 
-> Looks good, except it needs to be done only for the Trats2 board, i.e.
-> the PMU device node including these properties should be added to
-> exynos4412-trats2.dts.  I think it's fine to make it a one patch including
-> all dts changes.
+Hi,
+
+> On 2015-01-14 17:11, Kukjin Kim wrote:
+> > On 01/13/15 01:50, Javier Martinez Canillas wrote:
+> >> On Fri, Jan 2, 2015 at 10:36 AM, Marek Szyprowski
+> >> <m.szyprowski@samsung.com> wrote:
+> >>> This patch replaces all custom samsung,power-domain device tree properties
+> >>> with generic power domain bindings and updates documentation Samsung's devices
+> >>> refering to old binding.
+> >>>
+> >>> Suggested-by: Kevin Hilman <khilman@kernel.org>
+> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> It looks to me like a very nice cleanup.
+> >>
+> >> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >>
+> >> and on an Exynos5800 Peach Pi Chromebook:
+> >>
+> >> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >>
+> > Thanks your guys. Yeah, using generic something would be better and
+> > basically I have no objection. But need to check there is no side-effect
+> > because sometimes general cannot cover all of customs ;) Anyway I'll
+> > look at this change about that in this weekend.
 > 
-Yeah, I agree with Sylwester's suggestion. Please make a one patch for the
-updating DT for sound support and adding me in Cc for the change for relevant
-driver changes as well.
+> Kukjin: any new thoughts? I didn't notice this patch in your dt-samsung
+> branch
+> update...
+> 
+Sorry for late response.
+
+Yeah, I have no objection on this change and I'll apply.
 
 Thanks,
 Kukjin
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
