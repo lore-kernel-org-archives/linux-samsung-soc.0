@@ -1,88 +1,98 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
- devices from device tree
-Date: Fri, 23 Jan 2015 14:48:56 +0100
-Message-ID: <CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA@mail.gmail.com>
-References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
-	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
-	<CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
-	<54C2415A.3020508@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v6 08/18] cpufreq: exynos: Use device tree to determine if
+ cpufreq cooling should be registered
+Date: Fri, 23 Jan 2015 14:57:44 +0100
+Message-ID: <20150123145744.3dc47a47@amdc2363>
+References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
+ <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
+ <CAKohpok1EacvJ3PCOZYnz81D3=P04apRp7VOxPFE1QxYF4Wydg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:41013 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902AbbAWNs5 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47860 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751741AbbAWN5x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 08:48:57 -0500
-Received: by mail-wi0-f171.google.com with SMTP id l15so2944233wiw.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Jan 2015 05:48:56 -0800 (PST)
-In-Reply-To: <54C2415A.3020508@samsung.com>
+	Fri, 23 Jan 2015 08:57:53 -0500
+In-reply-to: <CAKohpok1EacvJ3PCOZYnz81D3=P04apRp7VOxPFE1QxYF4Wydg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Marek,
+Hi Viresh,
 
-On Fri, Jan 23, 2015 at 1:40 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->>> +
->>> +       list_add_tail(&data->owner_node, &owner->clients);
->>
->> This is the line that causes the kernel to hang, if I comment the
->> list_add_tail() call then the kernel boots.
->>
->> I checked that neither data nor owner are NULL and that the
->> owner->clients list_head is initialized. Do you have any ideas what
->> could be happening?
->
->
-> This is really strange. However the hang is definitely not caused by
-> adding the controller to the list, but rather the fact that it is later
-> being initialized, probably in exynos_iommu_attach_device().
->
+> On 23 January 2015 at 17:44, Lukasz Majewski <l.majewski@samsung.com>
+> wrote:
+> > +       cpus = of_find_node_by_path("/cpus");
+> > +       if (!cpus) {
+> > +               pr_err("failed to find cpus node\n");
+> > +               return 0;
+> > +       }
+> > +
+> > +       np = of_get_next_child(cpus, NULL);
+> > +       if (!np) {
+> > +               pr_err("failed to find cpus child node\n");
+> > +               of_node_put(cpus);
+> >                 return 0;
+> > +       }
+> 
+> Why making it complex? Just get device node for cpu 0 and
+> do cpu_dev->np.
 
-Yes, I knew adding to the list was not the issue but a side effect of
-being in the list. I'm not familiar with Exynos sysmmu/iommu to figure
-out though.
+Please pay a note about following problem:
 
-> Just a quick question - does bootloader on Exynos5420 Peach Pit sets
-> any image on the display?
->
+Previously we got: cpu0: cpu@0 for all Exynos devices.
 
-Yes u-boot does initialize the display, I see the boot messages and
-have an u-boot prompt.
+Now, however, cpu numbering has changed (due to GIC rework).
+For example:
 
-> If so then we will get IOMMU page fault on init (DMA engine of FIMD is
-> left enabled from bootloader) and such case is not yet handled.
-> Besides that I have no idea for any other reason for such failure.
->
+Exynos4412:
+	cpus {
+		cpu0: cpu@A00 {
+			...
+			#cooling-cells = <2>; /* min followed by max */
+		};
 
-I see, that's a reasonable explanation and in fact your patch makes at
-least the kernel to start booting.
+		cpu@A01 {
+		};
 
-> To check if this is caused by io page fault, please temporarily add the
-> following hack:
-> --->8---
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 7864797609b3..5e70cf7eb31b 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -2011,6 +2011,9 @@ static bool arm_setup_iommu_dma_ops(struct device
-> *dev, u64 dma_base, u64 size,
->          return false;
->      }
->
-> +    iommu_map(mapping->domain, 0x40000000, 0x40000000, 0x80000000,
-> +          IOMMU_READ | IOMMU_WRITE);
-> +
->      if (arm_iommu_attach_device(dev, mapping)) {
+		cpu@A02 {
+		};
 
-The kernel still hangs but the boot does indeed go further. Here is my
-boot log [0] although I couldn't find an evident cause.
+		cpu@A03 {
+		};
+	}
 
+Exynos 4210:
+	cpus {
+		cpu0: cpu@900 {
+			#cooling-cells = <2>; /* min followed by max */
+		};
+
+		cpu@901 {
+		};
+	};
+
+Exynos 5250:
+	cpus {
+		cpu0: cpu@0 {
+			#cooling-cells = <2>; /* min followed by max */
+		};
+
+		cpu@1 {
+		};
+	};
+	
+
+As you can see different cpu@XXY nodes we have and simply calling cpu@0
+won't work.
+
+
+-- 
 Best regards,
-Javier
 
-[0]: http://paste.debian.net/plain/141968
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
