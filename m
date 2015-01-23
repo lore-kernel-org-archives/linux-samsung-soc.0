@@ -1,74 +1,149 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: [PATCH 2/2] net: stmmac: add fixed_phy and phy_addr support using DT file
-Date: Fri, 23 Jan 2015 10:41:33 +0800
-Message-ID: <1421980893-14475-3-git-send-email-ming.lei@canonical.com>
-References: <1421980893-14475-1-git-send-email-ming.lei@canonical.com>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH v3 3/7] misc: Add cros_ec_lpc driver for x86 devices
+Date: Fri, 23 Jan 2015 09:27:22 +0530
+Message-ID: <CAEUmHyYQ_oOE0Bd2Qi++DdJ2OMg=SuESx_pEJug4Ci=N0uYF0g@mail.gmail.com>
+References: <1421954186-29764-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1421954186-29764-4-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f170.google.com ([209.85.160.170]:34690 "EHLO
-	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754792AbbAWCl4 (ORCPT
+Received: from mail-la0-f48.google.com ([209.85.215.48]:49007 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754024AbbAWD5Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jan 2015 21:41:56 -0500
-In-Reply-To: <1421980893-14475-1-git-send-email-ming.lei@canonical.com>
+	Thu, 22 Jan 2015 22:57:24 -0500
+In-Reply-To: <1421954186-29764-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, netdev@vger.kernel.org, Byungho An <bh74.an@samsung.com>, Ming Lei <ming.lei@canonical.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Byungho An <bh74.an@samsung.com>
+On Fri, Jan 23, 2015 at 12:46 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> From: Bill Richardson <wfrichar@chromium.org>
+>
+> Chromebooks have an Embedded Controller (EC) that is used to
+> implement various functions such as keyboard, power and battery.
+>
+> The AP can communicate with the EC through different bus types
+> such as I2C, SPI or LPC.
+>
+> The cros_ec mfd driver is then composed of a core driver that
+> register the sub-devices as mfd cells and provide a high level
+> communication interface that is used by the rest of the kernel
+> and bus specific interfaces modules.
+>
+> Each connection method then has its own driver, which register
+> with the EC driver interface-agnostic interface.
+>
+> Currently, there are drivers to communicate with the EC over
+> I2C and SPI and this driver adds support for LPC.
+>
+> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> Changes since v2:
+>  - Move out from drivers/mfd to drivers/misc. Suggested by Lee Jones.
+>
+> Changes since v1: None, new patch.
+> ---
+>  drivers/misc/Kconfig       |  10 ++
+>  drivers/misc/Makefile      |   1 +
+>  drivers/misc/cros_ec_lpc.c | 306 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 317 insertions(+)
+>  create mode 100644 drivers/misc/cros_ec_lpc.c
+(...)
+> +static int cros_ec_lpc_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct cros_ec_device *ec_dev;
+> +       int err = -ENOTTY;
+> +
+> +       if (!request_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE, MYNAME)) {
 
-This patch adds codes for DT file support, fixed_phy and phy_addr
-can be set in DT file.
+Why dont you use devres API for request_region()... Then maximum of
+your goto label regarding
+release region will gone...
 
-Signed-off-by: Byungho An <bh74.an@samsung.com>
-(bypass check for fixed phy)
-Signed-off-by: Ming Lei<ming.lei@canonical.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |    5 ++++-
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |    7 +++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+> +               dev_warn(dev, "couldn't reserve memmap region\n");
+> +               goto failed_memmap;
+> +       }
+> +
+> +       if ((inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID) != 'E') ||
+> +           (inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1) != 'C')) {
+> +               dev_warn(dev, "EC ID not detected\n");
+> +               goto failed_ec_probe;
+> +       }
+> +
+> +       if (!request_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE,
+> +                           MYNAME)) {
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 8c6b7c16..ddb4351 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -847,8 +847,11 @@ static int stmmac_init_phy(struct net_device *dev)
- 	 * 0 rather than 0xffff. Catch this here and treat 0 as a non-existent
- 	 * device as well.
- 	 * Note: phydev->phy_id is the result of reading the UID PHY registers.
-+	 * But phy_id returned from fixed phy is always zero, so bypass the
-+	 * check for fixed phy.
- 	 */
--	if (phydev->phy_id == 0) {
-+	if (phydev->phy_id == 0 && (!priv->plat->phy_bus_name ||
-+			strcmp(priv->plat->phy_bus_name,"fixed"))) {
- 		phy_disconnect(phydev);
- 		return -ENODEV;
- 	}
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 879e29f..4f11491 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -128,6 +128,7 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 	struct device_node *np = pdev->dev.of_node;
- 	struct stmmac_dma_cfg *dma_cfg;
- 	const struct of_device_id *device;
-+	u32 phy_addr;
- 
- 	if (!np)
- 		return -ENODEV;
-@@ -217,6 +218,12 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 		plat->pmt = 1;
- 	}
- 
-+	if (of_find_property(np, "fixed_phy", NULL)) {
-+		plat->phy_bus_name = "fixed";
-+		of_property_read_u32(np, "phy_addr", &phy_addr);
-+		plat->phy_addr = phy_addr;
-+	}
-+
- 	if (of_device_is_compatible(np, "snps,dwmac-3.610") ||
- 		of_device_is_compatible(np, "snps,dwmac-3.710")) {
- 		plat->enh_desc = 1;
+same...
+
+> +               dev_warn(dev, "couldn't reserve region0\n");
+> +               goto failed_region0;
+> +       }
+> +       if (!request_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE,
+> +                           MYNAME)) {
+
+same ...
+
+> +               dev_warn(dev, "couldn't reserve region1\n");
+> +               goto failed_region1;
+> +       }
+> +
+> +       ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+> +       if (!ec_dev) {
+> +               err = -ENOMEM;
+> +               goto failed_ec_dev;
+> +       }
+> +
+> +       platform_set_drvdata(pdev, ec_dev);
+> +       ec_dev->dev = dev;
+> +       ec_dev->ec_name = pdev->name;
+> +       ec_dev->phys_name = dev_name(dev);
+> +       ec_dev->parent = dev;
+> +       ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
+> +       ec_dev->cmd_readmem = cros_ec_lpc_readmem;
+> +
+> +       err = cros_ec_register(ec_dev);
+> +       if (err) {
+> +               dev_warn(dev, "couldn't register ec_dev\n");
+> +               goto failed_ec_dev;
+> +       }
+> +
+> +       return 0;
+> +
+> +failed_ec_dev:
+> +       release_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE);
+> +failed_region1:
+> +       release_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE);
+> +failed_region0:
+> +failed_ec_probe:
+> +       release_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE);
+
+All these goto labels will be gone if you use devres API..
+
+> +failed_memmap:
+> +       return err;
+> +}
+> +
+> +static int cros_ec_lpc_remove(struct platform_device *pdev)
+> +{
+> +       struct cros_ec_device *ec_dev;
+> +
+> +       ec_dev = platform_get_drvdata(pdev);
+> +       cros_ec_remove(ec_dev);
+> +
+> +       release_region(EC_HOST_CMD_REGION1, EC_HOST_CMD_REGION_SIZE);
+> +       release_region(EC_HOST_CMD_REGION0, EC_HOST_CMD_REGION_SIZE);
+> +       release_region(EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE);
+> +
+
+These also will be gone....
+
+
 -- 
-1.7.9.5
+Thanks and Regards,
+Varka Bhadram.
