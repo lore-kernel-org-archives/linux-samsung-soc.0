@@ -1,52 +1,98 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: [PATCH 2/2] net: stmmac: add fixed_phy support via fixed-link DT binding
-Date: Fri, 23 Jan 2015 15:48:25 +0800
-Message-ID: <1421999305-19267-3-git-send-email-ming.lei@canonical.com>
-References: <1421999305-19267-1-git-send-email-ming.lei@canonical.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: dts: exynos5422-odroidxu3: reduce total RAM by 22 MiB
+Date: Fri, 23 Jan 2015 16:50:30 +0900
+Message-ID: <0dbe01d036e1$42daee50$c890caf0$@kernel.org>
+References: <1421842972-25807-1-git-send-email-m.szyprowski@samsung.com>
+ <0b5601d036d6$d9628c80$8c27a580$@kernel.org> <54C1F7C3.7050103@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f173.google.com ([209.85.216.173]:43498 "EHLO
-	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751121AbbAWHtA (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:52119 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751554AbbAWHud (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 02:49:00 -0500
-In-Reply-To: <1421999305-19267-1-git-send-email-ming.lei@canonical.com>
+	Fri, 23 Jan 2015 02:50:33 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NIM00L0TDS7NM50@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Jan 2015 16:50:31 +0900 (KST)
+In-reply-to: <54C1F7C3.7050103@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, netdev@vger.kernel.org, Byungho An <bh74.an@samsung.com>, Florian Fainelli <f.fainelli@gmail.com>, Ming Lei <ming.lei@canonical.com>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+Cc: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, 'Kevin Hilman' <khilman@linaro.org>, 'Sjoerd Simons' <sjoerd.simons@collabora.co.uk>
 
-Signed-off-by: Ming Lei <ming.lei@canonical.com>
----
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+Marek Szyprowski wrote:
+> 
+> Hello,
+> 
+Hi,
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 3039de2..73a3ced 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -27,6 +27,7 @@
- #include <linux/of.h>
- #include <linux/of_net.h>
- #include <linux/of_device.h>
-+#include <linux/of_mdio.h>
- 
- #include "stmmac.h"
- #include "stmmac_platform.h"
-@@ -216,6 +217,15 @@ static int stmmac_probe_config_dt(struct platform_device *pdev,
- 		plat->pmt = 1;
- 	}
- 
-+	if (of_phy_is_fixed_link(np)) {
-+		int ret = of_phy_register_fixed_link(np);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to register fixed PHY\n");
-+			return ret;
-+		}
-+		plat->phy_bus_name = "fixed";
-+	}
-+
- 	if (of_device_is_compatible(np, "snps,dwmac-3.610") ||
- 		of_device_is_compatible(np, "snps,dwmac-3.710")) {
- 		plat->enh_desc = 1;
--- 
-1.7.9.5
+> On 2015-01-23 07:35, Kukjin Kim wrote:
+> > Marek Szyprowski wrote:
+> >> Last 22 MiB is RAM is reserved by secure monitor code and cannot be
+> >> accessed from Linux kernel, so adjust total RAM size to 0x7EA00000
+> >> (2 GiB - 22 MiB). This fixes random 'imprecise kernel abort' kernel
+> >> failures.
+> >>
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> >>   arch/arm/boot/dts/exynos5422-odroidxu3.dts | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-
+> odroidxu3.dts
+> >> index f6fc9442f631..50843208860d 100644
+> >> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> >> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> >> @@ -18,7 +18,7 @@
+> >>   	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
+> >>
+> >>   	memory {
+> >> -		reg = <0x40000000 0x80000000>;
+> >> +		reg = <0x40000000 0x7EA00000>;
+> >>   	};
+> >>
+> >>   	chosen {
+> >> --
+> > Hi,
+> >
+> > Maybe is it related to the SoC not only for odriodxu3 board. If so, following
+> > would be better?
+> >
+> > ---8<------------8<---
+> > diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+> > index c0bb356..54840e3 100644
+> > --- a/arch/arm/boot/dts/exynos5800.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5800.dtsi
+> > @@ -13,6 +13,8 @@
+> >    * published by the Free Software Foundation.
+> >    */
+> >
+> > +/memreserve/ 0x80000000 0x1600000;
+> > +
+> >   #include "exynos5420.dtsi"
+> >
+> >   / {
+> 
+> I don't think so. It is related only to the setup done by the respective
+> board's bootloader,
+> not the SoC itself. It is already known that exynos 5800-based
+> Chromebooks uses different
+> bootloader setup (BL1+BL2+Trustzone) than Odroid XU3. Also please note
+> that u-boot for Odroid
+> XU3 limits the total memory passed to Linux kernel to 0x7EA00000, so we
+> should not confuse
+> the kernel about such 'reserved' regions. The same approach is used for
+> Odroid X2/U3.
+> 
+If the boot-loader  passes limited memory, it makes sense. Thanks for the
+explanation.
+
+Will apply.
+
+- Kukjin
