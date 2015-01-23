@@ -1,98 +1,87 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: dts: exynos5422-odroidxu3: reduce total RAM by 22 MiB
-Date: Fri, 23 Jan 2015 16:50:30 +0900
-Message-ID: <0dbe01d036e1$42daee50$c890caf0$@kernel.org>
-References: <1421842972-25807-1-git-send-email-m.szyprowski@samsung.com>
- <0b5601d036d6$d9628c80$8c27a580$@kernel.org> <54C1F7C3.7050103@samsung.com>
+Subject: RE: [PATCH v9 0/7] devfreq: Add devfreq-event class to provide raw
+ data for devfreq device
+Date: Fri, 23 Jan 2015 16:56:32 +0900
+Message-ID: <0dd401d036e2$1a4431d0$4ecc9570$@kernel.org>
+References: <1421737809-4010-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52119 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:53703 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751554AbbAWHud (ORCPT
+	with ESMTP id S1752271AbbAWH4f (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 02:50:33 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NIM00L0TDS7NM50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Jan 2015 16:50:31 +0900 (KST)
-In-reply-to: <54C1F7C3.7050103@samsung.com>
+	Fri, 23 Jan 2015 02:56:35 -0500
+In-reply-to: <1421737809-4010-1-git-send-email-cw00.choi@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, 'Kevin Hilman' <khilman@linaro.org>, 'Sjoerd Simons' <sjoerd.simons@collabora.co.uk>
+To: 'Chanwoo Choi' <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Marek Szyprowski wrote:
-> 
-> Hello,
+Chanwoo Choi wrote:
 > 
 Hi,
 
-> On 2015-01-23 07:35, Kukjin Kim wrote:
-> > Marek Szyprowski wrote:
-> >> Last 22 MiB is RAM is reserved by secure monitor code and cannot be
-> >> accessed from Linux kernel, so adjust total RAM size to 0x7EA00000
-> >> (2 GiB - 22 MiB). This fixes random 'imprecise kernel abort' kernel
-> >> failures.
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >>   arch/arm/boot/dts/exynos5422-odroidxu3.dts | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-
-> odroidxu3.dts
-> >> index f6fc9442f631..50843208860d 100644
-> >> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> >> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> >> @@ -18,7 +18,7 @@
-> >>   	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
-> >>
-> >>   	memory {
-> >> -		reg = <0x40000000 0x80000000>;
-> >> +		reg = <0x40000000 0x7EA00000>;
-> >>   	};
-> >>
-> >>   	chosen {
-> >> --
-> > Hi,
-> >
-> > Maybe is it related to the SoC not only for odriodxu3 board. If so, following
-> > would be better?
-> >
-> > ---8<------------8<---
-> > diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-> > index c0bb356..54840e3 100644
-> > --- a/arch/arm/boot/dts/exynos5800.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5800.dtsi
-> > @@ -13,6 +13,8 @@
-> >    * published by the Free Software Foundation.
-> >    */
-> >
-> > +/memreserve/ 0x80000000 0x1600000;
-> > +
-> >   #include "exynos5420.dtsi"
-> >
-> >   / {
+> This patchset add new devfreq_event class to provide raw data to determine
+> current utilization of device  which is used for devfreq governor.
 > 
-> I don't think so. It is related only to the setup done by the respective
-> board's bootloader,
-> not the SoC itself. It is already known that exynos 5800-based
-> Chromebooks uses different
-> bootloader setup (BL1+BL2+Trustzone) than Odroid XU3. Also please note
-> that u-boot for Odroid
-> XU3 limits the total memory passed to Linux kernel to 0x7EA00000, so we
-> should not confuse
-> the kernel about such 'reserved' regions. The same approach is used for
-> Odroid X2/U3.
+Yes, would be nice to use common framework something like the devfreq_event you created :)
+
+> The following description explains the feature of two kind of devfreq class:
+> - devfreq class (existing)
+>  : devfreq consumer device use raw data from devfreq_event device for
+>    determining proper current system state and change voltage/frequency
+>    dynamically using various governors.
+> - devfreq_event class (new)
+>  : Provide measured raw data to devfreq device for governor
+
+[...]
+
+> Chanwoo Choi (7):
+>   devfreq: event: Add new devfreq_event class to provide basic data for devfreq governor
+>   devfreq: event: Add exynos-ppmu devfreq-event driver
+>   devfreq: event: Add documentation for exynos-ppmu devfreq-event driver
+>   ARM: dts: Add PPMU dt node for Exynos3250 SoC
+>   ARM: dts: Add PPMU dt node for Exynos4 SoCs
+>   ARM: dts: exynos: Add PPMU node for Exynos3250-based Rinato/Monk board
+>   ARM: dts: exynos: Add PPMU node for Exynos4412-based TRATS2 board
 > 
-If the boot-loader  passes limited memory, it makes sense. Thanks for the
-explanation.
+>  .../bindings/devfreq/event/exynos-ppmu.txt         | 110 +++++
+>  arch/arm/boot/dts/exynos3250-monk.dts              |  40 ++
+>  arch/arm/boot/dts/exynos3250-rinato.dts            |  40 ++
+>  arch/arm/boot/dts/exynos3250.dtsi                  |  74 +++
+>  arch/arm/boot/dts/exynos4.dtsi                     | 108 +++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   8 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |  40 ++
+>  drivers/devfreq/Kconfig                            |   2 +
+>  drivers/devfreq/Makefile                           |   6 +-
+>  drivers/devfreq/devfreq-event.c                    | 498 +++++++++++++++++++++
+>  drivers/devfreq/event/Kconfig                      |  25 ++
+>  drivers/devfreq/event/Makefile                     |   2 +
+>  drivers/devfreq/event/exynos-ppmu.c                | 374 ++++++++++++++++
+>  drivers/devfreq/event/exynos-ppmu.h                |  93 ++++
+>  include/linux/devfreq-event.h                      | 196 ++++++++
+>  15 files changed, 1615 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+>  create mode 100644 drivers/devfreq/devfreq-event.c
+>  create mode 100644 drivers/devfreq/event/Kconfig
+>  create mode 100644 drivers/devfreq/event/Makefile
+>  create mode 100644 drivers/devfreq/event/exynos-ppmu.c
+>  create mode 100644 drivers/devfreq/event/exynos-ppmu.h
+>  create mode 100644 include/linux/devfreq-event.h
+> 
+> --
 
-Will apply.
+Looks good to me.
 
-- Kukjin
+Myungjoo, shall I take DT changes in this series into Samsung tree?
+
+4/7 ARM: dts: Add PPMU dt node for Exynos3250 SoC
+5/7 ARM: dts: Add PPMU dt node for Exynos4 SoCs
+6/7 ARM: dts: exynos: Add PPMU node for Exynos3250-based Rinato/Monk board
+7/7 ARM: dts: exynos: Add PPMU node for Exynos4412-based TRATS2 board
+
+Thanks,
+Kukjin
