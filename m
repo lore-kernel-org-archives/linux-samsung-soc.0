@@ -1,62 +1,46 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: Re: [PATCH 2/2] net: stmmac: add fixed_phy support via fixed-link DT binding
-Date: Fri, 23 Jan 2015 16:28:59 +0800
-Message-ID: <CACVXFVOoo1MeXH04edv6-4kc0GZB_pAf4n9+h7qkoQef=ffkPw@mail.gmail.com>
-References: <1421999305-19267-1-git-send-email-ming.lei@canonical.com>
-	<1421999305-19267-3-git-send-email-ming.lei@canonical.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/2] clk: exynos5420: Add IDs for clocks used in DISP1
+ power domain
+Date: Fri, 23 Jan 2015 09:48:39 +0100
+Message-ID: <54C20AE7.3020508@collabora.co.uk>
+References: <1421750127-22536-1-git-send-email-javier.martinez@collabora.co.uk> <1421750127-22536-2-git-send-email-javier.martinez@collabora.co.uk> <54BE6050.1090205@samsung.com> <20150120175402.22722.84342@quantum> <54BF81C2.3020000@collabora.co.uk> <0c2601d036d9$1276e7d0$3764b770$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:38860 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751941AbbAWI3C (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:37155 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752608AbbAWIsr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jan 2015 03:29:02 -0500
-In-Reply-To: <1421999305-19267-3-git-send-email-ming.lei@canonical.com>
+	Fri, 23 Jan 2015 03:48:47 -0500
+In-Reply-To: <0c2601d036d9$1276e7d0$3764b770$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, netdev@vger.kernel.org, Byungho An <bh74.an@samsung.com>, Florian Fainelli <f.fainelli@gmail.com>, Ming Lei <ming.lei@canonical.com>
+To: Kukjin Kim <kgene@kernel.org>, 'Mike Turquette' <mturquette@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tobias Jakobi' <liquid.acid@gmx.net>, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 1/23/15, Ming Lei <ming.lei@canonical.com> wrote:
-> Signed-off-by: Ming Lei <ming.lei@canonical.com>
-> ---
->  .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |   10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> index 3039de2..73a3ced 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> @@ -27,6 +27,7 @@
->  #include <linux/of.h>
->  #include <linux/of_net.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_mdio.h>
->
->  #include "stmmac.h"
->  #include "stmmac_platform.h"
-> @@ -216,6 +217,15 @@ static int stmmac_probe_config_dt(struct
-> platform_device *pdev,
->  		plat->pmt = 1;
->  	}
->
-> +	if (of_phy_is_fixed_link(np)) {
-> +		int ret = of_phy_register_fixed_link(np);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "failed to register fixed PHY\n");
-> +			return ret;
-> +		}
-> +		plat->phy_bus_name = "fixed";
-> +	}
-> +
->  	if (of_device_is_compatible(np, "snps,dwmac-3.610") ||
->  		of_device_is_compatible(np, "snps,dwmac-3.710")) {
->  		plat->enh_desc = 1;
+Hello Kukjin,
 
-Sorry, bypassing check on phy id is missed in this patch, and will
-submit v1 later.
+On 01/23/2015 07:51 AM, Kukjin Kim wrote:
+>> >>
+>> >> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> >
+>> > Acked-by: Michael Turquette <mturquette@linaro.org>
+>> >
+>> 
+>> Thanks a lot Sylwester and Mike for your acks.
+>> 
+>> Kukjin, could you please pick $subject and "Patch 2/2 ARM: dts: Add DISP1
+>> power domain for exynos5420" through your tree?
+>> 
+> Sure, I will after applying Marek's generic power domain patch.
+>
 
-Thanks,
-Ming Lei
+Awesome, thanks a lot for your help!
+ 
+> Thanks,
+> Kukjin
+> 
+
+Best regards,
+Javier
