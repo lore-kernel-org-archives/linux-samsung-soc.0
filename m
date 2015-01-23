@@ -1,99 +1,86 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 18/18] iommu: exynos: add callback for initializing
-	devices from device tree
-Date: Fri, 23 Jan 2015 17:15:43 +0100
-Message-ID: <54C273AF.1010404@samsung.com>
-References: <1421399592-7482-1-git-send-email-m.szyprowski@samsung.com>
-	<1421399592-7482-19-git-send-email-m.szyprowski@samsung.com>
-	<CABxcv=nkcY0biXuDH1BHDdOZhrzYWr-YNP13QWzdLfZfQrxouA@mail.gmail.com>
-	<54C2415A.3020508@samsung.com>
-	<CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <CABxcv=nX22+1VcA038yyLJz7dUN-tk9-kWTpSB-FeyLxVeRmZA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 0/2] cpuidle: exynos: add coupled cpuidle support for
+ Exynos4210
+Date: Fri, 23 Jan 2015 17:24:52 +0100
+Message-ID: <1422030294-20925-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Javier,
+Hi,
 
-On 2015-01-23 14:48, Javier Martinez Canillas wrote:
-> On Fri, Jan 23, 2015 at 1:40 PM, Marek Szyprowski
-> <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>> +
->>>> +       list_add_tail(&data->owner_node, &owner->clients);
->>> This is the line that causes the kernel to hang, if I comment the
->>> list_add_tail() call then the kernel boots.
->>>
->>> I checked that neither data nor owner are NULL and that the
->>> owner->clients list_head is initialized. Do you have any ideas what
->>> could be happening?
->>
->> This is really strange. However the hang is definitely not caused by
->> adding the controller to the list, but rather the fact that it is later
->> being initialized, probably in exynos_iommu_attach_device().
->>
-> Yes, I knew adding to the list was not the issue but a side effect of
-> being in the list. I'm not familiar with Exynos sysmmu/iommu to figure
-> out though.
->
->> Just a quick question - does bootloader on Exynos5420 Peach Pit sets
->> any image on the display?
->>
-> Yes u-boot does initialize the display, I see the boot messages and
-> have an u-boot prompt.
->
->> If so then we will get IOMMU page fault on init (DMA engine of FIMD is
->> left enabled from bootloader) and such case is not yet handled.
->> Besides that I have no idea for any other reason for such failure.
->>
-> I see, that's a reasonable explanation and in fact your patch makes at
-> least the kernel to start booting.
->
->> To check if this is caused by io page fault, please temporarily add the
->> following hack:
->> --->8---
->> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
->> index 7864797609b3..5e70cf7eb31b 100644
->> --- a/arch/arm/mm/dma-mapping.c
->> +++ b/arch/arm/mm/dma-mapping.c
->> @@ -2011,6 +2011,9 @@ static bool arm_setup_iommu_dma_ops(struct device
->> *dev, u64 dma_base, u64 size,
->>           return false;
->>       }
->>
->> +    iommu_map(mapping->domain, 0x40000000, 0x40000000, 0x80000000,
->> +          IOMMU_READ | IOMMU_WRITE);
->> +
->>       if (arm_iommu_attach_device(dev, mapping)) {
-> The kernel still hangs but the boot does indeed go further. Here is my
-> boot log [0] although I couldn't find an evident cause.
+The following patchset adds coupled cpuidle support for Exynos4210
+to an existing cpuidle-exynos driver.  As a result it enables AFTR
+mode to be used by default on Exynos4210 without the need to hot
+unplug CPU1 first.
 
-Frankly, this freeze looks really strange, because there is no error message
-or any other failure indicator.
+This work is heavily based on earlier cpuidle-exynos4210 driver from
+Daniel Lezcano:
 
-Thanks for testing the above hack. It confirmed that the previous boot 
-failure
-was caused by display left enabled in bootloader. Such configuration is 
-not yet
-supported, although I will do my best so find how to add support for it. 
-For the
-time being - please don't enable IOMMU support on Exynos5420 Peach Pit. It
-shouldn't be a big issue, because IOMMU support was already non-functional
-all the time on Exynos platform.
+http://www.spinics.net/lists/linux-samsung-soc/msg28134.html
 
-Best regards
--- 
-Marek Szyprowski, PhD
+Changes from Daniel's code include:
+- porting code to current kernels
+- fixing it to work on my setup (by using S5P_INFORM register
+  instead of S5P_VA_SYSRAM one on Revison 1.1 and retrying poking
+  CPU1 out of the BOOT ROM if necessary)
+- fixing rare lockup caused by waiting for CPU1 to get stuck in
+  the BOOT ROM (CPU hotplug code in arch/arm/mach-exynos/platsmp.c
+  doesn't require this and works fine)
+- moving Exynos specific code to arch/arm/mach-exynos/pm.c
+- using cpu_boot_reg_base() helper instead of BOOT_VECTOR macro
+- using exynos_cpu_*() helpers instead of accessing registers
+  directly
+- using arch_send_wakeup_ipi_mask() instead of dsb_sev()
+  (this matches CPU hotplug code in arch/arm/mach-exynos/platsmp.c)
+- integrating separate exynos4210-cpuidle driver into existing
+  exynos-cpuidle one
+
+patch #1 is a fix for Exynos platform PM code preparing it for
+coupled cpuidle support
+
+patch #2 adds coupled cpuidle AFTR mode for Exynos4210
+
+The patchset depends on:
+- for-next branch (commit: 9663ad71912b) of linux-samsung.git
+  kernel tree
+
+Changes since v2:
+- rebased on top of for-next branch (commit: 9663ad71912b) of
+  linux-samsung.git kernel tree
+
+Changes since v1:
+- rebased on top of for-next branch (commit: 760a7d4763c8) of
+  linux-samsung.git kernel tree (the patchset also applies fine
+  to next-20141126 branch of linux-next kernel tree but needs
+  CPUIDLE_FLAG_TIME_VALID flag usage removed to fix build)
+- added Signed-off-by from Daniel Lezcano to patch #2
+- added separate struct cpuidle_driver exynos_coupled_idle_driver
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (2):
+  ARM: EXYNOS: apply S5P_CENTRAL_SEQ_OPTION fix only when necessary
+  cpuidle: exynos: add coupled cpuidle support for Exynos4210
+
+ arch/arm/mach-exynos/common.h                |   4 +
+ arch/arm/mach-exynos/exynos.c                |   4 +
+ arch/arm/mach-exynos/platsmp.c               |   2 +-
+ arch/arm/mach-exynos/pm.c                    | 133 ++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/suspend.c               |   4 +
+ drivers/cpuidle/Kconfig.arm                  |   1 +
+ drivers/cpuidle/cpuidle-exynos.c             |  76 ++++++++++++++-
+ include/linux/platform_data/cpuidle-exynos.h |  20 ++++
+ 8 files changed, 234 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/platform_data/cpuidle-exynos.h
+
+-- 
+1.8.2.3
+
