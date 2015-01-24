@@ -1,40 +1,31 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH] mmc: dw_mmc: exynos: remove incorrect __exit_p()
-Date: Fri, 23 Jan 2015 16:33:40 -0800
-Message-ID: <20150124003340.GA16286@dtor-ws>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v3 00/16] thermal: exynos: Thermal code rework to
+ use device tree
+Date: Sat, 24 Jan 2015 02:00:09 +0100
+Message-ID: <54C2EE99.6070108@math.uni-bielefeld.de>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com> <1421242874-3425-1-git-send-email-l.majewski@samsung.com> <54B8549F.60707@gmx.net> <20150116092946.38860303@amdc2363> <54BD9377.30606@gmx.net> <20150120091729.3d01a0cf@amdc2363> <54C04D02.90405@gmx.net> <20150121090802.GC13468@developer.hsd1.ca.comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Kukjin Kim <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45213 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750960AbbAXBAO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Jan 2015 20:00:14 -0500
+In-Reply-To: <20150121090802.GC13468@developer.hsd1.ca.comcast.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, tomasz.figa@gmail.com
 
-dw_mci_pltfm_remove() is not (nor should it be) marked as __exit,
-so we should not be using __exit_p() wrapper with it.
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/mmc/host/dw_mmc-exynos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 12a5eaa..fe32948 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -422,7 +422,7 @@ static const struct dev_pm_ops dw_mci_exynos_pmops = {
- 
- static struct platform_driver dw_mci_exynos_pltfm_driver = {
- 	.probe		= dw_mci_exynos_probe,
--	.remove		= __exit_p(dw_mci_pltfm_remove),
-+	.remove		= dw_mci_pltfm_remove,
- 	.driver		= {
- 		.name		= "dwmmc_exynos",
- 		.of_match_table	= dw_mci_exynos_match,
--- 
-2.2.0.rc0.207.ga3a616c
+Eduardo Valentin wrote:
+> The reason is that hwmon sensor device drivers also register via
+> of-thermal. So, adding hwmon interface by default will create a
+> cyclic problem.
+Hmm, I see. Would it still be possible to flag some thermal zones so
+that hwmon nodes are created for them?
 
 
--- 
-Dmitry
+With best wishes,
+Tobias
