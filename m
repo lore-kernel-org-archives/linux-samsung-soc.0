@@ -1,99 +1,122 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v5 11/18] iommu: exynos: remove useless device_add/remove callbacks
-Date: Sun, 25 Jan 2015 17:38:22 +0200
-Message-ID: <2829552.kzfCU5HyxQ@avalon>
-References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com> <1422028288-891-12-git-send-email-m.szyprowski@samsung.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v6 08/18] cpufreq: exynos: Use device tree to determine
+ if cpufreq cooling should be registered
+Date: Sun, 25 Jan 2015 12:46:21 -0400
+Message-ID: <20150125164559.GA29600@developer.hsd1.ca.comcast.net>
+References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
+ <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
+ <CAKohpok1EacvJ3PCOZYnz81D3=P04apRp7VOxPFE1QxYF4Wydg@mail.gmail.com>
+ <20150123145744.3dc47a47@amdc2363>
+ <CAKohponvCzJrseb7UW1szYc=1M9BA=A8nVpocOQVyr1c=zO6VQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34991 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752905AbbAYPhs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 Jan 2015 10:37:48 -0500
-In-Reply-To: <1422028288-891-12-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAKohponvCzJrseb7UW1szYc=1M9BA=A8nVpocOQVyr1c=zO6VQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hi Marek,
 
-Thank you for the patch.
+--PmA2V3Z32TCmWXqI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 23 January 2015 16:51:21 Marek Szyprowski wrote:
-> The driver doesn't need to do anything important in device add/remove
-> callbacks, because initialization will be done from device-tree specific
-> callbacks added later. IOMMU groups created by current code were never
-> used.
+On Sun, Jan 25, 2015 at 07:31:14PM +0530, Viresh Kumar wrote:
+> On 23 January 2015 at 19:27, Lukasz Majewski <l.majewski@samsung.com> wro=
+te:
+> > Please pay a note about following problem:
+> >
+> > Previously we got: cpu0: cpu@0 for all Exynos devices.
+> >
+> > Now, however, cpu numbering has changed (due to GIC rework).
+> > For example:
+> >
+> > Exynos4412:
+> >         cpus {
+> >                 cpu0: cpu@A00 {
+> >                         ...
+> >                         #cooling-cells =3D <2>; /* min followed by max =
+*/
+> >                 };
+> >
+> >                 cpu@A01 {
+> >                 };
+> >
+> >                 cpu@A02 {
+> >                 };
+> >
+> >                 cpu@A03 {
+> >                 };
+> >         }
+> >
+> > Exynos 4210:
+> >         cpus {
+> >                 cpu0: cpu@900 {
+> >                         #cooling-cells =3D <2>; /* min followed by max =
+*/
+> >                 };
+> >
+> >                 cpu@901 {
+> >                 };
+> >         };
+> >
+> > Exynos 5250:
+> >         cpus {
+> >                 cpu0: cpu@0 {
+> >                         #cooling-cells =3D <2>; /* min followed by max =
+*/
+> >                 };
+> >
+> >                 cpu@1 {
+> >                 };
+> >         };
+> >
+> >
+> > As you can see different cpu@XXY nodes we have and simply calling cpu@0
+> > won't work.
+>=20
+> I wasn't asked you to get the cpu0 node from dt but this:
+>=20
+> cpu_dev =3D get_cpu_dev(0);
+> np =3D of_node_get(cpu_dev->of_node);
+>=20
+> Wouldn't this work? You only need to guarantee that the cooling-cells is =
+added
+> onto the boot CPUs node.
 
-IOMMU groups still seem a bit unclear to me. Will Deacon has nicely explained 
-what they represent in http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310816.html. The IOMMU core doesn't make groups 
-mandatory, but requires them in some code paths.
+Lukasz,
 
-For example the coldplug device add function add_iommu_group() called for all 
-devices already registered when bus_set_iommu() is called will try to warn of 
-devices added multiple times with a WARN_ON(dev->iommu_group). Another example 
-is the iommu_bus_notifier() function which will call the remove_device() 
-operation only when dev->iommu_group isn't NULL.
+I agree with Viresh here, you can simplify your code.
 
-I'm thus unsure whether groups should be made mandatory, or whether the IOMMU 
-core should be fixed to make them really optional (or, third option, whether 
-there's something I haven't understood properly).
+I, somehow, missed this conversation and already applied v6 of this
+patch in my -fixes branch. Can you please fix this by sending a
+differential patch on top of this one applying Viresh's commit?
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/iommu/exynos-iommu.c | 28 ----------------------------
->  1 file changed, 28 deletions(-)
-> 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index e62cb96..e40e699 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -1055,32 +1055,6 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct
-> iommu_domain *domain, return phys;
->  }
-> 
-> -static int exynos_iommu_add_device(struct device *dev)
-> -{
-> -	struct iommu_group *group;
-> -	int ret;
-> -
-> -	group = iommu_group_get(dev);
-> -
-> -	if (!group) {
-> -		group = iommu_group_alloc();
-> -		if (IS_ERR(group)) {
-> -			dev_err(dev, "Failed to allocate IOMMU group\n");
-> -			return PTR_ERR(group);
-> -		}
-> -	}
-> -
-> -	ret = iommu_group_add_device(group, dev);
-> -	iommu_group_put(group);
-> -
-> -	return ret;
-> -}
-> -
-> -static void exynos_iommu_remove_device(struct device *dev)
-> -{
-> -	iommu_group_remove_device(dev);
-> -}
-> -
->  static const struct iommu_ops exynos_iommu_ops = {
->  	.domain_init = exynos_iommu_domain_init,
->  	.domain_destroy = exynos_iommu_domain_destroy,
-> @@ -1090,8 +1064,6 @@ static const struct iommu_ops exynos_iommu_ops = {
->  	.unmap = exynos_iommu_unmap,
->  	.map_sg = default_iommu_map_sg,
->  	.iova_to_phys = exynos_iommu_iova_to_phys,
-> -	.add_device = exynos_iommu_add_device,
-> -	.remove_device = exynos_iommu_remove_device,
->  	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
->  };
+Viresh, my bad, I missed your comments.
 
--- 
-Regards,
+Thanks
 
-Laurent Pinchart
+
+Eduardo=20
+
+--PmA2V3Z32TCmWXqI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUxR3QAAoJEMLUO4d9pOJW3soIAJvyrMrHTpWHjZbm61P1f6MX
+go3z2rUcv9p+a1a0eRUsug2FO3GalTfySsJ/2XOZsFBUE32cVnqAa1umKF5FoZbg
+do99gF9k7/kh6fJFPtGC9Dd5EplpqJSqlfRQnZdva7NbBD3Obc+NvmtEig5L/aIv
+K95Q1iU42jqRckdJhSMXjHMBc/azRzV1vhKxr8pTooWav8nwyV+5c+egLy0wmaIB
+yrnNahDaW54ex8kUVIfK72bfZh9rxgmxZQNgygzlrSsxfXpw6cRyygVTs38OdUX+
+Tmv3hqRWQJniHcTVHwS8sG395HpPp2pJ4RQzzXf5esxWgpR7aM6RWQmtBfDo0sE=
+=V3ks
+-----END PGP SIGNATURE-----
+
+--PmA2V3Z32TCmWXqI--
