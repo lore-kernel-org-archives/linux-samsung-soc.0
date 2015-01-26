@@ -1,43 +1,30 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 1/2] exynos: Don't use DRM_EXYNOS_GEM_{MAP_OFFSET/MMAP} ioctls
-Date: Mon, 26 Jan 2015 19:05:51 +0000
-Message-ID: <CACvgo52r33R99JkOkWxHGEO+1zvAjfBb2nJfk6Kqt57M3iA5FA@mail.gmail.com>
-References: <1421449054-2808-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<1421449054-2808-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<20150126104238.65da492e@hwh-ubuntu>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] mmc: dw_mmc: exynos: remove incorrect __exit_p()
+Date: Mon, 26 Jan 2015 12:49:28 -0800
+Message-ID: <CAD=FV=XWz1EktXSX_emtKpEhJKdseeuvgg4yTwaCVHBZ_sDfSg@mail.gmail.com>
+References: <20150124003340.GA16286@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f172.google.com ([209.85.160.172]:62414 "EHLO
-	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753947AbbAZTFw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Jan 2015 14:05:52 -0500
-Received: by mail-yk0-f172.google.com with SMTP id 9so4603234ykp.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Jan 2015 11:05:51 -0800 (PST)
-In-Reply-To: <20150126104238.65da492e@hwh-ubuntu>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20150124003340.GA16286@dtor-ws>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Kukjin Kim <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyungwon Hwang <human.hwang@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>
 
-On 26 January 2015 at 01:42, Hyungwon Hwang <human.hwang@samsung.com> wrote:
-> Dear Tobias,
+Dmitry,
+
+On Fri, Jan 23, 2015 at 4:33 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> dw_mci_pltfm_remove() is not (nor should it be) marked as __exit,
+> so we should not be using __exit_p() wrapper with it.
 >
-> Thanks for fixing it.
->
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
->
-Hi Hyungwon Hwang
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/mmc/host/dw_mmc-exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm a bit confused about the use of s-o-b here. I've assumed that
-libdrm follows the kernel style [1] for those type of things ?
-Would you have anything handy which I can read on the topic ?
+Nice catch, thanks!
 
-Cheers,
-Emil
-
-[1] https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/Documentation/SubmittingPatches#n358
-
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Tested-by: Doug Anderson <dianders@chromium.org>
