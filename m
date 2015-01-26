@@ -1,62 +1,85 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v5 11/18] iommu: exynos: remove useless device_add/remove
-	callbacks
-Date: Mon, 26 Jan 2015 13:06:07 +0100
-Message-ID: <54C62DAF.6020809@samsung.com>
-References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
-	<1422028288-891-12-git-send-email-m.szyprowski@samsung.com>
-	<2829552.kzfCU5HyxQ@avalon> <20150126110059.GC30345@8bytes.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH] video: treat signal like timeout as failure
+Date: Mon, 26 Jan 2015 14:50:16 +0200
+Message-ID: <54C63808.5070505@ti.com>
+References: <1421731430-13207-1-git-send-email-der.herr@hofr.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <20150126110059.GC30345-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="DmL8GCDmfpxL65I4pOhTWoVEQR6lijXME"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:58122 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753456AbbAZMuz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Jan 2015 07:50:55 -0500
+In-Reply-To: <1421731430-13207-1-git-send-email-der.herr@hofr.at>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Nicholas Mc Guire <der.herr@hofr.at>, Inki Dae <inki.dae@samsung.com>
+Cc: Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kukjin Kim <kgene@kernel.org>, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
+--DmL8GCDmfpxL65I4pOhTWoVEQR6lijXME
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-On 2015-01-26 12:00, Joerg Roedel wrote:
-> Hi Laurent,
->
-> On Sun, Jan 25, 2015 at 05:38:22PM +0200, Laurent Pinchart wrote:
->> IOMMU groups still seem a bit unclear to me. Will Deacon has nicely explained
->> what they represent in
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310816.html.
->> The IOMMU core doesn't make groups
->> mandatory, but requires them in some code paths.
->>
->> For example the coldplug device add function add_iommu_group() called for all
->> devices already registered when bus_set_iommu() is called will try to warn of
->> devices added multiple times with a WARN_ON(dev->iommu_group). Another example
->> is the iommu_bus_notifier() function which will call the remove_device()
->> operation only when dev->iommu_group isn't NULL.
->>
->> I'm thus unsure whether groups should be made mandatory, or whether the IOMMU
->> core should be fixed to make them really optional (or, third option, whether
->> there's something I haven't understood properly).
-> My plan is to make IOMMU groups mandatory. I am currently preparing and
-> RFC patch-set to introduce default-domains (which will be per group). So
-> when all IOMMU drivers are converted to make use of default domains the
-> iommu groups will be mandatory.
+Hi,
 
-Thanks for the comment, I will implement all that will be needed for it 
-to exynos
-iommu driver, but I would like to ask if you plan to merge my existing 
-patches for
-exynos iommu driver to your tree?
+On 20/01/15 07:23, Nicholas Mc Guire wrote:
+> if(!wait_for_completion_interruptible_timeout(...))
+> only handles the timeout case - this patch adds handling the
+> signal case the same as timeout and cleans up.
+>=20
+> Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
+> ---
+>=20
+> Only the timeout case was being handled, return of 0 in=20
+> wait_for_completion_interruptible_timeout, the signal case (-ERESTARTSY=
+S)
+> was treated just like the case of successful completion, which is most =
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> likely not reasonable.
+>=20
+> Note that exynos_mipi_dsi_wr_data/exynos_mipi_dsi_rd_data return values=
+
+> are not checked at the call sites in s6e8ax0.c (cmd_read/cmd_write)!
+>=20
+> This patch simply treats the signal case the same way as the timeout ca=
+se,
+> by releasing locks and returning 0 - which might not be the right thing=
+ to
+> do - this needs a review by someone knowing the details of this driver.=
+
+
+The code changes look ok to me, but again you have detailed descriptions
+above which are not in the patch description. All the above looks like
+something that should be in the patch description.
+
+ Tomi
+
+
+
+--DmL8GCDmfpxL65I4pOhTWoVEQR6lijXME
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUxjgIAAoJEPo9qoy8lh71xkgP/1LWI281Ua37tkCYWjhvjtHg
+CmmTtNyfi5DZcMewq2NhCxnE8zeu3So54LTsQgjDjlSVPWAyhD84POY6a7CbNvjb
+ZbhaB3t04I5v+REIG3rc7SkIXV2QP4EVvzHBajiz75YbSlM1hG+d76ZW1gqFNmoi
+8V4Yn2a3JNRzGMB9xQEdZKC45dyvafRhKCB3GYsyCR8SMa1tW0i2ZW/nAHOwd0QD
+nI5XSpJwhXgIexgWwhMciz1eJqNQJtotjqK8xOCld4vP9FnCrKHrNXgfxlZ88+oL
+KOkzTzeDJCAm4PnK/LPBfmj5B7kqxEhLJ0LFyWL5UA4uxYnLxb0rJBTVNerorug2
+Ew2NMWgDvzExZsWIjRIqrk5oYsYalmpdxMYeYyEtBkp+pBTACNhW64q1bW0Vy9eS
+CWPHCC7x7ZgWDU1J8/0foZ8cyjC7H+eMsw+1gDbw8XLSsuc9E73au6cjD7zLSkbF
+E7wjPio/ramhobiCaRNWgzoyza/2ekbsXBDMbhmPtiI+iFbqPXyQ1EC8fzim+TFb
+NQb1yZUuZPIMQF+TrtW1z/L5FNVBUfm9+Eqdyn46sB0XCUCapbw3lWq1o/ZuRce+
+/FXBoQQz+oy/JgjJCh6a62/nLpDL3U+9RQTnGuxyq0YquKBH6rd4my6eqSMJFbM0
+RK5sLlnIlf8PncgR63us
+=ec8W
+-----END PGP SIGNATURE-----
+
+--DmL8GCDmfpxL65I4pOhTWoVEQR6lijXME--
