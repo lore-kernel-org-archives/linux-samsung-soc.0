@@ -1,116 +1,89 @@
-From: Lukasz Majewski <l.majewski@majess.pl>
-Subject: Re: [PATCH v6 08/18] cpufreq: exynos: Use device tree to determine
- if cpufreq cooling should be registered
-Date: Sun, 25 Jan 2015 17:27:31 +0100
-Message-ID: <20150125172731.7ee2b7ae@jawa>
-References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
-	<1422015260-14225-1-git-send-email-l.majewski@samsung.com>
-	<CAKohpok1EacvJ3PCOZYnz81D3=P04apRp7VOxPFE1QxYF4Wydg@mail.gmail.com>
-	<20150123145744.3dc47a47@amdc2363>
-	<CAKohponvCzJrseb7UW1szYc=1M9BA=A8nVpocOQVyr1c=zO6VQ@mail.gmail.com>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH 1/2] exynos: Don't use DRM_EXYNOS_GEM_{MAP_OFFSET/MMAP}
+ ioctls
+Date: Mon, 26 Jan 2015 10:42:38 +0900
+Message-ID: <20150126104238.65da492e@hwh-ubuntu>
+References: <1421449054-2808-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1421449054-2808-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/9lb/ef6UNwoAeykz50R2a7X"; protocol="application/pgp-signature"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 9.mo1.mail-out.ovh.net ([178.32.108.172]:59664 "EHLO
-	9.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751053AbbAYW16 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 Jan 2015 17:27:58 -0500
-Received: from mail26.ha.ovh.net (gw6.ovh.net [213.251.189.206])
-	by mo1.mail-out.ovh.net (Postfix) with SMTP id 1BC4BFF8CCB
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Jan 2015 17:28:19 +0100 (CET)
-In-Reply-To: <CAKohponvCzJrseb7UW1szYc=1M9BA=A8nVpocOQVyr1c=zO6VQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1421449054-2808-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
---Sig_/9lb/ef6UNwoAeykz50R2a7X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 25 Jan 2015 19:31:14 +0530
-Viresh Kumar <viresh.kumar@linaro.org> wrote:
-
-> On 23 January 2015 at 19:27, Lukasz Majewski <l.majewski@samsung.com>
-> wrote:
-> > Please pay a note about following problem:
-> >
-> > Previously we got: cpu0: cpu@0 for all Exynos devices.
-> >
-> > Now, however, cpu numbering has changed (due to GIC rework).
-> > For example:
-> >
-> > Exynos4412:
-> >         cpus {
-> >                 cpu0: cpu@A00 {
-> >                         ...
-> >                         #cooling-cells =3D <2>; /* min followed by
-> > max */ };
-> >
-> >                 cpu@A01 {
-> >                 };
-> >
-> >                 cpu@A02 {
-> >                 };
-> >
-> >                 cpu@A03 {
-> >                 };
-> >         }
-> >
-> > Exynos 4210:
-> >         cpus {
-> >                 cpu0: cpu@900 {
-> >                         #cooling-cells =3D <2>; /* min followed by
-> > max */ };
-> >
-> >                 cpu@901 {
-> >                 };
-> >         };
-> >
-> > Exynos 5250:
-> >         cpus {
-> >                 cpu0: cpu@0 {
-> >                         #cooling-cells =3D <2>; /* min followed by
-> > max */ };
-> >
-> >                 cpu@1 {
-> >                 };
-> >         };
-> >
-> >
-> > As you can see different cpu@XXY nodes we have and simply calling
-> > cpu@0 won't work.
->=20
-> I wasn't asked you to get the cpu0 node from dt but this:
->=20
-> cpu_dev =3D get_cpu_dev(0);
-> np =3D of_node_get(cpu_dev->of_node);
-
-Ingenious simplicity :-)
-
->=20
-> Wouldn't this work? You only need to guarantee that the cooling-cells
-> is added onto the boot CPUs node.
-
-I will test it tomorrow and share results.
-
-Viresh, thanks for tip.
-
-Best regards,
-Lukasz Majewski
-
---Sig_/9lb/ef6UNwoAeykz50R2a7X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEARECAAYFAlTFGXgACgkQf9/hG2YwgjEvDgCfThj8A2EoIlulQWFQavbmaEax
-v9oAoLM6CJEoTbpqcmoX7529F3bbEP4x
-=BjuW
------END PGP SIGNATURE-----
-
---Sig_/9lb/ef6UNwoAeykz50R2a7X--
+RGVhciBUb2JpYXMsCgpUaGFua3MgZm9yIGZpeGluZyBpdC4KClNpZ25lZC1vZmYtYnk6IEh5dW5n
+d29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5nLmNvbT4KCk9uIEZyaSwgMTYgSmFuIDIwMTUg
+MjM6NTc6MzMgKzAxMDAKVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQu
+ZGU+IHdyb3RlOgoKPiBGcm9tOiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3VuZy5j
+b20+Cj4gCj4gVGhlIGlvY3RsIERSTV9FWFlOT1NfR0VNX01BUF9PRkZTRVQgYW5kIERSTV9FWFlO
+T1NfR0VNX01NQVAgYXJlCj4gcmVtb3ZlZCBmcm9tIHRoZSBsaW51eCBrZXJuZWwuIFRoaXMgcGF0
+Y2ggbW9kaWZpZXMgbGliZHJtIGFuZCBsaWJrbXMKPiB0byB1c2UgZHJtIGdlbmVyaWMgaW9jdGxz
+IGluc3RlYWQgb2YgdGhlIHJlbW92ZWQgaW9jdGxzLgo+IAo+IHYyOiBUaGUgb3JpZ2luYWwgcGF0
+Y2ggd2FzIGVycm9uZW91cy4gSW4gY2FzZSB0aGUgTU9ERV9NQVBfRFVNQiBpb2N0bAo+IGZhaWxl
+ZCBpdCB3b3VsZCByZXR1cm4gdGhlIHJldHZhbHVlIGFzIGEgdm9pZC1wb2ludGVyLiBVc2VycyBv
+Zgo+IGxpYmRybSB3b3VsZCB0aGVuIGhhcHBpbHkgdXNlIHRoYXQgcHRyLCBldmVudHVhbGx5IGxl
+YWRpbmcgdG8gYQo+IHNlZ2ZhdWx0LiBDaGFuZ2UgdGhpcyB0byByZXR1cm4gTlVMTCBpbiB0aGF0
+IGNhc2UgYW5kIGFsc28gcmVzdG9yZQo+IHRoZSBwcmV2aW91cyBiZWhhdmlvdXIgb2YgbG9nZ2lu
+ZyB0byBzdGRlcnIuCj4gICAgIFRoZSBvdGhlciBlcnJvciB3YXMgdGhhdCAnYm8tPnZhZGRyJyB3
+YXMgbmV2ZXIgZmlsbGVkIHdpdGggdGhlCj4gbWFwcGVkIGJ1ZmZlciBhZGRyZXNzLiBIZW5jZSBl
+eHlub3NfYm9fbWFwIHN0aWxsIHJldHVybmVkIE5VTEwgZXZlbgo+IGlmIHRoZSBidWZmZXIgbWFw
+cGluZyBzdWNjZWVkZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogSHl1bmd3b24gSHdhbmcgPGh1bWFu
+Lmh3YW5nQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
+YW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgu
+dW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZXh5bm9zL2V4eW5vc19kcm0uYyB8IDE5ICsrKysr
+KysrKysrKy0tLS0tLS0KPiAgbGlia21zL2V4eW5vcy5jICAgICB8ICA3ICsrKystLS0KPiAgMiBm
+aWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAKPiBkaWZm
+IC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19kcm0uYyBiL2V4eW5vcy9leHlub3NfZHJtLmMKPiBpbmRl
+eCA0YzdkZDEzLi5jNWRkOTQ4IDEwMDY0NAo+IC0tLSBhL2V4eW5vcy9leHlub3NfZHJtLmMKPiAr
+KysgYi9leHlub3MvZXh5bm9zX2RybS5jCj4gQEAgLTI4MywyMCArMjgzLDI1IEBAIGRybV9wdWJs
+aWMgdm9pZCAqZXh5bm9zX2JvX21hcChzdHJ1Y3QgZXh5bm9zX2JvCj4gKmJvKSB7Cj4gIAlpZiAo
+IWJvLT52YWRkcikgewo+ICAJCXN0cnVjdCBleHlub3NfZGV2aWNlICpkZXYgPSBiby0+ZGV2Owo+
+IC0JCXN0cnVjdCBkcm1fZXh5bm9zX2dlbV9tbWFwIHJlcSA9IHsKPiAtCQkJLmhhbmRsZSA9IGJv
+LT5oYW5kbGUsCj4gLQkJCS5zaXplCT0gYm8tPnNpemUsCj4gLQkJfTsKPiArCQlzdHJ1Y3QgZHJt
+X21vZGVfbWFwX2R1bWIgYXJnOwo+ICsJCXZvaWQgKm1hcCA9IE5VTEw7Cj4gIAkJaW50IHJldDsK
+PiAgCj4gLQkJcmV0ID0gZHJtSW9jdGwoZGV2LT5mZCwgRFJNX0lPQ1RMX0VYWU5PU19HRU1fTU1B
+UCwKPiAmcmVxKTsKPiArCQltZW1zZXQoJmFyZywgMCwgc2l6ZW9mKGFyZykpOwo+ICsJCWFyZy5o
+YW5kbGUgPSBiby0+aGFuZGxlOwo+ICsKPiArCQlyZXQgPSBkcm1Jb2N0bChkZXYtPmZkLCBEUk1f
+SU9DVExfTU9ERV9NQVBfRFVNQiwKPiAmYXJnKTsgaWYgKHJldCkgewo+IC0JCQlmcHJpbnRmKHN0
+ZGVyciwgImZhaWxlZCB0byBtbWFwWyVzXS5cbiIsCj4gKwkJCWZwcmludGYoc3RkZXJyLCAiZmFp
+bGVkIHRvIG1hcCBkdW1iCj4gYnVmZmVyWyVzXS5cbiIsIHN0cmVycm9yKGVycm5vKSk7Cj4gIAkJ
+CXJldHVybiBOVUxMOwo+ICAJCX0KPiAgCj4gLQkJYm8tPnZhZGRyID0gKHZvaWQgKikodWludHB0
+cl90KXJlcS5tYXBwZWQ7Cj4gKwkJbWFwID0gZHJtX21tYXAoMCwgYm8tPnNpemUsIFBST1RfUkVB
+RCB8IFBST1RfV1JJVEUsCj4gTUFQX1NIQVJFRCwKPiArCQkJCWRldi0+ZmQsIGFyZy5vZmZzZXQp
+Owo+ICsKPiArCQlpZiAobWFwICE9IE1BUF9GQUlMRUQpCj4gKwkJCWJvLT52YWRkciA9IG1hcDsK
+PiAgCX0KPiAgCj4gIAlyZXR1cm4gYm8tPnZhZGRyOwo+IGRpZmYgLS1naXQgYS9saWJrbXMvZXh5
+bm9zLmMgYi9saWJrbXMvZXh5bm9zLmMKPiBpbmRleCA5MmUzMjljLi4xMTIzNDgyIDEwMDY0NAo+
+IC0tLSBhL2xpYmttcy9leHlub3MuYwo+ICsrKyBiL2xpYmttcy9leHlub3MuYwo+IEBAIC0yNSw2
+ICsyNSw3IEBACj4gICNpbmNsdWRlIDxzeXMvaW9jdGwuaD4KPiAgI2luY2x1ZGUgInhmODZkcm0u
+aCIKPiAgCj4gKyNpbmNsdWRlICJsaWJkcm0uaCIKPiAgI2luY2x1ZGUgImV4eW5vc19kcm0uaCIK
+PiAgCj4gIHN0cnVjdCBleHlub3NfYm8KPiBAQCAtMTI0LDcgKzEyNSw3IEBAIHN0YXRpYyBpbnQK
+PiAgZXh5bm9zX2JvX21hcChzdHJ1Y3Qga21zX2JvICpfYm8sIHZvaWQgKipvdXQpCj4gIHsKPiAg
+CXN0cnVjdCBleHlub3NfYm8gKmJvID0gKHN0cnVjdCBleHlub3NfYm8gKilfYm87Cj4gLQlzdHJ1
+Y3QgZHJtX2V4eW5vc19nZW1fbWFwX29mZiBhcmc7Cj4gKwlzdHJ1Y3QgZHJtX21vZGVfbWFwX2R1
+bWIgYXJnOwo+ICAJdm9pZCAqbWFwID0gTlVMTDsKPiAgCWludCByZXQ7Cj4gIAo+IEBAIC0xMzcs
+MTEgKzEzOCwxMSBAQCBleHlub3NfYm9fbWFwKHN0cnVjdCBrbXNfYm8gKl9ibywgdm9pZCAqKm91
+dCkKPiAgCW1lbXNldCgmYXJnLCAwLCBzaXplb2YoYXJnKSk7Cj4gIAlhcmcuaGFuZGxlID0gYm8t
+PmJhc2UuaGFuZGxlOwo+ICAKPiAtCXJldCA9IGRybUNvbW1hbmRXcml0ZVJlYWQoYm8tPmJhc2Uu
+a21zLT5mZCwKPiBEUk1fRVhZTk9TX0dFTV9NQVBfT0ZGU0VULCAmYXJnLCBzaXplb2YoYXJnKSk7
+Cj4gKwlyZXQgPSBkcm1Jb2N0bChiby0+YmFzZS5rbXMtPmZkLCBEUk1fSU9DVExfTU9ERV9NQVBf
+RFVNQiwKPiAmYXJnKTsgaWYgKHJldCkKPiAgCQlyZXR1cm4gcmV0Owo+ICAKPiAtCW1hcCA9IG1t
+YXAoMCwgYm8tPmJhc2Uuc2l6ZSwgUFJPVF9SRUFEIHwgUFJPVF9XUklURSwKPiBNQVBfU0hBUkVE
+LCBiby0+YmFzZS5rbXMtPmZkLCBhcmcub2Zmc2V0KTsKPiArCW1hcCA9IGRybV9tbWFwKDAsIGJv
+LT5iYXNlLnNpemUsIFBST1RfUkVBRCB8IFBST1RfV1JJVEUsCj4gTUFQX1NIQVJFRCwgYm8tPmJh
+c2Uua21zLT5mZCwgYXJnLm9mZnNldCk7IGlmIChtYXAgPT0gTUFQX0ZBSUxFRCkKPiAgCQlyZXR1
+cm4gLWVycm5vOwo+ICAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
