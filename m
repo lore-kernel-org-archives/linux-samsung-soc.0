@@ -1,52 +1,25 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v9 0/7] devfreq: Add devfreq-event class to provide raw
- data for devfreq device
-Date: Mon, 26 Jan 2015 11:11:44 +0900
-Message-ID: <54C5A260.7030103@samsung.com>
-References: <298834569.29261422238011182.JavaMail.weblogic@epmlwas04d>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <298834569.29261422238011182.JavaMail.weblogic@epmlwas04d>
-Sender: linux-pm-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: Ming Lei <ming.lei@canonical.com>
+Subject: [PATCH v1 0/2] ARM EXYNOS5 & net: add fixed phy support
+Date: Mon, 26 Jan 2015 10:37:36 +0800
+Message-ID: <1422239858-3452-1-git-send-email-ming.lei@canonical.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:40145 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751092AbbAZChq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 25 Jan 2015 21:37:46 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, netdev@vger.kernel.org, Byungho An <bh74.an@samsung.com>, Florian Fainelli <f.fainelli@gmail.com>
 
-Dear Kukjin and Myungjoo,
+Hi,
 
-On 01/26/2015 11:06 AM, MyungJoo Ham wrote:
->>   
->>  Chanwoo Choi wrote:
->>>
->> Hi,
->>
-> 
-> []
-> 
->>>
->>> --
->>
->> Looks good to me.
->>
->> Myungjoo, shall I take DT changes in this series into Samsung tree?
->>
->> 4/7 ARM: dts: Add PPMU dt node for Exynos3250 SoC
->> 5/7 ARM: dts: Add PPMU dt node for Exynos4 SoCs
->> 6/7 ARM: dts: exynos: Add PPMU node for Exynos3250-based Rinato/Monk board
->> 7/7 ARM: dts: exynos: Add PPMU node for Exynos4412-based TRATS2 board
-> 
-> Yes, you may take those. I am not so confident with taking DT patches, either.
-> 
-> However, Chanwoo has another updates following for this patchset.
-> 
-> After that, I guess we can merge chanwoo's patchset splitted.
+These two patches adds fixed phy support using the fixed-link DT binding
+for stmmac.
 
-I have minor fixup issue. I'll send next patchset(v10) right now.
+v1:
+	- bypassing check on phy id for fixed phy (patch 2/2)
 
-Thanks for your review.
-
-Best Regards,
-Chanwoo Choi
-
+Thanks,
+Ming Lei
