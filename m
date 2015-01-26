@@ -1,89 +1,55 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 1/2] exynos: Don't use DRM_EXYNOS_GEM_{MAP_OFFSET/MMAP}
- ioctls
-Date: Mon, 26 Jan 2015 10:42:38 +0900
-Message-ID: <20150126104238.65da492e@hwh-ubuntu>
-References: <1421449054-2808-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1421449054-2808-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Add sd0_rst pinctrl node to exynos5420
+Date: Mon, 26 Jan 2015 10:47:24 +0900
+Message-ID: <54C59CAC.8020509@samsung.com>
+References: <1422023038-11842-1-git-send-email-jh80.chung@samsung.com>
+ <CABxcv=mJhHTBKes38+6kHi5o3RmBHHN6sVqBUDRc-YyNvkdESQ@mail.gmail.com>
+ <1422028075.15395.92.camel@collabora.co.uk>
+ <CABxcv=kARp8xLYCqf8dfdKd9ehs1u=qTEjkn1iujhN77ZjPdTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1421449054-2808-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CABxcv=kARp8xLYCqf8dfdKd9ehs1u=qTEjkn1iujhN77ZjPdTA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RGVhciBUb2JpYXMsCgpUaGFua3MgZm9yIGZpeGluZyBpdC4KClNpZ25lZC1vZmYtYnk6IEh5dW5n
-d29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5nLmNvbT4KCk9uIEZyaSwgMTYgSmFuIDIwMTUg
-MjM6NTc6MzMgKzAxMDAKVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQu
-ZGU+IHdyb3RlOgoKPiBGcm9tOiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3VuZy5j
-b20+Cj4gCj4gVGhlIGlvY3RsIERSTV9FWFlOT1NfR0VNX01BUF9PRkZTRVQgYW5kIERSTV9FWFlO
-T1NfR0VNX01NQVAgYXJlCj4gcmVtb3ZlZCBmcm9tIHRoZSBsaW51eCBrZXJuZWwuIFRoaXMgcGF0
-Y2ggbW9kaWZpZXMgbGliZHJtIGFuZCBsaWJrbXMKPiB0byB1c2UgZHJtIGdlbmVyaWMgaW9jdGxz
-IGluc3RlYWQgb2YgdGhlIHJlbW92ZWQgaW9jdGxzLgo+IAo+IHYyOiBUaGUgb3JpZ2luYWwgcGF0
-Y2ggd2FzIGVycm9uZW91cy4gSW4gY2FzZSB0aGUgTU9ERV9NQVBfRFVNQiBpb2N0bAo+IGZhaWxl
-ZCBpdCB3b3VsZCByZXR1cm4gdGhlIHJldHZhbHVlIGFzIGEgdm9pZC1wb2ludGVyLiBVc2VycyBv
-Zgo+IGxpYmRybSB3b3VsZCB0aGVuIGhhcHBpbHkgdXNlIHRoYXQgcHRyLCBldmVudHVhbGx5IGxl
-YWRpbmcgdG8gYQo+IHNlZ2ZhdWx0LiBDaGFuZ2UgdGhpcyB0byByZXR1cm4gTlVMTCBpbiB0aGF0
-IGNhc2UgYW5kIGFsc28gcmVzdG9yZQo+IHRoZSBwcmV2aW91cyBiZWhhdmlvdXIgb2YgbG9nZ2lu
-ZyB0byBzdGRlcnIuCj4gICAgIFRoZSBvdGhlciBlcnJvciB3YXMgdGhhdCAnYm8tPnZhZGRyJyB3
-YXMgbmV2ZXIgZmlsbGVkIHdpdGggdGhlCj4gbWFwcGVkIGJ1ZmZlciBhZGRyZXNzLiBIZW5jZSBl
-eHlub3NfYm9fbWFwIHN0aWxsIHJldHVybmVkIE5VTEwgZXZlbgo+IGlmIHRoZSBidWZmZXIgbWFw
-cGluZyBzdWNjZWVkZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogSHl1bmd3b24gSHdhbmcgPGh1bWFu
-Lmh3YW5nQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
-YW1zdW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgu
-dW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZXh5bm9zL2V4eW5vc19kcm0uYyB8IDE5ICsrKysr
-KysrKysrKy0tLS0tLS0KPiAgbGlia21zL2V4eW5vcy5jICAgICB8ICA3ICsrKystLS0KPiAgMiBm
-aWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAKPiBkaWZm
-IC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19kcm0uYyBiL2V4eW5vcy9leHlub3NfZHJtLmMKPiBpbmRl
-eCA0YzdkZDEzLi5jNWRkOTQ4IDEwMDY0NAo+IC0tLSBhL2V4eW5vcy9leHlub3NfZHJtLmMKPiAr
-KysgYi9leHlub3MvZXh5bm9zX2RybS5jCj4gQEAgLTI4MywyMCArMjgzLDI1IEBAIGRybV9wdWJs
-aWMgdm9pZCAqZXh5bm9zX2JvX21hcChzdHJ1Y3QgZXh5bm9zX2JvCj4gKmJvKSB7Cj4gIAlpZiAo
-IWJvLT52YWRkcikgewo+ICAJCXN0cnVjdCBleHlub3NfZGV2aWNlICpkZXYgPSBiby0+ZGV2Owo+
-IC0JCXN0cnVjdCBkcm1fZXh5bm9zX2dlbV9tbWFwIHJlcSA9IHsKPiAtCQkJLmhhbmRsZSA9IGJv
-LT5oYW5kbGUsCj4gLQkJCS5zaXplCT0gYm8tPnNpemUsCj4gLQkJfTsKPiArCQlzdHJ1Y3QgZHJt
-X21vZGVfbWFwX2R1bWIgYXJnOwo+ICsJCXZvaWQgKm1hcCA9IE5VTEw7Cj4gIAkJaW50IHJldDsK
-PiAgCj4gLQkJcmV0ID0gZHJtSW9jdGwoZGV2LT5mZCwgRFJNX0lPQ1RMX0VYWU5PU19HRU1fTU1B
-UCwKPiAmcmVxKTsKPiArCQltZW1zZXQoJmFyZywgMCwgc2l6ZW9mKGFyZykpOwo+ICsJCWFyZy5o
-YW5kbGUgPSBiby0+aGFuZGxlOwo+ICsKPiArCQlyZXQgPSBkcm1Jb2N0bChkZXYtPmZkLCBEUk1f
-SU9DVExfTU9ERV9NQVBfRFVNQiwKPiAmYXJnKTsgaWYgKHJldCkgewo+IC0JCQlmcHJpbnRmKHN0
-ZGVyciwgImZhaWxlZCB0byBtbWFwWyVzXS5cbiIsCj4gKwkJCWZwcmludGYoc3RkZXJyLCAiZmFp
-bGVkIHRvIG1hcCBkdW1iCj4gYnVmZmVyWyVzXS5cbiIsIHN0cmVycm9yKGVycm5vKSk7Cj4gIAkJ
-CXJldHVybiBOVUxMOwo+ICAJCX0KPiAgCj4gLQkJYm8tPnZhZGRyID0gKHZvaWQgKikodWludHB0
-cl90KXJlcS5tYXBwZWQ7Cj4gKwkJbWFwID0gZHJtX21tYXAoMCwgYm8tPnNpemUsIFBST1RfUkVB
-RCB8IFBST1RfV1JJVEUsCj4gTUFQX1NIQVJFRCwKPiArCQkJCWRldi0+ZmQsIGFyZy5vZmZzZXQp
-Owo+ICsKPiArCQlpZiAobWFwICE9IE1BUF9GQUlMRUQpCj4gKwkJCWJvLT52YWRkciA9IG1hcDsK
-PiAgCX0KPiAgCj4gIAlyZXR1cm4gYm8tPnZhZGRyOwo+IGRpZmYgLS1naXQgYS9saWJrbXMvZXh5
-bm9zLmMgYi9saWJrbXMvZXh5bm9zLmMKPiBpbmRleCA5MmUzMjljLi4xMTIzNDgyIDEwMDY0NAo+
-IC0tLSBhL2xpYmttcy9leHlub3MuYwo+ICsrKyBiL2xpYmttcy9leHlub3MuYwo+IEBAIC0yNSw2
-ICsyNSw3IEBACj4gICNpbmNsdWRlIDxzeXMvaW9jdGwuaD4KPiAgI2luY2x1ZGUgInhmODZkcm0u
-aCIKPiAgCj4gKyNpbmNsdWRlICJsaWJkcm0uaCIKPiAgI2luY2x1ZGUgImV4eW5vc19kcm0uaCIK
-PiAgCj4gIHN0cnVjdCBleHlub3NfYm8KPiBAQCAtMTI0LDcgKzEyNSw3IEBAIHN0YXRpYyBpbnQK
-PiAgZXh5bm9zX2JvX21hcChzdHJ1Y3Qga21zX2JvICpfYm8sIHZvaWQgKipvdXQpCj4gIHsKPiAg
-CXN0cnVjdCBleHlub3NfYm8gKmJvID0gKHN0cnVjdCBleHlub3NfYm8gKilfYm87Cj4gLQlzdHJ1
-Y3QgZHJtX2V4eW5vc19nZW1fbWFwX29mZiBhcmc7Cj4gKwlzdHJ1Y3QgZHJtX21vZGVfbWFwX2R1
-bWIgYXJnOwo+ICAJdm9pZCAqbWFwID0gTlVMTDsKPiAgCWludCByZXQ7Cj4gIAo+IEBAIC0xMzcs
-MTEgKzEzOCwxMSBAQCBleHlub3NfYm9fbWFwKHN0cnVjdCBrbXNfYm8gKl9ibywgdm9pZCAqKm91
-dCkKPiAgCW1lbXNldCgmYXJnLCAwLCBzaXplb2YoYXJnKSk7Cj4gIAlhcmcuaGFuZGxlID0gYm8t
-PmJhc2UuaGFuZGxlOwo+ICAKPiAtCXJldCA9IGRybUNvbW1hbmRXcml0ZVJlYWQoYm8tPmJhc2Uu
-a21zLT5mZCwKPiBEUk1fRVhZTk9TX0dFTV9NQVBfT0ZGU0VULCAmYXJnLCBzaXplb2YoYXJnKSk7
-Cj4gKwlyZXQgPSBkcm1Jb2N0bChiby0+YmFzZS5rbXMtPmZkLCBEUk1fSU9DVExfTU9ERV9NQVBf
-RFVNQiwKPiAmYXJnKTsgaWYgKHJldCkKPiAgCQlyZXR1cm4gcmV0Owo+ICAKPiAtCW1hcCA9IG1t
-YXAoMCwgYm8tPmJhc2Uuc2l6ZSwgUFJPVF9SRUFEIHwgUFJPVF9XUklURSwKPiBNQVBfU0hBUkVE
-LCBiby0+YmFzZS5rbXMtPmZkLCBhcmcub2Zmc2V0KTsKPiArCW1hcCA9IGRybV9tbWFwKDAsIGJv
-LT5iYXNlLnNpemUsIFBST1RfUkVBRCB8IFBST1RfV1JJVEUsCj4gTUFQX1NIQVJFRCwgYm8tPmJh
-c2Uua21zLT5mZCwgYXJnLm9mZnNldCk7IGlmIChtYXAgPT0gTUFQX0ZBSUxFRCkKPiAgCQlyZXR1
-cm4gLWVycm5vOwo+ICAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Hi,
+
+On 01/24/2015 12:59 AM, Javier Martinez Canillas wrote:
+> Hello Sjoerd,
+> 
+> On Fri, Jan 23, 2015 at 4:47 PM, Sjoerd Simons
+> <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
+>>>
+>>> If this pin is used by the Odroid XU3 board, shouldn't be defined in
+>>> the exynos5422-odroidxu3.dts instead?
+>>
+>> It's not just used by the XU3 though, it's also hooked up on the peach
+>> pi chromebook for example and i would expect it to be hooked up on most
+>> board with an eMMC
+>>
+>> This change is consistent with most of the special purpose GPIO pins
+>> defined in that file, so i don't see the problem with including it in
+>> that pinctrl file
+> 
+> In that case I completely agree that it should be defined in the .dtsi
+> but that is not what the commit message said though :-)
+
+I will resend the patch with obvious commit message.
+Thanks for review.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> Best regards,
+> Javier
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
