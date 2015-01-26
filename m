@@ -1,55 +1,31 @@
-From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Add sd0_rst pinctrl node to exynos5420
-Date: Mon, 26 Jan 2015 10:47:24 +0900
-Message-ID: <54C59CAC.8020509@samsung.com>
-References: <1422023038-11842-1-git-send-email-jh80.chung@samsung.com>
- <CABxcv=mJhHTBKes38+6kHi5o3RmBHHN6sVqBUDRc-YyNvkdESQ@mail.gmail.com>
- <1422028075.15395.92.camel@collabora.co.uk>
- <CABxcv=kARp8xLYCqf8dfdKd9ehs1u=qTEjkn1iujhN77ZjPdTA@mail.gmail.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: RE: [PATCH v9 0/7] devfreq: Add devfreq-event class to provide raw
+ data for devfreq device
+Date: Mon, 26 Jan 2015 02:06:54 +0000 (GMT)
+Message-ID: <298834569.29261422238011182.JavaMail.weblogic@epmlwas04d>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CABxcv=kARp8xLYCqf8dfdKd9ehs1u=qTEjkn1iujhN77ZjPdTA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+PiAgIA0KPiAgQ2hhbndvbyBDaG9pIHdyb3RlOg0KPiA+IA0KPiBIaSwNCj4gDQoNCltdDQoNCj4g
+PiANCj4gPiAtLQ0KPiANCj4gTG9va3MgZ29vZCB0byBtZS4NCj4gDQo+IE15dW5nam9vLCBzaGFs
+bCBJIHRha2UgRFQgY2hhbmdlcyBpbiB0aGlzIHNlcmllcyBpbnRvIFNhbXN1bmcgdHJlZT8NCj4g
+DQo+IDQvNyBBUk06IGR0czogQWRkIFBQTVUgZHQgbm9kZSBmb3IgRXh5bm9zMzI1MCBTb0MNCj4g
+NS83IEFSTTogZHRzOiBBZGQgUFBNVSBkdCBub2RlIGZvciBFeHlub3M0IFNvQ3MNCj4gNi83IEFS
+TTogZHRzOiBleHlub3M6IEFkZCBQUE1VIG5vZGUgZm9yIEV4eW5vczMyNTAtYmFzZWQgUmluYXRv
+L01vbmsgYm9hcmQNCj4gNy83IEFSTTogZHRzOiBleHlub3M6IEFkZCBQUE1VIG5vZGUgZm9yIEV4
+eW5vczQ0MTItYmFzZWQgVFJBVFMyIGJvYXJkDQoNClllcywgeW91IG1heSB0YWtlIHRob3NlLiBJ
+IGFtIG5vdCBzbyBjb25maWRlbnQgd2l0aCB0YWtpbmcgRFQgcGF0Y2hlcywgZWl0aGVyLg0KDQpI
+b3dldmVyLCBDaGFud29vIGhhcyBhbm90aGVyIHVwZGF0ZXMgZm9sbG93aW5nIGZvciB0aGlzIHBh
+dGNoc2V0Lg0KDQpBZnRlciB0aGF0LCBJIGd1ZXNzIHdlIGNhbiBtZXJnZSBjaGFud29vJ3MgcGF0
+Y2hzZXQgc3BsaXR0ZWQuDQoNCg0KDQpDaGVlcnMsDQpNeXVuZ0pvby4NCg0KPiANCj4gVGhhbmtz
+LA0KPiBLdWtqaW4NCj4gDQo=
 
-On 01/24/2015 12:59 AM, Javier Martinez Canillas wrote:
-> Hello Sjoerd,
-> 
-> On Fri, Jan 23, 2015 at 4:47 PM, Sjoerd Simons
-> <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
->>>
->>> If this pin is used by the Odroid XU3 board, shouldn't be defined in
->>> the exynos5422-odroidxu3.dts instead?
->>
->> It's not just used by the XU3 though, it's also hooked up on the peach
->> pi chromebook for example and i would expect it to be hooked up on most
->> board with an eMMC
->>
->> This change is consistent with most of the special purpose GPIO pins
->> defined in that file, so i don't see the problem with including it in
->> that pinctrl file
-> 
-> In that case I completely agree that it should be defined in the .dtsi
-> but that is not what the commit message said though :-)
 
-I will resend the patch with obvious commit message.
-Thanks for review.
-
-Best Regards,
-Jaehoon Chung
-
-> 
-> Best regards,
-> Javier
-> 
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
