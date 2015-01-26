@@ -1,93 +1,60 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] video: treat signal like timeout as failure
-Date: Mon, 26 Jan 2015 12:59:05 +0000
-Message-ID: <20150126125905.GI26493@n2100.arm.linux.org.uk>
-References: <1421731430-13207-1-git-send-email-der.herr@hofr.at>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [PATCH v5 11/18] iommu: exynos: remove useless device_add/remove
+	callbacks
+Date: Mon, 26 Jan 2015 15:03:57 +0200
+Message-ID: <1589480.9kxdoXKkuz@avalon>
+References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+	<2829552.kzfCU5HyxQ@avalon> <20150126110059.GC30345@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:54863 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752829AbbAZM71 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Jan 2015 07:59:27 -0500
-Content-Disposition: inline
-In-Reply-To: <1421731430-13207-1-git-send-email-der.herr@hofr.at>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20150126110059.GC30345-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicholas Mc Guire <der.herr@hofr.at>
-Cc: Inki Dae <inki.dae@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Jan 20, 2015 at 06:23:50AM +0100, Nicholas Mc Guire wrote:
-> if(!wait_for_completion_interruptible_timeout(...))
-> only handles the timeout case - this patch adds handling the
-> signal case the same as timeout and cleans up.
-> 
-> Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
-> ---
-> 
-> Only the timeout case was being handled, return of 0 in 
-> wait_for_completion_interruptible_timeout, the signal case (-ERESTARTSYS)
-> was treated just like the case of successful completion, which is most 
-> likely not reasonable.
-> 
-> Note that exynos_mipi_dsi_wr_data/exynos_mipi_dsi_rd_data return values
-> are not checked at the call sites in s6e8ax0.c (cmd_read/cmd_write)!
-> 
-> This patch simply treats the signal case the same way as the timeout case,
-> by releasing locks and returning 0 - which might not be the right thing to
-> do - this needs a review by someone knowing the details of this driver.
-> 
-> Patch is against 3.19.0-rc5 -next-20150119
-> 
-> Patch was only compile-tested with exynos_defconfig
-> 
->  drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c |   17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-> index 2358a2f..55a7a45 100644
-> --- a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-> +++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-> @@ -157,6 +157,7 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
->  	const unsigned char *data0, unsigned int data_size)
->  {
->  	unsigned int check_rx_ack = 0;
-> +	long timeout;
->  
->  	if (dsim->state == DSIM_STATE_ULPS) {
->  		dev_err(dsim->dev, "state is ULPS.\n");
-> @@ -244,9 +245,11 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
->  		exynos_mipi_dsi_wr_tx_header(dsim, data_id, data_size & 0xff,
->  			(data_size & 0xff00) >> 8);
->  
-> -		if (!wait_for_completion_interruptible_timeout(&dsim_wr_comp,
-> -							MIPI_FIFO_TIMEOUT)) {
-> -			dev_warn(dsim->dev, "command write timeout.\n");
-> +		timeout = wait_for_completion_interruptible_timeout(
-> +					&dsim_wr_comp, MIPI_FIFO_TIMEOUT);
-> +		if (timeout <= 0) {
-> +			dev_warn(dsim->dev,
-> +				"command write timed-out/interrupted.\n");
+Hi Joerg,
 
-This is really silly.  Let's say that the program which results in
-this function called is using signals (eg, alarm() with SIGALRM, or
-asynchronous IO with SIGIO, etc).
+On Monday 26 January 2015 12:00:59 Joerg Roedel wrote:
+> Hi Laurent,
+> 
+> On Sun, Jan 25, 2015 at 05:38:22PM +0200, Laurent Pinchart wrote:
+> > IOMMU groups still seem a bit unclear to me. Will Deacon has nicely
+> > explained what they represent in
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310816
+> > .html. The IOMMU core doesn't make groups
+> > mandatory, but requires them in some code paths.
+> > 
+> > For example the coldplug device add function add_iommu_group() called for
+> > all devices already registered when bus_set_iommu() is called will try to
+> > warn of devices added multiple times with a WARN_ON(dev->iommu_group).
+> > Another example is the iommu_bus_notifier() function which will call the
+> > remove_device() operation only when dev->iommu_group isn't NULL.
+> > 
+> > I'm thus unsure whether groups should be made mandatory, or whether the
+> > IOMMU core should be fixed to make them really optional (or, third
+> > option, whether there's something I haven't understood properly).
+> 
+> My plan is to make IOMMU groups mandatory. I am currently preparing and
+> RFC patch-set to introduce default-domains (which will be per group). So
+> when all IOMMU drivers are converted to make use of default domains the
+> iommu groups will be mandatory.
 
-Why should having a SIGALRM raised print a kernel message?  If this
-happens a lot, it will result in the kernel log being flooded with
-these messages.
-
-Signals should not be seen as exceptional conditions.  For some programs,
-they are merely asynchronous events which are a normal part of the
-programs operation (eg, SIGIO, SIGALRM, etc.)
-
-Please, if you are going to handle signals, then handle them properly.
-If you're not going to handle them properly, don't use a wait that
-caters for them - use wait_for_completion_killable_timeout() which
-doesn't finish waiting on a signal unless the signal is going to result
-in the death of the program.
+Could the default domain policy be configured by the IOMMU driver ? The ipmmu-
+vmsa driver supports four domains only, and serves up to 32 masters, with one 
+group per master. A default of one domain per group wouldn't be usable.
 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Regards,
+
+Laurent Pinchart
