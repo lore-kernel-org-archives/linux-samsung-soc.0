@@ -1,75 +1,49 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH] cpufreq: exynos: Use simple approach to asses if cpu cooling
- can be used
-Date: Mon, 26 Jan 2015 10:25:27 +0100
-Message-ID: <1422264327-17483-1-git-send-email-l.majewski@samsung.com>
-References: <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v5 11/18] iommu: exynos: remove useless device_add/remove
+ callbacks
+Date: Mon, 26 Jan 2015 12:00:59 +0100
+Message-ID: <20150126110059.GC30345@8bytes.org>
+References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+ <1422028288-891-12-git-send-email-m.szyprowski@samsung.com>
+ <2829552.kzfCU5HyxQ@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8bytes.org ([81.169.241.247]:45534 "EHLO theia.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752793AbbAZLBC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Jan 2015 06:01:02 -0500
+Content-Disposition: inline
+In-Reply-To: <2829552.kzfCU5HyxQ@avalon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Commit: e725d26c4857e5e41975b5e74e64ce6ab09a7121 provided possibility to
-use device tree to asses if cpu can be used as cooling device. Since the
-code was somewhat awkward, simpler approach has been proposed.
+Hi Laurent,
 
-Test HW: Exynos 4412 - Odroid U3.
+On Sun, Jan 25, 2015 at 05:38:22PM +0200, Laurent Pinchart wrote:
+> IOMMU groups still seem a bit unclear to me. Will Deacon has nicely explained 
+> what they represent in
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-December/310816.html.
+> The IOMMU core doesn't make groups 
+> mandatory, but requires them in some code paths.
+> 
+> For example the coldplug device add function add_iommu_group() called for all 
+> devices already registered when bus_set_iommu() is called will try to warn of 
+> devices added multiple times with a WARN_ON(dev->iommu_group). Another example 
+> is the iommu_bus_notifier() function which will call the remove_device() 
+> operation only when dev->iommu_group isn't NULL.
+> 
+> I'm thus unsure whether groups should be made mandatory, or whether the IOMMU 
+> core should be fixed to make them really optional (or, third option, whether 
+> there's something I haven't understood properly).
 
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
- drivers/cpufreq/exynos-cpufreq.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+My plan is to make IOMMU groups mandatory. I am currently preparing and
+RFC patch-set to introduce default-domains (which will be per group). So
+when all IOMMU drivers are converted to make use of default domains the
+iommu groups will be mandatory.
 
-diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index 5e98c6b..b640da0 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -159,7 +159,7 @@ static struct cpufreq_driver exynos_driver = {
- 
- static int exynos_cpufreq_probe(struct platform_device *pdev)
- {
--	struct device_node *cpus, *np;
-+	struct device_node *cpu0, *np;
- 	int ret = -EINVAL;
- 
- 	exynos_info = kzalloc(sizeof(*exynos_info), GFP_KERNEL);
-@@ -206,28 +206,19 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_cpufreq_reg;
- 
--	cpus = of_find_node_by_path("/cpus");
--	if (!cpus) {
--		pr_err("failed to find cpus node\n");
-+	cpu0 = of_get_cpu_node(0, NULL);
-+	if (!cpu0) {
-+		pr_err("failed to find cpu0 node\n");
- 		return 0;
- 	}
- 
--	np = of_get_next_child(cpus, NULL);
--	if (!np) {
--		pr_err("failed to find cpus child node\n");
--		of_node_put(cpus);
--		return 0;
--	}
--
--	if (of_find_property(np, "#cooling-cells", NULL)) {
--		cdev = of_cpufreq_cooling_register(np,
-+	if (of_find_property(cpu0, "#cooling-cells", NULL)) {
-+		cdev = of_cpufreq_cooling_register(cpu0,
- 						   cpu_present_mask);
- 		if (IS_ERR(cdev))
- 			pr_err("running cpufreq without cooling device: %ld\n",
- 			       PTR_ERR(cdev));
- 	}
--	of_node_put(np);
--	of_node_put(cpus);
- 
- 	return 0;
- 
--- 
-2.0.0.rc2
 
+	Joerg
