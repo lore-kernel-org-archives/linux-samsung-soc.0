@@ -1,45 +1,56 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH] thermal: Kconfig: Remove config for not used
- EXYNOS_THERMAL_CORE
-Date: Tue, 27 Jan 2015 12:13:59 +0100
-Message-ID: <1422357239-20316-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33659 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758053AbbA0LOO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jan 2015 06:14:14 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH 2/6] drm/exynos: track vblank events on a per crtc basis
+Date: Tue, 27 Jan 2015 12:59:15 +0000
+Message-ID: <CAPj87rNsVBAYxOA-Ob3poeqZFDTU2GVJh74+89frb8YSBN8Zzg@mail.gmail.com>
+References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
+ <1422016980-23806-2-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1422016980-23806-2-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Paul Bolle <pebolle@tiscali.nl>
-Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
-After removing exynos_thermal_common.[c|h] files the CONFIG_EXYNOS_THERMA_CORE
-is not needed anymore.
-This patch removes this entry from Kconfig.
-
-Reported-by: Paul Bolle <pebolle@tiscali.nl>
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
- drivers/thermal/samsung/Kconfig | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
-index c43306e..c8e35c1 100644
---- a/drivers/thermal/samsung/Kconfig
-+++ b/drivers/thermal/samsung/Kconfig
-@@ -7,12 +7,3 @@ config EXYNOS_THERMAL
- 	  the TMU, reports temperature and handles cooling action if defined.
- 	  This driver uses the Exynos core thermal APIs and TMU configuration
- 	  data from the supported SoCs.
--
--config EXYNOS_THERMAL_CORE
--	bool "Core thermal framework support for EXYNOS SOCs"
--	depends on EXYNOS_THERMAL
--	help
--	  If you say yes here you get support for EXYNOS TMU
--	  (Thermal Management Unit) common registration/unregistration
--	  functions to the core thermal layer and also to use the generic
--	  CPU cooling APIs.
--- 
-2.0.0.rc2
+SGksCgpPbiAyMyBKYW51YXJ5IDIwMTUgYXQgMTI6NDIsIEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2
+b0BwYWRvdmFuLm9yZz4gd3JvdGU6Cj4gIHZvaWQgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdl
+ZmxpcChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgcGlwZSkKPiAgewo+ICAgICAgICAgc3Ry
+dWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqZGV2X3ByaXYgPSBkZXYtPmRldl9wcml2YXRlOwo+IC0g
+ICAgICAgc3RydWN0IGRybV9wZW5kaW5nX3ZibGFua19ldmVudCAqZSwgKnQ7Cj4gICAgICAgICBz
+dHJ1Y3QgZHJtX2NydGMgKmRybV9jcnRjID0gZGV2X3ByaXYtPmNydGNbcGlwZV07Cj4gICAgICAg
+ICBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGRy
+bV9jcnRjKTsKPiAtICAgICAgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4KPiAtICAgICAgIHNwaW5f
+bG9ja19pcnFzYXZlKCZkZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPiArICAgICAgIGlmIChleHlu
+b3NfY3J0Yy0+ZXZlbnQpIHsKPgo+IC0gICAgICAgbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKGUs
+IHQsICZkZXZfcHJpdi0+cGFnZWZsaXBfZXZlbnRfbGlzdCwKPiAtICAgICAgICAgICAgICAgICAg
+ICAgICBiYXNlLmxpbmspIHsKPiAtICAgICAgICAgICAgICAgLyogaWYgZXZlbnQncyBwaXBlIGlz
+bid0IHNhbWUgYXMgY3J0YyB0aGVuIGlnbm9yZSBpdC4gKi8KPiAtICAgICAgICAgICAgICAgaWYg
+KHBpcGUgIT0gZS0+cGlwZSkKPiAtICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKPiAt
+Cj4gLSAgICAgICAgICAgICAgIGxpc3RfZGVsKCZlLT5iYXNlLmxpbmspOwo+IC0gICAgICAgICAg
+ICAgICBkcm1fc2VuZF92YmxhbmtfZXZlbnQoZGV2LCAtMSwgZSk7Cj4gKyAgICAgICAgICAgICAg
+IHNwaW5fbG9ja19pcnEoJmRldi0+ZXZlbnRfbG9jayk7Cj4gKyAgICAgICAgICAgICAgIGRybV9z
+ZW5kX3ZibGFua19ldmVudChkZXYsIC0xLCBleHlub3NfY3J0Yy0+ZXZlbnQpOwo+ICAgICAgICAg
+ICAgICAgICBkcm1fdmJsYW5rX3B1dChkZXYsIHBpcGUpOwo+IC0gICAgICAgICAgICAgICBhdG9t
+aWNfc2V0KCZleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwLCAwKTsKPiAgICAgICAgICAgICAgICAg
+d2FrZV91cCgmZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcF9xdWV1ZSk7Cj4gLSAgICAgICB9Cj4g
+KyAgICAgICAgICAgICAgIHNwaW5fdW5sb2NrX2lycSgmZGV2LT5ldmVudF9sb2NrKTsKPgo+IC0g
+ICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4g
+KyAgICAgICAgICAgICAgIGV4eW5vc19jcnRjLT5ldmVudCA9IE5VTEw7Cj4gKyAgICAgICB9Cj4g
+IH0KCkRvZXNuJ3QgdGhpcyBuZWVkIHRvIGhvbGQgdGhlIENSVEMgbG9jayB0byBub3QgcmFjZSB3
+aXRoLCBlLmcsIHRoZQpwYWdlX2ZsaXAgY2FsbGVyPyBUaGlzIGdldHMgY2FsbGVkIGZyb20gSVJR
+IGNvbnRleHQgdGhvdWdoLCBzbyBtaWdodApuZWVkIGNvbnZlcnNpb24gdG8gc29mdC1JUlEgdG8g
+ZG8gc28sIG9yIGFub3RoZXIgcGVyLUNSVEMgc3BpbmxvY2sKanVzdCB0byBwcm90ZWN0IHRoZSBl
+dmVudC4KCkNoZWVycywKRGFuaWVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
