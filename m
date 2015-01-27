@@ -1,73 +1,59 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 2/6] drm/exynos: track vblank events on a per crtc basis
-Date: Tue, 27 Jan 2015 14:02:48 +0100
-Message-ID: <20150127130248.GA4764@phenom.ffwll.local>
-References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
- <1422016980-23806-2-git-send-email-gustavo@padovan.org>
- <CAPj87rNsVBAYxOA-Ob3poeqZFDTU2GVJh74+89frb8YSBN8Zzg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 0/2] Fix reboot issue on Odroid boards with eMMC card
+Date: Tue, 27 Jan 2015 14:29:08 +0100
+Message-ID: <54C792A4.3040302@samsung.com>
+References: <1422346289-9348-1-git-send-email-m.szyprowski@samsung.com>
+ <1422348967.10070.26.camel@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:59749 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932372AbbA0NDR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jan 2015 08:03:17 -0500
-Received: by mail-wg0-f45.google.com with SMTP id x12so14650730wgg.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2015 05:03:16 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CAPj87rNsVBAYxOA-Ob3poeqZFDTU2GVJh74+89frb8YSBN8Zzg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1422348967.10070.26.camel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tobias Jakobi <Liquid.Acid-hi6Y0CQ0nG0@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-On Tue, Jan 27, 2015 at 12:59:15PM +0000, Daniel Stone wrote:
-> Hi,
-> 
-> On 23 January 2015 at 12:42, Gustavo Padovan <gustavo@padovan.org> wrote:
-> >  void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
-> >  {
-> >         struct exynos_drm_private *dev_priv = dev->dev_private;
-> > -       struct drm_pending_vblank_event *e, *t;
-> >         struct drm_crtc *drm_crtc = dev_priv->crtc[pipe];
-> >         struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(drm_crtc);
-> > -       unsigned long flags;
-> >
-> > -       spin_lock_irqsave(&dev->event_lock, flags);
-> > +       if (exynos_crtc->event) {
-> >
-> > -       list_for_each_entry_safe(e, t, &dev_priv->pageflip_event_list,
-> > -                       base.link) {
-> > -               /* if event's pipe isn't same as crtc then ignore it. */
-> > -               if (pipe != e->pipe)
-> > -                       continue;
-> > -
-> > -               list_del(&e->base.link);
-> > -               drm_send_vblank_event(dev, -1, e);
-> > +               spin_lock_irq(&dev->event_lock);
-> > +               drm_send_vblank_event(dev, -1, exynos_crtc->event);
-> >                 drm_vblank_put(dev, pipe);
-> > -               atomic_set(&exynos_crtc->pending_flip, 0);
-> >                 wake_up(&exynos_crtc->pending_flip_queue);
-> > -       }
-> > +               spin_unlock_irq(&dev->event_lock);
-> >
-> > -       spin_unlock_irqrestore(&dev->event_lock, flags);
-> > +               exynos_crtc->event = NULL;
-> > +       }
-> >  }
-> 
-> Doesn't this need to hold the CRTC lock to not race with, e.g, the
-> page_flip caller? This gets called from IRQ context though, so might
-> need conversion to soft-IRQ to do so, or another per-CRTC spinlock
-> just to protect the event.
+Hello,
 
-dev->even_lock should be enough, but I suspect that lock also protects
-exynos_crtc->event (at least that's the case in i915.ko). So would need to
-be moved out of the if block again.
--Daniel
+On 2015-01-27 09:56, Sjoerd Simons wrote:
+> On Tue, 2015-01-27 at 09:11 +0100, Marek Szyprowski wrote:
+>> This patchset fixes reboot hang issue on Hardkernel's Odroid boards with
+>> eMMC card. Those boards are designed in such a way, that the eMMC nreset
+>> signal is routed to SoC GPIO line instead of the board reset logic. To
+>> properly restard system, one need to set this line to zero before
+>> performing reboot.
+>>
+>> The initial patches consisted of a complete reset/power off driver, but
+>> after further analysis, it turned out that only eMMC nreset line control
+>> logic is specific for those boards. Everything else can be done by
+>> generic Exynos code, so the code has been moved to Exynos DW MMC driver.
+> This seems a general board design quirk, rather then an exynos specific
+> one. Potentially better to have this in the mmc core so it can be
+> re-used by non-exynos boards?
+>
+> A very quick peek at the schematic for the hardkernel C1 (amlogic
+> based), shows that for that board the eMMC reset line is hooked up to an
+> SoC gpio line as well. (Although ofcourse, it may not need to be reset
+> before a warm restart depending on what the amlogic rom code does).
+>
+>
+> Random side-note, at least the samsung peach chromebooks are also hooked
+> up this way. But don't run into this issue as they load their initial
+> stages from flash rather then the eMMC.
+
+Okay, I will try to move all the code to mmc core. I've also noticed that
+sdhci-pci driver already implements hw_reset feature with gpio line, 
+although
+I cannot find any user of it (I cannot find any platform data provider for
+sdhci-pci driver).
+
+Best regards
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
