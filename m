@@ -1,80 +1,73 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH] thermal: Kconfig: Remove config for not used
- EXYNOS_THERMAL_CORE
-Date: Tue, 27 Jan 2015 16:00:48 +0100
-Message-ID: <20150127160048.2f7d4bbe@amdc2363>
-References: <1422357239-20316-1-git-send-email-l.majewski@samsung.com>
- <20150127145458.GB29600@developer.hsd1.ca.comcast.net>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH v4 1/3] ASoC: samsung: Add machine driver for
+ Trats2
+Date: Tue, 27 Jan 2015 18:09:39 +0100
+Message-ID: <54C7C653.6080904@samsung.com>
+References: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
+ <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35081 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751755AbbA0PBB (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54892 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755367AbbA0RJy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jan 2015 10:01:01 -0500
-In-reply-to: <20150127145458.GB29600@developer.hsd1.ca.comcast.net>
+	Tue, 27 Jan 2015 12:09:54 -0500
+In-reply-to: <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Paul Bolle <pebolle@tiscali.nl>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Inha Song <ideal.song@samsung.com>
+Cc: alsa-devel@alsa-project.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, kgene@kernel.org, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Eduardo,
+On 23/01/15 06:03, Inha Song wrote:
+> +static int trats2_aif1_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(rtd->card);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(priv->clk_mclk);
+> +	if (ret) {
+> +		dev_err(rtd->card->dev, "Failed to enable mclk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void trats2_aif1_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct trats2_machine_priv *priv = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	clk_disable_unprepare(priv->clk_mclk);
+> +}
+> +
+> +static const struct snd_soc_ops trats2_aif1_ops = {
+> +	.startup = trats2_aif1_startup,
+> +	.shutdown = trats2_aif1_shutdown,
+> +	.hw_params = trats2_aif1_hw_params,
+> +};
 
-> On Tue, Jan 27, 2015 at 12:13:59PM +0100, Lukasz Majewski wrote:
-> > After removing exynos_thermal_common.[c|h] files the
-> > CONFIG_EXYNOS_THERMA_CORE is not needed anymore.
-> > This patch removes this entry from Kconfig.
-> > 
-> > Reported-by: Paul Bolle <pebolle@tiscali.nl>
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> 
-> This patch looks fine to me and I am about to queue it in my fixes
-> tree. However, you must carry along another patch to remove this
-> entry: arch/arm/configs/exynos_defconfig:CONFIG_EXYNOS_THERMAL_CORE=y
+> +static int trats2_audio_probe(struct platform_device *pdev)
+> +{
 
-OK.
+> +	priv->clk_mclk =  of_clk_get_by_name(codec_node, "MCLK1");
+> +	if (IS_ERR(priv->clk_mclk)) {
+> +		dev_err(&pdev->dev, "Failed to get mclk clock\n");
+> +		of_node_put(codec_node);
+> +		return PTR_ERR(priv->clk_mclk);
+> +	}
 
-> 
-> Can you please post it and ask Kim to queue the above suggested
-> removal too?
+Wouldn't it also work if we added clock handling into the wm8994 codec
+driver instead? Not sure if it is correct to retrieve the codec's clock
+in the machine driver like this. Or perhaps the MCLK1 (SoC CLKOUT) clock
+should be added to the sound DT node and handled only by the machine
+driver, together with the other (MCLK2) clock?
 
-OK.
+> +	of_node_put(codec_node);
 
-> 
-> > ---
-> >  drivers/thermal/samsung/Kconfig | 9 ---------
-> >  1 file changed, 9 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/samsung/Kconfig
-> > b/drivers/thermal/samsung/Kconfig index c43306e..c8e35c1 100644
-> > --- a/drivers/thermal/samsung/Kconfig
-> > +++ b/drivers/thermal/samsung/Kconfig
-> > @@ -7,12 +7,3 @@ config EXYNOS_THERMAL
-> >  	  the TMU, reports temperature and handles cooling action
-> > if defined. This driver uses the Exynos core thermal APIs and TMU
-> > configuration data from the supported SoCs.
-> > -
-> > -config EXYNOS_THERMAL_CORE
-> > -	bool "Core thermal framework support for EXYNOS SOCs"
-> > -	depends on EXYNOS_THERMAL
-> > -	help
-> > -	  If you say yes here you get support for EXYNOS TMU
-> > -	  (Thermal Management Unit) common
-> > registration/unregistration
-> > -	  functions to the core thermal layer and also to use the
-> > generic
-> > -	  CPU cooling APIs.
-> > -- 
-> > 2.0.0.rc2
-> > 
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+--
+Regards,
+Sylwester
