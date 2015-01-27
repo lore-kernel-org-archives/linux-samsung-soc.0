@@ -1,59 +1,84 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 1/2] exynos: Don't use DRM_EXYNOS_GEM_{MAP_OFFSET/MMAP} ioctls
-Date: Tue, 27 Jan 2015 02:56:49 +0000
-Message-ID: <CACvgo51_iy9sJHg3i-HQ-e_qaw+j5Jb8K_CFPiJEZNHggZMmwg@mail.gmail.com>
-References: <1421449054-2808-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<1421449054-2808-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<20150126104238.65da492e@hwh-ubuntu>
-	<CACvgo52r33R99JkOkWxHGEO+1zvAjfBb2nJfk6Kqt57M3iA5FA@mail.gmail.com>
-	<20150127100534.3619e1bd@hwh-ubuntu>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos: Use simple approach to asses if cpu
+ cooling can be used
+Date: Tue, 27 Jan 2015 09:14:20 +0530
+Message-ID: <CAKohponEXCsCu=WdbEb8eAnFpVdt1i2BWx+U7RcTX1cDi9A9ZA@mail.gmail.com>
+References: <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
+	<1422264327-17483-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f180.google.com ([209.85.160.180]:47621 "EHLO
-	mail-yk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671AbbA0C4u (ORCPT
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:43666 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752725AbbA0DoV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Jan 2015 21:56:50 -0500
-Received: by mail-yk0-f180.google.com with SMTP id 131so5394288ykp.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Jan 2015 18:56:49 -0800 (PST)
-In-Reply-To: <20150127100534.3619e1bd@hwh-ubuntu>
+	Mon, 26 Jan 2015 22:44:21 -0500
+Received: by mail-oi0-f50.google.com with SMTP id h136so10557238oig.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Jan 2015 19:44:20 -0800 (PST)
+In-Reply-To: <1422264327-17483-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyungwon Hwang <human.hwang@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 27 January 2015 at 01:05, Hyungwon Hwang <human.hwang@samsung.com> wrote:
-> Dear Emil,
+On 26 January 2015 at 14:55, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Commit: e725d26c4857e5e41975b5e74e64ce6ab09a7121 provided possibility to
+> use device tree to asses if cpu can be used as cooling device. Since the
+> code was somewhat awkward, simpler approach has been proposed.
 >
-> On Mon, 26 Jan 2015 19:05:51 +0000
-> Emil Velikov <emil.l.velikov@gmail.com> wrote:
+> Test HW: Exynos 4412 - Odroid U3.
 >
->> On 26 January 2015 at 01:42, Hyungwon Hwang <human.hwang@samsung.com>
->> wrote:
->> > Dear Tobias,
->> >
->> > Thanks for fixing it.
->> >
->> > Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
->> >
->> Hi Hyungwon Hwang
->>
->> I'm a bit confused about the use of s-o-b here. I've assumed that
->> libdrm follows the kernel style [1] for those type of things ?
->> Would you have anything handy which I can read on the topic ?
+> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
+>  drivers/cpufreq/exynos-cpufreq.c | 21 ++++++---------------
+>  1 file changed, 6 insertions(+), 15 deletions(-)
 >
-> I also think that DRI-devel mailing list follow the kernel rule.
-Sweet I'm not loosing my mind (much).
+> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+> index 5e98c6b..b640da0 100644
+> --- a/drivers/cpufreq/exynos-cpufreq.c
+> +++ b/drivers/cpufreq/exynos-cpufreq.c
+> @@ -159,7 +159,7 @@ static struct cpufreq_driver exynos_driver = {
+>
+>  static int exynos_cpufreq_probe(struct platform_device *pdev)
+>  {
+> -       struct device_node *cpus, *np;
+> +       struct device_node *cpu0, *np;
+>         int ret = -EINVAL;
+>
+>         exynos_info = kzalloc(sizeof(*exynos_info), GFP_KERNEL);
+> @@ -206,28 +206,19 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+>         if (ret)
+>                 goto err_cpufreq_reg;
+>
+> -       cpus = of_find_node_by_path("/cpus");
+> -       if (!cpus) {
+> -               pr_err("failed to find cpus node\n");
+> +       cpu0 = of_get_cpu_node(0, NULL);
+> +       if (!cpu0) {
+> +               pr_err("failed to find cpu0 node\n");
+>                 return 0;
+>         }
+>
+> -       np = of_get_next_child(cpus, NULL);
+> -       if (!np) {
+> -               pr_err("failed to find cpus child node\n");
+> -               of_node_put(cpus);
+> -               return 0;
+> -       }
+> -
+> -       if (of_find_property(np, "#cooling-cells", NULL)) {
+> -               cdev = of_cpufreq_cooling_register(np,
+> +       if (of_find_property(cpu0, "#cooling-cells", NULL)) {
+> +               cdev = of_cpufreq_cooling_register(cpu0,
+>                                                    cpu_present_mask);
+>                 if (IS_ERR(cdev))
+>                         pr_err("running cpufreq without cooling device: %ld\n",
+>                                PTR_ERR(cdev));
+>         }
+> -       of_node_put(np);
+> -       of_node_put(cpus);
+>
+>         return 0;
 
-[...]
-> Was it wrong to add s-o-b here? Should I have used "Reviewed-by" here?
-> I am sorry, if I broke the rule and confused you.
->
-Don't think any apology is due, I was just hinting that the patch has
-the s-o-b already :P
-Where as "what I should have used" that depends on your intent and/or
-the action undertaken.
-
-Thanks
-Emil
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
