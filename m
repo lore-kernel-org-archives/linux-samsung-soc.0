@@ -1,83 +1,82 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 2/3] regmap: Use the enhancement of i2c API to address
- circular dependency problem
-Date: Tue, 27 Jan 2015 18:12:14 +0000
-Message-ID: <20150127181214.GD21293@sirena.org.uk>
-References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
- <1421419194-1849-2-git-send-email-p.osmialowsk@samsung.com>
- <20150116162314.GB3856@sirena.org.uk>
- <alpine.DEB.2.10.1501161811280.21618@AMDC1262.digital.local>
- <20150116183635.GH3856@sirena.org.uk>
- <alpine.DEB.2.10.1501191031080.13777@AMDC1262.digital.local>
- <20150119192557.GI2809@sirena.org.uk>
- <alpine.DEB.2.10.1501201214200.8428@AMDC1262.digital.local>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 1/3] ASoC: samsung: Add machine driver
+ for Trats2
+Date: Tue, 27 Jan 2015 18:48:08 +0000
+Message-ID: <20150127184808.GK21293@sirena.org.uk>
+References: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
+ <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
+ <54C7C653.6080904@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PQOEDtqHNYuC9sWW"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.10.1501201214200.8428-rWxBz+Dn3+580y0nlK0+ubjjLBE8jN/0@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Osmialowski <p.osmialowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============1588719247546816264=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <54C7C653.6080904@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org, Inha Song <ideal.song@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---PQOEDtqHNYuC9sWW
+--===============1588719247546816264==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="I9EedR+SylB3Jyyc"
+Content-Disposition: inline
+
+
+--I9EedR+SylB3Jyyc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jan 20, 2015 at 12:14:31PM +0100, Paul Osmialowski wrote:
-> On Mon, 19 Jan 2015, Mark Brown wrote:
+On Tue, Jan 27, 2015 at 06:09:39PM +0100, Sylwester Nawrocki wrote:
+> On 23/01/15 06:03, Inha Song wrote:
 
-> >OK, so that's what should go in the changelog (along with an explanation
-> >of why this preparation is required at all) - but I still don't see the
-> >async bit of this I'm afraid.
+> > +	priv->clk_mclk =  of_clk_get_by_name(codec_node, "MCLK1");
+> > +	if (IS_ERR(priv->clk_mclk)) {
+> > +		dev_err(&pdev->dev, "Failed to get mclk clock\n");
+> > +		of_node_put(codec_node);
+> > +		return PTR_ERR(priv->clk_mclk);
+> > +	}
 
-> I don't think preparation stage should be exposed for asynchronous transfer.
-> Due to its nature, it shouldn't cause circular lock dependency as we can
-> observe for synchronous io. Since i2c does not support async transfer anyway
-> (so (map->async && map->bus->async_write) will be always false for i2c
-> transfers), let's use spi as an example.
+> Wouldn't it also work if we added clock handling into the wm8994 codec
+> driver instead? Not sure if it is correct to retrieve the codec's clock
+> in the machine driver like this. Or perhaps the MCLK1 (SoC CLKOUT) clock
+> should be added to the sound DT node and handled only by the machine
+> driver, together with the other (MCLK2) clock?
 
-Again I come back to explaining this out of the context of this
-particular issue in terms of something that's comprehensible at the
-regmap level.
+That's definitely where we should end up but there are practical issues
+with that approach since it involves coordination with all the machine
+drivers using the device.
 
-> With spi we have curious situation where both sync and async are handled by
-> the same __spi_async() function, though for sync transfer
-> wait_for_completion() is called soon after __spi_async() in order to ensure
-> that transfer is completed.
-
-That's not actually that strange really, in general synchronous
-operation can always be implemented as a simple wrapper around
-asynchronous operation.
-
-> Actual transfer is handled by spi_transfer_one_message() called from
-> spi_pump_messages(). Note that spi_pump_message() before it calls
-> spi_transfer_one_message() also calls prepare_message() callback (if
-> provided):
-
-We are *massively* into implementation details here, if we're relying on
-these things then they could change at any time (and in fact what you
-say above is partly specific and is not true even in the default case
-for current code).  Think in terms of abstractions and locking
-guarantees rather than the details of the current code.
-
---PQOEDtqHNYuC9sWW
+--I9EedR+SylB3Jyyc
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJUx9T9AAoJECTWi3JdVIfQJvwH/RuGx4/yLYw+wCetvLdU1fwS
-/oPsQgtY10opH+KmQOH0CxWR26W76iFxOExdPcD7YOPQDsE45Lw6cl8zdSlYDHkW
-GcXWXKB0Qw6uPWbf3m3fcmx5LZSaaTbM5gxnifsi4oOnpJ6mx1eNCeM6w+inf5Cq
-rG58MPDNgS5timYqUyFmNAeMJ5WtqQ32ytnDuED0o2nqlF3sD9xr5/nWYlqcWmHI
-VT/uDY0qMiSzr2yCNuOd5v2Y/LXKaBR9oFM1PBA2Rd21AMKHoAAPdwOy6+wNXiCe
-hcyCZN2+pUa2agiAxhEp/fMvMxudazzF4OTuf+21hJRaCMdNemHGUiNzjES3EF0=
-=dlI5
+iQEcBAEBCAAGBQJUx91oAAoJECTWi3JdVIfQfyUH/0/oWbQKGTYoaMNAy1uPtrKY
+pUAkVYCcYAcFK/3izIRPB+blvAqT0+Pp/j85XTrlsh0W8bA950ZTnNu58tE4HPaX
+NY+EDq3gB+uYwoeHo5CmXmRvm2eTpNhQ9b48jN+9VlPkZlKrIZSUjbeAP9Hk/JKW
+ng68h5F9Dn0+KjVBdr0bsu3/zIUJ6ejDEe9zMrAZZ3TnR1H8QSCJ/w/u0rL1RnA/
+iDAPtWNM2ADajDOIXi7AdIjjNRwBcgqNbd/Z/vBkglz6naaydqIILqGjHEplPqzW
+K4VzPxCamup8wbS8X+ksKVsl3gnD4t0rYSyNbb4sKrJSbHPoAk+PrmjSatNwM18=
+=s2TA
 -----END PGP SIGNATURE-----
 
---PQOEDtqHNYuC9sWW--
+--I9EedR+SylB3Jyyc--
+
+--===============1588719247546816264==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1588719247546816264==--
