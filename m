@@ -1,88 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 1/3] ASoC: samsung: Add machine driver
- for Trats2
-Date: Tue, 27 Jan 2015 18:59:42 +0000
-Message-ID: <20150127185942.GM21293@sirena.org.uk>
-References: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
- <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2257206771853245631=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Inha Song <ideal.song@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 0/8] PM / Domains: Re-structure code for adding/removing devices to genpd
+Date: Tue, 27 Jan 2015 21:13:37 +0100
+Message-ID: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:35899 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755300AbbA0UOF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Jan 2015 15:14:05 -0500
+Received: by mail-lb0-f169.google.com with SMTP id f15so15121533lbj.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2015 12:14:03 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+
+While adding error handling of genpd's ->attach_dev() callback, I realized that
+we also had a need to re-structure some of the code which deals with
+adding/removing devices to genpd. Especially the APIs, __pm_genpd_add_device()
+and pm_genpd_remove_device() deserved some attention.
+
+Patch 1 -> 4, can be considered as more simple cleanups and should not impact
+the behavior for current clients using the APIs. 
+
+Patch 5, eliminates a mutex for generic_pm_domain_data by re-order the
+initialization/cleanup of dev_pm_qos notifiers.
+
+Patch 6, move some code around to fix a potenial memory leakage of a struct
+pm_subsys_data.
+
+Patch 7, code restructuring which impacts locking behavior while adding/removing
+devices. Should improve code readability and decrease critical regions of
+holding locks.
+
+Patch 8, Adds error handling of genpd's ->attach_dev() callback
 
 
---===============2257206771853245631==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7ftbJ8egIWVmlOqJ"
-Content-Disposition: inline
+Ulf Hansson (8):
+  PM / Domains: Rename __pm_genpd_alloc|free_dev_data()
+  PM / Domains: Remove reference counting for the generic_pm_domain_data
+  PM / Domains: Don't allow an existing generic_pm_domain_data
+  PM / Domains: Don't check for an existing device when adding a new
+  PM / Domains: Eliminate the mutex for the generic_pm_domain_data
+  PM / Domains: Free pm_subsys_data in error path in
+    __pm_genpd_add_device()
+  PM / Domains: Re-order initialization of generic_pm_domain_data
+  PM / Domains: Handle errors from genpd's ->attach_dev() callback
 
+ drivers/base/power/domain.c | 137 +++++++++++++++++++++-----------------------
+ include/linux/pm_domain.h   |   2 -
+ 2 files changed, 65 insertions(+), 74 deletions(-)
 
---7ftbJ8egIWVmlOqJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jan 23, 2015 at 02:03:28PM +0900, Inha Song wrote:
-> This patch add the sound machine driver for Trats2 board.
-> The codec operate in master mode.
-
-This looks like (and mostly should be) a DTified copy of the littlemill
-driver.  The major differences are the fact that this lacks jack
-detection, the management of the clock and the fact that instead of
-picking a fixed clock frequency this tries to adjust based on
-hw_params().  Ideally we'd be able to merge these drivers so we're
-keeping up with best practice.
-
-The reason we pick a fixed frequency for littlemill is that the device
-supports analogue bypass paths which would be broken otherwise which
-will apply here also I imagine.
-
-> +config SND_SOC_SAMSUNG_TRATS2_WM1811
-> +	tristate "SoC I2S Audio support for WM1811 on Tizen Trats2 board"
-> +	depends on SND_SOC_SAMSUNG
-> +	select SND_SAMSUNG_I2S
-> +	select MFD_WM8994
-
-For things outside the audio subsystem it's more common to use a depends
-instead of a select - the selects are there because the drivers only
-work with a machine driver and if we go outside the subsystem then since
-selects aren't recursive we end up breaking elsewhere.  For example here
-we'll end up not selecting MFD_CORE.
-
---7ftbJ8egIWVmlOqJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJUx+AdAAoJECTWi3JdVIfQfdUH/RvJzdlHUSRh1yWQqBGUcj6U
-dUIAPq2NY7MEyC+gp1Xj5YsjnZ1da9w41wExLHLNX34+lUCDtKfb96WIxHNyrxg5
-q2ZRWpKa+sN8E1kwDrqYTWSXstbtNdy86RtUva47Y+2TN0GsFpyV75rDn39E8olb
-vanFXg85ZBMzQepVW2GQFCh2XyrPDfVLbpK9i4cYKPlNl5NDmDTA+7Ym7QbBqp40
-Yhaycl2WlHFyd3NH8vRbCjN1+20LwF6fjos2n4u7iWdtCdMBbjvAUWGYlQORjlch
-Zl3lZ5CaIRdDPar4+bEELb86n6d9wTqZd/vNGV8tcJB6iYsHoaSmo/N4KgrTXI4=
-=RXj1
------END PGP SIGNATURE-----
-
---7ftbJ8egIWVmlOqJ--
-
---===============2257206771853245631==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2257206771853245631==--
+-- 
+1.9.1
