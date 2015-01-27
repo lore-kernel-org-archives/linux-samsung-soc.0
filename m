@@ -1,59 +1,56 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 0/2] Fix reboot issue on Odroid boards with eMMC card
-Date: Tue, 27 Jan 2015 14:29:08 +0100
-Message-ID: <54C792A4.3040302@samsung.com>
-References: <1422346289-9348-1-git-send-email-m.szyprowski@samsung.com>
- <1422348967.10070.26.camel@collabora.co.uk>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc: exynos: remove incorrect __exit_p()
+Date: Tue, 27 Jan 2015 14:59:01 +0100
+Message-ID: <CAPDyKFpk_SjBpT=+yCfNv8yGVVT64Z5GugjL+qoYubxjduxN3g@mail.gmail.com>
+References: <20150124003340.GA16286@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1422348967.10070.26.camel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tobias Jakobi <Liquid.Acid-hi6Y0CQ0nG0@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:53770 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755806AbbA0N7D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Jan 2015 08:59:03 -0500
+Received: by mail-qc0-f171.google.com with SMTP id s11so12050883qcv.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2015 05:59:01 -0800 (PST)
+In-Reply-To: <20150124003340.GA16286@dtor-ws>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Kukjin Kim <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello,
-
-On 2015-01-27 09:56, Sjoerd Simons wrote:
-> On Tue, 2015-01-27 at 09:11 +0100, Marek Szyprowski wrote:
->> This patchset fixes reboot hang issue on Hardkernel's Odroid boards with
->> eMMC card. Those boards are designed in such a way, that the eMMC nreset
->> signal is routed to SoC GPIO line instead of the board reset logic. To
->> properly restard system, one need to set this line to zero before
->> performing reboot.
->>
->> The initial patches consisted of a complete reset/power off driver, but
->> after further analysis, it turned out that only eMMC nreset line control
->> logic is specific for those boards. Everything else can be done by
->> generic Exynos code, so the code has been moved to Exynos DW MMC driver.
-> This seems a general board design quirk, rather then an exynos specific
-> one. Potentially better to have this in the mmc core so it can be
-> re-used by non-exynos boards?
+On 24 January 2015 at 01:33, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> dw_mci_pltfm_remove() is not (nor should it be) marked as __exit,
+> so we should not be using __exit_p() wrapper with it.
 >
-> A very quick peek at the schematic for the hardkernel C1 (amlogic
-> based), shows that for that board the eMMC reset line is hooked up to an
-> SoC gpio line as well. (Although ofcourse, it may not need to be reset
-> before a warm restart depending on what the amlogic rom code does).
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Thanks! Applied for next.
+
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/dw_mmc-exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 12a5eaa..fe32948 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -422,7 +422,7 @@ static const struct dev_pm_ops dw_mci_exynos_pmops = {
+>
+>  static struct platform_driver dw_mci_exynos_pltfm_driver = {
+>         .probe          = dw_mci_exynos_probe,
+> -       .remove         = __exit_p(dw_mci_pltfm_remove),
+> +       .remove         = dw_mci_pltfm_remove,
+>         .driver         = {
+>                 .name           = "dwmmc_exynos",
+>                 .of_match_table = dw_mci_exynos_match,
+> --
+> 2.2.0.rc0.207.ga3a616c
 >
 >
-> Random side-note, at least the samsung peach chromebooks are also hooked
-> up this way. But don't run into this issue as they load their initial
-> stages from flash rather then the eMMC.
-
-Okay, I will try to move all the code to mmc core. I've also noticed that
-sdhci-pci driver already implements hw_reset feature with gpio line, 
-although
-I cannot find any user of it (I cannot find any platform data provider for
-sdhci-pci driver).
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> Dmitry
