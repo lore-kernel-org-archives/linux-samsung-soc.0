@@ -1,80 +1,45 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 00/16] ASoC: samsung: Add clk provider for I2S internal
- clocks
-Date: Tue, 27 Jan 2015 11:59:41 +0100
-Message-ID: <54C76F9D.7040805@samsung.com>
-References: <1418997336-17777-1-git-send-email-s.nawrocki@samsung.com>
- <54C2FB25.4030501@gmx.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <54C2FB25.4030501-hi6Y0CQ0nG0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tobias Jakobi <liquid.acid-hi6Y0CQ0nG0@public.gmane.org>
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH] thermal: Kconfig: Remove config for not used
+ EXYNOS_THERMAL_CORE
+Date: Tue, 27 Jan 2015 12:13:59 +0100
+Message-ID: <1422357239-20316-1-git-send-email-l.majewski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:33659 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758053AbbA0LOO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Jan 2015 06:14:14 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Paul Bolle <pebolle@tiscali.nl>
+Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
-Hello Tobias,
+After removing exynos_thermal_common.[c|h] files the CONFIG_EXYNOS_THERMA_CORE
+is not needed anymore.
+This patch removes this entry from Kconfig.
 
-On 24/01/15 02:53, Tobias Jakobi wrote:
-> Hello,
-> 
-> I've tested the series on my X2 and so far I haven't encountered any
-> obvious issues with it.
-> 
-> I have a small question though. With the move to simple-audio-card the
-> old driver (selected by SND_SOC_ODROIDX2) is probably going away after
-> some time.
-> Currently SND_SOC_ODROIDX2 also selects SND_SOC_MAX98090 and
-> SND_SAMSUNG_I2S, which I believe (correct me if I'm wrong) are necessary
-> to use the sound subsystem even with simple-audio-card (since the
-> max98090 codec has to be built at least). I've found no way of selecting
-> these two manually, so at the moment I need both CONFIG_SND_SIMPLE_CARD
-> and SND_SOC_ODROIDX2 enabled to use sound. Is this intended behaviour?
+Reported-by: Paul Bolle <pebolle@tiscali.nl>
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+---
+ drivers/thermal/samsung/Kconfig | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-Thanks for the feedback.  It seems I finally forgot to update Kconfig,
-presumably we should make SND_SOC_ODROIDX2 selecting SND_SIMPLE_CARD,
-i.e.
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 58c797a..7fb728c 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -247,6 +247,7 @@ config SND_SOC_ODROIDX2
-        depends on SND_SOC_SAMSUNG
-        select SND_SOC_MAX98090
-        select SND_SAMSUNG_I2S
-+       select SND_SIMPLE_CARD
-        help
-          Say Y here to enable audio support for the Odroidx2.
-
-Making SND_SOC_SAMSUNG selecting SND_SIMPLE_CARD is probably not a good
-idea and still we would be missing the codec part.
-I'm going to post a patch as above.
-
-> And while I'm at it. I'm booting the board with an upstream u-boot
-> version which sets the MPLL to 800MHz, which AFAIK is the clocking rate
-> that makes less 'trouble' (but at the expense of performance).
-> I was wondering if anyone can comment on whether the recent rework has
-> any influence on the behaviour when booting with the vendor u-boot
-> (which sets the MPLL to 880MHz). IIRC then clock rounding issues arose
-> there.
-> 
-> It would be interesting to know if this series gets us closer to drive
-> the MPLL with the recommended (?) higher clocking rate.
-
-No, (unfortunately) this series has nothing to do with MPLL.  The whole
-clock tree for sound is configured by the kernel, including the EPLL, which
-provides reference clock for the audio subsystem.  MPLL and EPLL are normally
-used in different clock domains.  So there should be no any clock rounding
-issues related to bootloader as far as audio is concerned.  Please let me
-know if you find any related problems.
-
+diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
+index c43306e..c8e35c1 100644
+--- a/drivers/thermal/samsung/Kconfig
++++ b/drivers/thermal/samsung/Kconfig
+@@ -7,12 +7,3 @@ config EXYNOS_THERMAL
+ 	  the TMU, reports temperature and handles cooling action if defined.
+ 	  This driver uses the Exynos core thermal APIs and TMU configuration
+ 	  data from the supported SoCs.
+-
+-config EXYNOS_THERMAL_CORE
+-	bool "Core thermal framework support for EXYNOS SOCs"
+-	depends on EXYNOS_THERMAL
+-	help
+-	  If you say yes here you get support for EXYNOS TMU
+-	  (Thermal Management Unit) common registration/unregistration
+-	  functions to the core thermal layer and also to use the generic
+-	  CPU cooling APIs.
 -- 
-Regards,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.0.0.rc2
