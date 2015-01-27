@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 2/3] ASoC: samsung: Document Trats2
- audio subsystem bindings
-Date: Tue, 27 Jan 2015 18:49:10 +0000
-Message-ID: <20150127184910.GL21293@sirena.org.uk>
+Subject: Re: [PATCH v4 1/3] ASoC: samsung: Add machine driver
+ for Trats2
+Date: Tue, 27 Jan 2015 18:59:42 +0000
+Message-ID: <20150127185942.GM21293@sirena.org.uk>
 References: <1421989410-12490-1-git-send-email-ideal.song@samsung.com>
- <1421989410-12490-3-git-send-email-ideal.song@samsung.com>
+ <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3948499895165194741=="
+Content-Type: multipart/mixed; boundary="===============2257206771853245631=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1421989410-12490-3-git-send-email-ideal.song@samsung.com>
+In-Reply-To: <1421989410-12490-2-git-send-email-ideal.song@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -23,49 +23,66 @@ Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.or
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============3948499895165194741==
+--===============2257206771853245631==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BupHoQMOlvKF7IyR"
+	protocol="application/pgp-signature"; boundary="7ftbJ8egIWVmlOqJ"
 Content-Disposition: inline
 
 
---BupHoQMOlvKF7IyR
+--7ftbJ8egIWVmlOqJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Jan 23, 2015 at 02:03:29PM +0900, Inha Song wrote:
+On Fri, Jan 23, 2015 at 02:03:28PM +0900, Inha Song wrote:
+> This patch add the sound machine driver for Trats2 board.
+> The codec operate in master mode.
 
-> + - samsung,audio-routing : A list of the connections between audio
-> +   components. each entry is a pair of strings, the first being the
-> +   connection's sink, the second being the connection's source
+This looks like (and mostly should be) a DTified copy of the littlemill
+driver.  The major differences are the fact that this lacks jack
+detection, the management of the clock and the fact that instead of
+picking a fixed clock frequency this tries to adjust based on
+hw_params().  Ideally we'd be able to merge these drivers so we're
+keeping up with best practice.
 
-The list of valid components should be specified here - reference the
-CODEC bindings for anything on the CODEC but things on the board need to
-be enumerated.
+The reason we pick a fixed frequency for littlemill is that the device
+supports analogue bypass paths which would be broken otherwise which
+will apply here also I imagine.
 
---BupHoQMOlvKF7IyR
+> +config SND_SOC_SAMSUNG_TRATS2_WM1811
+> +	tristate "SoC I2S Audio support for WM1811 on Tizen Trats2 board"
+> +	depends on SND_SOC_SAMSUNG
+> +	select SND_SAMSUNG_I2S
+> +	select MFD_WM8994
+
+For things outside the audio subsystem it's more common to use a depends
+instead of a select - the selects are there because the drivers only
+work with a machine driver and if we go outside the subsystem then since
+selects aren't recursive we end up breaking elsewhere.  For example here
+we'll end up not selecting MFD_CORE.
+
+--7ftbJ8egIWVmlOqJ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJUx92lAAoJECTWi3JdVIfQJd0H/RGrpS2pSSQhGQPjNHK2GSRu
-/l8yWZVaxI8SGIfcZZNetKBPv84uXrU7QUNRLttL6EfeAC0qgt0QS4XbdtY1ubeQ
-YAGqUSv18N0Ym66scWiQqDGyZ3b0Qu2EEwwq+Ec7NockWutfumNG2jxFHzGRw0WF
-8/0rPCaf6BnYNc02Zg2njB2WDXA3u1KKShiX/sCdQEW/Zy5gWFFpx5VuxIqh/Pxh
-r3rqH74oCymM8JoarNuUtA6JMB7RVlwc3VyMRq8FjCmQpEVzVyp68/RNb6JOJJON
-xLdj7bvE38HDkrnOfw2+Vr7av9K/UxNUxZOf/XRebkU+wRJm+f74ZvjJNrg1E8M=
-=OLNI
+iQEcBAEBCAAGBQJUx+AdAAoJECTWi3JdVIfQfdUH/RvJzdlHUSRh1yWQqBGUcj6U
+dUIAPq2NY7MEyC+gp1Xj5YsjnZ1da9w41wExLHLNX34+lUCDtKfb96WIxHNyrxg5
+q2ZRWpKa+sN8E1kwDrqYTWSXstbtNdy86RtUva47Y+2TN0GsFpyV75rDn39E8olb
+vanFXg85ZBMzQepVW2GQFCh2XyrPDfVLbpK9i4cYKPlNl5NDmDTA+7Ym7QbBqp40
+Yhaycl2WlHFyd3NH8vRbCjN1+20LwF6fjos2n4u7iWdtCdMBbjvAUWGYlQORjlch
+Zl3lZ5CaIRdDPar4+bEELb86n6d9wTqZd/vNGV8tcJB6iYsHoaSmo/N4KgrTXI4=
+=RXj1
 -----END PGP SIGNATURE-----
 
---BupHoQMOlvKF7IyR--
+--7ftbJ8egIWVmlOqJ--
 
---===============3948499895165194741==
+--===============2257206771853245631==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
---===============3948499895165194741==--
+--===============2257206771853245631==--
