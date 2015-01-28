@@ -1,91 +1,66 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 02/15] iommu: Introduce iommu domain types
-Date: Wed, 28 Jan 2015 14:19:34 +0000
-Message-ID: <20150128141934.GP1569@arm.com>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
-	<1422316305-19216-3-git-send-email-joro@8bytes.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: multi_v7_defconfig: Enable Exynos5420 Multi-Cluster
+ PM support
+Date: Wed, 28 Jan 2015 15:40:20 +0100
+Message-ID: <1422456020-10975-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1422316305-19216-3-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jroedel-l3A5Bk7waGM@public.gmane.org" <jroedel-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Joerg,
+The Exynos5420 cluster power management support allowing Exynos
+5420/5422/5800 machines to power up and down the secondary CPUs.
 
-Thanks for posting this!
+Without this option enabled, the secondary CPUs are not brought
+up on boot and the following error is shown:
 
-On Mon, Jan 26, 2015 at 11:51:32PM +0000, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-> 
-> This allows to handle domains differently based on their
-> type in the future. An IOMMU driver can implement certain
-> optimizations for DMA-API domains for example.
-> 
-> Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
-> ---
->  drivers/iommu/iommu.c |  5 +++--
->  include/linux/iommu.h | 11 ++++++++++-
->  2 files changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 684efc0..ab24d77 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -909,14 +909,15 @@ struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
->  	ops = bus->iommu_ops;
->  
->  	if (ops->domain_alloc)
-> -		domain = ops->domain_alloc();
-> +		domain = ops->domain_alloc(IOMMU_DOMAIN_UNMANAGED);
->  	else
->  		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
->  
->  	if (!domain)
->  		return NULL;
->  
-> -	domain->ops = bus->iommu_ops;
-> +	domain->ops  = bus->iommu_ops;
-> +	domain->type = IOMMU_DOMAIN_UNMANAGED;
->  
->  	if (ops->domain_init && domain->ops->domain_init(domain))
->  		goto out_free;
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 69d1d12..0b67f65 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -51,7 +51,16 @@ struct iommu_domain_geometry {
->  	bool force_aperture;       /* DMA only allowed in mappable range? */
->  };
->  
-> +/* This are the possible domain-types */
-> +enum iommu_domain_type {
-> +	IOMMU_DOMAIN_DMA,	/* Domain used for DMA-API */
-> +	IOMMU_DOMAIN_IDENTITY,	/* Identity mapped domain  */
+CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+Setting up static identity map for 0x40938e90 - 0x40938f28
+ARM CCI driver probed
+CPU1: failed to boot: -38
+CPU2: failed to boot: -38
+CPU3: failed to boot: -38
+CPU4: failed to boot: -38
+CPU5: failed to boot: -38
+CPU6: failed to boot: -38
+CPU7: failed to boot: -38
+Brought up 1 CPUs
 
-What happens if somebody calls map or unmap on an identity-mapping domain?
-Can we catch that in the IOMMU core before calling the IOMMU driver? That
-also implies we need something extra to parameterise the attributes for
-the mapping (e.g. cacheable, read-only) and also potentially the address
-range.
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
-> +	IOMMU_DOMAIN_UNMANAGED, /* Domain mappings are managed by a third party
-> +				   user (like KVM or VFIO) */
+This patch was tested on an Exynos5420 Peach Pit and with MCPM support
+enabled, all the 8 CPUs are powered up:
 
-We already have the domain attributes (iommu_attr) to describe features
-of a domain. Is there really a need for this extra type, or can we extend
-the attribute set and allow for domain allocation with attributes?
+Brought up 8 CPUs
+SMP: Total of 8 processors activated (384.00 BogoMIPS).
 
-Will
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 6e974b6bfa90..e8a4c955241b 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -61,6 +61,7 @@ CONFIG_MACH_SPEAR1310=y
+ CONFIG_MACH_SPEAR1340=y
+ CONFIG_ARCH_STI=y
+ CONFIG_ARCH_EXYNOS=y
++CONFIG_EXYNOS5420_MCPM=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_SIRF=y
+ CONFIG_ARCH_TEGRA=y
+-- 
+2.1.3
