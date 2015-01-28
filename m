@@ -1,13 +1,15 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 5/6] ARM: dts: exynos5250-snow: Enable wifi power-on
-Date: Wed, 28 Jan 2015 19:15:52 +0100
-Message-ID: <1422468953-7594-6-git-send-email-javier.martinez@collabora.co.uk>
-References: <1422468953-7594-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 3/3] cpufreq: exynos: allow modular build
+Date: Wed, 28 Jan 2015 21:01:39 +0100
+Message-ID: <1799972.nQ2Axu0CEJ@wuerfel>
+References: <1422451015-390439-1-git-send-email-arnd@arndb.de>
+ <1422451015-390439-4-git-send-email-arnd@arndb.de>
+ <20150128172209.GF29600@developer.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1422468953-7594-1-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <20150128172209.GF29600@developer.hsd1.ca.comcast.net>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,81 +19,67 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, Kukjin Kim <kgene@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Snow board has a MMC/SDIO wifi chip that is always powered but it
-needs a power sequence involving a reset (active low) and an enable
-(active high) pins. Both pins are marked as active low since the MMC
-simple power sequence driver asserts the pins prior to the card power
-up procedure and de-asserts the pins after the card has been powered.
+On Wednesday 28 January 2015 13:22:11 Eduardo Valentin wrote:
+> >  
+> >  config ARM_EXYNOS5440_CPUFREQ
+> > -	bool "SAMSUNG EXYNOS5440"
+> > +	tristate "SAMSUNG EXYNOS5440"
+> >  	depends on SOC_EXYNOS5440
+> >  	depends on HAVE_CLK && OF
+> > +	depends on THERMAL
+> >  	select PM_OPP
+> >  	default y
+> >  	help
+> 
+> Reading the code briefly, looks like the intention is to separate soc
+> specific code into different files, but they all compose one single
+> driver. Translating into module, I believe it makes sense to build them
+> into a single module, instead of having all of them as separate module.
+> 
+> Meaning, only ARM_EXYNOS_CPUFREQ becomes tristate, all the remaining
+> continues bool. And we add the following Makefile change to your patch
 
-So the reset line will be left de-asserted and the enable pin will be
-left asserted.
+That was my initial thought as well, but the devil is in the details:
 
-The chip also needs an external 32kHz reference clock to be operational
-that is by the MAX77686 PMIC clock.
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 0f9a2c3..c3c3cf5 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -26,13 +26,19 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+>  
+>  
+>  config ARM_EXYNOS_CPUFREQ
+> -	bool
+> +	tristate "SAMSUNG EXYNOS CPUfreq Driver"
+> +	depends on THERMAL
+> +	default y
+> +	help
+> +	  This adds the CPUFreq driver for Samsung EXYNOS platforms
+> +
+> +	  If in doubt, say N.
 
-Add a simple MMC power sequence provider for the wifi MMC/SDIO slot.
+Now the option shows up on all systems that include Kconfig.arm,
+in particular non-exynos machines that might not even be able
+to build this.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
+It's also enabled by default, but if you change the default to 'n',
+the entire drivers will be disabled for users with an existing
+configuration file.
 
-Changes since v1:
- - Remove cap-sdio-irq from mmc3 dev node since is a separate change.
-   Suggested by Arend van Spriel.
----
- arch/arm/boot/dts/exynos5250-snow.dts | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+We could work around these issues by adding extra (silent) Kconfig
+symbols that automatically do the right thing, but that would not
+be any less ugly than my first patch.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index b9aeec430527..b78712058903 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -229,6 +229,14 @@
- 		power-supply = <&fet6>;
- 		backlight = <&backlight>;
- 	};
-+
-+	mmc3_pwrseq: mmc3_pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpx0 2 GPIO_ACTIVE_LOW>, /* WIFI_RSTn */
-+			      <&gpx0 1 GPIO_ACTIVE_LOW>; /* WIFI_EN */
-+		clocks = <&max77686 MAX77686_CLK_PMIC>;
-+		clock-names = "ext_clock";
-+	};
- };
- 
- &dp {
-@@ -536,12 +544,27 @@
- 	samsung,dw-mshc-sdr-timing = <2 3>;
- 	samsung,dw-mshc-ddr-timing = <1 2>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
-+	pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4 &wifi_en &wifi_rst>;
- 	bus-width = <4>;
- 	cap-sd-highspeed;
-+	mmc-pwrseq = <&mmc3_pwrseq>;
- };
- 
- &pinctrl_0 {
-+	wifi_en: wifi-en {
-+		samsung,pins = "gpx0-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	wifi_rst: wifi-rst {
-+		samsung,pins = "gpx0-2";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	power_key_irq: power-key-irq {
- 		samsung,pins = "gpx1-3";
- 		samsung,pin-function = <0xf>;
--- 
-2.1.3
+Another possible might be to change the drivers to use the normal
+probe ordering and move the module_platform_driver() statement
+into the individual drivers, so that e.g. exynos4210_cpufreq_init()
+gets turned into exynos4210_cpufreq_probe() and calls the generic
+exynos_cpufreq_probe() function. This would let us express the
+dependencies more naturally and just export one symbol from the
+main module.
+
+	Arnd
