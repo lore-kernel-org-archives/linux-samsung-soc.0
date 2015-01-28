@@ -1,65 +1,192 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: exynos5422-odroidxu3: add eMMC reset line
-Date: Wed, 28 Jan 2015 14:59:55 +0100
-Message-ID: <1422453595-21160-5-git-send-email-m.szyprowski@samsung.com>
-References: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45682 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933383AbbA2CKc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jan 2015 21:10:32 -0500
-In-reply-to: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 01/12] clk: samsung: exynos5433: Add clocks using common
+ clock framework
+Date: Thu, 29 Jan 2015 08:38:03 +0900
+Message-ID: <54C972DB.1020808@samsung.com>
+References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
+ <1421821618-8627-2-git-send-email-cw00.choi@samsung.com>
+ <54C129B0.1090404@samsung.com> <54C1FBF6.4040405@samsung.com>
+ <54C2877A.3040500@samsung.com>
+ <CAGTfZH3NM-Y7Q9ru_iyKXFRO67TAc=SG8urwDyUF_qWWKEGVVg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAGTfZH3NM-Y7Q9ru_iyKXFRO67TAc=SG8urwDyUF_qWWKEGVVg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: cw00.choi@samsung.com, Chanwoo Choi <cwchoi00@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, "pankaj.dubey@samsung.com" <pankaj.dubey@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-This patch adds reset-gpios property to the eMMC slot, so the MMC driver
-is able to properly reset eMMC card on system restart and thus fixes
-system hang on software reboot.
+Hi Sylwester,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Do you have any comment about Tomasz and me reply?
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index a519c863248d..bafbc4e19adc 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -298,13 +298,15 @@
- 
- &mmc_0 {
- 	status = "okay";
-+	reset-gpios = <&gpd1 0 0>;
-+	reset-invered;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &emmc_nrst>;
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
- };
-@@ -330,6 +332,15 @@
- 	};
- };
- 
-+&pinctrl_1 {
-+	emmc_nrst: emmc-nrst {
-+		samsung,pins = "gpd1-0";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
- &usbdrd_dwc3_0 {
- 	dr_mode = "host";
- };
--- 
-1.9.2
+Thanks,
+Chanwoo Choi
+
+On 01/24/2015 07:05 AM, Chanwoo Choi wrote:
+> Hi Sylwester,
+> 
+> On Sat, Jan 24, 2015 at 2:40 AM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> On 23/01/15 08:44, Chanwoo Choi wrote:
+>>>>> +   cmu_top: clock-controller@0x10030000 {
+>>>>>>> +                compatible = "samsung,exynos5433-cmu-top";
+>>>>>>> +                reg = <0x10030000 0x0c04>;
+>>>>>>> +                #clock-cells = <1>;
+>>>>>>> +        };
+>>>>>>> +
+>>
+>>>>>>> +        cmu_fsys: clock-controller@0x156e0000 {
+>>>>>>> +                compatible = "samsung,exynos5433-cmu-fsys";
+>>>>>>> +                reg = <0x156e0000 0x0b04>;
+>>>>>>> +                #clock-cells = <1>;
+>>>>>>> +        };
+>>>>>
+>>>>> What are the reasons to split the whole clock controller into separate
+>>>>> device nodes with different compatible strings like this? I doubt drivers
+>>>>> associated with each of those compatible strings could be ever reused on
+>>>>> different Exynos SoCs.
+>>>
+>>> No special reason. I added the clock controller according to clock domain
+>>> separately. As I knew, samsung clk drivers use this way to support various
+>>> clock domains. For exmaple, drivers/clk/samsung/clk-exynos7.c.
+>>
+>> I'm afraid exynos7 has that initialization ordering issue, unfortunately I
+>> didn't notice it before.
+> 
+> OK.
+> 
+>>
+>>>>> There are hardware dependencies between these clock domains, which are
+>>>>> not currently modelled in DT with your binding.
+>>>
+>>> Right. current samsung clock drivers cannot show the hierarchy among clock
+>>> domains in DT.
+>>>
+>>>>> IOW, there is currently
+>>>>> no way to ensure proper registration order of the CMUs (clock domains).
+>>>>> This may be important in some cases.
+>>>>>
+>>>>> To address this we could either add clocks/clock-names properties in
+>>>>> respective CMU device nodes, pointing to any clocks in other CMU(s) or
+>>>>> make a single device node for the whole clock controller, with an
+>>>>> aggregated reg entry, e.g.
+>>>>>
+>>>>>  cmu: clock-controller@0x10030000 {
+>>>>>    compatible = "samsung,exynos5433-cmu";
+>>>>>    reg =   <0x10030000 0x0c04>,
+>>>>>            <0x10fc0000 0x0c04>,
+>>>>>            <0x105b0000 0x100c>,
+>>>>>            <0x14c80000 0x0b08>,
+>>>>>            <0x10040000 0x0b20>,
+>>>>>            <0x156e0000 0x0b04>,
+>>>>>                    ...
+>>>>>    reg-names = "top", "cpif", "mif", "peric", "peris", "fsys"...
+>>>>>    #clock-cells = <1>;
+>>>>>  };
+>>>
+>>> If you make a single device node to support various clock domain,
+>>> How are you indicate the specific clock in some clock domain?
+>>
+>> This might be an issue, we would need to make all the clk indexes a one
+>> contiguous set.
+> 
+> Exynos5433 has a whole lot of clocks against Exynos4 series clocks.
+> So, if make all the clocks in the same set, I wonder making too huge set.
+> It may cause the complicated code to find the proper clock or to analyze
+> the clock driver.
+> 
+> I'm wondering if there is really any use of having such
+>> information expressed explicitly in DT, or it would just make the DT
+>> binding closer resembling the SoC's documentation ?
+> 
+> If we show the hierarchy or dependency between clock domains,
+> I think we should modify "structure samsung_clk_provider"
+> to include dependency information between clock domains.
+> (It is just my opinion, this opinion could be not proper solution.)
+> 
+> Because
+> when we use the common clk framework without adding
+> any dependency information between clock domains, it is well working.
+> 
+>>
+>> Similarly, the clock controller is divided into subdomains in older SoCs,
+>> like exynos4, yet we do not create separate device nodes for each domain.
+>> Is reference to each individual clock domain required in any other SoC's
+>> part in case of exynos5433 ?
+> 
+> There is a difference between exynos4 cmu and exynos5433 cmu.
+> exynos4. As I knew, Exynos4 series have the one more clock domain.
+> But, there are not any IPs between clock domains. We can check it as following
+> read base address and scope.
+> 
+> The base address and range of Exynos4412 clock domain :
+> - 0x1003_0000 ~ 0x1003_CA08
+> - 0x1004_0000 ~ 0x1004_8B0C
+> 
+> But, the clock domain in base address map of exynos5433 is located
+> in non-continuous range. Also, there are un-related IPs to clocks.
+> (e.g., mct 101c_0000, gic 1100_1000, serial0 14c1_0000, pinctrl 1058_0000 ...)
+> If we make the one dt node for clock domains like exynos4,
+> I think it may cause the possible issue that clock drivers may access
+> the un-related memory-mapped region.
+> 
+> The base address and range of Exynos5433 clock domain :
+> - top domain    : 0x1003_0000 ~ 0x1003_0c04
+> - cpif domain   : 0x10fc_0000 ~ 0x10fc_0x0c04
+> - mif domain    : 0x105b_0000 ~ 0x105b_0x100c
+> - peric domain : 0x14c8_0000 ~ 0x14c8_0b08
+> - peris domain  : 0x1004_0000 ~ 0x1004_0x0b20
+> - fsys domain   : 0x156e_0000 ~ 0x156e_0b04
+> 
+>>
+>>> For example,
+>>> The serial dt node in exynos7.dtsi. serial_0 dt node use the uart clocks
+>>> in 'clock_peric0' clock domain and serial_1 dt node use the uart clocks
+>>> in 'clock-peric1' clock domain.
+>>>
+>>> When using the clock in specific clock domain,
+>>> we need to phandle(e.g., clock_peric0, clock_peric1) of clock domain.
+>>>
+>>>               serial_0: serial@13630000 {
+>>>                       compatible = "samsung,exynos4210-uart";
+>>>                       reg = <0x13630000 0x100>;
+>>>                       interrupts = <0 440 0>;
+>>>                       clocks = <&clock_peric0 PCLK_UART0>,
+>>>                                <&clock_peric0 SCLK_UART0>;
+>>>                       clock-names = "uart", "clk_uart_baud0";
+>>>                       status = "disabled";
+>>>               };
+>>>
+>>>               serial_1: serial@14c20000 {
+>>>                       compatible = "samsung,exynos4210-uart";
+>>>                       reg = <0x14c20000 0x100>;
+>>>                       interrupts = <0 456 0>;
+>>>                       clocks = <&clock_peric1 PCLK_UART1>,
+>>>                                <&clock_peric1 SCLK_UART1>;
+>>>                       clock-names = "uart", "clk_uart_baud0";
+>>>                       status = "disabled";
+>>>               };
+>>>
+>>>>> Then we could modify samsung_cmu_register_one() function by adding
+>>>>> the reg entry index or name argument. What do you think ?
+>>>
+>>> If there is more reasonable way to show the dependency between clock domains,
+>>> I will agree.
+>>
+>> The other option I mentioned is specifying all parent clocks of a given
+>> clock domain in its device node with clocks(/clock-names) properties.
+>> But it might be a bit hard to list all the clock domain dependencies
+>> this way
+> 
+> Right, I agree that it is too hard.
+> 
+> Regards,
+> Chanwoo Choi
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
