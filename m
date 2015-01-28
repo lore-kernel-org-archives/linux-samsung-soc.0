@@ -1,13 +1,14 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] spi: pl08x: do not select S3C64XX_PL080
-Date: Wed, 28 Jan 2015 14:27:06 +0100
-Message-ID: <2608153.sC21ihDxEF@wuerfel>
-References: <1957186.KORYFIrP42@wuerfel>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 2/5] mmc: pwrseq_simple: Extend to support more pins
+Date: Wed, 28 Jan 2015 14:01:22 +0000
+Message-ID: <54C8EBB2.10101@linaro.org>
+References: <1422439819-29854-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1422439819-29854-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1957186.KORYFIrP42@wuerfel>
+In-Reply-To: <1422439819-29854-3-git-send-email-javier.martinez@collabora.co.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,30 +18,206 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The pl08x driver originally selected S3C64XX_PL080 to avoid having
-the legacy Samsung DMA interfaces. Those are now gone, so the
-select is no longer needed, but it now causes problems when
-CONFIG_DMA_ENGINE is disabled:
+Hi Javier,
 
-arch/arm/plat-samsung/built-in.o: In function `s3c64xx_spi0_set_platdata':
-:(.init.text+0x518): undefined reference to `pl08x_filter_id'
+You are in a lead of 3 hrs from me..
+Surprisingly I send very much same patch just few Mins ago :-)
+May be we can merge goods in both :-)
 
-This simply removes the 'select' to avoid this problem.
+On 28/01/15 10:10, Javier Martinez Canillas wrote:
+> Many WLAN attached to a SDIO/MMC interface, needs more than one pin for
+> their reset sequence. For example, is very common for chips to have two
+> pins: one for reset and one for power enable.
+>
+> This patch adds support for more reset pins to the pwrseq_simple driver
+> and instead hardcoding a fixed number, it uses the of_gpio_named_count()
+> since the MMC power sequence is only built when CONFIG_OF is enabled.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>   drivers/mmc/core/pwrseq_simple.c | 54 ++++++++++++++++++++++++++++++----------
+>   1 file changed, 41 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+> index 0958c696137f..9e51fe1051c5 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/device.h>
+>   #include <linux/err.h>
+> +#include <linux/of_gpio.h>
+>   #include <linux/gpio/consumer.h>
+>
+>   #include <linux/mmc/host.h>
+> @@ -19,34 +20,44 @@
+>
+>   struct mmc_pwrseq_simple {
+>   	struct mmc_pwrseq pwrseq;
+> -	struct gpio_desc *reset_gpio;
+> +	struct gpio_desc **reset_gpio;
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+May be renaming it to reset_gpios makes more sense..
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 9b81b39de54e..7727660e9702 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -470,7 +470,6 @@ config SPI_S3C24XX_FIQ
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
- 	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
--	select S3C64XX_PL080 if ARCH_S3C64XX
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
+If you make this struct gpio_desc *reset_gpios[0]; You can aviod an 
+extra kmalloc and free ..
+
+
+> +	int nr_gpios;
+>   };
+>
+>   static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+>   {
+
+[...
+>   	struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+>   					struct mmc_pwrseq_simple, pwrseq);
+> +	int i;
+>
+> -	if (!IS_ERR(pwrseq->reset_gpio))
+> -		gpiod_set_value_cansleep(pwrseq->reset_gpio, 1);
+> +	for (i = 0; i < pwrseq->nr_gpios; i++)
+> +		if (!IS_ERR(pwrseq->reset_gpio[i]))
+> +			gpiod_set_value_cansleep(pwrseq->reset_gpio[i], 1);
+
+...]
+
+>   }
+>
+>   static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
+>   {
+
+[...
+
+>   	struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+>   					struct mmc_pwrseq_simple, pwrseq);
+> +	int i;
+>
+> -	if (!IS_ERR(pwrseq->reset_gpio))
+> -		gpiod_set_value_cansleep(pwrseq->reset_gpio, 0);
+> +	for (i = 0; i < pwrseq->nr_gpios; i++)
+> +		if (!IS_ERR(pwrseq->reset_gpio[i]))
+> +			gpiod_set_value_cansleep(pwrseq->reset_gpio[i], 0);
+...]
+
+Now that we have more code in mmc_pwrseq_simple_post_power_on() and 
+mmc_pwrseq_simple_pre_power_on(), Just move most of them into a common 
+function like:
+
+static void __mmc_pwrseq_simple_power_on_off(struct mmc_host *host,
+						      bool on)
+{
+	struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+					struct mmc_pwrseq_simple, pwrseq);
+	int i;
+
+	if (!IS_ERR(pwrseq->reset_gpios)) {
+		for (i = 0; i < pwrseq->ngpios; i++)
+			gpiod_set_value_cansleep(pwrseq->reset_gpios[i],
+						 on ? : 0);
+	}
+}
+
+static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+{
+	__mmc_pwrseq_simple_power_on_off(host, true);
+}
+
+static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
+{
+	__mmc_pwrseq_simple_power_on_off(host, false);
+}
+
+
+>   }
+>
+>   static void mmc_pwrseq_simple_free(struct mmc_host *host)
+>   {
+>   	struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+>   					struct mmc_pwrseq_simple, pwrseq);
+> +	int i;
+>
+> -	if (!IS_ERR(pwrseq->reset_gpio))
+> -		gpiod_put(pwrseq->reset_gpio);
+> +	if (pwrseq->nr_gpios > 0) {
+> +		for (i = 0; i < pwrseq->nr_gpios; i++)
+> +			if (!IS_ERR(pwrseq->reset_gpio[i]))
+> +				gpiod_put(pwrseq->reset_gpio[i]);
+> +		kfree(pwrseq->reset_gpio);
+> +	}
+>
+>   	kfree(pwrseq);
+>   	host->pwrseq = NULL;
+> @@ -63,17 +74,27 @@ int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev)
+>   {
+>   	struct mmc_pwrseq_simple *pwrseq;
+>   	int ret = 0;
+> +	int i;
+>
+>   	pwrseq = kzalloc(sizeof(struct mmc_pwrseq_simple), GFP_KERNEL);
+>   	if (!pwrseq)
+>   		return -ENOMEM;
+>
+> -	pwrseq->reset_gpio = gpiod_get_index(dev, "reset", 0, GPIOD_OUT_HIGH);
+> -	if (IS_ERR(pwrseq->reset_gpio) &&
+> -		PTR_ERR(pwrseq->reset_gpio) != -ENOENT &&
+> -		PTR_ERR(pwrseq->reset_gpio) != -ENOSYS) {
+> -		ret = PTR_ERR(pwrseq->reset_gpio);
+> -		goto free;
+> +	pwrseq->nr_gpios = of_gpio_named_count(dev->of_node, "reset-gpios");
+> +	if (pwrseq->nr_gpios > 0) {
+
+What happens if there are no gpios? This fuction should return -ENOENT 
+and should not even try to allocate pwrseq?
+Probably you should do of_gpio_named_count before allocating memory.
+
+> +		pwrseq->reset_gpio = kzalloc(sizeof(struct gpio_desc *) *
+> +					     pwrseq->nr_gpios, GFP_KERNEL);
+> +
+> +		for (i = 0; i < pwrseq->nr_gpios; i++) {
+> +			pwrseq->reset_gpio[i] = gpiod_get_index(dev, "reset", i,
+> +								GPIOD_OUT_HIGH);
+> +			if (IS_ERR(pwrseq->reset_gpio[i]) &&
+> +			    PTR_ERR(pwrseq->reset_gpio[i]) != -ENOENT &&
+> +			    PTR_ERR(pwrseq->reset_gpio[i]) != -ENOSYS) {
+> +				ret = PTR_ERR(pwrseq->reset_gpio[i]);
+
+is simple to add:
+	while(--i)
+		gpiod_put(pwrseq->reset_gpio[i])
+
+
+		
+> +				goto free;
+> +			}
+> +		}
+
+
+>   	}
+>
+>   	pwrseq->pwrseq.ops = &mmc_pwrseq_simple_ops;
+> @@ -81,6 +102,13 @@ int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev)
+>
+>   	return 0;
+>   free:
+> +	if (pwrseq->nr_gpios > 0) {
+> +		for (i = 0; i < pwrseq->nr_gpios; i++)
+> +			if (!IS_ERR_OR_NULL(pwrseq->reset_gpio[i]))
+> +				gpiod_put(pwrseq->reset_gpio[i]);
+> +		kfree(pwrseq->reset_gpio);
+> +	}
+> +
+>   	kfree(pwrseq);
+>   	return ret;
+>   }
+>
+
+I get a feeling that am just dumping my patch here.. If possible could 
+you have look at it too.
+
+Thanks,
+srini
