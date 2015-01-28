@@ -1,74 +1,85 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 1/3] exynos: config: Remove CONFIG_EXYNOS_THERMAL_CORE
- define (exynos_defconfig)
-Date: Wed, 28 Jan 2015 01:26:42 -0400
-Message-ID: <20150128052640.GE29600@developer.hsd1.ca.comcast.net>
-References: <1422458920-14555-1-git-send-email-l.majewski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ASoC: Samsung: add missing I2C/SPI dependencies
+Date: Wed, 28 Jan 2015 22:28:55 +0100
+Message-ID: <1815674.ObkQWLfgIW@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Zs/RYxT/hKAHzkfQ"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:39951 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754167AbbA1Uzg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jan 2015 15:55:36 -0500
-Content-Disposition: inline
-In-Reply-To: <1422458920-14555-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: broonie@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene@kernel.org>, lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
+The SND_SOC_ARNDALE_RT5631_ALC5631 selects the rt5631 codec
+that requires I2C to work, so we get a build error if I2C
+is disabled:
 
---Zs/RYxT/hKAHzkfQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+codecs/rt5631.c:1737:1: warning: data definition has no type or storage class
+31_i2c_driver);
 
-On Wed, Jan 28, 2015 at 04:28:38PM +0100, Lukasz Majewski wrote:
-> After Exynos TMU rework to use device tree for configuration this flag
-> can be removed. It is not used anymore.
->=20
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+codecs/rt5631.c:1737:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Werror=implicit-int]
+codecs/rt5631.c:1737:1: warning: parameter names (without types) in function declaration
+codecs/rt5631.c:1726:26: warning: 'rt5631_i2c_driver' defined but not used [-Wunused-variable]
 
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
+The same thing can happen on odroid-x2, littlemill, bells
+and speyside, so this patch adds all the dependencies.
 
-> ---
->  arch/arm/configs/exynos_defconfig | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_=
-defconfig
-> index 3d0c5d6..3691a68 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -88,7 +88,6 @@ CONFIG_HWMON=3Dy
->  CONFIG_SENSORS_LM90=3Dy
->  CONFIG_THERMAL=3Dy
->  CONFIG_EXYNOS_THERMAL=3Dy
-> -CONFIG_EXYNOS_THERMAL_CORE=3Dy
->  CONFIG_WATCHDOG=3Dy
->  CONFIG_S3C2410_WATCHDOG=3Dy
->  CONFIG_MFD_CROS_EC=3Dy
-> --=20
-> 2.0.0.rc2
->=20
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
---Zs/RYxT/hKAHzkfQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUyHMHAAoJEMLUO4d9pOJWTzgIAIWWQiqNtORH9UnkUwgrxSgW
-mo1XxWCyVF+1WA8kUGa9ShSasMzVGX3nHR030CfvDNYyKzJ8ltuaLmCbMuG6HRdP
-sPQ9xn9n77Z1+c2mqI9GeaGby4ebIj3rXloliNl2QTfKYp7dW1hDwySzNivvFmq/
-+nhgkjvuXtFc/XtGuO9ag7QF+ip0soEITjSb3FNVg7VTmieNR/oJkGKDCuBrzJvo
-b0erZy4I+VD7tFaXBdyEZbWVdEqYuA/w8mXWgPopCO24mC34QCtZpV5drPznzD8q
-PQcYb2fKEjCXbl/+e6tfICbn4p/hiDu+zrEAKU9q7LV738oXKw6ZpqrkK9ZN1gk=
-=/n2q
------END PGP SIGNATURE-----
-
---Zs/RYxT/hKAHzkfQ--
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index e817a2f43ea8..dd781d9a1c66 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -185,7 +185,7 @@ config SND_SOC_SMDK_WM8994_PCM
+ 
+ config SND_SOC_SPEYSIDE
+ 	tristate "Audio support for Wolfson Speyside"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && SPI_MASTER
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8996
+ 	select SND_SOC_WM9081
+@@ -200,7 +200,7 @@ config SND_SOC_TOBERMORY
+ 
+ config SND_SOC_BELLS
+ 	tristate "Audio support for Wolfson Bells"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && MFD_ARIZONA
++	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && MFD_ARIZONA && I2C && SPI_MASTER
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM5102
+ 	select SND_SOC_WM5110
+@@ -217,7 +217,7 @@ config SND_SOC_LOWLAND
+ 
+ config SND_SOC_LITTLEMILL
+ 	tristate "Audio support for Wolfson Littlemill"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && I2C
+ 	select SND_SAMSUNG_I2S
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
+@@ -234,7 +234,7 @@ config SND_SOC_SNOW
+ 
+ config SND_SOC_ODROIDX2
+ 	tristate "Audio support for Odroid-X2 and Odroid-U3"
+-	depends on SND_SOC_SAMSUNG
++	depends on SND_SOC_SAMSUNG && I2C
+ 	select SND_SOC_MAX98090
+ 	select SND_SAMSUNG_I2S
+ 	help
+@@ -242,6 +242,6 @@ config SND_SOC_ODROIDX2
+ 
+ config SND_SOC_ARNDALE_RT5631_ALC5631
+         tristate "Audio support for RT5631(ALC5631) on Arndale Board"
+-        depends on SND_SOC_SAMSUNG
++        depends on SND_SOC_SAMSUNG && I2C
+         select SND_SAMSUNG_I2S
+         select SND_SOC_RT5631
