@@ -1,104 +1,65 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v4 1/2] dts: Documentation: Add documentation for Exynos7
- SoC thermal bindings
-Date: Wed, 28 Jan 2015 13:23:20 -0400
-Message-ID: <20150128172319.GG29600@developer.hsd1.ca.comcast.net>
-References: <1422337703-11289-1-git-send-email-a.kesavan@samsung.com>
- <CAM4voan-aoVQtRCFaB2rLLOgm+CEXg+Mc2gwfokUTu5eeQDo+g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bygAmIonOAIqBxQB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAM4voan-aoVQtRCFaB2rLLOgm+CEXg+Mc2gwfokUTu5eeQDo+g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Amit Kachhap <amit.daniel@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: exynos5422-odroidxu3: add eMMC reset line
+Date: Wed, 28 Jan 2015 14:59:55 +0100
+Message-ID: <1422453595-21160-5-git-send-email-m.szyprowski@samsung.com>
+References: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45682 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933383AbbA2CKc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Jan 2015 21:10:32 -0500
+In-reply-to: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>
 
+This patch adds reset-gpios property to the eMMC slot, so the MMC driver
+is able to properly reset eMMC card on system restart and thus fixes
+system hang on software reboot.
 
---bygAmIonOAIqBxQB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-On Wed, Jan 28, 2015 at 04:21:49PM +0530, Abhilash Kesavan wrote:
-> Hi Eduardo,
->=20
-> On Tue, Jan 27, 2015 at 11:18 AM, Abhilash Kesavan
-> <a.kesavan@samsung.com> wrote:
-> > Add documentation for exynos7 thermal bindings including compatible
-> > name and special clock properties.
-> >
-> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> > ---
-> >  .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.t=
-xt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> > index 0f44932..695150a 100644
-> > --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> > +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> > @@ -12,6 +12,7 @@
-> >                "samsung,exynos5420-tmu-ext-triminfo" for TMU channels 2=
-, 3 and 4
-> >                         Exynos5420 (Must pass triminfo base and triminf=
-o clock)
-> >                "samsung,exynos5440-tmu"
-> > +              "samsung,exynos7-tmu"
-> >  - interrupt-parent : The phandle for the interrupt controller
-> >  - reg : Address range of the thermal registers. For soc's which has mu=
-ltiple
-> >         instances of TMU and some registers are shared across all TMU's=
- like
-> > @@ -32,10 +33,13 @@
-> >  - clocks : The main clocks for TMU device
-> >         -- 1. operational clock for TMU channel
-> >         -- 2. optional clock to access the shared registers of TMU chan=
-nel
-> > +       -- 3. optional special clock for functional operation
-> >  - clock-names : Thermal system clock name
-> >         -- "tmu_apbif" operational clock for current TMU channel
-> >         -- "tmu_triminfo_apbif" clock to access the shared triminfo reg=
-ister
-> >                 for current TMU channel
-> > +       -- "tmu_sclk" clock for functional operation of the current TMU
-> > +               channel
-> >  - vtmu-supply: This entry is optional and provides the regulator node =
-supplying
-> >                 voltage to TMU. If needed this entry can be placed insi=
-de
-> >                 board/platform specific dts file.
->=20
-> Can you kindly consider applying these two patches to your next tree
-> if they look OK ?
-
-Abhilash, can you please get at least one Reviewed-by from one of the
-active developers of exynos thermal driver?
-
-
->=20
-> Regards,
-> Abhilash
-> > --
-> > 1.7.9.5
-> >
-
---bygAmIonOAIqBxQB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUyRr/AAoJEMLUO4d9pOJW5PoIAIlr8iOKRp5/KjMKsvESv1vZ
-pWEe4oe+9GaO59nzEEL2FVIs/20+GNEj9McZZ7XhDpOxj5T+pVcAo++9tnDOlTl9
-XQtjaz6HmLQ0Am1HC6GPuCMTTRzgiQrKF98JfMvzgOkdUQDT5ChoXfd+xQMqc5jB
-FRH4lF15bgg80RMkjaxQh2kjdcqcg+f05DH7R2nQWPRr/Yeo5qtAevbi+i2RJx4r
-kbJJaQal9VKiUi2BL+gj2xlX0uaBjJKOOLBuYO/xCYG7i24007FtmnFHs2OEexX/
-tsaISNPfZZtA/HWDeYdHke9s5WLmcFQZlH4h4Pkslqt/4PIQsOxMv8G1FUSrR3Y=
-=Oafo
------END PGP SIGNATURE-----
-
---bygAmIonOAIqBxQB--
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index a519c863248d..bafbc4e19adc 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -298,13 +298,15 @@
+ 
+ &mmc_0 {
+ 	status = "okay";
++	reset-gpios = <&gpd1 0 0>;
++	reset-invered;
+ 	broken-cd;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &emmc_nrst>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
+ };
+@@ -330,6 +332,15 @@
+ 	};
+ };
+ 
++&pinctrl_1 {
++	emmc_nrst: emmc-nrst {
++		samsung,pins = "gpd1-0";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
++
+ &usbdrd_dwc3_0 {
+ 	dr_mode = "host";
+ };
+-- 
+1.9.2
