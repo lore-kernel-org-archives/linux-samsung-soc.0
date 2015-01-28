@@ -1,85 +1,56 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ASoC: Samsung: add missing I2C/SPI dependencies
-Date: Wed, 28 Jan 2015 22:28:55 +0100
-Message-ID: <1815674.ObkQWLfgIW@wuerfel>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v3.20
+Date: Wed, 28 Jan 2015 19:06:26 +0100
+Message-ID: <54C92522.7050207@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: broonie@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene@kernel.org>, lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The SND_SOC_ARNDALE_RT5631_ALC5631 selects the rt5631 codec
-that requires I2C to work, so we get a build error if I2C
-is disabled:
 
-codecs/rt5631.c:1737:1: warning: data definition has no type or storage class
-31_i2c_driver);
+Hi Mike,
 
-codecs/rt5631.c:1737:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Werror=implicit-int]
-codecs/rt5631.c:1737:1: warning: parameter names (without types) in function declaration
-codecs/rt5631.c:1726:26: warning: 'rt5631_i2c_driver' defined but not used [-Wunused-variable]
+The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
 
-The same thing can happen on odroid-x2, littlemill, bells
-and speyside, so this patch adds all the dependencies.
+  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+are available in the git repository at:
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index e817a2f43ea8..dd781d9a1c66 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -185,7 +185,7 @@ config SND_SOC_SMDK_WM8994_PCM
- 
- config SND_SOC_SPEYSIDE
- 	tristate "Audio support for Wolfson Speyside"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && SPI_MASTER
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM8996
- 	select SND_SOC_WM9081
-@@ -200,7 +200,7 @@ config SND_SOC_TOBERMORY
- 
- config SND_SOC_BELLS
- 	tristate "Audio support for Wolfson Bells"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && MFD_ARIZONA
-+	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && MFD_ARIZONA && I2C && SPI_MASTER
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM5102
- 	select SND_SOC_WM5110
-@@ -217,7 +217,7 @@ config SND_SOC_LOWLAND
- 
- config SND_SOC_LITTLEMILL
- 	tristate "Audio support for Wolfson Littlemill"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && I2C
- 	select SND_SAMSUNG_I2S
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
-@@ -234,7 +234,7 @@ config SND_SOC_SNOW
- 
- config SND_SOC_ODROIDX2
- 	tristate "Audio support for Odroid-X2 and Odroid-U3"
--	depends on SND_SOC_SAMSUNG
-+	depends on SND_SOC_SAMSUNG && I2C
- 	select SND_SOC_MAX98090
- 	select SND_SAMSUNG_I2S
- 	help
-@@ -242,6 +242,6 @@ config SND_SOC_ODROIDX2
- 
- config SND_SOC_ARNDALE_RT5631_ALC5631
-         tristate "Audio support for RT5631(ALC5631) on Arndale Board"
--        depends on SND_SOC_SAMSUNG
-+        depends on SND_SOC_SAMSUNG && I2C
-         select SND_SAMSUNG_I2S
-         select SND_SOC_RT5631
+  git://linuxtv.org/snawrocki/samsung.git tags/v3.20-exynos-clk
+
+for you to fetch changes up to e64fb42da4c6c713cfc7cad607e97e0773fa41ff:
+
+  clk: samsung: exynos4: Add divider clock id for memory bus frequency
+(2015-01-28 15:51:17 +0100)
+
+----------------------------------------------------------------
+Exynos 3250, 4415 drivers cleanup by using common code
+and addition of clock definitions for DVFS on Exynos4.
+
+----------------------------------------------------------------
+
+It's just couple mostly cleanup patches this time, we have a clk driver
+for exynos5433 pending yet but I'll likely send it after the coming merge
+window.
+
+Chanwoo Choi (4):
+      clk: samsung: Change the return value of samsung_cmu_register_one()
+      clk: samsung: exynos3250: Use samsung_cmu_register_one() to simplify code
+      clk: samsung: exynos4415: Use samsung_cmu_register_one() to simplify code
+      clk: samsung: exynos4: Add divider clock id for memory bus frequency
+
+ drivers/clk/samsung/clk-exynos3250.c |  217 ++++++++--------------------------
+ drivers/clk/samsung/clk-exynos4.c    |   10 +-
+ drivers/clk/samsung/clk-exynos4415.c |  216 ++++++++-------------------------
+ drivers/clk/samsung/clk.c            |   13 +-
+ drivers/clk/samsung/clk.h            |    3 +-
+ include/dt-bindings/clock/exynos4.h  |    7 +-
+ 6 files changed, 118 insertions(+), 348 deletions(-)
+
+--
+Thanks
+Sylwester
