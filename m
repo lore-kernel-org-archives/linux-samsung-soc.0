@@ -1,15 +1,15 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 8/8] PM / Domains: Handle errors from genpd's
- ->attach_dev() callback
-Date: Wed, 28 Jan 2015 10:35:10 +0100
-Message-ID: <CAMuHMdXQ7SUBunaZQs0_xBgnYR2mbwjCVuuy3xe6S1qbyBsUWA@mail.gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/8] PM / Domains: Rename __pm_genpd_alloc|free_dev_data()
+Date: Wed, 28 Jan 2015 11:06:53 +0100
+Message-ID: <20150128100653.GB29177@amd>
 References: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
- <1422389625-11730-9-git-send-email-ulf.hansson@linaro.org>
+ <1422389625-11730-2-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1422389625-11730-9-git-send-email-ulf.hansson@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <1422389625-11730-2-git-send-email-ulf.hansson@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,26 +20,32 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM list <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 27, 2015 at 9:13 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> When __pm_genpd_add_device() is invoked through the generic OF-based PM
-> domain look-up path, the device is being probed. Returning an error
-> will mean the device won't be attached to its PM domain. Errors of
-> -EPROBE_DEFER get special treatment and is propagated to the driver
+On Tue 2015-01-27 21:13:38, Ulf Hansson wrote:
+> In a step to get consistent names of functions in genpd, rename
+> the internal __pm_genpd_alloc|free_dev_data() into
+> gendp_alloc|free_dev_data().
+> 
+> As discussed on the linux-pm list, let's move towards the following
+> name rules:
+> 
+> Internal functions:
+> genpd_*
+> _genpd_*
+> __genpd_*
+> 
+> External functions:
+> pm_genpd_*
+> _pm_genpd_*
+> __pm_genpd_*
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-are propagated
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-> core.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
