@@ -1,51 +1,46 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4/8] PM / Domains: Don't check for an existing device when adding a new
-Date: Tue, 27 Jan 2015 21:13:41 +0100
-Message-ID: <1422389625-11730-5-git-send-email-ulf.hansson@linaro.org>
-References: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v10 0/7] devfreq: Add devfreq-event class to provide raw
+ data for devfreq device
+Date: Wed, 28 Jan 2015 10:01:27 +0900
+Message-ID: <54C834E7.8060203@samsung.com>
+References: <2091672023.141961422352757659.JavaMail.weblogic@epmlwas08c>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
+In-reply-to: <2091672023.141961422352757659.JavaMail.weblogic@epmlwas08c>
 Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: myungjoo.ham@samsung.com, "kgene@kernel.org" <kgene@kernel.org>
+Cc: =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?UTF-8?B?7J207IOB67Cw?= <sangbae90.lee@samsung.com>, =?UTF-8?B?64yA7J24?= =?UTF-8?B?6riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When adding a device to a genpd, we no longer need to walk genpd's list
-of existing devices to verify it hasn't already been added.
+Dear Kukjin,
 
-Instead we can now rely on the verification of not allowing existing
-generic_pm_domain_data for a device, since that has the same meaning.
+Could you please pick remaining patches (patch4-patch7)?
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/base/power/domain.c | 7 -------
- 1 file changed, 7 deletions(-)
+On 01/27/2015 06:59 PM, MyungJoo Ham wrote:
+>>  This patchset add new devfreq_event class to provide raw data to determine
+>> current utilization of device  which is used for devfreq governor.
+>>
+>> The following description explains the feature of two kind of devfreq class:
+>> - devfreq class (existing)
+>>  : devfreq consumer device use raw data from devfreq_event device for
+>>    determining proper current system state and change voltage/frequency
+>>    dynamically using various governors.
+>> - devfreq_event class (new)
+>>  : Provide measured raw data to devfreq device for governor
+> 
+> Merged in my local git repo (1/7 to 3/7 as those three are in /drivers/devfreq).
+> 
+> However, the admin requires me to setup the firewall again, so please wait
+> another day for the merged patches to show up in external network
+> (git.kernel.org) and to make a pull-request for Rafael.
+> (waiting firewall execption approvals from the admin)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 76eb0c3..88198ba 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1415,7 +1415,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- 			  struct gpd_timing_data *td)
- {
- 	struct generic_pm_domain_data *gpd_data_new, *gpd_data = NULL;
--	struct pm_domain_data *pdd;
- 	int ret = 0;
- 
- 	dev_dbg(dev, "%s()\n", __func__);
-@@ -1434,12 +1433,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- 		goto out;
- 	}
- 
--	list_for_each_entry(pdd, &genpd->dev_list, list_node)
--		if (pdd->dev == dev) {
--			ret = -EINVAL;
--			goto out;
--		}
--
- 	ret = dev_pm_get_subsys_data(dev);
- 	if (ret)
- 		goto out;
--- 
-1.9.1
+Dear Myungjoo,
+
+Thanks for your apply.
+
+Best Regards,
+Chanwoo Choi
 
