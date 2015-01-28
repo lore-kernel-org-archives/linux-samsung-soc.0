@@ -1,13 +1,13 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 5/5] ARM: dts: exynos5250-snow: Enable wifi power-on
-Date: Wed, 28 Jan 2015 11:10:19 +0100
-Message-ID: <1422439819-29854-6-git-send-email-javier.martinez@collabora.co.uk>
-References: <1422439819-29854-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/3] cpufreq: s3c: remove last use of resume_clocks callback
+Date: Wed, 28 Jan 2015 14:16:54 +0100
+Message-ID: <1422451015-390439-3-git-send-email-arnd@arndb.de>
+References: <1422451015-390439-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1422439819-29854-1-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1422451015-390439-1-git-send-email-arnd@arndb.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,81 +17,51 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+To: linux-pm@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Snow board has a MMC/SDIO wifi chip that is always powered but it
-needs a power sequence involving a reset (active low) and an enable
-(active high) pins. Both pins are marked as active low since the MMC
-simple power sequence driver asserts the pins prior to the card power
-up procedure and de-asserts the pins after the card has been powered.
+Commit 32726d2d550 ("ARM: SAMSUNG: Remove legacy clock code")
+already removed the callback pointer, but there was one remaining
+user:
 
-So the reset line will be left de-asserted and the enable pin will be
-left asserted.
+drivers/cpufreq/s3c24xx-cpufreq.c: In function 's3c_cpufreq_resume_clocks':
+drivers/cpufreq/s3c24xx-cpufreq.c:149:14: error: 'struct s3c_cpufreq_info' has no member named 'resume_clocks'
+  cpu_cur.info->resume_clocks();
+              ^
 
-The chip also needs an external 32kHz reference clock to be operational
-that is by the MAX77686 PMIC clock.
-
-Add a simple MMC power sequence provider for the wifi MMC/SDIO slot.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 32726d2d550 ("ARM: SAMSUNG: Remove legacy clock code")
+Cc: stable@vger.kernel.org # v3.17+
 ---
- arch/arm/boot/dts/exynos5250-snow.dts | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ drivers/cpufreq/s3c24xx-cpufreq.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index b9aeec430527..0f7971ba8238 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -229,6 +229,13 @@
- 		power-supply = <&fet6>;
- 		backlight = <&backlight>;
- 	};
-+
-+	mmc3_pwrseq: mmc3_pwrseq {
-+		reset-gpios = <&gpx0 2 GPIO_ACTIVE_LOW>, /* WIFI_RSTn */
-+			      <&gpx0 1 GPIO_ACTIVE_LOW>; /* WIFI_EN */
-+		clocks = <&max77686 MAX77686_CLK_PMIC>;
-+		clock-names = "ext_clock";
-+	};
- };
+diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+index bd340a1ca87d..733aa5153e74 100644
+--- a/drivers/cpufreq/s3c24xx-cpufreq.c
++++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+@@ -144,11 +144,6 @@ static void s3c_cpufreq_setfvco(struct s3c_cpufreq_config *cfg)
+ 	(cfg->info->set_fvco)(cfg);
+ }
  
- &dp {
-@@ -531,17 +538,33 @@
- 	status = "okay";
- 	num-slots = <1>;
- 	broken-cd;
-+	cap-sdio-irq;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <2 3>;
- 	samsung,dw-mshc-ddr-timing = <1 2>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
-+	pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4 &wifi_en &wifi_rst>;
- 	bus-width = <4>;
- 	cap-sd-highspeed;
-+	mmc-pwrseq = <&mmc3_pwrseq>;
- };
+-static inline void s3c_cpufreq_resume_clocks(void)
+-{
+-	cpu_cur.info->resume_clocks();
+-}
+-
+ static inline void s3c_cpufreq_updateclk(struct clk *clk,
+ 					 unsigned int freq)
+ {
+@@ -417,9 +412,6 @@ static int s3c_cpufreq_resume(struct cpufreq_policy *policy)
  
- &pinctrl_0 {
-+	wifi_en: wifi-en {
-+		samsung,pins = "gpx0-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	wifi_rst: wifi-rst {
-+		samsung,pins = "gpx0-2";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	power_key_irq: power-key-irq {
- 		samsung,pins = "gpx1-3";
- 		samsung,pin-function = <0xf>;
+ 	last_target = ~0;	/* invalidate last_target setting */
+ 
+-	/* first, find out what speed we resumed at. */
+-	s3c_cpufreq_resume_clocks();
+-
+ 	/* whilst we will be called later on, we try and re-set the
+ 	 * cpu frequencies as soon as possible so that we do not end
+ 	 * up resuming devices and then immediately having to re-set
 -- 
-2.1.3
+2.1.0.rc2
