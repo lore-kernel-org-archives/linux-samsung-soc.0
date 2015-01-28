@@ -1,56 +1,74 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] mmc: dw_mmc-exynos: add support for controlling emmc
- reset pin
-Date: Wed, 28 Jan 2015 15:54:23 +0100
-Message-ID: <CAPDyKFr9fQ5ny=Foi4x_-wEQA9K0wRqqEfLxmxtBn5tmPwS-Nw@mail.gmail.com>
-References: <1422346289-9348-1-git-send-email-m.szyprowski@samsung.com>
-	<1422346289-9348-2-git-send-email-m.szyprowski@samsung.com>
-	<54C74C33.5050305@samsung.com>
-	<54C8D8E3.9060609@gmx.net>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 1/3] exynos: config: Remove CONFIG_EXYNOS_THERMAL_CORE
+ define (exynos_defconfig)
+Date: Wed, 28 Jan 2015 01:26:42 -0400
+Message-ID: <20150128052640.GE29600@developer.hsd1.ca.comcast.net>
+References: <1422458920-14555-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54C8D8E3.9060609-hi6Y0CQ0nG0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tobias Jakobi <liquid.acid-hi6Y0CQ0nG0@public.gmane.org>
-Cc: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Zs/RYxT/hKAHzkfQ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:39951 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754167AbbA1Uzg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Jan 2015 15:55:36 -0500
+Content-Disposition: inline
+In-Reply-To: <1422458920-14555-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 28 January 2015 at 13:41, Tobias Jakobi <liquid.acid-hi6Y0CQ0nG0@public.gmane.org> wrote:
-> Hello!
->
-> Jaehoon Chung wrote:
->> mmc core supported to hw_reset function.
->> So i think we can use it. It's called at only initial time to clear the previous status.
->> But i think it can be called at reboot time. (it needs to implement codes.)
->> how about?
-> I don't think that's going the work. The problem here is that depending
-> on the board configuration, the eMMC might carry the bootloader. If the
-> eMMC subsystem is not properly reset _during_ reboot, the board won't
-> even start since no bootloader is found. So we don't even reach the
-> point where the kernel does anything.
 
-I guess it depends on what's being done during the reboot sequence.
+--Zs/RYxT/hKAHzkfQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The most proper thing would be to let the boot loader control the GPIO
-to trigger the HW reset, but that would mean the boot loader need to
-know about board specific configurations, such as which GPIO pin. So
-maybe SOC vendors need to state what GPIO pin to use and don't leave
-that as a configurable option.
+On Wed, Jan 28, 2015 at 04:28:38PM +0100, Lukasz Majewski wrote:
+> After Exynos TMU rework to use device tree for configuration this flag
+> can be removed. It is not used anymore.
+>=20
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 
->From kernel perspective, the best we can do is to the GPIO, when doing
-a controlled reset (soft reset, or whatever we call it), but I am not
-sure where that should be done? Is there a guarantee that the mmc bus'
-->shutdown() callback gets called in this sequence?
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
 
-Moreover, adding the reset GPIO as part of the initialization
-procedure in the mmc core, gives us other benefits and it won't hurt.
-So no matter, I think it's worth to proceed and discuss Marek's
-proposal.
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_=
+defconfig
+> index 3d0c5d6..3691a68 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -88,7 +88,6 @@ CONFIG_HWMON=3Dy
+>  CONFIG_SENSORS_LM90=3Dy
+>  CONFIG_THERMAL=3Dy
+>  CONFIG_EXYNOS_THERMAL=3Dy
+> -CONFIG_EXYNOS_THERMAL_CORE=3Dy
+>  CONFIG_WATCHDOG=3Dy
+>  CONFIG_S3C2410_WATCHDOG=3Dy
+>  CONFIG_MFD_CROS_EC=3Dy
+> --=20
+> 2.0.0.rc2
+>=20
 
-Kind regards
-Uffe
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Zs/RYxT/hKAHzkfQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUyHMHAAoJEMLUO4d9pOJWTzgIAIWWQiqNtORH9UnkUwgrxSgW
+mo1XxWCyVF+1WA8kUGa9ShSasMzVGX3nHR030CfvDNYyKzJ8ltuaLmCbMuG6HRdP
+sPQ9xn9n77Z1+c2mqI9GeaGby4ebIj3rXloliNl2QTfKYp7dW1hDwySzNivvFmq/
++nhgkjvuXtFc/XtGuO9ag7QF+ip0soEITjSb3FNVg7VTmieNR/oJkGKDCuBrzJvo
+b0erZy4I+VD7tFaXBdyEZbWVdEqYuA/w8mXWgPopCO24mC34QCtZpV5drPznzD8q
+PQcYb2fKEjCXbl/+e6tfICbn4p/hiDu+zrEAKU9q7LV738oXKw6ZpqrkK9ZN1gk=
+=/n2q
+-----END PGP SIGNATURE-----
+
+--Zs/RYxT/hKAHzkfQ--
