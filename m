@@ -1,192 +1,162 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 01/12] clk: samsung: exynos5433: Add clocks using common
- clock framework
-Date: Thu, 29 Jan 2015 08:38:03 +0900
-Message-ID: <54C972DB.1020808@samsung.com>
-References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
- <1421821618-8627-2-git-send-email-cw00.choi@samsung.com>
- <54C129B0.1090404@samsung.com> <54C1FBF6.4040405@samsung.com>
- <54C2877A.3040500@samsung.com>
- <CAGTfZH3NM-Y7Q9ru_iyKXFRO67TAc=SG8urwDyUF_qWWKEGVVg@mail.gmail.com>
+From: Tobias Jakobi <liquid.acid-hi6Y0CQ0nG0@public.gmane.org>
+Subject: Re: [PATCH 1/2] mmc: dw_mmc-exynos: add support for
+ controlling emmc reset pin
+Date: Wed, 28 Jan 2015 13:41:07 +0100
+Message-ID: <54C8D8E3.9060609@gmx.net>
+References: <1422346289-9348-1-git-send-email-m.szyprowski@samsung.com> <1422346289-9348-2-git-send-email-m.szyprowski@samsung.com> <54C74C33.5050305@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAGTfZH3NM-Y7Q9ru_iyKXFRO67TAc=SG8urwDyUF_qWWKEGVVg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: cw00.choi@samsung.com, Chanwoo Choi <cwchoi00@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, "pankaj.dubey@samsung.com" <pankaj.dubey@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54C74C33.5050305-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+Hello!
 
-Do you have any comment about Tomasz and me reply?
+Jaehoon Chung wrote:
+> mmc core supported to hw_reset function.
+> So i think we can use it. It's called at only initial time to clear the previous status.
+> But i think it can be called at reboot time. (it needs to implement codes.)
+> how about?
+I don't think that's going the work. The problem here is that depending
+on the board configuration, the eMMC might carry the bootloader. If the
+eMMC subsystem is not properly reset _during_ reboot, the board won't
+even start since no bootloader is found. So we don't even reach the
+point where the kernel does anything.
 
-Thanks,
-Chanwoo Choi
 
-On 01/24/2015 07:05 AM, Chanwoo Choi wrote:
-> Hi Sylwester,
+With best wishes,
+Tobias
+
+
+
 > 
-> On Sat, Jan 24, 2015 at 2:40 AM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 23/01/15 08:44, Chanwoo Choi wrote:
->>>>> +   cmu_top: clock-controller@0x10030000 {
->>>>>>> +                compatible = "samsung,exynos5433-cmu-top";
->>>>>>> +                reg = <0x10030000 0x0c04>;
->>>>>>> +                #clock-cells = <1>;
->>>>>>> +        };
->>>>>>> +
->>
->>>>>>> +        cmu_fsys: clock-controller@0x156e0000 {
->>>>>>> +                compatible = "samsung,exynos5433-cmu-fsys";
->>>>>>> +                reg = <0x156e0000 0x0b04>;
->>>>>>> +                #clock-cells = <1>;
->>>>>>> +        };
->>>>>
->>>>> What are the reasons to split the whole clock controller into separate
->>>>> device nodes with different compatible strings like this? I doubt drivers
->>>>> associated with each of those compatible strings could be ever reused on
->>>>> different Exynos SoCs.
->>>
->>> No special reason. I added the clock controller according to clock domain
->>> separately. As I knew, samsung clk drivers use this way to support various
->>> clock domains. For exmaple, drivers/clk/samsung/clk-exynos7.c.
->>
->> I'm afraid exynos7 has that initialization ordering issue, unfortunately I
->> didn't notice it before.
-> 
-> OK.
+> Best Regards,
+> Jaehoon Chung
 > 
 >>
->>>>> There are hardware dependencies between these clock domains, which are
->>>>> not currently modelled in DT with your binding.
->>>
->>> Right. current samsung clock drivers cannot show the hierarchy among clock
->>> domains in DT.
->>>
->>>>> IOW, there is currently
->>>>> no way to ensure proper registration order of the CMUs (clock domains).
->>>>> This may be important in some cases.
->>>>>
->>>>> To address this we could either add clocks/clock-names properties in
->>>>> respective CMU device nodes, pointing to any clocks in other CMU(s) or
->>>>> make a single device node for the whole clock controller, with an
->>>>> aggregated reg entry, e.g.
->>>>>
->>>>>  cmu: clock-controller@0x10030000 {
->>>>>    compatible = "samsung,exynos5433-cmu";
->>>>>    reg =   <0x10030000 0x0c04>,
->>>>>            <0x10fc0000 0x0c04>,
->>>>>            <0x105b0000 0x100c>,
->>>>>            <0x14c80000 0x0b08>,
->>>>>            <0x10040000 0x0b20>,
->>>>>            <0x156e0000 0x0b04>,
->>>>>                    ...
->>>>>    reg-names = "top", "cpif", "mif", "peric", "peris", "fsys"...
->>>>>    #clock-cells = <1>;
->>>>>  };
->>>
->>> If you make a single device node to support various clock domain,
->>> How are you indicate the specific clock in some clock domain?
+>> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |  6 +++
+>>  drivers/mmc/host/dw_mmc-exynos.c                   | 43 +++++++++++++++++++++-
+>>  2 files changed, 48 insertions(+), 1 deletion(-)
 >>
->> This might be an issue, we would need to make all the clk indexes a one
->> contiguous set.
-> 
-> Exynos5433 has a whole lot of clocks against Exynos4 series clocks.
-> So, if make all the clocks in the same set, I wonder making too huge set.
-> It may cause the complicated code to find the proper clock or to analyze
-> the clock driver.
-> 
-> I'm wondering if there is really any use of having such
->> information expressed explicitly in DT, or it would just make the DT
->> binding closer resembling the SoC's documentation ?
-> 
-> If we show the hierarchy or dependency between clock domains,
-> I think we should modify "structure samsung_clk_provider"
-> to include dependency information between clock domains.
-> (It is just my opinion, this opinion could be not proper solution.)
-> 
-> Because
-> when we use the common clk framework without adding
-> any dependency information between clock domains, it is well working.
-> 
+>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> index ee4fc0576c7d..fc53d335e7db 100644
+>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> @@ -50,6 +50,12 @@ Required Properties:
+>>        - if CIU clock divider value is 0 (that is divide by 1), both tx and rx
+>>          phase shift clocks should be 0.
+>>  
+>> +Optional properties:
+>> +
+>> +* dw-mshc-reset-gpios: optional property specifying gpio for the eMMC nreset
+>> +  line, it will be triggered on system reboot to properly reset eMMC card for
+>> +  next system boot.
+>> +
+>>  Required properties for a slot (Deprecated - Recommend to use one slot per host):
+>>  
+>>  * gpios: specifies a list of gpios used for command, clock and data bus. The
+>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+>> index 509365cb22c6..2add5a93859d 100644
+>> --- a/drivers/mmc/host/dw_mmc-exynos.c
+>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+>> @@ -12,12 +12,14 @@
+>>  #include <linux/module.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/clk.h>
+>> +#include <linux/delay.h>
+>>  #include <linux/mmc/host.h>
+>>  #include <linux/mmc/dw_mmc.h>
+>>  #include <linux/mmc/mmc.h>
+>>  #include <linux/of.h>
+>>  #include <linux/of_gpio.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/reboot.h>
+>>  
+>>  #include "dw_mmc.h"
+>>  #include "dw_mmc-pltfm.h"
+>> @@ -77,8 +79,23 @@ struct dw_mci_exynos_priv_data {
+>>  	u32				sdr_timing;
+>>  	u32				ddr_timing;
+>>  	u32				cur_speed;
+>> +	struct gpio_desc 		*reset_gpio;
+>> +	struct notifier_block		reset_nb;
+>>  };
+>>  
+>> +static int dw_mci_restart_handler(struct notifier_block *this,
+>> +				  unsigned long mode, void *cmd)
+>> +{
+>> +	struct dw_mci_exynos_priv_data *data;
+>> +	data = container_of(this, struct dw_mci_exynos_priv_data, reset_nb);
+>> +
+>> +	gpiod_direction_output(data->reset_gpio, 0);
+>> +	mdelay(150);
+>> +	gpiod_direction_output(data->reset_gpio, 1);
+>> +
+>> +	return NOTIFY_DONE;
+>> +}
+>> +
+>>  static struct dw_mci_exynos_compatible {
+>>  	char				*compatible;
+>>  	enum dw_mci_exynos_type		ctrl_type;
+>> @@ -295,7 +312,20 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>  		return ret;
+>>  
+>>  	priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
+>> +
+>> +	priv->reset_gpio = devm_gpiod_get_optional(host->dev,
+>> +						   "samsung,dw-mshc-reset",
+>> +						   GPIOD_OUT_HIGH);
+>> +	if (!IS_ERR_OR_NULL(priv->reset_gpio)) {
+>> +		priv->reset_nb.notifier_call = dw_mci_restart_handler;
+>> +		priv->reset_nb.priority = 255;
+>> +		ret = register_restart_handler(&priv->reset_nb);
+>> +		if (ret)
+>> +			dev_err(host->dev, "cannot register restart handler\n");
+>> +	}
+>> +
+>>  	host->priv = priv;
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -490,6 +520,17 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+>>  	return dw_mci_pltfm_register(pdev, drv_data);
+>>  }
+>>  
+>> +static int dw_mci_exynos_remove(struct platform_device *pdev)
+>> +{
+>> +	struct dw_mci *host = platform_get_drvdata(pdev);
+>> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+>> +
+>> +	if (priv->reset_gpio)
+>> +		unregister_restart_handler(&priv->reset_nb);
+>> +
+>> +	return dw_mci_pltfm_remove(pdev);
+>> +}
+>> +
+>>  static const struct dev_pm_ops dw_mci_exynos_pmops = {
+>>  	SET_SYSTEM_SLEEP_PM_OPS(dw_mci_exynos_suspend, dw_mci_exynos_resume)
+>>  	.resume_noirq = dw_mci_exynos_resume_noirq,
+>> @@ -499,7 +540,7 @@ static const struct dev_pm_ops dw_mci_exynos_pmops = {
+>>  
+>>  static struct platform_driver dw_mci_exynos_pltfm_driver = {
+>>  	.probe		= dw_mci_exynos_probe,
+>> -	.remove		= __exit_p(dw_mci_pltfm_remove),
+>> +	.remove		= dw_mci_exynos_remove,
+>>  	.driver		= {
+>>  		.name		= "dwmmc_exynos",
+>>  		.of_match_table	= dw_mci_exynos_match,
 >>
->> Similarly, the clock controller is divided into subdomains in older SoCs,
->> like exynos4, yet we do not create separate device nodes for each domain.
->> Is reference to each individual clock domain required in any other SoC's
->> part in case of exynos5433 ?
 > 
-> There is a difference between exynos4 cmu and exynos5433 cmu.
-> exynos4. As I knew, Exynos4 series have the one more clock domain.
-> But, there are not any IPs between clock domains. We can check it as following
-> read base address and scope.
 > 
-> The base address and range of Exynos4412 clock domain :
-> - 0x1003_0000 ~ 0x1003_CA08
-> - 0x1004_0000 ~ 0x1004_8B0C
-> 
-> But, the clock domain in base address map of exynos5433 is located
-> in non-continuous range. Also, there are un-related IPs to clocks.
-> (e.g., mct 101c_0000, gic 1100_1000, serial0 14c1_0000, pinctrl 1058_0000 ...)
-> If we make the one dt node for clock domains like exynos4,
-> I think it may cause the possible issue that clock drivers may access
-> the un-related memory-mapped region.
-> 
-> The base address and range of Exynos5433 clock domain :
-> - top domain    : 0x1003_0000 ~ 0x1003_0c04
-> - cpif domain   : 0x10fc_0000 ~ 0x10fc_0x0c04
-> - mif domain    : 0x105b_0000 ~ 0x105b_0x100c
-> - peric domain : 0x14c8_0000 ~ 0x14c8_0b08
-> - peris domain  : 0x1004_0000 ~ 0x1004_0x0b20
-> - fsys domain   : 0x156e_0000 ~ 0x156e_0b04
-> 
->>
->>> For example,
->>> The serial dt node in exynos7.dtsi. serial_0 dt node use the uart clocks
->>> in 'clock_peric0' clock domain and serial_1 dt node use the uart clocks
->>> in 'clock-peric1' clock domain.
->>>
->>> When using the clock in specific clock domain,
->>> we need to phandle(e.g., clock_peric0, clock_peric1) of clock domain.
->>>
->>>               serial_0: serial@13630000 {
->>>                       compatible = "samsung,exynos4210-uart";
->>>                       reg = <0x13630000 0x100>;
->>>                       interrupts = <0 440 0>;
->>>                       clocks = <&clock_peric0 PCLK_UART0>,
->>>                                <&clock_peric0 SCLK_UART0>;
->>>                       clock-names = "uart", "clk_uart_baud0";
->>>                       status = "disabled";
->>>               };
->>>
->>>               serial_1: serial@14c20000 {
->>>                       compatible = "samsung,exynos4210-uart";
->>>                       reg = <0x14c20000 0x100>;
->>>                       interrupts = <0 456 0>;
->>>                       clocks = <&clock_peric1 PCLK_UART1>,
->>>                                <&clock_peric1 SCLK_UART1>;
->>>                       clock-names = "uart", "clk_uart_baud0";
->>>                       status = "disabled";
->>>               };
->>>
->>>>> Then we could modify samsung_cmu_register_one() function by adding
->>>>> the reg entry index or name argument. What do you think ?
->>>
->>> If there is more reasonable way to show the dependency between clock domains,
->>> I will agree.
->>
->> The other option I mentioned is specifying all parent clocks of a given
->> clock domain in its device node with clocks(/clock-names) properties.
->> But it might be a bit hard to list all the clock domain dependencies
->> this way
-> 
-> Right, I agree that it is too hard.
-> 
-> Regards,
-> Chanwoo Choi
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
