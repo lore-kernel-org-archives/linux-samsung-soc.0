@@ -1,103 +1,91 @@
-From: Arend van Spriel <arend@broadcom.com>
-Subject: Re: [PATCH 5/5] ARM: dts: exynos5250-snow: Enable wifi power-on
-Date: Wed, 28 Jan 2015 15:03:36 +0100
-Message-ID: <54C8EC38.6010702@broadcom.com>
-References: <1422439819-29854-1-git-send-email-javier.martinez@collabora.co.uk>
- <1422439819-29854-6-git-send-email-javier.martinez@collabora.co.uk>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 02/15] iommu: Introduce iommu domain types
+Date: Wed, 28 Jan 2015 14:19:34 +0000
+Message-ID: <20150128141934.GP1569@arm.com>
+References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+	<1422316305-19216-3-git-send-email-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1422439819-29854-6-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1422316305-19216-3-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jroedel-l3A5Bk7waGM@public.gmane.org" <jroedel-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/28/15 11:10, Javier Martinez Canillas wrote:
-> The Snow board has a MMC/SDIO wifi chip that is always powered but it
-> needs a power sequence involving a reset (active low) and an enable
-> (active high) pins. Both pins are marked as active low since the MMC
-> simple power sequence driver asserts the pins prior to the card power
-> up procedure and de-asserts the pins after the card has been powered.
->
-> So the reset line will be left de-asserted and the enable pin will be
-> left asserted.
->
-> The chip also needs an external 32kHz reference clock to be operational
-> that is by the MAX77686 PMIC clock.
->
-> Add a simple MMC power sequence provider for the wifi MMC/SDIO slot.
->
-> Signed-off-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
+Hi Joerg,
+
+Thanks for posting this!
+
+On Mon, Jan 26, 2015 at 11:51:32PM +0000, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
+> 
+> This allows to handle domains differently based on their
+> type in the future. An IOMMU driver can implement certain
+> optimizations for DMA-API domains for example.
+> 
+> Signed-off-by: Joerg Roedel <jroedel-l3A5Bk7waGM@public.gmane.org>
 > ---
->   arch/arm/boot/dts/exynos5250-snow.dts | 25 ++++++++++++++++++++++++-
->   1 file changed, 24 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index b9aeec430527..0f7971ba8238 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -229,6 +229,13 @@
->   		power-supply =<&fet6>;
->   		backlight =<&backlight>;
->   	};
-> +
-> +	mmc3_pwrseq: mmc3_pwrseq {
-> +		reset-gpios =<&gpx0 2 GPIO_ACTIVE_LOW>, /* WIFI_RSTn */
-> +			<&gpx0 1 GPIO_ACTIVE_LOW>; /* WIFI_EN */
-> +		clocks =<&max77686 MAX77686_CLK_PMIC>;
-> +		clock-names = "ext_clock";
-> +	};
->   };
->
->   &dp {
-> @@ -531,17 +538,33 @@
->   	status = "okay";
->   	num-slots =<1>;
->   	broken-cd;
-> +	cap-sdio-irq;
+>  drivers/iommu/iommu.c |  5 +++--
+>  include/linux/iommu.h | 11 ++++++++++-
+>  2 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 684efc0..ab24d77 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -909,14 +909,15 @@ struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>  	ops = bus->iommu_ops;
+>  
+>  	if (ops->domain_alloc)
+> -		domain = ops->domain_alloc();
+> +		domain = ops->domain_alloc(IOMMU_DOMAIN_UNMANAGED);
+>  	else
+>  		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+>  
+>  	if (!domain)
+>  		return NULL;
+>  
+> -	domain->ops = bus->iommu_ops;
+> +	domain->ops  = bus->iommu_ops;
+> +	domain->type = IOMMU_DOMAIN_UNMANAGED;
+>  
+>  	if (ops->domain_init && domain->ops->domain_init(domain))
+>  		goto out_free;
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 69d1d12..0b67f65 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -51,7 +51,16 @@ struct iommu_domain_geometry {
+>  	bool force_aperture;       /* DMA only allowed in mappable range? */
+>  };
+>  
+> +/* This are the possible domain-types */
+> +enum iommu_domain_type {
+> +	IOMMU_DOMAIN_DMA,	/* Domain used for DMA-API */
+> +	IOMMU_DOMAIN_IDENTITY,	/* Identity mapped domain  */
 
-This seems like an unrelated change, right?
+What happens if somebody calls map or unmap on an identity-mapping domain?
+Can we catch that in the IOMMU core before calling the IOMMU driver? That
+also implies we need something extra to parameterise the attributes for
+the mapping (e.g. cacheable, read-only) and also potentially the address
+range.
 
-Regards,
-Arend
+> +	IOMMU_DOMAIN_UNMANAGED, /* Domain mappings are managed by a third party
+> +				   user (like KVM or VFIO) */
 
->   	card-detect-delay =<200>;
->   	samsung,dw-mshc-ciu-div =<3>;
->   	samsung,dw-mshc-sdr-timing =<2 3>;
->   	samsung,dw-mshc-ddr-timing =<1 2>;
->   	pinctrl-names = "default";
-> -	pinctrl-0 =<&sd3_clk&sd3_cmd&sd3_bus4>;
-> +	pinctrl-0 =<&sd3_clk&sd3_cmd&sd3_bus4&wifi_en&wifi_rst>;
->   	bus-width =<4>;
->   	cap-sd-highspeed;
-> +	mmc-pwrseq =<&mmc3_pwrseq>;
->   };
->
->   &pinctrl_0 {
-> +	wifi_en: wifi-en {
-> +		samsung,pins = "gpx0-1";
-> +		samsung,pin-function =<1>;
-> +		samsung,pin-pud =<0>;
-> +		samsung,pin-drv =<0>;
-> +	};
-> +
-> +	wifi_rst: wifi-rst {
-> +		samsung,pins = "gpx0-2";
-> +		samsung,pin-function =<1>;
-> +		samsung,pin-pud =<0>;
-> +		samsung,pin-drv =<0>;
-> +	};
-> +
->   	power_key_irq: power-key-irq {
->   		samsung,pins = "gpx1-3";
->   		samsung,pin-function =<0xf>;
+We already have the domain attributes (iommu_attr) to describe features
+of a domain. Is there really a need for this extra type, or can we extend
+the attribute set and allow for domain allocation with attributes?
+
+Will
