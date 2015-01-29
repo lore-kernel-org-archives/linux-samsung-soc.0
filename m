@@ -1,97 +1,116 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [RFC] drm/exynos: move hdmi clk disable out of pm ops
-Date: Thu, 29 Jan 2015 11:31:13 -0200
-Message-ID: <1422538273-3097-1-git-send-email-gustavo@padovan.org>
-References: <CABxcv=nNKrF45TL3_1BZHMzfKj1xPm6TzUGRSZ3WgJxzyUSmxQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 0/7] platform/chrome: Add user-space dev inferface support
+Date: Thu, 29 Jan 2015 14:37:49 +0100
+Message-ID: <1422538676-4615-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f53.google.com ([209.85.192.53]:50942 "EHLO
-	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754329AbbA2NdU (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47152 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752742AbbA2NiI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 08:33:20 -0500
-Received: by mail-qg0-f53.google.com with SMTP id a108so27928956qge.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2015 05:33:19 -0800 (PST)
-In-Reply-To: <CABxcv=nNKrF45TL3_1BZHMzfKj1xPm6TzUGRSZ3WgJxzyUSmxQ@mail.gmail.com>
+	Thu, 29 Jan 2015 08:38:08 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, inki.dae@samsung.com, Prathyush K <prathyush.k@samsung.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Prathyush K <prathyush.k@samsung.com>
+Hello,
 
-When VPLL clock of less than 140 MHz was used and all the three
-clocks - hdmiphy, hdmi, sclk_hdmi are disabled, the system hangs
-during S2R when HDMI is connected. Since we want to use a vpll
-clock of 70.5 MHz, we cannot disable these 3 clocks before suspending.
-This patch moves the clk enable/disable of hdmi and sclk_hdmi
-outside of the pm ops. Now system suspends and resumes with HDMI
-connected with VPLL set at 70.5 MHz.
+The mainline ChromeOS Embedded Controller (EC) driver is still missing some
+features that are present in the downstream ChromiumOS tree. These are:
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+  - Low Pin Count (LPC) interface
+  - User-space device interface
+  - Access to vboot context stored on a block device
+  - Access to vboot context stored on EC's nvram
+  - Power Delivery Device
+  - Support for multiple EC in a system
 
----
-This work depends on the HDMI support patches from Javier:
-https://lkml.org/lkml/2015/1/20/235
+This is a fourth version of a series that adds support for the first two of
+the missing features: the EC LPC and EC character device interfaces that
+are used by user-space to access the ChromeOS EC. The support patches were
+taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
+squashed to have a minimal patch-set.
 
-This patch comes from a downstream tree (Google chormeOS) and it is
-authored by a Samsung employee, but we still think this may not fix
-the real cause of the bug, there might be something else that we
-haven't found that could be the cause of this issue. Anyone has some
-comment to add here?
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+The version of the ChromeOS EC chardev driver in this series still does not
+reflect the latest one that is in the downstream ChromiumOS 3.14 kernel but
+makes the delta shorter. Following patches will add the remaining missing
+features until both trees are in sync. I preferred to first add the initial
+support and then adding the other features to both maintain the original
+patch history in the downstream kernel and so preserve the patch authorship
+and also make the diff to have a working cros user-space interface smaller.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 6aa0d65..7a473cb 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2064,9 +2064,6 @@ static void hdmi_poweron(struct exynos_drm_display *display)
- 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
- 			PMU_HDMI_PHY_ENABLE_BIT, 1);
- 
--	clk_prepare_enable(res->hdmi);
--	clk_prepare_enable(res->sclk_hdmi);
--
- 	hdmiphy_poweron(hdata);
- 	hdmi_commit(display);
- }
-@@ -2088,9 +2085,6 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
- 
- 	cancel_delayed_work(&hdata->hotplug_work);
- 
--	clk_disable_unprepare(res->sclk_hdmi);
--	clk_disable_unprepare(res->hdmi);
--
- 	/* reset pmu hdmiphy control bit to disable hdmiphy */
- 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
- 			PMU_HDMI_PHY_ENABLE_BIT, 0);
-@@ -2254,6 +2248,14 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
- 	} else
- 		res->reg_hdmi_en = NULL;
- 
-+	/*
-+	 * These two clocks are not moved into hdmi_poweron/off since system
-+	 * fails to suspend if VPLL clock of 70.5 MHz is used and these
-+	 * clocks are disabled before suspend. So enable them here.
-+	 */
-+	clk_prepare_enable(res->sclk_hdmi);
-+	clk_prepare_enable(res->hdmi);
-+
- 	return ret;
- fail:
- 	DRM_ERROR("HDMI resource init - failed\n");
-@@ -2516,6 +2518,9 @@ static int hdmi_remove(struct platform_device *pdev)
- 	if (hdata->res.reg_hdmi_en)
- 		regulator_disable(hdata->res.reg_hdmi_en);
- 
-+	clk_disable_unprepare(hdata->res.sclk_hdmi);
-+	clk_disable_unprepare(hdata->res.hdmi);
-+
- 	if (hdata->hdmiphy_port)
- 		put_device(&hdata->hdmiphy_port->dev);
- 	put_device(&hdata->ddc_adpt->dev);
--- 
-1.9.3
+This version solves the issues pointed out in the earlier revision.
+
+A big difference between this series and the downstream ChromiumOS kernel is
+that the ioctl API is modified to make it 64-bit safe and compatible with both
+64 and 32 bit user-space binaries. The data structures passed as arguments in
+the ChromiumOS ioctl interface commands has pointers fields and since these
+have different byte boundaries alignment requirement, the ChromiumOS driver
+has a compat ioctl interface. The feedback was that this had to be avoided
+since this was a new ioctl API so the pointers fields were replaced with a set
+of fixed-size arrays to be used instead. This has the drawback that more data
+could be used and copied between user and kernel space so feedback is welcomed
+if there is a better approach to solve this kind of issues.
+
+The patches were tested on an Exynos5420 Peach Pit Chromebook and (thanks to
+Bill Richardson) on an x86 Pixel Chromebook using a modified ectool [0] to use
+the new ioctl API. The LPC interface driver and the lightbar sysfs driver were
+also tested on the Pixel Chromebook.
+
+The series is composed of the following patches:
+
+Bill Richardson (4):
+  misc: Add cros_ec_lpc driver for x86 devices
+  platform/chrome: Add Chrome OS EC userspace device interface
+  platform/chrome: Create sysfs attributes for the ChromeOS EC
+  platform/chrome: Expose Chrome OS Lightbar to users
+
+Javier Martinez Canillas (3):
+  mfd: cros_ec: Use fixed size arrays to transfer data with the EC
+  mfd: cros_ec: Add char dev and virtual dev pointers
+  mfd: cros_ec: Instantiate ChromeOS EC character device
+
+ Documentation/ioctl/ioctl-number.txt       |   1 +
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  51 +---
+ drivers/input/keyboard/cros_ec_keyb.c      |  13 +-
+ drivers/mfd/cros_ec.c                      |  19 +-
+ drivers/misc/Kconfig                       |  10 +
+ drivers/misc/Makefile                      |   1 +
+ drivers/misc/cros_ec_lpc.c                 | 291 +++++++++++++++++++++++
+ drivers/platform/chrome/Kconfig            |  14 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/cros_ec_dev.c      | 274 +++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_dev.h      |  53 +++++
+ drivers/platform/chrome/cros_ec_lightbar.c | 367 +++++++++++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_sysfs.c    | 271 +++++++++++++++++++++
+ include/linux/mfd/cros_ec.h                |  23 +-
+ 14 files changed, 1328 insertions(+), 62 deletions(-)
+ create mode 100644 drivers/misc/cros_ec_lpc.c
+ create mode 100644 drivers/platform/chrome/cros_ec_dev.c
+ create mode 100644 drivers/platform/chrome/cros_ec_dev.h
+ create mode 100644 drivers/platform/chrome/cros_ec_lightbar.c
+ create mode 100644 drivers/platform/chrome/cros_ec_sysfs.c
+
+Patch #1 modified the struct cros_ec_command structure so it can be used
+as an ioctl argument and be 64 and 32 bit safe and patch #2 adds fields
+to the struct cros_ec_device that will be needed by the EC chardev driver.
+
+Patch #3 adds support for the EC LPC interface used on x86 Chromebooks.
+
+Patch #4 adds the ChromeOS chardev driver and patch #5 instantiates it
+from the mfd cros_ec driver.
+
+Patch #6 exposes sysfs attributes that can be used by user space programs
+to get information and control the ChromeOS EC.
+
+Patch #7 exposes sysfs attributes that are used to control the lightbar
+RGB LEDs found on the Pixel Chromebook.
+
+The patches must be applied together and in that order due dependencies.
+Lee Jones has already acked the MFD changes so I think this could go
+through the chrome-platform.git tree.
+
+Best regards,
+Javier
+
+[0]: git://git.collabora.co.uk/git/user/javier/ec.git mainline-ioctl
