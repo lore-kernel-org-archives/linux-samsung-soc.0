@@ -1,7 +1,7 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 2/4] Samsung mach updates for v3.20
-Date: Thu, 29 Jan 2015 09:33:52 +0900
-Message-ID: <54C97FF0.6090808@kernel.org>
+Subject: [GIT PULL 3/4] Samsung 2nd DT updates for v3.20
+Date: Thu, 29 Jan 2015 09:34:14 +0900
+Message-ID: <54C98006.2020405@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -15,54 +15,85 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>
 Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-This is for updating of mach-exynos and plat-samsung.
-Please pull and if any problems, please let me know.
+This is 2nd Samsung DT updates for v3.20, please pull.
 
 Thanks,
 Kukjin
 
 
+The following changes since commit 23c76dc666471dce5ce71b620839d2465723a7c9:
 
-The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-
-  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
+  ARM: dts: Configure regulators for suspend on exynos Peach boards
+(2015-01-15 00:30:49 +0900)
 
 are available in the git repository at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-update
+tags/samsung-dt-2
 
-for you to fetch changes up to a4f582f5c5fe3e8eaef7ce637c894619bdee650e:
+for you to fetch changes up to 6591a02e17e6d6587c3cf7588d523fa6f26b584a:
 
-  ARM: EXYNOS: Add exynos3250 suspend-to-ram support (2015-01-15
-00:24:26 +0900)
-
-----------------------------------------------------------------
-Samsung mach updates for v3.20
-
-- add exynos3250 Supsend to RAM support
-- recognize MFC v8 devices for exynos5422/5800
-- print CPU id/rev during kernel boot
+  ARM: dts: reduce total RAM by 22 MiB for exynos5422-odroidxu3
+(2015-01-24 13:24:10 +0900)
 
 ----------------------------------------------------------------
-Chanwoo Choi (1):
-      ARM: EXYNOS: Add exynos3250 suspend-to-ram support
+Samsung 2nd DT updates for v3.20
 
-Olof Johansson (1):
-      ARM: SAMSUNG: print CPU id on probe
+- for all of Samsung SoCs
+  : use generic power domain bindings
+  : add 'dr_mode' property for hsotg/dwc2 devices
 
-Sjoerd Simons (1):
-      ARM: EXYNOS: Recognize Samsung MFC v8 devices
+- exynos3250-rinato and exynos3250-monk
+  : add regulator-haptic
 
- arch/arm/mach-exynos/exynos.c   |  1 +
- arch/arm/mach-exynos/regs-pmu.h |  3 ++
- arch/arm/mach-exynos/suspend.c  | 77
-+++++++++++++++++++++++++++++++++++++++++
- arch/arm/plat-samsung/cpu.c     |  4 +++
- 4 files changed, 85 insertions(+)
+- exynos5422-odroidxu3
+  : reduce total RAM by 22 MiB because last 22 MiB
+    for secure monitor cannot be accessed by kernel
+  : add on-board INA231 sensors and LDO26 of PMIC
+    for the sensors
+
+Note that this is based on tags/samsung-dt
+
+----------------------------------------------------------------
+Jaewon Kim (2):
+      ARM: dts: Add regulator-haptic node for exynos3250-rinato
+      ARM: dts: Add regulator-haptic node for exynos3250-monk
+
+Kevin Hilman (1):
+      ARM: dts: add on-board INA231 sensors for exynos5422-odroidxu3
+
+Marek Szyprowski (3):
+      ARM: dts: convert to generic power domain bindings for exynos DT
+      ARM: dts: add 'dr_mode' property to hsotg devices for exynos boards
+      ARM: dts: reduce total RAM by 22 MiB for exynos5422-odroidxu3
+
+ .../bindings/arm/exynos/power_domain.txt           |  2 +-
+ .../devicetree/bindings/iommu/samsung,sysmmu.txt   |  6 ++--
+ .../devicetree/bindings/media/s5p-mfc.txt          |  4 +--
+ .../devicetree/bindings/video/exynos_dsim.txt      |  4 +--
+ .../devicetree/bindings/video/samsung-fimd.txt     |  4 +--
+ arch/arm/boot/dts/exynos3250-monk.dts              |  8 +++++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  8 +++++
+ arch/arm/boot/dts/exynos3250.dtsi                  | 11 ++++--
+ arch/arm/boot/dts/exynos4.dtsi                     | 25 ++++++++-----
+ arch/arm/boot/dts/exynos4210-trats.dts             |  1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |  1 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |  1 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  1 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  1 +
+ arch/arm/boot/dts/exynos4415.dtsi                  |  7 ++++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |  7 ++--
+ arch/arm/boot/dts/exynos5250.dtsi                  | 12 ++++---
+ arch/arm/boot/dts/exynos5420.dtsi                  | 10 ++++--
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 41
++++++++++++++++++++++-
+ arch/arm/boot/dts/s5pv210-aquila.dts               |  1 +
+ arch/arm/boot/dts/s5pv210-goni.dts                 |  1 +
+ arch/arm/boot/dts/s5pv210-smdkv210.dts             |  1 +
+ 22 files changed, 123 insertions(+), 34 deletions(-)
