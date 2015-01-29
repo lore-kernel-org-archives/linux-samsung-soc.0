@@ -1,91 +1,61 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/4] mmc: core: add support for hardware reset gpio line
-Date: Thu, 29 Jan 2015 12:01:39 +0100
-Message-ID: <54CA1313.1090302@samsung.com>
-References: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
- <1422453595-21160-2-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFpowidghwadJS+gYP0EVo6gRUhAG8s14CMEbwatFadP2Q@mail.gmail.com>
- <54C9FA48.5050705@samsung.com>
- <CABxcv=nbTcuzcmhYHKnDom5XFd+gqUbKRF0THCKsN5tL8-cBGA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: add missing I2C/SPI dependencies
+Date: Thu, 29 Jan 2015 11:41:34 +0000
+Message-ID: <20150129114134.GC21293@sirena.org.uk>
+References: <1815674.ObkQWLfgIW@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3vWfdACk3p9Kkm6R"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:56532 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756586AbbA2LBo (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38887 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753981AbbA2LmC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 06:01:44 -0500
-In-reply-to: <CABxcv=nbTcuzcmhYHKnDom5XFd+gqUbKRF0THCKsN5tL8-cBGA@mail.gmail.com>
+	Thu, 29 Jan 2015 06:42:02 -0500
+Content-Disposition: inline
+In-Reply-To: <1815674.ObkQWLfgIW@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: alsa-devel@alsa-project.org, lgirdwood@gmail.com, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
 
-On 2015-01-29 11:56, Javier Martinez Canillas wrote:
-> On Thu, Jan 29, 2015 at 10:15 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->>> Also, I wonder whether we could extend the mmc-pwrseq to cover your
->>> case? Did you consider that as an option?
->> I didn't consider mmc-pwrseq yet. For me it looked straightforward to
-> I agree with Ulf that using mmc-pwrseq would be a good solution and in
-> fact I think the pwrseq_simple [0] driver will fit your use case since
-> it supports a reset GPIO pin which is what many WLAN chips attached to
-> a SDIO interface use.
->> implement
->> it just like card detect or write-protection gpio pins. I already noticed
->> that
->> there is code for some mmc host driver, which perform mmc hardware reset. If
->> you
->> think that extending pwrseq is the better approach, I will try to update my
->> patches. This will add reboot handler to mmc-pwrseq then. The only question
->> is
-> I don't think that adding a reboot handler to mmc-pwrseq is needed.
-> AFAICT the call chain is:
->
-> sys_reboot() -> kernel_restart() -> device_shutdown() ->
-> mmc_bus_shutdown() -> _mmc_suspend() -> mmc_power_off() ->
-> mmc_pwrseq_power_off() -> struct mmc_pwrseq_ops .power_off
->
-> So since the pwrseq_simple already asserts the reset GPIO in
-> .power_off, it should be enough to ensure the eMMC will be reset to
-> its default configuration for the iROM to work properly.
+--3vWfdACk3p9Kkm6R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think that I had to add reset handler, because device_shutdown() was not
-called if reset was triggered from magic sysrq, but I will check it again.
+On Wed, Jan 28, 2015 at 10:28:55PM +0100, Arnd Bergmann wrote:
+> The SND_SOC_ARNDALE_RT5631_ALC5631 selects the rt5631 codec
+> that requires I2C to work, so we get a build error if I2C
+> is disabled:
 
-> It also asserts the GPIO pin in .pre_power_on and de-asserts in
-> .post_power_on which should be needed as well for the other case you
-> mentioned when a broken bootloader left the emmc card in some unknown
-> state.
->
->> weather to use it always when mmc-pwrseq has been enabled or only if some
->> additional property like 'reset-on-reboot' has been provided.
->>
-> Having a reset GPIO is optional AFAIK so I don't think there is a need
-> for an additional "reset-on-reboot" propery.
->
->> Best regards
->> --
->> Marek Szyprowski, PhD
->> Samsung R&D Institute Poland
->>
-> Best regards,
-> Javier
->
-> [0]:
-> FYI, these are the relevant commits in linux-next:
-> fe1922d5d4d0 mmc: pwrseq_simple: Add support for a reset GPIO pin
-> ec2017f2491f mmc: pwrseq: Initial support for the simple MMC power
-> sequence provider
-> fe1686658f9c mmc: pwrseq: Document DT bindings for the simple MMC power sequence
-> 1b745e8a4627 mmc: core: Initial support for MMC power sequences
+You rather buried the lead about there being other drivers in this
+changelog, makes the code a bit surprising when you find it.
 
-Ok, I will check it.
+>  config SND_SOC_SPEYSIDE
+>  	tristate "Audio support for Wolfson Speyside"
+> -	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
+> +	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && SPI_MASTER
+>  	select SND_SAMSUNG_I2S
+>  	select SND_SOC_WM8996
+>  	select SND_SOC_WM9081
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Why only add a dependency on SPI here?
+
+--3vWfdACk3p9Kkm6R
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJUyhxuAAoJECTWi3JdVIfQ5fAH/1u7oE5swGgdUUZ6m0zwjoyj
++hZo1FKWwQJH6FVgCABdoo6ZUrMUUXfD5WZdJR/hEfygrzqpZS2ZI2cIC9G0udLC
+/qMdVV9vwScaPDa6Ft9Sm08F+NvcX2gv/yHgrnJ9CLnVZQjdC3O4GRuD76/DH5IU
+xW5DYeyBJB62B0skm6ra8WdOrl9FLqMREnVfllEtiBnrw7GpsKdls/jCV44DNs6J
+xwdJbjUT37hTSbSBn5hchVKdv6faGDvelu4Z5gUSxG1ZJ3fvAOrf3OgJwUkuvCsh
+VJb9zyKaQc0nUrtXpVjBoXx6zP//kTPvtLA0OZmEIO1oMBxyJKE7ppFwaLPUS1M=
+=0FRX
+-----END PGP SIGNATURE-----
+
+--3vWfdACk3p9Kkm6R--
