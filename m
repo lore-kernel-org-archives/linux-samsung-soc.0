@@ -1,33 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
-Date: Thu, 29 Jan 2015 10:48:34 +0100
-Message-ID: <CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
-References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 3/3] cpufreq: exynos: allow modular build
+Date: Thu, 29 Jan 2015 11:01:16 +0100
+Message-ID: <2157802.ranbh8xTdL@wuerfel>
+References: <1422451015-390439-1-git-send-email-arnd@arndb.de> <1799972.nQ2Axu0CEJ@wuerfel> <CAKohpom9L4jiMRGn3OaWyYM7iR3Ame4-LKG144yuHmRxCJud3g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohpom9L4jiMRGn3OaWyYM7iR3Ame4-LKG144yuHmRxCJud3g@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Eduardo Valentin <edubezval@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+On Thursday 29 January 2015 09:09:03 Viresh Kumar wrote:
+> On 29 January 2015 at 01:31, Arnd Bergmann <arnd@arndb.de> wrote:
+> 
+> >>  config ARM_EXYNOS_CPUFREQ
+> >> -     bool
+> >> +     tristate "SAMSUNG EXYNOS CPUfreq Driver"
+> >> +     depends on THERMAL
+> >> +     default y
+> >> +     help
+> >> +       This adds the CPUFreq driver for Samsung EXYNOS platforms
+> >> +
+> >> +       If in doubt, say N.
+> >
+> > Now the option shows up on all systems that include Kconfig.arm,
+> > in particular non-exynos machines that might not even be able
+> > to build this.
+> 
+> I am sure I am wrong here, but want to know what I am missing.
+> What about:
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index c3c3cf52d2d9..f3ee05067a69 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -27,7 +27,7 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+> 
+>  config ARM_EXYNOS_CPUFREQ
+>         tristate "SAMSUNG EXYNOS CPUfreq Driver"
+> -       depends on THERMAL
+> +       depends on THERMAL && ARCH_EXYNOS
+>         default y
+>         help
+>           This adds the CPUFreq driver for Samsung EXYNOS platforms
 
-> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
-> functional input/output port pins and 135 memory port pins. There are 41 general
-> port groups and 2 memory port groups.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> ---
-> Changes from v2:
-> - Rebase it on v3.19-rc5
+That might be close enough to what we want. It would by default enable
+ARM_EXYNOS_CPUFREQ for exynos based machines that do not use this driver
+(e.g. 5440, which has a separate driver, or exynos3/exynos7), but that
+can probably just be dealt with by disabling it in the user's defconfig.
+If i'm reading exynos_cpufreq_probe right, it would actually compile
+into an almost-empty file in this case and only kzalloc a few bytes
+of memory and then print a warning message.
 
-Waiting for Tomasz to review this.
-
-Yours,
-Linus Walleij
+	Arnd
