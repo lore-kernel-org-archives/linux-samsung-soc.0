@@ -1,92 +1,108 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] mmc: core: add support for hardware reset gpio line
-Date: Thu, 29 Jan 2015 10:15:52 +0100
-Message-ID: <54C9FA48.5050705@samsung.com>
-References: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
- <1422453595-21160-2-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFpowidghwadJS+gYP0EVo6gRUhAG8s14CMEbwatFadP2Q@mail.gmail.com>
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Subject: Re: [PATCH] video: treat signal like timeout as failure
+Date: Thu, 29 Jan 2015 10:43:15 +0100
+Message-ID: <20150129094315.GC23666@opentech.at>
+References: <1421731430-13207-1-git-send-email-der.herr@hofr.at> <20150126125905.GI26493@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAPDyKFpowidghwadJS+gYP0EVo6gRUhAG8s14CMEbwatFadP2Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tobias Jakobi <liquid.acid-hi6Y0CQ0nG0@public.gmane.org>, Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from hofr.at ([212.69.189.236]:38498 "EHLO mail.hofr.at"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1761800AbbA2JnR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Jan 2015 04:43:17 -0500
+Content-Disposition: inline
+In-Reply-To: <20150126125905.GI26493@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 
-Hello,
+On Mon, 26 Jan 2015, Russell King - ARM Linux wrote:
 
-On 2015-01-28 15:24, Ulf Hansson wrote:
-> On 28 January 2015 at 14:59, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> There are boards (like Hardkernel's Odroid boards) on which eMMC card's
->> reset line is connected to GPIO line instead of the hardware reset
->> logic. In case of such boards, if first stage of bootloader is loaded
->> from such eMMC card, before performing system reboot, additional reset
->> of eMMC card is required to properly boot the whole system again. This
->> patch adds code for handling reset gpio lines defined in device tree.
+> On Tue, Jan 20, 2015 at 06:23:50AM +0100, Nicholas Mc Guire wrote:
+> > if(!wait_for_completion_interruptible_timeout(...))
+> > only handles the timeout case - this patch adds handling the
+> > signal case the same as timeout and cleans up.
+> > 
+> > Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
+> > ---
+> > 
+> > Only the timeout case was being handled, return of 0 in 
+> > wait_for_completion_interruptible_timeout, the signal case (-ERESTARTSYS)
+> > was treated just like the case of successful completion, which is most 
+> > likely not reasonable.
+> > 
+> > Note that exynos_mipi_dsi_wr_data/exynos_mipi_dsi_rd_data return values
+> > are not checked at the call sites in s6e8ax0.c (cmd_read/cmd_write)!
+> > 
+> > This patch simply treats the signal case the same way as the timeout case,
+> > by releasing locks and returning 0 - which might not be the right thing to
+> > do - this needs a review by someone knowing the details of this driver.
+> > 
+> > Patch is against 3.19.0-rc5 -next-20150119
+> > 
+> > Patch was only compile-tested with exynos_defconfig
+> > 
+> >  drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c |   17 +++++++++++------
+> >  1 file changed, 11 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
+> > index 2358a2f..55a7a45 100644
+> > --- a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
+> > +++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
+> > @@ -157,6 +157,7 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
+> >  	const unsigned char *data0, unsigned int data_size)
+> >  {
+> >  	unsigned int check_rx_ack = 0;
+> > +	long timeout;
+> >  
+> >  	if (dsim->state == DSIM_STATE_ULPS) {
+> >  		dev_err(dsim->dev, "state is ULPS.\n");
+> > @@ -244,9 +245,11 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
+> >  		exynos_mipi_dsi_wr_tx_header(dsim, data_id, data_size & 0xff,
+> >  			(data_size & 0xff00) >> 8);
+> >  
+> > -		if (!wait_for_completion_interruptible_timeout(&dsim_wr_comp,
+> > -							MIPI_FIFO_TIMEOUT)) {
+> > -			dev_warn(dsim->dev, "command write timeout.\n");
+> > +		timeout = wait_for_completion_interruptible_timeout(
+> > +					&dsim_wr_comp, MIPI_FIFO_TIMEOUT);
+> > +		if (timeout <= 0) {
+> > +			dev_warn(dsim->dev,
+> > +				"command write timed-out/interrupted.\n");
+> 
+> This is really silly.  Let's say that the program which results in
+> this function called is using signals (eg, alarm() with SIGALRM, or
+> asynchronous IO with SIGIO, etc).
+> 
+> Why should having a SIGALRM raised print a kernel message?  If this
+> happens a lot, it will result in the kernel log being flooded with
+> these messages.
+> 
+> Signals should not be seen as exceptional conditions.  For some programs,
+> they are merely asynchronous events which are a normal part of the
+> programs operation (eg, SIGIO, SIGALRM, etc.)
+> 
+> Please, if you are going to handle signals, then handle them properly.
+> If you're not going to handle them properly, don't use a wait that
+> caters for them - use wait_for_completion_killable_timeout() which
+> doesn't finish waiting on a signal unless the signal is going to result
+> in the death of the program.
 >
-> I don't follow the above sequence. Can you try to elaborate and
-> describe for what exact scenario we require the hardware reset to be
-> done?
 
-Odroid boards uses multi stage bootloaders. The very first stage is in 
-SoC ROM.
-That code loads next stages (called bl1, bl2, tz) from either eMMC or SD 
-card
-(depending on jumper configuration or some card detect pins). This ROM 
-code is
-very simple and assumes that the mmc card has been reset to the default
-configuration. However, eMMC card is not being reset by the board 
-'reboot' logic.
-Instead the nreset line from emmc card is connected to gpio line of SoC. 
-Thus to
-perform full system reboot procedure, before triggering reboot inside 
-the SoC,
-one need to manually toggle nreset line of this emmc card to 'zero' for 
-a while.
-Only then the card is put back to the default state, so ROM code is able 
-to read
-bootloaders from it.
+the current code would treat the signal case identical with the
+completion success case - and that hardly can be the intention
+so while it might not be necessary to call printk in the signal
+case it should in some way be handled - if there is not need to 
+handle signals then it might be more resonable to use
+wait_for_completion_timeout which is not interruptible.
 
-My patch adds code for managing gpio line connected to nreset signal of 
-emmc card.
-It registers reset handler, which is being triggered from Linux reboot 
-code. This
-handler toggles such gpio line before the final reboot is triggered. My 
-patch also
-provides a function for registering as a mmc host hw_reset callback, so 
-it can be
-used to reset mmc card before initializing it with kernel driver (this 
-is already
-implemented), which also might help to get it working if broken 
-bootloader left
-the emmc card in some unknown/broken state (already observed such issue, 
-but it
-has been fixed finally by patching bootloader).
+So the key issue here is not that a signal should necessarily print
+a message but that it should not be treated as the success case. The
+current code will only treat timeout as an error condition and a received
+signal (implying that the condition being waited for is most likely not
+satisfied) as a successful completion.
 
-
-> Also, I wonder whether we could extend the mmc-pwrseq to cover your
-> case? Did you consider that as an option?
-
-I didn't consider mmc-pwrseq yet. For me it looked straightforward to 
-implement
-it just like card detect or write-protection gpio pins. I already 
-noticed that
-there is code for some mmc host driver, which perform mmc hardware 
-reset. If you
-think that extending pwrseq is the better approach, I will try to update my
-patches. This will add reboot handler to mmc-pwrseq then. The only 
-question is
-weather to use it always when mmc-pwrseq has been enabled or only if some
-additional property like 'reset-on-reboot' has been provided.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+thx!
+hofrat 
