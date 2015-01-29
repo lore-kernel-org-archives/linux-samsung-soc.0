@@ -1,67 +1,49 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 2/3] cpufreq: s3c: remove last use of resume_clocks callback
-Date: Thu, 29 Jan 2015 08:53:31 +0530
-Message-ID: <CAKohpo=v7SLii7ykqWfpf0ZAzCF6Oi9_ARVNmTu9u4j9poXafA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] cpufreq: exynos: allow modular build
+Date: Thu, 29 Jan 2015 09:09:03 +0530
+Message-ID: <CAKohpom9L4jiMRGn3OaWyYM7iR3Ame4-LKG144yuHmRxCJud3g@mail.gmail.com>
 References: <1422451015-390439-1-git-send-email-arnd@arndb.de>
-	<1422451015-390439-3-git-send-email-arnd@arndb.de>
+	<1422451015-390439-4-git-send-email-arnd@arndb.de>
+	<20150128172209.GF29600@developer.hsd1.ca.comcast.net>
+	<1799972.nQ2Axu0CEJ@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:38317 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761476AbbA2DXc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jan 2015 22:23:32 -0500
-Received: by mail-oi0-f41.google.com with SMTP id z81so22818142oif.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2015 19:23:31 -0800 (PST)
-In-Reply-To: <1422451015-390439-3-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1799972.nQ2Axu0CEJ@wuerfel>
+Sender: linux-pm-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Eduardo Valentin <edubezval@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 28 January 2015 at 18:46, Arnd Bergmann <arnd@arndb.de> wrote:
-> Commit 32726d2d550 ("ARM: SAMSUNG: Remove legacy clock code")
-> already removed the callback pointer, but there was one remaining
-> user:
->
-> drivers/cpufreq/s3c24xx-cpufreq.c: In function 's3c_cpufreq_resume_clocks':
-> drivers/cpufreq/s3c24xx-cpufreq.c:149:14: error: 'struct s3c_cpufreq_info' has no member named 'resume_clocks'
->   cpu_cur.info->resume_clocks();
->               ^
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 32726d2d550 ("ARM: SAMSUNG: Remove legacy clock code")
-> Cc: stable@vger.kernel.org # v3.17+
-> ---
->  drivers/cpufreq/s3c24xx-cpufreq.c | 8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-> index bd340a1ca87d..733aa5153e74 100644
-> --- a/drivers/cpufreq/s3c24xx-cpufreq.c
-> +++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-> @@ -144,11 +144,6 @@ static void s3c_cpufreq_setfvco(struct s3c_cpufreq_config *cfg)
->         (cfg->info->set_fvco)(cfg);
->  }
->
-> -static inline void s3c_cpufreq_resume_clocks(void)
-> -{
-> -       cpu_cur.info->resume_clocks();
-> -}
-> -
->  static inline void s3c_cpufreq_updateclk(struct clk *clk,
->                                          unsigned int freq)
->  {
-> @@ -417,9 +412,6 @@ static int s3c_cpufreq_resume(struct cpufreq_policy *policy)
->
->         last_target = ~0;       /* invalidate last_target setting */
->
-> -       /* first, find out what speed we resumed at. */
-> -       s3c_cpufreq_resume_clocks();
-> -
->         /* whilst we will be called later on, we try and re-set the
->          * cpu frequencies as soon as possible so that we do not end
->          * up resuming devices and then immediately having to re-set
+On 29 January 2015 at 01:31, Arnd Bergmann <arnd@arndb.de> wrote:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>  config ARM_EXYNOS_CPUFREQ
+>> -     bool
+>> +     tristate "SAMSUNG EXYNOS CPUfreq Driver"
+>> +     depends on THERMAL
+>> +     default y
+>> +     help
+>> +       This adds the CPUFreq driver for Samsung EXYNOS platforms
+>> +
+>> +       If in doubt, say N.
+>
+> Now the option shows up on all systems that include Kconfig.arm,
+> in particular non-exynos machines that might not even be able
+> to build this.
+
+I am sure I am wrong here, but want to know what I am missing.
+What about:
+
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index c3c3cf52d2d9..f3ee05067a69 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -27,7 +27,7 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+
+ config ARM_EXYNOS_CPUFREQ
+        tristate "SAMSUNG EXYNOS CPUfreq Driver"
+-       depends on THERMAL
++       depends on THERMAL && ARCH_EXYNOS
+        default y
+        help
+          This adds the CPUFreq driver for Samsung EXYNOS platforms
