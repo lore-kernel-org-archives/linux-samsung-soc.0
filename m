@@ -1,84 +1,65 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH v4 3/7] misc: Add cros_ec_lpc driver for x86 devices
-Date: Thu, 29 Jan 2015 22:11:29 +0100
-Message-ID: <1422565889.10643.6.camel@x220>
-References: <1422538676-4615-1-git-send-email-javier.martinez@collabora.co.uk>
-	 <1422538676-4615-4-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Alban Browaeys <alban.browaeys@gmail.com>
+Subject: [PATCH] exynos/drm: fix no hdmi output
+Date: Thu, 29 Jan 2015 22:18:40 +0100
+Message-ID: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews08.kpnxchange.com ([213.75.39.13]:50902 "EHLO
-	cpsmtpb-ews08.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752741AbbA2VLc (ORCPT
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:50478 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754927AbbA2VTU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 16:11:32 -0500
-In-Reply-To: <1422538676-4615-4-git-send-email-javier.martinez@collabora.co.uk>
+	Thu, 29 Jan 2015 16:19:20 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, Alban Browaeys <prahal@yahoo.com>
 
-Javier,
+The hdmi outputs black screen only even though under the hood Xorg and
+framebuffer console  are fine : devices found and initialized, but
+not a pixel out.
 
-Trivial nits below.
+Commit 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+changed the call order of mixer_initialize with regards to
+ exynos_drm_crtc_create.
 
-On Thu, 2015-01-29 at 14:37 +0100, Javier Martinez Canillas wrote:
-> From: Bill Richardson <wfrichar@chromium.org>
-> 
-> Chromebooks have an Embedded Controller (EC) that is used to
-> implement various functions such as keyboard, power and battery.
-> 
-> The AP can communicate with the EC through different bus types
-> such as I2C, SPI or LPC.
-> 
-> The cros_ec mfd driver is then composed of a core driver that
-> register the sub-devices as mfd cells and provide a high level
-> communication interface that is used by the rest of the kernel
-> and bus specific interfaces modules.
-> 
-> Each connection method then has its own driver, which register
-> with the EC driver interface-agnostic interface.
-> 
-> Currently, there are drivers to communicate with the EC over
-> I2C and SPI and this driver adds support for LPC.
-> 
-> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> [...]
->  drivers/misc/Kconfig       |  10 ++
->  drivers/misc/Makefile      |   1 +
->  drivers/misc/cros_ec_lpc.c | 291 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 302 insertions(+)
->  create mode 100644 drivers/misc/cros_ec_lpc.c
-> 
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 006242c8bca0..142393e84a43 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -515,6 +515,16 @@ config VEXPRESS_SYSCFG
->  	  bus. System Configuration interface is one of the possible means
->  	  of generating transactions on this bus.
->  
-> +config CROS_EC_LPC
-> +	tristate "ChromeOS Embedded Controller (LPC)"
-> +	depends on MFD_CROS_EC
-> +
+This changes breaks hdmi out on Odroid U2 (linux-next with added
+ Marek Szyprowski v4 hdmi patchset from linux-samsung-soc ML).
 
-Please drop this empty line.
+Restore the previous call ordering get hdmi to ouput proper pixels:
+ie call mixer_initialize first then exynos_drm_crtc_create.
 
-> +	help
-> +	  If you say Y here, you get support for talking to the ChromeOS EC
-> +	  over an LPC bus. This uses a simple byte-level protocol with a
-> +	  checksum. This is used for userspace access only. The kernel
-> +	  typically has its own communication methods.
-> +
+Fixes: 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+Signed-off-by: Alban Browaeys <prahal@yahoo.com>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-What happens when you say M?
-
->  source "drivers/misc/c2port/Kconfig"
->  source "drivers/misc/eeprom/Kconfig"
->  source "drivers/misc/cb710/Kconfig"
-
-
-Paul Bolle
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index d8fd8e1..188f90f 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1258,18 +1258,19 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+ 	struct drm_device *drm_dev = data;
+ 	int ret;
+ 
++	ret = mixer_initialize(ctx, drm_dev);
++	if (ret)
++		return ret;
++
+ 	ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
+ 				     EXYNOS_DISPLAY_TYPE_HDMI,
+ 				     &mixer_crtc_ops, ctx);
+ 	if (IS_ERR(ctx->crtc)) {
++		mixer_ctx_remove(ctx);
+ 		ret = PTR_ERR(ctx->crtc);
+ 		goto free_ctx;
+ 	}
+ 
+-	ret = mixer_initialize(ctx, drm_dev);
+-	if (ret)
+-		goto free_ctx;
+-
+ 	return 0;
+ 
+ free_ctx:
+-- 
+2.1.4
