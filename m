@@ -1,389 +1,232 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v4 3/7] misc: Add cros_ec_lpc driver for x86 devices
-Date: Thu, 29 Jan 2015 14:37:52 +0100
-Message-ID: <1422538676-4615-4-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 1/7] mfd: cros_ec: Use fixed size arrays to transfer data with the EC
+Date: Thu, 29 Jan 2015 14:37:50 +0100
+Message-ID: <1422538676-4615-2-git-send-email-javier.martinez@collabora.co.uk>
 References: <1422538676-4615-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47172 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758196AbbA2NiN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 08:38:13 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1422538676-4615-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
 Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Bill Richardson <wfrichar@chromium.org>
+The struct cros_ec_command will be used as an ioctl() argument for the
+API to control the ChromeOS EC from user-space. So the data structure
+has to be 64-bit safe to make it compatible between 32 and 64 avoiding
+the need for a compat ioctl interface. Since pointers are self-aligned
+to different byte boundaries, use fixed size arrays instead of pointers
+for transferring ingoing and outgoing data with the Embedded Controller.
 
-Chromebooks have an Embedded Controller (EC) that is used to
-implement various functions such as keyboard, power and battery.
+Also, re-arrange struct members by decreasing alignment requirements to
+reduce the needing padding size.
 
-The AP can communicate with the EC through different bus types
-such as I2C, SPI or LPC.
-
-The cros_ec mfd driver is then composed of a core driver that
-register the sub-devices as mfd cells and provide a high level
-communication interface that is used by the rest of the kernel
-and bus specific interfaces modules.
-
-Each connection method then has its own driver, which register
-with the EC driver interface-agnostic interface.
-
-Currently, there are drivers to communicate with the EC over
-I2C and SPI and this driver adds support for LPC.
-
-Signed-off-by: Bill Richardson <wfrichar@chromium.org>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 
-Changes since v3:
- - Rename MYNAME to DRV_NAME
- - Use devm_request_region() instead of request_region.
-   Suggested by Varka Bhadram.
- - Remove release_region from cleanup handle logic by using devres API.
-   Suggested by Varka Bhadram.
- - Use {dev,pr}_err() instead of {dev,pr}_warn() to log errors.
+Hello,
 
-Changes since v2:
- - Move out from drivers/mfd to drivers/misc. Suggested by Lee Jones.
+I choose EC_PROTO2_MAX_PARAM_SIZE as the maximum length for the input and
+output buffers since I see that is what is assumed in the cros_ec driver
+that is the maximum lengths. But the downstream kernel has also suppport
+for the EC host command protocol v3 even though there is currently no bus
+specific code to handle v3 packets. So I wonder if this is a good max len
+or if a different size should be used instead.
 
-Changes since v1: None, new patch.
+Best regards,
+Javier
+
+Changes since v3: None.
+
+Changes since v2: None, added Lee Jones Acked-by tag.
+
+Changes since v1: None, new patch
 ---
- drivers/misc/Kconfig       |  10 ++
- drivers/misc/Makefile      |   1 +
- drivers/misc/cros_ec_lpc.c | 291 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 302 insertions(+)
- create mode 100644 drivers/misc/cros_ec_lpc.c
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c | 51 +++++++--------------------------
+ drivers/input/keyboard/cros_ec_keyb.c   | 13 +++++----
+ drivers/mfd/cros_ec.c                   | 15 +++++-----
+ include/linux/mfd/cros_ec.h             |  8 +++---
+ 4 files changed, 29 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 006242c8bca0..142393e84a43 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -515,6 +515,16 @@ config VEXPRESS_SYSCFG
- 	  bus. System Configuration interface is one of the possible means
- 	  of generating transactions on this bus.
+diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+index 875c22ae5400..fa8dedd8c3a2 100644
+--- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
++++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+@@ -182,72 +182,41 @@ static int ec_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg i2c_msgs[],
+ 	const u16 bus_num = bus->remote_bus;
+ 	int request_len;
+ 	int response_len;
+-	u8 *request = NULL;
+-	u8 *response = NULL;
+ 	int result;
+-	struct cros_ec_command msg;
++	struct cros_ec_command msg = { };
  
-+config CROS_EC_LPC
-+	tristate "ChromeOS Embedded Controller (LPC)"
-+	depends on MFD_CROS_EC
+ 	request_len = ec_i2c_count_message(i2c_msgs, num);
+ 	if (request_len < 0) {
+ 		dev_warn(dev, "Error constructing message %d\n", request_len);
+-		result = request_len;
+-		goto exit;
++		return request_len;
+ 	}
 +
-+	help
-+	  If you say Y here, you get support for talking to the ChromeOS EC
-+	  over an LPC bus. This uses a simple byte-level protocol with a
-+	  checksum. This is used for userspace access only. The kernel
-+	  typically has its own communication methods.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index 7d5c4cd118c4..37a9647e7900 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -55,4 +55,5 @@ obj-y				+= mic/
- obj-$(CONFIG_GENWQE)		+= genwqe/
- obj-$(CONFIG_ECHO)		+= echo/
- obj-$(CONFIG_VEXPRESS_SYSCFG)	+= vexpress-syscfg.o
-+obj-$(CONFIG_CROS_EC_LPC)	+= cros_ec_lpc.o
- obj-$(CONFIG_CXL_BASE)		+= cxl/
-diff --git a/drivers/misc/cros_ec_lpc.c b/drivers/misc/cros_ec_lpc.c
-new file mode 100644
-index 000000000000..ff6ce5e489c4
---- /dev/null
-+++ b/drivers/misc/cros_ec_lpc.c
-@@ -0,0 +1,291 @@
-+/*
-+ * cros_ec_lpc - LPC access to the Chrome OS Embedded Controller
-+ *
-+ * Copyright (C) 2012-2015 Google, Inc
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * This driver uses the Chrome OS EC byte-level message-based protocol for
-+ * communicating the keyboard state (which keys are pressed) from a keyboard EC
-+ * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-+ * but everything else (including deghosting) is done here.  The main
-+ * motivation for this is to keep the EC firmware as simple as possible, since
-+ * it cannot be easily upgraded and EC flash/IRAM space is relatively
-+ * expensive.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/mfd/cros_ec.h>
-+#include <linux/mfd/cros_ec_commands.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/printk.h>
-+
-+#define DRV_NAME "cros_ec_lpc"
-+
-+static int ec_response_timed_out(void)
-+{
-+	unsigned long one_second = jiffies + HZ;
-+
-+	usleep_range(200, 300);
-+	do {
-+		if (!(inb(EC_LPC_ADDR_HOST_CMD) & EC_LPC_STATUS_BUSY_MASK))
-+			return 0;
-+		usleep_range(100, 200);
-+	} while (time_before(jiffies, one_second));
-+
-+	return 1;
-+}
-+
-+static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
-+				struct cros_ec_command *msg)
-+{
-+	struct ec_lpc_host_args args;
-+	int csum;
-+	int i;
-+	int ret = 0;
-+
-+	if (msg->outsize > EC_PROTO2_MAX_PARAM_SIZE ||
-+	    msg->insize > EC_PROTO2_MAX_PARAM_SIZE) {
-+		dev_err(ec->dev,
-+			"invalid buffer sizes (out %d, in %d)\n",
-+			msg->outsize, msg->insize);
-+		return -EINVAL;
-+	}
-+
-+	/* Now actually send the command to the EC and get the result */
-+	args.flags = EC_HOST_ARGS_FLAG_FROM_HOST;
-+	args.command_version = msg->version;
-+	args.data_size = msg->outsize;
-+
-+	/* Initialize checksum */
-+	csum = msg->command + args.flags +
-+		args.command_version + args.data_size;
-+
-+	/* Copy data and update checksum */
-+	for (i = 0; i < msg->outsize; i++) {
-+		outb(msg->outdata[i], EC_LPC_ADDR_HOST_PARAM + i);
-+		csum += msg->outdata[i];
-+	}
-+
-+	/* Finalize checksum and write args */
-+	args.checksum = csum & 0xFF;
-+	outb(args.flags, EC_LPC_ADDR_HOST_ARGS);
-+	outb(args.command_version, EC_LPC_ADDR_HOST_ARGS + 1);
-+	outb(args.data_size, EC_LPC_ADDR_HOST_ARGS + 2);
-+	outb(args.checksum, EC_LPC_ADDR_HOST_ARGS + 3);
-+
-+	/* Here we go */
-+	outb(msg->command, EC_LPC_ADDR_HOST_CMD);
-+
-+	if (ec_response_timed_out()) {
-+		dev_warn(ec->dev, "EC responsed timed out\n");
-+		ret = -EIO;
-+		goto done;
-+	}
-+
-+	/* Check result */
-+	msg->result = inb(EC_LPC_ADDR_HOST_DATA);
-+
-+	switch (msg->result) {
-+	case EC_RES_SUCCESS:
-+		break;
-+	case EC_RES_IN_PROGRESS:
-+		ret = -EAGAIN;
-+		dev_dbg(ec->dev, "command 0x%02x in progress\n",
-+			msg->command);
-+		goto done;
-+	default:
-+		dev_dbg(ec->dev, "command 0x%02x returned %d\n",
-+			msg->command, msg->result);
-+	}
-+
-+	/* Read back args */
-+	args.flags = inb(EC_LPC_ADDR_HOST_ARGS);
-+	args.command_version = inb(EC_LPC_ADDR_HOST_ARGS + 1);
-+	args.data_size = inb(EC_LPC_ADDR_HOST_ARGS + 2);
-+	args.checksum = inb(EC_LPC_ADDR_HOST_ARGS + 3);
-+
-+	if (args.data_size > msg->insize) {
-+		dev_err(ec->dev,
-+			"packet too long (%d bytes, expected %d)",
-+			args.data_size, msg->insize);
-+		ret = -ENOSPC;
-+		goto done;
-+	}
-+
-+	/* Start calculating response checksum */
-+	csum = msg->command + args.flags +
-+		args.command_version + args.data_size;
-+
-+	/* Read response and update checksum */
-+	for (i = 0; i < args.data_size; i++) {
-+		msg->indata[i] = inb(EC_LPC_ADDR_HOST_PARAM + i);
-+		csum += msg->indata[i];
-+	}
-+
-+	/* Verify checksum */
-+	if (args.checksum != (csum & 0xFF)) {
-+		dev_err(ec->dev,
-+			"bad packet checksum, expected %02x, got %02x\n",
-+			args.checksum, csum & 0xFF);
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	/* Return actual amount of data received */
-+	ret = args.data_size;
-+done:
-+	return ret;
-+}
-+
-+/* Returns num bytes read, or negative on error. Doesn't need locking. */
-+static int cros_ec_lpc_readmem(struct cros_ec_device *ec, unsigned int offset,
-+			       unsigned int bytes, void *dest)
-+{
-+	int i = offset;
-+	char *s = dest;
-+	int cnt = 0;
-+
-+	if (offset >= EC_MEMMAP_SIZE - bytes)
-+		return -EINVAL;
-+
-+	/* fixed length */
-+	if (bytes) {
-+		for (; cnt < bytes; i++, s++, cnt++)
-+			*s = inb(EC_LPC_ADDR_MEMMAP + i);
-+		return cnt;
-+	}
-+
-+	/* string */
-+	for (; i < EC_MEMMAP_SIZE; i++, s++) {
-+		*s = inb(EC_LPC_ADDR_MEMMAP + i);
-+		cnt++;
-+		if (!*s)
-+			break;
-+	}
-+
-+	return cnt;
-+}
-+
-+static int cros_ec_lpc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct cros_ec_device *ec_dev;
+ 	response_len = ec_i2c_count_response(i2c_msgs, num);
+ 	if (response_len < 0) {
+ 		/* Unexpected; no errors should come when NULL response */
+ 		dev_warn(dev, "Error preparing response %d\n", response_len);
+-		result = response_len;
+-		goto exit;
+-	}
+-
+-	if (request_len <= ARRAY_SIZE(bus->request_buf)) {
+-		request = bus->request_buf;
+-	} else {
+-		request = kzalloc(request_len, GFP_KERNEL);
+-		if (request == NULL) {
+-			result = -ENOMEM;
+-			goto exit;
+-		}
+-	}
+-	if (response_len <= ARRAY_SIZE(bus->response_buf)) {
+-		response = bus->response_buf;
+-	} else {
+-		response = kzalloc(response_len, GFP_KERNEL);
+-		if (response == NULL) {
+-			result = -ENOMEM;
+-			goto exit;
+-		}
++		return response_len;
+ 	}
+ 
+-	result = ec_i2c_construct_message(request, i2c_msgs, num, bus_num);
++	result = ec_i2c_construct_message(msg.outdata, i2c_msgs, num, bus_num);
+ 	if (result)
+-		goto exit;
++		return result;
+ 
+ 	msg.version = 0;
+ 	msg.command = EC_CMD_I2C_PASSTHRU;
+-	msg.outdata = request;
+ 	msg.outsize = request_len;
+-	msg.indata = response;
+ 	msg.insize = response_len;
+ 
+ 	result = cros_ec_cmd_xfer(bus->ec, &msg);
+ 	if (result < 0)
+-		goto exit;
++		return result;
+ 
+-	result = ec_i2c_parse_response(response, i2c_msgs, &num);
++	result = ec_i2c_parse_response(msg.indata, i2c_msgs, &num);
+ 	if (result < 0)
+-		goto exit;
++		return result;
+ 
+ 	/* Indicate success by saying how many messages were sent */
+-	result = num;
+-exit:
+-	if (request != bus->request_buf)
+-		kfree(request);
+-	if (response != bus->response_buf)
+-		kfree(response);
+-
+-	return result;
++	return num;
+ }
+ 
+ static u32 ec_i2c_functionality(struct i2c_adapter *adap)
+diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+index ffa989f2c785..769f8f7f62b7 100644
+--- a/drivers/input/keyboard/cros_ec_keyb.c
++++ b/drivers/input/keyboard/cros_ec_keyb.c
+@@ -148,16 +148,19 @@ static void cros_ec_keyb_process(struct cros_ec_keyb *ckdev,
+ 
+ static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uint8_t *kb_state)
+ {
 +	int ret;
-+
-+	if (!devm_request_region(dev, EC_LPC_ADDR_MEMMAP, EC_MEMMAP_SIZE,
-+				 dev_name(dev))) {
-+		dev_err(dev, "couldn't reserve memmap region\n");
-+		return -EBUSY;
-+	}
-+
-+	if ((inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID) != 'E') ||
-+	    (inb(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID + 1) != 'C')) {
-+		dev_err(dev, "EC ID not detected\n");
-+		return -ENODEV;
-+	}
-+
-+	if (!devm_request_region(dev, EC_HOST_CMD_REGION0,
-+				 EC_HOST_CMD_REGION_SIZE, dev_name(dev))) {
-+		dev_err(dev, "couldn't reserve region0\n");
-+		return -EBUSY;
-+	}
-+	if (!devm_request_region(dev, EC_HOST_CMD_REGION1,
-+				 EC_HOST_CMD_REGION_SIZE, dev_name(dev))) {
-+		dev_err(dev, "couldn't reserve region1\n");
-+		return -EBUSY;
-+	}
-+
-+	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
-+	if (!ec_dev)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, ec_dev);
-+	ec_dev->dev = dev;
-+	ec_dev->ec_name = pdev->name;
-+	ec_dev->phys_name = dev_name(dev);
-+	ec_dev->parent = dev;
-+	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
-+	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
-+
-+	ret = cros_ec_register(ec_dev);
-+	if (ret) {
-+		dev_err(dev, "couldn't register ec_dev (%d)\n", ret);
+ 	struct cros_ec_command msg = {
+-		.version = 0,
+ 		.command = EC_CMD_MKBP_STATE,
+-		.outdata = NULL,
+-		.outsize = 0,
+-		.indata = kb_state,
+ 		.insize = ckdev->cols,
+ 	};
+ 
+-	return cros_ec_cmd_xfer(ckdev->ec, &msg);
++	ret = cros_ec_cmd_xfer(ckdev->ec, &msg);
++	if (ret < 0)
 +		return ret;
-+	}
++
++	memcpy(kb_state, msg.indata, ckdev->cols);
 +
 +	return 0;
-+}
+ }
+ 
+ static irqreturn_t cros_ec_keyb_irq(int irq, void *data)
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index fc0c81ef04ff..c872e1b0eaf8 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -74,15 +74,11 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+ 	ret = ec_dev->cmd_xfer(ec_dev, msg);
+ 	if (msg->result == EC_RES_IN_PROGRESS) {
+ 		int i;
+-		struct cros_ec_command status_msg;
+-		struct ec_response_get_comms_status status;
++		struct cros_ec_command status_msg = { };
++		struct ec_response_get_comms_status *status;
+ 
+-		status_msg.version = 0;
+ 		status_msg.command = EC_CMD_GET_COMMS_STATUS;
+-		status_msg.outdata = NULL;
+-		status_msg.outsize = 0;
+-		status_msg.indata = (uint8_t *)&status;
+-		status_msg.insize = sizeof(status);
++		status_msg.insize = sizeof(*status);
+ 
+ 		/*
+ 		 * Query the EC's status until it's no longer busy or
+@@ -98,7 +94,10 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+ 			msg->result = status_msg.result;
+ 			if (status_msg.result != EC_RES_SUCCESS)
+ 				break;
+-			if (!(status.flags & EC_COMMS_STATUS_PROCESSING))
 +
-+static int cros_ec_lpc_remove(struct platform_device *pdev)
-+{
-+	struct cros_ec_device *ec_dev;
-+
-+	ec_dev = platform_get_drvdata(pdev);
-+	cros_ec_remove(ec_dev);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver cros_ec_lpc_driver = {
-+	.driver = {
-+		.name = DRV_NAME,
-+		.owner = THIS_MODULE,
-+	},
-+	.probe = cros_ec_lpc_probe,
-+	.remove = cros_ec_lpc_remove,
-+};
-+
-+static void do_nothing(struct device *dev)
-+{
-+	/* not a physical device */
-+}
-+
-+static struct platform_device cros_ec_lpc_device = {
-+	.name = DRV_NAME,
-+	.dev = {
-+		.release = do_nothing,
-+	},
-+};
-+
-+static int __init cros_ec_lpc_init(void)
-+{
-+	int ret;
-+
-+	/* Register the driver */
-+	ret = platform_driver_register(&cros_ec_lpc_driver);
-+	if (ret < 0) {
-+		pr_warn(DRV_NAME ": can't register driver: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Register the device, and it'll get hooked up automatically */
-+	ret = platform_device_register(&cros_ec_lpc_device);
-+	if (ret < 0) {
-+		pr_warn(DRV_NAME ": can't register device: %d\n", ret);
-+		platform_driver_unregister(&cros_ec_lpc_driver);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit cros_ec_lpc_exit(void)
-+{
-+	platform_device_unregister(&cros_ec_lpc_device);
-+	platform_driver_unregister(&cros_ec_lpc_driver);
-+}
-+
-+module_init(cros_ec_lpc_init);
-+module_exit(cros_ec_lpc_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("ChromeOS EC LPC driver");
++			status = (struct ec_response_get_comms_status *)
++				 status_msg.indata;
++			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
+ 				break;
+ 		}
+ 	}
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index 0e166b92f5b4..71675b14b5ca 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -38,20 +38,20 @@ enum {
+ /*
+  * @version: Command version number (often 0)
+  * @command: Command to send (EC_CMD_...)
+- * @outdata: Outgoing data to EC
+  * @outsize: Outgoing length in bytes
+- * @indata: Where to put the incoming data from EC
+  * @insize: Max number of bytes to accept from EC
+  * @result: EC's response to the command (separate from communication failure)
++ * @outdata: Outgoing data to EC
++ * @indata: Where to put the incoming data from EC
+  */
+ struct cros_ec_command {
+ 	uint32_t version;
+ 	uint32_t command;
+-	uint8_t *outdata;
+ 	uint32_t outsize;
+-	uint8_t *indata;
+ 	uint32_t insize;
+ 	uint32_t result;
++	uint8_t outdata[EC_PROTO2_MAX_PARAM_SIZE];
++	uint8_t indata[EC_PROTO2_MAX_PARAM_SIZE];
+ };
+ 
+ /**
 -- 
 2.1.3
