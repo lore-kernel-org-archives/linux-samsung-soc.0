@@ -1,72 +1,61 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 4/6] mmc: pwrseq_simple: Add optional reference clock
- support
-Date: Thu, 29 Jan 2015 14:53:10 +0100
-Message-ID: <54CA3B46.20204@collabora.co.uk>
-References: <1422468953-7594-1-git-send-email-javier.martinez@collabora.co.uk>	<1422468953-7594-5-git-send-email-javier.martinez@collabora.co.uk> <CAPDyKFommNu7oscgmhwMpT-5KYN9b6d1xvt513_0qWE=HEGbow@mail.gmail.com>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH v4 3/7] misc: Add cros_ec_lpc driver for x86 devices
+Date: Thu, 29 Jan 2015 19:45:28 +0530
+Message-ID: <CAEUmHyYaqC4nz5CpteCaZT5CxfOFtK1vWnPZk6U-bowYCPezcA@mail.gmail.com>
+References: <1422538676-4615-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1422538676-4615-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFommNu7oscgmhwMpT-5KYN9b6d1xvt513_0qWE=HEGbow@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Arend van Spriel <arend@broadcom.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:46165 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756706AbbA2OPa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Jan 2015 09:15:30 -0500
+In-Reply-To: <1422538676-4615-4-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Ulf,
-
-Thanks a lot for your feedback.
-
-On 01/29/2015 02:05 PM, Ulf Hansson wrote:
->>
->>  struct mmc_pwrseq_simple {
->>         struct mmc_pwrseq pwrseq;
->> +       struct clk *ext_clk;
-> 
-> You need to add a bool, maybe call it clk_enabled;  See why below.
+On Thu, Jan 29, 2015 at 7:07 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> From: Bill Richardson <wfrichar@chromium.org>
+>
+> Chromebooks have an Embedded Controller (EC) that is used to
+> implement various functions such as keyboard, power and battery.
+>
+> The AP can communicate with the EC through different bus types
+> such as I2C, SPI or LPC.
+>
+> The cros_ec mfd driver is then composed of a core driver that
+> register the sub-devices as mfd cells and provide a high level
+> communication interface that is used by the rest of the kernel
+> and bus specific interfaces modules.
+>
+> Each connection method then has its own driver, which register
+> with the EC driver interface-agnostic interface.
+>
+> Currently, there are drivers to communicate with the EC over
+> I2C and SPI and this driver adds support for LPC.
+>
+> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> Changes since v3:
+>  - Rename MYNAME to DRV_NAME
+>  - Use devm_request_region() instead of request_region.
+>    Suggested by Varka Bhadram.
+>  - Remove release_region from cleanup handle logic by using devres API.
+>    Suggested by Varka Bhadram.
+>  - Use {dev,pr}_err() instead of {dev,pr}_warn() to log errors.
 >
 
-Ok
- 
->>         int nr_gpios;
->>         struct gpio_desc *reset_gpios[0];
->>  };
->> @@ -39,6 +41,9 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
->>         struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
->>                                         struct mmc_pwrseq_simple, pwrseq);
->>
->> +       if (!IS_ERR(pwrseq->ext_clk))
->> +               clk_prepare_enable(pwrseq->ext_clk);
->> +
-> 
-> There are no guarantee that the ->mmc_pwrseq_simple_pre_power_on()
-> will be invoked prior ->mmc_pwrseq_simple_power_off().
->
+Addressed all of my comments... Thanks
 
-Got it, I didn't know that mmc_pwrseq_simple_power_off() could be invoked.
-without mmc_pwrseq_simple_pre_power_on() not being called before.
+Reviewed-by: Varka Bhadram <varkabhadram@gmail.com>
 
-> That means you need to keep track of if you have gated/ungated the
-> clock. In other words check pwrseq->clk_enabled. That will prevent
-> potential clk unbalance issues.
-
-Yes, I'll change to check for the boolean in _simple_power_off() and
-_post_power_on() then.
-
->> @@ -85,6 +104,14 @@ int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev)
->>         if (!pwrseq)
->>                 return -ENOMEM;
->>
->> +       pwrseq->ext_clk = clk_get(dev, "ext_clock");
->> +       if (IS_ERR(pwrseq->ext_clk) &&
->> +           PTR_ERR(pwrseq->ext_clk) != -ENOENT &&
->> +           PTR_ERR(pwrseq->ext_clk) != -ENOSYS) {
-> 
-> I don't think you can get -ENOSYS.
-> 
-
-You are right, I'll remove that.
-
-Best regards,
-Javier
+-- 
+Regards,
+Varka Bhadram.
