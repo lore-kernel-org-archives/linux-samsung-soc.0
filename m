@@ -1,108 +1,92 @@
-From: Gustavo Padovan <gustavo@padovan.org>
+From: Ajay kumar <ajaynumb@gmail.com>
 Subject: Re: [PATCH V9 04/14] drm/bridge: ptn3460: Convert to i2c driver model
-Date: Thu, 29 Jan 2015 12:29:19 -0200
-Message-ID: <20150129142919.GN2001@joana>
+Date: Thu, 29 Jan 2015 20:09:07 +0530
+Message-ID: <CAEC9eQMKrUsdUdSRPNqE_YOobb__8nXLLe454kKXab14rPg-ZA@mail.gmail.com>
 References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
  <1421771935-31618-5-git-send-email-ajaykumar.rs@samsung.com>
+ <20150129142919.GN2001@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:63374 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755610AbbA2O3Y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 09:29:24 -0500
-Content-Disposition: inline
-In-Reply-To: <1421771935-31618-5-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150129142919.GN2001@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, thierry.reding@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, bhushan.r@samsung.com, prashanth.g@samsung.com
 
-Hi Ajay,
-
-2015-01-20 Ajay Kumar <ajaykumar.rs@samsung.com>:
-
-> Use drm_bridge helpers to modify the driver to support
-> i2c driver model.
-> 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Tested-by: Rahul Sharma <rahul.sharma@samsung.com>
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Tested-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> ---
->  drivers/gpu/drm/bridge/Kconfig          |    2 +
->  drivers/gpu/drm/bridge/ptn3460.c        |  124 +++++++++++++++++++++----------
->  drivers/gpu/drm/exynos/exynos_dp_core.c |   22 ------
->  3 files changed, 86 insertions(+), 62 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index 884923f..4254c2b 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -1,5 +1,7 @@
->  config DRM_PTN3460
->  	tristate "PTN3460 DP/LVDS bridge"
->  	depends on DRM
-> +	depends on OF && I2C
-
-Adding I2C here is causing this circular dependency:
-
-scripts/kconfig/conf --silentoldconfig Kconfig
-drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
-drivers/video/fbdev/Kconfig:5:  symbol FB is selected by DRM_KMS_FB_HELPER
-drivers/gpu/drm/Kconfig:34:     symbol DRM_KMS_FB_HELPER depends on
-DRM_KMS_HELPER
-drivers/gpu/drm/Kconfig:28:     symbol DRM_KMS_HELPER is selected by
-DRM_PTN3460
-drivers/gpu/drm/bridge/Kconfig:1:       symbol DRM_PTN3460 depends on I2C
-drivers/i2c/Kconfig:7:  symbol I2C is selected by FB_DDC
-drivers/video/fbdev/Kconfig:59: symbol FB_DDC is selected by FB_CYBER2000_DDC
-drivers/video/fbdev/Kconfig:374:        symbol FB_CYBER2000_DDC depends on
-FB_CYBER2000
-drivers/video/fbdev/Kconfig:362:        symbol FB_CYBER2000 depends on FB
-
-To solve this we just need to remove I2C from depends as DRM already selects
-I2C. This was already fixed by:
-
-
-commit 90bde571ad194adb039cb92a11a5b346f15eb610
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Tue Mar 25 12:06:46 2014 +0100
-
-    drm/bridge: PTN3460 needs DRM_KMS_HELPER
-
-    The recently added PTN3460 device driver uses interfaces that
-    are provided by the KMS helper infrastructure, so we should
-    explicitly select that to avoid this linker error:
-
-    ERROR: "drm_helper_probe_single_connector_modes" [drivers/gpu/drm/bridge/ptn3460.ko] undefined!
-    ERROR: "drm_helper_connector_dpms" [drivers/gpu/drm/bridge/ptn3460.ko] undefined!
-
-    We have to drop the I2C dependency to avoid a circular dependency
-    chain, but that's ok because DRM already selects I2C.
-
-    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-    Signed-off-by: Dave Airlie <airlied@redhat.com>
-
-
-But you may have introduced it again on a rebase. The following patch fixes it:
-
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 990b4b2..946d1ef 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -1,7 +1,6 @@
- config DRM_PTN3460
-        tristate "PTN3460 DP/LVDS bridge"
--       depends on DRM
--       depends on OF && I2C
-+       depends on DRM && OF
-        select DRM_KMS_HELPER
-        select DRM_PANEL
-        ---help---
-
-
-	Gustavo
+SGkgR3VzdGF2bywKCkkgdGhpbmsgVGhpZXJyeSBhbHJlYWR5IGZpeGVkIGl0LiBDaGVjayB0aGlz
+LgpodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L25leHQvbGludXgt
+bmV4dC5naXQvdHJlZS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcKCgpSZWdhcmRzLApB
+amF5CgoKCk9uIFRodSwgSmFuIDI5LCAyMDE1IGF0IDc6NTkgUE0sIEd1c3Rhdm8gUGFkb3ZhbiA8
+Z3VzdGF2b0BwYWRvdmFuLm9yZz4gd3JvdGU6Cj4gSGkgQWpheSwKPgo+IDIwMTUtMDEtMjAgQWph
+eSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPjoKPgo+PiBVc2UgZHJtX2JyaWRnZSBo
+ZWxwZXJzIHRvIG1vZGlmeSB0aGUgZHJpdmVyIHRvIHN1cHBvcnQKPj4gaTJjIGRyaXZlciBtb2Rl
+bC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcu
+Y29tPgo+PiBBY2tlZC1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiBUZXN0
+ZWQtYnk6IFJhaHVsIFNoYXJtYSA8cmFodWwuc2hhcm1hQHNhbXN1bmcuY29tPgo+PiBUZXN0ZWQt
+Ynk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5j
+by51az4KPj4gVGVzdGVkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xs
+YWJvcmEuY28udWs+Cj4+IFRlc3RlZC1ieTogU2pvZXJkIFNpbW9ucyA8c2pvZXJkLnNpbW9uc0Bj
+b2xsYWJvcmEuY28udWs+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmln
+ICAgICAgICAgIHwgICAgMiArCj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYyAg
+ICAgICAgfCAgMTI0ICsrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPj4gIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyB8ICAgMjIgLS0tLS0tCj4+ICAzIGZpbGVz
+IGNoYW5nZWQsIDg2IGluc2VydGlvbnMoKyksIDYyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnIGIvZHJpdmVycy9ncHUvZHJtL2Jy
+aWRnZS9LY29uZmlnCj4+IGluZGV4IDg4NDkyM2YuLjQyNTRjMmIgMTAwNjQ0Cj4+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL0tjb25maWcKPj4gQEAgLTEsNSArMSw3IEBACj4+ICBjb25maWcgRFJNX1BUTjM0NjAKPj4g
+ICAgICAgdHJpc3RhdGUgIlBUTjM0NjAgRFAvTFZEUyBicmlkZ2UiCj4+ICAgICAgIGRlcGVuZHMg
+b24gRFJNCj4+ICsgICAgIGRlcGVuZHMgb24gT0YgJiYgSTJDCj4KPiBBZGRpbmcgSTJDIGhlcmUg
+aXMgY2F1c2luZyB0aGlzIGNpcmN1bGFyIGRlcGVuZGVuY3k6Cj4KPiBzY3JpcHRzL2tjb25maWcv
+Y29uZiAtLXNpbGVudG9sZGNvbmZpZyBLY29uZmlnCj4gZHJpdmVycy92aWRlby9mYmRldi9LY29u
+ZmlnOjU6ZXJyb3I6IHJlY3Vyc2l2ZSBkZXBlbmRlbmN5IGRldGVjdGVkIQo+IGRyaXZlcnMvdmlk
+ZW8vZmJkZXYvS2NvbmZpZzo1OiAgc3ltYm9sIEZCIGlzIHNlbGVjdGVkIGJ5IERSTV9LTVNfRkJf
+SEVMUEVSCj4gZHJpdmVycy9ncHUvZHJtL0tjb25maWc6MzQ6ICAgICBzeW1ib2wgRFJNX0tNU19G
+Ql9IRUxQRVIgZGVwZW5kcyBvbgo+IERSTV9LTVNfSEVMUEVSCj4gZHJpdmVycy9ncHUvZHJtL0tj
+b25maWc6Mjg6ICAgICBzeW1ib2wgRFJNX0tNU19IRUxQRVIgaXMgc2VsZWN0ZWQgYnkKPiBEUk1f
+UFROMzQ2MAo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZzoxOiAgICAgICBzeW1ib2wg
+RFJNX1BUTjM0NjAgZGVwZW5kcyBvbiBJMkMKPiBkcml2ZXJzL2kyYy9LY29uZmlnOjc6ICBzeW1i
+b2wgSTJDIGlzIHNlbGVjdGVkIGJ5IEZCX0REQwo+IGRyaXZlcnMvdmlkZW8vZmJkZXYvS2NvbmZp
+Zzo1OTogc3ltYm9sIEZCX0REQyBpcyBzZWxlY3RlZCBieSBGQl9DWUJFUjIwMDBfRERDCj4gZHJp
+dmVycy92aWRlby9mYmRldi9LY29uZmlnOjM3NDogICAgICAgIHN5bWJvbCBGQl9DWUJFUjIwMDBf
+RERDIGRlcGVuZHMgb24KPiBGQl9DWUJFUjIwMDAKPiBkcml2ZXJzL3ZpZGVvL2ZiZGV2L0tjb25m
+aWc6MzYyOiAgICAgICAgc3ltYm9sIEZCX0NZQkVSMjAwMCBkZXBlbmRzIG9uIEZCCj4KPiBUbyBz
+b2x2ZSB0aGlzIHdlIGp1c3QgbmVlZCB0byByZW1vdmUgSTJDIGZyb20gZGVwZW5kcyBhcyBEUk0g
+YWxyZWFkeSBzZWxlY3RzCj4gSTJDLiBUaGlzIHdhcyBhbHJlYWR5IGZpeGVkIGJ5Ogo+Cj4KPiBj
+b21taXQgOTBiZGU1NzFhZDE5NGFkYjAzOWNiOTJhMTFhNWIzNDZmMTVlYjYxMAo+IEF1dGhvcjog
+QXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KPiBEYXRlOiAgIFR1ZSBNYXIgMjUgMTI6MDY6
+NDYgMjAxNCArMDEwMAo+Cj4gICAgIGRybS9icmlkZ2U6IFBUTjM0NjAgbmVlZHMgRFJNX0tNU19I
+RUxQRVIKPgo+ICAgICBUaGUgcmVjZW50bHkgYWRkZWQgUFROMzQ2MCBkZXZpY2UgZHJpdmVyIHVz
+ZXMgaW50ZXJmYWNlcyB0aGF0Cj4gICAgIGFyZSBwcm92aWRlZCBieSB0aGUgS01TIGhlbHBlciBp
+bmZyYXN0cnVjdHVyZSwgc28gd2Ugc2hvdWxkCj4gICAgIGV4cGxpY2l0bHkgc2VsZWN0IHRoYXQg
+dG8gYXZvaWQgdGhpcyBsaW5rZXIgZXJyb3I6Cj4KPiAgICAgRVJST1I6ICJkcm1faGVscGVyX3By
+b2JlX3NpbmdsZV9jb25uZWN0b3JfbW9kZXMiIFtkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0
+NjAua29dIHVuZGVmaW5lZCEKPiAgICAgRVJST1I6ICJkcm1faGVscGVyX2Nvbm5lY3Rvcl9kcG1z
+IiBbZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmtvXSB1bmRlZmluZWQhCj4KPiAgICAg
+V2UgaGF2ZSB0byBkcm9wIHRoZSBJMkMgZGVwZW5kZW5jeSB0byBhdm9pZCBhIGNpcmN1bGFyIGRl
+cGVuZGVuY3kKPiAgICAgY2hhaW4sIGJ1dCB0aGF0J3Mgb2sgYmVjYXVzZSBEUk0gYWxyZWFkeSBz
+ZWxlY3RzIEkyQy4KPgo+ICAgICBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFy
+bmRiLmRlPgo+ICAgICBTaWduZWQtb2ZmLWJ5OiBEYXZlIEFpcmxpZSA8YWlybGllZEByZWRoYXQu
+Y29tPgo+Cj4KPiBCdXQgeW91IG1heSBoYXZlIGludHJvZHVjZWQgaXQgYWdhaW4gb24gYSByZWJh
+c2UuIFRoZSBmb2xsb3dpbmcgcGF0Y2ggZml4ZXMgaXQ6Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmln
+Cj4gaW5kZXggOTkwYjRiMi4uOTQ2ZDFlZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL0tjb25maWcKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcKPiBA
+QCAtMSw3ICsxLDYgQEAKPiAgY29uZmlnIERSTV9QVE4zNDYwCj4gICAgICAgICB0cmlzdGF0ZSAi
+UFROMzQ2MCBEUC9MVkRTIGJyaWRnZSIKPiAtICAgICAgIGRlcGVuZHMgb24gRFJNCj4gLSAgICAg
+ICBkZXBlbmRzIG9uIE9GICYmIEkyQwo+ICsgICAgICAgZGVwZW5kcyBvbiBEUk0gJiYgT0YKPiAg
+ICAgICAgIHNlbGVjdCBEUk1fS01TX0hFTFBFUgo+ICAgICAgICAgc2VsZWN0IERSTV9QQU5FTAo+
+ICAgICAgICAgLS0taGVscC0tLQo+Cj4KPiAgICAgICAgIEd1c3Rhdm8KX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
