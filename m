@@ -1,108 +1,33 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH] video: treat signal like timeout as failure
-Date: Thu, 29 Jan 2015 10:43:15 +0100
-Message-ID: <20150129094315.GC23666@opentech.at>
-References: <1421731430-13207-1-git-send-email-der.herr@hofr.at> <20150126125905.GI26493@n2100.arm.linux.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
+Date: Thu, 29 Jan 2015 10:48:34 +0100
+Message-ID: <CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
+References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hofr.at ([212.69.189.236]:38498 "EHLO mail.hofr.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1761800AbbA2JnR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 04:43:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20150126125905.GI26493@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Inki Dae <inki.dae@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 
-On Mon, 26 Jan 2015, Russell King - ARM Linux wrote:
+On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
-> On Tue, Jan 20, 2015 at 06:23:50AM +0100, Nicholas Mc Guire wrote:
-> > if(!wait_for_completion_interruptible_timeout(...))
-> > only handles the timeout case - this patch adds handling the
-> > signal case the same as timeout and cleans up.
-> > 
-> > Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
-> > ---
-> > 
-> > Only the timeout case was being handled, return of 0 in 
-> > wait_for_completion_interruptible_timeout, the signal case (-ERESTARTSYS)
-> > was treated just like the case of successful completion, which is most 
-> > likely not reasonable.
-> > 
-> > Note that exynos_mipi_dsi_wr_data/exynos_mipi_dsi_rd_data return values
-> > are not checked at the call sites in s6e8ax0.c (cmd_read/cmd_write)!
-> > 
-> > This patch simply treats the signal case the same way as the timeout case,
-> > by releasing locks and returning 0 - which might not be the right thing to
-> > do - this needs a review by someone knowing the details of this driver.
-> > 
-> > Patch is against 3.19.0-rc5 -next-20150119
-> > 
-> > Patch was only compile-tested with exynos_defconfig
-> > 
-> >  drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c |   17 +++++++++++------
-> >  1 file changed, 11 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-> > index 2358a2f..55a7a45 100644
-> > --- a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-> > +++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-> > @@ -157,6 +157,7 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
-> >  	const unsigned char *data0, unsigned int data_size)
-> >  {
-> >  	unsigned int check_rx_ack = 0;
-> > +	long timeout;
-> >  
-> >  	if (dsim->state == DSIM_STATE_ULPS) {
-> >  		dev_err(dsim->dev, "state is ULPS.\n");
-> > @@ -244,9 +245,11 @@ int exynos_mipi_dsi_wr_data(struct mipi_dsim_device *dsim, unsigned int data_id,
-> >  		exynos_mipi_dsi_wr_tx_header(dsim, data_id, data_size & 0xff,
-> >  			(data_size & 0xff00) >> 8);
-> >  
-> > -		if (!wait_for_completion_interruptible_timeout(&dsim_wr_comp,
-> > -							MIPI_FIFO_TIMEOUT)) {
-> > -			dev_warn(dsim->dev, "command write timeout.\n");
-> > +		timeout = wait_for_completion_interruptible_timeout(
-> > +					&dsim_wr_comp, MIPI_FIFO_TIMEOUT);
-> > +		if (timeout <= 0) {
-> > +			dev_warn(dsim->dev,
-> > +				"command write timed-out/interrupted.\n");
-> 
-> This is really silly.  Let's say that the program which results in
-> this function called is using signals (eg, alarm() with SIGALRM, or
-> asynchronous IO with SIGIO, etc).
-> 
-> Why should having a SIGALRM raised print a kernel message?  If this
-> happens a lot, it will result in the kernel log being flooded with
-> these messages.
-> 
-> Signals should not be seen as exceptional conditions.  For some programs,
-> they are merely asynchronous events which are a normal part of the
-> programs operation (eg, SIGIO, SIGALRM, etc.)
-> 
-> Please, if you are going to handle signals, then handle them properly.
-> If you're not going to handle them properly, don't use a wait that
-> caters for them - use wait_for_completion_killable_timeout() which
-> doesn't finish waiting on a signal unless the signal is going to result
-> in the death of the program.
+> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+> functional input/output port pins and 135 memory port pins. There are 41 general
+> port groups and 2 memory port groups.
 >
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> ---
+> Changes from v2:
+> - Rebase it on v3.19-rc5
 
-the current code would treat the signal case identical with the
-completion success case - and that hardly can be the intention
-so while it might not be necessary to call printk in the signal
-case it should in some way be handled - if there is not need to 
-handle signals then it might be more resonable to use
-wait_for_completion_timeout which is not interruptible.
+Waiting for Tomasz to review this.
 
-So the key issue here is not that a signal should necessarily print
-a message but that it should not be treated as the success case. The
-current code will only treat timeout as an error condition and a received
-signal (implying that the condition being waited for is most likely not
-satisfied) as a successful completion.
-
-thx!
-hofrat 
+Yours,
+Linus Walleij
