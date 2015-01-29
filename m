@@ -1,85 +1,166 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 01/12] clk: samsung: exynos5433: Add clocks using common
- clock framework
-Date: Thu, 29 Jan 2015 13:53:17 +0100
-Message-ID: <54CA2D3D.3070908@samsung.com>
-References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
- <1421821618-8627-2-git-send-email-cw00.choi@samsung.com>
- <54C287A0.50407@samsung.com>
- <CAGTfZH0nXzDgFoMF4eSW71Sey44aY9gYRzX+uWP39ut2jY_Pfg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 4/6] mmc: pwrseq_simple: Add optional reference clock support
+Date: Thu, 29 Jan 2015 14:05:41 +0100
+Message-ID: <CAPDyKFommNu7oscgmhwMpT-5KYN9b6d1xvt513_0qWE=HEGbow@mail.gmail.com>
+References: <1422468953-7594-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1422468953-7594-5-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:62467 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751851AbbA2Mxe (ORCPT
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:61383 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755743AbbA2NFm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 07:53:34 -0500
-In-reply-to: <CAGTfZH0nXzDgFoMF4eSW71Sey44aY9gYRzX+uWP39ut2jY_Pfg@mail.gmail.com>
+	Thu, 29 Jan 2015 08:05:42 -0500
+Received: by mail-qg0-f48.google.com with SMTP id z60so27576480qgd.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2015 05:05:41 -0800 (PST)
+In-Reply-To: <1422468953-7594-5-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: cw00.choi@samsung.com
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, "pankaj.dubey@samsung.com" <pankaj.dubey@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Arend van Spriel <arend@broadcom.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Chanwoo,
+On 28 January 2015 at 19:15, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Some WLAN chips attached to a SDIO interface, need a reference clock.
+>
+> Since this is very common, extend the prseq_simple driver to support
+> an optional clock that is enabled prior the card power up procedure.
+>
+> Note: the external clock is optional. Thus an error is not returned
+> if the clock is not found.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> Changes since v1:
+>  - Rebase on top of latest changes.
+>  - Use IS_ERR() instead of checking for NULL to see if the clock exists.
+> ---
+>  drivers/mmc/core/pwrseq_simple.c | 34 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+> index e53d3c7e059c..5e34c77efa5e 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -7,6 +7,7 @@
+>   *
+>   *  Simple MMC power sequence management
+>   */
+> +#include <linux/clk.h>
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/device.h>
+> @@ -20,6 +21,7 @@
+>
+>  struct mmc_pwrseq_simple {
+>         struct mmc_pwrseq pwrseq;
+> +       struct clk *ext_clk;
 
-On 23/01/15 21:54, Chanwoo Choi wrote:
-> On Sat, Jan 24, 2015 at 2:40 AM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 21/01/15 07:26, Chanwoo Choi wrote:
->>> +/* list of all parent clock list */
->>
->>> +PNAME(mout_bus_pll_user_p)   = { "fin_pll", "sclk_bus_pll", };
->> ...
->>> +
->>> +static struct samsung_mux_clock top_mux_clks[] __initdata = {
->>
->>> +     MUX(CLK_MOUT_BUS_PLL_USER, "mout_bus_pll_user", mout_bus_pll_user_p,
->>> +                     MUX_SEL_TOP1, 0, 1),
->> ...
->>> +};
->>> +
->>> +static struct samsung_div_clock top_div_clks[] __initdata = {
->> ...
->>> +     /* DIV_TOP3 */
->>> +     DIV(CLK_DIV_ACLK_IMEM_SSSX_266, "div_aclk_imem_sssx_266",
->>> +                     "mout_bus_pll_user", DIV_TOP3, 24, 3),
->>
->> Shouldn't "fin_pll" be renamed to "oscclk" ? In the documentation
->> the root clock (from XXTI input pin) seems to be referred as OSCCLK.
->> And I can't see "fin_pll" clock registered anywhere. Shouldn't there
->> be a "fixed-rate-clock" as a parent of at least CMU_TOP? e.g.
-> 
-> Right,
-> I added "fin_pll" fixed clock in DT as following:
-> When I registered "fin_pll" fixed clock, I could use "fin_pll" clock
-> for exynos5433 cmu without adding additional dt node.
-> 
-> fin_pll: xxti {
->         compatible = "fixed-clock";
->         clock-output-names = "fin_pll";
->         #clock-cells = <0>;
-> };
-> 
-> I'll add the example of "fin_pll" dt node to documentation for exynos5433 cmu.
+You need to add a bool, maybe call it clk_enabled;  See why below.
 
-OK, thanks. But I think it needs to be named "oscclk", FIN_PLL is almost
-not existent in the SoC's documentation.
-I'd suggest to define the root oscillator clock (XXTI/OSCCLK) as "oscclk"
-in DT, rather than registering "fin_pll" fixed clock in the driver.
+>         int nr_gpios;
+>         struct gpio_desc *reset_gpios[0];
+>  };
+> @@ -39,6 +41,9 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+>         struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+>                                         struct mmc_pwrseq_simple, pwrseq);
+>
+> +       if (!IS_ERR(pwrseq->ext_clk))
+> +               clk_prepare_enable(pwrseq->ext_clk);
+> +
 
->> xxti: xxti {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-output-names = "oscclk";
->>         clock-frequency = <24000000>;
->> };
->>
->> &cmu_top {
->>         clocks = <&xxti>;
->> };
+There are no guarantee that the ->mmc_pwrseq_simple_pre_power_on()
+will be invoked prior ->mmc_pwrseq_simple_power_off().
 
---
-Regards,
-Sylwester
+That means you need to keep track of if you have gated/ungated the
+clock. In other words check pwrseq->clk_enabled. That will prevent
+potential clk unbalance issues.
+
+>         mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
+>  }
+>
+> @@ -50,6 +55,17 @@ static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
+>         mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
+>  }
+>
+> +static void mmc_pwrseq_simple_power_off(struct mmc_host *host)
+> +{
+> +       struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+> +                                       struct mmc_pwrseq_simple, pwrseq);
+> +
+> +       mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
+> +
+> +       if (!IS_ERR(pwrseq->ext_clk))
+> +               clk_disable_unprepare(pwrseq->ext_clk);
+
+Same comment as above.
+
+> +}
+> +
+>  static void mmc_pwrseq_simple_free(struct mmc_host *host)
+>  {
+>         struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+> @@ -60,6 +76,9 @@ static void mmc_pwrseq_simple_free(struct mmc_host *host)
+>                 if (!IS_ERR(pwrseq->reset_gpios[i]))
+>                         gpiod_put(pwrseq->reset_gpios[i]);
+>
+> +       if (!IS_ERR(pwrseq->ext_clk))
+> +               clk_put(pwrseq->ext_clk);
+> +
+>         kfree(pwrseq);
+>         host->pwrseq = NULL;
+>  }
+> @@ -67,7 +86,7 @@ static void mmc_pwrseq_simple_free(struct mmc_host *host)
+>  static struct mmc_pwrseq_ops mmc_pwrseq_simple_ops = {
+>         .pre_power_on = mmc_pwrseq_simple_pre_power_on,
+>         .post_power_on = mmc_pwrseq_simple_post_power_on,
+> -       .power_off = mmc_pwrseq_simple_pre_power_on,
+> +       .power_off = mmc_pwrseq_simple_power_off,
+>         .free = mmc_pwrseq_simple_free,
+>  };
+>
+> @@ -85,6 +104,14 @@ int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev)
+>         if (!pwrseq)
+>                 return -ENOMEM;
+>
+> +       pwrseq->ext_clk = clk_get(dev, "ext_clock");
+> +       if (IS_ERR(pwrseq->ext_clk) &&
+> +           PTR_ERR(pwrseq->ext_clk) != -ENOENT &&
+> +           PTR_ERR(pwrseq->ext_clk) != -ENOSYS) {
+
+I don't think you can get -ENOSYS.
+
+> +               ret = PTR_ERR(pwrseq->ext_clk);
+> +               goto free;
+> +       }
+> +
+>         for (i = 0; i < nr_gpios; i++) {
+>                 pwrseq->reset_gpios[i] = gpiod_get_index(dev, "reset", i,
+>                                                          GPIOD_OUT_HIGH);
+> @@ -96,7 +123,7 @@ int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev)
+>                         while (--i)
+>                                 gpiod_put(pwrseq->reset_gpios[i]);
+>
+> -                       goto free;
+> +                       goto clk_put;
+>                 }
+>         }
+>
+> @@ -105,6 +132,9 @@ int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev)
+>         host->pwrseq = &pwrseq->pwrseq;
+>
+>         return 0;
+> +clk_put:
+> +       if (!IS_ERR(pwrseq->ext_clk))
+> +               clk_put(pwrseq->ext_clk);
+>  free:
+>         kfree(pwrseq);
+>         return ret;
+> --
+> 2.1.3
+>
+
+Kind regards
+Uffe
