@@ -1,93 +1,72 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/4] mmc: core: add support for hardware reset gpio line
-Date: Fri, 30 Jan 2015 11:37:01 +0100
-Message-ID: <54CB5ECD.4090909@samsung.com>
-References: <1422453595-21160-1-git-send-email-m.szyprowski@samsung.com>
- <1422453595-21160-2-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFpowidghwadJS+gYP0EVo6gRUhAG8s14CMEbwatFadP2Q@mail.gmail.com>
- <54C9FA48.5050705@samsung.com>
- <CABxcv=nbTcuzcmhYHKnDom5XFd+gqUbKRF0THCKsN5tL8-cBGA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 0/6] Add multiple GPIO and external clock to MMC pwrseq_simple
+Date: Fri, 30 Jan 2015 12:13:52 +0100
+Message-ID: <CAPDyKFqx-dhhVmtGnP2YpmR63Y20Ns=YyxnYrE2ewTuNXPA7Ag@mail.gmail.com>
+References: <1422543608-24704-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CABxcv=nbTcuzcmhYHKnDom5XFd+gqUbKRF0THCKsN5tL8-cBGA@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:61853 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753990AbbA3LNx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Jan 2015 06:13:53 -0500
+Received: by mail-qg0-f54.google.com with SMTP id q108so37621306qgd.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jan 2015 03:13:52 -0800 (PST)
+In-Reply-To: <1422543608-24704-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Arend van Spriel <arend@broadcom.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello,
-
-On 2015-01-29 11:56, Javier Martinez Canillas wrote:
-> On Thu, Jan 29, 2015 at 10:15 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->>> Also, I wonder whether we could extend the mmc-pwrseq to cover your
->>> case? Did you consider that as an option?
->>
->> I didn't consider mmc-pwrseq yet. For me it looked straightforward to
-> I agree with Ulf that using mmc-pwrseq would be a good solution and in
-> fact I think the pwrseq_simple [0] driver will fit your use case since
-> it supports a reset GPIO pin which is what many WLAN chips attached to
-> a SDIO interface use.
-
-Ok, I've checked mmc-prwseq and mmc-pwrseq-simple. I also checked the
-hardware and it mmc-pwrseq-simple cannot be used directly.
-
-Although the signal is called RSTN (on Odroid U3 schema), the eMMC card
-gets resetted not on low line level, but during the rising edge. This RSTN
-line is also pulled up by the external resistor. However, the strangest
-thing is the fact that the default SoC configuration (which is applied
-during hw reset) for this GPIO line is input, pulled-down. The SoC
-internal pull-down is stronger than the external pull up, so in the end,
-during the SoC reboot the RSTN signal is set to zero. Later bootloader
-disables the internal pull-down.
-
-To sum up - to perform proper reboot on Odroid U3/XU3, one need to set
-RSTN to zero, wait a while and the set it back to 1.
-
-To achieve this with mmc-pwrseq-simple, I would need to modify the power_off
-callback to toggle reset line to zero and back to one. This however might
-not be desired to other sd/mmc cards used with mmc-pwrseq-simple.
-
-I can also provide separate mmc-pwrsrq-odroid driver, which will be very
-similar to mmc-pwrseq-simple.
-
-Ulf - which approach would you prefer?
-
-
+On 29 January 2015 at 16:00, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Ulf,
 >
->> implement
->> it just like card detect or write-protection gpio pins. I already noticed
->> that
->> there is code for some mmc host driver, which perform mmc hardware reset. If
->> you
->> think that extending pwrseq is the better approach, I will try to update my
->> patches. This will add reboot handler to mmc-pwrseq then. The only question
->> is
-> I don't think that adding a reboot handler to mmc-pwrseq is needed.
-> AFAICT the call chain is:
+> Many WLAN chips attached to an SDIO interface needs more than one GPIO
+> for their reset sequence and also an external clock to be operational.
 >
-> sys_reboot() -> kernel_restart() -> device_shutdown() ->
-> mmc_bus_shutdown() -> _mmc_suspend() -> mmc_power_off() ->
-> mmc_pwrseq_power_off() -> struct mmc_pwrseq_ops .power_off
+> Since this is very common, this series extend the simple MMC power sequence
+> to support more than one reset GPIO and also an optional external clock.
 >
-> So since the pwrseq_simple already asserts the reset GPIO in
-> .power_off, it should be enough to ensure the eMMC will be reset to
-> its default configuration for the iROM to work properly.
+> This is the third version of the series that addressed issues pointed out
+> in the previous versions.
 >
-> It also asserts the GPIO pin in .pre_power_on and de-asserts in
-> .post_power_on which should be needed as well for the other case you
-> mentioned when a broken bootloader left the emmc card in some unknown
-> state.
+> The series depend on v4 "mmc: core: Add support for MMC power sequences":
+>
+> http://comments.gmane.org/gmane.linux.kernel.mmc/30665
+>
+> Javier Martinez Canillas (6):
+>   mmc: pwrseq: Document that simple sequence support more than one GPIO
+>   mmc: pwrseq_simple: Extend to support more pins
+>   mmc: pwrseq: Document optional clock for the simple power sequence
+>   mmc: pwrseq_simple: Add optional reference clock support
+>   ARM: dts: exynos5250-snow: Enable wifi power-on
+>   ARM: dts: exynos5250-snow: Add cap-sdio-irq to wifi mmc node
+>
+>  .../devicetree/bindings/mmc/mmc-pwrseq-simple.txt  | 11 ++-
+>  arch/arm/boot/dts/exynos5250-snow.dts              | 26 ++++++-
+>  drivers/mmc/core/pwrseq_simple.c                   | 89 ++++++++++++++++++----
+>  3 files changed, 107 insertions(+), 19 deletions(-)
+>
+> Patch #1 extends the simple MMC power sequence DT binding to support more
+> than one GPIO and patch #2 adds the actual implementation.
+>
+> In the same way, patch #3 and #4 extend the simple MMC power sequence DT
+> binding and pwrseq_simple driver to support an optional external clock.
+>
+> Finally as an example, patch #5 and patch #6 adds support for the wifi
+> chip in the Exynos5250 Snow that needs all these resources. These two
+> patches were added to the series only for completeness and should be
+> picked by Kukjin through his linux-samsung tree.
+>
+> Best regards,
+> Javier
 
-emergency_restart() doesn't call device_shutdown(), so I think it still 
-makes
-sense to add real reset handler to mmc-pwrseq to ensure that power_off will
-be called even during emergency_restart().
+Thanks Javier! I have applied patch 1 -> 4 for my next branch.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+I made some minor fix to patch4, I send a separate response to that
+patch so you know.
 
+Kind regards
+Uffe
