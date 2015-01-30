@@ -1,33 +1,56 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 03/14] drm/bridge: make bridge registration independent
- of drm flow
-Date: Fri, 30 Jan 2015 15:59:27 +0000
-Message-ID: <20150130155927.GO26493@n2100.arm.linux.org.uk>
-References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
- <1421771935-31618-4-git-send-email-ajaykumar.rs@samsung.com>
- <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH -v2] drm/exynos: track vblank events on a per crtc basis
+Date: Fri, 30 Jan 2015 17:08:06 +0100
+Message-ID: <20150130160806.GB14009@phenom.ffwll.local>
+References: <1422016980-23806-2-git-send-email-gustavo@padovan.org>
+ <1422551459-25812-1-git-send-email-gustavo@padovan.org>
+ <54CAF028.6060902@samsung.com> <20150130143037.GB30820@joana>
+ <CAPj87rOJO5kYeVeserzrCk6AYu3CfrKBk8hhNCvzWUGQu_7ncg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, daeinki <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Prashanth G <prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CAPj87rOJO5kYeVeserzrCk6AYu3CfrKBk8hhNCvzWUGQu_7ncg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 30, 2015 at 10:37:19AM -0500, Rob Clark wrote:
-> On Tue, Jan 20, 2015 at 11:38 AM, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> I'll also need to update the new bridge in the msm edp code..
-> although that isn't such a big deal if I knew how this was *supposed*
-> to work.. since what is there now at least doesn't look right..
-
-I wonder whether the new dw-hdmi bridge code get fixed up too...
-
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gRnJpLCBKYW4gMzAsIDIwMTUgYXQgMDM6NTc6NTNQTSArMDAwMCwgRGFuaWVsIFN0b25lIHdy
+b3RlOgo+IEhpLAo+IAo+IE9uIDMwIEphbnVhcnkgMjAxNSBhdCAxNDozMCwgR3VzdGF2byBQYWRv
+dmFuIDxndXN0YXZvQHBhZG92YW4ub3JnPiB3cm90ZToKPiA+IDIwMTUtMDEtMzAgSm9vbnlvdW5n
+IFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPjoKPiA+PiBXZSB3aWxsIGxvc2UgdW5maW5p
+c2hlZCBwcmlvciBldmVudHMgYnkgdGhpcyBjaGFuZ2UuIFRoYXQncyB3aHkgd2UgdXNlCj4gPj4g
+bGlua2VkIGxpc3QuCj4gPgo+ID4gSSB0aGluayB5b3UgYXJlIHJpZ2h0LCBidXQgSSB3YXMgdXNp
+bmcgZXh5bm9zX2NydGMtPmV2ZW50IHRvIGRvIGV4YWN0bHkgdGhlCj4gPiBzYW1lIGFzIGV4eW5v
+c19jcnRjLT5wZW5kaW5nX2ZsaXAuIFNvIHdlIHdlcmUgbG9zaW5nIGEgZXZlbnQgaW4KPiA+IGV4
+eW5vc19kcm1fY3J0Y19kcG1zKCkgYmVmb3JlIHRvby4gSSBjaGFuZ2UgdGhpcyBwYXRjaCB0byBo
+YXZlIGEgcGFnZV9mbGlwCj4gPiBsaXN0IG9uIHRoZSBjcnRjLgo+IAo+IFRoZSB1c3VhbCBhcHBy
+b2FjaCBpbiBvdGhlciBkcml2ZXJzIGlzIHRvIHJldHVybiAtRUJVU1kgd2hlbiB0aGVyZSBpcwo+
+IGFscmVhZHkgYW4gYXN5bmMgcGFnZWZsaXAgcGVuZGluZy4gVGhpcyBkZWZpbml0ZWx5IG1ha2Vz
+IHNlbnNlIHRvIG1lLAo+IGFzIEkgZG9uJ3Qgc2VlIHRoZSBwb2ludCBvZiBzdWJtaXR0aW5nIHBh
+Z2VmbGlwcyBmYXN0ZXIgdGhhbiB0aGUKPiBoYXJkd2FyZSBjYW4gYWN0dWFsbHkgcmVuZGVyLCBh
+bmQgcHJldGVuZGluZyB0byB0aGUgYXBwbGljYXRpb24gdGhhdAo+IHRoZXkgd2VyZSBhY3R1YWxs
+eSBzaG93bi4KClllcywgcmlnaHQgbm93IGRybSBkb2Vzbid0IHJlYWxseSBzdXBwb3J0IGFueXRo
+aW5nIGxpa2UgYSBwYWdlZmxpcCBxdWV1ZS4KU2FtZSBmb3IgYXRvbWljIHJlYWxseS4gRXZlbiB0
+aGUgYXN5bmMgcGFnZWZsaXAgbW9kZSB3b3JrcyBsaWtlIGl0LCBpdApqdXN0IGVuZHMgdXAgZmxp
+cHBpbmcgZmFzdGVyLgoKTG9uZy10ZXJtIHdlIHdhbnQgYSBmbGlwIHF1ZXVlIHdoZXJlIHN1YnNl
+cXVlbnQgZmxpcHMgY2FuIGJlIGZvbGRlZAp0b2dldGhlciBvbiB0aGUgbmV4dCB2YmxhbmsuIFRo
+YXQgbWFrZXMgYmVuY2htYXJrLW1vZGUgZ2FtZXMgaGFwcHksCndpdGhvdXQgcmVzdWx0aW5nIGlu
+IHRlYXJpbmcgbGlrZSBhc3luYyBmbGlwcyBhbmQgc3RpbGwgcmVzdWx0aW5nIGluIHRoZQpsb3dl
+c3QgcG9zc2libGUgbGF0ZW5jeSAoc2luY2UgdGhlIGtlcm5lbCB3ZSBqdXN0IGNvbW1pdCB0aGUg
+ZmxpcHMgZm9yCndoaWNoIGFsbCB0aGUgYnVmZmVycyBhcmUgcmVhZHkgYW5kIG5vdCBzdGFsbCku
+Ci1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBv
+cmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
