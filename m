@@ -1,41 +1,33 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH -v2] drm/exynos: track vblank events on a per crtc basis
-Date: Fri, 30 Jan 2015 15:57:53 +0000
-Message-ID: <CAPj87rOJO5kYeVeserzrCk6AYu3CfrKBk8hhNCvzWUGQu_7ncg@mail.gmail.com>
-References: <1422016980-23806-2-git-send-email-gustavo@padovan.org>
- <1422551459-25812-1-git-send-email-gustavo@padovan.org>
- <54CAF028.6060902@samsung.com> <20150130143037.GB30820@joana>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 03/14] drm/bridge: make bridge registration independent
+ of drm flow
+Date: Fri, 30 Jan 2015 15:59:27 +0000
+Message-ID: <20150130155927.GO26493@n2100.arm.linux.org.uk>
+References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1421771935-31618-4-git-send-email-ajaykumar.rs@samsung.com>
+ <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150130143037.GB30820@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, =?UTF-8?B?J+uMgOyduOq4sC9Nb2JpbGUgUy9XIFBsYXRmb3JtIExhYi4o7Ya17Iug7JewKS9FMyjsgqzsm5ApLw==?= =?UTF-8?B?7IK87ISx7KCE7J6QJw==?= <inki.dae@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, daeinki <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Prashanth G <prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpPbiAzMCBKYW51YXJ5IDIwMTUgYXQgMTQ6MzAsIEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2
-b0BwYWRvdmFuLm9yZz4gd3JvdGU6Cj4gMjAxNS0wMS0zMCBKb29ueW91bmcgU2hpbSA8ankwOTIy
-LnNoaW1Ac2Ftc3VuZy5jb20+Ogo+PiBXZSB3aWxsIGxvc2UgdW5maW5pc2hlZCBwcmlvciBldmVu
-dHMgYnkgdGhpcyBjaGFuZ2UuIFRoYXQncyB3aHkgd2UgdXNlCj4+IGxpbmtlZCBsaXN0Lgo+Cj4g
-SSB0aGluayB5b3UgYXJlIHJpZ2h0LCBidXQgSSB3YXMgdXNpbmcgZXh5bm9zX2NydGMtPmV2ZW50
-IHRvIGRvIGV4YWN0bHkgdGhlCj4gc2FtZSBhcyBleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwLiBT
-byB3ZSB3ZXJlIGxvc2luZyBhIGV2ZW50IGluCj4gZXh5bm9zX2RybV9jcnRjX2RwbXMoKSBiZWZv
-cmUgdG9vLiBJIGNoYW5nZSB0aGlzIHBhdGNoIHRvIGhhdmUgYSBwYWdlX2ZsaXAKPiBsaXN0IG9u
-IHRoZSBjcnRjLgoKVGhlIHVzdWFsIGFwcHJvYWNoIGluIG90aGVyIGRyaXZlcnMgaXMgdG8gcmV0
-dXJuIC1FQlVTWSB3aGVuIHRoZXJlIGlzCmFscmVhZHkgYW4gYXN5bmMgcGFnZWZsaXAgcGVuZGlu
-Zy4gVGhpcyBkZWZpbml0ZWx5IG1ha2VzIHNlbnNlIHRvIG1lLAphcyBJIGRvbid0IHNlZSB0aGUg
-cG9pbnQgb2Ygc3VibWl0dGluZyBwYWdlZmxpcHMgZmFzdGVyIHRoYW4gdGhlCmhhcmR3YXJlIGNh
-biBhY3R1YWxseSByZW5kZXIsIGFuZCBwcmV0ZW5kaW5nIHRvIHRoZSBhcHBsaWNhdGlvbiB0aGF0
-CnRoZXkgd2VyZSBhY3R1YWxseSBzaG93bi4KCkNoZWVycywKRGFuaWVsCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Fri, Jan 30, 2015 at 10:37:19AM -0500, Rob Clark wrote:
+> On Tue, Jan 20, 2015 at 11:38 AM, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> I'll also need to update the new bridge in the msm edp code..
+> although that isn't such a big deal if I knew how this was *supposed*
+> to work.. since what is there now at least doesn't look right..
+
+I wonder whether the new dw-hdmi bridge code get fixed up too...
+
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
