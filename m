@@ -1,92 +1,43 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH -v2] drm/exynos: track vblank events on a per crtc basis
-Date: Fri, 30 Jan 2015 12:30:37 -0200
-Message-ID: <20150130143037.GB30820@joana>
-References: <1422016980-23806-2-git-send-email-gustavo@padovan.org>
- <1422551459-25812-1-git-send-email-gustavo@padovan.org>
- <54CAF028.6060902@samsung.com>
+Subject: Re: [PATCH 3/6] drm/exynos: Remove exynos_plane_dpms() call with no
+ effect
+Date: Fri, 30 Jan 2015 12:36:25 -0200
+Message-ID: <20150130143625.GC30820@joana>
+References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
+ <1422016980-23806-3-git-send-email-gustavo@padovan.org>
+ <54CAE878.7030805@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f180.google.com ([209.85.216.180]:36968 "EHLO
-	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753492AbbA3Oan (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Jan 2015 09:30:43 -0500
-Received: by mail-qc0-f180.google.com with SMTP id r5so20556975qcx.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jan 2015 06:30:42 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <54CAF028.6060902@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <54CAE878.7030805@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, =?utf-8?B?IifrjIDsnbjquLAvTW9iaWxlIFMvVyBQbGF0Zm9ybSBMYWIuKO2GteyLoA==?= =?utf-8?B?7JewKS9FMyjsgqzsm5ApL+yCvOyEseyghOyekCci?= <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-01-30 Joonyoung Shim <jy0922.shim@samsung.com>:
-
-> +Cc Inki,
-> 
-> Hi,
-> 
-> On 01/30/2015 02:10 AM, Gustavo Padovan wrote:
-> > From: Mandeep Singh Baines <msb@chromium.org>
-> > 
-> > The goal of the change is to make sure we send the vblank event on the
-> > current vblank. My hope is to fix any races that might be causing flicker.
-> > After this change I only see a flicker in the transition plymouth and
-> > X11.
-> > 
-> > Simplified the code by tracking vblank events on a per-crtc basis. This
-> > allowed me to remove all error paths from the callback. It also allowed
-> > me to remove the vblank wait from the callback.
-> > 
-> > Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 29 +++++++----------------------
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 19 -------------------
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 ++----
-> >  3 files changed, 9 insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > index a85c451..91c175b 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > @@ -34,9 +34,8 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
-> >  	if (mode > DRM_MODE_DPMS_ON) {
-> >  		/* wait for the completion of page flip. */
-> >  		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
-> > -				!atomic_read(&exynos_crtc->pending_flip),
-> > -				HZ/20))
-> > -			atomic_set(&exynos_crtc->pending_flip, 0);
-> > +				(exynos_crtc->event == NULL), HZ/20))
-> > +			exynos_crtc->event = NULL;
-> >  		drm_crtc_vblank_off(crtc);
-> >  	}
-> >  
-> > @@ -166,7 +165,6 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
-> >  				     uint32_t page_flip_flags)
-> >  {
-> >  	struct drm_device *dev = crtc->dev;
-> > -	struct exynos_drm_private *dev_priv = dev->dev_private;
-> >  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-> >  	struct drm_framebuffer *old_fb = crtc->primary->fb;
-> >  	unsigned int crtc_w, crtc_h;
-> > @@ -195,9 +193,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
-> >  		}
-> >  
-> >  		spin_lock_irq(&dev->event_lock);
-> > -		list_add_tail(&event->base.link,
-> > -				&dev_priv->pageflip_event_list);
-> > -		atomic_set(&exynos_crtc->pending_flip, 1);
-> > +		exynos_crtc->event = event;
-> 
-> We will lose unfinished prior events by this change. That's why we use
-> linked list.
-
-I think you are right, but I was using exynos_crtc->event to do exactly the
-same as exynos_crtc->pending_flip. So we were losing a event in
-exynos_drm_crtc_dpms() before too. I change this patch to have a page_flip
-list on the crtc. 
-
-	Gustavo
+MjAxNS0wMS0zMCBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+OgoKPiAr
+Q2MgSW5raSwKPiAKPiBIaSwKPiAKPiBPbiAwMS8yMy8yMDE1IDA5OjQyIFBNLCBHdXN0YXZvIFBh
+ZG92YW4gd3JvdGU6Cj4gPiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
+b2xsYWJvcmEuY28udWs+Cj4gPiAKPiA+IGV4eW5vc19wbGFuZV9kcG1zKERSTV9NT0RFX0RQTVNf
+T04pIGNhbGxzIHRoZSB3aW5fZW5hYmxlKCkncyBjYWxsYmFjawo+ID4gZnJvbSB0aGUgdW5kZXJs
+eWluZyBsYXllci4gSG93ZXZlciBuZWl0aGVyIG9uZSBvZiB0aGVzZSBsYXllcnMgaW1wbGVtZW50
+Cj4gPiB3aW5fZW5hYmxlKCkgLSBGSU1ELCBNaXhlciBhbmQgVklESS4gVGh1cyB0aGUgY2FsbCB0
+byBleHlub3NfcGxhbmVfZHBtcygpCj4gPiBpcyBwb2ludGxlc3MuCj4gPiAKPiAKPiBObywgaXQg
+bmVlZHMgZm9yIHBhaXIgd2l0aCBEUk1fTU9ERV9EUE1TX09GRiBjYXNlLgoKSXQgaXMgYSBzdHVi
+IGNhbGwuIGV4eW5vc19wbGFuZV9kcG1zKERSTV9NT0RFX0RQTVNfT04pIG9ubHkgY2FsbHMKZXh5
+bm9zX2NydGMtPm9wcy0+d2luX2VuYWJsZSgpIGhvd2V2ZXIgbmVpdGhlciBGSU1ELCBWSURJIG9y
+IE1peGVyIGltcGxlbWVudHMKd2luX2VuYWJsZSgpLiBTbyBpdCBoYXMgbm8gZWZmZWN0IGFuZCB3
+ZSBjYW4gcmVtb3ZlIHRoaXMgY2FsbCBzYWZlbHkuCgoJR3VzdGF2bwpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
