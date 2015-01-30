@@ -1,64 +1,70 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 4/6] drm/exynos: remove leftover functions declarations
-Date: Fri, 30 Jan 2015 11:48:15 +0900
-Message-ID: <54CAF0EF.9090502@samsung.com>
+Subject: Re: [PATCH 5/6] drm/exynos: remove struct *_win_data abstraction on
+ planes
+Date: Fri, 30 Jan 2015 13:32:56 +0900
+Message-ID: <54CB0978.5020207@samsung.com>
 References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
- <1422016980-23806-4-git-send-email-gustavo@padovan.org>
+ <1422016980-23806-5-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51303 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759344AbbA3CsP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 21:48:15 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NIY009RYYGD6840@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Jan 2015 11:48:13 +0900 (KST)
-In-reply-to: <1422016980-23806-4-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422016980-23806-5-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, =?UTF-8?B?IifrjIDsnbjquLAvTW9iaWxlIFMvVw==?= =?UTF-8?B?IFBsYXRmb3JtIExhYi4o7Ya17Iug7JewKS9FMyjsgqzsm5ApL+yCvOyEseyghOyekA==?= =?UTF-8?B?JyI=?= <inki.dae@samsung.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-+Cc Inki,
-
-Hi,
-
-On 01/23/2015 09:42 PM, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> These functions were already removed by previous cleanup work, but these
-> ones were left behind.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-> index 6258b80..628b787 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-> @@ -27,12 +27,6 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe);
->  void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe);
->  void exynos_drm_crtc_complete_scanout(struct drm_framebuffer *fb);
->  
-> -void exynos_drm_crtc_plane_mode_set(struct drm_crtc *crtc,
-> -			struct exynos_drm_plane *plane);
-> -void exynos_drm_crtc_plane_commit(struct drm_crtc *crtc, int zpos);
-> -void exynos_drm_crtc_plane_enable(struct drm_crtc *crtc, int zpos);
-> -void exynos_drm_crtc_plane_disable(struct drm_crtc *crtc, int zpos);
-> -
->  /* This function gets pipe value to crtc device matched with out_type. */
->  int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
->  					unsigned int out_type);
-> 
-
-Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Thanks.
+K0NjIElua2ksCgpIaSwKCk9uIDAxLzIzLzIwMTUgMDk6NDIgUE0sIEd1c3Rhdm8gUGFkb3ZhbiB3
+cm90ZToKPiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEu
+Y28udWs+Cj4gCj4gc3RydWN0IHtmaW1kLG1peGVyLHZpZGl9X3dpbl9kYXRhIHdhcyBqdXN0IGtl
+ZXBpbmcgdGhlIHNhbWUgZGF0YQo+IGFzIHN0cnVjdCBleHlub3NfZHJtX3BsYW5lIHRodXMgZ2V0
+IHJpZGUgb2YgaXQgYW5kIHVzZSBleHlub3NfZHJtX3BsYW5lCj4gZGlyZWN0bHkuCj4gCj4gSXQg
+Y2hhbmdlcyBob3cgcGxhbmVzIGFyZSBjcmVhdGVkIGFuZCByZW1vdmUgLndpbl9tb2RlX3NldCgp
+IGNhbGxiYWNrCj4gdGhhdCB3YXMgb25seSBmaWxsaW5nIGFsbCAqX3dpbl9kYXRhIHN0cnVjdHMu
+Cj4gCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
+bGFib3JhLmNvLnVrPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Y3J0Yy5jICB8ICAgOSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
+Yy5oICB8ICAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAg
+IHwgIDE0IC0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwg
+ICA1ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgIHwgMTgx
+ICsrKysrKysrKystLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX3BsYW5lLmMgfCAgMjAgKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9wbGFuZS5oIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV92aWRpLmMgIHwgMTIzICsrKystLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX21peGVyLmMgICAgIHwgMjEyICsrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0t
+LQo+ICA5IGZpbGVzIGNoYW5nZWQsIDE4MiBpbnNlcnRpb25zKCspLCAzODkgZGVsZXRpb25zKC0p
+Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gaW5kZXggZDBm
+NGUxYi4uNWNkNmMxYSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
+dGMuYwo+IEBAIC0yODcsMTMgKzI4NywxMyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNf
+YXR0YWNoX21vZGVfcHJvcGVydHkoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+ICB9Cj4gIAo+ICBz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkcm1fZGV2LAo+ICsJCQkJCSAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwK
+PiAgCQkJCQkgICAgICAgaW50IHBpcGUsCj4gIAkJCQkJICAgICAgIGVudW0gZXh5bm9zX2RybV9v
+dXRwdXRfdHlwZSB0eXBlLAo+ICAJCQkJCSAgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29w
+cyAqb3BzLAo+ICAJCQkJCSAgICAgICB2b2lkICpjdHgpCj4gIHsKPiAgCXN0cnVjdCBleHlub3Nf
+ZHJtX2NydGMgKmV4eW5vc19jcnRjOwo+IC0Jc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Cj4gIAlz
+dHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2YXRlID0gZHJtX2Rldi0+ZGV2X3ByaXZhdGU7
+Cj4gIAlzdHJ1Y3QgZHJtX2NydGMgKmNydGM7Cj4gIAlpbnQgcmV0Owo+IEBAIC0zMDksMTIgKzMw
+OSw2IEBAIHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19kcm1fY3J0Y19jcmVhdGUoc3Ry
+dWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAlleHlub3NfY3J0Yy0+dHlwZSA9IHR5cGU7Cj4g
+IAlleHlub3NfY3J0Yy0+b3BzID0gb3BzOwo+ICAJZXh5bm9zX2NydGMtPmN0eCA9IGN0eDsKPiAt
+CXBsYW5lID0gZXh5bm9zX3BsYW5lX2luaXQoZHJtX2RldiwgMSA8PCBwaXBlLAo+IC0JCQkJICBE
+Uk1fUExBTkVfVFlQRV9QUklNQVJZKTsKPiAtCWlmIChJU19FUlIocGxhbmUpKSB7Cj4gLQkJcmV0
+ID0gUFRSX0VSUihwbGFuZSk7Cj4gLQkJZ290byBlcnJfcGxhbmU7Cj4gLQl9Cj4gIAoKVGhlIGNy
+dGMgc2hvdWxkIGhhdmUgb25lIHByaW1hcnkgcGxhbmUsIGkgdGhpbmsgaXQgaXMgbW9yZSByZWFz
+b25hYmxlCmV4eW5vc19kcm1fY3J0Y19jcmVhdGUgZnVuY3Rpb24gY3JlYXRlcyBwcmltYXJ5IHBs
+YW5lLgoKVGhhbmtzLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
