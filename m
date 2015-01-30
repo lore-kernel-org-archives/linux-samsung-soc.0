@@ -1,59 +1,54 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v4 3/7] misc: Add cros_ec_lpc driver for x86 devices
-Date: Fri, 30 Jan 2015 13:51:44 +0100
-Message-ID: <54CB7E60.8040603@collabora.co.uk>
-References: <1422538676-4615-1-git-send-email-javier.martinez@collabora.co.uk>	 <1422538676-4615-4-git-send-email-javier.martinez@collabora.co.uk> <1422565889.10643.6.camel@x220>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:48642 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755679AbbA3Mvu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Jan 2015 07:51:50 -0500
-In-Reply-To: <1422565889.10643.6.camel@x220>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/4] ARM: EXYNOS: cpuidle: add AFTR mode support for
+ Exynos3250
+Date: Fri, 30 Jan 2015 13:52:48 +0100
+Message-ID: <1422622373-24769-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Paul,
+Hi,
 
-Thanks a lot for your feedback.
+This patch series adds support for AFTR idle mode on boards with
+Exynos3250 SoC and allows EXYNOS cpuidle driver usage on these
+boards.
 
-On 01/29/2015 10:11 PM, Paul Bolle wrote:
->>  
->> +config CROS_EC_LPC
->> +	tristate "ChromeOS Embedded Controller (LPC)"
->> +	depends on MFD_CROS_EC
->> +
-> 
-> Please drop this empty line.
->
+It has been tested on Samsung Rinato board (Gear 2).
 
-Ok.
- 
->> +	help
->> +	  If you say Y here, you get support for talking to the ChromeOS EC
->> +	  over an LPC bus. This uses a simple byte-level protocol with a
->> +	  checksum. This is used for userspace access only. The kernel
->> +	  typically has its own communication methods.
->> +
-> 
-> What happens when you say M?
-> 
+Depends on:
+- for-next branch (commit: ce275c369a0b) of linux-samsung.git
+  kernel tree
 
-Since it is a tristate kconfig symbol, it can be built as a kernel module
-but since there isn't a LPC subsystem, the platform device is registered
-in the module_init() function. So, building as a module is trickier since
-there won't be an uevent that can trigger a module auto-load based on the
-modinfo aliases information.
-
-One can of course force udev to load the module by adding to modules.conf
-or such but I wonder if is better to change from tristate to boolean or
-add to the help that it can be built as a module but auto-load does not
-work in that case.
+Changes since v1:
+- rebased on top of for-next branch (commit: ce275c369a0b) of
+  linux-samsung.git kernel tree
+- fixed lockup on hotplug by using dsb_sev() instead of IPI in
+  exynos_boot_secondary() on Exynos3250
 
 Best regards,
-Javier
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (4):
+  ARM: EXYNOS: fix CPU1 hotplug for AFTR mode on Exynos3250
+  ARM: EXYNOS: add code for setting/clearing boot flag
+  ARM: EXYNOS: cpuidle: add AFTR mode support for Exynos3250
+  ARM: EXYNOS: cpuidle: allow driver usage on Exynos3250 SoC
+
+ arch/arm/mach-exynos/common.h   |  6 ++++++
+ arch/arm/mach-exynos/exynos.c   | 26 ++++++++++++++++++++++++++
+ arch/arm/mach-exynos/firmware.c |  8 +++++++-
+ arch/arm/mach-exynos/platsmp.c  | 23 ++++++++++++++++++++---
+ arch/arm/mach-exynos/pm.c       | 12 +++++++++++-
+ arch/arm/mach-exynos/regs-pmu.h |  3 +++
+ arch/arm/mach-exynos/smc.h      |  9 +++++++++
+ 7 files changed, 82 insertions(+), 5 deletions(-)
+
+-- 
+1.8.2.3
+
