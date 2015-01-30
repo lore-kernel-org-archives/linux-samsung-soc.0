@@ -1,159 +1,92 @@
-From: Damian Eppel <d.eppel@samsung.com>
-Subject: [PATCH] clocksource: exynos_mct: fix for sleeping in atomic ctx
- handling cpu hotplug notif.
-Date: Fri, 30 Jan 2015 15:21:31 +0100
-Message-ID: <1422627691-10774-1-git-send-email-d.eppel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de, kgene@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, b.zolnierkie@samsung.com, Damian Eppel <d.eppel@samsung.com>, stable@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH -v2] drm/exynos: track vblank events on a per crtc basis
+Date: Fri, 30 Jan 2015 12:30:37 -0200
+Message-ID: <20150130143037.GB30820@joana>
+References: <1422016980-23806-2-git-send-email-gustavo@padovan.org>
+ <1422551459-25812-1-git-send-email-gustavo@padovan.org>
+ <54CAF028.6060902@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f180.google.com ([209.85.216.180]:36968 "EHLO
+	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753492AbbA3Oan (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Jan 2015 09:30:43 -0500
+Received: by mail-qc0-f180.google.com with SMTP id r5so20556975qcx.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jan 2015 06:30:42 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <54CAF028.6060902@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, =?utf-8?B?IifrjIDsnbjquLAvTW9iaWxlIFMvVyBQbGF0Zm9ybSBMYWIuKO2GteyLoA==?= =?utf-8?B?7JewKS9FMyjsgqzsm5ApL+yCvOyEseyghOyekCci?= <inki.dae@samsung.com>
 
-This is to fix an issue of sleeping in atomic context when processing
-hotplug notifications in Exynos MCT(Multi-Core Timer).
-The issue was reproducible on Exynos 3250 (Rinato board) and Exynos 5420
-(Arndale Octa board).
+2015-01-30 Joonyoung Shim <jy0922.shim@samsung.com>:
 
-Whilst testing cpu hotplug events on kernel configured with DEBUG_PREEMPT
-and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by calling
-request_irq() and free_irq() in the context of hotplug notification
-(which is in this case atomic context).
+> +Cc Inki,
+> 
+> Hi,
+> 
+> On 01/30/2015 02:10 AM, Gustavo Padovan wrote:
+> > From: Mandeep Singh Baines <msb@chromium.org>
+> > 
+> > The goal of the change is to make sure we send the vblank event on the
+> > current vblank. My hope is to fix any races that might be causing flicker.
+> > After this change I only see a flicker in the transition plymouth and
+> > X11.
+> > 
+> > Simplified the code by tracking vblank events on a per-crtc basis. This
+> > allowed me to remove all error paths from the callback. It also allowed
+> > me to remove the vblank wait from the callback.
+> > 
+> > Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 29 +++++++----------------------
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 19 -------------------
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 ++----
+> >  3 files changed, 9 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > index a85c451..91c175b 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > @@ -34,9 +34,8 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+> >  	if (mode > DRM_MODE_DPMS_ON) {
+> >  		/* wait for the completion of page flip. */
+> >  		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+> > -				!atomic_read(&exynos_crtc->pending_flip),
+> > -				HZ/20))
+> > -			atomic_set(&exynos_crtc->pending_flip, 0);
+> > +				(exynos_crtc->event == NULL), HZ/20))
+> > +			exynos_crtc->event = NULL;
+> >  		drm_crtc_vblank_off(crtc);
+> >  	}
+> >  
+> > @@ -166,7 +165,6 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+> >  				     uint32_t page_flip_flags)
+> >  {
+> >  	struct drm_device *dev = crtc->dev;
+> > -	struct exynos_drm_private *dev_priv = dev->dev_private;
+> >  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> >  	struct drm_framebuffer *old_fb = crtc->primary->fb;
+> >  	unsigned int crtc_w, crtc_h;
+> > @@ -195,9 +193,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+> >  		}
+> >  
+> >  		spin_lock_irq(&dev->event_lock);
+> > -		list_add_tail(&event->base.link,
+> > -				&dev_priv->pageflip_event_list);
+> > -		atomic_set(&exynos_crtc->pending_flip, 1);
+> > +		exynos_crtc->event = event;
+> 
+> We will lose unfinished prior events by this change. That's why we use
+> linked list.
 
-root@target:~# echo 0 > /sys/devices/system/cpu/cpu1/online
+I think you are right, but I was using exynos_crtc->event to do exactly the
+same as exynos_crtc->pending_flip. So we were losing a event in
+exynos_drm_crtc_dpms() before too. I change this patch to have a page_flip
+list on the crtc. 
 
-[   25.157867] IRQ18 no longer affine to CPU1
-...
-[   25.158445] CPU1: shutdown
-
-root@target:~# echo 1 > /sys/devices/system/cpu/cpu1/online
-
-[   40.785859] CPU1: Software reset
-[   40.786660] BUG: sleeping function called from invalid context at mm/slub.c:1241
-[   40.786668] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
-[   40.786678] Preemption disabled at:[<  (null)>]   (null)
-[   40.786681]
-[   40.786692] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.19.0-rc4-00024-g7dca860 #36
-[   40.786698] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   40.786728] [<c0014a00>] (unwind_backtrace) from [<c0011980>] (show_stack+0x10/0x14)
-[   40.786747] [<c0011980>] (show_stack) from [<c0449ba0>] (dump_stack+0x70/0xbc)
-[   40.786767] [<c0449ba0>] (dump_stack) from [<c00c6124>] (kmem_cache_alloc+0xd8/0x170)
-[   40.786785] [<c00c6124>] (kmem_cache_alloc) from [<c005d6f8>] (request_threaded_irq+0x64/0x128)
-[   40.786804] [<c005d6f8>] (request_threaded_irq) from [<c0350b8c>] (exynos4_local_timer_setup+0xc0/0x13c)
-[   40.786820] [<c0350b8c>] (exynos4_local_timer_setup) from [<c0350ca8>] (exynos4_mct_cpu_notify+0x30/0xa8)
-[   40.786838] [<c0350ca8>] (exynos4_mct_cpu_notify) from [<c003b330>] (notifier_call_chain+0x44/0x84)
-[   40.786857] [<c003b330>] (notifier_call_chain) from [<c0022fd4>] (__cpu_notify+0x28/0x44)
-[   40.786873] [<c0022fd4>] (__cpu_notify) from [<c0013714>] (secondary_start_kernel+0xec/0x150)
-[   40.786886] [<c0013714>] (secondary_start_kernel) from [<40008764>] (0x40008764)
-
-Solution:
-Clockevent irqs cannot be requested/freed every time cpu is
-hot-plugged/unplugged as CPU_STARTING/CPU_DYING notifications
-that signals hotplug or unplug events are sent with both preemption
-and local interrupts disabled. Since request_irq() may sleep it is
-moved to the initialization stage and performed for all possible
-cpus prior putting them online. Then, in the case of hotplug event
-the irq asociated with the given cpu will simply be enabled.
-Similarly on cpu unplug event the interrupt is not freed but just
-disabled.
-
-Note that after successful request_irq() call for a clockevent device
-associated to given cpu the requested irq is disabled (via disable_irq()).
-That is to make things symmetric as we expect hotplug event as a next
-thing (which will enable irq again). This should not pose any problems
-because at the time of requesting irq the clockevent device is not
-fully initialized yet, therefore should not produce interrupts at that point.
-
-For disabling an irq at cpu unplug notification disable_irq_nosync() is
-chosen which is a non-blocking function. This again shouldn't be a problem as
-prior sending CPU_DYING notification interrupts are migrated away
-from the cpu.
-
-Fixes: 7114cd749a12 ("clocksource: exynos_mct: use (request/free)_irq calls for local timer registration")
-Signed-off-by: Damian Eppel <d.eppel@samsung.com>
-Cc: <stable@vger.kernel.org>
-Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clocksource/exynos_mct.c | 45 ++++++++++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 83564c9..9beca58 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -466,15 +466,12 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
- 
- 	if (mct_int_type == MCT_INT_SPI) {
--		evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
--		if (request_irq(evt->irq, exynos4_mct_tick_isr,
--				IRQF_TIMER | IRQF_NOBALANCING,
--				evt->name, mevt)) {
--			pr_err("exynos-mct: cannot register IRQ %d\n",
--				evt->irq);
-+
-+		if (evt->irq == -1)
- 			return -EIO;
--		}
--		irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
-+
-+		irq_force_affinity(evt->irq, cpumask_of(cpu));
-+		enable_irq(evt->irq);
- 	} else {
- 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
- 	}
-@@ -487,10 +484,12 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
- static void exynos4_local_timer_stop(struct clock_event_device *evt)
- {
- 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
--	if (mct_int_type == MCT_INT_SPI)
--		free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
--	else
-+	if (mct_int_type == MCT_INT_SPI) {
-+		if (evt->irq != -1)
-+			disable_irq_nosync(evt->irq);
-+	} else {
- 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
-+	}
- }
- 
- static int exynos4_mct_cpu_notify(struct notifier_block *self,
-@@ -522,7 +521,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
- 
- static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
- {
--	int err;
-+	int err, cpu;
- 	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
- 	struct clk *mct_clk, *tick_clk;
- 
-@@ -549,7 +548,27 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
- 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
- 		     mct_irqs[MCT_L0_IRQ], err);
- 	} else {
--		irq_set_affinity(mct_irqs[MCT_L0_IRQ], cpumask_of(0));
-+		for_each_possible_cpu(cpu) {
-+			int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
-+			struct mct_clock_event_device *pcpu_mevt =
-+				per_cpu_ptr(&percpu_mct_tick, cpu);
-+
-+			pcpu_mevt->evt.irq = -1;
-+
-+			if (request_irq(mct_irq,
-+					exynos4_mct_tick_isr,
-+					IRQF_TIMER | IRQF_NOBALANCING,
-+					pcpu_mevt->name, pcpu_mevt)) {
-+				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
-+									cpu);
-+
-+				continue;
-+			}
-+			pcpu_mevt->evt.irq = mct_irq;
-+			irq_force_affinity(mct_irq, cpumask_of(cpu));
-+
-+			disable_irq(mct_irq);
-+		}
- 	}
- 
- 	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
--- 
-1.9.1
+	Gustavo
