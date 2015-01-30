@@ -1,46 +1,47 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 6/6] drm/exynos: do not copy adjusted mode into mode
- during crtc mode_set
-Date: Fri, 30 Jan 2015 12:44:20 -0200
-Message-ID: <20150130144420.GE30820@joana>
-References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
- <1422016980-23806-6-git-send-email-gustavo@padovan.org>
- <54CB0E40.1020400@samsung.com>
+Subject: Re: [PATCH] exynos/drm: fix no hdmi output
+Date: Fri, 30 Jan 2015 12:55:08 -0200
+Message-ID: <20150130145508.GF30820@joana>
+References: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f179.google.com ([209.85.216.179]:61122 "EHLO
+	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932565AbbA3OzL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Jan 2015 09:55:11 -0500
 Content-Disposition: inline
-In-Reply-To: <54CB0E40.1020400@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alban Browaeys <alban.browaeys@gmail.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, Alban Browaeys <prahal@yahoo.com>
 
-SGkgSm9vbnlvdW5nLAoKMjAxNS0wMS0zMCBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ft
-c3VuZy5jb20+OgoKPiBIaSwKPiAKPiBPbiAwMS8yMy8yMDE1IDA5OjQzIFBNLCBHdXN0YXZvIFBh
-ZG92YW4gd3JvdGU6Cj4gPiBGcm9tOiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3Jn
-Pgo+ID4gCj4gPiBUaGUgJ21vZGUnIGlzIHRoZSBtb2RlbGluZSBpbmZvcm1hdGlvbiB3aGljaCBz
-cGVjaWZpZXMgdGhlIGlkZWFsIG1vZGUKPiA+IHJlcXVlc3RlZCBieSB0aGUgbW9kZSBzZXQgaW5p
-dGlhdG9yICh1c3VhbGx5IHVzZXJzcGFjZSkuCj4gPiBUaGUgJ2FkanVzdGVkX21vZGUnIGlzIHRo
-ZSBhY3R1YWwgaGFyZHdhcmUgbW9kZSBhZnRlciBhbGwgdGhlIGNydGNzCj4gPiBhbmQgZW5jb2Rl
-cnMgaGF2ZSBoYWQgYSBjaGFuY2UgdG8gImZpeCBpdCB1cCIuCj4gPiAKPiA+IFRoZSBhZGp1c3Rl
-ZF9tb2RlIHN0YXJ0cyBhcyBhIGR1cGxpY2F0ZSBvZiB0aGUgbW9kZSBpbgo+ID4gZHJtX2NydGNf
-aGVscGVyX3NldF9tb2RlKCksIGFuZCBnZXRzIG1vZGlmaWVkIGFzIHJlcXVpcmVkLiAgVGhlcmUg
-aXMgbm8KPiA+IHJlYXNvbiB0byB0b3VjaCB0aGUgb3JpZ2luYWwgcmVxdWVzdGVkIG1vZGUuCj4g
-PiAKPiAKPiBBZ3JlZSwgYnV0IGlzIHRoZXJlIGFueSBzaWRlIGVmZmVjdCBhZnRlciB0aGlzIGNv
-bW1pdD8gU2hvdWxkIHdlIHNhdmUKPiBhZGp1c3RlZF9tb2RlIHRvIG90aGVyIHZhcmlhYmxlIGFu
-ZCB1c2UgaXQ/CgpJIGhhdmVuJ3Qgc2VlbiBhbnkuIFRlc3RlZCBvbiBwZWFjaCBwaSBhbmQgc25v
-dy4gRG8gd2UgaGF2ZSBhbnkgcmVhc29uIHRvIHNhdmUKaXQgbm93PyBJIGRvbid0IHdlIGhhdmUg
-YSB1c2VyIGZvciBpdCBub3cuCgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+Hi Alban,
+
+2015-01-29 Alban Browaeys <alban.browaeys@gmail.com>:
+
+> The hdmi outputs black screen only even though under the hood Xorg and
+> framebuffer console  are fine : devices found and initialized, but
+> not a pixel out.
+> 
+> Commit 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+> changed the call order of mixer_initialize with regards to
+>  exynos_drm_crtc_create.
+> 
+> This changes breaks hdmi out on Odroid U2 (linux-next with added
+>  Marek Szyprowski v4 hdmi patchset from linux-samsung-soc ML).
+> 
+> Restore the previous call ordering get hdmi to ouput proper pixels:
+> ie call mixer_initialize first then exynos_drm_crtc_create.
+> 
+> Fixes: 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+> Signed-off-by: Alban Browaeys <prahal@yahoo.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+	Gustavo
