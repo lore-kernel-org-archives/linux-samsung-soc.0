@@ -1,60 +1,108 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 6/6] drm/exynos: do not copy adjusted mode into mode during
- crtc mode_set
-Date: Fri, 30 Jan 2015 13:53:20 +0900
-Message-ID: <54CB0E40.1020400@samsung.com>
-References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
- <1422016980-23806-6-git-send-email-gustavo@padovan.org>
+Subject: Re: [PATCH] exynos/drm: fix no hdmi output
+Date: Fri, 30 Jan 2015 16:29:21 +0900
+Message-ID: <54CB32D1.9000201@samsung.com>
+References: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
+ <54CACF31.2040303@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422016980-23806-6-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:60345 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759794AbbA3H3V (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Jan 2015 02:29:21 -0500
+In-reply-to: <54CACF31.2040303@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alban Browaeys <alban.browaeys@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-SGksCgpPbiAwMS8yMy8yMDE1IDA5OjQzIFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
-bTogRGFuaWVsIEt1cnR6IDxkamt1cnR6QGNocm9taXVtLm9yZz4KPiAKPiBUaGUgJ21vZGUnIGlz
-IHRoZSBtb2RlbGluZSBpbmZvcm1hdGlvbiB3aGljaCBzcGVjaWZpZXMgdGhlIGlkZWFsIG1vZGUK
-PiByZXF1ZXN0ZWQgYnkgdGhlIG1vZGUgc2V0IGluaXRpYXRvciAodXN1YWxseSB1c2Vyc3BhY2Up
-Lgo+IFRoZSAnYWRqdXN0ZWRfbW9kZScgaXMgdGhlIGFjdHVhbCBoYXJkd2FyZSBtb2RlIGFmdGVy
-IGFsbCB0aGUgY3J0Y3MKPiBhbmQgZW5jb2RlcnMgaGF2ZSBoYWQgYSBjaGFuY2UgdG8gImZpeCBp
-dCB1cCIuCj4gCj4gVGhlIGFkanVzdGVkX21vZGUgc3RhcnRzIGFzIGEgZHVwbGljYXRlIG9mIHRo
-ZSBtb2RlIGluCj4gZHJtX2NydGNfaGVscGVyX3NldF9tb2RlKCksIGFuZCBnZXRzIG1vZGlmaWVk
-IGFzIHJlcXVpcmVkLiAgVGhlcmUgaXMgbm8KPiByZWFzb24gdG8gdG91Y2ggdGhlIG9yaWdpbmFs
-IHJlcXVlc3RlZCBtb2RlLgo+IAoKQWdyZWUsIGJ1dCBpcyB0aGVyZSBhbnkgc2lkZSBlZmZlY3Qg
-YWZ0ZXIgdGhpcyBjb21taXQ/IFNob3VsZCB3ZSBzYXZlCmFkanVzdGVkX21vZGUgdG8gb3RoZXIg
-dmFyaWFibGUgYW5kIHVzZSBpdD8KClRoYW5rcy4KCj4gSW4gZmFjdCwgZG9pbmcgc28gd2lsbCBj
-YXVzZSB1cyB0byB0aGluayBhIG5ldyBtb2RlIGlzIGJlaW5nIHJlcXVlc3RlZAo+IHdoZW5ldmVy
-IHVzZXJzcGFjZSB0cmllcyB0byBlc3RhYmxpc2ggYSBuZXcgZnJhbWVidWZmZXIgd2l0aAo+IGRy
-bU1vZGVTZXRDcnRjKCksIHNpbmNlIHVzZXJzcGFjZSB3aWxsIHN0aWxsIGJlIHVzaW5nIHRoZSBp
-ZGVhbCBtb2RlLCBidXQKPiB0aGUgY3J0YyB3aWxsIGJlIGluY29ycmVjdGx5IGNvbXBhcmluZyBp
-dCBhZ2FpbnN0IHRoZSBhZGp1c3RlZF9tb2RlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBL
-dXJ0eiA8ZGprdXJ0ekBjaHJvbWl1bS5vcmc+Cj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRv
-dmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IC0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIHwgNiAtLS0tLS0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDYgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-Y3J0Yy5jCj4gaW5kZXggNWNkNmMxYS4uN2ZkNjQyNiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC05MSwxMiArOTEsNiBAQCBleHlub3NfZHJtX2Ny
-dGNfbW9kZV9zZXQoc3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9k
-ZSAqbW9kZSwKPiAgCXVuc2lnbmVkIGludCBjcnRjX2g7Cj4gIAlpbnQgcmV0Owo+ICAKPiAtCS8q
-Cj4gLQkgKiBjb3B5IHRoZSBtb2RlIGRhdGEgYWRqdXN0ZWQgYnkgbW9kZV9maXh1cCgpIGludG8g
-Y3J0Yy0+bW9kZQo+IC0JICogc28gdGhhdCBoYXJkd2FyZSBjYW4gYmUgc2VldCB0byBwcm9wZXIg
-bW9kZS4KPiAtCSAqLwo+IC0JbWVtY3B5KCZjcnRjLT5tb2RlLCBhZGp1c3RlZF9tb2RlLCBzaXpl
-b2YoKmFkanVzdGVkX21vZGUpKTsKPiAtCj4gIAlyZXQgPSBleHlub3NfY2hlY2tfcGxhbmUoY3J0
-Yy0+cHJpbWFyeSwgZmIpOwo+ICAJaWYgKHJldCA8IDApCj4gIAkJcmV0dXJuIHJldDsKPiAKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi,
+
+On 01/30/2015 09:24 AM, Joonyoung Shim wrote:
+> +Cc dri-devel ML.
+> 
+> Hi Alban,
+> 
+> On 01/30/2015 06:18 AM, Alban Browaeys wrote:
+>> The hdmi outputs black screen only even though under the hood Xorg and
+>> framebuffer console  are fine : devices found and initialized, but
+>> not a pixel out.
+>>
+>> Commit 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+>> changed the call order of mixer_initialize with regards to
+>>  exynos_drm_crtc_create.
+>>
+> 
+> Right, there is no any reason to change order but i don't think it
+> causes problem because they don't any dependency.
+> 
+
+OK, i also get blank screen from hdmi after enable vidi.
+
+>> This changes breaks hdmi out on Odroid U2 (linux-next with added
+>>  Marek Szyprowski v4 hdmi patchset from linux-samsung-soc ML).
+>>
+> 
+> I tested Odroid U3 but hdmi out is working well.
+> 
+> Thanks.
+> 
+>> Restore the previous call ordering get hdmi to ouput proper pixels:
+>> ie call mixer_initialize first then exynos_drm_crtc_create.
+>>
+>> Fixes: 93bca243ec96 ("drm/exynos: remove struct exynos_drm_manager")
+>> Signed-off-by: Alban Browaeys <prahal@yahoo.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_mixer.c | 9 +++++----
+>>  1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index d8fd8e1..188f90f 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -1258,18 +1258,19 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+>>  	struct drm_device *drm_dev = data;
+>>  	int ret;
+>>  
+>> +	ret = mixer_initialize(ctx, drm_dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+
+The pipe value for crtc is increased in mixer_initialize so it should be
+called before exynos_drm_crtc_create because the pipe value is used in
+exynos_drm_crtc_create.
+
+Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
+
+Fimd and VIDI driver also have same issue. I will post the patch to fix
+this for Fimd and VIDI driver.
+
+Thanks.
+
+>>  	ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
+>>  				     EXYNOS_DISPLAY_TYPE_HDMI,
+>>  				     &mixer_crtc_ops, ctx);
+>>  	if (IS_ERR(ctx->crtc)) {
+>> +		mixer_ctx_remove(ctx);
+>>  		ret = PTR_ERR(ctx->crtc);
+>>  		goto free_ctx;
+>>  	}
+>>  
+>> -	ret = mixer_initialize(ctx, drm_dev);
+>> -	if (ret)
+>> -		goto free_ctx;
+>> -
+>>  	return 0;
+>>  
+>>  free_ctx:
+>>
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
