@@ -1,51 +1,41 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 0/6] Add multiple GPIO and external clock to MMC pwrseq_simple
-Date: Fri, 30 Jan 2015 14:06:55 +0100
-Message-ID: <54CB81EF.8030603@collabora.co.uk>
-References: <1422543608-24704-1-git-send-email-javier.martinez@collabora.co.uk> <CAPDyKFqx-dhhVmtGnP2YpmR63Y20Ns=YyxnYrE2ewTuNXPA7Ag@mail.gmail.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 1/6] drm/exynos: remove leftover code using event_list
+Date: Fri, 30 Jan 2015 11:37:59 -0200
+Message-ID: <20150130133759.GA30820@joana>
+References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
+ <54CAEAC2.50709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFqx-dhhVmtGnP2YpmR63Y20Ns=YyxnYrE2ewTuNXPA7Ag@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Arend van Spriel <arend@broadcom.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f54.google.com ([209.85.216.54]:63994 "EHLO
+	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752866AbbA3NiD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Jan 2015 08:38:03 -0500
+Received: by mail-qa0-f54.google.com with SMTP id w8so19865197qac.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jan 2015 05:38:03 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <54CAEAC2.50709@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, =?utf-8?B?IifrjIDsnbjquLAvTW9iaWxlIFMvVyBQbGF0Zm9ybSBMYWIuKO2GteyLoA==?= =?utf-8?B?7JewKS9FMyjsgqzsm5ApL+yCvOyEseyghOyekCci?= <inki.dae@samsung.com>
 
-Hello Ulf,
+2015-01-30 Joonyoung Shim <jy0922.shim@samsung.com>:
 
-On 01/30/2015 12:13 PM, Ulf Hansson wrote:
->>
->> Patch #1 extends the simple MMC power sequence DT binding to support more
->> than one GPIO and patch #2 adds the actual implementation.
->>
->> In the same way, patch #3 and #4 extend the simple MMC power sequence DT
->> binding and pwrseq_simple driver to support an optional external clock.
->>
->> Finally as an example, patch #5 and patch #6 adds support for the wifi
->> chip in the Exynos5250 Snow that needs all these resources. These two
->> patches were added to the series only for completeness and should be
->> picked by Kukjin through his linux-samsung tree.
->>
->> Best regards,
->> Javier
+> +Cc Inki,
 > 
-> Thanks Javier! I have applied patch 1 -> 4 for my next branch.
+> Hi,
 > 
-> I made some minor fix to patch4, I send a separate response to that
-> patch so you know.
->
-
-Great, thanks a lot!
-
-Kukjin,
-
-Could you please pick patches #5 and #6 then now that Ulf picked the others?
- 
-> Kind regards
-> Uffe
+> On 01/23/2015 09:42 PM, Gustavo Padovan wrote:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > 
+> > The drm_file event_list hasn't been used anymore by exynos, so we don't
+> > need any code to clean it.
+> > 
 > 
+> No, it is used from drm core e.g. drm_irq.c file.
 
-Best regards,
-Javier
+You are right, I'll drop this patch.
+
+	Gustavo
