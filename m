@@ -1,63 +1,61 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V9 12/14] drm/bridge: Add i2c based driver for
- ps8622/ps8625 bridge
-Date: Fri, 30 Jan 2015 12:43:12 +0100
-Message-ID: <20150130114308.GD32359@ulmo>
-References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
- <1421771935-31618-13-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQMv_qbQJ=DKz=KznxkGbE2O08DUTwSDtpcfZeHtesEewA@mail.gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 02/15] iommu: Introduce iommu domain types
+Date: Fri, 30 Jan 2015 13:22:34 +0100
+Message-ID: <20150130122233.GA3702@8bytes.org>
+References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+	<1422316305-19216-3-git-send-email-joro@8bytes.org>
+	<20150128141934.GP1569@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+B+y8wtTXqdUj1xM"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAEC9eQMv_qbQJ=DKz=KznxkGbE2O08DUTwSDtpcfZeHtesEewA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, InKi Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pannaga Bhushan Reddy Patel <bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prashanth G <prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20150128141934.GP1569-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jroedel-l3A5Bk7waGM@public.gmane.org" <jroedel-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Will,
 
---+B+y8wtTXqdUj1xM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 28, 2015 at 02:19:34PM +0000, Will Deacon wrote:
+> > +/* This are the possible domain-types */
+> > +enum iommu_domain_type {
+> > +	IOMMU_DOMAIN_DMA,	/* Domain used for DMA-API */
+> > +	IOMMU_DOMAIN_IDENTITY,	/* Identity mapped domain  */
+> 
+> What happens if somebody calls map or unmap on an identity-mapping domain?
+> Can we catch that in the IOMMU core before calling the IOMMU driver? That
+> also implies we need something extra to parameterise the attributes for
+> the mapping (e.g. cacheable, read-only) and also potentially the address
+> range.
 
-On Thu, Jan 29, 2015 at 08:12:20PM +0530, Ajay kumar wrote:
-> Hi Thierry,
->=20
-> I think you forgot to take this patch!
-> Can you check this?
+The domain type is only used by the IOMMU drivers to do be able to enter
+special allocation paths (the AMD-Vi driver for example could allocate a
+special internal domain type for IOMMU_DOMAIN_DMA).
+But I think you are right, a couple of the current domain attributes we
+have could be moved here, turning the domain-type into a bit-field. So
+we could have bits for PAGING, CACHABLE, DMA_API and NESTING and build
+the domain types above from those bits.
 
-Yes, I missed it somehow. It didn't build for me after applying it now,
-but I fixed that up (and a few sparse warnings along with it). I'll send
-out another pull request shortly.
+> > +	IOMMU_DOMAIN_UNMANAGED, /* Domain mappings are managed by a third party
+> > +				   user (like KVM or VFIO) */
+> 
+> We already have the domain attributes (iommu_attr) to describe features
+> of a domain. Is there really a need for this extra type, or can we extend
+> the attribute set and allow for domain allocation with attributes?
 
-Thierry
+I don't think that domains attributed will become obsolete with this
+domain-type field. Some of the attributes should stay there for now,
+like all the PAMU specific stuff. But I agree, some could be moved over.
 
---+B+y8wtTXqdUj1xM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUy25MAAoJEN0jrNd/PrOhTzsQAIkipJrf+rQIZSHlDGvbZqA6
-kJMkr/bJ2LUsPxGye5JFqaZ54ewYC5PgAmQPsAEk7N9PyZW/1bsboK1oAXYa2nJv
-Lt9tiG1wUbBVATMkZzwi28nUqdCX4iL0y5MJ9uUvJWSUh4wDJeBKZzH9OeoRbNPM
-2BcKMU2YE62bqENFqmG5Cs/f0h4E6qyyZitqP7SNnexF8kz2qKdbDHK8wmG5PQOd
-J9vr2qAQKO81yYeVPfHHDS8LMEgjcsefRhmEZgENXG8iY03T4nlxTDEOF2sKTc8M
-X8dNFDL+Mlp4ZOY3beVp6sKBCBk1yklyLgpG8rpFK7fTF4r6Qjfq2a3OPbDKSGck
-D3o1qU6zuUFAhV/CLEETKlXE4ukMY4hNXeJZvADjuvttcuaICghBrboPK4Grva9i
-LBWbLHiH7cLSxO7O2PYbZhkTKwY3eSKrCeLKEfiq6L/N21MQjgG9YI9ZHblwEs5T
-vmUcG9bCogixcSRa4bksIfv4Dnz8Ii4CUuhaCVGUJ2xQx6wGRGJBx9XxRo7ZMqgp
-Tp9nu+ELY+L5bEP93MeXurYODDEcXZMBnDiRX2pLn0z1Edcv5xmdUbLeW0W8EQWC
-p6MCmdprkhMh6gaP2Ld8amFef4uO2QwcB2xvpkE0LNat/TVQNGunva1VKnzVXUSD
-437l2EN8PPmPKVlmOUla
-=owGE
------END PGP SIGNATURE-----
-
---+B+y8wtTXqdUj1xM--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	
+	Joerg
