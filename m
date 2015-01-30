@@ -1,60 +1,52 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] exynos/drm: fix no hdmi output
-Date: Fri, 30 Jan 2015 09:24:17 +0900
-Message-ID: <54CACF31.2040303@samsung.com>
-References: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 0/3] cpufreq: build fixes
+Date: Fri, 30 Jan 2015 01:58:03 +0100
+Message-ID: <1773560.dycYOFyPKY@vostro.rjw.lan>
+References: <1422451015-390439-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422566320-6126-1-git-send-email-prahal@yahoo.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alban Browaeys <alban.browaeys@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:50845 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751265AbbA3AfQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Jan 2015 19:35:16 -0500
+In-Reply-To: <1422451015-390439-1-git-send-email-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 
-K0NjIGRyaS1kZXZlbCBNTC4KCkhpIEFsYmFuLAoKT24gMDEvMzAvMjAxNSAwNjoxOCBBTSwgQWxi
-YW4gQnJvd2FleXMgd3JvdGU6Cj4gVGhlIGhkbWkgb3V0cHV0cyBibGFjayBzY3JlZW4gb25seSBl
-dmVuIHRob3VnaCB1bmRlciB0aGUgaG9vZCBYb3JnIGFuZAo+IGZyYW1lYnVmZmVyIGNvbnNvbGUg
-IGFyZSBmaW5lIDogZGV2aWNlcyBmb3VuZCBhbmQgaW5pdGlhbGl6ZWQsIGJ1dAo+IG5vdCBhIHBp
-eGVsIG91dC4KPiAKPiBDb21taXQgOTNiY2EyNDNlYzk2ICgiZHJtL2V4eW5vczogcmVtb3ZlIHN0
-cnVjdCBleHlub3NfZHJtX21hbmFnZXIiKQo+IGNoYW5nZWQgdGhlIGNhbGwgb3JkZXIgb2YgbWl4
-ZXJfaW5pdGlhbGl6ZSB3aXRoIHJlZ2FyZHMgdG8KPiAgZXh5bm9zX2RybV9jcnRjX2NyZWF0ZS4K
-PiAKClJpZ2h0LCB0aGVyZSBpcyBubyBhbnkgcmVhc29uIHRvIGNoYW5nZSBvcmRlciBidXQgaSBk
-b24ndCB0aGluayBpdApjYXVzZXMgcHJvYmxlbSBiZWNhdXNlIHRoZXkgZG9uJ3QgYW55IGRlcGVu
-ZGVuY3kuCgo+IFRoaXMgY2hhbmdlcyBicmVha3MgaGRtaSBvdXQgb24gT2Ryb2lkIFUyIChsaW51
-eC1uZXh0IHdpdGggYWRkZWQKPiAgTWFyZWsgU3p5cHJvd3NraSB2NCBoZG1pIHBhdGNoc2V0IGZy
-b20gbGludXgtc2Ftc3VuZy1zb2MgTUwpLgo+IAoKSSB0ZXN0ZWQgT2Ryb2lkIFUzIGJ1dCBoZG1p
-IG91dCBpcyB3b3JraW5nIHdlbGwuCgpUaGFua3MuCgo+IFJlc3RvcmUgdGhlIHByZXZpb3VzIGNh
-bGwgb3JkZXJpbmcgZ2V0IGhkbWkgdG8gb3VwdXQgcHJvcGVyIHBpeGVsczoKPiBpZSBjYWxsIG1p
-eGVyX2luaXRpYWxpemUgZmlyc3QgdGhlbiBleHlub3NfZHJtX2NydGNfY3JlYXRlLgo+IAo+IEZp
-eGVzOiA5M2JjYTI0M2VjOTYgKCJkcm0vZXh5bm9zOiByZW1vdmUgc3RydWN0IGV4eW5vc19kcm1f
-bWFuYWdlciIpCj4gU2lnbmVkLW9mZi1ieTogQWxiYW4gQnJvd2FleXMgPHByYWhhbEB5YWhvby5j
-b20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCA5ICsr
-KysrLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
-KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IGQ4ZmQ4ZTEu
-LjE4OGY5MGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAt
-MTI1OCwxOCArMTI1OCwxOSBAQCBzdGF0aWMgaW50IG1peGVyX2JpbmQoc3RydWN0IGRldmljZSAq
-ZGV2LCBzdHJ1Y3QgZGV2aWNlICptYW5hZ2VyLCB2b2lkICpkYXRhKQo+ICAJc3RydWN0IGRybV9k
-ZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+ICAJaW50IHJldDsKPiAgCj4gKwlyZXQgPSBtaXhlcl9p
-bml0aWFsaXplKGN0eCwgZHJtX2Rldik7Cj4gKwlpZiAocmV0KQo+ICsJCXJldHVybiByZXQ7Cj4g
-Kwo+ICAJY3R4LT5jcnRjID0gZXh5bm9zX2RybV9jcnRjX2NyZWF0ZShkcm1fZGV2LCBjdHgtPnBp
-cGUsCj4gIAkJCQkgICAgIEVYWU5PU19ESVNQTEFZX1RZUEVfSERNSSwKPiAgCQkJCSAgICAgJm1p
-eGVyX2NydGNfb3BzLCBjdHgpOwo+ICAJaWYgKElTX0VSUihjdHgtPmNydGMpKSB7Cj4gKwkJbWl4
-ZXJfY3R4X3JlbW92ZShjdHgpOwo+ICAJCXJldCA9IFBUUl9FUlIoY3R4LT5jcnRjKTsKPiAgCQln
-b3RvIGZyZWVfY3R4Owo+ICAJfQo+ICAKPiAtCXJldCA9IG1peGVyX2luaXRpYWxpemUoY3R4LCBk
-cm1fZGV2KTsKPiAtCWlmIChyZXQpCj4gLQkJZ290byBmcmVlX2N0eDsKPiAtCj4gIAlyZXR1cm4g
-MDsKPiAgCj4gIGZyZWVfY3R4Ogo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On Wednesday, January 28, 2015 02:16:52 PM Arnd Bergmann wrote:
+> These came out of running randconfig build tests on ARM. The three
+> patches are completely independent, so please apply what looks good.
+> 
+> The two s3c patches are for old bugs and should go through the
+> cpufreq tree.
+> 
+> The exynos bug only exists in the thermal-soc tree at the moment
+> and should get picked up by Eduardo with an Ack from the cpufreq
+> maintainers, or alternatively the bug should get fixed differently
+> if someone can come up with a better solution.
+> 
+> Arnd Bergmann (3):
+>   cpufreq: s3c: remove incorrect __init annotations
+>   cpufreq: s3c: remove last use of resume_clocks callback
+>   cpufreq: exynos: allow modular build
+> 
+>  drivers/cpufreq/Kconfig.arm          | 14 +++++++++-----
+>  drivers/cpufreq/exynos-cpufreq.h     |  6 +++---
+>  drivers/cpufreq/exynos4210-cpufreq.c |  1 +
+>  drivers/cpufreq/exynos4x12-cpufreq.c |  1 +
+>  drivers/cpufreq/exynos5250-cpufreq.c |  1 +
+>  drivers/cpufreq/s3c2416-cpufreq.c    |  4 ++--
+>  drivers/cpufreq/s3c24xx-cpufreq.c    | 10 +---------
+>  7 files changed, 18 insertions(+), 19 deletions(-)
+
+I'm assuming that this series will go in through the Samsumg tree.
+
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
