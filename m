@@ -1,38 +1,81 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 4/4] ARM: EXYNOS: cpuidle: allow driver usage on Exynos3250
- SoC
-Date: Fri, 30 Jan 2015 13:52:52 +0100
-Message-ID: <1422622373-24769-5-git-send-email-b.zolnierkie@samsung.com>
-References: <1422622373-24769-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1422622373-24769-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 4/6] mmc: pwrseq_simple: Add optional reference clock
+ support
+Date: Fri, 30 Jan 2015 14:03:33 +0100
+Message-ID: <54CB8125.7030107@collabora.co.uk>
+References: <1422543608-24704-1-git-send-email-javier.martinez@collabora.co.uk>	<1422543608-24704-5-git-send-email-javier.martinez@collabora.co.uk> <CAPDyKFp5tGogzjU27jTDcHviUUwnTSgq4EP484_OprV_nPBsOg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFp5tGogzjU27jTDcHviUUwnTSgq4EP484_OprV_nPBsOg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Arend van Spriel <arend@broadcom.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Register cpuidle platform device on Exynos3250 SoC allowing EXYNOS
-cpuidle driver usage on this SoC.
+Hello Ulf,
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
+On 01/30/2015 12:17 PM, Ulf Hansson wrote:
+>>  };
+>> @@ -39,6 +42,11 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+>>         struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+>>                                         struct mmc_pwrseq_simple, pwrseq);
+>>
+>> +       if (!IS_ERR(pwrseq->ext_clk)) {
+> 
+> This should be:
+> 
+> if (!IS_ERR(pwrseq->ext_clk) && !pwrseq->clk_enabled) {
+> 
+>
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index c599a0f..2652024 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -244,6 +244,7 @@ static void __init exynos_dt_machine_init(void)
- 	    of_machine_is_compatible("samsung,exynos4212") ||
- 	    (of_machine_is_compatible("samsung,exynos4412") &&
- 	     of_machine_is_compatible("samsung,trats2")) ||
-+	    of_machine_is_compatible("samsung,exynos3250") ||
- 	    of_machine_is_compatible("samsung,exynos5250"))
- 		platform_device_register(&exynos_cpuidle);
+Oh, I thought that it was not possible to enter mmc_pwrseq_pre_power_on()
+twice without a prior call to mmc_pwrseq_power_off() but I guess I didn't
+read the MMC core code carefully...
  
--- 
-1.8.2.3
+>> +               clk_prepare_enable(pwrseq->ext_clk);
+>> +               pwrseq->clk_enabled = true;
+>> +       }
+>> +
+>>         mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
+>>  }
+>>
+>> @@ -50,6 +58,19 @@ static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
+>>         mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
+>>  }
+>>
+>> +static void mmc_pwrseq_simple_power_off(struct mmc_host *host)
+>> +{
+>> +       struct mmc_pwrseq_simple *pwrseq = container_of(host->pwrseq,
+>> +                                       struct mmc_pwrseq_simple, pwrseq);
+>> +
+>> +       mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
+>> +
+>> +       if (pwrseq->clk_enabled) {
+> 
+> I changed this as well, but that was just to make code clearer.
+> 
+> if (!IS_ERR(pwrseq->ext_clk) && pwrseq->clk_enabled) {
+> 
+>
 
+Yeah, if IS_ERR(pwrseq->ext_clk) then clk_enabled will always be false but I
+agree that the change makes the code to be more consistent.
+
+>>
+> 
+> As I stated in the response to he coverletter for the patchset, this
+> patch is applied for next with above changes.
+> 
+> Thanks!
+>
+
+Thanks a lot for your help and for fixing these things!
+
+> Kind regards
+> Uffe
+>
+
+Best regards,
+Javier
