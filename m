@@ -1,50 +1,48 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH] drm/exynos: hdmi: replace fb size with mode size from win
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos: hdmi: replace fb size with mode size from win
  commit
-Date: Fri, 30 Jan 2015 17:30:45 +0900
-Message-ID: <1422606645-25491-1-git-send-email-sw0312.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38490 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754513AbbA3Iai (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Jan 2015 03:30:38 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NIZ00178EB1ZB80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Jan 2015 17:30:37 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Date: Fri, 30 Jan 2015 17:36:24 +0900
+Message-ID: <54CB4288.4090906@samsung.com>
+References: <1422606645-25491-1-git-send-email-sw0312.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422606645-25491-1-git-send-email-sw0312.kim@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
-Cc: jy0922.shim@samsung.com, sw0312.kim@samsung.com
 
-For default graphic window, mixer_win_commit() sets display size
-register as fb size. Calling setplane with smaller fb size than
-mode size to default window causes distorted display result. So
-this patch replaces fb size with mode size for display size from
-the mixer_win_commit().
-
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 6766271..086fe0e 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -584,8 +584,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 	/* setup display size */
- 	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
- 		win == MIXER_DEFAULT_WIN) {
--		val  = MXR_MXR_RES_HEIGHT(win_data->fb_height);
--		val |= MXR_MXR_RES_WIDTH(win_data->fb_width);
-+		val  = MXR_MXR_RES_HEIGHT(win_data->mode_height);
-+		val |= MXR_MXR_RES_WIDTH(win_data->mode_width);
- 		mixer_reg_write(res, MXR_RESOLUTION, val);
- 	}
- 
--- 
-1.7.9.5
+SGksCgpPbiAwMS8zMC8yMDE1IDA1OjMwIFBNLCBTZXVuZy1Xb28gS2ltIHdyb3RlOgo+IEZvciBk
+ZWZhdWx0IGdyYXBoaWMgd2luZG93LCBtaXhlcl93aW5fY29tbWl0KCkgc2V0cyBkaXNwbGF5IHNp
+emUKPiByZWdpc3RlciBhcyBmYiBzaXplLiBDYWxsaW5nIHNldHBsYW5lIHdpdGggc21hbGxlciBm
+YiBzaXplIHRoYW4KPiBtb2RlIHNpemUgdG8gZGVmYXVsdCB3aW5kb3cgY2F1c2VzIGRpc3RvcnRl
+ZCBkaXNwbGF5IHJlc3VsdC4gU28KPiB0aGlzIHBhdGNoIHJlcGxhY2VzIGZiIHNpemUgd2l0aCBt
+b2RlIHNpemUgZm9yIGRpc3BsYXkgc2l6ZSBmcm9tCj4gdGhlIG1peGVyX3dpbl9jb21taXQoKS4K
+PiAKPiBTaWduZWQtb2ZmLWJ5OiBTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29t
+Pgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgICAgNCAr
+Ky0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4g
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gaW5kZXggNjc2NjI3MS4uMDg2
+ZmUwZSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5j
+Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IEBAIC01ODQs
+OCArNTg0LDggQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9j
+b250ZXh0ICpjdHgsIGludCB3aW4pCj4gIAkvKiBzZXR1cCBkaXNwbGF5IHNpemUgKi8KPiAgCWlm
+IChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCAmJgo+ICAJCXdpbiA9PSBNSVhF
+Ul9ERUZBVUxUX1dJTikgewo+IC0JCXZhbCAgPSBNWFJfTVhSX1JFU19IRUlHSFQod2luX2RhdGEt
+PmZiX2hlaWdodCk7Cj4gLQkJdmFsIHw9IE1YUl9NWFJfUkVTX1dJRFRIKHdpbl9kYXRhLT5mYl93
+aWR0aCk7Cj4gKwkJdmFsICA9IE1YUl9NWFJfUkVTX0hFSUdIVCh3aW5fZGF0YS0+bW9kZV9oZWln
+aHQpOwo+ICsJCXZhbCB8PSBNWFJfTVhSX1JFU19XSURUSCh3aW5fZGF0YS0+bW9kZV93aWR0aCk7
+Cj4gIAkJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1JFU09MVVRJT04sIHZhbCk7Cj4gIAl9Cj4g
+IAo+IAoKQWNrZWQtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4K
+ClRoYW5rcy4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
