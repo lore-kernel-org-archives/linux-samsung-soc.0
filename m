@@ -1,92 +1,120 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 01/12] clk: samsung: exynos5433: Add clocks using common
- clock framework
-Date: Fri, 30 Jan 2015 09:50:13 +0900
-Message-ID: <54CAD545.7090301@samsung.com>
-References: <1421821618-8627-1-git-send-email-cw00.choi@samsung.com>
- <1421821618-8627-2-git-send-email-cw00.choi@samsung.com>
- <54C287A0.50407@samsung.com>
- <CAGTfZH0nXzDgFoMF4eSW71Sey44aY9gYRzX+uWP39ut2jY_Pfg@mail.gmail.com>
- <54CA2D3D.3070908@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [RFC] drm/exynos: move hdmi clk disable out of pm ops
+Date: Fri, 30 Jan 2015 11:02:50 +0900
+Message-ID: <54CAE64A.2040906@samsung.com>
+References: <CABxcv=nNKrF45TL3_1BZHMzfKj1xPm6TzUGRSZ3WgJxzyUSmxQ@mail.gmail.com>
+ <1422538273-3097-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23151 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:40704 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752910AbbA3AuQ (ORCPT
+	with ESMTP id S1758757AbbA3CCu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jan 2015 19:50:16 -0500
-In-reply-to: <54CA2D3D.3070908@samsung.com>
+	Thu, 29 Jan 2015 21:02:50 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NIY00K7NWCOCZE0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Jan 2015 11:02:48 +0900 (KST)
+In-reply-to: <1422538273-3097-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, "pankaj.dubey@samsung.com" <pankaj.dubey@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, inki.dae@samsung.com, Prathyush K <prathyush.k@samsung.com>, kgene@kernel.org
 
-Hi Sylwester,
++Cc Kukjin,
 
-On 01/29/2015 09:53 PM, Sylwester Nawrocki wrote:
-> Hi Chanwoo,
+Hi,
+
+On 01/29/2015 10:31 PM, Gustavo Padovan wrote:
+> From: Prathyush K <prathyush.k@samsung.com>
 > 
-> On 23/01/15 21:54, Chanwoo Choi wrote:
->> On Sat, Jan 24, 2015 at 2:40 AM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>> On 21/01/15 07:26, Chanwoo Choi wrote:
->>>> +/* list of all parent clock list */
->>>
->>>> +PNAME(mout_bus_pll_user_p)   = { "fin_pll", "sclk_bus_pll", };
->>> ...
->>>> +
->>>> +static struct samsung_mux_clock top_mux_clks[] __initdata = {
->>>
->>>> +     MUX(CLK_MOUT_BUS_PLL_USER, "mout_bus_pll_user", mout_bus_pll_user_p,
->>>> +                     MUX_SEL_TOP1, 0, 1),
->>> ...
->>>> +};
->>>> +
->>>> +static struct samsung_div_clock top_div_clks[] __initdata = {
->>> ...
->>>> +     /* DIV_TOP3 */
->>>> +     DIV(CLK_DIV_ACLK_IMEM_SSSX_266, "div_aclk_imem_sssx_266",
->>>> +                     "mout_bus_pll_user", DIV_TOP3, 24, 3),
->>>
->>> Shouldn't "fin_pll" be renamed to "oscclk" ? In the documentation
->>> the root clock (from XXTI input pin) seems to be referred as OSCCLK.
->>> And I can't see "fin_pll" clock registered anywhere. Shouldn't there
->>> be a "fixed-rate-clock" as a parent of at least CMU_TOP? e.g.
->>
->> Right,
->> I added "fin_pll" fixed clock in DT as following:
->> When I registered "fin_pll" fixed clock, I could use "fin_pll" clock
->> for exynos5433 cmu without adding additional dt node.
->>
->> fin_pll: xxti {
->>         compatible = "fixed-clock";
->>         clock-output-names = "fin_pll";
->>         #clock-cells = <0>;
->> };
->>
->> I'll add the example of "fin_pll" dt node to documentation for exynos5433 cmu.
+> When VPLL clock of less than 140 MHz was used and all the three
+> clocks - hdmiphy, hdmi, sclk_hdmi are disabled, the system hangs
+> during S2R when HDMI is connected. Since we want to use a vpll
+> clock of 70.5 MHz, we cannot disable these 3 clocks before suspending.
+> This patch moves the clk enable/disable of hdmi and sclk_hdmi
+> outside of the pm ops. Now system suspends and resumes with HDMI
+> connected with VPLL set at 70.5 MHz.
 > 
-> OK, thanks. But I think it needs to be named "oscclk", FIN_PLL is almost
-> not existent in the SoC's documentation.
-> I'd suggest to define the root oscillator clock (XXTI/OSCCLK) as "oscclk"
-> in DT, rather than registering "fin_pll" fixed clock in the driver.
-
-OK,
-I'll fix it by using "oscclk" clock name instead of "fin_pll".
-
+> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 > 
->>> xxti: xxti {
->>>         compatible = "fixed-clock";
->>>         #clock-cells = <0>;
->>>         clock-output-names = "oscclk";
->>>         clock-frequency = <24000000>;
->>> };
->>>
->>> &cmu_top {
->>>         clocks = <&xxti>;
->>> };
+> ---
+> This work depends on the HDMI support patches from Javier:
+> https://lkml.org/lkml/2015/1/20/235
+> 
+> This patch comes from a downstream tree (Google chormeOS) and it is
+> authored by a Samsung employee, but we still think this may not fix
+> the real cause of the bug, there might be something else that we
+> haven't found that could be the cause of this issue. Anyone has some
+> comment to add here?
 
-Best Regards,
-Chanwoo Choi
+Hmm, do you test from which exynos SoC?
+
+Kukjin, if it is hw issue, do you know hw experts of exynos hdmi and
+could we get any advice?
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 6aa0d65..7a473cb 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -2064,9 +2064,6 @@ static void hdmi_poweron(struct exynos_drm_display *display)
+>  	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>  			PMU_HDMI_PHY_ENABLE_BIT, 1);
+>  
+> -	clk_prepare_enable(res->hdmi);
+> -	clk_prepare_enable(res->sclk_hdmi);
+> -
+>  	hdmiphy_poweron(hdata);
+>  	hdmi_commit(display);
+>  }
+> @@ -2088,9 +2085,6 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+>  
+>  	cancel_delayed_work(&hdata->hotplug_work);
+>  
+> -	clk_disable_unprepare(res->sclk_hdmi);
+> -	clk_disable_unprepare(res->hdmi);
+> -
+>  	/* reset pmu hdmiphy control bit to disable hdmiphy */
+>  	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>  			PMU_HDMI_PHY_ENABLE_BIT, 0);
+> @@ -2254,6 +2248,14 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+>  	} else
+>  		res->reg_hdmi_en = NULL;
+>  
+> +	/*
+> +	 * These two clocks are not moved into hdmi_poweron/off since system
+> +	 * fails to suspend if VPLL clock of 70.5 MHz is used and these
+> +	 * clocks are disabled before suspend. So enable them here.
+> +	 */
+> +	clk_prepare_enable(res->sclk_hdmi);
+> +	clk_prepare_enable(res->hdmi);
+> +
+
+Then twe clocks are turned on always. I don't think it's reasonable.
+
+Thanks.
+
+>  	return ret;
+>  fail:
+>  	DRM_ERROR("HDMI resource init - failed\n");
+> @@ -2516,6 +2518,9 @@ static int hdmi_remove(struct platform_device *pdev)
+>  	if (hdata->res.reg_hdmi_en)
+>  		regulator_disable(hdata->res.reg_hdmi_en);
+>  
+> +	clk_disable_unprepare(hdata->res.sclk_hdmi);
+> +	clk_disable_unprepare(hdata->res.hdmi);
+> +
+>  	if (hdata->hdmiphy_port)
+>  		put_device(&hdata->hdmiphy_port->dev);
+>  	put_device(&hdata->ddc_adpt->dev);
+> 
