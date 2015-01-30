@@ -1,143 +1,132 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
-Date: Fri, 30 Jan 2015 09:14:22 +0100
-Message-ID: <20150130091422.669930c8@amdc2363>
-References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
- <1421667844-13627-2-git-send-email-l.majewski@samsung.com>
- <CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
- <20150122100124.65e7a19e@amdc2363>
- <CAM4voani1xcgRU3e11_pnYw4d7Yj=QOKun8g_DywmxDxOwEgRQ@mail.gmail.com>
- <20150129230616.GJ29837@developer.amazonguestwifi.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [RFC] drm/exynos: move hdmi clk disable out of pm ops
+Date: Fri, 30 Jan 2015 17:27:46 +0900
+Message-ID: <54CB4082.1000005@samsung.com>
+References: <CABxcv=nNKrF45TL3_1BZHMzfKj1xPm6TzUGRSZ3WgJxzyUSmxQ@mail.gmail.com>
+ <1422538273-3097-1-git-send-email-gustavo@padovan.org>
+ <54CAE64A.2040906@samsung.com>
+ <CABxcv=n7=ujyOoy1rTL-SQg=-hnCXVHbLX_npp5tn5BpTYFTZA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150129230616.GJ29837@developer.amazonguestwifi.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:17590 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752519AbbA3I2N (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Jan 2015 03:28:13 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NIZ009B2E6XOK20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Jan 2015 17:28:10 +0900 (KST)
+In-reply-to: <CABxcv=n7=ujyOoy1rTL-SQg=-hnCXVHbLX_npp5tn5BpTYFTZA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, Inki Dae <inki.dae@samsung.com>, Prathyush K <prathyush.k@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-Hi Eduardo, Abhilash,
+Hi Javier,
 
-> On Thu, Jan 22, 2015 at 06:02:07PM +0530, Abhilash Kesavan wrote:
-> > Hi Lukasz,
-> > 
-> > On Thu, Jan 22, 2015 at 2:31 PM, Lukasz Majewski
-> > <l.majewski@samsung.com> wrote:
-> > > Hi Abhilash,
-> > >
-> > >> Hi Lukasz,
-> > >>
-> > >> On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski
-> > >> <l.majewski@samsung.com> wrote:
-> > >> > The exynos_map_dt_data() function must be called before
-> > >> > thermal_zone_of_sensor_register(), and hence provide tmu_read()
-> > >> > function, before it is needed.
-> > >> >
-> > >> > This change is driven by adding support for enabling
-> > >> > thermal_zoneX when it is properly initialized.
-> > >> >
-> > >> > One can read the mode of operation
-> > >> > at /sys/class/thermal/thermal_zone0/mode Such functionality was
-> > >> > missing in the of-thermal.c code.
-> > >> >
-> > >> > Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> > >> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > >> > ---
-> > >> >  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
-> > >> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > >> >
-> > >> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> > >> > b/drivers/thermal/samsung/exynos_tmu.c index 9d2d685..5d946ab
-> > >> > 100644 --- a/drivers/thermal/samsung/exynos_tmu.c
-> > >> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > >> > @@ -975,15 +975,16 @@ static int exynos_tmu_probe(struct
-> > >> > platform_device *pdev) platform_set_drvdata(pdev, data);
-> > >> >         mutex_init(&data->lock);
-> > >> >
-> > >> > +       ret = exynos_map_dt_data(pdev);
-> > >> > +       if (ret)
-> > >> > +               goto err_sensor;
-> > >> > +
-> > >> >         data->tzd =
-> > >> > thermal_zone_of_sensor_register(&pdev->dev, 0, data,
-> > >> > &exynos_sensor_ops); if (IS_ERR(data->tzd)) {
-> > >> >                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
-> > >> >                 return PTR_ERR(data->tzd);
-> > >> >         }
-> > >> > -       ret = exynos_map_dt_data(pdev);
-> > >> > -       if (ret)
-> > >> > -               goto err_sensor;
-> > >> >
-> > >> >         pdata = data->pdata;
-> > >>
-> > >> I have been testing this along with your v5 patch set and am
-> > >> seeing incorrect temperature being reported at boot-up on
-> > >> exynos7.
-> > >
-> > > Does it show a maximal temperature value (0x1FF)?
-> > 
-> > I did not print the current temperature register, but I remember the
-> > message showing ~105C. Will give you the register value when I test
-> > with more debug prints tomorrow.
-> > 
-> > >
-> > >>  It looks
-> > >> like exynos_tmu_read gets called from
-> > >> thermal_zone_of_device_update during boot-up, now that we have
-> > >> it populated early. However, as the tmu initialization function
-> > >> has not been called yet it returns a wrong value. Does that
-> > >> sound correct ?
-> > >
-> > > No, this is a mistake. However, I'm wondering why on Exynos4/5
-> > > this error didn't show up...
-> > 
-> > I have been lowering the software trip point temperature in the
-> > exynos7 dts file (to 55C) for testing purposes. Hence, when the
-> > temperature is read incorrectly as ~105C the board trips at boot-up
-
-					^^^^ this is a very unusual
-					value - I had problems with
-					reading 0xFF values with
-					similar symptom (but this was
-					caused by lack of vtmu).
-
-> > itself. Maybe for exynos4/5 the incorrect value read during boot-up
-> > is in the non-tripping range and once the tmu is initialized later
-> > it continues to function properly thereafter ?
-> > 
-> > >
-> > > The reordering is needed to be able to call set_mode callback at
-> > > of-thermal.c to set the mode.
-> > >
-> > > If this change causes problems, then another solution (probably
-> > > not so neat) must be found.
-> > 
-> > Please let me know if you need any further details.
-
-Abhilash, could you provide more details (like relevant output from
-dmesg) and point me a list of patches which shall I apply to test this
-issue on Exynos4/5?
-
+On 01/30/2015 05:03 PM, Javier Martinez Canillas wrote:
+> Hello Joonyoung,
 > 
-> What is the status of this patch? Is it still required?
-
-It is strange, since on Exynos4/5 this works and some problems show up
-when run on Exynos7.
-
+> On Fri, Jan 30, 2015 at 3:02 AM, Joonyoung Shim <jy0922.shim@samsung.com> wrote:
+>> +Cc Kukjin,
+>>
+>> Hi,
+>>
+>> On 01/29/2015 10:31 PM, Gustavo Padovan wrote:
+>>> From: Prathyush K <prathyush.k@samsung.com>
+>>>
+>>> When VPLL clock of less than 140 MHz was used and all the three
+>>> clocks - hdmiphy, hdmi, sclk_hdmi are disabled, the system hangs
+>>> during S2R when HDMI is connected. Since we want to use a vpll
+>>> clock of 70.5 MHz, we cannot disable these 3 clocks before suspending.
+>>> This patch moves the clk enable/disable of hdmi and sclk_hdmi
+>>> outside of the pm ops. Now system suspends and resumes with HDMI
+>>> connected with VPLL set at 70.5 MHz.
+>>>
+>>> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+>>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>>
+>>> ---
+>>> This work depends on the HDMI support patches from Javier:
+>>> https://lkml.org/lkml/2015/1/20/235
+>>>
+>>> This patch comes from a downstream tree (Google chormeOS) and it is
+>>> authored by a Samsung employee, but we still think this may not fix
+>>> the real cause of the bug, there might be something else that we
+>>> haven't found that could be the cause of this issue. Anyone has some
+>>> comment to add here?
+>>
+>> Hmm, do you test from which exynos SoC?
+>>
 > 
-> Cheers,
+> I haven't the S2R case since it is broken in mainline for Exynos5420
+> (even with $subject applied) but $subject fixes for me the system
+> crash we have discussed before [0]. That is when mixer_poweron() tries
+> to access the mixer register without hdmi_poweron() enabling the
+> "hdmi" clock.
 > 
-> > 
-> > Thanks,
-> > Abhilash
+>> Kukjin, if it is hw issue, do you know hw experts of exynos hdmi and
+>> could we get any advice?
+>>
+> 
+> It would be great if someone can shed some light on both issues.
+> 
+>>> ---
+>>>  drivers/gpu/drm/exynos/exynos_hdmi.c | 17 +++++++++++------
+>>>  1 file changed, 11 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>> index 6aa0d65..7a473cb 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>> @@ -2064,9 +2064,6 @@ static void hdmi_poweron(struct exynos_drm_display *display)
+>>>       regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>>>                       PMU_HDMI_PHY_ENABLE_BIT, 1);
+>>>
+>>> -     clk_prepare_enable(res->hdmi);
+>>> -     clk_prepare_enable(res->sclk_hdmi);
+>>> -
+>>>       hdmiphy_poweron(hdata);
+>>>       hdmi_commit(display);
+>>>  }
+>>> @@ -2088,9 +2085,6 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+>>>
+>>>       cancel_delayed_work(&hdata->hotplug_work);
+>>>
+>>> -     clk_disable_unprepare(res->sclk_hdmi);
+>>> -     clk_disable_unprepare(res->hdmi);
+>>> -
+>>>       /* reset pmu hdmiphy control bit to disable hdmiphy */
+>>>       regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+>>>                       PMU_HDMI_PHY_ENABLE_BIT, 0);
+>>> @@ -2254,6 +2248,14 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+>>>       } else
+>>>               res->reg_hdmi_en = NULL;
+>>>
+>>> +     /*
+>>> +      * These two clocks are not moved into hdmi_poweron/off since system
+>>> +      * fails to suspend if VPLL clock of 70.5 MHz is used and these
+>>> +      * clocks are disabled before suspend. So enable them here.
+>>> +      */
+>>> +     clk_prepare_enable(res->sclk_hdmi);
+>>> +     clk_prepare_enable(res->hdmi);
+>>> +
+>>
+>> Then twe clocks are turned on always. I don't think it's reasonable.
+>>
+> 
+> Agreed that it would be better to gate/ungate the clocks as necessary
+> to reduce power consumption but OTOH is better to leave some clocks
+> enabled to avoid system crashes. Of course it would be even better to
+> understand the root cause and fix it.
+> 
 
+It's ok to me if we apply workaround only about exynos5420 hdmi case.
 
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Thanks.
