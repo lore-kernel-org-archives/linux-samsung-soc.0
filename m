@@ -1,191 +1,77 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 3/3] cpufreq: exynos: allow modular build
-Date: Fri, 30 Jan 2015 17:51:24 -0400
-Message-ID: <20150130215118.GA14374@developer.amazonguestwifi.org>
-References: <1422451015-390439-1-git-send-email-arnd@arndb.de>
- <1642077.OrkdxhO2uI@wuerfel>
- <20150129222150.GA29837@developer.amazonguestwifi.org>
- <5048920.rXbXJT1FvO@wuerfel>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: =?windows-1252?Q?PROBLEM=3A=A0BUG__appearing_when_tr?=
+ =?windows-1252?Q?ying_to_allocate_interrupt_on_Exynos_MCT_?=
+ =?windows-1252?Q?after_CPU_hotplug?=
+Date: Fri, 30 Jan 2015 17:08:40 -0800
+Message-ID: <54CC2B18.2070809@codeaurora.org>
+References: <544907D4.1020409@samsung.com> <20141023140644.GI27405@n2100.arm.linux.org.uk> <54494BEE.9020702@codeaurora.org> <544A52B0.9050901@samsung.com> <544EA810.6090502@codeaurora.org> <5450C391.2070007@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:37130 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753671AbbA3WFo (ORCPT
+Received: from smtp.codeaurora.org ([198.145.11.231]:55608 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757268AbbAaBIm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Jan 2015 17:05:44 -0500
-Content-Disposition: inline
-In-Reply-To: <5048920.rXbXJT1FvO@wuerfel>
+	Fri, 30 Jan 2015 20:08:42 -0500
+In-Reply-To: <5450C391.2070007@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>
+To: Marcin Jabrzyk <m.jabrzyk@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Mark Rutland <Mark.Rutland@arm.com>, Chander Kashyap <chander.kashyap@linaro.org>
+
+Kept meaning to get back to this thread. Have you resolved it?
+
+On 10/29/14 03:38, Marcin Jabrzyk wrote:
+> So I've tried this patch, it resolves one problem but introduces also
+> new ones. As expected the BUG warning is not showing after applying
+> this patch but there are some interesting side effects.
+
+Well that's half good news.
+
+> I was looking on /proc/interrupts output. IRQ for CPU0 have "MCT" name
+> and IRQ for CPU1 has unexpectedly no name at all.
+
+This is pretty confusing. I don't see how the patch could cause this to
+happen.
+
+> After making hotplug cycle of CPU1 I've observed that IRQs attached
+> originally for that CPU are generating on really low count and not in
+> order with IRQ for CPU0.
+> What's more the interrupt for CPU1 is showing to me as being counted
+> for both CPUs, so it's probably not being attached to CPU1.
+>
+
+yeah. Can you give the output of /proc/timer_list in addition to
+/proc/interrupts? It may give some hints on what's going on. It may also
+be interesting to see if irq_force_affinity() is failing. Please check
+the return value and print an error
 
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 1800053b4644..3c4538e26731 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -450,6 +450,7 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+ {
+ 	struct mct_clock_event_device *mevt;
+ 	unsigned int cpu = smp_processor_id();
++	int ret;
+ 
+ 	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 
+@@ -468,7 +469,9 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
+ 		enable_irq(evt->irq);
+-		irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
++		ret = irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
++		if (ret)
++			pr_err("force failed %d\n", ret);
+ 	} else {
+ 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+ 	}
 
-On Fri, Jan 30, 2015 at 10:24:12PM +0100, Arnd Bergmann wrote:
-> On Thursday 29 January 2015 18:21:51 Eduardo Valentin wrote:
-> > Hello Arnd and Viresh,
-> >=20
-> > On Thu, Jan 29, 2015 at 01:42:32PM +0100, Arnd Bergmann wrote:
-> > > On Thursday 29 January 2015 15:40:15 Viresh Kumar wrote:
-> > > >  obj-$(CONFIG_ARCH_DAVINCI)             +=3D davinci-cpufreq.o
-> > > >  obj-$(CONFIG_UX500_SOC_DB8500)         +=3D dbx500-cpufreq.o
-> > > > -obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)       +=3D exynos-cpufreq.o
-> > > > -obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)   +=3D exynos4210-cpufreq.o
-> > > > -obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)   +=3D exynos4x12-cpufreq.o
-> > > > -obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)   +=3D exynos5250-cpufreq.o
-> > > > +obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)   +=3D exynos-cpufreq.o exyno=
-s4210-cpufreq.o
-> > > > +obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)   +=3D exynos-cpufreq.o exyno=
-s4x12-cpufreq.o
-> > > > +obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)   +=3D exynos-cpufreq.o exyno=
-s5250-cpufreq.o
-> > > >=20
-> > >=20
-> > > I'd have to try it, but this might fail if one of the three drivers
-> > > is built-in and another one is a module.
-> > >=20
-> > > 	Arnd
-> >=20
-> > Let me make one step back here. The original issue is, now this exynos
-> > cpufreq driver depends on of thermal; but of thermal can be built as
-> > module, while this cpufreq driver cannot. Original proposal is to allow
-> > module build in the exynos cpufreq driver.
-> >=20
-> > On the original proposal, my concern is that the driver code does not
-> > have separated modules, but one single module platform driver,  which u=
-ses functions from
-> > other c files. On top of that, the patch originally allows four
-> > (independent) modules builds. Although the children drivers still
-> > selects the core part, we would still need to change the original patch
-> > to add module dependency too.
-> >=20
-> > So, my proposal was to, in order to allow module builds on this cpufreq
-> > driver, we also need to properly construct the driver into a single
-> > module, instead of several modules. The issue with my patch was the fact
-> > that it was allowing platforms that do not use that driver, to select it
-> > by default. And eventually this may cause a unusable module being loaded
-> > into those systems.
-> >=20
-> > Well, trying harder here in the same approach. The diff bellow is based
-> > on Arnd's original patch and on Viresh's amendment, except that the core
-> > part is now dependent on all the supported platforms, instead of
-> > ARCH_EXYNOS. This way, it wont load in platforms that are not supposed
-> > to be loaded. The user will be able to build the support for all
-> > platforms, or select which platforms he/she wants (as originally),
-> > except that now it can be a module, instead.
-> >=20
-> > I believe now by default it will still keep the driver only on those
-> > configs that expect it to be on. And it won't compile/load on platforms
-> > that it is not supposed to. It brings closer a config that is dependent=
- on this
-> > driver, so it looks better in the menuconfig.
-> >=20
-> > Let me know if I missed something (feel free to amend to your patch):
->=20
-> Yes, I think your refined approach works and is better than my
-> original patch, thanks a lot for giving it more thought!
->=20
-> One tiny problem:
->=20
-> > @@ -90,6 +84,20 @@ config ARM_EXYNOS_CPU_FREQ_BOOST_SW
-> > =20
-> >  	  If in doubt, say N.
-> > =20
-> > +config ARM_EXYNOS5440_CPUFREQ
-> > +	bool "SAMSUNG EXYNOS5440"
-> > +	depends on SOC_EXYNOS5440
-> > +	depends on HAVE_CLK && OF
-> > +	select PM_OPP
-> > +	default y
-> > +	help
-> > +	  This adds the CPUFreq driver for Samsung EXYNOS5440
-> > +	  SoC. The nature of exynos5440 clock controller is
-> > +	  different than previous exynos controllers so not using
-> > +	  the common exynos framework.
-> > +
-> > +	  If in doubt, say N.
->=20
-> I believe this one also has to be tristate, for the same reason.
->=20
-
-I agree with you that it is better if we make it tristate. So, on my
-side, I have no concerns changing it to tristate.
-
-However, the exynos5440 cpufreq driver does not depend on of thermal as
-of today, and therefore, I did not touch this driver for this matter.
-Meaning, if it is not causing troubles, no need to mess with it.
-
-But I can add this change. No issues, on my side.
-
-> > =20
-> > -#ifdef CONFIG_ARM_EXYNOS4210_CPUFREQ
-> > +#if IS_ENABLED(CONFIG_ARM_EXYNOS4210_CPUFREQ)
-> >  extern int exynos4210_cpufreq_init(struct exynos_dvfs_info *);
-> >  #else
-> >  static inline int exynos4210_cpufreq_init(struct exynos_dvfs_info *inf=
-o)
-> > @@ -61,7 +61,7 @@ static inline int exynos4210_cpufreq_init(struct exyn=
-os_dvfs_info *info)
-> >  	return -EOPNOTSUPP;
-> >  }
-> >  #endif
-> > -#ifdef CONFIG_ARM_EXYNOS4X12_CPUFREQ
-> > +#if IS_ENABLED(CONFIG_ARM_EXYNOS4X12_CPUFREQ)
-> >  extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
-> >  #else
-> >  static inline int exynos4x12_cpufreq_init(struct exynos_dvfs_info *inf=
-o)
-> > @@ -69,7 +69,7 @@ static inline int exynos4x12_cpufreq_init(struct exyn=
-os_dvfs_info *info)
-> >  	return -EOPNOTSUPP;
-> >  }
-> >  #endif
-> > -#ifdef CONFIG_ARM_EXYNOS5250_CPUFREQ
-> > +#if IS_ENABLED(CONFIG_ARM_EXYNOS5250_CPUFREQ)
-> >  extern int exynos5250_cpufreq_init(struct exynos_dvfs_info *);
-> >  #else
-> >  static inline int exynos5250_cpufreq_init(struct exynos_dvfs_info *inf=
-o)
->=20
-> This change is ok, but not needed, because the three extra symbols are st=
-ill
-> bool. I would leave that change out, but I also don't mind it.
-
-Indeed.
-
->=20
-> With the change to make ARM_EXYNOS5440_CPUFREQ tristate:
->=20
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-I will repost this patch with the minor amendments. Now, we only need
-an ack from cpufreq folks.
-
-BR,
-
-Eduardo Valentin
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUy/zOAAoJEMLUO4d9pOJWe50IAI59AqCXvrx4sIoYHkHsOyNQ
-fcyEZBQqGXJdiQtjNyJFqMNo6k+iQvFYzvr5JdW1gElm5Bris1f+MuCeyI3/cd9m
-K/4A9t2CiCE1q5zW0zwLPSJE8tk+6sZCWIGcipc+NIbL86sscBfJy4O7OL+5viCK
-chQCrPwTksQsFJrE4VMO3b8s/SjpDf7VUbvK7htoJ3ol/he+CDzNmmwkj2Yy3K4N
-nhFFe3lAju93ceqxacEpGWDoi413Nie4EwoLkOdfdZKxuY7CwHvmUjql5yyPskL/
-XKuB9DRMaAr2OAFdxxAL+ipx7Q0WROP+MGEUn8M+7C/NYXoQGri28NV33Av1U+I=
-=meVh
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
