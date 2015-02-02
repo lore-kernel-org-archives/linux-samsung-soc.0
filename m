@@ -1,258 +1,71 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 01/13] clk: samsung: exynos5433: Add binding document
- for Exynos5433 clock domains
-Date: Mon, 02 Feb 2015 23:08:24 +0900
-Message-ID: <54CF84D8.7070208@samsung.com>
-References: <1422882074-19758-1-git-send-email-cw00.choi@samsung.com>
- <1422882074-19758-2-git-send-email-cw00.choi@samsung.com>
- <54CF81DE.3010902@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36499 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932206AbbBBOI5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 09:08:57 -0500
-In-reply-to: <54CF81DE.3010902@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 00/13] clk: samsung: Add the support for exynos5433 clocks
+Date: Mon, 02 Feb 2015 23:23:54 +0900
+Message-ID: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sangbae90.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Sylwester,
+This patchset adds the support for Exynos5433 CMU (Clock Management Unit)
+by using common clock framework. This patchset is divided from patch[1]
+and then sent it.
+[1] https://lkml.org/lkml/2014/12/2/134
 
-On 02/02/2015 10:55 PM, Sylwester Nawrocki wrote:
-> Hi Chanwoo,
-> 
-> On 02/02/15 14:01, Chanwoo Choi wrote:
->> This patch adds devicetree binding document for Exynos5433 SoC system clock
->> controller.
->>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> ---
->>  .../devicetree/bindings/clock/exynos5433-clock.txt | 258 +++++++++++++++++++++
->>  1 file changed, 258 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->> new file mode 100644
->> index 0000000..2d7a723
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->> @@ -0,0 +1,258 @@
->> +* Samsung Exynos5433 CMU (Clock Management Units)
->> +
->> +The Exynos5433 clock controller generates and supplies clock to various
->> +controllers within the Exynos5433 SoC.
->> +
->> +Required Properties:
->> +
->> +- compatible: should be one of the following.
->> +  - "samsung,exynos5433-cmu-top"   - clock controller compatible for CMU_TOP
->> +    which generates clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
->> +    domains and bus clocks.
->> +  - "samsung,exynos5433-cmu-cpif"  - clock controller compatible for CMU_CPIF
->> +    which generates clocks for LLI (Low Latency Interface) IP.
->> +  - "samsung,exynos5433-cmu-mif"   - clock controller compatible for CMU_MIF
->> +    which generates clocks for DRAM Memory Controller domain.
->> +  - "samsung,exynos5433-cmu-peric" - clock controller compatible for CMU_PERIC
->> +    which generates clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS IPs.
->> +  - "samsung,exynos5433-cmu-peris" - clock controller compatible for CMU_PERIS
->> +    which generates clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC IPs.
->> +  - "samsung,exynos5433-cmu-fsys"  - clock controller compatible for CMU_FSYS
->> +    which generates clocks for USB/UFS/SDMMC/TSI/PDMA IPs.
->> +  - "samsung,exynos5433-cmu-g2d"   - clock controller compatible for CMU_G2D
->> +    which generates clocks for G2D/MDMA IPs.
->> +  - "samsung,exynos5433-cmu-disp"  - clock controller compatible for CMU_DISP
->> +    which generates clocks for Display (DECON/HDMI/DSIM/MIXER) IPs.
->> +  - "samsung,exynos5433-cmu-aud"   - clock controller compatible for CMU_AUD
->> +    which generates clocks for Cortex-A5/BUS/AUDIO clocks.
->> +  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-cmu-bus1"
->> +    and "samsung,exynos5433-cmu-bus2" - clock controller compatible for CMU_BUS
->> +    which generates global data buses clock and global peripheral buses clock.
->> +  - "samsung,exynos5433-cmu-g3d"  - clock controller compatible for CMU_G3D
->> +    which generates clocks for 3D Graphics Engine IP.
->> +  - "samsung,exynos5433-cmu-gscl"  - clock controller compatible for CMU_GSCL
->> +    which generates clocks for GSCALER IPs.
->> +
->> +- reg: physical base address of the controller and length of memory mapped
->> +  region.
->> +
->> +- #clock-cells: should be 1.
-> 
-> Thanks for addressing my comments! It looks almost good enough, can you
-> just please also add clocks, clock-names to the list of required properties ?
-> I guess it's sufficient to mention that these properties should contain
-> values as listed in the examples below per each CMU.
-> This also applies to you following series of 9 patches.
+Changelog:
 
-OK, I'll add more following information:
-I'll send only patch1 with following information.
+Changes from v4:
+- Add input clock information to binding document
 
-+ - clocks: list of clock identifiers which are fed as the input to
-+       the given clock controller. Please refer the next section to
-+       find the input clocks for a given controller.
-+
-+- clock-names: list of names of clocks which are fed as the input
-+       to the given clock controller.
-+
-+       Input clocks for top clock controller:
-+               - oscclk
-+               - sclk_mphy_pll
-+               - sclk_mfc_pll
-+               - sclk_bus_pll
-+
-+       Input clocks for cpif clock controller:
-+               - oscclk
-+
-+       Input clocks for mif clock controller:
-+               - oscclk
-+               - sclk_mphy_pll
-+
-+       Input clocks for fsys clock controller:
-+               - oscclk
-+               - sclk_ufs_mphy
-+               - div_aclk_fsys_200
-+               - sclk_pcie_100_fsys
-+               - sclk_ufsunipro_fsys
-+               - sclk_mmc2_fsys
-+               - sclk_mmc1_fsys
-+               - sclk_mmc0_fsys
-+               - sclk_usbhost30_fsys
-+               - sclk_usbdrd30_fsys
-+
-+       Input clocks for g2d clock controller:
-+               - oscclk
-+               - aclk_g2d_266
-+               - aclk_g2d_400
-+
-+       Input clocks for disp clock controller:
-+               - oscclk
-+               - sclk_dsim1_disp
-+               - sclk_dsim0_disp
-+               - sclk_dsd_disp
-+               - sclk_decon_tv_eclk_disp
-+               - sclk_decon_vclk_disp
-+               - sclk_decon_eclk_disp
-+               - sclk_decon_tv_vclk_disp
-+               - aclk_disp_333
-+
-+       Input clocks for bus0 clock controller:
-+               - aclk_bus0_400
-+
-+       Input clocks for bus1 clock controller:
-+               - aclk_bus1_400
-+
-+       Input clocks for bus2 clock controller:
-+               - oscclk
-+               - aclk_bus2_400
-+
-+       Input clocks for g3d clock controller:
-+               - oscclk
-+               - aclk_g3d_400
-+
-+       Input clocks for gscl clock controller:
-+               - oscclk
-+               - aclk_gscl_111
-+               - aclk_gscl_333
+Changes from v3:
+- Use 'oscclk' clock name instead of 'fin_pll'
+- Add the clock dependencies between clock domains on first patch of this patch-set
 
-> 
->> +
->> +Each clock is assigned an identifier and client nodes can use this identifier
->> +to specify the clock which they consume.
->> +
->> +All available clocks are defined as preprocessor macros in
->> +dt-bindings/clock/exynos5433.h header and can be used in device
->> +tree sources.
->> +
->> +Example 1: Examples of 'oscclk' source clock node are listed below.
->> +
->> +	xxti: xxti {
->> +		compatible = "fixed-clock";
->> +		clock-output-names = "oscclk";
->> +		#clock-cells = <0>;
->> +	};
->> +
->> +Example 2: Examples of clock controller nodes are listed below.
->> +
->> +	cmu_top: clock-controller@0x10030000 {
->> +		compatible = "samsung,exynos5433-cmu-top";
->> +		reg = <0x10030000 0x0c04>;
->> +		#clock-cells = <1>;
->> +
->> +		clock-names = "oscclk",
->> +			"sclk_mphy_pll",
->> +			"sclk_mfc_pll",
->> +			"sclk_bus_pll";
->> +		clocks = <&xxti>,
->> +		       <&cmu_cpif CLK_SCLK_MPHY_PLL>,
->> +		       <&cmu_mif CLK_SCLK_MFC_PLL>,
->> +		       <&cmu_mif CLK_SCLK_BUS_PLL>;
->> +	};
-> 
->> +	cmu_gscl: clock-controller@0x13cf0000 {
->> +		compatible = "samsung,exynos5433-cmu-gscl";
->> +		reg = <0x13cf0000 0x0b10>;
->> +		#clock-cells = <1>;
->> +
->> +		clock-names = "oscclk",
->> +			"aclk_gscl_111",
->> +			"aclk_gscl_333";
->> +		clocks = <&xxti>,
->> +			<&cmu_top CLK_ACLK_GSCL_111>,
->> +			<&cmu_top CLK_ACLK_GSCL_333>;
->> +	};
->> +
->> +Example 3: UART controller node that consumes the clock generated by the clock
->> +	   controller.
->> +
->> +	serial_0: serial@14C10000 {
->> +		compatible = "samsung,exynos5433-uart";
->> +		reg = <0x14C10000 0x100>;
->> +		interrupts = <0 421 0>;
->> +		clocks = <&cmu_peric CLK_PCLK_UART0>,
->> +			 <&cmu_peric CLK_SCLK_UART0>;
->> +		clock-names = "uart", "clk_uart_baud0";
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&uart0_bus>;
->> +		status = "disabled";
->> +	};
->> +
->> +Example 4: SPI controller node that consumes the clock generated by the clock
->> +	   controller.
-> 
-> This fourth example doesn't look like it adds significant value, I'd say it
-> can be removed.
+Changes from v2:
+- Fix the parent clock of sclk_bus_pll/sclk_mfc_pll clock on CMU_MIF domain
+- Fix wrong clock name of 'phyclk_usbdrd30_udrd30_{pipe_pclk|phyclock}_phy' clock
+- Add the clock id for CMU_FSYS fixed clock
+- Fix wrong bit width of CLK_DIV_SCLK_SCI clock on CMU_PERIC domain
+- Remove duplicat parent clocks on CMU_DISP/CMU_AUD domains
+- Fix typo on patch descriptions
+- Fix wrong fixed rate on CMU_AUD domain (ioclk_{jtag_|slimbus_|i2s_b}clk)
+- Add CLK_IGNORE_UNUSED flag to 'aclk_dmac/sclk_aud_i2s' clock for audio subsystem
+- Fix the parent clock of mout_aclk_fsys_200_user clock from aclk_fsys_200 to div_aclk_fsys_200
 
-OK, I'll merge it.
+Changes from v1:
+- Fix wrong register and code clean by using space instead of tab [Pankaj]
+- Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
+- Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
 
-> 
->> +	spi_0: spi@14d20000 {
->> +		compatible = "samsung,exynos7-spi";
->> +		reg = <0x14d20000 0x100>;
->> +		interrupts = <0 432 0>;
->> +		dmas = <&pdma0 9>, <&pdma0 8>;
->> +		dma-names = "tx", "rx";
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +		clocks = <&cmu_peric CLK_PCLK_SPI0>,
->> +			 <&cmu_top CLK_SCLK_SPI0_PERIC>;
->> +		clock-names = "spi", "spi_busclk0";
->> +		samsung,spi-src-clk = <0>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&spi0_bus>;
->> +		status = "disabled";
->> +	};
->>
-> 
-> Also please don't forget to Cc devicetree@vger.kernel.org next time.
+Chanwoo Choi (13):
+  clk: samsung: exynos5433: Add binding document for Exynos5433 clock domains
+  clk: samsung: exynos5433: Add clocks using common clock framework
+  clk: samsung: exynos5433: Add MUX clocks of CMU_TOP domain
+  clk: samsung: exynos5433: Add clocks for CMU_PERIC domain
+  clk: samsung: exynos5433: Add clocks for CMU_PERIS domain
+  clk: samsung: exynos5433: Add clocks for CMU_G2D domain
+  clk: samsung: exynos5433: Add clocks for CMU_MIF domain
+  clk: samsung: exynos5433: Add clocks for CMU_DISP domain
+  clk: samsung: exynos5433: Add clocks for CMU_AUD domain
+  clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
+  clk: samsung: exynos5433: Add missing clocks for CMU_FSYS domain
+  clk: samsung: exynos5433: Add clocks for CMU_G3D domain
+  clk: samsung: exynos5433: Add clocks for CMU_GSCL domain
 
-OK.
+ .../devicetree/bindings/clock/exynos5433-clock.txt |  305 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5433.c               | 3395 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h             |  857 +++++
+ 4 files changed, 4558 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos5433.c
+ create mode 100644 include/dt-bindings/clock/exynos5433.h
 
-Thanks,
-Chanwoo Choi
+-- 
+1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
