@@ -1,76 +1,50 @@
 From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCHv2 1/1] cpufreq: exynos: allow modular build
-Date: Mon, 2 Feb 2015 14:22:15 -0400
-Message-ID: <20150202182213.GF17425@developer.hsd1.ca.comcast.net>
-References: <1422730782-13055-1-git-send-email-edubezval@gmail.com>
- <CAKohpondsvLm2S_V+aBSoCg252nHONJ6TbyTuHoVYuwxBDEuDA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iBwuxWUsK/REspAd"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:63348 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932452AbbBBSWT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 13:22:19 -0500
-Content-Disposition: inline
-In-Reply-To: <CAKohpondsvLm2S_V+aBSoCg252nHONJ6TbyTuHoVYuwxBDEuDA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH 01/14] cpufreq: exynos4210: properly put of node
+Date: Mon,  2 Feb 2015 16:58:04 -0400
+Message-ID: <1422910697-5920-2-git-send-email-edubezval@gmail.com>
+References: <1422910697-5920-1-git-send-email-edubezval@gmail.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1422910697-5920-1-git-send-email-edubezval@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Linux PM <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
+Call of_node_put when necessary during init.
 
---iBwuxWUsK/REspAd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+---
+ drivers/cpufreq/exynos4210-cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Mon, Feb 02, 2015 at 09:33:09AM +0530, Viresh Kumar wrote:
-> On 1 February 2015 at 00:29, Eduardo Valentin <edubezval@gmail.com> wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
+diff --git a/drivers/cpufreq/exynos4210-cpufreq.c b/drivers/cpufreq/exynos4210-cpufreq.c
+index 843ec82..dba48f0 100644
+--- a/drivers/cpufreq/exynos4210-cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -169,6 +169,7 @@ int exynos4210_cpufreq_init(struct exynos_dvfs_info *info)
+ 	info->set_freq = exynos4210_set_frequency;
+ 
+ 	cpufreq = info;
++	of_node_put(np);
+ 
+ 	return 0;
+ 
+@@ -179,6 +180,8 @@ err_mout_mpll:
+ err_moutcore:
+ 	clk_put(cpu_clk);
+ 
++	of_node_put(np);
+ 	pr_debug("%s: failed initialization\n", __func__);
++
+ 	return -EINVAL;
+ }
+-- 
+2.1.3
 
-<big cut>
-
->=20
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Thanks!
-
->=20
-> Now as these are all compilable as modules, should we look into the drive=
-rs as
-> well to see what they are doing on module unload ?
-
-hmm.. it seams to be the case, yes. From a quick look, there are unreleased=
- resources
-that needs to be freed. However, they are not really on module unload,
-but on device removal. Which should be a reproducible but even today, in
-case one manually unbinds the device.
-
-Let me have a look here and will be sending something soon.
-
-
-Thanks,
-
-Eduardo Valentin
-
-
---iBwuxWUsK/REspAd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUz8BJAAoJEMLUO4d9pOJWgswIAJ2CgMsC9kNE4xzkPbkbsPta
-iC/rpcCI3bMuGto14/owwXnvExyRG+jS4K9RV4k2VekNGVbSfqBHFxfE3lqUZ+tO
-Ws/VZx7VPHN1TZHLt5m4o89hhCF3aUnqt7P1d5Ua3rStvKYfq+cn7vJivK+rUcei
-CHfvvdFY1vJil60D2u+vYxa1EIlyoroBfzyxT5vn8wt4+mxre6BI3MDkEgxia5Pd
-lRL5LLFv9V5c0Xgm4h/Wz2SBBIcuoMrmykolBhNHib137LERDOTpXp0mcfnXSshv
-I2wEpuX0WvWZg06GATwyBUPISIzQ58LjhPK4G1HfXFE9WX7YBhKewyfzm55W9V8=
-=Ksmw
------END PGP SIGNATURE-----
-
---iBwuxWUsK/REspAd--
