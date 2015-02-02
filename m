@@ -1,65 +1,50 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2] drm/exynos: do not disable hdmi clocks for exynos5420
-Date: Mon,  2 Feb 2015 12:26:41 -0200
-Message-ID: <1422887201-4052-1-git-send-email-gustavo@padovan.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 01/13] clk: samsung: exynos5433: Add binding document
+ for Exynos5433 clock domains
+Date: Mon, 02 Feb 2015 15:40:53 +0100
+Message-ID: <54CF8C75.7000104@samsung.com>
+References: <1422882074-19758-1-git-send-email-cw00.choi@samsung.com>
+ <1422882074-19758-2-git-send-email-cw00.choi@samsung.com>
+ <54CF81DE.3010902@samsung.com> <54CF84D8.7070208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Prathyush K <prathyush.k@samsung.com>, dri-devel@lists.freedesktop.org, liquid.acid@gmx.net, kgene@kernel.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59785 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751999AbbBBOlN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Feb 2015 09:41:13 -0500
+In-reply-to: <54CF84D8.7070208@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-RnJvbTogUHJhdGh5dXNoIEsgPHByYXRoeXVzaC5rQHNhbXN1bmcuY29tPgoKV2hlbiBWUExMIGNs
-b2NrIG9mIGxlc3MgdGhhbiAxNDAgTUh6IHdhcyB1c2VkIGFuZCBhbGwgdGhlIHRocmVlIGNsb2Nr
-cyAtCmhkbWlwaHksIGhkbWksIHNjbGtfaGRtaSBhcmUgZGlzYWJsZWQsIHRoZSBzeXN0ZW0gaGFu
-Z3MgZHVyaW5nIFMyUiB3aGVuCkhETUkgaXMgY29ubmVjdGVkLiBTaW5jZSB3ZSB3YW50IHRvIHVz
-ZSBhIHZwbGwgY2xvY2sgb2YgNzAuNSBNSHosIHdlCmNhbm5vdCBkaXNhYmxlIHRoZXNlIDMgY2xv
-Y2tzIGJlZm9yZSBzdXNwZW5kaW5nLiAgVGhpcyBwYXRjaCBhZGQgYW4gZXh0cmEKY2xrIGVuYWJs
-ZS9kaXNhYmxlIG9mIGhkbWkgYW5kIHNjbGtfaGRtaSBvdXRzaWRlIG9mIHRoZSBwbSBvcHMgc28g
-dGhlc2UKY2xvY2tzIGFyZSBhbHdheXMgZW5hYmxlZC4gTm93IHN5c3RlbSBzdXNwZW5kcyBhbmQg
-cmVzdW1lcyB3aXRoIEhETUkKY29ubmVjdGVkIHdpdGggVlBMTCBzZXQgYXQgNzAuNSBNSHouCgpU
-aGlzIGlzIG5vdCB0aGUgYmVzdCBzb2x1dGlvbiwgYnV0IGl0IGluaGliaXRzIGEgY3Jhc2ggd2hp
-bGUgd2UgZmlndXJlIG91dAp3aGF0IGlzIHRoZSBjb3JyZWN0IHNvbHV0aW9uIGZvciB0aGlzIGlz
-c3VlLgoKU2lnbmVkLW9mZi1ieTogUHJhdGh5dXNoIEsgPHByYXRoeXVzaC5rQHNhbXN1bmcuY29t
-PgpTaWduZWQtb2ZmLWJ5OiBBbmRyZXcgQnJlc3RpY2tlciA8YWJyZXN0aWNAY2hyb21pdW0ub3Jn
-PgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJv
-cmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgMjAg
-KysrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAyMCBpbnNlcnRpb25zKCspCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCmluZGV4IDZhYTBkNjUuLmM2YmFmNjQgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTIyNTQsNiArMjI1NCwyMCBAQCBz
-dGF0aWMgaW50IGhkbWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEp
-CiAJfSBlbHNlCiAJCXJlcy0+cmVnX2hkbWlfZW4gPSBOVUxMOwogCisJLyoKKwkgKiBGb3IgdGhl
-c2UgdHdvIGNsb2NrcyBleHlub3M1NDIwIGZhaWxzIHRvIHN1c3BlbmQgaWYgVlBMTCBjbG9jayBv
-ZgorCSAqIDcwLjUgTUh6IGlzIHVzZWQgYW5kIHRoZXNlIGNsb2NrcyBhcmUgZGlzYWJsZWQgYmVm
-b3JlIHN1c3BlbmQuIFNvCisJICogZW5hYmxlIHRoZW0gaGVyZS4KKwkgKiBOb3RlIHRoYXQgdGhp
-cyB3aWxsIGtlZXAgdGhlIGNsb2NrcyBlbmFibGVkIGZvciB0aGUgZW50aXJlCisJICogbGlmZXRp
-bWUgb2YgdGhlIGRyaXZlciBhbmQgd2FzdGUgZW5lcmd5IHdoZW4gaXQgaXMgc3VzcGVuZGVkLgor
-CSAqIEhvd2V2ZXIgaXQgcHJldmVudHMgdGhlIHN5c3RlbSBjcmFzaCB1bnRpbCBhIGJldHRlciBz
-b2x1dGlvbiBpcworCSAqIGZvdW5kCisJICovCisJaWYgKG9mX2RldmljZV9pc19jb21wYXRpYmxl
-KGRldi0+b2Zfbm9kZSwgInNhbXN1bmcsZXh5bm9zNTQyMC1oZG1pIikpIHsKKwkJY2xrX3ByZXBh
-cmVfZW5hYmxlKHJlcy0+c2Nsa19oZG1pKTsKKwkJY2xrX3ByZXBhcmVfZW5hYmxlKHJlcy0+aGRt
-aSk7CisJfQorCiAJcmV0dXJuIHJldDsKIGZhaWw6CiAJRFJNX0VSUk9SKCJIRE1JIHJlc291cmNl
-IGluaXQgLSBmYWlsZWRcbiIpOwpAQCAtMjUxNiw2ICsyNTMwLDEyIEBAIHN0YXRpYyBpbnQgaGRt
-aV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlpZiAoaGRhdGEtPnJlcy5y
-ZWdfaGRtaV9lbikKIAkJcmVndWxhdG9yX2Rpc2FibGUoaGRhdGEtPnJlcy5yZWdfaGRtaV9lbik7
-CiAKKwlpZiAob2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUoaGRhdGEtPmRldi0+b2Zfbm9kZSwKKwkJ
-CQkgICAgInNhbXN1bmcsZXh5bm9zNTQyMC1oZG1pIikpIHsKKwkJY2xrX2Rpc2FibGVfdW5wcmVw
-YXJlKGhkYXRhLT5yZXMuc2Nsa19oZG1pKTsKKwkJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGhkYXRh
-LT5yZXMuaGRtaSk7CisJfQorCiAJaWYgKGhkYXRhLT5oZG1pcGh5X3BvcnQpCiAJCXB1dF9kZXZp
-Y2UoJmhkYXRhLT5oZG1pcGh5X3BvcnQtPmRldik7CiAJcHV0X2RldmljZSgmaGRhdGEtPmRkY19h
-ZHB0LT5kZXYpOwotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+On 02/02/15 15:08, Chanwoo Choi wrote:
+
+> OK, I'll add more following information:
+> I'll send only patch1 with following information.
+> 
+> + - clocks: list of clock identifiers which are fed as the input to
+> +       the given clock controller. Please refer the next section to
+> +       find the input clocks for a given controller.
+> + - clock-names: list of names of clocks which are fed as the input
+> +       to the given clock controller.
+> +
+
+Perhaps:
+
++ - clocks: list of the clock controller input clock identifiers,
+	from common clock bindings. Please refer the next section
+	to find the input clocks for a given controller.
+
++- clock-names: list of the clock controller input clock names,
+	as described in clock-bindings.txt.
+
+?
+It's fine to resend just updated first patch from each series.
+
+-- 
+Regards,
+Sylwester
