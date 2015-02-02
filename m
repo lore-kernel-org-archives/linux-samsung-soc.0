@@ -1,260 +1,225 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v5 03/13] clk: samsung: exynos5433: Add MUX clocks of CMU_TOP
+Subject: [PATCH v5 04/13] clk: samsung: exynos5433: Add clocks for CMU_PERIC
  domain
-Date: Mon, 02 Feb 2015 23:23:57 +0900
-Message-ID: <1422887047-30911-4-git-send-email-cw00.choi@samsung.com>
+Date: Mon, 02 Feb 2015 23:23:58 +0900
+Message-ID: <1422887047-30911-5-git-send-email-cw00.choi@samsung.com>
 References: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37475 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097AbbBBOYK (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:62356 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752428AbbBBOYK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 2 Feb 2015 09:24:10 -0500
 In-reply-to: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
-Cc: kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Inha Song <ideal.song@samsung.com>
 
-This patch adds the MUX (multiplexer) clocks for CMU_TOP domain of Exynos5433.
-CMU_TOP domain provides source clocks to other CMU domains.
+This patch adds missing divider/gate clocks of CMU_PERIC domain
+which includes I2S/PCM/SPDIF/PWM/SLIMBUS IPs. The SPI/I2S may use
+external input clock which has 'ioclk_*' prefix.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+[ideal.song: Change clk flags of to pclk_gpio_* clk, pclk_gpio_* should be always on.]
+Signed-off-by: Inha Song <ideal.song@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c   | 90 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h | 31 +++++++++++-
- 2 files changed, 119 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c   | 83 +++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/exynos5433.h | 34 +++++++++++++-
+ 2 files changed, 114 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 5ad1803..31ec700 100644
+index 31ec700..9c2cb19 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -208,6 +208,7 @@ PNAME(mout_mphy_pll_user_p)	= { "oscclk", "sclk_mphy_pll", };
- PNAME(mout_mfc_pll_user_p)	= { "oscclk", "sclk_mfc_pll", };
- PNAME(mout_bus_pll_user_p)	= { "oscclk", "sclk_bus_pll", };
- PNAME(mout_bus_pll_user_t_p)	= { "oscclk", "mout_bus_pll_user", };
-+PNAME(mout_mphy_pll_user_t_p)	= { "oscclk", "mout_mphy_pll_user", };
+@@ -251,6 +251,14 @@ static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
+ 	FRATE(0, "ioclk_audiocdclk0", NULL, CLK_IS_ROOT, 100000000),
+ 	/* Xi2s1SDI input clock for SPDIF */
+ 	FRATE(0, "ioclk_spdif_extclk", NULL, CLK_IS_ROOT, 100000000),
++	/* XspiCLK[4:0] input clock for SPI */
++	FRATE(0, "ioclk_spi4_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi3_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi2_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi1_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	FRATE(0, "ioclk_spi0_clk_in", NULL, CLK_IS_ROOT, 50000000),
++	/* Xi2s1SCLK input clock for I2S1_BCLK */
++	FRATE(0, "ioclk_i2s1_bclk_in", NULL, CLK_IS_ROOT, 12288000),
+ };
  
- PNAME(mout_bus_mfc_pll_user_p)	= { "mout_bus_pll_user", "mout_mfc_pll_user",};
- PNAME(mout_mfc_bus_pll_user_p)	= { "mout_mfc_pll_user", "mout_bus_pll_user",};
-@@ -215,6 +216,12 @@ PNAME(mout_aclk_cam1_552_b_p)	= { "mout_aclk_cam1_552_a",
- 				    "mout_mfc_pll_user", };
- PNAME(mout_aclk_cam1_552_a_p)	= { "mout_isp_pll", "mout_bus_pll_user", };
+ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+@@ -756,6 +764,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
+  * Register offset definitions for CMU_PERIC
+  */
+ #define DIV_PERIC			0x0600
++#define DIV_STAT_PERIC			0x0700
+ #define ENABLE_ACLK_PERIC		0x0800
+ #define ENABLE_PCLK_PERIC0		0x0900
+ #define ENABLE_PCLK_PERIC1		0x0904
+@@ -766,6 +775,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
  
-+PNAME(mout_aclk_mfc_400_c_p)	= { "mout_aclk_mfc_400_b",
-+				    "mout_mphy_pll_user", };
-+PNAME(mout_aclk_mfc_400_b_p)	= { "mout_aclk_mfc_400_a",
-+				    "mout_bus_pll_user", };
-+PNAME(mout_aclk_mfc_400_a_p)	= { "mout_mfc_pll_user", "mout_isp_pll", };
-+
- PNAME(mout_bus_mphy_pll_user_p)	= { "mout_bus_pll_user",
- 				    "mout_mphy_pll_user", };
- PNAME(mout_aclk_mscl_b_p)	= { "mout_aclk_mscl_400_a",
-@@ -231,6 +238,21 @@ PNAME(mout_sclk_mmc0_d_p)	= { "mout_sclk_mmc0_c", "mout_isp_pll", };
- PNAME(mout_sclk_mmc0_c_p)	= { "mout_sclk_mmc0_b", "mout_mphy_pll_user",};
- PNAME(mout_sclk_mmc0_b_p)	= { "mout_sclk_mmc0_a", "mout_mfc_pll_user", };
+ static unsigned long peric_clk_regs[] __initdata = {
+ 	DIV_PERIC,
++	DIV_STAT_PERIC,
+ 	ENABLE_ACLK_PERIC,
+ 	ENABLE_PCLK_PERIC0,
+ 	ENABLE_PCLK_PERIC1,
+@@ -775,14 +785,57 @@ static unsigned long peric_clk_regs[] __initdata = {
+ 	ENABLE_IP_PERIC2,
+ };
  
-+PNAME(mout_sclk_spdif_p)	= { "sclk_audio0", "sclk_audio1",
-+				    "oscclk", "ioclk_spdif_extclk", };
-+PNAME(mout_sclk_audio1_p)	= { "ioclk_audiocdclk1", "oscclk",
-+				    "mout_aud_pll_user_t",};
-+PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "oscclk",
-+				    "mout_aud_pll_user_t",};
-+
-+static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
-+	/* Xi2s{0|1}CDCLK input clock for I2S/PCM */
-+	FRATE(0, "ioclk_audiocdclk1", NULL, CLK_IS_ROOT, 100000000),
-+	FRATE(0, "ioclk_audiocdclk0", NULL, CLK_IS_ROOT, 100000000),
-+	/* Xi2s1SDI input clock for SPDIF */
-+	FRATE(0, "ioclk_spdif_extclk", NULL, CLK_IS_ROOT, 100000000),
++static struct samsung_div_clock peric_div_clks[] __initdata = {
++	/* DIV_PERIC */
++	DIV(CLK_DIV_SCLK_SCI, "div_sclk_sci", "oscclk", DIV_PERIC, 4, 4),
++	DIV(CLK_DIV_SCLK_SC_IN, "div_sclk_sc_in", "oscclk", DIV_PERIC, 0, 4),
 +};
 +
- static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	/* MUX_SEL_TOP0 */
- 	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
-@@ -276,6 +298,14 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_ACLK_G2D_400_A, "mout_aclk_g2d_400_a",
- 			mout_bus_mfc_pll_user_p, MUX_SEL_TOP3, 0, 1),
+ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_PERIC */
++	GATE(CLK_ACLK_AHB2APB_PERIC2P, "aclk_ahb2apb_peric2p", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_PERIC1P, "aclk_ahb2apb_peric1p", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_PERIC0P, "aclk_ahb2apb_peric0p", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PERICNP_66, "aclk_pericnp_66", "aclk_peric_66",
++			ENABLE_ACLK_PERIC, 0, CLK_IGNORE_UNUSED, 0),
++
+ 	/* ENABLE_PCLK_PERIC0 */
++	GATE(CLK_PCLK_SCI, "pclk_sci", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			31, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_GPIO_FINGER, "pclk_gpio_finger", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 30, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_GPIO_ESE, "pclk_gpio_ese", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 29, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PWM, "pclk_pwm", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			28, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_SPDIF, "pclk_spdif", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			26, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_PCM1, "pclk_pcm1", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			25, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_I2S1, "pclk_i2s", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			24, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_SPI2, "pclk_spi2", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			23, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_SPI1, "pclk_spi1", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			22, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_SPI0, "pclk_spi0", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			21, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_ADCIF, "pclk_adcif", "aclk_peric_66", ENABLE_PCLK_PERIC0,
++			20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_GPIO_TOUCH, "pclk_gpio_touch", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_GPIO_NFC, "pclk_gpio_nfc", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_GPIO_PERIC, "pclk_gpio_peric", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PMU_PERIC, "pclk_pmu_peric", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_PCLK_SYSREG_PERIC, "pclk_sysreg_peric", "aclk_peric_66",
++			ENABLE_PCLK_PERIC0, 15,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_UART2, "pclk_uart2", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+ 			14, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_PCLK_UART1, "pclk_uart1", "aclk_peric_66", ENABLE_PCLK_PERIC0,
+@@ -837,15 +890,39 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+ 			ENABLE_PCLK_PERIC1, 0, CLK_SET_RATE_PARENT, 0),
  
-+	/* MUX_SEL_TOP4 */
-+	MUX(CLK_MOUT_ACLK_MFC_400_C, "mout_aclk_mfc_400_c",
-+			mout_aclk_mfc_400_c_p, MUX_SEL_TOP4, 8, 1),
-+	MUX(CLK_MOUT_ACLK_MFC_400_B, "mout_aclk_mfc_400_b",
-+			mout_aclk_mfc_400_b_p, MUX_SEL_TOP4, 4, 1),
-+	MUX(CLK_MOUT_ACLK_MFC_400_A, "mout_aclk_mfc_400_a",
-+			mout_aclk_mfc_400_a_p, MUX_SEL_TOP4, 0, 1),
-+
- 	/* MUX_SEL_TOP_MSCL */
- 	MUX(CLK_MOUT_SCLK_JPEG_C, "mout_sclk_jpeg_c", mout_sclk_jpeg_c_p,
- 			MUX_SEL_TOP_MSCL, 8, 1),
-@@ -284,6 +314,20 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_SCLK_JPEG_A, "mout_sclk_jpeg_a", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_MSCL, 0, 1),
- 
-+	/* MUX_SEL_TOP_CAM1 */
-+	MUX(CLK_MOUT_SCLK_ISP_SENSOR2, "mout_sclk_isp_sensor2",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 24, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SENSOR1, "mout_sclk_isp_sensor1",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 20, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SENSOR0, "mout_sclk_isp_sensor0",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 16, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_UART, "mout_sclk_isp_uart",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 8, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SPI1, "mout_sclk_isp_spi1",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 4, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SPI0, "mout_sclk_isp_spi0",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 0, 1),
-+
- 	/* MUX_SEL_TOP_FSYS0 */
- 	MUX(CLK_MOUT_SCLK_MMC2_B, "mout_sclk_mmc2_b", mout_sclk_mmc2_b_p,
- 			MUX_SEL_TOP_FSYS0, 28, 1),
-@@ -302,6 +346,16 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_SCLK_MMC0_A, "mout_sclk_mmc0_a", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_FSYS0, 0, 1),
- 
-+	/* MUX_SEL_TOP_FSYS1 */
-+	MUX(CLK_MOUT_SCLK_PCIE_100, "mout_sclk_pcie_100", mout_bus_pll_user_t_p,
-+			MUX_SEL_TOP_FSYS1, 12, 1),
-+	MUX(CLK_MOUT_SCLK_UFSUNIPRO, "mout_sclk_ufsunipro",
-+			mout_mphy_pll_user_t_p, MUX_SEL_TOP_FSYS1, 8, 1),
-+	MUX(CLK_MOUT_SCLK_USBHOST30, "mout_sclk_usbhost30",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_FSYS1, 4, 1),
-+	MUX(CLK_MOUT_SCLK_USBDRD30, "mout_sclk_usbdrd30",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_FSYS1, 0, 1),
-+
- 	/* MUX_SEL_TOP_PERIC0 */
- 	MUX(CLK_MOUT_SCLK_SPI4, "mout_sclk_spi4", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_PERIC0, 28, 1),
-@@ -319,6 +373,16 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 			MUX_SEL_TOP_PERIC0, 4, 1),
- 	MUX(CLK_MOUT_SCLK_SPI0, "mout_sclk_spi0", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_PERIC0, 0, 1),
-+
-+	/* MUX_SEL_TOP_PERIC1 */
-+	MUX(CLK_MOUT_SCLK_SLIMBUS, "mout_sclk_slimbus", mout_aud_pll_user_p,
-+			MUX_SEL_TOP_PERIC1, 16, 1),
-+	MUX(CLK_MOUT_SCLK_SPDIF, "mout_sclk_spdif", mout_sclk_spdif_p,
-+			MUX_SEL_TOP_PERIC1, 12, 2),
-+	MUX(CLK_MOUT_SCLK_AUDIO1, "mout_sclk_audio1", mout_sclk_audio1_p,
-+			MUX_SEL_TOP_PERIC1, 4, 2),
-+	MUX(CLK_MOUT_SCLK_AUDIO0, "mout_sclk_audio0", mout_sclk_audio0_p,
-+			MUX_SEL_TOP_PERIC1, 0, 2),
+ 	/* ENABLE_SCLK_PERIC */
++	GATE(CLK_SCLK_IOCLK_SPI4, "sclk_ioclk_spi4", "ioclk_spi4_clk_in",
++			ENABLE_SCLK_PERIC, 21, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_SPI3, "sclk_ioclk_spi3", "ioclk_spi3_clk_in",
++			ENABLE_SCLK_PERIC, 20, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI4, "sclk_spi4", "sclk_spi4_peric", ENABLE_SCLK_PERIC,
+ 			19, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI3, "sclk_spi3", "sclk_spi3_peric", ENABLE_SCLK_PERIC,
+ 			18, CLK_SET_RATE_PARENT, 0),
+-
++	GATE(CLK_SCLK_SCI, "sclk_sci", "div_sclk_sci", ENABLE_SCLK_PERIC,
++			17, 0, 0),
++	GATE(CLK_SCLK_SC_IN, "sclk_sc_in", "div_sclk_sc_in", ENABLE_SCLK_PERIC,
++			16, 0, 0),
++	GATE(CLK_SCLK_PWM, "sclk_pwm", "oscclk", ENABLE_SCLK_PERIC, 15, 0, 0),
++	GATE(CLK_SCLK_IOCLK_SPI2, "sclk_ioclk_spi2", "ioclk_spi2_clk_in",
++			ENABLE_SCLK_PERIC, 13, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_SPI1, "sclk_ioclk_spi1", "ioclk_spi1_clk_in",
++			ENABLE_SCLK_PERIC, 12,
++			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_SPI0, "sclk_ioclk_spi0", "ioclk_spi0_clk_in",
++			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
++			"ioclk_i2s1_bclk_in", ENABLE_SCLK_PERIC, 10,
++			CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "sclk_spdif_peric",
++			ENABLE_SCLK_PERIC, 8, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
++			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
++			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+-			4, CLK_SET_RATE_PARENT, 0),
++			4, CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+ 			3, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+@@ -857,6 +934,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
  };
  
- static struct samsung_div_clock top_div_clks[] __initdata = {
-@@ -382,6 +446,16 @@ static struct samsung_div_clock top_div_clks[] __initdata = {
- 	DIV(CLK_DIV_SCLK_UART0, "div_sclk_uart0", "mout_sclk_uart1",
- 			DIV_TOP_PERIC2, 0, 4),
- 
-+	/* DIV_TOP_PERIC3 */
-+	DIV(CLK_DIV_SCLK_I2S1, "div_sclk_i2s1", "sclk_audio1",
-+			DIV_TOP_PERIC3, 16, 6),
-+	DIV(CLK_DIV_SCLK_PCM1, "div_sclk_pcm1", "sclk_audio1",
-+			DIV_TOP_PERIC3, 8, 8),
-+	DIV(CLK_DIV_SCLK_AUDIO1, "div_sclk_audio1", "mout_sclk_audio1",
-+			DIV_TOP_PERIC3, 4, 4),
-+	DIV(CLK_DIV_SCLK_AUDIO0, "div_sclk_audio0", "mout_sclk_audio0",
-+			DIV_TOP_PERIC3, 0, 4),
-+
- 	/* DIV_TOP_PERIC4 */
- 	DIV(CLK_DIV_SCLK_SPI4_B, "div_sclk_spi4_b", "div_sclk_spi4_a",
- 			DIV_TOP_PERIC4, 16, 8),
-@@ -418,6 +492,12 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 			ENABLE_SCLK_TOP_PERIC, 12, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI3_PERIC, "sclk_spi3_peric", "div_sclk_spi3_b",
- 			ENABLE_SCLK_TOP_PERIC, 11, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_SPDIF_PERIC, "sclk_spdif_peric", "mout_sclk_spdif",
-+			ENABLE_SCLK_TOP_PERIC, 9, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_I2S1_PERIC, "sclk_i2s1_peric", "div_sclk_i2s1",
-+			ENABLE_SCLK_TOP_PERIC, 8, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_PCM1_PERIC, "sclk_pcm1_peric", "div_sclk_pcm1",
-+			ENABLE_SCLK_TOP_PERIC, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2_PERIC, "sclk_uart2_peric", "div_sclk_uart2",
- 			ENABLE_SCLK_TOP_PERIC, 5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART1_PERIC, "sclk_uart1_peric", "div_sclk_uart1",
-@@ -430,6 +510,14 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 			ENABLE_SCLK_TOP_PERIC, 1, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0_PERIC, "sclk_spi0_peric", "div_sclk_spi0_b",
- 			ENABLE_SCLK_TOP_PERIC, 0, CLK_SET_RATE_PARENT, 0),
-+
-+	/* MUX_ENABLE_TOP_PERIC1 */
-+	GATE(CLK_SCLK_SLIMBUS, "sclk_slimbus", "mout_sclk_slimbus",
-+			MUX_ENABLE_TOP_PERIC1, 16, 0, 0),
-+	GATE(CLK_SCLK_AUDIO1, "sclk_audio1", "div_sclk_audio1",
-+			MUX_ENABLE_TOP_PERIC1, 4, 0, 0),
-+	GATE(CLK_SCLK_AUDIO0, "sclk_audio0", "div_sclk_audio0",
-+			MUX_ENABLE_TOP_PERIC1, 0, 0, 0),
- };
- 
- /*
-@@ -516,6 +604,8 @@ static struct samsung_cmu_info top_cmu_info __initdata = {
- 	.nr_div_clks		= ARRAY_SIZE(top_div_clks),
- 	.gate_clks		= top_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(top_gate_clks),
-+	.fixed_clks		= top_fixed_clks,
-+	.nr_fixed_clks		= ARRAY_SIZE(top_fixed_clks),
- 	.nr_clk_ids		= TOP_NR_CLK,
- 	.clk_regs		= top_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
+ static struct samsung_cmu_info peric_cmu_info __initdata = {
++	.div_clks		= peric_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(peric_div_clks),
+ 	.gate_clks		= peric_gate_clks,
+ 	.nr_gate_clks		= ARRAY_SIZE(peric_gate_clks),
+ 	.nr_clk_ids		= PERIC_NR_CLK,
 diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 5cd0201..6025006 100644
+index 6025006..62d3ec7 100644
 --- a/include/dt-bindings/clock/exynos5433.h
 +++ b/include/dt-bindings/clock/exynos5433.h
-@@ -51,6 +51,23 @@
- #define CLK_MOUT_SCLK_SPI2		44
- #define CLK_MOUT_SCLK_SPI1		45
- #define CLK_MOUT_SCLK_SPI0		46
-+#define CLK_MOUT_ACLK_MFC_400_C		47
-+#define CLK_MOUT_ACLK_MFC_400_B		48
-+#define CLK_MOUT_ACLK_MFC_400_A		49
-+#define CLK_MOUT_SCLK_ISP_SENSOR2	50
-+#define CLK_MOUT_SCLK_ISP_SENSOR1	51
-+#define CLK_MOUT_SCLK_ISP_SENSOR0	52
-+#define CLK_MOUT_SCLK_ISP_UART		53
-+#define CLK_MOUT_SCLK_ISP_SPI1		54
-+#define CLK_MOUT_SCLK_ISP_SPI0		55
-+#define CLK_MOUT_SCLK_PCIE_100		56
-+#define CLK_MOUT_SCLK_UFSUNIPRO		57
-+#define CLK_MOUT_SCLK_USBHOST30		58
-+#define CLK_MOUT_SCLK_USBDRD30		59
-+#define CLK_MOUT_SCLK_SLIMBUS		60
-+#define CLK_MOUT_SCLK_SPDIF		61
-+#define CLK_MOUT_SCLK_AUDIO1		62
-+#define CLK_MOUT_SCLK_AUDIO0		63
+@@ -181,8 +181,40 @@
+ #define CLK_SCLK_UART2			34
+ #define CLK_SCLK_UART1			35
+ #define CLK_SCLK_UART0			36
++#define CLK_ACLK_AHB2APB_PERIC2P	37
++#define CLK_ACLK_AHB2APB_PERIC1P	38
++#define CLK_ACLK_AHB2APB_PERIC0P	39
++#define CLK_ACLK_PERICNP_66		40
++#define CLK_PCLK_SCI			41
++#define CLK_PCLK_GPIO_FINGER		42
++#define CLK_PCLK_GPIO_ESE		43
++#define CLK_PCLK_PWM			44
++#define CLK_PCLK_SPDIF			45
++#define CLK_PCLK_PCM1			46
++#define CLK_PCLK_I2S1			47
++#define CLK_PCLK_ADCIF			48
++#define CLK_PCLK_GPIO_TOUCH		49
++#define CLK_PCLK_GPIO_NFC		50
++#define CLK_PCLK_GPIO_PERIC		51
++#define CLK_PCLK_PMU_PERIC		52
++#define CLK_PCLK_SYSREG_PERIC		53
++#define CLK_SCLK_IOCLK_SPI4		54
++#define CLK_SCLK_IOCLK_SPI3		55
++#define CLK_SCLK_SCI			56
++#define CLK_SCLK_SC_IN			57
++#define CLK_SCLK_PWM			58
++#define CLK_SCLK_IOCLK_SPI2		59
++#define CLK_SCLK_IOCLK_SPI1		60
++#define CLK_SCLK_IOCLK_SPI0		61
++#define CLK_SCLK_IOCLK_I2S1_BCLK	62
++#define CLK_SCLK_SPDIF			63
++#define CLK_SCLK_PCM1			64
++#define CLK_SCLK_I2S1			65
  
- #define CLK_DIV_ACLK_FSYS_200		100
- #define CLK_DIV_ACLK_IMEM_SSSX_266	101
-@@ -79,6 +96,10 @@
- #define CLK_DIV_SCLK_SPI4_A		124
- #define CLK_DIV_SCLK_SPI3_B		125
- #define CLK_DIV_SCLK_SPI3_A		126
-+#define CLK_DIV_SCLK_I2S1		127
-+#define CLK_DIV_SCLK_PCM1		128
-+#define CLK_DIV_SCLK_AUDIO1		129
-+#define CLK_DIV_SCLK_AUDIO0		130
- 
- #define CLK_ACLK_PERIC_66		200
- #define CLK_ACLK_PERIS_66		201
-@@ -94,8 +115,14 @@
- #define CLK_SCLK_SPI2_PERIC		211
- #define CLK_SCLK_SPI1_PERIC		212
- #define CLK_SCLK_SPI0_PERIC		213
--
--#define TOP_NR_CLK			214
-+#define CLK_SCLK_SPDIF_PERIC		214
-+#define CLK_SCLK_I2S1_PERIC		215
-+#define CLK_SCLK_PCM1_PERIC		216
-+#define CLK_SCLK_SLIMBUS		217
-+#define CLK_SCLK_AUDIO1			218
-+#define CLK_SCLK_AUDIO0			219
+-#define PERIC_NR_CLK			37
++#define CLK_DIV_SCLK_SCI		70
++#define CLK_DIV_SCLK_SC_IN		71
 +
-+#define TOP_NR_CLK			220
++#define PERIC_NR_CLK			72
  
- /* CMU_CPIF */
- #define CLK_FOUT_MPHY_PLL		1
+ /* CMU_PERIS */
+ #define	CLK_PCLK_HPM_APBIF		1
 -- 
 1.8.5.5
