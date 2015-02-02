@@ -1,387 +1,260 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH V7 RESEND 2/2] phy: exynos5-usbdrd: Calibrate LOS levels for
- exynos5420/5800
-Date: Mon, 02 Feb 2015 18:12:04 +0530
-Message-ID: <1422880924-14212-3-git-send-email-gautam.vivek@samsung.com>
-References: <1422880924-14212-1-git-send-email-gautam.vivek@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 1/3] mmc: pwrseq: add driver for emmc hardware reset
+Date: Mon, 2 Feb 2015 13:53:46 +0100
+Message-ID: <CAPDyKFr0YxFXSvknUE=CPbDwge0uSN0JJMCM=aP+JrXAMnFHCA@mail.gmail.com>
+References: <CABxcv=nF3SJK7p1j=F08_9kHU2n+v=hmgr7-ikfZ7Xraz3J0_g@mail.gmail.com>
+	<1422871549-5468-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39157 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753954AbbBBMj3 (ORCPT
+Received: from mail-qa0-f49.google.com ([209.85.216.49]:48803 "EHLO
+	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754009AbbBBMxr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 07:39:29 -0500
-In-reply-to: <1422880924-14212-1-git-send-email-gautam.vivek@samsung.com>
+	Mon, 2 Feb 2015 07:53:47 -0500
+Received: by mail-qa0-f49.google.com with SMTP id v8so28765160qal.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Feb 2015 04:53:46 -0800 (PST)
+In-Reply-To: <1422871549-5468-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com, kishon@ti.com, mathias.nyman@intel.com, heikki.krogerus@linux.intel.com, sergei.shtylyov@cogentembedded.com, jg1.han@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-Adding phy calibration sequence for USB 3.0 DRD PHY present on
-Exynos5420/5800 systems.
-This calibration facilitates setting certain PHY parameters viz.
-the Loss-of-Signal (LOS) Detector Threshold Level, as well as
-Tx-Vboost-Level for Super-Speed operations.
-Additionally we also set proper time to wait for RxDetect measurement,
-for desired PHY reference clock, so as to solve issue with enumeration
-of few USB 3.0 devices, like Samsung SUM-TSB16S 3.0 USB drive
-on the controller.
+On 2 February 2015 at 11:05, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> This patch provides a simple mmc-pwrseq-emmc driver, which controls
+> single gpio line. It perform standard eMMC hw reset procedure, as
+> descibed by Jedec 4.4 specification. This procedure is performed just
+> after MMC core enabled power to the given mmc host (to fix possible
+> issues if bootloader has left eMMC card in initialized or unknown
+> state), and before performing complete system reboot (also in case of
+> emergency reboot call). The latter is needed on boards, which doesn't
+> have hardware reset logic connected to emmc card and (limited or broken)
+> ROM bootloaders are unable to read second stage from the emmc card if
+> the card is left in unknown or already initialized state.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/mmc/mmc-pwrseq-emmc.txt    |  25 +++++
+>  drivers/mmc/core/Makefile                          |   2 +-
+>  drivers/mmc/core/pwrseq.c                          |   3 +
+>  drivers/mmc/core/pwrseq.h                          |   1 +
+>  drivers/mmc/core/pwrseq_emmc.c                     | 103 +++++++++++++++++++++
+>  5 files changed, 133 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
+>  create mode 100644 drivers/mmc/core/pwrseq_emmc.c
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
+> new file mode 100644
+> index 000000000000..4baeac828f6b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
+> @@ -0,0 +1,25 @@
+> +* The simple eMMC hardware reset provider
+> +
+> +The purpose of this driver is to perform standard eMMC hw reset
+> +procedure, as descibed by Jedec 4.4 specification. This procedure is
+> +performed just after MMC core enabled power to the given mmc host (to
+> +fix possible issues if bootloader has left eMMC card in initialized or
+> +unknown state), and before performing complete system reboot (also in
+> +case of emergency reboot call). The latter is needed on boards, which
+> +doesn't have hardware reset logic connected to emmc card and (limited or
+> +broken) ROM bootloaders are unable to read second stage from the emmc
+> +card if the card is left in unknown or already initialized state.
+> +
+> +Required properties:
+> +- compatible : contains "mmc-pwrseq-emmc".
+> +- reset-gpios : contains a GPIO specifier. The reset GPIO is pulled
+> +       down and then pulled up to perform eMMC card reset. To perform
 
-We are using CR_port for this purpose to send required data
-to override the LOS values.
+Could we maybe use the word "(de)asserted" instead of "pulled down/up".
 
-On testing with USB 3.0 devices on USB 3.0 port present on
-SMDK5420, and peach-pit boards should see following message:
-usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
+> +       reset procedure as described in Jedec 4.4 specification, the
+> +       gpio line should be defined as GPIO_ACTIVE_LOW.
+> +
+> +Example:
+> +
+> +       sdhci0_pwrseq {
+> +               compatible = "mmc-pwrseq-emmc";
+> +               reset-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+> +       }
+> diff --git a/drivers/mmc/core/Makefile b/drivers/mmc/core/Makefile
+> index b39cbd2f830b..2c25138f28b7 100644
+> --- a/drivers/mmc/core/Makefile
+> +++ b/drivers/mmc/core/Makefile
+> @@ -8,5 +8,5 @@ mmc_core-y                      := core.o bus.o host.o \
+>                                    sdio.o sdio_ops.o sdio_bus.o \
+>                                    sdio_cis.o sdio_io.o sdio_irq.o \
+>                                    quirks.o slot-gpio.o
+> -mmc_core-$(CONFIG_OF)          += pwrseq.o pwrseq_simple.o
+> +mmc_core-$(CONFIG_OF)          += pwrseq.o pwrseq_simple.o pwrseq_emmc.o
+>  mmc_core-$(CONFIG_DEBUG_FS)    += debugfs.o
+> diff --git a/drivers/mmc/core/pwrseq.c b/drivers/mmc/core/pwrseq.c
+> index 2cea00ed4e65..862356123d78 100644
+> --- a/drivers/mmc/core/pwrseq.c
+> +++ b/drivers/mmc/core/pwrseq.c
+> @@ -26,6 +26,9 @@ static struct mmc_pwrseq_match pwrseq_match[] = {
+>         {
+>                 .compatible = "mmc-pwrseq-simple",
+>                 .alloc = mmc_pwrseq_simple_alloc,
+> +       }, {
+> +               .compatible = "mmc-pwrseq-emmc",
+> +               .alloc = mmc_pwrseq_emmc_alloc,
+>         },
+>  };
+>
+> diff --git a/drivers/mmc/core/pwrseq.h b/drivers/mmc/core/pwrseq.h
+> index bd860d88f116..aba3409e8d6e 100644
+> --- a/drivers/mmc/core/pwrseq.h
+> +++ b/drivers/mmc/core/pwrseq.h
+> @@ -28,6 +28,7 @@ void mmc_pwrseq_power_off(struct mmc_host *host);
+>  void mmc_pwrseq_free(struct mmc_host *host);
+>
+>  int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev);
+> +int mmc_pwrseq_emmc_alloc(struct mmc_host *host, struct device *dev);
+>
+>  #else
+>
+> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+> new file mode 100644
+> index 000000000000..39dc43dd316f
+> --- /dev/null
+> +++ b/drivers/mmc/core/pwrseq_emmc.c
+> @@ -0,0 +1,103 @@
+> +/*
+> + * Copyright (C) 2015, Samsung Electronics Co., Ltd.
+> + *
+> + * Author: Marek Szyprowski <m.szyprowski@samsung.com>
+> + *
+> + * License terms: GNU General Public License (GPL) version 2
+> + *
+> + * Simple eMMC hardware reset provider
+> + */
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/reboot.h>
+> +
+> +#include <linux/mmc/host.h>
+> +
+> +#include "pwrseq.h"
+> +
+> +struct mmc_pwrseq_emmc {
+> +       struct mmc_pwrseq pwrseq;
+> +       struct notifier_block reset_nb;
+> +       struct gpio_desc *reset_gpio;
+> +};
+> +
+> +static void mmc_pwrseq_perform_emmc_reset(struct mmc_pwrseq_emmc *pwrseq)
 
-and without this patch, should see below shown message:
-usb 1-1: new high-speed USB device number 2 using xhci-hcd
+I would prefer the name of this function to be __mmc_pwrseq_emmc_reset()
 
-[Also removed unnecessary extra lines in the register macro definitions]
+> +{
+> +       gpiod_set_value(pwrseq->reset_gpio, 1);
+> +       /* For eMMC, minimum is 1us but give it 10us for good measure */
+> +       udelay(10);
+> +       gpiod_set_value(pwrseq->reset_gpio, 0);
+> +       /* For eMMC, minimum is 200us but give it 300us for good measure */
+> +       udelay(300);
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/phy/phy-exynos5-usbdrd.c |  219 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 203 insertions(+), 16 deletions(-)
+These delays will affect the total power up time for the card.
+According to the specification 1 us and 200 us, should be enough. Do
+you think there are a good reason to have them extended to the values
+you suggested?
 
-diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-index 0437401..5834529 100644
---- a/drivers/phy/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/phy-exynos5-usbdrd.c
-@@ -37,13 +37,11 @@
- 
- /* EXYNOS5: USB 3.0 DRD PHY registers */
- #define EXYNOS5_DRD_LINKSYSTEM			0x04
--
- #define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
- #define LINKSYSTEM_FLADJ(_x)			((_x) << 1)
- #define LINKSYSTEM_XHCI_VERSION_CONTROL		BIT(27)
- 
- #define EXYNOS5_DRD_PHYUTMI			0x08
--
- #define PHYUTMI_OTGDISABLE			BIT(6)
- #define PHYUTMI_FORCESUSPEND			BIT(1)
- #define PHYUTMI_FORCESLEEP			BIT(0)
-@@ -51,26 +49,20 @@
- #define EXYNOS5_DRD_PHYPIPE			0x0c
- 
- #define EXYNOS5_DRD_PHYCLKRST			0x10
--
- #define PHYCLKRST_EN_UTMISUSPEND		BIT(31)
--
- #define PHYCLKRST_SSC_REFCLKSEL_MASK		(0xff << 23)
- #define PHYCLKRST_SSC_REFCLKSEL(_x)		((_x) << 23)
--
- #define PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
- #define PHYCLKRST_SSC_RANGE(_x)			((_x) << 21)
--
- #define PHYCLKRST_SSC_EN			BIT(20)
- #define PHYCLKRST_REF_SSP_EN			BIT(19)
- #define PHYCLKRST_REF_CLKDIV2			BIT(18)
--
- #define PHYCLKRST_MPLL_MULTIPLIER_MASK		(0x7f << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF	(0x19 << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_50M_REF	(0x32 << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF	(0x68 << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF	(0x7d << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF	(0x02 << 11)
--
- #define PHYCLKRST_FSEL_UTMI_MASK		(0x7 << 5)
- #define PHYCLKRST_FSEL_PIPE_MASK		(0x7 << 8)
- #define PHYCLKRST_FSEL(_x)			((_x) << 5)
-@@ -78,46 +70,68 @@
- #define PHYCLKRST_FSEL_PAD_24MHZ		(0x2a << 5)
- #define PHYCLKRST_FSEL_PAD_20MHZ		(0x31 << 5)
- #define PHYCLKRST_FSEL_PAD_19_2MHZ		(0x38 << 5)
--
- #define PHYCLKRST_RETENABLEN			BIT(4)
--
- #define PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
- #define PHYCLKRST_REFCLKSEL_PAD_REFCLK		(0x2 << 2)
- #define PHYCLKRST_REFCLKSEL_EXT_REFCLK		(0x3 << 2)
--
- #define PHYCLKRST_PORTRESET			BIT(1)
- #define PHYCLKRST_COMMONONN			BIT(0)
- 
- #define EXYNOS5_DRD_PHYREG0			0x14
-+#define PHYREG0_SSC_REF_CLK_SEL			BIT(21)
-+#define PHYREG0_SSC_RANGE			BIT(20)
-+#define PHYREG0_CR_WRITE			BIT(19)
-+#define PHYREG0_CR_READ				BIT(18)
-+#define PHYREG0_CR_DATA_IN(_x)			((_x) << 2)
-+#define PHYREG0_CR_CAP_DATA			BIT(1)
-+#define PHYREG0_CR_CAP_ADDR			BIT(0)
-+
- #define EXYNOS5_DRD_PHYREG1			0x18
-+#define PHYREG1_CR_DATA_OUT(_x)			((_x) << 1)
-+#define PHYREG1_CR_ACK				BIT(0)
- 
- #define EXYNOS5_DRD_PHYPARAM0			0x1c
--
- #define PHYPARAM0_REF_USE_PAD			BIT(31)
- #define PHYPARAM0_REF_LOSLEVEL_MASK		(0x1f << 26)
- #define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
- 
- #define EXYNOS5_DRD_PHYPARAM1			0x20
--
- #define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
- #define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
- 
- #define EXYNOS5_DRD_PHYTERM			0x24
- 
- #define EXYNOS5_DRD_PHYTEST			0x28
--
- #define PHYTEST_POWERDOWN_SSP			BIT(3)
- #define PHYTEST_POWERDOWN_HSP			BIT(2)
- 
- #define EXYNOS5_DRD_PHYADP			0x2c
- 
- #define EXYNOS5_DRD_PHYUTMICLKSEL		0x30
--
- #define PHYUTMICLKSEL_UTMI_CLKSEL		BIT(2)
- 
- #define EXYNOS5_DRD_PHYRESUME			0x34
- #define EXYNOS5_DRD_LINKPORT			0x44
- 
-+/* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
-+#define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN		(0x15)
-+#define LOSLEVEL_OVRD_IN_LOS_BIAS_5420			(0x5 << 13)
-+#define LOSLEVEL_OVRD_IN_LOS_BIAS_DEFAULT		(0x0 << 13)
-+#define LOSLEVEL_OVRD_IN_EN				(0x1 << 10)
-+#define LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT		(0x9 << 0)
-+
-+#define EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN	(0x12)
-+#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420		(0x5 << 13)
-+#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_DEFAULT		(0x4 << 13)
-+
-+#define EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG		(0x1010)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M		(0x4 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M		(0x8 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_25M_26M		(0x8 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M	(0x20 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_62M5		(0x20 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_96M_100M		(0x40 << 4)
-+
- #define KHZ	1000
- #define MHZ	(KHZ * KHZ)
- 
-@@ -135,6 +149,7 @@ struct exynos5_usbdrd_phy_config {
- 	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
- 	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
- 	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
-+	int (*phy_calibrate)(struct phy_usb_instance *inst);
- };
- 
- struct exynos5_usbdrd_phy_drvdata {
-@@ -142,6 +157,7 @@ struct exynos5_usbdrd_phy_drvdata {
- 	u32 pmu_offset_usbdrd0_phy;
- 	u32 pmu_offset_usbdrd1_phy;
- 	bool has_common_clk_gate;
-+	int (*phy_exynos_calibrate)(struct exynos5_usbdrd_phy *phy_drd);
- };
- 
- /**
-@@ -408,9 +424,21 @@ static int exynos5_usbdrd_phy_init(struct phy *phy)
- 	reg &= ~PHYCLKRST_PORTRESET;
- 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
- 
-+	/*
-+	 * Calibrate some of the PHY parameters, using cr_port control
-+	 * register, which are internal to PHY and are not exposed
-+	 * directly to the outside world for configuring.
-+	 */
-+	if (inst->phy_cfg->phy_calibrate) {
-+		ret = inst->phy_cfg->phy_calibrate(inst);
-+		if (ret)
-+			dev_err(phy_drd->dev,
-+				"Exiting init: Failed to calibrate PHY\n");
-+	}
-+
- 	clk_disable_unprepare(phy_drd->clk);
- 
--	return 0;
-+	return ret;
- }
- 
- static int exynos5_usbdrd_phy_exit(struct phy *phy)
-@@ -526,6 +554,163 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- 	return 0;
- }
- 
-+static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
-+						u32 val, u32 cmd)
-+{
-+	u32 usec = 100;
-+	unsigned int result;
-+
-+	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+
-+	do {
-+		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
-+		if (result & PHYREG1_CR_ACK)
-+			break;
-+
-+		udelay(1);
-+	} while (usec-- > 0);
-+
-+	if (!usec) {
-+		dev_err(phy_drd->dev,
-+			"CRPORT handshake timeout1 (0x%08x)\n", val);
-+		return -ETIME;
-+	}
-+
-+	usec = 100;
-+
-+	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+
-+	do {
-+		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
-+		if (!(result & PHYREG1_CR_ACK))
-+			break;
-+
-+		udelay(1);
-+	} while (usec-- > 0);
-+
-+	if (!usec) {
-+		dev_err(phy_drd->dev,
-+			"CRPORT handshake timeout2 (0x%08x)\n", val);
-+		return -ETIME;
-+	}
-+
-+	return 0;
-+}
-+
-+static int crport_ctrl_write(struct exynos5_usbdrd_phy *phy_drd,
-+						u32 addr, u32 data)
-+{
-+	int ret;
-+
-+	/* Write Address */
-+	writel(PHYREG0_CR_DATA_IN(addr),
-+		phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(addr),
-+				PHYREG0_CR_CAP_ADDR);
-+	if (ret)
-+		return ret;
-+
-+	/* Write Data */
-+	writel(PHYREG0_CR_DATA_IN(data),
-+		phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
-+				PHYREG0_CR_CAP_DATA);
-+	if (ret)
-+		return ret;
-+
-+	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
-+				PHYREG0_CR_WRITE);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Calibrate few PHY parameters using CR_PORT register to meet
-+ * SuperSpeed requirements on Exynos5420 and Exynos5800 systems,
-+ * which have 28nm USB 3.0 DRD PHY.
-+ */
-+static int exynos5420_usbdrd_phy_calibrate(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	unsigned int temp;
-+	int ret = 0;
-+
-+	/*
-+	 * Change los_bias to (0x5) for 28nm PHY from a
-+	 * default value (0x0); los_level is set as default
-+	 * (0x9) as also reflected in los_level[30:26] bits
-+	 * of PHYPARAM0 register.
-+	 */
-+	temp = LOSLEVEL_OVRD_IN_LOS_BIAS_5420 |
-+		LOSLEVEL_OVRD_IN_EN |
-+		LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT;
-+	ret = crport_ctrl_write(phy_drd,
-+				EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN,
-+				temp);
-+	if (ret) {
-+		dev_err(phy_drd->dev,
-+		 "Failed setting Loss-of-Signal level for SuperSpeed\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * Set tx_vboost_lvl to (0x5) for 28nm PHY Tuning,
-+	 * to raise Tx signal level from its default value of (0x4)
-+	 */
-+	temp = TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420;
-+	ret = crport_ctrl_write(phy_drd,
-+				EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN,
-+				temp);
-+	if (ret) {
-+		dev_err(phy_drd->dev,
-+		 "Failed setting Tx-Vboost-Level for SuperSpeed\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * Set proper time to wait for RxDetect measurement, for
-+	 * desired reference clock of PHY, by tuning the CR_PORT
-+	 * register LANE0.TX_DEBUG which is internal to PHY.
-+	 * This fixes issue with few USB 3.0 devices, which are
-+	 * not detected (not even generate interrupts on the bus
-+	 * on insertion) without this change.
-+	 * e.g. Samsung SUM-TSB16S 3.0 USB drive.
-+	 */
-+	switch (phy_drd->extrefclk) {
-+	case EXYNOS5_FSEL_50MHZ:
-+		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M;
-+		break;
-+	case EXYNOS5_FSEL_20MHZ:
-+	case EXYNOS5_FSEL_19MHZ2:
-+		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M;
-+		break;
-+	case EXYNOS5_FSEL_24MHZ:
-+	default:
-+		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M;
-+		break;
-+	}
-+
-+	ret = crport_ctrl_write(phy_drd,
-+				EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG,
-+				temp);
-+	if (ret)
-+		dev_err(phy_drd->dev,
-+		 "Failed setting RxDetect measurement time for SuperSpeed\n");
-+
-+	return ret;
-+}
-+
-+/* Calibrate PIPE3 PHY settings, if any */
-+static int exynos5_usbdrd_pipe3_calibrate(struct phy_usb_instance *inst)
-+{
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	/* Call respective phy_calibrate given by certain platform */
-+	if (phy_drd->drv_data->phy_exynos_calibrate)
-+		return phy_drd->drv_data->phy_exynos_calibrate(phy_drd);
-+
-+	return -ENODEV;
-+}
-+
- static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
- 					struct of_phandle_args *args)
- {
-@@ -608,6 +793,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
- 		.phy_isol	= exynos5_usbdrd_phy_isol,
- 		.phy_init	= exynos5_usbdrd_pipe3_init,
- 		.set_refclk	= exynos5_usbdrd_pipe3_set_refclk,
-+		.phy_calibrate	= exynos5_usbdrd_pipe3_calibrate,
- 	},
- };
- 
-@@ -616,6 +802,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.pmu_offset_usbdrd1_phy	= EXYNOS5420_USBDRD1_PHY_CONTROL,
- 	.has_common_clk_gate	= true,
-+	.phy_exynos_calibrate	= exynos5420_usbdrd_phy_calibrate,
- };
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
--- 
-1.7.10.4
+> +}
+> +
+> +static void mmc_pwrseq_emmc_reset(struct mmc_host *host)
+> +{
+> +       struct mmc_pwrseq_emmc *pwrseq = container_of(host->pwrseq,
+> +                                       struct mmc_pwrseq_emmc, pwrseq);
+> +
+> +       mmc_pwrseq_perform_emmc_reset(pwrseq);
+> +}
+> +
+> +static void mmc_pwrseq_emmc_free(struct mmc_host *host)
+> +{
+> +       struct mmc_pwrseq_emmc *pwrseq = container_of(host->pwrseq,
+> +                                       struct mmc_pwrseq_emmc, pwrseq);
+> +
+> +       gpiod_put(pwrseq->reset_gpio);
+> +       unregister_restart_handler(&pwrseq->reset_nb);
+
+I suggest you to move the unregister_restart_handler() to be done
+prior gpiod_put(), since else (theoretically) the notifier may be
+called without a valid gpio requested.
+
+> +       kfree(pwrseq);
+> +       host->pwrseq = NULL;
+> +}
+> +
+> +static struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
+> +       .post_power_on = mmc_pwrseq_emmc_reset,
+> +       .power_off = mmc_pwrseq_emmc_reset,
+
+I don't think you should assign the ->power_off() callback, unless you
+think there are a reason to reset the card while cutting powering for
+it!?
+
+> +       .free = mmc_pwrseq_emmc_free,
+> +};
+> +
+> +static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
+> +                                   unsigned long mode, void *cmd)
+> +{
+> +       struct mmc_pwrseq_emmc *pwrseq;
+> +       pwrseq = container_of(this, struct mmc_pwrseq_emmc, reset_nb);
+> +
+> +       mmc_pwrseq_perform_emmc_reset(pwrseq);
+> +       return NOTIFY_DONE;
+> +}
+> +
+> +int mmc_pwrseq_emmc_alloc(struct mmc_host *host, struct device *dev)
+> +{
+> +       struct mmc_pwrseq_emmc *pwrseq;
+> +       int ret = 0;
+> +
+> +       pwrseq = kzalloc(sizeof(struct mmc_pwrseq_emmc), GFP_KERNEL);
+> +       if (!pwrseq)
+> +               return -ENOMEM;
+> +
+> +       pwrseq->reset_gpio = gpiod_get_index(dev, "reset", 0, GPIOD_OUT_LOW);
+> +       if (IS_ERR(pwrseq->reset_gpio)) {
+> +               ret = PTR_ERR(pwrseq->reset_gpio);
+> +               goto free;
+> +       }
+> +
+> +       /*
+> +        * register reset handler to ensure emmc reset also from
+> +        * emergency_reboot()
+> +        */
+> +       pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
+> +       pwrseq->reset_nb.priority = 255;
+
+Why 255? I guess it could deserve a comment!?
+
+> +       register_restart_handler(&pwrseq->reset_nb);
+> +
+> +       pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
+> +       host->pwrseq = &pwrseq->pwrseq;
+> +
+> +       return 0;
+> +free:
+> +       kfree(pwrseq);
+> +       return ret;
+> +}
+> --
+> 1.9.2
+>
+
+Some final generic thoughts; since the reset GPIO will be toggled for
+each call to mmc_power_up(), that means the card will be reset for
+each system PM suspend to resume cycle. Is that really what we want?
+
+For some cases that also means the card will be reset when it's in
+sleep state (CMD5). Do you know if that's okay?
+
+Kind regards
+Uffe
