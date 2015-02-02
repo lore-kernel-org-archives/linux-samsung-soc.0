@@ -1,69 +1,109 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add syscon phandle to the video-phy node for
- Exynos4
-Date: Mon, 02 Feb 2015 11:39:07 +0100
-Message-ID: <54CF53CB.3050100@samsung.com>
-References: <1421429438-32090-1-git-send-email-s.nawrocki@samsung.com>
- <1421429438-32090-2-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44098 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933041AbbBBKj0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 05:39:26 -0500
-In-reply-to: <1421429438-32090-2-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v5 0/7] platform/chrome: Add user-space dev inferface support
+Date: Mon,  2 Feb 2015 12:26:21 +0100
+Message-ID: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: kishon@ti.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Kukjin,
+Hello,
 
-On 16/01/15 18:30, Sylwester Nawrocki wrote:
-> This is required to fix regression after introducing the PMU device
-> nodes required for the PMU driver modified in commit
-> 14fc8b93d47323561edf5d482d4a4b3ee1b90286
-> ("ARM: EXYNOS: Add platform driver support for Exynos PMU").
-> This change is needed to make MIPI DSI displays and MIPI CSI-2
-> camera sensors working again on Exynos4 boards.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index b8168f1..250ee50 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -76,6 +76,7 @@
->  		compatible = "samsung,s5pv210-mipi-video-phy";
->  		reg = <0x10020710 8>;
->  		#phy-cells = <1>;
-> +		syscon = <&pmu_system_controller>;
->  	};
->  
->  	pd_mfc: mfc-power-domain@10023C40 {
+The mainline ChromeOS Embedded Controller (EC) driver is still missing some
+features that are present in the downstream ChromiumOS tree. These are:
 
-I'd like to remind you about a few pending dts patches I send to you, except
-the above one there are:
+  - Low Pin Count (LPC) interface
+  - User-space device interface
+  - Access to vboot context stored on a block device
+  - Access to vboot context stored on EC's nvram
+  - Power Delivery Device
+  - Support for multiple EC in a system
 
-[PATCH V3 15/15] ARM: dts: Fix I2S1, I2S2 compatible for exynos4 SoCs
-[PATCH] ARM: dts: Fix CLK_MOUT_CAMn parent clocks assignment for Trats2
-[PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in exynos4x12.dtsi
- 
-and
+This is a fifth version of a series that adds support for the first two of
+the missing features: the EC LPC and EC character device interfaces that
+are used by user-space to access the ChromeOS EC. The support patches were
+taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
+squashed to have a minimal patch-set.
 
-[PATCH v2 14/16] ARM: dts: Exynos4 and Odroid X2/U3 sound device nodes update
+The version of the ChromeOS EC chardev driver in this series still does not
+reflect the latest one that is in the downstream ChromiumOS 3.14 kernel but
+makes the delta shorter. Following patches will add the remaining missing
+features until both trees are in sync. I preferred to first add the initial
+support and then adding the other features to both maintain the original
+patch history in the downstream kernel and so preserve the patch authorship
+and also make the diff to have a working cros user-space interface smaller.
 
-but this one depends on ASoC patch:
-[PATCH V3 11/15] ASoC: samsung: i2s: Add clk provider DT binding documentation
+This version solves the issues pointed out in the earlier revision.
 
-hence it could be probably merged only after 3.20-rc1 release. 
+A big difference between this series and the downstream ChromiumOS kernel is
+that the ioctl API is modified to make it 64-bit safe and compatible with both
+64 and 32 bit user-space binaries. The data structures passed as arguments in
+the ChromiumOS ioctl interface commands has pointers fields and since these
+have different byte boundaries alignment requirement, the ChromiumOS driver
+has a compat ioctl interface. The feedback was that this had to be avoided
+since this was a new ioctl API so the pointers fields were replaced with a set
+of fixed-size arrays to be used instead. This has the drawback that more data
+could be used and copied between user and kernel space so feedback is welcomed
+if there is a better approach to solve this kind of issues.
 
---
-Thanks,
-Sylwester
+The patches were tested on an Exynos5420 Peach Pit Chromebook and (thanks to
+Bill Richardson) on an x86 Pixel Chromebook using a modified ectool [0] to use
+the new ioctl API. The LPC interface driver and the lightbar sysfs driver were
+also tested on the Pixel Chromebook.
+
+The series is composed of the following patches:
+
+Bill Richardson (4):
+  platform/chrome: Add cros_ec_lpc driver for x86 devices
+  platform/chrome: Add Chrome OS EC userspace device interface
+  platform/chrome: Create sysfs attributes for the ChromeOS EC
+  platform/chrome: Expose Chrome OS Lightbar to users
+
+Javier Martinez Canillas (3):
+  mfd: cros_ec: Use fixed size arrays to transfer data with the EC
+  mfd: cros_ec: Add char dev and virtual dev pointers
+  mfd: cros_ec: Instantiate ChromeOS EC character device
+
+ Documentation/ioctl/ioctl-number.txt       |   1 +
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  51 +---
+ drivers/input/keyboard/cros_ec_keyb.c      |  13 +-
+ drivers/mfd/cros_ec.c                      |  19 +-
+ drivers/platform/chrome/Kconfig            |  26 +-
+ drivers/platform/chrome/Makefile           |   3 +
+ drivers/platform/chrome/cros_ec_dev.c      | 274 +++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_dev.h      |  53 +++++
+ drivers/platform/chrome/cros_ec_lightbar.c | 367 +++++++++++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_lpc.c      | 319 +++++++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_sysfs.c    | 271 +++++++++++++++++++++
+ include/linux/mfd/cros_ec.h                |  23 +-
+ 12 files changed, 1358 insertions(+), 62 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_dev.c
+ create mode 100644 drivers/platform/chrome/cros_ec_dev.h
+ create mode 100644 drivers/platform/chrome/cros_ec_lightbar.c
+ create mode 100644 drivers/platform/chrome/cros_ec_lpc.c
+ create mode 100644 drivers/platform/chrome/cros_ec_sysfs.c
+
+Patch #1 modified the struct cros_ec_command structure so it can be used
+as an ioctl argument and be 64 and 32 bit safe and patch #2 adds fields
+to the struct cros_ec_device that will be needed by the EC chardev driver.
+
+Patch #3 adds support for the EC LPC interface used on x86 Chromebooks.
+
+Patch #4 adds the ChromeOS chardev driver and patch #5 instantiates it
+from the mfd cros_ec driver.
+
+Patch #6 exposes sysfs attributes that can be used by user space programs
+to get information and control the ChromeOS EC.
+
+Patch #7 exposes sysfs attributes that are used to control the lightbar
+RGB LEDs found on the Pixel Chromebook.
+
+The patches must be applied together and in order due dependencies.
+Lee Jones has already acked the MFD changes so I think this could go
+through Olof's chrome-platform tree.
+
+Best regards,
+Javier
+
+[0]: git://git.collabora.co.uk/git/user/javier/ec.git mainline-ioctl
