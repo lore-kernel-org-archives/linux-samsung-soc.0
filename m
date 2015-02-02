@@ -1,339 +1,269 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v5 01/13] clk: samsung: exynos5433: Add binding document for
- Exynos5433 clock domains
-Date: Mon, 02 Feb 2015 23:23:55 +0900
-Message-ID: <1422887047-30911-2-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v5 05/13] clk: samsung: exynos5433: Add clocks for CMU_PERIS
+ domain
+Date: Mon, 02 Feb 2015 23:23:59 +0900
+Message-ID: <1422887047-30911-6-git-send-email-cw00.choi@samsung.com>
 References: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:37475 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752678AbbBBOYM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Feb 2015 09:24:12 -0500
 In-reply-to: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
 Cc: kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds devicetree binding document for Exynos5433 SoC system clock
-controller.
+This patch adds missing gate clocks of CMU_PERIS domain
+which includes TMU/TZPC/SECKEY/CHIPID/TOPRTC/EFUSE IPs.
+The special clocks of CMU_PERIS use fin_pll source clock directly.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos5433-clock.txt | 305 +++++++++++++++++++++
- 1 file changed, 305 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+ drivers/clk/samsung/clk-exynos5433.c   | 151 ++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/exynos5433.h |  33 ++++++-
+ 2 files changed, 181 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-new file mode 100644
-index 0000000..a15dbeb6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -0,0 +1,305 @@
-+* Samsung Exynos5433 CMU (Clock Management Units)
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 9c2cb19..4de1fdf 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -245,6 +245,10 @@ PNAME(mout_sclk_audio1_p)	= { "ioclk_audiocdclk1", "oscclk",
+ PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "oscclk",
+ 				    "mout_aud_pll_user_t",};
+ 
++static struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initdata = {
++	FFACTOR(0, "oscclk_efuse_common", "oscclk", 1, 1, 0),
++};
 +
-+The Exynos5433 clock controller generates and supplies clock to various
-+controllers within the Exynos5433 SoC.
+ static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
+ 	/* Xi2s{0|1}CDCLK input clock for I2S/PCM */
+ 	FRATE(0, "ioclk_audiocdclk1", NULL, CLK_IS_ROOT, 100000000),
+@@ -614,6 +618,8 @@ static struct samsung_cmu_info top_cmu_info __initdata = {
+ 	.nr_gate_clks		= ARRAY_SIZE(top_gate_clks),
+ 	.fixed_clks		= top_fixed_clks,
+ 	.nr_fixed_clks		= ARRAY_SIZE(top_fixed_clks),
++	.fixed_factor_clks	= top_fixed_factor_clks,
++	.nr_fixed_factor_clks	= ARRAY_SIZE(top_fixed_factor_clks),
+ 	.nr_clk_ids		= TOP_NR_CLK,
+ 	.clk_regs		= top_clk_regs,
+ 	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
+@@ -954,15 +960,69 @@ CLK_OF_DECLARE(exynos5433_cmu_peric, "samsung,exynos5433-cmu-peric",
+ /*
+  * Register offset definitions for CMU_PERIS
+  */
+-#define ENABLE_ACLK_PERIS		0x0800
+-#define ENABLE_PCLK_PERIS		0x0900
++#define ENABLE_ACLK_PERIS				0x0800
++#define ENABLE_PCLK_PERIS				0x0900
++#define ENABLE_PCLK_PERIS_SECURE_TZPC			0x0904
++#define ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF		0x0908
++#define ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF		0x090c
++#define ENABLE_PCLK_PERIS_SECURE_TOPRTC			0x0910
++#define ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF	0x0914
++#define ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF	0x0918
++#define ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF		0x091c
++#define ENABLE_SCLK_PERIS				0x0a00
++#define ENABLE_SCLK_PERIS_SECURE_SECKEY			0x0a04
++#define ENABLE_SCLK_PERIS_SECURE_CHIPID			0x0a08
++#define ENABLE_SCLK_PERIS_SECURE_TOPRTC			0x0a0c
++#define ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE		0x0a10
++#define ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT		0x0a14
++#define ENABLE_SCLK_PERIS_SECURE_OTP_CON		0x0a18
++#define ENABLE_IP_PERIS0				0x0b00
++#define ENABLE_IP_PERIS1				0x0b04
++#define ENABLE_IP_PERIS_SECURE_TZPC			0x0b08
++#define ENABLE_IP_PERIS_SECURE_SECKEY			0x0b0c
++#define ENABLE_IP_PERIS_SECURE_CHIPID			0x0b10
++#define ENABLE_IP_PERIS_SECURE_TOPRTC			0x0b14
++#define ENABLE_IP_PERIS_SECURE_CUSTOM_EFUSE		0x0b18
++#define ENABLE_IP_PERIS_SECURE_ANTIBRK_CNT		0x0b1c
++#define ENABLE_IP_PERIS_SECURE_OTP_CON			0x0b20
+ 
+ static unsigned long peris_clk_regs[] __initdata = {
+ 	ENABLE_ACLK_PERIS,
+ 	ENABLE_PCLK_PERIS,
++	ENABLE_PCLK_PERIS_SECURE_TZPC,
++	ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_TOPRTC,
++	ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF,
++	ENABLE_SCLK_PERIS,
++	ENABLE_SCLK_PERIS_SECURE_SECKEY,
++	ENABLE_SCLK_PERIS_SECURE_CHIPID,
++	ENABLE_SCLK_PERIS_SECURE_TOPRTC,
++	ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE,
++	ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT,
++	ENABLE_SCLK_PERIS_SECURE_OTP_CON,
++	ENABLE_IP_PERIS0,
++	ENABLE_IP_PERIS1,
++	ENABLE_IP_PERIS_SECURE_TZPC,
++	ENABLE_IP_PERIS_SECURE_SECKEY,
++	ENABLE_IP_PERIS_SECURE_CHIPID,
++	ENABLE_IP_PERIS_SECURE_TOPRTC,
++	ENABLE_IP_PERIS_SECURE_CUSTOM_EFUSE,
++	ENABLE_IP_PERIS_SECURE_ANTIBRK_CNT,
++	ENABLE_IP_PERIS_SECURE_OTP_CON,
+ };
+ 
+ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_PERIS */
++	GATE(CLK_ACLK_AHB2APB_PERIS1P, "aclk_ahb2apb_peris1p", "aclk_peris_66",
++			ENABLE_ACLK_PERIS, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_PERIS0P, "aclk_ahb2apb_peris0p", "aclk_peris_66",
++			ENABLE_ACLK_PERIS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PERISNP_66, "aclk_perisnp_66", "aclk_peris_66",
++			ENABLE_ACLK_PERIS, 0, CLK_IGNORE_UNUSED, 0),
 +
-+Required Properties:
+ 	/* ENABLE_PCLK_PERIS */
+ 	GATE(CLK_PCLK_HPM_APBIF, "pclk_hpm_apbif", "aclk_peris_66",
+ 			ENABLE_PCLK_PERIS, 30, CLK_IGNORE_UNUSED, 0),
+@@ -984,6 +1044,93 @@ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
+ 			ENABLE_PCLK_PERIS, 15, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_HDMI_CEC, "pclk_hdmi_cec", "aclk_peris_66",
+ 			ENABLE_PCLK_PERIS, 14, CLK_IGNORE_UNUSED, 0),
 +
-+- compatible: should be one of the following.
-+  - "samsung,exynos5433-cmu-top"   - clock controller compatible for CMU_TOP
-+    which generates clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
-+    domains and bus clocks.
-+  - "samsung,exynos5433-cmu-cpif"  - clock controller compatible for CMU_CPIF
-+    which generates clocks for LLI (Low Latency Interface) IP.
-+  - "samsung,exynos5433-cmu-mif"   - clock controller compatible for CMU_MIF
-+    which generates clocks for DRAM Memory Controller domain.
-+  - "samsung,exynos5433-cmu-peric" - clock controller compatible for CMU_PERIC
-+    which generates clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS IPs.
-+  - "samsung,exynos5433-cmu-peris" - clock controller compatible for CMU_PERIS
-+    which generates clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC IPs.
-+  - "samsung,exynos5433-cmu-fsys"  - clock controller compatible for CMU_FSYS
-+    which generates clocks for USB/UFS/SDMMC/TSI/PDMA IPs.
-+  - "samsung,exynos5433-cmu-g2d"   - clock controller compatible for CMU_G2D
-+    which generates clocks for G2D/MDMA IPs.
-+  - "samsung,exynos5433-cmu-disp"  - clock controller compatible for CMU_DISP
-+    which generates clocks for Display (DECON/HDMI/DSIM/MIXER) IPs.
-+  - "samsung,exynos5433-cmu-aud"   - clock controller compatible for CMU_AUD
-+    which generates clocks for Cortex-A5/BUS/AUDIO clocks.
-+  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-cmu-bus1"
-+    and "samsung,exynos5433-cmu-bus2" - clock controller compatible for CMU_BUS
-+    which generates global data buses clock and global peripheral buses clock.
-+  - "samsung,exynos5433-cmu-g3d"  - clock controller compatible for CMU_G3D
-+    which generates clocks for 3D Graphics Engine IP.
-+  - "samsung,exynos5433-cmu-gscl"  - clock controller compatible for CMU_GSCL
-+    which generates clocks for GSCALER IPs.
++	/* ENABLE_PCLK_PERIS_SECURE_TZPC */
++	GATE(CLK_PCLK_TZPC12, "pclk_tzpc12", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 12, 0, 0),
++	GATE(CLK_PCLK_TZPC11, "pclk_tzpc11", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 11, 0, 0),
++	GATE(CLK_PCLK_TZPC10, "pclk_tzpc10", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 10, 0, 0),
++	GATE(CLK_PCLK_TZPC9, "pclk_tzpc9", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 9, 0, 0),
++	GATE(CLK_PCLK_TZPC8, "pclk_tzpc8", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 8, 0, 0),
++	GATE(CLK_PCLK_TZPC7, "pclk_tzpc7", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 7, 0, 0),
++	GATE(CLK_PCLK_TZPC6, "pclk_tzpc6", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 6, 0, 0),
++	GATE(CLK_PCLK_TZPC5, "pclk_tzpc5", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 5, 0, 0),
++	GATE(CLK_PCLK_TZPC4, "pclk_tzpc4", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 4, 0, 0),
++	GATE(CLK_PCLK_TZPC3, "pclk_tzpc3", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 3, 0, 0),
++	GATE(CLK_PCLK_TZPC2, "pclk_tzpc2", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 2, 0, 0),
++	GATE(CLK_PCLK_TZPC1, "pclk_tzpc1", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 1, 0, 0),
++	GATE(CLK_PCLK_TZPC0, "pclk_tzpc0", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 0, 0, 0),
 +
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
++	/* ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF */
++	GATE(CLK_PCLK_SECKEY_APBIF, "pclk_seckey_apbif", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF, 0, 0, 0),
 +
-+- #clock-cells: should be 1.
++	/* ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF */
++	GATE(CLK_PCLK_CHIPID_APBIF, "pclk_chipid_apbif", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF, 0, 0, 0),
 +
-+- clocks: list of clock identifiers which are fed as the input to
-+	the given clock controller. Please refer the next section to
-+	find the input clocks for a given controller.
++	/* ENABLE_PCLK_PERIS_SECURE_TOPRTC */
++	GATE(CLK_PCLK_TOPRTC, "pclk_toprtc", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TOPRTC, 0, 0, 0),
 +
-+- clock-names: list of names of clocks which are fed as the input
-+	to the given clock controller.
++	/* ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF */
++	GATE(CLK_PCLK_CUSTOM_EFUSE_APBIF, "pclk_custom_efuse_apbif",
++			"aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF, 0, 0, 0),
 +
-+	Input clocks for top clock controller:
-+		- oscclk
-+		- sclk_mphy_pll
-+		- sclk_mfc_pll
-+		- sclk_bus_pll
++	/* ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF */
++	GATE(CLK_PCLK_ANTIRBK_CNT_APBIF, "pclk_antirbk_cnt_apbif",
++			"aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF, 0, 0, 0),
 +
-+	Input clocks for cpif clock controller:
-+		- oscclk
++	/* ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF */
++	GATE(CLK_PCLK_OTP_CON_APBIF, "pclk_otp_con_apbif",
++			"aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF, 0, 0, 0),
 +
-+	Input clocks for mif clock controller:
-+		- oscclk
-+		- sclk_mphy_pll
++	/* ENABLE_SCLK_PERIS */
++	GATE(CLK_SCLK_ASV_TB, "sclk_asv_tb", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS, 10, 0, 0),
++	GATE(CLK_SCLK_TMU1, "sclk_tmu1", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS, 4, 0, 0),
++	GATE(CLK_SCLK_TMU0, "sclk_tmu0", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS, 3, 0, 0),
 +
-+	Input clocks for fsys clock controller:
-+		- oscclk
-+		- sclk_ufs_mphy
-+		- div_aclk_fsys_200
-+		- sclk_pcie_100_fsys
-+		- sclk_ufsunipro_fsys
-+		- sclk_mmc2_fsys
-+		- sclk_mmc1_fsys
-+		- sclk_mmc0_fsys
-+		- sclk_usbhost30_fsys
-+		- sclk_usbdrd30_fsys
++	/* ENABLE_SCLK_PERIS_SECURE_SECKEY */
++	GATE(CLK_SCLK_SECKEY, "sclk_seckey", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_SECKEY, 0, 0, 0),
 +
-+	Input clocks for g2d clock controller:
-+		- oscclk
-+		- aclk_g2d_266
-+		- aclk_g2d_400
++	/* ENABLE_SCLK_PERIS_SECURE_CHIPID */
++	GATE(CLK_SCLK_CHIPID, "sclk_chipid", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_CHIPID, 0, 0, 0),
 +
-+	Input clocks for disp clock controller:
-+		- oscclk
-+		- sclk_dsim1_disp
-+		- sclk_dsim0_disp
-+		- sclk_dsd_disp
-+		- sclk_decon_tv_eclk_disp
-+		- sclk_decon_vclk_disp
-+		- sclk_decon_eclk_disp
-+		- sclk_decon_tv_vclk_disp
-+		- aclk_disp_333
++	/* ENABLE_SCLK_PERIS_SECURE_TOPRTC */
++	GATE(CLK_SCLK_TOPRTC, "sclk_toprtc", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_TOPRTC, 0, 0, 0),
 +
-+	Input clocks for bus0 clock controller:
-+		- aclk_bus0_400
++	/* ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE */
++	GATE(CLK_SCLK_CUSTOM_EFUSE, "sclk_custom_efuse", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE, 0, 0, 0),
 +
-+	Input clocks for bus1 clock controller:
-+		- aclk_bus1_400
++	/* ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT */
++	GATE(CLK_SCLK_ANTIRBK_CNT, "sclk_antirbk_cnt", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT, 0, 0, 0),
 +
-+	Input clocks for bus2 clock controller:
-+		- oscclk
-+		- aclk_bus2_400
-+
-+	Input clocks for g3d clock controller:
-+		- oscclk
-+		- aclk_g3d_400
-+
-+	Input clocks for gscl clock controller:
-+		- oscclk
-+		- aclk_gscl_111
-+		- aclk_gscl_333
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume.
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/exynos5433.h header and can be used in device
-+tree sources.
-+
-+Example 1: Examples of 'oscclk' source clock node are listed below.
-+
-+	xxti: xxti {
-+		compatible = "fixed-clock";
-+		clock-output-names = "oscclk";
-+		#clock-cells = <0>;
-+	};
-+
-+Example 2: Examples of clock controller nodes are listed below.
-+
-+	cmu_top: clock-controller@0x10030000 {
-+		compatible = "samsung,exynos5433-cmu-top";
-+		reg = <0x10030000 0x0c04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk",
-+			"sclk_mphy_pll",
-+			"sclk_mfc_pll",
-+			"sclk_bus_pll";
-+		clocks = <&xxti>,
-+		       <&cmu_cpif CLK_SCLK_MPHY_PLL>,
-+		       <&cmu_mif CLK_SCLK_MFC_PLL>,
-+		       <&cmu_mif CLK_SCLK_BUS_PLL>;
-+	};
-+
-+	cmu_cpif: clock-controller@0x10fc0000 {
-+		compatible = "samsung,exynos5433-cmu-cpif";
-+		reg = <0x10fc0000 0x0c04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk";
-+		clocks = <&xxti>;
-+	};
-+
-+	cmu_mif: clock-controller@0x105b0000 {
-+		compatible = "samsung,exynos5433-cmu-mif";
-+		reg = <0x105b0000 0x100c>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk",
-+			"sclk_mphy_pll";
-+		clocks = <&xxti>,
-+		       <&cmu_cpif CLK_SCLK_MPHY_PLL>;
-+	};
-+
-+	cmu_peric: clock-controller@0x14c80000 {
-+		compatible = "samsung,exynos5433-cmu-peric";
-+		reg = <0x14c80000 0x0b08>;
-+		#clock-cells = <1>;
-+	};
-+
-+	cmu_peris: clock-controller@0x10040000 {
-+		compatible = "samsung,exynos5433-cmu-peris";
-+		reg = <0x10040000 0x0b20>;
-+		#clock-cells = <1>;
-+	};
-+
-+	cmu_fsys: clock-controller@0x156e0000 {
-+		compatible = "samsung,exynos5433-cmu-fsys";
-+		reg = <0x156e0000 0x0b04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk",
-+			"sclk_ufs_mphy",
-+			"div_aclk_fsys_200",
-+			"sclk_pcie_100_fsys",
-+			"sclk_ufsunipro_fsys",
-+			"sclk_mmc2_fsys",
-+			"sclk_mmc1_fsys",
-+			"sclk_mmc0_fsys",
-+			"sclk_usbhost30_fsys",
-+			"sclk_usbdrd30_fsys";
-+		clocks = <&xxti>,
-+		       <&cmu_cpif CLK_SCLK_UFS_MPHY>,
-+		       <&cmu_top CLK_DIV_ACLK_FSYS_200>,
-+		       <&cmu_top CLK_SCLK_PCIE_100_FSYS>,
-+		       <&cmu_top CLK_SCLK_UFSUNIPRO_FSYS>,
-+		       <&cmu_top CLK_SCLK_MMC2_FSYS>,
-+		       <&cmu_top CLK_SCLK_MMC1_FSYS>,
-+		       <&cmu_top CLK_SCLK_MMC0_FSYS>,
-+		       <&cmu_top CLK_SCLK_USBHOST30_FSYS>,
-+		       <&cmu_top CLK_SCLK_USBDRD30_FSYS>;
-+	};
-+
-+	cmu_g2d: clock-controller@0x12460000 {
-+		compatible = "samsung,exynos5433-cmu-g2d";
-+		reg = <0x12460000 0x0b08>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk",
-+			"aclk_g2d_266",
-+			"aclk_g2d_400";
-+		clocks = <&xxti>,
-+		       <&cmu_top CLK_ACLK_G2D_266>,
-+		       <&cmu_top CLK_ACLK_G2D_400>;
-+	};
-+
-+	cmu_disp: clock-controller@0x13b90000 {
-+		compatible = "samsung,exynos5433-cmu-disp";
-+		reg = <0x13b90000 0x0c04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk",
-+			"sclk_dsim1_disp",
-+			"sclk_dsim0_disp",
-+			"sclk_dsd_disp",
-+			"sclk_decon_tv_eclk_disp",
-+			"sclk_decon_vclk_disp",
-+			"sclk_decon_eclk_disp",
-+			"sclk_decon_tv_vclk_disp",
-+			"aclk_disp_333";
-+		clocks = <&xxti>,
-+		       <&cmu_mif CLK_SCLK_DSIM1_DISP>,
-+		       <&cmu_mif CLK_SCLK_DSIM0_DISP>,
-+		       <&cmu_mif CLK_SCLK_DSD_DISP>,
-+		       <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
-+		       <&cmu_mif CLK_SCLK_DECON_VCLK_DISP>,
-+		       <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
-+		       <&cmu_mif CLK_SCLK_DECON_TV_VCLK_DISP>,
-+		       <&cmu_mif CLK_ACLK_DISP_333>;
-+	};
-+
-+	cmu_aud: clock-controller@0x114c0000 {
-+		compatible = "samsung,exynos5433-cmu-aud";
-+		reg = <0x114c0000 0x0b04>;
-+		#clock-cells = <1>;
-+	};
-+
-+	cmu_bus0: clock-controller@0x13600000 {
-+		compatible = "samsung,exynos5433-cmu-bus0";
-+		reg = <0x13600000 0x0b04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "aclk_bus0_400";
-+		clocks = <&cmu_top CLK_ACLK_BUS0_400>;
-+	};
-+
-+	cmu_bus1: clock-controller@0x14800000 {
-+		compatible = "samsung,exynos5433-cmu-bus1";
-+		reg = <0x14800000 0x0b04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "aclk_bus1_400";
-+		clocks = <&cmu_top CLK_ACLK_BUS1_400>;
-+	};
-+
-+	cmu_bus2: clock-controller@0x13400000 {
-+		compatible = "samsung,exynos5433-cmu-bus2";
-+		reg = <0x13400000 0x0b04>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk", "aclk_bus2_400";
-+		clocks = <&xxti>, <&cmu_mif CLK_ACLK_BUS2_400>;
-+	};
-+
-+	cmu_g3d: clock-controller@0x14aa0000 {
-+		compatible = "samsung,exynos5433-cmu-g3d";
-+		reg = <0x14aa0000 0x1000>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk", "aclk_g3d_400";
-+		clocks = <&xxti>, <&cmu_top CLK_ACLK_G3D_400>;
-+	};
-+
-+	cmu_gscl: clock-controller@0x13cf0000 {
-+		compatible = "samsung,exynos5433-cmu-gscl";
-+		reg = <0x13cf0000 0x0b10>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk",
-+			"aclk_gscl_111",
-+			"aclk_gscl_333";
-+		clocks = <&xxti>,
-+			<&cmu_top CLK_ACLK_GSCL_111>,
-+			<&cmu_top CLK_ACLK_GSCL_333>;
-+	};
-+
-+Example 3: UART controller node that consumes the clock generated by the clock
-+	   controller.
-+
-+	serial_0: serial@14C10000 {
-+		compatible = "samsung,exynos5433-uart";
-+		reg = <0x14C10000 0x100>;
-+		interrupts = <0 421 0>;
-+		clocks = <&cmu_peric CLK_PCLK_UART0>,
-+			 <&cmu_peric CLK_SCLK_UART0>;
-+		clock-names = "uart", "clk_uart_baud0";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&uart0_bus>;
-+		status = "disabled";
-+	};
++	/* ENABLE_SCLK_PERIS_SECURE_OTP_CON */
++	GATE(CLK_SCLK_OTP_CON, "sclk_otp_con", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_OTP_CON, 0, 0, 0),
+ };
+ 
+ static struct samsung_cmu_info peris_cmu_info __initdata = {
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 62d3ec7..e9fc243 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -227,8 +227,39 @@
+ #define	CLK_PCLK_WDT_ATLAS		8
+ #define	CLK_PCLK_MCT			9
+ #define	CLK_PCLK_HDMI_CEC		10
++#define CLK_ACLK_AHB2APB_PERIS1P	11
++#define CLK_ACLK_AHB2APB_PERIS0P	12
++#define CLK_ACLK_PERISNP_66		13
++#define CLK_PCLK_TZPC12			14
++#define CLK_PCLK_TZPC11			15
++#define CLK_PCLK_TZPC10			16
++#define CLK_PCLK_TZPC9			17
++#define CLK_PCLK_TZPC8			18
++#define CLK_PCLK_TZPC7			19
++#define CLK_PCLK_TZPC6			20
++#define CLK_PCLK_TZPC5			21
++#define CLK_PCLK_TZPC4			22
++#define CLK_PCLK_TZPC3			23
++#define CLK_PCLK_TZPC2			24
++#define CLK_PCLK_TZPC1			25
++#define CLK_PCLK_TZPC0			26
++#define CLK_PCLK_SECKEY_APBIF		27
++#define CLK_PCLK_CHIPID_APBIF		28
++#define CLK_PCLK_TOPRTC			29
++#define CLK_PCLK_CUSTOM_EFUSE_APBIF	30
++#define CLK_PCLK_ANTIRBK_CNT_APBIF	31
++#define CLK_PCLK_OTP_CON_APBIF		32
++#define CLK_SCLK_ASV_TB			33
++#define CLK_SCLK_TMU1			34
++#define CLK_SCLK_TMU0			35
++#define CLK_SCLK_SECKEY			36
++#define CLK_SCLK_CHIPID			37
++#define CLK_SCLK_TOPRTC			38
++#define CLK_SCLK_CUSTOM_EFUSE		39
++#define CLK_SCLK_ANTIRBK_CNT		40
++#define CLK_SCLK_OTP_CON		41
+ 
+-#define PERIS_NR_CLK			11
++#define PERIS_NR_CLK			42
+ 
+ /* CMU_FSYS */
+ #define CLK_MOUT_ACLK_FSYS_200_USER	1
 -- 
 1.8.5.5
