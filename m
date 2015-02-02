@@ -1,52 +1,191 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 3/3] cpufreq: exynos: allow modular build
-Date: Sat, 31 Jan 2015 23:37:01 +0100
-Message-ID: <2204000.ofqAym34Rh@wuerfel>
-References: <1422451015-390439-1-git-send-email-arnd@arndb.de> <5048920.rXbXJT1FvO@wuerfel> <20150130215118.GA14374@developer.amazonguestwifi.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCHv2 1/1] cpufreq: exynos: allow modular build
+Date: Mon, 2 Feb 2015 09:33:09 +0530
+Message-ID: <CAKohpondsvLm2S_V+aBSoCg252nHONJ6TbyTuHoVYuwxBDEuDA@mail.gmail.com>
+References: <1422730782-13055-1-git-send-email-edubezval@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150130215118.GA14374@developer.amazonguestwifi.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Eduardo Valentin <edubezval@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:45854 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754824AbbBBEDL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 1 Feb 2015 23:03:11 -0500
+Received: by mail-ob0-f173.google.com with SMTP id uy5so21583559obc.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Feb 2015 20:03:10 -0800 (PST)
+In-Reply-To: <1422730782-13055-1-git-send-email-edubezval@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Friday 30 January 2015 17:51:24 Eduardo Valentin wrote:
-> > > @@ -90,6 +84,20 @@ config ARM_EXYNOS_CPU_FREQ_BOOST_SW
-> > >  
-> > >       If in doubt, say N.
-> > >  
-> > > +config ARM_EXYNOS5440_CPUFREQ
-> > > +   bool "SAMSUNG EXYNOS5440"
-> > > +   depends on SOC_EXYNOS5440
-> > > +   depends on HAVE_CLK && OF
-> > > +   select PM_OPP
-> > > +   default y
-> > > +   help
-> > > +     This adds the CPUFreq driver for Samsung EXYNOS5440
-> > > +     SoC. The nature of exynos5440 clock controller is
-> > > +     different than previous exynos controllers so not using
-> > > +     the common exynos framework.
-> > > +
-> > > +     If in doubt, say N.
-> > 
-> > I believe this one also has to be tristate, for the same reason.
-> > 
-> 
-> I agree with you that it is better if we make it tristate. So, on my
-> side, I have no concerns changing it to tristate.
-> 
-> However, the exynos5440 cpufreq driver does not depend on of thermal as
-> of today, and therefore, I did not touch this driver for this matter.
-> Meaning, if it is not causing troubles, no need to mess with it.
-> 
-> But I can add this change. No issues, on my side.
+On 1 February 2015 at 00:29, Eduardo Valentin <edubezval@gmail.com> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The exynos cpufreq driver code recently gained a dependency on the
+> cooling code, which may be a loadable module. This breaks an ARM
+> allmodconfig build:
+>
+> drivers/built-in.o: In function `exynos_cpufreq_probe':
+> :(.text+0x1748e8): undefined reference to `of_cpufreq_cooling_register'
+>
+> To avoid this problem, change cpufreq Kconfig to allow the drivers
+> to be loadable modules as well and enforce a dependency on the
+> thermal module.
+>
+> This change, in order to allow module builds on this cpufreq
+> driver, properly constructs the driver into a single module,
+> instead of several modules. The change also keeps the proper
+> platform dependency, and therefore, it wont load in platforms
+> that are not supposed to be loaded. The user will be able to
+> build the support for all platforms, or select which platforms
+> (s)he wants (as originally), except that now it can be a module,
+> instead.
+>
+> Besides, it will still keep the driver only on those configs
+> that expect it to be on. And it won't compile/load on platforms
+> that it is not supposed to. It brings the config ARM_EXYNOS_CPU_FREQ_BOOST_SW
+> closer to this driver, so it looks better in the menuconfig.
+>
+> We intentionally change ARM_EXYNOS5440_CPUFREQ to be tristate too, to
+> avoid future troubles.
+>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Fixes: e725d26c4857 ("cpufreq: exynos: Use device tree to determine if cpufreq cooling should be registered")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm | 44 ++++++++++++++++++++++++++------------------
+>  drivers/cpufreq/Makefile    |  9 +++++----
+>  2 files changed, 31 insertions(+), 22 deletions(-)
+> ---
+> Changes from V1:
+> - Instead of having several modules, the driver now is constructed by several
+> files into a single module, depending on config.
+> - The patch does not change existing user defconfigs.
+>
+> If no objections, I will include this in into my -fixes branch.
+>
+> Cheers,
+>
+> Eduardo Valentin
+>
+>
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 0f9a2c3..1b06fc4 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -26,13 +26,21 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+>
+>
+>  config ARM_EXYNOS_CPUFREQ
+> -       bool
+> +       tristate "SAMSUNG EXYNOS CPUfreq Driver"
+> +       depends on CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250
+> +       depends on THERMAL
+> +       help
+> +         This adds the CPUFreq driver for Samsung EXYNOS platforms.
+> +         Supported SoC versions are:
+> +            Exynos4210, Exynos4212, Exynos4412, and Exynos5250.
+> +
+> +         If in doubt, say N.
+>
+>  config ARM_EXYNOS4210_CPUFREQ
+>         bool "SAMSUNG EXYNOS4210"
+>         depends on CPU_EXYNOS4210
+> +       depends on ARM_EXYNOS_CPUFREQ
+>         default y
+> -       select ARM_EXYNOS_CPUFREQ
+>         help
+>           This adds the CPUFreq driver for Samsung EXYNOS4210
+>           SoC (S5PV310 or S5PC210).
+> @@ -42,8 +50,8 @@ config ARM_EXYNOS4210_CPUFREQ
+>  config ARM_EXYNOS4X12_CPUFREQ
+>         bool "SAMSUNG EXYNOS4x12"
+>         depends on SOC_EXYNOS4212 || SOC_EXYNOS4412
+> +       depends on ARM_EXYNOS_CPUFREQ
+>         default y
+> -       select ARM_EXYNOS_CPUFREQ
+>         help
+>           This adds the CPUFreq driver for Samsung EXYNOS4X12
+>           SoC (EXYNOS4212 or EXYNOS4412).
+> @@ -53,28 +61,14 @@ config ARM_EXYNOS4X12_CPUFREQ
+>  config ARM_EXYNOS5250_CPUFREQ
+>         bool "SAMSUNG EXYNOS5250"
+>         depends on SOC_EXYNOS5250
+> +       depends on ARM_EXYNOS_CPUFREQ
+>         default y
+> -       select ARM_EXYNOS_CPUFREQ
+>         help
+>           This adds the CPUFreq driver for Samsung EXYNOS5250
+>           SoC.
+>
+>           If in doubt, say N.
+>
+> -config ARM_EXYNOS5440_CPUFREQ
+> -       bool "SAMSUNG EXYNOS5440"
+> -       depends on SOC_EXYNOS5440
+> -       depends on HAVE_CLK && OF
+> -       select PM_OPP
+> -       default y
+> -       help
+> -         This adds the CPUFreq driver for Samsung EXYNOS5440
+> -         SoC. The nature of exynos5440 clock controller is
+> -         different than previous exynos controllers so not using
+> -         the common exynos framework.
+> -
+> -         If in doubt, say N.
+> -
+>  config ARM_EXYNOS_CPU_FREQ_BOOST_SW
+>         bool "EXYNOS Frequency Overclocking - Software"
+>         depends on ARM_EXYNOS_CPUFREQ && THERMAL
+> @@ -90,6 +84,20 @@ config ARM_EXYNOS_CPU_FREQ_BOOST_SW
+>
+>           If in doubt, say N.
+>
+> +config ARM_EXYNOS5440_CPUFREQ
+> +       tristate "SAMSUNG EXYNOS5440"
+> +       depends on SOC_EXYNOS5440
+> +       depends on HAVE_CLK && OF
+> +       select PM_OPP
+> +       default y
+> +       help
+> +         This adds the CPUFreq driver for Samsung EXYNOS5440
+> +         SoC. The nature of exynos5440 clock controller is
+> +         different than previous exynos controllers so not using
+> +         the common exynos framework.
+> +
+> +         If in doubt, say N.
+> +
+>  config ARM_HIGHBANK_CPUFREQ
+>         tristate "Calxeda Highbank-based"
+>         depends on ARCH_HIGHBANK && CPUFREQ_DT && REGULATOR
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index b3ca7b0..b26e2bf 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -51,10 +51,11 @@ obj-$(CONFIG_ARM_DT_BL_CPUFREQ)             += arm_big_little_dt.o
+>
+>  obj-$(CONFIG_ARCH_DAVINCI)             += davinci-cpufreq.o
+>  obj-$(CONFIG_UX500_SOC_DB8500)         += dbx500-cpufreq.o
+> -obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)       += exynos-cpufreq.o
+> -obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)   += exynos4210-cpufreq.o
+> -obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)   += exynos4x12-cpufreq.o
+> -obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)   += exynos5250-cpufreq.o
+> +obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)       += arm-exynos-cpufreq.o
+> +arm-exynos-cpufreq-y                                   := exynos-cpufreq.o
+> +arm-exynos-cpufreq-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)    += exynos4210-cpufreq.o
+> +arm-exynos-cpufreq-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)    += exynos4x12-cpufreq.o
+> +arm-exynos-cpufreq-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)    += exynos5250-cpufreq.o
+>  obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ)   += exynos5440-cpufreq.o
+>  obj-$(CONFIG_ARM_HIGHBANK_CPUFREQ)     += highbank-cpufreq.o
+>  obj-$(CONFIG_ARM_IMX6Q_CPUFREQ)                += imx6q-cpufreq.o
 
-Sorry, my mistake. I remembered incorrectly that the problem was
-in both modules, but you are right that it does not exist in the exynos5440
-one. It is not a mistake to turn this into tristate, but there is no
-immediate neeed, so either version is fine.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-	Arnd
+Now as these are all compilable as modules, should we look into the drivers as
+well to see what they are doing on module unload ?
