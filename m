@@ -1,218 +1,69 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 1/3] mmc: pwrseq: add driver for emmc hardware reset
-Date: Mon, 02 Feb 2015 11:05:49 +0100
-Message-ID: <1422871549-5468-1-git-send-email-m.szyprowski@samsung.com>
-References: <CABxcv=nF3SJK7p1j=F08_9kHU2n+v=hmgr7-ikfZ7Xraz3J0_g@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Add syscon phandle to the video-phy node for
+ Exynos4
+Date: Mon, 02 Feb 2015 11:39:07 +0100
+Message-ID: <54CF53CB.3050100@samsung.com>
+References: <1421429438-32090-1-git-send-email-s.nawrocki@samsung.com>
+ <1421429438-32090-2-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41855 "EHLO
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44098 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933087AbbBBKGP (ORCPT
+	with ESMTP id S933041AbbBBKj0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 05:06:15 -0500
-In-reply-to: <CABxcv=nF3SJK7p1j=F08_9kHU2n+v=hmgr7-ikfZ7Xraz3J0_g@mail.gmail.com>
+	Mon, 2 Feb 2015 05:39:26 -0500
+In-reply-to: <1421429438-32090-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+To: kgene@kernel.org
+Cc: kishon@ti.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch provides a simple mmc-pwrseq-emmc driver, which controls
-single gpio line. It perform standard eMMC hw reset procedure, as
-descibed by Jedec 4.4 specification. This procedure is performed just
-after MMC core enabled power to the given mmc host (to fix possible
-issues if bootloader has left eMMC card in initialized or unknown
-state), and before performing complete system reboot (also in case of
-emergency reboot call). The latter is needed on boards, which doesn't
-have hardware reset logic connected to emmc card and (limited or broken)
-ROM bootloaders are unable to read second stage from the emmc card if
-the card is left in unknown or already initialized state.
+Hi Kukjin,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- .../devicetree/bindings/mmc/mmc-pwrseq-emmc.txt    |  25 +++++
- drivers/mmc/core/Makefile                          |   2 +-
- drivers/mmc/core/pwrseq.c                          |   3 +
- drivers/mmc/core/pwrseq.h                          |   1 +
- drivers/mmc/core/pwrseq_emmc.c                     | 103 +++++++++++++++++++++
- 5 files changed, 133 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
- create mode 100644 drivers/mmc/core/pwrseq_emmc.c
+On 16/01/15 18:30, Sylwester Nawrocki wrote:
+> This is required to fix regression after introducing the PMU device
+> nodes required for the PMU driver modified in commit
+> 14fc8b93d47323561edf5d482d4a4b3ee1b90286
+> ("ARM: EXYNOS: Add platform driver support for Exynos PMU").
+> This change is needed to make MIPI DSI displays and MIPI CSI-2
+> camera sensors working again on Exynos4 boards.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index b8168f1..250ee50 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -76,6 +76,7 @@
+>  		compatible = "samsung,s5pv210-mipi-video-phy";
+>  		reg = <0x10020710 8>;
+>  		#phy-cells = <1>;
+> +		syscon = <&pmu_system_controller>;
+>  	};
+>  
+>  	pd_mfc: mfc-power-domain@10023C40 {
 
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
-new file mode 100644
-index 000000000000..4baeac828f6b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
-@@ -0,0 +1,25 @@
-+* The simple eMMC hardware reset provider
-+
-+The purpose of this driver is to perform standard eMMC hw reset
-+procedure, as descibed by Jedec 4.4 specification. This procedure is
-+performed just after MMC core enabled power to the given mmc host (to
-+fix possible issues if bootloader has left eMMC card in initialized or
-+unknown state), and before performing complete system reboot (also in
-+case of emergency reboot call). The latter is needed on boards, which
-+doesn't have hardware reset logic connected to emmc card and (limited or
-+broken) ROM bootloaders are unable to read second stage from the emmc
-+card if the card is left in unknown or already initialized state.
-+
-+Required properties:
-+- compatible : contains "mmc-pwrseq-emmc".
-+- reset-gpios : contains a GPIO specifier. The reset GPIO is pulled
-+	down and then pulled up to perform eMMC card reset. To perform
-+	reset procedure as described in Jedec 4.4 specification, the
-+	gpio line should be defined as GPIO_ACTIVE_LOW.
-+
-+Example:
-+
-+	sdhci0_pwrseq {
-+		compatible = "mmc-pwrseq-emmc";
-+		reset-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
-+	}
-diff --git a/drivers/mmc/core/Makefile b/drivers/mmc/core/Makefile
-index b39cbd2f830b..2c25138f28b7 100644
---- a/drivers/mmc/core/Makefile
-+++ b/drivers/mmc/core/Makefile
-@@ -8,5 +8,5 @@ mmc_core-y			:= core.o bus.o host.o \
- 				   sdio.o sdio_ops.o sdio_bus.o \
- 				   sdio_cis.o sdio_io.o sdio_irq.o \
- 				   quirks.o slot-gpio.o
--mmc_core-$(CONFIG_OF)		+= pwrseq.o pwrseq_simple.o
-+mmc_core-$(CONFIG_OF)		+= pwrseq.o pwrseq_simple.o pwrseq_emmc.o
- mmc_core-$(CONFIG_DEBUG_FS)	+= debugfs.o
-diff --git a/drivers/mmc/core/pwrseq.c b/drivers/mmc/core/pwrseq.c
-index 2cea00ed4e65..862356123d78 100644
---- a/drivers/mmc/core/pwrseq.c
-+++ b/drivers/mmc/core/pwrseq.c
-@@ -26,6 +26,9 @@ static struct mmc_pwrseq_match pwrseq_match[] = {
- 	{
- 		.compatible = "mmc-pwrseq-simple",
- 		.alloc = mmc_pwrseq_simple_alloc,
-+	}, {
-+		.compatible = "mmc-pwrseq-emmc",
-+		.alloc = mmc_pwrseq_emmc_alloc,
- 	},
- };
+I'd like to remind you about a few pending dts patches I send to you, except
+the above one there are:
+
+[PATCH V3 15/15] ARM: dts: Fix I2S1, I2S2 compatible for exynos4 SoCs
+[PATCH] ARM: dts: Fix CLK_MOUT_CAMn parent clocks assignment for Trats2
+[PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in exynos4x12.dtsi
  
-diff --git a/drivers/mmc/core/pwrseq.h b/drivers/mmc/core/pwrseq.h
-index bd860d88f116..aba3409e8d6e 100644
---- a/drivers/mmc/core/pwrseq.h
-+++ b/drivers/mmc/core/pwrseq.h
-@@ -28,6 +28,7 @@ void mmc_pwrseq_power_off(struct mmc_host *host);
- void mmc_pwrseq_free(struct mmc_host *host);
- 
- int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev);
-+int mmc_pwrseq_emmc_alloc(struct mmc_host *host, struct device *dev);
- 
- #else
- 
-diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-new file mode 100644
-index 000000000000..39dc43dd316f
---- /dev/null
-+++ b/drivers/mmc/core/pwrseq_emmc.c
-@@ -0,0 +1,103 @@
-+/*
-+ * Copyright (C) 2015, Samsung Electronics Co., Ltd.
-+ *
-+ * Author: Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * License terms: GNU General Public License (GPL) version 2
-+ *
-+ * Simple eMMC hardware reset provider
-+ */
-+#include <linux/delay.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/reboot.h>
-+
-+#include <linux/mmc/host.h>
-+
-+#include "pwrseq.h"
-+
-+struct mmc_pwrseq_emmc {
-+	struct mmc_pwrseq pwrseq;
-+	struct notifier_block reset_nb;
-+	struct gpio_desc *reset_gpio;
-+};
-+
-+static void mmc_pwrseq_perform_emmc_reset(struct mmc_pwrseq_emmc *pwrseq)
-+{
-+	gpiod_set_value(pwrseq->reset_gpio, 1);
-+	/* For eMMC, minimum is 1us but give it 10us for good measure */
-+	udelay(10);
-+	gpiod_set_value(pwrseq->reset_gpio, 0);
-+	/* For eMMC, minimum is 200us but give it 300us for good measure */
-+	udelay(300);
-+}
-+
-+static void mmc_pwrseq_emmc_reset(struct mmc_host *host)
-+{
-+	struct mmc_pwrseq_emmc *pwrseq = container_of(host->pwrseq,
-+					struct mmc_pwrseq_emmc, pwrseq);
-+
-+	mmc_pwrseq_perform_emmc_reset(pwrseq);
-+}
-+
-+static void mmc_pwrseq_emmc_free(struct mmc_host *host)
-+{
-+	struct mmc_pwrseq_emmc *pwrseq = container_of(host->pwrseq,
-+					struct mmc_pwrseq_emmc, pwrseq);
-+
-+	gpiod_put(pwrseq->reset_gpio);
-+	unregister_restart_handler(&pwrseq->reset_nb);
-+	kfree(pwrseq);
-+	host->pwrseq = NULL;
-+}
-+
-+static struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
-+	.post_power_on = mmc_pwrseq_emmc_reset,
-+	.power_off = mmc_pwrseq_emmc_reset,
-+	.free = mmc_pwrseq_emmc_free,
-+};
-+
-+static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
-+				    unsigned long mode, void *cmd)
-+{
-+	struct mmc_pwrseq_emmc *pwrseq;
-+	pwrseq = container_of(this, struct mmc_pwrseq_emmc, reset_nb);
-+
-+	mmc_pwrseq_perform_emmc_reset(pwrseq);
-+	return NOTIFY_DONE;
-+}
-+
-+int mmc_pwrseq_emmc_alloc(struct mmc_host *host, struct device *dev)
-+{
-+	struct mmc_pwrseq_emmc *pwrseq;
-+	int ret = 0;
-+
-+	pwrseq = kzalloc(sizeof(struct mmc_pwrseq_emmc), GFP_KERNEL);
-+	if (!pwrseq)
-+		return -ENOMEM;
-+
-+	pwrseq->reset_gpio = gpiod_get_index(dev, "reset", 0, GPIOD_OUT_LOW);
-+	if (IS_ERR(pwrseq->reset_gpio)) {
-+		ret = PTR_ERR(pwrseq->reset_gpio);
-+		goto free;
-+	}
-+
-+	/*
-+	 * register reset handler to ensure emmc reset also from
-+	 * emergency_reboot()
-+	 */
-+	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
-+	pwrseq->reset_nb.priority = 255;
-+	register_restart_handler(&pwrseq->reset_nb);
-+
-+	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
-+	host->pwrseq = &pwrseq->pwrseq;
-+
-+	return 0;
-+free:
-+	kfree(pwrseq);
-+	return ret;
-+}
--- 
-1.9.2
+and
+
+[PATCH v2 14/16] ARM: dts: Exynos4 and Odroid X2/U3 sound device nodes update
+
+but this one depends on ASoC patch:
+[PATCH V3 11/15] ASoC: samsung: i2s: Add clk provider DT binding documentation
+
+hence it could be probably merged only after 3.20-rc1 release. 
+
+--
+Thanks,
+Sylwester
