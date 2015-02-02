@@ -1,104 +1,103 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 0/9] Enable HDMI support on Exynos platforms
-Date: Mon, 02 Feb 2015 14:20:19 +0100
-Message-ID: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v5 6/9] ARM: dts: exynos4210-universal_c210: enable hdmi support
+Date: Mon, 02 Feb 2015 14:20:25 +0100
+Message-ID: <1422883228-10690-7-git-send-email-m.szyprowski@samsung.com>
+References: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:53491 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753471AbbBBNUn (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54119 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755329AbbBBNUr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 08:20:43 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
+	Mon, 2 Feb 2015 08:20:47 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NJ50088XBX97L30@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Feb 2015 13:24:46 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NJ5009CVBXG5C30@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 02 Feb 2015 13:24:52 +0000 (GMT)
+In-reply-to: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-Hi all,
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-This is yet another update on patchset, which enables HDMI support for
-Exynos based platforms.
+This patch adds configuration of hw modules required to enable HDMI
+support on Universal C210 board.
 
-Beside DTS changes, this patchset adds parent domain support for Exynos
-PM domains and add support for 'hdmi' clock directly to Exynos DRM mixer
-driver.
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 57 +++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-The patchset is based on samsung/for-next branch and 'PM / Domains:
-Export of_genpd_get_from_provider function' patch merged as commit
-7496fcbe8a643097efc061160e1c3b65ee2fa350 to v3.19-rc4.
-
-Regards
-Marek Szyprowski
-
-
-Changelog:
-
-v5:
-- fixed error value for clk_get() in mixer patch
-- rebased onto samsung/for-next branch
-
-v4: (http://www.spinics.net/lists/linux-samsung-soc/msg41375.html)
-- added patches, which add 'hdmi' clock handling to mixed block, this
-  finally solves the initialization related issues, thanks for Tobias
-  Jakobi for testing
-- added acks/reviewed/tested by tags
-
-v3: (http://www.spinics.net/lists/linux-samsung-soc/msg41020.html)
-- added a note on defining subdomains to generic PM domain binding
-  documentation (requested by Ulf Hansson)
-
-v2: (http://www.spinics.net/lists/linux-samsung-soc/msg40980.html)
-- rewrote subdomains patch according to suggestions from Geert
-  Uytterhoeven and Amit Daniel Kachhap.
-
-v1 resend: (http://www.spinics.net/lists/linux-samsung-soc/msg39428.html)
-- added handling of generic 'power-domains' binding in subdomains
-
-v1: (http://www.spinics.net/lists/linux-samsung-soc/msg38914.html)
-- resolved power domain on/off issue with 'clk: samsung: exynos4: set
-  parent of mixer gate clock to hdmi' patch
-
-v0: (http://www.spinics.net/lists/linux-samsung-soc/msg33498.html)
-- first attempt, used 'always on' power domains hack
-
-
-Patch summary:
-
-
-*** BLURB HERE ***
-
-Andrzej Hajda (1):
-  ARM: dts: exynos5250: add display power domain
-
-Marek Szyprowski (7):
-  PM / Domains: Add a note about power domain subdomains
-  ARM: Exynos: add support for sub-power domains
-  ARM: dts: exynos4: add hdmi related nodes
-  ARM: dts: exynos4: add dependency between TV and LCD0 power domains
-  ARM: dts: exynos4412-odroid: enable hdmi support
-  ARM: dts: Exynos: add 'hdmi' clock to mixer nodes
-  drm/exynos: add support for 'hdmi' clock
-
-Tomasz Stanislawski (1):
-  ARM: dts: exynos4210-universal_c210: enable hdmi support
-
- .../bindings/arm/exynos/power_domain.txt           |  2 +
- .../devicetree/bindings/power/power_domain.txt     | 29 +++++++++++
- .../devicetree/bindings/video/exynos_mixer.txt     |  1 +
- arch/arm/boot/dts/exynos4.dtsi                     | 41 ++++++++++++++++
- arch/arm/boot/dts/exynos4210-universal_c210.dts    | 57 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi                  |  8 +++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 44 +++++++++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi                  | 11 +++++
- arch/arm/boot/dts/exynos5250.dtsi                  | 15 +++++-
- arch/arm/boot/dts/exynos5420.dtsi                  |  5 +-
- arch/arm/mach-exynos/pm_domains.c                  | 28 +++++++++++
- drivers/gpu/drm/exynos/exynos_mixer.c              |  9 ++++
- 12 files changed, 246 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 08f89e0ff2b8..1d7643288569 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -504,6 +504,63 @@
+ 			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 	};
++
++	hdmi_en: voltage-regulator-hdmi-5v {
++		compatible = "regulator-fixed";
++		regulator-name = "HDMI_5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpe0 1 0>;
++		enable-active-high;
++	};
++
++	hdmi_ddc: i2c-ddc {
++		compatible = "i2c-gpio";
++		gpios = <&gpe4 2 0 &gpe4 3 0>;
++		i2c-gpio,delay-us = <100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pinctrl-0 = <&i2c_ddc_bus>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	mixer@12C10000 {
++		status = "okay";
++	};
++
++	hdmi@12D00000 {
++		hpd-gpio = <&gpx3 7 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmi_hpd>;
++		hdmi-en-supply = <&hdmi_en>;
++		vdd-supply = <&ldo3_reg>;
++		vdd_osc-supply = <&ldo4_reg>;
++		vdd_pll-supply = <&ldo3_reg>;
++		ddc = <&hdmi_ddc>;
++		status = "okay";
++	};
++
++	i2c@138E0000 {
++		status = "okay";
++	};
++};
++
++&pinctrl_1 {
++	hdmi_hpd: hdmi-hpd {
++		samsung,pins = "gpx3-7";
++		samsung,pin-pud = <0>;
++	};
++};
++
++&pinctrl_0 {
++	i2c_ddc_bus: i2c-ddc-bus {
++		samsung,pins = "gpe4-2", "gpe4-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
+ };
+ 
+ &mdma1 {
 -- 
 1.9.2
