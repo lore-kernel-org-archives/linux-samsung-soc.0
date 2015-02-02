@@ -1,163 +1,387 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH V7 RESEND 1/2] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Mon, 02 Feb 2015 18:12:03 +0530
-Message-ID: <1422880924-14212-2-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH V7 RESEND 2/2] phy: exynos5-usbdrd: Calibrate LOS levels for
+ exynos5420/5800
+Date: Mon, 02 Feb 2015 18:12:04 +0530
+Message-ID: <1422880924-14212-3-git-send-email-gautam.vivek@samsung.com>
 References: <1422880924-14212-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1422880924-14212-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:39157 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753954AbbBBMj3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Feb 2015 07:39:29 -0500
+In-reply-to: <1422880924-14212-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, kgene.kim@samsung.com, kishon@ti.com, mathias.nyman@intel.com, heikki.krogerus@linux.intel.com, sergei.shtylyov@cogentembedded.com, jg1.han@samsung.com
 
-The host controller by itself may sometimes need to handle PHY
-and re-initialize it to re-configure some of the PHY parameters
-to get full support out of the PHY controller.
-Therefore, facilitate getting the two possible PHYs, viz.
-USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3), and initialize them.
+Adding phy calibration sequence for USB 3.0 DRD PHY present on
+Exynos5420/5800 systems.
+This calibration facilitates setting certain PHY parameters viz.
+the Loss-of-Signal (LOS) Detector Threshold Level, as well as
+Tx-Vboost-Level for Super-Speed operations.
+Additionally we also set proper time to wait for RxDetect measurement,
+for desired PHY reference clock, so as to solve issue with enumeration
+of few USB 3.0 devices, like Samsung SUM-TSB16S 3.0 USB drive
+on the controller.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+We are using CR_port for this purpose to send required data
+to override the LOS values.
+
+On testing with USB 3.0 devices on USB 3.0 port present on
+SMDK5420, and peach-pit boards should see following message:
+usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
+
+and without this patch, should see below shown message:
+usb 1-1: new high-speed USB device number 2 using xhci-hcd
+
+[Also removed unnecessary extra lines in the register macro definitions]
+
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
- drivers/usb/host/xhci-plat.c |   74 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ drivers/phy/phy-exynos5-usbdrd.c |  219 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 203 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 08d402b..c478627 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/slab.h>
- #include <linux/usb/xhci_pdriver.h>
+diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+index 0437401..5834529 100644
+--- a/drivers/phy/phy-exynos5-usbdrd.c
++++ b/drivers/phy/phy-exynos5-usbdrd.c
+@@ -37,13 +37,11 @@
  
-@@ -127,10 +128,41 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 			goto put_hcd;
- 	}
+ /* EXYNOS5: USB 3.0 DRD PHY registers */
+ #define EXYNOS5_DRD_LINKSYSTEM			0x04
+-
+ #define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
+ #define LINKSYSTEM_FLADJ(_x)			((_x) << 1)
+ #define LINKSYSTEM_XHCI_VERSION_CONTROL		BIT(27)
  
-+	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
-+	hcd->phy = devm_phy_get(&pdev->dev, "usb2-phy");
-+	if (IS_ERR(hcd->phy)) {
-+		ret = PTR_ERR(hcd->phy);
-+		if (ret == -EPROBE_DEFER) {
-+			goto disable_clk;
-+		} else if (ret != -ENOSYS && ret != -ENODEV) {
-+			hcd->phy = NULL;
-+			dev_warn(&pdev->dev,
-+				 "Error retrieving usb2 phy: %d\n", ret);
-+		}
-+	}
+ #define EXYNOS5_DRD_PHYUTMI			0x08
+-
+ #define PHYUTMI_OTGDISABLE			BIT(6)
+ #define PHYUTMI_FORCESUSPEND			BIT(1)
+ #define PHYUTMI_FORCESLEEP			BIT(0)
+@@ -51,26 +49,20 @@
+ #define EXYNOS5_DRD_PHYPIPE			0x0c
+ 
+ #define EXYNOS5_DRD_PHYCLKRST			0x10
+-
+ #define PHYCLKRST_EN_UTMISUSPEND		BIT(31)
+-
+ #define PHYCLKRST_SSC_REFCLKSEL_MASK		(0xff << 23)
+ #define PHYCLKRST_SSC_REFCLKSEL(_x)		((_x) << 23)
+-
+ #define PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
+ #define PHYCLKRST_SSC_RANGE(_x)			((_x) << 21)
+-
+ #define PHYCLKRST_SSC_EN			BIT(20)
+ #define PHYCLKRST_REF_SSP_EN			BIT(19)
+ #define PHYCLKRST_REF_CLKDIV2			BIT(18)
+-
+ #define PHYCLKRST_MPLL_MULTIPLIER_MASK		(0x7f << 11)
+ #define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF	(0x19 << 11)
+ #define PHYCLKRST_MPLL_MULTIPLIER_50M_REF	(0x32 << 11)
+ #define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF	(0x68 << 11)
+ #define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF	(0x7d << 11)
+ #define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF	(0x02 << 11)
+-
+ #define PHYCLKRST_FSEL_UTMI_MASK		(0x7 << 5)
+ #define PHYCLKRST_FSEL_PIPE_MASK		(0x7 << 8)
+ #define PHYCLKRST_FSEL(_x)			((_x) << 5)
+@@ -78,46 +70,68 @@
+ #define PHYCLKRST_FSEL_PAD_24MHZ		(0x2a << 5)
+ #define PHYCLKRST_FSEL_PAD_20MHZ		(0x31 << 5)
+ #define PHYCLKRST_FSEL_PAD_19_2MHZ		(0x38 << 5)
+-
+ #define PHYCLKRST_RETENABLEN			BIT(4)
+-
+ #define PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
+ #define PHYCLKRST_REFCLKSEL_PAD_REFCLK		(0x2 << 2)
+ #define PHYCLKRST_REFCLKSEL_EXT_REFCLK		(0x3 << 2)
+-
+ #define PHYCLKRST_PORTRESET			BIT(1)
+ #define PHYCLKRST_COMMONONN			BIT(0)
+ 
+ #define EXYNOS5_DRD_PHYREG0			0x14
++#define PHYREG0_SSC_REF_CLK_SEL			BIT(21)
++#define PHYREG0_SSC_RANGE			BIT(20)
++#define PHYREG0_CR_WRITE			BIT(19)
++#define PHYREG0_CR_READ				BIT(18)
++#define PHYREG0_CR_DATA_IN(_x)			((_x) << 2)
++#define PHYREG0_CR_CAP_DATA			BIT(1)
++#define PHYREG0_CR_CAP_ADDR			BIT(0)
 +
- 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto disable_clk;
+ #define EXYNOS5_DRD_PHYREG1			0x18
++#define PHYREG1_CR_DATA_OUT(_x)			((_x) << 1)
++#define PHYREG1_CR_ACK				BIT(0)
+ 
+ #define EXYNOS5_DRD_PHYPARAM0			0x1c
+-
+ #define PHYPARAM0_REF_USE_PAD			BIT(31)
+ #define PHYPARAM0_REF_LOSLEVEL_MASK		(0x1f << 26)
+ #define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
+ 
+ #define EXYNOS5_DRD_PHYPARAM1			0x20
+-
+ #define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
+ #define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
+ 
+ #define EXYNOS5_DRD_PHYTERM			0x24
+ 
+ #define EXYNOS5_DRD_PHYTEST			0x28
+-
+ #define PHYTEST_POWERDOWN_SSP			BIT(3)
+ #define PHYTEST_POWERDOWN_HSP			BIT(2)
+ 
+ #define EXYNOS5_DRD_PHYADP			0x2c
+ 
+ #define EXYNOS5_DRD_PHYUTMICLKSEL		0x30
+-
+ #define PHYUTMICLKSEL_UTMI_CLKSEL		BIT(2)
+ 
+ #define EXYNOS5_DRD_PHYRESUME			0x34
+ #define EXYNOS5_DRD_LINKPORT			0x44
+ 
++/* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
++#define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN		(0x15)
++#define LOSLEVEL_OVRD_IN_LOS_BIAS_5420			(0x5 << 13)
++#define LOSLEVEL_OVRD_IN_LOS_BIAS_DEFAULT		(0x0 << 13)
++#define LOSLEVEL_OVRD_IN_EN				(0x1 << 10)
++#define LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT		(0x9 << 0)
++
++#define EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN	(0x12)
++#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420		(0x5 << 13)
++#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_DEFAULT		(0x4 << 13)
++
++#define EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG		(0x1010)
++#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M		(0x4 << 4)
++#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M		(0x8 << 4)
++#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_25M_26M		(0x8 << 4)
++#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M	(0x20 << 4)
++#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_62M5		(0x20 << 4)
++#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_96M_100M		(0x40 << 4)
++
+ #define KHZ	1000
+ #define MHZ	(KHZ * KHZ)
+ 
+@@ -135,6 +149,7 @@ struct exynos5_usbdrd_phy_config {
+ 	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
+ 	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
+ 	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
++	int (*phy_calibrate)(struct phy_usb_instance *inst);
+ };
+ 
+ struct exynos5_usbdrd_phy_drvdata {
+@@ -142,6 +157,7 @@ struct exynos5_usbdrd_phy_drvdata {
+ 	u32 pmu_offset_usbdrd0_phy;
+ 	u32 pmu_offset_usbdrd1_phy;
+ 	bool has_common_clk_gate;
++	int (*phy_exynos_calibrate)(struct exynos5_usbdrd_phy *phy_drd);
+ };
+ 
+ /**
+@@ -408,9 +424,21 @@ static int exynos5_usbdrd_phy_init(struct phy *phy)
+ 	reg &= ~PHYCLKRST_PORTRESET;
+ 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
  
 +	/*
-+	 * Initialize and power-on USB 2.0 PHY
-+	 * FIXME: Isn't this a hacky way of initializing the PHY again ?
-+	 * xhci's parent would have already initialized the PHY, but we
-+	 * wanna do it again.
++	 * Calibrate some of the PHY parameters, using cr_port control
++	 * register, which are internal to PHY and are not exposed
++	 * directly to the outside world for configuring.
 +	 */
-+	hcd->phy->init_count = 0;
-+	ret = phy_init(hcd->phy);
-+	if (ret)
-+		goto dealloc_usb2_hcd;
-+
-+	hcd->phy->power_count = 0;
-+	ret = phy_power_on(hcd->phy);
-+	if (ret) {
-+		phy_exit(hcd->phy);
-+		goto dealloc_usb2_hcd;
++	if (inst->phy_cfg->phy_calibrate) {
++		ret = inst->phy_cfg->phy_calibrate(inst);
++		if (ret)
++			dev_err(phy_drd->dev,
++				"Exiting init: Failed to calibrate PHY\n");
 +	}
 +
- 	device_wakeup_enable(hcd->self.controller);
+ 	clk_disable_unprepare(phy_drd->clk);
  
- 	/* USB 2.0 roothub is stored in the platform_device now. */
-@@ -156,12 +188,41 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
+-	return 0;
++	return ret;
+ }
  
-+	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
-+	xhci->shared_hcd->phy = devm_phy_get(&pdev->dev, "usb3-phy");
-+	if (IS_ERR(xhci->shared_hcd->phy)) {
-+		ret = PTR_ERR(xhci->shared_hcd->phy);
-+		if (ret == -EPROBE_DEFER) {
-+			goto put_usb3_hcd;
-+		} else if (ret != -ENOSYS && ret != -ENODEV) {
-+			xhci->shared_hcd->phy = NULL;
-+			dev_warn(&pdev->dev,
-+				 "Error retrieving usb3 phy: %d\n", ret);
-+		}
-+	}
-+
- 	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto put_usb3_hcd;
- 
-+	/* Initialize and power-on USB 3.0 PHY */
-+	xhci->shared_hcd->phy->init_count = 0;
-+	ret = phy_init(xhci->shared_hcd->phy);
-+	if (ret)
-+		goto dealloc_usb3_hcd;
-+
-+	xhci->shared_hcd->phy->power_count = 0;
-+	ret = phy_power_on(xhci->shared_hcd->phy);
-+	if (ret) {
-+		phy_exit(xhci->shared_hcd->phy);
-+		goto dealloc_usb3_hcd;
-+	}
-+
+ static int exynos5_usbdrd_phy_exit(struct phy *phy)
+@@ -526,6 +554,163 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
  	return 0;
+ }
  
-+dealloc_usb3_hcd:
-+	usb_remove_hcd(xhci->shared_hcd);
++static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
++						u32 val, u32 cmd)
++{
++	u32 usec = 100;
++	unsigned int result;
 +
- put_usb3_hcd:
- 	usb_put_hcd(xhci->shared_hcd);
- 
-@@ -184,9 +245,15 @@ static int xhci_plat_remove(struct platform_device *dev)
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
- 	struct clk *clk = xhci->clk;
- 
-+	phy_power_off(xhci->shared_hcd->phy);
-+	phy_exit(xhci->shared_hcd->phy);
++	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
 +
- 	usb_remove_hcd(xhci->shared_hcd);
- 	usb_put_hcd(xhci->shared_hcd);
- 
-+	phy_power_off(hcd->phy);
-+	phy_exit(hcd->phy);
++	do {
++		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
++		if (result & PHYREG1_CR_ACK)
++			break;
 +
- 	usb_remove_hcd(hcd);
- 	if (!IS_ERR(clk))
- 		clk_disable_unprepare(clk);
-@@ -202,6 +269,8 @@ static int xhci_plat_suspend(struct device *dev)
- 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
- 
-+	phy_exit(hcd->phy);
++		udelay(1);
++	} while (usec-- > 0);
 +
- 	/*
- 	 * xhci_suspend() needs `do_wakeup` to know whether host is allowed
- 	 * to do wakeup during suspend. Since xhci_plat_suspend is currently
-@@ -217,6 +286,11 @@ static int xhci_plat_resume(struct device *dev)
- {
- 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++	if (!usec) {
++		dev_err(phy_drd->dev,
++			"CRPORT handshake timeout1 (0x%08x)\n", val);
++		return -ETIME;
++	}
++
++	usec = 100;
++
++	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
++
++	do {
++		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
++		if (!(result & PHYREG1_CR_ACK))
++			break;
++
++		udelay(1);
++	} while (usec-- > 0);
++
++	if (!usec) {
++		dev_err(phy_drd->dev,
++			"CRPORT handshake timeout2 (0x%08x)\n", val);
++		return -ETIME;
++	}
++
++	return 0;
++}
++
++static int crport_ctrl_write(struct exynos5_usbdrd_phy *phy_drd,
++						u32 addr, u32 data)
++{
 +	int ret;
 +
-+	ret = phy_init(hcd->phy);
++	/* Write Address */
++	writel(PHYREG0_CR_DATA_IN(addr),
++		phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
++	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(addr),
++				PHYREG0_CR_CAP_ADDR);
 +	if (ret)
 +		return ret;
++
++	/* Write Data */
++	writel(PHYREG0_CR_DATA_IN(data),
++		phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
++	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
++				PHYREG0_CR_CAP_DATA);
++	if (ret)
++		return ret;
++
++	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
++				PHYREG0_CR_WRITE);
++
++	return ret;
++}
++
++/*
++ * Calibrate few PHY parameters using CR_PORT register to meet
++ * SuperSpeed requirements on Exynos5420 and Exynos5800 systems,
++ * which have 28nm USB 3.0 DRD PHY.
++ */
++static int exynos5420_usbdrd_phy_calibrate(struct exynos5_usbdrd_phy *phy_drd)
++{
++	unsigned int temp;
++	int ret = 0;
++
++	/*
++	 * Change los_bias to (0x5) for 28nm PHY from a
++	 * default value (0x0); los_level is set as default
++	 * (0x9) as also reflected in los_level[30:26] bits
++	 * of PHYPARAM0 register.
++	 */
++	temp = LOSLEVEL_OVRD_IN_LOS_BIAS_5420 |
++		LOSLEVEL_OVRD_IN_EN |
++		LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT;
++	ret = crport_ctrl_write(phy_drd,
++				EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN,
++				temp);
++	if (ret) {
++		dev_err(phy_drd->dev,
++		 "Failed setting Loss-of-Signal level for SuperSpeed\n");
++		return ret;
++	}
++
++	/*
++	 * Set tx_vboost_lvl to (0x5) for 28nm PHY Tuning,
++	 * to raise Tx signal level from its default value of (0x4)
++	 */
++	temp = TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420;
++	ret = crport_ctrl_write(phy_drd,
++				EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN,
++				temp);
++	if (ret) {
++		dev_err(phy_drd->dev,
++		 "Failed setting Tx-Vboost-Level for SuperSpeed\n");
++		return ret;
++	}
++
++	/*
++	 * Set proper time to wait for RxDetect measurement, for
++	 * desired reference clock of PHY, by tuning the CR_PORT
++	 * register LANE0.TX_DEBUG which is internal to PHY.
++	 * This fixes issue with few USB 3.0 devices, which are
++	 * not detected (not even generate interrupts on the bus
++	 * on insertion) without this change.
++	 * e.g. Samsung SUM-TSB16S 3.0 USB drive.
++	 */
++	switch (phy_drd->extrefclk) {
++	case EXYNOS5_FSEL_50MHZ:
++		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M;
++		break;
++	case EXYNOS5_FSEL_20MHZ:
++	case EXYNOS5_FSEL_19MHZ2:
++		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M;
++		break;
++	case EXYNOS5_FSEL_24MHZ:
++	default:
++		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M;
++		break;
++	}
++
++	ret = crport_ctrl_write(phy_drd,
++				EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG,
++				temp);
++	if (ret)
++		dev_err(phy_drd->dev,
++		 "Failed setting RxDetect measurement time for SuperSpeed\n");
++
++	return ret;
++}
++
++/* Calibrate PIPE3 PHY settings, if any */
++static int exynos5_usbdrd_pipe3_calibrate(struct phy_usb_instance *inst)
++{
++	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
++
++	/* Call respective phy_calibrate given by certain platform */
++	if (phy_drd->drv_data->phy_exynos_calibrate)
++		return phy_drd->drv_data->phy_exynos_calibrate(phy_drd);
++
++	return -ENODEV;
++}
++
+ static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
+ 					struct of_phandle_args *args)
+ {
+@@ -608,6 +793,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
+ 		.phy_isol	= exynos5_usbdrd_phy_isol,
+ 		.phy_init	= exynos5_usbdrd_pipe3_init,
+ 		.set_refclk	= exynos5_usbdrd_pipe3_set_refclk,
++		.phy_calibrate	= exynos5_usbdrd_pipe3_calibrate,
+ 	},
+ };
  
- 	return xhci_resume(xhci, 0);
- }
+@@ -616,6 +802,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
+ 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
+ 	.pmu_offset_usbdrd1_phy	= EXYNOS5420_USBDRD1_PHY_CONTROL,
+ 	.has_common_clk_gate	= true,
++	.phy_exynos_calibrate	= exynos5420_usbdrd_phy_calibrate,
+ };
+ 
+ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
 -- 
 1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
