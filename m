@@ -1,8 +1,8 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v4 03/13] clk: samsung: exynos5433: Add MUX clocks of CMU_TOP
- domain
-Date: Mon, 02 Feb 2015 22:01:04 +0900
-Message-ID: <1422882074-19758-4-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v4 01/13] clk: samsung: exynos5433: Add binding document for
+ Exynos5433 clock domains
+Date: Mon, 02 Feb 2015 22:01:02 +0900
+Message-ID: <1422882074-19758-2-git-send-email-cw00.choi@samsung.com>
 References: <1422882074-19758-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1422882074-19758-1-git-send-email-cw00.choi@samsung.com>
@@ -11,245 +11,281 @@ To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
 Cc: kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the MUX (multiplexer) clocks for CMU_TOP domain of Exynos5433.
-CMU_TOP domain provides source clocks to other CMU domains.
+This patch adds devicetree binding document for Exynos5433 SoC system clock
+controller.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c   | 90 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h | 31 +++++++++++-
- 2 files changed, 119 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/exynos5433-clock.txt | 258 +++++++++++++++++++++
+ 1 file changed, 258 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 5ad1803..31ec700 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -208,6 +208,7 @@ PNAME(mout_mphy_pll_user_p)	= { "oscclk", "sclk_mphy_pll", };
- PNAME(mout_mfc_pll_user_p)	= { "oscclk", "sclk_mfc_pll", };
- PNAME(mout_bus_pll_user_p)	= { "oscclk", "sclk_bus_pll", };
- PNAME(mout_bus_pll_user_t_p)	= { "oscclk", "mout_bus_pll_user", };
-+PNAME(mout_mphy_pll_user_t_p)	= { "oscclk", "mout_mphy_pll_user", };
- 
- PNAME(mout_bus_mfc_pll_user_p)	= { "mout_bus_pll_user", "mout_mfc_pll_user",};
- PNAME(mout_mfc_bus_pll_user_p)	= { "mout_mfc_pll_user", "mout_bus_pll_user",};
-@@ -215,6 +216,12 @@ PNAME(mout_aclk_cam1_552_b_p)	= { "mout_aclk_cam1_552_a",
- 				    "mout_mfc_pll_user", };
- PNAME(mout_aclk_cam1_552_a_p)	= { "mout_isp_pll", "mout_bus_pll_user", };
- 
-+PNAME(mout_aclk_mfc_400_c_p)	= { "mout_aclk_mfc_400_b",
-+				    "mout_mphy_pll_user", };
-+PNAME(mout_aclk_mfc_400_b_p)	= { "mout_aclk_mfc_400_a",
-+				    "mout_bus_pll_user", };
-+PNAME(mout_aclk_mfc_400_a_p)	= { "mout_mfc_pll_user", "mout_isp_pll", };
+diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+new file mode 100644
+index 0000000..2d7a723
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+@@ -0,0 +1,258 @@
++* Samsung Exynos5433 CMU (Clock Management Units)
 +
- PNAME(mout_bus_mphy_pll_user_p)	= { "mout_bus_pll_user",
- 				    "mout_mphy_pll_user", };
- PNAME(mout_aclk_mscl_b_p)	= { "mout_aclk_mscl_400_a",
-@@ -231,6 +238,21 @@ PNAME(mout_sclk_mmc0_d_p)	= { "mout_sclk_mmc0_c", "mout_isp_pll", };
- PNAME(mout_sclk_mmc0_c_p)	= { "mout_sclk_mmc0_b", "mout_mphy_pll_user",};
- PNAME(mout_sclk_mmc0_b_p)	= { "mout_sclk_mmc0_a", "mout_mfc_pll_user", };
- 
-+PNAME(mout_sclk_spdif_p)	= { "sclk_audio0", "sclk_audio1",
-+				    "oscclk", "ioclk_spdif_extclk", };
-+PNAME(mout_sclk_audio1_p)	= { "ioclk_audiocdclk1", "oscclk",
-+				    "mout_aud_pll_user_t",};
-+PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "oscclk",
-+				    "mout_aud_pll_user_t",};
++The Exynos5433 clock controller generates and supplies clock to various
++controllers within the Exynos5433 SoC.
 +
-+static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
-+	/* Xi2s{0|1}CDCLK input clock for I2S/PCM */
-+	FRATE(0, "ioclk_audiocdclk1", NULL, CLK_IS_ROOT, 100000000),
-+	FRATE(0, "ioclk_audiocdclk0", NULL, CLK_IS_ROOT, 100000000),
-+	/* Xi2s1SDI input clock for SPDIF */
-+	FRATE(0, "ioclk_spdif_extclk", NULL, CLK_IS_ROOT, 100000000),
-+};
++Required Properties:
 +
- static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	/* MUX_SEL_TOP0 */
- 	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
-@@ -276,6 +298,14 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_ACLK_G2D_400_A, "mout_aclk_g2d_400_a",
- 			mout_bus_mfc_pll_user_p, MUX_SEL_TOP3, 0, 1),
- 
-+	/* MUX_SEL_TOP4 */
-+	MUX(CLK_MOUT_ACLK_MFC_400_C, "mout_aclk_mfc_400_c",
-+			mout_aclk_mfc_400_c_p, MUX_SEL_TOP4, 8, 1),
-+	MUX(CLK_MOUT_ACLK_MFC_400_B, "mout_aclk_mfc_400_b",
-+			mout_aclk_mfc_400_b_p, MUX_SEL_TOP4, 4, 1),
-+	MUX(CLK_MOUT_ACLK_MFC_400_A, "mout_aclk_mfc_400_a",
-+			mout_aclk_mfc_400_a_p, MUX_SEL_TOP4, 0, 1),
++- compatible: should be one of the following.
++  - "samsung,exynos5433-cmu-top"   - clock controller compatible for CMU_TOP
++    which generates clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
++    domains and bus clocks.
++  - "samsung,exynos5433-cmu-cpif"  - clock controller compatible for CMU_CPIF
++    which generates clocks for LLI (Low Latency Interface) IP.
++  - "samsung,exynos5433-cmu-mif"   - clock controller compatible for CMU_MIF
++    which generates clocks for DRAM Memory Controller domain.
++  - "samsung,exynos5433-cmu-peric" - clock controller compatible for CMU_PERIC
++    which generates clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS IPs.
++  - "samsung,exynos5433-cmu-peris" - clock controller compatible for CMU_PERIS
++    which generates clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC IPs.
++  - "samsung,exynos5433-cmu-fsys"  - clock controller compatible for CMU_FSYS
++    which generates clocks for USB/UFS/SDMMC/TSI/PDMA IPs.
++  - "samsung,exynos5433-cmu-g2d"   - clock controller compatible for CMU_G2D
++    which generates clocks for G2D/MDMA IPs.
++  - "samsung,exynos5433-cmu-disp"  - clock controller compatible for CMU_DISP
++    which generates clocks for Display (DECON/HDMI/DSIM/MIXER) IPs.
++  - "samsung,exynos5433-cmu-aud"   - clock controller compatible for CMU_AUD
++    which generates clocks for Cortex-A5/BUS/AUDIO clocks.
++  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-cmu-bus1"
++    and "samsung,exynos5433-cmu-bus2" - clock controller compatible for CMU_BUS
++    which generates global data buses clock and global peripheral buses clock.
++  - "samsung,exynos5433-cmu-g3d"  - clock controller compatible for CMU_G3D
++    which generates clocks for 3D Graphics Engine IP.
++  - "samsung,exynos5433-cmu-gscl"  - clock controller compatible for CMU_GSCL
++    which generates clocks for GSCALER IPs.
 +
- 	/* MUX_SEL_TOP_MSCL */
- 	MUX(CLK_MOUT_SCLK_JPEG_C, "mout_sclk_jpeg_c", mout_sclk_jpeg_c_p,
- 			MUX_SEL_TOP_MSCL, 8, 1),
-@@ -284,6 +314,20 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_SCLK_JPEG_A, "mout_sclk_jpeg_a", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_MSCL, 0, 1),
- 
-+	/* MUX_SEL_TOP_CAM1 */
-+	MUX(CLK_MOUT_SCLK_ISP_SENSOR2, "mout_sclk_isp_sensor2",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 24, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SENSOR1, "mout_sclk_isp_sensor1",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 20, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SENSOR0, "mout_sclk_isp_sensor0",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 16, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_UART, "mout_sclk_isp_uart",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 8, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SPI1, "mout_sclk_isp_spi1",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 4, 1),
-+	MUX(CLK_MOUT_SCLK_ISP_SPI0, "mout_sclk_isp_spi0",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 0, 1),
++- reg: physical base address of the controller and length of memory mapped
++  region.
 +
- 	/* MUX_SEL_TOP_FSYS0 */
- 	MUX(CLK_MOUT_SCLK_MMC2_B, "mout_sclk_mmc2_b", mout_sclk_mmc2_b_p,
- 			MUX_SEL_TOP_FSYS0, 28, 1),
-@@ -302,6 +346,16 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 	MUX(CLK_MOUT_SCLK_MMC0_A, "mout_sclk_mmc0_a", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_FSYS0, 0, 1),
- 
-+	/* MUX_SEL_TOP_FSYS1 */
-+	MUX(CLK_MOUT_SCLK_PCIE_100, "mout_sclk_pcie_100", mout_bus_pll_user_t_p,
-+			MUX_SEL_TOP_FSYS1, 12, 1),
-+	MUX(CLK_MOUT_SCLK_UFSUNIPRO, "mout_sclk_ufsunipro",
-+			mout_mphy_pll_user_t_p, MUX_SEL_TOP_FSYS1, 8, 1),
-+	MUX(CLK_MOUT_SCLK_USBHOST30, "mout_sclk_usbhost30",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_FSYS1, 4, 1),
-+	MUX(CLK_MOUT_SCLK_USBDRD30, "mout_sclk_usbdrd30",
-+			mout_bus_pll_user_t_p, MUX_SEL_TOP_FSYS1, 0, 1),
++- #clock-cells: should be 1.
 +
- 	/* MUX_SEL_TOP_PERIC0 */
- 	MUX(CLK_MOUT_SCLK_SPI4, "mout_sclk_spi4", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_PERIC0, 28, 1),
-@@ -319,6 +373,16 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- 			MUX_SEL_TOP_PERIC0, 4, 1),
- 	MUX(CLK_MOUT_SCLK_SPI0, "mout_sclk_spi0", mout_bus_pll_user_t_p,
- 			MUX_SEL_TOP_PERIC0, 0, 1),
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume.
 +
-+	/* MUX_SEL_TOP_PERIC1 */
-+	MUX(CLK_MOUT_SCLK_SLIMBUS, "mout_sclk_slimbus", mout_aud_pll_user_p,
-+			MUX_SEL_TOP_PERIC1, 16, 1),
-+	MUX(CLK_MOUT_SCLK_SPDIF, "mout_sclk_spdif", mout_sclk_spdif_p,
-+			MUX_SEL_TOP_PERIC1, 12, 2),
-+	MUX(CLK_MOUT_SCLK_AUDIO1, "mout_sclk_audio1", mout_sclk_audio1_p,
-+			MUX_SEL_TOP_PERIC1, 4, 2),
-+	MUX(CLK_MOUT_SCLK_AUDIO0, "mout_sclk_audio0", mout_sclk_audio0_p,
-+			MUX_SEL_TOP_PERIC1, 0, 2),
- };
- 
- static struct samsung_div_clock top_div_clks[] __initdata = {
-@@ -382,6 +446,16 @@ static struct samsung_div_clock top_div_clks[] __initdata = {
- 	DIV(CLK_DIV_SCLK_UART0, "div_sclk_uart0", "mout_sclk_uart1",
- 			DIV_TOP_PERIC2, 0, 4),
- 
-+	/* DIV_TOP_PERIC3 */
-+	DIV(CLK_DIV_SCLK_I2S1, "div_sclk_i2s1", "sclk_audio1",
-+			DIV_TOP_PERIC3, 16, 6),
-+	DIV(CLK_DIV_SCLK_PCM1, "div_sclk_pcm1", "sclk_audio1",
-+			DIV_TOP_PERIC3, 8, 8),
-+	DIV(CLK_DIV_SCLK_AUDIO1, "div_sclk_audio1", "mout_sclk_audio1",
-+			DIV_TOP_PERIC3, 4, 4),
-+	DIV(CLK_DIV_SCLK_AUDIO0, "div_sclk_audio0", "mout_sclk_audio0",
-+			DIV_TOP_PERIC3, 0, 4),
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/exynos5433.h header and can be used in device
++tree sources.
 +
- 	/* DIV_TOP_PERIC4 */
- 	DIV(CLK_DIV_SCLK_SPI4_B, "div_sclk_spi4_b", "div_sclk_spi4_a",
- 			DIV_TOP_PERIC4, 16, 8),
-@@ -418,6 +492,12 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 			ENABLE_SCLK_TOP_PERIC, 12, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI3_PERIC, "sclk_spi3_peric", "div_sclk_spi3_b",
- 			ENABLE_SCLK_TOP_PERIC, 11, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_SPDIF_PERIC, "sclk_spdif_peric", "mout_sclk_spdif",
-+			ENABLE_SCLK_TOP_PERIC, 9, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_I2S1_PERIC, "sclk_i2s1_peric", "div_sclk_i2s1",
-+			ENABLE_SCLK_TOP_PERIC, 8, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_PCM1_PERIC, "sclk_pcm1_peric", "div_sclk_pcm1",
-+			ENABLE_SCLK_TOP_PERIC, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART2_PERIC, "sclk_uart2_peric", "div_sclk_uart2",
- 			ENABLE_SCLK_TOP_PERIC, 5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_UART1_PERIC, "sclk_uart1_peric", "div_sclk_uart1",
-@@ -430,6 +510,14 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 			ENABLE_SCLK_TOP_PERIC, 1, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI0_PERIC, "sclk_spi0_peric", "div_sclk_spi0_b",
- 			ENABLE_SCLK_TOP_PERIC, 0, CLK_SET_RATE_PARENT, 0),
++Example 1: Examples of 'oscclk' source clock node are listed below.
 +
-+	/* MUX_ENABLE_TOP_PERIC1 */
-+	GATE(CLK_SCLK_SLIMBUS, "sclk_slimbus", "mout_sclk_slimbus",
-+			MUX_ENABLE_TOP_PERIC1, 16, 0, 0),
-+	GATE(CLK_SCLK_AUDIO1, "sclk_audio1", "div_sclk_audio1",
-+			MUX_ENABLE_TOP_PERIC1, 4, 0, 0),
-+	GATE(CLK_SCLK_AUDIO0, "sclk_audio0", "div_sclk_audio0",
-+			MUX_ENABLE_TOP_PERIC1, 0, 0, 0),
- };
- 
- /*
-@@ -516,6 +604,8 @@ static struct samsung_cmu_info top_cmu_info __initdata = {
- 	.nr_div_clks		= ARRAY_SIZE(top_div_clks),
- 	.gate_clks		= top_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(top_gate_clks),
-+	.fixed_clks		= top_fixed_clks,
-+	.nr_fixed_clks		= ARRAY_SIZE(top_fixed_clks),
- 	.nr_clk_ids		= TOP_NR_CLK,
- 	.clk_regs		= top_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 5cd0201..6025006 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -51,6 +51,23 @@
- #define CLK_MOUT_SCLK_SPI2		44
- #define CLK_MOUT_SCLK_SPI1		45
- #define CLK_MOUT_SCLK_SPI0		46
-+#define CLK_MOUT_ACLK_MFC_400_C		47
-+#define CLK_MOUT_ACLK_MFC_400_B		48
-+#define CLK_MOUT_ACLK_MFC_400_A		49
-+#define CLK_MOUT_SCLK_ISP_SENSOR2	50
-+#define CLK_MOUT_SCLK_ISP_SENSOR1	51
-+#define CLK_MOUT_SCLK_ISP_SENSOR0	52
-+#define CLK_MOUT_SCLK_ISP_UART		53
-+#define CLK_MOUT_SCLK_ISP_SPI1		54
-+#define CLK_MOUT_SCLK_ISP_SPI0		55
-+#define CLK_MOUT_SCLK_PCIE_100		56
-+#define CLK_MOUT_SCLK_UFSUNIPRO		57
-+#define CLK_MOUT_SCLK_USBHOST30		58
-+#define CLK_MOUT_SCLK_USBDRD30		59
-+#define CLK_MOUT_SCLK_SLIMBUS		60
-+#define CLK_MOUT_SCLK_SPDIF		61
-+#define CLK_MOUT_SCLK_AUDIO1		62
-+#define CLK_MOUT_SCLK_AUDIO0		63
- 
- #define CLK_DIV_ACLK_FSYS_200		100
- #define CLK_DIV_ACLK_IMEM_SSSX_266	101
-@@ -79,6 +96,10 @@
- #define CLK_DIV_SCLK_SPI4_A		124
- #define CLK_DIV_SCLK_SPI3_B		125
- #define CLK_DIV_SCLK_SPI3_A		126
-+#define CLK_DIV_SCLK_I2S1		127
-+#define CLK_DIV_SCLK_PCM1		128
-+#define CLK_DIV_SCLK_AUDIO1		129
-+#define CLK_DIV_SCLK_AUDIO0		130
- 
- #define CLK_ACLK_PERIC_66		200
- #define CLK_ACLK_PERIS_66		201
-@@ -94,8 +115,14 @@
- #define CLK_SCLK_SPI2_PERIC		211
- #define CLK_SCLK_SPI1_PERIC		212
- #define CLK_SCLK_SPI0_PERIC		213
--
--#define TOP_NR_CLK			214
-+#define CLK_SCLK_SPDIF_PERIC		214
-+#define CLK_SCLK_I2S1_PERIC		215
-+#define CLK_SCLK_PCM1_PERIC		216
-+#define CLK_SCLK_SLIMBUS		217
-+#define CLK_SCLK_AUDIO1			218
-+#define CLK_SCLK_AUDIO0			219
++	xxti: xxti {
++		compatible = "fixed-clock";
++		clock-output-names = "oscclk";
++		#clock-cells = <0>;
++	};
 +
-+#define TOP_NR_CLK			220
- 
- /* CMU_CPIF */
- #define CLK_FOUT_MPHY_PLL		1
++Example 2: Examples of clock controller nodes are listed below.
++
++	cmu_top: clock-controller@0x10030000 {
++		compatible = "samsung,exynos5433-cmu-top";
++		reg = <0x10030000 0x0c04>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk",
++			"sclk_mphy_pll",
++			"sclk_mfc_pll",
++			"sclk_bus_pll";
++		clocks = <&xxti>,
++		       <&cmu_cpif CLK_SCLK_MPHY_PLL>,
++		       <&cmu_mif CLK_SCLK_MFC_PLL>,
++		       <&cmu_mif CLK_SCLK_BUS_PLL>;
++	};
++
++	cmu_cpif: clock-controller@0x10fc0000 {
++		compatible = "samsung,exynos5433-cmu-cpif";
++		reg = <0x10fc0000 0x0c04>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk";
++		clocks = <&xxti>;
++	};
++
++	cmu_mif: clock-controller@0x105b0000 {
++		compatible = "samsung,exynos5433-cmu-mif";
++		reg = <0x105b0000 0x100c>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk",
++			"sclk_mphy_pll";
++		clocks = <&xxti>,
++		       <&cmu_cpif CLK_SCLK_MPHY_PLL>;
++	};
++
++	cmu_peric: clock-controller@0x14c80000 {
++		compatible = "samsung,exynos5433-cmu-peric";
++		reg = <0x14c80000 0x0b08>;
++		#clock-cells = <1>;
++	};
++
++	cmu_peris: clock-controller@0x10040000 {
++		compatible = "samsung,exynos5433-cmu-peris";
++		reg = <0x10040000 0x0b20>;
++		#clock-cells = <1>;
++	};
++
++	cmu_fsys: clock-controller@0x156e0000 {
++		compatible = "samsung,exynos5433-cmu-fsys";
++		reg = <0x156e0000 0x0b04>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk",
++			"sclk_ufs_mphy",
++			"div_aclk_fsys_200",
++			"sclk_pcie_100_fsys",
++			"sclk_ufsunipro_fsys",
++			"sclk_mmc2_fsys",
++			"sclk_mmc1_fsys",
++			"sclk_mmc0_fsys",
++			"sclk_usbhost30_fsys",
++			"sclk_usbdrd30_fsys";
++		clocks = <&xxti>,
++		       <&cmu_cpif CLK_SCLK_UFS_MPHY>,
++		       <&cmu_top CLK_DIV_ACLK_FSYS_200>,
++		       <&cmu_top CLK_SCLK_PCIE_100_FSYS>,
++		       <&cmu_top CLK_SCLK_UFSUNIPRO_FSYS>,
++		       <&cmu_top CLK_SCLK_MMC2_FSYS>,
++		       <&cmu_top CLK_SCLK_MMC1_FSYS>,
++		       <&cmu_top CLK_SCLK_MMC0_FSYS>,
++		       <&cmu_top CLK_SCLK_USBHOST30_FSYS>,
++		       <&cmu_top CLK_SCLK_USBDRD30_FSYS>;
++	};
++
++	cmu_g2d: clock-controller@0x12460000 {
++		compatible = "samsung,exynos5433-cmu-g2d";
++		reg = <0x12460000 0x0b08>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk",
++			"aclk_g2d_266",
++			"aclk_g2d_400";
++		clocks = <&xxti>,
++		       <&cmu_top CLK_ACLK_G2D_266>,
++		       <&cmu_top CLK_ACLK_G2D_400>;
++	};
++
++	cmu_disp: clock-controller@0x13b90000 {
++		compatible = "samsung,exynos5433-cmu-disp";
++		reg = <0x13b90000 0x0c04>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk",
++			"sclk_dsim1_disp",
++			"sclk_dsim0_disp",
++			"sclk_dsd_disp",
++			"sclk_decon_tv_eclk_disp",
++			"sclk_decon_vclk_disp",
++			"sclk_decon_eclk_disp",
++			"sclk_decon_tv_vclk_disp",
++			"aclk_disp_333";
++		clocks = <&xxti>,
++		       <&cmu_mif CLK_SCLK_DSIM1_DISP>,
++		       <&cmu_mif CLK_SCLK_DSIM0_DISP>,
++		       <&cmu_mif CLK_SCLK_DSD_DISP>,
++		       <&cmu_mif CLK_SCLK_DECON_TV_ECLK_DISP>,
++		       <&cmu_mif CLK_SCLK_DECON_VCLK_DISP>,
++		       <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
++		       <&cmu_mif CLK_SCLK_DECON_TV_VCLK_DISP>,
++		       <&cmu_mif CLK_ACLK_DISP_333>;
++	};
++
++	cmu_aud: clock-controller@0x114c0000 {
++		compatible = "samsung,exynos5433-cmu-aud";
++		reg = <0x114c0000 0x0b04>;
++		#clock-cells = <1>;
++	};
++
++	cmu_bus0: clock-controller@0x13600000 {
++		compatible = "samsung,exynos5433-cmu-bus0";
++		reg = <0x13600000 0x0b04>;
++		#clock-cells = <1>;
++
++		clock-names = "aclk_bus0_400";
++		clocks = <&cmu_top CLK_ACLK_BUS0_400>;
++	};
++
++	cmu_bus1: clock-controller@0x14800000 {
++		compatible = "samsung,exynos5433-cmu-bus1";
++		reg = <0x14800000 0x0b04>;
++		#clock-cells = <1>;
++
++		clock-names = "aclk_bus1_400";
++		clocks = <&cmu_top CLK_ACLK_BUS1_400>;
++	};
++
++	cmu_bus2: clock-controller@0x13400000 {
++		compatible = "samsung,exynos5433-cmu-bus2";
++		reg = <0x13400000 0x0b04>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk", "aclk_bus2_400";
++		clocks = <&xxti>, <&cmu_mif CLK_ACLK_BUS2_400>;
++	};
++
++	cmu_g3d: clock-controller@0x14aa0000 {
++		compatible = "samsung,exynos5433-cmu-g3d";
++		reg = <0x14aa0000 0x1000>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk", "aclk_g3d_400";
++		clocks = <&xxti>, <&cmu_top CLK_ACLK_G3D_400>;
++	};
++
++	cmu_gscl: clock-controller@0x13cf0000 {
++		compatible = "samsung,exynos5433-cmu-gscl";
++		reg = <0x13cf0000 0x0b10>;
++		#clock-cells = <1>;
++
++		clock-names = "oscclk",
++			"aclk_gscl_111",
++			"aclk_gscl_333";
++		clocks = <&xxti>,
++			<&cmu_top CLK_ACLK_GSCL_111>,
++			<&cmu_top CLK_ACLK_GSCL_333>;
++	};
++
++Example 3: UART controller node that consumes the clock generated by the clock
++	   controller.
++
++	serial_0: serial@14C10000 {
++		compatible = "samsung,exynos5433-uart";
++		reg = <0x14C10000 0x100>;
++		interrupts = <0 421 0>;
++		clocks = <&cmu_peric CLK_PCLK_UART0>,
++			 <&cmu_peric CLK_SCLK_UART0>;
++		clock-names = "uart", "clk_uart_baud0";
++		pinctrl-names = "default";
++		pinctrl-0 = <&uart0_bus>;
++		status = "disabled";
++	};
++
++Example 4: SPI controller node that consumes the clock generated by the clock
++	   controller.
++
++	spi_0: spi@14d20000 {
++		compatible = "samsung,exynos7-spi";
++		reg = <0x14d20000 0x100>;
++		interrupts = <0 432 0>;
++		dmas = <&pdma0 9>, <&pdma0 8>;
++		dma-names = "tx", "rx";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&cmu_peric CLK_PCLK_SPI0>,
++			 <&cmu_top CLK_SCLK_SPI0_PERIC>;
++		clock-names = "spi", "spi_busclk0";
++		samsung,spi-src-clk = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&spi0_bus>;
++		status = "disabled";
++	};
 -- 
 1.8.5.5
