@@ -1,108 +1,32 @@
-From: Marcin Jabrzyk <m.jabrzyk@samsung.com>
-Subject: Re: =?UTF-8?B?UFJPQkxFTTrCoEJVRyAgYXBwZWFyaW5nIHdoZW4gdHJ5aW5nIHQ=?=
- =?UTF-8?B?byBhbGxvY2F0ZSBpbnRlcnJ1cHQgb24gRXh5bm9zIE1DVCBhZnRlciBDUFUgaG8=?=
- =?UTF-8?B?dHBsdWc=?=
-Date: Mon, 02 Feb 2015 09:47:29 +0100
-Message-ID: <54CF39A1.50003@samsung.com>
-References: <544907D4.1020409@samsung.com>
- <20141023140644.GI27405@n2100.arm.linux.org.uk>
- <54494BEE.9020702@codeaurora.org> <544A52B0.9050901@samsung.com>
- <544EA810.6090502@codeaurora.org> <5450C391.2070007@samsung.com>
- <54CC2B18.2070809@codeaurora.org> <54CC9EB2.7010409@linaro.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2 0/3] Add support for hardware reset of eMMC card on reboot
+Date: Mon, 2 Feb 2015 09:51:02 +0100
+Message-ID: <CABxcv=m2UjyF3V_B0PZkfA_jFkUPpKL+ZAmgBxTzmUb7JSwLiQ@mail.gmail.com>
+References: <1422866028-27891-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36177 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181AbbBBIrd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 03:47:33 -0500
-In-reply-to: <54CC9EB2.7010409@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1422866028-27891-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Mark Rutland <Mark.Rutland@arm.com>, Chander Kashyap <chander.kashyap@linaro.org>
 
+Hello Marek,
 
+On Mon, Feb 2, 2015 at 9:33 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> This patchset adds new mmc power sequence driver, which performs eMMC
+> card hardware reset. Such power sequence, involving resetting emmc card,
+> is required on some boards to properly perform system reboot procedure.
+>
 
-On 31/01/15 10:21, Daniel Lezcano wrote:
-> On 01/31/2015 02:08 AM, Stephen Boyd wrote:
->> Kept meaning to get back to this thread. Have you resolved it?
->>
->> On 10/29/14 03:38, Marcin Jabrzyk wrote:
->>> So I've tried this patch, it resolves one problem but introduces also
->>> new ones. As expected the BUG warning is not showing after applying
->>> this patch but there are some interesting side effects.
->>
->> Well that's half good news.
->>
->>> I was looking on /proc/interrupts output. IRQ for CPU0 have "MCT" name
->>> and IRQ for CPU1 has unexpectedly no name at all.
->>
->> This is pretty confusing. I don't see how the patch could cause this to
->> happen.
->>
->>> After making hotplug cycle of CPU1 I've observed that IRQs attached
->>> originally for that CPU are generating on really low count and not in
->>> order with IRQ for CPU0.
->>> What's more the interrupt for CPU1 is showing to me as being counted
->>> for both CPUs, so it's probably not being attached to CPU1.
->>>
->>
->> yeah. Can you give the output of /proc/timer_list in addition to
->> /proc/interrupts? It may give some hints on what's going on. It may also
->> be interesting to see if irq_force_affinity() is failing. Please check
->> the return value and print an error
->
-> Hi Stephen, Marcin,
->
-> can you have a look if the patch [1] fixes this issue ?
->
->   -- Daniel
->
-> [1] https://lkml.org/lkml/2015/1/30/423
->
->
-Hi Daniel,
+Patches looks good to me, I've only one comment on patch 1/3. Once
+that is addressed, feel free to add for all the series:
 
-I've checked this patch on the board that have problems and it fixes 
-this issue completely. Everything looks fine after power cycle of the CPU.
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 Best regards,
-Marcin Jabrzyk
-
->> diff --git a/drivers/clocksource/exynos_mct.c
->> b/drivers/clocksource/exynos_mct.c
->> index 1800053b4644..3c4538e26731 100644
->> --- a/drivers/clocksource/exynos_mct.c
->> +++ b/drivers/clocksource/exynos_mct.c
->> @@ -450,6 +450,7 @@ static int exynos4_local_timer_setup(struct
->> clock_event_device *evt)
->>   {
->>       struct mct_clock_event_device *mevt;
->>       unsigned int cpu = smp_processor_id();
->> +    int ret;
->>
->>       mevt = container_of(evt, struct mct_clock_event_device, evt);
->>
->> @@ -468,7 +469,9 @@ static int exynos4_local_timer_setup(struct
->> clock_event_device *evt)
->>       if (mct_int_type == MCT_INT_SPI) {
->>           evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
->>           enable_irq(evt->irq);
->> -        irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
->> +        ret = irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu],
->> cpumask_of(cpu));
->> +        if (ret)
->> +            pr_err("force failed %d\n", ret);
->>       } else {
->>           enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
->>       }
->>
->
->
-
--- 
-Samsung R&D Institute Poland
-Samsung Electronics
+Javier
