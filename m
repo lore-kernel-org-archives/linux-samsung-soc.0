@@ -1,309 +1,278 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 1/9] clk: samsung: exynos5433: Add clocks for CMU_APOLLO
- domain
-Date: Mon, 02 Feb 2015 22:10:28 +0900
-Message-ID: <1422882636-20464-2-git-send-email-cw00.choi@samsung.com>
-References: <1422882636-20464-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:32658 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932156AbbBBNKm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 08:10:42 -0500
-In-reply-to: <1422882636-20464-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 1/3] mmc: pwrseq: add driver for emmc hardware reset
+Date: Mon, 02 Feb 2015 14:19:35 +0100
+Message-ID: <54CF7967.4080901@samsung.com>
+References: <CABxcv=nF3SJK7p1j=F08_9kHU2n+v=hmgr7-ikfZ7Xraz3J0_g@mail.gmail.com>
+ <1422871549-5468-1-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFr0YxFXSvknUE=CPbDwge0uSN0JJMCM=aP+JrXAMnFHCA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAPDyKFr0YxFXSvknUE=CPbDwge0uSN0JJMCM=aP+JrXAMnFHCA@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
-Cc: kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds the mux/divider/gate clocks for CMU_APOLLO domain which
-generates the clocks for Cortex-A53 Quad-core processsor.
+Hello,
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
----
- .../devicetree/bindings/clock/exynos5433-clock.txt |  11 ++
- drivers/clk/samsung/clk-exynos5433.c               | 193 +++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h             |  37 ++++
- 3 files changed, 241 insertions(+)
+On 2015-02-02 13:53, Ulf Hansson wrote:
+> On 2 February 2015 at 11:05, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> This patch provides a simple mmc-pwrseq-emmc driver, which controls
+>> single gpio line. It perform standard eMMC hw reset procedure, as
+>> descibed by Jedec 4.4 specification. This procedure is performed just
+>> after MMC core enabled power to the given mmc host (to fix possible
+>> issues if bootloader has left eMMC card in initialized or unknown
+>> state), and before performing complete system reboot (also in case of
+>> emergency reboot call). The latter is needed on boards, which doesn't
+>> have hardware reset logic connected to emmc card and (limited or broken)
+>> ROM bootloaders are unable to read second stage from the emmc card if
+>> the card is left in unknown or already initialized state.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   .../devicetree/bindings/mmc/mmc-pwrseq-emmc.txt    |  25 +++++
+>>   drivers/mmc/core/Makefile                          |   2 +-
+>>   drivers/mmc/core/pwrseq.c                          |   3 +
+>>   drivers/mmc/core/pwrseq.h                          |   1 +
+>>   drivers/mmc/core/pwrseq_emmc.c                     | 103 +++++++++++++++++++++
+>>   5 files changed, 133 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
+>>   create mode 100644 drivers/mmc/core/pwrseq_emmc.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
+>> new file mode 100644
+>> index 000000000000..4baeac828f6b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mmc/mmc-pwrseq-emmc.txt
+>> @@ -0,0 +1,25 @@
+>> +* The simple eMMC hardware reset provider
+>> +
+>> +The purpose of this driver is to perform standard eMMC hw reset
+>> +procedure, as descibed by Jedec 4.4 specification. This procedure is
+>> +performed just after MMC core enabled power to the given mmc host (to
+>> +fix possible issues if bootloader has left eMMC card in initialized or
+>> +unknown state), and before performing complete system reboot (also in
+>> +case of emergency reboot call). The latter is needed on boards, which
+>> +doesn't have hardware reset logic connected to emmc card and (limited or
+>> +broken) ROM bootloaders are unable to read second stage from the emmc
+>> +card if the card is left in unknown or already initialized state.
+>> +
+>> +Required properties:
+>> +- compatible : contains "mmc-pwrseq-emmc".
+>> +- reset-gpios : contains a GPIO specifier. The reset GPIO is pulled
+>> +       down and then pulled up to perform eMMC card reset. To perform
+> Could we maybe use the word "(de)asserted" instead of "pulled down/up".
+>
+>> +       reset procedure as described in Jedec 4.4 specification, the
+>> +       gpio line should be defined as GPIO_ACTIVE_LOW.
+>> +
+>> +Example:
+>> +
+>> +       sdhci0_pwrseq {
+>> +               compatible = "mmc-pwrseq-emmc";
+>> +               reset-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+>> +       }
+>> diff --git a/drivers/mmc/core/Makefile b/drivers/mmc/core/Makefile
+>> index b39cbd2f830b..2c25138f28b7 100644
+>> --- a/drivers/mmc/core/Makefile
+>> +++ b/drivers/mmc/core/Makefile
+>> @@ -8,5 +8,5 @@ mmc_core-y                      := core.o bus.o host.o \
+>>                                     sdio.o sdio_ops.o sdio_bus.o \
+>>                                     sdio_cis.o sdio_io.o sdio_irq.o \
+>>                                     quirks.o slot-gpio.o
+>> -mmc_core-$(CONFIG_OF)          += pwrseq.o pwrseq_simple.o
+>> +mmc_core-$(CONFIG_OF)          += pwrseq.o pwrseq_simple.o pwrseq_emmc.o
+>>   mmc_core-$(CONFIG_DEBUG_FS)    += debugfs.o
+>> diff --git a/drivers/mmc/core/pwrseq.c b/drivers/mmc/core/pwrseq.c
+>> index 2cea00ed4e65..862356123d78 100644
+>> --- a/drivers/mmc/core/pwrseq.c
+>> +++ b/drivers/mmc/core/pwrseq.c
+>> @@ -26,6 +26,9 @@ static struct mmc_pwrseq_match pwrseq_match[] = {
+>>          {
+>>                  .compatible = "mmc-pwrseq-simple",
+>>                  .alloc = mmc_pwrseq_simple_alloc,
+>> +       }, {
+>> +               .compatible = "mmc-pwrseq-emmc",
+>> +               .alloc = mmc_pwrseq_emmc_alloc,
+>>          },
+>>   };
+>>
+>> diff --git a/drivers/mmc/core/pwrseq.h b/drivers/mmc/core/pwrseq.h
+>> index bd860d88f116..aba3409e8d6e 100644
+>> --- a/drivers/mmc/core/pwrseq.h
+>> +++ b/drivers/mmc/core/pwrseq.h
+>> @@ -28,6 +28,7 @@ void mmc_pwrseq_power_off(struct mmc_host *host);
+>>   void mmc_pwrseq_free(struct mmc_host *host);
+>>
+>>   int mmc_pwrseq_simple_alloc(struct mmc_host *host, struct device *dev);
+>> +int mmc_pwrseq_emmc_alloc(struct mmc_host *host, struct device *dev);
+>>
+>>   #else
+>>
+>> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+>> new file mode 100644
+>> index 000000000000..39dc43dd316f
+>> --- /dev/null
+>> +++ b/drivers/mmc/core/pwrseq_emmc.c
+>> @@ -0,0 +1,103 @@
+>> +/*
+>> + * Copyright (C) 2015, Samsung Electronics Co., Ltd.
+>> + *
+>> + * Author: Marek Szyprowski <m.szyprowski@samsung.com>
+>> + *
+>> + * License terms: GNU General Public License (GPL) version 2
+>> + *
+>> + * Simple eMMC hardware reset provider
+>> + */
+>> +#include <linux/delay.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/device.h>
+>> +#include <linux/err.h>
+>> +#include <linux/gpio/consumer.h>
+>> +#include <linux/reboot.h>
+>> +
+>> +#include <linux/mmc/host.h>
+>> +
+>> +#include "pwrseq.h"
+>> +
+>> +struct mmc_pwrseq_emmc {
+>> +       struct mmc_pwrseq pwrseq;
+>> +       struct notifier_block reset_nb;
+>> +       struct gpio_desc *reset_gpio;
+>> +};
+>> +
+>> +static void mmc_pwrseq_perform_emmc_reset(struct mmc_pwrseq_emmc *pwrseq)
+> I would prefer the name of this function to be __mmc_pwrseq_emmc_reset()
+>
+>> +{
+>> +       gpiod_set_value(pwrseq->reset_gpio, 1);
+>> +       /* For eMMC, minimum is 1us but give it 10us for good measure */
+>> +       udelay(10);
+>> +       gpiod_set_value(pwrseq->reset_gpio, 0);
+>> +       /* For eMMC, minimum is 200us but give it 300us for good measure */
+>> +       udelay(300);
+> These delays will affect the total power up time for the card.
+> According to the specification 1 us and 200 us, should be enough. Do
+> you think there are a good reason to have them extended to the values
+> you suggested?
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index 2d7a723..f228ffa 100644
---- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -32,6 +32,8 @@ Required Properties:
-     which generates clocks for 3D Graphics Engine IP.
-   - "samsung,exynos5433-cmu-gscl"  - clock controller compatible for CMU_GSCL
-     which generates clocks for GSCALER IPs.
-+  - "samsung,exynos5433-cmu-apollo"- clock controller compatible for CMU_APOLLO
-+    which generates clocks for Cortex-A53 Quad-core processor.
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
-@@ -222,6 +224,15 @@ Example 2: Examples of clock controller nodes are listed below.
- 			<&cmu_top CLK_ACLK_GSCL_333>;
- 	};
- 
-+	cmu_apollo: clock-controller@11900000 {
-+		compatible = "samsung,exynos5433-cmu-apollo";
-+		reg = <0x11900000 0x1088>;
-+		#clock-cells = <1>;
-+
-+		clock-names = "oscclk", "sclk_bus_pll_apollo";
-+		clocks = <&xxti>, <&cmu_mif CLK_SCLK_BUS_PLL_APOLLO>;
-+	};
-+
- Example 3: UART controller node that consumes the clock generated by the clock
- 	   controller.
- 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 8ae9c48..9a5d33c 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3393,3 +3393,196 @@ static void __init exynos5433_cmu_gscl_init(struct device_node *np)
- }
- CLK_OF_DECLARE(exynos5433_cmu_gscl, "samsung,exynos5433-cmu-gscl",
- 		exynos5433_cmu_gscl_init);
-+
-+/*
-+ * Register offset definitions for CMU_APOLLO
-+ */
-+#define APOLLO_PLL_LOCK				0x0000
-+#define APOLLO_PLL_CON0				0x0100
-+#define APOLLO_PLL_CON1				0x0104
-+#define APOLLO_PLL_FREQ_DET			0x010c
-+#define MUX_SEL_APOLLO0				0x0200
-+#define MUX_SEL_APOLLO1				0x0204
-+#define MUX_SEL_APOLLO2				0x0208
-+#define MUX_ENABLE_APOLLO0			0x0300
-+#define MUX_ENABLE_APOLLO1			0x0304
-+#define MUX_ENABLE_APOLLO2			0x0308
-+#define MUX_STAT_APOLLO0			0x0400
-+#define MUX_STAT_APOLLO1			0x0404
-+#define MUX_STAT_APOLLO2			0x0408
-+#define DIV_APOLLO0				0x0600
-+#define DIV_APOLLO1				0x0604
-+#define DIV_APOLLO_PLL_FREQ_DET			0x0608
-+#define DIV_STAT_APOLLO0			0x0700
-+#define DIV_STAT_APOLLO1			0x0704
-+#define DIV_STAT_APOLLO_PLL_FREQ_DET		0x0708
-+#define ENABLE_ACLK_APOLLO			0x0800
-+#define ENABLE_PCLK_APOLLO			0x0900
-+#define ENABLE_SCLK_APOLLO			0x0a00
-+#define ENABLE_IP_APOLLO0			0x0b00
-+#define ENABLE_IP_APOLLO1			0x0b04
-+#define CLKOUT_CMU_APOLLO			0x0c00
-+#define CLKOUT_CMU_APOLLO_DIV_STAT		0x0c04
-+#define ARMCLK_STOPCTRL				0x1000
-+#define APOLLO_PWR_CTRL				0x1020
-+#define APOLLO_PWR_CTRL2			0x1024
-+#define APOLLO_INTR_SPREAD_ENABLE		0x1080
-+#define APOLLO_INTR_SPREAD_USE_STANDBYWFI	0x1084
-+#define APOLLO_INTR_SPREAD_BLOCKING_DURATION	0x1088
-+
-+static unsigned long apollo_clk_regs[] __initdata = {
-+	APOLLO_PLL_LOCK,
-+	APOLLO_PLL_CON0,
-+	APOLLO_PLL_CON1,
-+	APOLLO_PLL_FREQ_DET,
-+	MUX_SEL_APOLLO0,
-+	MUX_SEL_APOLLO1,
-+	MUX_SEL_APOLLO2,
-+	MUX_ENABLE_APOLLO0,
-+	MUX_ENABLE_APOLLO1,
-+	MUX_ENABLE_APOLLO2,
-+	MUX_STAT_APOLLO0,
-+	MUX_STAT_APOLLO1,
-+	MUX_STAT_APOLLO2,
-+	DIV_APOLLO0,
-+	DIV_APOLLO1,
-+	DIV_APOLLO_PLL_FREQ_DET,
-+	DIV_STAT_APOLLO0,
-+	DIV_STAT_APOLLO1,
-+	DIV_STAT_APOLLO_PLL_FREQ_DET,
-+	ENABLE_ACLK_APOLLO,
-+	ENABLE_PCLK_APOLLO,
-+	ENABLE_SCLK_APOLLO,
-+	ENABLE_IP_APOLLO0,
-+	ENABLE_IP_APOLLO1,
-+	CLKOUT_CMU_APOLLO,
-+	CLKOUT_CMU_APOLLO_DIV_STAT,
-+	ARMCLK_STOPCTRL,
-+	APOLLO_PWR_CTRL,
-+	APOLLO_PWR_CTRL2,
-+	APOLLO_INTR_SPREAD_ENABLE,
-+	APOLLO_INTR_SPREAD_USE_STANDBYWFI,
-+	APOLLO_INTR_SPREAD_BLOCKING_DURATION,
-+};
-+
-+/* list of all parent clock list */
-+PNAME(mout_apollo_pll_p)		= { "oscclk", "fout_apollo_pll", };
-+PNAME(mout_bus_pll_apollo_user_p)	= { "oscclk", "sclk_bus_pll_apollo", };
-+PNAME(mout_apollo_p)			= { "mout_apollo_pll",
-+					    "mout_bus_pll_apollo_user", };
-+
-+static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
-+	PLL(pll_35xx, CLK_FOUT_APOLLO_PLL, "fout_apollo_pll", "oscclk",
-+		APOLLO_PLL_LOCK, APOLLO_PLL_CON0, exynos5443_pll_rates),
-+};
-+
-+static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
-+	/* MUX_SEL_APOLLO0 */
-+	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
-+			MUX_SEL_APOLLO0, 0, 1, 0, CLK_MUX_READ_ONLY),
-+
-+	/* MUX_SEL_APOLLO1 */
-+	MUX(CLK_MOUT_BUS_PLL_APOLLO_USER, "mout_bus_pll_apollo_user",
-+			mout_bus_pll_apollo_user_p, MUX_SEL_APOLLO1, 0, 1),
-+
-+	/* MUX_SEL_APOLLO2 */
-+	MUX_F(CLK_MOUT_APOLLO, "mout_apollo", mout_apollo_p, MUX_SEL_APOLLO2,
-+			0, 1, 0, CLK_MUX_READ_ONLY),
-+};
-+
-+static struct samsung_div_clock apollo_div_clks[] __initdata = {
-+	/* DIV_APOLLO0 */
-+	DIV_F(CLK_DIV_CNTCLK_APOLLO, "div_cntclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 24, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_PCLK_DBG_APOLLO, "div_pclk_dbg_apollo", "div_apollo2",
-+			DIV_APOLLO0, 20, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ATCLK_APOLLO, "div_atclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 16, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_PCLK_APOLLO, "div_pclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 12, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_ACLK_APOLLO, "div_aclk_apollo", "div_apollo2",
-+			DIV_APOLLO0, 8, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_APOLLO2, "div_apollo2", "div_apollo1",
-+			DIV_APOLLO0, 4, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_APOLLO1, "div_apollo1", "mout_apollo",
-+			DIV_APOLLO0, 0, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+
-+	/* DIV_APOLLO1 */
-+	DIV_F(CLK_DIV_SCLK_HPM_APOLLO, "div_sclk_hpm_apollo", "mout_apollo",
-+			DIV_APOLLO1, 4, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+	DIV_F(CLK_DIV_APOLLO_PLL, "div_apollo_pll", "mout_apollo",
-+			DIV_APOLLO1, 0, 3, CLK_GET_RATE_NOCACHE,
-+			CLK_DIVIDER_READ_ONLY),
-+};
-+
-+static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
-+	/* ENABLE_ACLK_APOLLO */
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_3_CSSYS, "aclk_asatbslv_apollo_3_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-+			6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_2_CSSYS, "aclk_asatbslv_apollo_2_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-+			5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_1_CSSYS, "aclk_asatbslv_apollo_1_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-+			4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASATBSLV_APOLLO_0_CSSYS, "aclk_asatbslv_apollo_0_cssys",
-+			"div_atclk_apollo", ENABLE_ACLK_APOLLO,
-+			3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCACES_APOLLO_CCI, "aclk_asyncaces_apollo_cci",
-+			"div_aclk_apollo", ENABLE_ACLK_APOLLO,
-+			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AHB2APB_APOLLOP, "aclk_ahb2apb_apollop",
-+			"div_pclk_apollo", ENABLE_ACLK_APOLLO,
-+			1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_APOLLONP_200, "aclk_apollonp_200",
-+			"div_pclk_apollo", ENABLE_ACLK_APOLLO,
-+			0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_PCLK_APOLLO */
-+	GATE(CLK_PCLK_ASAPBMST_CSSYS_APOLLO, "pclk_asapbmst_cssys_apollo",
-+			"div_pclk_dbg_apollo", ENABLE_PCLK_APOLLO,
-+			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
-+			ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
-+			"div_pclk_apollo", ENABLE_PCLK_APOLLO,
-+			0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_SCLK_APOLLO */
-+	GATE(CLK_CNTCLK_APOLLO, "cntclk_apollo", "div_cntclk_apollo",
-+			ENABLE_SCLK_APOLLO, 3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_HPM_APOLLO, "sclk_hpm_apollo", "div_sclk_hpm_apollo",
-+			ENABLE_SCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_APOLLO, "sclk_apollo", "div_apollo_pll",
-+			ENABLE_SCLK_APOLLO, 0, CLK_IGNORE_UNUSED, 0),
-+};
-+
-+static struct samsung_cmu_info apollo_cmu_info __initdata = {
-+	.pll_clks		= apollo_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(apollo_pll_clks),
-+	.mux_clks		= apollo_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(apollo_mux_clks),
-+	.div_clks		= apollo_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(apollo_div_clks),
-+	.gate_clks		= apollo_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(apollo_gate_clks),
-+	.nr_clk_ids		= APOLLO_NR_CLK,
-+	.clk_regs		= apollo_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(apollo_clk_regs),
-+};
-+
-+static void __init exynos5433_cmu_apollo_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &apollo_cmu_info);
-+}
-+CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
-+		exynos5433_cmu_apollo_init);
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index f855859..9d3b76f 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -854,4 +854,41 @@
- 
- #define GSCL_NR_CLK					29
- 
-+/* CMU_APOLLO */
-+#define CLK_FOUT_APOLLO_PLL				1
-+
-+#define CLK_MOUT_APOLLO_PLL				2
-+#define CLK_MOUT_BUS_PLL_APOLLO_USER			3
-+#define CLK_MOUT_APOLLO					4
-+
-+#define CLK_DIV_CNTCLK_APOLLO				5
-+#define CLK_DIV_PCLK_DBG_APOLLO				6
-+#define CLK_DIV_ATCLK_APOLLO				7
-+#define CLK_DIV_PCLK_APOLLO				8
-+#define CLK_DIV_ACLK_APOLLO				9
-+#define CLK_DIV_APOLLO2					10
-+#define CLK_DIV_APOLLO1					11
-+#define CLK_DIV_SCLK_HPM_APOLLO				12
-+#define CLK_DIV_APOLLO_PLL				13
-+
-+#define CLK_ACLK_ATBDS_APOLLO_3				14
-+#define CLK_ACLK_ATBDS_APOLLO_2				15
-+#define CLK_ACLK_ATBDS_APOLLO_1				16
-+#define CLK_ACLK_ATBDS_APOLLO_0				17
-+#define CLK_ACLK_ASATBSLV_APOLLO_3_CSSYS		18
-+#define CLK_ACLK_ASATBSLV_APOLLO_2_CSSYS		19
-+#define CLK_ACLK_ASATBSLV_APOLLO_1_CSSYS		20
-+#define CLK_ACLK_ASATBSLV_APOLLO_0_CSSYS		21
-+#define CLK_ACLK_ASYNCACES_APOLLO_CCI			22
-+#define CLK_ACLK_AHB2APB_APOLLOP			23
-+#define CLK_ACLK_APOLLONP_200				24
-+#define CLK_PCLK_ASAPBMST_CSSYS_APOLLO			25
-+#define CLK_PCLK_PMU_APOLLO				26
-+#define CLK_PCLK_SYSREG_APOLLO				27
-+#define CLK_CNTCLK_APOLLO				28
-+#define CLK_SCLK_HPM_APOLLO				29
-+#define CLK_SCLK_APOLLO					30
-+
-+#define APOLLO_NR_CLK					31
-+
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS5433_H */
+I've just copied those from sdhci-pci driver. 1us/200us works fine for me.
+
+>
+>> +}
+>> +
+>> +static void mmc_pwrseq_emmc_reset(struct mmc_host *host)
+>> +{
+>> +       struct mmc_pwrseq_emmc *pwrseq = container_of(host->pwrseq,
+>> +                                       struct mmc_pwrseq_emmc, pwrseq);
+>> +
+>> +       mmc_pwrseq_perform_emmc_reset(pwrseq);
+>> +}
+>> +
+>> +static void mmc_pwrseq_emmc_free(struct mmc_host *host)
+>> +{
+>> +       struct mmc_pwrseq_emmc *pwrseq = container_of(host->pwrseq,
+>> +                                       struct mmc_pwrseq_emmc, pwrseq);
+>> +
+>> +       gpiod_put(pwrseq->reset_gpio);
+>> +       unregister_restart_handler(&pwrseq->reset_nb);
+> I suggest you to move the unregister_restart_handler() to be done
+> prior gpiod_put(), since else (theoretically) the notifier may be
+> called without a valid gpio requested.
+>
+>> +       kfree(pwrseq);
+>> +       host->pwrseq = NULL;
+>> +}
+>> +
+>> +static struct mmc_pwrseq_ops mmc_pwrseq_emmc_ops = {
+>> +       .post_power_on = mmc_pwrseq_emmc_reset,
+>> +       .power_off = mmc_pwrseq_emmc_reset,
+> I don't think you should assign the ->power_off() callback, unless you
+> think there are a reason to reset the card while cutting powering for
+> it!?
+>
+>> +       .free = mmc_pwrseq_emmc_free,
+>> +};
+>> +
+>> +static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
+>> +                                   unsigned long mode, void *cmd)
+>> +{
+>> +       struct mmc_pwrseq_emmc *pwrseq;
+>> +       pwrseq = container_of(this, struct mmc_pwrseq_emmc, reset_nb);
+>> +
+>> +       mmc_pwrseq_perform_emmc_reset(pwrseq);
+>> +       return NOTIFY_DONE;
+>> +}
+>> +
+>> +int mmc_pwrseq_emmc_alloc(struct mmc_host *host, struct device *dev)
+>> +{
+>> +       struct mmc_pwrseq_emmc *pwrseq;
+>> +       int ret = 0;
+>> +
+>> +       pwrseq = kzalloc(sizeof(struct mmc_pwrseq_emmc), GFP_KERNEL);
+>> +       if (!pwrseq)
+>> +               return -ENOMEM;
+>> +
+>> +       pwrseq->reset_gpio = gpiod_get_index(dev, "reset", 0, GPIOD_OUT_LOW);
+>> +       if (IS_ERR(pwrseq->reset_gpio)) {
+>> +               ret = PTR_ERR(pwrseq->reset_gpio);
+>> +               goto free;
+>> +       }
+>> +
+>> +       /*
+>> +        * register reset handler to ensure emmc reset also from
+>> +        * emergency_reboot()
+>> +        */
+>> +       pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
+>> +       pwrseq->reset_nb.priority = 255;
+> Why 255? I guess it could deserve a comment!?
+
+The default architecture reset handler is called with priority 128. The 
+goal here
+is to be called before it.
+
+>
+>> +       register_restart_handler(&pwrseq->reset_nb);
+>> +
+>> +       pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
+>> +       host->pwrseq = &pwrseq->pwrseq;
+>> +
+>> +       return 0;
+>> +free:
+>> +       kfree(pwrseq);
+>> +       return ret;
+>> +}
+>> --
+>> 1.9.2
+>>
+> Some final generic thoughts; since the reset GPIO will be toggled for
+> each call to mmc_power_up(), that means the card will be reset for
+> each system PM suspend to resume cycle. Is that really what we want?
+
+I wanted to provide a generic driver. I already noticed that some mmc hosts
+perform emmc hardware reset on initialization, so I though that this is 
+not an
+issue if this driver will also do it. This will also solve strange issue
+I've observed some time ago, when bootloader's code was leaving the emmc 
+card
+initialized.
+
+If you think that one might not be interested in such behavior, maybe we 
+just
+need to add additional boolean properties to this driver, like 
+'reset-on-init'
+and 'reset-on-reboot'?
+
+> For some cases that also means the card will be reset when it's in
+> sleep state (CMD5). Do you know if that's okay?
+
+I've didn't observe any issues yet.
+
+Best regards
 -- 
-1.8.5.5
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
