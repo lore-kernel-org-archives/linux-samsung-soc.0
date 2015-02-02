@@ -1,42 +1,99 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 03/14] drm/bridge: make bridge registration independent of
- drm flow
-Date: Mon, 2 Feb 2015 14:46:40 +0530
-Message-ID: <CAEC9eQMpRcoJxF_u6rOKw_68x441790r595xdPnBpwqc79AMRQ@mail.gmail.com>
-References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
- <1421771935-31618-4-git-send-email-ajaykumar.rs@samsung.com>
- <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
- <20150130155927.GO26493@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] serial: samsung: earlycon support depends on
+ CONFIG_SERIAL_SAMSUNG_CONSOLE
+Date: Mon, 02 Feb 2015 10:47:35 +0100
+Message-ID: <1422870455-19581-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150130155927.GO26493@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34502 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753550AbbBBJsH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Feb 2015 04:48:07 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-SGksCgpPbiBGcmksIEphbiAzMCwgMjAxNSBhdCA5OjI5IFBNLCBSdXNzZWxsIEtpbmcgLSBBUk0g
-TGludXgKPGxpbnV4QGFybS5saW51eC5vcmcudWs+IHdyb3RlOgo+IE9uIEZyaSwgSmFuIDMwLCAy
-MDE1IGF0IDEwOjM3OjE5QU0gLTA1MDAsIFJvYiBDbGFyayB3cm90ZToKPj4gT24gVHVlLCBKYW4g
-MjAsIDIwMTUgYXQgMTE6MzggQU0sIEFqYXkgS3VtYXIgPGFqYXlrdW1hci5yc0BzYW1zdW5nLmNv
-bT4gd3JvdGU6Cj4+IEknbGwgYWxzbyBuZWVkIHRvIHVwZGF0ZSB0aGUgbmV3IGJyaWRnZSBpbiB0
-aGUgbXNtIGVkcCBjb2RlLi4KPj4gYWx0aG91Z2ggdGhhdCBpc24ndCBzdWNoIGEgYmlnIGRlYWwg
-aWYgSSBrbmV3IGhvdyB0aGlzIHdhcyAqc3VwcG9zZWQqCj4+IHRvIHdvcmsuLiBzaW5jZSB3aGF0
-IGlzIHRoZXJlIG5vdyBhdCBsZWFzdCBkb2Vzbid0IGxvb2sgcmlnaHQuLgo+Cj4gSSB3b25kZXIg
-d2hldGhlciB0aGUgbmV3IGR3LWhkbWkgYnJpZGdlIGNvZGUgZ2V0IGZpeGVkIHVwIHRvby4uLgpJ
-IHRoaW5rIGl0cyBhbHJlYWR5IGZpeGVkLiBDaGVjayB0aGlzOgpodHRwOi8vY2dpdC5mcmVlZGVz
-a3RvcC5vcmcvfmFpcmxpZWQvbGludXgvY29tbWl0Lz9oPWRybS1uZXh0JmlkPWI1MjE3YmY0Njky
-MjE4ZDIwMmQzZDJjZDc3Mjg2NGZhMWUxMGJlNGQKClJlZ2FyZHMsCkFqYXkgS3VtYXIKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+EarlyCon support depends on serial console infrastructure, so the code
+implementing it should depend on CONFIG_SERIAL_SAMSUNG_CONSOLE.
+
+This patch fixes the following build break:
+CC [M]  drivers/tty/serial/samsung.o
+drivers/tty/serial/samsung.c:2468:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before string constant
+drivers/tty/serial/samsung.c:2468:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before =E2=80=98s3c2410_setup_earlycon=E2=
+=80=99
+drivers/tty/serial/samsung.c:2487:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before string constant
+drivers/tty/serial/samsung.c:2487:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before =E2=80=98s3c2412_setup_earlycon=E2=
+=80=99
+drivers/tty/serial/samsung.c:2488:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before string constant
+drivers/tty/serial/samsung.c:2488:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before =E2=80=98s3c2440_setup_earlycon=E2=
+=80=99
+drivers/tty/serial/samsung.c:2489:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before string constant
+drivers/tty/serial/samsung.c:2489:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before =E2=80=98s3c6400_setup_earlycon=E2=
+=80=99
+drivers/tty/serial/samsung.c:2506:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before string constant
+drivers/tty/serial/samsung.c:2506:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before =E2=80=98s5pv210_setup_earlycon=E2=
+=80=99
+drivers/tty/serial/samsung.c:2507:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before string constant
+drivers/tty/serial/samsung.c:2507:1: error: expected declaration specif=
+iers or =E2=80=98...=E2=80=99 before =E2=80=98exynos4210_setup_earlycon=
+=E2=80=99
+drivers/tty/serial/samsung.c:2468:1: warning: =E2=80=98s3c2410_setup_ea=
+rlycon=E2=80=99 defined but not used [-Wunused-function]
+drivers/tty/serial/samsung.c:2487:1: warning: =E2=80=98s3c2412_setup_ea=
+rlycon=E2=80=99 defined but not used [-Wunused-function]
+drivers/tty/serial/samsung.c:2488:1: warning: =E2=80=98s3c2440_setup_ea=
+rlycon=E2=80=99 defined but not used [-Wunused-function]
+drivers/tty/serial/samsung.c:2489:1: warning: =E2=80=98s3c6400_setup_ea=
+rlycon=E2=80=99 defined but not used [-Wunused-function]
+drivers/tty/serial/samsung.c:2506:1: warning: =E2=80=98s5pv210_setup_ea=
+rlycon=E2=80=99 defined but not used [-Wunused-function]
+drivers/tty/serial/samsung.c:2507:1: warning: =E2=80=98exynos4210_setup=
+_earlycon=E2=80=99 defined but not used [-Wunused-function]
+make[3]: *** [drivers/tty/serial/samsung.o] Error 1
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/tty/serial/samsung.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.=
+c
+index a6bef8dcdc3c..bb73897809a1 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -2403,6 +2403,7 @@ static struct platform_driver samsung_serial_driv=
+er =3D {
+=20
+ module_platform_driver(samsung_serial_driver);
+=20
++#ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
+ /*
+  * Early console.
+  */
+@@ -2505,6 +2506,7 @@ OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos42=
+10-uart",
+ 			s5pv210_early_console_setup);
+ EARLYCON_DECLARE(s5pv210, s5pv210_early_console_setup);
+ EARLYCON_DECLARE(exynos4210, s5pv210_early_console_setup);
++#endif
+=20
+ MODULE_ALIAS("platform:samsung-uart");
+ MODULE_DESCRIPTION("Samsung SoC Serial port driver");
+--=20
+1.9.2
