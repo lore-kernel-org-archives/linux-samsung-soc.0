@@ -1,80 +1,72 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [RESEND PATCH] ARM: EXYNOS: Add missing static to file-scope
- declarations
-Date: Tue, 03 Feb 2015 13:10:02 +0900
-Message-ID: <06c201d03f67$48da45b0$da8ed110$@kernel.org>
-References: <1420819476-23344-1-git-send-email-k.kozlowski@samsung.com>
+Subject: RE: [PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in
+ exynos4x12.dtsi
+Date: Tue, 03 Feb 2015 13:12:13 +0900
+Message-ID: <06d501d03f67$96bc2b40$c43481c0$@kernel.org>
+References: <1421329871-18819-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33592 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964800AbbBCEKF (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:17556 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965100AbbBCEMP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 23:10:05 -0500
-In-reply-to: <1420819476-23344-1-git-send-email-k.kozlowski@samsung.com>
+	Mon, 2 Feb 2015 23:12:15 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NJ6002MZH0E2Q90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Feb 2015 13:12:14 +0900 (KST)
+In-reply-to: <1421329871-18819-1-git-send-email-s.nawrocki@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, kgene@kernel.org
+Cc: olof@lixom.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de
 
-Krzysztof Kozlowski wrote:
+Sylwester Nawrocki wrote:
 > 
-> The 'pm_data', 'exynos_release_ret_regs' and
-> 'exynos5420_release_ret_regs' are not exported nor used outside of
-> suspend.c file. Make them static.
+> Assign proper FIMC-IS UART gate clock in the device DT node and not
+> use the SRC_MASK gate. This fixes regression introduced in commit
+> a37c82a3b3c0910019abfd22a97be1f ("clk: samsung: exynos4: Remove
+> SRC_MASK_ISP gates").
 > 
-> This fixes following sparse warnings:
-> arch/arm/mach-exynos/suspend.c:83:23: warning: symbol 'pm_data' was not declared. Should it be static?
-> arch/arm/mach-exynos/suspend.c:106:14: warning: symbol 'exynos_release_ret_regs' was not declared.
-> Should it be static?
-> arch/arm/mach-exynos/suspend.c:117:14: warning: symbol 'exynos5420_release_ret_regs' was not declared.
-> Should it be static?
+> Without this change exynos4 fimc-is driver fails to probe with an
+> error log:
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> [    1.842447] ERROR: could not get clock /camera/fimc-is@12000000:uart(13)
+> [    1.848529] exynos4-fimc-is 12000000.fimc-is: failed to get clock: uart
+> [    1.855275] exynos4-fimc-is: probe of 12000000.fimc-is failed with error -2
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  arch/arm/mach-exynos/suspend.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index 342797b9bf3b..fef091f8e59f 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -75,7 +75,7 @@ struct exynos_pm_data {
->  	int (*cpu_suspend)(unsigned long);
->  };
+> Kukjin, could you take this patch into your tree ? I have been applying it
+> for several kernel releases now to get the Exynos4 FIMC driver even passing
+> probing.
 > 
-> -struct exynos_pm_data *pm_data;
-> +static struct exynos_pm_data *pm_data;
+> Thanks,
+> Sylwester
+>  arch/arm/boot/dts/exynos4x12.dtsi |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  static int exynos5420_cpu_state;
->  static unsigned int exynos_pmu_spare3;
-> @@ -98,7 +98,7 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
->  	{ /* sentinel */ },
->  };
-> 
-> -unsigned int exynos_release_ret_regs[] = {
-> +static unsigned int exynos_release_ret_regs[] = {
->  	S5P_PAD_RET_MAUDIO_OPTION,
->  	S5P_PAD_RET_GPIO_OPTION,
->  	S5P_PAD_RET_UART_OPTION,
-> @@ -109,7 +109,7 @@ unsigned int exynos_release_ret_regs[] = {
->  	REG_TABLE_END,
->  };
-> 
-> -unsigned int exynos5420_release_ret_regs[] = {
-> +static unsigned int exynos5420_release_ret_regs[] = {
->  	EXYNOS_PAD_RET_DRAM_OPTION,
->  	EXYNOS_PAD_RET_MAUDIO_OPTION,
->  	EXYNOS_PAD_RET_JTAG_OPTION,
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index 93b7040..86e1800 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -225,7 +225,7 @@
+>  				 <&clock CLK_DIV_ISP0>,<&clock CLK_DIV_ISP1>,
+>  				 <&clock CLK_DIV_MCUISP0>,
+>  				 <&clock CLK_DIV_MCUISP1>,
+> -				 <&clock CLK_SCLK_UART_ISP>,
+> +				 <&clock CLK_UART_ISP_SCLK>,
+>  				 <&clock CLK_ACLK200>, <&clock CLK_DIV_ACLK200>,
+>  				 <&clock CLK_ACLK400_MCUISP>,
+>  				 <&clock CLK_DIV_ACLK400_MCUISP>;
 > --
 
-Looks ok to me, how about re-spin this patch including following?
+Applied, thanks.
 
-...
-+static unsigned int exynos3250_release_ret_regs[] = {
-...
-
-Thanks,
-Kukjin
+- Kukjin
