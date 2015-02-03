@@ -1,110 +1,119 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 03/14] drm/bridge: make bridge registration independent
- of drm flow
-Date: Tue, 3 Feb 2015 13:03:03 +0100
-Message-ID: <20150203120301.GB15068@ulmo.nvidia.com>
-References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
- <1421771935-31618-4-git-send-email-ajaykumar.rs@samsung.com>
- <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v5 08/13] clk: samsung: exynos5433: Add clocks for CMU_DISP
+ domain
+Date: Tue, 03 Feb 2015 13:17:48 +0100
+Message-ID: <54D0BC6C.9020008@samsung.com>
+References: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
+ <1422887047-30911-9-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dc+cDN39EJAMEtIO"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:34915 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933461AbbBCMDI (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:35982 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755421AbbBCMRy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Feb 2015 07:03:08 -0500
-Content-Disposition: inline
-In-Reply-To: <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
+	Tue, 3 Feb 2015 07:17:54 -0500
+In-reply-to: <1422887047-30911-9-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Clark <robdclark@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, jg1.han@samsung.com, daeinki <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, bhushan.r@samsung.com, Prashanth G <prashanth.g@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
+Hi Chanwoo,
 
---dc+cDN39EJAMEtIO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 02/02/15 15:24, Chanwoo Choi wrote:
+> This patch adds the the mux/divider/gate clocks for CMU_DISP domain which
+> includes the clocks of Display IPs (DECON/HDMI/DSIM/MIXER). The CMU_DISP clocks
+> is used to need the source clock of CMU_MIF domain so, the CMU_MIF's clocks
+> related to CMU_DISP should be always on state.
 
-On Fri, Jan 30, 2015 at 10:37:19AM -0500, Rob Clark wrote:
-> On Tue, Jan 20, 2015 at 11:38 AM, Ajay Kumar <ajaykumar.rs@samsung.com> w=
-rote:
-> > Currently, third party bridge drivers(ptn3460) are dependent
-> > on the corresponding encoder driver init, since bridge driver
-> > needs a drm_device pointer to finish drm initializations.
-> > The encoder driver passes the drm_device pointer to the
-> > bridge driver. Because of this dependency, third party drivers
-> > like ptn3460 doesn't adhere to the driver model.
-> >
-> > In this patch, we reframe the bridge registration framework
-> > so that bridge initialization is split into 2 steps, and
-> > bridge registration happens independent of drm flow:
-> > --Step 1: gather all the bridge settings independent of drm and
-> >           add the bridge onto a global list of bridges.
-> > --Step 2: when the encoder driver is probed, call drm_bridge_attach
-> >           for the corresponding bridge so that the bridge receives
-> >           drm_device pointer and continues with connector and other
-> >           drm initializations.
-> >
-> > The old set of bridge helpers are removed, and a set of new helpers
-> > are added to accomplish the 2 step initialization.
-> >
-> > The bridge devices register themselves onto global list of bridges
-> > when they get probed by calling "drm_bridge_add".
-> >
-> > The parent encoder driver waits till the bridge is available
-> > in the lookup table(by calling "of_drm_find_bridge") and then
-> > continues with its initialization.
-> >
-> > The encoder driver should also call "drm_bridge_attach" to pass
-> > on the drm_device to the bridge object.
-> >
-> > drm_bridge_attach inturn calls "bridge->funcs->attach" so that
-> > bridge can continue with drm related initializations.
->=20
-> ok, so I probably should have had a closer look at this before it
-> landed in drm-next, so if it is too late to revert (and deal w/
-> untangling subsequent patches that depend on this) some of these
-> issues we'll just have to fix with follow-on patches.
->=20
-> 1) needs headerdoc for new fxns in drm_bridge.c, and needs to be added
-> in drm.tmpl
+Are you sure we need to add anything to CMU_MIF in this patch ?
 
-drm_panel.c is missing kerneldoc as well, though I have a local patch to
-add it. If nobody else steps up I'll take this.
+> Also, CMU_DISP must need the source clock of 'sclk_hdmi_spdif_disp'
+> from CMU_TOP domain. This patch adds the clocks of CMU_TOP related to HDMI.
+> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c   | 437 +++++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos5433.h | 114 ++++++++-
+>  2 files changed, 550 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index 3d6164e..cf3f0ac 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -245,6 +245,8 @@ PNAME(mout_sclk_audio1_p)	= { "ioclk_audiocdclk1", "oscclk",
+>  PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "oscclk",
+>  				    "mout_aud_pll_user_t",};
+>  
+> +PNAME(mout_sclk_hdmi_spdif_p)	= { "sclk_audio1", "ioclk_spdif_extclk", };
+> +
+>  static struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initdata = {
+>  	FFACTOR(0, "oscclk_efuse_common", "oscclk", 1, 1, 0),
+>  };
+> @@ -395,6 +397,10 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+>  			MUX_SEL_TOP_PERIC1, 4, 2),
+>  	MUX(CLK_MOUT_SCLK_AUDIO0, "mout_sclk_audio0", mout_sclk_audio0_p,
+>  			MUX_SEL_TOP_PERIC1, 0, 2),
+> +
+> +	/* MUX_SEL_TOP_DISP */
+> +	MUX(CLK_MOUT_SCLK_HDMI_SPDIF, "mout_sclk_hdmi_spdif",
+> +			mout_sclk_hdmi_spdif_p, MUX_SEL_TOP_DISP, 0, 1),
+>  };
+>  
+>  static struct samsung_div_clock top_div_clks[] __initdata = {
+> @@ -1360,6 +1366,11 @@ static struct samsung_gate_clock mif_gate_clks[] __initdata = {
+>  			ENABLE_SCLK_MIF, 1, CLK_IGNORE_UNUSED, 0),
+>  	GATE(CLK_SCLK_BUS_PLL_ATLAS, "sclk_bus_pll_atlas", "sclk_bus_pll",
+>  			ENABLE_SCLK_MIF, 0, CLK_IGNORE_UNUSED, 0),
+> +
+> +	/* ENABLE_SCLK_TOP_DISP */
+> +	GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+> +			"mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
+> +			CLK_IGNORE_UNUSED, 0),
 
-> 2) as far as I can tell, the new approach to cleaning up bridge
-> objects is to just let them leak !?!
+I think this clock should be added to top_gate_clks[] table instead, i.e.
+it seems to belong to CMU_TOP, not CMU_MIF. Can you double check it ?
 
-With this series bridges are no longer part of the DRM device and it's
-the driver that provides them that needs to free them (in ->remove()).
-It's not a completely perfect solution yet, but with the registry patch
-that I proposed a while back all the remaining issues should go away.
-Now if I could get anybody to look at that patch...
+If you confirm this I will add following change when applying, no need
+to resend again:
 
-Thierry
+----8<-------
+diff --git a/drivers/clk/samsung/clk-exynos5433.c
+b/drivers/clk/samsung/clk-exynos5433.c
+index cf3f0ac..edf9795 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -556,6 +556,11 @@ static struct samsung_gate_clock top_gate_clks[]
+__initdata = {
+                        MUX_ENABLE_TOP_PERIC1, 4, 0, 0),
+        GATE(CLK_SCLK_AUDIO0, "sclk_audio0", "div_sclk_audio0",
+                        MUX_ENABLE_TOP_PERIC1, 0, 0, 0),
++
++       /* ENABLE_SCLK_TOP_DISP */
++       GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
++                       "mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
++                       CLK_IGNORE_UNUSED, 0),
+ };
 
---dc+cDN39EJAMEtIO
-Content-Type: application/pgp-signature
+ /*
+@@ -1366,11 +1371,6 @@ static struct samsung_gate_clock mif_gate_clks[]
+__initdata = {
+                        ENABLE_SCLK_MIF, 1, CLK_IGNORE_UNUSED, 0),
+        GATE(CLK_SCLK_BUS_PLL_ATLAS, "sclk_bus_pll_atlas", "sclk_bus_pll",
+                        ENABLE_SCLK_MIF, 0, CLK_IGNORE_UNUSED, 0),
+-
+-       /* ENABLE_SCLK_TOP_DISP */
+-       GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+-                       "mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
+-                       CLK_IGNORE_UNUSED, 0),
+ };
+----8<-------
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJU0Lj1AAoJEN0jrNd/PrOhbcUP+wbtCFdsN19w/ACFa54qxK7o
-p898WTAsqsPMUUcRwAFyBKFj8jFH062RQgGQWdWDflIOm1kxQ2mHrw4VJPo+WXnS
-cc0jrrMivFTP0/gHxaaAczXEF8ej9i9eZbzGrLWWZxENtgsNwtcKIecysGG6BPIx
-g+SJOW9fhOB+C8EvN7NSWivSEwtWQpBZV/y2wgLy+tUSpnqZkh8SanoV4dNgX/qi
-LJrwMGHRHyuyba0YJbJBSDYopLUmzTwiihL0pO1dKCUiTPsUUP7a9vJmCLFsencs
-DG5erOFLSnOaflJxWGJE3HYIpTPve7tlBtH8kAd915dNG7+92uZLeAWMQZgQc2q+
-I/TzNSTVUJCPP426TIabVmaAWaYiLj2dLJ6z9UqL5vZ4acHeOXGvVNdCwNng2dKn
-FPiLGCUgPTGPfhcacHDDTyuJL93s0P2dzmyO5jjVz2q333wNz/Fnt7NZ7lpdYF8x
-F/wRw8RvfXfS5Kyg48tj/XLGiUkU0PQyraRYhP6riUxAuG82+0s0NYduPDVvcOC8
-F/hsqV5gWHjqOpBT+xbWG7YXK1uTQx8G188Qm3vcQyinc66ERkvn6sDIMsazsKId
-TH0xj7LBU82eVjnHLkRmfSlCYEef5Sey+K+X2FnvkUmpLD2qHDrsC4dxF4JE6bIr
-m9IW5OYrm3uuG30wSqiF
-=fOyr
------END PGP SIGNATURE-----
-
---dc+cDN39EJAMEtIO--
+--
+Thanks,
+Sylwester
