@@ -1,72 +1,88 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH -v2] drm/exynos: do not disable hdmi clocks for exynos5420
-Date: Tue, 03 Feb 2015 14:28:39 +0900
-Message-ID: <54D05C87.5010402@samsung.com>
-References: <1422887201-4052-1-git-send-email-gustavo@padovan.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESEND PATCH] ARM: EXYNOS: Add missing static to file-scope
+ declarations
+Date: Tue, 03 Feb 2015 09:06:13 +0100
+Message-ID: <1422950773.10086.1.camel@AMDC1943>
+References: <1420819476-23344-1-git-send-email-k.kozlowski@samsung.com>
+ <06c201d03f67$48da45b0$da8ed110$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422887201-4052-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Prathyush K <prathyush.k@samsung.com>, dri-devel@lists.freedesktop.org, liquid.acid@gmx.net, kgene@kernel.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20578 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751591AbbBCIGT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 03:06:19 -0500
+In-reply-to: <06c201d03f67$48da45b0$da8ed110$@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGksCgpPbiAwMi8wMi8yMDE1IDExOjI2IFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
-bTogUHJhdGh5dXNoIEsgPHByYXRoeXVzaC5rQHNhbXN1bmcuY29tPgo+IAo+IFdoZW4gVlBMTCBj
-bG9jayBvZiBsZXNzIHRoYW4gMTQwIE1IeiB3YXMgdXNlZCBhbmQgYWxsIHRoZSB0aHJlZSBjbG9j
-a3MgLQo+IGhkbWlwaHksIGhkbWksIHNjbGtfaGRtaSBhcmUgZGlzYWJsZWQsIHRoZSBzeXN0ZW0g
-aGFuZ3MgZHVyaW5nIFMyUiB3aGVuCj4gSERNSSBpcyBjb25uZWN0ZWQuIFNpbmNlIHdlIHdhbnQg
-dG8gdXNlIGEgdnBsbCBjbG9jayBvZiA3MC41IE1Ieiwgd2UKPiBjYW5ub3QgZGlzYWJsZSB0aGVz
-ZSAzIGNsb2NrcyBiZWZvcmUgc3VzcGVuZGluZy4gIFRoaXMgcGF0Y2ggYWRkIGFuIGV4dHJhCj4g
-Y2xrIGVuYWJsZS9kaXNhYmxlIG9mIGhkbWkgYW5kIHNjbGtfaGRtaSBvdXRzaWRlIG9mIHRoZSBw
-bSBvcHMgc28gdGhlc2UKPiBjbG9ja3MgYXJlIGFsd2F5cyBlbmFibGVkLiBOb3cgc3lzdGVtIHN1
-c3BlbmRzIGFuZCByZXN1bWVzIHdpdGggSERNSQo+IGNvbm5lY3RlZCB3aXRoIFZQTEwgc2V0IGF0
-IDcwLjUgTUh6Lgo+IAo+IFRoaXMgaXMgbm90IHRoZSBiZXN0IHNvbHV0aW9uLCBidXQgaXQgaW5o
-aWJpdHMgYSBjcmFzaCB3aGlsZSB3ZSBmaWd1cmUgb3V0Cj4gd2hhdCBpcyB0aGUgY29ycmVjdCBz
-b2x1dGlvbiBmb3IgdGhpcyBpc3N1ZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBQcmF0aHl1c2ggSyA8
-cHJhdGh5dXNoLmtAc2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogQW5kcmV3IEJyZXN0aWNr
-ZXIgPGFicmVzdGljQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92
-YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDIwICsrKysrKysrKysrKysrKysrKysrCj4gIDEg
-ZmlsZSBjaGFuZ2VkLCAyMCBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2hkbWkuYwo+IGluZGV4IDZhYTBkNjUuLmM2YmFmNjQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfaGRtaS5jCj4gQEAgLTIyNTQsNiArMjI1NCwyMCBAQCBzdGF0aWMgaW50IGhk
-bWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIAl9IGVsc2UK
-PiAgCQlyZXMtPnJlZ19oZG1pX2VuID0gTlVMTDsKPiAgCj4gKwkvKgo+ICsJICogRm9yIHRoZXNl
-IHR3byBjbG9ja3MgZXh5bm9zNTQyMCBmYWlscyB0byBzdXNwZW5kIGlmIFZQTEwgY2xvY2sgb2YK
-PiArCSAqIDcwLjUgTUh6IGlzIHVzZWQgYW5kIHRoZXNlIGNsb2NrcyBhcmUgZGlzYWJsZWQgYmVm
-b3JlIHN1c3BlbmQuIFNvCj4gKwkgKiBlbmFibGUgdGhlbSBoZXJlLgo+ICsJICogTm90ZSB0aGF0
-IHRoaXMgd2lsbCBrZWVwIHRoZSBjbG9ja3MgZW5hYmxlZCBmb3IgdGhlIGVudGlyZQo+ICsJICog
-bGlmZXRpbWUgb2YgdGhlIGRyaXZlciBhbmQgd2FzdGUgZW5lcmd5IHdoZW4gaXQgaXMgc3VzcGVu
-ZGVkLgo+ICsJICogSG93ZXZlciBpdCBwcmV2ZW50cyB0aGUgc3lzdGVtIGNyYXNoIHVudGlsIGEg
-YmV0dGVyIHNvbHV0aW9uIGlzCj4gKwkgKiBmb3VuZAo+ICsJICovCj4gKwlpZiAob2ZfZGV2aWNl
-X2lzX2NvbXBhdGlibGUoZGV2LT5vZl9ub2RlLCAic2Ftc3VuZyxleHlub3M1NDIwLWhkbWkiKSkg
-ewo+ICsJCWNsa19wcmVwYXJlX2VuYWJsZShyZXMtPnNjbGtfaGRtaSk7Cj4gKwkJY2xrX3ByZXBh
-cmVfZW5hYmxlKHJlcy0+aGRtaSk7Cj4gKwl9Cj4gKwo+ICAJcmV0dXJuIHJldDsKPiAgZmFpbDoK
-PiAgCURSTV9FUlJPUigiSERNSSByZXNvdXJjZSBpbml0IC0gZmFpbGVkXG4iKTsKPiBAQCAtMjUx
-Niw2ICsyNTMwLDEyIEBAIHN0YXRpYyBpbnQgaGRtaV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikKPiAgCWlmIChoZGF0YS0+cmVzLnJlZ19oZG1pX2VuKQo+ICAJCXJlZ3VsYXRv
-cl9kaXNhYmxlKGhkYXRhLT5yZXMucmVnX2hkbWlfZW4pOwo+ICAKPiArCWlmIChvZl9kZXZpY2Vf
-aXNfY29tcGF0aWJsZShoZGF0YS0+ZGV2LT5vZl9ub2RlLAo+ICsJCQkJICAgICJzYW1zdW5nLGV4
-eW5vczU0MjAtaGRtaSIpKSB7Cj4gKwkJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGhkYXRhLT5yZXMu
-c2Nsa19oZG1pKTsKPiArCQljbGtfZGlzYWJsZV91bnByZXBhcmUoaGRhdGEtPnJlcy5oZG1pKTsK
-PiArCX0KPiArCj4gIAlpZiAoaGRhdGEtPmhkbWlwaHlfcG9ydCkKPiAgCQlwdXRfZGV2aWNlKCZo
-ZGF0YS0+aGRtaXBoeV9wb3J0LT5kZXYpOwo+ICAJcHV0X2RldmljZSgmaGRhdGEtPmRkY19hZHB0
-LT5kZXYpOwo+IAoKTG9va3MgZmluZSB0byBtZSBidXQgaSdtIG5vdCBzdXJlIGFueSB0aGVyZSBh
-cmUgYW55IHNpZGUgZWZmZWN0cyB0bwpjaGFuZ2UgcGFyZW50IGNsb2NrIG9mIG1vdXRfaGRtaSBj
-bG9jay4KCkFja2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+
-CgpUaGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On wto, 2015-02-03 at 13:10 +0900, Kukjin Kim wrote:
+> Krzysztof Kozlowski wrote:
+> > 
+> > The 'pm_data', 'exynos_release_ret_regs' and
+> > 'exynos5420_release_ret_regs' are not exported nor used outside of
+> > suspend.c file. Make them static.
+> > 
+> > This fixes following sparse warnings:
+> > arch/arm/mach-exynos/suspend.c:83:23: warning: symbol 'pm_data' was not declared. Should it be static?
+> > arch/arm/mach-exynos/suspend.c:106:14: warning: symbol 'exynos_release_ret_regs' was not declared.
+> > Should it be static?
+> > arch/arm/mach-exynos/suspend.c:117:14: warning: symbol 'exynos5420_release_ret_regs' was not declared.
+> > Should it be static?
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/suspend.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> > index 342797b9bf3b..fef091f8e59f 100644
+> > --- a/arch/arm/mach-exynos/suspend.c
+> > +++ b/arch/arm/mach-exynos/suspend.c
+> > @@ -75,7 +75,7 @@ struct exynos_pm_data {
+> >  	int (*cpu_suspend)(unsigned long);
+> >  };
+> > 
+> > -struct exynos_pm_data *pm_data;
+> > +static struct exynos_pm_data *pm_data;
+> > 
+> >  static int exynos5420_cpu_state;
+> >  static unsigned int exynos_pmu_spare3;
+> > @@ -98,7 +98,7 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+> >  	{ /* sentinel */ },
+> >  };
+> > 
+> > -unsigned int exynos_release_ret_regs[] = {
+> > +static unsigned int exynos_release_ret_regs[] = {
+> >  	S5P_PAD_RET_MAUDIO_OPTION,
+> >  	S5P_PAD_RET_GPIO_OPTION,
+> >  	S5P_PAD_RET_UART_OPTION,
+> > @@ -109,7 +109,7 @@ unsigned int exynos_release_ret_regs[] = {
+> >  	REG_TABLE_END,
+> >  };
+> > 
+> > -unsigned int exynos5420_release_ret_regs[] = {
+> > +static unsigned int exynos5420_release_ret_regs[] = {
+> >  	EXYNOS_PAD_RET_DRAM_OPTION,
+> >  	EXYNOS_PAD_RET_MAUDIO_OPTION,
+> >  	EXYNOS_PAD_RET_JTAG_OPTION,
+> > --
+> 
+> Looks ok to me, how about re-spin this patch including following?
+> 
+> ...
+> +static unsigned int exynos3250_release_ret_regs[] = {
+
+Sure, I'll resend extended version.
+
+Best regards,
+Krzysztof
+
+> ...
+> 
+> Thanks,
+> Kukjin
