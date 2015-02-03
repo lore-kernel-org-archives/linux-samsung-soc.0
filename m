@@ -1,133 +1,184 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v11 3/4] ARM: dts: exynos: Add PPMU node for Exynos3250-based
- Rinato/Monk board
-Date: Tue, 03 Feb 2015 09:49:10 +0900
-Message-ID: <1422924551-10474-4-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v11 2/4] ARM: dts: Add PPMU dt node for Exynos4 SoCs
+Date: Tue, 03 Feb 2015 09:49:09 +0900
+Message-ID: <1422924551-10474-3-git-send-email-cw00.choi@samsung.com>
 References: <1422924551-10474-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48335 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753806AbbBCAtU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:31577 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933641AbbBCAt3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 19:49:20 -0500
+	Mon, 2 Feb 2015 19:49:29 -0500
 In-reply-to: <1422924551-10474-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene@kernel.org
 Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, kgene@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch add PPMU dt node to Exynos3250-base Rinato/Monk board. The PPMU node
-is used to get the utilization of DMC0/DMC1/LEFTBUS/RIGHTBUS Block.
+This patch add PPMU (Platform Performance Monitoring Unit) dt node for Exynos4
+(Exynos4210/4212/4412) SoC. PPMU dt node is used to monitor the utilization of
+each IP.
+
+The Exynos4210/Exynos4212/Exynos4412 SoC includes following PPMUs:
+- PPMU_DMC0      0x106A_0000
+- PPMU_DMC1      0x106B_0000
+- PPMU_CPU       0x106C_0000
+- PPMU_ACP       0x10AE_0000
+- PPMU_RIGHT_BUS 0x112A_0000
+- PPMU_LEFT_BUS  0x116A_0000
+- PPMU_FSYS      0x1263_0000
+- PPMU_LCD0      0x11E4_0000
+- PPMU_CAMIF     0x11AC_0000
+- PPMU_IMAGE     0x12AA_0000
+- PPMU_TV        0x12E4_0000
+- PPMU_3D        0x1322_0000
+- PPMU_MFC_LEFT  0x1366_0000
+- PPMU_MFC_RIGHT 0x1367_0000
+
+Additionally, the Exynos4210 SoC includes following PPMUs:
+- PPMU_LCD1      0x1224_0000
 
 Cc: Kukjin Kim <kgene@kernel.org>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-monk.dts   | 40 +++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos3250-rinato.dts | 40 +++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+ arch/arm/boot/dts/exynos4.dtsi    | 108 ++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi |   8 +++
+ 2 files changed, 116 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 24822aa..fcceb59 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -420,6 +420,46 @@
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index b8168f1..70064dc 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -645,4 +645,112 @@
+ 		samsung,sysreg = <&sys_reg>;
+ 		status = "disabled";
+ 	};
++
++	ppmu_dmc0: ppmu_dmc0@106a0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x106a0000 0x2000>;
++		clocks = <&clock CLK_PPMUDMC0>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_dmc1: ppmu_dmc1@106b0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x106b0000 0x2000>;
++		clocks = <&clock CLK_PPMUDMC1>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_cpu: ppmu_cpu@106c0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x106c0000 0x2000>;
++		clocks = <&clock CLK_PPMUCPU>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_acp: ppmu_acp@10ae0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x106e0000 0x2000>;
++		status = "disabled";
++	};
++
++	ppmu_rightbus: ppmu_rightbus@112a0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x112a0000 0x2000>;
++		clocks = <&clock CLK_PPMURIGHT>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_leftbus: ppmu_leftbus0@116a0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x116a0000 0x2000>;
++		clocks = <&clock CLK_PPMULEFT>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_camif: ppmu_camif@11ac0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x11ac0000 0x2000>;
++		clocks = <&clock CLK_PPMUCAMIF>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_lcd0: ppmu_lcd0@11e40000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x11e40000 0x2000>;
++		clocks = <&clock CLK_PPMULCD0>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_fsys: ppmu_g3d@12630000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x12630000 0x2000>;
++		status = "disabled";
++	};
++
++	ppmu_image: ppmu_image@12aa0000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x12aa0000 0x2000>;
++		clocks = <&clock CLK_PPMUIMAGE>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_tv: ppmu_tv@12e40000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x12e40000 0x2000>;
++		clocks = <&clock CLK_PPMUTV>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_g3d: ppmu_g3d@13220000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x13220000 0x2000>;
++		clocks = <&clock CLK_PPMUG3D>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_mfc_left: ppmu_mfc_left@13660000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x13660000 0x2000>;
++		clocks = <&clock CLK_PPMUMFC_L>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
++
++	ppmu_mfc_right: ppmu_mfc_right@13670000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x13670000 0x2000>;
++		clocks = <&clock CLK_PPMUMFC_R>;
++		clock-names = "ppmu";
++		status = "disabled";
++	};
  };
- 
-+&ppmu_dmc0 {
-+	status = "okay";
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index bcc9e63..b2598de 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -192,4 +192,12 @@
+ 			samsung,lcd-wb;
+ 		};
+ 	};
 +
-+	events {
-+		ppmu_dmc0_3: ppmu-event3-dmc0 {
-+			event-name = "ppmu-event3-dmc0";
-+		};
++	ppmu_lcd1: ppmu_lcd1@12240000 {
++		compatible = "samsung,exynos-ppmu";
++		reg = <0x12240000 0x2000>;
++		clocks = <&clock CLK_PPMULCD1>;
++		clock-names = "ppmu";
++		status = "disabled";
 +	};
-+};
-+
-+&ppmu_dmc1 {
-+	status = "okay";
-+
-+	events {
-+		ppmu_dmc1_3: ppmu-event3-dmc1 {
-+			event-name = "ppmu-event3-dmc1";
-+		};
-+	};
-+};
-+
-+&ppmu_leftbus {
-+	status = "okay";
-+
-+	events {
-+		ppmu_leftbus_3: ppmu-event3-leftbus {
-+			event-name = "ppmu-event3-leftbus";
-+		};
-+	};
-+};
-+
-+&ppmu_rightbus {
-+	status = "okay";
-+
-+	events {
-+		ppmu_rightbus_3: ppmu-event3-rightbus {
-+			event-name = "ppmu-event3-rightbus";
-+		};
-+	};
-+};
-+
- &xusbxti {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index a8caee5..7fd9fcb 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -594,6 +594,46 @@
- 	status = "okay";
- };
- 
-+&ppmu_dmc0 {
-+	status = "okay";
-+
-+	events {
-+		ppmu_dmc0_3: ppmu-event3-dmc0 {
-+			event-name = "ppmu-event3-dmc0";
-+		};
-+	};
-+};
-+
-+&ppmu_dmc1 {
-+	status = "okay";
-+
-+	events {
-+		ppmu_dmc1_3: ppmu-event3-dmc1 {
-+			event-name = "ppmu-event3-dmc1";
-+		};
-+	};
-+};
-+
-+&ppmu_leftbus {
-+	status = "okay";
-+
-+	events {
-+		ppmu_leftbus_3: ppmu-event3-leftbus {
-+			event-name = "ppmu-event3-leftbus";
-+		};
-+	};
-+};
-+
-+&ppmu_rightbus {
-+	status = "okay";
-+
-+	events {
-+		ppmu_rightbus_3: ppmu-event3-rightbus {
-+			event-name = "ppmu-event3-rightbus";
-+		};
-+	};
-+};
-+
- &xusbxti {
- 	clock-frequency = <24000000>;
  };
 -- 
 1.8.5.5
