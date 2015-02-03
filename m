@@ -1,46 +1,49 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 02/14] drm/exynos: Remove exynos_plane_dpms() call with no effect
-Date: Tue,  3 Feb 2015 17:14:19 -0200
-Message-ID: <1422990871-21355-3-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 03/14] drm/exynos: remove leftover functions declarations
+Date: Tue,  3 Feb 2015 17:14:20 -0200
+Message-ID: <1422990871-21355-4-git-send-email-gustavo@padovan.org>
 References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:59822 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966250AbbBCTQn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Feb 2015 14:16:43 -0500
-Received: by mail-qa0-f41.google.com with SMTP id bm13so35287482qab.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Feb 2015 11:16:42 -0800 (PST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: jy0922.shim@samsung.com, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-exynos_plane_dpms(DRM_MODE_DPMS_ON) calls the win_enable()'s callback
-from the underlying layer. However neither one of these layers implement
-win_enable() - FIMD, Mixer and VIDI. Thus the call to exynos_plane_dpms()
-is pointless.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index b2a4b84..ad675fb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -65,8 +65,6 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
- 
- 	if (exynos_crtc->ops->commit)
- 		exynos_crtc->ops->commit(exynos_crtc);
--
--	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
- }
- 
- static bool
--- 
-1.9.3
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlc2UgZnVuY3Rpb25zIHdlcmUgYWxyZWFkeSByZW1vdmVkIGJ5IHByZXZpb3VzIGNsZWFudXAg
+d29yaywgYnV0IHRoZXNlCm9uZXMgd2VyZSBsZWZ0IGJlaGluZC4KClNpZ25lZC1vZmYtYnk6IEd1
+c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KQWNrZWQtYnk6
+IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIHwgNiAtLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5o
+CmluZGV4IDYyNThiODAuLjYyOGI3ODcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9jcnRjLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2NydGMuaApAQCAtMjcsMTIgKzI3LDYgQEAgdm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJs
+ZV92Ymxhbmsoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IHBpcGUpOwogdm9pZCBleHlub3Nf
+ZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBwaXBl
+KTsKIHZvaWQgZXh5bm9zX2RybV9jcnRjX2NvbXBsZXRlX3NjYW5vdXQoc3RydWN0IGRybV9mcmFt
+ZWJ1ZmZlciAqZmIpOwogCi12b2lkIGV4eW5vc19kcm1fY3J0Y19wbGFuZV9tb2RlX3NldChzdHJ1
+Y3QgZHJtX2NydGMgKmNydGMsCi0JCQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUpOwot
+dm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfY29tbWl0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywg
+aW50IHpwb3MpOwotdm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfZW5hYmxlKHN0cnVjdCBkcm1f
+Y3J0YyAqY3J0YywgaW50IHpwb3MpOwotdm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfZGlzYWJs
+ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCB6cG9zKTsKLQogLyogVGhpcyBmdW5jdGlvbiBn
+ZXRzIHBpcGUgdmFsdWUgdG8gY3J0YyBkZXZpY2UgbWF0Y2hlZCB3aXRoIG91dF90eXBlLiAqLwog
+aW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9tX3R5cGUoc3RydWN0IGRybV9kZXZpY2Ug
+KmRybV9kZXYsCiAJCQkJCXVuc2lnbmVkIGludCBvdXRfdHlwZSk7Ci0tIAoxLjkuMwoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
