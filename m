@@ -1,478 +1,351 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 6/9] clk: samsung: exynos5433: Add clocks for CMU_ISP domain
-Date: Tue, 03 Feb 2015 09:13:54 +0900
-Message-ID: <1422922437-7414-7-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v3 2/9] clk: samsung: exynos5433: Add clocks for CMU_ATLAS
+ domain
+Date: Tue, 03 Feb 2015 09:13:50 +0900
+Message-ID: <1422922437-7414-3-git-send-email-cw00.choi@samsung.com>
 References: <1422922437-7414-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40986 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965342AbbBCAOJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 19:14:09 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1422922437-7414-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
 Cc: kgene@kernel.org, pankaj.dubey@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the mux/divider/gate clocks for CMU_ISP domain which
-generates the clocks for FIMC-ISP/DRC/SCLC/DIS/3DNR IPs.
+This patch adds the mux/divider/gate clocks for CMU_ATLAS domain which
+generates the clocks for Cortex-A57 Quad-core processsor, L2 cache controller
+and CoreSight.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos5433-clock.txt |  20 ++
- drivers/clk/samsung/clk-exynos5433.c               | 267 +++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h             |  89 ++++++-
- 3 files changed, 375 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/clock/exynos5433-clock.txt |  16 ++
+ drivers/clk/samsung/clk-exynos5433.c               | 219 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h             |  46 +++++
+ 3 files changed, 281 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index acc1d8a..4f3bfcd 100644
+index 0a71468..7c1dccc 100644
 --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
 +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -43,6 +43,8 @@ Required Properties:
-     which generates clocks for MFC(Multi-Format Codec) IP.
-   - "samsung,exynos5433-cmu-hevc" - clock controller compatible for CMU_HEVC
-     which generates clocks for HEVC(High Efficiency Video Codec) decoder IP.
-+  - "samsung,exynos5433-cmu-isp" - clock controller compatible for CMU_ISP
-+    which generates clocks for FIMC-ISP/DRC/SCLC/DIS/3DNR IPs.
+@@ -34,6 +34,9 @@ Required Properties:
+     which generates clocks for GSCALER IPs.
+   - "samsung,exynos5433-cmu-apollo"- clock controller compatible for CMU_APOLLO
+     which generates clocks for Cortex-A53 Quad-core processor.
++  - "samsung,exynos5433-cmu-atlas" - clock controller compatible for CMU_ATLAS
++    which generates clocks for Cortex-A57 Quad-core processor, CoreSight and
++    L2 cache controller.
  
  - reg: physical base address of the controller and length of memory mapped
    region.
-@@ -137,6 +139,11 @@ Required Properties:
+@@ -111,6 +114,10 @@ Required Properties:
  		- oscclk
- 		- aclk_hevc_400
+ 		- sclk_bus_pll_apollo
  
-+	Input clocks for isp clock controller:
++	Input clocks for atlas clock controller:
 +		- oscclk
-+		- aclk_isp_dis_400
-+		- aclk_isp_400
++		- sclk_bus_pll_atlas
 +
  Each clock is assigned an identifier and client nodes can use this identifier
  to specify the clock which they consume.
  
-@@ -370,6 +377,19 @@ Example 2: Examples of clock controller nodes are listed below.
- 		clocks = <&xxti>, <&cmu_top CLK_ACLK_HEVC_400>;
+@@ -304,6 +311,15 @@ Example 2: Examples of clock controller nodes are listed below.
+ 		clocks = <&xxti>, <&cmu_mif CLK_SCLK_BUS_PLL_APOLLO>;
  	};
  
-+	cmu_isp: clock-controller@146d0000 {
-+		compatible = "samsung,exynos5433-cmu-isp";
-+		reg = <0x146d0000 0x0b0c>;
++	cmu_atlas: clock-controller@11800000 {
++		compatible = "samsung,exynos5433-cmu-atlas";
++		reg = <0x11800000 0x1088>;
 +		#clock-cells = <1>;
 +
-+		clock-names = "oscclk",
-+			"aclk_isp_dis_400",
-+			"aclk_isp_400";
-+		clocks = <&xxti>,
-+		       <&cmu_top CLK_ACLK_ISP_DIS_400>,
-+		       <&cmu_top CLK_ACLK_ISP_400>;
++		clock-names = "oscclk", "sclk_bus_pll_atlas";
++		clocks = <&xxti>, <&cmu_mif CLK_SCLK_BUS_PLL_ATLAS>;
 +	};
 +
  Example 3: UART controller node that consumes the clock generated by the clock
  	   controller.
  
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 08780c0..a7ec551 100644
+index 9a5d33c..7abe9ce 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -404,6 +404,12 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
- };
- 
- static struct samsung_div_clock top_div_clks[] __initdata = {
-+	/* DIV_TOP0 */
-+	DIV(CLK_DIV_ACLK_ISP_DIS_400, "div_aclk_isp_dis_400",
-+			"mout_aclk_isp_dis_400", DIV_TOP0, 4, 4),
-+	DIV(CLK_DIV_ACLK_ISP_400, "div_aclk_isp_400",
-+			"mout_aclk_isp_400", DIV_TOP0, 0, 4),
-+
- 	/* DIV_TOP1 */
- 	DIV(CLK_DIV_ACLK_GSCL_111, "div_aclk_gscl_111", "mout_aclk_gscl_333",
- 			DIV_TOP1, 28, 3),
-@@ -560,6 +566,12 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
- 			ENABLE_ACLK_TOP, 14,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ISP_DIS_400, "aclk_isp_dis_400", "div_aclk_isp_dis_400",
-+			ENABLE_ACLK_TOP, 7,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
-+			ENABLE_ACLK_TOP, 6,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_HEVC_400, "aclk_hevc_400", "div_aclk_hevc_400",
- 			ENABLE_ACLK_TOP, 5,
- 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
-@@ -4218,3 +4230,258 @@ static void __init exynos5433_cmu_hevc_init(struct device_node *np)
+@@ -3586,3 +3586,222 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
  }
- CLK_OF_DECLARE(exynos5433_cmu_hevc, "samsung,exynos5433-cmu-hevc",
- 		exynos5433_cmu_hevc_init);
+ CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
+ 		exynos5433_cmu_apollo_init);
 +
 +/*
-+ * Register offset definitions for CMU_ISP
++ * Register offset definitions for CMU_ATLAS
 + */
-+#define MUX_SEL_ISP			0x0200
-+#define MUX_ENABLE_ISP			0x0300
-+#define MUX_STAT_ISP			0x0400
-+#define DIV_ISP				0x0600
-+#define DIV_STAT_ISP			0x0700
-+#define ENABLE_ACLK_ISP0		0x0800
-+#define ENABLE_ACLK_ISP1		0x0804
-+#define ENABLE_ACLK_ISP2		0x0808
-+#define ENABLE_PCLK_ISP			0x0900
-+#define ENABLE_SCLK_ISP			0x0a00
-+#define ENABLE_IP_ISP0			0x0b00
-+#define ENABLE_IP_ISP1			0x0b04
-+#define ENABLE_IP_ISP2			0x0b08
-+#define ENABLE_IP_ISP3			0x0b0c
++#define ATLAS_PLL_LOCK				0x0000
++#define ATLAS_PLL_CON0				0x0100
++#define ATLAS_PLL_CON1				0x0104
++#define ATLAS_PLL_FREQ_DET			0x010c
++#define MUX_SEL_ATLAS0				0x0200
++#define MUX_SEL_ATLAS1				0x0204
++#define MUX_SEL_ATLAS2				0x0208
++#define MUX_ENABLE_ATLAS0			0x0300
++#define MUX_ENABLE_ATLAS1			0x0304
++#define MUX_ENABLE_ATLAS2			0x0308
++#define MUX_STAT_ATLAS0				0x0400
++#define MUX_STAT_ATLAS1				0x0404
++#define MUX_STAT_ATLAS2				0x0408
++#define DIV_ATLAS0				0x0600
++#define DIV_ATLAS1				0x0604
++#define DIV_ATLAS_PLL_FREQ_DET			0x0608
++#define DIV_STAT_ATLAS0				0x0700
++#define DIV_STAT_ATLAS1				0x0704
++#define DIV_STAT_ATLAS_PLL_FREQ_DET		0x0708
++#define ENABLE_ACLK_ATLAS			0x0800
++#define ENABLE_PCLK_ATLAS			0x0900
++#define ENABLE_SCLK_ATLAS			0x0a00
++#define ENABLE_IP_ATLAS0			0x0b00
++#define ENABLE_IP_ATLAS1			0x0b04
++#define CLKOUT_CMU_ATLAS			0x0c00
++#define CLKOUT_CMU_ATLAS_DIV_STAT		0x0c04
++#define ARMCLK_STOPCTRL				0x1000
++#define ATLAS_PWR_CTRL				0x1020
++#define ATLAS_PWR_CTRL2				0x1024
++#define ATLAS_INTR_SPREAD_ENABLE		0x1080
++#define ATLAS_INTR_SPREAD_USE_STANDBYWFI	0x1084
++#define ATLAS_INTR_SPREAD_BLOCKING_DURATION	0x1088
 +
-+static unsigned long isp_clk_regs[] __initdata = {
-+	MUX_SEL_ISP,
-+	MUX_ENABLE_ISP,
-+	MUX_STAT_ISP,
-+	DIV_ISP,
-+	DIV_STAT_ISP,
-+	ENABLE_ACLK_ISP0,
-+	ENABLE_ACLK_ISP1,
-+	ENABLE_ACLK_ISP2,
-+	ENABLE_PCLK_ISP,
-+	ENABLE_SCLK_ISP,
-+	ENABLE_IP_ISP0,
-+	ENABLE_IP_ISP1,
-+	ENABLE_IP_ISP2,
-+	ENABLE_IP_ISP3,
++static unsigned long atlas_clk_regs[] __initdata = {
++	ATLAS_PLL_LOCK,
++	ATLAS_PLL_CON0,
++	ATLAS_PLL_CON1,
++	ATLAS_PLL_FREQ_DET,
++	MUX_SEL_ATLAS0,
++	MUX_SEL_ATLAS1,
++	MUX_SEL_ATLAS2,
++	MUX_ENABLE_ATLAS0,
++	MUX_ENABLE_ATLAS1,
++	MUX_ENABLE_ATLAS2,
++	MUX_STAT_ATLAS0,
++	MUX_STAT_ATLAS1,
++	MUX_STAT_ATLAS2,
++	DIV_ATLAS0,
++	DIV_ATLAS1,
++	DIV_ATLAS_PLL_FREQ_DET,
++	DIV_STAT_ATLAS0,
++	DIV_STAT_ATLAS1,
++	DIV_STAT_ATLAS_PLL_FREQ_DET,
++	ENABLE_ACLK_ATLAS,
++	ENABLE_PCLK_ATLAS,
++	ENABLE_SCLK_ATLAS,
++	ENABLE_IP_ATLAS0,
++	ENABLE_IP_ATLAS1,
++	CLKOUT_CMU_ATLAS,
++	CLKOUT_CMU_ATLAS_DIV_STAT,
++	ARMCLK_STOPCTRL,
++	ATLAS_PWR_CTRL,
++	ATLAS_PWR_CTRL2,
++	ATLAS_INTR_SPREAD_ENABLE,
++	ATLAS_INTR_SPREAD_USE_STANDBYWFI,
++	ATLAS_INTR_SPREAD_BLOCKING_DURATION,
 +};
 +
-+PNAME(mout_aclk_isp_dis_400_user_p)	= { "oscclk", "aclk_isp_dis_400", };
-+PNAME(mout_aclk_isp_400_user_p)		= { "oscclk", "aclk_isp_400", };
++/* list of all parent clock list */
++PNAME(mout_atlas_pll_p)			= { "oscclk", "fout_atlas_pll", };
++PNAME(mout_bus_pll_atlas_user_p)	= { "oscclk", "sclk_bus_pll_atlas", };
++PNAME(mout_atlas_p)			= { "mout_atlas_pll",
++					    "mout_bus_pll_atlas_user", };
 +
-+static struct samsung_mux_clock isp_mux_clks[] __initdata = {
-+	/* MUX_SEL_ISP */
-+	MUX(CLK_MOUT_ACLK_ISP_DIS_400_USER, "mout_aclk_isp_dis_400_user",
-+			mout_aclk_isp_dis_400_user_p, MUX_SEL_ISP, 4, 0),
-+	MUX(CLK_MOUT_ACLK_ISP_400_USER, "mout_aclk_isp_400_user",
-+			mout_aclk_isp_400_user_p, MUX_SEL_ISP, 0, 0),
++static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
++	PLL(pll_35xx, CLK_FOUT_ATLAS_PLL, "fout_atlas_pll", "oscclk",
++		ATLAS_PLL_LOCK, ATLAS_PLL_CON0, exynos5443_pll_rates),
 +};
 +
-+static struct samsung_div_clock isp_div_clks[] __initdata = {
-+	/* DIV_ISP */
-+	DIV(CLK_DIV_PCLK_ISP_DIS, "div_pclk_isp_dis",
-+			"mout_aclk_isp_dis_400_user", DIV_ISP, 12, 3),
-+	DIV(CLK_DIV_PCLK_ISP, "div_pclk_isp", "mout_aclk_isp_400_user",
-+			DIV_ISP, 8, 3),
-+	DIV(CLK_DIV_ACLK_ISP_D_200, "div_aclk_isp_d_200",
-+			"mout_aclk_isp_400_user", DIV_ISP, 4, 3),
-+	DIV(CLK_DIV_ACLK_ISP_C_200, "div_aclk_isp_c_200",
-+			"mout_aclk_isp_400_user", DIV_ISP, 0, 3),
++static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
++	/* MUX_SEL_ATLAS0 */
++	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
++			MUX_SEL_ATLAS0, 0, 1, 0, CLK_MUX_READ_ONLY),
++
++	/* MUX_SEL_ATLAS1 */
++	MUX(CLK_MOUT_BUS_PLL_ATLAS_USER, "mout_bus_pll_atlas_user",
++			mout_bus_pll_atlas_user_p, MUX_SEL_ATLAS1, 0, 1),
++
++	/* MUX_SEL_ATLAS2 */
++	MUX_F(CLK_MOUT_ATLAS, "mout_atlas", mout_atlas_p, MUX_SEL_ATLAS2,
++			0, 1, 0, CLK_MUX_READ_ONLY),
 +};
 +
-+static struct samsung_gate_clock isp_gate_clks[] __initdata = {
-+	/* ENABLE_ACLK_ISP0 */
-+	GATE(CLK_ACLK_ISP_D_GLUE, "aclk_isp_d_glue", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP0, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SCALERP, "aclk_scalerp", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP0, 5, 0, 0),
-+	GATE(CLK_ACLK_3DNR, "aclk_3dnr", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP0, 4, 0, 0),
-+	GATE(CLK_ACLK_DIS, "aclk_dis", "mout_aclk_isp_dis_400_user",
-+			ENABLE_ACLK_ISP0, 3, 0, 0),
-+	GATE(CLK_ACLK_SCALERC, "aclk_scalerc", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP0, 2, 0, 0),
-+	GATE(CLK_ACLK_DRC, "aclk_drc", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP0, 1, 0, 0),
-+	GATE(CLK_ACLK_ISP, "aclk_isp", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP0, 0, 0, 0),
++static struct samsung_div_clock atlas_div_clks[] __initdata = {
++	/* DIV_ATLAS0 */
++	DIV_F(CLK_DIV_CNTCLK_ATLAS, "div_cntclk_atlas", "div_atlas2",
++			DIV_ATLAS0, 24, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_PCLK_DBG_ATLAS, "div_pclk_dbg_atlas", "div_atclk_atlas",
++			DIV_ATLAS0, 20, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_ATCLK_ATLASO, "div_atclk_atlas", "div_atlas2",
++			DIV_ATLAS0, 16, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_PCLK_ATLAS, "div_pclk_atlas", "div_atlas2",
++			DIV_ATLAS0, 12, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_ACLK_ATLAS, "div_aclk_atlas", "div_atlas2",
++			DIV_ATLAS0, 8, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_ATLAS2, "div_atlas2", "div_atlas1",
++			DIV_ATLAS0, 4, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_ATLAS1, "div_atlas1", "mout_atlas",
++			DIV_ATLAS0, 0, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
 +
-+	/* ENABLE_ACLK_ISP1 */
-+	GATE(CLK_ACLK_AXIUS_SCALERP, "aclk_axius_scalerp",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP1,
-+			17, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXIUS_SCALERC, "aclk_axius_scalerc",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP1,
-+			16, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXIUS_DRC, "aclk_axius_drc",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP1,
-+			15, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAHBM_ISP2P, "aclk_asyncahbm_isp2p",
-+			"div_pclk_isp", ENABLE_ACLK_ISP1,
-+			14, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAHBM_ISP1P, "aclk_asyncahbm_isp1p",
-+			"div_pclk_isp", ENABLE_ACLK_ISP1,
-+			13, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIS_DIS1, "aclk_asyncaxis_dis1",
-+			"mout_aclk_isp_dis_400_user", ENABLE_ACLK_ISP1,
-+			12, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIS_DIS0, "aclk_asyncaxis_dis0",
-+			"mout_aclk_isp_dis_400_user", ENABLE_ACLK_ISP1,
-+			11, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIM_DIS1, "aclk_asyncaxim_dis1",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP1,
-+			10, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIM_DIS0, "aclk_asyncaxim_dis0",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP1,
++	/* DIV_ATLAS1 */
++	DIV_F(CLK_DIV_SCLK_HPM_ATLAS, "div_sclk_hpm_atlas", "mout_atlas",
++			DIV_ATLAS1, 4, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++	DIV_F(CLK_DIV_ATLAS_PLL, "div_atlas_pll", "mout_atlas",
++			DIV_ATLAS1, 0, 3, CLK_GET_RATE_NOCACHE,
++			CLK_DIVIDER_READ_ONLY),
++};
++
++static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_ATLAS */
++	GATE(CLK_ACLK_ATB_AUD_CSSYS, "aclk_atb_aud_cssys",
++			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
 +			9, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIM_ISP2P, "aclk_asyncaxim_isp2p",
-+			"div_aclk_isp_d_200", ENABLE_ACLK_ISP1,
++	GATE(CLK_ACLK_ATB_APOLLO3_CSSYS, "aclk_atb_apollo3_cssys",
++			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
 +			8, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIM_ISP1P, "aclk_asyncaxim_isp1p",
-+			"div_aclk_isp_c_200", ENABLE_ACLK_ISP1,
++	GATE(CLK_ACLK_ATB_APOLLO2_CSSYS, "aclk_atb_apollo2_cssys",
++			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
 +			7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AHB2APB_ISP2P, "aclk_ahb2apb_isp2p", "div_pclk_isp",
-+			ENABLE_ACLK_ISP1, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AHB2APB_ISP1P, "aclk_ahb2apb_isp1p", "div_pclk_isp",
-+			ENABLE_ACLK_ISP1, 5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXI2APB_ISP2P, "aclk_axi2apb_isp2p",
-+			"div_aclk_isp_d_200", ENABLE_ACLK_ISP1,
-+			4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXI2APB_ISP1P, "aclk_axi2apb_isp1p",
-+			"div_aclk_isp_c_200", ENABLE_ACLK_ISP1,
-+			3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_XIU_ISPEX1, "aclk_xiu_ispex1", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP1, 2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_XIU_ISPEX0, "aclk_xiu_ispex0", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP1, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ISPND_400, "aclk_ispnd_400", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP1, 1, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_ACLK_ISP2 */
-+	GATE(CLK_ACLK_SMMU_SCALERP, "aclk_smmu_scalerp",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP2,
-+			13, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SMMU_3DNR, "aclk_smmu_3dnr", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 12, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SMMU_DIS1, "aclk_smmu_dis1", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 11, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SMMU_DIS0, "aclk_smmu_dis0", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 10, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SMMU_SCALERC, "aclk_smmu_scalerc",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP2,
-+			9, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SMMU_DRC, "aclk_smmu_drc", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 8, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SMMU_ISP, "aclk_smmu_isp", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_SCALERP, "aclk_bts_scalerp",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP2,
++	GATE(CLK_ACLK_ATB_APOLLO1_CSSYS, "aclk_atb_apollo1_cssys",
++			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
 +			6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_3DR, "aclk_bts_3dnr", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_DIS1, "aclk_bts_dis1", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_DIS0, "aclk_bts_dis0", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_SCALERC, "aclk_bts_scalerc",
-+			"mout_aclk_isp_400_user", ENABLE_ACLK_ISP2,
-+			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_DRC, "aclk_bts_drc", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_ISP, "aclk_bts_isp", "mout_aclk_isp_400_user",
-+			ENABLE_ACLK_ISP2, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_PCLK_ISP */
-+	GATE(CLK_PCLK_SMMU_SCALERP, "pclk_smmu_scalerp", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 25, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SMMU_3DNR, "pclk_smmu_3dnr", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 24, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SMMU_DIS1, "pclk_smmu_dis1", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 23, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SMMU_DIS0, "pclk_smmu_dis0", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 22, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SMMU_SCALERC, "pclk_smmu_scalerc", "div_aclk_isp_c_200",
-+			ENABLE_PCLK_ISP, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SMMU_DRC, "pclk_smmu_drc", "div_aclk_isp_c_200",
-+			ENABLE_PCLK_ISP, 20, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SMMU_ISP, "pclk_smmu_isp", "div_aclk_isp_c_200",
-+			ENABLE_PCLK_ISP, 19, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_SCALERP, "pclk_bts_scalerp", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 18, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_3DNR, "pclk_bts_3dnr", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 17, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_DIS1, "pclk_bts_dis1", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 16, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_DIS0, "pclk_bts_dis0", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 15, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_SCALERC, "pclk_bts_scalerc", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 14, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_DRC, "pclk_bts_drc", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 13, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_ISP, "pclk_bts_isp", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 12, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ASYNCAXI_DIS1, "pclk_asyncaxi_dis1", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 11, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ASYNCAXI_DIS0, "pclk_asyncaxi_dis0", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 10, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PMU_ISP, "pclk_pmu_isp", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 9, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SYSREG_ISP, "pclk_sysreg_isp", "div_pclk_isp",
-+			ENABLE_PCLK_ISP, 8, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_CMU_ISP_LOCAL, "pclk_cmu_isp_local",
-+			"div_aclk_isp_c_200", ENABLE_PCLK_ISP,
-+			7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SCALERP, "pclk_scalerp", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_3DNR, "pclk_3dnr", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_DIS_CORE, "pclk_dis_core", "div_pclk_isp_dis",
-+			ENABLE_PCLK_ISP, 4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_DIS, "pclk_dis", "div_aclk_isp_d_200",
-+			ENABLE_PCLK_ISP, 3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SCALERC, "pclk_scalerc", "div_aclk_isp_c_200",
-+			ENABLE_PCLK_ISP, 2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_DRC, "pclk_drc", "div_aclk_isp_c_200",
-+			ENABLE_PCLK_ISP, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ISP, "pclk_isp", "div_aclk_isp_c_200",
-+			ENABLE_PCLK_ISP, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_SCLK_ISP */
-+	GATE(CLK_SCLK_PIXELASYNCS_DIS, "sclk_pixelasyncs_dis",
-+			"mout_aclk_isp_dis_400_user", ENABLE_SCLK_ISP,
++	GATE(CLK_ACLK_ATB_APOLLO0_CSSYS, "aclk_atb_apollo0_cssys",
++			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
 +			5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_PIXELASYNCM_DIS, "sclk_pixelasyncm_dis",
-+			"mout_aclk_isp_dis_400_user", ENABLE_SCLK_ISP,
++	GATE(CLK_ACLK_ASYNCAHBS_CSSYS_SSS, "aclk_asyncahbs_cssys_sss",
++			"div_atclk_atlas", ENABLE_ACLK_ATLAS,
 +			4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_PIXELASYNCS_SCALERP, "sclk_pixelasyncs_scalerp",
-+			"mout_aclk_isp_400_user", ENABLE_SCLK_ISP,
++	GATE(CLK_ACLK_ASYNCAXIS_CSSYS_CCIX, "aclk_asyncaxis_cssys_ccix",
++			"div_pclk_dbg_atlas", ENABLE_ACLK_ATLAS,
 +			3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_PIXELASYNCM_ISPD, "sclk_pixelasyncm_ispd",
-+			"mout_aclk_isp_400_user", ENABLE_SCLK_ISP,
++	GATE(CLK_ACLK_ASYNCACES_ATLAS_CCI, "aclk_asyncaces_atlas_cci",
++			"div_aclk_atlas", ENABLE_ACLK_ATLAS,
 +			2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_PIXELASYNCS_ISPC, "sclk_pixelasyncs_ispc",
-+			"mout_aclk_isp_400_user", ENABLE_SCLK_ISP,
-+			1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_SCLK_PIXELASYNCM_ISPC, "sclk_pixelasyncm_ispc",
-+			"mout_aclk_isp_400_user", ENABLE_SCLK_ISP,
-+			0, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_ATLASP, "aclk_ahb2apb_atlasp", "div_pclk_atlas",
++			ENABLE_ACLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ATLASNP_200, "aclk_atlasnp_200", "div_pclk_atlas",
++			ENABLE_ACLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_ATLAS */
++	GATE(CLK_PCLK_ASYNCAPB_AUD_CSSYS, "pclk_asyncapb_aud_cssys",
++			"div_pclk_dbg_atlas", ENABLE_PCLK_ATLAS,
++			5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAPB_ISP_CSSYS, "pclk_asyncapb_isp_cssys",
++			"div_pclk_dbg_atlas", ENABLE_PCLK_ATLAS,
++			4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAPB_APOLLO_CSSYS, "pclk_asyncapb_apollo_cssys",
++			"div_pclk_dbg_atlas", ENABLE_PCLK_ATLAS,
++			3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PMU_ATLAS, "pclk_pmu_atlas", "div_pclk_atlas",
++			ENABLE_PCLK_ATLAS, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SYSREG_ATLAS, "pclk_sysreg_atlas", "div_pclk_atlas",
++			ENABLE_PCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SECJTAG, "pclk_secjtag", "div_pclk_dbg_atlas",
++			ENABLE_PCLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_SCLK_ATLAS */
++	GATE(CLK_CNTCLK_ATLAS, "cntclk_atlas", "div_cntclk_atlas",
++			ENABLE_SCLK_ATLAS, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SCLK_HPM_ATLAS, "sclk_hpm_atlas", "div_sclk_hpm_atlas",
++			ENABLE_SCLK_ATLAS, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_TRACECLK, "traceclk", "div_atclk_atlas",
++			ENABLE_SCLK_ATLAS, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_CTMCLK, "ctmclk", "div_atclk_atlas",
++			ENABLE_SCLK_ATLAS, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_HCLK_CSSYS, "hclk_cssys", "div_atclk_atlas",
++			ENABLE_SCLK_ATLAS, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_DBG_CSSYS, "pclk_dbg_cssys", "div_pclk_dbg_atlas",
++			ENABLE_SCLK_ATLAS, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_DBG, "pclk_dbg", "div_pclk_dbg_atlas",
++			ENABLE_SCLK_ATLAS, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ATCLK, "atclk", "div_atclk_atlas",
++			ENABLE_SCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SCLK_ATLAS, "sclk_atlas", "div_atlas2",
++			ENABLE_SCLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
 +};
 +
-+static struct samsung_cmu_info isp_cmu_info __initdata = {
-+	.mux_clks		= isp_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(isp_mux_clks),
-+	.div_clks		= isp_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(isp_div_clks),
-+	.gate_clks		= isp_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(isp_gate_clks),
-+	.nr_clk_ids		= ISP_NR_CLK,
-+	.clk_regs		= isp_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(isp_clk_regs),
++static struct samsung_cmu_info atlas_cmu_info __initdata = {
++	.pll_clks		= atlas_pll_clks,
++	.nr_pll_clks		= ARRAY_SIZE(atlas_pll_clks),
++	.mux_clks		= atlas_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(atlas_mux_clks),
++	.div_clks		= atlas_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(atlas_div_clks),
++	.gate_clks		= atlas_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(atlas_gate_clks),
++	.nr_clk_ids		= ATLAS_NR_CLK,
++	.clk_regs		= atlas_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(atlas_clk_regs),
 +};
 +
-+static void __init exynos5433_cmu_isp_init(struct device_node *np)
++static void __init exynos5433_cmu_atlas_init(struct device_node *np)
 +{
-+	samsung_cmu_register_one(np, &isp_cmu_info);
++	samsung_cmu_register_one(np, &atlas_cmu_info);
 +}
-+CLK_OF_DECLARE(exynos5433_cmu_isp, "samsung,exynos5433-cmu-isp",
-+		exynos5433_cmu_isp_init);
++CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
++		exynos5433_cmu_atlas_init);
 diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 2b3ac5a..a38f420 100644
+index 9d3b76f..22b02e7 100644
 --- a/include/dt-bindings/clock/exynos5433.h
 +++ b/include/dt-bindings/clock/exynos5433.h
-@@ -116,6 +116,8 @@
- #define CLK_DIV_SCLK_USBDRD30		143
- #define CLK_DIV_SCLK_JPEG		144
- #define CLK_DIV_ACLK_MSCL_400		145
-+#define CLK_DIV_ACLK_ISP_DIS_400	146
-+#define CLK_DIV_ACLK_ISP_400		147
+@@ -891,4 +891,50 @@
  
- #define CLK_ACLK_PERIC_66		200
- #define CLK_ACLK_PERIS_66		201
-@@ -155,8 +157,10 @@
- #define CLK_ACLK_MSCL_400		235
- #define CLK_ACLK_MFC_400		236
- #define CLK_ACLK_HEVC_400		237
-+#define CLK_ACLK_ISP_DIS_400		238
-+#define CLK_ACLK_ISP_400		239
+ #define APOLLO_NR_CLK					31
  
--#define TOP_NR_CLK			238
-+#define TOP_NR_CLK			240
- 
- /* CMU_CPIF */
- #define CLK_FOUT_MPHY_PLL		1
-@@ -1026,4 +1030,87 @@
- 
- #define HEVC_NR_CLK					19
- 
-+/* CMU_ISP */
-+#define CLK_MOUT_ACLK_ISP_DIS_400_USER			1
-+#define CLK_MOUT_ACLK_ISP_400_USER			2
++/* CMU_ATLAS */
++#define CLK_FOUT_ATLAS_PLL				1
 +
-+#define CLK_DIV_PCLK_ISP_DIS				3
-+#define CLK_DIV_PCLK_ISP				4
-+#define CLK_DIV_ACLK_ISP_D_200				5
-+#define CLK_DIV_ACLK_ISP_C_200				6
++#define CLK_MOUT_ATLAS_PLL				2
++#define CLK_MOUT_BUS_PLL_ATLAS_USER			3
++#define CLK_MOUT_ATLAS					4
 +
-+#define CLK_ACLK_ISP_D_GLUE				7
-+#define CLK_ACLK_SCALERP				8
-+#define CLK_ACLK_3DNR					9
-+#define CLK_ACLK_DIS					10
-+#define CLK_ACLK_SCALERC				11
-+#define CLK_ACLK_DRC					12
-+#define CLK_ACLK_ISP					13
-+#define CLK_ACLK_AXIUS_SCALERP				14
-+#define CLK_ACLK_AXIUS_SCALERC				15
-+#define CLK_ACLK_AXIUS_DRC				16
-+#define CLK_ACLK_ASYNCAHBM_ISP2P			17
-+#define CLK_ACLK_ASYNCAHBM_ISP1P			18
-+#define CLK_ACLK_ASYNCAXIS_DIS1				19
-+#define CLK_ACLK_ASYNCAXIS_DIS0				20
-+#define CLK_ACLK_ASYNCAXIM_DIS1				21
-+#define CLK_ACLK_ASYNCAXIM_DIS0				22
-+#define CLK_ACLK_ASYNCAXIM_ISP2P			23
-+#define CLK_ACLK_ASYNCAXIM_ISP1P			24
-+#define CLK_ACLK_AHB2APB_ISP2P				25
-+#define CLK_ACLK_AHB2APB_ISP1P				26
-+#define CLK_ACLK_AXI2APB_ISP2P				27
-+#define CLK_ACLK_AXI2APB_ISP1P				28
-+#define CLK_ACLK_XIU_ISPEX1				29
-+#define CLK_ACLK_XIU_ISPEX0				30
-+#define CLK_ACLK_ISPND_400				31
-+#define CLK_ACLK_SMMU_SCALERP				32
-+#define CLK_ACLK_SMMU_3DNR				33
-+#define CLK_ACLK_SMMU_DIS1				34
-+#define CLK_ACLK_SMMU_DIS0				35
-+#define CLK_ACLK_SMMU_SCALERC				36
-+#define CLK_ACLK_SMMU_DRC				37
-+#define CLK_ACLK_SMMU_ISP				38
-+#define CLK_ACLK_BTS_SCALERP				39
-+#define CLK_ACLK_BTS_3DR				40
-+#define CLK_ACLK_BTS_DIS1				41
-+#define CLK_ACLK_BTS_DIS0				42
-+#define CLK_ACLK_BTS_SCALERC				43
-+#define CLK_ACLK_BTS_DRC				44
-+#define CLK_ACLK_BTS_ISP				45
-+#define CLK_PCLK_SMMU_SCALERP				46
-+#define CLK_PCLK_SMMU_3DNR				47
-+#define CLK_PCLK_SMMU_DIS1				48
-+#define CLK_PCLK_SMMU_DIS0				49
-+#define CLK_PCLK_SMMU_SCALERC				50
-+#define CLK_PCLK_SMMU_DRC				51
-+#define CLK_PCLK_SMMU_ISP				52
-+#define CLK_PCLK_BTS_SCALERP				53
-+#define CLK_PCLK_BTS_3DNR				54
-+#define CLK_PCLK_BTS_DIS1				55
-+#define CLK_PCLK_BTS_DIS0				56
-+#define CLK_PCLK_BTS_SCALERC				57
-+#define CLK_PCLK_BTS_DRC				58
-+#define CLK_PCLK_BTS_ISP				59
-+#define CLK_PCLK_ASYNCAXI_DIS1				60
-+#define CLK_PCLK_ASYNCAXI_DIS0				61
-+#define CLK_PCLK_PMU_ISP				62
-+#define CLK_PCLK_SYSREG_ISP				63
-+#define CLK_PCLK_CMU_ISP_LOCAL				64
-+#define CLK_PCLK_SCALERP				65
-+#define CLK_PCLK_3DNR					66
-+#define CLK_PCLK_DIS_CORE				67
-+#define CLK_PCLK_DIS					68
-+#define CLK_PCLK_SCALERC				69
-+#define CLK_PCLK_DRC					70
-+#define CLK_PCLK_ISP					71
-+#define CLK_SCLK_PIXELASYNCS_DIS			72
-+#define CLK_SCLK_PIXELASYNCM_DIS			73
-+#define CLK_SCLK_PIXELASYNCS_SCALERP			74
-+#define CLK_SCLK_PIXELASYNCM_ISPD			75
-+#define CLK_SCLK_PIXELASYNCS_ISPC			76
-+#define CLK_SCLK_PIXELASYNCM_ISPC			77
++#define CLK_DIV_CNTCLK_ATLAS				5
++#define CLK_DIV_PCLK_DBG_ATLAS				6
++#define CLK_DIV_ATCLK_ATLASO				7
++#define CLK_DIV_PCLK_ATLAS				8
++#define CLK_DIV_ACLK_ATLAS				9
++#define CLK_DIV_ATLAS2					10
++#define CLK_DIV_ATLAS1					11
++#define CLK_DIV_SCLK_HPM_ATLAS				12
++#define CLK_DIV_ATLAS_PLL				13
 +
-+#define ISP_NR_CLK					78
++#define CLK_ACLK_ATB_AUD_CSSYS				14
++#define CLK_ACLK_ATB_APOLLO3_CSSYS			15
++#define CLK_ACLK_ATB_APOLLO2_CSSYS			16
++#define CLK_ACLK_ATB_APOLLO1_CSSYS			17
++#define CLK_ACLK_ATB_APOLLO0_CSSYS			18
++#define CLK_ACLK_ASYNCAHBS_CSSYS_SSS			19
++#define CLK_ACLK_ASYNCAXIS_CSSYS_CCIX			20
++#define CLK_ACLK_ASYNCACES_ATLAS_CCI			21
++#define CLK_ACLK_AHB2APB_ATLASP				22
++#define CLK_ACLK_ATLASNP_200				23
++#define CLK_PCLK_ASYNCAPB_AUD_CSSYS			24
++#define CLK_PCLK_ASYNCAPB_ISP_CSSYS			25
++#define CLK_PCLK_ASYNCAPB_APOLLO_CSSYS			26
++#define CLK_PCLK_PMU_ATLAS				27
++#define CLK_PCLK_SYSREG_ATLAS				28
++#define CLK_PCLK_SECJTAG				29
++#define CLK_CNTCLK_ATLAS				30
++#define CLK_SCLK_FREQ_DET_ATLAS_PLL			31
++#define CLK_SCLK_HPM_ATLAS				32
++#define CLK_TRACECLK					33
++#define CLK_CTMCLK					34
++#define CLK_HCLK_CSSYS					35
++#define CLK_PCLK_DBG_CSSYS				36
++#define CLK_PCLK_DBG					37
++#define CLK_ATCLK					38
++#define CLK_SCLK_ATLAS					39
++
++#define ATLAS_NR_CLK					40
 +
  #endif /* _DT_BINDINGS_CLOCK_EXYNOS5433_H */
 -- 
