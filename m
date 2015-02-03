@@ -1,82 +1,110 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/3] ARM: EXYNOS: Remove left over 'extra_save'
-Date: Tue, 03 Feb 2015 12:06:41 +0100
-Message-ID: <1422961601-7087-3-git-send-email-k.kozlowski@samsung.com>
-References: <1422961601-7087-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1422961601-7087-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 03/14] drm/bridge: make bridge registration independent
+ of drm flow
+Date: Tue, 3 Feb 2015 13:03:03 +0100
+Message-ID: <20150203120301.GB15068@ulmo.nvidia.com>
+References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1421771935-31618-4-git-send-email-ajaykumar.rs@samsung.com>
+ <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dc+cDN39EJAMEtIO"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34915 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933461AbbBCMDI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 07:03:08 -0500
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGs8GbgYMLmaPjGnXAv=Gsf6gMhNj+Zt0-2GKHOnHv4d4Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Clark <robdclark@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, jg1.han@samsung.com, daeinki <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, bhushan.r@samsung.com, Prashanth G <prashanth.g@samsung.com>
 
-Since 32b0aa9aaeb4 ("ARM: EXYNOS: Remove i2c sys configuration related
-code") the Exynos 5250 no longer saves additional registers under
-'exynos_pm_data.extra_save' field.
 
-No one else uses this code so get rid of it making also 'exynos_pm_data'
-const everywhere.
+--dc+cDN39EJAMEtIO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Fri, Jan 30, 2015 at 10:37:19AM -0500, Rob Clark wrote:
+> On Tue, Jan 20, 2015 at 11:38 AM, Ajay Kumar <ajaykumar.rs@samsung.com> w=
+rote:
+> > Currently, third party bridge drivers(ptn3460) are dependent
+> > on the corresponding encoder driver init, since bridge driver
+> > needs a drm_device pointer to finish drm initializations.
+> > The encoder driver passes the drm_device pointer to the
+> > bridge driver. Because of this dependency, third party drivers
+> > like ptn3460 doesn't adhere to the driver model.
+> >
+> > In this patch, we reframe the bridge registration framework
+> > so that bridge initialization is split into 2 steps, and
+> > bridge registration happens independent of drm flow:
+> > --Step 1: gather all the bridge settings independent of drm and
+> >           add the bridge onto a global list of bridges.
+> > --Step 2: when the encoder driver is probed, call drm_bridge_attach
+> >           for the corresponding bridge so that the bridge receives
+> >           drm_device pointer and continues with connector and other
+> >           drm initializations.
+> >
+> > The old set of bridge helpers are removed, and a set of new helpers
+> > are added to accomplish the 2 step initialization.
+> >
+> > The bridge devices register themselves onto global list of bridges
+> > when they get probed by calling "drm_bridge_add".
+> >
+> > The parent encoder driver waits till the bridge is available
+> > in the lookup table(by calling "of_drm_find_bridge") and then
+> > continues with its initialization.
+> >
+> > The encoder driver should also call "drm_bridge_attach" to pass
+> > on the drm_device to the bridge object.
+> >
+> > drm_bridge_attach inturn calls "bridge->funcs->attach" so that
+> > bridge can continue with drm related initializations.
+>=20
+> ok, so I probably should have had a closer look at this before it
+> landed in drm-next, so if it is too late to revert (and deal w/
+> untangling subsequent patches that depend on this) some of these
+> issues we'll just have to fix with follow-on patches.
+>=20
+> 1) needs headerdoc for new fxns in drm_bridge.c, and needs to be added
+> in drm.tmpl
 
----
-Changes since v1:
-1. New patch.
----
- arch/arm/mach-exynos/suspend.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+drm_panel.c is missing kerneldoc as well, though I have a local patch to
+add it. If nobody else steps up I'll take this.
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index e6c961126087..d56bd6ca5e86 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -63,7 +63,6 @@ static struct sleep_save exynos_core_save[] = {
- 
- struct exynos_pm_data {
- 	const struct exynos_wkup_irq *wkup_irq;
--	struct sleep_save *extra_save;
- 	int num_extra_save;
- 	unsigned int wake_disable_mask;
- 	unsigned int *release_ret_regs;
-@@ -75,7 +74,7 @@ struct exynos_pm_data {
- 	int (*cpu_suspend)(unsigned long);
- };
- 
--static struct exynos_pm_data *pm_data;
-+static const struct exynos_pm_data *pm_data;
- 
- static int exynos5420_cpu_state;
- static unsigned int exynos_pmu_spare3;
-@@ -240,10 +239,6 @@ static void exynos_pm_prepare(void)
- 
- 	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
--	 if (pm_data->extra_save)
--		s3c_pm_do_save(pm_data->extra_save,
--				pm_data->num_extra_save);
--
- 	exynos_pm_enter_sleep_mode();
- 
- 	/* ensure at least INFORM0 has the resume address */
-@@ -362,10 +357,6 @@ static void exynos_pm_resume(void)
- 	/* For release retention */
- 	exynos_pm_release_retention();
- 
--	if (pm_data->extra_save)
--		s3c_pm_do_restore_core(pm_data->extra_save,
--					pm_data->num_extra_save);
--
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
- 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
-@@ -618,7 +609,7 @@ void __init exynos_pm_init(void)
- 		pr_err("Failed to find PMU node\n");
- 		return;
- 	}
--	pm_data = (struct exynos_pm_data *) match->data;
-+	pm_data = (const struct exynos_pm_data *) match->data;
- 
- 	/* Platform-specific GIC callback */
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
--- 
-1.9.1
+> 2) as far as I can tell, the new approach to cleaning up bridge
+> objects is to just let them leak !?!
+
+With this series bridges are no longer part of the DRM device and it's
+the driver that provides them that needs to free them (in ->remove()).
+It's not a completely perfect solution yet, but with the registry patch
+that I proposed a while back all the remaining issues should go away.
+Now if I could get anybody to look at that patch...
+
+Thierry
+
+--dc+cDN39EJAMEtIO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJU0Lj1AAoJEN0jrNd/PrOhbcUP+wbtCFdsN19w/ACFa54qxK7o
+p898WTAsqsPMUUcRwAFyBKFj8jFH062RQgGQWdWDflIOm1kxQ2mHrw4VJPo+WXnS
+cc0jrrMivFTP0/gHxaaAczXEF8ej9i9eZbzGrLWWZxENtgsNwtcKIecysGG6BPIx
+g+SJOW9fhOB+C8EvN7NSWivSEwtWQpBZV/y2wgLy+tUSpnqZkh8SanoV4dNgX/qi
+LJrwMGHRHyuyba0YJbJBSDYopLUmzTwiihL0pO1dKCUiTPsUUP7a9vJmCLFsencs
+DG5erOFLSnOaflJxWGJE3HYIpTPve7tlBtH8kAd915dNG7+92uZLeAWMQZgQc2q+
+I/TzNSTVUJCPP426TIabVmaAWaYiLj2dLJ6z9UqL5vZ4acHeOXGvVNdCwNng2dKn
+FPiLGCUgPTGPfhcacHDDTyuJL93s0P2dzmyO5jjVz2q333wNz/Fnt7NZ7lpdYF8x
+F/wRw8RvfXfS5Kyg48tj/XLGiUkU0PQyraRYhP6riUxAuG82+0s0NYduPDVvcOC8
+F/hsqV5gWHjqOpBT+xbWG7YXK1uTQx8G188Qm3vcQyinc66ERkvn6sDIMsazsKId
+TH0xj7LBU82eVjnHLkRmfSlCYEef5Sey+K+X2FnvkUmpLD2qHDrsC4dxF4JE6bIr
+m9IW5OYrm3uuG30wSqiF
+=fOyr
+-----END PGP SIGNATURE-----
+
+--dc+cDN39EJAMEtIO--
