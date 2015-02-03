@@ -1,89 +1,72 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 2/2] ARM: dts: Add syscon phandle to the video-phy node for
- Exynos4
-Date: Tue, 03 Feb 2015 13:28:59 +0900
-Message-ID: <07a601d03f69$ee394130$caabc390$@kernel.org>
-References: <1421429438-32090-1-git-send-email-s.nawrocki@samsung.com>
- <1421429438-32090-2-git-send-email-s.nawrocki@samsung.com>
- <54CF53CB.3050100@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH -v2] drm/exynos: do not disable hdmi clocks for exynos5420
+Date: Tue, 03 Feb 2015 14:28:39 +0900
+Message-ID: <54D05C87.5010402@samsung.com>
+References: <1422887201-4052-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20868 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753290AbbBCE3B (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 23:29:01 -0500
-In-reply-to: <54CF53CB.3050100@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422887201-4052-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: Prathyush K <prathyush.k@samsung.com>, dri-devel@lists.freedesktop.org, liquid.acid@gmx.net, kgene@kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, kgene@kernel.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kishon@ti.com, 'Mark Brown' <broonie@linaro.org>
 
-Sylwester Nawrocki wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
-
-> On 16/01/15 18:30, Sylwester Nawrocki wrote:
-> > This is required to fix regression after introducing the PMU device
-> > nodes required for the PMU driver modified in commit
-> > 14fc8b93d47323561edf5d482d4a4b3ee1b90286
-> > ("ARM: EXYNOS: Add platform driver support for Exynos PMU").
-> > This change is needed to make MIPI DSI displays and MIPI CSI-2
-> > camera sensors working again on Exynos4 boards.
-> >
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos4.dtsi |    1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> > index b8168f1..250ee50 100644
-> > --- a/arch/arm/boot/dts/exynos4.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4.dtsi
-> > @@ -76,6 +76,7 @@
-> >  		compatible = "samsung,s5pv210-mipi-video-phy";
-> >  		reg = <0x10020710 8>;
-> >  		#phy-cells = <1>;
-> > +		syscon = <&pmu_system_controller>;
-> >  	};
-> >
-> >  	pd_mfc: mfc-power-domain@10023C40 {
-> 
-Applied this.
-
-> I'd like to remind you about a few pending dts patches I send to you, except
-> the above one there are:
-> 
-> [PATCH V3 15/15] ARM: dts: Fix I2S1, I2S2 compatible for exynos4 SoCs
-I thought Mark applied the whole series including above patch.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/316326.html
-And I knew he didn't when I checked his comment on 13/15 patch ;)
-
-> [PATCH] ARM: dts: Fix CLK_MOUT_CAMn parent clocks assignment for Trats2
-Done.
-
-> [PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in exynos4x12.dtsi
-Done.
-> 
-> and
-> 
-> [PATCH v2 14/16] ARM: dts: Exynos4 and Odroid X2/U3 sound device nodes update
-> 
-> but this one depends on ASoC patch:
-> [PATCH V3 11/15] ASoC: samsung: i2s: Add clk provider DT binding documentation
-> 
-> hence it could be probably merged only after 3.20-rc1 release.
-> 
-+ Mark
-
-I see. I'll take 13 to 15 in the series for late DT updates if Mark has no
-objection. (I commented about that on the mail thread.)
-
-Thanks for your reminder.
-
-- Kukjin
+SGksCgpPbiAwMi8wMi8yMDE1IDExOjI2IFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
+bTogUHJhdGh5dXNoIEsgPHByYXRoeXVzaC5rQHNhbXN1bmcuY29tPgo+IAo+IFdoZW4gVlBMTCBj
+bG9jayBvZiBsZXNzIHRoYW4gMTQwIE1IeiB3YXMgdXNlZCBhbmQgYWxsIHRoZSB0aHJlZSBjbG9j
+a3MgLQo+IGhkbWlwaHksIGhkbWksIHNjbGtfaGRtaSBhcmUgZGlzYWJsZWQsIHRoZSBzeXN0ZW0g
+aGFuZ3MgZHVyaW5nIFMyUiB3aGVuCj4gSERNSSBpcyBjb25uZWN0ZWQuIFNpbmNlIHdlIHdhbnQg
+dG8gdXNlIGEgdnBsbCBjbG9jayBvZiA3MC41IE1Ieiwgd2UKPiBjYW5ub3QgZGlzYWJsZSB0aGVz
+ZSAzIGNsb2NrcyBiZWZvcmUgc3VzcGVuZGluZy4gIFRoaXMgcGF0Y2ggYWRkIGFuIGV4dHJhCj4g
+Y2xrIGVuYWJsZS9kaXNhYmxlIG9mIGhkbWkgYW5kIHNjbGtfaGRtaSBvdXRzaWRlIG9mIHRoZSBw
+bSBvcHMgc28gdGhlc2UKPiBjbG9ja3MgYXJlIGFsd2F5cyBlbmFibGVkLiBOb3cgc3lzdGVtIHN1
+c3BlbmRzIGFuZCByZXN1bWVzIHdpdGggSERNSQo+IGNvbm5lY3RlZCB3aXRoIFZQTEwgc2V0IGF0
+IDcwLjUgTUh6Lgo+IAo+IFRoaXMgaXMgbm90IHRoZSBiZXN0IHNvbHV0aW9uLCBidXQgaXQgaW5o
+aWJpdHMgYSBjcmFzaCB3aGlsZSB3ZSBmaWd1cmUgb3V0Cj4gd2hhdCBpcyB0aGUgY29ycmVjdCBz
+b2x1dGlvbiBmb3IgdGhpcyBpc3N1ZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBQcmF0aHl1c2ggSyA8
+cHJhdGh5dXNoLmtAc2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogQW5kcmV3IEJyZXN0aWNr
+ZXIgPGFicmVzdGljQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92
+YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDIwICsrKysrKysrKysrKysrKysrKysrCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAyMCBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2hkbWkuYwo+IGluZGV4IDZhYTBkNjUuLmM2YmFmNjQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfaGRtaS5jCj4gQEAgLTIyNTQsNiArMjI1NCwyMCBAQCBzdGF0aWMgaW50IGhk
+bWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIAl9IGVsc2UK
+PiAgCQlyZXMtPnJlZ19oZG1pX2VuID0gTlVMTDsKPiAgCj4gKwkvKgo+ICsJICogRm9yIHRoZXNl
+IHR3byBjbG9ja3MgZXh5bm9zNTQyMCBmYWlscyB0byBzdXNwZW5kIGlmIFZQTEwgY2xvY2sgb2YK
+PiArCSAqIDcwLjUgTUh6IGlzIHVzZWQgYW5kIHRoZXNlIGNsb2NrcyBhcmUgZGlzYWJsZWQgYmVm
+b3JlIHN1c3BlbmQuIFNvCj4gKwkgKiBlbmFibGUgdGhlbSBoZXJlLgo+ICsJICogTm90ZSB0aGF0
+IHRoaXMgd2lsbCBrZWVwIHRoZSBjbG9ja3MgZW5hYmxlZCBmb3IgdGhlIGVudGlyZQo+ICsJICog
+bGlmZXRpbWUgb2YgdGhlIGRyaXZlciBhbmQgd2FzdGUgZW5lcmd5IHdoZW4gaXQgaXMgc3VzcGVu
+ZGVkLgo+ICsJICogSG93ZXZlciBpdCBwcmV2ZW50cyB0aGUgc3lzdGVtIGNyYXNoIHVudGlsIGEg
+YmV0dGVyIHNvbHV0aW9uIGlzCj4gKwkgKiBmb3VuZAo+ICsJICovCj4gKwlpZiAob2ZfZGV2aWNl
+X2lzX2NvbXBhdGlibGUoZGV2LT5vZl9ub2RlLCAic2Ftc3VuZyxleHlub3M1NDIwLWhkbWkiKSkg
+ewo+ICsJCWNsa19wcmVwYXJlX2VuYWJsZShyZXMtPnNjbGtfaGRtaSk7Cj4gKwkJY2xrX3ByZXBh
+cmVfZW5hYmxlKHJlcy0+aGRtaSk7Cj4gKwl9Cj4gKwo+ICAJcmV0dXJuIHJldDsKPiAgZmFpbDoK
+PiAgCURSTV9FUlJPUigiSERNSSByZXNvdXJjZSBpbml0IC0gZmFpbGVkXG4iKTsKPiBAQCAtMjUx
+Niw2ICsyNTMwLDEyIEBAIHN0YXRpYyBpbnQgaGRtaV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2Rl
+dmljZSAqcGRldikKPiAgCWlmIChoZGF0YS0+cmVzLnJlZ19oZG1pX2VuKQo+ICAJCXJlZ3VsYXRv
+cl9kaXNhYmxlKGhkYXRhLT5yZXMucmVnX2hkbWlfZW4pOwo+ICAKPiArCWlmIChvZl9kZXZpY2Vf
+aXNfY29tcGF0aWJsZShoZGF0YS0+ZGV2LT5vZl9ub2RlLAo+ICsJCQkJICAgICJzYW1zdW5nLGV4
+eW5vczU0MjAtaGRtaSIpKSB7Cj4gKwkJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGhkYXRhLT5yZXMu
+c2Nsa19oZG1pKTsKPiArCQljbGtfZGlzYWJsZV91bnByZXBhcmUoaGRhdGEtPnJlcy5oZG1pKTsK
+PiArCX0KPiArCj4gIAlpZiAoaGRhdGEtPmhkbWlwaHlfcG9ydCkKPiAgCQlwdXRfZGV2aWNlKCZo
+ZGF0YS0+aGRtaXBoeV9wb3J0LT5kZXYpOwo+ICAJcHV0X2RldmljZSgmaGRhdGEtPmRkY19hZHB0
+LT5kZXYpOwo+IAoKTG9va3MgZmluZSB0byBtZSBidXQgaSdtIG5vdCBzdXJlIGFueSB0aGVyZSBh
+cmUgYW55IHNpZGUgZWZmZWN0cyB0bwpjaGFuZ2UgcGFyZW50IGNsb2NrIG9mIG1vdXRfaGRtaSBj
+bG9jay4KCkFja2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+
+CgpUaGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
