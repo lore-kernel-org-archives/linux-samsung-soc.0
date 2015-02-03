@@ -1,61 +1,59 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 0/3] ARM: dts: Regulator changes and fuel gauge for
- exynos4412-trats2
-Date: Tue, 03 Feb 2015 12:26:55 +0900
-Message-ID: <059b01d03f61$4263d1c0$c72b7540$@kernel.org>
-References: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: RE: [PATCH] ARM: dts: exynos4412-trats2: Add max77693 charger node
+Date: Tue, 03 Feb 2015 12:28:54 +0900
+Message-ID: <05c901d03f61$89861db0$9c925910$@kernel.org>
+References: <1422023395-8407-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:50910 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751339AbbBCD05 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 22:26:57 -0500
-In-reply-to: <1421311295-18960-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1422023395-8407-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Krzysztof Kozlowski' <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kukjin Kim' <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Marek Szyprowski' <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Krzysztof Kozlowski wrote:
 > 
-> Hi Kukjin,
+> Add to Trats2 DTS new node for configuring the max77693 charger driver.
+> Only the maxim,constant-microvolt differs from default value but set all
+> of the optional properties anyway.
 > 
-Hi,
-
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos4412-trats2.dts | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> I grouped into one patchset already posted patches for Trats2 board:
-> 1. Fuel gauge:
->    https://lkml.org/lkml/2015/1/7/167
-> 2. Suspend configuration for max77686 regulators:
->    https://lkml.org/lkml/2014/10/29/262
-> 3. GPIO control for max77686 regulators:
->    https://lkml.org/lkml/2015/1/5/230
-> 
-> 
-> The necessary changes in max77686 regulator driver were already
-> applied by Mark Brown.
-> 
-Sounds good.
-
-> Best regards,
-> Krzysztof
-> 
-> 
-> Krzysztof Kozlowski (3):
->   ARM: dts: exynos4412-trats2: Add Maxim 77693 fuel gauge node
->   ARM: dts: exynos4412-trats2: Add suspend configuration for max77686
->     regulators
->   ARM: dts: exynos4412-trats: Switch max77686 regulators to GPIO control
-> 
->  arch/arm/boot/dts/exynos4412-trats2.dts | 115 ++++++++++++++++++--------------
->  1 file changed, 65 insertions(+), 50 deletions(-)
+> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+> index 29231b452643..496a05faca37 100644
+> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
+> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+> @@ -549,6 +549,16 @@
+>  				haptic-supply = <&ldo26_reg>;
+>  				pwms = <&pwm 0 38022 0>;
+>  			};
+> +
+> +			charger {
+> +				compatible = "maxim,max77693-charger";
+> +
+> +				maxim,constant-microvolt = <4350000>;
+> +				maxim,min-system-microvolt = <3600000>;
+> +				maxim,thermal-regulation-celsius = <100>;
+> +				maxim,battery-overcurrent-microamp = <3500000>;
+> +				maxim,charge-input-threshold-microvolt = <4300000>;
+> +			};
+>  		};
+>  	};
 > 
 > --
 
-OK, looks good to me, applied this series.
+OK, applied.
 
 Thanks,
 Kukjin
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
