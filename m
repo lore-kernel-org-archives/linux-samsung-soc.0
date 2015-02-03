@@ -1,52 +1,94 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos: Fix disharmony when setting plane on/off
-Date: Tue,  3 Feb 2015 11:41:05 -0200
-Message-ID: <1422970865-23774-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 02/15] exynos: replace G2D_DOUBLE_TO_FIXED macro with function
+Date: Tue,  3 Feb 2015 14:53:52 +0100
+Message-ID: <1422971645-30621-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:46006 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965526AbbBCNyW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 08:54:22 -0500
+In-Reply-To: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhpcyBpc3N1ZSB3YXMgY2F1c2VkIGJ5IHRoZSBsYXRlc3QgZXh5bm9zX3VwZGF0ZV9wbGFuZSgp
-IGNsZWFuIHVwCnRoYXQgdW5pZmllZCBwbGFuZSBvcGVyYXRpb25zLiBBZnRlciB0aG9zZSBjaGFu
-Z2VzIHRoZSBwbGFuZSBmYWlsZWQKdG8gZ28gdGhlIE9uIHN0YXRlLiBUaGlzIHBhdGNoIGZpeCB0
-aGlzIHByb2JsZW0gYnkgZG9pbmcgY29ycmVjdCBhY2NvdW50Cm9mIGV4eW5vc19jcnRjLT5lbmFi
-bGVkLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
-bGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
-LmMgfCAxMiArKysrKysrKysrLS0KIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAy
-IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmlu
-ZGV4IGE4NWM0NTEuLjFkYmQwZTMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2NydGMuYwpAQCAtMTE5LDYgKzExOSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21v
-ZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCiAJc3RydWN0
-IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsKIAl1bnNpZ25lZCBpbnQg
-Y3J0Y193OwogCXVuc2lnbmVkIGludCBjcnRjX2g7CisJaW50IHJldDsKIAogCS8qIHdoZW4gZnJh
-bWVidWZmZXIgY2hhbmdpbmcgaXMgcmVxdWVzdGVkLCBjcnRjJ3MgZHBtcyBzaG91bGQgYmUgb24g
-Ki8KIAlpZiAoZXh5bm9zX2NydGMtPmRwbXMgPiBEUk1fTU9ERV9EUE1TX09OKSB7CkBAIC0xMjks
-OCArMTMwLDE1IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3Ry
-dWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCiAJY3J0Y193ID0gZmItPndpZHRoIC0g
-eDsKIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKIAotCXJldHVybiBleHlub3NfdXBkYXRlX3Bs
-YW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAotCQkJCSAgIGNydGNfdywgY3J0Y19o
-LCB4LCB5LCBjcnRjX3csIGNydGNfaCk7CisJcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRj
-LT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKKwkJCQkgIGNydGNfdywgY3J0Y19oLCB4LCB5LCBj
-cnRjX3csIGNydGNfaCk7CisJaWYgKCFyZXQpCisJCXJldHVybiByZXQ7CisKKwlleHlub3NfcGxh
-bmVfZHBtcyhjcnRjLT5wcmltYXJ5LCBEUk1fTU9ERV9EUE1TX09OKTsKKworCXJldHVybiAwOwor
-CiB9CiAKIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0
-YyAqY3J0YykKLS0gCjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+This also avoids the floating point conversion steps and just
+uses pure integer arithmetic.
+Since the G2D hardware scaling approach is a bit unintuitive,
+document it in the function as well.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 19 ++++++++++++++-----
+ exynos/fimg2d.h        |  2 --
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index ce1ba1e..d22c893 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -41,6 +41,15 @@
+ 
+ #define MIN(a, b)	((a) < (b) ? (a) : (b))
+ 
++static unsigned int g2d_get_scaling(unsigned int src, unsigned int dst)
++{
++	/* The G2D hw scaling factor is a normalized inverse of the scaling factor. *
++	 * For example: When source width is 100 and destination width is 200       *
++	 * (scaling of 2x), then the hw factor is NORMALIZE_CONSTANT * 100 / 200.   */
++
++	return ((src << 16) / dst);
++}
++
+ static unsigned int g2d_get_blend_op(enum e_g2d_op op)
+ {
+ 	union g2d_blend_func_val val;
+@@ -428,7 +437,7 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 	union g2d_rop4_val rop4;
+ 	union g2d_point_val pt;
+ 	unsigned int scale;
+-	double scale_x = 0.0f, scale_y = 0.0f;
++	unsigned int scale_x, scale_y;
+ 
+ 	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+@@ -454,8 +463,8 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 		scale = 0;
+ 	else {
+ 		scale = 1;
+-		scale_x = (double)src_w / (double)dst_w;
+-		scale_y = (double)src_h / (double)dst_h;
++		scale_x = g2d_get_scaling(src_w, dst_w);
++		scale_y = g2d_get_scaling(src_h, dst_h);
+ 	}
+ 
+ 	if (src_x + src_w > src->width)
+@@ -487,8 +496,8 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	if (scale) {
+ 		g2d_add_cmd(ctx, SRC_SCALE_CTRL_REG, G2D_SCALE_MODE_BILINEAR);
+-		g2d_add_cmd(ctx, SRC_XSCALE_REG, G2D_DOUBLE_TO_FIXED(scale_x));
+-		g2d_add_cmd(ctx, SRC_YSCALE_REG, G2D_DOUBLE_TO_FIXED(scale_y));
++		g2d_add_cmd(ctx, SRC_XSCALE_REG, scale_x);
++		g2d_add_cmd(ctx, SRC_YSCALE_REG, scale_y);
+ 	}
+ 
+ 	pt.val = 0;
+diff --git a/exynos/fimg2d.h b/exynos/fimg2d.h
+index 4785e2f..8e0321c 100644
+--- a/exynos/fimg2d.h
++++ b/exynos/fimg2d.h
+@@ -25,8 +25,6 @@
+ #define G2D_MAX_CMD_LIST_NR	64
+ #define G2D_PLANE_MAX_NR	2
+ 
+-#define G2D_DOUBLE_TO_FIXED(d)		((unsigned int)((d) * 65536.0))
+-
+ enum e_g2d_color_mode {
+ 	/* COLOR FORMAT */
+ 	G2D_COLOR_FMT_XRGB8888,
+-- 
+2.0.5
