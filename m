@@ -1,61 +1,52 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 13/15] ARM: dts: Exynos4 and Odroid X2/U3 sound device
- nodes update
-Date: Tue, 3 Feb 2015 13:11:27 +0000
-Message-ID: <20150203131127.GM21293@sirena.org.uk>
-References: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
- <1421260962-16892-14-git-send-email-s.nawrocki@samsung.com>
- <20150114195452.GM3043@sirena.org.uk>
- <07a501d03f69$aba222b0$02e66810$@kernel.org>
- <54D0AB30.2010504@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH] drm/exynos: Fix disharmony when setting plane on/off
+Date: Tue,  3 Feb 2015 11:41:05 -0200
+Message-ID: <1422970865-23774-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MK0knf37bjPWw3rr"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <54D0AB30.2010504-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---MK0knf37bjPWw3rr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Feb 03, 2015 at 12:04:16PM +0100, Sylwester Nawrocki wrote:
-
-> >> Sorry, I should've said - I applied the ASoC patches, not these.
-
-> > Shall I take 13 to 15 DT patches in Samsung tree?
-
-> Patches 13, 14 use macro definitions which are added in patch which is
-> already in Mark's sound tree ("ASoC: samsung: i2s: Add clk provider DT
-> binding documentation") [1]. We would need to consider that to avoid
-> build breaks.
-
-OK, I can apply them if people want but I'd need a resend - I discarded
-them since they'd normally go via the arch tree.
-
---MK0knf37bjPWw3rr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJU0Mj+AAoJECTWi3JdVIfQJcYH/j7G75SDZ4YqBvg2mg+eUE1i
-dC5Sio9hI4pPqv/f5EJNGLVecLd3hd111gbmMz5t9ggAjzWTayUSLMOpkiNH/ld4
-C6gncG6apYtfTi4hYGnEUx1DlokxIHxQ1obABiClzJrPpLjK0Gqhr8YfGTDlYhud
-nqJiY8gH81YJPkGQoACjYxnB+kUSiDvzQ9Q3YHMXBTZR8UgMF71gff3Sv2o33HEx
-TcEhA9BoBTbgodFamepBpN4Qan6CvwOU7ZEPoHMFa5HK5T639qKgROFm35J+xTSv
-v4a4L9A3ekK4ZRYb2QUR0NINgVV3bEhiz5rPNVhuMmpQa2Vk8LwD9WlEdHO1ULY=
-=gr3c
------END PGP SIGNATURE-----
-
---MK0knf37bjPWw3rr--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhpcyBpc3N1ZSB3YXMgY2F1c2VkIGJ5IHRoZSBsYXRlc3QgZXh5bm9zX3VwZGF0ZV9wbGFuZSgp
+IGNsZWFuIHVwCnRoYXQgdW5pZmllZCBwbGFuZSBvcGVyYXRpb25zLiBBZnRlciB0aG9zZSBjaGFu
+Z2VzIHRoZSBwbGFuZSBmYWlsZWQKdG8gZ28gdGhlIE9uIHN0YXRlLiBUaGlzIHBhdGNoIGZpeCB0
+aGlzIHByb2JsZW0gYnkgZG9pbmcgY29ycmVjdCBhY2NvdW50Cm9mIGV4eW5vc19jcnRjLT5lbmFi
+bGVkLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
+bGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
+LmMgfCAxMiArKysrKysrKysrLS0KIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAy
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmlu
+ZGV4IGE4NWM0NTEuLjFkYmQwZTMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2NydGMuYwpAQCAtMTE5LDYgKzExOSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21v
+ZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCiAJc3RydWN0
+IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsKIAl1bnNpZ25lZCBpbnQg
+Y3J0Y193OwogCXVuc2lnbmVkIGludCBjcnRjX2g7CisJaW50IHJldDsKIAogCS8qIHdoZW4gZnJh
+bWVidWZmZXIgY2hhbmdpbmcgaXMgcmVxdWVzdGVkLCBjcnRjJ3MgZHBtcyBzaG91bGQgYmUgb24g
+Ki8KIAlpZiAoZXh5bm9zX2NydGMtPmRwbXMgPiBEUk1fTU9ERV9EUE1TX09OKSB7CkBAIC0xMjks
+OCArMTMwLDE1IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3Ry
+dWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCiAJY3J0Y193ID0gZmItPndpZHRoIC0g
+eDsKIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKIAotCXJldHVybiBleHlub3NfdXBkYXRlX3Bs
+YW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAotCQkJCSAgIGNydGNfdywgY3J0Y19o
+LCB4LCB5LCBjcnRjX3csIGNydGNfaCk7CisJcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRj
+LT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKKwkJCQkgIGNydGNfdywgY3J0Y19oLCB4LCB5LCBj
+cnRjX3csIGNydGNfaCk7CisJaWYgKCFyZXQpCisJCXJldHVybiByZXQ7CisKKwlleHlub3NfcGxh
+bmVfZHBtcyhjcnRjLT5wcmltYXJ5LCBEUk1fTU9ERV9EUE1TX09OKTsKKworCXJldHVybiAwOwor
+CiB9CiAKIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0
+YyAqY3J0YykKLS0gCjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
