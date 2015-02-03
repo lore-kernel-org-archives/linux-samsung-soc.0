@@ -1,43 +1,46 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 13/14] drm/exynos: use correct pipe number on vblank event
-Date: Tue,  3 Feb 2015 17:14:30 -0200
-Message-ID: <1422990871-21355-14-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 14/14] drm/exynos: remove exynos_disable_plane()
+Date: Tue,  3 Feb 2015 17:14:31 -0200
+Message-ID: <1422990871-21355-15-git-send-email-gustavo@padovan.org>
 References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:46806 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966015AbbBCTRI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Feb 2015 14:17:08 -0500
-Received: by mail-qc0-f179.google.com with SMTP id w7so36827814qcr.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Feb 2015 11:17:07 -0800 (PST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: jy0922.shim@samsung.com, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Use the pipe var received instead of using always -1 as pipe value.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 2edc73c..0f2b789 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -382,7 +382,7 @@ void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	if (exynos_crtc->event) {
- 
--		drm_send_vblank_event(dev, -1, exynos_crtc->event);
-+		drm_send_vblank_event(dev, pipe, exynos_crtc->event);
- 		drm_vblank_put(dev, pipe);
- 		wake_up(&exynos_crtc->pending_flip_queue);
- 
--- 
-1.9.3
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+ZXh5bm9zX2Rpc2FibGVfcGxhbmUoKSBpcyB1c2VkIG9ubHkgb25jZSBub3cgdGh1cyByZW1vdmUg
+aXQgYW5kIGNhbGwKZXh5bm9zX3BsYW5lX2RwbXMoKSBkaXJlY3RseS4KClNpZ25lZC1vZmYtYnk6
+IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDkgKy0tLS0tLS0tCiAx
+IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCBjMGM1M2Q2Li4zNGRjZjE3YiAx
+MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKQEAgLTE5MSwxOCAr
+MTkxLDExIEBAIGV4eW5vc191cGRhdGVfcGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0
+cnVjdCBkcm1fY3J0YyAqY3J0YywKIAkJZXh5bm9zX2NydGMtPm9wcy0+d2luX2NvbW1pdChleHlu
+b3NfY3J0YywgZXh5bm9zX3BsYW5lLT56cG9zKTsKIH0KIAotc3RhdGljIGludCBleHlub3NfZGlz
+YWJsZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKLXsKLQlleHlub3NfcGxhbmVfZHBt
+cyhwbGFuZSwgRFJNX01PREVfRFBNU19PRkYpOwotCi0JcmV0dXJuIDA7Ci19Ci0KIHN0YXRpYyB2
+b2lkIGV4eW5vc19wbGFuZV9kZXN0cm95KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogewogCXN0
+cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxh
+bmUpOwogCi0JZXh5bm9zX2Rpc2FibGVfcGxhbmUocGxhbmUpOworCWV4eW5vc19wbGFuZV9kcG1z
+KHBsYW5lLCBEUk1fTU9ERV9EUE1TX09GRik7CiAJZHJtX3BsYW5lX2NsZWFudXAocGxhbmUpOwog
+CWtmcmVlKGV4eW5vc19wbGFuZSk7CiB9Ci0tIAoxLjkuMwoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
