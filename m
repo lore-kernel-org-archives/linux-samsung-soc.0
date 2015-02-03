@@ -1,39 +1,44 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 13/15] exynos: fimg2d: fix comment for G2D_COEFF_MODE_GB_COLOR
-Date: Tue,  3 Feb 2015 14:54:03 +0100
-Message-ID: <1422971645-30621-14-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 12/15] exynos: add fimg2d header to common includes
+Date: Tue,  3 Feb 2015 14:54:02 +0100
+Message-ID: <1422971645-30621-13-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:46045 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:46024 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965526AbbBCNyf (ORCPT
+	by vger.kernel.org with ESMTP id S965573AbbBCNye (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Feb 2015 08:54:35 -0500
+	Tue, 3 Feb 2015 08:54:34 -0500
 In-Reply-To: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-The coefficient mode enables use of global color, not alpha.
+The reason for this change is to let userspace use the header.
+Currently 'make install' does not install it.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- exynos/exynos_fimg2d.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ exynos/Makefile.am | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
-index bd116cf..78cff47 100644
---- a/exynos/exynos_fimg2d.h
-+++ b/exynos/exynos_fimg2d.h
-@@ -166,7 +166,7 @@ enum e_g2d_coeff_mode {
- 	G2D_COEFF_MODE_DST_COLOR,
- 	/* Global Alpha : Set by ALPHA_REG(0x618) */
- 	G2D_COEFF_MODE_GB_ALPHA,
--	/* Global Alpha : Set by ALPHA_REG(0x618) */
-+	/* Global Color : Set by ALPHA_REG(0x618) */
- 	G2D_COEFF_MODE_GB_COLOR,
- 	/* (1-SRC alpha)/DST Alpha */
- 	G2D_COEFF_MODE_DISJOINT_S,
+diff --git a/exynos/Makefile.am b/exynos/Makefile.am
+index 1715a85..35bc71f 100644
+--- a/exynos/Makefile.am
++++ b/exynos/Makefile.am
+@@ -14,11 +14,10 @@ libdrm_exynos_la_LIBADD = ../libdrm.la @PTHREADSTUBS_LIBS@
+ libdrm_exynos_la_SOURCES = \
+ 	exynos_drm.c \
+ 	exynos_fimg2d.c \
+-	exynos_fimg2d.h \
+ 	fimg2d_reg.h
+ 
+ libdrm_exynoscommonincludedir = ${includedir}/exynos
+-libdrm_exynoscommoninclude_HEADERS = exynos_drm.h
++libdrm_exynoscommoninclude_HEADERS = exynos_drm.h exynos_fimg2d.h
+ 
+ libdrm_exynosincludedir = ${includedir}/libdrm
+ libdrm_exynosinclude_HEADERS = exynos_drmif.h
 -- 
 2.0.5
