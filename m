@@ -1,157 +1,253 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 08/14] drm/exynos: atomic phase 1: add
- atomic_begin()/atomic_flush()
-Date: Tue,  3 Feb 2015 17:14:25 -0200
-Message-ID: <1422990871-21355-9-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 10/14] drm/exynos: atomic phase 2: wire up state reset(), duplicate() and destroy()
+Date: Tue,  3 Feb 2015 17:14:27 -0200
+Message-ID: <1422990871-21355-11-git-send-email-gustavo@padovan.org>
 References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f49.google.com ([209.85.216.49]:48702 "EHLO
+	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966250AbbBCTRB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 14:17:01 -0500
+Received: by mail-qa0-f49.google.com with SMTP id v8so35146737qal.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Feb 2015 11:17:00 -0800 (PST)
 In-Reply-To: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: jy0922.shim@samsung.com, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-QWRkIENSVEMgY2FsbGJhY2tzIC5hdG9taWNfYmVnaW4oKSAuYXRvbWljX2ZsdXNoKCkuIE9uIGV4
-eW5vcyB0aGV5CnVucHJvdGVjdCB0aGUgd2luZG93cyBiZWZvcmUgdGhlIGNvbW1pdCBhbmQgcHJv
-dGVjdHMgaXQgYWZ0ZXIgYmFzZWQgb24KYSBwbGFuZSBtYXNrIHRoYSBzdG9yZSB3aGljaCBwbGFu
-ZSB3aWxsIGJlIHVwZGF0ZWQuCgpGb3IgdGhhdCB3ZSBjcmVhdGUgdHdvIG5ldyBleHlub3NfY3J0
-YyBjYWxsYmFja3M6IC53aW5fcHJvdGVjdCgpIGFuZAoud2luX3VucHJvdGVjdCgpLiBUaGUgb25s
-eSBkcml2ZXIgdGhhdCBpbXBsZW1lbnQgdGhvc2Ugbm93IGlzIEZJTUQuCgpTaWduZWQtb2ZmLWJ5
-OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQog
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAgfCAzNCArKysrKysrKysr
-KysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwgIDQg
-KysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICB8IDU3ICsrKysr
-KysrKysrKysrKysrKysrKystLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9wbGFuZS5jIHwgIDQgKysrCiA0IGZpbGVzIGNoYW5nZWQsIDgyIGluc2VydGlvbnMoKyks
-IDE3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
-CmluZGV4IDA5ZDQ3ODAuLmJlMzZjY2EgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuYwpAQCAtMTQ3LDYgKzE0NywzOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2Ny
-dGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCiAJfQogfQogCitzdGF0aWMgdm9pZCBl
-eHlub3NfY3J0Y19hdG9taWNfYmVnaW4oc3RydWN0IGRybV9jcnRjICpjcnRjKQoreworCXN0cnVj
-dCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7CisJ
-c3RydWN0IGRybV9wbGFuZSAqcGxhbmU7CisJaW50IGluZGV4ID0gMDsKKworCWxpc3RfZm9yX2Vh
-Y2hfZW50cnkocGxhbmUsICZjcnRjLT5kZXYtPm1vZGVfY29uZmlnLnBsYW5lX2xpc3QsIGhlYWQp
-IHsKKwkJaWYgKGV4eW5vc19jcnRjLT5vcHMtPndpbl9wcm90ZWN0ICYmCisJCSAgICBleHlub3Nf
-Y3J0Yy0+cGxhbmVfbWFzayAmICgweDAxIDw8IGluZGV4KSkKKwkJCWV4eW5vc19jcnRjLT5vcHMt
-Pndpbl9wcm90ZWN0KGV4eW5vc19jcnRjLCBpbmRleCk7CisKKwkJaW5kZXgrKzsKKwl9Cit9CisK
-K3N0YXRpYyB2b2lkIGV4eW5vc19jcnRjX2F0b21pY19mbHVzaChzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMpCit7CisJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3Nf
-Y3J0YyhjcnRjKTsKKwlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKKwlpbnQgaW5kZXggPSAwOwor
-CisJbGlzdF9mb3JfZWFjaF9lbnRyeShwbGFuZSwgJmNydGMtPmRldi0+bW9kZV9jb25maWcucGxh
-bmVfbGlzdCwgaGVhZCkgeworCQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2luX3VucHJvdGVjdCAm
-JgorCQkgICAgZXh5bm9zX2NydGMtPnBsYW5lX21hc2sgJiAoMHgwMSA8PCBpbmRleCkpCisJCQll
-eHlub3NfY3J0Yy0+b3BzLT53aW5fdW5wcm90ZWN0KGV4eW5vc19jcnRjLCBpbmRleCk7CisKKwkJ
-aW5kZXgrKzsKKwl9CisKKwlleHlub3NfY3J0Yy0+cGxhbmVfbWFzayA9IDA7Cit9CisKIHN0YXRp
-YyBzdHJ1Y3QgZHJtX2NydGNfaGVscGVyX2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9
-IHsKIAkuZHBtcwkJPSBleHlub3NfZHJtX2NydGNfZHBtcywKIAkucHJlcGFyZQk9IGV4eW5vc19k
-cm1fY3J0Y19wcmVwYXJlLApAQCAtMTU1LDYgKzE4Nyw4IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX2Ny
-dGNfaGVscGVyX2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKIAkubW9kZV9zZXQJ
-PSBleHlub3NfZHJtX2NydGNfbW9kZV9zZXQsCiAJLm1vZGVfc2V0X2Jhc2UJPSBleHlub3NfZHJt
-X2NydGNfbW9kZV9zZXRfYmFzZSwKIAkuZGlzYWJsZQk9IGV4eW5vc19kcm1fY3J0Y19kaXNhYmxl
-LAorCS5hdG9taWNfYmVnaW4JPSBleHlub3NfY3J0Y19hdG9taWNfYmVnaW4sCisJLmF0b21pY19m
-bHVzaAk9IGV4eW5vc19jcnRjX2F0b21pY19mbHVzaCwKIH07CiAKIHN0YXRpYyBpbnQgZXh5bm9z
-X2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggY2FkNTRlNy4uNDNlZmQ5ZiAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaApAQCAtMTk0LDYgKzE5NCw4IEBAIHN0cnVj
-dCBleHlub3NfZHJtX2NydGNfb3BzIHsKIAl2b2lkICgqd2luX2VuYWJsZSkoc3RydWN0IGV4eW5v
-c19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpOwogCXZvaWQgKCp3aW5fZGlzYWJsZSkoc3RydWN0
-IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpOwogCXZvaWQgKCp0ZV9oYW5kbGVyKShz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKKwl2b2lkICgqd2luX3Byb3RlY3QpKHN0cnVj
-dCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB6cG9zKTsKKwl2b2lkICgqd2luX3VucHJvdGVj
-dCkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpOwogfTsKIAogZW51bSBl
-eHlub3NfY3J0Y19tb2RlIHsKQEAgLTIxNCw2ICsyMTYsNyBAQCBlbnVtIGV4eW5vc19jcnRjX21v
-ZGUgewogICoJd2UgY2FuIHJlZmVyIHRvIHRoZSBjcnRjIHRvIGN1cnJlbnQgaGFyZHdhcmUgaW50
-ZXJydXB0IG9jY3VycmVkIHRocm91Z2gKICAqCXRoaXMgcGlwZSB2YWx1ZS4KICAqIEBkcG1zOiBz
-dG9yZSB0aGUgY3J0YyBkcG1zIHZhbHVlCisgKiBAcGxhbmVfbWFzazogc3RvcmUgcGxhbmVzIHRv
-IGJlIHVwZGF0ZWQgb24gYXRvbWljIG1vZGVzZXR0aW5nCiAgKiBAbW9kZTogc3RvcmUgdGhlIGNy
-dGMgbW9kZSB2YWx1ZQogICogQGV2ZW50OiB2YmxhbmsgZXZlbnQgdGhhdCBpcyBjdXJyZW50bHkg
-cXVldWVkIGZvciBmbGlwCiAgKiBAb3BzOiBwb2ludGVyIHRvIGNhbGxiYWNrcyBmb3IgZXh5bm9z
-IGRybSBzcGVjaWZpYyBmdW5jdGlvbmFsaXR5CkBAIC0yMjQsNiArMjI3LDcgQEAgc3RydWN0IGV4
-eW5vc19kcm1fY3J0YyB7CiAJZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlCXR5cGU7CiAJdW5z
-aWduZWQgaW50CQkJcGlwZTsKIAl1bnNpZ25lZCBpbnQJCQlkcG1zOworCXVuc2lnbmVkIGludAkJ
-CXBsYW5lX21hc2s7CiAJZW51bSBleHlub3NfY3J0Y19tb2RlCQltb2RlOwogCXdhaXRfcXVldWVf
-aGVhZF90CQlwZW5kaW5nX2ZsaXBfcXVldWU7CiAJc3RydWN0IGRybV9wZW5kaW5nX3ZibGFua19l
-dmVudAkqZXZlbnQ7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRl
-eCBlYmI0Y2RjLi5mNDk4ZDg2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
-aW1kLmMKQEAgLTU4NSw2ICs1ODUsMTYgQEAgc3RhdGljIHZvaWQgZmltZF9zaGFkb3dfcHJvdGVj
-dF93aW4oc3RydWN0IGZpbWRfY29udGV4dCAqY3R4LAogewogCXUzMiByZWcsIGJpdHMsIHZhbDsK
-IAorCS8qCisJICogU0hBRE9XQ09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBlbmFibGlu
-ZyB0aW1pbmcuCisJICoKKwkgKiBmb3IgZXhhbXBsZSwgb25jZSBvbmx5IHdpZHRoIHZhbHVlIG9m
-IGEgcmVnaXN0ZXIgaXMgc2V0LAorCSAqIGlmIHRoZSBkbWEgaXMgc3RhcnRlZCB0aGVuIGZpbWQg
-aGFyZHdhcmUgY291bGQgbWFsZnVuY3Rpb24gc28KKwkgKiB3aXRoIHByb3RlY3Qgd2luZG93IHNl
-dHRpbmcsIHRoZSByZWdpc3RlciBmaWVsZHMgd2l0aCBwcmVmaXggJ19GJworCSAqIHdvdWxkbid0
-IGJlIHVwZGF0ZWQgYXQgdnN5bmMgYWxzbyBidXQgdXBkYXRlZCBvbmNlIHVucHJvdGVjdCB3aW5k
-b3cKKwkgKiBpcyBzZXQuCisJICovCisKIAlpZiAoY3R4LT5kcml2ZXJfZGF0YS0+aGFzX3NoYWRv
-d2NvbikgewogCQlyZWcgPSBTSEFET1dDT047CiAJCWJpdHMgPSBTSEFET1dDT05fV0lOeF9QUk9U
-RUNUKHdpbik7CkBAIC02MjcsMjAgKzYzNyw2IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2luX2NvbW1p
-dChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCBpbnQgenBvcykKIAkJcmV0dXJuOwogCX0K
-IAotCS8qCi0JICogU0hBRE9XQ09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBlbmFibGlu
-ZyB0aW1pbmcuCi0JICoKLQkgKiBmb3IgZXhhbXBsZSwgb25jZSBvbmx5IHdpZHRoIHZhbHVlIG9m
-IGEgcmVnaXN0ZXIgaXMgc2V0LAotCSAqIGlmIHRoZSBkbWEgaXMgc3RhcnRlZCB0aGVuIGZpbWQg
-aGFyZHdhcmUgY291bGQgbWFsZnVuY3Rpb24gc28KLQkgKiB3aXRoIHByb3RlY3Qgd2luZG93IHNl
-dHRpbmcsIHRoZSByZWdpc3RlciBmaWVsZHMgd2l0aCBwcmVmaXggJ19GJwotCSAqIHdvdWxkbid0
-IGJlIHVwZGF0ZWQgYXQgdnN5bmMgYWxzbyBidXQgdXBkYXRlZCBvbmNlIHVucHJvdGVjdCB3aW5k
-b3cKLQkgKiBpcyBzZXQuCi0JICovCi0KLQkvKiBwcm90ZWN0IHdpbmRvd3MgKi8KLQlmaW1kX3No
-YWRvd19wcm90ZWN0X3dpbihjdHgsIHdpbiwgdHJ1ZSk7Ci0KLQogCW9mZnNldCA9IHBsYW5lLT5m
-Yl94ICogKHBsYW5lLT5icHAgPj4gMyk7CiAJb2Zmc2V0ICs9IHBsYW5lLT5mYl95ICogcGxhbmUt
-PnBpdGNoOwogCkBAIC03MjIsOSArNzE4LDYgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fY29tbWl0
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB6cG9zKQogCWlmIChjdHgtPmRyaXZl
-cl9kYXRhLT5oYXNfc2hhZG93Y29uKQogCQlmaW1kX2VuYWJsZV9zaGFkb3dfY2hhbm5lbF9wYXRo
-KGN0eCwgd2luLCB0cnVlKTsKIAotCS8qIEVuYWJsZSBETUEgY2hhbm5lbCBhbmQgdW5wcm90ZWN0
-IHdpbmRvd3MgKi8KLQlmaW1kX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIHdpbiwgZmFsc2UpOwot
-CiAJcGxhbmUtPmVuYWJsZWQgPSB0cnVlOwogCiAJaWYgKGN0eC0+aTgwX2lmKQpAQCAtOTQ3LDYg
-Kzk0MCwzNCBAQCBzdGF0aWMgdm9pZCBmaW1kX3RlX2hhbmRsZXIoc3RydWN0IGV4eW5vc19kcm1f
-Y3J0YyAqY3J0YykKIAkJZHJtX2hhbmRsZV92YmxhbmsoY3R4LT5kcm1fZGV2LCBjdHgtPnBpcGUp
-OwogfQogCitzdGF0aWMgdm9pZCBmaW1kX3dpbl9wcm90ZWN0KHN0cnVjdCBleHlub3NfZHJtX2Ny
-dGMgKmNydGMsIGludCB6cG9zKQoreworCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMt
-PmN0eDsKKwlpbnQgd2luID0genBvczsKKworCWlmICh3aW4gPT0gREVGQVVMVF9aUE9TKQorCQl3
-aW4gPSBjdHgtPmRlZmF1bHRfd2luOworCisJaWYgKHdpbiA8IDAgfHwgd2luID49IFdJTkRPV1Nf
-TlIpCisJCXJldHVybjsKKworCWZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCB0cnVl
-KTsKK30KKworc3RhdGljIHZvaWQgZmltZF93aW5fdW5wcm90ZWN0KHN0cnVjdCBleHlub3NfZHJt
-X2NydGMgKmNydGMsIGludCB6cG9zKQoreworCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNy
-dGMtPmN0eDsKKwlpbnQgd2luID0genBvczsKKworCWlmICh3aW4gPT0gREVGQVVMVF9aUE9TKQor
-CQl3aW4gPSBjdHgtPmRlZmF1bHRfd2luOworCisJaWYgKHdpbiA8IDAgfHwgd2luID49IFdJTkRP
-V1NfTlIpCisJCXJldHVybjsKKworCWZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCBm
-YWxzZSk7Cit9CisKIHN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBmaW1kX2NydGNf
-b3BzID0gewogCS5kcG1zID0gZmltZF9kcG1zLAogCS5tb2RlX2ZpeHVwID0gZmltZF9tb2RlX2Zp
-eHVwLApAQCAtOTU3LDYgKzk3OCw4IEBAIHN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29w
-cyBmaW1kX2NydGNfb3BzID0gewogCS53aW5fY29tbWl0ID0gZmltZF93aW5fY29tbWl0LAogCS53
-aW5fZGlzYWJsZSA9IGZpbWRfd2luX2Rpc2FibGUsCiAJLnRlX2hhbmRsZXIgPSBmaW1kX3RlX2hh
-bmRsZXIsCisJLndpbl9wcm90ZWN0ID0gZmltZF93aW5fcHJvdGVjdCwKKwkud2luX3VucHJvdGVj
-dCA9IGZpbWRfd2luX3VucHJvdGVjdCwKIH07CiAKIHN0YXRpYyBpcnFyZXR1cm5fdCBmaW1kX2ly
-cV9oYW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX3BsYW5lLmMKaW5kZXggYTNiMDY4Ny4uMzYzZDU5ZCAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKQEAgLTY1LDYgKzY1LDcgQEAgc3RhdGljIGlu
-dCBleHlub3NfcGxhbmVfZ2V0X3NpemUoaW50IHN0YXJ0LCB1bnNpZ25lZCBsZW5ndGgsIHVuc2ln
-bmVkIGxhc3QpCiBpbnQgZXh5bm9zX2NoZWNrX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
-LCBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikKIHsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFu
-ZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKKwlzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKHBsYW5lLT5jcnRjKTsKIAlp
-bnQgbnI7CiAJaW50IGk7CiAKQEAgLTgzLDYgKzg0LDkgQEAgaW50IGV4eW5vc19jaGVja19wbGFu
-ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIpCiAJ
-CQkJaSwgKHVuc2lnbmVkIGxvbmcpZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltpXSk7CiAJfQogCisJ
-aWYgKGV4eW5vc19jcnRjKQorCQlleHlub3NfY3J0Yy0+cGxhbmVfbWFzayArPSAxIDw8IGV4eW5v
-c19wbGFuZS0+enBvczsKKwogCXJldHVybiAwOwogfQogCi0tIAoxLjkuMwoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Set CRTC, planes and connectors to use the default implementations from
+the atomic helper library. The helpers will work to keep track of state
+for each DRM object.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/bridge/ptn3460.c              | 4 ++++
+ drivers/gpu/drm/exynos/exynos_dp_core.c       | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_connector.c | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 5 +++++
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c       | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c       | 2 ++
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_plane.c     | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 4 ++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c          | 4 ++++
+ 10 files changed, 39 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index 826833e..30da10c 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -27,6 +27,7 @@
+ 
+ #include "drm_crtc.h"
+ #include "drm_crtc_helper.h"
++#include "drm_atomic_helper.h"
+ #include "drm_edid.h"
+ #include "drmP.h"
+ 
+@@ -263,6 +264,9 @@ static struct drm_connector_funcs ptn3460_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = ptn3460_detect,
+ 	.destroy = ptn3460_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ int ptn3460_bridge_attach(struct drm_bridge *bridge)
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index bf17a60..6704d5c 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -28,6 +28,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ #include <drm/drm_panel.h>
+ #include <drm/bridge/ptn3460.h>
+ 
+@@ -952,6 +953,9 @@ static struct drm_connector_funcs exynos_dp_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = exynos_dp_detect,
+ 	.destroy = exynos_dp_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int exynos_dp_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+index ba9b3d5..980b085 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+@@ -13,6 +13,7 @@
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include <drm/exynos_drm.h>
+ #include "exynos_drm_drv.h"
+@@ -182,6 +183,9 @@ static struct drm_connector_funcs exynos_connector_funcs = {
+ 	.fill_modes	= exynos_drm_connector_fill_modes,
+ 	.detect		= exynos_drm_connector_detect,
+ 	.destroy	= exynos_drm_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ struct drm_connector *exynos_drm_connector_create(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 17b64f8..660ad64 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -14,6 +14,8 @@
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+@@ -265,6 +267,9 @@ static struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.page_flip	= exynos_drm_crtc_page_flip,
+ 	.destroy	= exynos_drm_crtc_destroy,
+ 	.set_property	= exynos_drm_crtc_set_property,
++	.reset = drm_atomic_helper_crtc_reset,
++	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+ };
+ 
+ static const struct drm_prop_enum_list mode_names[] = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 37678cf..ced5c23 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -13,6 +13,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_panel.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include <linux/regulator/consumer.h>
+ 
+@@ -63,6 +64,9 @@ static struct drm_connector_funcs exynos_dpi_connector_funcs = {
+ 	.detect = exynos_dpi_detect,
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.destroy = exynos_dpi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int exynos_dpi_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 778c91e..0b76a42 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -98,6 +98,8 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	if (ret)
+ 		goto err_cleanup_vblank;
+ 
++	drm_mode_config_reset(dev);
++
+ 	/*
+ 	 * enable drm irq mode.
+ 	 * - with irq_enabled = true, we can use the vblank feature.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 05fe93d..6e9c2c3 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -14,6 +14,7 @@
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_panel.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include <linux/clk.h>
+ #include <linux/gpio/consumer.h>
+@@ -1461,6 +1462,9 @@ static struct drm_connector_funcs exynos_dsi_connector_funcs = {
+ 	.detect = exynos_dsi_detect,
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.destroy = exynos_dsi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int exynos_dsi_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 363d59d..0980c84 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -13,6 +13,7 @@
+ 
+ #include <drm/exynos_drm.h>
+ #include <drm/drm_plane_helper.h>
++#include <drm/drm_atomic_helper.h>
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_fb.h"
+@@ -226,6 +227,9 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.disable_plane	= drm_plane_helper_disable,
+ 	.destroy	= exynos_plane_destroy,
+ 	.set_property	= exynos_plane_set_property,
++	.reset = drm_atomic_helper_plane_reset,
++	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+ };
+ 
+ static int exynos_plane_atomic_check(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 08c7a1e..a42af1d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -20,6 +20,7 @@
+ 
+ #include <drm/drm_edid.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+@@ -396,6 +397,9 @@ static struct drm_connector_funcs vidi_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = vidi_detect,
+ 	.destroy = vidi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int vidi_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 229b361..5b597bc 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -17,6 +17,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "regs-hdmi.h"
+ 
+@@ -1054,6 +1055,9 @@ static struct drm_connector_funcs hdmi_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = hdmi_detect,
+ 	.destroy = hdmi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int hdmi_get_modes(struct drm_connector *connector)
+-- 
+1.9.3
