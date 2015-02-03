@@ -1,86 +1,253 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Handle of of_iomap() failure
-Date: Tue, 03 Feb 2015 09:09:21 +0100
-Message-ID: <1422950961.10086.2.camel@AMDC1943>
-References: <1421077065-30175-1-git-send-email-k.kozlowski@samsung.com>
- <054001d03f60$58535150$08f9f3f0$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Carlo Caione <carlo@caione.org>
+Subject: [PATCH 2/2] arm/dma-mapping: Respect NO_KERNEL_MAPPING when we don't have an IOMMU
+Date: Tue,  3 Feb 2015 09:47:32 +0100
+Message-ID: <1422953252-10835-3-git-send-email-carlo@caione.org>
+References: <1422953252-10835-1-git-send-email-carlo@caione.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:20802 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751753AbbBCIJZ (ORCPT
+Received: from mail-we0-f170.google.com ([74.125.82.170]:44306 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751907AbbBCIsN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Feb 2015 03:09:25 -0500
-In-reply-to: <054001d03f60$58535150$08f9f3f0$@kernel.org>
+	Tue, 3 Feb 2015 03:48:13 -0500
+Received: by mail-we0-f170.google.com with SMTP id w55so38157427wes.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Feb 2015 00:48:11 -0800 (PST)
+In-Reply-To: <1422953252-10835-1-git-send-email-carlo@caione.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, jstpierre@mecheye.net, drake@endlessm.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, robdclark@gmail.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org, jy0922.shim@samsung.com
+Cc: Carlo Caione <carlo@caione.org>
 
-On wto, 2015-02-03 at 12:20 +0900, Kukjin Kim wrote:
-> Krzysztof Kozlowski wrote:
-> > 
-> > Prevent possible NULL pointer dereference if of_iomap() fails. Handle
-> > the error by skipping such power domain.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/pm_domains.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> > index 20f267121b3e..fd7640a6b503 100644
-> > --- a/arch/arm/mach-exynos/pm_domains.c
-> > +++ b/arch/arm/mach-exynos/pm_domains.c
-> > @@ -128,6 +128,13 @@ static __init int exynos4_pm_init_power_domain(void)
-> >  		pd->pd.name = kstrdup(np->name, GFP_KERNEL);
-> >  		pd->name = pd->pd.name;
-> >  		pd->base = of_iomap(np, 0);
-> > +		if (!pd->base) {
-> > +			dev_warn(&pdev->dev, "Failed to map memory\n");
-> > +			kfree(pd);
-> > +			of_node_put(np);
-> > +			continue;
-> > +		}
-> > +
-> >  		pd->pd.power_off = exynos_pd_power_off;
-> >  		pd->pd.power_on = exynos_pd_power_on;
-> > 
-> > --
-> 
-> Looks good and applied.
+From: "Jasper St. Pierre" <jstpierre@mecheye.net>
 
-Thanks!
+Even without an iommu, NO_KERNEL_MAPPING is still convenient to save on
+kernel address space in places where we don't need a kernel mapping.
+Implement support for it in the two places where we're creating an
+expensive mapping.
 
-> BTW if we need more error handling like this, how about
-> error handling for failing of of_find_device_by_node() something like following?
+__alloc_from_pool uses an internal pool from which we already have
+virtual addresses, so it's not relevant, and __alloc_simple_buffer
+uses alloc_pages, which will always return a lowmem page, which is
+already mapped into kernel space, so we can't prevent a mapping for it
+in that case.
 
-I'll take a look into this.
+Signed-off-by: Jasper St. Pierre <jstpierre@mecheye.net>
+Signed-off-by: Carlo Caione <carlo@caione.org>
+Reviewed-by: Rob Clark <robdclark@gmail.com>
+Reviewed-by: Daniel Drake <dsd@endlessm.com>
+---
+ arch/arm/mm/dma-mapping.c | 67 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 41 insertions(+), 26 deletions(-)
 
-Best regards,
-Krzysztof
-
-> 
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index 20f2671..234f967 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -116,6 +116,10 @@ static __init int exynos4_pm_init_power_domain(void)
->  		struct device *dev;
-> 
->  		pdev = of_find_device_by_node(np);
-> +		if (!pdev) {
-> +			/* error handling */
-> +		}
-> +
->  		dev = &pdev->dev;
-> 
->  		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
-> 
-> I mean I'm not sure how many error/exception handling is required...
-> 
-> Note you can see your patch in Samsung tree tonight in my time.
-> 
-> Thanks, Kukjin
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index a673c7f..6843293 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -289,11 +289,11 @@ static void __dma_free_buffer(struct page *page, size_t size)
+ 
+ static void *__alloc_from_contiguous(struct device *dev, size_t size,
+ 				     pgprot_t prot, struct page **ret_page,
+-				     const void *caller);
++				     const void *caller, bool want_vaddr);
+ 
+ static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+ 				 pgprot_t prot, struct page **ret_page,
+-				 const void *caller);
++				 const void *caller, bool want_vaddr);
+ 
+ static void *
+ __dma_alloc_remap(struct page *page, size_t size, gfp_t gfp, pgprot_t prot,
+@@ -357,10 +357,10 @@ static int __init atomic_pool_init(void)
+ 
+ 	if (dev_get_cma_area(NULL))
+ 		ptr = __alloc_from_contiguous(NULL, atomic_pool_size, prot,
+-					      &page, atomic_pool_init);
++					      &page, atomic_pool_init, true);
+ 	else
+ 		ptr = __alloc_remap_buffer(NULL, atomic_pool_size, gfp, prot,
+-					   &page, atomic_pool_init);
++					   &page, atomic_pool_init, true);
+ 	if (ptr) {
+ 		int ret;
+ 
+@@ -467,13 +467,15 @@ static void __dma_remap(struct page *page, size_t size, pgprot_t prot)
+ 
+ static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+ 				 pgprot_t prot, struct page **ret_page,
+-				 const void *caller)
++				 const void *caller, bool want_vaddr)
+ {
+ 	struct page *page;
+-	void *ptr;
++	void *ptr = NULL;
+ 	page = __dma_alloc_buffer(dev, size, gfp);
+ 	if (!page)
+ 		return NULL;
++	if (!want_vaddr)
++		goto out;
+ 
+ 	ptr = __dma_alloc_remap(page, size, gfp, prot, caller);
+ 	if (!ptr) {
+@@ -481,6 +483,7 @@ static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+ 		return NULL;
+ 	}
+ 
++ out:
+ 	*ret_page = page;
+ 	return ptr;
+ }
+@@ -523,12 +526,12 @@ static int __free_from_pool(void *start, size_t size)
+ 
+ static void *__alloc_from_contiguous(struct device *dev, size_t size,
+ 				     pgprot_t prot, struct page **ret_page,
+-				     const void *caller)
++				     const void *caller, bool want_vaddr)
+ {
+ 	unsigned long order = get_order(size);
+ 	size_t count = size >> PAGE_SHIFT;
+ 	struct page *page;
+-	void *ptr;
++	void *ptr = NULL;
+ 
+ 	page = dma_alloc_from_contiguous(dev, count, order);
+ 	if (!page)
+@@ -536,6 +539,9 @@ static void *__alloc_from_contiguous(struct device *dev, size_t size,
+ 
+ 	__dma_clear_buffer(page, size);
+ 
++	if (!want_vaddr)
++		goto out;
++
+ 	if (PageHighMem(page)) {
+ 		ptr = __dma_alloc_remap(page, size, GFP_KERNEL, prot, caller);
+ 		if (!ptr) {
+@@ -546,17 +552,21 @@ static void *__alloc_from_contiguous(struct device *dev, size_t size,
+ 		__dma_remap(page, size, prot);
+ 		ptr = page_address(page);
+ 	}
++
++ out:
+ 	*ret_page = page;
+ 	return ptr;
+ }
+ 
+ static void __free_from_contiguous(struct device *dev, struct page *page,
+-				   void *cpu_addr, size_t size)
++				   void *cpu_addr, size_t size, bool want_vaddr)
+ {
+-	if (PageHighMem(page))
+-		__dma_free_remap(cpu_addr, size);
+-	else
+-		__dma_remap(page, size, PAGE_KERNEL);
++	if (want_vaddr) {
++		if (PageHighMem(page))
++			__dma_free_remap(cpu_addr, size);
++		else
++			__dma_remap(page, size, PAGE_KERNEL);
++	}
+ 	dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
+ }
+ 
+@@ -574,12 +584,12 @@ static inline pgprot_t __get_dma_pgprot(struct dma_attrs *attrs, pgprot_t prot)
+ 
+ #define nommu() 1
+ 
+-#define __get_dma_pgprot(attrs, prot)	__pgprot(0)
+-#define __alloc_remap_buffer(dev, size, gfp, prot, ret, c)	NULL
++#define __get_dma_pgprot(attrs, prot)				__pgprot(0)
++#define __alloc_remap_buffer(dev, size, gfp, prot, ret, c, wv)	NULL
+ #define __alloc_from_pool(size, ret_page)			NULL
+-#define __alloc_from_contiguous(dev, size, prot, ret, c)	NULL
++#define __alloc_from_contiguous(dev, size, prot, ret, c, wv)	NULL
+ #define __free_from_pool(cpu_addr, size)			0
+-#define __free_from_contiguous(dev, page, cpu_addr, size)	do { } while (0)
++#define __free_from_contiguous(dev, page, cpu_addr, size, wv)	do { } while (0)
+ #define __dma_free_remap(cpu_addr, size)			do { } while (0)
+ 
+ #endif	/* CONFIG_MMU */
+@@ -599,11 +609,13 @@ static void *__alloc_simple_buffer(struct device *dev, size_t size, gfp_t gfp,
+ 
+ 
+ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+-			 gfp_t gfp, pgprot_t prot, bool is_coherent, const void *caller)
++			 gfp_t gfp, pgprot_t prot, bool is_coherent,
++			 struct dma_attrs *attrs, const void *caller)
+ {
+ 	u64 mask = get_coherent_dma_mask(dev);
+ 	struct page *page = NULL;
+ 	void *addr;
++	bool want_vaddr;
+ 
+ #ifdef CONFIG_DMA_API_DEBUG
+ 	u64 limit = (mask + 1) & ~mask;
+@@ -631,20 +643,21 @@ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+ 
+ 	*handle = DMA_ERROR_CODE;
+ 	size = PAGE_ALIGN(size);
++	want_vaddr = !dma_get_attr(DMA_ATTR_NO_KERNEL_MAPPING, attrs);
+ 
+ 	if (is_coherent || nommu())
+ 		addr = __alloc_simple_buffer(dev, size, gfp, &page);
+ 	else if (!(gfp & __GFP_WAIT))
+ 		addr = __alloc_from_pool(size, &page);
+ 	else if (!dev_get_cma_area(dev))
+-		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page, caller);
++		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page, caller, want_vaddr);
+ 	else
+-		addr = __alloc_from_contiguous(dev, size, prot, &page, caller);
++		addr = __alloc_from_contiguous(dev, size, prot, &page, caller, want_vaddr);
+ 
+-	if (addr)
++	if (page)
+ 		*handle = pfn_to_dma(dev, page_to_pfn(page));
+ 
+-	return addr;
++	return want_vaddr ? addr : &page;
+ }
+ 
+ /*
+@@ -661,7 +674,7 @@ void *arm_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+ 		return memory;
+ 
+ 	return __dma_alloc(dev, size, handle, gfp, prot, false,
+-			   __builtin_return_address(0));
++			   attrs, __builtin_return_address(0));
+ }
+ 
+ static void *arm_coherent_dma_alloc(struct device *dev, size_t size,
+@@ -674,7 +687,7 @@ static void *arm_coherent_dma_alloc(struct device *dev, size_t size,
+ 		return memory;
+ 
+ 	return __dma_alloc(dev, size, handle, gfp, prot, true,
+-			   __builtin_return_address(0));
++			   attrs, __builtin_return_address(0));
+ }
+ 
+ /*
+@@ -715,6 +728,7 @@ static void __arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
+ 			   bool is_coherent)
+ {
+ 	struct page *page = pfn_to_page(dma_to_pfn(dev, handle));
++	bool want_vaddr = !dma_get_attr(DMA_ATTR_NO_KERNEL_MAPPING, attrs);
+ 
+ 	if (dma_release_from_coherent(dev, get_order(size), cpu_addr))
+ 		return;
+@@ -726,14 +740,15 @@ static void __arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
+ 	} else if (__free_from_pool(cpu_addr, size)) {
+ 		return;
+ 	} else if (!dev_get_cma_area(dev)) {
+-		__dma_free_remap(cpu_addr, size);
++		if (want_vaddr)
++			__dma_free_remap(cpu_addr, size);
+ 		__dma_free_buffer(page, size);
+ 	} else {
+ 		/*
+ 		 * Non-atomic allocations cannot be freed with IRQs disabled
+ 		 */
+ 		WARN_ON(irqs_disabled());
+-		__free_from_contiguous(dev, page, cpu_addr, size);
++		__free_from_contiguous(dev, page, cpu_addr, size, want_vaddr);
+ 	}
+ }
+ 
+-- 
+2.2.2
