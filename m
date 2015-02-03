@@ -1,187 +1,220 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
-Date: Tue, 03 Feb 2015 18:28:56 +0100
-Message-ID: <1422984536-17769-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: Re: [PATCH 2/2] arm/dma-mapping: Respect NO_KERNEL_MAPPING when we
+ don't have an IOMMU
+Date: Tue, 03 Feb 2015 09:54:40 -0800
+Message-ID: <54D10B60.6020002@codeaurora.org>
+References: <1422953252-10835-1-git-send-email-carlo@caione.org> <1422953252-10835-3-git-send-email-carlo@caione.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:54869 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965956AbbBCRyo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 12:54:44 -0500
+In-Reply-To: <1422953252-10835-3-git-send-email-carlo@caione.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Carlo Caione <carlo@caione.org>, linux-arm-kernel@lists.infradead.org, jstpierre@mecheye.net, drake@endlessm.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, robdclark@gmail.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org, jy0922.shim@samsung.com
 
-On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
-56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
-controller") the second suspend to RAM failed. First suspend worked fine
-but the next one hang just after powering down of secondary CPUs (system
-consumed energy as it would be running but was not responsive).
+On 2/3/2015 12:47 AM, Carlo Caione wrote:
+> From: "Jasper St. Pierre" <jstpierre@mecheye.net>
+>
+> Even without an iommu, NO_KERNEL_MAPPING is still convenient to save on
+> kernel address space in places where we don't need a kernel mapping.
+> Implement support for it in the two places where we're creating an
+> expensive mapping.
+>
+> __alloc_from_pool uses an internal pool from which we already have
+> virtual addresses, so it's not relevant, and __alloc_simple_buffer
+> uses alloc_pages, which will always return a lowmem page, which is
+> already mapped into kernel space, so we can't prevent a mapping for it
+> in that case.
+>
+> Signed-off-by: Jasper St. Pierre <jstpierre@mecheye.net>
+> Signed-off-by: Carlo Caione <carlo@caione.org>
+> Reviewed-by: Rob Clark <robdclark@gmail.com>
+> Reviewed-by: Daniel Drake <dsd@endlessm.com>
+> ---
+>   arch/arm/mm/dma-mapping.c | 67 +++++++++++++++++++++++++++++------------------
+>   1 file changed, 41 insertions(+), 26 deletions(-)
+>
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index a673c7f..6843293 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -289,11 +289,11 @@ static void __dma_free_buffer(struct page *page, size_t size)
+>
+>   static void *__alloc_from_contiguous(struct device *dev, size_t size,
+>   				     pgprot_t prot, struct page **ret_page,
+> -				     const void *caller);
+> +				     const void *caller, bool want_vaddr);
+>
+>   static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+>   				 pgprot_t prot, struct page **ret_page,
+> -				 const void *caller);
+> +				 const void *caller, bool want_vaddr);
+>
+>   static void *
+>   __dma_alloc_remap(struct page *page, size_t size, gfp_t gfp, pgprot_t prot,
+> @@ -357,10 +357,10 @@ static int __init atomic_pool_init(void)
+>
+>   	if (dev_get_cma_area(NULL))
+>   		ptr = __alloc_from_contiguous(NULL, atomic_pool_size, prot,
+> -					      &page, atomic_pool_init);
+> +					      &page, atomic_pool_init, true);
+>   	else
+>   		ptr = __alloc_remap_buffer(NULL, atomic_pool_size, gfp, prot,
+> -					   &page, atomic_pool_init);
+> +					   &page, atomic_pool_init, true);
+>   	if (ptr) {
+>   		int ret;
+>
+> @@ -467,13 +467,15 @@ static void __dma_remap(struct page *page, size_t size, pgprot_t prot)
+>
+>   static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+>   				 pgprot_t prot, struct page **ret_page,
+> -				 const void *caller)
+> +				 const void *caller, bool want_vaddr)
+>   {
+>   	struct page *page;
+> -	void *ptr;
+> +	void *ptr = NULL;
+>   	page = __dma_alloc_buffer(dev, size, gfp);
+>   	if (!page)
+>   		return NULL;
+> +	if (!want_vaddr)
+> +		goto out;
+>
+>   	ptr = __dma_alloc_remap(page, size, gfp, prot, caller);
+>   	if (!ptr) {
+> @@ -481,6 +483,7 @@ static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
+>   		return NULL;
+>   	}
+>
+> + out:
+>   	*ret_page = page;
+>   	return ptr;
+>   }
+> @@ -523,12 +526,12 @@ static int __free_from_pool(void *start, size_t size)
+>
+>   static void *__alloc_from_contiguous(struct device *dev, size_t size,
+>   				     pgprot_t prot, struct page **ret_page,
+> -				     const void *caller)
+> +				     const void *caller, bool want_vaddr)
+>   {
+>   	unsigned long order = get_order(size);
+>   	size_t count = size >> PAGE_SHIFT;
+>   	struct page *page;
+> -	void *ptr;
+> +	void *ptr = NULL;
+>
+>   	page = dma_alloc_from_contiguous(dev, count, order);
+>   	if (!page)
+> @@ -536,6 +539,9 @@ static void *__alloc_from_contiguous(struct device *dev, size_t size,
+>
+>   	__dma_clear_buffer(page, size);
+>
+> +	if (!want_vaddr)
+> +		goto out;
+> +
+>   	if (PageHighMem(page)) {
+>   		ptr = __dma_alloc_remap(page, size, GFP_KERNEL, prot, caller);
+>   		if (!ptr) {
+> @@ -546,17 +552,21 @@ static void *__alloc_from_contiguous(struct device *dev, size_t size,
+>   		__dma_remap(page, size, prot);
+>   		ptr = page_address(page);
+>   	}
+> +
+> + out:
+>   	*ret_page = page;
+>   	return ptr;
+>   }
+>
+>   static void __free_from_contiguous(struct device *dev, struct page *page,
+> -				   void *cpu_addr, size_t size)
+> +				   void *cpu_addr, size_t size, bool want_vaddr)
+>   {
+> -	if (PageHighMem(page))
+> -		__dma_free_remap(cpu_addr, size);
+> -	else
+> -		__dma_remap(page, size, PAGE_KERNEL);
+> +	if (want_vaddr) {
+> +		if (PageHighMem(page))
+> +			__dma_free_remap(cpu_addr, size);
+> +		else
+> +			__dma_remap(page, size, PAGE_KERNEL);
+> +	}
+>   	dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
+>   }
+>
+> @@ -574,12 +584,12 @@ static inline pgprot_t __get_dma_pgprot(struct dma_attrs *attrs, pgprot_t prot)
+>
+>   #define nommu() 1
+>
+> -#define __get_dma_pgprot(attrs, prot)	__pgprot(0)
+> -#define __alloc_remap_buffer(dev, size, gfp, prot, ret, c)	NULL
+> +#define __get_dma_pgprot(attrs, prot)				__pgprot(0)
+> +#define __alloc_remap_buffer(dev, size, gfp, prot, ret, c, wv)	NULL
+>   #define __alloc_from_pool(size, ret_page)			NULL
+> -#define __alloc_from_contiguous(dev, size, prot, ret, c)	NULL
+> +#define __alloc_from_contiguous(dev, size, prot, ret, c, wv)	NULL
+>   #define __free_from_pool(cpu_addr, size)			0
+> -#define __free_from_contiguous(dev, page, cpu_addr, size)	do { } while (0)
+> +#define __free_from_contiguous(dev, page, cpu_addr, size, wv)	do { } while (0)
+>   #define __dma_free_remap(cpu_addr, size)			do { } while (0)
+>
+>   #endif	/* CONFIG_MMU */
+> @@ -599,11 +609,13 @@ static void *__alloc_simple_buffer(struct device *dev, size_t size, gfp_t gfp,
+>
+>
+>   static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+> -			 gfp_t gfp, pgprot_t prot, bool is_coherent, const void *caller)
+> +			 gfp_t gfp, pgprot_t prot, bool is_coherent,
+> +			 struct dma_attrs *attrs, const void *caller)
+>   {
+>   	u64 mask = get_coherent_dma_mask(dev);
+>   	struct page *page = NULL;
+>   	void *addr;
+> +	bool want_vaddr;
+>
+>   #ifdef CONFIG_DMA_API_DEBUG
+>   	u64 limit = (mask + 1) & ~mask;
+> @@ -631,20 +643,21 @@ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+>
+>   	*handle = DMA_ERROR_CODE;
+>   	size = PAGE_ALIGN(size);
+> +	want_vaddr = !dma_get_attr(DMA_ATTR_NO_KERNEL_MAPPING, attrs);
+>
+>   	if (is_coherent || nommu())
+>   		addr = __alloc_simple_buffer(dev, size, gfp, &page);
+>   	else if (!(gfp & __GFP_WAIT))
+>   		addr = __alloc_from_pool(size, &page);
+>   	else if (!dev_get_cma_area(dev))
+> -		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page, caller);
+> +		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page, caller, want_vaddr);
+>   	else
+> -		addr = __alloc_from_contiguous(dev, size, prot, &page, caller);
+> +		addr = __alloc_from_contiguous(dev, size, prot, &page, caller, want_vaddr);
+>
+> -	if (addr)
+> +	if (page)
+>   		*handle = pfn_to_dma(dev, page_to_pfn(page));
+>
+> -	return addr;
+> +	return want_vaddr ? addr : &page;
+>   }
+>
+  
+What happens if __alloc_remap_buffer or __alloc_from_contiguous fails to allocate?
+ From this, its seems like we will return &page which will always be non-null
+so it will look like a success.
 
-The issue was caused by enabling delayed reset assertion for CPU0 just
-after issuing power down of cores. This was introduced for Exynos4 in
-13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
+Thanks,
+Laura
 
-The whole behavior is not well documented but after checking with vendor
-code this should be done like this (on Exynos4):
-1. Enable delayed reset assertion when system is running (for all CPUs).
-2. Disable delayed reset assertion before suspending the system.
-   This can be done after powering off secondary CPUs.
-3. Re-enable the delayed reset assertion when system is resumed.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/common.h  |  2 ++
- arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
- arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
- arch/arm/mach-exynos/suspend.c |  3 +++
- 4 files changed, 34 insertions(+), 37 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index f70eca7ee705..0ef8d4b47102 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -153,6 +153,8 @@ extern void exynos_enter_aftr(void);
- 
- extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
- 
-+extern void exynos_set_delayed_reset_assertion(bool enable);
-+
- extern void s5p_init_cpu(void __iomem *cpuid_addr);
- extern unsigned int samsung_rev(void);
- extern void __iomem *cpu_boot_reg_base(void);
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 2013f73797ed..e2f46295eed7 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -166,6 +166,33 @@ static void __init exynos_init_io(void)
- 	exynos_map_io();
- }
- 
-+/*
-+ * Set or clear the USE_DELAYED_RESET_ASSERTION option. Used by smp code
-+ * and suspend.
-+ *
-+ * This is necessary only on Exynos4 SoCs. When system is running
-+ * USE_DELAYED_RESET_ASSERTION should be set so the ARM CLK clock down
-+ * feature could properly detect global idle state when secondary CPU is
-+ * powered down.
-+ *
-+ * However this should not be set when such system is going into suspend.
-+ */
-+void exynos_set_delayed_reset_assertion(bool enable)
-+{
-+	if (soc_is_exynos4()) {
-+		unsigned int tmp, core_id;
-+
-+		for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
-+			tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-+			if (enable)
-+				tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
-+			else
-+				tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
-+			pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-+		}
-+	}
-+}
-+
- static const struct of_device_id exynos_dt_pmu_match[] = {
- 	{ .compatible = "samsung,exynos3250-pmu" },
- 	{ .compatible = "samsung,exynos4210-pmu" },
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 3f32c47a6d74..19d5c87c842c 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -34,30 +34,6 @@
- 
- extern void exynos4_secondary_startup(void);
- 
--/*
-- * Set or clear the USE_DELAYED_RESET_ASSERTION option, set on Exynos4 SoCs
-- * during hot-(un)plugging CPUx.
-- *
-- * The feature can be cleared safely during first boot of secondary CPU.
-- *
-- * Exynos4 SoCs require setting USE_DELAYED_RESET_ASSERTION during powering
-- * down a CPU so the CPU idle clock down feature could properly detect global
-- * idle state when CPUx is off.
-- */
--static void exynos_set_delayed_reset_assertion(u32 core_id, bool enable)
--{
--	if (soc_is_exynos4()) {
--		unsigned int tmp;
--
--		tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
--		if (enable)
--			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
--		else
--			tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
--		pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
--	}
--}
--
- #ifdef CONFIG_HOTPLUG_CPU
- static inline void cpu_leave_lowpower(u32 core_id)
- {
-@@ -73,8 +49,6 @@ static inline void cpu_leave_lowpower(u32 core_id)
- 	  : "=&r" (v)
- 	  : "Ir" (CR_C), "Ir" (0x40)
- 	  : "cc");
--
--	 exynos_set_delayed_reset_assertion(core_id, false);
- }
- 
- static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-@@ -87,14 +61,6 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- 		/* Turn the CPU off on next WFI instruction. */
- 		exynos_cpu_power_down(core_id);
- 
--		/*
--		 * Exynos4 SoCs require setting
--		 * USE_DELAYED_RESET_ASSERTION so the CPU idle
--		 * clock down feature could properly detect
--		 * global idle state when CPUx is off.
--		 */
--		exynos_set_delayed_reset_assertion(core_id, true);
--
- 		wfi();
- 
- 		if (pen_release == core_id) {
-@@ -355,9 +321,6 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 		udelay(10);
- 	}
- 
--	/* No harm if this is called during first boot of secondary CPU */
--	exynos_set_delayed_reset_assertion(core_id, false);
--
- 	/*
- 	 * now the secondary core is starting up let it run its
- 	 * calibrations, then wait for it to finish
-@@ -404,6 +367,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	exynos_sysram_init();
- 
-+	exynos_set_delayed_reset_assertion(true);
-+
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
- 		scu_enable(scu_base_addr());
- 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 666ec3e5b03f..d4da035cc88a 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -235,6 +235,8 @@ static void exynos_pm_enter_sleep_mode(void)
- 
- static void exynos_pm_prepare(void)
- {
-+	exynos_set_delayed_reset_assertion(false);
-+
- 	/* Set wake-up mask registers */
- 	exynos_pm_set_wakeup_mask();
- 
-@@ -383,6 +385,7 @@ early_wakeup:
- 
- 	/* Clear SLEEP mode set in INFORM1 */
- 	pmu_raw_writel(0x0, S5P_INFORM1);
-+	exynos_set_delayed_reset_assertion(true);
- }
- 
- static void exynos3250_pm_resume(void)
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
