@@ -1,83 +1,74 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v11 4/4] ARM: dts: exynos: Add PPMU node for Exynos4412-based
- TRATS2 board
-Date: Tue, 03 Feb 2015 09:49:11 +0900
-Message-ID: <1422924551-10474-5-git-send-email-cw00.choi@samsung.com>
-References: <1422924551-10474-1-git-send-email-cw00.choi@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: EXYNOS: Handle of of_iomap() failure
+Date: Tue, 03 Feb 2015 12:20:19 +0900
+Message-ID: <054001d03f60$58535150$08f9f3f0$@kernel.org>
+References: <1421077065-30175-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15517 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755367AbbBCAtV (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57631 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751133AbbBCDUY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Feb 2015 19:49:21 -0500
-In-reply-to: <1422924551-10474-1-git-send-email-cw00.choi@samsung.com>
+	Mon, 2 Feb 2015 22:20:24 -0500
+In-reply-to: <1421077065-30175-1-git-send-email-k.kozlowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, kgene@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch add dt node for PPMU_{DMC0|DMC1|LEFTBUS|RIGHTBUS} for
-exynos4412-trats2 board. Each PPMU dt node includes one event of 'PPMU Count3'.
+Krzysztof Kozlowski wrote:
+> 
+> Prevent possible NULL pointer dereference if of_iomap() fails. Handle
+> the error by skipping such power domain.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm_domains.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index 20f267121b3e..fd7640a6b503 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -128,6 +128,13 @@ static __init int exynos4_pm_init_power_domain(void)
+>  		pd->pd.name = kstrdup(np->name, GFP_KERNEL);
+>  		pd->name = pd->pd.name;
+>  		pd->base = of_iomap(np, 0);
+> +		if (!pd->base) {
+> +			dev_warn(&pdev->dev, "Failed to map memory\n");
+> +			kfree(pd);
+> +			of_node_put(np);
+> +			continue;
+> +		}
+> +
+>  		pd->pd.power_off = exynos_pd_power_off;
+>  		pd->pd.power_on = exynos_pd_power_on;
+> 
+> --
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 40 +++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Looks good and applied. BTW if we need more error handling like this, how about
+error handling for failing of of_find_device_by_node() something like following?
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 29231b4..70eac85 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -865,6 +865,46 @@
- 	};
- };
- 
-+&ppmu_dmc0 {
-+	status = "okay";
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 20f2671..234f967 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -116,6 +116,10 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		struct device *dev;
+
+ 		pdev = of_find_device_by_node(np);
++		if (!pdev) {
++			/* error handling */
++		}
 +
-+	events {
-+		ppmu_dmc0_3: ppmu-event3-dmc0 {
-+			event-name = "ppmu-event3-dmc0";
-+		};
-+	};
-+};
-+
-+&ppmu_dmc1 {
-+	status = "okay";
-+
-+	events {
-+		ppmu_dmc1_3: ppmu-event3-dmc1 {
-+			event-name = "ppmu-event3-dmc1";
-+		};
-+	};
-+};
-+
-+&ppmu_leftbus {
-+	status = "okay";
-+
-+	events {
-+		ppmu_leftbus_3: ppmu-event3-leftbus {
-+			event-name = "ppmu-event3-leftbus";
-+		};
-+	};
-+};
-+
-+&ppmu_rightbus {
-+	status = "okay";
-+
-+	events {
-+		ppmu_rightbus_3: ppmu-event3-rightbus {
-+			event-name = "ppmu-event3-rightbus";
-+		};
-+	};
-+};
-+
- &pinctrl_0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep0>;
--- 
-1.8.5.5
+ 		dev = &pdev->dev;
+
+ 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+
+I mean I'm not sure how many error/exception handling is required...
+
+Note you can see your patch in Samsung tree tonight in my time.
+
+Thanks, Kukjin
