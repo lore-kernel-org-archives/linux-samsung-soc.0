@@ -1,54 +1,62 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 6/6] drm/exynos: do not copy adjusted mode into mode
- during crtc mode_set
-Date: Tue, 3 Feb 2015 12:16:18 -0200
-Message-ID: <20150203141618.GB2122@joana>
-References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
- <1422016980-23806-6-git-send-email-gustavo@padovan.org>
- <54CB0E40.1020400@samsung.com> <20150130144420.GE30820@joana>
- <54CF035F.2050502@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V3 13/15] ARM: dts: Exynos4 and Odroid X2/U3 sound device
+ nodes update
+Date: Tue, 3 Feb 2015 16:19:54 +0000
+Message-ID: <20150203161954.GO21293@sirena.org.uk>
+References: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
+ <1421260962-16892-14-git-send-email-s.nawrocki@samsung.com>
+ <20150114195452.GM3043@sirena.org.uk>
+ <07a501d03f69$aba222b0$02e66810$@kernel.org>
+ <54D0AB30.2010504@samsung.com>
+ <20150203131127.GM21293@sirena.org.uk>
+ <54D0D5B0.20803@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dNFEVADhXeTQXwXY"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49298 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755956AbbBCQUG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 11:20:06 -0500
 Content-Disposition: inline
-In-Reply-To: <54CF035F.2050502@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <54D0D5B0.20803@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, sbkim73@samsung.com, drake@endlessm.com, linux-arm-kernel@lists.infradead.org
 
-MjAxNS0wMi0wMiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+OgoKPiBI
-aSwKPiAKPiBPbiAwMS8zMC8yMDE1IDExOjQ0IFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4g
-PiBIaSBKb29ueW91bmcsCj4gPiAKPiA+IDIwMTUtMDEtMzAgSm9vbnlvdW5nIFNoaW0gPGp5MDky
-Mi5zaGltQHNhbXN1bmcuY29tPjoKPiA+IAo+ID4+IEhpLAo+ID4+Cj4gPj4gT24gMDEvMjMvMjAx
-NSAwOTo0MyBQTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+ID4+PiBGcm9tOiBEYW5pZWwgS3Vy
-dHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgo+ID4+Pgo+ID4+PiBUaGUgJ21vZGUnIGlzIHRoZSBt
-b2RlbGluZSBpbmZvcm1hdGlvbiB3aGljaCBzcGVjaWZpZXMgdGhlIGlkZWFsIG1vZGUKPiA+Pj4g
-cmVxdWVzdGVkIGJ5IHRoZSBtb2RlIHNldCBpbml0aWF0b3IgKHVzdWFsbHkgdXNlcnNwYWNlKS4K
-PiA+Pj4gVGhlICdhZGp1c3RlZF9tb2RlJyBpcyB0aGUgYWN0dWFsIGhhcmR3YXJlIG1vZGUgYWZ0
-ZXIgYWxsIHRoZSBjcnRjcwo+ID4+PiBhbmQgZW5jb2RlcnMgaGF2ZSBoYWQgYSBjaGFuY2UgdG8g
-ImZpeCBpdCB1cCIuCj4gPj4+Cj4gPj4+IFRoZSBhZGp1c3RlZF9tb2RlIHN0YXJ0cyBhcyBhIGR1
-cGxpY2F0ZSBvZiB0aGUgbW9kZSBpbgo+ID4+PiBkcm1fY3J0Y19oZWxwZXJfc2V0X21vZGUoKSwg
-YW5kIGdldHMgbW9kaWZpZWQgYXMgcmVxdWlyZWQuICBUaGVyZSBpcyBubwo+ID4+PiByZWFzb24g
-dG8gdG91Y2ggdGhlIG9yaWdpbmFsIHJlcXVlc3RlZCBtb2RlLgo+ID4+Pgo+ID4+Cj4gPj4gQWdy
-ZWUsIGJ1dCBpcyB0aGVyZSBhbnkgc2lkZSBlZmZlY3QgYWZ0ZXIgdGhpcyBjb21taXQ/IFNob3Vs
-ZCB3ZSBzYXZlCj4gPj4gYWRqdXN0ZWRfbW9kZSB0byBvdGhlciB2YXJpYWJsZSBhbmQgdXNlIGl0
-Pwo+ID4gCj4gPiBJIGhhdmVuJ3Qgc2VlbiBhbnkuIFRlc3RlZCBvbiBwZWFjaCBwaSBhbmQgc25v
-dy4gRG8gd2UgaGF2ZSBhbnkgcmVhc29uIHRvIHNhdmUKPiA+IGl0IG5vdz8gSSBkb24ndCB3ZSBo
-YXZlIGEgdXNlciBmb3IgaXQgbm93Lgo+ID4gCj4gCj4gQmVjYXVzZSBjdXJyZW50IGNvZGVzIHVz
-ZSB2YWx1ZXMgb2YgYWRqdXN0ZWRfbW9kZSBpbiBleHlub3MgZHJtIGh3IGRyaXZlcnMuCgpJIGZh
-aWwgdG8gc2VlIHdoZXJlIHRoaXMgaGFwcGVuLiBhZGp1c3RlZF9tb2RlIGlzIHBhc3NlZCB0byB0
-byB0aGUgbW9kZV9zZXQoKQpjYWxsYmFjayBhbmQgZHJpdmVycyBjYW4gdXNlIGl0IGZyb20gdGhl
-cmUgYXMgdGhlIGhkbWkgb25lIGRvZXMgZm9yIGV4YW1wbGUuCgoJR3VzdGF2bwpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--dNFEVADhXeTQXwXY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Feb 03, 2015 at 03:05:36PM +0100, Sylwester Nawrocki wrote:
+> On 03/02/15 14:11, Mark Brown wrote:
+
+> > OK, I can apply them if people want but I'd need a resend - I discarded
+> > them since they'd normally go via the arch tree.
+
+> I will resend the last 3 patches then. There also shouldn't be any issues
+> if 13, 14 are only merged through ASoC tree and patch 15 through Samsung
+> tree.
+
+OK.  Kukjin, are you OK with me applying some or all of these?
+
+--dNFEVADhXeTQXwXY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU0PUqAAoJECTWi3JdVIfQ674H/1lYhtUA5jW0jxVqW3jeU77Y
+mN0vgioa3zP0duZ9pgos6D3TaXzMkKt/an9V9qxbUJV+y0xzeajiRBOq7q+/b3Lo
+dONtQf+geehwVg1G3xydBPvF/E3yG+vP2diA7FVofxEnWMyevR2TiYCK7BVR9wmV
++FOoQSQ+qn1byHCI7DIyaXrCAAIdb9cwtDj5qafEoO7T/E1Wj4Lgax6yyQDhdAqr
+qm9XaRBHsvdkGGarWPuDl5zvbqdlFlAhQUxeErQLjZ/tWI17mRZbk3jQTB6URG/W
+iOCt6GGRsii87J4QpimRotDM+DiPxmu/CJze1hn3Tu4MJbutYElkmNaycGGP+X8=
+=unA0
+-----END PGP SIGNATURE-----
+
+--dNFEVADhXeTQXwXY--
