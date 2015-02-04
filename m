@@ -1,95 +1,87 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] clk: samsung: exynos5433: Move CLK_SCLK_HDMI_SPDIF_DISP clock
- to CMU_TOP domain
-Date: Wed, 04 Feb 2015 10:12:59 +0900
-Message-ID: <1423012379-508-1-git-send-email-cw00.choi@samsung.com>
-References: <1422922437-7414-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1422922437-7414-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos: Fix disharmony when setting plane on/off
+Date: Wed, 04 Feb 2015 11:02:26 +0900
+Message-ID: <54D17DB2.1020207@samsung.com>
+References: <1422970865-23774-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422970865-23774-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch fixes the bug of CLK_SCLK_HDMI_SPDIF_DISP clock because this clock
-should be included in CMU_TOP domain. So, this patch moves the CLK_SCLK_HDMI_
-SPDIF_DISP clock from CMU_MIF to CMU_TOP domain.
-
-Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reported-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
-Depend on:
-This patches has the dependnecy on patch-set[1][2].
-
-[1] [PATCH v5 00/13] clk: samsung: Add the support for exynos5433 clocks
-- https://lkml.org/lkml/2015/2/2/368
-[2] [PATCH v3 0/9] clk: samsung: Add clocks for remaining domains of Exynos5433
-- https://lkml.org/lkml/2015/2/2/784
-
-drivers/clk/samsung/clk-exynos5433.c   | 10 +++++-----
- include/dt-bindings/clock/exynos5433.h |  6 +++---
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 83edbd2..bdd4113 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -661,6 +661,11 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
- 			ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
- 
-+	/* ENABLE_SCLK_TOP_DISP */
-+	GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
-+			"mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
-+			CLK_IGNORE_UNUSED, 0),
-+
- 	/* ENABLE_SCLK_TOP_FSYS */
- 	GATE(CLK_SCLK_PCIE_100_FSYS, "sclk_pcie_100_fsys", "div_sclk_pcie_100",
- 			ENABLE_SCLK_TOP_FSYS, 7, 0, 0),
-@@ -1521,11 +1526,6 @@ static struct samsung_gate_clock mif_gate_clks[] __initdata = {
- 			ENABLE_SCLK_MIF, 1, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_BUS_PLL_ATLAS, "sclk_bus_pll_atlas", "sclk_bus_pll",
- 			ENABLE_SCLK_MIF, 0, CLK_IGNORE_UNUSED, 0),
--
--	/* ENABLE_SCLK_TOP_DISP */
--	GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
--			"mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
--			CLK_IGNORE_UNUSED, 0),
- };
- 
- static struct samsung_cmu_info mif_cmu_info __initdata = {
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 8df9841..13204f5 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -189,8 +189,9 @@
- #define CLK_SCLK_ISP_UART_CAM1		250
- #define CLK_SCLK_ISP_SPI1_CAM1		251
- #define CLK_SCLK_ISP_SPI0_CAM1		252
-+#define CLK_SCLK_HDMI_SPDIF_DISP	253
- 
--#define TOP_NR_CLK			253
-+#define TOP_NR_CLK			254
- 
- /* CMU_CPIF */
- #define CLK_FOUT_MPHY_PLL		1
-@@ -397,9 +398,8 @@
- #define CLK_SCLK_BUS_PLL		198
- #define CLK_SCLK_BUS_PLL_APOLLO		199
- #define CLK_SCLK_BUS_PLL_ATLAS		200
--#define CLK_SCLK_HDMI_SPDIF_DISP	201
- 
--#define MIF_NR_CLK			202
-+#define MIF_NR_CLK			201
- 
- /* CMU_PERIC */
- #define CLK_PCLK_SPI2			1
--- 
-1.8.5.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGksCgpPbiAwMi8wMy8yMDE1IDEwOjQxIFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
+bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
+IFRoaXMgaXNzdWUgd2FzIGNhdXNlZCBieSB0aGUgbGF0ZXN0IGV4eW5vc191cGRhdGVfcGxhbmUo
+KSBjbGVhbiB1cAo+IHRoYXQgdW5pZmllZCBwbGFuZSBvcGVyYXRpb25zLiBBZnRlciB0aG9zZSBj
+aGFuZ2VzIHRoZSBwbGFuZSBmYWlsZWQKPiB0byBnbyB0aGUgT24gc3RhdGUuIFRoaXMgcGF0Y2gg
+Zml4IHRoaXMgcHJvYmxlbSBieSBkb2luZyBjb3JyZWN0IGFjY291bnQKPiBvZiBleHlub3NfY3J0
+Yy0+ZW5hYmxlZC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8u
+cGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9jcnRjLmMgfCAxMiArKysrKysrKysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEw
+IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fY3J0Yy5jCj4gaW5kZXggYTg1YzQ1MS4uMWRiZDBlMyAxMDA2NDQKPiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC0xMTksNiArMTE5LDcgQEAg
+c3RhdGljIGludCBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfYmFzZShzdHJ1Y3QgZHJtX2NydGMg
+KmNydGMsIGludCB4LCBpbnQgeSwKPiAgCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gY3J0
+Yy0+cHJpbWFyeS0+ZmI7Cj4gIAl1bnNpZ25lZCBpbnQgY3J0Y193Owo+ICAJdW5zaWduZWQgaW50
+IGNydGNfaDsKPiArCWludCByZXQ7Cj4gIAo+ICAJLyogd2hlbiBmcmFtZWJ1ZmZlciBjaGFuZ2lu
+ZyBpcyByZXF1ZXN0ZWQsIGNydGMncyBkcG1zIHNob3VsZCBiZSBvbiAqLwo+ICAJaWYgKGV4eW5v
+c19jcnRjLT5kcG1zID4gRFJNX01PREVfRFBNU19PTikgewo+IEBAIC0xMjksOCArMTMwLDE1IEBA
+IHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRj
+ICpjcnRjLCBpbnQgeCwgaW50IHksCj4gIAljcnRjX3cgPSBmYi0+d2lkdGggLSB4Owo+ICAJY3J0
+Y19oID0gZmItPmhlaWdodCAtIHk7Cj4gIAo+IC0JcmV0dXJuIGV4eW5vc191cGRhdGVfcGxhbmUo
+Y3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCj4gLQkJCQkgICBjcnRjX3csIGNydGNfaCwg
+eCwgeSwgY3J0Y193LCBjcnRjX2gpOwo+ICsJcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRj
+LT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiArCQkJCSAgY3J0Y193LCBjcnRjX2gsIHgsIHks
+IGNydGNfdywgY3J0Y19oKTsKPiArCWlmICghcmV0KQo+ICsJCXJldHVybiByZXQ7Cj4gKwo+ICsJ
+ZXh5bm9zX3BsYW5lX2RwbXMoY3J0Yy0+cHJpbWFyeSwgRFJNX01PREVfRFBNU19PTik7Cj4gKwo+
+ICsJcmV0dXJuIDA7Cj4gKwo+ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNf
+ZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gCgpUaGlzIHBhdGNoIGZhaWxzIHRvIGZp
+eCBkaXNoYXJtb255IHByb2JsZW0gb2YgcGxhbmUgb24vb2ZmIGJlY2F1c2UgaXQKY2F1c2VzIHRo
+ZSBwcm9ibGVtIHdoZW4gZG8gc2V0cGxhbmUuCgpQbGVhc2UgdGVzdCBzZXRwbGFuZSBsaWtlIGJl
+bG93IGFuZCBpIGdldCBlcnJvcnMgd2hlbiB0ZXJtaW5hdGUgaXQuCgpUaGFua3MuCgojIG1vZGV0
+ZXN0IC1QIDI0OjE5MjB4MTA4MAp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ2k5MTUnLi4uZmFpbGVk
+Lgp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ3JhZGVvbicuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVu
+IGRldmljZSAnbm91dmVhdScuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVuIGRldmljZSAndm13Z2Z4
+Jy4uLmZhaWxlZC4KdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdvbWFwZHJtJy4uLmZhaWxlZC4KdHJ5
+aW5nIHRvIG9wZW4gZGV2aWNlICdleHlub3MnLi4uc3VjY2Vzcy4KdGVzdGluZyAxOTIweDEwODBA
+WFIyNCBvdmVybGF5IHBsYW5lIDE3CgpbICAgMzMuNzY2MjY0XSBQQUdFIEZBVUxUIG9jY3VycmVk
+IGF0IDB4MjA4MDFlODAgYnkgMTQ2NTAwMDAuc3lzbW11KFBhZ2UgdGFibGUgYmFzZTogMHg2ZTNm
+MDAwMCkKWyAgIDMzLjc3MzMxMF0gIEx2MSBlbnRyeTogMHg2ZTIyODgwMQpbICAgMzMuNzc2NzQ4
+XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KWyAgIDMzLjc4MTI4M10ga2Vy
+bmVsIEJVRyBhdCBkcml2ZXJzL2lvbW11L2V4eW5vcy1pb21tdS5jOjM1OCEKWyAgIDMzLjc4Njgy
+OV0gSW50ZXJuYWwgZXJyb3I6IE9vcHMgLSBCVUc6IDAgWyMxXSBQUkVFTVBUIFNNUCBBUk0KWyAg
+IDMzLjc5MjYzNF0gTW9kdWxlcyBsaW5rZWQgaW46ClsgICAzMy43OTU2NzJdIENQVTogMCBQSUQ6
+IDE1NjEgQ29tbTogbW9kZXRlc3QgTm90IHRhaW50ZWQgMy4xOS4wLXJjNy0wMDY5Mi1nOTYzMGJl
+MCAjMTEyClsgICAzMy44MDM1NTFdIEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0
+dGVuZWQgRGV2aWNlIFRyZWUpClsgICAzMy44MDk2MjBdIHRhc2s6IGVkNGE1NDAwIHRpOiBlZDg0
+YzAwMCB0YXNrLnRpOiBlZDg0YzAwMApbICAgMzMuODE1MDAyXSBQQyBpcyBhdCBleHlub3Nfc3lz
+bW11X2lycSsweDE4MC8weDIwNApbICAgMzMuODE5NzU4XSBMUiBpcyBhdCBleHlub3Nfc3lzbW11
+X2lycSsweGQ0LzB4MjA0ClsgICAzMy44MjQ0MzldIHBjIDogWzxjMDI5OGI3ND5dICAgIGxyIDog
+WzxjMDI5OGFjOD5dICAgIHBzcjogNjAwMDAxOTMKWyAgIDMzLjgyNDQzOV0gc3AgOiBlZDg0ZGNl
+MCAgaXAgOiAwMDAwMDAwMCAgZnAgOiAwMDBiOWU0ZApbICAgMzMuODM1ODc1XSByMTA6IGMwN2Fl
+M2E0ICByOSA6IDAwMDAwMjA4ICByOCA6IDIwODAxZTgwClsgICAzMy44NDEwNzRdIHI3IDogZWUz
+ZjAwMDAgIHI2IDogZWUwZGYxMjggIHI1IDogZWUwZGYxMTAgIHI0IDogMDAwMDAwMDAKWyAgIDMz
+Ljg0NzU3NF0gcjMgOiA2ZTIyODgwMSAgcjIgOiA2ZTIyODgwMSAgcjEgOiBlZTM3OTYxMCAgcjAg
+OiBlZTEzYTUwMApbICAgMzMuODU0MDc0XSBGbGFnczogblpDdiAgSVJRcyBvZmYgIEZJUXMgb24g
+IE1vZGUgU1ZDXzMyICBJU0EgQVJNICBTZWdtZW50IHVzZXIKWyAgIDMzLjg2MTI2NV0gQ29udHJv
+bDogMTBjNTM4N2QgIFRhYmxlOiA2ZTE0YzA2YSAgREFDOiAwMDAwMDAxNQpbICAgMzMuODY2OTg0
+XSBQcm9jZXNzIG1vZGV0ZXN0IChwaWQ6IDE1NjEsIHN0YWNrIGxpbWl0ID0gMHhlZDg0YzIzOCkK
+WyAgIDMzLjg3MzEzNl0gU3RhY2s6ICgweGVkODRkY2UwIHRvIDB4ZWQ4NGUwMDApCi4uLgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
