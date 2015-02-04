@@ -1,66 +1,76 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 1/3] Samsung exynos_defconfig updates for v3.20
-Date: Wed, 04 Feb 2015 23:31:23 +0900
-Message-ID: <54D22D3B.4010704@kernel.org>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 11/14] drm/exynos: atomic phase 2: keep track of
+ framebuffer pointer
+Date: Wed, 4 Feb 2015 15:33:02 +0100
+Message-ID: <20150204143302.GJ14009@phenom.ffwll.local>
+References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
+ <1422990871-21355-12-git-send-email-gustavo@padovan.org>
+ <54D1CFE8.6070100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:36543 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933819AbbBDOba (ORCPT
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:37474 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933819AbbBDObk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 09:31:30 -0500
+	Wed, 4 Feb 2015 09:31:40 -0500
+Received: by mail-wg0-f47.google.com with SMTP id n12so2066508wgh.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Feb 2015 06:31:39 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <54D1CFE8.6070100@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-Hi Arnd, Olof, Kevin
+On Wed, Feb 04, 2015 at 04:53:12PM +0900, Joonyoung Shim wrote:
+> Hi,
+> 
+> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > 
+> > Use drm_atomic_set_fb_for_plane() in the legacy page_flip path to keep
+> > track of the framebuffer pointer and reference.
+> > 
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > index 660ad64..2edc73c 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > @@ -211,6 +211,9 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+> >  			    crtc_w, crtc_h, crtc->x, crtc->y,
+> >  			    crtc_w, crtc_h);
+> >  
+> > +	if (crtc->primary->state)
+> > +		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
+> > +
+> 
+> I'm not sure whether this needs, how about go to
+> drm_atomic_helper_page_flip?
 
-Here is late pull request for exynos_defconfig updates for v3.20 and if
-you're OK please pull.
+You can only do that once you have full async atomic commit support, which
+is done in phase 3. Until that's the case you need to keep this little bit
+of temporary fixup code around.
 
-Note this is based on previous exynos_defconfig pull-request during
-v3.19-rc.
+I've had the same in my exynos branch, we have the same now in i915 (well
+it looks a bit different since we dont use all the helpers but roll some
+things ourselves).
 
-Thanks,
-Kukjin
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
+> 
+> Thanks.
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-The following changes since commit 842ebf60bbad6d6e5ebaa063409fefdd2a7eb992:
-
-  ARM: exynos_defconfig: Enable LM90 driver (2014-12-23 00:20:44 +0900)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-defconfig
-
-for you to fetch changes up to 39ecb024e9727c9c29765ca233bdca91c8589d01:
-
-  ARM: exynos_defconfig: Enable CONFIG_FHANDLE (2015-01-24 13:50:01 +0900)
-
-----------------------------------------------------------------
-Samsung exynos_defconfig updates for v3.20
-
-- Enable CONFIG_LOCKUP_DETECTOR
-  : to detect hard lockup and soft lockup
-- Enable PMIC and MUIC
-  : for battery charger, fuel-gauge, regulators
-- Enable CONFIG_FHANDLE
-  : this is required by systemd
-
-----------------------------------------------------------------
-Anand Moon (1):
-      ARM: exynos_defconfig: Enable CONFIG_LOCKUP_DETECTOR
-
-Krzysztof Kozlowski (1):
-      ARM: exynos_defconfig: Enable PMIC and MUIC drivers for Gears and
-Trats2
-
-Sjoerd Simons (1):
-      ARM: exynos_defconfig: Enable CONFIG_FHANDLE
-
- arch/arm/configs/exynos_defconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
