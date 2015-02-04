@@ -1,253 +1,146 @@
-From: Carlo Caione <carlo@caione.org>
-Subject: [PATCH v2 2/2] arm/dma-mapping: Respect NO_KERNEL_MAPPING when we don't have an IOMMU
-Date: Wed,  4 Feb 2015 10:23:20 +0100
-Message-ID: <1423041800-27859-3-git-send-email-carlo@caione.org>
-References: <1423041800-27859-1-git-send-email-carlo@caione.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:49785 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753826AbbBDJXs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 04:23:48 -0500
-Received: by mail-wi0-f170.google.com with SMTP id bs8so27814212wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Feb 2015 01:23:46 -0800 (PST)
-In-Reply-To: <1423041800-27859-1-git-send-email-carlo@caione.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 00/18] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Wed, 4 Feb 2015 17:53:25 +0800
+Message-ID: <CAOhR-w3xdFtNGi=cfEM=N4ntjrjGwMUzxnqHWoRwy6r-AQOAjA@mail.gmail.com>
+References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1422028288-891-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linaro MM SIG Mailman List <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, jstpierre@mecheye.net, drake@endlessm.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, robdclark@gmail.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org, jy0922.shim@samsung.com, lauraa@codeaurora.org
-Cc: Carlo Caione <carlo@caione.org>
 
-From: "Jasper St. Pierre" <jstpierre@mecheye.net>
+Hi Marek,
+This is patch set against v3.19-rc4 plus 'Add HDMI support for
+Exynos5420 platform', right?
+No other dependencies? If there is, do you have a public git tree to be cloned?
 
-Even without an iommu, NO_KERNEL_MAPPING is still convenient to save on
-kernel address space in places where we don't need a kernel mapping.
-Implement support for it in the two places where we're creating an
-expensive mapping.
+Thanks.
 
-__alloc_from_pool uses an internal pool from which we already have
-virtual addresses, so it's not relevant, and __alloc_simple_buffer uses
-alloc_pages, which will always return a lowmem page, which is already
-mapped into kernel space, so we can't prevent a mapping for it in that
-case.
-
-Signed-off-by: Jasper St. Pierre <jstpierre@mecheye.net>
-Signed-off-by: Carlo Caione <carlo@caione.org>
-Reviewed-by: Rob Clark <robdclark@gmail.com>
-Reviewed-by: Daniel Drake <dsd@endlessm.com>
----
- arch/arm/mm/dma-mapping.c | 67 +++++++++++++++++++++++++++++------------------
- 1 file changed, 41 insertions(+), 26 deletions(-)
-
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index a673c7f..d767bba 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -289,11 +289,11 @@ static void __dma_free_buffer(struct page *page, size_t size)
- 
- static void *__alloc_from_contiguous(struct device *dev, size_t size,
- 				     pgprot_t prot, struct page **ret_page,
--				     const void *caller);
-+				     const void *caller, bool want_vaddr);
- 
- static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
- 				 pgprot_t prot, struct page **ret_page,
--				 const void *caller);
-+				 const void *caller, bool want_vaddr);
- 
- static void *
- __dma_alloc_remap(struct page *page, size_t size, gfp_t gfp, pgprot_t prot,
-@@ -357,10 +357,10 @@ static int __init atomic_pool_init(void)
- 
- 	if (dev_get_cma_area(NULL))
- 		ptr = __alloc_from_contiguous(NULL, atomic_pool_size, prot,
--					      &page, atomic_pool_init);
-+					      &page, atomic_pool_init, true);
- 	else
- 		ptr = __alloc_remap_buffer(NULL, atomic_pool_size, gfp, prot,
--					   &page, atomic_pool_init);
-+					   &page, atomic_pool_init, true);
- 	if (ptr) {
- 		int ret;
- 
-@@ -467,13 +467,15 @@ static void __dma_remap(struct page *page, size_t size, pgprot_t prot)
- 
- static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
- 				 pgprot_t prot, struct page **ret_page,
--				 const void *caller)
-+				 const void *caller, bool want_vaddr)
- {
- 	struct page *page;
--	void *ptr;
-+	void *ptr = NULL;
- 	page = __dma_alloc_buffer(dev, size, gfp);
- 	if (!page)
- 		return NULL;
-+	if (!want_vaddr)
-+		goto out;
- 
- 	ptr = __dma_alloc_remap(page, size, gfp, prot, caller);
- 	if (!ptr) {
-@@ -481,6 +483,7 @@ static void *__alloc_remap_buffer(struct device *dev, size_t size, gfp_t gfp,
- 		return NULL;
- 	}
- 
-+ out:
- 	*ret_page = page;
- 	return ptr;
- }
-@@ -523,12 +526,12 @@ static int __free_from_pool(void *start, size_t size)
- 
- static void *__alloc_from_contiguous(struct device *dev, size_t size,
- 				     pgprot_t prot, struct page **ret_page,
--				     const void *caller)
-+				     const void *caller, bool want_vaddr)
- {
- 	unsigned long order = get_order(size);
- 	size_t count = size >> PAGE_SHIFT;
- 	struct page *page;
--	void *ptr;
-+	void *ptr = NULL;
- 
- 	page = dma_alloc_from_contiguous(dev, count, order);
- 	if (!page)
-@@ -536,6 +539,9 @@ static void *__alloc_from_contiguous(struct device *dev, size_t size,
- 
- 	__dma_clear_buffer(page, size);
- 
-+	if (!want_vaddr)
-+		goto out;
-+
- 	if (PageHighMem(page)) {
- 		ptr = __dma_alloc_remap(page, size, GFP_KERNEL, prot, caller);
- 		if (!ptr) {
-@@ -546,17 +552,21 @@ static void *__alloc_from_contiguous(struct device *dev, size_t size,
- 		__dma_remap(page, size, prot);
- 		ptr = page_address(page);
- 	}
-+
-+ out:
- 	*ret_page = page;
- 	return ptr;
- }
- 
- static void __free_from_contiguous(struct device *dev, struct page *page,
--				   void *cpu_addr, size_t size)
-+				   void *cpu_addr, size_t size, bool want_vaddr)
- {
--	if (PageHighMem(page))
--		__dma_free_remap(cpu_addr, size);
--	else
--		__dma_remap(page, size, PAGE_KERNEL);
-+	if (want_vaddr) {
-+		if (PageHighMem(page))
-+			__dma_free_remap(cpu_addr, size);
-+		else
-+			__dma_remap(page, size, PAGE_KERNEL);
-+	}
- 	dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT);
- }
- 
-@@ -574,12 +584,12 @@ static inline pgprot_t __get_dma_pgprot(struct dma_attrs *attrs, pgprot_t prot)
- 
- #define nommu() 1
- 
--#define __get_dma_pgprot(attrs, prot)	__pgprot(0)
--#define __alloc_remap_buffer(dev, size, gfp, prot, ret, c)	NULL
-+#define __get_dma_pgprot(attrs, prot)				__pgprot(0)
-+#define __alloc_remap_buffer(dev, size, gfp, prot, ret, c, wv)	NULL
- #define __alloc_from_pool(size, ret_page)			NULL
--#define __alloc_from_contiguous(dev, size, prot, ret, c)	NULL
-+#define __alloc_from_contiguous(dev, size, prot, ret, c, wv)	NULL
- #define __free_from_pool(cpu_addr, size)			0
--#define __free_from_contiguous(dev, page, cpu_addr, size)	do { } while (0)
-+#define __free_from_contiguous(dev, page, cpu_addr, size, wv)	do { } while (0)
- #define __dma_free_remap(cpu_addr, size)			do { } while (0)
- 
- #endif	/* CONFIG_MMU */
-@@ -599,11 +609,13 @@ static void *__alloc_simple_buffer(struct device *dev, size_t size, gfp_t gfp,
- 
- 
- static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
--			 gfp_t gfp, pgprot_t prot, bool is_coherent, const void *caller)
-+			 gfp_t gfp, pgprot_t prot, bool is_coherent,
-+			 struct dma_attrs *attrs, const void *caller)
- {
- 	u64 mask = get_coherent_dma_mask(dev);
- 	struct page *page = NULL;
- 	void *addr;
-+	bool want_vaddr;
- 
- #ifdef CONFIG_DMA_API_DEBUG
- 	u64 limit = (mask + 1) & ~mask;
-@@ -631,20 +643,21 @@ static void *__dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
- 
- 	*handle = DMA_ERROR_CODE;
- 	size = PAGE_ALIGN(size);
-+	want_vaddr = !dma_get_attr(DMA_ATTR_NO_KERNEL_MAPPING, attrs);
- 
- 	if (is_coherent || nommu())
- 		addr = __alloc_simple_buffer(dev, size, gfp, &page);
- 	else if (!(gfp & __GFP_WAIT))
- 		addr = __alloc_from_pool(size, &page);
- 	else if (!dev_get_cma_area(dev))
--		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page, caller);
-+		addr = __alloc_remap_buffer(dev, size, gfp, prot, &page, caller, want_vaddr);
- 	else
--		addr = __alloc_from_contiguous(dev, size, prot, &page, caller);
-+		addr = __alloc_from_contiguous(dev, size, prot, &page, caller, want_vaddr);
- 
--	if (addr)
-+	if (page)
- 		*handle = pfn_to_dma(dev, page_to_pfn(page));
- 
--	return addr;
-+	return want_vaddr ? addr : page;
- }
- 
- /*
-@@ -661,7 +674,7 @@ void *arm_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
- 		return memory;
- 
- 	return __dma_alloc(dev, size, handle, gfp, prot, false,
--			   __builtin_return_address(0));
-+			   attrs, __builtin_return_address(0));
- }
- 
- static void *arm_coherent_dma_alloc(struct device *dev, size_t size,
-@@ -674,7 +687,7 @@ static void *arm_coherent_dma_alloc(struct device *dev, size_t size,
- 		return memory;
- 
- 	return __dma_alloc(dev, size, handle, gfp, prot, true,
--			   __builtin_return_address(0));
-+			   attrs, __builtin_return_address(0));
- }
- 
- /*
-@@ -715,6 +728,7 @@ static void __arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
- 			   bool is_coherent)
- {
- 	struct page *page = pfn_to_page(dma_to_pfn(dev, handle));
-+	bool want_vaddr = !dma_get_attr(DMA_ATTR_NO_KERNEL_MAPPING, attrs);
- 
- 	if (dma_release_from_coherent(dev, get_order(size), cpu_addr))
- 		return;
-@@ -726,14 +740,15 @@ static void __arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
- 	} else if (__free_from_pool(cpu_addr, size)) {
- 		return;
- 	} else if (!dev_get_cma_area(dev)) {
--		__dma_free_remap(cpu_addr, size);
-+		if (want_vaddr)
-+			__dma_free_remap(cpu_addr, size);
- 		__dma_free_buffer(page, size);
- 	} else {
- 		/*
- 		 * Non-atomic allocations cannot be freed with IRQs disabled
- 		 */
- 		WARN_ON(irqs_disabled());
--		__free_from_contiguous(dev, page, cpu_addr, size);
-+		__free_from_contiguous(dev, page, cpu_addr, size, want_vaddr);
- 	}
- }
- 
--- 
-2.2.2
+On 23 January 2015 at 23:51, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hello Everyone,
+>
+> This is yet another attempt to get Exynos SYSMMU driver with integrated
+> with IOMMU & DMA-mapping subsystems. The main change from previous
+> version is a rebase onto some more pending Exynos DTS patches and minor
+> fixes of the reported issues.
+>
+> Merge plan for this patchset:
+>
+> 1. All iommu related patches (with 'iommu: exynos') can be merged to
+> iommu tree. They don't have any direct dependencies on the DTS, DRM and
+> power domain initialization change - without them the driver will simply
+> not initialize, when no exynos,sysmmu nodes are provided in device tree.
+>
+> Joerg, could you merge those patches?
+>
+>
+> 2. DTS and power domain patches should go to Samsung Exynos tree. Those
+> patches depends on earlier DTS patches for Exynos SoCs, which make
+> this patchset really complete:
+> - 'ARM: DTS: Exynos: convert to generic power domain bindings'
+>   (http://www.spinics.net/lists/linux-samsung-soc/msg40584.html)
+> - '[PATCH v4 0/7] Enable HDMI support on Exynos platforms'
+>   (http://www.spinics.net/lists/arm-kernel/msg391148.html)
+> - '[PATCH 0/2] Add HDMI support for Exynos5420 platform'
+>   (http://www.spinics.net/lists/linux-samsung-soc/msg41364.html)
+>
+> Kukjin, could you merge those patches?
+>
+>
+> 3. Exynos DRM fix. This patch in my opinion should go Exynos DRM tree.
+>
+> Inki, could you merge it?
+>
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+>
+> Changelog:
+>
+> v5:
+> - rebased onto 'Add HDMI support for Exynos5420 platform' patchset
+> - fixed 'const' issue in 'iommu: exynos: init from dt-specific callback
+>   instead of initcall' patch, thanks to Tobias Jakobi for reporting it
+> - fixed copy-paste typo in exynos5250 dts patch
+>
+> v4: http://www.spinics.net/lists/linux-samsung-soc/msg41177.html
+> - rebased onto v3.19-rc4 and other Exynos DTS queued patches
+> - added DTS patch for Exynos 5250 & 5420/5422/5800
+>
+> v3: http://www.spinics.net/lists/linux-samsung-soc/msg39168.html
+> - rebased onto "[RFC PATCH v4 0/8] Introduce automatic DMA
+>   configuration for IOMMU masters"
+> - added some minor fixes for iommu and dma-mapping frameworks
+>
+> v2: http://thread.gmane.org/gmane.linux.kernel.iommu/6472/
+> - rebased onto "[RFC PATCH v3 0/7] Introduce automatic DMA
+>   configuration for IOMMU masters" patches:
+>   http://www.spinics.net/lists/arm-kernel/msg362076.html
+> - changed initialization from bus notifiers to DT related callbacks
+> - removed support for separate IO address spaces - this will be
+>   discussed separately after the basic support gets merged
+> - removed support for power domain notifier-based runtime power
+>   management - this also will be discussed separately later
+>
+> v1: https://lkml.org/lkml/2014/8/5/183
+> - initial version, feature complete, completely rewrote integration
+>   approach
+>
+>
+> Patch summary:
+>
+> Marek Szyprowski (18):
+>   drm: exynos: detach from default dma-mapping domain on init
+>   arm: exynos: pm_domains: add support for devices registered before
+>     arch_initcall
+>   ARM: dts: exynos4: add sysmmu nodes
+>   ARM: dts: exynos5250: add sysmmu nodes
+>   ARM: dts: exynos5420: add sysmmu nodes
+>   iommu: exynos: don't read version register on every tlb operation
+>   iommu: exynos: remove unused functions
+>   iommu: exynos: remove useless spinlock
+>   iommu: exynos: refactor function parameters to simplify code
+>   iommu: exynos: remove unused functions, part 2
+>   iommu: exynos: remove useless device_add/remove callbacks
+>   iommu: exynos: add support for binding more than one sysmmu to master
+>     device
+>   iommu: exynos: add support for runtime_pm
+>   iommu: exynos: rename variables to reflect their purpose
+>   iommu: exynos: document internal structures
+>   iommu: exynos: remove excessive includes and sort others
+>     alphabetically
+>   iommu: exynos: init from dt-specific callback instead of initcall
+>   iommu: exynos: add callback for initializing devices from device tree
+>
+>  arch/arm/boot/dts/exynos4.dtsi            | 118 +++++++
+>  arch/arm/boot/dts/exynos4210.dtsi         |  23 ++
+>  arch/arm/boot/dts/exynos4x12.dtsi         |  82 +++++
+>  arch/arm/boot/dts/exynos5250.dtsi         | 250 +++++++++++++++
+>  arch/arm/boot/dts/exynos5420.dtsi         | 181 +++++++++++
+>  arch/arm/mach-exynos/pm_domains.c         |   9 +-
+>  drivers/gpu/drm/exynos/exynos_drm_iommu.c |   3 +
+>  drivers/iommu/exynos-iommu.c              | 492 ++++++++++++++----------------
+>  8 files changed, 888 insertions(+), 270 deletions(-)
+>
+> --
+> 1.9.2
+>
+> _______________________________________________
+> iommu mailing list
+> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
