@@ -1,76 +1,58 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 02/14] drm/exynos: Remove exynos_plane_dpms() call with
- no effect
-Date: Wed, 4 Feb 2015 15:16:45 +0100
-Message-ID: <20150204141645.GE14009@phenom.ffwll.local>
-References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-3-git-send-email-gustavo@padovan.org>
- <54D1CD81.6020704@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 0/8] PM / Domains: Re-structure code for adding/removing devices to genpd
+Date: Wed, 04 Feb 2015 15:39:49 +0100
+Message-ID: <5703029.cMXmjeytH4@vostro.rjw.lan>
+References: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:52711 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964821AbbBDOPY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 09:15:24 -0500
-Received: by mail-wi0-f174.google.com with SMTP id n3so32128333wiv.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Feb 2015 06:15:22 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <54D1CD81.6020704@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-On Wed, Feb 04, 2015 at 04:42:57PM +0900, Joonyoung Shim wrote:
-> Hi,
+On Tuesday, January 27, 2015 09:13:37 PM Ulf Hansson wrote:
+> While adding error handling of genpd's ->attach_dev() callback, I realized that
+> we also had a need to re-structure some of the code which deals with
+> adding/removing devices to genpd. Especially the APIs, __pm_genpd_add_device()
+> and pm_genpd_remove_device() deserved some attention.
 > 
-> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > 
-> > exynos_plane_dpms(DRM_MODE_DPMS_ON) calls the win_enable()'s callback
-> > from the underlying layer. However neither one of these layers implement
-> > win_enable() - FIMD, Mixer and VIDI. Thus the call to exynos_plane_dpms()
-> > is pointless.
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > index b2a4b84..ad675fb 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > @@ -65,8 +65,6 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
-> >  
-> >  	if (exynos_crtc->ops->commit)
-> >  		exynos_crtc->ops->commit(exynos_crtc);
-> > -
-> > -	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
+> Patch 1 -> 4, can be considered as more simple cleanups and should not impact
+> the behavior for current clients using the APIs. 
 > 
-> As i said, this needs to keep pair enabled flag of struct
-> exynos_drm_plane.
+> Patch 5, eliminates a mutex for generic_pm_domain_data by re-order the
+> initialization/cleanup of dev_pm_qos notifiers.
+> 
+> Patch 6, move some code around to fix a potenial memory leakage of a struct
+> pm_subsys_data.
+> 
+> Patch 7, code restructuring which impacts locking behavior while adding/removing
+> devices. Should improve code readability and decrease critical regions of
+> holding locks.
+> 
+> Patch 8, Adds error handling of genpd's ->attach_dev() callback
+> 
+> 
+> Ulf Hansson (8):
+>   PM / Domains: Rename __pm_genpd_alloc|free_dev_data()
+>   PM / Domains: Remove reference counting for the generic_pm_domain_data
+>   PM / Domains: Don't allow an existing generic_pm_domain_data
+>   PM / Domains: Don't check for an existing device when adding a new
+>   PM / Domains: Eliminate the mutex for the generic_pm_domain_data
+>   PM / Domains: Free pm_subsys_data in error path in
+>     __pm_genpd_add_device()
+>   PM / Domains: Re-order initialization of generic_pm_domain_data
+>   PM / Domains: Handle errors from genpd's ->attach_dev() callback
+> 
+>  drivers/base/power/domain.c | 137 +++++++++++++++++++++-----------------------
+>  include/linux/pm_domain.h   |   2 -
+>  2 files changed, 65 insertions(+), 74 deletions(-)
 
-The reason exynos needs that exynos_plane->enable is because it has its
-own per-plane dpms state. There's two problems with that:
-- It's highyl non-standard, the drm kms way is to just disable the plane
-  and not have some additional knob on top.
-- The atomic helpers will not be able to handle this. They assume that
-  there's only one dpms knob for the entire display pipeline, and
-  per-plane enable/disable is handled by setting plane->state->crtc, which
-  must be set iff plane->state->fb is set right now.
+Whole series queued up for 3.20, thanks!
 
-I recommend we rip this all out if we can adjust existing userspace to
-stop using the "mode" property on planes and crtcs.
 
-And with that non-standard exynos plane mode thing gone we can indeed rip
-out exynos_plane_dpms and exynos_plane->enabled and just directly call
-manager->ops->win_enable/disble. And then rip out the win_enable since
-it's unused.
--Daniel
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
