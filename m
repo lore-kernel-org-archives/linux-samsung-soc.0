@@ -1,92 +1,95 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v5 0/9] Enable HDMI support on Exynos platforms
-Date: Wed, 04 Feb 2015 09:09:46 +0900
-Message-ID: <54D1634A.4040300@samsung.com>
-References: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com>
- <066101d03f65$a870dcc0$f9529640$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <066101d03f65$a870dcc0$f9529640$@kernel.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kukjin Kim <kgene@kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Tobias Jakobi' <Liquid.Acid@gmx.net>, dri-devel@lists.freedesktop.org, 'Daniel Drake' <drake@endlessm.com>, 'Andrzej Hajda' <a.hajda@samsung.com>, kyungmin.park@samsung.com, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] clk: samsung: exynos5433: Move CLK_SCLK_HDMI_SPDIF_DISP clock
+ to CMU_TOP domain
+Date: Wed, 04 Feb 2015 10:12:59 +0900
+Message-ID: <1423012379-508-1-git-send-email-cw00.choi@samsung.com>
+References: <1422922437-7414-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1422922437-7414-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpPbiAwMi8wMy8yMDE1IDEyOjU4IFBNLCBLdWtqaW4gS2ltIHdyb3RlOgo+IE1hcmVrIFN6
-eXByb3dza2kgd3JvdGU6Cj4+Cj4+IEhpIGFsbCwKPj4KPj4gVGhpcyBpcyB5ZXQgYW5vdGhlciB1
-cGRhdGUgb24gcGF0Y2hzZXQsIHdoaWNoIGVuYWJsZXMgSERNSSBzdXBwb3J0IGZvcgo+PiBFeHlu
-b3MgYmFzZWQgcGxhdGZvcm1zLgo+Pgo+PiBCZXNpZGUgRFRTIGNoYW5nZXMsIHRoaXMgcGF0Y2hz
-ZXQgYWRkcyBwYXJlbnQgZG9tYWluIHN1cHBvcnQgZm9yIEV4eW5vcwo+PiBQTSBkb21haW5zIGFu
-ZCBhZGQgc3VwcG9ydCBmb3IgJ2hkbWknIGNsb2NrIGRpcmVjdGx5IHRvIEV4eW5vcyBEUk0gbWl4
-ZXIKPj4gZHJpdmVyLgo+Pgo+PiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gc2Ftc3VuZy9mb3It
-bmV4dCBicmFuY2ggYW5kICdQTSAvIERvbWFpbnM6Cj4+IEV4cG9ydCBvZl9nZW5wZF9nZXRfZnJv
-bV9wcm92aWRlciBmdW5jdGlvbicgcGF0Y2ggbWVyZ2VkIGFzIGNvbW1pdAo+PiA3NDk2ZmNiZThh
-NjQzMDk3ZWZjMDYxMTYwZTFjM2I2NWVlMmZhMzUwIHRvIHYzLjE5LXJjNC4KPj4KPj4gUmVnYXJk
-cwo+PiBNYXJlayBTenlwcm93c2tpCj4+Cj4+Cj4+IENoYW5nZWxvZzoKPj4KPj4gdjU6Cj4+IC0g
-Zml4ZWQgZXJyb3IgdmFsdWUgZm9yIGNsa19nZXQoKSBpbiBtaXhlciBwYXRjaAo+PiAtIHJlYmFz
-ZWQgb250byBzYW1zdW5nL2Zvci1uZXh0IGJyYW5jaAo+Pgo+PiB2NDogKGh0dHA6Ly93d3cuc3Bp
-bmljcy5uZXQvbGlzdHMvbGludXgtc2Ftc3VuZy1zb2MvbXNnNDEzNzUuaHRtbCkKPj4gLSBhZGRl
-ZCBwYXRjaGVzLCB3aGljaCBhZGQgJ2hkbWknIGNsb2NrIGhhbmRsaW5nIHRvIG1peGVkIGJsb2Nr
-LCB0aGlzCj4+ICAgZmluYWxseSBzb2x2ZXMgdGhlIGluaXRpYWxpemF0aW9uIHJlbGF0ZWQgaXNz
-dWVzLCB0aGFua3MgZm9yIFRvYmlhcwo+PiAgIEpha29iaSBmb3IgdGVzdGluZwo+PiAtIGFkZGVk
-IGFja3MvcmV2aWV3ZWQvdGVzdGVkIGJ5IHRhZ3MKPj4KPj4gdjM6IChodHRwOi8vd3d3LnNwaW5p
-Y3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzQxMDIwLmh0bWwpCj4+IC0gYWRkZWQg
-YSBub3RlIG9uIGRlZmluaW5nIHN1YmRvbWFpbnMgdG8gZ2VuZXJpYyBQTSBkb21haW4gYmluZGlu
-Zwo+PiAgIGRvY3VtZW50YXRpb24gKHJlcXVlc3RlZCBieSBVbGYgSGFuc3NvbikKPj4KPj4gdjI6
-IChodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzQwOTgw
-Lmh0bWwpCj4+IC0gcmV3cm90ZSBzdWJkb21haW5zIHBhdGNoIGFjY29yZGluZyB0byBzdWdnZXN0
-aW9ucyBmcm9tIEdlZXJ0Cj4+ICAgVXl0dGVyaG9ldmVuIGFuZCBBbWl0IERhbmllbCBLYWNoaGFw
-Lgo+Pgo+PiB2MSByZXNlbmQ6IChodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXNh
-bXN1bmctc29jL21zZzM5NDI4Lmh0bWwpCj4+IC0gYWRkZWQgaGFuZGxpbmcgb2YgZ2VuZXJpYyAn
-cG93ZXItZG9tYWlucycgYmluZGluZyBpbiBzdWJkb21haW5zCj4+Cj4+IHYxOiAoaHR0cDovL3d3
-dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2czODkxNC5odG1sKQo+PiAt
-IHJlc29sdmVkIHBvd2VyIGRvbWFpbiBvbi9vZmYgaXNzdWUgd2l0aCAnY2xrOiBzYW1zdW5nOiBl
-eHlub3M0OiBzZXQKPj4gICBwYXJlbnQgb2YgbWl4ZXIgZ2F0ZSBjbG9jayB0byBoZG1pJyBwYXRj
-aAo+Pgo+PiB2MDogKGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGludXgtc2Ftc3VuZy1z
-b2MvbXNnMzM0OTguaHRtbCkKPj4gLSBmaXJzdCBhdHRlbXB0LCB1c2VkICdhbHdheXMgb24nIHBv
-d2VyIGRvbWFpbnMgaGFjawo+Pgo+Pgo+PiBQYXRjaCBzdW1tYXJ5Ogo+Pgo+Pgo+PiAqKiogQkxV
-UkIgSEVSRSAqKioKPj4KPj4gQW5kcnplaiBIYWpkYSAoMSk6Cj4+ICAgQVJNOiBkdHM6IGV4eW5v
-czUyNTA6IGFkZCBkaXNwbGF5IHBvd2VyIGRvbWFpbgo+Pgo+PiBNYXJlayBTenlwcm93c2tpICg3
-KToKPj4gICBQTSAvIERvbWFpbnM6IEFkZCBhIG5vdGUgYWJvdXQgcG93ZXIgZG9tYWluIHN1YmRv
-bWFpbnMKPj4gICBBUk06IEV4eW5vczogYWRkIHN1cHBvcnQgZm9yIHN1Yi1wb3dlciBkb21haW5z
-Cj4+ICAgQVJNOiBkdHM6IGV4eW5vczQ6IGFkZCBoZG1pIHJlbGF0ZWQgbm9kZXMKPj4gICBBUk06
-IGR0czogZXh5bm9zNDogYWRkIGRlcGVuZGVuY3kgYmV0d2VlbiBUViBhbmQgTENEMCBwb3dlciBk
-b21haW5zCj4+ICAgQVJNOiBkdHM6IGV4eW5vczQ0MTItb2Ryb2lkOiBlbmFibGUgaGRtaSBzdXBw
-b3J0Cj4+ICAgQVJNOiBkdHM6IEV4eW5vczogYWRkICdoZG1pJyBjbG9jayB0byBtaXhlciBub2Rl
-cwo+PiAgIGRybS9leHlub3M6IGFkZCBzdXBwb3J0IGZvciAnaGRtaScgY2xvY2sKPj4KPj4gVG9t
-YXN6IFN0YW5pc2xhd3NraSAoMSk6Cj4+ICAgQVJNOiBkdHM6IGV4eW5vczQyMTAtdW5pdmVyc2Fs
-X2MyMTA6IGVuYWJsZSBoZG1pIHN1cHBvcnQKPj4KPj4gIC4uLi9iaW5kaW5ncy9hcm0vZXh5bm9z
-L3Bvd2VyX2RvbWFpbi50eHQgICAgICAgICAgIHwgIDIgKwo+PiAgLi4uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvcG93ZXIvcG93ZXJfZG9tYWluLnR4dCAgICAgfCAyOSArKysrKysrKysrKwo+PiAgLi4u
-L2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zX21peGVyLnR4dCAgICAgfCAgMSArCj4+
-ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M0LmR0c2kgICAgICAgICAgICAgICAgICAgICB8IDQx
-ICsrKysrKysrKysrKysrKysKPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAtdW5pdmVy
-c2FsX2MyMTAuZHRzICAgIHwgNTcgKysrKysrKysrKysrKysrKysrKysrKwo+PiAgYXJjaC9hcm0v
-Ym9vdC9kdHMvZXh5bm9zNDIxMC5kdHNpICAgICAgICAgICAgICAgICAgfCAgOCArKysKPj4gIGFy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItb2Ryb2lkLWNvbW1vbi5kdHNpICAgIHwgNDQgKysr
-KysrKysrKysrKysrKysKPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4MTIuZHRzaSAgICAg
-ICAgICAgICAgICAgIHwgMTEgKysrKysKPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAu
-ZHRzaSAgICAgICAgICAgICAgICAgIHwgMTUgKysrKystCj4+ICBhcmNoL2FybS9ib290L2R0cy9l
-eHlub3M1NDIwLmR0c2kgICAgICAgICAgICAgICAgICB8ICA1ICstCj4+ICBhcmNoL2FybS9tYWNo
-LWV4eW5vcy9wbV9kb21haW5zLmMgICAgICAgICAgICAgICAgICB8IDI4ICsrKysrKysrKysrCj4+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgICAgICB8ICA5
-ICsrKysKPj4gIDEyIGZpbGVzIGNoYW5nZWQsIDI0NiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9u
-cygtKQo+Pgo+PiAtLQo+IEkgaGF2ZSBubyBvYmplY3Rpb24gb24gdGhpcyBzZXJpZXMsIGJ1dCBq
-dXN0IHdvbmRlcmluZyBteSB0cmVlIHNob3VsZCBiZSBmaW5lCj4gd2l0aG91dCA5LzkgZHJtIHBh
-dGNoIGFuZCBpdCB3aWxsIGJlIGhhbmRsZWQgZm9yIDMuMjA/Cj4gCj4gSSdsbCB0YWtlIDEgdG8g
-OCBwYXRjaGVzIG9uY2UgZHJtIHBhdGNoIGlzIGxhbmRlZCBmb3IgMy4yMC4KPiAKCkkgYWxzbyBo
-b3BlIHRoaXMgcGF0Y2hzZXQgbWVyZ2VkLAoKSW5raSwgY291bGQgeW91IGZvbGxvdyB1cCBleHlu
-b3MgZHJtIHBhcnQgb2YgdGhpcyBwYXRjaHNldD8KClRoYW5rcy4KX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This patch fixes the bug of CLK_SCLK_HDMI_SPDIF_DISP clock because this clock
+should be included in CMU_TOP domain. So, this patch moves the CLK_SCLK_HDMI_
+SPDIF_DISP clock from CMU_MIF to CMU_TOP domain.
+
+Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Reported-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+Depend on:
+This patches has the dependnecy on patch-set[1][2].
+
+[1] [PATCH v5 00/13] clk: samsung: Add the support for exynos5433 clocks
+- https://lkml.org/lkml/2015/2/2/368
+[2] [PATCH v3 0/9] clk: samsung: Add clocks for remaining domains of Exynos5433
+- https://lkml.org/lkml/2015/2/2/784
+
+drivers/clk/samsung/clk-exynos5433.c   | 10 +++++-----
+ include/dt-bindings/clock/exynos5433.h |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 83edbd2..bdd4113 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -661,6 +661,11 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_ISP_SPI0_CAM1, "sclk_isp_spi0_cam1", "div_sclk_isp_spi0_b",
+ 			ENABLE_SCLK_TOP_CAM1, 0, 0, 0),
+ 
++	/* ENABLE_SCLK_TOP_DISP */
++	GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
++			"mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
++			CLK_IGNORE_UNUSED, 0),
++
+ 	/* ENABLE_SCLK_TOP_FSYS */
+ 	GATE(CLK_SCLK_PCIE_100_FSYS, "sclk_pcie_100_fsys", "div_sclk_pcie_100",
+ 			ENABLE_SCLK_TOP_FSYS, 7, 0, 0),
+@@ -1521,11 +1526,6 @@ static struct samsung_gate_clock mif_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_MIF, 1, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_BUS_PLL_ATLAS, "sclk_bus_pll_atlas", "sclk_bus_pll",
+ 			ENABLE_SCLK_MIF, 0, CLK_IGNORE_UNUSED, 0),
+-
+-	/* ENABLE_SCLK_TOP_DISP */
+-	GATE(CLK_SCLK_HDMI_SPDIF_DISP, "sclk_hdmi_spdif_disp",
+-			"mout_sclk_hdmi_spdif", ENABLE_SCLK_TOP_DISP, 0,
+-			CLK_IGNORE_UNUSED, 0),
+ };
+ 
+ static struct samsung_cmu_info mif_cmu_info __initdata = {
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 8df9841..13204f5 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -189,8 +189,9 @@
+ #define CLK_SCLK_ISP_UART_CAM1		250
+ #define CLK_SCLK_ISP_SPI1_CAM1		251
+ #define CLK_SCLK_ISP_SPI0_CAM1		252
++#define CLK_SCLK_HDMI_SPDIF_DISP	253
+ 
+-#define TOP_NR_CLK			253
++#define TOP_NR_CLK			254
+ 
+ /* CMU_CPIF */
+ #define CLK_FOUT_MPHY_PLL		1
+@@ -397,9 +398,8 @@
+ #define CLK_SCLK_BUS_PLL		198
+ #define CLK_SCLK_BUS_PLL_APOLLO		199
+ #define CLK_SCLK_BUS_PLL_ATLAS		200
+-#define CLK_SCLK_HDMI_SPDIF_DISP	201
+ 
+-#define MIF_NR_CLK			202
++#define MIF_NR_CLK			201
+ 
+ /* CMU_PERIC */
+ #define CLK_PCLK_SPI2			1
+-- 
+1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
