@@ -1,65 +1,45 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 3/3] exynos: config: Enable support for cpufreq on Exynos
- SoCs (exynos_defconfig)
-Date: Wed, 04 Feb 2015 14:52:03 +0100
-Message-ID: <20150204145203.004d6b8c@amdc2363>
-References: <1422458920-14555-1-git-send-email-l.majewski@samsung.com>
- <1422458920-14555-3-git-send-email-l.majewski@samsung.com>
- <20150129230109.GI29837@developer.amazonguestwifi.org>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v5 00/18] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Wed, 04 Feb 2015 14:54:59 +0100
+Message-ID: <54D224B3.5070806@samsung.com>
+References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+	<CAOhR-w3xdFtNGi=cfEM=N4ntjrjGwMUzxnqHWoRwy6r-AQOAjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150129230109.GI29837@developer.amazonguestwifi.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CAOhR-w3xdFtNGi=cfEM=N4ntjrjGwMUzxnqHWoRwy6r-AQOAjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linaro MM SIG Mailman List <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+Hello,
 
-> On Wed, Jan 28, 2015 at 04:28:40PM +0100, Lukasz Majewski wrote:
-> > This commit enables the cpufreq subsystem. Moreover, support for
-> > using CPU as a cooling device is provided.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> 
-> I dont see problems with this patch:
-> 
-> Acked-by: Eduardo Valentin <edubezval@gmail.com>
-> 
-> 
-> Again, it must go via the correct tree.
+On 2015-02-04 10:53, Hongbo Zhang wrote:
+> This is patch set against v3.19-rc4 plus 'Add HDMI support for
+> Exynos5420 platform', right?
+> No other dependencies? If there is, do you have a public git tree to be cloned?
 
-Could you apply this patch to -samsung tree?
+I've just prepared public branch based on v3.19-rc7 with
+kgene/v3.20-next/dt-samsung-3 branch merged and exynos-hdmi patches applied.
 
-> 
-> > ---
-> >  arch/arm/configs/exynos_defconfig | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/arm/configs/exynos_defconfig
-> > b/arch/arm/configs/exynos_defconfig index 376dbf4..d6be7e8 100644
-> > --- a/arch/arm/configs/exynos_defconfig
-> > +++ b/arch/arm/configs/exynos_defconfig
-> > @@ -86,6 +86,8 @@ CONFIG_BATTERY_SBS=y
-> >  CONFIG_CHARGER_TPS65090=y
-> >  CONFIG_HWMON=y
-> >  CONFIG_SENSORS_LM90=y
-> > +CONFIG_CPU_FREQ=y
-> > +CONFIG_CPU_THERMAL=y
-> >  CONFIG_THERMAL=y
-> >  CONFIG_EXYNOS_THERMAL=y
-> >  CONFIG_THERMAL_EMULATION=y
-> > -- 
-> > 2.0.0.rc2
-> > 
+It is available here:
+http://git.linaro.org/git-ro/people/marek.szyprowski/linux-srpol.git 
+v3.19-hdmi-iommu
 
+Tested with Exynos5422-based Odroid XU3 and Exynos4412-based Odroid U3.
 
-
+Best regards
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
