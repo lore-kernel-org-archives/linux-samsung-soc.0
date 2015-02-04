@@ -1,44 +1,60 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 1/3] exynos: config: Remove CONFIG_EXYNOS_THERMAL_CORE
- define (exynos_defconfig)
-Date: Wed, 04 Feb 2015 23:33:50 +0900
-Message-ID: <54D22DCE.5070806@kernel.org>
-References: <1422458920-14555-1-git-send-email-l.majewski@samsung.com> <20150129225908.GH29837@developer.amazonguestwifi.org> <20150204144943.58003ac6@amdc2363>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 00/14] drm/exynos: cleanups + atomic phases 1 and 2
+Date: Wed, 4 Feb 2015 15:35:44 +0100
+Message-ID: <20150204143544.GK14009@phenom.ffwll.local>
+References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
+ <54D1CC20.60000@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:36733 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932630AbbBDOd5 (ORCPT
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:55572 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932630AbbBDOeW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 09:33:57 -0500
-In-Reply-To: <20150204144943.58003ac6@amdc2363>
+	Wed, 4 Feb 2015 09:34:22 -0500
+Received: by mail-wi0-f179.google.com with SMTP id l15so4071138wiw.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Feb 2015 06:34:21 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <54D1CC20.60000@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-On 02/04/15 22:49, Lukasz Majewski wrote:
-> Hi Kukjin,
-> 
-Hi,
+Hi all,
 
->> On Wed, Jan 28, 2015 at 04:28:38PM +0100, Lukasz Majewski wrote:
->>> After Exynos TMU rework to use device tree for configuration this
->>> flag can be removed. It is not used anymore.
->>>
->>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->>
->> I dont see problems with this patch:
->>
->> Acked-by: Eduardo Valentin <edubezval@gmail.com>
->>
->> This should go, obviously, via the correct platform tree.
-> 
-> Could you apply this patch to -samsung tree?
-> 
-Sure, I'll queue this series into samsung tree.
+I've gone through some of the contentions point in this patch review. With
+my community guy hat on I really want to make drm atomic a success, exynos
+atomic is important for that.
 
-Thanks,
-Kukjin
+On Wed, Feb 04, 2015 at 04:37:04PM +0900, Joonyoung Shim wrote:
+> Hi,
+> 
+> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > 
+> > Hi,
+> > 
+> > This series clean ups a few more paths from exynos-drm with the most important
+> > being the removal of the global page flip queue and the removal in driver
+> > internal data (struct *_win_data) that was replicating plane data.
+> > 
+> > Following these patches comes the first step torwards atomic modesetting
+> > support on exynos.
+> > 
+> 
+> It's better to split cleanup and atomic support, not one patchset.
+
+Imo the cleanups make perfect sense as prep work for atomic. They're
+definitely needed afaict from what I've seen reading exynos code and these
+patches here before we can implement atomic.
+
+Personally I'd have delayered even more aggressively before going into the
+atomic stuff. But in the end I guess Padovan wants to be able to ship
+exynos atomic preferrably sooner than later.
+
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
