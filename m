@@ -1,75 +1,253 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 07/14] drm/exynos: atomic phase 1: use
- drm_plane_helper_disable()
-Date: Wed, 04 Feb 2015 16:47:38 +0900
-Message-ID: <54D1CE9A.9040305@samsung.com>
+Subject: Re: [PATCH 08/14] drm/exynos: atomic phase 1: add
+ atomic_begin()/atomic_flush()
+Date: Wed, 04 Feb 2015 16:49:25 +0900
+Message-ID: <54D1CF05.8000804@samsung.com>
 References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-8-git-send-email-gustavo@padovan.org>
+ <1422990871-21355-9-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422990871-21355-8-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:33579 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752047AbbBDHtU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Feb 2015 02:49:20 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NJ800I1LLQ6DI10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Feb 2015 16:49:18 +0900 (KST)
+In-reply-to: <1422990871-21355-9-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-SGksCgpPbiAwMi8wNC8yMDE1IDA0OjE0IEFNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
-bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
-IFRoZSBhdG9taWMgaGVscGVyIHRvIGRpc2FibGUgcGxhbmVzIGFsc28gdXNlcyB0aGUgb3B0aW9u
-YWwKPiAuYXRvbWljX2Rpc2FibGUoKSBoZWxwZXIuIFRoZSB1bmlxdWUgb3BlcmF0aW9uIGl0IGRv
-ZXMgaXMgY2FsbGluZwo+IC53aW5fZGlzYWJsZSgpCj4gCgpJcyB0aGVyZSBhbnkgcmVhc29uIHRv
-IHNwbGl0IHRoaXMgcGF0Y2ggZnJvbSBwYXRjaCAwNi8xND8KCj4gZXh5bm9zX2RybV9mYl9nZXRf
-YnVmX2NudCgpIG5lZWRzIGEgZmIgY2hlY2sgdG9vIHRvIGF2b2lkIGEgbnVsbCBwb2ludGVyLgo+
-IAoKVGhpcyBpcyBub3QgcmVsYXRlZCB3aXRoIHRoaXMgcGF0Y2ggcHVycG9zZS4KCj4gU2lnbmVk
-LW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVr
-Pgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICB8ICAy
-ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgMTQgKysr
-KysrKysrKysrKy0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAyIGRlbGV0
-aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCj4gaW5kZXgg
-ZDM0NmQxZS4uNDcwNDU2ZCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
-Yi5jCj4gQEAgLTEzNiw3ICsxMzYsNyBAQCB1bnNpZ25lZCBpbnQgZXh5bm9zX2RybV9mYl9nZXRf
-YnVmX2NudChzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikKPiAgCj4gIAlleHlub3NfZmIgPSB0
-b19leHlub3NfZmIoZmIpOwo+ICAKPiAtCXJldHVybiBleHlub3NfZmItPmJ1Zl9jbnQ7Cj4gKwly
-ZXR1cm4gZXh5bm9zX2ZiID8gZXh5bm9zX2ZiLT5idWZfY250IDogMDsKCkkgZG9uJ3QgdGhpbmsg
-ZXh5bm9zX2ZiIGNhbiBiZSBOVUxMLgoKVGhhbmtzLgoKPiAgfQo+ICAKPiAgc3RydWN0IGRybV9m
-cmFtZWJ1ZmZlciAqCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMK
-PiBpbmRleCAyYzM1NmI5Li5hM2IwNjg3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX3BsYW5lLmMKPiBAQCAtMjE5LDcgKzIxOSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9z
-X3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPiAgCj4gIHN0YXRp
-YyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKPiAgCS51cGRh
-dGVfcGxhbmUJPSBkcm1fcGxhbmVfaGVscGVyX3VwZGF0ZSwKPiAtCS5kaXNhYmxlX3BsYW5lCT0g
-ZXh5bm9zX2Rpc2FibGVfcGxhbmUsCj4gKwkuZGlzYWJsZV9wbGFuZQk9IGRybV9wbGFuZV9oZWxw
-ZXJfZGlzYWJsZSwKPiAgCS5kZXN0cm95CT0gZXh5bm9zX3BsYW5lX2Rlc3Ryb3ksCj4gIAkuc2V0
-X3Byb3BlcnR5CT0gZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eSwKPiAgfTsKPiBAQCAtMjQyLDkg
-KzI0MiwyMSBAQCBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfYXRvbWljX3VwZGF0ZShzdHJ1Y3Qg
-ZHJtX3BsYW5lICpwbGFuZSwKPiAgCQkJICAgIHN0YXRlLT5zcmNfdyA+PiAxNiwgc3RhdGUtPnNy
-Y19oID4+IDE2KTsKPiAgfQo+ICAKPiArc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0b21pY19k
-aXNhYmxlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICsJCQkJICAgICAgICBzdHJ1Y3QgZHJt
-X3BsYW5lX3N0YXRlICpvbGRfc3RhdGUpCj4gK3sKPiArCXN0cnVjdCBleHlub3NfZHJtX3BsYW5l
-ICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwo+ICsJc3RydWN0IGV4eW5v
-c19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhvbGRfc3RhdGUtPmNydGMp
-Owo+ICsKPiArCWlmIChleHlub3NfY3J0Yy0+b3BzLT53aW5fZGlzYWJsZSkKPiArCQlleHlub3Nf
-Y3J0Yy0+b3BzLT53aW5fZGlzYWJsZShleHlub3NfY3J0YywKPiArCQkJCQkgICAgICBleHlub3Nf
-cGxhbmUtPnpwb3MpOwo+ICt9Cj4gKwo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wbGFuZV9o
-ZWxwZXJfZnVuY3MgcGxhbmVfaGVscGVyX2Z1bmNzID0gewo+ICAJLmF0b21pY19jaGVjayA9IGV4
-eW5vc19wbGFuZV9hdG9taWNfY2hlY2ssCj4gIAkuYXRvbWljX3VwZGF0ZSA9IGV4eW5vc19wbGFu
-ZV9hdG9taWNfdXBkYXRlLAo+ICsJLmF0b21pY19kaXNhYmxlID0gZXh5bm9zX3BsYW5lX2F0b21p
-Y19kaXNhYmxlLAo+ICB9Owo+ICAKPiAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFjaF96
-cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQo+IAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> Add CRTC callbacks .atomic_begin() .atomic_flush(). On exynos they
+> unprotect the windows before the commit and protects it after based on
+> a plane mask tha store which plane will be updated.
+> 
+
+I don't think they need now.
+
+Thanks.
+
+> For that we create two new exynos_crtc callbacks: .win_protect() and
+> .win_unprotect(). The only driver that implement those now is FIMD.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 34 ++++++++++++++++++
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h   |  4 +++
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 57 ++++++++++++++++++++++---------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c |  4 +++
+>  4 files changed, 82 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 09d4780..be36cca 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -147,6 +147,38 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+>  	}
+>  }
+>  
+> +static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
+> +{
+> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> +	struct drm_plane *plane;
+> +	int index = 0;
+> +
+> +	list_for_each_entry(plane, &crtc->dev->mode_config.plane_list, head) {
+> +		if (exynos_crtc->ops->win_protect &&
+> +		    exynos_crtc->plane_mask & (0x01 << index))
+> +			exynos_crtc->ops->win_protect(exynos_crtc, index);
+> +
+> +		index++;
+> +	}
+> +}
+> +
+> +static void exynos_crtc_atomic_flush(struct drm_crtc *crtc)
+> +{
+> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> +	struct drm_plane *plane;
+> +	int index = 0;
+> +
+> +	list_for_each_entry(plane, &crtc->dev->mode_config.plane_list, head) {
+> +		if (exynos_crtc->ops->win_unprotect &&
+> +		    exynos_crtc->plane_mask & (0x01 << index))
+> +			exynos_crtc->ops->win_unprotect(exynos_crtc, index);
+> +
+> +		index++;
+> +	}
+> +
+> +	exynos_crtc->plane_mask = 0;
+> +}
+> +
+>  static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+>  	.dpms		= exynos_drm_crtc_dpms,
+>  	.prepare	= exynos_drm_crtc_prepare,
+> @@ -155,6 +187,8 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+>  	.mode_set	= exynos_drm_crtc_mode_set,
+>  	.mode_set_base	= exynos_drm_crtc_mode_set_base,
+>  	.disable	= exynos_drm_crtc_disable,
+> +	.atomic_begin	= exynos_crtc_atomic_begin,
+> +	.atomic_flush	= exynos_crtc_atomic_flush,
+>  };
+>  
+>  static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> index cad54e7..43efd9f 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -194,6 +194,8 @@ struct exynos_drm_crtc_ops {
+>  	void (*win_enable)(struct exynos_drm_crtc *crtc, int zpos);
+>  	void (*win_disable)(struct exynos_drm_crtc *crtc, int zpos);
+>  	void (*te_handler)(struct exynos_drm_crtc *crtc);
+> +	void (*win_protect)(struct exynos_drm_crtc *crtc, int zpos);
+> +	void (*win_unprotect)(struct exynos_drm_crtc *crtc, int zpos);
+>  };
+>  
+>  enum exynos_crtc_mode {
+> @@ -214,6 +216,7 @@ enum exynos_crtc_mode {
+>   *	we can refer to the crtc to current hardware interrupt occurred through
+>   *	this pipe value.
+>   * @dpms: store the crtc dpms value
+> + * @plane_mask: store planes to be updated on atomic modesetting
+>   * @mode: store the crtc mode value
+>   * @event: vblank event that is currently queued for flip
+>   * @ops: pointer to callbacks for exynos drm specific functionality
+> @@ -224,6 +227,7 @@ struct exynos_drm_crtc {
+>  	enum exynos_drm_output_type	type;
+>  	unsigned int			pipe;
+>  	unsigned int			dpms;
+> +	unsigned int			plane_mask;
+>  	enum exynos_crtc_mode		mode;
+>  	wait_queue_head_t		pending_flip_queue;
+>  	struct drm_pending_vblank_event	*event;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index ebb4cdc..f498d86 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -585,6 +585,16 @@ static void fimd_shadow_protect_win(struct fimd_context *ctx,
+>  {
+>  	u32 reg, bits, val;
+>  
+> +	/*
+> +	 * SHADOWCON/PRTCON register is used for enabling timing.
+> +	 *
+> +	 * for example, once only width value of a register is set,
+> +	 * if the dma is started then fimd hardware could malfunction so
+> +	 * with protect window setting, the register fields with prefix '_F'
+> +	 * wouldn't be updated at vsync also but updated once unprotect window
+> +	 * is set.
+> +	 */
+> +
+>  	if (ctx->driver_data->has_shadowcon) {
+>  		reg = SHADOWCON;
+>  		bits = SHADOWCON_WINx_PROTECT(win);
+> @@ -627,20 +637,6 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
+>  		return;
+>  	}
+>  
+> -	/*
+> -	 * SHADOWCON/PRTCON register is used for enabling timing.
+> -	 *
+> -	 * for example, once only width value of a register is set,
+> -	 * if the dma is started then fimd hardware could malfunction so
+> -	 * with protect window setting, the register fields with prefix '_F'
+> -	 * wouldn't be updated at vsync also but updated once unprotect window
+> -	 * is set.
+> -	 */
+> -
+> -	/* protect windows */
+> -	fimd_shadow_protect_win(ctx, win, true);
+> -
+> -
+>  	offset = plane->fb_x * (plane->bpp >> 3);
+>  	offset += plane->fb_y * plane->pitch;
+>  
+> @@ -722,9 +718,6 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
+>  	if (ctx->driver_data->has_shadowcon)
+>  		fimd_enable_shadow_channel_path(ctx, win, true);
+>  
+> -	/* Enable DMA channel and unprotect windows */
+> -	fimd_shadow_protect_win(ctx, win, false);
+> -
+>  	plane->enabled = true;
+>  
+>  	if (ctx->i80_if)
+> @@ -947,6 +940,34 @@ static void fimd_te_handler(struct exynos_drm_crtc *crtc)
+>  		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+>  }
+>  
+> +static void fimd_win_protect(struct exynos_drm_crtc *crtc, int zpos)
+> +{
+> +	struct fimd_context *ctx = crtc->ctx;
+> +	int win = zpos;
+> +
+> +	if (win == DEFAULT_ZPOS)
+> +		win = ctx->default_win;
+> +
+> +	if (win < 0 || win >= WINDOWS_NR)
+> +		return;
+> +
+> +	fimd_shadow_protect_win(ctx, win, true);
+> +}
+> +
+> +static void fimd_win_unprotect(struct exynos_drm_crtc *crtc, int zpos)
+> +{
+> +	struct fimd_context *ctx = crtc->ctx;
+> +	int win = zpos;
+> +
+> +	if (win == DEFAULT_ZPOS)
+> +		win = ctx->default_win;
+> +
+> +	if (win < 0 || win >= WINDOWS_NR)
+> +		return;
+> +
+> +	fimd_shadow_protect_win(ctx, win, false);
+> +}
+> +
+>  static struct exynos_drm_crtc_ops fimd_crtc_ops = {
+>  	.dpms = fimd_dpms,
+>  	.mode_fixup = fimd_mode_fixup,
+> @@ -957,6 +978,8 @@ static struct exynos_drm_crtc_ops fimd_crtc_ops = {
+>  	.win_commit = fimd_win_commit,
+>  	.win_disable = fimd_win_disable,
+>  	.te_handler = fimd_te_handler,
+> +	.win_protect = fimd_win_protect,
+> +	.win_unprotect = fimd_win_unprotect,
+>  };
+>  
+>  static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> index a3b0687..363d59d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> @@ -65,6 +65,7 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
+>  int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
+>  {
+>  	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(plane->crtc);
+>  	int nr;
+>  	int i;
+>  
+> @@ -83,6 +84,9 @@ int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
+>  				i, (unsigned long)exynos_plane->dma_addr[i]);
+>  	}
+>  
+> +	if (exynos_crtc)
+> +		exynos_crtc->plane_mask += 1 << exynos_plane->zpos;
+> +
+>  	return 0;
+>  }
+>  
+> 
