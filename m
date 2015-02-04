@@ -1,58 +1,41 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 0/8] PM / Domains: Re-structure code for adding/removing devices to genpd
-Date: Wed, 04 Feb 2015 15:39:49 +0100
-Message-ID: <5703029.cMXmjeytH4@vostro.rjw.lan>
-References: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 00/18] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Wed, 4 Feb 2015 15:21:49 +0100
+Message-ID: <20150204142149.GM3702@8bytes.org>
+References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1422389625-11730-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1422028288-891-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, January 27, 2015 09:13:37 PM Ulf Hansson wrote:
-> While adding error handling of genpd's ->attach_dev() callback, I realized that
-> we also had a need to re-structure some of the code which deals with
-> adding/removing devices to genpd. Especially the APIs, __pm_genpd_add_device()
-> and pm_genpd_remove_device() deserved some attention.
-> 
-> Patch 1 -> 4, can be considered as more simple cleanups and should not impact
-> the behavior for current clients using the APIs. 
-> 
-> Patch 5, eliminates a mutex for generic_pm_domain_data by re-order the
-> initialization/cleanup of dev_pm_qos notifiers.
-> 
-> Patch 6, move some code around to fix a potenial memory leakage of a struct
-> pm_subsys_data.
-> 
-> Patch 7, code restructuring which impacts locking behavior while adding/removing
-> devices. Should improve code readability and decrease critical regions of
-> holding locks.
-> 
-> Patch 8, Adds error handling of genpd's ->attach_dev() callback
-> 
-> 
-> Ulf Hansson (8):
->   PM / Domains: Rename __pm_genpd_alloc|free_dev_data()
->   PM / Domains: Remove reference counting for the generic_pm_domain_data
->   PM / Domains: Don't allow an existing generic_pm_domain_data
->   PM / Domains: Don't check for an existing device when adding a new
->   PM / Domains: Eliminate the mutex for the generic_pm_domain_data
->   PM / Domains: Free pm_subsys_data in error path in
->     __pm_genpd_add_device()
->   PM / Domains: Re-order initialization of generic_pm_domain_data
->   PM / Domains: Handle errors from genpd's ->attach_dev() callback
-> 
->  drivers/base/power/domain.c | 137 +++++++++++++++++++++-----------------------
->  include/linux/pm_domain.h   |   2 -
->  2 files changed, 65 insertions(+), 74 deletions(-)
+Hi Marek,
 
-Whole series queued up for 3.20, thanks!
+On Fri, Jan 23, 2015 at 04:51:10PM +0100, Marek Szyprowski wrote:
+> 1. All iommu related patches (with 'iommu: exynos') can be merged to
+> iommu tree. They don't have any direct dependencies on the DTS, DRM and
+> power domain initialization change - without them the driver will simply
+> not initialize, when no exynos,sysmmu nodes are provided in device tree.
+> 
+> Joerg, could you merge those patches?
+
+Given the previous comments and tests on this patch set I am still
+waiting for some Acked-bys and/or Tested-bys on this. Can you collect
+these and resend then (probably after the v3.20 merge window)?
 
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+	Joerg
