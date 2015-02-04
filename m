@@ -1,15 +1,14 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 11/14] drm/exynos: atomic phase 2: keep track of
- framebuffer pointer
-Date: Wed, 04 Feb 2015 16:53:12 +0900
-Message-ID: <54D1CFE8.6070100@samsung.com>
-References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-12-git-send-email-gustavo@padovan.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: hdmi: replace fb size with mode size from win
+ commit
+Date: Wed, 04 Feb 2015 17:32:16 +0900
+Message-ID: <54D1D910.3090707@samsung.com>
+References: <1422606645-25491-1-git-send-email-sw0312.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422990871-21355-12-git-send-email-gustavo@padovan.org>
+In-reply-to: <1422606645-25491-1-git-send-email-sw0312.kim@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -19,27 +18,32 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+To: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpPbiAwMi8wNC8yMDE1IDA0OjE0IEFNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
-bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
-IFVzZSBkcm1fYXRvbWljX3NldF9mYl9mb3JfcGxhbmUoKSBpbiB0aGUgbGVnYWN5IHBhZ2VfZmxp
-cCBwYXRoIHRvIGtlZXAKPiB0cmFjayBvZiB0aGUgZnJhbWVidWZmZXIgcG9pbnRlciBhbmQgcmVm
-ZXJlbmNlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRv
-dmFuQGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYyB8IDMgKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykK
-PiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiBpbmRleCA2NjBh
-ZDY0Li4yZWRjNzNjIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
-Yy5jCj4gQEAgLTIxMSw2ICsyMTEsOSBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0Y19wYWdl
-X2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+ICAJCQkgICAgY3J0Y193LCBjcnRjX2gsIGNy
-dGMtPngsIGNydGMtPnksCj4gIAkJCSAgICBjcnRjX3csIGNydGNfaCk7Cj4gIAo+ICsJaWYgKGNy
-dGMtPnByaW1hcnktPnN0YXRlKQo+ICsJCWRybV9hdG9taWNfc2V0X2ZiX2Zvcl9wbGFuZShjcnRj
-LT5wcmltYXJ5LT5zdGF0ZSwgZmIpOwo+ICsKCkknbSBub3Qgc3VyZSB3aGV0aGVyIHRoaXMgbmVl
-ZHMsIGhvdyBhYm91dCBnbyB0bwpkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXA/CgpUaGFua3Mu
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+T24gMjAxNeuFhCAwMeyblCAzMOydvCAxNzozMCwgU2V1bmctV29vIEtpbSB3cm90ZToKPiBGb3Ig
+ZGVmYXVsdCBncmFwaGljIHdpbmRvdywgbWl4ZXJfd2luX2NvbW1pdCgpIHNldHMgZGlzcGxheSBz
+aXplCj4gcmVnaXN0ZXIgYXMgZmIgc2l6ZS4gQ2FsbGluZyBzZXRwbGFuZSB3aXRoIHNtYWxsZXIg
+ZmIgc2l6ZSB0aGFuCj4gbW9kZSBzaXplIHRvIGRlZmF1bHQgd2luZG93IGNhdXNlcyBkaXN0b3J0
+ZWQgZGlzcGxheSByZXN1bHQuIFNvCj4gdGhpcyBwYXRjaCByZXBsYWNlcyBmYiBzaXplIHdpdGgg
+bW9kZSBzaXplIGZvciBkaXNwbGF5IHNpemUgZnJvbQo+IHRoZSBtaXhlcl93aW5fY29tbWl0KCku
+CgpBcHBsaWVkLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBTZXVuZy1X
+b28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19taXhlci5jIHwgICAgNCArKy0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jCj4gaW5kZXggNjc2NjI3MS4uMDg2ZmUwZSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfbWl4ZXIuYwo+IEBAIC01ODQsOCArNTg0LDggQEAgc3RhdGljIHZvaWQgbWl4
+ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4gIAkv
+KiBzZXR1cCBkaXNwbGF5IHNpemUgKi8KPiAgCWlmIChjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8x
+MjhfMF8wXzE4NCAmJgo+ICAJCXdpbiA9PSBNSVhFUl9ERUZBVUxUX1dJTikgewo+IC0JCXZhbCAg
+PSBNWFJfTVhSX1JFU19IRUlHSFQod2luX2RhdGEtPmZiX2hlaWdodCk7Cj4gLQkJdmFsIHw9IE1Y
+Ul9NWFJfUkVTX1dJRFRIKHdpbl9kYXRhLT5mYl93aWR0aCk7Cj4gKwkJdmFsICA9IE1YUl9NWFJf
+UkVTX0hFSUdIVCh3aW5fZGF0YS0+bW9kZV9oZWlnaHQpOwo+ICsJCXZhbCB8PSBNWFJfTVhSX1JF
+U19XSURUSCh3aW5fZGF0YS0+bW9kZV93aWR0aCk7Cj4gIAkJbWl4ZXJfcmVnX3dyaXRlKHJlcywg
+TVhSX1JFU09MVVRJT04sIHZhbCk7Cj4gIAl9Cj4gIAo+IAoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
