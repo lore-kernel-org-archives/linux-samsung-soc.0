@@ -1,253 +1,85 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 08/14] drm/exynos: atomic phase 1: add
- atomic_begin()/atomic_flush()
-Date: Wed, 04 Feb 2015 16:49:25 +0900
-Message-ID: <54D1CF05.8000804@samsung.com>
+Subject: Re: [PATCH 09/14] drm/exynos: atomic phase 1: add .mode_set_nofb()
+ callback
+Date: Wed, 04 Feb 2015 16:51:11 +0900
+Message-ID: <54D1CF6F.1070403@samsung.com>
 References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-9-git-send-email-gustavo@padovan.org>
+ <1422990871-21355-10-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33579 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752047AbbBDHtU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 02:49:20 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NJ800I1LLQ6DI10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Feb 2015 16:49:18 +0900 (KST)
-In-reply-to: <1422990871-21355-9-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422990871-21355-10-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> Add CRTC callbacks .atomic_begin() .atomic_flush(). On exynos they
-> unprotect the windows before the commit and protects it after based on
-> a plane mask tha store which plane will be updated.
-> 
-
-I don't think they need now.
-
-Thanks.
-
-> For that we create two new exynos_crtc callbacks: .win_protect() and
-> .win_unprotect(). The only driver that implement those now is FIMD.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 34 ++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_drv.h   |  4 +++
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 57 ++++++++++++++++++++++---------
->  drivers/gpu/drm/exynos/exynos_drm_plane.c |  4 +++
->  4 files changed, 82 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index 09d4780..be36cca 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -147,6 +147,38 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
->  	}
->  }
->  
-> +static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
-> +{
-> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-> +	struct drm_plane *plane;
-> +	int index = 0;
-> +
-> +	list_for_each_entry(plane, &crtc->dev->mode_config.plane_list, head) {
-> +		if (exynos_crtc->ops->win_protect &&
-> +		    exynos_crtc->plane_mask & (0x01 << index))
-> +			exynos_crtc->ops->win_protect(exynos_crtc, index);
-> +
-> +		index++;
-> +	}
-> +}
-> +
-> +static void exynos_crtc_atomic_flush(struct drm_crtc *crtc)
-> +{
-> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-> +	struct drm_plane *plane;
-> +	int index = 0;
-> +
-> +	list_for_each_entry(plane, &crtc->dev->mode_config.plane_list, head) {
-> +		if (exynos_crtc->ops->win_unprotect &&
-> +		    exynos_crtc->plane_mask & (0x01 << index))
-> +			exynos_crtc->ops->win_unprotect(exynos_crtc, index);
-> +
-> +		index++;
-> +	}
-> +
-> +	exynos_crtc->plane_mask = 0;
-> +}
-> +
->  static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
->  	.dpms		= exynos_drm_crtc_dpms,
->  	.prepare	= exynos_drm_crtc_prepare,
-> @@ -155,6 +187,8 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
->  	.mode_set	= exynos_drm_crtc_mode_set,
->  	.mode_set_base	= exynos_drm_crtc_mode_set_base,
->  	.disable	= exynos_drm_crtc_disable,
-> +	.atomic_begin	= exynos_crtc_atomic_begin,
-> +	.atomic_flush	= exynos_crtc_atomic_flush,
->  };
->  
->  static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> index cad54e7..43efd9f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -194,6 +194,8 @@ struct exynos_drm_crtc_ops {
->  	void (*win_enable)(struct exynos_drm_crtc *crtc, int zpos);
->  	void (*win_disable)(struct exynos_drm_crtc *crtc, int zpos);
->  	void (*te_handler)(struct exynos_drm_crtc *crtc);
-> +	void (*win_protect)(struct exynos_drm_crtc *crtc, int zpos);
-> +	void (*win_unprotect)(struct exynos_drm_crtc *crtc, int zpos);
->  };
->  
->  enum exynos_crtc_mode {
-> @@ -214,6 +216,7 @@ enum exynos_crtc_mode {
->   *	we can refer to the crtc to current hardware interrupt occurred through
->   *	this pipe value.
->   * @dpms: store the crtc dpms value
-> + * @plane_mask: store planes to be updated on atomic modesetting
->   * @mode: store the crtc mode value
->   * @event: vblank event that is currently queued for flip
->   * @ops: pointer to callbacks for exynos drm specific functionality
-> @@ -224,6 +227,7 @@ struct exynos_drm_crtc {
->  	enum exynos_drm_output_type	type;
->  	unsigned int			pipe;
->  	unsigned int			dpms;
-> +	unsigned int			plane_mask;
->  	enum exynos_crtc_mode		mode;
->  	wait_queue_head_t		pending_flip_queue;
->  	struct drm_pending_vblank_event	*event;
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index ebb4cdc..f498d86 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -585,6 +585,16 @@ static void fimd_shadow_protect_win(struct fimd_context *ctx,
->  {
->  	u32 reg, bits, val;
->  
-> +	/*
-> +	 * SHADOWCON/PRTCON register is used for enabling timing.
-> +	 *
-> +	 * for example, once only width value of a register is set,
-> +	 * if the dma is started then fimd hardware could malfunction so
-> +	 * with protect window setting, the register fields with prefix '_F'
-> +	 * wouldn't be updated at vsync also but updated once unprotect window
-> +	 * is set.
-> +	 */
-> +
->  	if (ctx->driver_data->has_shadowcon) {
->  		reg = SHADOWCON;
->  		bits = SHADOWCON_WINx_PROTECT(win);
-> @@ -627,20 +637,6 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
->  		return;
->  	}
->  
-> -	/*
-> -	 * SHADOWCON/PRTCON register is used for enabling timing.
-> -	 *
-> -	 * for example, once only width value of a register is set,
-> -	 * if the dma is started then fimd hardware could malfunction so
-> -	 * with protect window setting, the register fields with prefix '_F'
-> -	 * wouldn't be updated at vsync also but updated once unprotect window
-> -	 * is set.
-> -	 */
-> -
-> -	/* protect windows */
-> -	fimd_shadow_protect_win(ctx, win, true);
-> -
-> -
->  	offset = plane->fb_x * (plane->bpp >> 3);
->  	offset += plane->fb_y * plane->pitch;
->  
-> @@ -722,9 +718,6 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
->  	if (ctx->driver_data->has_shadowcon)
->  		fimd_enable_shadow_channel_path(ctx, win, true);
->  
-> -	/* Enable DMA channel and unprotect windows */
-> -	fimd_shadow_protect_win(ctx, win, false);
-> -
->  	plane->enabled = true;
->  
->  	if (ctx->i80_if)
-> @@ -947,6 +940,34 @@ static void fimd_te_handler(struct exynos_drm_crtc *crtc)
->  		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
->  }
->  
-> +static void fimd_win_protect(struct exynos_drm_crtc *crtc, int zpos)
-> +{
-> +	struct fimd_context *ctx = crtc->ctx;
-> +	int win = zpos;
-> +
-> +	if (win == DEFAULT_ZPOS)
-> +		win = ctx->default_win;
-> +
-> +	if (win < 0 || win >= WINDOWS_NR)
-> +		return;
-> +
-> +	fimd_shadow_protect_win(ctx, win, true);
-> +}
-> +
-> +static void fimd_win_unprotect(struct exynos_drm_crtc *crtc, int zpos)
-> +{
-> +	struct fimd_context *ctx = crtc->ctx;
-> +	int win = zpos;
-> +
-> +	if (win == DEFAULT_ZPOS)
-> +		win = ctx->default_win;
-> +
-> +	if (win < 0 || win >= WINDOWS_NR)
-> +		return;
-> +
-> +	fimd_shadow_protect_win(ctx, win, false);
-> +}
-> +
->  static struct exynos_drm_crtc_ops fimd_crtc_ops = {
->  	.dpms = fimd_dpms,
->  	.mode_fixup = fimd_mode_fixup,
-> @@ -957,6 +978,8 @@ static struct exynos_drm_crtc_ops fimd_crtc_ops = {
->  	.win_commit = fimd_win_commit,
->  	.win_disable = fimd_win_disable,
->  	.te_handler = fimd_te_handler,
-> +	.win_protect = fimd_win_protect,
-> +	.win_unprotect = fimd_win_unprotect,
->  };
->  
->  static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> index a3b0687..363d59d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -65,6 +65,7 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
->  int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
->  {
->  	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(plane->crtc);
->  	int nr;
->  	int i;
->  
-> @@ -83,6 +84,9 @@ int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
->  				i, (unsigned long)exynos_plane->dma_addr[i]);
->  	}
->  
-> +	if (exynos_crtc)
-> +		exynos_crtc->plane_mask += 1 << exynos_plane->zpos;
-> +
->  	return 0;
->  }
->  
-> 
+SGksCgpPbiAwMi8wNC8yMDE1IDA0OjE0IEFNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
+bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
+IFRoZSBuZXcgYXRvbWljIGluZnJhc3RydWN0dXJlIG5lZWRzIHRoZSAubW9kZV9zZXRfbm9mYigp
+IGNhbGxiYWNrIHRvCj4gdXBkYXRlIENSVEMgdGltaW5ncyBiZWZvcmUgc2V0dGluZyBhbnkgcGxh
+bmUuCj4gCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5A
+Y29sbGFib3JhLmNvLnVrPgo+IAo+IENvbmZsaWN0czoKPiAJZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NydGMuYwo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fY3J0Yy5jIHwgNTUgKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBm
+aWxlIGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDQ0IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IGluZGV4IGJlMzZjY2EuLjE3YjY0
+ZjggMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
+Ywo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiBAQCAt
+ODEsNTMgKzgxLDE5IEBAIGV4eW5vc19kcm1fY3J0Y19tb2RlX2ZpeHVwKHN0cnVjdCBkcm1fY3J0
+YyAqY3J0YywKPiAgCXJldHVybiB0cnVlOwo+ICB9Cj4gIAo+IC1zdGF0aWMgaW50Cj4gLWV4eW5v
+c19kcm1fY3J0Y19tb2RlX3NldChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVjdCBkcm1fZGlz
+cGxheV9tb2RlICptb2RlLAo+IC0JCQkgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICphZGp1c3Rl
+ZF9tb2RlLCBpbnQgeCwgaW50IHksCj4gLQkJCSAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqb2xk
+X2ZiKQo+IC17Cj4gLQlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IGNydGMtPnByaW1hcnkt
+PmZiOwo+IC0JdW5zaWduZWQgaW50IGNydGNfdzsKPiAtCXVuc2lnbmVkIGludCBjcnRjX2g7Cj4g
+LQlpbnQgcmV0Owo+IC0KPiAtCXJldCA9IGV4eW5vc19jaGVja19wbGFuZShjcnRjLT5wcmltYXJ5
+LCBmYik7Cj4gLQlpZiAocmV0IDwgMCkKPiAtCQlyZXR1cm4gcmV0Owo+IC0KPiAtCWNydGNfdyA9
+IGZiLT53aWR0aCAtIHg7Cj4gLQljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKPiAtCWV4eW5vc19w
+bGFuZV9tb2RlX3NldChjcnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiAtCQkJICAgICAg
+Y3J0Y193LCBjcnRjX2gsIHgsIHksIGNydGNfdywgY3J0Y19oKTsKPiAtCj4gLQlyZXR1cm4gMDsK
+PiAtfQo+IC0KPiAtc3RhdGljIGludCBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfYmFzZShzdHJ1
+Y3QgZHJtX2NydGMgKmNydGMsIGludCB4LCBpbnQgeSwKPiAtCQkJCQkgIHN0cnVjdCBkcm1fZnJh
+bWVidWZmZXIgKm9sZF9mYikKPiArc3RhdGljIHZvaWQKPiArZXh5bm9zX2RybV9jcnRjX21vZGVf
+c2V0X25vZmIoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+ICB7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2Ry
+bV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwo+IC0Jc3RydWN0IGRy
+bV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsKPiAtCXVuc2lnbmVkIGludCBj
+cnRjX3c7Cj4gLQl1bnNpZ25lZCBpbnQgY3J0Y19oOwo+IC0JaW50IHJldDsKPiArCXN0cnVjdCBk
+cm1fZGlzcGxheV9tb2RlICphZGp1c3RlZF9tb2RlOwo+ICAKPiAtCS8qIHdoZW4gZnJhbWVidWZm
+ZXIgY2hhbmdpbmcgaXMgcmVxdWVzdGVkLCBjcnRjJ3MgZHBtcyBzaG91bGQgYmUgb24gKi8KPiAt
+CWlmIChleHlub3NfY3J0Yy0+ZHBtcyA+IERSTV9NT0RFX0RQTVNfT04pIHsKPiAtCQlEUk1fRVJS
+T1IoImZhaWxlZCBmcmFtZWJ1ZmZlciBjaGFuZ2luZyByZXF1ZXN0LlxuIik7Cj4gLQkJcmV0dXJu
+IC1FUEVSTTsKPiAtCX0KPiAtCj4gLQlyZXQgPSBleHlub3NfY2hlY2tfcGxhbmUoY3J0Yy0+cHJp
+bWFyeSwgZmIpOwo+IC0JaWYgKHJldCkKPiAtCQlyZXR1cm4gcmV0Owo+ICsJaWYgKFdBUk5fT04o
+IWNydGMtPnN0YXRlKSkKPiArCQlyZXR1cm47Cj4gIAo+IC0JY3J0Y193ID0gZmItPndpZHRoIC0g
+eDsKPiAtCWNydGNfaCA9IGZiLT5oZWlnaHQgLSB5Owo+IC0JZXh5bm9zX3VwZGF0ZV9wbGFuZShj
+cnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiAtCQkJICAgIGNydGNfdywgY3J0Y19oLCB4
+LCB5LCBjcnRjX3csIGNydGNfaCk7Cj4gKwlhZGp1c3RlZF9tb2RlID0gJmNydGMtPnN0YXRlLT5h
+ZGp1c3RlZF9tb2RlOwo+ICAKPiAtCXJldHVybiAwOwo+ICsJaWYgKGV4eW5vc19jcnRjLT5vcHMt
+PmNvbW1pdCkKPiArCQlleHlub3NfY3J0Yy0+b3BzLT5jb21taXQoZXh5bm9zX2NydGMpOwoKVGhp
+cyBhbHJlYWR5IHNob3VsZCBiZSBleGVjdXRlZCBieSAuY29tbWl0IG9mIHN0cnVjdApkcm1fY3J0
+Y19oZWxwZXJfZnVuY3MsIG5vdCBoZXJlLgoKVGhhbmtzLgoKPiAgfQo+ICAKPiAgc3RhdGljIHZv
+aWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+IEBAIC0x
+ODQsOCArMTUwLDkgQEAgc3RhdGljIHN0cnVjdCBkcm1fY3J0Y19oZWxwZXJfZnVuY3MgZXh5bm9z
+X2NydGNfaGVscGVyX2Z1bmNzID0gewo+ICAJLnByZXBhcmUJPSBleHlub3NfZHJtX2NydGNfcHJl
+cGFyZSwKPiAgCS5jb21taXQJCT0gZXh5bm9zX2RybV9jcnRjX2NvbW1pdCwKPiAgCS5tb2RlX2Zp
+eHVwCT0gZXh5bm9zX2RybV9jcnRjX21vZGVfZml4dXAsCj4gLQkubW9kZV9zZXQJPSBleHlub3Nf
+ZHJtX2NydGNfbW9kZV9zZXQsCj4gLQkubW9kZV9zZXRfYmFzZQk9IGV4eW5vc19kcm1fY3J0Y19t
+b2RlX3NldF9iYXNlLAo+ICsJLm1vZGVfc2V0CT0gZHJtX2hlbHBlcl9jcnRjX21vZGVfc2V0LAo+
+ICsJLm1vZGVfc2V0X25vZmIJPSBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfbm9mYiwKPiArCS5t
+b2RlX3NldF9iYXNlCT0gZHJtX2hlbHBlcl9jcnRjX21vZGVfc2V0X2Jhc2UsCj4gIAkuZGlzYWJs
+ZQk9IGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlLAo+ICAJLmF0b21pY19iZWdpbgk9IGV4eW5vc19j
+cnRjX2F0b21pY19iZWdpbiwKPiAgCS5hdG9taWNfZmx1c2gJPSBleHlub3NfY3J0Y19hdG9taWNf
+Zmx1c2gsCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
