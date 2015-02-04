@@ -1,35 +1,44 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH V9 13/14] ARM: dts: snow: represent the connection between
- bridge and panel using videoport and endpoints
-Date: Thu, 05 Feb 2015 00:30:47 +0900
-Message-ID: <54D23B27.4020301@kernel.org>
-References: <1421771935-31618-1-git-send-email-ajaykumar.rs@samsung.com>	<1421771935-31618-14-git-send-email-ajaykumar.rs@samsung.com>	<0c9401d036da$71046bf0$530d43d0$@kernel.org> <CAEC9eQP+BiiM=-rMu+kqA721L76whbHCkpc15ctfhV3Z1ETwLw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Add support for hardware reset of eMMC card on
+ reboot
+Date: Thu, 05 Feb 2015 00:39:16 +0900
+Message-ID: <54D23D24.7050808@kernel.org>
+References: <1422866028-27891-1-git-send-email-m.szyprowski@samsung.com> <CABxcv=m2UjyF3V_B0PZkfA_jFkUPpKL+ZAmgBxTzmUb7JSwLiQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:41719 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:42609 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161427AbbBDPax (ORCPT
+	id S966276AbbBDPjY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 10:30:53 -0500
-In-Reply-To: <CAEC9eQP+BiiM=-rMu+kqA721L76whbHCkpc15ctfhV3Z1ETwLw@mail.gmail.com>
+	Wed, 4 Feb 2015 10:39:24 -0500
+In-Reply-To: <CABxcv=m2UjyF3V_B0PZkfA_jFkUPpKL+ZAmgBxTzmUb7JSwLiQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sebastian Reichel <sre@kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-On 01/27/15 13:27, Ajay kumar wrote:
-> Hi Kukjin,
+On 02/02/15 17:51, Javier Martinez Canillas wrote:
+> Hello Marek,
 > 
-Hi,
+Hi Marek,
 
-[...]
+> On Mon, Feb 2, 2015 at 9:33 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Hello,
 >>
->> I'm fine on the DT changes in this series, shall I take 13/14 and 14/14 in
->> Samsung tree?
-> Yes, please take these patches.
+>> This patchset adds new mmc power sequence driver, which performs eMMC
+>> card hardware reset. Such power sequence, involving resetting emmc card,
+>> is required on some boards to properly perform system reboot procedure.
+>>
 > 
-Done, thanks.
+> Patches looks good to me, I've only one comment on patch 1/3. Once
+> that is addressed, feel free to add for all the series:
+> 
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> 
+Applied 2/3 and 3/3 DT updates.
 
-- Kukjin
+Thanks,
+Kukjin
