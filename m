@@ -1,65 +1,77 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: IOMMU support should not be selectable by user
-Date: Wed, 04 Feb 2015 14:17:34 +0900
-Message-ID: <54D1AB6E.3080900@samsung.com>
-References: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 00/14] drm/exynos: cleanups + atomic phases 1 and 2
+Date: Wed, 04 Feb 2015 16:37:04 +0900
+Message-ID: <54D1CC20.60000@samsung.com>
+References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9503 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750879AbbBDFRh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Feb 2015 00:17:37 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NJ800HJEEPBW5C0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Feb 2015 14:17:35 +0900 (KST)
-In-reply-to: <1421764274-26398-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-On 2015=EB=85=84 01=EC=9B=94 20=EC=9D=BC 23:31, Marek Szyprowski wrote:
-> If system provides IOMMU feature, Exynos DRM should use it by default=
-,
-> because the Exynos DRM subdrivers don't work correctly when Exynos IO=
-MMU
-> driver has been enabled and no IOMMU support has been compiled into E=
-xynos
-> DRM driver.
-
-Applied.
-
-Thanks,
-Inki Dae
-
->=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/Kconfig | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/=
-Kconfig
-> index 7f9f6f9e9b7e..39fe490efcd4 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -13,10 +13,9 @@ config DRM_EXYNOS
->  	  If M is selected the module will be called exynosdrm.
-> =20
->  config DRM_EXYNOS_IOMMU
-> -	bool "EXYNOS DRM IOMMU Support"
-> +	bool
->  	depends on DRM_EXYNOS && EXYNOS_IOMMU && ARM_DMA_USE_IOMMU
-> -	help
-> -	  Choose this option if you want to use IOMMU feature for DRM.
-> +	default y
-> =20
->  config DRM_EXYNOS_DMABUF
->  	bool "EXYNOS DRM DMABUF"
->=20
+SGksCgpPbiAwMi8wNC8yMDE1IDA0OjE0IEFNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
+bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
+IEhpLAo+IAo+IFRoaXMgc2VyaWVzIGNsZWFuIHVwcyBhIGZldyBtb3JlIHBhdGhzIGZyb20gZXh5
+bm9zLWRybSB3aXRoIHRoZSBtb3N0IGltcG9ydGFudAo+IGJlaW5nIHRoZSByZW1vdmFsIG9mIHRo
+ZSBnbG9iYWwgcGFnZSBmbGlwIHF1ZXVlIGFuZCB0aGUgcmVtb3ZhbCBpbiBkcml2ZXIKPiBpbnRl
+cm5hbCBkYXRhIChzdHJ1Y3QgKl93aW5fZGF0YSkgdGhhdCB3YXMgcmVwbGljYXRpbmcgcGxhbmUg
+ZGF0YS4KPiAKPiBGb2xsb3dpbmcgdGhlc2UgcGF0Y2hlcyBjb21lcyB0aGUgZmlyc3Qgc3RlcCB0
+b3J3YXJkcyBhdG9taWMgbW9kZXNldHRpbmcKPiBzdXBwb3J0IG9uIGV4eW5vcy4KPiAKCkl0J3Mg
+YmV0dGVyIHRvIHNwbGl0IGNsZWFudXAgYW5kIGF0b21pYyBzdXBwb3J0LCBub3Qgb25lIHBhdGNo
+c2V0LgoKVGhhbmtzLgoKPiBUaGlzIHNlcmllcyBpcyBhcHBsaWVkIG9uIHRvcCBvZiAzIHBhdGNo
+ZXNbMF1bMV1bMl0gdGhhdCB3ZXJlIHNlbnQgcmVjZW50bHkgdG8KPiBkcmktZGV2ZWwuCj4gCj4g
+CUd1c3Rhdm8KPiAKPiAtLS0KPiBbMF0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51
+eC1zYW1zdW5nLXNvYy9tc2c0MTg2Ny5odG1sCj4gWzFdIGh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtSmFudWFyeS8wNzY1MDQuaHRtbAo+IFsyXSBo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LUphbnVh
+cnkvMDc2NTA1Lmh0bWwKPiAKPiAKPiBEYW5pZWwgS3VydHogKDEpOgo+ICAgZHJtL2V4eW5vczog
+ZG8gbm90IGNvcHkgYWRqdXN0ZWQgbW9kZSBpbnRvIG1vZGUgZHVyaW5nIGNydGMgbW9kZV9zZXQK
+PiAKPiBHdXN0YXZvIFBhZG92YW4gKDEyKToKPiAgIGRybS9leHlub3M6IFJlbW92ZSBleHlub3Nf
+cGxhbmVfZHBtcygpIGNhbGwgd2l0aCBubyBlZmZlY3QKPiAgIGRybS9leHlub3M6IHJlbW92ZSBs
+ZWZ0b3ZlciBmdW5jdGlvbnMgZGVjbGFyYXRpb25zCj4gICBkcm0vZXh5bm9zOiByZW1vdmUgc3Ry
+dWN0ICpfd2luX2RhdGEgYWJzdHJhY3Rpb24gb24gcGxhbmVzCj4gICBkcm0vZXh5bm9zOiBhdG9t
+aWMgcGhhc2UgMTogdXNlIGRybV9wbGFuZV9oZWxwZXJfdXBkYXRlKCkKPiAgIGRybS9leHlub3M6
+IGF0b21pYyBwaGFzZSAxOiB1c2UgZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlKCkKPiAgIGRybS9l
+eHlub3M6IGF0b21pYyBwaGFzZSAxOiBhZGQgYXRvbWljX2JlZ2luKCkvYXRvbWljX2ZsdXNoKCkK
+PiAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAxOiBhZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxs
+YmFjawo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDI6IHdpcmUgdXAgc3RhdGUgcmVzZXQo
+KSwgZHVwbGljYXRlKCkgYW5kCj4gICAgIGRlc3Ryb3koKQo+ICAgZHJtL2V4eW5vczogYXRvbWlj
+IHBoYXNlIDI6IGtlZXAgdHJhY2sgb2YgZnJhbWVidWZmZXIgcG9pbnRlcgo+ICAgZHJtL2V4eW5v
+czogbWFrZSBleHlub3NfcGxhbmVfbW9kZV9zZXQoKSBzdGF0aWMKPiAgIGRybS9leHlub3M6IHVz
+ZSBjb3JyZWN0IHBpcGUgbnVtYmVyIG9uIHZibGFuayBldmVudAo+ICAgZHJtL2V4eW5vczogcmVt
+b3ZlIGV4eW5vc19kaXNhYmxlX3BsYW5lKCkKPiAKPiBNYW5kZWVwIFNpbmdoIEJhaW5lcyAoMSk6
+Cj4gICBkcm0vZXh5bm9zOiB0cmFjayB2YmxhbmsgZXZlbnRzIG9uIGEgcGVyIGNydGMgYmFzaXMK
+PiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAgICAgIHwgICA0
+ICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAgICAgIHwgICA0
+ICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Nvbm5lY3Rvci5jIHwgICA0
+ICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICAgIHwgMjAz
+ICsrKysrKysrKysrLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2NydGMuaCAgICAgIHwgICA3ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcGkuYyAgICAgICB8ICAgNCArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcnYuYyAgICAgICB8ICAyOSArLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kcnYuaCAgICAgICB8ICAxNSArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHNpLmMgICAgICAgfCAgIDQgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmIuYyAgICAgICAgfCAgIDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgMjM1ICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8ICA5OSArKysr
+KystLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCAgICAg
+fCAgMTMgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICAg
+IHwgMTI3ICsrKystLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
+bWkuYyAgICAgICAgICB8ICAgNCArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgICAgICAgICB8IDIxMiArKysrKysrKy0tLS0tLS0tLS0tLS0tLQo+ICAxNiBmaWxlcyBj
+aGFuZ2VkLCA0MDggaW5zZXJ0aW9ucygrKSwgNTU4IGRlbGV0aW9ucygtKQo+IAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
