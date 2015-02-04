@@ -1,54 +1,77 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: fix DMA_ATTR_NO_KERNEL_MAPPING usage
-Date: Wed, 04 Feb 2015 11:59:23 +0900
-Message-ID: <54D18B0B.5060208@samsung.com>
-References: <1422953252-10835-1-git-send-email-carlo@caione.org>
- <1422953252-10835-2-git-send-email-carlo@caione.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v5 9/9] drm/exynos: add support for 'hdmi' clock
+Date: Wed, 04 Feb 2015 14:13:00 +0900
+Message-ID: <54D1AA5C.7040501@samsung.com>
+References: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com>
+ <1422883228-10690-10-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:19139 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751202AbbBDC7S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Feb 2015 21:59:18 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NJ8004BY8AS9A00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Feb 2015 11:59:16 +0900 (KST)
-In-reply-to: <1422953252-10835-2-git-send-email-carlo@caione.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422883228-10690-10-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, kyungmin.park@samsung.com, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Carlo Caione <carlo@caione.org>, linux-arm-kernel@lists.infradead.org, jstpierre@mecheye.net, drake@endlessm.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, robdclark@gmail.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org
 
-Hi,
-
-On 02/03/2015 05:47 PM, Carlo Caione wrote:
-> The Exynos DRM driver doesn't follow the correct API when dealing with
-> dma_{alloc, mmap, free}_attrs functions and the
-> DMA_ATTR_NO_KERNEL_MAPPING attribute.
-> 
-> When a IOMMU is not available and the DMA_ATTR_NO_KERNEL_MAPPING is
-> used, the driver should use the pointer returned by dma_alloc_attr() as
-> a cookie.
-> 
-> The Exynos DRM driver directly uses the non-requested virtual
-> kernel address returned by the DMA mapping subsystem. This just works
-> now because the non-IOMMU codepath doesn't obey
-> DMA_ATTR_NO_KERNEL_MAPPING but we need to fix it before fixing the DMA
-> layer.
-> 
-> Signed-off-by: Carlo Caione <carlo@caione.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_buf.c   |  6 +++---
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 29 +++++++++--------------------
->  drivers/gpu/drm/exynos/exynos_drm_gem.h   |  2 ++
->  3 files changed, 14 insertions(+), 23 deletions(-)
-> 
-
-Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Thanks.
+SGkgTWFyZWssCgpPbiAyMDE164WEIDAy7JuUIDAy7J28IDIyOjIwLCBNYXJlayBTenlwcm93c2tp
+IHdyb3RlOgo+IE1peGVkIG5lZWQgdG8gaGF2ZSBoZG1pIGNsb2NrIGVuYWJsZWQgdG8gcHJvcGVy
+bHkgcGVyZm9ybSBwb3dlciBvbi9vZmYKPiBzZXF1ZW5jZXMsIHNvIGFkZCBoYW5kbGluZyBvZiB0
+aGlzIGNsb2NrIGRpcmVjdGx5IHRvIHRoZSBtaXhlciBkcml2ZXIuCj4gRGVwZW5kZW5jeSBiZXR3
+ZWVuIGhkbWkgY2xvY2sgYW5kIG1peGVyIG1vZHVsZSBoYXMgYmVlbiBvYnNlcnZlZCBvbgo+IEV4
+eW5vczQgYmFzZWQgYm9hcmRzLgoKUGlja2VkIGl0IHVwLgoKVGhhbmtzLApJbmtpIERhZS4KCj4g
+Cj4gU3VnZ2VzdGVkLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IFJl
+dmlld2VkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllci5tYXJ0aW5lekBjb2xs
+YWJvcmEuY28udWs+Cj4gVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmll
+ci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+Cj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJv
+d3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBEb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zX21peGVyLnR4dCB8IDEgKwo+ICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgICAgICAgICAgICB8IDkgKysr
+KysrKysrCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1n
+aXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zX21peGVy
+LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3NfbWl4
+ZXIudHh0Cj4gaW5kZXggMDhiMzk0YjFlZGJmLi4zZTM4MTI4Zjg2NmIgMTAwNjQ0Cj4gLS0tIGEv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vc19taXhlci50eHQK
+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zX21p
+eGVyLnR4dAo+IEBAIC0xNSw2ICsxNSw3IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4gIAlhKSBt
+aXhlcjogR2F0ZSBvZiBNaXhlciBJUCBidXMgY2xvY2suCj4gIAliKSBzY2xrX2hkbWk6IEhETUkg
+U3BlY2lhbCBjbG9jaywgb25lIG9mIHRoZSB0d28gcG9zc2libGUgaW5wdXRzIG9mCj4gICAgICAg
+ICAgICAgICAgIG1peGVyIG11eC4KPiArCWMpIGhkbWk6IEdhdGUgb2YgSERNSSBJUCBidXMgY2xv
+Y2ssIG5lZWRlZCB0b2dldGhlciB3aXRoIHNjbGtfaGRtaS4KPiAgCj4gIEV4YW1wbGU6Cj4gIAo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IDgyMGI3NjIzNGVmNC4u
+ODIxMmM4Mjk5NjI1IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X21peGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4g
+QEAgLTcyLDYgKzcyLDcgQEAgc3RydWN0IG1peGVyX3Jlc291cmNlcyB7Cj4gIAlzcGlubG9ja190
+CQlyZWdfc2xvY2s7Cj4gIAlzdHJ1Y3QgY2xrCQkqbWl4ZXI7Cj4gIAlzdHJ1Y3QgY2xrCQkqdnA7
+Cj4gKwlzdHJ1Y3QgY2xrCQkqaGRtaTsKPiAgCXN0cnVjdCBjbGsJCSpzY2xrX21peGVyOwo+ICAJ
+c3RydWN0IGNsawkJKnNjbGtfaGRtaTsKPiAgCXN0cnVjdCBjbGsJCSptb3V0X21peGVyOwo+IEBA
+IC03NzQsNiArNzc1LDEyIEBAIHN0YXRpYyBpbnQgbWl4ZXJfcmVzb3VyY2VzX2luaXQoc3RydWN0
+IG1peGVyX2NvbnRleHQgKm1peGVyX2N0eCkKPiAgCQlyZXR1cm4gLUVOT0RFVjsKPiAgCX0KPiAg
+Cj4gKwltaXhlcl9yZXMtPmhkbWkgPSBkZXZtX2Nsa19nZXQoZGV2LCAiaGRtaSIpOwo+ICsJaWYg
+KElTX0VSUihtaXhlcl9yZXMtPmhkbWkpKSB7Cj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8g
+Z2V0IGNsb2NrICdoZG1pJ1xuIik7Cj4gKwkJcmV0dXJuIFBUUl9FUlIobWl4ZXJfcmVzLT5oZG1p
+KTsKPiArCX0KPiArCj4gIAltaXhlcl9yZXMtPnNjbGtfaGRtaSA9IGRldm1fY2xrX2dldChkZXYs
+ICJzY2xrX2hkbWkiKTsKPiAgCWlmIChJU19FUlIobWl4ZXJfcmVzLT5zY2xrX2hkbWkpKSB7Cj4g
+IAkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gZ2V0IGNsb2NrICdzY2xrX2hkbWknXG4iKTsKPiBA
+QCAtMTA5NSw2ICsxMTAyLDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfcG93ZXJvbihzdHJ1Y3QgZXh5
+bm9zX2RybV9tYW5hZ2VyICptZ3IpCj4gIAlwbV9ydW50aW1lX2dldF9zeW5jKGN0eC0+ZGV2KTsK
+PiAgCj4gIAljbGtfcHJlcGFyZV9lbmFibGUocmVzLT5taXhlcik7Cj4gKwljbGtfcHJlcGFyZV9l
+bmFibGUocmVzLT5oZG1pKTsKPiAgCWlmIChjdHgtPnZwX2VuYWJsZWQpIHsKPiAgCQljbGtfcHJl
+cGFyZV9lbmFibGUocmVzLT52cCk7Cj4gIAkJaWYgKGN0eC0+aGFzX3NjbGspCj4gQEAgLTExMzQs
+NiArMTE0Miw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX3Bvd2Vyb2ZmKHN0cnVjdCBleHlub3NfZHJt
+X21hbmFnZXIgKm1ncikKPiAgCWN0eC0+cG93ZXJlZCA9IGZhbHNlOwo+ICAJbXV0ZXhfdW5sb2Nr
+KCZjdHgtPm1peGVyX211dGV4KTsKPiAgCj4gKwljbGtfZGlzYWJsZV91bnByZXBhcmUocmVzLT5o
+ZG1pKTsKPiAgCWNsa19kaXNhYmxlX3VucHJlcGFyZShyZXMtPm1peGVyKTsKPiAgCWlmIChjdHgt
+PnZwX2VuYWJsZWQpIHsKPiAgCQljbGtfZGlzYWJsZV91bnByZXBhcmUocmVzLT52cCk7Cj4gCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
