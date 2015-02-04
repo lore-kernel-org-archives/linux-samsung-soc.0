@@ -1,87 +1,73 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] drm/exynos: Fix disharmony when setting plane on/off
-Date: Wed, 04 Feb 2015 11:02:26 +0900
-Message-ID: <54D17DB2.1020207@samsung.com>
-References: <1422970865-23774-1-git-send-email-gustavo@padovan.org>
+Subject: Re: [PATCH 6/6] drm/exynos: do not copy adjusted mode into mode during
+ crtc mode_set
+Date: Wed, 04 Feb 2015 11:10:14 +0900
+Message-ID: <54D17F86.7020902@samsung.com>
+References: <1422016980-23806-1-git-send-email-gustavo@padovan.org>
+ <1422016980-23806-6-git-send-email-gustavo@padovan.org>
+ <54CB0E40.1020400@samsung.com> <20150130144420.GE30820@joana>
+ <54CF035F.2050502@samsung.com> <20150203141618.GB2122@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422970865-23774-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:56513 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753261AbbBDCKJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Feb 2015 21:10:09 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NJ8009XM60VBD60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Feb 2015 11:10:07 +0900 (KST)
+In-reply-to: <20150203141618.GB2122@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Daniel Kurtz <djkurtz@chromium.org>
 
-SGksCgpPbiAwMi8wMy8yMDE1IDEwOjQxIFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
-bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
-IFRoaXMgaXNzdWUgd2FzIGNhdXNlZCBieSB0aGUgbGF0ZXN0IGV4eW5vc191cGRhdGVfcGxhbmUo
-KSBjbGVhbiB1cAo+IHRoYXQgdW5pZmllZCBwbGFuZSBvcGVyYXRpb25zLiBBZnRlciB0aG9zZSBj
-aGFuZ2VzIHRoZSBwbGFuZSBmYWlsZWQKPiB0byBnbyB0aGUgT24gc3RhdGUuIFRoaXMgcGF0Y2gg
-Zml4IHRoaXMgcHJvYmxlbSBieSBkb2luZyBjb3JyZWN0IGFjY291bnQKPiBvZiBleHlub3NfY3J0
-Yy0+ZW5hYmxlZC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8u
-cGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmMgfCAxMiArKysrKysrKysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEw
-IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fY3J0Yy5jCj4gaW5kZXggYTg1YzQ1MS4uMWRiZDBlMyAxMDA2NDQKPiAtLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC0xMTksNiArMTE5LDcgQEAg
-c3RhdGljIGludCBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfYmFzZShzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMsIGludCB4LCBpbnQgeSwKPiAgCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gY3J0
-Yy0+cHJpbWFyeS0+ZmI7Cj4gIAl1bnNpZ25lZCBpbnQgY3J0Y193Owo+ICAJdW5zaWduZWQgaW50
-IGNydGNfaDsKPiArCWludCByZXQ7Cj4gIAo+ICAJLyogd2hlbiBmcmFtZWJ1ZmZlciBjaGFuZ2lu
-ZyBpcyByZXF1ZXN0ZWQsIGNydGMncyBkcG1zIHNob3VsZCBiZSBvbiAqLwo+ICAJaWYgKGV4eW5v
-c19jcnRjLT5kcG1zID4gRFJNX01PREVfRFBNU19PTikgewo+IEBAIC0xMjksOCArMTMwLDE1IEBA
-IHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRj
-ICpjcnRjLCBpbnQgeCwgaW50IHksCj4gIAljcnRjX3cgPSBmYi0+d2lkdGggLSB4Owo+ICAJY3J0
-Y19oID0gZmItPmhlaWdodCAtIHk7Cj4gIAo+IC0JcmV0dXJuIGV4eW5vc191cGRhdGVfcGxhbmUo
-Y3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCj4gLQkJCQkgICBjcnRjX3csIGNydGNfaCwg
-eCwgeSwgY3J0Y193LCBjcnRjX2gpOwo+ICsJcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRj
-LT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiArCQkJCSAgY3J0Y193LCBjcnRjX2gsIHgsIHks
-IGNydGNfdywgY3J0Y19oKTsKPiArCWlmICghcmV0KQo+ICsJCXJldHVybiByZXQ7Cj4gKwo+ICsJ
-ZXh5bm9zX3BsYW5lX2RwbXMoY3J0Yy0+cHJpbWFyeSwgRFJNX01PREVfRFBNU19PTik7Cj4gKwo+
-ICsJcmV0dXJuIDA7Cj4gKwo+ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNf
-ZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gCgpUaGlzIHBhdGNoIGZhaWxzIHRvIGZp
-eCBkaXNoYXJtb255IHByb2JsZW0gb2YgcGxhbmUgb24vb2ZmIGJlY2F1c2UgaXQKY2F1c2VzIHRo
-ZSBwcm9ibGVtIHdoZW4gZG8gc2V0cGxhbmUuCgpQbGVhc2UgdGVzdCBzZXRwbGFuZSBsaWtlIGJl
-bG93IGFuZCBpIGdldCBlcnJvcnMgd2hlbiB0ZXJtaW5hdGUgaXQuCgpUaGFua3MuCgojIG1vZGV0
-ZXN0IC1QIDI0OjE5MjB4MTA4MAp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ2k5MTUnLi4uZmFpbGVk
-Lgp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ3JhZGVvbicuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVu
-IGRldmljZSAnbm91dmVhdScuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVuIGRldmljZSAndm13Z2Z4
-Jy4uLmZhaWxlZC4KdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdvbWFwZHJtJy4uLmZhaWxlZC4KdHJ5
-aW5nIHRvIG9wZW4gZGV2aWNlICdleHlub3MnLi4uc3VjY2Vzcy4KdGVzdGluZyAxOTIweDEwODBA
-WFIyNCBvdmVybGF5IHBsYW5lIDE3CgpbICAgMzMuNzY2MjY0XSBQQUdFIEZBVUxUIG9jY3VycmVk
-IGF0IDB4MjA4MDFlODAgYnkgMTQ2NTAwMDAuc3lzbW11KFBhZ2UgdGFibGUgYmFzZTogMHg2ZTNm
-MDAwMCkKWyAgIDMzLjc3MzMxMF0gIEx2MSBlbnRyeTogMHg2ZTIyODgwMQpbICAgMzMuNzc2NzQ4
-XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KWyAgIDMzLjc4MTI4M10ga2Vy
-bmVsIEJVRyBhdCBkcml2ZXJzL2lvbW11L2V4eW5vcy1pb21tdS5jOjM1OCEKWyAgIDMzLjc4Njgy
-OV0gSW50ZXJuYWwgZXJyb3I6IE9vcHMgLSBCVUc6IDAgWyMxXSBQUkVFTVBUIFNNUCBBUk0KWyAg
-IDMzLjc5MjYzNF0gTW9kdWxlcyBsaW5rZWQgaW46ClsgICAzMy43OTU2NzJdIENQVTogMCBQSUQ6
-IDE1NjEgQ29tbTogbW9kZXRlc3QgTm90IHRhaW50ZWQgMy4xOS4wLXJjNy0wMDY5Mi1nOTYzMGJl
-MCAjMTEyClsgICAzMy44MDM1NTFdIEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0
-dGVuZWQgRGV2aWNlIFRyZWUpClsgICAzMy44MDk2MjBdIHRhc2s6IGVkNGE1NDAwIHRpOiBlZDg0
-YzAwMCB0YXNrLnRpOiBlZDg0YzAwMApbICAgMzMuODE1MDAyXSBQQyBpcyBhdCBleHlub3Nfc3lz
-bW11X2lycSsweDE4MC8weDIwNApbICAgMzMuODE5NzU4XSBMUiBpcyBhdCBleHlub3Nfc3lzbW11
-X2lycSsweGQ0LzB4MjA0ClsgICAzMy44MjQ0MzldIHBjIDogWzxjMDI5OGI3ND5dICAgIGxyIDog
-WzxjMDI5OGFjOD5dICAgIHBzcjogNjAwMDAxOTMKWyAgIDMzLjgyNDQzOV0gc3AgOiBlZDg0ZGNl
-MCAgaXAgOiAwMDAwMDAwMCAgZnAgOiAwMDBiOWU0ZApbICAgMzMuODM1ODc1XSByMTA6IGMwN2Fl
-M2E0ICByOSA6IDAwMDAwMjA4ICByOCA6IDIwODAxZTgwClsgICAzMy44NDEwNzRdIHI3IDogZWUz
-ZjAwMDAgIHI2IDogZWUwZGYxMjggIHI1IDogZWUwZGYxMTAgIHI0IDogMDAwMDAwMDAKWyAgIDMz
-Ljg0NzU3NF0gcjMgOiA2ZTIyODgwMSAgcjIgOiA2ZTIyODgwMSAgcjEgOiBlZTM3OTYxMCAgcjAg
-OiBlZTEzYTUwMApbICAgMzMuODU0MDc0XSBGbGFnczogblpDdiAgSVJRcyBvZmYgIEZJUXMgb24g
-IE1vZGUgU1ZDXzMyICBJU0EgQVJNICBTZWdtZW50IHVzZXIKWyAgIDMzLjg2MTI2NV0gQ29udHJv
-bDogMTBjNTM4N2QgIFRhYmxlOiA2ZTE0YzA2YSAgREFDOiAwMDAwMDAxNQpbICAgMzMuODY2OTg0
-XSBQcm9jZXNzIG1vZGV0ZXN0IChwaWQ6IDE1NjEsIHN0YWNrIGxpbWl0ID0gMHhlZDg0YzIzOCkK
-WyAgIDMzLjg3MzEzNl0gU3RhY2s6ICgweGVkODRkY2UwIHRvIDB4ZWQ4NGUwMDApCi4uLgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+On 02/03/2015 11:16 PM, Gustavo Padovan wrote:
+> 2015-02-02 Joonyoung Shim <jy0922.shim@samsung.com>:
+> 
+>> Hi,
+>>
+>> On 01/30/2015 11:44 PM, Gustavo Padovan wrote:
+>>> Hi Joonyoung,
+>>>
+>>> 2015-01-30 Joonyoung Shim <jy0922.shim@samsung.com>:
+>>>
+>>>> Hi,
+>>>>
+>>>> On 01/23/2015 09:43 PM, Gustavo Padovan wrote:
+>>>>> From: Daniel Kurtz <djkurtz@chromium.org>
+>>>>>
+>>>>> The 'mode' is the modeline information which specifies the ideal mode
+>>>>> requested by the mode set initiator (usually userspace).
+>>>>> The 'adjusted_mode' is the actual hardware mode after all the crtcs
+>>>>> and encoders have had a chance to "fix it up".
+>>>>>
+>>>>> The adjusted_mode starts as a duplicate of the mode in
+>>>>> drm_crtc_helper_set_mode(), and gets modified as required.  There is no
+>>>>> reason to touch the original requested mode.
+>>>>>
+>>>>
+>>>> Agree, but is there any side effect after this commit? Should we save
+>>>> adjusted_mode to other variable and use it?
+>>>
+>>> I haven't seen any. Tested on peach pi and snow. Do we have any reason to save
+>>> it now? I don't we have a user for it now.
+>>>
+>>
+>> Because current codes use values of adjusted_mode in exynos drm hw drivers.
+> 
+> I fail to see where this happen. adjusted_mode is passed to to the mode_set()
+> callback and drivers can use it from there as the hdmi one does for example.
+> 
+
+Currently adjusted_mode is copied to &crtc->mode, so after if to use
+&crtc->mode is same with to use adjusted_mode.
+
+Thanks.
