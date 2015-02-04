@@ -1,93 +1,70 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH] cpufreq: exynos: Use simple approach to asses if cpu
- cooling can be used
-Date: Wed, 04 Feb 2015 10:00:25 +0100
-Message-ID: <20150204100025.565ee2b0@amdc2363>
-References: <1422015260-14225-1-git-send-email-l.majewski@samsung.com>
- <1422264327-17483-1-git-send-email-l.majewski@samsung.com>
- <CAKohponEXCsCu=WdbEb8eAnFpVdt1i2BWx+U7RcTX1cDi9A9ZA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAKohponEXCsCu=WdbEb8eAnFpVdt1i2BWx+U7RcTX1cDi9A9ZA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Carlo Caione <carlo@caione.org>
+Subject: [PATCH v2 0/2] dma: fix DMA_ATTR_NO_KERNEL_MAPPING for no-IOMMU platforms
+Date: Wed,  4 Feb 2015 10:23:18 +0100
+Message-ID: <1423041800-27859-1-git-send-email-carlo@caione.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:61253 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751909AbbBDJXo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Feb 2015 04:23:44 -0500
+Received: by mail-wg0-f47.google.com with SMTP id n12so538723wgh.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Feb 2015 01:23:43 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, jstpierre@mecheye.net, drake@endlessm.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, robdclark@gmail.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org, jy0922.shim@samsung.com, lauraa@codeaurora.org
+Cc: Carlo Caione <carlo@caione.org>
 
-Hi Eduardo,
+The DMA_ATTR_NO_KERNEL_MAPPING attribute is used to notify dma-mapping core
+that the driver will not use kernel mapping for the allocated buffer at all, so
+the core can skip creating it.
 
-> On 26 January 2015 at 14:55, Lukasz Majewski <l.majewski@samsung.com>
-> wrote:
-> > Commit: e725d26c4857e5e41975b5e74e64ce6ab09a7121 provided
-> > possibility to use device tree to asses if cpu can be used as
-> > cooling device. Since the code was somewhat awkward, simpler
-> > approach has been proposed.
-> >
-> > Test HW: Exynos 4412 - Odroid U3.
-> >
-> > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> >  drivers/cpufreq/exynos-cpufreq.c | 21 ++++++---------------
-> >  1 file changed, 6 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/exynos-cpufreq.c
-> > b/drivers/cpufreq/exynos-cpufreq.c index 5e98c6b..b640da0 100644
-> > --- a/drivers/cpufreq/exynos-cpufreq.c
-> > +++ b/drivers/cpufreq/exynos-cpufreq.c
-> > @@ -159,7 +159,7 @@ static struct cpufreq_driver exynos_driver = {
-> >
-> >  static int exynos_cpufreq_probe(struct platform_device *pdev)
-> >  {
-> > -       struct device_node *cpus, *np;
-> > +       struct device_node *cpu0, *np;
-> >         int ret = -EINVAL;
-> >
-> >         exynos_info = kzalloc(sizeof(*exynos_info), GFP_KERNEL);
-> > @@ -206,28 +206,19 @@ static int exynos_cpufreq_probe(struct
-> > platform_device *pdev) if (ret)
-> >                 goto err_cpufreq_reg;
-> >
-> > -       cpus = of_find_node_by_path("/cpus");
-> > -       if (!cpus) {
-> > -               pr_err("failed to find cpus node\n");
-> > +       cpu0 = of_get_cpu_node(0, NULL);
-> > +       if (!cpu0) {
-> > +               pr_err("failed to find cpu0 node\n");
-> >                 return 0;
-> >         }
-> >
-> > -       np = of_get_next_child(cpus, NULL);
-> > -       if (!np) {
-> > -               pr_err("failed to find cpus child node\n");
-> > -               of_node_put(cpus);
-> > -               return 0;
-> > -       }
-> > -
-> > -       if (of_find_property(np, "#cooling-cells", NULL)) {
-> > -               cdev = of_cpufreq_cooling_register(np,
-> > +       if (of_find_property(cpu0, "#cooling-cells", NULL)) {
-> > +               cdev = of_cpufreq_cooling_register(cpu0,
-> >                                                    cpu_present_mask);
-> >                 if (IS_ERR(cdev))
-> >                         pr_err("running cpufreq without cooling
-> > device: %ld\n", PTR_ERR(cdev));
-> >         }
-> > -       of_node_put(np);
-> > -       of_node_put(cpus);
-> >
-> >         return 0;
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Unfortunately at the moment this attribute is only valid for IOMMU setups. In
+non-IOMMU setups the codepath doesn't obey DMA_ATTR_NO_KERNEL_MAPPING so when
+the CMA region is in high-memory all the buffers created with this attribute
+that do not require a kernel virtual address space still put pressure on the
+vmalloc area (for reference see
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-August/279325.html)
 
-Could you apply this patch to yours linux-soc-thermal tree?
+This patchset is composed by two patches.
 
+The first patch fixes the Exynos DRM driver so that it keeps working when the
+non-IOMMU DMA layer is fixed. The Exynos DRM driver doesn't follow the
+recommendations in DMA-attributes.txt so in the non-IOMMU case when
+DMA_ATTR_NO_KERNEL_MAPPING is used the driver directly uses the returned kernel
+virtual address which it explicitly requested not to be assigned. That must be
+fixed before the underlying DMA subsystem is improved to obey
+DMA_ATTR_NO_KERNEL_MAPPING.
+
+The second patch implements DMA_ATTR_NO_KERNEL_MAPPING for non-IOMMU capable
+platforms.
+
+Please note that:
+
+* The first patch must be applied before the second one to avoid breaking the
+Exynos DRM driver. This patch without the DMA layer fix works fine (we save
+git-bisect) but it's not fully correct (we have double mapping in kernel
+address space).
+
+* The second patch breaks the Exynos DRM driver unless the first patch is
+* applied first
+
+Changelog v2:
+
+* Return page instead of &page as cookie so the caller can detect if
+__alloc_remap_buffer or __alloc_from_contiguous fails to allocate the buffer
+
+Carlo Caione (1):
+  drm/exynos: fix DMA_ATTR_NO_KERNEL_MAPPING usage
+
+Jasper St. Pierre (1):
+  arm/dma-mapping: Respect NO_KERNEL_MAPPING when we don't have an IOMMU
+
+ arch/arm/mm/dma-mapping.c                 | 67 +++++++++++++++++++------------
+ drivers/gpu/drm/exynos/exynos_drm_buf.c   |  6 +--
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 29 +++++--------
+ drivers/gpu/drm/exynos/exynos_drm_gem.h   |  2 +
+ 4 files changed, 55 insertions(+), 49 deletions(-)
 
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+2.2.2
