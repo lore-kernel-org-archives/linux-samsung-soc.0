@@ -1,80 +1,56 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 4/4] drm/exynos: remove checks for zpos == -1 on primary planes
-Date: Thu,  5 Feb 2015 15:59:59 -0200
-Message-ID: <1423159199-16394-4-git-send-email-gustavo@padovan.org>
-References: <1423159199-16394-1-git-send-email-gustavo@padovan.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RESEND PATCH V3 15/15] ARM: dts: Fix I2S1, I2S2 compatible for
+ exynos4 SoCs
+Date: Thu, 5 Feb 2015 19:41:05 +0000
+Message-ID: <20150205194105.GM21293@sirena.org.uk>
+References: <1422972382-18520-1-git-send-email-s.nawrocki@samsung.com>
+ <1422972382-18520-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1423159199-16394-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="04k0J7wEch5uF2Pi"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52190 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752187AbbBETlP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Feb 2015 14:41:15 -0500
+Content-Disposition: inline
+In-Reply-To: <1422972382-18520-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIHByaW1hcnkgcGxhbmUgZGVmYXVsdCB6cG9zIGlzIG5vdyAwLCBzbyByZW1vdmUgY2hlY2tz
-IGZvciB6cG9zID09Ci0xLiBXZSBkb24ndCBuZWVkIHRvIHNldCB3aW4gdG8gMCBhbnltb3JlIGl0
-IGlzIGFscmVhZHkgemVyby4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2
-by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmltZC5jIHwgNiAtLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV92aWRpLmMgfCA2IC0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYyAgICB8IDYgKystLS0tCiAzIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMTYg
-ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5k
-ZXggMDBkZjQwZC4uNzYzNzc4MCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2ZpbWQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltZC5jCkBAIC02MTIsOSArNjEyLDYgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fY29tbWl0KHN0
-cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB3aW4pCiAJaWYgKGN0eC0+c3VzcGVuZGVk
-KQogCQlyZXR1cm47CiAKLQlpZiAod2luID09IERFRkFVTFRfWlBPUykKLQkJd2luID0gY3R4LT5k
-ZWZhdWx0X3dpbjsKLQogCWlmICh3aW4gPCAwIHx8IHdpbiA+PSBXSU5ET1dTX05SKQogCQlyZXR1
-cm47CiAKQEAgLTczNSw5ICs3MzIsNiBAQCBzdGF0aWMgdm9pZCBmaW1kX3dpbl9kaXNhYmxlKHN0
-cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB3aW4pCiAJc3RydWN0IGZpbWRfY29udGV4
-dCAqY3R4ID0gY3J0Yy0+Y3R4OwogCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFuZTsKIAot
-CWlmICh3aW4gPT0gREVGQVVMVF9aUE9TKQotCQl3aW4gPSBjdHgtPmRlZmF1bHRfd2luOwotCiAJ
-aWYgKHdpbiA8IDAgfHwgd2luID49IFdJTkRPV1NfTlIpCiAJCXJldHVybjsKIApkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggM2MwZGNiNC4uZTczMGVmNiAxMDA2
-NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYworKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCkBAIC0xMjUsOSArMTI1LDYg
-QEAgc3RhdGljIHZvaWQgdmlkaV93aW5fY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNy
-dGMsIGludCB3aW4pCiAJaWYgKGN0eC0+c3VzcGVuZGVkKQogCQlyZXR1cm47CiAKLQlpZiAod2lu
-ID09IERFRkFVTFRfWlBPUykKLQkJd2luID0gY3R4LT5kZWZhdWx0X3dpbjsKLQogCWlmICh3aW4g
-PCAwIHx8IHdpbiA+PSBXSU5ET1dTX05SKQogCQlyZXR1cm47CiAKQEAgLTE0Niw5ICsxNDMsNiBA
-QCBzdGF0aWMgdm9pZCB2aWRpX3dpbl9kaXNhYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNy
-dGMsIGludCB3aW4pCiAJc3RydWN0IHZpZGlfY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwogCXN0
-cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFuZTsKIAotCWlmICh3aW4gPT0gREVGQVVMVF9aUE9T
-KQotCQl3aW4gPSBjdHgtPmRlZmF1bHRfd2luOwotCiAJaWYgKHdpbiA8IDAgfHwgd2luID49IFdJ
-TkRPV1NfTlIpCiAJCXJldHVybjsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
-aW5kZXggMTQxZDQ2MS4uYjI4MzcxMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCkBAIC04OTIsMTAgKzg5Miw5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGVfdmJsYW5r
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMs
-IE1YUl9JTlRfRU4sIDAsIE1YUl9JTlRfRU5fVlNZTkMpOwogfQogCi1zdGF0aWMgdm9pZCBtaXhl
-cl93aW5fY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB6cG9zKQorc3Rh
-dGljIHZvaWQgbWl4ZXJfd2luX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCBp
-bnQgd2luKQogewogCXN0cnVjdCBtaXhlcl9jb250ZXh0ICptaXhlcl9jdHggPSBjcnRjLT5jdHg7
-Ci0JaW50IHdpbiA9IHpwb3MgPT0gREVGQVVMVF9aUE9TID8gTUlYRVJfREVGQVVMVF9XSU4gOiB6
-cG9zOwogCiAJRFJNX0RFQlVHX0tNUygid2luOiAlZFxuIiwgd2luKTsKIApAQCAtOTE0LDExICs5
-MTMsMTAgQEAgc3RhdGljIHZvaWQgbWl4ZXJfd2luX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9j
-cnRjICpjcnRjLCBpbnQgenBvcykKIAltaXhlcl9jdHgtPnBsYW5lc1t3aW5dLmVuYWJsZWQgPSB0
-cnVlOwogfQogCi1zdGF0aWMgdm9pZCBtaXhlcl93aW5fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2Ry
-bV9jcnRjICpjcnRjLCBpbnQgenBvcykKK3N0YXRpYyB2b2lkIG1peGVyX3dpbl9kaXNhYmxlKHN0
-cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB3aW4pCiB7CiAJc3RydWN0IG1peGVyX2Nv
-bnRleHQgKm1peGVyX2N0eCA9IGNydGMtPmN0eDsKIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpy
-ZXMgPSAmbWl4ZXJfY3R4LT5taXhlcl9yZXM7Ci0JaW50IHdpbiA9IHpwb3MgPT0gREVGQVVMVF9a
-UE9TID8gTUlYRVJfREVGQVVMVF9XSU4gOiB6cG9zOwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CiAK
-IAlEUk1fREVCVUdfS01TKCJ3aW46ICVkXG4iLCB3aW4pOwotLSAKMS45LjMKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--04k0J7wEch5uF2Pi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Feb 03, 2015 at 03:06:22PM +0100, Sylwester Nawrocki wrote:
+> I2S1, I2S2 on Exynos4 SoC series have limited functionality compared
+> to I2S0, "samsung,s3c6410-i2s" compatible should be used for them.
+
+I've applied this even though I really shouldn't in order to get it in.
+Since it's a bug fix for stable it should've been near the head of any
+series it's part of not the very last patch in the series, and since
+it's not really related to the rest of the series except in that it
+relates to the same driver it should probably have been sent by itself
+rather than mixed in with everything else.
+
+--04k0J7wEch5uF2Pi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU08dQAAoJECTWi3JdVIfQfMoH/R3L/JJXYLb4GnUi2BBCSu3L
+b6l7+WqH/FIvRgmhhI6QUgCnC/8R9tQyLtbw+qaTx6WkAbTug8pO1PAZGnni+pey
+Wmzl5IlRtX1iXN6DQcINaZNATKmyAXQkSX9pBjihIu7FFWYR0iMrTT/Ka6AWMjuL
+f/oJF+ohZdQ55w8UyGlb2lCo3Ogc2UVF5dtWZgRpOnE46fOCUiHV2MtJB+zUSmWm
+rykrbfMRvk2RQ8xJOkWSHkWMvmDrikS/BbzrRYWQQdXBibPCb3xKUcUpwHpF2Rqg
+aZhSuS8sj8U7BImkG1qLJQDPWtMU/LvvYiinOg59lG7GmbcFZ9L6e3HUeWjBKi4=
+=E7Ma
+-----END PGP SIGNATURE-----
+
+--04k0J7wEch5uF2Pi--
