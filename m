@@ -1,57 +1,343 @@
-From: Carlo Caione <carlo@caione.org>
-Subject: Re: [PATCH v2 2/2] arm/dma-mapping: Respect NO_KERNEL_MAPPING when we
- don't have an IOMMU
-Date: Thu, 5 Feb 2015 11:13:15 +0100
-Message-ID: <CAOQ7t2ZtWA4gnatMgRuk17BPycM8A6MaPD7s6jeprr3VWqOaPA@mail.gmail.com>
-References: <1423041800-27859-1-git-send-email-carlo@caione.org>
-	<1423041800-27859-3-git-send-email-carlo@caione.org>
-	<54D1F2AE.4070003@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:39689 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756968AbbBEKNQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Feb 2015 05:13:16 -0500
-Received: by mail-wi0-f178.google.com with SMTP id bs8so9395177wib.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2015 02:13:15 -0800 (PST)
-In-Reply-To: <54D1F2AE.4070003@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Beata Michalska <b.michalska@samsung.com>
+Subject: [PATCH] clk: samsung: exynos3250: Add driver for CMU_ISP clock domain
+Date: Thu, 05 Feb 2015 12:14:21 +0100
+Message-ID: <1423134861-30099-1-git-send-email-b.michalska@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
+Cc: kgene@kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, sw0312.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Carlo Caione <carlo@caione.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "Jasper St. Pierre" <jstpierre@mecheye.net>, Daniel Drake <drake@endlessm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Clark <robdclark@gmail.com>, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org, jy0922.shim@samsung.com, Laura Abbott <lauraa@codeaurora.org>
 
-On Wed, Feb 4, 2015 at 11:21 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hello,
->
-> On 2015-02-04 10:23, Carlo Caione wrote:
->>
->> From: "Jasper St. Pierre" <jstpierre@mecheye.net>
->>
->> Even without an iommu, NO_KERNEL_MAPPING is still convenient to save on
->> kernel address space in places where we don't need a kernel mapping.
->> Implement support for it in the two places where we're creating an
->> expensive mapping.
->>
->> __alloc_from_pool uses an internal pool from which we already have
->> virtual addresses, so it's not relevant, and __alloc_simple_buffer uses
->> alloc_pages, which will always return a lowmem page, which is already
->> mapped into kernel space, so we can't prevent a mapping for it in that
->> case.
->>
->> Signed-off-by: Jasper St. Pierre <jstpierre@mecheye.net>
->> Signed-off-by: Carlo Caione <carlo@caione.org>
->> Reviewed-by: Rob Clark <robdclark@gmail.com>
->> Reviewed-by: Daniel Drake <dsd@endlessm.com>
->
->
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
 
-Thanks. Who is supposed to take this patch? Russel?
+Add clock controller for CMU ISP clock domain on Exynos3250,
+providing clocks for FIMC-IS subsystem.
 
-Cheers,
+[b.michalska: initial setup of ISP block source clocks
+ (setting root oscillator clock as the input);
+ use samsung_cmu_register_one to register the provider;
+ updated DT binding documentation]
 
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Beata Michalska <b.michalska@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ .../devicetree/bindings/clock/exynos3250-clock.txt |    8 +
+ drivers/clk/samsung/clk-exynos3250.c               |  189 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h             |   61 +++++++
+ 3 files changed, 258 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+index f57d9dd..f1738b8 100644
+--- a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+@@ -9,6 +9,8 @@ Required Properties:
+   - "samsung,exynos3250-cmu" - controller compatible with Exynos3250 SoC.
+   - "samsung,exynos3250-cmu-dmc" - controller compatible with
+     Exynos3250 SoC for Dynamic Memory Controller domain.
++  - "samsung,exynos3250-cmu-isp" - ISP block clock controller compatible
++     with Exynos3250 SOC
+ 
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+@@ -36,6 +38,12 @@ Example 1: Examples of clock controller nodes are listed below.
+ 		#clock-cells = <1>;
+ 	};
+ 
++	cmu_isp: clock-controller@10048000 {
++		compatible = "samsung,exynos3250-cmu-isp";
++		reg = <0x10048000 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ Example 2: UART controller node that consumes the clock generated by the clock
+ 	   controller. Refer to the standard clock bindings for information
+ 	   about 'clocks' and 'clock-names' property.
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 6e6cca3..36dceb6 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -814,9 +814,16 @@ static void __init exynos3_core_down_clock(void)
+ 	__raw_writel(0x0, reg_base + PWR_CTRL2);
+ }
+ 
++static inline struct clk *__samsung_clk_get(struct samsung_clk_provider *ctx,
++					    unsigned int idx)
++{
++	return  ctx->clk_data.clks[idx];
++}
++
+ static void __init exynos3250_cmu_init(struct device_node *np)
+ {
+ 	struct samsung_clk_provider *ctx;
++	struct clk* clk_mux, *clk_parent;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base)
+@@ -841,6 +848,27 @@ static void __init exynos3250_cmu_init(struct device_node *np)
+ 	samsung_clk_register_div(ctx, div_clks, ARRAY_SIZE(div_clks));
+ 	samsung_clk_register_gate(ctx, gate_clks, ARRAY_SIZE(gate_clks));
+ 
++	/**
++	 * Both mux clocks: mout_aclk_400_mcuisp_sub and mout_aclk_266_sub
++	 * drive the source clocks for ISP block (MCUISP and ISP respectively).
++	 * Switch both muxes to root oscillator clock to secure
++	 * proper power down of ISP power domain case it's state
++	 * transitions remain unhandled (by a relevant device driver).
++	 * This will also reduce the risk of accessing the ISP CMU registers
++	 * while the ISP power domain remains turned off.
++	 * Note: This still requires some real solutions (involving
++	 * the ISP CMU)
++	 */
++	clk_parent =  __samsung_clk_get(ctx, CLK_FIN_PLL);
++	if (!IS_ERR(clk_parent)) {
++		clk_mux = __samsung_clk_get(ctx, CLK_MOUT_ACLK_400_MCUISP_SUB);
++		if (!IS_ERR(clk_mux))
++			clk_set_parent(clk_mux, clk_parent);
++		clk_mux =  __samsung_clk_get(ctx, CLK_MOUT_ACLK_266_SUB);
++		if (!IS_ERR(clk_mux))
++			clk_set_parent(clk_mux, clk_parent);
++	}
++
+ 	exynos3_core_down_clock();
+ 
+ 	exynos3250_clk_sleep_init();
+@@ -1017,3 +1045,164 @@ static void __init exynos3250_cmu_dmc_init(struct device_node *np)
+ }
+ CLK_OF_DECLARE(exynos3250_cmu_dmc, "samsung,exynos3250-cmu-dmc",
+ 		exynos3250_cmu_dmc_init);
++
++/*
++ * CMU ISP
++ */
++
++#define DIV_ISP0		0x300
++#define DIV_ISP1		0x304
++#define GATE_IP_ISP0		0x800
++#define GATE_IP_ISP1		0x804
++#define GATE_SCLK_ISP		0x900
++
++static struct samsung_div_clock isp_div_clks[] __initdata = {
++	/*
++	 * NOTE: Following table is sorted by register address in ascending
++	 * order and then bitfield shift in descending order, as it is done
++	 * in the User's Manual. When adding new entries, please make sure
++	 * that the order is preserved, to avoid merge conflicts and make
++	 * further work with defined data easier.
++	 */
++	/* DIV_ISP0 */
++	DIV(CLK_DIV_ISP1, "div_isp1", "mout_aclk_266_sub", DIV_ISP0, 4, 3),
++	DIV(CLK_DIV_ISP0, "div_isp0", "mout_aclk_266_sub", DIV_ISP0, 0, 3),
++
++	/* DIV_ISP1 */
++	DIV(CLK_DIV_MCUISP1, "div_mcuisp1", "mout_aclk_400_mcuisp_sub",
++		DIV_ISP1, 8, 3),
++	DIV(CLK_DIV_MCUISP0, "div_mcuisp0", "mout_aclk_400_mcuisp_sub",
++		DIV_ISP1, 4, 3),
++	DIV(CLK_DIV_MPWM, "div_mpwm", "div_isp1", DIV_ISP1, 0, 3),
++};
++
++static struct samsung_gate_clock isp_gate_clks[] __initdata = {
++	/*
++	 * NOTE: Following table is sorted by register address in ascending
++	 * order and then bitfield shift in descending order, as it is done
++	 * in the User's Manual. When adding new entries, please make sure
++	 * that the order is preserved, to avoid merge conflicts and make
++	 * further work with defined data easier.
++	 */
++
++	/* GATE_IP_ISP0 */
++	GATE(CLK_UART_ISP, "uart_isp", "uart_isp_top",
++		GATE_IP_ISP0, 31, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_WDT_ISP, "wdt_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 30, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PWM_ISP, "pwm_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 28, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_I2C1_ISP, "i2c1_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 26, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_I2C0_ISP, "i2c0_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 25, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_MPWM_ISP, "mpwm_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 24, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_MCUCTL_ISP, "mcuctl_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 23, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PPMUISPX, "ppmuispx", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PPMUISPMX, "ppmuispmx", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_LITE1, "qe_lite1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_LITE0, "qe_lite0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_FD, "qe_fd", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_DRC, "qe_drc", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_ISP, "qe_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_CSIS1, "csis1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_LITE1, "smmu_lite1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_LITE0, "smmu_lite0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 11, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_FD, "smmu_fd", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_DRC, "smmu_drc", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_ISP, "smmu_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_GICISP, "gicisp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_CSIS0, "csis0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_MCUISP, "mcuisp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_LITE1, "lite1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_LITE0, "lite0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_FD, "fd", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_DRC, "drc", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ISP, "isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* GATE_IP_ISP1 */
++	GATE(CLK_QE_ISPCX, "qe_ispcx", "uart_isp_top",
++		GATE_IP_ISP0, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_SCALERP, "qe_scalerp", "uart_isp_top",
++		GATE_IP_ISP0, 20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_SCALERC, "qe_scalerc", "uart_isp_top",
++		GATE_IP_ISP0, 19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_SCALERP, "smmu_scalerp", "uart_isp_top",
++		GATE_IP_ISP0, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_SCALERC, "smmu_scalerc", "uart_isp_top",
++		GATE_IP_ISP0, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SCALERP, "scalerp", "uart_isp_top",
++		GATE_IP_ISP0, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SCALERC, "scalerc", "uart_isp_top",
++		GATE_IP_ISP0, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SPI1_ISP, "spi1_isp", "uart_isp_top",
++		GATE_IP_ISP0, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SPI0_ISP, "spi0_isp", "uart_isp_top",
++		GATE_IP_ISP0, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_ISPCX, "smmu_ispcx", "uart_isp_top",
++		GATE_IP_ISP0, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ASYNCAXIM, "asyncaxim", "uart_isp_top",
++		GATE_IP_ISP0, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* GATE_SCLK_ISP */
++	GATE(CLK_SCLK_MPWM_ISP, "sclk_mpwm_isp", "div_mpwm",
++		GATE_SCLK_ISP, 0, CLK_IGNORE_UNUSED, 0),
++};
++
++static struct samsung_cmu_info isp_cmu_info __initdata = {
++	.div_clks	= isp_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(isp_div_clks),
++	.gate_clks	= isp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(isp_gate_clks),
++	.nr_clk_ids	= NR_CLKS_ISP,
++};
++
++static int __init exynos3250_cmu_isp_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++
++	samsung_cmu_register_one(np, &isp_cmu_info);
++	return 0;
++}
++
++static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
++	{ .compatible = "samsung,exynos3250-cmu-isp", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver exynos3250_cmu_isp_driver = {
++	.driver = {
++		.name = "exynos3250-cmu-isp",
++		.of_match_table = exynos3250_cmu_isp_of_match,
++	},
++};
++
++static int exynos3250_cmu_platform_init(void)
++{
++	return platform_driver_probe(&exynos3250_cmu_isp_driver,
++					exynos3250_cmu_isp_probe);
++}
++subsys_initcall(exynos3250_cmu_platform_init);
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index 961b9c1..aab088d 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -282,4 +282,65 @@
+  */
+ #define NR_CLKS_DMC			21
+ 
++/*
++ * CMU ISP
++ */
++
++/* Dividers */
++
++#define CLK_DIV_ISP1			1
++#define CLK_DIV_ISP0			2
++#define CLK_DIV_MCUISP1			3
++#define CLK_DIV_MCUISP0			4
++#define CLK_DIV_MPWM			5
++
++/* Gates */
++
++#define CLK_UART_ISP			8
++#define CLK_WDT_ISP			9
++#define CLK_PWM_ISP			10
++#define CLK_I2C1_ISP			11
++#define CLK_I2C0_ISP			12
++#define CLK_MPWM_ISP			13
++#define CLK_MCUCTL_ISP			14
++#define CLK_PPMUISPX			15
++#define CLK_PPMUISPMX			16
++#define CLK_QE_LITE1			17
++#define CLK_QE_LITE0			18
++#define CLK_QE_FD			19
++#define CLK_QE_DRC			20
++#define CLK_QE_ISP			21
++#define CLK_CSIS1			22
++#define CLK_SMMU_LITE1			23
++#define CLK_SMMU_LITE0			24
++#define CLK_SMMU_FD			25
++#define CLK_SMMU_DRC			26
++#define CLK_SMMU_ISP			27
++#define CLK_GICISP			28
++#define CLK_CSIS0			29
++#define CLK_MCUISP			30
++#define CLK_LITE1			31
++#define CLK_LITE0			32
++#define CLK_FD				33
++#define CLK_DRC				34
++#define CLK_ISP				35
++#define CLK_QE_ISPCX			36
++#define CLK_QE_SCALERP			37
++#define CLK_QE_SCALERC			38
++#define CLK_SMMU_SCALERP		39
++#define CLK_SMMU_SCALERC		40
++#define CLK_SCALERP			41
++#define CLK_SCALERC			42
++#define CLK_SPI1_ISP			43
++#define CLK_SPI0_ISP			44
++#define CLK_SMMU_ISPCX			45
++#define CLK_ASYNCAXIM			46
++#define CLK_SCLK_MPWM_ISP		47
++
++/*
++ * Total number of clocks of CMU_ISP.
++ * NOTE: Must be equal to last clock ID increased by one.
++ */
++#define NR_CLKS_ISP			48
++
+ #endif /* _DT_BINDINGS_CLOCK_SAMSUNG_EXYNOS3250_CLOCK_H */
 -- 
-Carlo Caione
+1.7.9.5
