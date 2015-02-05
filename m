@@ -1,63 +1,74 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [v2,3/3] ARM: EXYNOS: Remove left over 'extra_save'
-Date: Thu, 05 Feb 2015 08:14:46 +0100
-Message-ID: <1423120486.29408.2.camel@AMDC1943>
-References: <1422961601-7087-3-git-send-email-k.kozlowski@samsung.com>
- <54D2F646.3090306@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48231 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751589AbbBEHOv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Feb 2015 02:14:51 -0500
-In-reply-to: <54D2F646.3090306@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v3 1/3] ARM: EXYNOS: Add missing static to file-scope
+ declarations
+Date: Thu, 05 Feb 2015 08:23:20 +0100
+Message-ID: <1423121002-25117-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On czw, 2015-02-05 at 10:19 +0530, Pankaj Dubey wrote:
-> Hi Krzysztof,
-> 
-> On Tuesday 03 February 2015 04:36 PM, Krzysztof Kozlowski wrote:
-> > Since 32b0aa9aaeb4 ("ARM: EXYNOS: Remove i2c sys configuration related
-> > code") the Exynos 5250 no longer saves additional registers under
-> > 'exynos_pm_data.extra_save' field.
-> >
-> > No one else uses this code so get rid of it making also 'exynos_pm_data'
-> > const everywhere.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >
-> > ---
-> > Changes since v1:
-> > 1. New patch.
-> > ---
-> >   arch/arm/mach-exynos/suspend.c | 13 ++-----------
-> >   1 file changed, 2 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> > index e6c961126087..d56bd6ca5e86 100644
-> > --- a/arch/arm/mach-exynos/suspend.c
-> > +++ b/arch/arm/mach-exynos/suspend.c
-> > @@ -63,7 +63,6 @@ static struct sleep_save exynos_core_save[] = {
-> >
-> >   struct exynos_pm_data {
-> >   	const struct exynos_wkup_irq *wkup_irq;
-> > -	struct sleep_save *extra_save;
-> >   	int num_extra_save;
-> 
-> 'num_extra_save' can be removed at the same time.
-> 
-> Rest changes looks ok.
+The 'pm_data', 'exynos_release_ret_regs', 'exynos3250_release_ret_regs'
+and 'exynos5420_release_ret_regs' are not exported nor used outside of
+suspend.c file. Make them static.
 
-Right, thanks for pointing this out. I'll resend the patchset.
+This fixes following sparse warnings:
+arch/arm/mach-exynos/suspend.c:83:23: warning: symbol 'pm_data' was not declared. Should it be static?
+arch/arm/mach-exynos/suspend.c:106:14: warning: symbol 'exynos_release_ret_regs' was not declared. Should it be static?
+arch/arm/mach-exynos/suspend.c:117:14: warning: symbol 'exynos5420_release_ret_regs' was not declared. Should it be static?
 
-Best regards,
-Krzysztof
-> 
-> Thanks,
-> Pankaj Dubey
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+---
+Changes since v2:
+None
+
+Changes since v1:
+1. Add static to 'exynos3250_release_ret_regs' (suggested by Kukjin).
+---
+ arch/arm/mach-exynos/suspend.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 82e6b6fba23f..77cc39bdad47 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -75,7 +75,7 @@ struct exynos_pm_data {
+ 	int (*cpu_suspend)(unsigned long);
+ };
+ 
+-struct exynos_pm_data *pm_data;
++static struct exynos_pm_data *pm_data;
+ 
+ static int exynos5420_cpu_state;
+ static unsigned int exynos_pmu_spare3;
+@@ -104,7 +104,7 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-unsigned int exynos_release_ret_regs[] = {
++static unsigned int exynos_release_ret_regs[] = {
+ 	S5P_PAD_RET_MAUDIO_OPTION,
+ 	S5P_PAD_RET_GPIO_OPTION,
+ 	S5P_PAD_RET_UART_OPTION,
+@@ -115,7 +115,7 @@ unsigned int exynos_release_ret_regs[] = {
+ 	REG_TABLE_END,
+ };
+ 
+-unsigned int exynos3250_release_ret_regs[] = {
++static unsigned int exynos3250_release_ret_regs[] = {
+ 	S5P_PAD_RET_MAUDIO_OPTION,
+ 	S5P_PAD_RET_GPIO_OPTION,
+ 	S5P_PAD_RET_UART_OPTION,
+@@ -128,7 +128,7 @@ unsigned int exynos3250_release_ret_regs[] = {
+ 	REG_TABLE_END,
+ };
+ 
+-unsigned int exynos5420_release_ret_regs[] = {
++static unsigned int exynos5420_release_ret_regs[] = {
+ 	EXYNOS_PAD_RET_DRAM_OPTION,
+ 	EXYNOS_PAD_RET_MAUDIO_OPTION,
+ 	EXYNOS_PAD_RET_JTAG_OPTION,
+-- 
+1.9.1
