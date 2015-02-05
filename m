@@ -1,51 +1,57 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [v3,1/9] clk: samsung: exynos5433: Add clocks for CMU_APOLLO domain
-Date: Thu, 05 Feb 2015 10:56:54 +0100
-Message-ID: <54D33E66.30909@samsung.com>
-References: <1422922437-7414-2-git-send-email-cw00.choi@samsung.com>
- <54D31F67.1050701@samsung.com>
+From: Carlo Caione <carlo@caione.org>
+Subject: Re: [PATCH v2 2/2] arm/dma-mapping: Respect NO_KERNEL_MAPPING when we
+ don't have an IOMMU
+Date: Thu, 5 Feb 2015 11:13:15 +0100
+Message-ID: <CAOQ7t2ZtWA4gnatMgRuk17BPycM8A6MaPD7s6jeprr3VWqOaPA@mail.gmail.com>
+References: <1423041800-27859-1-git-send-email-carlo@caione.org>
+	<1423041800-27859-3-git-send-email-carlo@caione.org>
+	<54D1F2AE.4070003@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54D31F67.1050701@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, mturquette@linaro.org
-Cc: tomasz.figa@gmail.com, kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:39689 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756968AbbBEKNQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Feb 2015 05:13:16 -0500
+Received: by mail-wi0-f178.google.com with SMTP id bs8so9395177wib.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2015 02:13:15 -0800 (PST)
+In-Reply-To: <54D1F2AE.4070003@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Carlo Caione <carlo@caione.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "Jasper St. Pierre" <jstpierre@mecheye.net>, Daniel Drake <drake@endlessm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Clark <robdclark@gmail.com>, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, kgene@kernel.org, jy0922.shim@samsung.com, Laura Abbott <lauraa@codeaurora.org>
 
-On 05/02/15 08:44, Pankaj Dubey wrote:
->> +static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
-
->> > +
->> > +	/* ENABLE_PCLK_APOLLO */
->> > +	GATE(CLK_PCLK_ASAPBMST_CSSYS_APOLLO, "pclk_asapbmst_cssys_apollo",
->> > +			"div_pclk_dbg_apollo", ENABLE_PCLK_APOLLO,
->> > +			2, CLK_IGNORE_UNUSED, 0),
->> > +	GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
->> > +			ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
->> > +	GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
+On Wed, Feb 4, 2015 at 11:21 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
 >
-> Isn't "pclk_pmu_sysreg_apollo" be named as "pclk_sysreg_apollo" to match 
-> with UM?
+> On 2015-02-04 10:23, Carlo Caione wrote:
+>>
+>> From: "Jasper St. Pierre" <jstpierre@mecheye.net>
+>>
+>> Even without an iommu, NO_KERNEL_MAPPING is still convenient to save on
+>> kernel address space in places where we don't need a kernel mapping.
+>> Implement support for it in the two places where we're creating an
+>> expensive mapping.
+>>
+>> __alloc_from_pool uses an internal pool from which we already have
+>> virtual addresses, so it's not relevant, and __alloc_simple_buffer uses
+>> alloc_pages, which will always return a lowmem page, which is already
+>> mapped into kernel space, so we can't prevent a mapping for it in that
+>> case.
+>>
+>> Signed-off-by: Jasper St. Pierre <jstpierre@mecheye.net>
+>> Signed-off-by: Carlo Caione <carlo@caione.org>
+>> Reviewed-by: Rob Clark <robdclark@gmail.com>
+>> Reviewed-by: Daniel Drake <dsd@endlessm.com>
+>
+>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Sounds reasonable, Chanwoo, if you agree I'll squash following change
-to this patch before sending upstream:
+Thanks. Who is supposed to take this patch? Russel?
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c
-b/drivers/clk/samsung/clk-exynos5433.c
-index 7a024cd..387e3e3 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3656,7 +3656,7 @@ static struct samsung_gate_clock apollo_gate_clks[]
-__initdata = {
-                        2, CLK_IGNORE_UNUSED, 0),
-        GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
-                        ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
--       GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
-+       GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_sysreg_apollo",
-                        "div_pclk_apollo", ENABLE_PCLK_APOLLO,
-                        0, CLK_IGNORE_UNUSED, 0),
---
-Thanks,
-Sylwester
+Cheers,
+
+-- 
+Carlo Caione
