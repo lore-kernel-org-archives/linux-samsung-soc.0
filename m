@@ -1,208 +1,45 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
-Date: Thu, 05 Feb 2015 13:32:14 +0100
-Message-ID: <2549250.K92n8zdPv5@amdc1032>
-References: <1423045646-20592-1-git-send-email-k.kozlowski@samsung.com>
- <8043345.BDfdhXvZOx@amdc1032> <1423120340.29408.0.camel@AMDC1943>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [RFC PATCH 0/3] Fix power domains handling on exynos542x
+Date: Thu, 05 Feb 2015 13:35:36 +0100
+Message-ID: <1423139739-19881-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1423120340.29408.0.camel@AMDC1943>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Liquid.Acid@gmx.net, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, javier.martinez@collabora.co.uk, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-Hi,
-
-On Thursday, February 05, 2015 08:12:20 AM Krzysztof Kozlowski wrote:
-> On =C5=9Bro, 2015-02-04 at 19:07 +0100, Bartlomiej Zolnierkiewicz wro=
-te:
-> > Hi,
-> >=20
-> > On Wednesday, February 04, 2015 11:27:26 AM Krzysztof Kozlowski wro=
-te:
-> > > The Exynos cpuidle driver has coupled cpuidle built-in so it cann=
-ot be
-> > > built without SMP:
-> > >=20
-> > > arch/arm/mach-exynos/pm.c: In function =E2=80=98exynos_cpu0_enter=
-_aftr=E2=80=99:
-> > > arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of f=
-unction =E2=80=98arch_send_wakeup_ipi_mask=E2=80=99 [-Werror=3Dimplicit=
--function-declaration]
-> > > arch/arm/mach-exynos/built-in.o: In function `exynos_pre_enter_af=
-tr':
-> > > ../arch/arm/mach-exynos/pm.c:300: undefined reference to `cpu_boo=
-t_reg_base'
-> > > arch/arm/mach-exynos/built-in.o: In function `exynos_cpu1_powerdo=
-wn':
-> > > ../arch/arm/mach-exynos/pm.c:282: undefined reference to `exynos_=
-cpu_power_down'
-> > >=20
-> > > Make the cpuidle driver depending on SMP because this will be the
-> > > fastest way to fix build break without adding a bunch of ifdefs i=
-n few
-> > > places.
-> >=20
-> > There shouldn't be a lot of new ifdefs (please see below) and I wou=
-ld
-> > very much prefer for cpuidle to stay supported also on UP kernels.
->=20
-> Sure, I'm fine with your patch.
-
-Thanks!
-
-I tested it today with SMP & UP kernels on Origen4210 board and it work=
-s
-fine in both cases (-next is fine on Origen4210, the problem I hit yest=
-ereday
-was caused by a configuration issue on my side).
-
-Kukjin, please apply it.  Thank you.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> Best regards,
-> Krzysztof
->=20
-> >=20
-> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > > ---
-> > >  arch/arm/mach-exynos/pm.c   | 2 ++
-> > >  drivers/cpuidle/Kconfig.arm | 3 ++-
-> > >  2 files changed, 4 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.=
-c
-> > > index e6209dadc00d..17db00ff7f3a 100644
-> > > --- a/arch/arm/mach-exynos/pm.c
-> > > +++ b/arch/arm/mach-exynos/pm.c
-> > > @@ -181,6 +181,7 @@ void exynos_enter_aftr(void)
-> > >  	cpu_pm_exit();
-> > >  }
-> > > =20
-> > > +#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> > >  static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
-> > > =20
-> > >  static int exynos_cpu0_enter_aftr(void)
-> > > @@ -302,3 +303,4 @@ struct cpuidle_exynos_data cpuidle_coupled_ex=
-ynos_data =3D {
-> > >  	.pre_enter_aftr		=3D exynos_pre_enter_aftr,
-> > >  	.post_enter_aftr		=3D exynos_post_enter_aftr,
-> > >  };
-> > > +#endif /* CONFIG_ARM_EXYNOS_CPUIDLE */
-> > > diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfi=
-g.arm
-> > > index 8e07c9419153..5eb86a4f74d9 100644
-> > > --- a/drivers/cpuidle/Kconfig.arm
-> > > +++ b/drivers/cpuidle/Kconfig.arm
-> > > @@ -55,7 +55,8 @@ config ARM_AT91_CPUIDLE
-> > >  config ARM_EXYNOS_CPUIDLE
-> > >  	bool "Cpu Idle Driver for the Exynos processors"
-> > >  	depends on ARCH_EXYNOS
-> > > -	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
-> > > +	depends on SMP
-> > > +	select ARCH_NEEDS_CPU_IDLE_COUPLED
-> > >  	help
-> > >  	  Select this to enable cpuidle for Exynos processors
-> >=20
-> > How's about the patch below instead?  It builds fine for UP and SMP=
-=2E
-> > I will do more testing tomorrow (unfortunately it seems that someth=
-ing
-> > else broke Origen4210 in -next).
-> >=20
-> > From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Subject: [PATCH] ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
-> >=20
-> > The Exynos cpuidle driver has coupled cpuidle built-in so it cannot=
- be
-> > built without SMP:
-> >=20
-> > arch/arm/mach-exynos/pm.c: In function =E2=80=98exynos_cpu0_enter_a=
-ftr=E2=80=99:
-> > arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of fun=
-ction =E2=80=98arch_send_wakeup_ipi_mask=E2=80=99 [-Werror=3Dimplicit-f=
-unction-declaration]
-> > arch/arm/mach-exynos/built-in.o: In function `exynos_pre_enter_aftr=
-':
-> > ../arch/arm/mach-exynos/pm.c:300: undefined reference to `cpu_boot_=
-reg_base'
-> > arch/arm/mach-exynos/built-in.o: In function `exynos_cpu1_powerdown=
-':
-> > ../arch/arm/mach-exynos/pm.c:282: undefined reference to `exynos_cp=
-u_power_down'
-> >=20
-> > Fix it by adding missing checks for SMP.
-> >=20
-> > Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/exynos.c    |    2 +-
-> >  arch/arm/mach-exynos/pm.c        |    2 ++
-> >  drivers/cpuidle/cpuidle-exynos.c |    3 ++-
-> >  3 files changed, 5 insertions(+), 2 deletions(-)
-> >=20
-> > Index: b/arch/arm/mach-exynos/exynos.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- a/arch/arm/mach-exynos/exynos.c	2015-02-04 18:30:23.555819717 +=
-0100
-> > +++ b/arch/arm/mach-exynos/exynos.c	2015-02-04 18:43:23.539807815 +=
-0100
-> > @@ -211,7 +211,7 @@ static void __init exynos_dt_machine_ini
-> >  	if (!IS_ENABLED(CONFIG_SMP))
-> >  		exynos_sysram_init();
-> > =20
-> > -#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> > +#if defined(CONFIG_SMP) && defined(CONFIG_ARM_EXYNOS_CPUIDLE)
-> >  	if (of_machine_is_compatible("samsung,exynos4210"))
-> >  		exynos_cpuidle.dev.platform_data =3D &cpuidle_coupled_exynos_dat=
-a;
-> >  #endif
-> > Index: b/arch/arm/mach-exynos/pm.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- a/arch/arm/mach-exynos/pm.c	2015-02-04 18:30:23.563819719 +0100
-> > +++ b/arch/arm/mach-exynos/pm.c	2015-02-04 18:47:32.951804008 +0100
-> > @@ -181,6 +181,7 @@ void exynos_enter_aftr(void)
-> >  	cpu_pm_exit();
-> >  }
-> > =20
-> > +#if defined(CONFIG_SMP) && defined(CONFIG_ARM_EXYNOS_CPUIDLE)
-> >  static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
-> > =20
-> >  static int exynos_cpu0_enter_aftr(void)
-> > @@ -302,3 +303,4 @@ struct cpuidle_exynos_data cpuidle_coupl
-> >  	.pre_enter_aftr		=3D exynos_pre_enter_aftr,
-> >  	.post_enter_aftr		=3D exynos_post_enter_aftr,
-> >  };
-> > +#endif /* CONFIG_SMP && CONFIG_ARM_EXYNOS_CPUIDLE */
-> > Index: b/drivers/cpuidle/cpuidle-exynos.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- a/drivers/cpuidle/cpuidle-exynos.c	2015-02-04 18:30:32.93581957=
-7 +0100
-> > +++ b/drivers/cpuidle/cpuidle-exynos.c	2015-02-04 18:46:01.61980540=
-0 +0100
-> > @@ -117,7 +117,8 @@ static int exynos_cpuidle_probe(struct p
-> >  {
-> >  	int ret;
-> > =20
-> > -	if (of_machine_is_compatible("samsung,exynos4210")) {
-> > +	if (IS_ENABLED(CONFIG_SMP) &&
-> > +	    of_machine_is_compatible("samsung,exynos4210")) {
-> >  		exynos_cpuidle_pdata =3D pdev->dev.platform_data;
-> > =20
-> >  		ret =3D cpuidle_register(&exynos_coupled_idle_driver,
-
+SGksCgpFeHlub3MgY2hpcHNldHMgc2luY2UgNTQyeCBoYXZlIGFzeW5jaHJvbm91cyBicmlkZ2Vz
+IGNvbm5lY3RpbmcgZGlmZmVyZW50IElQcy4KVGhlc2UgYnJpZGdlcyBzaG91bGQgYmUgb3BlcmF0
+aW9uYWwgZHVyaW5nIHBvd2VyIGRvbWFpbiBzd2l0Y2hpbmcsIGllIGFzc29jaWF0ZWQKY2xvY2tz
+IGNhbm5vdCBiZSBnYXRlZC4KVGhpcyBwYXRjaHNldCBhZGRzIGJpbmRpbmcgdG8gcHJvdmlkZSBz
+dWNoIGNsb2NrcyBwZXIgcG93ZXIgZG9tYWluIGFuZCBhZGRzIGNvZGUKd2hpY2ggZW5hYmxlcyB0
+aGVtIGR1cmluZyBkb21haW4gb24vb2ZmIG9wZXJhdGlvbi4KClRoaXMgcGF0Y2hzZXQgZml4ZXMg
+cG93ZXIgZG9tYWluIGlzc3VlcyB3aXRoIGRpc3AxIGRvbWFpbiBhbmQgSERNSSAoc29tZSBvZiB0
+aGVtKQpvbiBPZHJvaWQgWFUzOgotIGRpc3AxIHBvd2VyIGRvbWFpbiBjYW4gYmUgdHVybmVkIG9m
+ZiwKLSBubyBtb3JlICJpbXByZWNpc2UgZXh0ZXJuYWwgYWJvcnQiIGZhdWx0cy4KClRoZSBwYXRj
+aHNldCBpcyBiYXNlZCBvbiAnW1BBVENIIHY1IDAvOV0gRW5hYmxlIEhETUkgc3VwcG9ydCBvbiBF
+eHlub3MgcGxhdGZvcm1zJyBbMV0uCgpJdCB3YXMgc3VjY2Vzc2Z1bGx5IHRlc3RlZCBvbiBPZHJv
+aWRYVTMuCgpbMV06IGh0dHA6Ly9wZXJtYWxpbmsuZ21hbmUub3JnL2dtYW5lLmxpbnV4Lmtlcm5l
+bC5zYW1zdW5nLXNvYy80Mjc0MwoKUmVnYXJkcwpBbmRyemVqCgoKQW5kcnplaiBIYWpkYSAoMyk6
+CiAgYXJtL2V4eW5vczogYWRkIGFzeW5jaHJvbm91cyBicmlkZ2UgY2xvY2sgYmluZGluZ3MKICBh
+cm0vZXh5bm9zL3BtX2RvbWFpbnM6IGFkZCBzdXBwb3J0IGZvciBhc3luYy1icmlkZ2UgY2xvY2tz
+CiAgQVJNOiBkdHM6IGV4eW5vczU0MjA6IGFkZCBhc3luYy1icmlkZ2UgY2xvY2sgdG8gZGlzcDEg
+cG93ZXIgZG9tYWluCgogLi4uL2JpbmRpbmdzL2FybS9leHlub3MvcG93ZXJfZG9tYWluLnR4dCAg
+ICAgICAgICAgfCAgMyArKysKIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAuZHRzaSAgICAg
+ICAgICAgICAgICAgIHwgIDYgKysrLS0KIGFyY2gvYXJtL21hY2gtZXh5bm9zL3BtX2RvbWFpbnMu
+YyAgICAgICAgICAgICAgICAgIHwgMjcgKysrKysrKysrKysrKysrKysrLS0tLQogMyBmaWxlcyBj
+aGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKLS0gCjEuOS4xCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
