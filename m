@@ -1,79 +1,38 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v2] cpufreq: exynos: Use simple approach to asses if cpu
- cooling can be used
-Date: Thu, 05 Feb 2015 16:54:49 +0100
-Message-ID: <1423151689-27490-1-git-send-email-l.majewski@samsung.com>
-References: <20150204100025.565ee2b0@amdc2363>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150204100025.565ee2b0@amdc2363>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v3 3/3] ARM: EXYNOS: Remove left over 'extra_save'
+Date: Thu, 5 Feb 2015 21:37:15 +0530
+Message-ID: <CAGcde9GiJRWFwtObWCOZeOo1Ax2MfjtaOEv0iNPNo5W9UDjTFw@mail.gmail.com>
+References: <1423121002-25117-1-git-send-email-k.kozlowski@samsung.com> <1423121002-25117-3-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:54497 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757435AbbBEQHh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Feb 2015 11:07:37 -0500
+In-Reply-To: <1423121002-25117-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Commit: e725d26c4857e5e41975b5e74e64ce6ab09a7121 provided possibility to
-use device tree to asses if cpu can be used as cooling device. Since the
-code was somewhat awkward, simpler approach has been proposed.
+Hi Krzysztof
 
-Test HW: Exynos 4412 - Odroid U3.
+On 5 February 2015 at 12:53, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+>
+> Since 32b0aa9aaeb4 ("ARM: EXYNOS: Remove i2c sys configuration related
+> code") the Exynos 5250 no longer saves additional registers under
+> 'exynos_pm_data.extra_save' field.
+>
+> No one else uses this code so get rid of it making also 'exynos_pm_data'
+> const everywhere.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
 
-Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-Changes for v2:
-- Remove superfluous *np pointer
----
- drivers/cpufreq/exynos-cpufreq.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index 5e98c6b..82d2fbb 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -159,7 +159,7 @@ static struct cpufreq_driver exynos_driver = {
- 
- static int exynos_cpufreq_probe(struct platform_device *pdev)
- {
--	struct device_node *cpus, *np;
-+	struct device_node *cpu0;
- 	int ret = -EINVAL;
- 
- 	exynos_info = kzalloc(sizeof(*exynos_info), GFP_KERNEL);
-@@ -206,28 +206,19 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_cpufreq_reg;
- 
--	cpus = of_find_node_by_path("/cpus");
--	if (!cpus) {
--		pr_err("failed to find cpus node\n");
-+	cpu0 = of_get_cpu_node(0, NULL);
-+	if (!cpu0) {
-+		pr_err("failed to find cpu0 node\n");
- 		return 0;
- 	}
- 
--	np = of_get_next_child(cpus, NULL);
--	if (!np) {
--		pr_err("failed to find cpus child node\n");
--		of_node_put(cpus);
--		return 0;
--	}
--
--	if (of_find_property(np, "#cooling-cells", NULL)) {
--		cdev = of_cpufreq_cooling_register(np,
-+	if (of_find_property(cpu0, "#cooling-cells", NULL)) {
-+		cdev = of_cpufreq_cooling_register(cpu0,
- 						   cpu_present_mask);
- 		if (IS_ERR(cdev))
- 			pr_err("running cpufreq without cooling device: %ld\n",
- 			       PTR_ERR(cdev));
- 	}
--	of_node_put(np);
--	of_node_put(cpus);
- 
- 	return 0;
- 
--- 
-2.0.0.rc2
-
+Thanks,
+Pankaj Dubey
