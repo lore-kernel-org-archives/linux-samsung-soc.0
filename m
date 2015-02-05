@@ -1,8 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 2/3] ARM: EXYNOS: Constify exynos_pm_data and of_device_id
- array
-Date: Thu, 05 Feb 2015 08:23:21 +0100
-Message-ID: <1423121002-25117-2-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v3 3/3] ARM: EXYNOS: Remove left over 'extra_save'
+Date: Thu, 05 Feb 2015 08:23:22 +0100
+Message-ID: <1423121002-25117-3-git-send-email-k.kozlowski@samsung.com>
 References: <1423121002-25117-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1423121002-25117-1-git-send-email-k.kozlowski@samsung.com>
@@ -11,43 +10,77 @@ To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-
 Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The 'exynos5420_pm_data' and of_device_id array are not modified and can
-be made const.
+Since 32b0aa9aaeb4 ("ARM: EXYNOS: Remove i2c sys configuration related
+code") the Exynos 5250 no longer saves additional registers under
+'exynos_pm_data.extra_save' field.
+
+No one else uses this code so get rid of it making also 'exynos_pm_data'
+const everywhere.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
 ---
 Changes since v2:
-1. Add Pankaj's reviewed-by.
+2. Remove also 'num_extra_save' field (suggested by Pankaj Dubey).
 
 Changes since v1:
 1. New patch.
 ---
- arch/arm/mach-exynos/suspend.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-exynos/suspend.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 77cc39bdad47..e6c961126087 100644
+index e6c961126087..71e2ba6dbc3d 100644
 --- a/arch/arm/mach-exynos/suspend.c
 +++ b/arch/arm/mach-exynos/suspend.c
-@@ -572,7 +572,7 @@ static const struct exynos_pm_data exynos5250_pm_data = {
- 	.cpu_suspend	= exynos_cpu_suspend,
+@@ -63,8 +63,6 @@ static struct sleep_save exynos_core_save[] = {
+ 
+ struct exynos_pm_data {
+ 	const struct exynos_wkup_irq *wkup_irq;
+-	struct sleep_save *extra_save;
+-	int num_extra_save;
+ 	unsigned int wake_disable_mask;
+ 	unsigned int *release_ret_regs;
+ 
+@@ -75,7 +73,7 @@ struct exynos_pm_data {
+ 	int (*cpu_suspend)(unsigned long);
  };
  
--static struct exynos_pm_data exynos5420_pm_data = {
-+static const struct exynos_pm_data exynos5420_pm_data = {
- 	.wkup_irq	= exynos5250_wkup_irq,
- 	.wake_disable_mask = (0x7F << 7) | (0x1F << 1),
- 	.release_ret_regs = exynos5420_release_ret_regs,
-@@ -583,7 +583,7 @@ static struct exynos_pm_data exynos5420_pm_data = {
- 	.cpu_suspend	= exynos5420_cpu_suspend,
- };
+-static struct exynos_pm_data *pm_data;
++static const struct exynos_pm_data *pm_data;
  
--static struct of_device_id exynos_pmu_of_device_ids[] = {
-+static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{
- 		.compatible = "samsung,exynos3250-pmu",
- 		.data = &exynos3250_pm_data,
+ static int exynos5420_cpu_state;
+ static unsigned int exynos_pmu_spare3;
+@@ -240,10 +238,6 @@ static void exynos_pm_prepare(void)
+ 
+ 	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+-	 if (pm_data->extra_save)
+-		s3c_pm_do_save(pm_data->extra_save,
+-				pm_data->num_extra_save);
+-
+ 	exynos_pm_enter_sleep_mode();
+ 
+ 	/* ensure at least INFORM0 has the resume address */
+@@ -362,10 +356,6 @@ static void exynos_pm_resume(void)
+ 	/* For release retention */
+ 	exynos_pm_release_retention();
+ 
+-	if (pm_data->extra_save)
+-		s3c_pm_do_restore_core(pm_data->extra_save,
+-					pm_data->num_extra_save);
+-
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+ 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
+@@ -618,7 +608,7 @@ void __init exynos_pm_init(void)
+ 		pr_err("Failed to find PMU node\n");
+ 		return;
+ 	}
+-	pm_data = (struct exynos_pm_data *) match->data;
++	pm_data = (const struct exynos_pm_data *) match->data;
+ 
+ 	/* Platform-specific GIC callback */
+ 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
 -- 
 1.9.1
