@@ -1,62 +1,51 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 08/14] drm/exynos: atomic phase 1: add
- atomic_begin()/atomic_flush()
-Date: Thu, 5 Feb 2015 10:18:54 +0100
-Message-ID: <20150205091854.GP14009@phenom.ffwll.local>
-References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-9-git-send-email-gustavo@padovan.org>
- <54D1CF05.8000804@samsung.com>
- <20150204143052.GI14009@phenom.ffwll.local>
- <54D2D9F2.2060505@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [v3,1/9] clk: samsung: exynos5433: Add clocks for CMU_APOLLO domain
+Date: Thu, 05 Feb 2015 10:56:54 +0100
+Message-ID: <54D33E66.30909@samsung.com>
+References: <1422922437-7414-2-git-send-email-cw00.choi@samsung.com>
+ <54D31F67.1050701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:41624 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756693AbbBEJRc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Feb 2015 04:17:32 -0500
-Received: by mail-we0-f173.google.com with SMTP id w62so6484929wes.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2015 01:17:31 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <54D2D9F2.2060505@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <54D31F67.1050701@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, mturquette@linaro.org
+Cc: tomasz.figa@gmail.com, kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-On Thu, Feb 05, 2015 at 11:48:18AM +0900, Joonyoung Shim wrote:
-> Hi Daniel,
-> 
-> On 02/04/2015 11:30 PM, Daniel Vetter wrote:
-> > On Wed, Feb 04, 2015 at 04:49:25PM +0900, Joonyoung Shim wrote:
-> >> Hi,
-> >>
-> >> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
-> >>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >>>
-> >>> Add CRTC callbacks .atomic_begin() .atomic_flush(). On exynos they
-> >>> unprotect the windows before the commit and protects it after based on
-> >>> a plane mask tha store which plane will be updated.
-> >>>
-> >>
-> >> I don't think they need now.
-> > 
-> > This does exactly what I wanted to do in my atomic poc but couldn't
-> > because of the massive layer hell that was still around in atomic. Haven't
-> > looked into the patch in details, so no full r-b but good enough for an
-> > 
-> 
-> I agree about its operation but i think it is unnecessary now. Because
-> it's exactly same operation with current codes.
+On 05/02/15 08:44, Pankaj Dubey wrote:
+>> +static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
 
-Well that's to be expected since if you don't want to have some duplicated
-code while transitioning to atomic you must do it all in one giant patch.
-With a bit of duplication you can move things over slowly, in differnt
-phases and piece by piece like Padovan's patch series here. The
-duplication should go away in the end again.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>> > +
+>> > +	/* ENABLE_PCLK_APOLLO */
+>> > +	GATE(CLK_PCLK_ASAPBMST_CSSYS_APOLLO, "pclk_asapbmst_cssys_apollo",
+>> > +			"div_pclk_dbg_apollo", ENABLE_PCLK_APOLLO,
+>> > +			2, CLK_IGNORE_UNUSED, 0),
+>> > +	GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
+>> > +			ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
+>> > +	GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
+>
+> Isn't "pclk_pmu_sysreg_apollo" be named as "pclk_sysreg_apollo" to match 
+> with UM?
+
+Sounds reasonable, Chanwoo, if you agree I'll squash following change
+to this patch before sending upstream:
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c
+b/drivers/clk/samsung/clk-exynos5433.c
+index 7a024cd..387e3e3 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -3656,7 +3656,7 @@ static struct samsung_gate_clock apollo_gate_clks[]
+__initdata = {
+                        2, CLK_IGNORE_UNUSED, 0),
+        GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
+                        ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
+-       GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
++       GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_sysreg_apollo",
+                        "div_pclk_apollo", ENABLE_PCLK_APOLLO,
+                        0, CLK_IGNORE_UNUSED, 0),
+--
+Thanks,
+Sylwester
