@@ -1,74 +1,62 @@
 From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 04/14] drm/exynos: remove struct *_win_data abstraction
- on planes
-Date: Thu, 5 Feb 2015 10:15:14 +0100
-Message-ID: <20150205091514.GO14009@phenom.ffwll.local>
+Subject: Re: [PATCH 08/14] drm/exynos: atomic phase 1: add
+ atomic_begin()/atomic_flush()
+Date: Thu, 5 Feb 2015 10:18:54 +0100
+Message-ID: <20150205091854.GP14009@phenom.ffwll.local>
 References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-5-git-send-email-gustavo@padovan.org>
- <54D1CDCC.60906@samsung.com>
- <20150204142838.GH14009@phenom.ffwll.local>
- <54D2D759.3000709@samsung.com>
+ <1422990871-21355-9-git-send-email-gustavo@padovan.org>
+ <54D1CF05.8000804@samsung.com>
+ <20150204143052.GI14009@phenom.ffwll.local>
+ <54D2D9F2.2060505@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f173.google.com ([74.125.82.173]:41624 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756693AbbBEJRc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Feb 2015 04:17:32 -0500
+Received: by mail-we0-f173.google.com with SMTP id w62so6484929wes.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2015 01:17:31 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <54D2D759.3000709@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+In-Reply-To: <54D2D9F2.2060505@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-T24gVGh1LCBGZWIgMDUsIDIwMTUgYXQgMTE6Mzc6MTNBTSArMDkwMCwgSm9vbnlvdW5nIFNoaW0g
-d3JvdGU6Cj4gSGkgRGFuaWVsLAo+IAo+IE9uIDAyLzA0LzIwMTUgMTE6MjggUE0sIERhbmllbCBW
-ZXR0ZXIgd3JvdGU6Cj4gPiBPbiBXZWQsIEZlYiAwNCwgMjAxNSBhdCAwNDo0NDoxMlBNICswOTAw
-LCBKb29ueW91bmcgU2hpbSB3cm90ZToKPiA+PiBIaSwKPiA+Pgo+ID4+IE9uIDAyLzA0LzIwMTUg
-MDQ6MTQgQU0sIEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+Pj4gRnJvbTogR3VzdGF2byBQYWRv
-dmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+ID4+Pgo+ID4+PiBzdHJ1Y3Qg
-e2ZpbWQsbWl4ZXIsdmlkaX1fd2luX2RhdGEgd2FzIGp1c3Qga2VlcGluZyB0aGUgc2FtZSBkYXRh
-Cj4gPj4+IGFzIHN0cnVjdCBleHlub3NfZHJtX3BsYW5lIHRodXMgZ2V0IHJpZGUgb2YgaXQgYW5k
-IHVzZSBleHlub3NfZHJtX3BsYW5lCj4gPj4+IGRpcmVjdGx5Lgo+ID4+Pgo+ID4+PiBJdCBjaGFu
-Z2VzIGhvdyBwbGFuZXMgYXJlIGNyZWF0ZWQgYW5kIHJlbW92ZSAud2luX21vZGVfc2V0KCkgY2Fs
-bGJhY2sKPiA+Pj4gdGhhdCB3YXMgb25seSBmaWxsaW5nIGFsbCAqX3dpbl9kYXRhIHN0cnVjdHMu
-Cj4gPj4+Cj4gPj4KPiA+PiBJIGNvbW1lbnRlZCBhbHJlYWR5IG9uIHByaW9yIHBhdGNoLgo+ID4g
-Cj4gPiBJIHRoaW5rIHlvdSBkb24ndCBxdWl0ZSB1bmRlcnN0YW5kIGhvdyB0aGlzIHByaW1hcnkv
-b3ZlcmxheSBwbGFuZSBzdHVmZgo+ID4gd29ya3MgaW4gZHJtIGNvcmUuIFRoZSBlbnRpcmUgcG9p
-bnQgb2YgdGhlIGRybSBjb3JlIHByaW1hcnkgcGxhbmUgaXMgdG8KPiA+IHdvcmsgX2V4YWN0bHlf
-IGxpa2UgYW4gb3ZlcmxheSBwbGFuZSBhbmQgYWxsb3cgdXNlcnNwYWNlIHRvIG1hbmdsZSB0aGUK
-PiA+IHByaW1hcnkgcGxhbmUgY29uZmlndXJhdGlvbiB0aHJvdWdoIHRoZSBvdmVybGF5IHBsYW5l
-LiBUaGUgb25seSByZWFzb24gd2UKPiA+IGhhdmUgcHJpbWFyeSBwbGFuZXMgaXMgc28gdGhhdCBv
-bGQgdXNlcnNwYWNlIGtlZXBzIHdvcmtpbmcuCj4gPiAKPiAKPiBSaWdodCwgaSBtaXN1bmRlcnN0
-b29kIGEgYml0IGJlY2F1c2UgZXh5bm9zIGh3IGRyaXZlcnMgaGF2ZSBkZXBlbmRlbmN5Cj4gb2Yg
-enBvcyhodyBvdmVybGF5IHBvc2l0aW9uKS4KPiAKPiBDdXJyZW50IGV4eW5vcyBkcm0gZHJpdmVy
-IGhhcyBlYWNoIHByaW1hcnkgcGxhbmUgb2YgaHcgZHJpdmVycyBhbmQgZml2ZQo+IG92ZXJsYXkg
-cGxhbmVzLiBUaGUgcHJpbWFyeSBwbGFuZSBpcyBmaXhlZCBvbiBkZWZhdWx0IGh3IG92ZXJsYXkg
-YW5kIGFsbAo+IG92ZXJsYXkgcGxhbmUgY2FuIG1hcCB0byBhbGwgaHcgb3ZlcmxheXMgdXNpbmcg
-c3BlY2lmaWMgenBvcyBwcm9wZXJ0eSBvZgo+IGV4eW5vcyBkcm0gcGxhbmUuCj4gCj4gR3VzdGF2
-byBhcHByb2FjaCB3aWxsIGluY2x1ZGUgc3BlY2lmaWMgaHcgb3ZlcmxheSBkYXRhIGluIG92ZXJs
-YXkgcGxhbmUKPiBhbmQgaHcgZHJpdmVyIGtlZXBzIG92ZXJsYXkgcGxhbmVzIHRvIGFycmF5IGJ5
-IHpwb3Mgb3JkZXIuIEJ1dCBjdXJyZW50Cj4genBvcyBvZiBvdmVybGF5IHBsYW5lIGlzIDAgYWx3
-YXlzIGlmIHVzZXIgZG9lc24ndCBtb2RpZnkgaXQsIHNvIGh3Cj4gZHJpdmVyIHdpbGwgdXNlIG9u
-bHkgaHcgb3ZlcmxheSBkYXRhIG9mIHByaW1hcnkgcGxhbmUgYWx3YXlzIGV2ZW4gaWYKPiB1c2Vy
-IHdhbnQgdG8gdXNlIG92ZXJsYXkgcGxhbmUuCj4gCj4gSWYgdXNlciBpcyBtb2RpZmllZCB6cG9z
-IG9mIG92ZXJsYXkgcGxhbmUsIGh3IGRyaXZlciBjYW4gZ2V0IHdyb25nIGh3Cj4gb3ZlcmxheSBk
-YXRhIGZyb20gZGlmZmVyZW50IG92ZXJsYXkgcGxhbmUgYmVjYXVzZSBodyBkcml2ZXIga2VlcHMK
-PiBvdmVybGF5IHBsYW5lcyBieSB6cG9zIG9yZGVyLgoKWWVhaCBJIG5vdGljZWQgdGhlIHpwb3Mg
-ZnVuIHdoZW4gaGFja2luZyBhcm91bmQgdG9vLiBFeHlub3Mgc2hvdWxkCnByb2JhYmx5IHN3aXRj
-aCBkZWZhdWx0cyBzbyB0aGF0IG92ZXJsYXlzIGFyZSB2aXNpYmxlIGJ5IGRlZmF1bHQuIEFuZCB3
-ZQpuZWVkIHRvIHN0YW5kYXJkaXplIHRoZSB6cG9zIHByb3BlcnR5IHNvIHRoYXQgb3RoZXIgZHJp
-dmVycyBjYW4gdXNlIGl0CnRvby4KCkJ1dCB0aGF0IGRvZXNuJ3QgY2hhbmdlIGFueXRoaW5nIHdp
-dGggdGhlIHByaW1hcnkgcGxhbmUganVzdCBiZWluZyBhCnNwZWNpYWwgcGxhbmUgZnJvbSB0aGUg
-c3cgc2lkZSAoYmFja3dhcmRzIGNvbXBhdCksIGZvciBleHlub3MgaHcgdGhleSBhbGwKbG9vayB0
-aGUgc2FtZS4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50
-ZWwgQ29ycG9yYXRpb24KKzQxICgwKSA3OSAzNjUgNTcgNDggLSBodHRwOi8vYmxvZy5mZndsbC5j
-aApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Thu, Feb 05, 2015 at 11:48:18AM +0900, Joonyoung Shim wrote:
+> Hi Daniel,
+> 
+> On 02/04/2015 11:30 PM, Daniel Vetter wrote:
+> > On Wed, Feb 04, 2015 at 04:49:25PM +0900, Joonyoung Shim wrote:
+> >> Hi,
+> >>
+> >> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
+> >>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >>>
+> >>> Add CRTC callbacks .atomic_begin() .atomic_flush(). On exynos they
+> >>> unprotect the windows before the commit and protects it after based on
+> >>> a plane mask tha store which plane will be updated.
+> >>>
+> >>
+> >> I don't think they need now.
+> > 
+> > This does exactly what I wanted to do in my atomic poc but couldn't
+> > because of the massive layer hell that was still around in atomic. Haven't
+> > looked into the patch in details, so no full r-b but good enough for an
+> > 
+> 
+> I agree about its operation but i think it is unnecessary now. Because
+> it's exactly same operation with current codes.
+
+Well that's to be expected since if you don't want to have some duplicated
+code while transitioning to atomic you must do it all in one giant patch.
+With a bit of duplication you can move things over slowly, in differnt
+phases and piece by piece like Padovan's patch series here. The
+duplication should go away in the end again.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
