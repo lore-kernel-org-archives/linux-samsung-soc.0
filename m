@@ -1,64 +1,58 @@
-From: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [v3,1/9] clk: samsung: exynos5433: Add clocks for CMU_APOLLO domain
-Date: Thu, 5 Feb 2015 22:42:36 +0900
-Message-ID: <CAGTfZH1hMBgKCyTk+zmovOU5uFLpY-KHvJssXwFz8Zv1vXQEsw@mail.gmail.com>
-References: <1422922437-7414-2-git-send-email-cw00.choi@samsung.com>
-	<54D31F67.1050701@samsung.com>
-	<54D33E66.30909@samsung.com>
-Reply-To: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] Fix power domains handling on exynos542x
+Date: Thu, 05 Feb 2015 15:45:08 +0100
+Message-ID: <54D381F4.2080701@collabora.co.uk>
+References: <1423139739-19881-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54D33E66.30909-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1423139739-19881-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liquid.Acid-hi6Y0CQ0nG0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pankaj and Sylwester,
+Hello Andrzej,
 
-On Thu, Feb 5, 2015 at 6:56 PM, Sylwester Nawrocki
-<s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 05/02/15 08:44, Pankaj Dubey wrote:
->>> +static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
->
->>> > +
->>> > +  /* ENABLE_PCLK_APOLLO */
->>> > +  GATE(CLK_PCLK_ASAPBMST_CSSYS_APOLLO, "pclk_asapbmst_cssys_apollo",
->>> > +                  "div_pclk_dbg_apollo", ENABLE_PCLK_APOLLO,
->>> > +                  2, CLK_IGNORE_UNUSED, 0),
->>> > +  GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
->>> > +                  ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
->>> > +  GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
->>
->> Isn't "pclk_pmu_sysreg_apollo" be named as "pclk_sysreg_apollo" to match
->> with UM?
+Thanks a lot for finally finding what was causing the HDMI issue.
 
-You're right. It is my mistake.
->
-> Sounds reasonable, Chanwoo, if you agree I'll squash following change
-> to this patch before sending upstream:
+On 02/05/2015 01:35 PM, Andrzej Hajda wrote:
+> Hi,
+> 
+> Exynos chipsets since 542x have asynchronous bridges connecting different IPs.
+> These bridges should be operational during power domain switching, ie associated
+> clocks cannot be gated.
+> This patchset adds binding to provide such clocks per power domain and adds code
+> which enables them during domain on/off operation.
+> 
+> This patchset fixes power domain issues with disp1 domain and HDMI (some of them)
+> on Odroid XU3:
+> - disp1 power domain can be turned off,
+> - no more "imprecise external abort" faults.
+> 
+> The patchset is based on '[PATCH v5 0/9] Enable HDMI support on Exynos platforms' [1].
+> 
 
-I agree.
+It also depends on '[PATCH 0/2] Add HDMI support for Exynos5420 platform' [2].
 
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c
-> b/drivers/clk/samsung/clk-exynos5433.c
-> index 7a024cd..387e3e3 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -3656,7 +3656,7 @@ static struct samsung_gate_clock apollo_gate_clks[]
-> __initdata = {
->                         2, CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_PCLK_PMU_APOLLO, "pclk_pmu_apollo", "div_pclk_apollo",
->                         ENABLE_PCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
-> -       GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_pmu_sysreg_apollo",
-> +       GATE(CLK_PCLK_SYSREG_APOLLO, "pclk_sysreg_apollo",
->                         "div_pclk_apollo", ENABLE_PCLK_APOLLO,
->                         0, CLK_IGNORE_UNUSED, 0),
+> It was successfully tested on OdroidXU3.
+> 
+> [1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/42743
 
-Best Regards,
-Chanwoo Choi
+Your patches looks good to me so please feel free to add:
+
+Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+
+I also tested on an Exynos5420 Peach Pit Chromebook and both the "Power
+domain power-domain disable failed" message and the system crash are gone.
+
+Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+
+Best regards,
+Javier
+
+[2]: https://lkml.org/lkml/2015/1/20/235
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
