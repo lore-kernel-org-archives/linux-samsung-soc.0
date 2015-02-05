@@ -1,239 +1,84 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v5 02/13] clk: samsung: exynos5433: Add clocks using common
- clock framework
-Date: Thu, 05 Feb 2015 08:40:56 +0900
-Message-ID: <54D2AE08.50905@samsung.com>
-References: <1422887047-30911-1-git-send-email-cw00.choi@samsung.com>
- <1422887047-30911-3-git-send-email-cw00.choi@samsung.com>
- <54D26019.6060109@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 02/14] drm/exynos: Remove exynos_plane_dpms() call with no
+ effect
+Date: Thu, 05 Feb 2015 10:05:43 +0900
+Message-ID: <54D2C1E7.2090209@samsung.com>
+References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
+ <1422990871-21355-3-git-send-email-gustavo@padovan.org>
+ <54D1CD81.6020704@samsung.com> <20150204141645.GE14009@phenom.ffwll.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54D26019.6060109@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, pankaj.dubey@samsung.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:28423 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756015AbbBEBFi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Feb 2015 20:05:38 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NJ9006NVXPCR9B0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 05 Feb 2015 10:05:36 +0900 (KST)
+In-reply-to: <20150204141645.GE14009@phenom.ffwll.local>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-Hi Sylwester,
+Hi Daniel,
 
-On 02/05/2015 03:08 AM, Sylwester Nawrocki wrote:
-> Hi Chanwoo,
+On 02/04/2015 11:16 PM, Daniel Vetter wrote:
+> On Wed, Feb 04, 2015 at 04:42:57PM +0900, Joonyoung Shim wrote:
+>> Hi,
+>>
+>> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
+>>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>>
+>>> exynos_plane_dpms(DRM_MODE_DPMS_ON) calls the win_enable()'s callback
+>>> from the underlying layer. However neither one of these layers implement
+>>> win_enable() - FIMD, Mixer and VIDI. Thus the call to exynos_plane_dpms()
+>>> is pointless.
+>>>
+>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>> ---
+>>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 --
+>>>  1 file changed, 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> index b2a4b84..ad675fb 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> @@ -65,8 +65,6 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
+>>>  
+>>>  	if (exynos_crtc->ops->commit)
+>>>  		exynos_crtc->ops->commit(exynos_crtc);
+>>> -
+>>> -	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
+>>
+>> As i said, this needs to keep pair enabled flag of struct
+>> exynos_drm_plane.
 > 
-> On 02/02/15 15:23, Chanwoo Choi wrote:
->> +/*
->> + * ATLAS_PLL & APOLLO_PLL & MEM0_PLL & MEM1_PLL & BUS_PLL & MFC_PLL
->> + * & MPHY_PLL & G3D_PLL & DISP_PLL & ISP_PLL
->> + */
->> +static struct samsung_pll_rate_table exynos5443_pll_rates[] = {
->> +	PLL_35XX_RATE(2500000000, 625, 6,  0),
->> +	PLL_35XX_RATE(2400000000, 500, 5,  0),
->> +	PLL_35XX_RATE(2300000000, 575, 6,  0),
->> +	PLL_35XX_RATE(2200000000, 550, 6,  0),
->> +	PLL_35XX_RATE(2100000000, 350, 4,  0),
->> +	PLL_35XX_RATE(2000000000, 500, 6,  0),
->> +	PLL_35XX_RATE(1900000000, 475, 6,  0),
->> +	PLL_35XX_RATE(1800000000, 375, 5,  0),
->> +	PLL_35XX_RATE(1700000000, 425, 6,  0),
->> +	PLL_35XX_RATE(1600000000, 400, 6,  0),
->> +	PLL_35XX_RATE(1500000000, 250, 4,  0),
->> +	PLL_35XX_RATE(1400000000, 350, 6,  0),
->> +	PLL_35XX_RATE(1332000000, 222, 4,  0),
->> +	PLL_35XX_RATE(1300000000, 325, 6,  0),
->> +	PLL_35XX_RATE(1200000000, 500, 5,  1),
->> +	PLL_35XX_RATE(1100000000, 550, 6,  1),
->> +	PLL_35XX_RATE(1086000000, 362, 4,  1),
->> +	PLL_35XX_RATE(1066000000, 533, 6,  1),
->> +	PLL_35XX_RATE(1000000000, 500, 6,  1),
->> +	PLL_35XX_RATE(933000000,  311, 4,  1),
->> +	PLL_35XX_RATE(921000000,  307, 4,  1),
->> +	PLL_35XX_RATE(900000000,  375, 5,  1),
->> +	PLL_35XX_RATE(825000000,  275, 4,  1),
->> +	PLL_35XX_RATE(800000000,  400, 6,  1),
->> +	PLL_35XX_RATE(733000000,  733, 12, 1),
->> +	PLL_35XX_RATE(700000000,  360, 6,  1),
->> +	PLL_35XX_RATE(667000000,  222, 4,  1),
->> +	PLL_35XX_RATE(633000000,  211, 4,  1),
->> +	PLL_35XX_RATE(600000000,  500, 5,  2),
->> +	PLL_35XX_RATE(552000000,  460, 5,  2),
->> +	PLL_35XX_RATE(550000000,  550, 6,  2),
->> +	PLL_35XX_RATE(543000000,  362, 4,  2),
->> +	PLL_35XX_RATE(533000000,  533, 6,  2),
->> +	PLL_35XX_RATE(500000000,  500, 6,  2),
->> +	PLL_35XX_RATE(444000000,  370, 5,  2),
->> +	PLL_35XX_RATE(420000000,  350, 5,  2),
->> +	PLL_35XX_RATE(400000000,  400, 6,  2),
->> +	PLL_35XX_RATE(350000000,  360, 6,  2),
->> +	PLL_35XX_RATE(333000000,  222, 4,  2),
->> +	PLL_35XX_RATE(300000000,  500, 5,  3),
->> +	PLL_35XX_RATE(266000000,  532, 6,  3),
->> +	PLL_35XX_RATE(200000000,  400, 6,  3),
->> +	PLL_35XX_RATE(166000000,  332, 6,  3),
->> +	PLL_35XX_RATE(160000000,  320, 6,  3),
->> +	PLL_35XX_RATE(133000000,  552, 6,  4),
->> +	PLL_35XX_RATE(100000000,  400, 6,  4),
->> +	{ /* sentinel */ }
->> +};
->> +
->> +/* AUD_PLL */
->> +static struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
->> +	PLL_36XX_RATE(400000000, 200, 3, 2,      0),
->> +	PLL_36XX_RATE(393216000, 197, 3, 2, -25690),
->> +	PLL_36XX_RATE(384000000, 128, 2, 2,      0),
->> +	PLL_36XX_RATE(368640000, 246, 4, 2, -15729),
->> +	PLL_36XX_RATE(361507200, 181, 3, 2, -16148),
->> +	PLL_36XX_RATE(338688000, 113, 2, 2,  -6816),
->> +	PLL_36XX_RATE(294912000,  98, 1, 3,  19923),
->> +	PLL_36XX_RATE(288000000,  96, 1, 3,      0),
->> +	PLL_36XX_RATE(252000000,  84, 1, 3,      0),
->> +	{ /* sentinel */ }
->> +};
+> The reason exynos needs that exynos_plane->enable is because it has its
+> own per-plane dpms state. There's two problems with that:
+> - It's highyl non-standard, the drm kms way is to just disable the plane
+>   and not have some additional knob on top.
+> - The atomic helpers will not be able to handle this. They assume that
+>   there's only one dpms knob for the entire display pipeline, and
+>   per-plane enable/disable is handled by setting plane->state->crtc, which
+>   must be set iff plane->state->fb is set right now.
 > 
-> To avoid issues pointed out by these build warnings:
+> I recommend we rip this all out if we can adjust existing userspace to
+> stop using the "mode" property on planes and crtcs.
 > 
-> drivers/clk/samsung/clk-exynos5433.c:726:2: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
-> drivers/clk/samsung/clk-exynos5433.c:727:2: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
-> drivers/clk/samsung/clk-exynos5433.c:728:2: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
-> drivers/clk/samsung/clk-exynos5433.c:729:2: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
-> 
-> I have squashed following change to the $subject patch:
+> And with that non-standard exynos plane mode thing gone we can indeed rip
+> out exynos_plane_dpms and exynos_plane->enabled and just directly call
+> manager->ops->win_enable/disble. And then rip out the win_enable since
+> it's unused.
 
-Thanks for your fixup.
+But this cleanup on current codes doesn't care now current operation
+normally. First let's cleanup non-standard exynos plane dpms state as
+you said.
 
-Best Regards,
-Chanwoo Choi
-
-> 
-> ---8<---
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index bdd4113..7a024cd 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -723,66 +723,66 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
->   * & MPHY_PLL & G3D_PLL & DISP_PLL & ISP_PLL
->   */
->  static struct samsung_pll_rate_table exynos5443_pll_rates[] = {
-> -       PLL_35XX_RATE(2500000000, 625, 6,  0),
-> -       PLL_35XX_RATE(2400000000, 500, 5,  0),
-> -       PLL_35XX_RATE(2300000000, 575, 6,  0),
-> -       PLL_35XX_RATE(2200000000, 550, 6,  0),
-> -       PLL_35XX_RATE(2100000000, 350, 4,  0),
-> -       PLL_35XX_RATE(2000000000, 500, 6,  0),
-> -       PLL_35XX_RATE(1900000000, 475, 6,  0),
-> -       PLL_35XX_RATE(1800000000, 375, 5,  0),
-> -       PLL_35XX_RATE(1700000000, 425, 6,  0),
-> -       PLL_35XX_RATE(1600000000, 400, 6,  0),
-> -       PLL_35XX_RATE(1500000000, 250, 4,  0),
-> -       PLL_35XX_RATE(1400000000, 350, 6,  0),
-> -       PLL_35XX_RATE(1332000000, 222, 4,  0),
-> -       PLL_35XX_RATE(1300000000, 325, 6,  0),
-> -       PLL_35XX_RATE(1200000000, 500, 5,  1),
-> -       PLL_35XX_RATE(1100000000, 550, 6,  1),
-> -       PLL_35XX_RATE(1086000000, 362, 4,  1),
-> -       PLL_35XX_RATE(1066000000, 533, 6,  1),
-> -       PLL_35XX_RATE(1000000000, 500, 6,  1),
-> -       PLL_35XX_RATE(933000000,  311, 4,  1),
-> -       PLL_35XX_RATE(921000000,  307, 4,  1),
-> -       PLL_35XX_RATE(900000000,  375, 5,  1),
-> -       PLL_35XX_RATE(825000000,  275, 4,  1),
-> -       PLL_35XX_RATE(800000000,  400, 6,  1),
-> -       PLL_35XX_RATE(733000000,  733, 12, 1),
-> -       PLL_35XX_RATE(700000000,  360, 6,  1),
-> -       PLL_35XX_RATE(667000000,  222, 4,  1),
-> -       PLL_35XX_RATE(633000000,  211, 4,  1),
-> -       PLL_35XX_RATE(600000000,  500, 5,  2),
-> -       PLL_35XX_RATE(552000000,  460, 5,  2),
-> -       PLL_35XX_RATE(550000000,  550, 6,  2),
-> -       PLL_35XX_RATE(543000000,  362, 4,  2),
-> -       PLL_35XX_RATE(533000000,  533, 6,  2),
-> -       PLL_35XX_RATE(500000000,  500, 6,  2),
-> -       PLL_35XX_RATE(444000000,  370, 5,  2),
-> -       PLL_35XX_RATE(420000000,  350, 5,  2),
-> -       PLL_35XX_RATE(400000000,  400, 6,  2),
-> -       PLL_35XX_RATE(350000000,  360, 6,  2),
-> -       PLL_35XX_RATE(333000000,  222, 4,  2),
-> -       PLL_35XX_RATE(300000000,  500, 5,  3),
-> -       PLL_35XX_RATE(266000000,  532, 6,  3),
-> -       PLL_35XX_RATE(200000000,  400, 6,  3),
-> -       PLL_35XX_RATE(166000000,  332, 6,  3),
-> -       PLL_35XX_RATE(160000000,  320, 6,  3),
-> -       PLL_35XX_RATE(133000000,  552, 6,  4),
-> -       PLL_35XX_RATE(100000000,  400, 6,  4),
-> +       PLL_35XX_RATE(2500000000U, 625, 6,  0),
-> +       PLL_35XX_RATE(2400000000U, 500, 5,  0),
-> +       PLL_35XX_RATE(2300000000U, 575, 6,  0),
-> +       PLL_35XX_RATE(2200000000U, 550, 6,  0),
-> +       PLL_35XX_RATE(2100000000U, 350, 4,  0),
-> +       PLL_35XX_RATE(2000000000U, 500, 6,  0),
-> +       PLL_35XX_RATE(1900000000U, 475, 6,  0),
-> +       PLL_35XX_RATE(1800000000U, 375, 5,  0),
-> +       PLL_35XX_RATE(1700000000U, 425, 6,  0),
-> +       PLL_35XX_RATE(1600000000U, 400, 6,  0),
-> +       PLL_35XX_RATE(1500000000U, 250, 4,  0),
-> +       PLL_35XX_RATE(1400000000U, 350, 6,  0),
-> +       PLL_35XX_RATE(1332000000U, 222, 4,  0),
-> +       PLL_35XX_RATE(1300000000U, 325, 6,  0),
-> +       PLL_35XX_RATE(1200000000U, 500, 5,  1),
-> +       PLL_35XX_RATE(1100000000U, 550, 6,  1),
-> +       PLL_35XX_RATE(1086000000U, 362, 4,  1),
-> +       PLL_35XX_RATE(1066000000U, 533, 6,  1),
-> +       PLL_35XX_RATE(1000000000U, 500, 6,  1),
-> +       PLL_35XX_RATE(933000000U,  311, 4,  1),
-> +       PLL_35XX_RATE(921000000U,  307, 4,  1),
-> +       PLL_35XX_RATE(900000000U,  375, 5,  1),
-> +       PLL_35XX_RATE(825000000U,  275, 4,  1),
-> +       PLL_35XX_RATE(800000000U,  400, 6,  1),
-> +       PLL_35XX_RATE(733000000U,  733, 12, 1),
-> +       PLL_35XX_RATE(700000000U,  360, 6,  1),
-> +       PLL_35XX_RATE(667000000U,  222, 4,  1),
-> +       PLL_35XX_RATE(633000000U,  211, 4,  1),
-> +       PLL_35XX_RATE(600000000U,  500, 5,  2),
-> +       PLL_35XX_RATE(552000000U,  460, 5,  2),
-> +       PLL_35XX_RATE(550000000U,  550, 6,  2),
-> +       PLL_35XX_RATE(543000000U,  362, 4,  2),
-> +       PLL_35XX_RATE(533000000U,  533, 6,  2),
-> +       PLL_35XX_RATE(500000000U,  500, 6,  2),
-> +       PLL_35XX_RATE(444000000U,  370, 5,  2),
-> +       PLL_35XX_RATE(420000000U,  350, 5,  2),
-> +       PLL_35XX_RATE(400000000U,  400, 6,  2),
-> +       PLL_35XX_RATE(350000000U,  360, 6,  2),
-> +       PLL_35XX_RATE(333000000U,  222, 4,  2),
-> +       PLL_35XX_RATE(300000000U,  500, 5,  3),
-> +       PLL_35XX_RATE(266000000U,  532, 6,  3),
-> +       PLL_35XX_RATE(200000000U,  400, 6,  3),
-> +       PLL_35XX_RATE(166000000U,  332, 6,  3),
-> +       PLL_35XX_RATE(160000000U,  320, 6,  3),
-> +       PLL_35XX_RATE(133000000U,  552, 6,  4),
-> +       PLL_35XX_RATE(100000000U,  400, 6,  4),
->         { /* sentinel */ }
->  };
->  
->  /* AUD_PLL */
->  static struct samsung_pll_rate_table exynos5443_aud_pll_rates[] = {
-> -       PLL_36XX_RATE(400000000, 200, 3, 2,      0),
-> -       PLL_36XX_RATE(393216000, 197, 3, 2, -25690),
-> -       PLL_36XX_RATE(384000000, 128, 2, 2,      0),
-> -       PLL_36XX_RATE(368640000, 246, 4, 2, -15729),
-> -       PLL_36XX_RATE(361507200, 181, 3, 2, -16148),
-> -       PLL_36XX_RATE(338688000, 113, 2, 2,  -6816),
-> -       PLL_36XX_RATE(294912000,  98, 1, 3,  19923),
-> -       PLL_36XX_RATE(288000000,  96, 1, 3,      0),
-> -       PLL_36XX_RATE(252000000,  84, 1, 3,      0),
-> +       PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
-> +       PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
-> +       PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
-> +       PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
-> +       PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
-> +       PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
-> +       PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
-> +       PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
-> +       PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->         { /* sentinel */ }
->  };
-> ---8<---
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Thanks.
