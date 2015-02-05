@@ -1,44 +1,81 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [v3,3/9] clk: samsung: exynos5433: Add clocks for CMU_MSCL domain
-Date: Thu, 05 Feb 2015 14:00:18 +0530
-Message-ID: <54D32A1A.8020202@samsung.com>
-References: <1422922437-7414-4-git-send-email-cw00.choi@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 02/14] drm/exynos: Remove exynos_plane_dpms() call with
+ no effect
+Date: Thu, 5 Feb 2015 10:03:15 +0100
+Message-ID: <20150205090315.GN14009@phenom.ffwll.local>
+References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
+ <1422990871-21355-3-git-send-email-gustavo@padovan.org>
+ <54D1CD81.6020704@samsung.com>
+ <20150204141645.GE14009@phenom.ffwll.local>
+ <54D2C1E7.2090209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1422922437-7414-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <54D2C1E7.2090209@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
-
-On Tuesday 03 February 2015 05:43 AM, Chanwoo Choi wrote:
-> This patch adds the mux/divider/gate clocks for CMU_MSCL domain which
-> generates the clocks for M2M (Memory to Memory) scaler, JPEG IPs.
->
-> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> ---
-> .../devicetree/bindings/clock/exynos5433-clock.txt |  20 +++
->   drivers/clk/samsung/clk-exynos5433.c               | 185 +++++++++++++++++++++
->   include/dt-bindings/clock/exynos5433.h             |  41 ++++-
->   3 files changed, 245 insertions(+), 1 deletion(-)
->
-
-Verified clock tree, clock register and bitfield settings against UM.
-Changes looks OK to me.
-
-Reviewed-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-Thanks,
-Pankaj Dubey
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gVGh1LCBGZWIgMDUsIDIwMTUgYXQgMTA6MDU6NDNBTSArMDkwMCwgSm9vbnlvdW5nIFNoaW0g
+d3JvdGU6Cj4gSGkgRGFuaWVsLAo+IAo+IE9uIDAyLzA0LzIwMTUgMTE6MTYgUE0sIERhbmllbCBW
+ZXR0ZXIgd3JvdGU6Cj4gPiBPbiBXZWQsIEZlYiAwNCwgMjAxNSBhdCAwNDo0Mjo1N1BNICswOTAw
+LCBKb29ueW91bmcgU2hpbSB3cm90ZToKPiA+PiBIaSwKPiA+Pgo+ID4+IE9uIDAyLzA0LzIwMTUg
+MDQ6MTQgQU0sIEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+Pj4gRnJvbTogR3VzdGF2byBQYWRv
+dmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+ID4+Pgo+ID4+PiBleHlub3Nf
+cGxhbmVfZHBtcyhEUk1fTU9ERV9EUE1TX09OKSBjYWxscyB0aGUgd2luX2VuYWJsZSgpJ3MgY2Fs
+bGJhY2sKPiA+Pj4gZnJvbSB0aGUgdW5kZXJseWluZyBsYXllci4gSG93ZXZlciBuZWl0aGVyIG9u
+ZSBvZiB0aGVzZSBsYXllcnMgaW1wbGVtZW50Cj4gPj4+IHdpbl9lbmFibGUoKSAtIEZJTUQsIE1p
+eGVyIGFuZCBWSURJLiBUaHVzIHRoZSBjYWxsIHRvIGV4eW5vc19wbGFuZV9kcG1zKCkKPiA+Pj4g
+aXMgcG9pbnRsZXNzLgo+ID4+Pgo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4g
+PGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gPj4+IC0tLQo+ID4+PiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDIgLS0KPiA+Pj4gIDEgZmlsZSBj
+aGFuZ2VkLCAyIGRlbGV0aW9ucygtKQo+ID4+Pgo+ID4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9jcnRjLmMKPiA+Pj4gaW5kZXggYjJhNGI4NC4uYWQ2NzVmYiAxMDA2NDQKPiA+
+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+ID4+PiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gPj4+IEBAIC02
+NSw4ICs2NSw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19jb21taXQoc3RydWN0IGRy
+bV9jcnRjICpjcnRjKQo+ID4+PiAgCj4gPj4+ICAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmNvbW1p
+dCkKPiA+Pj4gIAkJZXh5bm9zX2NydGMtPm9wcy0+Y29tbWl0KGV4eW5vc19jcnRjKTsKPiA+Pj4g
+LQo+ID4+PiAtCWV4eW5vc19wbGFuZV9kcG1zKGNydGMtPnByaW1hcnksIERSTV9NT0RFX0RQTVNf
+T04pOwo+ID4+Cj4gPj4gQXMgaSBzYWlkLCB0aGlzIG5lZWRzIHRvIGtlZXAgcGFpciBlbmFibGVk
+IGZsYWcgb2Ygc3RydWN0Cj4gPj4gZXh5bm9zX2RybV9wbGFuZS4KPiA+IAo+ID4gVGhlIHJlYXNv
+biBleHlub3MgbmVlZHMgdGhhdCBleHlub3NfcGxhbmUtPmVuYWJsZSBpcyBiZWNhdXNlIGl0IGhh
+cyBpdHMKPiA+IG93biBwZXItcGxhbmUgZHBtcyBzdGF0ZS4gVGhlcmUncyB0d28gcHJvYmxlbXMg
+d2l0aCB0aGF0Ogo+ID4gLSBJdCdzIGhpZ2h5bCBub24tc3RhbmRhcmQsIHRoZSBkcm0ga21zIHdh
+eSBpcyB0byBqdXN0IGRpc2FibGUgdGhlIHBsYW5lCj4gPiAgIGFuZCBub3QgaGF2ZSBzb21lIGFk
+ZGl0aW9uYWwga25vYiBvbiB0b3AuCj4gPiAtIFRoZSBhdG9taWMgaGVscGVycyB3aWxsIG5vdCBi
+ZSBhYmxlIHRvIGhhbmRsZSB0aGlzLiBUaGV5IGFzc3VtZSB0aGF0Cj4gPiAgIHRoZXJlJ3Mgb25s
+eSBvbmUgZHBtcyBrbm9iIGZvciB0aGUgZW50aXJlIGRpc3BsYXkgcGlwZWxpbmUsIGFuZAo+ID4g
+ICBwZXItcGxhbmUgZW5hYmxlL2Rpc2FibGUgaXMgaGFuZGxlZCBieSBzZXR0aW5nIHBsYW5lLT5z
+dGF0ZS0+Y3J0Yywgd2hpY2gKPiA+ICAgbXVzdCBiZSBzZXQgaWZmIHBsYW5lLT5zdGF0ZS0+ZmIg
+aXMgc2V0IHJpZ2h0IG5vdy4KPiA+IAo+ID4gSSByZWNvbW1lbmQgd2UgcmlwIHRoaXMgYWxsIG91
+dCBpZiB3ZSBjYW4gYWRqdXN0IGV4aXN0aW5nIHVzZXJzcGFjZSB0bwo+ID4gc3RvcCB1c2luZyB0
+aGUgIm1vZGUiIHByb3BlcnR5IG9uIHBsYW5lcyBhbmQgY3J0Y3MuCj4gPiAKPiA+IEFuZCB3aXRo
+IHRoYXQgbm9uLXN0YW5kYXJkIGV4eW5vcyBwbGFuZSBtb2RlIHRoaW5nIGdvbmUgd2UgY2FuIGlu
+ZGVlZCByaXAKPiA+IG91dCBleHlub3NfcGxhbmVfZHBtcyBhbmQgZXh5bm9zX3BsYW5lLT5lbmFi
+bGVkIGFuZCBqdXN0IGRpcmVjdGx5IGNhbGwKPiA+IG1hbmFnZXItPm9wcy0+d2luX2VuYWJsZS9k
+aXNibGUuIEFuZCB0aGVuIHJpcCBvdXQgdGhlIHdpbl9lbmFibGUgc2luY2UKPiA+IGl0J3MgdW51
+c2VkLgo+IAo+IEJ1dCB0aGlzIGNsZWFudXAgb24gY3VycmVudCBjb2RlcyBkb2Vzbid0IGNhcmUg
+bm93IGN1cnJlbnQgb3BlcmF0aW9uCj4gbm9ybWFsbHkuIEZpcnN0IGxldCdzIGNsZWFudXAgbm9u
+LXN0YW5kYXJkIGV4eW5vcyBwbGFuZSBkcG1zIHN0YXRlIGFzCj4geW91IHNhaWQuCgpZZWFoIG15
+IHJlcGx5IHdhc24ndCB0b28gY2xlYXIsIHNvIGxldCBtZSBjbGFyaWZ5OiBJIGFncmVlIHdpdGgg
+eW91LApQYWRvdmFuJ3MgcGF0Y2ggYXMtaXMgY2FuJ3QgYmUgbWVyZ2VkLiBGaXJzdCB3ZSBuZWVk
+IHRvIGdldCByaWQgb2YgdGhlCm5vbi1zdGFuZGFyZCBwbGFuZSBkcG1zIHN0dWZmLCB0aGVuIHdl
+IGNhbiByZW1vdmUgdGhlIC0+d2luX2VuYWJsZSBob29rCmFuZCB0aGVuIGNhbiB3ZSByZW1vdmUg
+dGhpcyBjYWxsIGhlcmUuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5l
+ZXIsIEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cu
+ZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
