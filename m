@@ -1,100 +1,208 @@
-From: Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH 04/14] drm/exynos: remove struct *_win_data abstraction on planes
-Date: Thu, 5 Feb 2015 07:26:59 -0500
-Message-ID: <CAF6AEGvB5N4XtGRetP0Xay0iH3awz_Bf2Uk34KFVJi-4ea3eUw@mail.gmail.com>
-References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
-	<1422990871-21355-5-git-send-email-gustavo@padovan.org>
-	<54D1CDCC.60906@samsung.com>
-	<20150204142838.GH14009@phenom.ffwll.local>
-	<54D2D759.3000709@samsung.com>
-	<20150205091514.GO14009@phenom.ffwll.local>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
+Date: Thu, 05 Feb 2015 13:32:14 +0100
+Message-ID: <2549250.K92n8zdPv5@amdc1032>
+References: <1423045646-20592-1-git-send-email-k.kozlowski@samsung.com>
+ <8043345.BDfdhXvZOx@amdc1032> <1423120340.29408.0.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:42517 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751539AbbBEM1A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Feb 2015 07:27:00 -0500
-Received: by mail-ie0-f175.google.com with SMTP id ar1so9668570iec.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2015 04:27:00 -0800 (PST)
-In-Reply-To: <20150205091514.GO14009@phenom.ffwll.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1423120340.29408.0.camel@AMDC1943>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-On Thu, Feb 5, 2015 at 4:15 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Thu, Feb 05, 2015 at 11:37:13AM +0900, Joonyoung Shim wrote:
->> Hi Daniel,
->>
->> On 02/04/2015 11:28 PM, Daniel Vetter wrote:
->> > On Wed, Feb 04, 2015 at 04:44:12PM +0900, Joonyoung Shim wrote:
->> >> Hi,
->> >>
->> >> On 02/04/2015 04:14 AM, Gustavo Padovan wrote:
->> >>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->> >>>
->> >>> struct {fimd,mixer,vidi}_win_data was just keeping the same data
->> >>> as struct exynos_drm_plane thus get ride of it and use exynos_drm_plane
->> >>> directly.
->> >>>
->> >>> It changes how planes are created and remove .win_mode_set() callback
->> >>> that was only filling all *_win_data structs.
->> >>>
->> >>
->> >> I commented already on prior patch.
->> >
->> > I think you don't quite understand how this primary/overlay plane stuff
->> > works in drm core. The entire point of the drm core primary plane is to
->> > work _exactly_ like an overlay plane and allow userspace to mangle the
->> > primary plane configuration through the overlay plane. The only reason we
->> > have primary planes is so that old userspace keeps working.
->> >
->>
->> Right, i misunderstood a bit because exynos hw drivers have dependency
->> of zpos(hw overlay position).
->>
->> Current exynos drm driver has each primary plane of hw drivers and five
->> overlay planes. The primary plane is fixed on default hw overlay and all
->> overlay plane can map to all hw overlays using specific zpos property of
->> exynos drm plane.
->>
->> Gustavo approach will include specific hw overlay data in overlay plane
->> and hw driver keeps overlay planes to array by zpos order. But current
->> zpos of overlay plane is 0 always if user doesn't modify it, so hw
->> driver will use only hw overlay data of primary plane always even if
->> user want to use overlay plane.
->>
->> If user is modified zpos of overlay plane, hw driver can get wrong hw
->> overlay data from different overlay plane because hw driver keeps
->> overlay planes by zpos order.
->
-> Yeah I noticed the zpos fun when hacking around too. Exynos should
-> probably switch defaults so that overlays are visible by default. And we
-> need to standardize the zpos property so that other drivers can use it
-> too.
 
-jfyi, I have a bit of logic in mdp5_crtc_atomic_check() (and really
-mdp4 probably needs the same) to sort attached planes and derive the
-actual hw zpos (with each layer having a unique zpos)..
+Hi,
 
-I suspect most hw will end up needing the same (ie. dislike having two
-overlays at same zpos), so might not be a horrible idea to make the
-atomic helpers do this sorting for us..
+On Thursday, February 05, 2015 08:12:20 AM Krzysztof Kozlowski wrote:
+> On =C5=9Bro, 2015-02-04 at 19:07 +0100, Bartlomiej Zolnierkiewicz wro=
+te:
+> > Hi,
+> >=20
+> > On Wednesday, February 04, 2015 11:27:26 AM Krzysztof Kozlowski wro=
+te:
+> > > The Exynos cpuidle driver has coupled cpuidle built-in so it cann=
+ot be
+> > > built without SMP:
+> > >=20
+> > > arch/arm/mach-exynos/pm.c: In function =E2=80=98exynos_cpu0_enter=
+_aftr=E2=80=99:
+> > > arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of f=
+unction =E2=80=98arch_send_wakeup_ipi_mask=E2=80=99 [-Werror=3Dimplicit=
+-function-declaration]
+> > > arch/arm/mach-exynos/built-in.o: In function `exynos_pre_enter_af=
+tr':
+> > > ../arch/arm/mach-exynos/pm.c:300: undefined reference to `cpu_boo=
+t_reg_base'
+> > > arch/arm/mach-exynos/built-in.o: In function `exynos_cpu1_powerdo=
+wn':
+> > > ../arch/arm/mach-exynos/pm.c:282: undefined reference to `exynos_=
+cpu_power_down'
+> > >=20
+> > > Make the cpuidle driver depending on SMP because this will be the
+> > > fastest way to fix build break without adding a bunch of ifdefs i=
+n few
+> > > places.
+> >=20
+> > There shouldn't be a lot of new ifdefs (please see below) and I wou=
+ld
+> > very much prefer for cpuidle to stay supported also on UP kernels.
+>=20
+> Sure, I'm fine with your patch.
 
-BR,
--R
+Thanks!
 
-> But that doesn't change anything with the primary plane just being a
-> special plane from the sw side (backwards compat), for exynos hw they all
-> look the same.
-> -Daniel
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+I tested it today with SMP & UP kernels on Origen4210 board and it work=
+s
+fine in both cases (-next is fine on Origen4210, the problem I hit yest=
+ereday
+was caused by a configuration issue on my side).
+
+Kukjin, please apply it.  Thank you.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Best regards,
+> Krzysztof
+>=20
+> >=20
+> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > ---
+> > >  arch/arm/mach-exynos/pm.c   | 2 ++
+> > >  drivers/cpuidle/Kconfig.arm | 3 ++-
+> > >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.=
+c
+> > > index e6209dadc00d..17db00ff7f3a 100644
+> > > --- a/arch/arm/mach-exynos/pm.c
+> > > +++ b/arch/arm/mach-exynos/pm.c
+> > > @@ -181,6 +181,7 @@ void exynos_enter_aftr(void)
+> > >  	cpu_pm_exit();
+> > >  }
+> > > =20
+> > > +#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> > >  static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
+> > > =20
+> > >  static int exynos_cpu0_enter_aftr(void)
+> > > @@ -302,3 +303,4 @@ struct cpuidle_exynos_data cpuidle_coupled_ex=
+ynos_data =3D {
+> > >  	.pre_enter_aftr		=3D exynos_pre_enter_aftr,
+> > >  	.post_enter_aftr		=3D exynos_post_enter_aftr,
+> > >  };
+> > > +#endif /* CONFIG_ARM_EXYNOS_CPUIDLE */
+> > > diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfi=
+g.arm
+> > > index 8e07c9419153..5eb86a4f74d9 100644
+> > > --- a/drivers/cpuidle/Kconfig.arm
+> > > +++ b/drivers/cpuidle/Kconfig.arm
+> > > @@ -55,7 +55,8 @@ config ARM_AT91_CPUIDLE
+> > >  config ARM_EXYNOS_CPUIDLE
+> > >  	bool "Cpu Idle Driver for the Exynos processors"
+> > >  	depends on ARCH_EXYNOS
+> > > -	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+> > > +	depends on SMP
+> > > +	select ARCH_NEEDS_CPU_IDLE_COUPLED
+> > >  	help
+> > >  	  Select this to enable cpuidle for Exynos processors
+> >=20
+> > How's about the patch below instead?  It builds fine for UP and SMP=
+=2E
+> > I will do more testing tomorrow (unfortunately it seems that someth=
+ing
+> > else broke Origen4210 in -next).
+> >=20
+> > From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Subject: [PATCH] ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
+> >=20
+> > The Exynos cpuidle driver has coupled cpuidle built-in so it cannot=
+ be
+> > built without SMP:
+> >=20
+> > arch/arm/mach-exynos/pm.c: In function =E2=80=98exynos_cpu0_enter_a=
+ftr=E2=80=99:
+> > arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of fun=
+ction =E2=80=98arch_send_wakeup_ipi_mask=E2=80=99 [-Werror=3Dimplicit-f=
+unction-declaration]
+> > arch/arm/mach-exynos/built-in.o: In function `exynos_pre_enter_aftr=
+':
+> > ../arch/arm/mach-exynos/pm.c:300: undefined reference to `cpu_boot_=
+reg_base'
+> > arch/arm/mach-exynos/built-in.o: In function `exynos_cpu1_powerdown=
+':
+> > ../arch/arm/mach-exynos/pm.c:282: undefined reference to `exynos_cp=
+u_power_down'
+> >=20
+> > Fix it by adding missing checks for SMP.
+> >=20
+> > Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/exynos.c    |    2 +-
+> >  arch/arm/mach-exynos/pm.c        |    2 ++
+> >  drivers/cpuidle/cpuidle-exynos.c |    3 ++-
+> >  3 files changed, 5 insertions(+), 2 deletions(-)
+> >=20
+> > Index: b/arch/arm/mach-exynos/exynos.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- a/arch/arm/mach-exynos/exynos.c	2015-02-04 18:30:23.555819717 +=
+0100
+> > +++ b/arch/arm/mach-exynos/exynos.c	2015-02-04 18:43:23.539807815 +=
+0100
+> > @@ -211,7 +211,7 @@ static void __init exynos_dt_machine_ini
+> >  	if (!IS_ENABLED(CONFIG_SMP))
+> >  		exynos_sysram_init();
+> > =20
+> > -#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> > +#if defined(CONFIG_SMP) && defined(CONFIG_ARM_EXYNOS_CPUIDLE)
+> >  	if (of_machine_is_compatible("samsung,exynos4210"))
+> >  		exynos_cpuidle.dev.platform_data =3D &cpuidle_coupled_exynos_dat=
+a;
+> >  #endif
+> > Index: b/arch/arm/mach-exynos/pm.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- a/arch/arm/mach-exynos/pm.c	2015-02-04 18:30:23.563819719 +0100
+> > +++ b/arch/arm/mach-exynos/pm.c	2015-02-04 18:47:32.951804008 +0100
+> > @@ -181,6 +181,7 @@ void exynos_enter_aftr(void)
+> >  	cpu_pm_exit();
+> >  }
+> > =20
+> > +#if defined(CONFIG_SMP) && defined(CONFIG_ARM_EXYNOS_CPUIDLE)
+> >  static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
+> > =20
+> >  static int exynos_cpu0_enter_aftr(void)
+> > @@ -302,3 +303,4 @@ struct cpuidle_exynos_data cpuidle_coupl
+> >  	.pre_enter_aftr		=3D exynos_pre_enter_aftr,
+> >  	.post_enter_aftr		=3D exynos_post_enter_aftr,
+> >  };
+> > +#endif /* CONFIG_SMP && CONFIG_ARM_EXYNOS_CPUIDLE */
+> > Index: b/drivers/cpuidle/cpuidle-exynos.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- a/drivers/cpuidle/cpuidle-exynos.c	2015-02-04 18:30:32.93581957=
+7 +0100
+> > +++ b/drivers/cpuidle/cpuidle-exynos.c	2015-02-04 18:46:01.61980540=
+0 +0100
+> > @@ -117,7 +117,8 @@ static int exynos_cpuidle_probe(struct p
+> >  {
+> >  	int ret;
+> > =20
+> > -	if (of_machine_is_compatible("samsung,exynos4210")) {
+> > +	if (IS_ENABLED(CONFIG_SMP) &&
+> > +	    of_machine_is_compatible("samsung,exynos4210")) {
+> >  		exynos_cpuidle_pdata =3D pdev->dev.platform_data;
+> > =20
+> >  		ret =3D cpuidle_register(&exynos_coupled_idle_driver,
+
