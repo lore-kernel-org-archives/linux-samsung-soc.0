@@ -1,54 +1,86 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [RFC PATCH v2 3/3] ARM: dts: exynos5420: add async-bridge clocks
- to disp1 power domain
-Date: Fri, 06 Feb 2015 12:27:48 +0100
-Message-ID: <54D4A534.8060004@collabora.co.uk>
-References: <54D48701.10105@collabora.co.uk> <1423220154-5333-1-git-send-email-a.hajda@samsung.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH 1/20] mtd: s3c2410: fix misspelling of current function
+ in string
+Date: Fri, 6 Feb 2015 03:28:45 -0800
+Message-ID: <20150206112845.GF4434@norris-Latitude-E6410>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1417980062-25151-2-git-send-email-Julia.Lawall@lip6.fr>
+ <CAFLxGvyiqxQ6U6p-A-JW8Nv8OvXFGsna93afUu-Gek0EV3gATA@mail.gmail.com>
+ <alpine.DEB.2.02.1412080809400.2100@localhost6.localdomain6>
+ <54856C75.1050309@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1423220154-5333-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liquid.Acid-hi6Y0CQ0nG0@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54856C75.1050309@nod.at>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Kukjin Kim <kgene@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linux@rasmusvillemoes.dk, Joe Perches <joe@perches.com>, David Woodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Andrzej,
-
-On 02/06/2015 11:55 AM, Andrzej Hajda wrote:
-> FIMD and MIXER IPs in disp1 power domain have async-bridges (to GSCALER),
-> therefore their clocks should be enabled during power domain switch.
+On Mon, Dec 08, 2014 at 10:16:37AM +0100, Richard Weinberger wrote:
+> Am 08.12.2014 um 08:11 schrieb Julia Lawall:
+> >>> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+> >>> index 35aef5e..0a9c41f 100644
+> >>> --- a/drivers/mtd/nand/s3c2410.c
+> >>> +++ b/drivers/mtd/nand/s3c2410.c
+> >>> @@ -948,7 +948,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+> >>>
+> >>>         cpu_type = platform_get_device_id(pdev)->driver_data;
+> >>>
+> >>> -       pr_debug("s3c2410_nand_probe(%p)\n", pdev);
+> >>> +       pr_debug("%s(%p)\n", __func__, pdev);
+> >>
+> >> I think we can drop the line completely.
+> >> We have ftrace to trace function calls...
+> > 
+> > Should the "initialised ok" at the end of the function be remove as well?
+> > 
+> > Will it be confusing if this cleanup is done in this function, but not in 
+> > others where it may be useful?  Perhaps s3c2410_nand_update_chip, for 
+> > example?
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Hi,
-> 
-> This is 2nd version of the patch. After decrypting manual and discussion
-> with Marek I guess this set of clocks is more apropriate - async-bridges
-> are present in MIXER and FIMD, so their clocks should be enabled.
->
+> Hmm, this driver seems to have a lot of debugging printks().
+> IMHO we can remove them.
+> Let's see what Brain says.
 
-I just tested this version on my Exynos5420 Peach Pit and the power domain
-failed error does not happen anymore even after enabling and disabling the
-HDMI display several times.
+I'm a little late for this one, but I can apply this instead:
 
-Thanks a lot for fixing this since the dependency was not clear to me from
-reading the manual.
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Fri, 6 Feb 2015 03:25:28 -0800
+Subject: [PATCH] mtd: s3c2410: drop useless / misspelled debug prints
 
-> The 1st version worked for me due to fact I have forgot to remove
-> clk_ignore_unused kernel boot option during tests ;)
->
+s3c2410_nand_probe is not the name of the function.
 
-Yes, that has bitten me too many times as well :)
+These prints have little utility, so let's just kill them.
 
-> Regards
-> Andrzej
-> ---
+Reported-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+---
+ drivers/mtd/nand/s3c2410.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index 35aef5edb588..0e02be47ce1d 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -948,8 +948,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 
+ 	cpu_type = platform_get_device_id(pdev)->driver_data;
+ 
+-	pr_debug("s3c2410_nand_probe(%p)\n", pdev);
+-
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (info == NULL) {
+ 		err = -ENOMEM;
+@@ -1045,7 +1043,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 		s3c2410_nand_clk_set_state(info, CLOCK_SUSPEND);
+ 	}
+ 
+-	pr_debug("initialised ok\n");
+ 	return 0;
+ 
+  exit_error:
+-- 
+2.3.0
+
