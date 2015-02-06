@@ -1,92 +1,304 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 04/14] drm/exynos: remove struct *_win_data abstraction on
+Subject: Re: [PATCH 1/4] drm/exynos: remove struct *_win_data abstraction on
  planes
-Date: Fri, 06 Feb 2015 12:39:26 +0900
-Message-ID: <54D4376E.6090707@samsung.com>
-References: <1422990871-21355-1-git-send-email-gustavo@padovan.org>
- <1422990871-21355-5-git-send-email-gustavo@padovan.org>
- <54D1CDCC.60906@samsung.com> <20150204142838.GH14009@phenom.ffwll.local>
- <54D2D759.3000709@samsung.com> <20150205091514.GO14009@phenom.ffwll.local>
- <CAF6AEGvB5N4XtGRetP0Xay0iH3awz_Bf2Uk34KFVJi-4ea3eUw@mail.gmail.com>
- <CAPj87rNij8b9P6=Ygk6gQiA1gsSXJsq6WPatdXm85QcDMJhVqg@mail.gmail.com>
- <20150205130605.GT14009@phenom.ffwll.local>
+Date: Fri, 06 Feb 2015 13:18:12 +0900
+Message-ID: <54D44084.3030308@samsung.com>
+References: <1423159199-16394-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15911 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:23137 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431AbbBFDjU (ORCPT
+	with ESMTP id S1753553AbbBFESG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Feb 2015 22:39:20 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
+	Thu, 5 Feb 2015 23:18:06 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
  by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NJB008A6ZHIQA90@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 06 Feb 2015 12:39:18 +0900 (KST)
-In-reply-to: <20150205130605.GT14009@phenom.ffwll.local>
+ with ESMTP id <0NJC00L8N1A4ZT00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 06 Feb 2015 13:18:04 +0900 (KST)
+In-reply-to: <1423159199-16394-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>
-Cc: Rob Clark <robdclark@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi,
+Hi Gustavo,
 
-On 02/05/2015 10:06 PM, Daniel Vetter wrote:
-> On Thu, Feb 05, 2015 at 12:48:07PM +0000, Daniel Stone wrote:
->> Hi,
->>
->> On 5 February 2015 at 12:26, Rob Clark <robdclark@gmail.com> wrote:
->>> On Thu, Feb 5, 2015 at 4:15 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
->>>> Yeah I noticed the zpos fun when hacking around too. Exynos should
->>>> probably switch defaults so that overlays are visible by default. And we
->>>> need to standardize the zpos property so that other drivers can use it
->>>> too.
->>>
->>> jfyi, I have a bit of logic in mdp5_crtc_atomic_check() (and really
->>> mdp4 probably needs the same) to sort attached planes and derive the
->>> actual hw zpos (with each layer having a unique zpos)..
->>>
->>> I suspect most hw will end up needing the same (ie. dislike having two
->>> overlays at same zpos), so might not be a horrible idea to make the
->>> atomic helpers do this sorting for us..
+On 02/06/2015 02:59 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 > 
-> Oh yeah such a helper would be nice. Especially since on intel hw flipping
-> planes around means fishing the right value out of some enum table ;-)
-> So some sort of helper to compute the absolute ordering in a stable way
-> would be nice.
+> struct {fimd,mixer,vidi}_win_data was just keeping the same data
+> as struct exynos_drm_plane thus get ride of it and use exynos_drm_plane
+> directly.
 > 
->> Same with Exynos, except it's a bit funnier still. In terms of its
->> hardware, each CRTC has a number of planes which have a fixed zpos.
->> The reason exynos_drm exposes zpos is because it sets up a fixed
->> number of planes for the entire device and declares they can run
->> across every single CRTC, and then works out from the combination of
->> CRTC assignment and zpos property, which hardware plane to assign it
->> to. This includes the primary, so if you accidentally get zpos==0 in
->> there, then you smash the primary plane. Or set a duplicate zpos and
->> then the last one in wins.
->>
->> It also means if you're using multiple CRTCs (e.g. FIMD for internal
->> panel plus mixer for external HDMI), then you can only use 5 planes in
->> total, rather than 5 planes per head. (And let's not forget that each
->> backend has disjoint format support, so again the driver just lies to
->> you and claims to support them all, with a silent fallback via a
->> default case statement when the format isn't actually supported.
->> Whoops.)
->>
->> I think a more ideal setup would be a much more direct 1:1 mapping
->> with the hardware, where each actual plane on each actual CRTC gets
->> exposed directly to userspace, perhaps with a fixed/read-only zpos
->> property to tell the userspace which plane it's actually configuring.
->> I suspect this would be a pretty good map to other hardware as well.
+> It changes how planes are created and remove .win_mode_set() callback
+> that was only filling all *_win_data structs.
 > 
-> Hm that sounds indeed a bit funny. I agree that exynos should split planes
-> into per-crtc and separate the code and capability tables out so that
-> there's less lying. And zpos should probably be converted to a read-only
-> property to tell userspace about the facts, instead of doing something
-> funny behind the scenes.
 
-I agree, it seems be time to convert each planes have unique zpos.
+OK, let's go ahead this with next zpos problem fix.
+
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  |   9 +-
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.h  |   1 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c   |  14 --
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h   |   5 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 182 ++++++++++---------------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c |  20 +--
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h |   6 +-
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c  | 123 +++++------------
+>  drivers/gpu/drm/exynos/exynos_mixer.c     | 212 +++++++++++-------------------
+>  9 files changed, 183 insertions(+), 389 deletions(-)
+> 
+
+[snip]
+
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 736269a..6e7c0cc 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -37,34 +37,13 @@
+>  
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_crtc.h"
+> +#include "exynos_drm_plane.h"
+>  #include "exynos_drm_iommu.h"
+>  #include "exynos_mixer.h"
+>  
+>  #define MIXER_WIN_NR		3
+>  #define MIXER_DEFAULT_WIN	0
+>  
+> -struct hdmi_win_data {
+> -	dma_addr_t		dma_addr;
+> -	dma_addr_t		chroma_dma_addr;
+> -	uint32_t		pixel_format;
+> -	unsigned int		bpp;
+> -	unsigned int		crtc_x;
+> -	unsigned int		crtc_y;
+> -	unsigned int		crtc_width;
+> -	unsigned int		crtc_height;
+> -	unsigned int		fb_x;
+> -	unsigned int		fb_y;
+> -	unsigned int		fb_width;
+> -	unsigned int		fb_height;
+> -	unsigned int		src_width;
+> -	unsigned int		src_height;
+> -	unsigned int		mode_width;
+> -	unsigned int		mode_height;
+> -	unsigned int		scan_flags;
+> -	bool			enabled;
+> -	bool			resume;
+> -};
+> -
+>  struct mixer_resources {
+>  	int			irq;
+>  	void __iomem		*mixer_regs;
+> @@ -88,6 +67,7 @@ struct mixer_context {
+>  	struct device		*dev;
+>  	struct drm_device	*drm_dev;
+>  	struct exynos_drm_crtc	*crtc;
+> +	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+>  	int			pipe;
+>  	bool			interlace;
+>  	bool			powered;
+> @@ -97,7 +77,6 @@ struct mixer_context {
+>  
+>  	struct mutex		mixer_mutex;
+>  	struct mixer_resources	mixer_res;
+> -	struct hdmi_win_data	win_data[MIXER_WIN_NR];
+>  	enum mixer_version_id	mxr_ver;
+>  	wait_queue_head_t	wait_vsync_queue;
+>  	atomic_t		wait_vsync_event;
+> @@ -401,7 +380,7 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+>  {
+>  	struct mixer_resources *res = &ctx->mixer_res;
+>  	unsigned long flags;
+> -	struct hdmi_win_data *win_data;
+> +	struct exynos_drm_plane *plane;
+>  	unsigned int x_ratio, y_ratio;
+>  	unsigned int buf_num = 1;
+>  	dma_addr_t luma_addr[2], chroma_addr[2];
+> @@ -409,9 +388,9 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+>  	bool crcb_mode = false;
+>  	u32 val;
+>  
+> -	win_data = &ctx->win_data[win];
+> +	plane = &ctx->planes[win];
+>  
+> -	switch (win_data->pixel_format) {
+> +	switch (plane->pixel_format) {
+>  	case DRM_FORMAT_NV12MT:
+>  		tiled_mode = true;
+>  	case DRM_FORMAT_NV12:
+> @@ -421,35 +400,35 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+>  	/* TODO: single buffer format NV12, NV21 */
+>  	default:
+>  		/* ignore pixel format at disable time */
+> -		if (!win_data->dma_addr)
+> +		if (!plane->dma_addr[0])
+>  			break;
+>  
+>  		DRM_ERROR("pixel format for vp is wrong [%d].\n",
+> -				win_data->pixel_format);
+> +				plane->pixel_format);
+>  		return;
+>  	}
+>  
+>  	/* scaling feature: (src << 16) / dst */
+> -	x_ratio = (win_data->src_width << 16) / win_data->crtc_width;
+> -	y_ratio = (win_data->src_height << 16) / win_data->crtc_height;
+> +	x_ratio = (plane->src_width << 16) / plane->crtc_width;
+> +	y_ratio = (plane->src_height << 16) / plane->crtc_height;
+>  
+>  	if (buf_num == 2) {
+> -		luma_addr[0] = win_data->dma_addr;
+> -		chroma_addr[0] = win_data->chroma_dma_addr;
+> +		luma_addr[0] = plane->dma_addr[0];
+> +		chroma_addr[0] = plane->dma_addr[1];
+>  	} else {
+> -		luma_addr[0] = win_data->dma_addr;
+> -		chroma_addr[0] = win_data->dma_addr
+> -			+ (win_data->fb_width * win_data->fb_height);
+> +		luma_addr[0] = plane->dma_addr[0];
+> +		chroma_addr[0] = plane->dma_addr[0]
+> +			+ (plane->fb_width * plane->fb_height);
+>  	}
+>  
+> -	if (win_data->scan_flags & DRM_MODE_FLAG_INTERLACE) {
+> +	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
+>  		ctx->interlace = true;
+>  		if (tiled_mode) {
+>  			luma_addr[1] = luma_addr[0] + 0x40;
+>  			chroma_addr[1] = chroma_addr[0] + 0x40;
+>  		} else {
+> -			luma_addr[1] = luma_addr[0] + win_data->fb_width;
+> -			chroma_addr[1] = chroma_addr[0] + win_data->fb_width;
+> +			luma_addr[1] = luma_addr[0] + plane->fb_width;
+> +			chroma_addr[1] = chroma_addr[0] + plane->fb_width;
+>  		}
+>  	} else {
+>  		ctx->interlace = false;
+> @@ -470,26 +449,26 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+>  	vp_reg_writemask(res, VP_MODE, val, VP_MODE_FMT_MASK);
+>  
+>  	/* setting size of input image */
+> -	vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(win_data->fb_width) |
+> -		VP_IMG_VSIZE(win_data->fb_height));
+> +	vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(plane->fb_width) |
+> +		VP_IMG_VSIZE(plane->fb_height));
+>  	/* chroma height has to reduced by 2 to avoid chroma distorions */
+> -	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(win_data->fb_width) |
+> -		VP_IMG_VSIZE(win_data->fb_height / 2));
+> +	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(plane->fb_width) |
+> +		VP_IMG_VSIZE(plane->fb_height / 2));
+>  
+> -	vp_reg_write(res, VP_SRC_WIDTH, win_data->src_width);
+> -	vp_reg_write(res, VP_SRC_HEIGHT, win_data->src_height);
+> +	vp_reg_write(res, VP_SRC_WIDTH, plane->src_width);
+> +	vp_reg_write(res, VP_SRC_HEIGHT, plane->src_height);
+>  	vp_reg_write(res, VP_SRC_H_POSITION,
+> -			VP_SRC_H_POSITION_VAL(win_data->fb_x));
+> -	vp_reg_write(res, VP_SRC_V_POSITION, win_data->fb_y);
+> +			VP_SRC_H_POSITION_VAL(plane->fb_x));
+> +	vp_reg_write(res, VP_SRC_V_POSITION, plane->fb_y);
+>  
+> -	vp_reg_write(res, VP_DST_WIDTH, win_data->crtc_width);
+> -	vp_reg_write(res, VP_DST_H_POSITION, win_data->crtc_x);
+> +	vp_reg_write(res, VP_DST_WIDTH, plane->crtc_width);
+> +	vp_reg_write(res, VP_DST_H_POSITION, plane->crtc_x);
+>  	if (ctx->interlace) {
+> -		vp_reg_write(res, VP_DST_HEIGHT, win_data->crtc_height / 2);
+> -		vp_reg_write(res, VP_DST_V_POSITION, win_data->crtc_y / 2);
+> +		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_height / 2);
+> +		vp_reg_write(res, VP_DST_V_POSITION, plane->crtc_y / 2);
+>  	} else {
+> -		vp_reg_write(res, VP_DST_HEIGHT, win_data->crtc_height);
+> -		vp_reg_write(res, VP_DST_V_POSITION, win_data->crtc_y);
+> +		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_height);
+> +		vp_reg_write(res, VP_DST_V_POSITION, plane->crtc_y);
+>  	}
+>  
+>  	vp_reg_write(res, VP_H_RATIO, x_ratio);
+> @@ -503,8 +482,8 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+>  	vp_reg_write(res, VP_TOP_C_PTR, chroma_addr[0]);
+>  	vp_reg_write(res, VP_BOT_C_PTR, chroma_addr[1]);
+>  
+> -	mixer_cfg_scan(ctx, win_data->mode_height);
+> -	mixer_cfg_rgb_fmt(ctx, win_data->mode_height);
+> +	mixer_cfg_scan(ctx, plane->mode_height);
+> +	mixer_cfg_rgb_fmt(ctx, plane->mode_height);
+>  	mixer_cfg_layer(ctx, win, true);
+>  	mixer_run(ctx);
+>  
+> @@ -525,21 +504,21 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
+>  {
+>  	struct mixer_resources *res = &ctx->mixer_res;
+>  	unsigned long flags;
+> -	struct hdmi_win_data *win_data;
+> +	struct exynos_drm_plane *plane;
+>  	unsigned int x_ratio, y_ratio;
+>  	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
+>  	dma_addr_t dma_addr;
+>  	unsigned int fmt;
+>  	u32 val;
+>  
+> -	win_data = &ctx->win_data[win];
+> +	plane = &ctx->planes[win];
+>  
+>  	#define RGB565 4
+>  	#define ARGB1555 5
+>  	#define ARGB4444 6
+>  	#define ARGB8888 7
+>  
+> -	switch (win_data->bpp) {
+> +	switch (plane->bpp) {
+>  	case 16:
+>  		fmt = ARGB4444;
+>  		break;
+> @@ -554,17 +533,17 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
+>  	x_ratio = 0;
+>  	y_ratio = 0;
+>  
+> -	dst_x_offset = win_data->crtc_x;
+> -	dst_y_offset = win_data->crtc_y;
+> +	dst_x_offset = plane->crtc_x;
+> +	dst_y_offset = plane->crtc_y;
+>  
+>  	/* converting dma address base and source offset */
+> -	dma_addr = win_data->dma_addr
+> -		+ (win_data->fb_x * win_data->bpp >> 3)
+> -		+ (win_data->fb_y * win_data->fb_width * win_data->bpp >> 3);
+> +	dma_addr = plane->dma_addr[0]
+> +		+ (plane->fb_x * plane->bpp >> 3)
+> +		+ (plane->fb_y * plane->fb_width * plane->bpp >> 3);
+>  	src_x_offset = 0;
+>  	src_y_offset = 0;
+>  
+> -	if (win_data->scan_flags & DRM_MODE_FLAG_INTERLACE)
+> +	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE)
+>  		ctx->interlace = true;
+>  	else
+>  		ctx->interlace = false;
+> @@ -577,18 +556,18 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
+>  		MXR_GRP_CFG_FORMAT_VAL(fmt), MXR_GRP_CFG_FORMAT_MASK);
+>  
+>  	/* setup geometry */
+> -	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win), win_data->fb_width);
+> +	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win), plane->fb_width);
+>  
+>  	/* setup display size */
+>  	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
+>  		win == MIXER_DEFAULT_WIN) {
+> -		val  = MXR_MXR_RES_HEIGHT(win_data->fb_height);
+> -		val |= MXR_MXR_RES_WIDTH(win_data->fb_width);
+> +		val  = MXR_MXR_RES_HEIGHT(plane->fb_height);
+> +		val |= MXR_MXR_RES_WIDTH(plane->fb_width);
+
+I can't apply because of this changes.
+
+Could you make patch based on latest exynos-drm-next branch?	
 
 Thanks.
