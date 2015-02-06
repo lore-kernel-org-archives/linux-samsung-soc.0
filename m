@@ -1,66 +1,92 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [RFC PATCH 0/3] Fix power domains handling on exynos542x
-Date: Fri, 06 Feb 2015 14:27:18 +0900
-Message-ID: <54D450B6.6010409@samsung.com>
-References: <1423139739-19881-1-git-send-email-a.hajda@samsung.com>
- <54D381F4.2080701@collabora.co.uk>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 0/2] mmc: dw_mmc: exynos: Add HS400 support
+Date: Fri, 6 Feb 2015 11:22:34 +0530
+Message-ID: <CAFp+6iEGCEiGf5WooHJyh=cnJF_c7j=n_YhHLowfwjpLiXUPiQ@mail.gmail.com>
+References: <1422499318-13726-1-git-send-email-alim.akhtar@samsung.com>
+	<54D41654.8030702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <54D381F4.2080701@collabora.co.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Liquid.Acid@gmx.net, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54D41654.8030702-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpPbiAwMi8wNS8yMDE1IDExOjQ1IFBNLCBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgd3Jv
-dGU6Cj4gSGVsbG8gQW5kcnplaiwKPiAKPiBUaGFua3MgYSBsb3QgZm9yIGZpbmFsbHkgZmluZGlu
-ZyB3aGF0IHdhcyBjYXVzaW5nIHRoZSBIRE1JIGlzc3VlLgo+IAo+IE9uIDAyLzA1LzIwMTUgMDE6
-MzUgUE0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IEhpLAo+Pgo+PiBFeHlub3MgY2hpcHNldHMg
-c2luY2UgNTQyeCBoYXZlIGFzeW5jaHJvbm91cyBicmlkZ2VzIGNvbm5lY3RpbmcgZGlmZmVyZW50
-IElQcy4KPj4gVGhlc2UgYnJpZGdlcyBzaG91bGQgYmUgb3BlcmF0aW9uYWwgZHVyaW5nIHBvd2Vy
-IGRvbWFpbiBzd2l0Y2hpbmcsIGllIGFzc29jaWF0ZWQKPj4gY2xvY2tzIGNhbm5vdCBiZSBnYXRl
-ZC4KPj4gVGhpcyBwYXRjaHNldCBhZGRzIGJpbmRpbmcgdG8gcHJvdmlkZSBzdWNoIGNsb2NrcyBw
-ZXIgcG93ZXIgZG9tYWluIGFuZCBhZGRzIGNvZGUKPj4gd2hpY2ggZW5hYmxlcyB0aGVtIGR1cmlu
-ZyBkb21haW4gb24vb2ZmIG9wZXJhdGlvbi4KPj4KPj4gVGhpcyBwYXRjaHNldCBmaXhlcyBwb3dl
-ciBkb21haW4gaXNzdWVzIHdpdGggZGlzcDEgZG9tYWluIGFuZCBIRE1JIChzb21lIG9mIHRoZW0p
-Cj4+IG9uIE9kcm9pZCBYVTM6Cj4+IC0gZGlzcDEgcG93ZXIgZG9tYWluIGNhbiBiZSB0dXJuZWQg
-b2ZmLAo+PiAtIG5vIG1vcmUgImltcHJlY2lzZSBleHRlcm5hbCBhYm9ydCIgZmF1bHRzLgo+Pgo+
-PiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gJ1tQQVRDSCB2NSAwLzldIEVuYWJsZSBIRE1JIHN1
-cHBvcnQgb24gRXh5bm9zIHBsYXRmb3JtcycgWzFdLgo+Pgo+IAo+IEl0IGFsc28gZGVwZW5kcyBv
-biAnW1BBVENIIDAvMl0gQWRkIEhETUkgc3VwcG9ydCBmb3IgRXh5bm9zNTQyMCBwbGF0Zm9ybScg
-WzJdLgo+IAo+PiBJdCB3YXMgc3VjY2Vzc2Z1bGx5IHRlc3RlZCBvbiBPZHJvaWRYVTMuCj4+Cj4+
-IFsxXTogaHR0cDovL3Blcm1hbGluay5nbWFuZS5vcmcvZ21hbmUubGludXgua2VybmVsLnNhbXN1
-bmctc29jLzQyNzQzCj4gCj4gWW91ciBwYXRjaGVzIGxvb2tzIGdvb2QgdG8gbWUgc28gcGxlYXNl
-IGZlZWwgZnJlZSB0byBhZGQ6Cj4gCj4gUmV2aWV3ZWQtYnk6IEphdmllciBNYXJ0aW5leiBDYW5p
-bGxhcyA8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4KPiAKPiBJIGFsc28gdGVzdGVk
-IG9uIGFuIEV4eW5vczU0MjAgUGVhY2ggUGl0IENocm9tZWJvb2sgYW5kIGJvdGggdGhlICJQb3dl
-cgo+IGRvbWFpbiBwb3dlci1kb21haW4gZGlzYWJsZSBmYWlsZWQiIG1lc3NhZ2UgYW5kIHRoZSBz
-eXN0ZW0gY3Jhc2ggYXJlIGdvbmUuCj4gCgpSZWFsbHkgZ29uZSBvdXQgIlBvd2VyIGRvbWFpbiBw
-b3dlci1kb21haW4gZGlzYWJsZSBmYWlsZWQiIG1lc3NhZ2U/CgpTdGlsbCBpIGdldCB0aGUgbWVz
-c2FnZSBmcm9tIHNlY29uZCB0cnksCgojIG1vZGV0ZXN0IC1NIGV4eW5vcyAtcyAyM0AyMToxOTIw
-eDEwODAKc2V0dGluZyBtb2RlIDE5MjB4MTA4MEBYUjI0IG9uIGNvbm5lY3RvcnMgMjMsIGNydGMg
-MjEKCiMgbW9kZXRlc3QgLU0gZXh5bm9zIC1zIDIzQDIxOjE5MjB4MTA4MApzZXR0aW5nIG1vZGUg
-MTkyMHgxMDgwQFhSMjQgb24gY29ubmVjdG9ycyAyMywgY3J0YyAyMQoKWyAgIDM5LjYwODg4MV0g
-UG93ZXIgZG9tYWluIHBvd2VyLWRvbWFpbiBkaXNhYmxlIGZhaWxlZAojIG1vZGV0ZXN0IC1NIGV4
-eW5vcyAtcyAyM0AyMToxOTIweDEwODAKc2V0dGluZyBtb2RlIDE5MjB4MTA4MEBYUjI0IG9uIGNv
-bm5lY3RvcnMgMjMsIGNydGMgMjEKClsgICA0Mi44Mjc2MzddIFBvd2VyIGRvbWFpbiBwb3dlci1k
-b21haW4gZGlzYWJsZSBmYWlsZWQKLi4uCgpUaGFua3MuCgo+IFRlc3RlZC1ieTogSmF2aWVyIE1h
-cnRpbmV6IENhbmlsbGFzIDxqYXZpZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPgo+IAo+IEJl
-c3QgcmVnYXJkcywKPiBKYXZpZXIKPiAKPiBbMl06IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE1
-LzEvMjAvMjM1Cj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUg
-bGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBt
-ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZv
-IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Jaehoon,
+
+
+On Fri, Feb 6, 2015 at 6:48 AM, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi, Alim.
+>
+> On my board, this patch isn't working fine.
+> So when i complete to test on my board(exynos5), i will reply with comments.
+> Sorry for late testing.
+
+I tested this series on linux-next, on Exynos5800-peach-pi board, and HS400
+seems to be working fine.
+I can see the card getting detected as HS400, and then i ran iozone as well.
+The iozone numbers are also as required.
+
+On peach-pit board too, the HS200 mode seems to be working good.
+
+What are the observations you saw on your board ?
+
+>
+> Best Regards,
+> Jaehoon Chung
+>
+> On 01/29/2015 11:41 AM, Alim Akhtar wrote:
+>> This adds HS400 mode support for exynos dw_mmc host controller.
+>>
+>> Currently tested on Exynos5800-peach-pi and Exyons7 platform for HS400 mode.
+>> Tested HS200 mode with this series applied, HS200 still works.
+>>
+>> Appreciate testing on other exynos5/7 platform which supports emmc5.0
+>>
+>> Changes in V5:
+>>       * Enable HS400 on Exynos5800-peach-pi boards
+>>       * Addressed other review comments from Jaehoon Chung
+>>
+>> Changes in V4:
+>>       * drop the idea of changing existing binding for ciu_div as per [1]
+>>         * addressed comments from Jaehoon Chung [2]
+>>
+>> [1] http://www.spinics.net/lists/linux-samsung-soc/msg40923.html
+>> [2] http://www.spinics.net/lists/devicetree/msg64373.html
+>>
+>> Changes in V3:
+>>       rebased on ulf's next (commit: 607b448 mmc: core: Make tuning block patterns static)
+>>
+>> Seungwon Jeon (2):
+>>   mmc: dw_mmc: exynos: Support eMMC's HS400 mode
+>>   ARM: dts: Add HS400 support for exynos5420 and exynos5800
+>>
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    7 +
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts         |    4 +-
+>>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 +
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |    4 +-
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts          |    7 +-
+>>  drivers/mmc/host/dw_mmc-exynos.c                   |  185 ++++++++++++++++----
+>>  drivers/mmc/host/dw_mmc-exynos.h                   |   19 +-
+>>  drivers/mmc/host/dw_mmc.c                          |   16 +-
+>>  drivers/mmc/host/dw_mmc.h                          |    2 +
+>>  9 files changed, 213 insertions(+), 38 deletions(-)
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
