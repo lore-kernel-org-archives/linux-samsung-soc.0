@@ -1,74 +1,113 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 1/1] ARM: dts: Add mclk entry for Snow and Peach Pit/Pi boards
-Date: Fri,  6 Feb 2015 18:52:51 +0100
-Message-ID: <1423245171-25485-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v3 6/8] hwmon: pwm-fan: Extract __set_pwm() function to
+ only modify PWM duty cycle
+Date: Fri, 6 Feb 2015 10:27:25 -0800
+Message-ID: <20150206182725.GA25410@roeck-us.net>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1423241948-31981-1-git-send-email-l.majewski@samsung.com>
+ <1423241948-31981-7-git-send-email-l.majewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59969 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753015AbbBFRxG (ORCPT
+Received: from bh-25.webhostbox.net ([208.91.199.152]:47710 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757796AbbBFS2h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Feb 2015 12:53:06 -0500
+	Fri, 6 Feb 2015 13:28:37 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YJnds-002bfp-Lh
+	for linux-samsung-soc@vger.kernel.org; Fri, 06 Feb 2015 18:28:37 +0000
+Content-Disposition: inline
+In-Reply-To: <1423241948-31981-7-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Tushar Behera <tushar.b@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-From: Tushar Behera <tushar.b@samsung.com>
+On Fri, Feb 06, 2015 at 05:59:06PM +0100, Lukasz Majewski wrote:
+> It was necessary to decouple code handling writing to sysfs from the one
+> responsible for setting PWM of the fan.
+> Due to that, new __set_pwm() method was extracted, which is responsible for
+> only setting new PWM duty cycle.
+> 
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
+> Changes for v2:
+> - None
+> Changes for v3:
+> - The commit headline has been reedited.
+> ---
+>  drivers/hwmon/pwm-fan.c | 35 ++++++++++++++++++++++-------------
+>  1 file changed, 22 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 1991d903..870e100 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -33,21 +33,15 @@ struct pwm_fan_ctx {
+>  	unsigned char pwm_value;
+>  };
+>  
+> -static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
+> -		       const char *buf, size_t count)
+> +static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+>  {
+> -	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
+> -	unsigned long pwm, duty;
+> -	ssize_t ret;
+> -
+> -	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
+> -		return -EINVAL;
+> -
+> -	mutex_lock(&ctx->lock);
+> +	unsigned long duty;
+> +	int ret;
+>  
+>  	if (ctx->pwm_value == pwm)
+> -		goto exit_set_pwm_no_change;
+> +		return 0;
+>  
+Why did you move this check outside the lock ? With this change there 
+is no guarantee that pwm_value wasn't changed while waiting for the lock.
 
-On Snow, Peach Pit and Peach Pi boards, the Exynos SoC XCLKOUT output pin
-provides the master clock (mclk) to codecs. So make them a clock consumer.
+Guenter
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-
-Changes since v1:
- - Rebased on top of Kukjin's for-next branch since v1 made on top of
-   3.19-rc7 doesn't apply cleanly on that branch. Sorry for the noise.
-
- arch/arm/boot/dts/exynos5250-snow.dts      | 2 ++
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 2 ++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 2 ++
- 3 files changed, 6 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 5be966df7603..6096d6b02dd8 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -206,6 +206,8 @@
- 		samsung,model = "Snow-I2S-MAX98095";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98095>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
- 	};
- 
- 	usb3_vbus_reg: regulator-usb3 {
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index ec86d9523935..1d4db3b0676e 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -594,6 +594,8 @@
- 		interrupt-parent = <&gpx0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98090_irq>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
- 	};
- 
- 	light-sensor@44 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 06737c60d333..6f2fc3445bd5 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -581,6 +581,8 @@
- 		interrupt-parent = <&gpx0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98091_irq>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
- 	};
- 
- 	light-sensor@44 {
--- 
-2.1.3
+> +	mutex_lock(&ctx->lock);
+>  	if (pwm == 0) {
+>  		pwm_disable(ctx->pwm);
+>  		goto exit_set_pwm;
+> @@ -66,13 +60,28 @@ static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
+>  
+>  exit_set_pwm:
+>  	ctx->pwm_value = pwm;
+> -exit_set_pwm_no_change:
+> -	ret = count;
+>  exit_set_pwm_err:
+>  	mutex_unlock(&ctx->lock);
+>  	return ret;
+>  }
+>  
+> +static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
+> +		       const char *buf, size_t count)
+> +{
+> +	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
+> +	unsigned long pwm;
+> +	int ret;
+> +
+> +	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
+> +		return -EINVAL;
+> +
+> +	ret = __set_pwm(ctx, pwm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return count;
+> +}
+> +
+>  static ssize_t show_pwm(struct device *dev,
+>  			struct device_attribute *attr, char *buf)
+>  {
+> -- 
+> 2.0.0.rc2
+> 
