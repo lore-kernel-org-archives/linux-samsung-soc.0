@@ -1,57 +1,53 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH 0/3] Fix power domains handling on exynos542x
-Date: Fri, 06 Feb 2015 10:18:57 +0100
-Message-ID: <54D48701.10105@collabora.co.uk>
-References: <1423139739-19881-1-git-send-email-a.hajda@samsung.com> <54D381F4.2080701@collabora.co.uk> <54D450B6.6010409@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [RFC PATCH v2 3/3] ARM: dts: exynos5420: add async-bridge clocks to
+ disp1 power domain
+Date: Fri, 06 Feb 2015 11:55:54 +0100
+Message-ID: <1423220154-5333-1-git-send-email-a.hajda@samsung.com>
+References: <54D48701.10105@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54D450B6.6010409@samsung.com>
+In-reply-to: <54D48701.10105@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Liquid.Acid@gmx.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, javier.martinez@collabora.co.uk, Liquid.Acid@gmx.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Joonyoung,
+FIMD and MIXER IPs in disp1 power domain have async-bridges (to GSCALER),
+therefore their clocks should be enabled during power domain switch.
 
-On 02/06/2015 06:27 AM, Joonyoung Shim wrote:
-> On 02/05/2015 11:45 PM, Javier Martinez Canillas wrote:
->> 
->> I also tested on an Exynos5420 Peach Pit Chromebook and both the "Power
->> domain power-domain disable failed" message and the system crash are gone.
->> 
-> 
-> Really gone out "Power domain power-domain disable failed" message?
-> 
-> Still i get the message from second try,
-> 
-> # modetest -M exynos -s 23@21:1920x1080
-> setting mode 1920x1080@XR24 on connectors 23, crtc 21
-> 
-> # modetest -M exynos -s 23@21:1920x1080
-> setting mode 1920x1080@XR24 on connectors 23, crtc 21
-> 
-> [   39.608881] Power domain power-domain disable failed
-> # modetest -M exynos -s 23@21:1920x1080
-> setting mode 1920x1080@XR24 on connectors 23, crtc 21
-> 
-> [   42.827637] Power domain power-domain disable failed
-> ...
->
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi,
 
-You are right, I tested that if I execute:
+This is 2nd version of the patch. After decrypting manual and discussion
+with Marek I guess this set of clocks is more apropriate - async-bridges
+are present in MIXER and FIMD, so their clocks should be enabled.
 
-# for val in 1 0; do echo $val > /sys/class/drm/card0/device/graphics/fb0/blank; done
+The 1st version worked for me due to fact I have forgot to remove
+clk_ignore_unused kernel boot option during tests ;)
 
-many times I see the "Power domain power-domain disable failed" message
-again and there is no output in the HDMI display when dpms on.
+Regards
+Andrzej
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-But even in that case, the imprecise external abort does not happen when the
-exynos_mixer driver tries to access the mixer registers and the system does
-not crash anymore.
-
-So I think that Andrzej's patches are at least a step in the right direction.
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index e1fa800..58579f5 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -293,9 +293,11 @@
+ 			 <&clock CLK_MOUT_SW_ACLK300>,
+ 			 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
+ 			 <&clock CLK_MOUT_SW_ACLK400>,
+-			 <&clock CLK_MOUT_USER_ACLK400_DISP1>;
++			 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
++			 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
+ 		clock-names = "oscclk", "pclk0", "clk0",
+-			      "pclk1", "clk1", "pclk2", "clk2";
++			      "pclk1", "clk1", "pclk2", "clk2",
++			      "asb0", "asb1";
+ 	};
  
-Best regards,
-Javier
+ 	pinctrl_0: pinctrl@13400000 {
+-- 
+1.9.1
