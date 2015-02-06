@@ -1,261 +1,203 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2 07/14] drm/exynos: track vblank events on a per crtc basis
-Date: Fri,  6 Feb 2015 17:37:51 -0200
-Message-ID: <1423251478-17043-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH -v2 08/14] drm/exynos: atomic phase 1: use drm_plane_helper_update()
+Date: Fri,  6 Feb 2015 17:37:52 -0200
+Message-ID: <1423251478-17043-9-git-send-email-gustavo@padovan.org>
 References: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:40372 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083AbbBFTkU (ORCPT
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:47314 "EHLO
+	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752644AbbBFTkX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Feb 2015 14:40:20 -0500
-Received: by mail-qg0-f47.google.com with SMTP id l89so12909891qgf.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Feb 2015 11:40:19 -0800 (PST)
+	Fri, 6 Feb 2015 14:40:23 -0500
+Received: by mail-qc0-f176.google.com with SMTP id c9so13712238qcz.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Feb 2015 11:40:22 -0800 (PST)
 In-Reply-To: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: jy0922.shim@samsung.com, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Mandeep Singh Baines <msb@chromium.org>
+Cc: jy0922.shim@samsung.com, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-From: Mandeep Singh Baines <msb@chromium.org>
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-The goal of the change is to make sure we send the vblank event on the
-current vblank. My hope is to fix any races that might be causing flicker.
-After this change I only see a flicker in the transition plymouth and
-X11.
+Rip out the check from exynos_update_plane() and create
+exynos_check_plane() for the check phase enabling use to use
+the atomic helpers to call our check and update phases when updating
+planes.
 
-Simplified the code by tracking vblank events on a per-crtc basis. This
-allowed me to remove all error paths from the callback. It also allowed
-me to remove the vblank wait from the callback.
+Update all users of exynos_update_plane() accordingly to call
+exynos_check_plane() before.
 
-Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 92 +++++++++++++++-----------------
- drivers/gpu/drm/exynos/exynos_drm_drv.c  | 13 -----
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 +--
- 3 files changed, 44 insertions(+), 67 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 29 ++++++++++++------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 37 ++++++++++++++++++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h |  2 +-
+ 3 files changed, 43 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 47dd2b0..eb49195 100644
+index eb49195..1c0d936 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -34,9 +34,8 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 	if (mode > DRM_MODE_DPMS_ON) {
- 		/* wait for the completion of page flip. */
- 		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
--				!atomic_read(&exynos_crtc->pending_flip),
--				HZ/20))
--			atomic_set(&exynos_crtc->pending_flip, 0);
-+				(exynos_crtc->event == NULL), HZ/20))
-+			exynos_crtc->event = NULL;
- 		drm_crtc_vblank_off(crtc);
- 	}
- 
-@@ -164,11 +163,10 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 				     uint32_t page_flip_flags)
- {
- 	struct drm_device *dev = crtc->dev;
--	struct exynos_drm_private *dev_priv = dev->dev_private;
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 	struct drm_framebuffer *old_fb = crtc->primary->fb;
- 	unsigned int crtc_w, crtc_h;
--	int ret = -EINVAL;
+@@ -116,6 +116,7 @@ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+ 	struct drm_framebuffer *fb = crtc->primary->fb;
+ 	unsigned int crtc_w;
+ 	unsigned int crtc_h;
 +	int ret;
  
- 	/* when the page flip is requested, crtc's dpms should be on */
+ 	/* when framebuffer changing is requested, crtc's dpms should be on */
  	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
-@@ -176,48 +174,49 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 		return -EINVAL;
+@@ -123,11 +124,16 @@ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+ 		return -EPERM;
  	}
  
--	mutex_lock(&dev->struct_mutex);
-+	if (!event)
-+		return -EINVAL;
- 
--	if (event) {
--		/*
--		 * the pipe from user always is 0 so we can set pipe number
--		 * of current owner to event.
--		 */
--		event->pipe = exynos_crtc->pipe;
-+	spin_lock_irq(&dev->event_lock);
-+	if (exynos_crtc->event) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
- 
--		ret = drm_vblank_get(dev, exynos_crtc->pipe);
--		if (ret) {
--			DRM_DEBUG("failed to acquire vblank counter\n");
-+	ret = drm_vblank_get(dev, exynos_crtc->pipe);
-+	if (ret) {
-+		DRM_DEBUG("failed to acquire vblank counter\n");
-+		goto out;
-+	}
- 
--			goto out;
--		}
-+	exynos_crtc->event = event;
-+	spin_unlock_irq(&dev->event_lock);
- 
-+	/*
-+	 * the pipe from user always is 0 so we can set pipe number
-+	 * of current owner to event.
-+	 */
-+	event->pipe = exynos_crtc->pipe;
-+
-+	crtc->primary->fb = fb;
-+	crtc_w = fb->width - crtc->x;
-+	crtc_h = fb->height - crtc->y;
-+	ret = exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
-+				  crtc_w, crtc_h, crtc->x, crtc->y,
-+				  crtc_w, crtc_h);
-+	if (ret) {
-+		crtc->primary->fb = old_fb;
- 		spin_lock_irq(&dev->event_lock);
--		list_add_tail(&event->base.link,
--				&dev_priv->pageflip_event_list);
--		atomic_set(&exynos_crtc->pending_flip, 1);
-+		exynos_crtc->event = NULL;
-+		drm_vblank_put(dev, exynos_crtc->pipe);
- 		spin_unlock_irq(&dev->event_lock);
--
--		crtc->primary->fb = fb;
--		crtc_w = fb->width - crtc->x;
--		crtc_h = fb->height - crtc->y;
--		ret = exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
--					  crtc_w, crtc_h, crtc->x, crtc->y,
--					  crtc_w, crtc_h);
--		if (ret) {
--			crtc->primary->fb = old_fb;
--
--			spin_lock_irq(&dev->event_lock);
--			drm_vblank_put(dev, exynos_crtc->pipe);
--			list_del(&event->base.link);
--			atomic_set(&exynos_crtc->pending_flip, 0);
--			spin_unlock_irq(&dev->event_lock);
--
--			goto out;
--		}
++	ret = exynos_check_plane(crtc->primary, fb);
++	if (ret)
 +		return ret;
- 	}
 +
+ 	crtc_w = fb->width - x;
+ 	crtc_h = fb->height - y;
++	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
++			    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+ 
+-	return exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-				   crtc_w, crtc_h, x, y, crtc_w, crtc_h);
 +	return 0;
-+
- out:
--	mutex_unlock(&dev->struct_mutex);
-+	spin_unlock_irq(&dev->event_lock);
- 	return ret;
  }
  
-@@ -255,7 +254,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	init_waitqueue_head(&exynos_crtc->pending_flip_queue);
--	atomic_set(&exynos_crtc->pending_flip, 0);
- 
- 	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
- 	exynos_crtc->pipe = pipe;
-@@ -313,26 +311,20 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe)
- void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
+ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+@@ -164,7 +170,6 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
  {
- 	struct exynos_drm_private *dev_priv = dev->dev_private;
--	struct drm_pending_vblank_event *e, *t;
- 	struct drm_crtc *drm_crtc = dev_priv->crtc[pipe];
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(drm_crtc);
- 	unsigned long flags;
+ 	struct drm_device *dev = crtc->dev;
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	struct drm_framebuffer *old_fb = crtc->primary->fb;
+ 	unsigned int crtc_w, crtc_h;
+ 	int ret;
  
- 	spin_lock_irqsave(&dev->event_lock, flags);
-+	if (exynos_crtc->event) {
- 
--	list_for_each_entry_safe(e, t, &dev_priv->pageflip_event_list,
--			base.link) {
--		/* if event's pipe isn't same as crtc then ignore it. */
--		if (pipe != e->pipe)
--			continue;
--
--		list_del(&e->base.link);
--		drm_send_vblank_event(dev, -1, e);
-+		drm_send_vblank_event(dev, -1, exynos_crtc->event);
- 		drm_vblank_put(dev, pipe);
--		atomic_set(&exynos_crtc->pending_flip, 0);
- 		wake_up(&exynos_crtc->pending_flip_queue);
-+
+@@ -183,6 +188,10 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 		goto out;
  	}
  
-+	exynos_crtc->event = NULL;
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
++	ret = exynos_check_plane(crtc->primary, fb);
++	if (ret)
++		goto out;
++
+ 	ret = drm_vblank_get(dev, exynos_crtc->pipe);
+ 	if (ret) {
+ 		DRM_DEBUG("failed to acquire vblank counter\n");
+@@ -201,17 +210,9 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 	crtc->primary->fb = fb;
+ 	crtc_w = fb->width - crtc->x;
+ 	crtc_h = fb->height - crtc->y;
+-	ret = exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-				  crtc_w, crtc_h, crtc->x, crtc->y,
+-				  crtc_w, crtc_h);
+-	if (ret) {
+-		crtc->primary->fb = old_fb;
+-		spin_lock_irq(&dev->event_lock);
+-		exynos_crtc->event = NULL;
+-		drm_vblank_put(dev, exynos_crtc->pipe);
+-		spin_unlock_irq(&dev->event_lock);
+-		return ret;
+-	}
++	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
++			    crtc_w, crtc_h, crtc->x, crtc->y,
++			    crtc_w, crtc_h);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 4367379..3d7c749 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -141,21 +141,15 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 	plane->crtc = crtc;
  }
  
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index c598197..778c91e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -60,7 +60,6 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
- 	if (!private)
- 		return -ENOMEM;
- 
--	INIT_LIST_HEAD(&private->pageflip_event_list);
- 	dev_set_drvdata(dev->dev, dev);
- 	dev->dev_private = (void *)private;
- 
-@@ -223,25 +222,13 @@ static void exynos_drm_preclose(struct drm_device *dev,
- 
- static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+-int
++void
+ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 		     struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+ 		     unsigned int crtc_w, unsigned int crtc_h,
+ 		     uint32_t src_x, uint32_t src_y,
+ 		     uint32_t src_w, uint32_t src_h)
  {
--	struct exynos_drm_private *private = dev->dev_private;
--	struct drm_pending_vblank_event *v, *vt;
- 	struct drm_pending_event *e, *et;
- 	unsigned long flags;
- 
- 	if (!file->driver_priv)
- 		return;
- 
--	/* Release all events not unhandled by page flip handler. */
- 	spin_lock_irqsave(&dev->event_lock, flags);
--	list_for_each_entry_safe(v, vt, &private->pageflip_event_list,
--			base.link) {
--		if (v->base.file_priv == file) {
--			list_del(&v->base.link);
--			drm_vblank_put(dev, v->pipe);
--			v->base.destroy(&v->base);
--		}
--	}
 -
- 	/* Release all events handled by page flip handler but not freed. */
- 	list_for_each_entry_safe(e, et, &file->event_list, link) {
- 		list_del(&e->link);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index a3a2d63..ab82772 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -206,6 +206,7 @@ struct exynos_drm_crtc_ops {
-  *	we can refer to the crtc to current hardware interrupt occurred through
-  *	this pipe value.
-  * @dpms: store the crtc dpms value
-+ * @event: vblank event that is currently queued for flip
-  * @ops: pointer to callbacks for exynos drm specific functionality
-  * @ctx: A pointer to the crtc's implementation specific context
-  */
-@@ -215,7 +216,7 @@ struct exynos_drm_crtc {
- 	unsigned int			pipe;
- 	unsigned int			dpms;
- 	wait_queue_head_t		pending_flip_queue;
--	atomic_t			pending_flip;
-+	struct drm_pending_vblank_event	*event;
- 	struct exynos_drm_crtc_ops	*ops;
- 	void				*ctx;
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	int ret;
+-
+-	ret = exynos_check_plane(plane, fb);
+-	if (ret < 0)
+-		return ret;
+ 
+ 	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
+ 			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
+@@ -163,8 +157,6 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 
+ 	if (exynos_crtc->ops->win_commit)
+ 		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+-
+-	return 0;
+ }
+ 
+ static int exynos_disable_plane(struct drm_plane *plane)
+@@ -180,11 +172,34 @@ static int exynos_disable_plane(struct drm_plane *plane)
+ }
+ 
+ static struct drm_plane_funcs exynos_plane_funcs = {
+-	.update_plane	= exynos_update_plane,
++	.update_plane	= drm_plane_helper_update,
+ 	.disable_plane	= exynos_disable_plane,
+ 	.destroy	= drm_plane_cleanup,
  };
-@@ -245,9 +246,6 @@ struct drm_exynos_file_private {
- struct exynos_drm_private {
- 	struct drm_fb_helper *fb_helper;
  
--	/* list head for new event to be added. */
--	struct list_head pageflip_event_list;
--
- 	/*
- 	 * created crtc object would be contained at this array and
- 	 * this array is used to be aware of which crtc did it request vblank.
++static int exynos_plane_atomic_check(struct drm_plane *plane,
++				     struct drm_plane_state *state)
++{
++	return exynos_check_plane(plane, state->fb);
++}
++
++static void exynos_plane_atomic_update(struct drm_plane *plane,
++				       struct drm_plane_state *old_state)
++{
++	struct drm_plane_state *state = plane->state;
++
++	exynos_update_plane(plane, state->crtc, state->fb,
++			    state->crtc_x, state->crtc_y,
++			    state->crtc_w, state->crtc_h,
++			    state->src_x >> 16, state->src_y >> 16,
++			    state->src_w >> 16, state->src_h >> 16);
++}
++
++static const struct drm_plane_helper_funcs plane_helper_funcs = {
++	.atomic_check = exynos_plane_atomic_check,
++	.atomic_update = exynos_plane_atomic_update,
++};
++
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+ 					      unsigned int zpos)
+ {
+@@ -220,6 +235,8 @@ int exynos_plane_init(struct drm_device *dev,
+ 		return err;
+ 	}
+ 
++	drm_plane_helper_add(&exynos_plane->base, &plane_helper_funcs);
++
+ 	exynos_plane->zpos = zpos;
+ 
+ 	if (type == DRM_PLANE_TYPE_OVERLAY)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+index f360590..560ca71 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+@@ -15,7 +15,7 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			   unsigned int crtc_w, unsigned int crtc_h,
+ 			   uint32_t src_x, uint32_t src_y,
+ 			   uint32_t src_w, uint32_t src_h);
+-int exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
++void exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+ 			unsigned int crtc_w, unsigned int crtc_h,
+ 			uint32_t src_x, uint32_t src_y,
 -- 
 1.9.3
