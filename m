@@ -1,80 +1,45 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2 11/14] drm/exynos: atomic phase 1: add .mode_set_nofb()
- callback
-Date: Fri,  6 Feb 2015 17:37:55 -0200
-Message-ID: <1423251478-17043-12-git-send-email-gustavo@padovan.org>
+Subject: [PATCH -v2 13/14] drm/exynos: atomic phase 2: keep track of framebuffer pointer
+Date: Fri,  6 Feb 2015 17:37:57 -0200
+Message-ID: <1423251478-17043-14-git-send-email-gustavo@padovan.org>
 References: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f181.google.com ([209.85.216.181]:57916 "EHLO
+	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754573AbbBFTke (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Feb 2015 14:40:34 -0500
+Received: by mail-qc0-f181.google.com with SMTP id l6so13600060qcy.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Feb 2015 11:40:33 -0800 (PST)
 In-Reply-To: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: jy0922.shim@samsung.com, inki.dae@samsung.com, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIG5ldyBhdG9taWMgaW5mcmFzdHJ1Y3R1cmUgbmVlZHMgdGhlIC5tb2RlX3NldF9ub2ZiKCkg
-Y2FsbGJhY2sgdG8KdXBkYXRlIENSVEMgdGltaW5ncyBiZWZvcmUgc2V0dGluZyBhbnkgcGxhbmUu
-CgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJv
-cmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8
-IDYwICsrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgOSBp
-bnNlcnRpb25zKCspLCA1MSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYwppbmRleCA1ZTdjMTNlLi43ZmJlYThlIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9jcnRjLmMKQEAgLTgxLDU5ICs4MSwxNiBAQCBleHlub3NfZHJtX2Ny
-dGNfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiAJcmV0dXJuIHRydWU7CiB9CiAK
-LXN0YXRpYyBpbnQKLWV4eW5vc19kcm1fY3J0Y19tb2RlX3NldChzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMsIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAotCQkJICBzdHJ1Y3QgZHJtX2Rpc3Bs
-YXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSwgaW50IHgsIGludCB5LAotCQkJICBzdHJ1Y3QgZHJtX2Zy
-YW1lYnVmZmVyICpvbGRfZmIpCi17Ci0Jc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRj
-LT5wcmltYXJ5LT5mYjsKLQl1bnNpZ25lZCBpbnQgY3J0Y193OwotCXVuc2lnbmVkIGludCBjcnRj
-X2g7Ci0JaW50IHJldDsKLQotCS8qCi0JICogY29weSB0aGUgbW9kZSBkYXRhIGFkanVzdGVkIGJ5
-IG1vZGVfZml4dXAoKSBpbnRvIGNydGMtPm1vZGUKLQkgKiBzbyB0aGF0IGhhcmR3YXJlIGNhbiBi
-ZSBzZWV0IHRvIHByb3BlciBtb2RlLgotCSAqLwotCW1lbWNweSgmY3J0Yy0+bW9kZSwgYWRqdXN0
-ZWRfbW9kZSwgc2l6ZW9mKCphZGp1c3RlZF9tb2RlKSk7Ci0KLQlyZXQgPSBleHlub3NfY2hlY2tf
-cGxhbmUoY3J0Yy0+cHJpbWFyeSwgZmIpOwotCWlmIChyZXQgPCAwKQotCQlyZXR1cm4gcmV0Owot
-Ci0JY3J0Y193ID0gZmItPndpZHRoIC0geDsKLQljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKLQll
-eHlub3NfcGxhbmVfbW9kZV9zZXQoY3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCi0JCQkg
-ICAgICBjcnRjX3csIGNydGNfaCwgeCwgeSwgY3J0Y193LCBjcnRjX2gpOwotCi0JcmV0dXJuIDA7
-Ci19Ci0KLXN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRy
-bV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCi0JCQkJCSAgc3RydWN0IGRybV9mcmFtZWJ1ZmZl
-ciAqb2xkX2ZiKQorc3RhdGljIHZvaWQKK2V4eW5vc19kcm1fY3J0Y19tb2RlX3NldF9ub2ZiKHN0
-cnVjdCBkcm1fY3J0YyAqY3J0YykKIHsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3Nf
-Y3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwotCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZi
-ID0gY3J0Yy0+cHJpbWFyeS0+ZmI7Ci0JdW5zaWduZWQgaW50IGNydGNfdzsKLQl1bnNpZ25lZCBp
-bnQgY3J0Y19oOwotCWludCByZXQ7CiAKLQkvKiB3aGVuIGZyYW1lYnVmZmVyIGNoYW5naW5nIGlz
-IHJlcXVlc3RlZCwgY3J0YydzIGRwbXMgc2hvdWxkIGJlIG9uICovCi0JaWYgKGV4eW5vc19jcnRj
-LT5kcG1zID4gRFJNX01PREVfRFBNU19PTikgewotCQlEUk1fRVJST1IoImZhaWxlZCBmcmFtZWJ1
-ZmZlciBjaGFuZ2luZyByZXF1ZXN0LlxuIik7Ci0JCXJldHVybiAtRVBFUk07Ci0JfQotCi0JcmV0
-ID0gZXh5bm9zX2NoZWNrX3BsYW5lKGNydGMtPnByaW1hcnksIGZiKTsKLQlpZiAocmV0KQotCQly
-ZXR1cm4gcmV0OwotCi0JY3J0Y193ID0gZmItPndpZHRoIC0geDsKLQljcnRjX2ggPSBmYi0+aGVp
-Z2h0IC0geTsKLQlleHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAw
-LCAwLAotCQkJICAgIGNydGNfdywgY3J0Y19oLCB4LCB5LCBjcnRjX3csIGNydGNfaCk7CisJaWYg
-KFdBUk5fT04oIWNydGMtPnN0YXRlKSkKKwkJcmV0dXJuOwogCi0JcmV0dXJuIDA7CisJaWYgKGV4
-eW5vc19jcnRjLT5vcHMtPmNvbW1pdCkKKwkJZXh5bm9zX2NydGMtPm9wcy0+Y29tbWl0KGV4eW5v
-c19jcnRjKTsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0
-IGRybV9jcnRjICpjcnRjKQpAQCAtMTkwLDggKzE0Nyw5IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX2Ny
-dGNfaGVscGVyX2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKIAkucHJlcGFyZQk9
-IGV4eW5vc19kcm1fY3J0Y19wcmVwYXJlLAogCS5jb21taXQJCT0gZXh5bm9zX2RybV9jcnRjX2Nv
-bW1pdCwKIAkubW9kZV9maXh1cAk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX2ZpeHVwLAotCS5tb2Rl
-X3NldAk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX3NldCwKLQkubW9kZV9zZXRfYmFzZQk9IGV4eW5v
-c19kcm1fY3J0Y19tb2RlX3NldF9iYXNlLAorCS5tb2RlX3NldAk9IGRybV9oZWxwZXJfY3J0Y19t
-b2RlX3NldCwKKwkubW9kZV9zZXRfbm9mYgk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX3NldF9ub2Zi
-LAorCS5tb2RlX3NldF9iYXNlCT0gZHJtX2hlbHBlcl9jcnRjX21vZGVfc2V0X2Jhc2UsCiAJLmRp
-c2FibGUJPSBleHlub3NfZHJtX2NydGNfZGlzYWJsZSwKIAkuYXRvbWljX2JlZ2luCT0gZXh5bm9z
-X2NydGNfYXRvbWljX2JlZ2luLAogCS5hdG9taWNfZmx1c2gJPSBleHlub3NfY3J0Y19hdG9taWNf
-Zmx1c2gsCi0tIAoxLjkuMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Use drm_atomic_set_fb_for_plane() in the legacy page_flip path to keep
+track of the framebuffer pointer and reference.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index adb56656..1739212 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -208,6 +208,9 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 			    crtc_w, crtc_h, crtc->x, crtc->y,
+ 			    crtc_w, crtc_h);
+ 
++	if (crtc->primary->state)
++		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
++
+ 	return 0;
+ 
+ out:
+-- 
+1.9.3
