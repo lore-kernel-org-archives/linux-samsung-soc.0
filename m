@@ -1,69 +1,61 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: dts: Add mclk entry for Snow and Peach Pit/Pi boards
-Date: Fri,  6 Feb 2015 17:55:47 +0100
-Message-ID: <1423241747-15032-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59831 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753504AbbBFQ4A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Feb 2015 11:56:00 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 0/8] hwmon: thermal: Odroid U3: Provide support for Odroid
+ U3 fan
+Date: Fri, 06 Feb 2015 17:59:00 +0100
+Message-ID: <1423241948-31981-1-git-send-email-l.majewski@samsung.com>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1418897591-18332-1-git-send-email-l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Tushar Behera <tushar.b@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Tushar Behera <tushar.b@samsung.com>
+Presented patches add support for Odroid's U3 optional CPU FAN, which uses PWM
+subsystem for low level control.
 
-On Snow, Peach Pit and Peach Pi boards, the Exynos SoC XCLKOUT output pin
-provides the master clock (mclk) to codecs. So make them a clock consumer.
+After successful probe it registers itself as a cooling device for thermal
+subsystem. To preserve the ability to use this fan as a PWM device stubs for
+thermal_of_cooling_device_register() and thermal_cdev_update() have been added.
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5250-snow.dts      | 2 ++
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 2 ++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 2 ++
- 3 files changed, 6 insertions(+)
+Additionally, devices without support for DTS are still supported.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index fc64a0066325..ece8bdb40c0a 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -191,6 +191,8 @@
- 		samsung,model = "DAISYI2S";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98095>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
- 	};
- 
- 	usb3_vbus_reg: regulator-usb3 {
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index c9a0e170a0f0..30014e6c6799 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -491,6 +491,8 @@
- 		interrupt-parent = <&gpx0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98090_irq>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
- 	};
- 
- 	light-sensor@44 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index a80ceeac4ec8..a415ad88bc0c 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -490,6 +490,8 @@
- 		interrupt-parent = <&gpx0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98091_irq>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
- 	};
- 
- 	light-sensor@44 {
+To provide correct functionality, new properties to device tree description for 
+Exynos4412 and in particular Odroid U3 have been added.
+
+Those patches were tested on Exynos4412 - Odroid U3 board.
+
+Patches were applied on:
+linux-soc-thermal/next branch (Linux 3.19-rc5)
+SHA1: 252454f5cbda2c6b40c5d36f58cac2938437b85d
+
+Kamil Debski (1):
+  ARM: dts: Add pwm-fan node to the Odroid-U3 board
+
+Lukasz Majewski (7):
+  thermal: Provide stub for thermal_of_cooling_device_register()
+    function
+  thermal: Provide stub for thermal_cdev_update() function
+  Documentation: dts: Documentation entry to explain how to use PWM FAN
+    as a cooling device
+  ARM: dts: Add properties to use pwm-fan device as a cooling device in
+    Odroid U3
+  hwmon: pwm-fan: Extract __set_pwm() function to only modify PWM duty
+    cycle
+  hwmon: pwm-fan: Read PWM FAN configuration from device tree
+  hwmon: pwm-fan: Code for using PWM FAN as a cooling device
+
+ .../devicetree/bindings/hwmon/pwm-fan.txt          |  20 +++
+ arch/arm/boot/dts/exynos4.dtsi                     |   2 +-
+ arch/arm/boot/dts/exynos4412-odroidu3.dts          |  44 ++++++
+ drivers/hwmon/pwm-fan.c                            | 171 +++++++++++++++++++--
+ include/linux/thermal.h                            |  22 ++-
+ 5 files changed, 239 insertions(+), 20 deletions(-)
+
 -- 
-2.1.3
+2.0.0.rc2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
