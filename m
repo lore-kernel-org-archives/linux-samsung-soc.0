@@ -1,45 +1,83 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4/4] ASoC: samsung: remove outdated Kconfig references
-Date: Sat, 7 Feb 2015 07:54:57 +0800
-Message-ID: <20150206235457.GR31311@finisterre.sirena.org.uk>
-References: <1421664182.9655.55.camel@x220>
+Subject: Re: [PATCH 0/4] ASoC: samsung: clean up references to outdated
+ Kconfig symbols
+Date: Sat, 7 Feb 2015 07:50:44 +0800
+Message-ID: <20150206235044.GO31311@finisterre.sirena.org.uk>
+References: <1421664067.9655.51.camel@x220>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="v4cNTr+tRGSs1txX"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421664182.9655.55.camel@x220>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1872107940140704945=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1421664067.9655.51.camel@x220>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Valentin Rothberg <valentinrothberg@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Valentin Rothberg <valentinrothberg@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---v4cNTr+tRGSs1txX
+--===============1872107940140704945==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="31zvzas5NXT9fief"
+Content-Disposition: inline
+Content-Length: 1335
+
+
+--31zvzas5NXT9fief
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 19, 2015 at 11:43:02AM +0100, Paul Bolle wrote:
-> The Kconfig symbols MACH_SMDKC110 and MACH_SMDKV210 were removed in
-> v3.17. But the Kconfig entries for SND_SOC_SAMSUNG_SMDK_WM8580 and
-> SND_SOC_SAMSUNG_SMDK_WM9713 still reference them.
+On Mon, Jan 19, 2015 at 11:41:07AM +0100, Paul Bolle wrote:
+> A few series of ARM cleanups regarding S5PC100 and S5PV210 were included
+> in v3.17. These series removed these five Kconfig symbols:
+>     MACH_AQUILA
+>     MACH_GONI
+>     MACH_SMDKC100
+>     MACH_SMDKC110
+>     MACH_SMDKV210
+>=20
+> This series, done on top of next-20150119, removes the remaining
 
-This doesn't apply against current code.
+If you are posting a patch series please ensure that all the patches in
+the series are threaded in reply to the cover letter (or first patch if
+there isn't one) so that mail clients can see to display them as a
+series.
 
---v4cNTr+tRGSs1txX
+--31zvzas5NXT9fief
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJU1VRQAAoJECTWi3JdVIfQxM4H/R/JennBrWOnK2Qv3SF77VD8
-ZNv1yxt7z0gE4WUdnKVAD0VbMkfeQq/G9Ed+V09+V265X1Vai22+G3hlq/h62x1Q
-g+unPxgGdwrTaArvH8hcnsaxlyIn5wHKq9nQBLKQh+b+XJhduVNHA96U9SgwuPgA
-mYiio63vTo6h27GjmH8/XkJNODWv9KY3LjKxyS43ezc3r2+csHUj9hFt0Yip5Ytq
-mwJXfZx8+wkUdJ5+KPgwhONpZ2mhsoUmjyE3p6ywzm8P9G23J3XsYP0HI0CApwCi
-AG5L+rG+y+KMQP/u+O8tsBGhT+nwli7kc2+0nmF+1ugaxZnnrDW8oTg1lqJnFPw=
-=5Twn
+iQEcBAEBCAAGBQJU1VNTAAoJECTWi3JdVIfQAtoH/joPAnxlEA4teq3gF2BizF80
+LecNeHYR6fwtEy1r6RGDPJJV4QWwZLhkEhaIwfuTg1p7iP5NZ2ivLy3oxHNKBAZM
+1JjtCBHMMz/ncNllJrOj/hktbAe1NVwj7K+0xBReVNqhjRFxrxzuL+gryuoJCuYS
+ESsG7vVtAEYLOzlnPnZTqyKc7v8vriDfh3R3nHxoepKMmFxtQSD9o8edWiudE5+B
+qA6d1/O5xRl8WsQGsJQTb5GucGVciitoglC/jSBrUI/QlRqZkEHFWzjmsetbKTF3
+1C6JnHwLR8VYrlUOT7+HL1TXfZ3Huq40vS6JQ0nlZO3jUA/vycfJ/jgx2Y+qBXA=
+=Tuji
 -----END PGP SIGNATURE-----
 
---v4cNTr+tRGSs1txX--
+--31zvzas5NXT9fief--
+
+
+--===============1872107940140704945==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1872107940140704945==--
