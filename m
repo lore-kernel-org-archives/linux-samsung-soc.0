@@ -1,63 +1,54 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2 14/14] drm/exynos: make exynos_plane_mode_set() static
-Date: Fri,  6 Feb 2015 17:37:58 -0200
-Message-ID: <1423251478-17043-15-git-send-email-gustavo@padovan.org>
-References: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] ARM: dts: Use more descriptive names for Exynos5420
+ PDs
+Date: Fri, 06 Feb 2015 21:50:13 +0100
+Message-ID: <54D52905.6040100@collabora.co.uk>
+References: <1423244258-24314-1-git-send-email-javier.martinez@collabora.co.uk> <54D51170.10903@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54D51170.10903@cogentembedded.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-SXQgaXMgbm90IHVzZWQgb3V0c2lkZSBvZiB0aGUgcGxhbmUgc2NvcGUgYW55bW9yZS4KClNpZ25l
-ZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51
-az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDExICsr
-KysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCB8ICA1
-IC0tLS0tCiAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0p
-CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCA4NDBlNjE4
-Li4zMWM4YjEzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-cGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpA
-QCAtOTEsMTEgKzkxLDEyIEBAIGludCBleHlub3NfY2hlY2tfcGxhbmUoc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUsIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiKQogCXJldHVybiAwOwogfQogCi12
-b2lkIGV4eW5vc19wbGFuZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0
-IGRybV9jcnRjICpjcnRjLAotCQkJICBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwgaW50IGNy
-dGNfeCwgaW50IGNydGNfeSwKLQkJCSAgdW5zaWduZWQgaW50IGNydGNfdywgdW5zaWduZWQgaW50
-IGNydGNfaCwKLQkJCSAgdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAotCQkJICB1aW50
-MzJfdCBzcmNfdywgdWludDMyX3Qgc3JjX2gpCitzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfbW9k
-ZV9zZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKKwkJ
-CQkgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLAorCQkJCSAgaW50IGNydGNfeCwgaW50IGNy
-dGNfeSwKKwkJCQkgIHVuc2lnbmVkIGludCBjcnRjX3csIHVuc2lnbmVkIGludCBjcnRjX2gsCisJ
-CQkJICB1aW50MzJfdCBzcmNfeCwgdWludDMyX3Qgc3JjX3ksCisJCQkJICB1aW50MzJfdCBzcmNf
-dywgdWludDMyX3Qgc3JjX2gpCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19w
-bGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7CiAJdW5zaWduZWQgaW50IGFjdHVhbF93Owpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaAppbmRleCA1NjBjYTcxLi5h
-N2IxYTIxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxh
-bmUuaAorKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaApAQCAt
-MTAsMTEgKzEwLDYgQEAKICAqLwogCiBpbnQgZXh5bm9zX2NoZWNrX3BsYW5lKHN0cnVjdCBkcm1f
-cGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYik7Ci12b2lkIGV4eW5vc19w
-bGFuZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpj
-cnRjLAotCQkJICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIsIGludCBjcnRjX3gsIGludCBj
-cnRjX3ksCi0JCQkgICB1bnNpZ25lZCBpbnQgY3J0Y193LCB1bnNpZ25lZCBpbnQgY3J0Y19oLAot
-CQkJICAgdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAotCQkJICAgdWludDMyX3Qgc3Jj
-X3csIHVpbnQzMl90IHNyY19oKTsKIHZvaWQgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAogCQkJc3RydWN0IGRybV9mcmFt
-ZWJ1ZmZlciAqZmIsIGludCBjcnRjX3gsIGludCBjcnRjX3ksCiAJCQl1bnNpZ25lZCBpbnQgY3J0
-Y193LCB1bnNpZ25lZCBpbnQgY3J0Y19oLAotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Sergei,
+
+Thanks a lot for your feedback.
+
+On 02/06/2015 08:09 PM, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 02/06/2015 08:37 PM, Javier Martinez Canillas wrote:
+> 
+>> All the device nodes for the Exynos5420 power-domains have a quite
+>> generic "power-domain" name.
+> 
+>     And this is in conformance to the ePAPR standard.
+> 
+
+True, I forgot that the ePAPR recommends that the node names should be
+somewhat generic but OTOH this is the only Exynos DTSI file that follows
+the standard for the power domain device nodes. All other Exynos DTSI
+use a prefix to differentiate between each power domain.
+
+>> So in case of an error, the Exynos PD
+>> driver shows the following (not very useful) message:
+> 
+>> "Power domain power-domain disable failed"
+> 
+>     Why not fix the message instead to use the full device name?
+>
+
+Well, the full node name is also not very useful IMHO since you have
+to check the DTSI or SoC manual to map the device node unit-address to
+the corresponding power domain.
+
+I used $subject when debugging an HDMI issue and instead of dropping
+it, I just posted it in case someone considered useful. I don't really
+mind if the patch is nacked / not picked.
+
+Best regards,
+Javier
