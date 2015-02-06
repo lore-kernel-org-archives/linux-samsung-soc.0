@@ -1,37 +1,71 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 1/1] ARM: dts: Use more descriptive names for Exynos5420
- PDs
-Date: Fri, 06 Feb 2015 22:09:36 +0300
-Message-ID: <54D51170.10903@cogentembedded.com>
-References: <1423244258-24314-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH -v2 00/14] drm/exynos: clean up + atomic phase 1 and 2
+Date: Fri,  6 Feb 2015 17:37:44 -0200
+Message-ID: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423244258-24314-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello.
-
-On 02/06/2015 08:37 PM, Javier Martinez Canillas wrote:
-
-> All the device nodes for the Exynos5420 power-domains have a quite
-> generic "power-domain" name.
-
-    And this is in conformance to the ePAPR standard.
-
-> So in case of an error, the Exynos PD
-> driver shows the following (not very useful) message:
-
-> "Power domain power-domain disable failed"
-
-    Why not fix the message instead to use the full device name?
-
-> Use descriptive names to know on which PD enable or disable failed.
-
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-WBR, Sergei
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+SGksCgpUaGlzIGlzIHRoZSB2MiBvZiB0aGlzIHBhdGNoc2V0LiBUaGUgb25seSBkaWZmZXJlbmNl
+IGhlcmUgaXMgdGhhdCBJIGFkZGVkCnRoZSB6cG9zIHJlZmFjdG9yIHRvIHRoaXMgc2VyaWVzIGFm
+dGVyIHRoZSByZXZpZXcgb2YgdjEgdG9kYXkuIE5vIGNoYW5nZXMKd2VyZSBtYWRlIHRvIGF0b21p
+YyBwYXRjaGVzIGJlc2lkZXMgc29sdmluZyBjb25mbGljdHMgYWZ0ZXIgdGhlIG5ldyB6cG9zCmNo
+YW5nZXMuCgpUaGlzIHNlcmllcyBjbGVhbiB1cHMgYSBmZXcgbW9yZSBwYXRocyBmcm9tIGV4eW5v
+cy1kcm0gd2l0aCB0aGUgbW9zdCBpbXBvcnRhbnQKYmVpbmcgdGhlIHJlbW92YWwgb2YgdGhlIGds
+b2JhbCBwYWdlIGZsaXAgcXVldWUsIHRoZSB6cG9zIHJlZmFjdG9yLCBhbmQgdGhlCnJlbW92YWwg
+aW4gZHJpdmVyIGludGVybmFsIGRhdGEgKHN0cnVjdCAqX3dpbl9kYXRhKSB0aGF0IHdhcyByZXBs
+aWNhdGluZyBwbGFuZQpkYXRhLgoKRm9sbG93aW5nIHRoZXNlIHBhdGNoZXMgY29tZXMgdGhlIGZp
+cnN0IHN0ZXAgdG9yd2FyZHMgYXRvbWljIG1vZGVzZXR0aW5nCnN1cHBvcnQgb24gZXh5bm9zLgoK
+VGhlc2UgcGF0Y2hlcyBhcmUgYXBwbGllZCBvbiB0b3Agb2YgdGhlIGRwbXMgY2xlYW4gcGF0Y2hl
+cyBmcm9tIEpvb255b3VuZyBhbmQKcmViYXNlZCBvbiBleHlub3MtZHJtLW5leHQuCgpHdXN0YXZv
+IFBhZG92YW4gKDEzKToKICBkcm0vZXh5bm9zOiByZW1vdmUgdW51c2VkIGV4eW5vc19jcnRjLT53
+aW5fZW5hYmxlKCkgY2FsbGJhY2sKICBkcm0vZXh5bm9zOiByZW1vdmUgc3RydWN0ICpfd2luX2Rh
+dGEgYWJzdHJhY3Rpb24gb24gcGxhbmVzCiAgZHJtL2V4eW5vczogcHJlc2V0IHpwb3MgdmFsdWUg
+Zm9yIG92ZXJsYXkgcGxhbmVzCiAgZHJtL2V4eW5vczogbWFrZSB6cG9zIHByb3BlcnR5IGltbXV0
+YWJsZQogIGRybS9leHlub3M6IHJlbW92ZSBleHlub3NfcGxhbmVfZGVzdHJveSgpCiAgZHJtL2V4
+eW5vczogcmVtb3ZlIGxlZnRvdmVyIGZ1bmN0aW9ucyBkZWNsYXJhdGlvbnMKICBkcm0vZXh5bm9z
+OiBhdG9taWMgcGhhc2UgMTogdXNlIGRybV9wbGFuZV9oZWxwZXJfdXBkYXRlKCkKICBkcm0vZXh5
+bm9zOiBhdG9taWMgcGhhc2UgMTogdXNlIGRybV9wbGFuZV9oZWxwZXJfZGlzYWJsZSgpCiAgZHJt
+L2V4eW5vczogYXRvbWljIHBoYXNlIDE6IGFkZCBhdG9taWNfYmVnaW4oKS9hdG9taWNfZmx1c2go
+KQogIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAxOiBhZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxs
+YmFjawogIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAyOiB3aXJlIHVwIHN0YXRlIHJlc2V0KCks
+IGR1cGxpY2F0ZSgpIGFuZAogICAgZGVzdHJveSgpCiAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNl
+IDI6IGtlZXAgdHJhY2sgb2YgZnJhbWVidWZmZXIgcG9pbnRlcgogIGRybS9leHlub3M6IG1ha2Ug
+ZXh5bm9zX3BsYW5lX21vZGVfc2V0KCkgc3RhdGljCgpNYW5kZWVwIFNpbmdoIEJhaW5lcyAoMSk6
+CiAgZHJtL2V4eW5vczogdHJhY2sgdmJsYW5rIGV2ZW50cyBvbiBhIHBlciBjcnRjIGJhc2lzCgog
+ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAgICAgIHwgICA0ICsKIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgICAgICB8ICAgNCArCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29ubmVjdG9yLmMgfCAgIDQgKwogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICAgIHwgMjA1ICsrKysrKysrKyst
+LS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaCAgICAg
+IHwgICA3ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMgICAgICAg
+fCAgIDQgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICAgIHwg
+IDI5ICstLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAgIHwg
+IDI2ICstLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAgICAgIHwg
+ICA0ICsKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgICB8ICAg
+MiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgMjQ1
+ICsrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fcGxhbmUuYyAgICAgfCAxMjYgKysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX3BsYW5lLmggICAgIHwgIDE0ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgfCAxMzggKysrKy0tLS0tLS0tLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgfCAgIDQgKwogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgIHwgMjE3ICsrKysrKysrLS0tLS0t
+LS0tLS0tLS0tCiAxNiBmaWxlcyBjaGFuZ2VkLCA0MTggaW5zZXJ0aW9ucygrKSwgNjE1IGRlbGV0
+aW9ucygtKQoKLS0gCjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
