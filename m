@@ -1,113 +1,90 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 6/8] hwmon: pwm-fan: Extract __set_pwm() function to
- only modify PWM duty cycle
-Date: Fri, 6 Feb 2015 10:27:25 -0800
-Message-ID: <20150206182725.GA25410@roeck-us.net>
+Subject: Re: [PATCH v3 7/8] hwmon: pwm-fan: Read PWM FAN configuration from
+ device tree
+Date: Fri, 6 Feb 2015 10:36:57 -0800
+Message-ID: <20150206183657.GB25410@roeck-us.net>
 References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
  <1423241948-31981-1-git-send-email-l.majewski@samsung.com>
- <1423241948-31981-7-git-send-email-l.majewski@samsung.com>
+ <1423241948-31981-8-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:47710 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757796AbbBFS2h (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Feb 2015 13:28:37 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YJnds-002bfp-Lh
-	for linux-samsung-soc@vger.kernel.org; Fri, 06 Feb 2015 18:28:37 +0000
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1423241948-31981-7-git-send-email-l.majewski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1423241948-31981-8-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 To: Lukasz Majewski <l.majewski@samsung.com>
 Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 06, 2015 at 05:59:06PM +0100, Lukasz Majewski wrote:
-> It was necessary to decouple code handling writing to sysfs from the one
-> responsible for setting PWM of the fan.
-> Due to that, new __set_pwm() method was extracted, which is responsible for
-> only setting new PWM duty cycle.
+On Fri, Feb 06, 2015 at 05:59:07PM +0100, Lukasz Majewski wrote:
+> This patch provides code for reading PWM FAN configuration data via
+> device tree. The pwm-fan can work with full speed when configuration
+> is not provided. However, errors are propagated when wrong DT bindings
+> are found.
+> Additionally the struct pwm_fan_ctx has been extended.
 > 
 > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 > ---
 > Changes for v2:
-> - None
+> - Rename pwm_fan_max_states to pwm_fan_cooling_levels
+> - Moving pwm_fan_of_get_cooling_data() call after setting end enabling PWM FAN
+> - pwm_fan_of_get_cooling_data() now can fail - preserving old behaviour
+> - Remove unnecessary dev_err() call
 > Changes for v3:
-> - The commit headline has been reedited.
+> - Patch's headline has been reedited
+> - pwm_fan_of_get_cooling_data() return code is now being checked.
+> - of_property_count_elems_of_size() is now used instead of_find_property()
+> - More verbose patch description added
 > ---
->  drivers/hwmon/pwm-fan.c | 35 ++++++++++++++++++++++-------------
->  1 file changed, 22 insertions(+), 13 deletions(-)
+>  drivers/hwmon/pwm-fan.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 53 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-> index 1991d903..870e100 100644
+> index 870e100..f3f5843 100644
 > --- a/drivers/hwmon/pwm-fan.c
 > +++ b/drivers/hwmon/pwm-fan.c
-> @@ -33,21 +33,15 @@ struct pwm_fan_ctx {
->  	unsigned char pwm_value;
+> @@ -30,7 +30,10 @@
+>  struct pwm_fan_ctx {
+>  	struct mutex lock;
+>  	struct pwm_device *pwm;
+> -	unsigned char pwm_value;
+> +	unsigned int pwm_value;
+> +	unsigned int pwm_fan_state;
+> +	unsigned int pwm_fan_max_state;
+> +	unsigned int *pwm_fan_cooling_levels;
 >  };
 >  
-> -static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
-> -		       const char *buf, size_t count)
-> +static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
->  {
-> -	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-> -	unsigned long pwm, duty;
-> -	ssize_t ret;
-> -
-> -	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
-> -		return -EINVAL;
-> -
-> -	mutex_lock(&ctx->lock);
-> +	unsigned long duty;
-> +	int ret;
+>  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+> @@ -100,6 +103,50 @@ static struct attribute *pwm_fan_attrs[] = {
 >  
->  	if (ctx->pwm_value == pwm)
-> -		goto exit_set_pwm_no_change;
+>  ATTRIBUTE_GROUPS(pwm_fan);
+>  
+> +int pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx *ctx)
+> +{
+> +	struct device_node *np = dev->of_node;
+> +	int num, i, ret;
+> +
+> +	ret = of_property_count_elems_of_size(np, "cooling-levels",
+> +					      sizeof(u32));
+> +
+> +	if (ret == -EINVAL) {
+> +		dev_err(dev, "Property 'cooling-levels' not found\n");
 > +		return 0;
->  
-Why did you move this check outside the lock ? With this change there 
-is no guarantee that pwm_value wasn't changed while waiting for the lock.
+
+Returning 0 is obviously not an error, otherwise you would not return 0 here.
+So dev_err is wrong. Also, the message itself is wrong; the property may
+well be there but have a wrong size.
+
+> +	}
+> +
+> +	if (ret <= 0) {
+> +		dev_err(dev, "Wrong data!\n");
+> +		return ret;
+> +	}
+
+This will result in the driver failing to load if devicetree is not configured
+(of_property_count_elems_of_size will return -ENOSYS). This is not acceptable.
+Also, if the call returns 0 you don't return an error but display a "Wrong data!"
+error message. Either it is an error or it is not, but not both.
 
 Guenter
-
-> +	mutex_lock(&ctx->lock);
->  	if (pwm == 0) {
->  		pwm_disable(ctx->pwm);
->  		goto exit_set_pwm;
-> @@ -66,13 +60,28 @@ static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
->  
->  exit_set_pwm:
->  	ctx->pwm_value = pwm;
-> -exit_set_pwm_no_change:
-> -	ret = count;
->  exit_set_pwm_err:
->  	mutex_unlock(&ctx->lock);
->  	return ret;
->  }
->  
-> +static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
-> +		       const char *buf, size_t count)
-> +{
-> +	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-> +	unsigned long pwm;
-> +	int ret;
-> +
-> +	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
-> +		return -EINVAL;
-> +
-> +	ret = __set_pwm(ctx, pwm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
->  static ssize_t show_pwm(struct device *dev,
->  			struct device_attribute *attr, char *buf)
->  {
-> -- 
-> 2.0.0.rc2
-> 
