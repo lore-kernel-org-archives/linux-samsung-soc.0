@@ -1,119 +1,69 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v2 3/3] clk: samsung: add cpu clock configuration data and instantiate cpu clock
-Date: Fri,  6 Feb 2015 19:27:46 +0530
-Message-ID: <1423231066-7341-4-git-send-email-a.kesavan@samsung.com>
-References: <1423231066-7341-1-git-send-email-a.kesavan@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: dts: Add mclk entry for Snow and Peach Pit/Pi boards
+Date: Fri,  6 Feb 2015 17:55:47 +0100
+Message-ID: <1423241747-15032-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:63308 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754216AbbBFN6G (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59831 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753504AbbBFQ4A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Feb 2015 08:58:06 -0500
-Received: by mail-pa0-f54.google.com with SMTP id kx10so2316054pab.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Feb 2015 05:58:05 -0800 (PST)
-In-Reply-To: <1423231066-7341-1-git-send-email-a.kesavan@samsung.com>
+	Fri, 6 Feb 2015 11:56:00 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Tushar Behera <tushar.b@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Add the Atlas CPU clock configuration data and instantiate the CPU clock
-type for Exynos7.
+From: Tushar Behera <tushar.b@samsung.com>
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+On Snow, Peach Pit and Peach Pi boards, the Exynos SoC XCLKOUT output pin
+provides the master clock (mclk) to codecs. So make them a clock consumer.
+
+Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/clk/samsung/clk-cpu.h           |    5 +++++
- drivers/clk/samsung/clk-exynos7.c       |   33 ++++++++++++++++++++++++++++++-
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 3 files changed, 39 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5250-snow.dts      | 2 ++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 2 ++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
-index 24e844e..1fd7f51 100644
---- a/drivers/clk/samsung/clk-cpu.h
-+++ b/drivers/clk/samsung/clk-cpu.h
-@@ -31,6 +31,11 @@
- #define E5420_KFC_DIV(kpll, pclk, aclk)					\
- 		((((kpll) << 24) | ((pclk) << 20) | ((aclk) << 4)))
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index fc64a0066325..ece8bdb40c0a 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -191,6 +191,8 @@
+ 		samsung,model = "DAISYI2S";
+ 		samsung,i2s-controller = <&i2s0>;
+ 		samsung,audio-codec = <&max98095>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "mclk";
+ 	};
  
-+#define EXYNOS7_ATL_DIV0(aclk, pclk, atclk, pclk_dbg) \
-+		((aclk << 8) | (pclk << 12) | (atclk << 20) | (pclk_dbg << 26))
-+#define EXYNOS7_ATL_DIV1(pll, hpm, cntclk) \
-+		((pll << 0) | (hpm << 4) | (cntclk << 8))
-+
- /**
-  * struct exynos_cpuclk_data: config data to setup cpu clocks.
-  * @prate: frequency of the primary parent clock (in KHz).
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index cec026c..f2a9895 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -14,6 +14,7 @@
- #include <linux/of.h>
+ 	usb3_vbus_reg: regulator-usb3 {
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index c9a0e170a0f0..30014e6c6799 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -491,6 +491,8 @@
+ 		interrupt-parent = <&gpx0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98090_irq>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "mclk";
+ 	};
  
- #include "clk.h"
-+#include "clk-cpu.h"
- #include <dt-bindings/clock/exynos7-clk.h>
+ 	light-sensor@44 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index a80ceeac4ec8..a415ad88bc0c 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -490,6 +490,8 @@
+ 		interrupt-parent = <&gpx0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98091_irq>;
++		clocks = <&pmu_system_controller 0>;
++		clock-names = "mclk";
+ 	};
  
- /* Register Offset definitions for CMU_TOPC (0x10570000) */
-@@ -64,6 +65,30 @@ static const struct samsung_pll_rate_table pll1450x_24mhz_tbl[] = {
- 	PLL_35XX_RATE(200000000, 200, 3, 3),
- };
- 
-+static const struct exynos_cpuclk_cfg_data exynos7_atlclk_d[] __initconst = {
-+	{ 2100000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 5, 6), },
-+	{ 2000000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 5, 6), },
-+	{ 1896000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1800000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1704000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1600000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1500000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1400000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1300000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 4, 6), },
-+	{ 1200000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 3, 6), },
-+	{ 1100000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 3, 6), },
-+	{ 1000000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 3, 6), },
-+	{  900000, EXYNOS7_ATL_DIV0(2, 6, 6, 6), EXYNOS7_ATL_DIV1(1, 3, 6), },
-+	{  800000, EXYNOS7_ATL_DIV0(2, 5, 5, 5), EXYNOS7_ATL_DIV1(1, 3, 5), },
-+	{  700000, EXYNOS7_ATL_DIV0(2, 5, 5, 5), EXYNOS7_ATL_DIV1(1, 3, 5), },
-+	{  600000, EXYNOS7_ATL_DIV0(2, 4, 4, 4), EXYNOS7_ATL_DIV1(1, 3, 4), },
-+	{  500000, EXYNOS7_ATL_DIV0(2, 3, 3, 3), EXYNOS7_ATL_DIV1(1, 2, 3), },
-+	{  400000, EXYNOS7_ATL_DIV0(2, 3, 3, 3), EXYNOS7_ATL_DIV1(1, 2, 3), },
-+	{  300000, EXYNOS7_ATL_DIV0(2, 3, 3, 3), EXYNOS7_ATL_DIV1(1, 2, 3), },
-+	{  200000, EXYNOS7_ATL_DIV0(2, 3, 3, 3), EXYNOS7_ATL_DIV1(1, 1, 3), },
-+	{  0 },
-+};
-+
- static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
- 	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_bus0_pll_ctrl", 1, 2, 0),
- 	FFACTOR(0, "ffac_topc_bus0_pll_div4",
-@@ -620,7 +645,13 @@ static struct samsung_cmu_info atlas_cmu_info __initdata = {
- 
- static void __init exynos7_clk_atlas_init(struct device_node *np)
- {
--	samsung_cmu_register_one(np, &atlas_cmu_info);
-+	struct samsung_clk_provider *ctx;
-+
-+	ctx = samsung_cmu_register_one(np, &atlas_cmu_info);
-+	exynos_register_cpu_clock(ctx, CLK_ATLAS_CLK, "atlclk",
-+		mout_atlas_p[0], mout_atlas_p[1], 0,
-+		exynos7_atlclk_d, ARRAY_SIZE(exynos7_atlclk_d),
-+		0, np);
- }
- 
- CLK_OF_DECLARE(exynos7_clk_atlas, "samsung,exynos7-clock-atlas",
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 6b9465c..6df64ef 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -67,7 +67,8 @@
- #define CLK_ATLAS			12
- #define DOUT_SCLK_HPM_ATLAS		13
- #define DOUT_ATLAS_PLL			14
--#define ATLAS_NR_CLK			15
-+#define CLK_ATLAS_CLK			15
-+#define ATLAS_NR_CLK			16
- 
- /* CCORE */
- #define PCLK_RTC			1
+ 	light-sensor@44 {
 -- 
-1.7.9.5
+2.1.3
