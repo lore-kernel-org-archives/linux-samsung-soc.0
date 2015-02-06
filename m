@@ -1,86 +1,35 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH 1/20] mtd: s3c2410: fix misspelling of current function
- in string
-Date: Fri, 6 Feb 2015 03:28:45 -0800
-Message-ID: <20150206112845.GF4434@norris-Latitude-E6410>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
- <1417980062-25151-2-git-send-email-Julia.Lawall@lip6.fr>
- <CAFLxGvyiqxQ6U6p-A-JW8Nv8OvXFGsna93afUu-Gek0EV3gATA@mail.gmail.com>
- <alpine.DEB.2.02.1412080809400.2100@localhost6.localdomain6>
- <54856C75.1050309@nod.at>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RESEND PATCH V3 15/15] ARM: dts: Fix I2S1,
+ I2S2 compatible for exynos4 SoCs
+Date: Fri, 06 Feb 2015 12:30:45 +0100
+Message-ID: <54D4A5E5.4010706@samsung.com>
+References: <1422972382-18520-1-git-send-email-s.nawrocki@samsung.com>
+ <1422972382-18520-3-git-send-email-s.nawrocki@samsung.com>
+ <20150205194105.GM21293@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54856C75.1050309@nod.at>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Richard Weinberger <richard@nod.at>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Kukjin Kim <kgene@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, linux@rasmusvillemoes.dk, Joe Perches <joe@perches.com>, David Woodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <20150205194105.GM21293@sirena.org.uk>
+Sender: stable-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: kgene@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 08, 2014 at 10:16:37AM +0100, Richard Weinberger wrote:
-> Am 08.12.2014 um 08:11 schrieb Julia Lawall:
-> >>> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-> >>> index 35aef5e..0a9c41f 100644
-> >>> --- a/drivers/mtd/nand/s3c2410.c
-> >>> +++ b/drivers/mtd/nand/s3c2410.c
-> >>> @@ -948,7 +948,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
-> >>>
-> >>>         cpu_type = platform_get_device_id(pdev)->driver_data;
-> >>>
-> >>> -       pr_debug("s3c2410_nand_probe(%p)\n", pdev);
-> >>> +       pr_debug("%s(%p)\n", __func__, pdev);
-> >>
-> >> I think we can drop the line completely.
-> >> We have ftrace to trace function calls...
-> > 
-> > Should the "initialised ok" at the end of the function be remove as well?
-> > 
-> > Will it be confusing if this cleanup is done in this function, but not in 
-> > others where it may be useful?  Perhaps s3c2410_nand_update_chip, for 
-> > example?
+On 05/02/15 20:41, Mark Brown wrote:
+> On Tue, Feb 03, 2015 at 03:06:22PM +0100, Sylwester Nawrocki wrote:
+>> I2S1, I2S2 on Exynos4 SoC series have limited functionality compared
+>> to I2S0, "samsung,s3c6410-i2s" compatible should be used for them.
 > 
-> Hmm, this driver seems to have a lot of debugging printks().
-> IMHO we can remove them.
-> Let's see what Brain says.
+> I've applied this even though I really shouldn't in order to get it in.
+> Since it's a bug fix for stable it should've been near the head of any
+> series it's part of not the very last patch in the series, and since
+> it's not really related to the rest of the series except in that it
+> relates to the same driver it should probably have been sent by itself
+> rather than mixed in with everything else.
 
-I'm a little late for this one, but I can apply this instead:
-
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Fri, 6 Feb 2015 03:25:28 -0800
-Subject: [PATCH] mtd: s3c2410: drop useless / misspelled debug prints
-
-s3c2410_nand_probe is not the name of the function.
-
-These prints have little utility, so let's just kill them.
-
-Reported-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
----
- drivers/mtd/nand/s3c2410.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-index 35aef5edb588..0e02be47ce1d 100644
---- a/drivers/mtd/nand/s3c2410.c
-+++ b/drivers/mtd/nand/s3c2410.c
-@@ -948,8 +948,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
- 
- 	cpu_type = platform_get_device_id(pdev)->driver_data;
- 
--	pr_debug("s3c2410_nand_probe(%p)\n", pdev);
--
- 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
- 	if (info == NULL) {
- 		err = -ENOMEM;
-@@ -1045,7 +1043,6 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
- 		s3c2410_nand_clk_set_state(info, CLOCK_SUSPEND);
- 	}
- 
--	pr_debug("initialised ok\n");
- 	return 0;
- 
-  exit_error:
--- 
-2.3.0
-
+Indeed I could sent this one separately to Kukjin, the issue it fixes
+was just found in the course of creating remaining part of the series
+and I wanted to keep somewhat related changes together.
+Thank you for merging it.  I hope you picked up the previous 2 as well,
+I couldn't see them in your tree.
