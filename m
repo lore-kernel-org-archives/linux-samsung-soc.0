@@ -1,47 +1,45 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 0/4] ASoC: samsung: clean up references to outdated
- Kconfig symbols
-Date: Sat, 07 Feb 2015 09:38:04 +0100
-Message-ID: <1423298284.2246.5.camel@x220>
-References: <1421664067.9655.51.camel@x220>
-	 <20150206235044.GO31311@finisterre.sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4412-trats2: set display clock correctly
+Date: Sat, 07 Feb 2015 19:49:08 +0900
+Message-ID: <1423306148-22212-1-git-send-email-inki.dae@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews07.kpnxchange.com ([213.75.39.10]:60070 "EHLO
-	cpsmtpb-ews07.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752217AbbBGIiI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47163 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752199AbbBGKtL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Feb 2015 03:38:08 -0500
-In-Reply-To: <20150206235044.GO31311@finisterre.sirena.org.uk>
+	Sat, 7 Feb 2015 05:49:11 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Valentin Rothberg <valentinrothberg@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Inki Dae <inki.dae@samsung.com>
 
-On Sat, 2015-02-07 at 07:50 +0800, Mark Brown wrote:
-> On Mon, Jan 19, 2015 at 11:41:07AM +0100, Paul Bolle wrote:
-> > A few series of ARM cleanups regarding S5PC100 and S5PV210 were included
-> > in v3.17. These series removed these five Kconfig symbols:
-> >     MACH_AQUILA
-> >     MACH_GONI
-> >     MACH_SMDKC100
-> >     MACH_SMDKC110
-> >     MACH_SMDKV210
-> > 
-> > This series, done on top of next-20150119, removes the remaining
-> 
-> If you are posting a patch series please ensure that all the patches in
-> the series are threaded in reply to the cover letter (or first patch if
-> there isn't one) so that mail clients can see to display them as a
-> series.
+This patch sets display clock correctly.
 
-Patches 2/4, 3/4, and 4/4 didn't apply. Locally I carry them in a tree
-that constantly rebases on top of linux-next. So locally I carry these
-patches on top of next-20150204.
+If Display clock isn't set correctly then you would find below messages
+and Display controller doesn't work correctly since a patch[1]
 
-What tree would you like me to rebase this onto?
+   exynos-drm: No connectors reported connected with modes
+   [drm] Cannot find any crtc or sizes - going 1024x768
 
+[1] commit abc0b1447d49 ("drm: Perform basic sanity checks on probed modes")
 
-Paul Bolle
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-trats2.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 29231b4..1ec4d33 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -691,7 +691,7 @@
+ 
+ 			display-timings {
+ 				timing-0 {
+-					clock-frequency = <0>;
++					clock-frequency = <57153600>;
+ 					hactive = <720>;
+ 					vactive = <1280>;
+ 					hfront-porch = <5>;
+-- 
+1.7.9.5
