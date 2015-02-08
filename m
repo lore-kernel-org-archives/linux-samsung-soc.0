@@ -1,57 +1,46 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: exynos4412: misc issues on Hardkernel Odroid boards
-Date: Sun, 8 Feb 2015 10:52:13 +0100
-Message-ID: <CAJKOXPfX_0eWpecHoj2z6cc879CBR=2=SwdMBaD3g3KO_mFHZQ@mail.gmail.com>
-References: <54D779FB.9070306@math.uni-bielefeld.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
+Date: Sun, 8 Feb 2015 23:59:56 +0900
+Message-ID: <CA+Ln22E1xpdj+LZAR6uf7sCEBR_TEN=CaTVznsKM490a8AzGww@mail.gmail.com>
+References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
+	<CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:43229 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871AbbBHJwO (ORCPT
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:39409 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751766AbbBHO74 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Feb 2015 04:52:14 -0500
-Received: by mail-vc0-f173.google.com with SMTP id hy4so3331335vcb.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Feb 2015 01:52:13 -0800 (PST)
-In-Reply-To: <54D779FB.9070306@math.uni-bielefeld.de>
+	Sun, 8 Feb 2015 09:59:56 -0500
+In-Reply-To: <CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Feb 7, 2015 9:27 PM, "Tobias Jakobi" <tjakobi@math.uni-bielefeld.de> wrote:
->
-> Hello,
->
-> I've collected some of the more serious remaining problems on the
-> Hardkernel Odroid boards (here on an X2).
->
-> 1) When using cpufreq-exynos and having selected the 'ondemand'
-> governor, the system shutdown/reboot process doesn't complete and hangs
-> before the end. I'm currently hotfixing this by switching to
-> 'performance' governor in a custom initscript.
->
-> 2) When reading the 'clk_summary' debugfs entry the system locks up
-> immediately. Currently hotfixing this by having the ISP powerdomain
-> always-on. The problem seems to be known, at least it was mentioned here:
-> http://www.spinics.net/lists/linux-samsung-soc/msg39488.html
->
-> 3) Maybe related to (1). I'm experiencing high SoC temperatures after
-> shutting the system down and leaving the AC connector plugged into the
-> board. The shutdown procedure is like mentioned in (1): Switch to
-> 'performance' and then do a normal 'shutdown -h now'. I was wondering if
-> the Odroid boards need a special shutdown procedure (like designed in
-> the odroid-restart handler patch) after all.
->
-> 4) Spinlock BUGs triggered by the sdhci subsystem (so for the people
-> using the system with a SD card). This is also a known problem, I think
-> first mentioned here: http://www.spinics.net/lists/linux-mmc/msg27277.html
-> Currently fixing this with this patch:
-> https://github.com/tobiasjakobi/linux-odroid/commit/abc749843dd7022d01322dca3db0181211a30cd8
+Hi,
 
-The fourth problem looks similar to:
-https://lkml.org/lkml/2015/2/4/63
-Could you give that patch a try?
+2015-01-29 18:48 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>
+>> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+>> functional input/output port pins and 135 memory port pins. There are 41 general
+>> port groups and 2 memory port groups.
+>>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>> ---
+>> Changes from v2:
+>> - Rebase it on v3.19-rc5
+>
+> Waiting for Tomasz to review this.
+
+Thanks Linus. Looks good to me.
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
 Best regards,
-Krzysztof
+Tomasz
