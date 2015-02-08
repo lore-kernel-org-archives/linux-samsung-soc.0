@@ -1,46 +1,144 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
-Date: Sun, 8 Feb 2015 23:59:56 +0900
-Message-ID: <CA+Ln22E1xpdj+LZAR6uf7sCEBR_TEN=CaTVznsKM490a8AzGww@mail.gmail.com>
-References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
-	<CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
+From: Lukasz Majewski <l.majewski@majess.pl>
+Subject: Re: [PATCH v3 6/8] hwmon: pwm-fan: Extract __set_pwm() function to
+ only modify PWM duty cycle
+Date: Sun, 8 Feb 2015 21:52:43 +0100
+Message-ID: <20150208215243.22085c97@jawa>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+	<1423241948-31981-1-git-send-email-l.majewski@samsung.com>
+	<1423241948-31981-7-git-send-email-l.majewski@samsung.com>
+	<20150206182725.GA25410@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ boundary="Sig_/BPabe_PY5yHylU13fGbDcaU"; protocol="application/pgp-signature"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:39409 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751766AbbBHO74 (ORCPT
+Received: from 6.mo3.mail-out.ovh.net ([188.165.43.173]:46288 "EHLO
+	6.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755039AbbBHVcF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Feb 2015 09:59:56 -0500
-In-Reply-To: <CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
+	Sun, 8 Feb 2015 16:32:05 -0500
+Received: from mail638.ha.ovh.net (gw6.ovh.net [213.251.189.206])
+	by mo3.mail-out.ovh.net (Postfix) with SMTP id 966BAFFA04F
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Feb 2015 21:53:53 +0100 (CET)
+In-Reply-To: <20150206182725.GA25410@roeck-us.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hi,
+--Sig_/BPabe_PY5yHylU13fGbDcaU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-2015-01-29 18:48 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->
->> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
->> functional input/output port pins and 135 memory port pins. There are 41 general
->> port groups and 2 memory port groups.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Thomas Abraham <thomas.abraham@linaro.org>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> ---
->> Changes from v2:
->> - Rebase it on v3.19-rc5
->
-> Waiting for Tomasz to review this.
+On Fri, 6 Feb 2015 10:27:25 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Thanks Linus. Looks good to me.
+> On Fri, Feb 06, 2015 at 05:59:06PM +0100, Lukasz Majewski wrote:
+> > It was necessary to decouple code handling writing to sysfs from
+> > the one responsible for setting PWM of the fan.
+> > Due to that, new __set_pwm() method was extracted, which is
+> > responsible for only setting new PWM duty cycle.
+> >=20
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > ---
+> > Changes for v2:
+> > - None
+> > Changes for v3:
+> > - The commit headline has been reedited.
+> > ---
+> >  drivers/hwmon/pwm-fan.c | 35 ++++++++++++++++++++++-------------
+> >  1 file changed, 22 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> > index 1991d903..870e100 100644
+> > --- a/drivers/hwmon/pwm-fan.c
+> > +++ b/drivers/hwmon/pwm-fan.c
+> > @@ -33,21 +33,15 @@ struct pwm_fan_ctx {
+> >  	unsigned char pwm_value;
+> >  };
+> > =20
+> > -static ssize_t set_pwm(struct device *dev, struct device_attribute
+> > *attr,
+> > -		       const char *buf, size_t count)
+> > +static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+> >  {
+> > -	struct pwm_fan_ctx *ctx =3D dev_get_drvdata(dev);
+> > -	unsigned long pwm, duty;
+> > -	ssize_t ret;
+> > -
+> > -	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
+> > -		return -EINVAL;
+> > -
+> > -	mutex_lock(&ctx->lock);
+> > +	unsigned long duty;
+> > +	int ret;
+> > =20
+> >  	if (ctx->pwm_value =3D=3D pwm)
+> > -		goto exit_set_pwm_no_change;
+> > +		return 0;
+> > =20
+> Why did you move this check outside the lock ? With this change there=20
+> is no guarantee that pwm_value wasn't changed while waiting for the
+> lock.
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Grrr. You are obviously right here. I will fix this. Thanks for spotting
 
 Best regards,
-Tomasz
+Lukasz Majewski
+
+>=20
+> Guenter
+>=20
+> > +	mutex_lock(&ctx->lock);
+> >  	if (pwm =3D=3D 0) {
+> >  		pwm_disable(ctx->pwm);
+> >  		goto exit_set_pwm;
+> > @@ -66,13 +60,28 @@ static ssize_t set_pwm(struct device *dev,
+> > struct device_attribute *attr,=20
+> >  exit_set_pwm:
+> >  	ctx->pwm_value =3D pwm;
+> > -exit_set_pwm_no_change:
+> > -	ret =3D count;
+> >  exit_set_pwm_err:
+> >  	mutex_unlock(&ctx->lock);
+> >  	return ret;
+> >  }
+> > =20
+> > +static ssize_t set_pwm(struct device *dev, struct device_attribute
+> > *attr,
+> > +		       const char *buf, size_t count)
+> > +{
+> > +	struct pwm_fan_ctx *ctx =3D dev_get_drvdata(dev);
+> > +	unsigned long pwm;
+> > +	int ret;
+> > +
+> > +	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
+> > +		return -EINVAL;
+> > +
+> > +	ret =3D __set_pwm(ctx, pwm);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return count;
+> > +}
+> > +
+> >  static ssize_t show_pwm(struct device *dev,
+> >  			struct device_attribute *attr, char *buf)
+> >  {
+> > --=20
+> > 2.0.0.rc2
+> >=20
+
+
+--Sig_/BPabe_PY5yHylU13fGbDcaU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEARECAAYFAlTXzKEACgkQf9/hG2YwgjHPugCcCxRGEjB5x5p9qUUvPITaXmeO
+hZMAoKxxfV0eHZqPvPfA1EPQ3mxFT2+r
+=jamh
+-----END PGP SIGNATURE-----
+
+--Sig_/BPabe_PY5yHylU13fGbDcaU--
