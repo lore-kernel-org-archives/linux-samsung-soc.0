@@ -1,173 +1,68 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH RFC v4 3/3] clk: samsung: Add PM runtime support for clocks.
-Date: Mon, 09 Feb 2015 16:32:06 +0530
-Message-ID: <1423479726-23140-4-git-send-email-amit.daniel@samsung.com>
-References: <1423479726-23140-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1423479726-23140-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be, Amit Daniel Kachhap <amit.daniel@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/4] drm/exynos: dsim: fix to control mipi phy register
+Date: Mon, 09 Feb 2015 21:17:35 +0900
+Message-ID: <54D8A55F.8020001@samsung.com>
+References: <1423309988-11793-1-git-send-email-inki.dae@samsung.com>
+ <1423309988-11793-2-git-send-email-inki.dae@samsung.com>
+ <54D8928D.9000008@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <54D8928D.9000008@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds PM runtime support for clocks associated with Power
-Domain. The PM runtime suspend/resume handlers will be called when the
-power domain associated with it, is turned on/off.
-
-The registration of clocks happen in early initailisation. The probe
-is later called to register the clock device with the power domain.
-
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- drivers/clk/samsung/clk.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk.h | 11 ++++++
- 2 files changed, 104 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 4bda540..0b5c82a 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -12,6 +12,9 @@
- */
- 
- #include <linux/of_address.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/syscore_ops.h>
- 
- #include "clk.h"
-@@ -370,6 +373,92 @@ static void samsung_clk_sleep_init(void __iomem *reg_base,
- 		unsigned long nr_rdump) {}
- #endif
- 
-+static int samsung_cmu_runtime_suspend(struct device *dev)
-+{
-+	struct samsung_clock_pd_reg_cache *reg_cache;
-+
-+	reg_cache = dev_get_drvdata(dev);
-+	samsung_clk_save(reg_cache->reg_base, reg_cache->rdump,
-+			reg_cache->rd_num);
-+	return 0;
-+}
-+
-+static int samsung_cmu_runtime_resume(struct device *dev)
-+{
-+	struct samsung_clock_pd_reg_cache *reg_cache;
-+
-+	reg_cache = dev_get_drvdata(dev);
-+	samsung_clk_restore(reg_cache->reg_base, reg_cache->rdump,
-+			reg_cache->rd_num);
-+	return 0;
-+}
-+
-+#define MAX_CMU_DEVICE_MATCH	50
-+static int samsung_cmu_count;
-+static struct of_device_id samsung_cmu_match[MAX_CMU_DEVICE_MATCH];
-+MODULE_DEVICE_TABLE(of, samsung_cmu_match);
-+
-+static void samsung_clk_pd_init(struct device_node *np, void __iomem *reg_base,
-+				struct samsung_cmu_info *cmu)
-+{
-+	struct samsung_clock_pd_reg_cache *pd_reg_cache;
-+	const char *name;
-+
-+	if (samsung_cmu_count == MAX_CMU_DEVICE_MATCH)
-+		panic("Maximum clock device limit reached.\n");
-+
-+	if (of_property_read_string_index(np, "compatible", 0, &name))
-+		panic("Invalid DT node.\n");
-+
-+	pd_reg_cache = kzalloc(sizeof(struct samsung_clock_pd_reg_cache),
-+			GFP_KERNEL);
-+	if (!pd_reg_cache)
-+		panic("Could not allocate register reg_cache.\n");
-+
-+	pd_reg_cache->rdump = samsung_clk_alloc_reg_dump(cmu->pd_clk_regs,
-+				cmu->nr_pd_clk_regs);
-+	if (!pd_reg_cache->rdump)
-+		panic("Could not allocate register dump storage.\n");
-+
-+	pd_reg_cache->reg_base = reg_base;
-+	pd_reg_cache->rd_num = cmu->nr_pd_clk_regs;
-+
-+	/* Fill up the compatible string and data */
-+	samsung_cmu_match[samsung_cmu_count].data = pd_reg_cache;
-+	strcpy(samsung_cmu_match[samsung_cmu_count].compatible, name);
-+	samsung_cmu_count++;
-+}
-+
-+static int __init samsung_cmu_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct of_device_id *match;
-+
-+	/* get the platform data */
-+	match = (struct of_device_id *)of_match_node(samsung_cmu_match,
-+							pdev->dev.of_node);
-+	if (!match)
-+		return 0;
-+	platform_set_drvdata(pdev, (void *)match->data);
-+	pm_runtime_enable(dev);
-+	pm_runtime_set_slave(dev);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops samsung_cmu_pm_ops = {
-+	SET_RUNTIME_PM_OPS(samsung_cmu_runtime_suspend,
-+			samsung_cmu_runtime_resume, NULL)
-+};
-+
-+static struct platform_driver samsung_cmu_driver = {
-+	.driver = {
-+		.name   = "exynos-clk",
-+		.of_match_table = samsung_cmu_match,
-+		.pm = &samsung_cmu_pm_ops,
-+	},
-+	.probe = samsung_cmu_probe,
-+};
-+
- /*
-  * Common function which registers plls, muxes, dividers and gates
-  * for each CMU. It also add CMU register list to register cache.
-@@ -409,5 +498,9 @@ void __init samsung_cmu_register_one(struct device_node *np,
- 		samsung_clk_sleep_init(reg_base, cmu->clk_regs,
- 			cmu->nr_clk_regs);
- 
-+	if (cmu->pd_clk_regs)
-+		samsung_clk_pd_init(np, reg_base, cmu);
-+
- 	samsung_clk_of_add_provider(np, ctx);
- }
-+module_platform_driver(samsung_cmu_driver);
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 8acabe1..7565be8 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -327,6 +327,12 @@ struct samsung_clock_reg_cache {
- 	unsigned int rd_num;
- };
- 
-+struct samsung_clock_pd_reg_cache {
-+	void __iomem *reg_base;
-+	struct samsung_clk_reg_dump *rdump;
-+	unsigned int rd_num;
-+};
-+
- struct samsung_cmu_info {
- 	/* list of pll clocks and respective count */
- 	struct samsung_pll_clock *pll_clks;
-@@ -352,6 +358,11 @@ struct samsung_cmu_info {
- 	/* list and number of clocks registers */
- 	unsigned long *clk_regs;
- 	unsigned int nr_clk_regs;
-+
-+	/* list and number of clocks to be saved/restored during
-+	 * power domain shutdown */
-+	unsigned long *pd_clk_regs;
-+	unsigned int nr_pd_clk_regs;
- };
- 
- extern struct samsung_clk_provider *__init samsung_clk_init(
--- 
-2.2.0
+T24gMjAxNeuFhCAwMuyblCAwOeydvCAxOTo1NywgU3lsd2VzdGVyIE5hd3JvY2tpIHdyb3RlOgo+
+IE9uIDA3LzAyLzE1IDEyOjUzLCBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRjaCBmaXhlcyB0
+aGUgaXNzdWUgdGhhdCB0aGUgdHJ5IHRvIGdldCBhIHBoeSBvYmplY3QgaXMgZmFpbGVkCj4+IHRv
+IGVuYWJsZSBtaXBpIHBoeS4KPj4KPj4gU3lzdGVtIGFuZCBwb3dlciBtYW5hZ2VtZW50IHVuaXQg
+cmVnaXN0ZXJzIHNob3VsZCBiZSBjb250cm9sbGVkIGJ5Cj4+IHN5c2NvbiBmcmFtZXdvcmsuIFNv
+IHRoaXMgcGF0Y2ggcmVtb3ZlcyBleGlzdGluZyBwaHkgZnJhbWV3b3JrIGJhc2VkCj4+IGNvZGVz
+IGFuZCBhZGRzIHN5c2NvbiBzdXBwb3J0IGluc3RlYWQuIEhvd2V2ZXIsIHdlIHNob3VsZCBzdXBw
+b3J0Cj4+IGxlZ2FjeSBkZXZpY2UgdHJlZSBiaW5kaW5nIHNvIGNvbnNpZGVyIHRoZSBsZWdhY3kg
+YmluZGluZyBmb3IgY29tcGF0aWJpbGl0eS4KPj4KPj4gSW4gYWRkaXRpb24sIHdlIG5lZWQgdG8g
+cmVtb3ZlIGJlbG93IGRldmljZSBub2RlIGFuZCByZWxldmFudCBwcm9wZXJ0aWVzLAo+PiAJbWlw
+aV9waHk6IHZpZGVvLXBoeUAxMDAyMDcxMCB7Cj4+IAkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM1
+cHYyMTAtbWlwaS12aWRlby1waHkiOwo+PiAJCXJlZyA9IDwweDEwMDIwNzEwIDg+Owo+PiAJCSNw
+aHktY2VsbHMgPSA8MT47Cj4+IAl9Owo+Pgo+PiBOb3cgY2FtZXJhIGRldmljZSBub2RlIHVzZXMg
+bWlwaV9waHkgbm9kZSByZWxldmFudCBwcm9wZXJ0aWVzIGxpa2UgYmVsb3csCj4+IAljYW1lcmEg
+ewo+PiAJCS4uLgo+PiAJCWNzaXNfMDogY3Npc0AxMTg4MDAwMCB7Cj4+IAkJCS4uLgo+PiAJCQlw
+aHlzID0gPCZtaXBpX3BoeSAwPjsKPj4gCQkJcGh5LW5hbWVzID0gImNzaXMiOwo+PiAJCQkuLi4K
+Pj4gCQl9Owo+PiAJCWNzaXNfMTogY3Npc0AxMTg5MDAwMCB7Cj4+IAkJCS4uLgo+PiAJCQlwaHlz
+ID0gPCZtaXBpX3BoeSAyPjsKPj4gCQkJcGh5LW5hbWVzID0gImNzaXMiOwo+PiAJCQkuLi4KPj4g
+CQl9Owo+PiAJCS4uLgo+PiAJfTsKPj4KPj4gV2l0aCBhYm92ZSwgd2Ugd2lsbCBmaW5kIGJlbG93
+IG1lc3NhZ2Ugd2hpbGUgYm9vdGluZywKPj4gICAgICBjYW4ndCByZXF1ZXN0IHJlZ2lvbiBmb3Ig
+cmVzb3VyY2UgW21lbSAweDEwMDIwNzEwLTB4MTAwMjA3MTddCj4gCj4gSSdtIGFmcmFpZCB0aGlz
+IGFwcHJvYWNoIHdvbid0IHdvcmsgYmVjYXVzZSBNSVBJIERTSSBNYXN0ZXIgYW5kIE1JUEkgQ1NJ
+Cj4gU2xhdmUgZGV2aWNlcyBzaGFyZSBhIGNvbnRyb2wgYml0IGluIHRoZSByZWdpc3RlciBhbmQg
+aXQgc2VlbXMgaW1wb3NzaWJsZQo+IHRvIGVuc3VyZSBwcm9wZXIgbG9ja2luZyB3aXRoIGN1cnJl
+bnQgcmVnbWFwL3N5c2NvbiBBUEkuCj4gCj4gSSBoYXZlIHN1Ym1pdHRlZCBwYXRjaGVzIHRvIGZp
+eCB0aGlzIGlzc3VlIFsxXSBhbmQgdGhleSBzaG91bGQgYmUgYWxyZWFkeQo+IGF2YWlsYWJsZSBp
+biBsaW51eC1uZXh0IGFuZCBjYW4gYmUgZm91bmQgb24gbGludXgtc2Ftc3VuZy1zb2MgTUw6Cj4g
+Cj4gW1BBVENIIDEvMl0gcGh5OiBleHlub3MtdmlkZW8tbWlwaTogRml4IHJlZ3Jlc3Npb24gYnkg
+YWRkaW5nIHN1cHBvcnQgZm9yIFBNVSByZWdtYXAKPiBbUEFUQ0ggMi8yXSBBUk06IGR0czogQWRk
+IHN5c2NvbiBwaGFuZGxlIHRvIHRoZSB2aWRlby1waHkgbm9kZSBmb3IgRXh5bm9zNAo+IAo+IFRo
+ZSBvdGhlciBpc3N1ZSB3aXRoIHlvdXIgYXBwcm9hY2ggaXMgdGhhdCB3ZSBhcmUgbW92aW5nIHRo
+ZSBQTVUgZGV0YWlscwo+IHRvIHRoZSBNSVBJIERTSU0gZHJpdmVyIGFuZCBzaW1pbGFyIGNoYW5n
+ZXMgd291bGQgbmVlZCB0byBiZSBkb25lIGluCj4gdGhlIE1JUEkgQ1NJUyBkcml2ZXIuCj4gCj4g
+SW5zdGVhZCBJIGp1c3QgYWRkZWQgc3lzY29uIHN1cHBvcnQgdG8gdGhlIFBIWSBsYXllciwgaXQn
+cyBub3QgcGVyZmVjdAo+IGJ1dCBmaXhlcyB0aGUgaXNzdWUgZm9yIGJvdGggRFNJIGFuZCBDU0kg
+YW5kICBkb2Vzbid0IHN0cmlwIHRoZSBQSFkgbGF5ZXIKPiB3aGljaCBjb3VsZCBwb3RlbnRpYWxs
+eSBiZSB1c2VmdWwuCgpBaCwgUmlnaHQuIEkgZGlkbid0IGNoZWNrIHlvdXIgcGF0Y2ggc2V0LiBZ
+b3VyIHdheSBpcyBhIGJldHRlciBpZGVhIHRoYW4KbXkgb25lLiBXaXRoIHRoaXMsIHdlIGRvbid0
+IG5lZWQgdG8gY2hhbmdlIGRldmljZSBkcml2ZXJzLCBNSVBJIERTSSBhbmQgQ1NJLgoKVGhlbiwg
+d2hhdCBpcyB0aGUgbWVhbmluZyB0aGF0IGl0J3Mgbm90IHBlcmZlY3Q/CgpUaGFua3MsCklua2kg
+RGFlCgo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
