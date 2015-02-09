@@ -1,68 +1,60 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/4] drm/exynos: dsim: fix to control mipi phy register
-Date: Mon, 09 Feb 2015 21:17:35 +0900
-Message-ID: <54D8A55F.8020001@samsung.com>
-References: <1423309988-11793-1-git-send-email-inki.dae@samsung.com>
- <1423309988-11793-2-git-send-email-inki.dae@samsung.com>
- <54D8928D.9000008@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <54D8928D.9000008@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos5420: Add maudio power domain
+Date: Mon, 09 Feb 2015 13:41:35 +0100
+Message-ID: <1423485695-22568-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43436 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759408AbbBIMls (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Feb 2015 07:41:48 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-T24gMjAxNeuFhCAwMuyblCAwOeydvCAxOTo1NywgU3lsd2VzdGVyIE5hd3JvY2tpIHdyb3RlOgo+
-IE9uIDA3LzAyLzE1IDEyOjUzLCBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRjaCBmaXhlcyB0
-aGUgaXNzdWUgdGhhdCB0aGUgdHJ5IHRvIGdldCBhIHBoeSBvYmplY3QgaXMgZmFpbGVkCj4+IHRv
-IGVuYWJsZSBtaXBpIHBoeS4KPj4KPj4gU3lzdGVtIGFuZCBwb3dlciBtYW5hZ2VtZW50IHVuaXQg
-cmVnaXN0ZXJzIHNob3VsZCBiZSBjb250cm9sbGVkIGJ5Cj4+IHN5c2NvbiBmcmFtZXdvcmsuIFNv
-IHRoaXMgcGF0Y2ggcmVtb3ZlcyBleGlzdGluZyBwaHkgZnJhbWV3b3JrIGJhc2VkCj4+IGNvZGVz
-IGFuZCBhZGRzIHN5c2NvbiBzdXBwb3J0IGluc3RlYWQuIEhvd2V2ZXIsIHdlIHNob3VsZCBzdXBw
-b3J0Cj4+IGxlZ2FjeSBkZXZpY2UgdHJlZSBiaW5kaW5nIHNvIGNvbnNpZGVyIHRoZSBsZWdhY3kg
-YmluZGluZyBmb3IgY29tcGF0aWJpbGl0eS4KPj4KPj4gSW4gYWRkaXRpb24sIHdlIG5lZWQgdG8g
-cmVtb3ZlIGJlbG93IGRldmljZSBub2RlIGFuZCByZWxldmFudCBwcm9wZXJ0aWVzLAo+PiAJbWlw
-aV9waHk6IHZpZGVvLXBoeUAxMDAyMDcxMCB7Cj4+IAkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM1
-cHYyMTAtbWlwaS12aWRlby1waHkiOwo+PiAJCXJlZyA9IDwweDEwMDIwNzEwIDg+Owo+PiAJCSNw
-aHktY2VsbHMgPSA8MT47Cj4+IAl9Owo+Pgo+PiBOb3cgY2FtZXJhIGRldmljZSBub2RlIHVzZXMg
-bWlwaV9waHkgbm9kZSByZWxldmFudCBwcm9wZXJ0aWVzIGxpa2UgYmVsb3csCj4+IAljYW1lcmEg
-ewo+PiAJCS4uLgo+PiAJCWNzaXNfMDogY3Npc0AxMTg4MDAwMCB7Cj4+IAkJCS4uLgo+PiAJCQlw
-aHlzID0gPCZtaXBpX3BoeSAwPjsKPj4gCQkJcGh5LW5hbWVzID0gImNzaXMiOwo+PiAJCQkuLi4K
-Pj4gCQl9Owo+PiAJCWNzaXNfMTogY3Npc0AxMTg5MDAwMCB7Cj4+IAkJCS4uLgo+PiAJCQlwaHlz
-ID0gPCZtaXBpX3BoeSAyPjsKPj4gCQkJcGh5LW5hbWVzID0gImNzaXMiOwo+PiAJCQkuLi4KPj4g
-CQl9Owo+PiAJCS4uLgo+PiAJfTsKPj4KPj4gV2l0aCBhYm92ZSwgd2Ugd2lsbCBmaW5kIGJlbG93
-IG1lc3NhZ2Ugd2hpbGUgYm9vdGluZywKPj4gICAgICBjYW4ndCByZXF1ZXN0IHJlZ2lvbiBmb3Ig
-cmVzb3VyY2UgW21lbSAweDEwMDIwNzEwLTB4MTAwMjA3MTddCj4gCj4gSSdtIGFmcmFpZCB0aGlz
-IGFwcHJvYWNoIHdvbid0IHdvcmsgYmVjYXVzZSBNSVBJIERTSSBNYXN0ZXIgYW5kIE1JUEkgQ1NJ
-Cj4gU2xhdmUgZGV2aWNlcyBzaGFyZSBhIGNvbnRyb2wgYml0IGluIHRoZSByZWdpc3RlciBhbmQg
-aXQgc2VlbXMgaW1wb3NzaWJsZQo+IHRvIGVuc3VyZSBwcm9wZXIgbG9ja2luZyB3aXRoIGN1cnJl
-bnQgcmVnbWFwL3N5c2NvbiBBUEkuCj4gCj4gSSBoYXZlIHN1Ym1pdHRlZCBwYXRjaGVzIHRvIGZp
-eCB0aGlzIGlzc3VlIFsxXSBhbmQgdGhleSBzaG91bGQgYmUgYWxyZWFkeQo+IGF2YWlsYWJsZSBp
-biBsaW51eC1uZXh0IGFuZCBjYW4gYmUgZm91bmQgb24gbGludXgtc2Ftc3VuZy1zb2MgTUw6Cj4g
-Cj4gW1BBVENIIDEvMl0gcGh5OiBleHlub3MtdmlkZW8tbWlwaTogRml4IHJlZ3Jlc3Npb24gYnkg
-YWRkaW5nIHN1cHBvcnQgZm9yIFBNVSByZWdtYXAKPiBbUEFUQ0ggMi8yXSBBUk06IGR0czogQWRk
-IHN5c2NvbiBwaGFuZGxlIHRvIHRoZSB2aWRlby1waHkgbm9kZSBmb3IgRXh5bm9zNAo+IAo+IFRo
-ZSBvdGhlciBpc3N1ZSB3aXRoIHlvdXIgYXBwcm9hY2ggaXMgdGhhdCB3ZSBhcmUgbW92aW5nIHRo
-ZSBQTVUgZGV0YWlscwo+IHRvIHRoZSBNSVBJIERTSU0gZHJpdmVyIGFuZCBzaW1pbGFyIGNoYW5n
-ZXMgd291bGQgbmVlZCB0byBiZSBkb25lIGluCj4gdGhlIE1JUEkgQ1NJUyBkcml2ZXIuCj4gCj4g
-SW5zdGVhZCBJIGp1c3QgYWRkZWQgc3lzY29uIHN1cHBvcnQgdG8gdGhlIFBIWSBsYXllciwgaXQn
-cyBub3QgcGVyZmVjdAo+IGJ1dCBmaXhlcyB0aGUgaXNzdWUgZm9yIGJvdGggRFNJIGFuZCBDU0kg
-YW5kICBkb2Vzbid0IHN0cmlwIHRoZSBQSFkgbGF5ZXIKPiB3aGljaCBjb3VsZCBwb3RlbnRpYWxs
-eSBiZSB1c2VmdWwuCgpBaCwgUmlnaHQuIEkgZGlkbid0IGNoZWNrIHlvdXIgcGF0Y2ggc2V0LiBZ
-b3VyIHdheSBpcyBhIGJldHRlciBpZGVhIHRoYW4KbXkgb25lLiBXaXRoIHRoaXMsIHdlIGRvbid0
-IG5lZWQgdG8gY2hhbmdlIGRldmljZSBkcml2ZXJzLCBNSVBJIERTSSBhbmQgQ1NJLgoKVGhlbiwg
-d2hhdCBpcyB0aGUgbWVhbmluZyB0aGF0IGl0J3Mgbm90IHBlcmZlY3Q/CgpUaGFua3MsCklua2kg
-RGFlCgo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Add maudio power domain to Exynos 5420 DTSI file so its state could be
+tracked. This actually won't power down this domain because the pl330
+dmaengine driver (for adma channel) uses IRQ safe runtime PM. Thus the
+patch should not introduce any functional change except of visibility of
+this domain to the system.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 6d38f8bfd0e6..2e99a39f7250 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -270,6 +270,11 @@
+ 		reg = <0x10044120 0x20>;
+ 	};
+ 
++	mau_pd: power-domain@100440E0 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x100440E0 0x20>;
++	};
++
+ 	pinctrl_0: pinctrl@13400000 {
+ 		compatible = "samsung,exynos5420-pinctrl";
+ 		reg = <0x13400000 0x1000>;
+@@ -328,6 +333,7 @@
+ 			#dma-cells = <1>;
+ 			#dma-channels = <6>;
+ 			#dma-requests = <16>;
++			samsung,power-domain = <&mau_pd>;
+ 		};
+ 
+ 		pdma0: pdma@121A0000 {
+@@ -397,6 +403,7 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
+ 		status = "disabled";
++		samsung,power-domain = <&mau_pd>;
+ 	};
+ 
+ 	i2s1: i2s@12D60000 {
+-- 
+1.9.1
