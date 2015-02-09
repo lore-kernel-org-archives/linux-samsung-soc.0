@@ -1,42 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/4] drm/exynos: dsim: fix to control mipi phy register
-Date: Mon, 09 Feb 2015 14:46:43 +0100
-Message-ID: <54D8BA43.9030609@samsung.com>
-References: <1423309988-11793-1-git-send-email-inki.dae@samsung.com>
- <1423309988-11793-2-git-send-email-inki.dae@samsung.com>
- <54D8928D.9000008@samsung.com> <54D8A55F.8020001@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54461 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932893AbbBINqx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Feb 2015 08:46:53 -0500
-In-reply-to: <54D8A55F.8020001@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos5420: Add maudio power domain
+Date: Mon, 09 Feb 2015 14:57:23 +0100
+Message-ID: <1423490243-7675-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, a.hajda@samsung.com
 
-On 09/02/15 13:17, Inki Dae wrote:
->> Instead I just added syscon support to the PHY layer, it's not perfect
->> > but fixes the issue for both DSI and CSI and  doesn't strip the PHY layer
->> > which could potentially be useful.
->
-> Ah, Right. I didn't check your patch set. Your way is a better idea than
-> my one. With this, we don't need to change device drivers, MIPI DSI and CSI.
-> 
-> Then, what is the meaning that it's not perfect?
+Add maudio power domain to Exynos 5420 DTSI file so its state could be
+tracked. This actually won't power down this domain because the pl330
+dmaengine driver (for adma channel) uses IRQ safe runtime PM. Thus the
+patch should not introduce any functional change except of visibility of
+this domain to the system.
 
-What I didn't like is that there are at least 3 mutexes on the phy_power_on/
-phy_power_off path (PHY core, PHY driver, regmap) and there is another level
-of indirection after introducing the regmap. I guess it's nothing serious
-though. And BTW the syscon could be converted to use spinlock rather than
-a mutex, since in our case behind the PMU syscon is always a memory mapped
-region.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+---
+
+Changes sinve v1:
+1. Use generic power domain bindings (suggested by Javier).
+2. Add Javier's reviewed-by.
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9dc2e9773b30..28c4a2f4b991 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -288,6 +288,12 @@
+ 			      "pclk1", "clk1", "pclk2", "clk2";
+ 	};
+ 
++	mau_pd: power-domain@100440E0 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x100440E0 0x20>;
++		#power-domain-cells = <0>;
++	};
++
+ 	pinctrl_0: pinctrl@13400000 {
+ 		compatible = "samsung,exynos5420-pinctrl";
+ 		reg = <0x13400000 0x1000>;
+@@ -346,6 +352,7 @@
+ 			#dma-cells = <1>;
+ 			#dma-channels = <6>;
+ 			#dma-requests = <16>;
++			power-domains = <&mau_pd>;
+ 		};
+ 
+ 		pdma0: pdma@121A0000 {
+@@ -415,6 +422,7 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
+ 		status = "disabled";
++		power-domains = <&mau_pd>;
+ 	};
+ 
+ 	i2s1: i2s@12D60000 {
 -- 
-Regards,
-Sylwester
+1.9.1
