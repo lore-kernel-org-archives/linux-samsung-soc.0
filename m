@@ -1,67 +1,47 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH RFC v4 0/3] PM / Runtime: Feature to power manage slave devices
-Date: Mon, 09 Feb 2015 16:32:03 +0530
-Message-ID: <1423479726-23140-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be, Amit Daniel Kachhap <amit.daniel@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] exynos: pmu: use PS_HOLD based poweroff for all supported SoCs
+Date: Mon, 9 Feb 2015 11:58:57 +0100
+Message-ID: <CAJKOXPe4=DHsV3_axDUhpimRaqSHA3=HLiSJ1K3DYZoGRRiTTg@mail.gmail.com>
+References: <1423466741-11421-1-git-send-email-m.szyprowski@samsung.com>
+	<CAJKOXPeeUjcwO6qBdHA8DJaviPxRwjAsSe7ciyGDFOUoNhZvcQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:48430 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932339AbbBIK66 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Feb 2015 05:58:58 -0500
+Received: by mail-vc0-f177.google.com with SMTP id hy10so7104801vcb.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2015 02:58:57 -0800 (PST)
+In-Reply-To: <CAJKOXPeeUjcwO6qBdHA8DJaviPxRwjAsSe7ciyGDFOUoNhZvcQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
 
-This patch is somewhat similar to V3 version but uses pm runtime framework to
-register/fetch the information about the device which may be slave or master.
-Since the power domain has the necessary information about devices so it invokes
-the save/restore runtime callbacks for the slave devices.
+2015-02-09 10:06 GMT+01:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> 2015-02-09 8:25 GMT+01:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+>> PS_HOLD based power off procedure is common for all Exynos SoCs, so use
+>> it for every Exynos SoC.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/pmu.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> I tried this on Trats2 board (Exynos 4412) and message "Power down
+> failed, please power off system manually." appears. Is it expected? Or
+> am I missing some patches (I applied this on top of next-20150129)?
 
-There was objection raised by Kevin and others that V3 is hacky in nature so this
-revision fixes it by keeping the slave device information in pm runtime framework.
+It was my fault (I left attached JIG cable which prevents power off).
+Now it works fine.
 
-The model works like,
-    DEV1 (Attaches itself with PD but no support of  pm_runtime_get and
-     /	pm_runtime_put. Registers itself as pm runtime slave device.
-    /	Its local runtime_suspend/resume is invoked by PD.
-   /	
-  /
-PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
-  \	pm_runtime_put. This in turn invokes PD On/Off)
-   \
-    DEV3 (Similar to DEV1)
+Tested on Trats2 (Exynos4412):
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This work is continuation of earlier work,
+Patch also looks good, so:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-In V3: Used the existing API pm_genpd_dev_need_restore to add a feature to force
-	devices to perform restore/save during every power domain on/off
-	operation. This API is now removed.
-	Link (https://lkml.org/lkml/2014/12/13/74
-
-In V2: Completely removed notfiers and add support for huge clock list to be
-	suspended and restored. There was some issue in this as some clocks are
-	not exposed and are just initialised by bootloaders. This approach
-	required all of them to be exposed which is cumbersome. Also some
-	clock API's set_parent are disabling the original parent clocks
-	which is not required.
-	Link (https://lkml.org/lkml/2014/11/24/290)
-
-In V1: Implemented PM Domain notfier such as PD_ON_PRE, PD_ON_POST
-	PD_OFF_PRE and PD_OFF_POST. This was not supported and other
-	options suggested. link (http://www.spinics.net/lists/linux-samsung-soc/msg38442.html)
-
-This work may also assist exynos iommu pm runtime posted earlier by Marek
-http://lists.linaro.org/pipermail/linaro-mm-sig/2014-August/004099.html
-
-Amit Daniel Kachhap (3):
-  PM / Runtime: Add an API pm_runtime_set_slave
-  PM / Domains: Save restore slave pm runtime devices
-  clk: samsung: Add PM runtime support for clocks.
-
- drivers/base/power/domain.c  | 28 +++++++++++++
- drivers/base/power/runtime.c | 18 +++++++++
- drivers/clk/samsung/clk.c    | 93 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk.h    | 11 ++++++
- include/linux/pm.h           |  1 +
- include/linux/pm_runtime.h   |  2 +
- 6 files changed, 153 insertions(+)
-
--- 
-2.2.0
-
+Best regards,
+Krzysztof
