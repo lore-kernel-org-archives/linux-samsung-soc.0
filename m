@@ -1,82 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/4] drm/exynos: dsim: fix to control mipi phy register
-Date: Mon, 09 Feb 2015 11:57:17 +0100
-Message-ID: <54D8928D.9000008@samsung.com>
-References: <1423309988-11793-1-git-send-email-inki.dae@samsung.com>
- <1423309988-11793-2-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43896 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760016AbbBIK50 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Feb 2015 05:57:26 -0500
-In-reply-to: <1423309988-11793-2-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH RFC v4 0/3] PM / Runtime: Feature to power manage slave devices
+Date: Mon, 09 Feb 2015 16:32:03 +0530
+Message-ID: <1423479726-23140-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be, Amit Daniel Kachhap <amit.daniel@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, devicetree@vger.kernel.org
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, a.hajda@samsung.com
 
-On 07/02/15 12:53, Inki Dae wrote:
-> This patch fixes the issue that the try to get a phy object is failed
-> to enable mipi phy.
-> 
-> System and power management unit registers should be controlled by
-> syscon framework. So this patch removes existing phy framework based
-> codes and adds syscon support instead. However, we should support
-> legacy device tree binding so consider the legacy binding for compatibility.
-> 
-> In addition, we need to remove below device node and relevant properties,
-> 	mipi_phy: video-phy@10020710 {
-> 		compatible = "samsung,s5pv210-mipi-video-phy";
-> 		reg = <0x10020710 8>;
-> 		#phy-cells = <1>;
-> 	};
-> 
-> Now camera device node uses mipi_phy node relevant properties like below,
-> 	camera {
-> 		...
-> 		csis_0: csis@11880000 {
-> 			...
-> 			phys = <&mipi_phy 0>;
-> 			phy-names = "csis";
-> 			...
-> 		};
-> 		csis_1: csis@11890000 {
-> 			...
-> 			phys = <&mipi_phy 2>;
-> 			phy-names = "csis";
-> 			...
-> 		};
-> 		...
-> 	};
-> 
-> With above, we will find below message while booting,
->      can't request region for resource [mem 0x10020710-0x10020717]
+This patch is somewhat similar to V3 version but uses pm runtime framework to
+register/fetch the information about the device which may be slave or master.
+Since the power domain has the necessary information about devices so it invokes
+the save/restore runtime callbacks for the slave devices.
 
-I'm afraid this approach won't work because MIPI DSI Master and MIPI CSI
-Slave devices share a control bit in the register and it seems impossible
-to ensure proper locking with current regmap/syscon API.
+There was objection raised by Kevin and others that V3 is hacky in nature so this
+revision fixes it by keeping the slave device information in pm runtime framework.
 
-I have submitted patches to fix this issue [1] and they should be already
-available in linux-next and can be found on linux-samsung-soc ML:
+The model works like,
+    DEV1 (Attaches itself with PD but no support of  pm_runtime_get and
+     /	pm_runtime_put. Registers itself as pm runtime slave device.
+    /	Its local runtime_suspend/resume is invoked by PD.
+   /	
+  /
+PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
+  \	pm_runtime_put. This in turn invokes PD On/Off)
+   \
+    DEV3 (Similar to DEV1)
 
-[PATCH 1/2] phy: exynos-video-mipi: Fix regression by adding support for PMU regmap
-[PATCH 2/2] ARM: dts: Add syscon phandle to the video-phy node for Exynos4
+This work is continuation of earlier work,
 
-The other issue with your approach is that we are moving the PMU details
-to the MIPI DSIM driver and similar changes would need to be done in
-the MIPI CSIS driver.
+In V3: Used the existing API pm_genpd_dev_need_restore to add a feature to force
+	devices to perform restore/save during every power domain on/off
+	operation. This API is now removed.
+	Link (https://lkml.org/lkml/2014/12/13/74
 
-Instead I just added syscon support to the PHY layer, it's not perfect
-but fixes the issue for both DSI and CSI and  doesn't strip the PHY layer
-which could potentially be useful.
+In V2: Completely removed notfiers and add support for huge clock list to be
+	suspended and restored. There was some issue in this as some clocks are
+	not exposed and are just initialised by bootloaders. This approach
+	required all of them to be exposed which is cumbersome. Also some
+	clock API's set_parent are disabling the original parent clocks
+	which is not required.
+	Link (https://lkml.org/lkml/2014/11/24/290)
+
+In V1: Implemented PM Domain notfier such as PD_ON_PRE, PD_ON_POST
+	PD_OFF_PRE and PD_OFF_POST. This was not supported and other
+	options suggested. link (http://www.spinics.net/lists/linux-samsung-soc/msg38442.html)
+
+This work may also assist exynos iommu pm runtime posted earlier by Marek
+http://lists.linaro.org/pipermail/linaro-mm-sig/2014-August/004099.html
+
+Amit Daniel Kachhap (3):
+  PM / Runtime: Add an API pm_runtime_set_slave
+  PM / Domains: Save restore slave pm runtime devices
+  clk: samsung: Add PM runtime support for clocks.
+
+ drivers/base/power/domain.c  | 28 +++++++++++++
+ drivers/base/power/runtime.c | 18 +++++++++
+ drivers/clk/samsung/clk.c    | 93 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk.h    | 11 ++++++
+ include/linux/pm.h           |  1 +
+ include/linux/pm_runtime.h   |  2 +
+ 6 files changed, 153 insertions(+)
 
 -- 
-Thanks,
-Sylwester
+2.2.0
 
-[1] https://patchwork.ozlabs.org/patch/429948/
-    http://www.spinics.net/lists/linux-samsung-soc/msg41210.html
