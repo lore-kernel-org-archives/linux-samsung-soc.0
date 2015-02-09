@@ -1,43 +1,72 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH RFC v4 1/3] PM / Runtime: Add an API pm_runtime_set_slave
-Date: Mon, 9 Feb 2015 10:58:41 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1502091055460.20425-100000@netrider.rowland.org>
-References: <1423479726-23140-2-git-send-email-amit.daniel@samsung.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH -v2 10/14] drm/exynos: atomic phase 1: add
+ atomic_begin()/atomic_flush()
+Date: Mon, 9 Feb 2015 16:10:48 +0000
+Message-ID: <CAPj87rM-Ahw59k9Sc_BnfQQPCyEEQkvV6xhsMyW1S=N4LQWfiA@mail.gmail.com>
+References: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
+ <1423251478-17043-11-git-send-email-gustavo@padovan.org>
+ <54D8C9DE.5040103@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423479726-23140-2-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <54D8C9DE.5040103@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 9 Feb 2015, Amit Daniel Kachhap wrote:
-
-> This API creates a pm runtime slave type device which does not itself
-> participates in pm runtime but depends on the master devices to power
-> manage them.
-
-This makes no sense.  How can a master device manage a slave device?  
-Devices are managed by drivers, not by other devices.
-
->  These devices should have pm runtime callbacks.
-> 
-> These devices (like clock) may not implement complete pm_runtime calls
-> such as pm_runtime_get/pm_runtime_put due to subsystems interaction
-> behaviour or any other reason.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/base/power/runtime.c | 18 ++++++++++++++++++
->  include/linux/pm.h           |  1 +
->  include/linux/pm_runtime.h   |  2 ++
->  3 files changed, 21 insertions(+)
-
-This patch is unacceptable because it does not update the runtime PM 
-documentation file.
-
-Besides, doesn't the no_callbacks flag already do more or less what you 
-want?
-
-Alan Stern
+SGkgSW5raSwKCk9uIDkgRmVicnVhcnkgMjAxNSBhdCAxNDo1MywgSW5raSBEYWUgPGlua2kuZGFl
+QHNhbXN1bmcuY29tPiB3cm90ZToKPiBJJ20gbWVyZ2luZyB0aGlzIHBhdGNoIHNlcmllcyBidXQg
+SSBmb3VuZCB0d28gaXNzdWVzLiBPbmUgaXMgYWxyZWFkeQo+IHBvaW50ZWQgb3V0LgoKRmFudGFz
+dGljIC0gdGhhbmtzIGEgbG90IGZvciBkb2luZyB0aGlzIQoKPiBPbiAyMDE164WEIDAy7JuUIDA3
+7J28IDA0OjM3LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4+IEBAIC02MjgsMjAgKzYzOCw2IEBA
+IHN0YXRpYyB2b2lkIGZpbWRfd2luX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRj
+LCB1bnNpZ25lZCBpbnQgd2luKQo+PiAgICAgICAgICAgICAgIHJldHVybjsKPj4gICAgICAgfQo+
+Pgo+PiAtICAgICAvKgo+PiAtICAgICAgKiBTSEFET1dDT04vUFJUQ09OIHJlZ2lzdGVyIGlzIHVz
+ZWQgZm9yIGVuYWJsaW5nIHRpbWluZy4KPj4gLSAgICAgICoKPj4gLSAgICAgICogZm9yIGV4YW1w
+bGUsIG9uY2Ugb25seSB3aWR0aCB2YWx1ZSBvZiBhIHJlZ2lzdGVyIGlzIHNldCwKPj4gLSAgICAg
+ICogaWYgdGhlIGRtYSBpcyBzdGFydGVkIHRoZW4gZmltZCBoYXJkd2FyZSBjb3VsZCBtYWxmdW5j
+dGlvbiBzbwo+PiAtICAgICAgKiB3aXRoIHByb3RlY3Qgd2luZG93IHNldHRpbmcsIHRoZSByZWdp
+c3RlciBmaWVsZHMgd2l0aCBwcmVmaXggJ19GJwo+PiAtICAgICAgKiB3b3VsZG4ndCBiZSB1cGRh
+dGVkIGF0IHZzeW5jIGFsc28gYnV0IHVwZGF0ZWQgb25jZSB1bnByb3RlY3Qgd2luZG93Cj4+IC0g
+ICAgICAqIGlzIHNldC4KPj4gLSAgICAgICovCj4+IC0KPj4gLSAgICAgLyogcHJvdGVjdCB3aW5k
+b3dzICovCj4+IC0gICAgIGZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCB0cnVlKTsK
+Pgo+IFlvdSByZW1vdmVkIHRvIHByb3RlY3Qgc2hhZG93IHJlZ2lzdGVyIHVwZGF0aW5nIGF0IHZz
+eW5jIHNvIGZpbWQKPiBoYXJkd2FyZSBjb3VsZCBtYWxmdW5jdGlvbiBpZiBzZXRjcnRjL3BhZ2Ug
+ZmxpcC9zZXRwbGFuZSBhcmUgcmVxdWVzdGVkCj4gYnkgdXNlcnNwYWNlLiBBY3R1YWxseSwgd2hl
+biBJIHJ1biBtb2RldGVzdCByZXBlYXRlZGx5LCBJIGNvdWxkIHNlZQo+IG92ZXJsYXkgaXNuJ3Qg
+cmFyZWx5IHR1cm5lZCBvbi4KPgo+IFNvIGhvdyBhYm91dCBjYWxsaW5nIHdpbl9wcm90ZWN0L3Vu
+cHJvdGVjdCBjYWxsYmFja3MgbGlrZSBiZWxvdz8gSWYgeW91Cj4gYXJlIG9rLCBJIGNhbiBtb2Rp
+ZnkgaXQgYW5kIG1lcmdlIGl0LgoKSSB0aGluayB5b3UgYXJlIG1pc3Npbmcgc29tZSBkZXRhaWxz
+IGFib3V0IGF0b21pYyBhbmQgdGhlIGhlbHBlcnMuCgpUaGUgaGVscGVycyB3cmFwIF9hbGxfIGxl
+Z2FjeSBjb2RlcGF0aHMsIGUuZy4gU2V0Q3J0YywgU2V0UGxhbmUsIGV0Yy4KQWxsIG9mIHRoZXNl
+IG9wZXJhdGlvbnMgYXJlIGludGVyY2VwdGVkIGJ5IHRoZSBjb2RlIGluCmRybV9hdG9taWNfaGVs
+cGVyLmMgLyBkcm1fcGxhbmVfaGVscGVyLmMgY29kZSwgYW5kIHRoZSBsZWdhY3kKb3BlcmF0aW9u
+cyBhcmUgdHVybmVkIGludG8gYXRvbWljIG9wZXJhdGlvbnMuIEZvciB0aGUgZHJpdmVyIC0gdGhl
+cmUKYXJlIG5vIGxlZ2FjeSBvcGVyYXRpb25zLgoKVGhlIGF0b21pYyBoZWxwZXJzIGd1YXJhbnRl
+ZSB0aGF0IGF0b21pY19iZWdpbigpIHdpbGwgYmUgY2FsbGVkIGJlZm9yZQp0aGUgc3RhdGUgaXMg
+Y29tbWl0dGVkLCBhbmQgYXRvbWljX2ZsdXNoKCkgd2lsbCBiZSBjYWxsZWQgYWZ0ZXIgdGhlCnN0
+YXRlIGlzIGNvbW1pdHRlZC4gVGh1cyB0aGlzIGNoYW5nZSBpcyBjb21wbGV0ZWx5IHNhZmUuCgo+
+IFRoaXMgd2FybmluZyB3b3VsZCBtZWFuIGEgZmIgb2JqZWN0IGxlYWsgYW5kIHdoaWxlIEkgaGF2
+ZSBhIHJldmlldywgSQo+IGNvdWxkbid0IGZpbmQgd2h5IGl0IGNhdXNlcyB0aGUgbGVhay4KCkkn
+bSBub3QgcmVhbGx5IHN1cnByaXNlZDsgdGhlIGZiIHJlZmNvdW50aW5nIGluIEV4eW5vcyBoYXMg
+bG9uZyBoYWQKcXVpdGUgYSBmZXcgaXNzdWVzLiBUaGUgcmVmY291bnRpbmcgaXMgaW5jcmVkaWJs
+eSBkaWZmaWN1bHQgdG8gZ2V0CnJpZ2h0LCBhbmQgd2hpbHN0IGF0b21pYyBjaGFuZ2VzIHRoZSBv
+cmRlciBvZiBvcGVyYXRpb25zIGEgbGl0dGxlLCBpdAphbHNvIG1ha2VzIHRoZSBzZW1hbnRpY3Mg
+b2YgZmIvdmJsYW5rIHJlZmNvdW50aW5nIG11Y2ggbW9yZQpjb25zaXN0ZW50LCBzbyBpdCBzaG91
+bGQgYmUgbXVjaCBlYXNpZXIgdG8gZml4IHRoYW4gdXN1YWwuCgo+IEhvd2V2ZXIsIEknZCBsaWtl
+IHRvIG1lcmdlIHRoaXMgcGF0Y2ggc2VyaWVzIHRoaXMgdGltZSBhbmQgZml4IHRoaXMKPiBpc3N1
+ZSBhdCBSQyBmb3IgcGhhc2UgMy4KCkdyZWF0LCB0aGFua3lvdSEgUmVhbGx5IHZlcnkgaGFwcHkg
+YWJvdXQgdGhpcy4gOikKCkNoZWVycywKRGFuaWVsCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
