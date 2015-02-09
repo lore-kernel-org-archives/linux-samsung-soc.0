@@ -1,47 +1,95 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] exynos: pmu: use PS_HOLD based poweroff for all supported SoCs
-Date: Mon, 9 Feb 2015 11:58:57 +0100
-Message-ID: <CAJKOXPe4=DHsV3_axDUhpimRaqSHA3=HLiSJ1K3DYZoGRRiTTg@mail.gmail.com>
-References: <1423466741-11421-1-git-send-email-m.szyprowski@samsung.com>
-	<CAJKOXPeeUjcwO6qBdHA8DJaviPxRwjAsSe7ciyGDFOUoNhZvcQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH RFC v4 1/3] PM / Runtime: Add an API pm_runtime_set_slave
+Date: Mon, 09 Feb 2015 16:32:04 +0530
+Message-ID: <1423479726-23140-2-git-send-email-amit.daniel@samsung.com>
+References: <1423479726-23140-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f177.google.com ([209.85.220.177]:48430 "EHLO
-	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932339AbbBIK66 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:28952 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759973AbbBIK64 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Feb 2015 05:58:58 -0500
-Received: by mail-vc0-f177.google.com with SMTP id hy10so7104801vcb.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2015 02:58:57 -0800 (PST)
-In-Reply-To: <CAJKOXPeeUjcwO6qBdHA8DJaviPxRwjAsSe7ciyGDFOUoNhZvcQ@mail.gmail.com>
+	Mon, 9 Feb 2015 05:58:56 -0500
+In-reply-to: <1423479726-23140-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-2015-02-09 10:06 GMT+01:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> 2015-02-09 8:25 GMT+01:00 Marek Szyprowski <m.szyprowski@samsung.com>:
->> PS_HOLD based power off procedure is common for all Exynos SoCs, so use
->> it for every Exynos SoC.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  arch/arm/mach-exynos/pmu.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> I tried this on Trats2 board (Exynos 4412) and message "Power down
-> failed, please power off system manually." appears. Is it expected? Or
-> am I missing some patches (I applied this on top of next-20150129)?
+This API creates a pm runtime slave type device which does not itself
+participates in pm runtime but depends on the master devices to power
+manage them. These devices should have pm runtime callbacks.
 
-It was my fault (I left attached JIG cable which prevents power off).
-Now it works fine.
+These devices (like clock) may not implement complete pm_runtime calls
+such as pm_runtime_get/pm_runtime_put due to subsystems interaction
+behaviour or any other reason.
 
-Tested on Trats2 (Exynos4412):
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ drivers/base/power/runtime.c | 18 ++++++++++++++++++
+ include/linux/pm.h           |  1 +
+ include/linux/pm_runtime.h   |  2 ++
+ 3 files changed, 21 insertions(+)
 
-Patch also looks good, so:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 5070c4f..e247f08 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1252,6 +1252,24 @@ void pm_runtime_no_callbacks(struct device *dev)
+ EXPORT_SYMBOL_GPL(pm_runtime_no_callbacks);
+ 
+ /**
++ * pm_runtime_set_slave - Set these devices as slave.
++ * @dev: Device to handle.
++ *
++ * Set the power.slave flag, which tells the PM core that this device is
++ * power-managed by the master device through the runtime callbacks. Since it
++ * will not manage runtime callbacks on its own, so runtime sysfs attributes is
++ * removed.
++ */
++void pm_runtime_set_slave(struct device *dev)
++{
++	spin_lock_irq(&dev->power.lock);
++	dev->power.slave = true;
++	spin_unlock_irq(&dev->power.lock);
++	if (device_is_registered(dev))
++		rpm_sysfs_remove(dev);
++}
++
++/**
+  * pm_runtime_irq_safe - Leave interrupts disabled during callbacks.
+  * @dev: Device to handle
+  *
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index 8b59763..a4090ef 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -581,6 +581,7 @@ struct dev_pm_info {
+ 	unsigned int		use_autosuspend:1;
+ 	unsigned int		timer_autosuspends:1;
+ 	unsigned int		memalloc_noio:1;
++	unsigned int		slave:1;
+ 	enum rpm_request	request;
+ 	enum rpm_status		runtime_status;
+ 	int			runtime_error;
+diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+index 30e84d4..0707a4b 100644
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -47,6 +47,7 @@ extern void __pm_runtime_disable(struct device *dev, bool check_resume);
+ extern void pm_runtime_allow(struct device *dev);
+ extern void pm_runtime_forbid(struct device *dev);
+ extern void pm_runtime_no_callbacks(struct device *dev);
++extern void pm_runtime_set_slave(struct device *dev);
+ extern void pm_runtime_irq_safe(struct device *dev);
+ extern void __pm_runtime_use_autosuspend(struct device *dev, bool use);
+ extern void pm_runtime_set_autosuspend_delay(struct device *dev, int delay);
+@@ -168,6 +169,7 @@ static inline bool pm_runtime_suspended_if_enabled(struct device *dev) { return
+ static inline bool pm_runtime_enabled(struct device *dev) { return false; }
+ 
+ static inline void pm_runtime_no_callbacks(struct device *dev) {}
++static inline void pm_runtime_set_slave(struct device *dev) {}
+ static inline void pm_runtime_irq_safe(struct device *dev) {}
+ static inline bool pm_runtime_is_irq_safe(struct device *dev) { return false; }
+ 
+-- 
+2.2.0
