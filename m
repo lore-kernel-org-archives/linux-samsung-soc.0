@@ -1,48 +1,99 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] ARM: exynos: Fix wrong hwirq of RTC interrupt for Exynos3250
- SoC
-Date: Tue, 10 Feb 2015 12:09:05 +0900
-Message-ID: <1423537745-11994-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org
-Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH -v2 10/14] drm/exynos: atomic phase 1: add
+ atomic_begin()/atomic_flush()
+Date: Tue, 10 Feb 2015 12:13:13 +0900
+Message-ID: <54D97749.7000208@samsung.com>
+References: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
+ <1423251478-17043-11-git-send-email-gustavo@padovan.org>
+ <54D8C9DE.5040103@samsung.com>
+ <CAPj87rM-Ahw59k9Sc_BnfQQPCyEEQkvV6xhsMyW1S=N4LQWfiA@mail.gmail.com>
+ <20150209170737.GA1991@joana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150209170737.GA1991@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, Daniel Stone <daniel@fooishbar.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch fixes wrong hwirq of RTC irq for Exynos3250 SoC. When entering
-suspend state, 'enable_irq_wake fail' happen because of the mismatch of RTC hwirq.
-
-	[  429.200937] Freezing user space processes ... (elapsed 0.002 seconds) done.
-	[  429.203383] Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
-	[  429.209914] Suspending console(s) (use no_console_suspend to debug)
-	[  429.370685] wake enabled for irq 65
-	[  429.370837] wake enabled for irq 64
-	[  429.370868] wake enabled for irq 79
-	[snip]
-	[  429.372120] s3c-rtc 10070000.rtc: enable_irq_wake failed
-
-Fixes: a4f582f5c5fe3 (ARM: EXYNOS: Add exynos3250 suspend-to-ram support)
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/suspend.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index d6feef3..2b8bd67 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -92,8 +92,8 @@ static unsigned int exynos_pmu_spare3;
- static u32 exynos_irqwake_intmask = 0xffffffff;
- 
- static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
--	{ 73, BIT(1) }, /* RTC alarm */
--	{ 74, BIT(2) }, /* RTC tick */
-+	{ 105, BIT(1) }, /* RTC alarm */
-+	{ 106, BIT(2) }, /* RTC tick */
- 	{ /* sentinel */ },
- };
- 
--- 
-1.8.5.5
+T24gMjAxNeuFhCAwMuyblCAxMOydvCAwMjowNywgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IDIw
+MTUtMDItMDkgRGFuaWVsIFN0b25lIDxkYW5pZWxAZm9vaXNoYmFyLm9yZz46Cj4gCj4+IEhpIElu
+a2ksCj4+Cj4+IE9uIDkgRmVicnVhcnkgMjAxNSBhdCAxNDo1MywgSW5raSBEYWUgPGlua2kuZGFl
+QHNhbXN1bmcuY29tPiB3cm90ZToKPj4+IEknbSBtZXJnaW5nIHRoaXMgcGF0Y2ggc2VyaWVzIGJ1
+dCBJIGZvdW5kIHR3byBpc3N1ZXMuIE9uZSBpcyBhbHJlYWR5Cj4+PiBwb2ludGVkIG91dC4KPj4K
+Pj4gRmFudGFzdGljIC0gdGhhbmtzIGEgbG90IGZvciBkb2luZyB0aGlzIQo+Pgo+Pj4gT24gMjAx
+NeuFhCAwMuyblCAwN+ydvCAwNDozNywgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4+IEBAIC02
+MjgsMjAgKzYzOCw2IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2luX2NvbW1pdChzdHJ1Y3QgZXh5bm9z
+X2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQo+Pj4+ICAgICAgICAgICAgICAgcmV0
+dXJuOwo+Pj4+ICAgICAgIH0KPj4+Pgo+Pj4+IC0gICAgIC8qCj4+Pj4gLSAgICAgICogU0hBRE9X
+Q09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBlbmFibGluZyB0aW1pbmcuCj4+Pj4gLSAg
+ICAgICoKPj4+PiAtICAgICAgKiBmb3IgZXhhbXBsZSwgb25jZSBvbmx5IHdpZHRoIHZhbHVlIG9m
+IGEgcmVnaXN0ZXIgaXMgc2V0LAo+Pj4+IC0gICAgICAqIGlmIHRoZSBkbWEgaXMgc3RhcnRlZCB0
+aGVuIGZpbWQgaGFyZHdhcmUgY291bGQgbWFsZnVuY3Rpb24gc28KPj4+PiAtICAgICAgKiB3aXRo
+IHByb3RlY3Qgd2luZG93IHNldHRpbmcsIHRoZSByZWdpc3RlciBmaWVsZHMgd2l0aCBwcmVmaXgg
+J19GJwo+Pj4+IC0gICAgICAqIHdvdWxkbid0IGJlIHVwZGF0ZWQgYXQgdnN5bmMgYWxzbyBidXQg
+dXBkYXRlZCBvbmNlIHVucHJvdGVjdCB3aW5kb3cKPj4+PiAtICAgICAgKiBpcyBzZXQuCj4+Pj4g
+LSAgICAgICovCj4+Pj4gLQo+Pj4+IC0gICAgIC8qIHByb3RlY3Qgd2luZG93cyAqLwo+Pj4+IC0g
+ICAgIGZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwgd2luLCB0cnVlKTsKPj4+Cj4+PiBZb3Ug
+cmVtb3ZlZCB0byBwcm90ZWN0IHNoYWRvdyByZWdpc3RlciB1cGRhdGluZyBhdCB2c3luYyBzbyBm
+aW1kCj4+PiBoYXJkd2FyZSBjb3VsZCBtYWxmdW5jdGlvbiBpZiBzZXRjcnRjL3BhZ2UgZmxpcC9z
+ZXRwbGFuZSBhcmUgcmVxdWVzdGVkCj4+PiBieSB1c2Vyc3BhY2UuIEFjdHVhbGx5LCB3aGVuIEkg
+cnVuIG1vZGV0ZXN0IHJlcGVhdGVkbHksIEkgY291bGQgc2VlCj4+PiBvdmVybGF5IGlzbid0IHJh
+cmVseSB0dXJuZWQgb24uCj4+Pgo+Pj4gU28gaG93IGFib3V0IGNhbGxpbmcgd2luX3Byb3RlY3Qv
+dW5wcm90ZWN0IGNhbGxiYWNrcyBsaWtlIGJlbG93PyBJZiB5b3UKPj4+IGFyZSBvaywgSSBjYW4g
+bW9kaWZ5IGl0IGFuZCBtZXJnZSBpdC4KPj4KPj4gSSB0aGluayB5b3UgYXJlIG1pc3Npbmcgc29t
+ZSBkZXRhaWxzIGFib3V0IGF0b21pYyBhbmQgdGhlIGhlbHBlcnMuCj4+Cj4+IFRoZSBoZWxwZXJz
+IHdyYXAgX2FsbF8gbGVnYWN5IGNvZGVwYXRocywgZS5nLiBTZXRDcnRjLCBTZXRQbGFuZSwgZXRj
+Lgo+PiBBbGwgb2YgdGhlc2Ugb3BlcmF0aW9ucyBhcmUgaW50ZXJjZXB0ZWQgYnkgdGhlIGNvZGUg
+aW4KPj4gZHJtX2F0b21pY19oZWxwZXIuYyAvIGRybV9wbGFuZV9oZWxwZXIuYyBjb2RlLCBhbmQg
+dGhlIGxlZ2FjeQo+PiBvcGVyYXRpb25zIGFyZSB0dXJuZWQgaW50byBhdG9taWMgb3BlcmF0aW9u
+cy4gRm9yIHRoZSBkcml2ZXIgLSB0aGVyZQo+PiBhcmUgbm8gbGVnYWN5IG9wZXJhdGlvbnMuCgpZ
+ZXMsIFNldENydGMgZG9lcyB0aGlzIGJ1dCBub3QgcGFnZSBmbGlwIGFuZCBTZXRQbGFuZS4gV2hl
+biBJIGhhZCBwYWdlCmZsaXAgYW5kIFNldFBsYW5lIHRlc3QgdXNpbmcgbW9kZXRlc3QsIHdpbl9w
+cm90ZWN0L3VucHJvdGVjdCBjYWxsYmFja3MKYXJlIG5ldmVyIGNhbGxlZC4gSW4gbXkgb3Bpbmlv
+biwgdGhleSwgcGFnZSBmbGlwIGFuZCBTZXRQbGFuZSwgYWxzbyBhcmUKcmVxdWlyZWQgZm9yIHdp
+bl9wcm90ZWN0L3VucHJvdGVjdCB3aGVuIHVwZGF0aW5nIG92ZXJsYXkgcmVnaXN0ZXJzLgoKSW4g
+YWRkaXRpb24sIEkgY291bGQgZmluZCBzb21lIGlzc3Vlcy4KCldpdGggcmVnYXJkIHRvIFNldFBs
+YW5lIHJlbGV2ZW50IGNvZGVzLCBpdCBzZWVtcyBjb25zaWRlcmVkIGZvcgp3aW5fcHJvdGVjdC91
+bnByb3RlY3QgYnV0IGFjdHVhbGx5LCB0aGV5IGFyZSBuZXZlciBjYWxsZWQgYmVjYXVzZSB3aGVu
+CmF0b21pY19jaGVjayBjYWxsYmFjayBpcyBjYWxsZWQsIHBsYW5lLT5jcnRjIGlzIE5VTEwgd2hp
+Y2ggd291bGQgYmUgc2V0CiBhdCBleHlub3NfcGxhbmVfbW9kZV9zZXQgZnVuY3Rpb24uIEhvd2V2
+ZXIsIGV4eW5vc19wbGFuZV9tb2RlX3NldApmdW5jdGlvbiBpcyBjYWxsZWQgbGF0ZXIgdGhhbiBh
+dG9taWNfY2hlY2sgY2FsbGJhY2suCgpPbmUgbW9yZSB0aGluZywgaXQgc2VlbXMgeW91ciBiZWxv
+dyBwYXRjaCBtYWtlcyBwb3NzaWJsZV9jcnRjIG9mIGVhY2gKY3J0YyBkcml2ZXIgaGF2ZSB3cm9u
+ZyB2YWx1ZSBiZWNhdXNlIHRoaXMgcGF0Y2ggY2FsbHMgZXh5bm9zX3BsYW5lX2luaXQKZnVuY3Rp
+b24gYmVmb3JlIGZpbWRfY3R4X2luaXRpYWxpemUgYW5kIHZpZGlfY3R4X2luaXRpYWxpemUgZnVu
+Y3Rpb25zCmFyZSBjYWxsZWQuCgogY29tbWl0IGZiYTZmZTEyOWVmZGEzMzZmODRjZjA1ZDYxYzE1
+MmVlNDVkNGQ5YjUKQXV0aG9yOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xs
+YWJvcmEuY28udWs+CkRhdGU6ICAgRnJpIEZlYiA2IDE3OjM3OjQ2IDIwMTUgLTAyMDAKCiAgICBk
+cm0vZXh5bm9zOiByZW1vdmUgc3RydWN0ICpfd2luX2RhdGEgYWJzdHJhY3Rpb24gb24gcGxhbmVz
+CgpJIHdhbnRlZCB0byBtZXJnZSB0aGlzIHBhdGNoIHNlcmllcyB0aGlzIHRpbWUgYnV0IGl0IHNl
+ZW1zIHRoYXQgd2UgaGF2ZQp0byByZXZpZXcgbW9yZSB0aGVtLiBVbmZvcnR1bmF0ZWx5LCBub3cg
+bWVyZ2Ugd2luZG93IGFuZCB3ZSBoYXZlIG5vIG11Y2gKdGltZSB0byByZXZpZXcgdGhlbS4gU28g
+aG93IGFib3V0IG1lcmdpbmcgdGhpcyBwYXRjaCBzZXJpZXMgbmV4dCB0aW1lCmFmdGVyIHJldmll
+d3MgZW5vdWdoPyBZb3VyIHBhdGNoIHNlcmllcyBpcyBncmVhdCBhbmQgdGhhbmtzIGZvciB5b3Vy
+CmNvbnRyaWJ1dGlvbi4gQnV0IGFzIG9mIG5vdywgSSdtIG5vdCBzdXJlIHRoYXQgdGhpcyBwYXRj
+aCBzZXJpZXMgaXMgc2FmZQphbmQgd291bGQgd29yayB3ZWxsLgoKVGhhbmtzLApJbmtpIERhZQoK
+Pj4KPj4gVGhlIGF0b21pYyBoZWxwZXJzIGd1YXJhbnRlZSB0aGF0IGF0b21pY19iZWdpbigpIHdp
+bGwgYmUgY2FsbGVkIGJlZm9yZQo+PiB0aGUgc3RhdGUgaXMgY29tbWl0dGVkLCBhbmQgYXRvbWlj
+X2ZsdXNoKCkgd2lsbCBiZSBjYWxsZWQgYWZ0ZXIgdGhlCj4+IHN0YXRlIGlzIGNvbW1pdHRlZC4g
+VGh1cyB0aGlzIGNoYW5nZSBpcyBjb21wbGV0ZWx5IHNhZmUuCj4gCj4gRXhhY3RseSwgd2hlbiBw
+aGFzZSAzIGlzIG1lcmdlZCB5b3Ugd29uJ3Qgc2VlIGFueSBvZiB0aGVzZSBpc3N1ZXMuIEkgaGF2
+ZQo+IHBhdGNoZXMgcmVhZHkgZm9yIG1vc3QgcGFydCBvZiBwaGFzZSAzLiBFeHBlY3QgdGhlbSBz
+b29uIGluIHRoZSBtYWlsaW5nIGxpc3QuCj4gCj4gCUd1c3Rhdm8KPiAtLQo+IFRvIHVuc3Vic2Ny
+aWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1z
+dW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2Vy
+bmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcv
+bWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
