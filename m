@@ -1,59 +1,77 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Tue, 10 Feb 2015 12:10:58 +0100
-Message-ID: <CAJKOXPfyPH7tyce6YB=q4krSP078aJVAmqObg89qCnLrL_Nbhg@mail.gmail.com>
-References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
-	<CAMAWPa9fUJVjJ8V+93AkHy9DtEmUUnGs4MJDGcsoMdWwGmg5qg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ARM: dts: Use more descriptive names for Exynos5420 PDs
+Date: Tue, 10 Feb 2015 12:46:06 +0100
+Message-ID: <CAJKOXPepTJYYs6gR6NLQzsJndeRLgF+KHRpH9qt9noUgRBs2Dw@mail.gmail.com>
+References: <1423244258-24314-1-git-send-email-javier.martinez@collabora.co.uk>
+	<54D51170.10903@cogentembedded.com>
+	<54D52905.6040100@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:42129 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751746AbbBJLK7 (ORCPT
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:42282 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752674AbbBJLqH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Feb 2015 06:10:59 -0500
-In-Reply-To: <CAMAWPa9fUJVjJ8V+93AkHy9DtEmUUnGs4MJDGcsoMdWwGmg5qg@mail.gmail.com>
+	Tue, 10 Feb 2015 06:46:07 -0500
+In-Reply-To: <54D52905.6040100@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-2015-01-08 22:17 GMT+01:00 Kevin Hilman <khilman@kernel.org>:
-> On Fri, Nov 21, 2014 at 5:31 AM, Thomas Abraham <thomas.ab@samsung.com> wrote:
->> Changes since v11:
->> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
->>
->> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->> drivers and enables the use of cpufreq-dt driver for these platforms. This
->> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
->> driver.
->>
->> This series is based on the following branch.
->> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
->>
->> This series depends on the following patch which can be picked from
->> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
->> e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
->>
->> This patch series has been tested on Exynos4210/5250/5420 based boards.
->> Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
->> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
->> Sylwester, could you consider to merge this in your tree?
+2015-02-06 21:50 GMT+01:00 Javier Martinez Canillas
+<javier.martinez@collabora.co.uk>:
+> Hello Sergei,
 >
-> CPUfreq for exynos is still not upstream.  What's the status of this
-> series?  It's been ver a month since there's been any activity here
-> (or any responses to the issues I reported.)
+> Thanks a lot for your feedback.
 >
-> On a related note, this series only does frequency scaling. Is there
-> any work going on to also enable voltage scaling for the CPU rails as
-> well?
+> On 02/06/2015 08:09 PM, Sergei Shtylyov wrote:
+>> Hello.
+>>
+>> On 02/06/2015 08:37 PM, Javier Martinez Canillas wrote:
+>>
+>>> All the device nodes for the Exynos5420 power-domains have a quite
+>>> generic "power-domain" name.
+>>
+>>     And this is in conformance to the ePAPR standard.
+>>
+>
+> True, I forgot that the ePAPR recommends that the node names should be
+> somewhat generic but OTOH this is the only Exynos DTSI file that follows
+> the standard for the power domain device nodes. All other Exynos DTSI
+> use a prefix to differentiate between each power domain.
+>
+>>> So in case of an error, the Exynos PD
+>>> driver shows the following (not very useful) message:
+>>
+>>> "Power domain power-domain disable failed"
+>>
+>>     Why not fix the message instead to use the full device name?
+>>
+>
+> Well, the full node name is also not very useful IMHO since you have
+> to check the DTSI or SoC manual to map the device node unit-address to
+> the corresponding power domain.
+>
+> I used $subject when debugging an HDMI issue and instead of dropping
+> it, I just posted it in case someone considered useful. I don't really
+> mind if the patch is nacked / not picked.
 
-Hi Thomas,
+Additionally (on Arndale Octa):
 
-Do you plan to continue with this work? It would be very helpful.
+$ cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+    domain                      status         slaves
+           /device                                      runtime status
+----------------------------------------------------------------------
+power-domain                    on
+    /devices/platform/amba/3880000.adma                 suspended
+power-domain                    off
+power-domain                    off
+power-domain                    off
+power-domain                    off
+power-domain                    off
 
-I also wonder if Exynos 4412 could be re-added (without the boost if
-these bindings are not ready)?
-
-Best regards,
-Krzysztof
+This really is not helpful. From the power domain debugfs code it is
+complicated to extract of_node of power domain. It is easier to print
+the name of power domain. But wait... all names are the same! :) So
+why do we have the name in the first place?
