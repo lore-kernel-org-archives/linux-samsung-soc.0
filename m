@@ -1,87 +1,49 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] ARM: dts: Use more descriptive names for Exynos5420
- PDs
-Date: Tue, 10 Feb 2015 13:46:12 +0100
-Message-ID: <54D9FD94.9000102@collabora.co.uk>
-References: <1423244258-24314-1-git-send-email-javier.martinez@collabora.co.uk> <54D51170.10903@cogentembedded.com> <54D52905.6040100@collabora.co.uk> <CAJKOXPepTJYYs6gR6NLQzsJndeRLgF+KHRpH9qt9noUgRBs2Dw@mail.gmail.com> <54D9F1A4.1000908@cogentembedded.com> <1423570670.6241.2.camel@AMDC1943> <54D9F7B1.3030106@cogentembedded.com> <1423571438.6241.4.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Use platform device name as power domain name
+Date: Tue, 10 Feb 2015 13:57:15 +0100
+Message-ID: <1423573035-21960-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42640 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752354AbbBJMqU (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38399 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752927AbbBJM5Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Feb 2015 07:46:20 -0500
-In-Reply-To: <1423571438.6241.4.camel@AMDC1943>
+	Tue, 10 Feb 2015 07:57:24 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello,
+The power domain nodes in DTS may be very generic (e.g. "power-domain"
+for Exynos 5420) making it very hard to debug:
 
-On 02/10/2015 01:30 PM, Krzysztof Kozlowski wrote:
-> On wto, 2015-02-10 at 15:21 +0300, Sergei Shtylyov wrote:
->> On 2/10/2015 3:17 PM, Krzysztof Kozlowski wrote:
->> 
->> >>> Additionally (on Arndale Octa):
->> 
->> >>> $ cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->> >>>       domain                      status         slaves
->> >>>              /device                                      runtime status
->> >>> ----------------------------------------------------------------------
->> >>> power-domain                    on
->> >>>       /devices/platform/amba/3880000.adma                 suspended
->> >>> power-domain                    off
->> >>> power-domain                    off
->> >>> power-domain                    off
->> >>> power-domain                    off
->> >>> power-domain                    off
->> 
->> >>> This really is not helpful. From the power domain debugfs code it is
->> >>> complicated to extract of_node of power domain.
->>
+$ cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+    domain                      status         slaves
+power-domain                    on
 
-Not very useful indeed.
+Use platform device name instead so the names will be a little more user
+friendly:
+    domain                      status         slaves
+100440e0.power-domain           on
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+ arch/arm/mach-exynos/pm_domains.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 20f267121b3e..37642ea97d23 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -125,7 +125,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 			return -ENOMEM;
+ 		}
  
->> >>      You shouldn't need it.
->> 
->> >>> It is easier to print
->> >>> the name of power domain. But wait... all names are the same! :) So
->> >>> why do we have the name in the first place?
->> 
->> >>      I'm not sure why the full platform device names aren't printed -- they
->> >> should all be different.
->> 
-
-Yes, but like I said in a previous email the fact that are different doesn't
-necessarily mean that they will be helpful for debugging purposes.
-
->> > This debugfs code iterates over list of generic_pm_domains (gpd_list). I
->> > cannot find function for translating from genpd to its platform device
->> > so only genpd->name can be printed.
->> 
->>     Then why power domains aren't just named with the platform device names?
-> 
-> Right, the mach-exynos/pm_domains.c set the name equal to OF node name.
-> I'll send a patch extending the name.
->
-
-IIRC the OF core uses the device node unit address and node name to create
-the platform device names so you will have something like 10044000.power-domain.
-
-Same if using the node full_name since it will /power-domain@10044000. In both
-cases the DTS should have to be checked to know which power domain really is
-unless someone knows by heart the power domains addresses.
-
-But if using generic names for the power domains as suggested by ePAPR is so
-important then we should change all the other Exynos DTS files which don't do.
- 
-> Best regards,
-> Krzysztof
-> 
-> 
-
-Best regards,
-Javier
+-		pd->pd.name = kstrdup(np->name, GFP_KERNEL);
++		pd->pd.name = kstrdup(dev_name(dev), GFP_KERNEL);
+ 		pd->name = pd->pd.name;
+ 		pd->base = of_iomap(np, 0);
+ 		pd->pd.power_off = exynos_pd_power_off;
+-- 
+1.9.1
