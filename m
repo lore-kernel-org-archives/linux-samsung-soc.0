@@ -1,64 +1,86 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: dts: Use more descriptive names for Exynos5420 PDs
-Date: Tue, 10 Feb 2015 13:30:38 +0100
-Message-ID: <1423571438.6241.4.camel@AMDC1943>
-References: <1423244258-24314-1-git-send-email-javier.martinez@collabora.co.uk>
- <54D51170.10903@cogentembedded.com> <54D52905.6040100@collabora.co.uk>
- <CAJKOXPepTJYYs6gR6NLQzsJndeRLgF+KHRpH9qt9noUgRBs2Dw@mail.gmail.com>
- <54D9F1A4.1000908@cogentembedded.com> <1423570670.6241.2.camel@AMDC1943>
- <54D9F7B1.3030106@cogentembedded.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH -v2 10/14] drm/exynos: atomic phase 1: add
+ atomic_begin()/atomic_flush()
+Date: Tue, 10 Feb 2015 10:43:08 -0200
+Message-ID: <20150210124308.GB1991@joana>
+References: <1423251478-17043-1-git-send-email-gustavo@padovan.org>
+ <1423251478-17043-11-git-send-email-gustavo@padovan.org>
+ <54D8C9DE.5040103@samsung.com>
+ <CAPj87rM-Ahw59k9Sc_BnfQQPCyEEQkvV6xhsMyW1S=N4LQWfiA@mail.gmail.com>
+ <20150209170737.GA1991@joana> <54D97749.7000208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36837 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752310AbbBJMal (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Feb 2015 07:30:41 -0500
-In-reply-to: <54D9F7B1.3030106@cogentembedded.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <54D97749.7000208@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On wto, 2015-02-10 at 15:21 +0300, Sergei Shtylyov wrote:
-> On 2/10/2015 3:17 PM, Krzysztof Kozlowski wrote:
-> 
-> >>> Additionally (on Arndale Octa):
-> 
-> >>> $ cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-> >>>       domain                      status         slaves
-> >>>              /device                                      runtime status
-> >>> ----------------------------------------------------------------------
-> >>> power-domain                    on
-> >>>       /devices/platform/amba/3880000.adma                 suspended
-> >>> power-domain                    off
-> >>> power-domain                    off
-> >>> power-domain                    off
-> >>> power-domain                    off
-> >>> power-domain                    off
-> 
-> >>> This really is not helpful. From the power domain debugfs code it is
-> >>> complicated to extract of_node of power domain.
-> 
-> >>      You shouldn't need it.
-> 
-> >>> It is easier to print
-> >>> the name of power domain. But wait... all names are the same! :) So
-> >>> why do we have the name in the first place?
-> 
-> >>      I'm not sure why the full platform device names aren't printed -- they
-> >> should all be different.
-> 
-> > This debugfs code iterates over list of generic_pm_domains (gpd_list). I
-> > cannot find function for translating from genpd to its platform device
-> > so only genpd->name can be printed.
-> 
->     Then why power domains aren't just named with the platform device names?
-
-Right, the mach-exynos/pm_domains.c set the name equal to OF node name.
-I'll send a patch extending the name.
-
-Best regards,
-Krzysztof
+MjAxNS0wMi0xMCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE164WE
+IDAy7JuUIDEw7J28IDAyOjA3LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiAyMDE1LTAyLTA5
+IERhbmllbCBTdG9uZSA8ZGFuaWVsQGZvb2lzaGJhci5vcmc+Ogo+ID4gCj4gPj4gSGkgSW5raSwK
+PiA+Pgo+ID4+IE9uIDkgRmVicnVhcnkgMjAxNSBhdCAxNDo1MywgSW5raSBEYWUgPGlua2kuZGFl
+QHNhbXN1bmcuY29tPiB3cm90ZToKPiA+Pj4gSSdtIG1lcmdpbmcgdGhpcyBwYXRjaCBzZXJpZXMg
+YnV0IEkgZm91bmQgdHdvIGlzc3Vlcy4gT25lIGlzIGFscmVhZHkKPiA+Pj4gcG9pbnRlZCBvdXQu
+Cj4gPj4KPiA+PiBGYW50YXN0aWMgLSB0aGFua3MgYSBsb3QgZm9yIGRvaW5nIHRoaXMhCj4gPj4K
+PiA+Pj4gT24gMjAxNeuFhCAwMuyblCAwN+ydvCAwNDozNywgR3VzdGF2byBQYWRvdmFuIHdyb3Rl
+Ogo+ID4+Pj4gQEAgLTYyOCwyMCArNjM4LDYgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fY29tbWl0
+KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGludCB3aW4pCj4gPj4+PiAg
+ICAgICAgICAgICAgIHJldHVybjsKPiA+Pj4+ICAgICAgIH0KPiA+Pj4+Cj4gPj4+PiAtICAgICAv
+Kgo+ID4+Pj4gLSAgICAgICogU0hBRE9XQ09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBl
+bmFibGluZyB0aW1pbmcuCj4gPj4+PiAtICAgICAgKgo+ID4+Pj4gLSAgICAgICogZm9yIGV4YW1w
+bGUsIG9uY2Ugb25seSB3aWR0aCB2YWx1ZSBvZiBhIHJlZ2lzdGVyIGlzIHNldCwKPiA+Pj4+IC0g
+ICAgICAqIGlmIHRoZSBkbWEgaXMgc3RhcnRlZCB0aGVuIGZpbWQgaGFyZHdhcmUgY291bGQgbWFs
+ZnVuY3Rpb24gc28KPiA+Pj4+IC0gICAgICAqIHdpdGggcHJvdGVjdCB3aW5kb3cgc2V0dGluZywg
+dGhlIHJlZ2lzdGVyIGZpZWxkcyB3aXRoIHByZWZpeCAnX0YnCj4gPj4+PiAtICAgICAgKiB3b3Vs
+ZG4ndCBiZSB1cGRhdGVkIGF0IHZzeW5jIGFsc28gYnV0IHVwZGF0ZWQgb25jZSB1bnByb3RlY3Qg
+d2luZG93Cj4gPj4+PiAtICAgICAgKiBpcyBzZXQuCj4gPj4+PiAtICAgICAgKi8KPiA+Pj4+IC0K
+PiA+Pj4+IC0gICAgIC8qIHByb3RlY3Qgd2luZG93cyAqLwo+ID4+Pj4gLSAgICAgZmltZF9zaGFk
+b3dfcHJvdGVjdF93aW4oY3R4LCB3aW4sIHRydWUpOwo+ID4+Pgo+ID4+PiBZb3UgcmVtb3ZlZCB0
+byBwcm90ZWN0IHNoYWRvdyByZWdpc3RlciB1cGRhdGluZyBhdCB2c3luYyBzbyBmaW1kCj4gPj4+
+IGhhcmR3YXJlIGNvdWxkIG1hbGZ1bmN0aW9uIGlmIHNldGNydGMvcGFnZSBmbGlwL3NldHBsYW5l
+IGFyZSByZXF1ZXN0ZWQKPiA+Pj4gYnkgdXNlcnNwYWNlLiBBY3R1YWxseSwgd2hlbiBJIHJ1biBt
+b2RldGVzdCByZXBlYXRlZGx5LCBJIGNvdWxkIHNlZQo+ID4+PiBvdmVybGF5IGlzbid0IHJhcmVs
+eSB0dXJuZWQgb24uCj4gPj4+Cj4gPj4+IFNvIGhvdyBhYm91dCBjYWxsaW5nIHdpbl9wcm90ZWN0
+L3VucHJvdGVjdCBjYWxsYmFja3MgbGlrZSBiZWxvdz8gSWYgeW91Cj4gPj4+IGFyZSBvaywgSSBj
+YW4gbW9kaWZ5IGl0IGFuZCBtZXJnZSBpdC4KPiA+Pgo+ID4+IEkgdGhpbmsgeW91IGFyZSBtaXNz
+aW5nIHNvbWUgZGV0YWlscyBhYm91dCBhdG9taWMgYW5kIHRoZSBoZWxwZXJzLgo+ID4+Cj4gPj4g
+VGhlIGhlbHBlcnMgd3JhcCBfYWxsXyBsZWdhY3kgY29kZXBhdGhzLCBlLmcuIFNldENydGMsIFNl
+dFBsYW5lLCBldGMuCj4gPj4gQWxsIG9mIHRoZXNlIG9wZXJhdGlvbnMgYXJlIGludGVyY2VwdGVk
+IGJ5IHRoZSBjb2RlIGluCj4gPj4gZHJtX2F0b21pY19oZWxwZXIuYyAvIGRybV9wbGFuZV9oZWxw
+ZXIuYyBjb2RlLCBhbmQgdGhlIGxlZ2FjeQo+ID4+IG9wZXJhdGlvbnMgYXJlIHR1cm5lZCBpbnRv
+IGF0b21pYyBvcGVyYXRpb25zLiBGb3IgdGhlIGRyaXZlciAtIHRoZXJlCj4gPj4gYXJlIG5vIGxl
+Z2FjeSBvcGVyYXRpb25zLgo+IAo+IFllcywgU2V0Q3J0YyBkb2VzIHRoaXMgYnV0IG5vdCBwYWdl
+IGZsaXAgYW5kIFNldFBsYW5lLiBXaGVuIEkgaGFkIHBhZ2UKPiBmbGlwIGFuZCBTZXRQbGFuZSB0
+ZXN0IHVzaW5nIG1vZGV0ZXN0LCB3aW5fcHJvdGVjdC91bnByb3RlY3QgY2FsbGJhY2tzCj4gYXJl
+IG5ldmVyIGNhbGxlZC4gSW4gbXkgb3BpbmlvbiwgdGhleSwgcGFnZSBmbGlwIGFuZCBTZXRQbGFu
+ZSwgYWxzbyBhcmUKPiByZXF1aXJlZCBmb3Igd2luX3Byb3RlY3QvdW5wcm90ZWN0IHdoZW4gdXBk
+YXRpbmcgb3ZlcmxheSByZWdpc3RlcnMuCgpPbmNlIGF0b21pYyBwaGFzZSAzIGFsbCBvcGVyYXRp
+b25zIHdpbGwgY2FsbCB3aW5fcHJvdGVjdC93aW5fdW5wcm90ZWN0LiBJJ2xsCnNlbmQgdGhlIG5l
+eHQgdmVyc2lvbiBvZiB0aGlzIHBhdGNoc2V0IHdpdGggdGhlIGF0b21pYyBwaGFzZSAzIHBhdGNo
+ZXMKaW5jbHVkZWQuCgo+IAo+IEluIGFkZGl0aW9uLCBJIGNvdWxkIGZpbmQgc29tZSBpc3N1ZXMu
+Cj4gCj4gV2l0aCByZWdhcmQgdG8gU2V0UGxhbmUgcmVsZXZlbnQgY29kZXMsIGl0IHNlZW1zIGNv
+bnNpZGVyZWQgZm9yCj4gd2luX3Byb3RlY3QvdW5wcm90ZWN0IGJ1dCBhY3R1YWxseSwgdGhleSBh
+cmUgbmV2ZXIgY2FsbGVkIGJlY2F1c2Ugd2hlbgo+IGF0b21pY19jaGVjayBjYWxsYmFjayBpcyBj
+YWxsZWQsIHBsYW5lLT5jcnRjIGlzIE5VTEwgd2hpY2ggd291bGQgYmUgc2V0Cj4gIGF0IGV4eW5v
+c19wbGFuZV9tb2RlX3NldCBmdW5jdGlvbi4gSG93ZXZlciwgZXh5bm9zX3BsYW5lX21vZGVfc2V0
+Cj4gZnVuY3Rpb24gaXMgY2FsbGVkIGxhdGVyIHRoYW4gYXRvbWljX2NoZWNrIGNhbGxiYWNrLgo+
+IAo+IE9uZSBtb3JlIHRoaW5nLCBpdCBzZWVtcyB5b3VyIGJlbG93IHBhdGNoIG1ha2VzIHBvc3Np
+YmxlX2NydGMgb2YgZWFjaAo+IGNydGMgZHJpdmVyIGhhdmUgd3JvbmcgdmFsdWUgYmVjYXVzZSB0
+aGlzIHBhdGNoIGNhbGxzIGV4eW5vc19wbGFuZV9pbml0Cj4gZnVuY3Rpb24gYmVmb3JlIGZpbWRf
+Y3R4X2luaXRpYWxpemUgYW5kIHZpZGlfY3R4X2luaXRpYWxpemUgZnVuY3Rpb25zCj4gYXJlIGNh
+bGxlZC4KClN1cmUsIEkgY2FuIGZpeCB0aGlzLiBUaGFua3MgZm9yIHlvdXIgcmV2aWV3LgoKCUd1
+c3Rhdm8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
