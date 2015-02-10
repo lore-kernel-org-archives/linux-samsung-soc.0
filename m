@@ -1,70 +1,39 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: Fix wrong hwirq of RTC interrupt for
- Exynos3250 SoC
-Date: Tue, 10 Feb 2015 09:05:07 +0100
-Message-ID: <CAJKOXPcaOVC5Rpoi+27Letk4sAuoaW6vheZnCPHJgPktA-RM4g@mail.gmail.com>
-References: <1423537745-11994-1-git-send-email-cw00.choi@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] PM / devfreq: event: testing the wrong variable
+Date: Tue, 10 Feb 2015 13:35:47 +0300
+Message-ID: <20150210103547.GA18481@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423537745-11994-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:38602 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932181AbbBJKfY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Feb 2015 05:35:24 -0500
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2015-02-10 4:09 GMT+01:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> This patch fixes wrong hwirq of RTC irq for Exynos3250 SoC. When entering
-> suspend state, 'enable_irq_wake fail' happen because of the mismatch of RTC hwirq.
->
->         [ 429.200937] Freezing user space processes ... (elapsed 0.002 seconds) done.
->         [ 429.203383] Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->         [ 429.209914] Suspending console(s) (use no_console_suspend to debug)
->         [ 429.370685] wake enabled for irq 65
->         [ 429.370837] wake enabled for irq 64
->         [ 429.370868] wake enabled for irq 79
->         [snip]
->         [  429.372120] s3c-rtc 10070000.rtc: enable_irq_wake failed
->
-> Fixes: a4f582f5c5fe3 (ARM: EXYNOS: Add exynos3250 suspend-to-ram support)
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/suspend.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+There is a typo here so we test "edev" but we intended to test
+"edev[i]".
 
-Yeah, I remember now Jonghwa's patches back in 2014 August and September :)
-https://lkml.org/lkml/2014/8/26/40
-https://lkml.org/lkml/2014/9/26/92
+Fixes: f262f28c1470 ('PM / devfreq: event: Add devfreq_event class')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Anyway now this looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
->
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index d6feef3..2b8bd67 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -92,8 +92,8 @@ static unsigned int exynos_pmu_spare3;
->  static u32 exynos_irqwake_intmask = 0xffffffff;
->
->  static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
-> -       { 73, BIT(1) }, /* RTC alarm */
-> -       { 74, BIT(2) }, /* RTC tick */
-> +       { 105, BIT(1) }, /* RTC alarm */
-> +       { 106, BIT(2) }, /* RTC tick */
->         { /* sentinel */ },
->  };
->
-> --
-> 1.8.5.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index 135be0a..ad83473 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -327,8 +327,8 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < info->num_events; i++) {
+ 		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
+-		if (IS_ERR(edev)) {
+-			ret = PTR_ERR(edev);
++		if (IS_ERR(edev[i])) {
++			ret = PTR_ERR(edev[i]);
+ 			dev_err(&pdev->dev,
+ 				"failed to add devfreq-event device\n");
+ 			goto err;
