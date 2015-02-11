@@ -1,1577 +1,1098 @@
-From: Ajay kumar <ajaynumb@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH V4] drm/exynos: Add DECON driver
-Date: Wed, 11 Feb 2015 16:13:00 +0530
-Message-ID: <CAEC9eQOWOs_hVSE7QDkVjiYTFOfD5PRNEvsGZyqO97bs4ANYNA@mail.gmail.com>
+Date: Wed, 11 Feb 2015 20:34:35 +0900
+Message-ID: <54DB3E4B.7000701@samsung.com>
 References: <1423151644-30189-1-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQOWOs_hVSE7QDkVjiYTFOfD5PRNEvsGZyqO97bs4ANYNA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:51154 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075AbbBKKnC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Feb 2015 05:43:02 -0500
-In-Reply-To: <1423151644-30189-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAEC9eQOWOs_hVSE7QDkVjiYTFOfD5PRNEvsGZyqO97bs4ANYNA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Akshu Agrawal <akshua@gmail.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Akshu Agrawal <akshua@gmail.com>
 
-ping.
-
-On Thu, Feb 5, 2015 at 9:24 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> This patch is based on exynos-drm-next branch of Inki Dae's tree at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->
-> DECON(Display and Enhancement Controller) is the new IP
-> in exynos7 SOC for generating video signals using pixel data.
->
-> DECON driver can be used to drive 2 different interfaces on Exynos7:
-> DECON-INT(video controller) and DECON-EXT(Mixer for HDMI)
->
-> The existing FIMD driver code was used as a template to create
-> DECON driver. Only DECON-INT is supported as of now, and
-> DECON-EXT support will be added later.
->
-> The current version of the driver supports video mode displays.
->
-> Signed-off-by: Akshu Agrawal <akshua@gmail.com>
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
-> Changes since V1:
->         -- Address comments from Pankaj and do few cleanups.
-> Changes since V2:
->         -- Address more comments from Pankaj and cleanup.
-> Changes since V3:
->         -- Rebase on exynos-drm-next. Pull in changes from
->            FIMD driver.
->         -- Address comments from Inki Dae. Remove unnecessary
->            functions and delays. Make use of i80-if-timings
->            node to differentiate between command/video mode.
->
->  .../devicetree/bindings/video/exynos7-decon.txt    |   68 ++
->  drivers/gpu/drm/exynos/Kconfig                     |   13 +-
->  drivers/gpu/drm/exynos/Makefile                    |    1 +
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c         |  991 ++++++++++++++++++++
->  drivers/gpu/drm/exynos/exynos_drm_drv.c            |    4 +
->  drivers/gpu/drm/exynos/exynos_drm_drv.h            |    1 +
->  include/video/exynos7_decon.h                      |  349 +++++++
->  7 files changed, 1424 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/video/exynos7-decon.txt
->  create mode 100644 drivers/gpu/drm/exynos/exynos7_drm_decon.c
->  create mode 100644 include/video/exynos7_decon.h
->
-> diff --git a/Documentation/devicetree/bindings/video/exynos7-decon.txt b/Documentation/devicetree/bindings/video/exynos7-decon.txt
-> new file mode 100644
-> index 0000000..f5f9c8d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/video/exynos7-decon.txt
-> @@ -0,0 +1,68 @@
-> +Device-Tree bindings for Samsung Exynos7 SoC display controller (DECON)
-> +
-> +DECON (Display and Enhancement Controller) is the Display Controller for the
-> +Exynos7 series of SoCs which transfers the image data from a video memory
-> +buffer to an external LCD interface.
-> +
-> +Required properties:
-> +- compatible: value should be "samsung,exynos7-decon";
-> +
-> +- reg: physical base address and length of the DECON registers set.
-> +
-> +- interrupt-parent: should be the phandle of the decon controller's
-> +               parent interrupt controller.
-> +
-> +- interrupts: should contain a list of all DECON IP block interrupts in the
-> +                order: FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier
-> +                format depends on the interrupt controller used.
-> +
-> +- interrupt-names: should contain the interrupt names: "fifo", "vsync",
-> +       "lcd_sys", in the same order as they were listed in the interrupts
-> +        property.
-> +
-> +- pinctrl-0: pin control group to be used for this controller.
-> +
-> +- pinctrl-names: must contain a "default" entry.
-> +
-> +- clocks: must include clock specifiers corresponding to entries in the
-> +         clock-names property.
-> +
-> +- clock-names: list of clock names sorted in the same order as the clocks
-> +               property. Must contain "pclk_decon0", "aclk_decon0",
-> +              "decon0_eclk", "decon0_vclk".
-> +- i80-if-timings: timing configuration for lcd i80 interface support.
-> +
-> +Optional Properties:
-> +- samsung,power-domain: a phandle to DECON power domain node.
-> +- display-timings: timing settings for DECON, as described in document [1].
-> +               Can be used in case timings cannot be provided otherwise
-> +               or to override timings provided by the panel.
-> +
-> +[1]: Documentation/devicetree/bindings/video/display-timing.txt
-> +
-> +Example:
-> +
-> +SoC specific DT entry:
-> +
-> +       decon@13930000 {
-> +               compatible = "samsung,exynos7-decon";
-> +               interrupt-parent = <&combiner>;
-> +               reg = <0x13930000 0x1000>;
-> +               interrupt-names = "lcd_sys", "vsync", "fifo";
-> +               interrupts = <0 188 0>, <0 189 0>, <0 190 0>;
-> +               clocks = <&clock_disp PCLK_DECON_INT>,
-> +                        <&clock_disp ACLK_DECON_INT>,
-> +                        <&clock_disp SCLK_DECON_INT_ECLK>,
-> +                        <&clock_disp SCLK_DECON_INT_EXTCLKPLL>;
-> +               clock-names = "pclk_decon0", "aclk_decon0", "decon0_eclk",
-> +                               "decon0_vclk";
-> +               status = "disabled";
-> +       };
-> +
-> +Board specific DT entry:
-> +
-> +       decon@13930000 {
-> +               pinctrl-0 = <&lcd_clk &pwm1_out>;
-> +               pinctrl-names = "default";
-> +               status = "okay";
-> +       };
-> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> index 627aaa0..378cfd5 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -24,9 +24,16 @@ config DRM_EXYNOS_FIMD
->         help
->           Choose this option if you want to use Exynos FIMD for DRM.
->
-> +config DRM_EXYNOS_DECON
-> +       bool "Exynos DRM DECON"
-> +       depends on DRM_EXYNOS
-> +       select FB_MODE_HELPERS
-> +       help
-> +         Choose this option if you want to use Exynos DECON for DRM.
-> +
->  config DRM_EXYNOS_DPI
->         bool "EXYNOS DRM parallel output support"
-> -       depends on DRM_EXYNOS_FIMD
-> +       depends on (DRM_EXYNOS_FIMD || DRM_EXYNOS_DECON)
->         select DRM_PANEL
->         default n
->         help
-> @@ -34,7 +41,7 @@ config DRM_EXYNOS_DPI
->
->  config DRM_EXYNOS_DSI
->         bool "EXYNOS DRM MIPI-DSI driver support"
-> -       depends on DRM_EXYNOS_FIMD
-> +       depends on (DRM_EXYNOS_FIMD || DRM_EXYNOS_DECON)
->         select DRM_MIPI_DSI
->         select DRM_PANEL
->         default n
-> @@ -43,7 +50,7 @@ config DRM_EXYNOS_DSI
->
->  config DRM_EXYNOS_DP
->         bool "EXYNOS DRM DP driver support"
-> -       depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
-> +       depends on (DRM_EXYNOS_FIMD || DRM_EXYNOS_DECON) && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
->         default DRM_EXYNOS
->         select DRM_PANEL
->         help
-> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-> index 0856891..aec058c 100644
-> --- a/drivers/gpu/drm/exynos/Makefile
-> +++ b/drivers/gpu/drm/exynos/Makefile
-> @@ -10,6 +10,7 @@ exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
->
->  exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)    += exynos_drm_fimd.o
-> +exynosdrm-$(CONFIG_DRM_EXYNOS_DECON)   += exynos7_drm_decon.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_DPI)     += exynos_drm_dpi.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_DSI)     += exynos_drm_dsi.o
->  exynosdrm-$(CONFIG_DRM_EXYNOS_DP)      += exynos_dp_core.o exynos_dp_reg.o
-> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> new file mode 100644
-> index 0000000..c610293
-> --- /dev/null
-> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> @@ -0,0 +1,990 @@
-> +/* drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> + *
-> + * Copyright (C) 2014 Samsung Electronics Co.Ltd
-> + * Authors:
-> + *     Akshu Agarwal <akshua@gmail.com>
-> + *     Ajay Kumar <ajaykumar.rs@samsung.com>
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + *
-> + */
-> +#include <drm/drmP.h>
-> +#include <drm/exynos_drm.h>
-> +
-> +#include <linux/clk.h>
-> +#include <linux/component.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +
-> +#include <video/of_display_timing.h>
-> +#include <video/of_videomode.h>
-> +#include <video/exynos7_decon.h>
-> +
-> +#include "exynos_drm_crtc.h"
-> +#include "exynos_drm_drv.h"
-> +#include "exynos_drm_fbdev.h"
-> +#include "exynos_drm_iommu.h"
-> +
-> +/*
-> + * DECON stands for Display and Enhancement controller.
-> + */
-> +
-> +#define DECON_DEFAULT_FRAMERATE 60
-> +#define MIN_FB_WIDTH_FOR_16WORD_BURST 128
-> +
-> +#define WINDOWS_NR     2
-> +
-> +struct decon_win_data {
-> +       unsigned int            ovl_x;
-> +       unsigned int            ovl_y;
-> +       unsigned int            offset_x;
-> +       unsigned int            offset_y;
-> +       unsigned int            ovl_width;
-> +       unsigned int            ovl_height;
-> +       unsigned int            fb_width;
-> +       unsigned int            fb_height;
-> +       unsigned int            bpp;
-> +       unsigned int            pixel_format;
-> +       dma_addr_t              dma_addr;
-> +       bool                    enabled;
-> +       bool                    resume;
-> +};
-> +
-> +struct decon_context {
-> +       struct device                   *dev;
-> +       struct drm_device               *drm_dev;
-> +       struct exynos_drm_crtc          *crtc;
-> +       struct clk                      *pclk;
-> +       struct clk                      *aclk;
-> +       struct clk                      *eclk;
-> +       struct clk                      *vclk;
-> +       void __iomem                    *regs;
-> +       struct decon_win_data           win_data[WINDOWS_NR];
-> +       unsigned int                    default_win;
-> +       unsigned long                   irq_flags;
-> +       bool                            i80_if;
-> +       bool                            suspended;
-> +       int                             pipe;
-> +       wait_queue_head_t               wait_vsync_queue;
-> +       atomic_t                        wait_vsync_event;
-> +
-> +       struct exynos_drm_panel_info panel;
-> +       struct exynos_drm_display *display;
-> +};
-> +
-> +static const struct of_device_id decon_driver_dt_match[] = {
-> +       { .compatible = "samsung,exynos7-decon"},
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(of, decon_driver_dt_match);
-> +
-> +static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +
-> +       if (ctx->suspended)
-> +               return;
-> +
-> +       atomic_set(&ctx->wait_vsync_event, 1);
-> +
-> +       /*
-> +        * wait for DECON to signal VSYNC interrupt or return after
-> +        * timeout which is set to 50ms (refresh rate of 20).
-> +        */
-> +       if (!wait_event_timeout(ctx->wait_vsync_queue,
-> +                               !atomic_read(&ctx->wait_vsync_event),
-> +                               HZ/20))
-> +               DRM_DEBUG_KMS("vblank wait timed out.\n");
-> +}
-> +
-> +static void decon_clear_channel(struct decon_context *ctx)
-> +{
-> +       int win, ch_enabled = 0;
-> +
-> +       DRM_DEBUG_KMS("%s\n", __FILE__);
-> +
-> +       /* Check if any channel is enabled. */
-> +       for (win = 0; win < WINDOWS_NR; win++) {
-> +               u32 val = readl(ctx->regs + WINCON(win));
-> +
-> +               if (val & WINCONx_ENWIN) {
-> +                       val &= ~WINCONx_ENWIN;
-> +                       writel(val, ctx->regs + WINCON(win));
-> +                       ch_enabled = 1;
-> +               }
-> +       }
-> +
-> +       /* Wait for vsync, as disable channel takes effect at next vsync */
-> +       if (ch_enabled) {
-> +               unsigned int state = ctx->suspended;
-> +
-> +               ctx->suspended = 0;
-> +               decon_wait_for_vblank(ctx->crtc);
-> +               ctx->suspended = state;
-> +       }
-> +}
-> +
-> +static int decon_ctx_initialize(struct decon_context *ctx,
-> +                       struct drm_device *drm_dev)
-> +{
-> +       struct exynos_drm_private *priv = drm_dev->dev_private;
-> +
-> +       ctx->drm_dev = drm_dev;
-> +       ctx->pipe = priv->pipe++;
-> +
-> +       /* attach this sub driver to iommu mapping if supported. */
-> +       if (is_drm_iommu_supported(ctx->drm_dev)) {
-> +               int ret;
-> +
-> +               /*
-> +                * If any channel is already active, iommu will throw
-> +                * a PAGE FAULT when enabled. So clear any channel if enabled.
-> +                */
-> +               decon_clear_channel(ctx);
-> +               ret = drm_iommu_attach_device(ctx->drm_dev, ctx->dev);
-> +               if (ret) {
-> +                       DRM_ERROR("drm_iommu_attach failed.\n");
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void decon_ctx_remove(struct decon_context *ctx)
-> +{
-> +       /* detach this sub driver from iommu mapping if supported. */
-> +       if (is_drm_iommu_supported(ctx->drm_dev))
-> +               drm_iommu_detach_device(ctx->drm_dev, ctx->dev);
-> +}
-> +
-> +static u32 decon_calc_clkdiv(struct decon_context *ctx,
-> +               const struct drm_display_mode *mode)
-> +{
-> +       unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
-> +       u32 clkdiv;
-> +
-> +       /* Find the clock divider value that gets us closest to ideal_clk */
-> +       clkdiv = DIV_ROUND_UP(clk_get_rate(ctx->vclk), ideal_clk);
-> +
-> +       return (clkdiv < 0x100) ? clkdiv : 0xff;
-> +}
-> +
-> +static bool decon_mode_fixup(struct exynos_drm_crtc *crtc,
-> +               const struct drm_display_mode *mode,
-> +               struct drm_display_mode *adjusted_mode)
-> +{
-> +       if (adjusted_mode->vrefresh == 0)
-> +               adjusted_mode->vrefresh = DECON_DEFAULT_FRAMERATE;
-> +
-> +       return true;
-> +}
-> +
-> +static void decon_commit(struct exynos_drm_crtc *crtc)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +       struct drm_display_mode *mode = &crtc->base.mode;
-> +       u32 val, clkdiv;
-> +
-> +       if (ctx->suspended)
-> +               return;
-> +
-> +       /* nothing to do if we haven't set the mode yet */
-> +       if (mode->htotal == 0 || mode->vtotal == 0)
-> +               return;
-> +
-> +       if (!ctx->i80_if) {
-> +               int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
-> +             /* setup vertical timing values. */
-> +               vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
-> +               vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
-> +               vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
-> +
-> +               val = VIDTCON0_VBPD(vbpd - 1) | VIDTCON0_VFPD(vfpd - 1);
-> +               writel(val, ctx->regs + VIDTCON0);
-> +
-> +               val = VIDTCON1_VSPW(vsync_len - 1);
-> +               writel(val, ctx->regs + VIDTCON1);
-> +
-> +               /* setup horizontal timing values.  */
-> +               hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
-> +               hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
-> +               hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
-> +
-> +               /* setup horizontal timing values.  */
-> +               val = VIDTCON2_HBPD(hbpd - 1) | VIDTCON2_HFPD(hfpd - 1);
-> +               writel(val, ctx->regs + VIDTCON2);
-> +
-> +               val = VIDTCON3_HSPW(hsync_len - 1);
-> +               writel(val, ctx->regs + VIDTCON3);
-> +       }
-> +
-> +       /* setup horizontal and vertical display size. */
-> +       val = VIDTCON4_LINEVAL(mode->vdisplay - 1) |
-> +              VIDTCON4_HOZVAL(mode->hdisplay - 1);
-> +       writel(val, ctx->regs + VIDTCON4);
-> +
-> +       writel(mode->vdisplay - 1, ctx->regs + LINECNT_OP_THRESHOLD);
-> +
-> +       /*
-> +        * fields of register with prefix '_F' would be updated
-> +        * at vsync(same as dma start)
-> +        */
-> +       val = VIDCON0_ENVID | VIDCON0_ENVID_F;
-> +       writel(val, ctx->regs + VIDCON0);
-> +
-> +       clkdiv = decon_calc_clkdiv(ctx, mode);
-> +       if (clkdiv > 1) {
-> +               val = VCLKCON1_CLKVAL_NUM_VCLK(clkdiv - 1);
-> +               writel(val, ctx->regs + VCLKCON1);
-> +               writel(val, ctx->regs + VCLKCON2);
-> +       }
-> +
-> +       val = readl(ctx->regs + DECON_UPDATE);
-> +       val |= DECON_UPDATE_STANDALONE_F;
-> +       writel(val, ctx->regs + DECON_UPDATE);
-> +}
-> +
-> +static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +       u32 val;
-> +
-> +       if (ctx->suspended)
-> +               return -EPERM;
-> +
-> +       if (!test_and_set_bit(0, &ctx->irq_flags)) {
-> +               val = readl(ctx->regs + VIDINTCON0);
-> +
-> +               val |= VIDINTCON0_INT_ENABLE;
-> +
-> +               if (!ctx->i80_if) {
-> +                       val |= VIDINTCON0_INT_FRAME;
-> +                       val &= ~VIDINTCON0_FRAMESEL0_MASK;
-> +                       val |= VIDINTCON0_FRAMESEL0_VSYNC;
-> +               }
-> +
-> +               writel(val, ctx->regs + VIDINTCON0);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +       u32 val;
-> +
-> +       if (ctx->suspended)
-> +               return;
-> +
-> +       if (test_and_clear_bit(0, &ctx->irq_flags)) {
-> +               val = readl(ctx->regs + VIDINTCON0);
-> +
-> +               val &= ~VIDINTCON0_INT_ENABLE;
-> +               if (!ctx->i80_if)
-> +                       val &= ~VIDINTCON0_INT_FRAME;
-> +
-> +               writel(val, ctx->regs + VIDINTCON0);
-> +       }
-> +}
-> +
-> +static void decon_win_mode_set(struct exynos_drm_crtc *crtc,
-> +                       struct exynos_drm_plane *plane)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +       struct decon_win_data *win_data;
-> +       int win, padding;
-> +
-> +       if (!plane) {
-> +               DRM_ERROR("plane is NULL\n");
-> +               return;
-> +       }
-> +
-> +       win = plane->zpos;
-> +       if (win == DEFAULT_ZPOS)
-> +               win = ctx->default_win;
-> +
-> +       if (win < 0 || win >= WINDOWS_NR)
-> +               return;
-> +
-> +
-> +       win_data = &ctx->win_data[win];
-> +
-> +       padding = (plane->pitch / (plane->bpp >> 3)) - plane->fb_width;
-> +       win_data->offset_x = plane->fb_x;
-> +       win_data->offset_y = plane->fb_y;
-> +       win_data->fb_width = plane->fb_width + padding;
-> +       win_data->fb_height = plane->fb_height;
-> +       win_data->ovl_x = plane->crtc_x;
-> +       win_data->ovl_y = plane->crtc_y;
-> +       win_data->ovl_width = plane->crtc_width;
-> +       win_data->ovl_height = plane->crtc_height;
-> +       win_data->dma_addr = plane->dma_addr[0];
-> +       win_data->bpp = plane->bpp;
-> +       win_data->pixel_format = plane->pixel_format;
-> +
-> +       DRM_DEBUG_KMS("offset_x = %d, offset_y = %d\n",
-> +                       win_data->offset_x, win_data->offset_y);
-> +       DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
-> +                       win_data->ovl_width, win_data->ovl_height);
-> +       DRM_DEBUG_KMS("paddr = 0x%lx\n", (unsigned long)win_data->dma_addr);
-> +       DRM_DEBUG_KMS("fb_width = %d, crtc_width = %d\n",
-> +                       plane->fb_width, plane->crtc_width);
-> +}
-> +
-> +static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win)
-> +{
-> +       struct decon_win_data *win_data = &ctx->win_data[win];
-> +       unsigned long val;
-> +
-> +       val = readl(ctx->regs + WINCON(win));
-> +       val &= ~WINCONx_BPPMODE_MASK;
-> +
-> +       switch (win_data->pixel_format) {
-> +       case DRM_FORMAT_RGB565:
-> +               val |= WINCONx_BPPMODE_16BPP_565;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_XRGB8888:
-> +               val |= WINCONx_BPPMODE_24BPP_xRGB;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_XBGR8888:
-> +               val |= WINCONx_BPPMODE_24BPP_xBGR;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_RGBX8888:
-> +               val |= WINCONx_BPPMODE_24BPP_RGBx;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_BGRX8888:
-> +               val |= WINCONx_BPPMODE_24BPP_BGRx;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_ARGB8888:
-> +               val |= WINCONx_BPPMODE_32BPP_ARGB | WINCONx_BLD_PIX |
-> +                       WINCONx_ALPHA_SEL;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_ABGR8888:
-> +               val |= WINCONx_BPPMODE_32BPP_ABGR | WINCONx_BLD_PIX |
-> +                       WINCONx_ALPHA_SEL;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_RGBA8888:
-> +               val |= WINCONx_BPPMODE_32BPP_RGBA | WINCONx_BLD_PIX |
-> +                       WINCONx_ALPHA_SEL;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       case DRM_FORMAT_BGRA8888:
-> +               val |= WINCONx_BPPMODE_32BPP_BGRA | WINCONx_BLD_PIX |
-> +                       WINCONx_ALPHA_SEL;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       default:
-> +               DRM_DEBUG_KMS("invalid pixel size so using unpacked 24bpp.\n");
-> +
-> +               val |= WINCONx_BPPMODE_24BPP_xRGB;
-> +               val |= WINCONx_BURSTLEN_16WORD;
-> +               break;
-> +       }
-> +
-> +       DRM_DEBUG_KMS("bpp = %d\n", win_data->bpp);
-> +
-> +       /*
-> +        * In case of exynos, setting dma-burst to 16Word causes permanent
-> +        * tearing for very small buffers, e.g. cursor buffer. Burst Mode
-> +        * switching which is based on plane size is not recommended as
-> +        * plane size varies a lot towards the end of the screen and rapid
-> +        * movement causes unstable DMA which results into iommu crash/tear.
-> +        */
-> +
-> +       if (win_data->fb_width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
-> +               val &= ~WINCONx_BURSTLEN_MASK;
-> +               val |= WINCONx_BURSTLEN_8WORD;
-> +       }
-> +
-> +       writel(val, ctx->regs + WINCON(win));
-> +}
-> +
-> +static void decon_win_set_colkey(struct decon_context *ctx, unsigned int win)
-> +{
-> +       unsigned int keycon0 = 0, keycon1 = 0;
-> +
-> +       keycon0 = ~(WxKEYCON0_KEYBL_EN | WxKEYCON0_KEYEN_F |
-> +                       WxKEYCON0_DIRCON) | WxKEYCON0_COMPKEY(0);
-> +
-> +       keycon1 = WxKEYCON1_COLVAL(0xffffffff);
-> +
-> +       writel(keycon0, ctx->regs + WKEYCON0_BASE(win));
-> +       writel(keycon1, ctx->regs + WKEYCON1_BASE(win));
-> +}
-> +
-> +/**
-> + * shadow_protect_win() - disable updating values from shadow registers at vsync
-> + *
-> + * @win: window to protect registers for
-> + * @protect: 1 to protect (disable updates)
-> + */
-> +static void decon_shadow_protect_win(struct decon_context *ctx,
-> +                                                       int win, bool protect)
-> +{
-> +       u32 bits, val;
-> +
-> +       bits = SHADOWCON_WINx_PROTECT(win);
-> +
-> +       val = readl(ctx->regs + SHADOWCON);
-> +       if (protect)
-> +               val |= bits;
-> +       else
-> +               val &= ~bits;
-> +       writel(val, ctx->regs + SHADOWCON);
-> +}
-> +
-> +static void decon_win_commit(struct exynos_drm_crtc *crtc, int zpos)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +       struct drm_display_mode *mode = &crtc->base.mode;
-> +       struct decon_win_data *win_data;
-> +       int win = zpos;
-> +       unsigned long val, alpha;
-> +       unsigned int last_x;
-> +       unsigned int last_y;
-> +
-> +       if (ctx->suspended)
-> +               return;
-> +
-> +       if (win == DEFAULT_ZPOS)
-> +               win = ctx->default_win;
-> +
-> +       if (win < 0 || win >= WINDOWS_NR)
-> +               return;
-> +
-> +       win_data = &ctx->win_data[win];
-> +
-> +       /* If suspended, enable this on resume */
-> +       if (ctx->suspended) {
-> +               win_data->resume = true;
-> +               return;
-> +       }
-> +
-> +       /*
-> +        * SHADOWCON/PRTCON register is used for enabling timing.
-> +        *
-> +        * for example, once only width value of a register is set,
-> +        * if the dma is started then decon hardware could malfunction so
-> +        * with protect window setting, the register fields with prefix '_F'
-> +        * wouldn't be updated at vsync also but updated once unprotect window
-> +        * is set.
-> +        */
-> +
-> +       /* protect windows */
-> +       decon_shadow_protect_win(ctx, win, true);
-> +
-> +       /* buffer start address */
-> +       val = (unsigned long)win_data->dma_addr;
-> +       writel(val, ctx->regs + VIDW_BUF_START(win));
-> +
-> +       /* buffer size */
-> +       writel(win_data->fb_width, ctx->regs + VIDW_WHOLE_X(win));
-> +       writel(win_data->fb_height, ctx->regs + VIDW_WHOLE_Y(win));
-> +
-> +       /* offset from the start of the buffer to read */
-> +       writel(win_data->offset_x, ctx->regs + VIDW_OFFSET_X(win));
-> +       writel(win_data->offset_y, ctx->regs + VIDW_OFFSET_Y(win));
-> +
-> +       DRM_DEBUG_KMS("start addr = 0x%lx\n",
-> +                       (unsigned long)win_data->dma_addr);
-> +       DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
-> +                       win_data->ovl_width, win_data->ovl_height);
-> +
-> +       /*
-> +        * OSD position.
-> +        * In case the window layout goes of LCD layout, DECON fails.
-> +        */
-> +       if ((win_data->ovl_x + win_data->ovl_width) > mode->hdisplay)
-> +               win_data->ovl_x = mode->hdisplay - win_data->ovl_width;
-> +       if ((win_data->ovl_y + win_data->ovl_height) > mode->vdisplay)
-> +               win_data->ovl_y = mode->vdisplay - win_data->ovl_height;
-> +
-> +       val = VIDOSDxA_TOPLEFT_X(win_data->ovl_x) |
-> +               VIDOSDxA_TOPLEFT_Y(win_data->ovl_y);
-> +       writel(val, ctx->regs + VIDOSD_A(win));
-> +
-> +       last_x = win_data->ovl_x + win_data->ovl_width;
-> +       if (last_x)
-> +               last_x--;
-> +       last_y = win_data->ovl_y + win_data->ovl_height;
-> +       if (last_y)
-> +               last_y--;
-> +
-> +       val = VIDOSDxB_BOTRIGHT_X(last_x) | VIDOSDxB_BOTRIGHT_Y(last_y);
-> +
-> +       writel(val, ctx->regs + VIDOSD_B(win));
-> +
-> +       DRM_DEBUG_KMS("osd pos: tx = %d, ty = %d, bx = %d, by = %d\n",
-> +                       win_data->ovl_x, win_data->ovl_y, last_x, last_y);
-> +
-> +       /* OSD alpha */
-> +       alpha = VIDOSDxC_ALPHA0_R_F(0x0) |
-> +                       VIDOSDxC_ALPHA0_G_F(0x0) |
-> +                       VIDOSDxC_ALPHA0_B_F(0x0);
-> +
-> +       writel(alpha, ctx->regs + VIDOSD_C(win));
-> +
-> +       alpha = VIDOSDxD_ALPHA1_R_F(0xff) |
-> +                       VIDOSDxD_ALPHA1_G_F(0xff) |
-> +                       VIDOSDxD_ALPHA1_B_F(0xff);
-> +
-> +       writel(alpha, ctx->regs + VIDOSD_D(win));
-> +
-> +       decon_win_set_pixfmt(ctx, win);
-> +
-> +       /* hardware window 0 doesn't support color key. */
-> +       if (win != 0)
-> +               decon_win_set_colkey(ctx, win);
-> +
-> +       /* wincon */
-> +       val = readl(ctx->regs + WINCON(win));
-> +       val |= WINCONx_TRIPLE_BUF_MODE;
-> +       val |= WINCONx_ENWIN;
-> +       writel(val, ctx->regs + WINCON(win));
-> +
-> +       /* Enable DMA channel and unprotect windows */
-> +       decon_shadow_protect_win(ctx, win, false);
-> +
-> +       val = readl(ctx->regs + DECON_UPDATE);
-> +       val |= DECON_UPDATE_STANDALONE_F;
-> +       writel(val, ctx->regs + DECON_UPDATE);
-> +
-> +       win_data->enabled = true;
-> +}
-> +
-> +static void decon_win_disable(struct exynos_drm_crtc *crtc, int zpos)
-> +{
-> +       struct decon_context *ctx = crtc->ctx;
-> +       struct decon_win_data *win_data;
-> +       int win = zpos;
-> +       u32 val;
-> +
-> +       if (win == DEFAULT_ZPOS)
-> +               win = ctx->default_win;
-> +
-> +       if (win < 0 || win >= WINDOWS_NR)
-> +               return;
-> +
-> +       win_data = &ctx->win_data[win];
-> +
-> +       if (ctx->suspended) {
-> +               /* do not resume this window*/
-> +               win_data->resume = false;
-> +               return;
-> +       }
-> +
-> +       /* protect windows */
-> +       decon_shadow_protect_win(ctx, win, true);
-> +
-> +       /* wincon */
-> +       val = readl(ctx->regs + WINCON(win));
-> +       val &= ~WINCONx_ENWIN;
-> +       writel(val, ctx->regs + WINCON(win));
-> +
-> +       /* unprotect windows */
-> +       decon_shadow_protect_win(ctx, win, false);
-> +
-> +       val = readl(ctx->regs + DECON_UPDATE);
-> +       val |= DECON_UPDATE_STANDALONE_F;
-> +       writel(val, ctx->regs + DECON_UPDATE);
-> +
-> +       win_data->enabled = false;
-> +}
-> +
-> +static void decon_window_suspend(struct decon_context *ctx)
-> +{
-> +       struct decon_win_data *win_data;
-> +       int i;
-> +
-> +       for (i = 0; i < WINDOWS_NR; i++) {
-> +               win_data = &ctx->win_data[i];
-> +               win_data->resume = win_data->enabled;
-> +               if (win_data->enabled)
-> +                       decon_win_disable(ctx->crtc, i);
-> +       }
-> +}
-> +
-> +static void decon_window_resume(struct decon_context *ctx)
-> +{
-> +       struct decon_win_data *win_data;
-> +       int i;
-> +
-> +       for (i = 0; i < WINDOWS_NR; i++) {
-> +               win_data = &ctx->win_data[i];
-> +               win_data->enabled = win_data->resume;
-> +               win_data->resume = false;
-> +       }
-> +}
-> +
-> +static void decon_apply(struct decon_context *ctx)
-> +{
-> +       struct decon_win_data *win_data;
-> +       int i;
-> +
-> +       for (i = 0; i < WINDOWS_NR; i++) {
-> +               win_data = &ctx->win_data[i];
-> +               if (win_data->enabled)
-> +                       decon_win_commit(ctx->crtc, i);
-> +               else
-> +                       decon_win_disable(ctx->crtc, i);
-> +       }
-> +
-> +       decon_commit(ctx->crtc);
-> +}
-> +
-> +static void decon_init(struct decon_context *ctx)
-> +{
-> +       u32 val;
-> +
-> +       writel(VIDCON0_SWRESET, ctx->regs + VIDCON0);
-> +
-> +       val = VIDOUTCON0_DISP_IF_0_ON;
-> +       if (!ctx->i80_if)
-> +               val |= VIDOUTCON0_RGBIF;
-> +       writel(val, ctx->regs + VIDOUTCON0);
-> +
-> +       writel(VCLKCON0_CLKVALUP | VCLKCON0_VCLKFREE, ctx->regs + VCLKCON0);
-> +
-> +       if (!ctx->i80_if)
-> +               writel(VIDCON1_VCLK_HOLD, ctx->regs + VIDCON1(0));
-> +}
-> +
-> +static int decon_poweron(struct decon_context *ctx)
-> +{
-> +       int ret;
-> +
-> +       if (!ctx->suspended)
-> +               return 0;
-> +
-> +       ctx->suspended = false;
-> +
-> +       pm_runtime_get_sync(ctx->dev);
-> +
-> +       ret = clk_prepare_enable(ctx->pclk);
-> +       if (ret < 0) {
-> +               DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
-> +               goto pclk_err;
-> +       }
-> +
-> +       ret = clk_prepare_enable(ctx->aclk);
-> +       if (ret < 0) {
-> +               DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
-> +               goto aclk_err;
-> +       }
-> +
-> +       ret = clk_prepare_enable(ctx->eclk);
-> +       if  (ret < 0) {
-> +               DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
-> +               goto eclk_err;
-> +       }
-> +
-> +       ret = clk_prepare_enable(ctx->vclk);
-> +       if  (ret < 0) {
-> +               DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
-> +               goto vclk_err;
-> +       }
-> +
-> +       decon_init(ctx);
-> +
-> +       /* if vblank was enabled status, enable it again. */
-> +       if (test_and_clear_bit(0, &ctx->irq_flags)) {
-> +               ret = decon_enable_vblank(ctx->crtc);
-> +               if (ret) {
-> +                       DRM_ERROR("Failed to re-enable vblank [%d]\n", ret);
-> +                       goto err;
-> +               }
-> +       }
-> +
-> +       decon_window_resume(ctx);
-> +
-> +       decon_apply(ctx);
-> +
-> +       return 0;
-> +
-> +err:
-> +       clk_disable_unprepare(ctx->vclk);
-> +vclk_err:
-> +       clk_disable_unprepare(ctx->eclk);
-> +eclk_err:
-> +       clk_disable_unprepare(ctx->aclk);
-> +aclk_err:
-> +       clk_disable_unprepare(ctx->pclk);
-> +pclk_err:
-> +       ctx->suspended = true;
-> +       return ret;
-> +}
-> +
-> +static int decon_poweroff(struct decon_context *ctx)
-> +{
-> +       if (ctx->suspended)
-> +               return 0;
-> +
-> +       /*
-> +        * We need to make sure that all windows are disabled before we
-> +        * suspend that connector. Otherwise we might try to scan from
-> +        * a destroyed buffer later.
-> +        */
-> +       decon_window_suspend(ctx);
-> +
-> +       clk_disable_unprepare(ctx->vclk);
-> +       clk_disable_unprepare(ctx->eclk);
-> +       clk_disable_unprepare(ctx->aclk);
-> +       clk_disable_unprepare(ctx->pclk);
-> +
-> +       pm_runtime_put_sync(ctx->dev);
-> +
-> +       ctx->suspended = true;
-> +       return 0;
-> +}
-> +
-> +static void decon_dpms(struct exynos_drm_crtc *crtc, int mode)
-> +{
-> +       DRM_DEBUG_KMS("%s, %d\n", __FILE__, mode);
-> +
-> +       switch (mode) {
-> +       case DRM_MODE_DPMS_ON:
-> +               decon_poweron(crtc->ctx);
-> +               break;
-> +       case DRM_MODE_DPMS_STANDBY:
-> +       case DRM_MODE_DPMS_SUSPEND:
-> +       case DRM_MODE_DPMS_OFF:
-> +               decon_poweroff(crtc->ctx);
-> +               break;
-> +       default:
-> +               DRM_DEBUG_KMS("unspecified mode %d\n", mode);
-> +               break;
-> +       }
-> +}
-> +
-> +static struct exynos_drm_crtc_ops decon_crtc_ops = {
-> +       .dpms = decon_dpms,
-> +       .mode_fixup = decon_mode_fixup,
-> +       .commit = decon_commit,
-> +       .enable_vblank = decon_enable_vblank,
-> +       .disable_vblank = decon_disable_vblank,
-> +       .wait_for_vblank = decon_wait_for_vblank,
-> +       .win_mode_set = decon_win_mode_set,
-> +       .win_commit = decon_win_commit,
-> +       .win_disable = decon_win_disable,
-> +};
-> +
-> +
-> +static irqreturn_t decon_irq_handler(int irq, void *dev_id)
-> +{
-> +       struct decon_context *ctx = (struct decon_context *)dev_id;
-> +       u32 val, clear_bit;
-> +
-> +       val = readl(ctx->regs + VIDINTCON1);
-> +
-> +       clear_bit = ctx->i80_if ? VIDINTCON1_INT_I80 : VIDINTCON1_INT_FRAME;
-> +       if (val & clear_bit)
-> +               writel(clear_bit, ctx->regs + VIDINTCON1);
-> +
-> +       /* check the crtc is detached already from encoder */
-> +       if (ctx->pipe < 0 || !ctx->drm_dev)
-> +               goto out;
-> +
-> +       if (!ctx->i80_if) {
-> +               drm_handle_vblank(ctx->drm_dev, ctx->pipe);
-> +               exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
-> +
-> +               /* set wait vsync event to zero and wake up queue. */
-> +               if (atomic_read(&ctx->wait_vsync_event)) {
-> +                       atomic_set(&ctx->wait_vsync_event, 0);
-> +                       wake_up(&ctx->wait_vsync_queue);
-> +               }
-> +       }
-> +out:
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static int decon_bind(struct device *dev, struct device *master, void *data)
-> +{
-> +       struct decon_context *ctx = dev_get_drvdata(dev);
-> +       struct drm_device *drm_dev = data;
-> +       int ret;
-> +
-> +       ret = decon_ctx_initialize(ctx, drm_dev);
-> +       if (ret) {
-> +               DRM_ERROR("decon_ctx_initialize failed.\n");
-> +               return ret;
-> +       }
-> +
-> +       ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
-> +                                          EXYNOS_DISPLAY_TYPE_LCD,
-> +                                          &decon_crtc_ops, ctx);
-> +       if (IS_ERR(ctx->crtc)) {
-> +               decon_ctx_remove(ctx);
-> +               return PTR_ERR(ctx->crtc);
-> +       }
-> +
-> +       if (ctx->display)
-> +               exynos_drm_create_enc_conn(drm_dev, ctx->display);
-> +
-> +       return 0;
-> +
-> +}
-> +
-> +static void decon_unbind(struct device *dev, struct device *master,
-> +                       void *data)
-> +{
-> +       struct decon_context *ctx = dev_get_drvdata(dev);
-> +
-> +       decon_dpms(ctx->crtc, DRM_MODE_DPMS_OFF);
-> +
-> +       if (ctx->display)
-> +               exynos_dpi_remove(ctx->display);
-> +
-> +       decon_ctx_remove(ctx);
-> +}
-> +
-> +static const struct component_ops decon_component_ops = {
-> +       .bind   = decon_bind,
-> +       .unbind = decon_unbind,
-> +};
-> +
-> +static int decon_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct decon_context *ctx;
-> +       struct device_node *i80_if_timings;
-> +       struct resource *res;
-> +       int ret;
-> +
-> +       if (!dev->of_node)
-> +               return -ENODEV;
-> +
-> +       ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +       if (!ctx)
-> +               return -ENOMEM;
-> +
-> +       ret = exynos_drm_component_add(dev, EXYNOS_DEVICE_TYPE_CRTC,
-> +                                       EXYNOS_DISPLAY_TYPE_LCD);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ctx->dev = dev;
-> +       ctx->suspended = true;
-> +
-> +       i80_if_timings = of_get_child_by_name(dev->of_node, "i80-if-timings");
-> +       if (i80_if_timings)
-> +               ctx->i80_if = true;
-> +       of_node_put(i80_if_timings);
-> +
-> +       ctx->regs = of_iomap(dev->of_node, 0);
-> +       if (IS_ERR(ctx->regs)) {
-> +               ret = PTR_ERR(ctx->regs);
-> +               goto err_del_component;
-> +       }
-> +
-> +       ctx->pclk = devm_clk_get(dev, "pclk_decon0");
-> +       if (IS_ERR(ctx->pclk)) {
-> +               dev_err(dev, "failed to get bus clock pclk\n");
-> +               ret = PTR_ERR(ctx->pclk);
-> +               goto err_iounmap;
-> +       }
-> +
-> +       ctx->aclk = devm_clk_get(dev, "aclk_decon0");
-> +       if (IS_ERR(ctx->aclk)) {
-> +               dev_err(dev, "failed to get bus clock aclk\n");
-> +               ret = PTR_ERR(ctx->aclk);
-> +               goto err_iounmap;
-> +       }
-> +
-> +       ctx->eclk = devm_clk_get(dev, "decon0_eclk");
-> +       if (IS_ERR(ctx->eclk)) {
-> +               dev_err(dev, "failed to get eclock\n");
-> +               ret = PTR_ERR(ctx->eclk);
-> +               goto err_iounmap;
-> +       }
-> +
-> +       ctx->vclk = devm_clk_get(dev, "decon0_vclk");
-> +       if (IS_ERR(ctx->vclk)) {
-> +               dev_err(dev, "failed to get vclock\n");
-> +               ret = PTR_ERR(ctx->vclk);
-> +               goto err_iounmap;
-> +       }
-> +
-> +       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
-> +                                          ctx->i80_if ? "lcd_sys" : "vsync");
-> +       if (!res) {
-> +               dev_err(dev, "irq request failed.\n");
-> +               ret = -ENXIO;
-> +               goto err_iounmap;
-> +       }
-> +
-> +       ret = devm_request_irq(dev, res->start, decon_irq_handler,
-> +                                                       0, "drm_decon", ctx);
-> +       if (ret) {
-> +               dev_err(dev, "irq request failed.\n");
-> +               goto err_iounmap;
-> +       }
-> +
-> +       init_waitqueue_head(&ctx->wait_vsync_queue);
-> +       atomic_set(&ctx->wait_vsync_event, 0);
-> +
-> +       platform_set_drvdata(pdev, ctx);
-> +
-> +       ctx->display = exynos_dpi_probe(dev);
-> +       if (IS_ERR(ctx->display)) {
-> +               ret = PTR_ERR(ctx->display);
-> +               goto err_iounmap;
-> +       }
-> +
-> +       pm_runtime_enable(dev);
-> +
-> +       ret = component_add(dev, &decon_component_ops);
-> +       if (ret)
-> +               goto err_disable_pm_runtime;
-> +
-> +       return ret;
-> +
-> +err_disable_pm_runtime:
-> +       pm_runtime_disable(dev);
-> +
-> +err_iounmap:
-> +       iounmap(ctx->regs);
-> +
-> +err_del_component:
-> +       exynos_drm_component_del(dev, EXYNOS_DEVICE_TYPE_CRTC);
-> +       return ret;
-> +}
-> +
-> +static int decon_remove(struct platform_device *pdev)
-> +{
-> +       struct decon_context *ctx = dev_get_drvdata(&pdev->dev);
-> +
-> +       pm_runtime_disable(&pdev->dev);
-> +
-> +       iounmap(ctx->regs);
-> +
-> +       component_del(&pdev->dev, &decon_component_ops);
-> +       exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
-> +
-> +       return 0;
-> +}
-> +
-> +struct platform_driver decon_driver = {
-> +       .probe          = decon_probe,
-> +       .remove         = decon_remove,
-> +       .driver         = {
-> +               .name   = "exynos-decon",
-> +               .of_match_table = decon_driver_dt_match,
-> +       },
-> +};
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 1bcbe07..a2ab406 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -556,6 +556,9 @@ static struct platform_driver *const exynos_drm_kms_drivers[] = {
->  #ifdef CONFIG_DRM_EXYNOS_FIMD
->         &fimd_driver,
->  #endif
-> +#ifdef CONFIG_DRM_EXYNOS_DECON
-> +       &decon_driver,
-> +#endif
->  #ifdef CONFIG_DRM_EXYNOS_DP
->         &dp_driver,
->  #endif
-> @@ -612,6 +615,7 @@ static const char * const strings[] = {
->         "samsung,exynos3",
->         "samsung,exynos4",
->         "samsung,exynos5",
-> +       "samsung,exynos7",
->  };
->
->  static struct platform_driver exynos_drm_platform_driver = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> index d490b49..dff1d06 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -352,6 +352,7 @@ void exynos_drm_component_del(struct device *dev,
->                                 enum exynos_drm_device_type dev_type);
->
->  extern struct platform_driver fimd_driver;
-> +extern struct platform_driver decon_driver;
->  extern struct platform_driver dp_driver;
->  extern struct platform_driver dsi_driver;
->  extern struct platform_driver mixer_driver;
-> diff --git a/include/video/exynos7_decon.h b/include/video/exynos7_decon.h
-> new file mode 100644
-> index 0000000..a62b11b
-> --- /dev/null
-> +++ b/include/video/exynos7_decon.h
-> @@ -0,0 +1,349 @@
-> +/* include/video/exynos7_decon.h
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + * Author: Ajay Kumar <ajaykumar.rs@samsung.com>
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +/* VIDCON0 */
-> +#define VIDCON0                                        0x00
-> +
-> +#define VIDCON0_SWRESET                                (1 << 28)
-> +#define VIDCON0_DECON_STOP_STATUS              (1 << 2)
-> +#define VIDCON0_ENVID                          (1 << 1)
-> +#define VIDCON0_ENVID_F                                (1 << 0)
-> +
-> +/* VIDOUTCON0 */
-> +#define VIDOUTCON0                             0x4
-> +
-> +#define VIDOUTCON0_DUAL_MASK                   (0x3 << 24)
-> +#define VIDOUTCON0_DUAL_ON                     (0x3 << 24)
-> +#define VIDOUTCON0_DISP_IF_1_ON                        (0x2 << 24)
-> +#define VIDOUTCON0_DISP_IF_0_ON                        (0x1 << 24)
-> +#define VIDOUTCON0_DUAL_OFF                    (0x0 << 24)
-> +#define VIDOUTCON0_IF_SHIFT                    23
-> +#define VIDOUTCON0_IF_MASK                     (0x1 << 23)
-> +#define VIDOUTCON0_RGBIF                       (0x0 << 23)
-> +#define VIDOUTCON0_I80IF                       (0x1 << 23)
-> +
-> +/* VIDCON3 */
-> +#define VIDCON3                                        0x8
-> +
-> +/* VIDCON4 */
-> +#define VIDCON4                                        0xC
-> +#define VIDCON4_FIFOCNT_START_EN               (1 << 0)
-> +
-> +/* VCLKCON0 */
-> +#define VCLKCON0                               0x10
-> +#define VCLKCON0_CLKVALUP                      (1 << 8)
-> +#define VCLKCON0_VCLKFREE                      (1 << 0)
-> +
-> +/* VCLKCON */
-> +#define VCLKCON1                               0x14
-> +#define VCLKCON1_CLKVAL_NUM_VCLK(val)          (((val) & 0xff) << 0)
-> +#define VCLKCON2                               0x18
-> +
-> +/* SHADOWCON */
-> +#define SHADOWCON                              0x30
-> +
-> +#define SHADOWCON_WINx_PROTECT(_win)           (1 << (10 + (_win)))
-> +
-> +/* WINCONx */
-> +#define WINCON(_win)                           (0x50 + ((_win) * 4))
-> +
-> +#define WINCONx_BUFSTATUS                      (0x3 << 30)
-> +#define WINCONx_BUFSEL_MASK                    (0x3 << 28)
-> +#define WINCONx_BUFSEL_SHIFT                   28
-> +#define WINCONx_TRIPLE_BUF_MODE                        (0x1 << 18)
-> +#define WINCONx_DOUBLE_BUF_MODE                        (0x0 << 18)
-> +#define WINCONx_BURSTLEN_16WORD                        (0x0 << 11)
-> +#define WINCONx_BURSTLEN_8WORD                 (0x1 << 11)
-> +#define WINCONx_BURSTLEN_MASK                  (0x1 << 11)
-> +#define WINCONx_BURSTLEN_SHIFT                 11
-> +#define WINCONx_BLD_PLANE                      (0 << 8)
-> +#define WINCONx_BLD_PIX                                (1 << 8)
-> +#define WINCONx_ALPHA_MUL                      (1 << 7)
-> +
-> +#define WINCONx_BPPMODE_MASK                   (0xf << 2)
-> +#define WINCONx_BPPMODE_SHIFT                  2
-> +#define WINCONx_BPPMODE_16BPP_565              (0x8 << 2)
-> +#define WINCONx_BPPMODE_24BPP_BGRx             (0x7 << 2)
-> +#define WINCONx_BPPMODE_24BPP_RGBx             (0x6 << 2)
-> +#define WINCONx_BPPMODE_24BPP_xBGR             (0x5 << 2)
-> +#define WINCONx_BPPMODE_24BPP_xRGB             (0x4 << 2)
-> +#define WINCONx_BPPMODE_32BPP_BGRA             (0x3 << 2)
-> +#define WINCONx_BPPMODE_32BPP_RGBA             (0x2 << 2)
-> +#define WINCONx_BPPMODE_32BPP_ABGR             (0x1 << 2)
-> +#define WINCONx_BPPMODE_32BPP_ARGB             (0x0 << 2)
-> +#define WINCONx_ALPHA_SEL                      (1 << 1)
-> +#define WINCONx_ENWIN                          (1 << 0)
-> +
-> +#define WINCON1_ALPHA_MUL_F                    (1 << 7)
-> +#define WINCON2_ALPHA_MUL_F                    (1 << 7)
-> +#define WINCON3_ALPHA_MUL_F                    (1 << 7)
-> +#define WINCON4_ALPHA_MUL_F                    (1 << 7)
-> +
-> +/*  VIDOSDxH: The height for the OSD image(READ ONLY)*/
-> +#define VIDOSD_H(_x)                           (0x80 + ((_x) * 4))
-> +
-> +/* Frame buffer start addresses: VIDWxxADD0n */
-> +#define VIDW_BUF_START(_win)                   (0x80 + ((_win) * 0x10))
-> +#define VIDW_BUF_START1(_win)                  (0x84 + ((_win) * 0x10))
-> +#define VIDW_BUF_START2(_win)                  (0x88 + ((_win) * 0x10))
-> +
-> +#define VIDW_WHOLE_X(_win)                     (0x0130 + ((_win) * 8))
-> +#define VIDW_WHOLE_Y(_win)                     (0x0134 + ((_win) * 8))
-> +#define VIDW_OFFSET_X(_win)                    (0x0170 + ((_win) * 8))
-> +#define VIDW_OFFSET_Y(_win)                    (0x0174 + ((_win) * 8))
-> +#define VIDW_BLKOFFSET(_win)                   (0x01B0 + ((_win) * 4))
-> +#define VIDW_BLKSIZE(win)                      (0x0200 + ((_win) * 4))
-> +
-> +/* Interrupt controls register */
-> +#define VIDINTCON2                             0x228
-> +
-> +#define VIDINTCON1_INTEXTRA1_EN                        (1 << 1)
-> +#define VIDINTCON1_INTEXTRA0_EN                        (1 << 0)
-> +
-> +/* Interrupt controls and status register */
-> +#define VIDINTCON3                             0x22C
-> +
-> +#define VIDINTCON1_INTEXTRA1_PEND              (1 << 1)
-> +#define VIDINTCON1_INTEXTRA0_PEND              (1 << 0)
-> +
-> +/* VIDOSDxA ~ VIDOSDxE */
-> +#define VIDOSD_BASE                            0x230
-> +
-> +#define OSD_STRIDE                             0x20
-> +
-> +#define VIDOSD_A(_win)                         (VIDOSD_BASE + \
-> +                                               ((_win) * OSD_STRIDE) + 0x00)
-> +#define VIDOSD_B(_win)                         (VIDOSD_BASE + \
-> +                                               ((_win) * OSD_STRIDE) + 0x04)
-> +#define VIDOSD_C(_win)                         (VIDOSD_BASE + \
-> +                                               ((_win) * OSD_STRIDE) + 0x08)
-> +#define VIDOSD_D(_win)                         (VIDOSD_BASE + \
-> +                                               ((_win) * OSD_STRIDE) + 0x0C)
-> +#define VIDOSD_E(_win)                         (VIDOSD_BASE + \
-> +                                               ((_win) * OSD_STRIDE) + 0x10)
-> +
-> +#define VIDOSDxA_TOPLEFT_X_MASK                        (0x1fff << 13)
-> +#define VIDOSDxA_TOPLEFT_X_SHIFT               13
-> +#define VIDOSDxA_TOPLEFT_X_LIMIT               0x1fff
-> +#define VIDOSDxA_TOPLEFT_X(_x)                 (((_x) & 0x1fff) << 13)
-> +
-> +#define VIDOSDxA_TOPLEFT_Y_MASK                        (0x1fff << 0)
-> +#define VIDOSDxA_TOPLEFT_Y_SHIFT               0
-> +#define VIDOSDxA_TOPLEFT_Y_LIMIT               0x1fff
-> +#define VIDOSDxA_TOPLEFT_Y(_x)                 (((_x) & 0x1fff) << 0)
-> +
-> +#define VIDOSDxB_BOTRIGHT_X_MASK               (0x1fff << 13)
-> +#define VIDOSDxB_BOTRIGHT_X_SHIFT              13
-> +#define VIDOSDxB_BOTRIGHT_X_LIMIT              0x1fff
-> +#define VIDOSDxB_BOTRIGHT_X(_x)                        (((_x) & 0x1fff) << 13)
-> +
-> +#define VIDOSDxB_BOTRIGHT_Y_MASK               (0x1fff << 0)
-> +#define VIDOSDxB_BOTRIGHT_Y_SHIFT              0
-> +#define VIDOSDxB_BOTRIGHT_Y_LIMIT              0x1fff
-> +#define VIDOSDxB_BOTRIGHT_Y(_x)                        (((_x) & 0x1fff) << 0)
-> +
-> +#define VIDOSDxC_ALPHA0_R_F(_x)                        (((_x) & 0xFF) << 16)
-> +#define VIDOSDxC_ALPHA0_G_F(_x)                        (((_x) & 0xFF) << 8)
-> +#define VIDOSDxC_ALPHA0_B_F(_x)                        (((_x) & 0xFF) << 0)
-> +
-> +#define VIDOSDxD_ALPHA1_R_F(_x)                        (((_x) & 0xFF) << 16)
-> +#define VIDOSDxD_ALPHA1_G_F(_x)                        (((_x) & 0xFF) << 8)
-> +#define VIDOSDxD_ALPHA1_B_F(_x)                        (((_x) & 0xFF) >> 0)
-> +
-> +/* Window MAP (Color map) */
-> +#define WINxMAP(_win)                          (0x340 + ((_win) * 4))
-> +
-> +#define WINxMAP_MAP                            (1 << 24)
-> +#define WINxMAP_MAP_COLOUR_MASK                        (0xffffff << 0)
-> +#define WINxMAP_MAP_COLOUR_SHIFT               0
-> +#define WINxMAP_MAP_COLOUR_LIMIT               0xffffff
-> +#define WINxMAP_MAP_COLOUR(_x)                 ((_x) << 0)
-> +
-> +/* Window colour-key control registers */
-> +#define WKEYCON                                        0x370
-> +
-> +#define WKEYCON0                               0x00
-> +#define WKEYCON1                               0x04
-> +#define WxKEYCON0_KEYBL_EN                     (1 << 26)
-> +#define WxKEYCON0_KEYEN_F                      (1 << 25)
-> +#define WxKEYCON0_DIRCON                       (1 << 24)
-> +#define WxKEYCON0_COMPKEY_MASK                 (0xffffff << 0)
-> +#define WxKEYCON0_COMPKEY_SHIFT                        0
-> +#define WxKEYCON0_COMPKEY_LIMIT                        0xffffff
-> +#define WxKEYCON0_COMPKEY(_x)                  ((_x) << 0)
-> +#define WxKEYCON1_COLVAL_MASK                  (0xffffff << 0)
-> +#define WxKEYCON1_COLVAL_SHIFT                 0
-> +#define WxKEYCON1_COLVAL_LIMIT                 0xffffff
-> +#define WxKEYCON1_COLVAL(_x)                   ((_x) << 0)
-> +
-> +/* color key control register for hardware window 1 ~ 4. */
-> +#define WKEYCON0_BASE(x)               ((WKEYCON + WKEYCON0) + ((x - 1) * 8))
-> +/* color key value register for hardware window 1 ~ 4. */
-> +#define WKEYCON1_BASE(x)               ((WKEYCON + WKEYCON1) + ((x - 1) * 8))
-> +
-> +/* Window KEY Alpha value */
-> +#define WxKEYALPHA(_win)                       (0x3A0 + (((_win) - 1) * 0x4))
-> +
-> +#define Wx_KEYALPHA_R_F_SHIFT                  16
-> +#define Wx_KEYALPHA_G_F_SHIFT                  8
-> +#define Wx_KEYALPHA_B_F_SHIFT                  0
-> +
-> +/* Blending equation */
-> +#define BLENDE(_win)                           (0x03C0 + ((_win) * 4))
-> +#define BLENDE_COEF_ZERO                       0x0
-> +#define BLENDE_COEF_ONE                                0x1
-> +#define BLENDE_COEF_ALPHA_A                    0x2
-> +#define BLENDE_COEF_ONE_MINUS_ALPHA_A          0x3
-> +#define BLENDE_COEF_ALPHA_B                    0x4
-> +#define BLENDE_COEF_ONE_MINUS_ALPHA_B          0x5
-> +#define BLENDE_COEF_ALPHA0                     0x6
-> +#define BLENDE_COEF_A                          0xA
-> +#define BLENDE_COEF_ONE_MINUS_A                        0xB
-> +#define BLENDE_COEF_B                          0xC
-> +#define BLENDE_COEF_ONE_MINUS_B                        0xD
-> +#define BLENDE_Q_FUNC(_v)                      ((_v) << 18)
-> +#define BLENDE_P_FUNC(_v)                      ((_v) << 12)
-> +#define BLENDE_B_FUNC(_v)                      ((_v) << 6)
-> +#define BLENDE_A_FUNC(_v)                      ((_v) << 0)
-> +
-> +/* Blending equation control */
-> +#define BLENDCON                               0x3D8
-> +#define BLENDCON_NEW_MASK                      (1 << 0)
-> +#define BLENDCON_NEW_8BIT_ALPHA_VALUE          (1 << 0)
-> +#define BLENDCON_NEW_4BIT_ALPHA_VALUE          (0 << 0)
-> +
-> +/* Interrupt control register */
-> +#define VIDINTCON0                             0x500
-> +
-> +#define VIDINTCON0_WAKEUP_MASK                 (0x3f << 26)
-> +#define VIDINTCON0_INTEXTRAEN                  (1 << 21)
-> +
-> +#define VIDINTCON0_FRAMESEL0_SHIFT             15
-> +#define VIDINTCON0_FRAMESEL0_MASK              (0x3 << 15)
-> +#define VIDINTCON0_FRAMESEL0_BACKPORCH         (0x0 << 15)
-> +#define VIDINTCON0_FRAMESEL0_VSYNC             (0x1 << 15)
-> +#define VIDINTCON0_FRAMESEL0_ACTIVE            (0x2 << 15)
-> +#define VIDINTCON0_FRAMESEL0_FRONTPORCH                (0x3 << 15)
-> +
-> +#define VIDINTCON0_INT_FRAME                   (1 << 11)
-> +
-> +#define VIDINTCON0_FIFOLEVEL_MASK              (0x7 << 3)
-> +#define VIDINTCON0_FIFOLEVEL_SHIFT             3
-> +#define VIDINTCON0_FIFOLEVEL_EMPTY             (0x0 << 3)
-> +#define VIDINTCON0_FIFOLEVEL_TO25PC            (0x1 << 3)
-> +#define VIDINTCON0_FIFOLEVEL_TO50PC            (0x2 << 3)
-> +#define VIDINTCON0_FIFOLEVEL_FULL              (0x4 << 3)
-> +
-> +#define VIDINTCON0_FIFOSEL_MAIN_EN             (1 << 1)
-> +#define VIDINTCON0_INT_FIFO                    (1 << 1)
-> +
-> +#define VIDINTCON0_INT_ENABLE                  (1 << 0)
-> +
-> +/* Interrupt controls and status register */
-> +#define VIDINTCON1                             0x504
-> +
-> +#define VIDINTCON1_INT_EXTRA                   (1 << 3)
-> +#define VIDINTCON1_INT_I80                     (1 << 2)
-> +#define VIDINTCON1_INT_FRAME                   (1 << 1)
-> +#define VIDINTCON1_INT_FIFO                    (1 << 0)
-> +
-> +/* VIDCON1 */
-> +#define VIDCON1(_x)                            (0x0600 + ((_x) * 0x50))
-> +#define VIDCON1_LINECNT_GET(_v)                        (((_v) >> 17) & 0x1fff)
-> +#define VIDCON1_VCLK_MASK                      (0x3 << 9)
-> +#define VIDCON1_VCLK_HOLD                      (0x0 << 9)
-> +#define VIDCON1_VCLK_RUN                       (0x1 << 9)
-> +#define VIDCON1_VCLK_RUN_VDEN_DISABLE          (0x3 << 9)
-> +#define VIDCON1_RGB_ORDER_O_MASK               (0x7 << 4)
-> +#define VIDCON1_RGB_ORDER_O_RGB                        (0x0 << 4)
-> +#define VIDCON1_RGB_ORDER_O_GBR                        (0x1 << 4)
-> +#define VIDCON1_RGB_ORDER_O_BRG                        (0x2 << 4)
-> +#define VIDCON1_RGB_ORDER_O_BGR                        (0x4 << 4)
-> +#define VIDCON1_RGB_ORDER_O_RBG                        (0x5 << 4)
-> +#define VIDCON1_RGB_ORDER_O_GRB                        (0x6 << 4)
-> +
-> +/* VIDTCON0 */
-> +#define VIDTCON0                               0x610
-> +
-> +#define VIDTCON0_VBPD_MASK                     (0xffff << 16)
-> +#define VIDTCON0_VBPD_SHIFT                    16
-> +#define VIDTCON0_VBPD_LIMIT                    0xffff
-> +#define VIDTCON0_VBPD(_x)                      ((_x) << 16)
-> +
-> +#define VIDTCON0_VFPD_MASK                     (0xffff << 0)
-> +#define VIDTCON0_VFPD_SHIFT                    0
-> +#define VIDTCON0_VFPD_LIMIT                    0xffff
-> +#define VIDTCON0_VFPD(_x)                      ((_x) << 0)
-> +
-> +/* VIDTCON1 */
-> +#define VIDTCON1                               0x614
-> +
-> +#define VIDTCON1_VSPW_MASK                     (0xffff << 16)
-> +#define VIDTCON1_VSPW_SHIFT                    16
-> +#define VIDTCON1_VSPW_LIMIT                    0xffff
-> +#define VIDTCON1_VSPW(_x)                      ((_x) << 16)
-> +
-> +/* VIDTCON2 */
-> +#define VIDTCON2                               0x618
-> +
-> +#define VIDTCON2_HBPD_MASK                     (0xffff << 16)
-> +#define VIDTCON2_HBPD_SHIFT                    16
-> +#define VIDTCON2_HBPD_LIMIT                    0xffff
-> +#define VIDTCON2_HBPD(_x)                      ((_x) << 16)
-> +
-> +#define VIDTCON2_HFPD_MASK                     (0xffff << 0)
-> +#define VIDTCON2_HFPD_SHIFT                    0
-> +#define VIDTCON2_HFPD_LIMIT                    0xffff
-> +#define VIDTCON2_HFPD(_x)                      ((_x) << 0)
-> +
-> +/* VIDTCON3 */
-> +#define VIDTCON3                               0x61C
-> +
-> +#define VIDTCON3_HSPW_MASK                     (0xffff << 16)
-> +#define VIDTCON3_HSPW_SHIFT                    16
-> +#define VIDTCON3_HSPW_LIMIT                    0xffff
-> +#define VIDTCON3_HSPW(_x)                      ((_x) << 16)
-> +
-> +/* VIDTCON4 */
-> +#define VIDTCON4                               0x620
-> +
-> +#define VIDTCON4_LINEVAL_MASK                  (0xfff << 16)
-> +#define VIDTCON4_LINEVAL_SHIFT                 16
-> +#define VIDTCON4_LINEVAL_LIMIT                 0xfff
-> +#define VIDTCON4_LINEVAL(_x)                   (((_x) & 0xfff) << 16)
-> +
-> +#define VIDTCON4_HOZVAL_MASK                   (0xfff << 0)
-> +#define VIDTCON4_HOZVAL_SHIFT                  0
-> +#define VIDTCON4_HOZVAL_LIMIT                  0xfff
-> +#define VIDTCON4_HOZVAL(_x)                    (((_x) & 0xfff) << 0)
-> +
-> +/* LINECNT OP THRSHOLD*/
-> +#define LINECNT_OP_THRESHOLD                   0x630
-> +
-> +/* CRCCTRL */
-> +#define CRCCTRL                                        0x6C8
-> +#define CRCCTRL_CRCCLKEN                       (0x1 << 2)
-> +#define CRCCTRL_CRCSTART_F                     (0x1 << 1)
-> +#define CRCCTRL_CRCEN                          (0x1 << 0)
-> +
-> +/* DECON_CMU */
-> +#define DECON_CMU                              0x704
-> +
-> +#define DECON_CMU_ALL_CLKGATE_ENABLE           0x3
-> +#define DECON_CMU_SE_CLKGATE_ENABLE            (0x1 << 2)
-> +#define DECON_CMU_SFR_CLKGATE_ENABLE           (0x1 << 1)
-> +#define DECON_CMU_MEM_CLKGATE_ENABLE           (0x1 << 0)
-> +
-> +/* DECON_UPDATE */
-> +#define DECON_UPDATE                           0x710
-> +
-> +#define DECON_UPDATE_SLAVE_SYNC                        (1 << 4)
-> +#define DECON_UPDATE_STANDALONE_F              (1 << 0)
-> --
-> 1.7.9.5
->
+CllvdXIgcGF0Y2ggaGFkIGEgbWlub3IgaXNzdWUgd2hpY2ggaXMgdGhlIHVzZSBvZiBjb25maWcg
+bmFtZSwKRFJNX0VYWU5PU19ERUNPTi4gVGhlIGNvbmZpZyBuYW1lIHNob3VsZCBiZSBjaGFuZ2Vk
+IHRvIERSTV9FWFlOT1M3X0RFQ09OCnRvIGRpc3Rpbmd1aXNoIERFQ09OIGNvbnRyb2xsZXIgb2Yg
+RXh5bm9zNyBhbmQgb25lIG9mIEV4eW5vczU0MzMuIEkKcmVtZW1iZXIgdGhhdCB3ZSBoYWQgYWxy
+ZWFkeSBhIGRpc2N1c3Npb24gYWJvdXQgaXQuCgpTbyBJIGZpeGVkIGl0IHVwIGFuZCBhcHBsaWVk
+LgoKVGhhbmtzLApJbmtpIERhZQoKT24gMjAxNeuFhCAwMuyblCAxMeydvCAxOTo0MywgQWpheSBr
+dW1hciB3cm90ZToKPiBwaW5nLgo+IAo+IE9uIFRodSwgRmViIDUsIDIwMTUgYXQgOToyNCBQTSwg
+QWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPiB3cm90ZToKPj4gVGhpcyBwYXRj
+aCBpcyBiYXNlZCBvbiBleHlub3MtZHJtLW5leHQgYnJhbmNoIG9mIElua2kgRGFlJ3MgdHJlZSBh
+dDoKPj4gZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlu
+a2kvZHJtLWV4eW5vcy5naXQKPj4KPj4gREVDT04oRGlzcGxheSBhbmQgRW5oYW5jZW1lbnQgQ29u
+dHJvbGxlcikgaXMgdGhlIG5ldyBJUAo+PiBpbiBleHlub3M3IFNPQyBmb3IgZ2VuZXJhdGluZyB2
+aWRlbyBzaWduYWxzIHVzaW5nIHBpeGVsIGRhdGEuCj4+Cj4+IERFQ09OIGRyaXZlciBjYW4gYmUg
+dXNlZCB0byBkcml2ZSAyIGRpZmZlcmVudCBpbnRlcmZhY2VzIG9uIEV4eW5vczc6Cj4+IERFQ09O
+LUlOVCh2aWRlbyBjb250cm9sbGVyKSBhbmQgREVDT04tRVhUKE1peGVyIGZvciBIRE1JKQo+Pgo+
+PiBUaGUgZXhpc3RpbmcgRklNRCBkcml2ZXIgY29kZSB3YXMgdXNlZCBhcyBhIHRlbXBsYXRlIHRv
+IGNyZWF0ZQo+PiBERUNPTiBkcml2ZXIuIE9ubHkgREVDT04tSU5UIGlzIHN1cHBvcnRlZCBhcyBv
+ZiBub3csIGFuZAo+PiBERUNPTi1FWFQgc3VwcG9ydCB3aWxsIGJlIGFkZGVkIGxhdGVyLgo+Pgo+
+PiBUaGUgY3VycmVudCB2ZXJzaW9uIG9mIHRoZSBkcml2ZXIgc3VwcG9ydHMgdmlkZW8gbW9kZSBk
+aXNwbGF5cy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQWtzaHUgQWdyYXdhbCA8YWtzaHVhQGdtYWls
+LmNvbT4KPj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcu
+Y29tPgo+PiAtLS0KPj4gQ2hhbmdlcyBzaW5jZSBWMToKPj4gICAgICAgICAtLSBBZGRyZXNzIGNv
+bW1lbnRzIGZyb20gUGFua2FqIGFuZCBkbyBmZXcgY2xlYW51cHMuCj4+IENoYW5nZXMgc2luY2Ug
+VjI6Cj4+ICAgICAgICAgLS0gQWRkcmVzcyBtb3JlIGNvbW1lbnRzIGZyb20gUGFua2FqIGFuZCBj
+bGVhbnVwLgo+PiBDaGFuZ2VzIHNpbmNlIFYzOgo+PiAgICAgICAgIC0tIFJlYmFzZSBvbiBleHlu
+b3MtZHJtLW5leHQuIFB1bGwgaW4gY2hhbmdlcyBmcm9tCj4+ICAgICAgICAgICAgRklNRCBkcml2
+ZXIuCj4+ICAgICAgICAgLS0gQWRkcmVzcyBjb21tZW50cyBmcm9tIElua2kgRGFlLiBSZW1vdmUg
+dW5uZWNlc3NhcnkKPj4gICAgICAgICAgICBmdW5jdGlvbnMgYW5kIGRlbGF5cy4gTWFrZSB1c2Ug
+b2YgaTgwLWlmLXRpbWluZ3MKPj4gICAgICAgICAgICBub2RlIHRvIGRpZmZlcmVudGlhdGUgYmV0
+d2VlbiBjb21tYW5kL3ZpZGVvIG1vZGUuCj4+Cj4+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92
+aWRlby9leHlub3M3LWRlY29uLnR4dCAgICB8ICAgNjggKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgIHwgICAxMyArLQo+PiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgfCAgICAxICsKPj4gIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAgICAgICAgIHwgIDk5MSAr
+KysrKysrKysrKysrKysrKysrKwo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5jICAgICAgICAgICAgfCAgICA0ICsKPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kcnYuaCAgICAgICAgICAgIHwgICAgMSArCj4+ICBpbmNsdWRlL3ZpZGVvL2V4eW5v
+czdfZGVjb24uaCAgICAgICAgICAgICAgICAgICAgICB8ICAzNDkgKysrKysrKwo+PiAgNyBmaWxl
+cyBjaGFuZ2VkLCAxNDI0IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+ICBjcmVhdGUg
+bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5v
+czctZGVjb24udHh0Cj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3M3X2RybV9kZWNvbi5jCj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS92aWRl
+by9leHlub3M3X2RlY29uLmgKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dAo+PiBuZXcgZmlsZSBtb2Rl
+IDEwMDY0NAo+PiBpbmRleCAwMDAwMDAwLi5mNWY5YzhkCj4+IC0tLSAvZGV2L251bGwKPj4gKysr
+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vczctZGVjb24u
+dHh0Cj4+IEBAIC0wLDAgKzEsNjggQEAKPj4gK0RldmljZS1UcmVlIGJpbmRpbmdzIGZvciBTYW1z
+dW5nIEV4eW5vczcgU29DIGRpc3BsYXkgY29udHJvbGxlciAoREVDT04pCj4+ICsKPj4gK0RFQ09O
+IChEaXNwbGF5IGFuZCBFbmhhbmNlbWVudCBDb250cm9sbGVyKSBpcyB0aGUgRGlzcGxheSBDb250
+cm9sbGVyIGZvciB0aGUKPj4gK0V4eW5vczcgc2VyaWVzIG9mIFNvQ3Mgd2hpY2ggdHJhbnNmZXJz
+IHRoZSBpbWFnZSBkYXRhIGZyb20gYSB2aWRlbyBtZW1vcnkKPj4gK2J1ZmZlciB0byBhbiBleHRl
+cm5hbCBMQ0QgaW50ZXJmYWNlLgo+PiArCj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+PiArLSBj
+b21wYXRpYmxlOiB2YWx1ZSBzaG91bGQgYmUgInNhbXN1bmcsZXh5bm9zNy1kZWNvbiI7Cj4+ICsK
+Pj4gKy0gcmVnOiBwaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgREVDT04g
+cmVnaXN0ZXJzIHNldC4KPj4gKwo+PiArLSBpbnRlcnJ1cHQtcGFyZW50OiBzaG91bGQgYmUgdGhl
+IHBoYW5kbGUgb2YgdGhlIGRlY29uIGNvbnRyb2xsZXIncwo+PiArICAgICAgICAgICAgICAgcGFy
+ZW50IGludGVycnVwdCBjb250cm9sbGVyLgo+PiArCj4+ICstIGludGVycnVwdHM6IHNob3VsZCBj
+b250YWluIGEgbGlzdCBvZiBhbGwgREVDT04gSVAgYmxvY2sgaW50ZXJydXB0cyBpbiB0aGUKPj4g
+KyAgICAgICAgICAgICAgICBvcmRlcjogRklGTyBMZXZlbCwgVlNZTkMsIExDRF9TWVNURU0uIFRo
+ZSBpbnRlcnJ1cHQgc3BlY2lmaWVyCj4+ICsgICAgICAgICAgICAgICAgZm9ybWF0IGRlcGVuZHMg
+b24gdGhlIGludGVycnVwdCBjb250cm9sbGVyIHVzZWQuCj4+ICsKPj4gKy0gaW50ZXJydXB0LW5h
+bWVzOiBzaG91bGQgY29udGFpbiB0aGUgaW50ZXJydXB0IG5hbWVzOiAiZmlmbyIsICJ2c3luYyIs
+Cj4+ICsgICAgICAgImxjZF9zeXMiLCBpbiB0aGUgc2FtZSBvcmRlciBhcyB0aGV5IHdlcmUgbGlz
+dGVkIGluIHRoZSBpbnRlcnJ1cHRzCj4+ICsgICAgICAgIHByb3BlcnR5Lgo+PiArCj4+ICstIHBp
+bmN0cmwtMDogcGluIGNvbnRyb2wgZ3JvdXAgdG8gYmUgdXNlZCBmb3IgdGhpcyBjb250cm9sbGVy
+Lgo+PiArCj4+ICstIHBpbmN0cmwtbmFtZXM6IG11c3QgY29udGFpbiBhICJkZWZhdWx0IiBlbnRy
+eS4KPj4gKwo+PiArLSBjbG9ja3M6IG11c3QgaW5jbHVkZSBjbG9jayBzcGVjaWZpZXJzIGNvcnJl
+c3BvbmRpbmcgdG8gZW50cmllcyBpbiB0aGUKPj4gKyAgICAgICAgIGNsb2NrLW5hbWVzIHByb3Bl
+cnR5Lgo+PiArCj4+ICstIGNsb2NrLW5hbWVzOiBsaXN0IG9mIGNsb2NrIG5hbWVzIHNvcnRlZCBp
+biB0aGUgc2FtZSBvcmRlciBhcyB0aGUgY2xvY2tzCj4+ICsgICAgICAgICAgICAgICBwcm9wZXJ0
+eS4gTXVzdCBjb250YWluICJwY2xrX2RlY29uMCIsICJhY2xrX2RlY29uMCIsCj4+ICsgICAgICAg
+ICAgICAgICJkZWNvbjBfZWNsayIsICJkZWNvbjBfdmNsayIuCj4+ICstIGk4MC1pZi10aW1pbmdz
+OiB0aW1pbmcgY29uZmlndXJhdGlvbiBmb3IgbGNkIGk4MCBpbnRlcmZhY2Ugc3VwcG9ydC4KPj4g
+Kwo+PiArT3B0aW9uYWwgUHJvcGVydGllczoKPj4gKy0gc2Ftc3VuZyxwb3dlci1kb21haW46IGEg
+cGhhbmRsZSB0byBERUNPTiBwb3dlciBkb21haW4gbm9kZS4KPj4gKy0gZGlzcGxheS10aW1pbmdz
+OiB0aW1pbmcgc2V0dGluZ3MgZm9yIERFQ09OLCBhcyBkZXNjcmliZWQgaW4gZG9jdW1lbnQgWzFd
+Lgo+PiArICAgICAgICAgICAgICAgQ2FuIGJlIHVzZWQgaW4gY2FzZSB0aW1pbmdzIGNhbm5vdCBi
+ZSBwcm92aWRlZCBvdGhlcndpc2UKPj4gKyAgICAgICAgICAgICAgIG9yIHRvIG92ZXJyaWRlIHRp
+bWluZ3MgcHJvdmlkZWQgYnkgdGhlIHBhbmVsLgo+PiArCj4+ICtbMV06IERvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9kaXNwbGF5LXRpbWluZy50eHQKPj4gKwo+PiArRXhh
+bXBsZToKPj4gKwo+PiArU29DIHNwZWNpZmljIERUIGVudHJ5Ogo+PiArCj4+ICsgICAgICAgZGVj
+b25AMTM5MzAwMDAgewo+PiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4
+eW5vczctZGVjb24iOwo+PiArICAgICAgICAgICAgICAgaW50ZXJydXB0LXBhcmVudCA9IDwmY29t
+YmluZXI+Owo+PiArICAgICAgICAgICAgICAgcmVnID0gPDB4MTM5MzAwMDAgMHgxMDAwPjsKPj4g
+KyAgICAgICAgICAgICAgIGludGVycnVwdC1uYW1lcyA9ICJsY2Rfc3lzIiwgInZzeW5jIiwgImZp
+Zm8iOwo+PiArICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDE4OCAwPiwgPDAgMTg5IDA+
+LCA8MCAxOTAgMD47Cj4+ICsgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNsb2NrX2Rpc3AgUENM
+S19ERUNPTl9JTlQ+LAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgPCZjbG9ja19kaXNwIEFD
+TEtfREVDT05fSU5UPiwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgIDwmY2xvY2tfZGlzcCBT
+Q0xLX0RFQ09OX0lOVF9FQ0xLPiwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgIDwmY2xvY2tf
+ZGlzcCBTQ0xLX0RFQ09OX0lOVF9FWFRDTEtQTEw+Owo+PiArICAgICAgICAgICAgICAgY2xvY2st
+bmFtZXMgPSAicGNsa19kZWNvbjAiLCAiYWNsa19kZWNvbjAiLCAiZGVjb24wX2VjbGsiLAo+PiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJkZWNvbjBfdmNsayI7Cj4+ICsgICAgICAg
+ICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOwo+PiArICAgICAgIH07Cj4+ICsKPj4gK0JvYXJk
+IHNwZWNpZmljIERUIGVudHJ5Ogo+PiArCj4+ICsgICAgICAgZGVjb25AMTM5MzAwMDAgewo+PiAr
+ICAgICAgICAgICAgICAgcGluY3RybC0wID0gPCZsY2RfY2xrICZwd20xX291dD47Cj4+ICsgICAg
+ICAgICAgICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+PiArICAgICAgICAgICAgICAg
+c3RhdHVzID0gIm9rYXkiOwo+PiArICAgICAgIH07Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcKPj4g
+aW5kZXggNjI3YWFhMC4uMzc4Y2ZkNSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9LY29uZmlnCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZwo+PiBA
+QCAtMjQsOSArMjQsMTYgQEAgY29uZmlnIERSTV9FWFlOT1NfRklNRAo+PiAgICAgICAgIGhlbHAK
+Pj4gICAgICAgICAgIENob29zZSB0aGlzIG9wdGlvbiBpZiB5b3Ugd2FudCB0byB1c2UgRXh5bm9z
+IEZJTUQgZm9yIERSTS4KPj4KPj4gK2NvbmZpZyBEUk1fRVhZTk9TX0RFQ09OCj4+ICsgICAgICAg
+Ym9vbCAiRXh5bm9zIERSTSBERUNPTiIKPj4gKyAgICAgICBkZXBlbmRzIG9uIERSTV9FWFlOT1MK
+Pj4gKyAgICAgICBzZWxlY3QgRkJfTU9ERV9IRUxQRVJTCj4+ICsgICAgICAgaGVscAo+PiArICAg
+ICAgICAgQ2hvb3NlIHRoaXMgb3B0aW9uIGlmIHlvdSB3YW50IHRvIHVzZSBFeHlub3MgREVDT04g
+Zm9yIERSTS4KPj4gKwo+PiAgY29uZmlnIERSTV9FWFlOT1NfRFBJCj4+ICAgICAgICAgYm9vbCAi
+RVhZTk9TIERSTSBwYXJhbGxlbCBvdXRwdXQgc3VwcG9ydCIKPj4gLSAgICAgICBkZXBlbmRzIG9u
+IERSTV9FWFlOT1NfRklNRAo+PiArICAgICAgIGRlcGVuZHMgb24gKERSTV9FWFlOT1NfRklNRCB8
+fCBEUk1fRVhZTk9TX0RFQ09OKQo+PiAgICAgICAgIHNlbGVjdCBEUk1fUEFORUwKPj4gICAgICAg
+ICBkZWZhdWx0IG4KPj4gICAgICAgICBoZWxwCj4+IEBAIC0zNCw3ICs0MSw3IEBAIGNvbmZpZyBE
+Uk1fRVhZTk9TX0RQSQo+Pgo+PiAgY29uZmlnIERSTV9FWFlOT1NfRFNJCj4+ICAgICAgICAgYm9v
+bCAiRVhZTk9TIERSTSBNSVBJLURTSSBkcml2ZXIgc3VwcG9ydCIKPj4gLSAgICAgICBkZXBlbmRz
+IG9uIERSTV9FWFlOT1NfRklNRAo+PiArICAgICAgIGRlcGVuZHMgb24gKERSTV9FWFlOT1NfRklN
+RCB8fCBEUk1fRVhZTk9TX0RFQ09OKQo+PiAgICAgICAgIHNlbGVjdCBEUk1fTUlQSV9EU0kKPj4g
+ICAgICAgICBzZWxlY3QgRFJNX1BBTkVMCj4+ICAgICAgICAgZGVmYXVsdCBuCj4+IEBAIC00Myw3
+ICs1MCw3IEBAIGNvbmZpZyBEUk1fRVhZTk9TX0RTSQo+Pgo+PiAgY29uZmlnIERSTV9FWFlOT1Nf
+RFAKPj4gICAgICAgICBib29sICJFWFlOT1MgRFJNIERQIGRyaXZlciBzdXBwb3J0Igo+PiAtICAg
+ICAgIGRlcGVuZHMgb24gRFJNX0VYWU5PU19GSU1EICYmIEFSQ0hfRVhZTk9TICYmIChEUk1fUFRO
+MzQ2MD1uIHx8IERSTV9QVE4zNDYwPXkgfHwgRFJNX1BUTjM0NjA9RFJNX0VYWU5PUykKPj4gKyAg
+ICAgICBkZXBlbmRzIG9uIChEUk1fRVhZTk9TX0ZJTUQgfHwgRFJNX0VYWU5PU19ERUNPTikgJiYg
+QVJDSF9FWFlOT1MgJiYgKERSTV9QVE4zNDYwPW4gfHwgRFJNX1BUTjM0NjA9eSB8fCBEUk1fUFRO
+MzQ2MD1EUk1fRVhZTk9TKQo+PiAgICAgICAgIGRlZmF1bHQgRFJNX0VYWU5PUwo+PiAgICAgICAg
+IHNlbGVjdCBEUk1fUEFORUwKPj4gICAgICAgICBoZWxwCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL01ha2VmaWxlIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmls
+ZQo+PiBpbmRleCAwODU2ODkxLi5hZWMwNThjIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL01ha2VmaWxlCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvTWFrZWZp
+bGUKPj4gQEAgLTEwLDYgKzEwLDcgQEAgZXh5bm9zZHJtLXkgOj0gZXh5bm9zX2RybV9kcnYubyBl
+eHlub3NfZHJtX2VuY29kZXIubyBcCj4+Cj4+ICBleHlub3Nkcm0tJChDT05GSUdfRFJNX0VYWU5P
+U19JT01NVSkgKz0gZXh5bm9zX2RybV9pb21tdS5vCj4+ICBleHlub3Nkcm0tJChDT05GSUdfRFJN
+X0VYWU5PU19GSU1EKSAgICArPSBleHlub3NfZHJtX2ZpbWQubwo+PiArZXh5bm9zZHJtLSQoQ09O
+RklHX0RSTV9FWFlOT1NfREVDT04pICAgKz0gZXh5bm9zN19kcm1fZGVjb24ubwo+PiAgZXh5bm9z
+ZHJtLSQoQ09ORklHX0RSTV9FWFlOT1NfRFBJKSAgICAgKz0gZXh5bm9zX2RybV9kcGkubwo+PiAg
+ZXh5bm9zZHJtLSQoQ09ORklHX0RSTV9FWFlOT1NfRFNJKSAgICAgKz0gZXh5bm9zX2RybV9kc2ku
+bwo+PiAgZXh5bm9zZHJtLSQoQ09ORklHX0RSTV9FWFlOT1NfRFApICAgICAgKz0gZXh5bm9zX2Rw
+X2NvcmUubyBleHlub3NfZHBfcmVnLm8KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+N19kcm1fZGVjb24uYwo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRleCAwMDAwMDAwLi5j
+NjEwMjkzCj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3M3X2RybV9kZWNvbi5jCj4+IEBAIC0wLDAgKzEsOTkwIEBACj4+ICsvKiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKPj4gKyAqCj4+ICsgKiBDb3B5cmlnaHQg
+KEMpIDIwMTQgU2Ftc3VuZyBFbGVjdHJvbmljcyBDby5MdGQKPj4gKyAqIEF1dGhvcnM6Cj4+ICsg
+KiAgICAgQWtzaHUgQWdhcndhbCA8YWtzaHVhQGdtYWlsLmNvbT4KPj4gKyAqICAgICBBamF5IEt1
+bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+ICsgKgo+PiArICogVGhpcyBwcm9ncmFt
+IGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlICBpdCBhbmQvb3IgbW9kaWZ5
+IGl0Cj4+ICsgKiB1bmRlciAgdGhlIHRlcm1zIG9mICB0aGUgR05VIEdlbmVyYWwgIFB1YmxpYyBM
+aWNlbnNlIGFzIHB1Ymxpc2hlZCBieSB0aGUKPj4gKyAqIEZyZWUgU29mdHdhcmUgRm91bmRhdGlv
+bjsgIGVpdGhlciB2ZXJzaW9uIDIgb2YgdGhlICBMaWNlbnNlLCBvciAoYXQgeW91cgo+PiArICog
+b3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4KPj4gKyAqCj4+ICsgKi8KPj4gKyNpbmNsdWRlIDxk
+cm0vZHJtUC5oPgo+PiArI2luY2x1ZGUgPGRybS9leHlub3NfZHJtLmg+Cj4+ICsKPj4gKyNpbmNs
+dWRlIDxsaW51eC9jbGsuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9jb21wb25lbnQuaD4KPj4gKyNp
+bmNsdWRlIDxsaW51eC9rZXJuZWwuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9vZi5oPgo+PiArI2lu
+Y2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4KPj4gKyNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2Uu
+aD4KPj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KPj4gKyNpbmNsdWRlIDxs
+aW51eC9wbV9ydW50aW1lLmg+Cj4+ICsKPj4gKyNpbmNsdWRlIDx2aWRlby9vZl9kaXNwbGF5X3Rp
+bWluZy5oPgo+PiArI2luY2x1ZGUgPHZpZGVvL29mX3ZpZGVvbW9kZS5oPgo+PiArI2luY2x1ZGUg
+PHZpZGVvL2V4eW5vczdfZGVjb24uaD4KPj4gKwo+PiArI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0
+Yy5oIgo+PiArI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCj4+ICsjaW5jbHVkZSAiZXh5bm9z
+X2RybV9mYmRldi5oIgo+PiArI2luY2x1ZGUgImV4eW5vc19kcm1faW9tbXUuaCIKPj4gKwo+PiAr
+LyoKPj4gKyAqIERFQ09OIHN0YW5kcyBmb3IgRGlzcGxheSBhbmQgRW5oYW5jZW1lbnQgY29udHJv
+bGxlci4KPj4gKyAqLwo+PiArCj4+ICsjZGVmaW5lIERFQ09OX0RFRkFVTFRfRlJBTUVSQVRFIDYw
+Cj4+ICsjZGVmaW5lIE1JTl9GQl9XSURUSF9GT1JfMTZXT1JEX0JVUlNUIDEyOAo+PiArCj4+ICsj
+ZGVmaW5lIFdJTkRPV1NfTlIgICAgIDIKPj4gKwo+PiArc3RydWN0IGRlY29uX3dpbl9kYXRhIHsK
+Pj4gKyAgICAgICB1bnNpZ25lZCBpbnQgICAgICAgICAgICBvdmxfeDsKPj4gKyAgICAgICB1bnNp
+Z25lZCBpbnQgICAgICAgICAgICBvdmxfeTsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgICAgICAg
+ICAgICBvZmZzZXRfeDsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgICAgICAgICAgICBvZmZzZXRf
+eTsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgICAgICAgICAgICBvdmxfd2lkdGg7Cj4+ICsgICAg
+ICAgdW5zaWduZWQgaW50ICAgICAgICAgICAgb3ZsX2hlaWdodDsKPj4gKyAgICAgICB1bnNpZ25l
+ZCBpbnQgICAgICAgICAgICBmYl93aWR0aDsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgICAgICAg
+ICAgICBmYl9oZWlnaHQ7Cj4+ICsgICAgICAgdW5zaWduZWQgaW50ICAgICAgICAgICAgYnBwOwo+
+PiArICAgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgIHBpeGVsX2Zvcm1hdDsKPj4gKyAgICAg
+ICBkbWFfYWRkcl90ICAgICAgICAgICAgICBkbWFfYWRkcjsKPj4gKyAgICAgICBib29sICAgICAg
+ICAgICAgICAgICAgICBlbmFibGVkOwo+PiArICAgICAgIGJvb2wgICAgICAgICAgICAgICAgICAg
+IHJlc3VtZTsKPj4gK307Cj4+ICsKPj4gK3N0cnVjdCBkZWNvbl9jb250ZXh0IHsKPj4gKyAgICAg
+ICBzdHJ1Y3QgZGV2aWNlICAgICAgICAgICAgICAgICAgICpkZXY7Cj4+ICsgICAgICAgc3RydWN0
+IGRybV9kZXZpY2UgICAgICAgICAgICAgICAqZHJtX2RldjsKPj4gKyAgICAgICBzdHJ1Y3QgZXh5
+bm9zX2RybV9jcnRjICAgICAgICAgICpjcnRjOwo+PiArICAgICAgIHN0cnVjdCBjbGsgICAgICAg
+ICAgICAgICAgICAgICAgKnBjbGs7Cj4+ICsgICAgICAgc3RydWN0IGNsayAgICAgICAgICAgICAg
+ICAgICAgICAqYWNsazsKPj4gKyAgICAgICBzdHJ1Y3QgY2xrICAgICAgICAgICAgICAgICAgICAg
+ICplY2xrOwo+PiArICAgICAgIHN0cnVjdCBjbGsgICAgICAgICAgICAgICAgICAgICAgKnZjbGs7
+Cj4+ICsgICAgICAgdm9pZCBfX2lvbWVtICAgICAgICAgICAgICAgICAgICAqcmVnczsKPj4gKyAg
+ICAgICBzdHJ1Y3QgZGVjb25fd2luX2RhdGEgICAgICAgICAgIHdpbl9kYXRhW1dJTkRPV1NfTlJd
+Owo+PiArICAgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgICAgICAgICAgZGVmYXVsdF93aW47
+Cj4+ICsgICAgICAgdW5zaWduZWQgbG9uZyAgICAgICAgICAgICAgICAgICBpcnFfZmxhZ3M7Cj4+
+ICsgICAgICAgYm9vbCAgICAgICAgICAgICAgICAgICAgICAgICAgICBpODBfaWY7Cj4+ICsgICAg
+ICAgYm9vbCAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdXNwZW5kZWQ7Cj4+ICsgICAgICAg
+aW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwaXBlOwo+PiArICAgICAgIHdhaXRfcXVl
+dWVfaGVhZF90ICAgICAgICAgICAgICAgd2FpdF92c3luY19xdWV1ZTsKPj4gKyAgICAgICBhdG9t
+aWNfdCAgICAgICAgICAgICAgICAgICAgICAgIHdhaXRfdnN5bmNfZXZlbnQ7Cj4+ICsKPj4gKyAg
+ICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9wYW5lbF9pbmZvIHBhbmVsOwo+PiArICAgICAgIHN0cnVj
+dCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXk7Cj4+ICt9Owo+PiArCj4+ICtzdGF0aWMgY29u
+c3Qgc3RydWN0IG9mX2RldmljZV9pZCBkZWNvbl9kcml2ZXJfZHRfbWF0Y2hbXSA9IHsKPj4gKyAg
+ICAgICB7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNy1kZWNvbiJ9LAo+PiArICAgICAg
+IHt9LAo+PiArfTsKPj4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIGRlY29uX2RyaXZlcl9kdF9t
+YXRjaCk7Cj4+ICsKPj4gK3N0YXRpYyB2b2lkIGRlY29uX3dhaXRfZm9yX3ZibGFuayhzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+PiArewo+PiArICAgICAgIHN0cnVjdCBkZWNvbl9jb250
+ZXh0ICpjdHggPSBjcnRjLT5jdHg7Cj4+ICsKPj4gKyAgICAgICBpZiAoY3R4LT5zdXNwZW5kZWQp
+Cj4+ICsgICAgICAgICAgICAgICByZXR1cm47Cj4+ICsKPj4gKyAgICAgICBhdG9taWNfc2V0KCZj
+dHgtPndhaXRfdnN5bmNfZXZlbnQsIDEpOwo+PiArCj4+ICsgICAgICAgLyoKPj4gKyAgICAgICAg
+KiB3YWl0IGZvciBERUNPTiB0byBzaWduYWwgVlNZTkMgaW50ZXJydXB0IG9yIHJldHVybiBhZnRl
+cgo+PiArICAgICAgICAqIHRpbWVvdXQgd2hpY2ggaXMgc2V0IHRvIDUwbXMgKHJlZnJlc2ggcmF0
+ZSBvZiAyMCkuCj4+ICsgICAgICAgICovCj4+ICsgICAgICAgaWYgKCF3YWl0X2V2ZW50X3RpbWVv
+dXQoY3R4LT53YWl0X3ZzeW5jX3F1ZXVlLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICFhdG9taWNfcmVhZCgmY3R4LT53YWl0X3ZzeW5jX2V2ZW50KSwKPj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBIWi8yMCkpCj4+ICsgICAgICAgICAgICAgICBEUk1fREVCVUdf
+S01TKCJ2Ymxhbmsgd2FpdCB0aW1lZCBvdXQuXG4iKTsKPj4gK30KPj4gKwo+PiArc3RhdGljIHZv
+aWQgZGVjb25fY2xlYXJfY2hhbm5lbChzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4KQo+PiArewo+
+PiArICAgICAgIGludCB3aW4sIGNoX2VuYWJsZWQgPSAwOwo+PiArCj4+ICsgICAgICAgRFJNX0RF
+QlVHX0tNUygiJXNcbiIsIF9fRklMRV9fKTsKPj4gKwo+PiArICAgICAgIC8qIENoZWNrIGlmIGFu
+eSBjaGFubmVsIGlzIGVuYWJsZWQuICovCj4+ICsgICAgICAgZm9yICh3aW4gPSAwOyB3aW4gPCBX
+SU5ET1dTX05SOyB3aW4rKykgewo+PiArICAgICAgICAgICAgICAgdTMyIHZhbCA9IHJlYWRsKGN0
+eC0+cmVncyArIFdJTkNPTih3aW4pKTsKPj4gKwo+PiArICAgICAgICAgICAgICAgaWYgKHZhbCAm
+IFdJTkNPTnhfRU5XSU4pIHsKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgdmFsICY9IH5XSU5D
+T054X0VOV0lOOwo+PiArICAgICAgICAgICAgICAgICAgICAgICB3cml0ZWwodmFsLCBjdHgtPnJl
+Z3MgKyBXSU5DT04od2luKSk7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGNoX2VuYWJsZWQg
+PSAxOwo+PiArICAgICAgICAgICAgICAgfQo+PiArICAgICAgIH0KPj4gKwo+PiArICAgICAgIC8q
+IFdhaXQgZm9yIHZzeW5jLCBhcyBkaXNhYmxlIGNoYW5uZWwgdGFrZXMgZWZmZWN0IGF0IG5leHQg
+dnN5bmMgKi8KPj4gKyAgICAgICBpZiAoY2hfZW5hYmxlZCkgewo+PiArICAgICAgICAgICAgICAg
+dW5zaWduZWQgaW50IHN0YXRlID0gY3R4LT5zdXNwZW5kZWQ7Cj4+ICsKPj4gKyAgICAgICAgICAg
+ICAgIGN0eC0+c3VzcGVuZGVkID0gMDsKPj4gKyAgICAgICAgICAgICAgIGRlY29uX3dhaXRfZm9y
+X3ZibGFuayhjdHgtPmNydGMpOwo+PiArICAgICAgICAgICAgICAgY3R4LT5zdXNwZW5kZWQgPSBz
+dGF0ZTsKPj4gKyAgICAgICB9Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyBpbnQgZGVjb25fY3R4X2lu
+aXRpYWxpemUoc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCwKPj4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYpCj4+ICt7Cj4+ICsgICAgICAgc3RydWN0
+IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdiA9IGRybV9kZXYtPmRldl9wcml2YXRlOwo+PiArCj4+
+ICsgICAgICAgY3R4LT5kcm1fZGV2ID0gZHJtX2RldjsKPj4gKyAgICAgICBjdHgtPnBpcGUgPSBw
+cml2LT5waXBlKys7Cj4+ICsKPj4gKyAgICAgICAvKiBhdHRhY2ggdGhpcyBzdWIgZHJpdmVyIHRv
+IGlvbW11IG1hcHBpbmcgaWYgc3VwcG9ydGVkLiAqLwo+PiArICAgICAgIGlmIChpc19kcm1faW9t
+bXVfc3VwcG9ydGVkKGN0eC0+ZHJtX2RldikpIHsKPj4gKyAgICAgICAgICAgICAgIGludCByZXQ7
+Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIC8qCj4+ICsgICAgICAgICAgICAgICAgKiBJZiBhbnkg
+Y2hhbm5lbCBpcyBhbHJlYWR5IGFjdGl2ZSwgaW9tbXUgd2lsbCB0aHJvdwo+PiArICAgICAgICAg
+ICAgICAgICogYSBQQUdFIEZBVUxUIHdoZW4gZW5hYmxlZC4gU28gY2xlYXIgYW55IGNoYW5uZWwg
+aWYgZW5hYmxlZC4KPj4gKyAgICAgICAgICAgICAgICAqLwo+PiArICAgICAgICAgICAgICAgZGVj
+b25fY2xlYXJfY2hhbm5lbChjdHgpOwo+PiArICAgICAgICAgICAgICAgcmV0ID0gZHJtX2lvbW11
+X2F0dGFjaF9kZXZpY2UoY3R4LT5kcm1fZGV2LCBjdHgtPmRldik7Cj4+ICsgICAgICAgICAgICAg
+ICBpZiAocmV0KSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiZHJtX2lv
+bW11X2F0dGFjaCBmYWlsZWQuXG4iKTsKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJu
+IHJldDsKPj4gKyAgICAgICAgICAgICAgIH0KPj4gKyAgICAgICB9Cj4+ICsKPj4gKyAgICAgICBy
+ZXR1cm4gMDsKPj4gK30KPj4gKwo+PiArc3RhdGljIHZvaWQgZGVjb25fY3R4X3JlbW92ZShzdHJ1
+Y3QgZGVjb25fY29udGV4dCAqY3R4KQo+PiArewo+PiArICAgICAgIC8qIGRldGFjaCB0aGlzIHN1
+YiBkcml2ZXIgZnJvbSBpb21tdSBtYXBwaW5nIGlmIHN1cHBvcnRlZC4gKi8KPj4gKyAgICAgICBp
+ZiAoaXNfZHJtX2lvbW11X3N1cHBvcnRlZChjdHgtPmRybV9kZXYpKQo+PiArICAgICAgICAgICAg
+ICAgZHJtX2lvbW11X2RldGFjaF9kZXZpY2UoY3R4LT5kcm1fZGV2LCBjdHgtPmRldik7Cj4+ICt9
+Cj4+ICsKPj4gK3N0YXRpYyB1MzIgZGVjb25fY2FsY19jbGtkaXYoc3RydWN0IGRlY29uX2NvbnRl
+eHQgKmN0eCwKPj4gKyAgICAgICAgICAgICAgIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2Rl
+ICptb2RlKQo+PiArewo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgaWRlYWxfY2xrID0gbW9kZS0+
+aHRvdGFsICogbW9kZS0+dnRvdGFsICogbW9kZS0+dnJlZnJlc2g7Cj4+ICsgICAgICAgdTMyIGNs
+a2RpdjsKPj4gKwo+PiArICAgICAgIC8qIEZpbmQgdGhlIGNsb2NrIGRpdmlkZXIgdmFsdWUgdGhh
+dCBnZXRzIHVzIGNsb3Nlc3QgdG8gaWRlYWxfY2xrICovCj4+ICsgICAgICAgY2xrZGl2ID0gRElW
+X1JPVU5EX1VQKGNsa19nZXRfcmF0ZShjdHgtPnZjbGspLCBpZGVhbF9jbGspOwo+PiArCj4+ICsg
+ICAgICAgcmV0dXJuIChjbGtkaXYgPCAweDEwMCkgPyBjbGtkaXYgOiAweGZmOwo+PiArfQo+PiAr
+Cj4+ICtzdGF0aWMgYm9vbCBkZWNvbl9tb2RlX2ZpeHVwKHN0cnVjdCBleHlub3NfZHJtX2NydGMg
+KmNydGMsCj4+ICsgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAq
+bW9kZSwKPj4gKyAgICAgICAgICAgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICphZGp1c3Rl
+ZF9tb2RlKQo+PiArewo+PiArICAgICAgIGlmIChhZGp1c3RlZF9tb2RlLT52cmVmcmVzaCA9PSAw
+KQo+PiArICAgICAgICAgICAgICAgYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggPSBERUNPTl9ERUZB
+VUxUX0ZSQU1FUkFURTsKPj4gKwo+PiArICAgICAgIHJldHVybiB0cnVlOwo+PiArfQo+PiArCj4+
+ICtzdGF0aWMgdm9pZCBkZWNvbl9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykK
+Pj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+
+PiArICAgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0gJmNydGMtPmJhc2UubW9k
+ZTsKPj4gKyAgICAgICB1MzIgdmFsLCBjbGtkaXY7Cj4+ICsKPj4gKyAgICAgICBpZiAoY3R4LT5z
+dXNwZW5kZWQpCj4+ICsgICAgICAgICAgICAgICByZXR1cm47Cj4+ICsKPj4gKyAgICAgICAvKiBu
+b3RoaW5nIHRvIGRvIGlmIHdlIGhhdmVuJ3Qgc2V0IHRoZSBtb2RlIHlldCAqLwo+PiArICAgICAg
+IGlmIChtb2RlLT5odG90YWwgPT0gMCB8fCBtb2RlLT52dG90YWwgPT0gMCkKPj4gKyAgICAgICAg
+ICAgICAgIHJldHVybjsKPj4gKwo+PiArICAgICAgIGlmICghY3R4LT5pODBfaWYpIHsKPj4gKyAg
+ICAgICAgICAgICAgIGludCB2c3luY19sZW4sIHZicGQsIHZmcGQsIGhzeW5jX2xlbiwgaGJwZCwg
+aGZwZDsKPj4gKyAgICAgICAgICAgICAvKiBzZXR1cCB2ZXJ0aWNhbCB0aW1pbmcgdmFsdWVzLiAq
+Lwo+PiArICAgICAgICAgICAgICAgdnN5bmNfbGVuID0gbW9kZS0+Y3J0Y192c3luY19lbmQgLSBt
+b2RlLT5jcnRjX3ZzeW5jX3N0YXJ0Owo+PiArICAgICAgICAgICAgICAgdmJwZCA9IG1vZGUtPmNy
+dGNfdnRvdGFsIC0gbW9kZS0+Y3J0Y192c3luY19lbmQ7Cj4+ICsgICAgICAgICAgICAgICB2ZnBk
+ID0gbW9kZS0+Y3J0Y192c3luY19zdGFydCAtIG1vZGUtPmNydGNfdmRpc3BsYXk7Cj4+ICsKPj4g
+KyAgICAgICAgICAgICAgIHZhbCA9IFZJRFRDT04wX1ZCUEQodmJwZCAtIDEpIHwgVklEVENPTjBf
+VkZQRCh2ZnBkIC0gMSk7Cj4+ICsgICAgICAgICAgICAgICB3cml0ZWwodmFsLCBjdHgtPnJlZ3Mg
+KyBWSURUQ09OMCk7Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIHZhbCA9IFZJRFRDT04xX1ZTUFco
+dnN5bmNfbGVuIC0gMSk7Cj4+ICsgICAgICAgICAgICAgICB3cml0ZWwodmFsLCBjdHgtPnJlZ3Mg
+KyBWSURUQ09OMSk7Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIC8qIHNldHVwIGhvcml6b250YWwg
+dGltaW5nIHZhbHVlcy4gICovCj4+ICsgICAgICAgICAgICAgICBoc3luY19sZW4gPSBtb2RlLT5j
+cnRjX2hzeW5jX2VuZCAtIG1vZGUtPmNydGNfaHN5bmNfc3RhcnQ7Cj4+ICsgICAgICAgICAgICAg
+ICBoYnBkID0gbW9kZS0+Y3J0Y19odG90YWwgLSBtb2RlLT5jcnRjX2hzeW5jX2VuZDsKPj4gKyAg
+ICAgICAgICAgICAgIGhmcGQgPSBtb2RlLT5jcnRjX2hzeW5jX3N0YXJ0IC0gbW9kZS0+Y3J0Y19o
+ZGlzcGxheTsKPj4gKwo+PiArICAgICAgICAgICAgICAgLyogc2V0dXAgaG9yaXpvbnRhbCB0aW1p
+bmcgdmFsdWVzLiAgKi8KPj4gKyAgICAgICAgICAgICAgIHZhbCA9IFZJRFRDT04yX0hCUEQoaGJw
+ZCAtIDEpIHwgVklEVENPTjJfSEZQRChoZnBkIC0gMSk7Cj4+ICsgICAgICAgICAgICAgICB3cml0
+ZWwodmFsLCBjdHgtPnJlZ3MgKyBWSURUQ09OMik7Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIHZh
+bCA9IFZJRFRDT04zX0hTUFcoaHN5bmNfbGVuIC0gMSk7Cj4+ICsgICAgICAgICAgICAgICB3cml0
+ZWwodmFsLCBjdHgtPnJlZ3MgKyBWSURUQ09OMyk7Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAg
+ICAgLyogc2V0dXAgaG9yaXpvbnRhbCBhbmQgdmVydGljYWwgZGlzcGxheSBzaXplLiAqLwo+PiAr
+ICAgICAgIHZhbCA9IFZJRFRDT040X0xJTkVWQUwobW9kZS0+dmRpc3BsYXkgLSAxKSB8Cj4+ICsg
+ICAgICAgICAgICAgIFZJRFRDT040X0hPWlZBTChtb2RlLT5oZGlzcGxheSAtIDEpOwo+PiArICAg
+ICAgIHdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFZJRFRDT040KTsKPj4gKwo+PiArICAgICAgIHdy
+aXRlbChtb2RlLT52ZGlzcGxheSAtIDEsIGN0eC0+cmVncyArIExJTkVDTlRfT1BfVEhSRVNIT0xE
+KTsKPj4gKwo+PiArICAgICAgIC8qCj4+ICsgICAgICAgICogZmllbGRzIG9mIHJlZ2lzdGVyIHdp
+dGggcHJlZml4ICdfRicgd291bGQgYmUgdXBkYXRlZAo+PiArICAgICAgICAqIGF0IHZzeW5jKHNh
+bWUgYXMgZG1hIHN0YXJ0KQo+PiArICAgICAgICAqLwo+PiArICAgICAgIHZhbCA9IFZJRENPTjBf
+RU5WSUQgfCBWSURDT04wX0VOVklEX0Y7Cj4+ICsgICAgICAgd3JpdGVsKHZhbCwgY3R4LT5yZWdz
+ICsgVklEQ09OMCk7Cj4+ICsKPj4gKyAgICAgICBjbGtkaXYgPSBkZWNvbl9jYWxjX2Nsa2Rpdihj
+dHgsIG1vZGUpOwo+PiArICAgICAgIGlmIChjbGtkaXYgPiAxKSB7Cj4+ICsgICAgICAgICAgICAg
+ICB2YWwgPSBWQ0xLQ09OMV9DTEtWQUxfTlVNX1ZDTEsoY2xrZGl2IC0gMSk7Cj4+ICsgICAgICAg
+ICAgICAgICB3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBWQ0xLQ09OMSk7Cj4+ICsgICAgICAgICAg
+ICAgICB3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBWQ0xLQ09OMik7Cj4+ICsgICAgICAgfQo+PiAr
+Cj4+ICsgICAgICAgdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgREVDT05fVVBEQVRFKTsKPj4gKyAg
+ICAgICB2YWwgfD0gREVDT05fVVBEQVRFX1NUQU5EQUxPTkVfRjsKPj4gKyAgICAgICB3cml0ZWwo
+dmFsLCBjdHgtPnJlZ3MgKyBERUNPTl9VUERBVEUpOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgaW50
+IGRlY29uX2VuYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPj4gK3sK
+Pj4gKyAgICAgICBzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+PiArICAg
+ICAgIHUzMiB2YWw7Cj4+ICsKPj4gKyAgICAgICBpZiAoY3R4LT5zdXNwZW5kZWQpCj4+ICsgICAg
+ICAgICAgICAgICByZXR1cm4gLUVQRVJNOwo+PiArCj4+ICsgICAgICAgaWYgKCF0ZXN0X2FuZF9z
+ZXRfYml0KDAsICZjdHgtPmlycV9mbGFncykpIHsKPj4gKyAgICAgICAgICAgICAgIHZhbCA9IHJl
+YWRsKGN0eC0+cmVncyArIFZJRElOVENPTjApOwo+PiArCj4+ICsgICAgICAgICAgICAgICB2YWwg
+fD0gVklESU5UQ09OMF9JTlRfRU5BQkxFOwo+PiArCj4+ICsgICAgICAgICAgICAgICBpZiAoIWN0
+eC0+aTgwX2lmKSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHZhbCB8PSBWSURJTlRDT04w
+X0lOVF9GUkFNRTsKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgdmFsICY9IH5WSURJTlRDT04w
+X0ZSQU1FU0VMMF9NQVNLOwo+PiArICAgICAgICAgICAgICAgICAgICAgICB2YWwgfD0gVklESU5U
+Q09OMF9GUkFNRVNFTDBfVlNZTkM7Cj4+ICsgICAgICAgICAgICAgICB9Cj4+ICsKPj4gKyAgICAg
+ICAgICAgICAgIHdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFZJRElOVENPTjApOwo+PiArICAgICAg
+IH0KPj4gKwo+PiArICAgICAgIHJldHVybiAwOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgdm9pZCBk
+ZWNvbl9kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+PiArewo+
+PiArICAgICAgIHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7Cj4+ICsgICAg
+ICAgdTMyIHZhbDsKPj4gKwo+PiArICAgICAgIGlmIChjdHgtPnN1c3BlbmRlZCkKPj4gKyAgICAg
+ICAgICAgICAgIHJldHVybjsKPj4gKwo+PiArICAgICAgIGlmICh0ZXN0X2FuZF9jbGVhcl9iaXQo
+MCwgJmN0eC0+aXJxX2ZsYWdzKSkgewo+PiArICAgICAgICAgICAgICAgdmFsID0gcmVhZGwoY3R4
+LT5yZWdzICsgVklESU5UQ09OMCk7Cj4+ICsKPj4gKyAgICAgICAgICAgICAgIHZhbCAmPSB+VklE
+SU5UQ09OMF9JTlRfRU5BQkxFOwo+PiArICAgICAgICAgICAgICAgaWYgKCFjdHgtPmk4MF9pZikK
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgdmFsICY9IH5WSURJTlRDT04wX0lOVF9GUkFNRTsK
+Pj4gKwo+PiArICAgICAgICAgICAgICAgd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgVklESU5UQ09O
+MCk7Cj4+ICsgICAgICAgfQo+PiArfQo+PiArCj4+ICtzdGF0aWMgdm9pZCBkZWNvbl93aW5fbW9k
+ZV9zZXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKPj4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5lKQo+PiArewo+PiArICAgICAgIHN0
+cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7Cj4+ICsgICAgICAgc3RydWN0IGRl
+Y29uX3dpbl9kYXRhICp3aW5fZGF0YTsKPj4gKyAgICAgICBpbnQgd2luLCBwYWRkaW5nOwo+PiAr
+Cj4+ICsgICAgICAgaWYgKCFwbGFuZSkgewo+PiArICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJw
+bGFuZSBpcyBOVUxMXG4iKTsKPj4gKyAgICAgICAgICAgICAgIHJldHVybjsKPj4gKyAgICAgICB9
+Cj4+ICsKPj4gKyAgICAgICB3aW4gPSBwbGFuZS0+enBvczsKPj4gKyAgICAgICBpZiAod2luID09
+IERFRkFVTFRfWlBPUykKPj4gKyAgICAgICAgICAgICAgIHdpbiA9IGN0eC0+ZGVmYXVsdF93aW47
+Cj4+ICsKPj4gKyAgICAgICBpZiAod2luIDwgMCB8fCB3aW4gPj0gV0lORE9XU19OUikKPj4gKyAg
+ICAgICAgICAgICAgIHJldHVybjsKPj4gKwo+PiArCj4+ICsgICAgICAgd2luX2RhdGEgPSAmY3R4
+LT53aW5fZGF0YVt3aW5dOwo+PiArCj4+ICsgICAgICAgcGFkZGluZyA9IChwbGFuZS0+cGl0Y2gg
+LyAocGxhbmUtPmJwcCA+PiAzKSkgLSBwbGFuZS0+ZmJfd2lkdGg7Cj4+ICsgICAgICAgd2luX2Rh
+dGEtPm9mZnNldF94ID0gcGxhbmUtPmZiX3g7Cj4+ICsgICAgICAgd2luX2RhdGEtPm9mZnNldF95
+ID0gcGxhbmUtPmZiX3k7Cj4+ICsgICAgICAgd2luX2RhdGEtPmZiX3dpZHRoID0gcGxhbmUtPmZi
+X3dpZHRoICsgcGFkZGluZzsKPj4gKyAgICAgICB3aW5fZGF0YS0+ZmJfaGVpZ2h0ID0gcGxhbmUt
+PmZiX2hlaWdodDsKPj4gKyAgICAgICB3aW5fZGF0YS0+b3ZsX3ggPSBwbGFuZS0+Y3J0Y194Owo+
+PiArICAgICAgIHdpbl9kYXRhLT5vdmxfeSA9IHBsYW5lLT5jcnRjX3k7Cj4+ICsgICAgICAgd2lu
+X2RhdGEtPm92bF93aWR0aCA9IHBsYW5lLT5jcnRjX3dpZHRoOwo+PiArICAgICAgIHdpbl9kYXRh
+LT5vdmxfaGVpZ2h0ID0gcGxhbmUtPmNydGNfaGVpZ2h0Owo+PiArICAgICAgIHdpbl9kYXRhLT5k
+bWFfYWRkciA9IHBsYW5lLT5kbWFfYWRkclswXTsKPj4gKyAgICAgICB3aW5fZGF0YS0+YnBwID0g
+cGxhbmUtPmJwcDsKPj4gKyAgICAgICB3aW5fZGF0YS0+cGl4ZWxfZm9ybWF0ID0gcGxhbmUtPnBp
+eGVsX2Zvcm1hdDsKPj4gKwo+PiArICAgICAgIERSTV9ERUJVR19LTVMoIm9mZnNldF94ID0gJWQs
+IG9mZnNldF95ID0gJWRcbiIsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHdpbl9kYXRhLT5v
+ZmZzZXRfeCwgd2luX2RhdGEtPm9mZnNldF95KTsKPj4gKyAgICAgICBEUk1fREVCVUdfS01TKCJv
+dmxfd2lkdGggPSAlZCwgb3ZsX2hlaWdodCA9ICVkXG4iLAo+PiArICAgICAgICAgICAgICAgICAg
+ICAgICB3aW5fZGF0YS0+b3ZsX3dpZHRoLCB3aW5fZGF0YS0+b3ZsX2hlaWdodCk7Cj4+ICsgICAg
+ICAgRFJNX0RFQlVHX0tNUygicGFkZHIgPSAweCVseFxuIiwgKHVuc2lnbmVkIGxvbmcpd2luX2Rh
+dGEtPmRtYV9hZGRyKTsKPj4gKyAgICAgICBEUk1fREVCVUdfS01TKCJmYl93aWR0aCA9ICVkLCBj
+cnRjX3dpZHRoID0gJWRcbiIsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHBsYW5lLT5mYl93
+aWR0aCwgcGxhbmUtPmNydGNfd2lkdGgpOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgdm9pZCBkZWNv
+bl93aW5fc2V0X3BpeGZtdChzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQg
+d2luKQo+PiArewo+PiArICAgICAgIHN0cnVjdCBkZWNvbl93aW5fZGF0YSAqd2luX2RhdGEgPSAm
+Y3R4LT53aW5fZGF0YVt3aW5dOwo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgdmFsOwo+PiArCj4+
+ICsgICAgICAgdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+PiArICAgICAg
+IHZhbCAmPSB+V0lOQ09OeF9CUFBNT0RFX01BU0s7Cj4+ICsKPj4gKyAgICAgICBzd2l0Y2ggKHdp
+bl9kYXRhLT5waXhlbF9mb3JtYXQpIHsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfUkdCNTY1
+Ogo+PiArICAgICAgICAgICAgICAgdmFsIHw9IFdJTkNPTnhfQlBQTU9ERV8xNkJQUF81NjU7Cj4+
+ICsgICAgICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Cj4+ICsgICAg
+ICAgICAgICAgICBicmVhazsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfWFJHQjg4ODg6Cj4+
+ICsgICAgICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CUFBNT0RFXzI0QlBQX3hSR0I7Cj4+ICsg
+ICAgICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Cj4+ICsgICAgICAg
+ICAgICAgICBicmVhazsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfWEJHUjg4ODg6Cj4+ICsg
+ICAgICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CUFBNT0RFXzI0QlBQX3hCR1I7Cj4+ICsgICAg
+ICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Cj4+ICsgICAgICAgICAg
+ICAgICBicmVhazsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfUkdCWDg4ODg6Cj4+ICsgICAg
+ICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CUFBNT0RFXzI0QlBQX1JHQng7Cj4+ICsgICAgICAg
+ICAgICAgICB2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Cj4+ICsgICAgICAgICAgICAg
+ICBicmVhazsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfQkdSWDg4ODg6Cj4+ICsgICAgICAg
+ICAgICAgICB2YWwgfD0gV0lOQ09OeF9CUFBNT0RFXzI0QlBQX0JHUng7Cj4+ICsgICAgICAgICAg
+ICAgICB2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Cj4+ICsgICAgICAgICAgICAgICBi
+cmVhazsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6Cj4+ICsgICAgICAgICAg
+ICAgICB2YWwgfD0gV0lOQ09OeF9CUFBNT0RFXzMyQlBQX0FSR0IgfCBXSU5DT054X0JMRF9QSVgg
+fAo+PiArICAgICAgICAgICAgICAgICAgICAgICBXSU5DT054X0FMUEhBX1NFTDsKPj4gKyAgICAg
+ICAgICAgICAgIHZhbCB8PSBXSU5DT054X0JVUlNUTEVOXzE2V09SRDsKPj4gKyAgICAgICAgICAg
+ICAgIGJyZWFrOwo+PiArICAgICAgIGNhc2UgRFJNX0ZPUk1BVF9BQkdSODg4ODoKPj4gKyAgICAg
+ICAgICAgICAgIHZhbCB8PSBXSU5DT054X0JQUE1PREVfMzJCUFBfQUJHUiB8IFdJTkNPTnhfQkxE
+X1BJWCB8Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIFdJTkNPTnhfQUxQSEFfU0VMOwo+PiAr
+ICAgICAgICAgICAgICAgdmFsIHw9IFdJTkNPTnhfQlVSU1RMRU5fMTZXT1JEOwo+PiArICAgICAg
+ICAgICAgICAgYnJlYWs7Cj4+ICsgICAgICAgY2FzZSBEUk1fRk9STUFUX1JHQkE4ODg4Ogo+PiAr
+ICAgICAgICAgICAgICAgdmFsIHw9IFdJTkNPTnhfQlBQTU9ERV8zMkJQUF9SR0JBIHwgV0lOQ09O
+eF9CTERfUElYIHwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgV0lOQ09OeF9BTFBIQV9TRUw7
+Cj4+ICsgICAgICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CVVJTVExFTl8xNldPUkQ7Cj4+ICsg
+ICAgICAgICAgICAgICBicmVhazsKPj4gKyAgICAgICBjYXNlIERSTV9GT1JNQVRfQkdSQTg4ODg6
+Cj4+ICsgICAgICAgICAgICAgICB2YWwgfD0gV0lOQ09OeF9CUFBNT0RFXzMyQlBQX0JHUkEgfCBX
+SU5DT054X0JMRF9QSVggfAo+PiArICAgICAgICAgICAgICAgICAgICAgICBXSU5DT054X0FMUEhB
+X1NFTDsKPj4gKyAgICAgICAgICAgICAgIHZhbCB8PSBXSU5DT054X0JVUlNUTEVOXzE2V09SRDsK
+Pj4gKyAgICAgICAgICAgICAgIGJyZWFrOwo+PiArICAgICAgIGRlZmF1bHQ6Cj4+ICsgICAgICAg
+ICAgICAgICBEUk1fREVCVUdfS01TKCJpbnZhbGlkIHBpeGVsIHNpemUgc28gdXNpbmcgdW5wYWNr
+ZWQgMjRicHAuXG4iKTsKPj4gKwo+PiArICAgICAgICAgICAgICAgdmFsIHw9IFdJTkNPTnhfQlBQ
+TU9ERV8yNEJQUF94UkdCOwo+PiArICAgICAgICAgICAgICAgdmFsIHw9IFdJTkNPTnhfQlVSU1RM
+RU5fMTZXT1JEOwo+PiArICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICsgICAgICAgfQo+PiArCj4+
+ICsgICAgICAgRFJNX0RFQlVHX0tNUygiYnBwID0gJWRcbiIsIHdpbl9kYXRhLT5icHApOwo+PiAr
+Cj4+ICsgICAgICAgLyoKPj4gKyAgICAgICAgKiBJbiBjYXNlIG9mIGV4eW5vcywgc2V0dGluZyBk
+bWEtYnVyc3QgdG8gMTZXb3JkIGNhdXNlcyBwZXJtYW5lbnQKPj4gKyAgICAgICAgKiB0ZWFyaW5n
+IGZvciB2ZXJ5IHNtYWxsIGJ1ZmZlcnMsIGUuZy4gY3Vyc29yIGJ1ZmZlci4gQnVyc3QgTW9kZQo+
+PiArICAgICAgICAqIHN3aXRjaGluZyB3aGljaCBpcyBiYXNlZCBvbiBwbGFuZSBzaXplIGlzIG5v
+dCByZWNvbW1lbmRlZCBhcwo+PiArICAgICAgICAqIHBsYW5lIHNpemUgdmFyaWVzIGEgbG90IHRv
+d2FyZHMgdGhlIGVuZCBvZiB0aGUgc2NyZWVuIGFuZCByYXBpZAo+PiArICAgICAgICAqIG1vdmVt
+ZW50IGNhdXNlcyB1bnN0YWJsZSBETUEgd2hpY2ggcmVzdWx0cyBpbnRvIGlvbW11IGNyYXNoL3Rl
+YXIuCj4+ICsgICAgICAgICovCj4+ICsKPj4gKyAgICAgICBpZiAod2luX2RhdGEtPmZiX3dpZHRo
+IDwgTUlOX0ZCX1dJRFRIX0ZPUl8xNldPUkRfQlVSU1QpIHsKPj4gKyAgICAgICAgICAgICAgIHZh
+bCAmPSB+V0lOQ09OeF9CVVJTVExFTl9NQVNLOwo+PiArICAgICAgICAgICAgICAgdmFsIHw9IFdJ
+TkNPTnhfQlVSU1RMRU5fOFdPUkQ7Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAgICAgd3JpdGVs
+KHZhbCwgY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgdm9p
+ZCBkZWNvbl93aW5fc2V0X2NvbGtleShzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4LCB1bnNpZ25l
+ZCBpbnQgd2luKQo+PiArewo+PiArICAgICAgIHVuc2lnbmVkIGludCBrZXljb24wID0gMCwga2V5
+Y29uMSA9IDA7Cj4+ICsKPj4gKyAgICAgICBrZXljb24wID0gfihXeEtFWUNPTjBfS0VZQkxfRU4g
+fCBXeEtFWUNPTjBfS0VZRU5fRiB8Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIFd4S0VZQ09O
+MF9ESVJDT04pIHwgV3hLRVlDT04wX0NPTVBLRVkoMCk7Cj4+ICsKPj4gKyAgICAgICBrZXljb24x
+ID0gV3hLRVlDT04xX0NPTFZBTCgweGZmZmZmZmZmKTsKPj4gKwo+PiArICAgICAgIHdyaXRlbChr
+ZXljb24wLCBjdHgtPnJlZ3MgKyBXS0VZQ09OMF9CQVNFKHdpbikpOwo+PiArICAgICAgIHdyaXRl
+bChrZXljb24xLCBjdHgtPnJlZ3MgKyBXS0VZQ09OMV9CQVNFKHdpbikpOwo+PiArfQo+PiArCj4+
+ICsvKioKPj4gKyAqIHNoYWRvd19wcm90ZWN0X3dpbigpIC0gZGlzYWJsZSB1cGRhdGluZyB2YWx1
+ZXMgZnJvbSBzaGFkb3cgcmVnaXN0ZXJzIGF0IHZzeW5jCj4+ICsgKgo+PiArICogQHdpbjogd2lu
+ZG93IHRvIHByb3RlY3QgcmVnaXN0ZXJzIGZvcgo+PiArICogQHByb3RlY3Q6IDEgdG8gcHJvdGVj
+dCAoZGlzYWJsZSB1cGRhdGVzKQo+PiArICovCj4+ICtzdGF0aWMgdm9pZCBkZWNvbl9zaGFkb3df
+cHJvdGVjdF93aW4oc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCwKPj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbnQgd2luLCBib29sIHBy
+b3RlY3QpCj4+ICt7Cj4+ICsgICAgICAgdTMyIGJpdHMsIHZhbDsKPj4gKwo+PiArICAgICAgIGJp
+dHMgPSBTSEFET1dDT05fV0lOeF9QUk9URUNUKHdpbik7Cj4+ICsKPj4gKyAgICAgICB2YWwgPSBy
+ZWFkbChjdHgtPnJlZ3MgKyBTSEFET1dDT04pOwo+PiArICAgICAgIGlmIChwcm90ZWN0KQo+PiAr
+ICAgICAgICAgICAgICAgdmFsIHw9IGJpdHM7Cj4+ICsgICAgICAgZWxzZQo+PiArICAgICAgICAg
+ICAgICAgdmFsICY9IH5iaXRzOwo+PiArICAgICAgIHdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFNI
+QURPV0NPTik7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyB2b2lkIGRlY29uX3dpbl9jb21taXQoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpCj4+ICt7Cj4+ICsgICAgICAgc3Ry
+dWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKPj4gKyAgICAgICBzdHJ1Y3QgZHJt
+X2Rpc3BsYXlfbW9kZSAqbW9kZSA9ICZjcnRjLT5iYXNlLm1vZGU7Cj4+ICsgICAgICAgc3RydWN0
+IGRlY29uX3dpbl9kYXRhICp3aW5fZGF0YTsKPj4gKyAgICAgICBpbnQgd2luID0genBvczsKPj4g
+KyAgICAgICB1bnNpZ25lZCBsb25nIHZhbCwgYWxwaGE7Cj4+ICsgICAgICAgdW5zaWduZWQgaW50
+IGxhc3RfeDsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgbGFzdF95Owo+PiArCj4+ICsgICAgICAg
+aWYgKGN0eC0+c3VzcGVuZGVkKQo+PiArICAgICAgICAgICAgICAgcmV0dXJuOwo+PiArCj4+ICsg
+ICAgICAgaWYgKHdpbiA9PSBERUZBVUxUX1pQT1MpCj4+ICsgICAgICAgICAgICAgICB3aW4gPSBj
+dHgtPmRlZmF1bHRfd2luOwo+PiArCj4+ICsgICAgICAgaWYgKHdpbiA8IDAgfHwgd2luID49IFdJ
+TkRPV1NfTlIpCj4+ICsgICAgICAgICAgICAgICByZXR1cm47Cj4+ICsKPj4gKyAgICAgICB3aW5f
+ZGF0YSA9ICZjdHgtPndpbl9kYXRhW3dpbl07Cj4+ICsKPj4gKyAgICAgICAvKiBJZiBzdXNwZW5k
+ZWQsIGVuYWJsZSB0aGlzIG9uIHJlc3VtZSAqLwo+PiArICAgICAgIGlmIChjdHgtPnN1c3BlbmRl
+ZCkgewo+PiArICAgICAgICAgICAgICAgd2luX2RhdGEtPnJlc3VtZSA9IHRydWU7Cj4+ICsgICAg
+ICAgICAgICAgICByZXR1cm47Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAgICAgLyoKPj4gKyAg
+ICAgICAgKiBTSEFET1dDT04vUFJUQ09OIHJlZ2lzdGVyIGlzIHVzZWQgZm9yIGVuYWJsaW5nIHRp
+bWluZy4KPj4gKyAgICAgICAgKgo+PiArICAgICAgICAqIGZvciBleGFtcGxlLCBvbmNlIG9ubHkg
+d2lkdGggdmFsdWUgb2YgYSByZWdpc3RlciBpcyBzZXQsCj4+ICsgICAgICAgICogaWYgdGhlIGRt
+YSBpcyBzdGFydGVkIHRoZW4gZGVjb24gaGFyZHdhcmUgY291bGQgbWFsZnVuY3Rpb24gc28KPj4g
+KyAgICAgICAgKiB3aXRoIHByb3RlY3Qgd2luZG93IHNldHRpbmcsIHRoZSByZWdpc3RlciBmaWVs
+ZHMgd2l0aCBwcmVmaXggJ19GJwo+PiArICAgICAgICAqIHdvdWxkbid0IGJlIHVwZGF0ZWQgYXQg
+dnN5bmMgYWxzbyBidXQgdXBkYXRlZCBvbmNlIHVucHJvdGVjdCB3aW5kb3cKPj4gKyAgICAgICAg
+KiBpcyBzZXQuCj4+ICsgICAgICAgICovCj4+ICsKPj4gKyAgICAgICAvKiBwcm90ZWN0IHdpbmRv
+d3MgKi8KPj4gKyAgICAgICBkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oY3R4LCB3aW4sIHRydWUp
+Owo+PiArCj4+ICsgICAgICAgLyogYnVmZmVyIHN0YXJ0IGFkZHJlc3MgKi8KPj4gKyAgICAgICB2
+YWwgPSAodW5zaWduZWQgbG9uZyl3aW5fZGF0YS0+ZG1hX2FkZHI7Cj4+ICsgICAgICAgd3JpdGVs
+KHZhbCwgY3R4LT5yZWdzICsgVklEV19CVUZfU1RBUlQod2luKSk7Cj4+ICsKPj4gKyAgICAgICAv
+KiBidWZmZXIgc2l6ZSAqLwo+PiArICAgICAgIHdyaXRlbCh3aW5fZGF0YS0+ZmJfd2lkdGgsIGN0
+eC0+cmVncyArIFZJRFdfV0hPTEVfWCh3aW4pKTsKPj4gKyAgICAgICB3cml0ZWwod2luX2RhdGEt
+PmZiX2hlaWdodCwgY3R4LT5yZWdzICsgVklEV19XSE9MRV9ZKHdpbikpOwo+PiArCj4+ICsgICAg
+ICAgLyogb2Zmc2V0IGZyb20gdGhlIHN0YXJ0IG9mIHRoZSBidWZmZXIgdG8gcmVhZCAqLwo+PiAr
+ICAgICAgIHdyaXRlbCh3aW5fZGF0YS0+b2Zmc2V0X3gsIGN0eC0+cmVncyArIFZJRFdfT0ZGU0VU
+X1god2luKSk7Cj4+ICsgICAgICAgd3JpdGVsKHdpbl9kYXRhLT5vZmZzZXRfeSwgY3R4LT5yZWdz
+ICsgVklEV19PRkZTRVRfWSh3aW4pKTsKPj4gKwo+PiArICAgICAgIERSTV9ERUJVR19LTVMoInN0
+YXJ0IGFkZHIgPSAweCVseFxuIiwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgKHVuc2lnbmVk
+IGxvbmcpd2luX2RhdGEtPmRtYV9hZGRyKTsKPj4gKyAgICAgICBEUk1fREVCVUdfS01TKCJvdmxf
+d2lkdGggPSAlZCwgb3ZsX2hlaWdodCA9ICVkXG4iLAo+PiArICAgICAgICAgICAgICAgICAgICAg
+ICB3aW5fZGF0YS0+b3ZsX3dpZHRoLCB3aW5fZGF0YS0+b3ZsX2hlaWdodCk7Cj4+ICsKPj4gKyAg
+ICAgICAvKgo+PiArICAgICAgICAqIE9TRCBwb3NpdGlvbi4KPj4gKyAgICAgICAgKiBJbiBjYXNl
+IHRoZSB3aW5kb3cgbGF5b3V0IGdvZXMgb2YgTENEIGxheW91dCwgREVDT04gZmFpbHMuCj4+ICsg
+ICAgICAgICovCj4+ICsgICAgICAgaWYgKCh3aW5fZGF0YS0+b3ZsX3ggKyB3aW5fZGF0YS0+b3Zs
+X3dpZHRoKSA+IG1vZGUtPmhkaXNwbGF5KQo+PiArICAgICAgICAgICAgICAgd2luX2RhdGEtPm92
+bF94ID0gbW9kZS0+aGRpc3BsYXkgLSB3aW5fZGF0YS0+b3ZsX3dpZHRoOwo+PiArICAgICAgIGlm
+ICgod2luX2RhdGEtPm92bF95ICsgd2luX2RhdGEtPm92bF9oZWlnaHQpID4gbW9kZS0+dmRpc3Bs
+YXkpCj4+ICsgICAgICAgICAgICAgICB3aW5fZGF0YS0+b3ZsX3kgPSBtb2RlLT52ZGlzcGxheSAt
+IHdpbl9kYXRhLT5vdmxfaGVpZ2h0Owo+PiArCj4+ICsgICAgICAgdmFsID0gVklET1NEeEFfVE9Q
+TEVGVF9YKHdpbl9kYXRhLT5vdmxfeCkgfAo+PiArICAgICAgICAgICAgICAgVklET1NEeEFfVE9Q
+TEVGVF9ZKHdpbl9kYXRhLT5vdmxfeSk7Cj4+ICsgICAgICAgd3JpdGVsKHZhbCwgY3R4LT5yZWdz
+ICsgVklET1NEX0Eod2luKSk7Cj4+ICsKPj4gKyAgICAgICBsYXN0X3ggPSB3aW5fZGF0YS0+b3Zs
+X3ggKyB3aW5fZGF0YS0+b3ZsX3dpZHRoOwo+PiArICAgICAgIGlmIChsYXN0X3gpCj4+ICsgICAg
+ICAgICAgICAgICBsYXN0X3gtLTsKPj4gKyAgICAgICBsYXN0X3kgPSB3aW5fZGF0YS0+b3ZsX3kg
+KyB3aW5fZGF0YS0+b3ZsX2hlaWdodDsKPj4gKyAgICAgICBpZiAobGFzdF95KQo+PiArICAgICAg
+ICAgICAgICAgbGFzdF95LS07Cj4+ICsKPj4gKyAgICAgICB2YWwgPSBWSURPU0R4Ql9CT1RSSUdI
+VF9YKGxhc3RfeCkgfCBWSURPU0R4Ql9CT1RSSUdIVF9ZKGxhc3RfeSk7Cj4+ICsKPj4gKyAgICAg
+ICB3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBWSURPU0RfQih3aW4pKTsKPj4gKwo+PiArICAgICAg
+IERSTV9ERUJVR19LTVMoIm9zZCBwb3M6IHR4ID0gJWQsIHR5ID0gJWQsIGJ4ID0gJWQsIGJ5ID0g
+JWRcbiIsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHdpbl9kYXRhLT5vdmxfeCwgd2luX2Rh
+dGEtPm92bF95LCBsYXN0X3gsIGxhc3RfeSk7Cj4+ICsKPj4gKyAgICAgICAvKiBPU0QgYWxwaGEg
+Ki8KPj4gKyAgICAgICBhbHBoYSA9IFZJRE9TRHhDX0FMUEhBMF9SX0YoMHgwKSB8Cj4+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIFZJRE9TRHhDX0FMUEhBMF9HX0YoMHgwKSB8Cj4+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIFZJRE9TRHhDX0FMUEhBMF9CX0YoMHgwKTsKPj4gKwo+PiArICAgICAg
+IHdyaXRlbChhbHBoYSwgY3R4LT5yZWdzICsgVklET1NEX0Mod2luKSk7Cj4+ICsKPj4gKyAgICAg
+ICBhbHBoYSA9IFZJRE9TRHhEX0FMUEhBMV9SX0YoMHhmZikgfAo+PiArICAgICAgICAgICAgICAg
+ICAgICAgICBWSURPU0R4RF9BTFBIQTFfR19GKDB4ZmYpIHwKPj4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgVklET1NEeERfQUxQSEExX0JfRigweGZmKTsKPj4gKwo+PiArICAgICAgIHdyaXRlbChh
+bHBoYSwgY3R4LT5yZWdzICsgVklET1NEX0Qod2luKSk7Cj4+ICsKPj4gKyAgICAgICBkZWNvbl93
+aW5fc2V0X3BpeGZtdChjdHgsIHdpbik7Cj4+ICsKPj4gKyAgICAgICAvKiBoYXJkd2FyZSB3aW5k
+b3cgMCBkb2Vzbid0IHN1cHBvcnQgY29sb3Iga2V5LiAqLwo+PiArICAgICAgIGlmICh3aW4gIT0g
+MCkKPj4gKyAgICAgICAgICAgICAgIGRlY29uX3dpbl9zZXRfY29sa2V5KGN0eCwgd2luKTsKPj4g
+Kwo+PiArICAgICAgIC8qIHdpbmNvbiAqLwo+PiArICAgICAgIHZhbCA9IHJlYWRsKGN0eC0+cmVn
+cyArIFdJTkNPTih3aW4pKTsKPj4gKyAgICAgICB2YWwgfD0gV0lOQ09OeF9UUklQTEVfQlVGX01P
+REU7Cj4+ICsgICAgICAgdmFsIHw9IFdJTkNPTnhfRU5XSU47Cj4+ICsgICAgICAgd3JpdGVsKHZh
+bCwgY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+PiArCj4+ICsgICAgICAgLyogRW5hYmxlIERN
+QSBjaGFubmVsIGFuZCB1bnByb3RlY3Qgd2luZG93cyAqLwo+PiArICAgICAgIGRlY29uX3NoYWRv
+d19wcm90ZWN0X3dpbihjdHgsIHdpbiwgZmFsc2UpOwo+PiArCj4+ICsgICAgICAgdmFsID0gcmVh
+ZGwoY3R4LT5yZWdzICsgREVDT05fVVBEQVRFKTsKPj4gKyAgICAgICB2YWwgfD0gREVDT05fVVBE
+QVRFX1NUQU5EQUxPTkVfRjsKPj4gKyAgICAgICB3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBERUNP
+Tl9VUERBVEUpOwo+PiArCj4+ICsgICAgICAgd2luX2RhdGEtPmVuYWJsZWQgPSB0cnVlOwo+PiAr
+fQo+PiArCj4+ICtzdGF0aWMgdm9pZCBkZWNvbl93aW5fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2Ry
+bV9jcnRjICpjcnRjLCBpbnQgenBvcykKPj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgZGVjb25fY29u
+dGV4dCAqY3R4ID0gY3J0Yy0+Y3R4Owo+PiArICAgICAgIHN0cnVjdCBkZWNvbl93aW5fZGF0YSAq
+d2luX2RhdGE7Cj4+ICsgICAgICAgaW50IHdpbiA9IHpwb3M7Cj4+ICsgICAgICAgdTMyIHZhbDsK
+Pj4gKwo+PiArICAgICAgIGlmICh3aW4gPT0gREVGQVVMVF9aUE9TKQo+PiArICAgICAgICAgICAg
+ICAgd2luID0gY3R4LT5kZWZhdWx0X3dpbjsKPj4gKwo+PiArICAgICAgIGlmICh3aW4gPCAwIHx8
+IHdpbiA+PSBXSU5ET1dTX05SKQo+PiArICAgICAgICAgICAgICAgcmV0dXJuOwo+PiArCj4+ICsg
+ICAgICAgd2luX2RhdGEgPSAmY3R4LT53aW5fZGF0YVt3aW5dOwo+PiArCj4+ICsgICAgICAgaWYg
+KGN0eC0+c3VzcGVuZGVkKSB7Cj4+ICsgICAgICAgICAgICAgICAvKiBkbyBub3QgcmVzdW1lIHRo
+aXMgd2luZG93Ki8KPj4gKyAgICAgICAgICAgICAgIHdpbl9kYXRhLT5yZXN1bWUgPSBmYWxzZTsK
+Pj4gKyAgICAgICAgICAgICAgIHJldHVybjsKPj4gKyAgICAgICB9Cj4+ICsKPj4gKyAgICAgICAv
+KiBwcm90ZWN0IHdpbmRvd3MgKi8KPj4gKyAgICAgICBkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4o
+Y3R4LCB3aW4sIHRydWUpOwo+PiArCj4+ICsgICAgICAgLyogd2luY29uICovCj4+ICsgICAgICAg
+dmFsID0gcmVhZGwoY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+PiArICAgICAgIHZhbCAmPSB+
+V0lOQ09OeF9FTldJTjsKPj4gKyAgICAgICB3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBXSU5DT04o
+d2luKSk7Cj4+ICsKPj4gKyAgICAgICAvKiB1bnByb3RlY3Qgd2luZG93cyAqLwo+PiArICAgICAg
+IGRlY29uX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIHdpbiwgZmFsc2UpOwo+PiArCj4+ICsgICAg
+ICAgdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgREVDT05fVVBEQVRFKTsKPj4gKyAgICAgICB2YWwg
+fD0gREVDT05fVVBEQVRFX1NUQU5EQUxPTkVfRjsKPj4gKyAgICAgICB3cml0ZWwodmFsLCBjdHgt
+PnJlZ3MgKyBERUNPTl9VUERBVEUpOwo+PiArCj4+ICsgICAgICAgd2luX2RhdGEtPmVuYWJsZWQg
+PSBmYWxzZTsKPj4gK30KPj4gKwo+PiArc3RhdGljIHZvaWQgZGVjb25fd2luZG93X3N1c3BlbmQo
+c3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCkKPj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgZGVjb25f
+d2luX2RhdGEgKndpbl9kYXRhOwo+PiArICAgICAgIGludCBpOwo+PiArCj4+ICsgICAgICAgZm9y
+IChpID0gMDsgaSA8IFdJTkRPV1NfTlI7IGkrKykgewo+PiArICAgICAgICAgICAgICAgd2luX2Rh
+dGEgPSAmY3R4LT53aW5fZGF0YVtpXTsKPj4gKyAgICAgICAgICAgICAgIHdpbl9kYXRhLT5yZXN1
+bWUgPSB3aW5fZGF0YS0+ZW5hYmxlZDsKPj4gKyAgICAgICAgICAgICAgIGlmICh3aW5fZGF0YS0+
+ZW5hYmxlZCkKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGVjb25fd2luX2Rpc2FibGUoY3R4
+LT5jcnRjLCBpKTsKPj4gKyAgICAgICB9Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyB2b2lkIGRlY29u
+X3dpbmRvd19yZXN1bWUoc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCkKPj4gK3sKPj4gKyAgICAg
+ICBzdHJ1Y3QgZGVjb25fd2luX2RhdGEgKndpbl9kYXRhOwo+PiArICAgICAgIGludCBpOwo+PiAr
+Cj4+ICsgICAgICAgZm9yIChpID0gMDsgaSA8IFdJTkRPV1NfTlI7IGkrKykgewo+PiArICAgICAg
+ICAgICAgICAgd2luX2RhdGEgPSAmY3R4LT53aW5fZGF0YVtpXTsKPj4gKyAgICAgICAgICAgICAg
+IHdpbl9kYXRhLT5lbmFibGVkID0gd2luX2RhdGEtPnJlc3VtZTsKPj4gKyAgICAgICAgICAgICAg
+IHdpbl9kYXRhLT5yZXN1bWUgPSBmYWxzZTsKPj4gKyAgICAgICB9Cj4+ICt9Cj4+ICsKPj4gK3N0
+YXRpYyB2b2lkIGRlY29uX2FwcGx5KHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgpCj4+ICt7Cj4+
+ICsgICAgICAgc3RydWN0IGRlY29uX3dpbl9kYXRhICp3aW5fZGF0YTsKPj4gKyAgICAgICBpbnQg
+aTsKPj4gKwo+PiArICAgICAgIGZvciAoaSA9IDA7IGkgPCBXSU5ET1dTX05SOyBpKyspIHsKPj4g
+KyAgICAgICAgICAgICAgIHdpbl9kYXRhID0gJmN0eC0+d2luX2RhdGFbaV07Cj4+ICsgICAgICAg
+ICAgICAgICBpZiAod2luX2RhdGEtPmVuYWJsZWQpCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+IGRlY29uX3dpbl9jb21taXQoY3R4LT5jcnRjLCBpKTsKPj4gKyAgICAgICAgICAgICAgIGVsc2UK
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGVjb25fd2luX2Rpc2FibGUoY3R4LT5jcnRjLCBp
+KTsKPj4gKyAgICAgICB9Cj4+ICsKPj4gKyAgICAgICBkZWNvbl9jb21taXQoY3R4LT5jcnRjKTsK
+Pj4gK30KPj4gKwo+PiArc3RhdGljIHZvaWQgZGVjb25faW5pdChzdHJ1Y3QgZGVjb25fY29udGV4
+dCAqY3R4KQo+PiArewo+PiArICAgICAgIHUzMiB2YWw7Cj4+ICsKPj4gKyAgICAgICB3cml0ZWwo
+VklEQ09OMF9TV1JFU0VULCBjdHgtPnJlZ3MgKyBWSURDT04wKTsKPj4gKwo+PiArICAgICAgIHZh
+bCA9IFZJRE9VVENPTjBfRElTUF9JRl8wX09OOwo+PiArICAgICAgIGlmICghY3R4LT5pODBfaWYp
+Cj4+ICsgICAgICAgICAgICAgICB2YWwgfD0gVklET1VUQ09OMF9SR0JJRjsKPj4gKyAgICAgICB3
+cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBWSURPVVRDT04wKTsKPj4gKwo+PiArICAgICAgIHdyaXRl
+bChWQ0xLQ09OMF9DTEtWQUxVUCB8IFZDTEtDT04wX1ZDTEtGUkVFLCBjdHgtPnJlZ3MgKyBWQ0xL
+Q09OMCk7Cj4+ICsKPj4gKyAgICAgICBpZiAoIWN0eC0+aTgwX2lmKQo+PiArICAgICAgICAgICAg
+ICAgd3JpdGVsKFZJRENPTjFfVkNMS19IT0xELCBjdHgtPnJlZ3MgKyBWSURDT04xKDApKTsKPj4g
+K30KPj4gKwo+PiArc3RhdGljIGludCBkZWNvbl9wb3dlcm9uKHN0cnVjdCBkZWNvbl9jb250ZXh0
+ICpjdHgpCj4+ICt7Cj4+ICsgICAgICAgaW50IHJldDsKPj4gKwo+PiArICAgICAgIGlmICghY3R4
+LT5zdXNwZW5kZWQpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gMDsKPj4gKwo+PiArICAgICAg
+IGN0eC0+c3VzcGVuZGVkID0gZmFsc2U7Cj4+ICsKPj4gKyAgICAgICBwbV9ydW50aW1lX2dldF9z
+eW5jKGN0eC0+ZGV2KTsKPj4gKwo+PiArICAgICAgIHJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShj
+dHgtPnBjbGspOwo+PiArICAgICAgIGlmIChyZXQgPCAwKSB7Cj4+ICsgICAgICAgICAgICAgICBE
+Uk1fRVJST1IoIkZhaWxlZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgcGNsayBbJWRdXG4iLCByZXQp
+Owo+PiArICAgICAgICAgICAgICAgZ290byBwY2xrX2VycjsKPj4gKyAgICAgICB9Cj4+ICsKPj4g
+KyAgICAgICByZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUoY3R4LT5hY2xrKTsKPj4gKyAgICAgICBp
+ZiAocmV0IDwgMCkgewo+PiArICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJGYWlsZWQgdG8gcHJl
+cGFyZV9lbmFibGUgdGhlIGFjbGsgWyVkXVxuIiwgcmV0KTsKPj4gKyAgICAgICAgICAgICAgIGdv
+dG8gYWNsa19lcnI7Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAgICAgcmV0ID0gY2xrX3ByZXBh
+cmVfZW5hYmxlKGN0eC0+ZWNsayk7Cj4+ICsgICAgICAgaWYgIChyZXQgPCAwKSB7Cj4+ICsgICAg
+ICAgICAgICAgICBEUk1fRVJST1IoIkZhaWxlZCB0byBwcmVwYXJlX2VuYWJsZSB0aGUgZWNsayBb
+JWRdXG4iLCByZXQpOwo+PiArICAgICAgICAgICAgICAgZ290byBlY2xrX2VycjsKPj4gKyAgICAg
+ICB9Cj4+ICsKPj4gKyAgICAgICByZXQgPSBjbGtfcHJlcGFyZV9lbmFibGUoY3R4LT52Y2xrKTsK
+Pj4gKyAgICAgICBpZiAgKHJldCA8IDApIHsKPj4gKyAgICAgICAgICAgICAgIERSTV9FUlJPUigi
+RmFpbGVkIHRvIHByZXBhcmVfZW5hYmxlIHRoZSB2Y2xrIFslZF1cbiIsIHJldCk7Cj4+ICsgICAg
+ICAgICAgICAgICBnb3RvIHZjbGtfZXJyOwo+PiArICAgICAgIH0KPj4gKwo+PiArICAgICAgIGRl
+Y29uX2luaXQoY3R4KTsKPj4gKwo+PiArICAgICAgIC8qIGlmIHZibGFuayB3YXMgZW5hYmxlZCBz
+dGF0dXMsIGVuYWJsZSBpdCBhZ2Fpbi4gKi8KPj4gKyAgICAgICBpZiAodGVzdF9hbmRfY2xlYXJf
+Yml0KDAsICZjdHgtPmlycV9mbGFncykpIHsKPj4gKyAgICAgICAgICAgICAgIHJldCA9IGRlY29u
+X2VuYWJsZV92YmxhbmsoY3R4LT5jcnRjKTsKPj4gKyAgICAgICAgICAgICAgIGlmIChyZXQpIHsK
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJGYWlsZWQgdG8gcmUtZW5hYmxl
+IHZibGFuayBbJWRdXG4iLCByZXQpOwo+PiArICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGVy
+cjsKPj4gKyAgICAgICAgICAgICAgIH0KPj4gKyAgICAgICB9Cj4+ICsKPj4gKyAgICAgICBkZWNv
+bl93aW5kb3dfcmVzdW1lKGN0eCk7Cj4+ICsKPj4gKyAgICAgICBkZWNvbl9hcHBseShjdHgpOwo+
+PiArCj4+ICsgICAgICAgcmV0dXJuIDA7Cj4+ICsKPj4gK2VycjoKPj4gKyAgICAgICBjbGtfZGlz
+YWJsZV91bnByZXBhcmUoY3R4LT52Y2xrKTsKPj4gK3ZjbGtfZXJyOgo+PiArICAgICAgIGNsa19k
+aXNhYmxlX3VucHJlcGFyZShjdHgtPmVjbGspOwo+PiArZWNsa19lcnI6Cj4+ICsgICAgICAgY2xr
+X2Rpc2FibGVfdW5wcmVwYXJlKGN0eC0+YWNsayk7Cj4+ICthY2xrX2VycjoKPj4gKyAgICAgICBj
+bGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5wY2xrKTsKPj4gK3BjbGtfZXJyOgo+PiArICAgICAg
+IGN0eC0+c3VzcGVuZGVkID0gdHJ1ZTsKPj4gKyAgICAgICByZXR1cm4gcmV0Owo+PiArfQo+PiAr
+Cj4+ICtzdGF0aWMgaW50IGRlY29uX3Bvd2Vyb2ZmKHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHgp
+Cj4+ICt7Cj4+ICsgICAgICAgaWYgKGN0eC0+c3VzcGVuZGVkKQo+PiArICAgICAgICAgICAgICAg
+cmV0dXJuIDA7Cj4+ICsKPj4gKyAgICAgICAvKgo+PiArICAgICAgICAqIFdlIG5lZWQgdG8gbWFr
+ZSBzdXJlIHRoYXQgYWxsIHdpbmRvd3MgYXJlIGRpc2FibGVkIGJlZm9yZSB3ZQo+PiArICAgICAg
+ICAqIHN1c3BlbmQgdGhhdCBjb25uZWN0b3IuIE90aGVyd2lzZSB3ZSBtaWdodCB0cnkgdG8gc2Nh
+biBmcm9tCj4+ICsgICAgICAgICogYSBkZXN0cm95ZWQgYnVmZmVyIGxhdGVyLgo+PiArICAgICAg
+ICAqLwo+PiArICAgICAgIGRlY29uX3dpbmRvd19zdXNwZW5kKGN0eCk7Cj4+ICsKPj4gKyAgICAg
+ICBjbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT52Y2xrKTsKPj4gKyAgICAgICBjbGtfZGlzYWJs
+ZV91bnByZXBhcmUoY3R4LT5lY2xrKTsKPj4gKyAgICAgICBjbGtfZGlzYWJsZV91bnByZXBhcmUo
+Y3R4LT5hY2xrKTsKPj4gKyAgICAgICBjbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5wY2xrKTsK
+Pj4gKwo+PiArICAgICAgIHBtX3J1bnRpbWVfcHV0X3N5bmMoY3R4LT5kZXYpOwo+PiArCj4+ICsg
+ICAgICAgY3R4LT5zdXNwZW5kZWQgPSB0cnVlOwo+PiArICAgICAgIHJldHVybiAwOwo+PiArfQo+
+PiArCj4+ICtzdGF0aWMgdm9pZCBkZWNvbl9kcG1zKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNy
+dGMsIGludCBtb2RlKQo+PiArewo+PiArICAgICAgIERSTV9ERUJVR19LTVMoIiVzLCAlZFxuIiwg
+X19GSUxFX18sIG1vZGUpOwo+PiArCj4+ICsgICAgICAgc3dpdGNoIChtb2RlKSB7Cj4+ICsgICAg
+ICAgY2FzZSBEUk1fTU9ERV9EUE1TX09OOgo+PiArICAgICAgICAgICAgICAgZGVjb25fcG93ZXJv
+bihjcnRjLT5jdHgpOwo+PiArICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICsgICAgICAgY2FzZSBE
+Uk1fTU9ERV9EUE1TX1NUQU5EQlk6Cj4+ICsgICAgICAgY2FzZSBEUk1fTU9ERV9EUE1TX1NVU1BF
+TkQ6Cj4+ICsgICAgICAgY2FzZSBEUk1fTU9ERV9EUE1TX09GRjoKPj4gKyAgICAgICAgICAgICAg
+IGRlY29uX3Bvd2Vyb2ZmKGNydGMtPmN0eCk7Cj4+ICsgICAgICAgICAgICAgICBicmVhazsKPj4g
+KyAgICAgICBkZWZhdWx0Ogo+PiArICAgICAgICAgICAgICAgRFJNX0RFQlVHX0tNUygidW5zcGVj
+aWZpZWQgbW9kZSAlZFxuIiwgbW9kZSk7Cj4+ICsgICAgICAgICAgICAgICBicmVhazsKPj4gKyAg
+ICAgICB9Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBk
+ZWNvbl9jcnRjX29wcyA9IHsKPj4gKyAgICAgICAuZHBtcyA9IGRlY29uX2RwbXMsCj4+ICsgICAg
+ICAgLm1vZGVfZml4dXAgPSBkZWNvbl9tb2RlX2ZpeHVwLAo+PiArICAgICAgIC5jb21taXQgPSBk
+ZWNvbl9jb21taXQsCj4+ICsgICAgICAgLmVuYWJsZV92YmxhbmsgPSBkZWNvbl9lbmFibGVfdmJs
+YW5rLAo+PiArICAgICAgIC5kaXNhYmxlX3ZibGFuayA9IGRlY29uX2Rpc2FibGVfdmJsYW5rLAo+
+PiArICAgICAgIC53YWl0X2Zvcl92YmxhbmsgPSBkZWNvbl93YWl0X2Zvcl92YmxhbmssCj4+ICsg
+ICAgICAgLndpbl9tb2RlX3NldCA9IGRlY29uX3dpbl9tb2RlX3NldCwKPj4gKyAgICAgICAud2lu
+X2NvbW1pdCA9IGRlY29uX3dpbl9jb21taXQsCj4+ICsgICAgICAgLndpbl9kaXNhYmxlID0gZGVj
+b25fd2luX2Rpc2FibGUsCj4+ICt9Owo+PiArCj4+ICsKPj4gK3N0YXRpYyBpcnFyZXR1cm5fdCBk
+ZWNvbl9pcnFfaGFuZGxlcihpbnQgaXJxLCB2b2lkICpkZXZfaWQpCj4+ICt7Cj4+ICsgICAgICAg
+c3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IChzdHJ1Y3QgZGVjb25fY29udGV4dCAqKWRldl9p
+ZDsKPj4gKyAgICAgICB1MzIgdmFsLCBjbGVhcl9iaXQ7Cj4+ICsKPj4gKyAgICAgICB2YWwgPSBy
+ZWFkbChjdHgtPnJlZ3MgKyBWSURJTlRDT04xKTsKPj4gKwo+PiArICAgICAgIGNsZWFyX2JpdCA9
+IGN0eC0+aTgwX2lmID8gVklESU5UQ09OMV9JTlRfSTgwIDogVklESU5UQ09OMV9JTlRfRlJBTUU7
+Cj4+ICsgICAgICAgaWYgKHZhbCAmIGNsZWFyX2JpdCkKPj4gKyAgICAgICAgICAgICAgIHdyaXRl
+bChjbGVhcl9iaXQsIGN0eC0+cmVncyArIFZJRElOVENPTjEpOwo+PiArCj4+ICsgICAgICAgLyog
+Y2hlY2sgdGhlIGNydGMgaXMgZGV0YWNoZWQgYWxyZWFkeSBmcm9tIGVuY29kZXIgKi8KPj4gKyAg
+ICAgICBpZiAoY3R4LT5waXBlIDwgMCB8fCAhY3R4LT5kcm1fZGV2KQo+PiArICAgICAgICAgICAg
+ICAgZ290byBvdXQ7Cj4+ICsKPj4gKyAgICAgICBpZiAoIWN0eC0+aTgwX2lmKSB7Cj4+ICsgICAg
+ICAgICAgICAgICBkcm1faGFuZGxlX3ZibGFuayhjdHgtPmRybV9kZXYsIGN0eC0+cGlwZSk7Cj4+
+ICsgICAgICAgICAgICAgICBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0eC0+ZHJt
+X2RldiwgY3R4LT5waXBlKTsKPj4gKwo+PiArICAgICAgICAgICAgICAgLyogc2V0IHdhaXQgdnN5
+bmMgZXZlbnQgdG8gemVybyBhbmQgd2FrZSB1cCBxdWV1ZS4gKi8KPj4gKyAgICAgICAgICAgICAg
+IGlmIChhdG9taWNfcmVhZCgmY3R4LT53YWl0X3ZzeW5jX2V2ZW50KSkgewo+PiArICAgICAgICAg
+ICAgICAgICAgICAgICBhdG9taWNfc2V0KCZjdHgtPndhaXRfdnN5bmNfZXZlbnQsIDApOwo+PiAr
+ICAgICAgICAgICAgICAgICAgICAgICB3YWtlX3VwKCZjdHgtPndhaXRfdnN5bmNfcXVldWUpOwo+
+PiArICAgICAgICAgICAgICAgfQo+PiArICAgICAgIH0KPj4gK291dDoKPj4gKyAgICAgICByZXR1
+cm4gSVJRX0hBTkRMRUQ7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyBpbnQgZGVjb25fYmluZChzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKPj4gK3sK
+Pj4gKyAgICAgICBzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gZGV2X2dldF9kcnZkYXRhKGRl
+dik7Cj4+ICsgICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+PiArICAg
+ICAgIGludCByZXQ7Cj4+ICsKPj4gKyAgICAgICByZXQgPSBkZWNvbl9jdHhfaW5pdGlhbGl6ZShj
+dHgsIGRybV9kZXYpOwo+PiArICAgICAgIGlmIChyZXQpIHsKPj4gKyAgICAgICAgICAgICAgIERS
+TV9FUlJPUigiZGVjb25fY3R4X2luaXRpYWxpemUgZmFpbGVkLlxuIik7Cj4+ICsgICAgICAgICAg
+ICAgICByZXR1cm4gcmV0Owo+PiArICAgICAgIH0KPj4gKwo+PiArICAgICAgIGN0eC0+Y3J0YyA9
+IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoZHJtX2RldiwgY3R4LT5waXBlLAo+PiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0Qs
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmZGVjb25fY3J0
+Y19vcHMsIGN0eCk7Cj4+ICsgICAgICAgaWYgKElTX0VSUihjdHgtPmNydGMpKSB7Cj4+ICsgICAg
+ICAgICAgICAgICBkZWNvbl9jdHhfcmVtb3ZlKGN0eCk7Cj4+ICsgICAgICAgICAgICAgICByZXR1
+cm4gUFRSX0VSUihjdHgtPmNydGMpOwo+PiArICAgICAgIH0KPj4gKwo+PiArICAgICAgIGlmIChj
+dHgtPmRpc3BsYXkpCj4+ICsgICAgICAgICAgICAgICBleHlub3NfZHJtX2NyZWF0ZV9lbmNfY29u
+bihkcm1fZGV2LCBjdHgtPmRpc3BsYXkpOwo+PiArCj4+ICsgICAgICAgcmV0dXJuIDA7Cj4+ICsK
+Pj4gK30KPj4gKwo+PiArc3RhdGljIHZvaWQgZGVjb25fdW5iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
+diwgc3RydWN0IGRldmljZSAqbWFzdGVyLAo+PiArICAgICAgICAgICAgICAgICAgICAgICB2b2lk
+ICpkYXRhKQo+PiArewo+PiArICAgICAgIHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBkZXZf
+Z2V0X2RydmRhdGEoZGV2KTsKPj4gKwo+PiArICAgICAgIGRlY29uX2RwbXMoY3R4LT5jcnRjLCBE
+Uk1fTU9ERV9EUE1TX09GRik7Cj4+ICsKPj4gKyAgICAgICBpZiAoY3R4LT5kaXNwbGF5KQo+PiAr
+ICAgICAgICAgICAgICAgZXh5bm9zX2RwaV9yZW1vdmUoY3R4LT5kaXNwbGF5KTsKPj4gKwo+PiAr
+ICAgICAgIGRlY29uX2N0eF9yZW1vdmUoY3R4KTsKPj4gK30KPj4gKwo+PiArc3RhdGljIGNvbnN0
+IHN0cnVjdCBjb21wb25lbnRfb3BzIGRlY29uX2NvbXBvbmVudF9vcHMgPSB7Cj4+ICsgICAgICAg
+LmJpbmQgICA9IGRlY29uX2JpbmQsCj4+ICsgICAgICAgLnVuYmluZCA9IGRlY29uX3VuYmluZCwK
+Pj4gK307Cj4+ICsKPj4gK3N0YXRpYyBpbnQgZGVjb25fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
+dmljZSAqcGRldikKPj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+
+ZGV2Owo+PiArICAgICAgIHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHg7Cj4+ICsgICAgICAgc3Ry
+dWN0IGRldmljZV9ub2RlICppODBfaWZfdGltaW5nczsKPj4gKyAgICAgICBzdHJ1Y3QgcmVzb3Vy
+Y2UgKnJlczsKPj4gKyAgICAgICBpbnQgcmV0Owo+PiArCj4+ICsgICAgICAgaWYgKCFkZXYtPm9m
+X25vZGUpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT0RFVjsKPj4gKwo+PiArICAgICAg
+IGN0eCA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqY3R4KSwgR0ZQX0tFUk5FTCk7Cj4+ICsg
+ICAgICAgaWYgKCFjdHgpCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsKPj4gKwo+
+PiArICAgICAgIHJldCA9IGV4eW5vc19kcm1fY29tcG9uZW50X2FkZChkZXYsIEVYWU5PU19ERVZJ
+Q0VfVFlQRV9DUlRDLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+RVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0QpOwo+PiArICAgICAgIGlmIChyZXQpCj4+ICsgICAgICAg
+ICAgICAgICByZXR1cm4gcmV0Owo+PiArCj4+ICsgICAgICAgY3R4LT5kZXYgPSBkZXY7Cj4+ICsg
+ICAgICAgY3R4LT5zdXNwZW5kZWQgPSB0cnVlOwo+PiArCj4+ICsgICAgICAgaTgwX2lmX3RpbWlu
+Z3MgPSBvZl9nZXRfY2hpbGRfYnlfbmFtZShkZXYtPm9mX25vZGUsICJpODAtaWYtdGltaW5ncyIp
+Owo+PiArICAgICAgIGlmIChpODBfaWZfdGltaW5ncykKPj4gKyAgICAgICAgICAgICAgIGN0eC0+
+aTgwX2lmID0gdHJ1ZTsKPj4gKyAgICAgICBvZl9ub2RlX3B1dChpODBfaWZfdGltaW5ncyk7Cj4+
+ICsKPj4gKyAgICAgICBjdHgtPnJlZ3MgPSBvZl9pb21hcChkZXYtPm9mX25vZGUsIDApOwo+PiAr
+ICAgICAgIGlmIChJU19FUlIoY3R4LT5yZWdzKSkgewo+PiArICAgICAgICAgICAgICAgcmV0ID0g
+UFRSX0VSUihjdHgtPnJlZ3MpOwo+PiArICAgICAgICAgICAgICAgZ290byBlcnJfZGVsX2NvbXBv
+bmVudDsKPj4gKyAgICAgICB9Cj4+ICsKPj4gKyAgICAgICBjdHgtPnBjbGsgPSBkZXZtX2Nsa19n
+ZXQoZGV2LCAicGNsa19kZWNvbjAiKTsKPj4gKyAgICAgICBpZiAoSVNfRVJSKGN0eC0+cGNsaykp
+IHsKPj4gKyAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGdldCBidXMgY2xv
+Y2sgcGNsa1xuIik7Cj4+ICsgICAgICAgICAgICAgICByZXQgPSBQVFJfRVJSKGN0eC0+cGNsayk7
+Cj4+ICsgICAgICAgICAgICAgICBnb3RvIGVycl9pb3VubWFwOwo+PiArICAgICAgIH0KPj4gKwo+
+PiArICAgICAgIGN0eC0+YWNsayA9IGRldm1fY2xrX2dldChkZXYsICJhY2xrX2RlY29uMCIpOwo+
+PiArICAgICAgIGlmIChJU19FUlIoY3R4LT5hY2xrKSkgewo+PiArICAgICAgICAgICAgICAgZGV2
+X2VycihkZXYsICJmYWlsZWQgdG8gZ2V0IGJ1cyBjbG9jayBhY2xrXG4iKTsKPj4gKyAgICAgICAg
+ICAgICAgIHJldCA9IFBUUl9FUlIoY3R4LT5hY2xrKTsKPj4gKyAgICAgICAgICAgICAgIGdvdG8g
+ZXJyX2lvdW5tYXA7Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAgICAgY3R4LT5lY2xrID0gZGV2
+bV9jbGtfZ2V0KGRldiwgImRlY29uMF9lY2xrIik7Cj4+ICsgICAgICAgaWYgKElTX0VSUihjdHgt
+PmVjbGspKSB7Cj4+ICsgICAgICAgICAgICAgICBkZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQg
+ZWNsb2NrXG4iKTsKPj4gKyAgICAgICAgICAgICAgIHJldCA9IFBUUl9FUlIoY3R4LT5lY2xrKTsK
+Pj4gKyAgICAgICAgICAgICAgIGdvdG8gZXJyX2lvdW5tYXA7Cj4+ICsgICAgICAgfQo+PiArCj4+
+ICsgICAgICAgY3R4LT52Y2xrID0gZGV2bV9jbGtfZ2V0KGRldiwgImRlY29uMF92Y2xrIik7Cj4+
+ICsgICAgICAgaWYgKElTX0VSUihjdHgtPnZjbGspKSB7Cj4+ICsgICAgICAgICAgICAgICBkZXZf
+ZXJyKGRldiwgImZhaWxlZCB0byBnZXQgdmNsb2NrXG4iKTsKPj4gKyAgICAgICAgICAgICAgIHJl
+dCA9IFBUUl9FUlIoY3R4LT52Y2xrKTsKPj4gKyAgICAgICAgICAgICAgIGdvdG8gZXJyX2lvdW5t
+YXA7Cj4+ICsgICAgICAgfQo+PiArCj4+ICsgICAgICAgcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291
+cmNlX2J5bmFtZShwZGV2LCBJT1JFU09VUkNFX0lSUSwKPj4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIGN0eC0+aTgwX2lmID8gImxjZF9zeXMiIDogInZzeW5jIik7
+Cj4+ICsgICAgICAgaWYgKCFyZXMpIHsKPj4gKyAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAi
+aXJxIHJlcXVlc3QgZmFpbGVkLlxuIik7Cj4+ICsgICAgICAgICAgICAgICByZXQgPSAtRU5YSU87
+Cj4+ICsgICAgICAgICAgICAgICBnb3RvIGVycl9pb3VubWFwOwo+PiArICAgICAgIH0KPj4gKwo+
+PiArICAgICAgIHJldCA9IGRldm1fcmVxdWVzdF9pcnEoZGV2LCByZXMtPnN0YXJ0LCBkZWNvbl9p
+cnFfaGFuZGxlciwKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAwLCAiZHJtX2RlY29uIiwgY3R4KTsKPj4gKyAgICAgICBpZiAocmV0KSB7
+Cj4+ICsgICAgICAgICAgICAgICBkZXZfZXJyKGRldiwgImlycSByZXF1ZXN0IGZhaWxlZC5cbiIp
+Owo+PiArICAgICAgICAgICAgICAgZ290byBlcnJfaW91bm1hcDsKPj4gKyAgICAgICB9Cj4+ICsK
+Pj4gKyAgICAgICBpbml0X3dhaXRxdWV1ZV9oZWFkKCZjdHgtPndhaXRfdnN5bmNfcXVldWUpOwo+
+PiArICAgICAgIGF0b21pY19zZXQoJmN0eC0+d2FpdF92c3luY19ldmVudCwgMCk7Cj4+ICsKPj4g
+KyAgICAgICBwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBjdHgpOwo+PiArCj4+ICsgICAgICAg
+Y3R4LT5kaXNwbGF5ID0gZXh5bm9zX2RwaV9wcm9iZShkZXYpOwo+PiArICAgICAgIGlmIChJU19F
+UlIoY3R4LT5kaXNwbGF5KSkgewo+PiArICAgICAgICAgICAgICAgcmV0ID0gUFRSX0VSUihjdHgt
+PmRpc3BsYXkpOwo+PiArICAgICAgICAgICAgICAgZ290byBlcnJfaW91bm1hcDsKPj4gKyAgICAg
+ICB9Cj4+ICsKPj4gKyAgICAgICBwbV9ydW50aW1lX2VuYWJsZShkZXYpOwo+PiArCj4+ICsgICAg
+ICAgcmV0ID0gY29tcG9uZW50X2FkZChkZXYsICZkZWNvbl9jb21wb25lbnRfb3BzKTsKPj4gKyAg
+ICAgICBpZiAocmV0KQo+PiArICAgICAgICAgICAgICAgZ290byBlcnJfZGlzYWJsZV9wbV9ydW50
+aW1lOwo+PiArCj4+ICsgICAgICAgcmV0dXJuIHJldDsKPj4gKwo+PiArZXJyX2Rpc2FibGVfcG1f
+cnVudGltZToKPj4gKyAgICAgICBwbV9ydW50aW1lX2Rpc2FibGUoZGV2KTsKPj4gKwo+PiArZXJy
+X2lvdW5tYXA6Cj4+ICsgICAgICAgaW91bm1hcChjdHgtPnJlZ3MpOwo+PiArCj4+ICtlcnJfZGVs
+X2NvbXBvbmVudDoKPj4gKyAgICAgICBleHlub3NfZHJtX2NvbXBvbmVudF9kZWwoZGV2LCBFWFlO
+T1NfREVWSUNFX1RZUEVfQ1JUQyk7Cj4+ICsgICAgICAgcmV0dXJuIHJldDsKPj4gK30KPj4gKwo+
+PiArc3RhdGljIGludCBkZWNvbl9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikK
+Pj4gK3sKPj4gKyAgICAgICBzdHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gZGV2X2dldF9kcnZk
+YXRhKCZwZGV2LT5kZXYpOwo+PiArCj4+ICsgICAgICAgcG1fcnVudGltZV9kaXNhYmxlKCZwZGV2
+LT5kZXYpOwo+PiArCj4+ICsgICAgICAgaW91bm1hcChjdHgtPnJlZ3MpOwo+PiArCj4+ICsgICAg
+ICAgY29tcG9uZW50X2RlbCgmcGRldi0+ZGV2LCAmZGVjb25fY29tcG9uZW50X29wcyk7Cj4+ICsg
+ICAgICAgZXh5bm9zX2RybV9jb21wb25lbnRfZGVsKCZwZGV2LT5kZXYsIEVYWU5PU19ERVZJQ0Vf
+VFlQRV9DUlRDKTsKPj4gKwo+PiArICAgICAgIHJldHVybiAwOwo+PiArfQo+PiArCj4+ICtzdHJ1
+Y3QgcGxhdGZvcm1fZHJpdmVyIGRlY29uX2RyaXZlciA9IHsKPj4gKyAgICAgICAucHJvYmUgICAg
+ICAgICAgPSBkZWNvbl9wcm9iZSwKPj4gKyAgICAgICAucmVtb3ZlICAgICAgICAgPSBkZWNvbl9y
+ZW1vdmUsCj4+ICsgICAgICAgLmRyaXZlciAgICAgICAgID0gewo+PiArICAgICAgICAgICAgICAg
+Lm5hbWUgICA9ICJleHlub3MtZGVjb24iLAo+PiArICAgICAgICAgICAgICAgLm9mX21hdGNoX3Rh
+YmxlID0gZGVjb25fZHJpdmVyX2R0X21hdGNoLAo+PiArICAgICAgIH0sCj4+ICt9Owo+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4+IGluZGV4IDFiY2JlMDcuLmEyYWI0
+MDYgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+Ywo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gQEAg
+LTU1Niw2ICs1NTYsOSBAQCBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciAqY29uc3QgZXh5
+bm9zX2RybV9rbXNfZHJpdmVyc1tdID0gewo+PiAgI2lmZGVmIENPTkZJR19EUk1fRVhZTk9TX0ZJ
+TUQKPj4gICAgICAgICAmZmltZF9kcml2ZXIsCj4+ICAjZW5kaWYKPj4gKyNpZmRlZiBDT05GSUdf
+RFJNX0VYWU5PU19ERUNPTgo+PiArICAgICAgICZkZWNvbl9kcml2ZXIsCj4+ICsjZW5kaWYKPj4g
+ICNpZmRlZiBDT05GSUdfRFJNX0VYWU5PU19EUAo+PiAgICAgICAgICZkcF9kcml2ZXIsCj4+ICAj
+ZW5kaWYKPj4gQEAgLTYxMiw2ICs2MTUsNyBAQCBzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IHN0
+cmluZ3NbXSA9IHsKPj4gICAgICAgICAic2Ftc3VuZyxleHlub3MzIiwKPj4gICAgICAgICAic2Ft
+c3VuZyxleHlub3M0IiwKPj4gICAgICAgICAic2Ftc3VuZyxleHlub3M1IiwKPj4gKyAgICAgICAi
+c2Ftc3VuZyxleHlub3M3IiwKPj4gIH07Cj4+Cj4+ICBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2Ry
+aXZlciBleHlub3NfZHJtX3BsYXRmb3JtX2RyaXZlciA9IHsKPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuaAo+PiBpbmRleCBkNDkwYjQ5Li5kZmYxZDA2IDEwMDY0NAo+PiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+IEBAIC0zNTIsNiArMzUyLDcg
+QEAgdm9pZCBleHlub3NfZHJtX2NvbXBvbmVudF9kZWwoc3RydWN0IGRldmljZSAqZGV2LAo+PiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVudW0gZXh5bm9zX2RybV9kZXZpY2VfdHlw
+ZSBkZXZfdHlwZSk7Cj4+Cj4+ICBleHRlcm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBmaW1kX2Ry
+aXZlcjsKPj4gK2V4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGRlY29uX2RyaXZlcjsKPj4g
+IGV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGRwX2RyaXZlcjsKPj4gIGV4dGVybiBzdHJ1
+Y3QgcGxhdGZvcm1fZHJpdmVyIGRzaV9kcml2ZXI7Cj4+ICBleHRlcm4gc3RydWN0IHBsYXRmb3Jt
+X2RyaXZlciBtaXhlcl9kcml2ZXI7Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3ZpZGVvL2V4eW5v
+czdfZGVjb24uaCBiL2luY2x1ZGUvdmlkZW8vZXh5bm9zN19kZWNvbi5oCj4+IG5ldyBmaWxlIG1v
+ZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAuLmE2MmIxMWIKPj4gLS0tIC9kZXYvbnVsbAo+PiAr
+KysgYi9pbmNsdWRlL3ZpZGVvL2V4eW5vczdfZGVjb24uaAo+PiBAQCAtMCwwICsxLDM0OSBAQAo+
+PiArLyogaW5jbHVkZS92aWRlby9leHlub3M3X2RlY29uLmgKPj4gKyAqCj4+ICsgKiBDb3B5cmln
+aHQgKGMpIDIwMTQgU2Ftc3VuZyBFbGVjdHJvbmljcyBDby4sIEx0ZC4KPj4gKyAqIEF1dGhvcjog
+QWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPgo+PiArICoKPj4gKyAqIFRoaXMg
+cHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSAgaXQgYW5kL29y
+IG1vZGlmeSBpdAo+PiArICogdW5kZXIgIHRoZSB0ZXJtcyBvZiAgdGhlIEdOVSBHZW5lcmFsICBQ
+dWJsaWMgTGljZW5zZSBhcyBwdWJsaXNoZWQgYnkgdGhlCj4+ICsgKiBGcmVlIFNvZnR3YXJlIEZv
+dW5kYXRpb247ICBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSAgTGljZW5zZSwgb3IgKGF0IHlvdXIK
+Pj4gKyAqIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uCj4+ICsgKi8KPj4gKwo+PiArLyogVklE
+Q09OMCAqLwo+PiArI2RlZmluZSBWSURDT04wICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIDB4MDAKPj4gKwo+PiArI2RlZmluZSBWSURDT04wX1NXUkVTRVQgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDI4KQo+PiArI2RlZmluZSBWSURDT04wX0RFQ09O
+X1NUT1BfU1RBVFVTICAgICAgICAgICAgICAoMSA8PCAyKQo+PiArI2RlZmluZSBWSURDT04wX0VO
+VklEICAgICAgICAgICAgICAgICAgICAgICAgICAoMSA8PCAxKQo+PiArI2RlZmluZSBWSURDT04w
+X0VOVklEX0YgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDApCj4+ICsKPj4g
+Ky8qIFZJRE9VVENPTjAgKi8KPj4gKyNkZWZpbmUgVklET1VUQ09OMCAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgMHg0Cj4+ICsKPj4gKyNkZWZpbmUgVklET1VUQ09OMF9EVUFMX01BU0sgICAg
+ICAgICAgICAgICAgICAgKDB4MyA8PCAyNCkKPj4gKyNkZWZpbmUgVklET1VUQ09OMF9EVUFMX09O
+ICAgICAgICAgICAgICAgICAgICAgKDB4MyA8PCAyNCkKPj4gKyNkZWZpbmUgVklET1VUQ09OMF9E
+SVNQX0lGXzFfT04gICAgICAgICAgICAgICAgICAgICAgICAoMHgyIDw8IDI0KQo+PiArI2RlZmlu
+ZSBWSURPVVRDT04wX0RJU1BfSUZfMF9PTiAgICAgICAgICAgICAgICAgICAgICAgICgweDEgPDwg
+MjQpCj4+ICsjZGVmaW5lIFZJRE9VVENPTjBfRFVBTF9PRkYgICAgICAgICAgICAgICAgICAgICgw
+eDAgPDwgMjQpCj4+ICsjZGVmaW5lIFZJRE9VVENPTjBfSUZfU0hJRlQgICAgICAgICAgICAgICAg
+ICAgIDIzCj4+ICsjZGVmaW5lIFZJRE9VVENPTjBfSUZfTUFTSyAgICAgICAgICAgICAgICAgICAg
+ICgweDEgPDwgMjMpCj4+ICsjZGVmaW5lIFZJRE9VVENPTjBfUkdCSUYgICAgICAgICAgICAgICAg
+ICAgICAgICgweDAgPDwgMjMpCj4+ICsjZGVmaW5lIFZJRE9VVENPTjBfSTgwSUYgICAgICAgICAg
+ICAgICAgICAgICAgICgweDEgPDwgMjMpCj4+ICsKPj4gKy8qIFZJRENPTjMgKi8KPj4gKyNkZWZp
+bmUgVklEQ09OMyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDgKPj4g
+Kwo+PiArLyogVklEQ09ONCAqLwo+PiArI2RlZmluZSBWSURDT040ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIDB4Qwo+PiArI2RlZmluZSBWSURDT040X0ZJRk9DTlRfU1RB
+UlRfRU4gICAgICAgICAgICAgICAoMSA8PCAwKQo+PiArCj4+ICsvKiBWQ0xLQ09OMCAqLwo+PiAr
+I2RlZmluZSBWQ0xLQ09OMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDEwCj4+ICsj
+ZGVmaW5lIFZDTEtDT04wX0NMS1ZBTFVQICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDgpCj4+
+ICsjZGVmaW5lIFZDTEtDT04wX1ZDTEtGUkVFICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDAp
+Cj4+ICsKPj4gKy8qIFZDTEtDT04gKi8KPj4gKyNkZWZpbmUgVkNMS0NPTjEgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgMHgxNAo+PiArI2RlZmluZSBWQ0xLQ09OMV9DTEtWQUxfTlVNX1ZD
+TEsodmFsKSAgICAgICAgICAoKCh2YWwpICYgMHhmZikgPDwgMCkKPj4gKyNkZWZpbmUgVkNMS0NP
+TjIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMHgxOAo+PiArCj4+ICsvKiBTSEFET1dD
+T04gKi8KPj4gKyNkZWZpbmUgU0hBRE9XQ09OICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+MHgzMAo+PiArCj4+ICsjZGVmaW5lIFNIQURPV0NPTl9XSU54X1BST1RFQ1QoX3dpbikgICAgICAg
+ICAgICgxIDw8ICgxMCArIChfd2luKSkpCj4+ICsKPj4gKy8qIFdJTkNPTnggKi8KPj4gKyNkZWZp
+bmUgV0lOQ09OKF93aW4pICAgICAgICAgICAgICAgICAgICAgICAgICAgKDB4NTAgKyAoKF93aW4p
+ICogNCkpCj4+ICsKPj4gKyNkZWZpbmUgV0lOQ09OeF9CVUZTVEFUVVMgICAgICAgICAgICAgICAg
+ICAgICAgKDB4MyA8PCAzMCkKPj4gKyNkZWZpbmUgV0lOQ09OeF9CVUZTRUxfTUFTSyAgICAgICAg
+ICAgICAgICAgICAgKDB4MyA8PCAyOCkKPj4gKyNkZWZpbmUgV0lOQ09OeF9CVUZTRUxfU0hJRlQg
+ICAgICAgICAgICAgICAgICAgMjgKPj4gKyNkZWZpbmUgV0lOQ09OeF9UUklQTEVfQlVGX01PREUg
+ICAgICAgICAgICAgICAgICAgICAgICAoMHgxIDw8IDE4KQo+PiArI2RlZmluZSBXSU5DT054X0RP
+VUJMRV9CVUZfTU9ERSAgICAgICAgICAgICAgICAgICAgICAgICgweDAgPDwgMTgpCj4+ICsjZGVm
+aW5lIFdJTkNPTnhfQlVSU1RMRU5fMTZXT1JEICAgICAgICAgICAgICAgICAgICAgICAgKDB4MCA8
+PCAxMSkKPj4gKyNkZWZpbmUgV0lOQ09OeF9CVVJTVExFTl84V09SRCAgICAgICAgICAgICAgICAg
+KDB4MSA8PCAxMSkKPj4gKyNkZWZpbmUgV0lOQ09OeF9CVVJTVExFTl9NQVNLICAgICAgICAgICAg
+ICAgICAgKDB4MSA8PCAxMSkKPj4gKyNkZWZpbmUgV0lOQ09OeF9CVVJTVExFTl9TSElGVCAgICAg
+ICAgICAgICAgICAgMTEKPj4gKyNkZWZpbmUgV0lOQ09OeF9CTERfUExBTkUgICAgICAgICAgICAg
+ICAgICAgICAgKDAgPDwgOCkKPj4gKyNkZWZpbmUgV0lOQ09OeF9CTERfUElYICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAoMSA8PCA4KQo+PiArI2RlZmluZSBXSU5DT054X0FMUEhBX01V
+TCAgICAgICAgICAgICAgICAgICAgICAoMSA8PCA3KQo+PiArCj4+ICsjZGVmaW5lIFdJTkNPTnhf
+QlBQTU9ERV9NQVNLICAgICAgICAgICAgICAgICAgICgweGYgPDwgMikKPj4gKyNkZWZpbmUgV0lO
+Q09OeF9CUFBNT0RFX1NISUZUICAgICAgICAgICAgICAgICAgMgo+PiArI2RlZmluZSBXSU5DT054
+X0JQUE1PREVfMTZCUFBfNTY1ICAgICAgICAgICAgICAoMHg4IDw8IDIpCj4+ICsjZGVmaW5lIFdJ
+TkNPTnhfQlBQTU9ERV8yNEJQUF9CR1J4ICAgICAgICAgICAgICgweDcgPDwgMikKPj4gKyNkZWZp
+bmUgV0lOQ09OeF9CUFBNT0RFXzI0QlBQX1JHQnggICAgICAgICAgICAgKDB4NiA8PCAyKQo+PiAr
+I2RlZmluZSBXSU5DT054X0JQUE1PREVfMjRCUFBfeEJHUiAgICAgICAgICAgICAoMHg1IDw8IDIp
+Cj4+ICsjZGVmaW5lIFdJTkNPTnhfQlBQTU9ERV8yNEJQUF94UkdCICAgICAgICAgICAgICgweDQg
+PDwgMikKPj4gKyNkZWZpbmUgV0lOQ09OeF9CUFBNT0RFXzMyQlBQX0JHUkEgICAgICAgICAgICAg
+KDB4MyA8PCAyKQo+PiArI2RlZmluZSBXSU5DT054X0JQUE1PREVfMzJCUFBfUkdCQSAgICAgICAg
+ICAgICAoMHgyIDw8IDIpCj4+ICsjZGVmaW5lIFdJTkNPTnhfQlBQTU9ERV8zMkJQUF9BQkdSICAg
+ICAgICAgICAgICgweDEgPDwgMikKPj4gKyNkZWZpbmUgV0lOQ09OeF9CUFBNT0RFXzMyQlBQX0FS
+R0IgICAgICAgICAgICAgKDB4MCA8PCAyKQo+PiArI2RlZmluZSBXSU5DT054X0FMUEhBX1NFTCAg
+ICAgICAgICAgICAgICAgICAgICAoMSA8PCAxKQo+PiArI2RlZmluZSBXSU5DT054X0VOV0lOICAg
+ICAgICAgICAgICAgICAgICAgICAgICAoMSA8PCAwKQo+PiArCj4+ICsjZGVmaW5lIFdJTkNPTjFf
+QUxQSEFfTVVMX0YgICAgICAgICAgICAgICAgICAgICgxIDw8IDcpCj4+ICsjZGVmaW5lIFdJTkNP
+TjJfQUxQSEFfTVVMX0YgICAgICAgICAgICAgICAgICAgICgxIDw8IDcpCj4+ICsjZGVmaW5lIFdJ
+TkNPTjNfQUxQSEFfTVVMX0YgICAgICAgICAgICAgICAgICAgICgxIDw8IDcpCj4+ICsjZGVmaW5l
+IFdJTkNPTjRfQUxQSEFfTVVMX0YgICAgICAgICAgICAgICAgICAgICgxIDw8IDcpCj4+ICsKPj4g
+Ky8qICBWSURPU0R4SDogVGhlIGhlaWdodCBmb3IgdGhlIE9TRCBpbWFnZShSRUFEIE9OTFkpKi8K
+Pj4gKyNkZWZpbmUgVklET1NEX0goX3gpICAgICAgICAgICAgICAgICAgICAgICAgICAgKDB4ODAg
+KyAoKF94KSAqIDQpKQo+PiArCj4+ICsvKiBGcmFtZSBidWZmZXIgc3RhcnQgYWRkcmVzc2VzOiBW
+SURXeHhBREQwbiAqLwo+PiArI2RlZmluZSBWSURXX0JVRl9TVEFSVChfd2luKSAgICAgICAgICAg
+ICAgICAgICAoMHg4MCArICgoX3dpbikgKiAweDEwKSkKPj4gKyNkZWZpbmUgVklEV19CVUZfU1RB
+UlQxKF93aW4pICAgICAgICAgICAgICAgICAgKDB4ODQgKyAoKF93aW4pICogMHgxMCkpCj4+ICsj
+ZGVmaW5lIFZJRFdfQlVGX1NUQVJUMihfd2luKSAgICAgICAgICAgICAgICAgICgweDg4ICsgKChf
+d2luKSAqIDB4MTApKQo+PiArCj4+ICsjZGVmaW5lIFZJRFdfV0hPTEVfWChfd2luKSAgICAgICAg
+ICAgICAgICAgICAgICgweDAxMzAgKyAoKF93aW4pICogOCkpCj4+ICsjZGVmaW5lIFZJRFdfV0hP
+TEVfWShfd2luKSAgICAgICAgICAgICAgICAgICAgICgweDAxMzQgKyAoKF93aW4pICogOCkpCj4+
+ICsjZGVmaW5lIFZJRFdfT0ZGU0VUX1goX3dpbikgICAgICAgICAgICAgICAgICAgICgweDAxNzAg
+KyAoKF93aW4pICogOCkpCj4+ICsjZGVmaW5lIFZJRFdfT0ZGU0VUX1koX3dpbikgICAgICAgICAg
+ICAgICAgICAgICgweDAxNzQgKyAoKF93aW4pICogOCkpCj4+ICsjZGVmaW5lIFZJRFdfQkxLT0ZG
+U0VUKF93aW4pICAgICAgICAgICAgICAgICAgICgweDAxQjAgKyAoKF93aW4pICogNCkpCj4+ICsj
+ZGVmaW5lIFZJRFdfQkxLU0laRSh3aW4pICAgICAgICAgICAgICAgICAgICAgICgweDAyMDAgKyAo
+KF93aW4pICogNCkpCj4+ICsKPj4gKy8qIEludGVycnVwdCBjb250cm9scyByZWdpc3RlciAqLwo+
+PiArI2RlZmluZSBWSURJTlRDT04yICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDIyOAo+
+PiArCj4+ICsjZGVmaW5lIFZJRElOVENPTjFfSU5URVhUUkExX0VOICAgICAgICAgICAgICAgICAg
+ICAgICAgKDEgPDwgMSkKPj4gKyNkZWZpbmUgVklESU5UQ09OMV9JTlRFWFRSQTBfRU4gICAgICAg
+ICAgICAgICAgICAgICAgICAoMSA8PCAwKQo+PiArCj4+ICsvKiBJbnRlcnJ1cHQgY29udHJvbHMg
+YW5kIHN0YXR1cyByZWdpc3RlciAqLwo+PiArI2RlZmluZSBWSURJTlRDT04zICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAweDIyQwo+PiArCj4+ICsjZGVmaW5lIFZJRElOVENPTjFfSU5URVhU
+UkExX1BFTkQgICAgICAgICAgICAgICgxIDw8IDEpCj4+ICsjZGVmaW5lIFZJRElOVENPTjFfSU5U
+RVhUUkEwX1BFTkQgICAgICAgICAgICAgICgxIDw8IDApCj4+ICsKPj4gKy8qIFZJRE9TRHhBIH4g
+VklET1NEeEUgKi8KPj4gKyNkZWZpbmUgVklET1NEX0JBU0UgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgMHgyMzAKPj4gKwo+PiArI2RlZmluZSBPU0RfU1RSSURFICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAweDIwCj4+ICsKPj4gKyNkZWZpbmUgVklET1NEX0EoX3dpbikgICAgICAgICAg
+ICAgICAgICAgICAgICAgKFZJRE9TRF9CQVNFICsgXAo+PiArICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAoKF93aW4pICogT1NEX1NUUklERSkgKyAweDAwKQo+
+PiArI2RlZmluZSBWSURPU0RfQihfd2luKSAgICAgICAgICAgICAgICAgICAgICAgICAoVklET1NE
+X0JBU0UgKyBcCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICgoX3dpbikgKiBPU0RfU1RSSURFKSArIDB4MDQpCj4+ICsjZGVmaW5lIFZJRE9TRF9DKF93
+aW4pICAgICAgICAgICAgICAgICAgICAgICAgIChWSURPU0RfQkFTRSArIFwKPj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKChfd2luKSAqIE9TRF9TVFJJ
+REUpICsgMHgwOCkKPj4gKyNkZWZpbmUgVklET1NEX0QoX3dpbikgICAgICAgICAgICAgICAgICAg
+ICAgICAgKFZJRE9TRF9CQVNFICsgXAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAoKF93aW4pICogT1NEX1NUUklERSkgKyAweDBDKQo+PiArI2RlZmlu
+ZSBWSURPU0RfRShfd2luKSAgICAgICAgICAgICAgICAgICAgICAgICAoVklET1NEX0JBU0UgKyBc
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgoX3dp
+bikgKiBPU0RfU1RSSURFKSArIDB4MTApCj4+ICsKPj4gKyNkZWZpbmUgVklET1NEeEFfVE9QTEVG
+VF9YX01BU0sgICAgICAgICAgICAgICAgICAgICAgICAoMHgxZmZmIDw8IDEzKQo+PiArI2RlZmlu
+ZSBWSURPU0R4QV9UT1BMRUZUX1hfU0hJRlQgICAgICAgICAgICAgICAxMwo+PiArI2RlZmluZSBW
+SURPU0R4QV9UT1BMRUZUX1hfTElNSVQgICAgICAgICAgICAgICAweDFmZmYKPj4gKyNkZWZpbmUg
+VklET1NEeEFfVE9QTEVGVF9YKF94KSAgICAgICAgICAgICAgICAgKCgoX3gpICYgMHgxZmZmKSA8
+PCAxMykKPj4gKwo+PiArI2RlZmluZSBWSURPU0R4QV9UT1BMRUZUX1lfTUFTSyAgICAgICAgICAg
+ICAgICAgICAgICAgICgweDFmZmYgPDwgMCkKPj4gKyNkZWZpbmUgVklET1NEeEFfVE9QTEVGVF9Z
+X1NISUZUICAgICAgICAgICAgICAgMAo+PiArI2RlZmluZSBWSURPU0R4QV9UT1BMRUZUX1lfTElN
+SVQgICAgICAgICAgICAgICAweDFmZmYKPj4gKyNkZWZpbmUgVklET1NEeEFfVE9QTEVGVF9ZKF94
+KSAgICAgICAgICAgICAgICAgKCgoX3gpICYgMHgxZmZmKSA8PCAwKQo+PiArCj4+ICsjZGVmaW5l
+IFZJRE9TRHhCX0JPVFJJR0hUX1hfTUFTSyAgICAgICAgICAgICAgICgweDFmZmYgPDwgMTMpCj4+
+ICsjZGVmaW5lIFZJRE9TRHhCX0JPVFJJR0hUX1hfU0hJRlQgICAgICAgICAgICAgIDEzCj4+ICsj
+ZGVmaW5lIFZJRE9TRHhCX0JPVFJJR0hUX1hfTElNSVQgICAgICAgICAgICAgIDB4MWZmZgo+PiAr
+I2RlZmluZSBWSURPU0R4Ql9CT1RSSUdIVF9YKF94KSAgICAgICAgICAgICAgICAgICAgICAgICgo
+KF94KSAmIDB4MWZmZikgPDwgMTMpCj4+ICsKPj4gKyNkZWZpbmUgVklET1NEeEJfQk9UUklHSFRf
+WV9NQVNLICAgICAgICAgICAgICAgKDB4MWZmZiA8PCAwKQo+PiArI2RlZmluZSBWSURPU0R4Ql9C
+T1RSSUdIVF9ZX1NISUZUICAgICAgICAgICAgICAwCj4+ICsjZGVmaW5lIFZJRE9TRHhCX0JPVFJJ
+R0hUX1lfTElNSVQgICAgICAgICAgICAgIDB4MWZmZgo+PiArI2RlZmluZSBWSURPU0R4Ql9CT1RS
+SUdIVF9ZKF94KSAgICAgICAgICAgICAgICAgICAgICAgICgoKF94KSAmIDB4MWZmZikgPDwgMCkK
+Pj4gKwo+PiArI2RlZmluZSBWSURPU0R4Q19BTFBIQTBfUl9GKF94KSAgICAgICAgICAgICAgICAg
+ICAgICAgICgoKF94KSAmIDB4RkYpIDw8IDE2KQo+PiArI2RlZmluZSBWSURPU0R4Q19BTFBIQTBf
+R19GKF94KSAgICAgICAgICAgICAgICAgICAgICAgICgoKF94KSAmIDB4RkYpIDw8IDgpCj4+ICsj
+ZGVmaW5lIFZJRE9TRHhDX0FMUEhBMF9CX0YoX3gpICAgICAgICAgICAgICAgICAgICAgICAgKCgo
+X3gpICYgMHhGRikgPDwgMCkKPj4gKwo+PiArI2RlZmluZSBWSURPU0R4RF9BTFBIQTFfUl9GKF94
+KSAgICAgICAgICAgICAgICAgICAgICAgICgoKF94KSAmIDB4RkYpIDw8IDE2KQo+PiArI2RlZmlu
+ZSBWSURPU0R4RF9BTFBIQTFfR19GKF94KSAgICAgICAgICAgICAgICAgICAgICAgICgoKF94KSAm
+IDB4RkYpIDw8IDgpCj4+ICsjZGVmaW5lIFZJRE9TRHhEX0FMUEhBMV9CX0YoX3gpICAgICAgICAg
+ICAgICAgICAgICAgICAgKCgoX3gpICYgMHhGRikgPj4gMCkKPj4gKwo+PiArLyogV2luZG93IE1B
+UCAoQ29sb3IgbWFwKSAqLwo+PiArI2RlZmluZSBXSU54TUFQKF93aW4pICAgICAgICAgICAgICAg
+ICAgICAgICAgICAoMHgzNDAgKyAoKF93aW4pICogNCkpCj4+ICsKPj4gKyNkZWZpbmUgV0lOeE1B
+UF9NQVAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKDEgPDwgMjQpCj4+ICsjZGVmaW5lIFdJ
+TnhNQVBfTUFQX0NPTE9VUl9NQVNLICAgICAgICAgICAgICAgICAgICAgICAgKDB4ZmZmZmZmIDw8
+IDApCj4+ICsjZGVmaW5lIFdJTnhNQVBfTUFQX0NPTE9VUl9TSElGVCAgICAgICAgICAgICAgIDAK
+Pj4gKyNkZWZpbmUgV0lOeE1BUF9NQVBfQ09MT1VSX0xJTUlUICAgICAgICAgICAgICAgMHhmZmZm
+ZmYKPj4gKyNkZWZpbmUgV0lOeE1BUF9NQVBfQ09MT1VSKF94KSAgICAgICAgICAgICAgICAgKChf
+eCkgPDwgMCkKPj4gKwo+PiArLyogV2luZG93IGNvbG91ci1rZXkgY29udHJvbCByZWdpc3RlcnMg
+Ki8KPj4gKyNkZWZpbmUgV0tFWUNPTiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAweDM3MAo+PiArCj4+ICsjZGVmaW5lIFdLRVlDT04wICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIDB4MDAKPj4gKyNkZWZpbmUgV0tFWUNPTjEgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgMHgwNAo+PiArI2RlZmluZSBXeEtFWUNPTjBfS0VZQkxfRU4gICAgICAgICAgICAg
+ICAgICAgICAoMSA8PCAyNikKPj4gKyNkZWZpbmUgV3hLRVlDT04wX0tFWUVOX0YgICAgICAgICAg
+ICAgICAgICAgICAgKDEgPDwgMjUpCj4+ICsjZGVmaW5lIFd4S0VZQ09OMF9ESVJDT04gICAgICAg
+ICAgICAgICAgICAgICAgICgxIDw8IDI0KQo+PiArI2RlZmluZSBXeEtFWUNPTjBfQ09NUEtFWV9N
+QVNLICAgICAgICAgICAgICAgICAoMHhmZmZmZmYgPDwgMCkKPj4gKyNkZWZpbmUgV3hLRVlDT04w
+X0NPTVBLRVlfU0hJRlQgICAgICAgICAgICAgICAgICAgICAgICAwCj4+ICsjZGVmaW5lIFd4S0VZ
+Q09OMF9DT01QS0VZX0xJTUlUICAgICAgICAgICAgICAgICAgICAgICAgMHhmZmZmZmYKPj4gKyNk
+ZWZpbmUgV3hLRVlDT04wX0NPTVBLRVkoX3gpICAgICAgICAgICAgICAgICAgKChfeCkgPDwgMCkK
+Pj4gKyNkZWZpbmUgV3hLRVlDT04xX0NPTFZBTF9NQVNLICAgICAgICAgICAgICAgICAgKDB4ZmZm
+ZmZmIDw8IDApCj4+ICsjZGVmaW5lIFd4S0VZQ09OMV9DT0xWQUxfU0hJRlQgICAgICAgICAgICAg
+ICAgIDAKPj4gKyNkZWZpbmUgV3hLRVlDT04xX0NPTFZBTF9MSU1JVCAgICAgICAgICAgICAgICAg
+MHhmZmZmZmYKPj4gKyNkZWZpbmUgV3hLRVlDT04xX0NPTFZBTChfeCkgICAgICAgICAgICAgICAg
+ICAgKChfeCkgPDwgMCkKPj4gKwo+PiArLyogY29sb3Iga2V5IGNvbnRyb2wgcmVnaXN0ZXIgZm9y
+IGhhcmR3YXJlIHdpbmRvdyAxIH4gNC4gKi8KPj4gKyNkZWZpbmUgV0tFWUNPTjBfQkFTRSh4KSAg
+ICAgICAgICAgICAgICgoV0tFWUNPTiArIFdLRVlDT04wKSArICgoeCAtIDEpICogOCkpCj4+ICsv
+KiBjb2xvciBrZXkgdmFsdWUgcmVnaXN0ZXIgZm9yIGhhcmR3YXJlIHdpbmRvdyAxIH4gNC4gKi8K
+Pj4gKyNkZWZpbmUgV0tFWUNPTjFfQkFTRSh4KSAgICAgICAgICAgICAgICgoV0tFWUNPTiArIFdL
+RVlDT04xKSArICgoeCAtIDEpICogOCkpCj4+ICsKPj4gKy8qIFdpbmRvdyBLRVkgQWxwaGEgdmFs
+dWUgKi8KPj4gKyNkZWZpbmUgV3hLRVlBTFBIQShfd2luKSAgICAgICAgICAgICAgICAgICAgICAg
+KDB4M0EwICsgKCgoX3dpbikgLSAxKSAqIDB4NCkpCj4+ICsKPj4gKyNkZWZpbmUgV3hfS0VZQUxQ
+SEFfUl9GX1NISUZUICAgICAgICAgICAgICAgICAgMTYKPj4gKyNkZWZpbmUgV3hfS0VZQUxQSEFf
+R19GX1NISUZUICAgICAgICAgICAgICAgICAgOAo+PiArI2RlZmluZSBXeF9LRVlBTFBIQV9CX0Zf
+U0hJRlQgICAgICAgICAgICAgICAgICAwCj4+ICsKPj4gKy8qIEJsZW5kaW5nIGVxdWF0aW9uICov
+Cj4+ICsjZGVmaW5lIEJMRU5ERShfd2luKSAgICAgICAgICAgICAgICAgICAgICAgICAgICgweDAz
+QzAgKyAoKF93aW4pICogNCkpCj4+ICsjZGVmaW5lIEJMRU5ERV9DT0VGX1pFUk8gICAgICAgICAg
+ICAgICAgICAgICAgIDB4MAo+PiArI2RlZmluZSBCTEVOREVfQ09FRl9PTkUgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIDB4MQo+PiArI2RlZmluZSBCTEVOREVfQ09FRl9BTFBIQV9BICAg
+ICAgICAgICAgICAgICAgICAweDIKPj4gKyNkZWZpbmUgQkxFTkRFX0NPRUZfT05FX01JTlVTX0FM
+UEhBX0EgICAgICAgICAgMHgzCj4+ICsjZGVmaW5lIEJMRU5ERV9DT0VGX0FMUEhBX0IgICAgICAg
+ICAgICAgICAgICAgIDB4NAo+PiArI2RlZmluZSBCTEVOREVfQ09FRl9PTkVfTUlOVVNfQUxQSEFf
+QiAgICAgICAgICAweDUKPj4gKyNkZWZpbmUgQkxFTkRFX0NPRUZfQUxQSEEwICAgICAgICAgICAg
+ICAgICAgICAgMHg2Cj4+ICsjZGVmaW5lIEJMRU5ERV9DT0VGX0EgICAgICAgICAgICAgICAgICAg
+ICAgICAgIDB4QQo+PiArI2RlZmluZSBCTEVOREVfQ09FRl9PTkVfTUlOVVNfQSAgICAgICAgICAg
+ICAgICAgICAgICAgIDB4Qgo+PiArI2RlZmluZSBCTEVOREVfQ09FRl9CICAgICAgICAgICAgICAg
+ICAgICAgICAgICAweEMKPj4gKyNkZWZpbmUgQkxFTkRFX0NPRUZfT05FX01JTlVTX0IgICAgICAg
+ICAgICAgICAgICAgICAgICAweEQKPj4gKyNkZWZpbmUgQkxFTkRFX1FfRlVOQyhfdikgICAgICAg
+ICAgICAgICAgICAgICAgKChfdikgPDwgMTgpCj4+ICsjZGVmaW5lIEJMRU5ERV9QX0ZVTkMoX3Yp
+ICAgICAgICAgICAgICAgICAgICAgICgoX3YpIDw8IDEyKQo+PiArI2RlZmluZSBCTEVOREVfQl9G
+VU5DKF92KSAgICAgICAgICAgICAgICAgICAgICAoKF92KSA8PCA2KQo+PiArI2RlZmluZSBCTEVO
+REVfQV9GVU5DKF92KSAgICAgICAgICAgICAgICAgICAgICAoKF92KSA8PCAwKQo+PiArCj4+ICsv
+KiBCbGVuZGluZyBlcXVhdGlvbiBjb250cm9sICovCj4+ICsjZGVmaW5lIEJMRU5EQ09OICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIDB4M0Q4Cj4+ICsjZGVmaW5lIEJMRU5EQ09OX05FV19N
+QVNLICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDApCj4+ICsjZGVmaW5lIEJMRU5EQ09OX05F
+V184QklUX0FMUEhBX1ZBTFVFICAgICAgICAgICgxIDw8IDApCj4+ICsjZGVmaW5lIEJMRU5EQ09O
+X05FV180QklUX0FMUEhBX1ZBTFVFICAgICAgICAgICgwIDw8IDApCj4+ICsKPj4gKy8qIEludGVy
+cnVwdCBjb250cm9sIHJlZ2lzdGVyICovCj4+ICsjZGVmaW5lIFZJRElOVENPTjAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIDB4NTAwCj4+ICsKPj4gKyNkZWZpbmUgVklESU5UQ09OMF9XQUtF
+VVBfTUFTSyAgICAgICAgICAgICAgICAgKDB4M2YgPDwgMjYpCj4+ICsjZGVmaW5lIFZJRElOVENP
+TjBfSU5URVhUUkFFTiAgICAgICAgICAgICAgICAgICgxIDw8IDIxKQo+PiArCj4+ICsjZGVmaW5l
+IFZJRElOVENPTjBfRlJBTUVTRUwwX1NISUZUICAgICAgICAgICAgIDE1Cj4+ICsjZGVmaW5lIFZJ
+RElOVENPTjBfRlJBTUVTRUwwX01BU0sgICAgICAgICAgICAgICgweDMgPDwgMTUpCj4+ICsjZGVm
+aW5lIFZJRElOVENPTjBfRlJBTUVTRUwwX0JBQ0tQT1JDSCAgICAgICAgICgweDAgPDwgMTUpCj4+
+ICsjZGVmaW5lIFZJRElOVENPTjBfRlJBTUVTRUwwX1ZTWU5DICAgICAgICAgICAgICgweDEgPDwg
+MTUpCj4+ICsjZGVmaW5lIFZJRElOVENPTjBfRlJBTUVTRUwwX0FDVElWRSAgICAgICAgICAgICgw
+eDIgPDwgMTUpCj4+ICsjZGVmaW5lIFZJRElOVENPTjBfRlJBTUVTRUwwX0ZST05UUE9SQ0ggICAg
+ICAgICAgICAgICAgKDB4MyA8PCAxNSkKPj4gKwo+PiArI2RlZmluZSBWSURJTlRDT04wX0lOVF9G
+UkFNRSAgICAgICAgICAgICAgICAgICAoMSA8PCAxMSkKPj4gKwo+PiArI2RlZmluZSBWSURJTlRD
+T04wX0ZJRk9MRVZFTF9NQVNLICAgICAgICAgICAgICAoMHg3IDw8IDMpCj4+ICsjZGVmaW5lIFZJ
+RElOVENPTjBfRklGT0xFVkVMX1NISUZUICAgICAgICAgICAgIDMKPj4gKyNkZWZpbmUgVklESU5U
+Q09OMF9GSUZPTEVWRUxfRU1QVFkgICAgICAgICAgICAgKDB4MCA8PCAzKQo+PiArI2RlZmluZSBW
+SURJTlRDT04wX0ZJRk9MRVZFTF9UTzI1UEMgICAgICAgICAgICAoMHgxIDw8IDMpCj4+ICsjZGVm
+aW5lIFZJRElOVENPTjBfRklGT0xFVkVMX1RPNTBQQyAgICAgICAgICAgICgweDIgPDwgMykKPj4g
+KyNkZWZpbmUgVklESU5UQ09OMF9GSUZPTEVWRUxfRlVMTCAgICAgICAgICAgICAgKDB4NCA8PCAz
+KQo+PiArCj4+ICsjZGVmaW5lIFZJRElOVENPTjBfRklGT1NFTF9NQUlOX0VOICAgICAgICAgICAg
+ICgxIDw8IDEpCj4+ICsjZGVmaW5lIFZJRElOVENPTjBfSU5UX0ZJRk8gICAgICAgICAgICAgICAg
+ICAgICgxIDw8IDEpCj4+ICsKPj4gKyNkZWZpbmUgVklESU5UQ09OMF9JTlRfRU5BQkxFICAgICAg
+ICAgICAgICAgICAgKDEgPDwgMCkKPj4gKwo+PiArLyogSW50ZXJydXB0IGNvbnRyb2xzIGFuZCBz
+dGF0dXMgcmVnaXN0ZXIgKi8KPj4gKyNkZWZpbmUgVklESU5UQ09OMSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgMHg1MDQKPj4gKwo+PiArI2RlZmluZSBWSURJTlRDT04xX0lOVF9FWFRSQSAg
+ICAgICAgICAgICAgICAgICAoMSA8PCAzKQo+PiArI2RlZmluZSBWSURJTlRDT04xX0lOVF9JODAg
+ICAgICAgICAgICAgICAgICAgICAoMSA8PCAyKQo+PiArI2RlZmluZSBWSURJTlRDT04xX0lOVF9G
+UkFNRSAgICAgICAgICAgICAgICAgICAoMSA8PCAxKQo+PiArI2RlZmluZSBWSURJTlRDT04xX0lO
+VF9GSUZPICAgICAgICAgICAgICAgICAgICAoMSA8PCAwKQo+PiArCj4+ICsvKiBWSURDT04xICov
+Cj4+ICsjZGVmaW5lIFZJRENPTjEoX3gpICAgICAgICAgICAgICAgICAgICAgICAgICAgICgweDA2
+MDAgKyAoKF94KSAqIDB4NTApKQo+PiArI2RlZmluZSBWSURDT04xX0xJTkVDTlRfR0VUKF92KSAg
+ICAgICAgICAgICAgICAgICAgICAgICgoKF92KSA+PiAxNykgJiAweDFmZmYpCj4+ICsjZGVmaW5l
+IFZJRENPTjFfVkNMS19NQVNLICAgICAgICAgICAgICAgICAgICAgICgweDMgPDwgOSkKPj4gKyNk
+ZWZpbmUgVklEQ09OMV9WQ0xLX0hPTEQgICAgICAgICAgICAgICAgICAgICAgKDB4MCA8PCA5KQo+
+PiArI2RlZmluZSBWSURDT04xX1ZDTEtfUlVOICAgICAgICAgICAgICAgICAgICAgICAoMHgxIDw8
+IDkpCj4+ICsjZGVmaW5lIFZJRENPTjFfVkNMS19SVU5fVkRFTl9ESVNBQkxFICAgICAgICAgICgw
+eDMgPDwgOSkKPj4gKyNkZWZpbmUgVklEQ09OMV9SR0JfT1JERVJfT19NQVNLICAgICAgICAgICAg
+ICAgKDB4NyA8PCA0KQo+PiArI2RlZmluZSBWSURDT04xX1JHQl9PUkRFUl9PX1JHQiAgICAgICAg
+ICAgICAgICAgICAgICAgICgweDAgPDwgNCkKPj4gKyNkZWZpbmUgVklEQ09OMV9SR0JfT1JERVJf
+T19HQlIgICAgICAgICAgICAgICAgICAgICAgICAoMHgxIDw8IDQpCj4+ICsjZGVmaW5lIFZJRENP
+TjFfUkdCX09SREVSX09fQlJHICAgICAgICAgICAgICAgICAgICAgICAgKDB4MiA8PCA0KQo+PiAr
+I2RlZmluZSBWSURDT04xX1JHQl9PUkRFUl9PX0JHUiAgICAgICAgICAgICAgICAgICAgICAgICgw
+eDQgPDwgNCkKPj4gKyNkZWZpbmUgVklEQ09OMV9SR0JfT1JERVJfT19SQkcgICAgICAgICAgICAg
+ICAgICAgICAgICAoMHg1IDw8IDQpCj4+ICsjZGVmaW5lIFZJRENPTjFfUkdCX09SREVSX09fR1JC
+ICAgICAgICAgICAgICAgICAgICAgICAgKDB4NiA8PCA0KQo+PiArCj4+ICsvKiBWSURUQ09OMCAq
+Lwo+PiArI2RlZmluZSBWSURUQ09OMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDYx
+MAo+PiArCj4+ICsjZGVmaW5lIFZJRFRDT04wX1ZCUERfTUFTSyAgICAgICAgICAgICAgICAgICAg
+ICgweGZmZmYgPDwgMTYpCj4+ICsjZGVmaW5lIFZJRFRDT04wX1ZCUERfU0hJRlQgICAgICAgICAg
+ICAgICAgICAgIDE2Cj4+ICsjZGVmaW5lIFZJRFRDT04wX1ZCUERfTElNSVQgICAgICAgICAgICAg
+ICAgICAgIDB4ZmZmZgo+PiArI2RlZmluZSBWSURUQ09OMF9WQlBEKF94KSAgICAgICAgICAgICAg
+ICAgICAgICAoKF94KSA8PCAxNikKPj4gKwo+PiArI2RlZmluZSBWSURUQ09OMF9WRlBEX01BU0sg
+ICAgICAgICAgICAgICAgICAgICAoMHhmZmZmIDw8IDApCj4+ICsjZGVmaW5lIFZJRFRDT04wX1ZG
+UERfU0hJRlQgICAgICAgICAgICAgICAgICAgIDAKPj4gKyNkZWZpbmUgVklEVENPTjBfVkZQRF9M
+SU1JVCAgICAgICAgICAgICAgICAgICAgMHhmZmZmCj4+ICsjZGVmaW5lIFZJRFRDT04wX1ZGUEQo
+X3gpICAgICAgICAgICAgICAgICAgICAgICgoX3gpIDw8IDApCj4+ICsKPj4gKy8qIFZJRFRDT04x
+ICovCj4+ICsjZGVmaW5lIFZJRFRDT04xICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4
+NjE0Cj4+ICsKPj4gKyNkZWZpbmUgVklEVENPTjFfVlNQV19NQVNLICAgICAgICAgICAgICAgICAg
+ICAgKDB4ZmZmZiA8PCAxNikKPj4gKyNkZWZpbmUgVklEVENPTjFfVlNQV19TSElGVCAgICAgICAg
+ICAgICAgICAgICAgMTYKPj4gKyNkZWZpbmUgVklEVENPTjFfVlNQV19MSU1JVCAgICAgICAgICAg
+ICAgICAgICAgMHhmZmZmCj4+ICsjZGVmaW5lIFZJRFRDT04xX1ZTUFcoX3gpICAgICAgICAgICAg
+ICAgICAgICAgICgoX3gpIDw8IDE2KQo+PiArCj4+ICsvKiBWSURUQ09OMiAqLwo+PiArI2RlZmlu
+ZSBWSURUQ09OMiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDYxOAo+PiArCj4+ICsj
+ZGVmaW5lIFZJRFRDT04yX0hCUERfTUFTSyAgICAgICAgICAgICAgICAgICAgICgweGZmZmYgPDwg
+MTYpCj4+ICsjZGVmaW5lIFZJRFRDT04yX0hCUERfU0hJRlQgICAgICAgICAgICAgICAgICAgIDE2
+Cj4+ICsjZGVmaW5lIFZJRFRDT04yX0hCUERfTElNSVQgICAgICAgICAgICAgICAgICAgIDB4ZmZm
+Zgo+PiArI2RlZmluZSBWSURUQ09OMl9IQlBEKF94KSAgICAgICAgICAgICAgICAgICAgICAoKF94
+KSA8PCAxNikKPj4gKwo+PiArI2RlZmluZSBWSURUQ09OMl9IRlBEX01BU0sgICAgICAgICAgICAg
+ICAgICAgICAoMHhmZmZmIDw8IDApCj4+ICsjZGVmaW5lIFZJRFRDT04yX0hGUERfU0hJRlQgICAg
+ICAgICAgICAgICAgICAgIDAKPj4gKyNkZWZpbmUgVklEVENPTjJfSEZQRF9MSU1JVCAgICAgICAg
+ICAgICAgICAgICAgMHhmZmZmCj4+ICsjZGVmaW5lIFZJRFRDT04yX0hGUEQoX3gpICAgICAgICAg
+ICAgICAgICAgICAgICgoX3gpIDw8IDApCj4+ICsKPj4gKy8qIFZJRFRDT04zICovCj4+ICsjZGVm
+aW5lIFZJRFRDT04zICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4NjFDCj4+ICsKPj4g
+KyNkZWZpbmUgVklEVENPTjNfSFNQV19NQVNLICAgICAgICAgICAgICAgICAgICAgKDB4ZmZmZiA8
+PCAxNikKPj4gKyNkZWZpbmUgVklEVENPTjNfSFNQV19TSElGVCAgICAgICAgICAgICAgICAgICAg
+MTYKPj4gKyNkZWZpbmUgVklEVENPTjNfSFNQV19MSU1JVCAgICAgICAgICAgICAgICAgICAgMHhm
+ZmZmCj4+ICsjZGVmaW5lIFZJRFRDT04zX0hTUFcoX3gpICAgICAgICAgICAgICAgICAgICAgICgo
+X3gpIDw8IDE2KQo+PiArCj4+ICsvKiBWSURUQ09ONCAqLwo+PiArI2RlZmluZSBWSURUQ09ONCAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDYyMAo+PiArCj4+ICsjZGVmaW5lIFZJRFRD
+T040X0xJTkVWQUxfTUFTSyAgICAgICAgICAgICAgICAgICgweGZmZiA8PCAxNikKPj4gKyNkZWZp
+bmUgVklEVENPTjRfTElORVZBTF9TSElGVCAgICAgICAgICAgICAgICAgMTYKPj4gKyNkZWZpbmUg
+VklEVENPTjRfTElORVZBTF9MSU1JVCAgICAgICAgICAgICAgICAgMHhmZmYKPj4gKyNkZWZpbmUg
+VklEVENPTjRfTElORVZBTChfeCkgICAgICAgICAgICAgICAgICAgKCgoX3gpICYgMHhmZmYpIDw8
+IDE2KQo+PiArCj4+ICsjZGVmaW5lIFZJRFRDT040X0hPWlZBTF9NQVNLICAgICAgICAgICAgICAg
+ICAgICgweGZmZiA8PCAwKQo+PiArI2RlZmluZSBWSURUQ09ONF9IT1pWQUxfU0hJRlQgICAgICAg
+ICAgICAgICAgICAwCj4+ICsjZGVmaW5lIFZJRFRDT040X0hPWlZBTF9MSU1JVCAgICAgICAgICAg
+ICAgICAgIDB4ZmZmCj4+ICsjZGVmaW5lIFZJRFRDT040X0hPWlZBTChfeCkgICAgICAgICAgICAg
+ICAgICAgICgoKF94KSAmIDB4ZmZmKSA8PCAwKQo+PiArCj4+ICsvKiBMSU5FQ05UIE9QIFRIUlNI
+T0xEKi8KPj4gKyNkZWZpbmUgTElORUNOVF9PUF9USFJFU0hPTEQgICAgICAgICAgICAgICAgICAg
+MHg2MzAKPj4gKwo+PiArLyogQ1JDQ1RSTCAqLwo+PiArI2RlZmluZSBDUkNDVFJMICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4NkM4Cj4+ICsjZGVmaW5lIENSQ0NUUkxf
+Q1JDQ0xLRU4gICAgICAgICAgICAgICAgICAgICAgICgweDEgPDwgMikKPj4gKyNkZWZpbmUgQ1JD
+Q1RSTF9DUkNTVEFSVF9GICAgICAgICAgICAgICAgICAgICAgKDB4MSA8PCAxKQo+PiArI2RlZmlu
+ZSBDUkNDVFJMX0NSQ0VOICAgICAgICAgICAgICAgICAgICAgICAgICAoMHgxIDw8IDApCj4+ICsK
+Pj4gKy8qIERFQ09OX0NNVSAqLwo+PiArI2RlZmluZSBERUNPTl9DTVUgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAweDcwNAo+PiArCj4+ICsjZGVmaW5lIERFQ09OX0NNVV9BTExfQ0xLR0FU
+RV9FTkFCTEUgICAgICAgICAgIDB4Mwo+PiArI2RlZmluZSBERUNPTl9DTVVfU0VfQ0xLR0FURV9F
+TkFCTEUgICAgICAgICAgICAoMHgxIDw8IDIpCj4+ICsjZGVmaW5lIERFQ09OX0NNVV9TRlJfQ0xL
+R0FURV9FTkFCTEUgICAgICAgICAgICgweDEgPDwgMSkKPj4gKyNkZWZpbmUgREVDT05fQ01VX01F
+TV9DTEtHQVRFX0VOQUJMRSAgICAgICAgICAgKDB4MSA8PCAwKQo+PiArCj4+ICsvKiBERUNPTl9V
+UERBVEUgKi8KPj4gKyNkZWZpbmUgREVDT05fVVBEQVRFICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgMHg3MTAKPj4gKwo+PiArI2RlZmluZSBERUNPTl9VUERBVEVfU0xBVkVfU1lOQyAgICAgICAg
+ICAgICAgICAgICAgICAgICgxIDw8IDQpCj4+ICsjZGVmaW5lIERFQ09OX1VQREFURV9TVEFOREFM
+T05FX0YgICAgICAgICAgICAgICgxIDw8IDApCj4+IC0tCj4+IDEuNy45LjUKPj4KPiAtLQo+IFRv
+IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBs
+aW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
+QHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
+cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
