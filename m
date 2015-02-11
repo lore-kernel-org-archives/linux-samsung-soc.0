@@ -1,47 +1,55 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH 04/15] tests/exynos: disable the G2D userptr/blend test
-Date: Wed, 11 Feb 2015 10:11:43 +0900
-Message-ID: <54DAAC4F.5020906@samsung.com>
-References: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1422971645-30621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
+Date: Wed, 11 Feb 2015 02:39:32 +0100
+Message-ID: <54DAB2D4.1070405@math.uni-bielefeld.de>
+References: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1422971645-30621-5-git-send-email-tjakobi@math.uni-bielefeld.de> <54DAAC4F.5020906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1422971645-30621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: robclark@freedesktop.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:41293 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751075AbbBKBjh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Feb 2015 20:39:37 -0500
+In-Reply-To: <54DAAC4F.5020906@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org
 
-SGksCgpPbiAwMi8wMy8yMDE1IDEwOjUzIFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+IFRoZSBi
-bGVuZCB0ZXN0IHVzZXMgdGhlIHVzZXJwdHIgZnVuY3Rpb25hbGl0eSBvZiBleHlub3MtZHJtLCB3
-aGljaAo+IGlzIGN1cnJlbnRseSBub3Qgc2FmZSB0byB1c2UuIElmIHRoZSBrZXJuZWwgaGFzbid0
-IGJlZW4gYnVpbGQgd2l0aAo+IGV4eW5vcy1pb21tdSBzdXBwb3J0LCB0aGVuIHRoZSBibGVuZCB0
-ZXN0IGlzIGdvaW5nIHRvIHByb2R1Y2UgKGtlcm5lbCkKPiBtZW1vcnkgY29ycnVwdGlvbiwgZXZl
-bnR1YWxseSBsZWFkaW5nIHRvIGEgc3lzdGVtIGNyYXNoLgo+IAo+IERpc2FibGUgdGhlIHRlc3Qg
-Zm9yIG5vdywgdW50aWwgdGhlIGtlcm5lbCBjb2RlIGhhcyBiZWVuIHNhbml0aXplZC4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5k
-ZT4KPiAtLS0KPiAgdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jIHwgMiArKwo+ICAx
-IGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2V4
-eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rl
-c3QuYwo+IGluZGV4IGFhMTQwZTUuLjQ4ZGZlOTcgMTAwNjQ0Cj4gLS0tIGEvdGVzdHMvZXh5bm9z
-L2V4eW5vc19maW1nMmRfdGVzdC5jCj4gKysrIGIvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRf
-dGVzdC5jCj4gQEAgLTc4OCwxMSArNzg4LDEzIEBAIGludCBtYWluKGludCBhcmdjLCBjaGFyICoq
-YXJndikKPiAgCj4gIAlnZXRjaGFyKCk7Cj4gIAo+ICsjaWYgMAoKSG93IGFib3V0IGFkZCBzb21l
-IGNvbW1lbnRzIGFib3V0IHdoeSBuZWVkIGRpc2FibGU/CgpUaGFua3MuCgo+ICAJcmV0ICA9IHRl
-c3RfY2FzZS5ibGVuZChkZXYsIHNyYywgYm8sIEcyRF9JTUdCVUZfVVNFUlBUUik7Cj4gIAlpZiAo
-cmV0IDwgMCkKPiAgCQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0byB0ZXN0IGJsZW5kIG9wZXJh
-dGlvbi5cbiIpOwo+ICAKPiAgCWdldGNoYXIoKTsKPiArI2VuZGlmCj4gIAo+ICBlcnJfZnJlZV9z
-cmM6Cj4gIAlpZiAoc3JjKQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+Hello Joonyoung!
+
+Joonyoung Shim wrote:
+> Hi,
+> 
+> On 02/03/2015 10:53 PM, Tobias Jakobi wrote:
+>> The blend test uses the userptr functionality of exynos-drm, which
+>> is currently not safe to use. If the kernel hasn't been build with
+>> exynos-iommu support, then the blend test is going to produce (kernel)
+>> memory corruption, eventually leading to a system crash.
+>>
+>> Disable the test for now, until the kernel code has been sanitized.
+>>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  tests/exynos/exynos_fimg2d_test.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
+>> index aa140e5..48dfe97 100644
+>> --- a/tests/exynos/exynos_fimg2d_test.c
+>> +++ b/tests/exynos/exynos_fimg2d_test.c
+>> @@ -788,11 +788,13 @@ int main(int argc, char **argv)
+>>  
+>>  	getchar();
+>>  
+>> +#if 0
+> 
+> How about add some comments about why need disable?
+You mean the current patch description is not enough, or that I should
+put that description also in the sourcecode?
+
+
+With best wishes,
+Tobias
