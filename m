@@ -1,68 +1,79 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 04/15] tests/exynos: disable the G2D userptr/blend test
-Date: Wed, 11 Feb 2015 10:47:15 +0900
-Message-ID: <54DAB4A3.1020606@samsung.com>
-References: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1422971645-30621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
- <54DAAC4F.5020906@samsung.com> <54DAB2D4.1070405@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos5420: Add maudio power domain
+Date: Wed, 11 Feb 2015 08:29:36 +0100
+Message-ID: <1423639776.19979.2.camel@AMDC1943>
+References: <1423490243-7675-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:22462 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751315AbbBKBrQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Feb 2015 20:47:16 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NJL00IDR3MQO060@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Feb 2015 10:47:14 +0900 (KST)
-In-reply-to: <54DAB2D4.1070405@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1423490243-7675-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org
 
-Hi,
+On pon, 2015-02-09 at 14:57 +0100, Krzysztof Kozlowski wrote:
+> Add maudio power domain to Exynos 5420 DTSI file so its state could be
+> tracked. This actually won't power down this domain because the pl330
+> dmaengine driver (for adma channel) uses IRQ safe runtime PM. Thus the
+> patch should not introduce any functional change except of visibility of
+> this domain to the system.
 
-On 02/11/2015 10:39 AM, Tobias Jakobi wrote:
-> Hello Joonyoung!
+I was wrong. There is a functional change during suspend.
+
+The mau domain is powered off after suspending adma device (pl330 dma).
+However later clk-exynos-audss receives syscore suspend notification and
+tries to save mau clock registers. This results in imprecise abort
+because mau power domain is turned off.
+
+I think it is better to drop my patch.
+
+Krzysztof
+
 > 
-> Joonyoung Shim wrote:
->> Hi,
->>
->> On 02/03/2015 10:53 PM, Tobias Jakobi wrote:
->>> The blend test uses the userptr functionality of exynos-drm, which
->>> is currently not safe to use. If the kernel hasn't been build with
->>> exynos-iommu support, then the blend test is going to produce (kernel)
->>> memory corruption, eventually leading to a system crash.
->>>
->>> Disable the test for now, until the kernel code has been sanitized.
->>>
->>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>> ---
->>>  tests/exynos/exynos_fimg2d_test.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
->>> index aa140e5..48dfe97 100644
->>> --- a/tests/exynos/exynos_fimg2d_test.c
->>> +++ b/tests/exynos/exynos_fimg2d_test.c
->>> @@ -788,11 +788,13 @@ int main(int argc, char **argv)
->>>  
->>>  	getchar();
->>>  
->>> +#if 0
->>
->> How about add some comments about why need disable?
-> You mean the current patch description is not enough, or that I should
-> put that description also in the sourcecode?
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > 
-
-I mean just to add on source code, if anyone meets #if 0 without any
-comments, he will have question.
-
-Thanks.
+> ---
+> 
+> Changes sinve v1:
+> 1. Use generic power domain bindings (suggested by Javier).
+> 2. Add Javier's reviewed-by.
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 9dc2e9773b30..28c4a2f4b991 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -288,6 +288,12 @@
+>  			      "pclk1", "clk1", "pclk2", "clk2";
+>  	};
+>  
+> +	mau_pd: power-domain@100440E0 {
+> +		compatible = "samsung,exynos4210-pd";
+> +		reg = <0x100440E0 0x20>;
+> +		#power-domain-cells = <0>;
+> +	};
+> +
+>  	pinctrl_0: pinctrl@13400000 {
+>  		compatible = "samsung,exynos5420-pinctrl";
+>  		reg = <0x13400000 0x1000>;
+> @@ -346,6 +352,7 @@
+>  			#dma-cells = <1>;
+>  			#dma-channels = <6>;
+>  			#dma-requests = <16>;
+> +			power-domains = <&mau_pd>;
+>  		};
+>  
+>  		pdma0: pdma@121A0000 {
+> @@ -415,6 +422,7 @@
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&i2s0_bus>;
+>  		status = "disabled";
+> +		power-domains = <&mau_pd>;
+>  	};
+>  
+>  	i2s1: i2s@12D60000 {
