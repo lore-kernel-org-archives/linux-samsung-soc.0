@@ -1,79 +1,76 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos5420: Add maudio power domain
-Date: Wed, 11 Feb 2015 08:29:36 +0100
-Message-ID: <1423639776.19979.2.camel@AMDC1943>
-References: <1423490243-7675-1-git-send-email-k.kozlowski@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 0/4] ASoC: samsung: clean up references to outdated
+ Kconfig symbols
+Date: Wed, 11 Feb 2015 10:21:38 +0100
+Message-ID: <1423646498.21685.35.camel@x220>
+References: <1421664067.9655.51.camel@x220>
+	 <20150206235044.GO31311@finisterre.sirena.org.uk>
+	 <1423298284.2246.5.camel@x220>
+	 <20150209060704.GB19229@finisterre.sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1423490243-7675-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cpsmtpb-ews07.kpnxchange.com ([213.75.39.10]:56228 "EHLO
+	cpsmtpb-ews07.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751927AbbBKJVl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Feb 2015 04:21:41 -0500
+In-Reply-To: <20150209060704.GB19229@finisterre.sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Valentin Rothberg <valentinrothberg@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On pon, 2015-02-09 at 14:57 +0100, Krzysztof Kozlowski wrote:
-> Add maudio power domain to Exynos 5420 DTSI file so its state could be
-> tracked. This actually won't power down this domain because the pl330
-> dmaengine driver (for adma channel) uses IRQ safe runtime PM. Thus the
-> patch should not introduce any functional change except of visibility of
-> this domain to the system.
+TL;DR: what exactly should I resend and when?
 
-I was wrong. There is a functional change during suspend.
-
-The mau domain is powered off after suspending adma device (pl330 dma).
-However later clk-exynos-audss receives syscore suspend notification and
-tries to save mau clock registers. This results in imprecise abort
-because mau power domain is turned off.
-
-I think it is better to drop my patch.
-
-Krzysztof
-
+On Mon, 2015-02-09 at 14:07 +0800, Mark Brown wrote:
+> On Sat, Feb 07, 2015 at 09:38:04AM +0100, Paul Bolle wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > Patches 2/4, 3/4, and 4/4 didn't apply. Locally I carry them in a tree
+> > that constantly rebases on top of linux-next. So locally I carry these
+> > patches on top of next-20150204.
 > 
-> ---
+> What's posted doesn't apply against -next.
+
+That's because of trivial conflicts with commit a59aa180ea56 ("ASoC:
+samsung: Replace depends on REGMAP_I2C with depends on I2C"). That
+commit landed in next-20150127 (ie, eight days after I sent this short
+series). I guess I resolved these conflicts in the local version of
+these patches and promptly forgot about them, as they were so trivial.
+
+> > What tree would you like me to rebase this onto?
 > 
-> Changes sinve v1:
-> 1. Use generic power domain bindings (suggested by Javier).
-> 2. Add Javier's reviewed-by.
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> As ever submit against the tree listed in MAINTAINERS
 > 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 9dc2e9773b30..28c4a2f4b991 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -288,6 +288,12 @@
->  			      "pclk1", "clk1", "pclk2", "clk2";
->  	};
->  
-> +	mau_pd: power-domain@100440E0 {
-> +		compatible = "samsung,exynos4210-pd";
-> +		reg = <0x100440E0 0x20>;
-> +		#power-domain-cells = <0>;
-> +	};
-> +
->  	pinctrl_0: pinctrl@13400000 {
->  		compatible = "samsung,exynos5420-pinctrl";
->  		reg = <0x13400000 0x1000>;
-> @@ -346,6 +352,7 @@
->  			#dma-cells = <1>;
->  			#dma-channels = <6>;
->  			#dma-requests = <16>;
-> +			power-domains = <&mau_pd>;
->  		};
->  
->  		pdma0: pdma@121A0000 {
-> @@ -415,6 +422,7 @@
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&i2s0_bus>;
->  		status = "disabled";
-> +		power-domains = <&mau_pd>;
->  	};
->  
->  	i2s1: i2s@12D60000 {
+>    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Which is not entirely obvious, since this series only touches files
+below sound/soc/samsung/. That directory is mentioned in MAINTAINERS
+under "ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" and under "SAMSUNG AUDIO
+(ASoC) DRIVERS". (Why does that directory need two entries?) Neither
+entry mention a repository.
+
+Anyhow, this entire series will probably now apply to your for-next
+branch. That's because your for-next branch doesn't contain commit
+a59aa180ea56 ("ASoC: samsung: Replace depends on REGMAP_I2C with depends
+on I2C"), which I mentioned above, or commit 6cf2cf315075 ("ASoC:
+samsung: Remove goni or aquila with the WM8994"), which is 1/4 of this
+series, anymore.
+
+See, it turns out there are two sound.git#for-next branches in
+linux-next. One is done by Takashi, the other by you. Yours is called
+sound-asoc in Next/Trees, the other sound. sound-asoc contained the two
+commits I just mentioned in next-20150209. It has dropped both, it
+seems, by next-20150210, but by then they were already included in
+Takashi's sound. So these two commits are now in linux-next through that
+branch. Figuring this all out required quite a bit of head-scratching.
+
+And now I wonder what I should resend: the three patches 2/4, 3/4, and
+4/4 with the trivial conflicts resolved or the entire series? And when
+do you prefer I resend?
+
+Thanks,
+
+
+Paul Bolle
