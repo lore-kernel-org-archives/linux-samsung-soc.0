@@ -1,44 +1,47 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [libdrm] improvements to userspace exynos component
-Date: Wed, 11 Feb 2015 10:11:21 +0900
-Message-ID: <54DAAC39.2040803@samsung.com>
+Subject: Re: [PATCH 04/15] tests/exynos: disable the G2D userptr/blend test
+Date: Wed, 11 Feb 2015 10:11:43 +0900
+Message-ID: <54DAAC4F.5020906@samsung.com>
 References: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1422971645-30621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16424 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813AbbBKBLW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Feb 2015 20:11:22 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NJL00EUX1YWEL40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Feb 2015 10:11:20 +0900 (KST)
-In-reply-to: <1422971645-30621-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1422971645-30621-5-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
 Cc: robclark@freedesktop.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 02/03/2015 10:53 PM, Tobias Jakobi wrote:
-> Hello,
-> 
-> here are some miscellaneous improvements (small features, bugfixes, spelling fixes, etc.) for the exynos component of libdrm. The general idea is to let userspace use the G2D engine functionality more 
-> efficiently.
-> 
-> If someone is interested in an application that actually makes use of this, the RetroArch frontend has a custom video backend:
-> https://github.com/libretro/RetroArch/blob/master/gfx/drivers/exynos_gfx.c
-> 
-> 
-> Please review and let me know what I can improve.
-> 
-
-Working well on odroid u3 board.
-
-Tested-by: Joonyoung Shim <jy0922.shim@samsung.com>
+SGksCgpPbiAwMi8wMy8yMDE1IDEwOjUzIFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+IFRoZSBi
+bGVuZCB0ZXN0IHVzZXMgdGhlIHVzZXJwdHIgZnVuY3Rpb25hbGl0eSBvZiBleHlub3MtZHJtLCB3
+aGljaAo+IGlzIGN1cnJlbnRseSBub3Qgc2FmZSB0byB1c2UuIElmIHRoZSBrZXJuZWwgaGFzbid0
+IGJlZW4gYnVpbGQgd2l0aAo+IGV4eW5vcy1pb21tdSBzdXBwb3J0LCB0aGVuIHRoZSBibGVuZCB0
+ZXN0IGlzIGdvaW5nIHRvIHByb2R1Y2UgKGtlcm5lbCkKPiBtZW1vcnkgY29ycnVwdGlvbiwgZXZl
+bnR1YWxseSBsZWFkaW5nIHRvIGEgc3lzdGVtIGNyYXNoLgo+IAo+IERpc2FibGUgdGhlIHRlc3Qg
+Zm9yIG5vdywgdW50aWwgdGhlIGtlcm5lbCBjb2RlIGhhcyBiZWVuIHNhbml0aXplZC4KPiAKPiBT
+aWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5k
+ZT4KPiAtLS0KPiAgdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jIHwgMiArKwo+ICAx
+IGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2V4
+eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rl
+c3QuYwo+IGluZGV4IGFhMTQwZTUuLjQ4ZGZlOTcgMTAwNjQ0Cj4gLS0tIGEvdGVzdHMvZXh5bm9z
+L2V4eW5vc19maW1nMmRfdGVzdC5jCj4gKysrIGIvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRf
+dGVzdC5jCj4gQEAgLTc4OCwxMSArNzg4LDEzIEBAIGludCBtYWluKGludCBhcmdjLCBjaGFyICoq
+YXJndikKPiAgCj4gIAlnZXRjaGFyKCk7Cj4gIAo+ICsjaWYgMAoKSG93IGFib3V0IGFkZCBzb21l
+IGNvbW1lbnRzIGFib3V0IHdoeSBuZWVkIGRpc2FibGU/CgpUaGFua3MuCgo+ICAJcmV0ICA9IHRl
+c3RfY2FzZS5ibGVuZChkZXYsIHNyYywgYm8sIEcyRF9JTUdCVUZfVVNFUlBUUik7Cj4gIAlpZiAo
+cmV0IDwgMCkKPiAgCQlmcHJpbnRmKHN0ZGVyciwgImZhaWxlZCB0byB0ZXN0IGJsZW5kIG9wZXJh
+dGlvbi5cbiIpOwo+ICAKPiAgCWdldGNoYXIoKTsKPiArI2VuZGlmCj4gIAo+ICBlcnJfZnJlZV9z
+cmM6Cj4gIAlpZiAoc3JjKQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
