@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 1/3] clk: Don't dereference parent clock if is NULL
-Date: Thu, 12 Feb 2015 14:58:28 +0100
-Message-ID: <1423749510-14525-2-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 2/3] clk: Add __clk_hw_set_clk helper function
+Date: Thu, 12 Feb 2015 14:58:29 +0100
+Message-ID: <1423749510-14525-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,38 +10,38 @@ To: Mike Turquette <mturquette@linaro.org>
 Cc: Stephen Boyd <sboyd@codeaurora.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The clock passed as an argument to clk_mux_determine_rate_flags()
-has the CLK_SET_RATE_PARENT flag set but it has no parent, then a
-NULL pointer will tried to be dereferenced.
+After the clk API change to return a per-user clock instance, both the
+struct clk_core and struct clk pointers from the hw clock needs to be
+assigned to clock that share the same state.
 
-This shouldn't happen since setting that flag for a clock with no
-parent is a bug but the core should be robust to handle that case.
+In the future the struct clk_core will be removed and this is going to
+change again so to avoid having to change the assignments twice in all
+the drivers, add a helper function to have an indirection level.
 
-Fixes: 035a61c314eb3 ("clk: Make clk API return per-user struct clk instances")
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
-Changes since v2:
- - Pass NULL struct clk_hw argument to __clk_determine_rate() if parent is NULL.
-   suggested by Stephen Boyd.
+Changes since v1: None, new patch.
 ---
- drivers/clk/clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/clk-provider.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7f53166af5e6..5941af7b4665 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -800,8 +800,8 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, unsigned long rate,
- 	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
- 		parent = core->parent;
- 		if (core->flags & CLK_SET_RATE_PARENT)
--			best = __clk_determine_rate(parent->hw, rate,
--						    min_rate, max_rate);
-+			best = __clk_determine_rate(parent ? parent->hw : NULL,
-+						    rate, min_rate, max_rate);
- 		else if (parent)
- 			best = clk_core_get_rate_nolock(parent);
- 		else
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 17dd6e9439d1..5591ea71a8d1 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -590,6 +590,12 @@ long __clk_mux_determine_rate_closest(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *best_parent_rate,
+ 			      struct clk_hw **best_parent_p);
+ 
++static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
++{
++	dst->clk = src->clk;
++	dst->core = src->core;
++}
++
+ /*
+  * FIXME clock api without lock protection
+  */
 -- 
 2.1.3
