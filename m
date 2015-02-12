@@ -1,82 +1,36 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: RE: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
-Date: Thu, 12 Feb 2015 16:00:20 +0900
-Message-ID: <009301d04691$90e47d40$b2ad77c0$@samsung.com>
-References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
- <CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
- <CA+Ln22E1xpdj+LZAR6uf7sCEBR_TEN=CaTVznsKM490a8AzGww@mail.gmail.com>
- <54DC4598.4010603@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [patch] PM / devfreq: event: testing the wrong variable
+Date: Thu, 12 Feb 2015 09:00:43 +0000 (GMT)
+Message-ID: <808951994.1086901423731642675.JavaMail.weblogic@epmlwas01a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10313 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881AbbBLHAX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Feb 2015 02:00:23 -0500
-In-reply-to: <54DC4598.4010603@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, 'Inki Dae' <inki.dae@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Linus,
+PiAgIA0KPiAgT24gMDIvMTAvMjAxNSAwNzozNSBQTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4g
+PiBUaGVyZSBpcyBhIHR5cG8gaGVyZSBzbyB3ZSB0ZXN0ICJlZGV2IiBidXQgd2UgaW50ZW5kZWQg
+dG8gdGVzdA0KPiA+ICJlZGV2W2ldIi4NCj4gPiANCj4gPiBGaXhlczogZjI2MmYyOGMxNDcwICgn
+UE0gLyBkZXZmcmVxOiBldmVudDogQWRkIGRldmZyZXFfZXZlbnQgY2xhc3MnKQ0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPiAN
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMgYi9k
+cml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiA+IGluZGV4IDEzNWJlMGEuLmFk
+ODM0NzMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11
+LmMNCj4gPiArKysgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiA+IEBA
+IC0zMjcsOCArMzI3LDggQEAgc3RhdGljIGludCBleHlub3NfcHBtdV9wcm9iZShzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+IC0JCWlmIChJU19FUlIoZWRldikpIHsNCj4gPiAtCQkJ
+cmV0ID0gUFRSX0VSUihlZGV2KTsNCj4gPiArCQlpZiAoSVNfRVJSKGVkZXZbaV0pKSB7DQo+ID4g
+KwkJCXJldCA9IFBUUl9FUlIoZWRldltpXSk7DQo+IA0KPiBSZXZpZXdlZC1ieTogQ2hhbndvbyBD
+aG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IA0KPiBCdXQsDQo+IFRoaXMgcGF0Y2ggaGFz
+IG5vdCB5ZXQgbWVyZ2VkIHRvIGxpbnV4LmdpdCAoaHR0cDovL2dpdC5rZXJuZWwub3JnL2NnaXQv
+bGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQpLg0KPiBBZnRlciByZWxlYXNpbmcg
+TGludXggMy4yMC1yYzEsIHRoaXMgcGF0Y2ggd2lsbCBiZSBoYW5kbGVkLg0KPiANCj4gVGhhbmtz
+LA0KPiBDaGFud29vIENob2kNCg0KQWNrZWQtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFt
+QHNhbXN1bmcuY29tPg0KDQo=
 
-We're looking forward to merging it on the v3.20.
-Could you pick this patch up before merge-window is closed?
 
-Best Regards,
-Chanho Park
-
-> -----Original Message-----
-> From: linux-arm-kernel [mailto:linux-arm-kernel-
-> bounces@lists.infradead.org] On Behalf Of Chanwoo Choi
-> Sent: Thursday, February 12, 2015 3:18 PM
-> To: Linus Walleij
-> Cc: linux-samsung-soc; Tomasz Figa; linux-kernel@vger.kernel.org; Inki
-> Dae; Kukjin Kim; Thomas Abraham; Chanho Park; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
-> 
-> Hi Linus,
-> 
-> On 02/08/2015 11:59 PM, Tomasz Figa wrote:
-> > Hi,
-> >
-> > 2015-01-29 18:48 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> >> On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com>
-> wrote:
-> >>
-> >>> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes
-> 228 multi-
-> >>> functional input/output port pins and 135 memory port pins. There
-> are 41 general
-> >>> port groups and 2 memory port groups.
-> >>>
-> >>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> >>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> >>> Cc: Linus Walleij <linus.walleij@linaro.org>
-> >>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >>> Acked-by: Inki Dae <inki.dae@samsung.com>
-> >>> ---
-> >>> Changes from v2:
-> >>> - Rebase it on v3.19-rc5
-> >>
-> >> Waiting for Tomasz to review this.
-> >
-> > Thanks Linus. Looks good to me.
-> >
-> > Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> Could you please pick this patch?
-> 
-> Best Regards,
-> Chanwoo Choi
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
