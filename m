@@ -1,54 +1,48 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: Don't dereference parent clock if is NULL
-Date: Wed, 11 Feb 2015 10:54:35 -0800
-Message-ID: <20150211185435.GD11190@codeaurora.org>
-References: <1423649612-31746-1-git-send-email-javier.martinez@collabora.co.uk>
- <1423649612-31746-2-git-send-email-javier.martinez@collabora.co.uk>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
+Date: Thu, 12 Feb 2015 15:18:00 +0900
+Message-ID: <54DC4598.4010603@samsung.com>
+References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
+ <CACRpkdYq-1ztF5baHjB9aBUNspD5vRXrpnEd1zdWsADmwrhuWw@mail.gmail.com>
+ <CA+Ln22E1xpdj+LZAR6uf7sCEBR_TEN=CaTVznsKM490a8AzGww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1423649612-31746-2-git-send-email-javier.martinez@collabora.co.uk>
+In-reply-to: <CA+Ln22E1xpdj+LZAR6uf7sCEBR_TEN=CaTVznsKM490a8AzGww@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Emilio L??pez <emilio@elopez.com.ar>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/11, Javier Martinez Canillas wrote:
-> The clock passed as an argument to clk_mux_determine_rate_flags() can
-> not have a parent clock if is either a root clock or an orphan.
-> 
-> In those cases parent is NULL so parent->hw shouldn't be dereferenced.
-> 
-> Fixes: 035a61c314eb3 ("clk: Make clk API return per-user struct clk instances")
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  drivers/clk/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 7f53166af5e6..7bd8893c94d6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -799,7 +799,7 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, unsigned long rate,
->  	/* if NO_REPARENT flag set, pass through to current parent */
->  	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
->  		parent = core->parent;
-> -		if (core->flags & CLK_SET_RATE_PARENT)
-> +		if (core->flags & CLK_SET_RATE_PARENT && parent)
->  			best = __clk_determine_rate(parent->hw, rate,
->  						    min_rate, max_rate);
->  		else if (parent)
+Hi Linus,
 
-Sorry this doesn't look right. Before all the recent changes to
-this file we would call __clk_round_rate() which would return 0
-if the first argument was NULL. Now we're going to take the else
-if path and do something different. So we need a parent ?
-parent->hw : NULL here.
+On 02/08/2015 11:59 PM, Tomasz Figa wrote:
+> Hi,
+> 
+> 2015-01-29 18:48 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>>
+>>> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+>>> functional input/output port pins and 135 memory port pins. There are 41 general
+>>> port groups and 2 memory port groups.
+>>>
+>>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>> ---
+>>> Changes from v2:
+>>> - Rebase it on v3.19-rc5
+>>
+>> Waiting for Tomasz to review this.
+> 
+> Thanks Linus. Looks good to me.
+> 
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Of course, I wonder why a clock has the CLK_SET_RATE_PARENT flag
-set if it doesn't actually have a parent. That also seems wrong.
+Could you please pick this patch?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards,
+Chanwoo Choi
