@@ -1,91 +1,49 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 0/8] arm64: Add the support for new Exynos5433 SoC
-Date: Thu, 12 Feb 2015 15:55:50 +0900
-Message-ID: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51297 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754104AbbBLG45 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Feb 2015 01:56:57 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 7/8] arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
+Date: Thu, 12 Feb 2015 15:55:57 +0900
+Message-ID: <1423724158-23632-8-git-send-email-cw00.choi@samsung.com>
+References: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene@kernel.org, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene@kernel.org, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inha Song <ideal.song@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patchset adds new 64-bit Exynos5433 Samsung SoC which contains quad
-Cortex-A57 and quad Cortex-A53. It is desigend with the 20nm low power process.
+From: Inha Song <ideal.song@samsung.com>
 
-This patchset is based on linux-samsung.git (branch: for-next).
+This patch adds ADMA (Advanced DMA) device tree node for Exynos5433 SoC.
+In Exynos5433 SoC, ADMA is used for I2S audio interface.
 
-Depends on:
-- Exynos5433 clock controller patch-set[1][2] was merged by Sylwester Nawrocki,
-(http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/, branch:for-v3.20/clk/next)
-- Exynos5433 UART patch[4] was merged by GregKH.
+Cc: Kukjin Kim <kgene@kernel.org>
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-[1] [PATCH v5 00/13] clk: samsung: Add the support for exynos5433 clocks
-- https://lkml.org/lkml/2015/2/2/368
-[2] [PATCH v3 0/9] clk: samsung: Add clocks for remaining domains of Exynos5433
-- https://lkml.org/lkml/2015/2/2/784
-[3] [PATCHv2] pinctrl: exynos: Add support for Exynos543
-- https://lkml.org/lkml/2014/12/2/207
-[4] serial: samsung: Add the support for Exynos5433 SoC
-- http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=31ec77aca72ee5920ed3ec3d047734dc0bc43342
-
-Changelog:
-Changes from v2:
-(https://lkml.org/lkml/2014/12/2/134)
-- Exynos5444 DTS modification
-: Fix the range of GICC memory map (0x1000 -> 0x2000)
-: Fix address space of 'range' property under 'soc' node
-: Add ADMA / I2S dt node for sound playback/capture
-- Select ARM_AMBA/ARM_GIC/HAVE_S3C_RTC for Exynos5433 in arch/arm64/Kconfig
-- Send separate patch-set for Exynos5433 clock controller[1][2] and pinctrl[3]
-
-Changes from v1:
-(https://lkml.org/lkml/2014/11/27/92)
-- Merge two patches (patch2, patch3) to solve incomplete description
-- Exynos5433 Clock driver
- : Fix wrong register and code clean by using space instead of tab
- : Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
- : Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
-- Exynos5433 SoC DTS
- : Remove un-supported properties of arch_timer
- : Remove 'clock-frequency' property from 'cpus' dt node
- : Fix interrupt type from edge rising triggering to level high triggering
-   because Cortex-A53/A57 use level triggering.
- : Fix defult address-size/size-celss from 1 to 2 because Exynos5433 is 64-bit SoC
- : Modify 'fin_pll' dt node to remove un-needed and ugly code
- : Move 'chipid' dt node under 'soc'
- : Use lowercase on all case in exynos5433.dtsi
- : Add PSCI dt node for secondary cpu boot
- : Add 'samsung,exynos5433' compatible to MCT dt node
-- Divide pinctrl patch from this patchset
-- Add new following patches:
-  : clocksource: exynos_mct: Add the support for Exynos 64bit SoC
-  : arm64: Enable Exynos5433 SoC in the defconfig
-
-Chanwoo Choi (5):
-  arm64: exynos5433: Enable ARMv8 based Exynos5433 (SoC) support
-  arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
-  arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
-  arm64: dts: exynos: Add PMU dt node for Exynos5433
-  arm64: dts: exynos: Add RTC and ADC dt node for Exynos5433 SoC
-
-Inha Song (2):
-  arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
-  arm64: dts: exynos: Add I2S dt node for Exynos5433 SoC
-
-Jaehoon Chung (1):
-  arm64: dts: exynos: Add MSHC dt node for Exynos5433
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
- arch/arm64/Kconfig                                 |  13 +
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698 ++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 911 +++++++++++++++++++++
- 4 files changed, 1623 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 8e9ca8d..7bf4dcf 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -462,6 +462,17 @@
+ 				#dma-channels = <8>;
+ 				#dma-requests = <32>;
+ 			};
++
++			adma: adma@11420000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x11420000 0x1000>;
++				interrupts = <0 73 0>;
++				clocks = <&cmu_aud CLK_ACLK_DMAC>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
+ 		};
+ 
+ 		serial_0: serial@14c10000 {
 -- 
 1.8.5.5
