@@ -1,36 +1,31 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v2 3/3] clk: Replace explicit clk assignment with __clk_hw_set_clk
-Date: Thu, 12 Feb 2015 17:12:39 +0100
-Message-ID: <87oaoz5cso.fsf@free.fr>
-References: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1423749510-14525-4-git-send-email-javier.martinez@collabora.co.uk>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 1/3] clk: Don't dereference parent clock if is NULL
+Date: Thu, 12 Feb 2015 11:00:16 -0800
+Message-ID: <54DCF840.60709@codeaurora.org>
+References: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk> <1423749510-14525-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:47343 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755543AbbBLQNA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Feb 2015 11:13:00 -0500
-In-Reply-To: <1423749510-14525-4-git-send-email-javier.martinez@collabora.co.uk>
-	(Javier Martinez Canillas's message of "Thu, 12 Feb 2015 14:58:30
-	+0100")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1423749510-14525-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mike Turquette <mturquette@linaro.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?windows-1252?Q?Emilio_?= =?windows-1252?Q?L=F3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Emilio =?utf-8?Q?L=C3=B3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+On 02/12/15 05:58, Javier Martinez Canillas wrote:
+> The clock passed as an argument to clk_mux_determine_rate_flags()
+> has the CLK_SET_RATE_PARENT flag set but it has no parent, then a
+> NULL pointer will tried to be dereferenced.
+>
+> This shouldn't happen since setting that flag for a clock with no
+> parent is a bug but the core should be robust to handle that case.
+>
+> Fixes: 035a61c314eb3 ("clk: Make clk API return per-user struct clk instances")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-> The change in the clk API to return a per-user clock instance, moved
-> the clock state to struct clk_core so now the struct clk_hw .core field
-> is used instead of .clk for most operations.
-
-If the patchset makes it up to acceptance by Mike or Stephen, the clk-pxa part
-looks quite straightforward, so :
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-
-Cheers.
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-Robert
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
