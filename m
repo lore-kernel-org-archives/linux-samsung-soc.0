@@ -1,40 +1,47 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 0/3] clk: Some fixes for the per-user clk API changes.
-Date: Thu, 12 Feb 2015 14:58:27 +0100
-Message-ID: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 1/3] clk: Don't dereference parent clock if is NULL
+Date: Thu, 12 Feb 2015 14:58:28 +0100
+Message-ID: <1423749510-14525-2-git-send-email-javier.martinez@collabora.co.uk>
+References: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mike Turquette <mturquette@linaro.org>
 Cc: Stephen Boyd <sboyd@codeaurora.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+The clock passed as an argument to clk_mux_determine_rate_flags()
+has the CLK_SET_RATE_PARENT flag set but it has no parent, then a
+NULL pointer will tried to be dereferenced.
 
-This is a v2 of a series to fix some issues found on linux-next after the
-per-user clk API changes were introduced. Booting an Exynos5420 Peach Pit
-Chromebook and using a composite clock makes the system to crash due a
-NULL pointer dereference error.
+This shouldn't happen since setting that flag for a clock with no
+parent is a bug but the core should be robust to handle that case.
 
-A previous version of the series is [0] and this addresses issues pointed
-out by Stephen Boyd.
+Fixes: 035a61c314eb3 ("clk: Make clk API return per-user struct clk instances")
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
-This series is composed of the following patches:
+Changes since v2:
+ - Pass NULL struct clk_hw argument to __clk_determine_rate() if parent is NULL.
+   suggested by Stephen Boyd.
+---
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Javier Martinez Canillas (3):
-  clk: Don't dereference parent clock if is NULL
-  clk: Add __clk_hw_set_clk helper function
-  clk: Replace explicit clk assignment with __clk_hw_set_clk
-
- drivers/clk/clk-composite.c    | 20 ++++++++++----------
- drivers/clk/clk.c              |  4 ++--
- drivers/clk/pxa/clk-pxa.c      |  2 +-
- drivers/clk/st/clk-flexgen.c   | 20 ++++++++++----------
- drivers/clk/st/clkgen-mux.c    | 14 +++++++-------
- drivers/clk/tegra/clk-periph.c | 14 +++++++-------
- include/linux/clk-provider.h   |  6 ++++++
- 7 files changed, 43 insertions(+), 37 deletions(-)
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2015/2/11/139
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7f53166af5e6..5941af7b4665 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -800,8 +800,8 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, unsigned long rate,
+ 	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
+ 		parent = core->parent;
+ 		if (core->flags & CLK_SET_RATE_PARENT)
+-			best = __clk_determine_rate(parent->hw, rate,
+-						    min_rate, max_rate);
++			best = __clk_determine_rate(parent ? parent->hw : NULL,
++						    rate, min_rate, max_rate);
+ 		else if (parent)
+ 			best = clk_core_get_rate_nolock(parent);
+ 		else
+-- 
+2.1.3
