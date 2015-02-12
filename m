@@ -1,67 +1,40 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH RFC v4 1/3] PM / Runtime: Add an API pm_runtime_set_slave
-Date: Thu, 12 Feb 2015 15:12:52 +0530
-Message-ID: <CADGdYn6OwXgsGFspQva-q5WV5b_WB=G2PxZyhcETTgt8zY96ZQ@mail.gmail.com>
-References: <1423479726-23140-2-git-send-email-amit.daniel@samsung.com>
-	<Pine.LNX.4.44L0.1502091055460.20425-100000@netrider.rowland.org>
+From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v3 1/8] arm64: exynos5433: Enable ARMv8 based Exynos5433
+ (SoC) support
+Date: Thu, 12 Feb 2015 11:02:08 +0000
+Message-ID: <20150212110208.GB1028@e104818-lin.cambridge.arm.com>
+References: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
+ <1423724158-23632-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1502091055460.20425-100000@netrider.rowland.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1423724158-23632-2-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sangbae90.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Alan,
+On Thu, Feb 12, 2015 at 03:55:51PM +0900, Chanwoo Choi wrote:
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 15e8e74..4fc08d1 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -153,6 +153,19 @@ config ARCH_EXYNOS
+>  	help
+>  	  This enables support for Samsung Exynos SoC family
+>  
+> +config ARCH_EXYNOS5433
+> +	bool "ARMv8 based Samsung Exynos5433"
+> +	select ARCH_EXYNOS
+> +	select ARM_AMBA
+> +	select ARM_GIC
 
-On Mon, Feb 9, 2015 at 9:28 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Mon, 9 Feb 2015, Amit Daniel Kachhap wrote:
->
->> This API creates a pm runtime slave type device which does not itself
->> participates in pm runtime but depends on the master devices to power
->> manage them.
->
-> This makes no sense.  How can a master device manage a slave device?
-> Devices are managed by drivers, not by other devices.
-May be my commit is not explaining the requirements completely and the
-API name may not reflect the relevance. But If you see the 3rd patch
-it has one clock use-case where this new feature is used and the
-current pm runtime feature is not sufficient enough to handle it. I
-have one more IOMMU use case also which is not part of this patch
-series.
-I am not sure if this approach is final but I looked at runtime.c file
-and it has couple of API's like pm_runtime_forbid/allow which
-blocks/unblocks the runtime callbacks according to driver requirement.
-In the similar line I added this new API.
->
->>  These devices should have pm runtime callbacks.
->>
->> These devices (like clock) may not implement complete pm_runtime calls
->> such as pm_runtime_get/pm_runtime_put due to subsystems interaction
->> behaviour or any other reason.
->>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> ---
->>  drivers/base/power/runtime.c | 18 ++++++++++++++++++
->>  include/linux/pm.h           |  1 +
->>  include/linux/pm_runtime.h   |  2 ++
->>  3 files changed, 21 insertions(+)
->
-> This patch is unacceptable because it does not update the runtime PM
-> documentation file.
-my fault. Will update in next version.
->
-> Besides, doesn't the no_callbacks flag already do more or less what you
-> want?
-yes to some extent. But I thought its purpose is different so I added 1 more.
+ARM_GIC and ARM_AMBA are already selected by the top ARM64 config.
 
-Regards,
-Amit D
->
-> Alan Stern
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Catalin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
