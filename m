@@ -1,47 +1,60 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4/9] ARM: s3c24xx: use SAMSUNG_WAKEMASK for s3c2416
-Date: Thu, 12 Feb 2015 20:35:41 +0100
-Message-ID: <1423769746-582629-5-git-send-email-arnd@arndb.de>
+Subject: [PATCH 7/9] ARM: s3c24xx: avoid a Kconfig warning
+Date: Thu, 12 Feb 2015 20:35:44 +0100
+Message-ID: <1423769746-582629-8-git-send-email-arnd@arndb.de>
 References: <1423769746-582629-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:60568 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.187]:58869 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752013AbbBLTgN (ORCPT
+	with ESMTP id S1751982AbbBLTgU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Feb 2015 14:36:13 -0500
+	Thu, 12 Feb 2015 14:36:20 -0500
 In-Reply-To: <1423769746-582629-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-Both s3c2412 and s3c2416 use the s3c2412_pm_prepare code, which
-depends on the common wakemask code, but only s3c2412 currently
-selects the code, leading to a build error for an s3c2416-only
-kernel.
+The PM_H1940 symbol is used by two platforms: RX3715 and RX1950. However,
+it is hidden inside of the the CPU_S3C2410 conditional, which is only
+set by one of them, so we get a lot of randconfig warnings like
 
-arch/arm/mach-s3c24xx/built-in.o: In function `s3c2412_pm_prepare':
-:(.text+0x240): undefined reference to `samsung_sync_wakemask'
-arch/arm/mach-s3c24xx/built-in.o:(.data+0xeb0): undefined reference to `s3c2412_subsys'
+warning: (MACH_RX3715 && MACH_RX1950) selects PM_H1940 which has unmet direct dependencies (ARCH_S3C24XX && CPU_S3C2410)
 
-This adds the missing select.
+This moves it outside of the conditional to remove the warnings.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c24xx/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-s3c24xx/Kconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 79c49ff77f6e..389173690716 100644
+index a6d3b5bcc4c2..23bec3a85b22 100644
 --- a/arch/arm/mach-s3c24xx/Kconfig
 +++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -362,6 +362,7 @@ if CPU_S3C2416
- config S3C2416_PM
- 	bool
- 	select S3C2412_PM_SLEEP
-+	select SAMSUNG_WAKEMASK
- 	help
- 	  Internal config node to apply S3C2416 power management
+@@ -228,11 +228,6 @@ config H1940BT
+ 	  This is a simple driver that is able to control
+ 	  the state of built in bluetooth chip on h1940.
  
+-config PM_H1940
+-	bool
+-	help
+-	  Internal node for H1940 and related PM
+-
+ config MACH_N30
+ 	bool "Acer N30 family"
+ 	select S3C_DEV_NAND
+@@ -585,6 +580,11 @@ config MACH_SMDK2443
+ 
+ endif	# CPU_S3C2443
+ 
++config PM_H1940
++	bool
++	help
++	  Internal node for H1940 and related PM
++
+ endmenu	# SAMSUNG S3C24XX SoCs Support
+ 
+ endif	# ARCH_S3C24XX
 -- 
 2.1.0.rc2
