@@ -1,64 +1,124 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 0/9] ARM: samsung: randconfig build fixes
-Date: Thu, 12 Feb 2015 20:35:37 +0100
-Message-ID: <1423769746-582629-1-git-send-email-arnd@arndb.de>
+Subject: [PATCH 6/9] ARM: s3c24xx: fix header file inclusions
+Date: Thu, 12 Feb 2015 20:35:43 +0100
+Message-ID: <1423769746-582629-7-git-send-email-arnd@arndb.de>
+References: <1423769746-582629-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:53964 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.130]:62344 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752101AbbBLTgb (ORCPT
+	with ESMTP id S1751744AbbBLTgj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Feb 2015 14:36:31 -0500
+	Thu, 12 Feb 2015 14:36:39 -0500
+In-Reply-To: <1423769746-582629-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-This is a set of mostly trivial build fixes for bugs I have encountered
-in random configurations. I'm sending them separate from the other
-platforms since we have a lot of them for the various samsung platforms
-here.
+The pm-core.h file does not include all the necessary headers,
+and has a static declaration for a function that is not
+defined in the same file, causing SAMSUNG_PM_DEBUG to
+break on s3c24xx:
 
-Kukjin, please pick them up into a fixes branch for 3.20 or send
-an Ack so we can apply them directly.
+arch/arm/mach-s3c24xx/include/mach/pm-core.h:50:91: warning: 's3c_pm_show_resume_irqs' used but never defined
+arch/arm/mach-s3c24xx/include/mach/pm-core.h: In function 's3c_pm_debug_init_uart':
+arch/arm/mach-s3c24xx/include/mach/pm-core.h:16:34: error: 'S3C2410_CLKCON' undeclared (first use in this function)
+  unsigned long tmp = __raw_readl(S3C2410_CLKCON);
+                                  ^
 
-Let me know if anything looks wrong with some of the patches.
+This moves the code around slightly to avoid the errors.
 
-Thanks,
-
-	Arnd
-
-Arnd Bergmann (9):
-  ARM: s3c64xx: add I2C dependencies where needed
-  ARM: s3c64xx: fix building without CONFIG_PM_SLEEP
-  ARM: s3c64xx: fix __initdata section mismatch
-  ARM: s3c24xx: use SAMSUNG_WAKEMASK for s3c2416
-  ARM: s3c24xx: fix building without PM_SLEEP
-  ARM: s3c24xx: fix header file inclusions
-  ARM: s3c24xx: avoid a Kconfig warning
-  ARM: EXYNOS: suspend requires regulator access
-  ARM: EXYNOS: make exynos 4210 cpuidle build without SMP
-
- arch/arm/mach-exynos/Kconfig                 |  1 +
- arch/arm/mach-exynos/pm.c                    | 19 +++++++++++++++----
- arch/arm/mach-s3c24xx/Kconfig                | 19 ++++++++++---------
- arch/arm/mach-s3c24xx/Makefile               |  3 ++-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
  arch/arm/mach-s3c24xx/include/mach/pm-core.h | 24 ++++++++++++++++++++++--
- arch/arm/mach-s3c24xx/pm-s3c2416.c           |  3 ++-
- arch/arm/mach-s3c24xx/pm.c                   |  6 ++++--
- arch/arm/mach-s3c24xx/s3c2410.c              |  2 +-
- arch/arm/mach-s3c24xx/s3c2412.c              |  2 +-
- arch/arm/mach-s3c24xx/s3c2416.c              |  2 +-
- arch/arm/mach-s3c24xx/s3c2440.c              |  4 ++--
- arch/arm/mach-s3c24xx/s3c2442.c              |  4 ++--
- arch/arm/mach-s3c24xx/s3c244x.c              |  7 ++-----
- arch/arm/mach-s3c64xx/Kconfig                |  4 +++-
- arch/arm/mach-s3c64xx/Makefile               |  3 ++-
- arch/arm/mach-s3c64xx/mach-smdk6410.c        |  2 +-
- arch/arm/mach-s3c64xx/pm.c                   |  2 ++
- arch/arm/plat-samsung/include/plat/pm.h      | 14 +++++++++++---
  arch/arm/plat-samsung/pm-debug.c             |  1 +
  arch/arm/plat-samsung/pm.c                   | 20 --------------------
- 20 files changed, 85 insertions(+), 57 deletions(-)
+ 3 files changed, 23 insertions(+), 22 deletions(-)
 
+diff --git a/arch/arm/mach-s3c24xx/include/mach/pm-core.h b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+index 2eef7e6f7675..69459dbbdcad 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/pm-core.h
++++ b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+@@ -10,6 +10,11 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/delay.h>
++#include <linux/io.h>
++
++#include "regs-clock.h"
++#include "regs-irq.h"
+ 
+ static inline void s3c_pm_debug_init_uart(void)
+ {
+@@ -42,8 +47,23 @@ static inline void s3c_pm_arch_stop_clocks(void)
+ 	__raw_writel(0x00, S3C2410_CLKCON);  /* turn off clocks over sleep */
+ }
+ 
+-static void s3c_pm_show_resume_irqs(int start, unsigned long which,
+-				    unsigned long mask);
++/* s3c2410_pm_show_resume_irqs
++ *
++ * print any IRQs asserted at resume time (ie, we woke from)
++*/
++static inline void s3c_pm_show_resume_irqs(int start, unsigned long which,
++					   unsigned long mask)
++{
++	int i;
++
++	which &= ~mask;
++
++	for (i = 0; i <= 31; i++) {
++		if (which & (1L<<i)) {
++			S3C_PMDBG("IRQ %d asserted at resume\n", start+i);
++		}
++	}
++}
+ 
+ static inline void s3c_pm_arch_show_resume_irqs(void)
+ {
+diff --git a/arch/arm/plat-samsung/pm-debug.c b/arch/arm/plat-samsung/pm-debug.c
+index 39609601f407..64e15da33b42 100644
+--- a/arch/arm/plat-samsung/pm-debug.c
++++ b/arch/arm/plat-samsung/pm-debug.c
+@@ -23,6 +23,7 @@
+ #include <plat/pm-common.h>
+ 
+ #ifdef CONFIG_SAMSUNG_ATAGS
++#include <plat/pm.h>
+ #include <mach/pm-core.h>
+ #else
+ static inline void s3c_pm_debug_init_uart(void) {}
+diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+index f8c0f9797dcf..82777c649774 100644
+--- a/arch/arm/plat-samsung/pm.c
++++ b/arch/arm/plat-samsung/pm.c
+@@ -65,26 +65,6 @@ int s3c_irqext_wake(struct irq_data *data, unsigned int state)
+ 	return 0;
+ }
+ 
+-/* s3c2410_pm_show_resume_irqs
+- *
+- * print any IRQs asserted at resume time (ie, we woke from)
+-*/
+-static void __maybe_unused s3c_pm_show_resume_irqs(int start,
+-						   unsigned long which,
+-						   unsigned long mask)
+-{
+-	int i;
+-
+-	which &= ~mask;
+-
+-	for (i = 0; i <= 31; i++) {
+-		if (which & (1L<<i)) {
+-			S3C_PMDBG("IRQ %d asserted at resume\n", start+i);
+-		}
+-	}
+-}
+-
+-
+ void (*pm_cpu_prep)(void);
+ int (*pm_cpu_sleep)(unsigned long);
+ 
 -- 
 2.1.0.rc2
