@@ -1,36 +1,67 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: Re: [patch] PM / devfreq: event: testing the wrong variable
-Date: Thu, 12 Feb 2015 09:00:43 +0000 (GMT)
-Message-ID: <808951994.1086901423731642675.JavaMail.weblogic@epmlwas01a>
-Reply-To: myungjoo.ham@samsung.com
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH RFC v4 1/3] PM / Runtime: Add an API pm_runtime_set_slave
+Date: Thu, 12 Feb 2015 15:12:52 +0530
+Message-ID: <CADGdYn6OwXgsGFspQva-q5WV5b_WB=G2PxZyhcETTgt8zY96ZQ@mail.gmail.com>
+References: <1423479726-23140-2-git-send-email-amit.daniel@samsung.com>
+	<Pine.LNX.4.44L0.1502091055460.20425-100000@netrider.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-pm-owner@vger.kernel.org>
-MIME-version: 1.0
+In-Reply-To: <Pine.LNX.4.44L0.1502091055460.20425-100000@netrider.rowland.org>
 Sender: linux-pm-owner@vger.kernel.org
-To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PiAgIA0KPiAgT24gMDIvMTAvMjAxNSAwNzozNSBQTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4g
-PiBUaGVyZSBpcyBhIHR5cG8gaGVyZSBzbyB3ZSB0ZXN0ICJlZGV2IiBidXQgd2UgaW50ZW5kZWQg
-dG8gdGVzdA0KPiA+ICJlZGV2W2ldIi4NCj4gPiANCj4gPiBGaXhlczogZjI2MmYyOGMxNDcwICgn
-UE0gLyBkZXZmcmVxOiBldmVudDogQWRkIGRldmZyZXFfZXZlbnQgY2xhc3MnKQ0KPiA+IFNpZ25l
-ZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPiAN
-Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11LmMgYi9k
-cml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiA+IGluZGV4IDEzNWJlMGEuLmFk
-ODM0NzMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9kZXZmcmVxL2V2ZW50L2V4eW5vcy1wcG11
-LmMNCj4gPiArKysgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiA+IEBA
-IC0zMjcsOCArMzI3LDggQEAgc3RhdGljIGludCBleHlub3NfcHBtdV9wcm9iZShzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+IC0JCWlmIChJU19FUlIoZWRldikpIHsNCj4gPiAtCQkJ
-cmV0ID0gUFRSX0VSUihlZGV2KTsNCj4gPiArCQlpZiAoSVNfRVJSKGVkZXZbaV0pKSB7DQo+ID4g
-KwkJCXJldCA9IFBUUl9FUlIoZWRldltpXSk7DQo+IA0KPiBSZXZpZXdlZC1ieTogQ2hhbndvbyBD
-aG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IA0KPiBCdXQsDQo+IFRoaXMgcGF0Y2ggaGFz
-IG5vdCB5ZXQgbWVyZ2VkIHRvIGxpbnV4LmdpdCAoaHR0cDovL2dpdC5rZXJuZWwub3JnL2NnaXQv
-bGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQpLg0KPiBBZnRlciByZWxlYXNpbmcg
-TGludXggMy4yMC1yYzEsIHRoaXMgcGF0Y2ggd2lsbCBiZSBoYW5kbGVkLg0KPiANCj4gVGhhbmtz
-LA0KPiBDaGFud29vIENob2kNCg0KQWNrZWQtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFt
-QHNhbXN1bmcuY29tPg0KDQo=
+Hi Alan,
 
+On Mon, Feb 9, 2015 at 9:28 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Mon, 9 Feb 2015, Amit Daniel Kachhap wrote:
+>
+>> This API creates a pm runtime slave type device which does not itself
+>> participates in pm runtime but depends on the master devices to power
+>> manage them.
+>
+> This makes no sense.  How can a master device manage a slave device?
+> Devices are managed by drivers, not by other devices.
+May be my commit is not explaining the requirements completely and the
+API name may not reflect the relevance. But If you see the 3rd patch
+it has one clock use-case where this new feature is used and the
+current pm runtime feature is not sufficient enough to handle it. I
+have one more IOMMU use case also which is not part of this patch
+series.
+I am not sure if this approach is final but I looked at runtime.c file
+and it has couple of API's like pm_runtime_forbid/allow which
+blocks/unblocks the runtime callbacks according to driver requirement.
+In the similar line I added this new API.
+>
+>>  These devices should have pm runtime callbacks.
+>>
+>> These devices (like clock) may not implement complete pm_runtime calls
+>> such as pm_runtime_get/pm_runtime_put due to subsystems interaction
+>> behaviour or any other reason.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/base/power/runtime.c | 18 ++++++++++++++++++
+>>  include/linux/pm.h           |  1 +
+>>  include/linux/pm_runtime.h   |  2 ++
+>>  3 files changed, 21 insertions(+)
+>
+> This patch is unacceptable because it does not update the runtime PM
+> documentation file.
+my fault. Will update in next version.
+>
+> Besides, doesn't the no_callbacks flag already do more or less what you
+> want?
+yes to some extent. But I thought its purpose is different so I added 1 more.
 
+Regards,
+Amit D
+>
+> Alan Stern
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
