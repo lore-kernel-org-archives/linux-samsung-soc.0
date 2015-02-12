@@ -1,47 +1,59 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 2/3] clk: Add __clk_hw_set_clk helper function
-Date: Thu, 12 Feb 2015 14:58:29 +0100
-Message-ID: <1423749510-14525-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH RFC v4 1/3] PM / Runtime: Add an API pm_runtime_set_slave
+Date: Thu, 12 Feb 2015 10:13:36 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1502121010070.1209-100000@iolanthe.rowland.org>
+References: <CADGdYn6OwXgsGFspQva-q5WV5b_WB=G2PxZyhcETTgt8zY96ZQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:41956 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755372AbbBLPNh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Feb 2015 10:13:37 -0500
+In-Reply-To: <CADGdYn6OwXgsGFspQva-q5WV5b_WB=G2PxZyhcETTgt8zY96ZQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: amit daniel kachhap <amit.daniel@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-After the clk API change to return a per-user clock instance, both the
-struct clk_core and struct clk pointers from the hw clock needs to be
-assigned to clock that share the same state.
+On Thu, 12 Feb 2015, amit daniel kachhap wrote:
 
-In the future the struct clk_core will be removed and this is going to
-change again so to avoid having to change the assignments twice in all
-the drivers, add a helper function to have an indirection level.
+> Hi Alan,
+> 
+> On Mon, Feb 9, 2015 at 9:28 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> > On Mon, 9 Feb 2015, Amit Daniel Kachhap wrote:
+> >
+> >> This API creates a pm runtime slave type device which does not itself
+> >> participates in pm runtime but depends on the master devices to power
+> >> manage them.
+> >
+> > This makes no sense.  How can a master device manage a slave device?
+> > Devices are managed by drivers, not by other devices.
+> May be my commit is not explaining the requirements completely and the
+> API name may not reflect the relevance. But If you see the 3rd patch
+> it has one clock use-case where this new feature is used and the
+> current pm runtime feature is not sufficient enough to handle it. I
+> have one more IOMMU use case also which is not part of this patch
+> series.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
+Regardless, your description should say what is really happening.  The
+master device doesn't power-manage the clock; some driver power-manages
+it.
 
-Changes since v1: None, new patch.
----
- include/linux/clk-provider.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+> I am not sure if this approach is final but I looked at runtime.c file
+> and it has couple of API's like pm_runtime_forbid/allow which
+> blocks/unblocks the runtime callbacks according to driver requirement.
+> In the similar line I added this new API.
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 17dd6e9439d1..5591ea71a8d1 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -590,6 +590,12 @@ long __clk_mux_determine_rate_closest(struct clk_hw *hw, unsigned long rate,
- 			      unsigned long *best_parent_rate,
- 			      struct clk_hw **best_parent_p);
- 
-+static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
-+{
-+	dst->clk = src->clk;
-+	dst->core = src->core;
-+}
-+
- /*
-  * FIXME clock api without lock protection
-  */
--- 
-2.1.3
+forbid/allow blocks/unblocks runtime PM according to the user's 
+requirements, not the driver's requirements.
+
+> > Besides, doesn't the no_callbacks flag already do more or less what you
+> > want?
+> yes to some extent. But I thought its purpose is different so I added 1 more.
+
+The purpose doesn't matter.  If no_callbacks does what you want then 
+you should use it instead of adding another API.
+
+Alan Stern
