@@ -1,55 +1,91 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 1/8] arm64: exynos5433: Enable ARMv8 based Exynos5433 (SoC)
- support
-Date: Thu, 12 Feb 2015 15:55:51 +0900
-Message-ID: <1423724158-23632-2-git-send-email-cw00.choi@samsung.com>
-References: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v3 0/8] arm64: Add the support for new Exynos5433 SoC
+Date: Thu, 12 Feb 2015 15:55:50 +0900
+Message-ID: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13359 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752691AbbBLG45 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:51297 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754104AbbBLG45 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 12 Feb 2015 01:56:57 -0500
-In-reply-to: <1423724158-23632-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kgene@kernel.org, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, sangbae90.lee@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch adds the necessary Kconfig entries to enable
-support for the ARMv8 based Exynos5433 SoC.
+This patchset adds new 64-bit Exynos5433 Samsung SoC which contains quad
+Cortex-A57 and quad Cortex-A53. It is desigend with the 20nm low power process.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
----
- arch/arm64/Kconfig | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+This patchset is based on linux-samsung.git (branch: for-next).
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 15e8e74..4fc08d1 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -153,6 +153,19 @@ config ARCH_EXYNOS
- 	help
- 	  This enables support for Samsung Exynos SoC family
- 
-+config ARCH_EXYNOS5433
-+	bool "ARMv8 based Samsung Exynos5433"
-+	select ARCH_EXYNOS
-+	select ARM_AMBA
-+	select ARM_GIC
-+	select COMMON_CLK_SAMSUNG
-+	select HAVE_S3C_RTC if RTC_CLASS
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
-+
-+	help
-+	  This enables support for Samsung Exynos5433 SoC family
-+
- config ARCH_EXYNOS7
- 	bool "ARMv8 based Samsung Exynos7"
- 	select ARCH_EXYNOS
+Depends on:
+- Exynos5433 clock controller patch-set[1][2] was merged by Sylwester Nawrocki,
+(http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/, branch:for-v3.20/clk/next)
+- Exynos5433 UART patch[4] was merged by GregKH.
+
+[1] [PATCH v5 00/13] clk: samsung: Add the support for exynos5433 clocks
+- https://lkml.org/lkml/2015/2/2/368
+[2] [PATCH v3 0/9] clk: samsung: Add clocks for remaining domains of Exynos5433
+- https://lkml.org/lkml/2015/2/2/784
+[3] [PATCHv2] pinctrl: exynos: Add support for Exynos543
+- https://lkml.org/lkml/2014/12/2/207
+[4] serial: samsung: Add the support for Exynos5433 SoC
+- http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=31ec77aca72ee5920ed3ec3d047734dc0bc43342
+
+Changelog:
+Changes from v2:
+(https://lkml.org/lkml/2014/12/2/134)
+- Exynos5444 DTS modification
+: Fix the range of GICC memory map (0x1000 -> 0x2000)
+: Fix address space of 'range' property under 'soc' node
+: Add ADMA / I2S dt node for sound playback/capture
+- Select ARM_AMBA/ARM_GIC/HAVE_S3C_RTC for Exynos5433 in arch/arm64/Kconfig
+- Send separate patch-set for Exynos5433 clock controller[1][2] and pinctrl[3]
+
+Changes from v1:
+(https://lkml.org/lkml/2014/11/27/92)
+- Merge two patches (patch2, patch3) to solve incomplete description
+- Exynos5433 Clock driver
+ : Fix wrong register and code clean by using space instead of tab
+ : Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
+ : Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
+- Exynos5433 SoC DTS
+ : Remove un-supported properties of arch_timer
+ : Remove 'clock-frequency' property from 'cpus' dt node
+ : Fix interrupt type from edge rising triggering to level high triggering
+   because Cortex-A53/A57 use level triggering.
+ : Fix defult address-size/size-celss from 1 to 2 because Exynos5433 is 64-bit SoC
+ : Modify 'fin_pll' dt node to remove un-needed and ugly code
+ : Move 'chipid' dt node under 'soc'
+ : Use lowercase on all case in exynos5433.dtsi
+ : Add PSCI dt node for secondary cpu boot
+ : Add 'samsung,exynos5433' compatible to MCT dt node
+- Divide pinctrl patch from this patchset
+- Add new following patches:
+  : clocksource: exynos_mct: Add the support for Exynos 64bit SoC
+  : arm64: Enable Exynos5433 SoC in the defconfig
+
+Chanwoo Choi (5):
+  arm64: exynos5433: Enable ARMv8 based Exynos5433 (SoC) support
+  arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
+  arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
+  arm64: dts: exynos: Add PMU dt node for Exynos5433
+  arm64: dts: exynos: Add RTC and ADC dt node for Exynos5433 SoC
+
+Inha Song (2):
+  arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
+  arm64: dts: exynos: Add I2S dt node for Exynos5433 SoC
+
+Jaehoon Chung (1):
+  arm64: dts: exynos: Add MSHC dt node for Exynos5433
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
+ arch/arm64/Kconfig                                 |  13 +
+ arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698 ++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 911 +++++++++++++++++++++
+ 4 files changed, 1623 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+
 -- 
 1.8.5.5
