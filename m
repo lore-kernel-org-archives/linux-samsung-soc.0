@@ -1,51 +1,64 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 2/3] clk: Add __clk_hw_set_clk helper function
-Date: Fri, 13 Feb 2015 08:28:19 +0100
-Message-ID: <54DDA793.9080909@collabora.co.uk>
-References: <1423749510-14525-1-git-send-email-javier.martinez@collabora.co.uk> <1423749510-14525-3-git-send-email-javier.martinez@collabora.co.uk> <54DD0524.4060503@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH RESEND] ARM: dts: exynos5422-odroidxu3: add mmc detect gpio
+Date: Fri, 13 Feb 2015 08:48:54 +0100
+Message-ID: <1423813734-20664-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:50989 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751679AbbBMH2Y (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:30857 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751477AbbBMHtI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Feb 2015 02:28:24 -0500
-In-Reply-To: <54DD0524.4060503@codeaurora.org>
+	Fri, 13 Feb 2015 02:49:08 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?windows-1252?Q?Emilio_?= =?windows-1252?Q?L=F3pez?= <emilio@elopez.com.ar>, Peter De Schrijver <pdeschrijver@nvidia.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene@kernel.org, javier@dowhile0.org
 
-Hello Stephen,
+The patch adds gpio for detecting presence of MMC card.
+It fixes issue with kernel hang due when MMC card is missing.
 
-On 02/12/2015 08:55 PM, Stephen Boyd wrote:
-> On 02/12/15 05:58, Javier Martinez Canillas wrote:
->> After the clk API change to return a per-user clock instance, both the
->> struct clk_core and struct clk pointers from the hw clock needs to be
->> assigned to clock that share the same state.
->>
->> In the future the struct clk_core will be removed and this is going to
-> 
-> s/clk_core/clk/?
->
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi,
 
-hrmm, I thought that the plan was to eventually merge clk_core into clk_hw.
+This is just resend of the patch with added mmc ML and dw-mmc maintainers.
 
-In any case, if I got it backwards then I guess that the commit message
-could be fixed up by Mike when the patches are applied?
+Javier, I have no access to peach-pi(t) schematics, so I do not know if they
+have mmc-cd line connected to gpc0-2 gpio, but I guess it could be the case.
+You could check if similar patches will fix the issue for them.
 
->> change again so to avoid having to change the assignments twice in all
->> the drivers, add a helper function to have an indirection level.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
-> 
-> Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
+Regards
+Andrzej
 
-Thanks a lot for your review.
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Best regards,
-Javier
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 47ec9bf..a563811 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -11,6 +11,7 @@
+ */
+ 
+ /dts-v1/;
++#include <dt-bindings/gpio/gpio.h>
+ #include "exynos5800.dtsi"
+ 
+ / {
+@@ -355,13 +356,13 @@
+ 
+ &mmc_0 {
+ 	status = "okay";
+-	broken-cd;
++	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_cd>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
+ };
+-- 
+1.9.1
