@@ -1,104 +1,88 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH RESEND] ARM: dts: exynos5422-odroidxu3: add mmc detect gpio
-Date: Fri, 13 Feb 2015 11:03:34 +0100
-Message-ID: <CABxcv==sgCGGsVY8=RtdTGw501zUybufkpW-N_h-fopg37UFPg@mail.gmail.com>
-References: <1423813734-20664-1-git-send-email-a.hajda@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/4] ASoC: samsung: clean up references to outdated
+ Kconfig symbols
+Date: Sat, 14 Feb 2015 12:22:55 +0800
+Message-ID: <20150214042255.GA9110@finisterre.sirena.org.uk>
+References: <1421664067.9655.51.camel@x220>
+ <20150206235044.GO31311@finisterre.sirena.org.uk>
+ <1423298284.2246.5.camel@x220>
+ <20150209060704.GB19229@finisterre.sirena.org.uk>
+ <1423646498.21685.35.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:37744 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752412AbbBMKDf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Feb 2015 05:03:35 -0500
-Received: by mail-wg0-f45.google.com with SMTP id k14so12543892wgh.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Feb 2015 02:03:34 -0800 (PST)
-In-Reply-To: <1423813734-20664-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1423646498.21685.35.camel@x220>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Valentin Rothberg <valentinrothberg@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>
 
-Hello Andrzej,
 
-On Fri, Feb 13, 2015 at 8:48 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> The patch adds gpio for detecting presence of MMC card.
-> It fixes issue with kernel hang due when MMC card is missing.
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Maybe s/MMC/eMMC here? to make more clear that this patch is solving
-an issue when the eMMC and not the uSD is missing.
+On Wed, Feb 11, 2015 at 10:21:38AM +0100, Paul Bolle wrote:
 
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> Hi,
->
-> This is just resend of the patch with added mmc ML and dw-mmc maintainers.
->
-> Javier, I have no access to peach-pi(t) schematics, so I do not know if they
-> have mmc-cd line connected to gpc0-2 gpio, but I guess it could be the case.
-> You could check if similar patches will fix the issue for them.
->
+> TL;DR: what exactly should I resend and when?
 
-Yes, both the eMMC and uSD card detection lines in the Peach Pit/Pi
-are connected to the XMMC0CDN and XMMC2CDN built-in CD# pins so is the
-same than the Odroid XU3 if I read the schematics correctly since the
-those pins are also GPC0_2 and GPC2_2.
+This is disappointing; you're someone who's been contributing for quite
+some time now, I'd really expect you to be faimilar with the process of
+submitting patches and able to identify answers to your questions.
 
-Now, in the Peach Pit Chromebook the eMMC is not removable so card
-detection is not an issue there, the problem I'm having is that card
-detection for the uSD seems to be broken after adding Addy's patches:
+> > What's posted doesn't apply against -next.
 
-mmc: dw_mmc: fix bug that cause 'Timeout sending command'
-mmc: dw_mmc: Don't start command while data busy
+> That's because of trivial conflicts with commit a59aa180ea56 ("ASoC:
+> samsung: Replace depends on REGMAP_I2C with depends on I2C"). That
+> commit landed in next-20150127 (ie, eight days after I sent this short
+> series). I guess I resolved these conflicts in the local version of
+> these patches and promptly forgot about them, as they were so trivial.
 
-And adding a cd-gpios property with a phandle to gpc2_2 to the mmc2
-device node does not help.
+For something like this I'm just not even going to look at what's
+required to fix up by hand, sorry.
 
-But without those patches, I've timeouts when mmc commands are sent to
-the SDIO slot which has the wifi chip connected to.
+> > As ever submit against the tree listed in MAINTAINERS
 
-> Regards
-> Andrzej
->
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index 47ec9bf..a563811 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -11,6 +11,7 @@
->  */
->
->  /dts-v1/;
-> +#include <dt-bindings/gpio/gpio.h>
->  #include "exynos5800.dtsi"
->
->  / {
-> @@ -355,13 +356,13 @@
->
->  &mmc_0 {
->         status = "okay";
-> -       broken-cd;
-> +       cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
->         card-detect-delay = <200>;
->         samsung,dw-mshc-ciu-div = <3>;
->         samsung,dw-mshc-sdr-timing = <0 4>;
->         samsung,dw-mshc-ddr-timing = <0 2>;
->         pinctrl-names = "default";
-> -       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-> +       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_cd>;
->         bus-width = <8>;
->         cap-mmc-highspeed;
->  };
-> --
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Your patch looks good to me though from what I've seen in the Odroid
-XU3 schematic and taking into account that the eMMC can be removed in
-that board.
+> Which is not entirely obvious, since this series only touches files
+> below sound/soc/samsung/. That directory is mentioned in MAINTAINERS
+> under "ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" and under "SAMSUNG AUDIO
+> (ASoC) DRIVERS". (Why does that directory need two entries?) Neither
+> entry mention a repository.
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Of course neither of those entries list me either yet you managed to
+figure out that you should send the patch to me.  The same process that
+helps you identify that things should be submitted to the subsystem
+maintainers should allow you to identify where they're likely to try to
+apply changes.  Or simply looking at how other similar patches get
+merged.
 
-Best regards,
-Javier
+> And now I wonder what I should resend: the three patches 2/4, 3/4, and
+> 4/4 with the trivial conflicts resolved or the entire series? And when
+> do you prefer I resend?
+
+Again this is something I'd really expect you to be familiar with.  As
+ever if there are changes you would like to see integrated into the
+kernel then please submit them using the normal patch submission
+process.
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU3s2eAAoJECTWi3JdVIfQfh4H/jM8fa4kDiAXAxmCQCNKEwsG
+lf82YS1B9sX8nM4nZr4oNvL2+JtY4bePdfaovPVYoRwYS14ENTGCJmqP9ec/3o+7
+w0pUroy0YEEUBs4O1Kc4YiASDZRq0KGoG/NS29CrgYAuezWaE2PYxGySYPpXhJq0
+zxFH1A906EUo7RRu6SvOq4zVlxlTUu99lBdGv0Yvz/syfI5TL/ZdLv7wMCrs11hu
+st/sSvqTyz/JFY+6fJwm6/mPWoo5HdOfu92lyNiCiB4UDAbbcIq7cor85tNcwMO8
+yX6AvylalYWAVssqD+ZuwIN3ZzNFA34LqUVLskipW66HY95aa4YQqpZfPXFt9v4=
+=bCF0
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
