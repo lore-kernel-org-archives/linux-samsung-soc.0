@@ -1,30 +1,41 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCHv3 0/8] devfreq: Add generic exynos memory-bus
- frequency driver
-Date: Sun, 15 Feb 2015 01:25:59 +0100
-Message-ID: <54DFE797.1020008@math.uni-bielefeld.de>
-References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH] ARM: exynos_defconfig: Enable Marvell WiFi-Ex support
+Date: Sun, 15 Feb 2015 10:28:52 +0100
+Message-ID: <1423992532-29228-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:53790 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754324AbbBOA0E (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:55998 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbbBOJ3G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Feb 2015 19:26:04 -0500
-In-Reply-To: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
+	Sun, 15 Feb 2015 04:29:06 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello,
+Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a MMC/SDIO
+Marvell WiFi-Ex chip. This patch enables wireless support and the
+mwifiex driver.
 
-I've tested the series on my Odroid-X2 (by adapting the TRATS2 changes),
-and so far I haven't seen any issues. With the system being idle one can
-see that the 'simple_ondemand' devfreq governor clocks down both memory
-busses to the lowest state.
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/configs/exynos_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-With best wishes,
-Tobias
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 70e5d0bdb4e4..dcef516bcd0d 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -34,6 +34,10 @@ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+ CONFIG_NET_KEY=y
+ CONFIG_INET=y
++CONFIG_WIRELESS=y
++CONFIG_CFG80211=y
++CONFIG_MWIFIEX=y
++CONFIG_MWIFIEX_SDIO=y
+ CONFIG_RFKILL_REGULATOR=y
+ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_DEVTMPFS=y
+-- 
+2.1.3
