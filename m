@@ -1,55 +1,81 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 0/7] platform/chrome: Add user-space dev inferface
- support
-Date: Mon, 16 Feb 2015 09:19:49 +0100
-Message-ID: <54E1A825.7090408@collabora.co.uk>
-References: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos
+ platforms
+Date: Mon, 16 Feb 2015 10:52:17 +0100
+Message-ID: <20150216105217.79315ffd@amdc2363>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
+ <CAMAWPa9fUJVjJ8V+93AkHy9DtEmUUnGs4MJDGcsoMdWwGmg5qg@mail.gmail.com>
+ <CAJKOXPfyPH7tyce6YB=q4krSP078aJVAmqObg89qCnLrL_Nbhg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:58084 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751458AbbBPITz (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:32799 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754049AbbBPJwZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Feb 2015 03:19:55 -0500
-In-Reply-To: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 16 Feb 2015 04:52:25 -0500
+In-reply-to: <CAJKOXPfyPH7tyce6YB=q4krSP078aJVAmqObg89qCnLrL_Nbhg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>
 
-Hello Olof,
+Hi Krzysztof, Thomas,
 
-On 02/02/2015 12:26 PM, Javier Martinez Canillas wrote:
-> Hello,
+> 2015-01-08 22:17 GMT+01:00 Kevin Hilman <khilman@kernel.org>:
+> > On Fri, Nov 21, 2014 at 5:31 AM, Thomas Abraham
+> > <thomas.ab@samsung.com> wrote:
+> >> Changes since v11:
+> >> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git
+> >> for-v3.19-exynos-clk
+> >>
+> >> This patch series removes the use of Exynos4210 and Exynos5250
+> >> specific cpufreq drivers and enables the use of cpufreq-dt driver
+> >> for these platforms. This series also enables cpufreq support for
+> >> Exynos5420 using arm_big_little cpufreq driver.
+> >>
+> >> This series is based on the following branch.
+> >> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+> >>
+> >> This series depends on the following patch which can be picked from
+> >> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
+> >> samsung/dt e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
+> >>
+> >> This patch series has been tested on Exynos4210/5250/5420 based
+> >> boards. Tomasz Figa had plans to take this in the Samsung clock
+> >> tree for v3.19
+> >> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
+> >> Sylwester, could you consider to merge this in your tree?
+> >
+> > CPUfreq for exynos is still not upstream.  What's the status of this
+> > series?  It's been ver a month since there's been any activity here
+> > (or any responses to the issues I reported.)
+> >
+> > On a related note, this series only does frequency scaling. Is there
+> > any work going on to also enable voltage scaling for the CPU rails
+> > as well?
 > 
-> The mainline ChromeOS Embedded Controller (EC) driver is still missing some
-> features that are present in the downstream ChromiumOS tree. These are:
+> Hi Thomas,
 > 
->   - Low Pin Count (LPC) interface
->   - User-space device interface
->   - Access to vboot context stored on a block device
->   - Access to vboot context stored on EC's nvram
->   - Power Delivery Device
->   - Support for multiple EC in a system
+> Do you plan to continue with this work? It would be very helpful.
+
++1 from me.
+
 > 
-> This is a fifth version of a series that adds support for the first two of
-> the missing features: the EC LPC and EC character device interfaces that
-> are used by user-space to access the ChromeOS EC. The support patches were
-> taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
-> squashed to have a minimal patch-set.
+> I also wonder if Exynos 4412 could be re-added (without the boost if
+> these bindings are not ready)?
+
+I would prefer to have all platforms converted at once, since it might
+happen that some parts of the work would get lost.
+
 > 
+> Best regards,
+> Krzysztof
 
-Any comments on this series? The last version was posted a couple of weeks
-ago but the series have been in the list for months. Lee has already acked
-the mfd changes so you can merge all through your chrome-platform tree if
-you want.
-
-It wold be great if this series get in to have the EC user-space interface
-supported and to minimize the delta with the Chromemium OS kernel since it
-still has other features that needs to be upstreamed like multiple EC in a
-system and access to vboot context stored in block device or EC's nvram.
-
+-- 
 Best regards,
-Javier
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
