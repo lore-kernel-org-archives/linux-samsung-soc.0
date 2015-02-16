@@ -1,47 +1,32 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Don't use LDREX and STREX after disabling cache
- coherency
-Date: Mon, 16 Feb 2015 14:36:42 +0100
-Message-ID: <1424093802-5488-1-git-send-email-k.kozlowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [v2] libdrm: improvements to userspace exynos component
+Date: Mon, 16 Feb 2015 14:46:30 +0100
+Message-ID: <1424094405-6314-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54807 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755671AbbBPNhC (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55392 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754955AbbBPNqz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Feb 2015 08:37:02 -0500
+	Mon, 16 Feb 2015 08:46:55 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org
 
-During CPU shutdown the exynos_cpu_power_down() is called after
-disabling cache coherency and it uses LDREX and STREX instructions (by
-calling of_machine_is_compatible() -> kobject_get() -> kref_get()).
+Hello,
 
-The LDREX and STREX should not be used after disabling the cache
-coherency so just use soc_is_exynos().
+here are some miscellaneous improvements (small features, bugfixes, spelling fixes, etc.) for the exynos component of libdrm. The general idea is to let userspace use the G2D engine functionality more 
+efficiently.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Fixes: adc548d77c22 ("ARM: EXYNOS: Use MCPM call-backs to support S2R on exynos5420")
-Cc: <stable@vger.kernel.org>
-Reported-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/arm/mach-exynos/platsmp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+If someone is interested in an application that actually makes use of this, the RetroArch frontend has a custom video backend:
+https://github.com/libretro/RetroArch/blob/master/gfx/drivers/exynos_gfx.c
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 7a1ebfeeeeb8..0abb7dff73ab 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -126,8 +126,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-  */
- void exynos_cpu_power_down(int cpu)
- {
--	if (cpu == 0 && (of_machine_is_compatible("samsung,exynos5420") ||
--		of_machine_is_compatible("samsung,exynos5800"))) {
-+	if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
- 		/*
- 		 * Bypass power down for CPU0 during suspend. Check for
- 		 * the SYS_PWR_REG value to decide if we are suspending
--- 
-1.9.1
+
+Please review and let me know what I can improve.
+
+v2:
+- Mention value of G2D scaling normalization factor (02/15).
+- Moved patch (04/15) description from commit message to source itself, like suggested by Joonyoung Shim.
+
+With best wishes,
+Tobias
