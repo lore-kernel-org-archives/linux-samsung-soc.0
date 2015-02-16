@@ -1,54 +1,37 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/3] thermal: exynos: Fix wrong control of power down detection
- mode for Exynos7
-Date: Mon, 16 Feb 2015 23:20:13 +0900
-Message-ID: <1424096414-4327-3-git-send-email-cw00.choi@samsung.com>
-References: <1424096414-4327-1-git-send-email-cw00.choi@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 14/15] exynos: fimg2d: unify register style
+Date: Mon, 16 Feb 2015 15:26:19 +0100
+Message-ID: <1424096780-7559-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31750 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755562AbbBPOUV (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55526 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752517AbbBPO03 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Feb 2015 09:20:21 -0500
-In-reply-to: <1424096414-4327-1-git-send-email-cw00.choi@samsung.com>
+	Mon, 16 Feb 2015 09:26:29 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: rui.zhang@intel.com, edubezval@gmail.com
-Cc: kgene@kernel.org, b.zolnierkie@samsung.com, kyungmin.park@samsung.com, amit.daniel@samsung.com, l.majewski@samsung.com, a.kesavan@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-This patch fixes the wrong control of PD_DET_EN (power down detection mode)
-for Exynos7 because exynos7_tmu_control() always enables the power down detection
-mode regardless 'on' parameter.
+Register defines all use uppercase hex codes.
 
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ exynos/fimg2d_reg.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index b8846f1..b199fff 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -682,6 +682,7 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+diff --git a/exynos/fimg2d_reg.h b/exynos/fimg2d_reg.h
+index 5782488..07dd634 100644
+--- a/exynos/fimg2d_reg.h
++++ b/exynos/fimg2d_reg.h
+@@ -15,7 +15,7 @@
  
- 	if (on) {
- 		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
-+		con |= (1 << EXYNOS7_PD_DET_EN_SHIFT);
- 		interrupt_en =
- 			(of_thermal_is_trip_valid(tz, 7)
- 			<< EXYNOS7_TMU_INTEN_RISE7_SHIFT) |
-@@ -704,9 +705,9 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
- 			interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
- 	} else {
- 		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
-+		con &= ~(1 << EXYNOS7_PD_DET_EN_SHIFT);
- 		interrupt_en = 0; /* Disable all interrupts */
- 	}
--	con |= 1 << EXYNOS7_PD_DET_EN_SHIFT;
- 
- 	writel(interrupt_en, data->base + EXYNOS7_TMU_REG_INTEN);
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+ #define SOFT_RESET_REG			(0x0000)
+ #define INTEN_REG			(0x0004)
+-#define INTC_PEND_REG			(0x000c)
++#define INTC_PEND_REG			(0x000C)
+ #define FIFO_STAT_REG			(0x0010)
+ #define AXI_MODE_REG			(0x001C)
+ #define DMA_SFR_BASE_ADDR_REG		(0x0080)
 -- 
-1.8.5.5
+2.0.5
