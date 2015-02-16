@@ -1,182 +1,192 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 01/15] tests/exynos: fimg2d: add a checkerboard test
-Date: Mon, 16 Feb 2015 14:46:31 +0100
-Message-ID: <1424094405-6314-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 08/15] exynos: introduce g2d_add_base_addr helper function
+Date: Mon, 16 Feb 2015 14:46:38 +0100
+Message-ID: <1424094405-6314-9-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1424094405-6314-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55398 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55437 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755193AbbBPNq4 (ORCPT
+	by vger.kernel.org with ESMTP id S1755547AbbBPNrD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Feb 2015 08:46:56 -0500
+	Mon, 16 Feb 2015 08:47:03 -0500
 In-Reply-To: <1424094405-6314-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, m.szyprowski@samsung.com, djkurtz@chromium.org, robclark@freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-This makes it easier to spot memory corruptions which don't become
-visible when using a plain buffer filled with a solid color (so
-corruptions that are just a permutation of the bytes in the buffer).
+In almost all functions the base address register is written, so it
+makes sense to have a helper function for this.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- tests/exynos/exynos_fimg2d_test.c | 117 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
+ exynos/exynos_fimg2d.c | 87 +++++++++++++++++++-------------------------------
+ 1 file changed, 33 insertions(+), 54 deletions(-)
 
-diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
-index c6bd558..41fb869 100644
---- a/tests/exynos/exynos_fimg2d_test.c
-+++ b/tests/exynos/exynos_fimg2d_test.c
-@@ -55,6 +55,9 @@ struct fimg2d_test_case {
- 	int (*blend)(struct exynos_device *dev,
- 				struct exynos_bo *src, struct exynos_bo *dst,
- 				enum e_g2d_buf_type);
-+	int (*checkerboard)(struct exynos_device *dev,
-+				struct exynos_bo *src, struct exynos_bo *dst,
-+				enum e_g2d_buf_type);
- };
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index b79081e..c08974a 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -41,6 +41,11 @@
  
- struct connector {
-@@ -207,6 +210,33 @@ static struct exynos_bo *exynos_create_buffer(struct exynos_device *dev,
- 	return bo;
- }
+ #define MIN(a, b)	((a) < (b) ? (a) : (b))
  
-+/* Allocate buffer and fill it with checkerboard pattern, where the tiles *
-+ * have a random color. The caller has to free the buffer.                */
-+void *create_checkerboard_pattern(unsigned int num_tiles_x,
-+						unsigned int num_tiles_y, unsigned int tile_size)
-+{
-+	unsigned int *buf;
-+	unsigned int x, y, i, j;
-+	const unsigned int stride = num_tiles_x * tile_size;
++enum g2d_base_addr_reg {
++	g2d_dst = 0,
++	g2d_src
++};
 +
-+	if (posix_memalign((void*)&buf, 64, num_tiles_y * tile_size * stride * 4) != 0)
-+		return NULL;
-+
-+	for (x = 0; x < num_tiles_x; ++x) {
-+		for (y = 0; y < num_tiles_y; ++y) {
-+			const unsigned int color = 0xff000000 + (random() & 0xffffff);
-+
-+			for (i = 0; i < tile_size; ++i) {
-+				for (j = 0; j < tile_size; ++j) {
-+					buf[x * tile_size + y * stride * tile_size + i + j * stride] = color;
-+				}
-+			}
-+		}
-+	}
-+
-+	return buf;
-+}
-+
- static void exynos_destroy_buffer(struct exynos_bo *bo)
+ static unsigned int g2d_get_scaling(unsigned int src, unsigned int dst)
  {
- 	exynos_bo_destroy(bo);
-@@ -533,11 +563,90 @@ err_free_userptr:
- 	return 0;
+ 	/* The G2D hw scaling factor is a normalized inverse of the scaling factor. *
+@@ -132,6 +137,25 @@ static int g2d_add_cmd(struct g2d_context *ctx, unsigned long cmd,
  }
  
-+static int g2d_checkerboard_test(struct exynos_device *dev,
-+					struct exynos_bo *src,
-+					struct exynos_bo *dst,
-+					enum e_g2d_buf_type type)
+ /*
++ * g2d_add_base_addr - helper function to set dst/src base address register.
++ *
++ * @ctx: a pointer to g2d_context structure.
++ * @img: a pointer to the dst/src g2d_image structure.
++ * @reg: the register that should be set.
++ */
++static void g2d_add_base_addr(struct g2d_context *ctx, struct g2d_image *img,
++			enum g2d_base_addr_reg reg)
 +{
-+	struct g2d_context *ctx;
-+	struct g2d_image src_img = {0}, dst_img = {0};
-+	unsigned int src_x, src_y, dst_x, dst_y, img_w, img_h;
-+	void *checkerboard = NULL;
-+	int ret;
++	const unsigned long cmd = (reg == g2d_dst) ? DST_BASE_ADDR_REG : SRC_BASE_ADDR_REG;
 +
-+	ctx = g2d_init(dev->fd);
-+	if (!ctx)
-+		return -EFAULT;
-+
-+	dst_img.bo[0] = dst->handle;
-+
-+	src_x = 0;
-+	src_y = 0;
-+	dst_x = 0;
-+	dst_y = 0;
-+
-+	checkerboard = create_checkerboard_pattern(screen_width / 32, screen_height / 32, 32);
-+	if (checkerboard == NULL) {
-+		ret = -1;
-+		goto fail;
-+	}
-+
-+	img_w = screen_width - (screen_width % 32);
-+	img_h = screen_height - (screen_height % 32);
-+
-+	switch (type) {
-+	case G2D_IMGBUF_GEM:
-+		memcpy(src->vaddr, checkerboard, img_w * img_h * 4);
-+		src_img.bo[0] = src->handle;
-+		break;
-+	case G2D_IMGBUF_USERPTR:
-+		src_img.user_ptr[0].userptr = (unsigned long)checkerboard;
-+		src_img.user_ptr[0].size = img_w * img_h * 4;
-+		break;
-+	default:
-+		ret = -EFAULT;
-+		goto fail;
-+	}
-+
-+	printf("checkerboard test with %s.\n",
-+			type == G2D_IMGBUF_GEM ? "gem" : "userptr");
-+
-+	src_img.width = img_w;
-+	src_img.height = img_h;
-+	src_img.stride = src_img.width * 4;
-+	src_img.buf_type = type;
-+	src_img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+
-+	dst_img.width = screen_width;
-+	dst_img.height = screen_height;
-+	dst_img.stride = dst_img.width * 4;
-+	dst_img.buf_type = G2D_IMGBUF_GEM;
-+	dst_img.color_mode = G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-+	src_img.color = 0xff000000;
-+	ret = g2d_solid_fill(ctx, &dst_img, src_x, src_y, screen_width, screen_height);
-+	if (ret < 0)
-+		goto fail;
-+
-+	ret = g2d_copy(ctx, &src_img, &dst_img, src_x, src_y, dst_x, dst_y,
-+			img_w, img_h);
-+	if (ret < 0)
-+		goto fail;
-+
-+	g2d_exec(ctx);
-+
-+fail:
-+	free(checkerboard);
-+	g2d_fini(ctx);
-+
-+	return ret;
++	if (img->buf_type == G2D_IMGBUF_USERPTR)
++		g2d_add_cmd(ctx, cmd | G2D_BUF_USERPTR,
++				(unsigned long)&img->user_ptr[0]);
++	else
++		g2d_add_cmd(ctx, cmd, img->bo[0]);
 +}
 +
- static struct fimg2d_test_case test_case = {
- 	.solid_fill = &g2d_solid_fill_test,
- 	.copy = &g2d_copy_test,
- 	.copy_with_scale = &g2d_copy_with_scale_test,
- 	.blend = &g2d_blend_test,
-+	.checkerboard = &g2d_checkerboard_test,
- };
++/*
+  * g2d_reset - reset fimg2d hardware.
+  *
+  * @ctx: a pointer to g2d_context structure.
+@@ -276,13 +300,7 @@ g2d_solid_fill(struct g2d_context *ctx, struct g2d_image *img,
  
- static void usage(char *name)
-@@ -671,6 +780,14 @@ int main(int argc, char **argv)
+ 	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, img->color_mode);
+-
+-	if (img->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&img->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG, img->bo[0]);
+-
++	g2d_add_base_addr(ctx, img, g2d_dst);
+ 	g2d_add_cmd(ctx, DST_STRIDE_REG, img->stride);
  
- 	getchar();
+ 	if (x + w > img->width)
+@@ -339,22 +357,12 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
  
-+	ret = test_case.checkerboard(dev, src, bo, G2D_IMGBUF_GEM);
-+	if (ret < 0) {
-+		fprintf(stderr, "failed to issue checkerboard test.\n");
-+		goto err_free_src;
-+	}
-+
-+	getchar();
-+
- 	ret  = test_case.blend(dev, src, bo, G2D_IMGBUF_USERPTR);
- 	if (ret < 0)
- 		fprintf(stderr, "failed to test blend operation.\n");
+ 	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	if (dst->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&dst->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG, dst->bo[0]);
+-
++	g2d_add_base_addr(ctx, dst, g2d_dst);
+ 	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+ 
+ 	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+ 	g2d_add_cmd(ctx, SRC_COLOR_MODE_REG, src->color_mode);
+-	if (src->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, SRC_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&src->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, SRC_BASE_ADDR_REG, src->bo[0]);
+-
++	g2d_add_base_addr(ctx, src, g2d_src);
+ 	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
+ 
+ 	src_w = w;
+@@ -442,12 +450,7 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_BGCOLOR);
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	if (dst->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&dst->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG, dst->bo[0]);
+-
++	g2d_add_base_addr(ctx, dst, g2d_dst);
+ 	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+ 
+ 	g2d_add_cmd(ctx, SRC_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+@@ -457,11 +460,7 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 	if (src->repeat_mode == G2D_REPEAT_MODE_PAD)
+ 		g2d_add_cmd(ctx, SRC_PAD_VALUE_REG, dst->color);
+ 
+-	if (src->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, SRC_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&src->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, SRC_BASE_ADDR_REG, src->bo[0]);
++	g2d_add_base_addr(ctx, src, g2d_src);
+ 
+ 	g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
+ 
+@@ -565,12 +564,7 @@ g2d_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 		g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+ 
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	if (dst->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&dst->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG, dst->bo[0]);
+-
++	g2d_add_base_addr(ctx, dst, g2d_dst);
+ 	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+ 
+ 	g2d_add_cmd(ctx, SRC_SELECT_REG, src->select_mode);
+@@ -578,12 +572,7 @@ g2d_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	switch (src->select_mode) {
+ 	case G2D_SELECT_MODE_NORMAL:
+-		if (src->buf_type == G2D_IMGBUF_USERPTR)
+-			g2d_add_cmd(ctx, SRC_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-					(unsigned long)&src->user_ptr[0]);
+-		else
+-			g2d_add_cmd(ctx, SRC_BASE_ADDR_REG, src->bo[0]);
+-
++		g2d_add_base_addr(ctx, src, g2d_src);
+ 		g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
+ 		break;
+ 	case G2D_SELECT_MODE_FGCOLOR:
+@@ -688,12 +677,7 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 		g2d_add_cmd(ctx, DST_SELECT_REG, G2D_SELECT_MODE_NORMAL);
+ 
+ 	g2d_add_cmd(ctx, DST_COLOR_MODE_REG, dst->color_mode);
+-	if (dst->buf_type == G2D_IMGBUF_USERPTR)
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-				(unsigned long)&dst->user_ptr[0]);
+-	else
+-		g2d_add_cmd(ctx, DST_BASE_ADDR_REG, dst->bo[0]);
+-
++	g2d_add_base_addr(ctx, dst, g2d_dst);
+ 	g2d_add_cmd(ctx, DST_STRIDE_REG, dst->stride);
+ 
+ 	g2d_add_cmd(ctx, SRC_SELECT_REG, src->select_mode);
+@@ -701,12 +685,7 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 
+ 	switch (src->select_mode) {
+ 	case G2D_SELECT_MODE_NORMAL:
+-		if (src->buf_type == G2D_IMGBUF_USERPTR)
+-			g2d_add_cmd(ctx, SRC_BASE_ADDR_REG | G2D_BUF_USERPTR,
+-					(unsigned long)&src->user_ptr[0]);
+-		else
+-			g2d_add_cmd(ctx, SRC_BASE_ADDR_REG, src->bo[0]);
+-
++		g2d_add_base_addr(ctx, src, g2d_src);
+ 		g2d_add_cmd(ctx, SRC_STRIDE_REG, src->stride);
+ 		break;
+ 	case G2D_SELECT_MODE_FGCOLOR:
 -- 
 2.0.5
