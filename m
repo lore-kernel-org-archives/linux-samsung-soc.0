@@ -1,41 +1,48 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] Revert "drm/exynos: IOMMU support should not be
-	selectable by user"
-Date: Tue, 17 Feb 2015 20:20:51 +0000
-Message-ID: <20150217202051.GA19818@opensource.wolfsonmicro.com>
-References: <1424192294-16897-1-git-send-email-ckeepax@opensource.wolfsonmicro.com> <CABxcv=kdHsmQ1sjD8Ty6pjdH3HXeV+wjSRNBQC+7BM+EnaJbQg@mail.gmail.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for
+ exynos platforms
+Date: Tue, 17 Feb 2015 21:25:49 +0100
+Message-ID: <54E3A3CD.3020106@gmx.net>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com> <CAMAWPa9fUJVjJ8V+93AkHy9DtEmUUnGs4MJDGcsoMdWwGmg5qg@mail.gmail.com> <CAJKOXPfyPH7tyce6YB=q4krSP078aJVAmqObg89qCnLrL_Nbhg@mail.gmail.com> <20150216105217.79315ffd@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CABxcv=kdHsmQ1sjD8Ty6pjdH3HXeV+wjSRNBQC+7BM+EnaJbQg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.17.21]:60120 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751459AbbBQU0i (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Feb 2015 15:26:38 -0500
+In-Reply-To: <20150216105217.79315ffd@amdc2363>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>
 
-On Tue, Feb 17, 2015 at 09:18:28PM +0100, Javier Martinez Canillas wrote:
-> Hello Charles,
-> 
-> On Tue, Feb 17, 2015 at 5:58 PM, Charles Keepax
-> <ckeepax@opensource.wolfsonmicro.com> wrote:
-> > This reverts commit 8dcc14f82f06fce997e35f4c77ced9d4ed192f31.
-> >
-> > This patch causes this error on Arndale:
-> 
-> IMHO the commit you are referring is correct so it should not be
-> reverted but I also had the same error on different boards (Exynos5250
-> Snow, Exynos5420 Peach Pit and Exynos5800 Peach Pi).
-> 
-> So I posted a patch [0] today to disable Exnos IOMMU support in
-> exynos_defconfig until these issues gets fixed.
-> 
-> Best regards,
-> Javier
-> 
-> [0]: https://lkml.org/lkml/2015/2/17/163
+Hello!
 
-I agree your patch is the better fix.
+Lukasz Majewski wrote:
+> Hi Krzysztof, Thomas,
+> 
+>> 2015-01-08 22:17 GMT+01:00 Kevin Hilman <khilman@kernel.org>:
+>> Hi Thomas,
+>>
+>> Do you plan to continue with this work? It would be very helpful.
+> 
+> +1 from me.
+> 
+>>
+>> I also wonder if Exynos 4412 could be re-added (without the boost if
+>> these bindings are not ready)?
+> 
+> I would prefer to have all platforms converted at once, since it might
+> happen that some parts of the work would get lost.
 
-Thanks,
-Charles
+Joining in as well!
+
+Reviving this patch series would be very much appreciated, especially if
+it moves again into the direction of storing most information into the
+DT (so that one can easily modify it in the board dts).
+
+With best wishes,
+Tobias
