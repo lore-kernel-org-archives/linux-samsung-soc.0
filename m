@@ -1,43 +1,109 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: drm/exynos: DRM_EXYNOS7DECON?
-Date: Tue, 17 Feb 2015 18:25:22 +0900
-Message-ID: <54E30902.5070000@samsung.com>
-References: <1424163888.7082.16.camel@x220>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1424163888.7082.16.camel@x220>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Akshu Agrawal <akshua@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-arm-kernel@lists.infradead.org, Valentin Rothberg <valentinrothberg@gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: exynos_defconfig: Disable IOMMU support
+Date: Tue, 17 Feb 2015 12:38:29 +0100
+Message-ID: <1424173109-30347-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwMuyblCAxN+ydvCAxODowNCwgUGF1bCBCb2xsZSB3cm90ZToKPiBZb3VyIGNv
-bW1pdCA5Njk3NmMzZDlhZmYgKCJkcm0vZXh5bm9zOiBBZGQgREVDT04gZHJpdmVyIikgaXMgaW5j
-bHVkZWQgaW4KPiB0b2RheSdzIGxpbnV4LW5leHQgKGllLCBuZXh0LTIwMTUwMjE3KS4gSSBub3Rp
-Y2VkIGJlY2F1c2UgYSBzY3JpcHQgSSB1c2UKPiB0byBjaGVjayBsaW51eC1uZXh0IHNwb3R0ZWQg
-YSBwcm9ibGVtIHdpdGggaXQuCj4gCj4gSXQgYWRkZWQgYW4gKG9wdGlvbmFsKSBkZXBlbmRlbmN5
-IG9uIERSTV9FWFlOT1M3REVDT04gaW5zdGVhZCBvZgo+IERSTV9FWFlOT1M3X0RFQ09OIChzZWUg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnKS4gSXMgdGhlIHRyaXZpYWwKPiBwYXRjaCB0
-byBjb3JyZWN0IHRoaXMgdHlwbyBxdWV1ZWQgc29tZXdoZXJlPyAoVGhpcyBhc3N1bWVzIGFuIG9w
-dGlvbmFsCj4gZGVwZW5kZW5jeSBvbiBEUk1fRVhZTk9TN19ERUNPTiBpcyBhY3R1YWxseSBuZWVk
-ZWQgZm9yIERSTV9FWFlOT1NfRFAsIG9mCj4gY291cnNlLikKCkFoLCByaWdodC4gSXQncyBteSBt
-aXN0YWtlLiBUaGF0IGlzIGp1c3QgdHlwbyBzbyBpdCBzaG91bGQgYmUKRFJNX0VYWU5PUzdfREVD
-T04gaW5zdGVhZCBvZiBEUk1fRVhZTk9TN0RFQ09OLiBJdCB3b3VsZCBiZSBmaXhlZCBhdCBSQzEu
-CgpUaGFua3MgZm9yIHJlcG9ydCwKSW5raSBEYWUKCj4gCj4gCj4gUGF1bCBCb2xsZQo+IAo+IC0t
-Cj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2Ny
-aWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpv
-cmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3Zn
-ZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Enabling Exynos DRM IOMMU support for Exynos is currently broken and
+causes a BUG on exynos-iommu driver. This was not an issue since the
+options was disabled in exynos_defconfig but after commit 8dcc14f82f06
+("drm/exynos: IOMMU support should not be selectable by user"), it is
+selected if EXYNOS_IOMMU is enabled which is in exynos_defconfig.
+
+So a kernel built using exynos_defconfig after the mentioned commit
+fails to boot [0]. Disable IOMMU support in Exynos defconfig until
+things get sorted out.
+
+[0]:
+[    1.242183] ------------[ cut here ]------------
+[    1.246191] kernel BUG at drivers/iommu/exynos-iommu.c:481!
+[    1.251747] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+[    1.257561] Modules linked in:
+[    1.260603] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 3.19.0-07478-g796e1c55717e #490
+[    1.268412] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[    1.274489] task: ee06c000 ti: ee05a000 task.ti: ee05a000
+[    1.279874] PC is at __exynos_sysmmu_enable+0x184/0x190
+[    1.285080] LR is at exynos_iommu_attach_device+0x44/0xb0
+[    1.290461] pc : [<c0254a14>]    lr : [<c0254a64>]    psr: 60000193
+[    1.290461] sp : ee05bcf8  ip : 00000000  fp : ed84aa40
+[    1.301916] r10: ed84a890  r9 : a0000113  r8 : 6db30000
+[    1.307125] r7 : ed84aa40  r6 : 00000000  r5 : 00000000  r4 : ee174e10
+[    1.313635] r3 : 6db30000  r2 : ed84aa40  r1 : 6db30000  r0 : ee174e10
+[    1.320147] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+[    1.327524] Control: 10c5387d  Table: 4000406a  DAC: 00000015
+[    1.333252] Process swapper/0 (pid: 1, stack limit = 0xee05a210)
+[    1.339241] Stack: (0xee05bcf8 to 0xee05c000)
+[    1.343581] bce0:                                                       6db30000 ee174e10
+[    1.351741] bd00: ed84a880 00000000 ed84aa40 ee174e10 a0000113 ed84a890 00000000 c0254a64
+[    1.359900] bd20: 00000000 6db30000 ee174e10 ed84adc0 00000005 00000034 00000001 c0692c1c
+[    1.368059] bd40: 00000097 c02526c8 ee29f050 c0017210 ee29f050 ee174e10 edab6810 c0282558
+[    1.376219] bd60: edab6a10 ee1cb000 00000005 c0283520 ee29f240 c028f210 edab6810 ee2ef280
+[    1.384378] bd80: edb24680 ed84a680 ee1cb000 c02883f8 edab6810 ee1cb000 ee1cb000 00000000
+[    1.392537] bda0: ed84a680 ee2ef450 00000000 c027e968 ee1cb000 00000000 00000000 c0268fd4
+[    1.400696] bdc0: edab6800 c06b0de4 ee1cb000 c026a8bc ee2ef0c0 c028f210 00000002 ee2ef460
+[    1.408855] bde0: ee2ef460 00000002 ee2ef280 c0288728 c04af5d0 edab6810 ee2ef280 00000000
+[    1.417014] be00: c06b1348 c0288918 c06b0f00 c06b0f00 edab6810 00000001 c06b0da0 c027eaf4
+[    1.425173] be20: c070334c edaee190 00000000 edab6810 ffffffed c06b0da0 00000000 c028da1c
+[    1.433332] be40: edab6810 c070334c 00000000 c028c5f8 edab6810 c06b0da0 edab6844 00000000
+[    1.441492] be60: eda3c740 c028c7a4 c06b0da0 00000000 c028c718 c028af74 ee005274 ee3b7b40
+[    1.449652] be80: c06b0da0 ee3b7680 c06b1540 c028bde4 c05b6990 c06b0da0 c0703324 c06b0da0
+[    1.457811] bea0: c0703324 00000000 c069ab18 c028cdc4 00000000 00000000 c0703324 c027ebd8
+[    1.465970] bec0: 00000000 c05b6990 ffffffff 00000000 00000000 00000000 00000000 c00c4574
+[    1.474129] bee0: 00000000 00000000 c069ab18 c027eb1c 00000000 c069ab18 c069ab18 c0008944
+[    1.482288] bf00: 00000036 c04770e8 ee049800 c06eace0 ee06c000 60000113 c069eab0 00000000
+[    1.490447] bf20: 00000000 c069eab0 60000113 00000000 ef7fcabc ef7fcaae c061c594 c0038640
+[    1.498607] bf40: c05cb1d0 c061bc24 00000006 00000006 c069ea50 c06724d4 00000006 c06724b4
+[    1.506766] bf60: c06c7600 c0647588 c0692c1c 00000097 00000000 c0647d40 00000006 00000006
+[    1.514925] bf80: c0647588 c003d2d8 00000000 c046921c 00000000 00000000 00000000 00000000
+[    1.523084] bfa0: 00000000 c0469224 00000000 c000e680 00000000 00000000 00000000 00000000
+[    1.531243] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    1.539402] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[    1.547567] [<c0254a14>] (__exynos_sysmmu_enable) from [<c0254a64>] (exynos_iommu_attach_device+0x44/0xb0)
+[    1.557199] [<c0254a64>] (exynos_iommu_attach_device) from [<c02526c8>] (iommu_attach_device+0x18/0x24)
+[    1.566576] [<c02526c8>] (iommu_attach_device) from [<c0017210>] (arm_iommu_attach_device+0x18/0x50)
+[    1.575690] [<c0017210>] (arm_iommu_attach_device) from [<c0282558>] (drm_iommu_attach_device+0x50/0xb4)
+[    1.585150] [<c0282558>] (drm_iommu_attach_device) from [<c0283520>] (fimd_bind+0x94/0x1b8)
+[    1.593483] [<c0283520>] (fimd_bind) from [<c02883f8>] (component_bind_all+0xb4/0x214)
+[    1.601380] [<c02883f8>] (component_bind_all) from [<c027e968>] (exynos_drm_load+0x9c/0x13c)
+[    1.609802] [<c027e968>] (exynos_drm_load) from [<c0268fd4>] (drm_dev_register+0xa0/0xf4)
+[    1.617960] [<c0268fd4>] (drm_dev_register) from [<c026a8bc>] (drm_platform_init+0x44/0xcc)
+[    1.626293] [<c026a8bc>] (drm_platform_init) from [<c0288728>] (try_to_bring_up_master.part.3+0xc8/0x104)
+[    1.635839] [<c0288728>] (try_to_bring_up_master.part.3) from [<c0288918>] (component_master_add_with_match+0xcc/0x114)
+[    1.646602] [<c0288918>] (component_master_add_with_match) from [<c027eaf4>] (exynos_drm_platform_probe+0xec/0x114)
+[    1.657019] [<c027eaf4>] (exynos_drm_platform_probe) from [<c028da1c>] (platform_drv_probe+0x48/0x98)
+[    1.666221] [<c028da1c>] (platform_drv_probe) from [<c028c5f8>] (driver_probe_device+0x114/0x234)
+[    1.675075] [<c028c5f8>] (driver_probe_device) from [<c028c7a4>] (__driver_attach+0x8c/0x90)
+[    1.683494] [<c028c7a4>] (__driver_attach) from [<c028af74>] (bus_for_each_dev+0x54/0x88)
+[    1.691653] [<c028af74>] (bus_for_each_dev) from [<c028bde4>] (bus_add_driver+0xd8/0x1cc)
+[    1.699812] [<c028bde4>] (bus_add_driver) from [<c028cdc4>] (driver_register+0x78/0xf4)
+[    1.707797] [<c028cdc4>] (driver_register) from [<c027ebd8>] (exynos_drm_init+0xbc/0x110)
+[    1.715956] [<c027ebd8>] (exynos_drm_init) from [<c0008944>] (do_one_initcall+0x80/0x1d0)
+[    1.724117] [<c0008944>] (do_one_initcall) from [<c0647d40>] (kernel_init_freeable+0x108/0x1d4)
+[    1.732796] [<c0647d40>] (kernel_init_freeable) from [<c0469224>] (kernel_init+0x8/0xe4)
+[    1.740869] [<c0469224>] (kernel_init) from [<c000e680>] (ret_from_fork+0x14/0x34)
+[    1.748419] Code: e3403110 11a02001 01a02003 eaffffe4 (e7f001f2) 
+[    1.754502] ---[ end trace f58ad362326928d7 ]---
+
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/configs/exynos_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 70e5d0bdb4e4..3d22aae39a83 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -176,7 +176,6 @@ CONFIG_PL330_DMA=y
+ CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_COMMON_CLK_MAX77802=y
+ CONFIG_COMMON_CLK_S2MPS11=y
+-CONFIG_EXYNOS_IOMMU=y
+ CONFIG_EXTCON=y
+ CONFIG_EXTCON_MAX14577=y
+ CONFIG_EXTCON_MAX77693=y
+-- 
+2.1.3
