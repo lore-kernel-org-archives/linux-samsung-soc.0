@@ -1,44 +1,33 @@
-From: Mikko Rapeli <mikko.rapeli@iki.fi>
-Subject: [PATCH 07/45] exynos_drm.h: include stdint.h in userspace
-Date: Tue, 17 Feb 2015 00:05:10 +0100
-Message-ID: <1424127948-22484-8-git-send-email-mikko.rapeli@iki.fi>
-References: <1424127948-22484-1-git-send-email-mikko.rapeli@iki.fi>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: drm/exynos: DRM_EXYNOS7DECON?
+Date: Tue, 17 Feb 2015 10:04:48 +0100
+Message-ID: <1424163888.7082.16.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424127948-22484-1-git-send-email-mikko.rapeli@iki.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Mikko Rapeli <mikko.rapeli@iki.fi>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Akshu Agrawal <akshua@gmail.com>, linux-arm-kernel@lists.infradead.org, Valentin Rothberg <valentinrothberg@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-=46ixes compilation errors like:
-
-drm/exynos_drm.h:30:2: error: unknown type name =E2=80=98uint64_t=E2=80=
-=99
-
-Signed-off-by: Mikko Rapeli <mikko.rapeli@iki.fi>
----
- include/uapi/drm/exynos_drm.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_dr=
-m.h
-index 5575ed1..03d094d 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -15,6 +15,11 @@
- #ifndef _UAPI_EXYNOS_DRM_H_
- #define _UAPI_EXYNOS_DRM_H_
-=20
-+#ifdef __KERNEL__
-+#include <linux/types.h>
-+#else
-+#include <stdint.h>
-+#endif
- #include <drm/drm.h>
-=20
- /**
---=20
-2.1.4
+WW91ciBjb21taXQgOTY5NzZjM2Q5YWZmICgiZHJtL2V4eW5vczogQWRkIERFQ09OIGRyaXZlciIp
+IGlzIGluY2x1ZGVkIGluCnRvZGF5J3MgbGludXgtbmV4dCAoaWUsIG5leHQtMjAxNTAyMTcpLiBJ
+IG5vdGljZWQgYmVjYXVzZSBhIHNjcmlwdCBJIHVzZQp0byBjaGVjayBsaW51eC1uZXh0IHNwb3R0
+ZWQgYSBwcm9ibGVtIHdpdGggaXQuCgpJdCBhZGRlZCBhbiAob3B0aW9uYWwpIGRlcGVuZGVuY3kg
+b24gRFJNX0VYWU5PUzdERUNPTiBpbnN0ZWFkIG9mCkRSTV9FWFlOT1M3X0RFQ09OIChzZWUgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnKS4gSXMgdGhlIHRyaXZpYWwKcGF0Y2ggdG8gY29y
+cmVjdCB0aGlzIHR5cG8gcXVldWVkIHNvbWV3aGVyZT8gKFRoaXMgYXNzdW1lcyBhbiBvcHRpb25h
+bApkZXBlbmRlbmN5IG9uIERSTV9FWFlOT1M3X0RFQ09OIGlzIGFjdHVhbGx5IG5lZWRlZCBmb3Ig
+RFJNX0VYWU5PU19EUCwgb2YKY291cnNlLikKCgpQYXVsIEJvbGxlCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
