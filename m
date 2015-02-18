@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH 5/6] ASoC: samsung: Extend Snow driver to support max98089
-Date: Wed, 18 Feb 2015 19:25:58 +0100
-Message-ID: <1424283959-16289-6-git-send-email-afaerber@suse.de>
+Subject: [PATCH 6/6] ARM: dts: Add sound support to exynos5250-spring
+Date: Wed, 18 Feb 2015 19:25:59 +0100
+Message-ID: <1424283959-16289-7-git-send-email-afaerber@suse.de>
 References: <1424283959-16289-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -18,29 +18,32 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Vincent Palatin <vpalatin@chromium.org>, Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Jaroslav Kysela <perex@perex.cz>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBpcyBuZWVkZWQgZm9yIFNwcmluZy4KClNpZ25lZC1vZmYtYnk6IEFuZHJlYXMgRsOkcmJl
-ciA8YWZhZXJiZXJAc3VzZS5kZT4KLS0tCiBzb3VuZC9zb2Mvc2Ftc3VuZy9LY29uZmlnIHwgMSAr
-CiBzb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMgIHwgMSArCiAyIGZpbGVzIGNoYW5nZWQsIDIgaW5z
-ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy9zYW1zdW5nL0tjb25maWcgYi9zb3Vu
-ZC9zb2Mvc2Ftc3VuZy9LY29uZmlnCmluZGV4IDNjZWJmNmNhMDNkZi4uMjIyMTgxNjU1ZTRmIDEw
-MDY0NAotLS0gYS9zb3VuZC9zb2Mvc2Ftc3VuZy9LY29uZmlnCisrKyBiL3NvdW5kL3NvYy9zYW1z
-dW5nL0tjb25maWcKQEAgLTIxNCw2ICsyMTQsNyBAQCBjb25maWcgU05EX1NPQ19MSVRUTEVNSUxM
-CiBjb25maWcgU05EX1NPQ19TTk9XCiAJdHJpc3RhdGUgIkF1ZGlvIHN1cHBvcnQgZm9yIEdvb2ds
-ZSBTbm93IGJvYXJkcyIKIAlkZXBlbmRzIG9uIFNORF9TT0NfU0FNU1VORyAmJiBJMkMKKwlzZWxl
-Y3QgU05EX1NPQ19NQVg5ODA4OAogCXNlbGVjdCBTTkRfU09DX01BWDk4MDkwCiAJc2VsZWN0IFNO
-RF9TT0NfTUFYOTgwOTUKIAlzZWxlY3QgU05EX1NBTVNVTkdfSTJTCmRpZmYgLS1naXQgYS9zb3Vu
-ZC9zb2Mvc2Ftc3VuZy9zbm93LmMgYi9zb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMKaW5kZXggNzY1
-MWRjOTI0MTYxLi44OWQ3ZTM5YjIwNmUgMTAwNjQ0Ci0tLSBhL3NvdW5kL3NvYy9zYW1zdW5nL3Nu
-b3cuYworKysgYi9zb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMKQEAgLTEwNSw2ICsxMDUsNyBAQCBz
-dGF0aWMgaW50IHNub3dfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIH0KIAog
-c3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgc25vd19vZl9tYXRjaFtdID0geworCXsg
-LmNvbXBhdGlibGUgPSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgwODkiLCB9LAogCXsgLmNvbXBh
-dGlibGUgPSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgwOTAiLCB9LAogCXsgLmNvbXBhdGlibGUg
-PSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgwOTEiLCB9LAogCXsgLmNvbXBhdGlibGUgPSAiZ29v
-Z2xlLHNub3ctYXVkaW8tbWF4OTgwOTUiLCB9LAotLSAKMi4xLjQKCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
-ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+U2lnbmVkLW9mZi1ieTogQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPgotLS0KIGFy
+Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cyB8IDI1ICsrKysrKysrKysrKysr
+KysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
+IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzCmluZGV4IDg2NmJlYjRlMDU5Ny4uMTQyZTA1NTBl
+MjIzIDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmluZy5kdHMK
+KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzCkBAIC00OSw2ICs0
+OSwxNyBAQAogCQl9OwogCX07CiAKKwlzb3VuZCB7CisJCWNvbXBhdGlibGUgPSAiZ29vZ2xlLHNu
+b3ctYXVkaW8tbWF4OTgwODkiOworCQlzYW1zdW5nLG1vZGVsID0gIlNwcmluZy1JMlMtTUFYOTgw
+ODkiOworCQlzYW1zdW5nLGkycy1jb250cm9sbGVyID0gPCZpMnMwPjsKKwkJc2Ftc3VuZyxhdWRp
+by1jb2RlYyA9IDwmbWF4OTgwODk+OworCQljbG9ja3MgPSA8JnBtdV9zeXN0ZW1fY29udHJvbGxl
+ciAwPjsKKwkJY2xvY2stbmFtZXMgPSAibWNsayI7CisJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVs
+dCI7CisJCXBpbmN0cmwtMCA9IDwmbWljX2RldF9ncGlvPiwgPCZocF9kZXRfZ3Bpbz47CisJfTsK
+KwogCXVzYi1odWIgewogCQljb21wYXRpYmxlID0gInNtc2MsdXNiMzUwM2EiOwogCQlyZXNldC1n
+cGlvcyA9IDwmZ3BlMSAwIEdQSU9fQUNUSVZFX0xPVz47CkBAIC00OTksNiArNTEwLDIwIEBACiAJ
+CXNhbXN1bmcscGluLWRydiA9IDwwPjsKIAl9OwogCisJbWljX2RldF9ncGlvOiBtaWMtZGV0LWdw
+aW8geworCQlzYW1zdW5nLHBpbnMgPSAiZ3B4Mi0wIjsKKwkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24g
+PSA8MD47CisJCXNhbXN1bmcscGluLXB1ZCA9IDwwPjsKKwkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+
+OworCX07CisKKwlocF9kZXRfZ3BpbzogaHAtZGV0LWdwaW8geworCQlzYW1zdW5nLHBpbnMgPSAi
+Z3B4Mi0yIjsKKwkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8MD47CisJCXNhbXN1bmcscGluLXB1
+ZCA9IDwwPjsKKwkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OworCX07CisKIAlzNW04NzY3X2RzOiBz
+NW04NzY3LWRzIHsKIAkJc2Ftc3VuZyxwaW5zID0gImdweDItMyIsICJncHgyLTQiLCAiZ3B4Mi01
+IjsKIAkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8MD47Ci0tIAoyLjEuNAoKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFp
+bGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlz
+dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
