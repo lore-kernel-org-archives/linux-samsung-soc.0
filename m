@@ -1,83 +1,24 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2] ASoC: Samsung: add missing I2C/SPI dependencies
-Date: Wed, 18 Feb 2015 21:35:08 +0100
-Message-ID: <8075847.dUio9f5hRh@wuerfel>
+Subject: [PATCH 0/2, v2] cpufreq: build fixes
+Date: Wed, 18 Feb 2015 21:54:01 +0100
+Message-ID: <7331404.XKGG8rohnR@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:62688 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.24]:57738 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750985AbbBRUfT (ORCPT
+	with ESMTP id S1750927AbbBRUyj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Feb 2015 15:35:19 -0500
+	Wed, 18 Feb 2015 15:54:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, lgirdwood@gmail.com, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
 
-A few sound drivers for the samsung platforms are missing dependencies
-on I2C or SPI, which can lead to build errors like
+This is an unmodified re-send of two patches I originally submitted
+on January 28. Both patches were Acked by Viresh, while a third patch
+got replaced with a better fix. Please merge these through the cpufreq
+tree for 3.20 and backports.
 
-codecs/rt5631.c:1737:1: warning: data definition has no type or storage class
-31_i2c_driver);
-
-codecs/rt5631.c:1737:1: error: type defaults to 'int' in declaration of 'module_i2c_driver' [-Werror=implicit-int]
-codecs/rt5631.c:1737:1: warning: parameter names (without types) in function declaration
-codecs/rt5631.c:1726:26: warning: 'rt5631_i2c_driver' defined but not used [-Wunused-variable]
-
-I have gone through all the ones that did not already have
-an I2C dependency and added the ones that I found missing,
-namely arndale, odroid-x2, littlemill, bells and speyside
-and this patch adds all the dependencies.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 3cebf6ca03df..0632a36852c8 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -174,7 +174,7 @@ config SND_SOC_SMDK_WM8994_PCM
- 
- config SND_SOC_SPEYSIDE
- 	tristate "Audio support for Wolfson Speyside"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && I2C && SPI_MASTER
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM8996
- 	select SND_SOC_WM9081
-@@ -189,7 +189,7 @@ config SND_SOC_TOBERMORY
- 
- config SND_SOC_BELLS
- 	tristate "Audio support for Wolfson Bells"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && MFD_ARIZONA
-+	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && MFD_ARIZONA && I2C && SPI_MASTER
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM5102
- 	select SND_SOC_WM5110
-@@ -206,7 +206,7 @@ config SND_SOC_LOWLAND
- 
- config SND_SOC_LITTLEMILL
- 	tristate "Audio support for Wolfson Littlemill"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410 && I2C
- 	select SND_SAMSUNG_I2S
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
-@@ -223,7 +223,7 @@ config SND_SOC_SNOW
- 
- config SND_SOC_ODROIDX2
- 	tristate "Audio support for Odroid-X2 and Odroid-U3"
--	depends on SND_SOC_SAMSUNG
-+	depends on SND_SOC_SAMSUNG && I2C
- 	select SND_SOC_MAX98090
- 	select SND_SAMSUNG_I2S
- 	help
-@@ -231,6 +231,6 @@ config SND_SOC_ODROIDX2
- 
- config SND_SOC_ARNDALE_RT5631_ALC5631
-         tristate "Audio support for RT5631(ALC5631) on Arndale Board"
--        depends on SND_SOC_SAMSUNG
-+        depends on SND_SOC_SAMSUNG && I2C
-         select SND_SAMSUNG_I2S
-         select SND_SOC_RT5631
+	Arnd
