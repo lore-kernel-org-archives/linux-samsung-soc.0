@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH 3/6] ARM: dts: Add max98089 to exynos5250-spring
-Date: Wed, 18 Feb 2015 19:25:56 +0100
-Message-ID: <1424283959-16289-4-git-send-email-afaerber@suse.de>
+Subject: [PATCH 5/6] ASoC: samsung: Extend Snow driver to support max98089
+Date: Wed, 18 Feb 2015 19:25:58 +0100
+Message-ID: <1424283959-16289-6-git-send-email-afaerber@suse.de>
 References: <1424283959-16289-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -18,21 +18,29 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Vincent Palatin <vpalatin@chromium.org>, Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Jaroslav Kysela <perex@perex.cz>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2lnbmVkLW9mZi1ieTogQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPgotLS0KIGFy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cyB8IDUgKysrKysKIDEgZmlsZSBj
-aGFuZ2VkLCA1IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9l
-eHlub3M1MjUwLXNwcmluZy5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmlu
-Zy5kdHMKaW5kZXggZDA3NWE2OGFjMDc4Li44NjZiZWI0ZTA1OTcgMTAwNjQ0Ci0tLSBhL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cworKysgYi9hcmNoL2FybS9ib290L2R0
-cy9leHlub3M1MjUwLXNwcmluZy5kdHMKQEAgLTQwMCw2ICs0MDAsMTEgQEAKIAlzYW1zdW5nLGky
-Yy1zZGEtZGVsYXkgPSA8MTAwPjsKIAlzYW1zdW5nLGkyYy1tYXgtYnVzLWZyZXEgPSA8NjYwMDA+
-OwogCisJbWF4OTgwODk6IGNvZGVjQDEwIHsKKwkJY29tcGF0aWJsZSA9ICJtYXhpbSxtYXg5ODA4
-OSIsICJtYXhpbSxtYXg5ODA4OCI7CisJCXJlZyA9IDwweDEwPjsKKwl9OworCiAJdGVtcGVyYXR1
-cmUtc2Vuc29yQDRjIHsKIAkJY29tcGF0aWJsZSA9ICJnbXQsZzc4MSI7CiAJCXJlZyA9IDwweDRj
-PjsKLS0gCjIuMS40CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0
-cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGlu
-Zm8vbGludXgtYXJtLWtlcm5lbAo=
+VGhpcyBpcyBuZWVkZWQgZm9yIFNwcmluZy4KClNpZ25lZC1vZmYtYnk6IEFuZHJlYXMgRsOkcmJl
+ciA8YWZhZXJiZXJAc3VzZS5kZT4KLS0tCiBzb3VuZC9zb2Mvc2Ftc3VuZy9LY29uZmlnIHwgMSAr
+CiBzb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMgIHwgMSArCiAyIGZpbGVzIGNoYW5nZWQsIDIgaW5z
+ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy9zYW1zdW5nL0tjb25maWcgYi9zb3Vu
+ZC9zb2Mvc2Ftc3VuZy9LY29uZmlnCmluZGV4IDNjZWJmNmNhMDNkZi4uMjIyMTgxNjU1ZTRmIDEw
+MDY0NAotLS0gYS9zb3VuZC9zb2Mvc2Ftc3VuZy9LY29uZmlnCisrKyBiL3NvdW5kL3NvYy9zYW1z
+dW5nL0tjb25maWcKQEAgLTIxNCw2ICsyMTQsNyBAQCBjb25maWcgU05EX1NPQ19MSVRUTEVNSUxM
+CiBjb25maWcgU05EX1NPQ19TTk9XCiAJdHJpc3RhdGUgIkF1ZGlvIHN1cHBvcnQgZm9yIEdvb2ds
+ZSBTbm93IGJvYXJkcyIKIAlkZXBlbmRzIG9uIFNORF9TT0NfU0FNU1VORyAmJiBJMkMKKwlzZWxl
+Y3QgU05EX1NPQ19NQVg5ODA4OAogCXNlbGVjdCBTTkRfU09DX01BWDk4MDkwCiAJc2VsZWN0IFNO
+RF9TT0NfTUFYOTgwOTUKIAlzZWxlY3QgU05EX1NBTVNVTkdfSTJTCmRpZmYgLS1naXQgYS9zb3Vu
+ZC9zb2Mvc2Ftc3VuZy9zbm93LmMgYi9zb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMKaW5kZXggNzY1
+MWRjOTI0MTYxLi44OWQ3ZTM5YjIwNmUgMTAwNjQ0Ci0tLSBhL3NvdW5kL3NvYy9zYW1zdW5nL3Nu
+b3cuYworKysgYi9zb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMKQEAgLTEwNSw2ICsxMDUsNyBAQCBz
+dGF0aWMgaW50IHNub3dfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIH0KIAog
+c3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgc25vd19vZl9tYXRjaFtdID0geworCXsg
+LmNvbXBhdGlibGUgPSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgwODkiLCB9LAogCXsgLmNvbXBh
+dGlibGUgPSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgwOTAiLCB9LAogCXsgLmNvbXBhdGlibGUg
+PSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgwOTEiLCB9LAogCXsgLmNvbXBhdGlibGUgPSAiZ29v
+Z2xlLHNub3ctYXVkaW8tbWF4OTgwOTUiLCB9LAotLSAKMi4xLjQKCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
+bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
+ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
