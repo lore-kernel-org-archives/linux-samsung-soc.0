@@ -1,81 +1,57 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 0/7] platform/chrome: Add user-space dev inferface
- support
-Date: Wed, 18 Feb 2015 10:27:15 +0100
-Message-ID: <54E45AF3.1010405@collabora.co.uk>
-References: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk>	<54E1A825.7090408@collabora.co.uk> <CAPnjgZ2QQzdZSrJ8gFYzMiVEFT8y7jod993AeVkpTPpKhiQ8DA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34650 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750976AbbBRJ1V (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Feb 2015 04:27:21 -0500
-In-Reply-To: <CAPnjgZ2QQzdZSrJ8gFYzMiVEFT8y7jod993AeVkpTPpKhiQ8DA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH v4 0/8] hwmon: thermal: Odroid U3: Provide support for Odroid
+ U3 fan
+Date: Wed, 18 Feb 2015 11:07:28 +0100
+Message-ID: <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>
+Cc: lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Glass <sjg@chromium.org>
-Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>
 
-Hello Simon,
+Presented patches add support for Odroid's U3 optional CPU FAN, which uses PWM
+subsystem for low level control.
 
-On 02/18/2015 03:26 AM, Simon Glass wrote:
-> 
-> On 16 February 2015 at 01:19, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> Hello Olof,
->>
->> On 02/02/2015 12:26 PM, Javier Martinez Canillas wrote:
->>> Hello,
->>>
->>> The mainline ChromeOS Embedded Controller (EC) driver is still missing some
->>> features that are present in the downstream ChromiumOS tree. These are:
->>>
->>>   - Low Pin Count (LPC) interface
->>>   - User-space device interface
->>>   - Access to vboot context stored on a block device
->>>   - Access to vboot context stored on EC's nvram
->>>   - Power Delivery Device
->>>   - Support for multiple EC in a system
->>>
->>> This is a fifth version of a series that adds support for the first two of
->>> the missing features: the EC LPC and EC character device interfaces that
->>> are used by user-space to access the ChromeOS EC. The support patches were
->>> taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
->>> squashed to have a minimal patch-set.
->>>
->>
->> Any comments on this series? The last version was posted a couple of weeks
->> ago but the series have been in the list for months. Lee has already acked
->> the mfd changes so you can merge all through your chrome-platform tree if
->> you want.
->>
->> It wold be great if this series get in to have the EC user-space interface
->> supported and to minimize the delta with the Chromemium OS kernel since it
->> still has other features that needs to be upstreamed like multiple EC in a
->> system and access to vboot context stored in block device or EC's nvram.
-> 
-> Are you sure Olof is the right maintainer for this going to mainline?
->
+After successful probe it registers itself as a cooling device for thermal
+subsystem. To preserve the ability to use this fan as a PWM device stubs for
+thermal_of_cooling_device_register() and thermal_cdev_update() have been added.
 
-The downstream ChromiumOS kernel has this stuff in drivers/mfd but Lee was
-patient enough to explain to me why it does not fit there. So I think the
-best place is drivers/platform/chrome/ which is maintained by Olof.
- 
-> I do feel for you trying to get all this in and have seen your many
-> attempts. It has been in U-Boot for 18 months...I hope you get there
-> in the end.
->
+Additionally, devices without support for DTS are still supported.
 
-Thanks a lot for your empathy. I do hope to get there too since there are
-still more features to match what is in the downstream tree but needs to
-be based on this series.
+To provide correct functionality, new properties to device tree description for 
+Exynos4412 and in particular Odroid U3 have been added.
 
-> Regards,
-> Simon
->
+Those patches were tested on Exynos4412 - Odroid U3 board.
 
-Best regards,
-Javier
+Patches were applied on:
+linux-soc-thermal/next branch (Linux 3.19-rc5)
+SHA1: 252454f5cbda2c6b40c5d36f58cac2938437b85d
+
+Kamil Debski (1):
+  ARM: dts: Add pwm-fan node to the Odroid-U3 board
+
+Lukasz Majewski (7):
+  thermal: Provide stub for thermal_of_cooling_device_register()
+    function
+  thermal: Provide stub for thermal_cdev_update() function
+  Documentation: dts: Documentation entry to explain how to use PWM FAN
+    as a cooling device
+  ARM: dts: Add properties to use pwm-fan device as a cooling device in
+    Odroid U3
+  hwmon: pwm-fan: Extract __set_pwm() function to only modify PWM duty
+    cycle
+  hwmon: pwm-fan: Read PWM FAN configuration from device tree
+  hwmon: pwm-fan: Code for using PWM FAN as a cooling device
+
+ .../devicetree/bindings/hwmon/pwm-fan.txt          |  20 +++
+ arch/arm/boot/dts/exynos4.dtsi                     |   2 +-
+ arch/arm/boot/dts/exynos4412-odroidu3.dts          |  44 ++++++
+ drivers/hwmon/pwm-fan.c                            | 167 +++++++++++++++++++--
+ include/linux/thermal.h                            |  22 ++-
+ 5 files changed, 236 insertions(+), 19 deletions(-)
+
+-- 
+2.0.0.rc2
+
