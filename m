@@ -1,178 +1,189 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v4 8/8] hwmon: pwm-fan: Code for using PWM FAN as a cooling
- device
-Date: Wed, 18 Feb 2015 11:07:36 +0100
-Message-ID: <1424254056-5904-9-git-send-email-l.majewski@samsung.com>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>
-Cc: lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
+Date: Wed, 18 Feb 2015 11:45:25 +0100
+Message-ID: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The PWM FAN device can now be used as a thermal cooling device. Necessary
-infrastructure has been added in this commit.
+On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
+56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+controller") the second suspend to RAM failed. First suspend worked fine
+but the next one hang just after powering down of secondary CPUs (system
+consumed energy as it would be running but was not responsive).
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
-Changes for v2:
-- Replace pwm_fan_cooling_states with pwm_fan_cooling_levels
-- Update ctx->pwm_fan_state when correct data from device tree is available
-- Using therma_cdev_update() when thermal is ready for controlling the fan
-Changes for v3:
-- Rename patch heading
-- pwm_fan_of_get_cooling_data() now returns -EINVAL when no "cooling-levels"
-  property defined
-- register of cooling device only when proper cooling data is present
-Changed for v4:
-- None
----
- drivers/hwmon/pwm-fan.c | 86 +++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 83 insertions(+), 3 deletions(-)
+The issue was caused by enabling delayed reset assertion for CPU0 just
+after issuing power down of cores. This was introduced for Exynos4 in
+13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 82cd06a..622bcd1 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/sysfs.h>
-+#include <linux/thermal.h>
+The whole behavior is not well documented but after checking with vendor
+code this should be done like this (on Exynos4):
+1. Enable delayed reset assertion when system is running (for all CPUs).
+2. Disable delayed reset assertion before suspending the system.
+   This can be done after powering off secondary CPUs.
+3. Re-enable the delayed reset assertion when system is resumed.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
+Cc: <stable@vger.kernel.org>
+---
+ arch/arm/mach-exynos/common.h  |  2 ++
+ arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
+ arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
+ arch/arm/mach-exynos/suspend.c |  3 +++
+ 4 files changed, 34 insertions(+), 37 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index f70eca7ee705..0ef8d4b47102 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -153,6 +153,8 @@ extern void exynos_enter_aftr(void);
  
- #define MAX_PWM 255
+ extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
  
-@@ -68,6 +69,17 @@ exit_set_pwm_err:
- 	return ret;
++extern void exynos_set_delayed_reset_assertion(bool enable);
++
+ extern void s5p_init_cpu(void __iomem *cpuid_addr);
+ extern unsigned int samsung_rev(void);
+ extern void __iomem *cpu_boot_reg_base(void);
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 2013f73797ed..e2f46295eed7 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -166,6 +166,33 @@ static void __init exynos_init_io(void)
+ 	exynos_map_io();
  }
  
-+static void pwm_fan_update_state(struct pwm_fan_ctx *ctx, unsigned long pwm)
++/*
++ * Set or clear the USE_DELAYED_RESET_ASSERTION option. Used by smp code
++ * and suspend.
++ *
++ * This is necessary only on Exynos4 SoCs. When system is running
++ * USE_DELAYED_RESET_ASSERTION should be set so the ARM CLK clock down
++ * feature could properly detect global idle state when secondary CPU is
++ * powered down.
++ *
++ * However this should not be set when such system is going into suspend.
++ */
++void exynos_set_delayed_reset_assertion(bool enable)
 +{
-+	int i;
++	if (soc_is_exynos4()) {
++		unsigned int tmp, core_id;
 +
-+	for (i = 0; i < ctx->pwm_fan_max_state; ++i)
-+		if (pwm < ctx->pwm_fan_cooling_levels[i + 1])
-+			break;
-+
-+	ctx->pwm_fan_state = i;
-+}
-+
- static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
- 		       const char *buf, size_t count)
- {
-@@ -82,6 +94,7 @@ static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		return ret;
- 
-+	pwm_fan_update_state(ctx, pwm);
- 	return count;
- }
- 
-@@ -103,6 +116,59 @@ static struct attribute *pwm_fan_attrs[] = {
- 
- ATTRIBUTE_GROUPS(pwm_fan);
- 
-+/* thermal cooling device callbacks */
-+static int pwm_fan_get_max_state(struct thermal_cooling_device *cdev,
-+				 unsigned long *state)
-+{
-+	struct pwm_fan_ctx *ctx = cdev->devdata;
-+
-+	*state = ctx->pwm_fan_max_state;
-+
-+	return 0;
-+}
-+
-+static int pwm_fan_get_cur_state(struct thermal_cooling_device *cdev,
-+				 unsigned long *state)
-+{
-+	struct pwm_fan_ctx *ctx = cdev->devdata;
-+
-+	if (!ctx)
-+		return -EINVAL;
-+
-+	*state = ctx->pwm_fan_state;
-+
-+	return 0;
-+}
-+
-+static int
-+pwm_fan_set_cur_state(struct thermal_cooling_device *cdev, unsigned long state)
-+{
-+	struct pwm_fan_ctx *ctx = cdev->devdata;
-+	int ret;
-+
-+	if (!ctx || (state > ctx->pwm_fan_max_state))
-+		return -EINVAL;
-+
-+	if (state == ctx->pwm_fan_state)
-+		return 0;
-+
-+	ret = __set_pwm(ctx, ctx->pwm_fan_cooling_levels[state]);
-+	if (ret) {
-+		dev_err(&cdev->device, "Cannot set pwm!\n");
-+		return ret;
++		for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
++			tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
++			if (enable)
++				tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
++			else
++				tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
++			pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
++		}
 +	}
-+
-+	ctx->pwm_fan_state = state;
-+
-+	return ret;
 +}
 +
-+static const struct thermal_cooling_device_ops pwm_fan_cooling_ops = {
-+	.get_max_state = pwm_fan_get_max_state,
-+	.get_cur_state = pwm_fan_get_cur_state,
-+	.set_cur_state = pwm_fan_set_cur_state,
-+};
-+
- int pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx *ctx)
+ static const struct of_device_id exynos_dt_pmu_match[] = {
+ 	{ .compatible = "samsung,exynos3250-pmu" },
+ 	{ .compatible = "samsung,exynos4210-pmu" },
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 3f32c47a6d74..19d5c87c842c 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -34,30 +34,6 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
+-/*
+- * Set or clear the USE_DELAYED_RESET_ASSERTION option, set on Exynos4 SoCs
+- * during hot-(un)plugging CPUx.
+- *
+- * The feature can be cleared safely during first boot of secondary CPU.
+- *
+- * Exynos4 SoCs require setting USE_DELAYED_RESET_ASSERTION during powering
+- * down a CPU so the CPU idle clock down feature could properly detect global
+- * idle state when CPUx is off.
+- */
+-static void exynos_set_delayed_reset_assertion(u32 core_id, bool enable)
+-{
+-	if (soc_is_exynos4()) {
+-		unsigned int tmp;
+-
+-		tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
+-		if (enable)
+-			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
+-		else
+-			tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
+-		pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
+-	}
+-}
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ static inline void cpu_leave_lowpower(u32 core_id)
  {
- 	struct device_node *np = dev->of_node;
-@@ -112,7 +178,7 @@ int pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx *ctx)
- 					      sizeof(u32));
+@@ -73,8 +49,6 @@ static inline void cpu_leave_lowpower(u32 core_id)
+ 	  : "=&r" (v)
+ 	  : "Ir" (CR_C), "Ir" (0x40)
+ 	  : "cc");
+-
+-	 exynos_set_delayed_reset_assertion(core_id, false);
+ }
  
- 	if (ret == -EINVAL)
--		return 0;
-+		return ret;
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+@@ -87,14 +61,6 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 		/* Turn the CPU off on next WFI instruction. */
+ 		exynos_cpu_power_down(core_id);
  
- 	if (ret <= 0) {
- 		dev_err(dev, "Wrong data!\n");
-@@ -147,8 +213,9 @@ int pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx *ctx)
+-		/*
+-		 * Exynos4 SoCs require setting
+-		 * USE_DELAYED_RESET_ASSERTION so the CPU idle
+-		 * clock down feature could properly detect
+-		 * global idle state when CPUx is off.
+-		 */
+-		exynos_set_delayed_reset_assertion(core_id, true);
+-
+ 		wfi();
  
- static int pwm_fan_probe(struct platform_device *pdev)
- {
--	struct device *hwmon;
-+	struct thermal_cooling_device *cdev;
- 	struct pwm_fan_ctx *ctx;
-+	struct device *hwmon;
- 	int duty_cycle;
- 	int ret;
- 
-@@ -192,8 +259,21 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 		if (pen_release == core_id) {
+@@ -355,9 +321,6 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 		udelay(10);
  	}
  
- 	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
--	if (ret)
-+	if (!ret) {
-+		ctx->pwm_fan_state = ctx->pwm_fan_max_state;
-+		cdev = thermal_of_cooling_device_register(pdev->dev.of_node,
-+							  "pwm-fan", ctx,
-+							  &pwm_fan_cooling_ops);
-+		if (IS_ERR(cdev)) {
-+			dev_err(&pdev->dev,
-+				"Failed to register pwm-fan as cooling device");
-+			pwm_disable(ctx->pwm);
-+			return PTR_ERR(cdev);
-+		}
-+		thermal_cdev_update(cdev);
-+	} else if (ret != -EINVAL) {
- 		return ret;
-+	}
+-	/* No harm if this is called during first boot of secondary CPU */
+-	exynos_set_delayed_reset_assertion(core_id, false);
+-
+ 	/*
+ 	 * now the secondary core is starting up let it run its
+ 	 * calibrations, then wait for it to finish
+@@ -404,6 +367,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
  
- 	return 0;
+ 	exynos_sysram_init();
+ 
++	exynos_set_delayed_reset_assertion(true);
++
+ 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+ 		scu_enable(scu_base_addr());
+ 
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 666ec3e5b03f..d4da035cc88a 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -235,6 +235,8 @@ static void exynos_pm_enter_sleep_mode(void)
+ 
+ static void exynos_pm_prepare(void)
+ {
++	exynos_set_delayed_reset_assertion(false);
++
+ 	/* Set wake-up mask registers */
+ 	exynos_pm_set_wakeup_mask();
+ 
+@@ -383,6 +385,7 @@ early_wakeup:
+ 
+ 	/* Clear SLEEP mode set in INFORM1 */
+ 	pmu_raw_writel(0x0, S5P_INFORM1);
++	exynos_set_delayed_reset_assertion(true);
  }
+ 
+ static void exynos3250_pm_resume(void)
 -- 
-2.0.0.rc2
-
+1.9.1
