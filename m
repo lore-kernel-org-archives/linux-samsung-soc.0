@@ -1,99 +1,78 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v4 4/8] ARM: dts: Add pwm-fan node to the Odroid-U3 board
-Date: Wed, 18 Feb 2015 14:16:26 +0100
-Message-ID: <54E490AA.3020301@suse.de>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com> <1424254056-5904-1-git-send-email-l.majewski@samsung.com> <1424254056-5904-5-git-send-email-l.majewski@samsung.com>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH] ARM: dts: Update exynos5250-spring with mmc node changes
+Date: Wed, 18 Feb 2015 17:10:12 +0100
+Message-ID: <1424275812-6797-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34263 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751711AbbBRNQc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Feb 2015 08:16:32 -0500
-In-Reply-To: <1424254056-5904-5-git-send-email-l.majewski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Jaehoon Chung <jh80.chung@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Am 18.02.2015 um 11:07 schrieb Lukasz Majewski:
-> From: Kamil Debski <k.debski@samsung.com>
->=20
-> Add pwm-fan node to the Odroid-U3 board file to enable PWM control of=
- the
-> cooling fan. In addition, add the "pwm" label to the pwm@139D0000 nod=
-e
-> in the exynos4412.dtsi.
->=20
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> [Rebased on the newest mainline by l.majewski@samsung.com]
+Resolve a merge conflict with mmc refactoring aaa25a5a33cb ("ARM: dts:
+unuse the slot-node and deprecate the supports-highspeed for dw-mmc in
+exynos") by dropping the slot@0 nodes, moving its bus-width property to
+the mmc node and replacing supports-highspeed with cap-{mmc,sd}-highspe=
+ed,
+matching exynos5250-snow.
 
-You need to sign off patches you submit.
+Cc: Jaehoon Chung <jh80.chung@samsung.com>
+=46ixes: 53dd4138bb0a ("ARM: dts: Add exynos5250-spring device tree")
+Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+---
+ arch/arm/boot/dts/exynos5250-spring.dts | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-> ---
-> Changes since v1:
-> - added pwm label to the pwm@139D0000 node in exynos4.dtsi
-> - use the pwm label in the exynos4412-odroidu3.dts
-> - change order or properties in the pwn-fan node, to be sorted
->   in alphabetical order
->=20
-> ---
->  arch/arm/boot/dts/exynos4.dtsi            |  2 +-
->  arch/arm/boot/dts/exynos4412-odroidu3.dts | 13 +++++++++++++
->  2 files changed, 14 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exyno=
-s4.dtsi
-> index f18d746..75266e3 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -582,7 +582,7 @@
->  		status =3D "disabled";
->  	};
-> =20
-> -	pwm@139D0000 {
-> +	pwm: pwm@139D0000 {
->  		compatible =3D "samsung,exynos4210-pwm";
->  		reg =3D <0x139D0000 0x1000>;
->  		interrupts =3D <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boo=
-t/dts/exynos4412-odroidu3.dts
-> index c8a64be..60bd1e4 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> @@ -31,6 +31,19 @@
->  			linux,default-trigger =3D "heartbeat";
->  		};
->  	};
-> +
-> +	pwm-fan {
-> +		compatible =3D "pwm-fan";
-> +		pwms =3D <&pwm 0 10000 0>;
-> +		status =3D "okay";
-
-Status "okay" is only needed for pre-existing nodes that would have
-status "disabled" otherwise, such as below. Just drop it here.
-
-Regards,
-Andreas
-
-> +	};
-> +};
-> +
-> +&pwm {
-> +	pinctrl-0 =3D <&pwm0_out>;
-> +	pinctrl-names =3D "default";
-> +	samsung,pwm-outputs =3D <0>;
-> +	status =3D "okay";
->  };
-> =20
->  &usb3503 {
->=20
-
-
+diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dt=
+s/exynos5250-spring.dts
+index f02775487cd4..c41600e587e0 100644
+--- a/arch/arm/boot/dts/exynos5250-spring.dts
++++ b/arch/arm/boot/dts/exynos5250-spring.dts
+@@ -429,7 +429,6 @@
+ &mmc_0 {
+ 	status =3D "okay";
+ 	num-slots =3D <1>;
+-	supports-highspeed;
+ 	broken-cd;
+ 	card-detect-delay =3D <200>;
+ 	samsung,dw-mshc-ciu-div =3D <3>;
+@@ -437,11 +436,8 @@
+ 	samsung,dw-mshc-ddr-timing =3D <1 2>;
+ 	pinctrl-names =3D "default";
+ 	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
+-
+-	slot@0 {
+-		reg =3D <0>;
+-		bus-width =3D <8>;
+-	};
++	bus-width =3D <8>;
++	cap-mmc-highspeed;
+ };
+=20
+ /*
+@@ -451,7 +447,6 @@
+ &mmc_1 {
+ 	status =3D "okay";
+ 	num-slots =3D <1>;
+-	supports-highspeed;
+ 	broken-cd;
+ 	card-detect-delay =3D <200>;
+ 	samsung,dw-mshc-ciu-div =3D <3>;
+@@ -459,11 +454,8 @@
+ 	samsung,dw-mshc-ddr-timing =3D <1 2>;
+ 	pinctrl-names =3D "default";
+ 	pinctrl-0 =3D <&sd1_clk &sd1_cmd &sd1_cd &sd1_bus4>;
+-
+-	slot@0 {
+-		reg =3D <0>;
+-		bus-width =3D <4>;
+-	};
++	bus-width =3D <4>;
++	cap-sd-highspeed;
+ };
+=20
+ &pinctrl_0 {
 --=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
-Graham Norton; HRB 21284 (AG N=FCrnberg)
+2.1.4
