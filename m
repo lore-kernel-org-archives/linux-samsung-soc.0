@@ -1,45 +1,68 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/1] ARM: dts: Add mclk entry for Snow and Peach Pit/Pi
- boards
-Date: Thu, 19 Feb 2015 14:31:26 +0100
-Message-ID: <54E5E5AE.3080001@collabora.co.uk>
-References: <1423245171-25485-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/6] ASoC: max98088: Document DT bindings
+Date: Thu, 19 Feb 2015 14:55:02 +0100
+Message-ID: <54E5EB36.9020007@collabora.co.uk>
+References: <1424283959-16289-1-git-send-email-afaerber@suse.de> <1424283959-16289-2-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37507 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753005AbbBSNbb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Feb 2015 08:31:31 -0500
-In-Reply-To: <1423245171-25485-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1424283959-16289-2-git-send-email-afaerber@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Tushar Behera <tushar.b@samsung.com>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello Kukjin,
+Hello Andreas,
 
-On 02/06/2015 06:52 PM, Javier Martinez Canillas wrote:
-> From: Tushar Behera <tushar.b@samsung.com>
-> 
-> On Snow, Peach Pit and Peach Pi boards, the Exynos SoC XCLKOUT output pin
-> provides the master clock (mclk) to codecs. So make them a clock consumer.
-> 
-> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+On 02/18/2015 07:25 PM, Andreas F=C3=A4rber wrote:
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 > ---
-> 
+>  Documentation/devicetree/bindings/sound/max98088.txt | 16 ++++++++++=
+++++++
+>  1 file changed, 16 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/max98088.=
+txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/sound/max98088.txt b/D=
+ocumentation/devicetree/bindings/sound/max98088.txt
+> new file mode 100644
+> index 000000000000..6f8fe85040ee
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/max98088.txt
+> @@ -0,0 +1,16 @@
+> +MAX98088 audio CODEC
+> +
+> +This device supports I2C only.
+> +
+> +Required properties:
+> +
+> +- compatible : "maxim,max98088" or "maxim,max98089".
+> +
+> +- reg : The I2C address of the device.
+> +
+> +Example:
+> +
+> +max98089: codec@10 {
+> +	compatible =3D "maxim,max98089";
+> +	reg =3D <0x10>;
+> +};
+>
 
-Please drop this patch since I took it from [0] but that patch was when
-the master clock was grabbed in the ASoC machine driver but the final
-version that got merged grabs the master clock in the codec driver so
-it has to be in the codec device node too.
+I see that a master clock (mclk) is added in patch 6/6 but the
+max98088 codec driver does handle this clock.
 
-I'll send the correct version soon.
+If the SoC XCLKOUT provides the master clock to the max98089
+codec in Spring like is the case for the max9809{0,5} codecs
+in the Snow and Peach Pit/Pi Chromebooks then you need to do
+something along the lines of the following commits:
+
+e3048c3d2be5 ASoC: max98095: Add master clock handling
+b10ab7b838bd ASoC: max98090: Add master clock handling
+
+If that's the case you also have to mention in the DT binding
+doc that "clocks" and "clock-names" are optional properties
+like Documentation/devicetree/bindings/sound/max9809{0,5}.txt.
 
 Best regards,
 Javier
-
-[0]: https://lkml.org/lkml/2014/5/20/4
