@@ -1,38 +1,64 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Update lid and power pin-functions for exynos5250-spring
-Date: Thu, 19 Feb 2015 12:49:11 +0100
-Message-ID: <54E5CDB7.6050002@collabora.co.uk>
-References: <1424276245-7028-1-git-send-email-afaerber@suse.de>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH] thermal: exynos: fix: Check if data->tmu_read callback is
+ present before read
+Date: Thu, 19 Feb 2015 17:53:16 +0530
+Message-ID: <CAM4voamBf4p6KG0GT3=vc9TcDz_XhoaPMUsfgaMa0mLgdSdV8g@mail.gmail.com>
+References: <1423228030-18708-1-git-send-email-l.majewski@samsung.com>
+	<20150216105359.1b39fac8@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1424276245-7028-1-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150216105359.1b39fac8@amdc2363>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Andreas,
+Hi Lukasz,
 
-On 02/18/2015 05:17 PM, Andreas F=C3=A4rber wrote:
-> Configure the pins in external interrupt mode, as done for Snow in
-> e5e5c6d14e39 ("ARM: dts: Add power and lid GPIO keys pinctrl for
-> exynos5250-snow").
->=20
-> Reported-by: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Suggested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8p/WX4DV1PbvA@public.gmane.org=
-uk>
-> Fixes: 53dd4138bb0a ("ARM: dts: Add exynos5250-spring device tree")
-> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
-> ---
+On Mon, Feb 16, 2015 at 3:23 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Hi Eduardo,
+>
+>> The exynos_tmu_data() function should on entrance test not only for
+>> valid data pointer, but also for data->tmu_read one.
+>> It is important, since afterwards it is dereferenced to get
+>> temperature code.
+>>
+>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>> ---
+>>  drivers/thermal/samsung/exynos_tmu.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+>> b/drivers/thermal/samsung/exynos_tmu.c index 3a19353..a86e0495e 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -717,7 +717,7 @@ static int exynos_get_temp(void *p, long *temp)
+>>  {
+>>       struct exynos_tmu_data *data = p;
+>>
+>> -     if (!data)
+>> +     if (!data || !data->tmu_read)
+>>               return -EINVAL;
+>>
+>>       mutex_lock(&data->lock);
+>
+> This fix shall be added to v3.20.
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Thanks for looking into this. This fixes the incorrect temperature at
+boot-up I was seeing on Exynos7 and Exynos5420.
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tested-by: Abhilash Kesavan <a.kesavan@samsung.com>
+
+Test HW: Peach-Pit (Exynos5420 based chromebook) and Exynos7 based
+Espresso board.
+
+Regards,
+Abhilash
+>
+> --
+> Best regards,
+>
+> Lukasz Majewski
+>
+> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
