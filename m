@@ -1,37 +1,64 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCHv3 0/8] devfreq: Add generic exynos memory-bus
- frequency driver
-Date: Wed, 18 Feb 2015 21:59:44 +0100
-Message-ID: <54E4FD40.8020206@gmx.net>
-References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com> <54DFE797.1020008@math.uni-bielefeld.de>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v5 7/9] ARM: dts: Exynos: add 'hdmi' clock to mixer nodes
+Date: Thu, 19 Feb 2015 03:42:39 +0100
+Message-ID: <54E54D9F.2060207@suse.de>
+References: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com> <1422883228-10690-8-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <54DFE797.1020008@math.uni-bielefeld.de>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:54715 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751473AbbBSCmy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Feb 2015 21:42:54 -0500
+In-Reply-To: <1422883228-10690-8-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-Hello again,
+Am 02.02.2015 um 14:20 schrieb Marek Szyprowski:
+> Mixed block needs to control hdmi clock to properly perform power on/=
+off
+> operation, so add 'hdmi' clock also to mixer nodes.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 5 +++--
+>  arch/arm/boot/dts/exynos5420.dtsi | 5 +++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/ex=
+ynos5250.dtsi
+> index 9bb1b0b738f5..e8c67fdb69fb 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -732,8 +732,9 @@
+>  		compatible =3D "samsung,exynos5250-mixer";
+>  		reg =3D <0x14450000 0x10000>;
+>  		interrupts =3D <0 94 0>;
+> -		clocks =3D <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>;
+> -		clock-names =3D "mixer", "sclk_hdmi";
+> +		clocks =3D <&clock CLK_MIXER>, <&clock CLK_HDMI>,
+> +			 <&clock CLK_SCLK_HDMI>;
+> +		clock-names =3D "mixer", "hdmi", "sclk_hdmi";
+>  	};
+> =20
+>  	dp_phy: video-phy@10040720 {
+[snip]
 
-Tobias Jakobi wrote
-> I've tested the series on my Odroid-X2 (by adapting the TRATS2 changes),
-> and so far I haven't seen any issues. With the system being idle one can
-> see that the 'simple_ondemand' devfreq governor clocks down both memory
-> busses to the lowest state.
+Tested-by: Andreas F=E4rber <afaerber@suse.de>
 
-looks I was too hasty the last time. Actually this series breaks HDMI
-output for me (or at least with 'simple_ondemand' governor, haven't
-tried with performance yet).
+Without this patch, next-20150218 exynos drm mixer fails to locate the
+hdmi clock on Spring.
 
-I tried to run some simple application, but it hangs in uninterruptible
-sleep immediately, probably before the first page flip. Going to check
-this more thoroughly.
+Kukjin, can you please queue the remaining patches 1-8?
 
-Maybe some parts of the hdmi subsystem don't like the lower clocks?
+Regards,
+Andreas
 
-With best wishes,
-Tobias
-
+--=20
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
+Graham Norton; HRB 21284 (AG N=FCrnberg)
