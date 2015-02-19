@@ -1,75 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 5/6] ASoC: samsung: Extend Snow driver to
-	support max98089
-Date: Thu, 19 Feb 2015 18:44:25 +0900
-Message-ID: <20150219094425.GB3198@finisterre.sirena.org.uk>
-References: <1424283959-16289-1-git-send-email-afaerber@suse.de>
- <1424283959-16289-6-git-send-email-afaerber@suse.de>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Update exynos5250-spring with mmc node changes
+Date: Thu, 19 Feb 2015 12:46:54 +0100
+Message-ID: <54E5CD2E.9070608@collabora.co.uk>
+References: <1424275812-6797-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6861968169231599671=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1424283959-16289-6-git-send-email-afaerber@suse.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: Doug Anderson <dianders@chromium.org>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1424275812-6797-1-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello Andreas,
 
---===============6861968169231599671==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3uo+9/B/ebqu+fSQ"
-Content-Disposition: inline
+On 02/18/2015 05:10 PM, Andreas F=C3=A4rber wrote:
+> Resolve a merge conflict with mmc refactoring aaa25a5a33cb ("ARM: dts=
+:
+> unuse the slot-node and deprecate the supports-highspeed for dw-mmc i=
+n
+> exynos") by dropping the slot@0 nodes, moving its bus-width property =
+to
+> the mmc node and replacing supports-highspeed with cap-{mmc,sd}-highs=
+peed,
+> matching exynos5250-snow.
+>=20
+> Cc: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Fixes: 53dd4138bb0a ("ARM: dts: Add exynos5250-spring device tree")
+> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5250-spring.dts | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+>=20
 
+Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 
---3uo+9/B/ebqu+fSQ
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 18, 2015 at 07:25:58PM +0100, Andreas F=E4rber wrote:
-
->  static const struct of_device_id snow_of_match[] =3D {
-> +	{ .compatible =3D "google,snow-audio-max98089", },
->  	{ .compatible =3D "google,snow-audio-max98090", },
->  	{ .compatible =3D "google,snow-audio-max98091", },
->  	{ .compatible =3D "google,snow-audio-max98095", },
-
-Since we completely ignore the CODEC in the property might it not be
-better to just add a plain old snow-audio compatible and bind to that,
-that way we don't need these driver updates?  Just the "snow" bit should
-be enough to know it's one of this class of machines.
-
---3uo+9/B/ebqu+fSQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJU5bB5AAoJECTWi3JdVIfQrvMH/jQFZat83HOXGQ6uN6UfGyOp
-EL/5IynL/XJOM9WRGk/9LCH2BITnrIECC4k2zIOflnzaCe0aLspAY9cdC2XjZroM
-iiRrOAC0a8OM9GmshJt1uatdoIdAJF+Xs2zaxqXzEgqaIdDtUJSG0rjlo/xA0+gU
-ITpKI9u5fOTO6GpEskBCbs28EL9zW1lAXciMm2aiEbRdPlhHBywmroBQzjuI3RlE
-hkehhi2xSWrMqbN9gbEks3kRB/2AUvCjeCFDwlp4Fuid3DsP7QEKAYR2rLvCU8IN
-ZpJ+7cqgzvK3l/lSlkJ9RAeKHIYxsux9U/OZWFm2873BJ/MhFs1jigTko67W36s=
-=o+MI
------END PGP SIGNATURE-----
-
---3uo+9/B/ebqu+fSQ--
-
---===============6861968169231599671==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============6861968169231599671==--
+Best regards,
+Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
