@@ -1,85 +1,56 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 1/6] ASoC: max98088: Document DT bindings
-Date: Thu, 19 Feb 2015 15:13:07 +0100
-Message-ID: <54E5EF73.2090302@suse.de>
-References: <1424283959-16289-1-git-send-email-afaerber@suse.de> <1424283959-16289-2-git-send-email-afaerber@suse.de> <54E5EB36.9020007@collabora.co.uk>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 5/6] ASoC: samsung: Extend Snow driver to support max98089
+Date: Thu, 19 Feb 2015 09:44:08 -0800
+Message-ID: <CAD=FV=WkieDSSB_-a6DtH1hmq6SyZk4NAR-eXQ11hxUDMTvRfg@mail.gmail.com>
+References: <1424283959-16289-1-git-send-email-afaerber@suse.de>
+	<1424283959-16289-6-git-send-email-afaerber@suse.de>
+	<20150219094425.GB3198@finisterre.sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54E5EB36.9020007@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150219094425.GB3198-bheZrs9scGb3/WHNxyQH9YN0K6Il/+VY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Javier, Doug,
+Mark,
 
-Am 19.02.2015 um 14:55 schrieb Javier Martinez Canillas:
-> On 02/18/2015 07:25 PM, Andreas F=C3=A4rber wrote:
->> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
->> ---
->>  Documentation/devicetree/bindings/sound/max98088.txt | 16 +++++++++=
-+++++++
->>  1 file changed, 16 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/sound/max98088=
-=2Etxt
->>
->> diff --git a/Documentation/devicetree/bindings/sound/max98088.txt b/=
-Documentation/devicetree/bindings/sound/max98088.txt
->> new file mode 100644
->> index 000000000000..6f8fe85040ee
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/max98088.txt
->> @@ -0,0 +1,16 @@
->> +MAX98088 audio CODEC
->> +
->> +This device supports I2C only.
->> +
->> +Required properties:
->> +
->> +- compatible : "maxim,max98088" or "maxim,max98089".
->> +
->> +- reg : The I2C address of the device.
->> +
->> +Example:
->> +
->> +max98089: codec@10 {
->> +	compatible =3D "maxim,max98089";
->> +	reg =3D <0x10>;
->> +};
->>
->=20
-> I see that a master clock (mclk) is added in patch 6/6 but the
-> max98088 codec driver does handle this clock.
->=20
-> If the SoC XCLKOUT provides the master clock to the max98089
-> codec in Spring like is the case for the max9809{0,5} codecs
-> in the Snow and Peach Pit/Pi Chromebooks then you need to do
-> something along the lines of the following commits:
->=20
-> e3048c3d2be5 ASoC: max98095: Add master clock handling
-> b10ab7b838bd ASoC: max98090: Add master clock handling
->=20
-> If that's the case you also have to mention in the DT binding
-> doc that "clocks" and "clock-names" are optional properties
-> like Documentation/devicetree/bindings/sound/max9809{0,5}.txt.
-
-When I prepared this patch, I believe it was a straight copy from
-max98090. Sounds like they changed since then.
-
-My 6/6 adopted the mclk clock from your now-cancelled v2 patch for Snow=
+On Thu, Feb 19, 2015 at 1:44 AM, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Wed, Feb 18, 2015 at 07:25:58PM +0100, Andreas F=C3=A4rber wrote:
+>
+>>  static const struct of_device_id snow_of_match[] =3D {
+>> +     { .compatible =3D "google,snow-audio-max98089", },
+>>       { .compatible =3D "google,snow-audio-max98090", },
+>>       { .compatible =3D "google,snow-audio-max98091", },
+>>       { .compatible =3D "google,snow-audio-max98095", },
+>
+> Since we completely ignore the CODEC in the property might it not be
+> better to just add a plain old snow-audio compatible and bind to that=
 ,
-assuming it would be the same on all Chromebooks. I tested that last
-change by checking for errors in dmesg.
+> that way we don't need these driver updates?  Just the "snow" bit sho=
+uld
+> be enough to know it's one of this class of machines.
 
-Doug, can you advise on how the clock wiring is for Spring?
+I think what you're suggesting is that here we should add a new
+compatible string "google,snow-audio" instead of adding
+"google,snow-audio-max98089" here.  Then the sound node in the spring
+DTS would look like:
 
-Regards,
-Andreas
+  compatible =3D "google,snow-audio-max98089", "google,snow-audio";
 
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Felix Imend=C3=B6rffer, Jane Smithard, Jennifer Guild, Dilip Upmany=
-u,
-Graham Norton; HRB 21284 (AG N=C3=BCrnberg)
+That would allow us to later figure out that we're on a board with
+max98089 in case it became important but means that any other minor
+tweaks like this wouldn't need anything special.  I haven't tried that
+to make sure that the fallback compatible string actually works in
+this case, but it seems like the right way to go...
+
+Sound good?
+
+-Doug
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
