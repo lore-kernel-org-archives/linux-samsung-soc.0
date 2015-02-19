@@ -1,48 +1,61 @@
 From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 5/6] ASoC: samsung: Extend Snow driver to support max98089
-Date: Thu, 19 Feb 2015 18:56:25 +0100
-Message-ID: <54E623C9.7070001@suse.de>
-References: <1424283959-16289-1-git-send-email-afaerber@suse.de>	<1424283959-16289-6-git-send-email-afaerber@suse.de>	<20150219094425.GB3198@finisterre.sirena.org.uk> <CAD=FV=WkieDSSB_-a6DtH1hmq6SyZk4NAR-eXQ11hxUDMTvRfg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] ASoC: max98088: Document DT bindings
+Date: Thu, 19 Feb 2015 19:40:28 +0100
+Message-ID: <54E62E1C.4030105@suse.de>
+References: <1424283959-16289-1-git-send-email-afaerber@suse.de>	<1424283959-16289-2-git-send-email-afaerber@suse.de>	<54E5EB36.9020007@collabora.co.uk>	<54E5EF73.2090302@suse.de> <CAD=FV=VoFnbEsKi4mDDkaTrTXboJmm0UNV5iCk1CvV5ndEZtsA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=WkieDSSB_-a6DtH1hmq6SyZk4NAR-eXQ11hxUDMTvRfg@mail.gmail.com>
+In-Reply-To: <CAD=FV=VoFnbEsKi4mDDkaTrTXboJmm0UNV5iCk1CvV5ndEZtsA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am 19.02.2015 um 18:44 schrieb Doug Anderson:
-> On Thu, Feb 19, 2015 at 1:44 AM, Mark Brown <broonie@kernel.org> wrot=
-e:
->> On Wed, Feb 18, 2015 at 07:25:58PM +0100, Andreas F=C3=A4rber wrote:
+Am 19.02.2015 um 18:48 schrieb Doug Anderson:
+> On Thu, Feb 19, 2015 at 6:13 AM, Andreas F=C3=A4rber <afaerber@suse.d=
+e> wrote:
+>>> I see that a master clock (mclk) is added in patch 6/6 but the
+>>> max98088 codec driver does handle this clock.
+>>>
+>>> If the SoC XCLKOUT provides the master clock to the max98089
+>>> codec in Spring like is the case for the max9809{0,5} codecs
+>>> in the Snow and Peach Pit/Pi Chromebooks then you need to do
+>>> something along the lines of the following commits:
+>>>
+>>> e3048c3d2be5 ASoC: max98095: Add master clock handling
+>>> b10ab7b838bd ASoC: max98090: Add master clock handling
+>>>
+>>> If that's the case you also have to mention in the DT binding
+>>> doc that "clocks" and "clock-names" are optional properties
+>>> like Documentation/devicetree/bindings/sound/max9809{0,5}.txt.
 >>
->>>  static const struct of_device_id snow_of_match[] =3D {
->>> +     { .compatible =3D "google,snow-audio-max98089", },
->>>       { .compatible =3D "google,snow-audio-max98090", },
->>>       { .compatible =3D "google,snow-audio-max98091", },
->>>       { .compatible =3D "google,snow-audio-max98095", },
+>> When I prepared this patch, I believe it was a straight copy from
+>> max98090. Sounds like they changed since then.
 >>
->> Since we completely ignore the CODEC in the property might it not be
->> better to just add a plain old snow-audio compatible and bind to tha=
-t,
->> that way we don't need these driver updates?  Just the "snow" bit sh=
-ould
->> be enough to know it's one of this class of machines.
+>> My 6/6 adopted the mclk clock from your now-cancelled v2 patch for S=
+now,
+>> assuming it would be the same on all Chromebooks. I tested that last
+>> change by checking for errors in dmesg.
+>>
+>> Doug, can you advise on how the clock wiring is for Spring?
 >=20
-> I think what you're suggesting is that here we should add a new
-> compatible string "google,snow-audio" instead of adding
-> "google,snow-audio-max98089" here.  Then the sound node in the spring
-> DTS would look like:
->=20
->   compatible =3D "google,snow-audio-max98089", "google,snow-audio";
+> I can confirm that XCLKOUT is connected to the codec MCLK on the
+> Spring schematics I have.
 
-If we want to be specific just in case, was it an active decision not t=
-o
-use "google,peach-pi[t]-audio-max98..."?
+Thanks! I updated max98088 and had it working on first boot, but on
+second boot it complained about the frequency:
 
-Again, either way works for me.
+[    7.896834] max98088 7-0010: revision A
+[    7.912776] snow-audio sound: HiFi <-> 3830000.i2s mapping ok
+[    7.919367] max98088 7-0010: Invalid master clock frequency
+[    7.919429] snow-audio sound: ASoC: Spring-I2S-MAX98089 late_probe()
+failed: -22
+[    7.920019] snow-audio sound: snd_soc_register_card failed (-22)
+[    7.920109] snow-audio: probe of sound failed with error -22
+
+Will investigate.
 
 Andreas
 
