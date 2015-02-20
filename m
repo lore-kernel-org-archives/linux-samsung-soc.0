@@ -1,55 +1,56 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/6] ASoC: max98088: Document DT bindings
-Date: Fri, 20 Feb 2015 13:12:15 +0100
-Message-ID: <54E7249F.2020900@samsung.com>
-References: <1424283959-16289-1-git-send-email-afaerber@suse.de>
- <1424283959-16289-2-git-send-email-afaerber@suse.de>
- <54E5EB36.9020007@collabora.co.uk> <54E5EF73.2090302@suse.de>
- <CAD=FV=VoFnbEsKi4mDDkaTrTXboJmm0UNV5iCk1CvV5ndEZtsA@mail.gmail.com>
- <54E62E1C.4030105@suse.de> <54E6314E.5060509@suse.de>
- <54E64C09.5000505@collabora.co.uk> <54E681A8.6040702@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/5] cpuidle: exynos: add coupled cpuidle support for Exynos3250
+Date: Fri, 20 Feb 2015 17:22:16 +0100
+Message-ID: <1424449341-7782-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53156 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754045AbbBTMMW (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17478 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754193AbbBTQWp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Feb 2015 07:12:22 -0500
-In-reply-to: <54E681A8.6040702@suse.de>
+	Fri, 20 Feb 2015 11:22:45 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-On 20/02/15 01:36, Andreas F=C3=A4rber wrote:
->>> >> So it seems the mclk is not always set up properly by the kernel=
-,
->>> >> relying on firmware. Who's in charge of setting that clock up?
->> >=20
->> > Right, it seems audio is only working due the firmware doing some =
-previous
->> > setup. Probably it works on every boot if you have "sound init" as=
- a part of
->> > the u-boot boot commands?
->
-> Indeed it does, 24 MHz without the reparenting patch, and sound worki=
-ng.
+Hi,
 
-You can have parent of the CLKOUT clock set by the clk core if it is
-specified in device tree in the PMU (the clkout clock supplier) device
-node.
+The following patchset adds coupled cpuidle support for Exynos3250
+to an existing cpuidle-exynos driver.  As a result it enables AFTR
+mode to be used by default on Exynos3250 without the need to hot
+unplug CPU1 first.
 
-Similarly as we did for the Odroix U3:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/ar=
-ch/arm/boot/dts/exynos4412-odroid-common.dtsi#n39
+The patchset depends on:
+- for-next branch (commit: aeb011501873) of linux-samsung.git
+  kernel tree
+- "[PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4"
+  (https://lkml.org/lkml/2015/2/3/481)
+- "[PATCH v2 0/4] ARM: EXYNOS: cpuidle: add AFTR mode support for
+  Exynos3250"
+  (https://lkml.org/lkml/2015/1/30/345)
 
-Relying on the clk_set_rate() to set the parent clock is not optimal
-IMO. Presumably you need to set select stable parent clock for clkout
-like XXTI. But I'm not very familiar with exyno5250 and that might be
-something different.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
---=20
-Regards,
-Sylwester
+
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: fix exynos_boot_secondary() return value on timeout
+  ARM: EXYNOS: make exynos_core_restart() less verbose
+  ARM: EXYNOS: add exynos_set_boot_addr() helper
+  ARM: EXYNOS: add exynos_get_boot_addr() helper
+  cpuidle: exynos: add coupled cpuidle support for Exynos3250
+
+ arch/arm/include/asm/firmware.h  |  4 ++
+ arch/arm/mach-exynos/common.h    |  4 +-
+ arch/arm/mach-exynos/exynos.c    |  3 +-
+ arch/arm/mach-exynos/firmware.c  | 18 +++++++++
+ arch/arm/mach-exynos/platsmp.c   | 86 +++++++++++++++++++++++++++-------------
+ arch/arm/mach-exynos/pm.c        | 51 ++++++++++++++++++++----
+ drivers/cpuidle/cpuidle-exynos.c |  3 +-
+ 7 files changed, 131 insertions(+), 38 deletions(-)
+
+-- 
+1.8.2.3
