@@ -1,138 +1,53 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4 7/8] hwmon: pwm-fan: Read PWM FAN configuration from
- device tree
-Date: Fri, 20 Feb 2015 16:26:27 -0800
-Message-ID: <54E7D0B3.7040800@roeck-us.net>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com> <1424254056-5904-1-git-send-email-l.majewski@samsung.com> <1424254056-5904-8-git-send-email-l.majewski@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 5/6] ASoC: samsung: Extend Snow driver to support max98089
+Date: Sat, 21 Feb 2015 11:40:25 +0900
+Message-ID: <20150221024025.GB6236@finisterre.sirena.org.uk>
+References: <1424283959-16289-1-git-send-email-afaerber@suse.de>
+ <1424283959-16289-6-git-send-email-afaerber@suse.de>
+ <20150219094425.GB3198@finisterre.sirena.org.uk>
+ <CAD=FV=WkieDSSB_-a6DtH1hmq6SyZk4NAR-eXQ11hxUDMTvRfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424254056-5904-8-git-send-email-l.majewski@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WkieDSSB_-a6DtH1hmq6SyZk4NAR-eXQ11hxUDMTvRfg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>
-Cc: lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/18/2015 02:07 AM, Lukasz Majewski wrote:
-> This patch provides code for reading PWM FAN configuration data via
-> device tree. The pwm-fan can work with full speed when configuration
-> is not provided. However, errors are propagated when wrong DT bindings
-> are found.
-> Additionally the struct pwm_fan_ctx has been extended.
->
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
-> Changes for v2:
-> - Rename pwm_fan_max_states to pwm_fan_cooling_levels
-> - Moving pwm_fan_of_get_cooling_data() call after setting end enabling PWM FAN
-> - pwm_fan_of_get_cooling_data() now can fail - preserving old behaviour
-> - Remove unnecessary dev_err() call
-> Changes for v3:
-> - Patch's headline has been reedited
-> - pwm_fan_of_get_cooling_data() return code is now being checked.
-> - of_property_count_elems_of_size() is now used instead of_find_property()
-> - More verbose patch description added
-> Changes for v4:
-> - dev_err() has been removed from pwm_fan_of_get_cooling_data()
-> - Returning -EINVAL when "cooling-levels" are defined in DT, but doesn't
->    have the value
-> ---
->   drivers/hwmon/pwm-fan.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 51 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-> index bd42d39..82cd06a 100644
-> --- a/drivers/hwmon/pwm-fan.c
-> +++ b/drivers/hwmon/pwm-fan.c
-> @@ -30,7 +30,10 @@
->   struct pwm_fan_ctx {
->   	struct mutex lock;
->   	struct pwm_device *pwm;
-> -	unsigned char pwm_value;
-> +	unsigned int pwm_value;
-> +	unsigned int pwm_fan_state;
-> +	unsigned int pwm_fan_max_state;
-> +	unsigned int *pwm_fan_cooling_levels;
->   };
->
->   static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
-> @@ -100,6 +103,48 @@ static struct attribute *pwm_fan_attrs[] = {
->
->   ATTRIBUTE_GROUPS(pwm_fan);
->
-> +int pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx *ctx)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	int num, i, ret;
-> +
-> +	ret = of_property_count_elems_of_size(np, "cooling-levels",
-> +					      sizeof(u32));
-> +
-> +	if (ret == -EINVAL)
-> +		return 0;
 
-The function returns -EINVAL if there is no such property,
-but also if prop->length % elem_size != 0. The latter _would_
-be an error.
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Overall I don't entirely understand why you do not call
-of_find_property first. If that returns NULL, you would know for sure
-that the property does not exist, and you would not have to second
-guess the returned error from of_property_count_elems_of_size.
+On Thu, Feb 19, 2015 at 09:44:08AM -0800, Doug Anderson wrote:
+> On Thu, Feb 19, 2015 at 1:44 AM, Mark Brown <broonie@kernel.org> wrote:
 
-On a side note, there is of_property_count_u32_elems() to count
-properties of size u32.
+> I think what you're suggesting is that here we should add a new
+> compatible string "google,snow-audio" instead of adding
+> "google,snow-audio-max98089" here.  Then the sound node in the spring
+> DTS would look like:
 
-> +
-> +	if (ret <= 0) {
-> +		dev_err(dev, "Wrong data!\n");
-> +		return ret ? ret : -EINVAL;
-> +	}
+>   compatible = "google,snow-audio-max98089", "google,snow-audio";
 
-If devicetree is not configured, of_property_count_elems_of_size
-returns -ENOSYS, which is returned, causing the driver to fail loading.
+Yes.
 
-> +
-> +	num = ret;
-> +	ctx->pwm_fan_cooling_levels = devm_kzalloc(dev, num * sizeof(u32),
-> +						   GFP_KERNEL);
-> +	if (!ctx->pwm_fan_cooling_levels)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u32_array(np, "cooling-levels",
-> +					 ctx->pwm_fan_cooling_levels, num);
-> +	if (ret) {
-> +		dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num; i++) {
-> +		if (ctx->pwm_fan_cooling_levels[i] > MAX_PWM) {
-> +			dev_err(dev, "PWM fan state[%d]:%d > %d\n", i,
-> +				ctx->pwm_fan_cooling_levels[i], MAX_PWM);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	ctx->pwm_fan_max_state = num - 1;
-> +
-> +	return 0;
-> +}
-> +
->   static int pwm_fan_probe(struct platform_device *pdev)
->   {
->   	struct device *hwmon;
-> @@ -145,6 +190,11 @@ static int pwm_fan_probe(struct platform_device *pdev)
->   		pwm_disable(ctx->pwm);
->   		return PTR_ERR(hwmon);
->   	}
-> +
-> +	ret = pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
-> +	if (ret)
-> +		return ret;
-> +
->   	return 0;
->   }
->
->
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU5/AYAAoJECTWi3JdVIfQ2uEH/ji13tl3wMeBeylmEMkTfB0w
+PX75Whi9IvG0iu4deHgZY8n1AVWjGff2jRgtL9ESwvudME8WOPC2NJvXeH4XGVdo
+zyMvLgyY46T/9fvJjQcYd8ducE6ofsLf+B/AqEw1iCBKkBVbzYnBLetZFGUI+S2m
+B2Ib6tjSllapIRmPyO0v0ocYigP0ef/EI3LgYqyvkmDbmuWx0wf684W2Y8lvXimk
+8WiTfJ5DABTZYj2LFnXnccfgEKsbomhiTogU7Kvdk4cX47wzJGR2LBjYvWOP+0Dw
+POBpON1VZD9uSXjjYOM4ecpyMFMWD/K/bFcea2j9Zccx4YILYlhkSOHIFLwGmjU=
+=C0V4
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
