@@ -1,50 +1,51 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v5 05/18] ARM: dts: exynos5420: add sysmmu nodes
-Date: Sun, 22 Feb 2015 19:00:02 +0100
-Message-ID: <54EA1922.2030000@suse.de>
-References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com> <1422028288-891-6-git-send-email-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv3 0/8] devfreq: Add generic exynos memory-bus frequency
+ driver
+Date: Mon, 23 Feb 2015 08:44:18 +0900
+Message-ID: <54EA69D2.7010706@samsung.com>
+References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
+ <54DFE797.1020008@math.uni-bielefeld.de> <54E4FD40.8020206@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59521 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752006AbbBVSAG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Feb 2015 13:00:06 -0500
-In-Reply-To: <1422028288-891-6-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <54E4FD40.8020206@gmx.net>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tobias Jakobi <liquid.acid@gmx.net>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, myungjoo.ham@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Am 23.01.2015 um 16:51 schrieb Marek Szyprowski:
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 181 ++++++++++++++++++++++++++++=
-++++++++++
->  1 file changed, 181 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/ex=
-ynos5420.dtsi
-> index 1b62410..b8f1c9f 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-[...]
-> @@ -925,4 +932,178 @@
->  		samsung,sysreg-phandle =3D <&sysreg_system_controller>;
->  		samsung,pmureg-phandle =3D <&pmu_system_controller>;
->  	};
-> +
-> +	sysmmu_g2dr: sysmmu@0x10A60000 {
-[snip]
+Hi Tobias,
 
-Unit addresses are without 0x. Please also check the sort order.
+First of all, thanks for your test.
 
-Regards,
-Andreas
+On 02/19/2015 05:59 AM, Tobias Jakobi wrote:
+> Hello again,
+> 
+> Tobias Jakobi wrote
+>> I've tested the series on my Odroid-X2 (by adapting the TRATS2 changes),
+>> and so far I haven't seen any issues. With the system being idle one can
+>> see that the 'simple_ondemand' devfreq governor clocks down both memory
+>> busses to the lowest state.
+> 
+> looks I was too hasty the last time. Actually this series breaks HDMI
+> output for me (or at least with 'simple_ondemand' governor, haven't
+> tried with performance yet).
+> 
+> I tried to run some simple application, but it hangs in uninterruptible
+> sleep immediately, probably before the first page flip. Going to check
+> this more thoroughly.
+> 
+> Maybe some parts of the hdmi subsystem don't like the lower clocks?
 
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
-Graham Norton; HRB 21284 (AG N=FCrnberg)
+As you thought, when maintaining lower clock of memory bus frequency,
+some issue related to multimedia feature will happen.
+
+Separately, We have to check the miminum lower clock for working of multimedia feature.
+and then multimedia or other IP have to request it to DVFS driver (memory busfreq driver).
+But, latest mainline kernel currently has not some way to inform minimum clock to DVFS driver.
+
+So, If you check the miminum clock for hdmi, I'll use this clock as minumu frequency of dvfs table.
+
+Thanks,
+Chanwoo Choi
