@@ -1,50 +1,53 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
-Date: Mon, 23 Feb 2015 17:25:48 +0100
-Message-ID: <2802418.zt8CxNGGkT@amdc1032>
-References: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/6] ASoC: max98088: Document DT bindings
+Date: Mon, 23 Feb 2015 17:46:17 +0100
+Message-ID: <54EB5959.90606@collabora.co.uk>
+References: <1424283959-16289-1-git-send-email-afaerber@suse.de> <1424283959-16289-2-git-send-email-afaerber@suse.de> <54E5EB36.9020007@collabora.co.uk> <54E5EF73.2090302@suse.de> <CAD=FV=VoFnbEsKi4mDDkaTrTXboJmm0UNV5iCk1CvV5ndEZtsA@mail.gmail.com> <54E62E1C.4030105@suse.de> <54E6314E.5060509@suse.de> <54E64C09.5000505@collabora.co.uk> <54E681A8.6040702@suse.de> <54E7249F.2020900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
+In-Reply-To: <54E7249F.2020900@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?B?QW5kcmVhcyBGw6Q=?= =?UTF-8?B?cmJlcg==?= <afaerber@suse.de>
+Cc: Doug Anderson <dianders@chromium.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello Sylwester,
 
-Hi,
+On 02/20/2015 01:12 PM, Sylwester Nawrocki wrote:
+> On 20/02/15 01:36, Andreas F=C3=A4rber wrote:
+>>>> >> So it seems the mclk is not always set up properly by the kerne=
+l,
+>>>> >> relying on firmware. Who's in charge of setting that clock up?
+>>> >=20
+>>> > Right, it seems audio is only working due the firmware doing some=
+ previous
+>>> > setup. Probably it works on every boot if you have "sound init" a=
+s a part of
+>>> > the u-boot boot commands?
+>>
+>> Indeed it does, 24 MHz without the reparenting patch, and sound work=
+ing.
+>=20
+> You can have parent of the CLKOUT clock set by the clk core if it is
+> specified in device tree in the PMU (the clkout clock supplier) devic=
+e
+> node.
+>=20
+> Similarly as we did for the Odroix U3:
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/=
+arch/arm/boot/dts/exynos4412-odroid-common.dtsi#n39
+>=20
+> Relying on the clk_set_rate() to set the parent clock is not optimal
+> IMO. Presumably you need to set select stable parent clock for clkout
+> like XXTI. But I'm not very familiar with exyno5250 and that might be
+> something different.
+>=20
 
-On Wednesday, February 18, 2015 11:45:25 AM Krzysztof Kozlowski wrote:
-> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
-> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
-> controller") the second suspend to RAM failed. First suspend worked fine
-> but the next one hang just after powering down of secondary CPUs (system
-> consumed energy as it would be running but was not responsive).
-> 
-> The issue was caused by enabling delayed reset assertion for CPU0 just
-> after issuing power down of cores. This was introduced for Exynos4 in
-> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
-> 
-> The whole behavior is not well documented but after checking with vendor
-> code this should be done like this (on Exynos4):
-> 1. Enable delayed reset assertion when system is running (for all CPUs).
-> 2. Disable delayed reset assertion before suspending the system.
->    This can be done after powering off secondary CPUs.
-> 3. Re-enable the delayed reset assertion when system is resumed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
-> Cc: <stable@vger.kernel.org>
-
-It turned out that this patch is also needed to fix cpuidle AFTR mode
-hang on Trats2.
-
-Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Thanks a lot for your suggestion. I'll drop Tushar's patch to allow
+clkout to be reparent during set_rate then and change his DTS patch
+to set a default parent for CLKOUT using "assigned-clock-parents".
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Javier
