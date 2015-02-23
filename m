@@ -1,65 +1,62 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH v2 08/15] exynos: introduce g2d_add_base_addr helper function
-Date: Mon, 23 Feb 2015 11:22:25 +0000
-Message-ID: <54EB0D71.2000803@gmail.com>
-References: <1424094405-6314-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1424094405-6314-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 06/15] tests/exynos: introduce wait_for_user_input
+Date: Mon, 23 Feb 2015 12:28:06 +0100
+Message-ID: <20150223112806.GX24485@phenom.ffwll.local>
+References: <1424094405-6314-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1424094405-6314-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <54EB0D61.3000603@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f181.google.com ([74.125.82.181]:46582 "EHLO
-	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751861AbbBWLWV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Feb 2015 06:22:21 -0500
-Received: by wevm14 with SMTP id m14so17241502wev.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Feb 2015 03:22:20 -0800 (PST)
-In-Reply-To: <1424094405-6314-9-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <54EB0D61.3000603@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, robclark@freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, robclark@freedesktop.org, m.szyprowski@samsung.com
 
-On 16/02/15 13:46, Tobias Jakobi wrote:
-> In almost all functions the base address register is written, so it
-> makes sense to have a helper function for this.
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  exynos/exynos_fimg2d.c | 87 +++++++++++++++++++-------------------------------
->  1 file changed, 33 insertions(+), 54 deletions(-)
-> 
-> diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-> index b79081e..c08974a 100644
-> --- a/exynos/exynos_fimg2d.c
-> +++ b/exynos/exynos_fimg2d.c
-> @@ -41,6 +41,11 @@
->  
->  #define MIN(a, b)	((a) < (b) ? (a) : (b))
->  
-> +enum g2d_base_addr_reg {
-> +	g2d_dst = 0,
-> +	g2d_src
-> +};
-> +
->  static unsigned int g2d_get_scaling(unsigned int src, unsigned int dst)
->  {
->  	/* The G2D hw scaling factor is a normalized inverse of the scaling factor. *
-> @@ -132,6 +137,25 @@ static int g2d_add_cmd(struct g2d_context *ctx, unsigned long cmd,
->  }
->  
->  /*
-> + * g2d_add_base_addr - helper function to set dst/src base address register.
-> + *
-> + * @ctx: a pointer to g2d_context structure.
-> + * @img: a pointer to the dst/src g2d_image structure.
-> + * @reg: the register that should be set.
-> + */
-> +static void g2d_add_base_addr(struct g2d_context *ctx, struct g2d_image *img,
-> +			enum g2d_base_addr_reg reg)
-> +{
-> +	const unsigned long cmd = (reg == g2d_dst) ? DST_BASE_ADDR_REG : SRC_BASE_ADDR_REG;
-> +
-Can we wrap this to 80 columns please ?
-
--Emil
+T24gTW9uLCBGZWIgMjMsIDIwMTUgYXQgMTE6MjI6MDlBTSArMDAwMCwgRW1pbCBWZWxpa292IHdy
+b3RlOgo+IE9uIDE2LzAyLzE1IDEzOjQ2LCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+ID4gQ3VycmVu
+dGx5IGdldGNoYXIoKSBpcyB1c2VkIHRvIHBhdXNlIGV4ZWN1dGlvbiBhZnRlciBlYWNoIHRlc3Qu
+Cj4gPiBUaGUgdXNlciBpc24ndCBpbmZvcm1lZCBpZiBvbmUgaXMgc3VwcG9zZWQgdG8gZG8gYW55
+dGhpbmcgZm9yCj4gPiB0aGUgdGVzdHMgdG8gY29udGludWUsIHNvIHByaW50IGEgc2ltcGxlIG1l
+c3NhZ2UgdG8gbWFrZSB0aGlzCj4gPiBtb3JlIGNsZWFyLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5
+OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiA+IC0tLQo+
+ID4gIHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyB8IDIwICsrKysrKysrKysrKysr
+KystLS0tCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25z
+KC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0
+LmMgYi90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKPiA+IGluZGV4IDU1ZDI5NzAu
+LjQ0NmE2YzYgMTAwNjQ0Cj4gPiAtLS0gYS90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0
+LmMKPiA+ICsrKyBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYwo+ID4gQEAgLTIz
+Nyw2ICsyMzcsMTggQEAgdm9pZCAqY3JlYXRlX2NoZWNrZXJib2FyZF9wYXR0ZXJuKHVuc2lnbmVk
+IGludCBudW1fdGlsZXNfeCwKPiA+ICAJcmV0dXJuIGJ1ZjsKPiA+ICB9Cj4gPiAgCj4gPiArc3Rh
+dGljIHZvaWQgd2FpdF9mb3JfdXNlcl9pbnB1dChpbnQgbGFzdCkKPiA+ICt7Cj4gPiArCXByaW50
+ZigicHJlc3MgPEVOVEVSPiB0byAiKTsKPiA+ICsKPiA+ICsJaWYgKGxhc3QpCj4gPiArCQlwcmlu
+dGYoImV4aXQgdGVzdCBhcHBsaWNhdGlvblxuIik7Cj4gPiArCWVsc2UKPiA+ICsJCXByaW50Zigi
+c2tpcCB0byBuZXh0IHRlc3RcbiIpOwo+ID4gKwo+IElmIGludGVyZXN0ZWQgeW91IGNhbiBjb21w
+YWN0IHRoaXMgYXMKPiAKPiAJcHJpbnRmKCJwcmVzcyA8RU5URVI+IHRvICVzXG4iLCBsYXN0ID8g
+ImV4aXQgdGVzdCBhcHBsaWNhdGlvbiIgOgo+IAkgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAic2tpcCB0byBuZXh0IHRlc3QiKTsKCldlIGhhdmUgdGhpcyBhbmQgYSB0b24g
+b2Ygb3RoZXIgbmVhdCBoZWxwZXJzIGluIGlndC4gQXMgSSd2ZSBwcm9iYWJseSBzYWlkCmNvdW50
+bGVzcyB0aW1lcyBvbiBpcmMgYW5kIGF0IGNvbmZlcmVuY2VzIGlmIHNvbWVvbmUgYm90aGVycyB0
+byBtYWtlIHRoZQpjb3JlIG9mIGlndCBpOTE1LWFnbm9zdGljIChqdXN0IG5lZWRzIGNoYW5nZXMg
+aW4gdGhlIGZ1bmN0aW9uIHRvIG9wZW4gdGhlCmRybSBkZXYgbW9zdGx5KSBJJ2QgbG92ZSB0byBz
+ZWUgaWd0IGNvbnZlcnRlZCBpbnRvIGEgZ2VuZXJpYyBkcm0KdGVzdHN1aXRlLgoKQW5kIHNpbWls
+YXIgdG8gcGlnbGl0IEkgdGhpbmsgaXQgbWFrZXMgbW9yZSBzZW5zZSB0byBoYXZlIHRoYXQgb3V0
+c2lkZSBvZgphbnkgdXNlcnNwYWNlIGNvbXBvbmVudHMgd2Ugc2hpcCB0byB1c2VycywgaS5lLiBu
+b3QgaW4gbGliZHJtLgoKQnV0IEkgcmVhbGx5IGNhbid0IGp1c3RpZnkgZG9pbmcgdGhpcyB3b3Jr
+IHRvIG15IGRlYXIgZW1wbG95ZXIgOy0pCgpDaGVlcnMsIERhbmllbAotLSAKRGFuaWVsIFZldHRl
+cgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KKzQxICgwKSA3OSAzNjUgNTcg
+NDggLSBodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
