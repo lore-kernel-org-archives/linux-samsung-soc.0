@@ -1,312 +1,85 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH v5 1/2] ARM: exynos4/5: convert pmu wakeup to stacked domains
-Date: Mon, 23 Feb 2015 17:45:33 +0000
-Message-ID: <1424713534-7112-2-git-send-email-marc.zyngier@arm.com>
-References: <1424713534-7112-1-git-send-email-marc.zyngier@arm.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:60633 "EHLO
-	usa-sjc-mx-foss1.foss.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751935AbbBWRpr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Feb 2015 12:45:47 -0500
-In-Reply-To: <1424713534-7112-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCHv3 0/8] devfreq: Add generic exynos memory-bus
+ frequency driver
+Date: Mon, 23 Feb 2015 20:57:57 +0100
+Message-ID: <54EB8645.4060608@math.uni-bielefeld.de>
+References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com> <54DFE797.1020008@math.uni-bielefeld.de> <54E4FD40.8020206@gmx.net> <54EA69D2.7010706@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54EA69D2.7010706@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>
+Cc: myungjoo.ham@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Exynos has been (ab)using the gic_arch_extn to provide
-wakeup from suspend, and it makes a lot of sense to convert
-this code to use stacked domains instead.
+Hello Chanwoo!
 
-This patch does just this, updating the DT files to actually
-reflect what the HW provides.
+Chanwoo Choi wrote:
+> As you thought, when maintaining lower clock of memory bus frequency,
+> some issue related to multimedia feature will happen.
+> 
+> Separately, We have to check the miminum lower clock for working of multimedia feature.
+> and then multimedia or other IP have to request it to DVFS driver (memory busfreq driver).
+> But, latest mainline kernel currently has not some way to inform minimum clock to DVFS driver.
+> 
+> So, If you check the miminum clock for hdmi, I'll use this clock as minumu frequency of dvfs table.
+> 
+> Thanks,
+> Chanwoo Choi
+> 
 
-BIG FAT WARNING: because the DTs were so far lying by not
-exposing the fact that the PMU block is actually the first
-interrupt controller in the chain for RTC, kernels with this patch
-applied wont have any suspend-resume facility when booted
-with old DTs, and old kernels with updated DTs may not even boot.
+First I have to apologize. I didn't check carefully. Actually it's not
+the HDMI subsystem which seems to hang during my test, but the G2D
+subsystem.
 
-Also, I stronly suspect that there is more than two wake-up
-interrupts on these platforms, but I leave it to the maintainers
-to fix their mess.
+Here's a snippet of the kernel log with drm.debug=0xff:
+[ 1157.911264] [drm:drm_framebuffer_reference] ee144e00: FB ID: 27 (2)
+[ 1157.911271] [drm:drm_framebuffer_unreference] ee37fb80: FB ID: 25 (2)
+[ 1157.911277] [drm:drm_framebuffer_unreference] ee144e00: FB ID: 27 (3)
+[ 1157.911315] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+EXYNOS_G2D_GET_VER
+[ 1158.434439] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+EXYNOS_G2D_SET_CMDLIST
+[ 1158.434536] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1, EXYNOS_G2D_EXEC
+[ 1158.437484] [drm:drm_vm_close_locked] 0xaf840000,0x00140000
+[ 1158.437507] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+DRM_IOCTL_GEM_CLOSE
+[ 1158.437524] [drm:exynos_drm_gem_destroy] handle count = 0
+[ 1158.437532] [drm:lowlevel_buffer_deallocate] dma_addr(0x20500000),
+size(0x140000)
+[ 1158.437810] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+EXYNOS_GEM_CREATE
+[ 1158.437819] [drm:exynos_drm_init_buf] desired size = 0x256000
+[ 1158.437851] [drm:exynos_drm_gem_init] created file object = 0xe97c8d00
+[ 1158.445506] [drm:lowlevel_buffer_allocate] dma_addr(0x21400000),
+size(0x256000)
+[ 1158.445535] [drm:exynos_drm_gem_handle_create] gem handle = 0x1
+[ 1158.445556] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+DRM_IOCTL_MODE_MAP_DUMB
+[ 1158.445570] [drm:exynos_drm_gem_dumb_map_offset] offset = 0x101c2000
+[ 1158.445600] [drm:drm_vm_open_locked] 0xaec15000,0x00256000
+[ 1158.445608] [drm:update_vm_cache_attr] flags = 0x0
+[ 1158.457696] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+EXYNOS_G2D_SET_CMDLIST
+[ 1158.457745] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1, EXYNOS_G2D_EXEC
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/boot/dts/exynos4.dtsi    |   4 ++
- arch/arm/boot/dts/exynos5250.dtsi |   4 ++
- arch/arm/boot/dts/exynos5420.dtsi |   4 ++
- arch/arm/mach-exynos/exynos.c     |  14 ++---
- arch/arm/mach-exynos/suspend.c    | 122 ++++++++++++++++++++++++++++++++++----
- 5 files changed, 129 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 76173ca..1d21f02 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -152,6 +152,9 @@
- 	pmu_system_controller: system-controller@10020000 {
- 		compatible = "samsung,exynos4210-pmu", "syscon";
- 		reg = <0x10020000 0x4000>;
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		interrupt-parent = <&gic>;
- 	};
- 
- 	dsi_0: dsi@11C80000 {
-@@ -264,6 +267,7 @@
- 	rtc@10070000 {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
-+		interrupt-parent = <&pmu_system_controller>;
- 		interrupts = <0 44 0>, <0 45 0>;
- 		clocks = <&clock CLK_RTC>;
- 		clock-names = "rtc";
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 9bb1b0b..72fa2d1 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -196,6 +196,9 @@
- 		clock-names = "clkout16";
- 		clocks = <&clock CLK_FIN_PLL>;
- 		#clock-cells = <1>;
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		interrupt-parent = <&gic>;
- 	};
- 
- 	sysreg_system_controller: syscon@10050000 {
-@@ -232,6 +235,7 @@
- 	rtc: rtc@101E0000 {
- 		clocks = <&clock CLK_RTC>;
- 		clock-names = "rtc";
-+		interrupt-parent = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9dc2e97..d11a6ab 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -327,6 +327,7 @@
- 	rtc: rtc@101E0000 {
- 		clocks = <&clock CLK_RTC>;
- 		clock-names = "rtc";
-+		interrupt-parent = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
- 
-@@ -769,6 +770,9 @@
- 		clock-names = "clkout16";
- 		clocks = <&clock CLK_FIN_PLL>;
- 		#clock-cells = <1>;
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		interrupt-parent = <&gic>;
- 	};
- 
- 	sysreg_system_controller: syscon@10050000 {
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 9e9dfdf..c623d39 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -166,16 +166,15 @@ static void __init exynos_init_io(void)
- 	exynos_map_io();
- }
- 
-+/*
-+ * Apparently, these SoCs are not able to wake-up from suspend using
-+ * the PMU. Too bad. Should they suddenly become capable of such a
-+ * feat, the matches below should be moved to suspend.c.
-+ */
- static const struct of_device_id exynos_dt_pmu_match[] = {
- 	{ .compatible = "samsung,exynos3250-pmu" },
--	{ .compatible = "samsung,exynos4210-pmu" },
--	{ .compatible = "samsung,exynos4212-pmu" },
--	{ .compatible = "samsung,exynos4412-pmu" },
--	{ .compatible = "samsung,exynos4415-pmu" },
--	{ .compatible = "samsung,exynos5250-pmu" },
- 	{ .compatible = "samsung,exynos5260-pmu" },
- 	{ .compatible = "samsung,exynos5410-pmu" },
--	{ .compatible = "samsung,exynos5420-pmu" },
- 	{ /*sentinel*/ },
- };
- 
-@@ -186,9 +185,6 @@ static void exynos_map_pmu(void)
- 	np = of_find_matching_node(NULL, exynos_dt_pmu_match);
- 	if (np)
- 		pmu_base_addr = of_iomap(np, 0);
--
--	if (!pmu_base_addr)
--		panic("failed to find exynos pmu register\n");
- }
- 
- static void __init exynos_init_irq(void)
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 52e2b1a..69ede2c 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -18,7 +18,9 @@
- #include <linux/syscore_ops.h>
- #include <linux/cpu_pm.h>
- #include <linux/io.h>
--#include <linux/irqchip/arm-gic.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/of_address.h>
- #include <linux/err.h>
- #include <linux/regulator/machine.h>
- 
-@@ -43,8 +45,8 @@
- #define EXYNOS5420_CPU_STATE	0x28
- 
- /**
-- * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
-- * @hwirq: Hardware IRQ signal of the GIC
-+ * struct exynos_wkup_irq - PMU IRQ to mask mapping
-+ * @hwirq: Hardware IRQ signal of the PMU
-  * @mask: Mask in PMU wake-up mask register
-  */
- struct exynos_wkup_irq {
-@@ -93,14 +95,14 @@ static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
- };
- 
- static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
--	{ 76, BIT(1) }, /* RTC alarm */
--	{ 77, BIT(2) }, /* RTC tick */
-+	{ 44, BIT(1) }, /* RTC alarm */
-+	{ 45, BIT(2) }, /* RTC tick */
- 	{ /* sentinel */ },
- };
- 
- static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
--	{ 75, BIT(1) }, /* RTC alarm */
--	{ 76, BIT(2) }, /* RTC tick */
-+	{ 43, BIT(1) }, /* RTC alarm */
-+	{ 44, BIT(2) }, /* RTC tick */
- 	{ /* sentinel */ },
- };
- 
-@@ -167,6 +169,109 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- 	return -ENOENT;
- }
- 
-+static struct irq_chip exynos_pmu_chip = {
-+	.name		= "PMU",
-+	.irq_eoi	= irq_chip_eoi_parent,
-+	.irq_mask	= irq_chip_mask_parent,
-+	.irq_unmask	= irq_chip_unmask_parent,
-+	.irq_retrigger	= irq_chip_retrigger_hierarchy,
-+	.irq_set_wake	= exynos_irq_set_wake,
-+};
-+
-+static int exynos_pmu_domain_xlate(struct irq_domain *domain,
-+				   struct device_node *controller,
-+				   const u32 *intspec,
-+				   unsigned int intsize,
-+				   unsigned long *out_hwirq,
-+				   unsigned int *out_type)
-+{
-+	if (domain->of_node != controller)
-+		return -EINVAL;	/* Shouldn't happen, really... */
-+	if (intsize != 3)
-+		return -EINVAL;	/* Not GIC compliant */
-+	if (intspec[0] != 0)
-+		return -EINVAL;	/* No PPI should point to this domain */
-+
-+	*out_hwirq = intspec[1];
-+	*out_type = intspec[2];
-+	return 0;
-+}
-+
-+static int exynos_pmu_domain_alloc(struct irq_domain *domain,
-+				   unsigned int virq,
-+				   unsigned int nr_irqs, void *data)
-+{
-+	struct of_phandle_args *args = data;
-+	struct of_phandle_args parent_args;
-+	irq_hw_number_t hwirq;
-+	int i;
-+
-+	if (args->args_count != 3)
-+		return -EINVAL;	/* Not GIC compliant */
-+	if (args->args[0] != 0)
-+		return -EINVAL;	/* No PPI should point to this domain */
-+
-+	hwirq = args->args[1];
-+
-+	for (i = 0; i < nr_irqs; i++)
-+		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-+					      &exynos_pmu_chip, NULL);
-+
-+	parent_args = *args;
-+	parent_args.np = domain->parent->of_node;
-+	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &parent_args);
-+}
-+
-+static struct irq_domain_ops exynos_pmu_domain_ops = {
-+	.xlate	= exynos_pmu_domain_xlate,
-+	.alloc	= exynos_pmu_domain_alloc,
-+	.free	= irq_domain_free_irqs_common,
-+};
-+
-+static int __init exynos_pmu_irq_init(struct device_node *node,
-+				      struct device_node *parent)
-+{
-+	struct irq_domain *parent_domain, *domain;
-+
-+	if (!parent) {
-+		pr_err("%s: no parent, giving up\n", node->full_name);
-+		return -ENODEV;
-+	}
-+
-+	parent_domain = irq_find_host(parent);
-+	if (!parent_domain) {
-+		pr_err("%s: unable to obtain parent domain\n", node->full_name);
-+		return -ENXIO;
-+	}
-+
-+	pmu_base_addr = of_iomap(node, 0);
-+
-+	if (!pmu_base_addr) {
-+		pr_err("%s: failed to find exynos pmu register\n",
-+		       node->full_name);
-+		return -ENOMEM;
-+	}
-+
-+	domain = irq_domain_add_hierarchy(parent_domain, 0, 0,
-+					  node, &exynos_pmu_domain_ops,
-+					  NULL);
-+	if (!domain) {
-+		iounmap(pmu_base_addr);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+#define EXYNOS_PMU_IRQ(symbol, name)	OF_DECLARE_2(irqchip, symbol, name, exynos_pmu_irq_init)
-+
-+EXYNOS_PMU_IRQ(exynos4210_pmu_irq, "samsung,exynos4210-pmu");
-+EXYNOS_PMU_IRQ(exynos4212_pmu_irq, "samsung,exynos4212-pmu");
-+EXYNOS_PMU_IRQ(exynos4412_pmu_irq, "samsung,exynos4412-pmu");
-+EXYNOS_PMU_IRQ(exynos4415_pmu_irq, "samsung,exynos4415-pmu");
-+EXYNOS_PMU_IRQ(exynos5250_pmu_irq, "samsung,exynos5250-pmu");
-+EXYNOS_PMU_IRQ(exynos5420_pmu_irq, "samsung,exynos5420-pmu");
-+
- static int exynos_cpu_do_idle(void)
- {
- 	/* issue the standby signal into the pm unit. */
-@@ -624,9 +729,6 @@ void __init exynos_pm_init(void)
- 	}
- 	pm_data = (struct exynos_pm_data *) match->data;
- 
--	/* Platform-specific GIC callback */
--	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
--
- 	/* All wakeup disable */
- 	tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
- 	tmp |= pm_data->wake_disable_mask;
--- 
-2.1.4
+So G2D_EXEC seems to work once, but the second time it hangs forever. I
+even fail at attaching gdb to the application then (gdb then also hangs
+in D state).
+
+If I just use the 'vsynced page flipping' test, then everything works:
+./modetest -M exynos -s 16@13:1280x720 -v
+setting mode 1280x720-60Hz@XR24 on connectors 16, crtc 13
+freq: 61.08Hz
+freq: 60.00Hz
+freq: 60.00Hz
+<etc.>
+
+I'm going to do some tests with the G2D in the next time, checking how
+much I can lower MIF/INT clocks before the engine becomes unstable.
+
+With best wishes,
+Tobias
