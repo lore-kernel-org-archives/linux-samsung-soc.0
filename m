@@ -1,91 +1,59 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4 7/8] hwmon: pwm-fan: Read PWM FAN configuration from
- device tree
-Date: Mon, 23 Feb 2015 08:59:55 -0800
-Message-ID: <20150223165955.GA9417@roeck-us.net>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-8-git-send-email-l.majewski@samsung.com>
- <54E7D0B3.7040800@roeck-us.net>
- <20150223171336.2e09ce50@amdc2363>
- <20150223162305.GB2165@roeck-us.net>
- <20150223175122.2c0a4645@amdc2363>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
+Date: Mon, 23 Feb 2015 18:12:39 +0100
+Message-ID: <CAJKOXPe23vtEByLOLNnmm5u=fpR5OSV_KUC_nc6UV-LUuKfHGQ@mail.gmail.com>
+References: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
+	<2802418.zt8CxNGGkT@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:44026 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752592AbbBWRA5 (ORCPT
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:60106 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832AbbBWRMk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Feb 2015 12:00:57 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YPwNM-002F5D-JC
-	for linux-samsung-soc@vger.kernel.org; Mon, 23 Feb 2015 17:00:56 +0000
-Content-Disposition: inline
-In-Reply-To: <20150223175122.2c0a4645@amdc2363>
+	Mon, 23 Feb 2015 12:12:40 -0500
+In-Reply-To: <2802418.zt8CxNGGkT@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Mon, Feb 23, 2015 at 05:51:22PM +0100, Lukasz Majewski wrote:
-> Hi Guenter,
-> 
-> > On Mon, Feb 23, 2015 at 05:13:36PM +0100, Lukasz Majewski wrote:
-> > > Hi Guenter,
-> > > 
-> > [ ... ]
-> > 
-> > > > 
-> > > > If devicetree is not configured, of_property_count_elems_of_size
-> > > > returns -ENOSYS, which is returned, causing the driver to fail
-> > > > loading.
-> > > 
-> > > Has of_property_count_elems_of_size() returns -ENOSYS?
-> > > 
-> > > Maybe something has changed, but in my linux-vanila (3.19-rc4)
-> > > at ./drivers/of/base.c it returns -EINVAL, -ENODATA or number of
-> > > elements.
-> > > 
-> > > Have I missed something?
-> > > 
-> > Hi Lukasz,
-> > 
-> > Yes, you have. Check include/linux/of.h, line 484, in latest mainline.
-> 
-> Ok. Now I got it.
-> 
-> The above situation shouldn't happen if I put of_find_property() check
-> on the very beginning of this function (it returns NULL when DT support
-> is not compiled).
-> 
+2015-02-23 17:25 GMT+01:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+>
+> Hi,
+>
+> On Wednesday, February 18, 2015 11:45:25 AM Krzysztof Kozlowski wrote:
+>> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
+>> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+>> controller") the second suspend to RAM failed. First suspend worked fine
+>> but the next one hang just after powering down of secondary CPUs (system
+>> consumed energy as it would be running but was not responsive).
+>>
+>> The issue was caused by enabling delayed reset assertion for CPU0 just
+>> after issuing power down of cores. This was introduced for Exynos4 in
+>> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
+>>
+>> The whole behavior is not well documented but after checking with vendor
+>> code this should be done like this (on Exynos4):
+>> 1. Enable delayed reset assertion when system is running (for all CPUs).
+>> 2. Disable delayed reset assertion before suspending the system.
+>>    This can be done after powering off secondary CPUs.
+>> 3. Re-enable the delayed reset assertion when system is resumed.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
+>> Cc: <stable@vger.kernel.org>
+>
+> It turned out that this patch is also needed to fix cpuidle AFTR mode
+> hang on Trats2.
+>
+> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Correct.
+Thanks for testing.
 
-> The function would look as follows:
-> 
-> int 
-> pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx
-> *ctx) 
-> {       
->         struct device_node *np = dev->of_node;
-> 	int num, i, ret;
-> 
-> 	if (!of_find_property(np, "cooling-levels", NULL))
-> 		return 0;
-> 
-> 	ret = of_property_count_u32_elems(np, "cooling-levels");
-> 	if (ret <= 0) {
-> 		dev_err(dev, "Wrong data!\n");
-> 		return ret;
+Dear Kukjin,
+Could you pick it up for this RC cycle? This patch fixes fatal suspend
+and cpuidle failures on Exynos4 based boards on current mainline.
 
-This should probably be something like 
-
-		return ret ? : -EINVAL;
-
-or ret == 0 is not an error, and you should not display an error message
-in that case.
-
-Thanks,
-Guenter
+Best regards,
+Krzysztof
