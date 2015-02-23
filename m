@@ -1,51 +1,55 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv3 0/8] devfreq: Add generic exynos memory-bus frequency
- driver
-Date: Mon, 23 Feb 2015 08:44:18 +0900
-Message-ID: <54EA69D2.7010706@samsung.com>
-References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
- <54DFE797.1020008@math.uni-bielefeld.de> <54E4FD40.8020206@gmx.net>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos: allow build for !THERMAL or !CPU_THERMAL cases
+Date: Mon, 23 Feb 2015 10:07:50 +0530
+Message-ID: <CAKohpomXnpdLtMpnWeFWdGDCE4t8iEz5aDxA=PhTcR-UKjQM6A@mail.gmail.com>
+References: <2275232.48muFcOOQv@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <54E4FD40.8020206@gmx.net>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, myungjoo.ham@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:33230 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751875AbbBWEhv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 22 Feb 2015 23:37:51 -0500
+Received: by mail-ob0-f169.google.com with SMTP id wp4so34404181obc.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Feb 2015 20:37:50 -0800 (PST)
+In-Reply-To: <2275232.48muFcOOQv@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Tobias,
+On 20 February 2015 at 21:50, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Allow driver build for !THERMAL or !CPU_THERMAL cases.
+>
+> The new dependency rule is the same as the one that CPUFREQ_DT
+> option has (for cpufreq-dt driver which has the same issue with
+> using of_cpufreq_cooling_register()).
+>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Eduardo Valentin <edubezval@gmail.com>
+> Cc: Lukasz Majewski <l.majewski@samsung.com>
+> Fixes: 8b2b4a4e5366 ("cpufreq: exynos: allow modular build")
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 1b06fc4..f4df4af3 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -28,7 +28,8 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+>  config ARM_EXYNOS_CPUFREQ
+>         tristate "SAMSUNG EXYNOS CPUfreq Driver"
+>         depends on CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250
+> -       depends on THERMAL
+> +       # if CPU_THERMAL is on and THERMAL=m, ARM_EXYNOS_CPUFREQ cannot be =y:
+> +       depends on !CPU_THERMAL || THERMAL
+>         help
+>           This adds the CPUFreq driver for Samsung EXYNOS platforms.
+>           Supported SoC versions are:
 
-First of all, thanks for your test.
-
-On 02/19/2015 05:59 AM, Tobias Jakobi wrote:
-> Hello again,
-> 
-> Tobias Jakobi wrote
->> I've tested the series on my Odroid-X2 (by adapting the TRATS2 changes),
->> and so far I haven't seen any issues. With the system being idle one can
->> see that the 'simple_ondemand' devfreq governor clocks down both memory
->> busses to the lowest state.
-> 
-> looks I was too hasty the last time. Actually this series breaks HDMI
-> output for me (or at least with 'simple_ondemand' governor, haven't
-> tried with performance yet).
-> 
-> I tried to run some simple application, but it hangs in uninterruptible
-> sleep immediately, probably before the first page flip. Going to check
-> this more thoroughly.
-> 
-> Maybe some parts of the hdmi subsystem don't like the lower clocks?
-
-As you thought, when maintaining lower clock of memory bus frequency,
-some issue related to multimedia feature will happen.
-
-Separately, We have to check the miminum lower clock for working of multimedia feature.
-and then multimedia or other IP have to request it to DVFS driver (memory busfreq driver).
-But, latest mainline kernel currently has not some way to inform minimum clock to DVFS driver.
-
-So, If you check the miminum clock for hdmi, I'll use this clock as minumu frequency of dvfs table.
-
-Thanks,
-Chanwoo Choi
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
