@@ -1,147 +1,40 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v6 00/18] thermal: exynos: Thermal code rework to use
- device tree
-Date: Mon, 23 Feb 2015 20:18:50 +0900
-Message-ID: <039101d04f5a$80147660$803d6320$@kernel.org>
-References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
- <1422015010-11918-1-git-send-email-l.majewski@samsung.com>
- <20150124214955.GA14443@developer.hsd1.ca.comcast.net>
- <54CAC3A2.5060804@kernel.org> <20150223111338.11ca4b6c@amdc2363>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH v2 12/15] exynos: add fimg2d header to common includes
+Date: Mon, 23 Feb 2015 11:19:08 +0000
+Message-ID: <54EB0CAC.5030801@gmail.com>
+References: <1424094405-6314-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1424094405-6314-13-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150223111338.11ca4b6c@amdc2363>
-Content-language: ko
-Sender: linux-pm-owner@vger.kernel.org
-To: 'Lukasz Majewski' <l.majewski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Eduardo Valentin' <edubezval@gmail.com>
-Cc: 'Zhang Rui' <rui.zhang@intel.com>, 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:44623 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752341AbbBWLTF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Feb 2015 06:19:05 -0500
+Received: by mail-wg0-f51.google.com with SMTP id y19so24896855wgg.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Feb 2015 03:19:04 -0800 (PST)
+In-Reply-To: <1424094405-6314-13-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, robclark@freedesktop.org, m.szyprowski@samsung.com
 
-Lukasz Majewski wrote:
+On 16/02/15 13:46, Tobias Jakobi wrote:
+> The reason for this change is to let userspace use the header.
+> Currently 'make install' does not install it.
 > 
-> Hi Kukjin, Eduardo
-> 
-Hi,
+Hi Tobias,
 
-> > On 01/25/15 06:49, Eduardo Valentin wrote:
-> > > On Fri, Jan 23, 2015 at 01:09:53PM +0100, Lukasz Majewski wrote:
-> > >> 1. Introduction
-> > >>
-> > >> Following patches aim to clean up the current implementation of
-> > >> the thermal framework on Exynos devices.
-> > >>
-> > >> The main goal was to use a generic code for reading thermal
-> > >> configuration (of-thermal.c). Due to that redundant
-> > >> exynos_thermal_common.[h|c] files were removed.
-> > >>
-> > >> Around 400 lines of code (LOC) were removed directly by this
-> > >> patch, which is around 20% of the Exynos thermal code base.
-> > >>
-> > >> This work should NOT bring any functional changes to Exynos
-> > >> thermal subsystem.
-> > >>
-> > >> 2. Patch-set structure
-> > >>
-> > >> Then the cpu_cooling functionality has been preserved to allow
-> > >> cooling devices by reducing operating frequency. Definition of
-> > >> trip points and cpufreq's cooling properties were moved to device
-> > >> tree.
-> > >>
-> > >> Then the rework of the way in which configuration data is provided
-> > >> to the Exynos thermal subsystem was performed. Now device tree is
-> > >> used for configuration.
-> > >>
-> > >> 3. Dead code removal
-> > >>
-> > >> Thermal support for some SoCs, previously available in the
-> > >> exynos_tmu_data.c file, was removed since, as of (almost)
-> > >> 3.19-rc3, they didn't have TMU bindings.
-> > >>
-> > >> Moreover, support for cpu_cooling devices was preserved only on
-> > >> those SoCs which had available and working cpufreq driver.
-> > >>
-> > >> 4. Testing
-> > >>
-> > >> Test devices:
-> > >> - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> > >> - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> > >> - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> > >> - Exynos5420 - Arndale-octa (only TMU zones)
-> > >>
-> > >> Unfortunately, I don't posses Exynos5440 for testing. Its
-> > >> functionality has been preserved in the code, but not tested on
-> > >> the hardware. I would be grateful for help in testing.
-> > >>
-> > >>
-> > >> 5. This work apply on the following tree:
-> > >>
-> > >> kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> > >> SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
-> > >>
-> > >>
-> > >> Lukasz Majewski (18):
-> > >
-> > > I have applied the following patches to my -fixes branch (for next
-> > > rc cycle)
-> > >
-> > >>   thermal: exynos: cosmetic: Correct comment format
-> > >>   thermal: exynos: Provide thermal_exynos.h file to be included in
-> > >>     device tree files
-> > >>   thermal: exynos: Modify exynos thermal code to use device tree
-> > >> for cpu cooling configuration
-> > >>   cpufreq: exynos: Use device tree to determine if cpufreq cooling
-> > >>     should be registered
-> > >>   dts: Documentation: Extending documentation entry for
-> > >> exynos-thermal dts: Documentation: Update exynos-thermal.txt
-> > >> example for Exynos5440 thermal: samsung: core: Exynos TMU rework
-> > >> to use device tree for configuration
-> > >>   thermal: exynos: Remove exynos_thermal_common.[c|h] files
-> > >>   thermal: exynos: Remove exynos_tmu_data.c file
-> > >
-> > > The patches below should go via platform tree:
-> > >
-> > >>   arm: dts: trats: Enable TMU on the Exynos4210 trats device
-> > >>   arm: dts: odroid: Add LDO10 regulator node necessary for TMU on
-> > >> Odroid arm: dts: odroid: Enable TMU at Exynos4412 based Odroid U3
-> > >> device arm: dts: Adding CPU cooling binding for Exynos SoCs
-> > >>   thermal: exynos: dts: Add default definition of the TMU sensor
-> > >>     parameter
-> > >>   thermal: dts: Default trip points definition for Exynos5420 SoCs
-> > >>   thermal: exynos: dts: Define default thermal-zones for Exynos4
-> > >>   thermal: dts: exynos: Trip points and sensor configuration data
-> > >> for Exynos5440
-> > >>   thermal: exynos: dts: Provide device tree bindings identical to
-> > >> the one in exynos_tmu_data.c
-> > >
-> >
-> > I've applied above patches with small subject changes.
-> >
-> > BTW unfortunately, since missing the
-> > "include/dt-bindings/thermal/thermal_exynos.h" in my tree, I couldn't
-> > merge it into for-next yet.
-> 
-> As of this writing: (Kernel 4.0-rc1) the
-> "include/dt-bindings/thermal/thermal_exynos.h" file is in the kernel
-> tree.
-> 
-I know.
+Afaict that this was done intentionally. I believe the Samsung guys got
+this out only to fulfil the "no drm(render) driver without open
+userspace" policy.
 
-> Kukjin, could you add missing DTS files and send this to upstream.
-> 
-Unfortunately, I couldn't take the DT changes in Samsung tree at that time
-because of missing header file and it causes build error. Now I can pick
-them into Samsung tree but I'm not sure it can be sent to upstream during
-this -rc...
+Although it's nice to see actual user(s) (outside of libdrm) perhaps the
+header could be cleaned up (#define TRUE 0, #define FALSE -1) a bit
+before that ?
 
-Eduardo, Lukasz,
-Do you guys think the DT changes are really fixes for 4.0?
+Either way it's up-to the Samsung/Exynos people to make the call.
 
-> Thanks in advance.
-> 
-> >
-> > Can you please provide a topic branch for it? If not, this cannot be
-> > handled in arm-soc tree in this time, I think.
-> >
-> > - Kukjin
-
+Cheers
+Emil
