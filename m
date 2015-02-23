@@ -1,63 +1,40 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] [media] s5p-jpeg: Clear JPEG_CODEC_ON bits in sw reset
- function
-Date: Mon, 23 Feb 2015 16:04:08 +0100
-Message-ID: <54EB4168.7090007@samsung.com>
-References: <1418797339-27877-1-git-send-email-tony.kn@samsung.com>
+Subject: Re: [PATCH] [media] s5p-jpeg: Fix crash in jpeg isr due to multiple
+ interrupts.
+Date: Mon, 23 Feb 2015 16:26:06 +0100
+Message-ID: <54EB468E.2050505@samsung.com>
+References: <1418797512-30226-1-git-send-email-tony.kn@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:9643 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752428AbbBWPEQ (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61659 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752505AbbBWP0P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Feb 2015 10:04:16 -0500
-In-reply-to: <1418797339-27877-1-git-send-email-tony.kn@samsung.com>
+	Mon, 23 Feb 2015 10:26:15 -0500
+In-reply-to: <1418797512-30226-1-git-send-email-tony.kn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tony K Nadackal <tony.kn@samsung.com>, linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mchehab@osg.samsung.com, j.anaszewski@samsung.com, kgene@kernel.org, k.debski@samsung.com, bhushan.r@samsung.com
 
-Hi,
-
-On 17/12/14 07:22, Tony K Nadackal wrote:
-> Bits EXYNOS4_DEC_MODE and EXYNOS4_ENC_MODE do not get cleared
-> on software reset. These bits need to be cleared explicitly.
+On 17/12/14 07:25, Tony K Nadackal wrote:
+> In case of corrupt images, multiple interrupts may occur
+> due to different error scenarios.
 > 
-> Signed-off-by: Tony K Nadackal <tony.kn@samsung.com>
-> ---
-> This patch is created and tested on top of linux-next-20141210.
-> It can be cleanly applied on media-next and kgene/for-next.
+> Since we are removing the src and dest buffers in the first
+> interrupt itself, crash occurs in the second error interrupts.
 > 
+> Disable the global interrupt before we start processing
+> the interrupt avoid the crash.
 > 
->  drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-> index ab6d6f43..e53f13a 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-> @@ -21,6 +21,10 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
->  	unsigned int reg;
->  
->  	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
-> +	writel(reg & ~(EXYNOS4_DEC_MODE | EXYNOS4_ENC_MODE),
-> +				base + EXYNOS4_JPEG_CNTL_REG);
-> +
-> +	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
+> Disable System interrupt in isr to avoid the crash below.
 
-Do we really need the second read? Wouldn't it also work as below ?
+Rather than disabling all interrupts, is there no way to check
+the interrupt reason from some status register and decide
+whether we return the buffers or just ignore the interrupt ?
 
-  	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
-
-+	reg &= ~(EXYNOS4_DEC_MODE | EXYNOS4_ENC_MODE);
-+	writel(reg, base + EXYNOS4_JPEG_CNTL_REG);
-
-?
->  	writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
->  
->  	udelay(100);
---
+-- 
 Thanks,
 Sylwester
