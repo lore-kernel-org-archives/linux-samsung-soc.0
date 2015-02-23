@@ -1,87 +1,102 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [GIT PULL] clk/samsung: clk support for Exynos 5433 SoC
-Date: Tue, 24 Feb 2015 08:48:23 +0900
-Message-ID: <54EBBC47.4090801@samsung.com>
-References: <54D3C820.2010800@samsung.com>
+Subject: Re: [PATCHv3 0/8] devfreq: Add generic exynos memory-bus frequency
+ driver
+Date: Tue, 24 Feb 2015 08:55:29 +0900
+Message-ID: <54EBBDF1.1030306@samsung.com>
+References: <1420681257-3078-1-git-send-email-cw00.choi@samsung.com>
+ <54DFE797.1020008@math.uni-bielefeld.de> <54E4FD40.8020206@gmx.net>
+ <54EA69D2.7010706@samsung.com> <54EB8645.4060608@math.uni-bielefeld.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54D3C820.2010800@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:61532 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120AbbBWXzc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Feb 2015 18:55:32 -0500
+In-reply-to: <54EB8645.4060608@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, myungjoo.ham@samsung.com, kgene@kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Dear Mike and Sylwester,
+Hi Tobias,
 
-This pull-request was not merged on Linux 4.0-rc1.
-Did you have any plan about it?
+On 02/24/2015 04:57 AM, Tobias Jakobi wrote:
+> Hello Chanwoo!
+> 
+> Chanwoo Choi wrote:
+>> As you thought, when maintaining lower clock of memory bus frequency,
+>> some issue related to multimedia feature will happen.
+>>
+>> Separately, We have to check the miminum lower clock for working of multimedia feature.
+>> and then multimedia or other IP have to request it to DVFS driver (memory busfreq driver).
+>> But, latest mainline kernel currently has not some way to inform minimum clock to DVFS driver.
+>>
+>> So, If you check the miminum clock for hdmi, I'll use this clock as minumu frequency of dvfs table.
+>>
+>> Thanks,
+>> Chanwoo Choi
+>>
+> 
+> First I have to apologize. I didn't check carefully. Actually it's not
+> the HDMI subsystem which seems to hang during my test, but the G2D
+> subsystem.
+> 
+> Here's a snippet of the kernel log with drm.debug=0xff:
+> [ 1157.911264] [drm:drm_framebuffer_reference] ee144e00: FB ID: 27 (2)
+> [ 1157.911271] [drm:drm_framebuffer_unreference] ee37fb80: FB ID: 25 (2)
+> [ 1157.911277] [drm:drm_framebuffer_unreference] ee144e00: FB ID: 27 (3)
+> [ 1157.911315] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+> EXYNOS_G2D_GET_VER
+> [ 1158.434439] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+> EXYNOS_G2D_SET_CMDLIST
+> [ 1158.434536] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1, EXYNOS_G2D_EXEC
+> [ 1158.437484] [drm:drm_vm_close_locked] 0xaf840000,0x00140000
+> [ 1158.437507] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+> DRM_IOCTL_GEM_CLOSE
+> [ 1158.437524] [drm:exynos_drm_gem_destroy] handle count = 0
+> [ 1158.437532] [drm:lowlevel_buffer_deallocate] dma_addr(0x20500000),
+> size(0x140000)
+> [ 1158.437810] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+> EXYNOS_GEM_CREATE
+> [ 1158.437819] [drm:exynos_drm_init_buf] desired size = 0x256000
+> [ 1158.437851] [drm:exynos_drm_gem_init] created file object = 0xe97c8d00
+> [ 1158.445506] [drm:lowlevel_buffer_allocate] dma_addr(0x21400000),
+> size(0x256000)
+> [ 1158.445535] [drm:exynos_drm_gem_handle_create] gem handle = 0x1
+> [ 1158.445556] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+> DRM_IOCTL_MODE_MAP_DUMB
+> [ 1158.445570] [drm:exynos_drm_gem_dumb_map_offset] offset = 0x101c2000
+> [ 1158.445600] [drm:drm_vm_open_locked] 0xaec15000,0x00256000
+> [ 1158.445608] [drm:update_vm_cache_attr] flags = 0x0
+> [ 1158.457696] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1,
+> EXYNOS_G2D_SET_CMDLIST
+> [ 1158.457745] [drm:drm_ioctl] pid=2569, dev=0xe200, auth=1, EXYNOS_G2D_EXEC
+> 
+> 
+> So G2D_EXEC seems to work once, but the second time it hangs forever. I
+> even fail at attaching gdb to the application then (gdb then also hangs
+> in D state).
+> 
+> If I just use the 'vsynced page flipping' test, then everything works:
+> ./modetest -M exynos -s 16@13:1280x720 -v
+> setting mode 1280x720-60Hz@XR24 on connectors 16, crtc 13
+> freq: 61.08Hz
+> freq: 60.00Hz
+> freq: 60.00Hz
+> <etc.>
+> 
+> I'm going to do some tests with the G2D in the next time, checking how
+> much I can lower MIF/INT clocks before the engine becomes unstable.
+
+Thanks for your test. If you have any question or help, please feel free to ask me.
+
+I'm working to implemnet new generic exynos memoby-bus frequency driver (exynos-busfreq.c).
+because this version of patch-set used the 'virtual operating-points'.
+So, I'm working to implment this drvier without 'virtual operation-points'.
+After finishing the implmentaion, I'll add you to mailing list ac Cc.
 
 Best Regards,
 Chanwoo Choi
-
-On 02/06/2015 04:44 AM, Sylwester Nawrocki wrote:
-> Hi Mike,
-> 
-> This pull request includes driver for clock controller of the Exynos 
-> 5433 SoC.  As the hardware is quite complex, with many peripherals and 
-> corresponding clock management units the driver is rather huge.  I guess 
-> it will require a bit more cleanups than last time to balance lines 
-> introduced in this patch set... Please review and pull if it looks OK.
-> 
-> The following changes since commit e64fb42da4c6c713cfc7cad607e97e0773fa41ff:
-> 
->   clk: samsung: exynos4: Add divider clock id for memory bus frequency 
-> (2015-01-28 15:51:17 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/v3.20-exynos5433-clk
-> 
-> for you to fetch changes up to b2f0e5f28e0686c0d5db238357a2e32555e97633:
-> 
->   clk: samsung: exynos5433: Move CLK_SCLK_HDMI_SPDIF_DISP clock to CMU_TOP 
-> domain (2015-02-05 19:31:09 +0100)
-> 
-> ----------------------------------------------------------------
-> Clock controller driver for Exynos 5433 SoC.
-> 
-> ----------------------------------------------------------------
-> Chanwoo Choi (22):
->       clk: samsung: exynos5433: Add binding document for Exynos5433 clock domains
->       clk: samsung: exynos5433: Add clocks using common clock framework
->       clk: samsung: exynos5433: Add MUX clocks of CMU_TOP domain
->       clk: samsung: exynos5433: Add clocks for CMU_PERIC domain
->       clk: samsung: exynos5433: Add clocks for CMU_PERIS domain
->       clk: samsung: exynos5433: Add clocks for CMU_G2D domain
->       clk: samsung: exynos5433: Add clocks for CMU_MIF domain
->       clk: samsung: exynos5433: Add clocks for CMU_DISP domain
->       clk: samsung: exynos5433: Add clocks for CMU_AUD domain
->       clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
->       clk: samsung: exynos5433: Add missing clocks for CMU_FSYS domain
->       clk: samsung: exynos5433: Add clocks for CMU_G3D domain
->       clk: samsung: exynos5433: Add clocks for CMU_GSCL domain
->       clk: samsung: exynos5433: Add clocks for CMU_APOLLO domain
->       clk: samsung: exynos5433: Add clocks for CMU_ATLAS domain
->       clk: samsung: exynos5433: Add clocks for CMU_MSCL domain
->       clk: samsung: exynos5433: Add clocks for CMU_MFC domain
->       clk: samsung: exynos5433: Add clocks for CMU_HEVC domain
->       clk: samsung: exynos5433: Add clocks for CMU_ISP domain
->       clk: samsung: exynos5433: Add clocks for CMU_CAM0 domain
->       clk: samsung: exynos5433: Add clocks for CMU_CAM1 domain
->       clk: samsung: exynos5433: Move CLK_SCLK_HDMI_SPDIF_DISP clock to CMU_TOP domain
-> 
-> Inha Song (1):
->       clk: samsung: Add CLKOUT driver support for Exynos5433 SoC
-> 
->  .../devicetree/bindings/clock/exynos5433-clock.txt |  462 ++
->  drivers/clk/samsung/Makefile                       |    1 +
->  drivers/clk/samsung/clk-exynos-clkout.c            |    2 +
->  drivers/clk/samsung/clk-exynos5433.c               | 5423 ++++++++++++++++++++
->  include/dt-bindings/clock/exynos5433.h             | 1403 +++++
->  5 files changed, 7291 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->  create mode 100644 drivers/clk/samsung/clk-exynos5433.c
->  create mode 100644 include/dt-bindings/clock/exynos5433.h
-> 
