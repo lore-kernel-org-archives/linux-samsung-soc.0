@@ -1,57 +1,51 @@
-From: Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH] drivers: spi: fix compiler warning in spi-s3c64xx
-Date: Mon, 23 Feb 2015 12:30:46 +0000
-Message-ID: <1424694646-26002-1-git-send-email-andre.przywara@arm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] drivers: spi: fix compiler warning in spi-s3c64xx
+Date: Mon, 23 Feb 2015 23:21:35 +0900
+Message-ID: <20150223142135.GC6236@finisterre.sirena.org.uk>
+References: <1424694646-26002-1-git-send-email-andre.przywara@arm.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3WLtXmtPTeS+BWmV"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:61024 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752028AbbBWMbS (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50727 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751055AbbBWOWl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Feb 2015 07:31:18 -0500
+	Mon, 23 Feb 2015 09:22:41 -0500
+Content-Disposition: inline
+In-Reply-To: <1424694646-26002-1-git-send-email-andre.przywara@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, arnd@arndb.de
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, arnd@arndb.de
 
-The Exynos 7 arm64 support now allows the S3C64xx SPI driver to be
-compiled into an ARM64 kernel, so the cast from the [rt]x_dmach int
-variable to a void* in this driver now triggers a warning.
-Add a long cast to silence the compiler.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
-Hi,
+--3WLtXmtPTeS+BWmV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-this is only compile-tested for arm and arm64. Could someone with
-the hardware please confirm that it still works?
+On Mon, Feb 23, 2015 at 12:30:46PM +0000, Andre Przywara wrote:
+> The Exynos 7 arm64 support now allows the S3C64xx SPI driver to be
+> compiled into an ARM64 kernel, so the cast from the [rt]x_dmach int
+> variable to a void* in this driver now triggers a warning.
+> Add a long cast to silence the compiler.
 
-Cheers,
-Andre.
+Applied, thanks.
 
- drivers/spi/spi-s3c64xx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--3WLtXmtPTeS+BWmV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 9231c34..b1c6731 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -324,7 +324,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 
- 		/* Acquire DMA channels */
- 		sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				   (void *)sdd->rx_dma.dmach, dev, "rx");
-+				   (void *)(long)sdd->rx_dma.dmach, dev, "rx");
- 		if (!sdd->rx_dma.ch) {
- 			dev_err(dev, "Failed to get RX DMA channel\n");
- 			ret = -EBUSY;
-@@ -333,7 +333,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 		spi->dma_rx = sdd->rx_dma.ch;
- 
- 		sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				   (void *)sdd->tx_dma.dmach, dev, "tx");
-+				   (void *)(long)sdd->tx_dma.dmach, dev, "tx");
- 		if (!sdd->tx_dma.ch) {
- 			dev_err(dev, "Failed to get TX DMA channel\n");
- 			ret = -EBUSY;
--- 
-1.7.9.5
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU6zduAAoJECTWi3JdVIfQ/WgH/2WjP9ysYqvL5bvXNUgCFosp
+Uje0DBt0s5Dsysrw+ZiYgSNgYiBx4ieG3xjtWPgAgYBhtH9gyjFGbNosdKP6dhhB
+BGOSR+O3PzuxmjEbWyqAhgQ8yY0iWwWmFWbngnIf7/7+R0nw0klEwzms54vg56EB
+5Op5indYqYh5mX09Y78EjynKQhr/M21u/tcZ7nMWmuZwYmxAp+XmFl0KJG5CFuTI
+oRnKT58Ene79abXVw1GaC9dJCa3IhYHh0DF19tgKNx5BVsOXgKfNZTCqC6+pDf0t
+v5GQlN57UpR+nD7Fldnl7MLnJV9lCGbQIJC7UfINaDvEJmnoQ1pMqlT2rshyy/I=
+=Y0hP
+-----END PGP SIGNATURE-----
+
+--3WLtXmtPTeS+BWmV--
