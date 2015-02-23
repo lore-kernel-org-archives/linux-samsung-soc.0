@@ -1,57 +1,178 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: max98088: Add master clock handling
-Date: Mon, 23 Feb 2015 13:23:21 +0100
-Message-ID: <54EB1BB9.4030205@suse.de>
-References: <1424283959-16289-3-git-send-email-afaerber@suse.de> <1424373526-4135-1-git-send-email-afaerber@suse.de> <54E6A9AB.4070401@gmail.com> <54EAE4DF.3040607@collabora.co.uk>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v6 00/18] thermal: exynos: Thermal code rework to use
+ device tree
+Date: Mon, 23 Feb 2015 13:28:54 +0100
+Message-ID: <20150223132854.232d0da8@amdc2363>
+References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com>
+ <1422015010-11918-1-git-send-email-l.majewski@samsung.com>
+ <20150124214955.GA14443@developer.hsd1.ca.comcast.net>
+ <54CAC3A2.5060804@kernel.org> <20150223111338.11ca4b6c@amdc2363>
+ <039101d04f5a$80147660$803d6320$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54EAE4DF.3040607-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Xiubo Li <Li.Xiubo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:23736 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752488AbbBWM3R (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Feb 2015 07:29:17 -0500
+In-reply-to: <039101d04f5a$80147660$803d6320$@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Eduardo Valentin' <edubezval@gmail.com>, 'Zhang Rui' <rui.zhang@intel.com>, 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>
 
-Hi,
+Hi Kukjin,
 
-Am 23.02.2015 um 09:29 schrieb Javier Martinez Canillas:
-> On 02/20/2015 04:27 AM, Tushar Behera wrote:
->> On 02/20/2015 12:48 AM, Andreas F=C3=A4rber wrote:
->>> If master clock is provided through device tree, then update
->>> the master clock frequency during set_sysclk.
->>>
->>> Cc: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
->>> ---
->>>  sound/soc/codecs/max98088.c | 24 ++++++++++++++++++++++++
->>>  1 file changed, 24 insertions(+)
->>>
->>
->> Looks good.
->>
->> Acked-by: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>
->=20
-> Looks good to me as well.
->=20
-> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8oXa1LcwEujcA@public.gmane.org=
-k>
+> Lukasz Majewski wrote:
+> > 
+> > Hi Kukjin, Eduardo
+> > 
+> Hi,
+> 
+> > > On 01/25/15 06:49, Eduardo Valentin wrote:
+> > > > On Fri, Jan 23, 2015 at 01:09:53PM +0100, Lukasz Majewski wrote:
+> > > >> 1. Introduction
+> > > >>
+> > > >> Following patches aim to clean up the current implementation of
+> > > >> the thermal framework on Exynos devices.
+> > > >>
+> > > >> The main goal was to use a generic code for reading thermal
+> > > >> configuration (of-thermal.c). Due to that redundant
+> > > >> exynos_thermal_common.[h|c] files were removed.
+> > > >>
+> > > >> Around 400 lines of code (LOC) were removed directly by this
+> > > >> patch, which is around 20% of the Exynos thermal code base.
+> > > >>
+> > > >> This work should NOT bring any functional changes to Exynos
+> > > >> thermal subsystem.
+> > > >>
+> > > >> 2. Patch-set structure
+> > > >>
+> > > >> Then the cpu_cooling functionality has been preserved to allow
+> > > >> cooling devices by reducing operating frequency. Definition of
+> > > >> trip points and cpufreq's cooling properties were moved to
+> > > >> device tree.
+> > > >>
+> > > >> Then the rework of the way in which configuration data is
+> > > >> provided to the Exynos thermal subsystem was performed. Now
+> > > >> device tree is used for configuration.
+> > > >>
+> > > >> 3. Dead code removal
+> > > >>
+> > > >> Thermal support for some SoCs, previously available in the
+> > > >> exynos_tmu_data.c file, was removed since, as of (almost)
+> > > >> 3.19-rc3, they didn't have TMU bindings.
+> > > >>
+> > > >> Moreover, support for cpu_cooling devices was preserved only on
+> > > >> those SoCs which had available and working cpufreq driver.
+> > > >>
+> > > >> 4. Testing
+> > > >>
+> > > >> Test devices:
+> > > >> - Exynos4210 - Trats (TMU zone + cpu_cooling)
+> > > >> - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+> > > >> - Exynos5250 - Arndale (TMU zone + cpu_cooling)
+> > > >> - Exynos5420 - Arndale-octa (only TMU zones)
+> > > >>
+> > > >> Unfortunately, I don't posses Exynos5440 for testing. Its
+> > > >> functionality has been preserved in the code, but not tested on
+> > > >> the hardware. I would be grateful for help in testing.
+> > > >>
+> > > >>
+> > > >> 5. This work apply on the following tree:
+> > > >>
+> > > >> kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
+> > > >> SHA1: 1813d80874699145f04af6b05ebab0a6419001fb
+> > > >>
+> > > >>
+> > > >> Lukasz Majewski (18):
+> > > >
+> > > > I have applied the following patches to my -fixes branch (for
+> > > > next rc cycle)
+> > > >
+> > > >>   thermal: exynos: cosmetic: Correct comment format
+> > > >>   thermal: exynos: Provide thermal_exynos.h file to be
+> > > >> included in device tree files
+> > > >>   thermal: exynos: Modify exynos thermal code to use device
+> > > >> tree for cpu cooling configuration
+> > > >>   cpufreq: exynos: Use device tree to determine if cpufreq
+> > > >> cooling should be registered
+> > > >>   dts: Documentation: Extending documentation entry for
+> > > >> exynos-thermal dts: Documentation: Update exynos-thermal.txt
+> > > >> example for Exynos5440 thermal: samsung: core: Exynos TMU
+> > > >> rework to use device tree for configuration
+> > > >>   thermal: exynos: Remove exynos_thermal_common.[c|h] files
+> > > >>   thermal: exynos: Remove exynos_tmu_data.c file
+> > > >
+> > > > The patches below should go via platform tree:
+> > > >
+> > > >>   arm: dts: trats: Enable TMU on the Exynos4210 trats device
+> > > >>   arm: dts: odroid: Add LDO10 regulator node necessary for TMU
+> > > >> on Odroid arm: dts: odroid: Enable TMU at Exynos4412 based
+> > > >> Odroid U3 device arm: dts: Adding CPU cooling binding for
+> > > >> Exynos SoCs thermal: exynos: dts: Add default definition of
+> > > >> the TMU sensor parameter
+> > > >>   thermal: dts: Default trip points definition for Exynos5420
+> > > >> SoCs thermal: exynos: dts: Define default thermal-zones for
+> > > >> Exynos4 thermal: dts: exynos: Trip points and sensor
+> > > >> configuration data for Exynos5440
+> > > >>   thermal: exynos: dts: Provide device tree bindings identical
+> > > >> to the one in exynos_tmu_data.c
+> > > >
+> > >
+> > > I've applied above patches with small subject changes.
+> > >
+> > > BTW unfortunately, since missing the
+> > > "include/dt-bindings/thermal/thermal_exynos.h" in my tree, I
+> > > couldn't merge it into for-next yet.
+> > 
+> > As of this writing: (Kernel 4.0-rc1) the
+> > "include/dt-bindings/thermal/thermal_exynos.h" file is in the kernel
+> > tree.
+> > 
+> I know.
+> 
+> > Kukjin, could you add missing DTS files and send this to upstream.
+> > 
+> Unfortunately, I couldn't take the DT changes in Samsung tree at that
+> time because of missing header file and it causes build error. 
 
-Thanks guys. One self-doubt: Is there any downside to returning
--EPROBE_DEFER after regcache_mark_dirty(max98088->regmap)? I.e., should
-I move the last hunk some lines up to be the very first thing executed?
+The header problem was due to splitting this patch set to -samsung and
+-thermal trees.
+The intention was to merge it all at once, but unfortunately it was
+split.
 
-Cheers,
-Andreas
+> Now I
+> can pick them into Samsung tree but I'm not sure it can be sent to
+> upstream during this -rc...
+> 
+> Eduardo, Lukasz,
+> Do you guys think the DT changes are really fixes for 4.0?
 
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Felix Imend=C3=B6rffer, Jane Smithard, Jennifer Guild, Dilip Upmany=
-u,
-Graham Norton; HRB 21284 (AG N=C3=BCrnberg)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The thermal Samsung rework has been merged, so without this DTS files
+we have regression, since boards like Trats2, Odroid will not have
+thermal support in 4.0 final release.
+
+Additionally we are now at -rc1 state, so some extra time is left to
+handle unexpected situation (although there shouldn't be any).
+
+> 
+> > Thanks in advance.
+> > 
+> > >
+> > > Can you please provide a topic branch for it? If not, this cannot
+> > > be handled in arm-soc tree in this time, I think.
+> > >
+> > > - Kukjin
+> 
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
