@@ -1,85 +1,55 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v5 0/2] irqchip: Move Exynos PM to use stacked domains
-Date: Tue, 24 Feb 2015 10:36:59 +0000
-Message-ID: <54EC544B.3030705@arm.com>
-References: <1424713534-7112-1-git-send-email-marc.zyngier@arm.com> <54EC4DF4.1010906@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Tue, 24 Feb 2015 20:04:17 +0900
+Message-ID: <54EC5AB1.5090802@samsung.com>
+References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
+ <7139111.LGA4lhSjob@wuerfel> <54EC3BB1.1020701@samsung.com>
+ <7412525.l6YnQcTxtg@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:33706 "EHLO
-	usa-sjc-mx-foss1.foss.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751281AbbBXKhE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Feb 2015 05:37:04 -0500
-In-Reply-To: <54EC4DF4.1010906@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <7412525.l6YnQcTxtg@wuerfel>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Pakaj,
-
-On 24/02/15 10:09, Pankaj Dubey wrote:
-> Hi Mark,
+On 02/24/2015 06:48 PM, Arnd Bergmann wrote:
+> On Tuesday 24 February 2015 17:52:01 Chanwoo Choi wrote:
+>>
+>> But, I have a question.
+>> If we put the aliases into the board dts file instaed of SoC dtsi,
+>> each board dts file may use the different alias name about same phandle.
 > 
-> On Monday 23 February 2015 11:15 PM, Marc Zyngier wrote:
->> This series is extracted from [4], which is trying to remove all
->> traces of gic_arch_extn from the tree. As some maintainers are more
->> responsive than others (understatement of the year...), I've decided
->> to split it per sub-arch, and get it moving, at least partially.
->>
->> This series addresses Exynos by converting its PM support to a stacked
->> domain on top of the standard GIC.
->>
->> Based on 4.0-rc1.
->>
->> * From v4: [4]
->> - Extracted from the full series
->> - Rebased on 4.0-rc1
->>
->> * From v3 [3]:
->> - Rebased on top of the patch working around hardcoded IRQ on OMAP4/5 [4]
->> - Fixed more iMX6 DTs (Stephan)
->> - Fixed Exynos4/5 DTs
->>
->> * From v2 [2]:
->> - Addressed numerous comments from Thierry
->> - Merged bug fixes from Nishanth
->> - Merged bug fix from Stefan
->>
->> * From v1 [1]:
->> - Rebased on 3.19-rc3
->> - Fixed a number of additional platforms
->> - Added crossbar conversion to stacked domains
->> - Merged bug fixes from Nishanth
->>
->> [4]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/317531.html
->> [3]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/315385.html
->> [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/314041.html
->> [1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/307338.html
->>
->> Marc Zyngier (2):
->>    ARM: exynos4/5: convert pmu wakeup to stacked domains
->>    DT: exynos: update PMU binding
->>
->>   .../devicetree/bindings/arm/samsung/pmu.txt        |  17 +++
->>   arch/arm/boot/dts/exynos4.dtsi                     |   4 +
->>   arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
->>   arch/arm/boot/dts/exynos5420.dtsi                  |   4 +
->>   arch/arm/mach-exynos/exynos.c                      |  14 +--
->>   arch/arm/mach-exynos/suspend.c                     | 122 +++++++++++++++++++--
->>   6 files changed, 146 insertions(+), 19 deletions(-)
->>
-> 
-> I tested and verified S2R functionality on Exynos5250 based SMDK5250 
-> board, and suspend-resume working fine. For testing on SMDK5250 you can 
-> add my tested-by.
-> 
-> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Yes, that is the idea. In particular with the uarts, the intention is
+> that the numbering of the device nodes in /dev is the same that is
+> printed on the board (if any), which may be different from the numbering
+> internal to the SoC.
 
-Thanks. Will you or Kukjin get that merged directly?
+I check the uart device with Exynos5433 SoC based on Linux 4.0-rc1
+If some board use the serial_0 and serial_3 as following in board dtsi,
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+	&serial_0 {		--> UART 0 device
+		status = "okay";
+	};
+
+	&serial_3 {		--> UART 3 device
+		status = "okay";
+	};
+
+The serial core driver create the follwoing /dev/ttySACx device node
+by using the number of alias. It maintain the same device number of internel to the SoC.
+
+	root@localhost:~# ls /dev/ttySAC
+	ttySAC1  ttySAC3  
+
+Thanks,
+Chanwoo Choi
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
