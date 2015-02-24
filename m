@@ -1,112 +1,123 @@
 From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v4 3/8] Documentation: dts: Documentation entry to
- explain how to use PWM FAN as a cooling device
-Date: Tue, 24 Feb 2015 15:25:21 -0400
-Message-ID: <20150224192520.GI3448@developer.amazonguestwifi.org>
+Subject: Re: [PATCH v4 5/8] ARM: dts: Add properties to use pwm-fan device as
+ a cooling device in Odroid U3
+Date: Tue, 24 Feb 2015 15:37:13 -0400
+Message-ID: <20150224193711.GA353@developer.amazonguestwifi.org>
 References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
  <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-4-git-send-email-l.majewski@samsung.com>
+ <1424254056-5904-6-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7IgncvKP0CVPV/ZZ"
+	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:43277 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751824AbbBXTZ2 (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:35854 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752879AbbBXThR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Feb 2015 14:25:28 -0500
+	Tue, 24 Feb 2015 14:37:17 -0500
 Content-Disposition: inline
-In-Reply-To: <1424254056-5904-4-git-send-email-l.majewski@samsung.com>
+In-Reply-To: <1424254056-5904-6-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Lukasz Majewski <l.majewski@samsung.com>
 Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
 
---7IgncvKP0CVPV/ZZ
+--+QahgC5+KEYLbs62
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 18, 2015 at 11:07:31AM +0100, Lukasz Majewski wrote:
-> Explanation of several properties, which allow PWM fan working as a cooli=
-ng
-> device, have been embraced in this commit.
+On Wed, Feb 18, 2015 at 11:07:33AM +0100, Lukasz Majewski wrote:
+> With those bindings it is possible to use pwm-fan device available in
+> Odroid U3 as a cooling device.
 >=20
 > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 > ---
 > Changes for v2:
-> - Rename cooling-pwm-values to cooling-levels
-> - Remove default-pulse-width property and stick to default hwmon policy
+> - Rename cooling-pwm-values property to cooling-levels
 > Changes for v3:
-> - Changing commit title from "hwmon: dts: Doc:" to "Documentation: dts"
-> - Remove unnecessary properties
-> - Set maximal cooling level to 230 instead of 255
+> - Change patch's topic to "ARM dts"
+> - Reduce maximal cooling-level to 230 from 255
 > Changes for v4:
 > - None
 > ---
->  Documentation/devicetree/bindings/hwmon/pwm-fan.txt | 20 +++++++++++++++=
-+++++
->  1 file changed, 20 insertions(+)
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts | 33 +++++++++++++++++++++++++=
++++++-
+>  1 file changed, 32 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Docume=
-ntation/devicetree/bindings/hwmon/pwm-fan.txt
-> index 610757c..d53fe0c 100644
-> --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> @@ -3,10 +3,30 @@ Bindings for a fan connected to the PWM lines
->  Required properties:
->  - compatible	: "pwm-fan"
->  - pwms		: the PWM that is used to control the PWM fan
-> +- cooling-levels      : PWM duty cycle values in a range from 0 to 255
-> +			which correspond to thermal cooling states
-> +
-> +Thorough description of the following bindings:
+> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dt=
+s/exynos4412-odroidu3.dts
+> index 60bd1e4..3e5df3e 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> @@ -32,11 +32,42 @@
+>  		};
+>  	};
+> =20
+> -	pwm-fan {
+> +	fan0: pwm-fan {
+>  		compatible =3D "pwm-fan";
+>  		pwms =3D <&pwm 0 10000 0>;
 > +		cooling-min-state =3D <0>;
 > +		cooling-max-state =3D <3>;
 > +		#cooling-cells =3D <2>;
-> +		thermal-zone {
-> +			cpu_thermal: cpu-thermal {
+> +		cooling-levels =3D <0 102 170 230>;
+>  		status =3D "okay";
+>  	};
+> +
+> +	thermal-zones {
+> +		cpu_thermal: cpu-thermal {
+
+
+This thermal zone misses the mandatory properties as per=20
+ Documentation/devicetree/bindings/thermal/thermal.txt
+
 > +			cooling-maps {
 > +				map0 {
 > +				     trip =3D <&cpu_alert1>;
+> +				     cooling-device =3D <&cpu0 7 7>;
+> +				};
+> +				map1 {
+> +				     trip =3D <&cpu_alert2>;
+> +				     cooling-device =3D <&cpu0 13 13>;
+> +				};
+> +				map2 {
+> +				     trip =3D <&cpu_alert0>;
 > +				     cooling-device =3D <&fan0 0 1>;
+> +				};
+> +				map3 {
+> +				     trip =3D <&cpu_alert1>;
+> +				     cooling-device =3D <&fan0 1 2>;
+> +				};
+> +				map4 {
+> +				     trip =3D <&cpu_alert2>;
+> +				     cooling-device =3D <&fan0 2 3>;
 > +				};
 > +			};
 > +		};
-
-I am fine if you leave the reference to thermal.txt biding description,
-but I would prefer if you move the above lines to a proper example section.
-
-> +
-> +for PWM FAN used as cooling device can be found at:
-> +./Documentation/devicetree/bindings/thermal/thermal.txt
+> +	};
+>  };
 > =20
->  Example:
->  	pwm-fan {
->  		compatible =3D "pwm-fan";
->  		status =3D "okay";
->  		pwms =3D <&pwm 0 10000 0>;
-> +		cooling-levels =3D <0 102 170 230>;
->  	};
+>  &pwm {
 > --=20
 > 2.0.0.rc2
 >=20
 
---7IgncvKP0CVPV/ZZ
+--+QahgC5+KEYLbs62
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJU7NAWAAoJEMLUO4d9pOJWCAIH/0f3Y2wm25mlIgWvVB1zPEyD
-357D2o77MaVTOrsHBB4qZ39/xZczRM2+MJkj4J2jS1Jc5vvdeRdJ9eRHsoxwTvma
-0Prhw8dBHi7yzBLYefeBtsVuraHc3P6V8QXQhhnBgF0W4PIXT749KWoXPXc55f+q
-E1sk3Hp4TBm5SinUescBz+vktBglHYTmn/4RAW/ieZJmc5U4CwJ1bh692GNesONK
-E3jYbiuLjm9VbI5erVoZeF3MACMiulLpalZegBRmgl8izSq/OZpchXI7UnLa5Uxu
-ZccUBJLDXxMQRYOOvufaaA4WoEAMQvt0vN415+ragHYsuvqGHlqF6/BEIagylVM=
-=2ODY
+iQEcBAEBAgAGBQJU7NLeAAoJEMLUO4d9pOJWPR0H/iwmIou90qFFRLOerb+N8B3U
+4vUB/xpRTChTV3Y7MriVzBWsVpVFbqBgvtDcYiXAOQon0sm2TL1x3uSXIFyc0Q5R
+YjwuSHHHvgOSJqNXjcAE9LAozko1L6wHUppvQ0+T82uqKoC8/MbEX1VzIxGT4JrT
+7QrPMUEtgJcHWWrUHLg+VDpk1dPJ46hLwEqPHhk7jtTR0mNr7IDEPlvWms7docSp
+svVn9xW0UGG+PJXX35+uerEdRkVJ3yCH4wX88oiw5IF/UNo8t/jkEK/ksUHp89wc
+42jVRtfQrgiLtVCthquS+dPIbmOkDyToLbeTqQwIqZ2iOLGJpv9R2SV9QHQpGx0=
+=m1tq
 -----END PGP SIGNATURE-----
 
---7IgncvKP0CVPV/ZZ--
+--+QahgC5+KEYLbs62--
