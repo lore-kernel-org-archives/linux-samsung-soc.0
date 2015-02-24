@@ -1,87 +1,54 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v3 03/17] tests/exynos: fix typos and change wording
-Date: Tue, 24 Feb 2015 15:20:41 +0100
-Message-ID: <1424787655-10739-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v3 04/17] tests/exynos: disable the G2D userptr/blend test
+Date: Tue, 24 Feb 2015 15:20:42 +0100
+Message-ID: <1424787655-10739-5-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:47904 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:47913 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752411AbbBXOWa (ORCPT
+	by vger.kernel.org with ESMTP id S1752350AbbBXOW7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Feb 2015 09:22:30 -0500
+	Tue, 24 Feb 2015 09:22:59 -0500
 In-Reply-To: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, m.szyprowski@samsung.com, robclark@freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-No functional changes.
+v2: Move the commit description into the patch itself.
+v3: Use common commenting style as pointed out by
+    Emil Velikov <emil.l.velikov at gmail.com>.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- exynos/exynos_fimg2d.c            | 8 ++++----
- tests/exynos/exynos_fimg2d_test.c | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ tests/exynos/exynos_fimg2d_test.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
-index 9c66c3a..df18a08 100644
---- a/exynos/exynos_fimg2d.c
-+++ b/exynos/exynos_fimg2d.c
-@@ -148,13 +148,13 @@ static void g2d_reset(struct g2d_context *ctx)
- }
- 
- /*
-- * g2d_flush - summit all commands and values in user side command buffer
-+ * g2d_flush - submit all commands and values in user side command buffer
-  *		to command queue aware of fimg2d dma.
-  *
-  * @ctx: a pointer to g2d_context structure.
-  *
-  * This function should be called after all commands and values to user
-- * side command buffer is set to summit that buffer to kernel side driver.
-+ * side command buffer are set. It submits that buffer to the kernel side driver.
-  */
- static int g2d_flush(struct g2d_context *ctx)
- {
-@@ -195,7 +195,7 @@ static int g2d_flush(struct g2d_context *ctx)
- /**
-  * g2d_init - create a new g2d context and get hardware version.
-  *
-- * fd: a file descriptor to drm device driver opened.
-+ * fd: a file descriptor to an opened drm device.
-  */
- drm_public struct g2d_context *g2d_init(int fd)
- {
-@@ -527,7 +527,7 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
- }
- 
- /**
-- * g2d_blend - blend image data in source and destion buffers
-+ * g2d_blend - blend image data in source and destination buffers.
-  *
-  * @ctx: a pointer to g2d_context structure.
-  * @src: a pointer to g2d_image structure including image and buffer
 diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
-index 41fb869..aa140e5 100644
+index aa140e5..0f7cf24 100644
 --- a/tests/exynos/exynos_fimg2d_test.c
 +++ b/tests/exynos/exynos_fimg2d_test.c
-@@ -39,7 +39,7 @@ static unsigned int screen_width, screen_height;
- /*
-  * A structure to test fimg2d hw.
-  *
-- * @solid_fild: fill given color data to source buffer.
-+ * @solid_fill: fill given color data to source buffer.
-  * @copy: copy source to destination buffer.
-  * @copy_with_scale: copy source to destination buffer scaling up or
-  *	down properly.
-@@ -256,7 +256,7 @@ static int g2d_solid_fill_test(struct exynos_device *dev, struct exynos_bo *dst)
- 	memset(&img, 0, sizeof(struct g2d_image));
- 	img.bo[0] = dst->handle;
+@@ -788,11 +788,21 @@ int main(int argc, char **argv)
  
--	printf("soild fill test.\n");
-+	printf("solid fill test.\n");
+ 	getchar();
  
- 	srand(time(NULL));
- 	img_w = screen_width;
++	/*
++	 * The blend test uses the userptr functionality of exynos-drm, which
++	 * is currently not safe to use. If the kernel hasn't been build with
++	 * exynos-iommu support, then the blend test is going to produce (kernel)
++	 * memory corruption, eventually leading to a system crash.
++	 *
++	 * Disable the test for now, until the kernel code has been sanitized.
++	 */
++#if 0
+ 	ret  = test_case.blend(dev, src, bo, G2D_IMGBUF_USERPTR);
+ 	if (ret < 0)
+ 		fprintf(stderr, "failed to test blend operation.\n");
+ 
+ 	getchar();
++#endif
+ 
+ err_free_src:
+ 	if (src)
 -- 
 2.0.5
