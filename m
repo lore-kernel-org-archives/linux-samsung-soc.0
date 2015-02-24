@@ -1,50 +1,85 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add the source clock for CLKOUT register as
- xusbxti
-Date: Tue, 24 Feb 2015 19:21:43 +0900
-Message-ID: <54EC50B7.7050408@samsung.com>
-References: <1424770315-4725-1-git-send-email-ideal.song@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v5 0/2] irqchip: Move Exynos PM to use stacked domains
+Date: Tue, 24 Feb 2015 10:36:59 +0000
+Message-ID: <54EC544B.3030705@arm.com>
+References: <1424713534-7112-1-git-send-email-marc.zyngier@arm.com> <54EC4DF4.1010906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1424770315-4725-1-git-send-email-ideal.song@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inha Song <ideal.song@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, kgene@kernel.org, linux@arm.linux.org.uk, galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:33706 "EHLO
+	usa-sjc-mx-foss1.foss.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751281AbbBXKhE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Feb 2015 05:37:04 -0500
+In-Reply-To: <54EC4DF4.1010906@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Inha,
+Hi Pakaj,
 
-On 02/24/2015 06:31 PM, Inha Song wrote:
-> This patch add the CLKOUT register source clock as xusbxti in
-> PMU (Power Management Unit) dt node on Exynos3250.
+On 24/02/15 10:09, Pankaj Dubey wrote:
+> Hi Mark,
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Signed-off-by: Inha Song <ideal.song@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
+> On Monday 23 February 2015 11:15 PM, Marc Zyngier wrote:
+>> This series is extracted from [4], which is trying to remove all
+>> traces of gic_arch_extn from the tree. As some maintainers are more
+>> responsive than others (understatement of the year...), I've decided
+>> to split it per sub-arch, and get it moving, at least partially.
+>>
+>> This series addresses Exynos by converting its PM support to a stacked
+>> domain on top of the standard GIC.
+>>
+>> Based on 4.0-rc1.
+>>
+>> * From v4: [4]
+>> - Extracted from the full series
+>> - Rebased on 4.0-rc1
+>>
+>> * From v3 [3]:
+>> - Rebased on top of the patch working around hardcoded IRQ on OMAP4/5 [4]
+>> - Fixed more iMX6 DTs (Stephan)
+>> - Fixed Exynos4/5 DTs
+>>
+>> * From v2 [2]:
+>> - Addressed numerous comments from Thierry
+>> - Merged bug fixes from Nishanth
+>> - Merged bug fix from Stefan
+>>
+>> * From v1 [1]:
+>> - Rebased on 3.19-rc3
+>> - Fixed a number of additional platforms
+>> - Added crossbar conversion to stacked domains
+>> - Merged bug fixes from Nishanth
+>>
+>> [4]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/317531.html
+>> [3]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/315385.html
+>> [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/314041.html
+>> [1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/307338.html
+>>
+>> Marc Zyngier (2):
+>>    ARM: exynos4/5: convert pmu wakeup to stacked domains
+>>    DT: exynos: update PMU binding
+>>
+>>   .../devicetree/bindings/arm/samsung/pmu.txt        |  17 +++
+>>   arch/arm/boot/dts/exynos4.dtsi                     |   4 +
+>>   arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
+>>   arch/arm/boot/dts/exynos5420.dtsi                  |   4 +
+>>   arch/arm/mach-exynos/exynos.c                      |  14 +--
+>>   arch/arm/mach-exynos/suspend.c                     | 122 +++++++++++++++++++--
+>>   6 files changed, 146 insertions(+), 19 deletions(-)
+>>
 > 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 277b48b..aa1eb8c 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -130,6 +130,9 @@
->  		pmu_system_controller: system-controller@10020000 {
->  			compatible = "samsung,exynos3250-pmu", "syscon";
->  			reg = <0x10020000 0x4000>;
-> +			#clock-cells = <1>;
-> +			clock-names = "clkout9";
-> +			clocks = <&xusbxti>;
->  		};
->  
->  		mipi_phy: video-phy@10020710 {
+> I tested and verified S2R functionality on Exynos5250 based SMDK5250 
+> board, and suspend-resume working fine. For testing on SMDK5250 you can 
+> add my tested-by.
 > 
+> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Looks good to me.
+Thanks. Will you or Kukjin get that merged directly?
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
+	M.
+-- 
+Jazz is not dead. It just smells funny...
