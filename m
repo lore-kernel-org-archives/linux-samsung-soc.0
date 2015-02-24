@@ -1,210 +1,49 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
-Date: Tue, 24 Feb 2015 11:38:52 +0900
-Message-ID: <54EBE43C.1020901@samsung.com>
-References: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38212 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751837AbbBXCjB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Feb 2015 21:39:01 -0500
-In-reply-to: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [RESEND PATCH] ARM: exynos: Fix wrong hwirq of RTC interrupt for
+ Exynos3250 SoC
+Date: Tue, 24 Feb 2015 11:43:18 +0900
+Message-ID: <1424745798-14196-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene@kernel.org
+Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
 
-Hi Krzysztof,
+This patch fixes wrong hwirq of RTC irq for Exynos3250 SoC. When entering
+suspend state, 'enable_irq_wake fail' happen because of the mismatch of RTC hwirq.
 
-I tested this patch for suspend-to-ram on Exynos4412-based trats2 board.
-When I tested suspend-to-ram repetitively, I faced on hang issue of
-suspend-to-ram for Exynos4 as before.
+	[  429.200937] Freezing user space processes ... (elapsed 0.002 seconds) done.
+	[  429.203383] Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
+	[  429.209914] Suspending console(s) (use no_console_suspend to debug)
+	[  429.370685] wake enabled for irq 65
+	[  429.370837] wake enabled for irq 64
+	[  429.370868] wake enabled for irq 79
+	[snip]
+	[  429.372120] s3c-rtc 10070000.rtc: enable_irq_wake failed
 
-Could you send .config file for test?
+Fixes: a4f582f5c5fe3 (ARM: EXYNOS: Add exynos3250 suspend-to-ram support)
+Cc: Kukjin Kim <kgene@kernel.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/suspend.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Chanwoo Choi
-
-On 02/18/2015 07:45 PM, Krzysztof Kozlowski wrote:
-> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
-> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
-> controller") the second suspend to RAM failed. First suspend worked fine
-> but the next one hang just after powering down of secondary CPUs (system
-> consumed energy as it would be running but was not responsive).
-> 
-> The issue was caused by enabling delayed reset assertion for CPU0 just
-> after issuing power down of cores. This was introduced for Exynos4 in
-> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
-> 
-> The whole behavior is not well documented but after checking with vendor
-> code this should be done like this (on Exynos4):
-> 1. Enable delayed reset assertion when system is running (for all CPUs).
-> 2. Disable delayed reset assertion before suspending the system.
->    This can be done after powering off secondary CPUs.
-> 3. Re-enable the delayed reset assertion when system is resumed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
-> Cc: <stable@vger.kernel.org>
-> ---
->  arch/arm/mach-exynos/common.h  |  2 ++
->  arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
->  arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
->  arch/arm/mach-exynos/suspend.c |  3 +++
->  4 files changed, 34 insertions(+), 37 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index f70eca7ee705..0ef8d4b47102 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -153,6 +153,8 @@ extern void exynos_enter_aftr(void);
->  
->  extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
->  
-> +extern void exynos_set_delayed_reset_assertion(bool enable);
-> +
->  extern void s5p_init_cpu(void __iomem *cpuid_addr);
->  extern unsigned int samsung_rev(void);
->  extern void __iomem *cpu_boot_reg_base(void);
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 2013f73797ed..e2f46295eed7 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -166,6 +166,33 @@ static void __init exynos_init_io(void)
->  	exynos_map_io();
->  }
->  
-> +/*
-> + * Set or clear the USE_DELAYED_RESET_ASSERTION option. Used by smp code
-> + * and suspend.
-> + *
-> + * This is necessary only on Exynos4 SoCs. When system is running
-> + * USE_DELAYED_RESET_ASSERTION should be set so the ARM CLK clock down
-> + * feature could properly detect global idle state when secondary CPU is
-> + * powered down.
-> + *
-> + * However this should not be set when such system is going into suspend.
-> + */
-> +void exynos_set_delayed_reset_assertion(bool enable)
-> +{
-> +	if (soc_is_exynos4()) {
-> +		unsigned int tmp, core_id;
-> +
-> +		for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
-> +			tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-> +			if (enable)
-> +				tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
-> +			else
-> +				tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> +			pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-> +		}
-> +	}
-> +}
-> +
->  static const struct of_device_id exynos_dt_pmu_match[] = {
->  	{ .compatible = "samsung,exynos3250-pmu" },
->  	{ .compatible = "samsung,exynos4210-pmu" },
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index 3f32c47a6d74..19d5c87c842c 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -34,30 +34,6 @@
->  
->  extern void exynos4_secondary_startup(void);
->  
-> -/*
-> - * Set or clear the USE_DELAYED_RESET_ASSERTION option, set on Exynos4 SoCs
-> - * during hot-(un)plugging CPUx.
-> - *
-> - * The feature can be cleared safely during first boot of secondary CPU.
-> - *
-> - * Exynos4 SoCs require setting USE_DELAYED_RESET_ASSERTION during powering
-> - * down a CPU so the CPU idle clock down feature could properly detect global
-> - * idle state when CPUx is off.
-> - */
-> -static void exynos_set_delayed_reset_assertion(u32 core_id, bool enable)
-> -{
-> -	if (soc_is_exynos4()) {
-> -		unsigned int tmp;
-> -
-> -		tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-> -		if (enable)
-> -			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
-> -		else
-> -			tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> -		pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-> -	}
-> -}
-> -
->  #ifdef CONFIG_HOTPLUG_CPU
->  static inline void cpu_leave_lowpower(u32 core_id)
->  {
-> @@ -73,8 +49,6 @@ static inline void cpu_leave_lowpower(u32 core_id)
->  	  : "=&r" (v)
->  	  : "Ir" (CR_C), "Ir" (0x40)
->  	  : "cc");
-> -
-> -	 exynos_set_delayed_reset_assertion(core_id, false);
->  }
->  
->  static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-> @@ -87,14 +61,6 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
->  		/* Turn the CPU off on next WFI instruction. */
->  		exynos_cpu_power_down(core_id);
->  
-> -		/*
-> -		 * Exynos4 SoCs require setting
-> -		 * USE_DELAYED_RESET_ASSERTION so the CPU idle
-> -		 * clock down feature could properly detect
-> -		 * global idle state when CPUx is off.
-> -		 */
-> -		exynos_set_delayed_reset_assertion(core_id, true);
-> -
->  		wfi();
->  
->  		if (pen_release == core_id) {
-> @@ -355,9 +321,6 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->  		udelay(10);
->  	}
->  
-> -	/* No harm if this is called during first boot of secondary CPU */
-> -	exynos_set_delayed_reset_assertion(core_id, false);
-> -
->  	/*
->  	 * now the secondary core is starting up let it run its
->  	 * calibrations, then wait for it to finish
-> @@ -404,6 +367,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
->  
->  	exynos_sysram_init();
->  
-> +	exynos_set_delayed_reset_assertion(true);
-> +
->  	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
->  		scu_enable(scu_base_addr());
->  
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index 666ec3e5b03f..d4da035cc88a 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -235,6 +235,8 @@ static void exynos_pm_enter_sleep_mode(void)
->  
->  static void exynos_pm_prepare(void)
->  {
-> +	exynos_set_delayed_reset_assertion(false);
-> +
->  	/* Set wake-up mask registers */
->  	exynos_pm_set_wakeup_mask();
->  
-> @@ -383,6 +385,7 @@ early_wakeup:
->  
->  	/* Clear SLEEP mode set in INFORM1 */
->  	pmu_raw_writel(0x0, S5P_INFORM1);
-> +	exynos_set_delayed_reset_assertion(true);
->  }
->  
->  static void exynos3250_pm_resume(void)
-> 
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 52e2b1a..318d127 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -87,8 +87,8 @@ static unsigned int exynos_pmu_spare3;
+ static u32 exynos_irqwake_intmask = 0xffffffff;
+ 
+ static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
+-	{ 73, BIT(1) }, /* RTC alarm */
+-	{ 74, BIT(2) }, /* RTC tick */
++	{ 105, BIT(1) }, /* RTC alarm */
++	{ 106, BIT(2) }, /* RTC tick */
+ 	{ /* sentinel */ },
+ };
+ 
+-- 
+1.8.5.5
