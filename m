@@ -1,36 +1,49 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
-Date: Tue, 24 Feb 2015 17:45:31 +0900
-Message-ID: <54EC3A2B.9000603@samsung.com>
+Date: Tue, 24 Feb 2015 17:46:32 +0900
+Message-ID: <54EC3A68.3030207@samsung.com>
 References: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
- <54EBE43C.1020901@samsung.com> <1424764762.2877.3.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1424764762.2877.3.camel@AMDC1943>
+In-reply-to: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/24/2015 04:59 PM, Krzysztof Kozlowski wrote:
-> On wto, 2015-02-24 at 11:38 +0900, Chanwoo Choi wrote:
->> Hi Krzysztof,
->>
->> I tested this patch for suspend-to-ram on Exynos4412-based trats2 board.
->> When I tested suspend-to-ram repetitively, I faced on hang issue of
->> suspend-to-ram for Exynos4 as before.
->>
->> Could you send .config file for test?
+On 02/18/2015 07:45 PM, Krzysztof Kozlowski wrote:
+> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
+> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+> controller") the second suspend to RAM failed. First suspend worked fine
+> but the next one hang just after powering down of secondary CPUs (system
+> consumed energy as it would be running but was not responsive).
 > 
-> I am testing on exynos_defconfig with some stuff enabled (nothing
-> special: regulators, chargers, PM_ADVANCED_DEBUG, extcon etc.). However
-> sometimes I also see hangs related to MMC. But I believe this issue is
-> present for some time and is not related to my DELAYED_RESET_ASSERTION
-> changes.
+> The issue was caused by enabling delayed reset assertion for CPU0 just
+> after issuing power down of cores. This was introduced for Exynos4 in
+> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
+> 
+> The whole behavior is not well documented but after checking with vendor
+> code this should be done like this (on Exynos4):
+> 1. Enable delayed reset assertion when system is running (for all CPUs).
+> 2. Disable delayed reset assertion before suspending the system.
+>    This can be done after powering off secondary CPUs.
+> 3. Re-enable the delayed reset assertion when system is resumed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
+> Cc: <stable@vger.kernel.org>
+> ---
+>  arch/arm/mach-exynos/common.h  |  2 ++
+>  arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
+>  arch/arm/mach-exynos/suspend.c |  3 +++
+>  4 files changed, 34 insertions(+), 37 deletions(-)
 
-I understand. I think we have to resolve the remaining hang issue for Exynos4 suspend-to-ram.
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+I tested this patch on Exynos4412-baed TRATS2 board.
 
 Thanks,
 Chanwoo Choi
