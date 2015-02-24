@@ -1,39 +1,62 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v3 14/17] exynos: fimg2d: fix comment for G2D_COEFF_MODE_GB_COLOR
-Date: Tue, 24 Feb 2015 15:20:52 +0100
-Message-ID: <1424787655-10739-15-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] drivers/rtc/rtc-s3c.c: Add .needs_src_clk to s3c6410 RTC data
+Date: Tue, 24 Feb 2015 16:18:50 +0100
+Message-ID: <1424791130-32102-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:47993 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752711AbbBXO3F (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:49189 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751436AbbBXPTF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Feb 2015 09:29:05 -0500
-In-Reply-To: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Tue, 24 Feb 2015 10:19:05 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, m.szyprowski@samsung.com, robclark@freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: lessandro Zummo <a.zummo@towertech.it>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The coefficient mode enables use of global color, not alpha.
+Commit df9e26d093d3 ("rtc: s3c: add support for RTC of Exynos3250 SoC")
+added an "rtc_src" DT property to specify the clock used as a source to
+the S3C real-time clock.
 
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Not all SoCs needs this so commit eaf3a659086e ("drivers/rtc/rtc-s3c.c:
+fix initialization failure without rtc source clock") changed to check
+the struct s3c_rtc_data .needs_src_clk to conditionally grab the clock.
+
+But that commit didn't update the data for each IP version so the RTC
+broke on the boards that needs a source clock. This is the case of at
+least Exynos5250 and Exynos5440 which uses the s3c6410 RTC IP block.
+
+This commit fixes the S3C rtc on the Exynos5250 Snow and Exynos5420
+Peach Pit and Pi Chromebooks.
+
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- exynos/exynos_fimg2d.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
-index dbcb764..418757f 100644
---- a/exynos/exynos_fimg2d.h
-+++ b/exynos/exynos_fimg2d.h
-@@ -159,7 +159,7 @@ enum e_g2d_coeff_mode {
- 	G2D_COEFF_MODE_DST_COLOR,
- 	/* Global Alpha : Set by ALPHA_REG(0x618) */
- 	G2D_COEFF_MODE_GB_ALPHA,
--	/* Global Alpha : Set by ALPHA_REG(0x618) */
-+	/* Global Color : Set by ALPHA_REG(0x618) */
- 	G2D_COEFF_MODE_GB_COLOR,
- 	/* (1-SRC alpha)/DST Alpha */
- 	G2D_COEFF_MODE_DISJOINT_S,
+Hello,
+
+I see that Exynos4 uses the same s3c6410 RTC IP version but at least
+the Exynos4412 Odroid boards don't define a source clock for the RTC.
+
+According to the Exynos4 documentation I've, the RTC uses XRTCXTI as
+its source clock so I think those boards are relying on the HW not
+being completely defined in DT and the clock setup by the bootloader.
+
+Best regards,
+Javier
+
+ drivers/rtc/rtc-s3c.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 4241eeab3386..f4cf6851fae9 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -849,6 +849,7 @@ static struct s3c_rtc_data const s3c2443_rtc_data = {
+ 
+ static struct s3c_rtc_data const s3c6410_rtc_data = {
+ 	.max_user_freq		= 32768,
++	.needs_src_clk		= true,
+ 	.irq_handler		= s3c6410_rtc_irq,
+ 	.set_freq		= s3c6410_rtc_setfreq,
+ 	.enable_tick		= s3c6410_rtc_enable_tick,
 -- 
-2.0.5
+2.1.3
