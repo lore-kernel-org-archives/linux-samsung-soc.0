@@ -1,32 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [rtc-linux] [PATCH v3] rtc: s5m: Add the support for S2MPS13 RTC
-Date: Tue, 24 Feb 2015 09:21:27 +0100
-Message-ID: <CAJKOXPdb9=B-s=EEdB8-pDoDNw8KyZwuD68_NgcAdVpBc-v0hg@mail.gmail.com>
-References: <1424758197-20057-1-git-send-email-cw00.choi@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 1/8] arm64: exynos5433: Enable ARMv8 based Exynos5433 (SoC) support
+Date: Tue, 24 Feb 2015 09:31:41 +0100
+Message-ID: <8838911.kfOYZxBsJP@wuerfel>
+References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com> <1424755011-15999-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424758197-20057-1-git-send-email-cw00.choi@samsung.com>
+In-Reply-To: <1424755011-15999-2-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: a.zummo@towertech.it, akpm@linux-foundation.org, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: kgene@kernel.org, mark.rutland@arm.com, marc.zyngier@arm.com, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-02-24 7:09 GMT+01:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> This patch adds only the compatible string for S2MPS13 clock which is identical
-> with S2MPS14 clock driver.
+On Tuesday 24 February 2015 14:16:44 Chanwoo Choi wrote:
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 1b8e973..d83cea0 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -154,6 +154,17 @@ config ARCH_EXYNOS
+>         help
+>           This enables support for Samsung Exynos SoC family
+>  
+> +config ARCH_EXYNOS5433
+> +       bool "ARMv8 based Samsung Exynos5433"
+> +       select ARCH_EXYNOS
+> +       select COMMON_CLK_SAMSUNG
+> +       select HAVE_S3C_RTC if RTC_CLASS
+> +       select PINCTRL
+> +       select PINCTRL_EXYNOS
+> +
+> +       help
+> +         This enables support for Samsung Exynos5433 SoC family
+> +
+>  config ARCH_EXYNOS7
+>         bool "ARMv8 based Samsung Exynos7"
+>         select ARCH_EXYNOS
+> -- 
+> 
 
-If everything is identical then maybe use the same ID?
-        { "s5m-rtc",            S5M8767X },
-+       { "s2mps13-rtc",        S2MPS14X },
-        { "s2mps14-rtc",        S2MPS14X },
+Can we collapse all these entries into one for EXYNOS? I don't
+want to end up with endless lists like we have on arm32 when
+there is no platform specific code that is actually controlled
+by this anway.
 
-Or in mfd/sec-core:
- static const struct mfd_cell s2mps13_devs[] = {
--        { .name = "s2mps13-rtc", },
-+       { .name = "s2mps14-rtc", },
-
-The duplication of all S2MPS14 labels seems not necessary in such case.
-
-Best regards,
-Krzysztof
+	Arnd
