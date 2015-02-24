@@ -1,94 +1,54 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v4 0/8] arm64: Add the support for new Exynos5433 SoC
-Date: Tue, 24 Feb 2015 14:16:43 +0900
-Message-ID: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58662 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750701AbbBXFQ7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Feb 2015 00:16:59 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4 8/8] arm64: dts: exynos: Add I2S dt node for Exynos5433 SoC
+Date: Tue, 24 Feb 2015 14:16:51 +0900
+Message-ID: <1424755011-15999-9-git-send-email-cw00.choi@samsung.com>
+References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene@kernel.org
 Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patchset adds new 64-bit Exynos5433 Samsung SoC which contains quad
-Cortex-A57 and quad Cortex-A53. It is desigend with the 20nm low power process.
+From: Inha Song <ideal.song@samsung.com>
 
-This patchset is based on Linux 4.0-rc1.
+This patch adds I2S device tree node for Exynos5433 SoC.
+In Exynos5433 SoC, I2S0 is used for audio interface.
 
-Depends on:
-- This patch-set has the dependency on Exynos5433 clock driver[1][2] and pinctrl driver[3].
-The Exynos5433 clock controller patch-set[1][2] was merged by Sylwester Nawrocki
-and Exynos5433's pinctrl patch[3] receviced the acked message by Tomasz Figa.
-(http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/, branch:for-v3.20/clk/next)
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-[1] [PATCH v5 00/13] clk: samsung: Add the support for exynos5433 clocks
-    - https://lkml.org/lkml/2015/2/2/368
-[2] [PATCH v3 0/9] clk: samsung: Add clocks for remaining domains of Exynos5433
-    - https://lkml.org/lkml/2015/2/2/784
-[3] [PATCH v4] pinctrl: exynos: Add support for Exynos5433
-    - https://lkml.org/lkml/2015/2/23/728
-
-Changelog:
-Changes from v3:
-(https://lkml.org/lkml/2015/2/12/65)
-- Rebased it on Linux 4.0-rc1.
-- Remove ARM_GIC and ARM_AMBA dependency because CONFIG_ARM64 already included them.
-
-Changes from v2:
-(https://lkml.org/lkml/2014/12/2/134)
-: Fix the range of GICC memory map (0x1000 -> 0x2000)
-: Fix address space of 'range' property under 'soc' node
-: Add ADMA / I2S dt node for sound playback/capture
-- Select ARM_AMBA/ARM_GIC/HAVE_S3C_RTC for Exynos5433 in arch/arm64/Kconfig
-- Send separate patch-set for Exynos5433 clock controller[1][2] and pinctrl[3]
-
-Changes from v1:
-(https://lkml.org/lkml/2014/11/27/92)
-- Merge two patches (patch2, patch3) to solve incomplete description
-- Exynos5433 Clock driver
- : Fix wrong register and code clean by using space instead of tab
- : Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
- : Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
-- Exynos5433 SoC DTS
- : Remove un-supported properties of arch_timer
- : Remove 'clock-frequency' property from 'cpus' dt node
- : Fix interrupt type from edge rising triggering to level high triggering
-   because Cortex-A53/A57 use level triggering.
- : Fix defult address-size/size-celss from 1 to 2 because Exynos5433 is 64-bit SoC
- : Modify 'fin_pll' dt node to remove un-needed and ugly code
- : Move 'chipid' dt node under 'soc'
- : Use lowercase on all case in exynos5433.dtsi
- : Add PSCI dt node for secondary cpu boot
- : Add 'samsung,exynos5433' compatible to MCT dt node
-- Divide pinctrl patch from this patchset
-- Add new following patches:
-  : clocksource: exynos_mct: Add the support for Exynos 64bit SoC
-  : arm64: Enable Exynos5433 SoC in the defconfig
-
-Chanwoo Choi (5):
-  arm64: exynos5433: Enable ARMv8 based Exynos5433 (SoC) support
-  arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
-  arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
-  arm64: dts: exynos: Add PMU dt node for Exynos5433
-  arm64: dts: exynos: Add RTC and ADC dt node for Exynos5433 SoC
-
-Inha Song (2):
-  arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
-  arm64: dts: exynos: Add I2S dt node for Exynos5433 SoC
-
-Jaehoon Chung (1):
-  arm64: dts: exynos: Add MSHC dt node for Exynos5433
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
- arch/arm64/Kconfig                                 |  11 +
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698 ++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 911 +++++++++++++++++++++
- 4 files changed, 1621 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 6becaca..0776b6d 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -511,6 +511,23 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2s0: i2s0@11440000 {
++			compatible = "samsung,exynos7-i2s";
++			reg = <0x11440000 0x100>;
++			dmas = <&adma 0 &adma 2>;
++			dma-names = "tx", "rx";
++			interrupts = <0 70 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_aud CLK_PCLK_AUD_I2S>,
++				 <&cmu_aud CLK_SCLK_AUD_I2S>,
++				 <&cmu_aud CLK_SCLK_I2S_BCLK>;
++			clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2s0_bus>;
++			status = "disabled";
++		};
++
+ 		pinctrl_alive: pinctrl@10580000 {
+ 			compatible = "samsung,exynos5433-pinctrl";
+ 			reg = <0x10580000 0x1000>;
 -- 
 1.8.5.5
