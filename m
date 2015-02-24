@@ -1,36 +1,32 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
-Date: Tue, 24 Feb 2015 08:59:22 +0100
-Message-ID: <1424764762.2877.3.camel@AMDC1943>
-References: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
- <54EBE43C.1020901@samsung.com>
+Subject: Re: [rtc-linux] [PATCH v3] rtc: s5m: Add the support for S2MPS13 RTC
+Date: Tue, 24 Feb 2015 09:21:27 +0100
+Message-ID: <CAJKOXPdb9=B-s=EEdB8-pDoDNw8KyZwuD68_NgcAdVpBc-v0hg@mail.gmail.com>
+References: <1424758197-20057-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54EBE43C.1020901@samsung.com>
+In-Reply-To: <1424758197-20057-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
+To: rtc-linux@googlegroups.com
+Cc: a.zummo@towertech.it, akpm@linux-foundation.org, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On wto, 2015-02-24 at 11:38 +0900, Chanwoo Choi wrote:
-> Hi Krzysztof,
-> 
-> I tested this patch for suspend-to-ram on Exynos4412-based trats2 board.
-> When I tested suspend-to-ram repetitively, I faced on hang issue of
-> suspend-to-ram for Exynos4 as before.
-> 
-> Could you send .config file for test?
+2015-02-24 7:09 GMT+01:00 Chanwoo Choi <cw00.choi@samsung.com>:
+> This patch adds only the compatible string for S2MPS13 clock which is identical
+> with S2MPS14 clock driver.
 
-I am testing on exynos_defconfig with some stuff enabled (nothing
-special: regulators, chargers, PM_ADVANCED_DEBUG, extcon etc.). However
-sometimes I also see hangs related to MMC. But I believe this issue is
-present for some time and is not related to my DELAYED_RESET_ASSERTION
-changes.
+If everything is identical then maybe use the same ID?
+        { "s5m-rtc",            S5M8767X },
++       { "s2mps13-rtc",        S2MPS14X },
+        { "s2mps14-rtc",        S2MPS14X },
 
-Maybe you could try to boot with "no_console_suspend loglevel=7" and see
-when the suspend fails?
+Or in mfd/sec-core:
+ static const struct mfd_cell s2mps13_devs[] = {
+-        { .name = "s2mps13-rtc", },
++       { .name = "s2mps14-rtc", },
+
+The duplication of all S2MPS14 labels seems not necessary in such case.
 
 Best regards,
 Krzysztof
