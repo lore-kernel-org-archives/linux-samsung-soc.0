@@ -1,62 +1,47 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit
  Exynos5433 SoC
-Date: Tue, 24 Feb 2015 17:52:01 +0900
-Message-ID: <54EC3BB1.1020701@samsung.com>
+Date: Tue, 24 Feb 2015 18:01:27 +0900
+Message-ID: <54EC3DE7.7070306@samsung.com>
 References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
  <1424755011-15999-3-git-send-email-cw00.choi@samsung.com>
- <7139111.LGA4lhSjob@wuerfel>
+ <19309272.tlWX2xvTnx@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <7139111.LGA4lhSjob@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:56438 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751147AbbBXJBb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Feb 2015 04:01:31 -0500
+In-reply-to: <19309272.tlWX2xvTnx@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
 Cc: kgene@kernel.org, mark.rutland@arm.com, marc.zyngier@arm.com, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/24/2015 05:35 PM, Arnd Bergmann wrote:
+On 02/24/2015 05:33 PM, Arnd Bergmann wrote:
 > On Tuesday 24 February 2015 14:16:45 Chanwoo Choi wrote:
->> +       aliases {
->> +               pinctrl0 = &pinctrl_alive;
->> +               pinctrl1 = &pinctrl_aud;
->> +               pinctrl2 = &pinctrl_cpif;
->> +               pinctrl3 = &pinctrl_ese;
->> +               pinctrl4 = &pinctrl_finger;
->> +               pinctrl5 = &pinctrl_fsys;
->> +               pinctrl6 = &pinctrl_imem;
->> +               pinctrl7 = &pinctrl_nfc;
->> +               pinctrl8 = &pinctrl_peric;
->> +               pinctrl9 = &pinctrl_touch;
->> +               serial0 = &serial_0;
->> +               serial1 = &serial_1;
->> +               serial2 = &serial_2;
->> +               i2c0 = &hsi2c_0;
->> +               i2c1 = &hsi2c_1;
->> +               i2c2 = &hsi2c_2;
->> +               i2c3 = &hsi2c_3;
->> +               i2c4 = &hsi2c_4;
->> +               i2c5 = &hsi2c_5;
->> +               i2c6 = &hsi2c_6;
->> +               i2c7 = &hsi2c_7;
->> +               i2c8 = &hsi2c_8;
->> +               i2c9 = &hsi2c_9;
->> +               i2c10 = &hsi2c_10;
->> +               i2c11 = &hsi2c_11;
->> +       };
->> +
+>> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
+>> Octal core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
+>> PSCI (Power State Coordination Interface) v0.1.
 >>
+>> This patch includes following dt node to support Exynos5433 SoC:
+>> 1. Octa core for big.LITTLE architecture
+>> - Cortex-A53 LITTLE Quad-core
+>> - Cortex-A57 big Quad-core
+>> - Support PSCI v0.1
 > 
-> Can you put the aliases into the per-board files? There might be boards that
-> do not support all the uarts and all the i2c controllers but only want to
-> provide aliases for a subset of them, without holes in the numbering.
+> Should we try to come up with a way to better share parts of this with the
+> exynos5 dtsi files you already have in arm32? I suspect that there is a
+> significant overlap.
 
-OK, I'm not opposite with you opinion.
+Currently, 32-bit Exynos5 SoC (which is included in arch/arm/boot/dts)
+didn't support the Cortex-A53/A57 and PSCI.
 
-But, I have a question.
-If we put the aliases into the board dts file instaed of SoC dtsi,
-each board dts file may use the different alias name about same phandle.
+The 32-bit Exynos5 SoC support the Coretex-A7 or A15 and big.LITTLE Exynos5 SoC
+use the MCPM (Multi-Cluster PM) driver for secondary cpu on/off instead of PSCI.
 
 Thanks,
 Chanwoo Choi
