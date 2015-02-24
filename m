@@ -1,7 +1,8 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v4 7/8] arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
-Date: Tue, 24 Feb 2015 14:16:50 +0900
-Message-ID: <1424755011-15999-8-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v4 1/8] arm64: exynos5433: Enable ARMv8 based Exynos5433 (SoC)
+ support
+Date: Tue, 24 Feb 2015 14:16:44 +0900
+Message-ID: <1424755011-15999-2-git-send-email-cw00.choi@samsung.com>
 References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,39 +22,38 @@ To: kgene@kernel.org
 Cc: mark.rutland@arm.com, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, cw00.choi@samsung.com, marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, devicetree@vger.kernel.org, olof@lixom.net, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Inha Song <ideal.song@samsung.com>
+This patch adds the necessary Kconfig entries to enable
+support for the ARMv8 based Exynos5433 SoC.
 
-This patch adds ADMA (Advanced DMA) device tree node for Exynos5433 SoC.
-In Exynos5433 SoC, ADMA is used for I2S audio interface.
-
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Inha Song <ideal.song@samsung.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
+ arch/arm64/Kconfig | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 1c68d9e..6becaca 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -462,6 +462,17 @@
- 				#dma-channels = <8>;
- 				#dma-requests = <32>;
- 			};
-+
-+			adma: adma@11420000 {
-+				compatible = "arm,pl330", "arm,primecell";
-+				reg = <0x11420000 0x1000>;
-+				interrupts = <0 73 0>;
-+				clocks = <&cmu_aud CLK_ACLK_DMAC>;
-+				clock-names = "apb_pclk";
-+				#dma-cells = <1>;
-+				#dma-channels = <8>;
-+				#dma-requests = <32>;
-+			};
- 		};
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 1b8e973..d83cea0 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -154,6 +154,17 @@ config ARCH_EXYNOS
+ 	help
+ 	  This enables support for Samsung Exynos SoC family
  
- 		serial_0: serial@14c10000 {
++config ARCH_EXYNOS5433
++	bool "ARMv8 based Samsung Exynos5433"
++	select ARCH_EXYNOS
++	select COMMON_CLK_SAMSUNG
++	select HAVE_S3C_RTC if RTC_CLASS
++	select PINCTRL
++	select PINCTRL_EXYNOS
++
++	help
++	  This enables support for Samsung Exynos5433 SoC family
++
+ config ARCH_EXYNOS7
+ 	bool "ARMv8 based Samsung Exynos7"
+ 	select ARCH_EXYNOS
 -- 
 1.8.5.5
