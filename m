@@ -1,57 +1,59 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v4 6/8] arm64: dts: exynos: Add RTC and ADC dt node for
- Exynos5433 SoC
-Date: Tue, 24 Feb 2015 14:16:49 +0900
-Message-ID: <1424755011-15999-7-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v4 7/8] arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
+Date: Tue, 24 Feb 2015 14:16:50 +0900
+Message-ID: <1424755011-15999-8-git-send-email-cw00.choi@samsung.com>
 References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene@kernel.org
-Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, cw00.choi@samsung.com, marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, devicetree@vger.kernel.org, olof@lixom.net, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds RTC (Real Time Clock) dt node for Exynos5433 SoC and adds
-ADC dt node for Exynos5433 SoC. The c1b501564c98a94b4(iio: adc: exynos_adc:
-Add support for exynos7) commit supports the ADC for Exynos7. Exynos5433's ADC
-IP is the same with Exynos7's ADC IP. Exynos5433 has a little different from
-ADCv2 on ADC_CON2 register. Exynos5433 don't contain OSEL/ESEL /HIGHF of ADC_CON2.
+From: Inha Song <ideal.song@samsung.com>
+
+This patch adds ADMA (Advanced DMA) device tree node for Exynos5433 SoC.
+In Exynos5433 SoC, ADMA is used for I2S audio interface.
 
 Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Inha Song <ideal.song@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 84be8e2..1c68d9e 100644
+index 1c68d9e..6becaca 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -852,6 +852,24 @@
- 			clocks = <&xxti>;
+@@ -462,6 +462,17 @@
+ 				#dma-channels = <8>;
+ 				#dma-requests = <32>;
+ 			};
++
++			adma: adma@11420000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x11420000 0x1000>;
++				interrupts = <0 73 0>;
++				clocks = <&cmu_aud CLK_ACLK_DMAC>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
  		};
  
-+		rtc: rtc@10590000 {
-+			compatible = "samsung,exynos3250-rtc";
-+			reg = <0x10590000 0x100>;
-+			interrupts = <0 385 0>, <0 386 0>;
-+			status = "disabled";
-+		};
-+
-+		adc: adc@14d10000 {
-+			compatible = "samsung,exynos7-adc";
-+			reg = <0x14d10000 0x100>;
-+			interrupts = <0 438 0>;
-+			clock-names = "adc";
-+			clocks = <&cmu_peric CLK_PCLK_ADCIF>;
-+			#io-channel-cells = <1>;
-+			io-channel-ranges;
-+			status = "disabled";
-+		};
-+
- 		timer {
- 			compatible = "arm,armv8-timer";
- 			interrupts = <1 13 0xff04>,
+ 		serial_0: serial@14c10000 {
 -- 
 1.8.5.5
