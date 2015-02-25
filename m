@@ -1,150 +1,87 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v4 5/8] ARM: dts: Add properties to use pwm-fan device as
- a cooling device in Odroid U3
-Date: Wed, 25 Feb 2015 14:30:37 -0400
-Message-ID: <20150225183035.GC2306@developer.amazonguestwifi.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v5 0/6] hwmon: thermal: Odroid U3: Provide support for
+ Odroid U3 fan
+Date: Wed, 25 Feb 2015 10:42:33 -0800
+Message-ID: <20150225184233.GB4231@roeck-us.net>
 References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-6-git-send-email-l.majewski@samsung.com>
- <20150224193711.GA353@developer.amazonguestwifi.org>
- <20150225142815.562fe22b@amdc2363>
+ <1424878462-15511-1-git-send-email-l.majewski@samsung.com>
+ <20150225171820.GA2400@roeck-us.net>
+ <20150225182917.GB2306@developer.amazonguestwifi.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1ccMZA6j1vT5UqiK"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150225142815.562fe22b@amdc2363>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---1ccMZA6j1vT5UqiK
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:57239 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752778AbbBYSnm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Feb 2015 13:43:42 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YQgvt-00276Q-HN
+	for linux-samsung-soc@vger.kernel.org; Wed, 25 Feb 2015 18:43:41 +0000
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20150225182917.GB2306@developer.amazonguestwifi.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Wed, Feb 25, 2015 at 02:28:15PM +0100, Lukasz Majewski wrote:
-> Hi Eduardo,
->=20
-> > On Wed, Feb 18, 2015 at 11:07:33AM +0100, Lukasz Majewski wrote:
-> > > With those bindings it is possible to use pwm-fan device available
-> > > in Odroid U3 as a cooling device.
-> > >=20
-> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > ---
-> > > Changes for v2:
-> > > - Rename cooling-pwm-values property to cooling-levels
-> > > Changes for v3:
-> > > - Change patch's topic to "ARM dts"
-> > > - Reduce maximal cooling-level to 230 from 255
-> > > Changes for v4:
-> > > - None
-> > > ---
-> > >  arch/arm/boot/dts/exynos4412-odroidu3.dts | 33
-> > > ++++++++++++++++++++++++++++++- 1 file changed, 32 insertions(+), 1
-> > > deletion(-)
-> > >=20
-> > > diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > > b/arch/arm/boot/dts/exynos4412-odroidu3.dts index 60bd1e4..3e5df3e
-> > > 100644 --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > > +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > > @@ -32,11 +32,42 @@
-> > >  		};
-> > >  	};
-> > > =20
-> > > -	pwm-fan {
-> > > +	fan0: pwm-fan {
-> > >  		compatible =3D "pwm-fan";
-> > >  		pwms =3D <&pwm 0 10000 0>;
-> > > +		cooling-min-state =3D <0>;
-> > > +		cooling-max-state =3D <3>;
-> > > +		#cooling-cells =3D <2>;
-> > > +		cooling-levels =3D <0 102 170 230>;
-> > >  		status =3D "okay";
-> > >  	};
-> > > +
-> > > +	thermal-zones {
-> > > +		cpu_thermal: cpu-thermal {
-> >=20
-> >=20
-> > This thermal zone misses the mandatory properties as per=20
-> >  Documentation/devicetree/bindings/thermal/thermal.txt
->=20
-> Following mandatory properties:
-> 		thermal-sensors =3D <&tmu 0>;
-> 		polling-delay-passive =3D <0>;
-> 		polling-delay =3D <0>;
-> 		trips {
->=20
-> 		}
->=20
-> are defined in exynos4-cpu-thermal.dtsi included by this file.
->=20
-> In this patch only device dependent changes are stated.
+On Wed, Feb 25, 2015 at 02:29:18PM -0400, Eduardo Valentin wrote:
+> Guenter,
+> 
+> On Wed, Feb 25, 2015 at 09:18:20AM -0800, Guenter Roeck wrote:
+> > On Wed, Feb 25, 2015 at 04:34:16PM +0100, Lukasz Majewski wrote:
+> > > Presented patches add support for Odroid's U3 optional CPU FAN, which uses PWM
+> > > subsystem for low level control.
+> > > 
+> > > After successful probe it registers itself as a cooling device for thermal
+> > > subsystem.
+> > > 
+> > > This driver also supports devices without DTS specified.
+> > > 
+> > > To provide correct functionality, new properties to device tree description for
+> > > Exynos4412 and in particular Odroid U3 have been added.
+> > > 
+> > > Those patches were tested at Exynos4412 - Odroid U3 board.
+> > > 
+> > > Patches were applied on:
+> > > linux-soc-thermal/fixes branch (Linux v4.0-rc1)
+> > > SHA1: b71d399c7f2fe06b60b96155ec0b9ae167334e4a
+> > > 
+> > > Kamil Debski (1):
+> > >   ARM: dts: Add pwm-fan node to the Odroid-U3 board
+> > > 
+> > > Lukasz Majewski (5):
+> > >   Documentation: dts: Documentation entry to explain how to use PWM FAN
+> > >     as a cooling device
+> > >   ARM: dts: Add properties to use pwm-fan device as a cooling device in
+> > >     Odroid U3
+> > >   hwmon: pwm-fan: Extract __set_pwm() function to only modify PWM duty
+> > >     cycle
+> > >   hwmon: pwm-fan: Read PWM FAN configuration from device tree
+> > >   hwmon: pwm-fan: Code for using PWM FAN as a cooling device
+> > > 
+> > >  .../devicetree/bindings/hwmon/pwm-fan.txt          |  25 +++-
+> > >  arch/arm/boot/dts/exynos4.dtsi                     |   2 +-
+> > >  arch/arm/boot/dts/exynos4412-odroidu3.dts          |  43 ++++++
+> > >  drivers/hwmon/pwm-fan.c                            | 166 +++++++++++++++++++--
+> > >  4 files changed, 220 insertions(+), 16 deletions(-)
+> > > 
+> > For the series:
+> > 
+> > Acked-by: Guenter Roeck <linux@roeck-us.net>
+> > 
+> > Should I take it through hwmon ? Might make sense given the majority
+> > of the changes is in hwmon code.
+> 
+> I believe the series should go via your tree, yes. I had only minor
+> comments in the code added for the cooling device code, as it lacks the
+> unregistration call in the .remove callback. 
+> 
+> Also, the DTS changes may generate conflicts with platform code. Lukasz
+> may probably ask  Kukjin Kim to add them via the samsung tree.
+> 
+Ok, I'll wait for the updated patch and then add the hwmon parts to hwmon-next.
 
-OK. I missed that.
-
-
-
->=20
-> >=20
-> > > +			cooling-maps {
-> > > +				map0 {
-> > > +				     trip =3D <&cpu_alert1>;
-> > > +				     cooling-device =3D <&cpu0 7 7>;
-> > > +				};
-> > > +				map1 {
-> > > +				     trip =3D <&cpu_alert2>;
-> > > +				     cooling-device =3D <&cpu0 13
-> > > 13>;
-> > > +				};
-> > > +				map2 {
-> > > +				     trip =3D <&cpu_alert0>;
-> > > +				     cooling-device =3D <&fan0 0 1>;
-> > > +				};
-> > > +				map3 {
-> > > +				     trip =3D <&cpu_alert1>;
-> > > +				     cooling-device =3D <&fan0 1 2>;
-> > > +				};
-> > > +				map4 {
-> > > +				     trip =3D <&cpu_alert2>;
-> > > +				     cooling-device =3D <&fan0 2 3>;
-> > > +				};
-> > > +			};
-> > > +		};
-> > > +	};
-> > >  };
-> > > =20
-> > >  &pwm {
-> > > --=20
-> > > 2.0.0.rc2
-> > >=20
->=20
->=20
->=20
-> --=20
-> Best regards,
->=20
-> Lukasz Majewski
->=20
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
-
---1ccMZA6j1vT5UqiK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJU7hTDAAoJEMLUO4d9pOJW3UgIAJuPitfzUpvx64fKWhzkwJEo
-Wqurf/24cFmq4hfTc2XzZWD4m+UgGbKEVlk/4Nh0Sf5HTOgYB5xuXjex1UnwFH4q
-vJ04nR/UXHL3utrVOgoHrRKfpzRRqr3NE1XjbgBzv/KQkX5coVfPGZHGn1QEdKoI
-GUYU8NxGpAGgnTFDVX4PmrPtj8XEHLdbtr59yaYG1ATH+C/guGZZqPE8xd2RN80H
-5ikrFzoX8azLo/o/7l89KeWrASavVTbnwY/zAPqOcULMpnfjwov6yJmDf9jhcFhT
-SDq6HYdkQIcZWql6/a/zqtWCT4deAq8dqlOlFYZNoHvgWOmkaYROrS1tGB9pCJ0=
-=EDyM
------END PGP SIGNATURE-----
-
---1ccMZA6j1vT5UqiK--
+Thanks,
+Guenter
