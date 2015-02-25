@@ -1,74 +1,49 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Fix wrong control of power down
- detection mode for Exynos7
-Date: Wed, 25 Feb 2015 17:39:06 +0530
-Message-ID: <CAM4voakf6oeSEdtGtHRzQ-tC6XMbsU+VNtBnqeed8J4btKA3Yg@mail.gmail.com>
-References: <1424753815-15113-1-git-send-email-cw00.choi@samsung.com>
-	<1424753815-15113-2-git-send-email-cw00.choi@samsung.com>
-	<20150225100330.0ef63a95@amdc2363>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v5 8/9] ARM: dts: exynos5250: add display power domain
+Date: Wed, 25 Feb 2015 13:17:22 +0100
+Message-ID: <54EDBD52.7070506@collabora.co.uk>
+References: <1422883228-10690-1-git-send-email-m.szyprowski@samsung.com> <1422883228-10690-9-git-send-email-m.szyprowski@samsung.com> <54E54DFE.9040808@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150225100330.0ef63a95@amdc2363>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Amit Kachhap <amit.daniel@samsung.com>, inki.dae@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51483 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753257AbbBYMRb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Feb 2015 07:17:31 -0500
+In-Reply-To: <54E54DFE.9040808@suse.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, jy0922.shim@samsung.com, kyungmin.park@samsung.com
 
-Hi Lukasz,
+Hello Kukjin,
 
-On Wed, Feb 25, 2015 at 2:33 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Hi Abhilash,
+On 02/19/2015 03:44 AM, Andreas F=E4rber wrote:
+> Am 02.02.2015 um 14:20 schrieb Marek Szyprowski:
+>> From: Andrzej Hajda <a.hajda@samsung.com>
+>>=20
+>> The patch adds domain definition and references to it in appropriate=
+ devices.
+>>=20
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> [mszyprow: rebased onto generic power domains dt bindings]
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk=
 >
->> This patch fixes the wrong control of PD_DET_EN (power down detection
->> mode) for Exynos7 because exynos7_tmu_control() always enables the
->> power down detection mode regardless 'on' parameter.
->>
->> Cc: Zhang Rui <rui.zhang@intel.com>
->> Cc: Eduardo Valentin <edubezval@gmail.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/thermal/samsung/exynos_tmu.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c
->> b/drivers/thermal/samsung/exynos_tmu.c index 933cd80..a60f527 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -682,6 +682,7 @@ static void exynos7_tmu_control(struct
->> platform_device *pdev, bool on)
->>       if (on) {
->>               con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
->> +             con |= (1 << EXYNOS7_PD_DET_EN_SHIFT);
->>               interrupt_en =
->>                       (of_thermal_is_trip_valid(tz, 7)
->>                       << EXYNOS7_TMU_INTEN_RISE7_SHIFT) |
->> @@ -704,9 +705,9 @@ static void exynos7_tmu_control(struct
->> platform_device *pdev, bool on) interrupt_en <<
->> EXYNOS_TMU_INTEN_FALL0_SHIFT; } else {
->>               con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
->> +             con &= ~(1 << EXYNOS7_PD_DET_EN_SHIFT);
->>               interrupt_en = 0; /* Disable all interrupts */
->>       }
->> -     con |= 1 << EXYNOS7_PD_DET_EN_SHIFT;
->>
->>       writel(interrupt_en, data->base + EXYNOS7_TMU_REG_INTEN);
->>       writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
->
-> Could you test this patch if it isn't introducing any regression on your
-> HW?
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.=
+uk>
+>=20
+> On Spring,
+>=20
+> Tested-by: Andreas F=E4rber <afaerber@suse.de>
+>=20
+> Andreas
+>=20
 
-The patch does not cause any regression on exynos7 and seems logically correct.
+Any comments on this patch? It is needed to have
+display working on Exynos5250 machines.
 
-Tested-by: Abhilash Kesavan <a.kesavan@samsung.com>
-
-
-Regards,
-Abhilash
->
-> --
-> Best regards,
->
-> Lukasz Majewski
->
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Best regards,
+Javier
