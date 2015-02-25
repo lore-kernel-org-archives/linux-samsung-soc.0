@@ -1,118 +1,50 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v4 5/8] ARM: dts: Add properties to use pwm-fan device as a
- cooling device in Odroid U3
-Date: Wed, 25 Feb 2015 14:28:15 +0100
-Message-ID: <20150225142815.562fe22b@amdc2363>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-6-git-send-email-l.majewski@samsung.com>
- <20150224193711.GA353@developer.amazonguestwifi.org>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH V5 1/2] mmc: dw_mmc: exynos: Support eMMC's HS400 mode
+Date: Wed, 25 Feb 2015 08:38:42 -0600
+Message-ID: <CAL_Jsq+Mr=WOoCjWRnHnUqo8+UmqxxHbMG3M8+kLNgfhPASteA@mail.gmail.com>
+References: <1422499318-13726-1-git-send-email-alim.akhtar@samsung.com> <1422499318-13726-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150224193711.GA353@developer.amazonguestwifi.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f54.google.com ([74.125.82.54]:39423 "EHLO
+	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752775AbbBYOjF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Feb 2015 09:39:05 -0500
+In-Reply-To: <1422499318-13726-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, "chris@printf.net" <chris@printf.net>, Doug Anderson <dianders@chromium.org>, Jaehoon Chung <jh80.chung@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>, a.kesavan@samsung.com, alim.akhtar@gmail.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Eduardo,
+On Wed, Jan 28, 2015 at 8:41 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+> From: Seungwon Jeon <tgih.jun@samsung.com>
+>
+> Implements HS400 mode support for exynos host driver.
+> This also include some updates as new mode is added.
+>
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> [Alim: addressed review comments]
+> ---
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    7 +
+>  drivers/mmc/host/dw_mmc-exynos.c                   |  185 ++++++++++++++++----
+>  drivers/mmc/host/dw_mmc-exynos.h                   |   19 +-
+>  drivers/mmc/host/dw_mmc.c                          |   16 +-
+>  drivers/mmc/host/dw_mmc.h                          |    2 +
+>  5 files changed, 195 insertions(+), 34 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> index ee4fc05..aad9844 100644
+> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> @@ -36,6 +36,8 @@ Required Properties:
+>    in transmit mode and CIU clock phase shift value in receive mode for double
+>    data rate mode operation. Refer notes below for the order of the cells and the
+>    valid values.
+> +* samsung,dw-mshc-hs400-timing: Specifies the value of CIU TX and RX clock phase
+> +  shift value for hs400 mode operation.
 
-> On Wed, Feb 18, 2015 at 11:07:33AM +0100, Lukasz Majewski wrote:
-> > With those bindings it is possible to use pwm-fan device available
-> > in Odroid U3 as a cooling device.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> > Changes for v2:
-> > - Rename cooling-pwm-values property to cooling-levels
-> > Changes for v3:
-> > - Change patch's topic to "ARM dts"
-> > - Reduce maximal cooling-level to 230 from 255
-> > Changes for v4:
-> > - None
-> > ---
-> >  arch/arm/boot/dts/exynos4412-odroidu3.dts | 33
-> > ++++++++++++++++++++++++++++++- 1 file changed, 32 insertions(+), 1
-> > deletion(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > b/arch/arm/boot/dts/exynos4412-odroidu3.dts index 60bd1e4..3e5df3e
-> > 100644 --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > @@ -32,11 +32,42 @@
-> >  		};
-> >  	};
-> >  
-> > -	pwm-fan {
-> > +	fan0: pwm-fan {
-> >  		compatible = "pwm-fan";
-> >  		pwms = <&pwm 0 10000 0>;
-> > +		cooling-min-state = <0>;
-> > +		cooling-max-state = <3>;
-> > +		#cooling-cells = <2>;
-> > +		cooling-levels = <0 102 170 230>;
-> >  		status = "okay";
-> >  	};
-> > +
-> > +	thermal-zones {
-> > +		cpu_thermal: cpu-thermal {
-> 
-> 
-> This thermal zone misses the mandatory properties as per 
->  Documentation/devicetree/bindings/thermal/thermal.txt
+What are the units?
 
-Following mandatory properties:
-		thermal-sensors = <&tmu 0>;
-		polling-delay-passive = <0>;
-		polling-delay = <0>;
-		trips {
-
-		}
-
-are defined in exynos4-cpu-thermal.dtsi included by this file.
-
-In this patch only device dependent changes are stated.
-
-> 
-> > +			cooling-maps {
-> > +				map0 {
-> > +				     trip = <&cpu_alert1>;
-> > +				     cooling-device = <&cpu0 7 7>;
-> > +				};
-> > +				map1 {
-> > +				     trip = <&cpu_alert2>;
-> > +				     cooling-device = <&cpu0 13
-> > 13>;
-> > +				};
-> > +				map2 {
-> > +				     trip = <&cpu_alert0>;
-> > +				     cooling-device = <&fan0 0 1>;
-> > +				};
-> > +				map3 {
-> > +				     trip = <&cpu_alert1>;
-> > +				     cooling-device = <&fan0 1 2>;
-> > +				};
-> > +				map4 {
-> > +				     trip = <&cpu_alert2>;
-> > +				     cooling-device = <&fan0 2 3>;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> >  };
-> >  
-> >  &pwm {
-> > -- 
-> > 2.0.0.rc2
-> > 
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Rob
