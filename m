@@ -1,63 +1,88 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Fix wrong control of power down
- detection mode for Exynos7
-Date: Wed, 25 Feb 2015 10:03:30 +0100
-Message-ID: <20150225100330.0ef63a95@amdc2363>
-References: <1424753815-15113-1-git-send-email-cw00.choi@samsung.com>
- <1424753815-15113-2-git-send-email-cw00.choi@samsung.com>
+From: Inha Song <ideal.song@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Add CLKOUT driver support for Exynos3250 SoC.
+Date: Wed, 25 Feb 2015 19:13:12 +0900
+Message-ID: <20150225191312.303ba10d@songinha-Samsung-DeskTop-System>
+References: <1424769751-4633-1-git-send-email-ideal.song@samsung.com>
+ <CA+Ln22Hb9vx707=smWZwGqc9-JuSYvQ_dPcRbpPFZOF=ZgzUbQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1424753815-15113-2-git-send-email-cw00.choi@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: a.kesavan@samsung.com, Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, rui.zhang@intel.com, edubezval@gmail.com, kgene@kernel.org, b.zolnierkie@samsung.com, amit.daniel@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:47254 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751590AbbBYKNV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Feb 2015 05:13:21 -0500
+In-reply-to: <CA+Ln22Hb9vx707=smWZwGqc9-JuSYvQ_dPcRbpPFZOF=ZgzUbQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Abhilash,
+Hi, Tomasz,
 
-> This patch fixes the wrong control of PD_DET_EN (power down detection
-> mode) for Exynos7 because exynos7_tmu_control() always enables the
-> power down detection mode regardless 'on' parameter.
+Thanks for you comment :)
+
+On Wed, 25 Feb 2015 09:54:02 +0900
+Tomasz Figa <tomasz.figa@gmail.com> wrote:
+
+> Hi Inha,
 > 
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Eduardo Valentin <edubezval@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Thanks for the patch. Please see my comments inline.
 > 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> b/drivers/thermal/samsung/exynos_tmu.c index 933cd80..a60f527 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -682,6 +682,7 @@ static void exynos7_tmu_control(struct
-> platform_device *pdev, bool on) 
->  	if (on) {
->  		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
-> +		con |= (1 << EXYNOS7_PD_DET_EN_SHIFT);
->  		interrupt_en =
->  			(of_thermal_is_trip_valid(tz, 7)
->  			<< EXYNOS7_TMU_INTEN_RISE7_SHIFT) |
-> @@ -704,9 +705,9 @@ static void exynos7_tmu_control(struct
-> platform_device *pdev, bool on) interrupt_en <<
-> EXYNOS_TMU_INTEN_FALL0_SHIFT; } else {
->  		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
-> +		con &= ~(1 << EXYNOS7_PD_DET_EN_SHIFT);
->  		interrupt_en = 0; /* Disable all interrupts */
->  	}
-> -	con |= 1 << EXYNOS7_PD_DET_EN_SHIFT;
->  
->  	writel(interrupt_en, data->base + EXYNOS7_TMU_REG_INTEN);
->  	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+> 2015-02-24 18:22 GMT+09:00 Inha Song <ideal.song@samsung.com>:
+> > This patch add CLKOUT driver support for Exynos3250 SoC.
+> 
+> Could you please add a little more information? I know that it might
+> be pretty obvious to people familiar with this driver and/or hardware,
+> but it might be a good idea to explicitly say that the CLKOUT
+> controller is compatible with Exynos4, so only a new compatible string
+> is added.
+> 
+> On the other hand, do you really need to add a new compatible string
+> if an existing one can be reused? The reason why the DT property is
+> called "compatible" is to be able to use the same compatible strings
+> on different devices, because they are compatible, even though the
+> string might have its name after only one of them. If there is some
+> additional reason to add a new compatible string, please write this in
+> commit message.
 
-Could you test this patch if it isn't introducing any regression on your
-HW?
+In in PMU document(Document/devicetree/bindgins/arm/samsung/pmu.txt),
+"samsung,exynos3250-pmu" compatible string had been added.
 
--- 
-Best regards,
+So I add this compatible in driver.
 
-Lukasz Majewski
+> 
+> >
+> > Signed-off-by: Inha Song <ideal.song@samsung.com>
+> > ---
+> >  drivers/clk/samsung/clk-exynos-clkout.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> > index 3a7cb25..1c02e73 100644
+> > --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> > +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> > @@ -142,6 +142,8 @@ CLK_OF_DECLARE(exynos4212_clkout, "samsung,exynos4212-pmu",
+> >                 exynos4_clkout_init);
+> >  CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4412-pmu",
+> >                 exynos4_clkout_init);
+> > +CLK_OF_DECLARE(exynos3250_clkout, "samsung,exynos3250-pmu",
+> > +               exynos4_clkout_init);
+> 
+> Are you sure that the PMU DEBUG register on Exynos3250 is indeed
+> compatible with Exynos4 and not with newer SoCs? AFAIR, the only
+> difference was the number of bits (4 on Exynos4 and 5 on Exynos5?) of
+> the main mux.
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Exynos3250 PMU_DEBUG register is same with Exynos4. So I just use exynos4_clkout_init function.
+But, on second thought, It looks good to add exynos3_clkout_init function for Exynos3 SoC even though it's the same with exynos4_clkout_init.
+
+what is your opinion?
+
+Best Regards,
+Inha Song.
+
+> 
+> Best regards,
+> Tomasz
