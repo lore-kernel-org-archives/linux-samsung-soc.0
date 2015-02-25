@@ -1,123 +1,64 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v4 5/8] ARM: dts: Add properties to use pwm-fan device as
- a cooling device in Odroid U3
-Date: Tue, 24 Feb 2015 15:37:13 -0400
-Message-ID: <20150224193711.GA353@developer.amazonguestwifi.org>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-1-git-send-email-l.majewski@samsung.com>
- <1424254056-5904-6-git-send-email-l.majewski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] clk: samsung: Add CLKOUT driver support for Exynos3250 SoC.
+Date: Wed, 25 Feb 2015 09:54:02 +0900
+Message-ID: <CA+Ln22Hb9vx707=smWZwGqc9-JuSYvQ_dPcRbpPFZOF=ZgzUbQ@mail.gmail.com>
+References: <1424769751-4633-1-git-send-email-ideal.song@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:35854 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752879AbbBXThR (ORCPT
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:33024 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752721AbbBYAyE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Feb 2015 14:37:17 -0500
-Content-Disposition: inline
-In-Reply-To: <1424254056-5904-6-git-send-email-l.majewski@samsung.com>
+	Tue, 24 Feb 2015 19:54:04 -0500
+In-Reply-To: <1424769751-4633-1-git-send-email-ideal.song@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Inha Song <ideal.song@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
+Hi Inha,
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch. Please see my comments inline.
 
-On Wed, Feb 18, 2015 at 11:07:33AM +0100, Lukasz Majewski wrote:
-> With those bindings it is possible to use pwm-fan device available in
-> Odroid U3 as a cooling device.
->=20
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+2015-02-24 18:22 GMT+09:00 Inha Song <ideal.song@samsung.com>:
+> This patch add CLKOUT driver support for Exynos3250 SoC.
+
+Could you please add a little more information? I know that it might
+be pretty obvious to people familiar with this driver and/or hardware,
+but it might be a good idea to explicitly say that the CLKOUT
+controller is compatible with Exynos4, so only a new compatible string
+is added.
+
+On the other hand, do you really need to add a new compatible string
+if an existing one can be reused? The reason why the DT property is
+called "compatible" is to be able to use the same compatible strings
+on different devices, because they are compatible, even though the
+string might have its name after only one of them. If there is some
+additional reason to add a new compatible string, please write this in
+commit message.
+
+>
+> Signed-off-by: Inha Song <ideal.song@samsung.com>
 > ---
-> Changes for v2:
-> - Rename cooling-pwm-values property to cooling-levels
-> Changes for v3:
-> - Change patch's topic to "ARM dts"
-> - Reduce maximal cooling-level to 230 from 255
-> Changes for v4:
-> - None
-> ---
->  arch/arm/boot/dts/exynos4412-odroidu3.dts | 33 +++++++++++++++++++++++++=
-+++++-
->  1 file changed, 32 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dt=
-s/exynos4412-odroidu3.dts
-> index 60bd1e4..3e5df3e 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> @@ -32,11 +32,42 @@
->  		};
->  	};
-> =20
-> -	pwm-fan {
-> +	fan0: pwm-fan {
->  		compatible =3D "pwm-fan";
->  		pwms =3D <&pwm 0 10000 0>;
-> +		cooling-min-state =3D <0>;
-> +		cooling-max-state =3D <3>;
-> +		#cooling-cells =3D <2>;
-> +		cooling-levels =3D <0 102 170 230>;
->  		status =3D "okay";
->  	};
-> +
-> +	thermal-zones {
-> +		cpu_thermal: cpu-thermal {
+>  drivers/clk/samsung/clk-exynos-clkout.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> index 3a7cb25..1c02e73 100644
+> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> @@ -142,6 +142,8 @@ CLK_OF_DECLARE(exynos4212_clkout, "samsung,exynos4212-pmu",
+>                 exynos4_clkout_init);
+>  CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4412-pmu",
+>                 exynos4_clkout_init);
+> +CLK_OF_DECLARE(exynos3250_clkout, "samsung,exynos3250-pmu",
+> +               exynos4_clkout_init);
 
+Are you sure that the PMU DEBUG register on Exynos3250 is indeed
+compatible with Exynos4 and not with newer SoCs? AFAIR, the only
+difference was the number of bits (4 on Exynos4 and 5 on Exynos5?) of
+the main mux.
 
-This thermal zone misses the mandatory properties as per=20
- Documentation/devicetree/bindings/thermal/thermal.txt
-
-> +			cooling-maps {
-> +				map0 {
-> +				     trip =3D <&cpu_alert1>;
-> +				     cooling-device =3D <&cpu0 7 7>;
-> +				};
-> +				map1 {
-> +				     trip =3D <&cpu_alert2>;
-> +				     cooling-device =3D <&cpu0 13 13>;
-> +				};
-> +				map2 {
-> +				     trip =3D <&cpu_alert0>;
-> +				     cooling-device =3D <&fan0 0 1>;
-> +				};
-> +				map3 {
-> +				     trip =3D <&cpu_alert1>;
-> +				     cooling-device =3D <&fan0 1 2>;
-> +				};
-> +				map4 {
-> +				     trip =3D <&cpu_alert2>;
-> +				     cooling-device =3D <&fan0 2 3>;
-> +				};
-> +			};
-> +		};
-> +	};
->  };
-> =20
->  &pwm {
-> --=20
-> 2.0.0.rc2
->=20
-
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJU7NLeAAoJEMLUO4d9pOJWPR0H/iwmIou90qFFRLOerb+N8B3U
-4vUB/xpRTChTV3Y7MriVzBWsVpVFbqBgvtDcYiXAOQon0sm2TL1x3uSXIFyc0Q5R
-YjwuSHHHvgOSJqNXjcAE9LAozko1L6wHUppvQ0+T82uqKoC8/MbEX1VzIxGT4JrT
-7QrPMUEtgJcHWWrUHLg+VDpk1dPJ46hLwEqPHhk7jtTR0mNr7IDEPlvWms7docSp
-svVn9xW0UGG+PJXX35+uerEdRkVJ3yCH4wX88oiw5IF/UNo8t/jkEK/ksUHp89wc
-42jVRtfQrgiLtVCthquS+dPIbmOkDyToLbeTqQwIqZ2iOLGJpv9R2SV9QHQpGx0=
-=m1tq
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+Best regards,
+Tomasz
