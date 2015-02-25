@@ -1,128 +1,61 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v5 1/6] Documentation: dts: Documentation entry to
- explain how to use PWM FAN as a cooling device
-Date: Wed, 25 Feb 2015 15:13:03 -0400
-Message-ID: <20150225191301.GA2983@developer.amazonguestwifi.org>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1424878462-15511-1-git-send-email-l.majewski@samsung.com>
- <1424878462-15511-2-git-send-email-l.majewski@samsung.com>
- <20150225191123.GA2950@developer.amazonguestwifi.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [RFC 1/3] i2c: Enhancement of i2c API to address circular lock
+ dependency problem
+Date: Wed, 25 Feb 2015 11:47:15 -0800
+Message-ID: <20150225194715.421.87263@quantum>
+References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
+ <CA+Ln22GrsCj0291dVccFPzPW8pmxyc8JHtPo5ijsAdDXw6RC1Q@mail.gmail.com>
+ <54BB9100.7000506@samsung.com> <20150118134124.GC2809@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150225191123.GA2950@developer.amazonguestwifi.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:35653 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752714AbbBYTrb convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Feb 2015 14:47:31 -0500
+Received: by mail-oi0-f51.google.com with SMTP id g201so5276775oib.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Feb 2015 11:47:31 -0800 (PST)
+In-Reply-To: <20150118134124.GC2809@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Paul Osmialowski <p.osmialowsk@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
+Quoting Mark Brown (2015-01-18 05:41:24)
+> On Sun, Jan 18, 2015 at 11:54:56AM +0100, Krzysztof Kozlowski wrote:
+> > W dniu 18.01.2015 o 07:30, Tomasz Figa pisze:
+> 
+> > >So, the question is, do we actually have hardware that _really_
+> > >requires _actual_ preparation or all the clk_prepare_enable()s in I2C
+> > >drivers (at least in i2c-s3c2410) are just to simplify the code?
+> 
+> > I completely forgot that you already thought about this deadlock in 2014. I
+> > think we can try the no-prepare way for i2c-s3c2410. However this would be
+> > only workaround for specific chip. Other buses (like SPI) would require
+> > similar changes.
+> 
+> Right, and it's every single driver which would need an update too which
+> is a bit icky and sad.  On the other hand a more detailed fix is going
+> to involve trying to make the clock API locking more fine grained which
+> isn't fun.
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not fun is right. Please see Stephen's attempt here:
 
-On Wed, Feb 25, 2015 at 03:11:24PM -0400, Eduardo Valentin wrote:
-> On Wed, Feb 25, 2015 at 04:34:17PM +0100, Lukasz Majewski wrote:
-> > Explanation of several properties, which allow PWM fan working as a coo=
-ling
-> > device, have been embraced in this commit.
-> >=20
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> > Changes for v2:
-> > - Rename cooling-pwm-values to cooling-levels
-> > - Remove default-pulse-width property and stick to default hwmon policy
-> > Changes for v3:
-> > - Changing commit title from "hwmon: dts: Doc:" to "Documentation: dts"
-> > - Remove unnecessary properties
-> > - Set maximal cooling level to 230 instead of 255
-> > Changes for v4:
-> > - None
-> > Changes for v5:
-> > - Move thermal-zones description to example section
-> > - Extending example section
-> >=20
-> > ---
-> >  .../devicetree/bindings/hwmon/pwm-fan.txt          | 25 ++++++++++++++=
-+++++++-
-> >  1 file changed, 24 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Docu=
-mentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > index 610757c..645251b 100644
-> > --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > @@ -3,10 +3,33 @@ Bindings for a fan connected to the PWM lines
-> >  Required properties:
-> >  - compatible	: "pwm-fan"
-> >  - pwms		: the PWM that is used to control the PWM fan
-> > +- cooling-levels      : PWM duty cycle values in a range from 0 to 255
-> > +			which correspond to thermal cooling states
-> > =20
-> >  Example:
-> > -	pwm-fan {
-> > +	fan0: pwm-fan {
-> >  		compatible =3D "pwm-fan";
-> >  		status =3D "okay";
-> >  		pwms =3D <&pwm 0 10000 0>;
-> > +		cooling-levels =3D <0 102 170 230>;
-> > +	};
-> > +
-> > +	thermal-zones {
-> > +		cpu_thermal: cpu-thermal {
-> > +		cooling-min-state =3D <0>;
-> > +		cooling-max-state =3D <3>;
-> > +		#cooling-cells =3D <2>;
-> > +		trips {
-> > +			cpu_alert1: cpu-alert1 {
-> > +				temperature =3D <100000>; /* millicelsius */
-> > +				hysteresis =3D <2000>; /* millicelsius */
-> > +				type =3D "passive";
-> > +			};
-> > +		};
-> > +		cooling-maps {
-> > +			map0 {
-> > +			     trip =3D <&cpu_alert1>;
-> > +			     cooling-device =3D <&fan0 0 1>;
-> > +			};
-> > +		};
->=20
-> The above example has two issues:
-> (1) it is wrong, as the cooling device properties are in the thermal
-> zone node.
-> (2) has a misalignment / tabulation
->=20
-> Can you please fix that in your next version too?
+http://lkml.kernel.org/r/<1409792466-5092-1-git-send-email-sboyd@codeaurora.org>
 
+I'm hoping this approach will be revisited soon.
 
-Apart from the above two issues you may add my=20
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
+Regards,
+Mike
 
->=20
-> >  	};
-> > --=20
-> > 2.0.0.rc2
-> >=20
-
-
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJU7h60AAoJEMLUO4d9pOJWXwwH/ic5KhV2vXDFG0IMmnOlSIma
-ZtJas8ij2hCaO90lPWoNvBgOmsxdA/EMLjaKFxkiB54HGO5Pcnc3r7RylN9u3uRy
-X4SMc0RAzOB0pX85P/tM0k1XnejJylZe7Z/LF0lTYAab3FVLgqZ6JU2S0jSAVlkv
-pidXPyCmEFJ3SYX/OcJZk92WGJYRyEbEDEmiKfuZ6ExmmvaERr+rmzRGbc8VLW+L
-s4t9G62IhhgrXKS2zzsze4ZScFDPe81gEqXaXkar0UPJFb4Cxgkx0atFH5xdVDPI
-eirEFtUxmzvyOCP92IoFvPBV4eq0W1+4An1V8h5U+Yj5R+N3qtMN/I1YLLPXVDs=
-=pmq/
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+> 
+> > I wondered why this was not observed (at least not observed by me with
+> > lockdep) on Gear 2 (Rinato) board. This is quite similar case: the S2MPS14
+> > PMIC provides regulators and 32kHz clocks. I think it is exactly the same
+> > pattern as for max77686... but somehow lockdep never reported that deadlock
+> > there.
+> 
+> Mostly the clocks on PMICs never get changed at runtime which helps a
+> lot here.
