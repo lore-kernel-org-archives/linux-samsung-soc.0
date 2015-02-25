@@ -1,56 +1,72 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [v3] libdrm: improvements to userspace exynos component
-Date: Wed, 25 Feb 2015 15:54:38 +0000
-Message-ID: <CACvgo50e534ZjnNZHhj3jiiDNXeguDj7VMhrUVrByHZ_rh8i-w@mail.gmail.com>
-References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v5 0/6] hwmon: thermal: Odroid U3: Provide support for
+ Odroid U3 fan
+Date: Wed, 25 Feb 2015 09:18:20 -0800
+Message-ID: <20150225171820.GA2400@roeck-us.net>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1424878462-15511-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Rob Clark <robclark@freedesktop.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:45431 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752874AbbBYRTZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Feb 2015 12:19:25 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YQfcL-001K5X-Cp
+	for linux-samsung-soc@vger.kernel.org; Wed, 25 Feb 2015 17:19:25 +0000
+Content-Disposition: inline
+In-Reply-To: <1424878462-15511-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Kukjin Kim <kgene@kernel.org>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-T24gMjQgRmVicnVhcnkgMjAxNSBhdCAxNDoyMCwgVG9iaWFzIEpha29iaQo8dGpha29iaUBtYXRo
-LnVuaS1iaWVsZWZlbGQuZGU+IHdyb3RlOgo+IEhlbGxvLAo+Cj4gaGVyZSBhcmUgc29tZSBtaXNj
-ZWxsYW5lb3VzIGltcHJvdmVtZW50cyAoc21hbGwgZmVhdHVyZXMsIGJ1Z2ZpeGVzLCBzcGVsbGlu
-ZyBmaXhlcywgZXRjLikgZm9yIHRoZSBleHlub3MgY29tcG9uZW50IG9mIGxpYmRybS4gVGhlIGdl
-bmVyYWwgaWRlYSBpcyB0byBsZXQgdXNlcnNwYWNlIHVzZSB0aGUgRzJEIGVuZ2luZSBmdW5jdGlv
-bmFsaXR5IG1vcmUKPiBlZmZpY2llbnRseS4KPgo+IElmIHNvbWVvbmUgaXMgaW50ZXJlc3RlZCBp
-biBhbiBhcHBsaWNhdGlvbiB0aGF0IGFjdHVhbGx5IG1ha2VzIHVzZSBvZiB0aGlzLCB0aGUgUmV0
-cm9BcmNoIGZyb250ZW5kIGhhcyBhIGN1c3RvbSB2aWRlbyBiYWNrZW5kOgo+IGh0dHBzOi8vZ2l0
-aHViLmNvbS9saWJyZXRyby9SZXRyb0FyY2gvYmxvYi9tYXN0ZXIvZ2Z4L2RyaXZlcnMvZXh5bm9z
-X2dmeC5jCj4KPgo+IFBsZWFzZSByZXZpZXcgYW5kIGxldCBtZSBrbm93IHdoYXQgSSBjYW4gaW1w
-cm92ZS4KPgo+IHYyOgo+IC0gTWVudGlvbiB2YWx1ZSBvZiBHMkQgc2NhbGluZyBub3JtYWxpemF0
-aW9uIGZhY3RvciAoMDIvMTUpLgo+IC0gTW92ZWQgcGF0Y2ggKDA0LzE1KSBkZXNjcmlwdGlvbiBm
-cm9tIGNvbW1pdCBtZXNzYWdlIHRvIHNvdXJjZSBpdHNlbGYsIGxpa2Ugc3VnZ2VzdGVkIGJ5IEpv
-b255b3VuZyBTaGltLgo+Cj4gdjM6Cj4gSSBpbnRlZ3JhdGVkIHRoZSBzdWdnZXN0aW9ucyBieSBF
-bWlsIFZlbGlrb3YgYW5kIGFkZGVkIHR3byBhZGRpdGlvbmFsIHBhdGNoZXMgdG8gdGhlIHNlcmll
-cy4gT25lIGRvaW5nIHRoZSBoZWFkZXIgY2xlYW51cCB0aGF0IEVtaWwgcG9pbnQgb3V0LCBhbm90
-aGVyIG9uZSBqdXN0IGEgdHJpdmlhbCB3aGl0ZXNwYWNlIHRoaW5nLiBJJ20gcmVzZW5kaW5nCj4g
-dGhlIHdob2xlIHNlcmllcywgc2luY2UgbnVtYmVyIG9mIHBhdGNoZXMgYW5kIG9yZGVyIGNoYW5n
-ZWQuCj4KVGhhbmtzIGZvciB0aGUgdXBkYXRlLiBGb3IgdGhlIGZ1dHVyZSBwbGVhc2UgYWRkIHRo
-ZSB0YWdzCih0ZXN0ZWQtYnksZXRjLikgd2hlbiByZXNlbmRpbmcgcGF0Y2hlcy4KRG9uJ3Qgd29y
-cnkgYWJvdXQgdGhlc2UgSSdsbCBhZGQgdGhlbSBiZWZvcmUgcHVzaGluZy4gVGhlIHR3byBleHRy
-YQpwYXRjaGVzIGxvb2sgZ29vZCBpbWhvLgoKSW5raSwKClRoaXMgY2xlYW51cCBzZXJpZXMgaGFz
-IGJlZW4gYXJvdW5kIGZvciBhIGxpdHRsZSB3aGlsZSBub3cuIHYzIGNhbiBiZSBmb3VuZCBhdApo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LUZlYnJ1
-YXJ5LzA3ODExMS5odG1sCgpEbyB5b3UgbWluZCBpZiB3ZSBhcHBseSB0aGUgdHJpdmlhbCBhbmQg
-dGVzdGVkKiBwYXRjaGVzIHdpdGhpbiB0aGUKbmV4dCB3ZWVrIG9yIHNvID8KVGhlIG1vcmUgc2Vy
-aW91cyBwYXRjaGVzIGh3IHNwZWNpZmljLCBldGMgYXJlIGxhY2tpbmcgcHJldmlldyBhbmQgY2Fu
-CmJlIGNvbW1pdHRlZCBhdCBhIGxhdGVyIHN0YWdlLgoKVGhhbmtzCkVtaWwKClsqXSBQYXRjaGVz
-IDItNCwgNiwgOCwgMTAsIDEyLCAxNC0xNywgb3V0IG9mIHdoaWNoIEpvb255b3VuZyBTaGltIGhh
-cwp0ZXN0ZWQgYWxsIGJ1dCAxMiBhbmQgMTcuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+On Wed, Feb 25, 2015 at 04:34:16PM +0100, Lukasz Majewski wrote:
+> Presented patches add support for Odroid's U3 optional CPU FAN, which uses PWM
+> subsystem for low level control.
+> 
+> After successful probe it registers itself as a cooling device for thermal
+> subsystem.
+> 
+> This driver also supports devices without DTS specified.
+> 
+> To provide correct functionality, new properties to device tree description for
+> Exynos4412 and in particular Odroid U3 have been added.
+> 
+> Those patches were tested at Exynos4412 - Odroid U3 board.
+> 
+> Patches were applied on:
+> linux-soc-thermal/fixes branch (Linux v4.0-rc1)
+> SHA1: b71d399c7f2fe06b60b96155ec0b9ae167334e4a
+> 
+> Kamil Debski (1):
+>   ARM: dts: Add pwm-fan node to the Odroid-U3 board
+> 
+> Lukasz Majewski (5):
+>   Documentation: dts: Documentation entry to explain how to use PWM FAN
+>     as a cooling device
+>   ARM: dts: Add properties to use pwm-fan device as a cooling device in
+>     Odroid U3
+>   hwmon: pwm-fan: Extract __set_pwm() function to only modify PWM duty
+>     cycle
+>   hwmon: pwm-fan: Read PWM FAN configuration from device tree
+>   hwmon: pwm-fan: Code for using PWM FAN as a cooling device
+> 
+>  .../devicetree/bindings/hwmon/pwm-fan.txt          |  25 +++-
+>  arch/arm/boot/dts/exynos4.dtsi                     |   2 +-
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts          |  43 ++++++
+>  drivers/hwmon/pwm-fan.c                            | 166 +++++++++++++++++++--
+>  4 files changed, 220 insertions(+), 16 deletions(-)
+> 
+For the series:
+
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+
+Should I take it through hwmon ? Might make sense given the majority
+of the changes is in hwmon code.
+
+Thanks,
+Guenter
