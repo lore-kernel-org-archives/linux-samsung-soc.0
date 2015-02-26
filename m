@@ -1,55 +1,29 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 4/7] platform/chrome: Add Chrome OS EC userspace device
- interface
-Date: Thu, 26 Feb 2015 10:08:31 +0100
-Message-ID: <54EEE28F.8000307@collabora.co.uk>
-References: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk> <1422876388-16540-5-git-send-email-javier.martinez@collabora.co.uk> <20150226005425.GA3101@quad.lixom.net> <CAMHSBOXOLrvkhWgF=hF8tB+yeakVUbTkTi-8ZvC2aAFtMEw_1A@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] phy: exynos-mipi-video: Fixup the test for state->regmap
+Date: Thu, 26 Feb 2015 10:47:46 +0100
+Message-ID: <54EEEBC2.3090201@samsung.com>
+References: <1424922488.2076.1.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:53930 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751399AbbBZJIi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:8997 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753182AbbBZJr5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Feb 2015 04:08:38 -0500
-In-Reply-To: <CAMHSBOXOLrvkhWgF=hF8tB+yeakVUbTkTi-8ZvC2aAFtMEw_1A@mail.gmail.com>
+	Thu, 26 Feb 2015 04:47:57 -0500
+In-reply-to: <1424922488.2076.1.camel@phoenix>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Gwendal Grignou <gwendal@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Olof,
-
-Thanks a lot for your feedback.
-
-On 02/26/2015 02:13 AM, Gwendal Grignou wrote:
-> Olof,
+On 26/02/15 04:48, Axel Lin wrote:
+> syscon_regmap_lookup_by_phandle() returns ERR_PTR on error.
+> Thus don't use null test against state->regmap.
 > 
-> I think the way Javier did it is fine, the 'major' of the ioctl is
-> 0xEC, from ':'.
-> 
-> Gwendal.
->
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-As Gwendal said, I deliberately changed the IOCTL mayor number to
-make it different in both kernels.
+Thanks for the patch, I had this on my todo list.
 
-downstream:
-
-#define CROS_EC_DEV_IOC              ':'
-#define CROS_EC_DEV_IOCXCMD    _IOWR(':', 0, struct cros_ec_command)
-#define CROS_EC_DEV_IOCRDMEM   _IOWR(':', 1, struct cros_ec_readmem)
-
-mainline:
-
-#define CROS_EC_DEV_IOC       0xEC
-#define CROS_EC_DEV_IOCXCMD   _IOWR(CROS_EC_DEV_IOC, 0, struct cros_ec_command)
-#define CROS_EC_DEV_IOCRDMEM  _IOWR(CROS_EC_DEV_IOC, 1, struct cros_ec_readmem)
-
-I can also do what you suggested and keep ':' as the major and use 2/3
-as command numbers but I just think 0xEC is a much nicer major for the
-interface to talk with the Embedded Controller and it was available ;)
-
-Best regards,
-Javier
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
