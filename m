@@ -1,48 +1,59 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] ARM: exynos: Fix wrong hwirq of RTC interrupt for Exynos3250
- SoC
-Date: Fri, 27 Feb 2015 05:59:05 +0900
-Message-ID: <54EF8919.9010703@kernel.org>
-References: <1423537745-11994-1-git-send-email-cw00.choi@samsung.com> <CAJKOXPcaOVC5Rpoi+27Letk4sAuoaW6vheZnCPHJgPktA-RM4g@mail.gmail.com>
+Subject: Re: [PATCH v6 00/18] thermal: exynos: Thermal code rework to use
+ device tree
+Date: Fri, 27 Feb 2015 06:21:25 +0900
+Message-ID: <54EF8E55.5050803@kernel.org>
+References: <1421666462-7606-1-git-send-email-l.majewski@samsung.com> <1422015010-11918-1-git-send-email-l.majewski@samsung.com> <20150124214955.GA14443@developer.hsd1.ca.comcast.net> <54CAC3A2.5060804@kernel.org> <20150223111338.11ca4b6c@amdc2363> <039101d04f5a$80147660$803d6320$@kernel.org> <20150226165659.1a37de79@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcaOVC5Rpoi+27Letk4sAuoaW6vheZnCPHJgPktA-RM4g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:60992 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754057AbbBZVVc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Feb 2015 16:21:32 -0500
+In-Reply-To: <20150226165659.1a37de79@amdc2363>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, 'Eduardo Valentin' <edubezval@gmail.com>, 'Zhang Rui' <rui.zhang@intel.com>, 'Linux PM list' <linux-pm@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>
 
-On 02/10/15 17:05, Krzysztof Kozlowski wrote:
-> 2015-02-10 4:09 GMT+01:00 Chanwoo Choi <cw00.choi@samsung.com>:
->> This patch fixes wrong hwirq of RTC irq for Exynos3250 SoC. When entering
->> suspend state, 'enable_irq_wake fail' happen because of the mismatch of RTC hwirq.
->>
->>         [ 429.200937] Freezing user space processes ... (elapsed 0.002 seconds) done.
->>         [ 429.203383] Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->>         [ 429.209914] Suspending console(s) (use no_console_suspend to debug)
->>         [ 429.370685] wake enabled for irq 65
->>         [ 429.370837] wake enabled for irq 64
->>         [ 429.370868] wake enabled for irq 79
->>         [snip]
->>         [  429.372120] s3c-rtc 10070000.rtc: enable_irq_wake failed
->>
->> Fixes: a4f582f5c5fe3 (ARM: EXYNOS: Add exynos3250 suspend-to-ram support)
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  arch/arm/mach-exynos/suspend.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+On 02/27/15 00:56, Lukasz Majewski wrote:
+> Hi Kukjin,
 > 
-> Yeah, I remember now Jonghwa's patches back in 2014 August and September :)
-> https://lkml.org/lkml/2014/8/26/40
-> https://lkml.org/lkml/2014/9/26/92
-> 
-> Anyway now this looks good:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-Thanks, applied.
+>> Lukasz Majewski wrote:
+>>>
+>>> Hi Kukjin, Eduardo
+>>>
+>> Hi,
 
-- Kukjin
+[...]
+
+>>> Kukjin, could you add missing DTS files and send this to upstream.
+>>>
+>> Unfortunately, I couldn't take the DT changes in Samsung tree at that
+>> time because of missing header file and it causes build error. Now I
+>> can pick them into Samsung tree but I'm not sure it can be sent to
+>> upstream during this -rc...
+>>
+>> Eduardo, Lukasz,
+>> Do you guys think the DT changes are really fixes for 4.0?
+> 
+> I've created following repository with DTS files:
+> 
+> https://github.com/lmajewski/linux-samsung-thermal.git
+> 
+> Branch: devel.
+> 
+> On top of the v4.0-rc1 tag you will find all necessary patches for
+> fixing thermal regression at Samsung Exynos boards.
+> 
+> I hope, that organizing all patches in a separate repository will
+> facilitate and speed up the inclusion process.
+
+I already did :-) If any problems on the branch
+(v4.0-samsung-dt-tmu-hdmi) in my tree, please kindly let me know.
+
+Thanks,
+Kukjin
