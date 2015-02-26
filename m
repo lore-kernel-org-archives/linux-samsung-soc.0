@@ -1,504 +1,91 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 1/2] drm/exynos: hdmi: Add support for Exynos7 HDMI
-Date: Thu, 26 Feb 2015 20:54:44 +0530
-Message-ID: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
+Date: Thu, 26 Feb 2015 16:42:09 +0100
+Message-ID: <2707354.mhmQEHxoKV@wuerfel>
+References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com> <6850624.bdB2Ab6zJx@wuerfel> <54EED6E1.4060908@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:49840 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753689AbbBZPUR (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:49708 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753597AbbBZPmS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Feb 2015 10:20:17 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NKD0044OX9REGB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Feb 2015 00:20:15 +0900 (KST)
+	Thu, 26 Feb 2015 10:42:18 -0500
+In-Reply-To: <54EED6E1.4060908@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, ajaynumb@gmail.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, marc.zyngier@arm.com, catalin.marinas@arm.com, olof@lixom.net, will.deacon@arm.com, linux-kernel@vger.kernel.org, jh80.chung@samsung.com, sw0312.kim@samsung.com, kgene@kernel.org, a.kesavan@samsung.com, chanho61.park@samsung.com, inki.dae@samsung.com, ideal.song@samsung.com
 
-Modify the exynos HDMI driver to support Exynos7 HDMI 1.4.
-* Add phy configs for Exynos7.
-* Exynos7 has a different clock structure for HDMI,
-  so introduce the new clocks.
-* Add sysreg support to enable HDMI SYSREG on Exynos7.
-* Exynos7 based boards need a DCDC_EN and LS_EN pins
-  for powering up HDMI. Add support for that too.
+On Thursday 26 February 2015 17:18:41 Chanwoo Choi wrote:
+> I add following aliases and serial_1/serial_3 dt node in board dtsi:
+> I tested that change the alias of serial_x node.
+>         
+>         aliases {
+>                 serial0 = &serial_1;
+>                 serial1 = &serial_3;
+>         };
+> 
+>         /* Add 'linux,stdout-path' property to print kernel log by using ealycon */
+>         chosen {
+>                 linux,stdout-path = &serial_1;
+>         };
+> 
+>         [snip]
+> 
+>         /* serial_1 is used for printing kernel log throught JIG cable */
+>         &serial_1 {
+>                 status = "okay";
+>         };
+> 
+>         &serial_3 {
+>                 status = "okay";
+>         };
+> 
+> In result, serial driver create the /dev/ttySAC0 for serial_1 and /dev/ttySAC1 for serial_3.
+> But, I cannot complete the kernel booting and stop it with following kernel log
+> 
+> [    0.000000] Booting Linux on physical CPU 0x100
+> [    0.000000] Initializing cgroup subsys cpuset
+> [    0.000000] Initializing cgroup subsys cpu
+> [    0.000000] Initializing cgroup subsys cpuacct
+> [    0.000000] Linux version 4.0.0-rc1-00066-g49bfcec-dirty (cwchoi00@chan) (gcc version 4.9.2 20140904 (prerelease) (crosstool-NG l5
+> [snip]
+> [    0.000000] Kernel command line: console=ttySAC1,115200 earlycon=exynos4210,0x14C20000
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- .../devicetree/bindings/video/exynos_hdmi.txt      |   21 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c               |  252 ++++++++++++++++----
- drivers/gpu/drm/exynos/regs-hdmi.h                 |    4 +
- 3 files changed, 231 insertions(+), 46 deletions(-)
+What is the "earlycon=exynos4210,0x14C20000" doing here? Should that not just be
+"earlycon=exynos" or something like that when you set the correct stdout-path?
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index 1fd8cf9..bb22a60 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -6,6 +6,7 @@ Required properties:
- 	2) "samsung,exynos4210-hdmi"
- 	3) "samsung,exynos4212-hdmi"
- 	4) "samsung,exynos5420-hdmi"
-+	5) "samsung,exynos7-hdmi"
- - reg: physical base address of the hdmi and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
-@@ -15,21 +16,33 @@ Required properties:
- 	c) optional flags and pull up/down.
- - clocks: list of clock IDs from SoC clock driver.
- 	a) hdmi: Gate of HDMI IP bus clock.
--	b) sclk_hdmi: Gate of HDMI special clock.
--	c) sclk_pixel: Pixel special clock, one of the two possible inputs of
-+	HDMI clocks necessary for non exynos7:
-+	 b) sclk_hdmi: Gate of HDMI special clock.
-+	 c) sclk_pixel: Pixel special clock, one of the two possible inputs of
- 		HDMI clock mux.
--	d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
-+	 d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
- 		HDMI clock mux.
--	e) mout_hdmi: It is required by the driver to switch between the 2
-+	 e) mout_hdmi: It is required by the driver to switch between the 2
- 		parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
- 		after configuration, parent is set to sclk_hdmiphy else
- 		sclk_pixel.
-+	HDMI clocks necessary for Exynos7:
-+	 b) pclk_hdmiphy: Gate to HDMIPHY clock.
-+	 c) hdmi_pixel: Gate clock of MUX output for I_PIXEL_CLK.
-+	 d) hdmi_tmds: Gate clock of MUX output for I_TMDS_CLK.
- - clock-names: aliases as per driver requirements for above clock IDs:
- 	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
- - ddc: phandle to the hdmi ddc node
- - phy: phandle to the hdmi phy node
- - samsung,syscon-phandle: phandle for system controller node for PMU.
- 
-+Only for Exynos7(when compatible = "samsung,exynos7-hdmi"):
-+- samsung,sysreg-phandle: phandle for system controller node for SYSREG block.
-+
-+Optional properties:
-+- dcdc-gpios: OF device-tree gpio specification for HDMI_DCDC_EN pin.
-+- lsen-gpios: OF device-tree gpio specification for HDMI_LS_EN pin.
-+
- Example:
- 
- 	hdmi {
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 229b361..1b579ea 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -67,6 +67,7 @@
- enum hdmi_type {
- 	HDMI_TYPE13,
- 	HDMI_TYPE14,
-+	HDMI_TYPE14_7,
- };
- 
- struct hdmi_driver_data {
-@@ -82,6 +83,9 @@ struct hdmi_resources {
- 	struct clk			*sclk_pixel;
- 	struct clk			*sclk_hdmiphy;
- 	struct clk			*mout_hdmi;
-+	struct clk			*hdmi_pixel;
-+	struct clk			*pclk_hdmiphy;
-+	struct clk			*hdmi_tmds;
- 	struct regulator_bulk_data	*regul_bulk;
- 	struct regulator		*reg_hdmi_en;
- 	int				regul_count;
-@@ -210,6 +214,7 @@ struct hdmi_context {
- 	unsigned int			phy_conf_count;
- 
- 	struct regmap			*pmureg;
-+	struct regmap			*sysreg;
- 	enum hdmi_type			type;
- };
- 
-@@ -584,6 +589,61 @@ static const struct hdmiphy_config hdmiphy_5420_configs[] = {
- 	},
- };
- 
-+static const struct hdmiphy_config hdmiphy_7_configs[] = {
-+	{
-+		.pixel_clock = 27000000,
-+		.conf = {
-+			0x01, 0xD2, 0x87, 0xB0, 0x01, 0x00, 0x88, 0x02,
-+			0x4F, 0x30, 0x33, 0x65, 0x00, 0xE4, 0x24, 0x80,
-+			0x6C, 0xF2, 0x67, 0x00, 0x10, 0x0B, 0x00, 0x10,
-+			0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
-+		},
-+	},
-+	{
-+		.pixel_clock = 27027000,
-+		.conf = {
-+			0x01, 0xD1, 0x5A, 0xFA, 0xE4, 0x12, 0x88, 0x43,
-+			0x4F, 0x30, 0x33, 0x65, 0x00, 0xE4, 0x24, 0x80,
-+			0x6C, 0xF2, 0x67, 0x00, 0x10, 0x0F, 0x00, 0x10,
-+			0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
-+		},
-+	},
-+	{
-+		.pixel_clock = 74176000,
-+		.conf = {
-+			0x01, 0xD1, 0x3E, 0x35, 0xDB, 0xA2, 0x88, 0x42,
-+			0x4F, 0x30, 0x33, 0x65, 0x10, 0xA6, 0x24, 0x80,
-+			0x6C, 0xF2, 0x67, 0x00, 0x10, 0x03, 0x00, 0x10,
-+			0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
-+		},
-+	},
-+	{
-+		.pixel_clock = 74250000,
-+		.conf = {
-+			0x01, 0xD1, 0x3E, 0x35, 0xC0, 0x90, 0x88, 0x42,
-+			0x4F, 0x30, 0x33, 0x65, 0x10, 0xA6, 0x24, 0x80,
-+			0x6C, 0xF2, 0x67, 0x00, 0x10, 0x03, 0x00, 0x10,
-+			0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
-+		},
-+	},
-+	{
-+		.pixel_clock = 148500000,
-+		.conf = {
-+			0x01, 0xD1, 0x3E, 0x15, 0xC0, 0x90, 0x88, 0x42,
-+			0x4F, 0x30, 0x33, 0x65, 0x20, 0xA6, 0x24, 0x80,
-+			0x6C, 0xF2, 0x67, 0x00, 0x10, 0x01, 0x00, 0x10,
-+			0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
-+		},
-+	},
-+};
-+
-+static struct hdmi_driver_data exynos7_hdmi_driver_data = {
-+	.type		= HDMI_TYPE14_7,
-+	.phy_confs	= hdmiphy_7_configs,
-+	.phy_conf_count	= ARRAY_SIZE(hdmiphy_7_configs),
-+	.is_apb_phy	= 1,
-+};
-+
- static struct hdmi_driver_data exynos5420_hdmi_driver_data = {
- 	.type		= HDMI_TYPE14,
- 	.phy_confs	= hdmiphy_5420_configs,
-@@ -1355,6 +1415,9 @@ static void hdmi_start(struct hdmi_context *hdata, bool start)
- 		val |= HDMI_FIELD_EN;
- 
- 	hdmi_reg_writemask(hdata, HDMI_CON_0, val, HDMI_EN);
-+	if (hdata->type == HDMI_TYPE14_7)
-+		hdmi_reg_writemask(hdata, HDMI_CON_0, HDMI_ENCODING_RETAIN,
-+							HDMI_ENCODING_RETAIN);
- 	hdmi_reg_writemask(hdata, HDMI_TG_CMD, val, HDMI_TG_EN | HDMI_FIELD_EN);
- }
- 
-@@ -1489,9 +1552,11 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 		hdmi_regs_dump(hdata, "timing apply");
- 	}
- 
--	clk_disable_unprepare(hdata->res.sclk_hdmi);
--	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
--	clk_prepare_enable(hdata->res.sclk_hdmi);
-+	if (hdata->type != HDMI_TYPE14_7) {
-+		clk_disable_unprepare(hdata->res.sclk_hdmi);
-+		clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
-+		clk_prepare_enable(hdata->res.sclk_hdmi);
-+	}
- 
- 	/* enable HDMI and timing generator */
- 	hdmi_start(hdata, true);
-@@ -1651,9 +1716,11 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- 		hdmi_regs_dump(hdata, "timing apply");
- 	}
- 
--	clk_disable_unprepare(hdata->res.sclk_hdmi);
--	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
--	clk_prepare_enable(hdata->res.sclk_hdmi);
-+	if (hdata->type != HDMI_TYPE14_7) {
-+		clk_disable_unprepare(hdata->res.sclk_hdmi);
-+		clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
-+		clk_prepare_enable(hdata->res.sclk_hdmi);
-+	}
- 
- 	/* enable HDMI and timing generator */
- 	hdmi_start(hdata, true);
-@@ -1671,9 +1738,11 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
- {
- 	u32 reg;
- 
--	clk_disable_unprepare(hdata->res.sclk_hdmi);
--	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_pixel);
--	clk_prepare_enable(hdata->res.sclk_hdmi);
-+	if (hdata->type != HDMI_TYPE14_7) {
-+		clk_disable_unprepare(hdata->res.sclk_hdmi);
-+		clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_pixel);
-+		clk_prepare_enable(hdata->res.sclk_hdmi);
-+	}
- 
- 	/* operation mode */
- 	hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
-@@ -1693,7 +1762,7 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
- 
- static void hdmiphy_poweron(struct hdmi_context *hdata)
- {
--	if (hdata->type != HDMI_TYPE14)
-+	if ((hdata->type != HDMI_TYPE14) || (hdata->type != HDMI_TYPE14_7))
- 		return;
- 
- 	DRM_DEBUG_KMS("\n");
-@@ -1713,7 +1782,7 @@ static void hdmiphy_poweron(struct hdmi_context *hdata)
- 
- static void hdmiphy_poweroff(struct hdmi_context *hdata)
- {
--	if (hdata->type != HDMI_TYPE14)
-+	if ((hdata->type != HDMI_TYPE14) || (hdata->type != HDMI_TYPE14_7))
- 		return;
- 
- 	DRM_DEBUG_KMS("\n");
-@@ -2042,6 +2111,10 @@ static void hdmi_poweron(struct hdmi_context *hdata)
- 		return;
- 	}
- 
-+	if (hdata->type == HDMI_TYPE14_7)
-+		regmap_update_bits(hdata->sysreg, SYSREG_DISP_HDMI_PHY,
-+					SYSREG_HDMI_REFCLK_SEL, 1);
-+
- 	hdata->powered = true;
- 
- 	mutex_unlock(&hdata->hdmi_mutex);
-@@ -2056,7 +2129,19 @@ static void hdmi_poweron(struct hdmi_context *hdata)
- 			PMU_HDMI_PHY_ENABLE_BIT, 1);
- 
- 	clk_prepare_enable(res->hdmi);
--	clk_prepare_enable(res->sclk_hdmi);
-+	if (hdata->type != HDMI_TYPE14_7)
-+		clk_prepare_enable(res->sclk_hdmi);
-+	else
-+		clk_prepare_enable(res->pclk_hdmiphy);
-+
-+	if (hdata->type == HDMI_TYPE14_7)
-+		hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0,
-+					HDMI_PHY_POWER_OFF_EN);
-+
-+	if (hdata->type == HDMI_TYPE14_7) {
-+		clk_prepare_enable(res->hdmi_pixel);
-+		clk_prepare_enable(res->hdmi_tmds);
-+	}
- 
- 	hdmiphy_poweron(hdata);
- 	hdmi_commit(&hdata->display);
-@@ -2074,13 +2159,29 @@ static void hdmi_poweroff(struct hdmi_context *hdata)
- 	/* HDMI System Disable */
- 	hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
- 
-+	if (hdata->type == HDMI_TYPE14_7) {
-+		clk_disable_unprepare(res->hdmi_pixel);
-+		clk_disable_unprepare(res->hdmi_tmds);
-+	}
-+
-+	if (hdata->type == HDMI_TYPE14_7)
-+		hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0,
-+					HDMI_PHY_POWER_OFF_EN);
-+
- 	hdmiphy_poweroff(hdata);
- 
- 	cancel_delayed_work(&hdata->hotplug_work);
- 
--	clk_disable_unprepare(res->sclk_hdmi);
-+	if (hdata->type != HDMI_TYPE14_7)
-+		clk_disable_unprepare(res->sclk_hdmi);
-+	else
-+		clk_disable_unprepare(res->pclk_hdmiphy);
- 	clk_disable_unprepare(res->hdmi);
- 
-+	if (hdata->type == HDMI_TYPE14_7)
-+		regmap_update_bits(hdata->sysreg, SYSREG_DISP_HDMI_PHY,
-+					SYSREG_HDMI_REFCLK_SEL, 0);
-+
- 	/* reset pmu hdmiphy control bit to disable hdmiphy */
- 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
- 			PMU_HDMI_PHY_ENABLE_BIT, 0);
-@@ -2121,10 +2222,12 @@ static void hdmi_dpms(struct exynos_drm_display *display, int mode)
- 		 * Below codes will try to disable Mixer and VP(if used)
- 		 * prior to disabling HDMI.
- 		 */
--		if (crtc)
--			funcs = crtc->helper_private;
--		if (funcs && funcs->dpms)
--			(*funcs->dpms)(crtc, mode);
-+		if (hdata->type != HDMI_TYPE14_7) {
-+			if (crtc)
-+				funcs = crtc->helper_private;
-+			if (funcs && funcs->dpms)
-+				(*funcs->dpms)(crtc, mode);
-+		}
- 
- 		hdmi_poweroff(hdata);
- 		break;
-@@ -2166,6 +2269,31 @@ static irqreturn_t hdmi_irq_thread(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
-+static int hdmi_configure_gpios(struct hdmi_context *hdata)
-+{
-+	struct gpio_desc *dcdc_gpio, *lsen_gpio;
-+	int err;
-+
-+	dcdc_gpio = devm_gpiod_get_optional(hdata->dev, "dcdc", GPIOD_OUT_LOW);
-+	if (IS_ERR(dcdc_gpio)) {
-+		err = PTR_ERR(dcdc_gpio);
-+		dev_err(hdata->dev, "failed to request GPIO: %d\n", err);
-+		return err;
-+	}
-+
-+	lsen_gpio = devm_gpiod_get_optional(hdata->dev, "lsen", GPIOD_OUT_LOW);
-+	if (IS_ERR(lsen_gpio)) {
-+		err = PTR_ERR(lsen_gpio);
-+		dev_err(hdata->dev, "failed to request GPIO: %d\n", err);
-+		return err;
-+	}
-+
-+	gpiod_set_value(dcdc_gpio, 1);
-+	gpiod_set_value(lsen_gpio, 1);
-+
-+	return 0;
-+}
-+
- static int hdmi_resources_init(struct hdmi_context *hdata)
- {
- 	struct device *dev = hdata->dev;
-@@ -2179,6 +2307,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
- 
- 	DRM_DEBUG_KMS("HDMI resource init\n");
- 
-+	ret = hdmi_configure_gpios(hdata);
-+	if (ret)
-+		goto fail;
-+
- 	/* get clocks, power */
- 	res->hdmi = devm_clk_get(dev, "hdmi");
- 	if (IS_ERR(res->hdmi)) {
-@@ -2186,32 +2318,55 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
- 		ret = PTR_ERR(res->hdmi);
- 		goto fail;
- 	}
--	res->sclk_hdmi = devm_clk_get(dev, "sclk_hdmi");
--	if (IS_ERR(res->sclk_hdmi)) {
--		DRM_ERROR("failed to get clock 'sclk_hdmi'\n");
--		ret = PTR_ERR(res->sclk_hdmi);
--		goto fail;
--	}
--	res->sclk_pixel = devm_clk_get(dev, "sclk_pixel");
--	if (IS_ERR(res->sclk_pixel)) {
--		DRM_ERROR("failed to get clock 'sclk_pixel'\n");
--		ret = PTR_ERR(res->sclk_pixel);
--		goto fail;
--	}
--	res->sclk_hdmiphy = devm_clk_get(dev, "sclk_hdmiphy");
--	if (IS_ERR(res->sclk_hdmiphy)) {
--		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
--		ret = PTR_ERR(res->sclk_hdmiphy);
--		goto fail;
--	}
--	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
--	if (IS_ERR(res->mout_hdmi)) {
--		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
--		ret = PTR_ERR(res->mout_hdmi);
--		goto fail;
--	}
- 
--	clk_set_parent(res->mout_hdmi, res->sclk_pixel);
-+	if (hdata->type != HDMI_TYPE14_7) {
-+		res->sclk_hdmi = devm_clk_get(dev, "sclk_hdmi");
-+		if (IS_ERR(res->sclk_hdmi)) {
-+			DRM_ERROR("failed to get clock 'sclk_hdmi'\n");
-+			ret = PTR_ERR(res->sclk_hdmi);
-+			goto fail;
-+		}
-+		res->sclk_pixel = devm_clk_get(dev, "sclk_pixel");
-+		if (IS_ERR(res->sclk_pixel)) {
-+			DRM_ERROR("failed to get clock 'sclk_pixel'\n");
-+			ret = PTR_ERR(res->sclk_pixel);
-+			goto fail;
-+		}
-+		res->sclk_hdmiphy = devm_clk_get(dev, "sclk_hdmiphy");
-+		if (IS_ERR(res->sclk_hdmiphy)) {
-+			DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
-+			ret = PTR_ERR(res->sclk_hdmiphy);
-+			goto fail;
-+		}
-+		res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
-+		if (IS_ERR(res->mout_hdmi)) {
-+			DRM_ERROR("failed to get clock 'mout_hdmi'\n");
-+			ret = PTR_ERR(res->mout_hdmi);
-+			goto fail;
-+		}
-+
-+		clk_set_parent(res->mout_hdmi, res->sclk_pixel);
-+	} else {
-+
-+		res->pclk_hdmiphy = clk_get(dev, "pclk_hdmiphy");
-+		if (IS_ERR_OR_NULL(res->pclk_hdmiphy)) {
-+			DRM_ERROR("failed to get clock 'pclk_hdmiphy'\n");
-+			ret = PTR_ERR(res->pclk_hdmiphy);
-+			goto fail;
-+		}
-+		res->hdmi_pixel = clk_get(dev, "hdmi_pixel");
-+		if (IS_ERR_OR_NULL(res->hdmi_pixel)) {
-+			DRM_ERROR("failed to get clock 'hdmi_pixel'\n");
-+			ret = PTR_ERR(res->hdmi_pixel);
-+			goto fail;
-+		}
-+		res->hdmi_tmds = clk_get(dev, "hdmi_tmds");
-+		if (IS_ERR_OR_NULL(res->hdmi_tmds)) {
-+			DRM_ERROR("failed to get clock 'hdmi_tmds'\n");
-+			ret = PTR_ERR(res->hdmi_tmds);
-+			goto fail;
-+		}
-+	}
- 
- 	res->regul_bulk = devm_kzalloc(dev, ARRAY_SIZE(supply) *
- 		sizeof(res->regul_bulk[0]), GFP_KERNEL);
-@@ -2288,6 +2443,9 @@ static struct of_device_id hdmi_match_types[] = {
- 		.compatible = "samsung,exynos5420-hdmi",
- 		.data = &exynos5420_hdmi_driver_data,
- 	}, {
-+		.compatible = "samsung,exynos7-hdmi",
-+		.data = &exynos7_hdmi_driver_data,
-+	}, {
- 		/* end node */
- 	}
- };
-@@ -2474,6 +2632,16 @@ out_get_phy_port:
- 		goto err_hdmiphy;
- 	}
- 
-+	if (hdata->type == HDMI_TYPE14_7) {
-+		hdata->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
-+			"samsung,sysreg-phandle");
-+		if (IS_ERR(hdata->sysreg)) {
-+			DRM_ERROR("sysreg regmap lookup failed.\n");
-+			ret = -EPROBE_DEFER;
-+			goto err_hdmiphy;
-+		}
-+	}
-+
- 	pm_runtime_enable(dev);
- 
- 	ret = component_add(&pdev->dev, &hdmi_component_ops);
-diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
-index 3f35ac6..d6c84e0 100644
---- a/drivers/gpu/drm/exynos/regs-hdmi.h
-+++ b/drivers/gpu/drm/exynos/regs-hdmi.h
-@@ -133,6 +133,7 @@
- 
- /* HDMI_CON_0 */
- #define HDMI_BLUE_SCR_EN		(1 << 5)
-+#define HDMI_ENCODING_RETAIN		(1 << 4)
- #define HDMI_ASP_EN			(1 << 2)
- #define HDMI_ASP_DIS			(0 << 2)
- #define HDMI_ASP_MASK			(1 << 2)
-@@ -594,4 +595,7 @@
- #define PMU_HDMI_PHY_CONTROL		0x700
- #define PMU_HDMI_PHY_ENABLE_BIT		BIT(0)
- 
-+#define SYSREG_DISP_HDMI_PHY		0x838
-+#define SYSREG_HDMI_REFCLK_SEL		BIT(0)
-+
- #endif /* SAMSUNG_REGS_HDMI_H */
--- 
-1.7.9.5
+> [snip]
+> [    0.651647] dma-pl330 15610000.pdma: Loaded driver for PL330 DMAC-341330
+> [    0.651851] dma-pl330 15610000.pdma:         DBUFF-32x4bytes Num_Chans-8 Num_Peri-32 Num_Events-32
+> [    0.658566] dma-pl330 15600000.pdma: Loaded driver for PL330 DMAC-341330
+> [    0.662872] dma-pl330 15600000.pdma:         DBUFF-32x4bytes Num_Chans-8 Num_Peri-32 Num_Events-32
+> [    0.672487] dma-pl330 11420000.adma: Loaded driver for PL330 DMAC-341330
+> [ 8466.414900] dma-pl330 11420000.adma:         DBUFF-8x8bytes Num_Chans-8 Num_Peri-16 Num_Events-8
+> [ 8466.481648] 14c20000.serial: ttySAC0 at MMIO 0x14c20000 (irq = 21, base_baud = 0) is a S3C6400/10
+> (dont' print any kernel log)
+> 
+> So, I change the kernel command line about ('console' bootparam) as following:
+> because tty framework must use the 'console' bootparam to print kernel log.
+> - original     : Kernel command line: console=ttySAC1,115200 ... (cannot the kernel log from serial driver probed)
+> - modification : Kernel command line: console=ttySAC0,115200 ... (got the successful kernel booting)
+> 
+> After modification, I got the successful kernel booting.
+> 
+> If should use the serial_0 device and then modify the 'aliases' as following:
+> I have to modify the commandline of bootloader if the commandline of bootloader is used
+> instad of default kernel command line.
+> 
+>         aliases {
+>                 serial0 = &serial_0;
+>                 serial1 = &serial_1;
+>                 serial2 = &serial_3;
+>         };
+
+If you need the numbers to match, maybe there is still a bug in the serial port
+driver and it uses some arbitrary number (e.g. probe order, or ascending
+MMIO address) for the console instead of the alias?
+
+	Arnd
