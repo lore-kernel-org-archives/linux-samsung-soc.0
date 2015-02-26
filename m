@@ -1,66 +1,46 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Thu, 26 Feb 2015 17:42:38 +0900
-Message-ID: <54EEDC7E.9010406@samsung.com>
-References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
- <7412525.l6YnQcTxtg@wuerfel> <54EC5AB1.5090802@samsung.com>
- <6850624.bdB2Ab6zJx@wuerfel> <54EED6E1.4060908@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] drm: exynos: clean up dma_addr_t use
+Date: Thu, 26 Feb 2015 09:46:39 +0100
+Message-ID: <2303513.m1GhqAXJBa@wuerfel>
+References: <2463296.ej1sNijqo7@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54EED6E1.4060908@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kgene@kernel.org, olof@lixom.net, chanho61.park@samsung.com, ideal.song@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <2463296.ej1sNijqo7@wuerfel>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
-
-On 02/26/2015 05:18 PM, Chanwoo Choi wrote:
-> On 02/24/2015 08:59 PM, Arnd Bergmann wrote:
->> On Tuesday 24 February 2015 20:04:17 Chanwoo Choi wrote:
->>> On 02/24/2015 06:48 PM, Arnd Bergmann wrote:
->>>> On Tuesday 24 February 2015 17:52:01 Chanwoo Choi wrote:
->>>>>
->>>>> But, I have a question.
->>>>> If we put the aliases into the board dts file instaed of SoC dtsi,
->>>>> each board dts file may use the different alias name about same phandle.
->>>>
->>>> Yes, that is the idea. In particular with the uarts, the intention is
->>>> that the numbering of the device nodes in /dev is the same that is
->>>> printed on the board (if any), which may be different from the numbering
->>>> internal to the SoC.
->>>
->>> I check the uart device with Exynos5433 SoC based on Linux 4.0-rc1
->>> If some board use the serial_0 and serial_3 as following in board dtsi,
->>>
->>>         &serial_0 {             --> UART 0 device
->>>                 status = "okay";
->>>         };
->>>
->>>         &serial_3 {             --> UART 3 device
->>>                 status = "okay";
->>>         };
->>>
->>> The serial core driver create the follwoing /dev/ttySACx device node
->>> by using the number of alias. It maintain the same device number of internel to the SoC.
->>>
->>>         root@localhost:~# ls /dev/ttySAC
->>>         ttySAC1  ttySAC3  
->>>
->>
-
-[snip]
-
-> 
-> So, I change the kernel command line about ('console' bootparam) as following:
-> because tty framework must use the 'console' bootparam to print kernel log.
-
-I fix the my wrong expression. Some tty driver use the 'console' bootparam.
-
-[snip]
-
-Thanks,
-Chanwoo Choi
+T24gV2VkbmVzZGF5IDI1IEZlYnJ1YXJ5IDIwMTUgMTY6MzY6NDYgQXJuZCBCZXJnbWFubiB3cm90
+ZToKCj4gQEAgLTY3MSw2ICs2NzEsNyBAQCBzdGF0aWMgdm9pZCBmaW1kX3dpbl9jb21taXQoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpCj4gIAlzdHJ1Y3QgZmltZF93aW5f
+ZGF0YSAqd2luX2RhdGE7Cj4gIAlpbnQgd2luID0genBvczsKPiAgCXVuc2lnbmVkIGxvbmcgdmFs
+LCBhbHBoYSwgc2l6ZTsKPiArCWRtYV9hZGRyX3QgZW5kOwo+ICAJdW5zaWduZWQgaW50IGxhc3Rf
+eDsKPiAgCXVuc2lnbmVkIGludCBsYXN0X3k7Cj4gIAo+IEBAIC03MDUsMTYgKzcwNiwxNiBAQCBz
+dGF0aWMgdm9pZCBmaW1kX3dpbl9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yywg
+aW50IHpwb3MpCj4gIAkvKiBidWZmZXIgZW5kIGFkZHJlc3MgKi8KPiAgCXNpemUgPSB3aW5fZGF0
+YS0+ZmJfd2lkdGggKiB3aW5fZGF0YS0+b3ZsX2hlaWdodCAqICh3aW5fZGF0YS0+YnBwID4+IDMp
+Owo+IC0JdmFsID0gKHVuc2lnbmVkIGxvbmcpKHdpbl9kYXRhLT5kbWFfYWRkciArIHNpemUpOwo+
+ICsJZW5kID0gd2luX2RhdGEtPmRtYV9hZGRyICsgc2l6ZTsKPiAgCXdyaXRlbCh2YWwsIGN0eC0+
+cmVncyArIFZJRFd4X0JVRl9FTkQod2luLCAwKSk7Cj4gIAo+IC0JRFJNX0RFQlVHX0tNUygic3Rh
+cnQgYWRkciA9IDB4JWx4LCBlbmQgYWRkciA9IDB4JWx4LCBzaXplID0gMHglbHhcbiIsCj4gLQkJ
+CSh1bnNpZ25lZCBsb25nKXdpbl9kYXRhLT5kbWFfYWRkciwgdmFsLCBzaXplKTsKPiArCURSTV9E
+RUJVR19LTVMoInN0YXJ0IGFkZHIgPSAlcGFkLCBlbmQgYWRkciA9ICVwYWQsIHNpemUgPSAweCVs
+eFxuIiwKPiArCQkJJndpbl9kYXRhLT5kbWFfYWRkciwgZW5kLCBzaXplKTsKPiAgCURSTV9ERUJV
+R19LTVMoIm92bF93aWR0aCA9ICVkLCBvdmxfaGVpZ2h0ID0gJWRcbiIsCj4gIAkJCXdpbl9kYXRh
+LT5vdmxfd2lkdGgsIHdpbl9kYXRhLT5vdmxfaGVpZ2h0KTsKPiAgCgpVbmZvcnR1bmF0ZWx5LCBJ
+IGludHJvZHVjZWQgYSBuZXcgYnVnIGhlcmUsIHBsZWFzZSBkaXNyZWdhcmQgdGhpcyB2ZXJzaW9u
+CmFuZCB1c2UgdjIgb2YgdGhpcyBwYXRjaCBpbnN0ZWFkLgoKCUFybmQKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
