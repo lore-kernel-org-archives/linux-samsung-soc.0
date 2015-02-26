@@ -1,61 +1,133 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [RFC 1/3] i2c: Enhancement of i2c API to address circular lock
- dependency problem
-Date: Wed, 25 Feb 2015 11:47:15 -0800
-Message-ID: <20150225194715.421.87263@quantum>
-References: <1421419194-1849-1-git-send-email-p.osmialowsk@samsung.com>
- <CA+Ln22GrsCj0291dVccFPzPW8pmxyc8JHtPo5ijsAdDXw6RC1Q@mail.gmail.com>
- <54BB9100.7000506@samsung.com> <20150118134124.GC2809@sirena.org.uk>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 4/7] platform/chrome: Add Chrome OS EC userspace
+ device interface
+Date: Wed, 25 Feb 2015 16:54:25 -0800
+Message-ID: <20150226005425.GA3101@quad.lixom.net>
+References: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1422876388-16540-5-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:35653 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752714AbbBYTrb convert rfc822-to-8bit (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:41265 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752676AbbBZAyV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Feb 2015 14:47:31 -0500
-Received: by mail-oi0-f51.google.com with SMTP id g201so5276775oib.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Feb 2015 11:47:31 -0800 (PST)
-In-Reply-To: <20150118134124.GC2809@sirena.org.uk>
+	Wed, 25 Feb 2015 19:54:21 -0500
+Received: by pdno5 with SMTP id o5so8818939pdn.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Feb 2015 16:54:21 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1422876388-16540-5-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Paul Osmialowski <p.osmialowsk@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kukjin Kim <kgene@kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Quoting Mark Brown (2015-01-18 05:41:24)
-> On Sun, Jan 18, 2015 at 11:54:56AM +0100, Krzysztof Kozlowski wrote:
-> > W dniu 18.01.2015 o 07:30, Tomasz Figa pisze:
+On Mon, Feb 02, 2015 at 12:26:25PM +0100, Javier Martinez Canillas wrote:
+> From: Bill Richardson <wfrichar@chromium.org>
 > 
-> > >So, the question is, do we actually have hardware that _really_
-> > >requires _actual_ preparation or all the clk_prepare_enable()s in I2C
-> > >drivers (at least in i2c-s3c2410) are just to simplify the code?
+> This patch adds a device interface to access the
+> Chrome OS Embedded Controller from user-space.
 > 
-> > I completely forgot that you already thought about this deadlock in 2014. I
-> > think we can try the no-prepare way for i2c-s3c2410. However this would be
-> > only workaround for specific chip. Other buses (like SPI) would require
-> > similar changes.
+> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> Reviewed-by: Simon Glass <sjg@google.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> ---
 > 
-> Right, and it's every single driver which would need an update too which
-> is a bit icky and sad.  On the other hand a more detailed fix is going
-> to involve trying to make the clock API locking more fine grained which
-> isn't fun.
-
-Not fun is right. Please see Stephen's attempt here:
-
-http://lkml.kernel.org/r/<1409792466-5092-1-git-send-email-sboyd@codeaurora.org>
-
-I'm hoping this approach will be revisited soon.
-
-Regards,
-Mike
-
+> Changes since v4: None.
 > 
-> > I wondered why this was not observed (at least not observed by me with
-> > lockdep) on Gear 2 (Rinato) board. This is quite similar case: the S2MPS14
-> > PMIC provides regulators and 32kHz clocks. I think it is exactly the same
-> > pattern as for max77686... but somehow lockdep never reported that deadlock
-> > there.
+> Changes since v3: None.
 > 
-> Mostly the clocks on PMICs never get changed at runtime which helps a
-> lot here.
+> Changes since v2:
+>  - Rename the devname to "cros-ec-ctl". Suggested by Lee Jones.
+>  - Added Gwendal Grignou Reviewed-by tag.
+> 
+> Changes since v1: None, new patch.
+
+Hi,
+
+> ---
+>  Documentation/ioctl/ioctl-number.txt  |   1 +
+>  drivers/platform/chrome/Kconfig       |  14 +-
+>  drivers/platform/chrome/Makefile      |   1 +
+>  drivers/platform/chrome/cros_ec_dev.c | 268 ++++++++++++++++++++++++++++++++++
+>  drivers/platform/chrome/cros_ec_dev.h |  47 ++++++
+>  5 files changed, 328 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/platform/chrome/cros_ec_dev.c
+>  create mode 100644 drivers/platform/chrome/cros_ec_dev.h
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+> index 8136e1fd30fd..51f4221657bf 100644
+> --- a/Documentation/ioctl/ioctl-number.txt
+> +++ b/Documentation/ioctl/ioctl-number.txt
+> @@ -321,6 +321,7 @@ Code  Seq#(hex)	Include File		Comments
+>  0xDB	00-0F	drivers/char/mwave/mwavepub.h
+>  0xDD	00-3F	ZFCP device driver	see drivers/s390/scsi/
+>  					<mailto:aherrman@de.ibm.com>
+> +0xEC	00-01	drivers/platform/chrome/cros_ec_dev.h	ChromeOS EC driver
+
+It seems like a bad idea to reuse the same ioctl numbers as the out-of-tree
+driver but changing the arguments. So please allocate a few more and use 2/3
+for this calling interface.
+
+[...]
+
+> new file mode 100644
+> index 000000000000..15c54c4c5531
+> --- /dev/null
+> +++ b/drivers/platform/chrome/cros_ec_dev.h
+> @@ -0,0 +1,47 @@
+> +/*
+> + * cros_ec_dev - expose the Chrome OS Embedded Controller to userspace
+> + *
+> + * Copyright (C) 2014 Google, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#ifndef _CROS_EC_DEV_H_
+> +#define _CROS_EC_DEV_H_
+> +
+> +#include <linux/ioctl.h>
+> +#include <linux/types.h>
+> +#include <linux/mfd/cros_ec.h>
+> +
+> +#define CROS_EC_DEV_NAME "cros_ec"
+> +#define CROS_EC_DEV_VERSION "1.0.0"
+> +
+> +/*
+> + * @offset: within EC_LPC_ADDR_MEMMAP region
+> + * @bytes: number of bytes to read. zero means "read a string" (including '\0')
+> + *         (at most only EC_MEMMAP_SIZE bytes can be read)
+> + * @buffer: where to store the result
+> + * ioctl returns the number of bytes read, negative on error
+> + */
+> +struct cros_ec_readmem {
+> +	uint32_t offset;
+> +	uint32_t bytes;
+> +	uint8_t buffer[EC_MEMMAP_SIZE];
+> +};
+> +
+> +#define CROS_EC_DEV_IOC       0xEC
+> +#define CROS_EC_DEV_IOCXCMD   _IOWR(CROS_EC_DEV_IOC, 0, struct cros_ec_command)
+> +#define CROS_EC_DEV_IOCRDMEM  _IOWR(CROS_EC_DEV_IOC, 1, struct cros_ec_readmem)
+
+I.e. go with 2/3 here.
+
+(I can just do that change when I apply this patch, let me know if you prefer
+that).
+
+
+-Olof
+> 
