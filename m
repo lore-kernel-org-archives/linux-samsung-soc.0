@@ -1,43 +1,72 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 0/3] ARM: dts: Peach boards WiFi and audio support
-Date: Thu, 26 Feb 2015 16:59:36 +0100
-Message-ID: <54EF42E8.5040509@collabora.co.uk>
-References: <1424965776-4381-1-git-send-email-javier.martinez@collabora.co.uk> <003e01d051dc$a8cf0960$fa6d1c20$@kernel.org>
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH v5 0/7] platform/chrome: Add user-space dev inferface support
+Date: Thu, 26 Feb 2015 09:00:37 -0700
+Message-ID: <CAPnjgZ31ai+0jQQeAGLuR62Jep0SUkhn9_JX5jiQ533OA7Kr4A@mail.gmail.com>
+References: <1422876388-16540-1-git-send-email-javier.martinez@collabora.co.uk>
+	<54E1A825.7090408@collabora.co.uk>
+	<CAPnjgZ2QQzdZSrJ8gFYzMiVEFT8y7jod993AeVkpTPpKhiQ8DA@mail.gmail.com>
+	<20150226005917.GC3101@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:54825 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751597AbbBZP7n (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Feb 2015 10:59:43 -0500
-In-Reply-To: <003e01d051dc$a8cf0960$fa6d1c20$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150226005917.GC3101@quad.lixom.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, Varka Bhadram <varkabhadram@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, 'Tushar Behera' <tushar.b@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, 'Andreas Faerber' <afaerber@suse.de>, 'Tyler Baker' <tyler.baker@linaro.org>, 'Steve Capper' <steve.capper@linaro.org>, 'Amit Kucheria' <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Kukjin,
+Hi Olof,
 
-On 02/26/2015 04:55 PM, Kukjin Kim wrote:
-> Javier Martinez Canillas wrote:
->> 
->> After this series all the peripherals in the Peach boards are working
->> at least at a basic level, more work is needed to make the ASoC audio
->> driver more robust or the WiFi chip to support highspeed mode but that
->> can be made as a follow-up.
->> 
-> Sounds great and looks good to me after quick looking at this series.
-> 
-> Will apply this whole series.
+On 25 February 2015 at 17:59, Olof Johansson <olof@lixom.net> wrote:
+> On Tue, Feb 17, 2015 at 07:26:50PM -0700, Simon Glass wrote:
+>> Hi,
+>>
+>> On 16 February 2015 at 01:19, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>> > Hello Olof,
+>> >
+>> > On 02/02/2015 12:26 PM, Javier Martinez Canillas wrote:
+>> >> Hello,
+>> >>
+>> >> The mainline ChromeOS Embedded Controller (EC) driver is still missing some
+>> >> features that are present in the downstream ChromiumOS tree. These are:
+>> >>
+>> >>   - Low Pin Count (LPC) interface
+>> >>   - User-space device interface
+>> >>   - Access to vboot context stored on a block device
+>> >>   - Access to vboot context stored on EC's nvram
+>> >>   - Power Delivery Device
+>> >>   - Support for multiple EC in a system
+>> >>
+>> >> This is a fifth version of a series that adds support for the first two of
+>> >> the missing features: the EC LPC and EC character device interfaces that
+>> >> are used by user-space to access the ChromeOS EC. The support patches were
+>> >> taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
+>> >> squashed to have a minimal patch-set.
+>> >>
+>> >
+>> > Any comments on this series? The last version was posted a couple of weeks
+>> > ago but the series have been in the list for months. Lee has already acked
+>> > the mfd changes so you can merge all through your chrome-platform tree if
+>> > you want.
+>> >
+>> > It wold be great if this series get in to have the EC user-space interface
+>> > supported and to minimize the delta with the Chromemium OS kernel since it
+>> > still has other features that needs to be upstreamed like multiple EC in a
+>> > system and access to vboot context stored in block device or EC's nvram.
+>>
+>> Are you sure Olof is the right maintainer for this going to mainline?
 >
-
-Great, thanks a lot for your help.
- 
-> Thanks,
-> Kukjin
+> Yes.
 >
+>> I do feel for you trying to get all this in and have seen your many
+>> attempts. It has been in U-Boot for 18 months...I hope you get there
+>> in the end.
+>
+> Cool, u-boot has userspace interfaces now? I didn't know that.
 
-Best regards,
-Javier
+Not the 'User-space device interface', the other stuff :-) Anyway it
+will be good to see this series in.
+
+Regards,
+Simon
