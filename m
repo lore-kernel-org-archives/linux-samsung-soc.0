@@ -1,82 +1,100 @@
-From: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 1/8] arm64: exynos5433: Enable ARMv8 based Exynos5433
- (SoC) support
-Date: Sat, 28 Feb 2015 09:51:14 +0900
-Message-ID: <CAGTfZH2h4=PEk0BvG9ar3O7ne_rZdNEUJK_=BZu8KnCuQOBECQ@mail.gmail.com>
-References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
-	<1424755011-15999-2-git-send-email-cw00.choi@samsung.com>
-	<8838911.kfOYZxBsJP@wuerfel>
-	<54EED910.4010603@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [GIT PULL] clk/samsung: clk support for Exynos 5433 SoC
+Date: Sat, 28 Feb 2015 09:52:59 +0900
+Message-ID: <CAGTfZH1uCd_K0t=atft9CA6L0R8tM5JGyHaw2hBPFEFK5OACKQ@mail.gmail.com>
+References: <54D3C820.2010800@samsung.com>
+	<54EBBC47.4090801@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <54EED910.4010603-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54EBBC47.4090801@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin and Sylwester,
+Dear Mike and Sylwester,
 
-On Thu, Feb 26, 2015 at 5:28 PM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 02/24/2015 05:31 PM, Arnd Bergmann wrote:
->> On Tuesday 24 February 2015 14:16:44 Chanwoo Choi wrote:
->>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>> index 1b8e973..d83cea0 100644
->>> --- a/arch/arm64/Kconfig
->>> +++ b/arch/arm64/Kconfig
->>> @@ -154,6 +154,17 @@ config ARCH_EXYNOS
->>>         help
->>>           This enables support for Samsung Exynos SoC family
->>>
->>> +config ARCH_EXYNOS5433
->>> +       bool "ARMv8 based Samsung Exynos5433"
->>> +       select ARCH_EXYNOS
->>> +       select COMMON_CLK_SAMSUNG
->>> +       select HAVE_S3C_RTC if RTC_CLASS
->>> +       select PINCTRL
->>> +       select PINCTRL_EXYNOS
->>> +
->>> +       help
->>> +         This enables support for Samsung Exynos5433 SoC family
->>> +
->>>  config ARCH_EXYNOS7
->>>         bool "ARMv8 based Samsung Exynos7"
->>>         select ARCH_EXYNOS
->>> --
->>>
->>
->> Can we collapse all these entries into one for EXYNOS? I don't
->> want to end up with endless lists like we have on arm32 when
->> there is no platform specific code that is actually controlled
->> by this anway.
->
-> I agree.
->
-> I check the some issue for only using the CONFIG_ARCH_EXYNOS
-> insead of CONFIG_ARCH_EXYNOS7 and CONFIG_ARCH_EXYNOS5433.
->
-> Each CONFIG_ARCH_EXYNOS{7|5433} configuraiton was used on following list:
-> - CONFIG_ARCH_EXYNOS7
-> arch/arm64/boot/dts/exynos/Makefile:1:dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
-> drivers/clk/samsung/Makefile:17:obj-$(CONFIG_ARCH_EXYNOS7)      += clk-exynos7.o
-> - CONFIG_ARCH_EXYNOS5433
-> drivers/clk/samsung/Makefile:13:obj-$(CONFIG_ARCH_EXYNOS5433)   += clk-exynos5433.o
->
-> We may can fix it as following by only using 'CONFIG_ARCH_EXYNOS' without any specific configuration.
->
-> arch/arm64/boot/dts/exynos/Makefile:1:dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
-> drivers/clk/samsung/Makefile:17:obj-$(CONFIG_ARCH_EXYNOS)       += clk-exynos7.o clk-exynos5433.o
->
-> I think that we need the opinion of Kukjin Kim (Exynos SoC Maintainer)
-> and Sylwester Nawrocki(Samsung clock Maintainer)
+Gently ping.
 
-I need yout opinion about using the CONFIG_ARCH_EXYNOS
-instead of CONFIG_ARCH_EXYNOS7/CONFIG_ARCH_EXYNOS5433?
-
-Thanks,
+Best Regards,
 Chanwoo Choi
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+On Tue, Feb 24, 2015 at 8:48 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> Dear Mike and Sylwester,
+>
+> This pull-request was not merged on Linux 4.0-rc1.
+> Did you have any plan about it?
+>
+> Best Regards,
+> Chanwoo Choi
+>
+> On 02/06/2015 04:44 AM, Sylwester Nawrocki wrote:
+>> Hi Mike,
+>>
+>> This pull request includes driver for clock controller of the Exynos
+>> 5433 SoC.  As the hardware is quite complex, with many peripherals and
+>> corresponding clock management units the driver is rather huge.  I guess
+>> it will require a bit more cleanups than last time to balance lines
+>> introduced in this patch set... Please review and pull if it looks OK.
+>>
+>> The following changes since commit e64fb42da4c6c713cfc7cad607e97e0773fa41ff:
+>>
+>>   clk: samsung: exynos4: Add divider clock id for memory bus frequency
+>> (2015-01-28 15:51:17 +0100)
+>>
+>> are available in the git repository at:
+>>
+>>   git://linuxtv.org/snawrocki/samsung.git tags/v3.20-exynos5433-clk
+>>
+>> for you to fetch changes up to b2f0e5f28e0686c0d5db238357a2e32555e97633:
+>>
+>>   clk: samsung: exynos5433: Move CLK_SCLK_HDMI_SPDIF_DISP clock to CMU_TOP
+>> domain (2015-02-05 19:31:09 +0100)
+>>
+>> ----------------------------------------------------------------
+>> Clock controller driver for Exynos 5433 SoC.
+>>
+>> ----------------------------------------------------------------
+>> Chanwoo Choi (22):
+>>       clk: samsung: exynos5433: Add binding document for Exynos5433 clock domains
+>>       clk: samsung: exynos5433: Add clocks using common clock framework
+>>       clk: samsung: exynos5433: Add MUX clocks of CMU_TOP domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_PERIC domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_PERIS domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_G2D domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_MIF domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_DISP domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_AUD domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
+>>       clk: samsung: exynos5433: Add missing clocks for CMU_FSYS domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_G3D domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_GSCL domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_APOLLO domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_ATLAS domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_MSCL domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_MFC domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_HEVC domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_ISP domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_CAM0 domain
+>>       clk: samsung: exynos5433: Add clocks for CMU_CAM1 domain
+>>       clk: samsung: exynos5433: Move CLK_SCLK_HDMI_SPDIF_DISP clock to CMU_TOP domain
+>>
+>> Inha Song (1):
+>>       clk: samsung: Add CLKOUT driver support for Exynos5433 SoC
+>>
+>>  .../devicetree/bindings/clock/exynos5433-clock.txt |  462 ++
+>>  drivers/clk/samsung/Makefile                       |    1 +
+>>  drivers/clk/samsung/clk-exynos-clkout.c            |    2 +
+>>  drivers/clk/samsung/clk-exynos5433.c               | 5423 ++++++++++++++++++++
+>>  include/dt-bindings/clock/exynos5433.h             | 1403 +++++
+>>  5 files changed, 7291 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>>  create mode 100644 drivers/clk/samsung/clk-exynos5433.c
+>>  create mode 100644 include/dt-bindings/clock/exynos5433.h
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
