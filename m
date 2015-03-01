@@ -1,39 +1,40 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH RESEND] ARM: EXYNOS: Remove ARCH_HAS_BANDGAP selection
-Date: Sun,  1 Mar 2015 21:51:43 +0530
-Message-ID: <1425226903-5164-1-git-send-email-a.kesavan@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
+Date: Sun, 01 Mar 2015 22:22 +0100
+Message-ID: <13467157.nyRCsNWIp6@wuerfel>
+References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com> <2707354.mhmQEHxoKV@wuerfel> <CAGTfZH0VVT0hMn4ooRNZxnqjUQ_hF8nHg-4NtNriayick50qgw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:46165 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751557AbbCAQVw (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:50363 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751344AbbCAVWO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Mar 2015 11:21:52 -0500
+	Sun, 1 Mar 2015 16:22:14 -0500
+In-Reply-To: <CAGTfZH0VVT0hMn4ooRNZxnqjUQ_hF8nHg-4NtNriayick50qgw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, kgene@kernel.org
-Cc: kesavan.abhilash@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chanwoo Choi <cwchoi00@gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, "will.deacon@arm.com" <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, ideal.song@samsung.com
 
-Now that the samsung thermal driver dependency on ARCH_HAS_BANDGAP
-has been removed, fix the arch code selection too.
+On Saturday 28 February 2015 09:47:01 Chanwoo Choi wrote:
+> "earlycon=exynos4210,0x14C20000" is correct bootparam. You can check
+> it on Documentation/kernel-parameters.txt as following.
+> 
+>      exynos4210,<addr>
+>                 Use early console provided by serial driver available
+>                 on Samsung SoCs, requires selecting proper type and
+>                 a correct base address of the selected UART port. The
+>                 serial port must already be setup and configured.
+>                 Options are not yet supported.
+> 
+> 
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Lukasz Majewski <l.majewski@samsung.com>
----
- arch/arm/mach-exynos/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+But it's crazy to do this when you have a DT. Please fix the existing
+devicetree files that use this to just list 'earlycon'.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 603820e..a4abcae 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -9,7 +9,6 @@
- 
- menuconfig ARCH_EXYNOS
- 	bool "Samsung EXYNOS" if ARCH_MULTI_V7
--	select ARCH_HAS_BANDGAP
- 	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
--- 
-2.1.0
+The syntax above only makes sense for classic board files that we
+do not support for exynos any more.
+
+	Arnd
