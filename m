@@ -1,41 +1,39 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] pinctrl: exynos: Remove eint_gpio_init call-back for exynos7 alive pinctrl block
-Date: Sun,  1 Mar 2015 21:51:16 +0530
-Message-ID: <1425226876-5122-1-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH RESEND] ARM: EXYNOS: Remove ARCH_HAS_BANDGAP selection
+Date: Sun,  1 Mar 2015 21:51:43 +0530
+Message-ID: <1425226903-5164-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:36504 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751557AbbCAQV2 (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:46165 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751557AbbCAQVw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Mar 2015 11:21:28 -0500
-Received: by padfa1 with SMTP id fa1so1096767pad.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Mar 2015 08:21:28 -0800 (PST)
+	Sun, 1 Mar 2015 11:21:52 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tomasz.figa@gmail.com, linus.walleij@linaro.org
-Cc: kesavan.abhilash@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, kgene@kernel.org
+Cc: kesavan.abhilash@gmail.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The alive pin controller on exynos7 does not support external gpio
-interrupts. Hence, remove the eint_gpio_init call-back for it. This
-fixes the following error message seen during exynos7 boot-up:
-"samsung-pinctrl 10580000.pinctrl: irq number not available"
+Now that the samsung thermal driver dependency on ARCH_HAS_BANDGAP
+has been removed, fix the arch code selection too.
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Lukasz Majewski <l.majewski@samsung.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c | 1 -
+ arch/arm/mach-exynos/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index c8f83f9..a7e9c42 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1324,7 +1324,6 @@ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
- 		/* pin-controller instance 0 Alive data */
- 		.pin_banks	= exynos7_pin_banks0,
- 		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks0),
--		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
- 	}, {
- 		/* pin-controller instance 1 BUS0 data */
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 603820e..a4abcae 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -9,7 +9,6 @@
+ 
+ menuconfig ARCH_EXYNOS
+ 	bool "Samsung EXYNOS" if ARCH_MULTI_V7
+-	select ARCH_HAS_BANDGAP
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_AMBA
 -- 
 2.1.0
