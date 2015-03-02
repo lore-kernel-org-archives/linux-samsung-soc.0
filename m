@@ -1,358 +1,306 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
-Date: Mon,  2 Mar 2015 13:35:58 +0100
-Message-ID: <1425299763-4066822-6-git-send-email-arnd@arndb.de>
-References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
+From: Beata Michalska <b.michalska@samsung.com>
+Subject: [PATCH 1/2] clk: samsung: exynos3250: Add driver for CMU_ISP clock
+ domain
+Date: Mon, 02 Mar 2015 14:17:29 +0100
+Message-ID: <1425302250-13446-2-git-send-email-b.michalska@samsung.com>
+References: <1425302250-13446-1-git-send-email-b.michalska@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:57578 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754035AbbCBMhi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:12826 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750870AbbCBNRm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 07:37:38 -0500
-In-Reply-To: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
+	Mon, 2 Mar 2015 08:17:42 -0500
+In-reply-to: <1425302250-13446-1-git-send-email-b.michalska@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, dmitry.torokhov@gmail.com, ch.naveen@samsung.com, a.kesavan@samsung.com, cw00.choi@samsung.com, jic23@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, padma.v@samsung.com, Arnd Bergmann <arnd@arndb.de>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com
 
-This is another prerequisite for enabling multiplatform
-support, and it is the part I am least certain about.
+From: Tomasz Figa <t.figa@samsung.com>
 
-I assume it will cause the extra boot message "Cannot
-allocate irq_descs @ IRQ%d, assuming pre-allocated" to
-be printed, but otherwise work ok. This definitely needs
-to be tested on real hardware to see if it works.
+Add clock controller for CMU ISP clock domain on Exynos3250,
+providing clocks for FIMC-IS subsystem.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[b.michalska:use samsung_cmu_register_one to register
+ the provider; updated DT binding documentation]
+
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Beata Michalska <b.michalska@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/Kconfig                             |  1 +
- arch/arm/mach-s3c64xx/common.c               |  1 +
- arch/arm/mach-s3c64xx/dev-uart.c             |  1 +
- arch/arm/mach-s3c64xx/include/mach/irqs.h    | 20 +++-----------------
- arch/arm/mach-s3c64xx/include/mach/pm-core.h |  1 +
- arch/arm/mach-s3c64xx/mach-anw6410.c         |  3 ++-
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |  2 ++
- arch/arm/mach-s3c64xx/mach-crag6410.c        |  2 ++
- arch/arm/mach-s3c64xx/mach-hmt.c             |  2 ++
- arch/arm/mach-s3c64xx/mach-mini6410.c        |  2 ++
- arch/arm/mach-s3c64xx/mach-ncp.c             |  2 ++
- arch/arm/mach-s3c64xx/mach-real6410.c        |  3 ++-
- arch/arm/mach-s3c64xx/mach-smartq5.c         |  2 ++
- arch/arm/mach-s3c64xx/mach-smartq7.c         |  2 ++
- arch/arm/mach-s3c64xx/mach-smdk6400.c        |  3 ++-
- arch/arm/mach-s3c64xx/mach-smdk6410.c        |  3 ++-
- arch/arm/plat-samsung/gpio-samsung.c         |  1 +
- 17 files changed, 30 insertions(+), 21 deletions(-)
+ .../devicetree/bindings/clock/exynos3250-clock.txt |    8 +
+ drivers/clk/samsung/clk-exynos3250.c               |  163 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h             |   61 ++++++++
+ 3 files changed, 232 insertions(+)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 98f113833465..a6f71e402b38 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -709,6 +709,7 @@ config ARCH_S3C64XX
- 	select SAMSUNG_ATAGS
- 	select SAMSUNG_WAKEMASK
- 	select SAMSUNG_WDT_RESET
-+	select SPARSE_IRQ
- 	help
- 	  Samsung S3C64XX series based systems
+diff --git a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+index f57d9dd..f1738b8 100644
+--- a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+@@ -9,6 +9,8 @@ Required Properties:
+   - "samsung,exynos3250-cmu" - controller compatible with Exynos3250 SoC.
+   - "samsung,exynos3250-cmu-dmc" - controller compatible with
+     Exynos3250 SoC for Dynamic Memory Controller domain.
++  - "samsung,exynos3250-cmu-isp" - ISP block clock controller compatible
++     with Exynos3250 SOC
  
-diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-index cca29aa49fd3..971b4799f16d 100644
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -40,6 +40,7 @@
- #include <asm/system_misc.h>
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+@@ -36,6 +38,12 @@ Example 1: Examples of clock controller nodes are listed below.
+ 		#clock-cells = <1>;
+ 	};
  
- #include <mach/map.h>
-+#include <mach/irqs.h>
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-diff --git a/arch/arm/mach-s3c64xx/dev-uart.c b/arch/arm/mach-s3c64xx/dev-uart.c
-index 46e18d77ea93..a0b4f0329811 100644
---- a/arch/arm/mach-s3c64xx/dev-uart.c
-+++ b/arch/arm/mach-s3c64xx/dev-uart.c
-@@ -23,6 +23,7 @@
- #include <asm/mach/irq.h>
- #include <mach/hardware.h>
- #include <mach/map.h>
-+#include <mach/irqs.h>
- 
- #include <plat/devs.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/irqs.h b/arch/arm/mach-s3c64xx/include/mach/irqs.h
-index 67bbd1dd04c2..3ceb00b5de07 100644
---- a/arch/arm/mach-s3c64xx/include/mach/irqs.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/irqs.h
-@@ -156,25 +156,11 @@
- 
- #define IRQ_EINT_GROUP(group, no)	(IRQ_EINT_GROUP##group##_BASE + (no))
- 
--/* Define a group of interrupts for board-specific use (eg, for MFD
-- * interrupt controllers). */
-+/* Some boards have their own IRQs behind this */
- #define IRQ_BOARD_START (IRQ_EINT_GROUP9_BASE + IRQ_EINT_GROUP9_NR + 1)
- 
--#ifdef CONFIG_MACH_WLF_CRAGG_6410
--#define IRQ_BOARD_NR 160
--#elif defined(CONFIG_SMDK6410_WM1190_EV1)
--#define IRQ_BOARD_NR 64
--#elif defined(CONFIG_SMDK6410_WM1192_EV1)
--#define IRQ_BOARD_NR 64
--#else
--#define IRQ_BOARD_NR 16
--#endif
--
--#define IRQ_BOARD_END (IRQ_BOARD_START + IRQ_BOARD_NR)
--
--/* Set the default NR_IRQS */
--
--#define NR_IRQS	(IRQ_BOARD_END + 1)
-+/* Set the default nr_irqs, boards can override if necessary */
-+#define S3C64XX_NR_IRQS	IRQ_BOARD_START
- 
- /* Compatibility */
- 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-index a30a1e3ffc6a..32d2ff54f82d 100644
---- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-@@ -18,6 +18,7 @@
- #include <linux/serial_s3c.h>
- 
- #include <mach/regs-gpio.h>
-+#include <mach/regs-clock.h>
- 
- static inline void s3c_pm_debug_init_uart(void)
- {
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index 6224c67f5061..347ce6009a8c 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -47,6 +47,7 @@
- 
- #include <plat/devs.h>
- #include <plat/cpu.h>
-+#include <mach/irqs.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
- #include <plat/samsung-time.h>
-@@ -229,7 +230,7 @@ static void __init anw6410_machine_init(void)
- MACHINE_START(ANW6410, "A&W6410")
- 	/* Maintainer: Kwangwoo Lee <kwangwoo.lee@gmail.com> */
- 	.atag_offset	= 0x100,
--
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= anw6410_map_io,
- 	.init_machine	= anw6410_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index be21f06e6b3f..571f95cc5a53 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -30,6 +30,8 @@
- #include <linux/platform_data/spi-s3c64xx.h>
- 
- #include <plat/cpu.h>
-+#include <mach/irqs.h>
++	cmu_isp: clock-controller@10048000 {
++		compatible = "samsung,exynos3250-cmu-isp";
++		reg = <0x10048000 0x1000>;
++		#clock-cells = <1>;
++	};
 +
- #include "crag6410.h"
+ Example 2: UART controller node that consumes the clock generated by the clock
+ 	   controller. Refer to the standard clock bindings for information
+ 	   about 'clocks' and 'clock-names' property.
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index cc4c348..e5dc48c 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -894,3 +894,166 @@ static void __init exynos3250_cmu_dmc_init(struct device_node *np)
+ }
+ CLK_OF_DECLARE(exynos3250_cmu_dmc, "samsung,exynos3250-cmu-dmc",
+ 		exynos3250_cmu_dmc_init);
++
++
++/*
++ * CMU ISP
++ */
++
++#define DIV_ISP0		0x300
++#define DIV_ISP1		0x304
++#define GATE_IP_ISP0		0x800
++#define GATE_IP_ISP1		0x804
++#define GATE_SCLK_ISP		0x900
++
++static struct samsung_div_clock isp_div_clks[] __initdata = {
++	/*
++	 * NOTE: Following table is sorted by register address in ascending
++	 * order and then bitfield shift in descending order, as it is done
++	 * in the User's Manual. When adding new entries, please make sure
++	 * that the order is preserved, to avoid merge conflicts and make
++	 * further work with defined data easier.
++	 */
++	/* DIV_ISP0 */
++	DIV(CLK_DIV_ISP1, "div_isp1", "mout_aclk_266_sub", DIV_ISP0, 4, 3),
++	DIV(CLK_DIV_ISP0, "div_isp0", "mout_aclk_266_sub", DIV_ISP0, 0, 3),
++
++	/* DIV_ISP1 */
++	DIV(CLK_DIV_MCUISP1, "div_mcuisp1", "mout_aclk_400_mcuisp_sub",
++		DIV_ISP1, 8, 3),
++	DIV(CLK_DIV_MCUISP0, "div_mcuisp0", "mout_aclk_400_mcuisp_sub",
++		DIV_ISP1, 4, 3),
++	DIV(CLK_DIV_MPWM, "div_mpwm", "div_isp1", DIV_ISP1, 0, 3),
++};
++
++static struct samsung_gate_clock isp_gate_clks[] __initdata = {
++	/*
++	 * NOTE: Following table is sorted by register address in ascending
++	 * order and then bitfield shift in descending order, as it is done
++	 * in the User's Manual. When adding new entries, please make sure
++	 * that the order is preserved, to avoid merge conflicts and make
++	 * further work with defined data easier.
++	 */
++
++	/* GATE_IP_ISP0 */
++	GATE(CLK_UART_ISP, "uart_isp", "uart_isp_top",
++		GATE_IP_ISP0, 31, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_WDT_ISP, "wdt_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 30, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PWM_ISP, "pwm_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 28, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_I2C1_ISP, "i2c1_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 26, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_I2C0_ISP, "i2c0_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 25, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_MPWM_ISP, "mpwm_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 24, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_MCUCTL_ISP, "mcuctl_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 23, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PPMUISPX, "ppmuispx", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PPMUISPMX, "ppmuispmx", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_LITE1, "qe_lite1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_LITE0, "qe_lite0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_FD, "qe_fd", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_DRC, "qe_drc", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_ISP, "qe_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_CSIS1, "csis1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_LITE1, "smmu_lite1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_LITE0, "smmu_lite0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 11, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_FD, "smmu_fd", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_DRC, "smmu_drc", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_ISP, "smmu_isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_GICISP, "gicisp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_CSIS0, "csis0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_MCUISP, "mcuisp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_LITE1, "lite1", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_LITE0, "lite0", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_FD, "fd", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_DRC, "drc", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ISP, "isp", "mout_aclk_266_sub",
++		GATE_IP_ISP0, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* GATE_IP_ISP1 */
++	GATE(CLK_QE_ISPCX, "qe_ispcx", "uart_isp_top",
++		GATE_IP_ISP0, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_SCALERP, "qe_scalerp", "uart_isp_top",
++		GATE_IP_ISP0, 20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_QE_SCALERC, "qe_scalerc", "uart_isp_top",
++		GATE_IP_ISP0, 19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_SCALERP, "smmu_scalerp", "uart_isp_top",
++		GATE_IP_ISP0, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_SCALERC, "smmu_scalerc", "uart_isp_top",
++		GATE_IP_ISP0, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SCALERP, "scalerp", "uart_isp_top",
++		GATE_IP_ISP0, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SCALERC, "scalerc", "uart_isp_top",
++		GATE_IP_ISP0, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SPI1_ISP, "spi1_isp", "uart_isp_top",
++		GATE_IP_ISP0, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SPI0_ISP, "spi0_isp", "uart_isp_top",
++		GATE_IP_ISP0, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_SMMU_ISPCX, "smmu_ispcx", "uart_isp_top",
++		GATE_IP_ISP0, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ASYNCAXIM, "asyncaxim", "uart_isp_top",
++		GATE_IP_ISP0, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* GATE_SCLK_ISP */
++	GATE(CLK_SCLK_MPWM_ISP, "sclk_mpwm_isp", "div_mpwm",
++		GATE_SCLK_ISP, 0, CLK_IGNORE_UNUSED, 0),
++};
++
++static struct samsung_cmu_info isp_cmu_info __initdata = {
++	.div_clks	= isp_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(isp_div_clks),
++	.gate_clks	= isp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(isp_gate_clks),
++	.nr_clk_ids	= NR_CLKS_ISP,
++};
++
++static int __init exynos3250_cmu_isp_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++
++	samsung_cmu_register_one(np, &isp_cmu_info);
++	return 0;
++}
++
++static const struct of_device_id exynos3250_cmu_isp_of_match[] = {
++	{ .compatible = "samsung,exynos3250-cmu-isp", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver exynos3250_cmu_isp_driver = {
++	.driver = {
++		.name = "exynos3250-cmu-isp",
++		.of_match_table = exynos3250_cmu_isp_of_match,
++	},
++};
++
++static int exynos3250_cmu_platform_init(void)
++{
++	return platform_driver_probe(&exynos3250_cmu_isp_driver,
++					exynos3250_cmu_isp_probe);
++}
++subsys_initcall(exynos3250_cmu_platform_init);
++
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index 961b9c1..aab088d 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -282,4 +282,65 @@
+  */
+ #define NR_CLKS_DMC			21
  
- static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 10b913baab28..f395a5617142 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -51,6 +51,7 @@
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-+#include <mach/irqs.h>
- 
- #include <plat/fb.h>
- #include <plat/sdhci.h>
-@@ -854,6 +855,7 @@ static void __init crag6410_machine_init(void)
- MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
- 	/* Maintainer: Mark Brown <broonie@opensource.wolfsonmicro.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= S3C64XX_NR_IRQS + 160,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= crag6410_map_io,
- 	.init_machine	= crag6410_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index e4b087c58ee6..74f67c49f364 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -30,6 +30,7 @@
- #include <video/samsung_fimd.h>
- #include <mach/hardware.h>
- #include <mach/map.h>
-+#include <mach/irqs.h>
- 
- #include <asm/irq.h>
- #include <asm/mach-types.h>
-@@ -274,6 +275,7 @@ static void __init hmt_machine_init(void)
- MACHINE_START(HMT, "Airgoo-HMT")
- 	/* Maintainer: Peter Korsgaard <jacmet@sunsite.dk> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= hmt_map_io,
- 	.init_machine	= hmt_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index ab61af50bfb9..3ce5842ed51b 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -41,6 +41,7 @@
- #include <linux/platform_data/mmc-sdhci-s3c.h>
- #include <plat/sdhci.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
-+#include <mach/irqs.h>
- 
- #include <video/platform_lcd.h>
- #include <video/samsung_fimd.h>
-@@ -363,6 +364,7 @@ static void __init mini6410_machine_init(void)
- MACHINE_START(MINI6410, "MINI6410")
- 	/* Maintainer: Darius Augulis <augulis.darius@gmail.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= mini6410_map_io,
- 	.init_machine	= mini6410_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 80cb1446f69f..23baaa04318c 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -31,6 +31,7 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
- 
-+#include <mach/irqs.h>
- #include <mach/hardware.h>
- #include <mach/map.h>
- 
-@@ -100,6 +101,7 @@ static void __init ncp_machine_init(void)
- MACHINE_START(NCP, "NCP")
- 	/* Maintainer: Samsung Electronics */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= ncp_map_io,
- 	.init_machine	= ncp_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 85fa9598b980..ca6548a1ed3b 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -33,6 +33,7 @@
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-+#include <mach/irqs.h>
- 
- #include <plat/adc.h>
- #include <plat/cpu.h>
-@@ -331,7 +332,7 @@ static void __init real6410_machine_init(void)
- MACHINE_START(REAL6410, "REAL6410")
- 	/* Maintainer: Darius Augulis <augulis.darius@gmail.com> */
- 	.atag_offset	= 0x100,
--
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= real6410_map_io,
- 	.init_machine	= real6410_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 33224ab36fac..0972b6ce0ef6 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -21,6 +21,7 @@
- #include <asm/mach/arch.h>
- 
- #include <video/samsung_fimd.h>
-+#include <mach/irqs.h>
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-@@ -153,6 +154,7 @@ static void __init smartq5_machine_init(void)
- MACHINE_START(SMARTQ5, "SmartQ 5")
- 	/* Maintainer: Maurus Cuelenaere <mcuelenaere AT gmail DOT com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= smartq_map_io,
- 	.init_machine	= smartq5_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
-index fc7fece22fb0..51ac1c6c654a 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq7.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
-@@ -21,6 +21,7 @@
- #include <asm/mach/arch.h>
- 
- #include <video/samsung_fimd.h>
-+#include <mach/irqs.h>
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-@@ -169,6 +170,7 @@ static void __init smartq7_machine_init(void)
- MACHINE_START(SMARTQ7, "SmartQ 7")
- 	/* Maintainer: Maurus Cuelenaere <mcuelenaere AT gmail DOT com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= smartq_map_io,
- 	.init_machine	= smartq7_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index 6f425126a735..7d8a74fd8915 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -27,6 +27,7 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
- 
-+#include <mach/irqs.h>
- #include <mach/hardware.h>
- #include <mach/map.h>
- 
-@@ -88,7 +89,7 @@ static void __init smdk6400_machine_init(void)
- MACHINE_START(SMDK6400, "SMDK6400")
- 	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
- 	.atag_offset	= 0x100,
--
-+	.nr_irqs	= S3C64XX_NR_IRQS,
- 	.init_irq	= s3c6400_init_irq,
- 	.map_io		= smdk6400_map_io,
- 	.init_machine	= smdk6400_machine_init,
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 661eb662d051..e160eded69e1 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -51,6 +51,7 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/hardware.h>
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-@@ -701,7 +702,7 @@ static void __init smdk6410_machine_init(void)
- MACHINE_START(SMDK6410, "SMDK6410")
- 	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
- 	.atag_offset	= 0x100,
--
-+	.nr_irqs	= S3C64XX_NR_IRQS + 64,
- 	.init_irq	= s3c6410_init_irq,
- 	.map_io		= smdk6410_map_io,
- 	.init_machine	= smdk6410_machine_init,
-diff --git a/arch/arm/plat-samsung/gpio-samsung.c b/arch/arm/plat-samsung/gpio-samsung.c
-index 37faa8eab78f..287c3df8b4c6 100644
---- a/arch/arm/plat-samsung/gpio-samsung.c
-+++ b/arch/arm/plat-samsung/gpio-samsung.c
-@@ -30,6 +30,7 @@
- 
- #include <asm/irq.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
++/*
++ * CMU ISP
++ */
++
++/* Dividers */
++
++#define CLK_DIV_ISP1			1
++#define CLK_DIV_ISP0			2
++#define CLK_DIV_MCUISP1			3
++#define CLK_DIV_MCUISP0			4
++#define CLK_DIV_MPWM			5
++
++/* Gates */
++
++#define CLK_UART_ISP			8
++#define CLK_WDT_ISP			9
++#define CLK_PWM_ISP			10
++#define CLK_I2C1_ISP			11
++#define CLK_I2C0_ISP			12
++#define CLK_MPWM_ISP			13
++#define CLK_MCUCTL_ISP			14
++#define CLK_PPMUISPX			15
++#define CLK_PPMUISPMX			16
++#define CLK_QE_LITE1			17
++#define CLK_QE_LITE0			18
++#define CLK_QE_FD			19
++#define CLK_QE_DRC			20
++#define CLK_QE_ISP			21
++#define CLK_CSIS1			22
++#define CLK_SMMU_LITE1			23
++#define CLK_SMMU_LITE0			24
++#define CLK_SMMU_FD			25
++#define CLK_SMMU_DRC			26
++#define CLK_SMMU_ISP			27
++#define CLK_GICISP			28
++#define CLK_CSIS0			29
++#define CLK_MCUISP			30
++#define CLK_LITE1			31
++#define CLK_LITE0			32
++#define CLK_FD				33
++#define CLK_DRC				34
++#define CLK_ISP				35
++#define CLK_QE_ISPCX			36
++#define CLK_QE_SCALERP			37
++#define CLK_QE_SCALERC			38
++#define CLK_SMMU_SCALERP		39
++#define CLK_SMMU_SCALERC		40
++#define CLK_SCALERP			41
++#define CLK_SCALERC			42
++#define CLK_SPI1_ISP			43
++#define CLK_SPI0_ISP			44
++#define CLK_SMMU_ISPCX			45
++#define CLK_ASYNCAXIM			46
++#define CLK_SCLK_MPWM_ISP		47
++
++/*
++ * Total number of clocks of CMU_ISP.
++ * NOTE: Must be equal to last clock ID increased by one.
++ */
++#define NR_CLKS_ISP			48
++
+ #endif /* _DT_BINDINGS_CLOCK_SAMSUNG_EXYNOS3250_CLOCK_H */
 -- 
-2.1.0.rc2
+1.7.9.5
