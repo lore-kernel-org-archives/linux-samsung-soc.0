@@ -1,196 +1,170 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 02/10] ASoC: samsung/smartq: use dynamic registration
-Date: Mon,  2 Mar 2015 13:35:55 +0100
-Message-ID: <1425299763-4066822-3-git-send-email-arnd@arndb.de>
+Subject: [PATCH 08/10] ARM: s3c64xx: use common debug-ll implementation
+Date: Mon,  2 Mar 2015 13:36:01 +0100
+Message-ID: <1425299763-4066822-9-git-send-email-arnd@arndb.de>
 References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:54531 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.10]:65510 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbbCBMgy (ORCPT
+	with ESMTP id S1752518AbbCBMhD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 07:36:54 -0500
+	Mon, 2 Mar 2015 07:37:03 -0500
 In-Reply-To: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, dmitry.torokhov@gmail.com, ch.naveen@samsung.com, a.kesavan@samsung.com, cw00.choi@samsung.com, jic23@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, padma.v@samsung.com, Arnd Bergmann <arnd@arndb.de>
 
-As a prerequisite for moving s3c64xx into multiplatform configurations,
-we need to change the smartq audio driver to stop using hardcoded
-gpio numbers from the header file, and instead pass the gpio data
-through platform_data.
-
-In order to do that, we also move the code to use module_platform_driver
-and register the platform device using platform_device_register_simple
-and register the gpios through the gpiod API.
+The uart on s3c64xx is essentially the same as on s3c24xx,
+so we can share a single assembler file. However, the addresses
+are different, and we need to add the respective Kconfig magic
+to get the right addresses.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c64xx/mach-smartq.c | 13 +++++++
- sound/soc/samsung/smartq_wm8987.c   | 77 +++++++++++++------------------------
- 2 files changed, 40 insertions(+), 50 deletions(-)
+ arch/arm/Kconfig.debug                           | 19 +++++++++++-
+ arch/arm/mach-s3c64xx/include/mach/debug-macro.S | 38 ------------------------
+ 2 files changed, 18 insertions(+), 39 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c64xx/include/mach/debug-macro.S
 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index b3d13537a7f0..327ec1f451e3 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/fb.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/pwm_backlight.h>
-@@ -379,6 +380,15 @@ void __init smartq_map_io(void)
- 	smartq_lcd_mode_set();
- }
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 970de7518341..7af848b0f615 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -846,6 +846,7 @@ choice
+ 		depends on PLAT_SAMSUNG
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
++		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+ 		select DEBUG_S5PV210_UART if ARCH_S5PV210
+ 		bool "Use Samsung S3C UART 0 for low-level debug"
+ 		help
+@@ -857,6 +858,7 @@ choice
+ 		depends on PLAT_SAMSUNG
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
++		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+ 		select DEBUG_S5PV210_UART if ARCH_S5PV210
+ 		bool "Use Samsung S3C UART 1 for low-level debug"
+ 		help
+@@ -868,6 +870,7 @@ choice
+ 		depends on PLAT_SAMSUNG
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
++		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+ 		select DEBUG_S5PV210_UART if ARCH_S5PV210
+ 		bool "Use Samsung S3C UART 2 for low-level debug"
+ 		help
+@@ -878,6 +881,7 @@ choice
+ 	config DEBUG_S3C_UART3
+ 		depends on PLAT_SAMSUNG && (ARCH_EXYNOS || ARCH_S5PV210)
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
++		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+ 		select DEBUG_S5PV210_UART if ARCH_S5PV210
+ 		bool "Use Samsung S3C UART 3 for low-level debug"
+ 		help
+@@ -1225,6 +1229,9 @@ config DEBUG_S3C2410_UART
+ config DEBUG_S3C24XX_UART
+ 	bool
  
-+static struct gpiod_lookup_table smartq_audio_gpios = {
-+	.dev_id = "smartq-audio",
-+	.table = {
-+		GPIO_LOOKUP("GPL", 12, "headphone detect", 0),
-+		GPIO_LOOKUP("GPK", 12, "amplifiers shutdown", 0),
-+		{ },
-+	},
-+};
++config DEBUG_S3C64XX_UART
++	bool
 +
- void __init smartq_machine_init(void)
- {
- 	s3c_i2c0_set_platdata(NULL);
-@@ -397,4 +407,7 @@ void __init smartq_machine_init(void)
- 	WARN_ON(smartq_wifi_init());
+ config DEBUG_S5PV210_UART
+ 	bool
  
- 	platform_add_devices(smartq_devices, ARRAY_SIZE(smartq_devices));
-+
-+	gpiod_add_lookup_table(&smartq_audio_gpios);
-+	platform_device_register_simple("smartq-audio", -1, NULL, 0);
- }
-diff --git a/sound/soc/samsung/smartq_wm8987.c b/sound/soc/samsung/smartq_wm8987.c
-index 8291d2a5f152..7b6291fb55b9 100644
---- a/sound/soc/samsung/smartq_wm8987.c
-+++ b/sound/soc/samsung/smartq_wm8987.c
-@@ -13,15 +13,12 @@
-  *
-  */
+@@ -1306,7 +1313,7 @@ config DEBUG_LL_INCLUDE
+ 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA0
+ 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA1
+ 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA4
+-	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART
++	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART || DEBUG_S3C64XX_UART
+ 	default "debug/s5pv210.S" if DEBUG_S5PV210_UART
+ 	default "debug/sirf.S" if DEBUG_SIRFSOC_UART
+ 	default "debug/sti.S" if DEBUG_STI_UART
+@@ -1382,6 +1389,10 @@ config DEBUG_UART_PHYS
+ 				DEBUG_S3C2410_UART2)
+ 	default 0x78000000 if DEBUG_CNS3XXX
+ 	default 0x7c0003f8 if FOOTBRIDGE
++	default 0x7f005000 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART0
++	default 0x7f005400 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART1
++	default 0x7f005800 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART2
++	default 0x7f005c00 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART3
+ 	default 0x80010000 if DEBUG_ASM9260_UART
+ 	default 0x80070000 if DEBUG_IMX23_UART
+ 	default 0x80074000 if DEBUG_IMX28_UART
+@@ -1439,6 +1450,7 @@ config DEBUG_UART_PHYS
+ 		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF2 || \
+ 		DEBUG_RMOBILE_SCIFA0 || DEBUG_RMOBILE_SCIFA1 || \
+ 		DEBUG_RMOBILE_SCIFA4 || DEBUG_S3C24XX_UART || \
++		DEBUG_S3C64XX_UART || \
+ 		DEBUG_UART_BCM63XX || DEBUG_ASM9260_UART || \
+ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0
  
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
+@@ -1464,8 +1476,12 @@ config DEBUG_UART_VIRT
+ 	default 0xf4090000 if ARCH_LPC32XX
+ 	default 0xf4200000 if ARCH_GEMINI
+ 	default 0xf7000000 if DEBUG_SUN9I_UART0
++	default 0xf7000000 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART0
+ 	default 0xf7000000 if DEBUG_S3C24XX_UART && (DEBUG_S3C_UART0 || \
+ 				DEBUG_S3C2410_UART0)
++	default 0xf7000400 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART1
++	default 0xf7000800 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART2
++	default 0xf7000c00 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART3
+ 	default 0xf7004000 if DEBUG_S3C24XX_UART && (DEBUG_S3C_UART1 || \
+ 				DEBUG_S3C2410_UART1)
+ 	default 0xf7008000 if DEBUG_S3C24XX_UART && (DEBUG_S3C_UART2 || \
+@@ -1528,6 +1544,7 @@ config DEBUG_UART_VIRT
+ 		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_MESON_UARTAO || \
+ 		DEBUG_MSM_UART || DEBUG_NETX_UART || \
+ 		DEBUG_QCOM_UARTDM || DEBUG_S3C24XX_UART || \
++		DEBUG_S3C64XX_UART || \
+ 		DEBUG_UART_BCM63XX || DEBUG_ASM9260_UART || \
+ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0
  
- #include <sound/soc.h>
- #include <sound/jack.h>
- 
--#include <mach/gpio-samsung.h>
--#include <asm/mach-types.h>
+diff --git a/arch/arm/mach-s3c64xx/include/mach/debug-macro.S b/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
+deleted file mode 100644
+index c9b95325b672..000000000000
+--- a/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
++++ /dev/null
+@@ -1,38 +0,0 @@
+-/* arch/arm/mach-s3c6400/include/mach/debug-macro.S
+- *
+- * Copyright 2008 Openmoko, Inc.
+- * Copyright 2008 Simtec Electronics
+- *	http://armlinux.simtec.co.uk/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
 -
- #include "i2s.h"
- #include "../codecs/wm8750.h"
- 
-@@ -96,7 +93,7 @@ static struct snd_soc_jack_pin smartq_jack_pins[] = {
- 
- static struct snd_soc_jack_gpio smartq_jack_gpios[] = {
- 	{
--		.gpio		= S3C64XX_GPL(12),
-+		.gpio		= -1,
- 		.name		= "headphone detect",
- 		.report		= SND_JACK_HEADPHONE,
- 		.debounce_time	= 200,
-@@ -113,7 +110,9 @@ static int smartq_speaker_event(struct snd_soc_dapm_widget *w,
- 				struct snd_kcontrol *k,
- 				int event)
- {
--	gpio_set_value(S3C64XX_GPK(12), SND_SOC_DAPM_EVENT_OFF(event));
-+	struct gpio_desc *gpio = snd_soc_card_get_drvdata(&snd_soc_smartq);
-+
-+	gpiod_set_value(gpio, SND_SOC_DAPM_EVENT_OFF(event));
- 
- 	return 0;
- }
-@@ -206,62 +205,40 @@ static struct snd_soc_card snd_soc_smartq = {
- 	.num_controls = ARRAY_SIZE(wm8987_smartq_controls),
- };
- 
--static struct platform_device *smartq_snd_device;
+-/* pull in the relevant register and map files. */
 -
--static int __init smartq_init(void)
-+static int smartq_probe(struct platform_device *pdev)
- {
-+	struct gpio_desc *gpio;
- 	int ret;
- 
--	if (!machine_is_smartq7() && !machine_is_smartq5()) {
--		pr_info("Only SmartQ is supported by this ASoC driver\n");
--		return -ENODEV;
--	}
+-#include <linux/serial_s3c.h>
+-#include <mach/map.h>
 -
--	smartq_snd_device = platform_device_alloc("soc-audio", -1);
--	if (!smartq_snd_device)
--		return -ENOMEM;
+-	/* note, for the boot process to work we have to keep the UART
+-	 * virtual address aligned to an 1MiB boundary for the L1
+-	 * mapping the head code makes. We keep the UART virtual address
+-	 * aligned and add in the offset when we load the value here.
+-	 */
 -
--	platform_set_drvdata(smartq_snd_device, &snd_soc_smartq);
+-	.macro addruart, rp, rv, tmp
+-		ldr	\rp, = S3C_PA_UART
+-		ldr	\rv, = (S3C_VA_UART + S3C_PA_UART & 0xfffff)
+-#if CONFIG_DEBUG_S3C_UART != 0
+-		add	\rp, \rp, #(0x400 * CONFIG_DEBUG_S3C_UART)
+-		add	\rv, \rv, #(0x400 * CONFIG_DEBUG_S3C_UART)
+-#endif
+-	.endm
 -
--	ret = platform_device_add(smartq_snd_device);
--	if (ret) {
--		platform_device_put(smartq_snd_device);
--		return ret;
--	}
-+	platform_set_drvdata(pdev, &snd_soc_smartq);
- 
- 	/* Initialise GPIOs used by amplifiers */
--	ret = gpio_request(S3C64XX_GPK(12), "amplifiers shutdown");
--	if (ret) {
--		dev_err(&smartq_snd_device->dev, "Failed to register GPK12\n");
--		goto err_unregister_device;
-+	gpio = devm_gpiod_get(&pdev->dev, "amplifiers shutdown",
-+			      GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpio)) {
-+		dev_err(&pdev->dev, "Failed to register GPK12\n");
-+		ret = PTR_ERR(gpio);
-+		goto out;
- 	}
-+	snd_soc_card_set_drvdata(&snd_soc_smartq, gpio);
- 
--	/* Disable amplifiers */
--	ret = gpio_direction_output(S3C64XX_GPK(12), 1);
--	if (ret) {
--		dev_err(&smartq_snd_device->dev, "Failed to configure GPK12\n");
--		goto err_free_gpio_amp_shut;
--	}
+-/* include the reset of the code which will do the work, we're only
+- * compiling for a single cpu processor type so the default of s3c2440
+- * will be fine with us.
+- */
 -
--	return 0;
--
--err_free_gpio_amp_shut:
--	gpio_free(S3C64XX_GPK(12));
--err_unregister_device:
--	platform_device_unregister(smartq_snd_device);
-+	ret = devm_snd_soc_register_card(&pdev->dev, &snd_soc_smartq);
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to register card\n");
- 
-+out:
- 	return ret;
- }
- 
--static void __exit smartq_exit(void)
--{
--	gpio_free(S3C64XX_GPK(12));
--
--	platform_device_unregister(smartq_snd_device);
--}
-+static struct platform_driver smartq_driver = {
-+	.driver = {
-+		.name = "smartq-audio",
-+		.owner = THIS_MODULE,
-+	},
-+	.probe = smartq_probe,
-+};
- 
--module_init(smartq_init);
--module_exit(smartq_exit);
-+module_platform_driver(smartq_driver);
- 
- /* Module information */
- MODULE_AUTHOR("Maurus Cuelenaere <mcuelenaere@gmail.com>");
+-#include <debug/samsung.S>
 -- 
 2.1.0.rc2
