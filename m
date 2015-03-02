@@ -1,97 +1,188 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 00/10] ARM: s3c64xx multiplatform, help needed
-Date: Mon,  2 Mar 2015 13:35:53 +0100
-Message-ID: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
+Subject: [PATCH 09/10] ARM: s3c64xx: multiplatform support
+Date: Mon,  2 Mar 2015 13:36:02 +0100
+Message-ID: <1425299763-4066822-10-git-send-email-arnd@arndb.de>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:58466 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.10]:63070 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbbCBMhD (ORCPT
+	with ESMTP id S1752518AbbCBMhI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 07:37:03 -0500
+	Mon, 2 Mar 2015 07:37:08 -0500
+In-Reply-To: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, dmitry.torokhov@gmail.com, ch.naveen@samsung.com, a.kesavan@samsung.com, cw00.choi@samsung.com, jic23@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, padma.v@samsung.com, Arnd Bergmann <arnd@arndb.de>
 
-Hi everyone,
+After all preparation work is done, we can finally move the Kconfig
+option for s3c64xx into ARCH_MULTIPLATFORM. This implies allowing
+SAMSUNG_ATAGS for multiplatform again, but now disallowing the
+ADC driver below it, as that still has dependencies on header files.
 
-I've had these patches in a private git tree for a while, and have
-finally gotten around to clean them up some more for submission.
-Hopefully we can get all of it merged into 4.1.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/Kconfig                    | 27 ---------------------------
+ arch/arm/configs/multi_v7_defconfig |  3 +++
+ arch/arm/configs/s3c6400_defconfig  |  2 ++
+ arch/arm/mach-s3c64xx/Kconfig       | 22 +++++++++++++++++++++-
+ arch/arm/mach-s3c64xx/Makefile      |  3 +++
+ arch/arm/plat-samsung/Kconfig       |  2 +-
+ arch/arm/plat-samsung/Makefile      |  3 ++-
+ 7 files changed, 32 insertions(+), 30 deletions(-)
 
-I've done this to the best of my knowledge, but some parts are
-a bit tricky, so I expect that there are bugs. The trickiest
-part is the touchscreen driver. I've sent it out for review
-last year already, but I have not found anybody who could test
-it, and it's basically a blind rewrite of an existing driver,
-so it's unlikely that I got it all right.
-
-The other parts may actually work, but it is possible that
-I made a mistake with the ASoC driver, the sparseirq support
-or something else.
-
-Does anyone still have access to the hardware? I'm particularly
-interested in seeing this patch set get tested on smartq
-and on smdk6410, which have the majority of the hardware.
-
-Arnd Bergmann (10):
-  Input: s3c2410_ts: fix S3C_ADC dependency
-  ASoC: samsung/smartq: use dynamic registration
-  gpio: samsung: move gpio-samsung driver back to platform code
-  ARM: s3c64xx: prepare initcalls for multiplatform
-  ARM: s3c64xx: enable sparse IRQ support
-  iio: exynos-adc: add experimental touchscreen support
-  ARM: s3c64xx: use new adc/touchscreen driver
-  ARM: s3c64xx: use common debug-ll implementation
-  ARM: s3c64xx: multiplatform support
-  ARM: s3c64xx: allow building without board support
-
- .../devicetree/bindings/arm/samsung/exynos-adc.txt |   3 +
- arch/arm/Kconfig                                   |  26 ---
- arch/arm/Kconfig.debug                             |  19 +-
- arch/arm/configs/multi_v7_defconfig                |   3 +
- arch/arm/configs/s3c6400_defconfig                 |   2 +
- arch/arm/mach-s3c64xx/Kconfig                      |  31 ++-
- arch/arm/mach-s3c64xx/Makefile                     |  23 ++-
- arch/arm/mach-s3c64xx/common.c                     |   5 +-
- arch/arm/mach-s3c64xx/cpuidle.c                    |   5 +-
- arch/arm/mach-s3c64xx/dev-uart.c                   |   1 +
- arch/arm/mach-s3c64xx/include/mach/debug-macro.S   |  38 ----
- arch/arm/mach-s3c64xx/include/mach/gpio-samsung.h  |   3 +
- arch/arm/mach-s3c64xx/include/mach/irqs.h          |  20 +-
- arch/arm/mach-s3c64xx/include/mach/pm-core.h       |   1 +
- arch/arm/mach-s3c64xx/irq-pm.c                     |   2 +-
- arch/arm/mach-s3c64xx/mach-anw6410.c               |   3 +-
- arch/arm/mach-s3c64xx/mach-crag6410-module.c       |   6 +
- arch/arm/mach-s3c64xx/mach-crag6410.c              |   2 +
- arch/arm/mach-s3c64xx/mach-hmt.c                   |   2 +
- arch/arm/mach-s3c64xx/mach-mini6410.c              |   5 +-
- arch/arm/mach-s3c64xx/mach-ncp.c                   |   2 +
- arch/arm/mach-s3c64xx/mach-real6410.c              |   6 +-
- arch/arm/mach-s3c64xx/mach-smartq.c                |  16 +-
- arch/arm/mach-s3c64xx/mach-smartq5.c               |   2 +
- arch/arm/mach-s3c64xx/mach-smartq7.c               |   2 +
- arch/arm/mach-s3c64xx/mach-smdk6400.c              |   3 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c              |   6 +-
- arch/arm/mach-s3c64xx/pl080.c                      |   4 +
- arch/arm/mach-s3c64xx/pm.c                         |   4 +
- arch/arm/mach-s3c64xx/s3c6400.c                    |   2 +-
- arch/arm/mach-s3c64xx/s3c6410.c                    |   2 +-
- arch/arm/plat-samsung/Kconfig                      |   5 +-
- arch/arm/plat-samsung/Makefile                     |   5 +-
- arch/arm/plat-samsung/devs.c                       |  22 +-
- .../gpio => arch/arm/plat-samsung}/gpio-samsung.c  |  12 +-
- arch/arm/plat-samsung/init.c                       |   5 +
- arch/arm/plat-samsung/pm.c                         |   4 -
- drivers/gpio/Kconfig                               |   7 -
- drivers/gpio/Makefile                              |   1 -
- drivers/iio/adc/exynos_adc.c                       | 222 ++++++++++++++++++++-
- drivers/input/touchscreen/Kconfig                  |   2 +-
- include/linux/platform_data/touchscreen-s3c2410.h  |   1 +
- sound/soc/samsung/smartq_wm8987.c                  |  77 +++----
- 43 files changed, 408 insertions(+), 204 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/include/mach/debug-macro.S
- rename {drivers/gpio => arch/arm/plat-samsung}/gpio-samsung.c (99%)
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a6f71e402b38..0f7dd89b5eee 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -686,33 +686,6 @@ config ARCH_S3C24XX
+ 	  (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 or the
+ 	  Samsung SMDK2410 development board (and derivatives).
+ 
+-config ARCH_S3C64XX
+-	bool "Samsung S3C64XX"
+-	select ARCH_REQUIRE_GPIOLIB
+-	select ARM_AMBA
+-	select ARM_VIC
+-	select ATAGS
+-	select CLKDEV_LOOKUP
+-	select CLKSRC_SAMSUNG_PWM
+-	select COMMON_CLK_SAMSUNG
+-	select CPU_V6K
+-	select GENERIC_CLOCKEVENTS
+-	select GPIO_SAMSUNG
+-	select HAVE_S3C2410_I2C if I2C
+-	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+-	select HAVE_TCM
+-	select NO_IOPORT_MAP
+-	select PLAT_SAMSUNG
+-	select PM_GENERIC_DOMAINS if PM
+-	select S3C_DEV_NAND
+-	select S3C_GPIO_TRACK
+-	select SAMSUNG_ATAGS
+-	select SAMSUNG_WAKEMASK
+-	select SAMSUNG_WDT_RESET
+-	select SPARSE_IRQ
+-	help
+-	  Samsung S3C64XX series based systems
+-
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index e8a4c955241b..7bd95c167f93 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -11,6 +11,9 @@ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+ CONFIG_CMDLINE_PARTITION=y
++CONFIG_ARCH_MULTI_V7=y
++# CONFIG_ARCH_MULTI_V5 is not set
++# CONFIG_ARCH_MULTI_V4 is not set
+ CONFIG_ARCH_VIRT=y
+ CONFIG_ARCH_MVEBU=y
+ CONFIG_MACH_ARMADA_370=y
+diff --git a/arch/arm/configs/s3c6400_defconfig b/arch/arm/configs/s3c6400_defconfig
+index e2f9fa5bb54b..e0f66936ae02 100644
+--- a/arch/arm/configs/s3c6400_defconfig
++++ b/arch/arm/configs/s3c6400_defconfig
+@@ -5,6 +5,8 @@ CONFIG_KALLSYMS_ALL=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
++CONFIG_ARCH_MULTI_V6=y
++# CONFIG_ARCH_MULTI_V7 is not set
+ CONFIG_ARCH_S3C64XX=y
+ CONFIG_S3C_BOOT_ERROR_RESET=y
+ CONFIG_MACH_SMDK6400=y
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 26ca2427e53d..8bdddee61520 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -2,6 +2,27 @@
+ #	Simtec Electronics, Ben Dooks <ben@simtec.co.uk>
+ #
+ # Licensed under GPLv2
++menuconfig ARCH_S3C64XX
++	bool "Samsung S3C64XX" if ARCH_MULTI_V6
++	select ARCH_REQUIRE_GPIOLIB
++	select ARM_AMBA
++	select ARM_VIC
++	select ATAGS
++	select CLKSRC_SAMSUNG_PWM
++	select COMMON_CLK_SAMSUNG
++	select GPIO_SAMSUNG
++	select HAVE_S3C2410_I2C if I2C
++	select HAVE_S3C2410_WATCHDOG if WATCHDOG
++	select HAVE_TCM
++	select PLAT_SAMSUNG
++	select PM_GENERIC_DOMAINS if PM
++	select S3C_DEV_NAND
++	select S3C_GPIO_TRACK
++	select SAMSUNG_ATAGS
++	select SAMSUNG_WAKEMASK if PM
++	select SAMSUNG_WDT_RESET
++	help
++	  Samsung S3C64XX series based systems
+ 
+ if ARCH_S3C64XX
+ 
+@@ -302,7 +323,6 @@ config MACH_S3C64XX_DT
+ 	select CPU_S3C6410
+ 	select PINCTRL
+ 	select PINCTRL_S3C64XX
+-	select USE_OF
+ 	help
+ 	  Machine support for Samsung S3C6400/S3C6410 machines with Device Tree
+ 	  enabled.
+diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+index 12f67b61ca5f..46dcdf1584d6 100644
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@ -5,6 +5,9 @@
+ #
+ # Licensed under GPLv2
+ 
++ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
++asflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
++
+ # Core
+ 
+ obj-y				+= common.o
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 1df08180f2a5..6744cd28459f 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -39,7 +39,6 @@ config S3C_LOWLEVEL_UART_PORT
+ 
+ config SAMSUNG_ATAGS
+ 	def_bool n
+-	depends on !ARCH_MULTIPLATFORM
+ 	depends on ATAGS
+ 	help
+ 	   This option enables ATAGS based boot support code for
+@@ -70,6 +69,7 @@ config S3C_GPIO_TRACK
+ 
+ config S3C_ADC
+ 	bool "ADC common driver support"
++	depends on !ARCH_MULTIPLATFORM
+ 	help
+ 	  Core support for the ADC block found in the Samsung SoC systems
+ 	  for drivers such as the touchscreen and hwmon to use to share
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 7896ddf63974..d79bb442b914 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -4,7 +4,8 @@
+ #
+ # Licensed under GPLv2
+ 
+-ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
++ccflags-$(CONFIG_ARCH_S3C64XX) := -I$(srctree)/arch/arm/mach-s3c64xx/include
++ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include
+ 
+ # Objects we always build independent of SoC choice
+ 
 -- 
 2.1.0.rc2
