@@ -1,52 +1,49 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Fix off-by-one valid value checking
- for args->args[0]
-Date: Mon, 02 Mar 2015 16:41:41 +0530
-Message-ID: <110D56A3356F4CB298E0690B183D50F0@sisodomain.com>
-References: <1425051864.6032.1.camel@phoenix>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V2 0/8] [media] exynos-gsc: Fixup PM support
+Date: Mon, 2 Mar 2015 13:28:36 +0100
+Message-ID: <CAPDyKFpC4Ytd7j7MRV6G27Be7TphKBc-7ZyVBveAbiHB8VMt+g@mail.gmail.com>
+References: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=utf-8; reply-type=original
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1425051864.6032.1.camel@phoenix>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1421673760-2600-1-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-media@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Friday, February 27, 2015 9:14 PM "Axel Lin" <axel.lin@ingics.com> wrote:
-> Current code uses args->args[0] as array subscript of phy_drd->phys[].
-> So the valid value range for args->args[0] is 0 ... EXYNOS5_DRDPHYS_NUM - 
-> 1.
+On 19 January 2015 at 14:22, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> Changes in v2:
+>         - Rebase patches.
+>         - Adapt to changes for the PM core. Especially, the Kconfig option for
+>           CONFIG_PM_RUNTIME has been removed and the runtime PM core is now
+>           build for CONFIG_PM.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-
-Reviewed by: Vivek Gautam <gautam.vivek@samsung.com>
-
-> ---
-> drivers/phy/phy-exynos5-usbdrd.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+> This patchset fixup the PM support and adds some minor improvements to
+> potentially save some more power at runtime PM suspend.
 >
-> diff --git a/drivers/phy/phy-exynos5-usbdrd.c 
-> b/drivers/phy/phy-exynos5-usbdrd.c
-> index 0437401..e2a0be7 100644
-> --- a/drivers/phy/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/phy-exynos5-usbdrd.c
-> @@ -531,7 +531,7 @@ static struct phy *exynos5_usbdrd_phy_xlate(struct 
-> device *dev,
-> {
->  struct exynos5_usbdrd_phy *phy_drd = dev_get_drvdata(dev);
 >
-> - if (WARN_ON(args->args[0] > EXYNOS5_DRDPHYS_NUM))
-> + if (WARN_ON(args->args[0] >= EXYNOS5_DRDPHYS_NUM))
->  return ERR_PTR(-ENODEV);
+> Ulf Hansson (8):
+>   [media] exynos-gsc: Simplify clock management
+>   [media] exynos-gsc: Convert gsc_m2m_resume() from int to void
+>   [media] exynos-gsc: Make driver functional when CONFIG_PM is unset
+>   [media] exynos-gsc: Make runtime PM callbacks available for CONFIG_PM
+>   [media] exynos-gsc: Fixup clock management at ->remove()
+>   [media] exynos-gsc: Do full clock gating at runtime PM suspend
+>   [media] exynos-gsc: Make system PM callbacks available for
+>     CONFIG_PM_SLEEP
+>   [media] exynos-gsc: Simplify system PM
 >
->  return phy_drd->phys[args->args[0]].phy;
-> -- 
+>  drivers/media/platform/exynos-gsc/gsc-core.c | 183 +++++++++++----------------
+>  drivers/media/platform/exynos-gsc/gsc-core.h |   3 -
+>  2 files changed, 72 insertions(+), 114 deletions(-)
+>
+> --
 > 1.9.1
 >
 
-BRs
-Vivek 
+I guess you guys have been busy, but it would be nice to get some
+feedback of these patches.
+
+Kind regards
+Uffe
