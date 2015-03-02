@@ -1,40 +1,41 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
-Date: Sun, 01 Mar 2015 22:22 +0100
-Message-ID: <13467157.nyRCsNWIp6@wuerfel>
-References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com> <2707354.mhmQEHxoKV@wuerfel> <CAGTfZH0VVT0hMn4ooRNZxnqjUQ_hF8nHg-4NtNriayick50qgw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Inha Song <ideal.song@samsung.com>
+Subject: [PATCH v2] clk: samsung: Add CLKOUT driver support for Exynos3250 SoC.
+Date: Mon, 02 Mar 2015 11:15:00 +0900
+Message-ID: <1425262500-27456-1-git-send-email-ideal.song@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:50363 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751344AbbCAVWO (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:26681 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367AbbCBCRB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Mar 2015 16:22:14 -0500
-In-Reply-To: <CAGTfZH0VVT0hMn4ooRNZxnqjUQ_hF8nHg-4NtNriayick50qgw@mail.gmail.com>
+	Sun, 1 Mar 2015 21:17:01 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cwchoi00@gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, "will.deacon@arm.com" <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, ideal.song@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, sboyd@codeaurora.org, mturquette@linaro.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, Inha Song <ideal.song@samsung.com>
 
-On Saturday 28 February 2015 09:47:01 Chanwoo Choi wrote:
-> "earlycon=exynos4210,0x14C20000" is correct bootparam. You can check
-> it on Documentation/kernel-parameters.txt as following.
-> 
->      exynos4210,<addr>
->                 Use early console provided by serial driver available
->                 on Samsung SoCs, requires selecting proper type and
->                 a correct base address of the selected UART port. The
->                 serial port must already be setup and configured.
->                 Options are not yet supported.
-> 
-> 
+This patch add CLKOUT driver support for Exynos3250 SoC.
 
-But it's crazy to do this when you have a DT. Please fix the existing
-devicetree files that use this to just list 'earlycon'.
+Exynos3250 SoC PMU_DEBUG is the same with Exynos4's PMU_DEBUG
+including CLKOUT mux. So, We can use the exynos4's clkout init
+function for Exynos3250 without the need to add new function.
 
-The syntax above only makes sense for classic board files that we
-do not support for exynos any more.
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	Arnd
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 3a7cb25..1c02e73 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -142,6 +142,8 @@ CLK_OF_DECLARE(exynos4212_clkout, "samsung,exynos4212-pmu",
+ 		exynos4_clkout_init);
+ CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4412-pmu",
+ 		exynos4_clkout_init);
++CLK_OF_DECLARE(exynos3250_clkout, "samsung,exynos3250-pmu",
++		exynos4_clkout_init);
+ 
+ static void __init exynos5_clkout_init(struct device_node *node)
+ {
+-- 
+2.0.0.390.gcb682f8
