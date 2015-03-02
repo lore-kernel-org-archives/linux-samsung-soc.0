@@ -1,44 +1,40 @@
 From: Beata Michalska <b.michalska@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: exynos3250: Add assigned clock parents to CMU
- node
-Date: Mon, 02 Mar 2015 14:17:30 +0100
-Message-ID: <1425302250-13446-3-git-send-email-b.michalska@samsung.com>
-References: <1425302250-13446-1-git-send-email-b.michalska@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1425302250-13446-1-git-send-email-b.michalska@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 0/2] Support for CMU_ISP clock domain on Exynos3250
+Date: Mon, 02 Mar 2015 14:17:28 +0100
+Message-ID: <1425302250-13446-1-git-send-email-b.michalska@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:9942 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751602AbbCBNSU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Mar 2015 08:18:20 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Use assigned-clocks/assigned-clock-parents properties for
-CMU clock controller DT node to secure proper clock setup:
-switching the two muxes to root oscillator clock is not only
-required for proper powering down the ISP power domain,
-but it also reduces the risk of accessing the ISP CMU
-registers while the ISP power domain remains turned off
-(i.e. through the common clock framework by clk_summary)
 
-Signed-off-by: Beata Michalska <b.michalska@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Hi All,
+
+This simple patchset adds support for CMU_ISP clock domain
+on Exynos3250.
+
+Best Regards
+Beata Michalska
+
 ---
- arch/arm/boot/dts/exynos3250.dtsi |    4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 277b48b..6d6118e 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -172,6 +172,10 @@
- 			compatible = "samsung,exynos3250-cmu";
- 			reg = <0x10030000 0x20000>;
- 			#clock-cells = <1>;
-+			assigned-clocks = <&cmu CLK_MOUT_ACLK_400_MCUISP_SUB>,
-+					  <&cmu CLK_MOUT_ACLK_266_SUB>;
-+			assigned-clock-parents = <&cmu CLK_FIN_PLL>,
-+						 <&cmu CLK_FIN_PLL>;
- 		};
- 
- 		cmu_dmc: clock-controller@105C0000 {
+Beata Michalska (1):
+  ARM: dts: exynos3250: Add assigned clock parents to CMU node
+
+Tomasz Figa (1):
+  clk: samsung: exynos3250: Add driver for CMU_ISP clock domain
+
+ .../devicetree/bindings/clock/exynos3250-clock.txt |    8 +
+ arch/arm/boot/dts/exynos3250.dtsi                  |    4 +
+ drivers/clk/samsung/clk-exynos3250.c               |  163 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h             |   61 ++++++++
+ 4 files changed, 236 insertions(+)
+
 -- 
 1.7.9.5
