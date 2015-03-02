@@ -1,53 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH 00/10] ARM: s3c64xx multiplatform, help needed
-Date: Mon, 2 Mar 2015 16:17:12 +0000
-Message-ID: <20150302161712.GX21293@sirena.org.uk>
+Date: Tue, 3 Mar 2015 01:53:17 +0900
+Message-ID: <CA+Ln22HVJVN8kRdgAkhzJvuRKBYpPdk4NWmH3p+Q15wqpcgzFQ@mail.gmail.com>
 References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6K2wDG8L3IKgXtjN"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60957 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237AbbCBQRg (ORCPT
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35918 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752254AbbCBQxS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 11:17:36 -0500
-Content-Disposition: inline
+	Mon, 2 Mar 2015 11:53:18 -0500
+Received: by mail-oi0-f44.google.com with SMTP id a3so28056692oib.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Mar 2015 08:53:17 -0800 (PST)
 In-Reply-To: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, dmitry.torokhov@gmail.com, ch.naveen@samsung.com, a.kesavan@samsung.com, cw00.choi@samsung.com, jic23@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, padma.v@samsung.com, ckeepax@opensource.wolfsonmicro.com
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, naveen krishna <ch.naveen@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, Padmavathi Venna <padma.v@samsung.com>
 
+Hi Arnd,
 
---6K2wDG8L3IKgXtjN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks a lot for these patches.
 
-On Mon, Mar 02, 2015 at 01:35:53PM +0100, Arnd Bergmann wrote:
-
+2015-03-02 21:35 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> Hi everyone,
+>
+> I've had these patches in a private git tree for a while, and have
+> finally gotten around to clean them up some more for submission.
+> Hopefully we can get all of it merged into 4.1.
+>
+> I've done this to the best of my knowledge, but some parts are
+> a bit tricky, so I expect that there are bugs. The trickiest
+> part is the touchscreen driver. I've sent it out for review
+> last year already, but I have not found anybody who could test
+> it, and it's basically a blind rewrite of an existing driver,
+> so it's unlikely that I got it all right.
+>
+> The other parts may actually work, but it is possible that
+> I made a mistake with the ASoC driver, the sparseirq support
+> or something else.
+>
 > Does anyone still have access to the hardware? I'm particularly
 > interested in seeing this patch set get tested on smartq
 > and on smdk6410, which have the majority of the hardware.
 
-I and a bunch of other people still have Cragganmore, the ex-Wolfson
-(added Charles here) people may also be able to locate a smdk6410.
-may also be a
+I still have a tiny6410, which is compatible with mini6410, so I can
+test both DT and non-DT code paths. It also has a touchscreen using
+the on-SoC ADC. I'll give it a try this weekend. I'll try to review
+the series as well.
 
---6K2wDG8L3IKgXtjN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJU9I0HAAoJECTWi3JdVIfQcssH/3bl/JlpkmtKrJ7hPZtA8oZZ
-HF+hpnEkMEyxHJWMlRBnvO+S8EDiN/iz4a3m1BozWBuvXUM/ad4iiyU1eZumBCmQ
-V8T5dVuFVxWMtgBBowosYd4OpWqXoYJZo+czb5vJHDtpU0DKpvy3MAdYTrYbzZKk
-xFKzOkvWf/hOzKdIzZj7bum7PkGsJlHJ/srsZaQEJdsmLSb56ih5B/N21ZpxjhrS
-OMpDu6GNNrIWFybOmxgrXiD3aXPkYXnyBVAfFAGEoyW6eeV71IIDWZ3xXAKSV3+1
-pBfWjEOpVIPxZk9TVBVirBmYB52KKlNfa03gm5FdjwFi6zzUJDmt5rwAxQQXYpU=
-=J3nM
------END PGP SIGNATURE-----
-
---6K2wDG8L3IKgXtjN--
+Best regards,
+Tomasz
