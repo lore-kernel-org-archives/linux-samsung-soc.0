@@ -1,568 +1,650 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 1/2] drm/exynos: hdmi: Add support for Exynos7 HDMI
-Date: Mon, 2 Mar 2015 14:10:29 +0530
-Message-ID: <CAEC9eQMc002Nd-CF0tjwzipUZVcN3vTxWsq9OrfTnHsXQdp0tQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/exynos: decon: Add support for DECON-EXT
+Date: Mon, 2 Mar 2015 16:27:37 +0530
+Message-ID: <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
 References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
-	<54F04B80.7050606@samsung.com>
+	<1424964285-27480-2-git-send-email-ajaykumar.rs@samsung.com>
+	<54F41A8B.4020400@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:35339 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750764AbbCBIka (ORCPT
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:39232 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751117AbbCBK5i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 03:40:30 -0500
-Received: by igqa13 with SMTP id a13so15349821igq.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Mar 2015 00:40:30 -0800 (PST)
-In-Reply-To: <54F04B80.7050606@samsung.com>
+	Mon, 2 Mar 2015 05:57:38 -0500
+Received: by igdh15 with SMTP id h15so16060416igd.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Mar 2015 02:57:37 -0800 (PST)
+In-Reply-To: <54F41A8B.4020400@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, InKi Dae <inki.dae@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hi Andrej,
-
-On Fri, Feb 27, 2015 at 4:18 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Hi Ajay,
->
-> Thanks for the patch.
-Thanks for reviewing the patch.
-
+On Mon, Mar 2, 2015 at 1:38 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
 > On 02/26/2015 04:24 PM, Ajay Kumar wrote:
->> Modify the exynos HDMI driver to support Exynos7 HDMI 1.4.
->> * Add phy configs for Exynos7.
->> * Exynos7 has a different clock structure for HDMI,
->>   so introduce the new clocks.
->> * Add sysreg support to enable HDMI SYSREG on Exynos7.
->> * Exynos7 based boards need a DCDC_EN and LS_EN pins
->>   for powering up HDMI. Add support for that too.
+>> * Modify DECON-INT driver to support DECON-EXT.
+>> * Add a table of porch values needed to set timing registers of DECON-EXT.
+>> * DECON-EXT supports only H/w Triggered COMMAND mode.
+>> * DECON-EXT supports only one DMA window(window 1), so modify
+>>   all window management routines to support 2 windows of DECON-INT
+>>   and 1 window of DECON-EXT.
 >>
 >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 >> ---
->>  .../devicetree/bindings/video/exynos_hdmi.txt      |   21 +-
->>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  252 ++++++++++++++++----
->>  drivers/gpu/drm/exynos/regs-hdmi.h                 |    4 +
->>  3 files changed, 231 insertions(+), 46 deletions(-)
+>>  .../devicetree/bindings/video/exynos7-decon.txt    |    8 +-
+>>  drivers/gpu/drm/exynos/exynos7_drm_decon.c         |  229 ++++++++++++++++++--
+>>  include/video/exynos7_decon.h                      |   13 ++
+>>  3 files changed, 230 insertions(+), 20 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->> index 1fd8cf9..bb22a60 100644
->> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->> @@ -6,6 +6,7 @@ Required properties:
->>       2) "samsung,exynos4210-hdmi"
->>       3) "samsung,exynos4212-hdmi"
->>       4) "samsung,exynos5420-hdmi"
->> +     5) "samsung,exynos7-hdmi"
->
-> Why not "samsung,exynos7420-hdmi" ?
-> What compatible will you use for Exynos7430 or higher chip number?
-I will leave this decision to Inki Dae or Kukjin.
-
->>  - reg: physical base address of the hdmi and length of memory mapped
->>       region.
->>  - interrupts: interrupt number to the cpu.
->> @@ -15,21 +16,33 @@ Required properties:
->>       c) optional flags and pull up/down.
->>  - clocks: list of clock IDs from SoC clock driver.
->>       a) hdmi: Gate of HDMI IP bus clock.
->> -     b) sclk_hdmi: Gate of HDMI special clock.
->> -     c) sclk_pixel: Pixel special clock, one of the two possible inputs of
->> +     HDMI clocks necessary for non exynos7:
->> +      b) sclk_hdmi: Gate of HDMI special clock.
->> +      c) sclk_pixel: Pixel special clock, one of the two possible inputs of
->>               HDMI clock mux.
->> -     d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
->> +      d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
->>               HDMI clock mux.
->> -     e) mout_hdmi: It is required by the driver to switch between the 2
->> +      e) mout_hdmi: It is required by the driver to switch between the 2
->>               parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
->>               after configuration, parent is set to sclk_hdmiphy else
->>               sclk_pixel.
->> +     HDMI clocks necessary for Exynos7:
->> +      b) pclk_hdmiphy: Gate to HDMIPHY clock.
->
-> According to specs there is also pclk_hdmi, why do you specify only this
-> one?
-Right, I have reused "hdmi" gating clock for pclk_hdmi. That is why I have
-left "hdmi" clock as common for exynos7 and non-exynos7.
-
->> +      c) hdmi_pixel: Gate clock of MUX output for I_PIXEL_CLK.
->> +      d) hdmi_tmds: Gate clock of MUX output for I_TMDS_CLK.
->
-> According to specs these clocks should be named i_pixel_clk and
-> i_tmds_clk, shouldn't they?
-I actually took these changes from an "internal" code(non-DRM).
-The original author used these names, and I just carried the same names. :)
-
->>  - clock-names: aliases as per driver requirements for above clock IDs:
->>       "hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
->>  - ddc: phandle to the hdmi ddc node
->>  - phy: phandle to the hdmi phy node
->>  - samsung,syscon-phandle: phandle for system controller node for PMU.
+>> diff --git a/Documentation/devicetree/bindings/video/exynos7-decon.txt b/Documentation/devicetree/bindings/video/exynos7-decon.txt
+>> index f5f9c8d..87350c0 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos7-decon.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos7-decon.txt
+>> @@ -2,10 +2,14 @@ Device-Tree bindings for Samsung Exynos7 SoC display controller (DECON)
 >>
->> +Only for Exynos7(when compatible = "samsung,exynos7-hdmi"):
->> +- samsung,sysreg-phandle: phandle for system controller node for SYSREG block.
+>>  DECON (Display and Enhancement Controller) is the Display Controller for the
+>>  Exynos7 series of SoCs which transfers the image data from a video memory
+>> -buffer to an external LCD interface.
+>> +buffer to an external LCD/HDMI interface.
 >> +
->> +Optional properties:
->> +- dcdc-gpios: OF device-tree gpio specification for HDMI_DCDC_EN pin.
->> +- lsen-gpios: OF device-tree gpio specification for HDMI_LS_EN pin.
+>> +Exynos7 supports DECON-INT for generating video signals for LCD.
+>> +Exynos7 supports DECON-EXT for generating video signals for HDMI.
+>>
+>>  Required properties:
+>> -- compatible: value should be "samsung,exynos7-decon";
+>> +- compatible: value should be "samsung,exynos7-decon-int" for DECON-INT;
+>> +           value should be "samsung,exynos7-decon-ext" for DECON-EXT;
+>>
+>>  - reg: physical base address and length of the DECON registers set.
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>> index 63f02e2..9e2d083 100644
+>> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>> @@ -41,6 +41,28 @@
+>>
+>>  #define WINDOWS_NR   2
 >
-> What is purpose of these gpios?
-These 2 GPIOs need to be enabled to powerup HDMI on exynos7-espresso board.
-Other boards need not provide the GPIO.
-
+> Maybe it would be better to rename it to MAX_WINDOWS_NR
+Ok.
+>>
+>> +#define DECON_EXT_CH_MAPPING 0x432105
+>
+> I am not familiar with decon, could you explain what exactly
+> this mapping means and why is it fixed in the driver to this value,
+> not default one. By the way my specs says bits 0-3 are reserverd
+> and here it seems you are using them.
+I reused the value from the code which hardware team shared with me.
+It tries to map a input hardware channel(IDMA or VPP channel) onto
+a hardware window in DECON.
+Channel_N is mapped onto window_N in case of DECON-INT.
+In case of DECON-EXT, Channel 0 should be mapped to window 1 of DECON-EXT.
+So, basically for the changes I have made, I should ideally set only
+bits [4:6] to 0x1,
+and leave other bits untouched, though modifying other bits wouldn't
+affect in anyway.
+>
 >> +
->>  Example:
->>
->>       hdmi {
->> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> index 229b361..1b579ea 100644
->> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> @@ -67,6 +67,7 @@
->>  enum hdmi_type {
->>       HDMI_TYPE13,
->>       HDMI_TYPE14,
->> +     HDMI_TYPE14_7,
->>  };
->>
->>  struct hdmi_driver_data {
->> @@ -82,6 +83,9 @@ struct hdmi_resources {
->>       struct clk                      *sclk_pixel;
->>       struct clk                      *sclk_hdmiphy;
->>       struct clk                      *mout_hdmi;
->> +     struct clk                      *hdmi_pixel;
->> +     struct clk                      *pclk_hdmiphy;
->> +     struct clk                      *hdmi_tmds;
->>       struct regulator_bulk_data      *regul_bulk;
->>       struct regulator                *reg_hdmi_en;
->>       int                             regul_count;
->> @@ -210,6 +214,7 @@ struct hdmi_context {
->>       unsigned int                    phy_conf_count;
->>
->>       struct regmap                   *pmureg;
->> +     struct regmap                   *sysreg;
->>       enum hdmi_type                  type;
->>  };
->>
->> @@ -584,6 +589,61 @@ static const struct hdmiphy_config hdmiphy_5420_configs[] = {
->>       },
->>  };
->>
->> +static const struct hdmiphy_config hdmiphy_7_configs[] = {
->> +     {
->> +             .pixel_clock = 27000000,
->> +             .conf = {
->> +                     0x01, 0xD2, 0x87, 0xB0, 0x01, 0x00, 0x88, 0x02,
->> +                     0x4F, 0x30, 0x33, 0x65, 0x00, 0xE4, 0x24, 0x80,
->> +                     0x6C, 0xF2, 0x67, 0x00, 0x10, 0x0B, 0x00, 0x10,
->> +                     0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
->> +             },
->> +     },
->> +     {
->> +             .pixel_clock = 27027000,
->> +             .conf = {
->> +                     0x01, 0xD1, 0x5A, 0xFA, 0xE4, 0x12, 0x88, 0x43,
->> +                     0x4F, 0x30, 0x33, 0x65, 0x00, 0xE4, 0x24, 0x80,
->> +                     0x6C, 0xF2, 0x67, 0x00, 0x10, 0x0F, 0x00, 0x10,
->> +                     0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
->> +             },
->> +     },
->> +     {
->> +             .pixel_clock = 74176000,
->> +             .conf = {
->> +                     0x01, 0xD1, 0x3E, 0x35, 0xDB, 0xA2, 0x88, 0x42,
->> +                     0x4F, 0x30, 0x33, 0x65, 0x10, 0xA6, 0x24, 0x80,
->> +                     0x6C, 0xF2, 0x67, 0x00, 0x10, 0x03, 0x00, 0x10,
->> +                     0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
->> +             },
->> +     },
->> +     {
->> +             .pixel_clock = 74250000,
->> +             .conf = {
->> +                     0x01, 0xD1, 0x3E, 0x35, 0xC0, 0x90, 0x88, 0x42,
->> +                     0x4F, 0x30, 0x33, 0x65, 0x10, 0xA6, 0x24, 0x80,
->> +                     0x6C, 0xF2, 0x67, 0x00, 0x10, 0x03, 0x00, 0x10,
->> +                     0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
->> +             },
->> +     },
->> +     {
->> +             .pixel_clock = 148500000,
->> +             .conf = {
->> +                     0x01, 0xD1, 0x3E, 0x15, 0xC0, 0x90, 0x88, 0x42,
->> +                     0x4F, 0x30, 0x33, 0x65, 0x20, 0xA6, 0x24, 0x80,
->> +                     0x6C, 0xF2, 0x67, 0x00, 0x10, 0x01, 0x00, 0x10,
->> +                     0x60, 0x0F, 0x00, 0x00, 0x08, 0x00, 0x3E, 0x00,
->> +             },
->> +     },
+>> +enum decon_type {
+>> +     DECON_INT,
+>> +     DECON_EXT,
+>> +} decon_type;
+>> +
+>> +struct decon_driver_data {
+>> +     enum decon_type                 decon_type;
+>> +     unsigned int                    nr_windows;
 >> +};
 >> +
->> +static struct hdmi_driver_data exynos7_hdmi_driver_data = {
->> +     .type           = HDMI_TYPE14_7,
->> +     .phy_confs      = hdmiphy_7_configs,
->> +     .phy_conf_count = ARRAY_SIZE(hdmiphy_7_configs),
->> +     .is_apb_phy     = 1,
+>> +static struct decon_driver_data exynos7_decon_int_driver_data = {
+>> +     .decon_type = DECON_INT,
+>
+> I wonder if it wouldn't be better to use different fields to describe
+> each capability/property instead of decon_type. For example
+>         .display_type = EXYNOS_DISPLAY_TYPE_LCD,
+>         .map_channels = 0,
+Ok, let me list down the differences between INT and EXT.
+1) Only h/w triggered command mode for DECON-EXT.
+2) Need to feed modified porch values(decon_ext_timings)
+3) Input channel to H/w window mapping(WINCHMAP)
+4) default_window - 0 for DECON-INT and 1 for DECON-EXT
+
+Out of the above differences, the first 3 can somehow be converted
+to capability/property and embedded into driver_data.
+But the 4th difference is bothering me.
+I tried using something like start_window, end_window and tried to make
+The code common for DECON-INT and DECON-EXT, and it just doesn't work.
+ex:
+start_window = 0, end_window = 1 for DECON-INT
+start_window = 1, end_window = 1 for DECON-EXT
+
+When win_commit gets called for window 0 from crtc_commit/plane_commit:
+Configure start_window(0  for DECON-INT and 1 for DECON-EXT)
+
+When win_commit is called from decon_apply, it is called for window 1 also.
+That time win_commit can skip updating actual window 1.
+How do I take care of this ambiguity? This case happens with
+win_disable routine also!
+
+
+> This way the code will be cleaner (less ifs).
+>
+>
+>> +     .nr_windows = 2,
 >> +};
 >> +
->>  static struct hdmi_driver_data exynos5420_hdmi_driver_data = {
->>       .type           = HDMI_TYPE14,
->>       .phy_confs      = hdmiphy_5420_configs,
->> @@ -1355,6 +1415,9 @@ static void hdmi_start(struct hdmi_context *hdata, bool start)
->>               val |= HDMI_FIELD_EN;
->>
->>       hdmi_reg_writemask(hdata, HDMI_CON_0, val, HDMI_EN);
->> +     if (hdata->type == HDMI_TYPE14_7)
->> +             hdmi_reg_writemask(hdata, HDMI_CON_0, HDMI_ENCODING_RETAIN,
->> +                                                     HDMI_ENCODING_RETAIN);
->>       hdmi_reg_writemask(hdata, HDMI_TG_CMD, val, HDMI_TG_EN | HDMI_FIELD_EN);
->>  }
->>
->> @@ -1489,9 +1552,11 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
->>               hdmi_regs_dump(hdata, "timing apply");
->>       }
->>
->> -     clk_disable_unprepare(hdata->res.sclk_hdmi);
->> -     clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
->> -     clk_prepare_enable(hdata->res.sclk_hdmi);
->> +     if (hdata->type != HDMI_TYPE14_7) {
->> +             clk_disable_unprepare(hdata->res.sclk_hdmi);
->> +             clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
->> +             clk_prepare_enable(hdata->res.sclk_hdmi);
->> +     }
->
-> If is not neccessary, hdmi_v13_mode_apply is called only for HDMI_TYPE13.
-Ahh, That's a nice catch. I will remove it.
-
->>
->>       /* enable HDMI and timing generator */
->>       hdmi_start(hdata, true);
->> @@ -1651,9 +1716,11 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
->>               hdmi_regs_dump(hdata, "timing apply");
->>       }
->>
->> -     clk_disable_unprepare(hdata->res.sclk_hdmi);
->> -     clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
->> -     clk_prepare_enable(hdata->res.sclk_hdmi);
->> +     if (hdata->type != HDMI_TYPE14_7) {
->> +             clk_disable_unprepare(hdata->res.sclk_hdmi);
->> +             clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
->> +             clk_prepare_enable(hdata->res.sclk_hdmi);
->> +     }
->>
->>       /* enable HDMI and timing generator */
->>       hdmi_start(hdata, true);
->> @@ -1671,9 +1738,11 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
->>  {
->>       u32 reg;
->>
->> -     clk_disable_unprepare(hdata->res.sclk_hdmi);
->> -     clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_pixel);
->> -     clk_prepare_enable(hdata->res.sclk_hdmi);
->> +     if (hdata->type != HDMI_TYPE14_7) {
->> +             clk_disable_unprepare(hdata->res.sclk_hdmi);
->> +             clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_pixel);
->> +             clk_prepare_enable(hdata->res.sclk_hdmi);
->> +     }
->>
->>       /* operation mode */
->>       hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
->> @@ -1693,7 +1762,7 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
->>
->>  static void hdmiphy_poweron(struct hdmi_context *hdata)
->>  {
->> -     if (hdata->type != HDMI_TYPE14)
->> +     if ((hdata->type != HDMI_TYPE14) || (hdata->type != HDMI_TYPE14_7))
->>               return;
->>
->>       DRM_DEBUG_KMS("\n");
->> @@ -1713,7 +1782,7 @@ static void hdmiphy_poweron(struct hdmi_context *hdata)
->>
->>  static void hdmiphy_poweroff(struct hdmi_context *hdata)
->>  {
->> -     if (hdata->type != HDMI_TYPE14)
->> +     if ((hdata->type != HDMI_TYPE14) || (hdata->type != HDMI_TYPE14_7))
->
-> It could be replaced with if (hdata->type == HDMI_TYPE13)
-Ok, I will change it.
-
->>               return;
->>
->>       DRM_DEBUG_KMS("\n");
->> @@ -2042,6 +2111,10 @@ static void hdmi_poweron(struct hdmi_context *hdata)
->>               return;
->>       }
->>
->> +     if (hdata->type == HDMI_TYPE14_7)
->> +             regmap_update_bits(hdata->sysreg, SYSREG_DISP_HDMI_PHY,
->> +                                     SYSREG_HDMI_REFCLK_SEL, 1);
+>> +static struct decon_driver_data exynos7_decon_ext_driver_data = {
+>> +     .decon_type = DECON_EXT,
+>> +     .nr_windows = 1,
+>> +};
 >> +
->>       hdata->powered = true;
+>>  struct decon_win_data {
+>>       unsigned int            ovl_x;
+>>       unsigned int            ovl_y;
+>> @@ -76,15 +98,28 @@ struct decon_context {
+>>       atomic_t                        wait_vsync_event;
 >>
->>       mutex_unlock(&hdata->hdmi_mutex);
->> @@ -2056,7 +2129,19 @@ static void hdmi_poweron(struct hdmi_context *hdata)
->>                       PMU_HDMI_PHY_ENABLE_BIT, 1);
+>>       struct exynos_drm_panel_info panel;
+>> +     struct decon_driver_data *driver_data;
+>>       struct exynos_drm_display *display;
+>>  };
 >>
->>       clk_prepare_enable(res->hdmi);
->> -     clk_prepare_enable(res->sclk_hdmi);
->> +     if (hdata->type != HDMI_TYPE14_7)
->> +             clk_prepare_enable(res->sclk_hdmi);
->> +     else
->> +             clk_prepare_enable(res->pclk_hdmiphy);
->> +
->> +     if (hdata->type == HDMI_TYPE14_7)
->> +             hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0,
->> +                                     HDMI_PHY_POWER_OFF_EN);
->> +
->> +     if (hdata->type == HDMI_TYPE14_7) {
->> +             clk_prepare_enable(res->hdmi_pixel);
->> +             clk_prepare_enable(res->hdmi_tmds);
->> +     }
->
->
-> All ifs can be squashed.
-Right, this big chunk can easily go inside a single if.
-
+>>  static const struct of_device_id decon_driver_dt_match[] = {
+>> -     {.compatible = "samsung,exynos7-decon"},
+>> +     { .compatible = "samsung,exynos7-decon-int",
+>> +       .data = &exynos7_decon_int_driver_data },
+>> +     { .compatible = "samsung,exynos7-decon-ext",
+>> +       .data = &exynos7_decon_ext_driver_data },
+>>       {},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, decon_driver_dt_match);
 >>
->>       hdmiphy_poweron(hdata);
->>       hdmi_commit(&hdata->display);
->> @@ -2074,13 +2159,29 @@ static void hdmi_poweroff(struct hdmi_context *hdata)
->>       /* HDMI System Disable */
->>       hdmi_reg_writemask(hdata, HDMI_CON_0, 0, HDMI_EN);
->>
->> +     if (hdata->type == HDMI_TYPE14_7) {
->> +             clk_disable_unprepare(res->hdmi_pixel);
->> +             clk_disable_unprepare(res->hdmi_tmds);
->> +     }
->> +
->> +     if (hdata->type == HDMI_TYPE14_7)
->> +             hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0,
->> +                                     HDMI_PHY_POWER_OFF_EN);
->
-> Ditto
-Ok, one if can be removed.
-
->> +
->>       hdmiphy_poweroff(hdata);
->>
->>       cancel_delayed_work(&hdata->hotplug_work);
->>
->> -     clk_disable_unprepare(res->sclk_hdmi);
->> +     if (hdata->type != HDMI_TYPE14_7)
->> +             clk_disable_unprepare(res->sclk_hdmi);
->> +     else
->> +             clk_disable_unprepare(res->pclk_hdmiphy);
->>       clk_disable_unprepare(res->hdmi);
->>
->> +     if (hdata->type == HDMI_TYPE14_7)
->> +             regmap_update_bits(hdata->sysreg, SYSREG_DISP_HDMI_PHY,
->> +                                     SYSREG_HDMI_REFCLK_SEL, 0);
->> +
->>       /* reset pmu hdmiphy control bit to disable hdmiphy */
->>       regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
->>                       PMU_HDMI_PHY_ENABLE_BIT, 0);
->> @@ -2121,10 +2222,12 @@ static void hdmi_dpms(struct exynos_drm_display *display, int mode)
->>                * Below codes will try to disable Mixer and VP(if used)
->>                * prior to disabling HDMI.
->>                */
->> -             if (crtc)
->> -                     funcs = crtc->helper_private;
->> -             if (funcs && funcs->dpms)
->> -                     (*funcs->dpms)(crtc, mode);
->> +             if (hdata->type != HDMI_TYPE14_7) {
->> +                     if (crtc)
->> +                             funcs = crtc->helper_private;
->> +                     if (funcs && funcs->dpms)
->> +                             (*funcs->dpms)(crtc, mode);
->> +             }
->>
->>               hdmi_poweroff(hdata);
->>               break;
->> @@ -2166,6 +2269,31 @@ static irqreturn_t hdmi_irq_thread(int irq, void *arg)
->>       return IRQ_HANDLED;
->>  }
->>
->> +static int hdmi_configure_gpios(struct hdmi_context *hdata)
+>> +static inline struct decon_driver_data *drm_decon_get_driver_data(
+>> +     struct platform_device *pdev)
 >> +{
->> +     struct gpio_desc *dcdc_gpio, *lsen_gpio;
->> +     int err;
+>> +     const struct of_device_id *of_id =
+>> +                     of_match_device(decon_driver_dt_match, &pdev->dev);
 >> +
->> +     dcdc_gpio = devm_gpiod_get_optional(hdata->dev, "dcdc", GPIOD_OUT_LOW);
->> +     if (IS_ERR(dcdc_gpio)) {
->> +             err = PTR_ERR(dcdc_gpio);
->> +             dev_err(hdata->dev, "failed to request GPIO: %d\n", err);
->> +             return err;
->> +     }
->> +
->> +     lsen_gpio = devm_gpiod_get_optional(hdata->dev, "lsen", GPIOD_OUT_LOW);
->> +     if (IS_ERR(lsen_gpio)) {
->> +             err = PTR_ERR(lsen_gpio);
->> +             dev_err(hdata->dev, "failed to request GPIO: %d\n", err);
->> +             return err;
->> +     }
->> +
->> +     gpiod_set_value(dcdc_gpio, 1);
->> +     gpiod_set_value(lsen_gpio, 1);
->> +
->> +     return 0;
+>> +     return (struct decon_driver_data *)of_id->data;
 >> +}
 >> +
->>  static int hdmi_resources_init(struct hdmi_context *hdata)
+>>  static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
 >>  {
->>       struct device *dev = hdata->dev;
->> @@ -2179,6 +2307,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+>>       struct decon_context *ctx = crtc->ctx;
+>> @@ -106,13 +141,20 @@ static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
 >>
->>       DRM_DEBUG_KMS("HDMI resource init\n");
+>>  static void decon_clear_channel(struct decon_context *ctx)
+>>  {
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       int win, ch_enabled = 0;
 >>
->> +     ret = hdmi_configure_gpios(hdata);
->> +     if (ret)
->> +             goto fail;
->> +
->>       /* get clocks, power */
->>       res->hdmi = devm_clk_get(dev, "hdmi");
->>       if (IS_ERR(res->hdmi)) {
->> @@ -2186,32 +2318,55 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
->>               ret = PTR_ERR(res->hdmi);
->>               goto fail;
->>       }
->> -     res->sclk_hdmi = devm_clk_get(dev, "sclk_hdmi");
->> -     if (IS_ERR(res->sclk_hdmi)) {
->> -             DRM_ERROR("failed to get clock 'sclk_hdmi'\n");
->> -             ret = PTR_ERR(res->sclk_hdmi);
->> -             goto fail;
->> -     }
->> -     res->sclk_pixel = devm_clk_get(dev, "sclk_pixel");
->> -     if (IS_ERR(res->sclk_pixel)) {
->> -             DRM_ERROR("failed to get clock 'sclk_pixel'\n");
->> -             ret = PTR_ERR(res->sclk_pixel);
->> -             goto fail;
->> -     }
->> -     res->sclk_hdmiphy = devm_clk_get(dev, "sclk_hdmiphy");
->> -     if (IS_ERR(res->sclk_hdmiphy)) {
->> -             DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
->> -             ret = PTR_ERR(res->sclk_hdmiphy);
->> -             goto fail;
->> -     }
->> -     res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
->> -     if (IS_ERR(res->mout_hdmi)) {
->> -             DRM_ERROR("failed to get clock 'mout_hdmi'\n");
->> -             ret = PTR_ERR(res->mout_hdmi);
->> -             goto fail;
->> -     }
+>>       DRM_DEBUG_KMS("%s\n", __FILE__);
 >>
->> -     clk_set_parent(res->mout_hdmi, res->sclk_pixel);
->> +     if (hdata->type != HDMI_TYPE14_7) {
->> +             res->sclk_hdmi = devm_clk_get(dev, "sclk_hdmi");
->> +             if (IS_ERR(res->sclk_hdmi)) {
->> +                     DRM_ERROR("failed to get clock 'sclk_hdmi'\n");
->> +                     ret = PTR_ERR(res->sclk_hdmi);
->> +                     goto fail;
->> +             }
->> +             res->sclk_pixel = devm_clk_get(dev, "sclk_pixel");
->> +             if (IS_ERR(res->sclk_pixel)) {
->> +                     DRM_ERROR("failed to get clock 'sclk_pixel'\n");
->> +                     ret = PTR_ERR(res->sclk_pixel);
->> +                     goto fail;
->> +             }
->> +             res->sclk_hdmiphy = devm_clk_get(dev, "sclk_hdmiphy");
->> +             if (IS_ERR(res->sclk_hdmiphy)) {
->> +                     DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
->> +                     ret = PTR_ERR(res->sclk_hdmiphy);
->> +                     goto fail;
->> +             }
->> +             res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
->> +             if (IS_ERR(res->mout_hdmi)) {
->> +                     DRM_ERROR("failed to get clock 'mout_hdmi'\n");
->> +                     ret = PTR_ERR(res->mout_hdmi);
->> +                     goto fail;
->> +             }
->> +
->> +             clk_set_parent(res->mout_hdmi, res->sclk_pixel);
->> +     } else {
->> +
->> +             res->pclk_hdmiphy = clk_get(dev, "pclk_hdmiphy");
->> +             if (IS_ERR_OR_NULL(res->pclk_hdmiphy)) {
+>>       /* Check if any channel is enabled. */
+>> -     for (win = 0; win < WINDOWS_NR; win++) {
+>> -             u32 val = readl(ctx->regs + WINCON(win));
+>> +     for (win = 0; win < drv_data->nr_windows; win++) {
+>> +             u32 val;
+>> +             /* DECON EXT sw-hw window mapping */
+>> +             if (drv_data->decon_type == DECON_EXT) {
+>> +                     if (win == 0)
+>> +                             win = 1;
 >
-> NULL clock is valid so IS_ERR_OR_NULL should be replaced with IS_ERR.
-Ok, I will change it.
+> Changing value of for iterator inside the loop seems quite strange.
+> Wouldn't be better to start loop from 1 in case of DECON_EXT.
+I have explained the resulting ambiguity above.
+>
+>> +             }
+>> +             val = readl(ctx->regs + WINCON(win));
+>>
+>>               if (val & WINCONx_ENWIN) {
+>>                       val &= ~WINCONx_ENWIN;
+>> @@ -187,10 +229,74 @@ static bool decon_mode_fixup(struct exynos_drm_crtc *crtc,
+>>       return true;
+>>  }
+>>
+>> +struct decon_ext_videomode {
+>> +     u32 vfront_porch;
+>> +     u32 vback_porch;
+>> +     u32 hfront_porch;
+>> +     u32 hback_porch;
+>> +     u32 vsync_len;
+>> +     u32 hsync_len;
+>> +     u32 hactive;
+>> +     u32 vactive;
+>> +     u32 refresh_rate;
+>> +};
+>> +
+>> +enum DECON_EXT_MODES {
+>> +     MODE_720_480_60,
+>> +     MODE_720_576_50,
+>> +     MODE_1280_720_60,
+>> +     MODE_1280_720_50,
+>> +     MODE_1920_1080_60,
+>> +     MODE_1920_1080_50,
+>> +     MODE_1920_1080_30,
+>> +     MODE_1920_1080_25,
+>> +     MODE_1920_1080_24,
+>> +     MODE_3840_2160_30,
+>> +     MODE_3840_2160_25,
+>> +     MODE_3840_2160_24,
+>> +     MODE_4096_2160_24,
+>> +};
+>> +
+>> +static struct decon_ext_videomode decon_ext_porchs[] = {
+>> +     /*vfp vbp hfp hbp  vsa hsa xres yres fps */
+>> +     {1, 43, 10, 92,   1, 36,  720, 480,   60},
+>> +     {1, 47, 10, 92,   1, 42,  720, 576,   50},
+>> +     {1, 28, 10, 192,  1, 168, 1280, 720,  60},
+>> +     {1, 28, 10, 92,   1, 598, 1280, 720,  50},
+>> +     {1, 43, 10, 92,   1, 178, 1920, 1080, 60},
+>> +     {1, 43, 10, 92,   1, 618, 1920, 1080, 50},
+>> +     {1, 43, 10, 92,   1, 178, 1920, 1080, 30},
+>> +     {1, 43, 10, 92,   1, 618, 1920, 1080, 25},
+>> +     {1, 43, 10, 92,   1, 728, 1920, 1080, 24},
+>> +     {1, 88, 10, 458,  1, 92,  3840, 2160, 30},
+>> +     {1, 88, 10, 1338, 1, 92,  3840, 2160, 25},
+>> +     {1, 88, 10, 1558, 1, 92,  3840, 2160, 24},
+>> +     {1, 88, 10, 1302, 1, 92,  4096, 2160, 24},
+>> +};
+>> +
+>> +static void decon_ext_set_timing(struct drm_display_mode *mode,
+>> +                             struct decon_ext_videomode *ext_mode)
+>> +{
+>> +     mode->crtc_hdisplay = ext_mode->hactive;
+>> +     mode->crtc_hsync_start = ext_mode->hactive + ext_mode->hfront_porch;
+>> +     mode->crtc_hsync_end = ext_mode->hactive + ext_mode->hfront_porch
+>> +                                             + ext_mode->hsync_len;
+>> +     mode->crtc_htotal = ext_mode->hactive + ext_mode->hfront_porch
+>> +                     + ext_mode->hsync_len + ext_mode->hback_porch;
+>> +     mode->crtc_vdisplay = ext_mode->vactive;
+>> +     mode->crtc_vsync_start = ext_mode->vactive + ext_mode->vfront_porch;
+>> +     mode->crtc_vsync_end = ext_mode->vactive + ext_mode->vfront_porch
+>> +                                             + ext_mode->vsync_len;
+>> +     mode->crtc_vtotal = ext_mode->vactive + ext_mode->vfront_porch
+>> +                             + ext_mode->vsync_len + ext_mode->vback_porch;
+>> +}
+>> +
+>>  static void decon_commit(struct exynos_drm_crtc *crtc)
+>>  {
+>>       struct decon_context *ctx = crtc->ctx;
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       struct drm_display_mode *mode = &crtc->base.mode;
+>> +     struct decon_ext_videomode *my_mode;
+>>       u32 val, clkdiv;
+>>
+>>       if (ctx->suspended)
+>> @@ -200,6 +306,38 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+>>       if (mode->htotal == 0 || mode->vtotal == 0)
+>>               return;
+>>
+>> +     if (drv_data->decon_type == DECON_EXT) {
+>> +             if ((mode->hdisplay == 720) && (mode->vdisplay == 480) &&
+>> +                                             (mode->vrefresh == 60))
+>> +                     my_mode = &decon_ext_porchs[MODE_720_480_60];
+>> +             if ((mode->hdisplay == 720) && (mode->vdisplay == 576) &&
+>> +                                             (mode->vrefresh == 50))
+>> +                     my_mode = &decon_ext_porchs[MODE_720_576_50];
+>> +             if ((mode->hdisplay == 1280) && (mode->vdisplay == 720) &&
+>> +                                             (mode->vrefresh == 60))
+>> +                     my_mode = &decon_ext_porchs[MODE_1280_720_60];
+>> +             if ((mode->hdisplay == 1280) && (mode->vdisplay == 720) &&
+>> +                                             (mode->vrefresh == 50))
+>> +                     my_mode = &decon_ext_porchs[MODE_1280_720_50];
+>> +             if ((mode->hdisplay == 1920) && (mode->vdisplay == 1080) &&
+>> +                                             (mode->vrefresh == 60))
+>> +                     my_mode = &decon_ext_porchs[MODE_1920_1080_60];
+>> +             if ((mode->hdisplay == 1920) && (mode->vdisplay == 1080) &&
+>> +                                             (mode->vrefresh == 50))
+>> +                     my_mode = &decon_ext_porchs[MODE_1920_1080_50];
+>> +             if ((mode->hdisplay == 1920) && (mode->vdisplay == 1080) &&
+>> +                                             (mode->vrefresh == 30))
+>> +                     my_mode = &decon_ext_porchs[MODE_1920_1080_30];
+>> +             if ((mode->hdisplay == 1920) && (mode->vdisplay == 1080) &&
+>> +                                             (mode->vrefresh == 25))
+>> +                     my_mode = &decon_ext_porchs[MODE_1920_1080_25];
+>> +             if ((mode->hdisplay == 1920) && (mode->vdisplay == 1080) &&
+>> +                                             (mode->vrefresh == 24))
+>> +                     my_mode = &decon_ext_porchs[MODE_1920_1080_24];
+>> +
+>> +             decon_ext_set_timing(mode, my_mode);
+>> +     }
+>> +
+>
+> I guess these ugly ifs could be replaced by simple loop:
+>         for (i = 0; i < ARRAY_SIZE(decon_ext_porchs); ++i) {
+>                 if (mode->hdisplay != decon_ext_porchs[i].hdisplay || ...)
+>                         continue;
+>                 decon_ext_set_timing(mode, &decon_ext_porchs[i]);
+>                 break;
+>         }
+Ok, Though the number of checks is the same, your code at least looks better. :)
 
-> By the way, it would be nice to replace this redundant clock get code
-> with some helpers.
-like?
->
->> +                     DRM_ERROR("failed to get clock 'pclk_hdmiphy'\n");
->> +                     ret = PTR_ERR(res->pclk_hdmiphy);
->> +                     goto fail;
->> +             }
->> +             res->hdmi_pixel = clk_get(dev, "hdmi_pixel");
->> +             if (IS_ERR_OR_NULL(res->hdmi_pixel)) {
->
-> ditto
->
->> +                     DRM_ERROR("failed to get clock 'hdmi_pixel'\n");
->> +                     ret = PTR_ERR(res->hdmi_pixel);
->> +                     goto fail;
->> +             }
->> +             res->hdmi_tmds = clk_get(dev, "hdmi_tmds");
->> +             if (IS_ERR_OR_NULL(res->hdmi_tmds)) {
->
-> ditto
->
->> +                     DRM_ERROR("failed to get clock 'hdmi_tmds'\n");
->> +                     ret = PTR_ERR(res->hdmi_tmds);
->> +                     goto fail;
->> +             }
+> Anyway I have doubts if commit should modify crtc.base.mode I guess
+> better place for it can be in *_fixup callback.
+Inki? What is your suggestion?
+
+>>       if (!ctx->i80_if) {
+>>               int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
+>>             /* setup vertical timing values. */
+>> @@ -301,6 +439,7 @@ static void decon_win_mode_set(struct exynos_drm_crtc *crtc,
+>>  {
+>>       struct decon_context *ctx = crtc->ctx;
+>>       struct decon_win_data *win_data;
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       int win, padding;
+>>
+>>       if (!plane) {
+>> @@ -312,12 +451,18 @@ static void decon_win_mode_set(struct exynos_drm_crtc *crtc,
+>>       if (win == DEFAULT_ZPOS)
+>>               win = ctx->default_win;
+>>
+>> -     if (win < 0 || win >= WINDOWS_NR)
+>> +     if (win < 0 || win >= drv_data->nr_windows)
+>>               return;
+>>
+>>
+>>       win_data = &ctx->win_data[win];
+>>
+>> +     /* DECON EXT sw-hw window mapping */
+>> +     if (drv_data->decon_type == DECON_EXT) {
+>> +             if (win == 0)
+>> +                     win = 1;
 >> +     }
+>
+> This code is repeated few times, maybe it would be good to place it into
+> some helper function.
+Ok.
+
+>> +
+>>       padding = (plane->pitch / (plane->bpp >> 3)) - plane->fb_width;
+>>       win_data->offset_x = plane->fb_x;
+>>       win_data->offset_y = plane->fb_y;
+>> @@ -340,9 +485,9 @@ static void decon_win_mode_set(struct exynos_drm_crtc *crtc,
+>>                       plane->fb_width, plane->crtc_width);
+>>  }
 >>
->>       res->regul_bulk = devm_kzalloc(dev, ARRAY_SIZE(supply) *
->>               sizeof(res->regul_bulk[0]), GFP_KERNEL);
->> @@ -2288,6 +2443,9 @@ static struct of_device_id hdmi_match_types[] = {
->>               .compatible = "samsung,exynos5420-hdmi",
->>               .data = &exynos5420_hdmi_driver_data,
->>       }, {
->> +             .compatible = "samsung,exynos7-hdmi",
->> +             .data = &exynos7_hdmi_driver_data,
->> +     }, {
->>               /* end node */
->>       }
->>  };
->> @@ -2474,6 +2632,16 @@ out_get_phy_port:
->>               goto err_hdmiphy;
->>       }
+>> -static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win)
+>> +static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+>> +                                     struct decon_win_data *win_data)
+>>  {
+>> -     struct decon_win_data *win_data = &ctx->win_data[win];
+>>       unsigned long val;
 >>
->> +     if (hdata->type == HDMI_TYPE14_7) {
->> +             hdata->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
->> +                     "samsung,sysreg-phandle");
->> +             if (IS_ERR(hdata->sysreg)) {
->> +                     DRM_ERROR("sysreg regmap lookup failed.\n");
->> +                     ret = -EPROBE_DEFER;
->> +                     goto err_hdmiphy;
->> +             }
+>>       val = readl(ctx->regs + WINCON(win));
+>> @@ -454,6 +599,7 @@ static void decon_win_commit(struct exynos_drm_crtc *crtc, int zpos)
+>>       struct decon_context *ctx = crtc->ctx;
+>>       struct drm_display_mode *mode = &crtc->base.mode;
+>>       struct decon_win_data *win_data;
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       int win = zpos;
+>>       unsigned long val, alpha;
+>>       unsigned int last_x;
+>> @@ -465,11 +611,17 @@ static void decon_win_commit(struct exynos_drm_crtc *crtc, int zpos)
+>>       if (win == DEFAULT_ZPOS)
+>>               win = ctx->default_win;
+>>
+>> -     if (win < 0 || win >= WINDOWS_NR)
+>> +     if (win < 0 || win >= drv_data->nr_windows)
+>>               return;
+>>
+>>       win_data = &ctx->win_data[win];
+>>
+>> +     /* DECON EXT sw-hw window mapping */
+>> +     if (drv_data->decon_type == DECON_EXT) {
+>> +             if (win == 0)
+>> +                     win = 1;
 >> +     }
 >> +
->>       pm_runtime_enable(dev);
+>>       /* If suspended, enable this on resume */
+>>       if (ctx->suspended) {
+>>               win_data->resume = true;
+>> @@ -546,7 +698,7 @@ static void decon_win_commit(struct exynos_drm_crtc *crtc, int zpos)
 >>
->>       ret = component_add(&pdev->dev, &hdmi_component_ops);
->> diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
->> index 3f35ac6..d6c84e0 100644
->> --- a/drivers/gpu/drm/exynos/regs-hdmi.h
->> +++ b/drivers/gpu/drm/exynos/regs-hdmi.h
->> @@ -133,6 +133,7 @@
+>>       writel(alpha, ctx->regs + VIDOSD_D(win));
 >>
->>  /* HDMI_CON_0 */
->>  #define HDMI_BLUE_SCR_EN             (1 << 5)
->> +#define HDMI_ENCODING_RETAIN         (1 << 4)
->>  #define HDMI_ASP_EN                  (1 << 2)
->>  #define HDMI_ASP_DIS                 (0 << 2)
->>  #define HDMI_ASP_MASK                        (1 << 2)
->> @@ -594,4 +595,7 @@
->>  #define PMU_HDMI_PHY_CONTROL         0x700
->>  #define PMU_HDMI_PHY_ENABLE_BIT              BIT(0)
+>> -     decon_win_set_pixfmt(ctx, win);
+>> +     decon_win_set_pixfmt(ctx, win, win_data);
 >>
->> +#define SYSREG_DISP_HDMI_PHY         0x838
->> +#define SYSREG_HDMI_REFCLK_SEL               BIT(0)
+>>       /* hardware window 0 doesn't support color key. */
+>>       if (win != 0)
+>> @@ -572,17 +724,24 @@ static void decon_win_disable(struct exynos_drm_crtc *crtc, int zpos)
+>>  {
+>>       struct decon_context *ctx = crtc->ctx;
+>>       struct decon_win_data *win_data;
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       int win = zpos;
+>>       u32 val;
+>>
+>>       if (win == DEFAULT_ZPOS)
+>>               win = ctx->default_win;
+>>
+>> -     if (win < 0 || win >= WINDOWS_NR)
+>> +     if (win < 0 || win >= drv_data->nr_windows)
+>>               return;
+>>
+>>       win_data = &ctx->win_data[win];
+>>
+>> +     /* DECON EXT sw-hw window mapping */
+>> +     if (drv_data->decon_type == DECON_EXT) {
+>> +             if (win == 0)
+>> +                     win = 1;
+>> +     }
 >> +
->>  #endif /* SAMSUNG_REGS_HDMI_H */
+>>       if (ctx->suspended) {
+>>               /* do not resume this window*/
+>>               win_data->resume = false;
+>> @@ -609,10 +768,11 @@ static void decon_win_disable(struct exynos_drm_crtc *crtc, int zpos)
 >>
+>>  static void decon_window_suspend(struct decon_context *ctx)
+>>  {
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       struct decon_win_data *win_data;
+>>       int i;
+>>
+>> -     for (i = 0; i < WINDOWS_NR; i++) {
+>> +     for (i = 0; i < drv_data->nr_windows; i++) {
+>>               win_data = &ctx->win_data[i];
+>>               win_data->resume = win_data->enabled;
+>>               if (win_data->enabled)
+>> @@ -622,10 +782,11 @@ static void decon_window_suspend(struct decon_context *ctx)
+>>
+>>  static void decon_window_resume(struct decon_context *ctx)
+>>  {
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       struct decon_win_data *win_data;
+>>       int i;
+>>
+>> -     for (i = 0; i < WINDOWS_NR; i++) {
+>> +     for (i = 0; i < drv_data->nr_windows; i++) {
+>>               win_data = &ctx->win_data[i];
+>>               win_data->enabled = win_data->resume;
+>>               win_data->resume = false;
+>> @@ -634,10 +795,11 @@ static void decon_window_resume(struct decon_context *ctx)
+>>
+>>  static void decon_apply(struct decon_context *ctx)
+>>  {
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       struct decon_win_data *win_data;
+>>       int i;
+>>
+>> -     for (i = 0; i < WINDOWS_NR; i++) {
+>> +     for (i = 0; i < drv_data->nr_windows; i++) {
+>>               win_data = &ctx->win_data[i];
+>>               if (win_data->enabled)
+>>                       decon_win_commit(ctx->crtc, i);
+>> @@ -650,6 +812,7 @@ static void decon_apply(struct decon_context *ctx)
+>>
+>>  static void decon_init(struct decon_context *ctx)
+>>  {
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       u32 val;
+>>
+>>       writel(VIDCON0_SWRESET, ctx->regs + VIDCON0);
+>> @@ -657,6 +820,14 @@ static void decon_init(struct decon_context *ctx)
+>>       val = VIDOUTCON0_DISP_IF_0_ON;
+>>       if (!ctx->i80_if)
+>>               val |= VIDOUTCON0_RGBIF;
+>> +
+>> +     if (drv_data->decon_type == DECON_EXT) {
+>> +             writel(TRIGCON_HWTRIG_AUTO_MASK |
+>> +                     TRIGCON_HWTRIGMASK_DISPIF0 |
+>> +                     TRIGCON_HWTRIGEN_I80_RGB, ctx->regs + TRIGCON);
+>> +             val |= VIDOUTCON0_TV_MODE | VIDOUTCON0_I80IF;
+>> +     }
+>> +
+>>       writel(val, ctx->regs + VIDOUTCON0);
+>>
+>>       writel(VCLKCON0_CLKVALUP | VCLKCON0_VCLKFREE, ctx->regs + VCLKCON0);
+>> @@ -667,6 +838,7 @@ static void decon_init(struct decon_context *ctx)
+>>
+>>  static int decon_poweron(struct decon_context *ctx)
+>>  {
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       int ret;
+>>
+>>       if (!ctx->suspended)
+>> @@ -702,6 +874,9 @@ static int decon_poweron(struct decon_context *ctx)
+>>
+>>       decon_init(ctx);
+>>
+>> +     if (drv_data->decon_type == DECON_EXT)
+>> +             writel(DECON_EXT_CH_MAPPING, ctx->regs + WINCHMAP0);
+>> +
+>>       /* if vblank was enabled status, enable it again. */
+>>       if (test_and_clear_bit(0, &ctx->irq_flags)) {
+>>               ret = decon_enable_vblank(ctx->crtc);
+>> @@ -817,6 +992,7 @@ out:
+>>  static int decon_bind(struct device *dev, struct device *master, void *data)
+>>  {
+>>       struct decon_context *ctx = dev_get_drvdata(dev);
+>> +     struct decon_driver_data *drv_data = ctx->driver_data;
+>>       struct drm_device *drm_dev = data;
+>>       int ret;
+>>
+>> @@ -826,16 +1002,23 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>>               return ret;
+>>       }
+>>
+>> -     ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
+>> +     if (drv_data->decon_type == DECON_INT)
+>> +             ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
+>>                                          EXYNOS_DISPLAY_TYPE_LCD,
+>>                                          &decon_crtc_ops, ctx);
+>> +     else
+>> +             ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
+>> +                                        EXYNOS_DISPLAY_TYPE_HDMI,
+>> +                                        &decon_crtc_ops, ctx);
+>> +
+>>       if (IS_ERR(ctx->crtc)) {
+>>               decon_ctx_remove(ctx);
+>>               return PTR_ERR(ctx->crtc);
+>>       }
+>>
+>> -     if (ctx->display)
+>> -             exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>> +     if (drv_data->decon_type == DECON_INT)
 >
+> This check should not be necessary, ctx->display shall be set only in
+> case of presence of parallel output.
+Ok, this check is not necessarily needed!
+
 Ajay
+>> +             if (ctx->display)
+>> +                     exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>>
+>>       return 0;
+>>
+>> @@ -848,8 +1031,9 @@ static void decon_unbind(struct device *dev, struct device *master,
+>>
+>>       decon_dpms(ctx->crtc, DRM_MODE_DPMS_OFF);
+>>
+>> -     if (ctx->display)
+>> -             exynos_dpi_remove(ctx->display);
+>> +     if (ctx->driver_data->decon_type == DECON_INT)
+>
+> ditto
+>
+>
+> Regards
+> Andrzej
+>
+>> +             if (ctx->display)
+>> +                     exynos_dpi_remove(ctx->display);
+>>
+>>       decon_ctx_remove(ctx);
+>>  }
+>> @@ -862,11 +1046,14 @@ static const struct component_ops decon_component_ops = {
+>>  static int decon_probe(struct platform_device *pdev)
+>>  {
+>>       struct device *dev = &pdev->dev;
+>> +     struct decon_driver_data *drv_data;
+>>       struct decon_context *ctx;
+>>       struct device_node *i80_if_timings;
+>>       struct resource *res;
+>>       int ret;
+>>
+>> +     drv_data = drm_decon_get_driver_data(pdev);
+>> +
+>>       if (!dev->of_node)
+>>               return -ENODEV;
+>>
+>> @@ -874,11 +1061,17 @@ static int decon_probe(struct platform_device *pdev)
+>>       if (!ctx)
+>>               return -ENOMEM;
+>>
+>> -     ret = exynos_drm_component_add(dev, EXYNOS_DEVICE_TYPE_CRTC,
+>> +     if (drv_data->decon_type == DECON_INT)
+>> +             ret = exynos_drm_component_add(dev, EXYNOS_DEVICE_TYPE_CRTC,
+>>                                       EXYNOS_DISPLAY_TYPE_LCD);
+>> +     else
+>> +             ret = exynos_drm_component_add(dev, EXYNOS_DEVICE_TYPE_CRTC,
+>> +                                     EXYNOS_DISPLAY_TYPE_HDMI);
+>> +
+>>       if (ret)
+>>               return ret;
+>>
+>> +     ctx->driver_data = drv_data;
+>>       ctx->dev = dev;
+>>       ctx->suspended = true;
+>>
+>> diff --git a/include/video/exynos7_decon.h b/include/video/exynos7_decon.h
+>> index a62b11b..d02320b 100644
+>> --- a/include/video/exynos7_decon.h
+>> +++ b/include/video/exynos7_decon.h
+>> @@ -20,6 +20,7 @@
+>>  /* VIDOUTCON0 */
+>>  #define VIDOUTCON0                           0x4
+>>
+>> +#define VIDOUTCON0_TV_MODE                   (0x1 << 26)
+>>  #define VIDOUTCON0_DUAL_MASK                 (0x3 << 24)
+>>  #define VIDOUTCON0_DUAL_ON                   (0x3 << 24)
+>>  #define VIDOUTCON0_DISP_IF_1_ON                      (0x2 << 24)
+>> @@ -52,6 +53,9 @@
+>>
+>>  #define SHADOWCON_WINx_PROTECT(_win)         (1 << (10 + (_win)))
+>>
+>> +/* WINCHMAP0 */
+>> +#define WINCHMAP0                            0x40
+>> +
+>>  /* WINCONx */
+>>  #define WINCON(_win)                         (0x50 + ((_win) * 4))
+>>
+>> @@ -328,6 +332,15 @@
+>>  /* LINECNT OP THRSHOLD*/
+>>  #define LINECNT_OP_THRESHOLD                 0x630
+>>
+>> +/* TRIGCON */
+>> +#define TRIGCON                                      0x06B0
+>> +#define TRIGCON_HWTRIG_AUTO_MASK             (1 << 6)
+>> +#define TRIGCON_HWTRIGMASK_DISPIF1           (1 << 5)
+>> +#define TRIGCON_HWTRIGMASK_DISPIF0           (1 << 4)
+>> +#define TRIGCON_HWTRIGEN_I80_RGB             (1 << 3)
+>> +#define TRIGCON_SWTRIGCMD_I80_RGB            (1 << 1)
+>> +#define TRIGCON_SWTRIGEN_I80_RGB             (1 << 0)
+>> +
+>>  /* CRCCTRL */
+>>  #define CRCCTRL                                      0x6C8
+>>  #define CRCCTRL_CRCCLKEN                     (0x1 << 2)
+>>
+>
