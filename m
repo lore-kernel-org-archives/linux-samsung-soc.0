@@ -1,20 +1,31 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 1/2] Samsung fixes-1 for v4.0
-Date: Tue, 03 Mar 2015 03:56:16 +0900
-Message-ID: <54F4B250.5080200@kernel.org>
+Subject: [GIT PULL 2/2] Samsung fixes-2 for v4.0
+Date: Tue, 03 Mar 2015 04:00:14 +0900
+Message-ID: <54F4B33E.3070803@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44893 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:45262 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753037AbbCBS4X (ORCPT
+	id S1753865AbbCBTAT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 13:56:23 -0500
+	Mon, 2 Mar 2015 14:00:19 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+
+Hi,
+
+Please pull Samsung tmu and hdmi regression fixes for v4.0 and I know
+this is quite big for fixes but I couldn't handle this series for
+previous merge window because of dependency with driver side...sorry for
+that and please pull so that we could support them in v4.0 on exynos
+platforms.
+
+Thanks,
+Kukjin
 
 The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 
@@ -23,30 +34,77 @@ The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 are available in the git repository at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-fixes-1
+tags/samsung-fixes-dt
 
-for you to fetch changes up to 8a68de64e984cfc49ecc22ac18155a7fe6dbbfaf:
+for you to fetch changes up to 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c:
 
-  ARM: EXYNOS: fix exynos randconfig build error (2015-03-03 03:37:57 +0900)
-
-----------------------------------------------------------------
-Samsung fixes for v4.0
-
-- fix exynos randconfig build error with SMP=n
-- fix wrong hwirq of RTC interrupt for exynos3250
-- fix usage of LDREX and STREX after disabling cache coherency
+  ARM: dts: add display power domain for exynos5250 (2015-02-27 05:29:32
++0900)
 
 ----------------------------------------------------------------
-Chanwoo Choi (1):
-      ARM: EXYNOS: Fix wrong hwirq of RTC interrupt for Exynos3250 SoC
+Samsung tmu and hdmi regression fixes for v4.0
 
-Krzysztof Kozlowski (1):
-      ARM: EXYNOS: Don't use LDREX and STREX after disabling cache coherency
+- The thermal management unit and HDMI (drm mixer driver) related
+reworks have been merged in v4.0 merge window. So if this DT changes
+are missed for v4.0, we regressions in v4.0 release for exynos
+platforms such as exynos5250, exynos5420, exynos4 SoCs.
 
-Russell King (1):
-      ARM: EXYNOS: fix exynos randconfig build error
+- Note since there was a dependency with driver side, this cannot
+be sent to upstream during preivous merge window and now it has been
+resolved.
 
- arch/arm/mach-exynos/Kconfig   | 1 +
- arch/arm/mach-exynos/platsmp.c | 3 +--
- arch/arm/mach-exynos/suspend.c | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      ARM: dts: add display power domain for exynos5250
+
+Lukasz Majewski (9):
+      ARM: dts: Enable TMU for exynos4210-trats
+      ARM: dts: Add LDO10 for TMU for exynos4412-odroid-common
+      ARM: dts: Enable TMU for exynos4412-odriod-common
+      ARM: dts: Adding CPU cooling binding for Exynos SoCs
+      ARM: dts: add TMU default definitions for exynos4412
+      ARM: dts: default trip points definition for exynos5420
+      ARM: dts: define default thermal-zones for exynos4
+      ARM: dts: Trip points and sensor configuration data for exynos5440
+      ARM: dts: Provide dt bindings identical for Exynos TMU
+
+Marek Szyprowski (6):
+      dt-bindings: document a note about power domain subdomains
+      ARM: EXYNOS: add support for sub-power domains
+      ARM: dts: add hdmi related nodes for exynos4 SoCs
+      ARM: dts: add dependency between TV and LCD0 power domains for exynos4
+      ARM: dts: enable hdmi support for exynos4412-odroid-common
+      ARM: dts: add 'hdmi' clock to mixer nodes for exynos5250 and
+exynos5420
+
+Tomasz Stanislawski (1):
+      ARM: dts: enable hdmi support for exynos4210-universal_c210
+
+ .../bindings/arm/exynos/power_domain.txt           |  2 +
+ .../devicetree/bindings/power/power_domain.txt     | 29 ++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi                  |  2 +
+ arch/arm/boot/dts/exynos4-cpu-thermal.dtsi         | 52 ++++++++++++++++++
+ arch/arm/boot/dts/exynos4.dtsi                     | 45 +++++++++++++++
+ arch/arm/boot/dts/exynos4210-trats.dts             | 19 +++++++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    | 57 +++++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  | 38 ++++++++++++-
+ arch/arm/boot/dts/exynos4212.dtsi                  |  5 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 64
+++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi  | 24 ++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts            | 15 +++++
+ arch/arm/boot/dts/exynos4412.dtsi                  |  5 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  | 12 ++++
+ arch/arm/boot/dts/exynos5250.dtsi                  | 44 +++++++++++++--
+ arch/arm/boot/dts/exynos5420-trip-points.dtsi      | 35 ++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  | 33 ++++++++++-
+ arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  | 24 ++++++++
+ arch/arm/boot/dts/exynos5440-trip-points.dtsi      | 25 +++++++++
+ arch/arm/boot/dts/exynos5440.dtsi                  | 18 ++++++
+ arch/arm/mach-exynos/pm_domains.c                  | 28 ++++++++++
+ 21 files changed, 565 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
