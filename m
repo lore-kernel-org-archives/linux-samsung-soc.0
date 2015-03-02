@@ -1,36 +1,53 @@
-From: "Mr. Juan Sebastian Morato" <noreply@popfax.com>
-Subject: Confidential Letter
-Date: Mon, 02 Mar 2015 01:34:43 +0100
-Message-ID: <20150302003450.E9C083EE0FF__34043.4256861501$1425312609$gmane$org@mail.quartzbg.ro>
-Reply-To: juan_morato@yahoo.es
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 00/10] ARM: s3c64xx multiplatform, help needed
+Date: Mon, 2 Mar 2015 16:17:12 +0000
+Message-ID: <20150302161712.GX21293@sirena.org.uk>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6K2wDG8L3IKgXtjN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.quartzbg.ro ([82.79.64.94]:43863 "EHLO mail.quartzbg.ro"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751692AbbCBQJ5 convert rfc822-to-8bit (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60957 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751237AbbCBQRg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 11:09:57 -0500
-Content-Description: Mail message body
+	Mon, 2 Mar 2015 11:17:36 -0500
+Content-Disposition: inline
+In-Reply-To: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Recipients <noreply@popfax.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, dmitry.torokhov@gmail.com, ch.naveen@samsung.com, a.kesavan@samsung.com, cw00.choi@samsung.com, jic23@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, padma.v@samsung.com, ckeepax@opensource.wolfsonmicro.com
 
-Dear Friend, 
 
-I am Mr. Juan Sebastian Morato, the Auditor General of Unicaja Bank Madrid. In the course of my auditing, I discovered a floating fund in an account, which was opened in 1990 at Cam Bank before it was bought over by Unicaja Group which I am the auditor belonging to a dead foreigner Mr. Kenny who died in 2004. Every effort made to track any member of his family or next of kin has since failed; hence I got in contact with you to stand as his next of kin since you bear the same last name. He died leaving no heir or a will.
+--6K2wDG8L3IKgXtjN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My intention is to transfer this sum of 5.5M in the aforementioned account to a safe account. I am therefore proposing that you quietly partner with me and provide an account or set up a new one that will serve the purpose of receiving this fund. For your assistance in this venture, I am ready to part with a good percentage of the entire funds. After going through the deceased person's records and files, I discovered that:
+On Mon, Mar 02, 2015 at 01:35:53PM +0100, Arnd Bergmann wrote:
 
-(1) No one has operated this account since 2004
-(2) He died without an heir; hence the money has been floating.
-(3) No other person knows about this account and there was no known beneficiary.
+> Does anyone still have access to the hardware? I'm particularly
+> interested in seeing this patch set get tested on smartq
+> and on smdk6410, which have the majority of the hardware.
 
-If I do not remit this money urgently, it would be forfeited and subsequently converted to company's funds, which will benefit only the directors of my firm. This money can be approved to you legally as with all the necessary documentary approvals in your name. However, you would be required to show some proof of claim, which I will provide you with and also guide you on how to make your applications.
+I and a bunch of other people still have Cragganmore, the ex-Wolfson
+(added Charles here) people may also be able to locate a smdk6410.
+may also be a
 
-Please do give me a reply on my private e-mail juan.morato1@1email.eu or fax 00 34 917 692 656 so that I can send you detailed information on the modalities of my proposition. I completely trust you to keep this proposition absolutely confidential. Kindly forward your telephone number where I can reach you easily. I look forward to your prompt response.
+--6K2wDG8L3IKgXtjN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Best Regards,
-Mr. Juan Sebastian Morato
-Fax: 00 34 917 692 656
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU9I0HAAoJECTWi3JdVIfQcssH/3bl/JlpkmtKrJ7hPZtA8oZZ
+HF+hpnEkMEyxHJWMlRBnvO+S8EDiN/iz4a3m1BozWBuvXUM/ad4iiyU1eZumBCmQ
+V8T5dVuFVxWMtgBBowosYd4OpWqXoYJZo+czb5vJHDtpU0DKpvy3MAdYTrYbzZKk
+xFKzOkvWf/hOzKdIzZj7bum7PkGsJlHJ/srsZaQEJdsmLSb56ih5B/N21ZpxjhrS
+OMpDu6GNNrIWFybOmxgrXiD3aXPkYXnyBVAfFAGEoyW6eeV71IIDWZ3xXAKSV3+1
+pBfWjEOpVIPxZk9TVBVirBmYB52KKlNfa03gm5FdjwFi6zzUJDmt5rwAxQQXYpU=
+=J3nM
+-----END PGP SIGNATURE-----
+
+--6K2wDG8L3IKgXtjN--
