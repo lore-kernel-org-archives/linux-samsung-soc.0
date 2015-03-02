@@ -1,61 +1,60 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 00/10] ARM: s3c64xx multiplatform, help needed
-Date: Tue, 03 Mar 2015 04:04:08 +0900
-Message-ID: <54F4B428.1020205@kernel.org>
-References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <CA+Ln22HVJVN8kRdgAkhzJvuRKBYpPdk4NWmH3p+Q15wqpcgzFQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: fix exynos randconfig build error
+Date: Tue, 03 Mar 2015 04:40:02 +0900
+Message-ID: <54F4BC92.2050405@kernel.org>
+References: <E1YQa78-0000O0-A4@rmk-PC.arm.linux.org.uk> <CAJKOXPf2F-g9fU9TrNXz8LPwp8fBNZ6NpaAoP15N0nbHWVesaw@mail.gmail.com> <54EF9091.30802@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45604 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:48242 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754495AbbCBTEO (ORCPT
+	id S1755222AbbCBTkN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Mar 2015 14:04:14 -0500
-In-Reply-To: <CA+Ln22HVJVN8kRdgAkhzJvuRKBYpPdk4NWmH3p+Q15wqpcgzFQ@mail.gmail.com>
+	Mon, 2 Mar 2015 14:40:13 -0500
+In-Reply-To: <54EF9091.30802@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, naveen krishna <ch.naveen@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, Padmavathi Venna <padma.v@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
 
-On 03/03/15 01:53, Tomasz Figa wrote:
-> Hi Arnd,
+On 02/27/15 06:30, Kukjin Kim wrote:
+> On 02/25/15 20:46, Krzysztof Kozlowski wrote:
+>> 2015-02-25 12:26 GMT+01:00 Russell King <rmk+kernel@arm.linux.org.uk>:
+>>> The following error was observed with SMP=n in v4.0-rc1:
+>>>
+>>> arch/arm/mach-exynos/pm.c: In function 'exynos_cpu0_enter_aftr':
+>>> arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of function 'arch_send_wakeup_ipi_mask' [-Werror=implicit-function-declaration]
+>>>
+>>> As the code unconditionally calls a function only available with SMP=y,
+>>> make the Exynos PM support depend on SMP.
+>>>
+>>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+>>
+>> Hi,
+>>
+>> Thanks for the patch but this already waits for Kukjin top be picked
+>> up. The first patch was similar to yours (adds dependency on SMP),
+>> sent on 4th of February:
+>> https://patchwork.ozlabs.org/patch/436231/
+>>
+>> But later Bartlomiej fixed this in other way (allowing to use cpuidle
+>> on non-SMP):
+>> https://patchwork.ozlabs.org/patch/436445/
+>>
+>> Unfortunately none of them were picked up.
+>>
+> I've missed the fix, sorry.
 > 
-Hi,
+> BTW, as you know, all of exynos SoCs are based on SMP so generally (in
+> normal case) there is no reason to use non-SMP on exynos
+> platforms...even though I understand the build error should be fixed...
+> 
+> Anyway, I'll have a look Bart's patch and Russell's fix in this weekend.
+> 
 
-> Thanks a lot for these patches.
-> 
-> 2015-03-02 21:35 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->> Hi everyone,
->>
->> I've had these patches in a private git tree for a while, and have
->> finally gotten around to clean them up some more for submission.
->> Hopefully we can get all of it merged into 4.1.
->>
-Sure,
+Firstly, let me take rmk's patch for the randconfig build error...BTW
+I'm still wondering exynos stuff needs to support non-SMP and need to
+think more about its usefulness?...
 
->> I've done this to the best of my knowledge, but some parts are
->> a bit tricky, so I expect that there are bugs. The trickiest
->> part is the touchscreen driver. I've sent it out for review
->> last year already, but I have not found anybody who could test
->> it, and it's basically a blind rewrite of an existing driver,
->> so it's unlikely that I got it all right.
->>
->> The other parts may actually work, but it is possible that
->> I made a mistake with the ASoC driver, the sparseirq support
->> or something else.
->>
->> Does anyone still have access to the hardware? I'm particularly
->> interested in seeing this patch set get tested on smartq
->> and on smdk6410, which have the majority of the hardware.
-> 
-> I still have a tiny6410, which is compatible with mini6410, so I can
-> test both DT and non-DT code paths. It also has a touchscreen using
-> the on-SoC ADC. I'll give it a try this weekend. I'll try to review
-> the series as well.
-> 
-I also have smdk6410 board on my desk and maybe I can test this series
-in the weekend. If anything I'll let you know.
-
-Thanks,
-Kukjin
+- Kukjin
