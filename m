@@ -1,52 +1,106 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 02/10] ASoC: samsung/smartq: use dynamic registration
-Date: Tue, 3 Mar 2015 14:14:03 +0000
-Message-ID: <20150303141403.GR21293@sirena.org.uk>
-References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
- <1425299763-4066822-3-git-send-email-arnd@arndb.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: decon: Add support for DECON-EXT
+Date: Wed, 4 Mar 2015 00:30:15 +0900
+Message-ID: <CAAQKjZNy1a-5tU7yAH+7U7hUt_q4RBw+OW3++eHxoO9esvJmcw@mail.gmail.com>
+References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1424964285-27480-2-git-send-email-ajaykumar.rs@samsung.com>
+ <54F41A8B.4020400@samsung.com>
+ <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="y62i5p+dJyqelKOt"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33928 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756509AbbCCOOT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Mar 2015 09:14:19 -0500
-Content-Disposition: inline
-In-Reply-To: <1425299763-4066822-3-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, dmitry.torokhov@gmail.com, ch.naveen@samsung.com, a.kesavan@samsung.com, cw00.choi@samsung.com, jic23@kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, padma.v@samsung.com
 
-
---y62i5p+dJyqelKOt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Mar 02, 2015 at 01:35:55PM +0100, Arnd Bergmann wrote:
-> As a prerequisite for moving s3c64xx into multiplatform configurations,
-> we need to change the smartq audio driver to stop using hardcoded
-> gpio numbers from the header file, and instead pass the gpio data
-> through platform_data.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---y62i5p+dJyqelKOt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJU9cGrAAoJECTWi3JdVIfQWqQH/RseZcEzYwlUNS4ERrYkmyEd
-ep2OgBGvJ5uwc387JvFqsbv58V/RANETNCFaNKBb3+12K+PJe9ZQcDskmrGcDrsl
-rq3+dje2kG9L4zmfoZ0cG5za1EKDqqCEO/60ll6qJHeNR8t89w93DztP+iBQwVab
-muXiDxyFWUQJCXopmmKhjZVixpHS3S8HPGoJ0xuxreDwAIZScGpa3HY1K4UHihC9
-DDT2iMUugrKvLY8YKFul4A5VJPSXDVMZWUw16aSOKFoSp8mo05AuwMYWfgNwbDPo
-JyX7AU+LF1ZUcoOR2ExnD5iVCf5QPnwYZB41k9MhAkg4Tg47mO0XpbpsaV2TvpQ=
-=D04b
------END PGP SIGNATURE-----
-
---y62i5p+dJyqelKOt--
+SGksCgoyMDE1LTAzLTAyIDE5OjU3IEdNVCswOTowMCBBamF5IGt1bWFyIDxhamF5bnVtYkBnbWFp
+bC5jb20+Ogo+IE9uIE1vbiwgTWFyIDIsIDIwMTUgYXQgMTozOCBQTSwgQW5kcnplaiBIYWpkYSA8
+YS5oYWpkYUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+IE9uIDAyLzI2LzIwMTUgMDQ6MjQgUE0sIEFq
+YXkgS3VtYXIgd3JvdGU6Cj4+PiAqIE1vZGlmeSBERUNPTi1JTlQgZHJpdmVyIHRvIHN1cHBvcnQg
+REVDT04tRVhULgo+Pj4gKiBBZGQgYSB0YWJsZSBvZiBwb3JjaCB2YWx1ZXMgbmVlZGVkIHRvIHNl
+dCB0aW1pbmcgcmVnaXN0ZXJzIG9mIERFQ09OLUVYVC4KPj4+ICogREVDT04tRVhUIHN1cHBvcnRz
+IG9ubHkgSC93IFRyaWdnZXJlZCBDT01NQU5EIG1vZGUuCj4+PiAqIERFQ09OLUVYVCBzdXBwb3J0
+cyBvbmx5IG9uZSBETUEgd2luZG93KHdpbmRvdyAxKSwgc28gbW9kaWZ5Cj4+PiAgIGFsbCB3aW5k
+b3cgbWFuYWdlbWVudCByb3V0aW5lcyB0byBzdXBwb3J0IDIgd2luZG93cyBvZiBERUNPTi1JTlQK
+Pj4+ICAgYW5kIDEgd2luZG93IG9mIERFQ09OLUVYVC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBB
+amF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+PiAtLS0KPj4+ICAuLi4vZGV2
+aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dCAgICB8ICAgIDggKy0KPj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgICAgICB8ICAy
+MjkgKysrKysrKysrKysrKysrKysrLS0KPj4+ICBpbmNsdWRlL3ZpZGVvL2V4eW5vczdfZGVjb24u
+aCAgICAgICAgICAgICAgICAgICAgICB8ICAgMTMgKysKPj4+ICAzIGZpbGVzIGNoYW5nZWQsIDIz
+MCBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkKPj4+CgotLSBzbmlwIC0tCgo+Pj4gIHN0
+YXRpYyB2b2lkIGRlY29uX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+Pj4g
+IHsKPj4+ICAgICAgIHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7Cj4+PiAr
+ICAgICBzdHJ1Y3QgZGVjb25fZHJpdmVyX2RhdGEgKmRydl9kYXRhID0gY3R4LT5kcml2ZXJfZGF0
+YTsKPj4+ICAgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0gJmNydGMtPmJhc2Uu
+bW9kZTsKPj4+ICsgICAgIHN0cnVjdCBkZWNvbl9leHRfdmlkZW9tb2RlICpteV9tb2RlOwo+Pj4g
+ICAgICAgdTMyIHZhbCwgY2xrZGl2Owo+Pj4KPj4+ICAgICAgIGlmIChjdHgtPnN1c3BlbmRlZCkK
+Pj4+IEBAIC0yMDAsNiArMzA2LDM4IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NvbW1pdChzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+Pj4gICAgICAgaWYgKG1vZGUtPmh0b3RhbCA9PSAwIHx8
+IG1vZGUtPnZ0b3RhbCA9PSAwKQo+Pj4gICAgICAgICAgICAgICByZXR1cm47Cj4+Pgo+Pj4gKyAg
+ICAgaWYgKGRydl9kYXRhLT5kZWNvbl90eXBlID09IERFQ09OX0VYVCkgewo+Pj4gKyAgICAgICAg
+ICAgICBpZiAoKG1vZGUtPmhkaXNwbGF5ID09IDcyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDQ4
+MCkgJiYKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAo
+bW9kZS0+dnJlZnJlc2ggPT0gNjApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUg
+PSAmZGVjb25fZXh0X3BvcmNoc1tNT0RFXzcyMF80ODBfNjBdOwo+Pj4gKyAgICAgICAgICAgICBp
+ZiAoKG1vZGUtPmhkaXNwbGF5ID09IDcyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDU3NikgJiYK
+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+
+dnJlZnJlc2ggPT0gNTApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVj
+b25fZXh0X3BvcmNoc1tNT0RFXzcyMF81NzZfNTBdOwo+Pj4gKyAgICAgICAgICAgICBpZiAoKG1v
+ZGUtPmhkaXNwbGF5ID09IDEyODApICYmIChtb2RlLT52ZGlzcGxheSA9PSA3MjApICYmCj4+PiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKG1vZGUtPnZyZWZy
+ZXNoID09IDYwKSkKPj4+ICsgICAgICAgICAgICAgICAgICAgICBteV9tb2RlID0gJmRlY29uX2V4
+dF9wb3JjaHNbTU9ERV8xMjgwXzcyMF82MF07Cj4+PiArICAgICAgICAgICAgIGlmICgobW9kZS0+
+aGRpc3BsYXkgPT0gMTI4MCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDcyMCkgJiYKPj4+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+dnJlZnJlc2gg
+PT0gNTApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVjb25fZXh0X3Bv
+cmNoc1tNT0RFXzEyODBfNzIwXzUwXTsKPj4+ICsgICAgICAgICAgICAgaWYgKChtb2RlLT5oZGlz
+cGxheSA9PSAxOTIwKSAmJiAobW9kZS0+dmRpc3BsYXkgPT0gMTA4MCkgJiYKPj4+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+dnJlZnJlc2ggPT0g
+NjApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVjb25fZXh0X3BvcmNo
+c1tNT0RFXzE5MjBfMTA4MF82MF07Cj4+PiArICAgICAgICAgICAgIGlmICgobW9kZS0+aGRpc3Bs
+YXkgPT0gMTkyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDEwODApICYmCj4+PiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKG1vZGUtPnZyZWZyZXNoID09IDUw
+KSkKPj4+ICsgICAgICAgICAgICAgICAgICAgICBteV9tb2RlID0gJmRlY29uX2V4dF9wb3JjaHNb
+TU9ERV8xOTIwXzEwODBfNTBdOwo+Pj4gKyAgICAgICAgICAgICBpZiAoKG1vZGUtPmhkaXNwbGF5
+ID09IDE5MjApICYmIChtb2RlLT52ZGlzcGxheSA9PSAxMDgwKSAmJgo+Pj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChtb2RlLT52cmVmcmVzaCA9PSAzMCkp
+Cj4+PiArICAgICAgICAgICAgICAgICAgICAgbXlfbW9kZSA9ICZkZWNvbl9leHRfcG9yY2hzW01P
+REVfMTkyMF8xMDgwXzMwXTsKPj4+ICsgICAgICAgICAgICAgaWYgKChtb2RlLT5oZGlzcGxheSA9
+PSAxOTIwKSAmJiAobW9kZS0+dmRpc3BsYXkgPT0gMTA4MCkgJiYKPj4+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+dnJlZnJlc2ggPT0gMjUpKQo+
+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVjb25fZXh0X3BvcmNoc1tNT0RF
+XzE5MjBfMTA4MF8yNV07Cj4+PiArICAgICAgICAgICAgIGlmICgobW9kZS0+aGRpc3BsYXkgPT0g
+MTkyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDEwODApICYmCj4+PiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKG1vZGUtPnZyZWZyZXNoID09IDI0KSkKPj4+
+ICsgICAgICAgICAgICAgICAgICAgICBteV9tb2RlID0gJmRlY29uX2V4dF9wb3JjaHNbTU9ERV8x
+OTIwXzEwODBfMjRdOwo+Pj4gKwo+Pj4gKyAgICAgICAgICAgICBkZWNvbl9leHRfc2V0X3RpbWlu
+Zyhtb2RlLCBteV9tb2RlKTsKPj4+ICsgICAgIH0KPj4+ICsKPj4KPj4gSSBndWVzcyB0aGVzZSB1
+Z2x5IGlmcyBjb3VsZCBiZSByZXBsYWNlZCBieSBzaW1wbGUgbG9vcDoKPj4gICAgICAgICBmb3Ig
+KGkgPSAwOyBpIDwgQVJSQVlfU0laRShkZWNvbl9leHRfcG9yY2hzKTsgKytpKSB7Cj4+ICAgICAg
+ICAgICAgICAgICBpZiAobW9kZS0+aGRpc3BsYXkgIT0gZGVjb25fZXh0X3BvcmNoc1tpXS5oZGlz
+cGxheSB8fCAuLi4pCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOwo+PiAgICAg
+ICAgICAgICAgICAgZGVjb25fZXh0X3NldF90aW1pbmcobW9kZSwgJmRlY29uX2V4dF9wb3JjaHNb
+aV0pOwo+PiAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICAgICAgICAgfQo+IE9rLCBUaG91Z2gg
+dGhlIG51bWJlciBvZiBjaGVja3MgaXMgdGhlIHNhbWUsIHlvdXIgY29kZSBhdCBsZWFzdCBsb29r
+cyBiZXR0ZXIuIDopCj4KPj4gQW55d2F5IEkgaGF2ZSBkb3VidHMgaWYgY29tbWl0IHNob3VsZCBt
+b2RpZnkgY3J0Yy5iYXNlLm1vZGUgSSBndWVzcwo+PiBiZXR0ZXIgcGxhY2UgZm9yIGl0IGNhbiBi
+ZSBpbiAqX2ZpeHVwIGNhbGxiYWNrLgo+IElua2k/IFdoYXQgaXMgeW91ciBzdWdnZXN0aW9uPwoK
+QWdyZWUgd2l0aCBBbmRyemVqLiBUaGUgZml4dXAgY2FsbGJhY2sgd291bGQgYmUgYSByaWdodCBw
+bGFjZSB0byBmaW5kCmEgdmFsaWQgbW9kZS4gQnkgdGhlIHdheSwgd2hhdCBpZiBtb2RlLT5oZGlz
+cGxheS92ZGlzcGxheS92cmVmcmVzaCBhcmUKbm90IHN1cHBvcnRlZCBmb3IgYWxsIERFQ09OX0VY
+VCBtb2Rlcz8KClRoYW5rcywKSW5raSBEYWUKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
