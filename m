@@ -1,68 +1,66 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH v2 3/3] ARM: dts: exynos5420: add async-bridge clocks
- to disp1 power domain
-Date: Tue, 03 Mar 2015 09:12:20 +0100
-Message-ID: <54F56CE4.8000704@collabora.co.uk>
-References: <54D48701.10105@collabora.co.uk> <1423220154-5333-1-git-send-email-a.hajda@samsung.com> <54D4A534.8060004@collabora.co.uk>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4
+Date: Tue, 03 Mar 2015 12:28:17 +0100
+Message-ID: <13977718.vr52PylqCh@amdc1032>
+References: <1424256325-16659-1-git-send-email-k.kozlowski@samsung.com>
+ <2802418.zt8CxNGGkT@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34275 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751500AbbCCIMZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Mar 2015 03:12:25 -0500
-In-Reply-To: <54D4A534.8060004@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <2802418.zt8CxNGGkT@amdc1032>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Liquid.Acid@gmx.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hello Kukjin,
 
-On 02/06/2015 12:27 PM, Javier Martinez Canillas wrote:
-> Hello Andrzej,
+Hi Kukjin,
+
+It has been a month since this regression fix was originally posted:
+	https://lkml.org/lkml/2015/2/3/481
+
+Could you please review/apply it?  Thank you.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+On Monday, February 23, 2015 05:25:48 PM Bartlomiej Zolnierkiewicz wrote:
 > 
-> On 02/06/2015 11:55 AM, Andrzej Hajda wrote:
->> FIMD and MIXER IPs in disp1 power domain have async-bridges (to GSCALER),
->> therefore their clocks should be enabled during power domain switch.
->> 
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->> Hi,
->> 
->> This is 2nd version of the patch. After decrypting manual and discussion
->> with Marek I guess this set of clocks is more apropriate - async-bridges
->> are present in MIXER and FIMD, so their clocks should be enabled.
->>
+> Hi,
 > 
-> I just tested this version on my Exynos5420 Peach Pit and the power domain
-> failed error does not happen anymore even after enabling and disabling the
-> HDMI display several times.
+> On Wednesday, February 18, 2015 11:45:25 AM Krzysztof Kozlowski wrote:
+> > On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
+> > 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+> > controller") the second suspend to RAM failed. First suspend worked fine
+> > but the next one hang just after powering down of secondary CPUs (system
+> > consumed energy as it would be running but was not responsive).
+> > 
+> > The issue was caused by enabling delayed reset assertion for CPU0 just
+> > after issuing power down of cores. This was introduced for Exynos4 in
+> > 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
+> > 
+> > The whole behavior is not well documented but after checking with vendor
+> > code this should be done like this (on Exynos4):
+> > 1. Enable delayed reset assertion when system is running (for all CPUs).
+> > 2. Disable delayed reset assertion before suspending the system.
+> >    This can be done after powering off secondary CPUs.
+> > 3. Re-enable the delayed reset assertion when system is resumed.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
+> > Cc: <stable@vger.kernel.org>
 > 
-> Thanks a lot for fixing this since the dependency was not clear to me from
-> reading the manual.
+> It turned out that this patch is also needed to fix cpuidle AFTR mode
+> hang on Trats2.
 > 
->> The 1st version worked for me due to fact I have forgot to remove
->> clk_ignore_unused kernel boot option during tests ;)
->>
-> 
-> Yes, that has bitten me too many times as well :)
-> 
->> Regards
->> Andrzej
->> ---
+> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > 
 > Best regards,
-> Javier
-> 
-
-Could you please pick this patch and patches 1/2 and 2/3 from the series [0]?
-
-These are needed to fix DISP1 power domain issues and HDMI on Exynos542x.
-
-Thanks a lot and best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2015/2/5/265
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
