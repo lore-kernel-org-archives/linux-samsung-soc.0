@@ -1,132 +1,82 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 9/9] ARM: EXYNOS: make exynos 4210 cpuidle build without SMP
-Date: Tue, 03 Mar 2015 13:35:04 +0100
-Message-ID: <5040084.lEIUokD8Gn@amdc1032>
-References: <1423769746-582629-1-git-send-email-arnd@arndb.de>
- <2875270.gE4YDsjeJe@wuerfel>
+Subject: Re: [PATCH] ARM: fix exynos randconfig build error
+Date: Tue, 03 Mar 2015 13:44:34 +0100
+Message-ID: <14257250.yOR9pFcIkO@amdc1032>
+References: <E1YQa78-0000O0-A4@rmk-PC.arm.linux.org.uk>
+ <54EF9091.30802@kernel.org> <54F4BC92.2050405@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15733 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:16593 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752254AbbCCMft (ORCPT
+	with ESMTP id S1751625AbbCCMpR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Mar 2015 07:35:49 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Tue, 3 Mar 2015 07:45:17 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NKM000L7YZMAX20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 03 Mar 2015 21:35:46 +0900 (KST)
-In-reply-to: <2875270.gE4YDsjeJe@wuerfel>
+ 17 2011)) with ESMTP id <0NKM000UDZFFC020@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Mar 2015 21:45:15 +0900 (KST)
+In-reply-to: <54F4BC92.2050405@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, arm@kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
 Hi,
 
-Have you seen my patch from 4th February?
-
-	https://lkml.org/lkml/2015/2/4/521
-
-I think that it is cleaner as it doesn't add new ifdefs,
-results in less code being compiled for UP and doesn't
-open-code cpu_boot_reg_base().  It has also been tested
-on Exynos4210 Origen board.
-
-PS Please cc: me and Daniel on Exynos cpuidle changes
-(MAINTAINERS file contains a relevant entry).
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-On Monday, March 02, 2015 10:29:42 PM Arnd Bergmann wrote:
-> arch/arm/mach-exynos/pm.c: In function 'exynos_cpu0_enter_aftr':
-> arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of function 'arch_send_wakeup_ipi_mask' [-Werror=implicit-function-declaration]
->     arch_send_wakeup_ipi_mask(cpumask_of(1));
+On Tuesday, March 03, 2015 04:40:02 AM Kukjin Kim wrote:
+> On 02/27/15 06:30, Kukjin Kim wrote:
+> > On 02/25/15 20:46, Krzysztof Kozlowski wrote:
+> >> 2015-02-25 12:26 GMT+01:00 Russell King <rmk+kernel@arm.linux.org.uk>:
+> >>> The following error was observed with SMP=n in v4.0-rc1:
+> >>>
+> >>> arch/arm/mach-exynos/pm.c: In function 'exynos_cpu0_enter_aftr':
+> >>> arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of function 'arch_send_wakeup_ipi_mask' [-Werror=implicit-function-declaration]
+> >>>
+> >>> As the code unconditionally calls a function only available with SMP=y,
+> >>> make the Exynos PM support depend on SMP.
+> >>>
+> >>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> >>
+> >> Hi,
+> >>
+> >> Thanks for the patch but this already waits for Kukjin top be picked
+> >> up. The first patch was similar to yours (adds dependency on SMP),
+> >> sent on 4th of February:
+> >> https://patchwork.ozlabs.org/patch/436231/
+> >>
+> >> But later Bartlomiej fixed this in other way (allowing to use cpuidle
+> >> on non-SMP):
+> >> https://patchwork.ozlabs.org/patch/436445/
+> >>
+> >> Unfortunately none of them were picked up.
+> >>
+> > I've missed the fix, sorry.
+> > 
+> > BTW, as you know, all of exynos SoCs are based on SMP so generally (in
+> > normal case) there is no reason to use non-SMP on exynos
+> > platforms...even though I understand the build error should be fixed...
+> > 
+> > Anyway, I'll have a look Bart's patch and Russell's fix in this weekend.
+> > 
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/mach-exynos/pm.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index e6209dadc00d..a91aefaee31d 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -187,6 +187,7 @@ static int exynos_cpu0_enter_aftr(void)
->  {
->  	int ret = -1;
->  
-> +#ifdef CONFIG_SMP
->  	/*
->  	 * If the other cpu is powered on, we have to power it off, because
->  	 * the AFTR state won't work otherwise
-> @@ -216,10 +217,12 @@ static int exynos_cpu0_enter_aftr(void)
->  			cpu_relax();
->  		}
->  	}
-> +#endif
->  
->  	exynos_enter_aftr();
->  	ret = 0;
->  
-> +#ifdef CONFIG_SMP
->  abort:
->  	if (cpu_online(1)) {
->  		/*
-> @@ -246,11 +249,12 @@ abort:
->  			arch_send_wakeup_ipi_mask(cpumask_of(1));
->  		}
->  	}
-> +#endif
->  
->  	return ret;
->  }
->  
-> -static int exynos_wfi_finisher(unsigned long flags)
-> +static int __maybe_unused exynos_wfi_finisher(unsigned long flags)
->  {
->  	cpu_do_idle();
->  
-> @@ -260,7 +264,7 @@ static int exynos_wfi_finisher(unsigned long flags)
->  static int exynos_cpu1_powerdown(void)
->  {
->  	int ret = -1;
-> -
-> +#ifdef CONFIG_SMP
->  	/*
->  	 * Idle sequence for cpu1
->  	 */
-> @@ -282,13 +286,20 @@ cpu1_aborted:
->  	 * Notify cpu 0 that cpu 1 is awake
->  	 */
->  	atomic_set(&cpu1_wakeup, 1);
-> -
-> +#endif
->  	return ret;
->  }
->  
->  static void exynos_pre_enter_aftr(void)
->  {
-> -	__raw_writel(virt_to_phys(exynos_cpu_resume), cpu_boot_reg_base());
-> +	void *reg_base;
-> +
-> +	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-> +		reg_base = pmu_base_addr + S5P_INFORM5;
-> +	else
-> +		reg_base = sysram_base_addr;
-> +
-> +	__raw_writel(virt_to_phys(exynos_cpu_resume), reg_base);
->  }
->  
->  static void exynos_post_enter_aftr(void)
-> 
+> Firstly, let me take rmk's patch for the randconfig build error...BTW
+
+What is wrong with picking my patch instead?  It is non-invasive and fixes
+cpuidle support on UP (which is a regression from previous kernels)?
+
+https://lkml.org/lkml/2015/2/4/521
+
+> I'm still wondering exynos stuff needs to support non-SMP and need to
+> think more about its usefulness?...
+
+Currently UP is supported and at least I find it useful for testing/debug
+purposes.  If you want to to make Exynos SMP only thats OK but it should
+be done globally for Exynos arch support not just for cpuidle support.
+
 Best regards,
 --
 Bartlomiej Zolnierkiewicz
