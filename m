@@ -1,106 +1,221 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: decon: Add support for DECON-EXT
-Date: Wed, 4 Mar 2015 00:30:15 +0900
-Message-ID: <CAAQKjZNy1a-5tU7yAH+7U7hUt_q4RBw+OW3++eHxoO9esvJmcw@mail.gmail.com>
-References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
- <1424964285-27480-2-git-send-email-ajaykumar.rs@samsung.com>
- <54F41A8B.4020400@samsung.com>
- <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL 1/2] Samsung fixes-1 for v4.0
+Date: Tue, 03 Mar 2015 16:48:39 +0100
+Message-ID: <1651242.NSDETIvUSP@amdc1032>
+References: <54F4B250.5080200@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:29276 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756344AbbCCPta convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Mar 2015 10:49:30 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NKN00E577YFDA90@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Mar 2015 00:49:27 +0900 (KST)
+In-reply-to: <54F4B250.5080200@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>
 
-SGksCgoyMDE1LTAzLTAyIDE5OjU3IEdNVCswOTowMCBBamF5IGt1bWFyIDxhamF5bnVtYkBnbWFp
-bC5jb20+Ogo+IE9uIE1vbiwgTWFyIDIsIDIwMTUgYXQgMTozOCBQTSwgQW5kcnplaiBIYWpkYSA8
-YS5oYWpkYUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+IE9uIDAyLzI2LzIwMTUgMDQ6MjQgUE0sIEFq
-YXkgS3VtYXIgd3JvdGU6Cj4+PiAqIE1vZGlmeSBERUNPTi1JTlQgZHJpdmVyIHRvIHN1cHBvcnQg
-REVDT04tRVhULgo+Pj4gKiBBZGQgYSB0YWJsZSBvZiBwb3JjaCB2YWx1ZXMgbmVlZGVkIHRvIHNl
-dCB0aW1pbmcgcmVnaXN0ZXJzIG9mIERFQ09OLUVYVC4KPj4+ICogREVDT04tRVhUIHN1cHBvcnRz
-IG9ubHkgSC93IFRyaWdnZXJlZCBDT01NQU5EIG1vZGUuCj4+PiAqIERFQ09OLUVYVCBzdXBwb3J0
-cyBvbmx5IG9uZSBETUEgd2luZG93KHdpbmRvdyAxKSwgc28gbW9kaWZ5Cj4+PiAgIGFsbCB3aW5k
-b3cgbWFuYWdlbWVudCByb3V0aW5lcyB0byBzdXBwb3J0IDIgd2luZG93cyBvZiBERUNPTi1JTlQK
-Pj4+ICAgYW5kIDEgd2luZG93IG9mIERFQ09OLUVYVC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBB
-amF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+PiAtLS0KPj4+ICAuLi4vZGV2
-aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dCAgICB8ICAgIDggKy0KPj4+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgICAgICB8ICAy
-MjkgKysrKysrKysrKysrKysrKysrLS0KPj4+ICBpbmNsdWRlL3ZpZGVvL2V4eW5vczdfZGVjb24u
-aCAgICAgICAgICAgICAgICAgICAgICB8ICAgMTMgKysKPj4+ICAzIGZpbGVzIGNoYW5nZWQsIDIz
-MCBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkKPj4+CgotLSBzbmlwIC0tCgo+Pj4gIHN0
-YXRpYyB2b2lkIGRlY29uX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+Pj4g
-IHsKPj4+ICAgICAgIHN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7Cj4+PiAr
-ICAgICBzdHJ1Y3QgZGVjb25fZHJpdmVyX2RhdGEgKmRydl9kYXRhID0gY3R4LT5kcml2ZXJfZGF0
-YTsKPj4+ICAgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlID0gJmNydGMtPmJhc2Uu
-bW9kZTsKPj4+ICsgICAgIHN0cnVjdCBkZWNvbl9leHRfdmlkZW9tb2RlICpteV9tb2RlOwo+Pj4g
-ICAgICAgdTMyIHZhbCwgY2xrZGl2Owo+Pj4KPj4+ICAgICAgIGlmIChjdHgtPnN1c3BlbmRlZCkK
-Pj4+IEBAIC0yMDAsNiArMzA2LDM4IEBAIHN0YXRpYyB2b2lkIGRlY29uX2NvbW1pdChzdHJ1Y3Qg
-ZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+Pj4gICAgICAgaWYgKG1vZGUtPmh0b3RhbCA9PSAwIHx8
-IG1vZGUtPnZ0b3RhbCA9PSAwKQo+Pj4gICAgICAgICAgICAgICByZXR1cm47Cj4+Pgo+Pj4gKyAg
-ICAgaWYgKGRydl9kYXRhLT5kZWNvbl90eXBlID09IERFQ09OX0VYVCkgewo+Pj4gKyAgICAgICAg
-ICAgICBpZiAoKG1vZGUtPmhkaXNwbGF5ID09IDcyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDQ4
-MCkgJiYKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAo
-bW9kZS0+dnJlZnJlc2ggPT0gNjApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUg
-PSAmZGVjb25fZXh0X3BvcmNoc1tNT0RFXzcyMF80ODBfNjBdOwo+Pj4gKyAgICAgICAgICAgICBp
-ZiAoKG1vZGUtPmhkaXNwbGF5ID09IDcyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDU3NikgJiYK
-Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+
-dnJlZnJlc2ggPT0gNTApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVj
-b25fZXh0X3BvcmNoc1tNT0RFXzcyMF81NzZfNTBdOwo+Pj4gKyAgICAgICAgICAgICBpZiAoKG1v
-ZGUtPmhkaXNwbGF5ID09IDEyODApICYmIChtb2RlLT52ZGlzcGxheSA9PSA3MjApICYmCj4+PiAr
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKG1vZGUtPnZyZWZy
-ZXNoID09IDYwKSkKPj4+ICsgICAgICAgICAgICAgICAgICAgICBteV9tb2RlID0gJmRlY29uX2V4
-dF9wb3JjaHNbTU9ERV8xMjgwXzcyMF82MF07Cj4+PiArICAgICAgICAgICAgIGlmICgobW9kZS0+
-aGRpc3BsYXkgPT0gMTI4MCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDcyMCkgJiYKPj4+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+dnJlZnJlc2gg
-PT0gNTApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVjb25fZXh0X3Bv
-cmNoc1tNT0RFXzEyODBfNzIwXzUwXTsKPj4+ICsgICAgICAgICAgICAgaWYgKChtb2RlLT5oZGlz
-cGxheSA9PSAxOTIwKSAmJiAobW9kZS0+dmRpc3BsYXkgPT0gMTA4MCkgJiYKPj4+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+dnJlZnJlc2ggPT0g
-NjApKQo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVjb25fZXh0X3BvcmNo
-c1tNT0RFXzE5MjBfMTA4MF82MF07Cj4+PiArICAgICAgICAgICAgIGlmICgobW9kZS0+aGRpc3Bs
-YXkgPT0gMTkyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDEwODApICYmCj4+PiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKG1vZGUtPnZyZWZyZXNoID09IDUw
-KSkKPj4+ICsgICAgICAgICAgICAgICAgICAgICBteV9tb2RlID0gJmRlY29uX2V4dF9wb3JjaHNb
-TU9ERV8xOTIwXzEwODBfNTBdOwo+Pj4gKyAgICAgICAgICAgICBpZiAoKG1vZGUtPmhkaXNwbGF5
-ID09IDE5MjApICYmIChtb2RlLT52ZGlzcGxheSA9PSAxMDgwKSAmJgo+Pj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChtb2RlLT52cmVmcmVzaCA9PSAzMCkp
-Cj4+PiArICAgICAgICAgICAgICAgICAgICAgbXlfbW9kZSA9ICZkZWNvbl9leHRfcG9yY2hzW01P
-REVfMTkyMF8xMDgwXzMwXTsKPj4+ICsgICAgICAgICAgICAgaWYgKChtb2RlLT5oZGlzcGxheSA9
-PSAxOTIwKSAmJiAobW9kZS0+dmRpc3BsYXkgPT0gMTA4MCkgJiYKPj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobW9kZS0+dnJlZnJlc2ggPT0gMjUpKQo+
-Pj4gKyAgICAgICAgICAgICAgICAgICAgIG15X21vZGUgPSAmZGVjb25fZXh0X3BvcmNoc1tNT0RF
-XzE5MjBfMTA4MF8yNV07Cj4+PiArICAgICAgICAgICAgIGlmICgobW9kZS0+aGRpc3BsYXkgPT0g
-MTkyMCkgJiYgKG1vZGUtPnZkaXNwbGF5ID09IDEwODApICYmCj4+PiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKG1vZGUtPnZyZWZyZXNoID09IDI0KSkKPj4+
-ICsgICAgICAgICAgICAgICAgICAgICBteV9tb2RlID0gJmRlY29uX2V4dF9wb3JjaHNbTU9ERV8x
-OTIwXzEwODBfMjRdOwo+Pj4gKwo+Pj4gKyAgICAgICAgICAgICBkZWNvbl9leHRfc2V0X3RpbWlu
-Zyhtb2RlLCBteV9tb2RlKTsKPj4+ICsgICAgIH0KPj4+ICsKPj4KPj4gSSBndWVzcyB0aGVzZSB1
-Z2x5IGlmcyBjb3VsZCBiZSByZXBsYWNlZCBieSBzaW1wbGUgbG9vcDoKPj4gICAgICAgICBmb3Ig
-KGkgPSAwOyBpIDwgQVJSQVlfU0laRShkZWNvbl9leHRfcG9yY2hzKTsgKytpKSB7Cj4+ICAgICAg
-ICAgICAgICAgICBpZiAobW9kZS0+aGRpc3BsYXkgIT0gZGVjb25fZXh0X3BvcmNoc1tpXS5oZGlz
-cGxheSB8fCAuLi4pCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOwo+PiAgICAg
-ICAgICAgICAgICAgZGVjb25fZXh0X3NldF90aW1pbmcobW9kZSwgJmRlY29uX2V4dF9wb3JjaHNb
-aV0pOwo+PiAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+ICAgICAgICAgfQo+IE9rLCBUaG91Z2gg
-dGhlIG51bWJlciBvZiBjaGVja3MgaXMgdGhlIHNhbWUsIHlvdXIgY29kZSBhdCBsZWFzdCBsb29r
-cyBiZXR0ZXIuIDopCj4KPj4gQW55d2F5IEkgaGF2ZSBkb3VidHMgaWYgY29tbWl0IHNob3VsZCBt
-b2RpZnkgY3J0Yy5iYXNlLm1vZGUgSSBndWVzcwo+PiBiZXR0ZXIgcGxhY2UgZm9yIGl0IGNhbiBi
-ZSBpbiAqX2ZpeHVwIGNhbGxiYWNrLgo+IElua2k/IFdoYXQgaXMgeW91ciBzdWdnZXN0aW9uPwoK
-QWdyZWUgd2l0aCBBbmRyemVqLiBUaGUgZml4dXAgY2FsbGJhY2sgd291bGQgYmUgYSByaWdodCBw
-bGFjZSB0byBmaW5kCmEgdmFsaWQgbW9kZS4gQnkgdGhlIHdheSwgd2hhdCBpZiBtb2RlLT5oZGlz
-cGxheS92ZGlzcGxheS92cmVmcmVzaCBhcmUKbm90IHN1cHBvcnRlZCBmb3IgYWxsIERFQ09OX0VY
-VCBtb2Rlcz8KClRoYW5rcywKSW5raSBEYWUKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+
+Hi,
+
+On Tuesday, March 03, 2015 03:56:16 AM Kukjin Kim wrote:
+> The following changes since commit c517d838eb7d07bbe9507871fab3931dec=
+cff539:
+>=20
+>   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+>=20
+> are available in the git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.g=
+it
+> tags/samsung-fixes-1
+>=20
+> for you to fetch changes up to 8a68de64e984cfc49ecc22ac18155a7fe6dbbf=
+af:
+>=20
+>   ARM: EXYNOS: fix exynos randconfig build error (2015-03-03 03:37:57=
+ +0900)
+>=20
+> ----------------------------------------------------------------
+> Samsung fixes for v4.0
+>=20
+> - fix exynos randconfig build error with SMP=3Dn
+> - fix wrong hwirq of RTC interrupt for exynos3250
+> - fix usage of LDREX and STREX after disabling cache coherency
+>=20
+> ----------------------------------------------------------------
+> Chanwoo Choi (1):
+>       ARM: EXYNOS: Fix wrong hwirq of RTC interrupt for Exynos3250 So=
+C
+>=20
+> Krzysztof Kozlowski (1):
+>       ARM: EXYNOS: Don't use LDREX and STREX after disabling cache co=
+herency
+>=20
+> Russell King (1):
+>       ARM: EXYNOS: fix exynos randconfig build error
+
+Has anyone actually tested this patch with SMP=3Dn && PM_SLEEP=3Dy
+or SMP=3Dn && CONFIG_ARM_EXYNOS_CPUIDLE=3Dy?
+
+The patch is just insufficient as it prevents build of
+arch/arm/mach-exynos/pm.o and arch/arm/mach-exynos/sleep.o
+for SMP=3Dn.  Both files are needed for PM_SLEEP=3Dy code that
+resides in arch/arm/mach-exynos/suspend.c:
+
+  LD      init/built-in.o
+arch/arm/mach-exynos/built-in.o: In function `exynos_save_cp15':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/firmware.c:36: undef=
+ined reference to `exynos_cpu_resume_ns'
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/firmware.c:36: undef=
+ined reference to `cp15_save_power'
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/firmware.c:36: undef=
+ined reference to `cp15_save_diag'
+arch/arm/mach-exynos/built-in.o: In function `exynos5420_pm_resume':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:435: undef=
+ined reference to `exynos_pm_central_resume'
+arch/arm/mach-exynos/built-in.o: In function `__virt_to_phys':
+/home/bzolnier/sam/linux-sprc/./arch/arm/include/asm/memory.h:228: unde=
+fined reference to `exynos_cpu_resume'
+/home/bzolnier/sam/linux-sprc/./arch/arm/include/asm/memory.h:228: unde=
+fined reference to `exynos_cpu_resume'
+arch/arm/mach-exynos/built-in.o: In function `exynos3250_pm_resume':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:395: undef=
+ined reference to `exynos_pm_central_resume'
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:405: undef=
+ined reference to `exynos_cpu_restore_register'
+arch/arm/mach-exynos/built-in.o: In function `exynos_pm_resume':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:365: undef=
+ined reference to `exynos_pm_central_resume'
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:382: undef=
+ined reference to `exynos_cpu_restore_register'
+arch/arm/mach-exynos/built-in.o: In function `exynos_pm_prepare':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:253: undef=
+ined reference to `exynos_cpu_resume'
+arch/arm/mach-exynos/built-in.o: In function `exynos_pm_suspend':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:322: undef=
+ined reference to `exynos_pm_central_suspend'
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:329: undef=
+ined reference to `exynos_cpu_save_register'
+arch/arm/mach-exynos/built-in.o: In function `exynos5420_pm_suspend':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/suspend.c:338: undef=
+ined reference to `exynos_pm_central_suspend'
+arch/arm/mach-exynos/built-in.o: In function `exynos_dt_machine_init':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/exynos.c:284: undefi=
+ned reference to `cpuidle_coupled_exynos_data'
+arch/arm/mach-exynos/built-in.o:(.data+0x70): undefined reference to `e=
+xynos_enter_aftr'
+make: *** [vmlinux] Error 1
+
+Moreover it still allows to select Exynos cpuidle support
+(CONFIG_ARM_EXYNOS_CPUIDLE=3Dy) with SMP=3Dn which results in:
+
+  LD      init/built-in.o
+arch/arm/mach-exynos/built-in.o: In function `exynos_dt_machine_init':
+/home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/exynos.c:284: undefi=
+ned reference to `cpuidle_coupled_exynos_data'
+arch/arm/mach-exynos/built-in.o:(.data+0x70): undefined reference to `e=
+xynos_enter_aftr'
+make: *** [vmlinux] Error 1
+
+
+The full solution for issue that "ARM: EXYNOS: fix exynos randconfig
+build error" patch attempted to fix has been posted by me on 4th of
+=46ebruary (https://lkml.org/lkml/2015/2/4/521) and for completness is
+also included below.  It fixes a v4.0-rc1 regression caused by
+a recent addition of cpuidle coupled support for Exynos4210 SoC.
+It makes only the new Exynos4210 coupled cpuidle support to be
+dependent on SMP.  On UP cpuidle will use the old non-coupled code
+for Exynos4210 which is an expected behavior (as it was in v3.19).
+The patch has been tested on Exynos4210 Origen board with both SMP
+and UP kernels and in both cases it worked fine.
+
+
+=46rom: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
+
+The Exynos cpuidle driver has coupled cpuidle built-in so it cannot be
+built without SMP:
+
+arch/arm/mach-exynos/pm.c: In function =E2=80=98exynos_cpu0_enter_aftr=E2=
+=80=99:
+arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of functio=
+n =E2=80=98arch_send_wakeup_ipi_mask=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+arch/arm/mach-exynos/built-in.o: In function `exynos_pre_enter_aftr':
+=2E./arch/arm/mach-exynos/pm.c:300: undefined reference to `cpu_boot_re=
+g_base'
+arch/arm/mach-exynos/built-in.o: In function `exynos_cpu1_powerdown':
+=2E./arch/arm/mach-exynos/pm.c:282: undefined reference to `exynos_cpu_=
+power_down'
+
+=46ix it by adding missing checks for SMP.
+
+Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c    |    2 +-
+ arch/arm/mach-exynos/pm.c        |    2 ++
+ drivers/cpuidle/cpuidle-exynos.c |    3 ++-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+Index: b/arch/arm/mach-exynos/exynos.c
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+--- a/arch/arm/mach-exynos/exynos.c	2015-02-04 18:30:23.555819717 +0100
++++ b/arch/arm/mach-exynos/exynos.c	2015-02-04 18:43:23.539807815 +0100
+@@ -211,7 +211,7 @@ static void __init exynos_dt_machine_ini
+ 	if (!IS_ENABLED(CONFIG_SMP))
+ 		exynos_sysram_init();
+=20
+-#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
++#if defined(CONFIG_SMP) && defined(CONFIG_ARM_EXYNOS_CPUIDLE)
+ 	if (of_machine_is_compatible("samsung,exynos4210"))
+ 		exynos_cpuidle.dev.platform_data =3D &cpuidle_coupled_exynos_data;
+ #endif
+Index: b/arch/arm/mach-exynos/pm.c
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+--- a/arch/arm/mach-exynos/pm.c	2015-02-04 18:30:23.563819719 +0100
++++ b/arch/arm/mach-exynos/pm.c	2015-02-04 18:47:32.951804008 +0100
+@@ -181,6 +181,7 @@ void exynos_enter_aftr(void)
+ 	cpu_pm_exit();
+ }
+=20
++#if defined(CONFIG_SMP) && defined(CONFIG_ARM_EXYNOS_CPUIDLE)
+ static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
+=20
+ static int exynos_cpu0_enter_aftr(void)
+@@ -302,3 +303,4 @@ struct cpuidle_exynos_data cpuidle_coupl
+ 	.pre_enter_aftr		=3D exynos_pre_enter_aftr,
+ 	.post_enter_aftr		=3D exynos_post_enter_aftr,
+ };
++#endif /* CONFIG_SMP && CONFIG_ARM_EXYNOS_CPUIDLE */
+Index: b/drivers/cpuidle/cpuidle-exynos.c
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+--- a/drivers/cpuidle/cpuidle-exynos.c	2015-02-04 18:30:32.935819577 +0=
+100
++++ b/drivers/cpuidle/cpuidle-exynos.c	2015-02-04 18:46:01.619805400 +0=
+100
+@@ -117,7 +117,8 @@ static int exynos_cpuidle_probe(struct p
+ {
+ 	int ret;
+=20
+-	if (of_machine_is_compatible("samsung,exynos4210")) {
++	if (IS_ENABLED(CONFIG_SMP) &&
++	    of_machine_is_compatible("samsung,exynos4210")) {
+ 		exynos_cpuidle_pdata =3D pdev->dev.platform_data;
+=20
+ 		ret =3D cpuidle_register(&exynos_coupled_idle_driver,
