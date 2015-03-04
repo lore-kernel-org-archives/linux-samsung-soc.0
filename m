@@ -1,74 +1,57 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/2] Samsung fixes-1 for v4.0
-Date: Wed, 04 Mar 2015 21:13:32 +0100
-Message-ID: <3844945.fqZoGxPksl@wuerfel>
-References: <54F4B250.5080200@kernel.org> <1651242.NSDETIvUSP@amdc1032> <5506858.hZnoOahndE@amdc1032>
+Subject: Re: [PATCH 8/9] ARM: EXYNOS: suspend requires regulator access
+Date: Wed, 04 Mar 2015 22:14:01 +0100
+Message-ID: <4263601.lmZODAZr9H@wuerfel>
+References: <1423769746-582629-1-git-send-email-arnd@arndb.de> <2062492.pEav958W9c@wuerfel> <CAJKOXPf6eY4oZZe3tG51QnRhsvFuOVRmYsEpc4g0bwyAfip0EQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:53735 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.187]:63850 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932748AbbCDUdC (ORCPT
+	with ESMTP id S1751109AbbCDVOa convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Mar 2015 15:33:02 -0500
-In-Reply-To: <5506858.hZnoOahndE@amdc1032>
+	Wed, 4 Mar 2015 16:14:30 -0500
+In-Reply-To: <CAJKOXPf6eY4oZZe3tG51QnRhsvFuOVRmYsEpc4g0bwyAfip0EQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, arm@kernel.org, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Krzysztof =?utf-8?B?S296xYJvd3NraQ==?= <k.kozlowski.k@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "arm@kernel.org" <arm@kernel.org>, javier.martinez@collabora.co.uk, broonie@kernel.org
 
-On Tuesday 03 March 2015 17:23:52 Bartlomiej Zolnierkiewicz wrote:
-> On Tuesday, March 03, 2015 04:48:39 PM Bartlomiej Zolnierkiewicz wrote:
-> > On Tuesday, March 03, 2015 03:56:16 AM Kukjin Kim wrote:
-> > > The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
-> > > 
-> > >   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > > tags/samsung-fixes-1
-> > > 
-> > > for you to fetch changes up to 8a68de64e984cfc49ecc22ac18155a7fe6dbbfaf:
-> > > 
-> > >   ARM: EXYNOS: fix exynos randconfig build error (2015-03-03 03:37:57 +0900)
-> > > 
-> > > ----------------------------------------------------------------
-> > > Samsung fixes for v4.0
-> > > 
-> > > - fix exynos randconfig build error with SMP=n
-> > > - fix wrong hwirq of RTC interrupt for exynos3250
-> > > - fix usage of LDREX and STREX after disabling cache coherency
-> > > 
-> > > ----------------------------------------------------------------
-> > > Chanwoo Choi (1):
-> > >       ARM: EXYNOS: Fix wrong hwirq of RTC interrupt for Exynos3250 SoC
+On Wednesday 04 March 2015 20:44:07 Krzysztof Koz=C5=82owski wrote:
+> W dniu poniedzia=C5=82ek, 2 marca 2015 Arnd Bergmann <arnd@arndb.de> =
+napisa=C5=82(a):
+> >
+> > Building an exynos kernel without regulators but with suspend enabl=
+ed results
+> > in a link error:
+> >
+> > arch/arm/mach-exynos/built-in.o: In function `exynos_suspend_finish=
+':
+> > arch/arm/mach-exynos/suspend.c:532: undefined reference to `regulat=
+or_suspend_finish'
+> > arch/arm/mach-exynos/built-in.o: In function `exynos_suspend_prepar=
+e':
+> > arch/arm/mach-exynos/suspend.c:515: undefined reference to `regulat=
+or_suspend_prepare'
+> >
+> > This adds an appropriate 'select' statement in Kconfig to ensure th=
+e symbols
+> > are available.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>=20
+>=20
+> Isn't this fixed already by: https://lkml.org/lkml/2015/2/4/119
+> (applied by Mark Brown)?
+>=20
+> I can't test it now (I am out of office) but issue looks quite simila=
+r.
+>=20
+>=20
 
-Question: why doesn't the number come from DT?
+Yes, that is probably right.
 
-> > > Krzysztof Kozlowski (1):
-> > >       ARM: EXYNOS: Don't use LDREX and STREX after disabling cache coherency
-
-I suppose the right long-term fix would be to kill off those soc_is_exynos*
-macros as well, and derive the right set of SMP operations from the machine
-descriptor that would then use the top-level compatible string to match
-the machine.
-
-> > > Russell King (1):
-> > >       ARM: EXYNOS: fix exynos randconfig build error
-> > 
-> > Has anyone actually tested this patch with SMP=n && PM_SLEEP=y
-> > or SMP=n && CONFIG_ARM_EXYNOS_CPUIDLE=y?
-> > 
-> > The patch is just insufficient as it prevents build of
-> 
-> By insufficient here I mean compeltely bogus.  I don't mean to be rude
-> howeover since the wrong patch was picked please let me explain it in
-> more technical details.
-
-Thanks for the detailed analysis. I noticed the same thing earlier
-when it showed up in linux-next. I've done a partial merge now
-and took only the other two patches, which seem necessary.
+Thanks,
 
 	Arnd
