@@ -1,59 +1,139 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Wed, 04 Mar 2015 19:11:17 +0900
-Message-ID: <54F6DA45.2080508@samsung.com>
-References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
- <13467157.nyRCsNWIp6@wuerfel> <54F6AD6B.70007@samsung.com>
- <2449954.zWisnqDpUA@wuerfel>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Disable IOMMU support
+Date: Wed, 04 Mar 2015 11:24:57 +0100
+Message-ID: <54F6DD79.9070009@collabora.co.uk>
+References: <1424173109-30347-1-git-send-email-javier.martinez@collabora.co.uk> <7hioehu8cn.fsf@linaro.org> <54F6C746.606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <2449954.zWisnqDpUA@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, "will.deacon@arm.com" <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, ideal.song@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35801 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752533AbbCDKZG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Mar 2015 05:25:06 -0500
+In-Reply-To: <54F6C746.606@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, tyler.baker@linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <daeinki@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On 03/04/2015 06:38 PM, Arnd Bergmann wrote:
-> On Wednesday 04 March 2015 15:59:55 Chanwoo Choi wrote:
->> On 03/02/2015 06:22 AM, Arnd Bergmann wrote:
->>> On Saturday 28 February 2015 09:47:01 Chanwoo Choi wrote:
->>>> "earlycon=exynos4210,0x14C20000" is correct bootparam. You can check
->>>> it on Documentation/kernel-parameters.txt as following.
->>>>
->>>>      exynos4210,<addr>
->>>>                 Use early console provided by serial driver available
->>>>                 on Samsung SoCs, requires selecting proper type and
->>>>                 a correct base address of the selected UART port. The
->>>>                 serial port must already be setup and configured.
->>>>                 Options are not yet supported.
->>>>
->>>>
->>>
->>> But it's crazy to do this when you have a DT. Please fix the existing
->>> devicetree files that use this to just list 'earlycon'.
->>>
->>> The syntax above only makes sense for classic board files that we
->>> do not support for exynos any more.
->>
->> Following earlycon patch for exynos soc was merged in Linux 4.0-rc1.
->> - commit-id: b94ba0328d3b36ff95f5074c0e9b44f90dc56bb5 (serial: samsung: Add support for early console)
->> Almost Exynos SoC use the same UART IP of Exynos4210.
->>
->> If you mean that "earlycon=exynos4210" naming will be changed to "earlycon=exynos",
->> we have to modify the drivers/tty/serial/samsung.c.
++Gustavo which has been looking at the issues
+
+Hello,
+
+On 03/04/2015 09:50 AM, Marek Szyprowski wrote:
+> Hello,
 > 
-> No, what I mean is that you should use just "earlycon" instead of "earlycon=..."
-> when you have a DTB. You have the OF_EARLYCON_DECLARE() in the driver as
-> well, so that should just work.
+> On 2015-03-03 21:36, Kevin Hilman wrote:
+>> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>>
+>>> Enabling Exynos DRM IOMMU support for Exynos is currently broken and
+>>> causes a BUG on exynos-iommu driver. This was not an issue since the
+>>> options was disabled in exynos_defconfig but after commit 8dcc14f82f06
+>>> ("drm/exynos: IOMMU support should not be selectable by user"), it is
+>>> selected if EXYNOS_IOMMU is enabled which is in exynos_defconfig.
+>>>
+>>> So a kernel built using exynos_defconfig after the mentioned commit
+>>> fails to boot [0]. Disable IOMMU support in Exynos defconfig until
+>>> things get sorted out.
+>> So some other exynos boards started failing in next-20150303[1], and
+>> appear are DRM failures.
+>>
+>> Interestingly, (re)enabling CONFIG_EXYNOS_IOMMU for these cause things to
+>> work again.  Even more intersting, with IOMMU enabled, peach-pi is
+>>
+
+I built both 4.0-rc2 and linux-next (tag next-20150303) with and without
+CONFIG_EXYNOS_IOMMU and boot tested on Snow, Peach Pit and Pi.
+
+We still don't have a Peach Pit hooked in LAVA so I tested it locally
+and pasted the boot logs.
+
+4.0-rc2 (which has CONFIG_EXYNOS_IOMMU enabled)
+-----------------------------------------------
+
+ * Snow: NULL pointer dereference at fimd_wait_for_vblank [0]
+
+ * Peach Pi: kernel BUG at drivers/iommu/exynos-iommu.c:481 [1]
+
+ * Peach Pit: NULL pointer dereference at fimd_wait_for_vblank [2]
+
+4.0-rc2 + CONFIG_EXYNOS_IOMMU disabled
+--------------------------------------
+
+ * Snow: NULL pointer dereference at exynos_plane_destroy [3]
+
+ * Peach Pi: no error, kernel booted successfully [4]
+
+ * Peach Pit: NULL pointer dereference at exynos_plane_destroy [5]
+
+next-20150303 (which has CONFIG_EXYNOS_IOMMU disabled)
+-----------------------------------------------------
+
+ * Snow: no error, kernel booted successfully [6]
+ * Peach Pi: no error, kernel booted successfully [7]
+ * Peach Pit: no error, kernel booted successfully [8]
+
+next-20150303 + CONFIG_EXYNOS_IOMMU (re)enabled
+-----------------------------------------------
+
+Snow: no error, kernel booted successfully [9]
+Peach Pi: no error, kernel booted successfully [10]
+Peach Pit: no error, kernel booted successfully [11]
+
+Is interesting that the only Exynos5 machines that failed to boot in
+next-20150303 were exynos5250-arndale and exynos5422-odroidxu3 [12].
+
+Also, only the exynos5250-arndale failed to boot with next-20150304 [13]
+while exynos5422-odroidxu3 booted successfully and there were no changes
+for the exynos drm driver between next-20150303 and next-20150304.
+
+Another interesting data point is that the error in next-20150303 for
+these 2 boards was the NULL pointer dereference in exynos_plane_destroy
+that I got with 4.0-rc2 (when IOMMU is disabled) in Snow and Peach Pit.
+
+So it appears the error is not consistent and may be a race condition.
+
+>> I'm starting to think it's the DRM driver that needs to be disabled
+>> until it actually gets some testing, rathre than disabling IOMMU.
+>
+
+It's true that there are a lot of issues with the Exynos DRM driver
+but OTOH those are exposed because the config is enabled by default.
+
+My fear is that if we disable the driver, it could silently break
+and be noticed much later when a user enables the option.
+
+> Well, this only shows that broken patch has been merged to exynos-drm-next
+> kernel tree. I think that we should keep Exynos DRM enabled and give Exynos
+> DRM developers a chance to fix their stuff and then test their stuff.
+>
+
+Agree, hopefully all these issues are sorted out during the -rc cycle but
+if not then I think we would have to disable the driver as Kevin suggests.
+
+Another thing that may be useful to detect these issues early is to have
+exynos-drm-next be pulled by linux-next since otherwise the integration
+is not tested until the changes are picked by the DRM maintainer.
+
+> Best regards
 > 
-> EARLYCON_DECLARE() is really just a hack that allows users to override the
-> early console from the command line without modifying the stdout-path
-> property. Don't put that into a dts file.
 
-OK, I understand. Thanks for your comment.
+Best regards,
+Javier
 
-Regards,
-Chanwoo Choi
+[0]: https://lava.collabora.co.uk/scheduler/job/8559/log_file
+[1]: https://lava.collabora.co.uk/scheduler/job/8558/log_file
+[2]: http://hastebin.com/gupoworepa.xml
+[3]: https://lava.collabora.co.uk/scheduler/job/8560/log_file
+[4]: https://lava.collabora.co.uk/scheduler/job/8566/log_file
+[5]: http://hastebin.com/ziyiruretu.xml
+[6]: https://lava.collabora.co.uk/scheduler/job/8570/log_file
+[7]: https://lava.collabora.co.uk/scheduler/job/8571/log_file
+[8]: http://hastebin.com/felopehimi.vhdl
+[9]: https://lava.collabora.co.uk/scheduler/job/8572/log_file
+[10]: https://lava.collabora.co.uk/scheduler/job/8573/log_file
+[11]: http://hastebin.com/kazupucufu.vhdl
+[12]: http://kernelci.org/boot/?next-20150303&fail
+[13]: http://kernelci.org/boot/?next-20150304&fail
