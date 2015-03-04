@@ -1,128 +1,91 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 2/2] drm/exynos: decon: Add support for DECON-EXT
-Date: Wed, 4 Mar 2015 20:05:55 +0530
-Message-ID: <CAEC9eQOb=B4OG913qZcbDuzGWx6CAeYZetURe=fKpjT9AN4CWQ@mail.gmail.com>
-References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
- <1424964285-27480-2-git-send-email-ajaykumar.rs@samsung.com>
- <54F41A8B.4020400@samsung.com>
- <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
- <54F7132B.6000202@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH] phy: samsung-usb2: Remove NULL terminating entry from phys
+ array
+Date: Wed, 04 Mar 2015 15:47:28 +0100
+Message-ID: <07b201d0568a$234c4160$69e4c420$%debski@samsung.com>
+References: <1425344923.4315.3.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54F7132B.6000202@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43509 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755514AbbCDOrb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Mar 2015 09:47:31 -0500
+In-reply-to: <1425344923.4315.3.camel@phoenix>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Axel Lin' <axel.lin@ingics.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Kukjin Kim' <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBNYXIgNCwgMjAxNSBhdCA3OjQ0IFBNLCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNh
-bXN1bmcuY29tPiB3cm90ZToKPiBPbiAwMy8wMi8yMDE1IDExOjU3IEFNLCBBamF5IGt1bWFyIHdy
-b3RlOgo+PiBPbiBNb24sIE1hciAyLCAyMDE1IGF0IDE6MzggUE0sIEFuZHJ6ZWogSGFqZGEgPGEu
-aGFqZGFAc2Ftc3VuZy5jb20+IHdyb3RlOgo+Pj4gT24gMDIvMjYvMjAxNSAwNDoyNCBQTSwgQWph
-eSBLdW1hciB3cm90ZToKPj4+PiAqIE1vZGlmeSBERUNPTi1JTlQgZHJpdmVyIHRvIHN1cHBvcnQg
-REVDT04tRVhULgo+Pj4+ICogQWRkIGEgdGFibGUgb2YgcG9yY2ggdmFsdWVzIG5lZWRlZCB0byBz
-ZXQgdGltaW5nIHJlZ2lzdGVycyBvZiBERUNPTi1FWFQuCj4+Pj4gKiBERUNPTi1FWFQgc3VwcG9y
-dHMgb25seSBIL3cgVHJpZ2dlcmVkIENPTU1BTkQgbW9kZS4KPj4+PiAqIERFQ09OLUVYVCBzdXBw
-b3J0cyBvbmx5IG9uZSBETUEgd2luZG93KHdpbmRvdyAxKSwgc28gbW9kaWZ5Cj4+Pj4gICBhbGwg
-d2luZG93IG1hbmFnZW1lbnQgcm91dGluZXMgdG8gc3VwcG9ydCAyIHdpbmRvd3Mgb2YgREVDT04t
-SU5UCj4+Pj4gICBhbmQgMSB3aW5kb3cgb2YgREVDT04tRVhULgo+Pj4+Cj4+Pj4gU2lnbmVkLW9m
-Zi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPgo+Pj4+IC0tLQo+Pj4+
-ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dCAgICB8ICAg
-IDggKy0KPj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jICAg
-ICAgICAgfCAgMjI5ICsrKysrKysrKysrKysrKysrKy0tCj4+Pj4gIGluY2x1ZGUvdmlkZW8vZXh5
-bm9zN19kZWNvbi5oICAgICAgICAgICAgICAgICAgICAgIHwgICAxMyArKwo+Pj4+ICAzIGZpbGVz
-IGNoYW5nZWQsIDIzMCBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkKPj4+Pgo+Pj4+IGRp
-ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9z
-Ny1kZWNvbi50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5
-bm9zNy1kZWNvbi50eHQKPj4+PiBpbmRleCBmNWY5YzhkLi44NzM1MGMwIDEwMDY0NAo+Pj4+IC0t
-LSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29u
-LnR4dAo+Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9l
-eHlub3M3LWRlY29uLnR4dAo+Pj4+IEBAIC0yLDEwICsyLDE0IEBAIERldmljZS1UcmVlIGJpbmRp
-bmdzIGZvciBTYW1zdW5nIEV4eW5vczcgU29DIGRpc3BsYXkgY29udHJvbGxlciAoREVDT04pCj4+
-Pj4KPj4+PiAgREVDT04gKERpc3BsYXkgYW5kIEVuaGFuY2VtZW50IENvbnRyb2xsZXIpIGlzIHRo
-ZSBEaXNwbGF5IENvbnRyb2xsZXIgZm9yIHRoZQo+Pj4+ICBFeHlub3M3IHNlcmllcyBvZiBTb0Nz
-IHdoaWNoIHRyYW5zZmVycyB0aGUgaW1hZ2UgZGF0YSBmcm9tIGEgdmlkZW8gbWVtb3J5Cj4+Pj4g
-LWJ1ZmZlciB0byBhbiBleHRlcm5hbCBMQ0QgaW50ZXJmYWNlLgo+Pj4+ICtidWZmZXIgdG8gYW4g
-ZXh0ZXJuYWwgTENEL0hETUkgaW50ZXJmYWNlLgo+Pj4+ICsKPj4+PiArRXh5bm9zNyBzdXBwb3J0
-cyBERUNPTi1JTlQgZm9yIGdlbmVyYXRpbmcgdmlkZW8gc2lnbmFscyBmb3IgTENELgo+Pj4+ICtF
-eHlub3M3IHN1cHBvcnRzIERFQ09OLUVYVCBmb3IgZ2VuZXJhdGluZyB2aWRlbyBzaWduYWxzIGZv
-ciBIRE1JLgo+Pj4+Cj4+Pj4gIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4+Pj4gLS0gY29tcGF0aWJs
-ZTogdmFsdWUgc2hvdWxkIGJlICJzYW1zdW5nLGV4eW5vczctZGVjb24iOwo+Pj4+ICstIGNvbXBh
-dGlibGU6IHZhbHVlIHNob3VsZCBiZSAic2Ftc3VuZyxleHlub3M3LWRlY29uLWludCIgZm9yIERF
-Q09OLUlOVDsKPj4+PiArICAgICAgICAgICB2YWx1ZSBzaG91bGQgYmUgInNhbXN1bmcsZXh5bm9z
-Ny1kZWNvbi1leHQiIGZvciBERUNPTi1FWFQ7Cj4+Pj4KPj4+PiAgLSByZWc6IHBoeXNpY2FsIGJh
-c2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBERUNPTiByZWdpc3RlcnMgc2V0Lgo+Pj4+Cj4+
-Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24u
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+Pj4+IGluZGV4
-IDYzZjAyZTIuLjllMmQwODMgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3M3X2RybV9kZWNvbi5jCj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3M3X2RybV9kZWNvbi5jCj4+Pj4gQEAgLTQxLDYgKzQxLDI4IEBACj4+Pj4KPj4+PiAgI2Rl
-ZmluZSBXSU5ET1dTX05SICAgMgo+Pj4gTWF5YmUgaXQgd291bGQgYmUgYmV0dGVyIHRvIHJlbmFt
-ZSBpdCB0byBNQVhfV0lORE9XU19OUgo+PiBPay4KPj4+PiArI2RlZmluZSBERUNPTl9FWFRfQ0hf
-TUFQUElORyAweDQzMjEwNQo+Pj4gSSBhbSBub3QgZmFtaWxpYXIgd2l0aCBkZWNvbiwgY291bGQg
-eW91IGV4cGxhaW4gd2hhdCBleGFjdGx5Cj4+PiB0aGlzIG1hcHBpbmcgbWVhbnMgYW5kIHdoeSBp
-cyBpdCBmaXhlZCBpbiB0aGUgZHJpdmVyIHRvIHRoaXMgdmFsdWUsCj4+PiBub3QgZGVmYXVsdCBv
-bmUuIEJ5IHRoZSB3YXkgbXkgc3BlY3Mgc2F5cyBiaXRzIDAtMyBhcmUgcmVzZXJ2ZXJkCj4+PiBh
-bmQgaGVyZSBpdCBzZWVtcyB5b3UgYXJlIHVzaW5nIHRoZW0uCj4+IEkgcmV1c2VkIHRoZSB2YWx1
-ZSBmcm9tIHRoZSBjb2RlIHdoaWNoIGhhcmR3YXJlIHRlYW0gc2hhcmVkIHdpdGggbWUuCj4+IEl0
-IHRyaWVzIHRvIG1hcCBhIGlucHV0IGhhcmR3YXJlIGNoYW5uZWwoSURNQSBvciBWUFAgY2hhbm5l
-bCkgb250bwo+PiBhIGhhcmR3YXJlIHdpbmRvdyBpbiBERUNPTi4KPj4gQ2hhbm5lbF9OIGlzIG1h
-cHBlZCBvbnRvIHdpbmRvd19OIGluIGNhc2Ugb2YgREVDT04tSU5ULgo+PiBJbiBjYXNlIG9mIERF
-Q09OLUVYVCwgQ2hhbm5lbCAwIHNob3VsZCBiZSBtYXBwZWQgdG8gd2luZG93IDEgb2YgREVDT04t
-RVhULgo+PiBTbywgYmFzaWNhbGx5IGZvciB0aGUgY2hhbmdlcyBJIGhhdmUgbWFkZSwgSSBzaG91
-bGQgaWRlYWxseSBzZXQgb25seQo+PiBiaXRzIFs0OjZdIHRvIDB4MSwKPj4gYW5kIGxlYXZlIG90
-aGVyIGJpdHMgdW50b3VjaGVkLCB0aG91Z2ggbW9kaWZ5aW5nIG90aGVyIGJpdHMgd291bGRuJ3QK
-Pj4gYWZmZWN0IGluIGFueXdheS4KPj4+PiArCj4+Pj4gK2VudW0gZGVjb25fdHlwZSB7Cj4+Pj4g
-KyAgICAgREVDT05fSU5ULAo+Pj4+ICsgICAgIERFQ09OX0VYVCwKPj4+PiArfSBkZWNvbl90eXBl
-Owo+Pj4+ICsKPj4+PiArc3RydWN0IGRlY29uX2RyaXZlcl9kYXRhIHsKPj4+PiArICAgICBlbnVt
-IGRlY29uX3R5cGUgICAgICAgICAgICAgICAgIGRlY29uX3R5cGU7Cj4+Pj4gKyAgICAgdW5zaWdu
-ZWQgaW50ICAgICAgICAgICAgICAgICAgICBucl93aW5kb3dzOwo+Pj4+ICt9Owo+Pj4+ICsKPj4+
-PiArc3RhdGljIHN0cnVjdCBkZWNvbl9kcml2ZXJfZGF0YSBleHlub3M3X2RlY29uX2ludF9kcml2
-ZXJfZGF0YSA9IHsKPj4+PiArICAgICAuZGVjb25fdHlwZSA9IERFQ09OX0lOVCwKPj4+IEkgd29u
-ZGVyIGlmIGl0IHdvdWxkbid0IGJlIGJldHRlciB0byB1c2UgZGlmZmVyZW50IGZpZWxkcyB0byBk
-ZXNjcmliZQo+Pj4gZWFjaCBjYXBhYmlsaXR5L3Byb3BlcnR5IGluc3RlYWQgb2YgZGVjb25fdHlw
-ZS4gRm9yIGV4YW1wbGUKPj4+ICAgICAgICAgLmRpc3BsYXlfdHlwZSA9IEVYWU5PU19ESVNQTEFZ
-X1RZUEVfTENELAo+Pj4gICAgICAgICAubWFwX2NoYW5uZWxzID0gMCwKPj4gT2ssIGxldCBtZSBs
-aXN0IGRvd24gdGhlIGRpZmZlcmVuY2VzIGJldHdlZW4gSU5UIGFuZCBFWFQuCj4+IDEpIE9ubHkg
-aC93IHRyaWdnZXJlZCBjb21tYW5kIG1vZGUgZm9yIERFQ09OLUVYVC4KPj4gMikgTmVlZCB0byBm
-ZWVkIG1vZGlmaWVkIHBvcmNoIHZhbHVlcyhkZWNvbl9leHRfdGltaW5ncykKPj4gMykgSW5wdXQg
-Y2hhbm5lbCB0byBIL3cgd2luZG93IG1hcHBpbmcoV0lOQ0hNQVApCj4+IDQpIGRlZmF1bHRfd2lu
-ZG93IC0gMCBmb3IgREVDT04tSU5UIGFuZCAxIGZvciBERUNPTi1FWFQKPj4KPj4gT3V0IG9mIHRo
-ZSBhYm92ZSBkaWZmZXJlbmNlcywgdGhlIGZpcnN0IDMgY2FuIHNvbWVob3cgYmUgY29udmVydGVk
-Cj4+IHRvIGNhcGFiaWxpdHkvcHJvcGVydHkgYW5kIGVtYmVkZGVkIGludG8gZHJpdmVyX2RhdGEu
-Cj4+IEJ1dCB0aGUgNHRoIGRpZmZlcmVuY2UgaXMgYm90aGVyaW5nIG1lLgo+PiBJIHRyaWVkIHVz
-aW5nIHNvbWV0aGluZyBsaWtlIHN0YXJ0X3dpbmRvdywgZW5kX3dpbmRvdyBhbmQgdHJpZWQgdG8g
-bWFrZQo+PiBUaGUgY29kZSBjb21tb24gZm9yIERFQ09OLUlOVCBhbmQgREVDT04tRVhULCBhbmQg
-aXQganVzdCBkb2Vzbid0IHdvcmsuCj4+IGV4Ogo+PiBzdGFydF93aW5kb3cgPSAwLCBlbmRfd2lu
-ZG93ID0gMSBmb3IgREVDT04tSU5UCj4+IHN0YXJ0X3dpbmRvdyA9IDEsIGVuZF93aW5kb3cgPSAx
-IGZvciBERUNPTi1FWFQKPj4KPj4gV2hlbiB3aW5fY29tbWl0IGdldHMgY2FsbGVkIGZvciB3aW5k
-b3cgMCBmcm9tIGNydGNfY29tbWl0L3BsYW5lX2NvbW1pdDoKPj4gQ29uZmlndXJlIHN0YXJ0X3dp
-bmRvdygwICBmb3IgREVDT04tSU5UIGFuZCAxIGZvciBERUNPTi1FWFQpCj4+Cj4+IFdoZW4gd2lu
-X2NvbW1pdCBpcyBjYWxsZWQgZnJvbSBkZWNvbl9hcHBseSwgaXQgaXMgY2FsbGVkIGZvciB3aW5k
-b3cgMSBhbHNvLgo+PiBUaGF0IHRpbWUgd2luX2NvbW1pdCBjYW4gc2tpcCB1cGRhdGluZyBhY3R1
-YWwgd2luZG93IDEuCj4+IEhvdyBkbyBJIHRha2UgY2FyZSBvZiB0aGlzIGFtYmlndWl0eT8gVGhp
-cyBjYXNlIGhhcHBlbnMgd2l0aAo+PiB3aW5fZGlzYWJsZSByb3V0aW5lIGFsc28hCj4KPiBJIHRo
-aW5rIGNsZWFyIGRpc3RpbmN0aW9uIHdoZXJlIGFyZSB3ZSB1c2luZyBodyB3aW5kb3dzIGFuZCB3
-aGVyZSBzdwo+IHdpbmRvd3Mgc2hvdWxkIGJlIGVub3VnaC4KPiBGb3IgZXhhbXBsZSB0aGUgbG9v
-cCBpdGVyYXRpbmcgb3ZlciBhbGwgd2luZG93cyBjYW4gbG9vayBsaWtlOgo+Cj4gICAgICAgICBm
-b3IgKHdpbiA9IDA7IHdpbiA8IGRydl9kYXRhLT5ucl93aW5kb3dzOyB3aW4rKykgewo+ICAgICAg
-ICAgICAgICAgICBpbnQgaHdfd2luID0gZ2V0X2h3X3dpbihjdHgsIHdpbik7Cj4KPiAgICAgICAg
-ICAgICAgICAgdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgV0lOQ09OKGh3X3dpbikpOwo+ICAgICAg
-ICAgfQo+Cj4gV2hlcmUgZ2V0X2h3X3dpbiBjYW4gbG9vayBsaWtlOgo+Cj4gc3RhdGljIGlubGlu
-ZSBpbnQgZ2V0X2h3X3dpbihjdHgsIHdpbikKPiB7Cj4gICAgIHJldHVybiBjdHgtPmRyaXZlcl9k
-YXRhLT5za2lwX3dpbmRvd3MgKyB3aW47Cj4gfQpPSywgeW91IGp1c3Qgd2FudCBpdCBpbiBhIHN0
-YXRpYyB3cmFwcGVyLgpza2lwX3dpbmRvd3MgPSAwIGZvciBERUNPTi1JTlQKc2tpcF93aW5kb3dz
-ID0gMSBmb3IgREVDT04tRVhUCgpSZWdhcmRzLApBamF5Cl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Axel Lin [mailto:axel.lin@ingics.com]
+Sent: Tuesday, March 03, 2015 2:09 AM
+> 
+> Current code uses num_phys settings to tell the number of entries in
+> phys.
+> Thus remove the NULL terminating entry from phys array which is not
+> necessary.
+
+The patch looks good.
+
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+
+Acked-by: Kamil Debski <k.debski@samsung.com>
+
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
+
+> ---
+>  drivers/phy/phy-exynos4210-usb2.c | 1 -  drivers/phy/phy-exynos4x12-
+> usb2.c | 1 -  drivers/phy/phy-exynos5250-usb2.c | 1 -
+>  3 files changed, 3 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-exynos4210-usb2.c b/drivers/phy/phy-
+> exynos4210-usb2.c
+> index 236a52a..f30bbb0 100644
+> --- a/drivers/phy/phy-exynos4210-usb2.c
+> +++ b/drivers/phy/phy-exynos4210-usb2.c
+> @@ -250,7 +250,6 @@ static const struct samsung_usb2_common_phy
+> exynos4210_phys[] = {
+>  		.power_on	= exynos4210_power_on,
+>  		.power_off	= exynos4210_power_off,
+>  	},
+> -	{},
+>  };
+> 
+>  const struct samsung_usb2_phy_config exynos4210_usb2_phy_config = {
+> diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-
+> exynos4x12-usb2.c
+> index 0b9de88..765da90 100644
+> --- a/drivers/phy/phy-exynos4x12-usb2.c
+> +++ b/drivers/phy/phy-exynos4x12-usb2.c
+> @@ -361,7 +361,6 @@ static const struct samsung_usb2_common_phy
+> exynos4x12_phys[] = {
+>  		.power_on	= exynos4x12_power_on,
+>  		.power_off	= exynos4x12_power_off,
+>  	},
+> -	{},
+>  };
+> 
+>  const struct samsung_usb2_phy_config exynos3250_usb2_phy_config = {
+> diff --git a/drivers/phy/phy-exynos5250-usb2.c b/drivers/phy/phy-
+> exynos5250-usb2.c
+> index 1c139aa..2ed1735 100644
+> --- a/drivers/phy/phy-exynos5250-usb2.c
+> +++ b/drivers/phy/phy-exynos5250-usb2.c
+> @@ -391,7 +391,6 @@ static const struct samsung_usb2_common_phy
+> exynos5250_phys[] = {
+>  		.power_on	= exynos5250_power_on,
+>  		.power_off	= exynos5250_power_off,
+>  	},
+> -	{},
+>  };
+> 
+>  const struct samsung_usb2_phy_config exynos5250_usb2_phy_config = {
+> --
+> 1.9.1
+> 
