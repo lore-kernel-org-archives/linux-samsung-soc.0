@@ -1,100 +1,121 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos/ipp: Validate buffer enqueue requests
-Date: Wed, 04 Mar 2015 15:02:49 +0100
-Message-ID: <1425477769-5430-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:40712 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753781AbbCDODF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Mar 2015 09:03:05 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NKO00MIPXVP7WA0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Mar 2015 14:07:01 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: decon: Add support for DECON-EXT
+Date: Wed, 04 Mar 2015 15:14:03 +0100
+Message-ID: <54F7132B.6000202@samsung.com>
+References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1424964285-27480-2-git-send-email-ajaykumar.rs@samsung.com>
+ <54F41A8B.4020400@samsung.com>
+ <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAEC9eQPEcZCf9af-RuhuW689PhcdajU-cx4+QWibLJdhasa3vw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com, Beata Michalska <b.michalska@samsung.com>
 
-From: Beata Michalska <b.michalska@samsung.com>
-
-As for now there is no validation of incoming buffer
-enqueue request as far as the gem buffers are being
-concerned. This might lead to some undesired cases
-when the driver tries to operate on invalid buffers
-(wiht no valid gem object handle i.e.).
-Add some basic checks to rule out those potential issues.
-
-Signed-off-by: Beata Michalska <b.michalska@samsung.com>
-[mszyprow: rebased onto v4.0-rc1 and adapted to recent ipp changes]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 44 +++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 12ae9c4..ac35625 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -476,6 +476,45 @@ err_clear:
- 	return ret;
- }
- 
-+static int ipp_validate_mem_node(struct drm_device *drm_dev,
-+				 struct drm_exynos_ipp_mem_node *m_node,
-+				 struct drm_exynos_ipp_cmd_node *c_node)
-+{
-+	struct drm_exynos_ipp_config *ipp_cfg;
-+	unsigned int num_plane;
-+	unsigned long min_size, size;
-+	unsigned int bpp;
-+	int i;
-+
-+	/* The property id should already be varified */
-+	ipp_cfg = &c_node->property.config[m_node->prop_id];
-+	num_plane = drm_format_num_planes(ipp_cfg->fmt);
-+
-+	/**
-+	 * This is a rather simplified validation of a memory node.
-+	 * It basically verifies provided gem object handles
-+	 * and the buffer sizes with respect to current configuration.
-+	 * This is not the best that can be done
-+	 * but it seems more than enough
-+	 */
-+	for (i = 0; i < num_plane; ++i) {
-+		if (!m_node->buf_info.handles[i]) {
-+			DRM_ERROR("invalid handle for plane %d\n", i);
-+			return -EINVAL;
-+		}
-+		bpp = drm_format_plane_cpp(ipp_cfg->fmt, i);
-+		min_size = (ipp_cfg->sz.hsize * ipp_cfg->sz.vsize * bpp) >> 3;
-+		size = exynos_drm_gem_get_size(drm_dev,
-+					       m_node->buf_info.handles[i],
-+					       c_node->filp);
-+		if (min_size > size) {
-+			DRM_ERROR("invalid size for plane %d\n", i);
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+}
-+
- static int ipp_put_mem_node(struct drm_device *drm_dev,
- 		struct drm_exynos_ipp_cmd_node *c_node,
- 		struct drm_exynos_ipp_mem_node *m_node)
-@@ -552,6 +591,11 @@ static struct drm_exynos_ipp_mem_node
- 	}
- 
- 	mutex_lock(&c_node->mem_lock);
-+	if (ipp_validate_mem_node(drm_dev, m_node, c_node)) {
-+		ipp_put_mem_node(drm_dev, c_node, m_node);
-+		mutex_unlock(&c_node->mem_lock);
-+		return ERR_PTR(-EFAULT);
-+	}
- 	list_add_tail(&m_node->list, &c_node->mem_list[qbuf->ops_id]);
- 	mutex_unlock(&c_node->mem_lock);
- 
--- 
-1.9.2
+T24gMDMvMDIvMjAxNSAxMTo1NyBBTSwgQWpheSBrdW1hciB3cm90ZToKPiBPbiBNb24sIE1hciAy
+LCAyMDE1IGF0IDE6MzggUE0sIEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+IHdy
+b3RlOgo+PiBPbiAwMi8yNi8yMDE1IDA0OjI0IFBNLCBBamF5IEt1bWFyIHdyb3RlOgo+Pj4gKiBN
+b2RpZnkgREVDT04tSU5UIGRyaXZlciB0byBzdXBwb3J0IERFQ09OLUVYVC4KPj4+ICogQWRkIGEg
+dGFibGUgb2YgcG9yY2ggdmFsdWVzIG5lZWRlZCB0byBzZXQgdGltaW5nIHJlZ2lzdGVycyBvZiBE
+RUNPTi1FWFQuCj4+PiAqIERFQ09OLUVYVCBzdXBwb3J0cyBvbmx5IEgvdyBUcmlnZ2VyZWQgQ09N
+TUFORCBtb2RlLgo+Pj4gKiBERUNPTi1FWFQgc3VwcG9ydHMgb25seSBvbmUgRE1BIHdpbmRvdyh3
+aW5kb3cgMSksIHNvIG1vZGlmeQo+Pj4gICBhbGwgd2luZG93IG1hbmFnZW1lbnQgcm91dGluZXMg
+dG8gc3VwcG9ydCAyIHdpbmRvd3Mgb2YgREVDT04tSU5UCj4+PiAgIGFuZCAxIHdpbmRvdyBvZiBE
+RUNPTi1FWFQuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJz
+QHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8v
+ZXh5bm9zNy1kZWNvbi50eHQgICAgfCAgICA4ICstCj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3M3X2RybV9kZWNvbi5jICAgICAgICAgfCAgMjI5ICsrKysrKysrKysrKysrKysrKy0t
+Cj4+PiAgaW5jbHVkZS92aWRlby9leHlub3M3X2RlY29uLmggICAgICAgICAgICAgICAgICAgICAg
+fCAgIDEzICsrCj4+PiAgMyBmaWxlcyBjaGFuZ2VkLCAyMzAgaW5zZXJ0aW9ucygrKSwgMjAgZGVs
+ZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy92aWRlby9leHlub3M3LWRlY29uLnR4dAo+Pj4gaW5kZXggZjVmOWM4ZC4uODcz
+NTBjMCAxMDA2NDQKPj4+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92
+aWRlby9leHlub3M3LWRlY29uLnR4dAo+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3ZpZGVvL2V4eW5vczctZGVjb24udHh0Cj4+PiBAQCAtMiwxMCArMiwxNCBAQCBE
+ZXZpY2UtVHJlZSBiaW5kaW5ncyBmb3IgU2Ftc3VuZyBFeHlub3M3IFNvQyBkaXNwbGF5IGNvbnRy
+b2xsZXIgKERFQ09OKQo+Pj4KPj4+ICBERUNPTiAoRGlzcGxheSBhbmQgRW5oYW5jZW1lbnQgQ29u
+dHJvbGxlcikgaXMgdGhlIERpc3BsYXkgQ29udHJvbGxlciBmb3IgdGhlCj4+PiAgRXh5bm9zNyBz
+ZXJpZXMgb2YgU29DcyB3aGljaCB0cmFuc2ZlcnMgdGhlIGltYWdlIGRhdGEgZnJvbSBhIHZpZGVv
+IG1lbW9yeQo+Pj4gLWJ1ZmZlciB0byBhbiBleHRlcm5hbCBMQ0QgaW50ZXJmYWNlLgo+Pj4gK2J1
+ZmZlciB0byBhbiBleHRlcm5hbCBMQ0QvSERNSSBpbnRlcmZhY2UuCj4+PiArCj4+PiArRXh5bm9z
+NyBzdXBwb3J0cyBERUNPTi1JTlQgZm9yIGdlbmVyYXRpbmcgdmlkZW8gc2lnbmFscyBmb3IgTENE
+Lgo+Pj4gK0V4eW5vczcgc3VwcG9ydHMgREVDT04tRVhUIGZvciBnZW5lcmF0aW5nIHZpZGVvIHNp
+Z25hbHMgZm9yIEhETUkuCj4+Pgo+Pj4gIFJlcXVpcmVkIHByb3BlcnRpZXM6Cj4+PiAtLSBjb21w
+YXRpYmxlOiB2YWx1ZSBzaG91bGQgYmUgInNhbXN1bmcsZXh5bm9zNy1kZWNvbiI7Cj4+PiArLSBj
+b21wYXRpYmxlOiB2YWx1ZSBzaG91bGQgYmUgInNhbXN1bmcsZXh5bm9zNy1kZWNvbi1pbnQiIGZv
+ciBERUNPTi1JTlQ7Cj4+PiArICAgICAgICAgICB2YWx1ZSBzaG91bGQgYmUgInNhbXN1bmcsZXh5
+bm9zNy1kZWNvbi1leHQiIGZvciBERUNPTi1FWFQ7Cj4+Pgo+Pj4gIC0gcmVnOiBwaHlzaWNhbCBi
+YXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgREVDT04gcmVnaXN0ZXJzIHNldC4KPj4+Cj4+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5j
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4+PiBpbmRleCA2
+M2YwMmUyLi45ZTJkMDgzIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3M3X2RybV9kZWNvbi5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+czdfZHJtX2RlY29uLmMKPj4+IEBAIC00MSw2ICs0MSwyOCBAQAo+Pj4KPj4+ICAjZGVmaW5lIFdJ
+TkRPV1NfTlIgICAyCj4+IE1heWJlIGl0IHdvdWxkIGJlIGJldHRlciB0byByZW5hbWUgaXQgdG8g
+TUFYX1dJTkRPV1NfTlIKPiBPay4KPj4+ICsjZGVmaW5lIERFQ09OX0VYVF9DSF9NQVBQSU5HIDB4
+NDMyMTA1Cj4+IEkgYW0gbm90IGZhbWlsaWFyIHdpdGggZGVjb24sIGNvdWxkIHlvdSBleHBsYWlu
+IHdoYXQgZXhhY3RseQo+PiB0aGlzIG1hcHBpbmcgbWVhbnMgYW5kIHdoeSBpcyBpdCBmaXhlZCBp
+biB0aGUgZHJpdmVyIHRvIHRoaXMgdmFsdWUsCj4+IG5vdCBkZWZhdWx0IG9uZS4gQnkgdGhlIHdh
+eSBteSBzcGVjcyBzYXlzIGJpdHMgMC0zIGFyZSByZXNlcnZlcmQKPj4gYW5kIGhlcmUgaXQgc2Vl
+bXMgeW91IGFyZSB1c2luZyB0aGVtLgo+IEkgcmV1c2VkIHRoZSB2YWx1ZSBmcm9tIHRoZSBjb2Rl
+IHdoaWNoIGhhcmR3YXJlIHRlYW0gc2hhcmVkIHdpdGggbWUuCj4gSXQgdHJpZXMgdG8gbWFwIGEg
+aW5wdXQgaGFyZHdhcmUgY2hhbm5lbChJRE1BIG9yIFZQUCBjaGFubmVsKSBvbnRvCj4gYSBoYXJk
+d2FyZSB3aW5kb3cgaW4gREVDT04uCj4gQ2hhbm5lbF9OIGlzIG1hcHBlZCBvbnRvIHdpbmRvd19O
+IGluIGNhc2Ugb2YgREVDT04tSU5ULgo+IEluIGNhc2Ugb2YgREVDT04tRVhULCBDaGFubmVsIDAg
+c2hvdWxkIGJlIG1hcHBlZCB0byB3aW5kb3cgMSBvZiBERUNPTi1FWFQuCj4gU28sIGJhc2ljYWxs
+eSBmb3IgdGhlIGNoYW5nZXMgSSBoYXZlIG1hZGUsIEkgc2hvdWxkIGlkZWFsbHkgc2V0IG9ubHkK
+PiBiaXRzIFs0OjZdIHRvIDB4MSwKPiBhbmQgbGVhdmUgb3RoZXIgYml0cyB1bnRvdWNoZWQsIHRo
+b3VnaCBtb2RpZnlpbmcgb3RoZXIgYml0cyB3b3VsZG4ndAo+IGFmZmVjdCBpbiBhbnl3YXkuCj4+
+PiArCj4+PiArZW51bSBkZWNvbl90eXBlIHsKPj4+ICsgICAgIERFQ09OX0lOVCwKPj4+ICsgICAg
+IERFQ09OX0VYVCwKPj4+ICt9IGRlY29uX3R5cGU7Cj4+PiArCj4+PiArc3RydWN0IGRlY29uX2Ry
+aXZlcl9kYXRhIHsKPj4+ICsgICAgIGVudW0gZGVjb25fdHlwZSAgICAgICAgICAgICAgICAgZGVj
+b25fdHlwZTsKPj4+ICsgICAgIHVuc2lnbmVkIGludCAgICAgICAgICAgICAgICAgICAgbnJfd2lu
+ZG93czsKPj4+ICt9Owo+Pj4gKwo+Pj4gK3N0YXRpYyBzdHJ1Y3QgZGVjb25fZHJpdmVyX2RhdGEg
+ZXh5bm9zN19kZWNvbl9pbnRfZHJpdmVyX2RhdGEgPSB7Cj4+PiArICAgICAuZGVjb25fdHlwZSA9
+IERFQ09OX0lOVCwKPj4gSSB3b25kZXIgaWYgaXQgd291bGRuJ3QgYmUgYmV0dGVyIHRvIHVzZSBk
+aWZmZXJlbnQgZmllbGRzIHRvIGRlc2NyaWJlCj4+IGVhY2ggY2FwYWJpbGl0eS9wcm9wZXJ0eSBp
+bnN0ZWFkIG9mIGRlY29uX3R5cGUuIEZvciBleGFtcGxlCj4+ICAgICAgICAgLmRpc3BsYXlfdHlw
+ZSA9IEVYWU5PU19ESVNQTEFZX1RZUEVfTENELAo+PiAgICAgICAgIC5tYXBfY2hhbm5lbHMgPSAw
+LAo+IE9rLCBsZXQgbWUgbGlzdCBkb3duIHRoZSBkaWZmZXJlbmNlcyBiZXR3ZWVuIElOVCBhbmQg
+RVhULgo+IDEpIE9ubHkgaC93IHRyaWdnZXJlZCBjb21tYW5kIG1vZGUgZm9yIERFQ09OLUVYVC4K
+PiAyKSBOZWVkIHRvIGZlZWQgbW9kaWZpZWQgcG9yY2ggdmFsdWVzKGRlY29uX2V4dF90aW1pbmdz
+KQo+IDMpIElucHV0IGNoYW5uZWwgdG8gSC93IHdpbmRvdyBtYXBwaW5nKFdJTkNITUFQKQo+IDQp
+IGRlZmF1bHRfd2luZG93IC0gMCBmb3IgREVDT04tSU5UIGFuZCAxIGZvciBERUNPTi1FWFQKPgo+
+IE91dCBvZiB0aGUgYWJvdmUgZGlmZmVyZW5jZXMsIHRoZSBmaXJzdCAzIGNhbiBzb21laG93IGJl
+IGNvbnZlcnRlZAo+IHRvIGNhcGFiaWxpdHkvcHJvcGVydHkgYW5kIGVtYmVkZGVkIGludG8gZHJp
+dmVyX2RhdGEuCj4gQnV0IHRoZSA0dGggZGlmZmVyZW5jZSBpcyBib3RoZXJpbmcgbWUuCj4gSSB0
+cmllZCB1c2luZyBzb21ldGhpbmcgbGlrZSBzdGFydF93aW5kb3csIGVuZF93aW5kb3cgYW5kIHRy
+aWVkIHRvIG1ha2UKPiBUaGUgY29kZSBjb21tb24gZm9yIERFQ09OLUlOVCBhbmQgREVDT04tRVhU
+LCBhbmQgaXQganVzdCBkb2Vzbid0IHdvcmsuCj4gZXg6Cj4gc3RhcnRfd2luZG93ID0gMCwgZW5k
+X3dpbmRvdyA9IDEgZm9yIERFQ09OLUlOVAo+IHN0YXJ0X3dpbmRvdyA9IDEsIGVuZF93aW5kb3cg
+PSAxIGZvciBERUNPTi1FWFQKPgo+IFdoZW4gd2luX2NvbW1pdCBnZXRzIGNhbGxlZCBmb3Igd2lu
+ZG93IDAgZnJvbSBjcnRjX2NvbW1pdC9wbGFuZV9jb21taXQ6Cj4gQ29uZmlndXJlIHN0YXJ0X3dp
+bmRvdygwICBmb3IgREVDT04tSU5UIGFuZCAxIGZvciBERUNPTi1FWFQpCj4KPiBXaGVuIHdpbl9j
+b21taXQgaXMgY2FsbGVkIGZyb20gZGVjb25fYXBwbHksIGl0IGlzIGNhbGxlZCBmb3Igd2luZG93
+IDEgYWxzby4KPiBUaGF0IHRpbWUgd2luX2NvbW1pdCBjYW4gc2tpcCB1cGRhdGluZyBhY3R1YWwg
+d2luZG93IDEuCj4gSG93IGRvIEkgdGFrZSBjYXJlIG9mIHRoaXMgYW1iaWd1aXR5PyBUaGlzIGNh
+c2UgaGFwcGVucyB3aXRoCj4gd2luX2Rpc2FibGUgcm91dGluZSBhbHNvIQoKSSB0aGluayBjbGVh
+ciBkaXN0aW5jdGlvbiB3aGVyZSBhcmUgd2UgdXNpbmcgaHcgd2luZG93cyBhbmQgd2hlcmUgc3cK
+d2luZG93cyBzaG91bGQgYmUgZW5vdWdoLgpGb3IgZXhhbXBsZSB0aGUgbG9vcCBpdGVyYXRpbmcg
+b3ZlciBhbGwgd2luZG93cyBjYW4gbG9vayBsaWtlOgoKCWZvciAod2luID0gMDsgd2luIDwgZHJ2
+X2RhdGEtPm5yX3dpbmRvd3M7IHdpbisrKSB7CgkJaW50IGh3X3dpbiA9IGdldF9od193aW4oY3R4
+LCB3aW4pOwoKCQl2YWwgPSByZWFkbChjdHgtPnJlZ3MgKyBXSU5DT04oaHdfd2luKSk7CiAJfQoK
+V2hlcmUgZ2V0X2h3X3dpbiBjYW4gbG9vayBsaWtlOgoKc3RhdGljIGlubGluZSBpbnQgZ2V0X2h3
+X3dpbihjdHgsIHdpbikKewogICAgcmV0dXJuIGN0eC0+ZHJpdmVyX2RhdGEtPnNraXBfd2luZG93
+cyArIHdpbjsKfQoKUmVnYXJkcwpBbmRyemVqCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
