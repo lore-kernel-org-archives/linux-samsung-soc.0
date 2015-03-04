@@ -1,47 +1,111 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Disable IOMMU support
-Date: Wed, 04 Mar 2015 09:50:14 +0100
-Message-ID: <54F6C746.606@samsung.com>
-References: <1424173109-30347-1-git-send-email-javier.martinez@collabora.co.uk>
- <7hioehu8cn.fsf@linaro.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: hdmi: Add support for Exynos7 HDMI
+Date: Wed, 04 Mar 2015 10:00:00 +0100
+Message-ID: <54F6C990.6050503@samsung.com>
+References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
+ <54F04B80.7050606@samsung.com>
+ <CAEC9eQMc002Nd-CF0tjwzipUZVcN3vTxWsq9OrfTnHsXQdp0tQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <7hioehu8cn.fsf@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, tyler.baker@linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <daeinki@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAEC9eQMc002Nd-CF0tjwzipUZVcN3vTxWsq9OrfTnHsXQdp0tQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, InKi Dae <inki.dae@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On 2015-03-03 21:36, Kevin Hilman wrote:
-> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
->
->> Enabling Exynos DRM IOMMU support for Exynos is currently broken and
->> causes a BUG on exynos-iommu driver. This was not an issue since the
->> options was disabled in exynos_defconfig but after commit 8dcc14f82f06
->> ("drm/exynos: IOMMU support should not be selectable by user"), it is
->> selected if EXYNOS_IOMMU is enabled which is in exynos_defconfig.
->>
->> So a kernel built using exynos_defconfig after the mentioned commit
->> fails to boot [0]. Disable IOMMU support in Exynos defconfig until
->> things get sorted out.
-> So some other exynos boards started failing in next-20150303[1], and
-> appear are DRM failures.
->
-> Interestingly, (re)enabling CONFIG_EXYNOS_IOMMU for these cause things to
-> work again.  Even more intersting, with IOMMU enabled, peach-pi is
->
-> I'm starting to think it's the DRM driver that needs to be disabled
-> until it actually gets some testing, rathre than disabling IOMMU.
-
-Well, this only shows that broken patch has been merged to exynos-drm-next
-kernel tree. I think that we should keep Exynos DRM enabled and give Exynos
-DRM developers a chance to fix their stuff and then test their stuff.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+T24gMDMvMDIvMjAxNSAwOTo0MCBBTSwgQWpheSBrdW1hciB3cm90ZToKPiBIaSBBbmRyZWosCj4K
+PiBPbiBGcmksIEZlYiAyNywgMjAxNSBhdCA0OjE4IFBNLCBBbmRyemVqIEhhamRhIDxhLmhhamRh
+QHNhbXN1bmcuY29tPiB3cm90ZToKPj4gSGkgQWpheSwKPj4KPj4gVGhhbmtzIGZvciB0aGUgcGF0
+Y2guCj4gVGhhbmtzIGZvciByZXZpZXdpbmcgdGhlIHBhdGNoLgo+Cj4+IE9uIDAyLzI2LzIwMTUg
+MDQ6MjQgUE0sIEFqYXkgS3VtYXIgd3JvdGU6Cj4+PiBNb2RpZnkgdGhlIGV4eW5vcyBIRE1JIGRy
+aXZlciB0byBzdXBwb3J0IEV4eW5vczcgSERNSSAxLjQuCj4+PiAqIEFkZCBwaHkgY29uZmlncyBm
+b3IgRXh5bm9zNy4KPj4+ICogRXh5bm9zNyBoYXMgYSBkaWZmZXJlbnQgY2xvY2sgc3RydWN0dXJl
+IGZvciBIRE1JLAo+Pj4gICBzbyBpbnRyb2R1Y2UgdGhlIG5ldyBjbG9ja3MuCj4+PiAqIEFkZCBz
+eXNyZWcgc3VwcG9ydCB0byBlbmFibGUgSERNSSBTWVNSRUcgb24gRXh5bm9zNy4KPj4+ICogRXh5
+bm9zNyBiYXNlZCBib2FyZHMgbmVlZCBhIERDRENfRU4gYW5kIExTX0VOIHBpbnMKPj4+ICAgZm9y
+IHBvd2VyaW5nIHVwIEhETUkuIEFkZCBzdXBwb3J0IGZvciB0aGF0IHRvby4KPj4+Cj4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+PiAtLS0K
+Pj4+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3NfaGRtaS50eHQgICAgICB8
+ICAgMjEgKy0KPj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAg
+ICAgICAgICB8ICAyNTIgKysrKysrKysrKysrKysrKy0tLS0KPj4+ICBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL3JlZ3MtaGRtaS5oICAgICAgICAgICAgICAgICB8ICAgIDQgKwo+Pj4gIDMgZmlsZXMg
+Y2hhbmdlZCwgMjMxIGluc2VydGlvbnMoKyksIDQ2IGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYg
+LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vZXh5bm9zX2hk
+bWkudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2V4eW5vc19o
+ZG1pLnR4dAo+Pj4gaW5kZXggMWZkOGNmOS4uYmIyMmE2MCAxMDA2NDQKPj4+IC0tLSBhL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3NfaGRtaS50eHQKPj4+ICsr
+KyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3NfaGRtaS50
+eHQKPj4+IEBAIC02LDYgKzYsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+Pj4gICAgICAgMikg
+InNhbXN1bmcsZXh5bm9zNDIxMC1oZG1pIgo+Pj4gICAgICAgMykgInNhbXN1bmcsZXh5bm9zNDIx
+Mi1oZG1pIgo+Pj4gICAgICAgNCkgInNhbXN1bmcsZXh5bm9zNTQyMC1oZG1pIgo+Pj4gKyAgICAg
+NSkgInNhbXN1bmcsZXh5bm9zNy1oZG1pIgo+PiBXaHkgbm90ICJzYW1zdW5nLGV4eW5vczc0MjAt
+aGRtaSIgPwo+PiBXaGF0IGNvbXBhdGlibGUgd2lsbCB5b3UgdXNlIGZvciBFeHlub3M3NDMwIG9y
+IGhpZ2hlciBjaGlwIG51bWJlcj8KPiBJIHdpbGwgbGVhdmUgdGhpcyBkZWNpc2lvbiB0byBJbmtp
+IERhZSBvciBLdWtqaW4uCj4KPj4+ICAtIHJlZzogcGh5c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRo
+ZSBoZG1pIGFuZCBsZW5ndGggb2YgbWVtb3J5IG1hcHBlZAo+Pj4gICAgICAgcmVnaW9uLgo+Pj4g
+IC0gaW50ZXJydXB0czogaW50ZXJydXB0IG51bWJlciB0byB0aGUgY3B1Lgo+Pj4gQEAgLTE1LDIx
+ICsxNiwzMyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+Pj4gICAgICAgYykgb3B0aW9uYWwgZmxh
+Z3MgYW5kIHB1bGwgdXAvZG93bi4KPj4+ICAtIGNsb2NrczogbGlzdCBvZiBjbG9jayBJRHMgZnJv
+bSBTb0MgY2xvY2sgZHJpdmVyLgo+Pj4gICAgICAgYSkgaGRtaTogR2F0ZSBvZiBIRE1JIElQIGJ1
+cyBjbG9jay4KPj4+IC0gICAgIGIpIHNjbGtfaGRtaTogR2F0ZSBvZiBIRE1JIHNwZWNpYWwgY2xv
+Y2suCj4+PiAtICAgICBjKSBzY2xrX3BpeGVsOiBQaXhlbCBzcGVjaWFsIGNsb2NrLCBvbmUgb2Yg
+dGhlIHR3byBwb3NzaWJsZSBpbnB1dHMgb2YKPj4+ICsgICAgIEhETUkgY2xvY2tzIG5lY2Vzc2Fy
+eSBmb3Igbm9uIGV4eW5vczc6Cj4+PiArICAgICAgYikgc2Nsa19oZG1pOiBHYXRlIG9mIEhETUkg
+c3BlY2lhbCBjbG9jay4KPj4+ICsgICAgICBjKSBzY2xrX3BpeGVsOiBQaXhlbCBzcGVjaWFsIGNs
+b2NrLCBvbmUgb2YgdGhlIHR3byBwb3NzaWJsZSBpbnB1dHMgb2YKPj4+ICAgICAgICAgICAgICAg
+SERNSSBjbG9jayBtdXguCj4+PiAtICAgICBkKSBzY2xrX2hkbWlwaHk6IEhETUkgUEhZIGNsb2Nr
+IG91dHB1dCwgb25lIG9mIHR3byBwb3NzaWJsZSBpbnB1dHMgb2YKPj4+ICsgICAgICBkKSBzY2xr
+X2hkbWlwaHk6IEhETUkgUEhZIGNsb2NrIG91dHB1dCwgb25lIG9mIHR3byBwb3NzaWJsZSBpbnB1
+dHMgb2YKPj4+ICAgICAgICAgICAgICAgSERNSSBjbG9jayBtdXguCj4+PiAtICAgICBlKSBtb3V0
+X2hkbWk6IEl0IGlzIHJlcXVpcmVkIGJ5IHRoZSBkcml2ZXIgdG8gc3dpdGNoIGJldHdlZW4gdGhl
+IDIKPj4+ICsgICAgICBlKSBtb3V0X2hkbWk6IEl0IGlzIHJlcXVpcmVkIGJ5IHRoZSBkcml2ZXIg
+dG8gc3dpdGNoIGJldHdlZW4gdGhlIDIKPj4+ICAgICAgICAgICAgICAgcGFyZW50cyBpLmUuIHNj
+bGtfcGl4ZWwgYW5kIHNjbGtfaGRtaXBoeS4gSWYgaGRtaXBoeSBpcyBzdGFibGUKPj4+ICAgICAg
+ICAgICAgICAgYWZ0ZXIgY29uZmlndXJhdGlvbiwgcGFyZW50IGlzIHNldCB0byBzY2xrX2hkbWlw
+aHkgZWxzZQo+Pj4gICAgICAgICAgICAgICBzY2xrX3BpeGVsLgo+Pj4gKyAgICAgSERNSSBjbG9j
+a3MgbmVjZXNzYXJ5IGZvciBFeHlub3M3Ogo+Pj4gKyAgICAgIGIpIHBjbGtfaGRtaXBoeTogR2F0
+ZSB0byBIRE1JUEhZIGNsb2NrLgo+PiBBY2NvcmRpbmcgdG8gc3BlY3MgdGhlcmUgaXMgYWxzbyBw
+Y2xrX2hkbWksIHdoeSBkbyB5b3Ugc3BlY2lmeSBvbmx5IHRoaXMKPj4gb25lPwo+IFJpZ2h0LCBJ
+IGhhdmUgcmV1c2VkICJoZG1pIiBnYXRpbmcgY2xvY2sgZm9yIHBjbGtfaGRtaS4gVGhhdCBpcyB3
+aHkgSSBoYXZlCj4gbGVmdCAiaGRtaSIgY2xvY2sgYXMgY29tbW9uIGZvciBleHlub3M3IGFuZCBu
+b24tZXh5bm9zNy4KCklNTyBpdCB3b3VsZCBiZSBiZXR0ZXIgdG8gdXNlIHNlcGFyYXRlIGVudHJ5
+IGZvciBwY2xrX2hkbWkuCgo+Pj4gKyAgICAgIGMpIGhkbWlfcGl4ZWw6IEdhdGUgY2xvY2sgb2Yg
+TVVYIG91dHB1dCBmb3IgSV9QSVhFTF9DTEsuCj4+PiArICAgICAgZCkgaGRtaV90bWRzOiBHYXRl
+IGNsb2NrIG9mIE1VWCBvdXRwdXQgZm9yIElfVE1EU19DTEsuCj4+IEFjY29yZGluZyB0byBzcGVj
+cyB0aGVzZSBjbG9ja3Mgc2hvdWxkIGJlIG5hbWVkIGlfcGl4ZWxfY2xrIGFuZAo+PiBpX3RtZHNf
+Y2xrLCBzaG91bGRuJ3QgdGhleT8KPiBJIGFjdHVhbGx5IHRvb2sgdGhlc2UgY2hhbmdlcyBmcm9t
+IGFuICJpbnRlcm5hbCIgY29kZShub24tRFJNKS4KPiBUaGUgb3JpZ2luYWwgYXV0aG9yIHVzZWQg
+dGhlc2UgbmFtZXMsIGFuZCBJIGp1c3QgY2FycmllZCB0aGUgc2FtZSBuYW1lcy4gOikKPgo+Pj4g
+IC0gY2xvY2stbmFtZXM6IGFsaWFzZXMgYXMgcGVyIGRyaXZlciByZXF1aXJlbWVudHMgZm9yIGFi
+b3ZlIGNsb2NrIElEczoKPj4+ICAgICAgICJoZG1pIiwgInNjbGtfaGRtaSIsICJzY2xrX3BpeGVs
+IiwgInNjbGtfaGRtaXBoeSIgYW5kICJtb3V0X2hkbWkiLgo+Pj4gIC0gZGRjOiBwaGFuZGxlIHRv
+IHRoZSBoZG1pIGRkYyBub2RlCj4+PiAgLSBwaHk6IHBoYW5kbGUgdG8gdGhlIGhkbWkgcGh5IG5v
+ZGUKPj4+ICAtIHNhbXN1bmcsc3lzY29uLXBoYW5kbGU6IHBoYW5kbGUgZm9yIHN5c3RlbSBjb250
+cm9sbGVyIG5vZGUgZm9yIFBNVS4KPj4+Cj4+PiArT25seSBmb3IgRXh5bm9zNyh3aGVuIGNvbXBh
+dGlibGUgPSAic2Ftc3VuZyxleHlub3M3LWhkbWkiKToKPj4+ICstIHNhbXN1bmcsc3lzcmVnLXBo
+YW5kbGU6IHBoYW5kbGUgZm9yIHN5c3RlbSBjb250cm9sbGVyIG5vZGUgZm9yIFNZU1JFRyBibG9j
+ay4KPj4+ICsKPj4+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOgo+Pj4gKy0gZGNkYy1ncGlvczogT0Yg
+ZGV2aWNlLXRyZWUgZ3BpbyBzcGVjaWZpY2F0aW9uIGZvciBIRE1JX0RDRENfRU4gcGluLgo+Pj4g
+Ky0gbHNlbi1ncGlvczogT0YgZGV2aWNlLXRyZWUgZ3BpbyBzcGVjaWZpY2F0aW9uIGZvciBIRE1J
+X0xTX0VOIHBpbi4KPj4gV2hhdCBpcyBwdXJwb3NlIG9mIHRoZXNlIGdwaW9zPwo+IFRoZXNlIDIg
+R1BJT3MgbmVlZCB0byBiZSBlbmFibGVkIHRvIHBvd2VydXAgSERNSSBvbiBleHlub3M3LWVzcHJl
+c3NvIGJvYXJkLgo+IE90aGVyIGJvYXJkcyBuZWVkIG5vdCBwcm92aWRlIHRoZSBHUElPLgoKSERN
+SSBpcyBpbnRlcm5hbCBJUCBvZiBTb0MsIHNvIGl0IGlzIHJhdGhlciBub3QgY29uZmlndXJhYmxl
+IHZpYSBwaW5zLgpQaW4gbmFtZXMgc3VnZ2VzdHMgdGhleSBhcmUgZm9yIERDLURDIGNvbnZlcnRl
+ciBhbmQgbGV2ZWwgc2hpZnRlciwgSSBndWVzcwp0aGVzZSBhcmUgZm9yIEhETUkgY29ubmVjdG9y
+LCBub3QgdGhlIEhETUkgSVAsIGFtIEkgcmlnaHQ/CgpNYXliZSBiZXR0ZXIgb3B0aW9uIGlzIHRv
+IHVzZSBwaW5jdHJsIGZvciB0aGVzZSBncGlvcywgb3IgdXNlIGdwaW8KcmVndWxhdG9yLCBoYXJk
+CnRvIGd1ZXNzIHdpdGhvdXQgZG9jdW1lbnRhdGlvbi4KClJlZ2FyZHMKQW5kcnplagoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
