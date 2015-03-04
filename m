@@ -1,53 +1,47 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Wed, 04 Mar 2015 15:59:55 +0900
-Message-ID: <54F6AD6B.70007@samsung.com>
-References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
- <2707354.mhmQEHxoKV@wuerfel>
- <CAGTfZH0VVT0hMn4ooRNZxnqjUQ_hF8nHg-4NtNriayick50qgw@mail.gmail.com>
- <13467157.nyRCsNWIp6@wuerfel>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Disable IOMMU support
+Date: Wed, 04 Mar 2015 09:50:14 +0100
+Message-ID: <54F6C746.606@samsung.com>
+References: <1424173109-30347-1-git-send-email-javier.martinez@collabora.co.uk>
+ <7hioehu8cn.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:49153 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933284AbbCDG76 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Mar 2015 01:59:58 -0500
-In-reply-to: <13467157.nyRCsNWIp6@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <7hioehu8cn.fsf@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, tyler.baker@linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <daeinki@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, "will.deacon@arm.com" <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, ideal.song@samsung.com
 
-On 03/02/2015 06:22 AM, Arnd Bergmann wrote:
-> On Saturday 28 February 2015 09:47:01 Chanwoo Choi wrote:
->> "earlycon=exynos4210,0x14C20000" is correct bootparam. You can check
->> it on Documentation/kernel-parameters.txt as following.
+Hello,
+
+On 2015-03-03 21:36, Kevin Hilman wrote:
+> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>
+>> Enabling Exynos DRM IOMMU support for Exynos is currently broken and
+>> causes a BUG on exynos-iommu driver. This was not an issue since the
+>> options was disabled in exynos_defconfig but after commit 8dcc14f82f06
+>> ("drm/exynos: IOMMU support should not be selectable by user"), it is
+>> selected if EXYNOS_IOMMU is enabled which is in exynos_defconfig.
 >>
->>      exynos4210,<addr>
->>                 Use early console provided by serial driver available
->>                 on Samsung SoCs, requires selecting proper type and
->>                 a correct base address of the selected UART port. The
->>                 serial port must already be setup and configured.
->>                 Options are not yet supported.
->>
->>
-> 
-> But it's crazy to do this when you have a DT. Please fix the existing
-> devicetree files that use this to just list 'earlycon'.
-> 
-> The syntax above only makes sense for classic board files that we
-> do not support for exynos any more.
+>> So a kernel built using exynos_defconfig after the mentioned commit
+>> fails to boot [0]. Disable IOMMU support in Exynos defconfig until
+>> things get sorted out.
+> So some other exynos boards started failing in next-20150303[1], and
+> appear are DRM failures.
+>
+> Interestingly, (re)enabling CONFIG_EXYNOS_IOMMU for these cause things to
+> work again.  Even more intersting, with IOMMU enabled, peach-pi is
+>
+> I'm starting to think it's the DRM driver that needs to be disabled
+> until it actually gets some testing, rathre than disabling IOMMU.
 
-Following earlycon patch for exynos soc was merged in Linux 4.0-rc1.
-- commit-id: b94ba0328d3b36ff95f5074c0e9b44f90dc56bb5 (serial: samsung: Add support for early console)
-Almost Exynos SoC use the same UART IP of Exynos4210.
+Well, this only shows that broken patch has been merged to exynos-drm-next
+kernel tree. I think that we should keep Exynos DRM enabled and give Exynos
+DRM developers a chance to fix their stuff and then test their stuff.
 
-If you mean that "earlycon=exynos4210" naming will be changed to "earlycon=exynos",
-we have to modify the drivers/tty/serial/samsung.c.
-
-Thanks,
-Chanwoo Choi
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
