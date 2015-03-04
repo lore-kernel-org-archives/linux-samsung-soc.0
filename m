@@ -1,128 +1,59 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 1/2] drm/exynos: hdmi: Add support for Exynos7 HDMI
-Date: Wed, 4 Mar 2015 15:24:21 +0530
-Message-ID: <CAEC9eQNCT2uj2=xgqA9KeCQMKeTAMvxWyqt_ZmB0osN2_ADhzQ@mail.gmail.com>
-References: <1424964285-27480-1-git-send-email-ajaykumar.rs@samsung.com>
-	<54F04B80.7050606@samsung.com>
-	<CAEC9eQMc002Nd-CF0tjwzipUZVcN3vTxWsq9OrfTnHsXQdp0tQ@mail.gmail.com>
-	<54F6C990.6050503@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 2/8] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Wed, 04 Mar 2015 19:11:17 +0900
+Message-ID: <54F6DA45.2080508@samsung.com>
+References: <1424755011-15999-1-git-send-email-cw00.choi@samsung.com>
+ <13467157.nyRCsNWIp6@wuerfel> <54F6AD6B.70007@samsung.com>
+ <2449954.zWisnqDpUA@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f175.google.com ([209.85.213.175]:41824 "EHLO
-	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758941AbbCDJyW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Mar 2015 04:54:22 -0500
-Received: by igal13 with SMTP id l13so35430424iga.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Mar 2015 01:54:21 -0800 (PST)
-In-Reply-To: <54F6C990.6050503@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <2449954.zWisnqDpUA@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chanwoo Choi <cwchoi00@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, "will.deacon@arm.com" <will.deacon@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, InKi Dae <inki.dae@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Wed, Mar 4, 2015 at 2:30 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 03/02/2015 09:40 AM, Ajay kumar wrote:
->> Hi Andrej,
->>
->> On Fri, Feb 27, 2015 at 4:18 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>> Hi Ajay,
+On 03/04/2015 06:38 PM, Arnd Bergmann wrote:
+> On Wednesday 04 March 2015 15:59:55 Chanwoo Choi wrote:
+>> On 03/02/2015 06:22 AM, Arnd Bergmann wrote:
+>>> On Saturday 28 February 2015 09:47:01 Chanwoo Choi wrote:
+>>>> "earlycon=exynos4210,0x14C20000" is correct bootparam. You can check
+>>>> it on Documentation/kernel-parameters.txt as following.
+>>>>
+>>>>      exynos4210,<addr>
+>>>>                 Use early console provided by serial driver available
+>>>>                 on Samsung SoCs, requires selecting proper type and
+>>>>                 a correct base address of the selected UART port. The
+>>>>                 serial port must already be setup and configured.
+>>>>                 Options are not yet supported.
+>>>>
+>>>>
 >>>
->>> Thanks for the patch.
->> Thanks for reviewing the patch.
+>>> But it's crazy to do this when you have a DT. Please fix the existing
+>>> devicetree files that use this to just list 'earlycon'.
+>>>
+>>> The syntax above only makes sense for classic board files that we
+>>> do not support for exynos any more.
 >>
->>> On 02/26/2015 04:24 PM, Ajay Kumar wrote:
->>>> Modify the exynos HDMI driver to support Exynos7 HDMI 1.4.
->>>> * Add phy configs for Exynos7.
->>>> * Exynos7 has a different clock structure for HDMI,
->>>>   so introduce the new clocks.
->>>> * Add sysreg support to enable HDMI SYSREG on Exynos7.
->>>> * Exynos7 based boards need a DCDC_EN and LS_EN pins
->>>>   for powering up HDMI. Add support for that too.
->>>>
->>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->>>> ---
->>>>  .../devicetree/bindings/video/exynos_hdmi.txt      |   21 +-
->>>>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  252 ++++++++++++++++----
->>>>  drivers/gpu/drm/exynos/regs-hdmi.h                 |    4 +
->>>>  3 files changed, 231 insertions(+), 46 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->>>> index 1fd8cf9..bb22a60 100644
->>>> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->>>> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
->>>> @@ -6,6 +6,7 @@ Required properties:
->>>>       2) "samsung,exynos4210-hdmi"
->>>>       3) "samsung,exynos4212-hdmi"
->>>>       4) "samsung,exynos5420-hdmi"
->>>> +     5) "samsung,exynos7-hdmi"
->>> Why not "samsung,exynos7420-hdmi" ?
->>> What compatible will you use for Exynos7430 or higher chip number?
->> I will leave this decision to Inki Dae or Kukjin.
+>> Following earlycon patch for exynos soc was merged in Linux 4.0-rc1.
+>> - commit-id: b94ba0328d3b36ff95f5074c0e9b44f90dc56bb5 (serial: samsung: Add support for early console)
+>> Almost Exynos SoC use the same UART IP of Exynos4210.
 >>
->>>>  - reg: physical base address of the hdmi and length of memory mapped
->>>>       region.
->>>>  - interrupts: interrupt number to the cpu.
->>>> @@ -15,21 +16,33 @@ Required properties:
->>>>       c) optional flags and pull up/down.
->>>>  - clocks: list of clock IDs from SoC clock driver.
->>>>       a) hdmi: Gate of HDMI IP bus clock.
->>>> -     b) sclk_hdmi: Gate of HDMI special clock.
->>>> -     c) sclk_pixel: Pixel special clock, one of the two possible inputs of
->>>> +     HDMI clocks necessary for non exynos7:
->>>> +      b) sclk_hdmi: Gate of HDMI special clock.
->>>> +      c) sclk_pixel: Pixel special clock, one of the two possible inputs of
->>>>               HDMI clock mux.
->>>> -     d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
->>>> +      d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
->>>>               HDMI clock mux.
->>>> -     e) mout_hdmi: It is required by the driver to switch between the 2
->>>> +      e) mout_hdmi: It is required by the driver to switch between the 2
->>>>               parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
->>>>               after configuration, parent is set to sclk_hdmiphy else
->>>>               sclk_pixel.
->>>> +     HDMI clocks necessary for Exynos7:
->>>> +      b) pclk_hdmiphy: Gate to HDMIPHY clock.
->>> According to specs there is also pclk_hdmi, why do you specify only this
->>> one?
->> Right, I have reused "hdmi" gating clock for pclk_hdmi. That is why I have
->> left "hdmi" clock as common for exynos7 and non-exynos7.
->
-> IMO it would be better to use separate entry for pclk_hdmi.
-Ok.
+>> If you mean that "earlycon=exynos4210" naming will be changed to "earlycon=exynos",
+>> we have to modify the drivers/tty/serial/samsung.c.
+> 
+> No, what I mean is that you should use just "earlycon" instead of "earlycon=..."
+> when you have a DTB. You have the OF_EARLYCON_DECLARE() in the driver as
+> well, so that should just work.
+> 
+> EARLYCON_DECLARE() is really just a hack that allows users to override the
+> early console from the command line without modifying the stdout-path
+> property. Don't put that into a dts file.
 
->>>> +      c) hdmi_pixel: Gate clock of MUX output for I_PIXEL_CLK.
->>>> +      d) hdmi_tmds: Gate clock of MUX output for I_TMDS_CLK.
->>> According to specs these clocks should be named i_pixel_clk and
->>> i_tmds_clk, shouldn't they?
->> I actually took these changes from an "internal" code(non-DRM).
->> The original author used these names, and I just carried the same names. :)
->>
->>>>  - clock-names: aliases as per driver requirements for above clock IDs:
->>>>       "hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
->>>>  - ddc: phandle to the hdmi ddc node
->>>>  - phy: phandle to the hdmi phy node
->>>>  - samsung,syscon-phandle: phandle for system controller node for PMU.
->>>>
->>>> +Only for Exynos7(when compatible = "samsung,exynos7-hdmi"):
->>>> +- samsung,sysreg-phandle: phandle for system controller node for SYSREG block.
->>>> +
->>>> +Optional properties:
->>>> +- dcdc-gpios: OF device-tree gpio specification for HDMI_DCDC_EN pin.
->>>> +- lsen-gpios: OF device-tree gpio specification for HDMI_LS_EN pin.
->>> What is purpose of these gpios?
->> These 2 GPIOs need to be enabled to powerup HDMI on exynos7-espresso board.
->> Other boards need not provide the GPIO.
->
-> HDMI is internal IP of SoC, so it is rather not configurable via pins.
-> Pin names suggests they are for DC-DC converter and level shifter, I guess
-> these are for HDMI connector, not the HDMI IP, am I right?
-Right, this is for HDMI connector.
+OK, I understand. Thanks for your comment.
 
-> Maybe better option is to use pinctrl for these gpios, or use gpio
-> regulator, hard
-> to guess without documentation.
-Why should I not use devm_gpiod_get_optional for these GPIOs?
-
-Ajay
+Regards,
+Chanwoo Choi
