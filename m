@@ -1,111 +1,40 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH v2 Resend] pwm: samsung: Fix output race on disabling
-Date: Thu,  5 Mar 2015 09:14:03 +0100
-Message-ID: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lukasz Majewski <l.majewski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] pinctrl: exynos: Add support for Exynos5433
+Date: Thu, 5 Mar 2015 10:53:46 +0100
+Message-ID: <CACRpkdZaRbkLtaS2ABWt8jsv2j7MRsg63E0gDte6mvh1TzbH2Q@mail.gmail.com>
+References: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:33371 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754301AbbCEJxr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Mar 2015 04:53:47 -0500
+Received: by oifz81 with SMTP id z81so10766860oif.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2015 01:53:46 -0800 (PST)
+In-Reply-To: <1421822591-10536-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-When disabling the samsung PWM the output state remains at the level it
-was in the end of a pwm cycle. In other words, calling pwm_disable when
-at 100% duty will keep the output active, while at all other setting the
-output will go/stay inactive. On top of that the samsung PWM settings are
-double-buffered, which means the new settings only get applied at the
-start of a new PWM cycle.
+On Wed, Jan 21, 2015 at 7:43 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
-This results in a race if the PWM is at 100% duty and a driver calls:
-  pwm_config (pwm, 0, period);
-  pwm_disable (pwm);
+> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+> functional input/output port pins and 135 memory port pins. There are 41 general
+> port groups and 2 memory port groups.
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> ---
+> Changes from v2:
+> - Rebase it on v3.19-rc5
 
-In this case the PWMs output will unexpectedly stay active, unless a new
-PWM cycle happened to start between the register writes in _config and
-_disable. As far as i can tell this is a regression introduced by 3bdf878,
-before that a call to pwm_config would call pwm_samsung_enable which,
-while heavy-handed, made sure the expected settings were live.
+Patch applied with Tomasz ACK.
 
-To resolve this, while not re-introducing the issues 3bdf878 (flickering
-as the PWM got reset while in a PWM cycle). Only force an update of the
-settings when at 100% duty, which shouldn't have a noticeable effect on
-the output but is enough to ensure the behaviour is as expected on
-disable.
-
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
-Changes since v1:
-  Fix small issues pointed out by Tomasz Figa
-  - Correct various coding style issues
-  - Read the current value of the tcmp register for comparison rather then
-    using a non-trivial comparison to decide whether the current state was
-    100% duty
-  - Move the code to force manual update out into its own function
-  - Clarify the comment indicating why a manual update is sometimes required
-
- drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 3e9b583..649f6c4 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
- }
- 
-+static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
-+				      struct pwm_device *pwm)
-+{
-+	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
-+	u32 tcon;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&samsung_pwm_lock, flags);
-+
-+	tcon = readl(chip->base + REG_TCON);
-+	tcon |= TCON_MANUALUPDATE(tcon_chan);
-+	writel(tcon, chip->base + REG_TCON);
-+
-+	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
-+	writel(tcon, chip->base + REG_TCON);
-+
-+	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
-+}
-+
- static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			      int duty_ns, int period_ns)
- {
- 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
- 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
--	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
-+	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
- 
- 	/*
- 	 * We currently avoid using 64bit arithmetic by using the
-@@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return 0;
- 
- 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
-+	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
- 	/* We need tick count for calculation, not last tick. */
- 	++tcnt;
-@@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
- 	writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
-+	/* In case the PWM is currently at 100% duty, force a manual update
-+	 * to prevent the signal staying high in the pwm is disabled shortly
-+	 * afer this update (before it autoreloaded the new values) .
-+	 */
-+	if (oldtcmp == (u32) -1) {
-+		dev_dbg(our_chip->chip.dev, "Forcing manual update");
-+		pwm_samsung_manual_update(our_chip, pwm);
-+	}
-+
- 	chan->period_ns = period_ns;
- 	chan->tin_ns = tin_ns;
- 	chan->duty_ns = duty_ns;
--- 
-2.1.4
-
+Yours,
+Linus Walleij
