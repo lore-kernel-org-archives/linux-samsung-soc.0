@@ -1,60 +1,53 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH ulf.hansson-mmc] mmc: dw_mmc: exynos:
- dw_mci_exynos_prepare_hs400_tuning() can be static
-Date: Thu, 05 Mar 2015 19:13:12 +0900
-Message-ID: <54F82C38.9090401@samsung.com>
-References: <201503051843.EsoMldBU%fengguang.wu@intel.com>
- <20150305100254.GA66299@lkp-sb04.lkp.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150305100254.GA66299@lkp-sb04.lkp.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <fengguang.wu@intel.com>, Seungwon Jeon <tgih.jun@samsung.com>
-Cc: kbuild-all@01.org, Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Chris Ball <chris@printf.net>, Kukjin Kim <kgene@kernel.org>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: exynos5420: add nodes for jpeg codec
+Date: Thu, 05 Mar 2015 12:56:35 +0100
+Message-ID: <1425556596-3938-2-git-send-email-andrzej.p@samsung.com>
+References: <1425556596-3938-1-git-send-email-andrzej.p@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24558 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755303AbbCEL5U (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Mar 2015 06:57:20 -0500
+In-reply-to: <1425556596-3938-1-git-send-email-andrzej.p@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi,
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Sorry for missing warning, and Thanks for pointing out.
-
-Best Regards,
-Jaehoon Chung
-
-
-On 03/05/2015 07:02 PM, kbuild test robot wrote:
-> 
-> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-> ---
->  dw_mmc-exynos.c |    2 +-
->  dw_mmc.c        |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 0a56d766..e761eb1 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -477,7 +477,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot)
->  	return ret;
->  }
->  
-> -int dw_mci_exynos_prepare_hs400_tuning(struct dw_mci *host,
-> +static int dw_mci_exynos_prepare_hs400_tuning(struct dw_mci *host,
->  					struct mmc_ios *ios)
->  {
->  	struct dw_mci_exynos_priv_data *priv = host->priv;
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index f30ef69..a99fa1b 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1324,7 +1324,7 @@ static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  	return err;
->  }
->  
-> -int dw_mci_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
-> +static int dw_mci_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
->  {
->  	struct dw_mci_slot *slot = mmc_priv(mmc);
->  	struct dw_mci *host = slot->host;
-> 
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 73c1851..c8722d9 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -775,6 +775,24 @@
+ 		iommus = <&sysmmu_gscl1>;
+ 	};
+ 
++	jpeg_0: jpeg@11F50000 {
++		compatible = "samsung,exynos5420-jpeg";
++		reg = <0x11F50000 0x1000>;
++		interrupts = <0 89 0>;
++		clock-names = "jpeg";
++		clocks = <&clock CLK_JPEG>;
++		iommus = <&sysmmu_jpeg>;
++	};
++
++	jpeg_1: jpeg@11F60000 {
++		compatible = "samsung,exynos5420-jpeg";
++		reg = <0x11F60000 0x1000>;
++		interrupts = <0 168 0>;
++		clock-names = "jpeg";
++		clocks = <&clock CLK_JPEG2>;
++		iommus = <&sysmmu_jpeg2>;
++	};
++
+ 	pmu_system_controller: system-controller@10040000 {
+ 		compatible = "samsung,exynos5420-pmu", "syscon";
+ 		reg = <0x10040000 0x5000>;
+-- 
+1.9.1
