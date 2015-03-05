@@ -1,68 +1,169 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [GIT PULL 2/2] Samsung fixes-2 for v4.0
-Date: Thu, 5 Mar 2015 01:38:02 +0100
-Message-ID: <CABxcv=nTi_+qkNhw=4NypNnR795cX4QUsWLOR4S+2w3suXvz5g@mail.gmail.com>
-References: <54F4B33E.3070803@kernel.org>
-	<2064108.qlOP0oDx90@wuerfel>
-	<20154650.hb5Lekq8n0@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:39635 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753974AbbCEAiE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Mar 2015 19:38:04 -0500
-Received: by wggx12 with SMTP id x12so50175444wgg.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Mar 2015 16:38:02 -0800 (PST)
-In-Reply-To: <20154650.hb5Lekq8n0@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 3/9] arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
+Date: Thu, 05 Mar 2015 14:38:25 +0900
+Message-ID: <1425533911-14800-4-git-send-email-cw00.choi@samsung.com>
+References: <1425533911-14800-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1425533911-14800-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene@kernel.org>, arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello Arnd,
+This patch adds SPI (Serial Peripheral Interface) dt node for Exynos5433 SoC.
+SPI transfers serial data by using various peripherals. SPI includes
+8-bit/16-bit/32-bit shift registers to transmit and receive data. PDMA is used
+for SPI communication.
 
-On Thu, Mar 5, 2015 at 12:04 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 04 March 2015 21:04:40 Arnd Bergmann wrote:
->> On Tuesday 03 March 2015 04:00:14 Kukjin Kim wrote:
->> > Please pull Samsung tmu and hdmi regression fixes for v4.0 and I know
->> > this is quite big for fixes but I couldn't handle this series for
->> > previous merge window because of dependency with driver side...sorry for
->> > that and please pull so that we could support them in v4.0 on exynos
->> > platforms.
->>
->> What kind of dependency do you have there? It really should not be
->> necessary to wait for driver changes, unless you do an incompatible
->> DT binding change, which you should avoid.
->>
->> I've pulled it into fixes, but won't forward it until I hear a
->> good explanation.
->
-> Even with both fixes-1 and fixes-2 applied, we still get boot failures
-> on Exynos:
->
-> http://arm-soc.lixom.net/bootlogs/arm-soc/v4.0-rc2-104-g2ee4716/
->
-> Any idea what is going on?
->
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 114 +++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
 
-Yes, the problem is the Exynos DRM driver which has a lot of issues.
-It's broken if CONFIG_DRM_EXYNOS_IOMMU is enabled which defaults to
-yes after commit 8dcc14f82f06 ("drm/exynos: IOMMU support should not
-be selectable by user").
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 9b96bdf..710566a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -399,6 +399,35 @@
+ 			interrupts = <1 9 0xf04>;
+ 		};
+ 
++		amba {
++			compatible = "arm,amba-bus";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			pdma0: pdma@15610000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x15610000 0x1000>;
++				interrupts = <0 228 0>;
++				clocks = <&cmu_fsys CLK_PDMA0>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
++
++			pdma1: pdma@15600000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x15600000 0x1000>;
++				interrupts = <0 246 0>;
++				clocks = <&cmu_fsys CLK_PDMA1>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
++		};
++
+ 		serial_0: serial@14c10000 {
+ 			compatible = "samsung,exynos5433-uart";
+ 			reg = <0x14c10000 0x100>;
+@@ -499,6 +528,91 @@
+ 			interrupts = <0 442 0>;
+ 		};
+ 
++		spi_0: spi@14d20000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d20000 0x100>;
++			interrupts = <0 432 0>;
++			dmas = <&pdma0 9>, <&pdma0 8>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI0>,
++				 <&cmu_top CLK_SCLK_SPI0_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi0_bus>;
++			status = "disabled";
++		};
++
++		spi_1: spi@14d30000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d30000 0x100>;
++			interrupts = <0 433 0>;
++			dmas = <&pdma0 11>, <&pdma0 10>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI1>,
++				 <&cmu_top CLK_SCLK_SPI1_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi1_bus>;
++			status = "disabled";
++		};
++
++		spi_2: spi@14d40000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d40000 0x100>;
++			interrupts = <0 434 0>;
++			dmas = <&pdma0 13>, <&pdma0 12>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI2>,
++				 <&cmu_top CLK_SCLK_SPI2_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi2_bus>;
++			status = "disabled";
++		};
++
++		spi_3: spi@14d50000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d50000 0x100>;
++			interrupts = <0 447 0>;
++			dmas = <&pdma0 23>, <&pdma0 22>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI3>,
++				 <&cmu_top CLK_SCLK_SPI3_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi3_bus>;
++			status = "disabled";
++		};
++
++		spi_4: spi@14d00000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d00000 0x100>;
++			interrupts = <0 412 0>;
++			dmas = <&pdma0 25>, <&pdma0 24>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI4>,
++				 <&cmu_top CLK_SCLK_SPI4_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi4_bus>;
++			status = "disabled";
++		};
++
+ 		hsi2c_0: hsi2c@14e40000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e40000 0x1000>;
+-- 
+1.8.5.5
 
-I posted a patch to disable IOMMU support on Exynos to avoid these
-boot failures and also mentioned to Kukjin that it should be a fix for
-4.0 [0]. But even with IOMMU disabled, the Exynos DRM is broken in
-some boards [1] so we may have to disable that driver until everything
-gets sorted out and is stable again.
-
->         Arnd
-> --
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2015/3/3/60
-[1]: https://lkml.org/lkml/2015/3/4/1070
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
