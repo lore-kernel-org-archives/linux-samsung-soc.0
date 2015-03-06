@@ -1,63 +1,182 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: Check for NULL dereference of crtc
-Date: Fri, 06 Mar 2015 22:13:42 +0900
-Message-ID: <54F9A806.6020605@samsung.com>
-References: <1424193281-30401-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Disable IOMMU support
+Date: Fri, 06 Mar 2015 22:32:38 +0900
+Message-ID: <54F9AC76.1000305@samsung.com>
+References: <1424173109-30347-1-git-send-email-javier.martinez@collabora.co.uk>
+ <7hioehu8cn.fsf@linaro.org> <54F6C746.606@samsung.com>
+ <54F6DD79.9070009@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1424193281-30401-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene@kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:11944 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753449AbbCFNcl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Mar 2015 08:32:41 -0500
+In-reply-to: <54F6DD79.9070009@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, tyler.baker@linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <daeinki@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMjAxNeuFhCAwMuyblCAxOOydvCAwMjoxNCwgQ2hhcmxlcyBLZWVwYXggd3JvdGU6Cj4gVGhl
-IGNvbW1pdCAiZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19wbGFuZV9kcG1zIiAoZDllYTYyNTYp
-IHJlbW92ZWQgdGhlCj4gdXNlIG9mIHRoZSBlbmFibGVkIGZsYWcsIHdoaWNoIG1lYW5zIHRoYXQg
-dGhlIGNvZGUgbWF5IGF0dGVtcHQgdG8gY2FsbAo+IHdpbl9lbmFibGUgb24gYSBOVUxMIGNydGMu
-IFRoaXMgcmVzdWx0cyBpbiB0aGUgZm9sbG93aW5nIG9vcHMgb24KCkhtbS4uLiBpdCdzIHN0cmFu
-Z2UuIHBsYW5lLT5mdW5jcy0+ZGVzdHJveSgpIGlzIGNhbGxlZCBwcmlvciB0bwpjcnRjLT5mdW5j
-cy0+ZGVzdHJveSgpIHNvIGl0IHNob3VsZCBiZSBleHlub3NfY3J0YyBpcyBub3QgTlVMTC4gSG93
-ZXZlciwKaXQgc2VlbXMgdGhlcmUgaXMgYW55IGNvcm5lciBjYXNlIHdlIGRpZG4ndCBjYXRjaCB1
-cC4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IEFybmRhbGU6Cj4gCj4gWyAgICAxLjY3
-MzQ3OV0gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0
-IHZpcnR1YWwgYWRkcmVzcyAwMDAwMDM2OAo+IFsgICAgMS42ODE1MDBdIHBnZCA9IGMwMDA0MDAw
-Cj4gWyAgICAxLjY4NDE1NF0gWzAwMDAwMzY4XSAqcGdkPTAwMDAwMDAwCj4gWyAgICAxLjY4Nzcx
-M10gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDUgWyMxXSBQUkVFTVBUIFNNUCBBUk0KPiBbICAgIDEu
-NjkzMDEyXSBNb2R1bGVzIGxpbmtlZCBpbjoKPiBbICAgIDEuNjk2MDQ1XSBDUFU6IDEgUElEOiAx
-IENvbW06IHN3YXBwZXIvMCBOb3QgdGFpbnRlZAo+IDMuMTkuMC0wNzU0NS1nNTc0ODVmYSAjMTkw
-Nwo+IFsgICAgMS43MDM1MjRdIEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVu
-ZWQgRGV2aWNlIFRyZWUpCj4gKC4uLi4pCj4gWyAgICAyLjAxNDgwM10gWzxjMDJmOWNmYz5dIChl
-eHlub3NfcGxhbmVfZGVzdHJveSkgZnJvbSBbPGMwMmU2MWI0Pl0gKGRybV9tb2RlX2NvbmZpZ19j
-bGVhbnVwKzB4MTY4LzB4MjBjKQo+IFsgICAgMi4wMjQxNzhdIFs8YzAyZTYxYjQ+XSAoZHJtX21v
-ZGVfY29uZmlnX2NsZWFudXApIGZyb20gWzxjMDJmNjZmYz5dIChleHlub3NfZHJtX2xvYWQrMHhh
-Yy8weDEyYykKPiAKPiBUaGlzIHBhdGNoIGFkZHMgaW4gYSBjaGVjayB0byBlbnN1cmUgZXh5bm9z
-X2NydGMgaXMgbm90IE5VTEwgYmVmb3JlIGl0Cj4gaXMgZGVyZWZlcmVuY2VkLgo+IAo+IFNpZ25l
-ZC1vZmYtYnk6IENoYXJsZXMgS2VlcGF4IDxja2VlcGF4QG9wZW5zb3VyY2Uud29sZnNvbm1pY3Jv
-LmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
-fCAgICAyICstCj4gIDEgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
-cygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-cGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gaW5k
-ZXggMmRmYjg0Ny4uNzhmYzBhMSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fcGxhbmUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9wbGFuZS5jCj4gQEAgLTE3Niw3ICsxNzYsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kaXNh
-YmxlX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQo+ICAJc3RydWN0IGV4eW5vc19kcm1f
-cGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7Cj4gIAlzdHJ1Y3Qg
-ZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKHBsYW5lLT5jcnRj
-KTsKPiAgCj4gLQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUpCj4gKwlpZiAoZXh5
-bm9zX2NydGMgJiYgZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUpCj4gIAkJZXh5bm9zX2Ny
-dGMtPm9wcy0+d2luX2Rpc2FibGUoZXh5bm9zX2NydGMsCj4gIAkJCQkJICAgICAgZXh5bm9zX3Bs
-YW5lLT56cG9zKTsKPiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Hi all,
+
+On 2015=EB=85=84 03=EC=9B=94 04=EC=9D=BC 19:24, Javier Martinez Canilla=
+s wrote:
+> +Gustavo which has been looking at the issues
+>=20
+> Hello,
+>=20
+> On 03/04/2015 09:50 AM, Marek Szyprowski wrote:
+>> Hello,
+>>
+>> On 2015-03-03 21:36, Kevin Hilman wrote:
+>>> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>>>
+>>>> Enabling Exynos DRM IOMMU support for Exynos is currently broken a=
+nd
+>>>> causes a BUG on exynos-iommu driver. This was not an issue since t=
+he
+>>>> options was disabled in exynos_defconfig but after commit 8dcc14f8=
+2f06
+>>>> ("drm/exynos: IOMMU support should not be selectable by user"), it=
+ is
+>>>> selected if EXYNOS_IOMMU is enabled which is in exynos_defconfig.
+>>>>
+>>>> So a kernel built using exynos_defconfig after the mentioned commi=
+t
+>>>> fails to boot [0]. Disable IOMMU support in Exynos defconfig until
+>>>> things get sorted out.
+>>> So some other exynos boards started failing in next-20150303[1], an=
+d
+>>> appear are DRM failures.
+>>>
+>>> Interestingly, (re)enabling CONFIG_EXYNOS_IOMMU for these cause thi=
+ngs to
+>>> work again.  Even more intersting, with IOMMU enabled, peach-pi is
+>>>
+>=20
+> I built both 4.0-rc2 and linux-next (tag next-20150303) with and with=
+out
+> CONFIG_EXYNOS_IOMMU and boot tested on Snow, Peach Pit and Pi.
+>=20
+> We still don't have a Peach Pit hooked in LAVA so I tested it locally
+> and pasted the boot logs.
+>=20
+> 4.0-rc2 (which has CONFIG_EXYNOS_IOMMU enabled)
+> -----------------------------------------------
+>=20
+>  * Snow: NULL pointer dereference at fimd_wait_for_vblank [0]
+>=20
+>  * Peach Pi: kernel BUG at drivers/iommu/exynos-iommu.c:481 [1]
+>=20
+>  * Peach Pit: NULL pointer dereference at fimd_wait_for_vblank [2]
+>=20
+> 4.0-rc2 + CONFIG_EXYNOS_IOMMU disabled
+> --------------------------------------
+>=20
+>  * Snow: NULL pointer dereference at exynos_plane_destroy [3]
+>=20
+>  * Peach Pi: no error, kernel booted successfully [4]
+>=20
+>  * Peach Pit: NULL pointer dereference at exynos_plane_destroy [5]
+>=20
+> next-20150303 (which has CONFIG_EXYNOS_IOMMU disabled)
+> -----------------------------------------------------
+>=20
+>  * Snow: no error, kernel booted successfully [6]
+>  * Peach Pi: no error, kernel booted successfully [7]
+>  * Peach Pit: no error, kernel booted successfully [8]
+>=20
+> next-20150303 + CONFIG_EXYNOS_IOMMU (re)enabled
+> -----------------------------------------------
+>=20
+> Snow: no error, kernel booted successfully [9]
+> Peach Pi: no error, kernel booted successfully [10]
+> Peach Pit: no error, kernel booted successfully [11]
+>=20
+> Is interesting that the only Exynos5 machines that failed to boot in
+> next-20150303 were exynos5250-arndale and exynos5422-odroidxu3 [12].
+>=20
+> Also, only the exynos5250-arndale failed to boot with next-20150304 [=
+13]
+> while exynos5422-odroidxu3 booted successfully and there were no chan=
+ges
+> for the exynos drm driver between next-20150303 and next-20150304.
+>=20
+> Another interesting data point is that the error in next-20150303 for
+> these 2 boards was the NULL pointer dereference in exynos_plane_destr=
+oy
+> that I got with 4.0-rc2 (when IOMMU is disabled) in Snow and Peach Pi=
+t.
+
+I think the NULL pointer dereference issue may be fixed with below patc=
+h
+I merged to exynos-drm-fixes just a while ago,
+https://lkml.org/lkml/2015/2/17/434
+
+Could you test it with this patch again?
+
+Thanks,
+Inki Dae
+
+>=20
+> So it appears the error is not consistent and may be a race condition=
+=2E
+>=20
+>>> I'm starting to think it's the DRM driver that needs to be disabled
+>>> until it actually gets some testing, rathre than disabling IOMMU.
+>>
+>=20
+> It's true that there are a lot of issues with the Exynos DRM driver
+> but OTOH those are exposed because the config is enabled by default.
+>=20
+> My fear is that if we disable the driver, it could silently break
+> and be noticed much later when a user enables the option.
+>=20
+>> Well, this only shows that broken patch has been merged to exynos-dr=
+m-next
+>> kernel tree. I think that we should keep Exynos DRM enabled and give=
+ Exynos
+>> DRM developers a chance to fix their stuff and then test their stuff=
+=2E
+>>
+>=20
+> Agree, hopefully all these issues are sorted out during the -rc cycle=
+ but
+> if not then I think we would have to disable the driver as Kevin sugg=
+ests.
+>=20
+> Another thing that may be useful to detect these issues early is to h=
+ave
+> exynos-drm-next be pulled by linux-next since otherwise the integrati=
+on
+> is not tested until the changes are picked by the DRM maintainer.
+>=20
+>> Best regards
+>>
+>=20
+> Best regards,
+> Javier
+>=20
+> [0]: https://lava.collabora.co.uk/scheduler/job/8559/log_file
+> [1]: https://lava.collabora.co.uk/scheduler/job/8558/log_file
+> [2]: http://hastebin.com/gupoworepa.xml
+> [3]: https://lava.collabora.co.uk/scheduler/job/8560/log_file
+> [4]: https://lava.collabora.co.uk/scheduler/job/8566/log_file
+> [5]: http://hastebin.com/ziyiruretu.xml
+> [6]: https://lava.collabora.co.uk/scheduler/job/8570/log_file
+> [7]: https://lava.collabora.co.uk/scheduler/job/8571/log_file
+> [8]: http://hastebin.com/felopehimi.vhdl
+> [9]: https://lava.collabora.co.uk/scheduler/job/8572/log_file
+> [10]: https://lava.collabora.co.uk/scheduler/job/8573/log_file
+> [11]: http://hastebin.com/kazupucufu.vhdl
+> [12]: http://kernelci.org/boot/?next-20150303&fail
+> [13]: http://kernelci.org/boot/?next-20150304&fail
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
