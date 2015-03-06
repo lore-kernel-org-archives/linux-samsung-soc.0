@@ -1,132 +1,74 @@
-From: Inha Song <ideal.song@samsung.com>
-Subject: [alsa-devel] [PATCH] ARM: dts: Support audio on Exynos5422-odroidxu3
- using simple-audio-card
-Date: Fri, 06 Mar 2015 17:18:01 +0900
-Message-ID: <1425629881-12944-1-git-send-email-ideal.song@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, Inha Song <ideal.song@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL 2/2] Samsung fixes-2 for v4.0
+Date: Fri, 06 Mar 2015 18:43:03 +0900
+Message-ID: <027501d057f1$f13a5090$d3aef1b0$@kernel.org>
+References: <54F4B33E.3070803@kernel.org> <2064108.qlOP0oDx90@wuerfel>
+ <20154650.hb5Lekq8n0@wuerfel>
+ <CABxcv=nTi_+qkNhw=4NypNnR795cX4QUsWLOR4S+2w3suXvz5g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:9202 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932636AbbCFJnG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Mar 2015 04:43:06 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NKS00K1AAZSGTE0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 06 Mar 2015 18:43:04 +0900 (KST)
+In-reply-to: <CABxcv=nTi_+qkNhw=4NypNnR795cX4QUsWLOR4S+2w3suXvz5g@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Lukasz Majewski' <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-Add MAX98090 audio codec, I2S interface and the sound nodes to support
-audio on Exynos5422 SoC Based Odroid-XU3 board. Now we can support audio
-in Odroid-XU3 board using simple-audio-card DT binding.
+Javier Martinez Canillas wrote:
+> 
+> Hello Arnd,
+> 
+Hi,
 
-Signed-off-by: Inha Song <ideal.song@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi          |  9 +++++
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 57 ++++++++++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
+> On Thu, Mar 5, 2015 at 12:04 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wednesday 04 March 2015 21:04:40 Arnd Bergmann wrote:
+> >> On Tuesday 03 March 2015 04:00:14 Kukjin Kim wrote:
+> >> > Please pull Samsung tmu and hdmi regression fixes for v4.0 and I know
+> >> > this is quite big for fixes but I couldn't handle this series for
+> >> > previous merge window because of dependency with driver side...sorry for
+> >> > that and please pull so that we could support them in v4.0 on exynos
+> >> > platforms.
+> >>
+> >> What kind of dependency do you have there? It really should not be
+> >> necessary to wait for driver changes, unless you do an incompatible
+> >> DT binding change, which you should avoid.
+> >>
+> >> I've pulled it into fixes, but won't forward it until I hear a
+> >> good explanation.
+> >
+> > Even with both fixes-1 and fixes-2 applied, we still get boot failures
+> > on Exynos:
+> >
+> > http://arm-soc.lixom.net/bootlogs/arm-soc/v4.0-rc2-104-g2ee4716/
+> >
+> > Any idea what is going on?
+> >
+> 
+> Yes, the problem is the Exynos DRM driver which has a lot of issues.
+> It's broken if CONFIG_DRM_EXYNOS_IOMMU is enabled which defaults to
+> yes after commit 8dcc14f82f06 ("drm/exynos: IOMMU support should not
+> be selectable by user").
+> 
+> I posted a patch to disable IOMMU support on Exynos to avoid these
+> boot failures and also mentioned to Kukjin that it should be a fix for
+> 4.0 [0]. But even with IOMMU disabled, the Exynos DRM is broken in
+> some boards [1] so we may have to disable that driver until everything
+> gets sorted out and is stable again.
+> 
+Yes, the fix is in my tree and it will be sent to upstream via arm-soc soon.
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c0e98cf..a70005e 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -411,6 +411,9 @@
- 			<&clock_audss EXYNOS_I2S_BUS>,
- 			<&clock_audss EXYNOS_SCLK_I2S>;
- 		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-+		#clock-cells = <1>;
-+		clock-output-names = "i2s_cdclk0";
-+		#sound-dai-cells = <1>;
- 		samsung,idma-addr = <0x03000000>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s0_bus>;
-@@ -425,6 +428,9 @@
- 		dma-names = "tx", "rx";
- 		clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
- 		clock-names = "iis", "i2s_opclk0";
-+		#clock-cells = <1>;
-+		clock-output-names = "i2s_cdclk1";
-+		#sound-dai-cells = <1>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s1_bus>;
- 		status = "disabled";
-@@ -438,6 +444,9 @@
- 		dma-names = "tx", "rx";
- 		clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
- 		clock-names = "iis", "i2s_opclk0";
-+		#clock-cells = <1>;
-+		clock-output-names = "i2s_cdclk2";
-+		#sound-dai-cells = <1>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s2_bus>;
- 		status = "disabled";
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index edc25cf..9275ad6 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -11,6 +11,7 @@
- */
- 
- /dts-v1/;
-+#include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- 
- / {
-@@ -285,6 +286,62 @@
- 	rtc@101E0000 {
- 		status = "okay";
- 	};
-+
-+	sound: sound {
-+		compatible = "simple-audio-card";
-+		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-+				<&clock_audss EXYNOS_MOUT_I2S>,
-+				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+		assigned-clock-parents = <&clock CLK_FIN_PLL>,
-+				<&clock_audss EXYNOS_MOUT_AUDSS>;
-+		assigned-clock-rates = <0>,
-+				<0>,
-+				<19200000>;
-+
-+		simple-audio-card,name = "Odroid-XU3";
-+
-+		simple-audio-card,widgets =
-+			"Headphone", "Headphone Jack",
-+			"Speakers", "Speakers";
-+		simple-audio-card,routing =
-+			"Headphone Jack", "HPL",
-+			"Headphone Jack", "HPR",
-+			"Headphone Jack", "MICBIAS",
-+			"IN1", "Headphone Jack",
-+			"Speakers", "SPKL",
-+			"Speakers", "SPKR";
-+
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&link0_codec>;
-+		simple-audio-card,frame-master = <&link0_codec>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s0 0>;
-+			system-clock-frequency = <19200000>;
-+		};
-+
-+		link0_codec: simple-audio-card,codec {
-+			sound-dai = <&max98090>;
-+			clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		};
-+	};
-+};
-+
-+&hsi2c_5 {
-+	status = "okay";
-+	max98090: max98090@10 {
-+		compatible = "maxim,max98090";
-+		reg = <0x10>;
-+		interrupt-parent = <&gpx3>;
-+		interrupts = <2 0>;
-+		clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		clock-names = "mclk";
-+		#sound-dai-cells = <0>;
-+	};
-+};
-+
-+&i2s0 {
-+	status = "okay";
- };
- 
- &hdmi {
--- 
-2.0.0.390.gcb682f8
+Thanks,
+Kukjin
