@@ -1,97 +1,63 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v5 1/9] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Fri, 06 Mar 2015 21:18:34 +0900
-Message-ID: <54F99B1A.3080600@samsung.com>
-References: <1425533911-14800-1-git-send-email-cw00.choi@samsung.com>
- <1425533911-14800-2-git-send-email-cw00.choi@samsung.com>
- <20150305122459.GC14093@leverpostej>
- <CAGTfZH3Bf1ueFO25NXFbN+Mvb9TcGbErbSp=a+vQ0=A+E07mQA@mail.gmail.com>
- <20150305170450.GG14093@leverpostej>
- <CAGTfZH3nkCvnuu+fC1Gv5DrRQXEg6Y19tQnh+phj6c_jAFpbvg@mail.gmail.com>
- <20150305185407.GK14093@leverpostej> <54F9140B.3060109@samsung.com>
- <20150306114021.GF8700@leverpostej>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: Check for NULL dereference of crtc
+Date: Fri, 06 Mar 2015 22:13:42 +0900
+Message-ID: <54F9A806.6020605@samsung.com>
+References: <1424193281-30401-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150306114021.GF8700@leverpostej>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, "kgene@kernel.org" <kgene@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, "a.kesavan@samsung.com" <a.kesavan@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1424193281-30401-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 03/06/2015 08:40 PM, Mark Rutland wrote:
->>>>>> CPU0 (boot CPU) is only well working for CPU_OFF.
->>>>>> But when I try to turn on the CPU0 after CPU_OFF, I failed it.
->>>>>
->>>>> That's rather worrying. Can you look into what's going on here? I'd
->>>>> rather not have dts describing things which are known to be broken.
->>>>
->>>> The board dts don't include any node for CPU_ON/OFF.
->>>
->>> I don't understand. The CPU_ON and CPU_OFF IDs are in the psci node
->>> quoted above, and all the CPUs had enable-method = "psci".
->>
->> I mean that there are not additional dt node except for 'cpu' and 'psci' node.
-> 
-> The psci node and cpu enable-method are sufficient. No other nodes
-> should be relevant.
-
-You're right.
-
-> 
->>>
->>>> When I try to turn on the CPU0 (boot CPU), fail to turn on and lockup happen.
->>>> After lockup happen, I cannot use the console.
->>>
->>> That sounds like a pretty major bug.
->>>
->>> Are you able to investigate with a hardware debugger?
->>
->> I can't do because there are not any jtag connector.
-> 
-> That is very unfortunate. Which PSCI implementation are you using?
-> Surely whoever developed it has access to debug. Surely they should have
-> tested this?
-
-I just used the lateset Linux 4.0-rc2 for PSCI (arch/arm64/kernel/psci.c)
-without any modification. Unfortunately, I don't know who is the h/w developer of Exynos5433 SoC.
-
-> 
->>> Do other CPUs eventually log errors regarding the lockup? Or is the
->>> machine completely dead from this point on?
->>
->> I tested CPU0 on/off. When I turn on the CPU0, I fail it. But, kernel just show the error log without lockup.
->> I gave you wrong infromation about CPU0 off.
-> 
-> Ok. However that's still a major bug.
-> 
-> [...]
-> 
->>>>>>> I take it CPUs boot at EL2?
->>>>>
->>>>> Do the CPUs boot at EL1 or EL2?
->>>>
->>>> Unfortunately, I cannot check the secure firmware for Exynos5433 SoC.
->>>> I think that a few SoC provider probably would know it.
->>>
->>> I guess I asked the wrong question.
->>>
->>> Do CPUs enter the kernel at EL2 or at EL1?
->>
->> Could you give me a tip how to check the kernel at EL2 or EL1?
-> 
-> Hmm... I thought we logged this but it looks like we don't.
-> 
-> You could hack in a check of is_hyp_mode_available() and
-> is_hyp_mode_mismatched(). That will tell you if EL2/hyp is available,
-> and whether all CPUs enter at the same mode (mandatory per the boot
-> protocol).
-
-OK, I'll try it.
-
-Thanks,
-Chanwoo Choi
+T24gMjAxNeuFhCAwMuyblCAxOOydvCAwMjoxNCwgQ2hhcmxlcyBLZWVwYXggd3JvdGU6Cj4gVGhl
+IGNvbW1pdCAiZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19wbGFuZV9kcG1zIiAoZDllYTYyNTYp
+IHJlbW92ZWQgdGhlCj4gdXNlIG9mIHRoZSBlbmFibGVkIGZsYWcsIHdoaWNoIG1lYW5zIHRoYXQg
+dGhlIGNvZGUgbWF5IGF0dGVtcHQgdG8gY2FsbAo+IHdpbl9lbmFibGUgb24gYSBOVUxMIGNydGMu
+IFRoaXMgcmVzdWx0cyBpbiB0aGUgZm9sbG93aW5nIG9vcHMgb24KCkhtbS4uLiBpdCdzIHN0cmFu
+Z2UuIHBsYW5lLT5mdW5jcy0+ZGVzdHJveSgpIGlzIGNhbGxlZCBwcmlvciB0bwpjcnRjLT5mdW5j
+cy0+ZGVzdHJveSgpIHNvIGl0IHNob3VsZCBiZSBleHlub3NfY3J0YyBpcyBub3QgTlVMTC4gSG93
+ZXZlciwKaXQgc2VlbXMgdGhlcmUgaXMgYW55IGNvcm5lciBjYXNlIHdlIGRpZG4ndCBjYXRjaCB1
+cC4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IEFybmRhbGU6Cj4gCj4gWyAgICAxLjY3
+MzQ3OV0gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0
+IHZpcnR1YWwgYWRkcmVzcyAwMDAwMDM2OAo+IFsgICAgMS42ODE1MDBdIHBnZCA9IGMwMDA0MDAw
+Cj4gWyAgICAxLjY4NDE1NF0gWzAwMDAwMzY4XSAqcGdkPTAwMDAwMDAwCj4gWyAgICAxLjY4Nzcx
+M10gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDUgWyMxXSBQUkVFTVBUIFNNUCBBUk0KPiBbICAgIDEu
+NjkzMDEyXSBNb2R1bGVzIGxpbmtlZCBpbjoKPiBbICAgIDEuNjk2MDQ1XSBDUFU6IDEgUElEOiAx
+IENvbW06IHN3YXBwZXIvMCBOb3QgdGFpbnRlZAo+IDMuMTkuMC0wNzU0NS1nNTc0ODVmYSAjMTkw
+Nwo+IFsgICAgMS43MDM1MjRdIEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVu
+ZWQgRGV2aWNlIFRyZWUpCj4gKC4uLi4pCj4gWyAgICAyLjAxNDgwM10gWzxjMDJmOWNmYz5dIChl
+eHlub3NfcGxhbmVfZGVzdHJveSkgZnJvbSBbPGMwMmU2MWI0Pl0gKGRybV9tb2RlX2NvbmZpZ19j
+bGVhbnVwKzB4MTY4LzB4MjBjKQo+IFsgICAgMi4wMjQxNzhdIFs8YzAyZTYxYjQ+XSAoZHJtX21v
+ZGVfY29uZmlnX2NsZWFudXApIGZyb20gWzxjMDJmNjZmYz5dIChleHlub3NfZHJtX2xvYWQrMHhh
+Yy8weDEyYykKPiAKPiBUaGlzIHBhdGNoIGFkZHMgaW4gYSBjaGVjayB0byBlbnN1cmUgZXh5bm9z
+X2NydGMgaXMgbm90IE5VTEwgYmVmb3JlIGl0Cj4gaXMgZGVyZWZlcmVuY2VkLgo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IENoYXJsZXMgS2VlcGF4IDxja2VlcGF4QG9wZW5zb3VyY2Uud29sZnNvbm1pY3Jv
+LmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
+fCAgICAyICstCj4gIDEgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
+cygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+cGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gaW5k
+ZXggMmRmYjg0Ny4uNzhmYzBhMSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fcGxhbmUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9wbGFuZS5jCj4gQEAgLTE3Niw3ICsxNzYsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kaXNh
+YmxlX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQo+ICAJc3RydWN0IGV4eW5vc19kcm1f
+cGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7Cj4gIAlzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKHBsYW5lLT5jcnRj
+KTsKPiAgCj4gLQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUpCj4gKwlpZiAoZXh5
+bm9zX2NydGMgJiYgZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUpCj4gIAkJZXh5bm9zX2Ny
+dGMtPm9wcy0+d2luX2Rpc2FibGUoZXh5bm9zX2NydGMsCj4gIAkJCQkJICAgICAgZXh5bm9zX3Bs
+YW5lLT56cG9zKTsKPiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
