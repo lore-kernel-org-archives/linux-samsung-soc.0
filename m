@@ -1,89 +1,42 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v5 1/9] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Fri, 6 Mar 2015 11:40:21 +0000
-Message-ID: <20150306114021.GF8700@leverpostej>
-References: <1425533911-14800-1-git-send-email-cw00.choi@samsung.com>
- <1425533911-14800-2-git-send-email-cw00.choi@samsung.com>
- <20150305122459.GC14093@leverpostej>
- <CAGTfZH3Bf1ueFO25NXFbN+Mvb9TcGbErbSp=a+vQ0=A+E07mQA@mail.gmail.com>
- <20150305170450.GG14093@leverpostej>
- <CAGTfZH3nkCvnuu+fC1Gv5DrRQXEg6Y19tQnh+phj6c_jAFpbvg@mail.gmail.com>
- <20150305185407.GK14093@leverpostej>
- <54F9140B.3060109@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4] pinctrl: exynos: Add support for Exynos5433
+Date: Fri, 6 Mar 2015 12:57:12 +0100
+Message-ID: <CACRpkdZRWgJmUh5nc8Mims11cqqj-GNrK5jCvF6y+Jtcore4yA@mail.gmail.com>
+References: <1424746062-14424-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <54F9140B.3060109-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:38896 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753123AbbCFL5N (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Mar 2015 06:57:13 -0500
+Received: by oiax69 with SMTP id x69so17178989oia.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2015 03:57:12 -0800 (PST)
+In-Reply-To: <1424746062-14424-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Chanho Park <chanho61.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-> >>>> CPU0 (boot CPU) is only well working for CPU_OFF.
-> >>>> But when I try to turn on the CPU0 after CPU_OFF, I failed it.
-> >>>
-> >>> That's rather worrying. Can you look into what's going on here? I'd
-> >>> rather not have dts describing things which are known to be broken.
-> >>
-> >> The board dts don't include any node for CPU_ON/OFF.
-> > 
-> > I don't understand. The CPU_ON and CPU_OFF IDs are in the psci node
-> > quoted above, and all the CPUs had enable-method = "psci".
-> 
-> I mean that there are not additional dt node except for 'cpu' and 'psci' node.
+On Tue, Feb 24, 2015 at 3:47 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
-The psci node and cpu enable-method are sufficient. No other nodes
-should be relevant.
+> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+> functional input/output port pins and 135 memory port pins. There are 41 general
+> port groups and 2 memory port groups.
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+> Changes from v3:
+> - Rebase it on Linux 4.0-rc1
+> - Add acked messgae of Tomasz Figa
 
-> > 
-> >> When I try to turn on the CPU0 (boot CPU), fail to turn on and lockup happen.
-> >> After lockup happen, I cannot use the console.
-> > 
-> > That sounds like a pretty major bug.
-> > 
-> > Are you able to investigate with a hardware debugger?
-> 
-> I can't do because there are not any jtag connector.
+Already merged v3. Thanks anyway!
 
-That is very unfortunate. Which PSCI implementation are you using?
-Surely whoever developed it has access to debug. Surely they should have
-tested this?
-
-> > Do other CPUs eventually log errors regarding the lockup? Or is the
-> > machine completely dead from this point on?
-> 
-> I tested CPU0 on/off. When I turn on the CPU0, I fail it. But, kernel just show the error log without lockup.
-> I gave you wrong infromation about CPU0 off.
-
-Ok. However that's still a major bug.
-
-[...]
-
-> >>>>> I take it CPUs boot at EL2?
-> >>>
-> >>> Do the CPUs boot at EL1 or EL2?
-> >>
-> >> Unfortunately, I cannot check the secure firmware for Exynos5433 SoC.
-> >> I think that a few SoC provider probably would know it.
-> > 
-> > I guess I asked the wrong question.
-> > 
-> > Do CPUs enter the kernel at EL2 or at EL1?
-> 
-> Could you give me a tip how to check the kernel at EL2 or EL1?
-
-Hmm... I thought we logged this but it looks like we don't.
-
-You could hack in a check of is_hyp_mode_available() and
-is_hyp_mode_mismatched(). That will tell you if EL2/hyp is available,
-and whether all CPUs enter at the same mode (mandatory per the boot
-protocol).
-
-Thanks,
-Mark.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
