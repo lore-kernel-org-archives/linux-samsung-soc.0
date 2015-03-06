@@ -1,51 +1,48 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Disable IOMMU support
-Date: Fri, 06 Mar 2015 16:07:08 +0100
-Message-ID: <54F9C29C.7050608@collabora.co.uk>
-References: <1424173109-30347-1-git-send-email-javier.martinez@collabora.co.uk> <7hioehu8cn.fsf@linaro.org> <54F6C746.606@samsung.com> <54F6DD79.9070009@collabora.co.uk> <54F9AC76.1000305@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
+Date: Fri, 6 Mar 2015 17:43:16 +0000
+Message-ID: <20150306174316.GA26692@opensource.wolfsonmicro.com>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <1425299763-4066822-6-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54F9AC76.1000305@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, tyler.baker@linaro.org, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <daeinki@gmail.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59839 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754843AbbCFRnT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Mar 2015 12:43:19 -0500
+Content-Disposition: inline
+In-Reply-To: <1425299763-4066822-6-git-send-email-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
 
-Hello Inki,
-
-On 03/06/2015 02:32 PM, Inki Dae wrote:
->> 
->> Another interesting data point is that the error in next-20150303 for
->> these 2 boards was the NULL pointer dereference in exynos_plane_destroy
->> that I got with 4.0-rc2 (when IOMMU is disabled) in Snow and Peach Pit.
+On Mon, Mar 02, 2015 at 01:35:58PM +0100, Arnd Bergmann wrote:
+> This is another prerequisite for enabling multiplatform
+> support, and it is the part I am least certain about.
 > 
-> I think the NULL pointer dereference issue may be fixed with below patch
-> I merged to exynos-drm-fixes just a while ago,
-> https://lkml.org/lkml/2015/2/17/434
+> I assume it will cause the extra boot message "Cannot
+> allocate irq_descs @ IRQ%d, assuming pre-allocated" to
+> be printed, but otherwise work ok. This definitely needs
+> to be tested on real hardware to see if it works.
 > 
-> Could you test it with this patch again?
->
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Thanks, I tested v4.0-rc2 + the patch to disable IOMMU + the patch you
-mentioned and the crash does not happen anymore in Peach Pit and Snow.
+This one appears to cause some problems with the IRQs on
+Cragganmore, I need to look into it a bit more but it looks like
+one of the PMICs can't allocate its IRQs:
 
->> 
->> Another thing that may be useful to detect these issues early is to have
->> exynos-drm-next be pulled by linux-next since otherwise the integration
->> is not tested until the changes are picked by the DRM maintainer.
->> 
+[    0.961455] wm831x 1-0034: WM8311 revision C
+[    0.965066] wm831x 1-0034: Failed to allocate IRQs: -17
 
-I know that I may sound like a broken record but could you please make
-sure that your tree is included in linux-next?
+And the CODEC can't request its IRQ:
 
-That way the fix could be tested by all the machines that are testing
-linux-next daily since right now Exynos will still be broken until you
-send a pull request to the DRM maintainer.
+[    4.252735] arizona spi0.1: WM5102 revision C
+[    4.269763] arizona spi0.1: Failed to request primary IRQ 263: -22
 
-So it would be nice to get the changes as soon as possible into -next
-to avoid a recurrent error to mask other possible new issues.
+Hopefully I can look into this a little more next week.
 
-Best regards,
-Javier
+Thanks,
+Charles
