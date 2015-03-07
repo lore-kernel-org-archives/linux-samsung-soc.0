@@ -1,117 +1,108 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [GIT PULL 2/2] Samsung fixes-2 for v4.0
-Date: Thu, 5 Mar 2015 08:34:00 -0400
-Message-ID: <20150305123358.GC25728@developer.hsd1.ca.comcast.net>
-References: <54F4B33E.3070803@kernel.org>
- <2064108.qlOP0oDx90@wuerfel>
- <02cd01d057f6$ab1a8e40$014faac0$@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: Check for NULL dereference of crtc
+Date: Sat, 07 Mar 2015 21:19:22 +0900
+Message-ID: <54FAECCA.2050201@samsung.com>
+References: <1424193281-30401-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <54F9A806.6020605@samsung.com>
+ <20150306140431.GE4286@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:39837 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755227AbbCFTmy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Mar 2015 14:42:54 -0500
-Received: by pabrd3 with SMTP id rd3so20383183pab.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2015 11:42:53 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <02cd01d057f6$ab1a8e40$014faac0$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150306140431.GE4286@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-
---4jXrM3lyYWu4nBt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 06, 2015 at 07:16:53PM +0900, Kukjin Kim wrote:
-> Arnd Bergmann wrote:
-> >=20
-> + Eduardo
->=20
-> Hi Arnd,
->=20
-> > On Tuesday 03 March 2015 04:00:14 Kukjin Kim wrote:
-> > > Please pull Samsung tmu and hdmi regression fixes for v4.0 and I know
-> > > this is quite big for fixes but I couldn't handle this series for
-> > > previous merge window because of dependency with driver side...sorry =
-for
-> > > that and please pull so that we could support them in v4.0 on exynos
-> > > platforms.
-> >=20
-> > What kind of dependency do you have there? It really should not be
-> > necessary to wait for driver changes, unless you do an incompatible
-> > DT binding change, which you should avoid.
-> >=20
-> For TMU patches, I've asked Eduardo to provide topic branch for
-> 'include/dt-bindings/thermal/thermal_exynos.h' has been added via thermal=
- tree
-> because if I can't apply the patch in Samsung tree for arm-soc, kernel bu=
-ild
-> breakage will be happened. But I couldn't get Eduardo's topic branch.
-
-
-Specifically, the developer, while migrating the driver to support DT
-and OF thermal, decided to create a header with constants. The header is
-used by DT files and the driver code. The header was the dependency.
-
-
-BR,
-
-Eduardo Valentin
-
->=20
-> http://www.spinics.net/lists/linux-samsung-soc/msg41877.html
->=20
->=20
-> For HDMI patches, I thought the DT changes have a dependency with "drm/ex=
-ynos:
-> add support for 'hdmi' clock" so waited for its applying then in drm tree=
-=2E But
-> I couldn't send it to arm-soc after that...
->=20
-> http://www.spinics.net/lists/linux-samsung-soc/msg42173.html
->=20
->=20
-> I asked about the situation (late DT changes?) when I sent a pull-request=
-, then
-> I couldn't get a access my kernel.org because of biz. trip to China :(
->=20
-> http://www.spinics.net/lists/linux-samsung-soc/msg42235.html
->=20
->=20
-> > I've pulled it into fixes, but won't forward it until I hear a
-> > good explanation.
-> >=20
-> As you know, basically I tried to make a clear branch for pull-request bu=
-t in
-> that case, I couldn't find a solution. Sorry for the inconvenience.
->=20
-> I hope v4.0 can support them properly.
->=20
-> Thanks,
-> Kukjin
->=20
-
---4jXrM3lyYWu4nBt5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJU+E0sAAoJEMLUO4d9pOJWjhMIAIDCDyxq0JqxSApvdOegcwLU
-FzJOYWnhyZdTDlsJO0sWuTiwgrOKK0Z8yBs1nhkQwpRLFCupoMW8JyBIuwlXEu7B
-SDW59BoKIFLIseiCE1N7ORb5PXtcyPIX/9vqnRON7lyUTTSq7Q34FQFI/5hmqnii
-NIpn5S5E10prTuZA1zCoYoREifgopKV/9l8wSb1lCul9n3rehn2tsC3fErGkY69I
-c4c5p8nRQjfpmgQtPNEkgVzn+SFGO3EHgYlx2Py3UfWZkvQ+hA60WHzTnJsYfXaB
-OH0LEd2oq/RtFR83Lnp8TG5AMILufEB3daJtAbf5MXiC9aBfXyeDwsamo/8gu5M=
-=sLYu
------END PGP SIGNATURE-----
-
---4jXrM3lyYWu4nBt5--
+T24gMjAxNeuFhCAwM+yblCAwNuydvCAyMzowNCwgQ2hhcmxlcyBLZWVwYXggd3JvdGU6Cj4gT24g
+RnJpLCBNYXIgMDYsIDIwMTUgYXQgMTA6MTM6NDJQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
+IE9uIDIwMTXrhYQgMDLsm5QgMTjsnbwgMDI6MTQsIENoYXJsZXMgS2VlcGF4IHdyb3RlOgo+Pj4g
+VGhlIGNvbW1pdCAiZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19wbGFuZV9kcG1zIiAoZDllYTYy
+NTYpIHJlbW92ZWQgdGhlCj4+PiB1c2Ugb2YgdGhlIGVuYWJsZWQgZmxhZywgd2hpY2ggbWVhbnMg
+dGhhdCB0aGUgY29kZSBtYXkgYXR0ZW1wdCB0byBjYWxsCj4+PiB3aW5fZW5hYmxlIG9uIGEgTlVM
+TCBjcnRjLiBUaGlzIHJlc3VsdHMgaW4gdGhlIGZvbGxvd2luZyBvb3BzIG9uCj4+Cj4+IEhtbS4u
+LiBpdCdzIHN0cmFuZ2UuIHBsYW5lLT5mdW5jcy0+ZGVzdHJveSgpIGlzIGNhbGxlZCBwcmlvciB0
+bwo+PiBjcnRjLT5mdW5jcy0+ZGVzdHJveSgpIHNvIGl0IHNob3VsZCBiZSBleHlub3NfY3J0YyBp
+cyBub3QgTlVMTC4gSG93ZXZlciwKPj4gaXQgc2VlbXMgdGhlcmUgaXMgYW55IGNvcm5lciBjYXNl
+IHdlIGRpZG4ndCBjYXRjaCB1cC4KPj4KPj4gQXBwbGllZC4KPiAKPiBUaGFua3MsIGl0IHNlZW1z
+IHRoZSBvZmZlbmRpbmcgcGF0aCBpbiBhbiBlcnJvciBwYXRoLCBsb29rcyBsaWtlCj4gQXJuZGFs
+ZSBpcyBtaXNzaW5nIHNvbWUgcmVxdWlyZWQgRFQgc2V0dGluZyB3aGljaCBjYXVzZXMKPiBleHlu
+b3NfZHJtX2xvYWQgdG8gZmFpbDoKClJpZ2h0LiBXaXRoIHF1aWNrIGxvb2ssIGl0IHNlZW1zIHRo
+YXQgdGhpcyBpc3N1ZSBpcyBpbmN1cnJlZCBiZWNhdXNlIGl0CnRyaWVkIHRvIGFjY2VzcyBwbGFu
+ZS0+Y3J0YyBvYmplY3QgdG8gY2FsbCB3aW5fZGlzYWJsZSBjYWxsYmFjayBvZiBGSU1ECmRyaXZl
+ciBiZWZvcmUgbW9kZV9zZXQgY2FsbGJhY2sgaXMgY2FsbGVkOiBwbGFuZS0+Y3J0YyB3b3VsZCBi
+ZSBzZXQgYnkKbW9kZV9zZXQgY2FsbGJhY2sgc28gaWYgaXQgaGFzIG5vIHBhaXIgb2YgZW5jb2Rl
+ciBhbmQgY3J0YyB0aGVuIHRoZQpwbGFuZSBjYW4gbmV2ZXIgcG9pbnQgYSBjcnRjIG9iamVjdCBj
+cmVhdGVkIGJ5IEZJTUQgZHJpdmVyLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBbICAgIDEuNjM4
+MTA5XSBvZl9ncmFwaF9nZXRfbmV4dF9lbmRwb2ludCgpOiBubyBwb3J0IG5vZGUgZm91bmQgaW4g
+L2RwLWNvbnRyb2xsZXJAMTQ1QjAwMDAKPiBbICAgIDEuNjQ2NDI0XSBleHlub3MtZHJtIGV4eW5v
+cy1kcm06IGJvdW5kIDE0NDAwMDAwLmZpbWQgKG9wcyBmaW1kX2NvbXBvbmVudF9vcHMpCj4gWyAg
+ICAxLjY1MjcwNF0gL2RwLWNvbnRyb2xsZXJAMTQ1QjAwMDA6IGNvdWxkIG5vdCBmaW5kIGRpc3Bs
+YXktdGltaW5ncyBub2RlCj4gWyAgICAxLjY1OTMyM10gL2RwLWNvbnRyb2xsZXJAMTQ1QjAwMDA6
+IG5vIHRpbWluZ3Mgc3BlY2lmaWVkCj4gWyAgICAxLjY2NDcwOV0gW2RybTpleHlub3NfZHBfYmlu
+ZF0gKkVSUk9SKiBmYWlsZWQ6IG9mX2dldF92aWRlb21vZGUoKSA6IC0yMgo+IFsgICAgMS42NzE0
+ODVdIGV4eW5vcy1kcm0gZXh5bm9zLWRybTogZmFpbGVkIHRvIGJpbmQgMTQ1YjAwMDAuZHAtY29u
+dHJvbGxlciAob3BzIGV4eW5vc19kcF9vcHMpOiAtMjIKPiAKPiBXaGljaCBlbmRzIHVwIGNhbGxp
+bmcgZXh5bm9zX3BsYW5lX2Rlc3Ryb3kgYXMgcGFydCBvZiB0aGUgY2xlYW4gdXA6Cj4gCj4gWyAg
+ICAxLjY5ODY1NV0gWzxjMDAxNWRiND5dICh1bndpbmRfYmFja3RyYWNlKSBmcm9tIFs8YzAwMTIx
+Y2M+XSAoc2hvd19zdGFjaysweDIwLzB4MjQpCj4gWyAgICAxLjcwNjM4NV0gWzxjMDAxMjFjYz5d
+IChzaG93X3N0YWNrKSBmcm9tIFs8YzA1MjgyMzA+XSAoZHVtcF9zdGFjaysweDc4LzB4YzQpCj4g
+WyAgICAxLjcxMzU4OF0gWzxjMDUyODIzMD5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAyZjcyZWM+
+XSAoZXh5bm9zX2Rpc2FibGVfcGxhbmUrMHgyYy8weDYwKQo+IFsgICAgMS43MjE2NjBdIFs8YzAy
+ZjcyZWM+XSAoZXh5bm9zX2Rpc2FibGVfcGxhbmUpIGZyb20gWzxjMDJmNzMzYz5dIChleHlub3Nf
+cGxhbmVfZGVzdHJveSsweDFjLzB4MzApCj4gWyAgICAxLjczMDYwNV0gWzxjMDJmNzMzYz5dIChl
+eHlub3NfcGxhbmVfZGVzdHJveSkgZnJvbSBbPGMwMmUzN2M0Pl0gKGRybV9tb2RlX2NvbmZpZ19j
+bGVhbnVwKzB4MTY4LzB4MjBjKQo+IFsgICAgMS43Mzk5ODJdIFs8YzAyZTM3YzQ+XSAoZHJtX21v
+ZGVfY29uZmlnX2NsZWFudXApIGZyb20gWzxjMDJmM2QxOD5dIChleHlub3NfZHJtX2xvYWQrMHhh
+Yy8weDEyYykKPiBbICAgIDEuNzQ4ODMyXSBbPGMwMmYzZDE4Pl0gKGV4eW5vc19kcm1fbG9hZCkg
+ZnJvbSBbPGMwMmRjMDc0Pl0gKGRybV9kZXZfcmVnaXN0ZXIrMHhiMC8weDExMCkKPiBbICAgIDEu
+NzU3MDc1XSBbPGMwMmRjMDc0Pl0gKGRybV9kZXZfcmVnaXN0ZXIpIGZyb20gWzxjMDJkZGM4OD5d
+IChkcm1fcGxhdGZvcm1faW5pdCsweDUwLzB4ZTApCj4gWyAgICAxLjc2NTQwNV0gWzxjMDJkZGM4
+OD5dIChkcm1fcGxhdGZvcm1faW5pdCkgZnJvbSBbPGMwMmYzYTA4Pl0gKGV4eW5vc19kcm1fYmlu
+ZCsweDIwLzB4MjgpCj4gWyAgICAxLjc3MzY1NV0gWzxjMDJmM2EwOD5dIChleHlub3NfZHJtX2Jp
+bmQpIGZyb20gWzxjMDJmZTY2ND5dICh0cnlfdG9fYnJpbmdfdXBfbWFzdGVyLnBhcnQuMSsweGQ4
+LzB4MTE0KQo+IFsgICAgMS43ODMwMjddIFs8YzAyZmU2NjQ+XSAodHJ5X3RvX2JyaW5nX3VwX21h
+c3Rlci5wYXJ0LjEpIGZyb20gWzxjMDJmZTc1ND5dIChjb21wb25lbnRfbWFzdGVyX2FkZF93aXRo
+X21hdGNoKzB4YjQvMHgxMzQpCj4gWyAgICAxLjc5Mzc5Ml0gWzxjMDJmZTc1ND5dIChjb21wb25l
+bnRfbWFzdGVyX2FkZF93aXRoX21hdGNoKSBmcm9tIFs8YzAyZjNlOTQ+XSAoZXh5bm9zX2RybV9w
+bGF0Zm9ybV9wcm9iZSsweGZjLzB4MTI0KQo+IFsgICAgMS44MDQyMDddIFs8YzAyZjNlOTQ+XSAo
+ZXh5bm9zX2RybV9wbGF0Zm9ybV9wcm9iZSkgZnJvbSBbPGMwMzA0YTQ0Pl0gKHBsYXRmb3JtX2Ry
+dl9wcm9iZSsweDU4LzB4YjQpCj4gWyAgICAxLjgxMzQxMV0gWzxjMDMwNGE0ND5dIChwbGF0Zm9y
+bV9kcnZfcHJvYmUpIGZyb20gWzxjMDMwMmZhOD5dIChkcml2ZXJfcHJvYmVfZGV2aWNlKzB4MTFj
+LzB4MjNjKQo+IFsgICAgMS44MjIyNjFdIFs8YzAzMDJmYTg+XSAoZHJpdmVyX3Byb2JlX2Rldmlj
+ZSkgZnJvbSBbPGMwMzAzMTY0Pl0gKF9fZHJpdmVyX2F0dGFjaCsweDljLzB4YTApCj4gWyAgICAx
+LjgzMDY3OV0gWzxjMDMwMzE2ND5dIChfX2RyaXZlcl9hdHRhY2gpIGZyb20gWzxjMDMwMTRhMD5d
+IChidXNfZm9yX2VhY2hfZGV2KzB4NjQvMHg5OCkKPiBbICAgIDEuODM4ODM4XSBbPGMwMzAxNGEw
+Pl0gKGJ1c19mb3JfZWFjaF9kZXYpIGZyb20gWzxjMDMwMmE0Yz5dIChkcml2ZXJfYXR0YWNoKzB4
+MmMvMHgzMCkKPiBbICAgIDEuODQ2ODI0XSBbPGMwMzAyYTRjPl0gKGRyaXZlcl9hdHRhY2gpIGZy
+b20gWzxjMDMwMjY5Yz5dIChidXNfYWRkX2RyaXZlcisweGU4LzB4MWU0KQo+IFsgICAgMS44NTQ3
+MjJdIFs8YzAzMDI2OWM+XSAoYnVzX2FkZF9kcml2ZXIpIGZyb20gWzxjMDMwM2FkOD5dIChkcml2
+ZXJfcmVnaXN0ZXIrMHg4OC8weDEwNCkKPiBbICAgIDEuODYyNzk0XSBbPGMwMzAzYWQ4Pl0gKGRy
+aXZlcl9yZWdpc3RlcikgZnJvbSBbPGMwMzA0OGFjPl0gKF9fcGxhdGZvcm1fZHJpdmVyX3JlZ2lz
+dGVyKzB4NTgvMHg2YykKPiBbICAgIDEuODcxODI3XSBbPGMwMzA0OGFjPl0gKF9fcGxhdGZvcm1f
+ZHJpdmVyX3JlZ2lzdGVyKSBmcm9tIFs8YzAyZjNmODQ+XSAoZXh5bm9zX2RybV9pbml0KzB4Yzgv
+MHgxMjQpCj4gWyAgICAxLjg4MDkzNl0gWzxjMDJmM2Y4ND5dIChleHlub3NfZHJtX2luaXQpIGZy
+b20gWzxjMDAwODlmND5dIChkb19vbmVfaW5pdGNhbGwrMHg5MC8weDFlMCkKPiBbICAgIDEuODg5
+MDk2XSBbPGMwMDA4OWY0Pl0gKGRvX29uZV9pbml0Y2FsbCkgZnJvbSBbPGMwOGIyZTI0Pl0gKGtl
+cm5lbF9pbml0X2ZyZWVhYmxlKzB4MTE0LzB4MWUwKQo+IFsgICAgMS44OTc3NzldIFs8YzA4YjJl
+MjQ+XSAoa2VybmVsX2luaXRfZnJlZWFibGUpIGZyb20gWzxjMDUyMzVhYz5dIChrZXJuZWxfaW5p
+dCsweDE4LzB4ZmMpCj4gWyAgICAxLjkwNTkzNF0gWzxjMDUyMzVhYz5dIChrZXJuZWxfaW5pdCkg
+ZnJvbSBbPGMwMDBlZmEwPl0gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDM0KQo+IAo+IEhvcGUgdGhh
+dCBoZWxwcyBzb21lLCBhZnJhaWQgSSBhbSBub3QgcmVhbGx5IGZhbWlsaWFyIGVub3VnaCB3aXRo
+Cj4gdGhlIGdyYXBoaWNzIHN0YWNrIHRvIGNoYXNlIHRoYXQgZG93biBtdWNoIG1vcmUgdGhvdWdo
+Lgo+IAo+IFRoYW5rcywKPiBDaGFybGVzCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
+bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4g
+dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3Jl
+IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
+Lmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
