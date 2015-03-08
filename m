@@ -1,61 +1,64 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [v3] libdrm: improvements to userspace exynos component
-Date: Sun, 8 Mar 2015 14:30:47 +0000
-Message-ID: <CACvgo53QTAXNt3Z8JJ8ADsrNJDnR7V89EXEiQ_-+x_P8dnCNHA@mail.gmail.com>
-References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CACvgo50e534ZjnNZHhj3jiiDNXeguDj7VMhrUVrByHZ_rh8i-w@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
+Date: Sun, 8 Mar 2015 18:56:27 +0000
+Message-ID: <20150308185627.GU28806@sirena.org.uk>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
+ <1425299763-4066822-6-git-send-email-arnd@arndb.de>
+ <20150306174316.GA26692@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACvgo50e534ZjnNZHhj3jiiDNXeguDj7VMhrUVrByHZ_rh8i-w@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Rob Clark <robclark@freedesktop.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="V4yrq4dHtCqH+JvC"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58968 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750894AbbCHS4u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 8 Mar 2015 14:56:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20150306174316.GA26692@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
 
-T24gMjUgRmVicnVhcnkgMjAxNSBhdCAxNTo1NCwgRW1pbCBWZWxpa292IDxlbWlsLmwudmVsaWtv
-dkBnbWFpbC5jb20+IHdyb3RlOgo+IE9uIDI0IEZlYnJ1YXJ5IDIwMTUgYXQgMTQ6MjAsIFRvYmlh
-cyBKYWtvYmkKPiA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+IHdyb3RlOgo+PiBIZWxs
-bywKPj4KPj4gaGVyZSBhcmUgc29tZSBtaXNjZWxsYW5lb3VzIGltcHJvdmVtZW50cyAoc21hbGwg
-ZmVhdHVyZXMsIGJ1Z2ZpeGVzLCBzcGVsbGluZyBmaXhlcywgZXRjLikgZm9yIHRoZSBleHlub3Mg
-Y29tcG9uZW50IG9mIGxpYmRybS4gVGhlIGdlbmVyYWwgaWRlYSBpcyB0byBsZXQgdXNlcnNwYWNl
-IHVzZSB0aGUgRzJEIGVuZ2luZSBmdW5jdGlvbmFsaXR5IG1vcmUKPj4gZWZmaWNpZW50bHkuCj4+
-Cj4+IElmIHNvbWVvbmUgaXMgaW50ZXJlc3RlZCBpbiBhbiBhcHBsaWNhdGlvbiB0aGF0IGFjdHVh
-bGx5IG1ha2VzIHVzZSBvZiB0aGlzLCB0aGUgUmV0cm9BcmNoIGZyb250ZW5kIGhhcyBhIGN1c3Rv
-bSB2aWRlbyBiYWNrZW5kOgo+PiBodHRwczovL2dpdGh1Yi5jb20vbGlicmV0cm8vUmV0cm9BcmNo
-L2Jsb2IvbWFzdGVyL2dmeC9kcml2ZXJzL2V4eW5vc19nZnguYwo+Pgo+Pgo+PiBQbGVhc2UgcmV2
-aWV3IGFuZCBsZXQgbWUga25vdyB3aGF0IEkgY2FuIGltcHJvdmUuCj4+Cj4+IHYyOgo+PiAtIE1l
-bnRpb24gdmFsdWUgb2YgRzJEIHNjYWxpbmcgbm9ybWFsaXphdGlvbiBmYWN0b3IgKDAyLzE1KS4K
-Pj4gLSBNb3ZlZCBwYXRjaCAoMDQvMTUpIGRlc2NyaXB0aW9uIGZyb20gY29tbWl0IG1lc3NhZ2Ug
-dG8gc291cmNlIGl0c2VsZiwgbGlrZSBzdWdnZXN0ZWQgYnkgSm9vbnlvdW5nIFNoaW0uCj4+Cj4+
-IHYzOgo+PiBJIGludGVncmF0ZWQgdGhlIHN1Z2dlc3Rpb25zIGJ5IEVtaWwgVmVsaWtvdiBhbmQg
-YWRkZWQgdHdvIGFkZGl0aW9uYWwgcGF0Y2hlcyB0byB0aGUgc2VyaWVzLiBPbmUgZG9pbmcgdGhl
-IGhlYWRlciBjbGVhbnVwIHRoYXQgRW1pbCBwb2ludCBvdXQsIGFub3RoZXIgb25lIGp1c3QgYSB0
-cml2aWFsIHdoaXRlc3BhY2UgdGhpbmcuIEknbSByZXNlbmRpbmcKPj4gdGhlIHdob2xlIHNlcmll
-cywgc2luY2UgbnVtYmVyIG9mIHBhdGNoZXMgYW5kIG9yZGVyIGNoYW5nZWQuCj4+Cj4gVGhhbmtz
-IGZvciB0aGUgdXBkYXRlLiBGb3IgdGhlIGZ1dHVyZSBwbGVhc2UgYWRkIHRoZSB0YWdzCj4gKHRl
-c3RlZC1ieSxldGMuKSB3aGVuIHJlc2VuZGluZyBwYXRjaGVzLgo+IERvbid0IHdvcnJ5IGFib3V0
-IHRoZXNlIEknbGwgYWRkIHRoZW0gYmVmb3JlIHB1c2hpbmcuIFRoZSB0d28gZXh0cmEKPiBwYXRj
-aGVzIGxvb2sgZ29vZCBpbWhvLgo+Cj4gSW5raSwKPgo+IFRoaXMgY2xlYW51cCBzZXJpZXMgaGFz
-IGJlZW4gYXJvdW5kIGZvciBhIGxpdHRsZSB3aGlsZSBub3cuIHYzIGNhbiBiZSBmb3VuZCBhdAo+
-IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtRmVi
-cnVhcnkvMDc4MTExLmh0bWwKPgo+IERvIHlvdSBtaW5kIGlmIHdlIGFwcGx5IHRoZSB0cml2aWFs
-IGFuZCB0ZXN0ZWQqIHBhdGNoZXMgd2l0aGluIHRoZQo+IG5leHQgd2VlayBvciBzbyA/Cj4gVGhl
-IG1vcmUgc2VyaW91cyBwYXRjaGVzIGh3IHNwZWNpZmljLCBldGMgYXJlIGxhY2tpbmcgcHJldmll
-dyBhbmQgY2FuCj4gYmUgY29tbWl0dGVkIGF0IGEgbGF0ZXIgc3RhZ2UuCj4KPiBUaGFua3MKPiBF
-bWlsCj4KPiBbKl0gUGF0Y2hlcyAyLTQsIDYsIDgsIDEwLCAxMiwgMTQtMTcsIG91dCBvZiB3aGlj
-aCBKb29ueW91bmcgU2hpbSBoYXMKPiB0ZXN0ZWQgYWxsIGJ1dCAxMiBhbmQgMTcuCkknbSBwbGFu
-bmluZyB0byBwdXNoIHRoZSBhYm92ZSBtZW50aW9uZWQgcGF0Y2hlcyBhcm91bmQgbHVuY2h0aW1l
-IHRoaXMKVHVlc2RheS4gSWYgYW55b25lIGhhcyBvYmplY3Rpb25zIHBsZWFzZSBzcGVhayB1cC4K
-Ci1FbWlsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--V4yrq4dHtCqH+JvC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Mar 06, 2015 at 05:43:16PM +0000, Charles Keepax wrote:
+
+> Cragganmore, I need to look into it a bit more but it looks like
+> one of the PMICs can't allocate its IRQs:
+
+> [    0.961455] wm831x 1-0034: WM8311 revision C
+> [    0.965066] wm831x 1-0034: Failed to allocate IRQs: -17
+
+> And the CODEC can't request its IRQ:
+
+> [    4.252735] arizona spi0.1: WM5102 revision C
+> [    4.269763] arizona spi0.1: Failed to request primary IRQ 263: -22
+
+> Hopefully I can look into this a little more next week.
+
+The second is a knock on from the first - the CODEC interrupt line is
+connected to the PMIC so since the PMIC can't allocate its IRQ range the
+CODEC can't request it.
+
+--V4yrq4dHtCqH+JvC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJU/JtbAAoJECTWi3JdVIfQduIH/iax+XszscTcQxZ5zj5lVRGt
+RG0dWdzIF4vyGDcVinciGKumTe6MQSKy00b38FFSebUVOd5aFF1dCSk0fT75jJSa
+6vgjNTQpB7Z+hItwHPfNaNq3CvbNjyZfIJX0fHKAjDduS/NPEaXEZK/JcA6IQQBv
+HXe4JICZPG/KJqGa2l1yEl8F5RTeSJ1LoPkJzmgI6KMpPT38VEhCaXdAEW1CVLmB
+8cQq2HC+jA5722INJD9MuBEFuHAxLHunOOW6omewLCTJRc0xUb8tS92cGkaxdwGU
+zj+Gj8Ran2Sb5oNc0IkmiJ8upcQX68vEQ5omSGGoS1oNV0wLkMBq3yuKFuyScsY=
+=LchU
+-----END PGP SIGNATURE-----
+
+--V4yrq4dHtCqH+JvC--
