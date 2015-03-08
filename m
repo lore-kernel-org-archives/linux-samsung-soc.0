@@ -1,33 +1,61 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: exynos_defconfig: Enable ChromeOS EC chardev driver
-Date: Sat,  7 Mar 2015 16:14:22 +0100
-Message-ID: <1425741262-8278-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [v3] libdrm: improvements to userspace exynos component
+Date: Sun, 8 Mar 2015 14:30:47 +0000
+Message-ID: <CACvgo53QTAXNt3Z8JJ8ADsrNJDnR7V89EXEiQ_-+x_P8dnCNHA@mail.gmail.com>
+References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CACvgo50e534ZjnNZHhj3jiiDNXeguDj7VMhrUVrByHZ_rh8i-w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACvgo50e534ZjnNZHhj3jiiDNXeguDj7VMhrUVrByHZ_rh8i-w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Rob Clark <robclark@freedesktop.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos Chromebooks have an Embedded Controller known as the ChromeOS EC
-Enable the driver that provides an interface to access from user-space.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 3d22aae39a83..14fa9f05f768 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -173,6 +173,8 @@ CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_S3C=y
- CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC_CHARDEV=y
- CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_COMMON_CLK_MAX77802=y
- CONFIG_COMMON_CLK_S2MPS11=y
--- 
-2.1.4
+T24gMjUgRmVicnVhcnkgMjAxNSBhdCAxNTo1NCwgRW1pbCBWZWxpa292IDxlbWlsLmwudmVsaWtv
+dkBnbWFpbC5jb20+IHdyb3RlOgo+IE9uIDI0IEZlYnJ1YXJ5IDIwMTUgYXQgMTQ6MjAsIFRvYmlh
+cyBKYWtvYmkKPiA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+IHdyb3RlOgo+PiBIZWxs
+bywKPj4KPj4gaGVyZSBhcmUgc29tZSBtaXNjZWxsYW5lb3VzIGltcHJvdmVtZW50cyAoc21hbGwg
+ZmVhdHVyZXMsIGJ1Z2ZpeGVzLCBzcGVsbGluZyBmaXhlcywgZXRjLikgZm9yIHRoZSBleHlub3Mg
+Y29tcG9uZW50IG9mIGxpYmRybS4gVGhlIGdlbmVyYWwgaWRlYSBpcyB0byBsZXQgdXNlcnNwYWNl
+IHVzZSB0aGUgRzJEIGVuZ2luZSBmdW5jdGlvbmFsaXR5IG1vcmUKPj4gZWZmaWNpZW50bHkuCj4+
+Cj4+IElmIHNvbWVvbmUgaXMgaW50ZXJlc3RlZCBpbiBhbiBhcHBsaWNhdGlvbiB0aGF0IGFjdHVh
+bGx5IG1ha2VzIHVzZSBvZiB0aGlzLCB0aGUgUmV0cm9BcmNoIGZyb250ZW5kIGhhcyBhIGN1c3Rv
+bSB2aWRlbyBiYWNrZW5kOgo+PiBodHRwczovL2dpdGh1Yi5jb20vbGlicmV0cm8vUmV0cm9BcmNo
+L2Jsb2IvbWFzdGVyL2dmeC9kcml2ZXJzL2V4eW5vc19nZnguYwo+Pgo+Pgo+PiBQbGVhc2UgcmV2
+aWV3IGFuZCBsZXQgbWUga25vdyB3aGF0IEkgY2FuIGltcHJvdmUuCj4+Cj4+IHYyOgo+PiAtIE1l
+bnRpb24gdmFsdWUgb2YgRzJEIHNjYWxpbmcgbm9ybWFsaXphdGlvbiBmYWN0b3IgKDAyLzE1KS4K
+Pj4gLSBNb3ZlZCBwYXRjaCAoMDQvMTUpIGRlc2NyaXB0aW9uIGZyb20gY29tbWl0IG1lc3NhZ2Ug
+dG8gc291cmNlIGl0c2VsZiwgbGlrZSBzdWdnZXN0ZWQgYnkgSm9vbnlvdW5nIFNoaW0uCj4+Cj4+
+IHYzOgo+PiBJIGludGVncmF0ZWQgdGhlIHN1Z2dlc3Rpb25zIGJ5IEVtaWwgVmVsaWtvdiBhbmQg
+YWRkZWQgdHdvIGFkZGl0aW9uYWwgcGF0Y2hlcyB0byB0aGUgc2VyaWVzLiBPbmUgZG9pbmcgdGhl
+IGhlYWRlciBjbGVhbnVwIHRoYXQgRW1pbCBwb2ludCBvdXQsIGFub3RoZXIgb25lIGp1c3QgYSB0
+cml2aWFsIHdoaXRlc3BhY2UgdGhpbmcuIEknbSByZXNlbmRpbmcKPj4gdGhlIHdob2xlIHNlcmll
+cywgc2luY2UgbnVtYmVyIG9mIHBhdGNoZXMgYW5kIG9yZGVyIGNoYW5nZWQuCj4+Cj4gVGhhbmtz
+IGZvciB0aGUgdXBkYXRlLiBGb3IgdGhlIGZ1dHVyZSBwbGVhc2UgYWRkIHRoZSB0YWdzCj4gKHRl
+c3RlZC1ieSxldGMuKSB3aGVuIHJlc2VuZGluZyBwYXRjaGVzLgo+IERvbid0IHdvcnJ5IGFib3V0
+IHRoZXNlIEknbGwgYWRkIHRoZW0gYmVmb3JlIHB1c2hpbmcuIFRoZSB0d28gZXh0cmEKPiBwYXRj
+aGVzIGxvb2sgZ29vZCBpbWhvLgo+Cj4gSW5raSwKPgo+IFRoaXMgY2xlYW51cCBzZXJpZXMgaGFz
+IGJlZW4gYXJvdW5kIGZvciBhIGxpdHRsZSB3aGlsZSBub3cuIHYzIGNhbiBiZSBmb3VuZCBhdAo+
+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtRmVi
+cnVhcnkvMDc4MTExLmh0bWwKPgo+IERvIHlvdSBtaW5kIGlmIHdlIGFwcGx5IHRoZSB0cml2aWFs
+IGFuZCB0ZXN0ZWQqIHBhdGNoZXMgd2l0aGluIHRoZQo+IG5leHQgd2VlayBvciBzbyA/Cj4gVGhl
+IG1vcmUgc2VyaW91cyBwYXRjaGVzIGh3IHNwZWNpZmljLCBldGMgYXJlIGxhY2tpbmcgcHJldmll
+dyBhbmQgY2FuCj4gYmUgY29tbWl0dGVkIGF0IGEgbGF0ZXIgc3RhZ2UuCj4KPiBUaGFua3MKPiBF
+bWlsCj4KPiBbKl0gUGF0Y2hlcyAyLTQsIDYsIDgsIDEwLCAxMiwgMTQtMTcsIG91dCBvZiB3aGlj
+aCBKb29ueW91bmcgU2hpbSBoYXMKPiB0ZXN0ZWQgYWxsIGJ1dCAxMiBhbmQgMTcuCkknbSBwbGFu
+bmluZyB0byBwdXNoIHRoZSBhYm92ZSBtZW50aW9uZWQgcGF0Y2hlcyBhcm91bmQgbHVuY2h0aW1l
+IHRoaXMKVHVlc2RheS4gSWYgYW55b25lIGhhcyBvYmplY3Rpb25zIHBsZWFzZSBzcGVhayB1cC4K
+Ci1FbWlsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
