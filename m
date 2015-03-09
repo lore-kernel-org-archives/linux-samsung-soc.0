@@ -1,39 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: exynos: Remove eint_gpio_init call-back for
- exynos7 alive pinctrl block
-Date: Mon, 9 Mar 2015 19:24:29 +0900
-Message-ID: <CA+Ln22HGH3r6UEYtCPU7Y4a0-b4FKnx8d0VcA3a1-m1VD5Jm=w@mail.gmail.com>
-References: <1425226876-5122-1-git-send-email-a.kesavan@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCHv3 0/2] Support for JPEG IP on Exynos542x
+Date: Mon, 09 Mar 2015 13:32:44 +0100
+Message-ID: <1425904366-14447-1-git-send-email-andrzej.p@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:37006 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754021AbbCIKY3 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:63057 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751520AbbCIMcy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Mar 2015 06:24:29 -0400
-Received: by oigi138 with SMTP id i138so28318226oig.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Mar 2015 03:24:29 -0700 (PDT)
-In-Reply-To: <1425226876-5122-1-git-send-email-a.kesavan@samsung.com>
+	Mon, 9 Mar 2015 08:32:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>
 
-Hi Abhilash, Linus,
+This short series adds support for JPEG IP on Exynos542x SoC.
+The first patch adds necessary device tree nodes and the second
+one does JPEG IP support proper. The JPEG IP on Exynos542x is
+similar to what is on Exynos3250, there just slight differences.
 
-2015-03-02 1:21 GMT+09:00 Abhilash Kesavan <a.kesavan@samsung.com>:
-> The alive pin controller on exynos7 does not support external gpio
-> interrupts. Hence, remove the eint_gpio_init call-back for it. This
-> fixes the following error message seen during exynos7 boot-up:
-> "samsung-pinctrl 10580000.pinctrl: irq number not available"
+v2..v3:
+- added commit message to patch 1/2
 
-As long as "external gpio interrupts" refer to non-wake-up-capable
-GPIO interrupts I'm fine with this patch.
+v1..v2:
+- implemented changes resulting from Jacek's review
+- removed iommu entries in device tree nodes as iommu is
+not available at this moment
+- added hw3250_compat and htbl_reinit flags to s5p_jpeg_variant,
+which simplifies the code a bit
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Andrzej Pietrasiewicz (2):
+  ARM: dts: exynos5420: add nodes for jpeg codec
+  media: s5p-jpeg: add 5420 family support
 
-Thanks Linus for pinging and sorry for delay.
+ .../bindings/media/exynos-jpeg-codec.txt           |  2 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  | 16 ++++++
+ drivers/media/platform/s5p-jpeg/jpeg-core.c        | 59 +++++++++++++++-------
+ drivers/media/platform/s5p-jpeg/jpeg-core.h        | 12 +++--
+ 4 files changed, 67 insertions(+), 22 deletions(-)
 
-Best regards,
-Tomasz
+-- 
+1.9.1
