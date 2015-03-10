@@ -1,46 +1,45 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v6 8/9] arm64: dts: exynos: Add TMU sensor dt node for
+Subject: [PATCH v6 9/9] arm64: dts: exynos: Add thermal-zones dt node for
  Exynos5433 SoC
-Date: Tue, 10 Mar 2015 10:57:34 +0900
-Message-ID: <1425952655-21654-9-git-send-email-cw00.choi@samsung.com>
+Date: Tue, 10 Mar 2015 10:57:35 +0900
+Message-ID: <1425952655-21654-10-git-send-email-cw00.choi@samsung.com>
 References: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54041 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752678AbbCJB5w (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17577 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751429AbbCJB54 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Mar 2015 21:57:52 -0400
+	Mon, 9 Mar 2015 21:57:56 -0400
 In-reply-to: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene@kernel.org
 Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds the TMU (Thermal Management Unit) sensor devicetree node for
-Exynos5433. The Exynos5433 includes the five temperature sensors as following:
-- two temperature sensor for Cortex-A57 (ATLAS)
-- one temperature sensor for Cortex-A53 (APOLLO)
-- one temperature sensor for G3D IP
-- one temperature sensor for ISP IP
+This patch adds the thermal-zones devicetree node for Exynos5433 SoC.
+The thermal-zones has five thermal-zones and then each thermal-zone contains
+each thermal-sensor to monitor the temperature of own IP. The {atlas0|apollo}_
+thermal zone have the eight trip-points for interrupt method to detect the
+over-temperature.
 
 Cc: Kukjin Kim <kgene@kernel.org>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
 ---
- .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     | 22 +++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 55 ++++++++++++++++++++++
- 2 files changed, 77 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+ arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 231 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
+ 2 files changed, 232 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
 new file mode 100644
-index 0000000..396e60f
+index 0000000..7ff7b0e
 --- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
-@@ -0,0 +1,22 @@
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+@@ -0,0 +1,231 @@
 +/*
-+ * Device tree sources for Exynos5433 TMU sensor configuration
++ * Device tree sources for Exynos5433 thermal zone
 + *
 + * Copyright (c) 2015 Chanwoo Choi <cw00.choi@samsung.com>
 + *
@@ -49,83 +48,235 @@ index 0000000..396e60f
 + * published by the Free Software Foundation.
 + */
 +
-+#include <dt-bindings/thermal/thermal_exynos.h>
++#include <dt-bindings/thermal/thermal.h>
 +
-+#thermal-sensor-cells = <0>;
-+samsung,tmu_gain = <8>;
-+samsung,tmu_reference_voltage = <16>;
-+samsung,tmu_noise_cancel_mode = <4>;
-+samsung,tmu_efuse_value = <75>;
-+samsung,tmu_min_efuse_value = <40>;
-+samsung,tmu_max_efuse_value = <150>;
-+samsung,tmu_first_point_trim = <25>;
-+samsung,tmu_second_point_trim = <85>;
-+samsung,tmu_default_temp_offset = <50>;
++/ {
++thermal-zones {
++	atlas0_thermal: atlas0-thermal {
++		thermal-sensors = <&tmu_atlas0>;
++		polling-delay-passive = <0>;
++		polling-delay = <0>;
++		trips {
++			atlas0_alert_0: atlas0-alert-0 {
++				temperature = <80000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas0_alert_1: atlas0-alert-1 {
++				temperature = <85000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas0_alert_2: atlas0-alert-2 {
++				temperature = <90000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas0_alert_3: atlas0-alert-3 {
++				temperature = <95000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas0_alert_4: atlas0-alert-4 {
++				temperature = <100000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas0_alert_5: atlas0-alert-5 {
++				temperature = <105000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas0_alert_6: atlas0-alert-6 {
++				temperature = <110000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++		};
++	};
++
++	atlas1_thermal: atlas1-thermal {
++		thermal-sensors = <&tmu_atlas1>;
++		polling-delay-passive = <0>;
++		polling-delay = <0>;
++		trips {
++			atlas1_alert_0: atlas1-alert-0 {
++				temperature = <80000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas1_alert_1: atlas1-alert-1 {
++				temperature = <85000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas1_alert_2: atlas1-alert-2 {
++				temperature = <90000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas1_alert_3: atlas1-alert-3 {
++				temperature = <95000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas1_alert_4: atlas1-alert-4 {
++				temperature = <100000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas1_alert_5: atlas1-alert-5 {
++				temperature = <105000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			atlas1_alert_6: atlas1-alert-6 {
++				temperature = <110000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++		};
++	};
++
++	g3d_thermal: g3d-thermal {
++		thermal-sensors = <&tmu_g3d>;
++		polling-delay-passive = <0>;
++		polling-delay = <0>;
++		trips {
++			g3d_alert_0: g3d-alert-0 {
++				temperature = <80000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			g3d_alert_1: g3d-alert-1 {
++				temperature = <85000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			g3d_alert_2: g3d-alert-2 {
++				temperature = <90000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			g3d_alert_3: g3d-alert-3 {
++				temperature = <95000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			g3d_alert_4: g3d-alert-4 {
++				temperature = <100000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			g3d_alert_5: g3d-alert-5 {
++				temperature = <105000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			g3d_alert_6: g3d-alert-6 {
++				temperature = <110000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++		};
++
++	};
++
++	apollo_thermal: apollo-thermal {
++		thermal-sensors = <&tmu_apollo>;
++		polling-delay-passive = <0>;
++		polling-delay = <0>;
++		trips {
++			apollo_alert_0: apollo-alert-0 {
++				temperature = <80000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			apollo_alert_1: apollo-alert-1 {
++				temperature = <85000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			apollo_alert_2: apollo-alert-2 {
++				temperature = <90000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			apollo_alert_3: apollo-alert-3 {
++				temperature = <95000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			apollo_alert_4: apollo-alert-4 {
++				temperature = <100000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			apollo_alert_5: apollo-alert-5 {
++				temperature = <105000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			apollo_alert_6: apollo-alert-6 {
++				temperature = <110000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++		};
++	};
++
++	isp_thermal: isp-thermal {
++		thermal-sensors = <&tmu_isp>;
++		polling-delay-passive = <0>;
++		polling-delay = <0>;
++		trips {
++			isp_alert_0: isp-alert-0 {
++				temperature = <80000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			isp_alert_1: isp-alert-1 {
++				temperature = <85000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			isp_alert_2: isp-alert-2 {
++				temperature = <90000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			isp_alert_3: isp-alert-3 {
++				temperature = <95000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			isp_alert_4: isp-alert-4 {
++				temperature = <100000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			isp_alert_5: isp-alert-5 {
++				temperature = <105000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++			isp_alert_6: isp-alert-6 {
++				temperature = <110000>;	/* millicelsius */
++				hysteresis = <10000>;	/* millicelsius */
++				type = "active";
++			};
++		};
++	};
++};
++};
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index fea4e32..22f36f5 100644
+index 22f36f5..6a81a4f 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -836,6 +836,61 @@
- 			status = "disabled";
- 		};
+@@ -928,3 +928,4 @@
+ };
  
-+		tmu_atlas0: tmu@10060000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10060000 0x200>;
-+			interrupts = <0 95 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU0_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU0>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			status = "disabled";
-+		};
-+
-+		tmu_atlas1: tmu@10068000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10068000 0x200>;
-+			interrupts = <0 96 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU0_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU0>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			status = "disabled";
-+		};
-+
-+		tmu_g3d: tmu@10070000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10070000 0x200>;
-+			interrupts = <0 99 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU1>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			status = "disabled";
-+		};
-+
-+		tmu_apollo: tmu@10078000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10078000 0x200>;
-+			interrupts = <0 115 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU1>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			status = "disabled";
-+		};
-+
-+		tmu_isp: tmu@1007c000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x1007c000 0x200>;
-+			interrupts = <0 94 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU1>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			status = "disabled";
-+		};
-+
- 		pmu_system_controller: system-controller@105c0000 {
- 			compatible = "samsung,exynos5433-pmu", "syscon";
- 			reg = <0x105c0000 0x5008>;
+ #include "exynos5433-pinctrl.dtsi"
++#include "exynos5433-tmu.dtsi"
 -- 
 1.8.5.5
