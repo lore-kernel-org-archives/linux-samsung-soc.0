@@ -1,62 +1,53 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v6 5/9] arm64: dts: exynos: Add RTC and ADC dt node for
- Exynos5433 SoC
-Date: Tue, 10 Mar 2015 10:57:31 +0900
-Message-ID: <1425952655-21654-6-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 6/9] arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
+Date: Tue, 10 Mar 2015 10:57:32 +0900
+Message-ID: <1425952655-21654-7-git-send-email-cw00.choi@samsung.com>
 References: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40638 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752401AbbCJB5u (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Mar 2015 21:57:50 -0400
-In-reply-to: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1425952655-21654-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds RTC (Real Time Clock) dt node for Exynos5433 SoC and adds
-ADC dt node for Exynos5433 SoC. The c1b501564c98a94b4(iio: adc: exynos_adc:
-Add support for exynos7) commit supports the ADC for Exynos7. Exynos5433's ADC
-IP is the same with Exynos7's ADC IP. Exynos5433 has a little different from
-ADCv2 on ADC_CON2 register. Exynos5433 don't contain OSEL/ESEL /HIGHF of ADC_CON2.
+From: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
+This patch adds ADMA (Advanced DMA) device tree node for Exynos5433 SoC.
+In Exynos5433 SoC, ADMA is used for I2S audio interface.
+
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index fa27bb8..99aa51e 100644
+index 99aa51e..23d9018 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -815,6 +815,24 @@
- 			clock-names = "clkout16";
- 			clocks = <&xxti>;
+@@ -426,6 +426,17 @@
+ 				#dma-channels = <8>;
+ 				#dma-requests = <32>;
+ 			};
++
++			adma: adma@11420000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x11420000 0x1000>;
++				interrupts = <0 73 0>;
++				clocks = <&cmu_aud CLK_ACLK_DMAC>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
  		};
-+
-+		rtc: rtc@10590000 {
-+			compatible = "samsung,exynos3250-rtc";
-+			reg = <0x10590000 0x100>;
-+			interrupts = <0 385 0>, <0 386 0>;
-+			status = "disabled";
-+		};
-+
-+		adc: adc@14d10000 {
-+			compatible = "samsung,exynos7-adc";
-+			reg = <0x14d10000 0x100>;
-+			interrupts = <0 438 0>;
-+			clock-names = "adc";
-+			clocks = <&cmu_peric CLK_PCLK_ADCIF>;
-+			#io-channel-cells = <1>;
-+			io-channel-ranges;
-+			status = "disabled";
-+		};
- 	};
  
- 	timer {
+ 		serial_0: serial@14c10000 {
 -- 
 1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
