@@ -1,74 +1,88 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH 0/3] Fix power domains handling on exynos542x
-Date: Tue, 10 Mar 2015 10:48:54 +0100
-Message-ID: <54FEBE06.3000007@collabora.co.uk>
-References: <1423139739-19881-1-git-send-email-a.hajda@samsung.com> <54D381F4.2080701@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:43430 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272AbbCJJtA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Mar 2015 05:49:00 -0400
-In-Reply-To: <54D381F4.2080701@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RESEND] usb: dwc2: rework initialization of host and gadget in
+ dual-role mode
+Date: Tue, 10 Mar 2015 13:41:10 +0100
+Message-ID: <1425991270-30629-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, John Youn <johnyoun-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Liquid.Acid@gmx.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hello Kukjin,
+If device is configured to work only in HOST or DEVICE mode, there is
+no point in initializing both subdrivers. This patch also fixes
+resource leakage if host subdriver fails to initialize.
 
-On 02/05/2015 03:45 PM, Javier Martinez Canillas wrote:
-> Hello Andrzej,
-> 
-> Thanks a lot for finally finding what was causing the HDMI issue.
-> 
-> On 02/05/2015 01:35 PM, Andrzej Hajda wrote:
->> Hi,
->> 
->> Exynos chipsets since 542x have asynchronous bridges connecting different IPs.
->> These bridges should be operational during power domain switching, ie associated
->> clocks cannot be gated.
->> This patchset adds binding to provide such clocks per power domain and adds code
->> which enables them during domain on/off operation.
->> 
->> This patchset fixes power domain issues with disp1 domain and HDMI (some of them)
->> on Odroid XU3:
->> - disp1 power domain can be turned off,
->> - no more "imprecise external abort" faults.
->> 
->> The patchset is based on '[PATCH v5 0/9] Enable HDMI support on Exynos platforms' [1].
->> 
-> 
-> It also depends on '[PATCH 0/2] Add HDMI support for Exynos5420 platform' [2].
-> 
->> It was successfully tested on OdroidXU3.
->> 
->> [1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/42743
-> 
-> Your patches looks good to me so please feel free to add:
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> I also tested on an Exynos5420 Peach Pit Chromebook and both the "Power
-> domain power-domain disable failed" message and the system crash are gone.
-> 
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> Best regards,
-> Javier
-> 
-> [2]: https://lkml.org/lkml/2015/1/20/235
-> 
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/dwc2/core.h     |  2 ++
+ drivers/usb/dwc2/platform.c | 29 +++++++++++++++++++++--------
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
-Any comments about this series? It fixes system hangs on Exynos
-5420/5422/5800 boards and has been in the list for a while.
+diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+index 7a70a1349334..f93b06daef97 100644
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -570,6 +570,8 @@ struct dwc2_hsotg {
+ 	struct dwc2_core_params *core_params;
+ 	enum usb_otg_state op_state;
+ 	enum usb_dr_mode dr_mode;
++	unsigned int hcd_enabled:1;
++	unsigned int gadget_enabled:1;
+ 
+ 	struct phy *phy;
+ 	struct usb_phy *uphy;
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index 6a795aa2ff05..ee0b0b06d0fc 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -121,8 +121,10 @@ static int dwc2_driver_remove(struct platform_device *dev)
+ {
+ 	struct dwc2_hsotg *hsotg = platform_get_drvdata(dev);
+ 
+-	dwc2_hcd_remove(hsotg);
+-	s3c_hsotg_remove(hsotg);
++	if (hsotg->hcd_enabled)
++		dwc2_hcd_remove(hsotg);
++	if (hsotg->gadget_enabled)
++		s3c_hsotg_remove(hsotg);
+ 
+ 	return 0;
+ }
+@@ -214,12 +216,23 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 
+ 	spin_lock_init(&hsotg->lock);
+ 	mutex_init(&hsotg->init_mutex);
+-	retval = dwc2_gadget_init(hsotg, irq);
+-	if (retval)
+-		return retval;
+-	retval = dwc2_hcd_init(hsotg, irq, params);
+-	if (retval)
+-		return retval;
++
++	if (hsotg->dr_mode != USB_DR_MODE_HOST) {
++		retval = dwc2_gadget_init(hsotg, irq);
++		if (retval)
++			return retval;
++		hsotg->gadget_enabled = 1;
++	}
++
++	if (hsotg->dr_mode != USB_DR_MODE_PERIPHERAL) {
++		retval = dwc2_hcd_init(hsotg, irq, params);
++		if (retval) {
++			if (hsotg->gadget_enabled)
++				s3c_hsotg_remove(hsotg);
++			return retval;
++		}
++		hsotg->hcd_enabled = 1;
++	}
+ 
+ 	platform_set_drvdata(dev, hsotg);
+ 
+-- 
+1.9.2
 
-Please keep in mind that a v2 of patch 3/3 was posted [0].
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2015/2/6/138
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
