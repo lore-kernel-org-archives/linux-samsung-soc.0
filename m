@@ -1,30 +1,19 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v6 3/9] arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
-Date: Tue, 10 Mar 2015 10:57:29 +0900
-Message-ID: <1425952655-21654-4-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v6 2/9] arm64: dts: exynos: Add MSHC dt node for Exynos5433
+Date: Tue, 10 Mar 2015 10:57:28 +0900
+Message-ID: <1425952655-21654-3-git-send-email-cw00.choi@samsung.com>
 References: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene@kernel.org
-Cc: mark.rutland@arm.com, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, cw00.choi@samsung.com, marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, devicetree@vger.kernel.org, olof@lixom.net, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org, ideal.song@samsung.com
+Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds SPI (Serial Peripheral Interface) dt node for Exynos5433 SoC.
-SPI transfers serial data by using various peripherals. SPI includes
-8-bit/16-bit/32-bit shift registers to transmit and receive data. PDMA is used
-for SPI communication.
+From: Jaehoon Chung <jh80.chung@samsung.com>
+
+This patch adds MSHC (Mobile Storage Host Controller) dt node for Exynos5433
+SoC. MSHC is an interface between the system the SD/MMC card.
 
 Cc: Kukjin Kim <kgene@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -33,143 +22,61 @@ Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Olof Johansson <olof@lixom.net>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 114 +++++++++++++++++++++++++++++
- 1 file changed, 114 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 38 ++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 5807f71..cc166c0 100644
+index 7c3488a..5807f71 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -399,6 +399,35 @@
- 			interrupts = <1 9 0xf04>;
+@@ -655,6 +655,44 @@
+ 			status = "disabled";
  		};
  
-+		amba {
-+			compatible = "arm,amba-bus";
++		mshc_0: mshc@15540000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 225 0>;
 +			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			pdma0: pdma@15610000 {
-+				compatible = "arm,pl330", "arm,primecell";
-+				reg = <0x15610000 0x1000>;
-+				interrupts = <0 228 0>;
-+				clocks = <&cmu_fsys CLK_PDMA0>;
-+				clock-names = "apb_pclk";
-+				#dma-cells = <1>;
-+				#dma-channels = <8>;
-+				#dma-requests = <32>;
-+			};
-+
-+			pdma1: pdma@15600000 {
-+				compatible = "arm,pl330", "arm,primecell";
-+				reg = <0x15600000 0x1000>;
-+				interrupts = <0 246 0>;
-+				clocks = <&cmu_fsys CLK_PDMA1>;
-+				clock-names = "apb_pclk";
-+				#dma-cells = <1>;
-+				#dma-channels = <8>;
-+				#dma-requests = <32>;
-+			};
++			#size-cells = <0>;
++			reg = <0x15540000 0x2000>;
++			clocks = <&cmu_fsys CLK_ACLK_MMC0>,
++				 <&cmu_fsys CLK_SCLK_MMC0>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
 +		};
 +
- 		serial_0: serial@14c10000 {
- 			compatible = "samsung,exynos5433-uart";
- 			reg = <0x14c10000 0x100>;
-@@ -499,6 +528,91 @@
- 			interrupts = <0 442 0>;
- 		};
++		mshc_1: mshc@15550000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 226 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15550000 0x2000>;
++			clocks = <&cmu_fsys CLK_ACLK_MMC1>,
++				 <&cmu_fsys CLK_SCLK_MMC1>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
++
++		mshc_2: mshc@15560000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 227 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15560000 0x2000>;
++			clocks = <&cmu_fsys CLK_ACLK_MMC2>,
++				 <&cmu_fsys CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
+ 	};
  
-+		spi_0: spi@14d20000 {
-+			compatible = "samsung,exynos7-spi";
-+			reg = <0x14d20000 0x100>;
-+			interrupts = <0 432 0>;
-+			dmas = <&pdma0 9>, <&pdma0 8>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric CLK_PCLK_SPI0>,
-+				 <&cmu_top CLK_SCLK_SPI0_PERIC>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi0_bus>;
-+			status = "disabled";
-+		};
-+
-+		spi_1: spi@14d30000 {
-+			compatible = "samsung,exynos7-spi";
-+			reg = <0x14d30000 0x100>;
-+			interrupts = <0 433 0>;
-+			dmas = <&pdma0 11>, <&pdma0 10>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric CLK_PCLK_SPI1>,
-+				 <&cmu_top CLK_SCLK_SPI1_PERIC>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi1_bus>;
-+			status = "disabled";
-+		};
-+
-+		spi_2: spi@14d40000 {
-+			compatible = "samsung,exynos7-spi";
-+			reg = <0x14d40000 0x100>;
-+			interrupts = <0 434 0>;
-+			dmas = <&pdma0 13>, <&pdma0 12>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric CLK_PCLK_SPI2>,
-+				 <&cmu_top CLK_SCLK_SPI2_PERIC>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi2_bus>;
-+			status = "disabled";
-+		};
-+
-+		spi_3: spi@14d50000 {
-+			compatible = "samsung,exynos7-spi";
-+			reg = <0x14d50000 0x100>;
-+			interrupts = <0 447 0>;
-+			dmas = <&pdma0 23>, <&pdma0 22>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric CLK_PCLK_SPI3>,
-+				 <&cmu_top CLK_SCLK_SPI3_PERIC>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi3_bus>;
-+			status = "disabled";
-+		};
-+
-+		spi_4: spi@14d00000 {
-+			compatible = "samsung,exynos7-spi";
-+			reg = <0x14d00000 0x100>;
-+			interrupts = <0 412 0>;
-+			dmas = <&pdma0 25>, <&pdma0 24>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_peric CLK_PCLK_SPI4>,
-+				 <&cmu_top CLK_SCLK_SPI4_PERIC>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi4_bus>;
-+			status = "disabled";
-+		};
-+
- 		hsi2c_0: hsi2c@14e40000 {
- 			compatible = "samsung,exynos7-hsi2c";
- 			reg = <0x14e40000 0x1000>;
+ 	timer {
 -- 
 1.8.5.5
