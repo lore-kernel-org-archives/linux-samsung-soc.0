@@ -1,282 +1,63 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v6 9/9] arm64: dts: exynos: Add thermal-zones dt node for
- Exynos5433 SoC
-Date: Tue, 10 Mar 2015 10:57:35 +0900
-Message-ID: <1425952655-21654-10-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 4/9] arm64: dts: exynos: Add PMU dt node for Exynos5433
+Date: Tue, 10 Mar 2015 10:57:30 +0900
+Message-ID: <1425952655-21654-5-git-send-email-cw00.choi@samsung.com>
 References: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:17577 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751429AbbCJB54 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Mar 2015 21:57:56 -0400
-In-reply-to: <1425952655-21654-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1425952655-21654-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds the thermal-zones devicetree node for Exynos5433 SoC.
-The thermal-zones has five thermal-zones and then each thermal-zone contains
-each thermal-sensor to monitor the temperature of own IP. The {atlas0|apollo}_
-thermal zone have the eight trip-points for interrupt method to detect the
-over-temperature.
+This patch adds PMU (Power Management Unit) dt node for Exynos5433 SoC and
+set the source clock for CLKOUT register as xxti .
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+[ideal.song: Add the setting of CLKOUT register]
+Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 231 +++++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi     |   1 +
- 2 files changed, 232 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+ Documentation/devicetree/bindings/arm/samsung/pmu.txt | 1 +
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi            | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
-new file mode 100644
-index 0000000..7ff7b0e
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
-@@ -0,0 +1,231 @@
-+/*
-+ * Device tree sources for Exynos5433 thermal zone
-+ *
-+ * Copyright (c) 2015 Chanwoo Choi <cw00.choi@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <dt-bindings/thermal/thermal.h>
-+
-+/ {
-+thermal-zones {
-+	atlas0_thermal: atlas0-thermal {
-+		thermal-sensors = <&tmu_atlas0>;
-+		polling-delay-passive = <0>;
-+		polling-delay = <0>;
-+		trips {
-+			atlas0_alert_0: atlas0-alert-0 {
-+				temperature = <80000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas0_alert_1: atlas0-alert-1 {
-+				temperature = <85000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas0_alert_2: atlas0-alert-2 {
-+				temperature = <90000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas0_alert_3: atlas0-alert-3 {
-+				temperature = <95000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas0_alert_4: atlas0-alert-4 {
-+				temperature = <100000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas0_alert_5: atlas0-alert-5 {
-+				temperature = <105000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas0_alert_6: atlas0-alert-6 {
-+				temperature = <110000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+		};
-+	};
-+
-+	atlas1_thermal: atlas1-thermal {
-+		thermal-sensors = <&tmu_atlas1>;
-+		polling-delay-passive = <0>;
-+		polling-delay = <0>;
-+		trips {
-+			atlas1_alert_0: atlas1-alert-0 {
-+				temperature = <80000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas1_alert_1: atlas1-alert-1 {
-+				temperature = <85000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas1_alert_2: atlas1-alert-2 {
-+				temperature = <90000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas1_alert_3: atlas1-alert-3 {
-+				temperature = <95000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas1_alert_4: atlas1-alert-4 {
-+				temperature = <100000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas1_alert_5: atlas1-alert-5 {
-+				temperature = <105000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			atlas1_alert_6: atlas1-alert-6 {
-+				temperature = <110000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+		};
-+	};
-+
-+	g3d_thermal: g3d-thermal {
-+		thermal-sensors = <&tmu_g3d>;
-+		polling-delay-passive = <0>;
-+		polling-delay = <0>;
-+		trips {
-+			g3d_alert_0: g3d-alert-0 {
-+				temperature = <80000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			g3d_alert_1: g3d-alert-1 {
-+				temperature = <85000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			g3d_alert_2: g3d-alert-2 {
-+				temperature = <90000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			g3d_alert_3: g3d-alert-3 {
-+				temperature = <95000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			g3d_alert_4: g3d-alert-4 {
-+				temperature = <100000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			g3d_alert_5: g3d-alert-5 {
-+				temperature = <105000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			g3d_alert_6: g3d-alert-6 {
-+				temperature = <110000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+		};
-+
-+	};
-+
-+	apollo_thermal: apollo-thermal {
-+		thermal-sensors = <&tmu_apollo>;
-+		polling-delay-passive = <0>;
-+		polling-delay = <0>;
-+		trips {
-+			apollo_alert_0: apollo-alert-0 {
-+				temperature = <80000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			apollo_alert_1: apollo-alert-1 {
-+				temperature = <85000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			apollo_alert_2: apollo-alert-2 {
-+				temperature = <90000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			apollo_alert_3: apollo-alert-3 {
-+				temperature = <95000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			apollo_alert_4: apollo-alert-4 {
-+				temperature = <100000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			apollo_alert_5: apollo-alert-5 {
-+				temperature = <105000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			apollo_alert_6: apollo-alert-6 {
-+				temperature = <110000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+		};
-+	};
-+
-+	isp_thermal: isp-thermal {
-+		thermal-sensors = <&tmu_isp>;
-+		polling-delay-passive = <0>;
-+		polling-delay = <0>;
-+		trips {
-+			isp_alert_0: isp-alert-0 {
-+				temperature = <80000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			isp_alert_1: isp-alert-1 {
-+				temperature = <85000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			isp_alert_2: isp-alert-2 {
-+				temperature = <90000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			isp_alert_3: isp-alert-3 {
-+				temperature = <95000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			isp_alert_4: isp-alert-4 {
-+				temperature = <100000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			isp_alert_5: isp-alert-5 {
-+				temperature = <105000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+			isp_alert_6: isp-alert-6 {
-+				temperature = <110000>;	/* millicelsius */
-+				hysteresis = <10000>;	/* millicelsius */
-+				type = "active";
-+			};
-+		};
-+	};
-+};
-+};
+diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+index 67b2113..a87fc43 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+@@ -10,6 +10,7 @@ Properties:
+ 		   - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
+ 		   - "samsung,exynos5410-pmu" - for Exynos5410 SoC,
+ 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
++		   - "samsung,exynos5433-pmu" - for Exynos5433 SoC.
+ 		   - "samsung,exynos7-pmu" - for Exynos7 SoC.
+ 		second value must be always "syscon".
+ 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 22f36f5..6a81a4f 100644
+index cc166c0..fa27bb8 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -928,3 +928,4 @@
- };
+@@ -807,6 +807,14 @@
+ 			fifo-depth = <0x40>;
+ 			status = "disabled";
+ 		};
++
++		pmu_system_controller: system-controller@105c0000 {
++			compatible = "samsung,exynos5433-pmu", "syscon";
++			reg = <0x105c0000 0x5008>;
++			#clock-cells = <1>;
++			clock-names = "clkout16";
++			clocks = <&xxti>;
++		};
+ 	};
  
- #include "exynos5433-pinctrl.dtsi"
-+#include "exynos5433-tmu.dtsi"
+ 	timer {
 -- 
 1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
