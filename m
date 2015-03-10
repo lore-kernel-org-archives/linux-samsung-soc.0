@@ -1,48 +1,56 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] pinctrl: exynos: Remove eint_gpio_init call-back for
- exynos7 alive pinctrl block
-Date: Mon, 9 Mar 2015 22:22:17 +0530
-Message-ID: <CAM4voandpVQqVtHgZdTViEzNtBj=XWJ7A7yY5oGqgqg4btxzCA@mail.gmail.com>
-References: <1425226876-5122-1-git-send-email-a.kesavan@samsung.com>
-	<CA+Ln22HGH3r6UEYtCPU7Y4a0-b4FKnx8d0VcA3a1-m1VD5Jm=w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] devfreq: event: Add 'const' keyword for devfreq_event_ops
+ structure
+Date: Tue, 10 Mar 2015 09:27:35 +0900
+Message-ID: <1425947255-375-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f176.google.com ([209.85.216.176]:40144 "EHLO
-	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753531AbbCIQwS (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:32243 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750933AbbCJA1l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Mar 2015 12:52:18 -0400
-Received: by qcvs11 with SMTP id s11so34156339qcv.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Mar 2015 09:52:17 -0700 (PDT)
-In-Reply-To: <CA+Ln22HGH3r6UEYtCPU7Y4a0-b4FKnx8d0VcA3a1-m1VD5Jm=w@mail.gmail.com>
+	Mon, 9 Mar 2015 20:27:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: myungjoo.ham@samsung.com
+Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Tomasz,
+This patch adds the 'const' keyword for devfreq_event_ops structure
+because the ops of devfreq_event_desc structure shold not be changed
+after initialization.
 
-On Mon, Mar 9, 2015 at 3:54 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Abhilash, Linus,
->
-> 2015-03-02 1:21 GMT+09:00 Abhilash Kesavan <a.kesavan@samsung.com>:
->> The alive pin controller on exynos7 does not support external gpio
->> interrupts. Hence, remove the eint_gpio_init call-back for it. This
->> fixes the following error message seen during exynos7 boot-up:
->> "samsung-pinctrl 10580000.pinctrl: irq number not available"
->
-> As long as "external gpio interrupts" refer to non-wake-up-capable
-> GPIO interrupts I'm fine with this patch.
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/devfreq/event/exynos-ppmu.c | 2 +-
+ include/linux/devfreq-event.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Yes, that was the intention. Thanks for the review.
-
-Regards,
-Abhilash
->
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
->
-> Thanks Linus for pinging and sorry for delay.
->
-> Best regards,
-> Tomasz
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index ad83473..7d99d13 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -194,7 +194,7 @@ static int exynos_ppmu_get_event(struct devfreq_event_dev *edev,
+ 	return 0;
+ }
+ 
+-static struct devfreq_event_ops exynos_ppmu_ops = {
++static const struct devfreq_event_ops exynos_ppmu_ops = {
+ 	.disable = exynos_ppmu_disable,
+ 	.set_event = exynos_ppmu_set_event,
+ 	.get_event = exynos_ppmu_get_event,
+diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
+index 602fbbf..0a83a1e 100644
+--- a/include/linux/devfreq-event.h
++++ b/include/linux/devfreq-event.h
+@@ -91,7 +91,7 @@ struct devfreq_event_desc {
+ 	const char *name;
+ 	void *driver_data;
+ 
+-	struct devfreq_event_ops *ops;
++	const struct devfreq_event_ops *ops;
+ };
+ 
+ #if defined(CONFIG_PM_DEVFREQ_EVENT)
+-- 
+1.8.5.5
