@@ -1,56 +1,68 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] devfreq: event: Add 'const' keyword for devfreq_event_ops
- structure
-Date: Tue, 10 Mar 2015 09:27:35 +0900
-Message-ID: <1425947255-375-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH v5 1/9] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Tue, 10 Mar 2015 10:31:03 +0900
+Message-ID: <54FE4957.7050904@samsung.com>
+References: <1425533911-14800-1-git-send-email-cw00.choi@samsung.com>
+ <1425533911-14800-2-git-send-email-cw00.choi@samsung.com>
+ <20150305122459.GC14093@leverpostej>
+ <CAGTfZH3Bf1ueFO25NXFbN+Mvb9TcGbErbSp=a+vQ0=A+E07mQA@mail.gmail.com>
+ <20150305170450.GG14093@leverpostej>
+ <CAGTfZH3nkCvnuu+fC1Gv5DrRQXEg6Y19tQnh+phj6c_jAFpbvg@mail.gmail.com>
+ <20150305185407.GK14093@leverpostej> <54F9140B.3060109@samsung.com>
+ <20150306114021.GF8700@leverpostej> <54F99B1A.3080600@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:32243 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750933AbbCJA1l (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:34616 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbbCJBbH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Mar 2015 20:27:41 -0400
+	Mon, 9 Mar 2015 21:31:07 -0400
+In-reply-to: <54F99B1A.3080600@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Chanwoo Choi <cwchoi00@gmail.com>, "kgene@kernel.org" <kgene@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, "a.kesavan@samsung.com" <a.kesavan@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This patch adds the 'const' keyword for devfreq_event_ops structure
-because the ops of devfreq_event_desc structure shold not be changed
-after initialization.
+Hi Mark,
 
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/devfreq/event/exynos-ppmu.c | 2 +-
- include/linux/devfreq-event.h       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On 03/06/2015 09:18 PM, Chanwoo Choi wrote:
+> Hi,
+> 
+> On 03/06/2015 08:40 PM, Mark Rutland wrote:
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index ad83473..7d99d13 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -194,7 +194,7 @@ static int exynos_ppmu_get_event(struct devfreq_event_dev *edev,
- 	return 0;
- }
- 
--static struct devfreq_event_ops exynos_ppmu_ops = {
-+static const struct devfreq_event_ops exynos_ppmu_ops = {
- 	.disable = exynos_ppmu_disable,
- 	.set_event = exynos_ppmu_set_event,
- 	.get_event = exynos_ppmu_get_event,
-diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
-index 602fbbf..0a83a1e 100644
---- a/include/linux/devfreq-event.h
-+++ b/include/linux/devfreq-event.h
-@@ -91,7 +91,7 @@ struct devfreq_event_desc {
- 	const char *name;
- 	void *driver_data;
- 
--	struct devfreq_event_ops *ops;
-+	const struct devfreq_event_ops *ops;
- };
- 
- #if defined(CONFIG_PM_DEVFREQ_EVENT)
--- 
-1.8.5.5
+[snip]
+
+>>
+>>>>>>>> I take it CPUs boot at EL2?
+>>>>>>
+>>>>>> Do the CPUs boot at EL1 or EL2?
+>>>>>
+>>>>> Unfortunately, I cannot check the secure firmware for Exynos5433 SoC.
+>>>>> I think that a few SoC provider probably would know it.
+>>>>
+>>>> I guess I asked the wrong question.
+>>>>
+>>>> Do CPUs enter the kernel at EL2 or at EL1?
+>>>
+>>> Could you give me a tip how to check the kernel at EL2 or EL1?
+>>
+>> Hmm... I thought we logged this but it looks like we don't.
+>>
+>> You could hack in a check of is_hyp_mode_available() and
+>> is_hyp_mode_mismatched(). That will tell you if EL2/hyp is available,
+>> and whether all CPUs enter at the same mode (mandatory per the boot
+>> protocol).
+> 
+> OK, I'll try it.
+
+I check the return value of is_hyp_mode_available() to catch whether EL1 or EL2. 
+
+The is_hyp_mode_available() returns 'false' during kernel booting.
+- __boot_cpu_mode[0]: 0xe11 (BOOT_CPU_MODE_EL1)
+- __boot_cpu_mode[1]: 0x0
+
+Best Regards,
+Chanwoo Choi
