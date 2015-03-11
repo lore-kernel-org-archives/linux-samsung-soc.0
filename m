@@ -1,46 +1,32 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 6/7] exynos: add fimg2d header to common includes
-Date: Wed, 11 Mar 2015 20:38:45 +0100
-Message-ID: <1426102726-27078-6-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1426102726-27078-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: Re: [v3] libdrm: improvements to userspace exynos component
+Date: Wed, 11 Mar 2015 20:40:00 +0100
+Message-ID: <ff574a011450bbe8333fd3bb432575d6@math.uni-bielefeld.de>
+References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <550043C2.1050601@samsung.com>
+ <CACvgo50iT=fUbyt_ZtRDppudgcfNERrNLwvKvPhhGoHuaOqwWw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33750 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33756 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751670AbbCKTjE (ORCPT
+	by vger.kernel.org with ESMTP id S1750820AbbCKTkD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Mar 2015 15:39:04 -0400
-In-Reply-To: <1426102726-27078-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Wed, 11 Mar 2015 15:40:03 -0400
+In-Reply-To: <CACvgo50iT=fUbyt_ZtRDppudgcfNERrNLwvKvPhhGoHuaOqwWw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>, jy0922.shim@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, Rob Clark <robclark@freedesktop.org>
 
-The reason for this change is to let userspace use the header.
-Currently 'make install' does not install it.
+On 2015-03-11 19:56, Emil Velikov wrote:
+> Tobias,
+> Can you please re-spin the remaining patches on top of master, and
+> address Inki's comment.
+> Also please add Inki's and Joonyoung Shim's tags.
+Done. I hope I did the tagging correctly.
 
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Reviewed-by: Inki Dae <inki.dae@samsung.com>
-Tested-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
- exynos/Makefile.am | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/exynos/Makefile.am b/exynos/Makefile.am
-index 1715a85..35bc71f 100644
---- a/exynos/Makefile.am
-+++ b/exynos/Makefile.am
-@@ -14,11 +14,10 @@ libdrm_exynos_la_LIBADD = ../libdrm.la @PTHREADSTUBS_LIBS@
- libdrm_exynos_la_SOURCES = \
- 	exynos_drm.c \
- 	exynos_fimg2d.c \
--	exynos_fimg2d.h \
- 	fimg2d_reg.h
- 
- libdrm_exynoscommonincludedir = ${includedir}/exynos
--libdrm_exynoscommoninclude_HEADERS = exynos_drm.h
-+libdrm_exynoscommoninclude_HEADERS = exynos_drm.h exynos_fimg2d.h
- 
- libdrm_exynosincludedir = ${includedir}/libdrm
- libdrm_exynosinclude_HEADERS = exynos_drmif.h
--- 
-2.0.5
+With best wishes,
+Tobias
