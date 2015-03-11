@@ -1,97 +1,55 @@
-From: Valentin Rothberg <valentinrothberg@gmail.com>
-Subject: Re: ARCH_EXYNOS5433 missing in Kconfig
-Date: Wed, 11 Mar 2015 09:21:11 +0100
-Message-ID: <CAD3Xx4KPcWYpK0us2O+Ct67yYiNb1=ZXR7GhR0FMcchCjhMy8A@mail.gmail.com>
-References: <CAD3Xx4Jf5ACBKe-KvGRD=myHKrJ+K_P0vBrtrmfgh+1zNM4hug@mail.gmail.com>
- <54FF95ED.1040003@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2] ARM: EXYNOS: Use platform device name as power domain name
+Date: Wed, 11 Mar 2015 10:54:32 +0100
+Message-ID: <1426067672-21589-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:45609 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751612AbbCKIVo (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:30276 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751165AbbCKJyo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Mar 2015 04:21:44 -0400
-In-Reply-To: <54FF95ED.1040003@samsung.com>
+	Wed, 11 Mar 2015 05:54:44 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Andreas Ruprecht <rupran@einserver.de>, hengelein Stefan <stefan.hengelein@fau.de>, Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?6rmA6rWt7KeEQGtlcm5lbC5vcmc=?= <kgene@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Wed, Mar 11, 2015 at 2:10 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> Hi Valentin,
->
-> I sent the Exynos5433 clock patch and then separately I'm sending the
-> Exynos5433 devicetree patch-set[1].
-> [1] [PATCH v6 0/9] arm64: Add the support for new Exynos5433 SoC
-> - https://lkml.org/lkml/2015/3/9/1036
->
-> But, according to Arnd bergmann's comment[2], latest Exynos5433 dt patch-set[1]
-> removed the CONFIG_ARCH_EXYNOS5433.
-> [2] https://lkml.org/lkml/2015/2/24/85
->
->
-> So, I have plan to send following patch.
+The power domain nodes in DTS may be very generic (e.g. "power-domain"
+for Exynos 5420) making it very hard to debug:
 
-Great!  Thanks for your reply and the explanation.
+$ cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+    domain                      status         slaves
+power-domain                    on
 
-Kind regards,
- Valentin
+Use platform device name instead so the names will be a little more user
+friendly:
+    domain                      status         slaves
+100440e0.power-domain           on
 
-> ---
->     clk: samsung: Use CONFIG_ARCH_EXYNOS instead of Exynos-specific configuration
->
->     This patch removes the CONFIG_ARCH_EXYNOS{5433|7} and then use only the
->     CONFIG_ARCH_EXYNOS for ARM-64bit Exynos SoC.
->
->     Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->     Cc: Tomasz Figa <tomasz.figa@gmail.com>
->     Cc: Arnd Bergmann <arnd@arndb.de>
->     Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 17e9af7..561719d 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)        += clk-exynos5250.o
->  obj-$(CONFIG_SOC_EXYNOS5260)   += clk-exynos5260.o
->  obj-$(CONFIG_SOC_EXYNOS5410)   += clk-exynos5410.o
->  obj-$(CONFIG_SOC_EXYNOS5420)   += clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
-> +obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos5433.o
->  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
->  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
->  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-clkout.o
->
->
-> Regards,
-> Chanwoo Choi
->
->
-> On 03/11/2015 12:32 AM, Valentin Rothberg wrote:
->> Hi Chanwoo,
->>
->> your commit 96bd6224f07b ("clk: samsung: exynos5433: Add clocks using
->> common clock framework") is included in today's linux-next tree (i.e.,
->> next-20150310).
->>
->> This patch conditionally compiles clk-exynos5433.c depending on the
->> Kconfig option ARCH_EXYNOS5433.  However, this option is not defined
->> in Kconfig, so that the driver cannot be compiled at the current
->> state:
->>
->> +obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
->>
->> Is there a patch queued somewhere that adds this Kconfig symbol?  I
->> detected the issue by running undertaker-checkpatch from the
->> Undertaker tool suite (undertaker.cs.fau.de).  There is also a tool in
->> the git tree that can detect such issues (i.e.,
->> scripts/checkkconfigsymbols.py).
->>
->> Kind regards,
->>  Valentin
->>
->
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+
+Notes:
+    Changes since v1:
+    1. Add Javier's reviewed-by.
+
+ arch/arm/mach-exynos/pm_domains.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 37266a826437..84e1d9f4d76c 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -125,7 +125,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 			return -ENOMEM;
+ 		}
+ 
+-		pd->pd.name = kstrdup(np->name, GFP_KERNEL);
++		pd->pd.name = kstrdup(dev_name(dev), GFP_KERNEL);
+ 		pd->name = pd->pd.name;
+ 		pd->base = of_iomap(np, 0);
+ 		pd->pd.power_off = exynos_pd_power_off;
+-- 
+1.9.1
