@@ -1,72 +1,71 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 4/7] drm/exynos: make zpos property immutable
-Date: Thu, 12 Mar 2015 00:10:37 +0900
-Message-ID: <55005AED.70305@samsung.com>
-References: <1424352158-728-1-git-send-email-gustavo@padovan.org>
- <1424352158-728-5-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1424352158-728-5-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH v6 0/2] irqchip: Move Exynos PM to use stacked domains
+Date: Wed, 11 Mar 2015 15:44:51 +0000
+Message-ID: <1426088693-15724-1-git-send-email-marc.zyngier@arm.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:46407 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751926AbbCKPo7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Mar 2015 11:44:59 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwMuyblCAxOeydvCAyMjoyMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
-b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
-PiBXZSBhbHJlYWR5IHNldCBlYWNoIHBsYW5lIHpwb3MgYXQgaW5pdCwgYWZ0ZXIgdGhhdCBjaGFu
-Z2VzIHRvIHpwb3MgYXJlCj4gbm90IGV4cGVjdGVkLiBUaGlzIHBhdGNoIHR1cm5zIHpwb3MgaW50
-byBhIHJlYWQtb25seSBwcm9wZXJ0eSBzbyBub3cgaXQgaXMKPiBpbXBvc3NpYmxlIHRvIHNldCB6
-cG9zLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
-QGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX3BsYW5lLmMgfCAyMSArKy0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQs
-IDIgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBpbmRleCA1MDRiZDZlLi4yZmJhYzliIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBAQCAtMTg0LDI3ICsx
-ODQsMTAgQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2Rlc3Ryb3koc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUpCj4gIAlkcm1fcGxhbmVfY2xlYW51cChwbGFuZSk7Cj4gIH0KPiAgCj4gLXN0YXRp
-YyBpbnQgZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwK
-PiAtCQkJCSAgICAgc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcGVydHksCj4gLQkJCQkgICAgIHVp
-bnQ2NF90IHZhbCkKPiAtewo+IC0Jc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7
-Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3Bs
-YW5lKHBsYW5lKTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKmRldl9wcml2ID0gZGV2
-LT5kZXZfcHJpdmF0ZTsKPiAtCj4gLQlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pw
-b3NfcHJvcGVydHkpIHsKPiAtCQlleHlub3NfcGxhbmUtPnpwb3MgPSB2YWw7Cj4gLQkJcmV0dXJu
-IDA7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJuIC1FSU5WQUw7Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1
-Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKPiAgCS51cGRhdGVfcGxh
-bmUJPSBleHlub3NfdXBkYXRlX3BsYW5lLAo+ICAJLmRpc2FibGVfcGxhbmUJPSBleHlub3NfZGlz
-YWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZXh5bm9zX3BsYW5lX2Rlc3Ryb3ksCj4gLQkuc2V0
-X3Byb3BlcnR5CT0gZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eSwKCkl0J3MgYSBnb29kIGlkZWEg
-Zm9yIGEgaGFyZHdhcmUgb3ZlcmxheSB0byBhIHBsYW5lIG9iamVjdCBpc24ndCBjaGFuZ2VkCmJ5
-IHVzZXItc3BhY2UuIEhvd2V2ZXIsIHRoaXMgcGF0Y2ggd291bGQgbWFrZSB0aGUgY29tcGF0aWJp
-bGl0eSBvZiB0aGUKZXhpc3RpbmcgYXBwbGljYXRpb24gLSB1c2luZyBzZXRfcHJvcGVydHkgaW9j
-dGwgdG8gY2hhbmdlIGhhcmR3YXJlCm92ZXJsYXkgdG8gcGFydGljdWxhciBwbGFuZSAtIHRvIGJl
-IGJyb2tlbiBiZWNhdXNlIHRoZSBzZXRfcHJvcGVydHkKaW9jdGwgcmVxdWVzdCB3aWxsIGFsd2F5
-cyBiZSBmYWlsZWQgd2l0aG91dCB0aGUgc2V0X3Byb3BlcnR5IGNhbGxiYWNrLgoKU28gaG93IGFi
-b3V0IGxlYXZpbmcgd2FybmluZyBtZXNzYWdlICd0aGUgaGFyZHdhcmUgb3ZlcmxheSBjYW5ub3Qg
-YmUKY2hhbmdlZCB0byBhbm90aGVyIGFueW1vcmUnIHdoZW4gdGhlIHNldF9wcm9wZXJ0eSBpb2N0
-bCBpcyByZXF1ZXN0ZWQgYnkKdXNlci1zcGFjZSwgYW5kIHJldHVybmluZyBqdXN0IDA/CgpUaGFu
-a3MsCklua2kgRGFlCgo+ICB9Owo+ICAKPiAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFj
-aF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+IEBAIC0yMTYsOCArMTk5
-LDggQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3Byb3BlcnR5KHN0cnVj
-dCBkcm1fcGxhbmUgKnBsYW5lLAo+ICAKPiAgCXByb3AgPSBkZXZfcHJpdi0+cGxhbmVfenBvc19w
-cm9wZXJ0eTsKPiAgCWlmICghcHJvcCkgewo+IC0JCXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRl
-X3JhbmdlKGRldiwgMCwgInpwb3MiLCAwLAo+IC0JCQkJCQkgTUFYX1BMQU5FIC0gMSk7Cj4gKwkJ
-cHJvcCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UoZGV2LCBEUk1fTU9ERV9QUk9QX0lNTVVU
-QUJMRSwKPiArCQkJCQkJICJ6cG9zIiwgMCwgTUFYX1BMQU5FIC0gMSk7Cj4gIAkJaWYgKCFwcm9w
-KQo+ICAJCQlyZXR1cm47Cj4gIAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+This series is extracted from [4], which is trying to remove all
+traces of gic_arch_extn from the tree. As some maintainers are more
+responsive than others (understatement of the year...), I've decided
+to split it per sub-arch, and get it moving, at least partially.
+
+This series addresses Exynos by converting its PM support to a stacked
+domain on top of the standard GIC.
+
+Based on 4.0-rc1.
+
+* From v5: [5]
+- Added a big fat warning when an old DT is detected (as requested by Jason)
+- Added support for Exynos3250
+- Allow interrupt affinity to be changed
+
+* From v4: [4]
+- Extracted from the full series
+- Rebased on 4.0-rc1
+
+* From v3 [3]:
+- Rebased on top of the patch working around hardcoded IRQ on OMAP4/5 [4]
+- Fixed more iMX6 DTs (Stephan)
+- Fixed Exynos4/5 DTs
+
+* From v2 [2]:
+- Addressed numerous comments from Thierry
+- Merged bug fixes from Nishanth
+- Merged bug fix from Stefan
+
+* From v1 [1]:
+- Rebased on 3.19-rc3
+- Fixed a number of additional platforms
+- Added crossbar conversion to stacked domains
+- Merged bug fixes from Nishanth
+
+[5]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/325368.html
+[4]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/317531.html
+[3]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/315385.html
+[2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/314041.html
+[1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/307338.html
+
+Marc Zyngier (2):
+  ARM: exynos4/5: convert pmu wakeup to stacked domains
+  DT: exynos: update PMU binding
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  17 +++
+ arch/arm/boot/dts/exynos3250.dtsi                  |   6 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |   4 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   4 +
+ arch/arm/mach-exynos/exynos.c                      |  15 +--
+ arch/arm/mach-exynos/suspend.c                     | 139 ++++++++++++++++++---
+ 7 files changed, 164 insertions(+), 25 deletions(-)
+
+-- 
+2.1.4
