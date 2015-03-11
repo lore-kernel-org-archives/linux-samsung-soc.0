@@ -1,96 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 3/3] ARM: EXYNOS: Remove left over 'extra_save'
-Date: Wed, 11 Mar 2015 12:08:41 +0100
-Message-ID: <1426072121-6822-3-git-send-email-k.kozlowski@samsung.com>
-References: <1426072121-6822-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35125 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752623AbbCKLIw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Mar 2015 07:08:52 -0400
-In-reply-to: <1426072121-6822-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3 14/17] exynos: fimg2d: fix comment for
+ G2D_COEFF_MODE_GB_COLOR
+Date: Wed, 11 Mar 2015 22:11:03 +0900
+Message-ID: <55003EE7.3060904@samsung.com>
+References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1424787655-10739-15-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1424787655-10739-15-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, robclark@freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Since 32b0aa9aaeb4 ("ARM: EXYNOS: Remove i2c sys configuration related
-code") the Exynos 5250 no longer saves additional registers under
-'exynos_pm_data.extra_save' field.
-
-No one else uses this code so get rid of it making also 'exynos_pm_data'
-const everywhere.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
-
-Notes:
-    Changes since v3:
-    1. Add Pankaj's reviewed-by.
-    
-    Changes since v2:
-    1. Remove also 'num_extra_save' field (suggested by Pankaj Dubey).
-    
-    Changes since v1:
-    1. New patch.
-
- arch/arm/mach-exynos/suspend.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index d42fb1cd202d..6e5a3355ae81 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -63,8 +63,6 @@ static struct sleep_save exynos_core_save[] = {
- 
- struct exynos_pm_data {
- 	const struct exynos_wkup_irq *wkup_irq;
--	struct sleep_save *extra_save;
--	int num_extra_save;
- 	unsigned int wake_disable_mask;
- 	unsigned int *release_ret_regs;
- 
-@@ -75,7 +73,7 @@ struct exynos_pm_data {
- 	int (*cpu_suspend)(unsigned long);
- };
- 
--static struct exynos_pm_data *pm_data;
-+static const struct exynos_pm_data *pm_data;
- 
- static int exynos5420_cpu_state;
- static unsigned int exynos_pmu_spare3;
-@@ -240,10 +238,6 @@ static void exynos_pm_prepare(void)
- 
- 	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
--	 if (pm_data->extra_save)
--		s3c_pm_do_save(pm_data->extra_save,
--				pm_data->num_extra_save);
--
- 	exynos_pm_enter_sleep_mode();
- 
- 	/* ensure at least INFORM0 has the resume address */
-@@ -366,10 +360,6 @@ static void exynos_pm_resume(void)
- 	/* For release retention */
- 	exynos_pm_release_retention();
- 
--	if (pm_data->extra_save)
--		s3c_pm_do_restore_core(pm_data->extra_save,
--					pm_data->num_extra_save);
--
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
- 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
-@@ -622,7 +612,7 @@ void __init exynos_pm_init(void)
- 		pr_err("Failed to find PMU node\n");
- 		return;
- 	}
--	pm_data = (struct exynos_pm_data *) match->data;
-+	pm_data = (const struct exynos_pm_data *) match->data;
- 
- 	/* Platform-specific GIC callback */
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
--- 
-1.9.1
+SGkgVG9iaWFzLAoKT24gMjAxNeuFhCAwMuyblCAyNOydvCAyMzoyMCwgVG9iaWFzIEpha29iaSB3
+cm90ZToKPiBUaGUgY29lZmZpY2llbnQgbW9kZSBlbmFibGVzIHVzZSBvZiBnbG9iYWwgY29sb3Is
+IG5vdCBhbHBoYS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1h
+dGgudW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZXh5bm9zL2V4eW5vc19maW1nMmQuaCB8IDIg
+Ky0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4g
+ZGlmZiAtLWdpdCBhL2V4eW5vcy9leHlub3NfZmltZzJkLmggYi9leHlub3MvZXh5bm9zX2ZpbWcy
+ZC5oCj4gaW5kZXggZGJjYjc2NC4uNDE4NzU3ZiAxMDA2NDQKPiAtLS0gYS9leHlub3MvZXh5bm9z
+X2ZpbWcyZC5oCj4gKysrIGIvZXh5bm9zL2V4eW5vc19maW1nMmQuaAo+IEBAIC0xNTksNyArMTU5
+LDcgQEAgZW51bSBlX2cyZF9jb2VmZl9tb2RlIHsKPiAgCUcyRF9DT0VGRl9NT0RFX0RTVF9DT0xP
+UiwKPiAgCS8qIEdsb2JhbCBBbHBoYSA6IFNldCBieSBBTFBIQV9SRUcoMHg2MTgpICovCj4gIAlH
+MkRfQ09FRkZfTU9ERV9HQl9BTFBIQSwKPiAtCS8qIEdsb2JhbCBBbHBoYSA6IFNldCBieSBBTFBI
+QV9SRUcoMHg2MTgpICovCj4gKwkvKiBHbG9iYWwgQ29sb3IgOiBTZXQgYnkgQUxQSEFfUkVHKDB4
+NjE4KSAqLwoKQWN0dWFsbHksIGFib3ZlIHJlZ2lzdGVyIHNldHMgbm90IG9ubHkgZ2xvYmFsIGNv
+bG9yIHZhbHVlIGJ1dCBhbHNvCmdsb2JhbCBhbHBoYSB2YWx1ZS4gQmVsb3cgc2hvd3MgZmllbGRz
+IG9mIHRoZSByZWdpc3RlciwKCkNvbG9yVmFsdWUgIFszMTo4XSAgIEdsb2JhbCBjb2xvciB2YWx1
+ZSAoUkdCIG9yZGVyKQpBbHBoYVZhbHVlIFs3OjBdICBHbG9iYWwgYWxwaGEgdmFsdWUKClNvIHJp
+Z2h0IGNvbW1lbnQgd291bGQgYmUgIkdsb2JhbCBDb2xvciBhbmQgR2xvYmFsIEFscGhhIi4KClRo
+YW5rcywKSW5raSBEYWUKCj4gIAlHMkRfQ09FRkZfTU9ERV9HQl9DT0xPUiwKPiAgCS8qICgxLVNS
+QyBhbHBoYSkvRFNUIEFscGhhICovCj4gIAlHMkRfQ09FRkZfTU9ERV9ESVNKT0lOVF9TLAo+IAoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
