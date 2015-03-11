@@ -1,58 +1,72 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] Exynos changes for v4.1
-Date: Wed, 11 Mar 2015 15:21:58 +0100
-Message-ID: <1426083718.24734.16.camel@AMDC1943>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 4/7] drm/exynos: make zpos property immutable
+Date: Thu, 12 Mar 2015 00:10:37 +0900
+Message-ID: <55005AED.70305@samsung.com>
+References: <1424352158-728-1-git-send-email-gustavo@padovan.org>
+ <1424352158-728-5-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1424352158-728-5-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Kukjin,
-
-This groups non-critical fixes and enhancements for Exynos suspend
-and power domain code for upcoming v4.1 release:
-1. Add 'const' and 'static' keywords where they are applicable.
-2. Remove unused field in struct 'exynos_pm_data'.
-3. Be more verbose about power domain name.
-4. Handle of_iomap() and of_find_device_by_node() failures.
-5. Enable cpuidle in exynos_defconfig.
-
-All of these patches were sent previously to the LKML. I grouped
-them so they won't be forgotten. I hope you will find useful
-such grouping of pending patches in a pull request.
-
-Best regards,
-Krzysztof
-
-----------------------------------------------------------------
-
-The following changes since commit c1b57bce36a69f3972a1db433d3c8b34e0541e63:
-
-  ARM: EXYNOS: cpuidle: Fix build breakage on !SMP (2015-03-11 13:02:08 +0100)
-
-are available in the git repository at:
-
-  git://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.0-rc1-exynos-next
-
-for you to fetch changes up to 150be89d6dddc61a7c01b2678e8872ac73ca68d3:
-
-  ARM: exynos_defconfig: Enable CPU idle (2015-03-11 13:45:26 +0100)
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (7):
-      ARM: EXYNOS: Add missing static to file-scope declarations
-      ARM: EXYNOS: Constify exynos_pm_data array
-      ARM: EXYNOS: Remove left over 'extra_save'
-      ARM: EXYNOS: Use platform device name as power domain name
-      ARM: EXYNOS: Handle of of_iomap() failure
-      ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
-      ARM: exynos_defconfig: Enable CPU idle
-
- arch/arm/configs/exynos_defconfig |  2 ++
- arch/arm/mach-exynos/pm_domains.c | 21 ++++++++++++++++++++-
- arch/arm/mach-exynos/suspend.c    | 22 ++++++----------------
- 3 files changed, 28 insertions(+), 17 deletions(-)
+T24gMjAxNeuFhCAwMuyblCAxOeydvCAyMjoyMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
+b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
+PiBXZSBhbHJlYWR5IHNldCBlYWNoIHBsYW5lIHpwb3MgYXQgaW5pdCwgYWZ0ZXIgdGhhdCBjaGFu
+Z2VzIHRvIHpwb3MgYXJlCj4gbm90IGV4cGVjdGVkLiBUaGlzIHBhdGNoIHR1cm5zIHpwb3MgaW50
+byBhIHJlYWQtb25seSBwcm9wZXJ0eSBzbyBub3cgaXQgaXMKPiBpbXBvc3NpYmxlIHRvIHNldCB6
+cG9zLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
+QGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX3BsYW5lLmMgfCAyMSArKy0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDIgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBpbmRleCA1MDRiZDZlLi4yZmJhYzliIDEwMDY0NAo+
+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBAQCAtMTg0LDI3ICsx
+ODQsMTAgQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2Rlc3Ryb3koc3RydWN0IGRybV9wbGFu
+ZSAqcGxhbmUpCj4gIAlkcm1fcGxhbmVfY2xlYW51cChwbGFuZSk7Cj4gIH0KPiAgCj4gLXN0YXRp
+YyBpbnQgZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwK
+PiAtCQkJCSAgICAgc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcGVydHksCj4gLQkJCQkgICAgIHVp
+bnQ2NF90IHZhbCkKPiAtewo+IC0Jc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7
+Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3Bs
+YW5lKHBsYW5lKTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKmRldl9wcml2ID0gZGV2
+LT5kZXZfcHJpdmF0ZTsKPiAtCj4gLQlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pw
+b3NfcHJvcGVydHkpIHsKPiAtCQlleHlub3NfcGxhbmUtPnpwb3MgPSB2YWw7Cj4gLQkJcmV0dXJu
+IDA7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJuIC1FSU5WQUw7Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1
+Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKPiAgCS51cGRhdGVfcGxh
+bmUJPSBleHlub3NfdXBkYXRlX3BsYW5lLAo+ICAJLmRpc2FibGVfcGxhbmUJPSBleHlub3NfZGlz
+YWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZXh5bm9zX3BsYW5lX2Rlc3Ryb3ksCj4gLQkuc2V0
+X3Byb3BlcnR5CT0gZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eSwKCkl0J3MgYSBnb29kIGlkZWEg
+Zm9yIGEgaGFyZHdhcmUgb3ZlcmxheSB0byBhIHBsYW5lIG9iamVjdCBpc24ndCBjaGFuZ2VkCmJ5
+IHVzZXItc3BhY2UuIEhvd2V2ZXIsIHRoaXMgcGF0Y2ggd291bGQgbWFrZSB0aGUgY29tcGF0aWJp
+bGl0eSBvZiB0aGUKZXhpc3RpbmcgYXBwbGljYXRpb24gLSB1c2luZyBzZXRfcHJvcGVydHkgaW9j
+dGwgdG8gY2hhbmdlIGhhcmR3YXJlCm92ZXJsYXkgdG8gcGFydGljdWxhciBwbGFuZSAtIHRvIGJl
+IGJyb2tlbiBiZWNhdXNlIHRoZSBzZXRfcHJvcGVydHkKaW9jdGwgcmVxdWVzdCB3aWxsIGFsd2F5
+cyBiZSBmYWlsZWQgd2l0aG91dCB0aGUgc2V0X3Byb3BlcnR5IGNhbGxiYWNrLgoKU28gaG93IGFi
+b3V0IGxlYXZpbmcgd2FybmluZyBtZXNzYWdlICd0aGUgaGFyZHdhcmUgb3ZlcmxheSBjYW5ub3Qg
+YmUKY2hhbmdlZCB0byBhbm90aGVyIGFueW1vcmUnIHdoZW4gdGhlIHNldF9wcm9wZXJ0eSBpb2N0
+bCBpcyByZXF1ZXN0ZWQgYnkKdXNlci1zcGFjZSwgYW5kIHJldHVybmluZyBqdXN0IDA/CgpUaGFu
+a3MsCklua2kgRGFlCgo+ICB9Owo+ICAKPiAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFj
+aF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+IEBAIC0yMTYsOCArMTk5
+LDggQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFjaF96cG9zX3Byb3BlcnR5KHN0cnVj
+dCBkcm1fcGxhbmUgKnBsYW5lLAo+ICAKPiAgCXByb3AgPSBkZXZfcHJpdi0+cGxhbmVfenBvc19w
+cm9wZXJ0eTsKPiAgCWlmICghcHJvcCkgewo+IC0JCXByb3AgPSBkcm1fcHJvcGVydHlfY3JlYXRl
+X3JhbmdlKGRldiwgMCwgInpwb3MiLCAwLAo+IC0JCQkJCQkgTUFYX1BMQU5FIC0gMSk7Cj4gKwkJ
+cHJvcCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UoZGV2LCBEUk1fTU9ERV9QUk9QX0lNTVVU
+QUJMRSwKPiArCQkJCQkJICJ6cG9zIiwgMCwgTUFYX1BMQU5FIC0gMSk7Cj4gIAkJaWYgKCFwcm9w
+KQo+ICAJCQlyZXR1cm47Cj4gIAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
