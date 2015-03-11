@@ -1,27 +1,26 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 1/3] ARM: EXYNOS: Add missing static to file-scope
- declarations
-Date: Wed, 11 Mar 2015 12:08:39 +0100
-Message-ID: <1426072121-6822-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v4 3/3] ARM: EXYNOS: Remove left over 'extra_save'
+Date: Wed, 11 Mar 2015 12:08:41 +0100
+Message-ID: <1426072121-6822-3-git-send-email-k.kozlowski@samsung.com>
+References: <1426072121-6822-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.w1.samsung.com ([210.118.77.11]:35125 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752310AbbCKLIv (ORCPT
+	with ESMTP id S1752623AbbCKLIw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Mar 2015 07:08:51 -0400
+	Wed, 11 Mar 2015 07:08:52 -0400
+In-reply-to: <1426072121-6822-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The 'pm_data', 'exynos_release_ret_regs', 'exynos3250_release_ret_regs'
-and 'exynos5420_release_ret_regs' are not exported nor used outside of
-suspend.c file. Make them static.
+Since 32b0aa9aaeb4 ("ARM: EXYNOS: Remove i2c sys configuration related
+code") the Exynos 5250 no longer saves additional registers under
+'exynos_pm_data.extra_save' field.
 
-This fixes following sparse warnings:
-arch/arm/mach-exynos/suspend.c:83:23: warning: symbol 'pm_data' was not declared. Should it be static?
-arch/arm/mach-exynos/suspend.c:106:14: warning: symbol 'exynos_release_ret_regs' was not declared. Should it be static?
-arch/arm/mach-exynos/suspend.c:117:14: warning: symbol 'exynos5420_release_ret_regs' was not declared. Should it be static?
+No one else uses this code so get rid of it making also 'exynos_pm_data'
+const everywhere.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
@@ -32,53 +31,66 @@ Notes:
     1. Add Pankaj's reviewed-by.
     
     Changes since v2:
-    None
+    1. Remove also 'num_extra_save' field (suggested by Pankaj Dubey).
     
     Changes since v1:
-    1. Add static to 'exynos3250_release_ret_regs' (suggested by Kukjin).
+    1. New patch.
 
- arch/arm/mach-exynos/suspend.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/mach-exynos/suspend.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 318d127df147..2fefb7073083 100644
+index d42fb1cd202d..6e5a3355ae81 100644
 --- a/arch/arm/mach-exynos/suspend.c
 +++ b/arch/arm/mach-exynos/suspend.c
-@@ -75,7 +75,7 @@ struct exynos_pm_data {
+@@ -63,8 +63,6 @@ static struct sleep_save exynos_core_save[] = {
+ 
+ struct exynos_pm_data {
+ 	const struct exynos_wkup_irq *wkup_irq;
+-	struct sleep_save *extra_save;
+-	int num_extra_save;
+ 	unsigned int wake_disable_mask;
+ 	unsigned int *release_ret_regs;
+ 
+@@ -75,7 +73,7 @@ struct exynos_pm_data {
  	int (*cpu_suspend)(unsigned long);
  };
  
--struct exynos_pm_data *pm_data;
-+static struct exynos_pm_data *pm_data;
+-static struct exynos_pm_data *pm_data;
++static const struct exynos_pm_data *pm_data;
  
  static int exynos5420_cpu_state;
  static unsigned int exynos_pmu_spare3;
-@@ -104,7 +104,7 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
- 	{ /* sentinel */ },
- };
+@@ -240,10 +238,6 @@ static void exynos_pm_prepare(void)
  
--unsigned int exynos_release_ret_regs[] = {
-+static unsigned int exynos_release_ret_regs[] = {
- 	S5P_PAD_RET_MAUDIO_OPTION,
- 	S5P_PAD_RET_GPIO_OPTION,
- 	S5P_PAD_RET_UART_OPTION,
-@@ -115,7 +115,7 @@ unsigned int exynos_release_ret_regs[] = {
- 	REG_TABLE_END,
- };
+ 	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
  
--unsigned int exynos3250_release_ret_regs[] = {
-+static unsigned int exynos3250_release_ret_regs[] = {
- 	S5P_PAD_RET_MAUDIO_OPTION,
- 	S5P_PAD_RET_GPIO_OPTION,
- 	S5P_PAD_RET_UART_OPTION,
-@@ -128,7 +128,7 @@ unsigned int exynos3250_release_ret_regs[] = {
- 	REG_TABLE_END,
- };
+-	 if (pm_data->extra_save)
+-		s3c_pm_do_save(pm_data->extra_save,
+-				pm_data->num_extra_save);
+-
+ 	exynos_pm_enter_sleep_mode();
  
--unsigned int exynos5420_release_ret_regs[] = {
-+static unsigned int exynos5420_release_ret_regs[] = {
- 	EXYNOS_PAD_RET_DRAM_OPTION,
- 	EXYNOS_PAD_RET_MAUDIO_OPTION,
- 	EXYNOS_PAD_RET_JTAG_OPTION,
+ 	/* ensure at least INFORM0 has the resume address */
+@@ -366,10 +360,6 @@ static void exynos_pm_resume(void)
+ 	/* For release retention */
+ 	exynos_pm_release_retention();
+ 
+-	if (pm_data->extra_save)
+-		s3c_pm_do_restore_core(pm_data->extra_save,
+-					pm_data->num_extra_save);
+-
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+ 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
+@@ -622,7 +612,7 @@ void __init exynos_pm_init(void)
+ 		pr_err("Failed to find PMU node\n");
+ 		return;
+ 	}
+-	pm_data = (struct exynos_pm_data *) match->data;
++	pm_data = (const struct exynos_pm_data *) match->data;
+ 
+ 	/* Platform-specific GIC callback */
+ 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
 -- 
 1.9.1
