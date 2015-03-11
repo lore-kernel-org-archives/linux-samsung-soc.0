@@ -1,58 +1,68 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [v3] libdrm: improvements to userspace exynos component
-Date: Wed, 11 Mar 2015 22:31:46 +0900
-Message-ID: <550043C2.1050601@samsung.com>
-References: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] Exynos fixes for v4.0
+Date: Wed, 11 Mar 2015 15:20:37 +0100
+Message-ID: <1426083637.24734.14.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1424787655-10739-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com, robclark@freedesktop.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpPbiAyMDE164WEIDAy7JuUIDI07J28IDIzOjIwLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+
-IEhlbGxvLAo+IAo+IGhlcmUgYXJlIHNvbWUgbWlzY2VsbGFuZW91cyBpbXByb3ZlbWVudHMgKHNt
-YWxsIGZlYXR1cmVzLCBidWdmaXhlcywgc3BlbGxpbmcgZml4ZXMsIGV0Yy4pIGZvciB0aGUgZXh5
-bm9zIGNvbXBvbmVudCBvZiBsaWJkcm0uIFRoZSBnZW5lcmFsIGlkZWEgaXMgdG8gbGV0IHVzZXJz
-cGFjZSB1c2UgdGhlIEcyRCBlbmdpbmUgZnVuY3Rpb25hbGl0eSBtb3JlIAo+IGVmZmljaWVudGx5
-Lgo+IAo+IElmIHNvbWVvbmUgaXMgaW50ZXJlc3RlZCBpbiBhbiBhcHBsaWNhdGlvbiB0aGF0IGFj
-dHVhbGx5IG1ha2VzIHVzZSBvZiB0aGlzLCB0aGUgUmV0cm9BcmNoIGZyb250ZW5kIGhhcyBhIGN1
-c3RvbSB2aWRlbyBiYWNrZW5kOgo+IGh0dHBzOi8vZ2l0aHViLmNvbS9saWJyZXRyby9SZXRyb0Fy
-Y2gvYmxvYi9tYXN0ZXIvZ2Z4L2RyaXZlcnMvZXh5bm9zX2dmeC5jCj4gCj4gCj4gUGxlYXNlIHJl
-dmlldyBhbmQgbGV0IG1lIGtub3cgd2hhdCBJIGNhbiBpbXByb3ZlLgo+IAo+IHYyOgo+IC0gTWVu
-dGlvbiB2YWx1ZSBvZiBHMkQgc2NhbGluZyBub3JtYWxpemF0aW9uIGZhY3RvciAoMDIvMTUpLgo+
-IC0gTW92ZWQgcGF0Y2ggKDA0LzE1KSBkZXNjcmlwdGlvbiBmcm9tIGNvbW1pdCBtZXNzYWdlIHRv
-IHNvdXJjZSBpdHNlbGYsIGxpa2Ugc3VnZ2VzdGVkIGJ5IEpvb255b3VuZyBTaGltLgo+IAo+IHYz
-Ogo+IEkgaW50ZWdyYXRlZCB0aGUgc3VnZ2VzdGlvbnMgYnkgRW1pbCBWZWxpa292IGFuZCBhZGRl
-ZCB0d28gYWRkaXRpb25hbCBwYXRjaGVzIHRvIHRoZSBzZXJpZXMuIE9uZSBkb2luZyB0aGUgaGVh
-ZGVyIGNsZWFudXAgdGhhdCBFbWlsIHBvaW50IG91dCwgYW5vdGhlciBvbmUganVzdCBhIHRyaXZp
-YWwgd2hpdGVzcGFjZSB0aGluZy4gSSdtIHJlc2VuZGluZyAKPiB0aGUgd2hvbGUgc2VyaWVzLCBz
-aW5jZSBudW1iZXIgb2YgcGF0Y2hlcyBhbmQgb3JkZXIgY2hhbmdlZC4KCkxvb2tzIGdvb2QgdG8g
-bWUgZXhjZXB0IGZvciAxNC8xNyBwYXRjaC4gRm9yIHRoZSBwYXRjaCwgSSBjb21tZW50ZWQKYWxy
-ZWFkeSwgd2hpY2ggbWF5IGJlIHZlcnkgdHJpdmlhbCBidXQgc2hvdWxkIGJlIGZpeGVkIGNvcnJl
-Y3RseS4gSQp0aGluayBFbWlsIGNvdWxkIGZpeCBpdCBiZWZvcmUgbWVyZ2luZyBpdC4KClRvIEVt
-aWwsCkNvdWxkIHlvdSBwbGVhc2UgZml4IHRoZSBwYXRjaCAxNC8xNyBsaWtlIGJlbG93PywKCmJl
-Zm9yZQotCS8qIEdsb2JhbCBBbHBoYSA6IFNldCBieSBBTFBIQV9SRUcoMHg2MTgpICovCisJLyog
-R2xvYmFsIENvbG9yIDogU2V0IGJ5IEFMUEhBX1JFRygweDYxOCkgKi8KCmFmdGVyCi0JLyogR2xv
-YmFsIEFscGhhIDogU2V0IGJ5IEFMUEhBX1JFRygweDYxOCkgKi8KKwkvKiBHbG9iYWwgQ29sb3Ig
-YW5kIEFscGhhOiBTZXQgYnkgQUxQSEFfUkVHKDB4NjE4KSAqLwoKCmZvciBhbGwgcGF0Y2hlcyAt
-IDEgdGhvdWdoIDE3LCBTaWduZWQtb2ZmLWJ5IDogSW5raSBEYWUKPGlua2kuZGFlQHNhbXN1bmcu
-Y29tPgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAKPiBXaXRoIGJlc3Qgd2lzaGVzLAo+IFRvYmlh
-cwo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
-InVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2Fn
-ZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
-aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Dear Kukjin,
+
+This groups important fixes for this v4.0-rc cycle. I hope you will find
+useful such grouping them in a pull request.
+
+1. Fix second suspend to RAM on Trats2 board. This has shown up
+   after enabling L2 cache but actually the "use delayed reset
+   assertion" is to be blamed.
+2. Fix power domain issues with disp1 domain and HDMI (some of them)
+   on Odroid XU3:
+   - disp1 power domain can be turned off,
+   - no more "imprecise external abort" faults.
+3. Proper fix for build breakage of cpuidle on !SMP. This allows using
+   Exynos cpuidle driver on UP.
+
+Best regards,
+Krzysztof
+
+----------------------------------------------------------------
+
+The following changes since commit 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c:
+
+  ARM: dts: add display power domain for exynos5250 (2015-02-27 05:29:32 +0900)
+
+are available in the git repository at:
+
+  git://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.0-rc1-exynos-fixes
+
+for you to fetch changes up to c1b57bce36a69f3972a1db433d3c8b34e0541e63:
+
+  ARM: EXYNOS: cpuidle: Fix build breakage on !SMP (2015-03-11 13:02:08 +0100)
+
+----------------------------------------------------------------
+Andrzej Hajda (4):
+      arm/exynos: add asynchronous bridge clock bindings
+      arm/exynos/pm_domains: add support for async-bridge clocks
+      ARM: dts: exynos5420: add async-bridge clocks to disp1 power domain
+      ARM: dts: exynos5420: add async-bridge clocks to gsc power domain
+
+Bartlomiej Zolnierkiewicz (1):
+      ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
+
+Krzysztof Kozlowski (1):
+      ARM: EXYNOS: Fix failed second suspend on Exynos4
+
+ .../bindings/arm/exynos/power_domain.txt           |  3 ++
+ arch/arm/boot/dts/exynos5420.dtsi                  |  8 +++--
+ arch/arm/mach-exynos/common.h                      |  2 ++
+ arch/arm/mach-exynos/exynos.c                      | 29 +++++++++++++++-
+ arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
+ arch/arm/mach-exynos/pm.c                          |  2 ++
+ arch/arm/mach-exynos/pm_domains.c                  | 27 ++++++++++++---
+ arch/arm/mach-exynos/suspend.c                     |  3 ++
+ drivers/cpuidle/cpuidle-exynos.c                   |  3 +-
+ 9 files changed, 71 insertions(+), 45 deletions(-)
