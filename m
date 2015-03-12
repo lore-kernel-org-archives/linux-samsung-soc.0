@@ -1,54 +1,95 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v5 1/9] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Thu, 12 Mar 2015 10:39:06 +0000
-Message-ID: <20150312103906.GB30145@leverpostej>
-References: <1425533911-14800-2-git-send-email-cw00.choi@samsung.com>
- <20150305122459.GC14093@leverpostej>
- <CAGTfZH3Bf1ueFO25NXFbN+Mvb9TcGbErbSp=a+vQ0=A+E07mQA@mail.gmail.com>
- <20150305170450.GG14093@leverpostej>
- <CAGTfZH3nkCvnuu+fC1Gv5DrRQXEg6Y19tQnh+phj6c_jAFpbvg@mail.gmail.com>
- <20150305185407.GK14093@leverpostej>
- <54F9140B.3060109@samsung.com>
- <20150306114021.GF8700@leverpostej>
- <54F99B1A.3080600@samsung.com>
- <54FE4957.7050904@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL] Exynos fixes for v4.0
+Date: Thu, 12 Mar 2015 20:04:18 +0900
+Message-ID: <021d01d05cb4$49599260$dc0cb720$@kernel.org>
+References: <1426083637.24734.14.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54FE4957.7050904@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, "kgene@kernel.org" <kgene@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Will Deacon <Will.Deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, "a.kesavan@samsung.com" <a.kesavan@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:13482 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751850AbbCLLEV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Mar 2015 07:04:21 -0400
+In-reply-to: <1426083637.24734.14.camel@AMDC1943>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
 
-[...]
-
-> >>>> Do CPUs enter the kernel at EL2 or at EL1?
-> >>>
-> >>> Could you give me a tip how to check the kernel at EL2 or EL1?
-> >>
-> >> Hmm... I thought we logged this but it looks like we don't.
-> >>
-> >> You could hack in a check of is_hyp_mode_available() and
-> >> is_hyp_mode_mismatched(). That will tell you if EL2/hyp is available,
-> >> and whether all CPUs enter at the same mode (mandatory per the boot
-> >> protocol).
-> > 
-> > OK, I'll try it.
+Krzysztof Kozlowski wrote:
 > 
-> I check the return value of is_hyp_mode_available() to catch whether EL1 or EL2. 
+> Dear Kukjin,
 > 
-> The is_hyp_mode_available() returns 'false' during kernel booting.
-> - __boot_cpu_mode[0]: 0xe11 (BOOT_CPU_MODE_EL1)
-> - __boot_cpu_mode[1]: 0x0
+Hi,
 
-Thanks for taking a look.
+> This groups important fixes for this v4.0-rc cycle. I hope you will find
+> useful such grouping them in a pull request.
+> 
+Thanks for your gentle reminder :-)
 
-It's unfortunate that CPUs aren't booted at EL2 (especially given that
-booting them at EL1N means the FW is doing more work to be less helpful
-to the OS), but at least they seem to be booted in consistent modes.
+> 1. Fix second suspend to RAM on Trats2 board. This has shown up
+>    after enabling L2 cache but actually the "use delayed reset
+>    assertion" is to be blamed.
+> 2. Fix power domain issues with disp1 domain and HDMI (some of them)
+>    on Odroid XU3:
+>    - disp1 power domain can be turned off,
+>    - no more "imprecise external abort" faults.
+> 3. Proper fix for build breakage of cpuidle on !SMP. This allows using
+>    Exynos cpuidle driver on UP.
+> 
+> Best regards,
+> Krzysztof
+> 
+> ----------------------------------------------------------------
+> 
+> The following changes since commit 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c:
+> 
+>   ARM: dts: add display power domain for exynos5250 (2015-02-27 05:29:32 +0900)
+> 
+> are available in the git repository at:
+> 
+>   git://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.0-rc1-exynos-fixes
+> 
+> for you to fetch changes up to c1b57bce36a69f3972a1db433d3c8b34e0541e63:
+> 
+>   ARM: EXYNOS: cpuidle: Fix build breakage on !SMP (2015-03-11 13:02:08 +0100)
+> 
+> ----------------------------------------------------------------
+> Andrzej Hajda (4):
+>       arm/exynos: add asynchronous bridge clock bindings
+>       arm/exynos/pm_domains: add support for async-bridge clocks
+>       ARM: dts: exynos5420: add async-bridge clocks to disp1 power domain
+>       ARM: dts: exynos5420: add async-bridge clocks to gsc power domain
+> 
+When I checked the patches, I expected that we could get the review from clock
+guys even we could do it though. And basically/usually the 'RFC' tagging means
+it's not a patch can be upstreamed and will be posted after gathering some
+comments so I didn't queue them in my tree. I'm still thinking like that...
+
+> Bartlomiej Zolnierkiewicz (1):
+>       ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
+> 
+Yeah, we need to fix it up asap and I'll finish it by this weekend. Sorry for
+the inconvenience.
+
+> Krzysztof Kozlowski (1):
+>       ARM: EXYNOS: Fix failed second suspend on Exynos4
+> 
+I'll have a look at this with above.
 
 Thanks,
-Mark.
+Kukjin
+
+>  .../bindings/arm/exynos/power_domain.txt           |  3 ++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  8 +++--
+>  arch/arm/mach-exynos/common.h                      |  2 ++
+>  arch/arm/mach-exynos/exynos.c                      | 29 +++++++++++++++-
+>  arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
+>  arch/arm/mach-exynos/pm.c                          |  2 ++
+>  arch/arm/mach-exynos/pm_domains.c                  | 27 ++++++++++++---
+>  arch/arm/mach-exynos/suspend.c                     |  3 ++
+>  drivers/cpuidle/cpuidle-exynos.c                   |  3 +-
+>  9 files changed, 71 insertions(+), 45 deletions(-)
