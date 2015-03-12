@@ -1,95 +1,102 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL] Exynos fixes for v4.0
-Date: Thu, 12 Mar 2015 20:04:18 +0900
-Message-ID: <021d01d05cb4$49599260$dc0cb720$@kernel.org>
-References: <1426083637.24734.14.camel@AMDC1943>
+Subject: RE: [GIT PULL 2/2] Samsung fixes-2 for v4.0
+Date: Thu, 12 Mar 2015 20:15:28 +0900
+Message-ID: <025d01d05cb5$d8c6d650$8a5482f0$@kernel.org>
+References: <54F4B33E.3070803@kernel.org> <2064108.qlOP0oDx90@wuerfel>
+ <02cd01d057f6$ab1a8e40$014faac0$@kernel.org>
+ <20150305123358.GC25728@developer.hsd1.ca.comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13482 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:14868 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751850AbbCLLEV (ORCPT
+	with ESMTP id S1752819AbbCLLPb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Mar 2015 07:04:21 -0400
-In-reply-to: <1426083637.24734.14.camel@AMDC1943>
+	Thu, 12 Mar 2015 07:15:31 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NL300D8RJ9TBZB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Mar 2015 20:15:29 +0900 (KST)
+In-reply-to: <20150305123358.GC25728@developer.hsd1.ca.comcast.net>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+To: 'Eduardo Valentin' <edubezval@gmail.com>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-Krzysztof Kozlowski wrote:
+Eduardo Valentin wrote:
 > 
-> Dear Kukjin,
-> 
-Hi,
+Hi Eduardo,
 
-> This groups important fixes for this v4.0-rc cycle. I hope you will find
-> useful such grouping them in a pull request.
+> On Fri, Mar 06, 2015 at 07:16:53PM +0900, Kukjin Kim wrote:
+> > Arnd Bergmann wrote:
+> > >
+> > + Eduardo
+> >
+> > Hi Arnd,
+> >
+> > > On Tuesday 03 March 2015 04:00:14 Kukjin Kim wrote:
+> > > > Please pull Samsung tmu and hdmi regression fixes for v4.0 and I know
+> > > > this is quite big for fixes but I couldn't handle this series for
+> > > > previous merge window because of dependency with driver side...sorry for
+> > > > that and please pull so that we could support them in v4.0 on exynos
+> > > > platforms.
+> > >
+> > > What kind of dependency do you have there? It really should not be
+> > > necessary to wait for driver changes, unless you do an incompatible
+> > > DT binding change, which you should avoid.
+> > >
+> > For TMU patches, I've asked Eduardo to provide topic branch for
+> > 'include/dt-bindings/thermal/thermal_exynos.h' has been added via thermal tree
+> > because if I can't apply the patch in Samsung tree for arm-soc, kernel build
+> > breakage will be happened. But I couldn't get Eduardo's topic branch.
 > 
-Thanks for your gentle reminder :-)
+> 
+> Specifically, the developer, while migrating the driver to support DT
+> and OF thermal, decided to create a header with constants. The header is
+> used by DT files and the driver code. The header was the dependency.
+> 
+Yes, sometimes we can't avoid the situation so it can be a kind of dependency...
 
-> 1. Fix second suspend to RAM on Trats2 board. This has shown up
->    after enabling L2 cache but actually the "use delayed reset
->    assertion" is to be blamed.
-> 2. Fix power domain issues with disp1 domain and HDMI (some of them)
->    on Odroid XU3:
->    - disp1 power domain can be turned off,
->    - no more "imprecise external abort" faults.
-> 3. Proper fix for build breakage of cpuidle on !SMP. This allows using
->    Exynos cpuidle driver on UP.
-> 
-> Best regards,
-> Krzysztof
-> 
-> ----------------------------------------------------------------
-> 
-> The following changes since commit 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c:
-> 
->   ARM: dts: add display power domain for exynos5250 (2015-02-27 05:29:32 +0900)
-> 
-> are available in the git repository at:
-> 
->   git://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.0-rc1-exynos-fixes
-> 
-> for you to fetch changes up to c1b57bce36a69f3972a1db433d3c8b34e0541e63:
-> 
->   ARM: EXYNOS: cpuidle: Fix build breakage on !SMP (2015-03-11 13:02:08 +0100)
-> 
-> ----------------------------------------------------------------
-> Andrzej Hajda (4):
->       arm/exynos: add asynchronous bridge clock bindings
->       arm/exynos/pm_domains: add support for async-bridge clocks
->       ARM: dts: exynos5420: add async-bridge clocks to disp1 power domain
->       ARM: dts: exynos5420: add async-bridge clocks to gsc power domain
-> 
-When I checked the patches, I expected that we could get the review from clock
-guys even we could do it though. And basically/usually the 'RFC' tagging means
-it's not a patch can be upstreamed and will be posted after gathering some
-comments so I didn't queue them in my tree. I'm still thinking like that...
 
-> Bartlomiej Zolnierkiewicz (1):
->       ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
-> 
-Yeah, we need to fix it up asap and I'll finish it by this weekend. Sorry for
-the inconvenience.
-
-> Krzysztof Kozlowski (1):
->       ARM: EXYNOS: Fix failed second suspend on Exynos4
-> 
-I'll have a look at this with above.
+Arnd,
+Do you have any updates on this?
 
 Thanks,
 Kukjin
 
->  .../bindings/arm/exynos/power_domain.txt           |  3 ++
->  arch/arm/boot/dts/exynos5420.dtsi                  |  8 +++--
->  arch/arm/mach-exynos/common.h                      |  2 ++
->  arch/arm/mach-exynos/exynos.c                      | 29 +++++++++++++++-
->  arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
->  arch/arm/mach-exynos/pm.c                          |  2 ++
->  arch/arm/mach-exynos/pm_domains.c                  | 27 ++++++++++++---
->  arch/arm/mach-exynos/suspend.c                     |  3 ++
->  drivers/cpuidle/cpuidle-exynos.c                   |  3 +-
->  9 files changed, 71 insertions(+), 45 deletions(-)
+> 
+> BR,
+> 
+> Eduardo Valentin
+> 
+> >
+> > http://www.spinics.net/lists/linux-samsung-soc/msg41877.html
+> >
+> >
+> > For HDMI patches, I thought the DT changes have a dependency with "drm/exynos:
+> > add support for 'hdmi' clock" so waited for its applying then in drm tree. But
+> > I couldn't send it to arm-soc after that...
+> >
+> > http://www.spinics.net/lists/linux-samsung-soc/msg42173.html
+> >
+> >
+> > I asked about the situation (late DT changes?) when I sent a pull-request, then
+> > I couldn't get a access my kernel.org because of biz. trip to China :(
+> >
+> > http://www.spinics.net/lists/linux-samsung-soc/msg42235.html
+> >
+> >
+> > > I've pulled it into fixes, but won't forward it until I hear a
+> > > good explanation.
+> > >
+> > As you know, basically I tried to make a clear branch for pull-request but in
+> > that case, I couldn't find a solution. Sorry for the inconvenience.
+> >
+> > I hope v4.0 can support them properly.
+> >
+> > Thanks,
+> > Kukjin
