@@ -1,112 +1,73 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 5/8] mfd: cros-ec: Support multiple EC in a system
-Date: Thu, 12 Mar 2015 18:02:45 +0100
-Message-ID: <1426179768-27482-6-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH 4/8] mfd: cros_ec: Instantiate sub-devices from device tree
+Date: Thu, 12 Mar 2015 18:02:44 +0100
+Message-ID: <1426179768-27482-5-git-send-email-javier.martinez@collabora.co.uk>
 References: <1426179768-27482-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426179768-27482-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>
-Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gwendal Grignou <gwendal@chromium.org>
+From: Todd Broch <tbroch@chromium.org>
 
-Chromebooks can have more than one Embedded Controller so the
-cros_ec device id has to be incremented for each EC registered.
+If the EC device tree node has sub-nodes, try to instantiate them as
+MFD sub-devices.  We can configure the EC features provided by the board.
 
-Add code to handle multiple EC. First ec found is cros-ec0,
-second cros-ec1 and so on.
-
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+Signed-off-by: Todd Broch <tbroch@chromium.org>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/mfd/cros_ec.c                 | 7 ++++++-
- drivers/platform/chrome/cros_ec_dev.c | 4 ++--
- include/linux/mfd/cros_ec.h           | 2 ++
- 3 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/mfd/cros_ec.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 9da95cc0a1ee..ffaf17823115 100644
+index 07c53c27c82a..9da95cc0a1ee 100644
 --- a/drivers/mfd/cros_ec.c
 +++ b/drivers/mfd/cros_ec.c
-@@ -28,6 +28,8 @@
+@@ -17,6 +17,7 @@
+  * battery charging and regulator control, firmware update.
+  */
  
- #define EC_COMMAND_RETRIES	50
++#include <linux/of_platform.h>
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+@@ -123,18 +124,8 @@ EXPORT_SYMBOL(cros_ec_cmd_xfer);
  
-+static int dev_id;
-+
- int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 		       struct cros_ec_command *msg)
- {
-@@ -134,6 +136,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 	struct device *dev = ec_dev->dev;
- 	int err = 0;
+ static const struct mfd_cell cros_devs[] = {
+ 	{
+-		.name = "cros-ec-keyb",
+-		.id = 1,
+-		.of_compatible = "google,cros-ec-keyb",
+-	},
+-	{
+-		.name = "cros-ec-i2c-tunnel",
+-		.id = 2,
+-		.of_compatible = "google,cros-ec-i2c-tunnel",
+-	},
+-	{
+ 		.name = "cros-ec-ctl",
+-		.id = 3,
++		.id = 1,
+ 	},
+ };
  
-+	ec_dev->id = dev_id;
-+
- 	if (ec_dev->din_size) {
- 		ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
- 		if (!ec_dev->din)
-@@ -147,7 +151,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 
- 	mutex_init(&ec_dev->lock);
- 
--	err = mfd_add_devices(dev, 0, cros_devs,
-+	err = mfd_add_devices(dev, ec_dev->id, cros_devs,
- 			      ARRAY_SIZE(cros_devs),
- 			      NULL, ec_dev->irq, NULL);
- 	if (err) {
-@@ -163,6 +167,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+@@ -164,6 +155,15 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
  		return err;
  	}
- #endif
-+	dev_id += ARRAY_SIZE(cros_devs);
  
++#ifdef CONFIG_OF
++	err = of_platform_populate(dev->of_node, NULL, NULL, dev);
++	if (err) {
++		mfd_remove_devices(dev);
++		dev_err(dev, "Failed to register sub-devices\n");
++		return err;
++	}
++#endif
++
  	dev_info(dev, "Chrome EC device registered\n");
  
-diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform/chrome/cros_ec_dev.c
-index 6090d0b2826f..3f5983601dd9 100644
---- a/drivers/platform/chrome/cros_ec_dev.c
-+++ b/drivers/platform/chrome/cros_ec_dev.c
-@@ -178,7 +178,7 @@ static int ec_device_probe(struct platform_device *pdev)
- {
- 	struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
- 	int retval = -ENOTTY;
--	dev_t devno = MKDEV(ec_major, 0);
-+	dev_t devno = MKDEV(ec_major, ec->id);
- 
- 	/* Instantiate it (and remember the EC) */
- 	cdev_init(&ec->cdev, &fops);
-@@ -190,7 +190,7 @@ static int ec_device_probe(struct platform_device *pdev)
- 	}
- 
- 	ec->vdev = device_create(cros_class, NULL, devno, ec,
--				 CROS_EC_DEV_NAME);
-+				 CROS_EC_DEV_NAME "%d", ec->id);
- 	if (IS_ERR(ec->vdev)) {
- 		retval = PTR_ERR(ec->vdev);
- 		dev_err(&pdev->dev, ": failed to create device\n");
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 14cf522123dd..8828e8ec347b 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -74,6 +74,7 @@ struct cros_ec_command {
-  *
-  * @priv: Private data
-  * @irq: Interrupt to use
-+ * @id: Device id
-  * @din: input buffer (for data from EC)
-  * @dout: output buffer (for data to EC)
-  * \note
-@@ -108,6 +109,7 @@ struct cros_ec_device {
- 	/* These are used to implement the platform-specific interface */
- 	void *priv;
- 	int irq;
-+	int id;
- 	uint8_t *din;
- 	uint8_t *dout;
- 	int din_size;
+ 	return 0;
 -- 
 2.1.4
