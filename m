@@ -1,49 +1,50 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 1/2] ARM: exynos_defconfig: Enable CPU idle
-Date: Thu, 12 Mar 2015 20:53:02 +0900
-Message-ID: <02c201d05cbb$18522220$48f66660$@kernel.org>
-References: <1424854103-11028-1-git-send-email-k.kozlowski@samsung.com>
+Subject: RE: [PATCH] ARM: exynos_defconfig: Enable Marvell WiFi-Ex support
+Date: Thu, 12 Mar 2015 21:00:53 +0900
+Message-ID: <02cf01d05cbc$30ab15b0$92014110$@kernel.org>
+References: <1423992532-29228-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18720 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754013AbbCLLxF (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:8463 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752978AbbCLMAz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Mar 2015 07:53:05 -0400
-In-reply-to: <1424854103-11028-1-git-send-email-k.kozlowski@samsung.com>
+	Thu, 12 Mar 2015 08:00:55 -0400
+In-reply-to: <1423992532-29228-1-git-send-email-javier.martinez@collabora.co.uk>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kukjin Kim' <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>
+To: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-Krzysztof Kozlowski wrote:
+Martinez Canillas wrote:
 > 
-> Current Exynos CPU idle driver supports entering AFTR (Arm Off, Top
-> Running) mode on Exynos 4210 (coupled), Exynos 4x12 and Exynos 5250.
-> Enable it in default configuration to reduce energy consumption.
+> Exynos5420 Peach Pit and Exynos5800 Peach Pi boards have a MMC/SDIO
+> Marvell WiFi-Ex chip. This patch enables wireless support and the
+> mwifiex driver.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > ---
->  arch/arm/configs/exynos_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm/configs/exynos_defconfig | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 > diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 70e5d0bdb4e4..7e0622a36da9 100644
+> index 70e5d0bdb4e4..dcef516bcd0d 100644
 > --- a/arch/arm/configs/exynos_defconfig
 > +++ b/arch/arm/configs/exynos_defconfig
-> @@ -26,6 +26,8 @@ CONFIG_ZBOOT_ROM_BSS=0x0
->  CONFIG_ARM_APPENDED_DTB=y
->  CONFIG_ARM_ATAG_DTB_COMPAT=y
->  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200
-> init=/linuxrc mem=256M"
-> +CONFIG_CPU_IDLE=y
-> +CONFIG_ARM_EXYNOS_CPUIDLE=y
->  CONFIG_VFP=y
->  CONFIG_NEON=y
->  CONFIG_PM=y
+> @@ -34,6 +34,10 @@ CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+>  CONFIG_NET_KEY=y
+>  CONFIG_INET=y
+> +CONFIG_WIRELESS=y
+> +CONFIG_CFG80211=y
+> +CONFIG_MWIFIEX=y
+> +CONFIG_MWIFIEX_SDIO=y
+>  CONFIG_RFKILL_REGULATOR=y
+>  CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+>  CONFIG_DEVTMPFS=y
 > --
 
 OK, will apply.
