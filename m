@@ -1,67 +1,118 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC PATCH v2 3/3] ARM: dts: exynos5420: add async-bridge clocks
- to disp1 power domain
-Date: Thu, 12 Mar 2015 14:00:07 +0100
-Message-ID: <55018DD7.2010608@samsung.com>
-References: <54D48701.10105@collabora.co.uk>
- <1423220154-5333-1-git-send-email-a.hajda@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [GIT PULL] Exynos fixes for v4.0
+Date: Thu, 12 Mar 2015 14:03:17 +0100
+Message-ID: <55018E95.3040105@samsung.com>
+References: <1426083637.24734.14.camel@AMDC1943>
+ <021d01d05cb4$49599260$dc0cb720$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:26803 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753602AbbCLNAb (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:25482 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754151AbbCLNDV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Mar 2015 09:00:31 -0400
-In-reply-to: <1423220154-5333-1-git-send-email-a.hajda@samsung.com>
+	Thu, 12 Mar 2015 09:03:21 -0400
+In-reply-to: <021d01d05cb4$49599260$dc0cb720$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, javier.martinez@collabora.co.uk, Liquid.Acid@gmx.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Kukjin Kim <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 06/02/15 11:55, Andrzej Hajda wrote:
-> FIMD and MIXER IPs in disp1 power domain have async-bridges (to GSCALER),
-> therefore their clocks should be enabled during power domain switch.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index e1fa800..58579f5 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -293,9 +293,11 @@
->  			 <&clock CLK_MOUT_SW_ACLK300>,
->  			 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
->  			 <&clock CLK_MOUT_SW_ACLK400>,
-> -			 <&clock CLK_MOUT_USER_ACLK400_DISP1>;
-> +			 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
-> +			 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
->  		clock-names = "oscclk", "pclk0", "clk0",
-> -			      "pclk1", "clk1", "pclk2", "clk2";
-> +			      "pclk1", "clk1", "pclk2", "clk2",
-> +			      "asb0", "asb1";
->  	};
+Hello,
 
-In general I don't like those clock/clock-names properties in the power
-domain nodes, since the power domains are not really consumers of those
-clocks. However these clocks are essential for the exynos power domains
-operation. There are more dependencies between the clocks and the power
-domains which adding of those properties does not cover. And we'll need
-to address those dependencies somehow.
-Anyway, the subject patch looks OK to me, given that support for clocks/
-clock-names in the exynos power domain device nodes has been merged
-for quite long already.
-The entire feature has been merged without PM or clk subsystem
-maintainer ACK, I don't see a reason not to merge this small addition
-of more clocks, especially that it fixes a real bug.
+On 2015-03-12 12:04, Kukjin Kim wrote:
+> Krzysztof Kozlowski wrote:
+>> This groups important fixes for this v4.0-rc cycle. I hope you will find
+>> useful such grouping them in a pull request.
+>>
+> Thanks for your gentle reminder :-)
+>
+>> 1. Fix second suspend to RAM on Trats2 board. This has shown up
+>>     after enabling L2 cache but actually the "use delayed reset
+>>     assertion" is to be blamed.
+>> 2. Fix power domain issues with disp1 domain and HDMI (some of them)
+>>     on Odroid XU3:
+>>     - disp1 power domain can be turned off,
+>>     - no more "imprecise external abort" faults.
+>> 3. Proper fix for build breakage of cpuidle on !SMP. This allows using
+>>     Exynos cpuidle driver on UP.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>> ----------------------------------------------------------------
+>>
+>> The following changes since commit 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c:
+>>
+>>    ARM: dts: add display power domain for exynos5250 (2015-02-27 05:29:32 +0900)
+>>
+>> are available in the git repository at:
+>>
+>>    git://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.0-rc1-exynos-fixes
+>>
+>> for you to fetch changes up to c1b57bce36a69f3972a1db433d3c8b34e0541e63:
+>>
+>>    ARM: EXYNOS: cpuidle: Fix build breakage on !SMP (2015-03-11 13:02:08 +0100)
+>>
+>> ----------------------------------------------------------------
+>> Andrzej Hajda (4):
+>>        arm/exynos: add asynchronous bridge clock bindings
+>>        arm/exynos/pm_domains: add support for async-bridge clocks
+>>        ARM: dts: exynos5420: add async-bridge clocks to disp1 power domain
+>>        ARM: dts: exynos5420: add async-bridge clocks to gsc power domain
+>>
+> When I checked the patches, I expected that we could get the review from clock
+> guys even we could do it though. And basically/usually the 'RFC' tagging means
+> it's not a patch can be upstreamed and will be posted after gathering some
+> comments so I didn't queue them in my tree. I'm still thinking like that...
 
-Please feel free to add:
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Frankly we thought that if the only comments are reports that the 
+patches fixed
+the issue, there is no need to resend them without any change.
 
+I also don't know why you think that the review from clock maintainers 
+is needed.
+Those patches modify power domain driver and implement the requirements from
+exynos5422 technical note about power on/off procedures. The quality of 
+technical
+note is a different story (those requirements are not clearly stated 
+there and
+one need to collect them from different chapters). The patches were 
+posted with
+'RFC' tag, because we were not sure if they will fix the lockup issues 
+on all
+5420+ based boards, but after comments from others it looks that they 
+are finally
+the right approach.
+
+>
+>> Bartlomiej Zolnierkiewicz (1):
+>>        ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
+>>
+> Yeah, we need to fix it up asap and I'll finish it by this weekend. Sorry for
+> the inconvenience.
+>
+>> Krzysztof Kozlowski (1):
+>>        ARM: EXYNOS: Fix failed second suspend on Exynos4
+>>
+> I'll have a look at this with above.
+>
+> Thanks,
+> Kukjin
+>
+>>   .../bindings/arm/exynos/power_domain.txt           |  3 ++
+>>   arch/arm/boot/dts/exynos5420.dtsi                  |  8 +++--
+>>   arch/arm/mach-exynos/common.h                      |  2 ++
+>>   arch/arm/mach-exynos/exynos.c                      | 29 +++++++++++++++-
+>>   arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
+>>   arch/arm/mach-exynos/pm.c                          |  2 ++
+>>   arch/arm/mach-exynos/pm_domains.c                  | 27 ++++++++++++---
+>>   arch/arm/mach-exynos/suspend.c                     |  3 ++
+>>   drivers/cpuidle/cpuidle-exynos.c                   |  3 +-
+>>   9 files changed, 71 insertions(+), 45 deletions(-)
+
+Best regards
 -- 
-Regards,
-Sylwester
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
