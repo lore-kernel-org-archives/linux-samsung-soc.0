@@ -1,102 +1,67 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: remove usb2-phy on Exynos5 series SoC
-Date: Thu, 12 Mar 2015 18:29:10 +0530
-Message-ID: <CAFp+6iHr5pDge7AGfus4uXoe6Oe_Q44B6nzEJYA1==Vb-8PdYA@mail.gmail.com>
-References: <1426155007-22189-1-git-send-email-jaewon02.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC PATCH v2 3/3] ARM: dts: exynos5420: add async-bridge clocks
+ to disp1 power domain
+Date: Thu, 12 Mar 2015 14:00:07 +0100
+Message-ID: <55018DD7.2010608@samsung.com>
+References: <54D48701.10105@collabora.co.uk>
+ <1423220154-5333-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1426155007-22189-1-git-send-email-jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:26803 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753602AbbCLNAb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Mar 2015 09:00:31 -0400
+In-reply-to: <1423220154-5333-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, javier.martinez@collabora.co.uk, Liquid.Acid@gmx.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi,
-
-
-On Thu, Mar 12, 2015 at 3:40 PM, Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Exynos5 series SoC does not have usb2-phy on USB3.0 Controller.
-> It is controlled by only usb3-phy. So, this patch remove usb2-phy
-> property.
-
-Why would you want to remove the usb2-phy property ?
-The usb2-phy projected here is actually the UTMI+ phy which is present
-as a part of a hybrid PHY controller (that includes both UTMI+ as well
-as PIPE3 phys).
-
-And the exynos5-usbdrd phy driver also differentiates between the two PHYs.
-It does try to separate out the initializations for UTMI+ and PIPE3
-phy, if you notice
-the functions:
-exynos5_usbdrd_utmi_init() and exynos5_usbdrd_pipe3_init().
-
-I don't think this change seems valid.
-
->
-> Signed-off-by: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On 06/02/15 11:55, Andrzej Hajda wrote:
+> FIMD and MIXER IPs in disp1 power domain have async-bridges (to GSCALER),
+> therefore their clocks should be enabled during power domain switch.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5250.dtsi |    4 ++--
->  arch/arm/boot/dts/exynos5420.dtsi |    8 ++++----
->  2 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 9bb1b0b..b58b169 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -565,8 +565,8 @@
->                         compatible = "synopsys,dwc3";
->                         reg = <0x12000000 0x10000>;
->                         interrupts = <0 72 0>;
-> -                       phys = <&usbdrd_phy 0>, <&usbdrd_phy 1>;
-> -                       phy-names = "usb2-phy", "usb3-phy";
-> +                       phys = <&usbdrd_phy 0>;
-> +                       phy-names = "usb3-phy";
->                 };
->         };
->
+>  arch/arm/boot/dts/exynos5420.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
 > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 9dc2e97..0df14bb 100644
+> index e1fa800..58579f5 100644
 > --- a/arch/arm/boot/dts/exynos5420.dtsi
 > +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -845,8 +845,8 @@
->                         compatible = "snps,dwc3";
->                         reg = <0x12000000 0x10000>;
->                         interrupts = <0 72 0>;
-> -                       phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
-> -                       phy-names = "usb2-phy", "usb3-phy";
-> +                       phys = <&usbdrd_phy0 0>;
-> +                       phy-names = "usb3-phy";
->                 };
->         };
->
-> @@ -871,8 +871,8 @@
->                         compatible = "snps,dwc3";
->                         reg = <0x12400000 0x10000>;
->                         interrupts = <0 73 0>;
-> -                       phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
-> -                       phy-names = "usb2-phy", "usb3-phy";
-> +                       phys = <&usbdrd_phy1 1>;
-> +                       phy-names = "usb3-phy";
->                 };
->         };
->
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> @@ -293,9 +293,11 @@
+>  			 <&clock CLK_MOUT_SW_ACLK300>,
+>  			 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
+>  			 <&clock CLK_MOUT_SW_ACLK400>,
+> -			 <&clock CLK_MOUT_USER_ACLK400_DISP1>;
+> +			 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
+> +			 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
+>  		clock-names = "oscclk", "pclk0", "clk0",
+> -			      "pclk1", "clk1", "pclk2", "clk2";
+> +			      "pclk1", "clk1", "pclk2", "clk2",
+> +			      "asb0", "asb1";
+>  	};
 
+In general I don't like those clock/clock-names properties in the power
+domain nodes, since the power domains are not really consumers of those
+clocks. However these clocks are essential for the exynos power domains
+operation. There are more dependencies between the clocks and the power
+domains which adding of those properties does not cover. And we'll need
+to address those dependencies somehow.
+Anyway, the subject patch looks OK to me, given that support for clocks/
+clock-names in the exynos power domain device nodes has been merged
+for quite long already.
+The entire feature has been merged without PM or clk subsystem
+maintainer ACK, I don't see a reason not to merge this small addition
+of more clocks, especially that it fixes a real bug.
 
+Please feel free to add:
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Sylwester
