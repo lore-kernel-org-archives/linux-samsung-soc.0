@@ -1,70 +1,85 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [PATCH 0/7] drm/exynos: clean ups
-Date: Thu, 12 Mar 2015 11:57:33 -0300
-Message-ID: <20150312145733.GA1708@joana>
-References: <1424352158-728-1-git-send-email-gustavo@padovan.org>
- <5501A5DD.1040707@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 06/10] iio: exynos-adc: add experimental touchscreen support
+Date: Thu, 12 Mar 2015 18:01 +0100
+Message-ID: <2880161.O2Qj0NkBq3@wuerfel>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <1425299763-4066822-7-git-send-email-arnd@arndb.de> <20150304231000.GD38298@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:46639 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932137AbbCLO5k convert rfc822-to-8bit (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:51145 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754516AbbCLRBj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Mar 2015 10:57:40 -0400
-Content-Disposition: inline
-In-Reply-To: <5501A5DD.1040707@samsung.com>
+	Thu, 12 Mar 2015 13:01:39 -0400
+In-Reply-To: <20150304231000.GD38298@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, jic23@kernel.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com
 
-2015-03-12 Inki Dae <inki.dae@samsung.com>:
+On Wednesday 04 March 2015 15:10:00 Dmitry Torokhov wrote:
+> > +static int exynos_adc_ts_init(struct exynos_adc *info)
+> > +{
+> > +     int ret;
+> > +
+> > +     if (info->tsirq <= 0)
+> > +             return -ENODEV;
+> > +
+> > +     info->input = input_allocate_device();
+> > +     if (!info->input)
+> > +             return -ENOMEM;
+> > +
+> > +     info->input->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
+> > +     info->input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
+> > +
+> > +     input_set_abs_params(info->input, ABS_X, 0, 0x3FF, 0, 0);
+> > +     input_set_abs_params(info->input, ABS_Y, 0, 0x3FF, 0, 0);
+> > +
+> > +     info->input->name = "S3C24xx TouchScreen";
+> > +     info->input->id.bustype = BUS_HOST;
+> > +     info->input->open = exynos_adc_ts_open;
+> > +     info->input->close = exynos_adc_ts_close;
+> > +
+> > +     input_set_drvdata(info->input, info);
+> > +
+> > +     ret = input_register_device(info->input);
+> > +     if (ret)
+> > +             input_free_device(info->input);
+> 
+> 
+> If you fail to register input device are you sure you want to continue
+> and register interrupt?
+> 
+> > +
+> > +     disable_irq(info->tsirq);
+> > +     ret = request_threaded_irq(info->tsirq, NULL, exynos_ts_isr,
+> > +                                0, "touchscreen", info);
+> > +     if (ret)
+> > +             input_unregister_device(info->input);
+> > +
+> > +     return ret;
+> > +}
 
-> On 2015=EB=85=84 02=EC=9B=94 19=EC=9D=BC 22:22, Gustavo Padovan wrote=
-:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> > Hi,
-> >
-> > Here goes some clean ups to the exynos drivers. The main clean ups =
-is
-> > the presetting and zpos making the property immutable and the remov=
-al
-> > of *_win_data structures.
->=20
-> With your cleanup patch set, the plane test doesn't work. Have you ev=
-er
-> tested plane feature with modetest application?
->=20
-> I typed like below and it looks like no problem but I cannot see
-> anything on Panel except for cute four penguins.
->=20
-> # modetest -P 29:100x100+0+0
-> trying to open device 'i915'...failed.
-> trying to open device 'radeon'...failed.
-> trying to open device 'nouveau'...failed.
-> trying to open device 'vmwgfx'...failed.
-> trying to open device 'omapdrm'...failed.
-> trying to open device 'exynos'...success.
-> testing 100x100@XR24 overlay plane 25
->=20
-> And for two plane test,
->=20
-> # modetest -P 29:100x100+0+0 -P 29:100x100+0+100
-> trying to open device 'i915'...failed.
-> trying to open device 'radeon'...failed.
-> trying to open device 'nouveau'...failed.
-> trying to open device 'vmwgfx'...failed.
-> trying to open device 'omapdrm'...failed.
-> trying to open device 'exynos'...success.
-> testing 100x100@XR24 overlay plane 25
-> testing 100x100@XR24 overlay plane 26
->=20
-> Still no screen.
+Sorry for the delayed reply, I've now folded in this patch:
 
-Okay, I'll check on that. I was using a test app we wrote here.
-I'll test this again with modetest too.
 
-	Gustavo
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index 75cd381a8181..d11cd604562c 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -732,8 +732,10 @@ static int exynos_adc_ts_init(struct exynos_adc *info)
+ 	input_set_drvdata(info->input, info);
+ 
+ 	ret = input_register_device(info->input);
+-	if (ret)
++	if (ret) {
+ 		input_free_device(info->input);
++		return ret;
++	}
+ 
+ 	disable_irq(info->tsirq);
+ 	ret = request_threaded_irq(info->tsirq, NULL, exynos_ts_isr,
+
+
+	Arnd
