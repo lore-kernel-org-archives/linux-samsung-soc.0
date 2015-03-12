@@ -1,69 +1,70 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 Subject: Re: [PATCH 0/7] drm/exynos: clean ups
-Date: Thu, 12 Mar 2015 23:42:37 +0900
-Message-ID: <5501A5DD.1040707@samsung.com>
+Date: Thu, 12 Mar 2015 11:57:33 -0300
+Message-ID: <20150312145733.GA1708@joana>
 References: <1424352158-728-1-git-send-email-gustavo@padovan.org>
+ <5501A5DD.1040707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1424352158-728-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:46639 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932137AbbCLO5k convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Mar 2015 10:57:40 -0400
+Content-Disposition: inline
+In-Reply-To: <5501A5DD.1040707@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com
 
-T24gMjAxNeuFhCAwMuyblCAxOeydvCAyMjoyMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
-b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
-PiBIaSwKPiAKPiBIZXJlIGdvZXMgc29tZSBjbGVhbiB1cHMgdG8gdGhlIGV4eW5vcyBkcml2ZXJz
-LiBUaGUgbWFpbiBjbGVhbiB1cHMgaXMKPiB0aGUgcHJlc2V0dGluZyBhbmQgenBvcyBtYWtpbmcg
-dGhlIHByb3BlcnR5IGltbXV0YWJsZSBhbmQgdGhlIHJlbW92YWwKPiBvZiAqX3dpbl9kYXRhIHN0
-cnVjdHVyZXMuCgpXaXRoIHlvdXIgY2xlYW51cCBwYXRjaCBzZXQsIHRoZSBwbGFuZSB0ZXN0IGRv
-ZXNuJ3Qgd29yay4gSGF2ZSB5b3UgZXZlcgp0ZXN0ZWQgcGxhbmUgZmVhdHVyZSB3aXRoIG1vZGV0
-ZXN0IGFwcGxpY2F0aW9uPwoKSSB0eXBlZCBsaWtlIGJlbG93IGFuZCBpdCBsb29rcyBsaWtlIG5v
-IHByb2JsZW0gYnV0IEkgY2Fubm90IHNlZQphbnl0aGluZyBvbiBQYW5lbCBleGNlcHQgZm9yIGN1
-dGUgZm91ciBwZW5ndWlucy4KCiMgbW9kZXRlc3QgLVAgMjk6MTAweDEwMCswKzAKdHJ5aW5nIHRv
-IG9wZW4gZGV2aWNlICdpOTE1Jy4uLmZhaWxlZC4KdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdyYWRl
-b24nLi4uZmFpbGVkLgp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ25vdXZlYXUnLi4uZmFpbGVkLgp0
-cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ3Ztd2dmeCcuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVuIGRl
-dmljZSAnb21hcGRybScuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVuIGRldmljZSAnZXh5bm9zJy4u
-LnN1Y2Nlc3MuCnRlc3RpbmcgMTAweDEwMEBYUjI0IG92ZXJsYXkgcGxhbmUgMjUKCkFuZCBmb3Ig
-dHdvIHBsYW5lIHRlc3QsCgojIG1vZGV0ZXN0IC1QIDI5OjEwMHgxMDArMCswIC1QIDI5OjEwMHgx
-MDArMCsxMDAKdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdpOTE1Jy4uLmZhaWxlZC4KdHJ5aW5nIHRv
-IG9wZW4gZGV2aWNlICdyYWRlb24nLi4uZmFpbGVkLgp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ25v
-dXZlYXUnLi4uZmFpbGVkLgp0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ3Ztd2dmeCcuLi5mYWlsZWQu
-CnRyeWluZyB0byBvcGVuIGRldmljZSAnb21hcGRybScuLi5mYWlsZWQuCnRyeWluZyB0byBvcGVu
-IGRldmljZSAnZXh5bm9zJy4uLnN1Y2Nlc3MuCnRlc3RpbmcgMTAweDEwMEBYUjI0IG92ZXJsYXkg
-cGxhbmUgMjUKdGVzdGluZyAxMDB4MTAwQFhSMjQgb3ZlcmxheSBwbGFuZSAyNgoKU3RpbGwgbm8g
-c2NyZWVuLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAKPiBHdXN0YXZvIFBhZG92YW4gKDYpOgo+
-ICAgZHJtL2V4eW5vczogcmVtb3ZlIHVudXNlZCBleHlub3NfY3J0Yy0+d2luX2VuYWJsZSgpIGNh
-bGxiYWNrCj4gICBkcm0vZXh5bm9zOiByZW1vdmUgc3RydWN0ICpfd2luX2RhdGEgYWJzdHJhY3Rp
-b24gb24gcGxhbmVzCj4gICBkcm0vZXh5bm9zOiBwcmVzZXQgenBvcyB2YWx1ZSBmb3Igb3Zlcmxh
-eSBwbGFuZXMKPiAgIGRybS9leHlub3M6IG1ha2UgenBvcyBwcm9wZXJ0eSBpbW11dGFibGUKPiAg
-IGRybS9leHlub3M6IHJlbW92ZSBleHlub3NfcGxhbmVfZGVzdHJveSgpCj4gICBkcm0vZXh5bm9z
-OiByZW1vdmUgbGVmdG92ZXIgZnVuY3Rpb25zIGRlY2xhcmF0aW9ucwo+IAo+IE1hbmRlZXAgU2lu
-Z2ggQmFpbmVzICgxKToKPiAgIGRybS9leHlub3M6IHRyYWNrIHZibGFuayBldmVudHMgb24gYSBw
-ZXIgY3J0YyBiYXNpcwo+IAo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2Rl
-Y29uLmMgfCAxNzYgKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYyAgIHwgMTAxICsrKysrKy0tLS0tLS0tCj4gIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggICB8ICAgNyArLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgICAgfCAgMjcgLS0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgfCAgMjAgKy0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDE5NSArKysrKysrKysrLS0tLS0tLS0t
-LS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgfCAg
-NjYgKysrLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5o
-ICB8ICAgNyArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAg
-fCAxMzQgKysrKystLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X21peGVyLmMgICAgICB8IDIxNyArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLQo+ICAxMCBm
-aWxlcyBjaGFuZ2VkLCAzMTEgaW5zZXJ0aW9ucygrKSwgNjM5IGRlbGV0aW9ucygtKQo+IAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+2015-03-12 Inki Dae <inki.dae@samsung.com>:
+
+> On 2015=EB=85=84 02=EC=9B=94 19=EC=9D=BC 22:22, Gustavo Padovan wrote=
+:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >
+> > Hi,
+> >
+> > Here goes some clean ups to the exynos drivers. The main clean ups =
+is
+> > the presetting and zpos making the property immutable and the remov=
+al
+> > of *_win_data structures.
+>=20
+> With your cleanup patch set, the plane test doesn't work. Have you ev=
+er
+> tested plane feature with modetest application?
+>=20
+> I typed like below and it looks like no problem but I cannot see
+> anything on Panel except for cute four penguins.
+>=20
+> # modetest -P 29:100x100+0+0
+> trying to open device 'i915'...failed.
+> trying to open device 'radeon'...failed.
+> trying to open device 'nouveau'...failed.
+> trying to open device 'vmwgfx'...failed.
+> trying to open device 'omapdrm'...failed.
+> trying to open device 'exynos'...success.
+> testing 100x100@XR24 overlay plane 25
+>=20
+> And for two plane test,
+>=20
+> # modetest -P 29:100x100+0+0 -P 29:100x100+0+100
+> trying to open device 'i915'...failed.
+> trying to open device 'radeon'...failed.
+> trying to open device 'nouveau'...failed.
+> trying to open device 'vmwgfx'...failed.
+> trying to open device 'omapdrm'...failed.
+> trying to open device 'exynos'...success.
+> testing 100x100@XR24 overlay plane 25
+> testing 100x100@XR24 overlay plane 26
+>=20
+> Still no screen.
+
+Okay, I'll check on that. I was using a test app we wrote here.
+I'll test this again with modetest too.
+
+	Gustavo
