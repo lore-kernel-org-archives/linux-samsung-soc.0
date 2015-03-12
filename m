@@ -1,123 +1,58 @@
-From: Anand Moon <moon.linux@yahoo.com>
-Subject: [PATCH] ARM: dts: exynos5420 Fixes -ELOOP (Too many levels of
- symbolic links)
-Date: Thu, 12 Mar 2015 12:59:51 +0530
-Message-ID: <1426145391-30089-1-git-send-email-moon.linux@yahoo.com>
+From: Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
+Date: Thu, 12 Mar 2015 14:17:25 +0530
+Message-ID: <CAJe_Zhe5AXnaSvPqiEBD11EY_fkp8Rw6jBNoy8korsSnm+gVTw@mail.gmail.com>
+References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
+	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
+	<547DF61D.3010909@metafoo.de>
+	<CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
+	<CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
+	<20141205151843.GV11285@n2100.arm.linux.org.uk>
+	<CAJe_ZhfDsfehCXHB6pCuQ6672kXBYFxh687cZT1qaSCOyLy76g@mail.gmail.com>
+	<20141208130727.GK16827@intel.com>
+	<CAJe_ZhfKFdrV8=oMiH0hJeOmGAmPNbZ7rUXsqN+Ak7PvOnZEmA@mail.gmail.com>
+	<20141211044758.GH16827@intel.com>
+	<CAJe_ZhdeTp3RAm-QQu04XVF-oOppV2zx8_7G7MOTF+ziqzbvCQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, Anand Moon <moon.linux@yahoo.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f177.google.com ([209.85.216.177]:36100 "EHLO
+	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751247AbbCLIr0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Mar 2015 04:47:26 -0400
+Received: by qcxm20 with SMTP id m20so16714320qcx.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Mar 2015 01:47:25 -0700 (PDT)
+In-Reply-To: <CAJe_ZhdeTp3RAm-QQu04XVF-oOppV2zx8_7G7MOTF+ziqzbvCQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-BUG of recursive symbolic link and be observed by using below powerdebug
-        git://git.linaro.org/tools/powerdebug.git.
+Hi Vinod, Hi Russell,
 
-This utility populates the Clock, Regulators, Sensors and Gpio.
-Some how the regulators were not getting populated by this utility.
-After debugging this powerdebug application using 'strace' I can across following.
+On 11 December 2014 at 11:42, Jassi Brar <jaswinder.singh@linaro.org> wrote:
+> On 11 December 2014 at 10:17, Vinod Koul <vinod.koul@intel.com> wrote:
+>> On Tue, Dec 09, 2014 at 08:48:04PM +0530, Jassi Brar wrote:
+>>> As Russell pointed out, that ain't the case either.
+>>> So we are yet to figure out benefits of having explicit
+>>> issue_pending() after tx_submit().
+>> callback ?
+>>
+> The callback is set after prep() and before tx_submit(), but here we
+> talk after tx_submit().
 
-Below output is trunkated.
+Perhaps the idea dates back to async-only days, when client drivers
+would prepare and queue descriptors in the controller driver rather
+than having to manage the dependency queues themselves (?).
 
-stat64("/sys/class/regulator/regulator.0/usb@12000000-vdd10/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group/devices/usb@12000000/
-iommu_group/devices/usb@12000000/iommu_group", 0xbec45fb8) = -1 ELOOP (Too many levels of symbolic links)
-close(63)                               = 0
-close(62)                               = 0
+ Today ~95% clients are slave and I am yet to find one that really
+can't work with submit and issue_pending tied together. Not to forget
+the 100% of the controller drivers have to manage 'submitted' and
+'active' queues -- only to have arguably negative side-effects.
 
-These changes depend on following series of commit.
- Pull iommu fixes from Joerg Roedel:
-     "The patches contain:
+If we agree that clubbing submit and issue_pending is the right thing
+to do, I can start converting the ~90 client drivers. Please let me
+know either way.
 
-       - fix multiple ARM IOMMU drivers to behave well when the hardware is
-         not present
-
-       - mark MSM driver as broken
-
-       - fix build errors with the new ARM generic io-page-table code"
-
-    * tag 'iommu-fixes-v4.0-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu:
-      iommu/io-pgtable-arm: Add built time dependency
-      iommu/msm: Mark driver BROKEN
-      iommu/rockchip: Play nice in multi-platform builds
-      iommu/omap: Play nice in multi-platform builds
-      iommu/exynos: Play nice in multi-platform builds
-      iommu/io-pgtable-arm: Fix self-test WARNs on i386
-
-After these changes powerdebug will populate regulators.
-
-Tested on OdroidXU3 board.
-
-Signed-off-by: Anand Moon <moon.linux@yahoo.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9dc2e97..a5f13a3 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -840,14 +840,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-+	};
- 
--		usbdrd_dwc3_0: dwc3 {
--			compatible = "snps,dwc3";
--			reg = <0x12000000 0x10000>;
--			interrupts = <0 72 0>;
--			phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
--			phy-names = "usb2-phy", "usb3-phy";
--		};
-+	usbdrd_dwc3_0: dwc3 {
-+		compatible = "snps,dwc3";
-+		reg = <0x12000000 0x10000>;
-+		interrupts = <0 72 0>;
-+		phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
-+		phy-names = "usb2-phy", "usb3-phy";
- 	};
- 
- 	usbdrd_phy0: phy@12100000 {
-@@ -866,14 +866,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
-+	};
- 
--		usbdrd_dwc3_1: dwc3 {
--			compatible = "snps,dwc3";
--			reg = <0x12400000 0x10000>;
--			interrupts = <0 73 0>;
--			phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
--			phy-names = "usb2-phy", "usb3-phy";
--		};
-+	usbdrd_dwc3_1: dwc3 {
-+		compatible = "snps,dwc3";
-+		reg = <0x12400000 0x10000>;
-+		interrupts = <0 73 0>;
-+		phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
-+		phy-names = "usb2-phy", "usb3-phy";
- 	};
- 
- 	usbdrd_phy1: phy@12500000 {
--- 
-2.1.0
+Cheers!
