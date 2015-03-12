@@ -1,118 +1,76 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [GIT PULL] Exynos fixes for v4.0
-Date: Thu, 12 Mar 2015 14:03:17 +0100
-Message-ID: <55018E95.3040105@samsung.com>
-References: <1426083637.24734.14.camel@AMDC1943>
- <021d01d05cb4$49599260$dc0cb720$@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC PATCH 2/3] arm/exynos/pm_domains: add support for
+ async-bridge clocks
+Date: Thu, 12 Mar 2015 14:05:39 +0100
+Message-ID: <55018F23.3010402@samsung.com>
+References: <1423139739-19881-1-git-send-email-a.hajda@samsung.com>
+ <1423139739-19881-3-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:25482 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754151AbbCLNDV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Mar 2015 09:03:21 -0400
-In-reply-to: <021d01d05cb4$49599260$dc0cb720$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1423139739-19881-3-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Liquid.Acid@gmx.net, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, javier.martinez@collabora.co.uk, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello,
-
-On 2015-03-12 12:04, Kukjin Kim wrote:
-> Krzysztof Kozlowski wrote:
->> This groups important fixes for this v4.0-rc cycle. I hope you will find
->> useful such grouping them in a pull request.
->>
-> Thanks for your gentle reminder :-)
->
->> 1. Fix second suspend to RAM on Trats2 board. This has shown up
->>     after enabling L2 cache but actually the "use delayed reset
->>     assertion" is to be blamed.
->> 2. Fix power domain issues with disp1 domain and HDMI (some of them)
->>     on Odroid XU3:
->>     - disp1 power domain can be turned off,
->>     - no more "imprecise external abort" faults.
->> 3. Proper fix for build breakage of cpuidle on !SMP. This allows using
->>     Exynos cpuidle driver on UP.
->>
->> Best regards,
->> Krzysztof
->>
->> ----------------------------------------------------------------
->>
->> The following changes since commit 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c:
->>
->>    ARM: dts: add display power domain for exynos5250 (2015-02-27 05:29:32 +0900)
->>
->> are available in the git repository at:
->>
->>    git://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.0-rc1-exynos-fixes
->>
->> for you to fetch changes up to c1b57bce36a69f3972a1db433d3c8b34e0541e63:
->>
->>    ARM: EXYNOS: cpuidle: Fix build breakage on !SMP (2015-03-11 13:02:08 +0100)
->>
->> ----------------------------------------------------------------
->> Andrzej Hajda (4):
->>        arm/exynos: add asynchronous bridge clock bindings
->>        arm/exynos/pm_domains: add support for async-bridge clocks
->>        ARM: dts: exynos5420: add async-bridge clocks to disp1 power domain
->>        ARM: dts: exynos5420: add async-bridge clocks to gsc power domain
->>
-> When I checked the patches, I expected that we could get the review from clock
-> guys even we could do it though. And basically/usually the 'RFC' tagging means
-> it's not a patch can be upstreamed and will be posted after gathering some
-> comments so I didn't queue them in my tree. I'm still thinking like that...
-
-Frankly we thought that if the only comments are reports that the 
-patches fixed
-the issue, there is no need to resend them without any change.
-
-I also don't know why you think that the review from clock maintainers 
-is needed.
-Those patches modify power domain driver and implement the requirements from
-exynos5422 technical note about power on/off procedures. The quality of 
-technical
-note is a different story (those requirements are not clearly stated 
-there and
-one need to collect them from different chapters). The patches were 
-posted with
-'RFC' tag, because we were not sure if they will fix the lockup issues 
-on all
-5420+ based boards, but after comments from others it looks that they 
-are finally
-the right approach.
-
->
->> Bartlomiej Zolnierkiewicz (1):
->>        ARM: EXYNOS: cpuidle: Fix build breakage on !SMP
->>
-> Yeah, we need to fix it up asap and I'll finish it by this weekend. Sorry for
-> the inconvenience.
->
->> Krzysztof Kozlowski (1):
->>        ARM: EXYNOS: Fix failed second suspend on Exynos4
->>
-> I'll have a look at this with above.
->
-> Thanks,
-> Kukjin
->
->>   .../bindings/arm/exynos/power_domain.txt           |  3 ++
->>   arch/arm/boot/dts/exynos5420.dtsi                  |  8 +++--
->>   arch/arm/mach-exynos/common.h                      |  2 ++
->>   arch/arm/mach-exynos/exynos.c                      | 29 +++++++++++++++-
->>   arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
->>   arch/arm/mach-exynos/pm.c                          |  2 ++
->>   arch/arm/mach-exynos/pm_domains.c                  | 27 ++++++++++++---
->>   arch/arm/mach-exynos/suspend.c                     |  3 ++
->>   drivers/cpuidle/cpuidle-exynos.c                   |  3 +-
->>   9 files changed, 71 insertions(+), 45 deletions(-)
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+T24gMDUvMDIvMTUgMTM6MzUsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4gU2luY2UgRXh5bm9zNTQy
+MCB0aGVyZSBhcmUgYXN5bmMtYnJpZGdlcyAoQVNCKSBiZXR3ZWVuIGRpZmZlcmVudCBJUHMuIFRo
+ZXNlCj4gYnJpZGdlcyBtdXN0IGJlIG9wZXJhdGlvbmFsIGR1cmluZyBwb3dlciBkb21haW4gb24v
+b2ZmLCBpZS4gY2xvY2tzIHVzZWQKPiBieSB0aGVzZSBicmlkZ2VzIHNob3VsZCBiZSBlbmFibGVk
+Lgo+IFRoaXMgcGF0Y2ggZW5hYmxlZCB0aGVzZSBjbG9ja3MgZHVyaW5nIGRvbWFpbiBvbi9vZmYu
+Cj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4K
+ClJldmlld2VkLWJ5OiBTeWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ftc3VuZy5jb20+
+Cgo+IC0tLQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9wbV9kb21haW5zLmMgfCAyNyArKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyks
+IDQgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtZXh5bm9zL3Bt
+X2RvbWFpbnMuYyBiL2FyY2gvYXJtL21hY2gtZXh5bm9zL3BtX2RvbWFpbnMuYwo+IGluZGV4IDBl
+MmJjMzYuLmVjZmY1MjIgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vbWFjaC1leHlub3MvcG1fZG9t
+YWlucy5jCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3MvcG1fZG9tYWlucy5jCj4gQEAgLTM3
+LDYgKzM3LDcgQEAgc3RydWN0IGV4eW5vc19wbV9kb21haW4gewo+ICAJc3RydWN0IGNsayAqb3Nj
+Y2xrOwo+ICAJc3RydWN0IGNsayAqY2xrW01BWF9DTEtfUEVSX0RPTUFJTl07Cj4gIAlzdHJ1Y3Qg
+Y2xrICpwY2xrW01BWF9DTEtfUEVSX0RPTUFJTl07Cj4gKwlzdHJ1Y3QgY2xrICphc2JfY2xrW01B
+WF9DTEtfUEVSX0RPTUFJTl07Cj4gIH07Cj4gIAo+ICBzdGF0aWMgaW50IGV4eW5vc19wZF9wb3dl
+cihzdHJ1Y3QgZ2VuZXJpY19wbV9kb21haW4gKmRvbWFpbiwgYm9vbCBwb3dlcl9vbikKPiBAQCAt
+NDUsMTQgKzQ2LDE5IEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BkX3Bvd2VyKHN0cnVjdCBnZW5lcmlj
+X3BtX2RvbWFpbiAqZG9tYWluLCBib29sIHBvd2VyX29uKQo+ICAJdm9pZCBfX2lvbWVtICpiYXNl
+Owo+ICAJdTMyIHRpbWVvdXQsIHB3cjsKPiAgCWNoYXIgKm9wOwo+ICsJaW50IGk7Cj4gIAo+ICAJ
+cGQgPSBjb250YWluZXJfb2YoZG9tYWluLCBzdHJ1Y3QgZXh5bm9zX3BtX2RvbWFpbiwgcGQpOwo+
+ICAJYmFzZSA9IHBkLT5iYXNlOwo+ICAKPiArCWZvciAoaSA9IDA7IGkgPCBNQVhfQ0xLX1BFUl9E
+T01BSU47IGkrKykgewo+ICsJCWlmIChJU19FUlIocGQtPmFzYl9jbGtbaV0pKQo+ICsJCQlicmVh
+azsKPiArCQljbGtfcHJlcGFyZV9lbmFibGUocGQtPmFzYl9jbGtbaV0pOwo+ICsJfQo+ICsKPiAg
+CS8qIFNldCBvc2NjbGsgYmVmb3JlIHBvd2VyaW5nIG9mZiBhIGRvbWFpbiovCj4gIAlpZiAoIXBv
+d2VyX29uKSB7Cj4gLQkJaW50IGk7Cj4gLQo+ICAJCWZvciAoaSA9IDA7IGkgPCBNQVhfQ0xLX1BF
+Ul9ET01BSU47IGkrKykgewo+ICAJCQlpZiAoSVNfRVJSKHBkLT5jbGtbaV0pKQo+ICAJCQkJYnJl
+YWs7Cj4gQEAgLTgxLDggKzg3LDYgQEAgc3RhdGljIGludCBleHlub3NfcGRfcG93ZXIoc3RydWN0
+IGdlbmVyaWNfcG1fZG9tYWluICpkb21haW4sIGJvb2wgcG93ZXJfb24pCj4gIAo+ICAJLyogUmVz
+dG9yZSBjbG9ja3MgYWZ0ZXIgcG93ZXJpbmcgb24gYSBkb21haW4qLwo+ICAJaWYgKHBvd2VyX29u
+KSB7Cj4gLQkJaW50IGk7Cj4gLQo+ICAJCWZvciAoaSA9IDA7IGkgPCBNQVhfQ0xLX1BFUl9ET01B
+SU47IGkrKykgewo+ICAJCQlpZiAoSVNfRVJSKHBkLT5jbGtbaV0pKQo+ICAJCQkJYnJlYWs7Cj4g
+QEAgLTkyLDYgKzk2LDEyIEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BkX3Bvd2VyKHN0cnVjdCBnZW5l
+cmljX3BtX2RvbWFpbiAqZG9tYWluLCBib29sIHBvd2VyX29uKQo+ICAJCX0KPiAgCX0KPiAgCj4g
+Kwlmb3IgKGkgPSAwOyBpIDwgTUFYX0NMS19QRVJfRE9NQUlOOyBpKyspIHsKPiArCQlpZiAoSVNf
+RVJSKHBkLT5hc2JfY2xrW2ldKSkKPiArCQkJYnJlYWs7Cj4gKwkJY2xrX2Rpc2FibGVfdW5wcmVw
+YXJlKHBkLT5hc2JfY2xrW2ldKTsKPiArCX0KPiArCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICAKPiBA
+QCAtMTM3LDYgKzE0NywxNSBAQCBzdGF0aWMgX19pbml0IGludCBleHlub3M0X3BtX2luaXRfcG93
+ZXJfZG9tYWluKHZvaWQpCj4gIAkJcGQtPnBkLnBvd2VyX29mZiA9IGV4eW5vc19wZF9wb3dlcl9v
+ZmY7Cj4gIAkJcGQtPnBkLnBvd2VyX29uID0gZXh5bm9zX3BkX3Bvd2VyX29uOwo+ICAKPiArCQlm
+b3IgKGkgPSAwOyBpIDwgTUFYX0NMS19QRVJfRE9NQUlOOyBpKyspIHsKPiArCQkJY2hhciBjbGtf
+bmFtZVs4XTsKPiArCj4gKwkJCXNucHJpbnRmKGNsa19uYW1lLCBzaXplb2YoY2xrX25hbWUpLCAi
+YXNiJWQiLCBpKTsKPiArCQkJcGQtPmFzYl9jbGtbaV0gPSBjbGtfZ2V0KGRldiwgY2xrX25hbWUp
+Owo+ICsJCQlpZiAoSVNfRVJSKHBkLT5hc2JfY2xrW2ldKSkKPiArCQkJCWJyZWFrOwo+ICsJCX0K
+PiArCj4gIAkJcGQtPm9zY2NsayA9IGNsa19nZXQoZGV2LCAib3NjY2xrIik7Cj4gIAkJaWYgKElT
+X0VSUihwZC0+b3NjY2xrKSkKPiAgCQkJZ290byBub19jbGs7Cj4gCgoKLS0gClN5bHdlc3RlciBO
+YXdyb2NraQpTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9sYW5kCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
