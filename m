@@ -1,50 +1,51 @@
-From: riku.voipio@linaro.org
-Subject: [PATCH] ARM: multi_v7_defconfig: enable usb3503
-Date: Fri, 13 Mar 2015 15:54:26 +0200
-Message-ID: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Riku Voipio <riku.voipio@linaro.org>
+From: Ameen Ali <ameenali023@gmail.com>
+Subject: [PATCH 10/11] arch/arm/mach-s3c24xx/mach-osiris-dvs.c: use "&&" (not "&") with bool operands
+Date: Fri, 13 Mar 2015 16:53:38 +0200
+Message-ID: <1426258418-5940-1-git-send-email-ameenali023@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f194.google.com ([74.125.82.194]:36785 "EHLO
+	mail-we0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751868AbbCMOxp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Mar 2015 10:53:45 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org, linux@arm.linux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ameen Ali <ameenali023@gmail.com>
 
-From: Riku Voipio <riku.voipio@linaro.org>
+bitwise AND ("&") was used
+in logical expressions with operands having "bool" type. Replaced
+bitwise AND operators with logical AND.
 
-CONFIG_USB_HSIC_USB3503 is needed by exynos5250-arndale for the on-board
-asix network controller. Enable it so networking works with
-multi_v7_defconfig out of box like it does with exynos_defconfig.
-
-USB3503 is also referenced from exynos4412-odroidu3.dts and
-exynos5250-spring.dts so this patch should improve
-multi_v7_defconfig on those platforms as well.
-
-Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
+Signed-off-by : Ameen Ali <AmeenAli023@gmail.com
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index b7e6b6fb..a4b9bc3 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -426,6 +426,7 @@ CONFIG_USB_STORAGE=y
- CONFIG_USB_DWC3=y
- CONFIG_USB_CHIPIDEA=y
- CONFIG_USB_CHIPIDEA_HOST=y
-+CONFIG_USB_HSIC_USB3503=y
- CONFIG_AB8500_USB=y
- CONFIG_KEYSTONE_USB_PHY=y
- CONFIG_OMAP_USB3=y
+diff --git a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+index ce2db23..e189836 100644
+--- a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
++++ b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+@@ -70,16 +70,16 @@ static int osiris_dvs_notify(struct notifier_block *nb,
+ 
+ 	switch (val) {
+ 	case CPUFREQ_PRECHANGE:
+-		if (old_dvs & !new_dvs ||
+-		    cur_dvs & !new_dvs) {
++		if (old_dvs && !new_dvs ||
++		    cur_dvs && !new_dvs) {
+ 			pr_debug("%s: exiting dvs\n", __func__);
+ 			cur_dvs = false;
+ 			gpio_set_value(OSIRIS_GPIO_DVS, 1);
+ 		}
+ 		break;
+ 	case CPUFREQ_POSTCHANGE:
+-		if (!old_dvs & new_dvs ||
+-		    !cur_dvs & new_dvs) {
++		if (!old_dvs && new_dvs ||
++		    !cur_dvs && new_dvs) {
+ 			pr_debug("entering dvs\n");
+ 			cur_dvs = true;
+ 			gpio_set_value(OSIRIS_GPIO_DVS, 0);
 -- 
-2.1.4
+2.1.0
