@@ -1,75 +1,56 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: dts: don't make DP a consumer of DISP1 on Exynos5250
-Date: Sat, 14 Mar 2015 09:11:56 +0100
-Message-ID: <1426320716-28137-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [GIT PULL 2/2] Samsung fixes-2 for v4.0
+Date: Sat, 14 Mar 2015 14:17:50 +0100
+Message-ID: <CABxcv=kDOavviyRC-wPBwqd81J=TYD3bKbaa0dpD-6M0tr01XA@mail.gmail.com>
+References: <54F4B33E.3070803@kernel.org>
+	<2064108.qlOP0oDx90@wuerfel>
+	<20154650.hb5Lekq8n0@wuerfel>
+	<CABxcv=nTi_+qkNhw=4NypNnR795cX4QUsWLOR4S+2w3suXvz5g@mail.gmail.com>
+	<027501d057f1$f13a5090$d3aef1b0$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:38874 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752481AbbCNNRw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 14 Mar 2015 09:17:52 -0400
+Received: by wifj2 with SMTP id j2so7739440wif.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Mar 2015 06:17:50 -0700 (PDT)
+In-Reply-To: <027501d057f1$f13a5090$d3aef1b0$@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-By making the DP controller a consumer of DISP1, the PD is powered
-off when the exynos-dp probe is deferred and powered on again when
-the exynos-drm driver is probed.
+Hello Kukjin,
 
-But this causes the exynos-dp driver failing to obtain the stream
-clock since the FIMD has been powered off with the DISP1 PD:
+On Fri, Mar 6, 2015 at 10:43 AM, Kukjin Kim <kgene@kernel.org> wrote:
+>>
+>> Yes, the problem is the Exynos DRM driver which has a lot of issues.
+>> It's broken if CONFIG_DRM_EXYNOS_IOMMU is enabled which defaults to
+>> yes after commit 8dcc14f82f06 ("drm/exynos: IOMMU support should not
+>> be selectable by user").
+>>
+>> I posted a patch to disable IOMMU support on Exynos to avoid these
+>> boot failures and also mentioned to Kukjin that it should be a fix for
+>> 4.0 [0]. But even with IOMMU disabled, the Exynos DRM is broken in
+>> some boards [1] so we may have to disable that driver until everything
+>> gets sorted out and is stable again.
+>>
+> Yes, the fix is in my tree and it will be sent to upstream via arm-soc soon.
+>
 
-exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
-exynos-dp 145b0000.dp-controller: unable to config video
+Sorry for pestering you but I see that the patch to disable
+EXYNOS_IOMMU is still not in Linus' master and we are almost in
+4.0-rc4 now.
 
-The Exynos5250 documentation doesn't mention that the Display Port
-Transmitter module is included in the DISP1 PD so the device should
-not have a reference to this Power Domain.
+A patch to the Exynos DRM driver to check for IOMMU and fail
+gracefully has landed in 4.0-rc so now at least the machines boot but
+with IOMMU enabled display is broken in the Exynos5 boards.
 
-This patch fixes video display on an Exynos5250 Snow Chromebook.
-
-Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250")
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-
-Hello Andrzej and Marek,
-
-I need this patch to have display working on an Snow Chromebook with
-next20150312. I remember testing the mentioned patch that introduced
-the regression when it was posted and I did not find any issues with
-it. Do you know what could had caused this behavior change?
-
-According to the Exynos5250 documentation I've access to, the modules
-that are included in the DISP1 power domain are LCD controller (FIMD),
-MIE1 VP, MIXER, TV Encoder and HDMI so I think this patch is correct
-since it not only solves the regression but also models the HW better.
-
-Please let me know if you think it should be fixed in a different way.
+> Thanks,
+> Kukjin
 
 Best regards,
 Javier
-
- arch/arm/boot/dts/exynos5250.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index adbde1adad95..ffb505171216 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -775,7 +775,6 @@
- 	};
- 
- 	dp: dp-controller@145B0000 {
--		power-domains = <&pd_disp1>;
- 		clocks = <&clock CLK_DP>;
- 		clock-names = "dp";
- 		phys = <&dp_phy>;
--- 
-2.1.4
