@@ -1,56 +1,90 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [GIT PULL 2/2] Samsung fixes-2 for v4.0
-Date: Sat, 14 Mar 2015 14:17:50 +0100
-Message-ID: <CABxcv=kDOavviyRC-wPBwqd81J=TYD3bKbaa0dpD-6M0tr01XA@mail.gmail.com>
-References: <54F4B33E.3070803@kernel.org>
-	<2064108.qlOP0oDx90@wuerfel>
-	<20154650.hb5Lekq8n0@wuerfel>
-	<CABxcv=nTi_+qkNhw=4NypNnR795cX4QUsWLOR4S+2w3suXvz5g@mail.gmail.com>
-	<027501d057f1$f13a5090$d3aef1b0$@kernel.org>
+From: Ben Gamari <bgamari.foss@gmail.com>
+Subject: Re: [RFC 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+Date: Sat, 14 Mar 2015 15:13:29 -0400
+Message-ID: <87oanv9yue.fsf@gmail.com>
+References: <1406549892-5558-1-git-send-email-afaerber@suse.de> <53D9CA35.1030800@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:38874 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752481AbbCNNRw (ORCPT
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:33240 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751296AbbCNTNn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Mar 2015 09:17:52 -0400
-Received: by wifj2 with SMTP id j2so7739440wif.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Mar 2015 06:17:50 -0700 (PDT)
-In-Reply-To: <027501d057f1$f13a5090$d3aef1b0$@kernel.org>
+	Sat, 14 Mar 2015 15:13:43 -0400
+In-Reply-To: <53D9CA35.1030800@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Humberto Naves <hsnaves@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, linux-kernel@vger.kernel.org, Hakjoo Kim <ruppi.kim@hardkernel.com>, linux-arm-kernel@lists.infradead.org
 
-Hello Kukjin,
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 6, 2015 at 10:43 AM, Kukjin Kim <kgene@kernel.org> wrote:
->>
->> Yes, the problem is the Exynos DRM driver which has a lot of issues.
->> It's broken if CONFIG_DRM_EXYNOS_IOMMU is enabled which defaults to
->> yes after commit 8dcc14f82f06 ("drm/exynos: IOMMU support should not
->> be selectable by user").
->>
->> I posted a patch to disable IOMMU support on Exynos to avoid these
->> boot failures and also mentioned to Kukjin that it should be a fix for
->> 4.0 [0]. But even with IOMMU disabled, the Exynos DRM is broken in
->> some boards [1] so we may have to disable that driver until everything
->> gets sorted out and is stable again.
->>
-> Yes, the fix is in my tree and it will be sent to upstream via arm-soc soon.
+Andreas F=C3=A4rber <afaerber@suse.de> writes:
+
+> Kukjin,
 >
+> Am 28.07.2014 14:18, schrieb Andreas F=C3=A4rber:
+>> Hello,
+>>=20
+>> This series adds a dedicated ODROID-XU device tree and enhances it with=
+=20
+>> LED configuration, to match the downstream 3.14 based behavior.
+>>=20
+>> It had turned out less trivial than I initially thought as the whole=20
+>> pinctrl stuff is still missing. I thus cherry-pick two downstream commit=
+s.
+>>=20
+>> Hakjoo, can you please reply with a Signed-off-by to your patches
+>> so that we can get them into upstream? Thanks in advance!
+>
+> FTR, Hakjoo Kim did reply with signed off patches (thanks again!) and
+> updated their branch accordingly:
+>
+> https://github.com/hardkernel/linux/commits/odroid-3.14.y-linaro
+> https://github.com/hardkernel/linux/commit/53edc3da0d1da287517681b47daf36=
+679637b6ba
+> https://github.com/hardkernel/linux/commit/afdc310e47e4d1799719566bfb5a47=
+c55141a7cb
+>
+>> Andreas F=C3=A4rber (3):
+>>   ARM: dts: exynos5410: Clean up SMDK5410 indentation
+>>   ARM: dts: exynos5410: Prepare ODROID-XU device tree
+>
+> The functional changes below haven't been reviewed yet, but could you
+> consider applying trivial patches 1-2?
+>
+> Regards,
+> Andreas
+>
+>>   ARM: dts: exynos5410: Add ODROID-XU LEDs
+>>=20
+>> Hakjoo Kim (2):
+>>   pinctrl: exynos: add exynos5410 SoC specific data
+>>   ARM: dts: add pinctrl support to Exynos5410
+>>=20
 
-Sorry for pestering you but I see that the patch to disable
-EXYNOS_IOMMU is still not in Linus' master and we are almost in
-4.0-rc4 now.
+What happened with this set? It appears that 1-2 were never merged nor
+was there any review of the remaining patches.
 
-A patch to the Exynos DRM driver to check for IOMMU and fail
-gracefully has landed in 4.0-rc so now at least the machines boot but
-with IOMMU enabled display is broken in the Exynos5 boards.
+Cheers,
 
-> Thanks,
-> Kukjin
+=2D Ben
 
-Best regards,
-Javier
+--=-=-=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJVBIhaAAoJEHPt6ejPuu8BFs0H/ixCGCZdcCiFhD7tWfk/2M+4
+dl0W9Ch17sGkAKudS62UiJE9P4zVXZRoPc36bBDl6BuBQvq4z/HWAhNWyJS+hMLE
+lQ8NgNaBxckGD4KXSfKvmXB6G6lPGGC1NFEhWLsYe9k/R/AlF1SfiNL3Jh9/WYXj
+IjocZD8K7y2XkCsuRTVcGCP7lVvYGiLFzovcCchD4LJwK155UPdseM648nUNDoWc
+oOe67Cs6WHY2urMpYaTR0iAhysVS8LpGqtUORCjwLqQZ9P8nWe5nZIeJWvNTxNoH
+Tn4qwgPXgpcCp8CotamvGOnqFE5YiOmtyw/f1+RiNTp5Gd9ijbOHWCw2/pqPOdc=
+=jV6+
+-----END PGP SIGNATURE-----
+--=-=-=--
