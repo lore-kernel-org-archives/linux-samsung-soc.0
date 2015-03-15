@@ -1,64 +1,128 @@
-From: Ben Gamari <bgamari.foss@gmail.com>
-Subject: Re: [PATCH] PM / devfreq: remove checks for CONFIG_EXYNOS_ASV
-Date: Sun, 15 Mar 2015 00:10:41 -0400
-Message-ID: <878ueyaoji.fsf@gmail.com>
-References: <7638065.14871400820762911.JavaMail.weblogic@epml08> <CAJ0PZbS_Xcu=OJuiy=xs7k_A1=ajp34KEdi4KGC3e-y8t3EUGw@mail.gmail.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH V5 2/2] ARM: dts: Add HS400 support for exynos5420 and exynos5800
+Date: Sun, 15 Mar 2015 16:58:13 +0530
+Message-ID: <CAGOxZ53_TGay2ooTW22ZGPZ+yneqoXH6JEPZ=mMSYr1cpOhXWg@mail.gmail.com>
+References: <1422499318-13726-1-git-send-email-alim.akhtar@samsung.com>
+ <1422499318-13726-3-git-send-email-alim.akhtar@samsung.com> <54ED6D24.4000703@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAJ0PZbS_Xcu=OJuiy=xs7k_A1=ajp34KEdi4KGC3e-y8t3EUGw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: myungjoo.ham@gmail.com, Paul Bolle <pebolle@tiscali.nl>, =?utf-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, =?utf-8?B?6rmA6rWt?= =?utf-8?B?7KeE?= <kgene.kim@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <54ED6D24.4000703@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, Douglas Anderson <dianders@chromium.org>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Ping?
 
-MyungJoo Ham <myungjoo.ham@samsung.com> writes:
-
-> On Fri, May 23, 2014 at 1:52 PM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
->> On Thu, May 22, 2014 at 5:37 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
->>> Checks for CONFIG_EXYNOS_ASV were added in v3.3. But the related Kconfig
->>> symbol has never been added to the tree. Remove these checks, as they
->>> always evaluate to false.
->>>
->>> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
->>
->> Thanks for pointing this out.
->>
->> ASV was supposed to be merged, but it appears it failed or never attempted.
->>
->> I will merge with the next batch (this week).
->>
->>
->> Cheers,
->> MyungJoo.
+On Wed, Feb 25, 2015 at 12:05 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi, Alim.
 >
-> Uh.. ASV itself affects the power efficiency; thus, I'd like to keep
-> it alive, but not as the current form.
+> Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
 >
-What is the current status of ASV? I've not seen any patches since this
-was sent.
+> Best Regards,
+> Jaehoon Chung
+>
+> On 01/29/2015 11:41 AM, Alim Akhtar wrote:
+>> From: Seungwon Jeon <tgih.jun@samsung.com>
+>>
+>> HS400 timing values are added for SMDK5420, exynos5420-peach-pit
+>> and exynos5800-peach-pi boards.
+>> This also adds RCLK GPIO line, this gpio should be in pull-down
+>> state.
+>> This also enables HS400 on peach-pi and this updates the clock frequency
+>> to 800MHz to be set as input clock to controller.
+>>
+>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> [Alim: addressed review comments]
+>> ---
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 +++-
+>>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    4 +++-
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    7 +++++--
+>>  4 files changed, 18 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> index 9a050e1..f7a44a4 100644
+>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> @@ -569,8 +569,10 @@
+>>       samsung,dw-mshc-ciu-div = <3>;
+>>       samsung,dw-mshc-sdr-timing = <0 4>;
+>>       samsung,dw-mshc-ddr-timing = <0 2>;
+>> +     samsung,dw-mshc-hs400-timing = <0 2>;
+>> +     samsung,read-strobe-delay = <90>;
+>>       pinctrl-names = "default";
+>> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
+>>       bus-width = <8>;
+>>  };
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> index ba686e4..8b15316 100644
+>> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>> @@ -201,6 +201,13 @@
+>>                       samsung,pin-drv = <3>;
+>>               };
+>>
+>> +             sd0_rclk: sd0-rclk {
+>> +                     samsung,pins = "gpc0-7";
+>> +                     samsung,pin-function = <2>;
+>> +                     samsung,pin-pud = <1>;
+>> +                     samsung,pin-drv = <3>;
+>> +             };
+>> +
+>>               sd1_cmd: sd1-cmd {
+>>                       samsung,pins = "gpc1-1";
+>>                       samsung,pin-function = <2>;
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index 8be3d7b..2078a1f 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -80,8 +80,10 @@
+>>               samsung,dw-mshc-ciu-div = <3>;
+>>               samsung,dw-mshc-sdr-timing = <0 4>;
+>>               samsung,dw-mshc-ddr-timing = <0 2>;
+>> +             samsung,dw-mshc-hs400-timing = <0 2>;
+>> +             samsung,read-strobe-delay = <90>;
+>>               pinctrl-names = "default";
+>> -             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
+>>               bus-width = <8>;
+>>               cap-mmc-highspeed;
+>>       };
+>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> index e8fdda8..96f0d61 100644
+>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> @@ -550,15 +550,18 @@
+>>       num-slots = <1>;
+>>       broken-cd;
+>>       mmc-hs200-1_8v;
+>> +     mmc-hs400-1_8v;
+>>       cap-mmc-highspeed;
+>>       non-removable;
+>>       card-detect-delay = <200>;
+>> -     clock-frequency = <400000000>;
+>> +     clock-frequency = <800000000>;
+>>       samsung,dw-mshc-ciu-div = <3>;
+>>       samsung,dw-mshc-sdr-timing = <0 4>;
+>>       samsung,dw-mshc-ddr-timing = <0 2>;
+>> +     samsung,dw-mshc-hs400-timing = <0 2>;
+>> +     samsung,read-strobe-delay = <90>;
+>>       pinctrl-names = "default";
+>> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
+>>       bus-width = <8>;
+>>  };
+>>
+>>
+>
 
-Cheers,
-
-- Ben
 
 
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJVBQZBAAoJEHPt6ejPuu8BTQsIAKI4APrIB1L/lXslJ/OIqrNj
-R2SfucM3HB1H/PFshgoTfgZ57TC72K+zvBfv6zcuUQ8jgUzelIuLTwBosORVpB0b
-P6vxqLpdLqFg3VC5RH4FB6wBOXJiuNIfxF3zZrCH2Et67MTkcUrtf3ricdGT23xs
-cM+xX5Dd6b8EvFU0HqBIDIGhLEY/N4+4wj8/sgR3ED+ZPHDx8zsscsVGvR1+tOpC
-VmGovJMHWOMaAc9TYHcKVA8Mi2lVfqbOP/nOhKMVr8zVetFyyeYjfoRsNB+jIWYY
-Ur5l+Wtm49EfSd/0wPrrLhkUTkQvPsKUd+WtcHbmUgjNDhdAmK1sp62t+0ru3XU=
-=U3D4
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Regards,
+Alim
