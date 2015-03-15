@@ -1,90 +1,86 @@
-From: Ben Gamari <bgamari.foss@gmail.com>
-Subject: Re: [RFC 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
-Date: Sat, 14 Mar 2015 15:13:29 -0400
-Message-ID: <87oanv9yue.fsf@gmail.com>
-References: <1406549892-5558-1-git-send-email-afaerber@suse.de> <53D9CA35.1030800@suse.de>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v6 0/2] irqchip: Move Exynos PM to use stacked domains
+Date: Sun, 15 Mar 2015 01:31:31 +0000
+Message-ID: <20150315013131.GC4463@io.lakedaemon.net>
+References: <1426088693-15724-1-git-send-email-marc.zyngier@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:33240 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751296AbbCNTNn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Mar 2015 15:13:43 -0400
-In-Reply-To: <53D9CA35.1030800@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1426088693-15724-1-git-send-email-marc.zyngier@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Humberto Naves <hsnaves@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, linux-kernel@vger.kernel.org, Hakjoo Kim <ruppi.kim@hardkernel.com>, linux-arm-kernel@lists.infradead.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Marc,
 
-Andreas F=C3=A4rber <afaerber@suse.de> writes:
+On Wed, Mar 11, 2015 at 03:44:51PM +0000, Marc Zyngier wrote:
+> This series is extracted from [4], which is trying to remove all
+> traces of gic_arch_extn from the tree. As some maintainers are more
+> responsive than others (understatement of the year...), I've decided
+> to split it per sub-arch, and get it moving, at least partially.
+> 
+> This series addresses Exynos by converting its PM support to a stacked
+> domain on top of the standard GIC.
+> 
+> Based on 4.0-rc1.
+> 
+> * From v5: [5]
+> - Added a big fat warning when an old DT is detected (as requested by Jason)
+> - Added support for Exynos3250
+> - Allow interrupt affinity to be changed
+> 
+> * From v4: [4]
+> - Extracted from the full series
+> - Rebased on 4.0-rc1
+> 
+> * From v3 [3]:
+> - Rebased on top of the patch working around hardcoded IRQ on OMAP4/5 [4]
+> - Fixed more iMX6 DTs (Stephan)
+> - Fixed Exynos4/5 DTs
+> 
+> * From v2 [2]:
+> - Addressed numerous comments from Thierry
+> - Merged bug fixes from Nishanth
+> - Merged bug fix from Stefan
+> 
+> * From v1 [1]:
+> - Rebased on 3.19-rc3
+> - Fixed a number of additional platforms
+> - Added crossbar conversion to stacked domains
+> - Merged bug fixes from Nishanth
+> 
+> [5]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/325368.html
+> [4]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/317531.html
+> [3]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/315385.html
+> [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/314041.html
+> [1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/307338.html
+> 
+> Marc Zyngier (2):
+>   ARM: exynos4/5: convert pmu wakeup to stacked domains
+>   DT: exynos: update PMU binding
+> 
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |  17 +++
+>  arch/arm/boot/dts/exynos3250.dtsi                  |   6 +-
+>  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
+>  arch/arm/boot/dts/exynos5420.dtsi                  |   4 +
+>  arch/arm/mach-exynos/exynos.c                      |  15 +--
+>  arch/arm/mach-exynos/suspend.c                     | 139 ++++++++++++++++++---
+>  7 files changed, 164 insertions(+), 25 deletions(-)
 
-> Kukjin,
->
-> Am 28.07.2014 14:18, schrieb Andreas F=C3=A4rber:
->> Hello,
->>=20
->> This series adds a dedicated ODROID-XU device tree and enhances it with=
-=20
->> LED configuration, to match the downstream 3.14 based behavior.
->>=20
->> It had turned out less trivial than I initially thought as the whole=20
->> pinctrl stuff is still missing. I thus cherry-pick two downstream commit=
-s.
->>=20
->> Hakjoo, can you please reply with a Signed-off-by to your patches
->> so that we can get them into upstream? Thanks in advance!
->
-> FTR, Hakjoo Kim did reply with signed off patches (thanks again!) and
-> updated their branch accordingly:
->
-> https://github.com/hardkernel/linux/commits/odroid-3.14.y-linaro
-> https://github.com/hardkernel/linux/commit/53edc3da0d1da287517681b47daf36=
-679637b6ba
-> https://github.com/hardkernel/linux/commit/afdc310e47e4d1799719566bfb5a47=
-c55141a7cb
->
->> Andreas F=C3=A4rber (3):
->>   ARM: dts: exynos5410: Clean up SMDK5410 indentation
->>   ARM: dts: exynos5410: Prepare ODROID-XU device tree
->
-> The functional changes below haven't been reviewed yet, but could you
-> consider applying trivial patches 1-2?
->
-> Regards,
-> Andreas
->
->>   ARM: dts: exynos5410: Add ODROID-XU LEDs
->>=20
->> Hakjoo Kim (2):
->>   pinctrl: exynos: add exynos5410 SoC specific data
->>   ARM: dts: add pinctrl support to Exynos5410
->>=20
+Applied to irqchip/stacked-exynos to give the series some time in -next.
 
-What happened with this set? It appears that 1-2 were never merged nor
-was there any review of the remaining patches.
+thx,
 
-Cheers,
-
-=2D Ben
-
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJVBIhaAAoJEHPt6ejPuu8BFs0H/ixCGCZdcCiFhD7tWfk/2M+4
-dl0W9Ch17sGkAKudS62UiJE9P4zVXZRoPc36bBDl6BuBQvq4z/HWAhNWyJS+hMLE
-lQ8NgNaBxckGD4KXSfKvmXB6G6lPGGC1NFEhWLsYe9k/R/AlF1SfiNL3Jh9/WYXj
-IjocZD8K7y2XkCsuRTVcGCP7lVvYGiLFzovcCchD4LJwK155UPdseM648nUNDoWc
-oOe67Cs6WHY2urMpYaTR0iAhysVS8LpGqtUORCjwLqQZ9P8nWe5nZIeJWvNTxNoH
-Tn4qwgPXgpcCp8CotamvGOnqFE5YiOmtyw/f1+RiNTp5Gd9ijbOHWCw2/pqPOdc=
-=jV6+
------END PGP SIGNATURE-----
---=-=-=--
+Jason.
