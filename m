@@ -1,86 +1,64 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH v6 0/2] irqchip: Move Exynos PM to use stacked domains
-Date: Sun, 15 Mar 2015 01:31:31 +0000
-Message-ID: <20150315013131.GC4463@io.lakedaemon.net>
-References: <1426088693-15724-1-git-send-email-marc.zyngier@arm.com>
+From: Ben Gamari <bgamari.foss@gmail.com>
+Subject: Re: [PATCH] PM / devfreq: remove checks for CONFIG_EXYNOS_ASV
+Date: Sun, 15 Mar 2015 00:10:41 -0400
+Message-ID: <878ueyaoji.fsf@gmail.com>
+References: <7638065.14871400820762911.JavaMail.weblogic@epml08> <CAJ0PZbS_Xcu=OJuiy=xs7k_A1=ajp34KEdi4KGC3e-y8t3EUGw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1426088693-15724-1-git-send-email-marc.zyngier@arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAJ0PZbS_Xcu=OJuiy=xs7k_A1=ajp34KEdi4KGC3e-y8t3EUGw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: myungjoo.ham@gmail.com, Paul Bolle <pebolle@tiscali.nl>, =?utf-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, =?utf-8?B?6rmA6rWt?= =?utf-8?B?7KeE?= <kgene.kim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Marc,
+--=-=-=
+Content-Type: text/plain
 
-On Wed, Mar 11, 2015 at 03:44:51PM +0000, Marc Zyngier wrote:
-> This series is extracted from [4], which is trying to remove all
-> traces of gic_arch_extn from the tree. As some maintainers are more
-> responsive than others (understatement of the year...), I've decided
-> to split it per sub-arch, and get it moving, at least partially.
-> 
-> This series addresses Exynos by converting its PM support to a stacked
-> domain on top of the standard GIC.
-> 
-> Based on 4.0-rc1.
-> 
-> * From v5: [5]
-> - Added a big fat warning when an old DT is detected (as requested by Jason)
-> - Added support for Exynos3250
-> - Allow interrupt affinity to be changed
-> 
-> * From v4: [4]
-> - Extracted from the full series
-> - Rebased on 4.0-rc1
-> 
-> * From v3 [3]:
-> - Rebased on top of the patch working around hardcoded IRQ on OMAP4/5 [4]
-> - Fixed more iMX6 DTs (Stephan)
-> - Fixed Exynos4/5 DTs
-> 
-> * From v2 [2]:
-> - Addressed numerous comments from Thierry
-> - Merged bug fixes from Nishanth
-> - Merged bug fix from Stefan
-> 
-> * From v1 [1]:
-> - Rebased on 3.19-rc3
-> - Fixed a number of additional platforms
-> - Added crossbar conversion to stacked domains
-> - Merged bug fixes from Nishanth
-> 
-> [5]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-February/325368.html
-> [4]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/317531.html
-> [3]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/315385.html
-> [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/314041.html
-> [1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/307338.html
-> 
-> Marc Zyngier (2):
->   ARM: exynos4/5: convert pmu wakeup to stacked domains
->   DT: exynos: update PMU binding
-> 
->  .../devicetree/bindings/arm/samsung/pmu.txt        |  17 +++
->  arch/arm/boot/dts/exynos3250.dtsi                  |   6 +-
->  arch/arm/boot/dts/exynos4.dtsi                     |   4 +
->  arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
->  arch/arm/boot/dts/exynos5420.dtsi                  |   4 +
->  arch/arm/mach-exynos/exynos.c                      |  15 +--
->  arch/arm/mach-exynos/suspend.c                     | 139 ++++++++++++++++++---
->  7 files changed, 164 insertions(+), 25 deletions(-)
+MyungJoo Ham <myungjoo.ham@samsung.com> writes:
 
-Applied to irqchip/stacked-exynos to give the series some time in -next.
+> On Fri, May 23, 2014 at 1:52 PM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
+>> On Thu, May 22, 2014 at 5:37 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
+>>> Checks for CONFIG_EXYNOS_ASV were added in v3.3. But the related Kconfig
+>>> symbol has never been added to the tree. Remove these checks, as they
+>>> always evaluate to false.
+>>>
+>>> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+>>
+>> Thanks for pointing this out.
+>>
+>> ASV was supposed to be merged, but it appears it failed or never attempted.
+>>
+>> I will merge with the next batch (this week).
+>>
+>>
+>> Cheers,
+>> MyungJoo.
+>
+> Uh.. ASV itself affects the power efficiency; thus, I'd like to keep
+> it alive, but not as the current form.
+>
+What is the current status of ASV? I've not seen any patches since this
+was sent.
 
-thx,
+Cheers,
 
-Jason.
+- Ben
+
+
+--=-=-=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJVBQZBAAoJEHPt6ejPuu8BTQsIAKI4APrIB1L/lXslJ/OIqrNj
+R2SfucM3HB1H/PFshgoTfgZ57TC72K+zvBfv6zcuUQ8jgUzelIuLTwBosORVpB0b
+P6vxqLpdLqFg3VC5RH4FB6wBOXJiuNIfxF3zZrCH2Et67MTkcUrtf3ricdGT23xs
+cM+xX5Dd6b8EvFU0HqBIDIGhLEY/N4+4wj8/sgR3ED+ZPHDx8zsscsVGvR1+tOpC
+VmGovJMHWOMaAc9TYHcKVA8Mi2lVfqbOP/nOhKMVr8zVetFyyeYjfoRsNB+jIWYY
+Ur5l+Wtm49EfSd/0wPrrLhkUTkQvPsKUd+WtcHbmUgjNDhdAmK1sp62t+0ru3XU=
+=U3D4
+-----END PGP SIGNATURE-----
+--=-=-=--
