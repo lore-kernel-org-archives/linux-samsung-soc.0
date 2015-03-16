@@ -1,47 +1,44 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH] ARM: dts: Update lid and power pin-functions for exynos5250-spring
-Date: Mon, 16 Mar 2015 15:54:50 +0100
-Message-ID: <5506EEBA.6050509@suse.de>
-References: <1424276245-7028-1-git-send-email-afaerber@suse.de> <54E5CDB7.6050002@collabora.co.uk>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Update exynos5250-spring with mmc node changes
+Date: Mon, 16 Mar 2015 15:55:53 +0100
+Message-ID: <5506EEF9.7080100@suse.de>
+References: <1424275812-6797-1-git-send-email-afaerber@suse.de> <54E5CD2E.9070608@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:44812 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964833AbbCPOyy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Mar 2015 10:54:54 -0400
-In-Reply-To: <54E5CDB7.6050002@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <54E5CD2E.9070608-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>
 
-Kukjin,
-
-Am 19.02.2015 um 12:49 schrieb Javier Martinez Canillas:
+Am 19.02.2015 um 12:46 schrieb Javier Martinez Canillas:
 > Hello Andreas,
 >=20
-> On 02/18/2015 05:17 PM, Andreas F=C3=A4rber wrote:
->> Configure the pins in external interrupt mode, as done for Snow in
->> e5e5c6d14e39 ("ARM: dts: Add power and lid GPIO keys pinctrl for
->> exynos5250-snow").
+> On 02/18/2015 05:10 PM, Andreas F=C3=A4rber wrote:
+>> Resolve a merge conflict with mmc refactoring aaa25a5a33cb ("ARM: dt=
+s:
+>> unuse the slot-node and deprecate the supports-highspeed for dw-mmc =
+in
+>> exynos") by dropping the slot@0 nodes, moving its bus-width property=
+ to
+>> the mmc node and replacing supports-highspeed with cap-{mmc,sd}-high=
+speed,
+>> matching exynos5250-snow.
 >>
->> Reported-by: Kukjin Kim <kgene@kernel.org>
->> Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
+>> Cc: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> Fixes: 53dd4138bb0a ("ARM: dts: Add exynos5250-spring device tree")
->> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
 >> ---
+>>  arch/arm/boot/dts/exynos5250-spring.dts | 16 ++++------------
+>>  1 file changed, 4 insertions(+), 12 deletions(-)
+>>
 >=20
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
+> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8oXa1LcwEujcA@public.gmane.org=
 k>
 
-Ping?
-
-Regards,
-Andreas
+Ping!
 
 >=20
 > Best regards,
@@ -52,3 +49,8 @@ SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
 GF: Felix Imend=C3=B6rffer, Jane Smithard, Jennifer Guild, Dilip Upmany=
 u,
 Graham Norton; HRB 21284 (AG N=C3=BCrnberg)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
