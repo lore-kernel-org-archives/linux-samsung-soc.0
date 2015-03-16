@@ -1,104 +1,118 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: Add to support for Exynos5433 SoC
-Date: Mon, 16 Mar 2015 21:21:08 +0900
-Message-ID: <5506CAB4.7000204@samsung.com>
-References: <1426155073-22356-1-git-send-email-jaewon02.kim@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] ARM: dts: don't make DP a consumer of DISP1 on
+ Exynos5250
+Date: Mon, 16 Mar 2015 15:16:52 +0100
+Message-ID: <5506E5D4.1020300@collabora.co.uk>
+References: <1426320716-28137-1-git-send-email-javier.martinez@collabora.co.uk>
+ <5506C945.5030603@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:31196 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751732AbbCPMVL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Mar 2015 08:21:11 -0400
-In-reply-to: <1426155073-22356-1-git-send-email-jaewon02.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <5506C945.5030603@suse.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 
-On 03/12/2015 07:11 PM, Jaewon Kim wrote:
-> This patch adds driver data to support for Exynos5433 SoC.
-> The Exynos5433 has one USB3.0 Host and USB3.0 DRD(Dual Role Device).
-> Exynos5433 is simplar to Eyxnos7 but Exynos5433 have
-> one more USB3.0 Host controller.
-> 
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
->  .../devicetree/bindings/phy/samsung-phy.txt        |    3 ++-
->  drivers/phy/phy-exynos5-usbdrd.c                   |   10 ++++++++++
->  include/linux/mfd/syscon/exynos5-pmu.h             |    3 +++
->  3 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 91e38cf..60c6f2a 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -128,6 +128,7 @@ Required properties:
->  - compatible : Should be set to one of the following supported values:
->  	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
->  	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
-> +	- "samsung,exynos5433-usbdrd-phy" - for exynos5433 SoC.
->  	- "samsung,exynos7-usbdrd-phy" - for exynos7 SoC.
->  - reg : Register offset and length of USB DRD PHY register set;
->  - clocks: Clock IDs array as required by the controller
-> @@ -139,7 +140,7 @@ Required properties:
->  	       PHY operations, associated by phy name. It is used to
->  	       determine bit values for clock settings register.
->  	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
-> -	- optional clocks: Exynos7 SoC has now following additional
-> +	- optional clocks: Exynos5433 & Exynos7 SoC has now following additional
->  			   gate clocks available:
->  			   - phy_pipe: for PIPE3 phy
->  			   - phy_utmi: for UTMI+ phy
-> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-> index 0437401..597e7dd 100644
-> --- a/drivers/phy/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/phy-exynos5-usbdrd.c
-> @@ -624,6 +624,13 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
->  	.has_common_clk_gate	= true,
->  };
->  
-> +static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
-> +	.phy_cfg		= phy_cfg_exynos5,
-> +	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
-> +	.pmu_offset_usbdrd1_phy	= EXYNOS5433_USBHOST30_PHY_CONTROL,
-> +	.has_common_clk_gate	= false,
-> +};
-> +
->  static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
->  	.phy_cfg		= phy_cfg_exynos5,
->  	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
-> @@ -638,6 +645,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
->  		.compatible = "samsung,exynos5420-usbdrd-phy",
->  		.data = &exynos5420_usbdrd_phy
->  	}, {
-> +		.compatible = "samsung,exynos5433-usbdrd-phy",
-> +		.data = &exynos5433_usbdrd_phy
-> +	}, {
->  		.compatible = "samsung,exynos7-usbdrd-phy",
->  		.data = &exynos7_usbdrd_phy
->  	},
-> diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
-> index 00ef24b..9352adc 100644
-> --- a/include/linux/mfd/syscon/exynos5-pmu.h
-> +++ b/include/linux/mfd/syscon/exynos5-pmu.h
-> @@ -36,6 +36,9 @@
->  #define EXYNOS5420_MTCADC_PHY_CONTROL		(0x724)
->  #define EXYNOS5420_DPTX_PHY_CONTROL		(0x728)
->  
-> +/* Exynos5433 specific register definitions */
-> +#define EXYNOS5433_USBHOST30_PHY_CONTROL	(0x728)
-> +
->  #define EXYNOS5_PHY_ENABLE			BIT(0)
->  
->  #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
-> 
+Hello,
 
-I tested this patch for USB on Exynos5433-based board.
+On 03/16/2015 01:15 PM, Andreas F=E4rber wrote:
+> Am 14.03.2015 um 09:11 schrieb Javier Martinez Canillas:
+>> By making the DP controller a consumer of DISP1, the PD is powered
+>> off when the exynos-dp probe is deferred and powered on again when
+>> the exynos-drm driver is probed.
+>> =
 
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> But this causes the exynos-dp driver failing to obtain the stream
+>> clock since the FIMD has been powered off with the DISP1 PD:
+>> =
 
-Thanks,
-Chanwoo Choi
+>> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+>> exynos-dp 145b0000.dp-controller: unable to config video
+>> =
+
+>> The Exynos5250 documentation doesn't mention that the Display Port
+>> Transmitter module is included in the DISP1 PD so the device should
+>> not have a reference to this Power Domain.
+>> =
+
+>> This patch fixes video display on an Exynos5250 Snow Chromebook.
+>> =
+
+>> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250")
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>> =
+
+>> Hello Andrzej and Marek,
+>> =
+
+>> I need this patch to have display working on an Snow Chromebook
+> =
+
+> Tested-by: Andreas F=E4rber <afaerber@suse.de>
+> =
+
+> This fixes the display on the Spring Chromebook as well!
+>
+
+Thanks for testing Andreas but this patch seems to only solve a symptom
+rather than the root cause.
+
+Since the error happens again when disabling and enabling the display:
+
+# echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+disp1-power-domain: Power-off latency exceeded, new value 225333 ns
+# echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+exynos-dp 145b0000.dp-controller: EDID data does not include any extensions.
+exynos-dp 145b0000.dp-controller: EDID Read success!
+exynos-dp 145b0000.dp-controller: Link Training Clock Recovery success
+exynos-dp 145b0000.dp-controller: Link Training success!
+exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+exynos-dp 145b0000.dp-controller: unable to config video
+
+So what happens is that if the DISP1 power domain is powered off and
+then powered on again, the display fails to be enabled.
+
+Making the dp controller a consumer of the DISP1 pd only made this to
+trigger on boot since the driver probe was deferred and the DISP1 pd
+was turned off and on again on exynos-drm probe.
+
+It seems that the kernel is not enabling everything that is needed for
+the power domain and it is working on boot just because the bootloader
+initialized everything properly.
+
+This is similar to the problem we had in Exynos5420 and that was fixed
+by Andrzej in the series "Fix power domains handling on exynos542x" [0].
+So probably a similar solution is needed.
+
+Andrzej,
+
+I looked at the Exynos5250 manual and I didn't find anything obvious
+that is missing in the DISP1 pd dev node but the asynchronous bridges
+clocks needed on Exynos5420 was also not well documented so I don't
+know if I'm missing something.
+
+Do you know what could be missing here? Otherwise I think your patch
+to add the DISP1 pd in the DT should be reverted to have display
+working again on Exynos5250 boards.
+ =
+
+> Thanks,
+> Andreas
+> =
+
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/3/12/387
