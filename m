@@ -1,82 +1,89 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 3/3] ARM: dts: Define stdout-path property for Spring
- board
-Date: Mon, 16 Mar 2015 12:05:44 +0100
-Message-ID: <5506B908.1060007@suse.de>
-References: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk> <1426501710-24177-4-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Define stdout-path property for Spring board
+Date: Mon, 16 Mar 2015 12:28:42 +0100
+Message-ID: <CABxcv=mmr-WWXY7-KUJe-3EP8FHRBzv-SabJma9VwGRPiHio3Q@mail.gmail.com>
+References: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1426501710-24177-4-git-send-email-javier.martinez@collabora.co.uk>
+	<5506B908.1060007@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:60440 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751450AbbCPLFr (ORCPT
+Received: from mail-we0-f182.google.com ([74.125.82.182]:32946 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753234AbbCPL2n convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Mar 2015 07:05:47 -0400
-In-Reply-To: <1426501710-24177-4-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 16 Mar 2015 07:28:43 -0400
+Received: by weop45 with SMTP id p45so10439327weo.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2015 04:28:42 -0700 (PDT)
+In-Reply-To: <5506B908.1060007@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi,
+Hello Andreas,
 
-Am 16.03.2015 um 11:28 schrieb Javier Martinez Canillas:
-> The kernel can use as the default console a serial port if is defined
+>> index f02775487cd4..b9ec763a5602 100644
+>> --- a/arch/arm/boot/dts/exynos5250-spring.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+>> @@ -25,6 +25,7 @@
+>>
+>>       chosen {
+>>               bootargs =3D "console=3Dtty1";
+>> +             stdout-path =3D "serial3:115200n8";
+>
+> Is this a guess or did you verify that against some schematics?
+>
 
-"The kernel can use a serial port as the default console if it's define=
-d
-=2E.."
+I don't have access to the Spring schematics but it is based on what
+is defined in the vendor u-boot for Spring [0].
 
-> as stdout device in the Device Tree.
->=20
-> This allows a board to be booted without the need of having a console
-> parameter in the kernel command line.
->=20
-> Currently the Spring DTS has bootargs in the /chosen node and this is
-> kept since users that don't have a serial console on this board might
-> be using it to have the boot log shown in the display. This will have
-> more precedence than the stdout-path but it's fine since is only used
+There isn't a Spring specific configuration file but only a
+chromeos_daisy.h which is shared by Snow, Spring and Kate (not yet in
+mainline):
 
-"since it's"
+#define CONFIG_DIRECT_BOOTARGS \
+"console=3DttySAC3," STRINGIFY(CONFIG_BAUDRATE) " debug earlyprintk"
 
-> when CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND is enabled.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> ---
->  arch/arm/boot/dts/exynos5250-spring.dts | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/=
-dts/exynos5250-spring.dts
-> index f02775487cd4..b9ec763a5602 100644
-> --- a/arch/arm/boot/dts/exynos5250-spring.dts
-> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
-> @@ -25,6 +25,7 @@
-> =20
->  	chosen {
->  		bootargs =3D "console=3Dtty1";
-> +		stdout-path =3D "serial3:115200n8";
+So I assumed that all daisy-based Chromebooks use the same UART for deb=
+ug.
 
-Is this a guess or did you verify that against some schematics?
+>>       };
+>>
+>>       gpio-keys {
+>
+> Assuming that bootargs still work,
+>
 
->  	};
-> =20
->  	gpio-keys {
+Yes, the semantics are not changed. The std-out property is only used
+as a default if no console=3D parameter is passed so if you already are
+passing one in your bootloader or using the one defined in the /chosen
+bootargs by enabling CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND, that
+will be used instead of std-out.
 
-Assuming that bootargs still work,
+> Reviewed-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>
+> I do wonder why this mechanism could not point to the same location a=
+s
+> bootargs? ("dp-controller"?) The device does not even have screws for
 
-Reviewed-by: Andreas F=E4rber <afaerber@suse.de>
+I did wonder the same indeed but I don't know if you can use a display
+as std-out or only works for serial consoles.
 
-I do wonder why this mechanism could not point to the same location as
-bootargs? ("dp-controller"?) The device does not even have screws for
-opening it, so accessing the serial port is highly theoretical.
+> opening it, so accessing the serial port is highly theoretical.
+>
 
-Regards,
-Andreas
+I see, in that case I think we could just drop this patch if is not
+possible to have a serial console even with some soldering like is the
+case in Snow, Peach Pit and Peach Pi.
 
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
-Graham Norton; HRB 21284 (AG N=FCrnberg)
+> Regards,
+> Andreas
+>
+
+Best regards,
+Javier
+
+[0]: https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/=
+firmware-spring-3824.B/include/configs/chromeos_daisy.h
