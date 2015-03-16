@@ -1,58 +1,104 @@
-From: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 1/1] ARM: dts: don't make DP a consumer of DISP1 on Exynos5250
-Date: Mon, 16 Mar 2015 13:15:01 +0100
-Message-ID: <5506C945.5030603@suse.de>
-References: <1426320716-28137-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Add to support for Exynos5433 SoC
+Date: Mon, 16 Mar 2015 21:21:08 +0900
+Message-ID: <5506CAB4.7000204@samsung.com>
+References: <1426155073-22356-1-git-send-email-jaewon02.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:44535 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753939AbbCPMPF (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:31196 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751732AbbCPMVL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Mar 2015 08:15:05 -0400
-In-Reply-To: <1426320716-28137-1-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 16 Mar 2015 08:21:11 -0400
+In-reply-to: <1426155073-22356-1-git-send-email-jaewon02.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Jaewon Kim <jaewon02.kim@samsung.com>
+Cc: Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 
-Am 14.03.2015 um 09:11 schrieb Javier Martinez Canillas:
-> By making the DP controller a consumer of DISP1, the PD is powered
-> off when the exynos-dp probe is deferred and powered on again when
-> the exynos-drm driver is probed.
->=20
-> But this causes the exynos-dp driver failing to obtain the stream
-> clock since the FIMD has been powered off with the DISP1 PD:
->=20
-> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
-> exynos-dp 145b0000.dp-controller: unable to config video
->=20
-> The Exynos5250 documentation doesn't mention that the Display Port
-> Transmitter module is included in the DISP1 PD so the device should
-> not have a reference to this Power Domain.
->=20
-> This patch fixes video display on an Exynos5250 Snow Chromebook.
->=20
-> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos52=
-50")
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
+On 03/12/2015 07:11 PM, Jaewon Kim wrote:
+> This patch adds driver data to support for Exynos5433 SoC.
+> The Exynos5433 has one USB3.0 Host and USB3.0 DRD(Dual Role Device).
+> Exynos5433 is simplar to Eyxnos7 but Exynos5433 have
+> one more USB3.0 Host controller.
+> 
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 > ---
->=20
-> Hello Andrzej and Marek,
->=20
-> I need this patch to have display working on an Snow Chromebook
+>  .../devicetree/bindings/phy/samsung-phy.txt        |    3 ++-
+>  drivers/phy/phy-exynos5-usbdrd.c                   |   10 ++++++++++
+>  include/linux/mfd/syscon/exynos5-pmu.h             |    3 +++
+>  3 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> index 91e38cf..60c6f2a 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> @@ -128,6 +128,7 @@ Required properties:
+>  - compatible : Should be set to one of the following supported values:
+>  	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+>  	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
+> +	- "samsung,exynos5433-usbdrd-phy" - for exynos5433 SoC.
+>  	- "samsung,exynos7-usbdrd-phy" - for exynos7 SoC.
+>  - reg : Register offset and length of USB DRD PHY register set;
+>  - clocks: Clock IDs array as required by the controller
+> @@ -139,7 +140,7 @@ Required properties:
+>  	       PHY operations, associated by phy name. It is used to
+>  	       determine bit values for clock settings register.
+>  	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+> -	- optional clocks: Exynos7 SoC has now following additional
+> +	- optional clocks: Exynos5433 & Exynos7 SoC has now following additional
+>  			   gate clocks available:
+>  			   - phy_pipe: for PIPE3 phy
+>  			   - phy_utmi: for UTMI+ phy
+> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+> index 0437401..597e7dd 100644
+> --- a/drivers/phy/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+> @@ -624,6 +624,13 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
+>  	.has_common_clk_gate	= true,
+>  };
+>  
+> +static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
+> +	.phy_cfg		= phy_cfg_exynos5,
+> +	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
+> +	.pmu_offset_usbdrd1_phy	= EXYNOS5433_USBHOST30_PHY_CONTROL,
+> +	.has_common_clk_gate	= false,
+> +};
+> +
+>  static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
+>  	.phy_cfg		= phy_cfg_exynos5,
+>  	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
+> @@ -638,6 +645,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
+>  		.compatible = "samsung,exynos5420-usbdrd-phy",
+>  		.data = &exynos5420_usbdrd_phy
+>  	}, {
+> +		.compatible = "samsung,exynos5433-usbdrd-phy",
+> +		.data = &exynos5433_usbdrd_phy
+> +	}, {
+>  		.compatible = "samsung,exynos7-usbdrd-phy",
+>  		.data = &exynos7_usbdrd_phy
+>  	},
+> diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
+> index 00ef24b..9352adc 100644
+> --- a/include/linux/mfd/syscon/exynos5-pmu.h
+> +++ b/include/linux/mfd/syscon/exynos5-pmu.h
+> @@ -36,6 +36,9 @@
+>  #define EXYNOS5420_MTCADC_PHY_CONTROL		(0x724)
+>  #define EXYNOS5420_DPTX_PHY_CONTROL		(0x728)
+>  
+> +/* Exynos5433 specific register definitions */
+> +#define EXYNOS5433_USBHOST30_PHY_CONTROL	(0x728)
+> +
+>  #define EXYNOS5_PHY_ENABLE			BIT(0)
+>  
+>  #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
+> 
 
-Tested-by: Andreas F=E4rber <afaerber@suse.de>
+I tested this patch for USB on Exynos5433-based board.
 
-This fixes the display on the Spring Chromebook as well!
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 Thanks,
-Andreas
-
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
-Graham Norton; HRB 21284 (AG N=FCrnberg)
+Chanwoo Choi
