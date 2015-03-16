@@ -1,89 +1,58 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Define stdout-path property for Spring board
-Date: Mon, 16 Mar 2015 12:28:42 +0100
-Message-ID: <CABxcv=mmr-WWXY7-KUJe-3EP8FHRBzv-SabJma9VwGRPiHio3Q@mail.gmail.com>
-References: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1426501710-24177-4-git-send-email-javier.martinez@collabora.co.uk>
-	<5506B908.1060007@suse.de>
+From: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH 1/1] ARM: dts: don't make DP a consumer of DISP1 on Exynos5250
+Date: Mon, 16 Mar 2015 13:15:01 +0100
+Message-ID: <5506C945.5030603@suse.de>
+References: <1426320716-28137-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:32946 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753234AbbCPL2n convert rfc822-to-8bit (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:44535 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753939AbbCPMPF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Mar 2015 07:28:43 -0400
-Received: by weop45 with SMTP id p45so10439327weo.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2015 04:28:42 -0700 (PDT)
-In-Reply-To: <5506B908.1060007@suse.de>
+	Mon, 16 Mar 2015 08:15:05 -0400
+In-Reply-To: <1426320716-28137-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello Andreas,
+Am 14.03.2015 um 09:11 schrieb Javier Martinez Canillas:
+> By making the DP controller a consumer of DISP1, the PD is powered
+> off when the exynos-dp probe is deferred and powered on again when
+> the exynos-drm driver is probed.
+>=20
+> But this causes the exynos-dp driver failing to obtain the stream
+> clock since the FIMD has been powered off with the DISP1 PD:
+>=20
+> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+> exynos-dp 145b0000.dp-controller: unable to config video
+>=20
+> The Exynos5250 documentation doesn't mention that the Display Port
+> Transmitter module is included in the DISP1 PD so the device should
+> not have a reference to this Power Domain.
+>=20
+> This patch fixes video display on an Exynos5250 Snow Chromebook.
+>=20
+> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos52=
+50")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>=20
+> Hello Andrzej and Marek,
+>=20
+> I need this patch to have display working on an Snow Chromebook
 
->> index f02775487cd4..b9ec763a5602 100644
->> --- a/arch/arm/boot/dts/exynos5250-spring.dts
->> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
->> @@ -25,6 +25,7 @@
->>
->>       chosen {
->>               bootargs =3D "console=3Dtty1";
->> +             stdout-path =3D "serial3:115200n8";
->
-> Is this a guess or did you verify that against some schematics?
->
+Tested-by: Andreas F=E4rber <afaerber@suse.de>
 
-I don't have access to the Spring schematics but it is based on what
-is defined in the vendor u-boot for Spring [0].
+This fixes the display on the Spring Chromebook as well!
 
-There isn't a Spring specific configuration file but only a
-chromeos_daisy.h which is shared by Snow, Spring and Kate (not yet in
-mainline):
+Thanks,
+Andreas
 
-#define CONFIG_DIRECT_BOOTARGS \
-"console=3DttySAC3," STRINGIFY(CONFIG_BAUDRATE) " debug earlyprintk"
-
-So I assumed that all daisy-based Chromebooks use the same UART for deb=
-ug.
-
->>       };
->>
->>       gpio-keys {
->
-> Assuming that bootargs still work,
->
-
-Yes, the semantics are not changed. The std-out property is only used
-as a default if no console=3D parameter is passed so if you already are
-passing one in your bootloader or using the one defined in the /chosen
-bootargs by enabling CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND, that
-will be used instead of std-out.
-
-> Reviewed-by: Andreas F=C3=A4rber <afaerber@suse.de>
->
-> I do wonder why this mechanism could not point to the same location a=
-s
-> bootargs? ("dp-controller"?) The device does not even have screws for
-
-I did wonder the same indeed but I don't know if you can use a display
-as std-out or only works for serial consoles.
-
-> opening it, so accessing the serial port is highly theoretical.
->
-
-I see, in that case I think we could just drop this patch if is not
-possible to have a serial console even with some soldering like is the
-case in Snow, Peach Pit and Peach Pi.
-
-> Regards,
-> Andreas
->
-
-Best regards,
-Javier
-
-[0]: https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/=
-firmware-spring-3824.B/include/configs/chromeos_daisy.h
+--=20
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Felix Imend=F6rffer, Jane Smithard, Jennifer Guild, Dilip Upmanyu,
+Graham Norton; HRB 21284 (AG N=FCrnberg)
