@@ -1,41 +1,54 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 30/35 linux-next] devfreq: constify of_device_id array
-Date: Tue, 17 Mar 2015 01:11:51 +0000 (GMT)
-Message-ID: <487895027.183321426554710978.JavaMail.weblogic@epmlwas07d>
-Reply-To: myungjoo.ham@samsung.com
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH 0/3] ARM: dts: Define stdout-patch for Exynos Chromebooks
+Date: Tue, 17 Mar 2015 10:51:13 +0900
+Message-ID: <075601d06054$d94e6fa0$8beb4ee0$@kernel.org>
+References: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fabian Frederick <fabf@skynet.be>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49234 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036AbbCQBvQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Mar 2015 21:51:16 -0400
+In-reply-to: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Kukjin Kim' <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>, 'Andreas Faerber' <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-PiBvZl9kZXZpY2VfaWQgaXMgYWx3YXlzIHVzZWQgYXMgY29uc3QuDQo+IChTZWUgZHJpdmVyLm9m
-X21hdGNoX3RhYmxlIGFuZCBvcGVuIGZpcm13YXJlIGZ1bmN0aW9ucykNCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IEZhYmlhbiBGcmVkZXJpY2sgPGZhYmZAc2t5bmV0LmJlPg0KDQpBY2tlZC1ieTogTXl1
-bmdKb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tDQo+ICBkcml2ZXJz
-L2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYyB8IDIgKy0NCj4gIGRyaXZlcnMvZGV2ZnJlcS90
-ZWdyYS1kZXZmcmVxLmMgICAgIHwgMiArLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVx
-L2V2ZW50L2V4eW5vcy1wcG11LmMgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUu
-Yw0KPiBpbmRleCBhZDgzNDczLi41YWZiODUxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZy
-ZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiArKysgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5
-bm9zLXBwbXUuYw0KPiBAQCAtMzU0LDcgKzM1NCw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BwbXVf
-cmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJcmV0dXJuIDA7DQo+ICB9
-DQo+ICANCj4gLXN0YXRpYyBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGV4eW5vc19wcG11X2lkX21hdGNo
-W10gPSB7DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfcHBtdV9p
-ZF9tYXRjaFtdID0gew0KPiAgCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtcHBtdSIs
-IH0sDQo+ICAJeyAvKiBzZW50aW5lbCAqLyB9LA0KPiAgfTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVxLmMgYi9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
-cS5jDQo+IGluZGV4IDM0NzkwOTYuLjI0NGQ4ZGIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2
-ZnJlcS90ZWdyYS1kZXZmcmVxLmMNCj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZy
-ZXEuYw0KPiBAQCAtNjk1LDcgKzY5NSw3IEBAIHN0YXRpYyBTSU1QTEVfREVWX1BNX09QUyh0ZWdy
-YV9kZXZmcmVxX3BtX29wcywNCj4gIAkJCSB0ZWdyYV9kZXZmcmVxX3N1c3BlbmQsDQo+ICAJCQkg
-dGVncmFfZGV2ZnJlcV9yZXN1bWUpOw0KPiAgDQo+IC1zdGF0aWMgc3RydWN0IG9mX2RldmljZV9p
-ZCB0ZWdyYV9kZXZmcmVxX29mX21hdGNoW10gPSB7DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9m
-X2RldmljZV9pZCB0ZWdyYV9kZXZmcmVxX29mX21hdGNoW10gPSB7DQo+ICAJeyAuY29tcGF0aWJs
-ZSA9ICJudmlkaWEsdGVncmExMjQtYWN0bW9uIiB9LA0KPiAgCXsgfSwNCj4gIH07DQo+IC0tIA0K
-PiAyLjEuMA0KPiANCj4gDQo=
+Javier Martinez Canillas wrote:
+> 
+> The kernel can use as the default console a serial port if is defined
+> as stdout device in the Device Tree.
+> 
+> This allows a board to be booted without the need of having a console
+> parameter in the kernel command line.
+> 
+> This small series add a stdout-path property for Exynos5 Chromebooks and
+> is composed of the following patches:
+> 
+> Javier Martinez Canillas (3):
+>   ARM: dts: Define stdout-path property for Peach boards
+>   ARM: dts: Define stdout-path property for Snow board
+>   ARM: dts: Define stdout-path property for Spring board
+> 
+>  arch/arm/boot/dts/exynos5250-snow.dts      | 1 +
+>  arch/arm/boot/dts/exynos5250-spring.dts    | 1 +
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 ++++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 ++++
+>  4 files changed, 10 insertions(+)
+> 
++ Arnd
+
+Basically, I have no objection to add stdout-path property on board DT but I
+need to ask other ARM guys how they think about? Always I'm questioned what
+should be defined in bootloader before entering kernel and IMHO kernel can do
+it, it should be defined in bootloader though ;)
+
+Let's wait for other opinions...
+
+Thanks,
+Kukjin
