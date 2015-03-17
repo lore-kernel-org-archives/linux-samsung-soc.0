@@ -1,90 +1,56 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2] ARM: EXYNOS: Fix failed second suspend on Exynos4
-Date: Wed, 18 Mar 2015 03:05:20 +0900
-Message-ID: <55086CE0.6080905@kernel.org>
-References: <1426069206-13667-1-git-send-email-k.kozlowski@samsung.com> <1426069765.30407.7.camel@AMDC1943>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable HDMI support
+Date: Tue, 17 Mar 2015 19:54:20 +0100
+Message-ID: <CABxcv=mMD=X=EKOC2sGXcDwMeOmoO6cmVAu=roV_AVqUwG+pXg@mail.gmail.com>
+References: <1423244567-24463-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426069765.30407.7.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org, BartlomiejZolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:36677 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932418AbbCQSyV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Mar 2015 14:54:21 -0400
+Received: by wgra20 with SMTP id a20so16126078wgr.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Mar 2015 11:54:20 -0700 (PDT)
+In-Reply-To: <1423244567-24463-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On 03/11/15 19:29, Krzysztof Kozlowski wrote:
-> On =C5=9Bro, 2015-03-11 at 11:20 +0100, Krzysztof Kozlowski wrote:
->> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
->> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
->> controller") the second suspend to RAM failed. First suspend worked =
-fine
->> but the next one hang just after powering down of secondary CPUs (sy=
-stem
->> consumed energy as it would be running but was not responsive).
->>
->> The issue was caused by enabling delayed reset assertion for CPU0 ju=
-st
->> after issuing power down of cores. This was introduced for Exynos4 i=
-n
->> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
->>
->> The whole behavior is not well documented but after checking with ve=
-ndor
->> code this should be done like this (on Exynos4):
->> 1. Enable delayed reset assertion when system is running (for all CP=
-Us).
->> 2. Disable delayed reset assertion before suspending the system.
->>    This can be done after powering off secondary CPUs.
->> 3. Re-enable the delayed reset assertion when system is resumed.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU=
- off")
->> Cc: <stable@vger.kernel.org>
->> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
->=20
-> Dear Kukjin,
->=20
-> This patch was first sent on 3rd of February. It could enter before
-> opening 4.0 merge window. I did not receive any response from you in
-> that time.
->=20
-> So let me point next steps:
-> 1. The Exynos4412 suspend on 4.0 is broken and now this patch applies=
- as
-> a fix.
-> 2. I resent it on 18th of February.
-> 3. I received tested-by from Bartlomiej and Chanwoo.
-> 4. Bartlomiej pinged you on 3rd March.
->=20
-> Still no response. If the patch does not look good then please share
-> your comments. I'll fix it.
-> If this patch looks good, why does it take so much time?
->=20
+Hello Kukjin,
 
-Please use another way something like check ARM core rather than use
-'soc_is_xxx()', as you know it is not acceptable now even it is just
-moving/modifying exist function though.
+On Fri, Feb 6, 2015 at 6:42 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Many Exynos boards have an HDMI port so enable Exynos DRM HDMI support.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> Exynos DRM HDMI has some issues that were fixed by Andrzej's [0] series.
+> So now is safe to HDMI support for Exynos boards.
+>
+> [0]: https://lkml.org/lkml/2015/2/5/265
+>
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 70e5d0bdb4e4..e44da52e5223 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -120,6 +120,7 @@ CONFIG_REGULATOR_S2MPS11=y
+>  CONFIG_REGULATOR_S5M8767=y
+>  CONFIG_REGULATOR_TPS65090=y
+>  CONFIG_DRM=y
+> +CONFIG_DRM_EXYNOS_HDMI=y
+>  CONFIG_DRM_BRIDGE=y
+>  CONFIG_DRM_PTN3460=y
+>  CONFIG_DRM_PS8622=y
+> --
 
-And please make sure your updates don't hurt other exynos5 stuff. Any
-tests on exynos5 platforms would be helpful.
+It seems you missed this patch when picking the exynos_defconfig patches.
 
-And I don't think the fix should be sent to 'stable' because I can't se=
-e
-the 'add node for L2$ controller' in v3.19...looks applied from v4.0-rc=
-=2E..
-
-One more if you have any doubts, I'd like to ask you to contact S.LSI
-guys who have created the vendor codes not assume with the code because
-maybe the vendor code you mentioned cannot cover all exynos stuff I
-think. Then we could make more clear pm codes in mainline. To be honest
-I'm not a Power Management hardware guy so I don't know every regarding
-PM stuff in exynos SoCs, I can contact them easier though...I mean
-please don't assume any hardware behavior with just vendor code. Please
-ask, you have an access in Samsung intranet before posting something
-like this...Hope let's make a better fix together during -rc.
-
-Thanks,
-Kukjin
+Best regards,
+Javier
