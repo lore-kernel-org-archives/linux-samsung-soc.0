@@ -1,148 +1,69 @@
-From: Daniel Stone <daniels@collabora.com>
-Subject: [PATCH] drm: Exynos: Respect framebuffer pitch for FIMD/Mixer
-Date: Tue, 17 Mar 2015 13:24:58 +0000
-Message-ID: <1426598698-31095-1-git-send-email-daniels@collabora.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos3250: Add assigned clock parents
+ to CMU node
+Date: Wed, 18 Mar 2015 00:19:38 +0900
+Message-ID: <5508460A.7030608@kernel.org>
+References: <1425302250-13446-1-git-send-email-b.michalska@samsung.com> <1425302250-13446-3-git-send-email-b.michalska@samsung.com> <5508078C.6010902@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:53347 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752681AbbCQNZD (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:60559 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754308AbbCQPTs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Mar 2015 09:25:03 -0400
+	Tue, 17 Mar 2015 11:19:48 -0400
+In-Reply-To: <5508078C.6010902@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, t.stanislaws@samsung.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Beata Michalska <b.michalska@samsung.com>, kgene@kernel.org, tomasz.figa@gmail.com, mturquette@linaro.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com
 
-When performing a modeset, use the framebuffer pitch value to set FIMD
-IMG_SIZE and Mixer SPAN registers. These are both defined as pitch - the
-distance between contiguous lines (bytes for FIMD, pixels for mixer).
+On 03/17/15 19:53, Sylwester Nawrocki wrote:
+> On 02/03/15 14:17, Beata Michalska wrote:
+>> Use assigned-clocks/assigned-clock-parents properties for
+>> CMU clock controller DT node to secure proper clock setup:
+>> switching the two muxes to root oscillator clock is not only
+>> required for proper powering down the ISP power domain,
+>> but it also reduces the risk of accessing the ISP CMU
+>> registers while the ISP power domain remains turned off
+>> (i.e. through the common clock framework by clk_summary)
+>>
+>> Signed-off-by: Beata Michalska <b.michalska@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> Kukjin, please merge this patch for v4.1. I merged the exynos3250
+> CMU ISP driver patch and we will have regression if $subject patch
+> is not applied, i.e. reading /sys/kernel/debug/clk/clk_summary
+> would cause system hang on exynos3250.
+> 
+OK, applied.
 
-Fixes display on Snow (1366x768).
+Thanks,
+Kukjin
 
-Signed-off-by: Daniel Stone <daniels@collabora.com>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |  8 +++++---
- drivers/gpu/drm/exynos/exynos_mixer.c    | 17 ++++++++++-------
- 2 files changed, 15 insertions(+), 10 deletions(-)
-
-The VP parts are untested as I don't have Exynos4 hardware, and the
-spec is uselessly vague. It does seem to look like the right fix however,
-and in the case where the buffer is naturally aligned (pitch == width*bpp),
-there should be no change, as bpp==8 for video buffers.
-
-FIMD/GRP and Mixer behaviour have been manually verified on Snow (5250
-with eDP/LVDS bridge and HDMI out).
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 925fc69..0d5681f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -147,6 +147,7 @@ struct fimd_win_data {
- 	unsigned int		ovl_height;
- 	unsigned int		fb_width;
- 	unsigned int		fb_height;
-+	unsigned int		fb_pitch;
- 	unsigned int		bpp;
- 	unsigned int		pixel_format;
- 	dma_addr_t		dma_addr;
-@@ -537,13 +538,14 @@ static void fimd_win_mode_set(struct exynos_drm_crtc *crtc,
- 	win_data->offset_y = plane->crtc_y;
- 	win_data->ovl_width = plane->crtc_width;
- 	win_data->ovl_height = plane->crtc_height;
-+	win_data->fb_pitch = plane->pitch;
- 	win_data->fb_width = plane->fb_width;
- 	win_data->fb_height = plane->fb_height;
- 	win_data->dma_addr = plane->dma_addr[0] + offset;
- 	win_data->bpp = plane->bpp;
- 	win_data->pixel_format = plane->pixel_format;
--	win_data->buf_offsize = (plane->fb_width - plane->crtc_width) *
--				(plane->bpp >> 3);
-+	win_data->buf_offsize =
-+		plane->pitch - (plane->crtc_width * (plane->bpp >> 3));
- 	win_data->line_size = plane->crtc_width * (plane->bpp >> 3);
- 
- 	DRM_DEBUG_KMS("offset_x = %d, offset_y = %d\n",
-@@ -709,7 +711,7 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
- 	writel(val, ctx->regs + VIDWx_BUF_START(win, 0));
- 
- 	/* buffer end address */
--	size = win_data->fb_width * win_data->ovl_height * (win_data->bpp >> 3);
-+	size = win_data->fb_pitch * win_data->ovl_height * (win_data->bpp >> 3);
- 	val = (unsigned long)(win_data->dma_addr + size);
- 	writel(val, ctx->regs + VIDWx_BUF_END(win, 0));
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 3518bc4..2e3bc57 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -55,6 +55,7 @@ struct hdmi_win_data {
- 	unsigned int		fb_x;
- 	unsigned int		fb_y;
- 	unsigned int		fb_width;
-+	unsigned int		fb_pitch;
- 	unsigned int		fb_height;
- 	unsigned int		src_width;
- 	unsigned int		src_height;
-@@ -438,7 +439,7 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 	} else {
- 		luma_addr[0] = win_data->dma_addr;
- 		chroma_addr[0] = win_data->dma_addr
--			+ (win_data->fb_width * win_data->fb_height);
-+			+ (win_data->fb_pitch * win_data->fb_height);
- 	}
- 
- 	if (win_data->scan_flags & DRM_MODE_FLAG_INTERLACE) {
-@@ -447,8 +448,8 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 			luma_addr[1] = luma_addr[0] + 0x40;
- 			chroma_addr[1] = chroma_addr[0] + 0x40;
- 		} else {
--			luma_addr[1] = luma_addr[0] + win_data->fb_width;
--			chroma_addr[1] = chroma_addr[0] + win_data->fb_width;
-+			luma_addr[1] = luma_addr[0] + win_data->fb_pitch;
-+			chroma_addr[1] = chroma_addr[0] + win_data->fb_pitch;
- 		}
- 	} else {
- 		ctx->interlace = false;
-@@ -469,10 +470,10 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 	vp_reg_writemask(res, VP_MODE, val, VP_MODE_FMT_MASK);
- 
- 	/* setting size of input image */
--	vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(win_data->fb_width) |
-+	vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(win_data->fb_pitch) |
- 		VP_IMG_VSIZE(win_data->fb_height));
- 	/* chroma height has to reduced by 2 to avoid chroma distorions */
--	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(win_data->fb_width) |
-+	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(win_data->fb_pitch) |
- 		VP_IMG_VSIZE(win_data->fb_height / 2));
- 
- 	vp_reg_write(res, VP_SRC_WIDTH, win_data->src_width);
-@@ -559,7 +560,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 	/* converting dma address base and source offset */
- 	dma_addr = win_data->dma_addr
- 		+ (win_data->fb_x * win_data->bpp >> 3)
--		+ (win_data->fb_y * win_data->fb_width * win_data->bpp >> 3);
-+		+ (win_data->fb_y * win_data->fb_pitch);
- 	src_x_offset = 0;
- 	src_y_offset = 0;
- 
-@@ -576,7 +577,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 		MXR_GRP_CFG_FORMAT_VAL(fmt), MXR_GRP_CFG_FORMAT_MASK);
- 
- 	/* setup geometry */
--	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win), win_data->fb_width);
-+	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win),
-+			win_data->fb_pitch / (win_data->bpp >> 3));
- 
- 	/* setup display size */
- 	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
-@@ -961,6 +963,7 @@ static void mixer_win_mode_set(struct exynos_drm_crtc *crtc,
- 	win_data->fb_y = plane->fb_y;
- 	win_data->fb_width = plane->fb_width;
- 	win_data->fb_height = plane->fb_height;
-+	win_data->fb_pitch = plane->pitch;
- 	win_data->src_width = plane->src_width;
- 	win_data->src_height = plane->src_height;
- 
--- 
-2.3.2
+>> ---
+>>  arch/arm/boot/dts/exynos3250.dtsi |    4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+>> index 277b48b..6d6118e 100644
+>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>> @@ -172,6 +172,10 @@
+>>  			compatible = "samsung,exynos3250-cmu";
+>>  			reg = <0x10030000 0x20000>;
+>>  			#clock-cells = <1>;
+>> +			assigned-clocks = <&cmu CLK_MOUT_ACLK_400_MCUISP_SUB>,
+>> +					  <&cmu CLK_MOUT_ACLK_266_SUB>;
+>> +			assigned-clock-parents = <&cmu CLK_FIN_PLL>,
+>> +						 <&cmu CLK_FIN_PLL>;
+>>  		};
+>>  
+>>  		cmu_dmc: clock-controller@105C0000 {
+>>
+> 
+> Thanks,
+> Sylwester
