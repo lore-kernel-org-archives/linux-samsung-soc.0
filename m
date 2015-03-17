@@ -1,38 +1,33 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] mfd: sec-core: Enable RTC on S2MPS11 PMIC
-Date: Tue, 17 Mar 2015 13:36:17 +0100
-Message-ID: <1426595777-10223-1-git-send-email-k.kozlowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 1/7] tests/exynos: fimg2d: add a checkerboard test
+Date: Tue, 17 Mar 2015 14:04:07 +0100
+Message-ID: <c26818989e1c63fd8182c6db9a439852@math.uni-bielefeld.de>
+References: <1426102726-27078-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <55080EBF.7050005@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60639 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932078AbbCQMg0 (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:47767 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932345AbbCQNEK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Mar 2015 08:36:26 -0400
+	Tue, 17 Mar 2015 09:04:10 -0400
+In-Reply-To: <55080EBF.7050005@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-The S2MPS11 PMIC (present on Arndale Octa board) has the same RTC module
-as S2MPS14 device. Add respective mfd cell to enable it.
+> Thank you Tobias.
+> The series is in master now.
+> 
+> -Emil
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/mfd/sec-core.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks Emil!
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 59bf322feacd..e08623807a62 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -69,6 +69,8 @@ static const struct mfd_cell s2mps11_devs[] = {
- 	{
- 		.name = "s2mps11-pmic",
- 	}, {
-+		.name = "s2mps14-rtc",
-+	}, {
- 		.name = "s2mps11-clk",
- 		.of_compatible = "samsung,s2mps11-clk",
- 	}
--- 
-1.9.1
+Going to prepare the next series now.
+
+With best wishes,
+Tobias
