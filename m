@@ -1,72 +1,41 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] phy: samsung_usb2: Fixup samsung_usb2_phy_power_on/off paths
-Date: Tue, 17 Mar 2015 08:42:38 +0800
-Message-ID: <1426552958.6645.3.camel@phoenix>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH 30/35 linux-next] devfreq: constify of_device_id array
+Date: Tue, 17 Mar 2015 01:11:51 +0000 (GMT)
+Message-ID: <487895027.183321426554710978.JavaMail.weblogic@epmlwas07d>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:35316 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751693AbbCQAmn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Mar 2015 20:42:43 -0400
-Received: by pabyw6 with SMTP id yw6so80393707pab.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2015 17:42:42 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fabian Frederick <fabf@skynet.be>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Ensure we have balanced clk_prepare_enable/clk_disable_unprepare calls if
-.power_on or .power_off callbacks return error.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/phy/phy-samsung-usb2.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
-index 4a12f66..55b6994 100644
---- a/drivers/phy/phy-samsung-usb2.c
-+++ b/drivers/phy/phy-samsung-usb2.c
-@@ -37,10 +37,14 @@ static int samsung_usb2_phy_power_on(struct phy *phy)
- 		spin_lock(&drv->lock);
- 		ret = inst->cfg->power_on(inst);
- 		spin_unlock(&drv->lock);
-+		if (ret)
-+			goto err_power_on;
- 	}
- 
- 	return 0;
- 
-+err_power_on:
-+	clk_disable_unprepare(drv->ref_clk);
- err_instance_clk:
- 	clk_disable_unprepare(drv->clk);
- err_main_clk:
-@@ -51,7 +55,7 @@ static int samsung_usb2_phy_power_off(struct phy *phy)
- {
- 	struct samsung_usb2_phy_instance *inst = phy_get_drvdata(phy);
- 	struct samsung_usb2_phy_driver *drv = inst->drv;
--	int ret = 0;
-+	int ret;
- 
- 	dev_dbg(drv->dev, "Request to power_off \"%s\" usb phy\n",
- 		inst->cfg->label);
-@@ -59,10 +63,12 @@ static int samsung_usb2_phy_power_off(struct phy *phy)
- 		spin_lock(&drv->lock);
- 		ret = inst->cfg->power_off(inst);
- 		spin_unlock(&drv->lock);
-+		if (ret)
-+			return ret;
- 	}
- 	clk_disable_unprepare(drv->ref_clk);
- 	clk_disable_unprepare(drv->clk);
--	return ret;
-+	return 0;
- }
- 
- static struct phy_ops samsung_usb2_phy_ops = {
--- 
-1.9.1
+PiBvZl9kZXZpY2VfaWQgaXMgYWx3YXlzIHVzZWQgYXMgY29uc3QuDQo+IChTZWUgZHJpdmVyLm9m
+X21hdGNoX3RhYmxlIGFuZCBvcGVuIGZpcm13YXJlIGZ1bmN0aW9ucykNCj4gDQo+IFNpZ25lZC1v
+ZmYtYnk6IEZhYmlhbiBGcmVkZXJpY2sgPGZhYmZAc2t5bmV0LmJlPg0KDQpBY2tlZC1ieTogTXl1
+bmdKb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tDQo+ICBkcml2ZXJz
+L2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUuYyB8IDIgKy0NCj4gIGRyaXZlcnMvZGV2ZnJlcS90
+ZWdyYS1kZXZmcmVxLmMgICAgIHwgMiArLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVx
+L2V2ZW50L2V4eW5vcy1wcG11LmMgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5bm9zLXBwbXUu
+Yw0KPiBpbmRleCBhZDgzNDczLi41YWZiODUxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZy
+ZXEvZXZlbnQvZXh5bm9zLXBwbXUuYw0KPiArKysgYi9kcml2ZXJzL2RldmZyZXEvZXZlbnQvZXh5
+bm9zLXBwbXUuYw0KPiBAQCAtMzU0LDcgKzM1NCw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BwbXVf
+cmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJcmV0dXJuIDA7DQo+ICB9
+DQo+ICANCj4gLXN0YXRpYyBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGV4eW5vc19wcG11X2lkX21hdGNo
+W10gPSB7DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBleHlub3NfcHBtdV9p
+ZF9tYXRjaFtdID0gew0KPiAgCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtcHBtdSIs
+IH0sDQo+ICAJeyAvKiBzZW50aW5lbCAqLyB9LA0KPiAgfTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZGV2ZnJlcS90ZWdyYS1kZXZmcmVxLmMgYi9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJl
+cS5jDQo+IGluZGV4IDM0NzkwOTYuLjI0NGQ4ZGIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2
+ZnJlcS90ZWdyYS1kZXZmcmVxLmMNCj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZy
+ZXEuYw0KPiBAQCAtNjk1LDcgKzY5NSw3IEBAIHN0YXRpYyBTSU1QTEVfREVWX1BNX09QUyh0ZWdy
+YV9kZXZmcmVxX3BtX29wcywNCj4gIAkJCSB0ZWdyYV9kZXZmcmVxX3N1c3BlbmQsDQo+ICAJCQkg
+dGVncmFfZGV2ZnJlcV9yZXN1bWUpOw0KPiAgDQo+IC1zdGF0aWMgc3RydWN0IG9mX2RldmljZV9p
+ZCB0ZWdyYV9kZXZmcmVxX29mX21hdGNoW10gPSB7DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9m
+X2RldmljZV9pZCB0ZWdyYV9kZXZmcmVxX29mX21hdGNoW10gPSB7DQo+ICAJeyAuY29tcGF0aWJs
+ZSA9ICJudmlkaWEsdGVncmExMjQtYWN0bW9uIiB9LA0KPiAgCXsgfSwNCj4gIH07DQo+IC0tIA0K
+PiAyLjEuMA0KPiANCj4gDQo=
