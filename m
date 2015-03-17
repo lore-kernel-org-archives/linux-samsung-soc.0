@@ -1,64 +1,90 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 0/3] ARM: dts: Define stdout-patch for Exynos Chromebooks
-Date: Wed, 18 Mar 2015 00:28:04 +0900
-Message-ID: <55084804.8000108@kernel.org>
-References: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk> <075601d06054$d94e6fa0$8beb4ee0$@kernel.org> <2791862.CZRe5DtPad@wuerfel>
+Subject: Re: [PATCH 3/3] ARM: dts: Define stdout-path property for Spring
+ board
+Date: Wed, 18 Mar 2015 00:29:12 +0900
+Message-ID: <55084848.1000207@kernel.org>
+References: <1426501710-24177-1-git-send-email-javier.martinez@collabora.co.uk>	<1426501710-24177-4-git-send-email-javier.martinez@collabora.co.uk>	<5506B908.1060007@suse.de> <CABxcv=mmr-WWXY7-KUJe-3EP8FHRBzv-SabJma9VwGRPiHio3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:32866 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:32977 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753451AbbCQP2K (ORCPT
+	id S1754179AbbCQP3R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Mar 2015 11:28:10 -0400
-In-Reply-To: <2791862.CZRe5DtPad@wuerfel>
+	Tue, 17 Mar 2015 11:29:17 -0400
+In-Reply-To: <CABxcv=mmr-WWXY7-KUJe-3EP8FHRBzv-SabJma9VwGRPiHio3Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>, 'Andreas Faerber' <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On 03/17/15 14:27, Arnd Bergmann wrote:
-> On Tuesday 17 March 2015 10:51:13 Kukjin Kim wrote:
->> Javier Martinez Canillas wrote:
+On 03/16/15 20:28, Javier Martinez Canillas wrote:
+> Hello Andreas,
+>=20
+Hi,
+
+>>> index f02775487cd4..b9ec763a5602 100644
+>>> --- a/arch/arm/boot/dts/exynos5250-spring.dts
+>>> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+>>> @@ -25,6 +25,7 @@
 >>>
->>> The kernel can use as the default console a serial port if is defined
->>> as stdout device in the Device Tree.
->>>
->>> This allows a board to be booted without the need of having a console
->>> parameter in the kernel command line.
->>>
->>> This small series add a stdout-path property for Exynos5 Chromebooks and
->>> is composed of the following patches:
->>>
->>> Javier Martinez Canillas (3):
->>>   ARM: dts: Define stdout-path property for Peach boards
->>>   ARM: dts: Define stdout-path property for Snow board
->>>   ARM: dts: Define stdout-path property for Spring board
->>>
->>>  arch/arm/boot/dts/exynos5250-snow.dts      | 1 +
->>>  arch/arm/boot/dts/exynos5250-spring.dts    | 1 +
->>>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 ++++
->>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 ++++
->>>  4 files changed, 10 insertions(+)
->>>
->> + Arnd
+>>>       chosen {
+>>>               bootargs =3D "console=3Dtty1";
+>>> +             stdout-path =3D "serial3:115200n8";
 >>
->> Basically, I have no objection to add stdout-path property on board DT but I
->> need to ask other ARM guys how they think about? Always I'm questioned what
->> should be defined in bootloader before entering kernel and IMHO kernel can do
->> it, it should be defined in bootloader though 
+>> Is this a guess or did you verify that against some schematics?
 >>
->> Let's wait for other opinions...
+>=20
+> I don't have access to the Spring schematics but it is based on what
+> is defined in the vendor u-boot for Spring [0].
+>=20
+> There isn't a Spring specific configuration file but only a
+> chromeos_daisy.h which is shared by Snow, Spring and Kate (not yet in
+> mainline):
+>=20
+> #define CONFIG_DIRECT_BOOTARGS \
+> "console=3DttySAC3," STRINGIFY(CONFIG_BAUDRATE) " debug earlyprintk"
+>=20
+> So I assumed that all daisy-based Chromebooks use the same UART for d=
+ebug.
+>=20
+>>>       };
+>>>
+>>>       gpio-keys {
 >>
-> 
-> We're trying to do this on all machines now so we can replace
-> debug_ll with earlycon for any normal use case aside from early
-> early boot debugging.
-> 
-> Please merge this patch set.
-> 
-OK, got it. Applied.
+>> Assuming that bootargs still work,
+>>
+>=20
+> Yes, the semantics are not changed. The std-out property is only used
+> as a default if no console=3D parameter is passed so if you already a=
+re
+> passing one in your bootloader or using the one defined in the /chose=
+n
+> bootargs by enabling CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND, that
+> will be used instead of std-out.
+>=20
+>> Reviewed-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>>
+>> I do wonder why this mechanism could not point to the same location =
+as
+>> bootargs? ("dp-controller"?) The device does not even have screws fo=
+r
+>=20
+> I did wonder the same indeed but I don't know if you can use a displa=
+y
+> as std-out or only works for serial consoles.
+>=20
+>> opening it, so accessing the serial port is highly theoretical.
+>>
+>=20
+> I see, in that case I think we could just drop this patch if is not
+> possible to have a serial console even with some soldering like is th=
+e
+> case in Snow, Peach Pit and Peach Pi.
+>=20
+I've applied this whole series so if you guys find any problem on this,
+please let me know ;)
 
 Thanks,
 Kukjin
