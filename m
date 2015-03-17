@@ -1,35 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: exynos: Remove eint_gpio_init call-back for
- exynos7 alive pinctrl block
-Date: Tue, 17 Mar 2015 13:23:18 +0100
-Message-ID: <CACRpkdbGzA0yUdyR8n+BFvxMg5PwqgnSUpbL-4kVAPNN-i_aNw@mail.gmail.com>
-References: <1425226876-5122-1-git-send-email-a.kesavan@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] mfd: sec-core: Enable RTC on S2MPS11 PMIC
+Date: Tue, 17 Mar 2015 13:36:17 +0100
+Message-ID: <1426595777-10223-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36253 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752789AbbCQMXT (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60639 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932078AbbCQMg0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Mar 2015 08:23:19 -0400
-Received: by oigv203 with SMTP id v203so6356549oig.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Mar 2015 05:23:19 -0700 (PDT)
-In-Reply-To: <1425226876-5122-1-git-send-email-a.kesavan@samsung.com>
+	Tue, 17 Mar 2015 08:36:26 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Sun, Mar 1, 2015 at 5:21 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+The S2MPS11 PMIC (present on Arndale Octa board) has the same RTC module
+as S2MPS14 device. Add respective mfd cell to enable it.
 
-> The alive pin controller on exynos7 does not support external gpio
-> interrupts. Hence, remove the eint_gpio_init call-back for it. This
-> fixes the following error message seen during exynos7 boot-up:
-> "samsung-pinctrl 10580000.pinctrl: irq number not available"
->
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/mfd/sec-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patch applied with Tomasz ACK.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 59bf322feacd..e08623807a62 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -69,6 +69,8 @@ static const struct mfd_cell s2mps11_devs[] = {
+ 	{
+ 		.name = "s2mps11-pmic",
+ 	}, {
++		.name = "s2mps14-rtc",
++	}, {
+ 		.name = "s2mps11-clk",
+ 		.of_compatible = "samsung,s2mps11-clk",
+ 	}
+-- 
+1.9.1
