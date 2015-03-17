@@ -1,41 +1,40 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 2/2] mfd: sec-core: Modify RTC compatible name of S2MPS13
-Date: Tue, 17 Mar 2015 10:57:34 +0100
-Message-ID: <1426586254.16027.1.camel@AMDC1943>
-References: <1426586058-15987-1-git-send-email-k.kozlowski@samsung.com>
- <1426586058-15987-2-git-send-email-k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: Add driver for CMU_ISP clock
+ domain
+Date: Tue, 17 Mar 2015 11:52:18 +0100
+Message-ID: <55080762.9080701@samsung.com>
+References: <1425302250-13446-1-git-send-email-b.michalska@samsung.com>
+ <1425302250-13446-2-git-send-email-b.michalska@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51056 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932589AbbCQJ5h (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56204 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932425AbbCQKwX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Mar 2015 05:57:37 -0400
-In-reply-to: <1426586058-15987-2-git-send-email-k.kozlowski@samsung.com>
+	Tue, 17 Mar 2015 06:52:23 -0400
+In-reply-to: <1425302250-13446-2-git-send-email-b.michalska@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Beata Michalska <b.michalska@samsung.com>
+Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com
 
-On wto, 2015-03-17 at 10:54 +0100, Krzysztof Kozlowski wrote:
-> From: Chanwoo Choi <cw00.choi@samsung.com>
+On 02/03/15 14:17, Beata Michalska wrote:
+> From: Tomasz Figa <t.figa@samsung.com>
 > 
-> This patch modify the RTC compatible name of S2MPS13 because S2MPS13's RTC is
-> equal to S2MPS14's RTC.
+> Add clock controller for CMU ISP clock domain on Exynos3250,
+> providing clocks for FIMC-IS subsystem.
 > 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> [b.michalska:use samsung_cmu_register_one to register
+>  the provider; updated DT binding documentation]
 
+Thanks for moving the initial clocks settings to dts, I've added this
+patch to my tree.
+In future please don't forget to add version information to subsequent
+patch iterations, it helps to ensure the right patch version is being
+applied.
 
-Tested on Exynos5433 board with S2MPS13 PMIC.
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-I feel like talking to myself with this self-reply... but at least this
-leaves a public track :).
-
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sylwester
