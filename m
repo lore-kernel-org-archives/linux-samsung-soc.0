@@ -1,64 +1,85 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Wed, 18 Mar 2015 10:31:42 +0100
-Message-ID: <CABxcv=nRZiMy3_ynSV81TDTKKCNFXrF6Er7-xU9MavwMaJ=9jA@mail.gmail.com>
-References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
-	<CAMAWPa9fUJVjJ8V+93AkHy9DtEmUUnGs4MJDGcsoMdWwGmg5qg@mail.gmail.com>
-	<CAJKOXPfyPH7tyce6YB=q4krSP078aJVAmqObg89qCnLrL_Nbhg@mail.gmail.com>
-	<20150216105217.79315ffd@amdc2363>
-	<54E3A3CD.3020106@gmx.net>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Fix failed second suspend on Exynos4
+Date: Wed, 18 Mar 2015 10:47:44 +0100
+Message-ID: <1426672064.30793.3.camel@AMDC1943>
+References: <1426069206-13667-1-git-send-email-k.kozlowski@samsung.com>
+ <1426069765.30407.7.camel@AMDC1943> <55086CE0.6080905@kernel.org>
+ <1426669047.29565.9.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:33645 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755053AbbCRJbn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Mar 2015 05:31:43 -0400
-Received: by weop45 with SMTP id p45so27319038weo.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Mar 2015 02:31:42 -0700 (PDT)
-In-Reply-To: <54E3A3CD.3020106@gmx.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <1426669047.29565.9.camel@AMDC1943>
+Sender: stable-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org, BartlomiejZolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tobias Jakobi <liquid.acid@gmx.net>, Lukasz Majewski <l.majewski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>
 
-Hello Thomas,
+On =C5=9Bro, 2015-03-18 at 09:57 +0100, Krzysztof Kozlowski wrote:
+> On =C5=9Bro, 2015-03-18 at 03:05 +0900, Kukjin Kim wrote:
+> > On 03/11/15 19:29, Krzysztof Kozlowski wrote:
+> > > On =C5=9Bro, 2015-03-11 at 11:20 +0100, Krzysztof Kozlowski wrote=
+:
+> > >> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache=
+ in
+> > >> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+> > >> controller") the second suspend to RAM failed. First suspend wor=
+ked fine
+> > >> but the next one hang just after powering down of secondary CPUs=
+ (system
+> > >> consumed energy as it would be running but was not responsive).
+> > >>
+> > >> The issue was caused by enabling delayed reset assertion for CPU=
+0 just
+> > >> after issuing power down of cores. This was introduced for Exyno=
+s4 in
+> > >> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU of=
+f").
+> > >>
+> > >> The whole behavior is not well documented but after checking wit=
+h vendor
+> > >> code this should be done like this (on Exynos4):
+> > >> 1. Enable delayed reset assertion when system is running (for al=
+l CPUs).
+> > >> 2. Disable delayed reset assertion before suspending the system.
+> > >>    This can be done after powering off secondary CPUs.
+> > >> 3. Re-enable the delayed reset assertion when system is resumed.
+> > >>
+> > >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > >> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after=
+ CPU off")
+> > >> Cc: <stable@vger.kernel.org>
+> > >> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > >> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Feb 17, 2015 at 9:25 PM, Tobias Jakobi <liquid.acid@gmx.net> wrote:
-> Hello!
->
-> Lukasz Majewski wrote:
->> Hi Krzysztof, Thomas,
->>
->>> 2015-01-08 22:17 GMT+01:00 Kevin Hilman <khilman@kernel.org>:
->>> Hi Thomas,
->>>
->>> Do you plan to continue with this work? It would be very helpful.
->>
->> +1 from me.
->>
->>>
->>> I also wonder if Exynos 4412 could be re-added (without the boost if
->>> these bindings are not ready)?
->>
->> I would prefer to have all platforms converted at once, since it might
->> happen that some parts of the work would get lost.
->
-> Joining in as well!
->
-> Reviving this patch series would be very much appreciated, especially if
-> it moves again into the direction of storing most information into the
-> DT (so that one can easily modify it in the board dts).
->
-> With best wishes,
-> Tobias
->
+(...)
 
-As others stated, it would be very useful to get this patch-set in but
-the current version has some issues as Kevin mentioned.
+>=20
+> >=20
+> > And please make sure your updates don't hurt other exynos5 stuff. A=
+ny
+> > tests on exynos5 platforms would be helpful.
+> >=20
+> > And I don't think the fix should be sent to 'stable' because I can'=
+t see
+> > the 'add node for L2$ controller' in v3.19...looks applied from v4.=
+0-rc...
+>=20
+> You're right. git-describe gave me 3.19-rc1 but this was tag for the
+> specific commit, not for merge-commit. The stable can be removed if t=
+his
+> comes during this RC-cycle.
 
-Are you planning to continue working on this series?
+Actually the "fixes" tag is for commit introducing wrong usage of
+"use_delayed_reset_assertion" which was merged for 3.19. Although
+mentioned bug (failed second to RAM) is observable only after enabling
+L2 cache, the fix is for original commit.
+
+I have also other proposal: what about reverting the commit 13cfa6c4f7f=
+a
+("ARM: EXYNOS: Fix CPU idle clock down after CPU off")? It will
+introduce minor issue (CPU idle clock down will stop to work after CPU
+hot unplug) but the main problem with suspend to RAM will be fixed.
 
 Best regards,
-Javier
+Krzysztof
