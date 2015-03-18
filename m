@@ -1,7 +1,7 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v7 6/9] arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
-Date: Wed, 18 Mar 2015 09:17:33 +0900
-Message-ID: <1426637856-3730-7-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v7 2/9] arm64: dts: exynos: Add MSHC dt node for Exynos5433
+Date: Wed, 18 Mar 2015 09:17:29 +0900
+Message-ID: <1426637856-3730-3-git-send-email-cw00.choi@samsung.com>
 References: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
@@ -10,39 +10,73 @@ To: kgene@kernel.org
 Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Inha Song <ideal.song@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-This patch adds ADMA (Advanced DMA) device tree node for Exynos5433 SoC.
-In Exynos5433 SoC, ADMA is used for I2S audio interface.
+This patch adds MSHC (Mobile Storage Host Controller) dt node for Exynos5433
+SoC. MSHC is an interface between the system the SD/MMC card.
 
 Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Inha Song <ideal.song@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 38 ++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 0e0e9c9..1155205 100644
+index 125feba..8367915 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -426,6 +426,17 @@
- 				#dma-channels = <8>;
- 				#dma-requests = <32>;
- 			};
-+
-+			adma: adma@11420000 {
-+				compatible = "arm,pl330", "arm,primecell";
-+				reg = <0x11420000 0x1000>;
-+				interrupts = <0 73 0>;
-+				clocks = <&cmu_aud CLK_ACLK_DMAC>;
-+				clock-names = "apb_pclk";
-+				#dma-cells = <1>;
-+				#dma-channels = <8>;
-+				#dma-requests = <32>;
-+			};
+@@ -655,6 +655,44 @@
+ 			status = "disabled";
  		};
  
- 		serial_0: serial@14c10000 {
++		mshc_0: mshc@15540000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 225 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15540000 0x2000>;
++			clocks = <&cmu_fsys CLK_ACLK_MMC0>,
++				 <&cmu_fsys CLK_SCLK_MMC0>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
++
++		mshc_1: mshc@15550000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 226 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15550000 0x2000>;
++			clocks = <&cmu_fsys CLK_ACLK_MMC1>,
++				 <&cmu_fsys CLK_SCLK_MMC1>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
++
++		mshc_2: mshc@15560000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 227 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15560000 0x2000>;
++			clocks = <&cmu_fsys CLK_ACLK_MMC2>,
++				 <&cmu_fsys CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	timer {
 -- 
 1.8.5.5
