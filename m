@@ -1,126 +1,175 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v7 8/9] arm64: dts: exynos: Add TMU sensor dt node for
- Exynos5433 SoC
-Date: Wed, 18 Mar 2015 09:17:35 +0900
-Message-ID: <1426637856-3730-9-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v7 3/9] arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
+Date: Wed, 18 Mar 2015 09:17:30 +0900
+Message-ID: <1426637856-3730-4-git-send-email-cw00.choi@samsung.com>
 References: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene@kernel.org
-Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, ideal.song@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, jh80.chung@samsung.com, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, cw00.choi@samsung.com, marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, devicetree@vger.kernel.org, olof@lixom.net, chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org, ideal.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the TMU (Thermal Management Unit) sensor devicetree node for
-Exynos5433. The Exynos5433 includes the five temperature sensors as following:
-- two temperature sensor for Cortex-A57 (ATLAS)
-- one temperature sensor for Cortex-A53 (APOLLO)
-- one temperature sensor for G3D IP
-- one temperature sensor for ISP IP
+This patch adds SPI (Serial Peripheral Interface) dt node for Exynos5433 SoC.
+SPI transfers serial data by using various peripherals. SPI includes
+8-bit/16-bit/32-bit shift registers to transmit and receive data. PDMA is used
+for SPI communication.
 
 Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
-Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
 ---
- .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     | 22 +++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 55 ++++++++++++++++++++++
- 2 files changed, 77 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 114 +++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
-new file mode 100644
-index 0000000..396e60f
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
-@@ -0,0 +1,22 @@
-+/*
-+ * Device tree sources for Exynos5433 TMU sensor configuration
-+ *
-+ * Copyright (c) 2015 Chanwoo Choi <cw00.choi@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <dt-bindings/thermal/thermal_exynos.h>
-+
-+#thermal-sensor-cells = <0>;
-+samsung,tmu_gain = <8>;
-+samsung,tmu_reference_voltage = <16>;
-+samsung,tmu_noise_cancel_mode = <4>;
-+samsung,tmu_efuse_value = <75>;
-+samsung,tmu_min_efuse_value = <40>;
-+samsung,tmu_max_efuse_value = <150>;
-+samsung,tmu_first_point_trim = <25>;
-+samsung,tmu_second_point_trim = <85>;
-+samsung,tmu_default_temp_offset = <50>;
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index f6ae71c..1fe0c23 100644
+index 8367915..dbecbba 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -836,6 +836,61 @@
- 			status = "disabled";
+@@ -399,6 +399,35 @@
+ 			interrupts = <1 9 0xf04>;
  		};
  
-+		tmu_atlas0: tmu@10060000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10060000 0x200>;
-+			interrupts = <0 95 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU0_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU0>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
++		amba {
++			compatible = "arm,amba-bus";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			pdma0: pdma@15610000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x15610000 0x1000>;
++				interrupts = <0 228 0>;
++				clocks = <&cmu_fsys CLK_PDMA0>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
++
++			pdma1: pdma@15600000 {
++				compatible = "arm,pl330", "arm,primecell";
++				reg = <0x15600000 0x1000>;
++				interrupts = <0 246 0>;
++				clocks = <&cmu_fsys CLK_PDMA1>;
++				clock-names = "apb_pclk";
++				#dma-cells = <1>;
++				#dma-channels = <8>;
++				#dma-requests = <32>;
++			};
++		};
++
+ 		serial_0: serial@14c10000 {
+ 			compatible = "samsung,exynos5433-uart";
+ 			reg = <0x14c10000 0x100>;
+@@ -499,6 +528,91 @@
+ 			interrupts = <0 442 0>;
+ 		};
+ 
++		spi_0: spi@14d20000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d20000 0x100>;
++			interrupts = <0 432 0>;
++			dmas = <&pdma0 9>, <&pdma0 8>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI0>,
++				 <&cmu_top CLK_SCLK_SPI0_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi0_bus>;
 +			status = "disabled";
 +		};
 +
-+		tmu_atlas1: tmu@10068000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10068000 0x200>;
-+			interrupts = <0 96 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU0_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU0>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
++		spi_1: spi@14d30000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d30000 0x100>;
++			interrupts = <0 433 0>;
++			dmas = <&pdma0 11>, <&pdma0 10>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI1>,
++				 <&cmu_top CLK_SCLK_SPI1_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi1_bus>;
 +			status = "disabled";
 +		};
 +
-+		tmu_g3d: tmu@10070000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10070000 0x200>;
-+			interrupts = <0 99 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU1>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
++		spi_2: spi@14d40000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d40000 0x100>;
++			interrupts = <0 434 0>;
++			dmas = <&pdma0 13>, <&pdma0 12>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI2>,
++				 <&cmu_top CLK_SCLK_SPI2_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi2_bus>;
 +			status = "disabled";
 +		};
 +
-+		tmu_apollo: tmu@10078000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x10078000 0x200>;
-+			interrupts = <0 115 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU1>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
++		spi_3: spi@14d50000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d50000 0x100>;
++			interrupts = <0 447 0>;
++			dmas = <&pdma0 23>, <&pdma0 22>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI3>,
++				 <&cmu_top CLK_SCLK_SPI3_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi3_bus>;
 +			status = "disabled";
 +		};
 +
-+		tmu_isp: tmu@1007c000 {
-+			compatible = "samsung,exynos5433-tmu";
-+			reg = <0x1007c000 0x200>;
-+			interrupts = <0 94 0>;
-+			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
-+				 <&cmu_peris CLK_SCLK_TMU1>;
-+			clock-names = "tmu_apbif", "tmu_sclk";
-+			#include "exynos5433-tmu-sensor-conf.dtsi"
++		spi_4: spi@14d00000 {
++			compatible = "samsung,exynos7-spi";
++			reg = <0x14d00000 0x100>;
++			interrupts = <0 412 0>;
++			dmas = <&pdma0 25>, <&pdma0 24>;
++			dma-names = "tx", "rx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cmu_peric CLK_PCLK_SPI4>,
++				 <&cmu_top CLK_SCLK_SPI4_PERIC>;
++			clock-names = "spi", "spi_busclk0";
++			samsung,spi-src-clk = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&spi4_bus>;
 +			status = "disabled";
 +		};
 +
- 		pmu_system_controller: system-controller@105c0000 {
- 			compatible = "samsung,exynos5433-pmu", "syscon";
- 			reg = <0x105c0000 0x5008>;
+ 		hsi2c_0: hsi2c@14e40000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e40000 0x1000>;
 -- 
 1.8.5.5
