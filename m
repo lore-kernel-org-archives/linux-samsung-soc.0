@@ -1,50 +1,58 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Enable SND_SIMPLE_CARD for Odroid X2/U3
-Date: Wed, 18 Mar 2015 11:51:46 +0000
-Message-ID: <20150318115146.GG2869@sirena.org.uk>
-References: <1426675939-25125-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zGQnqpIoxlsbsOfg"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53050 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754448AbbCRLvy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Mar 2015 07:51:54 -0400
-Content-Disposition: inline
-In-Reply-To: <1426675939-25125-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 0/4] ARM: EXYNOS: cpuidle: add AFTR mode support for
+ Exynos3250
+Date: Wed, 18 Mar 2015 13:51:49 +0100
+Message-ID: <1426683113-31209-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: liquid.acid@gmx.net, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+
+Hi,
+
+This patch series adds support for AFTR idle mode on boards with
+Exynos3250 SoC and allows EXYNOS cpuidle driver usage on these
+boards.
+
+It has been tested on Samsung Rinato board (Gear 2).
+
+Depends on:
+- for-next branch (commit: 77105c882ba6) of linux-samsung.git
+  kernel tree
+
+Changes since v2:
+- rebased on top of for-next branch (commit: 77105c882ba6) of
+  linux-samsung.git kernel tree
+
+Changes since v1:
+- rebased on top of for-next branch (commit: ce275c369a0b) of
+  linux-samsung.git kernel tree
+- fixed lockup on hotplug by using dsb_sev() instead of IPI in
+  exynos_boot_secondary() on Exynos3250
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
 
---zGQnqpIoxlsbsOfg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Bartlomiej Zolnierkiewicz (4):
+  ARM: EXYNOS: fix CPU1 hotplug for AFTR mode on Exynos3250
+  ARM: EXYNOS: add code for setting/clearing boot flag
+  ARM: EXYNOS: cpuidle: add AFTR mode support for Exynos3250
+  ARM: EXYNOS: cpuidle: allow driver usage on Exynos3250 SoC
 
-On Wed, Mar 18, 2015 at 11:52:19AM +0100, Sylwester Nawrocki wrote:
-> Odroid X2/U3 sound support can now be specified in device tree using
-> the simple card binding, make SND_SOC_ODROIDX2 select SND_SIMPLE_CARD
-> to ensure there are always required drivers in place.
+ arch/arm/mach-exynos/common.h   |  6 ++++++
+ arch/arm/mach-exynos/exynos.c   | 26 ++++++++++++++++++++++++++
+ arch/arm/mach-exynos/firmware.c |  8 +++++++-
+ arch/arm/mach-exynos/platsmp.c  | 23 ++++++++++++++++++++---
+ arch/arm/mach-exynos/pm.c       | 12 +++++++++++-
+ arch/arm/mach-exynos/regs-pmu.h |  3 +++
+ arch/arm/mach-exynos/smc.h      |  9 +++++++++
+ 7 files changed, 82 insertions(+), 5 deletions(-)
 
-No, this isn't an actual dependency so it shouldn't be in Kconfig.
+-- 
+1.8.2.3
 
---zGQnqpIoxlsbsOfg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVCWbSAAoJECTWi3JdVIfQiqgH/AnZCmXls1gNwp58Stlpf5y4
-9bVewChgF/1TERktx0G2pZvU5OhfsgKSlzGdm8Is1khSSlJZMXA27iQQtfajre26
-IgoX/XL3wBKNkqsCYCC7g/W6oP1m3Bsp7oJyqRwJ+qFjniTqOwYMdHoyeg3tsn9N
-78Ufy3m5mKvdG6yXVZm79fPfjKIcg4gWN0LucWyXuFGb/ZFCnmd68L7gYtiDfrWm
-WiBILhg+d6OfScTdV7Scl+LNoKohEeKiysd8dyuA9V++92VPXWMSApmIIkvzGlVn
-XH+WWAL3PGYXUDximzaoupTnUeeZn5BgD1RHHIi1npYcxUcaebPVKrXbpNSFYZQ=
-=UBAs
------END PGP SIGNATURE-----
-
---zGQnqpIoxlsbsOfg--
