@@ -1,151 +1,129 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH v2 Resend] pwm: samsung: Fix output race on disabling
-Date: Wed, 18 Mar 2015 09:27:55 +0100
-Message-ID: <1426667275.9099.79.camel@collabora.co.uk>
-References: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <1426665046.9099.74.camel@collabora.co.uk>
-	 <20150318090825.77b06ff7@amdc2363>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Fix failed second suspend on Exynos4
+Date: Wed, 18 Mar 2015 09:57:27 +0100
+Message-ID: <1426669047.29565.9.camel@AMDC1943>
+References: <1426069206-13667-1-git-send-email-k.kozlowski@samsung.com>
+ <1426069765.30407.7.camel@AMDC1943> <55086CE0.6080905@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20150318090825.77b06ff7@amdc2363>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34672 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751074AbbCRI5c (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Mar 2015 04:57:32 -0400
+In-reply-to: <55086CE0.6080905@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org, BartlomiejZolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, 2015-03-18 at 09:08 +0100, Lukasz Majewski wrote:
-> Hi Sjoerd,
-> 
-> > Hey Jingoo, Kukjijn, Lukasz,
-> > 
-> > Pinging on this one again, could you please review this patch so it
-> > can be merged through the PWM tree? 
-> 
-> As fair as I remember, I've already acked the patch :-)
+On =C5=9Bro, 2015-03-18 at 03:05 +0900, Kukjin Kim wrote:
+> On 03/11/15 19:29, Krzysztof Kozlowski wrote:
+> > On =C5=9Bro, 2015-03-11 at 11:20 +0100, Krzysztof Kozlowski wrote:
+> >> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache i=
+n
+> >> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+> >> controller") the second suspend to RAM failed. First suspend worke=
+d fine
+> >> but the next one hang just after powering down of secondary CPUs (=
+system
+> >> consumed energy as it would be running but was not responsive).
+> >>
+> >> The issue was caused by enabling delayed reset assertion for CPU0 =
+just
+> >> after issuing power down of cores. This was introduced for Exynos4=
+ in
+> >> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off"=
+).
+> >>
+> >> The whole behavior is not well documented but after checking with =
+vendor
+> >> code this should be done like this (on Exynos4):
+> >> 1. Enable delayed reset assertion when system is running (for all =
+CPUs).
+> >> 2. Disable delayed reset assertion before suspending the system.
+> >>    This can be done after powering off secondary CPUs.
+> >> 3. Re-enable the delayed reset assertion when system is resumed.
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after C=
+PU off")
+> >> Cc: <stable@vger.kernel.org>
+> >> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> >=20
+> > Dear Kukjin,
+> >=20
+> > This patch was first sent on 3rd of February. It could enter before
+> > opening 4.0 merge window. I did not receive any response from you i=
+n
+> > that time.
+> >=20
+> > So let me point next steps:
+> > 1. The Exynos4412 suspend on 4.0 is broken and now this patch appli=
+es as
+> > a fix.
+> > 2. I resent it on 18th of February.
+> > 3. I received tested-by from Bartlomiej and Chanwoo.
+> > 4. Bartlomiej pinged you on 3rd March.
+> >=20
+> > Still no response. If the patch does not look good then please shar=
+e
+> > your comments. I'll fix it.
+> > If this patch looks good, why does it take so much time?
+> >=20
+>=20
+> Please use another way something like check ARM core rather than use
+> 'soc_is_xxx()', as you know it is not acceptable now even it is just
+> moving/modifying exist function though.
 
-I don't think you did, but i might have missed it ofcourse. Seems
-patchwork also missed it though:   
-  https://patchwork.ozlabs.org/patch/446643/
+Probably of_machine_is_compatible() could be used here but such change
+should be done in separate patch. This is fix for wrong usage of
+use_delayed_assertion so it should not mix with other changes in the
+code. This fixes one thing at a time. Fixing many things in one patch
+often leads to new errors or difficulties in debugging.
 
-Mind redoing you're acked-by so it gets picked up by patchwork ? :)
+I can prepare a separate patch for changing this to
+of_machine_is_compatible().
 
-> > 
-> > On Thu, 2015-03-05 at 09:14 +0100, Sjoerd Simons wrote:
-> > > When disabling the samsung PWM the output state remains at the
-> > > level it was in the end of a pwm cycle. In other words, calling
-> > > pwm_disable when at 100% duty will keep the output active, while at
-> > > all other setting the output will go/stay inactive. On top of that
-> > > the samsung PWM settings are double-buffered, which means the new
-> > > settings only get applied at the start of a new PWM cycle.
-> > > 
-> > > This results in a race if the PWM is at 100% duty and a driver
-> > > calls: pwm_config (pwm, 0, period);
-> > >   pwm_disable (pwm);
-> > > 
-> > > In this case the PWMs output will unexpectedly stay active, unless
-> > > a new PWM cycle happened to start between the register writes in
-> > > _config and _disable. As far as i can tell this is a regression
-> > > introduced by 3bdf878, before that a call to pwm_config would call
-> > > pwm_samsung_enable which, while heavy-handed, made sure the
-> > > expected settings were live.
-> > > 
-> > > To resolve this, while not re-introducing the issues 3bdf878
-> > > (flickering as the PWM got reset while in a PWM cycle). Only force
-> > > an update of the settings when at 100% duty, which shouldn't have a
-> > > noticeable effect on the output but is enough to ensure the
-> > > behaviour is as expected on disable.
-> > > 
-> > > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> > > ---
-> > > Changes since v1:
-> > >   Fix small issues pointed out by Tomasz Figa
-> > >   - Correct various coding style issues
-> > >   - Read the current value of the tcmp register for comparison
-> > > rather then using a non-trivial comparison to decide whether the
-> > > current state was 100% duty
-> > >   - Move the code to force manual update out into its own function
-> > >   - Clarify the comment indicating why a manual update is sometimes
-> > > required
-> > > 
-> > >  drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
-> > >  1 file changed, 30 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> > > index 3e9b583..649f6c4 100644
-> > > --- a/drivers/pwm/pwm-samsung.c
-> > > +++ b/drivers/pwm/pwm-samsung.c
-> > > @@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct
-> > > pwm_chip *chip, struct pwm_device *pwm)
-> > > spin_unlock_irqrestore(&samsung_pwm_lock, flags); }
-> > >  
-> > > +static void pwm_samsung_manual_update(struct samsung_pwm_chip
-> > > *chip,
-> > > +				      struct pwm_device *pwm)
-> > > +{
-> > > +	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
-> > > +	u32 tcon;
-> > > +	unsigned long flags;
-> > > +
-> > > +	spin_lock_irqsave(&samsung_pwm_lock, flags);
-> > > +
-> > > +	tcon = readl(chip->base + REG_TCON);
-> > > +	tcon |= TCON_MANUALUPDATE(tcon_chan);
-> > > +	writel(tcon, chip->base + REG_TCON);
-> > > +
-> > > +	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
-> > > +	writel(tcon, chip->base + REG_TCON);
-> > > +
-> > > +	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
-> > > +}
-> > > +
-> > >  static int pwm_samsung_config(struct pwm_chip *chip, struct
-> > > pwm_device *pwm, int duty_ns, int period_ns)
-> > >  {
-> > >  	struct samsung_pwm_chip *our_chip =
-> > > to_samsung_pwm_chip(chip); struct samsung_pwm_channel *chan =
-> > > pwm_get_chip_data(pwm);
-> > > -	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
-> > > +	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
-> > >  
-> > >  	/*
-> > >  	 * We currently avoid using 64bit arithmetic by using the
-> > > @@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip
-> > > *chip, struct pwm_device *pwm, return 0;
-> > >  
-> > >  	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
-> > > +	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
-> > >  
-> > >  	/* We need tick count for calculation, not last tick. */
-> > >  	++tcnt;
-> > > @@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip
-> > > *chip, struct pwm_device *pwm, writel(tcnt, our_chip->base +
-> > > REG_TCNTB(pwm->hwpwm)); writel(tcmp, our_chip->base +
-> > > REG_TCMPB(pwm->hwpwm)); 
-> > > +	/* In case the PWM is currently at 100% duty, force a
-> > > manual update
-> > > +	 * to prevent the signal staying high in the pwm is
-> > > disabled shortly
-> > > +	 * afer this update (before it autoreloaded the new
-> > > values) .
-> > > +	 */
-> > > +	if (oldtcmp == (u32) -1) {
-> > > +		dev_dbg(our_chip->chip.dev, "Forcing manual
-> > > update");
-> > > +		pwm_samsung_manual_update(our_chip, pwm);
-> > > +	}
-> > > +
-> > >  	chan->period_ns = period_ns;
-> > >  	chan->tin_ns = tin_ns;
-> > >  	chan->duty_ns = duty_ns;
-> > 
-> > 
-> 
-> 
-> 
+>=20
+> And please make sure your updates don't hurt other exynos5 stuff. Any
+> tests on exynos5 platforms would be helpful.
+>=20
+> And I don't think the fix should be sent to 'stable' because I can't =
+see
+> the 'add node for L2$ controller' in v3.19...looks applied from v4.0-=
+rc...
 
+You're right. git-describe gave me 3.19-rc1 but this was tag for the
+specific commit, not for merge-commit. The stable can be removed if thi=
+s
+comes during this RC-cycle.
 
--- 
-Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Collabora Ltd.
+>=20
+> One more if you have any doubts, I'd like to ask you to contact S.LSI
+> guys who have created the vendor codes not assume with the code becau=
+se
+> maybe the vendor code you mentioned cannot cover all exynos stuff I
+> think. Then we could make more clear pm codes in mainline. To be hone=
+st
+> I'm not a Power Management hardware guy so I don't know every regardi=
+ng
+> PM stuff in exynos SoCs, I can contact them easier though...I mean
+> please don't assume any hardware behavior with just vendor code. Plea=
+se
+> ask, you have an access in Samsung intranet before posting something
+> like this...Hope let's make a better fix together during -rc.
+
+As you probably know I work in completely different company within
+Samsung Electronics than System LSI. I don't have access to the LSI
+intranet. I don't have access to guys from LSI. I'll try contacting the=
+m
+through my HQ partners.
+
+Thanks for feedback!
+
+Best regards,
+Krzysztof
