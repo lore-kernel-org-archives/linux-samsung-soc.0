@@ -1,48 +1,35 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
-Date: Wed, 18 Mar 2015 18:30:34 +0100
-Message-ID: <CAJKOXPdWdEx7uhy10EesE0ddTuVY09Fh7RTYkCcemEOGSB-ctQ@mail.gmail.com>
-References: <1422984529-17729-1-git-send-email-k.kozlowski@samsung.com>
-	<1424792562.6775.3.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f182.google.com ([209.85.220.182]:61231 "EHLO
-	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754685AbbCRRaf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Mar 2015 13:30:35 -0400
-In-Reply-To: <1424792562.6775.3.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ben Gamari <ben-OfdNVJEh3GKkIYD+M5K+dQ@public.gmane.org>
+Subject: [PATCH v2] USB3503: Always respect refclk-frequency
+Date: Wed, 18 Mar 2015 14:37:44 -0400
+Message-ID: <1426703865-31868-1-git-send-email-ben@smart-cactus.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: afaerber-l3A5Bk7waGM@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-2015-02-24 16:42 GMT+01:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> On wto, 2015-02-03 at 18:28 +0100, Krzysztof Kozlowski wrote:
->> Prevent possible NULL pointer dereference of pointer returned by
->> of_find_device_by_node(). Handle this by skipping such power domain.
->>
->> Additionally fail the init on kstrdup() failure. Such case is actually
->> not fatal because the name for power domain allocated by kstrdup() is
->> used only in printk. Still as a precaution handle this as an error
->> condition.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> Hi Kukjin,
->
-> What is the status of this patch and the "ARM: EXYNOS: Handle of
-> of_iomap() failure". The latter should be in your tree but I cannot find
-> it.
->
-> Best regards,
-> Krzysztof
+My apologies for the double-post; the previous patch lacked an Acked-by and
+several important recipients. Keep me on the CC list as I'm not subscribed to
+the linux-usb list.
 
-Hi Kukjin,
+The USB3503 driver exposes the refclk-frequency DT property to allow users to
+specify the rate of the clock provided on the device's REFCLK. This is
+necessary for the driver to correctly configure the REF_SEL and INT_N pins.
+Currently the driver only pays attention to refclk-frequency if the refclk
+property is also provided. The binding documentation stipulates that the user
+should omit refclk if the clock can be assumed to be always available.
 
-You haven't applied this and the "ARM: EXYNOS: Handle of of_iomap()
-failure" yet. Any comments?
+This patch reworks the initialization codepath such that the driver always
+respects the refclk-frequency property, even if refclk is omitted.
 
-Best regards,
-Krzysztof
+Cheers,
+
+ - Ben
+
+
+[1] https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/commit/drivers/usb/misc/usb3503.c?id=657d898a9320a7cdb9b94565d75ecf75c25cbf0a
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
