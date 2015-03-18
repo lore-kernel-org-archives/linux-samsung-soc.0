@@ -1,73 +1,48 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 0/5] cpuidle: exynos: add coupled cpuidle support for
- Exynos3250
-Date: Wed, 18 Mar 2015 17:05:42 +0100
-Message-ID: <2630890.UpA1dPndHV@amdc1032>
-References: <1426684197-22281-1-git-send-email-b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
+Date: Wed, 18 Mar 2015 18:30:34 +0100
+Message-ID: <CAJKOXPdWdEx7uhy10EesE0ddTuVY09Fh7RTYkCcemEOGSB-ctQ@mail.gmail.com>
+References: <1422984529-17729-1-git-send-email-k.kozlowski@samsung.com>
+	<1424792562.6775.3.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62799 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755048AbbCRQFs (ORCPT
+Received: from mail-vc0-f182.google.com ([209.85.220.182]:61231 "EHLO
+	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754685AbbCRRaf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Mar 2015 12:05:48 -0400
-In-reply-to: <1426684197-22281-1-git-send-email-b.zolnierkie@samsung.com>
+	Wed, 18 Mar 2015 13:30:35 -0400
+In-Reply-To: <1424792562.6775.3.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wednesday, March 18, 2015 02:09:52 PM Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> The following patchset adds coupled cpuidle support for Exynos3250
-> to an existing cpuidle-exynos driver.  As a result it enables AFTR
-> mode to be used by default on Exynos3250 without the need to hot
-> unplug CPU1 first.
-> 
-> The patchset depends on:
-> - for-next branch (commit: 77105c882ba6) of linux-samsung.git
->   kernel tree
-> - "[PATCH] ARM: EXYNOS: Fix failed second suspend on Exynos4"
->   (https://lkml.org/lkml/2015/2/3/481)
-> - "[PATCH v3 0/4] ARM: EXYNOS: cpuidle: add AFTR mode support for
->   Exynos3250"
->   (https://lkml.org/lkml/2015/3/18/282)
-
-This patchset also applies fine on top of v4 of the above patchset:
-"[PATCH v4 0/4] ARM: EXYNOS: cpuidle: add AFTR mode support for Exynos3250"
-(https://lkml.org/lkml/2015/3/18/505).
-
-> Changes since v1:
-> - rebased on top of for-next branch (commit: 77105c882ba6) of
->   linux-samsung.git kernel tree
-> 
+2015-02-24 16:42 GMT+01:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On wto, 2015-02-03 at 18:28 +0100, Krzysztof Kozlowski wrote:
+>> Prevent possible NULL pointer dereference of pointer returned by
+>> of_find_device_by_node(). Handle this by skipping such power domain.
+>>
+>> Additionally fail the init on kstrdup() failure. Such case is actually
+>> not fatal because the name for power domain allocated by kstrdup() is
+>> used only in printk. Still as a precaution handle this as an error
+>> condition.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> Hi Kukjin,
+>
+> What is the status of this patch and the "ARM: EXYNOS: Handle of
+> of_iomap() failure". The latter should be in your tree but I cannot find
+> it.
+>
 > Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (5):
->   ARM: EXYNOS: fix exynos_boot_secondary() return value on timeout
->   ARM: EXYNOS: make exynos_core_restart() less verbose
->   ARM: EXYNOS: add exynos_set_boot_addr() helper
->   ARM: EXYNOS: add exynos_get_boot_addr() helper
->   cpuidle: exynos: add coupled cpuidle support for Exynos3250
-> 
->  arch/arm/include/asm/firmware.h |  4 ++
->  arch/arm/mach-exynos/common.h   |  4 +-
->  arch/arm/mach-exynos/exynos.c   |  3 +-
->  arch/arm/mach-exynos/firmware.c | 18 +++++++++
->  arch/arm/mach-exynos/platsmp.c  | 86 ++++++++++++++++++++++++++++-------------
->  arch/arm/mach-exynos/pm.c       | 51 ++++++++++++++++++++----
->  6 files changed, 129 insertions(+), 37 deletions(-)
+> Krzysztof
+
+Hi Kukjin,
+
+You haven't applied this and the "ARM: EXYNOS: Handle of of_iomap()
+failure" yet. Any comments?
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Krzysztof
