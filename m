@@ -1,47 +1,39 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 2/2] clk: samsung: exynos5433: Fix wrong offset of
- PCLK_MSCL_SECURE_SMMU_JPEG
-Date: Wed, 18 Mar 2015 09:42:32 +0900
-Message-ID: <1426639352-6255-3-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 1/2] clk: samsung: Use CONFIG_ARCH_EXYNOS instead of
+ CONFIG_ARCH_EXYNOS5433
+Date: Wed, 18 Mar 2015 09:42:31 +0900
+Message-ID: <1426639352-6255-2-git-send-email-cw00.choi@samsung.com>
 References: <1426639352-6255-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53094 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754640AbbCRAmu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Mar 2015 20:42:50 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1426639352-6255-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
 Cc: kgene@kernel.org, arnd@arndb.de, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+This patch removes the CONFIG_ARCH_EXYNOS5433 and then use only the
+CONFIG_ARCH_EXYNOS for ARM-64bit Exynos5433 SoC.
 
-This patch fixes the wrong offoset of PCLK_MSCL_SECURE_SMMU_JPEG in CMU_MSCL
-domain.
-
-Fixes: b274bbfd8b4a94cb5bd6f (clk: samsung: exynos5433: Add clocks for CMU_MSCL domain
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 2 +-
+ drivers/clk/samsung/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 387e3e3..543f9c7 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3927,7 +3927,7 @@ CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
- #define ENABLE_PCLK_MSCL				0x0900
- #define ENABLE_PCLK_MSCL_SECURE_SMMU_M2MSCALER0		0x0904
- #define ENABLE_PCLK_MSCL_SECURE_SMMU_M2MSCALER1		0x0908
--#define ENABLE_PCLK_MSCL_SECURE_SMMU_JPEG		0x000c
-+#define ENABLE_PCLK_MSCL_SECURE_SMMU_JPEG		0x090c
- #define ENABLE_SCLK_MSCL				0x0a00
- #define ENABLE_IP_MSCL0					0x0b00
- #define ENABLE_IP_MSCL1					0x0b04
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index 17e9af7..a17683b 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -10,7 +10,7 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+-obj-$(CONFIG_ARCH_EXYNOS5433)	+= clk-exynos5433.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
+ obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
 -- 
 1.8.5.5
