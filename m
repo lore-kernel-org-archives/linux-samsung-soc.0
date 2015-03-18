@@ -1,38 +1,38 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 4/4] ARM: EXYNOS: cpuidle: allow driver usage on Exynos3250
- SoC
-Date: Wed, 18 Mar 2015 13:51:53 +0100
-Message-ID: <1426683113-31209-5-git-send-email-b.zolnierkie@samsung.com>
-References: <1426683113-31209-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1426683113-31209-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [rtc-s3c.c] add =?UTF-8?Q?=2Eneeds=5Fsrc=5Fclk=20to=20s=33c=36=34?=
+ =?UTF-8?Q?=31=30=20RTC=20data=20/=20break=20exynos=34?=
+Date: Wed, 18 Mar 2015 14:00:55 +0100
+Message-ID: <1d0ae8204c93040d4cfe35c8551f201f@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49473 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755717AbbCRNA4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Mar 2015 09:00:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: javier.martinez@collabora.co.uk
+Cc: linux-samsung-soc@vger.kernel.org
 
-Register cpuidle platform device on Exynos3250 SoC allowing EXYNOS
-cpuidle driver usage on this SoC.
+Hello Javier,
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
+I noticed that this recent commit breaks rtc-s3c on my Odroid-X2 
+(Exynos4412). The exynos4 dtsi includes a rtc of type s3c6410. Hence all 
+board files based on exynos4, and using the rtc-s3c, are now required to 
+specific the rtc_src clock. I don't think that this is correct, since 
+the rtc was properly working on this board before the commit.
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 90ed2e5..204f0e6 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -244,6 +244,7 @@ static void __init exynos_dt_machine_init(void)
- 	    of_machine_is_compatible("samsung,exynos4212") ||
- 	    (of_machine_is_compatible("samsung,exynos4412") &&
- 	     of_machine_is_compatible("samsung,trats2")) ||
-+	    of_machine_is_compatible("samsung,exynos3250") ||
- 	    of_machine_is_compatible("samsung,exynos5250"))
- 		platform_device_register(&exynos_cpuidle);
- 
--- 
-1.8.2.3
+Maybe the check should be relaxed to make the clock optional again?
 
+Anyway, here's a short dmesg snip:
+[    1.611352] s3c-rtc 10070000.rtc: s3c2410_rtc: tick irq 65, alarm irq 
+64
+[    1.611430] s3c-rtc 10070000.rtc: failed to find rtc source clock
+[    1.616740] s3c-rtc: probe of 10070000.rtc failed with error -2
+
+With best wishes,
+Tobias Jakobi
