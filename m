@@ -1,38 +1,115 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [rtc-s3c.c] add =?UTF-8?Q?=2Eneeds=5Fsrc=5Fclk=20to=20s=33c=36=34?=
- =?UTF-8?Q?=31=30=20RTC=20data=20/=20break=20exynos=34?=
-Date: Wed, 18 Mar 2015 14:00:55 +0100
-Message-ID: <1d0ae8204c93040d4cfe35c8551f201f@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 1/4] ARM: EXYNOS: fix CPU1 hotplug for AFTR mode on Exynos3250
+Date: Wed, 18 Mar 2015 14:10:31 +0100
+Message-ID: <CAJKOXPe3P0mO-WuufAwF_tB6P=kfr-ORyQ6pa2pRnvjytCuHZg@mail.gmail.com>
+References: <1426683113-31209-1-git-send-email-b.zolnierkie@samsung.com>
+	<1426683113-31209-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49473 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755717AbbCRNA4 (ORCPT
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:52664 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755819AbbCRNKd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Mar 2015 09:00:56 -0400
+	Wed, 18 Mar 2015 09:10:33 -0400
+In-Reply-To: <1426683113-31209-2-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: javier.martinez@collabora.co.uk
-Cc: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hello Javier,
+2015-03-18 13:51 GMT+01:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+> CPU1 hotplug may hang when AFTR is used.  Fix it by:
+> - setting AUTOWAKEUP_EN bit in ARM_COREx_CONFIGURATION register in
+>   exynos_cpu_power_up()
+> - not clearing reserved bits of ARM_COREx_CONFIGURATION register in
+>   exynos_cpu_power_down()
+> - waiting while an undocumented register 0x0908 becomes non-zero in
+>   exynos_core_restart()
+> - using dsb_sev() instead of IPI in exynos_boot_secondary() on
+>   Exynos3250
+>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/platsmp.c  | 23 ++++++++++++++++++++---
+>  arch/arm/mach-exynos/regs-pmu.h |  2 ++
+>  2 files changed, 22 insertions(+), 3 deletions(-)
 
-I noticed that this recent commit breaks rtc-s3c on my Odroid-X2 
-(Exynos4412). The exynos4 dtsi includes a rtc of type s3c6410. Hence all 
-board files based on exynos4, and using the rtc-s3c, are now required to 
-specific the rtc_src clock. I don't think that this is correct, since 
-the rtc was properly working on this board before the commit.
 
-Maybe the check should be relaxed to make the clock optional again?
+Looks good (except one nit below) and this also fixes hotplug issues
+during resume from S2R:
+$ echo mem > /sys/power/state
+[  156.517266] Disabling non-boot CPUs ...
+[  156.517781] IRQ18 no longer affine to CPU1
+[  156.518043] CPU1: shutdown
+[  156.544718] Enabling non-boot CPUs ...
+[  156.554925] CPU1: Software reset
+[  158.552631] CPU1: failed to come online
+[  158.552753] Error taking CPU1 up: -5
 
-Anyway, here's a short dmesg snip:
-[    1.611352] s3c-rtc 10070000.rtc: s3c2410_rtc: tick irq 65, alarm irq 
-64
-[    1.611430] s3c-rtc 10070000.rtc: failed to find rtc source clock
-[    1.616740] s3c-rtc: probe of 10070000.rtc failed with error -2
+Reviewed and tested on Rinato (Gear 2/Exynos 3250) board:
 
-With best wishes,
-Tobias Jakobi
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+One comment below...
+
+>
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index d2e9f12..ebd135b 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -126,6 +126,8 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>   */
+>  void exynos_cpu_power_down(int cpu)
+>  {
+> +       u32 core_conf;
+> +
+>         if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
+>                 /*
+>                  * Bypass power down for CPU0 during suspend. Check for
+> @@ -137,7 +139,10 @@ void exynos_cpu_power_down(int cpu)
+>                 if (!(val & S5P_CORE_LOCAL_PWR_EN))
+>                         return;
+>         }
+> -       pmu_raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +
+> +       core_conf = pmu_raw_readl(EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+> +       core_conf &= ~S5P_CORE_LOCAL_PWR_EN;
+> +       pmu_raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+>  }
+>
+>  /**
+> @@ -148,7 +153,12 @@ void exynos_cpu_power_down(int cpu)
+>   */
+>  void exynos_cpu_power_up(int cpu)
+>  {
+> -       pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
+> +       u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
+> +
+> +       if (soc_is_exynos3250())
+> +               core_conf |= S5P_CORE_AUTOWAKEUP_EN;
+> +
+> +       pmu_raw_writel(core_conf,
+>                         EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+>  }
+>
+> @@ -226,6 +236,10 @@ static void exynos_core_restart(u32 core_id)
+>         if (!of_machine_is_compatible("samsung,exynos3250"))
+>                 return;
+>
+> +       while (!pmu_raw_readl(S5P_PMU_SPARE2))
+> +               udelay(10);
+> +       udelay(10);
+
+We really need to start documenting this. Please add short description
+why this SPARE2 check is here and who uses it. Without documenting
+this behavior future generations won't be able to debug this stuff.
+Imagine replacing sboot with uboot by someone...
+
+Best regards,
+Krzysztof
