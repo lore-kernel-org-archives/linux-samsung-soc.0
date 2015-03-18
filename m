@@ -1,143 +1,101 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH V5 2/2] ARM: dts: Add HS400 support for exynos5420 and exynos5800
-Date: Wed, 18 Mar 2015 04:56:28 +0530
-Message-ID: <CAGOxZ53OgKKZVS2qKsMw4cDxdkwG-8OER=8oPxTo9g-+qKHimQ@mail.gmail.com>
-References: <1422499318-13726-1-git-send-email-alim.akhtar@samsung.com>
- <1422499318-13726-3-git-send-email-alim.akhtar@samsung.com>
- <54ED6D24.4000703@samsung.com> <CAGOxZ53_TGay2ooTW22ZGPZ+yneqoXH6JEPZ=mMSYr1cpOhXWg@mail.gmail.com>
- <07b501d06057$d9d7bc80$8d873580$@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
+Date: Wed, 18 Mar 2015 00:02:34 +0000
+Message-ID: <20150318000234.GU28806@sirena.org.uk>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
+ <1425299763-4066822-6-git-send-email-arnd@arndb.de>
+ <20150306174316.GA26692@opensource.wolfsonmicro.com>
+ <6643361.dhtMagqMYZ@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <07b501d06057$d9d7bc80$8d873580$@kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Douglas Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xV/tcm3TpxxBlS6c"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51255 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752669AbbCRACx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Mar 2015 20:02:53 -0400
+Content-Disposition: inline
+In-Reply-To: <6643361.dhtMagqMYZ@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Thanks Kukjin for looking into this.
-I will rebase on top of your for-next and send again.
-
-On Tue, Mar 17, 2015 at 7:42 AM, Kukjin Kim <kgene@kernel.org> wrote:
-> Alim Akhtar wrote:
->>
->> Ping?
->>
-> Alim,
->
-> Can you please re-send it based on latest my tree?
-> It would be helpful for me ;)
->
-> Thanks,
-> Kukjin
->
->> On Wed, Feb 25, 2015 at 12:05 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> > Hi, Alim.
->> >
->> > Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
->> >
->> > Best Regards,
->> > Jaehoon Chung
->> >
->> > On 01/29/2015 11:41 AM, Alim Akhtar wrote:
->> >> From: Seungwon Jeon <tgih.jun@samsung.com>
->> >>
->> >> HS400 timing values are added for SMDK5420, exynos5420-peach-pit
->> >> and exynos5800-peach-pi boards.
->> >> This also adds RCLK GPIO line, this gpio should be in pull-down
->> >> state.
->> >> This also enables HS400 on peach-pi and this updates the clock frequency
->> >> to 800MHz to be set as input clock to controller.
->> >>
->> >> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->> >> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> >> [Alim: addressed review comments]
->> >> ---
->> >>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 +++-
->> >>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
->> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts  |    4 +++-
->> >>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    7 +++++--
->> >>  4 files changed, 18 insertions(+), 4 deletions(-)
->> >>
->> >> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-
->> pit.dts
->> >> index 9a050e1..f7a44a4 100644
->> >> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> >> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> >> @@ -569,8 +569,10 @@
->> >>       samsung,dw-mshc-ciu-div = <3>;
->> >>       samsung,dw-mshc-sdr-timing = <0 4>;
->> >>       samsung,dw-mshc-ddr-timing = <0 2>;
->> >> +     samsung,dw-mshc-hs400-timing = <0 2>;
->> >> +     samsung,read-strobe-delay = <90>;
->> >>       pinctrl-names = "default";
->> >> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->> >> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->> >>       bus-width = <8>;
->> >>  };
->> >>
->> >> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> >> index ba686e4..8b15316 100644
->> >> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> >> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> >> @@ -201,6 +201,13 @@
->> >>                       samsung,pin-drv = <3>;
->> >>               };
->> >>
->> >> +             sd0_rclk: sd0-rclk {
->> >> +                     samsung,pins = "gpc0-7";
->> >> +                     samsung,pin-function = <2>;
->> >> +                     samsung,pin-pud = <1>;
->> >> +                     samsung,pin-drv = <3>;
->> >> +             };
->> >> +
->> >>               sd1_cmd: sd1-cmd {
->> >>                       samsung,pins = "gpc1-1";
->> >>                       samsung,pin-function = <2>;
->> >> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> >> index 8be3d7b..2078a1f 100644
->> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> >> @@ -80,8 +80,10 @@
->> >>               samsung,dw-mshc-ciu-div = <3>;
->> >>               samsung,dw-mshc-sdr-timing = <0 4>;
->> >>               samsung,dw-mshc-ddr-timing = <0 2>;
->> >> +             samsung,dw-mshc-hs400-timing = <0 2>;
->> >> +             samsung,read-strobe-delay = <90>;
->> >>               pinctrl-names = "default";
->> >> -             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->> >> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->> >>               bus-width = <8>;
->> >>               cap-mmc-highspeed;
->> >>       };
->> >> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> >> index e8fdda8..96f0d61 100644
->> >> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> >> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> >> @@ -550,15 +550,18 @@
->> >>       num-slots = <1>;
->> >>       broken-cd;
->> >>       mmc-hs200-1_8v;
->> >> +     mmc-hs400-1_8v;
->> >>       cap-mmc-highspeed;
->> >>       non-removable;
->> >>       card-detect-delay = <200>;
->> >> -     clock-frequency = <400000000>;
->> >> +     clock-frequency = <800000000>;
->> >>       samsung,dw-mshc-ciu-div = <3>;
->> >>       samsung,dw-mshc-sdr-timing = <0 4>;
->> >>       samsung,dw-mshc-ddr-timing = <0 2>;
->> >> +     samsung,dw-mshc-hs400-timing = <0 2>;
->> >> +     samsung,read-strobe-delay = <90>;
->> >>       pinctrl-names = "default";
->> >> -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->> >> +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->> >>       bus-width = <8>;
->> >>  };
->
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
 
 
+--xV/tcm3TpxxBlS6c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Regards,
-Alim
+On Sun, Mar 08, 2015 at 10:42:59PM +0100, Arnd Bergmann wrote:
+> On Friday 06 March 2015 17:43:16 Charles Keepax wrote:
+
+> > This one appears to cause some problems with the IRQs on
+> > Cragganmore, I need to look into it a bit more but it looks like
+> > one of the PMICs can't allocate its IRQs:
+
+> > [    0.961455] wm831x 1-0034: WM8311 revision C
+> > [    0.965066] wm831x 1-0034: Failed to allocate IRQs: -17
+
+> > And the CODEC can't request its IRQ:
+
+> > [    4.252735] arizona spi0.1: WM5102 revision C
+> > [    4.269763] arizona spi0.1: Failed to request primary IRQ 263: -22
+
+> > Hopefully I can look into this a little more next week.
+
+> My interpretation is that I mistakenly set the .nr_irqs value for
+> craggamore to include all irqs that the board has, while the
+> wm831x tries to allocate the irq descriptors itself and fails if
+> they are already allocated. If that is the only problem here, it
+> would get fixed by this change:
+
+> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> index f395a5617142..cbe353a5450e 100644
+> --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> @@ -855,7 +855,7 @@ static void __init crag6410_machine_init(void)
+>  MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
+>  	/* Maintainer: Mark Brown <broonie@opensource.wolfsonmicro.com> */
+>  	.atag_offset	= 0x100,
+> -	.nr_irqs	= S3C64XX_NR_IRQS + 160,
+> +	.nr_irqs	= S3C64XX_NR_IRQS,
+>  	.init_irq	= s3c6410_init_irq,
+>  	.map_io		= crag6410_map_io,
+>  	.init_machine	= crag6410_machine_init,
+
+> The samsung-gpio driver does not allocate irq descriptors for itself
+> though, otherwise we could make the S3C64XX_NR_IRQS number smaller.
+
+That's not the only thing, I'm still seeing an issue even with the
+change above.  The VICs are also complaining about preallocated
+descriptors, but they just assume the descriptors were preallocated and
+carry on happily.  I'd also expect this to be affecting both wm831xs but
+it's only affecting the WM8311 on the base board, not the primary
+WM8312, so this seems to be a red herring.
+
+I rather suspect that the issue is at least partly that the interrupt
+numbering is off - the CODEC has 24 interrupts allocated to it in
+crag6410.h which is nowhere near enough and the PMICs have 32 each
+rather than the 58 they need.  This is broken for the existing code too
+so we should get a fix to make that right in before anything else.  A
+trivial change to fix that doesn't seem to have helped though but I
+probably just miscounted or something.
+
+--xV/tcm3TpxxBlS6c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVCMCZAAoJECTWi3JdVIfQcGwH/0ojyEH2DYpa37/C9UrgXpVF
+kNiLkTYA3b198GxTopYXCu5dGkrgyKuqVcrwYTIPo1t8FHM26XCwqBQkVpMJJ1J8
+aOKZjCyWMca0xwHe8NieqXkmR3cDSI7LWbC9FY9YIKwsLitLsJ5IYrGEkcZw+K9X
+C22IaFbJ1tZlr8wLpVfKRX2ADY5jmVOUBD/gm0fUkh7Qm5Abr5pQ73PcbB/A0aI0
+OQDG+GD54J6n49VLEciWea8G/wIew5mvefhSM4QwkrmHWeCqV3/kO92Pyr5+2C18
+PgHuXRRyNo+f1l5CjrettxamMqqlleOKINaaC5LA1pr6n4o2J7QNpZxdLIkNIqc=
+=SYKd
+-----END PGP SIGNATURE-----
+
+--xV/tcm3TpxxBlS6c--
