@@ -1,79 +1,51 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 0/4] ARM: EXYNOS: cpuidle: add AFTR mode support for
- Exynos3250
-Date: Thu, 19 Mar 2015 14:11:48 +0900
-Message-ID: <550A5A94.2080207@samsung.com>
-References: <1426694453-3242-1-git-send-email-b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 Resend] pwm: samsung: Fix output race on disabling
+Date: Thu, 19 Mar 2015 10:19:13 +0100
+Message-ID: <550A9491.8050302@collabora.co.uk>
+References: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1426694453-3242-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Bartlomiej,
+Hello Sjoerd,
 
-I tested this patch-set for AFTR mode.
-When CPU1 is offline state, I checked that CPU0 enter the AFTR mode.
+On 03/05/2015 09:14 AM, Sjoerd Simons wrote:
+> When disabling the samsung PWM the output state remains at the level it
+> was in the end of a pwm cycle. In other words, calling pwm_disable when
+> at 100% duty will keep the output active, while at all other setting the
+> output will go/stay inactive. On top of that the samsung PWM settings are
+> double-buffered, which means the new settings only get applied at the
+> start of a new PWM cycle.
+> 
+> This results in a race if the PWM is at 100% duty and a driver calls:
+>   pwm_config (pwm, 0, period);
+>   pwm_disable (pwm);
+> 
+> In this case the PWMs output will unexpectedly stay active, unless a new
+> PWM cycle happened to start between the register writes in _config and
+> _disable. As far as i can tell this is a regression introduced by 3bdf878,
+> before that a call to pwm_config would call pwm_samsung_enable which,
+> while heavy-handed, made sure the expected settings were live.
+> 
+> To resolve this, while not re-introducing the issues 3bdf878 (flickering
+> as the PWM got reset while in a PWM cycle). Only force an update of the
+> settings when at 100% duty, which shouldn't have a noticeable effect on
+> the output but is enough to ensure the behaviour is as expected on
+> disable.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+>
 
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+The patch looks good to me.
 
-Best Regards,
-Chanwoo Choi
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On 03/19/2015 01:00 AM, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patch series adds support for AFTR idle mode on boards with
-> Exynos3250 SoC and allows EXYNOS cpuidle driver usage on these
-> boards.
-> 
-> It has been tested on Samsung Rinato board (Gear 2).
-> 
-> Depends on:
-> - for-next branch (commit: 77105c882ba6) of linux-samsung.git
->   kernel tree
-> 
-> Changes since v3:
-> - enhanced patch description for patch #1
-> - added Reviewed-by/Tested-by tags from Krzysztof
-> - enhanced C2_STATE BOOT mode flag comment
-> - moved exynos_{set,clear}_boot_flag() to firmware.c
-> - added patch description to patch #3
-> 
-> Changes since v2:
-> - rebased on top of for-next branch (commit: 77105c882ba6) of
->   linux-samsung.git kernel tree
-> 
-> Changes since v1:
-> - rebased on top of for-next branch (commit: ce275c369a0b) of
->   linux-samsung.git kernel tree
-> - fixed lockup on hotplug by using dsb_sev() instead of IPI in
->   exynos_boot_secondary() on Exynos3250
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (4):
->   ARM: EXYNOS: fix CPU1 hotplug on Exynos3250
->   ARM: EXYNOS: add code for setting/clearing boot flag
->   ARM: EXYNOS: cpuidle: add AFTR mode support for Exynos3250
->   ARM: EXYNOS: cpuidle: allow driver usage on Exynos3250 SoC
-> 
->  arch/arm/mach-exynos/common.h   |  6 ++++++
->  arch/arm/mach-exynos/exynos.c   |  1 +
->  arch/arm/mach-exynos/firmware.c | 33 ++++++++++++++++++++++++++++++++-
->  arch/arm/mach-exynos/platsmp.c  | 23 ++++++++++++++++++++---
->  arch/arm/mach-exynos/pm.c       | 12 +++++++++++-
->  arch/arm/mach-exynos/regs-pmu.h |  3 +++
->  arch/arm/mach-exynos/smc.h      |  9 +++++++++
->  7 files changed, 82 insertions(+), 5 deletions(-)
-> 
+Best regards,
+Javier
 
