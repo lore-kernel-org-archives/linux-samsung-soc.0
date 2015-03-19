@@ -1,40 +1,124 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 1/3] drm/exynos: don't commit if plane scaling is required
-Date: Thu, 19 Mar 2015 11:27:48 -0300
-Message-ID: <1426775270-31137-1-git-send-email-gustavo@padovan.org>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v7 0/9] arm64: Add the support for new Exynos5433 SoC
+Date: Fri, 20 Mar 2015 05:52:29 +0900
+Message-ID: <CAGTfZH30wMkvkFpH1dGCPfMQtQEREhDtYHpvpaTt9RMVha_8Nw@mail.gmail.com>
+References: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-ZXh5bm9zIGRvZXNuJ3Qgc2hvdyBzY2FsZWQgcGxhbmVzIHByb3Blcmx5IG9uIHRoZSBzY3JlZW4g
-c28KZGlzYWJsZSB0aGUgZmVhdHVyZSBhbmQgc2hvdyBhIG1lc3NhZ2UgdG8gdGhlIHVzZXIuCgpT
-aWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEu
-Y28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDYgKysr
-KysrCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX21peGVyLmMKaW5kZXggMmUzYmM1Ny4uYTk1ZmU4NCAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jCkBAIC01NTAsNiArNTUwLDEyIEBAIHN0YXRpYyB2b2lkIG1peGVy
-X2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQogCQlmbXQg
-PSBBUkdCODg4ODsKIAl9CiAKKwlpZiAod2luX2RhdGEtPmNydGNfd2lkdGggIT0gd2luX2RhdGEt
-PnNyY193aWR0aCB8fAorCSAgICB3aW5fZGF0YS0+Y3J0Y19oZWlnaHQgIT0gd2luX2RhdGEtPnNy
-Y19oZWlnaHQpIHsKKwkJRFJNX0RFQlVHX0tNUygicGxhbmUgc2NhbGluZyBub3Qgc3VwcG9ydGVk
-XG4iKTsKKwkJcmV0dXJuOworCX0KKwogCS8qIDJ4IHNjYWxpbmcgZmVhdHVyZSAqLwogCXhfcmF0
-aW8gPSAwOwogCXlfcmF0aW8gPSAwOwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Dear Kukjin,
+
+Could you please pick or review this patch-set?
+
+Best Regards,
+Chanwoo Choi
+
+On Wed, Mar 18, 2015 at 9:17 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patchset adds new 64-bit Exynos5433 Samsung SoC which contains quad
+> Cortex-A57 and quad Cortex-A53. It is desigend with the 20nm low power process.
+>
+> Depends on:
+> - This patch-set has the dependency on Exynos5433 clock driver[1] and pinctrl driver[2].
+> The Exynos5433 clock controller patch-set[1] was merged by Michael Turquette.
+> and Exynos5433's pinctrl patch[2] was merged by Linus Walleij. Exynos5433's TMU patch[3]
+> will be refactoring without feature update.
+>
+> [1] http://git.linaro.org/people/mike.turquette/linux.git/commit/cc91909b9683c834485fd0627708c81d9398bf02
+> [2] https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=for-next&id=3c5ecc9ed3537846fd95e8f288d6d6968075879f
+> [3] [PATCH 0/3] thermal: exynos: Add support for Exynos5433 TMU
+>     - https://lkml.org/lkml/2015/2/26/234
+>
+> Changelog:
+>
+> Changes fromv v6:
+> (https://lkml.org/lkml/2015/3/9/1036)
+> - Fix wrong base address of CMU_MSCL dt node (0x105d0000 -> 0x150d0000)
+> - Adjust the length of memory mapped region for all clock domains
+>
+> Changes from v5:
+> (https://lkml.org/lkml/2015/3/5/27)
+> - Move 'timer' dt node under root node by Mark Rutland's comment
+>
+> Changes from v4:
+> (https://lkml.org/lkml/2015/2/24/2)
+> - Rebased it on Linux 4.0-rc2
+> - Remove CONFIG_ARCH_EXYNOS5433 configuration by Arnd Bergmann's comment
+> - Move 'aliases' dt node from SoC dtsi to board dts file by Arnd Bergmann's comment
+> - Add Exynos5433 TMU patches which got the Lukasz Majewski's reviewed message
+>
+> Changes from v3:
+> (https://lkml.org/lkml/2015/2/12/65)
+> - Rebased it on Linux 4.0-rc1.
+> - Remove ARM_GIC and ARM_AMBA dependency because CONFIG_ARM64 already included them.
+>
+> Changes from v2:
+> (https://lkml.org/lkml/2014/12/2/134)
+> : Fix the range of GICC memory map (0x1000 -> 0x2000)
+> : Fix address space of 'range' property under 'soc' node
+> : Add ADMA / I2S dt node for sound playback/capture
+> - Select ARM_AMBA/ARM_GIC/HAVE_S3C_RTC for Exynos5433 in arch/arm64/Kconfig
+> - Send separate patch-set for Exynos5433 clock controller[1][2] and pinctrl[3]
+>
+> Changes from v1:
+> (https://lkml.org/lkml/2014/11/27/92)
+> - Merge two patches (patch2, patch3) to solve incomplete description
+> - Exynos5433 Clock driver
+>  : Fix wrong register and code clean by using space instead of tab
+>  : Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
+>  : Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
+> - Exynos5433 SoC DTS
+>  : Remove un-supported properties of arch_timer
+>  : Remove 'clock-frequency' property from 'cpus' dt node
+>  : Fix interrupt type from edge rising triggering to level high triggering
+>    because Cortex-A53/A57 use level triggering.
+>  : Fix defult address-size/size-celss from 1 to 2 because Exynos5433 is 64-bit SoC
+>  : Modify 'fin_pll' dt node to remove un-needed and ugly code
+>  : Move 'chipid' dt node under 'soc'
+>  : Use lowercase on all case in exynos5433.dtsi
+>  : Add PSCI dt node for secondary cpu boot
+>  : Add 'samsung,exynos5433' compatible to MCT dt node
+> - Divide pinctrl patch from this patchset
+> - Add new following patches:
+>   : clocksource: exynos_mct: Add the support for Exynos 64bit SoC
+>   : arm64: Enable Exynos5433 SoC in the defconfig
+> -----------------------------------------------------
+>
+> Chanwoo Choi (6):
+>   arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
+>   arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
+>   arm64: dts: exynos: Add PMU dt node for Exynos5433
+>   arm64: dts: exynos: Add RTC and ADC dt node for Exynos5433 SoC
+>   arm64: dts: exynos: Add TMU sensor dt node for Exynos5433 SoC
+>   arm64: dts: exynos: Add thermal-zones dt node for Exynos5433 SoC
+>
+> Inha Song (2):
+>   arm64: dts: exynos: Add ADMA dt node for Exynos5433 SoC
+>   arm64: dts: exynos: Add I2S dt node for Exynos5433 SoC
+>
+> Jaehoon Chung (1):
+>   arm64: dts: exynos: Add MSHC dt node for Exynos5433
+>
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
+>  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698 +++++++++++++++
+>  .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |  22 +
+>  arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     | 231 +++++
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 931 +++++++++++++++++++++
+>  5 files changed, 1883 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>
+> --
+> 1.8.5.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
