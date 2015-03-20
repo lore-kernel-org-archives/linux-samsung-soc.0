@@ -1,76 +1,42 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] ARM: dts: exynos4412-odroid: add 'rtc_src' clock to rtc
- node
-Date: Fri, 20 Mar 2015 09:56:33 +0100
-Message-ID: <550BE0C1.4020500@collabora.co.uk>
-References: <1426814952-13458-1-git-send-email-tjakobi@math.uni-bielefeld.de> <550B7A2C.4070403@samsung.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
+Date: Fri, 20 Mar 2015 17:24:18 +0800
+Message-ID: <1426843458.23931.17.camel@mtksdaap41>
+References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:57659 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392AbbCTI4i (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Mar 2015 04:56:38 -0400
-In-Reply-To: <550B7A2C.4070403@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Alex Williamson <alex.williamson@redhat.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, jroedel@suse.de, linux-tegra@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>, Tomasz Figa <tfiga@chromium.org>, Yong Wu =?UTF-8?Q?=28=E5=90=B4=E5=8B=87=29?= <yong.wu@mediatek.com>, Robin Murphy <robin.murphy@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, m.reichl@fivetechno.de
 
-Hello,
-
-On 03/20/2015 02:38 AM, Chanwoo Choi wrote:
-> On 03/20/2015 10:29 AM, Tobias Jakobi wrote:
->> From: Markus Reichl <m.reichl@fivetechno.de>
->> 
->> The Exynos4412 SoC has a s3c6410 RTC where the source clock
->> is now a mandatory property.
->> 
->> This patch fixes probe failure of s3c-rtc on Odroid-X2/U2/U3 boards.
->> 
->> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
->> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 3 +++
->>  1 file changed, 3 insertions(+)
->> 
->> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> index 1ff4c88..0a8e6aa4 100644
->> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> @@ -9,6 +9,7 @@
->>  
->>  #include <dt-bindings/sound/samsung-i2s.h>
->>  #include <dt-bindings/input/input.h>
->> +#include <dt-bindings/clock/maxim,max77686.h>
->>  #include "exynos4412.dtsi"
->>  
->>  / {
->> @@ -143,6 +144,8 @@
->>  
->>  	rtc@10070000 {
->>  		status = "okay";
->> +		clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
->> +		clock-names = "rtc", "rtc_src";
->>  	};
->>  
->>  	g2d@10800000 {
->> 
+On Tue, 2015-01-27 at 00:51 +0100, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
 > 
-> Exynos's RTC need the XrtcXTI source clock (32.768kHz). Looks good to me.
+> Hi,
 > 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-
-Yes, I also think this is the correct fix for these boards.
-
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
- 
-> Thanks,
-> Chanwoo Choi
+> here is patch-set to replace the existing domain_init and
+> domain_destroy iommu-ops with the new domain_alloc and
+> domain_free callbacks
 > 
+> The new callbacks move the allocation of iommu domains into
+> the iommu driver, allowing them to put a generic
+> iommu_domain struct into their own domain struct. This makes
+> domain handling in the drivers more cache efficient and
+> prepares the introduction of default domains in another
+> patch-set.
 
-Best regards,
-Javier
+Hi Joerg,
+
+What's the status of this patchset?
+While porting MTK IOMMU driver[1], we need to use a global variable
+because we need to do dma_alloc_coherent in our domain_init. I think we
+can remove that global variable if we base on this series.
+
+Joe.C
+
+[1]
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/328461.html
