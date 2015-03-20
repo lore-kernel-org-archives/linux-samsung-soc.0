@@ -1,42 +1,24 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH] ARM: Exynos5420: dt: Fixed the checkpatch.pl WARNING misspelled
-Date: Sat, 21 Mar 2015 06:53:51 +1030
-Message-ID: <1426883031-3518-1-git-send-email-linux.amoon@gmail.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: drm/exynos: add async G2D execution to libdrm
+Date: Fri, 20 Mar 2015 23:25:43 +0100
+Message-ID: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:34755 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751064AbbCTUYZ (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:53611 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751415AbbCTWZz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Mar 2015 16:24:25 -0400
+	Fri, 20 Mar 2015 18:25:55 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, m.szyprowski@samsung.com, inki.dae@samsung.com
 
-Changes fixes the misspelled of #interrups-cell.
+Hello,
 
-arch/arm/boot/dts/exynos5420.dtsi:224: WARNING: 'interrups'
-	 may be misspelled - perhaps 'interrupts'?
+this series exposes async execution of G2D command buffers to userspace. Also includes is a small performance analysis test, which can also be used to 
+stress test the engine. The async operation is of course also tested.
 
-Tested on OdroidXU3 board.
+Please review and let me know what I can improve.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c0e98cf..a78ac1f 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -221,7 +221,7 @@
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x101C0000 0x800>;
- 		interrupt-controller;
--		#interrups-cells = <1>;
-+		#interrupt-cells = <1>;
- 		interrupt-parent = <&mct_map>;
- 		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
- 				<8>, <9>, <10>, <11>;
--- 
-1.9.1
+With best wishes,
+Tobias
