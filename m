@@ -1,42 +1,67 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
-Date: Fri, 20 Mar 2015 17:24:18 +0800
-Message-ID: <1426843458.23931.17.camel@mtksdaap41>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] serial: samsung: Clear operation mode on UART shutdown
+Date: Fri, 20 Mar 2015 13:19:44 +0100
+Message-ID: <550C1060.1040900@collabora.co.uk>
+References: <1426246731-13751-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422316305-19216-1-git-send-email-joro@8bytes.org>
+In-Reply-To: <1426246731-13751-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Alex Williamson <alex.williamson@redhat.com>, Kukjin Kim <kgene@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, jroedel@suse.de, linux-tegra@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>, Tomasz Figa <tfiga@chromium.org>, Yong Wu =?UTF-8?Q?=28=E5=90=B4=E5=8B=87=29?= <yong.wu@mediatek.com>, Robin Murphy <robin.murphy@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Robert Baldyga <r.baldyga@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2015-01-27 at 00:51 +0100, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
+Hello,
+
+On 03/13/2015 12:38 PM, Javier Martinez Canillas wrote:
+> Exynos serial ports operate either in a DMA-based or interrupt-based
+> modes. In DMA-based mode, the UART generates a transfer data request
+> and a Transmission (Tx) interrupt in interrupt-based mode.
 > 
-> Hi,
+> The Tx IRQ is only unmasked in interrupt-based mode and it was done
+> in s3c24xx_serial_start_tx(). Commit ba019a3e2ad5 ("serial: samsung:
+> remove redundant interrupt enabling") removed the IRQ enable on that
+> function since it is enabled when the mode is set in enable_tx_pio().
 > 
-> here is patch-set to replace the existing domain_init and
-> domain_destroy iommu-ops with the new domain_alloc and
-> domain_free callbacks
+> The problem is that enable_tx_pio() is only called if the port mode
+> has not been set before but the mode was not cleared on .shutdown().
 > 
-> The new callbacks move the allocation of iommu domains into
-> the iommu driver, allowing them to put a generic
-> iommu_domain struct into their own domain struct. This makes
-> domain handling in the drivers more cache efficient and
-> prepares the introduction of default domains in another
-> patch-set.
+> So if the UART was shutdown and then started up again, the mode set
+> will remain and the Tx IRQ won't be unmasked.
+> 
+> This caused a hang on at least Exynos5250, Exynos5420 and Exynos5800
+> when the system is rebooted or powered off.
+> 
+> Fixes: ba019a3e2ad5 ("serial: samsung: remove redundant interrupt enabling")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+> 
+> I noticed this issue on an Exynos5250 Snow, Exynos5420 Peach Pit and Exynos
+> 5800 Peach Pi Chromebooks. This patch fixes the issue on all of them.
+> 
+> The offending commit landed in v4.0-rc1 so this fix is -rc material.
+> 
+>  drivers/tty/serial/samsung.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index af821a908720..cf08876922f1 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -963,6 +963,7 @@ static void s3c24xx_serial_shutdown(struct uart_port *port)
+>  			free_irq(ourport->tx_irq, ourport);
+>  		tx_enabled(port) = 0;
+>  		ourport->tx_claimed = 0;
+> +		ourport->tx_mode = 0;
+>  	}
+>  
+>  	if (ourport->rx_claimed) {
+> 
 
-Hi Joerg,
+Any comments about this patch? 3.14-rc5 will most likely be released this weekend
+so we are running out of time to fix this issue before 3.14 is released.
 
-What's the status of this patchset?
-While porting MTK IOMMU driver[1], we need to use a global variable
-because we need to do dma_alloc_coherent in our domain_init. I think we
-can remove that global variable if we base on this series.
-
-Joe.C
-
-[1]
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/328461.html
+Best regards,
+Javier
