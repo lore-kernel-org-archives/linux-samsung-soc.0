@@ -1,90 +1,40 @@
 From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
-Date: Sat, 21 Mar 2015 16:38:21 +0000
-Message-ID: <20150321163821.GE23705@opensource.wolfsonmicro.com>
-References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <1425299763-4066822-6-git-send-email-arnd@arndb.de> <20150306174316.GA26692@opensource.wolfsonmicro.com> <6643361.dhtMagqMYZ@wuerfel> <20150318000234.GU28806@sirena.org.uk>
+Subject: Re: [PATCH 10/10] ARM: s3c64xx: allow building without board
+	support
+Date: Sat, 21 Mar 2015 17:17:36 +0000
+Message-ID: <20150321171736.GF23705@opensource.wolfsonmicro.com>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <1425299763-4066822-11-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41036 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41069 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751527AbbCUQiZ (ORCPT
+	by vger.kernel.org with ESMTP id S1751532AbbCURRh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Mar 2015 12:38:25 -0400
+	Sat, 21 Mar 2015 13:17:37 -0400
 Content-Disposition: inline
-In-Reply-To: <20150318000234.GU28806@sirena.org.uk>
+In-Reply-To: <1425299763-4066822-11-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
 
-On Wed, Mar 18, 2015 at 12:02:34AM +0000, Mark Brown wrote:
-> On Sun, Mar 08, 2015 at 10:42:59PM +0100, Arnd Bergmann wrote:
-> > On Friday 06 March 2015 17:43:16 Charles Keepax wrote:
-> > diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> > index f395a5617142..cbe353a5450e 100644
-> > --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-> > +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> > @@ -855,7 +855,7 @@ static void __init crag6410_machine_init(void)
-> >  MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
-> >  	/* Maintainer: Mark Brown <broonie@opensource.wolfsonmicro.com> */
-> >  	.atag_offset	= 0x100,
-> > -	.nr_irqs	= S3C64XX_NR_IRQS + 160,
-> > +	.nr_irqs	= S3C64XX_NR_IRQS,
-> >  	.init_irq	= s3c6410_init_irq,
-> >  	.map_io		= crag6410_map_io,
-> >  	.init_machine	= crag6410_machine_init,
+On Mon, Mar 02, 2015 at 01:36:03PM +0100, Arnd Bergmann wrote:
+> Most of the code for the s3c64xx platform is only used when booting
+> with ATAGS based board files, but not when using device-tree.
 > 
-> > The samsung-gpio driver does not allocate irq descriptors for itself
-> > though, otherwise we could make the S3C64XX_NR_IRQS number smaller.
+> This tries to identify all the s3c64xx specific code that is
+> unneeded when CONFIG_ATAGS is not set, so we can build a smaller
+> DT-only kernel if configured that way.
 > 
-> That's not the only thing, I'm still seeing an issue even with the
-> change above.  The VICs are also complaining about preallocated
-> descriptors, but they just assume the descriptors were preallocated and
-> carry on happily.  I'd also expect this to be affecting both wm831xs but
-> it's only affecting the WM8311 on the base board, not the primary
-> WM8312, so this seems to be a red herring.
+> All board support is still left intact but now depends on the
+> CONFIG_ATAGS symbol that users may intentionally disable.
 > 
-> I rather suspect that the issue is at least partly that the interrupt
-> numbering is off - the CODEC has 24 interrupts allocated to it in
-> crag6410.h which is nowhere near enough and the PMICs have 32 each
-> rather than the 58 they need.  This is broken for the existing code too
-> so we should get a fix to make that right in before anything else.  A
-> trivial change to fix that doesn't seem to have helped though but I
-> probably just miscounted or something.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Ok guys very sorry about the massive delay in looking at this
-again, I have been a bit swamped lately. I think I see what is
-going on here.
-
-The fix from Arnd there definitely helped, but still doesn't
-quite work and those defines you are talking about there are
-actually for the GPIOs so they are a bit of a red herring. There
-are two PMICs as you mention one of which is given a fixed IRQ
-base and the other which allocates it own. The problem appears to
-be that the one which allocates its own IRQ base takes the space
-that is specified as the fixed base for the other PMIC. Which
-then fails to allocate its IRQs.
-
-So adding a bit of an offset into the PMIC with the fixed IRQ
-base fixes the problem. Although I am not sure if it would be
-better to move both PMICs onto a fixed IRQ base so there is no
-chance of the clashing. Any thoughts?
+Rest of this series doesn't seem to cause me any problems on
+Cragganmore.
 
 Thanks,
 Charles
-
-Applying this diff, on top of Arnd's fixup, gets everything
-working for me:
-
-diff --git a/arch/arm/mach-s3c64xx/crag6410.h
-b/arch/arm/mach-s3c64xx/crag6410.h
-index 7bc6668..59c5f44 100644
---- a/arch/arm/mach-s3c64xx/crag6410.h
-+++ b/arch/arm/mach-s3c64xx/crag6410.h
-@@ -13,7 +13,7 @@
-
- #include <mach/gpio-samsung.h>
-
--#define GLENFARCLAS_PMIC_IRQ_BASE      IRQ_BOARD_START
-+#define GLENFARCLAS_PMIC_IRQ_BASE      IRQ_BOARD_START + 256
