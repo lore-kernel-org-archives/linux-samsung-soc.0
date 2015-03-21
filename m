@@ -1,43 +1,90 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: drm/exynos: add async G2D execution to libdrm
-Date: Sat, 21 Mar 2015 15:03:37 +0100
-Message-ID: <550D7A39.4080502@gmx.net>
-References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
+Date: Sat, 21 Mar 2015 16:38:21 +0000
+Message-ID: <20150321163821.GE23705@opensource.wolfsonmicro.com>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <1425299763-4066822-6-git-send-email-arnd@arndb.de> <20150306174316.GA26692@opensource.wolfsonmicro.com> <6643361.dhtMagqMYZ@wuerfel> <20150318000234.GU28806@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.21]:64568 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751349AbbCUODw (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41036 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751527AbbCUQiZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Mar 2015 10:03:52 -0400
-In-Reply-To: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Sat, 21 Mar 2015 12:38:25 -0400
+Content-Disposition: inline
+In-Reply-To: <20150318000234.GU28806@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, m.szyprowski@samsung.com, inki.dae@samsung.com
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
 
-Tobias Jakobi wrote:
-> Hello,
+On Wed, Mar 18, 2015 at 12:02:34AM +0000, Mark Brown wrote:
+> On Sun, Mar 08, 2015 at 10:42:59PM +0100, Arnd Bergmann wrote:
+> > On Friday 06 March 2015 17:43:16 Charles Keepax wrote:
+> > diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> > index f395a5617142..cbe353a5450e 100644
+> > --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
+> > +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> > @@ -855,7 +855,7 @@ static void __init crag6410_machine_init(void)
+> >  MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
+> >  	/* Maintainer: Mark Brown <broonie@opensource.wolfsonmicro.com> */
+> >  	.atag_offset	= 0x100,
+> > -	.nr_irqs	= S3C64XX_NR_IRQS + 160,
+> > +	.nr_irqs	= S3C64XX_NR_IRQS,
+> >  	.init_irq	= s3c6410_init_irq,
+> >  	.map_io		= crag6410_map_io,
+> >  	.init_machine	= crag6410_machine_init,
 > 
-> this series exposes async execution of G2D command buffers to userspace. Also includes is a small performance analysis test, which can also be used to 
-> stress test the engine. The async operation is of course also tested.
+> > The samsung-gpio driver does not allocate irq descriptors for itself
+> > though, otherwise we could make the S3C64XX_NR_IRQS number smaller.
 > 
-> Please review and let me know what I can improve.
+> That's not the only thing, I'm still seeing an issue even with the
+> change above.  The VICs are also complaining about preallocated
+> descriptors, but they just assume the descriptors were preallocated and
+> carry on happily.  I'd also expect this to be affecting both wm831xs but
+> it's only affecting the WM8311 on the base board, not the primary
+> WM8312, so this seems to be a red herring.
 > 
-> With best wishes,
-> Tobias
-Almost forgot this. In case someone is interested in the solid fill
-performance, I've uploaded a plot here:
-http://www.math.uni-bielefeld.de/~tjakobi/exynos/g2d_clear_perf.pdf
+> I rather suspect that the issue is at least partly that the interrupt
+> numbering is off - the CODEC has 24 interrupts allocated to it in
+> crag6410.h which is nowhere near enough and the PMICs have 32 each
+> rather than the 58 they need.  This is broken for the existing code too
+> so we should get a fix to make that right in before anything else.  A
+> trivial change to fix that doesn't seem to have helped though but I
+> probably just miscounted or something.
 
-And yes, that should be _nano_seconds on the y-axis. What I find
-interesting that despite the performance being linear (well, affine
-linear, since we have a setup time) in the number of pixels to process,
-you can still see some kind of 'clustering'.
-I wonder where this comes from, maybe some small alignment penalty, or
-something?
+Ok guys very sorry about the massive delay in looking at this
+again, I have been a bit swamped lately. I think I see what is
+going on here.
 
-With best wishes,
-Tobias
+The fix from Arnd there definitely helped, but still doesn't
+quite work and those defines you are talking about there are
+actually for the GPIOs so they are a bit of a red herring. There
+are two PMICs as you mention one of which is given a fixed IRQ
+base and the other which allocates it own. The problem appears to
+be that the one which allocates its own IRQ base takes the space
+that is specified as the fixed base for the other PMIC. Which
+then fails to allocate its IRQs.
+
+So adding a bit of an offset into the PMIC with the fixed IRQ
+base fixes the problem. Although I am not sure if it would be
+better to move both PMICs onto a fixed IRQ base so there is no
+chance of the clashing. Any thoughts?
+
+Thanks,
+Charles
+
+Applying this diff, on top of Arnd's fixup, gets everything
+working for me:
+
+diff --git a/arch/arm/mach-s3c64xx/crag6410.h
+b/arch/arm/mach-s3c64xx/crag6410.h
+index 7bc6668..59c5f44 100644
+--- a/arch/arm/mach-s3c64xx/crag6410.h
++++ b/arch/arm/mach-s3c64xx/crag6410.h
+@@ -13,7 +13,7 @@
+
+ #include <mach/gpio-samsung.h>
+
+-#define GLENFARCLAS_PMIC_IRQ_BASE      IRQ_BOARD_START
++#define GLENFARCLAS_PMIC_IRQ_BASE      IRQ_BOARD_START + 256
