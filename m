@@ -1,137 +1,52 @@
-From: Inha Song <ideal.song@samsung.com>
-Subject: [alsa-devel] [PATCH RESEND] ARM: dts: Support audio on
- Exynos5422-odroidxu3 using simple-audio-card
-Date: Mon, 23 Mar 2015 11:51:33 +0900
-Message-ID: <1427079093-28483-1-git-send-email-ideal.song@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25568 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751907AbbCWCwa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Mar 2015 22:52:30 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ARM: S3C64XX: Use fixed IRQ bases to avoid conflicts on
+ Cragganmore
+Date: Sun, 22 Mar 2015 16:03:16 +0000
+Message-ID: <20150322160316.GB6643@sirena.org.uk>
+References: <1427020841-24189-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1427020841-24189-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: kgene@kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: s.nawrocki@samsung.com, broonie@kernel.org
-Cc: kgene@kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, Inha Song <ideal.song@samsung.com>
 
-Add MAX98090 audio codec, I2S interface and the sound nodes to support
-audio on Exynos5422 SoC Based Odroid-XU3 board. Now we can support audio
-in Odroid-XU3 board using simple-audio-card DT binding.
 
-Signed-off-by: Inha Song <ideal.song@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi          |  9 +++++
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 57 ++++++++++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
+--nVMJ2NtxeReIH9PS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 4eaeabe..e459c1d 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -415,6 +415,9 @@
- 			<&clock_audss EXYNOS_I2S_BUS>,
- 			<&clock_audss EXYNOS_SCLK_I2S>;
- 		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-+		#clock-cells = <1>;
-+		clock-output-names = "i2s_cdclk0";
-+		#sound-dai-cells = <1>;
- 		samsung,idma-addr = <0x03000000>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s0_bus>;
-@@ -429,6 +432,9 @@
- 		dma-names = "tx", "rx";
- 		clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
- 		clock-names = "iis", "i2s_opclk0";
-+		#clock-cells = <1>;
-+		clock-output-names = "i2s_cdclk1";
-+		#sound-dai-cells = <1>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s1_bus>;
- 		status = "disabled";
-@@ -442,6 +448,9 @@
- 		dma-names = "tx", "rx";
- 		clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
- 		clock-names = "iis", "i2s_opclk0";
-+		#clock-cells = <1>;
-+		clock-output-names = "i2s_cdclk2";
-+		#sound-dai-cells = <1>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s2_bus>;
- 		status = "disabled";
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index edc25cf..9275ad6 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -11,6 +11,7 @@
- */
- 
- /dts-v1/;
-+#include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
- 
- / {
-@@ -285,6 +286,62 @@
- 	rtc@101E0000 {
- 		status = "okay";
- 	};
-+
-+	sound: sound {
-+		compatible = "simple-audio-card";
-+		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-+				<&clock_audss EXYNOS_MOUT_I2S>,
-+				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+		assigned-clock-parents = <&clock CLK_FIN_PLL>,
-+				<&clock_audss EXYNOS_MOUT_AUDSS>;
-+		assigned-clock-rates = <0>,
-+				<0>,
-+				<19200000>;
-+
-+		simple-audio-card,name = "Odroid-XU3";
-+
-+		simple-audio-card,widgets =
-+			"Headphone", "Headphone Jack",
-+			"Speakers", "Speakers";
-+		simple-audio-card,routing =
-+			"Headphone Jack", "HPL",
-+			"Headphone Jack", "HPR",
-+			"Headphone Jack", "MICBIAS",
-+			"IN1", "Headphone Jack",
-+			"Speakers", "SPKL",
-+			"Speakers", "SPKR";
-+
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&link0_codec>;
-+		simple-audio-card,frame-master = <&link0_codec>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s0 0>;
-+			system-clock-frequency = <19200000>;
-+		};
-+
-+		link0_codec: simple-audio-card,codec {
-+			sound-dai = <&max98090>;
-+			clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		};
-+	};
-+};
-+
-+&hsi2c_5 {
-+	status = "okay";
-+	max98090: max98090@10 {
-+		compatible = "maxim,max98090";
-+		reg = <0x10>;
-+		interrupt-parent = <&gpx3>;
-+		interrupts = <2 0>;
-+		clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		clock-names = "mclk";
-+		#sound-dai-cells = <0>;
-+	};
-+};
-+
-+&i2s0 {
-+	status = "okay";
- };
- 
- &hdmi {
--- 
-2.0.0.390.gcb682f8
+On Sun, Mar 22, 2015 at 10:40:41AM +0000, Charles Keepax wrote:
+> There are two PMICs on Cragganmore, currently one dynamically assign
+> its IRQ base and the other uses a fixed base. It is possible for the
+> statically assigned PMIC to fail if its IRQ is taken by the dynamically
+> assigned one. Fix this by statically assigning both the IRQ bases.
+>=20
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+
+Reviwed-by: Mark Brown <broonie@kernel.org>
+
+This probably wants to go to stable as well.
+
+--nVMJ2NtxeReIH9PS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVDufDAAoJECTWi3JdVIfQfOsH/A4B8myIe4Psnshp0yF532/S
+ppfHZ5QoOc2vMY+MeHHl1UPLawYn+8nPIrUh6cq1ypMI+qx+Bt7QeI3U6Hlsbzlo
+HuyeK47GxAgDQ3ohgR3oO4bODVIjq5C2suCO9iYZMqP0z7KaTYb3ONImS/fcQb9+
+uE7DLVlvqzeu4AL8xNa09uqhQTKKOQdNKI9O8DApo1cyLRsTVF0LbE6uybe+CBrZ
+v0CRDiaQqzUpVXL6qPtuPy6rlu0SBmniOlKgYDCSNLQVy7Mej9s+82uo0LBSz3qp
+Ifbr7xprrB3N9i2O0E0gM68LpjaGTrQ0vDSZyZ2qXLnehpuLKkpsZOWhlOz4kLE=
+=7Knz
+-----END PGP SIGNATURE-----
+
+--nVMJ2NtxeReIH9PS--
