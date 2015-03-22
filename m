@@ -1,57 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH 05/10] ARM: s3c64xx: enable sparse IRQ support
-Date: Sat, 21 Mar 2015 18:22:59 +0000
-Message-ID: <20150321182259.GV2869@sirena.org.uk>
-References: <1425299763-4066822-1-git-send-email-arnd@arndb.de>
- <1425299763-4066822-6-git-send-email-arnd@arndb.de>
- <20150306174316.GA26692@opensource.wolfsonmicro.com>
- <6643361.dhtMagqMYZ@wuerfel>
- <20150318000234.GU28806@sirena.org.uk>
- <20150321163821.GE23705@opensource.wolfsonmicro.com>
+Date: Sun, 22 Mar 2015 03:54:42 +0100
+Message-ID: <201503220354.43125.arnd@arndb.de>
+References: <1425299763-4066822-1-git-send-email-arnd@arndb.de> <6643361.dhtMagqMYZ@wuerfel> <20150318000234.GU28806@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nk27jClX7wGPY2hW"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44868 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751670AbbCUSXO (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.24]:58939 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751502AbbCVCz0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Mar 2015 14:23:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20150321163821.GE23705@opensource.wolfsonmicro.com>
+	Sat, 21 Mar 2015 22:55:26 -0400
+In-Reply-To: <20150318000234.GU28806@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, a.kesavan@samsung.com, ch.naveen@samsung.com, jic23@kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, dmitry.torokhov@gmail.com, Maurus Cuelenaere <mcuelenaere@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, cw00.choi@samsung.com, Kukjin Kim <kgene@kernel.org>, jic23@kernel.org, a.kesavan@samsung.com, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, ch.naveen@samsung.com
 
+On Wednesday 18 March 2015, Mark Brown wrote:
+> On Sun, Mar 08, 2015 at 10:42:59PM +0100, Arnd Bergmann wrote:
 
---nk27jClX7wGPY2hW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> > index f395a5617142..cbe353a5450e 100644
+> > --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
+> > +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> > @@ -855,7 +855,7 @@ static void __init crag6410_machine_init(void)
+> >  MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
+> >       /* Maintainer: Mark Brown <broonie@opensource.wolfsonmicro.com> */
+> >       .atag_offset    = 0x100,
+> > -     .nr_irqs        = S3C64XX_NR_IRQS + 160,
+> > +     .nr_irqs        = S3C64XX_NR_IRQS,
+> >       .init_irq       = s3c6410_init_irq,
+> >       .map_io         = crag6410_map_io,
+> >       .init_machine   = crag6410_machine_init,
+> 
+> > The samsung-gpio driver does not allocate irq descriptors for itself
+> > though, otherwise we could make the S3C64XX_NR_IRQS number smaller.
+> 
+> That's not the only thing, I'm still seeing an issue even with the
+> change above.  The VICs are also complaining about preallocated
+> descriptors, but they just assume the descriptors were preallocated and
+> carry on happily.
 
-On Sat, Mar 21, 2015 at 04:38:21PM +0000, Charles Keepax wrote:
+Yes, that is the behavior I expected to see. The VIC driver would be
+fine in theory with allocating the descriptors dynamically, but
+the secondary irqchip (s3c_irq_eint) would need significant changes.
 
-> So adding a bit of an offset into the PMIC with the fixed IRQ
-> base fixes the problem. Although I am not sure if it would be
-> better to move both PMICs onto a fixed IRQ base so there is no
-> chance of the clashing. Any thoughts?
-
-Yes, that sounds like the safest thing.
-
---nk27jClX7wGPY2hW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVDbcDAAoJECTWi3JdVIfQKq8H/jzHuTP1boJw1M26r6kfYNg+
-IcZIDP3g+EGdz+xug9Jp1Cc5VtJArWoyhyDOndBZnlwOCmUbNca5iy7XC1xCa+B6
-Yir6QZfLxhlZuMIRRtrzxu4NPEyX9X2TejCap3z74YyjzeoL++hreioVQHzz7QqM
-RrUdnKg5sVuIllITQYRg7ARBUPXZ5+u19zqPeAvjmLlrA8126rmf0Icqf3BOpQfi
-tnENR//1Loc5tbpdS9wtI8QsZ6Q+2yXPEZ+jmFIZkDAxlPaOSZnmYeaBNJAMan69
-FBiVUXguApwtZR7TMOTul8q4dwl27hgE4rvf3QRIiL0Zxj5NCvHfxVTrbTNbAfc=
-=9yVG
------END PGP SIGNATURE-----
-
---nk27jClX7wGPY2hW--
+IIRC, another problem is the way that the first NR_IRQS_LEGACY interrupts
+are always preallocated, but would not need to, once we fix the eint.
+	Arnd
