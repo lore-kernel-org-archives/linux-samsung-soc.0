@@ -1,52 +1,95 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: S3C64XX: Use fixed IRQ bases to avoid conflicts on Cragganmore
-Date: Sun, 22 Mar 2015 10:40:41 +0000
-Message-ID: <1427020841-24189-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42070 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751669AbbCVKoG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Mar 2015 06:44:06 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 1/5] tests/exynos: add fimg2d performance analysis
+Date: Sun, 22 Mar 2015 15:36:55 +0000
+Message-ID: <550EE197.1090008@gmail.com>
+References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1426890348-12807-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1426890348-12807-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: linux@arm.linux.org.uk, arnd@arndb.de, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-There are two PMICs on Cragganmore, currently one dynamically assign
-its IRQ base and the other uses a fixed base. It is possible for the
-statically assigned PMIC to fail if its IRQ is taken by the dynamically
-assigned one. Fix this by statically assigning both the IRQ bases.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- arch/arm/mach-s3c64xx/crag6410.h      |    1 +
- arch/arm/mach-s3c64xx/mach-crag6410.c |    1 +
- 2 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/crag6410.h b/arch/arm/mach-s3c64xx/crag6410.h
-index 7bc6668..dcbe17f 100644
---- a/arch/arm/mach-s3c64xx/crag6410.h
-+++ b/arch/arm/mach-s3c64xx/crag6410.h
-@@ -14,6 +14,7 @@
- #include <mach/gpio-samsung.h>
- 
- #define GLENFARCLAS_PMIC_IRQ_BASE	IRQ_BOARD_START
-+#define BANFF_PMIC_IRQ_BASE		(IRQ_BOARD_START + 64)
- 
- #define PCA935X_GPIO_BASE		GPIO_BOARD_START
- #define CODEC_GPIO_BASE			(GPIO_BOARD_START + 8)
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 10b913b..65c426b 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -554,6 +554,7 @@ static struct wm831x_touch_pdata touch_pdata = {
- 
- static struct wm831x_pdata crag_pmic_pdata = {
- 	.wm831x_num = 1,
-+	.irq_base = BANFF_PMIC_IRQ_BASE,
- 	.gpio_base = BANFF_PMIC_GPIO_BASE,
- 	.soft_shutdown = true,
- 
--- 
-1.7.2.5
+T24gMjAvMDMvMTUgMjI6MjUsIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gQ3VycmVudGx5IG9ubHkg
+ZmFzdCBzb2xpZCBjb2xvciBjbGVhciBwZXJmb3JtYW5jZSBpcyBtZWFzdXJlZC4KPiBBIGxhcmdl
+IGJ1ZmZlciBpcyBhbGxvY2F0ZWQgYW5kIHNvbGlkIGNvbG9yIGNsZWFyIG9wZXJhdGlvbnMKPiBh
+cmUgZXhlY3V0ZWQgb24gaXQgd2l0aCByYW5kb21seSBjaG9zZW4gcHJvcGVydGllcyAocG9zaXRp
+b24KPiBhbmQgc2l6ZSBvZiB0aGUgcmVnaW9uLCBjbGVhciBjb2xvcikuIEV4ZWN1dGlvbiB0aW1l
+IGlzCj4gbWVhc3VyZWQgYW5kIG91dHB1dCB0b2dldGhlciB3aXRoIHRoZSBhbW91bnQgb2YgcGl4
+ZWxzCj4gcHJvY2Vzc2VkLgo+IAo+IFRoZSAnc2ltcGxlJyB2YXJpYW50IG9ubHkgZXhlY3V0ZXMg
+b25lIEcyRCBjb21tYW5kIGJ1ZmZlciBhdAo+IGEgdGltZSwgd2hpbGUgdGhlICdtdWx0aScgdmFy
+aWFudCBleGVjdXRlcyBtdWx0aXBsZSBvbmVzLiBUaGlzCj4gY2FuIGJlIHVzZWQgdG8gbWVhc3Vy
+ZSBzZXR1cC9leGVjIG92ZXJoZWFkLgo+IAo+IFRoZSB0ZXN0IGFsc28gc2VydmVzIGEgc3RhYmls
+aXR5IGNoZWNrLiBJZiBjbG9ja3Mvdm9sdGFnZXMgYXJlCj4gdG9vIGhpZ2ggb3IgbG93IHJlc3Bl
+Y3RpdmVseSwgdGhlIHRlc3QgcXVpY2tseSByZXZlYWxzIHRoaXMuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+CkhpIFRvYmlh
+cywKCkFzIG1vc3Qgb2YgdGhpcyBzZXJpZXMgaXMgcXVpdGUgRXh5bm9zIHNwZWNpZmljIEkgd2ls
+bCBjb3ZlciB0aGUgbWlzYwpiaXRzLCBhbmQgbGVhdmUgdGhlIGNvcmUgcGFydCB0byBzb21lb25l
+IGZhbWlsaWFyIHdpdGggdGhlIGhhcmR3YXJlLgoKPiAtLS0KPiAgdGVzdHMvZXh5bm9zL01ha2Vm
+aWxlLmFtICAgICAgICAgIHwgICA4ICstCj4gIHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Bl
+cmYuYyB8IDI0NSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAyIGZp
+bGVzIGNoYW5nZWQsIDI1MiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gIGNyZWF0ZSBt
+b2RlIDEwMDY0NCB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9wZXJmLmMKPiAKPiBkaWZmIC0t
+Z2l0IGEvdGVzdHMvZXh5bm9zL01ha2VmaWxlLmFtIGIvdGVzdHMvZXh5bm9zL01ha2VmaWxlLmFt
+Cj4gaW5kZXggYjIxZDAxNi4uMjQzZjk1NyAxMDA2NDQKPiAtLS0gYS90ZXN0cy9leHlub3MvTWFr
+ZWZpbGUuYW0KPiArKysgYi90ZXN0cy9leHlub3MvTWFrZWZpbGUuYW0KPiBAQCAtNSw5ICs1LDEx
+IEBAIEFNX0NGTEFHUyA9IFwKPiAgCS1JICQodG9wX3NyY2RpcikvZXh5bm9zIFwKPiAgCS1JICQo
+dG9wX3NyY2RpcikKPiAgCj4gK2Jpbl9QUk9HUkFNUyA9IGV4eW5vc19maW1nMmRfcGVyZgo+ICsK
+TWlnaHQgSSBzdWdnZXN0IHRoYXQgd2UgdHJlYXQgdGhpcyAoYW5kIHlvdXIgZm9sbG93IHVwIHV0
+aWxpdHkpIGFzIGEKdGVzdCA/IEkuZS4gdXNlCgppZiBIQVZFX0lOU1RBTExfVEVTVFMKYmluX1BS
+T0dSQU1TID0gXAoJZXh5bm9zX2ZpbWcyZF9wZXJmCmVsc2UKbm9pbnN0X1BST0dSQU1TID0gXAoJ
+ZXh5bm9zX2ZpbWcyZF9wZXJmCmVuZGlmCgphbmQgYW1lbmQgdGhlIGJsb2NrIGJlbG93IGFwcHJv
+cHJpYXRlbHkgPwoKPiAgaWYgSEFWRV9MSUJLTVMKPiAgaWYgSEFWRV9JTlNUQUxMX1RFU1RTCj4g
+LWJpbl9QUk9HUkFNUyA9IFwKPiArYmluX1BST0dSQU1TICs9IFwKPiAgCWV4eW5vc19maW1nMmRf
+dGVzdAo+ICBlbHNlCj4gIG5vaW5zdF9QUk9HUkFNUyA9IFwKPiBAQCAtMTUsNiArMTcsMTAgQEAg
+bm9pbnN0X1BST0dSQU1TID0gXAo+ICBlbmRpZgo+ICBlbmRpZgo+ICAKPiArZXh5bm9zX2ZpbWcy
+ZF9wZXJmX0xEQUREID0gXAo+ICsJJCh0b3BfYnVpbGRkaXIpL2xpYmRybS5sYSBcCj4gKwkkKHRv
+cF9idWlsZGRpcikvZXh5bm9zL2xpYmRybV9leHlub3MubGEKPiArCj4gIGV4eW5vc19maW1nMmRf
+dGVzdF9MREFERCA9IFwKPiAgCSQodG9wX2J1aWxkZGlyKS9saWJkcm0ubGEgXAo+ICAJJCh0b3Bf
+YnVpbGRkaXIpL2xpYmttcy9saWJrbXMubGEgXAo+IGRpZmYgLS1naXQgYS90ZXN0cy9leHlub3Mv
+ZXh5bm9zX2ZpbWcyZF9wZXJmLmMgYi90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF9wZXJmLmMK
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAuLmY0NWNhY2MKPiAtLS0gL2Rl
+di9udWxsCj4gKysrIGIvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfcGVyZi5jCj4gQEAgLTAs
+MCArMSwyNDUgQEAKQ2FuIHlvdSBhZGQgYSBsaWNlbmNlIHRvIHRoaXMgZmlsZS4gV291bGQgYmUg
+bmljZSBpZiBpdCdzIGNvdmVyZWQgYnkKWC9NSVQgc28gdGhhdCAqQlNEIGZvbGsgYW5kIG90aGVy
+cyBjYW4gdXNlIHlvdXIgdG9vbC4KCj4gKyNpbmNsdWRlIDxzdGRsaWIuaD4KPiArI2luY2x1ZGUg
+PHN0ZGlvLmg+Cj4gKyNpbmNsdWRlIDx0aW1lLmg+Cj4gKwo+ICsjaW5jbHVkZSA8eGY4NmRybS5o
+Pgo+ICsKPiArI2luY2x1ZGUgImV4eW5vc19kcm0uaCIKPiArI2luY2x1ZGUgImV4eW5vc19kcm1p
+Zi5oIgo+ICsjaW5jbHVkZSAiZXh5bm9zX2ZpbWcyZC5oIgo+ICsKPiArLyogRW5hYmxlIHRvIGZv
+cm1hdCB0aGUgb3V0cHV0IHNvIHRoYXQgaXQgY2FuIGJlIGZlZCBpbnRvIE1hdGhlbWF0aWNhLiAq
+Lwo+ICsjZGVmaW5lIE9VVFBVVF9NQVRIRU1BVElDQSAwCj4gKwo+ICtzdGF0aWMgaW50IGZpbWcy
+ZF9wZXJmX3NpbXBsZShzdHJ1Y3QgZXh5bm9zX2JvICpibywgc3RydWN0IGcyZF9jb250ZXh0ICpj
+dHgsCj4gKwkJCXVuc2lnbmVkIGJ1Zl93aWR0aCwgdW5zaWduZWQgYnVmX2hlaWdodCwgdW5zaWdu
+ZWQgaXRlcmF0aW9ucykKPiArewo+ICsJc3RydWN0IHRpbWVzcGVjIHRzcGVjID0geyAwIH07Cj4g
+KwlzdHJ1Y3QgZzJkX2ltYWdlIGltZyA9IHsgMCB9Owo+ICsKPiArCXVuc2lnbmVkIGxvbmcgbG9u
+ZyBnMmRfdGltZTsKPiArCXVuc2lnbmVkIGk7Cj4gKwlpbnQgcmV0ID0gMDsKPiArCj4gKwlpbWcu
+d2lkdGggPSBidWZfd2lkdGg7Cj4gKwlpbWcuaGVpZ2h0ID0gYnVmX2hlaWdodDsKPiArCWltZy5z
+dHJpZGUgPSBidWZfd2lkdGggKiA0Owo+ICsJaW1nLmNvbG9yX21vZGUgPSBHMkRfQ09MT1JfRk1U
+X0FSR0I4ODg4IHwgRzJEX09SREVSX0FYUkdCOwo+ICsJaW1nLmJ1Zl90eXBlID0gRzJEX0lNR0JV
+Rl9HRU07Cj4gKwlpbWcuYm9bMF0gPSBiby0+aGFuZGxlOwo+ICsKPiArCXNyYW5kKHRpbWUoTlVM
+TCkpOwo+ICsKPiArCXByaW50Zigic3RhcnRpbmcgc2ltcGxlIEcyRCBwZXJmb3JtYW5jZSB0ZXN0
+XG4iKTsKPiArCXByaW50ZigiYnVmZmVyIHdpZHRoID0gJXUsIGJ1ZmZlciBoZWlnaHQgPSAldSwg
+aXRlcmF0aW9ucyA9ICV1XG4iLAo+ICsJCWJ1Zl93aWR0aCwgYnVmX2hlaWdodCwgaXRlcmF0aW9u
+cyk7Cj4gKwo+ICsjaWYgKE9VVFBVVF9NQVRIRU1BVElDQSA9PSAxKQo+ICsJcHV0Y2hhcigneycp
+Owo+ICsjZW5kaWYKPiArCkknbSBzdXNwZWN0aW5nIHRoYXQgaGF2aW5nIHRoaXMgYXMgYSBydW50
+aW1lIG9wdGlvbiB3aWxsIGJlIGJldHRlci4KU29tZXRoaW5nIGxpa2UgLi9leHlub3NfZmltZzJk
+X3BlcmYgLS1vdXRwdXQgbWF0aGVtYXRpY2EgPwoKQXMgYSBnZW5lcmFsIG5vdGUgSSB3b3VsZCBy
+ZWNvbW1lbmQga2VlcGluZyBzdGF0ZW1lbnRzIG9uIHNlcGFyYXRlIGxpbmVzCihub25lIG9mIGlm
+IChmb28pIGZhcigpKSBhcyBpdCBtYWtlcyBkZWJ1Z2dpbmcgZWFzaWVyLgoKQWx0aG91Z2ggYWxs
+IG9mIHRoZSBhYm92ZSBhcmUgbXkgdGFrZSBvbiB0aGluZ3MsIHNvIGNoZWNrcyB3aXRoIHRoZQpF
+eHlub3MgY3JldyBpZiB0aGV5IGZlZWwgb3RoZXJ3aXNlIDotKQoKQ2hlZXJzLApFbWlsCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
