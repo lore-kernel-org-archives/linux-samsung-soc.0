@@ -1,14 +1,15 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
 Subject: Re: [PATCH 2/5] exynos: add EXYNOS_G2D_EVENT to drmHandleEvent
-Date: Sun, 22 Mar 2015 15:41:53 +0000
-Message-ID: <550EE2C1.8020603@gmail.com>
+Date: Sun, 22 Mar 2015 17:29:00 +0100
+Message-ID: <550EEDCC.1080605@gmx.net>
 References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
  <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <550EE2C1.8020603@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+In-Reply-To: <550EE2C1.8020603@gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -18,25 +19,31 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+To: Emil Velikov <emil.l.velikov@gmail.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAvMDMvMTUgMjI6MjUsIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gVGhpcyBldmVudCBpcyBz
-cGVjaWZpYyB0byBFeHlub3MgRzJEIERSTSBkcml2ZXIuIE9ubHkKPiBwcm9jZXNzIGl0IHdoZW4g
-RXh5bm9zIHN1cHBvcnQgaXMgZW5hYmxlZC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFr
-b2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZXh5bm9zL2V4eW5v
-c19kcm0uaCB8IDEyICsrKysrKysrKysrKwo+ICB4Zjg2ZHJtLmggICAgICAgICAgIHwgIDcgKysr
-KysrLQo+ICB4Zjg2ZHJtTW9kZS5jICAgICAgIHwgMTggKysrKysrKysrKysrKysrKysrCj4gIDMg
-ZmlsZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+IApJIGZlYXIg
-d2UgYXJlIG5vdCAoeWV0KSBhbGxvd2VkIHRvIGRvIGVpdGhlciBvZiB0aGVzZSBjaGFuZ2VzLgoK
-VGhlIGV4eW5vcy9leHlub3NfZHJtLmggaGVhZGVyIGlzIChzdXBwb3NlZCB0bykgYmUgaW4gc3lu
-Yy9jb21lIGZyb20gdGhlCmtlcm5lbC4gQW5kIGNoYW5nZXMgaGVyZSBhcmUgdG8gYmUgcmVmbGVj
-dGVkIG9ubHkgd2hlbiB0aGUgY29ycmVzcG9uZGluZwpwYXRjaCBsYW5kcyBpbiBkcm0tbmV4dCAo
-YXMgcGVyIFJFTEVBU0lORykuCgpXcnQgZXh0ZW5kaW5nIHRoZSBjdXJyZW50IGRybUV2ZW50Q29u
-dGV4dCwgSSdtIG5vdCBzdXJlIHRoYXQgYWRkaW5nCmRldmljZSBzcGVjaWZpYyBjaGFuZ2VzIHRv
-IGl0IGFyZSBhbGxvd2VkLgoKV2lzaCBJIHdvdWxkIGdpdmUgeW91IHNvbWUgYmV0dGVyIG5ld3Mg
-YnV0Li4uIEkgY2Fubm90IHNvcnJ5IDotXAoKLUVtaWwKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+SGVsbG8gRW1pbCwKCgpFbWlsIFZlbGlrb3Ygd3JvdGU6Cj4gSSBmZWFyIHdlIGFyZSBub3QgKHll
+dCkgYWxsb3dlZCB0byBkbyBlaXRoZXIgb2YgdGhlc2UgY2hhbmdlcy4KPiAKPiBUaGUgZXh5bm9z
+L2V4eW5vc19kcm0uaCBoZWFkZXIgaXMgKHN1cHBvc2VkIHRvKSBiZSBpbiBzeW5jL2NvbWUgZnJv
+bSB0aGUKPiBrZXJuZWwuIEFuZCBjaGFuZ2VzIGhlcmUgYXJlIHRvIGJlIHJlZmxlY3RlZCBvbmx5
+IHdoZW4gdGhlIGNvcnJlc3BvbmRpbmcKPiBwYXRjaCBsYW5kcyBpbiBkcm0tbmV4dCAoYXMgcGVy
+IFJFTEVBU0lORykuCnRoZSBwb2ludCBoZXJlIGlzLCB0aGF0IHRoZSBjdXJyZW50IGhlYWRlciBp
+biBsaWJkcm0gaW4gX25vdF8gaW4gc3luYwp3aXRoIHRoZSBvbmUgaW4gdGhlIGtlcm5lbC4gSXQn
+cyBob3BlbGVzc2x5IG91dGRhdGVkLCBidXQgbWFpbmx5IGJlY2F1c2UKZXh5bm9zL2xpYmRybSBk
+b2Vzbid0IHVzZSBhbnkgbmV3IGZ1bmN0aW9uYWxpdHkgcHJvdmlkZWQgYnkgc29tZSB1cGRhdGUu
+CgpIZXJlJ3MgdGhlIGN1cnJlbnQga2VybmVsIGhlYWRlcjoKaHR0cHM6Ly9naXQua2VybmVsLm9y
+Zy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvc3RhYmxlL2xpbnV4LXN0YWJsZS5naXQvdHJlZS9pbmNs
+dWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaAoKVGhlIGV2ZW50IHN0dWZmIGhhcyBiZWVuIHRoZXJl
+IHNpbmNlIDIwMTI6Cmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0
+L3N0YWJsZS9saW51eC1zdGFibGUuZ2l0L2NvbW1pdC9pbmNsdWRlL2RybS9leHlub3NfZHJtLmg/
+aWQ9ZDdmMTY0MmM5MGFiNWViMmQ3YzQ4YWYwNTgxYzk5MzA5NGY5N2UxYQoKVGhlIG9ubHkgcmVh
+c29uIHdoeSBJIGhhdmVuJ3QgYWRkZWQgdGhlIElQUCB0aGluZ3MsIGlzIGJlY2F1c2UgSSBkb24n
+dAppbnRlbmQgdG8gd29yayBvbiB0aGlzIGZvciB0aGUgbW9tZW50LgoKCgo+IFdydCBleHRlbmRp
+bmcgdGhlIGN1cnJlbnQgZHJtRXZlbnRDb250ZXh0LCBJJ20gbm90IHN1cmUgdGhhdCBhZGRpbmcK
+PiBkZXZpY2Ugc3BlY2lmaWMgY2hhbmdlcyB0byBpdCBhcmUgYWxsb3dlZC4KV2h5IHNob3VsZG4n
+dCBpdD8gSXNuJ3QgZHJtSGFuZGxlRXZlbnQgc3VwcG9zZWQgdG8gaGFuZGxlIGFsbCBraW5kcyBv
+ZgpEUk0gZXZlbnRzIHRoYXQgdGhlIGtlcm5lbCBwcm9kdWNlcz8KCgpXaXRoIGJlc3Qgd2lzaGVz
+LApUb2JpYXMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
