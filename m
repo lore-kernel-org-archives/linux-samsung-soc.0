@@ -1,51 +1,55 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 1/7] drm/exynos: remove unused exynos_crtc->win_enable()
- callback
-Date: Mon, 23 Mar 2015 17:37:56 -0300
-Message-ID: <1427143082-4257-2-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 5/7] drm/exynos: remove exynos_plane_destroy()
+Date: Mon, 23 Mar 2015 17:38:00 -0300
+Message-ID: <1427143082-4257-6-git-send-email-gustavo@padovan.org>
 References: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:35131 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753435AbbCWUi3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Mar 2015 16:38:29 -0400
+Received: by qgf74 with SMTP id 74so38342137qgf.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2015 13:38:28 -0700 (PDT)
 In-Reply-To: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-Tm9uZSBvZiB0aGUgZXh5bm9zIGNydGMgZHJpdmVycyBpbXBsZW1lbnRzIHdpbl9lbmFibGUoKSBz
-byByZW1vdmUgaXQgZm9yCmJldHRlciBjbGFyaXR5IG9mIHRoZSBjb2RlLgoKU2lnbmVkLW9mZi1i
-eTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0K
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCB8IDIgLS0KIDEgZmlsZSBj
-aGFuZ2VkLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuaAppbmRleCA5YWZkMzkwLi40ZThmMGIwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2Rydi5oCkBAIC0xNzQsNyArMTc0LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fZGlzcGxh
-eSB7CiAgKgloYXJkd2FyZSBvdmVybGF5IGlzIHVwZGF0ZWQuCiAgKiBAd2luX21vZGVfc2V0OiBj
-b3B5IGRybSBvdmVybGF5IGluZm8gdG8gaHcgc3BlY2lmaWMgb3ZlcmxheSBpbmZvLgogICogQHdp
-bl9jb21taXQ6IGFwcGx5IGhhcmR3YXJlIHNwZWNpZmljIG92ZXJsYXkgZGF0YSB0byByZWdpc3Rl
-cnMuCi0gKiBAd2luX2VuYWJsZTogZW5hYmxlIGhhcmR3YXJlIHNwZWNpZmljIG92ZXJsYXkuCiAg
-KiBAd2luX2Rpc2FibGU6IGRpc2FibGUgaGFyZHdhcmUgc3BlY2lmaWMgb3ZlcmxheS4KICAqIEB0
-ZV9oYW5kbGVyOiB0cmlnZ2VyIHRvIHRyYW5zZmVyIHZpZGVvIGltYWdlIGF0IHRoZSB0ZWFyaW5n
-IGVmZmVjdAogICoJc3luY2hyb25pemF0aW9uIHNpZ25hbCBpZiB0aGVyZSBpcyBhIHBhZ2UgZmxp
-cCByZXF1ZXN0LgpAQCAtMTkyLDcgKzE5MSw2IEBAIHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3Bz
-IHsKIAl2b2lkICgqd2luX21vZGVfc2V0KShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLAog
-CQkJCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFuZSk7CiAJdm9pZCAoKndpbl9jb21taXQp
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIGludCB6cG9zKTsKLQl2b2lkICgqd2luX2Vu
-YWJsZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpOwogCXZvaWQgKCp3
-aW5fZGlzYWJsZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpOwogCXZv
-aWQgKCp0ZV9oYW5kbGVyKShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKTsKIH07Ci0tIAoy
-LjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+The .destroy() callback for exynos can be replaced by drm_plane_cleanup().
+The only extra operation on exynos_plane_destroy() was a call to
+exynos_plane_disable() but the plane is already disabled by a earlier call
+to drm_framebuffer_remove().
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 2fbac9b..2b0479e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -178,16 +178,10 @@ static int exynos_disable_plane(struct drm_plane *plane)
+ 	return 0;
+ }
+ 
+-static void exynos_plane_destroy(struct drm_plane *plane)
+-{
+-	exynos_disable_plane(plane);
+-	drm_plane_cleanup(plane);
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= exynos_update_plane,
+ 	.disable_plane	= exynos_disable_plane,
+-	.destroy	= exynos_plane_destroy,
++	.destroy	= drm_plane_cleanup,
+ };
+ 
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+-- 
+2.1.0
