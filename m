@@ -1,28 +1,56 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
-Date: Mon, 23 Mar 2015 12:49:21 +0100
-Message-ID: <20150323114921.GM4441@8bytes.org>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
- <1426843458.23931.17.camel@mtksdaap41>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 2/2] mfd: sec-core: Modify RTC compatible name of
+ S2MPS13
+Date: Mon, 23 Mar 2015 12:34:00 +0000
+Message-ID: <20150323123400.GD24804@x1>
+References: <1426586058-15987-1-git-send-email-k.kozlowski@samsung.com>
+ <1426586058-15987-2-git-send-email-k.kozlowski@samsung.com>
+ <1426586254.16027.1.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:35504 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752277AbbCWMeF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Mar 2015 08:34:05 -0400
+Received: by webck51 with SMTP id ck51so9751441web.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2015 05:34:04 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1426843458.23931.17.camel@mtksdaap41>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Yong Wu =?utf-8?B?KOWQtOWLhyk=?= <yong.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <1426586254.16027.1.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Yingjoe,
+On Tue, 17 Mar 2015, Krzysztof Kozlowski wrote:
 
-On Fri, Mar 20, 2015 at 05:24:18PM +0800, Yingjoe Chen wrote:
-> What's the status of this patchset?
-> While porting MTK IOMMU driver[1], we need to use a global variable
-> because we need to do dma_alloc_coherent in our domain_init. I think we
-> can remove that global variable if we base on this series.
+> On wto, 2015-03-17 at 10:54 +0100, Krzysztof Kozlowski wrote:
+> > From: Chanwoo Choi <cw00.choi@samsung.com>
+> >=20
+> > This patch modify the RTC compatible name of S2MPS13 because S2MPS1=
+3's RTC is
+> > equal to S2MPS14's RTC.
+> >=20
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>=20
+>=20
+> Tested on Exynos5433 board with S2MPS13 PMIC.
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>=20
+> I feel like talking to myself with this self-reply... but at least th=
+is
+> leaves a public track :).
 
-I plan to send out a new version this week.
+If you are submitting a patch, it is assumed that you tested it
+_before_ sending.=20
 
-
-	Joerg
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
