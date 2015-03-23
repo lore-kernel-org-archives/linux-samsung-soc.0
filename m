@@ -1,33 +1,39 @@
-From: Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 00/15] iommu: Move domain allocation into drivers
-Date: Mon, 23 Mar 2015 21:35:36 +0800
-Message-ID: <1427117736.18677.8.camel@mtksdaap41>
-References: <1422316305-19216-1-git-send-email-joro@8bytes.org>
-	 <1426843458.23931.17.camel@mtksdaap41>  <20150323114921.GM4441@8bytes.org>
+From: Valentin Rothberg <valentinrothberg@gmail.com>
+Subject: Renaming ARM_CCI
+Date: Mon, 23 Mar 2015 16:10:14 +0100
+Message-ID: <CAD3Xx4+ECHuri6nT7=gpM5EnAqZM2zW8TK4T0yjW+aMMz=pwdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150323114921.GM4441-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Yong Wu =?UTF-8?Q?=28=E5=90=B4=E5=8B=87=29?= <yong.wu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:35807 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752106AbbCWPKq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Mar 2015 11:10:46 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: suzuki.poulose@arm.com, linux@arm.linux.org.uk
+Cc: sudeep.holla@arm.com, nicolas.pitre@linaro.org, punit.agrawal@arm.com, will.deacon@arm.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Andreas Ruprecht <rupran@einserver.de>, hengelein Stefan <stefan.hengelein@fau.de>
 
-On Mon, 2015-03-23 at 12:49 +0100, Joerg Roedel wrote:
-> Hi Yingjoe,
-> 
-> On Fri, Mar 20, 2015 at 05:24:18PM +0800, Yingjoe Chen wrote:
-> > What's the status of this patchset?
-> > While porting MTK IOMMU driver[1], we need to use a global variable
-> > because we need to do dma_alloc_coherent in our domain_init. I think we
-> > can remove that global variable if we base on this series.
-> 
-> I plan to send out a new version this week.
+Hi Suzuki,
 
-Hi Joerg,
+your commit c9966c98697a ("arm-cci: Split the code for PMU vs driver
+support") renames the Kconfig option ARM_CCI to ARM_CCI400_PORT_CTRL.
+However, the commit does not rename all references on ARM_CCI:
 
-That's great.
-Thanks for the update :)
+drivers/bus/Kconfig:29: select ARM_CCI
+drivers/bus/Makefile:6:obj-$(CONFIG_ARM_CCI)            += arm-cci.o
+include/linux/arm-cci.h:31:#ifdef CONFIG_ARM_CCI
 
-Joe.C
+Is this intentional or is there a patch scheduled somewhere to fix this issue?
+
+I detected your commit with scripts/checkkconfigsymbols.py.  A recent
+patch added support to make the script git aware, so that it lets you
+check git commits.  It's added to Greg's misc tree and should arrive
+soon in linux-next.
+
+[linux-next]$ ./checkkconfigsymbols.py --diff next-20150320..next-20150323
+ARM_CCI drivers/bus/Makefile, include/linux/arm-cci.h, drivers/bus/Kconfig
+
+Kind regards,
+ Valentin
