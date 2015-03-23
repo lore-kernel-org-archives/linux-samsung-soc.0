@@ -1,55 +1,58 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 5/7] drm/exynos: remove exynos_plane_destroy()
-Date: Mon, 23 Mar 2015 17:38:00 -0300
-Message-ID: <1427143082-4257-6-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 4/7] drm/exynos: make zpos property immutable
+Date: Mon, 23 Mar 2015 17:37:59 -0300
+Message-ID: <1427143082-4257-5-git-send-email-gustavo@padovan.org>
 References: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:35131 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753435AbbCWUi3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Mar 2015 16:38:29 -0400
-Received: by qgf74 with SMTP id 74so38342137qgf.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2015 13:38:28 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-The .destroy() callback for exynos can be replaced by drm_plane_cleanup().
-The only extra operation on exynos_plane_destroy() was a call to
-exynos_plane_disable() but the plane is already disabled by a earlier call
-to drm_framebuffer_remove().
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 2fbac9b..2b0479e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -178,16 +178,10 @@ static int exynos_disable_plane(struct drm_plane *plane)
- 	return 0;
- }
- 
--static void exynos_plane_destroy(struct drm_plane *plane)
--{
--	exynos_disable_plane(plane);
--	drm_plane_cleanup(plane);
--}
--
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= exynos_update_plane,
- 	.disable_plane	= exynos_disable_plane,
--	.destroy	= exynos_plane_destroy,
-+	.destroy	= drm_plane_cleanup,
- };
- 
- static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+V2UgYWxyZWFkeSBzZXQgZWFjaCBwbGFuZSB6cG9zIGF0IGluaXQsIGFmdGVyIHRoYXQgY2hhbmdl
+cyB0byB6cG9zIGFyZQpub3QgZXhwZWN0ZWQuIFRoaXMgcGF0Y2ggdHVybnMgenBvcyBpbnRvIGEg
+cmVhZC1vbmx5IHByb3BlcnR5IHNvIG5vdyBpdCBpcwppbXBvc3NpYmxlIHRvIHNldCB6cG9zLgoK
+U2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3Jh
+LmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwg
+MjEgKystLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
+LCAxOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
+ZS5jCmluZGV4IDUwNGJkNmUuLjJmYmFjOWIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9wbGFuZS5jCkBAIC0xODQsMjcgKzE4NCwxMCBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
+cGxhbmVfZGVzdHJveShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSkKIAlkcm1fcGxhbmVfY2xlYW51
+cChwbGFuZSk7CiB9CiAKLXN0YXRpYyBpbnQgZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1
+Y3QgZHJtX3BsYW5lICpwbGFuZSwKLQkJCQkgICAgIHN0cnVjdCBkcm1fcHJvcGVydHkgKnByb3Bl
+cnR5LAotCQkJCSAgICAgdWludDY0X3QgdmFsKQotewotCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYg
+PSBwbGFuZS0+ZGV2OwotCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0
+b19leHlub3NfcGxhbmUocGxhbmUpOwotCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKmRldl9w
+cml2ID0gZGV2LT5kZXZfcHJpdmF0ZTsKLQotCWlmIChwcm9wZXJ0eSA9PSBkZXZfcHJpdi0+cGxh
+bmVfenBvc19wcm9wZXJ0eSkgewotCQlleHlub3NfcGxhbmUtPnpwb3MgPSB2YWw7Ci0JCXJldHVy
+biAwOwotCX0KLQotCXJldHVybiAtRUlOVkFMOwotfQotCiBzdGF0aWMgc3RydWN0IGRybV9wbGFu
+ZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3MgPSB7CiAJLnVwZGF0ZV9wbGFuZQk9IGV4eW5vc191
+cGRhdGVfcGxhbmUsCiAJLmRpc2FibGVfcGxhbmUJPSBleHlub3NfZGlzYWJsZV9wbGFuZSwKIAku
+ZGVzdHJveQk9IGV4eW5vc19wbGFuZV9kZXN0cm95LAotCS5zZXRfcHJvcGVydHkJPSBleHlub3Nf
+cGxhbmVfc2V0X3Byb3BlcnR5LAogfTsKIAogc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0dGFj
+aF96cG9zX3Byb3BlcnR5KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLApAQCAtMjE2LDggKzE5OSw4
+IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3Qg
+ZHJtX3BsYW5lICpwbGFuZSwKIAogCXByb3AgPSBkZXZfcHJpdi0+cGxhbmVfenBvc19wcm9wZXJ0
+eTsKIAlpZiAoIXByb3ApIHsKLQkJcHJvcCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UoZGV2
+LCAwLCAienBvcyIsIDAsCi0JCQkJCQkgTUFYX1BMQU5FIC0gMSk7CisJCXByb3AgPSBkcm1fcHJv
+cGVydHlfY3JlYXRlX3JhbmdlKGRldiwgRFJNX01PREVfUFJPUF9JTU1VVEFCTEUsCisJCQkJCQkg
+Inpwb3MiLCAwLCBNQVhfUExBTkUgLSAxKTsKIAkJaWYgKCFwcm9wKQogCQkJcmV0dXJuOwogCi0t
+IAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
