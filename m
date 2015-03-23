@@ -1,261 +1,49 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 7/7] drm/exynos: track vblank events on a per crtc basis
-Date: Mon, 23 Mar 2015 17:38:02 -0300
-Message-ID: <1427143082-4257-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 6/7] drm/exynos: remove leftover functions declarations
+Date: Mon, 23 Mar 2015 17:38:01 -0300
+Message-ID: <1427143082-4257-7-git-send-email-gustavo@padovan.org>
 References: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f44.google.com ([209.85.192.44]:33642 "EHLO
-	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753450AbbCWUif (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Mar 2015 16:38:35 -0400
-Received: by qgfa8 with SMTP id a8so164561494qgf.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2015 13:38:34 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Mandeep Singh Baines <msb@chromium.org>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Mandeep Singh Baines <msb@chromium.org>
-
-The goal of the change is to make sure we send the vblank event on the
-current vblank. My hope is to fix any races that might be causing flicker.
-After this change I only see a flicker in the transition plymouth and
-X11.
-
-Simplified the code by tracking vblank events on a per-crtc basis. This
-allowed me to remove all error paths from the callback. It also allowed
-me to remove the vblank wait from the callback.
-
-Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 92 +++++++++++++++-----------------
- drivers/gpu/drm/exynos/exynos_drm_drv.c  | 13 -----
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 +--
- 3 files changed, 44 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 47dd2b0..eb49195 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -34,9 +34,8 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 	if (mode > DRM_MODE_DPMS_ON) {
- 		/* wait for the completion of page flip. */
- 		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
--				!atomic_read(&exynos_crtc->pending_flip),
--				HZ/20))
--			atomic_set(&exynos_crtc->pending_flip, 0);
-+				(exynos_crtc->event == NULL), HZ/20))
-+			exynos_crtc->event = NULL;
- 		drm_crtc_vblank_off(crtc);
- 	}
- 
-@@ -164,11 +163,10 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 				     uint32_t page_flip_flags)
- {
- 	struct drm_device *dev = crtc->dev;
--	struct exynos_drm_private *dev_priv = dev->dev_private;
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 	struct drm_framebuffer *old_fb = crtc->primary->fb;
- 	unsigned int crtc_w, crtc_h;
--	int ret = -EINVAL;
-+	int ret;
- 
- 	/* when the page flip is requested, crtc's dpms should be on */
- 	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
-@@ -176,48 +174,49 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 		return -EINVAL;
- 	}
- 
--	mutex_lock(&dev->struct_mutex);
-+	if (!event)
-+		return -EINVAL;
- 
--	if (event) {
--		/*
--		 * the pipe from user always is 0 so we can set pipe number
--		 * of current owner to event.
--		 */
--		event->pipe = exynos_crtc->pipe;
-+	spin_lock_irq(&dev->event_lock);
-+	if (exynos_crtc->event) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
- 
--		ret = drm_vblank_get(dev, exynos_crtc->pipe);
--		if (ret) {
--			DRM_DEBUG("failed to acquire vblank counter\n");
-+	ret = drm_vblank_get(dev, exynos_crtc->pipe);
-+	if (ret) {
-+		DRM_DEBUG("failed to acquire vblank counter\n");
-+		goto out;
-+	}
- 
--			goto out;
--		}
-+	exynos_crtc->event = event;
-+	spin_unlock_irq(&dev->event_lock);
- 
-+	/*
-+	 * the pipe from user always is 0 so we can set pipe number
-+	 * of current owner to event.
-+	 */
-+	event->pipe = exynos_crtc->pipe;
-+
-+	crtc->primary->fb = fb;
-+	crtc_w = fb->width - crtc->x;
-+	crtc_h = fb->height - crtc->y;
-+	ret = exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
-+				  crtc_w, crtc_h, crtc->x, crtc->y,
-+				  crtc_w, crtc_h);
-+	if (ret) {
-+		crtc->primary->fb = old_fb;
- 		spin_lock_irq(&dev->event_lock);
--		list_add_tail(&event->base.link,
--				&dev_priv->pageflip_event_list);
--		atomic_set(&exynos_crtc->pending_flip, 1);
-+		exynos_crtc->event = NULL;
-+		drm_vblank_put(dev, exynos_crtc->pipe);
- 		spin_unlock_irq(&dev->event_lock);
--
--		crtc->primary->fb = fb;
--		crtc_w = fb->width - crtc->x;
--		crtc_h = fb->height - crtc->y;
--		ret = exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
--					  crtc_w, crtc_h, crtc->x, crtc->y,
--					  crtc_w, crtc_h);
--		if (ret) {
--			crtc->primary->fb = old_fb;
--
--			spin_lock_irq(&dev->event_lock);
--			drm_vblank_put(dev, exynos_crtc->pipe);
--			list_del(&event->base.link);
--			atomic_set(&exynos_crtc->pending_flip, 0);
--			spin_unlock_irq(&dev->event_lock);
--
--			goto out;
--		}
-+		return ret;
- 	}
-+
-+	return 0;
-+
- out:
--	mutex_unlock(&dev->struct_mutex);
-+	spin_unlock_irq(&dev->event_lock);
- 	return ret;
- }
- 
-@@ -255,7 +254,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	init_waitqueue_head(&exynos_crtc->pending_flip_queue);
--	atomic_set(&exynos_crtc->pending_flip, 0);
- 
- 	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
- 	exynos_crtc->pipe = pipe;
-@@ -313,26 +311,20 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe)
- void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
- {
- 	struct exynos_drm_private *dev_priv = dev->dev_private;
--	struct drm_pending_vblank_event *e, *t;
- 	struct drm_crtc *drm_crtc = dev_priv->crtc[pipe];
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(drm_crtc);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
-+	if (exynos_crtc->event) {
- 
--	list_for_each_entry_safe(e, t, &dev_priv->pageflip_event_list,
--			base.link) {
--		/* if event's pipe isn't same as crtc then ignore it. */
--		if (pipe != e->pipe)
--			continue;
--
--		list_del(&e->base.link);
--		drm_send_vblank_event(dev, -1, e);
-+		drm_send_vblank_event(dev, -1, exynos_crtc->event);
- 		drm_vblank_put(dev, pipe);
--		atomic_set(&exynos_crtc->pending_flip, 0);
- 		wake_up(&exynos_crtc->pending_flip_queue);
-+
- 	}
- 
-+	exynos_crtc->event = NULL;
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index bb6e7f7..8ac4652 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -60,7 +60,6 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
- 	if (!private)
- 		return -ENOMEM;
- 
--	INIT_LIST_HEAD(&private->pageflip_event_list);
- 	dev_set_drvdata(dev->dev, dev);
- 	dev->dev_private = (void *)private;
- 
-@@ -223,25 +222,13 @@ static void exynos_drm_preclose(struct drm_device *dev,
- 
- static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- {
--	struct exynos_drm_private *private = dev->dev_private;
--	struct drm_pending_vblank_event *v, *vt;
- 	struct drm_pending_event *e, *et;
- 	unsigned long flags;
- 
- 	if (!file->driver_priv)
- 		return;
- 
--	/* Release all events not unhandled by page flip handler. */
- 	spin_lock_irqsave(&dev->event_lock, flags);
--	list_for_each_entry_safe(v, vt, &private->pageflip_event_list,
--			base.link) {
--		if (v->base.file_priv == file) {
--			list_del(&v->base.link);
--			drm_vblank_put(dev, v->pipe);
--			v->base.destroy(&v->base);
--		}
--	}
--
- 	/* Release all events handled by page flip handler but not freed. */
- 	list_for_each_entry_safe(e, et, &file->event_list, link) {
- 		list_del(&e->link);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 26d6de1..a1013aa 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -206,6 +206,7 @@ struct exynos_drm_crtc_ops {
-  *	we can refer to the crtc to current hardware interrupt occurred through
-  *	this pipe value.
-  * @dpms: store the crtc dpms value
-+ * @event: vblank event that is currently queued for flip
-  * @ops: pointer to callbacks for exynos drm specific functionality
-  * @ctx: A pointer to the crtc's implementation specific context
-  */
-@@ -215,7 +216,7 @@ struct exynos_drm_crtc {
- 	unsigned int			pipe;
- 	unsigned int			dpms;
- 	wait_queue_head_t		pending_flip_queue;
--	atomic_t			pending_flip;
-+	struct drm_pending_vblank_event	*event;
- 	struct exynos_drm_crtc_ops	*ops;
- 	void				*ctx;
- };
-@@ -245,9 +246,6 @@ struct drm_exynos_file_private {
- struct exynos_drm_private {
- 	struct drm_fb_helper *fb_helper;
- 
--	/* list head for new event to be added. */
--	struct list_head pageflip_event_list;
--
- 	/*
- 	 * created crtc object would be contained at this array and
- 	 * this array is used to be aware of which crtc did it request vblank.
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlc2UgZnVuY3Rpb25zIHdlcmUgYWxyZWFkeSByZW1vdmVkIGJ5IHByZXZpb3VzIGNsZWFudXAg
+d29yaywgYnV0IHRoZXNlCm9uZXMgd2VyZSBsZWZ0IGJlaGluZC4KClNpZ25lZC1vZmYtYnk6IEd1
+c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KQWNrZWQtYnk6
+IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIHwgNiAtLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
+LCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5o
+CmluZGV4IGUxZmQyZWYuLjBlY2Q4ZmMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9jcnRjLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2NydGMuaApAQCAtMjgsMTIgKzI4LDYgQEAgdm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJs
+ZV92Ymxhbmsoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IHBpcGUpOwogdm9pZCBleHlub3Nf
+ZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBwaXBl
+KTsKIHZvaWQgZXh5bm9zX2RybV9jcnRjX2NvbXBsZXRlX3NjYW5vdXQoc3RydWN0IGRybV9mcmFt
+ZWJ1ZmZlciAqZmIpOwogCi12b2lkIGV4eW5vc19kcm1fY3J0Y19wbGFuZV9tb2RlX3NldChzdHJ1
+Y3QgZHJtX2NydGMgKmNydGMsCi0JCQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUpOwot
+dm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfY29tbWl0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywg
+aW50IHpwb3MpOwotdm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfZW5hYmxlKHN0cnVjdCBkcm1f
+Y3J0YyAqY3J0YywgaW50IHpwb3MpOwotdm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfZGlzYWJs
+ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCB6cG9zKTsKLQogLyogVGhpcyBmdW5jdGlvbiBn
+ZXRzIHBpcGUgdmFsdWUgdG8gY3J0YyBkZXZpY2UgbWF0Y2hlZCB3aXRoIG91dF90eXBlLiAqLwog
+aW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9tX3R5cGUoc3RydWN0IGRybV9kZXZpY2Ug
+KmRybV9kZXYsCiAJCQkJCXVuc2lnbmVkIGludCBvdXRfdHlwZSk7Ci0tIAoyLjEuMAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
