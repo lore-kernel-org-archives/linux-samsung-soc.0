@@ -1,54 +1,50 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 3/5] pinctrl: exynos: add exynos5410 SoC specific data
-Date: Tue, 24 Mar 2015 02:22:57 +0900
-Message-ID: <CA+Ln22Fq6Z6vSy2zCsx61j-JVe_x=yAjkySXy_Lit0tBbPmo9Q@mail.gmail.com>
-References: <1426456834-6308-1-git-send-email-afaerber@suse.de>
-	<1426456834-6308-4-git-send-email-afaerber@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 0/7] drm/exynos: clean up patches (preparing for atomic)
+Date: Mon, 23 Mar 2015 17:37:55 -0300
+Message-ID: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:32942 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752460AbbCWRW5 convert rfc822-to-8bit (ORCPT
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:34641 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753432AbbCWUiP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Mar 2015 13:22:57 -0400
-In-Reply-To: <1426456834-6308-4-git-send-email-afaerber@suse.de>
+	Mon, 23 Mar 2015 16:38:15 -0400
+Received: by qgep97 with SMTP id p97so34985366qge.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2015 13:38:14 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, Ben Gamari <bgamari.foss@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Andreas, Hakjoo,
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Thanks for the patch.
+Hi,
 
-2015-03-16 7:00 GMT+09:00 Andreas F=C3=A4rber <afaerber@suse.de>:
-> From: Hakjoo Kim <ruppi.kim@hardkernel.com>
->
-> Add Samsung EXYNOS5410 SoC specific data to enable pinctrl
-> support for all platforms based on EXYNOS5410.
->
-> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
-> [AF: Rebased onto Exynos5260, irq_chip consolidation, const'ification=
-]
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  v2 -> v3:
->  * Rebased (.svc, .{g,w}eint_{con,mask,pend} fields dropped)
->
->  v1 -> v2:
->  * Filled in Sob from Hakjoo Kim
->
->  .../bindings/pinctrl/samsung-pinctrl.txt           |   1 +
->  drivers/pinctrl/samsung/pinctrl-exynos.c           | 103 +++++++++++=
-++++++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
->  4 files changed, 107 insertions(+)
->
+Here goes some clean ups to the exynos drivers. The main clean ups is
+the presetting and zpos making the property immutable and the removal
+of *_win_data structures.
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Gustavo Padovan (6):
+  drm/exynos: remove unused exynos_crtc->win_enable() callback
+  drm/exynos: remove struct *_win_data abstraction on planes
+  drm/exynos: preset zpos value for overlay planes
+  drm/exynos: make zpos property immutable
+  drm/exynos: remove exynos_plane_destroy()
+  drm/exynos: remove leftover functions declarations
 
-Best regards,
-Tomasz
+Mandeep Singh Baines (1):
+  drm/exynos: track vblank events on a per crtc basis
+
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 176 ++++++++--------------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c   | 101 ++++++-------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h   |   7 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c    |  27 ----
+ drivers/gpu/drm/exynos/exynos_drm_drv.h    |  20 +--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 205 ++++++++++----------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c  |  66 ++-------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h  |   7 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 144 ++++++------------
+ drivers/gpu/drm/exynos/exynos_mixer.c      | 228 +++++++++++------------------
+ 10 files changed, 339 insertions(+), 642 deletions(-)
+
+-- 
+2.1.0
