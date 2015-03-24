@@ -1,39 +1,62 @@
 From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] drm: Exynos: Respect framebuffer pitch for FIMD/Mixer
-Date: Tue, 24 Mar 2015 09:57:03 +0100
-Message-ID: <CABxcv==Z0ccmR-3Hasnkmg14m3hBJEwha=6c6288jQPUhyQt-g@mail.gmail.com>
-References: <1426598698-31095-1-git-send-email-daniels@collabora.com>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable HDMI support
+Date: Tue, 24 Mar 2015 10:03:55 +0100
+Message-ID: <CABxcv==Ko2PUfwuo8D2JDL4iR4+VGvewQpR_RDh9pB4Qbg5c=g@mail.gmail.com>
+References: <1423244567-24463-1-git-send-email-javier.martinez@collabora.co.uk>
+	<CABxcv=mMD=X=EKOC2sGXcDwMeOmoO6cmVAu=roV_AVqUwG+pXg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:33630 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751814AbbCXI5F (ORCPT
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:35650 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752042AbbCXJD5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Mar 2015 04:57:05 -0400
-Received: by weop45 with SMTP id p45so157730112weo.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Mar 2015 01:57:04 -0700 (PDT)
-In-Reply-To: <1426598698-31095-1-git-send-email-daniels@collabora.com>
+	Tue, 24 Mar 2015 05:03:57 -0400
+Received: by wibdy8 with SMTP id dy8so69002066wib.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Mar 2015 02:03:55 -0700 (PDT)
+In-Reply-To: <CABxcv=mMD=X=EKOC2sGXcDwMeOmoO6cmVAu=roV_AVqUwG+pXg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Daniel Stone <daniels@collabora.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>, t.stanislaws@samsung.com
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello Inki,
+Hello Kukjin,
 
-On Tue, Mar 17, 2015 at 2:24 PM, Daniel Stone <daniels@collabora.com> wrote:
-> When performing a modeset, use the framebuffer pitch value to set FIMD
-> IMG_SIZE and Mixer SPAN registers. These are both defined as pitch - the
-> distance between contiguous lines (bytes for FIMD, pixels for mixer).
+On Tue, Mar 17, 2015 at 7:54 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> On Fri, Feb 6, 2015 at 6:42 PM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>> Many Exynos boards have an HDMI port so enable Exynos DRM HDMI support.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>>
+>> Exynos DRM HDMI has some issues that were fixed by Andrzej's [0] series.
+>> So now is safe to HDMI support for Exynos boards.
+>>
+>> [0]: https://lkml.org/lkml/2015/2/5/265
+>>
+>>  arch/arm/configs/exynos_defconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+>> index 70e5d0bdb4e4..e44da52e5223 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -120,6 +120,7 @@ CONFIG_REGULATOR_S2MPS11=y
+>>  CONFIG_REGULATOR_S5M8767=y
+>>  CONFIG_REGULATOR_TPS65090=y
+>>  CONFIG_DRM=y
+>> +CONFIG_DRM_EXYNOS_HDMI=y
+>>  CONFIG_DRM_BRIDGE=y
+>>  CONFIG_DRM_PTN3460=y
+>>  CONFIG_DRM_PS8622=y
+>> --
 >
-> Fixes display on Snow (1366x768).
+> It seems you missed this patch when picking the exynos_defconfig patches.
 >
-> Signed-off-by: Daniel Stone <daniels@collabora.com>
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Any comments on this patch? It would be great to pick this sooner
-rather than later since it fixes (at least) display output on Snow and
-HDMI output on Peach Pit/Pi.
+Another gentle reminder about this patch.
 
 Best regards,
 Javier
