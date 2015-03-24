@@ -1,43 +1,57 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: S3C64XX: Use fixed IRQ bases to avoid conflicts on
- Cragganmore
-Date: Tue, 24 Mar 2015 22:03:20 +0900
-Message-ID: <02e801d06632$e75527e0$b5ff77a0$@kernel.org>
-References: <1427020841-24189-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20150322160316.GB6643@sirena.org.uk>
+Subject: RE: [PATCH] ARM: Exynos5420: dt: Fixed the checkpatch.pl WARNING
+ misspelled
+Date: Tue, 24 Mar 2015 22:11:56 +0900
+Message-ID: <02fb01d06634$1ac4ebf0$504ec3d0$@kernel.org>
+References: <1426883031-3518-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52026 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752300AbbCXNDa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Mar 2015 09:03:30 -0400
-In-reply-to: <20150322160316.GB6643@sirena.org.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1426883031-3518-1-git-send-email-linux.amoon@gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Anand Moon' <linux.amoon@gmail.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>, 'Charles Keepax' <ckeepax@opensource.wolfsonmicro.com>
-Cc: kgene@kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-Mark Brown wrote:
+Anand Moon wrote:
 > 
-> On Sun, Mar 22, 2015 at 10:40:41AM +0000, Charles Keepax wrote:
-> > There are two PMICs on Cragganmore, currently one dynamically assign
-> > its IRQ base and the other uses a fixed base. It is possible for the
-> > statically assigned PMIC to fail if its IRQ is taken by the dynamically
-> > assigned one. Fix this by statically assigning both the IRQ bases.
-> >
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> Changes fixes the misspelled of #interrups-cell.
 > 
-> Reviwed-by: Mark Brown <broonie@kernel.org>
+> arch/arm/boot/dts/exynos5420.dtsi:224: WARNING: 'interrups'
+> 	 may be misspelled - perhaps 'interrupts'?
 > 
-Thanks for your review.
+> Tested on OdroidXU3 board.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index c0e98cf..a78ac1f 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -221,7 +221,7 @@
+>  		compatible = "samsung,exynos4210-mct";
+>  		reg = <0x101C0000 0x800>;
+>  		interrupt-controller;
+> -		#interrups-cells = <1>;
+> +		#interrupt-cells = <1>;
 
-> This probably wants to go to stable as well.
+Oops, what's happened :(
+I'm seeing the typo in exynos5250.dtsi as well...
 
-OK, I'll.
+arch/arm/boot/dts/exynos5250.dtsi:146:          #interrups-cells = <2>;
+
+I'll apply with above fix.
 
 Thanks,
 Kukjin
+
+>  		interrupt-parent = <&mct_map>;
+>  		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+>  				<8>, <9>, <10>, <11>;
+> --
+> 1.9.1
