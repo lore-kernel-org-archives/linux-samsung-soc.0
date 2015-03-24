@@ -1,50 +1,68 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] cpufreq: exynos: allow build for !THERMAL or !CPU_THERMAL cases
-Date: Tue, 24 Mar 2015 12:33:53 +0100
-Message-ID: <2205924.4OPTnU534j@amdc1032>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH 1/1] ARM: exynos_defconfig: Enable HDMI support
+Date: Tue, 24 Mar 2015 21:52:10 +0900
+Message-ID: <02b201d06631$58129d70$0837d850$@kernel.org>
+References: <1423244567-24463-1-git-send-email-javier.martinez@collabora.co.uk>
+ <CABxcv=mMD=X=EKOC2sGXcDwMeOmoO6cmVAu=roV_AVqUwG+pXg@mail.gmail.com>
+ <CABxcv==Ko2PUfwuo8D2JDL4iR4+VGvewQpR_RDh9pB4Qbg5c=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49459 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751917AbbCXMwN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Mar 2015 08:52:13 -0400
+In-reply-to: <CABxcv==Ko2PUfwuo8D2JDL4iR4+VGvewQpR_RDh9pB4Qbg5c=g@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: 'Andrzej Hajda' <a.hajda@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>
 
-Allow driver build for !THERMAL or !CPU_THERMAL cases.
+Javier Martinez Canilla wrote:
+> 
+> Hello Kukjin,
+> 
+Hi,
 
-The new dependency rule is the same as the one that CPUFREQ_DT
-option has (for cpufreq-dt driver which has the same issue with
-using of_cpufreq_cooling_register()).
+> On Tue, Mar 17, 2015 at 7:54 PM, Javier Martinez Canillas
+> <javier@dowhile0.org> wrote:
+> > On Fri, Feb 6, 2015 at 6:42 PM, Javier Martinez Canillas
+> > <javier.martinez@collabora.co.uk> wrote:
+> >> Many Exynos boards have an HDMI port so enable Exynos DRM HDMI support.
+> >>
+> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> ---
+> >>
+> >> Exynos DRM HDMI has some issues that were fixed by Andrzej's [0] series.
+> >> So now is safe to HDMI support for Exynos boards.
+> >>
+> >> [0]: https://lkml.org/lkml/2015/2/5/265
+> >>
+> >>  arch/arm/configs/exynos_defconfig | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> >> index 70e5d0bdb4e4..e44da52e5223 100644
+> >> --- a/arch/arm/configs/exynos_defconfig
+> >> +++ b/arch/arm/configs/exynos_defconfig
+> >> @@ -120,6 +120,7 @@ CONFIG_REGULATOR_S2MPS11=y
+> >>  CONFIG_REGULATOR_S5M8767=y
+> >>  CONFIG_REGULATOR_TPS65090=y
+> >>  CONFIG_DRM=y
+> >> +CONFIG_DRM_EXYNOS_HDMI=y
+> >>  CONFIG_DRM_BRIDGE=y
+> >>  CONFIG_DRM_PTN3460=y
+> >>  CONFIG_DRM_PS8622=y
+> >> --
+> >
+> > It seems you missed this patch when picking the exynos_defconfig patches.
+> >
+> 
+> Another gentle reminder about this patch.
+> 
+Thanks, will apply tonight ;-)
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>
-Fixes: 8b2b4a4e5366 ("cpufreq: exynos: allow modular build")
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-Hi Rafael, please apply this patch.  It has been ACKed by Viresh already.
-
- drivers/cpufreq/Kconfig.arm | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 1b06fc4..f4df4af3 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -28,7 +28,8 @@ config ARM_VEXPRESS_SPC_CPUFREQ
- config ARM_EXYNOS_CPUFREQ
- 	tristate "SAMSUNG EXYNOS CPUfreq Driver"
- 	depends on CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250
--	depends on THERMAL
-+	# if CPU_THERMAL is on and THERMAL=m, ARM_EXYNOS_CPUFREQ cannot be =y:
-+	depends on !CPU_THERMAL || THERMAL
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS platforms.
- 	  Supported SoC versions are:
--- 
-1.8.2.3
-
-
+- Kukjin
