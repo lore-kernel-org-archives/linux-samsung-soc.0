@@ -1,79 +1,112 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] cpufreq: exynos: allow build for !THERMAL or !CPU_THERMAL
- cases
-Date: Tue, 24 Mar 2015 21:53:49 +0900
-Message-ID: <02c201d06631$92a06440$b7e12cc0$@kernel.org>
-References: <2275232.48muFcOOQv@amdc1032>
- <CAKohpomXnpdLtMpnWeFWdGDCE4t8iEz5aDxA=PhTcR-UKjQM6A@mail.gmail.com>
- <75115513.B5dLcdQ7nU@amdc1032>
+Subject: RE: [alsa-devel] [PATCH RESEND] ARM: dts: Support audio on
+ Exynos5422-odroidxu3 using simple-audio-card
+Date: Tue, 24 Mar 2015 21:58:29 +0900
+Message-ID: <02cf01d06632$39be11a0$ad3a34e0$@kernel.org>
+References: <1427079093-28483-1-git-send-email-ideal.song@samsung.com>
+ <550FF0FF.4000604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <75115513.B5dLcdQ7nU@amdc1032>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:18789 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752320AbbCXM6c (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Mar 2015 08:58:32 -0400
+In-reply-to: <550FF0FF.4000604@samsung.com>
 Content-language: ko
-Sender: linux-pm-owner@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, 'Eduardo Valentin' <edubezval@gmail.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Inha Song' <ideal.song@samsung.com>
+Cc: broonie@kernel.org, kgene@kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com
 
-Bartlomiej Zolnierkiewicz wrote:
+Sylwester Nawrocki wrote:
 > 
-> Hi,
+> On 23/03/15 03:51, Inha Song wrote:
+> > Add MAX98090 audio codec, I2S interface and the sound nodes to support
+> > audio on Exynos5422 SoC Based Odroid-XU3 board. Now we can support audio
+> > in Odroid-XU3 board using simple-audio-card DT binding.
+> >
+> > Signed-off-by: Inha Song <ideal.song@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos5420.dtsi          |  9 +++++
+> >  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 57 ++++++++++++++++++++++++++++++
+> >  2 files changed, 66 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> > index 4eaeabe..e459c1d 100644
+> > --- a/arch/arm/boot/dts/exynos5420.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> > @@ -415,6 +415,9 @@
+> >  			<&clock_audss EXYNOS_I2S_BUS>,
+> >  			<&clock_audss EXYNOS_SCLK_I2S>;
+> >  		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+> > +		#clock-cells = <1>;
+> > +		clock-output-names = "i2s_cdclk0";
+> > +		#sound-dai-cells = <1>;
+> >  		samsung,idma-addr = <0x03000000>;
+> >  		pinctrl-names = "default";
+> >  		pinctrl-0 = <&i2s0_bus>;
+> > @@ -429,6 +432,9 @@
+> >  		dma-names = "tx", "rx";
+> >  		clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
+> >  		clock-names = "iis", "i2s_opclk0";
+> > +		#clock-cells = <1>;
+> > +		clock-output-names = "i2s_cdclk1";
+> > +		#sound-dai-cells = <1>;
+> >  		pinctrl-names = "default";
+> >  		pinctrl-0 = <&i2s1_bus>;
+> >  		status = "disabled";
+> > @@ -442,6 +448,9 @@
+> >  		dma-names = "tx", "rx";
+> >  		clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
+> >  		clock-names = "iis", "i2s_opclk0";
+> > +		#clock-cells = <1>;
+> > +		clock-output-names = "i2s_cdclk2";
+> > +		#sound-dai-cells = <1>;
+> >  		pinctrl-names = "default";
+> >  		pinctrl-0 = <&i2s2_bus>;
+> >  		status = "disabled";
+> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > index edc25cf..9275ad6 100644
+> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > @@ -11,6 +11,7 @@
+> >  */
+> >
+> >  /dts-v1/;
+> > +#include <dt-bindings/sound/samsung-i2s.h>
+> >  #include "exynos5800.dtsi"
+> >
+> >  / {
+> > @@ -285,6 +286,62 @@
+> >  	rtc@101E0000 {
+> >  		status = "okay";
+> >  	};
+> > +
+> > +	sound: sound {
+> > +		compatible = "simple-audio-card";
+> > +		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
+> > +				<&clock_audss EXYNOS_MOUT_I2S>,
+> > +				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
+> > +		assigned-clock-parents = <&clock CLK_FIN_PLL>,
+> > +				<&clock_audss EXYNOS_MOUT_AUDSS>;
+> > +		assigned-clock-rates = <0>,
+> > +				<0>,
+> > +				<19200000>;
 > 
-Hi,
-
-> On Monday, February 23, 2015 10:07:50 AM Viresh Kumar wrote:
-> > On 20 February 2015 at 21:50, Bartlomiej Zolnierkiewicz
-> > <b.zolnierkie@samsung.com> wrote:
-> > > Allow driver build for !THERMAL or !CPU_THERMAL cases.
-> > >
-> > > The new dependency rule is the same as the one that CPUFREQ_DT
-> > > option has (for cpufreq-dt driver which has the same issue with
-> > > using of_cpufreq_cooling_register()).
-> > >
-> > > Cc: Kukjin Kim <kgene@kernel.org>
-
-Looks OK to me,
-
-Acked-by: Kukjin Kim <kgene@kernel.org>
+> The patch looks good, except it would be more appropriate to move the
+> above properties to &clock_audss { }; node in this file.
+> With that change feel free to add:
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> As a side note, this is a dts patch and of course Kukjin maintains that.
+> You would likely get it applied sooner if you would have addressed it
+> directly to Kukjin, rather than Mark or me.
+> 
+Yes, please. I'll apply this once you address comments per Sylwester's
+suggestion.
 
 Thanks,
 Kukjin
-
-> > > Cc: Arnd Bergmann <arnd@arndb.de>
-> > > Cc: Eduardo Valentin <edubezval@gmail.com>
-> > > Cc: Lukasz Majewski <l.majewski@samsung.com>
-> > > Fixes: 8b2b4a4e5366 ("cpufreq: exynos: allow modular build")
-> > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > ---
-> > >  drivers/cpufreq/Kconfig.arm | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> > > index 1b06fc4..f4df4af3 100644
-> > > --- a/drivers/cpufreq/Kconfig.arm
-> > > +++ b/drivers/cpufreq/Kconfig.arm
-> > > @@ -28,7 +28,8 @@ config ARM_VEXPRESS_SPC_CPUFREQ
-> > >  config ARM_EXYNOS_CPUFREQ
-> > >         tristate "SAMSUNG EXYNOS CPUfreq Driver"
-> > >         depends on CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250
-> > > -       depends on THERMAL
-> > > +       # if CPU_THERMAL is on and THERMAL=m, ARM_EXYNOS_CPUFREQ cannot be =y:
-> > > +       depends on !CPU_THERMAL || THERMAL
-> > >         help
-> > >           This adds the CPUFreq driver for Samsung EXYNOS platforms.
-> > >           Supported SoC versions are:
-> >
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Thank you for the ACK.
-> 
-> Would you pick this patch up or should I resend it to Rafael?
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-
