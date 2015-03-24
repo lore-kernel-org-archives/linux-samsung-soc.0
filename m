@@ -1,49 +1,140 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 6/7] drm/exynos: remove leftover functions declarations
-Date: Mon, 23 Mar 2015 17:38:01 -0300
-Message-ID: <1427143082-4257-7-git-send-email-gustavo@padovan.org>
-References: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1427143082-4257-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Inha Song <ideal.song@samsung.com>
+Subject: [alsa-devel] [PATCH v2] ARM: dts: Support audio on
+ Exynos5422-odroidxu3 using simple-audio-card
+Date: Tue, 24 Mar 2015 10:19:35 +0900
+Message-ID: <1427159975-3488-1-git-send-email-ideal.song@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:15476 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751980AbbCXBTu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Mar 2015 21:19:50 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org
+Cc: s.nawrocki@samsung.com, broonie@kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com, Inha Song <ideal.song@samsung.com>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlc2UgZnVuY3Rpb25zIHdlcmUgYWxyZWFkeSByZW1vdmVkIGJ5IHByZXZpb3VzIGNsZWFudXAg
-d29yaywgYnV0IHRoZXNlCm9uZXMgd2VyZSBsZWZ0IGJlaGluZC4KClNpZ25lZC1vZmYtYnk6IEd1
-c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KQWNrZWQtYnk6
-IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIHwgNiAtLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
-LCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5o
-CmluZGV4IGUxZmQyZWYuLjBlY2Q4ZmMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jcnRjLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuaApAQCAtMjgsMTIgKzI4LDYgQEAgdm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJs
-ZV92Ymxhbmsoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IHBpcGUpOwogdm9pZCBleHlub3Nf
-ZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBwaXBl
-KTsKIHZvaWQgZXh5bm9zX2RybV9jcnRjX2NvbXBsZXRlX3NjYW5vdXQoc3RydWN0IGRybV9mcmFt
-ZWJ1ZmZlciAqZmIpOwogCi12b2lkIGV4eW5vc19kcm1fY3J0Y19wbGFuZV9tb2RlX3NldChzdHJ1
-Y3QgZHJtX2NydGMgKmNydGMsCi0JCQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUpOwot
-dm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfY29tbWl0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywg
-aW50IHpwb3MpOwotdm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfZW5hYmxlKHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YywgaW50IHpwb3MpOwotdm9pZCBleHlub3NfZHJtX2NydGNfcGxhbmVfZGlzYWJs
-ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCB6cG9zKTsKLQogLyogVGhpcyBmdW5jdGlvbiBn
-ZXRzIHBpcGUgdmFsdWUgdG8gY3J0YyBkZXZpY2UgbWF0Y2hlZCB3aXRoIG91dF90eXBlLiAqLwog
-aW50IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9tX3R5cGUoc3RydWN0IGRybV9kZXZpY2Ug
-KmRybV9kZXYsCiAJCQkJCXVuc2lnbmVkIGludCBvdXRfdHlwZSk7Ci0tIAoyLjEuMAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Add MAX98090 audio codec, I2S interface and the sound nodes to support
+audio on Exynos5422 SoC Based Odroid-XU3 board. Now we can support audio
+in Odroid-XU3 board using simple-audio-card DT binding.
+
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi          |  9 +++++
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 59 ++++++++++++++++++++++++++++++
+ 2 files changed, 68 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 4eaeabe..e459c1d 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -415,6 +415,9 @@
+ 			<&clock_audss EXYNOS_I2S_BUS>,
+ 			<&clock_audss EXYNOS_SCLK_I2S>;
+ 		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++		#clock-cells = <1>;
++		clock-output-names = "i2s_cdclk0";
++		#sound-dai-cells = <1>;
+ 		samsung,idma-addr = <0x03000000>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
+@@ -429,6 +432,9 @@
+ 		dma-names = "tx", "rx";
+ 		clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
+ 		clock-names = "iis", "i2s_opclk0";
++		#clock-cells = <1>;
++		clock-output-names = "i2s_cdclk1";
++		#sound-dai-cells = <1>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s1_bus>;
+ 		status = "disabled";
+@@ -442,6 +448,9 @@
+ 		dma-names = "tx", "rx";
+ 		clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
+ 		clock-names = "iis", "i2s_opclk0";
++		#clock-cells = <1>;
++		clock-output-names = "i2s_cdclk2";
++		#sound-dai-cells = <1>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s2_bus>;
+ 		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index edc25cf..c038f0d 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -11,6 +11,7 @@
+ */
+ 
+ /dts-v1/;
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5800.dtsi"
+ 
+ / {
+@@ -285,6 +286,64 @@
+ 	rtc@101E0000 {
+ 		status = "okay";
+ 	};
++
++	sound: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,name = "Odroid-XU3";
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack",
++			"Speakers", "Speakers";
++		simple-audio-card,routing =
++			"Headphone Jack", "HPL",
++			"Headphone Jack", "HPR",
++			"Headphone Jack", "MICBIAS",
++			"IN1", "Headphone Jack",
++			"Speakers", "SPKL",
++			"Speakers", "SPKR";
++
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&link0_codec>;
++		simple-audio-card,frame-master = <&link0_codec>;
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
++			system-clock-frequency = <19200000>;
++		};
++
++		link0_codec: simple-audio-card,codec {
++			sound-dai = <&max98090>;
++			clocks = <&i2s0 CLK_I2S_CDCLK>;
++		};
++	};
++};
++
++&clock_audss {
++	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
++			<&clock_audss EXYNOS_MOUT_I2S>,
++			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
++	assigned-clock-parents = <&clock CLK_FIN_PLL>,
++			<&clock_audss EXYNOS_MOUT_AUDSS>;
++	assigned-clock-rates = <0>,
++			<0>,
++			<19200000>;
++};
++
++&hsi2c_5 {
++	status = "okay";
++	max98090: max98090@10 {
++		compatible = "maxim,max98090";
++		reg = <0x10>;
++		interrupt-parent = <&gpx3>;
++		interrupts = <2 0>;
++		clocks = <&i2s0 CLK_I2S_CDCLK>;
++		clock-names = "mclk";
++		#sound-dai-cells = <0>;
++	};
++};
++
++&i2s0 {
++	status = "okay";
+ };
+ 
+ &hdmi {
+-- 
+2.0.0.390.gcb682f8
