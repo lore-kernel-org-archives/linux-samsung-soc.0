@@ -1,36 +1,50 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 1/5] tests/exynos: add fimg2d performance analysis
-Date: Wed, 25 Mar 2015 19:27:16 +0100
-Message-ID: <5512FE04.9000600@math.uni-bielefeld.de>
-References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1426890348-12807-2-git-send-email-tjakobi@math.uni-bielefeld.de> <550EE197.1090008@gmail.com> <550EEF54.4050109@gmx.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: exynos_defconfig: Enable options to mount a rootfs via NFS
+Date: Wed, 25 Mar 2015 20:00:07 +0100
+Message-ID: <1427310007-1022-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49308 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752212AbbCYS1T (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:36937 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751032AbbCYTA3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Mar 2015 14:27:19 -0400
-In-Reply-To: <550EEF54.4050109@gmx.net>
+	Wed, 25 Mar 2015 15:00:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>, Emil Velikov <emil.l.velikov@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, m.szyprowski@samsung.com, inki.dae@samsung.com
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello,
+This patch enables the needed options to mount a rootfs over
+NFS and also the needed support for automatic configuration
+of IP addresses during boot as needed by NFS.
 
-the new version should fix most of the mentioned issues.
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/configs/exynos_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Tobias Jakobi wrote:
->> As a general note I would recommend keeping statements on separate lines
->> (none of if (foo) far()) as it makes debugging easier.
-> OK, changing this.
-Except for this, I didn't change it since I don't see the point. In fact
-I think that splitting the few occurrences makes the code less readable.
-
-I haven't worked with getopt before, so I gave it a try and made all
-these hardcoded parameters configurable.
-
-With best wishes,
-Tobias
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 72a4fffd603e..02be4c072497 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -36,6 +36,10 @@ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+ CONFIG_NET_KEY=y
+ CONFIG_INET=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++CONFIG_IP_PNP_BOOTP=y
++CONFIG_IP_PNP_RARP=y
+ CONFIG_WIRELESS=y
+ CONFIG_CFG80211=y
+ CONFIG_MWIFIEX=y
+@@ -206,6 +210,8 @@ CONFIG_TMPFS=y
+ CONFIG_TMPFS_POSIX_ACL=y
+ CONFIG_CRAMFS=y
+ CONFIG_ROMFS_FS=y
++CONFIG_NFS_FS=y
++CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ASCII=y
+ CONFIG_NLS_ISO8859_1=y
+-- 
+2.1.4
