@@ -1,24 +1,27 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: exynos_defconfig: Enable options to mount a rootfs via NFS
-Date: Wed, 25 Mar 2015 20:00:07 +0100
-Message-ID: <1427310007-1022-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 1/1] ARM: exynos_defconfig: Enable options to mount a rootfs via NFS
+Date: Wed, 25 Mar 2015 20:08:24 +0100
+Message-ID: <1427310504-1505-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36937 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:36950 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751032AbbCYTA3 (ORCPT
+	with ESMTP id S1751413AbbCYTIf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Mar 2015 15:00:29 -0400
+	Wed, 25 Mar 2015 15:08:35 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-This patch enables the needed options to mount a rootfs over
-NFS and also the needed support for automatic configuration
-of IP addresses during boot as needed by NFS.
+This patch enables the options to mount a rootfs over NFS and also support
+for automatic configuration of IP addresses during boot as needed by NFS.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
+
+Changes since v1:
+ - Found a typo in the changelog after posting the patch. Sorry for the noise.
+
  arch/arm/configs/exynos_defconfig | 6 ++++++
  1 file changed, 6 insertions(+)
 
