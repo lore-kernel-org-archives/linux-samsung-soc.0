@@ -1,117 +1,62 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH 5/6] pwm: samsung: Fix output race on disabling
-Date: Fri, 27 Mar 2015 03:09:14 +1030
-Message-ID: <1427387955-5129-6-git-send-email-linux.amoon@gmail.com>
-References: <1427387955-5129-1-git-send-email-linux.amoon@gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH v2 1/1] ARM: exynos_defconfig: Enable options to mount
+ a rootfs via NFS
+Date: Fri, 27 Mar 2015 01:50:50 +0900
+Message-ID: <551438EA.3010509@kernel.org>
+References: <1427310504-1505-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1427387955-5129-1-git-send-email-linux.amoon@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:36971 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751624AbbCZQu4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Mar 2015 12:50:56 -0400
+In-Reply-To: <1427310504-1505-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+On 03/26/15 04:08, Javier Martinez Canillas wrote:
+> This patch enables the options to mount a rootfs over NFS and also support
+> for automatic configuration of IP addresses during boot as needed by NFS.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+> 
+> Changes since v1:
+>  - Found a typo in the changelog after posting the patch. Sorry for the noise.
+> 
+>  arch/arm/configs/exynos_defconfig | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 72a4fffd603e..02be4c072497 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -36,6 +36,10 @@ CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+>  CONFIG_NET_KEY=y
+>  CONFIG_INET=y
+> +CONFIG_IP_PNP=y
+> +CONFIG_IP_PNP_DHCP=y
+> +CONFIG_IP_PNP_BOOTP=y
+> +CONFIG_IP_PNP_RARP=y
+>  CONFIG_WIRELESS=y
+>  CONFIG_CFG80211=y
+>  CONFIG_MWIFIEX=y
+> @@ -206,6 +210,8 @@ CONFIG_TMPFS=y
+>  CONFIG_TMPFS_POSIX_ACL=y
+>  CONFIG_CRAMFS=y
+>  CONFIG_ROMFS_FS=y
+> +CONFIG_NFS_FS=y
+> +CONFIG_ROOT_NFS=y
+>  CONFIG_NLS_CODEPAGE_437=y
+>  CONFIG_NLS_ASCII=y
+>  CONFIG_NLS_ISO8859_1=y
 
-When disabling the samsung PWM the output state remains at the level it
-was in the end of a pwm cycle. In other words, calling pwm_disable when
-at 100% duty will keep the output active, while at all other setting the
-output will go/stay inactive. On top of that the samsung PWM settings are
-double-buffered, which means the new settings only get applied at the
-start of a new PWM cycle.
+Applied, thanks.
 
-This results in a race if the PWM is at 100% duty and a driver calls:
-  pwm_config (pwm, 0, period);
-  pwm_disable (pwm);
-
-In this case the PWMs output will unexpectedly stay active, unless a new
-PWM cycle happened to start between the register writes in _config and
-_disable. As far as i can tell this is a regression introduced by 3bdf878,
-before that a call to pwm_config would call pwm_samsung_enable which,
-while heavy-handed, made sure the expected settings were live.
-
-To resolve this, while not re-introducing the issues 3bdf878 (flickering
-as the PWM got reset while in a PWM cycle). Only force an update of the
-settings when at 100% duty, which shouldn't have a noticeable effect on
-the output but is enough to ensure the behaviour is as expected on
-disable.
-
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 3e9b583..649f6c4 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
- }
- 
-+static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
-+				      struct pwm_device *pwm)
-+{
-+	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
-+	u32 tcon;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&samsung_pwm_lock, flags);
-+
-+	tcon = readl(chip->base + REG_TCON);
-+	tcon |= TCON_MANUALUPDATE(tcon_chan);
-+	writel(tcon, chip->base + REG_TCON);
-+
-+	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
-+	writel(tcon, chip->base + REG_TCON);
-+
-+	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
-+}
-+
- static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			      int duty_ns, int period_ns)
- {
- 	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
- 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
--	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
-+	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
- 
- 	/*
- 	 * We currently avoid using 64bit arithmetic by using the
-@@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return 0;
- 
- 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
-+	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
- 	/* We need tick count for calculation, not last tick. */
- 	++tcnt;
-@@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
- 	writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
-+	/* In case the PWM is currently at 100% duty, force a manual update
-+	 * to prevent the signal staying high in the pwm is disabled shortly
-+	 * afer this update (before it autoreloaded the new values) .
-+	 */
-+	if (oldtcmp == (u32) -1) {
-+		dev_dbg(our_chip->chip.dev, "Forcing manual update");
-+		pwm_samsung_manual_update(our_chip, pwm);
-+	}
-+
- 	chan->period_ns = period_ns;
- 	chan->tin_ns = tin_ns;
- 	chan->duty_ns = duty_ns;
--- 
-1.9.1
+- Kukjin
