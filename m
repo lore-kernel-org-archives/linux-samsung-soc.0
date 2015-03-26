@@ -1,63 +1,19 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH v2 1/5] tests/exynos: add fimg2d performance analysis
-Date: Thu, 26 Mar 2015 15:27:29 +0000
-Message-ID: <55142561.8020808@gmail.com>
-References: <1427302100-4210-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1427302100-4210-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Exynos5422 odroidxu3 pwm-fan control using thermal sensors
+Date: Fri, 27 Mar 2015 03:09:09 +1030
+Message-ID: <1427387955-5129-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f193.google.com ([209.85.192.193]:36579 "EHLO
+	mail-pd0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750884AbbCZQkO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Mar 2015 12:40:14 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
 
-T24gMjUvMDMvMTUgMTY6NDgsIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4gQ3VycmVudGx5IG9ubHkg
-ZmFzdCBzb2xpZCBjb2xvciBjbGVhciBwZXJmb3JtYW5jZSBpcyBtZWFzdXJlZC4KPiBBIGxhcmdl
-IGJ1ZmZlciBpcyBhbGxvY2F0ZWQgYW5kIHNvbGlkIGNvbG9yIGNsZWFyIG9wZXJhdGlvbnMKPiBh
-cmUgZXhlY3V0ZWQgb24gaXQgd2l0aCByYW5kb21seSBjaG9zZW4gcHJvcGVydGllcyAocG9zaXRp
-b24KPiBhbmQgc2l6ZSBvZiB0aGUgcmVnaW9uLCBjbGVhciBjb2xvcikuIEV4ZWN1dGlvbiB0aW1l
-IGlzCj4gbWVhc3VyZWQgYW5kIG91dHB1dCB0b2dldGhlciB3aXRoIHRoZSBhbW91bnQgb2YgcGl4
-ZWxzCj4gcHJvY2Vzc2VkLgo+IAo+IFRoZSAnc2ltcGxlJyB2YXJpYW50IG9ubHkgZXhlY3V0ZXMg
-b25lIEcyRCBjb21tYW5kIGJ1ZmZlciBhdAo+IGEgdGltZSwgd2hpbGUgdGhlICdtdWx0aScgdmFy
-aWFudCBleGVjdXRlcyBtdWx0aXBsZSBvbmVzLiBUaGlzCj4gY2FuIGJlIHVzZWQgdG8gbWVhc3Vy
-ZSBzZXR1cC9leGVjIG92ZXJoZWFkLgo+IAo+IFRoZSB0ZXN0IGFsc28gc2VydmVzIGEgc3RhYmls
-aXR5IGNoZWNrLiBJZiBjbG9ja3Mvdm9sdGFnZXMgYXJlCj4gdG9vIGhpZ2ggb3IgbG93IHJlc3Bl
-Y3RpdmVseSwgdGhlIHRlc3QgcXVpY2tseSByZXZlYWxzIHRoaXMuCj4gCj4gdjI6IEFkZCBHUEx2
-MiBoZWFkZXIsIGFyZ3VtZW50IGhhbmRsaW5nIGFuZCBkb2N1bWVudGF0aW9uLgo+ICAgICBUb29s
-IGlzIG9ubHkgaW5zdGFsbGVkIHdoZW4gcmVxdWVzdGVkLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRv
-YmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+ICB0ZXN0
-cy9leHlub3MvTWFrZWZpbGUuYW0gICAgICAgICAgfCAgMTkgKystCj4gIHRlc3RzL2V4eW5vcy9l
-eHlub3NfZmltZzJkX3BlcmYuYyB8IDMyMCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDMzNyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
-cygtKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfcGVy
-Zi5jCj4gCj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2V4eW5vcy9NYWtlZmlsZS5hbSBiL3Rlc3RzL2V4
-eW5vcy9NYWtlZmlsZS5hbQo+IGluZGV4IGIyMWQwMTYuLmU4MmQxOTkgMTAwNjQ0Cj4gLS0tIGEv
-dGVzdHMvZXh5bm9zL01ha2VmaWxlLmFtCj4gKysrIGIvdGVzdHMvZXh5bm9zL01ha2VmaWxlLmFt
-Cj4gQEAgLTUsMTYgKzUsMzEgQEAgQU1fQ0ZMQUdTID0gXAo+ICAJLUkgJCh0b3Bfc3JjZGlyKS9l
-eHlub3MgXAo+ICAJLUkgJCh0b3Bfc3JjZGlyKQo+ICAKPiArYmluX1BST0dSQU1TID0KPiArbm9p
-bnN0X1BST0dSQU1TID0KPiArCj4gIGlmIEhBVkVfTElCS01TCj4gIGlmIEhBVkVfSU5TVEFMTF9U
-RVNUUwo+IC1iaW5fUFJPR1JBTVMgPSBcCj4gK2Jpbl9QUk9HUkFNUyArPSBcCj4gIAlleHlub3Nf
-ZmltZzJkX3Rlc3QKPiAgZWxzZQo+IC1ub2luc3RfUFJPR1JBTVMgPSBcCj4gK25vaW5zdF9QUk9H
-UkFNUyArPSBcCj4gIAlleHlub3NfZmltZzJkX3Rlc3QKPiAgZW5kaWYKPiAgZW5kaWYKPiAgCj4g
-K2lmIEhBVkVfSU5TVEFMTF9URVNUUwo+ICtiaW5fUFJPR1JBTVMgKz0gXAo+ICsJZXh5bm9zX2Zp
-bWcyZF9wZXJmCj4gK2Vsc2UKPiArbm9pbnN0X1BST0dSQU1TICs9IFwKPiArCWV4eW5vc19maW1n
-MmRfcGVyZgo+ICtlbmRpZgo+ICsKT25lIGNhbiBzaW1wbGlmeSB0aGlzIGFzIGJlbG93LCBhbHRo
-b3VnaCBJIHdpbGwgbm90IHdvcnJ5IHRvbyBtdWNoIGFib3V0Cml0IDopIFRoYXQgYXNpZGUgd291
-bGQgYmUgbmljZSB0byBoZWFyIHNvbWUgZmVlZGJhY2sgZnJvbSB0aGUgRXh5bm9zIGFuZAp0aGUg
-b2xkIHNjaG9vbCBsaWJkcm0gZGV2cyBvbiB0aGUgY29yZSBjaGFuZ2VzLgoKCmlmIEhBVkVfTElC
-S01TCkZPTyA9IFwKCWV4eW5vc19maW1nMmRfdGVzdAplbmRpZgoKaWYgSEFWRV9JTlNUQUxMX1RF
-U1RTCmJpbl9QUk9HUkFNUyA9IFwKCSQoRk9PKSBcCglleHlub3NfZmltZzJkX3BlcmYKZWxzZQpu
-b2luc3RfUFJPR1JBTVMgPSBcCgkkKEZPTykgXAoJZXh5bm9zX2ZpbWcyZF9wZXJmCmVuZGlmCgoK
-LUVtaWwKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+This work depeds upon work done by Lukasz Majewski <l.majewski@samsung.com>
+ and Sjoerd Simons <sjoerd.simons@collabora.co.uk> regarding the pwm-fan.
+
+-Anand Moon
