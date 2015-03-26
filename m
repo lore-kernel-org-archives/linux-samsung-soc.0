@@ -1,116 +1,122 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH RESEND] phy: exynos5-usbdrd: Add to support for Exynos5433 SoC
-Date: Thu, 26 Mar 2015 10:46:33 +0530
-Message-ID: <CAFp+6iGbLB74D3GhrrQ8uHDtMj+dnT_E8zjvNfjUhzHQKLAjow@mail.gmail.com>
-References: <1427336323-10515-1-git-send-email-jaewon02.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f41.google.com ([209.85.192.41]:35390 "EHLO
-	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790AbbCZFQe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Mar 2015 01:16:34 -0400
-In-Reply-To: <1427336323-10515-1-git-send-email-jaewon02.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH 00/16 v2] iommu: Move domain allocation into drivers
+Date: Thu, 26 Mar 2015 13:43:03 +0100
+Message-ID: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Alex Williamson <alex.williamson@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, jroedel@suse.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-On Thu, Mar 26, 2015 at 7:48 AM, Jaewon Kim <jaewon02.kim@samsung.com> wrote:
-> This patch adds driver data to support for Exynos5433 SoC.
-> The Exynos5433 has one USB3.0 Host and USB3.0 DRD(Dual Role Device).
-> Exynos5433 is simplar to Eyxnos7 but Exynos5433 have
-> one more USB3.0 Host controller.
->
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
+Changes v1-v2:
 
-Patch looks good to me.
+	* Rebased to v4.0-rc5
+	* Converted domain-types to a bit-field
 
-Reviewed-by: Vivek Gautam <gautam.vivek@samsung.com>
+Hi,
 
->  .../devicetree/bindings/phy/samsung-phy.txt        |    3 ++-
->  drivers/phy/phy-exynos5-usbdrd.c                   |   10 ++++++++++
->  include/linux/mfd/syscon/exynos5-pmu.h             |    3 +++
->  3 files changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 91e38cf..60c6f2a 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -128,6 +128,7 @@ Required properties:
->  - compatible : Should be set to one of the following supported values:
->         - "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
->         - "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
-> +       - "samsung,exynos5433-usbdrd-phy" - for exynos5433 SoC.
->         - "samsung,exynos7-usbdrd-phy" - for exynos7 SoC.
->  - reg : Register offset and length of USB DRD PHY register set;
->  - clocks: Clock IDs array as required by the controller
-> @@ -139,7 +140,7 @@ Required properties:
->                PHY operations, associated by phy name. It is used to
->                determine bit values for clock settings register.
->                For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
-> -       - optional clocks: Exynos7 SoC has now following additional
-> +       - optional clocks: Exynos5433 & Exynos7 SoC has now following additional
->                            gate clocks available:
->                            - phy_pipe: for PIPE3 phy
->                            - phy_utmi: for UTMI+ phy
-> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-> index e2a0be7..d72ef15 100644
-> --- a/drivers/phy/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/phy-exynos5-usbdrd.c
-> @@ -624,6 +624,13 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
->         .has_common_clk_gate    = true,
->  };
->
-> +static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
-> +       .phy_cfg                = phy_cfg_exynos5,
-> +       .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
-> +       .pmu_offset_usbdrd1_phy = EXYNOS5433_USBHOST30_PHY_CONTROL,
-> +       .has_common_clk_gate    = false,
-> +};
-> +
->  static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
->         .phy_cfg                = phy_cfg_exynos5,
->         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
-> @@ -638,6 +645,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
->                 .compatible = "samsung,exynos5420-usbdrd-phy",
->                 .data = &exynos5420_usbdrd_phy
->         }, {
-> +               .compatible = "samsung,exynos5433-usbdrd-phy",
-> +               .data = &exynos5433_usbdrd_phy
-> +       }, {
->                 .compatible = "samsung,exynos7-usbdrd-phy",
->                 .data = &exynos7_usbdrd_phy
->         },
-> diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
-> index 00ef24b..9352adc 100644
-> --- a/include/linux/mfd/syscon/exynos5-pmu.h
-> +++ b/include/linux/mfd/syscon/exynos5-pmu.h
-> @@ -36,6 +36,9 @@
->  #define EXYNOS5420_MTCADC_PHY_CONTROL          (0x724)
->  #define EXYNOS5420_DPTX_PHY_CONTROL            (0x728)
->
-> +/* Exynos5433 specific register definitions */
-> +#define EXYNOS5433_USBHOST30_PHY_CONTROL       (0x728)
-> +
->  #define EXYNOS5_PHY_ENABLE                     BIT(0)
->
->  #define EXYNOS5_MIPI_PHY_S_RESETN              BIT(1)
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+here is patch-set to replace the existing domain_init and
+domain_destroy iommu-ops with the new domain_alloc and
+domain_free callbacks
 
+The new callbacks move the allocation of iommu domains into
+the iommu driver, allowing them to put a generic
+iommu_domain struct into their own domain struct. This makes
+domain handling in the drivers more cache efficient and
+prepares the introduction of default domains in another
+patch-set.
 
+While at it, this patch-set also introduces domain types.
+These are internal to the iommu core code for now, there are
+three of them:
+
+	* DMA-API domains
+	* Identity mapped domains
+	* Domains unmanaged by the iommu-core, used for
+	  iommu-api so that the users can create their own
+	  mappings
+
+The patches have been compile tested for x86, ARM and PPC
+and runtime tested on x86 (Intel VT-d and AMD IOMMU).
+
+Please review.
+
+Thanks,
+
+	Joerg
+
+Joerg Roedel (15):
+  iommu: Introduce domain_alloc and domain_free iommu_ops
+  iommu: Introduce iommu domain types
+  iommu/amd: Make use of domain_alloc and domain_free
+  iommu/vt-d: Make use of domain_alloc and domain_free
+  iommu/omap: Make use of domain_alloc and domain_free
+  iommu/arm-smmu: Make use of domain_alloc and domain_free
+  iommu/exynos: Make use of domain_alloc and domain_free
+  iommu/tegra-smmu: Make use of domain_alloc and domain_free
+  iommu/tegra-gart: Make use of domain_alloc and domain_free
+  iommu/msm: Make use of domain_alloc and domain_free
+  iommu/shmobile: Make use of domain_alloc and domain_free
+  iommu/ipmmu-vmsa: Make use of domain_alloc and domain_free
+  iommu/rockchip: Make use of domain_alloc and domain_free
+  iommu/fsl: Make use of domain_alloc and domain_free
+  iommu: Remove domain_init and domain_free iommu_ops
+
+ drivers/iommu/amd_iommu.c       | 84 +++++++++++++++++++++------------------
+ drivers/iommu/amd_iommu_types.h |  7 ++--
+ drivers/iommu/arm-smmu.c        | 46 +++++++++++++---------
+ drivers/iommu/exynos-iommu.c    | 87 ++++++++++++++++++++++-------------------
+ drivers/iommu/fsl_pamu_domain.c | 60 +++++++++++++++-------------
+ drivers/iommu/fsl_pamu_domain.h |  2 +-
+ drivers/iommu/intel-iommu.c     | 48 +++++++++++++----------
+ drivers/iommu/iommu.c           | 20 ++--------
+ drivers/iommu/ipmmu-vmsa.c      | 43 +++++++++++---------
+ drivers/iommu/msm_iommu.c       | 73 +++++++++++++++++-----------------
+ drivers/iommu/omap-iommu.c      | 49 +++++++++++++----------
+ drivers/iommu/rockchip-iommu.c  | 40 +++++++++++--------
+ drivers/iommu/shmobile-iommu.c  | 40 +++++++++++--------
+ drivers/iommu/tegra-gart.c      | 67 +++++++++++++++++++++----------
+ drivers/iommu/tegra-smmu.c      | 41 ++++++++++---------
+ include/linux/iommu.h           | 17 ++++++--
+ 16 files changed, 407 insertions(+), 317 deletions(-)
 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.8.4.5
+Joerg Roedel (16):
+  iommu: Introduce domain_alloc and domain_free iommu_ops
+  iommu: Introduce iommu domain types
+  iommu: Only allow iommu_map/unmap for paging domains
+  iommu/amd: Make use of domain_alloc and domain_free
+  iommu/vt-d: Make use of domain_alloc and domain_free
+  iommu/omap: Make use of domain_alloc and domain_free
+  iommu/arm-smmu: Make use of domain_alloc and domain_free
+  iommu/exynos: Make use of domain_alloc and domain_free
+  iommu/tegra-smmu: Make use of domain_alloc and domain_free
+  iommu/tegra-gart: Make use of domain_alloc and domain_free
+  iommu/msm: Make use of domain_alloc and domain_free
+  iommu/shmobile: Make use of domain_alloc and domain_free
+  iommu/ipmmu-vmsa: Make use of domain_alloc and domain_free
+  iommu/rockchip: Make use of domain_alloc and domain_free
+  iommu/fsl: Make use of domain_alloc and domain_free
+  iommu: Remove domain_init and domain_free iommu_ops
+
+ drivers/iommu/amd_iommu.c       | 84 +++++++++++++++++++++------------------
+ drivers/iommu/amd_iommu_types.h |  7 ++--
+ drivers/iommu/arm-smmu.c        | 46 +++++++++++++---------
+ drivers/iommu/exynos-iommu.c    | 87 ++++++++++++++++++++++-------------------
+ drivers/iommu/fsl_pamu_domain.c | 60 +++++++++++++++-------------
+ drivers/iommu/fsl_pamu_domain.h |  2 +-
+ drivers/iommu/intel-iommu.c     | 48 +++++++++++++----------
+ drivers/iommu/iommu.c           | 26 +++++-------
+ drivers/iommu/ipmmu-vmsa.c      | 41 ++++++++++---------
+ drivers/iommu/msm_iommu.c       | 73 +++++++++++++++++-----------------
+ drivers/iommu/omap-iommu.c      | 49 +++++++++++++----------
+ drivers/iommu/rockchip-iommu.c  | 40 +++++++++++--------
+ drivers/iommu/shmobile-iommu.c  | 39 ++++++++++--------
+ drivers/iommu/tegra-gart.c      | 67 +++++++++++++++++++++----------
+ drivers/iommu/tegra-smmu.c      | 41 ++++++++++---------
+ include/linux/iommu.h           | 33 ++++++++++++++--
+ 16 files changed, 427 insertions(+), 316 deletions(-)
+
+-- 
+1.9.1
