@@ -1,114 +1,46 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [PATCH 1/3] drm/exynos: mixer: add 2x scaling to
- mixer_graph_buffer
-Date: Thu, 26 Mar 2015 11:26:15 -0300
-Message-ID: <20150326142615.GA18573@joana>
-References: <1427325438-3791-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm: Exynos: Respect framebuffer pitch for FIMD/Mixer
+Date: Thu, 26 Mar 2015 23:32:30 +0900
+Message-ID: <5514187E.60405@samsung.com>
+References: <1426598698-31095-1-git-send-email-daniels@collabora.com>
+ <CABxcv==Z0ccmR-3Hasnkmg14m3hBJEwha=6c6288jQPUhyQt-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38025 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752725AbbCZO0X (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Mar 2015 10:26:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1427325438-3791-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CABxcv==Z0ccmR-3Hasnkmg14m3hBJEwha=6c6288jQPUhyQt-g@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Stone <daniels@collabora.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hi Tobias,
-
-2015-03-26 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
-
-> While the VP (video processor) supports arbitrary scaling
-> of its input, the mixer just supports a simple 2x (line
-> doubling) scaling. Expose this functionality and exit
-> early when an unsupported scaling configuration is
-> encountered.
-> 
-> This was tested with modetest's DRM plane test (from
-> the libdrm test suite) on an Odroid-X2 (Exynos4412).
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 38 +++++++++++++++++++++++++++++------
->  1 file changed, 32 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index df547b6..7c38d3b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -521,12 +521,37 @@ static void mixer_layer_update(struct mixer_context *ctx)
->  	mixer_reg_writemask(res, MXR_CFG, ~0, MXR_CFG_LAYER_UPDATE);
->  }
->  
-> +static int mixer_setup_scale(unsigned int src_w, unsigned int src_h,
-> +	unsigned int dst_w, unsigned int dst_h,
-> +	unsigned int *scale_w, unsigned int *scale_h)
-
-I would keep calling these two vars x_ratio and y_ratio. I don't see a reason
-to change the name here.
-
-> +{
-> +	if (dst_w != src_w) {
-> +		if (dst_w == 2 * src_w)
-> +			*scale_w = 1;
-> +		else
-> +			goto fail;
-> +	}
-> +
-> +	if (dst_h != src_h) {
-> +		if (dst_h == 2 * src_h)
-> +			*scale_h = 1;
-> +		else
-> +			goto fail;
-> +	}
-> +
-> +	return 0;
-> +
-> +fail:
-> +	DRM_DEBUG_KMS("only 2x width/height scaling of plane supported\n");
-> +	return -1;
-
-Use EPERM or ENOTSUPP. Or even true/false.
-
-> +}
-> +
->  static void mixer_graph_buffer(struct mixer_context *ctx, int win)
->  {
->  	struct mixer_resources *res = &ctx->mixer_res;
->  	unsigned long flags;
->  	struct hdmi_win_data *win_data;
-> -	unsigned int x_ratio, y_ratio;
-> +	unsigned int x_ratio = 0, y_ratio = 0;
->  	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
->  	dma_addr_t dma_addr;
->  	unsigned int fmt;
-> @@ -550,9 +575,10 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
->  		fmt = ARGB8888;
->  	}
->  
-> -	/* 2x scaling feature */
-> -	x_ratio = 0;
-> -	y_ratio = 0;
-> +	/* check if mixer supports scaling setup */
-> +	if (mixer_setup_scale(win_data->src_width, win_data->src_height,
-> +		win_data->crtc_width, win_data->crtc_height,
-> +		&x_ratio, &y_ratio)) return;
-
-You need to fix style here
-
-        if (mixer_setup_scale(win_data->src_width, win_data->src_height,        
-                              win_data->crtc_width, win_data->crtc_height,      
-                              &x_ratio, &y_ratio))                              
-                return; 
-
-
-I think your patch is good after these things get fixes and we can go with it
-and drop mine. Then I'll just rebase the alpha channel fix patch on top of
-this one.
-
-	Gustavo
+SGVsbG8gSmF2aWVyLAoKQXBwbGllZC4KCkNvdWxkIHlvdSB1c2UgcmlnaHQgcHJlZml4IG9mIHRo
+ZSBzdWJqZWN0IGxpa2UgYmVsb3cgd2hlbiB5b3UgcG9zdCBwYXRjaD8KCidkcm0vZXh5bm9zOiAu
+Li4nLCBub3QgJ2RybTogRXh5bm9zOiAuLi4nCgpZb3VyIGVtYWlsIHdpbGwgYmUgZmlsdGVyZWQg
+ZnJvbSBteSBtYWlsYm94IGlmIHlvdSBkb24ndCB1c2UgdGhlIHJpZ2h0CnByZWZpeCBzbyBJIGNv
+dWxkbid0IGNoZWNrIGFuZCB0YWtlIGNhcmUgb2YgeW91ciBwYXRjaC4KClRoYW5rcywKSW5raSBE
+YWUKCk9uIDIwMTXrhYQgMDPsm5QgMjTsnbwgMTc6NTcsIEphdmllciBNYXJ0aW5leiBDYW5pbGxh
+cyB3cm90ZToKPiBIZWxsbyBJbmtpLAo+IAo+IE9uIFR1ZSwgTWFyIDE3LCAyMDE1IGF0IDI6MjQg
+UE0sIERhbmllbCBTdG9uZSA8ZGFuaWVsc0Bjb2xsYWJvcmEuY29tPiB3cm90ZToKPj4gV2hlbiBw
+ZXJmb3JtaW5nIGEgbW9kZXNldCwgdXNlIHRoZSBmcmFtZWJ1ZmZlciBwaXRjaCB2YWx1ZSB0byBz
+ZXQgRklNRAo+PiBJTUdfU0laRSBhbmQgTWl4ZXIgU1BBTiByZWdpc3RlcnMuIFRoZXNlIGFyZSBi
+b3RoIGRlZmluZWQgYXMgcGl0Y2ggLSB0aGUKPj4gZGlzdGFuY2UgYmV0d2VlbiBjb250aWd1b3Vz
+IGxpbmVzIChieXRlcyBmb3IgRklNRCwgcGl4ZWxzIGZvciBtaXhlcikuCj4+Cj4+IEZpeGVzIGRp
+c3BsYXkgb24gU25vdyAoMTM2Nng3NjgpLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgU3Rv
+bmUgPGRhbmllbHNAY29sbGFib3JhLmNvbT4KPj4gVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXog
+Q2FuaWxsYXMgPGphdmllci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+Cj4gCj4gQW55IGNvbW1l
+bnRzIG9uIHRoaXMgcGF0Y2g/IEl0IHdvdWxkIGJlIGdyZWF0IHRvIHBpY2sgdGhpcyBzb29uZXIK
+PiByYXRoZXIgdGhhbiBsYXRlciBzaW5jZSBpdCBmaXhlcyAoYXQgbGVhc3QpIGRpc3BsYXkgb3V0
+cHV0IG9uIFNub3cgYW5kCj4gSERNSSBvdXRwdXQgb24gUGVhY2ggUGl0L1BpLgo+IAo+IEJlc3Qg
+cmVnYXJkcywKPiBKYXZpZXIKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
