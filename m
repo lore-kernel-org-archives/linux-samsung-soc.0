@@ -1,51 +1,53 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2 2/8] drm/exynos: remove unused exynos_crtc->win_enable() callback
-Date: Thu, 26 Mar 2015 11:10:55 -0300
-Message-ID: <1427379061-30621-3-git-send-email-gustavo@padovan.org>
-References: <1427379061-30621-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f177.google.com ([209.85.160.177]:36749 "EHLO
-	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752745AbbCZOLL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Mar 2015 10:11:11 -0400
-Received: by ykcn8 with SMTP id n8so27972284ykc.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Mar 2015 07:11:10 -0700 (PDT)
-In-Reply-To: <1427379061-30621-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH -v2 0/8] drm/exynos: clean up patches (preparing for atomic)
+Date: Thu, 26 Mar 2015 11:10:53 -0300
+Message-ID: <1427379061-30621-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-None of the exynos crtc drivers implements win_enable() so remove it for
-better clarity of the code.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 9afd390..4e8f0b0 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -174,7 +174,6 @@ struct exynos_drm_display {
-  *	hardware overlay is updated.
-  * @win_mode_set: copy drm overlay info to hw specific overlay info.
-  * @win_commit: apply hardware specific overlay data to registers.
-- * @win_enable: enable hardware specific overlay.
-  * @win_disable: disable hardware specific overlay.
-  * @te_handler: trigger to transfer video image at the tearing effect
-  *	synchronization signal if there is a page flip request.
-@@ -192,7 +191,6 @@ struct exynos_drm_crtc_ops {
- 	void (*win_mode_set)(struct exynos_drm_crtc *crtc,
- 				struct exynos_drm_plane *plane);
- 	void (*win_commit)(struct exynos_drm_crtc *crtc, int zpos);
--	void (*win_enable)(struct exynos_drm_crtc *crtc, int zpos);
- 	void (*win_disable)(struct exynos_drm_crtc *crtc, int zpos);
- 	void (*te_handler)(struct exynos_drm_crtc *crtc);
- };
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+SGksCgpIZXJlIGdvZXMgc29tZSBjbGVhbiB1cHMgdG8gdGhlIGV4eW5vcyBkcml2ZXJzLiBUaGUg
+bWFpbiBjbGVhbiB1cHMgaXMKdGhlIHByZXNldHRpbmcgYW5kIHpwb3MgbWFraW5nIHRoZSBwcm9w
+ZXJ0eSBpbW11dGFibGUgYW5kIHRoZSByZW1vdmFsCm9mICpfd2luX2RhdGEgc3RydWN0dXJlcy4K
+CnYyIGNvbnRhaW5zIGEgZXh0cmEgcGF0Y2ggdG8gZml4IGFscGhhIHNldHRpbmcgZm9yIHBsYW5l
+cyBpbiBmaW1kLCBzbwpub3cgZmltZCB3b3JrcyBmaW5lIGV2ZW4gYWZ0ZXIgdGhlIHJlbW92YWwg
+b2Ygc3RydWN0IGZpbWRfd2luX2RhdGEuCgoJR3VzdGF2bwoJCi0tLQpHdXN0YXZvIFBhZG92YW4g
+KDcpOgogIGRybS9leHlub3M6IGZpbWQ6IGZpeCBhbHBoYSBzZXR0aW5nIGZvciBYUjI0IHBpeGVs
+IGZvcm1hdAogIGRybS9leHlub3M6IHJlbW92ZSB1bnVzZWQgZXh5bm9zX2NydGMtPndpbl9lbmFi
+bGUoKSBjYWxsYmFjawogIGRybS9leHlub3M6IHJlbW92ZSBzdHJ1Y3QgKl93aW5fZGF0YSBhYnN0
+cmFjdGlvbiBvbiBwbGFuZXMKICBkcm0vZXh5bm9zOiBwcmVzZXQgenBvcyB2YWx1ZSBmb3Igb3Zl
+cmxheSBwbGFuZXMKICBkcm0vZXh5bm9zOiBtYWtlIHpwb3MgcHJvcGVydHkgaW1tdXRhYmxlCiAg
+ZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19wbGFuZV9kZXN0cm95KCkKICBkcm0vZXh5bm9zOiBy
+ZW1vdmUgbGVmdG92ZXIgZnVuY3Rpb25zIGRlY2xhcmF0aW9ucwoKTWFuZGVlcCBTaW5naCBCYWlu
+ZXMgKDEpOgogIGRybS9leHlub3M6IHRyYWNrIHZibGFuayBldmVudHMgb24gYSBwZXIgY3J0YyBi
+YXNpcwoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyB8IDE3NiAr
+KysrKysrKy0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Y3J0Yy5jICAgfCAxMDEgKysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2NydGMuaCAgIHwgICA3ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmMgICAgfCAgMjcgLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5oICAgIHwgIDIwICstLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
+bWQuYyAgIHwgMjI2ICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgfCAgNjYgKystLS0tLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCAgfCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICB8IDEzNCArKysrLS0tLS0tLS0tLS0tLQogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgIHwgMjE3ICsrKysrKysrKyst
+LS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaCAgICAgICAgICAg
+ICAgIHwgICA1ICsKIDExIGZpbGVzIGNoYW5nZWQsIDMzNyBpbnNlcnRpb25zKCspLCA2NDkgZGVs
+ZXRpb25zKC0pCgotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
