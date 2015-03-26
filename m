@@ -1,61 +1,93 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH 1/3] drm/exynos: don't commit if plane scaling is required
-Date: Thu, 26 Mar 2015 00:19:56 +0100
-Message-ID: <5513429C.6050103@gmx.net>
-References: <1426775270-31137-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH RESEND] phy: exynos5-usbdrd: Add to support for Exynos5433 SoC
+Date: Thu, 26 Mar 2015 11:18:43 +0900
+Message-ID: <1427336323-10515-1-git-send-email-jaewon02.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.19]:59912 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750979AbbCYXUH (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55564 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819AbbCZCSs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Mar 2015 19:20:07 -0400
-In-Reply-To: <1426775270-31137-1-git-send-email-gustavo@padovan.org>
+	Wed, 25 Mar 2015 22:18:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
 
-Hello,
+This patch adds driver data to support for Exynos5433 SoC.
+The Exynos5433 has one USB3.0 Host and USB3.0 DRD(Dual Role Device).
+Exynos5433 is simplar to Eyxnos7 but Exynos5433 have
+one more USB3.0 Host controller.
 
-I've just send an alternate version of this patch, which at least
-exposes the 2x scaling feature (which is already alluded to in the code):
-https://patchwork.kernel.org/patch/6095901/
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ .../devicetree/bindings/phy/samsung-phy.txt        |    3 ++-
+ drivers/phy/phy-exynos5-usbdrd.c                   |   10 ++++++++++
+ include/linux/mfd/syscon/exynos5-pmu.h             |    3 +++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
 
-@Gustavo: What do you think?
-
-With best wishes,
-Tobias
-
-
-Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> exynos doesn't show scaled planes properly on the screen so
-> disable the feature and show a message to the user.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 2e3bc57..a95fe84 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -550,6 +550,12 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
->  		fmt = ARGB8888;
->  	}
->  
-> +	if (win_data->crtc_width != win_data->src_width ||
-> +	    win_data->crtc_height != win_data->src_height) {
-> +		DRM_DEBUG_KMS("plane scaling not supported\n");
-> +		return;
-> +	}
-> +
->  	/* 2x scaling feature */
->  	x_ratio = 0;
->  	y_ratio = 0;
-> 
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+index 91e38cf..60c6f2a 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -128,6 +128,7 @@ Required properties:
+ - compatible : Should be set to one of the following supported values:
+ 	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
+ 	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
++	- "samsung,exynos5433-usbdrd-phy" - for exynos5433 SoC.
+ 	- "samsung,exynos7-usbdrd-phy" - for exynos7 SoC.
+ - reg : Register offset and length of USB DRD PHY register set;
+ - clocks: Clock IDs array as required by the controller
+@@ -139,7 +140,7 @@ Required properties:
+ 	       PHY operations, associated by phy name. It is used to
+ 	       determine bit values for clock settings register.
+ 	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
+-	- optional clocks: Exynos7 SoC has now following additional
++	- optional clocks: Exynos5433 & Exynos7 SoC has now following additional
+ 			   gate clocks available:
+ 			   - phy_pipe: for PIPE3 phy
+ 			   - phy_utmi: for UTMI+ phy
+diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
+index e2a0be7..d72ef15 100644
+--- a/drivers/phy/phy-exynos5-usbdrd.c
++++ b/drivers/phy/phy-exynos5-usbdrd.c
+@@ -624,6 +624,13 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
+ 	.has_common_clk_gate	= true,
+ };
+ 
++static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
++	.phy_cfg		= phy_cfg_exynos5,
++	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
++	.pmu_offset_usbdrd1_phy	= EXYNOS5433_USBHOST30_PHY_CONTROL,
++	.has_common_clk_gate	= false,
++};
++
+ static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
+ 	.phy_cfg		= phy_cfg_exynos5,
+ 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
+@@ -638,6 +645,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
+ 		.compatible = "samsung,exynos5420-usbdrd-phy",
+ 		.data = &exynos5420_usbdrd_phy
+ 	}, {
++		.compatible = "samsung,exynos5433-usbdrd-phy",
++		.data = &exynos5433_usbdrd_phy
++	}, {
+ 		.compatible = "samsung,exynos7-usbdrd-phy",
+ 		.data = &exynos7_usbdrd_phy
+ 	},
+diff --git a/include/linux/mfd/syscon/exynos5-pmu.h b/include/linux/mfd/syscon/exynos5-pmu.h
+index 00ef24b..9352adc 100644
+--- a/include/linux/mfd/syscon/exynos5-pmu.h
++++ b/include/linux/mfd/syscon/exynos5-pmu.h
+@@ -36,6 +36,9 @@
+ #define EXYNOS5420_MTCADC_PHY_CONTROL		(0x724)
+ #define EXYNOS5420_DPTX_PHY_CONTROL		(0x728)
+ 
++/* Exynos5433 specific register definitions */
++#define EXYNOS5433_USBHOST30_PHY_CONTROL	(0x728)
++
+ #define EXYNOS5_PHY_ENABLE			BIT(0)
+ 
+ #define EXYNOS5_MIPI_PHY_S_RESETN		BIT(1)
+-- 
+1.7.9.5
