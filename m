@@ -1,55 +1,43 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: exynos5800-peach-pi: suspend/resume (still) broken
-Date: Fri, 27 Mar 2015 19:36:02 +0530
-Message-ID: <CAM4voanJNJPMdBx5okcVYhqKyzKTctZddvV-XpWzPrA8Og_7oA@mail.gmail.com>
-References: <CAMAWPa_r04tAXAXosmLk+DfwvQV0qpD+=8O7T_pwFTAozcjOgQ@mail.gmail.com>
-	<550953ED.10508@collabora.co.uk>
-	<CAM4voakvhHuVXLY2DmdGexfrqSYUqhXhg1krLwO4CCxjHQ1NCw@mail.gmail.com>
-	<550C47ED.3010301@collabora.co.uk>
-	<CAM4voamLt=6dSY-DwDb+c=KRwDWAvjvzUUnno+=+1svDqf41Qg@mail.gmail.com>
-	<CAM4voanUg87=Ya6azGCRz8r2=WJ0wi4ktqdn6GD6ULJsnLUMmw@mail.gmail.com>
-	<55155B3F.2010704@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [RFC PATCH 0/2] ARM: EXYNOS: Fix Suspend-to-RAM on Exynos5420
+Date: Fri, 27 Mar 2015 15:21:35 +0100
+Message-ID: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:33315 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752970AbbC0OGD (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:39372 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752768AbbC0OVv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Mar 2015 10:06:03 -0400
-Received: by qgfa8 with SMTP id a8so126954216qgf.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2015 07:06:03 -0700 (PDT)
-In-Reply-To: <55155B3F.2010704@collabora.co.uk>
+	Fri, 27 Mar 2015 10:21:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello Javier,
+Hello,
 
-On Fri, Mar 27, 2015 at 6:59 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Abhilash,
->
-> On 03/20/2015 06:40 PM, Abhilash Kesavan wrote:
->>
->> Regarding the mdma0 disablement, it looks like for the system to
->> suspend properly the mdma0 pclk needs to stay on.
->>
->
-> I had time today again to work on this issue and the best
-> place I found to enable and disable the mdma0 clock is in
-> exynos5420_pm_{prepare,resume}. Please let me know if you
-> have a better idea of where the clock should be managed.
->
+Suspend-to-RAM is currently not working. Abhilash Kesavan traced down
+to the MDMA0 DMA controller clock to be disabled during suspend and
+that it must stay enaled during suspend or the system is not able to
+resume.
 
-Modifying exynos5420_clk_suspend in
-drivers/clk/samsung/clk-exynos5420.c would be another way to go,
-however I have not tested if this actually works.
+This series is an attempt to fix the issue and is composed of patches:
 
-> I'll send a RFC patch-set soon.
+Javier Martinez Canillas (2):
+  clk: exynos5420: Add alias for MDMA0 controller clock
+  ARM: EXYNOS: Make sure that the Exynos5420 MDMA0 clock is enabled
+    during suspend
 
-Thanks for the effort.
+ arch/arm/mach-exynos/suspend.c       | 15 +++++++++++++++
+ drivers/clk/samsung/clk-exynos5420.c |  2 +-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-Regards,
-Abhilash
+Patch #1 just adds an alias fo the MDMA0 clock so a lookup is registered.
+
+Patch #2 enables the MDMA0 clock before entering into a suspend state and
+disables it again once the system has been resumed.
+
+The patches are a RFC because I'm not sure if this is the best approach
+to solve the issue. So feedback will be highly appreciated.
+
+Best regards,
+Javier
