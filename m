@@ -1,89 +1,67 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH v2 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0 clock is enabled during suspend
-Date: Fri, 27 Mar 2015 20:38:51 +0100
-Message-ID: <1427485131-18561-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1427485131-18561-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427485131-18561-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH 00/16 v2] iommu: Move domain allocation into drivers
+Date: Fri, 27 Mar 2015 17:39:24 +0100
+Message-ID: <2897269.KbvNjRHUCI@phil>
+References: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1427373799-18662-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
-Management support v12") added pm support for the pl330 dma driver but
-it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
-during suspend and this clock needs to remain enabled in order to make
-the system resume from a system suspend state.
+Am Donnerstag, 26. M=E4rz 2015, 13:43:03 schrieb Joerg Roedel:
+> Changes v1-v2:
+> =
 
-To make sure that the clock is enabled during suspend, enable it prior
-to entering a suspend state and disable it once the system has resumed.
+> 	* Rebased to v4.0-rc5
+> 	* Converted domain-types to a bit-field
+> =
 
-Thanks to Abhilash Kesavan for figuring out that this was the issue.
+> Hi,
+> =
 
-Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
+> here is patch-set to replace the existing domain_init and
+> domain_destroy iommu-ops with the new domain_alloc and
+> domain_free callbacks
+> =
 
-The patch is an RFC because I'm not sure if this is the proper fix or if
-is just fixing a symptom rather than the cause. Any suggestions are more
-than welcomed.
+> The new callbacks move the allocation of iommu domains into
+> the iommu driver, allowing them to put a generic
+> iommu_domain struct into their own domain struct. This makes
+> domain handling in the drivers more cache efficient and
+> prepares the introduction of default domains in another
+> patch-set.
+> =
 
-Changes since v1:
-  - Call clk_put() after disabling the clock. Suggested by Sylwester Nawrocki.
-  - Use only IS_ERR() instead IS_ERR_OR_NULL(). Suggested by Sylwester Nawrocki.
+> While at it, this patch-set also introduces domain types.
+> These are internal to the iommu core code for now, there are
+> three of them:
+> =
 
- arch/arm/mach-exynos/suspend.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> 	* DMA-API domains
+> 	* Identity mapped domains
+> 	* Domains unmanaged by the iommu-core, used for
+> 	  iommu-api so that the users can create their own
+> 	  mappings
+> =
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 1521eaf99265..8a297fc1fa76 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/clk.h>
- #include <linux/cpu_pm.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -79,6 +80,7 @@ static const struct exynos_pm_data *pm_data;
- 
- static int exynos5420_cpu_state;
- static unsigned int exynos_pmu_spare3;
-+static struct clk *clk;
- 
- /*
-  * GIC wake-up support
-@@ -374,6 +376,16 @@ static void exynos5420_pm_prepare(void)
- {
- 	unsigned int tmp;
- 
-+	/*
-+	 * Exynos5420 requires the MDMA0 controller clock to be
-+	 * ungated on suspend in order to be resumed correctly.
-+	 */
-+	clk = clk_get(NULL, "mdma0");
-+	if (IS_ERR(clk))
-+		pr_warn("Failed to get mdma0 clk (%ld)\n", PTR_ERR(clk));
-+	else
-+		clk_prepare_enable(clk);
-+
- 	/* Set wake-up mask registers */
- 	exynos_pm_set_wakeup_mask();
- 
-@@ -516,6 +528,11 @@ static void exynos5420_pm_resume(void)
- {
- 	unsigned long tmp;
- 
-+	if (!IS_ERR(clk)) {
-+		clk_disable_unprepare(clk);
-+		clk_put(clk);
-+	}
-+
- 	/* Restore the CPU0 low power state register */
- 	tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
- 	pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
--- 
-2.1.4
+> The patches have been compile tested for x86, ARM and PPC
+> and runtime tested on x86 (Intel VT-d and AMD IOMMU).
+> =
+
+> Please review.
+
+core and Rockchip bits
+Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
