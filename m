@@ -1,90 +1,203 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 08/10] drm/exynos: atomic phase 3: convert page flips
-Date: Fri, 27 Mar 2015 12:58:58 -0300
-Message-ID: <1427471939-27345-9-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 01/10] drm/exynos: atomic phase 1: use drm_plane_helper_update()
+Date: Fri, 27 Mar 2015 12:58:51 -0300
+Message-ID: <1427471939-27345-2-git-send-email-gustavo@padovan.org>
 References: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:34486 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932469AbbC0P7G (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Mar 2015 11:59:06 -0400
+Received: by qcay5 with SMTP id y5so20174926qca.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2015 08:59:06 -0700 (PDT)
 In-Reply-To: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-UGFnZUZsaXBzIG5vdyB1c2UgdGhlIGF0b21pYyBoZWxwZXIgdG8gd29yayB0aHJvdWdoIHRoZSBh
-dG9taWMgbW9kZXNldHRpbmcKQVBJLiBBc3luYyBwYWdlIGZsaXBzIGFyZSBub3Qgc3VwcG9ydGVk
-IHlldC4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNv
-bGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
-Yy5jIHwgNjMgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgfCAgOSArKysrLQogMiBmaWxlcyBjaGFuZ2VkLCA5
-IGluc2VydGlvbnMoKyksIDYzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fY3J0Yy5jCmluZGV4IGIwODg4ZDQuLjBkYjdiOTEgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtMTIzLDY3ICsxMjMsNiBAQCBzdGF0aWMgc3Ry
-dWN0IGRybV9jcnRjX2hlbHBlcl9mdW5jcyBleHlub3NfY3J0Y19oZWxwZXJfZnVuY3MgPSB7CiAJ
-LmRpc2FibGUJPSBleHlub3NfZHJtX2NydGNfZGlzYWJsZSwKIH07CiAKLXN0YXRpYyBpbnQgZXh5
-bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCi0JCQkJICAgICBz
-dHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwKLQkJCQkgICAgIHN0cnVjdCBkcm1fcGVuZGluZ192
-YmxhbmtfZXZlbnQgKmV2ZW50LAotCQkJCSAgICAgdWludDMyX3QgcGFnZV9mbGlwX2ZsYWdzKQot
-ewotCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjcnRjLT5kZXY7Ci0Jc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsKLQl1bnNpZ25lZCBp
-bnQgY3J0Y193LCBjcnRjX2g7Ci0JaW50IHJldDsKLQotCS8qIHdoZW4gdGhlIHBhZ2UgZmxpcCBp
-cyByZXF1ZXN0ZWQsIGNydGMncyBkcG1zIHNob3VsZCBiZSBvbiAqLwotCWlmIChleHlub3NfY3J0
-Yy0+ZHBtcyA+IERSTV9NT0RFX0RQTVNfT04pIHsKLQkJRFJNX0VSUk9SKCJmYWlsZWQgcGFnZSBm
-bGlwIHJlcXVlc3QuXG4iKTsKLQkJcmV0dXJuIC1FSU5WQUw7Ci0JfQotCi0JaWYgKCFldmVudCkK
-LQkJcmV0dXJuIC1FSU5WQUw7Ci0KLQlzcGluX2xvY2tfaXJxKCZkZXYtPmV2ZW50X2xvY2spOwot
-CWlmIChleHlub3NfY3J0Yy0+ZXZlbnQpIHsKLQkJcmV0ID0gLUVCVVNZOwotCQlnb3RvIG91dDsK
-LQl9Ci0KLQlyZXQgPSBleHlub3NfY2hlY2tfcGxhbmUoY3J0Yy0+cHJpbWFyeSwgZmIpOwotCWlm
-IChyZXQpCi0JCWdvdG8gb3V0OwotCi0JcmV0ID0gZHJtX3ZibGFua19nZXQoZGV2LCBleHlub3Nf
-Y3J0Yy0+cGlwZSk7Ci0JaWYgKHJldCkgewotCQlEUk1fREVCVUcoImZhaWxlZCB0byBhY3F1aXJl
-IHZibGFuayBjb3VudGVyXG4iKTsKLQkJZ290byBvdXQ7Ci0JfQotCi0JZXh5bm9zX2NydGMtPmV2
-ZW50ID0gZXZlbnQ7Ci0Jc3Bpbl91bmxvY2tfaXJxKCZkZXYtPmV2ZW50X2xvY2spOwotCi0JLyoK
-LQkgKiB0aGUgcGlwZSBmcm9tIHVzZXIgYWx3YXlzIGlzIDAgc28gd2UgY2FuIHNldCBwaXBlIG51
-bWJlcgotCSAqIG9mIGN1cnJlbnQgb3duZXIgdG8gZXZlbnQuCi0JICovCi0JZXZlbnQtPnBpcGUg
-PSBleHlub3NfY3J0Yy0+cGlwZTsKLQotCWNydGMtPnByaW1hcnktPmZiID0gZmI7Ci0JY3J0Y193
-ID0gZmItPndpZHRoIC0gY3J0Yy0+eDsKLQljcnRjX2ggPSBmYi0+aGVpZ2h0IC0gY3J0Yy0+eTsK
-LQlleHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAotCQkJ
-ICAgIGNydGNfdywgY3J0Y19oLCBjcnRjLT54LCBjcnRjLT55LAotCQkJICAgIGNydGNfdywgY3J0
-Y19oKTsKLQotCWlmIChjcnRjLT5wcmltYXJ5LT5zdGF0ZSkKLQkJZHJtX2F0b21pY19zZXRfZmJf
-Zm9yX3BsYW5lKGNydGMtPnByaW1hcnktPnN0YXRlLCBmYik7Ci0KLQlyZXR1cm4gMDsKLQotb3V0
-OgotCXNwaW5fdW5sb2NrX2lycSgmZGV2LT5ldmVudF9sb2NrKTsKLQlyZXR1cm4gcmV0OwotfQot
-CiBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZGVzdHJveShzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMpCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3Nf
-Y3J0YyhjcnRjKTsKQEAgLTE5Nyw3ICsxMzYsNyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2Ny
-dGNfZGVzdHJveShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCiAKIHN0YXRpYyBzdHJ1Y3QgZHJtX2Ny
-dGNfZnVuY3MgZXh5bm9zX2NydGNfZnVuY3MgPSB7CiAJLnNldF9jb25maWcJPSBkcm1fYXRvbWlj
-X2hlbHBlcl9zZXRfY29uZmlnLAotCS5wYWdlX2ZsaXAJPSBleHlub3NfZHJtX2NydGNfcGFnZV9m
-bGlwLAorCS5wYWdlX2ZsaXAJPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAsCiAJLmRlc3Ry
-b3kJPSBleHlub3NfZHJtX2NydGNfZGVzdHJveSwKIAkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBl
-cl9jcnRjX3Jlc2V0LAogCS5hdG9taWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21pY19oZWxw
-ZXJfY3J0Y19kdXBsaWNhdGVfc3RhdGUsCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
-Yi5jCmluZGV4IGI4M2NlZWEuLmI0YmMzZWYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9mYi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9mYi5jCkBAIC0zMDcsMTEgKzMwNywxOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX291
-dHB1dF9wb2xsX2NoYW5nZWQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIAkJZXh5bm9zX2RybV9m
-YmRldl9pbml0KGRldik7CiB9CiAKK3N0YXRpYyBpbnQgZXh5bm9zX2F0b21pY19jb21taXQoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRldiwKKwkJCQlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUs
-CisJCQkJYm9vbCBhc3luYykKK3sKKwlyZXR1cm4gZHJtX2F0b21pY19oZWxwZXJfY29tbWl0KGRl
-diwgc3RhdGUsIGZhbHNlKTsKK30KKwogc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fbW9kZV9jb25m
-aWdfZnVuY3MgZXh5bm9zX2RybV9tb2RlX2NvbmZpZ19mdW5jcyA9IHsKIAkuZmJfY3JlYXRlID0g
-ZXh5bm9zX3VzZXJfZmJfY3JlYXRlLAogCS5vdXRwdXRfcG9sbF9jaGFuZ2VkID0gZXh5bm9zX2Ry
-bV9vdXRwdXRfcG9sbF9jaGFuZ2VkLAogCS5hdG9taWNfY2hlY2sgPSBkcm1fYXRvbWljX2hlbHBl
-cl9jaGVjaywKLQkuYXRvbWljX2NvbW1pdCA9IGRybV9hdG9taWNfaGVscGVyX2NvbW1pdCwKKwku
-YXRvbWljX2NvbW1pdCA9IGV4eW5vc19hdG9taWNfY29tbWl0LAogfTsKIAogdm9pZCBleHlub3Nf
-ZHJtX21vZGVfY29uZmlnX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKLS0gCjIuMS4wCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Rip out the check from exynos_update_plane() and create
+exynos_check_plane() for the check phase enabling use to use
+the atomic helpers to call our check and update phases when updating
+planes.
+
+Update all users of exynos_update_plane() accordingly to call
+exynos_check_plane() before.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 29 ++++++++++++------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 37 ++++++++++++++++++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h |  2 +-
+ 3 files changed, 43 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index eb49195..1c0d936 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -116,6 +116,7 @@ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+ 	struct drm_framebuffer *fb = crtc->primary->fb;
+ 	unsigned int crtc_w;
+ 	unsigned int crtc_h;
++	int ret;
+ 
+ 	/* when framebuffer changing is requested, crtc's dpms should be on */
+ 	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+@@ -123,11 +124,16 @@ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+ 		return -EPERM;
+ 	}
+ 
++	ret = exynos_check_plane(crtc->primary, fb);
++	if (ret)
++		return ret;
++
+ 	crtc_w = fb->width - x;
+ 	crtc_h = fb->height - y;
++	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
++			    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+ 
+-	return exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-				   crtc_w, crtc_h, x, y, crtc_w, crtc_h);
++	return 0;
+ }
+ 
+ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+@@ -164,7 +170,6 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ {
+ 	struct drm_device *dev = crtc->dev;
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	struct drm_framebuffer *old_fb = crtc->primary->fb;
+ 	unsigned int crtc_w, crtc_h;
+ 	int ret;
+ 
+@@ -183,6 +188,10 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 		goto out;
+ 	}
+ 
++	ret = exynos_check_plane(crtc->primary, fb);
++	if (ret)
++		goto out;
++
+ 	ret = drm_vblank_get(dev, exynos_crtc->pipe);
+ 	if (ret) {
+ 		DRM_DEBUG("failed to acquire vblank counter\n");
+@@ -201,17 +210,9 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 	crtc->primary->fb = fb;
+ 	crtc_w = fb->width - crtc->x;
+ 	crtc_h = fb->height - crtc->y;
+-	ret = exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-				  crtc_w, crtc_h, crtc->x, crtc->y,
+-				  crtc_w, crtc_h);
+-	if (ret) {
+-		crtc->primary->fb = old_fb;
+-		spin_lock_irq(&dev->event_lock);
+-		exynos_crtc->event = NULL;
+-		drm_vblank_put(dev, exynos_crtc->pipe);
+-		spin_unlock_irq(&dev->event_lock);
+-		return ret;
+-	}
++	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
++			    crtc_w, crtc_h, crtc->x, crtc->y,
++			    crtc_w, crtc_h);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 2b0479e..5a37816 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -140,21 +140,15 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 	plane->crtc = crtc;
+ }
+ 
+-int
++void
+ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 		     struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+ 		     unsigned int crtc_w, unsigned int crtc_h,
+ 		     uint32_t src_x, uint32_t src_y,
+ 		     uint32_t src_w, uint32_t src_h)
+ {
+-
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	int ret;
+-
+-	ret = exynos_check_plane(plane, fb);
+-	if (ret < 0)
+-		return ret;
+ 
+ 	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
+ 			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
+@@ -162,8 +156,6 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 
+ 	if (exynos_crtc->ops->win_commit)
+ 		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+-
+-	return 0;
+ }
+ 
+ static int exynos_disable_plane(struct drm_plane *plane)
+@@ -179,11 +171,34 @@ static int exynos_disable_plane(struct drm_plane *plane)
+ }
+ 
+ static struct drm_plane_funcs exynos_plane_funcs = {
+-	.update_plane	= exynos_update_plane,
++	.update_plane	= drm_plane_helper_update,
+ 	.disable_plane	= exynos_disable_plane,
+ 	.destroy	= drm_plane_cleanup,
+ };
+ 
++static int exynos_plane_atomic_check(struct drm_plane *plane,
++				     struct drm_plane_state *state)
++{
++	return exynos_check_plane(plane, state->fb);
++}
++
++static void exynos_plane_atomic_update(struct drm_plane *plane,
++				       struct drm_plane_state *old_state)
++{
++	struct drm_plane_state *state = plane->state;
++
++	exynos_update_plane(plane, state->crtc, state->fb,
++			    state->crtc_x, state->crtc_y,
++			    state->crtc_w, state->crtc_h,
++			    state->src_x >> 16, state->src_y >> 16,
++			    state->src_w >> 16, state->src_h >> 16);
++}
++
++static const struct drm_plane_helper_funcs plane_helper_funcs = {
++	.atomic_check = exynos_plane_atomic_check,
++	.atomic_update = exynos_plane_atomic_update,
++};
++
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+ 					      unsigned int zpos)
+ {
+@@ -219,6 +234,8 @@ int exynos_plane_init(struct drm_device *dev,
+ 		return err;
+ 	}
+ 
++	drm_plane_helper_add(&exynos_plane->base, &plane_helper_funcs);
++
+ 	exynos_plane->zpos = zpos;
+ 
+ 	if (type == DRM_PLANE_TYPE_OVERLAY)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+index f360590..560ca71 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+@@ -15,7 +15,7 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			   unsigned int crtc_w, unsigned int crtc_h,
+ 			   uint32_t src_x, uint32_t src_y,
+ 			   uint32_t src_w, uint32_t src_h);
+-int exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
++void exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+ 			unsigned int crtc_w, unsigned int crtc_h,
+ 			uint32_t src_x, uint32_t src_y,
+-- 
+2.1.0
