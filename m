@@ -1,69 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/3] ARM: EXYNOS: Add missing of_node_put() when parsing
- power domains
-Date: Fri, 27 Mar 2015 13:28:25 +0100
-Message-ID: <1427459305-26625-3-git-send-email-k.kozlowski@samsung.com>
-References: <1427459305-26625-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1427459305-26625-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 1/3] drm/exynos: mixer: add 2x scaling to
+ mixer_graph_buffer
+Date: Fri, 27 Mar 2015 10:11:51 -0300
+Message-ID: <20150327131151.GA15911@joana>
+References: <1427325438-3791-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20150326142615.GA18573@joana>
+ <55149475.1090900@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <55149475.1090900@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add missing of_node_put() to:
-1. Error return path if allocating memory for exynos_pm_domain failed.
-2. Second iteration over power domains if a child domain was not present
-   or was incomplete.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reported-by: Karol Wrona <k.wrona@samsung.com>
-
----
-Changes since v1:
-1. New patch.
----
- arch/arm/mach-exynos/pm_domains.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 61c32ccc9f7a..1a90c5da2fd7 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -138,6 +138,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 		if (!pd) {
- 			pr_err("%s: failed to allocate memory for domain\n",
- 					__func__);
-+			of_node_put(np);
- 			return -ENOMEM;
- 		}
- 
-@@ -209,15 +210,15 @@ no_clk:
- 		args.args_count = 0;
- 		child_domain = of_genpd_get_from_provider(&args);
- 		if (!child_domain)
--			continue;
-+			goto next_pd;
- 
- 		if (of_parse_phandle_with_args(np, "power-domains",
- 					 "#power-domain-cells", 0, &args) != 0)
--			continue;
-+			goto next_pd;
- 
- 		parent_domain = of_genpd_get_from_provider(&args);
- 		if (!parent_domain)
--			continue;
-+			goto next_pd;
- 
- 		if (pm_genpd_add_subdomain(parent_domain, child_domain))
- 			pr_warn("%s failed to add subdomain: %s\n",
-@@ -225,6 +226,7 @@ no_clk:
- 		else
- 			pr_info("%s has as child subdomain: %s.\n",
- 				parent_domain->name, child_domain->name);
-+next_pd:
- 		of_node_put(np);
- 	}
- 
--- 
-1.9.1
+SGkgVG9iaWFzLAoKMjAxNS0wMy0yNyBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
+ZWxlZmVsZC5kZT46Cgo+IEhlbGxvIQo+IAo+IAo+IEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+
+IEkgd291bGQga2VlcCBjYWxsaW5nIHRoZXNlIHR3byB2YXJzIHhfcmF0aW8gYW5kIHlfcmF0aW8u
+IEkgZG9uJ3Qgc2VlIGEgcmVhc29uCj4gPiB0byBjaGFuZ2UgdGhlIG5hbWUgaGVyZS4KPiBSaWdo
+dCwgSSdtIGdvaW5nIHRvIGNoYW5nZSB0aGlzLiBBbHNvIEkgd2FzIHRoaW5raW5nIG9mIGJhc2lu
+ZyB0aGUgcGF0Y2gKPiBvbiB5b3VyIGxhdGVzdCBjbGVhbnVwIHNlcmllcyAodGhlICdkcm0vZXh5
+bm9zOiByZW1vdmUgc3RydWN0ICpfd2luX2RhdGEKPiBhYnN0cmFjdGlvbiBvbiBwbGFuZXMnIG9u
+ZSkuCgpJZiB5b3UgY2FuIHJlYmFzZSB0aGlzIGluIG9uIHRvcCBvZiBteSBzZXJpZXMgdGhpcyB3
+b3VsZCBiZSByZWFsbHkgZ29vZC4KCj4gCj4gVGhlbiBpdCB3b3VsZCBqdXN0IGJlOgo+IHN0YXRp
+YyBpbnQgbWl4ZXJfc2V0dXBfc2NhbGUoY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBs
+YW5lLAo+IAl1bnNpZ25lZCBpbnQgKnhfcmF0aW8sIHVuc2lnbmVkIGludCAqeV9yYXRpbykKPiAK
+PiBBbHNvIHRoYXQgd291bGQgYXV0b21hdGljYWxseSBmaXggeW91ciBvdGhlciBjb21tZW50IGJl
+bG93IFsqXS4KPiAKPiAKPiA+IFVzZSBFUEVSTSBvciBFTk9UU1VQUC4gT3IgZXZlbiB0cnVlL2Zh
+bHNlLgo+IFdpbGwgZG8hCj4gCj4gCj4gPiBZb3UgbmVlZCB0byBmaXggc3R5bGUgaGVyZQo+ID4g
+Cj4gPiAgICAgICAgIGlmIChtaXhlcl9zZXR1cF9zY2FsZSh3aW5fZGF0YS0+c3JjX3dpZHRoLCB3
+aW5fZGF0YS0+c3JjX2hlaWdodCwgICAgICAgIAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgd2luX2RhdGEtPmNydGNfd2lkdGgsIHdpbl9kYXRhLT5jcnRjX2hlaWdodCwgICAgICAK
+PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZ4X3JhdGlvLCAmeV9yYXRpbykpICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgCj4gPiAgICAgICAgICAgICAgICAgcmV0dXJuOyAK
+PiBXaXRoIFsqXSB0aGlzIHdvdWxkIGp1c3QgYmU6Cj4gaWYgKG1peGVyX3NldHVwX3NjYWxlKHBs
+YW5lLCAmeF9yYXRpbywgJnlfcmF0aW8pKSByZXR1cm47Cj4gCj4gV2hhdCBkbyB5b3UgdGhpbms/
+CgpDaGFuZ2VzIHNvdW5kcyBnb29kIHRvIG1lLiBQbGVhc2UgZ28gYWhlYWQgYW5kIHNlbmQgYSBu
+ZXcgcGF0Y2guIDopCgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
