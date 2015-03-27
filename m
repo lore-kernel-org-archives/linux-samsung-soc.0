@@ -1,134 +1,63 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 Resend] pwm: samsung: Fix output race on disabling
-Date: Fri, 27 Mar 2015 08:41:58 +0100
-Message-ID: <20150327084158.642813f4@amdc2363>
-References: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND PATCH 2/2] ARM: EXYNOS: Handle of_find_device_by_node and
+ kstrdup failures
+Date: Fri, 27 Mar 2015 11:43:56 +0100
+Message-ID: <1427453036-6808-2-git-send-email-k.kozlowski@samsung.com>
+References: <1427453036-6808-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59781 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753146AbbC0HmG (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:13395 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752091AbbC0KoH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Mar 2015 03:42:06 -0400
-In-reply-to: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Fri, 27 Mar 2015 06:44:07 -0400
+In-reply-to: <1427453036-6808-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Sjoerd,
+Prevent possible NULL pointer dereference of pointer returned by
+of_find_device_by_node(). Handle this by skipping such power domain.
 
-> When disabling the samsung PWM the output state remains at the level
-> it was in the end of a pwm cycle. In other words, calling pwm_disable
-> when at 100% duty will keep the output active, while at all other
-> setting the output will go/stay inactive. On top of that the samsung
-> PWM settings are double-buffered, which means the new settings only
-> get applied at the start of a new PWM cycle.
-> 
-> This results in a race if the PWM is at 100% duty and a driver calls:
->   pwm_config (pwm, 0, period);
->   pwm_disable (pwm);
-> 
-> In this case the PWMs output will unexpectedly stay active, unless a
-> new PWM cycle happened to start between the register writes in
-> _config and _disable. As far as i can tell this is a regression
-> introduced by 3bdf878, before that a call to pwm_config would call
-> pwm_samsung_enable which, while heavy-handed, made sure the expected
-> settings were live.
-> 
-> To resolve this, while not re-introducing the issues 3bdf878
-> (flickering as the PWM got reset while in a PWM cycle). Only force an
-> update of the settings when at 100% duty, which shouldn't have a
-> noticeable effect on the output but is enough to ensure the behaviour
-> is as expected on disable.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> ---
-> Changes since v1:
->   Fix small issues pointed out by Tomasz Figa
->   - Correct various coding style issues
->   - Read the current value of the tcmp register for comparison rather
-> then using a non-trivial comparison to decide whether the current
-> state was 100% duty
->   - Move the code to force manual update out into its own function
->   - Clarify the comment indicating why a manual update is sometimes
-> required
-> 
->  drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> index 3e9b583..649f6c4 100644
-> --- a/drivers/pwm/pwm-samsung.c
-> +++ b/drivers/pwm/pwm-samsung.c
-> @@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct pwm_chip
-> *chip, struct pwm_device *pwm)
-> spin_unlock_irqrestore(&samsung_pwm_lock, flags); }
->  
-> +static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
-> +				      struct pwm_device *pwm)
-> +{
-> +	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
-> +	u32 tcon;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&samsung_pwm_lock, flags);
-> +
-> +	tcon = readl(chip->base + REG_TCON);
-> +	tcon |= TCON_MANUALUPDATE(tcon_chan);
-> +	writel(tcon, chip->base + REG_TCON);
-> +
-> +	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
-> +	writel(tcon, chip->base + REG_TCON);
-> +
-> +	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
-> +}
-> +
->  static int pwm_samsung_config(struct pwm_chip *chip, struct
-> pwm_device *pwm, int duty_ns, int period_ns)
->  {
->  	struct samsung_pwm_chip *our_chip =
-> to_samsung_pwm_chip(chip); struct samsung_pwm_channel *chan =
-> pwm_get_chip_data(pwm);
-> -	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
-> +	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
->  
->  	/*
->  	 * We currently avoid using 64bit arithmetic by using the
-> @@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip
-> *chip, struct pwm_device *pwm, return 0;
->  
->  	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
-> +	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
->  
->  	/* We need tick count for calculation, not last tick. */
->  	++tcnt;
-> @@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip
-> *chip, struct pwm_device *pwm, writel(tcnt, our_chip->base +
-> REG_TCNTB(pwm->hwpwm)); writel(tcmp, our_chip->base +
-> REG_TCMPB(pwm->hwpwm)); 
-> +	/* In case the PWM is currently at 100% duty, force a manual
-> update
-> +	 * to prevent the signal staying high in the pwm is disabled
-> shortly
-> +	 * afer this update (before it autoreloaded the new values) .
-> +	 */
-> +	if (oldtcmp == (u32) -1) {
-> +		dev_dbg(our_chip->chip.dev, "Forcing manual update");
-> +		pwm_samsung_manual_update(our_chip, pwm);
-> +	}
-> +
->  	chan->period_ns = period_ns;
->  	chan->tin_ns = tin_ns;
->  	chan->duty_ns = duty_ns;
+Additionally fail the init on kstrdup() failure. Such case is actually
+not fatal because the name for power domain allocated by kstrdup() is
+used only in printk. Still as a precaution handle this as an error
+condition.
 
-Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/pm_domains.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 2c5c206f3ea9..b20d228566b9 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -126,6 +126,12 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		struct device *dev;
+ 
+ 		pdev = of_find_device_by_node(np);
++		if (!pdev) {
++			pr_err("%s: failed to find device for node %s\n",
++					__func__, np->name);
++			of_node_put(np);
++			continue;
++		}
+ 		dev = &pdev->dev;
+ 
+ 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+@@ -136,6 +142,12 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		}
+ 
+ 		pd->pd.name = kstrdup(dev_name(dev), GFP_KERNEL);
++		if (!pd->pd.name) {
++			kfree(pd);
++			of_node_put(np);
++			return -ENOMEM;
++		}
++
+ 		pd->name = pd->pd.name;
+ 		pd->base = of_iomap(np, 0);
+ 		if (!pd->base) {
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+1.9.1
