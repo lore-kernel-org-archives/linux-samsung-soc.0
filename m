@@ -1,68 +1,134 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm: Exynos: Respect framebuffer pitch for FIMD/Mixer
-Date: Fri, 27 Mar 2015 10:55:47 +0900
-Message-ID: <5514B8A3.2040807@samsung.com>
-References: <1426598698-31095-1-git-send-email-daniels@collabora.com>
- <CABxcv==Z0ccmR-3Hasnkmg14m3hBJEwha=6c6288jQPUhyQt-g@mail.gmail.com>
- <5514187E.60405@samsung.com> <1427381307.28393.10@mail.collabora.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 Resend] pwm: samsung: Fix output race on disabling
+Date: Fri, 27 Mar 2015 08:41:58 +0100
+Message-ID: <20150327084158.642813f4@amdc2363>
+References: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1427381307.28393.10@mail.collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniels@collabora.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:59781 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753146AbbC0HmG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Mar 2015 03:42:06 -0400
+In-reply-to: <1425543243-6587-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-SGkgRGFuaWVsLAoKT24gMjAxNeuFhCAwM+yblCAyNuydvCAyMzo0OCwgRGFuaWVsIFN0b25lIHdy
-b3RlOgo+IEhpIElua2ksCj4gCj4gT24gVGh1LCAyNiBNYXIsIDIwMTUgYXQgMjozMiBQTSwgSW5r
-aSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3cm90ZToKPj4gQXBwbGllZC4KPiAKPiBUaGFu
-a3MgdmVyeSBtdWNoLgo+IAo+PiBDb3VsZCB5b3UgdXNlIHJpZ2h0IHByZWZpeCBvZiB0aGUgc3Vi
-amVjdCBsaWtlIGJlbG93IHdoZW4geW91IHBvc3QgcGF0Y2g/Cj4+Cj4+ICdkcm0vZXh5bm9zOiAu
-Li4nLCBub3QgJ2RybTogRXh5bm9zOiAuLi4nCj4+Cj4+IFlvdXIgZW1haWwgd2lsbCBiZSBmaWx0
-ZXJlZCBmcm9tIG15IG1haWxib3ggaWYgeW91IGRvbid0IHVzZSB0aGUgcmlnaHQKPj4gcHJlZml4
-IHNvIEkgY291bGRuJ3QgY2hlY2sgYW5kIHRha2UgY2FyZSBvZiB5b3VyIHBhdGNoLgo+IAo+IEFo
-LCBJIGRpZG4ndCByZWFsaXNlIHRoaXMuIE1heWJlIGl0IGNvdWxkIGJlIGdvb2QgdG8gbm90IGZp
-bHRlciBpZiB0aGUKPiBwYXRjaCBpcyBhbHNvIGRpcmVjdGx5IGFkZHJlc3NlZC9DQ2VkIHRvIHlv
-dSwgcmF0aGVyIHRoYW4gYSBsaXN0Pwo+IEd1c3Rhdm8gUGFkb3ZhbiBpcyBmb2xsb3dpbmcgdGhp
-cyBjb252ZW50aW9uIGFuZCBJIGFsc28gd2lsbCBpbiBmdXR1cmUsCj4gYnV0IEkgZ3Vlc3MgaXQg
-bWlnaHQgbGVhZCB0byBzb21lIHBhdGNoZXMgYmVpbmcgZHJvcHBlZCBmcm9tIGNhc3VhbAo+IGNv
-bnRyaWJ1dG9ycyBpZiB0aGV5IGRvbid0IGtub3cgdGhpcy4KClNvcnJ5IGZvciBjb25mdXNpbmcu
-IEkgZG9uJ3QgcmVhbGx5IHdhbnQgdG8gZHJvcCB0aGUgcGF0Y2hlcyB3aGljaCBkb24ndAp1c2Ug
-cmlnaHQgcHJlZml4IC0gdW5kb2N1bWVudGVkLiBJIGhhdmUgdHdvIGZpbHRlcnMsIG9uZSBpcyBE
-UkkgbWFpbGluZwpsaXN0LCBvdGhlciBpcyBkcm0vZXh5bm9zLiBTbyBpZiB5b3UgdXNlIG90aGVy
-IHByZWZpeCwgeW91ciBwYXRjaCBpcwpmaWx0ZXJlZCBhbmQgc3RvcmVkIGluIG15IGRyaS1kZXZl
-bCBtYWlsYm94LiBCdXQgYXMgeW91IG1heSBrbm93LCB0aGUKbWFpbGJveCB3b3VsZCBhbHdheXMg
-YmUgZnVsbCB3aXRoIG1hbnkgZW1haWxzIHdoaWNoIGNvbnRhaW5zIHZhcmlvdXMKdHlwZSBwYXRj
-aGVzLCBleHlub3MsIG9tYXAsIHN0aSwgcmFkZW9uLCBpbnRlbCBhbmQgc28gbm8uIFNvIGl0IHdv
-dWxkbid0CmJlIGVhc3kgdG8gcGljayB1cCBvbmx5IHlvdXIgcGF0Y2ggYW1vbmcgdGhlbS4gU28g
-SSdkIGxpa2UgdG8gcmVjb21tZW5kCnlvdSB0byB1c2UgZHJtL2V4eW5vcyBwcmVmaXggc28gdGhh
-dCBJIGNvdWxkIHJldmlldyBhbmQgcGljayBpdCB1cAplYXNpbHkgYW5kIHF1aWNrbHkuCgpUaGFu
-a3MsCklua2kgRGFlCgo+IAo+IENoZWVycywKPiBEYW5pZWwKPiAKPj4KPj4gVGhhbmtzLAo+PiBJ
-bmtpIERhZQo+Pgo+PiBPbiAyMDE164WEIDAz7JuUIDI07J28IDE3OjU3LCBKYXZpZXIgTWFydGlu
-ZXogQ2FuaWxsYXMgd3JvdGU6Cj4+PiAgSGVsbG8gSW5raSwKPj4+Cj4+PiAgT24gVHVlLCBNYXIg
-MTcsIDIwMTUgYXQgMjoyNCBQTSwgRGFuaWVsIFN0b25lCj4+PiA8ZGFuaWVsc0Bjb2xsYWJvcmEu
-Y29tPiB3cm90ZToKPj4+PiAgV2hlbiBwZXJmb3JtaW5nIGEgbW9kZXNldCwgdXNlIHRoZSBmcmFt
-ZWJ1ZmZlciBwaXRjaCB2YWx1ZSB0byBzZXQgRklNRAo+Pj4+ICBJTUdfU0laRSBhbmQgTWl4ZXIg
-U1BBTiByZWdpc3RlcnMuIFRoZXNlIGFyZSBib3RoIGRlZmluZWQgYXMgcGl0Y2gKPj4+PiAtIHRo
-ZQo+Pj4+ICBkaXN0YW5jZSBiZXR3ZWVuIGNvbnRpZ3VvdXMgbGluZXMgKGJ5dGVzIGZvciBGSU1E
-LCBwaXhlbHMgZm9yIG1peGVyKS4KPj4+Pgo+Pj4+ICBGaXhlcyBkaXNwbGF5IG9uIFNub3cgKDEz
-NjZ4NzY4KS4KPj4+Pgo+Pj4+ICBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgU3RvbmUgPGRhbmllbHNA
-Y29sbGFib3JhLmNvbT4KPj4+PiAgVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMg
-PGphdmllci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+Cj4+Pgo+Pj4gIEFueSBjb21tZW50cyBv
-biB0aGlzIHBhdGNoPyBJdCB3b3VsZCBiZSBncmVhdCB0byBwaWNrIHRoaXMgc29vbmVyCj4+PiAg
-cmF0aGVyIHRoYW4gbGF0ZXIgc2luY2UgaXQgZml4ZXMgKGF0IGxlYXN0KSBkaXNwbGF5IG91dHB1
-dCBvbiBTbm93IGFuZAo+Pj4gIEhETUkgb3V0cHV0IG9uIFBlYWNoIFBpdC9QaS4KPj4+Cj4+PiAg
-QmVzdCByZWdhcmRzLAo+Pj4gIEphdmllcgo+Pj4KPj4KPj4KPiAKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Sjoerd,
+
+> When disabling the samsung PWM the output state remains at the level
+> it was in the end of a pwm cycle. In other words, calling pwm_disable
+> when at 100% duty will keep the output active, while at all other
+> setting the output will go/stay inactive. On top of that the samsung
+> PWM settings are double-buffered, which means the new settings only
+> get applied at the start of a new PWM cycle.
+> 
+> This results in a race if the PWM is at 100% duty and a driver calls:
+>   pwm_config (pwm, 0, period);
+>   pwm_disable (pwm);
+> 
+> In this case the PWMs output will unexpectedly stay active, unless a
+> new PWM cycle happened to start between the register writes in
+> _config and _disable. As far as i can tell this is a regression
+> introduced by 3bdf878, before that a call to pwm_config would call
+> pwm_samsung_enable which, while heavy-handed, made sure the expected
+> settings were live.
+> 
+> To resolve this, while not re-introducing the issues 3bdf878
+> (flickering as the PWM got reset while in a PWM cycle). Only force an
+> update of the settings when at 100% duty, which shouldn't have a
+> noticeable effect on the output but is enough to ensure the behaviour
+> is as expected on disable.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> ---
+> Changes since v1:
+>   Fix small issues pointed out by Tomasz Figa
+>   - Correct various coding style issues
+>   - Read the current value of the tcmp register for comparison rather
+> then using a non-trivial comparison to decide whether the current
+> state was 100% duty
+>   - Move the code to force manual update out into its own function
+>   - Clarify the comment indicating why a manual update is sometimes
+> required
+> 
+>  drivers/pwm/pwm-samsung.c | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index 3e9b583..649f6c4 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -269,12 +269,31 @@ static void pwm_samsung_disable(struct pwm_chip
+> *chip, struct pwm_device *pwm)
+> spin_unlock_irqrestore(&samsung_pwm_lock, flags); }
+>  
+> +static void pwm_samsung_manual_update(struct samsung_pwm_chip *chip,
+> +				      struct pwm_device *pwm)
+> +{
+> +	unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
+> +	u32 tcon;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&samsung_pwm_lock, flags);
+> +
+> +	tcon = readl(chip->base + REG_TCON);
+> +	tcon |= TCON_MANUALUPDATE(tcon_chan);
+> +	writel(tcon, chip->base + REG_TCON);
+> +
+> +	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
+> +	writel(tcon, chip->base + REG_TCON);
+> +
+> +	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
+> +}
+> +
+>  static int pwm_samsung_config(struct pwm_chip *chip, struct
+> pwm_device *pwm, int duty_ns, int period_ns)
+>  {
+>  	struct samsung_pwm_chip *our_chip =
+> to_samsung_pwm_chip(chip); struct samsung_pwm_channel *chan =
+> pwm_get_chip_data(pwm);
+> -	u32 tin_ns = chan->tin_ns, tcnt, tcmp;
+> +	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
+>  
+>  	/*
+>  	 * We currently avoid using 64bit arithmetic by using the
+> @@ -288,6 +307,7 @@ static int pwm_samsung_config(struct pwm_chip
+> *chip, struct pwm_device *pwm, return 0;
+>  
+>  	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
+> +	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
+>  
+>  	/* We need tick count for calculation, not last tick. */
+>  	++tcnt;
+> @@ -335,6 +355,15 @@ static int pwm_samsung_config(struct pwm_chip
+> *chip, struct pwm_device *pwm, writel(tcnt, our_chip->base +
+> REG_TCNTB(pwm->hwpwm)); writel(tcmp, our_chip->base +
+> REG_TCMPB(pwm->hwpwm)); 
+> +	/* In case the PWM is currently at 100% duty, force a manual
+> update
+> +	 * to prevent the signal staying high in the pwm is disabled
+> shortly
+> +	 * afer this update (before it autoreloaded the new values) .
+> +	 */
+> +	if (oldtcmp == (u32) -1) {
+> +		dev_dbg(our_chip->chip.dev, "Forcing manual update");
+> +		pwm_samsung_manual_update(our_chip, pwm);
+> +	}
+> +
+>  	chan->period_ns = period_ns;
+>  	chan->tin_ns = tin_ns;
+>  	chan->duty_ns = duty_ns;
+
+Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
