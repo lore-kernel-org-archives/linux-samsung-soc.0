@@ -1,41 +1,64 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH 1/2] clk: exynos5420: Add alias for MDMA0 controller clock
-Date: Fri, 27 Mar 2015 15:21:36 +0100
-Message-ID: <1427466097-7287-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/1] Revert "ARM: dts: add display power domain for exynos5250"
+Date: Fri, 27 Mar 2015 15:29:08 +0100
+Message-ID: <CAJKOXPewO77pRwh151MFLX+W6WQYPZS759uqjvyZ_TkRf9vmdA@mail.gmail.com>
+References: <1427107800-21668-1-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1427107800-21668-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The MDMA0 controller clock needs to be enabled to allow the
-system to be resumed when entering into a suspend state.
+2015-03-23 11:49 GMT+01:00 Javier Martinez Canillas
+<javier.martinez@collabora.co.uk>:
+> This reverts commit 2d2c9a8d0a4f90e298315d2f4a282d8bd5d45e5c
+> ("ARM: dts: add display power domain for exynos5250").
+>
+> The mentioned commit added a domain definition for the DISP1
+> power domain and references to it in the appropriate devices
+> but this change breaks the display in at least the Exynos5250
+> based Snow and Spring Chromebooks.
+>
+> On these machines, the boot-loader enables the DISP1 domain and
+> before the mentioned commit, the kernel didn't know about it so
+> the power domain remained always enabled.
+>
+> But after that commit when the exynos-dp probe is deferred,
+> the DISP1 domain is powered off and on again but the exynos-dp
+> driver fails to configure the video showing the following error:
+>
+> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+> exynos-dp 145b0000.dp-controller: unable to config video
+>
+> The same issue happens when the display is turned off and on
+> again using DPMS.
+>
+> So, it seems the DISP1 power domain definition is not complete
+> since the display works with the initialization made by the boot
+> loader but it does not work when the power domain is enabled by
+> the kernel.
+>
+> Having the definition in the DTS makes the power domain to be
+> powered on when needed and powered off when not needed which is
+> better in terms of power consumption but for now is safer to just
+> revert the commit to avoid adding a regression in some machines.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The clock is disabled as a part of the runtime pm for the
-pl330 DMA driver so the system fails to resume. So to allow
-the system to grab the clock and make sure that it stays
-enabled during suspend, an alias has to be added so a clock
-lookup for a clock is registered.
+I looked at the DP and FIMD drivers and with great help of Andrzej
+Hajda found the issue: the FIMD driver does not enable DP clock
+(DP_MIE_CLKCON register). The process looks like:
+1. Bootloader sets the DP_MIE_CLKCON to proper value.
+2. FIMD is probed, DP power domain is on.
+3. FIMD is deffered, DP power domain is turned off.
+4. The FIMD registers are reset so DP clock is turned off.
+5. DP driver is probed, DP power domain is turned on but clock is not enabled.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll do some more testing and sent a patch for it till end of Monday
+so I think we should not revert this commit.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 07d666cc6a29..8b49e8b3b548 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -893,7 +893,7 @@ static struct samsung_div_clock exynos5x_div_clks[] __initdata = {
- 
- static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
- 	/* G2D */
--	GATE(CLK_MDMA0, "mdma0", "aclk266_g2d", GATE_IP_G2D, 1, 0, 0),
-+	GATE_A(CLK_MDMA0, "mdma0", "aclk266_g2d", GATE_IP_G2D, 1, 0, 0, "mdma0"),
- 	GATE(CLK_SSS, "sss", "aclk266_g2d", GATE_IP_G2D, 2, 0, 0),
- 	GATE(CLK_G2D, "g2d", "aclk333_g2d", GATE_IP_G2D, 3, 0, 0),
- 	GATE(CLK_SMMU_MDMA0, "smmu_mdma0", "aclk266_g2d", GATE_IP_G2D, 5, 0, 0),
--- 
-2.1.4
+Best regards,
+Krzysztof
