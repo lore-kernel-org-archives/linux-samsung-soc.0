@@ -1,127 +1,168 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 09/10] drm/exynos: remove exported functions from
- exynos_drm_plane
-Date: Fri, 27 Mar 2015 12:58:59 -0300
-Message-ID: <1427471939-27345-10-git-send-email-gustavo@padovan.org>
-References: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFT PATCHv2] drm/exynos: Enable DP clock to fix display on Exynos5250
+ and other
+Date: Fri, 27 Mar 2015 17:08:08 +0100
+Message-ID: <1427472488-21454-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-Tm93IHRoYXQgbm8gb25lIGlzIHVzaW5nIHRoZSBmdW5jdGlvbnMgZXhwb3J0ZWQgYnkgZXh5bm9z
-X2RybV9wbGFuZSBkdWUKdG8gdGhlIGF0b21pYyBjb252ZXJzaW9uIHdlIGNhbiBtYWtlIHJlbW92
-ZSBzb21lIG9mIHRoZSB0aGVtIG9yIG1ha2UgdGhlbQpzdGF0aWMuCgpTaWduZWQtb2ZmLWJ5OiBH
-dXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCA5MSArKysrKysrKysrKysr
-LS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxh
-bmUuaCB8IDExIC0tLS0KIDIgZmlsZXMgY2hhbmdlZCwgMzggaW5zZXJ0aW9ucygrKSwgNjQgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRl
-eCBlODM5MDhhLi43ZjhmOTYyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-cGxhbmUuYwpAQCAtNjIsMzUgKzYyLDEyIEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BsYW5lX2dldF9z
-aXplKGludCBzdGFydCwgdW5zaWduZWQgbGVuZ3RoLCB1bnNpZ25lZCBsYXN0KQogCXJldHVybiBz
-aXplOwogfQogCi1pbnQgZXh5bm9zX2NoZWNrX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
-LCBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikKLXsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFu
-ZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKLQlpbnQgbnI7Ci0JaW50
-IGk7Ci0KLQluciA9IGV4eW5vc19kcm1fZmJfZ2V0X2J1Zl9jbnQoZmIpOwotCWZvciAoaSA9IDA7
-IGkgPCBucjsgaSsrKSB7Ci0JCXN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYgKmJ1ZmZlciA9IGV4
-eW5vc19kcm1fZmJfYnVmZmVyKGZiLCBpKTsKLQotCQlpZiAoIWJ1ZmZlcikgewotCQkJRFJNX0RF
-QlVHX0tNUygiYnVmZmVyIGlzIG51bGxcbiIpOwotCQkJcmV0dXJuIC1FRkFVTFQ7Ci0JCX0KLQot
-CQlleHlub3NfcGxhbmUtPmRtYV9hZGRyW2ldID0gYnVmZmVyLT5kbWFfYWRkcjsKLQotCQlEUk1f
-REVCVUdfS01TKCJidWZmZXI6ICVkLCBkbWFfYWRkciA9IDB4JWx4XG4iLAotCQkJCWksICh1bnNp
-Z25lZCBsb25nKWV4eW5vc19wbGFuZS0+ZG1hX2FkZHJbaV0pOwotCX0KLQotCXJldHVybiAwOwot
-fQotCi12b2lkIGV4eW5vc19wbGFuZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwg
-c3RydWN0IGRybV9jcnRjICpjcnRjLAotCQkJICBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwg
-aW50IGNydGNfeCwgaW50IGNydGNfeSwKLQkJCSAgdW5zaWduZWQgaW50IGNydGNfdywgdW5zaWdu
-ZWQgaW50IGNydGNfaCwKLQkJCSAgdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAotCQkJ
-ICB1aW50MzJfdCBzcmNfdywgdWludDMyX3Qgc3JjX2gpCitzdGF0aWMgdm9pZCBleHlub3NfcGxh
-bmVfbW9kZV9zZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0
-YywKKwkJCQkgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLAorCQkJCSAgaW50IGNydGNfeCwg
-aW50IGNydGNfeSwKKwkJCQkgIHVuc2lnbmVkIGludCBjcnRjX3csIHVuc2lnbmVkIGludCBjcnRj
-X2gsCisJCQkJICB1aW50MzJfdCBzcmNfeCwgdWludDMyX3Qgc3JjX3ksCisJCQkJICB1aW50MzJf
-dCBzcmNfdywgdWludDMyX3Qgc3JjX2gpCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4
-eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7CiAJdW5zaWduZWQgaW50IGFjdHVh
-bF93OwpAQCAtMTQxLDI0ICsxMTgsNiBAQCB2b2lkIGV4eW5vc19wbGFuZV9tb2RlX3NldChzdHJ1
-Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAogCXBsYW5lLT5jcnRj
-ID0gY3J0YzsKIH0KIAotdm9pZAotZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5l
-ICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAotCQkgICAgIHN0cnVjdCBkcm1fZnJhbWVi
-dWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAotCQkgICAgIHVuc2lnbmVkIGludCBj
-cnRjX3csIHVuc2lnbmVkIGludCBjcnRjX2gsCi0JCSAgICAgdWludDMyX3Qgc3JjX3gsIHVpbnQz
-Ml90IHNyY195LAotCQkgICAgIHVpbnQzMl90IHNyY193LCB1aW50MzJfdCBzcmNfaCkKLXsKLQlz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMp
-OwotCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxh
-bmUocGxhbmUpOwotCi0JZXh5bm9zX3BsYW5lX21vZGVfc2V0KHBsYW5lLCBjcnRjLCBmYiwgY3J0
-Y194LCBjcnRjX3ksCi0JCQkgICAgICBjcnRjX3csIGNydGNfaCwgc3JjX3ggPj4gMTYsIHNyY195
-ID4+IDE2LAotCQkJICAgICAgc3JjX3cgPj4gMTYsIHNyY19oID4+IDE2KTsKLQotCWlmIChleHlu
-b3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KQotCQlleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0
-KGV4eW5vc19jcnRjLCBleHlub3NfcGxhbmUtPnpwb3MpOwotfQotCiBzdGF0aWMgc3RydWN0IGRy
-bV9wbGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3MgPSB7CiAJLnVwZGF0ZV9wbGFuZQk9IGRy
-bV9hdG9taWNfaGVscGVyX3VwZGF0ZV9wbGFuZSwKIAkuZGlzYWJsZV9wbGFuZQk9IGRybV9hdG9t
-aWNfaGVscGVyX2Rpc2FibGVfcGxhbmUsCkBAIC0xNzEsMTkgKzEzMCw0NSBAQCBzdGF0aWMgc3Ry
-dWN0IGRybV9wbGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3MgPSB7CiBzdGF0aWMgaW50IGV4
-eW5vc19wbGFuZV9hdG9taWNfY2hlY2soc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJCQkJICAg
-ICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSkKIHsKLQlyZXR1cm4gZXh5bm9zX2NoZWNr
-X3BsYW5lKHBsYW5lLCBzdGF0ZS0+ZmIpOworCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlu
-b3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOworCXN0cnVjdCBleHlub3NfZHJtX2Ny
-dGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMocGxhbmUtPmNydGMpOworCWludCBucjsK
-KwlpbnQgaTsKKworCW5yID0gZXh5bm9zX2RybV9mYl9nZXRfYnVmX2NudChzdGF0ZS0+ZmIpOwor
-CWZvciAoaSA9IDA7IGkgPCBucjsgaSsrKSB7CisJCXN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYg
-KmJ1ZmZlciA9CisJCQkJCWV4eW5vc19kcm1fZmJfYnVmZmVyKHN0YXRlLT5mYiwgaSk7CisKKwkJ
-aWYgKCFidWZmZXIpIHsKKwkJCURSTV9ERUJVR19LTVMoImJ1ZmZlciBpcyBudWxsXG4iKTsKKwkJ
-CXJldHVybiAtRUZBVUxUOworCQl9CisKKwkJZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltpXSA9IGJ1
-ZmZlci0+ZG1hX2FkZHI7CisKKwkJRFJNX0RFQlVHX0tNUygiYnVmZmVyOiAlZCwgZG1hX2FkZHIg
-PSAweCVseFxuIiwKKwkJCQlpLCAodW5zaWduZWQgbG9uZylleHlub3NfcGxhbmUtPmRtYV9hZGRy
-W2ldKTsKKwl9CisKKwlyZXR1cm4gMDsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0
-b21pY191cGRhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJCQkJICAgICAgIHN0cnVjdCBk
-cm1fcGxhbmVfc3RhdGUgKm9sZF9zdGF0ZSkKIHsKIAlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpz
-dGF0ZSA9IHBsYW5lLT5zdGF0ZTsKKwlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0
-YyA9IHRvX2V4eW5vc19jcnRjKHN0YXRlLT5jcnRjKTsKKwlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFu
-ZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKIAotCWV4eW5vc191cGRh
-dGVfcGxhbmUocGxhbmUsIHN0YXRlLT5jcnRjLCBzdGF0ZS0+ZmIsCi0JCQkgICAgc3RhdGUtPmNy
-dGNfeCwgc3RhdGUtPmNydGNfeSwKLQkJCSAgICBzdGF0ZS0+Y3J0Y193LCBzdGF0ZS0+Y3J0Y19o
-LAotCQkJICAgIHN0YXRlLT5zcmNfeCA+PiAxNiwgc3RhdGUtPnNyY195ID4+IDE2LAotCQkJICAg
-IHN0YXRlLT5zcmNfdyA+PiAxNiwgc3RhdGUtPnNyY19oID4+IDE2KTsKKwlleHlub3NfcGxhbmVf
-bW9kZV9zZXQocGxhbmUsIHN0YXRlLT5jcnRjLCBzdGF0ZS0+ZmIsCisJCQkgICAgICBzdGF0ZS0+
-Y3J0Y194LCBzdGF0ZS0+Y3J0Y195LAorCQkJICAgICAgc3RhdGUtPmNydGNfdywgc3RhdGUtPmNy
-dGNfaCwKKwkJCSAgICAgIHN0YXRlLT5zcmNfeCA+PiAxNiwgc3RhdGUtPnNyY195ID4+IDE2LAor
-CQkJICAgICAgc3RhdGUtPnNyY193ID4+IDE2LCBzdGF0ZS0+c3JjX2ggPj4gMTYpOworCisJaWYg
-KGV4eW5vc19jcnRjLT5vcHMtPndpbl9jb21taXQpCisJCWV4eW5vc19jcnRjLT5vcHMtPndpbl9j
-b21taXQoZXh5bm9zX2NydGMsIGV4eW5vc19wbGFuZS0+enBvcyk7CiB9CiAKIHN0YXRpYyB2b2lk
-IGV4eW5vc19wbGFuZV9hdG9taWNfZGlzYWJsZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgKaW5kZXggNTYwY2E3MS4uOGM4
-OGFlOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
-LmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgKQEAgLTks
-MTcgKzksNiBAQAogICoKICAqLwogCi1pbnQgZXh5bm9zX2NoZWNrX3BsYW5lKHN0cnVjdCBkcm1f
-cGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYik7Ci12b2lkIGV4eW5vc19w
-bGFuZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpj
-cnRjLAotCQkJICAgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIsIGludCBjcnRjX3gsIGludCBj
-cnRjX3ksCi0JCQkgICB1bnNpZ25lZCBpbnQgY3J0Y193LCB1bnNpZ25lZCBpbnQgY3J0Y19oLAot
-CQkJICAgdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAotCQkJICAgdWludDMyX3Qgc3Jj
-X3csIHVpbnQzMl90IHNyY19oKTsKLXZvaWQgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAotCQkJc3RydWN0IGRybV9mcmFt
-ZWJ1ZmZlciAqZmIsIGludCBjcnRjX3gsIGludCBjcnRjX3ksCi0JCQl1bnNpZ25lZCBpbnQgY3J0
-Y193LCB1bnNpZ25lZCBpbnQgY3J0Y19oLAotCQkJdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNy
-Y195LAotCQkJdWludDMyX3Qgc3JjX3csIHVpbnQzMl90IHNyY19oKTsKIGludCBleHlub3NfcGxh
-bmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkgICAgICBzdHJ1Y3QgZXh5bm9zX2Ry
-bV9wbGFuZSAqZXh5bm9zX3BsYW5lLAogCQkgICAgICB1bnNpZ25lZCBsb25nIHBvc3NpYmxlX2Ny
-dGNzLCBlbnVtIGRybV9wbGFuZV90eXBlIHR5cGUsCi0tIAoyLjEuMAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+After adding display power domain for Exynos5250 in commit
+2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250") the
+display on Chromebook Snow and others stopped working after boot.
+
+The reason for this suggested Andrzej Hajda: the DP clock was disabled.
+This clock is required by Display Port and is enabled by bootloader.
+However when FIMD driver probing was deferred, the display power domain
+was turned off. This effectively reset the value of DP clock enable
+register.
+
+When exynos-dp is later probed, the clock is not enabled and display is
+not properly configured:
+
+exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+exynos-dp 145b0000.dp-controller: unable to config video
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reported-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250")
+Cc: <stable@vger.kernel.org>
+
+---
+
+This should fix issue reported by Javier [1][2].
+
+Tested on Chromebook Snow (Exynos 5250). More testing would be great,
+especially on other Exynos 5xxx products.
+
+[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/43889
+[2] http://thread.gmane.org/gmane.linux.ports.arm.kernel/400290
+
+Changes since v1:
+1. Added missing exynos_drm_fimd.h.
+---
+ drivers/gpu/drm/exynos/exynos_dp_core.c  | 10 ++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 19 +++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.h | 15 +++++++++++++++
+ include/video/samsung_fimd.h             |  6 ++++++
+ 4 files changed, 50 insertions(+)
+ create mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimd.h
+
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index bf17a60b40ed..1dbfba58f909 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -32,10 +32,16 @@
+ #include <drm/bridge/ptn3460.h>
+ 
+ #include "exynos_dp_core.h"
++#include "exynos_drm_fimd.h"
+ 
+ #define ctx_from_connector(c)	container_of(c, struct exynos_dp_device, \
+ 					connector)
+ 
++static inline struct exynos_drm_crtc *dp_to_crtc(struct exynos_dp_device *dp)
++{
++	return to_exynos_crtc(dp->encoder->crtc);
++}
++
+ static inline struct exynos_dp_device *
+ display_to_dp(struct exynos_drm_display *d)
+ {
+@@ -1070,6 +1076,8 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
+ 		}
+ 	}
+ 
++	fimd_dp_clock_enable(dp_to_crtc(dp), true);
++
+ 	clk_prepare_enable(dp->clock);
+ 	exynos_dp_phy_init(dp);
+ 	exynos_dp_init_dp(dp);
+@@ -1094,6 +1102,8 @@ static void exynos_dp_poweroff(struct exynos_dp_device *dp)
+ 	exynos_dp_phy_exit(dp);
+ 	clk_disable_unprepare(dp->clock);
+ 
++	fimd_dp_clock_enable(dp_to_crtc(dp), false);
++
+ 	if (dp->panel) {
+ 		if (drm_panel_unprepare(dp->panel))
+ 			DRM_ERROR("failed to turnoff the panel\n");
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index c300e22da8ac..bdf0818dc8f5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -32,6 +32,7 @@
+ #include "exynos_drm_fbdev.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_iommu.h"
++#include "exynos_drm_fimd.h"
+ 
+ /*
+  * FIMD stands for Fully Interactive Mobile Display and
+@@ -1231,6 +1232,24 @@ static int fimd_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable)
++{
++	struct fimd_context *ctx = crtc->ctx;
++	u32 val;
++
++	/*
++	 * Only Exynos 5250, 5260, 5410 and 542x requires enabling DP/MIE
++	 * clock. On these SoCs the bootloader may enable it but any
++	 * power domain off/on will reset it to disable state.
++	 */
++	if (ctx->driver_data != &exynos5_fimd_driver_data)
++		return;
++
++	val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
++	writel(DP_MIE_CLK_DP_ENABLE, ctx->regs + DP_MIE_CLKCON);
++}
++EXPORT_SYMBOL_GPL(fimd_dp_clock_enable);
++
+ struct platform_driver fimd_driver = {
+ 	.probe		= fimd_probe,
+ 	.remove		= fimd_remove,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.h b/drivers/gpu/drm/exynos/exynos_drm_fimd.h
+new file mode 100644
+index 000000000000..b4fcaa568456
+--- /dev/null
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.h
+@@ -0,0 +1,15 @@
++/*
++ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#ifndef _EXYNOS_DRM_FIMD_H_
++#define _EXYNOS_DRM_FIMD_H_
++
++extern void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable);
++
++#endif /* _EXYNOS_DRM_FIMD_H_ */
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index a20e4a3a8b15..847a0a2b399c 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -436,6 +436,12 @@
+ #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+ #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+ 
++/* Display port clock control */
++#define DP_MIE_CLKCON				0x27c
++#define DP_MIE_CLK_DISABLE			0x0
++#define DP_MIE_CLK_DP_ENABLE			0x2
++#define DP_MIE_CLK_MIE_ENABLE			0x3
++
+ /* Notes on per-window bpp settings
+  *
+  * Value	Win0	 Win1	  Win2	   Win3	    Win 4
+-- 
+1.9.1
