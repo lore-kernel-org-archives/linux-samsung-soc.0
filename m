@@ -1,43 +1,78 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH 0/2] ARM: EXYNOS: Fix Suspend-to-RAM on Exynos5420
-Date: Fri, 27 Mar 2015 15:21:35 +0100
-Message-ID: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:39372 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752768AbbC0OVv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Mar 2015 10:21:51 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RFC PATCH 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0 clock is enabled during suspend
+Date: Fri, 27 Mar 2015 15:21:37 +0100
+Message-ID: <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk>
+References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
+Management support v12") added pm support for the pl330 dma driver but
+it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
+during suspend and this clock needs to remain enabled in order to make
+the system resume from a system suspend state.
 
-Suspend-to-RAM is currently not working. Abhilash Kesavan traced down
-to the MDMA0 DMA controller clock to be disabled during suspend and
-that it must stay enaled during suspend or the system is not able to
-resume.
+To make sure that the clock is enabled during suspend, enable it prior
+to entering a suspend state and disable it once the system has resumed.
 
-This series is an attempt to fix the issue and is composed of patches:
+Thanks to Abhilash Kesavan for figuring out that this was the issue.
 
-Javier Martinez Canillas (2):
-  clk: exynos5420: Add alias for MDMA0 controller clock
-  ARM: EXYNOS: Make sure that the Exynos5420 MDMA0 clock is enabled
-    during suspend
+Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/mach-exynos/suspend.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
- arch/arm/mach-exynos/suspend.c       | 15 +++++++++++++++
- drivers/clk/samsung/clk-exynos5420.c |  2 +-
- 2 files changed, 16 insertions(+), 1 deletion(-)
-
-Patch #1 just adds an alias fo the MDMA0 clock so a lookup is registered.
-
-Patch #2 enables the MDMA0 clock before entering into a suspend state and
-disables it again once the system has been resumed.
-
-The patches are a RFC because I'm not sure if this is the best approach
-to solve the issue. So feedback will be highly appreciated.
-
-Best regards,
-Javier
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 1521eaf99265..6dbc0a6d1bb5 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/suspend.h>
+ #include <linux/syscore_ops.h>
++#include <linux/clk.h>
+ #include <linux/cpu_pm.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -79,6 +80,7 @@ static const struct exynos_pm_data *pm_data;
+ 
+ static int exynos5420_cpu_state;
+ static unsigned int exynos_pmu_spare3;
++static struct clk *clk;
+ 
+ /*
+  * GIC wake-up support
+@@ -374,6 +376,16 @@ static void exynos5420_pm_prepare(void)
+ {
+ 	unsigned int tmp;
+ 
++	/*
++	 * Exynos5420 requires the MDMA0 controller clock to be
++	 * ungated on suspend in order to be resumed correctly.
++	 */
++	clk = clk_get(NULL, "mdma0");
++	if (IS_ERR(clk))
++		pr_warn("Failed to get mdma0 clk (%ld)\n", PTR_ERR(clk));
++	else
++		clk_prepare_enable(clk);
++
+ 	/* Set wake-up mask registers */
+ 	exynos_pm_set_wakeup_mask();
+ 
+@@ -516,6 +528,9 @@ static void exynos5420_pm_resume(void)
+ {
+ 	unsigned long tmp;
+ 
++	if (!IS_ERR_OR_NULL(clk))
++		clk_disable_unprepare(clk);
++
+ 	/* Restore the CPU0 low power state register */
+ 	tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+ 	pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
+-- 
+2.1.4
