@@ -1,85 +1,68 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH] drm: Exynos: Respect framebuffer pitch for FIMD/Mixer
-Date: Fri, 27 Mar 2015 10:47:55 +0900
-Message-ID: <5514B6CB.7060301@samsung.com>
+Date: Fri, 27 Mar 2015 10:55:47 +0900
+Message-ID: <5514B8A3.2040807@samsung.com>
 References: <1426598698-31095-1-git-send-email-daniels@collabora.com>
  <CABxcv==Z0ccmR-3Hasnkmg14m3hBJEwha=6c6288jQPUhyQt-g@mail.gmail.com>
- <5514187E.60405@samsung.com> <5514A118.2000609@gmx.net>
+ <5514187E.60405@samsung.com> <1427381307.28393.10@mail.collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43828 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752513AbbC0Br5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Mar 2015 21:47:57 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NLU00ICCKZV3B10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Mar 2015 10:47:55 +0900 (KST)
-In-reply-to: <5514A118.2000609@gmx.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1427381307.28393.10@mail.collabora.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniels@collabora.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Daniel Stone <daniels@collabora.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 2015=EB=85=84 03=EC=9B=94 27=EC=9D=BC 09:15, Tobias Jakobi wrote:
-> Inki Dae wrote:
->> Hello Javier,
->>
->> Applied.
->>
->> Could you use right prefix of the subject like below when you post p=
-atch?
->>
->> 'drm/exynos: ...', not 'drm: Exynos: ...'
->>
->> Your email will be filtered from my mailbox if you don't use the rig=
-ht
->> prefix so I couldn't check and take care of your patch.
-> I would suggest to change (or drop) the filter settings then. I don't
-
-=46ilters of my mailbox are considered for two cases, one is DRI mailin=
-g
-list, other is drm/exynos.
-So if you don't use the drm/exynos prefix, then I would try to find you=
-r
-patch in DRI mailing list - I sometimes check the mailing list. However=
-,
-the mailing list have so much emails so it'd be not easy to pick up onl=
-y
-exynos relevant patches among the email lists. As a result, you would
-get the my review lately.
-
-> think you can expect people to jump through these hoops to reach a
-> maintainer of a kernel subsystem. Especially since this not 'document=
-ed'
-> anywhere.
-
-Right, this is not documented but if you have ever checked exynos drm
-driver tree, then I think you could know how we use the prefix. Of
-course, I don't like to force the use of this prefix but if you and
-other people use prefix in the manner of them, exynos drm tree would be
-a little bit messy. i.e., DRM: EXYNOS, drm: exynos, drm: Exynos,
-drm/exynos, drm/exynos: fimd, drm: exynos: fimd, DRM: EXYNOS: FIMD, ...
- so many cases....  Do you really want this?
-
-So I will always say "please, use right prefix" Otherwise, I will chang=
-e
-it while merging as is.
-And I see that other drm drivers have their own way which is not
-documented but just implicitly.
-
-Thanks,
-Inki Dae
-
->=20
->=20
->=20
-> With best wishes,
-> Tobias
->=20
->=20
+SGkgRGFuaWVsLAoKT24gMjAxNeuFhCAwM+yblCAyNuydvCAyMzo0OCwgRGFuaWVsIFN0b25lIHdy
+b3RlOgo+IEhpIElua2ksCj4gCj4gT24gVGh1LCAyNiBNYXIsIDIwMTUgYXQgMjozMiBQTSwgSW5r
+aSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3cm90ZToKPj4gQXBwbGllZC4KPiAKPiBUaGFu
+a3MgdmVyeSBtdWNoLgo+IAo+PiBDb3VsZCB5b3UgdXNlIHJpZ2h0IHByZWZpeCBvZiB0aGUgc3Vi
+amVjdCBsaWtlIGJlbG93IHdoZW4geW91IHBvc3QgcGF0Y2g/Cj4+Cj4+ICdkcm0vZXh5bm9zOiAu
+Li4nLCBub3QgJ2RybTogRXh5bm9zOiAuLi4nCj4+Cj4+IFlvdXIgZW1haWwgd2lsbCBiZSBmaWx0
+ZXJlZCBmcm9tIG15IG1haWxib3ggaWYgeW91IGRvbid0IHVzZSB0aGUgcmlnaHQKPj4gcHJlZml4
+IHNvIEkgY291bGRuJ3QgY2hlY2sgYW5kIHRha2UgY2FyZSBvZiB5b3VyIHBhdGNoLgo+IAo+IEFo
+LCBJIGRpZG4ndCByZWFsaXNlIHRoaXMuIE1heWJlIGl0IGNvdWxkIGJlIGdvb2QgdG8gbm90IGZp
+bHRlciBpZiB0aGUKPiBwYXRjaCBpcyBhbHNvIGRpcmVjdGx5IGFkZHJlc3NlZC9DQ2VkIHRvIHlv
+dSwgcmF0aGVyIHRoYW4gYSBsaXN0Pwo+IEd1c3Rhdm8gUGFkb3ZhbiBpcyBmb2xsb3dpbmcgdGhp
+cyBjb252ZW50aW9uIGFuZCBJIGFsc28gd2lsbCBpbiBmdXR1cmUsCj4gYnV0IEkgZ3Vlc3MgaXQg
+bWlnaHQgbGVhZCB0byBzb21lIHBhdGNoZXMgYmVpbmcgZHJvcHBlZCBmcm9tIGNhc3VhbAo+IGNv
+bnRyaWJ1dG9ycyBpZiB0aGV5IGRvbid0IGtub3cgdGhpcy4KClNvcnJ5IGZvciBjb25mdXNpbmcu
+IEkgZG9uJ3QgcmVhbGx5IHdhbnQgdG8gZHJvcCB0aGUgcGF0Y2hlcyB3aGljaCBkb24ndAp1c2Ug
+cmlnaHQgcHJlZml4IC0gdW5kb2N1bWVudGVkLiBJIGhhdmUgdHdvIGZpbHRlcnMsIG9uZSBpcyBE
+UkkgbWFpbGluZwpsaXN0LCBvdGhlciBpcyBkcm0vZXh5bm9zLiBTbyBpZiB5b3UgdXNlIG90aGVy
+IHByZWZpeCwgeW91ciBwYXRjaCBpcwpmaWx0ZXJlZCBhbmQgc3RvcmVkIGluIG15IGRyaS1kZXZl
+bCBtYWlsYm94LiBCdXQgYXMgeW91IG1heSBrbm93LCB0aGUKbWFpbGJveCB3b3VsZCBhbHdheXMg
+YmUgZnVsbCB3aXRoIG1hbnkgZW1haWxzIHdoaWNoIGNvbnRhaW5zIHZhcmlvdXMKdHlwZSBwYXRj
+aGVzLCBleHlub3MsIG9tYXAsIHN0aSwgcmFkZW9uLCBpbnRlbCBhbmQgc28gbm8uIFNvIGl0IHdv
+dWxkbid0CmJlIGVhc3kgdG8gcGljayB1cCBvbmx5IHlvdXIgcGF0Y2ggYW1vbmcgdGhlbS4gU28g
+SSdkIGxpa2UgdG8gcmVjb21tZW5kCnlvdSB0byB1c2UgZHJtL2V4eW5vcyBwcmVmaXggc28gdGhh
+dCBJIGNvdWxkIHJldmlldyBhbmQgcGljayBpdCB1cAplYXNpbHkgYW5kIHF1aWNrbHkuCgpUaGFu
+a3MsCklua2kgRGFlCgo+IAo+IENoZWVycywKPiBEYW5pZWwKPiAKPj4KPj4gVGhhbmtzLAo+PiBJ
+bmtpIERhZQo+Pgo+PiBPbiAyMDE164WEIDAz7JuUIDI07J28IDE3OjU3LCBKYXZpZXIgTWFydGlu
+ZXogQ2FuaWxsYXMgd3JvdGU6Cj4+PiAgSGVsbG8gSW5raSwKPj4+Cj4+PiAgT24gVHVlLCBNYXIg
+MTcsIDIwMTUgYXQgMjoyNCBQTSwgRGFuaWVsIFN0b25lCj4+PiA8ZGFuaWVsc0Bjb2xsYWJvcmEu
+Y29tPiB3cm90ZToKPj4+PiAgV2hlbiBwZXJmb3JtaW5nIGEgbW9kZXNldCwgdXNlIHRoZSBmcmFt
+ZWJ1ZmZlciBwaXRjaCB2YWx1ZSB0byBzZXQgRklNRAo+Pj4+ICBJTUdfU0laRSBhbmQgTWl4ZXIg
+U1BBTiByZWdpc3RlcnMuIFRoZXNlIGFyZSBib3RoIGRlZmluZWQgYXMgcGl0Y2gKPj4+PiAtIHRo
+ZQo+Pj4+ICBkaXN0YW5jZSBiZXR3ZWVuIGNvbnRpZ3VvdXMgbGluZXMgKGJ5dGVzIGZvciBGSU1E
+LCBwaXhlbHMgZm9yIG1peGVyKS4KPj4+Pgo+Pj4+ICBGaXhlcyBkaXNwbGF5IG9uIFNub3cgKDEz
+NjZ4NzY4KS4KPj4+Pgo+Pj4+ICBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgU3RvbmUgPGRhbmllbHNA
+Y29sbGFib3JhLmNvbT4KPj4+PiAgVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMg
+PGphdmllci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+Cj4+Pgo+Pj4gIEFueSBjb21tZW50cyBv
+biB0aGlzIHBhdGNoPyBJdCB3b3VsZCBiZSBncmVhdCB0byBwaWNrIHRoaXMgc29vbmVyCj4+PiAg
+cmF0aGVyIHRoYW4gbGF0ZXIgc2luY2UgaXQgZml4ZXMgKGF0IGxlYXN0KSBkaXNwbGF5IG91dHB1
+dCBvbiBTbm93IGFuZAo+Pj4gIEhETUkgb3V0cHV0IG9uIFBlYWNoIFBpdC9QaS4KPj4+Cj4+PiAg
+QmVzdCByZWdhcmRzLAo+Pj4gIEphdmllcgo+Pj4KPj4KPj4KPiAKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
