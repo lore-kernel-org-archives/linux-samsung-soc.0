@@ -1,128 +1,61 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 00/16 v2] iommu: Move domain allocation into drivers
-Date: Fri, 27 Mar 2015 12:03:43 +0100
-Message-ID: <20150327110341.GC5440@ulmo.nvidia.com>
-References: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] drm: Exynos: Respect framebuffer pitch for FIMD/Mixer
+Date: Fri, 27 Mar 2015 12:08:02 +0100
+Message-ID: <CABxcv=nZoXGRyRbOAtFApNVb3CG42-1DVzsNRqpRCNQ+qW80VQ@mail.gmail.com>
+References: <1426598698-31095-1-git-send-email-daniels@collabora.com>
+	<CABxcv==Z0ccmR-3Hasnkmg14m3hBJEwha=6c6288jQPUhyQt-g@mail.gmail.com>
+	<5514187E.60405@samsung.com>
+	<5514A118.2000609@gmx.net>
+	<5514B6CB.7060301@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hOcCNbCCxyk/YU74"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:33850 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752369AbbC0LDs (ORCPT
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:33218 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752076AbbC0LID (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Mar 2015 07:03:48 -0400
-Content-Disposition: inline
-In-Reply-To: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+	Fri, 27 Mar 2015 07:08:03 -0400
+Received: by wixm2 with SMTP id m2so31947696wix.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2015 04:08:02 -0700 (PDT)
+In-Reply-To: <5514B6CB.7060301@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Alex Williamson <alex.williamson@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, jroedel@suse.de
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, Daniel Stone <daniels@collabora.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
+Hello Inki,
 
---hOcCNbCCxyk/YU74
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 27, 2015 at 2:47 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>
+> Right, this is not documented but if you have ever checked exynos drm
+> driver tree, then I think you could know how we use the prefix. Of
+> course, I don't like to force the use of this prefix but if you and
+> other people use prefix in the manner of them, exynos drm tree would be
+> a little bit messy. i.e., DRM: EXYNOS, drm: exynos, drm: Exynos,
+> drm/exynos, drm/exynos: fimd, drm: exynos: fimd, DRM: EXYNOS: FIMD, ...
+>  so many cases....  Do you really want this?
+>
+> So I will always say "please, use right prefix" Otherwise, I will change
+> it while merging as is.
+> And I see that other drm drivers have their own way which is not
+> documented but just implicitly.
+>
 
-On Thu, Mar 26, 2015 at 01:43:03PM +0100, Joerg Roedel wrote:
-> Changes v1-v2:
->=20
-> 	* Rebased to v4.0-rc5
-> 	* Converted domain-types to a bit-field
->=20
-> Hi,
->=20
-> here is patch-set to replace the existing domain_init and
-> domain_destroy iommu-ops with the new domain_alloc and
-> domain_free callbacks
->=20
-> The new callbacks move the allocation of iommu domains into
-> the iommu driver, allowing them to put a generic
-> iommu_domain struct into their own domain struct. This makes
-> domain handling in the drivers more cache efficient and
-> prepares the introduction of default domains in another
-> patch-set.
->=20
-> While at it, this patch-set also introduces domain types.
-> These are internal to the iommu core code for now, there are
-> three of them:
->=20
-> 	* DMA-API domains
-> 	* Identity mapped domains
-> 	* Domains unmanaged by the iommu-core, used for
-> 	  iommu-api so that the users can create their own
-> 	  mappings
->=20
-> The patches have been compile tested for x86, ARM and PPC
-> and runtime tested on x86 (Intel VT-d and AMD IOMMU).
->=20
-> Please review.
->=20
+I agree with you that people should follow the convention for subject
+lines used in a subsystem and that it is tedious to tell them to fix
+the subject and resend but I do agree with Tobias that you should
+rethink your mail filters.
+
+For example I've a filter for all the emails that are directly
+addressed to me or that I'm cc'ed to. It's true that you may get some
+emails that are not interesting to you just because people cc'ed you
+in random patches but I think is better to have false positives than
+to have false negatives. Specially since you are a kernel maintainer
+and people expect your feedback / ack for patches to get merged.
+
 > Thanks,
->=20
-> 	Joerg
->=20
-> Joerg Roedel (15):
->   iommu: Introduce domain_alloc and domain_free iommu_ops
->   iommu: Introduce iommu domain types
->   iommu/amd: Make use of domain_alloc and domain_free
->   iommu/vt-d: Make use of domain_alloc and domain_free
->   iommu/omap: Make use of domain_alloc and domain_free
->   iommu/arm-smmu: Make use of domain_alloc and domain_free
->   iommu/exynos: Make use of domain_alloc and domain_free
->   iommu/tegra-smmu: Make use of domain_alloc and domain_free
->   iommu/tegra-gart: Make use of domain_alloc and domain_free
->   iommu/msm: Make use of domain_alloc and domain_free
->   iommu/shmobile: Make use of domain_alloc and domain_free
->   iommu/ipmmu-vmsa: Make use of domain_alloc and domain_free
->   iommu/rockchip: Make use of domain_alloc and domain_free
->   iommu/fsl: Make use of domain_alloc and domain_free
->   iommu: Remove domain_init and domain_free iommu_ops
->=20
->  drivers/iommu/amd_iommu.c       | 84 +++++++++++++++++++++--------------=
-----
->  drivers/iommu/amd_iommu_types.h |  7 ++--
->  drivers/iommu/arm-smmu.c        | 46 +++++++++++++---------
->  drivers/iommu/exynos-iommu.c    | 87 ++++++++++++++++++++++-------------=
-------
->  drivers/iommu/fsl_pamu_domain.c | 60 +++++++++++++++-------------
->  drivers/iommu/fsl_pamu_domain.h |  2 +-
->  drivers/iommu/intel-iommu.c     | 48 +++++++++++++----------
->  drivers/iommu/iommu.c           | 20 ++--------
->  drivers/iommu/ipmmu-vmsa.c      | 43 +++++++++++---------
->  drivers/iommu/msm_iommu.c       | 73 +++++++++++++++++-----------------
->  drivers/iommu/omap-iommu.c      | 49 +++++++++++++----------
->  drivers/iommu/rockchip-iommu.c  | 40 +++++++++++--------
->  drivers/iommu/shmobile-iommu.c  | 40 +++++++++++--------
->  drivers/iommu/tegra-gart.c      | 67 +++++++++++++++++++++----------
->  drivers/iommu/tegra-smmu.c      | 41 ++++++++++---------
->  include/linux/iommu.h           | 17 ++++++--
->  16 files changed, 407 insertions(+), 317 deletions(-)
+> Inki Dae
+>
 
-The core and Tegra bits:
-
-Tested-by: Thierry Reding <treding@nvidia.com>
-
---hOcCNbCCxyk/YU74
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVFTkNAAoJEN0jrNd/PrOhOnAP/0c1ukOr7WBy0Q18WxVj8j7F
-VZj1NFFiReYH75D3J7LYVMCFoEnw8HaKQxjCwgy25WID6q9fBQD00SmTsj8y4vxW
-L3BhV2mWMmhtGoIVt110rtS6DRbMBzwzVWJ3uMp7y53FMr2BsQF9O1qOGYsgOmuM
-NahD7DaofEeJ+vgc/Uq0NH6ccae4lKRKxcszEicCdZ+/a7kQFikqQ1olR/oNw/Sz
-127aL97Cj8ASlnTRzeH2K2R6eETcareoBAYIIoBLHb84jfx9/npqU9TKW+z3EPB1
-ulMK8geAd0+wQcQe2h39IyBXWGf8ILwCfUjVNjq9W0PXkaLexE0VlktcZDYveeaj
-GGnKNSHFfPYmfsg3aIIVkt5sTs4dfw77opKH6wjRm3QPalNv86ELt9EwLx5YgM1I
-xi11a536l9ztHtZZ24NREd/7OAhXQV7Q6xbMdhiLsRIJiYclc58rFivMUMCvRavN
-qoOjS1TlIKoA6Jx01j76ejxVQfZoecsmyaa7D8RsVkN2S+GCfvsloqaM96ye6MNs
-IT9wCsPI93RuR1PWE5pcna1ltNId/Xwl3R90Kzj1vfa5csTHhiN3kXl7tVvvNhbG
-sMieuj/XF0XX5FpyoFGPud3wu7ZlDjASTInGWTFMZfr64vBiYIR7Tvh1ET7/dJ7p
-E1DQqZ9NjO0HmEjRmBMR
-=uhCB
------END PGP SIGNATURE-----
-
---hOcCNbCCxyk/YU74--
+Best regards,
+Javier
