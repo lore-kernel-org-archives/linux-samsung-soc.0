@@ -1,46 +1,100 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] Revert "ARM: dts: add display power domain for exynos5250"
-Date: Fri, 27 Mar 2015 15:34:27 +0100
-Message-ID: <55156A73.7060802@collabora.co.uk>
-References: <1427107800-21668-1-git-send-email-javier.martinez@collabora.co.uk> <CAJKOXPewO77pRwh151MFLX+W6WQYPZS759uqjvyZ_TkRf9vmdA@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC PATCH 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0
+ clock is enabled during suspend
+Date: Fri, 27 Mar 2015 15:36:00 +0100
+Message-ID: <55156AD0.5070107@samsung.com>
+References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPewO77pRwh151MFLX+W6WQYPZS759uqjvyZ_TkRf9vmdA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:31350 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802AbbC0OgO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Mar 2015 10:36:14 -0400
+In-reply-to: <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Krzysztof,
+Hello Javier,
 
-On 03/27/2015 03:29 PM, Krzysztof Kozlowski wrote:
-> 2015-03-23 11:49 GMT+01:00 Javier Martinez Canillas
+On 27/03/15 15:21, Javier Martinez Canillas wrote:
+> Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
+> Management support v12") added pm support for the pl330 dma driver but
+> it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
+> during suspend and this clock needs to remain enabled in order to make
+> the system resume from a system suspend state.
 > 
-> I looked at the DP and FIMD drivers and with great help of Andrzej
-> Hajda found the issue: the FIMD driver does not enable DP clock
-> (DP_MIE_CLKCON register). The process looks like:
-> 1. Bootloader sets the DP_MIE_CLKCON to proper value.
-> 2. FIMD is probed, DP power domain is on.
-> 3. FIMD is deffered, DP power domain is turned off.
-> 4. The FIMD registers are reset so DP clock is turned off.
-> 5. DP driver is probed, DP power domain is turned on but clock is not enabled.
->
-
-Great! I knew it was some setup missing that was made by the boot-loader.
-
-> I'll do some more testing and sent a patch for it till end of Monday
-> so I think we should not revert this commit.
->
-
-Agree, I of course preferred to fix the actual cause instead of relying
-on the boot-loader to do the initialization but I wasn't able to figure
-it out so I posted this patch to revert the commit in the meantime.
-
-> Best regards,
-> Krzysztof
+> To make sure that the clock is enabled during suspend, enable it prior
+> to entering a suspend state and disable it once the system has resumed.
 > 
+> Thanks to Abhilash Kesavan for figuring out that this was the issue.
+> 
+> Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  arch/arm/mach-exynos/suspend.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index 1521eaf99265..6dbc0a6d1bb5 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/init.h>
+>  #include <linux/suspend.h>
+>  #include <linux/syscore_ops.h>
+> +#include <linux/clk.h>
+>  #include <linux/cpu_pm.h>
+>  #include <linux/io.h>
+>  #include <linux/irq.h>
+> @@ -79,6 +80,7 @@ static const struct exynos_pm_data *pm_data;
+>  
+>  static int exynos5420_cpu_state;
+>  static unsigned int exynos_pmu_spare3;
+> +static struct clk *clk;
+>  
+>  /*
+>   * GIC wake-up support
+> @@ -374,6 +376,16 @@ static void exynos5420_pm_prepare(void)
+>  {
+>  	unsigned int tmp;
+>  
+> +	/*
+> +	 * Exynos5420 requires the MDMA0 controller clock to be
+> +	 * ungated on suspend in order to be resumed correctly.
+> +	 */
+> +	clk = clk_get(NULL, "mdma0");
+> +	if (IS_ERR(clk))
+> +		pr_warn("Failed to get mdma0 clk (%ld)\n", PTR_ERR(clk));
 
-Best regards,
-Javier
+I suppose you want this clk_get() call in exynos_pm_init(), now there
+is clk_put() missing and this will cause a memory leak.
+
+> +	else
+> +		clk_prepare_enable(clk);
+> +
+>  	/* Set wake-up mask registers */
+>  	exynos_pm_set_wakeup_mask();
+>  
+> @@ -516,6 +528,9 @@ static void exynos5420_pm_resume(void)
+>  {
+>  	unsigned long tmp;
+>  
+> +	if (!IS_ERR_OR_NULL(clk))
+
+This should be just IS_ERR().
+
+> +		clk_disable_unprepare(clk);
+> +
+>  	/* Restore the CPU0 low power state register */
+>  	tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+>  	pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
+
+--
+Regards,
+Sylwester
