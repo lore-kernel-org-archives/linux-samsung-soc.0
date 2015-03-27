@@ -1,62 +1,43 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/3] ARM: EXYNOS: Handle of_find_device_by_node and kstrdup
- failures
-Date: Fri, 27 Mar 2015 13:28:24 +0100
-Message-ID: <1427459305-26625-2-git-send-email-k.kozlowski@samsung.com>
-References: <1427459305-26625-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 1/3] ARM: EXYNOS: Handle of of_iomap() failure
+Date: Fri, 27 Mar 2015 13:28:23 +0100
+Message-ID: <1427459305-26625-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1427459305-26625-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Prevent possible NULL pointer dereference of pointer returned by
-of_find_device_by_node(). Handle this by skipping such power domain.
-
-Additionally fail the init on kstrdup() failure. Such case is actually
-not fatal because the name for power domain allocated by kstrdup() is
-used only in printk. Still as a precaution handle this as an error
-condition.
+Prevent possible NULL pointer dereference if of_iomap() fails. Handle
+the error by skipping such power domain.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 ---
 Changes since v1:
-None.
+1. Add missing kfree() of domain name (allocated with kstrdup()).
 ---
- arch/arm/mach-exynos/pm_domains.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/mach-exynos/pm_domains.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 14622b5f4481..61c32ccc9f7a 100644
+index cbe56b35aea0..14622b5f4481 100644
 --- a/arch/arm/mach-exynos/pm_domains.c
 +++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -126,6 +126,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 		struct device *dev;
- 
- 		pdev = of_find_device_by_node(np);
-+		if (!pdev) {
-+			pr_err("%s: failed to find device for node %s\n",
-+					__func__, np->name);
+@@ -138,6 +138,14 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->pd.name = kstrdup(dev_name(dev), GFP_KERNEL);
+ 		pd->name = pd->pd.name;
+ 		pd->base = of_iomap(np, 0);
++		if (!pd->base) {
++			dev_warn(&pdev->dev, "Failed to map memory\n");
++			kfree(pd->pd.name);
++			kfree(pd);
 +			of_node_put(np);
 +			continue;
 +		}
- 		dev = &pdev->dev;
- 
- 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
-@@ -136,6 +142,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 		}
- 
- 		pd->pd.name = kstrdup(dev_name(dev), GFP_KERNEL);
-+		if (!pd->pd.name) {
-+			kfree(pd);
-+			of_node_put(np);
-+			return -ENOMEM;
-+		}
 +
- 		pd->name = pd->pd.name;
- 		pd->base = of_iomap(np, 0);
- 		if (!pd->base) {
+ 		pd->pd.power_off = exynos_pd_power_off;
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 
 -- 
 1.9.1
