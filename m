@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0 clock is enabled during suspend
-Date: Fri, 27 Mar 2015 15:21:37 +0100
-Message-ID: <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [RFC PATCH 1/2] clk: exynos5420: Add alias for MDMA0 controller clock
+Date: Fri, 27 Mar 2015 15:21:36 +0100
+Message-ID: <1427466097-7287-2-git-send-email-javier.martinez@collabora.co.uk>
 References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,69 +10,32 @@ To: Kukjin Kim <kgene@kernel.org>
 Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
-Management support v12") added pm support for the pl330 dma driver but
-it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
-during suspend and this clock needs to remain enabled in order to make
-the system resume from a system suspend state.
+The MDMA0 controller clock needs to be enabled to allow the
+system to be resumed when entering into a suspend state.
 
-To make sure that the clock is enabled during suspend, enable it prior
-to entering a suspend state and disable it once the system has resumed.
+The clock is disabled as a part of the runtime pm for the
+pl330 DMA driver so the system fails to resume. So to allow
+the system to grab the clock and make sure that it stays
+enabled during suspend, an alias has to be added so a clock
+lookup for a clock is registered.
 
-Thanks to Abhilash Kesavan for figuring out that this was the issue.
-
-Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- arch/arm/mach-exynos/suspend.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 1521eaf99265..6dbc0a6d1bb5 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/clk.h>
- #include <linux/cpu_pm.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -79,6 +80,7 @@ static const struct exynos_pm_data *pm_data;
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 07d666cc6a29..8b49e8b3b548 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -893,7 +893,7 @@ static struct samsung_div_clock exynos5x_div_clks[] __initdata = {
  
- static int exynos5420_cpu_state;
- static unsigned int exynos_pmu_spare3;
-+static struct clk *clk;
- 
- /*
-  * GIC wake-up support
-@@ -374,6 +376,16 @@ static void exynos5420_pm_prepare(void)
- {
- 	unsigned int tmp;
- 
-+	/*
-+	 * Exynos5420 requires the MDMA0 controller clock to be
-+	 * ungated on suspend in order to be resumed correctly.
-+	 */
-+	clk = clk_get(NULL, "mdma0");
-+	if (IS_ERR(clk))
-+		pr_warn("Failed to get mdma0 clk (%ld)\n", PTR_ERR(clk));
-+	else
-+		clk_prepare_enable(clk);
-+
- 	/* Set wake-up mask registers */
- 	exynos_pm_set_wakeup_mask();
- 
-@@ -516,6 +528,9 @@ static void exynos5420_pm_resume(void)
- {
- 	unsigned long tmp;
- 
-+	if (!IS_ERR_OR_NULL(clk))
-+		clk_disable_unprepare(clk);
-+
- 	/* Restore the CPU0 low power state register */
- 	tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
- 	pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
+ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
+ 	/* G2D */
+-	GATE(CLK_MDMA0, "mdma0", "aclk266_g2d", GATE_IP_G2D, 1, 0, 0),
++	GATE_A(CLK_MDMA0, "mdma0", "aclk266_g2d", GATE_IP_G2D, 1, 0, 0, "mdma0"),
+ 	GATE(CLK_SSS, "sss", "aclk266_g2d", GATE_IP_G2D, 2, 0, 0),
+ 	GATE(CLK_G2D, "g2d", "aclk333_g2d", GATE_IP_G2D, 3, 0, 0),
+ 	GATE(CLK_SMMU_MDMA0, "smmu_mdma0", "aclk266_g2d", GATE_IP_G2D, 5, 0, 0),
 -- 
 2.1.4
