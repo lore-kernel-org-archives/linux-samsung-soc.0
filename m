@@ -1,142 +1,113 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFT PATCH] drm/exynos: Enable DP clock to fix display on Exynos5250
- and other
-Date: Fri, 27 Mar 2015 16:57:36 +0100
-Message-ID: <1427471856-20918-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 03/10] drm/exynos: atomic phase 1: add .mode_set_nofb() callback
+Date: Fri, 27 Mar 2015 12:58:53 -0300
+Message-ID: <1427471939-27345-4-git-send-email-gustavo@padovan.org>
+References: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:34747 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932469AbbC0P7K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Mar 2015 11:59:10 -0400
+Received: by qgep97 with SMTP id p97so137361889qge.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2015 08:59:10 -0700 (PDT)
+In-Reply-To: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-After adding display power domain for Exynos5250 in commit
-2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250") the
-display on Chromebook Snow and others stopped working after boot.
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-The reason for this suggested Andrzej Hajda: the DP clock was disabled.
-This clock is required by Display Port and is enabled by bootloader.
-However when FIMD driver probing was deferred, the display power domain
-was turned off. This effectively reset the value of DP clock enable
-register.
+The new atomic infrastructure needs the .mode_set_nofb() callback to
+update CRTC timings before setting any plane.
 
-When exynos-dp is later probed, the clock is not enabled and display is
-not properly configured:
-
-exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
-exynos-dp 145b0000.dp-controller: unable to config video
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reported-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250")
-Cc: <stable@vger.kernel.org>
-
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 60 +++++---------------------------
+ 1 file changed, 9 insertions(+), 51 deletions(-)
 
-This should fix issue reported by Javier [1][2].
-
-Tested on Chromebook Snow (Exynos 5250). More testing would be great,
-especially on other Exynos 5xxx products.
-
-[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/43889
-[2] http://thread.gmane.org/gmane.linux.ports.arm.kernel/400290
----
- drivers/gpu/drm/exynos/exynos_dp_core.c  | 10 ++++++++++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 19 +++++++++++++++++++
- include/video/samsung_fimd.h             |  6 ++++++
- 3 files changed, 35 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index bf17a60b40ed..1dbfba58f909 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -32,10 +32,16 @@
- #include <drm/bridge/ptn3460.h>
- 
- #include "exynos_dp_core.h"
-+#include "exynos_drm_fimd.h"
- 
- #define ctx_from_connector(c)	container_of(c, struct exynos_dp_device, \
- 					connector)
- 
-+static inline struct exynos_drm_crtc *dp_to_crtc(struct exynos_dp_device *dp)
-+{
-+	return to_exynos_crtc(dp->encoder->crtc);
-+}
-+
- static inline struct exynos_dp_device *
- display_to_dp(struct exynos_drm_display *d)
- {
-@@ -1070,6 +1076,8 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
- 		}
- 	}
- 
-+	fimd_dp_clock_enable(dp_to_crtc(dp), true);
-+
- 	clk_prepare_enable(dp->clock);
- 	exynos_dp_phy_init(dp);
- 	exynos_dp_init_dp(dp);
-@@ -1094,6 +1102,8 @@ static void exynos_dp_poweroff(struct exynos_dp_device *dp)
- 	exynos_dp_phy_exit(dp);
- 	clk_disable_unprepare(dp->clock);
- 
-+	fimd_dp_clock_enable(dp_to_crtc(dp), false);
-+
- 	if (dp->panel) {
- 		if (drm_panel_unprepare(dp->panel))
- 			DRM_ERROR("failed to turnoff the panel\n");
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index c300e22da8ac..bdf0818dc8f5 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -32,6 +32,7 @@
- #include "exynos_drm_fbdev.h"
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_iommu.h"
-+#include "exynos_drm_fimd.h"
- 
- /*
-  * FIMD stands for Fully Interactive Mobile Display and
-@@ -1231,6 +1232,24 @@ static int fimd_remove(struct platform_device *pdev)
- 	return 0;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 1c0d936..35f101f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -81,59 +81,16 @@ exynos_drm_crtc_mode_fixup(struct drm_crtc *crtc,
+ 	return true;
  }
  
-+void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable)
-+{
-+	struct fimd_context *ctx = crtc->ctx;
-+	u32 val;
-+
-+	/*
-+	 * Only Exynos 5250, 5260, 5410 and 542x requires enabling DP/MIE
-+	 * clock. On these SoCs the bootloader may enable it but any
-+	 * power domain off/on will reset it to disable state.
-+	 */
-+	if (ctx->driver_data != &exynos5_fimd_driver_data)
-+		return;
-+
-+	val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
-+	writel(DP_MIE_CLK_DP_ENABLE, ctx->regs + DP_MIE_CLKCON);
-+}
-+EXPORT_SYMBOL_GPL(fimd_dp_clock_enable);
-+
- struct platform_driver fimd_driver = {
- 	.probe		= fimd_probe,
- 	.remove		= fimd_remove,
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index a20e4a3a8b15..847a0a2b399c 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -436,6 +436,12 @@
- #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
- #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+-static int
+-exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+-			  struct drm_display_mode *adjusted_mode, int x, int y,
+-			  struct drm_framebuffer *old_fb)
+-{
+-	struct drm_framebuffer *fb = crtc->primary->fb;
+-	unsigned int crtc_w;
+-	unsigned int crtc_h;
+-	int ret;
+-
+-	/*
+-	 * copy the mode data adjusted by mode_fixup() into crtc->mode
+-	 * so that hardware can be seet to proper mode.
+-	 */
+-	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
+-
+-	ret = exynos_check_plane(crtc->primary, fb);
+-	if (ret < 0)
+-		return ret;
+-
+-	crtc_w = fb->width - x;
+-	crtc_h = fb->height - y;
+-	exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
+-			      crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+-
+-	return 0;
+-}
+-
+-static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+-					  struct drm_framebuffer *old_fb)
++static void
++exynos_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	struct drm_framebuffer *fb = crtc->primary->fb;
+-	unsigned int crtc_w;
+-	unsigned int crtc_h;
+-	int ret;
  
-+/* Display port clock control */
-+#define DP_MIE_CLKCON				0x27c
-+#define DP_MIE_CLK_DISABLE			0x0
-+#define DP_MIE_CLK_DP_ENABLE			0x2
-+#define DP_MIE_CLK_MIE_ENABLE			0x3
-+
- /* Notes on per-window bpp settings
-  *
-  * Value	Win0	 Win1	  Win2	   Win3	    Win 4
+-	/* when framebuffer changing is requested, crtc's dpms should be on */
+-	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+-		DRM_ERROR("failed framebuffer changing request.\n");
+-		return -EPERM;
+-	}
+-
+-	ret = exynos_check_plane(crtc->primary, fb);
+-	if (ret)
+-		return ret;
+-
+-	crtc_w = fb->width - x;
+-	crtc_h = fb->height - y;
+-	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-			    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
++	if (WARN_ON(!crtc->state))
++		return;
+ 
+-	return 0;
++	if (exynos_crtc->ops->commit)
++		exynos_crtc->ops->commit(exynos_crtc);
+ }
+ 
+ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+@@ -158,8 +115,9 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.prepare	= exynos_drm_crtc_prepare,
+ 	.commit		= exynos_drm_crtc_commit,
+ 	.mode_fixup	= exynos_drm_crtc_mode_fixup,
+-	.mode_set	= exynos_drm_crtc_mode_set,
+-	.mode_set_base	= exynos_drm_crtc_mode_set_base,
++	.mode_set	= drm_helper_crtc_mode_set,
++	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
++	.mode_set_base	= drm_helper_crtc_mode_set_base,
+ 	.disable	= exynos_drm_crtc_disable,
+ };
+ 
 -- 
-1.9.1
+2.1.0
