@@ -1,59 +1,42 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFT PATCHv2] drm/exynos: Enable DP clock to fix display on Exynos5250
- and other
-Date: Fri, 27 Mar 2015 20:21:26 +0100
-Message-ID: <5515ADB6.6050204@collabora.co.uk>
-References: <1427472488-21454-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [RFC PATCH v2 1/2] clk: exynos5420: Add alias for MDMA0 controller clock
+Date: Fri, 27 Mar 2015 20:38:50 +0100
+Message-ID: <1427485131-18561-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427472488-21454-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, stable@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+The MDMA0 controller clock needs to be enabled to allow the
+system to be resumed when entering into a suspend state.
 
-On 03/27/2015 05:08 PM, Krzysztof Kozlowski wrote:
-> After adding display power domain for Exynos5250 in commit
-> 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250") the
-> display on Chromebook Snow and others stopped working after boot.
-> 
-> The reason for this suggested Andrzej Hajda: the DP clock was disabled.
-> This clock is required by Display Port and is enabled by bootloader.
-> However when FIMD driver probing was deferred, the display power domain
-> was turned off. This effectively reset the value of DP clock enable
-> register.
-> 
-> When exynos-dp is later probed, the clock is not enabled and display is
-> not properly configured:
-> 
-> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
-> exynos-dp 145b0000.dp-controller: unable to config video
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reported-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250")
-> Cc: <stable@vger.kernel.org>
-> 
-> ---
-> 
-> This should fix issue reported by Javier [1][2].
->
+The clock is disabled as a part of the runtime pm for the
+pl330 DMA driver so the system fails to resume. So to allow
+the system to grab the clock and make sure that it stays
+enabled during suspend, an alias has to be added so a clock
+lookup for a clock is registered.
 
-I tested this patch and does indeed solves both issues I reported
-The exynos-dp probe deferral does not make the display to not be
-working and also disabling and enabling the display with:
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
-with /sys/devices/platform/exynos-drm/graphics/fb0/blank works.
+Changes since v1: None.
 
-Thanks a lot for fixing this issue.
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On an Exynos5250 Snow Chromebook:
-
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Best regards,
-Javier
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 07d666cc6a29..8b49e8b3b548 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -893,7 +893,7 @@ static struct samsung_div_clock exynos5x_div_clks[] __initdata = {
+ 
+ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
+ 	/* G2D */
+-	GATE(CLK_MDMA0, "mdma0", "aclk266_g2d", GATE_IP_G2D, 1, 0, 0),
++	GATE_A(CLK_MDMA0, "mdma0", "aclk266_g2d", GATE_IP_G2D, 1, 0, 0, "mdma0"),
+ 	GATE(CLK_SSS, "sss", "aclk266_g2d", GATE_IP_G2D, 2, 0, 0),
+ 	GATE(CLK_G2D, "g2d", "aclk333_g2d", GATE_IP_G2D, 3, 0, 0),
+ 	GATE(CLK_SMMU_MDMA0, "smmu_mdma0", "aclk266_g2d", GATE_IP_G2D, 5, 0, 0),
+-- 
+2.1.4
