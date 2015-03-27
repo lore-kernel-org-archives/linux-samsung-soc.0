@@ -1,53 +1,40 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 1/3] drm/exynos: mixer: add 2x scaling to
- mixer_graph_buffer
-Date: Fri, 27 Mar 2015 10:11:51 -0300
-Message-ID: <20150327131151.GA15911@joana>
-References: <1427325438-3791-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20150326142615.GA18573@joana>
- <55149475.1090900@math.uni-bielefeld.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: exynos5800-peach-pi: suspend/resume (still) broken
+Date: Fri, 27 Mar 2015 14:29:35 +0100
+Message-ID: <55155B3F.2010704@collabora.co.uk>
+References: <CAMAWPa_r04tAXAXosmLk+DfwvQV0qpD+=8O7T_pwFTAozcjOgQ@mail.gmail.com>	<550953ED.10508@collabora.co.uk>	<CAM4voakvhHuVXLY2DmdGexfrqSYUqhXhg1krLwO4CCxjHQ1NCw@mail.gmail.com>	<550C47ED.3010301@collabora.co.uk>	<CAM4voamLt=6dSY-DwDb+c=KRwDWAvjvzUUnno+=+1svDqf41Qg@mail.gmail.com> <CAM4voanUg87=Ya6azGCRz8r2=WJ0wi4ktqdn6GD6ULJsnLUMmw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <55149475.1090900@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:39308 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752511AbbC0N3l (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Mar 2015 09:29:41 -0400
+In-Reply-To: <CAM4voanUg87=Ya6azGCRz8r2=WJ0wi4ktqdn6GD6ULJsnLUMmw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Kevin Hilman <khilman@deeprootsystems.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-SGkgVG9iaWFzLAoKMjAxNS0wMy0yNyBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
-ZWxlZmVsZC5kZT46Cgo+IEhlbGxvIQo+IAo+IAo+IEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+
-IEkgd291bGQga2VlcCBjYWxsaW5nIHRoZXNlIHR3byB2YXJzIHhfcmF0aW8gYW5kIHlfcmF0aW8u
-IEkgZG9uJ3Qgc2VlIGEgcmVhc29uCj4gPiB0byBjaGFuZ2UgdGhlIG5hbWUgaGVyZS4KPiBSaWdo
-dCwgSSdtIGdvaW5nIHRvIGNoYW5nZSB0aGlzLiBBbHNvIEkgd2FzIHRoaW5raW5nIG9mIGJhc2lu
-ZyB0aGUgcGF0Y2gKPiBvbiB5b3VyIGxhdGVzdCBjbGVhbnVwIHNlcmllcyAodGhlICdkcm0vZXh5
-bm9zOiByZW1vdmUgc3RydWN0ICpfd2luX2RhdGEKPiBhYnN0cmFjdGlvbiBvbiBwbGFuZXMnIG9u
-ZSkuCgpJZiB5b3UgY2FuIHJlYmFzZSB0aGlzIGluIG9uIHRvcCBvZiBteSBzZXJpZXMgdGhpcyB3
-b3VsZCBiZSByZWFsbHkgZ29vZC4KCj4gCj4gVGhlbiBpdCB3b3VsZCBqdXN0IGJlOgo+IHN0YXRp
-YyBpbnQgbWl4ZXJfc2V0dXBfc2NhbGUoY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBs
-YW5lLAo+IAl1bnNpZ25lZCBpbnQgKnhfcmF0aW8sIHVuc2lnbmVkIGludCAqeV9yYXRpbykKPiAK
-PiBBbHNvIHRoYXQgd291bGQgYXV0b21hdGljYWxseSBmaXggeW91ciBvdGhlciBjb21tZW50IGJl
-bG93IFsqXS4KPiAKPiAKPiA+IFVzZSBFUEVSTSBvciBFTk9UU1VQUC4gT3IgZXZlbiB0cnVlL2Zh
-bHNlLgo+IFdpbGwgZG8hCj4gCj4gCj4gPiBZb3UgbmVlZCB0byBmaXggc3R5bGUgaGVyZQo+ID4g
-Cj4gPiAgICAgICAgIGlmIChtaXhlcl9zZXR1cF9zY2FsZSh3aW5fZGF0YS0+c3JjX3dpZHRoLCB3
-aW5fZGF0YS0+c3JjX2hlaWdodCwgICAgICAgIAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgd2luX2RhdGEtPmNydGNfd2lkdGgsIHdpbl9kYXRhLT5jcnRjX2hlaWdodCwgICAgICAK
-PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZ4X3JhdGlvLCAmeV9yYXRpbykpICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgCj4gPiAgICAgICAgICAgICAgICAgcmV0dXJuOyAK
-PiBXaXRoIFsqXSB0aGlzIHdvdWxkIGp1c3QgYmU6Cj4gaWYgKG1peGVyX3NldHVwX3NjYWxlKHBs
-YW5lLCAmeF9yYXRpbywgJnlfcmF0aW8pKSByZXR1cm47Cj4gCj4gV2hhdCBkbyB5b3UgdGhpbms/
-CgpDaGFuZ2VzIHNvdW5kcyBnb29kIHRvIG1lLiBQbGVhc2UgZ28gYWhlYWQgYW5kIHNlbmQgYSBu
-ZXcgcGF0Y2guIDopCgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Hello Abhilash,
+
+On 03/20/2015 06:40 PM, Abhilash Kesavan wrote:
+> 
+> Regarding the mdma0 disablement, it looks like for the system to
+> suspend properly the mdma0 pclk needs to stay on.
+> 
+
+I had time today again to work on this issue and the best
+place I found to enable and disable the mdma0 clock is in
+exynos5420_pm_{prepare,resume}. Please let me know if you
+have a better idea of where the clock should be managed.
+
+I'll send a RFC patch-set soon.
+
+> Regards,
+> Abhilash
+
+Best regards,
+Javier
