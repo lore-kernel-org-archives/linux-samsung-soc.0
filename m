@@ -1,48 +1,27 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos4: Disable ARMCLK down feature on
- Exynos4210 SoC
-Date: Sat, 28 Mar 2015 17:37:05 +0100
-Message-ID: <CAJKOXPc_M=rY0aYpE_bhfa6Ku-E09UZ5YXXF3uH9ENTbPJsqMA@mail.gmail.com>
-References: <1430933.sM2tQimLcT@amdc1032>
+From: "Paul G. Allen" <csudarat@su.ac.th>
+Subject: A DONATION FUND FOR YOU
+Date: Sat, 28 Mar 2015 17:23:47 +0000
+Message-ID: <e7f10019cb701a3486c2aac0a1c22755@su.ac.th>
+Reply-To: <3241705724@qq.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f172.google.com ([209.85.160.172]:36383 "EHLO
-	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751066AbbC1QhH (ORCPT
+Received: from naray.su.ac.th ([202.44.135.5]:38584 "EHLO mail.su.ac.th"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750829AbbC1R2F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 28 Mar 2015 12:37:07 -0400
-In-Reply-To: <1430933.sM2tQimLcT@amdc1032>
+	Sat, 28 Mar 2015 13:28:05 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-2015-03-27 17:27 GMT+01:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
-> Commit 42773b28e71d ("clk: samsung: exynos4: Enable ARMCLK
-> down feature") enabled ARMCLK down feature on all Exynos4
-> SoCs.  Unfortunately on Exynos4210 SoC ARMCLK down feature
-> causes a lockup when ondemand cpufreq governor is used.
-> Fix it by limiting ARMCLK down feature to Exynos4x12 SoCs.
->
-> This patch was tested on:
-> - Exynos4210 SoC based Trats board
-> - Exynos4210 SoC based Origen board
-> - Exynos4412 SoC based Trats2 board
-> - Exynos4412 SoC based Odroid-U3 board
->
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Daniel Drake <drake@endlessm.com>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Fixes: 42773b28e71d ("clk: samsung: exynos4: Enable ARMCLK down feature")
-> Cc: <stable@vger.kernel.org> # v3.17+
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c |   11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+You have been awarded $1,200,000.00 by Paul G. Allen Family Foundation, 
+Your email address was chosen online while searching at random. Kindly 
+get back to me at your earliest convenience via 
+(pjfoundation@foxmail.com) , so I know your email address is valid. For 
+more details Visit http://en.wikipedia.org/wiki/Paul_Allen
 
-Best regards,
-Krzysztof
+Regards,
+Paul G Allen
