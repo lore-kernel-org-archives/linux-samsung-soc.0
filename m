@@ -1,116 +1,111 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 2/5] exynos: add =?UTF-8?Q?EXYNOS=5FG=32D=5FEVENT=20to?=
- =?UTF-8?Q?=20drmHandleEvent?=
-Date: Mon, 30 Mar 2015 13:37:25 +0200
-Message-ID: <f195a1ede10574bb80606077a5ade50c@math.uni-bielefeld.de>
-References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: exynos5422-odroidxu3: add 'rtc_src' clock
+ to rtc node
+Date: Mon, 30 Mar 2015 14:17:24 +0200
+Message-ID: <CAJKOXPffPgs1XUxkDTgL7aq7jZaWvrKjnLrjFfKGjuxDw_C=LA@mail.gmail.com>
+References: <55192A48.3070201@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Emil Velikov <emil.l.velikov@gmail.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f43.google.com ([209.85.213.43]:34916 "EHLO
+	mail-yh0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750938AbbC3MRZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Mar 2015 08:17:25 -0400
+Received: by yhfw71 with SMTP id w71so5558550yhf.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2015 05:17:24 -0700 (PDT)
+In-Reply-To: <55192A48.3070201@fivetechno.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Markus Reichl <m.reichl@fivetechno.de>
+Cc: linux-samsung-soc@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-SGVsbG8sCgoKT24gMjAxNS0wMy0zMCAwMjowMiwgUm9iIENsYXJrIHdyb3RlOgo+IE1heWJlIHdl
-IG5lZWQgc29tZSBtb3JlIGZsZXhpYmxlIHdheSB0byByZWdpc3RlciBoYW5kbGVycyBmb3IgZHJp
-dmVyCj4gY3VzdG9tIGV2ZW50cz8gIEJ1dCBldmVyeW9uZSBhZGRpbmcgdGhlaXIgb3duIHRoaW5n
-IHRvCj4gZHJtSGFuZGxlRXZlbnQoKSBkb2Vzbid0IHJlYWxseSBzZWVtIHNvIG5pY2UuLiAgdGhh
-dCBzYWlkLCBJJ20gbm90Cj4gc3VyZSBob3cgbXVjaCB0byBjYXJlLiAgSWYgaXQgaXMganVzdCBl
-eHlub3MgYW5kIHZtd2dmeCwgdGhlbiB0ZWxsaW5nCj4gdGhlbSB0byB1c2UgdGhlcmUgb3duIHZl
-cnNpb24gb2Ygb2YgZHJtSGFuZGxlRXZlbnQoKSBtaWdodCBiZSBvay4gIEJ1dAo+IGlmIGRyaXZl
-ciBjdXN0b20gZXZlbnRzIHNvbWVob3cgYmVjb21lIG1vcmUgcG9wdWxhciwgbWF5YmUgd2Ugd2Fu
-dCBhCj4gYmV0dGVyIHNvbHV0aW9uLi4KSSBkb24ndCBsaWtlIHRoZSBpZGVhIG9mIGp1c3QgY29w
-eWluZyB0aGUgY3VycmVudCBkcm1IYW5kbGVFdmVudCgpIGNvZGUKYW5kIHB1dHRpbmcgaXQgaW50
-byB0aGUgZXh5bm9zIGNvZGUgdG9nZXRoZXIgd2l0aCB0aGUgYWRkaXRpb25hbCBzd2l0Y2gKY2Fz
-ZXMuIEl0IGp1c3Qgc2NyZWFtcyAiSEFDSyEiIHRvIG1lLgoKSSdtIGdvaW5nIHRvIHRyeSB0byBj
-b21lIHVwIHdpdGggYSBzb2x1dGlvbiB3aGVyZSB3ZSBjYW4gYXQgbGVhc3Qgc2hhcmUKc29tZSBv
-ZiB0aGUgY29kZS4KCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKCj4gCj4gQlIsCj4gLVIKPiAK
-PiBPbiBGcmksIE1hciAyMCwgMjAxNSBhdCA2OjI1IFBNLCBUb2JpYXMgSmFrb2JpCj4gPHRqYWtv
-YmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3cm90ZToKPj4gVGhpcyBldmVudCBpcyBzcGVjaWZp
-YyB0byBFeHlub3MgRzJEIERSTSBkcml2ZXIuIE9ubHkKPj4gcHJvY2VzcyBpdCB3aGVuIEV4eW5v
-cyBzdXBwb3J0IGlzIGVuYWJsZWQuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2Jp
-IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPj4gLS0tCj4+ICBleHlub3MvZXh5bm9z
-X2RybS5oIHwgMTIgKysrKysrKysrKysrCj4+ICB4Zjg2ZHJtLmggICAgICAgICAgIHwgIDcgKysr
-KysrLQo+PiAgeGY4NmRybU1vZGUuYyAgICAgICB8IDE4ICsrKysrKysrKysrKysrKysrKwo+PiAg
-MyBmaWxlcyBjaGFuZ2VkLCAzNiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+IAo+PiBk
-aWZmIC0tZ2l0IGEvZXh5bm9zL2V4eW5vc19kcm0uaCBiL2V4eW5vcy9leHlub3NfZHJtLmgKPj4g
-aW5kZXggMjU2YzAyZi4uYzNhZjBhYyAxMDA2NDQKPj4gLS0tIGEvZXh5bm9zL2V4eW5vc19kcm0u
-aAo+PiArKysgYi9leHlub3MvZXh5bm9zX2RybS5oCj4+IEBAIC0xNTcsNCArMTU3LDE2IEBAIHN0
-cnVjdCBkcm1fZXh5bm9zX2cyZF9leGVjIHsKPj4gICNkZWZpbmUgRFJNX0lPQ1RMX0VYWU5PU19H
-MkRfRVhFQyAgICAgICAgICAgICAgCj4+IERSTV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBcCj4+
-ICAgICAgICAgICAgICAgICBEUk1fRVhZTk9TX0cyRF9FWEVDLCBzdHJ1Y3QgZHJtX2V4eW5vc19n
-MmRfZXhlYykKPj4gCj4+ICsvKiBFWFlOT1Mgc3BlY2lmaWMgZXZlbnRzICovCj4+ICsjZGVmaW5l
-IERSTV9FWFlOT1NfRzJEX0VWRU5UICAgICAgICAgICAweDgwMDAwMDAwCj4+ICsKPj4gK3N0cnVj
-dCBkcm1fZXh5bm9zX2cyZF9ldmVudCB7Cj4+ICsgICAgICAgc3RydWN0IGRybV9ldmVudCAgICAg
-ICAgYmFzZTsKPj4gKyAgICAgICBfX3U2NCAgICAgICAgICAgICAgICAgICAgICAgICAgIHVzZXJf
-ZGF0YTsKPj4gKyAgICAgICBfX3UzMiAgICAgICAgICAgICAgICAgICAgICAgICAgIHR2X3NlYzsK
-Pj4gKyAgICAgICBfX3UzMiAgICAgICAgICAgICAgICAgICAgICAgICAgIHR2X3VzZWM7Cj4+ICsg
-ICAgICAgX191MzIgICAgICAgICAgICAgICAgICAgICAgICAgICBjbWRsaXN0X25vOwo+PiArICAg
-ICAgIF9fdTMyICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVzZXJ2ZWQ7Cj4+ICt9Owo+PiAr
-Cj4+ICAjZW5kaWYKPj4gZGlmZiAtLWdpdCBhL3hmODZkcm0uaCBiL3hmODZkcm0uaAo+PiBpbmRl
-eCA0MGM1NWM5Li42YjFjOWI0IDEwMDY0NAo+PiAtLS0gYS94Zjg2ZHJtLmgKPj4gKysrIGIveGY4
-NmRybS5oCj4+IEBAIC03MTksNyArNzE5LDcgQEAgZXh0ZXJuIHZvaWQgZHJtTXNnKGNvbnN0IGNo
-YXIgKmZvcm1hdCwgLi4uKSAKPj4gRFJNX1BSSU5URkxJS0UoMSwgMik7Cj4+ICBleHRlcm4gaW50
-IGRybVNldE1hc3RlcihpbnQgZmQpOwo+PiAgZXh0ZXJuIGludCBkcm1Ecm9wTWFzdGVyKGludCBm
-ZCk7Cj4+IAo+PiAtI2RlZmluZSBEUk1fRVZFTlRfQ09OVEVYVF9WRVJTSU9OIDIKPj4gKyNkZWZp
-bmUgRFJNX0VWRU5UX0NPTlRFWFRfVkVSU0lPTiAzCj4+IAo+PiAgdHlwZWRlZiBzdHJ1Y3QgX2Ry
-bUV2ZW50Q29udGV4dCB7Cj4+IAo+PiBAQCAtNzM5LDYgKzczOSwxMSBAQCB0eXBlZGVmIHN0cnVj
-dCBfZHJtRXZlbnRDb250ZXh0IHsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHVuc2lnbmVkIGludCB0dl91c2VjLAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgdm9pZCAqdXNlcl9kYXRhKTsKPj4gCj4+ICsgICAgICAgdm9pZCAoKmcyZF9ldmVudF9oYW5k
-bGVyKShpbnQgZmQsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25l
-ZCBpbnQgY21kbGlzdF9ubywKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVu
-c2lnbmVkIGludCB0dl9zZWMsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1
-bnNpZ25lZCBpbnQgdHZfdXNlYywKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHZvaWQgKnVzZXJfZGF0YSk7Cj4+ICB9IGRybUV2ZW50Q29udGV4dCwgKmRybUV2ZW50Q29udGV4
-dFB0cjsKPj4gCj4+ICBleHRlcm4gaW50IGRybUhhbmRsZUV2ZW50KGludCBmZCwgZHJtRXZlbnRD
-b250ZXh0UHRyIGV2Y3R4KTsKPj4gZGlmZiAtLWdpdCBhL3hmODZkcm1Nb2RlLmMgYi94Zjg2ZHJt
-TW9kZS5jCj4+IGluZGV4IDYxZDVlMDEuLmQ5ZjI4OTggMTAwNjQ0Cj4+IC0tLSBhL3hmODZkcm1N
-b2RlLmMKPj4gKysrIGIveGY4NmRybU1vZGUuYwo+PiBAQCAtNTMsNiArNTMsMTAgQEAKPj4gICNp
-bmNsdWRlIDx1bmlzdGQuaD4KPj4gICNpbmNsdWRlIDxlcnJuby5oPgo+PiAKPj4gKyNpZmRlZiBI
-QVZFX0VYWU5PUwo+PiArI2luY2x1ZGUgPGV4eW5vcy9leHlub3NfZHJtLmg+Cj4+ICsjZW5kaWYK
-Pj4gKwo+PiAgI2lmZGVmIEhBVkVfVkFMR1JJTkQKPj4gICNpbmNsdWRlIDx2YWxncmluZC5oPgo+
-PiAgI2luY2x1ZGUgPG1lbWNoZWNrLmg+Cj4+IEBAIC04NDYsNiArODUwLDcgQEAgaW50IGRybUhh
-bmRsZUV2ZW50KGludCBmZCwgZHJtRXZlbnRDb250ZXh0UHRyIAo+PiBldmN0eCkKPj4gICAgICAg
-ICBpbnQgbGVuLCBpOwo+PiAgICAgICAgIHN0cnVjdCBkcm1fZXZlbnQgKmU7Cj4+ICAgICAgICAg
-c3RydWN0IGRybV9ldmVudF92YmxhbmsgKnZibGFuazsKPj4gKyAgICAgICBzdHJ1Y3QgZHJtX2V4
-eW5vc19nMmRfZXZlbnQgKmcyZDsKPj4gCj4+ICAgICAgICAgLyogVGhlIERSTSByZWFkIHNlbWFu
-dGljcyBndWFyYW50ZWVzIHRoYXQgd2UgYWx3YXlzIGdldCBvbmx5Cj4+ICAgICAgICAgICogY29t
-cGxldGUgZXZlbnRzLiAqLwo+PiBAQCAtODgyLDYgKzg4NywxOSBAQCBpbnQgZHJtSGFuZGxlRXZl
-bnQoaW50IGZkLCBkcm1FdmVudENvbnRleHRQdHIgCj4+IGV2Y3R4KQo+PiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdmJsYW5rLT50dl91c2VjLAo+PiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVTY0MlZPSUQg
-Cj4+ICh2YmxhbmstPnVzZXJfZGF0YSkpOwo+PiAgICAgICAgICAgICAgICAgICAgICAgICBicmVh
-azsKPj4gKyNpZmRlZiBIQVZFX0VYWU5PUwo+PiArICAgICAgICAgICAgICAgY2FzZSBEUk1fRVhZ
-Tk9TX0cyRF9FVkVOVDoKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKGV2Y3R4LT52ZXJz
-aW9uIDwgMyB8fAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgZXZjdHgtPmcyZF9ldmVu
-dF9oYW5kbGVyID09IE5VTEwpCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJl
-YWs7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGcyZCA9IChzdHJ1Y3QgZHJtX2V4eW5vc19n
-MmRfZXZlbnQgKikgZTsKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZXZjdHgtPmcyZF9ldmVu
-dF9oYW5kbGVyKGZkLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgZzJkLT5jbWRsaXN0X25vLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgZzJkLT50dl9zZWMsCj4+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBnMmQtPnR2X3VzZWMsCj4+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBVNjQyVk9JRCAKPj4gKGcyZC0+
-dXNlcl9kYXRhKSk7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+PiArI2VuZGlm
-Cj4+ICAgICAgICAgICAgICAgICBkZWZhdWx0Ogo+PiAgICAgICAgICAgICAgICAgICAgICAgICBi
-cmVhazsKPj4gICAgICAgICAgICAgICAgIH0KPj4gLS0KPj4gMi4wLjUKPj4gCj4+IF9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKPj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+2015-03-30 12:49 GMT+02:00 Markus Reichl <m.reichl@fivetechno.de>:
+>
+> The Exynos5422 SoC has a s3c6410 RTC where the source clock
+> is now a mandatory property.
+>
+> This patch fixes probe failure of s3c-rtc on Odroid-XU3 boards.
+> It is based in v4.0-rc2.
+
+
+Could you split this into separate patches:
+1. Add S2MPS related changes clocks (this is a separate feature),
+changes in documentation (if such are needed but I doubt it).
+2. Fix S3C RTC.
+
+>
+> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/samsung,s2mps11.txt  | 67 ++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 12 ++--
+>  include/dt-bindings/clock/samsung,s2mps11.h        | 23 ++++++++
+>  3 files changed, 98 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+>  create mode 100644 include/dt-bindings/clock/samsung,s2mps11.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt b/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+> new file mode 100644
+> index 0000000..46c61ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+> @@ -0,0 +1,67 @@
+> +Binding for Samsung S2MPS11 32k clock generator block
+> +
+> +This is a part of device tree bindings of S2MPS11 multi-function device.
+> +More information can be found in bindings/mfd/s2mps11.txt file.
+
+This whole information is already present in bindings/mfd/s2mps11.txt
+file. I don't think it is good to duplicate documentation. It will
+double the effort of maintaining it and this way we can even introduce
+incompatible differences in docs.
+
+> +
+> +The S2MPS11 contains three 32.768khz clock outputs that can be controlled
+> +(gated/ungated) over I2C.
+> +
+> +Following properties should be present in main device node of the MFD chip.
+> +
+> +Required properties:
+> +- #clock-cells: From common clock binding; shall be set to 1.
+> +
+> +Optional properties:
+> +- clock-output-names: From common clock binding.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume. Following indices are allowed:
+> +     - 0: 32khz_ap clock,
+> +     - 1: 32khz_cp clock.
+> +     - 2: 32khz_bt clock
+> +
+> +Clocks are defined as preprocessor macros in dt-bindings/clock/samsung,s2mps11.h
+> +header and can be used in device tree sources.
+> +
+> +Example: Node of the MFD chip
+> +
+> +       s2mps11: s2mps11@66 {
+> +               compatible = "samsung,s2mps11";
+> +               interrupt-parent = <&wakeup_eint>;
+> +               interrupts = <26 0>;
+> +               reg = <0x66>;
+> +               #clock-cells = <1>;
+> +
+> +               /* ... */
+> +       };
+> +
+> +Example: Clock consumer node
+> +
+> +       foo@0 {
+> +               compatible = "bar,foo";
+> +               /* ... */
+> +               clock-names = "my-clock";
+> +               clocks = <&s2mps11 S2MPS11_CLK_32K_AP>;
+> +       };
+> +
+> +Presently (19.3.2015) the above said is not correct yet.
+
+I don't get it...  You are describing some kind of future here?
+
+Best regards,
+Krzysztof
