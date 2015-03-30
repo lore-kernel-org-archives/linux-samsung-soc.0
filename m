@@ -1,50 +1,66 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: Use define for s3c-rtc clock id
-Date: Mon, 30 Mar 2015 17:21:29 +0200
-Message-ID: <1427728889-29158-1-git-send-email-k.kozlowski@samsung.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH V3 1/2] ARM: dts: Add bindings for 32kHz clocks from s2mps11
+Date: Mon, 30 Mar 2015 17:38:05 +0200
+Message-ID: <55196DDD.7090205@fivetechno.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43461 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752847AbbC3PVm (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:54672 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752478AbbC3PiJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 11:21:42 -0400
+	Mon, 30 Mar 2015 11:38:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
 
-Use a define instead of raw number as a ID for "rtc_src" clock.
+This creates include/dt-bindings/clock/samsung,s2mps11.h with the three
+32kHz clock outputs from the s2mps11 mfd.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-
-Patch depends on new file "dt-bindings/clock/samsung,s2mps11.h" from:
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg43136.html
+Changes since v2:
+   None
+Changes since v1:
+1. Dropped Documentation.
+2. Split into 2 parts.
 ---
- arch/arm/boot/dts/exynos3250-rinato.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/samsung,s2mps11.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 include/dt-bindings/clock/samsung,s2mps11.h
 
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 3905824cac58..d2cbc95364de 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -16,6 +16,7 @@
- #include "exynos3250.dtsi"
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/samsung,s2mps11.h>
- 
- / {
- 	model = "Samsung Rinato board";
-@@ -605,7 +606,7 @@
- };
- 
- &rtc {
--	clocks = <&cmu CLK_RTC>, <&s2mps14_osc 0>;
-+	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
- 	clock-names = "rtc", "rtc_src";
- 	status = "okay";
- };
+diff --git a/include/dt-bindings/clock/samsung,s2mps11.h b/include/dt-bindings/clock/samsung,s2mps11.h
+new file mode 100644
+index 0000000..b903d7d
+--- /dev/null
++++ b/include/dt-bindings/clock/samsung,s2mps11.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (C) 2015 Markus Reichl
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants clocks for the Samsung S2MPS11 PMIC.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_SAMSUNG_S2MPS11_CLOCK_H
++#define _DT_BINDINGS_CLOCK_SAMSUNG_S2MPS11_CLOCK_H
++
++/* Fixed rate clocks. */
++
++#define S2MPS11_CLK_AP		0
++#define S2MPS11_CLK_CP		1
++#define S2MPS11_CLK_BT		2
++
++/* Total number of clocks. */
++#define S2MPS11_CLKS_NUM		(S2MPS11_CLK_BT + 1)
++
++#endif /* _DT_BINDINGS_CLOCK_SAMSUNG_S2MPS11_CLOCK_H */
 -- 
 1.9.1
+
