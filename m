@@ -1,85 +1,66 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: fix exynos randconfig build error
-Date: Mon, 30 Mar 2015 22:37:42 +0100
-Message-ID: <20150330213742.GO24899@n2100.arm.linux.org.uk>
-References: <E1YQa78-0000O0-A4@rmk-PC.arm.linux.org.uk>
- <54EF9091.30802@kernel.org>
- <54F4BC92.2050405@kernel.org>
- <14257250.yOR9pFcIkO@amdc1032>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/2] drivers/rtc/rtc-s3c.c: Integrate Exynos3250 into
+ S3C6410
+Date: Tue, 31 Mar 2015 08:37:51 +0900
+Message-ID: <5519DE4F.3080608@samsung.com>
+References: <1427728773-29065-1-git-send-email-k.kozlowski@samsung.com>
+ <1427728773-29065-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:53161 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752383AbbC3Vhx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 17:37:53 -0400
-Content-Disposition: inline
-In-Reply-To: <14257250.yOR9pFcIkO@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1427728773-29065-2-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 03, 2015 at 01:44:34PM +0100, Bartlomiej Zolnierkiewicz wrote:
+On 03/31/2015 12:19 AM, Krzysztof Kozlowski wrote:
+> There are now no differences between RTC on Exynos3250 and S3C6410.
+> Merge everything into one so duplicated code could be removed.
 > 
-> Hi,
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/rtc/rtc-s3c.c | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
 > 
-> On Tuesday, March 03, 2015 04:40:02 AM Kukjin Kim wrote:
-> > On 02/27/15 06:30, Kukjin Kim wrote:
-> > > On 02/25/15 20:46, Krzysztof Kozlowski wrote:
-> > >> 2015-02-25 12:26 GMT+01:00 Russell King <rmk+kernel@arm.linux.org.uk>:
-> > >>> The following error was observed with SMP=n in v4.0-rc1:
-> > >>>
-> > >>> arch/arm/mach-exynos/pm.c: In function 'exynos_cpu0_enter_aftr':
-> > >>> arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of function 'arch_send_wakeup_ipi_mask' [-Werror=implicit-function-declaration]
-> > >>>
-> > >>> As the code unconditionally calls a function only available with SMP=y,
-> > >>> make the Exynos PM support depend on SMP.
-> > >>>
-> > >>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > >>
-> > >> Hi,
-> > >>
-> > >> Thanks for the patch but this already waits for Kukjin top be picked
-> > >> up. The first patch was similar to yours (adds dependency on SMP),
-> > >> sent on 4th of February:
-> > >> https://patchwork.ozlabs.org/patch/436231/
-> > >>
-> > >> But later Bartlomiej fixed this in other way (allowing to use cpuidle
-> > >> on non-SMP):
-> > >> https://patchwork.ozlabs.org/patch/436445/
-> > >>
-> > >> Unfortunately none of them were picked up.
-> > >>
-> > > I've missed the fix, sorry.
-> > > 
-> > > BTW, as you know, all of exynos SoCs are based on SMP so generally (in
-> > > normal case) there is no reason to use non-SMP on exynos
-> > > platforms...even though I understand the build error should be fixed...
-> > > 
-> > > Anyway, I'll have a look Bart's patch and Russell's fix in this weekend.
-> > > 
-> > 
-> > Firstly, let me take rmk's patch for the randconfig build error...BTW
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index fb0c569765c6..5e162eaad277 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -774,18 +774,6 @@ static struct s3c_rtc_data const s3c6410_rtc_data = {
+>  	.disable		= s3c6410_rtc_disable,
+>  };
+>  
+> -static struct s3c_rtc_data const exynos3250_rtc_data = {
+> -	.max_user_freq		= 32768,
+> -	.needs_src_clk		= true,
+> -	.irq_handler		= s3c6410_rtc_irq,
+> -	.set_freq		= s3c6410_rtc_setfreq,
+> -	.enable_tick		= s3c6410_rtc_enable_tick,
+> -	.save_tick_cnt		= s3c6410_rtc_save_tick_cnt,
+> -	.restore_tick_cnt	= s3c6410_rtc_restore_tick_cnt,
+> -	.enable			= s3c24xx_rtc_enable,
+> -	.disable		= s3c6410_rtc_disable,
+> -};
+> -
+>  static const struct of_device_id s3c_rtc_dt_match[] = {
+>  	{
+>  		.compatible = "samsung,s3c2410-rtc",
+> @@ -801,7 +789,7 @@ static const struct of_device_id s3c_rtc_dt_match[] = {
+>  		.data = (void *)&s3c6410_rtc_data,
+>  	}, {
+>  		.compatible = "samsung,exynos3250-rtc",
+> -		.data = (void *)&exynos3250_rtc_data,
+> +		.data = (void *)&s3c6410_rtc_data,
+>  	},
+>  	{ /* sentinel */ },
+>  };
 > 
-> What is wrong with picking my patch instead?  It is non-invasive and fixes
-> cpuidle support on UP (which is a regression from previous kernels)?
-> 
-> https://lkml.org/lkml/2015/2/4/521
-> 
-> > I'm still wondering exynos stuff needs to support non-SMP and need to
-> > think more about its usefulness?...
-> 
-> Currently UP is supported and at least I find it useful for testing/debug
-> purposes.  If you want to to make Exynos SMP only thats OK but it should
-> be done globally for Exynos arch support not just for cpuidle support.
 
-Has either of these happened yet?  I don't see either in arm-soc.
+Looks good to me.
 
-(lkml.org seems to be - as seems typical - having problems.  The above
-URL now returns a blank message.)
+Reviewd-by: Chanwoo Choi <cw00.choi@samsung.com>
 
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Thanks,
+Chanwoo Choi
