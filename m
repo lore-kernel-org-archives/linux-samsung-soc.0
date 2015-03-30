@@ -1,46 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0
- clock is enabled during suspend
-Date: Mon, 30 Mar 2015 17:56:48 +0200
-Message-ID: <55197240.6010405@collabora.co.uk>
-References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk> <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk> <5518AF17.2060207@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC PATCH v3 1/2] clk: samsung: Add a clock lookup function
+Date: Tue, 31 Mar 2015 01:02:29 +0900
+Message-ID: <CA+Ln22Fn+TRGcFXH7m=LkOCpAtbdKq98jNNNDM0shYWvfHEBiA@mail.gmail.com>
+References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1427730803-28635-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5518AF17.2060207@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:34499 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752601AbbC3QCp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Mar 2015 12:02:45 -0400
+In-Reply-To: <1427730803-28635-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Chanwoo,
+Hi Javier,
 
-Thanks a lot for your feedback.
+2015-03-31 0:53 GMT+09:00 Javier Martinez Canillas
+<javier.martinez@collabora.co.uk>:
+> The Samsung helpers functions to register clocks, add the clock instance
+> returned by the common clock framework to a lookup table that is used by
+> OF to lookup the clocks.
+>
+> But this table could also be useful to clock drivers if they need to get
+> a clock instance since the helper functions don't return them.
+>
+> The common clock framework __clk_lookup() function from the clk provider
+> API could be used by drivers as well. But it's more efficient to use the
+> Samsung specific lookup table that returns the clock instance in constant
+> time, than using the __clk_lookup() function that uses the clock name as
+> an index so it has a linear search time.
 
-On 03/30/2015 04:04 AM, Chanwoo Choi wrote:
-> 
-> I faced on the similiar issue. If some clock was disabled,
-> Exynos SoC could not enter the suspend mode
-> 
-> But, I think it is not prpper method to resolve this issue.
-> about that that specific clock (e.g., mdma0) is handled in this dirver.
-> Also, ARM-64bit don't include any '../mach-exynos' directory.
-> 
-> IMHO, some clock issue have to be handled in SoC clk driver or others.
-> 
-
-Ok, Abhilash also said that before so I just posted another RFC:
-
-"[RFC PATCH v3 0/2] ARM: EXYNOS: Fix Suspend-to-RAM on Exynos5420"
-
-Please let me know if that is more aligned to what you were 
-thinking as the proper solution.
-
-> 
-> Best Regards,
-> Chanwoo Choi
-> 
+Is this really something we should be concerned about? If so, maybe
+the generic look-up function should be rewritten to use something
+faster, such as tree or hash table?
 
 Best regards,
-Javier
+Tomasz
