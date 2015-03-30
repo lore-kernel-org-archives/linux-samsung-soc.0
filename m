@@ -1,65 +1,39 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 2/2] ARM: dts: exynos5422-odroidxu3: add 'rtc_src'
- clock to rtc node
-Date: Mon, 30 Mar 2015 16:43:50 +0200
-Message-ID: <CAJKOXPeg7AAiY+MP0sRfP2k0iqQ3x8L0X-eDv-LZFscTK0+KeA@mail.gmail.com>
-References: <55195AA4.9060205@fivetechno.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 0/2] ARM: EXYNOS: Minor S3C RTC cleanups
+Date: Mon, 30 Mar 2015 17:19:31 +0200
+Message-ID: <1427728773-29065-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f45.google.com ([209.85.213.45]:33124 "EHLO
-	mail-yh0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753777AbbC3Onu (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:38673 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752601AbbC3PTp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 10:43:50 -0400
-Received: by yhpt93 with SMTP id t93so58169737yhp.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2015 07:43:50 -0700 (PDT)
-In-Reply-To: <55195AA4.9060205@fivetechno.de>
+	Mon, 30 Mar 2015 11:19:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
+To: Kukjin Kim <kgene@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-2015-03-30 16:16 GMT+02:00 Markus Reichl <m.reichl@fivetechno.de>:
-> The Exynos5422 SoC has a s3c6410 RTC where the source clock
-> is now a mandatory property.
->
-> This patch fixes probe failure of s3c-rtc on Odroid-XU3 boards.
-> It is based in v4.0-rc2.
->
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-> ---
-> Changes since v1:
-> 1. Dropped Documentation.
-> 2. Split into 2 parts.
-> ---
->
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index a519c86..ac663ec 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -11,6 +11,7 @@
->  */
->
->  /dts-v1/;
-> +#include <dt-bindings/clock/samsung,s2mps11.h>
->  #include "exynos5800.dtsi"
->
->  / {
-> @@ -44,7 +45,7 @@
->         hsi2c_4: i2c@12CA0000 {
->                 status = "okay";
->
-> -               s2mps11_pmic@66 {
-> +               s2mps11: s2mps11_pmic@66 {
+Hi,
 
-Why this is needed? This phandle is not used later.
+Now the s3c6410-rtc is exactly the same as exynos3250-rtc. Mark the
+second one as deprecated and switch to one binding.
 
-Rest looks fine.
+Patches are independent.
 
 Best regards,
 Krzysztof
+
+Krzysztof Kozlowski (3):
+  drivers/rtc/rtc-s3c.c: Integrate Exynos3250 into S3C6410
+  ARM: dts: s3c-rtc: Use s3c6410-rtc instead of exynos3250-rtc
+  ARM: dts: Use define for s3c-rtc clock id
+
+ Documentation/devicetree/bindings/rtc/s3c-rtc.txt |  3 ++-
+ arch/arm/boot/dts/exynos3250-rinato.dts           |  3 ++-
+ arch/arm/boot/dts/exynos3250.dtsi                 |  2 +-
+ arch/arm/boot/dts/exynos4415.dtsi                 |  2 +-
+ drivers/rtc/rtc-s3c.c                             | 14 +-------------
+ 5 files changed, 7 insertions(+), 17 deletions(-)
+
+-- 
+1.9.1
