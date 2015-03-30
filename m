@@ -1,56 +1,62 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 2/5] exynos: add =?UTF-8?Q?EXYNOS=5FG=32D=5FEVENT=20to?=
- =?UTF-8?Q?=20drmHandleEvent?=
-Date: Mon, 30 Mar 2015 15:04:12 +0200
-Message-ID: <9f0f7af7b53d22b2be2dd1b25ebbad56@math.uni-bielefeld.de>
-References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH V2 1/2] ARM: dts: Add bindings for 32kHz clocks from s2mps11
+Date: Mon, 30 Mar 2015 16:15:42 +0200
+Message-ID: <55195A8E.6050709@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33232 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752893AbbC3NEP (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:57533 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751622AbbC3OPr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 09:04:15 -0400
-In-Reply-To: <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com>
+	Mon, 30 Mar 2015 10:15:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Clark <robdclark@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Emil Velikov <emil.l.velikov@gmail.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Hellstrom <thellstrom@vmware.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
 
-Hello,
+This creates include/dt-bindings/clock/samsung,s2mps11.h with the three
+32kHz clock outputs from the s2mps11 mfd.
 
-On 2015-03-30 02:02, Rob Clark wrote:
-> so, iirc, vmwgfx also has some custom events..  not really sure if
-> they have their own hand-rolled drmHandleEvent() or if they have
-> another way of catching those.
-> 
-> Maybe we need some more flexible way to register handlers for driver
-> custom events?  But everyone adding their own thing to
-> drmHandleEvent() doesn't really seem so nice..  that said, I'm not
-> sure how much to care.  If it is just exynos and vmwgfx, then telling
-> them to use there own version of of drmHandleEvent() might be ok.  But
-> if driver custom events somehow become more popular, maybe we want a
-> better solution..
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+---
+Changes since v1:
+1. Dropped Documentation.
+2. Split into 2 parts.
+---
+ include/dt-bindings/clock/samsung,s2mps11.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 include/dt-bindings/clock/samsung,s2mps11.h
 
-would something like this work for you guys:
-https://www.math.uni-bielefeld.de/~tjakobi/archive/0001-custom-events.patch
-
-(this is not compile tested or anything, just a draft)
-
-Basically this introduces drmHandleEvent2, which is drmHandleEvent with 
-two additional arguments. The first one being a function pointer through 
-which the 'remaining' events (which are not handled by the common code) 
-are handled, and some (opaque) pointer to data that the handler might 
-need.
-
-In the vendor specific code I then introcuded exynos_handle_event which 
-calls dramHandleEvent2 with a properly setup handler. vmwgfx could do 
-the same here I guess.
-
-With best wishes,
-Tobias
+diff --git a/include/dt-bindings/clock/samsung,s2mps11.h b/include/dt-bindings/clock/samsung,s2mps11.h
+new file mode 100644
+index 0000000..b903d7d
+--- /dev/null
++++ b/include/dt-bindings/clock/samsung,s2mps11.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (C) 2015 Markus Reichl
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants clocks for the Samsung S2MPS11 PMIC.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_SAMSUNG_S2MPS11_CLOCK_H
++#define _DT_BINDINGS_CLOCK_SAMSUNG_S2MPS11_CLOCK_H
++
++/* Fixed rate clocks. */
++
++#define S2MPS11_CLK_AP		0
++#define S2MPS11_CLK_CP		1
++#define S2MPS11_CLK_BT		2
++
++/* Total number of clocks. */
++#define S2MPS11_CLKS_NUM		(S2MPS11_CLK_BT + 1)
++
++#endif /* _DT_BINDINGS_CLOCK_SAMSUNG_S2MPS11_CLOCK_H */
+-- 
+1.9.1
