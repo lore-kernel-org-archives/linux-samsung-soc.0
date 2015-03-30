@@ -1,108 +1,85 @@
-From: Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH 2/5] exynos: add EXYNOS_G2D_EVENT to drmHandleEvent
-Date: Sun, 29 Mar 2015 20:02:39 -0400
-Message-ID: <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com>
-References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC PATCH 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0
+ clock is enabled during suspend
+Date: Mon, 30 Mar 2015 11:04:07 +0900
+Message-ID: <5518AF17.2060207@samsung.com>
+References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Emil Velikov <emil.l.velikov@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-c28sIGlpcmMsIHZtd2dmeCBhbHNvIGhhcyBzb21lIGN1c3RvbSBldmVudHMuLiAgbm90IHJlYWxs
-eSBzdXJlIGlmCnRoZXkgaGF2ZSB0aGVpciBvd24gaGFuZC1yb2xsZWQgZHJtSGFuZGxlRXZlbnQo
-KSBvciBpZiB0aGV5IGhhdmUKYW5vdGhlciB3YXkgb2YgY2F0Y2hpbmcgdGhvc2UuCgpNYXliZSB3
-ZSBuZWVkIHNvbWUgbW9yZSBmbGV4aWJsZSB3YXkgdG8gcmVnaXN0ZXIgaGFuZGxlcnMgZm9yIGRy
-aXZlcgpjdXN0b20gZXZlbnRzPyAgQnV0IGV2ZXJ5b25lIGFkZGluZyB0aGVpciBvd24gdGhpbmcg
-dG8KZHJtSGFuZGxlRXZlbnQoKSBkb2Vzbid0IHJlYWxseSBzZWVtIHNvIG5pY2UuLiAgdGhhdCBz
-YWlkLCBJJ20gbm90CnN1cmUgaG93IG11Y2ggdG8gY2FyZS4gIElmIGl0IGlzIGp1c3QgZXh5bm9z
-IGFuZCB2bXdnZngsIHRoZW4gdGVsbGluZwp0aGVtIHRvIHVzZSB0aGVyZSBvd24gdmVyc2lvbiBv
-ZiBvZiBkcm1IYW5kbGVFdmVudCgpIG1pZ2h0IGJlIG9rLiAgQnV0CmlmIGRyaXZlciBjdXN0b20g
-ZXZlbnRzIHNvbWVob3cgYmVjb21lIG1vcmUgcG9wdWxhciwgbWF5YmUgd2Ugd2FudCBhCmJldHRl
-ciBzb2x1dGlvbi4uCgpCUiwKLVIKCk9uIEZyaSwgTWFyIDIwLCAyMDE1IGF0IDY6MjUgUE0sIFRv
-YmlhcyBKYWtvYmkKPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3cm90ZToKPiBUaGlz
-IGV2ZW50IGlzIHNwZWNpZmljIHRvIEV4eW5vcyBHMkQgRFJNIGRyaXZlci4gT25seQo+IHByb2Nl
-c3MgaXQgd2hlbiBFeHlub3Mgc3VwcG9ydCBpcyBlbmFibGVkLgo+Cj4gU2lnbmVkLW9mZi1ieTog
-VG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0tCj4gIGV4
-eW5vcy9leHlub3NfZHJtLmggfCAxMiArKysrKysrKysrKysKPiAgeGY4NmRybS5oICAgICAgICAg
-ICB8ICA3ICsrKysrKy0KPiAgeGY4NmRybU1vZGUuYyAgICAgICB8IDE4ICsrKysrKysrKysrKysr
-KysrKwo+ICAzIGZpbGVzIGNoYW5nZWQsIDM2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkK
-Pgo+IGRpZmYgLS1naXQgYS9leHlub3MvZXh5bm9zX2RybS5oIGIvZXh5bm9zL2V4eW5vc19kcm0u
-aAo+IGluZGV4IDI1NmMwMmYuLmMzYWYwYWMgMTAwNjQ0Cj4gLS0tIGEvZXh5bm9zL2V4eW5vc19k
-cm0uaAo+ICsrKyBiL2V4eW5vcy9leHlub3NfZHJtLmgKPiBAQCAtMTU3LDQgKzE1NywxNiBAQCBz
-dHJ1Y3QgZHJtX2V4eW5vc19nMmRfZXhlYyB7Cj4gICNkZWZpbmUgRFJNX0lPQ1RMX0VYWU5PU19H
-MkRfRVhFQyAgICAgICAgICAgICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIFwKPiAgICAg
-ICAgICAgICAgICAgRFJNX0VYWU5PU19HMkRfRVhFQywgc3RydWN0IGRybV9leHlub3NfZzJkX2V4
-ZWMpCj4KPiArLyogRVhZTk9TIHNwZWNpZmljIGV2ZW50cyAqLwo+ICsjZGVmaW5lIERSTV9FWFlO
-T1NfRzJEX0VWRU5UICAgICAgICAgICAweDgwMDAwMDAwCj4gKwo+ICtzdHJ1Y3QgZHJtX2V4eW5v
-c19nMmRfZXZlbnQgewo+ICsgICAgICAgc3RydWN0IGRybV9ldmVudCAgICAgICAgYmFzZTsKPiAr
-ICAgICAgIF9fdTY0ICAgICAgICAgICAgICAgICAgICAgICAgICAgdXNlcl9kYXRhOwo+ICsgICAg
-ICAgX191MzIgICAgICAgICAgICAgICAgICAgICAgICAgICB0dl9zZWM7Cj4gKyAgICAgICBfX3Uz
-MiAgICAgICAgICAgICAgICAgICAgICAgICAgIHR2X3VzZWM7Cj4gKyAgICAgICBfX3UzMiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIGNtZGxpc3Rfbm87Cj4gKyAgICAgICBfX3UzMiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHJlc2VydmVkOwo+ICt9Owo+ICsKPiAgI2VuZGlmCj4gZGlmZiAt
-LWdpdCBhL3hmODZkcm0uaCBiL3hmODZkcm0uaAo+IGluZGV4IDQwYzU1YzkuLjZiMWM5YjQgMTAw
-NjQ0Cj4gLS0tIGEveGY4NmRybS5oCj4gKysrIGIveGY4NmRybS5oCj4gQEAgLTcxOSw3ICs3MTks
-NyBAQCBleHRlcm4gdm9pZCBkcm1Nc2coY29uc3QgY2hhciAqZm9ybWF0LCAuLi4pIERSTV9QUklO
-VEZMSUtFKDEsIDIpOwo+ICBleHRlcm4gaW50IGRybVNldE1hc3RlcihpbnQgZmQpOwo+ICBleHRl
-cm4gaW50IGRybURyb3BNYXN0ZXIoaW50IGZkKTsKPgo+IC0jZGVmaW5lIERSTV9FVkVOVF9DT05U
-RVhUX1ZFUlNJT04gMgo+ICsjZGVmaW5lIERSTV9FVkVOVF9DT05URVhUX1ZFUlNJT04gMwo+Cj4g
-IHR5cGVkZWYgc3RydWN0IF9kcm1FdmVudENvbnRleHQgewo+Cj4gQEAgLTczOSw2ICs3MzksMTEg
-QEAgdHlwZWRlZiBzdHJ1Y3QgX2RybUV2ZW50Q29udGV4dCB7Cj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCB0dl91c2VjLAo+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICB2b2lkICp1c2VyX2RhdGEpOwo+Cj4gKyAgICAgICB2b2lkICgqZzJk
-X2V2ZW50X2hhbmRsZXIpKGludCBmZCwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgdW5zaWduZWQgaW50IGNtZGxpc3Rfbm8sCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHVuc2lnbmVkIGludCB0dl9zZWMsCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHVuc2lnbmVkIGludCB0dl91c2VjLAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICB2b2lkICp1c2VyX2RhdGEpOwo+ICB9IGRybUV2ZW50Q29udGV4dCwgKmRybUV2ZW50
-Q29udGV4dFB0cjsKPgo+ICBleHRlcm4gaW50IGRybUhhbmRsZUV2ZW50KGludCBmZCwgZHJtRXZl
-bnRDb250ZXh0UHRyIGV2Y3R4KTsKPiBkaWZmIC0tZ2l0IGEveGY4NmRybU1vZGUuYyBiL3hmODZk
-cm1Nb2RlLmMKPiBpbmRleCA2MWQ1ZTAxLi5kOWYyODk4IDEwMDY0NAo+IC0tLSBhL3hmODZkcm1N
-b2RlLmMKPiArKysgYi94Zjg2ZHJtTW9kZS5jCj4gQEAgLTUzLDYgKzUzLDEwIEBACj4gICNpbmNs
-dWRlIDx1bmlzdGQuaD4KPiAgI2luY2x1ZGUgPGVycm5vLmg+Cj4KPiArI2lmZGVmIEhBVkVfRVhZ
-Tk9TCj4gKyNpbmNsdWRlIDxleHlub3MvZXh5bm9zX2RybS5oPgo+ICsjZW5kaWYKPiArCj4gICNp
-ZmRlZiBIQVZFX1ZBTEdSSU5ECj4gICNpbmNsdWRlIDx2YWxncmluZC5oPgo+ICAjaW5jbHVkZSA8
-bWVtY2hlY2suaD4KPiBAQCAtODQ2LDYgKzg1MCw3IEBAIGludCBkcm1IYW5kbGVFdmVudChpbnQg
-ZmQsIGRybUV2ZW50Q29udGV4dFB0ciBldmN0eCkKPiAgICAgICAgIGludCBsZW4sIGk7Cj4gICAg
-ICAgICBzdHJ1Y3QgZHJtX2V2ZW50ICplOwo+ICAgICAgICAgc3RydWN0IGRybV9ldmVudF92Ymxh
-bmsgKnZibGFuazsKPiArICAgICAgIHN0cnVjdCBkcm1fZXh5bm9zX2cyZF9ldmVudCAqZzJkOwo+
-Cj4gICAgICAgICAvKiBUaGUgRFJNIHJlYWQgc2VtYW50aWNzIGd1YXJhbnRlZXMgdGhhdCB3ZSBh
-bHdheXMgZ2V0IG9ubHkKPiAgICAgICAgICAqIGNvbXBsZXRlIGV2ZW50cy4gKi8KPiBAQCAtODgy
-LDYgKzg4NywxOSBAQCBpbnQgZHJtSGFuZGxlRXZlbnQoaW50IGZkLCBkcm1FdmVudENvbnRleHRQ
-dHIgZXZjdHgpCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHZibGFuay0+dHZfdXNlYywKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgVTY0MlZPSUQgKHZibGFuay0+dXNlcl9kYXRhKSk7Cj4gICAgICAgICAg
-ICAgICAgICAgICAgICAgYnJlYWs7Cj4gKyNpZmRlZiBIQVZFX0VYWU5PUwo+ICsgICAgICAgICAg
-ICAgICBjYXNlIERSTV9FWFlOT1NfRzJEX0VWRU5UOgo+ICsgICAgICAgICAgICAgICAgICAgICAg
-IGlmIChldmN0eC0+dmVyc2lvbiA8IDMgfHwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ZXZjdHgtPmcyZF9ldmVudF9oYW5kbGVyID09IE5VTEwpCj4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBicmVhazsKPiArICAgICAgICAgICAgICAgICAgICAgICBnMmQgPSAoc3RydWN0
-IGRybV9leHlub3NfZzJkX2V2ZW50ICopIGU7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgZXZj
-dHgtPmcyZF9ldmVudF9oYW5kbGVyKGZkLAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBnMmQtPmNtZGxpc3Rfbm8sCj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGcyZC0+dHZfc2VjLAo+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBnMmQtPnR2X3VzZWMsCj4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFU2NDJWT0lEIChn
-MmQtPnVzZXJfZGF0YSkpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+ICsjZW5k
-aWYKPiAgICAgICAgICAgICAgICAgZGVmYXVsdDoKPiAgICAgICAgICAgICAgICAgICAgICAgICBi
-cmVhazsKPiAgICAgICAgICAgICAgICAgfQo+IC0tCj4gMi4wLjUKPgo+IF9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlz
-dAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Javier,
+
+On 03/27/2015 11:21 PM, Javier Martinez Canillas wrote:
+> Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
+> Management support v12") added pm support for the pl330 dma driver but
+> it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
+> during suspend and this clock needs to remain enabled in order to make
+> the system resume from a system suspend state.
+> 
+> To make sure that the clock is enabled during suspend, enable it prior
+> to entering a suspend state and disable it once the system has resumed.
+> 
+> Thanks to Abhilash Kesavan for figuring out that this was the issue.
+> 
+> Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  arch/arm/mach-exynos/suspend.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index 1521eaf99265..6dbc0a6d1bb5 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/init.h>
+>  #include <linux/suspend.h>
+>  #include <linux/syscore_ops.h>
+> +#include <linux/clk.h>
+>  #include <linux/cpu_pm.h>
+>  #include <linux/io.h>
+>  #include <linux/irq.h>
+> @@ -79,6 +80,7 @@ static const struct exynos_pm_data *pm_data;
+>  
+>  static int exynos5420_cpu_state;
+>  static unsigned int exynos_pmu_spare3;
+> +static struct clk *clk;
+>  
+>  /*
+>   * GIC wake-up support
+> @@ -374,6 +376,16 @@ static void exynos5420_pm_prepare(void)
+>  {
+>  	unsigned int tmp;
+>  
+> +	/*
+> +	 * Exynos5420 requires the MDMA0 controller clock to be
+> +	 * ungated on suspend in order to be resumed correctly.
+> +	 */
+> +	clk = clk_get(NULL, "mdma0");
+> +	if (IS_ERR(clk))
+> +		pr_warn("Failed to get mdma0 clk (%ld)\n", PTR_ERR(clk));
+> +	else
+> +		clk_prepare_enable(clk);
+> +
+
+I faced on the similiar issue. If some clock was disabled,
+Exynos SoC could not enter the suspend mode
+
+But, I think it is not prpper method to resolve this issue.
+about that that specific clock (e.g., mdma0) is handled in this dirver.
+Also, ARM-64bit don't include any '../mach-exynos' directory.
+
+IMHO, some clock issue have to be handled in SoC clk driver or others.
+
+[snip]
+
+Best Regards,
+Chanwoo Choi
