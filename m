@@ -1,62 +1,49 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: [PATCH 1/1] ARM: dts: Add HS400 support for exynos5422-odroidxu3
-Date: Mon, 30 Mar 2015 17:51:01 +0200
-Message-ID: <551970E5.3000308@fivetechno.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [RFC PATCH v3 0/2] ARM: EXYNOS: Fix Suspend-to-RAM on Exynos5420
+Date: Mon, 30 Mar 2015 17:53:20 +0200
+Message-ID: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:40245 "EHLO
-	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752347AbbC3PvE (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:43181 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752503AbbC3Pxh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 11:51:04 -0400
-Received: from [192.168.34.101] (reichl-x64.fritz.box [192.168.34.101])
-	(authenticated bits=0)
-	by linuxbbg.five-lan.de (8.14.9/8.14.5/SuSE Linux 0.8) with ESMTP id t2UFp1Dq006128
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO)
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2015 17:51:01 +0200
+	Mon, 30 Mar 2015 11:53:37 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-HS400 timing values are added for exynos5422-odroidxu3 board.
----
-This patch is analog to [0].
-This patch needs [0] for the pin-ctrl definition of sd0_rclk.
+Hello,
 
-[0]: https://www.mail-archive.com/linux-samsung-soc%40vger.kernel.org/msg42902.html
+This series is a 3rd version of a RFC to fix Suspend-to-RAM on Exynos5420.
+Abhilash Kesavan traced down to the MDMA0 DMA controller clock needed to
+be enabled during suspend in order to make the system resume correctly.
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I posted a RFC that grabbed the clock in the Exynos5420 specific suspend
+and resume callbacks [0] and a re-spin [1] but was asked by Abhilash and
+Chanwoo to do it in the clock driver instead.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index a519c86..0408ec0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -298,15 +298,20 @@
- 
- &mmc_0 {
- 	status = "okay";
-+	num-slots = <1>;
- 	broken-cd;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+	samsung,read-strobe-delay = <90>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_rclk>;
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
- };
- 
- &mmc_2 {
--- 
-1.9.1
+So this series is an attempt to fix the issue and is composed of patches:
+
+Javier Martinez Canillas (2):
+  clk: samsung: Add a clock lookup function
+  clk: exynos5420: Make sure MDMA0 clock is enabled during suspend
+
+ drivers/clk/samsung/clk-exynos5420.c | 26 ++++++++++++++++++++++++--
+ drivers/clk/samsung/clk.c            |  6 ++++++
+ drivers/clk/samsung/clk.h            |  3 +++
+ 3 files changed, 33 insertions(+), 2 deletions(-)
+
+Patch #1 just adds a function to lookup the provider clock instances.
+
+Patch #2 enables the MDMA0 clock before entering into a suspend state and
+disables it again once the system has been resumed.
+
+The patches are again an RFC because I'm not sure if this is the best
+approach to solve the issue. So feedback will be highly appreciated.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/3/27/397
+[1]: https://lkml.org/lkml/2015/3/27/770
