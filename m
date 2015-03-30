@@ -1,96 +1,46 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is enabled during suspend
-Date: Mon, 30 Mar 2015 17:53:22 +0200
-Message-ID: <1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH 2/2] ARM: EXYNOS: Make sure that the Exynos5420 MDMA0
+ clock is enabled during suspend
+Date: Mon, 30 Mar 2015 17:56:48 +0200
+Message-ID: <55197240.6010405@collabora.co.uk>
+References: <1427466097-7287-1-git-send-email-javier.martinez@collabora.co.uk> <1427466097-7287-3-git-send-email-javier.martinez@collabora.co.uk> <5518AF17.2060207@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <5518AF17.2060207@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Steve Capper <steve.capper@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
-Management support v12") added pm support for the pl330 dma driver but
-it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
-during suspend and this clock needs to remain enabled in order to make
-the system resume from a system suspend state.
+Hello Chanwoo,
 
-To make sure that the clock is enabled during suspend, enable it prior
-to entering a suspend state and disable it once the system has resumed.
+Thanks a lot for your feedback.
 
-Thanks to Abhilash Kesavan for figuring out that this was the issue.
+On 03/30/2015 04:04 AM, Chanwoo Choi wrote:
+> 
+> I faced on the similiar issue. If some clock was disabled,
+> Exynos SoC could not enter the suspend mode
+> 
+> But, I think it is not prpper method to resolve this issue.
+> about that that specific clock (e.g., mdma0) is handled in this dirver.
+> Also, ARM-64bit don't include any '../mach-exynos' directory.
+> 
+> IMHO, some clock issue have to be handled in SoC clk driver or others.
+> 
 
-Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/clk/samsung/clk-exynos5420.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+Ok, Abhilash also said that before so I just posted another RFC:
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 07d666cc6a29..2d39b629144a 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -151,6 +151,7 @@ enum exynos5x_plls {
- 
- static void __iomem *reg_base;
- static enum exynos5x_soc exynos5x_soc;
-+struct samsung_clk_provider *ctx;
- 
- #ifdef CONFIG_PM_SLEEP
- static struct samsung_clk_reg_dump *exynos5x_save;
-@@ -275,8 +276,18 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
- };
- 
-+/*
-+ * list of clocks that have to be kept enabled during suspend/resume cycle.
-+ */
-+static unsigned int exynos5x_clk_suspend[] = {
-+	CLK_MDMA0,
-+};
-+
- static int exynos5420_clk_suspend(void)
- {
-+	int i;
-+	struct clk *clk;
-+
- 	samsung_clk_save(reg_base, exynos5x_save,
- 				ARRAY_SIZE(exynos5x_clk_regs));
- 
-@@ -287,11 +298,24 @@ static int exynos5420_clk_suspend(void)
- 	samsung_clk_restore(reg_base, exynos5420_set_clksrc,
- 				ARRAY_SIZE(exynos5420_set_clksrc));
- 
-+	for (i = 0; i < ARRAY_SIZE(exynos5x_clk_suspend); i++) {
-+		clk = samsung_clk_lookup(ctx, exynos5x_clk_suspend[i]);
-+		clk_prepare_enable(clk);
-+	}
-+
- 	return 0;
- }
- 
- static void exynos5420_clk_resume(void)
- {
-+	int i;
-+	struct clk *clk;
-+
-+	for (i = 0; i < ARRAY_SIZE(exynos5x_clk_suspend); i++) {
-+		clk = samsung_clk_lookup(ctx, exynos5x_clk_suspend[i]);
-+		clk_disable_unprepare(clk);
-+	}
-+
- 	samsung_clk_restore(reg_base, exynos5x_save,
- 				ARRAY_SIZE(exynos5x_clk_regs));
- 
-@@ -1255,8 +1279,6 @@ static const struct of_device_id ext_clk_match[] __initconst = {
- static void __init exynos5x_clk_init(struct device_node *np,
- 		enum exynos5x_soc soc)
- {
--	struct samsung_clk_provider *ctx;
--
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
- 		if (!reg_base)
--- 
-2.1.4
+"[RFC PATCH v3 0/2] ARM: EXYNOS: Fix Suspend-to-RAM on Exynos5420"
+
+Please let me know if that is more aligned to what you were 
+thinking as the proper solution.
+
+> 
+> Best Regards,
+> Chanwoo Choi
+> 
+
+Best regards,
+Javier
