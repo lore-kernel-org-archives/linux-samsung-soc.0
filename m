@@ -1,58 +1,37 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH v3 1/2] clk: samsung: Add a clock lookup function
-Date: Mon, 30 Mar 2015 18:08:40 +0200
-Message-ID: <55197508.5030501@collabora.co.uk>
-References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>	<1427730803-28635-2-git-send-email-javier.martinez@collabora.co.uk> <CA+Ln22Fn+TRGcFXH7m=LkOCpAtbdKq98jNNNDM0shYWvfHEBiA@mail.gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v7 1/9] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Mon, 30 Mar 2015 17:09:41 +0100
+Message-ID: <20150330160940.GA13731@leverpostej>
+References: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
+ <1426637856-3730-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:43235 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752478AbbC3QIs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 12:08:48 -0400
-In-Reply-To: <CA+Ln22Fn+TRGcFXH7m=LkOCpAtbdKq98jNNNDM0shYWvfHEBiA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1426637856-3730-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "kgene@kernel.org" <kgene@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, "a.kesavan@samsung.com" <a.kesavan@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Tomasz,
+Hi,
 
-On 03/30/2015 06:02 PM, Tomasz Figa wrote:
-> Hi Javier,
+On Wed, Mar 18, 2015 at 12:17:28AM +0000, Chanwoo Choi wrote:
+> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
+> Octal core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
+> PSCI (Power State Coordination Interface) v0.1.
 > 
-> 2015-03-31 0:53 GMT+09:00 Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk>:
->> The Samsung helpers functions to register clocks, add the clock instance
->> returned by the common clock framework to a lookup table that is used by
->> OF to lookup the clocks.
->>
->> But this table could also be useful to clock drivers if they need to get
->> a clock instance since the helper functions don't return them.
->>
->> The common clock framework __clk_lookup() function from the clk provider
->> API could be used by drivers as well. But it's more efficient to use the
->> Samsung specific lookup table that returns the clock instance in constant
->> time, than using the __clk_lookup() function that uses the clock name as
->> an index so it has a linear search time.
-> 
-> Is this really something we should be concerned about? If so, maybe
-> the generic look-up function should be rewritten to use something
-> faster, such as tree or hash table?
->
+> This patch includes following dt node to support Exynos5433 SoC:
+> 1. Octa core for big.LITTLE architecture
+> - Cortex-A53 LITTLE Quad-core
+> - Cortex-A57 big Quad-core
+> - Support PSCI v0.1
 
-I don't performance is a big issue here. I just thought that since the
-lookup table is already filled by the driver and the lookup function
-is one line, we could use that instead to get the performance benefit.
+Is CPU0 hotplug still broken, or has the FW been fixed?
 
-But I don't mind to drop this patch and use the generic lookup function
-from the CCF API if that is preferred.
- 
-> Best regards,
-> Tomasz
->
+I'm very worried about adding a DT that's known broken, especially when
+we have no idea as to if/when the FW will be fixed judging from prior
+replies.
 
-Best regards,
-Javier
+Mark.
