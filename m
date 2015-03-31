@@ -1,52 +1,85 @@
-From: Ben Gamari <bgamari.foss@gmail.com>
-Subject: Re: [PATCH v4 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
-Date: Tue, 31 Mar 2015 15:48:17 -0400
-Message-ID: <87wq1xt0ce.fsf@gmail.com>
-References: <1426456834-6308-1-git-send-email-afaerber@suse.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
+ enabled during suspend
+Date: Tue, 31 Mar 2015 22:00:14 +0200
+Message-ID: <551AFCCE.4050404@collabora.co.uk>
+References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>	<1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>	<CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>	<551976F1.1000605@collabora.co.uk> <CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:33205 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751457AbbCaTsW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Mar 2015 15:48:22 -0400
-In-Reply-To: <1426456834-6308-1-git-send-email-afaerber@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, =?utf-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Tomasz Figa <tomasz.figa@gmail.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
-
---=-=-=
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Andreas F=C3=A4rber <afaerber@suse.de> writes:
+Hello Abhilash,
 
-> Hello,
+On 03/31/2015 04:38 PM, Abhilash Kesavan wrote:
+> javier.martinez@collabora.co.uk> wrote:
+>> On 03/30/2015 06:07 PM, Tomasz Figa wrote:
+>> >
+>> > If look-up speed is important here, maybe all the relevant clocks
+>> > could be looked up once at initialization time and just prepared and
+>> > enabled here?
+>> >
+>>
+>> Yes, I'll do that indeed.
+>>
+>> In fact, I was wondering if we should let this clock be disabled at
+>> all. I noticed that the rockchip clk drivers do something similar
+>> and prepare / enable a list of clocks at init time [0,1].
+>>
+>> Unfortunately I don't fully understand why this clock needs to be
+>> enabled. It would be good if someone at Samsung can explain in
+>> more detail what the real problem really is.
+>>
+> 
+> I had a look at this some more today. The problem actually occurs when the
+> mdma0 clock's parent - aclk266_g2d gets disabled. The run-time pm support
+> in the dma driver disables mdma0 and in turn aclk266_g2d which causes the
+> issue.
+> From the User Manual, it appears that aclk266_g2d should be gated only when
+> certain bits in the clock gating status register are 0. I cannot say for
+> certain, but our gating the aclk266_g2d clock without the CG_STATUS bits
+> being 0 could be a cause of the suspend failure.
+> 
+
+Thanks a lot for the explanation. I see the NOTE at the bottom of section
+7.9.1.159 CLK_GATE_BUS_TOP that mentions that. I'll add this information
+to the commit message when posting as a proper patch instead of a RFC.
+
+I confirmed that changing the patch to prevent "aclk266_g2d" to be gated
+instead of "mdm0" also makes the system to resume correctly from suspend
+so I'll change that on the patch as well.
+
+I see that many of the Exynos5420 clocks (including "aclk266_g2d") use the
+CLK_IGNORE_UNUSED flag but AFAIU it only prevents the common clock framework
+to disable the clocks on init but doesn't prevent the clocks to be disabled
+if all the clock childs are gated so the parent is gated as well.
+
+> As the CG_STATUS bits are not being checked anywhere in the kernel I think
+> aclk266_g2d (and others in GATE_BUS_TOP) should not be gated. I am OK with
+
+For now I'll just add "aclk266_g2d" but later if needed all the GATE_BUS_TOP
+clocks (and others) that should only be gated when CG_STATUS is 0 can be
+added. My patch iterates over a list of clocks to be kept during suspend even
+when there is only one for now so adding more later if needed will be trivial.
+
+Or do you think that I should add all the GATE_BUS_TOP clocks now?
+
+> the suspend specific approach you have posted.
 >
-> This series adds a dedicated ODROID-XU device tree and enhances it with=20
-> LED configuration, to match the downstream 3.14 based behavior.
->
-Any word on merging this?
 
-Cheers,
+Great, I'll wait a couple of days to see if others have more comments about
+the last RFC I shared [0] and I'll post it as a proper patch.
 
-=2D Ben
+> Regards,
+> Abhilash
+> 
 
---=-=-=
-Content-Type: application/pgp-signature
+Thanks a lot for all your help and best regards,
+Javier
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJVGvoBAAoJEHPt6ejPuu8BIoEIAJ9QS/joEB41iRFYvTZxuLu4
-DrGqyDewl29Wh9rPHzPyZpgGMvT8hzaEYgIiiIDY6I9oIJE7stwJXZA3/dqvQEaO
-jMJ7R6970Zn33opnlc1XrgoP4dW8F4uNnUd+BSsvaKuLckyzOR+KhTBXg1aeyv3i
-7KHEPE+PmrhLBiq5EIe9nf7BKllh2jPZvMRtODH2QPVtpyhYaDmq12UyGdR04qS5
-8EVL5DH+HXIN5UodeTeqf7PMIBqK3KEk/3vIzr/71zQtT3PCASUH+cR6Y2bxNA/u
-ITy06Wqln9MuEmK0Be6D87Xt65IO3vReV87Ayl8V5ayrRlLt1bpwBgvlJ+PqJgM=
-=c6/2
------END PGP SIGNATURE-----
---=-=-=--
+[0]: https://lkml.org/lkml/2015/3/31/152
