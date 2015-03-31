@@ -1,31 +1,71 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/16 v2] iommu: Move domain allocation into drivers
-Date: Tue, 31 Mar 2015 15:33:44 +0200
-Message-ID: <20150331133344.GA22683@8bytes.org>
-References: <1427373799-18662-1-git-send-email-joro@8bytes.org>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH -v2 3/8] drm/exynos: remove struct *_win_data abstraction
+ on planes
+Date: Tue, 31 Mar 2015 12:33:57 -0300
+Message-ID: <20150331153357.GA9294@joana>
+References: <1427379061-30621-1-git-send-email-gustavo@padovan.org>
+ <1427379061-30621-4-git-send-email-gustavo@padovan.org>
+ <551A5893.8040706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1427373799-18662-1-git-send-email-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jroedel-l3A5Bk7waGM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <551A5893.8040706@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 26, 2015 at 01:43:03PM +0100, Joerg Roedel wrote:
-> Changes v1-v2:
-> 
-> 	* Rebased to v4.0-rc5
-> 	* Converted domain-types to a bit-field
-
-Applied this series to the core branch.
+MjAxNS0wMy0zMSBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+OgoKPiBI
+aSwKPiAKPiBPbiAwMy8yNi8yMDE1IDExOjEwIFBNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4g
+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+
+Cj4gPiAKPiA+IHN0cnVjdCB7ZmltZCxtaXhlcix2aWRpfV93aW5fZGF0YSB3YXMganVzdCBrZWVw
+aW5nIHRoZSBzYW1lIGRhdGEKPiA+IGFzIHN0cnVjdCBleHlub3NfZHJtX3BsYW5lIHRodXMgZ2V0
+IHJpZGUgb2YgaXQgYW5kIHVzZSBleHlub3NfZHJtX3BsYW5lCj4gPiBkaXJlY3RseS4KPiA+IAo+
+ID4gSXQgY2hhbmdlcyBob3cgcGxhbmVzIGFyZSBjcmVhdGVkIGFuZCByZW1vdmUgLndpbl9tb2Rl
+X3NldCgpIGNhbGxiYWNrCj4gPiB0aGF0IHdhcyBvbmx5IGZpbGxpbmcgYWxsICpfd2luX2RhdGEg
+c3RydWN0cy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZv
+LnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIHwgMTY0ICsrKysrKysrLS0tLS0tLS0tLS0tLS0KPiA+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jICAgfCAgIDkgKy0KPiA+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oICAgfCAgIDEgKwo+ID4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICB8ICAxNCAtLQo+ID4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICB8ICAgNSArLQo+ID4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDE4MiArKysrKysr
+KystLS0tLS0tLS0tLS0tLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3BsYW5lLmMgIHwgIDIzICstLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fcGxhbmUuaCAgfCAgIDYgKy0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fdmlkaS5jICAgfCAxMjMgKysrKy0tLS0tLS0tLS0tLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgfCAyMTIgKysrKysrKysrKy0tLS0tLS0tLS0tLS0t
+LS0tLS0KPiA+ICAxMCBmaWxlcyBjaGFuZ2VkLCAyNDIgaW5zZXJ0aW9ucygrKSwgNDk3IGRlbGV0
+aW9ucygtKQo+ID4gCj4gCj4gW3NuaXBdCj4gCj4gPiBAQCAtODE4LDcgKzc2Miw5IEBAIHN0YXRp
+YyBpbnQgZGVjb25fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rl
+ciwgdm9pZCAqZGF0YSkKPiA+ICB7Cj4gPiAgCXN0cnVjdCBkZWNvbl9jb250ZXh0ICpjdHggPSBk
+ZXZfZ2V0X2RydmRhdGEoZGV2KTsKPiA+ICAJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBk
+YXRhOwo+ID4gLQlpbnQgcmV0Owo+ID4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9z
+X3BsYW5lOwo+ID4gKwllbnVtIGRybV9wbGFuZV90eXBlIHR5cGU7Cj4gPiArCWludCB6cG9zLCBy
+ZXQ7Cj4gPiAgCj4gPiAgCXJldCA9IGRlY29uX2N0eF9pbml0aWFsaXplKGN0eCwgZHJtX2Rldik7
+Cj4gPiAgCWlmIChyZXQpIHsKPiA+IEBAIC04MjYsOCArNzcyLDE2IEBAIHN0YXRpYyBpbnQgZGVj
+b25fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAq
+ZGF0YSkKPiA+ICAJCXJldHVybiByZXQ7Cj4gPiAgCX0KPiA+ICAKPiA+IC0JY3R4LT5jcnRjID0g
+ZXh5bm9zX2RybV9jcnRjX2NyZWF0ZShkcm1fZGV2LCBjdHgtPnBpcGUsCj4gPiAtCQkJCQkgICBF
+WFlOT1NfRElTUExBWV9UWVBFX0xDRCwKPiA+ICsJZm9yICh6cG9zID0gMDsgenBvcyA8IFdJTkRP
+V1NfTlI7IHpwb3MrKykgewo+ID4gKwkJdHlwZSA9ICh6cG9zID09IGN0eC0+ZGVmYXVsdF93aW4p
+ID8gRFJNX1BMQU5FX1RZUEVfUFJJTUFSWSA6Cj4gPiArCQkJCQkJRFJNX1BMQU5FX1RZUEVfT1ZF
+UkxBWTsKPiA+ICsJCWV4eW5vc19wbGFuZV9pbml0KGRybV9kZXYsICZjdHgtPnBsYW5lc1t6cG9z
+XSwgMSA8PCBjdHgtPnBpcGUsCj4gPiArCQkJCSAgdHlwZSk7Cj4gCj4gRG9lc24ndCBlcnJvciBj
+aGVja2luZyBuZWVkIGFib3V0IHJldHVybiB2YWx1ZSBvZiBleHlub3NfcGxhbmVfaW5pdD8KClN1
+cmUsIEkgdGhpbmsgaXQgaXMgbmVlZGVkIHRvby4gSSdsbCBzZW5kIGEgbmV3IHBhdGNoIHNldCBz
+aG9ydGx5LgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
