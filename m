@@ -1,51 +1,100 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [rtc-linux] Re: [PATCH 1/2] drivers/rtc/rtc-s3c.c: Integrate
- Exynos3250 into S3C6410
-Date: Tue, 31 Mar 2015 11:00:31 +0200
-Message-ID: <CAJKOXPemefBOfOUV_azuJbiOMGurZLTGtFKBx7rW6NCgu+sjvQ@mail.gmail.com>
-References: <1427728773-29065-1-git-send-email-k.kozlowski@samsung.com>
-	<1427728773-29065-2-git-send-email-k.kozlowski@samsung.com>
-	<20150331002709.GF3849@piout.net>
-	<CABxcv==+h8R-tL9D5OXmYsuYfs_cLATViZ3N1veZwZBZF=fu0Q@mail.gmail.com>
-	<20150331082052.GI3849@piout.net>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: fix exynos randconfig build error
+Date: Tue, 31 Mar 2015 11:26:03 +0200
+Message-ID: <9274849.uVSoggUUTC@amdc1032>
+References: <E1YQa78-0000O0-A4@rmk-PC.arm.linux.org.uk>
+ <14257250.yOR9pFcIkO@amdc1032> <20150330213742.GO24899@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150331082052.GI3849-m++hUPXGwpdeoWH0uzbU5w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:21987 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752510AbbCaJ0a (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 31 Mar 2015 05:26:30 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NM200LVEKVQ68C0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Mar 2015 18:26:14 +0900 (KST)
+In-reply-to: <20150330213742.GO24899@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-2015-03-31 10:20 GMT+02:00 Alexandre Belloni
-<alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>:
-> Hi,
->
-> On 31/03/2015 at 08:49:39 +0200, Javier Martinez Canillas wrote :
->> Hello Alexandre,
->>
->> On Tue, Mar 31, 2015 at 2:27 AM, Alexandre Belloni
->> <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->> > nitpick: I would prefer rtc: rtc-s3c instead of drivers/rtc/rtc-s3c.c
->> >
->>
->> Yes but Krzysztof is following the convention used in drivers/rtc/
->> which I think is the correct thing to do even when it's different from
->> what is used all over the kernel.
->>
->
-> Having a look at the git history, the first and most used prefix is
-> actually 'rtc:' at some point, this started to change to 'drivers/rtc/'.
-> We should probably start to get back to 'rtc:', like most subsystems.
 
-Yes, I used "rtc: driver_name:" before but I saw that Andrew changes
-them to full path when he picks the patch. So this time I wanted to
-reduce the overhead for him... Anyway I'll stick to one format ("rtc:
-rtc-s3c:") as you proposed.
+Hi,
+
+On Monday, March 30, 2015 10:37:42 PM Russell King - ARM Linux wrote:
+> On Tue, Mar 03, 2015 at 01:44:34PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> > 
+> > Hi,
+> > 
+> > On Tuesday, March 03, 2015 04:40:02 AM Kukjin Kim wrote:
+> > > On 02/27/15 06:30, Kukjin Kim wrote:
+> > > > On 02/25/15 20:46, Krzysztof Kozlowski wrote:
+> > > >> 2015-02-25 12:26 GMT+01:00 Russell King <rmk+kernel@arm.linux.org.uk>:
+> > > >>> The following error was observed with SMP=n in v4.0-rc1:
+> > > >>>
+> > > >>> arch/arm/mach-exynos/pm.c: In function 'exynos_cpu0_enter_aftr':
+> > > >>> arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of function 'arch_send_wakeup_ipi_mask' [-Werror=implicit-function-declaration]
+> > > >>>
+> > > >>> As the code unconditionally calls a function only available with SMP=y,
+> > > >>> make the Exynos PM support depend on SMP.
+> > > >>>
+> > > >>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > > >>
+> > > >> Hi,
+> > > >>
+> > > >> Thanks for the patch but this already waits for Kukjin top be picked
+> > > >> up. The first patch was similar to yours (adds dependency on SMP),
+> > > >> sent on 4th of February:
+> > > >> https://patchwork.ozlabs.org/patch/436231/
+> > > >>
+> > > >> But later Bartlomiej fixed this in other way (allowing to use cpuidle
+> > > >> on non-SMP):
+> > > >> https://patchwork.ozlabs.org/patch/436445/
+> > > >>
+> > > >> Unfortunately none of them were picked up.
+> > > >>
+> > > > I've missed the fix, sorry.
+> > > > 
+> > > > BTW, as you know, all of exynos SoCs are based on SMP so generally (in
+> > > > normal case) there is no reason to use non-SMP on exynos
+> > > > platforms...even though I understand the build error should be fixed...
+> > > > 
+> > > > Anyway, I'll have a look Bart's patch and Russell's fix in this weekend.
+> > > > 
+> > > 
+> > > Firstly, let me take rmk's patch for the randconfig build error...BTW
+> > 
+> > What is wrong with picking my patch instead?  It is non-invasive and fixes
+> > cpuidle support on UP (which is a regression from previous kernels)?
+> > 
+> > https://lkml.org/lkml/2015/2/4/521
+> > 
+> > > I'm still wondering exynos stuff needs to support non-SMP and need to
+> > > think more about its usefulness?...
+> > 
+> > Currently UP is supported and at least I find it useful for testing/debug
+> > purposes.  If you want to to make Exynos SMP only thats OK but it should
+> > be done globally for Exynos arch support not just for cpuidle support.
+> 
+> Has either of these happened yet?  I don't see either in arm-soc.
+> 
+> (lkml.org seems to be - as seems typical - having problems.  The above
+> URL now returns a blank message.)
+
+My fix has been in Kukjin's tree (and thus linux-next) for the last two weeks:
+http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=v4.0-samsung-fixes-2&id=cfdda3535f87e752780ca18a57d13db58f6a6913
+
+Unfortunately it seems that Samsung fixes branch has not been pushed to
+arm-soc tree yet.
 
 Best regards,
-Krzysztof
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
