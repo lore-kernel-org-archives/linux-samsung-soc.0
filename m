@@ -1,77 +1,75 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [RFT PATCHv2] drm/exynos: Enable DP clock to fix display on Exynos5250
- and other
-Date: Tue, 31 Mar 2015 13:42:32 +0200
-Message-ID: <551A8828.70108@suse.de>
-References: <1427472488-21454-1-git-send-email-k.kozlowski@samsung.com> <5515ADB6.6050204@collabora.co.uk>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH V4 2/2] ARM: dts: exynos5422-odroidxu3: add 'rtc_src' clock
+ to rtc node
+Date: Tue, 31 Mar 2015 13:48:33 +0200
+Message-ID: <551A8991.7080706@fivetechno.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <5515ADB6.6050204@collabora.co.uk>
-Sender: stable-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, stable@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:53990 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751581AbbCaLsh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 31 Mar 2015 07:48:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, cw00.choi@samsung.com
 
-Am 27.03.2015 um 20:21 schrieb Javier Martinez Canillas:
-> Hello Krzysztof,
->=20
-> On 03/27/2015 05:08 PM, Krzysztof Kozlowski wrote:
->> After adding display power domain for Exynos5250 in commit
->> 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250") t=
-he
->> display on Chromebook Snow and others stopped working after boot.
->>
->> The reason for this suggested Andrzej Hajda: the DP clock was disabl=
-ed.
->> This clock is required by Display Port and is enabled by bootloader.
->> However when FIMD driver probing was deferred, the display power dom=
-ain
->> was turned off. This effectively reset the value of DP clock enable
->> register.
->>
->> When exynos-dp is later probed, the clock is not enabled and display=
- is
->> not properly configured:
->>
->> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
->> exynos-dp 145b0000.dp-controller: unable to config video
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Reported-by: Javier Martinez Canillas <javier.martinez@collabora.co.=
-uk>
->> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5=
-250")
->> Cc: <stable@vger.kernel.org>
->>
->> ---
->>
->> This should fix issue reported by Javier [1][2].
->>
->=20
-> I tested this patch and does indeed solves both issues I reported
-> The exynos-dp probe deferral does not make the display to not be
-> working and also disabling and enabling the display with:
->=20
-> with /sys/devices/platform/exynos-drm/graphics/fb0/blank works.
->=20
-> Thanks a lot for fixing this issue.
->=20
-> On an Exynos5250 Snow Chromebook:
->=20
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+The Exynos5422 SoC has a s3c6410 RTC where the source clock
+is now a mandatory property.
 
-Seems to fix Spring Chromebook as well,
+This patch fixes probe failure of s3c-rtc on Odroid-XU3 boards.
+It is based on v4.0-rc2.
 
-Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
+---
+Changes since v3:
+1. Readded slipped #include statement.
+Sorry for the mess.
+Changes since v2:
+1. Dropped unused phandle.
+Changes since v1:
+1. Dropped Documentation.
+2. Split into 2 parts.
 
-Thanks a lot,
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Andreas
-
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Felix Imend=C3=B6rffer, Jane Smithard, Jennifer Guild, Dilip Upmany=
-u,
-Graham Norton; HRB 21284 (AG N=C3=BCrnberg)
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index a519c86..d086398 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -11,6 +11,7 @@
+ */
+ 
+ /dts-v1/;
++#include <dt-bindings/clock/samsung,s2mps11.h>
+ #include "exynos5800.dtsi"
+ 
+ / {
+@@ -274,10 +275,6 @@
+ 			reg = <0x50>;
+ 		};
+ 	};
+-
+-	rtc@101E0000 {
+-		status = "okay";
+-	};
+ };
+ 
+ &hdmi {
+@@ -369,3 +366,9 @@
+ 		shunt-resistor = <10000>;
+ 	};
+ };
++
++&rtc {
++	status = "okay";
++	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
++	clock-names = "rtc", "rtc_src";
++};
+-- 
+1.9.1
