@@ -1,100 +1,77 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: fix exynos randconfig build error
-Date: Tue, 31 Mar 2015 11:26:03 +0200
-Message-ID: <9274849.uVSoggUUTC@amdc1032>
-References: <E1YQa78-0000O0-A4@rmk-PC.arm.linux.org.uk>
- <14257250.yOR9pFcIkO@amdc1032> <20150330213742.GO24899@n2100.arm.linux.org.uk>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [RFT PATCHv2] drm/exynos: Enable DP clock to fix display on Exynos5250
+ and other
+Date: Tue, 31 Mar 2015 13:42:32 +0200
+Message-ID: <551A8828.70108@suse.de>
+References: <1427472488-21454-1-git-send-email-k.kozlowski@samsung.com> <5515ADB6.6050204@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21987 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752510AbbCaJ0a (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Mar 2015 05:26:30 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NM200LVEKVQ68C0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Mar 2015 18:26:14 +0900 (KST)
-In-reply-to: <20150330213742.GO24899@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <5515ADB6.6050204@collabora.co.uk>
+Sender: stable-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+Am 27.03.2015 um 20:21 schrieb Javier Martinez Canillas:
+> Hello Krzysztof,
+>=20
+> On 03/27/2015 05:08 PM, Krzysztof Kozlowski wrote:
+>> After adding display power domain for Exynos5250 in commit
+>> 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250") t=
+he
+>> display on Chromebook Snow and others stopped working after boot.
+>>
+>> The reason for this suggested Andrzej Hajda: the DP clock was disabl=
+ed.
+>> This clock is required by Display Port and is enabled by bootloader.
+>> However when FIMD driver probing was deferred, the display power dom=
+ain
+>> was turned off. This effectively reset the value of DP clock enable
+>> register.
+>>
+>> When exynos-dp is later probed, the clock is not enabled and display=
+ is
+>> not properly configured:
+>>
+>> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+>> exynos-dp 145b0000.dp-controller: unable to config video
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Reported-by: Javier Martinez Canillas <javier.martinez@collabora.co.=
+uk>
+>> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5=
+250")
+>> Cc: <stable@vger.kernel.org>
+>>
+>> ---
+>>
+>> This should fix issue reported by Javier [1][2].
+>>
+>=20
+> I tested this patch and does indeed solves both issues I reported
+> The exynos-dp probe deferral does not make the display to not be
+> working and also disabling and enabling the display with:
+>=20
+> with /sys/devices/platform/exynos-drm/graphics/fb0/blank works.
+>=20
+> Thanks a lot for fixing this issue.
+>=20
+> On an Exynos5250 Snow Chromebook:
+>=20
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hi,
+Seems to fix Spring Chromebook as well,
 
-On Monday, March 30, 2015 10:37:42 PM Russell King - ARM Linux wrote:
-> On Tue, Mar 03, 2015 at 01:44:34PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Tuesday, March 03, 2015 04:40:02 AM Kukjin Kim wrote:
-> > > On 02/27/15 06:30, Kukjin Kim wrote:
-> > > > On 02/25/15 20:46, Krzysztof Kozlowski wrote:
-> > > >> 2015-02-25 12:26 GMT+01:00 Russell King <rmk+kernel@arm.linux.org.uk>:
-> > > >>> The following error was observed with SMP=n in v4.0-rc1:
-> > > >>>
-> > > >>> arch/arm/mach-exynos/pm.c: In function 'exynos_cpu0_enter_aftr':
-> > > >>> arch/arm/mach-exynos/pm.c:246:4: error: implicit declaration of function 'arch_send_wakeup_ipi_mask' [-Werror=implicit-function-declaration]
-> > > >>>
-> > > >>> As the code unconditionally calls a function only available with SMP=y,
-> > > >>> make the Exynos PM support depend on SMP.
-> > > >>>
-> > > >>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > > >>
-> > > >> Hi,
-> > > >>
-> > > >> Thanks for the patch but this already waits for Kukjin top be picked
-> > > >> up. The first patch was similar to yours (adds dependency on SMP),
-> > > >> sent on 4th of February:
-> > > >> https://patchwork.ozlabs.org/patch/436231/
-> > > >>
-> > > >> But later Bartlomiej fixed this in other way (allowing to use cpuidle
-> > > >> on non-SMP):
-> > > >> https://patchwork.ozlabs.org/patch/436445/
-> > > >>
-> > > >> Unfortunately none of them were picked up.
-> > > >>
-> > > > I've missed the fix, sorry.
-> > > > 
-> > > > BTW, as you know, all of exynos SoCs are based on SMP so generally (in
-> > > > normal case) there is no reason to use non-SMP on exynos
-> > > > platforms...even though I understand the build error should be fixed...
-> > > > 
-> > > > Anyway, I'll have a look Bart's patch and Russell's fix in this weekend.
-> > > > 
-> > > 
-> > > Firstly, let me take rmk's patch for the randconfig build error...BTW
-> > 
-> > What is wrong with picking my patch instead?  It is non-invasive and fixes
-> > cpuidle support on UP (which is a regression from previous kernels)?
-> > 
-> > https://lkml.org/lkml/2015/2/4/521
-> > 
-> > > I'm still wondering exynos stuff needs to support non-SMP and need to
-> > > think more about its usefulness?...
-> > 
-> > Currently UP is supported and at least I find it useful for testing/debug
-> > purposes.  If you want to to make Exynos SMP only thats OK but it should
-> > be done globally for Exynos arch support not just for cpuidle support.
-> 
-> Has either of these happened yet?  I don't see either in arm-soc.
-> 
-> (lkml.org seems to be - as seems typical - having problems.  The above
-> URL now returns a blank message.)
+Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
 
-My fix has been in Kukjin's tree (and thus linux-next) for the last two weeks:
-http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=v4.0-samsung-fixes-2&id=cfdda3535f87e752780ca18a57d13db58f6a6913
+Thanks a lot,
 
-Unfortunately it seems that Samsung fixes branch has not been pushed to
-arm-soc tree yet.
+Andreas
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+--=20
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Felix Imend=C3=B6rffer, Jane Smithard, Jennifer Guild, Dilip Upmany=
+u,
+Graham Norton; HRB 21284 (AG N=C3=BCrnberg)
