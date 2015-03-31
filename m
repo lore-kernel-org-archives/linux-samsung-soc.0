@@ -1,75 +1,80 @@
-From: Michael Turquette <mturquette@linaro.org>
-Subject: Re: [RFC PATCH v3 1/2] clk: samsung: Add a clock lookup function
-Date: Mon, 30 Mar 2015 18:40:13 -0700
-Message-ID: <20150331014013.25195.26862@quantum>
-References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
- <1427730803-28635-2-git-send-email-javier.martinez@collabora.co.uk>
- <CA+Ln22Fn+TRGcFXH7m=LkOCpAtbdKq98jNNNDM0shYWvfHEBiA@mail.gmail.com>
- <55197508.5030501@collabora.co.uk>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH V3 2/2] ARM: dts: exynos5422-odroidxu3: add 'rtc_src' clock
+ to rtc node
+Date: Tue, 31 Mar 2015 13:05:11 +0900
+Message-ID: <551A1CF7.9090400@samsung.com>
+References: <55196DE2.4030109@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:35493 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932262AbbCaBk0 convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:57770 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750725AbbCaEFR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Mar 2015 21:40:26 -0400
-Received: by ierf6 with SMTP id f6so4648078ier.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2015 18:40:25 -0700 (PDT)
-In-Reply-To: <55197508.5030501@collabora.co.uk>
+	Tue, 31 Mar 2015 00:05:17 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NM2004ET60O4C90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Mar 2015 13:05:12 +0900 (KST)
+In-reply-to: <55196DE2.4030109@fivetechno.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Markus Reichl <m.reichl@fivetechno.de>
+Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
 
-Quoting Javier Martinez Canillas (2015-03-30 09:08:40)
-> Hello Tomasz,
+Hi,
+
+On 03/31/2015 12:38 AM, Markus Reichl wrote:
+> The Exynos5422 SoC has a s3c6410 RTC where the source clock
+> is now a mandatory property.
 > 
-> On 03/30/2015 06:02 PM, Tomasz Figa wrote:
-> > Hi Javier,
-> > 
-> > 2015-03-31 0:53 GMT+09:00 Javier Martinez Canillas
-> > <javier.martinez@collabora.co.uk>:
-> >> The Samsung helpers functions to register clocks, add the clock instance
-> >> returned by the common clock framework to a lookup table that is used by
-> >> OF to lookup the clocks.
-> >>
-> >> But this table could also be useful to clock drivers if they need to get
-> >> a clock instance since the helper functions don't return them.
-> >>
-> >> The common clock framework __clk_lookup() function from the clk provider
-> >> API could be used by drivers as well. But it's more efficient to use the
-> >> Samsung specific lookup table that returns the clock instance in constant
-> >> time, than using the __clk_lookup() function that uses the clock name as
-> >> an index so it has a linear search time.
-> > 
-> > Is this really something we should be concerned about? If so, maybe
-> > the generic look-up function should be rewritten to use something
-> > faster, such as tree or hash table?
-> >
+> This patch fixes probe failure of s3c-rtc on Odroid-XU3 boards.
+> It is based in v4.0-rc2.
 > 
-> I don't performance is a big issue here. I just thought that since the
-> lookup table is already filled by the driver and the lookup function
-> is one line, we could use that instead to get the performance benefit.
+> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+> ---
+> Changes since v2:
+> 1. Dropped unused phandle.
+> Changes since v1:
+> 1. Dropped Documentation.
+> 2. Split into 2 parts.
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> But I don't mind to drop this patch and use the generic lookup function
-> from the CCF API if that is preferred.
-
-Hello,
-
-I am not a fan of __clk_lookup and I don't like to see it used more and
-more outside of drivers/clk/clk.c. You mentioned that performance wasn't
-really the problem here.  The real method for a driver to get a clock is
-with clk_get(). Any reason to not use that?
-
-Regards,
-Mike
-
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> index 0408ec0..4a7ca15 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -274,10 +274,6 @@
+>  			reg = <0x50>;
+>  		};
+>  	};
+> -
+> -	rtc@101E0000 {
+> -		status = "okay";
+> -	};
+>  };
 >  
-> > Best regards,
-> > Tomasz
-> >
+>  &hdmi {
+> @@ -374,3 +370,9 @@
+>  		shunt-resistor = <10000>;
+>  	};
+>  };
+> +
+> +&rtc {
+> +	status = "okay";
+> +	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
+> +	clock-names = "rtc", "rtc_src";
+> +};
 > 
-> Best regards,
-> Javier
+
+Exynos's RTC must need the XrtcXTI source clock (32.768kHz). Looks good to me.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Thanks,
+Chanwoo Choi
