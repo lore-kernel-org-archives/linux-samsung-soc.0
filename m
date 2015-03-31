@@ -1,118 +1,55 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 1/8] drm/exynos: fimd: fix alpha setting for XR24 pixel format
-Date: Tue, 31 Mar 2015 12:47:00 -0300
-Message-ID: <1427816827-14867-2-git-send-email-gustavo@padovan.org>
-References: <1427816827-14867-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:36599 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753471AbbCaPrP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Mar 2015 11:47:15 -0400
-Received: by qcgx3 with SMTP id x3so17074457qcg.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Mar 2015 08:47:15 -0700 (PDT)
-In-Reply-To: <1427816827-14867-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH -v3 0/8] drm/exynos: clean up patches (preparing for atomic)
+Date: Tue, 31 Mar 2015 12:46:59 -0300
+Message-ID: <1427816827-14867-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-XR24 planes were not shown properly, so now set the right registers
-to correctly enable displaying these planes.
-
-It also moves the alpha register settings to fimd_win_set_pixfmt()
-to keep all pixel format stuff together.
-
-v2: remove leftover var alpha
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 33 +++++++++++++++++++++-----------
- include/video/samsung_fimd.h             |  5 +++++
- 2 files changed, 27 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 925fc69..4c56fa7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -54,6 +54,9 @@
- /* size control register for hardware windows 1 ~ 2. */
- #define VIDOSD_D(win)		(VIDOSD_BASE + 0x0C + (win) * 16)
- 
-+#define VIDWnALPHA0(win)	(VIDW_ALPHA + 0x00 + (win) * 8)
-+#define VIDWnALPHA1(win)	(VIDW_ALPHA + 0x04 + (win) * 8)
-+
- #define VIDWx_BUF_START(win, buf)	(VIDW_BUF_START(buf) + (win) * 8)
- #define VIDWx_BUF_END(win, buf)		(VIDW_BUF_END(buf) + (win) * 8)
- #define VIDWx_BUF_SIZE(win, buf)	(VIDW_BUF_SIZE(buf) + (win) * 4)
-@@ -623,6 +626,24 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win)
- 	}
- 
- 	writel(val, ctx->regs + WINCON(win));
-+
-+	/* hardware window 0 doesn't support alpha channel. */
-+	if (win != 0) {
-+		/* OSD alpha */
-+		val = VIDISD14C_ALPHA0_R(0xf) |
-+			VIDISD14C_ALPHA0_G(0xf) |
-+			VIDISD14C_ALPHA0_B(0xf) |
-+			VIDISD14C_ALPHA1_R(0xf) |
-+			VIDISD14C_ALPHA1_G(0xf) |
-+			VIDISD14C_ALPHA1_B(0xf);
-+
-+		writel(val, ctx->regs + VIDOSD_C(win));
-+
-+		val = VIDW_ALPHA_R(0xf) | VIDW_ALPHA_G(0xf) |
-+			VIDW_ALPHA_G(0xf);
-+		writel(val, ctx->regs + VIDWnALPHA0(win));
-+		writel(val, ctx->regs + VIDWnALPHA1(win));
-+	}
- }
- 
- static void fimd_win_set_colkey(struct fimd_context *ctx, unsigned int win)
-@@ -670,7 +691,7 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
- 	struct fimd_context *ctx = crtc->ctx;
- 	struct fimd_win_data *win_data;
- 	int win = zpos;
--	unsigned long val, alpha, size;
-+	unsigned long val, size;
- 	unsigned int last_x;
- 	unsigned int last_y;
- 
-@@ -747,16 +768,6 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, int zpos)
- 	DRM_DEBUG_KMS("osd pos: tx = %d, ty = %d, bx = %d, by = %d\n",
- 			win_data->offset_x, win_data->offset_y, last_x, last_y);
- 
--	/* hardware window 0 doesn't support alpha channel. */
--	if (win != 0) {
--		/* OSD alpha */
--		alpha = VIDISD14C_ALPHA1_R(0xf) |
--			VIDISD14C_ALPHA1_G(0xf) |
--			VIDISD14C_ALPHA1_B(0xf);
--
--		writel(alpha, ctx->regs + VIDOSD_C(win));
--	}
--
- 	/* OSD size */
- 	if (win != 3 && win != 4) {
- 		u32 offset = VIDOSD_D(win);
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index a20e4a3..5132428 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -289,6 +289,11 @@
- #define VIDISD14C_ALPHA1_B_LIMIT		0xf
- #define VIDISD14C_ALPHA1_B(_x)			((_x) << 0)
- 
-+#define VIDW_ALPHA				0x021c
-+#define VIDW_ALPHA_R(_x)			((_x) << 16)
-+#define VIDW_ALPHA_G(_x)			((_x) << 8)
-+#define VIDW_ALPHA_B(_x)			((_x) << 0)
-+
- /* Video buffer addresses */
- #define VIDW_BUF_START(_buff)			(0xA0 + ((_buff) * 8))
- #define VIDW_BUF_START1(_buff)			(0xA4 + ((_buff) * 8))
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+SGksCgpIZXJlIGdvZXMgc29tZSBjbGVhbiB1cHMgdG8gdGhlIGV4eW5vcyBkcml2ZXJzLiBUaGUg
+bWFpbiBjbGVhbiB1cHMgaXMKdGhlIHByZXNldHRpbmcgYW5kIHpwb3MgbWFraW5nIHRoZSBwcm9w
+ZXJ0eSBpbW11dGFibGUgYW5kIHRoZSByZW1vdmFsCm9mICpfd2luX2RhdGEgc3RydWN0dXJlcy4K
+CnYyIGNvbnRhaW5zIGEgZXh0cmEgcGF0Y2ggdG8gZml4IGFscGhhIHNldHRpbmcgZm9yIHBsYW5l
+cyBpbiBmaW1kLCBzbwpub3cgZmltZCB3b3JrcyBmaW5lIGV2ZW4gYWZ0ZXIgdGhlIHJlbW92YWwg
+b2Ygc3RydWN0IGZpbWRfd2luX2RhdGEuCgp2MyByZW1vdmVzIGEgbGVmdG92ZXIgdmFyIGluIHRo
+ZSBmaXJzdCBjb21taXQgYW5kIGFkZHJlc3MgdGhlIGNvbW1lbnQgZnJvbQpKb29ueW91bmcgYWJv
+dXQgY2hlY2tpbmcgdGhlIHJldHVybiB2YWx1ZSBvZiBleHlub3NfcGxhbmVfaW5pdCgpCgoJR3Vz
+dGF2bwoKLS0KR3VzdGF2byBQYWRvdmFuICg3KToKICBkcm0vZXh5bm9zOiBmaW1kOiBmaXggYWxw
+aGEgc2V0dGluZyBmb3IgWFIyNCBwaXhlbCBmb3JtYXQKICBkcm0vZXh5bm9zOiByZW1vdmUgdW51
+c2VkIGV4eW5vc19jcnRjLT53aW5fZW5hYmxlKCkgY2FsbGJhY2sKICBkcm0vZXh5bm9zOiByZW1v
+dmUgc3RydWN0ICpfd2luX2RhdGEgYWJzdHJhY3Rpb24gb24gcGxhbmVzCiAgZHJtL2V4eW5vczog
+cHJlc2V0IHpwb3MgdmFsdWUgZm9yIG92ZXJsYXkgcGxhbmVzCiAgZHJtL2V4eW5vczogbWFrZSB6
+cG9zIHByb3BlcnR5IGltbXV0YWJsZQogIGRybS9leHlub3M6IHJlbW92ZSBleHlub3NfcGxhbmVf
+ZGVzdHJveSgpCiAgZHJtL2V4eW5vczogcmVtb3ZlIGxlZnRvdmVyIGZ1bmN0aW9ucyBkZWNsYXJh
+dGlvbnMKCk1hbmRlZXAgU2luZ2ggQmFpbmVzICgxKToKICBkcm0vZXh5bm9zOiB0cmFjayB2Ymxh
+bmsgZXZlbnRzIG9uIGEgcGVyIGNydGMgYmFzaXMKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vczdfZHJtX2RlY29uLmMgfCAxNzggKysrKysrKystLS0tLS0tLS0tLS0tLQogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAgIHwgMTAxICsrKysrKy0tLS0tLS0KIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggICB8ICAgNyArLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgIHwgIDI3IC0tLS0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICB8ICAyMCArLS0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDIyOCArKysrKysrKysrKystLS0tLS0t
+LS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgIHwg
+IDY2ICsrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgg
+IHwgICA3ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgfCAx
+MzYgKysrKystLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVy
+LmMgICAgICB8IDIxOSArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0KIGluY2x1ZGUvdmlkZW8v
+c2Ftc3VuZ19maW1kLmggICAgICAgICAgICAgICB8ICAgNSArCiAxMSBmaWxlcyBjaGFuZ2VkLCAz
+NDUgaW5zZXJ0aW9ucygrKSwgNjQ5IGRlbGV0aW9ucygtKQoKLS0gCjIuMS4wCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
