@@ -1,48 +1,83 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH 2/2] ARM: dts: s3c-rtc: Use s3c6410-rtc instead of
- exynos3250-rtc
-Date: Tue, 31 Mar 2015 10:12:04 +0200
-Message-ID: <20150331081204.GH3849@piout.net>
-References: <1427728773-29065-1-git-send-email-k.kozlowski@samsung.com>
- <1427728773-29065-3-git-send-email-k.kozlowski@samsung.com>
- <5519DE76.4080803@samsung.com>
- <20150331003101.GG3849@piout.net>
- <5519EE93.70509@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH -v2 3/8] drm/exynos: remove struct *_win_data abstraction
+ on planes
+Date: Tue, 31 Mar 2015 17:19:31 +0900
+Message-ID: <551A5893.8040706@samsung.com>
+References: <1427379061-30621-1-git-send-email-gustavo@padovan.org>
+ <1427379061-30621-4-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5519EE93.70509@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:57587 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751359AbbCaIT3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 31 Mar 2015 04:19:29 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NM2002AWHSEYY70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Mar 2015 17:19:27 +0900 (KST)
+In-reply-to: <1427379061-30621-4-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On 31/03/2015 at 09:47:15 +0900, Chanwoo Choi wrote :
-> > Are you absolutely sure that the exynos3250 IP is the same as the
-> > s3c6410 (I don't know much about the exynos family). The concern being
-> > that if at one point you have an errata on one or ther other, you will
-> > have to break the DT ABI by undoing this change.
-> > 
-> > Note that I'm fine with it, I'm just asking.
+Hi,
+
+On 03/26/2015 11:10 PM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 > 
-> I'm sure about exynos3250 RTC is same with S3C6410 RTC.
-> There was little different about that pevious S3C6410 RTC
-> don't consider to control the 'rtc_src' clk.
+> struct {fimd,mixer,vidi}_win_data was just keeping the same data
+> as struct exynos_drm_plane thus get ride of it and use exynos_drm_plane
+> directly.
 > 
+> It changes how planes are created and remove .win_mode_set() callback
+> that was only filling all *_win_data structs.
 > 
-> But, Javier's patch[1] add the '.needs_src_clk' to control the
-> 'rtc_src' clk. After merged this patch, there is no different part between
-> Exynos3250 RTC and S3C6410 RTC.
-> 
-> [1] 8792f7772f4f (drivers/rtc/rtc-s3c.c: add .needs_src_clk to s3c6410 RTC data)
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 164 ++++++++--------------
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c   |   9 +-
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.h   |   1 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c    |  14 --
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h    |   5 +-
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 182 +++++++++----------------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c  |  23 +---
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h  |   6 +-
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 123 ++++-------------
+>  drivers/gpu/drm/exynos/exynos_mixer.c      | 212 ++++++++++-------------------
+>  10 files changed, 242 insertions(+), 497 deletions(-)
 > 
 
-Yes, I saw that the software was handling both the same way, I was
-asking about the hardware side.
+[snip]
 
+> @@ -818,7 +762,9 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>  {
+>  	struct decon_context *ctx = dev_get_drvdata(dev);
+>  	struct drm_device *drm_dev = data;
+> -	int ret;
+> +	struct exynos_drm_plane *exynos_plane;
+> +	enum drm_plane_type type;
+> +	int zpos, ret;
+>  
+>  	ret = decon_ctx_initialize(ctx, drm_dev);
+>  	if (ret) {
+> @@ -826,8 +772,16 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>  		return ret;
+>  	}
+>  
+> -	ctx->crtc = exynos_drm_crtc_create(drm_dev, ctx->pipe,
+> -					   EXYNOS_DISPLAY_TYPE_LCD,
+> +	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
+> +		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
+> +						DRM_PLANE_TYPE_OVERLAY;
+> +		exynos_plane_init(drm_dev, &ctx->planes[zpos], 1 << ctx->pipe,
+> +				  type);
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Doesn't error checking need about return value of exynos_plane_init?
+
+Thanks.
