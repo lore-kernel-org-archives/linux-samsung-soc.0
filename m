@@ -1,50 +1,71 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v7 1/9] arm64: dts: exynos: Add dts files for 64-bit
- Exynos5433 SoC
-Date: Tue, 31 Mar 2015 08:56:38 +0900
-Message-ID: <5519E2B6.2030905@samsung.com>
-References: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
- <1426637856-3730-2-git-send-email-cw00.choi@samsung.com>
- <20150330160940.GA13731@leverpostej>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH 1/2] drivers/rtc/rtc-s3c.c: Integrate Exynos3250 into
+ S3C6410
+Date: Tue, 31 Mar 2015 02:27:09 +0200
+Message-ID: <20150331002709.GF3849@piout.net>
+References: <1427728773-29065-1-git-send-email-k.kozlowski@samsung.com>
+ <1427728773-29065-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150330160940.GA13731@leverpostej>
+Content-Disposition: inline
+In-Reply-To: <1427728773-29065-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "kgene@kernel.org" <kgene@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, "a.kesavan@samsung.com" <a.kesavan@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
+nitpick: I would prefer rtc: rtc-s3c instead of drivers/rtc/rtc-s3c.c
 
-On 03/31/2015 01:09 AM, Mark Rutland wrote:
-> Hi,
+On 30/03/2015 at 17:19:32 +0200, Krzysztof Kozlowski wrote :
+> There are now no differences between RTC on Exynos3250 and S3C6410.
+> Merge everything into one so duplicated code could be removed.
 > 
-> On Wed, Mar 18, 2015 at 12:17:28AM +0000, Chanwoo Choi wrote:
->> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
->> Octal core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
->> PSCI (Power State Coordination Interface) v0.1.
->>
->> This patch includes following dt node to support Exynos5433 SoC:
->> 1. Octa core for big.LITTLE architecture
->> - Cortex-A53 LITTLE Quad-core
->> - Cortex-A57 big Quad-core
->> - Support PSCI v0.1
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+
+> ---
+>  drivers/rtc/rtc-s3c.c | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
 > 
-> Is CPU0 hotplug still broken, or has the FW been fixed?
-
-CPU0 hotplug is still not working.
-
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index fb0c569765c6..5e162eaad277 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -774,18 +774,6 @@ static struct s3c_rtc_data const s3c6410_rtc_data = {
+>  	.disable		= s3c6410_rtc_disable,
+>  };
+>  
+> -static struct s3c_rtc_data const exynos3250_rtc_data = {
+> -	.max_user_freq		= 32768,
+> -	.needs_src_clk		= true,
+> -	.irq_handler		= s3c6410_rtc_irq,
+> -	.set_freq		= s3c6410_rtc_setfreq,
+> -	.enable_tick		= s3c6410_rtc_enable_tick,
+> -	.save_tick_cnt		= s3c6410_rtc_save_tick_cnt,
+> -	.restore_tick_cnt	= s3c6410_rtc_restore_tick_cnt,
+> -	.enable			= s3c24xx_rtc_enable,
+> -	.disable		= s3c6410_rtc_disable,
+> -};
+> -
+>  static const struct of_device_id s3c_rtc_dt_match[] = {
+>  	{
+>  		.compatible = "samsung,s3c2410-rtc",
+> @@ -801,7 +789,7 @@ static const struct of_device_id s3c_rtc_dt_match[] = {
+>  		.data = (void *)&s3c6410_rtc_data,
+>  	}, {
+>  		.compatible = "samsung,exynos3250-rtc",
+> -		.data = (void *)&exynos3250_rtc_data,
+> +		.data = (void *)&s3c6410_rtc_data,
+>  	},
+>  	{ /* sentinel */ },
+>  };
+> -- 
+> 1.9.1
 > 
-> I'm very worried about adding a DT that's known broken, especially when
-> we have no idea as to if/when the FW will be fixed judging from prior
-> replies.
 
-As I replied, I can not fix the FW because I don't have any code of FW.
-I don't have any solution to fix it on Linux kernel level.
-
-So, If you agree, I can add the comment of CPU0 hotplug issue on DT file.
-
-Thanks,
-Chanwoo Choi
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
