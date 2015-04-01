@@ -1,72 +1,64 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 3/3] drm/exynos: mixer: add 2x scaling to mixer_graph_buffer
-Date: Wed,  1 Apr 2015 15:29:03 +0200
-Message-ID: <1427894943-9010-3-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 1/3] drm/exynos: mixer: add 2x scaling to
+ =?UTF-8?Q?mixer=5Fgraph=5Fbuffer?=
+Date: Wed, 01 Apr 2015 15:34:36 +0200
+Message-ID: <4edfafbdeda7d972e2eac7ee5b6333ca@math.uni-bielefeld.de>
+References: <1427325438-3791-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20150326142615.GA18573@joana> <55149475.1090900@math.uni-bielefeld.de>
+ <20150327131151.GA15911@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:36827 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753135AbbDANeh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Apr 2015 09:34:37 -0400
+In-Reply-To: <20150327131151.GA15911@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-V2hpbGUgdGhlIFZQICh2aWRlbyBwcm9jZXNzb3IpIHN1cHBvcnRzIGFyYml0cmFyeSBzY2FsaW5n
-Cm9mIGl0cyBpbnB1dCwgdGhlIG1peGVyIGp1c3Qgc3VwcG9ydHMgYSBzaW1wbGUgMnggKGxpbmUK
-ZG91YmxpbmcpIHNjYWxpbmcuIEV4cG9zZSB0aGlzIGZ1bmN0aW9uYWxpdHkgYW5kIGV4aXQKZWFy
-bHkgd2hlbiBhbiB1bnN1cHBvcnRlZCBzY2FsaW5nIGNvbmZpZ3VyYXRpb24gaXMKZW5jb3VudGVy
-ZWQuCgpUaGlzIHdhcyB0ZXN0ZWQgd2l0aCBtb2RldGVzdCdzIERSTSBwbGFuZSB0ZXN0IChmcm9t
-CnRoZSBsaWJkcm0gdGVzdCBzdWl0ZSkgb24gYW4gT2Ryb2lkLVgyIChFeHlub3M0NDEyKS4KClNp
-Z25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRl
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzNSArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKy0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI5IGluc2VydGlv
-bnMoKyksIDYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
-aW5kZXggNWFiMGUzMi4uNjgyMmIzNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCkBAIC00OTksMTIgKzQ5OSwzNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9sYXllcl91cGRhdGUo
-c3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKIAltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhS
-X0NGRywgfjAsIE1YUl9DRkdfTEFZRVJfVVBEQVRFKTsKIH0KIAorc3RhdGljIGludCBtaXhlcl9z
-ZXR1cF9zY2FsZShjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUsCisJCXVuc2ln
-bmVkIGludCAqeF9yYXRpbywgdW5zaWduZWQgaW50ICp5X3JhdGlvKQoreworCWlmIChwbGFuZS0+
-Y3J0Y193aWR0aCAhPSBwbGFuZS0+c3JjX3dpZHRoKSB7CisJCWlmIChwbGFuZS0+Y3J0Y193aWR0
-aCA9PSAyICogcGxhbmUtPnNyY193aWR0aCkKKwkJCSp4X3JhdGlvID0gMTsKKwkJZWxzZQorCQkJ
-Z290byBmYWlsOworCX0KKworCWlmIChwbGFuZS0+Y3J0Y19oZWlnaHQgIT0gcGxhbmUtPnNyY19o
-ZWlnaHQpIHsKKwkJaWYgKHBsYW5lLT5jcnRjX2hlaWdodCA9PSAyICogcGxhbmUtPnNyY19oZWln
-aHQpCisJCQkqeV9yYXRpbyA9IDE7CisJCWVsc2UKKwkJCWdvdG8gZmFpbDsKKwl9CisKKwlyZXR1
-cm4gMDsKKworZmFpbDoKKwlEUk1fREVCVUdfS01TKCJvbmx5IDJ4IHdpZHRoL2hlaWdodCBzY2Fs
-aW5nIG9mIHBsYW5lIHN1cHBvcnRlZFxuIik7CisJcmV0dXJuIC1FTk9UU1VQUDsKK30KKwogc3Rh
-dGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGlu
-dCB3aW4pCiB7CiAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVz
-OwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CiAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5l
-OwotCXVuc2lnbmVkIGludCB4X3JhdGlvLCB5X3JhdGlvOworCXVuc2lnbmVkIGludCB4X3JhdGlv
-ID0gMCwgeV9yYXRpbyA9IDA7CiAJdW5zaWduZWQgaW50IHNyY194X29mZnNldCwgc3JjX3lfb2Zm
-c2V0LCBkc3RfeF9vZmZzZXQsIGRzdF95X29mZnNldDsKIAlkbWFfYWRkcl90IGRtYV9hZGRyOwog
-CXVuc2lnbmVkIGludCBmbXQ7CkBAIC01MjgsOSArNTUyLDggQEAgc3RhdGljIHZvaWQgbWl4ZXJf
-Z3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCiAJCWZtdCA9
-IEFSR0I4ODg4OwogCX0KIAotCS8qIDJ4IHNjYWxpbmcgZmVhdHVyZSAqLwotCXhfcmF0aW8gPSAw
-OwotCXlfcmF0aW8gPSAwOworCS8qIGNoZWNrIGlmIG1peGVyIHN1cHBvcnRzIHJlcXVlc3RlZCBz
-Y2FsaW5nIHNldHVwICovCisJaWYgKG1peGVyX3NldHVwX3NjYWxlKHBsYW5lLCAmeF9yYXRpbywg
-JnlfcmF0aW8pKSByZXR1cm47CiAKIAlkc3RfeF9vZmZzZXQgPSBwbGFuZS0+Y3J0Y194OwogCWRz
-dF95X29mZnNldCA9IHBsYW5lLT5jcnRjX3k7CkBAIC01NjYsOCArNTg5LDggQEAgc3RhdGljIHZv
-aWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4p
-CiAJCW1peGVyX3JlZ193cml0ZShyZXMsIE1YUl9SRVNPTFVUSU9OLCB2YWwpOwogCX0KIAotCXZh
-bCAgPSBNWFJfR1JQX1dIX1dJRFRIKHBsYW5lLT5jcnRjX3dpZHRoKTsKLQl2YWwgfD0gTVhSX0dS
-UF9XSF9IRUlHSFQocGxhbmUtPmNydGNfaGVpZ2h0KTsKKwl2YWwgID0gTVhSX0dSUF9XSF9XSURU
-SChwbGFuZS0+c3JjX3dpZHRoKTsKKwl2YWwgfD0gTVhSX0dSUF9XSF9IRUlHSFQocGxhbmUtPnNy
-Y19oZWlnaHQpOwogCXZhbCB8PSBNWFJfR1JQX1dIX0hfU0NBTEUoeF9yYXRpbyk7CiAJdmFsIHw9
-IE1YUl9HUlBfV0hfVl9TQ0FMRSh5X3JhdGlvKTsKIAltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJf
-R1JBUEhJQ19XSCh3aW4pLCB2YWwpOwotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Gustavo,
+
+On 2015-03-27 14:11, Gustavo Padovan wrote:
+> If you can rebase this in on top of my series this would be really 
+> good.
+like I said in my other mail, the series doesn't apply cleanly anymore, 
+so I had to rebase your series.
+
+
+>> Then it would just be:
+>> static int mixer_setup_scale(const struct exynos_drm_plane *plane,
+>> 	unsigned int *x_ratio, unsigned int *y_ratio)
+>> 
+>> Also that would automatically fix your other comment below [*].
+>> 
+>> 
+>> > Use EPERM or ENOTSUPP. Or even true/false.
+>> Will do!
+>> 
+>> 
+>> > You need to fix style here
+>> >
+>> >         if (mixer_setup_scale(win_data->src_width, win_data->src_height,
+>> >                               win_data->crtc_width, win_data->crtc_height,
+>> >                               &x_ratio, &y_ratio))
+>> >                 return;
+>> With [*] this would just be:
+>> if (mixer_setup_scale(plane, &x_ratio, &y_ratio)) return;
+>> 
+>> What do you think?
+> 
+> Changes sounds good to me. Please go ahead and send a new patch. :)
+I've integrated the changes and just sent it out together with two other 
+small fixes.
+
+Here's the important part:
+https://patchwork.kernel.org/patch/6140451/
+
+
+With best wishes,
+Tobias
