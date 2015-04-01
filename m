@@ -1,118 +1,76 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH v3 1/2] clk: samsung: Add a clock lookup function
-Date: Wed, 01 Apr 2015 10:26:50 +0200
-Message-ID: <551BABCA.5070800@collabora.co.uk>
-References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk> <1427730803-28635-2-git-send-email-javier.martinez@collabora.co.uk> <CA+Ln22Fn+TRGcFXH7m=LkOCpAtbdKq98jNNNDM0shYWvfHEBiA@mail.gmail.com> <55197508.5030501@collabora.co.uk> <20150331014013.25195.26862@quantum> <551A61FB.1040401@collabora.co.uk> <20150401012955.25195.29066@quantum>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
+ enabled during suspend
+Date: Wed, 1 Apr 2015 11:16:08 +0200
+Message-ID: <CAJKOXPftzX4KT=RNVnuD3UKOLXKkKr0b9i9_HDE47=8z9AyzUQ@mail.gmail.com>
+References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
+	<CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>
+	<551976F1.1000605@collabora.co.uk>
+	<7hiodg98z7.fsf@deeprootsystems.com>
+	<CAM4voanzd-iiyTbGvZpTz4nmULJu9_VUFz3EibLB5L295K4P-Q@mail.gmail.com>
+	<7h1tk47awc.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:45547 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752688AbbDAI04 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Apr 2015 04:26:56 -0400
-In-Reply-To: <20150401012955.25195.29066@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7h1tk47awc.fsf@deeprootsystems.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michael Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
-Hello Mike,
-
-On 04/01/2015 03:29 AM, Michael Turquette wrote:
-> Quoting Javier Martinez Canillas (2015-03-31 01:59:39)
->> +Tomeu who I forgot to add to the cc list.
->> 
->> Hello Mike,
->> 
->> Thanks a lot for your feedback.
->> 
->> On 03/31/2015 03:40 AM, Michael Turquette wrote:
->> >> 
->> >> I don't performance is a big issue here. I just thought that since the
->> >> lookup table is already filled by the driver and the lookup function
->> >> is one line, we could use that instead to get the performance benefit.
->> >> 
->> >> But I don't mind to drop this patch and use the generic lookup function
->> >> from the CCF API if that is preferred.
->> > 
->> > Hello,
->> > 
->> > I am not a fan of __clk_lookup and I don't like to see it used more and
->> > more outside of drivers/clk/clk.c. You mentioned that performance wasn't
->> > really the problem here.  The real method for a driver to get a clock is
->> > with clk_get(). Any reason to not use that?
->> >
->> 
->> I can certainly use clk_get() but I thought that the clk consumer API was
->> not supposed to be used from within clock drivers. That's why I mentioned
->> __clk_lookup() as a possibility since that is part of the provider API.
-> 
-> I would like to remove __clk_lookup some day, so the fewer users now the
-> better. Additionally, now that we have unique struct clk pointers from
-> clk_get it makes a lot of sense for clk_register to stop returning
-> pointers to a struct clk. Hopefully we can get around to that soon.
-> 
-> These two points above are enough reason for the clock provider to use
-> clk_get.
+2015-04-01 6:03 GMT+02:00 Kevin Hilman <khilman@kernel.org>:
+> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
 >
+>> On Wed, Apr 1, 2015 at 2:32 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>>> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>>>
+>>> [...]
+>>>
+>>>> Unfortunately I don't fully understand why this clock needs to be
+>>>> enabled. It would be good if someone at Samsung can explain in more
+>>>> detail what the real problem really is.
+>>>
+>>> +1
+>>>
+>>> Maybe Abhilash can shed some light here?
+>>>
+>>> We really should know *why* this is needed because having the fix in the
+>>> clock driver just doesn't seem right.  It seems like the DMA driver
+>>> should be managing this clock.
+>>
+>> I think my last mail might not have reached you (was accidentally sent
+>> as html).
+>
+> Yeah, I saw it a bit later in Javier's reply.  Thanks for doing the
+> research and reporting back.
+>
+>> We are gating the aclk266_g2d clock without checking the
+>> CG_STATUS0 register bits as specified in the UM. It looks like we need
+>> to keep several clocks alive or gate them only after checking the
+>> CG_STATUSx register bits.
+>
+> I dont' know much about this clock hardware, but to me it sounds like a
+> clock driver bug.  The suspend fix Javier is proposing would fix it, but
+> to me it sounds like the clock driver needs to actually start checking
+> these CG_STATUSx bits before gating clocks.
+>
+> Otherwise, we might fix this current bug but a similar one will come and
+> bite us another day.
 
-Got it.
- 
->> 
->> Below is a RFC patch that uses clk_get() [0]. That needs another patch
->> which was part of a previous RFC and adds an alias for the mdma0 clock:
->> 
->> https://lkml.org/lkml/2015/3/27/769
->> 
->> If you think that is the correct approach then I can post it as a patch.
->> 
->> It would be great if you can also provide some feedback about the other
->> patch in the first RFC that instead of enabling and disabling the mdma0
->> clock in driver, does it in the exynos5420 platform PM callbacks:
->> 
->> https://lkml.org/lkml/2015/3/27/770
-> 
-> This seems like a big hack to me.
-> 
+Actually it looks kind a similar to issue with adma/mau_epll clocks:
+https://lkml.org/lkml/2014/12/5/291
 
-Ok, good to know. I just did because initially I thought that the clock
-consumer API was not allowed to be used from within clock drivers.
+In that case runtime PM for pl330 caused adma clock to be gated. This
+lead to gating its parent clock - mau_epll. The clock hierarchy is
+strange for maudio domain. Basically mau_epll is needed to access
+maudio clocks however these clocks are not children of mau_epll.
 
->> 
->> I was asked to do it in the exynos5420 clk driver instead but maybe you
->> have a different opinion on that.
->> 
->> Best regards,
->> Javier
->> 
->> [0]:
->> From c118df83da8cac65cc218ae9443622592222f5d0 Mon Sep 17 00:00:00 2001
->> From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Date: Mon, 30 Mar 2015 17:11:40 +0200
->> Subject: [RFC] clk: exynos5420: Make sure MDMA0 clock is enabled during
->>  suspend
->> 
->> Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
->> Management support v12") added pm support for the pl330 dma driver but
->> it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
->> during suspend and this clock needs to remain enabled in order to make
->> the system resume from a system suspend state.
->> 
->> To make sure that the clock is enabled during suspend, enable it prior
->> to entering a suspend state and disable it once the system has resumed.
-> 
-> I'd like to understand the issue a bit further. Isn't the correct
-> solution that the clk's prepare/unprepare and enable/disable callbacks
-> should support the CG_STATUS requirement?
-> 
+I think we should not enable the mdma0 but instead we should find the
+proper parent which needs to be enabled.
 
-Agreed, I'll take a look to that.
-
-> Regards,
-> Mike
-> 
+Anyway it is kind of annoying (or funny if one has sense of black
+humour) that two issues are exposed by runtime PM for pl330 driver.
 
 Best regards,
-Javier
+Krzysztof
