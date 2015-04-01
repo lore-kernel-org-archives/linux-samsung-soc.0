@@ -1,116 +1,65 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
- enabled during suspend
-Date: Wed, 01 Apr 2015 13:44:10 +0200
-Message-ID: <551BDA0A.7010704@collabora.co.uk>
-References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk> <1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk> <CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com> <551976F1.1000605@collabora.co.uk> <CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com> <551AFCCE.4050404@collabora.co.uk> <551BD07E.2090506@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 1/3] drm/exynos: fix typos in hdmi and mixer
+Date: Wed,  1 Apr 2015 15:29:01 +0200
+Message-ID: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:45793 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752133AbbDALoS (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:36807 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753324AbbDAN3O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Apr 2015 07:44:18 -0400
-In-Reply-To: <551BD07E.2090506@samsung.com>
+	Wed, 1 Apr 2015 09:29:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hello Sylwester,
+Use the correct spelling for 'progressive'.
 
-On 04/01/2015 01:03 PM, Sylwester Nawrocki wrote:
-> 
-> On 31/03/15 22:00, Javier Martinez Canillas wrote:
->> On 03/31/2015 04:38 PM, Abhilash Kesavan wrote:
->>> javier.martinez@collabora.co.uk> wrote:
-> 
->>>> Unfortunately I don't fully understand why this clock needs to be
->>>> enabled. It would be good if someone at Samsung can explain in
->>>> more detail what the real problem really is.
->>>>
->>>
->>> I had a look at this some more today. The problem actually occurs when the
->>> mdma0 clock's parent - aclk266_g2d gets disabled. The run-time pm support
->>> in the dma driver disables mdma0 and in turn aclk266_g2d which causes the
->>> issue.
->>> From the User Manual, it appears that aclk266_g2d should be gated only when
->>> certain bits in the clock gating status register are 0. I cannot say for
->>> certain, but our gating the aclk266_g2d clock without the CG_STATUS bits
->>> being 0 could be a cause of the suspend failure.
->>>
->> 
->> Thanks a lot for the explanation. I see the NOTE at the bottom of section
->> 7.9.1.159 CLK_GATE_BUS_TOP that mentions that. I'll add this information
->> to the commit message when posting as a proper patch instead of a RFC.
->> 
->> I confirmed that changing the patch to prevent "aclk266_g2d" to be gated
->> instead of "mdm0" also makes the system to resume correctly from suspend
->> so I'll change that on the patch as well.
->> 
->> I see that many of the Exynos5420 clocks (including "aclk266_g2d") use the
->> CLK_IGNORE_UNUSED flag but AFAIU it only prevents the common clock framework
->> to disable the clocks on init but doesn't prevent the clocks to be disabled
->> if all the clock childs are gated so the parent is gated as well.
->> 
->>> As the CG_STATUS bits are not being checked anywhere in the kernel I think
->>> aclk266_g2d (and others in GATE_BUS_TOP) should not be gated. I am OK with
->> 
->> For now I'll just add "aclk266_g2d" but later if needed all the GATE_BUS_TOP
->> clocks (and others) that should only be gated when CG_STATUS is 0 can be
->> added. My patch iterates over a list of clocks to be kept during suspend even
->> when there is only one for now so adding more later if needed will be trivial.
-> 
-> It's not clear what subsystems affect state of the CG_STATUSx registers, it
-> would be good if we could get more information on that. They are in the PMU
-> block and are related to LPI (Low Power Interface handshaking), but what
-> subsystems/peripheral blocks exactly are associated with them it's not clear
-> from the documentation.
-> 
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c  | 2 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
+ drivers/gpu/drm/exynos/regs-mixer.h   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Yes, I've been looking at the docs again and found out a couple of things:
-
-* Each GC_STATUSx register bit is associated with an IP hw block
-* Some LPI_MASKx registers maps exactly with the GC_STATUSx (i.e: 0 and 1)
-  and others maps only partially (i.e: LPI_MASK2 and GC_STATUS2)
-
-So it is related to LPI as you said and both LPI_MASKx and GC_STATUSx are
-part of the PMU register address space.
-
-In the particular case of aclk266_g2d, the doc says that the clock can only
-be gated when CG_STATUS0[20] and CG_STATUS0[21] are 0. These are associated
-with the SSS and SSS_SLIM respectively which AFAIU are crypto h/w modules.
-
-> I think it's essential to understand what triggers changes in CG_STATUSx
-> registers, before we start checking their value in the clock driver.
->
-
-Indeed, we should really understand what the status on these registers
-means. Also is not clear from the docs how much time should be waited,
-how long until giving up, etc.
-
-> Also it might be that there are indeed some clocks which must stay enabled
-> over suspend/resume cycle, then the approach with enabling/disabling clocks
-> in the clock driver might not be such a hack as it looks at first sight.
->
-
-Having a clock driver to both a provider and consumer feels hacky to me as
-well but I didn't find a better way to solve this issue... another option
-is to have this workaround to solve the S2R issue while we figure out what
-the the state in the CG_STATUSx really mean.
-
->> Or do you think that I should add all the GATE_BUS_TOP clocks now?
-> 
-> No, please don't do that. That includes many important clocks and we should
-> be certain what we are doing. I don't think it is expected to touch those
-> clocks in that way, it would likely cause more issues.
-> 
-> 
-
-Perfect, I just asked since it was not clear to me from Abhilash comment.
-But I also agree to only focus on the clock that is causing issues now.
-
-Best regards,
-Javier
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 3511fcc..20e2ce7 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -2022,7 +2022,7 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
+ 	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
+ 		m->hdisplay, m->vdisplay,
+ 		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
+-		"INTERLACED" : "PROGERESSIVE");
++		"INTERLACED" : "PROGRESSIVE");
+ 
+ 	/* preserve mode information for later use. */
+ 	drm_mode_copy(&hdata->current_mode, mode);
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index aa5b6e1..5ab0e32 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -267,7 +267,7 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
+ 
+ 	/* choosing between interlace and progressive mode */
+ 	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
+-				MXR_CFG_SCAN_PROGRASSIVE);
++				MXR_CFG_SCAN_PROGRESSIVE);
+ 
+ 	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
+ 		/* choosing between proper HD and SD mode */
+diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+index 5f32e1a..ac60260 100644
+--- a/drivers/gpu/drm/exynos/regs-mixer.h
++++ b/drivers/gpu/drm/exynos/regs-mixer.h
+@@ -101,7 +101,7 @@
+ #define MXR_CFG_GRP0_ENABLE		(1 << 4)
+ #define MXR_CFG_VP_ENABLE		(1 << 3)
+ #define MXR_CFG_SCAN_INTERLACE		(0 << 2)
+-#define MXR_CFG_SCAN_PROGRASSIVE	(1 << 2)
++#define MXR_CFG_SCAN_PROGRESSIVE	(1 << 2)
+ #define MXR_CFG_SCAN_NTSC		(0 << 1)
+ #define MXR_CFG_SCAN_PAL		(1 << 1)
+ #define MXR_CFG_SCAN_SD			(0 << 0)
+-- 
+2.0.5
