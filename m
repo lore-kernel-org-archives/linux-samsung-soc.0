@@ -1,38 +1,66 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 3/8] drm/exynos: remove struct *_win_data abstraction on
- planes
-Date: Wed, 1 Apr 2015 13:03:10 -0300
-Message-ID: <20150401160310.GG7013@joana>
-References: <1427816827-14867-1-git-send-email-gustavo@padovan.org>
- <1427816827-14867-4-git-send-email-gustavo@padovan.org>
- <trinity-d2f9c441-f8d4-40a4-b51b-c450e5d9aff5-1427817193699@3capp-gmx-bs24>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL] Samsung 2nd fixes for v4.0
+Date: Thu, 02 Apr 2015 02:23:55 +0900
+Message-ID: <551C29AB.7030306@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <trinity-d2f9c441-f8d4-40a4-b51b-c450e5d9aff5-1427817193699@3capp-gmx-bs24>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <Liquid.Acid@gmx.net>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:42947 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752189AbbDARYM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Apr 2015 13:24:12 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-SGkgVG9iaWFzLAoKMjAxNS0wMy0zMSBUb2JpYXMgSmFrb2JpIDxMaXF1aWQuQWNpZEBnbXgubmV0
-PjoKCj4gSGVsbG8sCj4gCj4gSSBqdXN0IHdhbnRlZCB0byBwb2ludCBvdXQgdGhhdCB0aGlzIGRv
-ZXNuJ3QgYXBwbHkgdG8gZXh5bm9zLWRybS1maXhlcywgd2hpY2ggd2FzIHByb2JhYmx5IGNhdXNl
-ZCBieSBEYW5pZWwncyBwaXRjaCBwYXRjaCBoZXJlOgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
-Y2dpdC9saW51eC9rZXJuZWwvZ2l0L2RhZWlua2kvZHJtLWV4eW5vcy5naXQvY29tbWl0Lz9oPWV4
-eW5vcy1kcm0tZml4ZXMmaWQ9NTdhYWFmMzczZWRlOTVlYmFhZjkwNjk1MDcxZjdiMWY0YTk3Nzk1
-ZgoKUmlnaHQuIEkndmUganVzdCBzZW50IGEgbmV3IHZlcnNpb24gb2YgdGhpcyBwYXRjaGVzIHJl
-YmFzZWQgb24gdG9wIG9mIERhbmllbCdzCnBhdGNoLgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Arnd, Olof, Kevin,
+
+Here is 2nd Samsung fixes for v4.0 and it fixes arm allmodconfig build
+breakage and exynos5250-spring lid, power-pin and mmc nodes dt updates.
+
+Please pull and sorry for pretty late pull-request for v4.0.
+
+Thanks,
+Kukjin
+
+
+The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
+
+  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-fixes-2
+
+for you to fetch changes up to cfdda3535f87e752780ca18a57d13db58f6a6913:
+
+  ARM: EXYNOS: Fix build breakage cpuidle on !SMP (2015-03-18 03:26:11
++0900)
+
+----------------------------------------------------------------
+Samsung 2nd fixes for v4.0
+
+- Fix build breakage exynos cpuidle driver on !SMP
+  because it is coupled built-in so added check for SMP.
+
+- Fix lid, power pin-functions and mmc node updates
+  for exynos5250-spring: Fixes commit ID 53dd4138bb0a
+  ("ARM: dts: Add exynos5250-spring device tree")
+
+----------------------------------------------------------------
+Andreas Faerber (2):
+      ARM: dts: fix mmc node updates for exynos5250-spring
+      ARM: dts: fix lid and power pin-functions for exynos5250-spring
+
+Bartlomiej Zolnierkiewicz (1):
+      ARM: EXYNOS: Fix build breakage cpuidle on !SMP
+
+ arch/arm/boot/dts/exynos5250-spring.dts | 20 ++++++--------------
+ arch/arm/mach-exynos/exynos.c           |  2 +-
+ arch/arm/mach-exynos/pm.c               |  2 ++
+ drivers/cpuidle/cpuidle-exynos.c        |  3 ++-
+ 4 files changed, 11 insertions(+), 16 deletions(-)
