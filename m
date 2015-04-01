@@ -1,76 +1,91 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
  enabled during suspend
-Date: Wed, 1 Apr 2015 11:16:08 +0200
-Message-ID: <CAJKOXPftzX4KT=RNVnuD3UKOLXKkKr0b9i9_HDE47=8z9AyzUQ@mail.gmail.com>
+Date: Wed, 01 Apr 2015 13:03:26 +0200
+Message-ID: <551BD07E.2090506@samsung.com>
 References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
-	<CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>
-	<551976F1.1000605@collabora.co.uk>
-	<7hiodg98z7.fsf@deeprootsystems.com>
-	<CAM4voanzd-iiyTbGvZpTz4nmULJu9_VUFz3EibLB5L295K4P-Q@mail.gmail.com>
-	<7h1tk47awc.fsf@deeprootsystems.com>
+ <1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>
+ <551976F1.1000605@collabora.co.uk>
+ <CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com>
+ <551AFCCE.4050404@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7h1tk47awc.fsf@deeprootsystems.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:62372 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751194AbbDALEN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Apr 2015 07:04:13 -0400
+In-reply-to: <551AFCCE.4050404@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-2015-04-01 6:03 GMT+02:00 Kevin Hilman <khilman@kernel.org>:
-> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
->
->> On Wed, Apr 1, 2015 at 2:32 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+Hello,
+
+On 31/03/15 22:00, Javier Martinez Canillas wrote:
+> On 03/31/2015 04:38 PM, Abhilash Kesavan wrote:
+>> javier.martinez@collabora.co.uk> wrote:
+
+>>> Unfortunately I don't fully understand why this clock needs to be
+>>> enabled. It would be good if someone at Samsung can explain in
+>>> more detail what the real problem really is.
 >>>
->>> [...]
->>>
->>>> Unfortunately I don't fully understand why this clock needs to be
->>>> enabled. It would be good if someone at Samsung can explain in more
->>>> detail what the real problem really is.
->>>
->>> +1
->>>
->>> Maybe Abhilash can shed some light here?
->>>
->>> We really should know *why* this is needed because having the fix in the
->>> clock driver just doesn't seem right.  It seems like the DMA driver
->>> should be managing this clock.
 >>
->> I think my last mail might not have reached you (was accidentally sent
->> as html).
->
-> Yeah, I saw it a bit later in Javier's reply.  Thanks for doing the
-> research and reporting back.
->
->> We are gating the aclk266_g2d clock without checking the
->> CG_STATUS0 register bits as specified in the UM. It looks like we need
->> to keep several clocks alive or gate them only after checking the
->> CG_STATUSx register bits.
->
-> I dont' know much about this clock hardware, but to me it sounds like a
-> clock driver bug.  The suspend fix Javier is proposing would fix it, but
-> to me it sounds like the clock driver needs to actually start checking
-> these CG_STATUSx bits before gating clocks.
->
-> Otherwise, we might fix this current bug but a similar one will come and
-> bite us another day.
+>> I had a look at this some more today. The problem actually occurs when the
+>> mdma0 clock's parent - aclk266_g2d gets disabled. The run-time pm support
+>> in the dma driver disables mdma0 and in turn aclk266_g2d which causes the
+>> issue.
+>> From the User Manual, it appears that aclk266_g2d should be gated only when
+>> certain bits in the clock gating status register are 0. I cannot say for
+>> certain, but our gating the aclk266_g2d clock without the CG_STATUS bits
+>> being 0 could be a cause of the suspend failure.
+>>
+> 
+> Thanks a lot for the explanation. I see the NOTE at the bottom of section
+> 7.9.1.159 CLK_GATE_BUS_TOP that mentions that. I'll add this information
+> to the commit message when posting as a proper patch instead of a RFC.
+> 
+> I confirmed that changing the patch to prevent "aclk266_g2d" to be gated
+> instead of "mdm0" also makes the system to resume correctly from suspend
+> so I'll change that on the patch as well.
+> 
+> I see that many of the Exynos5420 clocks (including "aclk266_g2d") use the
+> CLK_IGNORE_UNUSED flag but AFAIU it only prevents the common clock framework
+> to disable the clocks on init but doesn't prevent the clocks to be disabled
+> if all the clock childs are gated so the parent is gated as well.
+> 
+>> As the CG_STATUS bits are not being checked anywhere in the kernel I think
+>> aclk266_g2d (and others in GATE_BUS_TOP) should not be gated. I am OK with
+> 
+> For now I'll just add "aclk266_g2d" but later if needed all the GATE_BUS_TOP
+> clocks (and others) that should only be gated when CG_STATUS is 0 can be
+> added. My patch iterates over a list of clocks to be kept during suspend even
+> when there is only one for now so adding more later if needed will be trivial.
 
-Actually it looks kind a similar to issue with adma/mau_epll clocks:
-https://lkml.org/lkml/2014/12/5/291
+It's not clear what subsystems affect state of the CG_STATUSx registers, it
+would be good if we could get more information on that. They are in the PMU
+block and are related to LPI (Low Power Interface handshaking), but what
+subsystems/peripheral blocks exactly are associated with them it's not clear
+from the documentation.
 
-In that case runtime PM for pl330 caused adma clock to be gated. This
-lead to gating its parent clock - mau_epll. The clock hierarchy is
-strange for maudio domain. Basically mau_epll is needed to access
-maudio clocks however these clocks are not children of mau_epll.
+I think it's essential to understand what triggers changes in CG_STATUSx
+registers, before we start checking their value in the clock driver.
 
-I think we should not enable the mdma0 but instead we should find the
-proper parent which needs to be enabled.
+Also it might be that there are indeed some clocks which must stay enabled
+over suspend/resume cycle, then the approach with enabling/disabling clocks
+in the clock driver might not be such a hack as it looks at first sight.
 
-Anyway it is kind of annoying (or funny if one has sense of black
-humour) that two issues are exposed by runtime PM for pl330 driver.
+> Or do you think that I should add all the GATE_BUS_TOP clocks now?
 
-Best regards,
-Krzysztof
+No, please don't do that. That includes many important clocks and we should
+be certain what we are doing. I don't think it is expected to touch those
+clocks in that way, it would likely cause more issues.
+
+
+-- 
+Thanks
+Sylwester
