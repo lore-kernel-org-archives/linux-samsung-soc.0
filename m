@@ -1,65 +1,49 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 1/3] drm/exynos: fix typos in hdmi and mixer
-Date: Wed,  1 Apr 2015 15:29:01 +0200
-Message-ID: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:36807 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753324AbbDAN3O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Apr 2015 09:29:14 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 2/3] drm/exynos: remove superfluous error messages
+Date: Wed,  1 Apr 2015 15:29:02 +0200
+Message-ID: <1427894943-9010-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Use the correct spelling for 'progressive'.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c  | 2 +-
- drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
- drivers/gpu/drm/exynos/regs-mixer.h   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 3511fcc..20e2ce7 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2022,7 +2022,7 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
- 	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
- 		m->hdisplay, m->vdisplay,
- 		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
--		"INTERLACED" : "PROGERESSIVE");
-+		"INTERLACED" : "PROGRESSIVE");
- 
- 	/* preserve mode information for later use. */
- 	drm_mode_copy(&hdata->current_mode, mode);
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index aa5b6e1..5ab0e32 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -267,7 +267,7 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
- 
- 	/* choosing between interlace and progressive mode */
- 	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
--				MXR_CFG_SCAN_PROGRASSIVE);
-+				MXR_CFG_SCAN_PROGRESSIVE);
- 
- 	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
- 		/* choosing between proper HD and SD mode */
-diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
-index 5f32e1a..ac60260 100644
---- a/drivers/gpu/drm/exynos/regs-mixer.h
-+++ b/drivers/gpu/drm/exynos/regs-mixer.h
-@@ -101,7 +101,7 @@
- #define MXR_CFG_GRP0_ENABLE		(1 << 4)
- #define MXR_CFG_VP_ENABLE		(1 << 3)
- #define MXR_CFG_SCAN_INTERLACE		(0 << 2)
--#define MXR_CFG_SCAN_PROGRASSIVE	(1 << 2)
-+#define MXR_CFG_SCAN_PROGRESSIVE	(1 << 2)
- #define MXR_CFG_SCAN_NTSC		(0 << 1)
- #define MXR_CFG_SCAN_PAL		(1 << 1)
- #define MXR_CFG_SCAN_SD			(0 << 0)
--- 
-2.0.5
+VGhlIG1lc3NhZ2VzIGFyZSByZWR1bmRhbnQgc2luY2UgJ2NoZWNrX2ZiX2dlbV9tZW1vcnlfdHlw
+ZScKYWxyZWFkeSBwcmludHMgb3V0IGV4YWN0bHkgdGhlIHNhbWUgc3RyaW5nIHdoZW4gaXQgZmFp
+bHMuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxl
+ZmVsZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyB8IDEw
+ICsrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25z
+KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwppbmRleCBkMzQ2ZDFlLi45
+MjljYjAzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIu
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwpAQCAtMTUxLDEw
+ICsxNTEsOCBAQCBleHlub3NfZHJtX2ZyYW1lYnVmZmVyX2luaXQoc3RydWN0IGRybV9kZXZpY2Ug
+KmRldiwKIAlleHlub3NfZ2VtX29iaiA9IHRvX2V4eW5vc19nZW1fb2JqKG9iaik7CiAKIAlyZXQg
+PSBjaGVja19mYl9nZW1fbWVtb3J5X3R5cGUoZGV2LCBleHlub3NfZ2VtX29iaik7Ci0JaWYgKHJl
+dCA8IDApIHsKLQkJRFJNX0VSUk9SKCJjYW5ub3QgdXNlIHRoaXMgZ2VtIG1lbW9yeSB0eXBlIGZv
+ciBmYi5cbiIpOwotCQlyZXR1cm4gRVJSX1BUUigtRUlOVkFMKTsKLQl9CisJaWYgKHJldCA8IDAp
+CisJCXJldHVybiBFUlJfUFRSKHJldCk7CiAKIAlleHlub3NfZmIgPSBremFsbG9jKHNpemVvZigq
+ZXh5bm9zX2ZiKSwgR0ZQX0tFUk5FTCk7CiAJaWYgKCFleHlub3NfZmIpCkBAIC0yNTAsMTAgKzI0
+OCw4IEBAIGV4eW5vc191c2VyX2ZiX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1
+Y3QgZHJtX2ZpbGUgKmZpbGVfcHJpdiwKIAkJZXh5bm9zX2ZiLT5leHlub3NfZ2VtX29ialtpXSA9
+IGV4eW5vc19nZW1fb2JqOwogCiAJCXJldCA9IGNoZWNrX2ZiX2dlbV9tZW1vcnlfdHlwZShkZXYs
+IGV4eW5vc19nZW1fb2JqKTsKLQkJaWYgKHJldCA8IDApIHsKLQkJCURSTV9FUlJPUigiY2Fubm90
+IHVzZSB0aGlzIGdlbSBtZW1vcnkgdHlwZSBmb3IgZmIuXG4iKTsKKwkJaWYgKHJldCA8IDApCiAJ
+CQlnb3RvIGVycl91bnJlZmVyZW5jZTsKLQkJfQogCX0KIAogCXJldCA9IGRybV9mcmFtZWJ1ZmZl
+cl9pbml0KGRldiwgJmV4eW5vc19mYi0+ZmIsICZleHlub3NfZHJtX2ZiX2Z1bmNzKTsKLS0gCjIu
+MC41CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
