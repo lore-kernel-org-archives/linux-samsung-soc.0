@@ -1,211 +1,51 @@
-From: Michael Turquette <mturquette@linaro.org>
-Subject: Re: [RFC PATCH v3 1/2] clk: samsung: Add a clock lookup function
-Date: Tue, 31 Mar 2015 18:29:55 -0700
-Message-ID: <20150401012955.25195.29066@quantum>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
+ enabled during suspend
+Date: Wed, 1 Apr 2015 08:49:14 +0530
+Message-ID: <CAM4voanzd-iiyTbGvZpTz4nmULJu9_VUFz3EibLB5L295K4P-Q@mail.gmail.com>
 References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
- <1427730803-28635-2-git-send-email-javier.martinez@collabora.co.uk>
- <CA+Ln22Fn+TRGcFXH7m=LkOCpAtbdKq98jNNNDM0shYWvfHEBiA@mail.gmail.com>
- <55197508.5030501@collabora.co.uk> <20150331014013.25195.26862@quantum>
- <551A61FB.1040401@collabora.co.uk>
+	<1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
+	<CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>
+	<551976F1.1000605@collabora.co.uk>
+	<7hiodg98z7.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:38159 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752507AbbDABaI convert rfc822-to-8bit (ORCPT
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:34438 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751746AbbDADTP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Mar 2015 21:30:08 -0400
-Received: by igbqf9 with SMTP id qf9so33633755igb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Mar 2015 18:30:07 -0700 (PDT)
-In-Reply-To: <551A61FB.1040401@collabora.co.uk>
+	Tue, 31 Mar 2015 23:19:15 -0400
+In-Reply-To: <7hiodg98z7.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Quoting Javier Martinez Canillas (2015-03-31 01:59:39)
-> +Tomeu who I forgot to add to the cc list.
-> 
-> Hello Mike,
-> 
-> Thanks a lot for your feedback.
-> 
-> On 03/31/2015 03:40 AM, Michael Turquette wrote:
-> >> 
-> >> I don't performance is a big issue here. I just thought that since the
-> >> lookup table is already filled by the driver and the lookup function
-> >> is one line, we could use that instead to get the performance benefit.
-> >> 
-> >> But I don't mind to drop this patch and use the generic lookup function
-> >> from the CCF API if that is preferred.
-> > 
-> > Hello,
-> > 
-> > I am not a fan of __clk_lookup and I don't like to see it used more and
-> > more outside of drivers/clk/clk.c. You mentioned that performance wasn't
-> > really the problem here.  The real method for a driver to get a clock is
-> > with clk_get(). Any reason to not use that?
-> >
-> 
-> I can certainly use clk_get() but I thought that the clk consumer API was
-> not supposed to be used from within clock drivers. That's why I mentioned
-> __clk_lookup() as a possibility since that is part of the provider API.
+Hi Kevin,
 
-I would like to remove __clk_lookup some day, so the fewer users now the
-better. Additionally, now that we have unique struct clk pointers from
-clk_get it makes a lot of sense for clk_register to stop returning
-pointers to a struct clk. Hopefully we can get around to that soon.
+On Wed, Apr 1, 2015 at 2:32 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>
+> [...]
+>
+>> Unfortunately I don't fully understand why this clock needs to be
+>> enabled. It would be good if someone at Samsung can explain in more
+>> detail what the real problem really is.
+>
+> +1
+>
+> Maybe Abhilash can shed some light here?
+>
+> We really should know *why* this is needed because having the fix in the
+> clock driver just doesn't seem right.  It seems like the DMA driver
+> should be managing this clock.
 
-These two points above are enough reason for the clock provider to use
-clk_get.
-
-> 
-> Below is a RFC patch that uses clk_get() [0]. That needs another patch
-> which was part of a previous RFC and adds an alias for the mdma0 clock:
-> 
-> https://lkml.org/lkml/2015/3/27/769
-> 
-> If you think that is the correct approach then I can post it as a patch.
-> 
-> It would be great if you can also provide some feedback about the other
-> patch in the first RFC that instead of enabling and disabling the mdma0
-> clock in driver, does it in the exynos5420 platform PM callbacks:
-> 
-> https://lkml.org/lkml/2015/3/27/770
-
-This seems like a big hack to me.
-
-> 
-> I was asked to do it in the exynos5420 clk driver instead but maybe you
-> have a different opinion on that.
-> 
-> Best regards,
-> Javier
-> 
-> [0]:
-> From c118df83da8cac65cc218ae9443622592222f5d0 Mon Sep 17 00:00:00 2001
-> From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Date: Mon, 30 Mar 2015 17:11:40 +0200
-> Subject: [RFC] clk: exynos5420: Make sure MDMA0 clock is enabled during
->  suspend
-> 
-> Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
-> Management support v12") added pm support for the pl330 dma driver but
-> it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
-> during suspend and this clock needs to remain enabled in order to make
-> the system resume from a system suspend state.
-> 
-> To make sure that the clock is enabled during suspend, enable it prior
-> to entering a suspend state and disable it once the system has resumed.
-
-I'd like to understand the issue a bit further. Isn't the correct
-solution that the clk's prepare/unprepare and enable/disable callbacks
-should support the CG_STATUS requirement?
+I think my last mail might not have reached you (was accidentally sent
+as html). We are gating the aclk266_g2d clock without checking the
+CG_STATUS0 register bits as specified in the UM. It looks like we need
+to keep several clocks alive or gate them only after checking the
+CG_STATUSx register bits.
 
 Regards,
-Mike
-
-> 
-> Thanks to Abhilash Kesavan for figuring out that this was the issue.
-> 
-> Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 44 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 8b49e8b3b548..02029cf9fcb8 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -155,6 +155,7 @@ static enum exynos5x_soc exynos5x_soc;
->  #ifdef CONFIG_PM_SLEEP
->  static struct samsung_clk_reg_dump *exynos5x_save;
->  static struct samsung_clk_reg_dump *exynos5800_save;
-> +static struct clk **exynos5x_clks;
->  
->  /*
->   * list of controller registers to be saved and restored during a
-> @@ -275,8 +276,17 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
->         { .offset = GATE_IP_PERIC,              .value = 0xffffffff, },
->  };
->  
-> +/*
-> + * list of clocks that have to be kept enabled during suspend/resume cycle.
-> + */
-> +static const char *exynos5x_clk_pm[] __initdata = {
-> +       "mdma0",
-> +};
-> +
->  static int exynos5420_clk_suspend(void)
->  {
-> +       int i;
-> +
->         samsung_clk_save(reg_base, exynos5x_save,
->                                 ARRAY_SIZE(exynos5x_clk_regs));
->  
-> @@ -287,11 +297,19 @@ static int exynos5420_clk_suspend(void)
->         samsung_clk_restore(reg_base, exynos5420_set_clksrc,
->                                 ARRAY_SIZE(exynos5420_set_clksrc));
->  
-> +       for (i = 0; i < ARRAY_SIZE(exynos5x_clk_pm); i++)
-> +               clk_prepare_enable(exynos5x_clks[i]);
-> +
->         return 0;
->  }
->  
->  static void exynos5420_clk_resume(void)
->  {
-> +       int i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(exynos5x_clk_pm); i++)
-> +               clk_disable_unprepare(exynos5x_clks[i]);
-> +
->         samsung_clk_restore(reg_base, exynos5x_save,
->                                 ARRAY_SIZE(exynos5x_clk_regs));
->  
-> @@ -307,6 +325,9 @@ static struct syscore_ops exynos5420_clk_syscore_ops = {
->  
->  static void exynos5420_clk_sleep_init(void)
->  {
-> +       int i;
-> +       int clk_len = ARRAY_SIZE(exynos5x_clk_pm);
-> +
->         exynos5x_save = samsung_clk_alloc_reg_dump(exynos5x_clk_regs,
->                                         ARRAY_SIZE(exynos5x_clk_regs));
->         if (!exynos5x_save) {
-> @@ -323,8 +344,31 @@ static void exynos5420_clk_sleep_init(void)
->                         goto err_soc;
->         }
->  
-> +       exynos5x_clks = kzalloc(sizeof(struct clk *) * clk_len, GFP_KERNEL);
-> +       if (!exynos5x_clks)
-> +               goto err_clks;
-> +
-> +       for (i = 0; i < clk_len; i++) {
-> +               exynos5x_clks[i] = clk_get(NULL, exynos5x_clk_pm[i]);
-> +               if (IS_ERR(exynos5x_clks[i])) {
-> +                       pr_warn("Failed to get %s clk (%ld)\n",
-> +                               exynos5x_clk_pm[i], PTR_ERR(exynos5x_clks[i]));
-> +
-> +                       while (i--)
-> +                               clk_put(exynos5x_clks[i]);
-> +
-> +                       goto err_clkget;
-> +               }
-> +       }
-> +
->         register_syscore_ops(&exynos5420_clk_syscore_ops);
->         return;
-> +err_clkget:
-> +       kfree(exynos5x_clks);
-> +err_clks:
-> +       kfree(exynos5800_save);
-> +       pr_warn("%s: failed to allocate suspend clocks, no sleep support!\n",
-> +               __func__);
->  err_soc:
->         kfree(exynos5x_save);
->         pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
-> -- 
-> 2.1.4
+Abhilash
