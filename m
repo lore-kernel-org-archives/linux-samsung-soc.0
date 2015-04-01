@@ -1,120 +1,74 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
- enabled during suspend
-Date: Wed, 01 Apr 2015 19:31:25 +0200
-Message-ID: <551C2B6D.4010001@samsung.com>
-References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
- <1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
- <CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>
- <551976F1.1000605@collabora.co.uk>
- <CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com>
- <551AFCCE.4050404@collabora.co.uk> <551BD07E.2090506@samsung.com>
- <551BDA0A.7010704@collabora.co.uk>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL 1/5] Samsung non-critical-fixes for v4.1
+Date: Thu, 02 Apr 2015 03:15:54 +0900
+Message-ID: <551C35DA.6070003@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:23982 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752566AbbDARbn (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:45331 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752679AbbDASQM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Apr 2015 13:31:43 -0400
-In-reply-to: <551BDA0A.7010704@collabora.co.uk>
+	Wed, 1 Apr 2015 14:16:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hello Javier,
+The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 
-On 01/04/15 13:44, Javier Martinez Canillas wrote:
-> On 04/01/2015 01:03 PM, Sylwester Nawrocki wrote:
->> On 31/03/15 22:00, Javier Martinez Canillas wrote:
->>> On 03/31/2015 04:38 PM, Abhilash Kesavan wrote:
->>>> javier.martinez@collabora.co.uk> wrote:
->>>> I had a look at this some more today. The problem actually occurs when the
->>>> mdma0 clock's parent - aclk266_g2d gets disabled. The run-time pm support
->>>> in the dma driver disables mdma0 and in turn aclk266_g2d which causes the
->>>> issue.
->>>> From the User Manual, it appears that aclk266_g2d should be gated only when
->>>> certain bits in the clock gating status register are 0. I cannot say for
->>>> certain, but our gating the aclk266_g2d clock without the CG_STATUS bits
->>>> being 0 could be a cause of the suspend failure.
->>>>
->>>
->>> Thanks a lot for the explanation. I see the NOTE at the bottom of section
->>> 7.9.1.159 CLK_GATE_BUS_TOP that mentions that. I'll add this information
->>> to the commit message when posting as a proper patch instead of a RFC.
->>>
->>> I confirmed that changing the patch to prevent "aclk266_g2d" to be gated
->>> instead of "mdm0" also makes the system to resume correctly from suspend
->>> so I'll change that on the patch as well.
->>>
->>> I see that many of the Exynos5420 clocks (including "aclk266_g2d") use the
->>> CLK_IGNORE_UNUSED flag but AFAIU it only prevents the common clock framework
->>> to disable the clocks on init but doesn't prevent the clocks to be disabled
->>> if all the clock childs are gated so the parent is gated as well.
->>>
->>>> As the CG_STATUS bits are not being checked anywhere in the kernel I think
->>>> aclk266_g2d (and others in GATE_BUS_TOP) should not be gated. I am OK with
->>>
->>> For now I'll just add "aclk266_g2d" but later if needed all the GATE_BUS_TOP
->>> clocks (and others) that should only be gated when CG_STATUS is 0 can be
->>> added. My patch iterates over a list of clocks to be kept during suspend even
->>> when there is only one for now so adding more later if needed will be trivial.
->>
->> It's not clear what subsystems affect state of the CG_STATUSx registers, it
->> would be good if we could get more information on that. They are in the PMU
->> block and are related to LPI (Low Power Interface handshaking), but what
->> subsystems/peripheral blocks exactly are associated with them it's not clear
->> from the documentation.
-> 
-> Yes, I've been looking at the docs again and found out a couple of things:
-> 
-> * Each GC_STATUSx register bit is associated with an IP hw block
-> * Some LPI_MASKx registers maps exactly with the GC_STATUSx (i.e: 0 and 1)
->   and others maps only partially (i.e: LPI_MASK2 and GC_STATUS2)
+  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
 
-The CG_STATUSx and LPI_MASKx bits meaning is not matching according to
-documentation I have. I guess you've got something newer than REV0.00?
+are available in the git repository at:
 
-> So it is related to LPI as you said and both LPI_MASKx and GC_STATUSx are
-> part of the PMU register address space.
-> 
-> In the particular case of aclk266_g2d, the doc says that the clock can only
-> be gated when CG_STATUS0[20] and CG_STATUS0[21] are 0. These are associated
-> with the SSS and SSS_SLIM respectively which AFAIU are crypto h/w modules.
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-fixes-v4.1
 
-In my Exynos5420 UM ACLK_266_G2D is associated with CG_STATUS0 register
-bits 22, 21, which in turn correspond to NR3D and DIS IP blocks, i.e.
-the camera subsystem. Such a dependency would be rather surprising.
+for you to fetch changes up to a11176e65b8727158bc355ca0cb00bf70cd69e48:
 
->> I think it's essential to understand what triggers changes in CG_STATUSx
->> registers, before we start checking their value in the clock driver.
->>
-> 
-> Indeed, we should really understand what the status on these registers
-> means. Also is not clear from the docs how much time should be waited,
-> how long until giving up, etc.
+  ARM: S3C24XX: avoid a Kconfig warning (2015-02-27 05:50:25 +0900)
 
-Exactly, I checked some kernels from http://opensource.samsung.com
-(e.g. SM-N900_JB_Opensource.zip) for CG_STATUSx, but I didn't find anything
-related to these registers yet, except the address macro definitions
-and debug traces in the power domains driver.
+----------------------------------------------------------------
+Samsung non-critical fixes for v4.1
 
->> Also it might be that there are indeed some clocks which must stay enabled
->> over suspend/resume cycle, then the approach with enabling/disabling clocks
->> in the clock driver might not be such a hack as it looks at first sight.
->>
-> 
-> Having a clock driver to both a provider and consumer feels hacky to me as
-> well but I didn't find a better way to solve this issue... another option
-> is to have this workaround to solve the S2R issue while we figure out what
-> the the state in the CG_STATUSx really mean.
+- mostly trivial build fixes with random configurations
+  from Arnd Bergmann
 
-Let's try to diagnose the issue best we can, then we would choose the most
-accurate bug fix.
+  for s3c24xx:
+  avoid a Kconfig warning and fix header file inclusions,
+  and fix building without PM_SLEEP and use SAMSUNG_WAKEMASK
 
--- 
-Regards,
-Sylwester
+  for s3c64xx:
+  fix __initdata section mismatch and add I2C dependencies,
+  and fix building with PM_SLEEP
+
+----------------------------------------------------------------
+Arnd Bergmann (7):
+      ARM: S3C64XX: add I2C dependencies where needed
+      ARM: S3C64XX: fix building without CONFIG_PM_SLEEP
+      ARM: S3C64XX: fix __initdata section mismatch
+      ARM: S3C24XX: use SAMSUNG_WAKEMASK for s3c2416
+      ARM: S3C24XX: fix building without PM_SLEEP
+      ARM: S3C24XX: fix header file inclusions
+      ARM: S3C24XX: avoid a Kconfig warning
+
+ arch/arm/mach-s3c24xx/Kconfig                | 19 ++++++++++---------
+ arch/arm/mach-s3c24xx/Makefile               |  3 ++-
+ arch/arm/mach-s3c24xx/include/mach/pm-core.h | 24 ++++++++++++++++++++++--
+ arch/arm/mach-s3c24xx/pm-s3c2416.c           |  3 ++-
+ arch/arm/mach-s3c24xx/pm.c                   |  6 ++++--
+ arch/arm/mach-s3c24xx/s3c2410.c              |  2 +-
+ arch/arm/mach-s3c24xx/s3c2412.c              |  2 +-
+ arch/arm/mach-s3c24xx/s3c2416.c              |  2 +-
+ arch/arm/mach-s3c24xx/s3c2440.c              |  4 ++--
+ arch/arm/mach-s3c24xx/s3c2442.c              |  4 ++--
+ arch/arm/mach-s3c24xx/s3c244x.c              |  7 ++-----
+ arch/arm/mach-s3c64xx/Kconfig                |  4 +++-
+ arch/arm/mach-s3c64xx/Makefile               |  3 ++-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c        |  2 +-
+ arch/arm/mach-s3c64xx/pm.c                   |  2 ++
+ arch/arm/plat-samsung/include/plat/pm.h      | 14 +++++++++++---
+ arch/arm/plat-samsung/pm-debug.c             |  1 +
+ arch/arm/plat-samsung/pm.c                   | 20 --------------------
+ 18 files changed, 69 insertions(+), 53 deletions(-)
