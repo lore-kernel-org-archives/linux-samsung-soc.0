@@ -1,86 +1,48 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/2] ARM: EXYNOS: Get current parent clock for power domain
- on/off
-Date: Thu, 02 Apr 2015 10:06:18 +0200
-Message-ID: <1427961979-29477-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 0/6] arm64: dts: exynos: Add USB/PWM/UART3/reboot dt node for
+ Exynos5433 SoC
+Date: Thu, 02 Apr 2015 17:34:31 +0900
+Message-ID: <1427963677-32661-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:46584 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771AbbDBIep (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Apr 2015 04:34:45 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org
+Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, jaewon02.kim@samsung.com, beomho.seo@samsung.com, jy0922.shim@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Using a fixed (by DTS) parent for clocks when turning on the power domain
-may introduce issues in other drivers. For example when such driver
-changes the parent during runtime and expects that he is the only place
-of such change.
+This patch-set add the following devicetree to support USB/PWM/UART3/reboot.
+- USB 3.0 DRD (Dual Role Device) and host
+- PWM (Pulse Width Modulation)
+- UART3
+- System reboot
 
-Do not rely entirely on DTS providing the fixed parent for such clocks.
-Instead if "pclkN" clock name is missing, grab a current parent of clock
-with clk_get_parent().
+Depend on:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 8 +++++---
- arch/arm/mach-exynos/pm_domains.c                             | 9 ++++++---
- 2 files changed, 11 insertions(+), 6 deletions(-)
+This patch-set have the dependnecy on following patch[1] to support USB 3.0
+Host and DRD (Dual Role Device) for Exynos5433 SoC. This patch[1] was merged
+by Kishon Vijay Abraham I (GENERIC PHY FRAMEWORK maintainer).
+[1] https://lkml.org/lkml/2015/3/25/984
+    : [PATCH RESEND] phy: exynos5-usbdrd: Add to support for Exynos5433 SoC
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 5da38c5ed476..0fc1312f6fd5 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -19,9 +19,11 @@ Optional Properties:
- 	domains.
- - clock-names: The following clocks can be specified:
- 	- oscclk: Oscillator clock.
--	- pclkN, clkN: Pairs of parent of input clock and input clock to the
--		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
--		are supported currently.
-+	- pclkN, clkN: Input clocks (clkN) to the devices in this power domain.
-+		Optionally with parrents (pclkN). If such parent is provided
-+		it will be used for reparenting the given clock when domain
-+		is turned on. Otherwise the parent before power down will be
-+		used. Maximum of 4 pairs (N = 0 to 3) are supported currently.
- 	- asbN: Clocks required by asynchronous bridges (ASB) present in
- 		the power domain. These clock should be enabled during power
- 		domain on/off operations.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index cbe56b35aea0..c55bcf52a6ad 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -37,6 +37,7 @@ struct exynos_pm_domain {
- 	struct clk *oscclk;
- 	struct clk *clk[MAX_CLK_PER_DOMAIN];
- 	struct clk *pclk[MAX_CLK_PER_DOMAIN];
-+	unsigned int pclk_dynamic:MAX_CLK_PER_DOMAIN;
- 	struct clk *asb_clk[MAX_CLK_PER_DOMAIN];
- };
- 
-@@ -62,6 +63,9 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
- 			if (IS_ERR(pd->clk[i]))
- 				break;
-+			/* If parent was not set in DT, save current parent */
-+			if (pd->pclk_dynamic & (1 << i))
-+				pd->pclk[i] = clk_get_parent(pd->clk[i]);
- 			if (clk_set_parent(pd->clk[i], pd->oscclk))
- 				pr_err("%s: error setting oscclk as parent to clock %d\n",
- 						pd->name, i);
-@@ -164,9 +168,8 @@ static __init int exynos4_pm_init_power_domain(void)
- 			snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
- 			pd->pclk[i] = clk_get(dev, clk_name);
- 			if (IS_ERR(pd->pclk[i])) {
--				clk_put(pd->clk[i]);
--				pd->clk[i] = ERR_PTR(-EINVAL);
--				break;
-+				pd->pclk_dynamic |= (1 << i);
-+				pd->pclk[i] = clk_get_parent(pd->clk[i]);
- 			}
- 		}
- 
+Beomho Seo (1):
+  arm64: dts: exynos: Add UART3 dt node for Exynos5433 SoC
+
+Jaewon Kim (4):
+  arm64: dts: exynos: Add EHCI and OHCI dt node for Exynos5433
+  arm64: dts: exynos: Add USB Device dt node for Exynos5433
+  arm64: dts: exynos: Add USB3.0 Host dt node for Exynos5433
+  arm64: dts: exynos: Add PWM dt node and pinctrl for Exynos5433 SoC
+
+Joonyoung Shim (1):
+  arm64: dts: exynos: add reboot node for exynos5433
+
+ arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  35 +++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 167 +++++++++++++++++++++
+ 2 files changed, 202 insertions(+)
+
 -- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.8.5.5
