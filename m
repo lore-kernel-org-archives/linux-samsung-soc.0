@@ -1,65 +1,68 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ
- on Arndale Octa
-Date: Thu, 02 Apr 2015 16:36:16 +0200
-Message-ID: <1427985376-20420-3-git-send-email-k.kozlowski@samsung.com>
-References: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v7 1/9] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Thu, 2 Apr 2015 18:35:58 +0100
+Message-ID: <20150402173558.GB30669@leverpostej>
+References: <1426637856-3730-1-git-send-email-cw00.choi@samsung.com>
+ <1426637856-3730-2-git-send-email-cw00.choi@samsung.com>
+ <20150330160940.GA13731@leverpostej>
+ <5519E2B6.2030905@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:40992 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751473AbbDBRgE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Apr 2015 13:36:04 -0400
+Content-Disposition: inline
+In-Reply-To: <5519E2B6.2030905@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "kgene@kernel.org" <kgene@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "ideal.song@samsung.com" <ideal.song@samsung.com>, "a.kesavan@samsung.com" <a.kesavan@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Arndale Octa the S2MPS11 RTC alarm interrupt was not handled at all
-because of wrong configuration of interrupt and gpx3-2.
-1. Interrupt is signaled by falling edge.
-2. This GPIO line is hard-wired on the board to PVDD_APIO_1V8 through a
-   resistor so pull-up/down must be disabled.
+On Tue, Mar 31, 2015 at 12:56:38AM +0100, Chanwoo Choi wrote:
+> Hi Mark,
+> 
+> On 03/31/2015 01:09 AM, Mark Rutland wrote:
+> > Hi,
+> > 
+> > On Wed, Mar 18, 2015 at 12:17:28AM +0000, Chanwoo Choi wrote:
+> >> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC based on
+> >> Octal core CPUs (quad Cortex-A57 and quad Cortex-A53). And Exynos5433 supports
+> >> PSCI (Power State Coordination Interface) v0.1.
+> >>
+> >> This patch includes following dt node to support Exynos5433 SoC:
+> >> 1. Octa core for big.LITTLE architecture
+> >> - Cortex-A53 LITTLE Quad-core
+> >> - Cortex-A57 big Quad-core
+> >> - Support PSCI v0.1
+> > 
+> > Is CPU0 hotplug still broken, or has the FW been fixed?
+> 
+> CPU0 hotplug is still not working.
+> 
+> > 
+> > I'm very worried about adding a DT that's known broken, especially when
+> > we have no idea as to if/when the FW will be fixed judging from prior
+> > replies.
+> 
+> As I replied, I can not fix the FW because I don't have any code of FW.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Surely you are able to contact those who do?
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index d78fcd997ce6..97346df31d41 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -87,7 +87,9 @@
- 			s2mps11,buck4-ramp-enable = <1>;
- 
- 			interrupt-parent = <&gpx3>;
--			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&s2mps11_irq>;
- 
- 			s2mps11_osc: clocks {
- 				#clock-cells = <1>;
-@@ -379,3 +381,12 @@
- 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
- 	clock-names = "rtc", "rtc_src";
- };
-+
-+&pinctrl_0 {
-+	s2mps11_irq: s2mps11-irq {
-+		samsung,pins = "gpx3-2";
-+		samsung,pin-function = <0xf>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
--- 
-1.9.1
+> I don't have any solution to fix it on Linux kernel level.
+> 
+> So, If you agree, I can add the comment of CPU0 hotplug issue on DT file.
+
+I disagree. I do not want to add a DT that is known to be broken;
+especially when we have no idea how to fix it. It creates long-term
+maintenance pain for everyone, and marginal gain for few. A comment does
+nothing to aid the end-user.
+
+So NAK to the PSCI node and PSCI enable method in this dts until we
+either have a working firmware, or a reasonable mechanism to handle the
+deficiency.
+
+Mark.
