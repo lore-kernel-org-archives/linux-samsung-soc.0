@@ -1,77 +1,73 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Use define for s3c-rtc clock id
-Date: Thu, 2 Apr 2015 12:16:58 +0200
-Message-ID: <CAJKOXPf=aia+aeud-7V1YrDA1rhG3eyJrH_tcY-aEKTbVTTUGQ@mail.gmail.com>
-References: <1427728889-29158-1-git-send-email-k.kozlowski@samsung.com>
-	<551A1D27.6000301@samsung.com>
-	<CABxcv=moU4xO=BNj6r4_O-VeL_OuAjCuoWiB9xsKWw9NjFTr9g@mail.gmail.com>
-	<064c01d06b7f$aed30cf0$0c7926d0$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <064c01d06b7f$aed30cf0$0c7926d0$@kernel.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] rtc: rtc-s3c: Fix failed first read of RTC time
+Date: Thu, 02 Apr 2015 13:00:59 +0200
+Message-ID: <1427972459-6480-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-03-31 8:55 GMT+02:00 Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
-> Javier Martinez Canillas wrote:
->>
->> On Tue, Mar 31, 2015 at 6:05 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> > Hi,
->> >
->> > On 03/31/2015 12:21 AM, Krzysztof Kozlowski wrote:
->> >> Use a define instead of raw number as a ID for "rtc_src" clock.
->> >>
->> >> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> >>
->> >> ---
->> >>
->> >> Patch depends on new file "dt-bindings/clock/samsung,s2mps11.h" from:
->> >> http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg43136.html
->> >> ---
->> >>  arch/arm/boot/dts/exynos3250-rinato.dts | 3 ++-
->> >>  1 file changed, 2 insertions(+), 1 deletion(-)
->> >>
->> >> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
->> >> index 3905824cac58..d2cbc95364de 100644
->> >> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
->> >> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
->> >> @@ -16,6 +16,7 @@
->> >>  #include "exynos3250.dtsi"
->> >>  #include <dt-bindings/input/input.h>
->> >>  #include <dt-bindings/gpio/gpio.h>
->> >> +#include <dt-bindings/clock/samsung,s2mps11.h>
->> >>
->> >>  / {
->> >>       model = "Samsung Rinato board";
->> >> @@ -605,7 +606,7 @@
->> >>  };
->> >>
->> >>  &rtc {
->> >> -     clocks = <&cmu CLK_RTC>, <&s2mps14_osc 0>;
->> >> +     clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
->> >>       clock-names = "rtc", "rtc_src";
->> >>       status = "okay";
->> >>  };
->> >>
->> >
->> > Looks good to me.
->> >
->> > Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> >
->>
->> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
->>
-> Thanks for you guys' review. Applied.
+Initialize the device time (if it is wrong) before registering RTC
+device to fix following error message during rtc-s3c probe:
 
-Thanks Kukjin! I forgot to do this also for exynos3250-monk board.
-I'll send another patch for it but you may squash them if you want.
+[    2.215414] rtc (null): read_time: fail to read
+[    2.216322] s3c-rtc 10070000.rtc: rtc core: registered s3c as rtc1
 
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/rtc/rtc-s3c.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 5e162eaad277..1d3a4c58fec4 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -496,6 +496,22 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+ 
++	/* Check RTC Time */
++	s3c_rtc_gettime(&pdev->dev, &rtc_tm);
++
++	if (rtc_valid_tm(&rtc_tm)) {
++		rtc_tm.tm_year	= 100;
++		rtc_tm.tm_mon	= 0;
++		rtc_tm.tm_mday	= 1;
++		rtc_tm.tm_hour	= 0;
++		rtc_tm.tm_min	= 0;
++		rtc_tm.tm_sec	= 0;
++
++		s3c_rtc_settime(&pdev->dev, &rtc_tm);
++
++		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
++	}
++
+ 	/* register RTC and exit */
+ 	info->rtc = devm_rtc_device_register(&pdev->dev, "s3c", &s3c_rtcops,
+ 				  THIS_MODULE);
+@@ -519,22 +535,6 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 		goto err_nortc;
+ 	}
+ 
+-	/* Check RTC Time */
+-	s3c_rtc_gettime(&pdev->dev, &rtc_tm);
+-
+-	if (rtc_valid_tm(&rtc_tm)) {
+-		rtc_tm.tm_year	= 100;
+-		rtc_tm.tm_mon	= 0;
+-		rtc_tm.tm_mday	= 1;
+-		rtc_tm.tm_hour	= 0;
+-		rtc_tm.tm_min	= 0;
+-		rtc_tm.tm_sec	= 0;
+-
+-		s3c_rtc_settime(&pdev->dev, &rtc_tm);
+-
+-		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
+-	}
+-
+ 	if (info->data->select_tick_clk)
+ 		info->data->select_tick_clk(info);
+ 
+-- 
+1.9.1
