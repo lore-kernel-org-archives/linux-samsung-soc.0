@@ -1,42 +1,137 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2 05/10] drm/exynos: atomic phase 2: keep track of
- framebuffer pointer
-Date: Thu,  2 Apr 2015 11:17:07 -0300
-Message-ID: <1427984231-7007-6-git-send-email-gustavo@padovan.org>
+Subject: [PATCH -v2 08/10] drm/exynos: atomic phase 3: convert page flips
+Date: Thu,  2 Apr 2015 11:17:10 -0300
+Message-ID: <1427984231-7007-9-git-send-email-gustavo@padovan.org>
 References: <1427984231-7007-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:34284 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753146AbbDBORd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Apr 2015 10:17:33 -0400
+Received: by qgep97 with SMTP id p97so70451234qge.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Apr 2015 07:17:33 -0700 (PDT)
 In-Reply-To: <1427984231-7007-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VXNlIGRybV9hdG9taWNfc2V0X2ZiX2Zvcl9wbGFuZSgpIGluIHRoZSBsZWdhY3kgcGFnZV9mbGlw
-IHBhdGggdG8ga2VlcAp0cmFjayBvZiB0aGUgZnJhbWVidWZmZXIgcG9pbnRlciBhbmQgcmVmZXJl
-bmNlLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
-bGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
-LmMgfCAzICsrKwogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IDQ0ZTczZDAuLmIwODBlODMgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtMTc0LDYgKzE3NCw5IEBA
-IHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMsCiAJCQkgICAgY3J0Y193LCBjcnRjX2gsIGNydGMtPngsIGNydGMtPnksCiAJCQkgICAgY3J0
-Y193LCBjcnRjX2gpOwogCisJaWYgKGNydGMtPnByaW1hcnktPnN0YXRlKQorCQlkcm1fYXRvbWlj
-X3NldF9mYl9mb3JfcGxhbmUoY3J0Yy0+cHJpbWFyeS0+c3RhdGUsIGZiKTsKKwogCXJldHVybiAw
-OwogCiBvdXQ6Ci0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+PageFlips now use the atomic helper to work through the atomic modesetting
+API. Async page flips are not supported yet.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 63 +-------------------------------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c   |  9 ++++-
+ 2 files changed, 9 insertions(+), 63 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index b0888d4..0db7b91 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -123,67 +123,6 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.disable	= exynos_drm_crtc_disable,
+ };
+ 
+-static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+-				     struct drm_framebuffer *fb,
+-				     struct drm_pending_vblank_event *event,
+-				     uint32_t page_flip_flags)
+-{
+-	struct drm_device *dev = crtc->dev;
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	unsigned int crtc_w, crtc_h;
+-	int ret;
+-
+-	/* when the page flip is requested, crtc's dpms should be on */
+-	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+-		DRM_ERROR("failed page flip request.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!event)
+-		return -EINVAL;
+-
+-	spin_lock_irq(&dev->event_lock);
+-	if (exynos_crtc->event) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
+-
+-	ret = exynos_check_plane(crtc->primary, fb);
+-	if (ret)
+-		goto out;
+-
+-	ret = drm_vblank_get(dev, exynos_crtc->pipe);
+-	if (ret) {
+-		DRM_DEBUG("failed to acquire vblank counter\n");
+-		goto out;
+-	}
+-
+-	exynos_crtc->event = event;
+-	spin_unlock_irq(&dev->event_lock);
+-
+-	/*
+-	 * the pipe from user always is 0 so we can set pipe number
+-	 * of current owner to event.
+-	 */
+-	event->pipe = exynos_crtc->pipe;
+-
+-	crtc->primary->fb = fb;
+-	crtc_w = fb->width - crtc->x;
+-	crtc_h = fb->height - crtc->y;
+-	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-			    crtc_w, crtc_h, crtc->x, crtc->y,
+-			    crtc_w, crtc_h);
+-
+-	if (crtc->primary->state)
+-		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
+-
+-	return 0;
+-
+-out:
+-	spin_unlock_irq(&dev->event_lock);
+-	return ret;
+-}
+-
+ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+@@ -197,7 +136,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+ 
+ static struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_atomic_helper_set_config,
+-	.page_flip	= exynos_drm_crtc_page_flip,
++	.page_flip	= drm_atomic_helper_page_flip,
+ 	.destroy	= exynos_drm_crtc_destroy,
+ 	.reset = drm_atomic_helper_crtc_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index b83ceea..b4bc3ef 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -307,11 +307,18 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
+ 		exynos_drm_fbdev_init(dev);
+ }
+ 
++static int exynos_atomic_commit(struct drm_device *dev,
++				struct drm_atomic_state *state,
++				bool async)
++{
++	return drm_atomic_helper_commit(dev, state, false);
++}
++
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+ 	.fb_create = exynos_user_fb_create,
+ 	.output_poll_changed = exynos_drm_output_poll_changed,
+ 	.atomic_check = drm_atomic_helper_check,
+-	.atomic_commit = drm_atomic_helper_commit,
++	.atomic_commit = exynos_atomic_commit,
+ };
+ 
+ void exynos_drm_mode_config_init(struct drm_device *dev)
+-- 
+2.1.0
