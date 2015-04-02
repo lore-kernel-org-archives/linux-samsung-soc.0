@@ -1,35 +1,78 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] rtc: rtc-s3c: Remove one superfluous rtc_valid_tm() check
-Date: Thu, 02 Apr 2015 16:31:56 +0200
-Message-ID: <1427985116-20314-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] mfd: sec: Fix RTC alarm interrupt number on S2MPS11
+Date: Thu, 02 Apr 2015 16:36:15 +0200
+Message-ID: <1427985376-20420-2-git-send-email-k.kozlowski@samsung.com>
+References: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The s3c_rtc_gettime() returns already result of rtc_valid_tm() on
-obtained time so get rid of another call to rtc_valid_tm().
+The RTC on S2MPS11 is the same as S2MPS14. However interrupt numbers of
+RTC alarms 0 and 1 were inversed between these two devices. So when
+rtc-s5m driver requested S2MPS14_IRQ_RTCA0 interrupt, it matched to
+S2MPS11_IRQ_RTCA1, not RTCA0.
+
+Fix this by using consistent RTC alarm interrupt numbers and adding a
+BUILD_BUG_ON for future generations.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/rtc/rtc-s3c.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mfd/sec-irq.c           | 14 ++++++++++----
+ include/linux/mfd/samsung/irq.h |  2 +-
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 1d3a4c58fec4..a0f832362199 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -497,9 +497,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 	device_init_wakeup(&pdev->dev, 1);
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index ba86a918c2da..806fa8dbb22d 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -61,14 +61,14 @@ static const struct regmap_irq s2mps11_irqs[] = {
+ 		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTC60S_MASK,
+ 	},
+-	[S2MPS11_IRQ_RTCA0] = {
+-		.reg_offset = 1,
+-		.mask = S2MPS11_IRQ_RTCA0_MASK,
+-	},
+ 	[S2MPS11_IRQ_RTCA1] = {
+ 		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTCA1_MASK,
+ 	},
++	[S2MPS11_IRQ_RTCA0] = {
++		.reg_offset = 1,
++		.mask = S2MPS11_IRQ_RTCA0_MASK,
++	},
+ 	[S2MPS11_IRQ_SMPL] = {
+ 		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_SMPL_MASK,
+@@ -484,6 +484,12 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+ 		return ret;
+ 	}
  
- 	/* Check RTC Time */
--	s3c_rtc_gettime(&pdev->dev, &rtc_tm);
--
--	if (rtc_valid_tm(&rtc_tm)) {
-+	if (s3c_rtc_gettime(&pdev->dev, &rtc_tm)) {
- 		rtc_tm.tm_year	= 100;
- 		rtc_tm.tm_mon	= 0;
- 		rtc_tm.tm_mday	= 1;
++	/*
++	 * The rtc-s5m driver requests S2MPS14_IRQ_RTCA0 also for S2MPS11
++	 * so the interrupt number must be consistent.
++	 */
++	BUILD_BUG_ON(((enum s2mps14_irq)S2MPS11_IRQ_RTCA0) != S2MPS14_IRQ_RTCA0);
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
+index f35af7361b60..667aa40486dd 100644
+--- a/include/linux/mfd/samsung/irq.h
++++ b/include/linux/mfd/samsung/irq.h
+@@ -74,8 +74,8 @@ enum s2mps11_irq {
+ 	S2MPS11_IRQ_MRB,
+ 
+ 	S2MPS11_IRQ_RTC60S,
+-	S2MPS11_IRQ_RTCA0,
+ 	S2MPS11_IRQ_RTCA1,
++	S2MPS11_IRQ_RTCA0,
+ 	S2MPS11_IRQ_SMPL,
+ 	S2MPS11_IRQ_RTC1S,
+ 	S2MPS11_IRQ_WTSR,
 -- 
 1.9.1
