@@ -1,90 +1,96 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/6] arm64: dts: exynos: Add USB3.0 Host dt node for Exynos5433
-Date: Thu, 02 Apr 2015 17:34:34 +0900
-Message-ID: <1427963677-32661-4-git-send-email-cw00.choi@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 4/6] arm64: dts: exynos: Add PWM dt node and pinctrl for
+ Exynos5433 SoC
+Date: Thu, 02 Apr 2015 17:34:35 +0900
+Message-ID: <1427963677-32661-5-git-send-email-cw00.choi@samsung.com>
 References: <1427963677-32661-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1427963677-32661-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:52490 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752436AbbDBIet (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Apr 2015 04:34:49 -0400
+In-reply-to: <1427963677-32661-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org
+Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, jaewon02.kim@samsung.com, beomho.seo@samsung.com, jy0922.shim@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Jaewon Kim <jaewon02.kim@samsung.com>
 
-This patch adds PHY and USB3.0 Host device tree node
-using DWC3 chip and set USB3.0 Host related clock parent
-for Exynos5433.
+This patch adds PWM(Pulsle Width Modulation) device tree node
+to support for PWM Timer on Exynos5433 SoC.
 
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 46 ++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 28 ++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 12 ++++++++++
+ 2 files changed, 40 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+index c56bbf8..49be038 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+@@ -581,6 +581,34 @@
+ 		samsung,pin-drv = <0>;
+ 	};
+ 
++	pwm0_out: pwm0-out {
++		samsung,pins = "gpd2-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm1_out: pwm1-out {
++		samsung,pins = "gpd2-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm2_out: pwm2-out {
++		samsung,pins = "gpd2-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm3_out: pwm3-out {
++		samsung,pins = "gpd2-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
+ 	spi1_bus: spi1-bus {
+ 		samsung,pins = "gpd6-2", "gpd6-4", "gpd6-5";
+ 		samsung,pin-function = <2>;
 diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index b460f5f..9cca236 100644
+index 9cca236..baeec299 100644
 --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1006,6 +1006,52 @@
- 			samsung,pmu-syscon = <&pmu_system_controller>;
- 			status = "disabled";
+@@ -1052,6 +1052,18 @@
+ 				phy-names = "usb2-phy", "usb3-phy";
+ 			};
  		};
 +
-+		usbhost30_phy: phy@15580000 {
-+			compatible = "samsung,exynos5433-usbdrd-phy";
-+			reg = <0x15580000 0x100>;
-+			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>, <&xxti>,
-+				<&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PHYCLOCK>,
-+				<&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK>,
-+				<&cmu_fsys CLK_SCLK_USBHOST30>;
-+			clock-names = "phy", "ref", "phy_utmi", "phy_pipe", "itp";
-+			assigned-clocks =
-+				<&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK_USER>,
-+				<&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PHYCLOCK_USER>;
-+			assigned-clock-parents =
-+				<&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK_PHY>,
-+				<&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PHYCLOCK_PHY>;
-+			#phy-cells = <1>;
-+			samsung,pmu-syscon = <&pmu_system_controller>;
++		pwm: pwm@14dd0000 {
++			compatible = "samsung,exynos4210-pwm";
++			reg = <0x14dd0000 0x100>;
++			interrupts = <0 416 0>, <0 417 0>,
++				     <0 418 0>, <0 419 0>, <0 420 0>;
++			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
++			clocks = <&cmu_peric CLK_PCLK_PWM>;
++			clock-names = "timers";
++			#pwm-cells = <3>;
 +			status = "disabled";
-+		};
-+
-+		usbhost30: usb@15a00000 {
-+			compatible = "samsung,exynos5250-dwusb3";
-+			clocks = <&cmu_fsys CLK_ACLK_USBHOST30>,
-+				<&cmu_fsys CLK_SCLK_USBHOST30>;
-+			clock-names = "usbdrd30", "usbdrd30_susp_clk";
-+			assigned-clocks =
-+				<&cmu_fsys CLK_MOUT_SCLK_USBHOST30_USER>,
-+				<&cmu_top CLK_MOUT_SCLK_USBHOST30>,
-+				<&cmu_top CLK_DIV_SCLK_USBHOST30>;
-+			assigned-clock-parents =
-+				<&cmu_top CLK_SCLK_USBHOST30_FSYS>,
-+				<&cmu_top CLK_MOUT_BUS_PLL_USER>;
-+			assigned-clock-rates = <0>, <0>, <66700000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			status = "disabled";
-+
-+			dwc3 {
-+				compatible = "snps,dwc3";
-+				reg = <0x154a0000 0x10000>;
-+				interrupts = <0 244 0>;
-+				phys = <&usbhost30_phy 0>, <&usbhost30_phy 1>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+			};
 +		};
  	};
  
  	timer {
 -- 
 1.8.5.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
