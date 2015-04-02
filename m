@@ -1,34 +1,151 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: dts: Enable S3C RTC on Trats2, Odroid-U3 and
- Arndale Octa
-Date: Thu, 02 Apr 2015 14:18:34 +0200
-Message-ID: <551D339A.5000808@collabora.co.uk>
-References: <1427972588-6573-1-git-send-email-k.kozlowski@samsung.com> <1427972588-6573-2-git-send-email-k.kozlowski@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
+ enabled during suspend
+Date: Thu, 2 Apr 2015 17:52:24 +0530
+Message-ID: <CAM4voakS8PnatqRTW5gkD0NNKD9gW9Tuv5p-ekxFhKN5NcuBCQ@mail.gmail.com>
+References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>
+	<CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>
+	<551976F1.1000605@collabora.co.uk>
+	<CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com>
+	<551AFCCE.4050404@collabora.co.uk>
+	<551BD07E.2090506@samsung.com>
+	<551BDA0A.7010704@collabora.co.uk>
+	<551C2B6D.4010001@samsung.com>
+	<551C71A5.1070903@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1427972588-6573-2-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f177.google.com ([209.85.216.177]:33130 "EHLO
+	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750747AbbDBMWZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Apr 2015 08:22:25 -0400
+In-Reply-To: <551C71A5.1070903@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Krzysztof,
+Hi,
 
-On 04/02/2015 01:03 PM, Krzysztof Kozlowski wrote:
-> Extend the S3C RTC node with rtc_src clock so it could be operational.
-> The rtc_src clock is provided by MAX77686 (Trats2 and Odroid-U3) or
-> S2MPS11 (Arndale Octa).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Thu, Apr 2, 2015 at 4:01 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Sylwester,
+>
+> On 04/01/2015 07:31 PM, Sylwester Nawrocki wrote:
+>> On 01/04/15 13:44, Javier Martinez Canillas wrote:
+>>> On 04/01/2015 01:03 PM, Sylwester Nawrocki wrote:
+>>>> It's not clear what subsystems affect state of the CG_STATUSx registers, it
+>>>> would be good if we could get more information on that. They are in the PMU
+>>>> block and are related to LPI (Low Power Interface handshaking), but what
+>>>> subsystems/peripheral blocks exactly are associated with them it's not clear
+>>>> from the documentation.
+>>>
+>>> Yes, I've been looking at the docs again and found out a couple of things:
+>>>
+>>> * Each GC_STATUSx register bit is associated with an IP hw block
+>>> * Some LPI_MASKx registers maps exactly with the GC_STATUSx (i.e: 0 and 1)
+>>>   and others maps only partially (i.e: LPI_MASK2 and GC_STATUS2)
+>>
+>> The CG_STATUSx and LPI_MASKx bits meaning is not matching according to
+>> documentation I have. I guess you've got something newer than REV0.00?
+>>
+>
+> My Exynos5420 UM is Revision 1.00 dated February 2014 and GC_STATUS0 bits
+> maps LPI_MASK0 with the exception of bit 16 (NR3D) that is not mentioned
+> in GC_STATUS0, there is a hole between 15 (DIS) and 17 (FIMC_SCALERP).
+>
+> GC_STATUS1 maps exactly with LPI_MASK1 and GC_STATUS2 and LPI_MASK2 have
+> the same bits from 0 to 5 and then differ from there.
+>
+>>> So it is related to LPI as you said and both LPI_MASKx and GC_STATUSx are
+>>> part of the PMU register address space.
+>>>
+>>> In the particular case of aclk266_g2d, the doc says that the clock can only
+>>> be gated when CG_STATUS0[20] and CG_STATUS0[21] are 0. These are associated
+>>> with the SSS and SSS_SLIM respectively which AFAIU are crypto h/w modules.
+>>
+>> In my Exynos5420 UM ACLK_266_G2D is associated with CG_STATUS0 register
+>> bits 22, 21, which in turn correspond to NR3D and DIS IP blocks, i.e.
+>> the camera subsystem. Such a dependency would be rather surprising.
+>>
+>
+> Sorry, it was a typo error and I actually meant CG_STATUS0 21 and 22 but
+> these correspond in the documentation I've to 21 (SSS) and 22 (SSS_SLIM).
+>
+> As I mentioned before, DIS correspond to CG_STATUS0 15 and NR3D doesn't
+> have a corresponding bit in CG_STATUS0. But I don't know if that is an
+> error in the doc I've since is suspicious that is the only difference
+> between LPI_MASK0 and CG_STATUS0.
+>
+>>>> I think it's essential to understand what triggers changes in CG_STATUSx
+>>>> registers, before we start checking their value in the clock driver.
+>>>>
+>>>
+>>> Indeed, we should really understand what the status on these registers
+>>> means. Also is not clear from the docs how much time should be waited,
+>>> how long until giving up, etc.
+>>
+>> Exactly, I checked some kernels from http://opensource.samsung.com
+>> (e.g. SM-N900_JB_Opensource.zip) for CG_STATUSx, but I didn't find anything
+>> related to these registers yet, except the address macro definitions
+>> and debug traces in the power domains driver.
+>>
+>
+> Yes, I also looked in the ChromiumOS v3.8 kernel but didn't find anything.
+>
+>>>> Also it might be that there are indeed some clocks which must stay enabled
+>>>> over suspend/resume cycle, then the approach with enabling/disabling clocks
+>>>> in the clock driver might not be such a hack as it looks at first sight.
+>>>>
+>>>
+>>> Having a clock driver to both a provider and consumer feels hacky to me as
+>>> well but I didn't find a better way to solve this issue... another option
+>>> is to have this workaround to solve the S2R issue while we figure out what
+>>> the the state in the CG_STATUSx really mean.
+>>
+>> Let's try to diagnose the issue best we can, then we would choose the most
+>> accurate bug fix.
+>>
+>
+> Sounds good to me.
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Based on the earlier comments I was trying to isolate if:
+1) s2r fails because we gate aclk266_g2d (but it is one of those
+clocks that needs to be always on prior to suspend).
+2) s2r fails because we gate aclk266_g2d when CG_STATUS0[21:20] bits
+are not 0 (thus not following the spec).
 
-Best regards,
-Javier
+As I did not have access to the hardware guys who could possibly
+confirm 1), I decided to
+a) find a configuration where CG_STATUS0 allows gating of the
+aclk266_g2d clock (i.e. CG_STATUS0[22:21] are 0).
+b) disable the aclk266_g2d clock using such a configuration.
+c) check s2r.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I found a configuration [1] which gave the following after boot-up:
+# devmem 0x10040914
+0xFD800014 (CG_STATUS0[22:21] is 0)
+# devmem 0x10020700
+0xC6F8DE9F (aclk266_g2d is enabled)
+
+At this point s2r works.
+
+I rebooted the board with the same config as above and then disabled
+aclk266_g2d.
+
+# devmem 0x10020700 32 0xC6F8DE9D
+# devmem 0x10020700
+0xC6F8DE9D (aclk266_g2d is disabled)
+# devmem 0x10040914
+0xFD800014
+
+and tried s2r - It fails.
+
+>From the results, disabling the clock seems to cause the issue rather
+than the CG_STATUS violation. This is all a little confusing, so
+please let me know if I have missed something.
+
+Regards,
+Abhilash
