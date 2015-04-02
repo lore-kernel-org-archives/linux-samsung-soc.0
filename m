@@ -1,96 +1,147 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/6] arm64: dts: exynos: Add PWM dt node and pinctrl for
- Exynos5433 SoC
-Date: Thu, 02 Apr 2015 17:34:35 +0900
-Message-ID: <1427963677-32661-5-git-send-email-cw00.choi@samsung.com>
-References: <1427963677-32661-1-git-send-email-cw00.choi@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 09/10] drm/exynos: remove exported functions from
+ exynos_drm_plane
+Date: Thu, 02 Apr 2015 17:43:51 +0900
+Message-ID: <551D0147.6020509@samsung.com>
+References: <1427471939-27345-1-git-send-email-gustavo@padovan.org>
+ <1427471939-27345-10-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52490 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752436AbbDBIet (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:8993 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753396AbbDBInr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Apr 2015 04:34:49 -0400
-In-reply-to: <1427963677-32661-1-git-send-email-cw00.choi@samsung.com>
+	Thu, 2 Apr 2015 04:43:47 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NM600EDD88XJRB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Apr 2015 17:43:45 +0900 (KST)
+In-reply-to: <1427471939-27345-10-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, jaewon02.kim@samsung.com, beomho.seo@samsung.com, jy0922.shim@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-From: Jaewon Kim <jaewon02.kim@samsung.com>
+Hi,
 
-This patch adds PWM(Pulsle Width Modulation) device tree node
-to support for PWM Timer on Exynos5433 SoC.
+On 03/28/2015 12:58 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> Now that no one is using the functions exported by exynos_drm_plane due
+> to the atomic conversion we can make remove some of the them or make them
+> static.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c | 91 +++++++++++++------------------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h | 11 ----
+>  2 files changed, 38 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> index e83908a..7f8f962 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> @@ -62,35 +62,12 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
+>  	return size;
+>  }
+>  
+> -int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
+> -{
+> -	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+> -	int nr;
+> -	int i;
+> -
+> -	nr = exynos_drm_fb_get_buf_cnt(fb);
+> -	for (i = 0; i < nr; i++) {
+> -		struct exynos_drm_gem_buf *buffer = exynos_drm_fb_buffer(fb, i);
+> -
+> -		if (!buffer) {
+> -			DRM_DEBUG_KMS("buffer is null\n");
+> -			return -EFAULT;
+> -		}
+> -
+> -		exynos_plane->dma_addr[i] = buffer->dma_addr;
+> -
+> -		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
+> -				i, (unsigned long)exynos_plane->dma_addr[i]);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+> -			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+> -			  unsigned int crtc_w, unsigned int crtc_h,
+> -			  uint32_t src_x, uint32_t src_y,
+> -			  uint32_t src_w, uint32_t src_h)
+> +static void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+> +				  struct drm_framebuffer *fb,
+> +				  int crtc_x, int crtc_y,
+> +				  unsigned int crtc_w, unsigned int crtc_h,
+> +				  uint32_t src_x, uint32_t src_y,
+> +				  uint32_t src_w, uint32_t src_h)
+>  {
+>  	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+>  	unsigned int actual_w;
+> @@ -141,24 +118,6 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+>  	plane->crtc = crtc;
+>  }
+>  
+> -void
+> -exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+> -		     struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+> -		     unsigned int crtc_w, unsigned int crtc_h,
+> -		     uint32_t src_x, uint32_t src_y,
+> -		     uint32_t src_w, uint32_t src_h)
+> -{
+> -	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> -	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+> -
+> -	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
+> -			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
+> -			      src_w >> 16, src_h >> 16);
+> -
+> -	if (exynos_crtc->ops->win_commit)
+> -		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+> -}
+> -
+>  static struct drm_plane_funcs exynos_plane_funcs = {
+>  	.update_plane	= drm_atomic_helper_update_plane,
+>  	.disable_plane	= drm_atomic_helper_disable_plane,
+> @@ -171,19 +130,45 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+>  static int exynos_plane_atomic_check(struct drm_plane *plane,
+>  				     struct drm_plane_state *state)
+>  {
+> -	return exynos_check_plane(plane, state->fb);
+> +	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+> +	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(plane->crtc);
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 28 ++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 12 ++++++++++
- 2 files changed, 40 insertions(+)
+Here exynos_crtc is unnecessary.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-index c56bbf8..49be038 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-@@ -581,6 +581,34 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	pwm0_out: pwm0-out {
-+		samsung,pins = "gpd2-4";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm1_out: pwm1-out {
-+		samsung,pins = "gpd2-5";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm2_out: pwm2-out {
-+		samsung,pins = "gpd2-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm3_out: pwm3-out {
-+		samsung,pins = "gpd2-7";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	spi1_bus: spi1-bus {
- 		samsung,pins = "gpd6-2", "gpd6-4", "gpd6-5";
- 		samsung,pin-function = <2>;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 9cca236..baeec299 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1052,6 +1052,18 @@
- 				phy-names = "usb2-phy", "usb3-phy";
- 			};
- 		};
-+
-+		pwm: pwm@14dd0000 {
-+			compatible = "samsung,exynos4210-pwm";
-+			reg = <0x14dd0000 0x100>;
-+			interrupts = <0 416 0>, <0 417 0>,
-+				     <0 418 0>, <0 419 0>, <0 420 0>;
-+			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+			clocks = <&cmu_peric CLK_PCLK_PWM>;
-+			clock-names = "timers";
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	timer {
--- 
-1.8.5.5
+> +	int nr;
+> +	int i;
+> +
+> +	nr = exynos_drm_fb_get_buf_cnt(state->fb);
+> +	for (i = 0; i < nr; i++) {
+> +		struct exynos_drm_gem_buf *buffer =
+> +					exynos_drm_fb_buffer(state->fb, i);
+> +
+> +		if (!buffer) {
+> +			DRM_DEBUG_KMS("buffer is null\n");
+> +			return -EFAULT;
+> +		}
+> +
+> +		exynos_plane->dma_addr[i] = buffer->dma_addr;
+> +
+> +		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
+> +				i, (unsigned long)exynos_plane->dma_addr[i]);
+> +	}
+> +
+> +	return 0;
+>  }
+
+Thanks.
