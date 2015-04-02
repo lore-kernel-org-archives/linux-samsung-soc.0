@@ -1,15 +1,17 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH -v2 00/10] drm/exynos: Add atomic modesetting support
-Date: Thu,  2 Apr 2015 11:17:02 -0300
-Message-ID: <1427984231-7007-1-git-send-email-gustavo@padovan.org>
+Subject: [PATCH -v2 02/10] drm/exynos: atomic phase 1: use drm_plane_helper_disable()
+Date: Thu,  2 Apr 2015 11:17:04 -0300
+Message-ID: <1427984231-7007-3-git-send-email-gustavo@padovan.org>
+References: <1427984231-7007-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f53.google.com ([209.85.192.53]:36048 "EHLO
-	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753146AbbDBORQ (ORCPT
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:34205 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753146AbbDBORV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Apr 2015 10:17:16 -0400
-Received: by qgeb100 with SMTP id b100so29743442qge.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Apr 2015 07:17:16 -0700 (PDT)
+	Thu, 2 Apr 2015 10:17:21 -0400
+Received: by qcay5 with SMTP id y5so67774329qca.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Apr 2015 07:17:20 -0700 (PDT)
+In-Reply-To: <1427984231-7007-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -17,52 +19,79 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.c
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi,
+The atomic helper to disable planes also uses the optional
+.atomic_disable() helper. The unique operation it does is calling
+.win_disable()
 
-Here goes the full support for atomic modesetting on exynos. I've
-split the patches in the various phases of atomic support.
+exynos_drm_fb_get_buf_cnt() needs a fb check too to avoid a null pointer.
 
-These patches sits on top of the clean up patches I've sent yesterday
-to this mailing list[1].
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 26 +++++++++++++-------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-v2: fixes comments by Joonyoung
-	- remove unused var in patch 09
-	- use ->disable instead of outdated ->dpms in hdmi code
-	- remove WARN_ON from crtc enable/disable
-
-	Gustavo
-
-[1] http://lists.freedesktop.org/archives/dri-devel/2015-April/080449.html
-
-Gustavo Padovan (10):
-  drm/exynos: atomic phase 1: use drm_plane_helper_update()
-  drm/exynos: atomic phase 1: use drm_plane_helper_disable()
-  drm/exynos: atomic phase 1: add .mode_set_nofb() callback
-  drm/exynos: atomic phase 2: wire up state reset(), duplicate() and
-    destroy()
-  drm/exynos: atomic phase 2: keep track of framebuffer pointer
-  drm/exynos: atomic phase 3: atomic updates of planes
-  drm/exynos: atomic phase 3: use atomic .set_config helper
-  drm/exynos: atomic phase 3: convert page flips
-  drm/exynos: remove exported functions from exynos_drm_plane
-  drm/exynos: atomic dpms support
-
- drivers/gpu/drm/bridge/ptn3460.c              |   4 +
- drivers/gpu/drm/exynos/exynos_dp_core.c       |   6 +-
- drivers/gpu/drm/exynos/exynos_drm_connector.c |   6 +-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 226 ++++++++------------------
- drivers/gpu/drm/exynos/exynos_drm_dpi.c       |   6 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.c       |   2 +
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |   4 +-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c       |   6 +-
- drivers/gpu/drm/exynos/exynos_drm_encoder.c   |  27 +--
- drivers/gpu/drm/exynos/exynos_drm_fb.c        |  12 +-
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |   3 -
- drivers/gpu/drm/exynos/exynos_drm_plane.c     | 113 +++++++------
- drivers/gpu/drm/exynos/exynos_drm_plane.h     |  11 --
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |   6 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c          |  10 +-
- 15 files changed, 187 insertions(+), 255 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index d346d1e..470456d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -136,7 +136,7 @@ unsigned int exynos_drm_fb_get_buf_cnt(struct drm_framebuffer *fb)
+ 
+ 	exynos_fb = to_exynos_fb(fb);
+ 
+-	return exynos_fb->buf_cnt;
++	return exynos_fb ? exynos_fb->buf_cnt : 0;
+ }
+ 
+ struct drm_framebuffer *
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 5a37816..2152a24 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -158,21 +158,9 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+ }
+ 
+-static int exynos_disable_plane(struct drm_plane *plane)
+-{
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(plane->crtc);
+-
+-	if (exynos_crtc->ops->win_disable)
+-		exynos_crtc->ops->win_disable(exynos_crtc,
+-					      exynos_plane->zpos);
+-
+-	return 0;
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_plane_helper_update,
+-	.disable_plane	= exynos_disable_plane,
++	.disable_plane	= drm_plane_helper_disable,
+ 	.destroy	= drm_plane_cleanup,
+ };
+ 
+@@ -194,9 +182,21 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
+ 			    state->src_w >> 16, state->src_h >> 16);
+ }
+ 
++static void exynos_plane_atomic_disable(struct drm_plane *plane,
++				        struct drm_plane_state *old_state)
++{
++	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(old_state->crtc);
++
++	if (exynos_crtc->ops->win_disable)
++		exynos_crtc->ops->win_disable(exynos_crtc,
++					      exynos_plane->zpos);
++}
++
+ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+ 	.atomic_check = exynos_plane_atomic_check,
+ 	.atomic_update = exynos_plane_atomic_update,
++	.atomic_disable = exynos_plane_atomic_disable,
+ };
+ 
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
 -- 
 2.1.0
