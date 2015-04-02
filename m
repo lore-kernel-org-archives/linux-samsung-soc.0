@@ -1,73 +1,46 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] rtc: rtc-s3c: Fix failed first read of RTC time
-Date: Thu, 02 Apr 2015 13:00:59 +0200
-Message-ID: <1427972459-6480-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: Use define for s3c-rtc clock id
+Date: Thu, 02 Apr 2015 13:03:07 +0200
+Message-ID: <1427972588-6573-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Initialize the device time (if it is wrong) before registering RTC
-device to fix following error message during rtc-s3c probe:
-
-[    2.215414] rtc (null): read_time: fail to read
-[    2.216322] s3c-rtc 10070000.rtc: rtc core: registered s3c as rtc1
+Use a define instead of raw number as a ID for "rtc_src" clock.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/rtc/rtc-s3c.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 5e162eaad277..1d3a4c58fec4 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -496,6 +496,22 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+---
+
+Patch depends on new file "dt-bindings/clock/samsung,s2mps11.h" from:
+1. ARM: dts: Add bindings for 32kHz clocks from s2mps11
+   http://www.spinics.net/lists/linux-samsung-soc/msg43345.html
+---
+ arch/arm/boot/dts/exynos3250-monk.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 1d483c1c8b48..a5863acc5fff 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -16,6 +16,7 @@
+ #include "exynos3250.dtsi"
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/clock/samsung,s2mps11.h>
  
- 	device_init_wakeup(&pdev->dev, 1);
+ / {
+ 	model = "Samsung Monk board";
+@@ -432,7 +433,7 @@
+ };
  
-+	/* Check RTC Time */
-+	s3c_rtc_gettime(&pdev->dev, &rtc_tm);
-+
-+	if (rtc_valid_tm(&rtc_tm)) {
-+		rtc_tm.tm_year	= 100;
-+		rtc_tm.tm_mon	= 0;
-+		rtc_tm.tm_mday	= 1;
-+		rtc_tm.tm_hour	= 0;
-+		rtc_tm.tm_min	= 0;
-+		rtc_tm.tm_sec	= 0;
-+
-+		s3c_rtc_settime(&pdev->dev, &rtc_tm);
-+
-+		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
-+	}
-+
- 	/* register RTC and exit */
- 	info->rtc = devm_rtc_device_register(&pdev->dev, "s3c", &s3c_rtcops,
- 				  THIS_MODULE);
-@@ -519,22 +535,6 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 		goto err_nortc;
- 	}
- 
--	/* Check RTC Time */
--	s3c_rtc_gettime(&pdev->dev, &rtc_tm);
--
--	if (rtc_valid_tm(&rtc_tm)) {
--		rtc_tm.tm_year	= 100;
--		rtc_tm.tm_mon	= 0;
--		rtc_tm.tm_mday	= 1;
--		rtc_tm.tm_hour	= 0;
--		rtc_tm.tm_min	= 0;
--		rtc_tm.tm_sec	= 0;
--
--		s3c_rtc_settime(&pdev->dev, &rtc_tm);
--
--		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
--	}
--
- 	if (info->data->select_tick_clk)
- 		info->data->select_tick_clk(info);
- 
+ &rtc {
+-	clocks = <&cmu CLK_RTC>, <&s2mps14_osc 0>;
++	clocks = <&cmu CLK_RTC>, <&s2mps14_osc S2MPS11_CLK_AP>;
+ 	clock-names = "rtc", "rtc_src";
+ 	status = "okay";
+ };
 -- 
 1.9.1
