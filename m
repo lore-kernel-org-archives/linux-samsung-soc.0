@@ -1,91 +1,69 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH -v4 5/8] drm/exynos: make zpos property immutable
-Date: Fri, 3 Apr 2015 11:59:53 -0300
-Message-ID: <20150403145953.GA2208@joana>
-References: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
- <1427904132-15677-6-git-send-email-gustavo@padovan.org>
- <551E79C0.10105@samsung.com>
+Subject: Re: [PATCH 10/10] drm/exynos: atomic dpms support
+Date: Fri, 3 Apr 2015 12:06:20 -0300
+Message-ID: <20150403150620.GB2208@joana>
+References: <1427471939-27345-10-git-send-email-gustavo@padovan.org>
+ <1427742717-21469-1-git-send-email-gustavo@padovan.org>
+ <551D058A.3010805@samsung.com>
+ <20150402140837.GA6970@joana>
+ <551E3758.8030109@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f44.google.com ([209.85.213.44]:35627 "EHLO
-	mail-yh0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752036AbbDCO75 convert rfc822-to-8bit (ORCPT
+Received: from mail-yk0-f172.google.com ([209.85.160.172]:32862 "EHLO
+	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752709AbbDCPGY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Apr 2015 10:59:57 -0400
-Received: by yhfw71 with SMTP id w71so28782252yhf.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Apr 2015 07:59:56 -0700 (PDT)
+	Fri, 3 Apr 2015 11:06:24 -0400
+Received: by ykfa3 with SMTP id a3so25856614ykf.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Apr 2015 08:06:24 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <551E79C0.10105@samsung.com>
+In-Reply-To: <551E3758.8030109@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Inki,
+Hi Joonyoung,
 
-2015-04-03 Inki Dae <inki.dae@samsung.com>:
+2015-04-03 Joonyoung Shim <jy0922.shim@samsung.com>:
 
-> On 2015=EB=85=84 04=EC=9B=94 02=EC=9D=BC 01:02, Gustavo Padovan wrote=
-:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> > We already set each plane zpos at init, after that changes to zpos =
-are
-> > not expected. This patch turns zpos into a read-only property so no=
-w it is
-> > impossible to set zpos.
-> >
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_plane.c | 21 ++-----------------=
---
-> >  1 file changed, 2 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gp=
-u/drm/exynos/exynos_drm_plane.c
-> > index 504bd6e..2fbac9b 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> > @@ -184,27 +184,10 @@ static void exynos_plane_destroy(struct drm_p=
-lane *plane)
-> >  	drm_plane_cleanup(plane);
-> >  }
-> >
-> > -static int exynos_plane_set_property(struct drm_plane *plane,
-> > -				     struct drm_property *property,
-> > -				     uint64_t val)
-> > -{
-> > -	struct drm_device *dev =3D plane->dev;
-> > -	struct exynos_drm_plane *exynos_plane =3D to_exynos_plane(plane);
-> > -	struct exynos_drm_private *dev_priv =3D dev->dev_private;
-> > -
-> > -	if (property =3D=3D dev_priv->plane_zpos_property) {
-> > -		exynos_plane->zpos =3D val;
-> > -		return 0;
-> > -	}
-> > -
-> > -	return -EINVAL;
-> > -}
-> > -
-> >  static struct drm_plane_funcs exynos_plane_funcs =3D {
-> >  	.update_plane	=3D exynos_update_plane,
-> >  	.disable_plane	=3D exynos_disable_plane,
-> >  	.destroy	=3D exynos_plane_destroy,
-> > -	.set_property	=3D exynos_plane_set_property,
->=20
-> As I commented like below before, This patch would make the
-> compatibility of the existing application which uses set_property ioc=
-tl
-> to be broken. Didn't you check my comment?
-> http://www.spinics.net/lists/dri-devel/msg78852.html
+> Hi,
+>  
+> >>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> >>> index e71e331..e0b085b 100644
+> >>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> >>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> >>> @@ -275,9 +275,6 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
+> >>>  
+> >>>  	}
+> >>>  
+> >>> -	/* disable all the possible outputs/crtcs before entering KMS mode */
+> >>> -	drm_helper_disable_unused_functions(dev);
+> >>> -
+> >>
+> >> I think this is not related with atomic dpms support, if this needs,
+> >> could you make another patch?
+> > 
+> > Yes, it is, once you port exynos to use atomic dpms we start getting warning
+> > from this functions, the correct solution is to remove it. Other subsystems
+> > followed the same approach.
+> 
+> As i said, the warning comes from changes of this patch.
+> 
+> From rcar-du driver, it was handled to a separate patch.
+> 
+> http://www.spinics.net/lists/linux-sh/msg40384.html
 
-I checked that and it is currently not possible to output a error messa=
-ge
-when an property is set to immutable. The drm core will return earlier
-and never call the driver's set_property callback. We won't be able to =
-add
-the error message but I think we need this patch.
+Right, I think make this a new patch is no harm and will make things more clear.
+
+> > 
+> > I'm sending an updated patch set in a bit.
+> 
+> OK, but i didn't get your updated patch 10/10 yet. Could you resend it?
+
+No, I did a mistake with git send-email. Used 000*.patch to send the patches.
+That excluded the 0010 one. So I resend a new patchset with the change above
+and make sure I don't make the same mistake again.
 
 	Gustavo
