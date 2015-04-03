@@ -1,69 +1,119 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 10/10] drm/exynos: atomic dpms support
-Date: Fri, 3 Apr 2015 12:06:20 -0300
-Message-ID: <20150403150620.GB2208@joana>
-References: <1427471939-27345-10-git-send-email-gustavo@padovan.org>
- <1427742717-21469-1-git-send-email-gustavo@padovan.org>
- <551D058A.3010805@samsung.com>
- <20150402140837.GA6970@joana>
- <551E3758.8030109@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f172.google.com ([209.85.160.172]:32862 "EHLO
-	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752709AbbDCPGY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Apr 2015 11:06:24 -0400
-Received: by ykfa3 with SMTP id a3so25856614ykf.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Apr 2015 08:06:24 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <551E3758.8030109@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4210
+ platform
+Date: Fri, 03 Apr 2015 18:43:43 +0200
+Message-ID: <1428079429-4252-1-git-send-email-b.zolnierkie@samsung.com>
+References: <'@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <'@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Joonyoung,
+Hi,
 
-2015-04-03 Joonyoung Shim <jy0922.shim@samsung.com>:
+This patch series removes the use of Exynos4210 specific support
+from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+for this platform.
 
-> Hi,
->  
-> >>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> >>> index e71e331..e0b085b 100644
-> >>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> >>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> >>> @@ -275,9 +275,6 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
-> >>>  
-> >>>  	}
-> >>>  
-> >>> -	/* disable all the possible outputs/crtcs before entering KMS mode */
-> >>> -	drm_helper_disable_unused_functions(dev);
-> >>> -
-> >>
-> >> I think this is not related with atomic dpms support, if this needs,
-> >> could you make another patch?
-> > 
-> > Yes, it is, once you port exynos to use atomic dpms we start getting warning
-> > from this functions, the correct solution is to remove it. Other subsystems
-> > followed the same approach.
-> 
-> As i said, the warning comes from changes of this patch.
-> 
-> From rcar-du driver, it was handled to a separate patch.
-> 
-> http://www.spinics.net/lists/linux-sh/msg40384.html
+It consists of a modified "[PATCH v12 0/6] cpufreq: use generic
+cpufreq drivers for exynos platforms" [1] patch series from Thomas
+Abraham.  As there have not been updates of this patchset since
+November 2014 I decided to dust it off myself.  I updated Thomas'
+patchset to current kernels, fixed bugs that I noticed and removed
+non-Exynos4210 support for now (to speed up inclusion in upstream
+kernel).  Since some modifications were not trivial I dropped all
+Reviewed-by:, Tested-by: and Acked-by: tags.  Please review/test
+this patchset and reply with revelant tag (Thank You!).  I also
+plan to work on Exynos4x12 support next (which was missing in
+the original patchset) and then on Exynos5250/Exynos5420 one.
 
-Right, I think make this a new patch is no harm and will make things more clear.
+This patch series has been tested on Exynos4210 based Origen and
+Trats boards.
 
-> > 
-> > I'm sending an updated patch set in a bit.
-> 
-> OK, but i didn't get your updated patch 10/10 yet. Could you resend it?
+Depends on:
+- next-20150330 branch of linux-next kernel tree
+  (mfd tree contains a crucial fix for MAX8997 PMIC support)
+- "[PATCH] clk: samsung: exynos4: Disable ARMCLK down feature on
+  Exynos4210 SoC" [2]
 
-No, I did a mistake with git send-email. Used 000*.patch to send the patches.
-That excluded the 0010 one. So I resend a new patchset with the change above
-and make sure I don't make the same mistake again.
+[1] https://www.marc.info/?l=linux-arm-kernel&m=141657611003803&w=2
+[2] https://lkml.org/lkml/2015/3/27/568
 
-	Gustavo
+Changes over Thomas' code:
+- fixed issue with wrong dividers being setup by Common Clock Framework
+  (by an addition of CLK_RECALC_NEW_RATES clock flag to mout_apll clock,
+  without this change cpufreq-dt driver showed ~10 mA larger energy
+  consumption when compared to cpufreq-exynos one when "performance"
+  cpufreq governor was used on Exynos4210 SoC based Origen board), this
+  was probably meant to be workarounded by use of CLK_GET_RATE_NOCACHE
+  and CLK_DIVIDER_READ_ONLY clock flags in the original patchset (in
+  "[PATCH v12 6/6] clk: samsung: remove unused clock aliases and update
+  clock flags") but using these flags is not sufficient to fix the issue
+  observed
+- fixed issue with setting lower dividers before the parent clock speed
+  was lowered (the issue resulted in lockup on Exynos4210 SoC based
+  Origen board when "ondemand" cpufreq governor was stress tested)
+- fixed missing spin_unlock on error in exynos_cpuclk_post_rate_change()
+  problem by moving cfg_data search outside of the spin locked area
+- removed leftover kfree() in exynos_register_cpu_clock() that could
+  result in dereferencing the NULL pointer on error
+- moved spin_lock earlier in exynos_cpuclk_pre_rate_change() to cover
+  reading of E4210_SRC_CPU and E4210_DIV_CPU1 registers
+- added missing "last chance" checks to wait_until_divider_stable() and
+  wait_until_mux_stable() (needed in case that IRQ handling took long
+  time to proceed and resulted in function printing incorrect error
+  message about timeout)
+- moved E4210_CPU_DIV[0,1]() macros just before their only users,
+  this resulted in moving them from patch #2 to patch #3/6 ("clk:
+  samsung: exynos4: add cpu clock configuration data and instantiate
+  cpu clock")
+- added my Copyrights to drivers/clk/samsung/clk-cpu.c
+- updated exynos-cpufreq.[c,h]
+- removed non-Exynos4210 support for now
+- dropped "[PATCH v12 6/6] clk: samsung: remove unused clock aliases and
+  update clock flags" altogether for now
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (1):
+  clk: add CLK_RECALC_NEW_RATES clock flag for Exynos cpu clock support
+
+Thomas Abraham (5):
+  clk: samsung: add infrastructure to register cpu clocks
+  clk: samsung: exynos4: add cpu clock configuration data and
+    instantiate cpu clock
+  ARM: dts: Exynos4210: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos4210
+  cpufreq: exynos: remove Exynos4210 specific cpufreq driver support
+
+ arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
+ arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
+ arch/arm/boot/dts/exynos4210.dtsi               |   12 +
+ arch/arm/mach-exynos/exynos.c                   |   21 +-
+ drivers/clk/clk.c                               |    3 +
+ drivers/clk/samsung/Makefile                    |    2 +-
+ drivers/clk/samsung/clk-cpu.c                   |  349 +++++++++++++++++++++++
+ drivers/clk/samsung/clk-cpu.h                   |   73 +++++
+ drivers/clk/samsung/clk-exynos4.c               |   24 +-
+ drivers/cpufreq/Kconfig.arm                     |   11 -
+ drivers/cpufreq/Makefile                        |    1 -
+ drivers/cpufreq/exynos-cpufreq.c                |    5 +-
+ drivers/cpufreq/exynos-cpufreq.h                |    9 -
+ drivers/cpufreq/exynos4210-cpufreq.c            |  184 ------------
+ include/linux/clk-provider.h                    |    1 +
+ 16 files changed, 495 insertions(+), 212 deletions(-)
+ create mode 100644 drivers/clk/samsung/clk-cpu.c
+ create mode 100644 drivers/clk/samsung/clk-cpu.h
+ delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+
+-- 
+1.7.9.5
+
