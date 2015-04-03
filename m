@@ -1,121 +1,46 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 6/6] clk: samsung: exynos5433: Add CLK_SET_RATE_PARENT to
- support DVFS for big.LITTLE core
-Date: Fri, 03 Apr 2015 09:29:11 +0900
-Message-ID: <1428020951-30428-7-git-send-email-cw00.choi@samsung.com>
-References: <1428020951-30428-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20373 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083AbbDCA3f (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Apr 2015 20:29:35 -0400
-In-reply-to: <1428020951-30428-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 10/10] drm/exynos: atomic dpms support
+Date: Fri, 03 Apr 2015 15:46:48 +0900
+Message-ID: <551E3758.8030109@samsung.com>
+References: <1427471939-27345-10-git-send-email-gustavo@padovan.org>
+ <1427742717-21469-1-git-send-email-gustavo@padovan.org>
+ <551D058A.3010805@samsung.com> <20150402140837.GA6970@joana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150402140837.GA6970@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
-Cc: kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-This patch adds CLK_SET_RATE_PARENT flag to support DVFS of Cortex-{A53|A57}
-core (big.LITTLE core) because 'sclk_{apollo|atlas}' leaf clock is used to
-change the CPU frequency of Cortex-{A53|A57} core in arm_big_little.c driver.
-- 'apollo' word means the LITTLE core (Cortex-A53 core) in Exynos5433 TRM.
-- 'atlas' word means the big core (Cortex-A57 core) in Exynos5433 TRM.
-
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 44f3dd5..0e6dce8 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3582,7 +3582,7 @@ static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
- static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
- 	/* MUX_SEL_APOLLO0 */
- 	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
--			MUX_SEL_APOLLO0, 0, 1, 0, CLK_MUX_READ_ONLY),
-+			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT, 0),
- 
- 	/* MUX_SEL_APOLLO1 */
- 	MUX(CLK_MOUT_BUS_PLL_APOLLO_USER, "mout_bus_pll_apollo_user",
-@@ -3590,7 +3590,7 @@ static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
- 
- 	/* MUX_SEL_APOLLO2 */
- 	MUX_F(CLK_MOUT_APOLLO, "mout_apollo", mout_apollo_p, MUX_SEL_APOLLO2,
--			0, 1, 0, CLK_MUX_READ_ONLY),
-+			0, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_div_clock apollo_div_clks[] __initdata = {
-@@ -3611,11 +3611,9 @@ static struct samsung_div_clock apollo_div_clks[] __initdata = {
- 			DIV_APOLLO0, 8, 3, CLK_GET_RATE_NOCACHE,
- 			CLK_DIVIDER_READ_ONLY),
- 	DIV_F(CLK_DIV_APOLLO2, "div_apollo2", "div_apollo1",
--			DIV_APOLLO0, 4, 3, CLK_GET_RATE_NOCACHE,
--			CLK_DIVIDER_READ_ONLY),
-+			DIV_APOLLO0, 4, 3, CLK_SET_RATE_PARENT, 0),
- 	DIV_F(CLK_DIV_APOLLO1, "div_apollo1", "mout_apollo",
--			DIV_APOLLO0, 0, 3, CLK_GET_RATE_NOCACHE,
--			CLK_DIVIDER_READ_ONLY),
-+			DIV_APOLLO0, 0, 3, CLK_SET_RATE_PARENT, 0),
- 
- 	/* DIV_APOLLO1 */
- 	DIV_F(CLK_DIV_SCLK_HPM_APOLLO, "div_sclk_hpm_apollo", "mout_apollo",
-@@ -3666,7 +3664,8 @@ static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
- 	GATE(CLK_SCLK_HPM_APOLLO, "sclk_hpm_apollo", "div_sclk_hpm_apollo",
- 			ENABLE_SCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_APOLLO, "sclk_apollo", "div_apollo2",
--			ENABLE_SCLK_APOLLO, 0, CLK_IGNORE_UNUSED, 0),
-+			ENABLE_SCLK_APOLLO, 0,
-+			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_cmu_info apollo_cmu_info __initdata = {
-@@ -3775,7 +3774,7 @@ static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
- static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
- 	/* MUX_SEL_ATLAS0 */
- 	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
--			MUX_SEL_ATLAS0, 0, 1, 0, CLK_MUX_READ_ONLY),
-+			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT, 0),
- 
- 	/* MUX_SEL_ATLAS1 */
- 	MUX(CLK_MOUT_BUS_PLL_ATLAS_USER, "mout_bus_pll_atlas_user",
-@@ -3783,7 +3782,7 @@ static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
- 
- 	/* MUX_SEL_ATLAS2 */
- 	MUX_F(CLK_MOUT_ATLAS, "mout_atlas", mout_atlas_p, MUX_SEL_ATLAS2,
--			0, 1, 0, CLK_MUX_READ_ONLY),
-+			0, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_div_clock atlas_div_clks[] __initdata = {
-@@ -3804,11 +3803,9 @@ static struct samsung_div_clock atlas_div_clks[] __initdata = {
- 			DIV_ATLAS0, 8, 3, CLK_GET_RATE_NOCACHE,
- 			CLK_DIVIDER_READ_ONLY),
- 	DIV_F(CLK_DIV_ATLAS2, "div_atlas2", "div_atlas1",
--			DIV_ATLAS0, 4, 3, CLK_GET_RATE_NOCACHE,
--			CLK_DIVIDER_READ_ONLY),
-+			DIV_ATLAS0, 4, 3, CLK_SET_RATE_PARENT, 0),
- 	DIV_F(CLK_DIV_ATLAS1, "div_atlas1", "mout_atlas",
--			DIV_ATLAS0, 0, 3, CLK_GET_RATE_NOCACHE,
--			CLK_DIVIDER_READ_ONLY),
-+			DIV_ATLAS0, 0, 3, CLK_SET_RATE_PARENT, 0),
- 
- 	/* DIV_ATLAS1 */
- 	DIV_F(CLK_DIV_SCLK_HPM_ATLAS, "div_sclk_hpm_atlas", "mout_atlas",
-@@ -3885,7 +3882,8 @@ static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
- 	GATE(CLK_ATCLK, "atclk", "div_atclk_atlas",
- 			ENABLE_SCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_ATLAS, "sclk_atlas", "div_atlas2",
--			ENABLE_SCLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
-+			ENABLE_SCLK_ATLAS, 0,
-+			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
- };
- 
- static struct samsung_cmu_info atlas_cmu_info __initdata = {
--- 
-1.8.5.5
+SGksCiAKPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZmJkZXYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jCj4+PiBp
+bmRleCBlNzFlMzMxLi5lMGIwODViIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9mYmRldi5jCj4+PiBAQCAtMjc1LDkgKzI3NSw2IEBAIGludCBleHlub3NfZHJt
+X2ZiZGV2X2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPj4+ICAKPj4+ICAJfQo+Pj4gIAo+
+Pj4gLQkvKiBkaXNhYmxlIGFsbCB0aGUgcG9zc2libGUgb3V0cHV0cy9jcnRjcyBiZWZvcmUgZW50
+ZXJpbmcgS01TIG1vZGUgKi8KPj4+IC0JZHJtX2hlbHBlcl9kaXNhYmxlX3VudXNlZF9mdW5jdGlv
+bnMoZGV2KTsKPj4+IC0KPj4KPj4gSSB0aGluayB0aGlzIGlzIG5vdCByZWxhdGVkIHdpdGggYXRv
+bWljIGRwbXMgc3VwcG9ydCwgaWYgdGhpcyBuZWVkcywKPj4gY291bGQgeW91IG1ha2UgYW5vdGhl
+ciBwYXRjaD8KPiAKPiBZZXMsIGl0IGlzLCBvbmNlIHlvdSBwb3J0IGV4eW5vcyB0byB1c2UgYXRv
+bWljIGRwbXMgd2Ugc3RhcnQgZ2V0dGluZyB3YXJuaW5nCj4gZnJvbSB0aGlzIGZ1bmN0aW9ucywg
+dGhlIGNvcnJlY3Qgc29sdXRpb24gaXMgdG8gcmVtb3ZlIGl0LiBPdGhlciBzdWJzeXN0ZW1zCj4g
+Zm9sbG93ZWQgdGhlIHNhbWUgYXBwcm9hY2guCgpBcyBpIHNhaWQsIHRoZSB3YXJuaW5nIGNvbWVz
+IGZyb20gY2hhbmdlcyBvZiB0aGlzIHBhdGNoLgoKRnJvbSByY2FyLWR1IGRyaXZlciwgaXQgd2Fz
+IGhhbmRsZWQgdG8gYSBzZXBhcmF0ZSBwYXRjaC4KCmh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlz
+dHMvbGludXgtc2gvbXNnNDAzODQuaHRtbAoKPiAKPiBJJ20gc2VuZGluZyBhbiB1cGRhdGVkIHBh
+dGNoIHNldCBpbiBhIGJpdC4KCk9LLCBidXQgaSBkaWRuJ3QgZ2V0IHlvdXIgdXBkYXRlZCBwYXRj
+aCAxMC8xMCB5ZXQuIENvdWxkIHlvdSByZXNlbmQgaXQ/CgpUaGFua3MuCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
