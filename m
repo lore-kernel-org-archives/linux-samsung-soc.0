@@ -1,70 +1,91 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
 Subject: Re: [PATCH -v4 5/8] drm/exynos: make zpos property immutable
-Date: Fri, 03 Apr 2015 20:30:08 +0900
-Message-ID: <551E79C0.10105@samsung.com>
+Date: Fri, 3 Apr 2015 11:59:53 -0300
+Message-ID: <20150403145953.GA2208@joana>
 References: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
  <1427904132-15677-6-git-send-email-gustavo@padovan.org>
+ <551E79C0.10105@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1427904132-15677-6-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f44.google.com ([209.85.213.44]:35627 "EHLO
+	mail-yh0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752036AbbDCO75 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 3 Apr 2015 10:59:57 -0400
+Received: by yhfw71 with SMTP id w71so28782252yhf.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Apr 2015 07:59:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <551E79C0.10105@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMjAxNeuFhCAwNOyblCAwMuydvCAwMTowMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
-b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
-PiBXZSBhbHJlYWR5IHNldCBlYWNoIHBsYW5lIHpwb3MgYXQgaW5pdCwgYWZ0ZXIgdGhhdCBjaGFu
-Z2VzIHRvIHpwb3MgYXJlCj4gbm90IGV4cGVjdGVkLiBUaGlzIHBhdGNoIHR1cm5zIHpwb3MgaW50
-byBhIHJlYWQtb25seSBwcm9wZXJ0eSBzbyBub3cgaXQgaXMKPiBpbXBvc3NpYmxlIHRvIHNldCB6
-cG9zLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
-QGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX3BsYW5lLmMgfCAyMSArKy0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQs
-IDIgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBpbmRleCA1MDRiZDZlLi4yZmJhYzliIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBAQCAtMTg0LDI3ICsx
-ODQsMTAgQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2Rlc3Ryb3koc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUpCj4gIAlkcm1fcGxhbmVfY2xlYW51cChwbGFuZSk7Cj4gIH0KPiAgCj4gLXN0YXRp
-YyBpbnQgZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwK
-PiAtCQkJCSAgICAgc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcGVydHksCj4gLQkJCQkgICAgIHVp
-bnQ2NF90IHZhbCkKPiAtewo+IC0Jc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7
-Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3Bs
-YW5lKHBsYW5lKTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKmRldl9wcml2ID0gZGV2
-LT5kZXZfcHJpdmF0ZTsKPiAtCj4gLQlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pw
-b3NfcHJvcGVydHkpIHsKPiAtCQlleHlub3NfcGxhbmUtPnpwb3MgPSB2YWw7Cj4gLQkJcmV0dXJu
-IDA7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJuIC1FSU5WQUw7Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1
-Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKPiAgCS51cGRhdGVfcGxh
-bmUJPSBleHlub3NfdXBkYXRlX3BsYW5lLAo+ICAJLmRpc2FibGVfcGxhbmUJPSBleHlub3NfZGlz
-YWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZXh5bm9zX3BsYW5lX2Rlc3Ryb3ksCj4gLQkuc2V0
-X3Byb3BlcnR5CT0gZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eSwKCkFzIEkgY29tbWVudGVkIGxp
-a2UgYmVsb3cgYmVmb3JlLCBUaGlzIHBhdGNoIHdvdWxkIG1ha2UgdGhlCmNvbXBhdGliaWxpdHkg
-b2YgdGhlIGV4aXN0aW5nIGFwcGxpY2F0aW9uIHdoaWNoIHVzZXMgc2V0X3Byb3BlcnR5IGlvY3Rs
-CnRvIGJlIGJyb2tlbi4gRGlkbid0IHlvdSBjaGVjayBteSBjb21tZW50PwpodHRwOi8vd3d3LnNw
-aW5pY3MubmV0L2xpc3RzL2RyaS1kZXZlbC9tc2c3ODg1Mi5odG1sCgpUbyBvdGhlciBFeHlub3Mg
-Z3V5cywKSXMgdGhlcmUgbm8gYW55IGNhc2UgdGhhdCB0aGUgaGFyZHdhcmUgb3ZlcmxheSBzaG91
-bGQgYmUgY29uZmlndXJhYmxlPwpJZiBubyBjYXNlLCBJIHdpbGwgbWVyZ2UgdGhpcyBjbGVhbnVw
-LiBBZnRlciB0aGF0LCBhcHBsaWNhdGlvbiBjYW4gbmV2ZXIKY2hhbmdlIGhhcmR3YXJlIG92ZXJs
-YXkgdG8gZWFjaCBwbGFuZS4KClRoYW5rcywKSW5raSBEYWUKCj4gIH07Cj4gIAo+ICBzdGF0aWMg
-dm9pZCBleHlub3NfcGxhbmVfYXR0YWNoX3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAq
-cGxhbmUsCj4gQEAgLTIxNiw4ICsxOTksOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfYXR0
-YWNoX3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAo+ICAJcHJvcCA9
-IGRldl9wcml2LT5wbGFuZV96cG9zX3Byb3BlcnR5Owo+ICAJaWYgKCFwcm9wKSB7Cj4gLQkJcHJv
-cCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UoZGV2LCAwLCAienBvcyIsIDAsCj4gLQkJCQkJ
-CSBNQVhfUExBTkUgLSAxKTsKPiArCQlwcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShk
-ZXYsIERSTV9NT0RFX1BST1BfSU1NVVRBQkxFLAo+ICsJCQkJCQkgInpwb3MiLCAwLCBNQVhfUExB
-TkUgLSAxKTsKPiAgCQlpZiAoIXByb3ApCj4gIAkJCXJldHVybjsKPiAgCj4gCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Inki,
+
+2015-04-03 Inki Dae <inki.dae@samsung.com>:
+
+> On 2015=EB=85=84 04=EC=9B=94 02=EC=9D=BC 01:02, Gustavo Padovan wrote=
+:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >
+> > We already set each plane zpos at init, after that changes to zpos =
+are
+> > not expected. This patch turns zpos into a read-only property so no=
+w it is
+> > impossible to set zpos.
+> >
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_plane.c | 21 ++-----------------=
+--
+> >  1 file changed, 2 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gp=
+u/drm/exynos/exynos_drm_plane.c
+> > index 504bd6e..2fbac9b 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> > @@ -184,27 +184,10 @@ static void exynos_plane_destroy(struct drm_p=
+lane *plane)
+> >  	drm_plane_cleanup(plane);
+> >  }
+> >
+> > -static int exynos_plane_set_property(struct drm_plane *plane,
+> > -				     struct drm_property *property,
+> > -				     uint64_t val)
+> > -{
+> > -	struct drm_device *dev =3D plane->dev;
+> > -	struct exynos_drm_plane *exynos_plane =3D to_exynos_plane(plane);
+> > -	struct exynos_drm_private *dev_priv =3D dev->dev_private;
+> > -
+> > -	if (property =3D=3D dev_priv->plane_zpos_property) {
+> > -		exynos_plane->zpos =3D val;
+> > -		return 0;
+> > -	}
+> > -
+> > -	return -EINVAL;
+> > -}
+> > -
+> >  static struct drm_plane_funcs exynos_plane_funcs =3D {
+> >  	.update_plane	=3D exynos_update_plane,
+> >  	.disable_plane	=3D exynos_disable_plane,
+> >  	.destroy	=3D exynos_plane_destroy,
+> > -	.set_property	=3D exynos_plane_set_property,
+>=20
+> As I commented like below before, This patch would make the
+> compatibility of the existing application which uses set_property ioc=
+tl
+> to be broken. Didn't you check my comment?
+> http://www.spinics.net/lists/dri-devel/msg78852.html
+
+I checked that and it is currently not possible to output a error messa=
+ge
+when an property is set to immutable. The drm core will return earlier
+and never call the driver's set_property callback. We won't be able to =
+add
+the error message but I think we need this patch.
+
+	Gustavo
