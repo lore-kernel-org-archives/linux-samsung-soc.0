@@ -1,67 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/2] ARM: dts: Use last parent for clocks during power
- domain on/off
-Date: Fri, 03 Apr 2015 11:33:55 +0200
-Message-ID: <1428053635-10855-2-git-send-email-k.kozlowski@samsung.com>
-References: <1428053635-10855-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1428053635-10855-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH -v4 5/8] drm/exynos: make zpos property immutable
+Date: Fri, 03 Apr 2015 20:30:08 +0900
+Message-ID: <551E79C0.10105@samsung.com>
+References: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
+ <1427904132-15677-6-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1427904132-15677-6-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace fixed parent with last parent (obtained with clk_get_parent())
-of clocks for devices in mfc and disp power domains. This should improve
-behavior if such clocks were reparented by the drivers and new parents
-are different than those specified in DTS.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
----
-
-Changes since v1:
-1. Add Javier's reviewed/tested tags. Thanks!
----
- arch/arm/boot/dts/exynos5420.dtsi | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c7a44ee0ce06..b9b99305991b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -264,9 +264,8 @@
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
--			<&clock CLK_MOUT_USER_ACLK333>;
--		clock-names = "oscclk", "pclk0", "clk0";
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
-+		clock-names = "oscclk", "clk0";
- 		#power-domain-cells = <0>;
- 	};
- 
-@@ -280,16 +279,12 @@
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x100440C0 0x20>;
- 		#power-domain-cells = <0>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK200>,
-+		clocks = <&clock CLK_FIN_PLL>,
- 			 <&clock CLK_MOUT_USER_ACLK200_DISP1>,
--			 <&clock CLK_MOUT_SW_ACLK300>,
- 			 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
--			 <&clock CLK_MOUT_SW_ACLK400>,
- 			 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
- 			 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
--		clock-names = "oscclk", "pclk0", "clk0",
--			      "pclk1", "clk1", "pclk2", "clk2",
--			      "asb0", "asb1";
-+		clock-names = "oscclk", "clk0", "clk1", "clk2", "asb0", "asb1";
- 	};
- 
- 	pinctrl_0: pinctrl@13400000 {
--- 
-1.9.1
+T24gMjAxNeuFhCAwNOyblCAwMuydvCAwMTowMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
+b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
+PiBXZSBhbHJlYWR5IHNldCBlYWNoIHBsYW5lIHpwb3MgYXQgaW5pdCwgYWZ0ZXIgdGhhdCBjaGFu
+Z2VzIHRvIHpwb3MgYXJlCj4gbm90IGV4cGVjdGVkLiBUaGlzIHBhdGNoIHR1cm5zIHpwb3MgaW50
+byBhIHJlYWQtb25seSBwcm9wZXJ0eSBzbyBub3cgaXQgaXMKPiBpbXBvc3NpYmxlIHRvIHNldCB6
+cG9zLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
+QGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX3BsYW5lLmMgfCAyMSArKy0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDIgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBpbmRleCA1MDRiZDZlLi4yZmJhYzliIDEwMDY0NAo+
+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiBAQCAtMTg0LDI3ICsx
+ODQsMTAgQEAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2Rlc3Ryb3koc3RydWN0IGRybV9wbGFu
+ZSAqcGxhbmUpCj4gIAlkcm1fcGxhbmVfY2xlYW51cChwbGFuZSk7Cj4gIH0KPiAgCj4gLXN0YXRp
+YyBpbnQgZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwK
+PiAtCQkJCSAgICAgc3RydWN0IGRybV9wcm9wZXJ0eSAqcHJvcGVydHksCj4gLQkJCQkgICAgIHVp
+bnQ2NF90IHZhbCkKPiAtewo+IC0Jc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IHBsYW5lLT5kZXY7
+Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3Bs
+YW5lKHBsYW5lKTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKmRldl9wcml2ID0gZGV2
+LT5kZXZfcHJpdmF0ZTsKPiAtCj4gLQlpZiAocHJvcGVydHkgPT0gZGV2X3ByaXYtPnBsYW5lX3pw
+b3NfcHJvcGVydHkpIHsKPiAtCQlleHlub3NfcGxhbmUtPnpwb3MgPSB2YWw7Cj4gLQkJcmV0dXJu
+IDA7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJuIC1FSU5WQUw7Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1
+Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKPiAgCS51cGRhdGVfcGxh
+bmUJPSBleHlub3NfdXBkYXRlX3BsYW5lLAo+ICAJLmRpc2FibGVfcGxhbmUJPSBleHlub3NfZGlz
+YWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZXh5bm9zX3BsYW5lX2Rlc3Ryb3ksCj4gLQkuc2V0
+X3Byb3BlcnR5CT0gZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eSwKCkFzIEkgY29tbWVudGVkIGxp
+a2UgYmVsb3cgYmVmb3JlLCBUaGlzIHBhdGNoIHdvdWxkIG1ha2UgdGhlCmNvbXBhdGliaWxpdHkg
+b2YgdGhlIGV4aXN0aW5nIGFwcGxpY2F0aW9uIHdoaWNoIHVzZXMgc2V0X3Byb3BlcnR5IGlvY3Rs
+CnRvIGJlIGJyb2tlbi4gRGlkbid0IHlvdSBjaGVjayBteSBjb21tZW50PwpodHRwOi8vd3d3LnNw
+aW5pY3MubmV0L2xpc3RzL2RyaS1kZXZlbC9tc2c3ODg1Mi5odG1sCgpUbyBvdGhlciBFeHlub3Mg
+Z3V5cywKSXMgdGhlcmUgbm8gYW55IGNhc2UgdGhhdCB0aGUgaGFyZHdhcmUgb3ZlcmxheSBzaG91
+bGQgYmUgY29uZmlndXJhYmxlPwpJZiBubyBjYXNlLCBJIHdpbGwgbWVyZ2UgdGhpcyBjbGVhbnVw
+LiBBZnRlciB0aGF0LCBhcHBsaWNhdGlvbiBjYW4gbmV2ZXIKY2hhbmdlIGhhcmR3YXJlIG92ZXJs
+YXkgdG8gZWFjaCBwbGFuZS4KClRoYW5rcywKSW5raSBEYWUKCj4gIH07Cj4gIAo+ICBzdGF0aWMg
+dm9pZCBleHlub3NfcGxhbmVfYXR0YWNoX3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAq
+cGxhbmUsCj4gQEAgLTIxNiw4ICsxOTksOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfYXR0
+YWNoX3pwb3NfcHJvcGVydHkoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCj4gIAo+ICAJcHJvcCA9
+IGRldl9wcml2LT5wbGFuZV96cG9zX3Byb3BlcnR5Owo+ICAJaWYgKCFwcm9wKSB7Cj4gLQkJcHJv
+cCA9IGRybV9wcm9wZXJ0eV9jcmVhdGVfcmFuZ2UoZGV2LCAwLCAienBvcyIsIDAsCj4gLQkJCQkJ
+CSBNQVhfUExBTkUgLSAxKTsKPiArCQlwcm9wID0gZHJtX3Byb3BlcnR5X2NyZWF0ZV9yYW5nZShk
+ZXYsIERSTV9NT0RFX1BST1BfSU1NVVRBQkxFLAo+ICsJCQkJCQkgInpwb3MiLCAwLCBNQVhfUExB
+TkUgLSAxKTsKPiAgCQlpZiAoIXByb3ApCj4gIAkJCXJldHVybjsKPiAgCj4gCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
