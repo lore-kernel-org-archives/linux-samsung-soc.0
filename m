@@ -1,85 +1,67 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 1/2] ARM: EXYNOS: Get current parent clock for power domain
- on/off
-Date: Fri, 03 Apr 2015 11:33:54 +0200
-Message-ID: <1428053635-10855-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:18615 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752348AbbDCJeH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Apr 2015 05:34:07 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: dts: Use last parent for clocks during power
+ domain on/off
+Date: Fri, 03 Apr 2015 11:33:55 +0200
+Message-ID: <1428053635-10855-2-git-send-email-k.kozlowski@samsung.com>
+References: <1428053635-10855-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1428053635-10855-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Using a fixed (by DTS) parent for clocks when turning on the power domain
-may introduce issues in other drivers. For example when such driver
-changes the parent during runtime and expects that he is the only place
-of such change.
-
-Do not rely on DTS providing the fixed parent for such clocks. Instead
-before switching domain off, grab a current parent of a clock with
-clk_get_parent().
+Replace fixed parent with last parent (obtained with clk_get_parent())
+of clocks for devices in mfc and disp power domains. This should improve
+behavior if such clocks were reparented by the drivers and new parents
+are different than those specified in DTS.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 ---
 
 Changes since v1:
-1. Drop "pclk" bindings entirely as suggested by Andrzej Hajda.
-   This was significant change so I did not add Javier's
-   reviewed/tested tags.
+1. Add Javier's reviewed/tested tags. Thanks!
 ---
- Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 7 ++++---
- arch/arm/mach-exynos/pm_domains.c                             | 9 ++-------
- 2 files changed, 6 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 5da38c5ed476..e151057d92f0 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -19,9 +19,10 @@ Optional Properties:
- 	domains.
- - clock-names: The following clocks can be specified:
- 	- oscclk: Oscillator clock.
--	- pclkN, clkN: Pairs of parent of input clock and input clock to the
--		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
--		are supported currently.
-+	- clkN: Input clocks to the devices in this power domain. These clocks
-+		will be reparented to oscclk before swithing power domain off.
-+		Their original parent will be brought back after turning on
-+		the domain. Maximum of 4 clocks (N = 0 to 3) are supported.
- 	- asbN: Clocks required by asynchronous bridges (ASB) present in
- 		the power domain. These clock should be enabled during power
- 		domain on/off operations.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index cbe56b35aea0..056e0a09f381 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -62,6 +62,7 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
- 			if (IS_ERR(pd->clk[i]))
- 				break;
-+			pd->pclk[i] = clk_get_parent(pd->clk[i]);
- 			if (clk_set_parent(pd->clk[i], pd->oscclk))
- 				pr_err("%s: error setting oscclk as parent to clock %d\n",
- 						pd->name, i);
-@@ -161,13 +162,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 			pd->clk[i] = clk_get(dev, clk_name);
- 			if (IS_ERR(pd->clk[i]))
- 				break;
--			snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
--			pd->pclk[i] = clk_get(dev, clk_name);
--			if (IS_ERR(pd->pclk[i])) {
--				clk_put(pd->clk[i]);
--				pd->clk[i] = ERR_PTR(-EINVAL);
--				break;
--			}
-+			pd->pclk[i] = clk_get_parent(pd->clk[i]);
- 		}
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index c7a44ee0ce06..b9b99305991b 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -264,9 +264,8 @@
+ 	mfc_pd: power-domain@10044060 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044060 0x20>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
+-			<&clock CLK_MOUT_USER_ACLK333>;
+-		clock-names = "oscclk", "pclk0", "clk0";
++		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
++		clock-names = "oscclk", "clk0";
+ 		#power-domain-cells = <0>;
+ 	};
  
- 		if (IS_ERR(pd->clk[0]))
+@@ -280,16 +279,12 @@
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x100440C0 0x20>;
+ 		#power-domain-cells = <0>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK200>,
++		clocks = <&clock CLK_FIN_PLL>,
+ 			 <&clock CLK_MOUT_USER_ACLK200_DISP1>,
+-			 <&clock CLK_MOUT_SW_ACLK300>,
+ 			 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
+-			 <&clock CLK_MOUT_SW_ACLK400>,
+ 			 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
+ 			 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
+-		clock-names = "oscclk", "pclk0", "clk0",
+-			      "pclk1", "clk1", "pclk2", "clk2",
+-			      "asb0", "asb1";
++		clock-names = "oscclk", "clk0", "clk1", "clk2", "asb0", "asb1";
+ 	};
+ 
+ 	pinctrl_0: pinctrl@13400000 {
 -- 
 1.9.1
