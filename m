@@ -1,62 +1,97 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [GIT PULL 2/5] Samsung defconfig udpates for v4.1
-Date: Sat, 4 Apr 2015 08:47:31 +0200
-Message-ID: <CABxcv=kHPaJE4WGUHsgBPnFpT4aYqiodHVnTn+AccUhu3Te-Jw@mail.gmail.com>
-References: <551C35F6.1090602@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH -v3 11/11] drm/exynos: atomic dpms support
+Date: Sun, 5 Apr 2015 23:42:24 +0900
+Message-ID: <CAAQKjZMYXR7TxkGDKt=RTpE=ZpYyp7VveH_M6kEEB4EzcfCmcg@mail.gmail.com>
+References: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
+	<1428084583-14616-12-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:34107 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751730AbbDDGrd (ORCPT
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:35692 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751989AbbDEOm0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 4 Apr 2015 02:47:33 -0400
-Received: by wgbdm7 with SMTP id dm7so125367106wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Apr 2015 23:47:31 -0700 (PDT)
-In-Reply-To: <551C35F6.1090602@kernel.org>
+	Sun, 5 Apr 2015 10:42:26 -0400
+Received: by lbbuc2 with SMTP id uc2so3322549lbb.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Apr 2015 07:42:24 -0700 (PDT)
+In-Reply-To: <1428084583-14616-12-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-Hello Kukjin,
+Hi,
 
-On Wed, Apr 1, 2015 at 8:16 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
+2015-04-04 3:09 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 >
->   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+> Run dpms operations through the atomic intefaces. This basically removes
+> the .dpms() callback from econders and crtcs and use .disable() and
+> .enable() to turn the crtc on and off.
 >
-> are available in the git repository at:
+> v2: Address comments by Joonyoung:
+>         - make hdmi code call ->disable() instead of ->dpms()
+>         - do not use WARN_ON on crtc enable/disable
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-defconfig
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp_core.c       |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_connector.c |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 99 +++++++++++++++------------
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c       |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  4 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c       |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_encoder.c   | 27 ++------
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  2 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c          |  6 +-
+>  9 files changed, 70 insertions(+), 76 deletions(-)
 >
-> for you to fetch changes up to bb84296ae52da844c9cab81e0197152a69f2f841:
->
->   ARM: exynos_defconfig: Enable HDMI support (2015-03-27 02:00:09 +0900)
->
-> ----------------------------------------------------------------
-> Samsung defconfig updates for v4.1
->
-> - update exynos-defconfig
->   : enable HDMI, CPUidle, ChromeOS EC chardev driver
->     and thermal emulation, Marvell WiFi-Ex, CPUfreq,
->     and support for NFS rootfs
->   : remove EXYNOS_THERMAL_CORE define
->     and disable IOMMU support until support it
->
-> ----------------------------------------------------------------
-> Javier Martinez Canillas (5):
->       ARM: exynos_defconfig: Disable IOMMU support
 
-As I mentioned before, this also is needed for 4.0-rc to have display
-working on at least Exynos5420 Peach Pit and Exynos5800 Peach Pi
-Chromebooks but I saw that it is not included in your "Samsung 2nd
-fixes for v4.0" git pull [0].
+...snip...
 
-Maybe it can be sent directly to arm@kernel.org?
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 5b597bc..2ea7d01 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -1051,7 +1051,7 @@ static void hdmi_connector_destroy(struct drm_connector *connector)
+>  }
+>
+>  static struct drm_connector_funcs hdmi_connector_funcs = {
+> -       .dpms = drm_helper_connector_dpms,
+> +       .dpms = drm_atomic_helper_connector_dpms,
+>         .fill_modes = drm_helper_probe_single_connector_modes,
+>         .detect = hdmi_detect,
+>         .destroy = hdmi_connector_destroy,
+> @@ -2127,8 +2127,8 @@ static void hdmi_dpms(struct exynos_drm_display *display, int mode)
+>                  */
+>                 if (crtc)
+>                         funcs = crtc->helper_private;
+> -               if (funcs && funcs->dpms)
+> -                       (*funcs->dpms)(crtc, mode);
+> +               if (funcs && funcs->disable)
+> +                       (*funcs->disable)(crtc, mode);
 
-Best regards,
-Javier
+This patch makes funcs->disable callback to be called instead of
+funcs->dpms callback. However, funcs->disable callback isn't required
+for second argument so the build is failed like below,
 
-[0]: http://www.spinics.net/lists/arm-kernel/msg410078.html
+drivers/gpu/drm/exynos/exynos_hdmi.c: In function 'hdmi_dpms':
+drivers/gpu/drm/exynos/exynos_hdmi.c:2131:4: error: too many arguments
+to function 'funcs->disable'
+
+Please, keep in mind that you should build it and at least have a
+basic test before posting.
+
+Thanks,
+Inki Dae
+
+>
+>                 hdmi_poweroff(hdata);
+>                 break;
+> --
+> 2.1.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
