@@ -1,87 +1,79 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [GIT PULL 2/5] Samsung defconfig udpates for v4.1
-Date: Mon, 6 Apr 2015 09:49:04 +0200
-Message-ID: <CABxcv=njDwgF6CuEQLYg7V3cJT=UtkLgNKx-+T3pZRDg5T9e_w@mail.gmail.com>
-References: <551C35F6.1090602@kernel.org>
-	<CABxcv=kHPaJE4WGUHsgBPnFpT4aYqiodHVnTn+AccUhu3Te-Jw@mail.gmail.com>
-	<023d01d07035$c499b650$4dcd22f0$@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH -v4 0/8] drm/exynos: clean up patches (preparing for atomic)
+Date: Mon, 06 Apr 2015 19:38:46 +0900
+Message-ID: <55226236.8070307@samsung.com>
+References: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:35999 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181AbbDFHtF (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:14533 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752654AbbDFKit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Apr 2015 03:49:05 -0400
-Received: by wgra20 with SMTP id a20so20699199wgr.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Apr 2015 00:49:04 -0700 (PDT)
-In-Reply-To: <023d01d07035$c499b650$4dcd22f0$@kernel.org>
+	Mon, 6 Apr 2015 06:38:49 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NMD00ET3S8NKE90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 06 Apr 2015 19:38:47 +0900 (KST)
+In-reply-to: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hello Kukjin,
-
-On Mon, Apr 6, 2015 at 8:49 AM, Kukjin Kim <kgene@kernel.org> wrote:
-> Javier Martinez Canillas wrote:
->>
->> Hello Kukjin,
->>
+On 2015=EB=85=84 04=EC=9B=94 02=EC=9D=BC 01:02, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>=20
 > Hi,
->
->> On Wed, Apr 1, 2015 at 8:16 PM, Kukjin Kim <kgene@kernel.org> wrote:
->> > The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
->> >
->> >   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
->> >
->> > are available in the git repository at:
->> >
->> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> > tags/samsung-defconfig
->> >
->> > for you to fetch changes up to bb84296ae52da844c9cab81e0197152a69f2f841:
->> >
->> >   ARM: exynos_defconfig: Enable HDMI support (2015-03-27 02:00:09 +0900)
->> >
->> > ----------------------------------------------------------------
->> > Samsung defconfig updates for v4.1
->> >
->> > - update exynos-defconfig
->> >   : enable HDMI, CPUidle, ChromeOS EC chardev driver
->> >     and thermal emulation, Marvell WiFi-Ex, CPUfreq,
->> >     and support for NFS rootfs
->> >   : remove EXYNOS_THERMAL_CORE define
->> >     and disable IOMMU support until support it
->> >
->> > ----------------------------------------------------------------
->> > Javier Martinez Canillas (5):
->> >       ARM: exynos_defconfig: Disable IOMMU support
->>
->> As I mentioned before, this also is needed for 4.0-rc to have display
->> working on at least Exynos5420 Peach Pit and Exynos5800 Peach Pi
->> Chromebooks but I saw that it is not included in your "Samsung 2nd
->> fixes for v4.0" git pull [0].
->>
-> Yeah, you're right. The 'disabling IOMMU' should be queued for 4.0-rc but I've
-> missed. Sorry about that. As you know, the branch has been queued for 4.1
-> already so if we send it even the one patch for 4.0-rc, it will cause conflict.
->
-> So I think would be better if we could send it to stable after 4.1-rc1? If you
-> agree, I'll.
->
+>=20
+> Here goes some clean ups to the exynos drivers. The main clean ups is
+> the presetting and zpos making the property immutable and the removal
+> of *_win_data structures.
+>=20
+> v2 contains a extra patch to fix alpha setting for planes in fimd, so
+> now fimd works fine even after the removal of struct fimd_win_data.
+>=20
+> v3 removes a leftover var in the first commit and address the comment=
+ from
+> Joonyoung about checking the return value of exynos_plane_init()
+>=20
+> v4 rebases on top of Daniel Stone patch, currently only applied to
+> exynos-drm-fixes
 
-Agreed.
+Applied.
 
->> Maybe it can be sent directly to arm@kernel.org?
->>
-> I don't think so because of above reason...
->
+Thanks,
+Inki Dae
 
-Got it,  thanks for the explanation.
-
-> - Kukjin
->
-
-Best regards,
-Javier
+>=20
+> Gustavo Padovan (7):
+>   drm/exynos: fimd: fix alpha setting for XR24 pixel format
+>   drm/exynos: remove unused exynos_crtc->win_enable() callback
+>   drm/exynos: remove struct *_win_data abstraction on planes
+>   drm/exynos: preset zpos value for overlay planes
+>   drm/exynos: make zpos property immutable
+>   drm/exynos: remove exynos_plane_destroy()
+>   drm/exynos: remove leftover functions declarations
+>=20
+> Mandeep Singh Baines (1):
+>   drm/exynos: track vblank events on a per crtc basis
+>=20
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 178 ++++++++-----------=
+---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c   | 101 ++++++-------
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.h   |   7 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c    |  27 ----
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h    |  20 +--
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 230 ++++++++++++-------=
+----------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c  |  66 ++-------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h  |   7 +-
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 136 +++++------------
+>  drivers/gpu/drm/exynos/exynos_mixer.c      | 221 ++++++++++---------=
+--------
+>  include/video/samsung_fimd.h               |   5 +
+>  11 files changed, 345 insertions(+), 653 deletions(-)
+>=20
