@@ -1,45 +1,79 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 3/3] drm/exynos: mixer: add 2x scaling to mixer_graph_buffer
-Date: Sun, 5 Apr 2015 17:40:08 +0100
-Message-ID: <CACvgo50N_LGyA9rx-9y3dUQzu3cx0HhEaZjij=AWVsCf5-ZA2Q@mail.gmail.com>
-References: <1427894943-9010-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-	<1427894943-9010-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL 2/5] Samsung defconfig udpates for v4.1
+Date: Mon, 06 Apr 2015 15:49:02 +0900
+Message-ID: <023d01d07035$c499b650$4dcd22f0$@kernel.org>
+References: <551C35F6.1090602@kernel.org>
+ <CABxcv=kHPaJE4WGUHsgBPnFpT4aYqiodHVnTn+AccUhu3Te-Jw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f50.google.com ([209.85.216.50]:41355 "EHLO
-	mail-vn0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752660AbbDEQkJ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:15406 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750890AbbDFGtG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Apr 2015 12:40:09 -0400
-Received: by vnbf7 with SMTP id f7so1528065vnb.8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Apr 2015 09:40:08 -0700 (PDT)
-In-Reply-To: <1427894943-9010-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Mon, 6 Apr 2015 02:49:06 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NMD0064PHLRDJ90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 06 Apr 2015 15:49:03 +0900 (KST)
+In-reply-to: <CABxcv=kHPaJE4WGUHsgBPnFpT4aYqiodHVnTn+AccUhu3Te-Jw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>
+To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>
 
-Hi Tobias,
+Javier Martinez Canillas wrote:
+> 
+> Hello Kukjin,
+> 
+Hi,
 
-On 1 April 2015 at 14:29, Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 5ab0e32..6822b36 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> On Wed, Apr 1, 2015 at 8:16 PM, Kukjin Kim <kgene@kernel.org> wrote:
+> > The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
+> >
+> >   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
+> >
+> > are available in the git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > tags/samsung-defconfig
+> >
+> > for you to fetch changes up to bb84296ae52da844c9cab81e0197152a69f2f841:
+> >
+> >   ARM: exynos_defconfig: Enable HDMI support (2015-03-27 02:00:09 +0900)
+> >
+> > ----------------------------------------------------------------
+> > Samsung defconfig updates for v4.1
+> >
+> > - update exynos-defconfig
+> >   : enable HDMI, CPUidle, ChromeOS EC chardev driver
+> >     and thermal emulation, Marvell WiFi-Ex, CPUfreq,
+> >     and support for NFS rootfs
+> >   : remove EXYNOS_THERMAL_CORE define
+> >     and disable IOMMU support until support it
+> >
+> > ----------------------------------------------------------------
+> > Javier Martinez Canillas (5):
+> >       ARM: exynos_defconfig: Disable IOMMU support
+> 
+> As I mentioned before, this also is needed for 4.0-rc to have display
+> working on at least Exynos5420 Peach Pit and Exynos5800 Peach Pi
+> Chromebooks but I saw that it is not included in your "Samsung 2nd
+> fixes for v4.0" git pull [0].
+> 
+Yeah, you're right. The 'disabling IOMMU' should be queued for 4.0-rc but I've
+missed. Sorry about that. As you know, the branch has been queued for 4.1
+already so if we send it even the one patch for 4.0-rc, it will cause conflict.
 
-> @@ -528,9 +552,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
->                 fmt = ARGB8888;
->         }
->
-> -       /* 2x scaling feature */
-> -       x_ratio = 0;
-> -       y_ratio = 0;
-> +       /* check if mixer supports requested scaling setup */
-> +       if (mixer_setup_scale(plane, &x_ratio, &y_ratio)) return;
->
-Having return on the same line as the if statement will make
-checkpatch.pl unhappy :-(
+So I think would be better if we could send it to stable after 4.1-rc1? If you
+agree, I'll.
 
-Cheers
-Emil
+> Maybe it can be sent directly to arm@kernel.org?
+> 
+I don't think so because of above reason...
+
+- Kukjin
