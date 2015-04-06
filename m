@@ -1,266 +1,98 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 10/11] ARM: dts: Use phandle notation for overriding nodes in SMDK4412
-Date: Mon,  6 Apr 2015 22:28:21 +0200
-Message-ID: <1428352102-12855-11-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH 02/11] ARM: dts: Use phandle notation for overriding nodes in
+ Exynos4210
+Date: Mon,  6 Apr 2015 22:28:13 +0200
+Message-ID: <1428352102-12855-3-git-send-email-k.kozlowski.k@gmail.com>
 References: <1428352102-12855-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1428352102-12855-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 The phandle notation reduces possible mistakes when overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos4412-smdk4412.dts | 210 +++++++++++++++---------------
- 1 file changed, 105 insertions(+), 105 deletions(-)
+ arch/arm/boot/dts/exynos4210.dtsi | 43 +++++++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index b9256afbcc68..c2421df1fa43 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -28,135 +28,135 @@
- 		stdout-path = &serial_1;
- 	};
- 
--	g2d@10800000 {
--		status = "okay";
--	};
--
--	pinctrl@11000000 {
--		keypad_rows: keypad-rows {
--			samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible = "samsung,clock-xxti";
-+			clock-frequency = <0>;
- 		};
- 
--		keypad_cols: keypad-cols {
--			samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
--				       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
-+		xusbxti {
-+			compatible = "samsung,clock-xusbxti";
-+			clock-frequency = <24000000>;
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 76b84852f29c..a9a55304e31a 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -52,16 +52,6 @@
  		};
  	};
-+};
  
--	keypad@100A0000 {
--		samsung,keypad-num-rows = <3>;
--		samsung,keypad-num-columns = <8>;
--		linux,keypad-no-autorepeat;
--		linux,keypad-wakeup;
--		pinctrl-0 = <&keypad_rows &keypad_cols>;
--		pinctrl-names = "default";
--		status = "okay";
--
--		key_1 {
--			keypad,row = <1>;
--			keypad,column = <3>;
--			linux,code = <2>;
--		};
--
--		key_2 {
--			keypad,row = <1>;
--			keypad,column = <4>;
--			linux,code = <3>;
--		};
--
--		key_3 {
--			keypad,row = <1>;
--			keypad,column = <5>;
--			linux,code = <4>;
--		};
--
--		key_4 {
--			keypad,row = <1>;
--			keypad,column = <6>;
--			linux,code = <5>;
--		};
-+&g2d {
-+	status = "okay";
-+};
- 
--		key_5 {
--			keypad,row = <1>;
--			keypad,column = <7>;
--			linux,code = <6>;
--		};
-+&keypad {
-+	samsung,keypad-num-rows = <3>;
-+	samsung,keypad-num-columns = <8>;
-+	linux,keypad-no-autorepeat;
-+	linux,keypad-wakeup;
-+	pinctrl-0 = <&keypad_rows &keypad_cols>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	key_1 {
-+		keypad,row = <1>;
-+		keypad,column = <3>;
-+		linux,code = <2>;
-+	};
- 
--		key_A {
--			keypad,row = <2>;
--			keypad,column = <6>;
--			linux,code = <30>;
--		};
-+	key_2 {
-+		keypad,row = <1>;
-+		keypad,column = <4>;
-+		linux,code = <3>;
-+	};
- 
--		key_B {
--			keypad,row = <2>;
--			keypad,column = <7>;
--			linux,code = <48>;
--		};
-+	key_3 {
-+		keypad,row = <1>;
-+		keypad,column = <5>;
-+		linux,code = <4>;
-+	};
- 
--		key_C {
--			keypad,row = <0>;
--			keypad,column = <5>;
--			linux,code = <46>;
--		};
-+	key_4 {
-+		keypad,row = <1>;
-+		keypad,column = <6>;
-+		linux,code = <5>;
-+	};
- 
--		key_D {
--			keypad,row = <2>;
--			keypad,column = <5>;
--			linux,code = <32>;
--		};
-+	key_5 {
-+		keypad,row = <1>;
-+		keypad,column = <7>;
-+		linux,code = <6>;
-+	};
- 
--		key_E {
--			keypad,row = <0>;
--			keypad,column = <7>;
--			linux,code = <18>;
--		};
-+	key_A {
-+		keypad,row = <2>;
-+		keypad,column = <6>;
-+		linux,code = <30>;
- 	};
- 
--	sdhci@12530000 {
--		bus-width = <4>;
--		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
--		pinctrl-names = "default";
--		status = "okay";
-+	key_B {
-+		keypad,row = <2>;
-+		keypad,column = <7>;
-+		linux,code = <48>;
- 	};
- 
--	codec@13400000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
--		status = "okay";
-+	key_C {
-+		keypad,row = <0>;
-+		keypad,column = <5>;
-+		linux,code = <46>;
- 	};
- 
--	serial@13800000 {
--		status = "okay";
-+	key_D {
-+		keypad,row = <2>;
-+		keypad,column = <5>;
-+		linux,code = <32>;
- 	};
- 
--	serial@13810000 {
--		status = "okay";
-+	key_E {
-+		keypad,row = <0>;
-+		keypad,column = <7>;
-+		linux,code = <18>;
- 	};
-+};
-+
-+&mfc {
-+	samsung,mfc-r = <0x43000000 0x800000>;
-+	samsung,mfc-l = <0x51000000 0x800000>;
-+	status = "okay";
-+};
- 
--	serial@13820000 {
--		status = "okay";
-+&pinctrl_1 {
-+	keypad_rows: keypad-rows {
-+		samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
- 	};
- 
--	serial@13830000 {
--		status = "okay";
-+	keypad_cols: keypad-cols {
-+		samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
-+			       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
- 	};
-+};
- 
--	fixed-rate-clocks {
--		xxti {
--			compatible = "samsung,clock-xxti";
--			clock-frequency = <0>;
--		};
-+&sdhci_2 {
-+	bus-width = <4>;
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
- 
--		xusbxti {
--			compatible = "samsung,clock-xusbxti";
--			clock-frequency = <24000000>;
--		};
+-	pmu_system_controller: system-controller@10020000 {
+-		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
+-				"clkout4", "clkout8", "clkout9";
+-		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
+-			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
+-			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
+-			<&clock CLK_XUSBXTI>;
+-		#clock-cells = <1>;
 -	};
-+&serial_0 {
-+	status = "okay";
-+};
-+
-+&serial_1 {
-+	status = "okay";
-+};
-+
-+&serial_2 {
-+	status = "okay";
-+};
-+
-+&serial_3 {
-+	status = "okay";
+-
+ 	sysram: sysram@02020000 {
+ 		compatible = "mmio-sram";
+ 		reg = <0x02020000 0x20000>;
+@@ -95,18 +85,6 @@
+ 		arm,data-latency = <2 2 1>;
+ 	};
+ 
+-	gic: interrupt-controller@10490000 {
+-		cpu-offset = <0x8000>;
+-	};
+-
+-	combiner: interrupt-controller@10440000 {
+-		samsung,combiner-nr = <16>;
+-		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
+-	};
+-
+ 	mct: mct@10050000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x10050000 0x800>;
+@@ -245,3 +223,24 @@
+ 		status = "disabled";
+ 	};
  };
++
++&gic {
++	cpu-offset = <0x8000>;
++};
++
++&combiner {
++	samsung,combiner-nr = <16>;
++	interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
++		     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
++		     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
++		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
++};
++
++&pmu_system_controller {
++	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
++			"clkout4", "clkout8", "clkout9";
++	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
++		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
++		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
++	#clock-cells = <1>;
++};
 -- 
 2.1.0
