@@ -1,79 +1,89 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH -v4 0/8] drm/exynos: clean up patches (preparing for atomic)
-Date: Mon, 06 Apr 2015 19:38:46 +0900
-Message-ID: <55226236.8070307@samsung.com>
-References: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
+Subject: Re: [PATCH -v3 00/11] drm/exynos: Add atomic modesetting support
+Date: Mon, 06 Apr 2015 19:46:42 +0900
+Message-ID: <55226412.8040807@samsung.com>
+References: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14533 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752654AbbDFKit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Apr 2015 06:38:49 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NMD00ET3S8NKE90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 06 Apr 2015 19:38:47 +0900 (KST)
-In-reply-to: <1427904132-15677-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2015=EB=85=84 04=EC=9B=94 02=EC=9D=BC 01:02, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->=20
-> Hi,
->=20
-> Here goes some clean ups to the exynos drivers. The main clean ups is
-> the presetting and zpos making the property immutable and the removal
-> of *_win_data structures.
->=20
-> v2 contains a extra patch to fix alpha setting for planes in fimd, so
-> now fimd works fine even after the removal of struct fimd_win_data.
->=20
-> v3 removes a leftover var in the first commit and address the comment=
- from
-> Joonyoung about checking the return value of exynos_plane_init()
->=20
-> v4 rebases on top of Daniel Stone patch, currently only applied to
-> exynos-drm-fixes
-
-Applied.
-
-Thanks,
-Inki Dae
-
->=20
-> Gustavo Padovan (7):
->   drm/exynos: fimd: fix alpha setting for XR24 pixel format
->   drm/exynos: remove unused exynos_crtc->win_enable() callback
->   drm/exynos: remove struct *_win_data abstraction on planes
->   drm/exynos: preset zpos value for overlay planes
->   drm/exynos: make zpos property immutable
->   drm/exynos: remove exynos_plane_destroy()
->   drm/exynos: remove leftover functions declarations
->=20
-> Mandeep Singh Baines (1):
->   drm/exynos: track vblank events on a per crtc basis
->=20
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 178 ++++++++-----------=
----
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c   | 101 ++++++-------
->  drivers/gpu/drm/exynos/exynos_drm_crtc.h   |   7 +-
->  drivers/gpu/drm/exynos/exynos_drm_drv.c    |  27 ----
->  drivers/gpu/drm/exynos/exynos_drm_drv.h    |  20 +--
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 230 ++++++++++++-------=
-----------
->  drivers/gpu/drm/exynos/exynos_drm_plane.c  |  66 ++-------
->  drivers/gpu/drm/exynos/exynos_drm_plane.h  |   7 +-
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 136 +++++------------
->  drivers/gpu/drm/exynos/exynos_mixer.c      | 221 ++++++++++---------=
---------
->  include/video/samsung_fimd.h               |   5 +
->  11 files changed, 345 insertions(+), 653 deletions(-)
->=20
+T24gMjAxNeuFhCAwNOyblCAwNOydvCAwMzowOSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
+b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
+PiBIaSwKPiAKPiBIZXJlIGdvZXMgdGhlIGZ1bGwgc3VwcG9ydCBmb3IgYXRvbWljIG1vZGVzZXR0
+aW5nIG9uIGV4eW5vcy4gSSd2ZQo+IHNwbGl0IHRoZSBwYXRjaGVzIGluIHRoZSB2YXJpb3VzIHBo
+YXNlcyBvZiBhdG9taWMgc3VwcG9ydC4KPiAKPiBUaGVzZSBwYXRjaGVzIHNpdHMgb24gdG9wIG9m
+IHRoZSBjbGVhbiB1cCBwYXRjaGVzIEkndmUgc2VudCB5ZXN0ZXJkYXkKPiB0byB0aGlzIG1haWxp
+bmcgbGlzdFsxXS4KPiAKPiB2MjogZml4ZXMgY29tbWVudHMgYnkgSm9vbnlvdW5nCj4gICAgICAg
+ICAtIHJlbW92ZSB1bnVzZWQgdmFyIGluIHBhdGNoIDA5Cj4gICAgICAgICAtIHVzZSAtPmRpc2Fi
+bGUgaW5zdGVhZCBvZiBvdXRkYXRlZCAtPmRwbXMgaW4gaGRtaSBjb2RlCj4gICAgICAgICAtIHJl
+bW92ZSBXQVJOX09OIGZyb20gY3J0YyBlbmFibGUvZGlzYWJsZQo+IAo+IHYzOiBmaXhlcyBjb21t
+ZW50IGJ5IEpvb255b3VuZwo+IAktIG1vdmUgdGhlIHJlbW92YWwgb2YgZHJtX2hlbHBlcl9kaXNh
+YmxlX3VudXNlZF9mdW5jdGlvbnMoKSB0byAKPiAJc2VwYXJhdGVkIHBhdGNoCgpXaXRoIHRoaXMg
+cGF0Y2ggc2VyaWVzLCBLZXJuZWwgYm9vdGluZyBpcyBoYWx0ZWQgYXQgZW5kIG9mIGtlcm5lbApi
+b290aW5nLiBJIHRlc3RlZCB0aGlzIHBhdGNoIHNlcmllcyBvbiBUcmF0czIgYm9hcmQgYmFzZWQg
+b24gRXh5bm9zNDQxMiBTb0MuCgpCZWxvdyBpcyBhIHBhcnQgb2YgZnVsbCBib290aW5nIGxvZ3Ms
+IHdoaWNoIHdhcyBoYWx0ZWQsClsgICAgMS45OTIwMTVdIGV4eW5vcy1kcm0taXBwIGV4eW5vcy1k
+cm0taXBwOiBkcm0gaXBwIHJlZ2lzdGVyZWQKc3VjY2Vzc2Z1bGx5LgpbICAgIDEuOTkzMDA5XSBl
+eHlub3MtZHJtIGV4eW5vcy1kcm06IGJvdW5kIGV4eW5vcy1kcm0tdmlkaSAob3BzCnZpZGlfY29t
+cG9uZW50X29wcykKWyAgICAxLjk5MzAzNl0gZXh5bm9zLWRybSBleHlub3MtZHJtOiBib3VuZCAx
+MWMwMDAwMC5maW1kIChvcHMKZmltZF9jb21wb25lbnRfb3BzKQpbICAgIDEuOTkzMzg1XSBleHlu
+b3MtZHJtIGV4eW5vcy1kcm06IGJvdW5kIDExYzgwMDAwLmRzaSAob3BzCmV4eW5vc19kc2lfY29t
+cG9uZW50X29wcykKWyAgICAxLjk5MzM5MF0gW2RybV0gU3VwcG9ydHMgdmJsYW5rIHRpbWVzdGFt
+cCBjYWNoaW5nIFJldiAyICgyMS4xMC4yMDEzKS4KWyAgICAxLjk5MzM5M10gW2RybV0gTm8gZHJp
+dmVyIHN1cHBvcnQgZm9yIHZibGFuayB0aW1lc3RhbXAgcXVlcnkuClsgICAgMS45OTM0NDJdIFtk
+cm1dIEluaXRpYWxpemVkIGV4eW5vcyAxLjAuMCAyMDExMDUzMCBvbiBtaW5vciAwClsgICAgMi4w
+NDMzNThdIFdBUk5JTkc6IENQVTogMiBQSUQ6IDEyMDkgYXQgZHJpdmVycy9jbGsvY2xrLmM6ODk4
+CmNsa191bnByZXBhcmUrMHgyNC8weDJjKCkKWyAgICAyLjA1MTQxMl0gTW9kdWxlcyBsaW5rZWQg
+aW46ClsgICAgMi4wNTQ0MjJdIENQVTogMiBQSUQ6IDEyMDkgQ29tbToga3dvcmtlci8yOjEgVGFp
+bnRlZDogRyAgICAgICAgVwogICAgNC4wLjAtcmM2LTAwNTI2LWdjNDlkN2RlLWRpcnR5ICMxMjc4
+ClsgICAgMi4wNjQzMzddIEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVuZWQg
+RGV2aWNlIFRyZWUpClsgICAgMi4wNzA0MjhdIFdvcmtxdWV1ZTogcG0gcG1fcnVudGltZV93b3Jr
+Ph4CCgpBZnRlciB0aGF0LCBJIHRlc3RlZCBpdCBhZ2FpbiB3aXRob3V0IEZJTUQgYW5kIHRoZSBi
+b290aW5nIGlzIG9rLiBTbyBJCmd1ZXNzIHRoYXQgdGhpcyBhdG9taWMgZmVhdHVyZSBoYXMgYSBi
+dWcgdG8gRklNRCBkcml2ZXIuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IAlHdXN0YXZvCj4gLS0t
+Cj4gCj4gR3VzdGF2byBQYWRvdmFuICgxMSk6Cj4gICBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2Ug
+MTogdXNlIGRybV9wbGFuZV9oZWxwZXJfdXBkYXRlKCkKPiAgIGRybS9leHlub3M6IGF0b21pYyBw
+aGFzZSAxOiB1c2UgZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlKCkKPiAgIGRybS9leHlub3M6IGF0
+b21pYyBwaGFzZSAxOiBhZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxsYmFjawo+ICAgZHJtL2V4eW5v
+czogYXRvbWljIHBoYXNlIDI6IHdpcmUgdXAgc3RhdGUgcmVzZXQoKSwgZHVwbGljYXRlKCkgYW5k
+Cj4gICAgIGRlc3Ryb3koKQo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDI6IGtlZXAgdHJh
+Y2sgb2YgZnJhbWVidWZmZXIgcG9pbnRlcgo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6
+IGF0b21pYyB1cGRhdGVzIG9mIHBsYW5lcwo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6
+IHVzZSBhdG9taWMgLnNldF9jb25maWcgaGVscGVyCj4gICBkcm0vZXh5bm9zOiBhdG9taWMgcGhh
+c2UgMzogY29udmVydCBwYWdlIGZsaXBzCj4gICBkcm0vZXh5bm9zOiByZW1vdmUgZXhwb3J0ZWQg
+ZnVuY3Rpb25zIGZyb20gZXh5bm9zX2RybV9wbGFuZQo+ICAgZHJtL2V4eW5vczogZG9uJ3QgZGlz
+YWJsZSB1bnVzZWQgZnVuY3Rpb25zIGF0IGluaXQKPiAgIGRybS9leHlub3M6IGF0b21pYyBkcG1z
+IHN1cHBvcnQKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAg
+ICAgIHwgICA0ICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAg
+ICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb25uZWN0
+b3IuYyB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
+ICAgICAgfCAyMjYgKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2RwaS5jICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAgICB8ICAgMiArCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgICB8ICAgNCArLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgfCAgIDYgKy0KPiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuYyAgIHwgIDI3ICstLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICAgICAgfCAgMTIgKy0KPiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgICAgIHwgICAzIC0KPiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwgMTEzICsrKysrKystLS0tLS0K
+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggICAgIHwgIDExIC0t
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICAgNiAr
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgfCAgMTAg
+Ky0KPiAgMTUgZmlsZXMgY2hhbmdlZCwgMTg3IGluc2VydGlvbnMoKyksIDI1NSBkZWxldGlvbnMo
+LSkKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
