@@ -1,141 +1,103 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH -v3 00/11] drm/exynos: Add atomic modesetting support
-Date: Tue, 7 Apr 2015 00:44:04 +0900
-Message-ID: <CAAQKjZNMkNVs9YOq5G+u+-oQJrJrmxi=6bqMM2ScQP7RRrNpig@mail.gmail.com>
-References: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
-	<55226412.8040807@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:35674 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752791AbbDFPoG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Apr 2015 11:44:06 -0400
-Received: by labbd9 with SMTP id bd9so10962829lab.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Apr 2015 08:44:05 -0700 (PDT)
-In-Reply-To: <55226412.8040807@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [RESEND PATCH 0/8] cros_ec: Add multiple EC and protocol v3 support
+Date: Mon,  6 Apr 2015 18:14:58 +0200
+Message-ID: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-2015-04-06 19:46 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
-> On 2015=B3=E2 04=BF=F9 04=C0=CF 03:09, Gustavo Padovan wrote:
->> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->>
->> Hi,
->>
->> Here goes the full support for atomic modesetting on exynos. I've
->> split the patches in the various phases of atomic support.
->>
->> These patches sits on top of the clean up patches I've sent yesterda=
-y
->> to this mailing list[1].
->>
->> v2: fixes comments by Joonyoung
->>         - remove unused var in patch 09
->>         - use ->disable instead of outdated ->dpms in hdmi code
->>         - remove WARN_ON from crtc enable/disable
->>
->> v3: fixes comment by Joonyoung
->>       - move the removal of drm_helper_disable_unused_functions() to
->>       separated patch
->
-> With this patch series, Kernel booting is halted at end of kernel
-> booting. I tested this patch series on Trats2 board based on Exynos44=
-12 SoC.
->
-> Below is a part of full booting logs, which was halted,
-> [    1.992015] exynos-drm-ipp exynos-drm-ipp: drm ipp registered
-> successfully.
-> [    1.993009] exynos-drm exynos-drm: bound exynos-drm-vidi (ops
-> vidi_component_ops)
-> [    1.993036] exynos-drm exynos-drm: bound 11c00000.fimd (ops
-> fimd_component_ops)
-> [    1.993385] exynos-drm exynos-drm: bound 11c80000.dsi (ops
-> exynos_dsi_component_ops)
-> [    1.993390] [drm] Supports vblank timestamp caching Rev 2 (21.10.2=
-013).
-> [    1.993393] [drm] No driver support for vblank timestamp query.
-> [    1.993442] [drm] Initialized exynos 1.0.0 20110530 on minor 0
-> [    2.043358] WARNING: CPU: 2 PID: 1209 at drivers/clk/clk.c:898
-> clk_unprepare+0x24/0x2c()
-> [    2.051412] Modules linked in:
-> [    2.054422] CPU: 2 PID: 1209 Comm: kworker/2:1 Tainted: G        W
->     4.0.0-rc6-00526-gc49d7de-dirty #1278
-> [    2.064337] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [    2.070428] Workqueue: pm pm_runtime_work>
->
-> After that, I tested it again without FIMD and the booting is ok. So =
-I
-> guess that this atomic feature has a bug to FIMD driver.
->
+Hello,
 
-More information,
+Newer Chromebooks have more than one Embedded Controller (EC) in the
+system. These additional ECs are connected through I2C with a host EC
+which is the one that is connected to the Application Processor (AP)
+through I2C, SPI or LPC.
 
-The reason the booting is halted is that a deadlock occurs at fbcon
-module when register_framebuffer() is called.
+So on these platforms, sub-processors are chained to each other:
 
-Below are our test results,
-- with only cleanup series, FIMD and HDMI work well.
-- with cleanup and atomic series, HDMI works well but FIMD doesn't
-work - a deadlock occurs.
+AP <--> Host EC <--> Power Delivery (PD) EC
 
-Could anyone test it with the atomic series on trats2 board? You can
-test it on top of exynos-drm-next-todo branch which contains all
-relevant patches,
-https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/log=
-/?h=3Dexynos-drm-next-todo
+The AP sends commands to the additional EC through the host EC using
+a set of passthru commands and the host redirects to the correct EC.
 
-Anyway, we will continue to take a look at the this issue why the
-deadlock occurs.
+This series adds support for multiple EC in a system and also for the
+protocol version 3 that is used on newer ECs.
 
-Thanks,
-Inki Dae
+Most patches were taken from the downstream ChromiumOS v3.14 tree with
+fixes squashed, split to minimise the cross subsystem churn and changes
+for mainline inclusion but were not modified functionality wise.
 
-> Thanks,
-> Inki Dae
->
->>
->>       Gustavo
->> ---
->>
->> Gustavo Padovan (11):
->>   drm/exynos: atomic phase 1: use drm_plane_helper_update()
->>   drm/exynos: atomic phase 1: use drm_plane_helper_disable()
->>   drm/exynos: atomic phase 1: add .mode_set_nofb() callback
->>   drm/exynos: atomic phase 2: wire up state reset(), duplicate() and
->>     destroy()
->>   drm/exynos: atomic phase 2: keep track of framebuffer pointer
->>   drm/exynos: atomic phase 3: atomic updates of planes
->>   drm/exynos: atomic phase 3: use atomic .set_config helper
->>   drm/exynos: atomic phase 3: convert page flips
->>   drm/exynos: remove exported functions from exynos_drm_plane
->>   drm/exynos: don't disable unused functions at init
->>   drm/exynos: atomic dpms support
->>
->>  drivers/gpu/drm/bridge/ptn3460.c              |   4 +
->>  drivers/gpu/drm/exynos/exynos_dp_core.c       |   6 +-
->>  drivers/gpu/drm/exynos/exynos_drm_connector.c |   6 +-
->>  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 226 ++++++++-------=
------------
->>  drivers/gpu/drm/exynos/exynos_drm_dpi.c       |   6 +-
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c       |   2 +
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |   4 +-
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c       |   6 +-
->>  drivers/gpu/drm/exynos/exynos_drm_encoder.c   |  27 +--
->>  drivers/gpu/drm/exynos/exynos_drm_fb.c        |  12 +-
->>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |   3 -
->>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 113 +++++++------
->>  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  11 --
->>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |   6 +-
->>  drivers/gpu/drm/exynos/exynos_hdmi.c          |  10 +-
->>  15 files changed, 187 insertions(+), 255 deletions(-)
->>
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+The series depend on "platform/chrome: Add user-space dev inferface support"
+[0] that is already merged in the chrome-platform tree so probably these
+patches should also go through that tree once the mfd patches are acked.
+
+The series is a resend of a patch-set posted a month ago [1]. The only big
+change besides cleanups and bugfixes is a rework of the cros_ec IOCTL API
+as suggested by Gwendal Grignou to use a zero-length for the data buffer to
+make the API both 64-bit safe and flexible for variable commands lengths.
+
+The patches were tested on an Exynos5250 Snow, Exynos5420 Peach Pit,
+Exynos5800 Peach Pi and x86 Pixel Chromebook using a modified ectool [2]
+that uses the new API and no regressions were found.
+
+I don't have access neither to a Chromebook with more than one EC nor one
+that supports the protocol version 3 though, so testing on those systems
+will be highly appreciated.
+
+The series is composed of the following patches:
+
+Gwendal Grignou (2):
+  mfd: cros ec: Remove parent field
+  mfd: cros-ec: Support multiple EC in a system
+
+Javier Martinez Canillas (2):
+  platform/chrome: cros_ec_lpc - Use existing function to check EC
+    result
+  mfd: cros_ec: Use a zero-length array for command data
+
+Stephen Barber (3):
+  mfd: cros_ec: rev cros_ec_commands.h
+  mfd: cros_ec: add proto v3 skeleton
+  mfd: cros_ec: add bus-specific proto v3 code
+
+Todd Broch (1):
+  mfd: cros_ec: Instantiate sub-devices from device tree
+
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  44 ++--
+ drivers/input/keyboard/cros_ec_keyb.c      |  27 +-
+ drivers/mfd/cros_ec.c                      | 386 ++++++++++++++++++++++++----
+ drivers/mfd/cros_ec_i2c.c                  | 169 ++++++++++++-
+ drivers/mfd/cros_ec_spi.c                  | 390 ++++++++++++++++++++++++-----
+ drivers/platform/chrome/cros_ec_dev.c      |  53 ++--
+ drivers/platform/chrome/cros_ec_lightbar.c | 165 +++++++-----
+ drivers/platform/chrome/cros_ec_lpc.c      |  98 ++++++--
+ drivers/platform/chrome/cros_ec_sysfs.c    | 149 ++++++-----
+ include/linux/mfd/cros_ec.h                |  36 ++-
+ include/linux/mfd/cros_ec_commands.h       | 277 ++++++++++++++++++--
+ 11 files changed, 1477 insertions(+), 317 deletions(-)
+
+Patches #1 and #2 are just small cleanups.
+
+Patch #3 allows the driver to instantiate sub-devices defined in DT instead
+of using a fixed list of mfd cells.
+
+Patch #4 modifies the struct cros_ec_command to use a zero-length array for
+the buffer used for EC input and output data.
+
+Patch #5 adds support to make multiple EC have a different device id and
+also exposing a per EC character device interface.
+
+Patch #6 synchronises the cros_ec_commands.h with a newer version of the
+file in the EC firmware repository.
+
+Patch #7 adds the EC host command protocol v3 support to the cros_ec driver
+and patch #8 adds the bus specific proto v3 support for I2C, SPI and LPC.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/2/2/214
+[1]: https://lkml.org/lkml/2015/3/12/621
+[2]: http://cgit.collabora.com/git/user/javier/ec.git/log/?h=mainline-ioctl-zero-length
