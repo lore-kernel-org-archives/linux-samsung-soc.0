@@ -1,98 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 02/11] ARM: dts: Use phandle notation for overriding nodes in
- Exynos4210
-Date: Mon,  6 Apr 2015 22:28:13 +0200
-Message-ID: <1428352102-12855-3-git-send-email-k.kozlowski.k@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 08/11] ARM: dts: Use phandle notation for overriding nodes in Exynos4412
+Date: Mon,  6 Apr 2015 22:28:19 +0200
+Message-ID: <1428352102-12855-9-git-send-email-k.kozlowski.k@gmail.com>
 References: <1428352102-12855-1-git-send-email-k.kozlowski.k@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1428352102-12855-1-git-send-email-k.kozlowski.k@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1428352102-12855-1-git-send-email-k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 The phandle notation reduces possible mistakes when overriding nodes.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos4210.dtsi | 43 +++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/exynos4412.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 76b84852f29c..a9a55304e31a 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -52,16 +52,6 @@
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 68ad43b391ae..b78ada70bd05 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -54,19 +54,19 @@
  		};
  	};
  
--	pmu_system_controller: system-controller@10020000 {
--		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--				"clkout4", "clkout8", "clkout9";
--		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--			<&clock CLK_XUSBXTI>;
--		#clock-cells = <1>;
+-	combiner: interrupt-controller@10440000 {
+-		samsung,combiner-nr = <20>;
 -	};
 -
- 	sysram: sysram@02020000 {
- 		compatible = "mmio-sram";
- 		reg = <0x02020000 0x20000>;
-@@ -95,18 +85,6 @@
- 		arm,data-latency = <2 2 1>;
+ 	pmu {
+ 		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
  	};
++};
  
 -	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x8000>;
+-		cpu-offset = <0x4000>;
 -	};
--
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <16>;
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
++&pmu_system_controller {
++	compatible = "samsung,exynos4412-pmu", "syscon";
++};
+ 
+-	pmu_system_controller: system-controller@10020000 {
+-		compatible = "samsung,exynos4412-pmu", "syscon";
 -	};
--
- 	mct: mct@10050000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x10050000 0x800>;
-@@ -245,3 +223,24 @@
- 		status = "disabled";
- 	};
- };
++&combiner {
++	samsung,combiner-nr = <20>;
++};
 +
 +&gic {
-+	cpu-offset = <0x8000>;
-+};
-+
-+&combiner {
-+	samsung,combiner-nr = <16>;
-+	interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+		     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+		     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
-+};
-+
-+&pmu_system_controller {
-+	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+			"clkout4", "clkout8", "clkout9";
-+	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
-+	#clock-cells = <1>;
-+};
++	cpu-offset = <0x4000>;
+ };
 -- 
 2.1.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
