@@ -1,89 +1,141 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH -v3 00/11] drm/exynos: Add atomic modesetting support
-Date: Mon, 06 Apr 2015 19:46:42 +0900
-Message-ID: <55226412.8040807@samsung.com>
+Date: Tue, 7 Apr 2015 00:44:04 +0900
+Message-ID: <CAAQKjZNMkNVs9YOq5G+u+-oQJrJrmxi=6bqMM2ScQP7RRrNpig@mail.gmail.com>
 References: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
+	<55226412.8040807@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f42.google.com ([209.85.215.42]:35674 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752791AbbDFPoG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Apr 2015 11:44:06 -0400
+Received: by labbd9 with SMTP id bd9so10962829lab.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Apr 2015 08:44:05 -0700 (PDT)
+In-Reply-To: <55226412.8040807@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Gustavo Padovan <gustavo@padovan.org>
 Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwNOyblCAwNOydvCAwMzowOSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
-b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
-PiBIaSwKPiAKPiBIZXJlIGdvZXMgdGhlIGZ1bGwgc3VwcG9ydCBmb3IgYXRvbWljIG1vZGVzZXR0
-aW5nIG9uIGV4eW5vcy4gSSd2ZQo+IHNwbGl0IHRoZSBwYXRjaGVzIGluIHRoZSB2YXJpb3VzIHBo
-YXNlcyBvZiBhdG9taWMgc3VwcG9ydC4KPiAKPiBUaGVzZSBwYXRjaGVzIHNpdHMgb24gdG9wIG9m
-IHRoZSBjbGVhbiB1cCBwYXRjaGVzIEkndmUgc2VudCB5ZXN0ZXJkYXkKPiB0byB0aGlzIG1haWxp
-bmcgbGlzdFsxXS4KPiAKPiB2MjogZml4ZXMgY29tbWVudHMgYnkgSm9vbnlvdW5nCj4gICAgICAg
-ICAtIHJlbW92ZSB1bnVzZWQgdmFyIGluIHBhdGNoIDA5Cj4gICAgICAgICAtIHVzZSAtPmRpc2Fi
-bGUgaW5zdGVhZCBvZiBvdXRkYXRlZCAtPmRwbXMgaW4gaGRtaSBjb2RlCj4gICAgICAgICAtIHJl
-bW92ZSBXQVJOX09OIGZyb20gY3J0YyBlbmFibGUvZGlzYWJsZQo+IAo+IHYzOiBmaXhlcyBjb21t
-ZW50IGJ5IEpvb255b3VuZwo+IAktIG1vdmUgdGhlIHJlbW92YWwgb2YgZHJtX2hlbHBlcl9kaXNh
-YmxlX3VudXNlZF9mdW5jdGlvbnMoKSB0byAKPiAJc2VwYXJhdGVkIHBhdGNoCgpXaXRoIHRoaXMg
-cGF0Y2ggc2VyaWVzLCBLZXJuZWwgYm9vdGluZyBpcyBoYWx0ZWQgYXQgZW5kIG9mIGtlcm5lbApi
-b290aW5nLiBJIHRlc3RlZCB0aGlzIHBhdGNoIHNlcmllcyBvbiBUcmF0czIgYm9hcmQgYmFzZWQg
-b24gRXh5bm9zNDQxMiBTb0MuCgpCZWxvdyBpcyBhIHBhcnQgb2YgZnVsbCBib290aW5nIGxvZ3Ms
-IHdoaWNoIHdhcyBoYWx0ZWQsClsgICAgMS45OTIwMTVdIGV4eW5vcy1kcm0taXBwIGV4eW5vcy1k
-cm0taXBwOiBkcm0gaXBwIHJlZ2lzdGVyZWQKc3VjY2Vzc2Z1bGx5LgpbICAgIDEuOTkzMDA5XSBl
-eHlub3MtZHJtIGV4eW5vcy1kcm06IGJvdW5kIGV4eW5vcy1kcm0tdmlkaSAob3BzCnZpZGlfY29t
-cG9uZW50X29wcykKWyAgICAxLjk5MzAzNl0gZXh5bm9zLWRybSBleHlub3MtZHJtOiBib3VuZCAx
-MWMwMDAwMC5maW1kIChvcHMKZmltZF9jb21wb25lbnRfb3BzKQpbICAgIDEuOTkzMzg1XSBleHlu
-b3MtZHJtIGV4eW5vcy1kcm06IGJvdW5kIDExYzgwMDAwLmRzaSAob3BzCmV4eW5vc19kc2lfY29t
-cG9uZW50X29wcykKWyAgICAxLjk5MzM5MF0gW2RybV0gU3VwcG9ydHMgdmJsYW5rIHRpbWVzdGFt
-cCBjYWNoaW5nIFJldiAyICgyMS4xMC4yMDEzKS4KWyAgICAxLjk5MzM5M10gW2RybV0gTm8gZHJp
-dmVyIHN1cHBvcnQgZm9yIHZibGFuayB0aW1lc3RhbXAgcXVlcnkuClsgICAgMS45OTM0NDJdIFtk
-cm1dIEluaXRpYWxpemVkIGV4eW5vcyAxLjAuMCAyMDExMDUzMCBvbiBtaW5vciAwClsgICAgMi4w
-NDMzNThdIFdBUk5JTkc6IENQVTogMiBQSUQ6IDEyMDkgYXQgZHJpdmVycy9jbGsvY2xrLmM6ODk4
-CmNsa191bnByZXBhcmUrMHgyNC8weDJjKCkKWyAgICAyLjA1MTQxMl0gTW9kdWxlcyBsaW5rZWQg
-aW46ClsgICAgMi4wNTQ0MjJdIENQVTogMiBQSUQ6IDEyMDkgQ29tbToga3dvcmtlci8yOjEgVGFp
-bnRlZDogRyAgICAgICAgVwogICAgNC4wLjAtcmM2LTAwNTI2LWdjNDlkN2RlLWRpcnR5ICMxMjc4
-ClsgICAgMi4wNjQzMzddIEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVuZWQg
-RGV2aWNlIFRyZWUpClsgICAgMi4wNzA0MjhdIFdvcmtxdWV1ZTogcG0gcG1fcnVudGltZV93b3Jr
-Ph4CCgpBZnRlciB0aGF0LCBJIHRlc3RlZCBpdCBhZ2FpbiB3aXRob3V0IEZJTUQgYW5kIHRoZSBi
-b290aW5nIGlzIG9rLiBTbyBJCmd1ZXNzIHRoYXQgdGhpcyBhdG9taWMgZmVhdHVyZSBoYXMgYSBi
-dWcgdG8gRklNRCBkcml2ZXIuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IAlHdXN0YXZvCj4gLS0t
-Cj4gCj4gR3VzdGF2byBQYWRvdmFuICgxMSk6Cj4gICBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2Ug
-MTogdXNlIGRybV9wbGFuZV9oZWxwZXJfdXBkYXRlKCkKPiAgIGRybS9leHlub3M6IGF0b21pYyBw
-aGFzZSAxOiB1c2UgZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlKCkKPiAgIGRybS9leHlub3M6IGF0
-b21pYyBwaGFzZSAxOiBhZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxsYmFjawo+ICAgZHJtL2V4eW5v
-czogYXRvbWljIHBoYXNlIDI6IHdpcmUgdXAgc3RhdGUgcmVzZXQoKSwgZHVwbGljYXRlKCkgYW5k
-Cj4gICAgIGRlc3Ryb3koKQo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDI6IGtlZXAgdHJh
-Y2sgb2YgZnJhbWVidWZmZXIgcG9pbnRlcgo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6
-IGF0b21pYyB1cGRhdGVzIG9mIHBsYW5lcwo+ICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6
-IHVzZSBhdG9taWMgLnNldF9jb25maWcgaGVscGVyCj4gICBkcm0vZXh5bm9zOiBhdG9taWMgcGhh
-c2UgMzogY29udmVydCBwYWdlIGZsaXBzCj4gICBkcm0vZXh5bm9zOiByZW1vdmUgZXhwb3J0ZWQg
-ZnVuY3Rpb25zIGZyb20gZXh5bm9zX2RybV9wbGFuZQo+ICAgZHJtL2V4eW5vczogZG9uJ3QgZGlz
-YWJsZSB1bnVzZWQgZnVuY3Rpb25zIGF0IGluaXQKPiAgIGRybS9leHlub3M6IGF0b21pYyBkcG1z
-IHN1cHBvcnQKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAg
-ICAgIHwgICA0ICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAg
-ICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jb25uZWN0
-b3IuYyB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
-ICAgICAgfCAyMjYgKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2RwaS5jICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAgICB8ICAgMiArCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgICB8ICAgNCArLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgfCAgIDYgKy0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuYyAgIHwgIDI3ICstLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICAgICAgfCAgMTIgKy0KPiAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgICAgIHwgICAzIC0KPiAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwgMTEzICsrKysrKystLS0tLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggICAgIHwgIDExIC0t
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICAgNiAr
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgfCAgMTAg
-Ky0KPiAgMTUgZmlsZXMgY2hhbmdlZCwgMTg3IGluc2VydGlvbnMoKyksIDI1NSBkZWxldGlvbnMo
-LSkKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+2015-04-06 19:46 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
+> On 2015=B3=E2 04=BF=F9 04=C0=CF 03:09, Gustavo Padovan wrote:
+>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>
+>> Hi,
+>>
+>> Here goes the full support for atomic modesetting on exynos. I've
+>> split the patches in the various phases of atomic support.
+>>
+>> These patches sits on top of the clean up patches I've sent yesterda=
+y
+>> to this mailing list[1].
+>>
+>> v2: fixes comments by Joonyoung
+>>         - remove unused var in patch 09
+>>         - use ->disable instead of outdated ->dpms in hdmi code
+>>         - remove WARN_ON from crtc enable/disable
+>>
+>> v3: fixes comment by Joonyoung
+>>       - move the removal of drm_helper_disable_unused_functions() to
+>>       separated patch
+>
+> With this patch series, Kernel booting is halted at end of kernel
+> booting. I tested this patch series on Trats2 board based on Exynos44=
+12 SoC.
+>
+> Below is a part of full booting logs, which was halted,
+> [    1.992015] exynos-drm-ipp exynos-drm-ipp: drm ipp registered
+> successfully.
+> [    1.993009] exynos-drm exynos-drm: bound exynos-drm-vidi (ops
+> vidi_component_ops)
+> [    1.993036] exynos-drm exynos-drm: bound 11c00000.fimd (ops
+> fimd_component_ops)
+> [    1.993385] exynos-drm exynos-drm: bound 11c80000.dsi (ops
+> exynos_dsi_component_ops)
+> [    1.993390] [drm] Supports vblank timestamp caching Rev 2 (21.10.2=
+013).
+> [    1.993393] [drm] No driver support for vblank timestamp query.
+> [    1.993442] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+> [    2.043358] WARNING: CPU: 2 PID: 1209 at drivers/clk/clk.c:898
+> clk_unprepare+0x24/0x2c()
+> [    2.051412] Modules linked in:
+> [    2.054422] CPU: 2 PID: 1209 Comm: kworker/2:1 Tainted: G        W
+>     4.0.0-rc6-00526-gc49d7de-dirty #1278
+> [    2.064337] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [    2.070428] Workqueue: pm pm_runtime_work>
+>
+> After that, I tested it again without FIMD and the booting is ok. So =
+I
+> guess that this atomic feature has a bug to FIMD driver.
+>
+
+More information,
+
+The reason the booting is halted is that a deadlock occurs at fbcon
+module when register_framebuffer() is called.
+
+Below are our test results,
+- with only cleanup series, FIMD and HDMI work well.
+- with cleanup and atomic series, HDMI works well but FIMD doesn't
+work - a deadlock occurs.
+
+Could anyone test it with the atomic series on trats2 board? You can
+test it on top of exynos-drm-next-todo branch which contains all
+relevant patches,
+https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/log=
+/?h=3Dexynos-drm-next-todo
+
+Anyway, we will continue to take a look at the this issue why the
+deadlock occurs.
+
+Thanks,
+Inki Dae
+
+> Thanks,
+> Inki Dae
+>
+>>
+>>       Gustavo
+>> ---
+>>
+>> Gustavo Padovan (11):
+>>   drm/exynos: atomic phase 1: use drm_plane_helper_update()
+>>   drm/exynos: atomic phase 1: use drm_plane_helper_disable()
+>>   drm/exynos: atomic phase 1: add .mode_set_nofb() callback
+>>   drm/exynos: atomic phase 2: wire up state reset(), duplicate() and
+>>     destroy()
+>>   drm/exynos: atomic phase 2: keep track of framebuffer pointer
+>>   drm/exynos: atomic phase 3: atomic updates of planes
+>>   drm/exynos: atomic phase 3: use atomic .set_config helper
+>>   drm/exynos: atomic phase 3: convert page flips
+>>   drm/exynos: remove exported functions from exynos_drm_plane
+>>   drm/exynos: don't disable unused functions at init
+>>   drm/exynos: atomic dpms support
+>>
+>>  drivers/gpu/drm/bridge/ptn3460.c              |   4 +
+>>  drivers/gpu/drm/exynos/exynos_dp_core.c       |   6 +-
+>>  drivers/gpu/drm/exynos/exynos_drm_connector.c |   6 +-
+>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 226 ++++++++-------=
+-----------
+>>  drivers/gpu/drm/exynos/exynos_drm_dpi.c       |   6 +-
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.c       |   2 +
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |   4 +-
+>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c       |   6 +-
+>>  drivers/gpu/drm/exynos/exynos_drm_encoder.c   |  27 +--
+>>  drivers/gpu/drm/exynos/exynos_drm_fb.c        |  12 +-
+>>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |   3 -
+>>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 113 +++++++------
+>>  drivers/gpu/drm/exynos/exynos_drm_plane.h     |  11 --
+>>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |   6 +-
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c          |  10 +-
+>>  15 files changed, 187 insertions(+), 255 deletions(-)
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
