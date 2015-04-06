@@ -1,23 +1,63 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: drm/exynos: misc fixes
-Date: Tue,  7 Apr 2015 01:14:49 +0200
-Message-ID: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57488 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751130AbbDFXOE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Apr 2015 19:14:04 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 1/3] drm/exynos: fix typos in hdmi and mixer
+Date: Tue,  7 Apr 2015 01:14:50 +0200
+Message-ID: <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, jy0922.shim@samsung.com, inki.dae@samsung.com
+Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello!
-
-Some misc fixes. Patches are rebased on top of Gustavo's
-cleanup series:
-http://www.spinics.net/lists/linux-samsung-soc/msg43380.html
-
-With best wishes,
-Tobias
+VXNlIHRoZSBjb3JyZWN0IHNwZWxsaW5nIGZvciAncHJvZ3Jlc3NpdmUnLgoKUmV2aWV3ZWQtYnk6
+IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KU2lnbmVk
+LW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0t
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICB8IDIgKy0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgMiArLQogMyBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
+KyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCmluZGV4
+IDM1MTFmY2MuLjIwZTJjZTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAg
+LTIwMjIsNyArMjAyMiw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9zZXQoc3RydWN0IGV4eW5v
+c19kcm1fZGlzcGxheSAqZGlzcGxheSwKIAlEUk1fREVCVUdfS01TKCJ4cmVzPSVkLCB5cmVzPSVk
+LCByZWZyZXNoPSVkLCBpbnRsPSVzXG4iLAogCQltLT5oZGlzcGxheSwgbS0+dmRpc3BsYXksCiAJ
+CW0tPnZyZWZyZXNoLCAobS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkgPwotCQki
+SU5URVJMQUNFRCIgOiAiUFJPR0VSRVNTSVZFIik7CisJCSJJTlRFUkxBQ0VEIiA6ICJQUk9HUkVT
+U0lWRSIpOwogCiAJLyogcHJlc2VydmUgbW9kZSBpbmZvcm1hdGlvbiBmb3IgbGF0ZXIgdXNlLiAq
+LwogCWRybV9tb2RlX2NvcHkoJmhkYXRhLT5jdXJyZW50X21vZGUsIG1vZGUpOwpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggYWE1YjZlMS4uNWFiMGUzMiAxMDA2NDQKLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC0yNjcsNyArMjY3LDcgQEAgc3RhdGljIHZv
+aWQgbWl4ZXJfY2ZnX3NjYW4oc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50
+IGhlaWdodCkKIAogCS8qIGNob29zaW5nIGJldHdlZW4gaW50ZXJsYWNlIGFuZCBwcm9ncmVzc2l2
+ZSBtb2RlICovCiAJdmFsID0gKGN0eC0+aW50ZXJsYWNlID8gTVhSX0NGR19TQ0FOX0lOVEVSTEFD
+RSA6Ci0JCQkJTVhSX0NGR19TQ0FOX1BST0dSQVNTSVZFKTsKKwkJCQlNWFJfQ0ZHX1NDQU5fUFJP
+R1JFU1NJVkUpOwogCiAJaWYgKGN0eC0+bXhyX3ZlciAhPSBNWFJfVkVSXzEyOF8wXzBfMTg0KSB7
+CiAJCS8qIGNob29zaW5nIGJldHdlZW4gcHJvcGVyIEhEIGFuZCBTRCBtb2RlICovCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvcmVncy1taXhlci5oCmluZGV4IDVmMzJlMWEuLmFjNjAyNjAgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvcmVncy1taXhlci5oCkBAIC0xMDEsNyArMTAxLDcgQEAKICNkZWZpbmUgTVhSX0NG
+R19HUlAwX0VOQUJMRQkJKDEgPDwgNCkKICNkZWZpbmUgTVhSX0NGR19WUF9FTkFCTEUJCSgxIDw8
+IDMpCiAjZGVmaW5lIE1YUl9DRkdfU0NBTl9JTlRFUkxBQ0UJCSgwIDw8IDIpCi0jZGVmaW5lIE1Y
+Ul9DRkdfU0NBTl9QUk9HUkFTU0lWRQkoMSA8PCAyKQorI2RlZmluZSBNWFJfQ0ZHX1NDQU5fUFJP
+R1JFU1NJVkUJKDEgPDwgMikKICNkZWZpbmUgTVhSX0NGR19TQ0FOX05UU0MJCSgwIDw8IDEpCiAj
+ZGVmaW5lIE1YUl9DRkdfU0NBTl9QQUwJCSgxIDw8IDEpCiAjZGVmaW5lIE1YUl9DRkdfU0NBTl9T
+RAkJCSgwIDw8IDApCi0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
