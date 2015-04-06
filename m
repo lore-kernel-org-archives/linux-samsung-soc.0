@@ -1,63 +1,57 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 1/3] drm/exynos: fix typos in hdmi and mixer
-Date: Tue,  7 Apr 2015 01:14:50 +0200
-Message-ID: <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 2/3] drm/exynos: remove superfluous error messages
+Date: Tue,  7 Apr 2015 01:14:51 +0200
+Message-ID: <1428362092-29826-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57500 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751130AbbDFXOT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Apr 2015 19:14:19 -0400
 In-Reply-To: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VXNlIHRoZSBjb3JyZWN0IHNwZWxsaW5nIGZvciAncHJvZ3Jlc3NpdmUnLgoKUmV2aWV3ZWQtYnk6
-IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KU2lnbmVk
-LW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0t
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICB8IDIgKy0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgMiArLQogMyBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
-KyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCmluZGV4
-IDM1MTFmY2MuLjIwZTJjZTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAg
-LTIwMjIsNyArMjAyMiw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9zZXQoc3RydWN0IGV4eW5v
-c19kcm1fZGlzcGxheSAqZGlzcGxheSwKIAlEUk1fREVCVUdfS01TKCJ4cmVzPSVkLCB5cmVzPSVk
-LCByZWZyZXNoPSVkLCBpbnRsPSVzXG4iLAogCQltLT5oZGlzcGxheSwgbS0+dmRpc3BsYXksCiAJ
-CW0tPnZyZWZyZXNoLCAobS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkgPwotCQki
-SU5URVJMQUNFRCIgOiAiUFJPR0VSRVNTSVZFIik7CisJCSJJTlRFUkxBQ0VEIiA6ICJQUk9HUkVT
-U0lWRSIpOwogCiAJLyogcHJlc2VydmUgbW9kZSBpbmZvcm1hdGlvbiBmb3IgbGF0ZXIgdXNlLiAq
-LwogCWRybV9tb2RlX2NvcHkoJmhkYXRhLT5jdXJyZW50X21vZGUsIG1vZGUpOwpkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXggYWE1YjZlMS4uNWFiMGUzMiAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBAIC0yNjcsNyArMjY3LDcgQEAgc3RhdGljIHZv
-aWQgbWl4ZXJfY2ZnX3NjYW4oc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50
-IGhlaWdodCkKIAogCS8qIGNob29zaW5nIGJldHdlZW4gaW50ZXJsYWNlIGFuZCBwcm9ncmVzc2l2
-ZSBtb2RlICovCiAJdmFsID0gKGN0eC0+aW50ZXJsYWNlID8gTVhSX0NGR19TQ0FOX0lOVEVSTEFD
-RSA6Ci0JCQkJTVhSX0NGR19TQ0FOX1BST0dSQVNTSVZFKTsKKwkJCQlNWFJfQ0ZHX1NDQU5fUFJP
-R1JFU1NJVkUpOwogCiAJaWYgKGN0eC0+bXhyX3ZlciAhPSBNWFJfVkVSXzEyOF8wXzBfMTg0KSB7
-CiAJCS8qIGNob29zaW5nIGJldHdlZW4gcHJvcGVyIEhEIGFuZCBTRCBtb2RlICovCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvcmVncy1taXhlci5oCmluZGV4IDVmMzJlMWEuLmFjNjAyNjAgMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvcmVncy1taXhlci5oCkBAIC0xMDEsNyArMTAxLDcgQEAKICNkZWZpbmUgTVhSX0NG
-R19HUlAwX0VOQUJMRQkJKDEgPDwgNCkKICNkZWZpbmUgTVhSX0NGR19WUF9FTkFCTEUJCSgxIDw8
-IDMpCiAjZGVmaW5lIE1YUl9DRkdfU0NBTl9JTlRFUkxBQ0UJCSgwIDw8IDIpCi0jZGVmaW5lIE1Y
-Ul9DRkdfU0NBTl9QUk9HUkFTU0lWRQkoMSA8PCAyKQorI2RlZmluZSBNWFJfQ0ZHX1NDQU5fUFJP
-R1JFU1NJVkUJKDEgPDwgMikKICNkZWZpbmUgTVhSX0NGR19TQ0FOX05UU0MJCSgwIDw8IDEpCiAj
-ZGVmaW5lIE1YUl9DRkdfU0NBTl9QQUwJCSgxIDw8IDEpCiAjZGVmaW5lIE1YUl9DRkdfU0NBTl9T
-RAkJCSgwIDw8IDApCi0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+The messages are redundant since 'check_fb_gem_memory_type'
+already prints out exactly the same string when it fails.
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fb.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index d346d1e..929cb03 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -151,10 +151,8 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
+ 	exynos_gem_obj = to_exynos_gem_obj(obj);
+ 
+ 	ret = check_fb_gem_memory_type(dev, exynos_gem_obj);
+-	if (ret < 0) {
+-		DRM_ERROR("cannot use this gem memory type for fb.\n");
+-		return ERR_PTR(-EINVAL);
+-	}
++	if (ret < 0)
++		return ERR_PTR(ret);
+ 
+ 	exynos_fb = kzalloc(sizeof(*exynos_fb), GFP_KERNEL);
+ 	if (!exynos_fb)
+@@ -250,10 +248,8 @@ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+ 		exynos_fb->exynos_gem_obj[i] = exynos_gem_obj;
+ 
+ 		ret = check_fb_gem_memory_type(dev, exynos_gem_obj);
+-		if (ret < 0) {
+-			DRM_ERROR("cannot use this gem memory type for fb.\n");
++		if (ret < 0)
+ 			goto err_unreference;
+-		}
+ 	}
+ 
+ 	ret = drm_framebuffer_init(dev, &exynos_fb->fb, &exynos_drm_fb_funcs);
+-- 
+2.0.5
