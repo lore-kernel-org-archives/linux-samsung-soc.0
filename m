@@ -1,77 +1,65 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos/ipp: Validate buffer enqueue requests
-Date: Tue, 07 Apr 2015 20:36:49 +0900
-Message-ID: <5523C151.1070705@samsung.com>
-References: <1425477769-5430-1-git-send-email-m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH v3 2/2] clk: exynos5420: Make sure MDMA0 clock is
+ enabled during suspend
+Date: Tue, 07 Apr 2015 13:56:37 +0200
+Message-ID: <5523C5F5.6000604@collabora.co.uk>
+References: <1427730803-28635-1-git-send-email-javier.martinez@collabora.co.uk>	<1427730803-28635-3-git-send-email-javier.martinez@collabora.co.uk>	<CA+Ln22FBpuzR06qCsVc7SXtLX2mhf901vDE5D-mT1+ijZ2G3sg@mail.gmail.com>	<551976F1.1000605@collabora.co.uk>	<CAM4voanL3A=dS8Z-ovi_-EDi9ctyaxZkvjajp+3ZjyNAnqR1aQ@mail.gmail.com>	<551AFCCE.4050404@collabora.co.uk>	<551BD07E.2090506@samsung.com>	<551BDA0A.7010704@collabora.co.uk>	<551C2B6D.4010001@samsung.com>	<551C71A5.1070903@collabora.co.uk> <CAM4voakS8PnatqRTW5gkD0NNKD9gW9Tuv5p-ekxFhKN5NcuBCQ@mail.gmail.com> <5523B878.8040304@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1425477769-5430-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Beata Michalska <b.michalska@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:53569 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753544AbbDGL4o (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Apr 2015 07:56:44 -0400
+In-Reply-To: <5523B878.8040304@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-T24gMjAxNeuFhCAwM+yblCAwNOydvCAyMzowMiwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBG
-cm9tOiBCZWF0YSBNaWNoYWxza2EgPGIubWljaGFsc2thQHNhbXN1bmcuY29tPgo+IAo+IEFzIGZv
-ciBub3cgdGhlcmUgaXMgbm8gdmFsaWRhdGlvbiBvZiBpbmNvbWluZyBidWZmZXIKPiBlbnF1ZXVl
-IHJlcXVlc3QgYXMgZmFyIGFzIHRoZSBnZW0gYnVmZmVycyBhcmUgYmVpbmcKPiBjb25jZXJuZWQu
-IFRoaXMgbWlnaHQgbGVhZCB0byBzb21lIHVuZGVzaXJlZCBjYXNlcwo+IHdoZW4gdGhlIGRyaXZl
-ciB0cmllcyB0byBvcGVyYXRlIG9uIGludmFsaWQgYnVmZmVycwo+ICh3aWh0IG5vIHZhbGlkIGdl
-bSBvYmplY3QgaGFuZGxlIGkuZS4pLgo+IEFkZCBzb21lIGJhc2ljIGNoZWNrcyB0byBydWxlIG91
-dCB0aG9zZSBwb3RlbnRpYWwgaXNzdWVzLgoKQXBwbGllZC4KClRoYW5rcywKSW5raSBEYWUKCj4g
-Cj4gU2lnbmVkLW9mZi1ieTogQmVhdGEgTWljaGFsc2thIDxiLm1pY2hhbHNrYUBzYW1zdW5nLmNv
-bT4KPiBbbXN6eXByb3c6IHJlYmFzZWQgb250byB2NC4wLXJjMSBhbmQgYWRhcHRlZCB0byByZWNl
-bnQgaXBwIGNoYW5nZXNdCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlw
-cm93c2tpQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1faXBwLmMgfCA0NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgMSBm
-aWxlIGNoYW5nZWQsIDQ0IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lwcC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2lwcC5jCj4gaW5kZXggMTJhZTljNC4uYWMzNTYyNSAxMDA2NDQKPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmMKPiArKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmMKPiBAQCAtNDc2LDYgKzQ3Niw0NSBAQCBlcnJf
-Y2xlYXI6Cj4gIAlyZXR1cm4gcmV0Owo+ICB9Cj4gIAo+ICtzdGF0aWMgaW50IGlwcF92YWxpZGF0
-ZV9tZW1fbm9kZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPiArCQkJCSBzdHJ1Y3QgZHJt
-X2V4eW5vc19pcHBfbWVtX25vZGUgKm1fbm9kZSwKPiArCQkJCSBzdHJ1Y3QgZHJtX2V4eW5vc19p
-cHBfY21kX25vZGUgKmNfbm9kZSkKPiArewo+ICsJc3RydWN0IGRybV9leHlub3NfaXBwX2NvbmZp
-ZyAqaXBwX2NmZzsKPiArCXVuc2lnbmVkIGludCBudW1fcGxhbmU7Cj4gKwl1bnNpZ25lZCBsb25n
-IG1pbl9zaXplLCBzaXplOwo+ICsJdW5zaWduZWQgaW50IGJwcDsKPiArCWludCBpOwo+ICsKPiAr
-CS8qIFRoZSBwcm9wZXJ0eSBpZCBzaG91bGQgYWxyZWFkeSBiZSB2YXJpZmllZCAqLwo+ICsJaXBw
-X2NmZyA9ICZjX25vZGUtPnByb3BlcnR5LmNvbmZpZ1ttX25vZGUtPnByb3BfaWRdOwo+ICsJbnVt
-X3BsYW5lID0gZHJtX2Zvcm1hdF9udW1fcGxhbmVzKGlwcF9jZmctPmZtdCk7Cj4gKwo+ICsJLyoq
-Cj4gKwkgKiBUaGlzIGlzIGEgcmF0aGVyIHNpbXBsaWZpZWQgdmFsaWRhdGlvbiBvZiBhIG1lbW9y
-eSBub2RlLgo+ICsJICogSXQgYmFzaWNhbGx5IHZlcmlmaWVzIHByb3ZpZGVkIGdlbSBvYmplY3Qg
-aGFuZGxlcwo+ICsJICogYW5kIHRoZSBidWZmZXIgc2l6ZXMgd2l0aCByZXNwZWN0IHRvIGN1cnJl
-bnQgY29uZmlndXJhdGlvbi4KPiArCSAqIFRoaXMgaXMgbm90IHRoZSBiZXN0IHRoYXQgY2FuIGJl
-IGRvbmUKPiArCSAqIGJ1dCBpdCBzZWVtcyBtb3JlIHRoYW4gZW5vdWdoCj4gKwkgKi8KPiArCWZv
-ciAoaSA9IDA7IGkgPCBudW1fcGxhbmU7ICsraSkgewo+ICsJCWlmICghbV9ub2RlLT5idWZfaW5m
-by5oYW5kbGVzW2ldKSB7Cj4gKwkJCURSTV9FUlJPUigiaW52YWxpZCBoYW5kbGUgZm9yIHBsYW5l
-ICVkXG4iLCBpKTsKPiArCQkJcmV0dXJuIC1FSU5WQUw7Cj4gKwkJfQo+ICsJCWJwcCA9IGRybV9m
-b3JtYXRfcGxhbmVfY3BwKGlwcF9jZmctPmZtdCwgaSk7Cj4gKwkJbWluX3NpemUgPSAoaXBwX2Nm
-Zy0+c3ouaHNpemUgKiBpcHBfY2ZnLT5zei52c2l6ZSAqIGJwcCkgPj4gMzsKPiArCQlzaXplID0g
-ZXh5bm9zX2RybV9nZW1fZ2V0X3NpemUoZHJtX2RldiwKPiArCQkJCQkgICAgICAgbV9ub2RlLT5i
-dWZfaW5mby5oYW5kbGVzW2ldLAo+ICsJCQkJCSAgICAgICBjX25vZGUtPmZpbHApOwo+ICsJCWlm
-IChtaW5fc2l6ZSA+IHNpemUpIHsKPiArCQkJRFJNX0VSUk9SKCJpbnZhbGlkIHNpemUgZm9yIHBs
-YW5lICVkXG4iLCBpKTsKPiArCQkJcmV0dXJuIC1FSU5WQUw7Cj4gKwkJfQo+ICsJfQo+ICsJcmV0
-dXJuIDA7Cj4gK30KPiArCj4gIHN0YXRpYyBpbnQgaXBwX3B1dF9tZW1fbm9kZShzdHJ1Y3QgZHJt
-X2RldmljZSAqZHJtX2RldiwKPiAgCQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfY21kX25vZGUgKmNf
-bm9kZSwKPiAgCQlzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfbWVtX25vZGUgKm1fbm9kZSkKPiBAQCAt
-NTUyLDYgKzU5MSwxMSBAQCBzdGF0aWMgc3RydWN0IGRybV9leHlub3NfaXBwX21lbV9ub2RlCj4g
-IAl9Cj4gIAo+ICAJbXV0ZXhfbG9jaygmY19ub2RlLT5tZW1fbG9jayk7Cj4gKwlpZiAoaXBwX3Zh
-bGlkYXRlX21lbV9ub2RlKGRybV9kZXYsIG1fbm9kZSwgY19ub2RlKSkgewo+ICsJCWlwcF9wdXRf
-bWVtX25vZGUoZHJtX2RldiwgY19ub2RlLCBtX25vZGUpOwo+ICsJCW11dGV4X3VubG9jaygmY19u
-b2RlLT5tZW1fbG9jayk7Cj4gKwkJcmV0dXJuIEVSUl9QVFIoLUVGQVVMVCk7Cj4gKwl9Cj4gIAls
-aXN0X2FkZF90YWlsKCZtX25vZGUtPmxpc3QsICZjX25vZGUtPm1lbV9saXN0W3FidWYtPm9wc19p
-ZF0pOwo+ICAJbXV0ZXhfdW5sb2NrKCZjX25vZGUtPm1lbV9sb2NrKTsKPiAgCj4gCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 04/07/2015 12:59 PM, Javier Martinez Canillas wrote:
+> 
+> So IIUC the CG_STATUS0 bits were a red herring and the real problem
+> is that the aclk266_g2d needs to be enabled during suspend (although
+> we still don't know why).
+> 
+> It seems were are at a dead end now. Without being able to ask the HW
+> Samsung folks we would never know what's going on here...
+> 
+
+Ok, I found another interesting data point. ACLK_266_G2D has as
+constraints that CG_STATUS0[21:22] needs to be 0 before gating
+the clock and as I mentioned before those are associated with
+the SSS and SSS_SLIM HW crypto modules according the docs I've.
+
+So I looked at the clock used by the SSS module and found that
+CLK_SSS parent is ACLK_266_G2D but CLK_SSS is never requested
+since drivers/crypto/s5p-sss.c isn't built for exynos_defconfig.
+
+Enabling CONFIG_CRYPTO_DEV_S5P makes the system to resume without
+any patches since the sss clock prevents aclk266_g2d to be gated.
+
+But I wanted to know if it was really aclk266_g2d that was needed
+or the actual sss clock since the kernel didn't manage that clock
+without the driver enabled.
+
+So I disabled the sss clock before trying a S2R:
+
+# devmem 0x10018800 32 0xFFFFFFFB
+(CLK_SSS in CLK_GATE_IP_G2D is gated)
+
+and S2R worked anyways but I see that CLK_GATE_IP_G2D is reset to
+its default value on S2R so maybe that is why it works anyways?
+
+# devmem 0x10018800
+0xFFFFFFFF (all CLK_GATE_IP_G2D clocks enabled including CLK_SSS)
+
+Does this shed any more light? Could the problem be that the sss
+clock parent (aclk266_g2d) is gated during S2R? Is the SSS module
+required for S2R or is just that CLK_SSS prevents the parent to
+be gated and so it is another red herring?
+
+Best regards,
+Javier
