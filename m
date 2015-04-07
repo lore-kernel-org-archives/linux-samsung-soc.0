@@ -1,84 +1,55 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2 1/3] drm/exynos: fix typos in hdmi and mixer
-Date: Tue, 07 Apr 2015 16:03:59 +0900
-Message-ID: <5523815F.2030102@samsung.com>
+Subject: Re: [PATCH v2 2/3] drm/exynos: remove superfluous error messages
+Date: Tue, 07 Apr 2015 16:04:34 +0900
+Message-ID: <55238182.8030405@samsung.com>
 References: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1428362092-29826-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21781 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750929AbbDGHEF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Apr 2015 03:04:05 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NMF00ICICYCVK60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 07 Apr 2015 16:03:48 +0900 (KST)
-In-reply-to: <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1428362092-29826-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, inki.dae@samsung.com
+Cc: dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 04/07/2015 08:14 AM, Tobias Jakobi wrote:
-> Use the correct spelling for 'progressive'.
-> 
-> Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c  | 2 +-
->  drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
->  drivers/gpu/drm/exynos/regs-mixer.h   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 3511fcc..20e2ce7 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -2022,7 +2022,7 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
->  	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
->  		m->hdisplay, m->vdisplay,
->  		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
-> -		"INTERLACED" : "PROGERESSIVE");
-> +		"INTERLACED" : "PROGRESSIVE");
->  
->  	/* preserve mode information for later use. */
->  	drm_mode_copy(&hdata->current_mode, mode);
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index aa5b6e1..5ab0e32 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -267,7 +267,7 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
->  
->  	/* choosing between interlace and progressive mode */
->  	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
-> -				MXR_CFG_SCAN_PROGRASSIVE);
-> +				MXR_CFG_SCAN_PROGRESSIVE);
->  
->  	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
->  		/* choosing between proper HD and SD mode */
-> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
-> index 5f32e1a..ac60260 100644
-> --- a/drivers/gpu/drm/exynos/regs-mixer.h
-> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
-> @@ -101,7 +101,7 @@
->  #define MXR_CFG_GRP0_ENABLE		(1 << 4)
->  #define MXR_CFG_VP_ENABLE		(1 << 3)
->  #define MXR_CFG_SCAN_INTERLACE		(0 << 2)
-> -#define MXR_CFG_SCAN_PROGRASSIVE	(1 << 2)
-> +#define MXR_CFG_SCAN_PROGRESSIVE	(1 << 2)
->  #define MXR_CFG_SCAN_NTSC		(0 << 1)
->  #define MXR_CFG_SCAN_PAL		(1 << 1)
->  #define MXR_CFG_SCAN_SD			(0 << 0)
-> 
-
-Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Thanks.
+SGksCgpPbiAwNC8wNy8yMDE1IDA4OjE0IEFNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+IFRoZSBt
+ZXNzYWdlcyBhcmUgcmVkdW5kYW50IHNpbmNlICdjaGVja19mYl9nZW1fbWVtb3J5X3R5cGUnCj4g
+YWxyZWFkeSBwcmludHMgb3V0IGV4YWN0bHkgdGhlIHNhbWUgc3RyaW5nIHdoZW4gaXQgZmFpbHMu
+Cj4gCj4gUmV2aWV3ZWQtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxh
+Ym9yYS5jby51az4KPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgu
+dW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZiLmMgfCAxMCArKystLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMo
+KyksIDcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zi
+LmMKPiBpbmRleCBkMzQ2ZDFlLi45MjljYjAzIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9mYi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZiLmMKPiBAQCAtMTUxLDEwICsxNTEsOCBAQCBleHlub3NfZHJtX2ZyYW1lYnVm
+ZmVyX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiAgCWV4eW5vc19nZW1fb2JqID0gdG9f
+ZXh5bm9zX2dlbV9vYmoob2JqKTsKPiAgCj4gIAlyZXQgPSBjaGVja19mYl9nZW1fbWVtb3J5X3R5
+cGUoZGV2LCBleHlub3NfZ2VtX29iaik7Cj4gLQlpZiAocmV0IDwgMCkgewo+IC0JCURSTV9FUlJP
+UigiY2Fubm90IHVzZSB0aGlzIGdlbSBtZW1vcnkgdHlwZSBmb3IgZmIuXG4iKTsKPiAtCQlyZXR1
+cm4gRVJSX1BUUigtRUlOVkFMKTsKPiAtCX0KPiArCWlmIChyZXQgPCAwKQo+ICsJCXJldHVybiBF
+UlJfUFRSKHJldCk7Cj4gIAo+ICAJZXh5bm9zX2ZiID0ga3phbGxvYyhzaXplb2YoKmV4eW5vc19m
+YiksIEdGUF9LRVJORUwpOwo+ICAJaWYgKCFleHlub3NfZmIpCj4gQEAgLTI1MCwxMCArMjQ4LDgg
+QEAgZXh5bm9zX3VzZXJfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBk
+cm1fZmlsZSAqZmlsZV9wcml2LAo+ICAJCWV4eW5vc19mYi0+ZXh5bm9zX2dlbV9vYmpbaV0gPSBl
+eHlub3NfZ2VtX29iajsKPiAgCj4gIAkJcmV0ID0gY2hlY2tfZmJfZ2VtX21lbW9yeV90eXBlKGRl
+diwgZXh5bm9zX2dlbV9vYmopOwo+IC0JCWlmIChyZXQgPCAwKSB7Cj4gLQkJCURSTV9FUlJPUigi
+Y2Fubm90IHVzZSB0aGlzIGdlbSBtZW1vcnkgdHlwZSBmb3IgZmIuXG4iKTsKPiArCQlpZiAocmV0
+IDwgMCkKPiAgCQkJZ290byBlcnJfdW5yZWZlcmVuY2U7Cj4gLQkJfQo+ICAJfQo+ICAKPiAgCXJl
+dCA9IGRybV9mcmFtZWJ1ZmZlcl9pbml0KGRldiwgJmV4eW5vc19mYi0+ZmIsICZleHlub3NfZHJt
+X2ZiX2Z1bmNzKTsKPiAKCkFja2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ft
+c3VuZy5jb20+CgpUaGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
