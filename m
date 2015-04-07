@@ -1,81 +1,117 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2 3/3] drm/exynos: mixer: add 2x scaling to
- mixer_graph_buffer
-Date: Tue, 07 Apr 2015 16:10:48 +0900
-Message-ID: <552382F8.1000803@samsung.com>
-References: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1428362092-29826-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH -v3 11/11] drm/exynos: atomic dpms support
+Date: Tue, 07 Apr 2015 16:22:29 +0900
+Message-ID: <552385B5.1040001@samsung.com>
+References: <1428084583-14616-1-git-send-email-gustavo@padovan.org>
+ <1428084583-14616-12-git-send-email-gustavo@padovan.org>
+ <CAAQKjZMYXR7TxkGDKt=RTpE=ZpYyp7VveH_M6kEEB4EzcfCmcg@mail.gmail.com>
+ <20150406182646.GA4980@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1428362092-29826-4-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:8924 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750929AbbDGHWf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Apr 2015 03:22:35 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NMF003OWDT6JX10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Apr 2015 16:22:18 +0900 (KST)
+In-reply-to: <20150406182646.GA4980@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, Inki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-SGksCgpPbiAwNC8wNy8yMDE1IDA4OjE0IEFNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+IFdoaWxl
-IHRoZSBWUCAodmlkZW8gcHJvY2Vzc29yKSBzdXBwb3J0cyBhcmJpdHJhcnkgc2NhbGluZwo+IG9m
-IGl0cyBpbnB1dCwgdGhlIG1peGVyIGp1c3Qgc3VwcG9ydHMgYSBzaW1wbGUgMnggKGxpbmUKPiBk
-b3VibGluZykgc2NhbGluZy4gRXhwb3NlIHRoaXMgZnVuY3Rpb25hbGl0eSBhbmQgZXhpdAo+IGVh
-cmx5IHdoZW4gYW4gdW5zdXBwb3J0ZWQgc2NhbGluZyBjb25maWd1cmF0aW9uIGlzCj4gZW5jb3Vu
-dGVyZWQuCj4gCj4gVGhpcyB3YXMgdGVzdGVkIHdpdGggbW9kZXRlc3QncyBEUk0gcGxhbmUgdGVz
-dCAoZnJvbQo+IHRoZSBsaWJkcm0gdGVzdCBzdWl0ZSkgb24gYW4gT2Ryb2lkLVgyIChFeHlub3M0
-NDEyKS4KPiAKPiB2MjogUHV0IGlmLSBhbmQgcmV0dXJuLXN0YXRlbWVudCBvbiBkaWZmZXJlbnQg
-bGluZXMuCj4gCj4gUmV2aWV3ZWQtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFu
-QGNvbGxhYm9yYS5jby51az4KPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
-QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfbWl4ZXIuYyB8IDM2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tCj4g
-IDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IDVhYjBlMzIuLmY1MTAxMWUg
-MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtNDk5LDEyICs0
-OTksMzYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfbGF5ZXJfdXBkYXRlKHN0cnVjdCBtaXhlcl9jb250
-ZXh0ICpjdHgpCj4gIAltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9D
-RkdfTEFZRVJfVVBEQVRFKTsKPiAgfQo+ICAKPiArc3RhdGljIGludCBtaXhlcl9zZXR1cF9zY2Fs
-ZShjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmUsCj4gKwkJdW5zaWduZWQgaW50
-ICp4X3JhdGlvLCB1bnNpZ25lZCBpbnQgKnlfcmF0aW8pCj4gK3sKPiArCWlmIChwbGFuZS0+Y3J0
-Y193aWR0aCAhPSBwbGFuZS0+c3JjX3dpZHRoKSB7Cj4gKwkJaWYgKHBsYW5lLT5jcnRjX3dpZHRo
-ID09IDIgKiBwbGFuZS0+c3JjX3dpZHRoKQo+ICsJCQkqeF9yYXRpbyA9IDE7Cj4gKwkJZWxzZQo+
-ICsJCQlnb3RvIGZhaWw7Cj4gKwl9Cj4gKwo+ICsJaWYgKHBsYW5lLT5jcnRjX2hlaWdodCAhPSBw
-bGFuZS0+c3JjX2hlaWdodCkgewo+ICsJCWlmIChwbGFuZS0+Y3J0Y19oZWlnaHQgPT0gMiAqIHBs
-YW5lLT5zcmNfaGVpZ2h0KQo+ICsJCQkqeV9yYXRpbyA9IDE7Cj4gKwkJZWxzZQo+ICsJCQlnb3Rv
-IGZhaWw7Cj4gKwl9Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gKwo+ICtmYWlsOgo+ICsJRFJNX0RFQlVH
-X0tNUygib25seSAyeCB3aWR0aC9oZWlnaHQgc2NhbGluZyBvZiBwbGFuZSBzdXBwb3J0ZWRcbiIp
-Owo+ICsJcmV0dXJuIC1FTk9UU1VQUDsKPiArfQo+ICsKPiAgc3RhdGljIHZvaWQgbWl4ZXJfZ3Jh
-cGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4gIHsKPiAgCXN0
-cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPiAgCXVuc2lnbmVk
-IGxvbmcgZmxhZ3M7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmU7Cj4gLQl1bnNp
-Z25lZCBpbnQgeF9yYXRpbywgeV9yYXRpbzsKPiArCXVuc2lnbmVkIGludCB4X3JhdGlvID0gMCwg
-eV9yYXRpbyA9IDA7Cj4gIAl1bnNpZ25lZCBpbnQgc3JjX3hfb2Zmc2V0LCBzcmNfeV9vZmZzZXQs
-IGRzdF94X29mZnNldCwgZHN0X3lfb2Zmc2V0Owo+ICAJZG1hX2FkZHJfdCBkbWFfYWRkcjsKPiAg
-CXVuc2lnbmVkIGludCBmbXQ7Cj4gQEAgLTUyOCw5ICs1NTIsOSBAQCBzdGF0aWMgdm9pZCBtaXhl
-cl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgaW50IHdpbikKPiAgCQlm
-bXQgPSBBUkdCODg4ODsKPiAgCX0KPiAgCj4gLQkvKiAyeCBzY2FsaW5nIGZlYXR1cmUgKi8KPiAt
-CXhfcmF0aW8gPSAwOwo+IC0JeV9yYXRpbyA9IDA7Cj4gKwkvKiBjaGVjayBpZiBtaXhlciBzdXBw
-b3J0cyByZXF1ZXN0ZWQgc2NhbGluZyBzZXR1cCAqLwo+ICsJaWYgKG1peGVyX3NldHVwX3NjYWxl
-KHBsYW5lLCAmeF9yYXRpbywgJnlfcmF0aW8pKQo+ICsJCXJldHVybjsKPiAgCj4gIAlkc3RfeF9v
-ZmZzZXQgPSBwbGFuZS0+Y3J0Y194Owo+ICAJZHN0X3lfb2Zmc2V0ID0gcGxhbmUtPmNydGNfeTsK
-PiBAQCAtNTY2LDggKzU5MCw4IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1
-Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQo+ICAJCW1peGVyX3JlZ193cml0ZShyZXMs
-IE1YUl9SRVNPTFVUSU9OLCB2YWwpOwo+ICAJfQo+ICAKPiAtCXZhbCAgPSBNWFJfR1JQX1dIX1dJ
-RFRIKHBsYW5lLT5jcnRjX3dpZHRoKTsKPiAtCXZhbCB8PSBNWFJfR1JQX1dIX0hFSUdIVChwbGFu
-ZS0+Y3J0Y19oZWlnaHQpOwo+ICsJdmFsICA9IE1YUl9HUlBfV0hfV0lEVEgocGxhbmUtPnNyY193
-aWR0aCk7Cj4gKwl2YWwgfD0gTVhSX0dSUF9XSF9IRUlHSFQocGxhbmUtPnNyY19oZWlnaHQpOwoK
-V2l0aCB0aGlzIGNoYW5nZXMsIGkgZ290IGVycm9ycyB3aGVuIGNydGMgZ2V0cyBvdXQgYm91bmQg
-b2YgYWN0dWFsCnNjcmVlbiBhcmVhLiBJIHNlbnQgcGF0Y2ggdG8gZml4IGl0IGFuZCB0byBjYWxj
-dWxhdGUgcmF0aW8gZnJvbQpleHlub3NfZHJtIHBsYW5lIGNvZGVzLgoKQWNrZWQtYnk6IEpvb255
-b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KClRoYW5rcy4KX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+On 04/07/2015 03:26 AM, Gustavo Padovan wrote:
+> Hi Inki,
+> 
+> 2015-04-05 Inki Dae <inki.dae@samsung.com>:
+> 
+>> Hi,
+>>
+>> 2015-04-04 3:09 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
+>>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>>
+>>> Run dpms operations through the atomic intefaces. This basically removes
+>>> the .dpms() callback from econders and crtcs and use .disable() and
+>>> .enable() to turn the crtc on and off.
+>>>
+>>> v2: Address comments by Joonyoung:
+>>>         - make hdmi code call ->disable() instead of ->dpms()
+>>>         - do not use WARN_ON on crtc enable/disable
+>>>
+>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>> ---
+>>>  drivers/gpu/drm/exynos/exynos_dp_core.c       |  2 +-
+>>>  drivers/gpu/drm/exynos/exynos_drm_connector.c |  2 +-
+>>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 99 +++++++++++++++------------
+>>>  drivers/gpu/drm/exynos/exynos_drm_dpi.c       |  2 +-
+>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |  4 +-
+>>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c       |  2 +-
+>>>  drivers/gpu/drm/exynos/exynos_drm_encoder.c   | 27 ++------
+>>>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  2 +-
+>>>  drivers/gpu/drm/exynos/exynos_hdmi.c          |  6 +-
+>>>  9 files changed, 70 insertions(+), 76 deletions(-)
+>>>
+>>
+>> ...snip...
+>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>> index 5b597bc..2ea7d01 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>> @@ -1051,7 +1051,7 @@ static void hdmi_connector_destroy(struct drm_connector *connector)
+>>>  }
+>>>
+>>>  static struct drm_connector_funcs hdmi_connector_funcs = {
+>>> -       .dpms = drm_helper_connector_dpms,
+>>> +       .dpms = drm_atomic_helper_connector_dpms,
+>>>         .fill_modes = drm_helper_probe_single_connector_modes,
+>>>         .detect = hdmi_detect,
+>>>         .destroy = hdmi_connector_destroy,
+>>> @@ -2127,8 +2127,8 @@ static void hdmi_dpms(struct exynos_drm_display *display, int mode)
+>>>                  */
+>>>                 if (crtc)
+>>>                         funcs = crtc->helper_private;
+>>> -               if (funcs && funcs->dpms)
+>>> -                       (*funcs->dpms)(crtc, mode);
+>>> +               if (funcs && funcs->disable)
+>>> +                       (*funcs->disable)(crtc, mode);
+>>
+>> This patch makes funcs->disable callback to be called instead of
+>> funcs->dpms callback. However, funcs->disable callback isn't required
+>> for second argument so the build is failed like below,
+>>
+>> drivers/gpu/drm/exynos/exynos_hdmi.c: In function 'hdmi_dpms':
+>> drivers/gpu/drm/exynos/exynos_hdmi.c:2131:4: error: too many arguments
+>> to function 'funcs->disable'
+>>
+
+You needs to rebase patchset from latest repository of Inki Dae with
+this fix because i got some conflict to apply this patchset.
+
+Anyway, i just tested it from hdmi output part on odroid-xu3 board.
+
+Tested-by: Joonyoung Shim <jy0922.shim@samsung.com>
+
+Thanks.
+
+>> Please, keep in mind that you should build it and at least have a
+>> basic test before posting.
+> 
+> Sure, I think this happened because I've been using exynos_defconfig to test
+> my kernels and HDMI is not there. Maybe should we add the EXYNOS_DRM_HDMI to
+> defconfig? What do you think?
+> 
+> 	Gustavo
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
