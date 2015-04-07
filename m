@@ -1,52 +1,67 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
-Date: Tue,  7 Apr 2015 15:03:34 +0200
-Message-ID: <1428411814-21098-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/3] drm/exynos: fix typos in hdmi and mixer
+Date: Tue, 07 Apr 2015 22:35:54 +0900
+Message-ID: <5523DD3A.4060709@samsung.com>
+References: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Marvell mwifiex driver prevents the system to enter into a suspend
-state if the card power is not preserved during a suspend/resume cycle.
-
-So Suspend-to-RAM and Suspend-to-idle is failing on Exynos5800 Peach Pi
-and Exynos5420 Peach Pit Chromebooks.
-
-Add the keep-power-in-suspend Power Management property to the SDIO/MMC
-node so the mwifiex suspend handler doesn't fail and the system is able
-to enter into a suspend state.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 0788d08fb43e..146e71118a72 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -711,6 +711,7 @@
- 	num-slots = <1>;
- 	broken-cd;
- 	cap-sdio-irq;
-+	keep-power-in-suspend;
- 	card-detect-delay = <200>;
- 	clock-frequency = <400000000>;
- 	samsung,dw-mshc-ciu-div = <1>;
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 412f41d62686..02eb8b15374f 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -674,6 +674,7 @@
- 	num-slots = <1>;
- 	broken-cd;
- 	cap-sdio-irq;
-+	keep-power-in-suspend;
- 	card-detect-delay = <200>;
- 	clock-frequency = <400000000>;
- 	samsung,dw-mshc-ciu-div = <1>;
--- 
-2.1.4
+T24gMjAxNeuFhCAwNOyblCAwN+ydvCAwODoxNCwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBVc2Ug
+dGhlIGNvcnJlY3Qgc3BlbGxpbmcgZm9yICdwcm9ncmVzc2l2ZScuCgoxIHRocm91Z2ggMywgQXBw
+bGllZC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmV2aWV3ZWQtYnk6IEd1c3Rhdm8gUGFkb3Zh
+biA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiBTaWduZWQtb2ZmLWJ5OiBUb2Jp
+YXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICB8IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9y
+ZWdzLW1peGVyLmggICB8IDIgKy0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyks
+IDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+IGlu
+ZGV4IDM1MTFmY2MuLjIwZTJjZTcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfaGRtaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRt
+aS5jCj4gQEAgLTIwMjIsNyArMjAyMiw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9zZXQoc3Ry
+dWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSwKPiAgCURSTV9ERUJVR19LTVMoInhyZXM9
+JWQsIHlyZXM9JWQsIHJlZnJlc2g9JWQsIGludGw9JXNcbiIsCj4gIAkJbS0+aGRpc3BsYXksIG0t
+PnZkaXNwbGF5LAo+ICAJCW0tPnZyZWZyZXNoLCAobS0+ZmxhZ3MgJiBEUk1fTU9ERV9GTEFHX0lO
+VEVSTEFDRSkgPwo+IC0JCSJJTlRFUkxBQ0VEIiA6ICJQUk9HRVJFU1NJVkUiKTsKPiArCQkiSU5U
+RVJMQUNFRCIgOiAiUFJPR1JFU1NJVkUiKTsKPiAgCj4gIAkvKiBwcmVzZXJ2ZSBtb2RlIGluZm9y
+bWF0aW9uIGZvciBsYXRlciB1c2UuICovCj4gIAlkcm1fbW9kZV9jb3B5KCZoZGF0YS0+Y3VycmVu
+dF9tb2RlLCBtb2RlKTsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBpbmRl
+eCBhYTViNmUxLi41YWIwZTMyIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX21peGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
+ci5jCj4gQEAgLTI2Nyw3ICsyNjcsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfc2NhbihzdHJ1
+Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQo+ICAKPiAgCS8qIGNo
+b29zaW5nIGJldHdlZW4gaW50ZXJsYWNlIGFuZCBwcm9ncmVzc2l2ZSBtb2RlICovCj4gIAl2YWwg
+PSAoY3R4LT5pbnRlcmxhY2UgPyBNWFJfQ0ZHX1NDQU5fSU5URVJMQUNFIDoKPiAtCQkJCU1YUl9D
+RkdfU0NBTl9QUk9HUkFTU0lWRSk7Cj4gKwkJCQlNWFJfQ0ZHX1NDQU5fUFJPR1JFU1NJVkUpOwo+
+ICAKPiAgCWlmIChjdHgtPm14cl92ZXIgIT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCkgewo+ICAJCS8q
+IGNob29zaW5nIGJldHdlZW4gcHJvcGVyIEhEIGFuZCBTRCBtb2RlICovCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9yZWdzLW1peGVyLmgKPiBpbmRleCA1ZjMyZTFhLi5hYzYwMjYwIDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4gKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPiBAQCAtMTAxLDcgKzEwMSw3IEBACj4gICNkZWZpbmUg
+TVhSX0NGR19HUlAwX0VOQUJMRQkJKDEgPDwgNCkKPiAgI2RlZmluZSBNWFJfQ0ZHX1ZQX0VOQUJM
+RQkJKDEgPDwgMykKPiAgI2RlZmluZSBNWFJfQ0ZHX1NDQU5fSU5URVJMQUNFCQkoMCA8PCAyKQo+
+IC0jZGVmaW5lIE1YUl9DRkdfU0NBTl9QUk9HUkFTU0lWRQkoMSA8PCAyKQo+ICsjZGVmaW5lIE1Y
+Ul9DRkdfU0NBTl9QUk9HUkVTU0lWRQkoMSA8PCAyKQo+ICAjZGVmaW5lIE1YUl9DRkdfU0NBTl9O
+VFNDCQkoMCA8PCAxKQo+ICAjZGVmaW5lIE1YUl9DRkdfU0NBTl9QQUwJCSgxIDw8IDEpCj4gICNk
+ZWZpbmUgTVhSX0NGR19TQ0FOX1NECQkJKDAgPDwgMCkKPiAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
