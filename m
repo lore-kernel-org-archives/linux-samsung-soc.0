@@ -1,102 +1,84 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 3/3] drm/exynos: mixer: add 2x scaling to mixer_graph_buffer
-Date: Tue,  7 Apr 2015 01:14:52 +0200
-Message-ID: <1428362092-29826-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2 1/3] drm/exynos: fix typos in hdmi and mixer
+Date: Tue, 07 Apr 2015 16:03:59 +0900
+Message-ID: <5523815F.2030102@samsung.com>
 References: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57504 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752745AbbDFXOU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:21781 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750929AbbDGHEF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Apr 2015 19:14:20 -0400
-In-Reply-To: <1428362092-29826-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Tue, 7 Apr 2015 03:04:05 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NMF00ICICYCVK60@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Apr 2015 16:03:48 +0900 (KST)
+In-reply-to: <1428362092-29826-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo@padovan.org, inki.dae@samsung.com
 
-While the VP (video processor) supports arbitrary scaling
-of its input, the mixer just supports a simple 2x (line
-doubling) scaling. Expose this functionality and exit
-early when an unsupported scaling configuration is
-encountered.
+Hi,
 
-This was tested with modetest's DRM plane test (from
-the libdrm test suite) on an Odroid-X2 (Exynos4412).
+On 04/07/2015 08:14 AM, Tobias Jakobi wrote:
+> Use the correct spelling for 'progressive'.
+> 
+> Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c  | 2 +-
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
+>  drivers/gpu/drm/exynos/regs-mixer.h   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 3511fcc..20e2ce7 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -2022,7 +2022,7 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
+>  	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
+>  		m->hdisplay, m->vdisplay,
+>  		m->vrefresh, (m->flags & DRM_MODE_FLAG_INTERLACE) ?
+> -		"INTERLACED" : "PROGERESSIVE");
+> +		"INTERLACED" : "PROGRESSIVE");
+>  
+>  	/* preserve mode information for later use. */
+>  	drm_mode_copy(&hdata->current_mode, mode);
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index aa5b6e1..5ab0e32 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -267,7 +267,7 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
+>  
+>  	/* choosing between interlace and progressive mode */
+>  	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
+> -				MXR_CFG_SCAN_PROGRASSIVE);
+> +				MXR_CFG_SCAN_PROGRESSIVE);
+>  
+>  	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
+>  		/* choosing between proper HD and SD mode */
+> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+> index 5f32e1a..ac60260 100644
+> --- a/drivers/gpu/drm/exynos/regs-mixer.h
+> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
+> @@ -101,7 +101,7 @@
+>  #define MXR_CFG_GRP0_ENABLE		(1 << 4)
+>  #define MXR_CFG_VP_ENABLE		(1 << 3)
+>  #define MXR_CFG_SCAN_INTERLACE		(0 << 2)
+> -#define MXR_CFG_SCAN_PROGRASSIVE	(1 << 2)
+> +#define MXR_CFG_SCAN_PROGRESSIVE	(1 << 2)
+>  #define MXR_CFG_SCAN_NTSC		(0 << 1)
+>  #define MXR_CFG_SCAN_PAL		(1 << 1)
+>  #define MXR_CFG_SCAN_SD			(0 << 0)
+> 
 
-v2: Put if- and return-statement on different lines.
+Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
 
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 36 +++++++++++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 5ab0e32..f51011e 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -499,12 +499,36 @@ static void mixer_layer_update(struct mixer_context *ctx)
- 	mixer_reg_writemask(res, MXR_CFG, ~0, MXR_CFG_LAYER_UPDATE);
- }
- 
-+static int mixer_setup_scale(const struct exynos_drm_plane *plane,
-+		unsigned int *x_ratio, unsigned int *y_ratio)
-+{
-+	if (plane->crtc_width != plane->src_width) {
-+		if (plane->crtc_width == 2 * plane->src_width)
-+			*x_ratio = 1;
-+		else
-+			goto fail;
-+	}
-+
-+	if (plane->crtc_height != plane->src_height) {
-+		if (plane->crtc_height == 2 * plane->src_height)
-+			*y_ratio = 1;
-+		else
-+			goto fail;
-+	}
-+
-+	return 0;
-+
-+fail:
-+	DRM_DEBUG_KMS("only 2x width/height scaling of plane supported\n");
-+	return -ENOTSUPP;
-+}
-+
- static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- {
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	unsigned long flags;
- 	struct exynos_drm_plane *plane;
--	unsigned int x_ratio, y_ratio;
-+	unsigned int x_ratio = 0, y_ratio = 0;
- 	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
- 	dma_addr_t dma_addr;
- 	unsigned int fmt;
-@@ -528,9 +552,9 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 		fmt = ARGB8888;
- 	}
- 
--	/* 2x scaling feature */
--	x_ratio = 0;
--	y_ratio = 0;
-+	/* check if mixer supports requested scaling setup */
-+	if (mixer_setup_scale(plane, &x_ratio, &y_ratio))
-+		return;
- 
- 	dst_x_offset = plane->crtc_x;
- 	dst_y_offset = plane->crtc_y;
-@@ -566,8 +590,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 		mixer_reg_write(res, MXR_RESOLUTION, val);
- 	}
- 
--	val  = MXR_GRP_WH_WIDTH(plane->crtc_width);
--	val |= MXR_GRP_WH_HEIGHT(plane->crtc_height);
-+	val  = MXR_GRP_WH_WIDTH(plane->src_width);
-+	val |= MXR_GRP_WH_HEIGHT(plane->src_height);
- 	val |= MXR_GRP_WH_H_SCALE(x_ratio);
- 	val |= MXR_GRP_WH_V_SCALE(y_ratio);
- 	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
--- 
-2.0.5
+Thanks.
