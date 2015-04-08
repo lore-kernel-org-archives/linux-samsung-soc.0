@@ -1,49 +1,68 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 5/6] pwm: samsung: Fix output race on disabling
-Date: Wed, 8 Apr 2015 14:23:47 +0530
-Message-ID: <CANAwSgQAWtpgy4hX8c=B2i5nhooJE8HxHj8L=gqu9QuZZrge6w@mail.gmail.com>
-References: <1427387955-5129-1-git-send-email-linux.amoon@gmail.com>
-	<1427387955-5129-6-git-send-email-linux.amoon@gmail.com>
-	<20150408102811.219b964f@amdc2363>
-	<1428482527.4333.50.camel@collabora.co.uk>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/1] clk: exynos5420: Restore GATE_BUS_TOP on suspend
+Date: Wed, 08 Apr 2015 11:06:48 +0200
+Message-ID: <5524EFA8.6000800@samsung.com>
+References: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:34704 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159AbbDHIxs (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:21119 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751506AbbDHJGx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Apr 2015 04:53:48 -0400
-In-Reply-To: <1428482527.4333.50.camel@collabora.co.uk>
+	Wed, 8 Apr 2015 05:06:53 -0400
+In-reply-to: <1428471252-15872-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Sjoerd,
+Hello,
 
-Correct. Will do so. I just included in this series. As it relevant to
-my changes and testing.
+On 08/04/15 07:34, Javier Martinez Canillas wrote:
+> Commit ae43b3289186 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power
+> Management support v12") added pm support for the pl330 dma driver but
+> it makes the clock for the Exynos5420 MDMA0 DMA controller to be gated
+> during suspend and this in turn makes its parent clock aclk266_g2d to
+> be gated. But the clock needs to be ungated prior suspend to allow the
+> system to be suspend and resumed correctly.
+> 
+> Add GATE_BUS_TOP register to the list of registers to be restored when
+> the system enters into a suspend state so aclk266_g2d will be ungated.
+> 
+> Thanks to Abhilash Kesavan for figuring out that this was the issue.
+> 
+> Fixes: ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> Tested-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 07d666cc6a29..bea4a173eef5 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -271,6 +271,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+>  	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
+>  	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
+>  	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
+> +	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+>  	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+>  	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
+>  };
 
--Anand Moon
+I'm going to tag this patch for inclusion in the stable tree and send
+it to Mike or Stephen with other clk/samsung fixes after v4.1-rc1 is
+released.
 
-On 8 April 2015 at 14:12, Sjoerd Simons <sjoerd.simons@collabora.co.uk> wrote:
->
->
-> On Wed, 2015-04-08 at 10:28 +0200, Lukasz Majewski wrote:
->> Hi Anand,
->>
->> > From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
->> > When disabling the samsung PWM the output state remains at the level
->> > it was in the end of a pwm cycle. In other words, calling pwm_disable
->> > when at 100% duty will keep the output active, while at all other
->> > setting the output will go/stay inactive. On top of that the samsung
->> > PWM settings are double-buffered, which means the new settings only
->> > get applied at the start of a new PWM cycle.
->
-> This patch is already in the linux-pwm for-next tree so should probably
-> be dropped form this patchset to prevent conflicts.
->
-> --
-> Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> Collabora Ltd.
+Mike/Stephen, if you're willing to take this patch earlier here is my:
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+-- 
+Thanks,
+Sylwester
