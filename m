@@ -1,83 +1,35 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos: remove unnecessary calls to disable_plane()
-Date: Fri, 10 Apr 2015 14:57:06 -0400
-Message-ID: <1428692226-7157-1-git-send-email-gustavo@padovan.org>
-References: <1428084583-14616-12-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f42.google.com ([209.85.216.42]:38886 "EHLO
-	mail-vn0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932170AbbDJS5J (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Apr 2015 14:57:09 -0400
-Received: by vnbf1 with SMTP id f1so7742542vnb.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Apr 2015 11:57:08 -0700 (PDT)
-In-Reply-To: <1428084583-14616-12-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] [media] exynos4_is: exynos4-fimc requires i2c
+Date: Fri, 10 Apr 2015 22:30:14 +0200
+Message-ID: <19181630.veBMiO50KX@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: mchehab@osg.samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Without i2c, we can get a build error:
 
-The planes are already disabled by the drm_atomic_helper_commit() code
-so we don't need to disable the in these two places.
+drivers/media/platform/exynos4-is/fimc-is-i2c.c: In function 'fimc_is_i2c_probe':
+drivers/media/platform/exynos4-is/fimc-is-i2c.c:58:8: error: implicit declaration of function 'i2c_add_adapter' [-Werror=implicit-function-declaration]
 
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 11 -----------
- drivers/gpu/drm/exynos/exynos_drm_encoder.c |  8 --------
- 2 files changed, 19 deletions(-)
+The dependency already exists for exynos-fimc-lite and s5p-fimc,
+but is missing for exynos4-fimc.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 519c569..9bf25ff 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -47,8 +47,6 @@ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
- static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	struct drm_plane *plane;
--	int ret;
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+index b7b2e472240a..40423c6c5324 100644
+--- a/drivers/media/platform/exynos4-is/Kconfig
++++ b/drivers/media/platform/exynos4-is/Kconfig
+@@ -57,6 +57,7 @@ endif
  
- 	if (!exynos_crtc->enabled)
- 		return;
-@@ -64,15 +62,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
- 		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_OFF);
- 
- 	exynos_crtc->enabled = false;
--
--	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
--		if (plane->crtc != crtc)
--			continue;
--
--		ret = plane->funcs->disable_plane(plane);
--		if (ret)
--			DRM_ERROR("Failed to disable plane %d\n", ret);
--	}
- }
- 
- static bool
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-index 0648ba4..7b89fd5 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-@@ -81,17 +81,9 @@ static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
- {
- 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
- 	struct exynos_drm_display *display = exynos_encoder->display;
--	struct drm_plane *plane;
--	struct drm_device *dev = encoder->dev;
- 
- 	if (display->ops->dpms)
- 		display->ops->dpms(display, DRM_MODE_DPMS_OFF);
--
--	/* all planes connected to this encoder should be also disabled. */
--	drm_for_each_legacy_plane(plane, &dev->mode_config.plane_list) {
--		if (plane->crtc && (plane->crtc == encoder->crtc))
--			plane->funcs->disable_plane(plane);
--	}
- }
- 
- static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
--- 
-2.1.0
+ config VIDEO_EXYNOS4_FIMC_IS
+ 	tristate "EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver"
++	depends on I2C
+ 	depends on HAS_DMA
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	depends on OF
