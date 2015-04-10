@@ -1,162 +1,195 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH v2 RESEND] ARM: dts: Support audio on
- Exynos5422-odroidxu3 using simple-audio-card
-Date: Fri, 10 Apr 2015 14:48:13 +0530
-Message-ID: <CANAwSgS98n0kX8oBUk5Ehk1fwU4DA_DNuAqztp3LrOBcmrtAZw@mail.gmail.com>
-References: <1428651178-18186-1-git-send-email-ideal.song@samsung.com>
-	<552791A4.40203@fivetechno.de>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 6/6] hwmon: pwm-fan: Update the duty cycle inorder to
+ control the pwm-fan
+Date: Fri, 10 Apr 2015 16:58:40 +0530
+Message-ID: <CANAwSgRSxj9frUHRXh3JwD+bpnFrj8WkpDMKHZn-OPmuCEgP7w@mail.gmail.com>
+References: <1427387955-5129-1-git-send-email-linux.amoon@gmail.com>
+	<1427387955-5129-7-git-send-email-linux.amoon@gmail.com>
+	<20150408104415.07e1c821@amdc2363>
+	<20150408153214.GA15942@roeck-us.net>
+	<CANAwSgSD52sDpP7NH2hhiZX-=LZF6Qo-X3enqsqM+5XAMfyP=Q@mail.gmail.com>
+	<20150408165351.GA22846@roeck-us.net>
+	<CANAwSgQbNV9QZ2bFGk6g+RyWW6f5iW4e8ii_5rJ4srv02L=L_Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <552791A4.40203-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
-Cc: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:37841 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755599AbbDJL2m convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Apr 2015 07:28:42 -0400
+In-Reply-To: <CANAwSgQbNV9QZ2bFGk6g+RyWW6f5iW4e8ii_5rJ4srv02L=L_Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Markus Reichl <m.reichl@fivetechno.de>
 
-Hi Inha,
+Hi Guenter/Lukasz,
 
-Tested-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Earlier I send v2 version of the patch spiking this one.
+
+Markus Riechl came back to me with below mail.
+So This patch confirms fixes the bug.
+
+I will send v3 version of the patch. Earlier I was in delima about the =
+bug.
 
 -Anand Moon
+-------------------------------------------
+Hi Anand,
 
-On 10 April 2015 at 14:32, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org> wrote:
-> Hi Inha,
->
-> I have tested this on XU3 (Headphone output).
->
-> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
->
-> Best Regards
-> --
-> Markus Reichl
->
-> Am 10.04.2015 um 09:32 schrieb Inha Song:
->> Add MAX98090 audio codec, I2S interface and the sound nodes to support
->> audio on Exynos5422 SoC Based Odroid-XU3 board. Now we can support audio
->> in Odroid-XU3 board using simple-audio-card DT binding.
->>
->> Signed-off-by: Inha Song <ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/exynos5420.dtsi          |  9 +++++
->>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 59 ++++++++++++++++++++++++++++++
->>  2 files changed, 68 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->> index ac6f860..73886d6 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -415,6 +415,9 @@
->>                       <&clock_audss EXYNOS_I2S_BUS>,
->>                       <&clock_audss EXYNOS_SCLK_I2S>;
->>               clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
->> +             #clock-cells = <1>;
->> +             clock-output-names = "i2s_cdclk0";
->> +             #sound-dai-cells = <1>;
->>               samsung,idma-addr = <0x03000000>;
->>               pinctrl-names = "default";
->>               pinctrl-0 = <&i2s0_bus>;
->> @@ -429,6 +432,9 @@
->>               dma-names = "tx", "rx";
->>               clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
->>               clock-names = "iis", "i2s_opclk0";
->> +             #clock-cells = <1>;
->> +             clock-output-names = "i2s_cdclk1";
->> +             #sound-dai-cells = <1>;
->>               pinctrl-names = "default";
->>               pinctrl-0 = <&i2s1_bus>;
->>               status = "disabled";
->> @@ -442,6 +448,9 @@
->>               dma-names = "tx", "rx";
->>               clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
->>               clock-names = "iis", "i2s_opclk0";
->> +             #clock-cells = <1>;
->> +             clock-output-names = "i2s_cdclk2";
->> +             #sound-dai-cells = <1>;
->>               pinctrl-names = "default";
->>               pinctrl-0 = <&i2s2_bus>;
->>               status = "disabled";
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> index edc25cf..c038f0d 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> @@ -11,6 +11,7 @@
->>  */
->>
->>  /dts-v1/;
->> +#include <dt-bindings/sound/samsung-i2s.h>
->>  #include "exynos5800.dtsi"
->>
->>  / {
->> @@ -285,6 +286,64 @@
->>       rtc@101E0000 {
->>               status = "okay";
->>       };
->> +
->> +     sound: sound {
->> +             compatible = "simple-audio-card";
->> +
->> +             simple-audio-card,name = "Odroid-XU3";
->> +             simple-audio-card,widgets =
->> +                     "Headphone", "Headphone Jack",
->> +                     "Speakers", "Speakers";
->> +             simple-audio-card,routing =
->> +                     "Headphone Jack", "HPL",
->> +                     "Headphone Jack", "HPR",
->> +                     "Headphone Jack", "MICBIAS",
->> +                     "IN1", "Headphone Jack",
->> +                     "Speakers", "SPKL",
->> +                     "Speakers", "SPKR";
->> +
->> +             simple-audio-card,format = "i2s";
->> +             simple-audio-card,bitclock-master = <&link0_codec>;
->> +             simple-audio-card,frame-master = <&link0_codec>;
->> +
->> +             simple-audio-card,cpu {
->> +                     sound-dai = <&i2s0 0>;
->> +                     system-clock-frequency = <19200000>;
->> +             };
->> +
->> +             link0_codec: simple-audio-card,codec {
->> +                     sound-dai = <&max98090>;
->> +                     clocks = <&i2s0 CLK_I2S_CDCLK>;
->> +             };
->> +     };
->> +};
->> +
->> +&clock_audss {
->> +     assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
->> +                     <&clock_audss EXYNOS_MOUT_I2S>,
->> +                     <&clock_audss EXYNOS_DOUT_AUD_BUS>;
->> +     assigned-clock-parents = <&clock CLK_FIN_PLL>,
->> +                     <&clock_audss EXYNOS_MOUT_AUDSS>;
->> +     assigned-clock-rates = <0>,
->> +                     <0>,
->> +                     <19200000>;
->> +};
->> +
->> +&hsi2c_5 {
->> +     status = "okay";
->> +     max98090: max98090@10 {
->> +             compatible = "maxim,max98090";
->> +             reg = <0x10>;
->> +             interrupt-parent = <&gpx3>;
->> +             interrupts = <2 0>;
->> +             clocks = <&i2s0 CLK_I2S_CDCLK>;
->> +             clock-names = "mclk";
->> +             #sound-dai-cells = <0>;
->> +     };
->> +};
->> +
->> +&i2s0 {
->> +     status = "okay";
->>  };
->>
->>  &hdmi {
->>
->
+I tested your patch.
+
+After booting the fan is spinning despite only 44=B0C.
+
+/sys/class/thermal/cooling_device0/curstate is 0.
+/sys/class/hwmon/hwmon4/pwm1 is 0
+
+when I echo 1 > cur_state and then echo 0 > cur_state again,
+the fan switches to off and behaves as expected.
+
+It looks like there is a bug in initializing the pwm output
+immediately after booting.
+
+Best Regards,
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Markus Reichl
+
+On 8 April 2015 at 23:19, Anand Moon <linux.amoon@gmail.com> wrote:
+> Hi Guenter,
+>
+> Sorry my blunder mistake. Sorry for the noise.
+>
+> I just tested with spiking this patch and my observation and testing
+> were wrong we can skip this patch.
+>
+> I will send an v2 patch series removing the patch 5 and patch 6.
+>
+> With correct dts changes.
+>
+> Thanks for pointing my mistake.
+>
+> -Anand Moon
+>
+> On 8 April 2015 at 22:23, Guenter Roeck <linux@roeck-us.net> wrote:
+>> On Wed, Apr 08, 2015 at 09:32:05PM +0530, Anand Moon wrote:
+>>> Hi Guenter,
+>>>
+>>> Initially the board bootup the cooling level state is 0.
+>>> So update the duty cycle and this power off the fan.
+>>> As their is no state change the fan will not spin.
+>>>
+>>> Once the temperature sensor is reached to alert temperature it chan=
+ges state.
+>>> With the state change the fan cools the CPU and then stop's
+>>>
+>>> I have observed this state change with tmon utility in linux/tools/=
+thermal/tmon/
+>>>
+>> Sorry, I am missing something. I still don't see what problem you ar=
+e fixing
+>> with this patch. What behavior is wrong with the current code, and h=
+ow does your
+>> patch fix it ?
+>>
+>> Guenter
+>>
+>>> -Anand Moon
+>>>
+>>> On 8 April 2015 at 21:02, Guenter Roeck <linux@roeck-us.net> wrote:
+>>> > On Wed, Apr 08, 2015 at 10:44:15AM +0200, Lukasz Majewski wrote:
+>>> >> Hi Anand,
+>>> >>
+>>> >> > Below changes depend on following patch.
+>>> >> > https://patchwork.kernel.org/patch/5944061/
+>>> >> >
+>>> >> > Update the pwm_config with duty then update the pwm_disable
+>>> >> > to poweroff the cpu fan.
+>>> >> >
+>>> >
+>>> > Unfortunately, the patch does not include an explanation why it i=
+s needed.
+>>> >
+>>> > The original code presumably did not update the duty cycle becaus=
+e
+>>> > pwm was about to be disabled anyway. That kind of made sense to m=
+e.
+>>> > Updating the duty cycle to 0 just to disable the pwm channel righ=
+t
+>>> > afterwards does not immediately make sense.
+>>> >
+>>> > Given that, I would expect to see a rationale here. Why is this p=
+atch needed ?
+>>> > Does it fix a bug ? If yes, pelase describe the bug. If not, what=
+ is the
+>>> > purpose of this patch ?
+>>> >
+>>> > Maybe that is all explained in patch 0/6, which I was not copied =
+on. Even
+>>> > if so, the reationale will be needed in the changelog to explain =
+to future
+>>> > developers why this change was made.
+>>> >
+>>> > Thanks,
+>>> > Guenter
+>>> >
+>>> >> > Tested on OdroidXU3 board.
+>>> >> >
+>>> >> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>> >> > ---
+>>> >> >  drivers/hwmon/pwm-fan.c | 10 ++++------
+>>> >> >  1 file changed, 4 insertions(+), 6 deletions(-)
+>>> >> >
+>>> >> > diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+>>> >> > index 7c83dc4..f25c841 100644
+>>> >> > --- a/drivers/hwmon/pwm-fan.c
+>>> >> > +++ b/drivers/hwmon/pwm-fan.c
+>>> >> > @@ -44,26 +44,24 @@ static int  __set_pwm(struct pwm_fan_ctx *=
+ctx,
+>>> >> > unsigned long pwm) int ret =3D 0;
+>>> >> >
+>>> >> >     mutex_lock(&ctx->lock);
+>>> >> > +
+>>> >
+>>> > [ please refrain from unnecessary whitespace changes ]
+>>> >
+>>> >> >     if (ctx->pwm_value =3D=3D pwm)
+>>> >> >             goto exit_set_pwm_err;
+>>> >> >
+>>> >> > -   if (pwm =3D=3D 0) {
+>>> >> > -           pwm_disable(ctx->pwm);
+>>> >> > -           goto exit_set_pwm;
+>>> >> > -   }
+>>> >> > -
+>>> >> >     duty =3D DIV_ROUND_UP(pwm * (ctx->pwm->period - 1), MAX_PW=
+M);
+>>> >> >     ret =3D pwm_config(ctx->pwm, duty, ctx->pwm->period);
+>>> >> >     if (ret)
+>>> >> >             goto exit_set_pwm_err;
+>>> >> >
+>>> >> > +   if (pwm =3D=3D 0)
+>>> >> > +           pwm_disable(ctx->pwm);
+>>> >> > +
+>>> >> >     if (ctx->pwm_value =3D=3D 0) {
+>>> >> >             ret =3D pwm_enable(ctx->pwm);
+>>> >> >             if (ret)
+>>> >> >                     goto exit_set_pwm_err;
+>>> >> >     }
+>>> >> >
+>>> >> > -exit_set_pwm:
+>>> >> >     ctx->pwm_value =3D pwm;
+>>> >> >  exit_set_pwm_err:
+>>> >> >     mutex_unlock(&ctx->lock);
+>>> >>
+>>> >> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+>>> >>
+>>> >> BTW: I've added Guenter to CC.
+>>> >>
+>>> >> --
+>>> >> Best regards,
+>>> >>
+>>> >> Lukasz Majewski
+>>> >>
+>>> >> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
