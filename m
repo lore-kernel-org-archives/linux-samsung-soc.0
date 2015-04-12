@@ -1,78 +1,44 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
-Date: Sun, 12 Apr 2015 22:30:59 +0200
-Message-ID: <1428870659-5525-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v4 6/6] hwmon: pwm-fan: Update the duty cycle inorder
+ to control the pwm-fan
+Date: Sun, 12 Apr 2015 16:00:23 -0700
+Message-ID: <552AF907.5000600@roeck-us.net>
+References: <1428864251-31780-1-git-send-email-linux.amoon@gmail.com> <1428864251-31780-7-git-send-email-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60680 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751872AbbDLUbY (ORCPT
+Received: from bh-25.webhostbox.net ([208.91.199.152]:56359 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832AbbDLXA1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Apr 2015 16:31:24 -0400
+	Sun, 12 Apr 2015 19:00:27 -0400
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YhQra-000dYk-3m
+	for linux-samsung-soc@vger.kernel.org; Sun, 12 Apr 2015 23:00:27 +0000
+In-Reply-To: <1428864251-31780-7-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Markus Reichl <m.reichl@fivetechno.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Commit ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
-added a device node for the Exynos5420 DISP1 power domain but dit not
-make the DP controller a consumer of that power domain.
+On 04/12/2015 11:44 AM, Anand Moon wrote:
+> pwm_config() must be called with a duty cycle of 0 prior to calling
+> pwm_disable() to ensure that the pwm signal is set to low.
+>
+> Changes since v1 : None.
+> Changes since v2 : None
+> Changes since v3 : Simplify the comment.
+>
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+> Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-This causes an "Unhandled fault: imprecise external abort" error if the
-exynos-dp driver tries to access the DP controller registers and the PD
-was turned off. This lead to a kernel panic and a complete system hang.
+Applied to hwmon-next (after removing the changelog from
+the commit message).
 
-Make the DP controller device node a consumer of the DISP1 power domain
-to ensure that the PD is turned on when the exynos-dp driver is probed.
-
-Fixes: ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-
-Hello,
-
-This latent bug was not exposed before since drivers for other devices
-marked as DISP1 power domain consumers were probed before exynos-dp so
-the PD was already on which made possible to access the DP registers.
-
-But "regulator: Defer lookup of supply to regulator_get" [0] that is in
-linux-next from a couple of days now, changed the order on which the
-drivers' probes succeed so the PD was disabled during exynos-dp probe.
-
-Exynos5420 machines with a display such as the Exynos5420 Peach Pit and
-Exynos5800 Peach Pi were failing to boot due this issue, i.e: [1].
-
-Olof,
-
-Could you please confirm $subject fixes the issue catched by your farm?
-
-Krzysztof,
-
-This patch conflicts with your Exynos5 phandle notation cleanup [2] but
-I preferred to send it on top of linux-next instead of making your series
-a dependency since it fixes a very important bug that had caused -next to
-be broken on these matchines for days now.
-
-Thanks a lot and best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2015/3/24/1167
-[1]: http://arm-soc.lixom.net/bootlogs/next/next-20150409/pi-arm-exynos_defconfig.html
-[2]: https://lkml.org/lkml/2015/4/12/49
-
- arch/arm/boot/dts/exynos5420.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index f67b23f303c3..45317538bbae 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -536,6 +536,7 @@
- 		clock-names = "dp";
- 		phys = <&dp_phy>;
- 		phy-names = "dp";
-+		power-domains = <&disp_pd>;
- 	};
- 
- 	mipi_phy: video-phy@10040714 {
--- 
-2.1.4
+Thanks,
+Guenter
