@@ -1,34 +1,52 @@
 From: Anand Moon <linux.amoon@gmail.com>
-Subject: v3 Exynos5422 odroidxu3 pwm-fan control using thermal sensors
-Date: Mon, 13 Apr 2015 00:24:06 +0930
-Message-ID: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Markus Reichl <m.reichl@fivetechno.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 4/6] ARM: dts exynos5420 update the cooling cells for core cpu0
+Date: Mon, 13 Apr 2015 00:24:10 +0930
+Message-ID: <1428850452-4178-5-git-send-email-linux.amoon@gmail.com>
+References: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:36161 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751678AbbDLO4W (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 Apr 2015 10:56:22 -0400
+In-Reply-To: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Markus Reichl <m.reichl@fivetechno.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-This work depeds upon work done by Lukasz Majewski <l.majewski@samsung.com>
-and Sjoerd Simons <sjoerd.simons@collabora.co.uk> regarding the pwm-fan.
+update the cooling level for cpu0 to avoid following message.
 
-Changes from v1
-        fixed the registration of thermal sensor to tmu_cpu0
-Dropped patches.
-        0005-pwm-samsung-Fix-output-race-on-disabling.patch
-        0006-hwmon-pwm-fan-Update-the-duty-cycle-inorder-to-contr.patch
-changes from v2
-Added patch
-	0006-hwmon-pwm-fan-Update-the-duty-cycle-inorder-to-contr.patch
+root@odroidxu3:~# dmesg | grep ther
+[    0.241511] /thermal-zones/cpu-thermal/cooling-maps/map0:
+                         could not get #cooling-cells for /cpus/cpu@0
 
--Anand Moon
+Tested on OdroidXU3
+
+Changes since v1 : None
+Changes since v2 : None
+
+Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index c0e98cf..6b49f3c 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -61,6 +61,10 @@
+ 			reg = <0x0>;
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
++
++			cooling-min-level = <10>;
++			cooling-max-level = <7>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+ 		cpu1: cpu@1 {
+-- 
+1.9.1
