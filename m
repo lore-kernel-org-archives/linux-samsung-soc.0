@@ -1,80 +1,73 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 6/6] hwmon: pwm-fan: Update the duty cycle inorder to control the pwm-fan
-Date: Mon, 13 Apr 2015 00:24:12 +0930
-Message-ID: <1428850452-4178-7-git-send-email-linux.amoon@gmail.com>
-References: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1428850452-4178-1-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v3 6/6] hwmon: pwm-fan: Update the duty cycle inorder
+ to control the pwm-fan
+Date: Sun, 12 Apr 2015 08:07:08 -0700
+Message-ID: <552A8A1C.9000409@roeck-us.net>
+References: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com> <1428850452-4178-7-git-send-email-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:32837 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751314AbbDLPHM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 Apr 2015 11:07:12 -0400
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1YhJTb-000Kf4-Je
+	for linux-samsung-soc@vger.kernel.org; Sun, 12 Apr 2015 15:07:11 +0000
+In-Reply-To: <1428850452-4178-7-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Markus Reichl <m.reichl@fivetechno.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-In order to disable the PWM we need to update using following sequence.
+On 04/12/2015 07:54 AM, Anand Moon wrote:
+> In order to disable the PWM we need to update using following sequence.
+>
+> 	pwm_config(pwm, 0, period);
+>   	pwm_disable(pwm);
+>
+> pwm_config() with a zero duty cycle to make it clear the timer and update the PWM registers.
+> pwm_disable will clear the TCON_AUTORELOAD(tcon_chan) and update the PWM register.
+>
+There is no TCON_AUTORELOAD in this driver. Future developers will have no idea
+what you are talking about here. Please provide a generic comment.
 
-	pwm_config(pwm, 0, period);
- 	pwm_disable(pwm);
+> Next change in state will get trigger unless a new PWM cycle happened.
+>
+That sentence is difficult to parse. Actually, I have no idea what it is supposed to mean.
 
-pwm_config() with a zero duty cycle to make it clear the timer and update the PWM registers.
-pwm_disable will clear the TCON_AUTORELOAD(tcon_chan) and update the PWM register.
+> 	pwm_config(pwm, duty, period);
+>   	pwm_enable(pwm);
+>
+> Through pwm_config we update the duty cycle and period and update the PWM register.
+> pwm_enable will update the state to TCON_MANUALUPDATE(tcon_chan)
+> and TCON_START(tcon_chan) | TCON_AUTORELOAD(tcon_chan) and update the PWM register.
+>
+This sentence does not make sense in the context of the pwm-fan driver.
 
-Next change in state will get trigger unless a new PWM cycle happened.
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+> Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>   drivers/hwmon/pwm-fan.c | 10 ++++------
+>   1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 7c83dc4..f25c841 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -44,26 +44,24 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+>   	int ret = 0;
+>
+>   	mutex_lock(&ctx->lock);
+> +
 
-	pwm_config(pwm, duty, period);
- 	pwm_enable(pwm);
+Please refrain from making unnecessary whitespace changes.
 
-Through pwm_config we update the duty cycle and period and update the PWM register.
-pwm_enable will update the state to TCON_MANUALUPDATE(tcon_chan)
-and TCON_START(tcon_chan) | TCON_AUTORELOAD(tcon_chan) and update the PWM register.
-
-Reported-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
-Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
-Reviewed-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/hwmon/pwm-fan.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 7c83dc4..f25c841 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -44,26 +44,24 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
- 	int ret = 0;
- 
- 	mutex_lock(&ctx->lock);
-+
- 	if (ctx->pwm_value == pwm)
- 		goto exit_set_pwm_err;
- 
--	if (pwm == 0) {
--		pwm_disable(ctx->pwm);
--		goto exit_set_pwm;
--	}
--
- 	duty = DIV_ROUND_UP(pwm * (ctx->pwm->period - 1), MAX_PWM);
- 	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
- 	if (ret)
- 		goto exit_set_pwm_err;
- 
-+	if (pwm == 0)
-+		pwm_disable(ctx->pwm);
-+
- 	if (ctx->pwm_value == 0) {
- 		ret = pwm_enable(ctx->pwm);
- 		if (ret)
- 			goto exit_set_pwm_err;
- 	}
- 
--exit_set_pwm:
- 	ctx->pwm_value = pwm;
- exit_set_pwm_err:
- 	mutex_unlock(&ctx->lock);
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Guenter
