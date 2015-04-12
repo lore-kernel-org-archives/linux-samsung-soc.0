@@ -1,7 +1,7 @@
 From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 1/6] ARM: dts :exynos5422-odroidxu3 Add pwm-fan node to the Odroid-XU3 board.
-Date: Mon, 13 Apr 2015 04:14:06 +0930
-Message-ID: <1428864251-31780-2-git-send-email-linux.amoon@gmail.com>
+Subject: [PATCH v4 2/6] ARM: dts: OdroidXU3: Enable TMU at Exynos5422 base.
+Date: Mon, 13 Apr 2015 04:14:07 +0930
+Message-ID: <1428864251-31780-3-git-send-email-linux.amoon@gmail.com>
 References: <1428864251-31780-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1428864251-31780-1-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,7 +10,8 @@ To: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guente
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add pwm-fan node to the OdroidXU3 board.
+This commit enables TMU IP block on the Exynos5422 OdroidXU3
+device.
 
 Tested on OdroidXU3 board.
 
@@ -22,40 +23,45 @@ Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
 Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index a519c86..04d982b 100644
+index 04d982b..6e7ee53 100644
 --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
 +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -278,6 +278,15 @@
- 	rtc@101E0000 {
- 		status = "okay";
+@@ -287,6 +287,31 @@
+ 		#cooling-cells = <2>;
+ 		cooling-levels = <0 130 170 230>;
  	};
 +
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 0 20972 0>;
-+		cooling-min-state = <0>;
-+		cooling-max-state = <3>;
-+		#cooling-cells = <2>;
-+		cooling-levels = <0 130 170 230>;
++	tmu@10060000 {
++		vtmu-supply = <&ldo10_reg>;
++		status = "okay";
++	};
++
++	tmu@10064000 {
++		vtmu-supply = <&ldo10_reg>;
++		status = "okay";
++	};
++
++	tmu@10068000 {
++		vtmu-supply = <&ldo10_reg>;
++		status = "okay";
++	};
++
++	tmu@1006c000 {
++		vtmu-supply = <&ldo10_reg>;
++		status = "okay";
++	};
++
++	tmu@100a0000 {
++		vtmu-supply = <&ldo10_reg>;
++		status = "okay";
 +	};
  };
  
  &hdmi {
-@@ -369,3 +378,10 @@
- 		shunt-resistor = <10000>;
- 	};
- };
-+
-+&pwm {
-+	pinctrl-0 = <&pwm0_out>;
-+	pinctrl-names = "default";
-+	samsung,pwm-outputs = <0>;
-+	status = "okay";
-+};
 -- 
 1.9.1
 
