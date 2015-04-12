@@ -1,52 +1,43 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v3 4/6] ARM: dts exynos5420 update the cooling cells for core cpu0
-Date: Mon, 13 Apr 2015 00:24:10 +0930
-Message-ID: <1428850452-4178-5-git-send-email-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 5/6] ARM: dts: Enable thermal_zone for exynos5422.
+Date: Mon, 13 Apr 2015 00:24:11 +0930
+Message-ID: <1428850452-4178-6-git-send-email-linux.amoon@gmail.com>
 References: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:36161 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751678AbbDLO4W (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Apr 2015 10:56:22 -0400
-In-Reply-To: <1428850452-4178-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1428850452-4178-1-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Markus Reichl <m.reichl@fivetechno.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-update the cooling level for cpu0 to avoid following message.
+Include exynos5-cpu-thermal.dtsi to enable thermal_zone support.
 
-root@odroidxu3:~# dmesg | grep ther
-[    0.241511] /thermal-zones/cpu-thermal/cooling-maps/map0:
-                         could not get #cooling-cells for /cpus/cpu@0
-
-Tested on OdroidXU3
-
-Changes since v1 : None
+Changes since v1 : Seperate the include previous patch.
 Changes since v2 : None
 
-Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-Acked-by: Lukasz Majewski <l.majewski@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c0e98cf..6b49f3c 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -61,6 +61,10 @@
- 			reg = <0x0>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+
-+			cooling-min-level = <10>;
-+			cooling-max-level = <7>;
-+			#cooling-cells = <2>; /* min followed by max */
- 		};
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 6e7ee53..16a5f10 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -12,6 +12,7 @@
  
- 		cpu1: cpu@1 {
+ /dts-v1/;
+ #include "exynos5800.dtsi"
++#include "exynos5-cpu-thermal.dtsi"
+ 
+ / {
+ 	model = "Hardkernel Odroid XU3";
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
