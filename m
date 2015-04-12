@@ -1,35 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] [media] exynos4_is: exynos4-fimc requires i2c
-Date: Fri, 10 Apr 2015 22:30:14 +0200
-Message-ID: <19181630.veBMiO50KX@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: mchehab@osg.samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 0/7] ARM: dts: Refactor Exynos5 boards for phandle notation
+Date: Sun, 12 Apr 2015 21:24:47 +0900
+Message-ID: <1428841494-20769-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:35811 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751310AbbDLMZH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 Apr 2015 08:25:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Without i2c, we can get a build error:
+Hi,
 
-drivers/media/platform/exynos4-is/fimc-is-i2c.c: In function 'fimc_is_i2c_probe':
-drivers/media/platform/exynos4-is/fimc-is-i2c.c:58:8: error: implicit declaration of function 'i2c_add_adapter' [-Werror=implicit-function-declaration]
 
-The dependency already exists for exynos-fimc-lite and s5p-fimc,
-but is missing for exynos4-fimc.
+The phandle notation reduces possible mistakes when overriding nodes
+by child board files and reduces duplication of addresses.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The patchset refactors Exynos5 boards to use the phandle way.
 
-diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-index b7b2e472240a..40423c6c5324 100644
---- a/drivers/media/platform/exynos4-is/Kconfig
-+++ b/drivers/media/platform/exynos4-is/Kconfig
-@@ -57,6 +57,7 @@ endif
- 
- config VIDEO_EXYNOS4_FIMC_IS
- 	tristate "EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver"
-+	depends on I2C
- 	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	depends on OF
+Tested by comparison of decompiled DTB for each commit.
+
+
+Patchset depends (to reduce conflicts) on following patches:
+1. v2: ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa
+   http://www.spinics.net/lists/arm-kernel/msg410429.html
+2. ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ on Arndale Octa
+   http://www.spinics.net/lists/linux-samsung-soc/msg43435.html
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (7):
+  ARM: dts: Add labels to nodes used in Exynos5 based DTS
+  ARM: dts: Use phandle notation for overriding nodes in Exynos5250
+  ARM: dts: Remove duplicated I2C 7 nodes in Snow
+  ARM: dts: Use phandle notation for overriding nodes in Arndale Octa
+  ARM: dts: Use phandle notation for overriding nodes in Exynos5420
+  ARM: dts: Use phandle notation for overriding nodes in SMDK5420
+  ARM: dts: Use phandle notation for overriding nodes in Exynos5440
+    boards
+
+ arch/arm/boot/dts/exynos5.dtsi                |   6 +-
+ arch/arm/boot/dts/exynos5250-snow.dts         |  46 +-
+ arch/arm/boot/dts/exynos5250.dtsi             |  82 ++--
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 634 ++++++++++++-------------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |   2 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     | 639 +++++++++++++-------------
+ arch/arm/boot/dts/exynos5420.dtsi             |  80 ++--
+ arch/arm/boot/dts/exynos5440-sd5v1.dts        |  10 +-
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts     |  85 ++--
+ arch/arm/boot/dts/exynos5440.dtsi             |   4 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |   2 +-
+ 11 files changed, 794 insertions(+), 796 deletions(-)
+
+-- 
+2.1.0
