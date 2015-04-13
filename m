@@ -1,52 +1,74 @@
-From: Michael Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: samsung: exynos4: Disable ARMCLK down feature on Exynos4210
- SoC
-Date: Sun, 12 Apr 2015 21:02:12 -0700
-Message-ID: <20150413040212.19585.31796@quantum>
-References: <1430933.sM2tQimLcT@amdc1032>
- <CAJKOXPc_M=rY0aYpE_bhfa6Ku-E09UZ5YXXF3uH9ENTbPJsqMA@mail.gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove unnecessary calls to disable_plane()
+Date: Mon, 13 Apr 2015 15:32:08 +0900
+Message-ID: <552B62E8.3090906@samsung.com>
+References: <1428084583-14616-12-git-send-email-gustavo@padovan.org>
+ <1428692226-7157-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPc_M=rY0aYpE_bhfa6Ku-E09UZ5YXXF3uH9ENTbPJsqMA@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1428692226-7157-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2015-03-28 09:37:05)
-> 2015-03-27 17:27 GMT+01:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
-> > Commit 42773b28e71d ("clk: samsung: exynos4: Enable ARMCLK
-> > down feature") enabled ARMCLK down feature on all Exynos4
-> > SoCs.  Unfortunately on Exynos4210 SoC ARMCLK down feature
-> > causes a lockup when ondemand cpufreq governor is used.
-> > Fix it by limiting ARMCLK down feature to Exynos4x12 SoCs.
-> >
-> > This patch was tested on:
-> > - Exynos4210 SoC based Trats board
-> > - Exynos4210 SoC based Origen board
-> > - Exynos4412 SoC based Trats2 board
-> > - Exynos4412 SoC based Odroid-U3 board
-> >
-> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Cc: Daniel Drake <drake@endlessm.com>
-> > Cc: Tomasz Figa <t.figa@samsung.com>
-> > Cc: Kukjin Kim <kgene@kernel.org>
-> > Fixes: 42773b28e71d ("clk: samsung: exynos4: Enable ARMCLK down feature")
-> > Cc: <stable@vger.kernel.org> # v3.17+
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos4.c |   11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Applied.
-
-Thanks,
-Mike
-
-> 
-> Best regards,
-> Krzysztof
+SGksCgpPbiAwNC8xMS8yMDE1IDAzOjU3IEFNLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
+bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IAo+
+IFRoZSBwbGFuZXMgYXJlIGFscmVhZHkgZGlzYWJsZWQgYnkgdGhlIGRybV9hdG9taWNfaGVscGVy
+X2NvbW1pdCgpIGNvZGUKPiBzbyB3ZSBkb24ndCBuZWVkIHRvIGRpc2FibGUgdGhlIGluIHRoZXNl
+IHR3byBwbGFjZXMuCj4gCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZv
+LnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fY3J0Yy5jICAgIHwgMTEgLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuYyB8ICA4IC0tLS0tLS0tCj4gIDIgZmlsZXMgY2hh
+bmdlZCwgMTkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fY3J0Yy5jCj4gaW5kZXggNTE5YzU2OS4uOWJmMjVmZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC00Nyw4ICs0Nyw2IEBAIHN0YXRpYyB2b2lk
+IGV4eW5vc19kcm1fY3J0Y19lbmFibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+ICBzdGF0aWMg
+dm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIHsK
+PiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMo
+Y3J0Yyk7Cj4gLQlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKPiAtCWludCByZXQ7Cj4gIAo+ICAJ
+aWYgKCFleHlub3NfY3J0Yy0+ZW5hYmxlZCkKPiAgCQlyZXR1cm47Cj4gQEAgLTY0LDE1ICs2Miw2
+IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAq
+Y3J0YykKPiAgCQlleHlub3NfY3J0Yy0+b3BzLT5kcG1zKGV4eW5vc19jcnRjLCBEUk1fTU9ERV9E
+UE1TX09GRik7Cj4gIAo+ICAJZXh5bm9zX2NydGMtPmVuYWJsZWQgPSBmYWxzZTsKPiAtCj4gLQlk
+cm1fZm9yX2VhY2hfbGVnYWN5X3BsYW5lKHBsYW5lLCAmY3J0Yy0+ZGV2LT5tb2RlX2NvbmZpZy5w
+bGFuZV9saXN0KSB7Cj4gLQkJaWYgKHBsYW5lLT5jcnRjICE9IGNydGMpCj4gLQkJCWNvbnRpbnVl
+Owo+IC0KPiAtCQlyZXQgPSBwbGFuZS0+ZnVuY3MtPmRpc2FibGVfcGxhbmUocGxhbmUpOwo+IC0J
+CWlmIChyZXQpCj4gLQkJCURSTV9FUlJPUigiRmFpbGVkIHRvIGRpc2FibGUgcGxhbmUgJWRcbiIs
+IHJldCk7Cj4gLQl9CgpJZiByZW1vdmUgaGVyZSBkaXNhYmxlIGNvZGVzLCB3aGVuIGNydGMgaXMg
+ZGlzYWJsZWQsIGVuYWJsZWQgb3ZlcmxheQpwbGFuZXMgbWF5IG5vdCBiZSBkaXNhYmxlZC4KCkUu
+ZywgdXNlciBjYW4gcmVtb3ZlIGZiIG9mIGNydGMgdmlhIERSTV9JT0NUTF9NT0RFX1JNRkIgaW9j
+dGwsIHRoZW4gY3J0YwppcyBkaXNhYmxlZCBidXQgb3ZlcmxheSBwbGFuZXMgbm8uCgpUaGFua3Mu
+Cgo+ICB9Cj4gIAo+ICBzdGF0aWMgYm9vbAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2VuY29kZXIuYwo+IGluZGV4IDA2NDhiYTQuLjdiODlmZDUgMTAwNjQ0Cj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuYwo+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMKPiBAQCAtODEsMTcgKzgxLDkg
+QEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9lbmNvZGVyX2Rpc2FibGUoc3RydWN0IGRybV9lbmNv
+ZGVyICplbmNvZGVyKQo+ICB7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICpleHlub3Nf
+ZW5jb2RlciA9IHRvX2V4eW5vc19lbmNvZGVyKGVuY29kZXIpOwo+ICAJc3RydWN0IGV4eW5vc19k
+cm1fZGlzcGxheSAqZGlzcGxheSA9IGV4eW5vc19lbmNvZGVyLT5kaXNwbGF5Owo+IC0Jc3RydWN0
+IGRybV9wbGFuZSAqcGxhbmU7Cj4gLQlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2ID0gZW5jb2Rlci0+
+ZGV2Owo+ICAKPiAgCWlmIChkaXNwbGF5LT5vcHMtPmRwbXMpCj4gIAkJZGlzcGxheS0+b3BzLT5k
+cG1zKGRpc3BsYXksIERSTV9NT0RFX0RQTVNfT0ZGKTsKPiAtCj4gLQkvKiBhbGwgcGxhbmVzIGNv
+bm5lY3RlZCB0byB0aGlzIGVuY29kZXIgc2hvdWxkIGJlIGFsc28gZGlzYWJsZWQuICovCj4gLQlk
+cm1fZm9yX2VhY2hfbGVnYWN5X3BsYW5lKHBsYW5lLCAmZGV2LT5tb2RlX2NvbmZpZy5wbGFuZV9s
+aXN0KSB7Cj4gLQkJaWYgKHBsYW5lLT5jcnRjICYmIChwbGFuZS0+Y3J0YyA9PSBlbmNvZGVyLT5j
+cnRjKSkKPiAtCQkJcGxhbmUtPmZ1bmNzLT5kaXNhYmxlX3BsYW5lKHBsYW5lKTsKPiAtCX0KPiAg
+fQo+ICAKPiAgc3RhdGljIHN0cnVjdCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgZXh5bm9zX2Vu
+Y29kZXJfaGVscGVyX2Z1bmNzID0gewo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
