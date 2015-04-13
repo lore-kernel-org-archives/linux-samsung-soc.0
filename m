@@ -1,53 +1,66 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: fimd: fix buffer size calculation
-Date: Mon, 13 Apr 2015 16:48:38 +0900
-Message-ID: <552B74D6.4080203@samsung.com>
-References: <1428910167-14698-1-git-send-email-m.szyprowski@samsung.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [RESEND] [PATCH 1/1] ARM: dts: Add LEDs on odroid XU3 board
+Date: Mon, 13 Apr 2015 10:43:54 +0200
+Message-ID: <552B81CA.4090102@fivetechno.de>
+Reply-To: m.reichl@fivetechno.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1428910167-14698-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Stone <daniels@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:57536 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753109AbbDMIoK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Apr 2015 04:44:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>
 
-T24gMjAxNeuFhCAwNOyblCAxM+ydvCAxNjoyOCwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBD
-b21taXQgYWRhY2IyMjhkNzJiOTUyOWY4ZGUwNzY5Y2MzMzQxNGMzMDEyMDU0ZCAoImRybTogRXh5
-bm9zOiBSZXNwZWN0Cj4gZnJhbWVidWZmZXIgcGl0Y2ggZm9yIEZJTUQvTWl4ZXIiKSBjaGFuZ2Vk
-IHRoZSB3YXkgb2YgYnVmZmVyIHNpemUKPiBjYWxjdWxhcmlvbjogaXQgcmVwbGFjZWQgZmJfd2lk
-dGggYnkgZmJfcGl0Y2ggZW50cnkuIGZiX3BpdGNoIGhvd2V2ZXIKPiBhbHJlYWR5IGNvbnRhaW5z
-ICcod2luX2RhdGEtPmJwcCA+PiAzKScgZmFjdG9yLCBzbyBpdCBzaG91bGQgYmUgcmVtb3ZlZAo+
-IGZyb20gZmluYWwgYnVmZmVyIHNpemUgY2FsY3VsYXRpb24gZm9ybXVsYS4gVGhpcyBwYXRjaCBm
-aXhlcyB0aGlzIGlzc3VlLAo+IHNvbHZpbmcgcG9zc2libGUgSU9NTVUgcGFnZSBmYXVsdCBjYXVz
-ZWQgYnkgRklNRCBtb2R1bGUgYWNjZXNzaW5nIG1lbW9yeQo+IG91dHNpZGUgb2YgdGhlIGdpdmVu
-IGRpc3BsYXkgYnVmZmVyLgoKVGhpcyBmaXh1cCBoYWQgYWxyZWFkeSBiZWVuIHBvc3RlZCBieSBE
-YW5pZWwgU3RvbmUsCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0
-L2RhZWlua2kvZHJtLWV4eW5vcy5naXQvY29tbWl0Lz9oPWV4eW5vcy1kcm0tbmV4dAoKVGhhbmtz
-LApJbmtpIERhZQoKPiAKPiBTaWduZWQtb2ZmIGJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXBy
-b3dza2lAc2Ftc3VuZy5jb20+Cj4gQ0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcgICMgdjQuMCsK
-PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDIgKy0K
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4gaW5kZXggMGU5M2VkNzkyMjI0
-Li5mMjlhMTNlMDUyNGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
-aW1kLmMKPiBAQCAtNjg5LDcgKzY4OSw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2luX2NvbW1pdChz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQo+ICAJd3JpdGVs
-KHZhbCwgY3R4LT5yZWdzICsgVklEV3hfQlVGX1NUQVJUKHdpbiwgMCkpOwo+ICAKPiAgCS8qIGJ1
-ZmZlciBlbmQgYWRkcmVzcyAqLwo+IC0Jc2l6ZSA9IHBsYW5lLT5waXRjaCAqIHBsYW5lLT5jcnRj
-X2hlaWdodCAqIChwbGFuZS0+YnBwID4+IDMpOwo+ICsJc2l6ZSA9IHBsYW5lLT5waXRjaCAqIHBs
-YW5lLT5jcnRjX2hlaWdodDsKPiAgCXZhbCA9ICh1bnNpZ25lZCBsb25nKShkbWFfYWRkciArIHNp
-emUpOwo+ICAJd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgVklEV3hfQlVGX0VORCh3aW4sIDApKTsK
-PiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch adds the RGB-LED on XU3 as 3 gpio-leds.
+It is derived from hardkernel's 3.10 tree.
+
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index a519c86..0a32302 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -278,6 +278,30 @@
+ 	rtc@101E0000 {
+ 		status = "okay";
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++		heartbeat {
++			label = "blue:heartbeart";
++			gpios = <&gpb2 2 0>;
++			default-state = "off";
++			linux,default-trigger = "heartbeat";
++		};
++
++		eMMC {
++			label = "green:eMMC";
++			gpios = <&gpb2 1 0>;
++			default-state = "off";
++			linux,default-trigger = "mmc0";
++		};
++
++		microSD {
++			label = "red:microSD";
++			gpios = <&gpx2 3 0>;
++			default-state = "off";
++			linux,default-trigger = "mmc1";
++		};
++	};
+ };
+ 
+ &hdmi {
+-- 
+1.9.1
+
