@@ -1,39 +1,53 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: fimd: fix buffer size calculation
-Date: Mon, 13 Apr 2015 09:28:59 +0200
-Message-ID: <1428910167-14698-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Daniel Stone <daniels@collabora.com>, stable@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fimd: fix buffer size calculation
+Date: Mon, 13 Apr 2015 16:48:38 +0900
+Message-ID: <552B74D6.4080203@samsung.com>
+References: <1428910167-14698-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1428910167-14698-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Stone <daniels@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit adacb228d72b9529f8de0769cc33414c3012054d ("drm: Exynos: Respect
-framebuffer pitch for FIMD/Mixer") changed the way of buffer size
-calcularion: it replaced fb_width by fb_pitch entry. fb_pitch however
-already contains '(win_data->bpp >> 3)' factor, so it should be removed
-from final buffer size calculation formula. This patch fixes this issue,
-solving possible IOMMU page fault caused by FIMD module accessing memory
-outside of the given display buffer.
-
-Signed-off by: Marek Szyprowski <m.szyprowski@samsung.com>
-CC: stable@vger.kernel.org  # v4.0+
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 0e93ed792224..f29a13e0524c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -689,7 +689,7 @@ static void fimd_win_commit(struct exynos_drm_crtc *crtc, unsigned int win)
- 	writel(val, ctx->regs + VIDWx_BUF_START(win, 0));
- 
- 	/* buffer end address */
--	size = plane->pitch * plane->crtc_height * (plane->bpp >> 3);
-+	size = plane->pitch * plane->crtc_height;
- 	val = (unsigned long)(dma_addr + size);
- 	writel(val, ctx->regs + VIDWx_BUF_END(win, 0));
- 
--- 
-1.9.2
+T24gMjAxNeuFhCAwNOyblCAxM+ydvCAxNjoyOCwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBD
+b21taXQgYWRhY2IyMjhkNzJiOTUyOWY4ZGUwNzY5Y2MzMzQxNGMzMDEyMDU0ZCAoImRybTogRXh5
+bm9zOiBSZXNwZWN0Cj4gZnJhbWVidWZmZXIgcGl0Y2ggZm9yIEZJTUQvTWl4ZXIiKSBjaGFuZ2Vk
+IHRoZSB3YXkgb2YgYnVmZmVyIHNpemUKPiBjYWxjdWxhcmlvbjogaXQgcmVwbGFjZWQgZmJfd2lk
+dGggYnkgZmJfcGl0Y2ggZW50cnkuIGZiX3BpdGNoIGhvd2V2ZXIKPiBhbHJlYWR5IGNvbnRhaW5z
+ICcod2luX2RhdGEtPmJwcCA+PiAzKScgZmFjdG9yLCBzbyBpdCBzaG91bGQgYmUgcmVtb3ZlZAo+
+IGZyb20gZmluYWwgYnVmZmVyIHNpemUgY2FsY3VsYXRpb24gZm9ybXVsYS4gVGhpcyBwYXRjaCBm
+aXhlcyB0aGlzIGlzc3VlLAo+IHNvbHZpbmcgcG9zc2libGUgSU9NTVUgcGFnZSBmYXVsdCBjYXVz
+ZWQgYnkgRklNRCBtb2R1bGUgYWNjZXNzaW5nIG1lbW9yeQo+IG91dHNpZGUgb2YgdGhlIGdpdmVu
+IGRpc3BsYXkgYnVmZmVyLgoKVGhpcyBmaXh1cCBoYWQgYWxyZWFkeSBiZWVuIHBvc3RlZCBieSBE
+YW5pZWwgU3RvbmUsCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0
+L2RhZWlua2kvZHJtLWV4eW5vcy5naXQvY29tbWl0Lz9oPWV4eW5vcy1kcm0tbmV4dAoKVGhhbmtz
+LApJbmtpIERhZQoKPiAKPiBTaWduZWQtb2ZmIGJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXBy
+b3dza2lAc2Ftc3VuZy5jb20+Cj4gQ0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcgICMgdjQuMCsK
+PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDIgKy0K
+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4gaW5kZXggMGU5M2VkNzkyMjI0
+Li5mMjlhMTNlMDUyNGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+aW1kLmMKPiBAQCAtNjg5LDcgKzY4OSw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2luX2NvbW1pdChz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQo+ICAJd3JpdGVs
+KHZhbCwgY3R4LT5yZWdzICsgVklEV3hfQlVGX1NUQVJUKHdpbiwgMCkpOwo+ICAKPiAgCS8qIGJ1
+ZmZlciBlbmQgYWRkcmVzcyAqLwo+IC0Jc2l6ZSA9IHBsYW5lLT5waXRjaCAqIHBsYW5lLT5jcnRj
+X2hlaWdodCAqIChwbGFuZS0+YnBwID4+IDMpOwo+ICsJc2l6ZSA9IHBsYW5lLT5waXRjaCAqIHBs
+YW5lLT5jcnRjX2hlaWdodDsKPiAgCXZhbCA9ICh1bnNpZ25lZCBsb25nKShkbWFfYWRkciArIHNp
+emUpOwo+ICAJd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgVklEV3hfQlVGX0VORCh3aW4sIDApKTsK
+PiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
