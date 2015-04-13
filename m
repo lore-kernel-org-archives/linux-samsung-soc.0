@@ -1,78 +1,78 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH] drm/exynos: remove unnecessary calls to disable_plane()
-Date: Mon, 13 Apr 2015 13:35:11 -0400
-Message-ID: <20150413173511.GB6542@joana>
-References: <1428084583-14616-12-git-send-email-gustavo@padovan.org>
- <1428692226-7157-1-git-send-email-gustavo@padovan.org>
- <552B62E8.3090906@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/4] cpufreq: use generic cpufreq drivers for Exynos5250
+ platform
+Date: Mon, 13 Apr 2015 19:33:57 +0200
+Message-ID: <1428946441-17058-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f44.google.com ([209.85.216.44]:45114 "EHLO
-	mail-vn0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932415AbbDMRfO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Apr 2015 13:35:14 -0400
-Received: by vnbg190 with SMTP id g190so21943780vnb.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Apr 2015 10:35:13 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <552B62E8.3090906@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-2015-04-13 Joonyoung Shim <jy0922.shim@samsung.com>:
+Hi,
 
-> Hi,
-> 
-> On 04/11/2015 03:57 AM, Gustavo Padovan wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > 
-> > The planes are already disabled by the drm_atomic_helper_commit() code
-> > so we don't need to disable the in these two places.
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 11 -----------
-> >  drivers/gpu/drm/exynos/exynos_drm_encoder.c |  8 --------
-> >  2 files changed, 19 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > index 519c569..9bf25ff 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> > @@ -47,8 +47,6 @@ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
-> >  static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
-> >  {
-> >  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-> > -	struct drm_plane *plane;
-> > -	int ret;
-> >  
-> >  	if (!exynos_crtc->enabled)
-> >  		return;
-> > @@ -64,15 +62,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
-> >  		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_OFF);
-> >  
-> >  	exynos_crtc->enabled = false;
-> > -
-> > -	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
-> > -		if (plane->crtc != crtc)
-> > -			continue;
-> > -
-> > -		ret = plane->funcs->disable_plane(plane);
-> > -		if (ret)
-> > -			DRM_ERROR("Failed to disable plane %d\n", ret);
-> > -	}
-> 
-> If remove here disable codes, when crtc is disabled, enabled overlay
-> planes may not be disabled.
-> 
-> E.g, user can remove fb of crtc via DRM_IOCTL_MODE_RMFB ioctl, then crtc
-> is disabled but overlay planes no.
+This patch series removes the use of Exynos5250 specific support
+from exynos-cpufreq driver and enables the use of cpufreq-dt driver
+for this platform.  The exynos-cpufreq driver itself is also removed
+as it is no longer used/needed after Exynos5250 support removal.
 
-That not true anymore with atomic modesetting, the overlay planes are also
-disabled, so we should let the atomic core solve this and remove these pieces
-of code from here.
+This patch series has been tested on Exynos5250 based Arndale board.
 
-	Gustavo
+Depends on:
+- next-20150330 branch of linux-next kernel tree
+- "[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4210
+  platform" [1]
+- "[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+  platform" [2]
+- "[PATCH] cpufreq: exynos: remove dead ->need_apll_change method" [3]
+
+[1] http://www.kernelhub.org/?msg=721136&p=2
+[2] http://marc.info/?l=linux-pm&m=142868881101873&w=2
+[3] https://lkml.org/lkml/2015/3/27/574
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+Bartlomiej Zolnierkiewicz (1):
+  cpufreq: exynos: remove Exynos5250 specific cpufreq driver support
+
+Thomas Abraham (3):
+  clk: samsung: exynos5250: add cpu clock configuration data and
+    instantiate cpu clock
+  ARM: dts: Exynos5250: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos5250
+
+ arch/arm/boot/dts/exynos5250-arndale.dts  |    4 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    4 +
+ arch/arm/boot/dts/exynos5250-snow.dts     |    4 +
+ arch/arm/boot/dts/exynos5250-spring.dts   |    4 +
+ arch/arm/boot/dts/exynos5250.dtsi         |   22 +++
+ arch/arm/mach-exynos/exynos.c             |    1 +
+ drivers/clk/samsung/clk-exynos5250.c      |   31 +++++
+ drivers/cpufreq/Kconfig.arm               |   22 ---
+ drivers/cpufreq/Makefile                  |    3 -
+ drivers/cpufreq/exynos-cpufreq.c          |  203 ----------------------------
+ drivers/cpufreq/exynos-cpufreq.h          |   67 ---------
+ drivers/cpufreq/exynos5250-cpufreq.c      |  210 -----------------------------
+ include/dt-bindings/clock/exynos5250.h    |    1 +
+ 13 files changed, 71 insertions(+), 505 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+ delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+ delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+
+-- 
+1.7.9.5
