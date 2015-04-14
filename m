@@ -1,62 +1,47 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 1/1] mmc: pwrseq: Fix error code propagation in mmc_pwrseq_simple_alloc()
-Date: Tue, 14 Apr 2015 11:20:40 +0200
-Message-ID: <CAPDyKFqnpj3StC-3VKosn2EJnXzbxJgHfMP0FOi7_KUBa-0vDA@mail.gmail.com>
-References: <1428934061-29217-1-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:35340 "EHLO
-	mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752500AbbDNJUl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Apr 2015 05:20:41 -0400
-Received: by qkhg7 with SMTP id g7so7703088qkh.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Apr 2015 02:20:41 -0700 (PDT)
-In-Reply-To: <1428934061-29217-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH] pwm: Add clk enable/disable for pwm_samsung_enable/pwm_samsung_disable
+Date: Wed, 15 Apr 2015 03:35:08 +0930
+Message-ID: <1429034708-4537-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 13 April 2015 at 16:07, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> If the struct mmc_pwrseq_match .alloc function used to allocate a
-> struct mmc_pwrseq fails, the error is propagated to mmc_of_parse().
->
-> But instead of returning the error code in pwrseq, host->pwrseq is
-> returned which will always be 0. So mmc_of_parse() succeeds even if
-> the pwrseq .alloc function failed and host->pwrseq is NULL.
->
-> This makes the SDIO device to not be powered if the power sequencing
-> .alloc functions wants to be deferred due a missing resource because
-> the mmc controller driver probe did wrongly succeed.
->
-> Fixes: 0f12a0ce4ce4a ("mmc: pwrseq: simplify alloc/free hooks")
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+It's safe to disable the clk when we following.
+	pwm_config(pwm, 0, period);
+ 	pwm_disable(pwm);
+And enable clk when we do following.
+	pwm_config(pwm, duty, period);
+ 	pwm_enable(pwm);
 
-Thanks! Applied for fixes.
+Tested on OdroidXU3 Board.
 
-Kind regards
-Uffe
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/pwm/pwm-samsung.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  drivers/mmc/core/pwrseq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/core/pwrseq.c b/drivers/mmc/core/pwrseq.c
-> index ab2129781161..4c1d1757dbf9 100644
-> --- a/drivers/mmc/core/pwrseq.c
-> +++ b/drivers/mmc/core/pwrseq.c
-> @@ -73,7 +73,7 @@ int mmc_pwrseq_alloc(struct mmc_host *host)
->
->         pwrseq = match->alloc(host, &pdev->dev);
->         if (IS_ERR(pwrseq)) {
-> -               ret = PTR_ERR(host->pwrseq);
-> +               ret = PTR_ERR(pwrseq);
->                 goto err;
->         }
->
-> --
-> 2.1.4
->
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 3e9b583..b579753 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -247,6 +247,7 @@ static int pwm_samsung_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	tcon &= ~TCON_MANUALUPDATE(tcon_chan);
+ 	tcon |= TCON_START(tcon_chan) | TCON_AUTORELOAD(tcon_chan);
+ 	writel(tcon, our_chip->base + REG_TCON);
++	clk_prepare_enable(our_chip->base_clk);
+ 
+ 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
+ 
+@@ -265,6 +266,7 @@ static void pwm_samsung_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	tcon = readl(our_chip->base + REG_TCON);
+ 	tcon &= ~TCON_AUTORELOAD(tcon_chan);
+ 	writel(tcon, our_chip->base + REG_TCON);
++	clk_disable_unprepare(our_chip->base_clk);
+ 
+ 	spin_unlock_irqrestore(&samsung_pwm_lock, flags);
+ }
+-- 
+1.9.1
+
