@@ -1,85 +1,38 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 6/6] drm/exynos: mixer: add more pixel formats
-Date: Wed, 15 Apr 2015 17:02:00 +0200
-Message-ID: <1429110120-7043-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [RFC 1/6] drm/exynos: mixer: move pixelformat defines
+Date: Wed, 15 Apr 2015 16:03:21 -0400
+Message-ID: <20150415200321.GA29804@joana>
 References: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56672 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755663AbbDOPEV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Apr 2015 11:04:21 -0400
-In-Reply-To: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+ <1429110120-7043-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1429110120-7043-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-The mixer natively support RGB565, ARGB4444 and ARGB1555
-so expose these formats. Also, since being of 16-bit size,
-these formats have a lower bandwidth requirement, making
-them useful in situations where this is a bottleneck.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 512f7b3..7dec7c7 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -127,6 +127,11 @@ static const u8 filter_cr_horiz_tap4[] = {
- static const uint32_t mixer_formats[] = {
- 	DRM_FORMAT_XRGB8888,
- 	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_XRGB1555,
-+	DRM_FORMAT_ARGB1555,
-+	DRM_FORMAT_XRGB4444,
-+	DRM_FORMAT_ARGB4444,
- };
- 
- static const uint32_t vp_formats[] = {
-@@ -556,30 +561,32 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 	unsigned int x_ratio = 0, y_ratio = 0;
- 	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
- 	dma_addr_t dma_addr;
--	unsigned int fmt, blend;
-+	unsigned int fmt, blend = 0;
- 	u32 val;
- 
- 	plane = &ctx->planes[win];
- 
- 	switch (plane->pixel_format) {
- 	case DRM_FORMAT_ARGB4444:
--		fmt = MIXER_PIXELFORMAT_ARGB4444;
- 		blend = 1;
-+	case DRM_FORMAT_XRGB4444:
-+		fmt = MIXER_PIXELFORMAT_ARGB4444;
- 		break;
- 
- 	case DRM_FORMAT_ARGB8888:
--		fmt = MIXER_PIXELFORMAT_ARGB8888;
- 		blend = 1;
--		break;
--
- 	case DRM_FORMAT_XRGB8888:
- 		fmt = MIXER_PIXELFORMAT_ARGB8888;
--		blend = 0;
-+		break;
-+
-+	case DRM_FORMAT_ARGB1555:
-+		blend = 1;
-+	case DRM_FORMAT_XRGB1555:
-+		fmt = MIXER_PIXELFORMAT_ARGB1555;
- 		break;
- 
- 	case DRM_FORMAT_RGB565:
- 		fmt = MIXER_PIXELFORMAT_RGB565;
--		blend = 0;
- 		break;
- 
- 	default:
--- 
-2.0.5
+SGkgVG9iaWFzLAoKMjAxNS0wNC0xNSBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
+ZWxlZmVsZC5kZT46Cgo+IE1vdmUgdGhlIGRlZmluZXMgZm9yIHRoZSBwaXhlbGZvcm1hdHMgdGhh
+dCB0aGUgbWl4ZXIgc3VwcG9ydHMgb3V0Cj4gb2YgbWl4ZXJfZ3JhcGhfYnVmZmVyKCkgdG8gdGhl
+IHRvcCBvZiB0aGUgc291cmNlLgo+IEFsc28gYWRkIGhhbmRsaW5nIG9mIFJHQjU2NSBhbmQgZXhp
+dCBpZiB0aGUgcGl4ZWxmb3JtYXQgaXMgbm90Cj4gc3VwcG9ydGVkLgo+IAo+IFNpZ25lZC1vZmYt
+Ynk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMjQgKysrKysrKysrKysr
+KystLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxMCBkZWxl
+dGlvbnMoLSkKClJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
+b2xsYWJvcmEuY28udWs+CgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
