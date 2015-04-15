@@ -1,38 +1,36 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [RFC 1/6] drm/exynos: mixer: move pixelformat defines
-Date: Wed, 15 Apr 2015 16:03:21 -0400
-Message-ID: <20150415200321.GA29804@joana>
+Subject: Re: [RFC 2/6] drm/exynos: remove used 'activated' field from
+ exynos_drm_plane
+Date: Wed, 15 Apr 2015 16:04:46 -0400
+Message-ID: <20150415200446.GB29804@joana>
 References: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1429110120-7043-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429110120-7043-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:34536 "EHLO
+	mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755074AbbDOUFZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 15 Apr 2015 16:05:25 -0400
+Received: by qkgx75 with SMTP id x75so94557639qkg.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Apr 2015 13:05:24 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1429110120-7043-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1429110120-7043-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, inki.dae@samsung.com
 
-SGkgVG9iaWFzLAoKMjAxNS0wNC0xNSBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
-ZWxlZmVsZC5kZT46Cgo+IE1vdmUgdGhlIGRlZmluZXMgZm9yIHRoZSBwaXhlbGZvcm1hdHMgdGhh
-dCB0aGUgbWl4ZXIgc3VwcG9ydHMgb3V0Cj4gb2YgbWl4ZXJfZ3JhcGhfYnVmZmVyKCkgdG8gdGhl
-IHRvcCBvZiB0aGUgc291cmNlLgo+IEFsc28gYWRkIGhhbmRsaW5nIG9mIFJHQjU2NSBhbmQgZXhp
-dCBpZiB0aGUgcGl4ZWxmb3JtYXQgaXMgbm90Cj4gc3VwcG9ydGVkLgo+IAo+IFNpZ25lZC1vZmYt
-Ynk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0tLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMjQgKysrKysrKysrKysr
-KystLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxMCBkZWxl
-dGlvbnMoLSkKClJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
-b2xsYWJvcmEuY28udWs+CgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Hi Tobias,
+
+2015-04-15 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+
+I think you mean "unused" in the commit subject. And would also be good to
+have some commit message as well. Other than that:
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+	Gustavo
