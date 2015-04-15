@@ -1,122 +1,107 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Gustavo Padovan <gustavo@padovan.org>
 Subject: Re: [RFC 3/6] drm/exynos: introduce struct exynos_drm_plane_config
-Date: Wed, 15 Apr 2015 22:23:21 +0200
-Message-ID: <552EC8B9.40405@math.uni-bielefeld.de>
-References: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1429110120-7043-4-git-send-email-tjakobi@math.uni-bielefeld.de> <20150415201451.GC29804@joana>
+Date: Wed, 15 Apr 2015 16:33:16 -0400
+Message-ID: <20150415203316.GA2683@joana>
+References: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429110120-7043-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20150415201451.GC29804@joana>
+ <552EC8B9.40405@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57143 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754913AbbDOUX1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Apr 2015 16:23:27 -0400
-In-Reply-To: <20150415201451.GC29804@joana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <552EC8B9.40405@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, inki.dae@samsung.com
 
-Hello Gustavo!
-
-Gustavo Padovan wrote:
-> Hi Tobias,
-> 
-> 2015-04-15 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
-> 
->> This struct encapsulates the configuration for a plane
->> object. The pixel format config is currently unused.
->>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 17 ++++++++++-------
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h    | 19 +++++++++++++++++++
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 17 ++++++++++-------
->>  drivers/gpu/drm/exynos/exynos_drm_plane.c  | 14 +++++++-------
->>  drivers/gpu/drm/exynos/exynos_drm_plane.h  |  3 +--
->>  drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 17 ++++++++++-------
->>  drivers/gpu/drm/exynos/exynos_mixer.c      | 17 ++++++++++-------
->>  7 files changed, 67 insertions(+), 37 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
->> index 84a3638..ca70599 100644
->> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
->> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
->> @@ -756,8 +756,8 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
->>  	struct decon_context *ctx = dev_get_drvdata(dev);
->>  	struct drm_device *drm_dev = data;
->>  	struct exynos_drm_plane *exynos_plane;
->> -	enum drm_plane_type type;
->> -	unsigned int zpos;
->> +	struct exynos_drm_plane_config plane_config = { 0 };
->> +	unsigned int i;
->>  	int ret;
->>  
->>  	ret = decon_ctx_initialize(ctx, drm_dev);
->> @@ -766,11 +766,14 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
->>  		return ret;
->>  	}
->>  
->> -	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
->> -		type = (zpos == ctx->default_win) ? DRM_PLANE_TYPE_PRIMARY :
->> -						DRM_PLANE_TYPE_OVERLAY;
->> -		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
->> -					1 << ctx->pipe, type, zpos);
->> +	plane_config.possible_crtcs = 1 << ctx->pipe;
->> +
->> +	for (i = 0; i < WINDOWS_NR; i++) {
->> +		plane_config.type = (i == ctx->default_win) ?
->> +			DRM_PLANE_TYPE_PRIMARY : DRM_PLANE_TYPE_OVERLAY;
->> +		plane_config.zpos = i;
->> +
->> +		ret = exynos_plane_init(drm_dev, &ctx->planes[i], &plane_config);
->>  		if (ret)
->>  			return ret;
->>  	}
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> index 4c14a89..35698f3 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -116,6 +116,25 @@ struct exynos_drm_plane {
->>  };
->>  
->>  /*
->> + * Exynos DRM plane configuration structure.
->> + *
->> + * @possible_crtcs: bitfield describing the valid CRTCs
->> + *			for this plane.
->> + * @type: plane type (primary, overlay, etc.)
->> + * @zpos: z-position of the plane.
->> + * @pixel_formats: supported pixel formats.
->> + * @num_pixel_formats: number of elements in 'pixel_formats'.
->> + */
->> +
->> +struct exynos_drm_plane_config {
->> +	unsigned long possible_crtcs;
->> +	enum drm_plane_type type;
->> +	unsigned int zpos;
->> +	const uint32_t *pixel_formats;
->> +	unsigned int num_pixel_formats;
->> +};
-> 
-> As a follow up of my atomic series I started cleaning up exynos drm a bit more
-> and right now I'm removing most of struct exynos_drm_plane. Most of the plane
-> information there is also present in plane->state thus I'm basically removing
-> all the duplicated information there.
-Sounds like a good plan.
-
-
-> That said, I think we avoid creating exynos_drm_plane_config and stuff
-> everything directly in struct exynos_drm_plane, it will be quite small and
-> easier to manipulate.
-So that would imply that we then just have:
-int exynos_plane_init(struct drm_device *dev, struct exynos_drm_plane
-*exynos_plane);
-
-Correct?
-
-Anyway, I'm going to wait then until the cleanups are posted and rebase
-this series onto it.
-
-With best wishes,
-Tobias
+SGkgVG9iaWFzLAoKMjAxNS0wNC0xNSBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
+ZWxlZmVsZC5kZT46Cgo+IEhlbGxvIEd1c3Rhdm8hCj4gCj4gR3VzdGF2byBQYWRvdmFuIHdyb3Rl
+Ogo+ID4gSGkgVG9iaWFzLAo+ID4gCj4gPiAyMDE1LTA0LTE1IFRvYmlhcyBKYWtvYmkgPHRqYWtv
+YmlAbWF0aC51bmktYmllbGVmZWxkLmRlPjoKPiA+IAo+ID4+IFRoaXMgc3RydWN0IGVuY2Fwc3Vs
+YXRlcyB0aGUgY29uZmlndXJhdGlvbiBmb3IgYSBwbGFuZQo+ID4+IG9iamVjdC4gVGhlIHBpeGVs
+IGZvcm1hdCBjb25maWcgaXMgY3VycmVudGx5IHVudXNlZC4KPiA+Pgo+ID4+IFNpZ25lZC1vZmYt
+Ynk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+ID4+IC0t
+LQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgfCAxNyAr
+KysrKysrKysrLS0tLS0tLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHJ2LmggICAgfCAxOSArKysrKysrKysrKysrKysrKysrCj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDE3ICsrKysrKysrKystLS0tLS0tCj4gPj4gIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICB8IDE0ICsrKysrKystLS0t
+LS0tCj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oICB8ICAz
+ICstLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgfCAx
+NyArKysrKysrKysrLS0tLS0tLQo+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19t
+aXhlci5jICAgICAgfCAxNyArKysrKysrKysrLS0tLS0tLQo+ID4+ICA3IGZpbGVzIGNoYW5nZWQs
+IDY3IGluc2VydGlvbnMoKyksIDM3IGRlbGV0aW9ucygtKQo+ID4+Cj4gPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+ID4+IGluZGV4IDg0YTM2MzguLmNhNzA1
+OTkgMTAwNjQ0Cj4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9k
+ZWNvbi5jCj4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNv
+bi5jCj4gPj4gQEAgLTc1Niw4ICs3NTYsOCBAQCBzdGF0aWMgaW50IGRlY29uX2JpbmQoc3RydWN0
+IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCj4gPj4gIAlz
+dHJ1Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gPj4gIAlz
+dHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiA9IGRhdGE7Cj4gPj4gIAlzdHJ1Y3QgZXh5bm9zX2Ry
+bV9wbGFuZSAqZXh5bm9zX3BsYW5lOwo+ID4+IC0JZW51bSBkcm1fcGxhbmVfdHlwZSB0eXBlOwo+
+ID4+IC0JdW5zaWduZWQgaW50IHpwb3M7Cj4gPj4gKwlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZV9j
+b25maWcgcGxhbmVfY29uZmlnID0geyAwIH07Cj4gPj4gKwl1bnNpZ25lZCBpbnQgaTsKPiA+PiAg
+CWludCByZXQ7Cj4gPj4gIAo+ID4+ICAJcmV0ID0gZGVjb25fY3R4X2luaXRpYWxpemUoY3R4LCBk
+cm1fZGV2KTsKPiA+PiBAQCAtNzY2LDExICs3NjYsMTQgQEAgc3RhdGljIGludCBkZWNvbl9iaW5k
+KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+
+ID4+ICAJCXJldHVybiByZXQ7Cj4gPj4gIAl9Cj4gPj4gIAo+ID4+IC0JZm9yICh6cG9zID0gMDsg
+enBvcyA8IFdJTkRPV1NfTlI7IHpwb3MrKykgewo+ID4+IC0JCXR5cGUgPSAoenBvcyA9PSBjdHgt
+PmRlZmF1bHRfd2luKSA/IERSTV9QTEFORV9UWVBFX1BSSU1BUlkgOgo+ID4+IC0JCQkJCQlEUk1f
+UExBTkVfVFlQRV9PVkVSTEFZOwo+ID4+IC0JCXJldCA9IGV4eW5vc19wbGFuZV9pbml0KGRybV9k
+ZXYsICZjdHgtPnBsYW5lc1t6cG9zXSwKPiA+PiAtCQkJCQkxIDw8IGN0eC0+cGlwZSwgdHlwZSwg
+enBvcyk7Cj4gPj4gKwlwbGFuZV9jb25maWcucG9zc2libGVfY3J0Y3MgPSAxIDw8IGN0eC0+cGlw
+ZTsKPiA+PiArCj4gPj4gKwlmb3IgKGkgPSAwOyBpIDwgV0lORE9XU19OUjsgaSsrKSB7Cj4gPj4g
+KwkJcGxhbmVfY29uZmlnLnR5cGUgPSAoaSA9PSBjdHgtPmRlZmF1bHRfd2luKSA/Cj4gPj4gKwkJ
+CURSTV9QTEFORV9UWVBFX1BSSU1BUlkgOiBEUk1fUExBTkVfVFlQRV9PVkVSTEFZOwo+ID4+ICsJ
+CXBsYW5lX2NvbmZpZy56cG9zID0gaTsKPiA+PiArCj4gPj4gKwkJcmV0ID0gZXh5bm9zX3BsYW5l
+X2luaXQoZHJtX2RldiwgJmN0eC0+cGxhbmVzW2ldLCAmcGxhbmVfY29uZmlnKTsKPiA+PiAgCQlp
+ZiAocmV0KQo+ID4+ICAJCQlyZXR1cm4gcmV0Owo+ID4+ICAJfQo+ID4+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPiA+PiBpbmRleCA0YzE0YTg5Li4zNTY5OGYzIDEwMDY0
+NAo+ID4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+ID4+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+ID4+IEBAIC0x
+MTYsNiArMTE2LDI1IEBAIHN0cnVjdCBleHlub3NfZHJtX3BsYW5lIHsKPiA+PiAgfTsKPiA+PiAg
+Cj4gPj4gIC8qCj4gPj4gKyAqIEV4eW5vcyBEUk0gcGxhbmUgY29uZmlndXJhdGlvbiBzdHJ1Y3R1
+cmUuCj4gPj4gKyAqCj4gPj4gKyAqIEBwb3NzaWJsZV9jcnRjczogYml0ZmllbGQgZGVzY3JpYmlu
+ZyB0aGUgdmFsaWQgQ1JUQ3MKPiA+PiArICoJCQlmb3IgdGhpcyBwbGFuZS4KPiA+PiArICogQHR5
+cGU6IHBsYW5lIHR5cGUgKHByaW1hcnksIG92ZXJsYXksIGV0Yy4pCj4gPj4gKyAqIEB6cG9zOiB6
+LXBvc2l0aW9uIG9mIHRoZSBwbGFuZS4KPiA+PiArICogQHBpeGVsX2Zvcm1hdHM6IHN1cHBvcnRl
+ZCBwaXhlbCBmb3JtYXRzLgo+ID4+ICsgKiBAbnVtX3BpeGVsX2Zvcm1hdHM6IG51bWJlciBvZiBl
+bGVtZW50cyBpbiAncGl4ZWxfZm9ybWF0cycuCj4gPj4gKyAqLwo+ID4+ICsKPiA+PiArc3RydWN0
+IGV4eW5vc19kcm1fcGxhbmVfY29uZmlnIHsKPiA+PiArCXVuc2lnbmVkIGxvbmcgcG9zc2libGVf
+Y3J0Y3M7Cj4gPj4gKwllbnVtIGRybV9wbGFuZV90eXBlIHR5cGU7Cj4gPj4gKwl1bnNpZ25lZCBp
+bnQgenBvczsKPiA+PiArCWNvbnN0IHVpbnQzMl90ICpwaXhlbF9mb3JtYXRzOwo+ID4+ICsJdW5z
+aWduZWQgaW50IG51bV9waXhlbF9mb3JtYXRzOwo+ID4+ICt9Owo+ID4gCj4gPiBBcyBhIGZvbGxv
+dyB1cCBvZiBteSBhdG9taWMgc2VyaWVzIEkgc3RhcnRlZCBjbGVhbmluZyB1cCBleHlub3MgZHJt
+IGEgYml0IG1vcmUKPiA+IGFuZCByaWdodCBub3cgSSdtIHJlbW92aW5nIG1vc3Qgb2Ygc3RydWN0
+IGV4eW5vc19kcm1fcGxhbmUuIE1vc3Qgb2YgdGhlIHBsYW5lCj4gPiBpbmZvcm1hdGlvbiB0aGVy
+ZSBpcyBhbHNvIHByZXNlbnQgaW4gcGxhbmUtPnN0YXRlIHRodXMgSSdtIGJhc2ljYWxseSByZW1v
+dmluZwo+ID4gYWxsIHRoZSBkdXBsaWNhdGVkIGluZm9ybWF0aW9uIHRoZXJlLgo+IFNvdW5kcyBs
+aWtlIGEgZ29vZCBwbGFuLgo+IAo+IAo+ID4gVGhhdCBzYWlkLCBJIHRoaW5rIHdlIGF2b2lkIGNy
+ZWF0aW5nIGV4eW5vc19kcm1fcGxhbmVfY29uZmlnIGFuZCBzdHVmZgo+ID4gZXZlcnl0aGluZyBk
+aXJlY3RseSBpbiBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSwgaXQgd2lsbCBiZSBxdWl0ZSBzbWFs
+bCBhbmQKPiA+IGVhc2llciB0byBtYW5pcHVsYXRlLgo+IFNvIHRoYXQgd291bGQgaW1wbHkgdGhh
+dCB3ZSB0aGVuIGp1c3QgaGF2ZToKPiBpbnQgZXh5bm9zX3BsYW5lX2luaXQoc3RydWN0IGRybV9k
+ZXZpY2UgKmRldiwgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUKPiAqZXh5bm9zX3BsYW5lKTsKPiAK
+PiBDb3JyZWN0PwoKQ29ycmVjdCwgcGFzc2luZyBleHlub3NfZHJtX3BsYW5lIHNpbXBsaWZpZXMg
+dGhpbmdzIGEgbG90IGZvciB1cy4KCj4gCj4gQW55d2F5LCBJJ20gZ29pbmcgdG8gd2FpdCB0aGVu
+IHVudGlsIHRoZSBjbGVhbnVwcyBhcmUgcG9zdGVkIGFuZCByZWJhc2UKPiB0aGlzIHNlcmllcyBv
+bnRvIGl0LgoKUmlnaHQsIEknbGwgcHJvYmFibHkgaGF2ZSB0aGF0IHRoZSBuZXh0IHdlZWsgb3Ig
+dGhlIG90aGVyIG9uZSwgSSdtIGN1cnJlbnRseQp3b3JraW5nIG9uIHNvbWUgdGVzdGluZyBzY3Jp
+cHRzIHRvIHNwZWVkIHVwIG15IHRlc3RpbmcgYW5kIG1ha2Ugc3VyZSBJJ20gbm90CmJyZWFraW5n
+IGFueXRoaW5nLgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
