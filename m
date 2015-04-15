@@ -1,62 +1,85 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 5/6] drm/exynos: mixer: use more general check for VP format
-Date: Wed, 15 Apr 2015 17:01:59 +0200
-Message-ID: <1429110120-7043-6-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [RFC 6/6] drm/exynos: mixer: add more pixel formats
+Date: Wed, 15 Apr 2015 17:02:00 +0200
+Message-ID: <1429110120-7043-7-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56669 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:56672 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755663AbbDOPD6 (ORCPT
+	by vger.kernel.org with ESMTP id S1755663AbbDOPEV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Apr 2015 11:03:58 -0400
+	Wed, 15 Apr 2015 11:04:21 -0400
 In-Reply-To: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-The mixer itself can't handle 'video' formats like NV12 or
-NV21. It needs the VP (video processor) for this task.
-
-With the previous patch we ensure that DRM planes with
-a NV12 format can only be created when this setup is
-supported. Hence the check now reduces to checking the
-pixel format (currently only NV12).
+The mixer natively support RGB565, ARGB4444 and ARGB1555
+so expose these formats. Also, since being of 16-bit size,
+these formats have a lower bandwidth requirement, making
+them useful in situations where this is a bottleneck.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_mixer.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 50df981..512f7b3 100644
+index 512f7b3..7dec7c7 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -133,6 +133,16 @@ static const uint32_t vp_formats[] = {
- 	DRM_FORMAT_NV12,
+@@ -127,6 +127,11 @@ static const u8 filter_cr_horiz_tap4[] = {
+ static const uint32_t mixer_formats[] = {
+ 	DRM_FORMAT_XRGB8888,
+ 	DRM_FORMAT_ARGB8888,
++	DRM_FORMAT_RGB565,
++	DRM_FORMAT_XRGB1555,
++	DRM_FORMAT_ARGB1555,
++	DRM_FORMAT_XRGB4444,
++	DRM_FORMAT_ARGB4444,
  };
  
-+static inline bool is_vp_format(const struct mixer_context *ctx, unsigned int win)
-+{
-+	switch (ctx->planes[win].pixel_format) {
-+	case DRM_FORMAT_NV12:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
- {
- 	return readl(res->vp_regs + reg_id);
-@@ -970,7 +980,7 @@ static void mixer_win_commit(struct exynos_drm_crtc *crtc, unsigned int win)
- 	}
- 	mutex_unlock(&mixer_ctx->mixer_mutex);
+ static const uint32_t vp_formats[] = {
+@@ -556,30 +561,32 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
+ 	unsigned int x_ratio = 0, y_ratio = 0;
+ 	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
+ 	dma_addr_t dma_addr;
+-	unsigned int fmt, blend;
++	unsigned int fmt, blend = 0;
+ 	u32 val;
  
--	if (win > 1 && mixer_ctx->vp_enabled)
-+	if (is_vp_format(mixer_ctx, win))
- 		vp_video_buffer(mixer_ctx, win);
- 	else
- 		mixer_graph_buffer(mixer_ctx, win);
+ 	plane = &ctx->planes[win];
+ 
+ 	switch (plane->pixel_format) {
+ 	case DRM_FORMAT_ARGB4444:
+-		fmt = MIXER_PIXELFORMAT_ARGB4444;
+ 		blend = 1;
++	case DRM_FORMAT_XRGB4444:
++		fmt = MIXER_PIXELFORMAT_ARGB4444;
+ 		break;
+ 
+ 	case DRM_FORMAT_ARGB8888:
+-		fmt = MIXER_PIXELFORMAT_ARGB8888;
+ 		blend = 1;
+-		break;
+-
+ 	case DRM_FORMAT_XRGB8888:
+ 		fmt = MIXER_PIXELFORMAT_ARGB8888;
+-		blend = 0;
++		break;
++
++	case DRM_FORMAT_ARGB1555:
++		blend = 1;
++	case DRM_FORMAT_XRGB1555:
++		fmt = MIXER_PIXELFORMAT_ARGB1555;
+ 		break;
+ 
+ 	case DRM_FORMAT_RGB565:
+ 		fmt = MIXER_PIXELFORMAT_RGB565;
+-		blend = 0;
+ 		break;
+ 
+ 	default:
 -- 
 2.0.5
