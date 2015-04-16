@@ -1,44 +1,60 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] ARM: dts: Make DP a consumer of DISP1 power domain
- on Exynos5420
-Date: Thu, 16 Apr 2015 09:40:00 +0200
-Message-ID: <552F6750.6020306@collabora.co.uk>
-References: <1428870659-5525-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [RESEND PATCH 4/8] mfd: cros_ec: Use a zero-length array for command data
+Date: Thu, 16 Apr 2015 11:45:42 +0200
+Message-ID: <3714344.xf4aIv3C10@diego>
+References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-5-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1428870659-5525-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:55835 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753443AbbDPJpz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Apr 2015 05:45:55 -0400
+In-Reply-To: <1428336906-14906-5-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Kukjin,
-
-On 04/12/2015 10:30 PM, Javier Martinez Canillas wrote:
-> Commit ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
-> added a device node for the Exynos5420 DISP1 power domain but dit not
-> make the DP controller a consumer of that power domain.
+Am Montag, 6. April 2015, 18:15:02 schrieb Javier Martinez Canillas:
+> Commit 1b84f2a4cd4a ("mfd: cros_ec: Use fixed size arrays to transfer
+> data with the EC") modified the struct cros_ec_command fields to not
+> use pointers for the input and output buffers and use fixed length
+> arrays instead.
 > 
-> This causes an "Unhandled fault: imprecise external abort" error if the
-> exynos-dp driver tries to access the DP controller registers and the PD
-> was turned off. This lead to a kernel panic and a complete system hang.
+> This change was made because the cros_ec ioctl API uses that struct
+> cros_ec_command to allow user-space to send commands to the EC and
+> to get data from the EC. So using pointers made the API not 64-bit
+> safe. Unfortunately this approach was not flexible enough for all
+> the use-cases since there may be a need to send larger commands
+> on newer versions of the EC command protocol.
 > 
-> Make the DP controller device node a consumer of the DISP1 power domain
-> to ensure that the PD is turned on when the exynos-dp driver is probed.
+> So to avoid to choose a constant length that it may be too big for
+> most commands and thus wasting memory and CPU cycles on copy from
+> and to user-space or having a size that is too small for some big
+> commands, use a zero-length array that is both 64-bit safe and
+> flexible. The same buffer is used for both output and input data
+> so the maximum of these values should be used to allocate it.
 > 
-> Fixes: ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
+> Suggested-by: Gwendal Grignou <gwendal@chromium.org>
 > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
 
-Any comments about this patch?
+[...]
 
-It's very trivial but fixes a very important regression on Exynos5420 boards
-with display panel and Peach Pit and Pi have been broken since next-20150401.
+>  /* Module initialization */
+> @@ -269,3 +301,4 @@ void ec_dev_sysfs_remove(struct cros_ec_device *ec)
+>  {
+>  	sysfs_remove_group(&ec->vdev->kobj, &ec_attr_group);
+>  }
+> +
 
-This [0] is the Peach Pit boot log with yesteday's linux-next for example.
+.git/rebase-apply/patch:893: new blank line at EOF.
 
-Best regards,
-Javier
 
-[0]: http://arm-soc.lixom.net/bootlogs/next/next-20150415/pit-arm-exynos_defconfig.html
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index 14cf522123dd..7eee38abd02a 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
