@@ -1,66 +1,63 @@
-From: Beata Michalska <b.k.m.devel@gmail.com>
-Subject: Re: [PATCH v2] i2c: Mark adapter devices with pm_runtime_no_callbacks
-Date: Thu, 16 Apr 2015 14:28:02 +0200
-Message-ID: <552FAAD2.80407@gmail.com>
-References: <1429185919-26098-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH] ASoC: samsung: s3c24xx-i2s: Fix return value check in
+ s3c24xx_iis_dev_probe()
+Date: Thu, 16 Apr 2015 18:05:37 +0530
+Message-ID: <552FAC99.1030804@gmail.com>
+References: <1429186682-20629-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34753 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752367AbbDPM2H (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:35028 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367AbbDPMgB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Apr 2015 08:28:07 -0400
-In-reply-to: <1429185919-26098-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+	Thu, 16 Apr 2015 08:36:01 -0400
+Received: by pdbqd1 with SMTP id qd1so90712543pdb.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Apr 2015 05:36:00 -0700 (PDT)
+In-Reply-To: <1429186682-20629-1-git-send-email-weiyj_lk@163.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: wsa@the-dreams.de, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, lars@metafoo.de
+To: weiyj_lk@163.com, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-On 04/16/2015 02:05 PM, Charles Keepax wrote:
-> Commit 523c5b89640e ("i2c: Remove support for legacy PM") removed the PM
-> ops from the bus type, which causes the pm operations on the s3c2410
-> adapter device to fail (-ENOSUPP in rpm_callback). The adapter device
-> doesn't get bound to a driver and as such can't have its own pm_runtime
-> callbacks. Previously this was fine as the bus callbacks would have been
-> used, but now this can cause devices which use PM runtime and are
-> attached over I2C to fail to resume.
+On 04/16/2015 05:48 PM, weiyj_lk@163.com wrote:
+
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 >
-> This commit fixes this issue by marking all adapter devices with
-> pm_runtime_no_callbacks, since they can't have any.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> In case of error, the function devm_ioremap_resource() returns
+> ERR_PTR() and never returns NULL. The NULL test in the return
+> value check should be replaced with IS_ERR().
+
+This bug is there in other drivers in sound/soc/samsung/
+
+Try do for all the drivers.
+
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 > ---
+>  sound/soc/samsung/s3c24xx-i2s.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Changes since v1:
->  - Simple mark all adapter devices with pm_runtime_no_callbacks in the i2c
->    core
->
-> Thanks,
-> Charles
->
->  drivers/i2c/i2c-core.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-> index 1672e6b..eac3331 100644
-> --- a/drivers/i2c/i2c-core.c
-> +++ b/drivers/i2c/i2c-core.c
-> @@ -1410,6 +1410,8 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+> diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+> index 326d3c3..5bf7236 100644
+> --- a/sound/soc/samsung/s3c24xx-i2s.c
+> +++ b/sound/soc/samsung/s3c24xx-i2s.c
+> @@ -461,8 +461,8 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+>  		return -ENOENT;
+>  	}
+>  	s3c24xx_i2s.regs = devm_ioremap_resource(&pdev->dev, res);
+> -	if (s3c24xx_i2s.regs == NULL)
+> -		return -ENXIO;
+> +	if (IS_ERR(s3c24xx_i2s.regs))
+> +		return PTR_ERR(s3c24xx_i2s.regs);
 >  
->  	dev_dbg(&adap->dev, "adapter [%s] registered\n", adap->name);
->  
-> +	pm_runtime_no_callbacks(&adap->dev);
-> +
->  #ifdef CONFIG_I2C_COMPAT
->  	res = class_compat_create_link(i2c_adapter_compat_class, &adap->dev,
->  				       adap->dev.parent);
+>  	s3c24xx_i2s_pcm_stereo_out.dma_addr = res->start + S3C2410_IISFIFO;
+>  	s3c24xx_i2s_pcm_stereo_in.dma_addr = res->start + S3C2410_IISFIFO;
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thereis at least one more casewhen an I2C device fails to resume due
-to bus callbacks being dropped(like fimc-is-i2c driver for exynos4-is,
-the same scenario),  so I'm glad to see  it's being handled in on place
--it saves the trouble.
-
-BR
-Beata
+-- 
+Varka Bhadram
