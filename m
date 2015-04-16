@@ -1,87 +1,61 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 1/2] drm/exynos: mixer: move pixelformat defines
-Date: Wed, 15 Apr 2015 21:54:51 +0200
-Message-ID: <1429127692-5772-2-git-send-email-tjakobi__15093.1908320219$1429194388$gmane$org@math.uni-bielefeld.de>
-References: <1429127692-5772-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: Re: [RFC 3/6] drm/exynos: introduce struct =?UTF-8?Q?exynos=5Fdrm?=
+ =?UTF-8?Q?=5Fplane=5Fconfig?=
+Date: Thu, 16 Apr 2015 16:29:06 +0200
+Message-ID: <61166cec959425bf9728e73a08914ece@math.uni-bielefeld.de>
+References: <1429110120-7043-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429110120-7043-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20150415201451.GC29804@joana> <552EC8B9.40405@math.uni-bielefeld.de>
+ <20150415203316.GA2683@joana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:58434 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:58453 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753668AbbDPO0J (ORCPT
+	by vger.kernel.org with ESMTP id S1757375AbbDPO3I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Apr 2015 10:26:09 -0400
-In-Reply-To: <1429127692-5772-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Thu, 16 Apr 2015 10:29:08 -0400
+In-Reply-To: <20150415203316.GA2683@joana>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, inki.dae@samsung.com
 
-Move the defines for the pixelformats that the mixer supports out
-of mixer_graph_buffer() to the top of the source.
-Also add handling of RGB565 and exit if the pixelformat is not
-supported.
+Hello!
 
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+On 2015-04-15 22:33, Gustavo Padovan wrote:
+>> > As a follow up of my atomic series I started cleaning up exynos drm a bit more
+>> > and right now I'm removing most of struct exynos_drm_plane. Most of the plane
+>> > information there is also present in plane->state thus I'm basically removing
+>> > all the duplicated information there.
+>> Sounds like a good plan.
+>> 
+>> 
+>> > That said, I think we avoid creating exynos_drm_plane_config and stuff
+>> > everything directly in struct exynos_drm_plane, it will be quite small and
+>> > easier to manipulate.
+>> So that would imply that we then just have:
+>> int exynos_plane_init(struct drm_device *dev, struct exynos_drm_plane
+>> *exynos_plane);
+>> 
+>> Correct?
+> 
+> Correct, passing exynos_drm_plane simplifies things a lot for us.
+> 
+>> 
+>> Anyway, I'm going to wait then until the cleanups are posted and 
+>> rebase
+>> this series onto it.
+> 
+> Right, I'll probably have that the next week or the other one, I'm 
+> currently
+> working on some testing scripts to speed up my testing and make sure 
+> I'm not
+> breaking anything.
+Cool, take your time. And sorry that I haven't provided any feedback on 
+the atomic patches yet. Something urgent came up that day and I haven't 
+found enough time since then.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 3e07f04..9c398d5 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -44,6 +44,11 @@
- #define MIXER_WIN_NR		3
- #define MIXER_DEFAULT_WIN	0
- 
-+#define MIXER_PIXELFORMAT_RGB565 4
-+#define MIXER_PIXELFORMAT_ARGB1555 5
-+#define MIXER_PIXELFORMAT_ARGB4444 6
-+#define MIXER_PIXELFORMAT_ARGB8888 7
-+
- struct mixer_resources {
- 	int			irq;
- 	void __iomem		*mixer_regs;
-@@ -536,31 +541,30 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 
- 	plane = &ctx->planes[win];
- 
--	#define RGB565 4
--	#define ARGB1555 5
--	#define ARGB4444 6
--	#define ARGB8888 7
--
- 	switch (plane->pixel_format) {
- 	case DRM_FORMAT_ARGB4444:
--		fmt = ARGB4444;
-+		fmt = MIXER_PIXELFORMAT_ARGB4444;
- 		blend = 1;
- 		break;
- 
- 	case DRM_FORMAT_ARGB8888:
--		fmt = ARGB8888;
-+		fmt = MIXER_PIXELFORMAT_ARGB8888;
- 		blend = 1;
- 		break;
- 
- 	case DRM_FORMAT_XRGB8888:
--		fmt = ARGB8888;
-+		fmt = MIXER_PIXELFORMAT_ARGB8888;
- 		blend = 0;
- 		break;
- 
--	default:
--		fmt = ARGB8888;
-+	case DRM_FORMAT_RGB565:
-+		fmt = MIXER_PIXELFORMAT_RGB565;
- 		blend = 0;
- 		break;
-+
-+	default:
-+		DRM_DEBUG_KMS("pixelformat unsupported by mixer\n");
-+		return;
- 	}
- 
- 	/* check if mixer supports requested scaling setup */
--- 
-2.0.5
+With best wishes,
+Tobias
