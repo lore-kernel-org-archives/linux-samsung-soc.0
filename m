@@ -1,214 +1,67 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
-Date: Thu, 16 Apr 2015 10:01:49 +0900
-Message-ID: <552F09FD.7020200@samsung.com>
-References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
- <1421667844-13627-2-git-send-email-l.majewski@samsung.com>
- <CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
- <20150122100124.65e7a19e@amdc2363>
- <CAM4voani1xcgRU3e11_pnYw4d7Yj=QOKun8g_DywmxDxOwEgRQ@mail.gmail.com>
- <20150129230616.GJ29837@developer.amazonguestwifi.org>
- <20150130091422.669930c8@amdc2363> <552E091A.2000902@samsung.com>
- <20150415130554.264b61cc@amdc2363>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH 0/8] cros_ec: Add multiple EC and protocol v3 support
+Date: Thu, 16 Apr 2015 09:29:59 +0200
+Message-ID: <552F64F7.80908@collabora.co.uk>
+References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:28898 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751588AbbDPBBv (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:37338 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750810AbbDPHaH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Apr 2015 21:01:51 -0400
-In-reply-to: <20150415130554.264b61cc@amdc2363>
+	Thu, 16 Apr 2015 03:30:07 -0400
+In-Reply-To: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+Hello,
 
-On 04/15/2015 08:05 PM, Lukasz Majewski wrote:
-> Hi Joonyoung,
+On 04/06/2015 06:14 PM, Javier Martinez Canillas wrote:
 > 
->> Hi Lukasz,
->>
->> On 01/30/2015 05:14 PM, Lukasz Majewski wrote:
->>> Hi Eduardo, Abhilash,
->>>
->>>> On Thu, Jan 22, 2015 at 06:02:07PM +0530, Abhilash Kesavan wrote:
->>>>> Hi Lukasz,
->>>>>
->>>>> On Thu, Jan 22, 2015 at 2:31 PM, Lukasz Majewski
->>>>> <l.majewski@samsung.com> wrote:
->>>>>> Hi Abhilash,
->>>>>>
->>>>>>> Hi Lukasz,
->>>>>>>
->>>>>>> On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski
->>>>>>> <l.majewski@samsung.com> wrote:
->>>>>>>> The exynos_map_dt_data() function must be called before
->>>>>>>> thermal_zone_of_sensor_register(), and hence provide tmu_read()
->>>>>>>> function, before it is needed.
->>>>>>>>
->>>>>>>> This change is driven by adding support for enabling
->>>>>>>> thermal_zoneX when it is properly initialized.
->>>>>>>>
->>>>>>>> One can read the mode of operation
->>>>>>>> at /sys/class/thermal/thermal_zone0/mode Such functionality was
->>>>>>>> missing in the of-thermal.c code.
->>>>>>>>
->>>>>>>> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>>>>>>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->>>>>>>> ---
->>>>>>>>  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
->>>>>>>>  1 file changed, 4 insertions(+), 3 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
->>>>>>>> b/drivers/thermal/samsung/exynos_tmu.c index 9d2d685..5d946ab
->>>>>>>> 100644 --- a/drivers/thermal/samsung/exynos_tmu.c
->>>>>>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>>>>>>> @@ -975,15 +975,16 @@ static int exynos_tmu_probe(struct
->>>>>>>> platform_device *pdev) platform_set_drvdata(pdev, data);
->>>>>>>>         mutex_init(&data->lock);
->>>>>>>>
->>>>>>>> +       ret = exynos_map_dt_data(pdev);
->>>>>>>> +       if (ret)
->>>>>>>> +               goto err_sensor;
->>
->> It's enough to just return ret.
->>
->> One more, i think to need to take out regulator enable codes from
->> exynos_map_dt_data. If not, can't restore about regulator when error
->> occurs.
->>
->>>>>>>> +
->>>>>>>>         data->tzd =
->>>>>>>> thermal_zone_of_sensor_register(&pdev->dev, 0, data,
->>>>>>>> &exynos_sensor_ops); if (IS_ERR(data->tzd)) {
->>>>>>>>                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
->>>>>>>>                 return PTR_ERR(data->tzd);
->>>>>>>>         }
->>>>>>>> -       ret = exynos_map_dt_data(pdev);
->>>>>>>> -       if (ret)
->>>>>>>> -               goto err_sensor;
->>>>>>>>
->>>>>>>>         pdata = data->pdata;
->>>>>>>
->>>>>>> I have been testing this along with your v5 patch set and am
->>>>>>> seeing incorrect temperature being reported at boot-up on
->>>>>>> exynos7.
->>>>>>
->>>>>> Does it show a maximal temperature value (0x1FF)?
->>>>>
->>>>> I did not print the current temperature register, but I remember
->>>>> the message showing ~105C. Will give you the register value when
->>>>> I test with more debug prints tomorrow.
->>>>>
->>>>>>
->>>>>>>  It looks
->>>>>>> like exynos_tmu_read gets called from
->>>>>>> thermal_zone_of_device_update during boot-up, now that we have
->>>>>>> it populated early. However, as the tmu initialization function
->>>>>>> has not been called yet it returns a wrong value. Does that
->>>>>>> sound correct ?
->>>>>>
->>>>>> No, this is a mistake. However, I'm wondering why on Exynos4/5
->>>>>> this error didn't show up...
->>>>>
->>>>> I have been lowering the software trip point temperature in the
->>>>> exynos7 dts file (to 55C) for testing purposes. Hence, when the
->>>>> temperature is read incorrectly as ~105C the board trips at
->>>>> boot-up
->>>
->>> 					^^^^ this is a very unusual
->>> 					value - I had problems with
->>> 					reading 0xFF values with
->>> 					similar symptom (but this
->>> was caused by lack of vtmu).
->>>
->>>>> itself. Maybe for exynos4/5 the incorrect value read during
->>>>> boot-up is in the non-tripping range and once the tmu is
->>>>> initialized later it continues to function properly thereafter ?
->>>>>
->>>>>>
->>>>>> The reordering is needed to be able to call set_mode callback at
->>>>>> of-thermal.c to set the mode.
->>>>>>
->>>>>> If this change causes problems, then another solution (probably
->>>>>> not so neat) must be found.
->>>>>
->>>>> Please let me know if you need any further details.
->>>
->>> Abhilash, could you provide more details (like relevant output from
->>> dmesg) and point me a list of patches which shall I apply to test
->>> this issue on Exynos4/5?
->>>
->>>>
->>>> What is the status of this patch? Is it still required?
->>>
->>> It is strange, since on Exynos4/5 this works and some problems show
->>> up when run on Exynos7.
->>>
->>
->> I'm also wondering the status of this patch.
+> Newer Chromebooks have more than one Embedded Controller (EC) in the
+> system. These additional ECs are connected through I2C with a host EC
+> which is the one that is connected to the Application Processor (AP)
+> through I2C, SPI or LPC.
 > 
-> This patch has been dropped.
+> So on these platforms, sub-processors are chained to each other:
 > 
->>
->> I get below errors when boots odroidxu3 board without this patch.
+> AP <--> Host EC <--> Power Delivery (PD) EC
 > 
-> Could you share the exact SHA1 and branch which you use in your setup?
+> The AP sends commands to the additional EC through the host EC using
+> a set of passthru commands and the host redirects to the correct EC.
+> 
+> This series adds support for multiple EC in a system and also for the
+> protocol version 3 that is used on newer ECs.
 > 
 
-I tested with of odroidxu3 patchset for pwm-fan control of Anand Moon on
-20150414 -next.
+Any comments about this series? I know that we are in the middle of the
+merge window but it would be great if I can get some feedback to get it
+ready and re-post for 4.2 (addressing any issue) once 4.1-rc1 is out.
 
-http://www.spinics.net/lists/arm-kernel/msg412031.html
+> Most patches were taken from the downstream ChromiumOS v3.14 tree with
+> fixes squashed, split to minimise the cross subsystem churn and changes
+> for mainline inclusion but were not modified functionality wise.
+> 
+> The series depend on "platform/chrome: Add user-space dev inferface support"
+> [0] that is already merged in the chrome-platform tree so probably these
+> patches should also go through that tree once the mfd patches are acked.
+> 
+> The series is a resend of a patch-set posted a month ago [1]. The only big
 
-> For a reference please check following branch at github (this is the
-> code which should be merged to v4.1-rc1)
-> 
-> git@github.com:lmajewski/linux-samsung-thermal.git
-> 
-> branch: next [1]
-> 
-> This branch includes exynos7 support done by Chanwoo.
-> 
+As I said, the original patchset was post about a month ago and this re-sent
+10 days ago so it would be great to have some feedback on the series.
 
-I got following errors from branch [1] without patchset of Anand Moon,
+[snip]
 
-[    4.576442] thermal thermal_zone0: failed to read out thermal zone 0
-[    4.581685] 10060000.tmu supply vtmu not found, using dummy regulator
-[    4.588223] thermal thermal_zone1: failed to read out thermal zone 1
-[    4.594110] 10064000.tmu supply vtmu not found, using dummy regulator
-[    4.600849] thermal thermal_zone2: failed to read out thermal zone 2
-[    4.606847] 10068000.tmu supply vtmu not found, using dummy regulator
-[    4.613640] thermal thermal_zone3: failed to read out thermal zone 3
-[    4.619584] 1006c000.tmu supply vtmu not found, using dummy regulator
-[    4.626370] thermal thermal_zone4: failed to read out thermal zone 4
-[    4.632324] 100a0000.tmu supply vtmu not found, using dummy regulator
-
->>
->> [    4.831980] thermal thermal_zone0: failed to read out thermal zone
->> (-22) [    4.838096] thermal thermal_zone1: failed to read out
->> thermal zone (-22) [    4.844894] thermal thermal_zone2: failed to
->> read out thermal zone (-22) [    4.851470] thermal thermal_zone3:
->> failed to read out thermal zone (-22) [    4.858186] thermal
->> thermal_zone4: failed to read out thermal zone (-22)
->>
 > 
-> This issue has been fixed by following patch:
-> "thermal: exynos: fix: Check if data->tmu_read callback is present
-> before read"
-> 
-> SHA1: 4531fa1684bb883ee01f1a182900b1e15d461b3
+> [0]: https://lkml.org/lkml/2015/2/2/214
+> [1]: https://lkml.org/lkml/2015/3/12/621
+> [2]: http://cgit.collabora.com/git/user/javier/ec.git/log/?h=mainline-ioctl-zero-length
 > 
 
-I already have this commit on my test branch.
-
-> Please check [1] if it solves your problems.
-> 
->> Thanks.
-> 
-
-Thanks.
+Best regards,
+Javier
