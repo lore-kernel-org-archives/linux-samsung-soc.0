@@ -1,113 +1,78 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 0/8] cros_ec: Add multiple EC and protocol v3 support
-Date: Thu, 16 Apr 2015 12:24:14 +0200
-Message-ID: <552F8DCE.6080601@collabora.co.uk>
-References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <552F64F7.80908@collabora.co.uk> <2595984.H9vRKj1ZfJ@diego>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] i2c: s3c2410: Don't enable PM runtime on the adapter device
+Date: Thu, 16 Apr 2015 12:33:08 +0200
+Message-ID: <552F8FE4.7040905@samsung.com>
+References: <1429179025-5352-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37532 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964887AbbDPKYV (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:32109 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756939AbbDPKdX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Apr 2015 06:24:21 -0400
-In-Reply-To: <2595984.H9vRKj1ZfJ@diego>
+	Thu, 16 Apr 2015 06:33:23 -0400
+In-reply-to: <1429179025-5352-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: wsa@the-dreams.de, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, lars@metafoo.de
 
-Hello Heiko,
+On 16/04/15 12:10, Charles Keepax wrote:
+> Commit 523c5b89640e ("i2c: Remove support for legacy PM") removed the PM
+> ops from the bus type, which causes the pm operations on the s3c2410
+> adapter device to fail (-ENOSUPP in rpm_callback). The adapter device
+> doesn't get bound to a driver and as such can't have its own pm_runtime
+> callbacks. Previously this was fine as the bus callbacks would have been
+> used, but now this can cause devices which use PM runtime and are
+> attached over I2C to fail to resume.
+> 
+> This commit fixes this issue by just doing the PM operations directly on
+> the I2C device, rather than the adapter device in the driver and adding
+> some stub callbacks for runtime suspend and resume.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |   21 ++++++++++++++++-----
+>  1 files changed, 16 insertions(+), 5 deletions(-)
 
-On 04/16/2015 11:49 AM, Heiko St=FCbner wrote:
-> Hi Javier,
->=20
-> Am Donnerstag, 16. April 2015, 09:29:59 schrieb Javier Martinez Canil=
-las:
->> Hello,
->>=20
->> On 04/06/2015 06:14 PM, Javier Martinez Canillas wrote:
->> > Newer Chromebooks have more than one Embedded Controller (EC) in t=
-he
->> > system. These additional ECs are connected through I2C with a host=
- EC
->> > which is the one that is connected to the Application Processor (A=
-P)
->> > through I2C, SPI or LPC.
->> >=20
->> > So on these platforms, sub-processors are chained to each other:
->> >=20
->> > AP <--> Host EC <--> Power Delivery (PD) EC
->> >=20
->> > The AP sends commands to the additional EC through the host EC usi=
-ng
->> > a set of passthru commands and the host redirects to the correct E=
-C.
->> >=20
->> > This series adds support for multiple EC in a system and also for =
-the
->> > protocol version 3 that is used on newer ECs.
->>=20
->> Any comments about this series? I know that we are in the middle of =
-the
->> merge window but it would be great if I can get some feedback to get=
- it
->> ready and re-post for 4.2 (addressing any issue) once 4.1-rc1 is out=
-=2E
->>=20
->> > Most patches were taken from the downstream ChromiumOS v3.14 tree =
-with
->> > fixes squashed, split to minimise the cross subsystem churn and ch=
-anges
->> > for mainline inclusion but were not modified functionality wise.
->> >=20
->> > The series depend on "platform/chrome: Add user-space dev inferfac=
-e
->> > support" [0] that is already merged in the chrome-platform tree so
->> > probably these patches should also go through that tree once the m=
-fd
->> > patches are acked.
->> >=20
->> > The series is a resend of a patch-set posted a month ago [1]. The =
-only big
->>=20
->> As I said, the original patchset was post about a month ago and this=
- re-sent
->> 10 days ago so it would be great to have some feedback on the series=
-=2E
->=20
-> on a veyron-pinky-rev2, with
-> cros-ec-spi spi0.0: using proto v3
-> cros-ec-spi spi0.0: no PD chip found: -19
->=20
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
->=20
+> @@ -1253,7 +1253,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, i2c);
+>  
 
-Thanks a lot for testing!
+Wouldn't adding
 
->=20
-> with the catch of the device needing two additional patches from the =
-Chromeos-
-> tree:
->=20
-> c7ae1e2ef996 mfd: cros ec: spi: put the delay and send msg in one cyc=
-le
-> 8558460450c1 mfd: cros ec: spi: Add delay for asserting CS
->=20
-> and I'm not sure if they are submitted yet.
+	pm_runtime_no_callbacks(&pdev->dev);
 
-Yes, those patches have not been posted yet. The delta for the cros_ec
-drivers between the ChromiumOS tree and mainline is still very big but
-I've been trying to reduce it with each series.
+here let us avoid the runtime resume/suspend stubs?
 
-I was planning to include those in the next series once this one lands.
-You can refer to http://crbug.com/391797 for the current status.
+>  	pm_runtime_enable(&pdev->dev);
+> -	pm_runtime_enable(&i2c->adap.dev);
+>  
+>  	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+>  	return 0;
+> @@ -1270,7 +1269,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+>  
+>  	clk_unprepare(i2c->clk);
+>  
+> -	pm_runtime_disable(&i2c->adap.dev);
+>  	pm_runtime_disable(&pdev->dev);
+>  
+>  	s3c24xx_i2c_deregister_cpufreq(i2c);
+> @@ -1318,6 +1316,16 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+>  #endif
+>  
+>  #ifdef CONFIG_PM
+> +static int s3c24xx_runtime_resume(struct device *dev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int s3c24xx_runtime_suspend(struct device *dev)
+> +{
+> +	return 0;
+> +}
 
->=20
->=20
-> Heiko
->=20
-
-Best regards,
-Javier
+--
+Thanks,
+Sylwester
