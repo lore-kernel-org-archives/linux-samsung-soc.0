@@ -1,94 +1,103 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: Fw: Re: [PATCH 3/3] drm/exynos: enable/disable blend based on
- pixel format
-Date: Fri, 17 Apr 2015 14:55:57 +0200
-Message-ID: <b1662c937f929c5111ed282285c63c23@math.uni-bielefeld.de>
-References: <1426775270-31137-1-git-send-email-gustavo@padovan.org>
- <1426775270-31137-3-git-send-email-gustavo@padovan.org>,
- <5530A552.7060600@samsung.com>
- <trinity-82a40b8e-a2bb-425f-a1c6-15696573bf32-1429273719156@3capp-gmx-bs40>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <trinity-82a40b8e-a2bb-425f-a1c6-15696573bf32-1429273719156@3capp-gmx-bs40>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <Liquid.Acid@gmx.net>, gustavo@padovan.org, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: s3c2416: Add labels to S3C2416 nodes
+Date: Fri, 17 Apr 2015 22:00:10 +0900
+Message-ID: <1429275611-2542-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gSm9vbnlvdW5nLAoKSSB0aG91Z2h0IGFib3V0IHRoaXMgc29tZSBtb3JlLgoKCj4gR2Vz
-ZW5kZXQ6wqBGcmVpdGFnLCAxNy4gQXByaWwgMjAxNSB1bSAwODoxNiBVaHIKPiBWb246wqAiSm9v
-bnlvdW5nIFNoaW0iIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBBbjrCoCJHdXN0YXZvIFBh
-ZG92YW4iIDxndXN0YXZvQHBhZG92YW4ub3JnPiwgCj4gbGludXgtc2Ftc3VuZy1zb2NAdmdlci5r
-ZXJuZWwub3JnCj4gQ2M6wqBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnLCBpbmtpLmRh
-ZUBzYW1zdW5nLmNvbSwgIkd1c3Rhdm8KPiBQYWRvdmFuIiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxh
-Ym9yYS5jby51az4KPiBCZXRyZWZmOsKgUmU6IFtQQVRDSCAzLzNdIGRybS9leHlub3M6IGVuYWJs
-ZS9kaXNhYmxlIGJsZW5kIGJhc2VkIG9uIAo+IHBpeGVsIGZvcm1hdAo+IEhpIEd1c3Rhdm8sCj4g
-Cj4gT24gMDMvMTkvMjAxNSAxMToyNyBQTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+PiBGcm9t
-OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+IAo+
-PiBDaGFuZ2UgdGhlIHN3aXRjaCB0byB1c2UgdGhlIHBpeGVsX2Zvcm1hdCBpbnN0ZWFkIG9mIGJw
-cCB0byBmaWd1cmUgb3V0Cj4+IGlmIHdlIG5lZWQgdG8gZW5hYmxlIG9yIGRpc2FibGUgdGhlIGxh
-eWVyIGJsZW5kaW5nLgo+PiAKPiAKPiBUaGUgZGVmYXVsdCBjb25jZXB0IGlzIG9rIGFib3V0IGVu
-YWJsZSBvciBkaXNhYmxlIG9mIHBpeGVsIGJsZW5kaW5nCj4gZmVhdHVyZSBieSBwaXhlbF9mb3Jt
-YXQsIGJ1dCBpdCB3aWxsIG1ha2UgdG8gcG9zc2libGUgYmxlbmRpbmcgd2l0aAo+IGJhY2tncm91
-bmQgbGF5ZXIuIEknbSBub3Qgc3VyZSB3aGV0aGVyIGl0J3MgcHJvcGVyIG9yIG5vdC4KSSB0aGlu
-ayBvbmUgb2YgdGhlIHJlYXNvbnMgd2h5IHRoaXMgaXMgY3VycmVudGx5IGNhdXNpbmcgY29uZnVz
-aW9uIGlzIApiZWNhdXNlIHRoZSBiYWNrZ3JvdW5kIGxheWVyIGlzIG5vdCBleHBvc2VkIHRvIHVz
-ZXJzcGFjZS4gU28gYW4gaWRlYSAKd291bGQgYmUgdG8gZXhwb3NlIEJHIGFzIGEgbm9ybWFsIERS
-TSBwbGFuZSwgd2l0aCBhIGJhY2tncm91bmRfcmdiIApwcm9wZXJ5LgoKVGhlbiB3ZSBqdXN0IG5l
-ZWQgdG8ga2VlcCB0cmFjayB3aGljaCBwbGFuZXMgYXJlIGVuYWJsZWQuCgpFLmcuIGlmIGp1c3Qg
-dGhlIHByaW1hcnkgcGxhbmUgaXMgZW5hYmxlZCwgdGhlbiB3ZSBpZ25vcmUgYW55IGFscGhhIApw
-aXhlbGZvcm1hdCAoaW4gdGhlIHNlbnNlIHRoYXQgd2UgbWFwIGl0IHRvIGl0cyBub24tYWxwaGEg
-Y291bnRlcnBhcnQpLiAKSWYgYW5vdGhlciBwbGFuZSwgd2hpY2ggaXMgbG9jYXRlZCAndW5kZXJu
-ZWF0aCcsIGlzIGVuYWJsZWQsIHRoZW4gd2UgCmhvbm9yIHRoZSBhbHBoYS4gVGhpcyBjb3VsZCB0
-aGVuIGJlIHRoZSBiYWNrZ3JvdW5kIHBsYW5lLgoKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoK
-Cgo+IAo+IFRoYW5rcy4KPiAKPj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0
-YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+PiAtLS0KPj4gZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfbWl4ZXIuYyB8IDI5IAo+PiArKysrKysrKysrKysrKysrKysrKysrKysrLS0t
-LQo+PiAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPj4g
-Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIAo+
-PiBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gaW5kZXggN2FmZjg4
-Zi4uMGM1NDA5OCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-bWl4ZXIuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+
-IEBAIC01MjksNyArNTI5LDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVj
-dCAKPj4gbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQo+PiB1bnNpZ25lZCBpbnQgeF9yYXRp
-bywgeV9yYXRpbzsKPj4gdW5zaWduZWQgaW50IHNyY194X29mZnNldCwgc3JjX3lfb2Zmc2V0LCBk
-c3RfeF9vZmZzZXQsIGRzdF95X29mZnNldDsKPj4gZG1hX2FkZHJfdCBkbWFfYWRkcjsKPj4gLSB1
-bnNpZ25lZCBpbnQgZm10Owo+PiArIHVuc2lnbmVkIGludCBmbXQsIGJsZW5kOwo+PiB1MzIgdmFs
-Owo+PiAKPj4gd2luX2RhdGEgPSAmY3R4LT53aW5fZGF0YVt3aW5dOwo+PiBAQCAtNTM5LDE1ICs1
-MzksMjYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCAKPj4gbWl4ZXJf
-Y29udGV4dCAqY3R4LCBpbnQgd2luKQo+PiAjZGVmaW5lIEFSR0I0NDQ0IDYKPj4gI2RlZmluZSBB
-UkdCODg4OCA3Cj4+IAo+PiAtIHN3aXRjaCAod2luX2RhdGEtPmJwcCkgewo+PiAtIGNhc2UgMTY6
-Cj4+ICsgc3dpdGNoICh3aW5fZGF0YS0+cGl4ZWxfZm9ybWF0KSB7Cj4+ICsgY2FzZSBEUk1fRk9S
-TUFUX0FSR0I0NDQ0Ogo+PiBmbXQgPSBBUkdCNDQ0NDsKPj4gKyBibGVuZCA9IDE7Cj4+IGJyZWFr
-Owo+PiAtIGNhc2UgMzI6Cj4+ICsKPj4gKyBjYXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6Cj4+ICsg
-Zm10ID0gQVJHQjg4ODg7Cj4+ICsgYmxlbmQgPSAxOwo+PiArIGJyZWFrOwo+PiArCj4+ICsgY2Fz
-ZSBEUk1fRk9STUFUX1hSR0I4ODg4Ogo+PiBmbXQgPSBBUkdCODg4ODsKPj4gKyBibGVuZCA9IDA7
-Cj4+IGJyZWFrOwo+PiArCj4+IGRlZmF1bHQ6Cj4+IGZtdCA9IEFSR0I4ODg4Owo+PiArIGJsZW5k
-ID0gMDsKPj4gKyBicmVhazsKPj4gfQo+PiAKPj4gaWYgKHdpbl9kYXRhLT5jcnRjX3dpZHRoICE9
-IHdpbl9kYXRhLT5zcmNfd2lkdGggfHwKPj4gQEAgLTU4Niw2ICs1OTcsMTYgQEAgc3RhdGljIHZv
-aWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCAKPj4gbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQg
-d2luKQo+PiBtaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfR1JBUEhJQ19TUEFOKHdpbiksCj4+IHdp
-bl9kYXRhLT5mYl9waXRjaCAvICh3aW5fZGF0YS0+YnBwID4+IDMpKTsKPj4gCj4+ICsgaWYgKGJs
-ZW5kKSB7Cj4+ICsgdmFsID0gTVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTDsKPj4gKyB2YWwgfD0g
-TVhSX0dSUF9DRkdfUElYRUxfQkxFTkRfRU47Cj4+ICsgfSBlbHNlIHsKPj4gKyB2YWwgPSAwOwo+
-PiArIH0KPj4gKyBtaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0dSQVBISUNfQ0ZHKHdpbiks
-IHZhbCwKPj4gKyBNWFJfR1JQX0NGR19CTEVORF9QUkVfTVVMCj4+ICsgfCBNWFJfR1JQX0NGR19Q
-SVhFTF9CTEVORF9FTik7Cj4+ICsKPj4gLyogc2V0dXAgZGlzcGxheSBzaXplICovCj4+IGlmIChj
-dHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCAmJgo+PiB3aW4gPT0gTUlYRVJfREVG
-QVVMVF9XSU4pIHsKPj4gCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
-c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgCj4gbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhl
-IGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1h
-am9yZG9tbyBpbmZvIGF0IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
-bAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Add new labels to certain nodes on S3C2416 so they could be easily
+referenced by board DTS files.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ arch/arm/boot/dts/s3c2416.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
+index 30b8f7e47454..a5184ff56933 100644
+--- a/arch/arm/boot/dts/s3c2416.dtsi
++++ b/arch/arm/boot/dts/s3c2416.dtsi
+@@ -17,7 +17,7 @@
+ 	compatible = "samsung,s3c2416";
+ 
+ 	aliases {
+-		serial3 = &uart3;
++		serial3 = &uart_3;
+ 	};
+ 
+ 	cpus {
+@@ -48,7 +48,7 @@
+ 		clock-names = "timers";
+ 	};
+ 
+-	serial@50000000 {
++	uart_0: serial@50000000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		clock-names = "uart", "clk_uart_baud2",
+ 				"clk_uart_baud3";
+@@ -56,7 +56,7 @@
+ 				<&clocks SCLK_UART>;
+ 	};
+ 
+-	serial@50004000 {
++	uart_1: serial@50004000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		clock-names = "uart", "clk_uart_baud2",
+ 				"clk_uart_baud3";
+@@ -64,7 +64,7 @@
+ 				<&clocks SCLK_UART>;
+ 	};
+ 
+-	serial@50008000 {
++	uart_2: serial@50008000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		clock-names = "uart", "clk_uart_baud2",
+ 				"clk_uart_baud3";
+@@ -72,7 +72,7 @@
+ 				<&clocks SCLK_UART>;
+ 	};
+ 
+-	uart3: serial@5000C000 {
++	uart_3: serial@5000C000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		reg = <0x5000C000 0x4000>;
+ 		interrupts = <1 18 24 4>, <1 18 25 4>;
+@@ -83,7 +83,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	sdhci@4AC00000 {
++	sdhci_1: sdhci@4AC00000 {
+ 		compatible = "samsung,s3c6410-sdhci";
+ 		reg = <0x4AC00000 0x100>;
+ 		interrupts = <0 0 21 3>;
+@@ -94,7 +94,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	sdhci@4A800000 {
++	sdhci_0: sdhci@4A800000 {
+ 		compatible = "samsung,s3c6410-sdhci";
+ 		reg = <0x4A800000 0x100>;
+ 		interrupts = <0 0 20 3>;
+@@ -105,13 +105,13 @@
+ 		status = "disabled";
+ 	};
+ 
+-	watchdog@53000000 {
++	watchdog: watchdog@53000000 {
+ 		interrupts = <1 9 27 3>;
+ 		clocks = <&clocks PCLK_WDT>;
+ 		clock-names = "watchdog";
+ 	};
+ 
+-	rtc@57000000 {
++	rtc: rtc@57000000 {
+ 		compatible = "samsung,s3c2416-rtc";
+ 		clocks = <&clocks PCLK_RTC>;
+ 		clock-names = "rtc";
+-- 
+2.1.0
