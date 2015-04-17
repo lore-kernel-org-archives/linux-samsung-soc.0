@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v3 06/11] ARM: dts: exynos4: Use labels for overriding nodes in Exynos4212
-Date: Fri, 17 Apr 2015 22:47:14 +0900
-Message-ID: <1429278439-3919-7-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v3 10/11] ARM: dts: exynos4: Use labels for overriding nodes in SMDK4412
+Date: Fri, 17 Apr 2015 22:47:18 +0900
+Message-ID: <1429278439-3919-11-git-send-email-k.kozlowski.k@gmail.com>
 References: <1429278439-3919-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1429278439-3919-1-git-send-email-k.kozlowski.k@gmail.com>
@@ -15,31 +15,253 @@ overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos4212.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/exynos4412-smdk4412.dts | 210 +++++++++++++++---------------
+ 1 file changed, 105 insertions(+), 105 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 5be03288f1ee..d9c8efeef208 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -41,12 +41,12 @@
- 			reg = <0xA01>;
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index b9256afbcc68..c2421df1fa43 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -28,135 +28,135 @@
+ 		stdout-path = &serial_1;
+ 	};
+ 
+-	g2d@10800000 {
+-		status = "okay";
+-	};
+-
+-	pinctrl@11000000 {
+-		keypad_rows: keypad-rows {
+-			samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti";
++			clock-frequency = <0>;
+ 		};
+ 
+-		keypad_cols: keypad-cols {
+-			samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
+-				       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
++		xusbxti {
++			compatible = "samsung,clock-xusbxti";
++			clock-frequency = <24000000>;
  		};
  	};
 +};
  
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <18>;
--	};
-+&combiner {
-+	samsung,combiner-nr = <18>;
+-	keypad@100A0000 {
+-		samsung,keypad-num-rows = <3>;
+-		samsung,keypad-num-columns = <8>;
+-		linux,keypad-no-autorepeat;
+-		linux,keypad-wakeup;
+-		pinctrl-0 = <&keypad_rows &keypad_cols>;
+-		pinctrl-names = "default";
+-		status = "okay";
+-
+-		key_1 {
+-			keypad,row = <1>;
+-			keypad,column = <3>;
+-			linux,code = <2>;
+-		};
+-
+-		key_2 {
+-			keypad,row = <1>;
+-			keypad,column = <4>;
+-			linux,code = <3>;
+-		};
+-
+-		key_3 {
+-			keypad,row = <1>;
+-			keypad,column = <5>;
+-			linux,code = <4>;
+-		};
+-
+-		key_4 {
+-			keypad,row = <1>;
+-			keypad,column = <6>;
+-			linux,code = <5>;
+-		};
++&g2d {
++	status = "okay";
 +};
  
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x8000>;
+-		key_5 {
+-			keypad,row = <1>;
+-			keypad,column = <7>;
+-			linux,code = <6>;
+-		};
++&keypad {
++	samsung,keypad-num-rows = <3>;
++	samsung,keypad-num-columns = <8>;
++	linux,keypad-no-autorepeat;
++	linux,keypad-wakeup;
++	pinctrl-0 = <&keypad_rows &keypad_cols>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	key_1 {
++		keypad,row = <1>;
++		keypad,column = <3>;
++		linux,code = <2>;
++	};
+ 
+-		key_A {
+-			keypad,row = <2>;
+-			keypad,column = <6>;
+-			linux,code = <30>;
+-		};
++	key_2 {
++		keypad,row = <1>;
++		keypad,column = <4>;
++		linux,code = <3>;
++	};
+ 
+-		key_B {
+-			keypad,row = <2>;
+-			keypad,column = <7>;
+-			linux,code = <48>;
+-		};
++	key_3 {
++		keypad,row = <1>;
++		keypad,column = <5>;
++		linux,code = <4>;
++	};
+ 
+-		key_C {
+-			keypad,row = <0>;
+-			keypad,column = <5>;
+-			linux,code = <46>;
+-		};
++	key_4 {
++		keypad,row = <1>;
++		keypad,column = <6>;
++		linux,code = <5>;
++	};
+ 
+-		key_D {
+-			keypad,row = <2>;
+-			keypad,column = <5>;
+-			linux,code = <32>;
+-		};
++	key_5 {
++		keypad,row = <1>;
++		keypad,column = <7>;
++		linux,code = <6>;
++	};
+ 
+-		key_E {
+-			keypad,row = <0>;
+-			keypad,column = <7>;
+-			linux,code = <18>;
+-		};
++	key_A {
++		keypad,row = <2>;
++		keypad,column = <6>;
++		linux,code = <30>;
+ 	};
+ 
+-	sdhci@12530000 {
+-		bus-width = <4>;
+-		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
+-		pinctrl-names = "default";
+-		status = "okay";
++	key_B {
++		keypad,row = <2>;
++		keypad,column = <7>;
++		linux,code = <48>;
+ 	};
+ 
+-	codec@13400000 {
+-		samsung,mfc-r = <0x43000000 0x800000>;
+-		samsung,mfc-l = <0x51000000 0x800000>;
+-		status = "okay";
++	key_C {
++		keypad,row = <0>;
++		keypad,column = <5>;
++		linux,code = <46>;
+ 	};
+ 
+-	serial@13800000 {
+-		status = "okay";
++	key_D {
++		keypad,row = <2>;
++		keypad,column = <5>;
++		linux,code = <32>;
+ 	};
+ 
+-	serial@13810000 {
+-		status = "okay";
++	key_E {
++		keypad,row = <0>;
++		keypad,column = <7>;
++		linux,code = <18>;
+ 	};
++};
++
++&mfc {
++	samsung,mfc-r = <0x43000000 0x800000>;
++	samsung,mfc-l = <0x51000000 0x800000>;
++	status = "okay";
++};
+ 
+-	serial@13820000 {
+-		status = "okay";
++&pinctrl_1 {
++	keypad_rows: keypad-rows {
++		samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
+ 	};
+ 
+-	serial@13830000 {
+-		status = "okay";
++	keypad_cols: keypad-cols {
++		samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
++			       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
+ 	};
++};
+ 
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
++&sdhci_2 {
++	bus-width = <4>;
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
++	pinctrl-names = "default";
++	status = "okay";
++};
+ 
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
 -	};
-+&gic {
-+	cpu-offset = <0x8000>;
++&serial_0 {
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&serial_2 {
++	status = "okay";
++};
++
++&serial_3 {
++	status = "okay";
  };
 -- 
 2.1.0
