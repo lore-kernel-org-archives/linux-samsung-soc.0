@@ -1,249 +1,643 @@
-From: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCHv2 01/11] ARM: dts: Add labels to Exynos4 nodes
-Date: Fri, 17 Apr 2015 22:21:02 +0900
-Message-ID: <1429276870-19506-2-git-send-email-k.kozlowski.k@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCHv2 05/11] ARM: dts: exynos4: Use labels for overriding nodes in Trats
+Date: Fri, 17 Apr 2015 22:21:06 +0900
+Message-ID: <1429276870-19506-6-git-send-email-k.kozlowski.k@gmail.com>
 References: <1429276870-19506-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1429276870-19506-1-git-send-email-k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1429276870-19506-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add new labels to certain nodes so they could be easily referenced by
-Exynos4 board DTS files.
+Usage of lablels instead of full paths reduces possible mistakes when
+overriding nodes.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi            | 22 +++++++++++-----------
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  6 +++---
- arch/arm/boot/dts/exynos4210.dtsi         |  6 +++---
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |  8 ++++----
- arch/arm/boot/dts/exynos4x12.dtsi         |  2 +-
- 5 files changed, 22 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/exynos4210-trats.dts | 592 ++++++++++++++++-----------------
+ 1 file changed, 296 insertions(+), 296 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e20cdc24c3bb..ef944e4f42d0 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -257,7 +257,7 @@
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 32c5fd8f6269..98f3ce65cb9a 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -89,42 +89,6 @@
  		};
- 	};
- 
--	watchdog@10060000 {
-+	watchdog: watchdog@10060000 {
- 		compatible = "samsung,s3c2410-wdt";
- 		reg = <0x10060000 0x100>;
- 		interrupts = <0 43 0>;
-@@ -266,7 +266,7 @@
- 		status = "disabled";
- 	};
- 
--	rtc@10070000 {
-+	rtc: rtc@10070000 {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
- 		interrupt-parent = <&pmu_system_controller>;
-@@ -276,7 +276,7 @@
- 		status = "disabled";
- 	};
- 
--	keypad@100A0000 {
-+	keypad: keypad@100A0000 {
- 		compatible = "samsung,s5pv210-keypad";
- 		reg = <0x100A0000 0x100>;
- 		interrupts = <0 109 0>;
-@@ -285,7 +285,7 @@
- 		status = "disabled";
- 	};
- 
--	sdhci@12510000 {
-+	sdhci_0: sdhci@12510000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12510000 0x100>;
- 		interrupts = <0 73 0>;
-@@ -294,7 +294,7 @@
- 		status = "disabled";
- 	};
- 
--	sdhci@12520000 {
-+	sdhci_1: sdhci@12520000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12520000 0x100>;
- 		interrupts = <0 74 0>;
-@@ -303,7 +303,7 @@
- 		status = "disabled";
- 	};
- 
--	sdhci@12530000 {
-+	sdhci_2: sdhci@12530000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12530000 0x100>;
- 		interrupts = <0 75 0>;
-@@ -312,7 +312,7 @@
- 		status = "disabled";
- 	};
- 
--	sdhci@12540000 {
-+	sdhci_3: sdhci@12540000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12540000 0x100>;
- 		interrupts = <0 76 0>;
-@@ -331,7 +331,7 @@
- 		status = "disabled";
  	};
  
 -	hsotg@12480000 {
-+	hsotg: hsotg@12480000 {
- 		compatible = "samsung,s3c6400-hsotg";
- 		reg = <0x12480000 0x20000>;
- 		interrupts = <0 71 0>;
-@@ -342,7 +342,7 @@
- 		status = "disabled";
- 	};
+-		vusb_d-supply = <&vusb_reg>;
+-		vusb_a-supply = <&vusbdac_reg>;
+-		dr_mode = "peripheral";
+-		status = "okay";
+-	};
+-
+-	sdhci_emmc: sdhci@12510000 {
+-		bus-width = <8>;
+-		non-removable;
+-		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus8>;
+-		pinctrl-names = "default";
+-		vmmc-supply = <&vemmc_reg>;
+-		status = "okay";
+-	};
+-
+-	exynos-usbphy@125B0000 {
+-		status = "okay";
+-	};
+-
+-	serial@13800000 {
+-		status = "okay";
+-	};
+-
+-	serial@13810000 {
+-		status = "okay";
+-	};
+-
+-	serial@13820000 {
+-		status = "okay";
+-	};
+-
+-	serial@13830000 {
+-		status = "okay";
+-	};
+-
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
  
--	ehci@12580000 {
-+	ehci: ehci@12580000 {
- 		compatible = "samsung,exynos4210-ehci";
- 		reg = <0x12580000 0x100>;
- 		interrupts = <0 70 0>;
-@@ -368,7 +368,7 @@
+@@ -158,201 +122,6 @@
  		};
  	};
  
--	ohci@12590000 {
-+	ohci: ohci@12590000 {
- 		compatible = "samsung,exynos4210-ohci";
- 		reg = <0x12590000 0x100>;
- 		interrupts = <0 70 0>;
-@@ -621,7 +621,7 @@
- 		status = "disabled";
- 	};
- 
--	pwm@139D0000 {
-+	pwm: pwm@139D0000 {
- 		compatible = "samsung,exynos4210-pwm";
- 		reg = <0x139D0000 0x1000>;
- 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
-diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-index a7c212891674..4704e7bb2628 100644
---- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-@@ -15,7 +15,7 @@
- */
- 
- / {
--	pinctrl@11400000 {
-+	pinctrl_0: pinctrl@11400000 {
- 		gpa0: gpa0 {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -421,7 +421,7 @@
+-	i2c@13890000 {
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-slave-addr = <0x10>;
+-		samsung,i2c-max-bus-freq = <400000>;
+-		pinctrl-0 = <&i2c3_bus>;
+-		pinctrl-names = "default";
+-		status = "okay";
+-
+-		mms114-touchscreen@48 {
+-			compatible = "melfas,mms114";
+-			reg = <0x48>;
+-			interrupt-parent = <&gpx0>;
+-			interrupts = <4 2>;
+-			x-size = <720>;
+-			y-size = <1280>;
+-			avdd-supply = <&tsp_reg>;
+-			vdd-supply = <&tsp_reg>;
+-		};
+-	};
+-
+-	i2c@138B0000 {
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-slave-addr = <0x10>;
+-		samsung,i2c-max-bus-freq = <100000>;
+-		pinctrl-0 = <&i2c5_bus>;
+-		pinctrl-names = "default";
+-		status = "okay";
+-
+-		max8997_pmic@66 {
+-			compatible = "maxim,max8997-pmic";
+-
+-			reg = <0x66>;
+-
+-			max8997,pmic-buck1-uses-gpio-dvs;
+-			max8997,pmic-buck2-uses-gpio-dvs;
+-			max8997,pmic-buck5-uses-gpio-dvs;
+-
+-			max8997,pmic-ignore-gpiodvs-side-effect;
+-			max8997,pmic-buck125-default-dvs-idx = <0>;
+-
+-			max8997,pmic-buck125-dvs-gpios = <&gpx0 5 0>,
+-						         <&gpx0 6 0>,
+-							 <&gpl0 0 0>;
+-
+-			max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
+-							 <1250000>, <1200000>,
+-							 <1150000>, <1100000>,
+-							 <1000000>, <950000>;
+-
+-			max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
+-							 <950000>,  <900000>,
+-							 <1100000>, <1000000>,
+-							 <950000>,  <900000>;
+-
+-			max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
+-							 <1200000>, <1200000>,
+-							 <1200000>, <1200000>,
+-							 <1200000>, <1200000>;
+-
+-			regulators {
+-				valive_reg: LDO2 {
+-				     regulator-name = "VALIVE_1.1V_C210";
+-				     regulator-min-microvolt = <1100000>;
+-				     regulator-max-microvolt = <1100000>;
+-				     regulator-always-on;
+-				};
+-
+-				vusb_reg: LDO3 {
+-				     regulator-name = "VUSB_1.1V_C210";
+-				     regulator-min-microvolt = <1100000>;
+-				     regulator-max-microvolt = <1100000>;
+-				};
+-
+-				vmipi_reg: LDO4 {
+-				     regulator-name = "VMIPI_1.8V";
+-				     regulator-min-microvolt = <1800000>;
+-				     regulator-max-microvolt = <1800000>;
+-				};
+-
+-				vpda_reg: LDO6 {
+-				     regulator-name = "VCC_1.8V_PDA";
+-				     regulator-min-microvolt = <1800000>;
+-				     regulator-max-microvolt = <1800000>;
+-				     regulator-always-on;
+-				};
+-
+-				vcam_reg: LDO7 {
+-				     regulator-name = "CAM_ISP_1.8V";
+-				     regulator-min-microvolt = <1800000>;
+-				     regulator-max-microvolt = <1800000>;
+-				};
+-
+-				vusbdac_reg: LDO8 {
+-				     regulator-name = "VUSB/VDAC_3.3V_C210";
+-				     regulator-min-microvolt = <3300000>;
+-				     regulator-max-microvolt = <3300000>;
+-				};
+-
+-				vccpda_reg: LDO9 {
+-				     regulator-name = "VCC_2.8V_PDA";
+-				     regulator-min-microvolt = <2800000>;
+-				     regulator-max-microvolt = <2800000>;
+-				     regulator-always-on;
+-				};
+-
+-				vpll_reg: LDO10 {
+-				     regulator-name = "VPLL_1.1V_C210";
+-				     regulator-min-microvolt = <1100000>;
+-				     regulator-max-microvolt = <1100000>;
+-				     regulator-always-on;
+-				};
+-
+-				vtcam_reg: LDO12 {
+-				     regulator-name = "VT_CAM_1.8V";
+-				     regulator-min-microvolt = <1800000>;
+-				     regulator-max-microvolt = <1800000>;
+-				};
+-
+-				vcclcd_reg: LDO13 {
+-				     regulator-name = "VCC_3.3V_LCD";
+-				     regulator-min-microvolt = <3300000>;
+-				     regulator-max-microvolt = <3300000>;
+-				};
+-
+-				vlcd_reg: LDO15 {
+-				     regulator-name = "VLCD_2.2V";
+-				     regulator-min-microvolt = <2200000>;
+-				     regulator-max-microvolt = <2200000>;
+-				};
+-
+-				camsensor_reg: LDO16 {
+-				     regulator-name = "CAM_SENSOR_IO_1.8V";
+-				     regulator-min-microvolt = <1800000>;
+-				     regulator-max-microvolt = <1800000>;
+-				};
+-
+-				vddq_reg: LDO21 {
+-				     regulator-name = "VDDQ_M1M2_1.2V";
+-				     regulator-min-microvolt = <1200000>;
+-				     regulator-max-microvolt = <1200000>;
+-				     regulator-always-on;
+-				};
+-
+-				varm_breg: BUCK1 {
+-				     /*
+-				      * HACK: The real name is VARM_1.2V_C210,
+-				      * but exynos-cpufreq does not support
+-				      * DT-based regulator lookup yet.
+-				      */
+-				     regulator-name = "vdd_arm";
+-				     regulator-min-microvolt = <900000>;
+-				     regulator-max-microvolt = <1350000>;
+-				     regulator-always-on;
+-				};
+-
+-				vint_breg: BUCK2 {
+-				     regulator-name = "VINT_1.1V_C210";
+-				     regulator-min-microvolt = <900000>;
+-				     regulator-max-microvolt = <1100000>;
+-				     regulator-always-on;
+-				};
+-
+-				camisp_breg: BUCK4 {
+-				     regulator-name = "CAM_ISP_CORE_1.2V";
+-				     regulator-min-microvolt = <1200000>;
+-				     regulator-max-microvolt = <1200000>;
+-				};
+-
+-				vmem_breg: BUCK5 {
+-				     regulator-name = "VMEM_1.2V_C210";
+-				     regulator-min-microvolt = <1200000>;
+-				     regulator-max-microvolt = <1200000>;
+-				     regulator-always-on;
+-				};
+-
+-				vccsub_breg: BUCK7 {
+-				     regulator-name = "VCC_SUB_2.0V";
+-				     regulator-min-microvolt = <2000000>;
+-				     regulator-max-microvolt = <2000000>;
+-				     regulator-always-on;
+-				};
+-
+-				safe1_sreg: ESAFEOUT1 {
+-				     regulator-name = "SAFEOUT1";
+-				     regulator-always-on;
+-				};
+-
+-				safe2_sreg: ESAFEOUT2 {
+-				     regulator-name = "SAFEOUT2";
+-				     regulator-boot-on;
+-				};
+-			};
+-		};
+-	};
+-
+ 	fixed-rate-clocks {
+ 		xxti {
+ 			compatible = "samsung,clock-xxti";
+@@ -365,71 +134,6 @@
  		};
  	};
  
--	pinctrl@11000000 {
-+	pinctrl_1: pinctrl@11000000 {
- 		gpj0: gpj0 {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -822,7 +822,7 @@
+-	dsi_0: dsi@11C80000 {
+-		vddcore-supply = <&vusb_reg>;
+-		vddio-supply = <&vmipi_reg>;
+-		samsung,pll-clock-frequency = <24000000>;
+-		status = "okay";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@1 {
+-				reg = <1>;
+-
+-				dsi_out: endpoint {
+-					remote-endpoint = <&dsi_in>;
+-					samsung,burst-clock-frequency = <500000000>;
+-					samsung,esc-clock-frequency = <20000000>;
+-				};
+-			};
+-		};
+-
+-		panel@0 {
+-			reg = <0>;
+-			compatible = "samsung,s6e8aa0";
+-			vdd3-supply = <&vcclcd_reg>;
+-			vci-supply = <&vlcd_reg>;
+-			reset-gpios = <&gpy4 5 0>;
+-			power-on-delay= <50>;
+-			reset-delay = <100>;
+-			init-delay = <100>;
+-			flip-horizontal;
+-			flip-vertical;
+-			panel-width-mm = <58>;
+-			panel-height-mm = <103>;
+-
+-			display-timings {
+-				timing-0 {
+-					clock-frequency = <57153600>;
+-					hactive = <720>;
+-					vactive = <1280>;
+-					hfront-porch = <5>;
+-					hback-porch = <5>;
+-					hsync-len = <5>;
+-					vfront-porch = <13>;
+-					vback-porch = <1>;
+-					vsync-len = <2>;
+-				};
+-			};
+-
+-			port {
+-				dsi_in: endpoint {
+-					remote-endpoint = <&dsi_out>;
+-				};
+-			};
+-		};
+-	};
+-
+-	fimd@11c00000 {
+-		status = "okay";
+-	};
+-
+-	tmu@100C0000 {
+-		status = "okay";
+-	};
+-
+ 	thermal-zones {
+ 		cpu_thermal: cpu-thermal {
+ 			cooling-maps {
+@@ -483,3 +187,299 @@
  		};
  	};
- 
--	pinctrl@03860000 {
-+	pinctrl_3: pinctrl@03860000 {
- 		gpz: gpz {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index be89f83f70e7..76b84852f29c 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -62,7 +62,7 @@
- 		#clock-cells = <1>;
- 	};
- 
--	sysram@02020000 {
-+	sysram: sysram@02020000 {
- 		compatible = "mmio-sram";
- 		reg = <0x02020000 0x20000>;
- 		#address-cells = <1>;
-@@ -107,7 +107,7 @@
- 			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
- 	};
- 
--	mct@10050000 {
-+	mct: mct@10050000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x10050000 0x800>;
- 		interrupt-parent = <&mct_map>;
-@@ -189,7 +189,7 @@
- 		};
- 	};
- 
--	g2d@12800000 {
-+	g2d: g2d@12800000 {
- 		compatible = "samsung,s5pv210-g2d";
- 		reg = <0x12800000 0x1000>;
- 		interrupts = <0 89 0>;
-diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-index c141931378e7..bac25c672789 100644
---- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-@@ -29,7 +29,7 @@
- 	}
- 
- / {
--	pinctrl@11400000 {
-+	pinctrl_0: pinctrl@11400000 {
- 		gpa0: gpa0 {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -441,7 +441,7 @@
- 		};
- 	};
- 
--	pinctrl@11000000 {
-+	pinctrl_1: pinctrl@11000000 {
- 		gpk0: gpk0 {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -887,7 +887,7 @@
- 		};
- 	};
- 
--	pinctrl@03860000 {
-+	pinctrl_2: pinctrl@03860000 {
- 		gpz: gpz {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -913,7 +913,7 @@
- 		};
- 	};
- 
--	pinctrl@106E0000 {
-+	pinctrl_3: pinctrl@106E0000 {
- 		gpv0: gpv0 {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 6a6abe14fd9b..657b5ca39ce8 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -159,7 +159,7 @@
- 		#clock-cells = <1>;
- 	};
- 
--	g2d@10800000 {
-+	g2d: g2d@10800000 {
- 		compatible = "samsung,exynos4212-g2d";
- 		reg = <0x10800000 0x1000>;
- 		interrupts = <0 89 0>;
+ };
++
++&dsi_0 {
++	vddcore-supply = <&vusb_reg>;
++	vddio-supply = <&vmipi_reg>;
++	samsung,pll-clock-frequency = <24000000>;
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@1 {
++			reg = <1>;
++
++			dsi_out: endpoint {
++				remote-endpoint = <&dsi_in>;
++				samsung,burst-clock-frequency = <500000000>;
++				samsung,esc-clock-frequency = <20000000>;
++			};
++		};
++	};
++
++	panel@0 {
++		reg = <0>;
++		compatible = "samsung,s6e8aa0";
++		vdd3-supply = <&vcclcd_reg>;
++		vci-supply = <&vlcd_reg>;
++		reset-gpios = <&gpy4 5 0>;
++		power-on-delay= <50>;
++		reset-delay = <100>;
++		init-delay = <100>;
++		flip-horizontal;
++		flip-vertical;
++		panel-width-mm = <58>;
++		panel-height-mm = <103>;
++
++		display-timings {
++			timing-0 {
++				clock-frequency = <57153600>;
++				hactive = <720>;
++				vactive = <1280>;
++				hfront-porch = <5>;
++				hback-porch = <5>;
++				hsync-len = <5>;
++				vfront-porch = <13>;
++				vback-porch = <1>;
++				vsync-len = <2>;
++			};
++		};
++
++		port {
++			dsi_in: endpoint {
++				remote-endpoint = <&dsi_out>;
++			};
++		};
++	};
++};
++
++&exynos_usbphy {
++	status = "okay";
++};
++
++&fimd {
++	status = "okay";
++};
++
++&hsotg {
++	vusb_d-supply = <&vusb_reg>;
++	vusb_a-supply = <&vusbdac_reg>;
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
++&i2c_3 {
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <400000>;
++	pinctrl-0 = <&i2c3_bus>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	mms114-touchscreen@48 {
++		compatible = "melfas,mms114";
++		reg = <0x48>;
++		interrupt-parent = <&gpx0>;
++		interrupts = <4 2>;
++		x-size = <720>;
++		y-size = <1280>;
++		avdd-supply = <&tsp_reg>;
++		vdd-supply = <&tsp_reg>;
++	};
++};
++
++&i2c_5 {
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <100000>;
++	pinctrl-0 = <&i2c5_bus>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	max8997_pmic@66 {
++		compatible = "maxim,max8997-pmic";
++
++		reg = <0x66>;
++
++		max8997,pmic-buck1-uses-gpio-dvs;
++		max8997,pmic-buck2-uses-gpio-dvs;
++		max8997,pmic-buck5-uses-gpio-dvs;
++
++		max8997,pmic-ignore-gpiodvs-side-effect;
++		max8997,pmic-buck125-default-dvs-idx = <0>;
++
++		max8997,pmic-buck125-dvs-gpios = <&gpx0 5 0>,
++						 <&gpx0 6 0>,
++						 <&gpl0 0 0>;
++
++		max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
++						 <1250000>, <1200000>,
++						 <1150000>, <1100000>,
++						 <1000000>, <950000>;
++
++		max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
++						 <950000>,  <900000>,
++						 <1100000>, <1000000>,
++						 <950000>,  <900000>;
++
++		max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
++						 <1200000>, <1200000>,
++						 <1200000>, <1200000>,
++						 <1200000>, <1200000>;
++
++		regulators {
++			valive_reg: LDO2 {
++			     regulator-name = "VALIVE_1.1V_C210";
++			     regulator-min-microvolt = <1100000>;
++			     regulator-max-microvolt = <1100000>;
++			     regulator-always-on;
++			};
++
++			vusb_reg: LDO3 {
++			     regulator-name = "VUSB_1.1V_C210";
++			     regulator-min-microvolt = <1100000>;
++			     regulator-max-microvolt = <1100000>;
++			};
++
++			vmipi_reg: LDO4 {
++			     regulator-name = "VMIPI_1.8V";
++			     regulator-min-microvolt = <1800000>;
++			     regulator-max-microvolt = <1800000>;
++			};
++
++			vpda_reg: LDO6 {
++			     regulator-name = "VCC_1.8V_PDA";
++			     regulator-min-microvolt = <1800000>;
++			     regulator-max-microvolt = <1800000>;
++			     regulator-always-on;
++			};
++
++			vcam_reg: LDO7 {
++			     regulator-name = "CAM_ISP_1.8V";
++			     regulator-min-microvolt = <1800000>;
++			     regulator-max-microvolt = <1800000>;
++			};
++
++			vusbdac_reg: LDO8 {
++			     regulator-name = "VUSB/VDAC_3.3V_C210";
++			     regulator-min-microvolt = <3300000>;
++			     regulator-max-microvolt = <3300000>;
++			};
++
++			vccpda_reg: LDO9 {
++			     regulator-name = "VCC_2.8V_PDA";
++			     regulator-min-microvolt = <2800000>;
++			     regulator-max-microvolt = <2800000>;
++			     regulator-always-on;
++			};
++
++			vpll_reg: LDO10 {
++			     regulator-name = "VPLL_1.1V_C210";
++			     regulator-min-microvolt = <1100000>;
++			     regulator-max-microvolt = <1100000>;
++			     regulator-always-on;
++			};
++
++			vtcam_reg: LDO12 {
++			     regulator-name = "VT_CAM_1.8V";
++			     regulator-min-microvolt = <1800000>;
++			     regulator-max-microvolt = <1800000>;
++			};
++
++			vcclcd_reg: LDO13 {
++			     regulator-name = "VCC_3.3V_LCD";
++			     regulator-min-microvolt = <3300000>;
++			     regulator-max-microvolt = <3300000>;
++			};
++
++			vlcd_reg: LDO15 {
++			     regulator-name = "VLCD_2.2V";
++			     regulator-min-microvolt = <2200000>;
++			     regulator-max-microvolt = <2200000>;
++			};
++
++			camsensor_reg: LDO16 {
++			     regulator-name = "CAM_SENSOR_IO_1.8V";
++			     regulator-min-microvolt = <1800000>;
++			     regulator-max-microvolt = <1800000>;
++			};
++
++			vddq_reg: LDO21 {
++			     regulator-name = "VDDQ_M1M2_1.2V";
++			     regulator-min-microvolt = <1200000>;
++			     regulator-max-microvolt = <1200000>;
++			     regulator-always-on;
++			};
++
++			varm_breg: BUCK1 {
++			     /*
++			      * HACK: The real name is VARM_1.2V_C210,
++			      * but exynos-cpufreq does not support
++			      * DT-based regulator lookup yet.
++			      */
++			     regulator-name = "vdd_arm";
++			     regulator-min-microvolt = <900000>;
++			     regulator-max-microvolt = <1350000>;
++			     regulator-always-on;
++			};
++
++			vint_breg: BUCK2 {
++			     regulator-name = "VINT_1.1V_C210";
++			     regulator-min-microvolt = <900000>;
++			     regulator-max-microvolt = <1100000>;
++			     regulator-always-on;
++			};
++
++			camisp_breg: BUCK4 {
++			     regulator-name = "CAM_ISP_CORE_1.2V";
++			     regulator-min-microvolt = <1200000>;
++			     regulator-max-microvolt = <1200000>;
++			};
++
++			vmem_breg: BUCK5 {
++			     regulator-name = "VMEM_1.2V_C210";
++			     regulator-min-microvolt = <1200000>;
++			     regulator-max-microvolt = <1200000>;
++			     regulator-always-on;
++			};
++
++			vccsub_breg: BUCK7 {
++			     regulator-name = "VCC_SUB_2.0V";
++			     regulator-min-microvolt = <2000000>;
++			     regulator-max-microvolt = <2000000>;
++			     regulator-always-on;
++			};
++
++			safe1_sreg: ESAFEOUT1 {
++			     regulator-name = "SAFEOUT1";
++			     regulator-always-on;
++			};
++
++			safe2_sreg: ESAFEOUT2 {
++			     regulator-name = "SAFEOUT2";
++			     regulator-boot-on;
++			};
++		};
++	};
++};
++
++&sdhci_0 {
++	bus-width = <8>;
++	non-removable;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus8>;
++	pinctrl-names = "default";
++	vmmc-supply = <&vemmc_reg>;
++	status = "okay";
++};
++
++&serial_0 {
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&serial_2 {
++	status = "okay";
++};
++
++&serial_3 {
++	status = "okay";
++};
++
++&tmu {
++	status = "okay";
++};
 -- 
 2.1.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
