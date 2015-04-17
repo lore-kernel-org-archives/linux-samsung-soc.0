@@ -1,172 +1,84 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v2 5/7] ARM: dts: exynos5: Use labels for overriding nodes in Exynos5420
-Date: Fri, 17 Apr 2015 22:56:24 +0900
-Message-ID: <1429278986-4374-6-git-send-email-k.kozlowski.k@gmail.com>
-References: <1429278986-4374-1-git-send-email-k.kozlowski.k@gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v5 00/18] Exynos SYSMMU (IOMMU) integration with DT and
+ DMA-mapping subsystem
+Date: Fri, 17 Apr 2015 16:33:28 +0200
+Message-ID: <CABxcv=mXENvPHvvN5iOaUBZKORF49RhDs-tL_PBT4Urh54pd0Q@mail.gmail.com>
+References: <1422028288-891-1-git-send-email-m.szyprowski@samsung.com>
+	<20150204142149.GM3702@8bytes.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:35775 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965651AbbDQN4u (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:36708 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933389AbbDQOda (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Apr 2015 09:56:50 -0400
-In-Reply-To: <1429278986-4374-1-git-send-email-k.kozlowski.k@gmail.com>
+	Fri, 17 Apr 2015 10:33:30 -0400
+Received: by wgsk9 with SMTP id k9so115045982wgs.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Apr 2015 07:33:29 -0700 (PDT)
+In-Reply-To: <20150204142149.GM3702@8bytes.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>
+Cc: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Usage of labels instead of full paths reduces possible mistakes when
-overriding nodes. Additionally remove duplicated serial and uart labels
-for serial
+Hello Marek,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts |  2 +-
- arch/arm/boot/dts/exynos5420.dtsi          | 80 +++++++++++++++---------------
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |  2 +-
- 3 files changed, 42 insertions(+), 42 deletions(-)
+On Wed, Feb 4, 2015 at 3:21 PM, Joerg Roedel <joro@8bytes.org> wrote:
+> Hi Marek,
+>
+> On Fri, Jan 23, 2015 at 04:51:10PM +0100, Marek Szyprowski wrote:
+>> 1. All iommu related patches (with 'iommu: exynos') can be merged to
+>> iommu tree. They don't have any direct dependencies on the DTS, DRM and
+>> power domain initialization change - without them the driver will simply
+>> not initialize, when no exynos,sysmmu nodes are provided in device tree.
+>>
+>> Joerg, could you merge those patches?
+>
+> Given the previous comments and tests on this patch set I am still
+> waiting for some Acked-bys and/or Tested-bys on this. Can you collect
+> these and resend then (probably after the v3.20 merge window)?
+>
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 0788d08fb43e..d5921ffe1e0e 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -1026,7 +1026,7 @@
- 	};
- };
- 
--&uart_3 {
-+&serial_3 {
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index f67b23f303c3..0ba0004aae44 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -328,13 +328,6 @@
- 		interrupts = <0 47 0>;
- 	};
- 
--	rtc: rtc@101E0000 {
--		clocks = <&clock CLK_RTC>;
--		clock-names = "rtc";
--		interrupt-parent = <&pmu_system_controller>;
--		status = "disabled";
--	};
--
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -496,26 +489,6 @@
- 		status = "disabled";
- 	};
- 
--	uart_0: serial@12C00000 {
--		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	uart_1: serial@12C10000 {
--		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	uart_2: serial@12C20000 {
--		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	uart_3: serial@12C30000 {
--		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
- 	pwm: pwm@12dd0000 {
- 		compatible = "samsung,exynos4210-pwm";
- 		reg = <0x12dd0000 0x100>;
-@@ -531,13 +504,6 @@
- 		#phy-cells = <0>;
- 	};
- 
--	dp: dp-controller@145B0000 {
--		clocks = <&clock CLK_DP1>;
--		clock-names = "dp";
--		phys = <&dp_phy>;
--		phy-names = "dp";
--	};
--
- 	mipi_phy: video-phy@10040714 {
- 		compatible = "samsung,s5pv210-mipi-video-phy";
- 		reg = <0x10040714 12>;
-@@ -557,12 +523,6 @@
- 		status = "disabled";
- 	};
- 
--	fimd: fimd@14400000 {
--		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
--		clock-names = "sclk_fimd", "fimd";
--		power-domains = <&disp_pd>;
--	};
--
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v2";
- 		reg = <0x12D10000 0x100>;
-@@ -962,3 +922,43 @@
- 		samsung,pmureg-phandle = <&pmu_system_controller>;
- 	};
- };
-+
-+&dp {
-+	clocks = <&clock CLK_DP1>;
-+	clock-names = "dp";
-+	phys = <&dp_phy>;
-+	phy-names = "dp";
-+};
-+
-+&fimd {
-+	clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
-+	clock-names = "sclk_fimd", "fimd";
-+	power-domains = <&disp_pd>;
-+};
-+
-+&rtc {
-+	clocks = <&clock CLK_RTC>;
-+	clock-names = "rtc";
-+	interrupt-parent = <&pmu_system_controller>;
-+	status = "disabled";
-+};
-+
-+&serial_0 {
-+	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_1 {
-+	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_2 {
-+	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_3 {
-+	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 412f41d62686..3a1c46378460 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -989,7 +989,7 @@
- 	};
- };
- 
--&uart_3 {
-+&serial_3 {
- 	status = "okay";
- };
- 
--- 
-2.1.0
+I rebased your patches on top of latest linux-next (next-20150415) and
+tested it on my Exynos5420 Peach Pit. HDMI display is working
+correctly (both console and X) when CONFIG_DRM_EXYNOS_IOMMU is
+enabled. I also see that the mixer is attached to the IOMMU domain:
+
+exynos-mixer 14450000.mixer: exynos_iommu_attach_device: Attached
+IOMMU with pgtable 0x6e5e0000
+...
+exynos-sysmmu 14650000.sysmmu: Enabled
+
+As I mentioned before [0] on your v4 series, I still have the boot
+hang when CONFIG_DRM_EXYNOS_FIMD is enabled. You said that the cause
+is u-boot leaving the FIMD DMA engine enabled and so causing IOMMU
+page faults on init [1].
+
+I tried disabling the display on u-boot but the system hangs remains.
+But since I do a chain loading using the verified u-boot that comes
+with the Chromebooks, I don't know if the RO boot-loader is leaving
+something enabled.
+
+In any case since HDMI with sysmmu is working correctly, that issue is
+orthogonal to your series and can be fixed as a followup so:
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+NOTE: Most of the patches don't apply cleanly so I pushed a branch [2]
+with my conflict resolution so you don't have to do the same. I also
+did some small changes like using bool instead of int when were
+assigning it to true and renaming some of the subject lines to match
+the format used by the subsystem.
+
+What I didn't change is to re-order the sysmmu device nodes according
+to the unit address that was asked by Andreas since the DTS patches
+are likely to conflict with the work Krzysztof is doing to use labels
+instead of overriding nodes in Exynos 4 and 5 DTS[i]. So you may need
+to change those anyways once Krzysztof patches land.
+
+Best regards,
+Javier
+
+[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/317727.html
+[1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/319178.html
+[2]: http://cgit.collabora.com/git/user/javier/linux.git/log/?h=next20150415-exynos-iommu
