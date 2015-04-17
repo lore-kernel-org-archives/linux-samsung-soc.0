@@ -1,83 +1,68 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm
- IRQ on Arndale Octa
-Date: Fri, 17 Apr 2015 22:30:38 +0900
-Message-ID: <CAJKOXPfbsrkvXT_CBxZeDTLYdbwGMH=+5mnBLoy9Yfyp4thVQg@mail.gmail.com>
-References: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
- <1427985376-20420-3-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1427985376-20420-3-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v3 00/11] ARM: dts: exynos4: labels for overriding nodes
+Date: Fri, 17 Apr 2015 22:47:08 +0900
+Message-ID: <1429278439-3919-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-04-02 23:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> On Arndale Octa the S2MPS11 RTC alarm interrupt was not handled at all
-> because of wrong configuration of interrupt and gpx3-2.
-> 1. Interrupt is signaled by falling edge.
-> 2. This GPIO line is hard-wired on the board to PVDD_APIO_1V8 through a
->    resistor so pull-up/down must be disabled.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
 
-Dear Kukjin,
+Hi,
 
-Any comments  on this and other patches. A lot of emails waits for
-your opinion. Is there anything I could do to help you in smooth
-review or applying?
+Changes since v2
+================
+1. Fix typo in commit msg (lablels -> labels).
+
+Changes since v1
+================
+1. Re-phrased the description (phandle->label). Suggested by Arnd.
+
+Description
+===========
+
+The label-based notation reduces possible mistakes when overriding
+nodes by child DTSI and board files and reduces duplication
+of addresses.
+
+The patchset refactors Exynos4 boards to use labels for overriding nodes.
+
+Tested by comparison of decompiled DTB for each commit.
 
 Best regards,
 Krzysztof
 
->
-> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> index d78fcd997ce6..97346df31d41 100644
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> @@ -87,7 +87,9 @@
->                         s2mps11,buck4-ramp-enable = <1>;
->
->                         interrupt-parent = <&gpx3>;
-> -                       interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> +                       pinctrl-names = "default";
-> +                       pinctrl-0 = <&s2mps11_irq>;
->
->                         s2mps11_osc: clocks {
->                                 #clock-cells = <1>;
-> @@ -379,3 +381,12 @@
->         clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
->         clock-names = "rtc", "rtc_src";
->  };
-> +
-> +&pinctrl_0 {
-> +       s2mps11_irq: s2mps11-irq {
-> +               samsung,pins = "gpx3-2";
-> +               samsung,pin-function = <0xf>;
-> +               samsung,pin-pud = <0>;
-> +               samsung,pin-drv = <0>;
-> +       };
-> +};
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+Krzysztof Kozlowski (11):
+  ARM: dts: Add labels to Exynos4 nodes
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4210
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4210
+    Origen
+  ARM: dts: exynos4: Use labels for overriding nodes in SMDKv310
+  ARM: dts: exynos4: Use labels for overriding nodes in Trats
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4212
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4x12
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4412
+  ARM: dts: exynos4: Use labels for overriding nodes in Odroid
+  ARM: dts: exynos4: Use labels for overriding nodes in SMDK4412
+  ARM: dts: exynos4: Use labels for overriding nodes in Trats2
+
+ arch/arm/boot/dts/exynos4.dtsi                  |   22 +-
+ arch/arm/boot/dts/exynos4210-origen.dts         |  418 +++----
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi       |    6 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |  280 ++---
+ arch/arm/boot/dts/exynos4210-trats.dts          |  592 +++++-----
+ arch/arm/boot/dts/exynos4210.dtsi               |   49 +-
+ arch/arm/boot/dts/exynos4212.dtsi               |   12 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  728 ++++++-------
+ arch/arm/boot/dts/exynos4412-odroidx.dts        |   16 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |  210 ++--
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 1331 ++++++++++++-----------
+ arch/arm/boot/dts/exynos4412.dtsi               |   20 +-
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi       |    8 +-
+ arch/arm/boot/dts/exynos4x12.dtsi               |  212 ++--
+ 14 files changed, 1952 insertions(+), 1952 deletions(-)
+
+-- 
+2.1.0
