@@ -1,231 +1,94 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
-Date: Fri, 17 Apr 2015 14:39:21 +0200
-Message-ID: <20150417143921.36a5a66e@amdc2363>
-References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
- <1421667844-13627-2-git-send-email-l.majewski@samsung.com>
- <CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
- <20150122100124.65e7a19e@amdc2363>
- <CAM4voani1xcgRU3e11_pnYw4d7Yj=QOKun8g_DywmxDxOwEgRQ@mail.gmail.com>
- <20150129230616.GJ29837@developer.amazonguestwifi.org>
- <20150130091422.669930c8@amdc2363> <552E091A.2000902@samsung.com>
- <20150415130554.264b61cc@amdc2363> <552F09FD.7020200@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: Fw: Re: [PATCH 3/3] drm/exynos: enable/disable blend based on
+ pixel format
+Date: Fri, 17 Apr 2015 14:55:57 +0200
+Message-ID: <b1662c937f929c5111ed282285c63c23@math.uni-bielefeld.de>
+References: <1426775270-31137-1-git-send-email-gustavo@padovan.org>
+ <1426775270-31137-3-git-send-email-gustavo@padovan.org>,
+ <5530A552.7060600@samsung.com>
+ <trinity-82a40b8e-a2bb-425f-a1c6-15696573bf32-1429273719156@3capp-gmx-bs40>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19509 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751812AbbDQMja (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Apr 2015 08:39:30 -0400
-In-reply-to: <552F09FD.7020200@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <trinity-82a40b8e-a2bb-425f-a1c6-15696573bf32-1429273719156@3capp-gmx-bs40>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <Liquid.Acid@gmx.net>, gustavo@padovan.org, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Joonyoung,
-
-> Hi Lukasz,
-> 
-> On 04/15/2015 08:05 PM, Lukasz Majewski wrote:
-> > Hi Joonyoung,
-> > 
-> >> Hi Lukasz,
-> >>
-> >> On 01/30/2015 05:14 PM, Lukasz Majewski wrote:
-> >>> Hi Eduardo, Abhilash,
-> >>>
-> >>>> On Thu, Jan 22, 2015 at 06:02:07PM +0530, Abhilash Kesavan wrote:
-> >>>>> Hi Lukasz,
-> >>>>>
-> >>>>> On Thu, Jan 22, 2015 at 2:31 PM, Lukasz Majewski
-> >>>>> <l.majewski@samsung.com> wrote:
-> >>>>>> Hi Abhilash,
-> >>>>>>
-> >>>>>>> Hi Lukasz,
-> >>>>>>>
-> >>>>>>> On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski
-> >>>>>>> <l.majewski@samsung.com> wrote:
-> >>>>>>>> The exynos_map_dt_data() function must be called before
-> >>>>>>>> thermal_zone_of_sensor_register(), and hence provide
-> >>>>>>>> tmu_read() function, before it is needed.
-> >>>>>>>>
-> >>>>>>>> This change is driven by adding support for enabling
-> >>>>>>>> thermal_zoneX when it is properly initialized.
-> >>>>>>>>
-> >>>>>>>> One can read the mode of operation
-> >>>>>>>> at /sys/class/thermal/thermal_zone0/mode Such functionality
-> >>>>>>>> was missing in the of-thermal.c code.
-> >>>>>>>>
-> >>>>>>>> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> >>>>>>>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> >>>>>>>> ---
-> >>>>>>>>  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
-> >>>>>>>>  1 file changed, 4 insertions(+), 3 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> >>>>>>>> b/drivers/thermal/samsung/exynos_tmu.c index 9d2d685..5d946ab
-> >>>>>>>> 100644 --- a/drivers/thermal/samsung/exynos_tmu.c
-> >>>>>>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> >>>>>>>> @@ -975,15 +975,16 @@ static int exynos_tmu_probe(struct
-> >>>>>>>> platform_device *pdev) platform_set_drvdata(pdev, data);
-> >>>>>>>>         mutex_init(&data->lock);
-> >>>>>>>>
-> >>>>>>>> +       ret = exynos_map_dt_data(pdev);
-> >>>>>>>> +       if (ret)
-> >>>>>>>> +               goto err_sensor;
-> >>
-> >> It's enough to just return ret.
-> >>
-> >> One more, i think to need to take out regulator enable codes from
-> >> exynos_map_dt_data. If not, can't restore about regulator when
-> >> error occurs.
-> >>
-> >>>>>>>> +
-> >>>>>>>>         data->tzd =
-> >>>>>>>> thermal_zone_of_sensor_register(&pdev->dev, 0, data,
-> >>>>>>>> &exynos_sensor_ops); if (IS_ERR(data->tzd)) {
-> >>>>>>>>                 pr_err("thermal: tz: %p ERROR\n", data->tzd);
-> >>>>>>>>                 return PTR_ERR(data->tzd);
-> >>>>>>>>         }
-> >>>>>>>> -       ret = exynos_map_dt_data(pdev);
-> >>>>>>>> -       if (ret)
-> >>>>>>>> -               goto err_sensor;
-> >>>>>>>>
-> >>>>>>>>         pdata = data->pdata;
-> >>>>>>>
-> >>>>>>> I have been testing this along with your v5 patch set and am
-> >>>>>>> seeing incorrect temperature being reported at boot-up on
-> >>>>>>> exynos7.
-> >>>>>>
-> >>>>>> Does it show a maximal temperature value (0x1FF)?
-> >>>>>
-> >>>>> I did not print the current temperature register, but I remember
-> >>>>> the message showing ~105C. Will give you the register value when
-> >>>>> I test with more debug prints tomorrow.
-> >>>>>
-> >>>>>>
-> >>>>>>>  It looks
-> >>>>>>> like exynos_tmu_read gets called from
-> >>>>>>> thermal_zone_of_device_update during boot-up, now that we have
-> >>>>>>> it populated early. However, as the tmu initialization
-> >>>>>>> function has not been called yet it returns a wrong value.
-> >>>>>>> Does that sound correct ?
-> >>>>>>
-> >>>>>> No, this is a mistake. However, I'm wondering why on Exynos4/5
-> >>>>>> this error didn't show up...
-> >>>>>
-> >>>>> I have been lowering the software trip point temperature in the
-> >>>>> exynos7 dts file (to 55C) for testing purposes. Hence, when the
-> >>>>> temperature is read incorrectly as ~105C the board trips at
-> >>>>> boot-up
-> >>>
-> >>> 					^^^^ this is a very
-> >>> unusual value - I had problems with
-> >>> 					reading 0xFF values with
-> >>> 					similar symptom (but this
-> >>> was caused by lack of vtmu).
-> >>>
-> >>>>> itself. Maybe for exynos4/5 the incorrect value read during
-> >>>>> boot-up is in the non-tripping range and once the tmu is
-> >>>>> initialized later it continues to function properly thereafter ?
-> >>>>>
-> >>>>>>
-> >>>>>> The reordering is needed to be able to call set_mode callback
-> >>>>>> at of-thermal.c to set the mode.
-> >>>>>>
-> >>>>>> If this change causes problems, then another solution (probably
-> >>>>>> not so neat) must be found.
-> >>>>>
-> >>>>> Please let me know if you need any further details.
-> >>>
-> >>> Abhilash, could you provide more details (like relevant output
-> >>> from dmesg) and point me a list of patches which shall I apply to
-> >>> test this issue on Exynos4/5?
-> >>>
-> >>>>
-> >>>> What is the status of this patch? Is it still required?
-> >>>
-> >>> It is strange, since on Exynos4/5 this works and some problems
-> >>> show up when run on Exynos7.
-> >>>
-> >>
-> >> I'm also wondering the status of this patch.
-> > 
-> > This patch has been dropped.
-> > 
-> >>
-> >> I get below errors when boots odroidxu3 board without this patch.
-> > 
-> > Could you share the exact SHA1 and branch which you use in your
-> > setup?
-> > 
-> 
-> I tested with of odroidxu3 patchset for pwm-fan control of Anand Moon
-> on 20150414 -next.
-> 
-> http://www.spinics.net/lists/arm-kernel/msg412031.html
-> 
-> > For a reference please check following branch at github (this is the
-> > code which should be merged to v4.1-rc1)
-> > 
-> > git@github.com:lmajewski/linux-samsung-thermal.git
-> > 
-> > branch: next [1]
-> > 
-> > This branch includes exynos7 support done by Chanwoo.
-> > 
-> 
-> I got following errors from branch [1] without patchset of Anand Moon,
-> 
-> [    4.576442] thermal thermal_zone0: failed to read out thermal zone
-> 0 [    4.581685] 10060000.tmu supply vtmu not found, using dummy
-> regulator [    4.588223] thermal thermal_zone1: failed to read out
-> thermal zone 1 [    4.594110] 10064000.tmu supply vtmu not found,
-> using dummy regulator [    4.600849] thermal thermal_zone2: failed to
-> read out thermal zone 2 [    4.606847] 10068000.tmu supply vtmu not
-> found, using dummy regulator [    4.613640] thermal thermal_zone3:
-> failed to read out thermal zone 3 [    4.619584] 1006c000.tmu supply
-> vtmu not found, using dummy regulator [    4.626370] thermal
-> thermal_zone4: failed to read out thermal zone 4 [    4.632324]
-> 100a0000.tmu supply vtmu not found, using dummy regulator
-
-Could you check if after booting you can read temperature from thermal
-zones?
-
-> 
-> >>
-> >> [    4.831980] thermal thermal_zone0: failed to read out thermal
-> >> zone (-22) [    4.838096] thermal thermal_zone1: failed to read out
-> >> thermal zone (-22) [    4.844894] thermal thermal_zone2: failed to
-> >> read out thermal zone (-22) [    4.851470] thermal thermal_zone3:
-> >> failed to read out thermal zone (-22) [    4.858186] thermal
-> >> thermal_zone4: failed to read out thermal zone (-22)
-> >>
-> > 
-> > This issue has been fixed by following patch:
-> > "thermal: exynos: fix: Check if data->tmu_read callback is present
-> > before read"
-> > 
-> > SHA1: 4531fa1684bb883ee01f1a182900b1e15d461b3
-> > 
-> 
-> I already have this commit on my test branch.
-> 
-> > Please check [1] if it solves your problems.
-> > 
-> >> Thanks.
-> > 
-> 
-> Thanks.
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+SGVsbG8gSm9vbnlvdW5nLAoKSSB0aG91Z2h0IGFib3V0IHRoaXMgc29tZSBtb3JlLgoKCj4gR2Vz
+ZW5kZXQ6wqBGcmVpdGFnLCAxNy4gQXByaWwgMjAxNSB1bSAwODoxNiBVaHIKPiBWb246wqAiSm9v
+bnlvdW5nIFNoaW0iIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBBbjrCoCJHdXN0YXZvIFBh
+ZG92YW4iIDxndXN0YXZvQHBhZG92YW4ub3JnPiwgCj4gbGludXgtc2Ftc3VuZy1zb2NAdmdlci5r
+ZXJuZWwub3JnCj4gQ2M6wqBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnLCBpbmtpLmRh
+ZUBzYW1zdW5nLmNvbSwgIkd1c3Rhdm8KPiBQYWRvdmFuIiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxh
+Ym9yYS5jby51az4KPiBCZXRyZWZmOsKgUmU6IFtQQVRDSCAzLzNdIGRybS9leHlub3M6IGVuYWJs
+ZS9kaXNhYmxlIGJsZW5kIGJhc2VkIG9uIAo+IHBpeGVsIGZvcm1hdAo+IEhpIEd1c3Rhdm8sCj4g
+Cj4gT24gMDMvMTkvMjAxNSAxMToyNyBQTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+PiBGcm9t
+OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+IAo+
+PiBDaGFuZ2UgdGhlIHN3aXRjaCB0byB1c2UgdGhlIHBpeGVsX2Zvcm1hdCBpbnN0ZWFkIG9mIGJw
+cCB0byBmaWd1cmUgb3V0Cj4+IGlmIHdlIG5lZWQgdG8gZW5hYmxlIG9yIGRpc2FibGUgdGhlIGxh
+eWVyIGJsZW5kaW5nLgo+PiAKPiAKPiBUaGUgZGVmYXVsdCBjb25jZXB0IGlzIG9rIGFib3V0IGVu
+YWJsZSBvciBkaXNhYmxlIG9mIHBpeGVsIGJsZW5kaW5nCj4gZmVhdHVyZSBieSBwaXhlbF9mb3Jt
+YXQsIGJ1dCBpdCB3aWxsIG1ha2UgdG8gcG9zc2libGUgYmxlbmRpbmcgd2l0aAo+IGJhY2tncm91
+bmQgbGF5ZXIuIEknbSBub3Qgc3VyZSB3aGV0aGVyIGl0J3MgcHJvcGVyIG9yIG5vdC4KSSB0aGlu
+ayBvbmUgb2YgdGhlIHJlYXNvbnMgd2h5IHRoaXMgaXMgY3VycmVudGx5IGNhdXNpbmcgY29uZnVz
+aW9uIGlzIApiZWNhdXNlIHRoZSBiYWNrZ3JvdW5kIGxheWVyIGlzIG5vdCBleHBvc2VkIHRvIHVz
+ZXJzcGFjZS4gU28gYW4gaWRlYSAKd291bGQgYmUgdG8gZXhwb3NlIEJHIGFzIGEgbm9ybWFsIERS
+TSBwbGFuZSwgd2l0aCBhIGJhY2tncm91bmRfcmdiIApwcm9wZXJ5LgoKVGhlbiB3ZSBqdXN0IG5l
+ZWQgdG8ga2VlcCB0cmFjayB3aGljaCBwbGFuZXMgYXJlIGVuYWJsZWQuCgpFLmcuIGlmIGp1c3Qg
+dGhlIHByaW1hcnkgcGxhbmUgaXMgZW5hYmxlZCwgdGhlbiB3ZSBpZ25vcmUgYW55IGFscGhhIApw
+aXhlbGZvcm1hdCAoaW4gdGhlIHNlbnNlIHRoYXQgd2UgbWFwIGl0IHRvIGl0cyBub24tYWxwaGEg
+Y291bnRlcnBhcnQpLiAKSWYgYW5vdGhlciBwbGFuZSwgd2hpY2ggaXMgbG9jYXRlZCAndW5kZXJu
+ZWF0aCcsIGlzIGVuYWJsZWQsIHRoZW4gd2UgCmhvbm9yIHRoZSBhbHBoYS4gVGhpcyBjb3VsZCB0
+aGVuIGJlIHRoZSBiYWNrZ3JvdW5kIHBsYW5lLgoKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoK
+Cgo+IAo+IFRoYW5rcy4KPiAKPj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0
+YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+PiAtLS0KPj4gZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfbWl4ZXIuYyB8IDI5IAo+PiArKysrKysrKysrKysrKysrKysrKysrKysrLS0t
+LQo+PiAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPj4g
+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIAo+
+PiBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gaW5kZXggN2FmZjg4
+Zi4uMGM1NDA5OCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+bWl4ZXIuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+
+IEBAIC01MjksNyArNTI5LDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVj
+dCAKPj4gbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQo+PiB1bnNpZ25lZCBpbnQgeF9yYXRp
+bywgeV9yYXRpbzsKPj4gdW5zaWduZWQgaW50IHNyY194X29mZnNldCwgc3JjX3lfb2Zmc2V0LCBk
+c3RfeF9vZmZzZXQsIGRzdF95X29mZnNldDsKPj4gZG1hX2FkZHJfdCBkbWFfYWRkcjsKPj4gLSB1
+bnNpZ25lZCBpbnQgZm10Owo+PiArIHVuc2lnbmVkIGludCBmbXQsIGJsZW5kOwo+PiB1MzIgdmFs
+Owo+PiAKPj4gd2luX2RhdGEgPSAmY3R4LT53aW5fZGF0YVt3aW5dOwo+PiBAQCAtNTM5LDE1ICs1
+MzksMjYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCAKPj4gbWl4ZXJf
+Y29udGV4dCAqY3R4LCBpbnQgd2luKQo+PiAjZGVmaW5lIEFSR0I0NDQ0IDYKPj4gI2RlZmluZSBB
+UkdCODg4OCA3Cj4+IAo+PiAtIHN3aXRjaCAod2luX2RhdGEtPmJwcCkgewo+PiAtIGNhc2UgMTY6
+Cj4+ICsgc3dpdGNoICh3aW5fZGF0YS0+cGl4ZWxfZm9ybWF0KSB7Cj4+ICsgY2FzZSBEUk1fRk9S
+TUFUX0FSR0I0NDQ0Ogo+PiBmbXQgPSBBUkdCNDQ0NDsKPj4gKyBibGVuZCA9IDE7Cj4+IGJyZWFr
+Owo+PiAtIGNhc2UgMzI6Cj4+ICsKPj4gKyBjYXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6Cj4+ICsg
+Zm10ID0gQVJHQjg4ODg7Cj4+ICsgYmxlbmQgPSAxOwo+PiArIGJyZWFrOwo+PiArCj4+ICsgY2Fz
+ZSBEUk1fRk9STUFUX1hSR0I4ODg4Ogo+PiBmbXQgPSBBUkdCODg4ODsKPj4gKyBibGVuZCA9IDA7
+Cj4+IGJyZWFrOwo+PiArCj4+IGRlZmF1bHQ6Cj4+IGZtdCA9IEFSR0I4ODg4Owo+PiArIGJsZW5k
+ID0gMDsKPj4gKyBicmVhazsKPj4gfQo+PiAKPj4gaWYgKHdpbl9kYXRhLT5jcnRjX3dpZHRoICE9
+IHdpbl9kYXRhLT5zcmNfd2lkdGggfHwKPj4gQEAgLTU4Niw2ICs1OTcsMTYgQEAgc3RhdGljIHZv
+aWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCAKPj4gbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQg
+d2luKQo+PiBtaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfR1JBUEhJQ19TUEFOKHdpbiksCj4+IHdp
+bl9kYXRhLT5mYl9waXRjaCAvICh3aW5fZGF0YS0+YnBwID4+IDMpKTsKPj4gCj4+ICsgaWYgKGJs
+ZW5kKSB7Cj4+ICsgdmFsID0gTVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTDsKPj4gKyB2YWwgfD0g
+TVhSX0dSUF9DRkdfUElYRUxfQkxFTkRfRU47Cj4+ICsgfSBlbHNlIHsKPj4gKyB2YWwgPSAwOwo+
+PiArIH0KPj4gKyBtaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0dSQVBISUNfQ0ZHKHdpbiks
+IHZhbCwKPj4gKyBNWFJfR1JQX0NGR19CTEVORF9QUkVfTVVMCj4+ICsgfCBNWFJfR1JQX0NGR19Q
+SVhFTF9CTEVORF9FTik7Cj4+ICsKPj4gLyogc2V0dXAgZGlzcGxheSBzaXplICovCj4+IGlmIChj
+dHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCAmJgo+PiB3aW4gPT0gTUlYRVJfREVG
+QVVMVF9XSU4pIHsKPj4gCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
+c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgCj4gbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhl
+IGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1h
+am9yZG9tbyBpbmZvIGF0IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
+bAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
