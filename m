@@ -1,54 +1,83 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: s3c24xx-i2s: Fix return value check in
- s3c24xx_iis_dev_probe()
-Date: Fri, 17 Apr 2015 14:23:31 +0100
-Message-ID: <20150417132331.GB10513@sirena.org.uk>
-References: <1429186682-20629-1-git-send-email-weiyj_lk@163.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm
+ IRQ on Arndale Octa
+Date: Fri, 17 Apr 2015 22:30:38 +0900
+Message-ID: <CAJKOXPfbsrkvXT_CBxZeDTLYdbwGMH=+5mnBLoy9Yfyp4thVQg@mail.gmail.com>
+References: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
+ <1427985376-20420-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43608 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753362AbbDQNYm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Apr 2015 09:24:42 -0400
-Content-Disposition: inline
-In-Reply-To: <1429186682-20629-1-git-send-email-weiyj_lk@163.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1427985376-20420-3-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: weiyj_lk@163.com
-Cc: Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
+2015-04-02 23:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On Arndale Octa the S2MPS11 RTC alarm interrupt was not handled at all
+> because of wrong configuration of interrupt and gpx3-2.
+> 1. Interrupt is signaled by falling edge.
+> 2. This GPIO line is hard-wired on the board to PVDD_APIO_1V8 through a
+>    resistor so pull-up/down must be disabled.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 
---IiVenqGWf+H9Y6IX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dear Kukjin,
 
-On Thu, Apr 16, 2015 at 08:18:02PM +0800, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->=20
-> In case of error, the function devm_ioremap_resource() returns
-> ERR_PTR() and never returns NULL. The NULL test in the return
-> value check should be replaced with IS_ERR().
+Any comments  on this and other patches. A lot of emails waits for
+your opinion. Is there anything I could do to help you in smooth
+review or applying?
 
-Applied, thanks.
+Best regards,
+Krzysztof
 
---IiVenqGWf+H9Y6IX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVMQlTAAoJECTWi3JdVIfQ7usH/29jTfUa7Ysx/fcv/oRtjQWC
-wESIOxeJkIkXaZaf8GruC0awnnHUqw6fulQdf6ABVKpWuhmBB8F/zlrw289wEG6z
-Bhoh2cHKldD7OhrzzzamkmxBUSXrFTeJ7ATowKxX241lKMd2bVEeU9Bgu4t9BOZR
-WFAKZncVtkFC0IIW/XrOgBHFLrCHb1Tt3ec3Mu3Twaco20dMirgPtCY7yQyMRUC+
-qlPM52gSbZ88slw0RkVF9IDVFLyhlrq5/mLzePBIJoUWn3DzHwcLm3iOfSvh+dof
-2xgljn5+/J+oINn8+dZHU5urvJN8ijHKxQUe7L6E+kZNwBQUzOiwB0Kr6NyDZlg=
-=9KtI
------END PGP SIGNATURE-----
-
---IiVenqGWf+H9Y6IX--
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> index d78fcd997ce6..97346df31d41 100644
+> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> @@ -87,7 +87,9 @@
+>                         s2mps11,buck4-ramp-enable = <1>;
+>
+>                         interrupt-parent = <&gpx3>;
+> -                       interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+> +                       interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&s2mps11_irq>;
+>
+>                         s2mps11_osc: clocks {
+>                                 #clock-cells = <1>;
+> @@ -379,3 +381,12 @@
+>         clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
+>         clock-names = "rtc", "rtc_src";
+>  };
+> +
+> +&pinctrl_0 {
+> +       s2mps11_irq: s2mps11-irq {
+> +               samsung,pins = "gpx3-2";
+> +               samsung,pin-function = <0xf>;
+> +               samsung,pin-pud = <0>;
+> +               samsung,pin-drv = <0>;
+> +       };
+> +};
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
