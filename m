@@ -1,267 +1,63 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v3 07/11] ARM: dts: exynos4: Use labels for overriding nodes in Exynos4x12
-Date: Fri, 17 Apr 2015 22:47:15 +0900
-Message-ID: <1429278439-3919-8-git-send-email-k.kozlowski.k@gmail.com>
-References: <1429278439-3919-1-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v2 0/7] ARM: dts: exynos5: labels for overriding nodes
+Date: Fri, 17 Apr 2015 22:56:19 +0900
+Message-ID: <1429278986-4374-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1429278439-3919-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Usage of labels instead of full paths reduces possible mistakes when
-overriding nodes.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 210 +++++++++++++++++++-------------------
- 1 file changed, 105 insertions(+), 105 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 657b5ca39ce8..04812b842290 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -96,32 +96,6 @@
- 		};
- 	};
- 
--	combiner: interrupt-controller@10440000 {
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
--	};
--
--	pinctrl_0: pinctrl@11400000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x11400000 0x1000>;
--		interrupts = <0 47 0>;
--	};
--
--	pinctrl_1: pinctrl@11000000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x11000000 0x1000>;
--		interrupts = <0 46 0>;
--
--		wakup_eint: wakeup-interrupt-controller {
--			compatible = "samsung,exynos4210-wakeup-eint";
--			interrupt-parent = <&gic>;
--			interrupts = <0 32 0>;
--		};
--	};
--
- 	adc: adc@126C0000 {
- 		compatible = "samsung,exynos-adc-v1";
- 		reg = <0x126C0000 0x100>;
-@@ -135,30 +109,6 @@
- 		status = "disabled";
- 	};
- 
--	pinctrl_2: pinctrl@03860000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x03860000 0x1000>;
--		interrupt-parent = <&combiner>;
--		interrupts = <10 0>;
--	};
--
--	pinctrl_3: pinctrl@106E0000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x106E0000 0x1000>;
--		interrupts = <0 72 0>;
--	};
--
--	pmu_system_controller: system-controller@10020000 {
--		compatible = "samsung,exynos4212-pmu", "syscon";
--		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--				"clkout4", "clkout8", "clkout9";
--		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--			<&clock CLK_XUSBXTI>;
--		#clock-cells = <1>;
--	};
--
- 	g2d: g2d@10800000 {
- 		compatible = "samsung,exynos4212-g2d";
- 		reg = <0x10800000 0x1000>;
-@@ -173,40 +123,7 @@
- 			 <&clock CLK_PIXELASYNCM0>, <&clock CLK_PIXELASYNCM1>;
- 		clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
- 
--		fimc_0: fimc@11800000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <4224 8192 1920 4224>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,cam-if;
--		};
--
--		fimc_1: fimc@11810000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <4224 8192 1920 4224>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,cam-if;
--		};
--
--		fimc_2: fimc@11820000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <4224 8192 1920 4224>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,lcd-wb;
--			samsung,cam-if;
--		};
--
--		fimc_3: fimc@11830000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <1920 8192 1366 1920>;
--			samsung,rotators = <0>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,lcd-wb;
--		};
--
-+		/* fimc_[0-3] are configured outside, under phandles */
- 		fimc_lite_0: fimc-lite@12390000 {
- 			compatible = "samsung,exynos4212-fimc-lite";
- 			reg = <0x12390000 0x1000>;
-@@ -283,30 +200,113 @@
- 		clock-names = "biu", "ciu";
- 		status = "disabled";
- 	};
-+};
- 
--	exynos-usbphy@125B0000 {
--		compatible = "samsung,exynos4x12-usb2-phy";
--		samsung,sysreg-phandle = <&sys_reg>;
--	};
-+&combiner {
-+	interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+		     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+		     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-+		     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
-+};
- 
--	tmu@100C0000 {
--		compatible = "samsung,exynos4412-tmu";
--		interrupt-parent = <&combiner>;
--		interrupts = <2 4>;
--		reg = <0x100C0000 0x100>;
--		clocks = <&clock 383>;
--		clock-names = "tmu_apbif";
--		status = "disabled";
--	};
-+&exynos_usbphy {
-+	compatible = "samsung,exynos4x12-usb2-phy";
-+	samsung,sysreg-phandle = <&sys_reg>;
-+};
- 
--	hdmi: hdmi@12D00000 {
--		compatible = "samsung,exynos4212-hdmi";
--	};
-+&fimc_0 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <4224 8192 1920 4224>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,cam-if;
-+};
-+
-+&fimc_1 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <4224 8192 1920 4224>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,cam-if;
-+};
-+
-+&fimc_2 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <4224 8192 1920 4224>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,lcd-wb;
-+	samsung,cam-if;
-+};
-+
-+&fimc_3 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <1920 8192 1366 1920>;
-+	samsung,rotators = <0>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,lcd-wb;
-+};
-+
-+&hdmi {
-+	compatible = "samsung,exynos4212-hdmi";
-+};
- 
--	mixer: mixer@12C10000 {
--		compatible = "samsung,exynos4212-mixer";
--		clock-names = "mixer", "hdmi", "sclk_hdmi", "vp";
--		clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
--			 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>;
-+&mixer {
-+	compatible = "samsung,exynos4212-mixer";
-+	clock-names = "mixer", "hdmi", "sclk_hdmi", "vp";
-+	clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
-+		 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>;
-+};
-+
-+&pinctrl_0 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x11400000 0x1000>;
-+	interrupts = <0 47 0>;
-+};
-+
-+&pinctrl_1 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x11000000 0x1000>;
-+	interrupts = <0 46 0>;
-+
-+	wakup_eint: wakeup-interrupt-controller {
-+		compatible = "samsung,exynos4210-wakeup-eint";
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 32 0>;
- 	};
- };
-+
-+&pinctrl_2 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x03860000 0x1000>;
-+	interrupt-parent = <&combiner>;
-+	interrupts = <10 0>;
-+};
-+
-+&pinctrl_3 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x106E0000 0x1000>;
-+	interrupts = <0 72 0>;
-+};
-+
-+&pmu_system_controller {
-+	compatible = "samsung,exynos4212-pmu", "syscon";
-+	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+			"clkout4", "clkout8", "clkout9";
-+	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
-+	#clock-cells = <1>;
-+};
-+
-+&tmu {
-+	compatible = "samsung,exynos4412-tmu";
-+	interrupt-parent = <&combiner>;
-+	interrupts = <2 4>;
-+	reg = <0x100C0000 0x100>;
-+	clocks = <&clock 383>;
-+	clock-names = "tmu_apbif";
-+	status = "disabled";
-+};
+Changes since v1
+================
+1. Re-phrased the description (phandle->label). Suggested by Arnd.
+
+Description
+===========
+The label-based notation reduces possible mistakes when overriding
+nodes by child DTSI and board files and reduces duplication
+of addresses.
+
+The patchset refactors Exynos5 boards to use labels for overriding nodes.
+
+Tested by comparison of decompiled DTB for each commit.
+
+
+Patchset depends (to reduce conflicts) on following patches:
+1. v2: ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa
+   http://www.spinics.net/lists/arm-kernel/msg410429.html
+2. ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ on Arndale Octa
+   http://www.spinics.net/lists/linux-samsung-soc/msg43435.html
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (7):
+  ARM: dts: Add labels to Exynos5 nodes
+  ARM: dts: exynos5: Use labels for overriding nodes in Exynos5250
+  ARM: dts: exynos5: Remove duplicated I2C7 nodes in Snow
+  ARM: dts: exynos5: Use labels for overriding nodes in Arndale Octa
+  ARM: dts: exynos5: Use labels for overriding nodes in Exynos5420
+  ARM: dts: exynos5: Use labels for overriding nodes in SMDK5420
+  ARM: dts: exynos5: Use labels for overriding nodes in Exynos5440
+    boards
+
+ arch/arm/boot/dts/exynos5.dtsi                |   6 +-
+ arch/arm/boot/dts/exynos5250-snow.dts         |  46 +-
+ arch/arm/boot/dts/exynos5250.dtsi             |  82 ++--
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 634 ++++++++++++-------------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |   2 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     | 645 +++++++++++++-------------
+ arch/arm/boot/dts/exynos5420.dtsi             |  80 ++--
+ arch/arm/boot/dts/exynos5440-sd5v1.dts        |  10 +-
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts     |  85 ++--
+ arch/arm/boot/dts/exynos5440.dtsi             |   4 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |   2 +-
+ 11 files changed, 797 insertions(+), 799 deletions(-)
+
 -- 
 2.1.0
