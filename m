@@ -1,86 +1,74 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 Subject: Re: [PATCH v2 2/2] drm/exynos: remove unused 'activated' field from
- =?UTF-8?Q?exynos=5Fdrm=5Fplane?=
-Date: Fri, 17 Apr 2015 10:04:15 +0200
-Message-ID: <456f092fcd8f60331518a44fe898b0eb@math.uni-bielefeld.de>
+ exynos_drm_plane
+Date: Fri, 17 Apr 2015 17:23:43 +0900
+Message-ID: <5530C30F.6070208@samsung.com>
 References: <1429127692-5772-1-git-send-email-tjakobi@math.uni-bielefeld.de>
  <1429127692-5772-3-git-send-email-tjakobi@math.uni-bielefeld.de>
  <5530A896.2020208@samsung.com>
+ <456f092fcd8f60331518a44fe898b0eb@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:59457 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752647AbbDQIET (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Apr 2015 04:04:19 -0400
-In-Reply-To: <5530A896.2020208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <456f092fcd8f60331518a44fe898b0eb@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-Hello Joonyoung,
-
-On 2015-04-17 08:30, Joonyoung Shim wrote:
-> Hi Tobias,
-> 
-> On 04/16/2015 04:54 AM, Tobias Jakobi wrote:
->> No component of Exynos DRM uses this field. Perhaps it was
->> once meant to provide more fine-grained information in
->> addition to the status stored in the 'enabled' field.
->> 
->> Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h | 2 --
->>  1 file changed, 2 deletions(-)
->> 
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h 
->> b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> index 6a849cf..4c14a89 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -77,7 +77,6 @@ extern void exynos4412_qos(u8 tm, u8 ac);
->>   * @color_key: color key on or off.
->>   * @local_path: in case of lcd type, local path mode on or off.
->>   * @transparency: transparency on or off.
->> - * @activated: activated or not.
->>   * @enabled: enabled or not.
->>   * @resume: to resume or not.
->>   *
->> @@ -112,7 +111,6 @@ struct exynos_drm_plane {
->>  	bool color_key:1;
->>  	bool local_path:1;
->>  	bool transparency:1;
->> -	bool activated:1;
->>  	bool enabled:1;
->>  	bool resume:1;
->>  };
->> 
-> 
-> The following fields also are unused in exynos drm driver,
-> - default win, color_key, local_path, transparency
-Yeah, looks like it. I just stumbled upon 'activated' because I was 
-wondering what the difference between 'enabled' and 'activated' was. 
-Grepping than revealed that nothing was using that field. I didn't check 
-any other fields.
-
-Also I just noticed that due to how git formats the patches, this one 
-doesn't apply to any of Inki's branches (due to the 'extern void 
-exynos4412_qos(u8 tm, u8 ac);' line).
-
-Should I respin this, and if yes, should I also drop the other fields 
-mentioned? Question is more directed to Gustavo, since he's cleaning 
-'exynos_drm_plane' anyway.
-
-
-> Inki, how about remove unused fields?
-> 
-> Thanks.
-
-
-With best wishes,
-Tobias
+SGkgVG9iaWFzLAoKT24gMDQvMTcvMjAxNSAwNTowNCBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
+PiBIZWxsbyBKb29ueW91bmcsCj4gCj4gT24gMjAxNS0wNC0xNyAwODozMCwgSm9vbnlvdW5nIFNo
+aW0gd3JvdGU6Cj4+IEhpIFRvYmlhcywKPj4KPj4gT24gMDQvMTYvMjAxNSAwNDo1NCBBTSwgVG9i
+aWFzIEpha29iaSB3cm90ZToKPj4+IE5vIGNvbXBvbmVudCBvZiBFeHlub3MgRFJNIHVzZXMgdGhp
+cyBmaWVsZC4gUGVyaGFwcyBpdCB3YXMKPj4+IG9uY2UgbWVhbnQgdG8gcHJvdmlkZSBtb3JlIGZp
+bmUtZ3JhaW5lZCBpbmZvcm1hdGlvbiBpbgo+Pj4gYWRkaXRpb24gdG8gdGhlIHN0YXR1cyBzdG9y
+ZWQgaW4gdGhlICdlbmFibGVkJyBmaWVsZC4KPj4+Cj4+PiBSZXZpZXdlZC1ieTogR3VzdGF2byBQ
+YWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+Pj4gU2lnbmVkLW9mZi1i
+eTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+PiAtLS0K
+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggfCAyIC0tCj4+PiAg
+MSBmaWxlIGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4gaW5kZXggNmE4NDljZi4uNGMxNGE4OSAxMDA2NDQKPj4+
+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+Pj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+PiBAQCAtNzcsNyArNzcs
+NiBAQCBleHRlcm4gdm9pZCBleHlub3M0NDEyX3Fvcyh1OCB0bSwgdTggYWMpOwo+Pj4gICAqIEBj
+b2xvcl9rZXk6IGNvbG9yIGtleSBvbiBvciBvZmYuCj4+PiAgICogQGxvY2FsX3BhdGg6IGluIGNh
+c2Ugb2YgbGNkIHR5cGUsIGxvY2FsIHBhdGggbW9kZSBvbiBvciBvZmYuCj4+PiAgICogQHRyYW5z
+cGFyZW5jeTogdHJhbnNwYXJlbmN5IG9uIG9yIG9mZi4KPj4+IC0gKiBAYWN0aXZhdGVkOiBhY3Rp
+dmF0ZWQgb3Igbm90Lgo+Pj4gICAqIEBlbmFibGVkOiBlbmFibGVkIG9yIG5vdC4KPj4+ICAgKiBA
+cmVzdW1lOiB0byByZXN1bWUgb3Igbm90Lgo+Pj4gICAqCj4+PiBAQCAtMTEyLDcgKzExMSw2IEBA
+IHN0cnVjdCBleHlub3NfZHJtX3BsYW5lIHsKPj4+ICAgICAgYm9vbCBjb2xvcl9rZXk6MTsKPj4+
+ICAgICAgYm9vbCBsb2NhbF9wYXRoOjE7Cj4+PiAgICAgIGJvb2wgdHJhbnNwYXJlbmN5OjE7Cj4+
+PiAtICAgIGJvb2wgYWN0aXZhdGVkOjE7Cj4+PiAgICAgIGJvb2wgZW5hYmxlZDoxOwo+Pj4gICAg
+ICBib29sIHJlc3VtZToxOwo+Pj4gIH07Cj4+Pgo+Pgo+PiBUaGUgZm9sbG93aW5nIGZpZWxkcyBh
+bHNvIGFyZSB1bnVzZWQgaW4gZXh5bm9zIGRybSBkcml2ZXIsCj4+IC0gZGVmYXVsdCB3aW4sIGNv
+bG9yX2tleSwgbG9jYWxfcGF0aCwgdHJhbnNwYXJlbmN5Cj4gWWVhaCwgbG9va3MgbGlrZSBpdC4g
+SSBqdXN0IHN0dW1ibGVkIHVwb24gJ2FjdGl2YXRlZCcgYmVjYXVzZSBJIHdhcyB3b25kZXJpbmcg
+d2hhdCB0aGUgZGlmZmVyZW5jZSBiZXR3ZWVuICdlbmFibGVkJyBhbmQgJ2FjdGl2YXRlZCcgd2Fz
+LiBHcmVwcGluZyB0aGFuIHJldmVhbGVkIHRoYXQgbm90aGluZyB3YXMgdXNpbmcgdGhhdCBmaWVs
+ZC4gSSBkaWRuJ3QgY2hlY2sgYW55IG90aGVyIGZpZWxkcy4KPiAKCkFjdHVhbGx5IGkgZG9uJ3Qg
+a25vdyBhYm91dCBhY3RpdmF0ZWQgZmllbGQgYnV0IGkgdGhpbmsgbWF5YmUgYWN0aXZhdGVkCmZp
+ZWxkIGFuZCBvdGhlciBmaWVsZHMgc2VlbSBiZSBqdXN0IHJlc2VydmVkIGZvciBhbnkgZmVhdHVy
+ZXMgbGF0ZXIgd2hlbgpleHlub3MgZHJtIGRyaXZlciB3YXMgcG9zdGVkIGZpcnN0LgoKPiBBbHNv
+IEkganVzdCBub3RpY2VkIHRoYXQgZHVlIHRvIGhvdyBnaXQgZm9ybWF0cyB0aGUgcGF0Y2hlcywg
+dGhpcyBvbmUgZG9lc24ndCBhcHBseSB0byBhbnkgb2YgSW5raSdzIGJyYW5jaGVzIChkdWUgdG8g
+dGhlICdleHRlcm4gdm9pZCBleHlub3M0NDEyX3Fvcyh1OCB0bSwgdTggYWMpOycgbGluZSkuCj4g
+Cj4gU2hvdWxkIEkgcmVzcGluIHRoaXMsIGFuZCBpZiB5ZXMsIHNob3VsZCBJIGFsc28gZHJvcCB0
+aGUgb3RoZXIgZmllbGRzIG1lbnRpb25lZD8gUXVlc3Rpb24gaXMgbW9yZSBkaXJlY3RlZCB0byBH
+dXN0YXZvLCBzaW5jZSBoZSdzIGNsZWFuaW5nICdleHlub3NfZHJtX3BsYW5lJyBhbnl3YXkuCj4g
+CgpJIHRoaW5rIHlvdSBjYW4gcG9zdCBwYXRjaCBiYXNlZCBvbiBsYXRlc3QgYnJhbmNoKGV4eW5v
+cy1kcm0tbmV4dCkgb2YKSW5raSB3aXRoIHJlbW92aW5nIG90aGVyIGZpZWxkcy4KClRoYW5rcy4K
+Cj4gCj4+IElua2ksIGhvdyBhYm91dCByZW1vdmUgdW51c2VkIGZpZWxkcz8KPj4KPj4gVGhhbmtz
+Lgo+IAo+IAo+IFdpdGggYmVzdCB3aXNoZXMsCj4gVG9iaWFzCj4gCj4gCj4gCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
