@@ -1,63 +1,87 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v2 0/7] ARM: dts: exynos5: labels for overriding nodes
-Date: Fri, 17 Apr 2015 22:56:19 +0900
-Message-ID: <1429278986-4374-1-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v2 3/7] ARM: dts: exynos5: Remove duplicated I2C7 nodes in Snow
+Date: Fri, 17 Apr 2015 22:56:22 +0900
+Message-ID: <1429278986-4374-4-git-send-email-k.kozlowski.k@gmail.com>
+References: <1429278986-4374-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1429278986-4374-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The i2c_7 node (i2c@12CD0000) with LVDS bridge child node was put in
+Exynos5250 Snow DTS file twice. Move the LVDS bridge to proper existing
+i2c_7 node.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ arch/arm/boot/dts/exynos5250-snow.dts | 46 +++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 24 deletions(-)
 
-Changes since v1
-================
-1. Re-phrased the description (phandle->label). Suggested by Arnd.
-
-Description
-===========
-The label-based notation reduces possible mistakes when overriding
-nodes by child DTSI and board files and reduces duplication
-of addresses.
-
-The patchset refactors Exynos5 boards to use labels for overriding nodes.
-
-Tested by comparison of decompiled DTB for each commit.
-
-
-Patchset depends (to reduce conflicts) on following patches:
-1. v2: ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa
-   http://www.spinics.net/lists/arm-kernel/msg410429.html
-2. ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ on Arndale Octa
-   http://www.spinics.net/lists/linux-samsung-soc/msg43435.html
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (7):
-  ARM: dts: Add labels to Exynos5 nodes
-  ARM: dts: exynos5: Use labels for overriding nodes in Exynos5250
-  ARM: dts: exynos5: Remove duplicated I2C7 nodes in Snow
-  ARM: dts: exynos5: Use labels for overriding nodes in Arndale Octa
-  ARM: dts: exynos5: Use labels for overriding nodes in Exynos5420
-  ARM: dts: exynos5: Use labels for overriding nodes in SMDK5420
-  ARM: dts: exynos5: Use labels for overriding nodes in Exynos5440
-    boards
-
- arch/arm/boot/dts/exynos5.dtsi                |   6 +-
- arch/arm/boot/dts/exynos5250-snow.dts         |  46 +-
- arch/arm/boot/dts/exynos5250.dtsi             |  82 ++--
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 634 ++++++++++++-------------
- arch/arm/boot/dts/exynos5420-peach-pit.dts    |   2 +-
- arch/arm/boot/dts/exynos5420-smdk5420.dts     | 645 +++++++++++++-------------
- arch/arm/boot/dts/exynos5420.dtsi             |  80 ++--
- arch/arm/boot/dts/exynos5440-sd5v1.dts        |  10 +-
- arch/arm/boot/dts/exynos5440-ssdk5440.dts     |  85 ++--
- arch/arm/boot/dts/exynos5440.dtsi             |   4 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts     |   2 +-
- 11 files changed, 797 insertions(+), 799 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 2657e842e5a5..7ecdad0517e7 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -177,30 +177,6 @@
+ 		};
+ 	};
+ 
+-	i2c@12CD0000 {
+-		ptn3460: lvds-bridge@20 {
+-			compatible = "nxp,ptn3460";
+-			reg = <0x20>;
+-			powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
+-			reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
+-			edid-emulation = <5>;
+-
+-			ports {
+-				port@0 {
+-					bridge_out: endpoint {
+-						remote-endpoint = <&panel_in>;
+-					};
+-				};
+-
+-				port@1 {
+-					bridge_in: endpoint {
+-						remote-endpoint = <&dp_out>;
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+ 	sound {
+ 		compatible = "google,snow-audio-max98095";
+ 
+@@ -507,6 +483,28 @@
+ 	samsung,i2c-sda-delay = <100>;
+ 	samsung,i2c-max-bus-freq = <66000>;
+ 
++	ptn3460: lvds-bridge@20 {
++		compatible = "nxp,ptn3460";
++		reg = <0x20>;
++		powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
++		edid-emulation = <5>;
++
++		ports {
++			port@0 {
++				bridge_out: endpoint {
++					remote-endpoint = <&panel_in>;
++				};
++			};
++
++			port@1 {
++				bridge_in: endpoint {
++					remote-endpoint = <&dp_out>;
++				};
++			};
++		};
++	};
++
+ 	max98095: codec@11 {
+ 		compatible = "maxim,max98095";
+ 		reg = <0x11>;
 -- 
 2.1.0
