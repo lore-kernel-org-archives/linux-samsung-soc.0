@@ -1,13 +1,25 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCHv2 06/11] ARM: dts: exynos4: Use labels for overriding nodes in Exynos4212
-Date: Fri, 17 Apr 2015 22:21:07 +0900
-Message-ID: <1429276870-19506-7-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCHv2 04/11] ARM: dts: exynos4: Use labels for overriding nodes in
+ SMDKv310
+Date: Fri, 17 Apr 2015 22:21:05 +0900
+Message-ID: <1429276870-19506-5-git-send-email-k.kozlowski.k@gmail.com>
 References: <1429276870-19506-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1429276870-19506-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Usage of lablels instead of full paths reduces possible mistakes when
@@ -15,31 +27,334 @@ overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos4212.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/exynos4210-smdkv310.dts | 280 +++++++++++++++---------------
+ 1 file changed, 140 insertions(+), 140 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 5be03288f1ee..d9c8efeef208 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -41,12 +41,12 @@
- 			reg = <0xA01>;
- 		};
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index 86216fff1b4f..043b03caff8f 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -30,181 +30,181 @@
+ 		stdout-path = &serial_1;
+ 	};
+ 
+-	sdhci@12530000 {
+-		bus-width = <4>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-		status = "okay";
+-	};
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti";
++			clock-frequency = <12000000>;
++		};
+ 
+-	g2d@12800000 {
+-		status = "okay";
++		xusbxti {
++			compatible = "samsung,clock-xusbxti";
++			clock-frequency = <24000000>;
++		};
  	};
 +};
  
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <18>;
+-	codec@13400000 {
+-		samsung,mfc-r = <0x43000000 0x800000>;
+-		samsung,mfc-l = <0x51000000 0x800000>;
+-		status = "okay";
 -	};
-+&combiner {
-+	samsung,combiner-nr = <18>;
++&g2d {
++	status = "okay";
 +};
  
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x8000>;
+-	serial@13800000 {
+-		status = "okay";
 -	};
-+&gic {
-+	cpu-offset = <0x8000>;
++&i2c_0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-max-bus-freq = <100000>;
++	status = "okay";
+ 
+-	serial@13810000 {
+-		status = "okay";
++	eeprom@50 {
++		compatible = "samsung,24ad0xd1";
++		reg = <0x50>;
+ 	};
+ 
+-	serial@13820000 {
+-		status = "okay";
++	eeprom@52 {
++		compatible = "samsung,24ad0xd1";
++		reg = <0x52>;
+ 	};
++};
+ 
+-	serial@13830000 {
+-		status = "okay";
++&keypad {
++	samsung,keypad-num-rows = <2>;
++	samsung,keypad-num-columns = <8>;
++	linux,keypad-no-autorepeat;
++	linux,keypad-wakeup;
++	pinctrl-names = "default";
++	pinctrl-0 = <&keypad_rows &keypad_cols>;
++	status = "okay";
++
++	key_1 {
++		keypad,row = <0>;
++		keypad,column = <3>;
++		linux,code = <2>;
+ 	};
+ 
+-	pinctrl@11000000 {
+-		keypad_rows: keypad-rows {
+-			samsung,pins = "gpx2-0", "gpx2-1";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		keypad_cols: keypad-cols {
+-			samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
+-				       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
++	key_2 {
++		keypad,row = <0>;
++		keypad,column = <4>;
++		linux,code = <3>;
+ 	};
+ 
+-	keypad@100A0000 {
+-		samsung,keypad-num-rows = <2>;
+-		samsung,keypad-num-columns = <8>;
+-		linux,keypad-no-autorepeat;
+-		linux,keypad-wakeup;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&keypad_rows &keypad_cols>;
+-		status = "okay";
++	key_3 {
++		keypad,row = <0>;
++		keypad,column = <5>;
++		linux,code = <4>;
++	};
+ 
+-		key_1 {
+-			keypad,row = <0>;
+-			keypad,column = <3>;
+-			linux,code = <2>;
+-		};
++	key_4 {
++		keypad,row = <0>;
++		keypad,column = <6>;
++		linux,code = <5>;
++	};
+ 
+-		key_2 {
+-			keypad,row = <0>;
+-			keypad,column = <4>;
+-			linux,code = <3>;
+-		};
++	key_5 {
++		keypad,row = <0>;
++		keypad,column = <7>;
++		linux,code = <6>;
++	};
+ 
+-		key_3 {
+-			keypad,row = <0>;
+-			keypad,column = <5>;
+-			linux,code = <4>;
+-		};
++	key_a {
++		keypad,row = <1>;
++		keypad,column = <3>;
++		linux,code = <30>;
++	};
+ 
+-		key_4 {
+-			keypad,row = <0>;
+-			keypad,column = <6>;
+-			linux,code = <5>;
+-		};
++	key_b {
++		keypad,row = <1>;
++		keypad,column = <4>;
++		linux,code = <48>;
++	};
+ 
+-		key_5 {
+-			keypad,row = <0>;
+-			keypad,column = <7>;
+-			linux,code = <6>;
+-		};
++	key_c {
++		keypad,row = <1>;
++		keypad,column = <5>;
++		linux,code = <46>;
++	};
+ 
+-		key_a {
+-			keypad,row = <1>;
+-			keypad,column = <3>;
+-			linux,code = <30>;
+-		};
++	key_d {
++		keypad,row = <1>;
++		keypad,column = <6>;
++		linux,code = <32>;
++	};
+ 
+-		key_b {
+-			keypad,row = <1>;
+-			keypad,column = <4>;
+-			linux,code = <48>;
+-		};
++	key_e {
++		keypad,row = <1>;
++		keypad,column = <7>;
++		linux,code = <18>;
++	};
++};
+ 
+-		key_c {
+-			keypad,row = <1>;
+-			keypad,column = <5>;
+-			linux,code = <46>;
+-		};
++&mfc {
++	samsung,mfc-r = <0x43000000 0x800000>;
++	samsung,mfc-l = <0x51000000 0x800000>;
++	status = "okay";
++};
+ 
+-		key_d {
+-			keypad,row = <1>;
+-			keypad,column = <6>;
+-			linux,code = <32>;
+-		};
++&pinctrl_1 {
++	keypad_rows: keypad-rows {
++		samsung,pins = "gpx2-0", "gpx2-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
+ 
+-		key_e {
+-			keypad,row = <1>;
+-			keypad,column = <7>;
+-			linux,code = <18>;
+-		};
++	keypad_cols: keypad-cols {
++		samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
++			       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
+ 	};
++};
+ 
+-	i2c@13860000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <100000>;
+-		status = "okay";
+-
+-		eeprom@50 {
+-			compatible = "samsung,24ad0xd1";
+-			reg = <0x50>;
+-		};
++&sdhci_2 {
++	bus-width = <4>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++	status = "okay";
++};
+ 
+-		eeprom@52 {
+-			compatible = "samsung,24ad0xd1";
+-			reg = <0x52>;
+-		};
+-	};
++&serial_0 {
++	status = "okay";
++};
+ 
+-	spi_2: spi@13940000 {
+-		cs-gpios = <&gpc1 2 0>;
+-		status = "okay";
++&serial_1 {
++	status = "okay";
++};
+ 
+-		w25x80@0 {
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			compatible = "w25x80";
+-			reg = <0>;
+-			spi-max-frequency = <1000000>;
++&serial_2 {
++	status = "okay";
++};
+ 
+-			controller-data {
+-				samsung,spi-feedback-delay = <0>;
+-			};
++&serial_3 {
++	status = "okay";
++};
+ 
+-			partition@0 {
+-				label = "U-Boot";
+-				reg = <0x0 0x40000>;
+-				read-only;
+-			};
++&spi_2 {
++	cs-gpios = <&gpc1 2 0>;
++	status = "okay";
+ 
+-			partition@40000 {
+-				label = "Kernel";
+-				reg = <0x40000 0xc0000>;
+-			};
++	w25x80@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "w25x80";
++		reg = <0>;
++		spi-max-frequency = <1000000>;
++
++		controller-data {
++			samsung,spi-feedback-delay = <0>;
+ 		};
+-	};
+ 
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <12000000>;
++		partition@0 {
++			label = "U-Boot";
++			reg = <0x0 0x40000>;
++			read-only;
+ 		};
+ 
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
++		partition@40000 {
++			label = "Kernel";
++			reg = <0x40000 0xc0000>;
+ 		};
+ 	};
  };
 -- 
 2.1.0
