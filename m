@@ -1,61 +1,99 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCHv2 08/11] ARM: dts: exynos4: Use labels for overriding nodes in Exynos4412
-Date: Fri, 17 Apr 2015 22:21:09 +0900
-Message-ID: <1429276870-19506-9-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCHv2 02/11] ARM: dts: exynos4: Use labels for overriding nodes in
+ Exynos4210
+Date: Fri, 17 Apr 2015 22:21:03 +0900
+Message-ID: <1429276870-19506-3-git-send-email-k.kozlowski.k@gmail.com>
 References: <1429276870-19506-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:35637 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753977AbbDQNWI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Apr 2015 09:22:08 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1429276870-19506-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Usage of lablels instead of full paths reduces possible mistakes when
 overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos4412.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/exynos4210.dtsi | 43 +++++++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 68ad43b391ae..b78ada70bd05 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -54,19 +54,19 @@
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 76b84852f29c..a9a55304e31a 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -52,16 +52,6 @@
  		};
  	};
  
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <20>;
+-	pmu_system_controller: system-controller@10020000 {
+-		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
+-				"clkout4", "clkout8", "clkout9";
+-		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
+-			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
+-			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
+-			<&clock CLK_XUSBXTI>;
+-		#clock-cells = <1>;
 -	};
 -
- 	pmu {
- 		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+ 	sysram: sysram@02020000 {
+ 		compatible = "mmio-sram";
+ 		reg = <0x02020000 0x20000>;
+@@ -95,18 +85,6 @@
+ 		arm,data-latency = <2 2 1>;
  	};
-+};
  
 -	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x4000>;
+-		cpu-offset = <0x8000>;
 -	};
-+&pmu_system_controller {
-+	compatible = "samsung,exynos4412-pmu", "syscon";
-+};
- 
--	pmu_system_controller: system-controller@10020000 {
--		compatible = "samsung,exynos4412-pmu", "syscon";
+-
+-	combiner: interrupt-controller@10440000 {
+-		samsung,combiner-nr = <16>;
+-		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
 -	};
-+&combiner {
-+	samsung,combiner-nr = <20>;
-+};
+-
+ 	mct: mct@10050000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x10050000 0x800>;
+@@ -245,3 +223,24 @@
+ 		status = "disabled";
+ 	};
+ };
 +
 +&gic {
-+	cpu-offset = <0x4000>;
- };
++	cpu-offset = <0x8000>;
++};
++
++&combiner {
++	samsung,combiner-nr = <16>;
++	interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
++		     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
++		     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
++		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
++};
++
++&pmu_system_controller {
++	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
++			"clkout4", "clkout8", "clkout9";
++	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
++		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
++		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
++	#clock-cells = <1>;
++};
 -- 
 2.1.0
