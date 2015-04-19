@@ -1,83 +1,117 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [PATCH v2 2/2] drm/exynos: remove unused 'activated' field from
- exynos_drm_plane
-Date: Fri, 17 Apr 2015 16:00:17 -0300
-Message-ID: <20150417190017.GB1997@joana>
-References: <1429127692-5772-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1429127692-5772-3-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5530A896.2020208@samsung.com>
- <456f092fcd8f60331518a44fe898b0eb@math.uni-bielefeld.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Sun, 19 Apr 2015 14:13:04 +0200
+Message-ID: <7408975.lBcgZIN9hf@diego>
+References: <1429255769-13639-1-git-send-email-boris.brezillon@free-electrons.com> <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:39406 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751283AbbDQTAZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Apr 2015 15:00:25 -0400
-Content-Disposition: inline
-In-Reply-To: <456f092fcd8f60331518a44fe898b0eb@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com
 
-2015-04-17 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+Hi Boris,
 
-> Hello Joonyoung,
+Am Freitag, 17. April 2015, 09:29:28 schrieb Boris Brezillon:
+> Clock rates are stored in an unsigned long field, but ->round_rate()
+> (which returns a rounded rate from a requested one) returns a long
+> value (errors are reported using negative error codes), which can lead
+> to long overflow if the clock rate exceed 2Ghz.
 > 
-> On 2015-04-17 08:30, Joonyoung Shim wrote:
-> >Hi Tobias,
-> >
-> >On 04/16/2015 04:54 AM, Tobias Jakobi wrote:
-> >>No component of Exynos DRM uses this field. Perhaps it was
-> >>once meant to provide more fine-grained information in
-> >>addition to the status stored in the 'enabled' field.
-> >>
-> >>Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >>Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> >>---
-> >> drivers/gpu/drm/exynos/exynos_drm_drv.h | 2 --
-> >> 1 file changed, 2 deletions(-)
-> >>
-> >>diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> >>b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> >>index 6a849cf..4c14a89 100644
-> >>--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> >>+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> >>@@ -77,7 +77,6 @@ extern void exynos4412_qos(u8 tm, u8 ac);
-> >>  * @color_key: color key on or off.
-> >>  * @local_path: in case of lcd type, local path mode on or off.
-> >>  * @transparency: transparency on or off.
-> >>- * @activated: activated or not.
-> >>  * @enabled: enabled or not.
-> >>  * @resume: to resume or not.
-> >>  *
-> >>@@ -112,7 +111,6 @@ struct exynos_drm_plane {
-> >> 	bool color_key:1;
-> >> 	bool local_path:1;
-> >> 	bool transparency:1;
-> >>-	bool activated:1;
-> >> 	bool enabled:1;
-> >> 	bool resume:1;
-> >> };
-> >>
-> >
-> >The following fields also are unused in exynos drm driver,
-> >- default win, color_key, local_path, transparency
-> Yeah, looks like it. I just stumbled upon 'activated' because I was
-> wondering what the difference between 'enabled' and 'activated' was.
-> Grepping than revealed that nothing was using that field. I didn't check any
-> other fields.
+> Change ->round_rate() prototype to return 0 or an error code, and pass the
+> requested rate as a pointer so that it can be adjusted depending on
+> hardware capabilities.
 > 
-> Also I just noticed that due to how git formats the patches, this one
-> doesn't apply to any of Inki's branches (due to the 'extern void
-> exynos4412_qos(u8 tm, u8 ac);' line).
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+
+On a rk3288-veyron-pinky with the fix described below:
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index fa5a00e..1462ddc 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1640,8 +1643,10 @@ static struct clk_core *clk_calc_new_rates(struct
+> clk_core *clk, &parent_hw);
+>  		parent = parent_hw ? parent_hw->core : NULL;
+>  	} else if (clk->ops->round_rate) {
+> -		new_rate = clk->ops->round_rate(clk->hw, rate,
+> -						&best_parent_rate);
+> +		if (clk->ops->round_rate(clk->hw, &new_rate,
+> +					 &best_parent_rate))
+> +			return NULL;
+> +
+>  		if (new_rate < min_rate || new_rate > max_rate)
+>  			return NULL;
+>  	} else if (!parent || !(clk->flags & CLK_SET_RATE_PARENT)) {
+
+This is using new_rate uninitialized when calling into the round_rate
+callback. Which in turn pushed my PLLs up to 2.2GHz :-)
+
+I guess you'll need something like the following:
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index db4e4b2..afc7733 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1605,6 +1605,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *clk,
+ 						    &parent_hw);
+ 		parent = parent_hw ? parent_hw->core : NULL;
+ 	} else if (clk->ops->round_rate) {
++		new_rate = rate;
+ 		if (clk->ops->round_rate(clk->hw, &new_rate,
+ 					 &best_parent_rate))
+ 			return NULL;
+
+
+
+
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index f8d3baf..bd408ef 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -63,8 +63,8 @@ static const struct rockchip_pll_rate_table
+> *rockchip_get_pll_settings( return NULL;
+>  }
 > 
-> Should I respin this, and if yes, should I also drop the other fields
-> mentioned? Question is more directed to Gustavo, since he's cleaning
-> 'exynos_drm_plane' anyway.
+> -static long rockchip_pll_round_rate(struct clk_hw *hw,
+> -			    unsigned long drate, unsigned long *prate)
+> +static int rockchip_pll_round_rate(struct clk_hw *hw,
+> +			    unsigned long *drate, unsigned long *prate)
+>  {
+>  	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+>  	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
+> @@ -72,12 +72,15 @@ static long rockchip_pll_round_rate(struct clk_hw *hw,
+> 
+>  	/* Assumming rate_table is in descending order */
+>  	for (i = 0; i < pll->rate_count; i++) {
+> -		if (drate >= rate_table[i].rate)
+> -			return rate_table[i].rate;
+> +		if (*drate >= rate_table[i].rate) {
+> +			*drate = rate_table[i].rate;
+> +			return 0;
+> +		}
+>  	}
+> 
+>  	/* return minimum supported value */
+> -	return rate_table[i - 1].rate;
+> +	*drate = rate_table[i - 1].rate;
+> +	return 0;
+>  }
+> 
+>  /*
 
-Let's remove them now, that doesn't affect my work.
+The rockchip-part:
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-	Gustavo
+
+And as I've stumbled onto this recently too, the clock-maintainership has
+expanded to Stephen Boyd and linux-clk@vger.kernel.org .
+
+
+Heiko
