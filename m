@@ -1,71 +1,123 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 2/5] exynos: add EXYNOS_G2D_EVENT to drmHandleEvent
-Date: Tue, 21 Apr 2015 18:14:35 +0000
-Message-ID: <5536938B.8060605@gmail.com>
-References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de> <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com> <9f0f7af7b53d22b2be2dd1b25ebbad56@math.uni-bielefeld.de>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
+Date: Tue, 21 Apr 2015 16:45:56 -0700
+Message-ID: <7hsibtavuz.fsf@deeprootsystems.com>
+References: <1428946441-17058-1-git-send-email-b.zolnierkie@samsung.com>
+	<7h1tjeh5ka.fsf@deeprootsystems.com> <5439319.JYC6t7bzy4@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:34297 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932433AbbDURQF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Apr 2015 13:16:05 -0400
-Received: by wgso17 with SMTP id o17so221116714wgs.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Apr 2015 10:16:03 -0700 (PDT)
-In-Reply-To: <9f0f7af7b53d22b2be2dd1b25ebbad56@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <5439319.JYC6t7bzy4@amdc1032> (Bartlomiej Zolnierkiewicz's
+	message of "Tue, 21 Apr 2015 17:43:30 +0200")
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Rob Clark <robdclark@gmail.com>
-Cc: emil.l.velikov@gmail.com, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Hellstrom <thellstrom@vmware.com>
 
-Hi Tobias,
+Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> writes:
 
-On 30/03/15 13:04, Tobias Jakobi wrote:
-> Hello,
-> 
-> On 2015-03-30 02:02, Rob Clark wrote:
->> so, iirc, vmwgfx also has some custom events..  not really sure if
->> they have their own hand-rolled drmHandleEvent() or if they have
->> another way of catching those.
->>
->> Maybe we need some more flexible way to register handlers for driver
->> custom events?  But everyone adding their own thing to
->> drmHandleEvent() doesn't really seem so nice..  that said, I'm not
->> sure how much to care.  If it is just exynos and vmwgfx, then telling
->> them to use there own version of of drmHandleEvent() might be ok.  But
->> if driver custom events somehow become more popular, maybe we want a
->> better solution..
-> 
-> would something like this work for you guys:
-> https://www.math.uni-bielefeld.de/~tjakobi/archive/0001-custom-events.patch
-> 
-> (this is not compile tested or anything, just a draft)
-> 
-> Basically this introduces drmHandleEvent2, which is drmHandleEvent with
-> two additional arguments. The first one being a function pointer through
-> which the 'remaining' events (which are not handled by the common code)
-> are handled, and some (opaque) pointer to data that the handler might need.
-> 
-> In the vendor specific code I then introcuded exynos_handle_event which
-> calls dramHandleEvent2 with a properly setup handler. vmwgfx could do
-> the same here I guess.
-> 
-I'm assuming that one of the concerns here is about adding API for a
-single (and not so common) user to the core library.
+> On Monday, April 20, 2015 02:07:33 PM Kevin Hilman wrote:
+>> Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> writes:
+>> 
+>> > Hi,
+>> >
+>> > This patch series removes the use of Exynos5250 specific support
+>> > from exynos-cpufreq driver and enables the use of cpufreq-dt driver
+>> > for this platform.  The exynos-cpufreq driver itself is also removed
+>> > as it is no longer used/needed after Exynos5250 support removal.
+>> >
+>> > This patch series has been tested on Exynos5250 based Arndale board.
+>> >
+>> > Depends on:
+>> > - next-20150330 branch of linux-next kernel tree
+>> > - "[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4210
+>> >   platform" [1]
+>> > - "[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+>> >   platform" [2]
+>> > - "[PATCH] cpufreq: exynos: remove dead ->need_apll_change method" [3]
+>> 
+>> Any chance you could prepare a branch with all the dependencies for easy
+>> testing?
+>
+> All cpufreq changes with needed dependencies are now availble in
+>
+>     https://github.com/bzolnier/linux.git
+>
+> repository and the branch is
+>
+>     next-20150330-generic-cpufreq-exynos5420-5800-v2
 
->From a quick look at the mesa and xf86-video-vmware I cannot see the
-vmwgfx driver using events. It has some definitions in vmwgfx_drm.h but
-that's about it.
+Great, thanks.
 
-That aside - the drmHandleEvent2 approach looks like a massive
-improvement over the original patch. Personally I do not see any
-problems with it and think that it's a good way forward.
+>> Also, The previous version from Thomas was v12, and this one is neither
+>> versioned nor has any reference to what may have changed since that
+>
+> Please note that Thomas' patchset was split on separate parts (this is
+> part #3) and heavily modified so the previous versioning was dropped.
+>
+> The cover letter of part #1 ("[PATCH 0/6] cpufreq: use generic cpufreq
+> drivers for Exynos4210 platform") contains detailed changelog on what has
+> been changed since Thomas' original v12 patch series.  Individual Thomas'
+> patches which were modified by me also contain such information.
+>
+> Part #2 ("[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
+> platform") was entirely new code when compared to Thomas' v12 patchset so
+> its cover letter doesn't contain such detailed changelog as part #1.
+>
+> The newly posted part #4 ("[PATCH 0/8] cpufreq: add generic cpufreq driver
+> support for Exynos5250/5800 platforms" https://lkml.org/lkml/2015/4/21/314)
+> also contains the detailed changelog.
+>
+> However for part #3 (this one, "[PATCH 0/4] cpufreq: use generic cpufreq
+> drivers for Exynos5250 platform") such summary changelog got missed for
+> some reason.  Here it is:
+> - split Exynos5250 support from the original patch
+> - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
+> - added CPU regulator supply property for Google Spring board
+> - removed exynos-cpufreq driver entirely as it is no longer used/needed
 
-Perhaps you can come over to #dri-devel and ping the devs to get some
-more feedback. As the topic is not a priority for most of them your
-suggestions has mostly gone unnoticed.
+Great, thanks for clarifying.
 
-Cheers,
-Emil
+>> version.  Also, on v12, I had several comments[1] and wonder if they've
+>> been addressed.
+>
+> All issues previously reported should have been fixed.  If you still see
+> some problems please let me know.
+>
+> [ I see now that exynos5420-arndale-octa.dts, exynos5420-peach-pit.dts,
+>   exynos5420-smdk5420.dts and exynos5800-peach-pi.dts should also have
+>   been updated to contain CPU cluster regulator supply properties or else
+>   if the default vdd_arm/vdd_kfc regulator state is set to too low value
+>   there may be problems with stability when switching to higher than
+>   default frequencies.  I have posted v2 version of patch #2/8 of part #4
+>   and pushed v2 combined branch on github.  Sorry for the inconvenience. ]
+
+I've now tested your v2 branch with the bL switcher disabled, CPUidle
+enabled and CPUfreq enabled.  
+
+With the default governor set to performance, it fails to boot.  The last
+kernel messages on the console are:
+
+[...]
+[    3.426021] cpu cpu0: bL_cpufreq_init: CPU 0 initialized
+[    3.431189] cpu cpu4: bL_cpufreq_init: CPU 4 initialized
+
+However, with the default governor set to userspace it boots fine until
+my userspace (ubuntu) tries to enable the ondemand governor, and then it
+hangs. 
+
+For it to boot, I have to disable the ondemand governor, and set the
+default governor to userspace.
+
+As I reported earlier on Thomas' series, I suspect this is related to
+the fact that the higher OPPs aren't really functional without voltage
+scaling also supported. 
+
+I'm also seeing the wait_until_divider_stable errors when switching
+between the available A7 OPPs.  I'd reported this one earlier as well,
+along with the script to reproduce it.
+
+Kevin
+
+
+
