@@ -1,50 +1,71 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 5/8] ARM: Exynos: use generic cpufreq driver for Exynos5420
-Date: Tue, 21 Apr 2015 17:49:02 +0200
-Message-ID: <1429631345-16409-6-git-send-email-b.zolnierkie@samsung.com>
-References: <1429631345-16409-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1429631345-16409-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 2/5] exynos: add EXYNOS_G2D_EVENT to drmHandleEvent
+Date: Tue, 21 Apr 2015 18:14:35 +0000
+Message-ID: <5536938B.8060605@gmail.com>
+References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de> <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com> <9f0f7af7b53d22b2be2dd1b25ebbad56@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:34297 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932433AbbDURQF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Apr 2015 13:16:05 -0400
+Received: by wgso17 with SMTP id o17so221116714wgs.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Apr 2015 10:16:03 -0700 (PDT)
+In-Reply-To: <9f0f7af7b53d22b2be2dd1b25ebbad56@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Rob Clark <robdclark@gmail.com>
+Cc: emil.l.velikov@gmail.com, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Hellstrom <thellstrom@vmware.com>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+Hi Tobias,
 
-The new CPU clock type allows the use of generic arm_big_little_dt
-cpufreq driver for Exynos5420.
+On 30/03/15 13:04, Tobias Jakobi wrote:
+> Hello,
+> 
+> On 2015-03-30 02:02, Rob Clark wrote:
+>> so, iirc, vmwgfx also has some custom events..  not really sure if
+>> they have their own hand-rolled drmHandleEvent() or if they have
+>> another way of catching those.
+>>
+>> Maybe we need some more flexible way to register handlers for driver
+>> custom events?  But everyone adding their own thing to
+>> drmHandleEvent() doesn't really seem so nice..  that said, I'm not
+>> sure how much to care.  If it is just exynos and vmwgfx, then telling
+>> them to use there own version of of drmHandleEvent() might be ok.  But
+>> if driver custom events somehow become more popular, maybe we want a
+>> better solution..
+> 
+> would something like this work for you guys:
+> https://www.math.uni-bielefeld.de/~tjakobi/archive/0001-custom-events.patch
+> 
+> (this is not compile tested or anything, just a draft)
+> 
+> Basically this introduces drmHandleEvent2, which is drmHandleEvent with
+> two additional arguments. The first one being a function pointer through
+> which the 'remaining' events (which are not handled by the common code)
+> are handled, and some (opaque) pointer to data that the handler might need.
+> 
+> In the vendor specific code I then introcuded exynos_handle_event which
+> calls dramHandleEvent2 with a properly setup handler. vmwgfx could do
+> the same here I guess.
+> 
+I'm assuming that one of the concerns here is about adding API for a
+single (and not so common) user to the core library.
 
-Changes by Bartlomiej:
-- split Exynos5420 support from the original patch
-- disable cpufreq if big.LITTLE switcher support is enabled
+>From a quick look at the mesa and xf86-video-vmware I cannot see the
+vmwgfx driver using events. It has some definitions in vmwgfx_drm.h but
+that's about it.
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/mach-exynos/exynos.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+That aside - the drmHandleEvent2 approach looks like a massive
+improvement over the original patch. Personally I do not see any
+problems with it and think that it's a good way forward.
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 4b03a32..11ac7fb 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -207,6 +207,13 @@ struct cpufreq_dt_platform_data cpufreq_dt_pd = {
- static const struct of_device_id exynos_cpufreq_matches[] = {
- 	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
-+/*
-+ * FIXME: When big.LITTLE switcher is enabled system lockups during
-+ * ondemand governor stress testing (observed on ODROID-XU3 board).
-+ */
-+#ifndef CONFIG_BL_SWITCHER
-+	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
-+#endif
- 	{ /* sentinel */ }
- };
- 
--- 
-1.7.9.5
+Perhaps you can come over to #dri-devel and ping the devs to get some
+more feedback. As the topic is not a priority for most of them your
+suggestions has mostly gone unnoticed.
+
+Cheers,
+Emil
