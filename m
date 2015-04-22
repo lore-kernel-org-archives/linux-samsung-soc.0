@@ -1,58 +1,51 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH] ARM: exynos: Fix wake-up interrupts for Exynos3250
-Date: Wed, 22 Apr 2015 18:40:52 +0100
-Message-ID: <1429724452-26563-1-git-send-email-marc.zyngier@arm.com>
+From: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
+Subject: [PATCHv3 0/4] add devm_of_phy_get_by_index and update platform drivers
+Date: Wed, 22 Apr 2015 16:04:09 -0700
+Message-ID: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Content-Type: text/plain
+Return-path: <linux-ide-owner@vger.kernel.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, Jonathan Richardson <jonathar@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Arun Ramamurthy <arun.ramamurthy@broadcom.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 8b283c025443 (ARM: exynos4/5: convert pmu wakeup to
-stacked domains) changed the Exynos PMU code to use stacked
-domains. This has led to a number of interrupt numbers to be
-fixed.
+This patch set adds a new API to get phy by index when multiple 
+phys are present. This patch is based on discussion with Arnd Bergmann
+about dt bindings for multiple phys.
 
-In the meantime, support for Exynos 3250 was added, missing
-the required change to this platform. This amounts to revert
-ace283a04a4a (ARM: EXYNOS: Fix wrong hwirq of RTC interrupt
-for Exynos3250 SoC), as the initial patch was right, just a
-bit early...
+History:
+v1:
+    - Removed null pointers on Dmitry's suggestion
+    - Improved documentation in commit messages
+    - Exported new phy api
+v2:
+    - EHCI and OHCI platform Kconfigs select Generic Phy
+      to fix build errors in certain configs.
+v3:
+    - Made GENERIC_PHY an invisible option so 
+    that other configs can select it
+    - Added stubs for devm_of_phy_get_by_index
+    - Reformated code
 
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/mach-exynos/suspend.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Arun Ramamurthy (4):
+  phy: phy-core: Make GENERIC_PHY an invisible option
+  phy: core: Add devm_of_phy_get_by_index to phy-core
+  usb: ehci-platform: Use devm_of_phy_get_by_index
+  usb: ohci-platform: Use devm_of_phy_get_by_index
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 3e6aea7..40dce36 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -87,8 +87,8 @@ static unsigned int exynos_pmu_spare3;
- static u32 exynos_irqwake_intmask = 0xffffffff;
- 
- static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
--	{ 105, BIT(1) }, /* RTC alarm */
--	{ 106, BIT(2) }, /* RTC tick */
-+	{ 73, BIT(1) }, /* RTC alarm */
-+	{ 74, BIT(2) }, /* RTC tick */
- 	{ /* sentinel */ },
- };
- 
+ Documentation/phy.txt                     |  7 +++-
+ drivers/ata/Kconfig                       |  1 -
+ drivers/media/platform/exynos4-is/Kconfig |  2 +-
+ drivers/phy/Kconfig                       |  4 +-
+ drivers/phy/phy-core.c                    | 32 ++++++++++++++
+ drivers/usb/host/Kconfig                  |  4 +-
+ drivers/usb/host/ehci-platform.c          | 69 +++++++++++--------------------
+ drivers/usb/host/ohci-platform.c          | 69 +++++++++++--------------------
+ drivers/video/fbdev/exynos/Kconfig        |  2 +-
+ include/linux/phy/phy.h                   |  8 ++++
+ 10 files changed, 100 insertions(+), 98 deletions(-)
+
 -- 
-2.1.4
+2.3.4
+
