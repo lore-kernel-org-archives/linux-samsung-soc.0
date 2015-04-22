@@ -1,163 +1,93 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
-Date: Wed, 22 Apr 2015 16:40:37 -0700
-Message-ID: <7hegnb91fu.fsf@deeprootsystems.com>
-References: <1428946441-17058-1-git-send-email-b.zolnierkie@samsung.com>
-	<5439319.JYC6t7bzy4@amdc1032> <7hsibtavuz.fsf@deeprootsystems.com>
-	<4008289.pQOxzKW0Ir@amdc1032>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: drm/exynos: getting the video processor to work
+Date: Thu, 23 Apr 2015 08:57:39 +0900
+Message-ID: <55383573.2020508@samsung.com>
+References: <55356FEE.7030109@math.uni-bielefeld.de>
+ <5536FF93.6000107@samsung.com> <5537398B.3080607@samsung.com>
+ <6af982f487367524dd6ff38bd6746ae6@math.uni-bielefeld.de>
+ <5537AFAA.3080909@samsung.com>
+ <1bef64f6ef1b48a520e0e08d66367233@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <4008289.pQOxzKW0Ir@amdc1032> (Bartlomiej Zolnierkiewicz's
-	message of "Wed, 22 Apr 2015 19:37:43 +0200")
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:48153 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965598AbbDVX5h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Apr 2015 19:57:37 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NN80089QFVYUI40@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Apr 2015 08:57:34 +0900 (KST)
+In-reply-to: <1bef64f6ef1b48a520e0e08d66367233@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> writes:
+Hi Tobias,
 
-[...]
+On 04/22/2015 11:56 PM, Tobias Jakobi wrote:
+> Hello Inki,
+> 
+> 
+> On 2015-04-22 16:26, Inki Dae wrote:
+>> Right. However, there is a case that we should consider for Exynos SoC.
+>> Exynos SoC has a Hardware video codec which is called MFC. This hardware
+>> can use a special function for improving decoding and encoding
+>> performance, which makes it possible for Y and CbCr data are placed in
+>> separated memory banks. So for this, a V4L2 guy of Samsung added a new
+>> format - NV12M - to v4l2 fourcc header.
+>>
+>> AFAIK, the pixels of NV12 format would consist into,
+>> yyyyyyyyyy
+>> yyyyyyyyyy
+>> uvuvuvuvu
+>>
+>> The memory region of each data - y or uv - is continuous each other. In
+>> this case, the base address of each gem buffer is same.
+>>
+>>
+>> On the other hand, the pixels of NV12M consist into,
+>> yyyyyyyyyy
+>> yyyyyyyyyy
+>> .................
+>> uvuvuvuvu
+>>
+>> The memory region of each data - y or uv - isn't continuous each other.
+>> So Exynos driver identifies image format according to two cases above.
+>> In this case, the base address of each gem buffer is different.
+>>
+>> For more information, refer to exynos_drm_format_num_buffers function.
+> I don't see how this is relevant here. The VP doesn't gain anything from the fact that it can pull data from different memory banks. It's just the MFC that benefits from that.
+> 
+> Why does the VP need to know whether the data is NV12 or NV12M? When we get this data from userspace, then in the case of NV12 we always get two planes (yielding two handles, two pitches, two offsets). The VP then gets configured with two dma_addr, one for luma plane, one for chroma. If luma and chroma are contiguous in memory doesn't make any difference here.
+> 
 
->> However, with the default governor set to userspace it boots fine until
->> my userspace (ubuntu) tries to enable the ondemand governor, and then it
->> hangs. 
->> 
->> For it to boot, I have to disable the ondemand governor, and set the
->> default governor to userspace.
->
-> I've tried with ARM big.LITTLE cpuidle support enabled (I've just noticed
-> that it is not turned on in exynos_defconfig) and my ODROID-XU3 board
-> fails to boot.  This happens even with cpufreq support disabled (hard
-> lockup happens during mmc initialization which is done just after cpufreq
-> initialization).
+I feel it is just each other different implementation issue, not right
+and wrong. If you are interested, could you please make a patch to
+support NV12 format(including NV12M)? Maybe will have to modify or
+remove exynos_drm_format_num_buffers function and delivery each buffer
+informations to mixer driver via struct exynos_drm_plane. I think it's
+not difficult to do.
 
-Right, the XU3 has broken secure firmware such that MCPM cannot properly
-control CCI, so CPUidle will hang when trying to hit low power states,
-so you have to disable CCI by adding something like this to the end of
-your XU3 .dts file:
+Thanks.
 
-&cci {
-     status = "disabled";
-};
-
-> Could you please check if disabling cpuidle support helps?
-
-For now, I've disabled CPUidle so we have a similar setup, but it
-doesn't change anything on exynos5800-peach-pi
-
->> As I reported earlier on Thomas' series, I suspect this is related to
->> the fact that the higher OPPs aren't really functional without voltage
->> scaling also supported. 
->
-> Part #4 contains voltage scaling support for arm_big_little[_dt] driver
-> so this should not be a problem any longer.
->
-> You may try next-20150330-generic-cpufreq-exynos5420-5800-v2-debug
-> branch from my github (with cpufreq debugging printks enabled) to check
-> whether the voltage scaling is indeed done on your board.
->
->> I'm also seeing the wait_until_divider_stable errors when switching
->> between the available A7 OPPs.  I'd reported this one earlier as well,
->> along with the script to reproduce it.
->
-> I've tried your script and it works fine for me (I only needed to change
-> cpu4 to cpu0 as on ODROID-XU3 CPUs 0,5,6,7 are A7 and 1,2,3,4 are A15).
-
-Then it seems something isn't quite right for exynos5800-peach-pi.
-Below is the script[1] I'm using on exynos which also checks the voltage
-by quering the regulator fwk (and optionally checking the INA2xx sensors
-on odroid-xu3 if that support is enabled)
-
-On your debug branch, it just gives -1 for all the voltages, so the
-regulator voltage never changes:
-
-# ./dvfs
-CPU regulator: cpu0, vdd_arm, /sys/class/regulator/regulator.18
-[   45.691483] arm_big_little: bL_cpufreq_set_rate: cpu: 0, old cluster: 0, new cluster: 0, freq: 200000
-[   45.699581] arm_big_little: bL_cpufreq_set_rate_cluster: cpu 0, cluster: 0, 400 MHz, -1 mV --> 200 MHz, -1 mV
-current freq: 200000 
-current voltage: 1262500
-[   46.969821] arm_big_little: bL_cpufreq_set_rate: cpu: 0, old cluster: 0, new cluster: 0, freq: 300000
-[   46.978272] arm_big_little: bL_cpufreq_set_rate_cluster: cpu 0, cluster: 0, 200 MHz, -1 mV --> 300 MHz, -1 mV
-current freq: 300000
-current voltage: 1262500
-
-I added a bit more debug to the cpufreq driver[1] and found that the
-regulator_get_optional is failing:
-
-[    3.407295] cpu cpu0: Unable to get regulator cpu-cluster.0
-[    3.458282] cpu cpu4: Unable to get regulator cpu-cluster.1
-
-
-Kevin
-
-
-[1]
-#!/bin/sh
-
-if [ ! -d /sys/devices/system/cpu/cpu0/cpufreq ]; then
-  echo "CPUfreq not enabled in kernel."
-  exit 1
-fi
-
-# NOTE: odroid-xu3: CPU0 = A7.0, CPU1 = A15.0
-cpu=cpu0
-reg_name=vdd_arm
-hwmon=hwmon0
-#cpu=cpu4
-#reg_name=vdd_kfc
-#hwmon=hwmon3
-
-cpu_reg=$(dirname `find /sys/class/regulator/regulator.*/ -name name -exec grep -l $reg_name {} \;`)
-echo CPU regulator: $cpu, $reg_name, $cpu_reg
-
-# Cycle through frequencies (and check voltage)
-cd /sys/devices/system/cpu/$cpu/cpufreq
-echo userspace > scaling_governor
-for freq in `cat scaling_available_frequencies`; do
-  echo ${freq} > scaling_setspeed
-  sleep 0.2
-
-  echo -n "current freq: "
-  cat scaling_cur_freq
-  echo -n "current voltage: "
-  cat ${cpu_reg}/microvolts
-
-  # odroid-xu3 INA231 monitors
-  if [ ! -z $hwmon ]; then
-    if [ -e /sys/class/hwmon/$hwmon/in1_input ]; then
-      echo -n "current voltage (ina2xx)":
-      cat /sys/class/hwmon/$hwmon/in1_input
-    fi
-  fi
-
-  sleep 1
-done
-
-[2]
-diff --git a/drivers/cpufreq/arm_big_little.c
-b/drivers/cpufreq/arm_big_little.c
-index 024f185b2154..4108f909cc9c 100644
---- a/drivers/cpufreq/arm_big_little.c
-+++ b/drivers/cpufreq/arm_big_little.c
-@@ -16,6 +16,7 @@
-  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  * GNU General Public License for more details.
-  */
-+#define DEBUG
-
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-@@ -446,6 +447,8 @@ static int _get_cluster_clk_and_freq_table(struct
-device *cpu_dev)
-                ret = regulator_set_voltage_time(reg[cluster], min_uV,
-                max_uV);
-                if (ret > 0)
-                        transition_latencies[cluster] = ret * 1000;
-+       } else {
-+               dev_warn(cpu_dev, "Unable to get regulator %s", name);
-        }
-
-        ret = dev_pm_opp_init_cpufreq_table(cpu_dev,
-        &freq_table[cluster]);
+> Correct me if I'm wrong, but I think this whole NV12/NV12M business is strictly related to the video decoding / v4l2 side.
+> 
+> 
+> 
+>> Anyway, only NV12/NV21 + NV12/21 tiled are supported - this format
+>> contains macro blocks, which is specific to MFC (Hardware Video codec
+>> for Exynos SoC). However, we should consider NV12M format as I mentioned
+>> above.
+> Thanks for the confirmation, but as I said above, I don't see why we should consider NV12M for the DRM / presentation side.
+> 
+> 
+> With best wishes,
+> Tobias
+> 
+> 
