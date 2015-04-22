@@ -1,130 +1,70 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: drm/exynos: getting the video processor to work
-Date: Wed, 22 Apr 2015 15:45:50 +0900
-Message-ID: <5537439E.30401@samsung.com>
-References: <55356FEE.7030109@math.uni-bielefeld.de>
- <5536FF93.6000107@samsung.com> <5537398B.3080607@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2] i2c: Mark adapter devices with pm_runtime_no_callbacks
+Date: Wed, 22 Apr 2015 09:54:06 +0200
+Message-ID: <20150422075406.GE1511@katana>
+References: <1429185919-26098-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+SfteS7bOf3dGlBC"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:17174 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965283AbbDVGp4 convert rfc822-to-8bit (ORCPT
+Received: from sauhun.de ([89.238.76.85]:35025 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S964935AbbDVHyM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Apr 2015 02:45:56 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NN700E6E44ED5D0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Apr 2015 15:45:50 +0900 (KST)
-In-reply-to: <5537398B.3080607@samsung.com>
+	Wed, 22 Apr 2015 03:54:12 -0400
+Content-Disposition: inline
+In-Reply-To: <1429185919-26098-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, lars@metafoo.de
 
-On 2015=EB=85=84 04=EC=9B=94 22=EC=9D=BC 15:02, Inki Dae wrote:
-> On 2015=EB=85=84 04=EC=9B=94 22=EC=9D=BC 10:55, Joonyoung Shim wrote:
->> Hi Tobias,
->>
->> On 04/21/2015 06:30 AM, Tobias Jakobi wrote:
->>> Hello,
->>>
->>> I've spend some time on figuring out how to use the VP on my Exynos=
-4412.
->>> I noticed that currently it seems to be pretty broken (I've put a f=
-ull
->>> crashlog with drm.debug=3D0xff at the end).
->>>
->>> As far as I can see, the problem stems from conflicting buffer coun=
-ts in
->>> the driver.
->>>
->>> Let's start with vp_video_buffer(), there buf_num gets set to '2' w=
-hen
->>> DRM_FORMAT_NV12 is encountered as pixelformat. Which results in the=
- VP
->>> reading luma data from the plane's dma_addr[0] and chroma from dma_=
-addr[1].
->>>
->>> But dma_addr[1] is never correctly set. It should be set by
->>> exynos_check_plane(), but the loop only does one iteration since
->>> exynos_drm_fb_get_buf_cnt() returns 1.
->>>
->>> Which is due to special case handling in
->>> exynos_drm_format_num_buffers(). At least for the buffers that libd=
-rm's
->>> modetest creates this case handling triggers and reduces buffer cou=
-nt to
->>> '1'.
->>>
->>
->> This is just pixel format issue and mixer driver is not completed ab=
-out
->> that. The exynos mixer can support two NV12 formats.
->=20
-> To clarify it, NV12 and other NVXX formats have only two planes.
->=20
->>
->> First, NV12 format having just one buffer(Y plane and CbCr plane use=
- a
->> same buffer but differ their start index.)
->=20
-> So it is called packed YUV format and drm_fourcc header defines these
-> formats as follows,
->=20
-> DRM_FORMAT_YUYV
-> DRM_FORMAT_YVYU
-> DRM_FORMAT_UYVY
-> DRM_FORMAT_VYUY
-> DRM_FORMAT_AYUV
 
-Sorry, there was my mistake. Packed YUV format means Y/Cb/Cr values are
-packed with one pixel.
+--+SfteS7bOf3dGlBC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Apr 16, 2015 at 01:05:19PM +0100, Charles Keepax wrote:
+> Commit 523c5b89640e ("i2c: Remove support for legacy PM") removed the PM
+> ops from the bus type, which causes the pm operations on the s3c2410
+> adapter device to fail (-ENOSUPP in rpm_callback). The adapter device
+> doesn't get bound to a driver and as such can't have its own pm_runtime
+> callbacks. Previously this was fine as the bus callbacks would have been
+> used, but now this can cause devices which use PM runtime and are
+> attached over I2C to fail to resume.
 >=20
->> Second, NV12 format having split two buffers(one is for Y plane, oth=
-er
->> is for CbCr plane)
+> This commit fixes this issue by marking all adapter devices with
+> pm_runtime_no_callbacks, since they can't have any.
 >=20
-> All NVXX formats should be considered only for separated two buffers.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-So in case of Exynos, we identify that image data is NVXX format or
-NVXXM according to that whether having separated buffers or not. For
-this, we had already have a discussion before. I really forgot it.
+Applied to for-current, thanks!
 
->=20
->>
->> Current mixer driver considers only second NV12 format, we can know =
-it
->> from following comment in mixer driver.
->>
->> /* TODO: single buffer format NV12, NV21 */
->=20
-> So, it seems like wrong comment. Until now, it seems that we have bee=
-n
-> calling the packed YUV format as NVXX format and calling the NVXX for=
-mat
-> as NVXXM. And Exynos SoC have even NVXXMT whose format consists into
-> many macro blocks and which has separated two buffers.
+Will push out somewhat later today. Lars-Peter, if you'd like to donate
+some ack/review tag until then, this would be much appreciated.
 
-So Joonyoung is right. we should consider two cases. One is the case of
-using one buffer and other is the case of using two buffers case.
 
-Thanks,
-Inki Dae
+--+SfteS7bOf3dGlBC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->=20
-> We would need to make Exynos drivers suitable to fourcc.
->=20
-> Thanks,
-> Inki Dae
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVN1OeAAoJEBQN5MwUoCm2pj0P/jTp93AHDWFbJHqUUTrnOvi3
+hhkRcY7Ao/oJJRx1HiHQb+btlhex6ftsAxNFihWxYKgLR7XLGOB+H8/1jp07F7W8
+yRc8b6ElrXP9YQhalJ/KWGt0o9oCHryB23BTss5ZUdF6EPjZh667sbrvPx/9QIW/
+Tv1fgkkoO0aF/KXbcY6SeHd3eOkluqzXNHo+T4b7NUElvmG1TUQyJtKMubVKaJR6
+GpjkSfE/PHtpnRMmc8KwF3jDoD8XH3OZPSYbywumcKVPtp9W4+XXWljj4ML7FlKF
+PSNvQrU8ZJD/i5r1PEIXZ+O5n5vrQycexiHbKe4GZ4ZXNYAfjR5GodoWZLFWJ3BH
+rIK0ugSWrC00BGJ+JI/GOk9FwecTh/WMHtfZkAntqp5DmW7nJFguij3JDh8su9gj
+jzM+WLOyS0//sKh9g/dgeVbF3anpUTQOq0H0Gww7wcFy7XN6sEHMlj6SnnrArXb0
+Z1Sc2IXVkRXRtrLdPfbbXL2drFf9s3TMpYGWvuz3uYD2s0KoNcC5SfGAU5i/lNNl
+WiyF2IUctJsGb2U+DUyVvTwb759plHkG2XfsYbbRRz3RjH0cKaEdmaciEcvpdx5+
+rW6mmND2yqM67C9egrSxi5UxPAoAzFLpu66wchzzcoHcQiYX7T74uBNQ3ZG5oxyj
+zR3R7T81sxpXD/vpvQ0Y
+=Q6rN
+-----END PGP SIGNATURE-----
+
+--+SfteS7bOf3dGlBC--
