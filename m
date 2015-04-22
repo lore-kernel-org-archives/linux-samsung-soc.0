@@ -1,263 +1,137 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 1/2] thermal: exynos: Reorder exynos_map_dt_data() function
-Date: Wed, 22 Apr 2015 10:49:36 +0200
-Message-ID: <20150422104936.5aa75710@amdc2363>
-References: <1421667844-13627-1-git-send-email-l.majewski@samsung.com>
- <1421667844-13627-2-git-send-email-l.majewski@samsung.com>
- <CAM4voakDBLbshW3EvFN4YRx1o1ApMLJVZ2ZQ0Bb6NwhmoT8WFA@mail.gmail.com>
- <20150122100124.65e7a19e@amdc2363>
- <CAM4voani1xcgRU3e11_pnYw4d7Yj=QOKun8g_DywmxDxOwEgRQ@mail.gmail.com>
- <20150129230616.GJ29837@developer.amazonguestwifi.org>
- <20150130091422.669930c8@amdc2363> <552E091A.2000902@samsung.com>
- <20150415130554.264b61cc@amdc2363> <552F09FD.7020200@samsung.com>
- <20150417143921.36a5a66e@amdc2363> <5536FAB2.2070009@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: getting the video processor to work
+Date: Wed, 22 Apr 2015 14:23:40 +0200
+Message-ID: <6af982f487367524dd6ff38bd6746ae6@math.uni-bielefeld.de>
+References: <55356FEE.7030109@math.uni-bielefeld.de>
+ <5536FF93.6000107@samsung.com> <5537398B.3080607@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51719 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934401AbbDVItw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Apr 2015 04:49:52 -0400
-In-reply-to: <5536FAB2.2070009@samsung.com>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40381 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752524AbbDVMXn convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Apr 2015 08:23:43 -0400
+In-Reply-To: <5537398B.3080607@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Joonyoung,
+Hello Inki and Joonyoung,
 
-> Hi Lukasz,
-> 
-> On 04/17/2015 09:39 PM, Lukasz Majewski wrote:
-> > Hi Joonyoung,
-> > 
-> >> Hi Lukasz,
-> >>
-> >> On 04/15/2015 08:05 PM, Lukasz Majewski wrote:
-> >>> Hi Joonyoung,
-> >>>
-> >>>> Hi Lukasz,
-> >>>>
-> >>>> On 01/30/2015 05:14 PM, Lukasz Majewski wrote:
-> >>>>> Hi Eduardo, Abhilash,
-> >>>>>
-> >>>>>> On Thu, Jan 22, 2015 at 06:02:07PM +0530, Abhilash Kesavan
-> >>>>>> wrote:
-> >>>>>>> Hi Lukasz,
-> >>>>>>>
-> >>>>>>> On Thu, Jan 22, 2015 at 2:31 PM, Lukasz Majewski
-> >>>>>>> <l.majewski@samsung.com> wrote:
-> >>>>>>>> Hi Abhilash,
-> >>>>>>>>
-> >>>>>>>>> Hi Lukasz,
-> >>>>>>>>>
-> >>>>>>>>> On Mon, Jan 19, 2015 at 5:14 PM, Lukasz Majewski
-> >>>>>>>>> <l.majewski@samsung.com> wrote:
-> >>>>>>>>>> The exynos_map_dt_data() function must be called before
-> >>>>>>>>>> thermal_zone_of_sensor_register(), and hence provide
-> >>>>>>>>>> tmu_read() function, before it is needed.
-> >>>>>>>>>>
-> >>>>>>>>>> This change is driven by adding support for enabling
-> >>>>>>>>>> thermal_zoneX when it is properly initialized.
-> >>>>>>>>>>
-> >>>>>>>>>> One can read the mode of operation
-> >>>>>>>>>> at /sys/class/thermal/thermal_zone0/mode Such functionality
-> >>>>>>>>>> was missing in the of-thermal.c code.
-> >>>>>>>>>>
-> >>>>>>>>>> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> >>>>>>>>>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> >>>>>>>>>> ---
-> >>>>>>>>>>  drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
-> >>>>>>>>>>  1 file changed, 4 insertions(+), 3 deletions(-)
-> >>>>>>>>>>
-> >>>>>>>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> >>>>>>>>>> b/drivers/thermal/samsung/exynos_tmu.c index
-> >>>>>>>>>> 9d2d685..5d946ab 100644 ---
-> >>>>>>>>>> a/drivers/thermal/samsung/exynos_tmu.c +++
-> >>>>>>>>>> b/drivers/thermal/samsung/exynos_tmu.c @@ -975,15 +975,16
-> >>>>>>>>>> @@ static int exynos_tmu_probe(struct platform_device
-> >>>>>>>>>> *pdev) platform_set_drvdata(pdev, data);
-> >>>>>>>>>> mutex_init(&data->lock);
-> >>>>>>>>>>
-> >>>>>>>>>> +       ret = exynos_map_dt_data(pdev);
-> >>>>>>>>>> +       if (ret)
-> >>>>>>>>>> +               goto err_sensor;
-> >>>>
-> >>>> It's enough to just return ret.
-> >>>>
-> >>>> One more, i think to need to take out regulator enable codes from
-> >>>> exynos_map_dt_data. If not, can't restore about regulator when
-> >>>> error occurs.
-> >>>>
-> >>>>>>>>>> +
-> >>>>>>>>>>         data->tzd =
-> >>>>>>>>>> thermal_zone_of_sensor_register(&pdev->dev, 0, data,
-> >>>>>>>>>> &exynos_sensor_ops); if (IS_ERR(data->tzd)) {
-> >>>>>>>>>>                 pr_err("thermal: tz: %p ERROR\n",
-> >>>>>>>>>> data->tzd); return PTR_ERR(data->tzd);
-> >>>>>>>>>>         }
-> >>>>>>>>>> -       ret = exynos_map_dt_data(pdev);
-> >>>>>>>>>> -       if (ret)
-> >>>>>>>>>> -               goto err_sensor;
-> >>>>>>>>>>
-> >>>>>>>>>>         pdata = data->pdata;
-> >>>>>>>>>
-> >>>>>>>>> I have been testing this along with your v5 patch set and am
-> >>>>>>>>> seeing incorrect temperature being reported at boot-up on
-> >>>>>>>>> exynos7.
-> >>>>>>>>
-> >>>>>>>> Does it show a maximal temperature value (0x1FF)?
-> >>>>>>>
-> >>>>>>> I did not print the current temperature register, but I
-> >>>>>>> remember the message showing ~105C. Will give you the
-> >>>>>>> register value when I test with more debug prints tomorrow.
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>>>  It looks
-> >>>>>>>>> like exynos_tmu_read gets called from
-> >>>>>>>>> thermal_zone_of_device_update during boot-up, now that we
-> >>>>>>>>> have it populated early. However, as the tmu initialization
-> >>>>>>>>> function has not been called yet it returns a wrong value.
-> >>>>>>>>> Does that sound correct ?
-> >>>>>>>>
-> >>>>>>>> No, this is a mistake. However, I'm wondering why on
-> >>>>>>>> Exynos4/5 this error didn't show up...
-> >>>>>>>
-> >>>>>>> I have been lowering the software trip point temperature in
-> >>>>>>> the exynos7 dts file (to 55C) for testing purposes. Hence,
-> >>>>>>> when the temperature is read incorrectly as ~105C the board
-> >>>>>>> trips at boot-up
-> >>>>>
-> >>>>> 					^^^^ this is a very
-> >>>>> unusual value - I had problems with
-> >>>>> 					reading 0xFF values with
-> >>>>> 					similar symptom (but
-> >>>>> this was caused by lack of vtmu).
-> >>>>>
-> >>>>>>> itself. Maybe for exynos4/5 the incorrect value read during
-> >>>>>>> boot-up is in the non-tripping range and once the tmu is
-> >>>>>>> initialized later it continues to function properly
-> >>>>>>> thereafter ?
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> The reordering is needed to be able to call set_mode callback
-> >>>>>>>> at of-thermal.c to set the mode.
-> >>>>>>>>
-> >>>>>>>> If this change causes problems, then another solution
-> >>>>>>>> (probably not so neat) must be found.
-> >>>>>>>
-> >>>>>>> Please let me know if you need any further details.
-> >>>>>
-> >>>>> Abhilash, could you provide more details (like relevant output
-> >>>>> from dmesg) and point me a list of patches which shall I apply
-> >>>>> to test this issue on Exynos4/5?
-> >>>>>
-> >>>>>>
-> >>>>>> What is the status of this patch? Is it still required?
-> >>>>>
-> >>>>> It is strange, since on Exynos4/5 this works and some problems
-> >>>>> show up when run on Exynos7.
-> >>>>>
-> >>>>
-> >>>> I'm also wondering the status of this patch.
-> >>>
-> >>> This patch has been dropped.
-> >>>
-> >>>>
-> >>>> I get below errors when boots odroidxu3 board without this patch.
-> >>>
-> >>> Could you share the exact SHA1 and branch which you use in your
-> >>> setup?
-> >>>
-> >>
-> >> I tested with of odroidxu3 patchset for pwm-fan control of Anand
-> >> Moon on 20150414 -next.
-> >>
-> >> http://www.spinics.net/lists/arm-kernel/msg412031.html
-> >>
-> >>> For a reference please check following branch at github (this is
-> >>> the code which should be merged to v4.1-rc1)
-> >>>
-> >>> git@github.com:lmajewski/linux-samsung-thermal.git
-> >>>
-> >>> branch: next [1]
-> >>>
-> >>> This branch includes exynos7 support done by Chanwoo.
-> >>>
-> >>
-> >> I got following errors from branch [1] without patchset of Anand
-> >> Moon,
-> >>
-> >> [    4.576442] thermal thermal_zone0: failed to read out thermal
-> >> zone 0 [    4.581685] 10060000.tmu supply vtmu not found, using
-> >> dummy regulator [    4.588223] thermal thermal_zone1: failed to
-> >> read out thermal zone 1 [    4.594110] 10064000.tmu supply vtmu
-> >> not found, using dummy regulator [    4.600849] thermal
-> >> thermal_zone2: failed to read out thermal zone 2 [    4.606847]
-> >> 10068000.tmu supply vtmu not found, using dummy regulator
-> >> [    4.613640] thermal thermal_zone3: failed to read out thermal
-> >> zone 3 [    4.619584] 1006c000.tmu supply vtmu not found, using
-> >> dummy regulator [    4.626370] thermal thermal_zone4: failed to
-> >> read out thermal zone 4 [    4.632324] 100a0000.tmu supply vtmu
-> >> not found, using dummy regulator
-> > 
-> > Could you check if after booting you can read temperature from
-> > thermal zones?
-> > 
-> 
-> Yes, i can read temperature from
-> /sys/devices/virtual/thermal/thermal_zone[X]/temp after booting.
+On 2015-04-22 08:02, Inki Dae wrote:
+> On 2015=EB=85=84 04=EC=9B=94 22=EC=9D=BC 10:55, Joonyoung Shim wrote:
+>> Hi Tobias,
+>>=20
+>> On 04/21/2015 06:30 AM, Tobias Jakobi wrote:
+>>> Hello,
+>>>=20
+>>> I've spend some time on figuring out how to use the VP on my=20
+>>> Exynos4412.
+>>> I noticed that currently it seems to be pretty broken (I've put a=20
+>>> full
+>>> crashlog with drm.debug=3D0xff at the end).
+>>>=20
+>>> As far as I can see, the problem stems from conflicting buffer coun=
+ts=20
+>>> in
+>>> the driver.
+>>>=20
+>>> Let's start with vp_video_buffer(), there buf_num gets set to '2'=20
+>>> when
+>>> DRM_FORMAT_NV12 is encountered as pixelformat. Which results in the=
+=20
+>>> VP
+>>> reading luma data from the plane's dma_addr[0] and chroma from=20
+>>> dma_addr[1].
+>>>=20
+>>> But dma_addr[1] is never correctly set. It should be set by
+>>> exynos_check_plane(), but the loop only does one iteration since
+>>> exynos_drm_fb_get_buf_cnt() returns 1.
+>>>=20
+>>> Which is due to special case handling in
+>>> exynos_drm_format_num_buffers(). At least for the buffers that=20
+>>> libdrm's
+>>> modetest creates this case handling triggers and reduces buffer cou=
+nt=20
+>>> to
+>>> '1'.
+>>>=20
+>>=20
+>> This is just pixel format issue and mixer driver is not completed=20
+>> about
+>> that. The exynos mixer can support two NV12 formats.
+>=20
+> To clarify it, NV12 and other NVXX formats have only two planes.
+That was also my impression. NV12 and NV21 are always bi-planar, with=20
+the only difference that NV21 has U/V order reversed (when comparing it=
+=20
+to NV12). There is no uni-planar NV12/NV21. See also:
+https://wiki.videolan.org/YUV#NV12.2FNV21
 
-I'm aware of "thermal thermal_zone4: failed to read out thermal
-zone" messages which show up during booting.
 
-It is to prevent crashing TMU when it is not yet properly configured.
-The problem is related with dependency of of-thermal and exynos
-specific code.
+>> First, NV12 format having just one buffer(Y plane and CbCr plane use=
+ a
+>> same buffer but differ their start index.)
+>=20
+> So it is called packed YUV format and drm_fourcc header defines these
+> formats as follows,
+>=20
+> DRM_FORMAT_YUYV
+> DRM_FORMAT_YVYU
+> DRM_FORMAT_UYVY
+> DRM_FORMAT_VYUY
+> DRM_FORMAT_AYUV
+I'd like to know if any other formats except for NV12/NV21 are really=20
+supported by the video processor? Because I don't see any indication fo=
+r=20
+that. It's just NV12/NV21 and the tiled variants, which are there to=20
+make it easier to handle data from the MFC block.
 
-I'm planning to fix this issue.
 
-> 
-> Thanks.
-> 
-> >>
-> >>>>
-> >>>> [    4.831980] thermal thermal_zone0: failed to read out thermal
-> >>>> zone (-22) [    4.838096] thermal thermal_zone1: failed to read
-> >>>> out thermal zone (-22) [    4.844894] thermal thermal_zone2:
-> >>>> failed to read out thermal zone (-22) [    4.851470] thermal
-> >>>> thermal_zone3: failed to read out thermal zone (-22)
-> >>>> [    4.858186] thermal thermal_zone4: failed to read out thermal
-> >>>> zone (-22)
-> >>>>
-> >>>
-> >>> This issue has been fixed by following patch:
-> >>> "thermal: exynos: fix: Check if data->tmu_read callback is present
-> >>> before read"
-> >>>
-> >>> SHA1: 4531fa1684bb883ee01f1a182900b1e15d461b3
-> >>>
-> >>
-> >> I already have this commit on my test branch.
-> >>
-> >>> Please check [1] if it solves your problems.
-> >>>
-> >>>> Thanks.
-> >>>
-> >>
-> >> Thanks.
-> > 
-> > 
-> > 
-> 
+>> Second, NV12 format having split two buffers(one is for Y plane, oth=
+er
+>> is for CbCr plane)
+>=20
+> All NVXX formats should be considered only for separated two buffers.
+Does is even make any difference for the VP if luma and chroma are in=20
+different buffers or in a single one, just with an offset between=20
+luma/chroma? I think not, because the VP just gets a dma_addr for both=20
+and then fetches data from that position.
+
+
+>> Current mixer driver considers only second NV12 format, we can know =
+it
+>> from following comment in mixer driver.
+>>=20
+>> /* TODO: single buffer format NV12, NV21 */
+>=20
+> So, it seems like wrong comment. Until now, it seems that we have bee=
+n
+> calling the packed YUV format as NVXX format and calling the NVXX=20
+> format
+> as NVXXM. And Exynos SoC have even NVXXMT whose format consists into
+> many macro blocks and which has separated two buffers.
+I think getting just regular (un-tiled) NV12/NV21 working should come=20
+first, then we can think about how to handle the tiled formats (probabl=
+y=20
+with the newly introduced fb modifiers).
+
+I've patched the mixer so that it passes valid pointers for luma/chroma=
+=20
+but I still get a crash (sysmmu) sooner or later. So there seems to be=20
+more issues than just this pixelformat/buffercount one.
 
 
 
--- 
-Best regards,
+> We would need to make Exynos drivers suitable to fourcc.
+>=20
+> Thanks,
+> Inki Dae
 
-Lukasz Majewski
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+With best wishes,
+Tobias
