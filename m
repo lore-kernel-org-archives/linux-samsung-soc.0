@@ -1,68 +1,70 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [RESEND PATCH v2 2/3] ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
-Date: Wed, 22 Apr 2015 22:17:09 +0900
-Message-ID: <1429708630-19810-2-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [RESEND PATCH v2 3/3] ARM: EXYNOS: Add missing of_node_put() when parsing power domains
+Date: Wed, 22 Apr 2015 22:17:10 +0900
+Message-ID: <1429708630-19810-3-git-send-email-k.kozlowski.k@gmail.com>
 References: <1429708630-19810-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:34097 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756403AbbDVNRz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Apr 2015 09:17:55 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1429708630-19810-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Prevent possible NULL pointer dereference of pointer returned by
-of_find_device_by_node(). Handle this by skipping such power domain.
-
-Additionally fail the init on kstrdup() failure. Such case is actually
-not fatal because the name for power domain allocated by kstrdup() is
-used only in printk. Still as a precaution handle this as an error
-condition.
+Add missing of_node_put() to:
+1. Error return path if allocating memory for exynos_pm_domain failed.
+2. Second iteration over power domains if a child domain was not present
+   or was incomplete.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reported-by: Karol Wrona <k.wrona@samsung.com>
 
 ---
 Changes since v1:
-None.
+1. New patch.
 ---
- arch/arm/mach-exynos/pm_domains.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/mach-exynos/pm_domains.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 14622b5f4481..61c32ccc9f7a 100644
+index 61c32ccc9f7a..1a90c5da2fd7 100644
 --- a/arch/arm/mach-exynos/pm_domains.c
 +++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -126,6 +126,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 		struct device *dev;
- 
- 		pdev = of_find_device_by_node(np);
-+		if (!pdev) {
-+			pr_err("%s: failed to find device for node %s\n",
-+					__func__, np->name);
+@@ -138,6 +138,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		if (!pd) {
+ 			pr_err("%s: failed to allocate memory for domain\n",
+ 					__func__);
 +			of_node_put(np);
-+			continue;
-+		}
- 		dev = &pdev->dev;
- 
- 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
-@@ -136,6 +142,12 @@ static __init int exynos4_pm_init_power_domain(void)
+ 			return -ENOMEM;
  		}
  
- 		pd->pd.name = kstrdup(dev_name(dev), GFP_KERNEL);
-+		if (!pd->pd.name) {
-+			kfree(pd);
-+			of_node_put(np);
-+			return -ENOMEM;
-+		}
-+
- 		pd->name = pd->pd.name;
- 		pd->base = of_iomap(np, 0);
- 		if (!pd->base) {
+@@ -209,15 +210,15 @@ no_clk:
+ 		args.args_count = 0;
+ 		child_domain = of_genpd_get_from_provider(&args);
+ 		if (!child_domain)
+-			continue;
++			goto next_pd;
+ 
+ 		if (of_parse_phandle_with_args(np, "power-domains",
+ 					 "#power-domain-cells", 0, &args) != 0)
+-			continue;
++			goto next_pd;
+ 
+ 		parent_domain = of_genpd_get_from_provider(&args);
+ 		if (!parent_domain)
+-			continue;
++			goto next_pd;
+ 
+ 		if (pm_genpd_add_subdomain(parent_domain, child_domain))
+ 			pr_warn("%s failed to add subdomain: %s\n",
+@@ -225,6 +226,7 @@ no_clk:
+ 		else
+ 			pr_info("%s has as child subdomain: %s.\n",
+ 				parent_domain->name, child_domain->name);
++next_pd:
+ 		of_node_put(np);
+ 	}
+ 
 -- 
 2.1.0
