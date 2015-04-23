@@ -1,63 +1,94 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCHv3 0/4] add devm_of_phy_get_by_index and update platform
- drivers
-Date: Thu, 23 Apr 2015 09:42:35 +0200
-Message-ID: <5538A26B.10302@redhat.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: getting the video processor to work
+Date: Thu, 23 Apr 2015 14:02:52 +0200
+Message-ID: <a77003bc63c31545105a79c9e3ea9e1c@math.uni-bielefeld.de>
+References: <55356FEE.7030109@math.uni-bielefeld.de>
+ <5536FF93.6000107@samsung.com> <5537398B.3080607@samsung.com>
+ <6af982f487367524dd6ff38bd6746ae6@math.uni-bielefeld.de>
+ <5537AFAA.3080909@samsung.com>
+ <1bef64f6ef1b48a520e0e08d66367233@math.uni-bielefeld.de>
+ <55383573.2020508@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.g>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, Jonathan Richardson <jonathar@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42172 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965163AbbDWMCy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Apr 2015 08:02:54 -0400
+In-Reply-To: <55383573.2020508@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi,
+Hello Joonyoung!
 
-On 23-04-15 01:04, Arun Ramamurthy wrote:
-> This patch set adds a new API to get phy by index when multiple
-> phys are present. This patch is based on discussion with Arnd Bergmann
-> about dt bindings for multiple phys.
->
-> History:
-> v1:
->      - Removed null pointers on Dmitry's suggestion
->      - Improved documentation in commit messages
->      - Exported new phy api
-> v2:
->      - EHCI and OHCI platform Kconfigs select Generic Phy
->        to fix build errors in certain configs.
-> v3:
->      - Made GENERIC_PHY an invisible option so
->      that other configs can select it
->      - Added stubs for devm_of_phy_get_by_index
->      - Reformated code
->
-> Arun Ramamurthy (4):
->    phy: phy-core: Make GENERIC_PHY an invisible option
->    phy: core: Add devm_of_phy_get_by_index to phy-core
->    usb: ehci-platform: Use devm_of_phy_get_by_index
->    usb: ohci-platform: Use devm_of_phy_get_by_index
->
->   Documentation/phy.txt                     |  7 +++-
->   drivers/ata/Kconfig                       |  1 -
->   drivers/media/platform/exynos4-is/Kconfig |  2 +-
->   drivers/phy/Kconfig                       |  4 +-
->   drivers/phy/phy-core.c                    | 32 ++++++++++++++
->   drivers/usb/host/Kconfig                  |  4 +-
->   drivers/usb/host/ehci-platform.c          | 69 +++++++++++--------------------
->   drivers/usb/host/ohci-platform.c          | 69 +++++++++++--------------------
->   drivers/video/fbdev/exynos/Kconfig        |  2 +-
->   include/linux/phy/phy.h                   |  8 ++++
->   10 files changed, 100 insertions(+), 98 deletions(-)
->
+On 2015-04-23 01:57, Joonyoung Shim wrote:
+> Hi Tobias,
+> 
+> On 04/22/2015 11:56 PM, Tobias Jakobi wrote:
+>> Hello Inki,
+>> 
+>> 
+>> On 2015-04-22 16:26, Inki Dae wrote:
+>>> Right. However, there is a case that we should consider for Exynos 
+>>> SoC.
+>>> Exynos SoC has a Hardware video codec which is called MFC. This 
+>>> hardware
+>>> can use a special function for improving decoding and encoding
+>>> performance, which makes it possible for Y and CbCr data are placed 
+>>> in
+>>> separated memory banks. So for this, a V4L2 guy of Samsung added a 
+>>> new
+>>> format - NV12M - to v4l2 fourcc header.
+>>> 
+>>> AFAIK, the pixels of NV12 format would consist into,
+>>> yyyyyyyyyy
+>>> yyyyyyyyyy
+>>> uvuvuvuvu
+>>> 
+>>> The memory region of each data - y or uv - is continuous each other. 
+>>> In
+>>> this case, the base address of each gem buffer is same.
+>>> 
+>>> 
+>>> On the other hand, the pixels of NV12M consist into,
+>>> yyyyyyyyyy
+>>> yyyyyyyyyy
+>>> .................
+>>> uvuvuvuvu
+>>> 
+>>> The memory region of each data - y or uv - isn't continuous each 
+>>> other.
+>>> So Exynos driver identifies image format according to two cases 
+>>> above.
+>>> In this case, the base address of each gem buffer is different.
+>>> 
+>>> For more information, refer to exynos_drm_format_num_buffers 
+>>> function.
+>> I don't see how this is relevant here. The VP doesn't gain anything 
+>> from the fact that it can pull data from different memory banks. It's 
+>> just the MFC that benefits from that.
+>> 
+>> Why does the VP need to know whether the data is NV12 or NV12M? When 
+>> we get this data from userspace, then in the case of NV12 we always 
+>> get two planes (yielding two handles, two pitches, two offsets). The 
+>> VP then gets configured with two dma_addr, one for luma plane, one for 
+>> chroma. If luma and chroma are contiguous in memory doesn't make any 
+>> difference here.
+>> 
+> 
+> I feel it is just each other different implementation issue, not right
+> and wrong. If you are interested, could you please make a patch to
+> support NV12 format(including NV12M)? Maybe will have to modify or
+> remove exynos_drm_format_num_buffers function and delivery each buffer
+> informations to mixer driver via struct exynos_drm_plane. I think it's
+> not difficult to do.
+I'm going to take a look at this in the next days.
 
-Patch set looks good to me:
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
+With best wishes,
+Tobias
