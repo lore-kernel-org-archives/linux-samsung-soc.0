@@ -1,93 +1,86 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: drm/exynos: getting the video processor to work
-Date: Thu, 23 Apr 2015 14:02:52 +0200
-Message-ID: <a77003bc63c31545105a79c9e3ea9e1c@math.uni-bielefeld.de>
-References: <55356FEE.7030109@math.uni-bielefeld.de>
- <5536FF93.6000107@samsung.com> <5537398B.3080607@samsung.com>
- <6af982f487367524dd6ff38bd6746ae6@math.uni-bielefeld.de>
- <5537AFAA.3080909@samsung.com>
- <1bef64f6ef1b48a520e0e08d66367233@math.uni-bielefeld.de>
- <55383573.2020508@samsung.com>
+Subject: Re: [PATCH 2/5] exynos: add =?UTF-8?Q?EXYNOS=5FG=32D=5FEVENT=20to?=
+ =?UTF-8?Q?=20drmHandleEvent?=
+Date: Thu, 23 Apr 2015 14:04:11 +0200
+Message-ID: <e086870611c6d23904978de2a07f0bb2@math.uni-bielefeld.de>
+References: <1426890348-12807-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1426890348-12807-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CAF6AEGsZdV3CrdnNUVEeaNyxq6H6ZUdCte17-NRSHhS7kZL2tQ@mail.gmail.com>
+ <9f0f7af7b53d22b2be2dd1b25ebbad56@math.uni-bielefeld.de>
+ <5536938B.8060605@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42172 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42177 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965163AbbDWMCy (ORCPT
+	by vger.kernel.org with ESMTP id S965378AbbDWMEM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Apr 2015 08:02:54 -0400
-In-Reply-To: <55383573.2020508@samsung.com>
+	Thu, 23 Apr 2015 08:04:12 -0400
+In-Reply-To: <5536938B.8060605@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Hellstrom <thellstrom@vmware.com>
 
-Hello Joonyoung!
+Hello Emil,
 
-On 2015-04-23 01:57, Joonyoung Shim wrote:
+On 2015-04-21 20:14, Emil Velikov wrote:
 > Hi Tobias,
 > 
-> On 04/22/2015 11:56 PM, Tobias Jakobi wrote:
->> Hello Inki,
+> On 30/03/15 13:04, Tobias Jakobi wrote:
+>> Hello,
 >> 
+>> On 2015-03-30 02:02, Rob Clark wrote:
+>>> so, iirc, vmwgfx also has some custom events..  not really sure if
+>>> they have their own hand-rolled drmHandleEvent() or if they have
+>>> another way of catching those.
+>>> 
+>>> Maybe we need some more flexible way to register handlers for driver
+>>> custom events?  But everyone adding their own thing to
+>>> drmHandleEvent() doesn't really seem so nice..  that said, I'm not
+>>> sure how much to care.  If it is just exynos and vmwgfx, then telling
+>>> them to use there own version of of drmHandleEvent() might be ok.  
+>>> But
+>>> if driver custom events somehow become more popular, maybe we want a
+>>> better solution..
 >> 
->> On 2015-04-22 16:26, Inki Dae wrote:
->>> Right. However, there is a case that we should consider for Exynos 
->>> SoC.
->>> Exynos SoC has a Hardware video codec which is called MFC. This 
->>> hardware
->>> can use a special function for improving decoding and encoding
->>> performance, which makes it possible for Y and CbCr data are placed 
->>> in
->>> separated memory banks. So for this, a V4L2 guy of Samsung added a 
->>> new
->>> format - NV12M - to v4l2 fourcc header.
->>> 
->>> AFAIK, the pixels of NV12 format would consist into,
->>> yyyyyyyyyy
->>> yyyyyyyyyy
->>> uvuvuvuvu
->>> 
->>> The memory region of each data - y or uv - is continuous each other. 
->>> In
->>> this case, the base address of each gem buffer is same.
->>> 
->>> 
->>> On the other hand, the pixels of NV12M consist into,
->>> yyyyyyyyyy
->>> yyyyyyyyyy
->>> .................
->>> uvuvuvuvu
->>> 
->>> The memory region of each data - y or uv - isn't continuous each 
->>> other.
->>> So Exynos driver identifies image format according to two cases 
->>> above.
->>> In this case, the base address of each gem buffer is different.
->>> 
->>> For more information, refer to exynos_drm_format_num_buffers 
->>> function.
->> I don't see how this is relevant here. The VP doesn't gain anything 
->> from the fact that it can pull data from different memory banks. It's 
->> just the MFC that benefits from that.
+>> would something like this work for you guys:
+>> https://www.math.uni-bielefeld.de/~tjakobi/archive/0001-custom-events.patch
 >> 
->> Why does the VP need to know whether the data is NV12 or NV12M? When 
->> we get this data from userspace, then in the case of NV12 we always 
->> get two planes (yielding two handles, two pitches, two offsets). The 
->> VP then gets configured with two dma_addr, one for luma plane, one for 
->> chroma. If luma and chroma are contiguous in memory doesn't make any 
->> difference here.
+>> (this is not compile tested or anything, just a draft)
 >> 
+>> Basically this introduces drmHandleEvent2, which is drmHandleEvent 
+>> with
+>> two additional arguments. The first one being a function pointer 
+>> through
+>> which the 'remaining' events (which are not handled by the common 
+>> code)
+>> are handled, and some (opaque) pointer to data that the handler might 
+>> need.
+>> 
+>> In the vendor specific code I then introcuded exynos_handle_event 
+>> which
+>> calls dramHandleEvent2 with a properly setup handler. vmwgfx could do
+>> the same here I guess.
+>> 
+> I'm assuming that one of the concerns here is about adding API for a
+> single (and not so common) user to the core library.
 > 
-> I feel it is just each other different implementation issue, not right
-> and wrong. If you are interested, could you please make a patch to
-> support NV12 format(including NV12M)? Maybe will have to modify or
-> remove exynos_drm_format_num_buffers function and delivery each buffer
-> informations to mixer driver via struct exynos_drm_plane. I think it's
-> not difficult to do.
-I'm going to take a look at this in the next days.
+> From a quick look at the mesa and xf86-video-vmware I cannot see the
+> vmwgfx driver using events. It has some definitions in vmwgfx_drm.h but
+> that's about it.
+> 
+> That aside - the drmHandleEvent2 approach looks like a massive
+> improvement over the original patch. Personally I do not see any
+> problems with it and think that it's a good way forward.
+> 
+> Perhaps you can come over to #dri-devel and ping the devs to get some
+> more feedback. As the topic is not a priority for most of them your
+> suggestions has mostly gone unnoticed.
+I'm going to flesh out the non-exynos patches some more before sending 
+them to the ML for discussion.
 
 
 With best wishes,
