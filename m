@@ -1,70 +1,63 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: Fix wake-up interrupts for Exynos3250
-Date: Thu, 23 Apr 2015 09:24:41 +0900
-Message-ID: <55383BC9.5010604@samsung.com>
-References: <1429724452-26563-1-git-send-email-marc.zyngier@arm.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCHv3 0/4] add devm_of_phy_get_by_index and update platform
+ drivers
+Date: Thu, 23 Apr 2015 09:42:35 +0200
+Message-ID: <5538A26B.10302@redhat.com>
+References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:31962 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932737AbbDWAYo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Apr 2015 20:24:44 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NN800KTDH56LU50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Apr 2015 09:24:42 +0900 (KST)
-In-reply-to: <1429724452-26563-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.g>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, Jonathan Richardson <jonathar@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-Hi Marc,
+Hi,
 
-On 04/23/2015 02:40 AM, Marc Zyngier wrote:
-> Commit 8b283c025443 (ARM: exynos4/5: convert pmu wakeup to
-> stacked domains) changed the Exynos PMU code to use stacked
-> domains. This has led to a number of interrupt numbers to be
-> fixed.
-> 
-> In the meantime, support for Exynos 3250 was added, missing
-> the required change to this platform. This amounts to revert
-> ace283a04a4a (ARM: EXYNOS: Fix wrong hwirq of RTC interrupt
-> for Exynos3250 SoC), as the initial patch was right, just a
-> bit early...
-> 
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm/mach-exynos/suspend.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index 3e6aea7..40dce36 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -87,8 +87,8 @@ static unsigned int exynos_pmu_spare3;
->  static u32 exynos_irqwake_intmask = 0xffffffff;
->  
->  static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
-> -	{ 105, BIT(1) }, /* RTC alarm */
-> -	{ 106, BIT(2) }, /* RTC tick */
-> +	{ 73, BIT(1) }, /* RTC alarm */
-> +	{ 74, BIT(2) }, /* RTC tick */
->  	{ /* sentinel */ },
->  };
->  
-> 
+On 23-04-15 01:04, Arun Ramamurthy wrote:
+> This patch set adds a new API to get phy by index when multiple
+> phys are present. This patch is based on discussion with Arnd Bergmann
+> about dt bindings for multiple phys.
+>
+> History:
+> v1:
+>      - Removed null pointers on Dmitry's suggestion
+>      - Improved documentation in commit messages
+>      - Exported new phy api
+> v2:
+>      - EHCI and OHCI platform Kconfigs select Generic Phy
+>        to fix build errors in certain configs.
+> v3:
+>      - Made GENERIC_PHY an invisible option so
+>      that other configs can select it
+>      - Added stubs for devm_of_phy_get_by_index
+>      - Reformated code
+>
+> Arun Ramamurthy (4):
+>    phy: phy-core: Make GENERIC_PHY an invisible option
+>    phy: core: Add devm_of_phy_get_by_index to phy-core
+>    usb: ehci-platform: Use devm_of_phy_get_by_index
+>    usb: ohci-platform: Use devm_of_phy_get_by_index
+>
+>   Documentation/phy.txt                     |  7 +++-
+>   drivers/ata/Kconfig                       |  1 -
+>   drivers/media/platform/exynos4-is/Kconfig |  2 +-
+>   drivers/phy/Kconfig                       |  4 +-
+>   drivers/phy/phy-core.c                    | 32 ++++++++++++++
+>   drivers/usb/host/Kconfig                  |  4 +-
+>   drivers/usb/host/ehci-platform.c          | 69 +++++++++++--------------------
+>   drivers/usb/host/ohci-platform.c          | 69 +++++++++++--------------------
+>   drivers/video/fbdev/exynos/Kconfig        |  2 +-
+>   include/linux/phy/phy.h                   |  8 ++++
+>   10 files changed, 100 insertions(+), 98 deletions(-)
+>
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Patch set looks good to me:
 
-Thanks,
-Chanwoo Choi
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
