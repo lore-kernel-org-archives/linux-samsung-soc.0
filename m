@@ -1,88 +1,54 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
-Date: Thu, 23 Apr 2015 14:12:25 +0200
-Message-ID: <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 2/2] drm/exynos: cleanup exynos_drm_plane
+Date: Thu, 23 Apr 2015 14:12:26 +0200
+Message-ID: <1429791146-4410-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42206 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42211 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965508AbbDWMM0 (ORCPT
+	by vger.kernel.org with ESMTP id S965542AbbDWMM1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Apr 2015 08:12:26 -0400
+	Thu, 23 Apr 2015 08:12:27 -0400
 In-Reply-To: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Move the defines for the pixelformats that the mixer supports out
-of mixer_graph_buffer() to the top of the source.
-Then select the mixer pixelformat (pf) in mixer_graph_buffer() based on
-the plane's pf (and not bpp).
-Also add handling of RGB565 and XRGB1555 to the switch statement and
-exit early if the plane has an unsupported pf.
-
-Partially based on 'drm/exynos: enable/disable blend based on pixel
-format' by Gustavo Padovan <gustavo.padovan@collabora.co.uk>.
+Remove the unused fields of struct exynos_drm_plane.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_drv.h | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index fbec750..1bd23ee 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -44,6 +44,12 @@
- #define MIXER_WIN_NR		3
- #define MIXER_DEFAULT_WIN	0
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index e12ecb5..c80331b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -73,11 +73,6 @@ enum exynos_drm_output_type {
+  * @zpos: order of overlay layer(z position).
+  * @index_color: if using color key feature then this value would be used
+  *			as index color.
+- * @default_win: a window to be enabled.
+- * @color_key: color key on or off.
+- * @local_path: in case of lcd type, local path mode on or off.
+- * @transparency: transparency on or off.
+- * @activated: activated or not.
+  * @enabled: enabled or not.
+  * @resume: to resume or not.
+  *
+@@ -110,11 +105,6 @@ struct exynos_drm_plane {
+ 	unsigned int zpos;
+ 	unsigned int index_color;
  
-+/* The pixelformats that are natively supported by the mixer. */
-+#define MIXER_PIXELFORMAT_RGB565 4
-+#define MIXER_PIXELFORMAT_ARGB1555 5
-+#define MIXER_PIXELFORMAT_ARGB4444 6
-+#define MIXER_PIXELFORMAT_ARGB8888 7
-+
- struct mixer_resources {
- 	int			irq;
- 	void __iomem		*mixer_regs;
-@@ -531,20 +537,26 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 
- 	plane = &ctx->planes[win];
- 
--	#define RGB565 4
--	#define ARGB1555 5
--	#define ARGB4444 6
--	#define ARGB8888 7
-+	switch (plane->pixel_format) {
-+	case DRM_FORMAT_XRGB4444:
-+		fmt = MIXER_PIXELFORMAT_ARGB4444;
-+		break;
-+
-+	case DRM_FORMAT_XRGB1555:
-+		fmt = MIXER_PIXELFORMAT_ARGB1555;
-+		break;
- 
--	switch (plane->bpp) {
--	case 16:
--		fmt = ARGB4444;
-+	case DRM_FORMAT_RGB565:
-+		fmt = MIXER_PIXELFORMAT_RGB565;
- 		break;
--	case 32:
--		fmt = ARGB8888;
-+
-+	case DRM_FORMAT_XRGB8888:
-+		fmt = MIXER_PIXELFORMAT_ARGB8888;
- 		break;
-+
- 	default:
--		fmt = ARGB8888;
-+		DRM_DEBUG_KMS("pixelformat unsupported by mixer\n");
-+		return;
- 	}
- 
- 	/* check if mixer supports requested scaling setup */
+-	bool default_win:1;
+-	bool color_key:1;
+-	bool local_path:1;
+-	bool transparency:1;
+-	bool activated:1;
+ 	bool enabled:1;
+ 	bool resume:1;
+ };
 -- 
 2.0.5
