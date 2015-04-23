@@ -1,49 +1,96 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCHv3 0/4] add devm_of_phy_get_by_index and update platform
- drivers
-Date: Thu, 23 Apr 2015 10:31:42 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1504231031170.1529-100000@iolanthe.rowland.org>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1429743853-10254-1-git-send-email-arun.ramamurthy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arun Ramamurthy <arun.ramamurthy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Thomas Pugliese <thomas.pugliese-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Srinivas Kandagatla <srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Masanari Iida <standby24x7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Mosberger <davidm-haPfTeumbwasTnJN9+BGXg@public.gmane.org>, Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Laurent
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v3 3/7] exynos/fimg2d: add g2d_config_event
+Date: Thu, 23 Apr 2015 16:29:22 +0200
+Message-ID: <1429799366-12287-4-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1429799366-12287-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42567 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756713AbbDWOdA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Apr 2015 10:33:00 -0400
+In-Reply-To: <1429799366-12287-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Wed, 22 Apr 2015, Arun Ramamurthy wrote:
+This enables us to pass command buffers to the kernel which
+trigger an event on the DRM fd upon completion.
+The final goal is to enable asynchronous operation of the
+G2D engine, similar to async page flips.
 
-> This patch set adds a new API to get phy by index when multiple 
-> phys are present. This patch is based on discussion with Arnd Bergmann
-> about dt bindings for multiple phys.
-> 
-> History:
-> v1:
->     - Removed null pointers on Dmitry's suggestion
->     - Improved documentation in commit messages
->     - Exported new phy api
-> v2:
->     - EHCI and OHCI platform Kconfigs select Generic Phy
->       to fix build errors in certain configs.
-> v3:
->     - Made GENERIC_PHY an invisible option so 
->     that other configs can select it
->     - Added stubs for devm_of_phy_get_by_index
->     - Reformated code
-> 
-> Arun Ramamurthy (4):
->   phy: phy-core: Make GENERIC_PHY an invisible option
->   phy: core: Add devm_of_phy_get_by_index to phy-core
->   usb: ehci-platform: Use devm_of_phy_get_by_index
->   usb: ohci-platform: Use devm_of_phy_get_by_index
+Passing the event userdata pointer through the G2D context
+was chosen to not change the current API (e.g. by adding
+a userdata argument to each public functions).
 
-For patches 3 and 4:
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 27 +++++++++++++++++++++++++--
+ exynos/exynos_fimg2d.h |  2 ++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index fc605ed..e90ffed 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -202,8 +202,15 @@ static int g2d_flush(struct g2d_context *ctx)
+ 	cmdlist.cmd_buf = (uint64_t)(uintptr_t)&ctx->cmd_buf[0];
+ 	cmdlist.cmd_nr = ctx->cmd_nr;
+ 	cmdlist.cmd_buf_nr = ctx->cmd_buf_nr;
+-	cmdlist.event_type = G2D_EVENT_NOT;
+-	cmdlist.user_data = 0;
++
++	if (ctx->event_userdata) {
++		cmdlist.event_type = G2D_EVENT_NONSTOP;
++		cmdlist.user_data = (uint64_t)(uintptr_t)(ctx->event_userdata);
++		ctx->event_userdata = NULL;
++	} else {
++		cmdlist.event_type = G2D_EVENT_NOT;
++		cmdlist.user_data = 0;
++	}
+ 
+ 	ctx->cmd_nr = 0;
+ 	ctx->cmd_buf_nr = 0;
+@@ -259,6 +266,22 @@ drm_public void g2d_fini(struct g2d_context *ctx)
+ }
+ 
+ /**
++ * g2d_config_event - setup userdata configuration for a g2d event.
++ *		The next invocation of a g2d call (e.g. g2d_solid_fill) is
++ *		then going to flag the command buffer as 'nonstop'.
++ *		Completion of the command buffer execution can then be
++ *		determined by using drmHandleEvent on the DRM fd.
++ *		The userdata is 'consumed' in the process.
++ *
++ * @ctx: a pointer to g2d_context structure.
++ * @userdata: a pointer to the user data
++ */
++drm_public void g2d_config_event(struct g2d_context *ctx, void *userdata)
++{
++	ctx->event_userdata = userdata;
++}
++
++/**
+  * g2d_exec - start the dma to process all commands summited by g2d_flush().
+  *
+  * @ctx: a pointer to g2d_context structure.
+diff --git a/exynos/exynos_fimg2d.h b/exynos/exynos_fimg2d.h
+index 9db0c88..421249d 100644
+--- a/exynos/exynos_fimg2d.h
++++ b/exynos/exynos_fimg2d.h
+@@ -298,10 +298,12 @@ struct g2d_context {
+ 	unsigned int			cmd_nr;
+ 	unsigned int			cmd_buf_nr;
+ 	unsigned int			cmdlist_nr;
++	void				*event_userdata;
+ };
+ 
+ struct g2d_context *g2d_init(int fd);
+ void g2d_fini(struct g2d_context *ctx);
++void g2d_config_event(struct g2d_context *ctx, void *userdata);
+ int g2d_exec(struct g2d_context *ctx);
+ int g2d_solid_fill(struct g2d_context *ctx, struct g2d_image *img,
+ 			unsigned int x, unsigned int y, unsigned int w,
+-- 
+2.0.5
