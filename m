@@ -1,54 +1,50 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/2] drm/exynos: cleanup exynos_drm_plane
-Date: Thu, 23 Apr 2015 14:12:26 +0200
-Message-ID: <1429791146-4410-3-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: drm/exynos: mixer blending and layer order
+Date: Thu, 23 Apr 2015 14:28:59 +0200
+Message-ID: <f71d728970bc036fdce8934a499aba9f@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42211 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:42252 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965542AbbDWMM1 (ORCPT
+	by vger.kernel.org with ESMTP id S934422AbbDWM3B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Apr 2015 08:12:27 -0400
-In-Reply-To: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Thu, 23 Apr 2015 08:29:01 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com
 
-Remove the unused fields of struct exynos_drm_plane.
+Hello,
 
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h | 10 ----------
- 1 file changed, 10 deletions(-)
+I've noticed some inconsistency in what is currently exported as 'zpos' 
+DRM propery to userspace. Currently we create three planes, where the 
+zpos maps to the mixer 'win' (is this simply short for window?).
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index e12ecb5..c80331b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -73,11 +73,6 @@ enum exynos_drm_output_type {
-  * @zpos: order of overlay layer(z position).
-  * @index_color: if using color key feature then this value would be used
-  *			as index color.
-- * @default_win: a window to be enabled.
-- * @color_key: color key on or off.
-- * @local_path: in case of lcd type, local path mode on or off.
-- * @transparency: transparency on or off.
-- * @activated: activated or not.
-  * @enabled: enabled or not.
-  * @resume: to resume or not.
-  *
-@@ -110,11 +105,6 @@ struct exynos_drm_plane {
- 	unsigned int zpos;
- 	unsigned int index_color;
- 
--	bool default_win:1;
--	bool color_key:1;
--	bool local_path:1;
--	bool transparency:1;
--	bool activated:1;
- 	bool enabled:1;
- 	bool resume:1;
- };
--- 
-2.0.5
+But this is wrong since the mixer layer configuration is currently done 
+in this way (in mixer_win_reset()):
+layer1 (win[1]) > layer0 (win[0]) > video (win[2])
+
+So layer1 is at the top of our stack, and the video layer is at the 
+bottom. So regardless on how you interpret the zpos property (0 being 
+the top, or 0 being bottom), it doesn't give you accurate information on 
+how the planes are ordered.
+
+Related to this is the issue of how to blend planes. When should 
+blending of layer be enabled? We probably want to based this on three 
+states:
+- which layer are enabled
+- which pixelformats are associated to the layers
+- in which order are the layers (*)
+
+(*) So in the case of 'layer1 > layer0 > video', layer1 disabled, 
+layer0/video enabled, layer0 having alpha-pixelformat, we want to blend 
+layer0 and the video layer (so effectively making layer0 translucent).
+
+I'm trying to come up with a proposition for that issue in the next 
+days, but it would really help to hear thoughts of you guys.
+
+With best wishes,
+Tobias
