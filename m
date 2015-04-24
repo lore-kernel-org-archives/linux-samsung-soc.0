@@ -1,51 +1,73 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: cleanup exynos_drm_plane
-Date: Fri, 24 Apr 2015 10:54:19 +0900
-Message-ID: <5539A24B.3080506@samsung.com>
-References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1429791146-4410-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: mixer blending and layer order
+Date: Fri, 24 Apr 2015 11:13:00 +0900
+Message-ID: <5539A6AC.2040509@samsung.com>
+References: <f71d728970bc036fdce8934a499aba9f@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1429791146-4410-3-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:25717 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753450AbbDXCMz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Apr 2015 22:12:55 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NNA0026IGTHOD20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 24 Apr 2015 11:12:53 +0900 (KST)
+In-reply-to: <f71d728970bc036fdce8934a499aba9f@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-SGkgVG9iaWFzLAoKT24gMDQvMjMvMjAxNSAwOToxMiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
-PiBSZW1vdmUgdGhlIHVudXNlZCBmaWVsZHMgb2Ygc3RydWN0IGV4eW5vc19kcm1fcGxhbmUuCj4g
-Cj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZl
-bGQuZGU+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCB8
-IDEwIC0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPiBpbmRleCBlMTJlY2I1Li5jODAz
-MzFiIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-aAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+IEBAIC03
-MywxMSArNzMsNiBAQCBlbnVtIGV4eW5vc19kcm1fb3V0cHV0X3R5cGUgewo+ICAgKiBAenBvczog
-b3JkZXIgb2Ygb3ZlcmxheSBsYXllcih6IHBvc2l0aW9uKS4KPiAgICogQGluZGV4X2NvbG9yOiBp
-ZiB1c2luZyBjb2xvciBrZXkgZmVhdHVyZSB0aGVuIHRoaXMgdmFsdWUgd291bGQgYmUgdXNlZAo+
-ICAgKgkJCWFzIGluZGV4IGNvbG9yLgo+IC0gKiBAZGVmYXVsdF93aW46IGEgd2luZG93IHRvIGJl
-IGVuYWJsZWQuCj4gLSAqIEBjb2xvcl9rZXk6IGNvbG9yIGtleSBvbiBvciBvZmYuCj4gLSAqIEBs
-b2NhbF9wYXRoOiBpbiBjYXNlIG9mIGxjZCB0eXBlLCBsb2NhbCBwYXRoIG1vZGUgb24gb3Igb2Zm
-Lgo+IC0gKiBAdHJhbnNwYXJlbmN5OiB0cmFuc3BhcmVuY3kgb24gb3Igb2ZmLgo+IC0gKiBAYWN0
-aXZhdGVkOiBhY3RpdmF0ZWQgb3Igbm90Lgo+ICAgKiBAZW5hYmxlZDogZW5hYmxlZCBvciBub3Qu
-Cj4gICAqIEByZXN1bWU6IHRvIHJlc3VtZSBvciBub3QuCj4gICAqCj4gQEAgLTExMCwxMSArMTA1
-LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgewo+ICAJdW5zaWduZWQgaW50IHpwb3M7Cj4g
-IAl1bnNpZ25lZCBpbnQgaW5kZXhfY29sb3I7CgpIb3cgYWJvdXQgcmVtb3ZlIGFsc28gaW5kZXhf
-Y29sb3I/Cgo+ICAKPiAtCWJvb2wgZGVmYXVsdF93aW46MTsKPiAtCWJvb2wgY29sb3Jfa2V5OjE7
-Cj4gLQlib29sIGxvY2FsX3BhdGg6MTsKPiAtCWJvb2wgdHJhbnNwYXJlbmN5OjE7Cj4gLQlib29s
-IGFjdGl2YXRlZDoxOwo+ICAJYm9vbCBlbmFibGVkOjE7Cj4gIAlib29sIHJlc3VtZToxOwo+ICB9
-Owo+IAoKQWNrZWQtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4K
-ClRoYW5rcy4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Tobias,
+
+On 04/23/2015 09:28 PM, Tobias Jakobi wrote:
+> Hello,
+> 
+> I've noticed some inconsistency in what is currently exported as 'zpos' DRM propery to userspace. Currently we create three planes, where the zpos maps to the mixer 'win' (is this simply short for window?).
+> 
+> But this is wrong since the mixer layer configuration is currently done in this way (in mixer_win_reset()):
+> layer1 (win[1]) > layer0 (win[0]) > video (win[2])
+> 
+> So layer1 is at the top of our stack, and the video layer is at the bottom. So regardless on how you interpret the zpos property (0 being the top, or 0 being bottom), it doesn't give you accurate information on how the planes are ordered.
+> 
+
+I know, actually here zpos doesn't mean order priority of layer, it is
+just real hardware layer. Exynos mixer has 3 hardware layer, graphic0
+layer, graphic1 layer and video layer, so zpos 0 means graphic0 layer,
+zpos 1 means graphic1 layer, zpos 2 means video layer.
+
+Thanks.
+
+> Related to this is the issue of how to blend planes. When should blending of layer be enabled?
+
+Current mixer codes permit blending about all layers except bottom layer
+(just above background layer).
+
+> We probably want to based this on three states:
+> - which layer are enabled
+> - which pixelformats are associated to the layers
+
+This idea is ok but as i said, there is blending issue of background
+layer.
+
+> - in which order are the layers (*)
+
+Now we don't permit to change order priority of layer.
+
+> 
+> (*) So in the case of 'layer1 > layer0 > video', layer1 disabled, layer0/video enabled, layer0 having alpha-pixelformat, we want to blend layer0 and the video layer (so effectively making layer0 translucent).
+> 
+> I'm trying to come up with a proposition for that issue in the next days, but it would really help to hear thoughts of you guys.
+> 
+> With best wishes,
+> Tobias
+> 
+> 
+
+Thanks.
