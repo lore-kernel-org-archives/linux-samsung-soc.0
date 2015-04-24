@@ -1,131 +1,70 @@
-From: Gwendal Grignou <gwendal@google.com>
-Subject: Re: [RESEND PATCH 5/8] mfd: cros-ec: Support multiple EC in a system
-Date: Thu, 23 Apr 2015 16:54:59 -0700
-Message-ID: <CAMHSBOXMgYjxZL=rkB7rvg_192sbFGryD6hX2oSPMDPT+6OGog@mail.gmail.com>
-References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk>
- <1428336906-14906-6-git-send-email-javier.martinez@collabora.co.uk>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
+Date: Fri, 24 Apr 2015 10:48:27 +0900
+Message-ID: <5539A0EB.6060706@samsung.com>
+References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f43.google.com ([209.85.216.43]:44681 "EHLO
-	mail-vn0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030905AbbDWXzV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Apr 2015 19:55:21 -0400
-Received: by vnbg7 with SMTP id g7so2774157vnb.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2015 16:55:20 -0700 (PDT)
-In-Reply-To: <1428336906-14906-6-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Gwendal Grignou <gwendal@chromium.org>
 
-This patch needs  https://chromium-review.googlesource.com/217297:
-/dev/cros_ec0 was not a good idea, because it is difficult to know
-what it represents.
-
-On Mon, Apr 6, 2015 at 9:15 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> From: Gwendal Grignou <gwendal@chromium.org>
->
-> Chromebooks can have more than one Embedded Controller so the
-> cros_ec device id has to be incremented for each EC registered.
->
-> Add code to handle multiple EC. First ec found is cros-ec0,
-cros_ec0
-> second cros-ec1 and so on.
-cros_ec1
->
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  drivers/mfd/cros_ec.c                 | 7 ++++++-
->  drivers/platform/chrome/cros_ec_dev.c | 4 ++--
->  include/linux/mfd/cros_ec.h           | 2 ++
->  3 files changed, 10 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index c532dbca7404..70f6e55a096e 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -28,6 +28,8 @@
->
->  #define EC_COMMAND_RETRIES     50
->
-> +static int dev_id;
-> +
->  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->                        struct cros_ec_command *msg)
->  {
-> @@ -130,6 +132,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->         struct device *dev = ec_dev->dev;
->         int err = 0;
->
-> +       ec_dev->id = dev_id;
-> +
->         if (ec_dev->din_size) {
->                 ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
->                 if (!ec_dev->din)
-> @@ -143,7 +147,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->
->         mutex_init(&ec_dev->lock);
->
-> -       err = mfd_add_devices(dev, 0, cros_devs,
-> +       err = mfd_add_devices(dev, ec_dev->id, cros_devs,
->                               ARRAY_SIZE(cros_devs),
->                               NULL, ec_dev->irq, NULL);
->         if (err) {
-> @@ -159,6 +163,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->                 return err;
->         }
->  #endif
-> +       dev_id += ARRAY_SIZE(cros_devs);
->
->         dev_info(dev, "Chrome EC device registered\n");
->
-> diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform/chrome/cros_ec_dev.c
-> index e7e50f18097f..7173f0ea6ae5 100644
-> --- a/drivers/platform/chrome/cros_ec_dev.c
-> +++ b/drivers/platform/chrome/cros_ec_dev.c
-> @@ -191,7 +191,7 @@ static int ec_device_probe(struct platform_device *pdev)
->  {
->         struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
->         int retval = -ENOTTY;
-> -       dev_t devno = MKDEV(ec_major, 0);
-> +       dev_t devno = MKDEV(ec_major, ec->id);
->
->         /* Instantiate it (and remember the EC) */
->         cdev_init(&ec->cdev, &fops);
-> @@ -203,7 +203,7 @@ static int ec_device_probe(struct platform_device *pdev)
->         }
->
->         ec->vdev = device_create(cros_class, NULL, devno, ec,
-> -                                CROS_EC_DEV_NAME);
-> +                                CROS_EC_DEV_NAME "%d", ec->id);
->         if (IS_ERR(ec->vdev)) {
->                 retval = PTR_ERR(ec->vdev);
->                 dev_err(&pdev->dev, ": failed to create device\n");
-> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-> index 7eee38abd02a..2bee6ac74ffb 100644
-> --- a/include/linux/mfd/cros_ec.h
-> +++ b/include/linux/mfd/cros_ec.h
-> @@ -72,6 +72,7 @@ struct cros_ec_command {
->   *
->   * @priv: Private data
->   * @irq: Interrupt to use
-> + * @id: Device id
->   * @din: input buffer (for data from EC)
->   * @dout: output buffer (for data to EC)
->   * \note
-> @@ -106,6 +107,7 @@ struct cros_ec_device {
->         /* These are used to implement the platform-specific interface */
->         void *priv;
->         int irq;
-> +       int id;
->         uint8_t *din;
->         uint8_t *dout;
->         int din_size;
-> --
-> 2.1.4
->
+SGkgVG9iaWFzLAoKT24gMDQvMjMvMjAxNSAwOToxMiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
+PiBNb3ZlIHRoZSBkZWZpbmVzIGZvciB0aGUgcGl4ZWxmb3JtYXRzIHRoYXQgdGhlIG1peGVyIHN1
+cHBvcnRzIG91dAo+IG9mIG1peGVyX2dyYXBoX2J1ZmZlcigpIHRvIHRoZSB0b3Agb2YgdGhlIHNv
+dXJjZS4KPiBUaGVuIHNlbGVjdCB0aGUgbWl4ZXIgcGl4ZWxmb3JtYXQgKHBmKSBpbiBtaXhlcl9n
+cmFwaF9idWZmZXIoKSBiYXNlZCBvbgo+IHRoZSBwbGFuZSdzIHBmIChhbmQgbm90IGJwcCkuCj4g
+QWxzbyBhZGQgaGFuZGxpbmcgb2YgUkdCNTY1IGFuZCBYUkdCMTU1NSB0byB0aGUgc3dpdGNoIHN0
+YXRlbWVudCBhbmQKPiBleGl0IGVhcmx5IGlmIHRoZSBwbGFuZSBoYXMgYW4gdW5zdXBwb3J0ZWQg
+cGYuCj4gCj4gUGFydGlhbGx5IGJhc2VkIG9uICdkcm0vZXh5bm9zOiBlbmFibGUvZGlzYWJsZSBi
+bGVuZCBiYXNlZCBvbiBwaXhlbAo+IGZvcm1hdCcgYnkgR3VzdGF2byBQYWRvdmFuIDxndXN0YXZv
+LnBhZG92YW5AY29sbGFib3JhLmNvLnVrPi4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFr
+b2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDMyICsrKysrKysrKysrKysrKysrKysrKystLS0t
+LS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMo
+LSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBpbmRleCBmYmVjNzUw
+Li4xYmQyM2VlIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gQEAg
+LTQ0LDYgKzQ0LDEyIEBACj4gICNkZWZpbmUgTUlYRVJfV0lOX05SCQkzCj4gICNkZWZpbmUgTUlY
+RVJfREVGQVVMVF9XSU4JMAo+ICAKPiArLyogVGhlIHBpeGVsZm9ybWF0cyB0aGF0IGFyZSBuYXRp
+dmVseSBzdXBwb3J0ZWQgYnkgdGhlIG1peGVyLiAqLwo+ICsjZGVmaW5lIE1JWEVSX1BJWEVMRk9S
+TUFUX1JHQjU2NSA0Cj4gKyNkZWZpbmUgTUlYRVJfUElYRUxGT1JNQVRfQVJHQjE1NTUgNQo+ICsj
+ZGVmaW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0I0NDQ0IDYKPiArI2RlZmluZSBNSVhFUl9QSVhF
+TEZPUk1BVF9BUkdCODg4OCA3Cj4gKwoKU2VlbXMgYmUgbG9uZywgaG93IGFib3V0IHMvUElYRUxG
+T1JNQVQvRk9STUFUIG9yIGp1c3QgTUlYRVJfUkdCNTY1IC4uLiA/ClBsZWFzZSB1c2UgdGFiIGJl
+dHdlZW4gZGVmaW5lIG5hbWUgYW5kIHZhbHVlLgoKPiAgc3RydWN0IG1peGVyX3Jlc291cmNlcyB7
+Cj4gIAlpbnQJCQlpcnE7Cj4gIAl2b2lkIF9faW9tZW0JCSptaXhlcl9yZWdzOwo+IEBAIC01MzEs
+MjAgKzUzNywyNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCwgaW50IHdpbikKPiAgCj4gIAlwbGFuZSA9ICZjdHgtPnBsYW5lc1t3aW5d
+Owo+ICAKPiAtCSNkZWZpbmUgUkdCNTY1IDQKPiAtCSNkZWZpbmUgQVJHQjE1NTUgNQo+IC0JI2Rl
+ZmluZSBBUkdCNDQ0NCA2Cj4gLQkjZGVmaW5lIEFSR0I4ODg4IDcKPiArCXN3aXRjaCAocGxhbmUt
+PnBpeGVsX2Zvcm1hdCkgewo+ICsJY2FzZSBEUk1fRk9STUFUX1hSR0I0NDQ0Ogo+ICsJCWZtdCA9
+IE1JWEVSX1BJWEVMRk9STUFUX0FSR0I0NDQ0Owo+ICsJCWJyZWFrOwo+ICsKPiArCWNhc2UgRFJN
+X0ZPUk1BVF9YUkdCMTU1NToKPiArCQlmbXQgPSBNSVhFUl9QSVhFTEZPUk1BVF9BUkdCMTU1NTsK
+PiArCQlicmVhazsKPiAgCj4gLQlzd2l0Y2ggKHBsYW5lLT5icHApIHsKPiAtCWNhc2UgMTY6Cj4g
+LQkJZm10ID0gQVJHQjQ0NDQ7Cj4gKwljYXNlIERSTV9GT1JNQVRfUkdCNTY1Ogo+ICsJCWZtdCA9
+IE1JWEVSX1BJWEVMRk9STUFUX1JHQjU2NTsKPiAgCQlicmVhazsKPiAtCWNhc2UgMzI6Cj4gLQkJ
+Zm10ID0gQVJHQjg4ODg7Cj4gKwo+ICsJY2FzZSBEUk1fRk9STUFUX1hSR0I4ODg4Ogo+ICsJCWZt
+dCA9IE1JWEVSX1BJWEVMRk9STUFUX0FSR0I4ODg4Owo+ICAJCWJyZWFrOwo+ICsKPiAgCWRlZmF1
+bHQ6Cj4gLQkJZm10ID0gQVJHQjg4ODg7Cj4gKwkJRFJNX0RFQlVHX0tNUygicGl4ZWxmb3JtYXQg
+dW5zdXBwb3J0ZWQgYnkgbWl4ZXJcbiIpOwo+ICsJCXJldHVybjsKPiAgCX0KPiAgCj4gIAkvKiBj
+aGVjayBpZiBtaXhlciBzdXBwb3J0cyByZXF1ZXN0ZWQgc2NhbGluZyBzZXR1cCAqLwo+IAoKSG1t
+IG1pc3NpbmcgZm9ybWF0cyBoYXZpbmcgYWxwaGE/CkRSTV9GT1JNQVRfQVJHQjQ0NDQKRFJNX0ZP
+Uk1BVF9BUkdCMTU1NQpEUk1fRk9STUFUX0FSR0I4ODg4CgpUaGFua3MuCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
