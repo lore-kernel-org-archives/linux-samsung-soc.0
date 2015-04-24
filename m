@@ -1,158 +1,79 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: exynos4412: misc issues on Hardkernel Odroid boards
-Date: Fri, 24 Apr 2015 13:24:30 +0200
-Message-ID: <553A27EE.5000800@samsung.com>
-References: <54D779FB.9070306@math.uni-bielefeld.de>
- <54D86913.2050109@samsung.com> <54D9185A.10607@math.uni-bielefeld.de>
- <54D9EDC8.6020508@samsung.com>
- <f6d45cc1b5bcc8d3a6a3672cd953113a@math.uni-bielefeld.de>
- <54F5C0C1.2020902@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 2/2] drm/exynos: cleanup exynos_drm_plane
+Date: Fri, 24 Apr 2015 15:13:46 -0300
+Message-ID: <20150424181346.GE13025@joana>
+References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429791146-4410-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5539A24B.3080506@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:27337 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754551AbbDXLYe (ORCPT
+Received: from mail-qg0-f43.google.com ([209.85.192.43]:34820 "EHLO
+	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031014AbbDXSNv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Apr 2015 07:24:34 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NNB000JJ6FO1Q90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 24 Apr 2015 12:26:12 +0100 (BST)
-In-reply-to: <54F5C0C1.2020902@samsung.com>
+	Fri, 24 Apr 2015 14:13:51 -0400
+Received: by qgej70 with SMTP id j70so26512722qge.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Apr 2015 11:13:51 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <5539A24B.3080506@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-Hello Tobias,
+Hi Tobias,
 
-On 2015-03-03 15:10, Marek Szyprowski wrote:
-> Hello,
->
-> On 2015-02-24 14:39, Tobias Jakobi wrote:
->> Hello Marek,
->>
->> sorry for the late response!
->>
->>
->> On 2015-02-10 12:38, Marek Szyprowski wrote:
->>> Hello,
->>>
->>> On 2015-02-09 21:28, Tobias Jakobi wrote:
->>>> Hello!
->>>>
->>>> Marek Szyprowski wrote:
->>>>> I didn't observe any issues with 'ondemand' governor. I've just 
->>>>> tested it
->>>>> on next-20150204 with "[PATCH v2 0/3] Add support for hardware 
->>>>> reset of
->>>>> eMMC
->>>>> card on reboot" patches added
->>>>> (http://www.spinics.net/lists/linux-mmc/msg30621.html) and reboot 
->>>>> works
->>>>> fine.
->>>> Since I'm not using an eMMC card, I don't think the pwrseq stuff is
->>>> going to make a difference here.
->>>> Have you checked this with the PS_HOLD patch applied, or without?
->>>> Anyway, guess I'm going to recheck this, maybe with some other 
->>>> governors
->>>> too.
->>>
->>> PS_HOLD patch is related to shutdown behavior. Reboot doesn't use 
->>> it. Could you
->>> point which exactly version did you use and provide the .config 
->>> which causes
->>> problems with normal reboot when system runs from SD card? For eMMC 
->>> you would
->>> need patches from last linux-next.
->>
->> I'm currently using this tree:
->> https://github.com/tobiasjakobi/linux-odroid
->>
->> In this is the config:
->> https://raw.githubusercontent.com/tobiasjakobi/odroid-environment/master/sourcecode/system/vanilla-3.19-debug.conf 
->>
->>
->> Upon issuing reboot I get this here on the UART:
->> chidori ~ # reboot
->>
->> Broadcast message from root@chidori (ttySAC1) (Mon Feb 23 17:04:44 
->> 2015):
->>
->> The system is going down for reboot NOW!
->> INIT: Switching to runlevel: 6
->> INIT: Sending processes the TERM signal
->> chidori ~ #  * Stopping 
->> local                                             [ ok ]
->>  * Stopping vixie-cron 
->> ...                                                [ ok ]
->>  * Saving random seed 
->> ...                                                 [ ok ]
->>  * Deactivating additional swap space 
->> ...                                 [ ok ]
->>  * Stopping sshd 
->> ...                                                      [ ok ]
->>  * Unmounting network filesystems 
->> ...                                     [ ok ]
->>  * Stopping chronyd 
->> ...                                                   [ ok ]
->>  * Stopping BlueTooth NAP 
->> ...                                             [ ok ]
->>  * Stopping dnsmasq 
->> ...                                                   [ ok ]
->>  * Stopping syslog-ng 
->> ...                                                 [ ok ]
->>  * Shutting down bluetooth 
->> ...                                            [ ok ]
->>  * Stopping D-BUS system messagebus 
->> ...                                   [ ok ]
->>  * Unmounting loop devices
->>  * Unmounting filesystems
->>  *   Unmounting /usr/local/emu 
->> ...                                        [ ok ]
->>  *   Unmounting /home 
->> ...                                                 [ ok ]
->>  *   Unmounting /var 
->> ...                                                  [ ok ]
->>  * Deactivating swap devices 
->> ...                                          [ ok ]
->>  * Stopping udev 
->> ...                                                      [ ok ]
->>  * Saving the shutdown time 
->> ...                                           [ ok ]
->>  * Terminating remaining processes 
->> ...                                    [ ok ]
->>  * Killing remaining processes 
->> ...                                        [ ok ]
->>  * Saving dependency cache 
->> ...                                            [ ok ]
->>  * Remounting remaining filesystems read-only ...
->>  *   Remounting / read only ...
->> [  113.526626] EXT4-fs (mmcblk0p2): re-mounted. Opts: 
->> (null)              [ ok ]
->> [  115.609592] sd 0:0:0:0: [sda] Synchronizing SCSI cache
->> [
->>
->>
->> Notice the open bracket in the last line. Seems like there is still 
->> output in the kernel buffer, but the UART is maybe switched off 
->> before one can see that. At least there is nothing after that, and I 
->> have to manually restart the board then.
->
-> I've just checked and it works fine with my Odroid U3+ board booted 
-> from SD card. I have really no idea what wrong here... Could you check 
-> if the same problem exist with vanilla v4.0-rc1 kernel?
+2015-04-24 Joonyoung Shim <jy0922.shim@samsung.com>:
 
-I believe that patch e91d863d1aaeda0349aed42dfbd75c98e042a2c9 ("serial: 
-samsung:
-Clear operation mode on UART shutdown") solves this issue. It has been 
-merged to
-v4.0-rc7. Could you confirm it?
+> Hi Tobias,
+> 
+> On 04/23/2015 09:12 PM, Tobias Jakobi wrote:
+> > Remove the unused fields of struct exynos_drm_plane.
+> > 
+> > Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.h | 10 ----------
+> >  1 file changed, 10 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > index e12ecb5..c80331b 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > @@ -73,11 +73,6 @@ enum exynos_drm_output_type {
+> >   * @zpos: order of overlay layer(z position).
+> >   * @index_color: if using color key feature then this value would be used
+> >   *			as index color.
+> > - * @default_win: a window to be enabled.
+> > - * @color_key: color key on or off.
+> > - * @local_path: in case of lcd type, local path mode on or off.
+> > - * @transparency: transparency on or off.
+> > - * @activated: activated or not.
+> >   * @enabled: enabled or not.
+> >   * @resume: to resume or not.
+> >   *
+> > @@ -110,11 +105,6 @@ struct exynos_drm_plane {
+> >  	unsigned int zpos;
+> >  	unsigned int index_color;
+> 
+> How about remove also index_color?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+That one can go too.
+
+> 
+> >  
+> > -	bool default_win:1;
+> > -	bool color_key:1;
+> > -	bool local_path:1;
+> > -	bool transparency:1;
+> > -	bool activated:1;
+> >  	bool enabled:1;
+> >  	bool resume:1;
+> >  };
+> > 
+> 
+> Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+	Gustavo
