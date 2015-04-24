@@ -1,79 +1,62 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 2/2] drm/exynos: cleanup exynos_drm_plane
-Date: Fri, 24 Apr 2015 15:13:46 -0300
-Message-ID: <20150424181346.GE13025@joana>
+Subject: Re: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
+Date: Fri, 24 Apr 2015 15:14:40 -0300
+Message-ID: <20150424181440.GF13025@joana>
 References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1429791146-4410-3-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5539A24B.3080506@samsung.com>
+ <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5539A0EB.6060706@samsung.com>
+ <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f43.google.com ([209.85.192.43]:34820 "EHLO
-	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031014AbbDXSNv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Apr 2015 14:13:51 -0400
-Received: by qgej70 with SMTP id j70so26512722qge.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Apr 2015 11:13:51 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <5539A24B.3080506@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-Hi Tobias,
-
-2015-04-24 Joonyoung Shim <jy0922.shim@samsung.com>:
-
-> Hi Tobias,
-> 
-> On 04/23/2015 09:12 PM, Tobias Jakobi wrote:
-> > Remove the unused fields of struct exynos_drm_plane.
-> > 
-> > Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.h | 10 ----------
-> >  1 file changed, 10 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > index e12ecb5..c80331b 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> > @@ -73,11 +73,6 @@ enum exynos_drm_output_type {
-> >   * @zpos: order of overlay layer(z position).
-> >   * @index_color: if using color key feature then this value would be used
-> >   *			as index color.
-> > - * @default_win: a window to be enabled.
-> > - * @color_key: color key on or off.
-> > - * @local_path: in case of lcd type, local path mode on or off.
-> > - * @transparency: transparency on or off.
-> > - * @activated: activated or not.
-> >   * @enabled: enabled or not.
-> >   * @resume: to resume or not.
-> >   *
-> > @@ -110,11 +105,6 @@ struct exynos_drm_plane {
-> >  	unsigned int zpos;
-> >  	unsigned int index_color;
-> 
-> How about remove also index_color?
-
-That one can go too.
-
-> 
-> >  
-> > -	bool default_win:1;
-> > -	bool color_key:1;
-> > -	bool local_path:1;
-> > -	bool transparency:1;
-> > -	bool activated:1;
-> >  	bool enabled:1;
-> >  	bool resume:1;
-> >  };
-> > 
-> 
-> Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-	Gustavo
+SGkgVG9iaWFzLAoKMjAxNS0wNC0yNCBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
+ZWxlZmVsZC5kZT46Cgo+IE9uIDIwMTUtMDQtMjQgMDM6NDgsIEpvb255b3VuZyBTaGltIHdyb3Rl
+Ogo+ID5IaSBUb2JpYXMsCj4gPgo+ID5PbiAwNC8yMy8yMDE1IDA5OjEyIFBNLCBUb2JpYXMgSmFr
+b2JpIHdyb3RlOgo+ID4+TW92ZSB0aGUgZGVmaW5lcyBmb3IgdGhlIHBpeGVsZm9ybWF0cyB0aGF0
+IHRoZSBtaXhlciBzdXBwb3J0cyBvdXQKPiA+Pm9mIG1peGVyX2dyYXBoX2J1ZmZlcigpIHRvIHRo
+ZSB0b3Agb2YgdGhlIHNvdXJjZS4KPiA+PlRoZW4gc2VsZWN0IHRoZSBtaXhlciBwaXhlbGZvcm1h
+dCAocGYpIGluIG1peGVyX2dyYXBoX2J1ZmZlcigpIGJhc2VkIG9uCj4gPj50aGUgcGxhbmUncyBw
+ZiAoYW5kIG5vdCBicHApLgo+ID4+QWxzbyBhZGQgaGFuZGxpbmcgb2YgUkdCNTY1IGFuZCBYUkdC
+MTU1NSB0byB0aGUgc3dpdGNoIHN0YXRlbWVudCBhbmQKPiA+PmV4aXQgZWFybHkgaWYgdGhlIHBs
+YW5lIGhhcyBhbiB1bnN1cHBvcnRlZCBwZi4KPiA+Pgo+ID4+UGFydGlhbGx5IGJhc2VkIG9uICdk
+cm0vZXh5bm9zOiBlbmFibGUvZGlzYWJsZSBibGVuZCBiYXNlZCBvbiBwaXhlbAo+ID4+Zm9ybWF0
+JyBieSBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Lgo+
+ID4+Cj4gPj5TaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
+ZWxlZmVsZC5kZT4KPiA+Pi0tLQo+ID4+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgfCAzMgo+ID4+KysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPiA+PiAxIGZp
+bGUgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4gPj4KPiA+PmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gPj5iL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiA+PmluZGV4IGZiZWM3NTAuLjFi
+ZDIzZWUgMTAwNjQ0Cj4gPj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
+ci5jCj4gPj4rKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gPj5A
+QCAtNDQsNiArNDQsMTIgQEAKPiA+PiAjZGVmaW5lIE1JWEVSX1dJTl9OUgkJMwo+ID4+ICNkZWZp
+bmUgTUlYRVJfREVGQVVMVF9XSU4JMAo+ID4+Cj4gPj4rLyogVGhlIHBpeGVsZm9ybWF0cyB0aGF0
+IGFyZSBuYXRpdmVseSBzdXBwb3J0ZWQgYnkgdGhlIG1peGVyLiAqLwo+ID4+KyNkZWZpbmUgTUlY
+RVJfUElYRUxGT1JNQVRfUkdCNTY1IDQKPiA+PisjZGVmaW5lIE1JWEVSX1BJWEVMRk9STUFUX0FS
+R0IxNTU1IDUKPiA+PisjZGVmaW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0I0NDQ0IDYKPiA+Pisj
+ZGVmaW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0I4ODg4IDcKPiA+PisKPiA+Cj4gPlNlZW1zIGJl
+IGxvbmcsIGhvdyBhYm91dCBzL1BJWEVMRk9STUFUL0ZPUk1BVCBvciBqdXN0IE1JWEVSX1JHQjU2
+NSAuLi4gPwo+ID5QbGVhc2UgdXNlIHRhYiBiZXR3ZWVuIGRlZmluZSBuYW1lIGFuZCB2YWx1ZS4K
+PiBIb3cgYWJvdXQgTVhSX0ZPUk1BVF9YWVosIHRvIHN0YXkgY29uc2lzdGVudCB3aXRoIHRoZSBy
+ZWdzLW1peGVyIGhlYWRlcj8KCkknbSBmaW5lIHdpdGggTVhSX0ZPUk1BVF9YWVouIE90aGVyIHRo
+YW4gdGhhdDoKClJldmlld2VkLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
+b2xsYWJvcmEuY28udWs+CgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
