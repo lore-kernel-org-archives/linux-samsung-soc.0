@@ -1,61 +1,38 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 2/2] drm/exynos: cleanup exynos_drm_plane
-Date: Sat, 25 Apr 2015 20:06:54 +0200
-Message-ID: <1429985214-4651-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1429985214-4651-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
+Date: Sat, 25 Apr 2015 20:08:07 +0200
+Message-ID: <553BD807.8080109@gmx.net>
+References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de> <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de> <5539A0EB.6060706@samsung.com> <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de> <20150424181440.GF13025@joana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45719 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756594AbbDYSHH (ORCPT
+Received: from mout.gmx.net ([212.227.17.20]:56662 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754807AbbDYSI0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 25 Apr 2015 14:07:07 -0400
-In-Reply-To: <1429985214-4651-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Sat, 25 Apr 2015 14:08:26 -0400
+In-Reply-To: <20150424181440.GF13025@joana>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+To: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 
-Remove the unused fields of struct exynos_drm_plane.
+Gustavo Padovan wrote:
+>> How about MXR_FORMAT_XYZ, to stay consistent with the regs-mixer header?
+> 
+> I'm fine with MXR_FORMAT_XYZ. Other than that:
+> 
+> Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Thanks, updated version sent!
 
-v2: Remove index_color as well, also unused (thanks Joonyoung).
+With best wishes,
+Tobias
 
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h | 13 -------------
- 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index e12ecb5..b1014c6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -71,13 +71,6 @@ enum exynos_drm_output_type {
-  * @dma_addr: array of bus(accessed by dma) address to the memory region
-  *	      allocated for a overlay.
-  * @zpos: order of overlay layer(z position).
-- * @index_color: if using color key feature then this value would be used
-- *			as index color.
-- * @default_win: a window to be enabled.
-- * @color_key: color key on or off.
-- * @local_path: in case of lcd type, local path mode on or off.
-- * @transparency: transparency on or off.
-- * @activated: activated or not.
-  * @enabled: enabled or not.
-  * @resume: to resume or not.
-  *
-@@ -108,13 +101,7 @@ struct exynos_drm_plane {
- 	uint32_t pixel_format;
- 	dma_addr_t dma_addr[MAX_FB_BUFFER];
- 	unsigned int zpos;
--	unsigned int index_color;
- 
--	bool default_win:1;
--	bool color_key:1;
--	bool local_path:1;
--	bool transparency:1;
--	bool activated:1;
- 	bool enabled:1;
- 	bool resume:1;
- };
--- 
-2.0.5
+> 
+> 	Gustavo
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
