@@ -1,76 +1,71 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/2] drm/exynos: mixer: remove buffer count handling in vp_video_buffer()
-Date: Sat, 25 Apr 2015 22:31:54 +0200
-Message-ID: <1429993914-2708-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1429993914-2708-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45802 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750768AbbDYUcc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 25 Apr 2015 16:32:32 -0400
-In-Reply-To: <1429993914-2708-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] drm/exynos: fb: use drm_format_num_planes to get buffer
+ count
+Date: Sat, 25 Apr 2015 22:31:53 +0200
+Message-ID: <1429993914-2708-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The video processor (VP) supports four formats: NV12, NV21 and its
-tiled variants. All these formats are bi-planar, so the buffer
-count in vp_video_buffer() is always 2.
-
-While we're at it, also add support for NV21 and properly exit
-if we're called with an invalid (non-VP) pixelformat.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 534a594..6fb4faa 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -388,7 +388,6 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	unsigned long flags;
- 	struct exynos_drm_plane *plane;
--	unsigned int buf_num = 1;
- 	dma_addr_t luma_addr[2], chroma_addr[2];
- 	bool tiled_mode = false;
- 	bool crcb_mode = false;
-@@ -399,27 +398,18 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 	switch (plane->pixel_format) {
- 	case DRM_FORMAT_NV12:
- 		crcb_mode = false;
--		buf_num = 2;
- 		break;
--	/* TODO: single buffer format NV12, NV21 */
-+	case DRM_FORMAT_NV21:
-+		crcb_mode = true;
-+		break;
- 	default:
--		/* ignore pixel format at disable time */
--		if (!plane->dma_addr[0])
--			break;
--
- 		DRM_ERROR("pixel format for vp is wrong [%d].\n",
- 				plane->pixel_format);
- 		return;
- 	}
- 
--	if (buf_num == 2) {
--		luma_addr[0] = plane->dma_addr[0];
--		chroma_addr[0] = plane->dma_addr[1];
--	} else {
--		luma_addr[0] = plane->dma_addr[0];
--		chroma_addr[0] = plane->dma_addr[0]
--			+ (plane->pitch * plane->fb_height);
--	}
-+	luma_addr[0] = plane->dma_addr[0];
-+	chroma_addr[0] = plane->dma_addr[1];
- 
- 	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
- 		ctx->interlace = true;
--- 
-2.0.5
+VGhlIHByZXZpb3VzIGNvZGUgaGFkIHNvbWUgc3BlY2lhbCBjYXNlIGhhbmRsaW5nIGZvciB0aGUg
+YnVmZmVyCmNvdW50IGluIGV4eW5vc19kcm1fZm9ybWF0X251bV9idWZmZXJzKCkuCgpUaGlzIGNv
+ZGUgd2FzIGluY29ycmVjdCB0aG91Z2gsIHNpbmNlIHRoaXMgc3BlY2lhbCBjYXNlIGRvZXNuJ3QK
+ZXhpc3QgZm9yIERSTS4gSXQgc3RlbW1lZCBmcm9tIHRoZSBleGlzdGVuY2Ugb2YgdGhlIHNwZWNp
+YWwgTlYxMk0KVjRMMiBmb3JtYXQuIE5WMTIgaXMgYSBiaS1wbGFuYXIgZm9ybWF0IChzZXBhcmF0
+ZSBwbGFuZXMgZm9yIGx1bWEKYW5kIGNocm9tYSkgYW5kIFY0TDIgZGlmZmVyZW50aWF0ZXMgYmV0
+d2VlbiBhIE5WMTIgYnVmZmVyIHdoZXJlCmx1bWEgYW5kIGNocm9tYSBpcyBjb250aWd1b3VzIGlu
+IG1lbW9yeSAoc28gbm8gZGF0YSBiZXR3ZWVuCmx1bWEvY2hyb21hKSwgYW5kIGEgTlYxMiBidWZm
+ZXIgd2hlcmUgbHVtYSBhbmQgY2hyb21hIGhhdmUgdHdvCmV4cGxpY2l0IG1lbW9yeSBsb2NhdGlv
+bnMgKHdoaWNoIGlzIHRoZW4gY2FsbGVkIE5WMTJNKS4KClRoaXMgZGlzdGluY3Rpb24gZG9lc24n
+dCBleGlzdCBmb3IgRFJNLiBBIGJpLXBsYW5hciBmb3JtYXQgYWx3YXlzCmV4cGxpY2l0bHkgY29t
+ZXMgd2l0aCB0aGUgaW5mb3JtYXRpb24gYWJvdXQgaXRzIHR3byBwbGFuZXMgKGV2ZW4KaWYgdGhl
+c2UgcGxhbmVzIHNob3VsZCBiZSBjb250aWd1b3VzKS4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBK
+YWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9mYi5jIHwgMzkgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzOCBkZWxldGlvbnMoLSkK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCmluZGV4IDkyOWNiMDMuLjE0MmVi
+NGUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCkBAIC0xNzEsNDMgKzE3
+MSw2IEBAIGV4eW5vc19kcm1fZnJhbWVidWZmZXJfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
+LAogCXJldHVybiAmZXh5bm9zX2ZiLT5mYjsKIH0KIAotc3RhdGljIHUzMiBleHlub3NfZHJtX2Zv
+cm1hdF9udW1fYnVmZmVycyhzdHJ1Y3QgZHJtX21vZGVfZmJfY21kMiAqbW9kZV9jbWQpCi17Ci0J
+dW5zaWduZWQgaW50IGNudCA9IDA7Ci0KLQlpZiAobW9kZV9jbWQtPnBpeGVsX2Zvcm1hdCAhPSBE
+Uk1fRk9STUFUX05WMTIpCi0JCXJldHVybiBkcm1fZm9ybWF0X251bV9wbGFuZXMobW9kZV9jbWQt
+PnBpeGVsX2Zvcm1hdCk7Ci0KLQl3aGlsZSAoY250ICE9IE1BWF9GQl9CVUZGRVIpIHsKLQkJaWYg
+KCFtb2RlX2NtZC0+aGFuZGxlc1tjbnRdKQotCQkJYnJlYWs7Ci0JCWNudCsrOwotCX0KLQotCS8q
+Ci0JICogY2hlY2sgaWYgTlYxMiBvciBOVjEyTS4KLQkgKgotCSAqIE5WMTIKLQkgKiBoYW5kbGVz
+WzBdID0gYmFzZTEsIG9mZnNldHNbMF0gPSAwCi0JICogaGFuZGxlc1sxXSA9IGJhc2UxLCBvZmZz
+ZXRzWzFdID0gWV9zaXplCi0JICoKLQkgKiBOVjEyTQotCSAqIGhhbmRsZXNbMF0gPSBiYXNlMSwg
+b2Zmc2V0c1swXSA9IDAKLQkgKiBoYW5kbGVzWzFdID0gYmFzZTIsIG9mZnNldHNbMV0gPSAwCi0J
+ICovCi0JaWYgKGNudCA9PSAyKSB7Ci0JCS8qCi0JCSAqIGluIGNhc2Ugb2YgTlYxMiBmb3JtYXQs
+IG9mZnNldHNbMV0gaXMgbm90IDAgYW5kCi0JCSAqIGhhbmRsZXNbMF0gaXMgc2FtZSBhcyBoYW5k
+bGVzWzFdLgotCQkgKi8KLQkJaWYgKG1vZGVfY21kLT5vZmZzZXRzWzFdICYmCi0JCQltb2RlX2Nt
+ZC0+aGFuZGxlc1swXSA9PSBtb2RlX2NtZC0+aGFuZGxlc1sxXSkKLQkJCWNudCA9IDE7Ci0JfQot
+Ci0JcmV0dXJuIGNudDsKLX0KLQogc3RhdGljIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKgogZXh5
+bm9zX3VzZXJfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZmls
+ZSAqZmlsZV9wcml2LAogCQkgICAgICBzdHJ1Y3QgZHJtX21vZGVfZmJfY21kMiAqbW9kZV9jbWQp
+CkBAIC0yMzAsNyArMTkzLDcgQEAgZXh5bm9zX3VzZXJfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZV9wcml2LAogCiAJZHJtX2hlbHBlcl9tb2Rl
+X2ZpbGxfZmJfc3RydWN0KCZleHlub3NfZmItPmZiLCBtb2RlX2NtZCk7CiAJZXh5bm9zX2ZiLT5l
+eHlub3NfZ2VtX29ialswXSA9IHRvX2V4eW5vc19nZW1fb2JqKG9iaik7Ci0JZXh5bm9zX2ZiLT5i
+dWZfY250ID0gZXh5bm9zX2RybV9mb3JtYXRfbnVtX2J1ZmZlcnMobW9kZV9jbWQpOworCWV4eW5v
+c19mYi0+YnVmX2NudCA9IGRybV9mb3JtYXRfbnVtX3BsYW5lcyhtb2RlX2NtZC0+cGl4ZWxfZm9y
+bWF0KTsKIAogCURSTV9ERUJVR19LTVMoImJ1Zl9jbnQgPSAlZFxuIiwgZXh5bm9zX2ZiLT5idWZf
+Y250KTsKIAotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
