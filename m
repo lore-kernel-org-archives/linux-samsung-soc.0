@@ -1,61 +1,61 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 1/2] drm/exynos: mixer: cleanup pixelformat handling
-Date: Sat, 25 Apr 2015 20:06:53 +0200
-Message-ID: <1429985214-4651-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 2/2] drm/exynos: cleanup exynos_drm_plane
+Date: Sat, 25 Apr 2015 20:06:54 +0200
+Message-ID: <1429985214-4651-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1429985214-4651-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:45719 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756594AbbDYSHH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 25 Apr 2015 14:07:07 -0400
+In-Reply-To: <1429985214-4651-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-TW92ZSB0aGUgZGVmaW5lcyBmb3IgdGhlIHBpeGVsZm9ybWF0cyB0aGF0IHRoZSBtaXhlciBzdXBw
-b3J0cyBvdXQKb2YgbWl4ZXJfZ3JhcGhfYnVmZmVyKCkgdG8gdGhlIHRvcCBvZiB0aGUgc291cmNl
-LgpUaGVuIHNlbGVjdCB0aGUgbWl4ZXIgcGl4ZWxmb3JtYXQgKHBmKSBpbiBtaXhlcl9ncmFwaF9i
-dWZmZXIoKSBiYXNlZCBvbgp0aGUgcGxhbmUncyBwZiAoYW5kIG5vdCBicHApLgpBbHNvIGFkZCBo
-YW5kbGluZyBvZiBSR0I1NjUgYW5kIFhSR0IxNTU1IHRvIHRoZSBzd2l0Y2ggc3RhdGVtZW50IGFu
-ZApleGl0IGVhcmx5IGlmIHRoZSBwbGFuZSBoYXMgYW4gdW5zdXBwb3J0ZWQgcGYuCgpQYXJ0aWFs
-bHkgYmFzZWQgb24gJ2RybS9leHlub3M6IGVuYWJsZS9kaXNhYmxlIGJsZW5kIGJhc2VkIG9uIHBp
-eGVsCmZvcm1hdCcgYnkgR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3Jh
-LmNvLnVrPi4KCnYyOiBVc2UgdGhlIHNob3J0ZXIgTVhSX0ZPUk1BVCBhcyBwcmVmaXguCgpSZXZp
-ZXdlZC1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVr
-PgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVs
-ZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzIgKysr
-KysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRp
-b25zKCspLCAxMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
-YwppbmRleCBmYmVjNzUwLi41MzRhNTk0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
-eGVyLmMKQEAgLTQ0LDYgKzQ0LDEyIEBACiAjZGVmaW5lIE1JWEVSX1dJTl9OUgkJMwogI2RlZmlu
-ZSBNSVhFUl9ERUZBVUxUX1dJTgkwCiAKKy8qIFRoZSBwaXhlbGZvcm1hdHMgdGhhdCBhcmUgbmF0
-aXZlbHkgc3VwcG9ydGVkIGJ5IHRoZSBtaXhlci4gKi8KKyNkZWZpbmUgTVhSX0ZPUk1BVF9SR0I1
-NjUJNAorI2RlZmluZSBNWFJfRk9STUFUX0FSR0IxNTU1CTUKKyNkZWZpbmUgTVhSX0ZPUk1BVF9B
-UkdCNDQ0NAk2CisjZGVmaW5lIE1YUl9GT1JNQVRfQVJHQjg4ODgJNworCiBzdHJ1Y3QgbWl4ZXJf
-cmVzb3VyY2VzIHsKIAlpbnQJCQlpcnE7CiAJdm9pZCBfX2lvbWVtCQkqbWl4ZXJfcmVnczsKQEAg
-LTUzMSwyMCArNTM3LDI2IEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3Qg
-bWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQogCiAJcGxhbmUgPSAmY3R4LT5wbGFuZXNbd2lu
-XTsKIAotCSNkZWZpbmUgUkdCNTY1IDQKLQkjZGVmaW5lIEFSR0IxNTU1IDUKLQkjZGVmaW5lIEFS
-R0I0NDQ0IDYKLQkjZGVmaW5lIEFSR0I4ODg4IDcKKwlzd2l0Y2ggKHBsYW5lLT5waXhlbF9mb3Jt
-YXQpIHsKKwljYXNlIERSTV9GT1JNQVRfWFJHQjQ0NDQ6CisJCWZtdCA9IE1YUl9GT1JNQVRfQVJH
-QjQ0NDQ7CisJCWJyZWFrOworCisJY2FzZSBEUk1fRk9STUFUX1hSR0IxNTU1OgorCQlmbXQgPSBN
-WFJfRk9STUFUX0FSR0IxNTU1OworCQlicmVhazsKIAotCXN3aXRjaCAocGxhbmUtPmJwcCkgewot
-CWNhc2UgMTY6Ci0JCWZtdCA9IEFSR0I0NDQ0OworCWNhc2UgRFJNX0ZPUk1BVF9SR0I1NjU6CisJ
-CWZtdCA9IE1YUl9GT1JNQVRfUkdCNTY1OwogCQlicmVhazsKLQljYXNlIDMyOgotCQlmbXQgPSBB
-UkdCODg4ODsKKworCWNhc2UgRFJNX0ZPUk1BVF9YUkdCODg4ODoKKwkJZm10ID0gTVhSX0ZPUk1B
-VF9BUkdCODg4ODsKIAkJYnJlYWs7CisKIAlkZWZhdWx0OgotCQlmbXQgPSBBUkdCODg4ODsKKwkJ
-RFJNX0RFQlVHX0tNUygicGl4ZWxmb3JtYXQgdW5zdXBwb3J0ZWQgYnkgbWl4ZXJcbiIpOworCQly
-ZXR1cm47CiAJfQogCiAJLyogY2hlY2sgaWYgbWl4ZXIgc3VwcG9ydHMgcmVxdWVzdGVkIHNjYWxp
-bmcgc2V0dXAgKi8KLS0gCjIuMC41CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Remove the unused fields of struct exynos_drm_plane.
+
+v2: Remove index_color as well, also unused (thanks Joonyoung).
+
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index e12ecb5..b1014c6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -71,13 +71,6 @@ enum exynos_drm_output_type {
+  * @dma_addr: array of bus(accessed by dma) address to the memory region
+  *	      allocated for a overlay.
+  * @zpos: order of overlay layer(z position).
+- * @index_color: if using color key feature then this value would be used
+- *			as index color.
+- * @default_win: a window to be enabled.
+- * @color_key: color key on or off.
+- * @local_path: in case of lcd type, local path mode on or off.
+- * @transparency: transparency on or off.
+- * @activated: activated or not.
+  * @enabled: enabled or not.
+  * @resume: to resume or not.
+  *
+@@ -108,13 +101,7 @@ struct exynos_drm_plane {
+ 	uint32_t pixel_format;
+ 	dma_addr_t dma_addr[MAX_FB_BUFFER];
+ 	unsigned int zpos;
+-	unsigned int index_color;
+ 
+-	bool default_win:1;
+-	bool color_key:1;
+-	bool local_path:1;
+-	bool transparency:1;
+-	bool activated:1;
+ 	bool enabled:1;
+ 	bool resume:1;
+ };
+-- 
+2.0.5
