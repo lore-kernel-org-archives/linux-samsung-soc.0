@@ -1,71 +1,61 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 1/2] drm/exynos: fb: use drm_format_num_planes to get buffer
- count
-Date: Sat, 25 Apr 2015 22:31:53 +0200
-Message-ID: <1429993914-2708-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Gwendal Grignou <gwendal@chromium.org>
+Subject: Re: [RESEND PATCH 2/8] platform/chrome: cros_ec_lpc - Use existing
+ function to check EC result
+Date: Sat, 25 Apr 2015 18:33:56 -0700
+Message-ID: <CAMHSBOX3X1y0QA3nGxtw7RRdot78e0UKGNYv+fDbYe88=0iLaQ@mail.gmail.com>
+References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1428336906-14906-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1428336906-14906-3-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhlIHByZXZpb3VzIGNvZGUgaGFkIHNvbWUgc3BlY2lhbCBjYXNlIGhhbmRsaW5nIGZvciB0aGUg
-YnVmZmVyCmNvdW50IGluIGV4eW5vc19kcm1fZm9ybWF0X251bV9idWZmZXJzKCkuCgpUaGlzIGNv
-ZGUgd2FzIGluY29ycmVjdCB0aG91Z2gsIHNpbmNlIHRoaXMgc3BlY2lhbCBjYXNlIGRvZXNuJ3QK
-ZXhpc3QgZm9yIERSTS4gSXQgc3RlbW1lZCBmcm9tIHRoZSBleGlzdGVuY2Ugb2YgdGhlIHNwZWNp
-YWwgTlYxMk0KVjRMMiBmb3JtYXQuIE5WMTIgaXMgYSBiaS1wbGFuYXIgZm9ybWF0IChzZXBhcmF0
-ZSBwbGFuZXMgZm9yIGx1bWEKYW5kIGNocm9tYSkgYW5kIFY0TDIgZGlmZmVyZW50aWF0ZXMgYmV0
-d2VlbiBhIE5WMTIgYnVmZmVyIHdoZXJlCmx1bWEgYW5kIGNocm9tYSBpcyBjb250aWd1b3VzIGlu
-IG1lbW9yeSAoc28gbm8gZGF0YSBiZXR3ZWVuCmx1bWEvY2hyb21hKSwgYW5kIGEgTlYxMiBidWZm
-ZXIgd2hlcmUgbHVtYSBhbmQgY2hyb21hIGhhdmUgdHdvCmV4cGxpY2l0IG1lbW9yeSBsb2NhdGlv
-bnMgKHdoaWNoIGlzIHRoZW4gY2FsbGVkIE5WMTJNKS4KClRoaXMgZGlzdGluY3Rpb24gZG9lc24n
-dCBleGlzdCBmb3IgRFJNLiBBIGJpLXBsYW5hciBmb3JtYXQgYWx3YXlzCmV4cGxpY2l0bHkgY29t
-ZXMgd2l0aCB0aGUgaW5mb3JtYXRpb24gYWJvdXQgaXRzIHR3byBwbGFuZXMgKGV2ZW4KaWYgdGhl
-c2UgcGxhbmVzIHNob3VsZCBiZSBjb250aWd1b3VzKS4KClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBK
-YWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9mYi5jIHwgMzkgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzOCBkZWxldGlvbnMoLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCmluZGV4IDkyOWNiMDMuLjE0MmVi
-NGUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCkBAIC0xNzEsNDMgKzE3
-MSw2IEBAIGV4eW5vc19kcm1fZnJhbWVidWZmZXJfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
-LAogCXJldHVybiAmZXh5bm9zX2ZiLT5mYjsKIH0KIAotc3RhdGljIHUzMiBleHlub3NfZHJtX2Zv
-cm1hdF9udW1fYnVmZmVycyhzdHJ1Y3QgZHJtX21vZGVfZmJfY21kMiAqbW9kZV9jbWQpCi17Ci0J
-dW5zaWduZWQgaW50IGNudCA9IDA7Ci0KLQlpZiAobW9kZV9jbWQtPnBpeGVsX2Zvcm1hdCAhPSBE
-Uk1fRk9STUFUX05WMTIpCi0JCXJldHVybiBkcm1fZm9ybWF0X251bV9wbGFuZXMobW9kZV9jbWQt
-PnBpeGVsX2Zvcm1hdCk7Ci0KLQl3aGlsZSAoY250ICE9IE1BWF9GQl9CVUZGRVIpIHsKLQkJaWYg
-KCFtb2RlX2NtZC0+aGFuZGxlc1tjbnRdKQotCQkJYnJlYWs7Ci0JCWNudCsrOwotCX0KLQotCS8q
-Ci0JICogY2hlY2sgaWYgTlYxMiBvciBOVjEyTS4KLQkgKgotCSAqIE5WMTIKLQkgKiBoYW5kbGVz
-WzBdID0gYmFzZTEsIG9mZnNldHNbMF0gPSAwCi0JICogaGFuZGxlc1sxXSA9IGJhc2UxLCBvZmZz
-ZXRzWzFdID0gWV9zaXplCi0JICoKLQkgKiBOVjEyTQotCSAqIGhhbmRsZXNbMF0gPSBiYXNlMSwg
-b2Zmc2V0c1swXSA9IDAKLQkgKiBoYW5kbGVzWzFdID0gYmFzZTIsIG9mZnNldHNbMV0gPSAwCi0J
-ICovCi0JaWYgKGNudCA9PSAyKSB7Ci0JCS8qCi0JCSAqIGluIGNhc2Ugb2YgTlYxMiBmb3JtYXQs
-IG9mZnNldHNbMV0gaXMgbm90IDAgYW5kCi0JCSAqIGhhbmRsZXNbMF0gaXMgc2FtZSBhcyBoYW5k
-bGVzWzFdLgotCQkgKi8KLQkJaWYgKG1vZGVfY21kLT5vZmZzZXRzWzFdICYmCi0JCQltb2RlX2Nt
-ZC0+aGFuZGxlc1swXSA9PSBtb2RlX2NtZC0+aGFuZGxlc1sxXSkKLQkJCWNudCA9IDE7Ci0JfQot
-Ci0JcmV0dXJuIGNudDsKLX0KLQogc3RhdGljIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKgogZXh5
-bm9zX3VzZXJfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZmls
-ZSAqZmlsZV9wcml2LAogCQkgICAgICBzdHJ1Y3QgZHJtX21vZGVfZmJfY21kMiAqbW9kZV9jbWQp
-CkBAIC0yMzAsNyArMTkzLDcgQEAgZXh5bm9zX3VzZXJfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZV9wcml2LAogCiAJZHJtX2hlbHBlcl9tb2Rl
-X2ZpbGxfZmJfc3RydWN0KCZleHlub3NfZmItPmZiLCBtb2RlX2NtZCk7CiAJZXh5bm9zX2ZiLT5l
-eHlub3NfZ2VtX29ialswXSA9IHRvX2V4eW5vc19nZW1fb2JqKG9iaik7Ci0JZXh5bm9zX2ZiLT5i
-dWZfY250ID0gZXh5bm9zX2RybV9mb3JtYXRfbnVtX2J1ZmZlcnMobW9kZV9jbWQpOworCWV4eW5v
-c19mYi0+YnVmX2NudCA9IGRybV9mb3JtYXRfbnVtX3BsYW5lcyhtb2RlX2NtZC0+cGl4ZWxfZm9y
-bWF0KTsKIAogCURSTV9ERUJVR19LTVMoImJ1Zl9jbnQgPSAlZFxuIiwgZXh5bm9zX2ZiLT5idWZf
-Y250KTsKIAotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+
+On Mon, Apr 6, 2015 at 9:15 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Commit 6db07b633658 ("mfd: cros_ec: Check result code from EC messages")
+> added a common cros_ec_check_result() function that can be used to check
+> the ec_msg->result for errors and warns about them.
+>
+> Use the existing function instead of duplicating same check in the driver.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  drivers/platform/chrome/cros_ec_lpc.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+> index 860310513cf0..3a675817c95d 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -95,19 +95,9 @@ static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
+>
+>         /* Check result */
+>         msg->result = inb(EC_LPC_ADDR_HOST_DATA);
+> -
+> -       switch (msg->result) {
+> -       case EC_RES_SUCCESS:
+> -               break;
+> -       case EC_RES_IN_PROGRESS:
+> -               ret = -EAGAIN;
+> -               dev_dbg(ec->dev, "command 0x%02x in progress\n",
+> -                       msg->command);
+> +       ret = cros_ec_check_result(ec, msg);
+> +       if (ret)
+>                 goto done;
+> -       default:
+> -               dev_dbg(ec->dev, "command 0x%02x returned %d\n",
+> -                       msg->command, msg->result);
+> -       }
+>
+>         /* Read back args */
+>         args.flags = inb(EC_LPC_ADDR_HOST_ARGS);
+> --
+> 2.1.4
+>
