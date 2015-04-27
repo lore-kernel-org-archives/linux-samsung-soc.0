@@ -1,45 +1,72 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 2/4] drm/exynos: plane: honor buffer offset for dma_addr
-Date: Mon, 27 Apr 2015 23:10:14 +0200
-Message-ID: <1430169016-4966-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 3/4] drm/exynos: mixer: remove buffer count handling in vp_video_buffer()
+Date: Mon, 27 Apr 2015 23:10:15 +0200
+Message-ID: <1430169016-4966-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49459 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965104AbbD0VK7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Apr 2015 17:10:59 -0400
 In-Reply-To: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-UHJldmlvdXNseSB3ZSB3ZXJlIGlnbm9yaW5nIHRoZSBidWZmZXIgb2Zmc2V0cyB0aGF0IGFyZQpw
-YXNzZWQgdGhyb3VnaCB0aGUgYWRkZmIyIGlvY3RsLiBUaGlzIGRpZG4ndCBjYXVzZSBhbnkKbWFq
-b3IgaXNzdWVzLCBzaW5jZSBmb3IgdW5pLXBsYW5hciBmb3JtYXRzIChsaWtlIFhSR0I4ODg4KQp1
-c2Vyc3BhY2Ugd291bGQgbW9zdCBvZiB0aGUgdGltZSBqdXN0IHVzZSBvZmZzZXRzWzBdPTAuCgpI
-b3dldmVyIHdpdGggTlYxMiBvZmZzZXRzWzFdIGlzIHZlcnkgbGlrZWx5IG5vbi16ZXJvLgpTbyBw
-cm9wZXJseSBhcHBseSB0aGUgb2Zmc2V0cyB0byBvdXIgZG1hIGFkZHJlc3Nlcy4KClNpZ25lZC1v
-ZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0K
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgMiArLQogMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCAxM2VhMzM0Li5iMTE4MGZiIDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtNzYsNyArNzYsNyBAQCBp
-bnQgZXh5bm9zX2NoZWNrX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJt
-X2ZyYW1lYnVmZmVyICpmYikKIAkJCXJldHVybiAtRUZBVUxUOwogCQl9CiAKLQkJZXh5bm9zX3Bs
-YW5lLT5kbWFfYWRkcltpXSA9IGJ1ZmZlci0+ZG1hX2FkZHI7CisJCWV4eW5vc19wbGFuZS0+ZG1h
-X2FkZHJbaV0gPSBidWZmZXItPmRtYV9hZGRyICsgZmItPm9mZnNldHNbaV07CiAKIAkJRFJNX0RF
-QlVHX0tNUygiYnVmZmVyOiAlZCwgZG1hX2FkZHIgPSAweCVseFxuIiwKIAkJCQlpLCAodW5zaWdu
-ZWQgbG9uZylleHlub3NfcGxhbmUtPmRtYV9hZGRyW2ldKTsKLS0gCjIuMC41CgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The video processor (VP) supports four formats: NV12, NV21 and its
+tiled variants. All these formats are bi-planar, so the buffer
+count in vp_video_buffer() is always 2.
+
+Also properly exit if we're called with an invalid (non-VP) pixelformat.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 0474fd3..970b293 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -388,7 +388,6 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 	unsigned long flags;
+ 	struct exynos_drm_plane *plane;
+-	unsigned int buf_num = 1;
+ 	dma_addr_t luma_addr[2], chroma_addr[2];
+ 	bool tiled_mode = false;
+ 	bool crcb_mode = false;
+@@ -399,27 +398,15 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
+ 	switch (plane->pixel_format) {
+ 	case DRM_FORMAT_NV12:
+ 		crcb_mode = false;
+-		buf_num = 2;
+ 		break;
+-	/* TODO: single buffer format NV12, NV21 */
+ 	default:
+-		/* ignore pixel format at disable time */
+-		if (!plane->dma_addr[0])
+-			break;
+-
+ 		DRM_ERROR("pixel format for vp is wrong [%d].\n",
+ 				plane->pixel_format);
+ 		return;
+ 	}
+ 
+-	if (buf_num == 2) {
+-		luma_addr[0] = plane->dma_addr[0];
+-		chroma_addr[0] = plane->dma_addr[1];
+-	} else {
+-		luma_addr[0] = plane->dma_addr[0];
+-		chroma_addr[0] = plane->dma_addr[0]
+-			+ (plane->pitch * plane->fb_height);
+-	}
++	luma_addr[0] = plane->dma_addr[0];
++	chroma_addr[0] = plane->dma_addr[1];
+ 
+ 	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
+ 		ctx->interlace = true;
+-- 
+2.0.5
