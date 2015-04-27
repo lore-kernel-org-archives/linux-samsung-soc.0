@@ -1,226 +1,37 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 2/2] irqchip: Constify irq_domain_ops
-Date: Mon, 27 Apr 2015 21:54:24 +0900
-Message-ID: <1430139264-4362-2-git-send-email-k.kozlowski.k@gmail.com>
-References: <1430139264-4362-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430139264-4362-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH v3 09/10] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED
+ flag to clocks for sercure monitor call
+Date: Mon, 27 Apr 2015 22:11:28 +0900
+Message-ID: <CAJKOXPfBvtkm6y_hG0NrPKVQX-7fZyiW_bTV5FJRQyunn9R+=g@mail.gmail.com>
+References: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
+	<1430134597-14668-10-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f41.google.com ([209.85.216.41]:37894 "EHLO
+	mail-vn0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132AbbD0NL3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Apr 2015 09:11:29 -0400
+In-Reply-To: <1430134597-14668-10-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
 
-The irq_domain_ops are not modified by the driver and the irqdomain core
-code accepts pointer to a const data.
+2015-04-27 20:36 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+> From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>
+> This patch adds 'CLK_IGNORE_UNUSED' flag to clocks which is required for
+> operation of secure monitor call (smc). System will hang when it executes 'smc'
+> with one of those clock is gated. All related clocks must be enabled.
+>
+> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- drivers/irqchip/exynos-combiner.c         | 2 +-
- drivers/irqchip/irq-armada-370-xp.c       | 2 +-
- drivers/irqchip/irq-bcm2835.c             | 2 +-
- drivers/irqchip/irq-keystone.c            | 2 +-
- drivers/irqchip/irq-mips-gic.c            | 2 +-
- drivers/irqchip/irq-mtk-sysirq.c          | 2 +-
- drivers/irqchip/irq-mxs.c                 | 2 +-
- drivers/irqchip/irq-renesas-intc-irqpin.c | 2 +-
- drivers/irqchip/irq-renesas-irqc.c        | 2 +-
- drivers/irqchip/irq-s3c24xx.c             | 4 ++--
- drivers/irqchip/irq-sun4i.c               | 2 +-
- drivers/irqchip/irq-versatile-fpga.c      | 2 +-
- drivers/irqchip/irq-vic.c                 | 2 +-
- drivers/irqchip/irq-vt8500.c              | 2 +-
- 14 files changed, 15 insertions(+), 15 deletions(-)
+Hi,
 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index 5945223b73fa..a57a3a1f339f 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -164,7 +164,7 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 	return 0;
- }
- 
--static struct irq_domain_ops combiner_irq_domain_ops = {
-+static const struct irq_domain_ops combiner_irq_domain_ops = {
- 	.xlate	= combiner_irq_domain_xlate,
- 	.map	= combiner_irq_domain_map,
- };
-diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
-index daccc8bdbb42..0d3b0fe2f175 100644
---- a/drivers/irqchip/irq-armada-370-xp.c
-+++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -409,7 +409,7 @@ static struct notifier_block mpic_cascaded_cpu_notifier = {
- };
- #endif /* CONFIG_SMP */
- 
--static struct irq_domain_ops armada_370_xp_mpic_irq_ops = {
-+static const struct irq_domain_ops armada_370_xp_mpic_irq_ops = {
- 	.map = armada_370_xp_mpic_irq_map,
- 	.xlate = irq_domain_xlate_onecell,
- };
-diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
-index 5916d6cdafa1..e68c3b60a681 100644
---- a/drivers/irqchip/irq-bcm2835.c
-+++ b/drivers/irqchip/irq-bcm2835.c
-@@ -135,7 +135,7 @@ static int armctrl_xlate(struct irq_domain *d, struct device_node *ctrlr,
- 	return 0;
- }
- 
--static struct irq_domain_ops armctrl_ops = {
-+static const struct irq_domain_ops armctrl_ops = {
- 	.xlate = armctrl_xlate
- };
- 
-diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
-index 78e8b3ce5252..5dc61655055a 100644
---- a/drivers/irqchip/irq-keystone.c
-+++ b/drivers/irqchip/irq-keystone.c
-@@ -131,7 +131,7 @@ static int keystone_irq_map(struct irq_domain *h, unsigned int virq,
- 	return 0;
- }
- 
--static struct irq_domain_ops keystone_irq_ops = {
-+static const struct irq_domain_ops keystone_irq_ops = {
- 	.map	= keystone_irq_map,
- 	.xlate	= irq_domain_xlate_onecell,
- };
-diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
-index 57f09cb54464..44d2d106e818 100644
---- a/drivers/irqchip/irq-mips-gic.c
-+++ b/drivers/irqchip/irq-mips-gic.c
-@@ -739,7 +739,7 @@ static int gic_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
- 	return 0;
- }
- 
--static struct irq_domain_ops gic_irq_domain_ops = {
-+static const struct irq_domain_ops gic_irq_domain_ops = {
- 	.map = gic_irq_domain_map,
- 	.xlate = gic_irq_domain_xlate,
- };
-diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
-index eaf0a710e98a..04de2d4ca70f 100644
---- a/drivers/irqchip/irq-mtk-sysirq.c
-+++ b/drivers/irqchip/irq-mtk-sysirq.c
-@@ -111,7 +111,7 @@ static int mtk_sysirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &gic_data);
- }
- 
--static struct irq_domain_ops sysirq_domain_ops = {
-+static const struct irq_domain_ops sysirq_domain_ops = {
- 	.xlate = mtk_sysirq_domain_xlate,
- 	.alloc = mtk_sysirq_domain_alloc,
- 	.free = irq_domain_free_irqs_common,
-diff --git a/drivers/irqchip/irq-mxs.c b/drivers/irqchip/irq-mxs.c
-index e4acf1e3f8e3..04bf97b289cf 100644
---- a/drivers/irqchip/irq-mxs.c
-+++ b/drivers/irqchip/irq-mxs.c
-@@ -90,7 +90,7 @@ static int icoll_irq_domain_map(struct irq_domain *d, unsigned int virq,
- 	return 0;
- }
- 
--static struct irq_domain_ops icoll_irq_domain_ops = {
-+static const struct irq_domain_ops icoll_irq_domain_ops = {
- 	.map = icoll_irq_domain_map,
- 	.xlate = irq_domain_xlate_onecell,
- };
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 9a0767b9c89d..0670ab4e3897 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -347,7 +347,7 @@ static int intc_irqpin_irq_domain_map(struct irq_domain *h, unsigned int virq,
- 	return 0;
- }
- 
--static struct irq_domain_ops intc_irqpin_irq_domain_ops = {
-+static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
- 	.map	= intc_irqpin_irq_domain_map,
- 	.xlate  = irq_domain_xlate_twocell,
- };
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index cdf80b7794cd..df5bf21a701f 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -168,7 +168,7 @@ static int irqc_irq_domain_map(struct irq_domain *h, unsigned int virq,
- 	return 0;
- }
- 
--static struct irq_domain_ops irqc_irq_domain_ops = {
-+static const struct irq_domain_ops irqc_irq_domain_ops = {
- 	.map	= irqc_irq_domain_map,
- 	.xlate  = irq_domain_xlate_twocell,
- };
-diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index c8d373fcd823..e96717f45ea1 100644
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -502,7 +502,7 @@ err:
- 	return -EINVAL;
- }
- 
--static struct irq_domain_ops s3c24xx_irq_ops = {
-+static const struct irq_domain_ops s3c24xx_irq_ops = {
- 	.map = s3c24xx_irq_map,
- 	.xlate = irq_domain_xlate_twocell,
- };
-@@ -1228,7 +1228,7 @@ static int s3c24xx_irq_xlate_of(struct irq_domain *d, struct device_node *n,
- 	return 0;
- }
- 
--static struct irq_domain_ops s3c24xx_irq_ops_of = {
-+static const struct irq_domain_ops s3c24xx_irq_ops_of = {
- 	.map = s3c24xx_irq_map_of,
- 	.xlate = s3c24xx_irq_xlate_of,
- };
-diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
-index 64155b686081..83d6aa6464ee 100644
---- a/drivers/irqchip/irq-sun4i.c
-+++ b/drivers/irqchip/irq-sun4i.c
-@@ -89,7 +89,7 @@ static int sun4i_irq_map(struct irq_domain *d, unsigned int virq,
- 	return 0;
- }
- 
--static struct irq_domain_ops sun4i_irq_ops = {
-+static const struct irq_domain_ops sun4i_irq_ops = {
- 	.map = sun4i_irq_map,
- 	.xlate = irq_domain_xlate_onecell,
- };
-diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
-index 1ab451729a5c..888111b76ea0 100644
---- a/drivers/irqchip/irq-versatile-fpga.c
-+++ b/drivers/irqchip/irq-versatile-fpga.c
-@@ -132,7 +132,7 @@ static int fpga_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 	return 0;
- }
- 
--static struct irq_domain_ops fpga_irqdomain_ops = {
-+static const struct irq_domain_ops fpga_irqdomain_ops = {
- 	.map = fpga_irqdomain_map,
- 	.xlate = irq_domain_xlate_onetwocell,
- };
-diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
-index 54089debf2dc..d4ce331ea4a0 100644
---- a/drivers/irqchip/irq-vic.c
-+++ b/drivers/irqchip/irq-vic.c
-@@ -256,7 +256,7 @@ static void __exception_irq_entry vic_handle_irq(struct pt_regs *regs)
- 	} while (handled);
- }
- 
--static struct irq_domain_ops vic_irqdomain_ops = {
-+static const struct irq_domain_ops vic_irqdomain_ops = {
- 	.map = vic_irqdomain_map,
- 	.xlate = irq_domain_xlate_onetwocell,
- };
-diff --git a/drivers/irqchip/irq-vt8500.c b/drivers/irqchip/irq-vt8500.c
-index b7af816f2769..0b297009b856 100644
---- a/drivers/irqchip/irq-vt8500.c
-+++ b/drivers/irqchip/irq-vt8500.c
-@@ -173,7 +173,7 @@ static int vt8500_irq_map(struct irq_domain *h, unsigned int virq,
- 	return 0;
- }
- 
--static struct irq_domain_ops vt8500_irq_domain_ops = {
-+static const struct irq_domain_ops vt8500_irq_domain_ops = {
- 	.map = vt8500_irq_map,
- 	.xlate = irq_domain_xlate_onecell,
- };
--- 
-2.1.0
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+
+Best regards,
+Krzysztof
