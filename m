@@ -1,94 +1,45 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 1/4] drm/exynos: fb: use drm_format_num_planes to get buffer count
-Date: Mon, 27 Apr 2015 23:10:13 +0200
-Message-ID: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49448 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965133AbbD0VKS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Apr 2015 17:10:18 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 2/4] drm/exynos: plane: honor buffer offset for dma_addr
+Date: Mon, 27 Apr 2015 23:10:14 +0200
+Message-ID: <1430169016-4966-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The previous code had some special case handling for the buffer
-count in exynos_drm_format_num_buffers().
-
-This code was incorrect though, since this special case doesn't
-exist for DRM. It stemmed from the existence of the special NV12M
-V4L2 format. NV12 is a bi-planar format (separate planes for luma
-and chroma) and V4L2 differentiates between a NV12 buffer where
-luma and chroma is contiguous in memory (so no data between
-luma/chroma), and a NV12 buffer where luma and chroma have two
-explicit memory locations (which is then called NV12M).
-
-This distinction doesn't exist for DRM. A bi-planar format always
-explicitly comes with the information about its two planes (even
-if these planes should be contiguous).
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_fb.c | 39 +---------------------------------
- 1 file changed, 1 insertion(+), 38 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index 929cb03..142eb4e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -171,43 +171,6 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
- 	return &exynos_fb->fb;
- }
- 
--static u32 exynos_drm_format_num_buffers(struct drm_mode_fb_cmd2 *mode_cmd)
--{
--	unsigned int cnt = 0;
--
--	if (mode_cmd->pixel_format != DRM_FORMAT_NV12)
--		return drm_format_num_planes(mode_cmd->pixel_format);
--
--	while (cnt != MAX_FB_BUFFER) {
--		if (!mode_cmd->handles[cnt])
--			break;
--		cnt++;
--	}
--
--	/*
--	 * check if NV12 or NV12M.
--	 *
--	 * NV12
--	 * handles[0] = base1, offsets[0] = 0
--	 * handles[1] = base1, offsets[1] = Y_size
--	 *
--	 * NV12M
--	 * handles[0] = base1, offsets[0] = 0
--	 * handles[1] = base2, offsets[1] = 0
--	 */
--	if (cnt == 2) {
--		/*
--		 * in case of NV12 format, offsets[1] is not 0 and
--		 * handles[0] is same as handles[1].
--		 */
--		if (mode_cmd->offsets[1] &&
--			mode_cmd->handles[0] == mode_cmd->handles[1])
--			cnt = 1;
--	}
--
--	return cnt;
--}
--
- static struct drm_framebuffer *
- exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 		      struct drm_mode_fb_cmd2 *mode_cmd)
-@@ -230,7 +193,7 @@ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 
- 	drm_helper_mode_fill_fb_struct(&exynos_fb->fb, mode_cmd);
- 	exynos_fb->exynos_gem_obj[0] = to_exynos_gem_obj(obj);
--	exynos_fb->buf_cnt = exynos_drm_format_num_buffers(mode_cmd);
-+	exynos_fb->buf_cnt = drm_format_num_planes(mode_cmd->pixel_format);
- 
- 	DRM_DEBUG_KMS("buf_cnt = %d\n", exynos_fb->buf_cnt);
- 
--- 
-2.0.5
+UHJldmlvdXNseSB3ZSB3ZXJlIGlnbm9yaW5nIHRoZSBidWZmZXIgb2Zmc2V0cyB0aGF0IGFyZQpw
+YXNzZWQgdGhyb3VnaCB0aGUgYWRkZmIyIGlvY3RsLiBUaGlzIGRpZG4ndCBjYXVzZSBhbnkKbWFq
+b3IgaXNzdWVzLCBzaW5jZSBmb3IgdW5pLXBsYW5hciBmb3JtYXRzIChsaWtlIFhSR0I4ODg4KQp1
+c2Vyc3BhY2Ugd291bGQgbW9zdCBvZiB0aGUgdGltZSBqdXN0IHVzZSBvZmZzZXRzWzBdPTAuCgpI
+b3dldmVyIHdpdGggTlYxMiBvZmZzZXRzWzFdIGlzIHZlcnkgbGlrZWx5IG5vbi16ZXJvLgpTbyBw
+cm9wZXJseSBhcHBseSB0aGUgb2Zmc2V0cyB0byBvdXIgZG1hIGFkZHJlc3Nlcy4KClNpZ25lZC1v
+ZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0K
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgMiArLQogMSBmaWxl
+IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCAxM2VhMzM0Li5iMTE4MGZiIDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtNzYsNyArNzYsNyBAQCBp
+bnQgZXh5bm9zX2NoZWNrX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJt
+X2ZyYW1lYnVmZmVyICpmYikKIAkJCXJldHVybiAtRUZBVUxUOwogCQl9CiAKLQkJZXh5bm9zX3Bs
+YW5lLT5kbWFfYWRkcltpXSA9IGJ1ZmZlci0+ZG1hX2FkZHI7CisJCWV4eW5vc19wbGFuZS0+ZG1h
+X2FkZHJbaV0gPSBidWZmZXItPmRtYV9hZGRyICsgZmItPm9mZnNldHNbaV07CiAKIAkJRFJNX0RF
+QlVHX0tNUygiYnVmZmVyOiAlZCwgZG1hX2FkZHIgPSAweCVseFxuIiwKIAkJCQlpLCAodW5zaWdu
+ZWQgbG9uZylleHlub3NfcGxhbmUtPmRtYV9hZGRyW2ldKTsKLS0gCjIuMC41CgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
