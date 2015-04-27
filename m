@@ -1,100 +1,86 @@
-From: Valentin Rothberg <valentinrothberg@gmail.com>
-Subject: Re: ARCH_EXYNOS5433 missing in Kconfig
-Date: Mon, 27 Apr 2015 08:31:35 +0200
-Message-ID: <CAD3Xx4KpTTqNiFA-8EfuPsCR5ow0JkNVo11zM1twkrf8sckJtA@mail.gmail.com>
-References: <CAD3Xx4Jf5ACBKe-KvGRD=myHKrJ+K_P0vBrtrmfgh+1zNM4hug@mail.gmail.com>
- <54FF95ED.1040003@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
+Date: Mon, 27 Apr 2015 15:33:39 +0900
+Message-ID: <553DD843.9080209@samsung.com>
+References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5539A0EB.6060706@samsung.com>
+ <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:33164 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752397AbbD0GcH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Apr 2015 02:32:07 -0400
-In-Reply-To: <54FF95ED.1040003@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Andreas Ruprecht <rupran@einserver.de>, hengelein Stefan <stefan.hengelein@fau.de>, Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?6rmA6rWt7KeEQGtlcm5lbC5vcmc=?= <kgene@kernel.org>
 
-Hi Chanwoo,
-
-this is a kind reminder that the issue mentioned below is still
-present and made its way to v4.1-rc1.
-
-Kind regards,
- Valentin
-
-On Wed, Mar 11, 2015 at 2:10 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> Hi Valentin,
->
-> I sent the Exynos5433 clock patch and then separately I'm sending the
-> Exynos5433 devicetree patch-set[1].
-> [1] [PATCH v6 0/9] arm64: Add the support for new Exynos5433 SoC
-> - https://lkml.org/lkml/2015/3/9/1036
->
-> But, according to Arnd bergmann's comment[2], latest Exynos5433 dt patch-set[1]
-> removed the CONFIG_ARCH_EXYNOS5433.
-> [2] https://lkml.org/lkml/2015/2/24/85
->
->
-> So, I have plan to send following patch.
->
-> ---
->     clk: samsung: Use CONFIG_ARCH_EXYNOS instead of Exynos-specific configuration
->
->     This patch removes the CONFIG_ARCH_EXYNOS{5433|7} and then use only the
->     CONFIG_ARCH_EXYNOS for ARM-64bit Exynos SoC.
->
->     Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->     Cc: Tomasz Figa <tomasz.figa@gmail.com>
->     Cc: Arnd Bergmann <arnd@arndb.de>
->     Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 17e9af7..561719d 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)        += clk-exynos5250.o
->  obj-$(CONFIG_SOC_EXYNOS5260)   += clk-exynos5260.o
->  obj-$(CONFIG_SOC_EXYNOS5410)   += clk-exynos5410.o
->  obj-$(CONFIG_SOC_EXYNOS5420)   += clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
-> +obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos5433.o
->  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
->  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
->  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-clkout.o
->
->
-> Regards,
-> Chanwoo Choi
->
->
-> On 03/11/2015 12:32 AM, Valentin Rothberg wrote:
->> Hi Chanwoo,
->>
->> your commit 96bd6224f07b ("clk: samsung: exynos5433: Add clocks using
->> common clock framework") is included in today's linux-next tree (i.e.,
->> next-20150310).
->>
->> This patch conditionally compiles clk-exynos5433.c depending on the
->> Kconfig option ARCH_EXYNOS5433.  However, this option is not defined
->> in Kconfig, so that the driver cannot be compiled at the current
->> state:
->>
->> +obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
->>
->> Is there a patch queued somewhere that adds this Kconfig symbol?  I
->> detected the issue by running undertaker-checkpatch from the
->> Undertaker tool suite (undertaker.cs.fau.de).  There is also a tool in
->> the git tree that can detect such issues (i.e.,
->> scripts/checkkconfigsymbols.py).
->>
->> Kind regards,
->>  Valentin
->>
->
+SGkgVG9iaWFzLAoKT24gMDQvMjQvMjAxNSAwNToxMCBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
+PiBPbiAyMDE1LTA0LTI0IDAzOjQ4LCBKb29ueW91bmcgU2hpbSB3cm90ZToKPj4gSGkgVG9iaWFz
+LAo+Pgo+PiBPbiAwNC8yMy8yMDE1IDA5OjEyIFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+Pj4g
+TW92ZSB0aGUgZGVmaW5lcyBmb3IgdGhlIHBpeGVsZm9ybWF0cyB0aGF0IHRoZSBtaXhlciBzdXBw
+b3J0cyBvdXQKPj4+IG9mIG1peGVyX2dyYXBoX2J1ZmZlcigpIHRvIHRoZSB0b3Agb2YgdGhlIHNv
+dXJjZS4KPj4+IFRoZW4gc2VsZWN0IHRoZSBtaXhlciBwaXhlbGZvcm1hdCAocGYpIGluIG1peGVy
+X2dyYXBoX2J1ZmZlcigpIGJhc2VkIG9uCj4+PiB0aGUgcGxhbmUncyBwZiAoYW5kIG5vdCBicHAp
+Lgo+Pj4gQWxzbyBhZGQgaGFuZGxpbmcgb2YgUkdCNTY1IGFuZCBYUkdCMTU1NSB0byB0aGUgc3dp
+dGNoIHN0YXRlbWVudCBhbmQKPj4+IGV4aXQgZWFybHkgaWYgdGhlIHBsYW5lIGhhcyBhbiB1bnN1
+cHBvcnRlZCBwZi4KPj4+Cj4+PiBQYXJ0aWFsbHkgYmFzZWQgb24gJ2RybS9leHlub3M6IGVuYWJs
+ZS9kaXNhYmxlIGJsZW5kIGJhc2VkIG9uIHBpeGVsCj4+PiBmb3JtYXQnIGJ5IEd1c3Rhdm8gUGFk
+b3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4uCj4+Pgo+Pj4gU2lnbmVkLW9m
+Zi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+PiAt
+LS0KPj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzIgKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0
+aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jCj4+PiBpbmRleCBmYmVjNzUwLi4xYmQyM2VlIDEwMDY0NAo+Pj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gQEAgLTQ0LDYgKzQ0LDEyIEBACj4+PiAgI2Rl
+ZmluZSBNSVhFUl9XSU5fTlIgICAgICAgIDMKPj4+ICAjZGVmaW5lIE1JWEVSX0RFRkFVTFRfV0lO
+ICAgIDAKPj4+Cj4+PiArLyogVGhlIHBpeGVsZm9ybWF0cyB0aGF0IGFyZSBuYXRpdmVseSBzdXBw
+b3J0ZWQgYnkgdGhlIG1peGVyLiAqLwo+Pj4gKyNkZWZpbmUgTUlYRVJfUElYRUxGT1JNQVRfUkdC
+NTY1IDQKPj4+ICsjZGVmaW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0IxNTU1IDUKPj4+ICsjZGVm
+aW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0I0NDQ0IDYKPj4+ICsjZGVmaW5lIE1JWEVSX1BJWEVM
+Rk9STUFUX0FSR0I4ODg4IDcKPj4+ICsKPj4KPj4gU2VlbXMgYmUgbG9uZywgaG93IGFib3V0IHMv
+UElYRUxGT1JNQVQvRk9STUFUIG9yIGp1c3QgTUlYRVJfUkdCNTY1IC4uLiA/Cj4+IFBsZWFzZSB1
+c2UgdGFiIGJldHdlZW4gZGVmaW5lIG5hbWUgYW5kIHZhbHVlLgo+IEhvdyBhYm91dCBNWFJfRk9S
+TUFUX1hZWiwgdG8gc3RheSBjb25zaXN0ZW50IHdpdGggdGhlIHJlZ3MtbWl4ZXIgaGVhZGVyPwo+
+IAo+IAo+Pj4gIHN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgewo+Pj4gICAgICBpbnQgICAgICAgICAg
+ICBpcnE7Cj4+PiAgICAgIHZvaWQgX19pb21lbSAgICAgICAgKm1peGVyX3JlZ3M7Cj4+PiBAQCAt
+NTMxLDIwICs1MzcsMjYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBt
+aXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4+Pgo+Pj4gICAgICBwbGFuZSA9ICZjdHgtPnBs
+YW5lc1t3aW5dOwo+Pj4KPj4+IC0gICAgI2RlZmluZSBSR0I1NjUgNAo+Pj4gLSAgICAjZGVmaW5l
+IEFSR0IxNTU1IDUKPj4+IC0gICAgI2RlZmluZSBBUkdCNDQ0NCA2Cj4+PiAtICAgICNkZWZpbmUg
+QVJHQjg4ODggNwo+Pj4gKyAgICBzd2l0Y2ggKHBsYW5lLT5waXhlbF9mb3JtYXQpIHsKPj4+ICsg
+ICAgY2FzZSBEUk1fRk9STUFUX1hSR0I0NDQ0Ogo+Pj4gKyAgICAgICAgZm10ID0gTUlYRVJfUElY
+RUxGT1JNQVRfQVJHQjQ0NDQ7Cj4+PiArICAgICAgICBicmVhazsKPj4+ICsKPj4+ICsgICAgY2Fz
+ZSBEUk1fRk9STUFUX1hSR0IxNTU1Ogo+Pj4gKyAgICAgICAgZm10ID0gTUlYRVJfUElYRUxGT1JN
+QVRfQVJHQjE1NTU7Cj4+PiArICAgICAgICBicmVhazsKPj4+Cj4+PiAtICAgIHN3aXRjaCAocGxh
+bmUtPmJwcCkgewo+Pj4gLSAgICBjYXNlIDE2Ogo+Pj4gLSAgICAgICAgZm10ID0gQVJHQjQ0NDQ7
+Cj4+PiArICAgIGNhc2UgRFJNX0ZPUk1BVF9SR0I1NjU6Cj4+PiArICAgICAgICBmbXQgPSBNSVhF
+Ul9QSVhFTEZPUk1BVF9SR0I1NjU7Cj4+PiAgICAgICAgICBicmVhazsKPj4+IC0gICAgY2FzZSAz
+MjoKPj4+IC0gICAgICAgIGZtdCA9IEFSR0I4ODg4Owo+Pj4gKwo+Pj4gKyAgICBjYXNlIERSTV9G
+T1JNQVRfWFJHQjg4ODg6Cj4+PiArICAgICAgICBmbXQgPSBNSVhFUl9QSVhFTEZPUk1BVF9BUkdC
+ODg4ODsKPj4+ICAgICAgICAgIGJyZWFrOwo+Pj4gKwo+Pj4gICAgICBkZWZhdWx0Ogo+Pj4gLSAg
+ICAgICAgZm10ID0gQVJHQjg4ODg7Cj4+PiArICAgICAgICBEUk1fREVCVUdfS01TKCJwaXhlbGZv
+cm1hdCB1bnN1cHBvcnRlZCBieSBtaXhlclxuIik7Cj4+PiArICAgICAgICByZXR1cm47Cj4+PiAg
+ICAgIH0KPj4+Cj4+PiAgICAgIC8qIGNoZWNrIGlmIG1peGVyIHN1cHBvcnRzIHJlcXVlc3RlZCBz
+Y2FsaW5nIHNldHVwICovCj4+Pgo+Pgo+PiBIbW0gbWlzc2luZyBmb3JtYXRzIGhhdmluZyBhbHBo
+YT8KPj4gRFJNX0ZPUk1BVF9BUkdCNDQ0NAo+PiBEUk1fRk9STUFUX0FSR0IxNTU1Cj4+IERSTV9G
+T1JNQVRfQVJHQjg4ODgKPiBTaG91bGQgYmUgb2J2aW91cyBmcm9tIG15IG90aGVyIG1haWwuIEJs
+ZW5kaW5nL2FscGhhIGlzIGN1cnJlbnRseSBzY3Jld2VkIHVwLCBzbyB3ZSBzaG91bGRuJ3QgYWRk
+IHRoZXNlIGZvcm1hdHMgYXQgdGhpcyBwb2ludC4gQXQgbGVhc3Qgbm90IGJlZm9yZSBmaWd1cmlu
+ZyBvdXQgaG93IHRvIHByb3Blcmx5IHNvbHZlIHRoZSBpc3N1ZS4KPiAKCkl0IHNob3VsZG4ndCBt
+ZWFuIHRvIHJlbW92ZSBjdXJyZW50IHN1cHBvcnRlZCBmZWF0dXJlKGFscGhhIHBpeGVsIGZvcm1h
+dApwbGFuZSBzdXBwb3J0IG9mIG1peGVyIGRyaXZlcikuCgpUaGFua3MuCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
