@@ -1,138 +1,113 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
-Date: Mon, 27 Apr 2015 14:06:10 +0200
-Message-ID: <19c49fecc6ad402231725b2e718699fb@math.uni-bielefeld.de>
-References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5539A0EB.6060706@samsung.com>
- <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
- <553DD843.9080209@samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: mixer: remove buffer count handling in
+ =?UTF-8?Q?vp=5Fvideo=5Fbuffer=28=29?=
+Date: Mon, 27 Apr 2015 14:09:48 +0200
+Message-ID: <5ba3b35bebf3de195b8066f327f8663b@math.uni-bielefeld.de>
+References: <1429993914-2708-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1429993914-2708-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <553DE44B.2090605@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:48597 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:48608 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932517AbbD0MGN (ORCPT
+	by vger.kernel.org with ESMTP id S932247AbbD0MJu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Apr 2015 08:06:13 -0400
-In-Reply-To: <553DD843.9080209@samsung.com>
+	Mon, 27 Apr 2015 08:09:50 -0400
+In-Reply-To: <553DE44B.2090605@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Joonyoung Shim <jy0922.shim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-On 2015-04-27 08:33, Joonyoung Shim wrote:
+On 2015-04-27 09:24, Joonyoung Shim wrote:
 > Hi Tobias,
 > 
-> On 04/24/2015 05:10 PM, Tobias Jakobi wrote:
->> On 2015-04-24 03:48, Joonyoung Shim wrote:
->>> Hi Tobias,
->>> 
->>> On 04/23/2015 09:12 PM, Tobias Jakobi wrote:
->>>> Move the defines for the pixelformats that the mixer supports out
->>>> of mixer_graph_buffer() to the top of the source.
->>>> Then select the mixer pixelformat (pf) in mixer_graph_buffer() based 
->>>> on
->>>> the plane's pf (and not bpp).
->>>> Also add handling of RGB565 and XRGB1555 to the switch statement and
->>>> exit early if the plane has an unsupported pf.
->>>> 
->>>> Partially based on 'drm/exynos: enable/disable blend based on pixel
->>>> format' by Gustavo Padovan <gustavo.padovan@collabora.co.uk>.
->>>> 
->>>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>> ---
->>>>  drivers/gpu/drm/exynos/exynos_mixer.c | 32 
->>>> ++++++++++++++++++++++----------
->>>>  1 file changed, 22 insertions(+), 10 deletions(-)
->>>> 
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c 
->>>> b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> index fbec750..1bd23ee 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> @@ -44,6 +44,12 @@
->>>>  #define MIXER_WIN_NR        3
->>>>  #define MIXER_DEFAULT_WIN    0
->>>> 
->>>> +/* The pixelformats that are natively supported by the mixer. */
->>>> +#define MIXER_PIXELFORMAT_RGB565 4
->>>> +#define MIXER_PIXELFORMAT_ARGB1555 5
->>>> +#define MIXER_PIXELFORMAT_ARGB4444 6
->>>> +#define MIXER_PIXELFORMAT_ARGB8888 7
->>>> +
->>> 
->>> Seems be long, how about s/PIXELFORMAT/FORMAT or just MIXER_RGB565 
->>> ... ?
->>> Please use tab between define name and value.
->> How about MXR_FORMAT_XYZ, to stay consistent with the regs-mixer 
->> header?
+> On 04/26/2015 05:31 AM, Tobias Jakobi wrote:
+>> The video processor (VP) supports four formats: NV12, NV21 and its
+>> tiled variants. All these formats are bi-planar, so the buffer
+>> count in vp_video_buffer() is always 2.
 >> 
+>> While we're at it, also add support for NV21 and properly exit
+>> if we're called with an invalid (non-VP) pixelformat.
 >> 
->>>>  struct mixer_resources {
->>>>      int            irq;
->>>>      void __iomem        *mixer_regs;
->>>> @@ -531,20 +537,26 @@ static void mixer_graph_buffer(struct 
->>>> mixer_context *ctx, int win)
->>>> 
->>>>      plane = &ctx->planes[win];
->>>> 
->>>> -    #define RGB565 4
->>>> -    #define ARGB1555 5
->>>> -    #define ARGB4444 6
->>>> -    #define ARGB8888 7
->>>> +    switch (plane->pixel_format) {
->>>> +    case DRM_FORMAT_XRGB4444:
->>>> +        fmt = MIXER_PIXELFORMAT_ARGB4444;
->>>> +        break;
->>>> +
->>>> +    case DRM_FORMAT_XRGB1555:
->>>> +        fmt = MIXER_PIXELFORMAT_ARGB1555;
->>>> +        break;
->>>> 
->>>> -    switch (plane->bpp) {
->>>> -    case 16:
->>>> -        fmt = ARGB4444;
->>>> +    case DRM_FORMAT_RGB565:
->>>> +        fmt = MIXER_PIXELFORMAT_RGB565;
->>>>          break;
->>>> -    case 32:
->>>> -        fmt = ARGB8888;
->>>> +
->>>> +    case DRM_FORMAT_XRGB8888:
->>>> +        fmt = MIXER_PIXELFORMAT_ARGB8888;
->>>>          break;
->>>> +
->>>>      default:
->>>> -        fmt = ARGB8888;
->>>> +        DRM_DEBUG_KMS("pixelformat unsupported by mixer\n");
->>>> +        return;
->>>>      }
->>>> 
->>>>      /* check if mixer supports requested scaling setup */
->>>> 
->>> 
->>> Hmm missing formats having alpha?
->>> DRM_FORMAT_ARGB4444
->>> DRM_FORMAT_ARGB1555
->>> DRM_FORMAT_ARGB8888
->> Should be obvious from my other mail. Blending/alpha is currently 
->> screwed up, so we shouldn't add these formats at this point. At least 
->> not before figuring out how to properly solve the issue.
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_mixer.c | 20 +++++---------------
+>>  1 file changed, 5 insertions(+), 15 deletions(-)
 >> 
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c 
+>> b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index 534a594..6fb4faa 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -388,7 +388,6 @@ static void vp_video_buffer(struct mixer_context 
+>> *ctx, int win)
+>>  	struct mixer_resources *res = &ctx->mixer_res;
+>>  	unsigned long flags;
+>>  	struct exynos_drm_plane *plane;
+>> -	unsigned int buf_num = 1;
+>>  	dma_addr_t luma_addr[2], chroma_addr[2];
+>>  	bool tiled_mode = false;
+>>  	bool crcb_mode = false;
+>> @@ -399,27 +398,18 @@ static void vp_video_buffer(struct mixer_context 
+>> *ctx, int win)
+>>  	switch (plane->pixel_format) {
+>>  	case DRM_FORMAT_NV12:
+>>  		crcb_mode = false;
+>> -		buf_num = 2;
+>>  		break;
+>> -	/* TODO: single buffer format NV12, NV21 */
+>> +	case DRM_FORMAT_NV21:
+>> +		crcb_mode = true;
+>> +		break;
 > 
-> It shouldn't mean to remove current supported feature(alpha pixel 
-> format
-> plane support of mixer driver).
-Ah, I see what you mean! Going to send an updated version later this 
-day.
+> To support NV21, how about make to other patch? because this patch is 
+> to
+> fix buffer number.
+Sure, going to split this off.
+
+
+
+>>  	default:
+>> -		/* ignore pixel format at disable time */
+>> -		if (!plane->dma_addr[0])
+>> -			break;
+>> -
+>>  		DRM_ERROR("pixel format for vp is wrong [%d].\n",
+>>  				plane->pixel_format);
+>>  		return;
+>>  	}
+>> 
+>> -	if (buf_num == 2) {
+>> -		luma_addr[0] = plane->dma_addr[0];
+>> -		chroma_addr[0] = plane->dma_addr[1];
+>> -	} else {
+>> -		luma_addr[0] = plane->dma_addr[0];
+>> -		chroma_addr[0] = plane->dma_addr[0]
+>> -			+ (plane->pitch * plane->fb_height);
+>> -	}
+>> +	luma_addr[0] = plane->dma_addr[0];
+>> +	chroma_addr[0] = plane->dma_addr[1];
+> 
+> Hmm, dma_addr[0] and dma_addr[1] are same address if it uses just one
+> buffer for two planes, then need offset information of each plane.
+Good catch! I was already wondering why the colors were wrong, but 
+that's of course to be expected if luma/chroma addr are the same.
+
+I should probably apply offsets when writing dma_addr[i] to the plane 
+object.
 
 
 With best wishes,
 Tobias
 
 
-> 
 > Thanks.
+> 
+>> 
+>>  	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
+>>  		ctx->interlace = true;
+>> 
