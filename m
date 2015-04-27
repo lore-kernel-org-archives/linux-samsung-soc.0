@@ -1,83 +1,116 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3 08/10] clk: samsung: exynos5433: Add clock flag to support
- the DVFS of GPU
-Date: Mon, 27 Apr 2015 20:36:35 +0900
-Message-ID: <1430134597-14668-9-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH v3 06/10] clk: samsung: exynos5433: Add CLK_SET_RATE_PARENT to
+ support DVFS for big.LITTLE core
+Date: Mon, 27 Apr 2015 20:36:33 +0900
+Message-ID: <1430134597-14668-7-git-send-email-cw00.choi@samsung.com>
 References: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
-Cc: kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-
-This patch adds the CLK_SET_RATE_PARENT flag for 'aclk_g3d' clock and parent
-clocks becuase 'aclk_g3d' is used to change GPU frequency for DVFS (Dynamic
-Voltage Frequency Scaling) feature and adds CLK_IGNORE_UNUSED flags to
-'aclk_asyncapbs_g3d'/'aclk_asyncapbm_g3d' clocks to access the SFR
-(Special Funciton Regiser) of MALI device.
+This patch adds CLK_SET_RATE_PARENT flag to support DVFS of Cortex-{A53|A57}
+core (big.LITTLE core) because 'sclk_{apollo|atlas}' leaf clock is used to
+change the CPU frequency of Cortex-{A53|A57} core in arm_big_little.c driver.
+- 'apollo' word means the LITTLE core (Cortex-A53 core) in Exynos5433 TRM.
+- 'atlas' word means the big core (Cortex-A57 core) in Exynos5433 TRM.
 
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-[cw00.choi: Add patch description and add CLK_SET_RATE_PARENT to 'aclk_g3d' clk]
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 5d8b4a8..256fec0 100644
+index 9e04ae2..e4a6771 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3287,10 +3287,10 @@ static struct samsung_pll_clock g3d_pll_clks[] __initdata = {
+@@ -3582,7 +3582,7 @@ static struct samsung_pll_clock apollo_pll_clks[] __initdata = {
+ static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
+ 	/* MUX_SEL_APOLLO0 */
+ 	MUX_F(CLK_MOUT_APOLLO_PLL, "mout_apollo_pll", mout_apollo_pll_p,
+-			MUX_SEL_APOLLO0, 0, 1, 0, CLK_MUX_READ_ONLY),
++			MUX_SEL_APOLLO0, 0, 1, CLK_SET_RATE_PARENT, 0),
  
- static struct samsung_mux_clock g3d_mux_clks[] __initdata = {
- 	/* MUX_SEL_G3D */
--	MUX(CLK_MOUT_ACLK_G3D_400, "mout_aclk_g3d_400", mout_aclk_g3d_400_p,
--			MUX_SEL_G3D, 8, 1),
--	MUX(CLK_MOUT_G3D_PLL, "mout_g3d_pll", mout_g3d_pll_p,
--			MUX_SEL_G3D, 0, 1),
-+	MUX_F(CLK_MOUT_ACLK_G3D_400, "mout_aclk_g3d_400", mout_aclk_g3d_400_p,
-+			MUX_SEL_G3D, 8, 1, CLK_SET_RATE_PARENT, 0),
-+	MUX_F(CLK_MOUT_G3D_PLL, "mout_g3d_pll", mout_g3d_pll_p,
-+			MUX_SEL_G3D, 0, 1, CLK_SET_RATE_PARENT, 0),
+ 	/* MUX_SEL_APOLLO1 */
+ 	MUX(CLK_MOUT_BUS_PLL_APOLLO_USER, "mout_bus_pll_apollo_user",
+@@ -3590,7 +3590,7 @@ static struct samsung_mux_clock apollo_mux_clks[] __initdata = {
+ 
+ 	/* MUX_SEL_APOLLO2 */
+ 	MUX_F(CLK_MOUT_APOLLO, "mout_apollo", mout_apollo_p, MUX_SEL_APOLLO2,
+-			0, 1, 0, CLK_MUX_READ_ONLY),
++			0, 1, CLK_SET_RATE_PARENT, 0),
  };
  
- static struct samsung_div_clock g3d_div_clks[] __initdata = {
-@@ -3299,8 +3299,8 @@ static struct samsung_div_clock g3d_div_clks[] __initdata = {
- 			8, 2),
- 	DIV(CLK_DIV_PCLK_G3D, "div_pclk_g3d", "div_aclk_g3d", DIV_G3D,
- 			4, 3),
--	DIV(CLK_DIV_ACLK_G3D, "div_aclk_g3d", "mout_aclk_g3d_400", DIV_G3D,
--			0, 3),
-+	DIV_F(CLK_DIV_ACLK_G3D, "div_aclk_g3d", "mout_aclk_g3d_400", DIV_G3D,
-+			0, 3, CLK_SET_RATE_PARENT, 0),
+ static struct samsung_div_clock apollo_div_clks[] __initdata = {
+@@ -3611,11 +3611,9 @@ static struct samsung_div_clock apollo_div_clks[] __initdata = {
+ 			DIV_APOLLO0, 8, 3, CLK_GET_RATE_NOCACHE,
+ 			CLK_DIVIDER_READ_ONLY),
+ 	DIV_F(CLK_DIV_APOLLO2, "div_apollo2", "div_apollo1",
+-			DIV_APOLLO0, 4, 3, CLK_GET_RATE_NOCACHE,
+-			CLK_DIVIDER_READ_ONLY),
++			DIV_APOLLO0, 4, 3, CLK_SET_RATE_PARENT, 0),
+ 	DIV_F(CLK_DIV_APOLLO1, "div_apollo1", "mout_apollo",
+-			DIV_APOLLO0, 0, 3, CLK_GET_RATE_NOCACHE,
+-			CLK_DIVIDER_READ_ONLY),
++			DIV_APOLLO0, 0, 3, CLK_SET_RATE_PARENT, 0),
+ 
+ 	/* DIV_APOLLO1 */
+ 	DIV_F(CLK_DIV_SCLK_HPM_APOLLO, "div_sclk_hpm_apollo", "mout_apollo",
+@@ -3666,7 +3664,8 @@ static struct samsung_gate_clock apollo_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_HPM_APOLLO, "sclk_hpm_apollo", "div_sclk_hpm_apollo",
+ 			ENABLE_SCLK_APOLLO, 1, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_APOLLO, "sclk_apollo", "div_apollo2",
+-			ENABLE_SCLK_APOLLO, 0, CLK_IGNORE_UNUSED, 0),
++			ENABLE_SCLK_APOLLO, 0,
++			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
  };
  
- static struct samsung_gate_clock g3d_gate_clks[] __initdata = {
-@@ -3310,9 +3310,9 @@ static struct samsung_gate_clock g3d_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_BTS_G3D0, "aclk_bts_g3d0", "div_aclk_g3d",
- 			ENABLE_ACLK_G3D, 6, 0, 0),
- 	GATE(CLK_ACLK_ASYNCAPBS_G3D, "aclk_asyncapbs_g3d", "div_pclk_g3d",
--			ENABLE_ACLK_G3D, 5, 0, 0),
-+			ENABLE_ACLK_G3D, 5, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_ASYNCAPBM_G3D, "aclk_asyncapbm_g3d", "div_aclk_g3d",
--			ENABLE_ACLK_G3D, 4, 0, 0),
-+			ENABLE_ACLK_G3D, 4, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_AHB2APB_G3DP, "aclk_ahb2apb_g3dp", "div_pclk_g3d",
- 			ENABLE_ACLK_G3D, 3, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_G3DNP_150, "aclk_g3dnp_150", "div_pclk_g3d",
-@@ -3320,7 +3320,7 @@ static struct samsung_gate_clock g3d_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK_G3DND_600, "aclk_g3dnd_600", "div_aclk_g3d",
- 			ENABLE_ACLK_G3D, 1, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_G3D, "aclk_g3d", "div_aclk_g3d",
--			ENABLE_ACLK_G3D, 0, 0, 0),
-+			ENABLE_ACLK_G3D, 0, CLK_SET_RATE_PARENT, 0),
+ static struct samsung_cmu_info apollo_cmu_info __initdata = {
+@@ -3775,7 +3774,7 @@ static struct samsung_pll_clock atlas_pll_clks[] __initdata = {
+ static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
+ 	/* MUX_SEL_ATLAS0 */
+ 	MUX_F(CLK_MOUT_ATLAS_PLL, "mout_atlas_pll", mout_atlas_pll_p,
+-			MUX_SEL_ATLAS0, 0, 1, 0, CLK_MUX_READ_ONLY),
++			MUX_SEL_ATLAS0, 0, 1, CLK_SET_RATE_PARENT, 0),
  
- 	/* ENABLE_PCLK_G3D */
- 	GATE(CLK_PCLK_BTS_G3D1, "pclk_bts_g3d1", "div_pclk_g3d",
+ 	/* MUX_SEL_ATLAS1 */
+ 	MUX(CLK_MOUT_BUS_PLL_ATLAS_USER, "mout_bus_pll_atlas_user",
+@@ -3783,7 +3782,7 @@ static struct samsung_mux_clock atlas_mux_clks[] __initdata = {
+ 
+ 	/* MUX_SEL_ATLAS2 */
+ 	MUX_F(CLK_MOUT_ATLAS, "mout_atlas", mout_atlas_p, MUX_SEL_ATLAS2,
+-			0, 1, 0, CLK_MUX_READ_ONLY),
++			0, 1, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static struct samsung_div_clock atlas_div_clks[] __initdata = {
+@@ -3804,11 +3803,9 @@ static struct samsung_div_clock atlas_div_clks[] __initdata = {
+ 			DIV_ATLAS0, 8, 3, CLK_GET_RATE_NOCACHE,
+ 			CLK_DIVIDER_READ_ONLY),
+ 	DIV_F(CLK_DIV_ATLAS2, "div_atlas2", "div_atlas1",
+-			DIV_ATLAS0, 4, 3, CLK_GET_RATE_NOCACHE,
+-			CLK_DIVIDER_READ_ONLY),
++			DIV_ATLAS0, 4, 3, CLK_SET_RATE_PARENT, 0),
+ 	DIV_F(CLK_DIV_ATLAS1, "div_atlas1", "mout_atlas",
+-			DIV_ATLAS0, 0, 3, CLK_GET_RATE_NOCACHE,
+-			CLK_DIVIDER_READ_ONLY),
++			DIV_ATLAS0, 0, 3, CLK_SET_RATE_PARENT, 0),
+ 
+ 	/* DIV_ATLAS1 */
+ 	DIV_F(CLK_DIV_SCLK_HPM_ATLAS, "div_sclk_hpm_atlas", "mout_atlas",
+@@ -3885,7 +3882,8 @@ static struct samsung_gate_clock atlas_gate_clks[] __initdata = {
+ 	GATE(CLK_ATCLK, "atclk", "div_atclk_atlas",
+ 			ENABLE_SCLK_ATLAS, 1, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_ATLAS, "sclk_atlas", "div_atlas2",
+-			ENABLE_SCLK_ATLAS, 0, CLK_IGNORE_UNUSED, 0),
++			ENABLE_SCLK_ATLAS, 0,
++			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static struct samsung_cmu_info atlas_cmu_info __initdata = {
 -- 
 1.8.5.5
