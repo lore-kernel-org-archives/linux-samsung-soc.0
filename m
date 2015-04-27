@@ -1,30 +1,33 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH v3 04/10] clk: samsung: exynos5433: Fix wrong parent clock
- of sclk_apollo clock
-Date: Mon, 27 Apr 2015 21:43:53 +0900
-Message-ID: <CAJKOXPdsA-5RDooKfctxO9MnKZedOKQTEytyuabjtTFwO4s+uw@mail.gmail.com>
-References: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
-	<1430134597-14668-5-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH] ARM: EXYNOS: Constify irq_domain_ops
+Date: Mon, 27 Apr 2015 21:51:59 +0900
+Message-ID: <1430139119-3721-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430134597-14668-5-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-04-27 20:36 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> This patch fixes the wrong parent clock of sclk_apollo clock
-> from 'div_apollo_pll' to 'div_apollo2'.
->
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+The irq_domain_ops are not modified by the driver and the irqdomain core
+code accepts pointer to a const data.
 
-Hi,
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ arch/arm/mach-exynos/suspend.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 3e6aea7f83af..8f0d3a8e392d 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -223,7 +223,7 @@ static int exynos_pmu_domain_alloc(struct irq_domain *domain,
+ 	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &parent_args);
+ }
+ 
+-static struct irq_domain_ops exynos_pmu_domain_ops = {
++static const struct irq_domain_ops exynos_pmu_domain_ops = {
+ 	.xlate	= exynos_pmu_domain_xlate,
+ 	.alloc	= exynos_pmu_domain_alloc,
+ 	.free	= irq_domain_free_irqs_common,
+-- 
+2.1.0
