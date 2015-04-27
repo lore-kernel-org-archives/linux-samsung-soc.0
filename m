@@ -1,72 +1,100 @@
-From: Sergiy Kibrik <sakib@meta.ua>
-Subject: [PATCH] ARM: SAMSUNG: fix clk_enable() WARNing in S3C24XX ADC
-Date: Mon, 27 Apr 2015 08:29:44 +0300
-Message-ID: <1430112584-6170-1-git-send-email-sakib@meta.ua>
+From: Valentin Rothberg <valentinrothberg@gmail.com>
+Subject: Re: ARCH_EXYNOS5433 missing in Kconfig
+Date: Mon, 27 Apr 2015 08:31:35 +0200
+Message-ID: <CAD3Xx4KpTTqNiFA-8EfuPsCR5ow0JkNVo11zM1twkrf8sckJtA@mail.gmail.com>
+References: <CAD3Xx4Jf5ACBKe-KvGRD=myHKrJ+K_P0vBrtrmfgh+1zNM4hug@mail.gmail.com>
+ <54FF95ED.1040003@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-1.meta.ua ([194.0.131.45]:47358 "EHLO
-	smtp-out-1.meta.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752404AbbD0Fqc (ORCPT
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:33164 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752397AbbD0GcH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Apr 2015 01:46:32 -0400
+	Mon, 27 Apr 2015 02:32:07 -0400
+In-Reply-To: <54FF95ED.1040003@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Sergiy Kibrik <sakib@meta.ua>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Andreas Ruprecht <rupran@einserver.de>, hengelein Stefan <stefan.hengelein@fau.de>, Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?6rmA6rWt7KeEQGtlcm5lbC5vcmc=?= <kgene@kernel.org>
 
-Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-calls as required by common clock framework. Removes this warning on probe:
+Hi Chanwoo,
 
- ------------[ cut here ]------------
- WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:889 __clk_enable+0x28/0x9c()
- Modules linked in:
- CPU: 0 PID: 1 Comm: swapper Not tainted 3.19.0+ #46
- [<c0013a98>] (unwind_backtrace) from [<c0010d8c>] (show_stack+0x10/0x14)
- [<c0010d8c>] (show_stack) from [<c001b018>] (warn_slowpath_common+0x7c/0xa4)
- [<c001b018>] (warn_slowpath_common) from [<c001b0d0>] (warn_slowpath_null+0x18/0x20)
- [<c001b0d0>] (warn_slowpath_null) from [<c01a5f80>] (__clk_enable+0x28/0x9c)
- [<c01a5f80>] (__clk_enable) from [<c01a600c>] (clk_enable+0x18/0x2c)
- [<c01a600c>] (clk_enable) from [<c001860c>] (s3c_adc_probe+0x11c/0x18c)
- [<c001860c>] (s3c_adc_probe) from [<c0153a10>] (platform_drv_probe+0x30/0x78)
- [<c0153a10>] (platform_drv_probe) from [<c01523e0>] (driver_probe_device+0xb0/0x1fc)
- [<c01523e0>] (driver_probe_device) from [<c01525dc>] (__driver_attach+0x68/0x88)
- [<c01525dc>] (__driver_attach) from [<c0150df0>] (bus_for_each_dev+0x70/0x94)
- [<c0150df0>] (bus_for_each_dev) from [<c0151c80>] (bus_add_driver+0xdc/0x1c4)
- [<c0151c80>] (bus_add_driver) from [<c0152ba4>] (driver_register+0x9c/0xe0)
- [<c0152ba4>] (driver_register) from [<c03041cc>] (adc_init+0x10/0x34)
- [<c03041cc>] (adc_init) from [<c00087fc>] (do_one_initcall+0x110/0x1cc)
- [<c00087fc>] (do_one_initcall) from [<c02ffccc>] (kernel_init_freeable+0xf4/0x1ac)
- [<c02ffccc>] (kernel_init_freeable) from [<c022f4fc>] (kernel_init+0x8/0xe0)
- [<c022f4fc>] (kernel_init) from [<c000e098>] (ret_from_fork+0x14/0x3c)
- ---[ end trace f4a1ea39a114fecf ]---
+this is a kind reminder that the issue mentioned below is still
+present and made its way to v4.1-rc1.
 
-Signed-off-by: Sergiy Kibrik <sakib@meta.ua>
----
- arch/arm/plat-samsung/adc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Kind regards,
+ Valentin
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index e2be70d..38444b9 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -389,7 +389,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	clk_enable(adc->clk);
-+	clk_prepare_enable(adc->clk);
- 
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
- 
-@@ -413,7 +413,7 @@ static int s3c_adc_remove(struct platform_device *pdev)
- {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
- 
--	clk_disable(adc->clk);
-+	clk_disable_unprepare(adc->clk);
- 	regulator_disable(adc->vdd);
- 
- 	return 0;
--- 
-1.9.1
+On Wed, Mar 11, 2015 at 2:10 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> Hi Valentin,
+>
+> I sent the Exynos5433 clock patch and then separately I'm sending the
+> Exynos5433 devicetree patch-set[1].
+> [1] [PATCH v6 0/9] arm64: Add the support for new Exynos5433 SoC
+> - https://lkml.org/lkml/2015/3/9/1036
+>
+> But, according to Arnd bergmann's comment[2], latest Exynos5433 dt patch-set[1]
+> removed the CONFIG_ARCH_EXYNOS5433.
+> [2] https://lkml.org/lkml/2015/2/24/85
+>
+>
+> So, I have plan to send following patch.
+>
+> ---
+>     clk: samsung: Use CONFIG_ARCH_EXYNOS instead of Exynos-specific configuration
+>
+>     This patch removes the CONFIG_ARCH_EXYNOS{5433|7} and then use only the
+>     CONFIG_ARCH_EXYNOS for ARM-64bit Exynos SoC.
+>
+>     Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>     Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>     Cc: Arnd Bergmann <arnd@arndb.de>
+>     Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/clk/samsung/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 17e9af7..561719d 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)        += clk-exynos5250.o
+>  obj-$(CONFIG_SOC_EXYNOS5260)   += clk-exynos5260.o
+>  obj-$(CONFIG_SOC_EXYNOS5410)   += clk-exynos5410.o
+>  obj-$(CONFIG_SOC_EXYNOS5420)   += clk-exynos5420.o
+> -obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
+> +obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos5433.o
+>  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
+>  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-clkout.o
+>
+>
+> Regards,
+> Chanwoo Choi
+>
+>
+> On 03/11/2015 12:32 AM, Valentin Rothberg wrote:
+>> Hi Chanwoo,
+>>
+>> your commit 96bd6224f07b ("clk: samsung: exynos5433: Add clocks using
+>> common clock framework") is included in today's linux-next tree (i.e.,
+>> next-20150310).
+>>
+>> This patch conditionally compiles clk-exynos5433.c depending on the
+>> Kconfig option ARCH_EXYNOS5433.  However, this option is not defined
+>> in Kconfig, so that the driver cannot be compiled at the current
+>> state:
+>>
+>> +obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
+>>
+>> Is there a patch queued somewhere that adds this Kconfig symbol?  I
+>> detected the issue by running undertaker-checkpatch from the
+>> Undertaker tool suite (undertaker.cs.fau.de).  There is also a tool in
+>> the git tree that can detect such issues (i.e.,
+>> scripts/checkkconfigsymbols.py).
+>>
+>> Kind regards,
+>>  Valentin
+>>
+>
