@@ -1,361 +1,314 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2] thermal: exynos: Add the support for Exynos5433 TMU
-Date: Mon, 27 Apr 2015 11:20:22 +0900
-Message-ID: <553D9CE6.5040505@samsung.com>
-References: <1425954224-31035-1-git-send-email-cw00.choi@samsung.com>
- <5508C4A9.50705@samsung.com> <20150318083913.528119f4@amdc2363>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/8] cpufreq: arm_big_little: add cluster regulator support
+Date: Mon, 27 Apr 2015 10:45:37 +0530
+Message-ID: <CAKohponiprs9dyED_i6V9GdrVFpGKNU831MNahVg1c052bGUJg@mail.gmail.com>
+References: <1429622278-12216-1-git-send-email-b.zolnierkie@samsung.com>
+	<1429622278-12216-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20150318083913.528119f4@amdc2363>
+In-Reply-To: <1429622278-12216-2-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, edubezval@gmail.com
-Cc: rui.zhang@intel.com, kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Eduardo and Lukasz,
+On 21 April 2015 at 18:47, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Add cluster regulator support as a preparation to adding
+> generic arm_big_little_dt cpufreq_dt driver support for
+> ODROID-XU3 board.  This allows arm_big_little[_dt] driver
 
-I checked this patch merged on linux-next.git.
-But, this patch is not merged on Linux 4.1-rc1.
+This is irrelevant here, its not about XU3 but any board that
+wants to use it..
 
-Thanks,
-Chanwoo Choi
+> to set not only the frequency but also the voltage (which
+> is obtained from operating point's voltage value) for CPU
+> clusters.
+>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  .../bindings/cpufreq/arm_big_little_dt.txt         |    4 +
+>  drivers/cpufreq/arm_big_little.c                   |  153 +++++++++++++++++---
+>  2 files changed, 139 insertions(+), 18 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt b/Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt
+> index 0715695..8ca4a12 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt
+> +++ b/Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt
+> @@ -18,6 +18,10 @@ Required properties:
+>  Optional properties:
+>  - clock-latency: Specify the possible maximum transition latency for clock,
+>    in unit of nanoseconds.
+> +- cpu-cluster.0-supply: Provides the regulator node supplying voltage to CPU
+> +  cluster 0.
+> +- cpu-cluster.1-supply: Provides the regulator node supplying voltage to CPU
+> +  cluster 1.
 
-On 03/18/2015 04:39 PM, Lukasz Majewski wrote:
-> Hi Chanwoo,
-> 
->> Hi Lukasz,
->>
->> Genlty Ping.
-> 
-> I've got your patches at the back of my head :-)
-> 
-> I will try to review them today or tomorrow.
-> 
->>
->> Best Regards,
->> Chanwoo Choi
->>
->> On 03/10/2015 11:23 AM, Chanwoo Choi wrote:
->>> This patch adds the support for Exynos5433's TMU (Thermal
->>> Management Unit). Exynos5433 has a little different register bit
->>> fields as following description:
->>> - Support the eight trip points for rising/falling interrupt by
->>> using two registers
->>> - Read the calibration type (1-point or 2-point) and sensor id from
->>> TRIMINFO register
->>> - Use a little different register address
->>>
->>> Cc: Zhang Rui <rui.zhang@intel.com>
->>> Cc: Eduardo Valentin <edubezval@gmail.com>
->>> Cc: Lukasz Majewski <l.majewski@samsung.com>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>> Changes from v1:
->>> (https://lkml.org/lkml/2015/2/26/234)
->>> - Add exynos5433_tmu_control() instead of using
->>> exynos7_tmu_control() on both Exynos5433 and Exynos7.
->>> - Separate the patches related to devicetree and then send send
->>> Exnos5433's tmu patches[1] with other Exynos5433 devicetree patches.
->>>   [1] https://lkml.org/lkml/2015/3/9/1036
->>>
->>>  drivers/thermal/samsung/exynos_tmu.c | 187
->>> ++++++++++++++++++++++++++++++++++-
->>> drivers/thermal/samsung/exynos_tmu.h |   1 + 2 files changed, 186
->>> insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
->>> b/drivers/thermal/samsung/exynos_tmu.c index 1d30b09..531f4b17
->>> 100644 --- a/drivers/thermal/samsung/exynos_tmu.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>> @@ -97,6 +97,32 @@
->>>  #define EXYNOS4412_MUX_ADDR_VALUE          6
->>>  #define EXYNOS4412_MUX_ADDR_SHIFT          20
->>>  
->>> +/* Exynos5433 specific registers */
->>> +#define EXYNOS5433_TMU_REG_CONTROL1		0x024
->>> +#define EXYNOS5433_TMU_SAMPLING_INTERVAL	0x02c
->>> +#define EXYNOS5433_TMU_COUNTER_VALUE0		0x030
->>> +#define EXYNOS5433_TMU_COUNTER_VALUE1		0x034
->>> +#define EXYNOS5433_TMU_REG_CURRENT_TEMP1	0x044
->>> +#define EXYNOS5433_THD_TEMP_RISE3_0		0x050
->>> +#define EXYNOS5433_THD_TEMP_RISE7_4		0x054
->>> +#define EXYNOS5433_THD_TEMP_FALL3_0		0x060
->>> +#define EXYNOS5433_THD_TEMP_FALL7_4		0x064
->>> +#define EXYNOS5433_TMU_REG_INTEN		0x0c0
->>> +#define EXYNOS5433_TMU_REG_INTPEND		0x0c8
->>> +#define EXYNOS5433_TMU_EMUL_CON			0x110
->>> +#define EXYNOS5433_TMU_PD_DET_EN		0x130
->>> +
->>> +#define EXYNOS5433_TRIMINFO_SENSOR_ID_SHIFT	16
->>> +#define EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT	23
->>> +#define EXYNOS5433_TRIMINFO_SENSOR_ID_MASK	\
->>> +			(0xf <<
->>> EXYNOS5433_TRIMINFO_SENSOR_ID_SHIFT) +#define
->>> EXYNOS5433_TRIMINFO_CALIB_SEL_MASK	BIT(23) +
->>> +#define EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING	0
->>> +#define EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING	1
->>> +
->>> +#define EXYNOS5433_PD_DET_EN			1
->>> +
->>>  /*exynos5440 specific registers*/
->>>  #define EXYNOS5440_TMU_S0_7_TRIM		0x000
->>>  #define EXYNOS5440_TMU_S0_7_CTRL		0x020
->>> @@ -484,6 +510,101 @@ out:
->>>  	return ret;
->>>  }
->>>  
->>> +static int exynos5433_tmu_initialize(struct platform_device *pdev)
->>> +{
->>> +	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>> +	struct exynos_tmu_platform_data *pdata = data->pdata;
->>> +	struct thermal_zone_device *tz = data->tzd;
->>> +	unsigned int status, trim_info;
->>> +	unsigned int rising_threshold = 0, falling_threshold = 0;
->>> +	unsigned long temp, temp_hist;
->>> +	int ret = 0, threshold_code, i, sensor_id, cal_type;
->>> +
->>> +	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
->>> +	if (!status) {
->>> +		ret = -EBUSY;
->>> +		goto out;
->>> +	}
->>> +
->>> +	trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
->>> +	sanitize_temp_error(data, trim_info);
->>> +
->>> +	/* Read the temperature sensor id */
->>> +	sensor_id = (trim_info &
->>> EXYNOS5433_TRIMINFO_SENSOR_ID_MASK)
->>> +				>>
->>> EXYNOS5433_TRIMINFO_SENSOR_ID_SHIFT;
->>> +	dev_info(&pdev->dev, "Temperature sensor ID: 0x%x\n",
->>> sensor_id); +
->>> +	/* Read the calibration mode */
->>> +	writel(trim_info, data->base + EXYNOS_TMU_REG_TRIMINFO);
->>> +	cal_type = (trim_info & EXYNOS5433_TRIMINFO_CALIB_SEL_MASK)
->>> +				>>
->>> EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT; +
->>> +	switch (cal_type) {
->>> +	case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
->>> +		pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
->>> +		break;
->>> +	case EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING:
->>> +		pdata->cal_type = TYPE_TWO_POINT_TRIMMING;
->>> +		break;
->>> +	default:
->>> +		pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
->>> +		break;
->>> +	};
->>> +
->>> +	dev_info(&pdev->dev, "Calibration type is %d-point
->>> calibration\n",
->>> +			cal_type ?  2 : 1);
->>> +
->>> +	/* Write temperature code for rising and falling threshold
->>> */
->>> +	for (i = 0; i < of_thermal_get_ntrips(tz); i++) {
->>> +		int rising_reg_offset, falling_reg_offset;
->>> +		int j = 0;
->>> +
->>> +		switch (i) {
->>> +		case 0:
->>> +		case 1:
->>> +		case 2:
->>> +		case 3:
->>> +			rising_reg_offset =
->>> EXYNOS5433_THD_TEMP_RISE3_0;
->>> +			falling_reg_offset =
->>> EXYNOS5433_THD_TEMP_FALL3_0;
->>> +			j = i;
->>> +			break;
->>> +		case 4:
->>> +		case 5:
->>> +		case 6:
->>> +		case 7:
->>> +			rising_reg_offset =
->>> EXYNOS5433_THD_TEMP_RISE7_4;
->>> +			falling_reg_offset =
->>> EXYNOS5433_THD_TEMP_FALL7_4;
->>> +			j = i - 4;
->>> +			break;
->>> +		default:
->>> +			continue;
->>> +		}
->>> +
->>> +		/* Write temperature code for rising threshold */
->>> +		tz->ops->get_trip_temp(tz, i, &temp);
->>> +		temp /= MCELSIUS;
->>> +		threshold_code = temp_to_code(data, temp);
->>> +
->>> +		rising_threshold = readl(data->base +
->>> rising_reg_offset);
->>> +		rising_threshold |= (threshold_code << j * 8);
->>> +		writel(rising_threshold, data->base +
->>> rising_reg_offset); +
->>> +		/* Write temperature code for falling threshold */
->>> +		tz->ops->get_trip_hyst(tz, i, &temp_hist);
->>> +		temp_hist = temp - (temp_hist / MCELSIUS);
->>> +		threshold_code = temp_to_code(data, temp_hist);
->>> +
->>> +		falling_threshold = readl(data->base +
->>> falling_reg_offset);
->>> +		falling_threshold &= ~(0xff << j * 8);
->>> +		falling_threshold |= (threshold_code << j * 8);
->>> +		writel(falling_threshold, data->base +
->>> falling_reg_offset);
->>> +	}
->>> +
->>> +	data->tmu_clear_irqs(data);
->>> +out:
->>> +	return ret;
->>> +}
->>> +
->>>  static int exynos5440_tmu_initialize(struct platform_device *pdev)
->>>  {
->>>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>> @@ -643,6 +764,48 @@ static void exynos4210_tmu_control(struct
->>> platform_device *pdev, bool on) writel(con, data->base +
->>> EXYNOS_TMU_REG_CONTROL); }
->>>  
->>> +static void exynos5433_tmu_control(struct platform_device *pdev,
->>> bool on) +{
->>> +	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>> +	struct thermal_zone_device *tz = data->tzd;
->>> +	unsigned int con, interrupt_en, pd_det_en;
->>> +
->>> +	con = get_con_reg(data, readl(data->base +
->>> EXYNOS_TMU_REG_CONTROL)); +
->>> +	if (on) {
->>> +		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
->>> +		interrupt_en =
->>> +			(of_thermal_is_trip_valid(tz, 7)
->>> +			<< EXYNOS7_TMU_INTEN_RISE7_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 6)
->>> +			<< EXYNOS7_TMU_INTEN_RISE6_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 5)
->>> +			<< EXYNOS7_TMU_INTEN_RISE5_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 4)
->>> +			<< EXYNOS7_TMU_INTEN_RISE4_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 3)
->>> +			<< EXYNOS7_TMU_INTEN_RISE3_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 2)
->>> +			<< EXYNOS7_TMU_INTEN_RISE2_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 1)
->>> +			<< EXYNOS7_TMU_INTEN_RISE1_SHIFT) |
->>> +			(of_thermal_is_trip_valid(tz, 0)
->>> +			<< EXYNOS7_TMU_INTEN_RISE0_SHIFT);
->>> +
->>> +		interrupt_en |=
->>> +			interrupt_en <<
->>> EXYNOS_TMU_INTEN_FALL0_SHIFT;
->>> +	} else {
->>> +		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
->>> +		interrupt_en = 0; /* Disable all interrupts */
->>> +	}
->>> +
->>> +	pd_det_en = on ? EXYNOS5433_PD_DET_EN : 0;
->>> +
->>> +	writel(pd_det_en, data->base + EXYNOS5433_TMU_PD_DET_EN);
->>> +	writel(interrupt_en, data->base +
->>> EXYNOS5433_TMU_REG_INTEN);
->>> +	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
->>> +}
->>> +
->>>  static void exynos5440_tmu_control(struct platform_device *pdev,
->>> bool on) {
->>>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>> @@ -770,6 +933,8 @@ static void exynos4412_tmu_set_emulation(struct
->>> exynos_tmu_data *data, 
->>>  	if (data->soc == SOC_ARCH_EXYNOS5260)
->>>  		emul_con = EXYNOS5260_EMUL_CON;
->>> +	if (data->soc == SOC_ARCH_EXYNOS5433)
->>> +		emul_con = EXYNOS5433_TMU_EMUL_CON;
->>>  	else if (data->soc == SOC_ARCH_EXYNOS7)
->>>  		emul_con = EXYNOS7_TMU_REG_EMUL_CON;
->>>  	else
->>> @@ -882,6 +1047,9 @@ static void exynos4210_tmu_clear_irqs(struct
->>> exynos_tmu_data *data) } else if (data->soc == SOC_ARCH_EXYNOS7) {
->>>  		tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
->>>  		tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
->>> +	} else if (data->soc == SOC_ARCH_EXYNOS5433) {
->>> +		tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
->>> +		tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
->>>  	} else {
->>>  		tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
->>>  		tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
->>> @@ -926,6 +1094,7 @@ static const struct of_device_id
->>> exynos_tmu_match[] = { { .compatible = "samsung,exynos5260-tmu", },
->>>  	{ .compatible = "samsung,exynos5420-tmu", },
->>>  	{ .compatible = "samsung,exynos5420-tmu-ext-triminfo", },
->>> +	{ .compatible = "samsung,exynos5433-tmu", },
->>>  	{ .compatible = "samsung,exynos5440-tmu", },
->>>  	{ .compatible = "samsung,exynos7-tmu", },
->>>  	{ /* sentinel */ },
->>> @@ -949,6 +1118,8 @@ static int exynos_of_get_soc_type(struct
->>> device_node *np) else if (of_device_is_compatible(np,
->>>  					 "samsung,exynos5420-tmu-ext-triminfo"))
->>>  		return SOC_ARCH_EXYNOS5420_TRIMINFO;
->>> +	else if (of_device_is_compatible(np,
->>> "samsung,exynos5433-tmu"))
->>> +		return SOC_ARCH_EXYNOS5433;
->>>  	else if (of_device_is_compatible(np,
->>> "samsung,exynos5440-tmu")) return SOC_ARCH_EXYNOS5440;
->>>  	else if (of_device_is_compatible(np,
->>> "samsung,exynos7-tmu")) @@ -1069,6 +1240,13 @@ static int
->>> exynos_map_dt_data(struct platform_device *pdev)
->>> data->tmu_set_emulation = exynos4412_tmu_set_emulation;
->>> data->tmu_clear_irqs = exynos4210_tmu_clear_irqs; break;
->>> +	case SOC_ARCH_EXYNOS5433:
->>> +		data->tmu_initialize = exynos5433_tmu_initialize;
->>> +		data->tmu_control = exynos5433_tmu_control;
->>> +		data->tmu_read = exynos4412_tmu_read;
->>> +		data->tmu_set_emulation =
->>> exynos4412_tmu_set_emulation;
->>> +		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
->>> +		break;
->>>  	case SOC_ARCH_EXYNOS5440:
->>>  		data->tmu_initialize = exynos5440_tmu_initialize;
->>>  		data->tmu_control = exynos5440_tmu_control;
->>> @@ -1172,7 +1350,9 @@ static int exynos_tmu_probe(struct
->>> platform_device *pdev) goto err_clk_sec;
->>>  	}
->>>  
->>> -	if (data->soc == SOC_ARCH_EXYNOS7) {
->>> +	switch (data->soc) {
->>> +	case SOC_ARCH_EXYNOS5433:
->>> +	case SOC_ARCH_EXYNOS7:
->>>  		data->sclk = devm_clk_get(&pdev->dev, "tmu_sclk");
->>>  		if (IS_ERR(data->sclk)) {
->>>  			dev_err(&pdev->dev, "Failed to get
->>> sclk\n"); @@ -1184,7 +1364,10 @@ static int exynos_tmu_probe(struct
->>> platform_device *pdev) goto err_clk;
->>>  			}
->>>  		}
->>> -	}
->>> +		break;
->>> +	default:
->>> +		break;
->>> +	};
->>>  
->>>  	ret = exynos_tmu_initialize(pdev);
->>>  	if (ret) {
->>> diff --git a/drivers/thermal/samsung/exynos_tmu.h
->>> b/drivers/thermal/samsung/exynos_tmu.h index 4d71ec6..440c714 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu.h
->>> +++ b/drivers/thermal/samsung/exynos_tmu.h
->>> @@ -33,6 +33,7 @@ enum soc_type {
->>>  	SOC_ARCH_EXYNOS5260,
->>>  	SOC_ARCH_EXYNOS5420,
->>>  	SOC_ARCH_EXYNOS5420_TRIMINFO,
->>> +	SOC_ARCH_EXYNOS5433,
->>>  	SOC_ARCH_EXYNOS5440,
->>>  	SOC_ARCH_EXYNOS7,
->>>  };
->>>
->>
-> 
-> 
-> 
+I don't think you need these..
 
+http://permalink.gmane.org/gmane.linux.power-management.general/58548
+
+>  Examples:
+>
+> diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
+> index e1a6ba6..edb461b 100644
+> --- a/drivers/cpufreq/arm_big_little.c
+> +++ b/drivers/cpufreq/arm_big_little.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/topology.h>
+>  #include <linux/types.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <asm/bL_switcher.h>
+>
+>  #include "arm_big_little.h"
+> @@ -54,6 +55,9 @@ static bool bL_switching_enabled;
+>
+>  static struct cpufreq_arm_bL_ops *arm_bL_ops;
+>  static struct clk *clk[MAX_CLUSTERS];
+> +static struct regulator *reg[MAX_CLUSTERS];
+> +static struct device *cpu_devs[MAX_CLUSTERS];
+> +static int transition_latencies[MAX_CLUSTERS];
+>  static struct cpufreq_frequency_table *freq_table[MAX_CLUSTERS + 1];
+>  static atomic_t cluster_usage[MAX_CLUSTERS + 1];
+>
+> @@ -122,7 +126,76 @@ static unsigned int bL_cpufreq_get_rate(unsigned int cpu)
+>         }
+>  }
+>
+> -static unsigned int
+> +static int
+> +bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+> +{
+> +       unsigned long volt = 0, volt_old = 0;
+> +       long freq_Hz;
+> +       u32 old_rate;
+> +       int ret;
+> +
+> +       freq_Hz = new_rate * 1000;
+> +       old_rate = clk_get_rate(clk[cluster]) / 1000;
+> +
+> +       if (!IS_ERR(reg[cluster])) {
+> +               struct dev_pm_opp *opp;
+> +               unsigned long opp_freq;
+> +
+> +               rcu_read_lock();
+> +               opp = dev_pm_opp_find_freq_ceil(cpu_devs[cluster], &freq_Hz);
+> +               if (IS_ERR(opp)) {
+> +                       rcu_read_unlock();
+> +                       pr_err("%s: cpu %d, cluster: %d, failed to find OPP for %ld\n",
+> +                               __func__, cpu, cluster, freq_Hz);
+> +                       return PTR_ERR(opp);
+> +               }
+> +               volt = dev_pm_opp_get_voltage(opp);
+> +               opp_freq = dev_pm_opp_get_freq(opp);
+> +               rcu_read_unlock();
+> +               volt_old = regulator_get_voltage(reg[cluster]);
+> +               pr_debug("%s: cpu %d, cluster: %d, Found OPP: %ld kHz, %ld uV\n",
+> +                       __func__, cpu, cluster, opp_freq / 1000, volt);
+> +       }
+> +
+> +       pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
+> +               __func__, cpu, cluster,
+> +               old_rate / 1000, (volt_old > 0) ? volt_old / 1000 : -1,
+> +               new_rate / 1000, volt ? volt / 1000 : -1);
+> +
+> +       /* scaling up? scale voltage before frequency */
+> +       if (!IS_ERR(reg[cluster]) && new_rate > old_rate) {
+> +               ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+> +               if (ret) {
+> +                       pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage up: %d\n",
+> +                               __func__, cpu, cluster, ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       ret = clk_set_rate(clk[cluster], new_rate * 1000);
+> +       if (WARN_ON(ret)) {
+> +               pr_err("%s: clk_set_rate failed: %d, cluster: %d\n",
+> +                       __func__, cluster, ret);
+> +               if (!IS_ERR(reg[cluster]) && volt_old > 0)
+> +                       regulator_set_voltage_tol(reg[cluster], volt_old, 0);
+> +               return ret;
+> +       }
+> +
+> +       /* scaling down? scale voltage after frequency */
+> +       if (!IS_ERR(reg[cluster]) && new_rate < old_rate) {
+> +               ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+> +               if (ret) {
+> +                       pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage down: %d\n",
+> +                               __func__, cpu, cluster, ret);
+> +                       clk_set_rate(clk[cluster], old_rate * 1000);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int
+
+If you want to make such fixes, please add them separately.
+
+>  bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>  {
+>         u32 new_rate, prev_rate;
+> @@ -145,22 +218,17 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>         pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d, freq: %d\n",
+>                         __func__, cpu, old_cluster, new_cluster, new_rate);
+>
+> -       ret = clk_set_rate(clk[new_cluster], new_rate * 1000);
+> -       if (WARN_ON(ret)) {
+> -               pr_err("clk_set_rate failed: %d, new cluster: %d\n", ret,
+> -                               new_cluster);
+> -               if (bLs) {
+> -                       per_cpu(cpu_last_req_freq, cpu) = prev_rate;
+> -                       per_cpu(physical_cluster, cpu) = old_cluster;
+> -               }
+> -
+> -               mutex_unlock(&cluster_lock[new_cluster]);
+> -
+> -               return ret;
+> +       ret = bL_cpufreq_set_rate_cluster(cpu, new_cluster, new_rate);
+> +       if (ret && bLs) {
+> +               per_cpu(cpu_last_req_freq, cpu) = prev_rate;
+> +               per_cpu(physical_cluster, cpu) = old_cluster;
+>         }
+>
+>         mutex_unlock(&cluster_lock[new_cluster]);
+>
+> +       if (ret)
+> +               return ret;
+> +
+>         /* Recalc freq for old cluster when switching clusters */
+>         if (old_cluster != new_cluster) {
+>                 pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d\n",
+> @@ -174,14 +242,11 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>                 /* Set freq of old cluster if there are cpus left on it */
+>                 new_rate = find_cluster_maxfreq(old_cluster);
+>                 new_rate = ACTUAL_FREQ(old_cluster, new_rate);
+> -
+
+??
+
+>                 if (new_rate) {
+>                         pr_debug("%s: Updating rate of old cluster: %d, to freq: %d\n",
+>                                         __func__, old_cluster, new_rate);
+>
+> -                       if (clk_set_rate(clk[old_cluster], new_rate * 1000))
+> -                               pr_err("%s: clk_set_rate failed: %d, old cluster: %d\n",
+> -                                               __func__, ret, old_cluster);
+> +                       bL_cpufreq_set_rate_cluster(cpu, old_cluster, new_rate);
+>                 }
+>                 mutex_unlock(&cluster_lock[old_cluster]);
+>         }
+> @@ -288,6 +353,8 @@ static void _put_cluster_clk_and_freq_table(struct device *cpu_dev)
+>                 return;
+>
+>         clk_put(clk[cluster]);
+> +       if (!IS_ERR(reg[cluster]))
+> +               regulator_put(reg[cluster]);
+>         dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table[cluster]);
+>         if (arm_bL_ops->free_opp_table)
+>                 arm_bL_ops->free_opp_table(cpu_dev);
+> @@ -321,6 +388,7 @@ static void put_cluster_clk_and_freq_table(struct device *cpu_dev)
+>
+>  static int _get_cluster_clk_and_freq_table(struct device *cpu_dev)
+>  {
+> +       unsigned long min_uV = ~0, max_uV = 0;
+>         u32 cluster = raw_cpu_to_cluster(cpu_dev->id);
+>         char name[14] = "cpu-cluster.";
+>         int ret;
+> @@ -335,6 +403,51 @@ static int _get_cluster_clk_and_freq_table(struct device *cpu_dev)
+>                 goto out;
+>         }
+>
+> +       name[12] = cluster + '0';
+> +       reg[cluster] = regulator_get_optional(cpu_dev, name);
+
+Just pass NULL instead of name.
+
+> +       if (!IS_ERR(reg[cluster])) {
+> +               unsigned long opp_freq = 0;
+> +
+> +               dev_dbg(cpu_dev, "%s: reg: %p, cluster: %d\n",
+> +                       __func__, reg[cluster], cluster);
+> +               cpu_devs[cluster] = cpu_dev;
+
+If you want to save cpu_dev for further use, save it in bL_cpufreq_init()
+not here.
+
+> +               /*
+> +                * Disable any OPPs where the connected regulator isn't able to
+> +                * provide the specified voltage and record minimum and maximum
+> +                * voltage levels.
+> +                */
+> +               while (1) {
+> +                       struct dev_pm_opp *opp;
+> +                       unsigned long opp_uV;
+> +
+> +                       rcu_read_lock();
+> +                       opp = dev_pm_opp_find_freq_ceil(cpu_dev, &opp_freq);
+> +                       if (IS_ERR(opp)) {
+> +                               rcu_read_unlock();
+> +                               break;
+> +                       }
+> +                       opp_uV = dev_pm_opp_get_voltage(opp);
+> +                       rcu_read_unlock();
+> +
+> +                       if (regulator_is_supported_voltage(reg[cluster], opp_uV,
+> +                                                          opp_uV)) {
+> +                               if (opp_uV < min_uV)
+> +                                       min_uV = opp_uV;
+> +                               if (opp_uV > max_uV)
+> +                                       max_uV = opp_uV;
+> +                       } else {
+> +                               dev_pm_opp_disable(cpu_dev, opp_freq);
+> +                       }
+> +
+> +                       opp_freq++;
+> +               }
+> +
+> +               ret = regulator_set_voltage_time(reg[cluster], min_uV, max_uV);
+> +               if (ret > 0)
+> +                       transition_latencies[cluster] = ret * 1000;
+> +       }
+> +
+>         ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table[cluster]);
+>         if (ret) {
+>                 dev_err(cpu_dev, "%s: failed to init cpufreq table, cpu: %d, err: %d\n",
+> @@ -342,7 +455,6 @@ static int _get_cluster_clk_and_freq_table(struct device *cpu_dev)
+>                 goto free_opp_table;
+>         }
+>
+> -       name[12] = cluster + '0';
+>         clk[cluster] = clk_get(cpu_dev, name);
+>         if (!IS_ERR(clk[cluster])) {
+>                 dev_dbg(cpu_dev, "%s: clk: %p & freq table: %p, cluster: %d\n",
+> @@ -469,6 +581,11 @@ static int bL_cpufreq_init(struct cpufreq_policy *policy)
+>         else
+>                 policy->cpuinfo.transition_latency = CPUFREQ_ETERNAL;
+>
+> +       if (cur_cluster < MAX_CLUSTERS &&
+> +           policy->cpuinfo.transition_latency != CPUFREQ_ETERNAL)
+> +               policy->cpuinfo.transition_latency
+> +                       += transition_latencies[cur_cluster];
+
+Instead of the crap here + a global array for transition latencies,
+pass 'policy' to _get_cluster_clk_and_freq_table() and add it
+directly to policy.
+
+> +
+>         if (is_bL_switching_enabled())
+>                 per_cpu(cpu_last_req_freq, policy->cpu) = clk_get_cpu_rate(policy->cpu);
+>
+> --
+> 1.7.9.5
+>
