@@ -1,140 +1,336 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
 Subject: Re: [PATCH v4 06/10] cec: add HDMI CEC framework
-Date: Mon, 27 Apr 2015 10:19:36 +0200
-Message-ID: <553DF118.7020703@xs4all.nl>
-References: <1429794192-20541-1-git-send-email-k.debski@samsung.com> <1429794192-20541-7-git-send-email-k.debski@samsung.com> <553A14FC.6090200@opdenkamp.eu> <"08b501d080c1$835d07e0$8a1717a0$@debski"@samsung.com>
+Date: Mon, 27 Apr 2015 11:13:53 +0200
+Message-ID: <553DFDD1.9050803@xs4all.nl>
+References: <1429794192-20541-1-git-send-email-k.debski@samsung.com> <1429794192-20541-7-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <"08b501d080c1$835d07e0$8a1717a0$@debski"@samsung.com>
+In-Reply-To: <1429794192-20541-7-git-send-email-k.debski@samsung.com>
 Sender: linux-input-owner@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, 'Lars Op den Kamp' <lars@opdenkamp.eu>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Hans Verkuil' <hansverk@cisco.com>
+To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hans Verkuil <hansverk@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Lars,
+Hi Kamil,
 
-My thanks as well for your comments.
+I've added some missing HDMI 2.0 commands:
 
-I'd like to add some background information as well as to why we move
-the core CEC support into the kernel: the main reason for doing this
-is to support the HEAC part of the CEC protocol. Specifically the ARC
-support and handling the hotplug detect CEC/HEAC messages. This has to
-be handled in the kernel and cannot be left to userspace. While the
-current framework does not yet handle these messages support for this
-will appear, probably later this year since I will have to work on ARC.
+On 04/23/2015 03:03 PM, Kamil Debski wrote:
+> From: Hans Verkuil <hansverk@cisco.com>
+> 
+> The added HDMI CEC framework provides a generic kernel interface for
+> HDMI CEC devices.
+> 
+> Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+> [k.debski@samsung.com: Merged CEC Updates commit by Hans Verkuil]
+> [k.debski@samsung.com: Merged Update author commit by Hans Verkuil]
+> [k.debski@samsung.com: change kthread handling when setting logical
+> address]
+> [k.debski@samsung.com: code cleanup and fixes]
+> [k.debski@samsung.com: add missing CEC commands to match spec]
+> [k.debski@samsung.com: add RC framework support]
+> [k.debski@samsung.com: move and edit documentation]
+> [k.debski@samsung.com: add vendor id reporting]
+> [k.debski@samsung.com: add possibility to clear assigned logical
+> addresses]
+> [k.debski@samsung.com: documentation fixes, clenaup and expansion]
+> [k.debski@samsung.com: reorder of API structs and add reserved fields]
+> [k.debski@samsung.com: fix handling of events and fix 32/64bit timespec
+> problem]
+> [k.debski@samsung.com: add cec.h to include/uapi/linux/Kbuild]
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> ---
+>  Documentation/cec.txt     |  396 ++++++++++++++++
+>  drivers/media/Kconfig     |    6 +
+>  drivers/media/Makefile    |    2 +
+>  drivers/media/cec.c       | 1161 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/media/cec.h       |  140 ++++++
+>  include/uapi/linux/Kbuild |    1 +
+>  include/uapi/linux/cec.h  |  303 ++++++++++++
+>  7 files changed, 2009 insertions(+)
+>  create mode 100644 Documentation/cec.txt
+>  create mode 100644 drivers/media/cec.c
+>  create mode 100644 include/media/cec.h
+>  create mode 100644 include/uapi/linux/cec.h
+> 
+> diff --git a/include/uapi/linux/cec.h b/include/uapi/linux/cec.h
+> new file mode 100644
+> index 0000000..bb6d66c
+> --- /dev/null
+> +++ b/include/uapi/linux/cec.h
+> @@ -0,0 +1,303 @@
+> +#ifndef _CEC_H
+> +#define _CEC_H
+> +
+> +#include <linux/types.h>
+> +
+> +struct cec_time {
+> +	__u64 sec;
+> +	__u64 nsec;
+> +};
+> +
+> +struct cec_msg {
+> +	struct cec_time ts;
+> +	__u32 len;
+> +	__u32 status;
+> +	__u32 timeout;
+> +	/* timeout (in ms) is used to timeout CEC_RECEIVE.
+> +	   Set to 0 if you want to wait forever. */
+> +	__u8  msg[16];
+> +	__u8  reply;
+> +	/* If non-zero, then wait for a reply with this opcode.
+> +	   If there was an error when sending the msg or FeatureAbort
+> +	   was returned, then reply is set to 0.
+> +	   If reply is non-zero upon return, then len/msg are set to
+> +	   the received message.
+> +	   If reply is zero upon return and status has the
+> +	   CEC_TX_STATUS_FEATURE_ABORT bit set, then len/msg are set to the
+> +	   received feature abort message.
+> +	   If reply is zero upon return and status has the
+> +	   CEC_TX_STATUS_REPLY_TIMEOUT
+> +	   bit set, then no reply was seen at all.
+> +	   This field is ignored with CEC_RECEIVE.
+> +	   If reply is non-zero for CEC_TRANSMIT and the message is a broadcast,
+> +	   then -EINVAL is returned.
+> +	   if reply is non-zero, then timeout is set to 1000 (the required
+> +	   maximum response time).
+> +	 */
+> +	__u8 reserved[31];
+> +};
+> +
+> +static inline __u8 cec_msg_initiator(const struct cec_msg *msg)
+> +{
+> +	return msg->msg[0] >> 4;
+> +}
+> +
+> +static inline __u8 cec_msg_destination(const struct cec_msg *msg)
+> +{
+> +	return msg->msg[0] & 0xf;
+> +}
+> +
+> +static inline bool cec_msg_is_broadcast(const struct cec_msg *msg)
+> +{
+> +	return (msg->msg[0] & 0xf) == 0xf;
+> +}
+> +
+> +/* cec status field */
+> +#define CEC_TX_STATUS_OK            (0)
+> +#define CEC_TX_STATUS_ARB_LOST      (1 << 0)
+> +#define CEC_TX_STATUS_RETRY_TIMEOUT (1 << 1)
+> +#define CEC_TX_STATUS_FEATURE_ABORT (1 << 2)
+> +#define CEC_TX_STATUS_REPLY_TIMEOUT (1 << 3)
+> +#define CEC_RX_STATUS_READY         (0)
+> +
+> +#define CEC_LOG_ADDR_INVALID 0xff
+> +
+> +/* The maximum number of logical addresses one device can be assigned to.
+> + * The CEC 2.0 spec allows for only 2 logical addresses at the moment. The
+> + * Analog Devices CEC hardware supports 3. So let's go wild and go for 4. */
+> +#define CEC_MAX_LOG_ADDRS 4
+> +
+> +/* The "Primary Device Type" */
+> +#define CEC_PRIM_DEVTYPE_TV		0
+> +#define CEC_PRIM_DEVTYPE_RECORD		1
+> +#define CEC_PRIM_DEVTYPE_TUNER		3
+> +#define CEC_PRIM_DEVTYPE_PLAYBACK	4
+> +#define CEC_PRIM_DEVTYPE_AUDIOSYSTEM	5
+> +#define CEC_PRIM_DEVTYPE_SWITCH		6
+> +#define CEC_PRIM_DEVTYPE_VIDEOPROC	7
+> +
+> +/* The "All Device Types" flags (CEC 2.0) */
+> +#define CEC_FL_ALL_DEVTYPE_TV		(1 << 7)
+> +#define CEC_FL_ALL_DEVTYPE_RECORD	(1 << 6)
+> +#define CEC_FL_ALL_DEVTYPE_TUNER	(1 << 5)
+> +#define CEC_FL_ALL_DEVTYPE_PLAYBACK	(1 << 4)
+> +#define CEC_FL_ALL_DEVTYPE_AUDIOSYSTEM	(1 << 3)
+> +#define CEC_FL_ALL_DEVTYPE_SWITCH	(1 << 2)
+> +/* And if you wondering what happened to VIDEOPROC devices: those should
+> + * be mapped to a SWITCH. */
+> +
+> +/* The logical address types that the CEC device wants to claim */
+> +#define CEC_LOG_ADDR_TYPE_TV		0
+> +#define CEC_LOG_ADDR_TYPE_RECORD	1
+> +#define CEC_LOG_ADDR_TYPE_TUNER		2
+> +#define CEC_LOG_ADDR_TYPE_PLAYBACK	3
+> +#define CEC_LOG_ADDR_TYPE_AUDIOSYSTEM	4
+> +#define CEC_LOG_ADDR_TYPE_SPECIFIC	5
+> +#define CEC_LOG_ADDR_TYPE_UNREGISTERED	6
+> +/* Switches should use UNREGISTERED.
+> + * Video processors should use SPECIFIC. */
+> +
+> +/* The CEC version */
+> +#define CEC_VERSION_1_4B		5
+> +#define CEC_VERSION_2_0			6
+> +
+> +struct cec_event {
+> +	struct cec_time ts;
+> +	__u32 event;
+> +	__u8 reserved[4];
+> +};
+> +
+> +/* The CEC state */
+> +#define CEC_STATE_DISABLED		0
+> +#define CEC_STATE_ENABLED		1
+> +
+> +/* Userspace has to configure the adapter state (enable/disable) */
+> +#define CEC_CAP_STATE		(1 << 0)
+> +/* Userspace has to configure the physical address */
+> +#define CEC_CAP_PHYS_ADDR	(1 << 1)
+> +/* Userspace has to configure the logical addresses */
+> +#define CEC_CAP_LOG_ADDRS	(1 << 2)
+> +/* Userspace can transmit messages */
+> +#define CEC_CAP_TRANSMIT	(1 << 3)
+> +/* Userspace can receive messages */
+> +#define CEC_CAP_RECEIVE		(1 << 4)
+> +/* Userspace has to configure the vendor id */
+> +#define CEC_CAP_VENDOR_ID	(1 << 5)
+> +/* The hardware has the possibility to work in the promiscuous mode */
+> +#define CEC_CAP_PROMISCUOUS	(1 << 6)
+> +
+> +struct cec_caps {
+> +	__u32 available_log_addrs;
+> +	__u32 capabilities;
+> +	__u32 vendor_id;
+> +	__u8  version;
+> +	__u8  reserved[11];
+> +};
+> +
+> +struct cec_log_addrs {
+> +	__u8 cec_version;
+> +	__u8 num_log_addrs;
+> +	__u8 primary_device_type[CEC_MAX_LOG_ADDRS];
+> +	__u8 log_addr_type[CEC_MAX_LOG_ADDRS];
+> +	__u8 log_addr[CEC_MAX_LOG_ADDRS];
+> +
+> +	/* CEC 2.0 */
+> +	__u8 all_device_types;
+> +	__u8 features[CEC_MAX_LOG_ADDRS][12];
+> +
+> +	__u8 reserved[9];
+> +};
+> +
+> +/* Commands */
+> +
+> +/* One Touch Play Feature */
+> +#define CEC_OP_ACTIVE_SOURCE			0x82
+> +#define CEC_OP_IMAGE_VIEW_ON			0x04
+> +#define CEC_OP_TEXT_VIEW_ON			0x0d
+> +
+> +/* Routing Control Feature */
+> +#define CEC_OP_ACTIVE_SOURCE			0x82
+> +#define CEC_OP_INACTIVE_SOURCE			0x9d
+> +#define CEC_OP_REQUEST_ACTIVE_SOURCE		0x85
+> +#define CEC_OP_ROUTING_CHANGE			0x80
+> +#define CEC_OP_ROUTING_INFORMATION		0x81
+> +#define CEC_OP_SET_STREAM_PATH			0x86
+> +
+> +/* Standby Feature */
+> +#define CEC_OP_STANDBY				0x36
+> +
+> +/* One Touch Record Feature */
+> +#define CEC_OP_RECORD_OFF			0x0b
+> +#define CEC_OP_RECORD_ON			0x09
+> +#define CEC_OP_RECORD_STATUS			0x0a
+> +#define CEC_OP_RECORD_TV_SCREEN			0x0f
+> +
+> +/* Timer Programming Feature */
+> +#define CEC_OP_CLEAR_ANALOGUE_TIMER		0x33
+> +#define CEC_OP_CLEAR_DIGITAL_TIMER		0x99
+> +#define CEC_OP_CLEAR_EXT_TIMER			0xa1
+> +#define CEC_OP_SET_ANALOGUE_TIMER		0x34
+> +#define CEC_OP_SET_DIGITAL_TIMER		0x97
+> +#define CEC_OP_SET_EXT_TIMER			0xa2
+> +#define CEC_OP_SET_EXT_PROGRAM_TIMER		0x67
+> +#define CEC_OP_TIMER_CLEARED_STATUS		0x43
+> +#define CEC_OP_TIMER_STATUS			0x35
+> +
+> +/* System Information Feature */
+> +#define CEC_OP_CEC_VERSION			0x9e
+> +#define CEC_OP_GET_CEC_VERSION			0x9f
+> +#define CEC_OP_GIVE_PHYSICAL_ADDR		0x83
+> +#define CEC_OP_GET_MENU_LANGUAGE		0x91
+> +#define CEC_OP_REPORT_PHYSICAL_ADDR		0x84
+> +#define CEC_OP_SET_MENU_LANGUAGE		0x32
 
-Out of curiosity: have you ever seen CEC adapters that implement the
-ethernet part of HEAC? My understanding is that nobody uses that part
-since wifi is the standard these days. But perhaps you know of examples
-where it was actually implemented.
+#define CEC_OP_REPORT_FEATURES			0xa6	/* HDMI 2.0 */
+#define CEC_OP_GIVE_FEATURES			0xa5	/* HDMI 2.0 */
+
+> +
+> +/* Deck Control Feature */
+> +#define CEC_OP_DECK_CONTROL			0x42
+> +#define CEC_OP_DECK_STATUS			0x1b
+> +#define CEC_OP_GIVE_DECK_STATUS			0x1a
+> +#define CEC_OP_PLAY				0x41
+> +
+> +/* Tuner Control Feature */
+> +#define CEC_OP_GIVE_TUNER_DEVICE_STATUS		0x08
+> +#define CEC_OP_SELECT_ANALOGUE_SERVICE		0x92
+> +#define CEC_OP_SELECT_DIGITAL_SERVICE		0x93
+> +#define CEC_OP_TUNER_DEVICE_STATUS		0x07
+> +#define CEC_OP_TUNER_STEP_DECREMENT		0x06
+> +#define CEC_OP_TUNER_STEP_INCREMENT		0x05
+> +
+> +/* Vendor Specific Commands Feature */
+> +#define CEC_OP_CEC_VERSION			0x9e
+> +#define CEC_OP_DEVICE_VENDOR_ID			0x87
+> +#define CEC_OP_GET_CEC_VERSION			0x9f
+> +#define CEC_OP_GIVE_DEVICE_VENDOR_ID		0x8c
+> +#define CEC_OP_VENDOR_COMMAND			0x89
+> +#define CEC_OP_VENDOR_COMMAND_WITH_ID		0xa0
+> +#define CEC_OP_VENDOR_REMOTE_BUTTON_DOWN	0x8a
+> +#define CEC_OP_VENDOR_REMOTE_BUTTON_UP		0x8b
+> +
+> +/* OSD Display Feature */
+> +#define CEC_OP_SET_OSD_STRING			0x64
+> +
+> +/* Device OSD Transfer Feature */
+> +#define CEC_OP_GIVE_OSD_NAME			0x46
+> +#define CEC_OP_SET_OSD_NAME			0x47
+> +
+> +/* Device Menu Control Feature */
+> +#define CEC_OP_MENU_REQUEST			0x8d
+> +#define CEC_OP_MENU_STATUS			0x8e
+> +#define CEC_OP_USER_CONTROL_PRESSED		0x44
+> +#define CEC_OP_USER_CONTROL_RELEASED		0x45
+> +
+> +/* Power Status Feature */
+> +#define CEC_OP_GIVE_DEVICE_POWER_STATUS		0x8f
+> +#define CEC_OP_REPORT_POWER_STATUS		0x90
+> +#define CEC_OP_FEATURE_ABORT			0x00
+> +#define CEC_OP_ABORT				0xff
+> +
+> +/* System Audio Control Feature */
+> +#define CEC_OP_GIVE_AUDIO_STATUS		0x71
+> +#define CEC_OP_GIVE_SYSTEM_AUDIO_MODE_STATUS	0x7d
+> +#define CEC_OP_REPORT_AUDIO_STATUS		0x7a
+> +#define CEC_OP_SET_SYSTEM_AUDIO_MODE		0x72
+> +#define CEC_OP_SYSTEM_AUDIO_MODE_REQUEST	0x70
+> +#define CEC_OP_SYSTEM_AUDIO_MODE_STATUS		0x7e
+> +
+> +/* Audio Rate Control Feature */
+> +#define CEC_OP_SET_AUDIO_RATE			0x9a
+> +
+
+/* Audio Return Channel Control Feature */
+
+#define CEC_OP_INITIATE_ARC			0xc0
+#define CEC_OP_REPORT_ARC_INITIATED		0xc1
+#define CEC_OP_REPORT_ARC_TERMINATED		0xc2
+#define CEC_OP_REQUEST_ARC_INITIATION		0xc3
+#define CEC_OP_REQUEST_ARC_TERMINATION		0xc4
+#define CEC_OP_TERMINATE_ARC			0xc5
+
+/* Dynamic Audio Lipsync Feature, HDMI 2.0 */
+
+#define CEC_OP_REQUEST_CURRENT_LATENCY		0xa7
+#define CEC_OP_REPORT_CURRENT_LATENCY		0xa8
+
+/* Capability Discovery and Control Feature */
+
+#define CEC_OP_CDC_MESSAGE			0xf8
 
 Regards,
 
 	Hans
-
-On 04/27/2015 10:09 AM, Kamil Debski wrote:
-> Hi Lars, 
-> 
-> Thank you for your comments.
-> 
-> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> owner@vger.kernel.org] On Behalf Of Lars Op den Kamp
-> Sent: Friday, April 24, 2015 12:04 PM
->  
->> Hi Kamil, Hans,
->>
->> I'm the main developer of libCEC
->> (https://github.com/Pulse-Eight/libcec). Sorry for the late time to
->> jump
->> in here, but I wasn't signed up to this mailing list and someone
->> pointed
->> me to this discussion.
->>
->> Unfortunately this approach will not work with half the TVs that are
->> out
->> there. I'll explain why:
->>
->> * because of how some (common) brands implemented CEC in their TVs,
->> this
->> implementation will not work, as the TV will just reject it. In libCEC,
->> we've created work arounds for brands like this. Without these work
->> arounds, your in-kernel implementation will be very vendor specific.
->> e.g. this implementation will work for Samsung's TVs, but not for the
->> TVs made by another big TV brand. All commands, including CEC_OP_ABORT,
->> should be passed to userspace to make it work with all brands.
->>
->> * it should be made possible to not have the kernel send any CEC
->> message, try to process any received CEC message, or ack to any logical
->> address at all, to allow libraries like libCEC to fully handle all CEC
->> traffic. Some brands only enable routing of some CEC keys when a
->> specific device type is used. libCEC will allocate a logical address of
->> the correct type for the brand that's used. If another address is first
->> allocated by the kernel, and the TV communicates with it to find out
->> it's name and things like that, and libCEC allocates another address a
->> bit later when initialised, then you'll end up with multiple entries in
->> the device list on the TV, and only one of them will work.
-> 
-> Adding a special mode in the CEC framework that disables parsing and
-> processing seems like a good idea for me. This way libCEC could be
-> completely
-> in charge of how the communication is handled. 
-> 
-> I discussed this with Hans and he is for this solution. This way there would
-> be two modes:
-> - One with handling of CEC messages enabled in the kernel, in idea behind
->   this is to have processing adhere to the CEC spec as closely as possible.
->   It should work with equipment that also follows the spec and has little
->   vendor specific quirks.
-> - Second, the passthrough mode, in which the handling of CEC messages would
->   be left to userspace application. Kernel would not be sending or
->   receiving messages, unless specifically told to do so. Below you mentioned
->   that allocating logical addresses and sending ACKs could be done in
-> kernel.
-> 
->   The way I see it is following: If allocation of a logical address is made
->   then ACKs will be handled by the framework. If no allocation is made then
->   the userspace can still send and receive messages. However no filtering is
->   done based on the logical address - all received messages are sent to the
->   userspace.
-> 
->>
->> * CEC is *very* vendor specific. The main reason is, in my opinion, the
->> use of the word "should" instead of "shall" in the spec. It's addressed
->> in the new version, but it'll take years before all the non 2.x devices
->> are gone. What works for vendor A will simply not work for vendor B.
->> libCEC aims to address this, in a library that can be used on all major
->> platforms and by all major programming languages. You could duplicate
->> the work done there in the kernel to make make the implementation work
->> with all brands, but I think that this does simply not belong in the
->> kernel when it can be handled in userspace perfectly.
-> 
-> CEC being very vendor specific is a huge problem. I agree with you that
-> there is no need to duplicate the effort to mitigate all the vendor quirks.
-> Especially that a working implementation (libCEC) is already done.
-> 
->> So I suggest that you limit the in-kernel implementation to handling
->> raw
->> traffic only, to have it do this (and nothing more):
->> * allocate one or more logical addresses, and ack CEC traffic sent to
->> those logical addresses
->> * receive CEC traffic and forward it to userspace (traffic sent to all
->> addresses is preferred, not just traffic sent to the logical address
->> used by the device running this code)
->> * transmit CEC traffic initiated by userspace
-> 
-> As mentioned above, I propose a "passthorugh" mode in which handling of
-> CEC messages by the kernel CEC framework will be very limited. I think
-> that the three functions listed above should be enough.
-> 
-> Any comments on this solution?
-> 
->>
->> thanks,
->>
->> Lars Op den Kamp
-> 
-> Best wishes,
-> 
-
