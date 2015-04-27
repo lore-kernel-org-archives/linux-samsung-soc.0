@@ -1,88 +1,72 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v4 06/10] cec: add HDMI CEC framework
-Date: Mon, 27 Apr 2015 13:27:22 +0200
-Message-ID: <553E1D1A.9020503@xs4all.nl>
-References: <1429794192-20541-1-git-send-email-k.debski@samsung.com> <1429794192-20541-7-git-send-email-k.debski@samsung.com> <553E0E86.4080002@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <553E0E86.4080002@xs4all.nl>
-Sender: linux-input-owner@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hans Verkuil <hansverk@cisco.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v3 00/10] clk: samsung: exynos5433: Fix bug and support
+ dvfs/suspend-to-ram
+Date: Mon, 27 Apr 2015 20:36:27 +0900
+Message-ID: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:60513 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752619AbbD0Li0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Apr 2015 07:38:26 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org
+Cc: kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 04/27/2015 12:25 PM, Hans Verkuil wrote:
-> On 04/23/2015 03:03 PM, Kamil Debski wrote:
->> From: Hans Verkuil <hansverk@cisco.com>
->>
->> The added HDMI CEC framework provides a generic kernel interface for
->> HDMI CEC devices.
->>
->> Signed-off-by: Hans Verkuil <hansverk@cisco.com>
->> [k.debski@samsung.com: Merged CEC Updates commit by Hans Verkuil]
->> [k.debski@samsung.com: Merged Update author commit by Hans Verkuil]
->> [k.debski@samsung.com: change kthread handling when setting logical
->> address]
->> [k.debski@samsung.com: code cleanup and fixes]
->> [k.debski@samsung.com: add missing CEC commands to match spec]
->> [k.debski@samsung.com: add RC framework support]
->> [k.debski@samsung.com: move and edit documentation]
->> [k.debski@samsung.com: add vendor id reporting]
->> [k.debski@samsung.com: add possibility to clear assigned logical
->> addresses]
->> [k.debski@samsung.com: documentation fixes, clenaup and expansion]
->> [k.debski@samsung.com: reorder of API structs and add reserved fields]
->> [k.debski@samsung.com: fix handling of events and fix 32/64bit timespec
->> problem]
->> [k.debski@samsung.com: add cec.h to include/uapi/linux/Kbuild]
->> Signed-off-by: Kamil Debski <k.debski@samsung.com>
->> ---
->>  Documentation/cec.txt     |  396 ++++++++++++++++
->>  drivers/media/Kconfig     |    6 +
->>  drivers/media/Makefile    |    2 +
->>  drivers/media/cec.c       | 1161 +++++++++++++++++++++++++++++++++++++++++++++
->>  include/media/cec.h       |  140 ++++++
->>  include/uapi/linux/Kbuild |    1 +
->>  include/uapi/linux/cec.h  |  303 ++++++++++++
->>  7 files changed, 2009 insertions(+)
->>  create mode 100644 Documentation/cec.txt
->>  create mode 100644 drivers/media/cec.c
->>  create mode 100644 include/media/cec.h
->>  create mode 100644 include/uapi/linux/cec.h
->>
-> 
->> +	case CEC_S_ADAP_LOG_ADDRS: {
->> +		struct cec_log_addrs log_addrs;
->> +
->> +		if (!(adap->capabilities & CEC_CAP_LOG_ADDRS))
->> +			return -ENOTTY;
->> +		if (copy_from_user(&log_addrs, parg, sizeof(log_addrs)))
->> +			return -EFAULT;
->> +		err = cec_claim_log_addrs(adap, &log_addrs, true);
-> 
-> Currently CEC_S_ADAP_LOG_ADDRS is always blocking, but since we have CEC_EVENT_READY
-> I think it makes sense to just return in non-blocking mode and have cec_claim_log_addrs
-> generate CEC_EVENT_READY when done. Userspace can then call G_ADAP_LOG_ADDRS to discover
-> the result.
-> 
-> What do you think?
-> 
+This patchset fix the bug and support the DVFS/Suspend-to-RAM. And This patchset
+remove the CONFIG_ARCH_EXYNOS5433 insteadf use the CONFIG_ARCH_EXYNOS because
+Arnd Bergmann gave me a comment[1] that don't add specific CONFIG_ARCH_EXYNOS5433
+for ARM-64bit SoC. And this patchset fix following bugs:
+[1] https://lkml.org/lkml/2015/2/26/102
 
-On a related topic: non-blocking behavior for CEC_RECEIVE is well defined, but for
-CEC_TRANSMIT it isn't. If reply == 0, then we need a way to inform userspace that
-the transmit finished (with a possible non-zero status code). An event would be
-suitable for that, but we would need a way to associate a transmit message with
-the event.
+Detailed descirption of each patch:
+1. Fix the bug
+- Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG in CMU_MSCL. (patch2)
+- Fix wrong register for ENABLE_PCLK_MIF_SECURE_MONOTONIC_CNT (patch3)
+- Fix wrong parent clock of 'sclk_apollo' clock. (patch4)
+- Fix wrong PMS value for 700MHz. (patch5)
 
-One possibility might be to have the CEC framework assign a sequence number to
-a transmit message which is returned by CEC_TRANSMIT and used in the event.
+2. Support the DVFS for big.LITTLE cores and GPU
+- Add CLK_SET_RATE_PARENT flags to propagate parent clock
+  when changing the clock for DVFS(big.LITTLE Cores and GPU) (patch6/8)
 
-If reply != 0, then I think the received message should be queued up in the
-receive queue, but with a non-zero reply field and with the sequence number of the
-transmit message it is a reply of.
+3. Support the suspend-to-ram
+- Add missing DIV_CPIF register to save/restore register on suspend-to-ram (patch7)
+- Add CLK_IGNORE_UNUSED flag to SMC (Secure Monitor Call) cloks to support
+  the suspend-to-ram (patch9)
+- Add CLK_IGNORE_UNUSED flag some clocks to support the suspend-to-ram (patch10)
 
-Regards,
+Changelog:
+Change fromv v2:
+(https://lkml.org/lkml/2015/4/2/824)
+- Add new patches (patch7 ~ patch10)
 
-	Hans
+Change from v1:
+(https://lkml.org/lkml/2015/3/17/855)
+- Add new patches (patch3 ~ patch6)
+
+Chanwoo Choi (4):
+  clk: samsung: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+  clk: samsung: exynos5433: Fix wrong parent clock of sclk_apollo clock
+  clk: samsung: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+  clk: samsung: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LITTLE core
+
+Hyungwon Hwang (1):
+  clk: samsung: exynos5433: Add DIV_CPIF to store it when the board is being suspended
+
+Jonghwa Lee (4):
+  clk: samsung: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+  clk: samsung: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT's register correctly.
+  clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for sercure monitor call
+  clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED flag to prevent the hang for suspend-to-ram
+
+Joonyoung Shim (1):
+  clk: samsung: exynos5433: Add clock flag to support the DVFS of GPU
+
+ drivers/clk/samsung/Makefile         |   2 +-
+ drivers/clk/samsung/clk-exynos5433.c | 126 +++++++++++++++++++----------------
+ 2 files changed, 68 insertions(+), 60 deletions(-)
+
+-- 
+1.8.5.5
