@@ -1,72 +1,40 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 3/4] drm/exynos: mixer: remove buffer count handling in vp_video_buffer()
-Date: Mon, 27 Apr 2015 23:10:15 +0200
-Message-ID: <1430169016-4966-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 4/4] drm/exynos: mixer: also allow NV21 for the video
+ processor
+Date: Mon, 27 Apr 2015 23:10:16 +0200
+Message-ID: <1430169016-4966-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49459 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965104AbbD0VK7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Apr 2015 17:10:59 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The video processor (VP) supports four formats: NV12, NV21 and its
-tiled variants. All these formats are bi-planar, so the buffer
-count in vp_video_buffer() is always 2.
-
-Also properly exit if we're called with an invalid (non-VP) pixelformat.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 0474fd3..970b293 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -388,7 +388,6 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 	struct mixer_resources *res = &ctx->mixer_res;
- 	unsigned long flags;
- 	struct exynos_drm_plane *plane;
--	unsigned int buf_num = 1;
- 	dma_addr_t luma_addr[2], chroma_addr[2];
- 	bool tiled_mode = false;
- 	bool crcb_mode = false;
-@@ -399,27 +398,15 @@ static void vp_video_buffer(struct mixer_context *ctx, int win)
- 	switch (plane->pixel_format) {
- 	case DRM_FORMAT_NV12:
- 		crcb_mode = false;
--		buf_num = 2;
- 		break;
--	/* TODO: single buffer format NV12, NV21 */
- 	default:
--		/* ignore pixel format at disable time */
--		if (!plane->dma_addr[0])
--			break;
--
- 		DRM_ERROR("pixel format for vp is wrong [%d].\n",
- 				plane->pixel_format);
- 		return;
- 	}
- 
--	if (buf_num == 2) {
--		luma_addr[0] = plane->dma_addr[0];
--		chroma_addr[0] = plane->dma_addr[1];
--	} else {
--		luma_addr[0] = plane->dma_addr[0];
--		chroma_addr[0] = plane->dma_addr[0]
--			+ (plane->pitch * plane->fb_height);
--	}
-+	luma_addr[0] = plane->dma_addr[0];
-+	chroma_addr[0] = plane->dma_addr[1];
- 
- 	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
- 		ctx->interlace = true;
--- 
-2.0.5
+QWxsIHRoZSBuZWNlc3NhcnkgY29kZSBpcyBhbHJlYWR5IHRoZXJlLCBqdXN0IG5lZWQgdG8KaGFu
+ZGxlIHRoZSBmb3JtYXQgaW4gdGhlIHN3aXRjaCBzdGF0ZW1lbnQuCgpTaWduZWQtb2ZmLWJ5OiBU
+b2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMyArKysKIDEgZmlsZSBjaGFuZ2VkLCAz
+IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwppbmRleCA5
+NzBiMjkzLi4xYmNiY2ZkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAg
+LTM5OSw2ICszOTksOSBAQCBzdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCwgaW50IHdpbikKIAljYXNlIERSTV9GT1JNQVRfTlYxMjoKIAkJY3JjYl9t
+b2RlID0gZmFsc2U7CiAJCWJyZWFrOworCWNhc2UgRFJNX0ZPUk1BVF9OVjIxOgorCQljcmNiX21v
+ZGUgPSB0cnVlOworCQlicmVhazsKIAlkZWZhdWx0OgogCQlEUk1fRVJST1IoInBpeGVsIGZvcm1h
+dCBmb3IgdnAgaXMgd3JvbmcgWyVkXS5cbiIsCiAJCQkJcGxhbmUtPnBpeGVsX2Zvcm1hdCk7Ci0t
+IAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
