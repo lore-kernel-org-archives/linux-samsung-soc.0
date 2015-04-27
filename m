@@ -1,86 +1,131 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: mixer: cleanup pixelformat handling
-Date: Mon, 27 Apr 2015 15:33:39 +0900
-Message-ID: <553DD843.9080209@samsung.com>
-References: <1429791146-4410-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1429791146-4410-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5539A0EB.6060706@samsung.com>
- <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: mixer blending and layer order
+Date: Mon, 27 Apr 2015 15:52:13 +0900
+Message-ID: <553DDC9D.2080405@samsung.com>
+References: <f71d728970bc036fdce8934a499aba9f@math.uni-bielefeld.de>
+ <5539A6AC.2040509@samsung.com>
+ <11162479524807936a88e382661b3df6@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <aae08db4a8603a5109e5e3946e30e770@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:56592 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932352AbbD0GwX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Apr 2015 02:52:23 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NNG009JHDQRU0B0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Apr 2015 15:52:03 +0900 (KST)
+In-reply-to: <11162479524807936a88e382661b3df6@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-SGkgVG9iaWFzLAoKT24gMDQvMjQvMjAxNSAwNToxMCBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
-PiBPbiAyMDE1LTA0LTI0IDAzOjQ4LCBKb29ueW91bmcgU2hpbSB3cm90ZToKPj4gSGkgVG9iaWFz
-LAo+Pgo+PiBPbiAwNC8yMy8yMDE1IDA5OjEyIFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+Pj4g
-TW92ZSB0aGUgZGVmaW5lcyBmb3IgdGhlIHBpeGVsZm9ybWF0cyB0aGF0IHRoZSBtaXhlciBzdXBw
-b3J0cyBvdXQKPj4+IG9mIG1peGVyX2dyYXBoX2J1ZmZlcigpIHRvIHRoZSB0b3Agb2YgdGhlIHNv
-dXJjZS4KPj4+IFRoZW4gc2VsZWN0IHRoZSBtaXhlciBwaXhlbGZvcm1hdCAocGYpIGluIG1peGVy
-X2dyYXBoX2J1ZmZlcigpIGJhc2VkIG9uCj4+PiB0aGUgcGxhbmUncyBwZiAoYW5kIG5vdCBicHAp
-Lgo+Pj4gQWxzbyBhZGQgaGFuZGxpbmcgb2YgUkdCNTY1IGFuZCBYUkdCMTU1NSB0byB0aGUgc3dp
-dGNoIHN0YXRlbWVudCBhbmQKPj4+IGV4aXQgZWFybHkgaWYgdGhlIHBsYW5lIGhhcyBhbiB1bnN1
-cHBvcnRlZCBwZi4KPj4+Cj4+PiBQYXJ0aWFsbHkgYmFzZWQgb24gJ2RybS9leHlub3M6IGVuYWJs
-ZS9kaXNhYmxlIGJsZW5kIGJhc2VkIG9uIHBpeGVsCj4+PiBmb3JtYXQnIGJ5IEd1c3Rhdm8gUGFk
-b3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4uCj4+Pgo+Pj4gU2lnbmVkLW9m
-Zi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4+PiAt
-LS0KPj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMzIgKysrKysr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0
-aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19taXhlci5jCj4+PiBpbmRleCBmYmVjNzUwLi4xYmQyM2VlIDEwMDY0NAo+Pj4gLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gQEAgLTQ0LDYgKzQ0LDEyIEBACj4+PiAgI2Rl
-ZmluZSBNSVhFUl9XSU5fTlIgICAgICAgIDMKPj4+ICAjZGVmaW5lIE1JWEVSX0RFRkFVTFRfV0lO
-ICAgIDAKPj4+Cj4+PiArLyogVGhlIHBpeGVsZm9ybWF0cyB0aGF0IGFyZSBuYXRpdmVseSBzdXBw
-b3J0ZWQgYnkgdGhlIG1peGVyLiAqLwo+Pj4gKyNkZWZpbmUgTUlYRVJfUElYRUxGT1JNQVRfUkdC
-NTY1IDQKPj4+ICsjZGVmaW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0IxNTU1IDUKPj4+ICsjZGVm
-aW5lIE1JWEVSX1BJWEVMRk9STUFUX0FSR0I0NDQ0IDYKPj4+ICsjZGVmaW5lIE1JWEVSX1BJWEVM
-Rk9STUFUX0FSR0I4ODg4IDcKPj4+ICsKPj4KPj4gU2VlbXMgYmUgbG9uZywgaG93IGFib3V0IHMv
-UElYRUxGT1JNQVQvRk9STUFUIG9yIGp1c3QgTUlYRVJfUkdCNTY1IC4uLiA/Cj4+IFBsZWFzZSB1
-c2UgdGFiIGJldHdlZW4gZGVmaW5lIG5hbWUgYW5kIHZhbHVlLgo+IEhvdyBhYm91dCBNWFJfRk9S
-TUFUX1hZWiwgdG8gc3RheSBjb25zaXN0ZW50IHdpdGggdGhlIHJlZ3MtbWl4ZXIgaGVhZGVyPwo+
-IAo+IAo+Pj4gIHN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgewo+Pj4gICAgICBpbnQgICAgICAgICAg
-ICBpcnE7Cj4+PiAgICAgIHZvaWQgX19pb21lbSAgICAgICAgKm1peGVyX3JlZ3M7Cj4+PiBAQCAt
-NTMxLDIwICs1MzcsMjYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBt
-aXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4+Pgo+Pj4gICAgICBwbGFuZSA9ICZjdHgtPnBs
-YW5lc1t3aW5dOwo+Pj4KPj4+IC0gICAgI2RlZmluZSBSR0I1NjUgNAo+Pj4gLSAgICAjZGVmaW5l
-IEFSR0IxNTU1IDUKPj4+IC0gICAgI2RlZmluZSBBUkdCNDQ0NCA2Cj4+PiAtICAgICNkZWZpbmUg
-QVJHQjg4ODggNwo+Pj4gKyAgICBzd2l0Y2ggKHBsYW5lLT5waXhlbF9mb3JtYXQpIHsKPj4+ICsg
-ICAgY2FzZSBEUk1fRk9STUFUX1hSR0I0NDQ0Ogo+Pj4gKyAgICAgICAgZm10ID0gTUlYRVJfUElY
-RUxGT1JNQVRfQVJHQjQ0NDQ7Cj4+PiArICAgICAgICBicmVhazsKPj4+ICsKPj4+ICsgICAgY2Fz
-ZSBEUk1fRk9STUFUX1hSR0IxNTU1Ogo+Pj4gKyAgICAgICAgZm10ID0gTUlYRVJfUElYRUxGT1JN
-QVRfQVJHQjE1NTU7Cj4+PiArICAgICAgICBicmVhazsKPj4+Cj4+PiAtICAgIHN3aXRjaCAocGxh
-bmUtPmJwcCkgewo+Pj4gLSAgICBjYXNlIDE2Ogo+Pj4gLSAgICAgICAgZm10ID0gQVJHQjQ0NDQ7
-Cj4+PiArICAgIGNhc2UgRFJNX0ZPUk1BVF9SR0I1NjU6Cj4+PiArICAgICAgICBmbXQgPSBNSVhF
-Ul9QSVhFTEZPUk1BVF9SR0I1NjU7Cj4+PiAgICAgICAgICBicmVhazsKPj4+IC0gICAgY2FzZSAz
-MjoKPj4+IC0gICAgICAgIGZtdCA9IEFSR0I4ODg4Owo+Pj4gKwo+Pj4gKyAgICBjYXNlIERSTV9G
-T1JNQVRfWFJHQjg4ODg6Cj4+PiArICAgICAgICBmbXQgPSBNSVhFUl9QSVhFTEZPUk1BVF9BUkdC
-ODg4ODsKPj4+ICAgICAgICAgIGJyZWFrOwo+Pj4gKwo+Pj4gICAgICBkZWZhdWx0Ogo+Pj4gLSAg
-ICAgICAgZm10ID0gQVJHQjg4ODg7Cj4+PiArICAgICAgICBEUk1fREVCVUdfS01TKCJwaXhlbGZv
-cm1hdCB1bnN1cHBvcnRlZCBieSBtaXhlclxuIik7Cj4+PiArICAgICAgICByZXR1cm47Cj4+PiAg
-ICAgIH0KPj4+Cj4+PiAgICAgIC8qIGNoZWNrIGlmIG1peGVyIHN1cHBvcnRzIHJlcXVlc3RlZCBz
-Y2FsaW5nIHNldHVwICovCj4+Pgo+Pgo+PiBIbW0gbWlzc2luZyBmb3JtYXRzIGhhdmluZyBhbHBo
-YT8KPj4gRFJNX0ZPUk1BVF9BUkdCNDQ0NAo+PiBEUk1fRk9STUFUX0FSR0IxNTU1Cj4+IERSTV9G
-T1JNQVRfQVJHQjg4ODgKPiBTaG91bGQgYmUgb2J2aW91cyBmcm9tIG15IG90aGVyIG1haWwuIEJs
-ZW5kaW5nL2FscGhhIGlzIGN1cnJlbnRseSBzY3Jld2VkIHVwLCBzbyB3ZSBzaG91bGRuJ3QgYWRk
-IHRoZXNlIGZvcm1hdHMgYXQgdGhpcyBwb2ludC4gQXQgbGVhc3Qgbm90IGJlZm9yZSBmaWd1cmlu
-ZyBvdXQgaG93IHRvIHByb3Blcmx5IHNvbHZlIHRoZSBpc3N1ZS4KPiAKCkl0IHNob3VsZG4ndCBt
-ZWFuIHRvIHJlbW92ZSBjdXJyZW50IHN1cHBvcnRlZCBmZWF0dXJlKGFscGhhIHBpeGVsIGZvcm1h
-dApwbGFuZSBzdXBwb3J0IG9mIG1peGVyIGRyaXZlcikuCgpUaGFua3MuCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Tobias,
+
+On 04/24/2015 05:29 PM, Tobias Jakobi wrote:
+> Hello Joonyoung,
+> 
+> On 2015-04-24 04:13, Joonyoung Shim wrote:
+>> Hi Tobias,
+>>
+>> On 04/23/2015 09:28 PM, Tobias Jakobi wrote:
+>>> Hello,
+>>>
+>>> I've noticed some inconsistency in what is currently exported as 'zpos' DRM propery to userspace. Currently we create three planes, where the zpos maps to the mixer 'win' (is this simply short for window?).
+>>>
+>>> But this is wrong since the mixer layer configuration is currently done in this way (in mixer_win_reset()):
+>>> layer1 (win[1]) > layer0 (win[0]) > video (win[2])
+>>>
+>>> So layer1 is at the top of our stack, and the video layer is at the bottom. So regardless on how you interpret the zpos property (0 being the top, or 0 being bottom), it doesn't give you accurate information on how the planes are ordered.
+>>>
+>>
+>> I know, actually here zpos doesn't mean order priority of layer, it is
+>> just real hardware layer. Exynos mixer has 3 hardware layer, graphic0
+>> layer, graphic1 layer and video layer, so zpos 0 means graphic0 layer,
+>> zpos 1 means graphic1 layer, zpos 2 means video layer.
+> I'm aware of that, but that doesn't solve the issue at hand: The 'zpos' property is completly meaningless at ths point, since it tells the DRM user absolutely nothing about the z-ordering of the planes. Either that should be fixed (what I'm looking into) or the property should just be dropped.
+> 
+
+The zpos was not for layer order priority and now user cannot select hw
+layer which user wants to output without it.
+
+> 
+> 
+>>
+>> Thanks.
+>>
+>>> Related to this is the issue of how to blend planes. When should blending of layer be enabled?
+>>
+>> Current mixer codes permit blending about all layers except bottom layer
+>> (just above background layer).
+>>
+>>> We probably want to based this on three states:
+>>> - which layer are enabled
+>>> - which pixelformats are associated to the layers
+>>
+>> This idea is ok but as i said, there is blending issue of background
+>> layer.
+> Any suggestions on how to fix that bg issue?
+> 
+> Ville has pointed out that, under the condition that bg is a simple color, that it could be exported as a crtc property, see [1]. We would need another 'bg_enabled' flag as well I guess.
+> 
+
+First, i'm not sure whether it's right to enable blending of bottom
+layer and bg layer. Now current code doesn't permit it. If we allow
+it, i think it's ok to use crtc property but it is increased exynos
+specific property.
+
+> 
+>>
+>>> - in which order are the layers (*)
+>>
+>> Now we don't permit to change order priority of layer.
+> That's not what I mean (see my example). What I mean is that it should make a difference if the layer with alpha-pixelformat is on top of some layer, or below.
+> 
+> Something like this:
+> - if layer[i] has non-alpha-pixelformat, don't enable any blending for that layer
+> - if layer[i] has alpha-pixelformat, and layer[i] is a the bottom of our layer-stack, don't enable any blending for that layer (*)
+
+The layer[i] is bottom, then why don't other all layers enable blending?
+
+If The layer[0] is bottom and layer[1] is right above layer[0] and
+alpha-pixelformat, i think it's possible blending of layer[1] and
+layer[0].
+
+Thanks.
+
+> - if layer[i] has alpha-pixelformat, and there exists layer[j] which is located right below layer[i] in our stack, then enable blending
+> 
+> The configuration in (*) then would be the default setup, when just the primary plane is enabled, and no other planes are active.
+> 
+> The background would then just become another (virtual) layer.
+> 
+> I hope this is less confusing than my previous description. :)
+> 
+> 
+>>
+>>>
+>>> (*) So in the case of 'layer1 > layer0 > video', layer1 disabled, layer0/video enabled, layer0 having alpha-pixelformat, we want to blend layer0 and the video layer (so effectively making layer0 translucent).
+>>>
+>>> I'm trying to come up with a proposition for that issue in the next days, but it would really help to hear thoughts of you guys.
+>>>
+>>> With best wishes,
+>>> Tobias
+>>>
+>>>
+>>
+>> Thanks.
+> 
+> With best wishes,
+> Tobias
+> 
+> 
+> [1] http://article.gmane.org/gmane.comp.video.dri.devel/127749
+> 
+> 
