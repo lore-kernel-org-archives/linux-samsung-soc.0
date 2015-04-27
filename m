@@ -1,85 +1,94 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH v3 10/10] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED
- flag to prevent the hang for suspend-to-ram
-Date: Mon, 27 Apr 2015 22:49:59 +0900
-Message-ID: <CAJKOXPfjo_LovrCbBccrPVKSnUBCJNd8+eKQGa40UwDzkL1=zg@mail.gmail.com>
-References: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
-	<1430134597-14668-11-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 1/4] drm/exynos: fb: use drm_format_num_planes to get buffer count
+Date: Mon, 27 Apr 2015 23:10:13 +0200
+Message-ID: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f46.google.com ([209.85.216.46]:36096 "EHLO
-	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964826AbbD0NuD (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:49448 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965133AbbD0VKS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Apr 2015 09:50:03 -0400
-In-Reply-To: <1430134597-14668-11-git-send-email-cw00.choi@samsung.com>
+	Mon, 27 Apr 2015 17:10:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, inki.dae@samsung.com, chanho61.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-2015-04-27 20:36 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
-> From: Jonghwa Lee <jonghwa3.lee@samsung.com>
->
-> Some clocks are required being unmasked for suspend-to-ram. Otherwise,
-> PMU (Power Management Unit) will stick and power line never down.
+The previous code had some special case handling for the buffer
+count in exynos_drm_format_num_buffers().
 
-You mean "will stuck and never power down"?
+This code was incorrect though, since this special case doesn't
+exist for DRM. It stemmed from the existence of the special NV12M
+V4L2 format. NV12 is a bi-planar format (separate planes for luma
+and chroma) and V4L2 differentiates between a NV12 buffer where
+luma and chroma is contiguous in memory (so no data between
+luma/chroma), and a NV12 buffer where luma and chroma have two
+explicit memory locations (which is then called NV12M).
 
-One minor nit below, but overall looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+This distinction doesn't exist for DRM. A bi-planar format always
+explicitly comes with the information about its two planes (even
+if these planes should be contiguous).
 
-Best regards,
-Krzysztof
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fb.c | 39 +---------------------------------
+ 1 file changed, 1 insertion(+), 38 deletions(-)
 
-
->
-> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 33 +++++++++++++++++++++------------
->  1 file changed, 21 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 39c9564..84f02ec 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -697,11 +697,14 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
->         GATE(CLK_SCLK_PCM1_PERIC, "sclk_pcm1_peric", "div_sclk_pcm1",
->                         ENABLE_SCLK_TOP_PERIC, 7, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_UART2_PERIC, "sclk_uart2_peric", "div_sclk_uart2",
-> -                       ENABLE_SCLK_TOP_PERIC, 5, CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_TOP_PERIC, 5, CLK_SET_RATE_PARENT |
-> +                       CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_SCLK_UART1_PERIC, "sclk_uart1_peric", "div_sclk_uart1",
-> -                       ENABLE_SCLK_TOP_PERIC, 4, CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_TOP_PERIC, 4, CLK_SET_RATE_PARENT |
-> +                       CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_SCLK_UART0_PERIC, "sclk_uart0_peric", "div_sclk_uart0",
-> -                       ENABLE_SCLK_TOP_PERIC, 3, CLK_SET_RATE_PARENT, 0),
-> +                       ENABLE_SCLK_TOP_PERIC, 3, CLK_SET_RATE_PARENT |
-> +                       CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_SCLK_SPI2_PERIC, "sclk_spi2_peric", "div_sclk_spi2_b",
->                         ENABLE_SCLK_TOP_PERIC, 2, CLK_SET_RATE_PARENT, 0),
->         GATE(CLK_SCLK_SPI1_PERIC, "sclk_spi1_peric", "div_sclk_spi1_b",
-> @@ -862,7 +865,7 @@ static struct samsung_div_clock cpif_div_clks[] __initdata = {
->  static struct samsung_gate_clock cpif_gate_clks[] __initdata = {
->         /* ENABLE_SCLK_CPIF */
->         GATE(CLK_SCLK_MPHY_PLL, "sclk_mphy_pll", "mout_mphy_pll",
-> -                       ENABLE_SCLK_CPIF, 9, 0, 0),
-> +                       ENABLE_SCLK_CPIF, 9, CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_SCLK_UFS_MPHY, "sclk_ufs_mphy", "div_sclk_mphy",
->                         ENABLE_SCLK_CPIF, 4, 0, 0),
->  };
-> @@ -1444,6 +1447,7 @@ static struct samsung_gate_clock mif_gate_clks[] __initdata = {
->         GATE(CLK_PCLK_ASYNCAXI_NOC_P_CCI, "pclk_asyncaxi_noc_p_cci",
->                         "div_aclk_mif_133", ENABLE_PCLK_MIF, 21,
->                         CLK_IGNORE_UNUSED, 0),
-> +
-
-This new line seems unrelated.
-
->         GATE(CLK_PCLK_ASYNCAXI_CP1, "pclk_asyncaxi_cp1", "div_aclk_mif_133",
->                         ENABLE_PCLK_MIF, 19, 0, 0),
->         GATE(CLK_PCLK_ASYNCAXI_CP0, "pclk_asyncaxi_cp0", "div_aclk_mif_133",
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index 929cb03..142eb4e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -171,43 +171,6 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
+ 	return &exynos_fb->fb;
+ }
+ 
+-static u32 exynos_drm_format_num_buffers(struct drm_mode_fb_cmd2 *mode_cmd)
+-{
+-	unsigned int cnt = 0;
+-
+-	if (mode_cmd->pixel_format != DRM_FORMAT_NV12)
+-		return drm_format_num_planes(mode_cmd->pixel_format);
+-
+-	while (cnt != MAX_FB_BUFFER) {
+-		if (!mode_cmd->handles[cnt])
+-			break;
+-		cnt++;
+-	}
+-
+-	/*
+-	 * check if NV12 or NV12M.
+-	 *
+-	 * NV12
+-	 * handles[0] = base1, offsets[0] = 0
+-	 * handles[1] = base1, offsets[1] = Y_size
+-	 *
+-	 * NV12M
+-	 * handles[0] = base1, offsets[0] = 0
+-	 * handles[1] = base2, offsets[1] = 0
+-	 */
+-	if (cnt == 2) {
+-		/*
+-		 * in case of NV12 format, offsets[1] is not 0 and
+-		 * handles[0] is same as handles[1].
+-		 */
+-		if (mode_cmd->offsets[1] &&
+-			mode_cmd->handles[0] == mode_cmd->handles[1])
+-			cnt = 1;
+-	}
+-
+-	return cnt;
+-}
+-
+ static struct drm_framebuffer *
+ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+ 		      struct drm_mode_fb_cmd2 *mode_cmd)
+@@ -230,7 +193,7 @@ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+ 
+ 	drm_helper_mode_fill_fb_struct(&exynos_fb->fb, mode_cmd);
+ 	exynos_fb->exynos_gem_obj[0] = to_exynos_gem_obj(obj);
+-	exynos_fb->buf_cnt = exynos_drm_format_num_buffers(mode_cmd);
++	exynos_fb->buf_cnt = drm_format_num_planes(mode_cmd->pixel_format);
+ 
+ 	DRM_DEBUG_KMS("buf_cnt = %d\n", exynos_fb->buf_cnt);
+ 
+-- 
+2.0.5
