@@ -1,43 +1,115 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 4/8] clk: tegra: Fix duplicate const for parent names
-Date: Tue, 28 Apr 2015 13:46:19 +0900
-Message-ID: <1430196383-9190-5-git-send-email-k.kozlowski@samsung.com>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-reply-to: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, Barry Song <baohua@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2 1/4] drm/exynos: fb: use drm_format_num_planes to get
+ buffer count
+Date: Tue, 28 Apr 2015 15:38:19 +0900
+Message-ID: <553F2ADB.1090501@samsung.com>
+References: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:23915 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751889AbbD1GiL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Apr 2015 02:38:11 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NNI00MI17RLRG20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Apr 2015 15:38:09 +0900 (KST)
+In-reply-to: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-Replace duplicated const keyword for 'emc_parent_clk_names' with proper
-array of const pointers to const strings.
+Hi Tobias,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/tegra/clk-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 04/28/2015 06:10 AM, Tobias Jakobi wrote:
+> The previous code had some special case handling for the buffer
+> count in exynos_drm_format_num_buffers().
+> 
+> This code was incorrect though, since this special case doesn't
+> exist for DRM. It stemmed from the existence of the special NV12M
+> V4L2 format. NV12 is a bi-planar format (separate planes for luma
+> and chroma) and V4L2 differentiates between a NV12 buffer where
+> luma and chroma is contiguous in memory (so no data between
+> luma/chroma), and a NV12 buffer where luma and chroma have two
+> explicit memory locations (which is then called NV12M).
+> 
+> This distinction doesn't exist for DRM. A bi-planar format always
+> explicitly comes with the information about its two planes (even
+> if these planes should be contiguous).
+> 
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fb.c | 39 +---------------------------------
+>  1 file changed, 1 insertion(+), 38 deletions(-)
+> 
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 8757feda4a11..59697c61f2f1 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -45,7 +45,7 @@
- #define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK) << \
- 					  CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
- 
--static const char const *emc_parent_clk_names[] = {
-+static const char * const emc_parent_clk_names[] = {
- 	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
- 	"pll_c2", "pll_c3", "pll_c_ud"
- };
--- 
-1.9.1
+Looks good to me about this series,
+
+Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
+
+Thanks.
+
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> index 929cb03..142eb4e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> @@ -171,43 +171,6 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
+>  	return &exynos_fb->fb;
+>  }
+>  
+> -static u32 exynos_drm_format_num_buffers(struct drm_mode_fb_cmd2 *mode_cmd)
+> -{
+> -	unsigned int cnt = 0;
+> -
+> -	if (mode_cmd->pixel_format != DRM_FORMAT_NV12)
+> -		return drm_format_num_planes(mode_cmd->pixel_format);
+> -
+> -	while (cnt != MAX_FB_BUFFER) {
+> -		if (!mode_cmd->handles[cnt])
+> -			break;
+> -		cnt++;
+> -	}
+> -
+> -	/*
+> -	 * check if NV12 or NV12M.
+> -	 *
+> -	 * NV12
+> -	 * handles[0] = base1, offsets[0] = 0
+> -	 * handles[1] = base1, offsets[1] = Y_size
+> -	 *
+> -	 * NV12M
+> -	 * handles[0] = base1, offsets[0] = 0
+> -	 * handles[1] = base2, offsets[1] = 0
+> -	 */
+> -	if (cnt == 2) {
+> -		/*
+> -		 * in case of NV12 format, offsets[1] is not 0 and
+> -		 * handles[0] is same as handles[1].
+> -		 */
+> -		if (mode_cmd->offsets[1] &&
+> -			mode_cmd->handles[0] == mode_cmd->handles[1])
+> -			cnt = 1;
+> -	}
+> -
+> -	return cnt;
+> -}
+> -
+>  static struct drm_framebuffer *
+>  exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+>  		      struct drm_mode_fb_cmd2 *mode_cmd)
+> @@ -230,7 +193,7 @@ exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+>  
+>  	drm_helper_mode_fill_fb_struct(&exynos_fb->fb, mode_cmd);
+>  	exynos_fb->exynos_gem_obj[0] = to_exynos_gem_obj(obj);
+> -	exynos_fb->buf_cnt = exynos_drm_format_num_buffers(mode_cmd);
+> +	exynos_fb->buf_cnt = drm_format_num_planes(mode_cmd->pixel_format);
+>  
+>  	DRM_DEBUG_KMS("buf_cnt = %d\n", exynos_fb->buf_cnt);
+>  
+> 
