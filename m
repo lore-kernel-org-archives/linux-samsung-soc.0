@@ -1,29 +1,56 @@
-From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Subject: Re: [PATCH 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Tue, 28 Apr 2015 18:11:28 +0300
-Message-ID: <553FA320.4040006@kapsi.fi>
-References: <1429255769-13639-1-git-send-email-boris.brezillon@free-electrons.com> <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1429255769-13639-2-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarr>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: [PATCH 10/14] s3c-camif: Check if fmt is NULL before use
+Date: Tue, 28 Apr 2015 12:43:49 -0300
+Message-ID: <14da8840d09d05132cc6183b85cffecb71f2bde4.1430235781.git.mchehab@osg.samsung.com>
+References: <ea067cc285e015d6ba90554d650b0a9df2670252.1430235781.git.mchehab@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:59393 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030318AbbD1PoM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Apr 2015 11:44:12 -0400
+In-Reply-To: <ea067cc285e015d6ba90554d650b0a9df2670252.1430235781.git.mchehab@osg.samsung.com>
+In-Reply-To: <ea067cc285e015d6ba90554d650b0a9df2670252.1430235781.git.mchehab@osg.samsung.com>
+References: <ea067cc285e015d6ba90554d650b0a9df2670252.1430235781.git.mchehab@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-The series
+As reported by smatch:
+	drivers/media/platform/s3c-camif/camif-capture.c:463 queue_setup() warn: variable dereferenced before check 'fmt' (see line 460)
 
-Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 
-on Jetson-TK1.
-
-I rebased my cpufreq series on top of this and everything's working well 
-now. :)
-
-Thanks,
-Mikko.
-
-On 04/17/2015 10:29 AM, Boris Brezillon wrote:
-> ...
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index db4d7d23beb9..76e6289a5612 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -449,19 +449,22 @@ static int queue_setup(struct vb2_queue *vq, const struct v4l2_format *pfmt,
+ 	struct camif_vp *vp = vb2_get_drv_priv(vq);
+ 	struct camif_dev *camif = vp->camif;
+ 	struct camif_frame *frame = &vp->out_frame;
+-	const struct camif_fmt *fmt = vp->out_fmt;
++	const struct camif_fmt *fmt;
+ 	unsigned int size;
+ 
+ 	if (pfmt) {
+ 		pix = &pfmt->fmt.pix;
+ 		fmt = s3c_camif_find_format(vp, &pix->pixelformat, -1);
++		if (fmt == NULL)
++			return -EINVAL;
+ 		size = (pix->width * pix->height * fmt->depth) / 8;
+ 	} else {
++		fmt = vp->out_fmt;
++		if (fmt == NULL)
++			return -EINVAL;
+ 		size = (frame->f_width * frame->f_height * fmt->depth) / 8;
+ 	}
+ 
+-	if (fmt == NULL)
+-		return -EINVAL;
+ 	*num_planes = 1;
+ 
+ 	if (pix)
+-- 
+2.1.0
