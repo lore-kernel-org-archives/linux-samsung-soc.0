@@ -1,119 +1,98 @@
 From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: ARCH_EXYNOS5433 missing in Kconfig
-Date: Tue, 28 Apr 2015 18:25:54 +0900
-Message-ID: <CAGTfZH2yttvRsHXZUXQ7t37wmU=seg8Qoa=h=nat4EwJDY42Kw@mail.gmail.com>
-References: <CAD3Xx4Jf5ACBKe-KvGRD=myHKrJ+K_P0vBrtrmfgh+1zNM4hug@mail.gmail.com>
-	<54FF95ED.1040003@samsung.com>
-	<CAD3Xx4KpTTqNiFA-8EfuPsCR5ow0JkNVo11zM1twkrf8sckJtA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] clk: samsung: exynos5433: Add CLK_IGNORE_UNUSED
+ flag to prevent the hang for suspend-to-ram
+Date: Tue, 28 Apr 2015 18:28:38 +0900
+Message-ID: <CAGTfZH3JPLeBgxoOmXU0OckcvFFPKiU_+PD5waQ_Ba_3G3L5bQ@mail.gmail.com>
+References: <1430134597-14668-1-git-send-email-cw00.choi@samsung.com>
+	<1430134597-14668-11-git-send-email-cw00.choi@samsung.com>
+	<553F4FB2.9030201@samsung.com>
 Reply-To: cw00.choi@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD3Xx4KpTTqNiFA-8EfuPsCR5ow0JkNVo11zM1twkrf8sckJtA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Valentin Rothberg <valentinrothberg@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Inki Dae <inki.dae@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Andreas Ruprecht <rupran@einserver.de>, hengelein Stefan <stefan.hengelein@fau.de>, Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?6rmA6rWt7KeEQGtlcm5lbC5vcmc=?= <kgene@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:35055 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964803AbbD1J2j (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Apr 2015 05:28:39 -0400
+In-Reply-To: <553F4FB2.9030201@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Hi Valentin,
-
-
-On Mon, Apr 27, 2015 at 3:31 PM, Valentin Rothberg
-<valentinrothberg@gmail.com> wrote:
-> Hi Chanwoo,
->
-> this is a kind reminder that the issue mentioned below is still
-> present and made its way to v4.1-rc1.
-
-I sent the patch[1] to fix it. And Sylwester said that he will pick
-this patchset on patch[2].
-[1] https://lkml.org/lkml/2015/4/27/237
-[2] https://lkml.org/lkml/2015/4/28/117
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>
 
 Hi Sylwester,
-Could you apply a patch[1] on 4.2-rc2 to fix build warning?
+
+On Tue, Apr 28, 2015 at 6:15 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Chanwoo,
+>
+> On 27/04/15 13:36, Chanwoo Choi wrote:
+>> From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>>
+>> Some clocks are required being unmasked for suspend-to-ram. Otherwise,
+>> PMU (Power Management Unit) will stick and power line never down.
+>>
+>> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>
+>> @@ -1718,11 +1722,14 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+>>       GATE(CLK_SCLK_SPI0, "sclk_spi0", "sclk_spi0_peric", ENABLE_SCLK_PERIC,
+>>                       3, CLK_SET_RATE_PARENT, 0),
+>>       GATE(CLK_SCLK_UART2, "sclk_uart2", "sclk_uart2_peric",
+>> -                     ENABLE_SCLK_PERIC, 2, CLK_SET_RATE_PARENT, 0),
+>> +                     ENABLE_SCLK_PERIC, 2,
+>> +                     CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>>       GATE(CLK_SCLK_UART1, "sclk_uart1", "sclk_uart1_peric",
+>> -                     ENABLE_SCLK_PERIC, 1, CLK_SET_RATE_PARENT, 0),
+>> +                     ENABLE_SCLK_PERIC, 1,
+>> +                     CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>>       GATE(CLK_SCLK_UART0, "sclk_uart0", "sclk_uart0_peric",
+>> -                     ENABLE_SCLK_PERIC, 0, CLK_SET_RATE_PARENT, 0),
+>> +                     ENABLE_SCLK_PERIC, 0,
+>> +                     CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>>  };
+>>
+>>  static struct samsung_cmu_info peric_cmu_info __initdata = {
+>> @@ -3025,7 +3032,7 @@ static struct samsung_gate_clock aud_gate_clks[] __initdata = {
+>>
+>>       /* ENABLE_SCLK_AUD0 */
+>>       GATE(CLK_ATCLK_AUD, "atclk_aud", "div_atclk_aud", ENABLE_SCLK_AUD0,
+>> -                     2, 0, 0),
+>> +                     2, CLK_IGNORE_UNUSED, 0),
+>>       GATE(CLK_PCLK_DBG_AUD, "pclk_dbg_aud", "div_pclk_dbg_aud",
+>>                       ENABLE_SCLK_AUD0, 1, 0, 0),
+>>       GATE(CLK_SCLK_AUD_CA5, "sclk_aud_ca5", "div_aud_ca5", ENABLE_SCLK_AUD0,
+>> @@ -3425,9 +3432,11 @@ static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
+>>       GATE(CLK_ACLK_GSCLNP_111, "aclk_gsclnp_111", "mout_aclk_gscl_111_user",
+>>                       ENABLE_ACLK_GSCL, 6, CLK_IGNORE_UNUSED, 0),
+>>       GATE(CLK_ACLK_GSCLRTND_333, "aclk_gsclrtnd_333",
+>> -                     "mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 5, 0, 0),
+>> +                     "mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 5,
+>> +                     CLK_IGNORE_UNUSED, 0),
+>>       GATE(CLK_ACLK_GSCLBEND_333, "aclk_gsclbend_333",
+>> -                     "mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 4, 0, 0),
+>> +                     "mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 4,
+>> +                     CLK_IGNORE_UNUSED, 0),
+>
+> Some of the clocks you are adding CLK_IGNORE_UNUSED flag for here are
+> or will be handled be the related IP drivers, thus can be gated regardless
+> of the changes done in this patch. I would suggest to register suspend/
+> resume syscore ops like exynos5420_clk_syscore_ops and enable some of
+> clocks you're touching in this patch explicitly in the suspend() callback
+> and restore the registers state from before suspend() call in resume().
+
+OK, I'll rework and send it.
+
+>
+> I've picked up patches 01/10...09/10.
+
+Thanks.
+
+> In future please also copy linux-clk@vger.kernel.org on clk related patches.
+
+OK. I'll send clock patches to linux-clk@vger.kernel.org.
 
 Best Regards,
 Chanwoo Choi
-
->
-> Kind regards,
->  Valentin
->
-> On Wed, Mar 11, 2015 at 2:10 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> Hi Valentin,
->>
->> I sent the Exynos5433 clock patch and then separately I'm sending the
->> Exynos5433 devicetree patch-set[1].
->> [1] [PATCH v6 0/9] arm64: Add the support for new Exynos5433 SoC
->> - https://lkml.org/lkml/2015/3/9/1036
->>
->> But, according to Arnd bergmann's comment[2], latest Exynos5433 dt patch-set[1]
->> removed the CONFIG_ARCH_EXYNOS5433.
->> [2] https://lkml.org/lkml/2015/2/24/85
->>
->>
->> So, I have plan to send following patch.
->>
->> ---
->>     clk: samsung: Use CONFIG_ARCH_EXYNOS instead of Exynos-specific configuration
->>
->>     This patch removes the CONFIG_ARCH_EXYNOS{5433|7} and then use only the
->>     CONFIG_ARCH_EXYNOS for ARM-64bit Exynos SoC.
->>
->>     Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>     Cc: Tomasz Figa <tomasz.figa@gmail.com>
->>     Cc: Arnd Bergmann <arnd@arndb.de>
->>     Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/clk/samsung/Makefile | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->> index 17e9af7..561719d 100644
->> --- a/drivers/clk/samsung/Makefile
->> +++ b/drivers/clk/samsung/Makefile
->> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)        += clk-exynos5250.o
->>  obj-$(CONFIG_SOC_EXYNOS5260)   += clk-exynos5260.o
->>  obj-$(CONFIG_SOC_EXYNOS5410)   += clk-exynos5410.o
->>  obj-$(CONFIG_SOC_EXYNOS5420)   += clk-exynos5420.o
->> -obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
->> +obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos5433.o
->>  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
->>  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
->>  obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-clkout.o
->>
->>
->> Regards,
->> Chanwoo Choi
->>
->>
->> On 03/11/2015 12:32 AM, Valentin Rothberg wrote:
->>> Hi Chanwoo,
->>>
->>> your commit 96bd6224f07b ("clk: samsung: exynos5433: Add clocks using
->>> common clock framework") is included in today's linux-next tree (i.e.,
->>> next-20150310).
->>>
->>> This patch conditionally compiles clk-exynos5433.c depending on the
->>> Kconfig option ARCH_EXYNOS5433.  However, this option is not defined
->>> in Kconfig, so that the driver cannot be compiled at the current
->>> state:
->>>
->>> +obj-$(CONFIG_ARCH_EXYNOS5433)  += clk-exynos5433.o
->>>
->>> Is there a patch queued somewhere that adds this Kconfig symbol?  I
->>> detected the issue by running undertaker-checkpatch from the
->>> Undertaker tool suite (undertaker.cs.fau.de).  There is also a tool in
->>> the git tree that can detect such issues (i.e.,
->>> scripts/checkkconfigsymbols.py).
->>>
->>> Kind regards,
->>>  Valentin
->>>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
