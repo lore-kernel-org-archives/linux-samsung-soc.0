@@ -1,170 +1,64 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH] libgencec: Add userspace library for the generic CEC
- kernel interface
-Date: Wed, 29 Apr 2015 16:00:19 +0100
-Message-ID: <CACvgo52hDYpgv2FY8X-O7SC=+2YMn7osHt_V=NJxP+4REaw1=Q@mail.gmail.com>
-References: <1430301765-22202-1-git-send-email-k.debski@samsung.com>
-	<1430301765-22202-13-git-send-email-k.debski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung fixes for 4.1
+Date: Wed, 29 Apr 2015 18:24:12 +0200
+Message-ID: <554105AC.8060800@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f47.google.com ([209.85.216.47]:43465 "EHLO
-	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423246AbbD2PAU (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41393 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753599AbbD2QYe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Apr 2015 11:00:20 -0400
-In-Reply-To: <1430301765-22202-13-git-send-email-k.debski@samsung.com>
+	Wed, 29 Apr 2015 12:24:34 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, sean@mess.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, Kyungmin Park <kyungmin.park@samsung.com>, thomas@tommie-lie.de, linux-input@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
-
-Hi Kamil,
-
-Allow me to put a few suggestions:
-
-On 29 April 2015 at 11:02, Kamil Debski <k.debski@samsung.com> wrote:
-> This is the first version of the libGenCEC library. It was designed to
-> act as an interface between the generic CEC kernel API and userspace
-> applications. It provides a simple interface for applications and an
-> example application that can be used to test the CEC functionality.
->
-> signed-off-by: Kamil Debski <k.debski@samsung.com>
-> ---
->  AUTHORS              |    1 +
->  INSTALL              |    9 +
->  LICENSE              |  202 ++++++++++++++++
->  Makefile.am          |    4 +
->  README               |   22 ++
->  configure.ac         |   24 ++
->  doc/index.html       |  345 +++++++++++++++++++++++++++
->  examples/Makefile.am |    4 +
->  examples/cectest.c   |  631 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/gencec.h     |  255 ++++++++++++++++++++
->  src/Makefile.am      |    4 +
->  src/gencec.c         |  445 +++++++++++++++++++++++++++++++++++
->  12 files changed, 1946 insertions(+)
->  create mode 100644 AUTHORS
->  create mode 100644 INSTALL
->  create mode 100644 LICENSE
->  create mode 100644 Makefile.am
->  create mode 100644 README
->  create mode 100644 configure.ac
->  create mode 100644 doc/index.html
->  create mode 100644 examples/Makefile.am
->  create mode 100644 examples/cectest.c
->  create mode 100644 include/gencec.h
->  create mode 100644 m4/.gitkeep
->  create mode 100644 src/Makefile.am
->  create mode 100644 src/gencec.c
->
-> diff --git a/AUTHORS b/AUTHORS
-> new file mode 100644
-> index 0000000..e4b7117
-> --- /dev/null
-> +++ b/AUTHORS
-> @@ -0,0 +1 @@
-> +Kamil Debski <k.debski@samsung.com>
-> diff --git a/INSTALL b/INSTALL
-> new file mode 100644
-> index 0000000..aac6101
-> --- /dev/null
-> +++ b/INSTALL
-> @@ -0,0 +1,9 @@
-> +To install libgencec run following commands:
-> +
-> +autoreconf -i
-You might want add --force in here, otherwise the files will stay
-as-is if you update libtool and friends "mid-flight".
-Many projects include autogen.sh like the following. Feel free to add
-it to libgencec.
-
-$cat autogen.sh
-#! /bin/sh
-
-srcdir=`dirname "$0"`
-test -z "$srcdir" && srcdir=.
-
-ORIGDIR=`pwd`
-cd "$srcdir"
-
-autoreconf --force --verbose --install || exit 1
-cd "$ORIGDIR" || exit $?
-
-if test -z "$NOCONFIGURE"; then
-    "$srcdir"/configure "$@"
-fi
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
 
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
 
-> --- /dev/null
-> +++ b/configure.ac
-> @@ -0,0 +1,24 @@
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
 
-You can save yourself some headaches if you restrict old and/or buggy
-autoconf versions which don't work with the project.
-If I have to guess 2.60 should be ok.
-AC_PREREQ([XXX])
+are available in the git repository at:
 
-> +AC_INIT([libgencec], [0.1], [k.debski@samsung.com])
-> +AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-> +
-> +AC_PROG_CC
-> +AM_PROG_AR
-> +AC_CONFIG_MACRO_DIR([m4])
-> +AC_DEFINE([_GNU_SOURCE], [], [Use GNU extensions])
-> +
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1
 
-Same for libtool - 2.2 perhaps ?
-LT_PREREQ([XXX])
+for you to fetch changes up to 6f14d70a32756551a3645efd9508f2bae44e7127:
 
-> +LT_INIT
-> +
-> +# Checks for typedefs, structures, and compiler characteristics.
-> +AC_C_INLINE
-> +AC_TYPE_SIZE_T
-> +AC_TYPE_UINT16_T
-> +AC_TYPE_UINT32_T
-> +AC_TYPE_UINT8_T
-> +
-> +#AC_CHECK_LIB([c], [malloc])
-> +# Checks for library functions.
-> +#AC_FUNC_MALLOC
-> +
-> +AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile])
-Would be nice if the library provides libgencec.pc file. This way any
-users can avoid the explicit header/library check, amongst other
-useful bits.
+  clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-04-29 17:44:59 +0200)
 
-> --- /dev/null
-> +++ b/examples/Makefile.am
-> @@ -0,0 +1,4 @@
-> +bin_PROGRAMS = cectest
-> +cectest_SOURCES = cectest.c
-> +AM_CPPFLAGS=-I$(top_srcdir)/include/
-> +AM_LDFLAGS=-L../src/ -lgencec
-The following seems more common (in the projects I've seen at least)
-cectest_LDADD = $(top_builddir)/src/libgencec.la
+----------------------------------------------------------------
+clk/samsung fixes for 4.1
 
-> diff --git a/m4/.gitkeep b/m4/.gitkeep
-> new file mode 100644
-> index 0000000..e69de29
-Haven't seen any projects doing this. Curious what the benefits of
-keeping and empty folder might be ?
+Fixes of clk definitions in recently added clock controller driver for
+exynos5433 SoC and enhancements for DVFS, proper system sleep and secure
+monitor calls support in this SoC. The exynos5420 patch fixes a serious
+system sleep regression introduced in 3.19.
 
-> diff --git a/src/Makefile.am b/src/Makefile.am
-> new file mode 100644
-> index 0000000..cb024f0
-> --- /dev/null
-> +++ b/src/Makefile.am
-> @@ -0,0 +1,4 @@
-> +lib_LTLIBRARIES = libgencec.la
-> +libgencec_la_SOURCES = gencec.c
-> +libgencec_la_LDFLAGS = -version-info 0:1:0
-You might want to add -no-undefined in order to prevent having a
-library with unresolved symbols.
+----------------------------------------------------------------
+Chanwoo Choi (4):
+      clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+      clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
+      clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+      clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LITTLE core
 
-Hope you find the above useful :-)
+Hyungwon Hwang (1):
+      clk: exynos5433: Add DIV_CPIF to the list of stored registers on suspend
 
-Cheers
-Emil
+Javier Martinez Canillas (1):
+      clk: exynos5420: Restore GATE_BUS_TOP on suspend
+
+Jonghwa Lee (3):
+      clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+      clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
+      clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
+
+Joonyoung Shim (1):
+      clk: exynos5433: Add clock flag to support the DVFS of GPU
+
+ drivers/clk/samsung/Makefile         |    2 +-
+ drivers/clk/samsung/clk-exynos5420.c |    1 +
+ drivers/clk/samsung/clk-exynos5433.c |   93 +++++++++++++++++-----------------
+ 3 files changed, 48 insertions(+), 48 deletions(-)
