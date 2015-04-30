@@ -1,79 +1,76 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFT PATCH] drm/exynos: Enable DP clock to fix display on Exynos5250
- and other
-Date: Thu, 30 Apr 2015 18:40:27 +0200
-Message-ID: <55425AFB.8020904@collabora.co.uk>
-References: <1427471856-20918-1-git-send-email-k.kozlowski@samsung.com>	<7h8udau9he.fsf@deeprootsystems.com>	<CAJKOXPc6Epy_L+djManggcaYLaOrQ_c2S0=_GgU=dikuY1UU0g@mail.gmail.com>	<7h8ud9pqmm.fsf@deeprootsystems.com> <CAOesGMiHbcVK+BjiidPphGuoETyUroXtKgKqcVEgdSBiZQ+GmQ@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [RFT PATCH] drm/exynos: Enable DP clock to fix display on
+ Exynos5250 and other
+Date: Thu, 30 Apr 2015 09:50:03 -0700
+Message-ID: <CAOesGMiA7DCGCg2xgLwu_r_rRYKUjpw2HUePCW5Q9ewU61WbdA@mail.gmail.com>
+References: <1427471856-20918-1-git-send-email-k.kozlowski@samsung.com>
+ <7h8udau9he.fsf@deeprootsystems.com>
+ <CAJKOXPc6Epy_L+djManggcaYLaOrQ_c2S0=_GgU=dikuY1UU0g@mail.gmail.com>
+ <7h8ud9pqmm.fsf@deeprootsystems.com>
+ <CAOesGMiHbcVK+BjiidPphGuoETyUroXtKgKqcVEgdSBiZQ+GmQ@mail.gmail.com>
+ <55425AFB.8020904@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMiHbcVK+BjiidPphGuoETyUroXtKgKqcVEgdSBiZQ+GmQ@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Jingoo Han <jg1.han@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, stable <stable@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <55425AFB.8020904@collabora.co.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, stable <stable@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Olof,
-
-On 04/30/2015 05:57 PM, Olof Johansson wrote:
-> On Thu, Apr 30, 2015 at 8:44 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
->>>>>
->>>>> This should fix issue reported by Javier [1][2].
->>>>>
->>>>> Tested on Chromebook Snow (Exynos 5250). More testing would be great,
->>>>> especially on other Exynos 5xxx products.
->>>>
->>>> I hoped to try this on my exynos5 boards, but it doesn't seem to apply
->>>> to linux-next or to Linus' master branch.
->>>>
->>>> Are there some other dependencies here?
->>>
->>> It is already applied:
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=1c363c7cccf64128087002b0779986ad16aff6dc
->>
->> Er, yup.  That would explain it. ;)
->>
->> Sorry for the noise,
-> 
-> Well, noise or not, Exynos is still broken in mainline and was broken
-> on -next for so long in different ways that bisecting it is a futile
-> exercise in frustration.
-> 
-> It doesn't seem to show up with a trivial boot using only ramdisk, but
-> when booting a real distro from disk, it certainly does.
-> 
-> For example:
-> 
-> http://arm-soc.lixom.net/bootlogs/mainline/v4.1-rc1-56-g3d99e3f/pi-arm-exynos_defconfig.html
-> 
-> Disabling CONFIG_DRM makes it boot reliably.
-> 
-> Arndale doesn't show it for me, but it also doesn't have working graphics.
->
-
-Both Exynos5250 and Exynos5420 had similar issues and $subject is the fix
-for 5250 while 5420 is fixed by my "ARM: dts: Make DP a consumer of DISP1
-power domain on Exynos5420" patch that was posted a long time ago. I have
-pinged Kukjin several times about this patch and he said that he will pick
-it this weekend [0].
-
-It is indeed very frustrating how many Exynos patches seems to be falling
-through the crack, even important fixes like these ones that allow boards
-to boot again.
-
-Kevin suggested that Krzysztof could collect and queue patches [1] to help
-Kukjin and start acting as a co-maintatiner which I think it's a very good
-idea and Krzysztof already did for some patches during the 4.1 cycle.
-
-> 
-> -Olof
->
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2015/4/29/781
-[1]: https://lkml.org/lkml/2015/4/30/576
-[2]: https://lkml.org/lkml/2015/3/11/403
+T24gVGh1LCBBcHIgMzAsIDIwMTUgYXQgOTo0MCBBTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFz
+CjxqYXZpZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPiB3cm90ZToKPiBIZWxsbyBPbG9mLAo+
+Cj4gT24gMDQvMzAvMjAxNSAwNTo1NyBQTSwgT2xvZiBKb2hhbnNzb24gd3JvdGU6Cj4+IE9uIFRo
+dSwgQXByIDMwLCAyMDE1IGF0IDg6NDQgQU0sIEtldmluIEhpbG1hbiA8a2hpbG1hbkBrZXJuZWwu
+b3JnPiB3cm90ZToKPj4+IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcu
+Y29tPiB3cml0ZXM6Cj4+Pj4+Pgo+Pj4+Pj4gVGhpcyBzaG91bGQgZml4IGlzc3VlIHJlcG9ydGVk
+IGJ5IEphdmllciBbMV1bMl0uCj4+Pj4+Pgo+Pj4+Pj4gVGVzdGVkIG9uIENocm9tZWJvb2sgU25v
+dyAoRXh5bm9zIDUyNTApLiBNb3JlIHRlc3Rpbmcgd291bGQgYmUgZ3JlYXQsCj4+Pj4+PiBlc3Bl
+Y2lhbGx5IG9uIG90aGVyIEV4eW5vcyA1eHh4IHByb2R1Y3RzLgo+Pj4+Pgo+Pj4+PiBJIGhvcGVk
+IHRvIHRyeSB0aGlzIG9uIG15IGV4eW5vczUgYm9hcmRzLCBidXQgaXQgZG9lc24ndCBzZWVtIHRv
+IGFwcGx5Cj4+Pj4+IHRvIGxpbnV4LW5leHQgb3IgdG8gTGludXMnIG1hc3RlciBicmFuY2guCj4+
+Pj4+Cj4+Pj4+IEFyZSB0aGVyZSBzb21lIG90aGVyIGRlcGVuZGVuY2llcyBoZXJlPwo+Pj4+Cj4+
+Pj4gSXQgaXMgYWxyZWFkeSBhcHBsaWVkOgo+Pj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dp
+dC9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC9jb21taXQvP2lkPTFjMzYzYzdj
+Y2NmNjQxMjgwODcwMDJiMDc3OTk4NmFkMTZhZmY2ZGMKPj4+Cj4+PiBFciwgeXVwLiAgVGhhdCB3
+b3VsZCBleHBsYWluIGl0LiA7KQo+Pj4KPj4+IFNvcnJ5IGZvciB0aGUgbm9pc2UsCj4+Cj4+IFdl
+bGwsIG5vaXNlIG9yIG5vdCwgRXh5bm9zIGlzIHN0aWxsIGJyb2tlbiBpbiBtYWlubGluZSBhbmQg
+d2FzIGJyb2tlbgo+PiBvbiAtbmV4dCBmb3Igc28gbG9uZyBpbiBkaWZmZXJlbnQgd2F5cyB0aGF0
+IGJpc2VjdGluZyBpdCBpcyBhIGZ1dGlsZQo+PiBleGVyY2lzZSBpbiBmcnVzdHJhdGlvbi4KPj4K
+Pj4gSXQgZG9lc24ndCBzZWVtIHRvIHNob3cgdXAgd2l0aCBhIHRyaXZpYWwgYm9vdCB1c2luZyBv
+bmx5IHJhbWRpc2ssIGJ1dAo+PiB3aGVuIGJvb3RpbmcgYSByZWFsIGRpc3RybyBmcm9tIGRpc2ss
+IGl0IGNlcnRhaW5seSBkb2VzLgo+Pgo+PiBGb3IgZXhhbXBsZToKPj4KPj4gaHR0cDovL2FybS1z
+b2MubGl4b20ubmV0L2Jvb3Rsb2dzL21haW5saW5lL3Y0LjEtcmMxLTU2LWczZDk5ZTNmL3BpLWFy
+bS1leHlub3NfZGVmY29uZmlnLmh0bWwKPj4KPj4gRGlzYWJsaW5nIENPTkZJR19EUk0gbWFrZXMg
+aXQgYm9vdCByZWxpYWJseS4KPj4KPj4gQXJuZGFsZSBkb2Vzbid0IHNob3cgaXQgZm9yIG1lLCBi
+dXQgaXQgYWxzbyBkb2Vzbid0IGhhdmUgd29ya2luZyBncmFwaGljcy4KPj4KPgo+IEJvdGggRXh5
+bm9zNTI1MCBhbmQgRXh5bm9zNTQyMCBoYWQgc2ltaWxhciBpc3N1ZXMgYW5kICRzdWJqZWN0IGlz
+IHRoZSBmaXgKPiBmb3IgNTI1MCB3aGlsZSA1NDIwIGlzIGZpeGVkIGJ5IG15ICJBUk06IGR0czog
+TWFrZSBEUCBhIGNvbnN1bWVyIG9mIERJU1AxCj4gcG93ZXIgZG9tYWluIG9uIEV4eW5vczU0MjAi
+IHBhdGNoIHRoYXQgd2FzIHBvc3RlZCBhIGxvbmcgdGltZSBhZ28uIEkgaGF2ZQo+IHBpbmdlZCBL
+dWtqaW4gc2V2ZXJhbCB0aW1lcyBhYm91dCB0aGlzIHBhdGNoIGFuZCBoZSBzYWlkIHRoYXQgaGUg
+d2lsbCBwaWNrCj4gaXQgdGhpcyB3ZWVrZW5kIFswXS4KPgo+IEl0IGlzIGluZGVlZCB2ZXJ5IGZy
+dXN0cmF0aW5nIGhvdyBtYW55IEV4eW5vcyBwYXRjaGVzIHNlZW1zIHRvIGJlIGZhbGxpbmcKPiB0
+aHJvdWdoIHRoZSBjcmFjaywgZXZlbiBpbXBvcnRhbnQgZml4ZXMgbGlrZSB0aGVzZSBvbmVzIHRo
+YXQgYWxsb3cgYm9hcmRzCj4gdG8gYm9vdCBhZ2Fpbi4KPgo+IEtldmluIHN1Z2dlc3RlZCB0aGF0
+IEtyenlzenRvZiBjb3VsZCBjb2xsZWN0IGFuZCBxdWV1ZSBwYXRjaGVzIFsxXSB0byBoZWxwCj4g
+S3VramluIGFuZCBzdGFydCBhY3RpbmcgYXMgYSBjby1tYWludGF0aW5lciB3aGljaCBJIHRoaW5r
+IGl0J3MgYSB2ZXJ5IGdvb2QKPiBpZGVhIGFuZCBLcnp5c3p0b2YgYWxyZWFkeSBkaWQgZm9yIHNv
+bWUgcGF0Y2hlcyBkdXJpbmcgdGhlIDQuMSBjeWNsZS4KClllcywgdGhhdCdzIGEgbXVjaCBuZWVk
+ZWQgaW1wcm92ZW1lbnQuIEkgc3VnZ2VzdCBzdGFydGluZyBvdXQgYnkKY29sbGVjdGluZyBjcml0
+aWNhbCBmaXhlcyBsaWtlIHRoZXNlLCBhbmQgd2UnZCBiZSBoYXBweSB0byBtZXJnZSB0aGVtCmRp
+cmVjdGx5IGlmIGdvaW5nIHRocm91Z2ggS3VramluIHdpbGwgYWRkIGxhdGVuY3kuCgpLcnp5c3p0
+b2YsIGlmIHlvdSBjYW4sIG1ha2Ugc3VyZSB5b3UgZ2V0IGEgUEdQIGtleSBzZXR1cCBhbmQgc3Rh
+cnQKY29sbGVjdGluZyBzaWduYXR1cmVzIGZyb20ga2VybmVsIGRldmVsb3BlcnMuCgoKLU9sb2YK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
