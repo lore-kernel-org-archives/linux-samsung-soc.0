@@ -1,59 +1,53 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] ARM: dts: Add keep-power-in-suspend to WiFi SDIO
- node for Peach Boards
-Date: Thu, 30 Apr 2015 02:41:31 +0200
-Message-ID: <55417A3B.8090708@collabora.co.uk>
-References: <1428411814-21098-1-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=WhwEFWqZW8ByQrH3N43X7djMve-23ckqUCZ4EevZC7vw@mail.gmail.com> <552E1C39.4070104@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/3] clocksource: exynos_mct: Change exynos4_mct_tick_clear
+ return type to void
+Date: Thu, 30 Apr 2015 13:42:51 +0900
+Message-ID: <1430368973-23786-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:55792 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750883AbbD3Alo (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52141 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868AbbD3EnG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Apr 2015 20:41:44 -0400
-In-Reply-To: <552E1C39.4070104@collabora.co.uk>
+	Thu, 30 Apr 2015 00:43:06 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, kgene.kim@samsung.com
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello Kukjin,
+Return value of exynos4_mct_tick_clear() was never checked so it can
+be safely changed to void.
 
-On 04/15/2015 10:07 AM, Javier Martinez Canillas wrote:
-> 
-> On 04/07/2015 05:09 PM, Doug Anderson wrote:
->> Javier,
->> 
->> On Tue, Apr 7, 2015 at 6:03 AM, Javier Martinez Canillas
->> <javier.martinez@collabora.co.uk> wrote:
->>> The Marvell mwifiex driver prevents the system to enter into a suspend
->>> state if the card power is not preserved during a suspend/resume cycle.
->>>
->>> So Suspend-to-RAM and Suspend-to-idle is failing on Exynos5800 Peach Pi
->>> and Exynos5420 Peach Pit Chromebooks.
->>>
->>> Add the keep-power-in-suspend Power Management property to the SDIO/MMC
->>> node so the mwifiex suspend handler doesn't fail and the system is able
->>> to enter into a suspend state.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>> ---
->>>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
->>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
->>>  2 files changed, 2 insertions(+)
->> 
->> Reviewed-by: Doug Anderson <dianders@chromium.org>
->> 
-> 
-> Any comments on this patch?
-> 
-> Best regards,
-> Javier
-> 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Gentle reminder about this patch.
-
-Best regards,
-Javier
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 83564c9cfdbe..87c2e558c465 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -413,7 +413,7 @@ static inline void exynos4_tick_set_mode(enum clock_event_mode mode,
+ 	}
+ }
+ 
+-static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
++static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
+ {
+ 	struct clock_event_device *evt = &mevt->evt;
+ 
+@@ -426,12 +426,8 @@ static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
+ 		exynos4_mct_tick_stop(mevt);
+ 
+ 	/* Clear the MCT tick interrupt */
+-	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1) {
++	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1)
+ 		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+-		return 1;
+-	} else {
+-		return 0;
+-	}
+ }
+ 
+ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
+-- 
+1.9.1
