@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v4 12/12] drm/exynos: remove unnecessary calls to disable_plane()
-Date: Thu, 30 Apr 2015 18:50:51 -0300
-Message-ID: <1430430651-22416-13-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v4 08/12] drm/exynos: atomic phase 3: convert page flips
+Date: Thu, 30 Apr 2015 18:50:47 -0300
+Message-ID: <1430430651-22416-9-git-send-email-gustavo@padovan.org>
 References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f54.google.com ([209.85.192.54]:36670 "EHLO
-	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348AbbD3Vvx (ORCPT
+Received: from mail-qc0-f181.google.com ([209.85.216.181]:32946 "EHLO
+	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750705AbbD3Vvl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Apr 2015 17:51:53 -0400
-Received: by qgeb100 with SMTP id b100so31038862qge.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 14:51:53 -0700 (PDT)
+	Thu, 30 Apr 2015 17:51:41 -0400
+Received: by qcrf4 with SMTP id f4so36304817qcr.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 14:51:40 -0700 (PDT)
 In-Reply-To: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,65 +19,119 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.c
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-The planes are already disabled by the drm_atomic_helper_commit() code
-so we don't need to disable the in these two places.
+PageFlips now use the atomic helper to work through the atomic modesetting
+API. Async page flips are not supported yet.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 11 -----------
- drivers/gpu/drm/exynos/exynos_drm_encoder.c |  8 --------
- 2 files changed, 19 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 63 +-------------------------------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c   |  9 ++++-
+ 2 files changed, 9 insertions(+), 63 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 519c569..9bf25ff 100644
+index b0888d4..0db7b91 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -47,8 +47,6 @@ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
- static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+@@ -123,67 +123,6 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.disable	= exynos_drm_crtc_disable,
+ };
+ 
+-static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+-				     struct drm_framebuffer *fb,
+-				     struct drm_pending_vblank_event *event,
+-				     uint32_t page_flip_flags)
+-{
+-	struct drm_device *dev = crtc->dev;
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	unsigned int crtc_w, crtc_h;
+-	int ret;
+-
+-	/* when the page flip is requested, crtc's dpms should be on */
+-	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+-		DRM_ERROR("failed page flip request.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!event)
+-		return -EINVAL;
+-
+-	spin_lock_irq(&dev->event_lock);
+-	if (exynos_crtc->event) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
+-
+-	ret = exynos_check_plane(crtc->primary, fb);
+-	if (ret)
+-		goto out;
+-
+-	ret = drm_vblank_get(dev, exynos_crtc->pipe);
+-	if (ret) {
+-		DRM_DEBUG("failed to acquire vblank counter\n");
+-		goto out;
+-	}
+-
+-	exynos_crtc->event = event;
+-	spin_unlock_irq(&dev->event_lock);
+-
+-	/*
+-	 * the pipe from user always is 0 so we can set pipe number
+-	 * of current owner to event.
+-	 */
+-	event->pipe = exynos_crtc->pipe;
+-
+-	crtc->primary->fb = fb;
+-	crtc_w = fb->width - crtc->x;
+-	crtc_h = fb->height - crtc->y;
+-	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-			    crtc_w, crtc_h, crtc->x, crtc->y,
+-			    crtc_w, crtc_h);
+-
+-	if (crtc->primary->state)
+-		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
+-
+-	return 0;
+-
+-out:
+-	spin_unlock_irq(&dev->event_lock);
+-	return ret;
+-}
+-
+ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
  {
  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	struct drm_plane *plane;
--	int ret;
+@@ -197,7 +136,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
  
- 	if (!exynos_crtc->enabled)
- 		return;
-@@ -64,15 +62,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
- 		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_OFF);
- 
- 	exynos_crtc->enabled = false;
--
--	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
--		if (plane->crtc != crtc)
--			continue;
--
--		ret = plane->funcs->disable_plane(plane);
--		if (ret)
--			DRM_ERROR("Failed to disable plane %d\n", ret);
--	}
+ static struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_atomic_helper_set_config,
+-	.page_flip	= exynos_drm_crtc_page_flip,
++	.page_flip	= drm_atomic_helper_page_flip,
+ 	.destroy	= exynos_drm_crtc_destroy,
+ 	.reset = drm_atomic_helper_crtc_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index dcda496..d5141af 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -303,11 +303,18 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
+ 		exynos_drm_fbdev_init(dev);
  }
  
- static bool
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-index 0648ba4..7b89fd5 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-@@ -81,17 +81,9 @@ static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
- {
- 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
- 	struct exynos_drm_display *display = exynos_encoder->display;
--	struct drm_plane *plane;
--	struct drm_device *dev = encoder->dev;
++static int exynos_atomic_commit(struct drm_device *dev,
++				struct drm_atomic_state *state,
++				bool async)
++{
++	return drm_atomic_helper_commit(dev, state, false);
++}
++
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+ 	.fb_create = exynos_user_fb_create,
+ 	.output_poll_changed = exynos_drm_output_poll_changed,
+ 	.atomic_check = drm_atomic_helper_check,
+-	.atomic_commit = drm_atomic_helper_commit,
++	.atomic_commit = exynos_atomic_commit,
+ };
  
- 	if (display->ops->dpms)
- 		display->ops->dpms(display, DRM_MODE_DPMS_OFF);
--
--	/* all planes connected to this encoder should be also disabled. */
--	drm_for_each_legacy_plane(plane, &dev->mode_config.plane_list) {
--		if (plane->crtc && (plane->crtc == encoder->crtc))
--			plane->funcs->disable_plane(plane);
--	}
- }
- 
- static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
+ void exynos_drm_mode_config_init(struct drm_device *dev)
 -- 
 2.1.0
