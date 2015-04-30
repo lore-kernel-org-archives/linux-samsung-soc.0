@@ -1,53 +1,46 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 1/3] clocksource: exynos_mct: Change exynos4_mct_tick_clear
- return type to void
-Date: Thu, 30 Apr 2015 13:42:51 +0900
-Message-ID: <1430368973-23786-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52141 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbbD3EnG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Apr 2015 00:43:06 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 3/3] clocksource: exynos_mct: Remove old platform mct_init()
+Date: Thu, 30 Apr 2015 13:42:53 +0900
+Message-ID: <1430368973-23786-3-git-send-email-k.kozlowski@samsung.com>
+References: <1430368973-23786-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1430368973-23786-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Return value of exynos4_mct_tick_clear() was never checked so it can
-be safely changed to void.
+Since commit 228e3023eb04 ("Merge tag 'mct-exynos-for-v3.10' of ...") the
+mct_init() was superseded by mct_init_dt() and is not referenced
+anywhere. Remove it.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/clocksource/exynos_mct.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 83564c9cfdbe..87c2e558c465 100644
+index 8b2a9fc66dcc..935b05936dbd 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -413,7 +413,7 @@ static inline void exynos4_tick_set_mode(enum clock_event_mode mode,
- 	}
+@@ -560,18 +560,6 @@ out_irq:
+ 	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
  }
  
--static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
-+static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
+-void __init mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1)
+-{
+-	mct_irqs[MCT_G0_IRQ] = irq_g0;
+-	mct_irqs[MCT_L0_IRQ] = irq_l0;
+-	mct_irqs[MCT_L1_IRQ] = irq_l1;
+-	mct_int_type = MCT_INT_SPI;
+-
+-	exynos4_timer_resources(NULL, base);
+-	exynos4_clocksource_init();
+-	exynos4_clockevent_init();
+-}
+-
+ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
  {
- 	struct clock_event_device *evt = &mevt->evt;
- 
-@@ -426,12 +426,8 @@ static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
- 		exynos4_mct_tick_stop(mevt);
- 
- 	/* Clear the MCT tick interrupt */
--	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1) {
-+	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1)
- 		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
--		return 1;
--	} else {
--		return 0;
--	}
- }
- 
- static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
+ 	u32 nr_irqs, i;
 -- 
 1.9.1
