@@ -1,38 +1,55 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 5/5] drm/exynos: mixer: also allow ARGB1555 and ARGB4444
-Date: Thu, 30 Apr 2015 16:56:56 +0200
-Message-ID: <1430405816-4183-6-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH 1/1] Revert "ARM: dts: add display power domain for exynos5250"
+Date: Thu, 30 Apr 2015 07:59:09 -0700
+Message-ID: <7hk2wtpsqq.fsf@deeprootsystems.com>
+References: <1427107800-21668-1-git-send-email-javier.martinez@collabora.co.uk>
+	<7hr3r2suiw.fsf@deeprootsystems.com>
+	<1430336716.19504.92.camel@collabora.co.uk>
+	<55417967.80304@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55417967.80304@collabora.co.uk> (Javier Martinez Canillas's
+	message of "Thu, 30 Apr 2015 02:37:59 +0200")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQu
-ZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDIgKysKIDEg
-ZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-bWl4ZXIuYwppbmRleCA4MDlmODQwLi41YTQzNWFhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX21peGVyLmMKQEAgLTcwMSwxMCArNzAxLDEyIEBAIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBo
-X2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQogCiAJc3dpdGNoIChw
-bGFuZS0+cGl4ZWxfZm9ybWF0KSB7CiAJY2FzZSBEUk1fRk9STUFUX1hSR0I0NDQ0OgorCWNhc2Ug
-RFJNX0ZPUk1BVF9BUkdCNDQ0NDoKIAkJZm10ID0gTVhSX0ZPUk1BVF9BUkdCNDQ0NDsKIAkJYnJl
-YWs7CiAKIAljYXNlIERSTV9GT1JNQVRfWFJHQjE1NTU6CisJY2FzZSBEUk1fRk9STUFUX0FSR0Ix
-NTU1OgogCQlmbXQgPSBNWFJfRk9STUFUX0FSR0IxNTU1OwogCQlicmVhazsKIAotLSAKMi4wLjUK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+
+> Hello,
+>
+> On 04/29/2015 09:45 PM, Sjoerd Simons wrote:
+>> On Wed, 2015-04-29 at 10:40 -0700, Kevin Hilman wrote:
+>>> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>> 
+>>> Tested-by: Kevin Hilman <khilman@linaro.org>
+>>> 
+>>> FWIW, this patch fixes the boot panics when using MMC rootfs on
+>>> exynos5800-peach-pi with current linux-next that have been happening
+>>> for awhile.
+>> 
+>> That seems unlikely as this patch changes things in the exynos5250.dtsi,
+>> which isn't used by exynos5800-peach-pi.?
+>>
+>
+> Indeed, it will be surprising if $subject changes any behavior on
+> Exynos5420/5422/5800 machines.
+>
+> FWIW, this patch is not needed anymore since the right fix is Krzysztof's
+> "drm/exynos: Enable DP clock to fix display on Exynos5250 and other" patch
+> which is already in linux-next.
+>
+> The regression on Exynos5420/5422/5800 that has been for a while is fixed
+> by "ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420" [0]
+> which has been posted many weeks ago.
+
+Thanks for clarifying.
+
+I'm not sure how this worked for me.  Seems like sometimes, even with
+the imprecise aborts it does actually finish booting to a shell, so I
+must've gotten successful boot and thought it was because of this
+revert.
+
+Kevin
