@@ -1,79 +1,70 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
-Date: Thu, 30 Apr 2015 08:43:03 -0700
-Message-ID: <7hegn1pqpk.fsf@deeprootsystems.com>
-References: <1428870659-5525-1-git-send-email-javier.martinez@collabora.co.uk>
-	<552F6750.6020306@collabora.co.uk> <55417810.6070202@collabora.co.uk>
-	<126501d082dd$af818a30$0e849e90$@kernel.org>
+Subject: Re: [RFT PATCH] drm/exynos: Enable DP clock to fix display on Exynos5250 and other
+Date: Thu, 30 Apr 2015 08:44:49 -0700
+Message-ID: <7h8ud9pqmm.fsf@deeprootsystems.com>
+References: <1427471856-20918-1-git-send-email-k.kozlowski@samsung.com>
+	<7h8udau9he.fsf@deeprootsystems.com>
+	<CAJKOXPc6Epy_L+djManggcaYLaOrQ_c2S0=_GgU=dikuY1UU0g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:35705 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750807AbbD3PnH (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:36408 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751250AbbD3Pow (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Apr 2015 11:43:07 -0400
-Received: by pdbqd1 with SMTP id qd1so64319548pdb.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 08:43:07 -0700 (PDT)
-In-Reply-To: <126501d082dd$af818a30$0e849e90$@kernel.org> (Kukjin Kim's
-	message of "Thu, 30 Apr 2015 09:36:23 +0900")
+	Thu, 30 Apr 2015 11:44:52 -0400
+Received: by pabsx10 with SMTP id sx10so63291218pab.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 08:44:52 -0700 (PDT)
+In-Reply-To: <CAJKOXPc6Epy_L+djManggcaYLaOrQ_c2S0=_GgU=dikuY1UU0g@mail.gmail.com>
+	(Krzysztof Kozlowski's message of "Thu, 30 Apr 2015 08:56:50 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Tyler Baker' <tyler.baker@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Jingoo Han <jg1.han@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, stable@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Kukjin Kim <kgene@kernel.org> writes:
+Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
 
-> Javier Martinez Canillas wrote:
->> 
->> Hello Kukjin,
->> 
-> Hi,
+> 2015-04-30 2:31 GMT+09:00 Kevin Hilman <khilman@kernel.org>:
+>> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+>>
+>>> After adding display power domain for Exynos5250 in commit
+>>> 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250") the
+>>> display on Chromebook Snow and others stopped working after boot.
+>>>
+>>> The reason for this suggested Andrzej Hajda: the DP clock was disabled.
+>>> This clock is required by Display Port and is enabled by bootloader.
+>>> However when FIMD driver probing was deferred, the display power domain
+>>> was turned off. This effectively reset the value of DP clock enable
+>>> register.
+>>>
+>>> When exynos-dp is later probed, the clock is not enabled and display is
+>>> not properly configured:
+>>>
+>>> exynos-dp 145b0000.dp-controller: Timeout of video streamclk ok
+>>> exynos-dp 145b0000.dp-controller: unable to config video
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Reported-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>> Fixes: 2d2c9a8d0a4f ("ARM: dts: add display power domain for exynos5250")
+>>> Cc: <stable@vger.kernel.org>
+>>>
+>>> ---
+>>>
+>>> This should fix issue reported by Javier [1][2].
+>>>
+>>> Tested on Chromebook Snow (Exynos 5250). More testing would be great,
+>>> especially on other Exynos 5xxx products.
+>>
+>> I hoped to try this on my exynos5 boards, but it doesn't seem to apply
+>> to linux-next or to Linus' master branch.
+>>
+>> Are there some other dependencies here?
 >
->> On 04/16/2015 09:40 AM, Javier Martinez Canillas wrote:
->> >
->> > On 04/12/2015 10:30 PM, Javier Martinez Canillas wrote:
->> >> Commit ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
->> >> added a device node for the Exynos5420 DISP1 power domain but dit not
->> >> make the DP controller a consumer of that power domain.
->> >>
->> >> This causes an "Unhandled fault: imprecise external abort" error if the
->> >> exynos-dp driver tries to access the DP controller registers and the PD
->> >> was turned off. This lead to a kernel panic and a complete system hang.
->> >>
->> >> Make the DP controller device node a consumer of the DISP1 power domain
->> >> to ensure that the PD is turned on when the exynos-dp driver is probed.
->> >>
->> >> Fixes: ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
->> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> >
->> > Any comments about this patch?
->> >
->> > It's very trivial but fixes a very important regression on Exynos5420 boards
->> > with display panel and Peach Pit and Pi have been broken since next-20150401.
->> >
->> > This [0] is the Peach Pit boot log with yesteday's linux-next for example.
->> >
->> > Best regards,
->> > Javier
->> >
->> > [0]: http://arm-soc.lixom.net/bootlogs/next/next-20150415/pit-arm-exynos_defconfig.html
->> >
->> 
->> It has been many weeks since this patch has been posted and linux-next
->> is still broken:
->> 
->> http://arm-soc.lixom.net/bootlogs/next/next-20150429/pi-arm-exynos_defconfig.html
->> 
->> Could you please apply $subject to fix the imprecise external abort issue.
->> 
-> Sure I'll in this weekend.
->
-> Thanks for your gentle reminder ;-)
+> It is already applied:
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=1c363c7cccf64128087002b0779986ad16aff6dc
 
-Tested-by: Kevin Hilman <khilman@linaro.org>
+Er, yup.  That would explain it. ;)
 
-I confirm that this patch fixes the imprecise aborts (and sometimes
-kernel panics) that I'm seeing on exynos5800-peach-pi with linux-next.
+Sorry for the noise,
 
 Kevin
