@@ -1,58 +1,47 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [RFC 4/5] drm/exynos: mixer: do blending setup in mixer_cfg_layer()
-Date: Thu, 30 Apr 2015 16:56:55 +0200
-Message-ID: <1430405816-4183-5-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] Revert "ARM: dts: add display power domain for exynos5250"
+Date: Thu, 30 Apr 2015 17:23:05 +0200
+Message-ID: <554248D9.4030203@collabora.co.uk>
+References: <1427107800-21668-1-git-send-email-javier.martinez@collabora.co.uk>	<7hr3r2suiw.fsf@deeprootsystems.com>	<1430336716.19504.92.camel@collabora.co.uk>	<55417967.80304@collabora.co.uk> <7hk2wtpsqq.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7hk2wtpsqq.fsf@deeprootsystems.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyB1cGRhdGVzIHRoZSBibGVuZGluZyBzZXR1cCB3aGVuIHRoZSBsYXllciBjb25maWd1cmF0
-aW9uCmNoYW5nZXMgKHRyaWdnZXJlZCBieSBtaXhlcl93aW5fe2NvbW1pdCxkaXNhYmxlfSkuCgpF
-eHRyYSBjYXJlIGhhcyB0byBiZSB0YWtlbiBmb3IgdGhlIGxheWVyIHRoYXQgaXMgY3VycmVudGx5
-CmJlaW5nIGVuYWJsZWQvZGlzYWJsZWQuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0
-amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19taXhlci5jIHwgMjMgKysrKysrKysrKysrKysrKysrKysrKysKIDEgZmlsZSBjaGFu
-Z2VkLCAyMyBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
-aW5kZXggM2VlYzljZS4uODA5Zjg0MCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jCkBAIC0xNzgsNiArMTc4LDE4IEBAIHN0YXRpYyBpbmxpbmUgYm9vbCBpc19hbHBoYV9mb3Jt
-YXQoY29uc3Qgc3RydWN0IG1peGVyX2NvbnRleHQqIGN0eCwgdW5zaWduZWQgaW50CiAJfQogfQog
-CitzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGludCBsYXllcl9iaXRtYXNrKGNvbnN0IHN0cnVjdCBt
-aXhlcl9jb250ZXh0KiBjdHgpCit7CisJdW5zaWduZWQgaW50IGksIG1hc2sgPSAwOworCisJZm9y
-IChpID0gMDsgaSA8IE1JWEVSX1dJTl9OUjsgKytpKSB7CisJCWlmIChjdHgtPnBsYW5lc1tpXS5l
-bmFibGVkKQorCQkJbWFzayB8PSAoMSA8PCBpKTsKKwl9CisKKwlyZXR1cm4gbWFzazsKK30KKwog
-c3RhdGljIGlubGluZSB1MzIgdnBfcmVnX3JlYWQoc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVz
-LCB1MzIgcmVnX2lkKQogewogCXJldHVybiByZWFkbChyZXMtPnZwX3JlZ3MgKyByZWdfaWQpOwpA
-QCAtNDkwLDYgKzUwMiw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBt
-aXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBoZWlnaHQpCiBzdGF0aWMgdm9pZCBtaXhl
-cl9jZmdfbGF5ZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgaW50IHdpbiwgYm9vbCBlbmFi
-bGUpCiB7CiAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwor
-CXVuc2lnbmVkIGludCBlbmFibGVfc3RhdGU7CiAJdTMyIHZhbCA9IGVuYWJsZSA/IH4wIDogMDsK
-IAogCXN3aXRjaCAod2luKSB7CkBAIC01MDcsNiArNTIwLDE2IEBAIHN0YXRpYyB2b2lkIG1peGVy
-X2NmZ19sYXllcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luLCBib29sIGVuYWJs
-ZSkKIAkJfQogCQlicmVhazsKIAl9CisKKwkvKiBEZXRlcm1pbmUgdGhlIGN1cnJlbnQgZW5hYmxl
-ZC9kaXNhYmxlZCBzdGF0ZSBvZiB0aGUgbGF5ZXJzLiAqLworCWVuYWJsZV9zdGF0ZSA9IGxheWVy
-X2JpdG1hc2soY3R4KTsKKwlpZiAoZW5hYmxlKQorCQllbmFibGVfc3RhdGUgfD0gKDEgPDwgd2lu
-KTsKKwllbHNlCisJCWVuYWJsZV9zdGF0ZSAmPSB+KDEgPDwgd2luKTsKKworCS8qIExheWVyIGNv
-bmZpZ3VyYXRpb24gaGFzIGNoYW5nZWQsIHVwZGF0ZSBibGVuZGluZyBzZXR1cC4gKi8KKwltaXhl
-cl9sYXllcl9ibGVuZGluZyhjdHgsIGVuYWJsZV9zdGF0ZSk7CiB9CiAKIHN0YXRpYyB2b2lkIG1p
-eGVyX3J1bihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQotLSAKMi4wLjUKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Kevin,
+
+On 04/30/2015 04:59 PM, Kevin Hilman wrote:
+> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+>>
+>> The regression on Exynos5420/5422/5800 that has been for a while is fixed
+>> by "ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420" [0]
+>> which has been posted many weeks ago.
+> 
+> Thanks for clarifying.
+> 
+> I'm not sure how this worked for me.  Seems like sometimes, even with
+> the imprecise aborts it does actually finish booting to a shell, so I
+> must've gotten successful boot and thought it was because of this
+> revert.
+
+That is correct, the imprecise external abort error most of the times
+lead to a kernel panic but sometimes it doesn't and the the system finish
+booting to user-space even after the error.
+
+I've pinged Kukjin again yesterday to pick the fix and he said that will
+do it this weekend [0]. So hopefully exynos5420 machines will boot again
+in linux-next soon after being broken for weeks.
+
+> 
+> Kevin
+>
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/4/29/781
