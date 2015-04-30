@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v4 09/12] drm/exynos: remove exported functions from exynos_drm_plane
-Date: Thu, 30 Apr 2015 18:50:48 -0300
-Message-ID: <1430430651-22416-10-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v4 12/12] drm/exynos: remove unnecessary calls to disable_plane()
+Date: Thu, 30 Apr 2015 18:50:51 -0300
+Message-ID: <1430430651-22416-13-git-send-email-gustavo@padovan.org>
 References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:35827 "EHLO
-	mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750705AbbD3Vvo (ORCPT
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:36670 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751348AbbD3Vvx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Apr 2015 17:51:44 -0400
-Received: by qkhg7 with SMTP id g7so41751837qkh.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 14:51:43 -0700 (PDT)
+	Thu, 30 Apr 2015 17:51:53 -0400
+Received: by qgeb100 with SMTP id b100so31038862qge.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 14:51:53 -0700 (PDT)
 In-Reply-To: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,161 +19,65 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.c
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Now that no one is using the functions exported by exynos_drm_plane due
-to the atomic conversion we can make remove some of the them or make them
-static.
-
-v2: remove unused exynos_drm_crtc
+The planes are already disabled by the drm_atomic_helper_commit() code
+so we don't need to disable the in these two places.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 90 +++++++++++++------------------
- drivers/gpu/drm/exynos/exynos_drm_plane.h | 11 ----
- 2 files changed, 37 insertions(+), 64 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 11 -----------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c |  8 --------
+ 2 files changed, 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 7d42e09..8bad40e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -62,35 +62,12 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
- 	return size;
- }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 519c569..9bf25ff 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -47,8 +47,6 @@ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
+ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	struct drm_plane *plane;
+-	int ret;
  
--int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
--{
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
--	int nr;
--	int i;
+ 	if (!exynos_crtc->enabled)
+ 		return;
+@@ -64,15 +62,6 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ 		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_OFF);
+ 
+ 	exynos_crtc->enabled = false;
 -
--	nr = exynos_drm_fb_get_buf_cnt(fb);
--	for (i = 0; i < nr; i++) {
--		struct exynos_drm_gem_buf *buffer = exynos_drm_fb_buffer(fb, i);
+-	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
+-		if (plane->crtc != crtc)
+-			continue;
 -
--		if (!buffer) {
--			DRM_DEBUG_KMS("buffer is null\n");
--			return -EFAULT;
--		}
--
--		exynos_plane->dma_addr[i] = buffer->dma_addr;
--
--		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
--				i, (unsigned long)exynos_plane->dma_addr[i]);
+-		ret = plane->funcs->disable_plane(plane);
+-		if (ret)
+-			DRM_ERROR("Failed to disable plane %d\n", ret);
 -	}
--
--	return 0;
--}
--
--void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
--			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--			  unsigned int crtc_w, unsigned int crtc_h,
--			  uint32_t src_x, uint32_t src_y,
--			  uint32_t src_w, uint32_t src_h)
-+static void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
-+				  struct drm_framebuffer *fb,
-+				  int crtc_x, int crtc_y,
-+				  unsigned int crtc_w, unsigned int crtc_h,
-+				  uint32_t src_x, uint32_t src_y,
-+				  uint32_t src_w, uint32_t src_h)
- {
- 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 	unsigned int actual_w;
-@@ -145,24 +122,6 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
- 	plane->crtc = crtc;
  }
  
--void
--exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
--		     struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--		     unsigned int crtc_w, unsigned int crtc_h,
--		     uint32_t src_x, uint32_t src_y,
--		     uint32_t src_w, uint32_t src_h)
--{
--	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
--
--	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
--			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
--			      src_w >> 16, src_h >> 16);
--
--	if (exynos_crtc->ops->win_commit)
--		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
--}
--
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= drm_atomic_helper_update_plane,
- 	.disable_plane	= drm_atomic_helper_disable_plane,
-@@ -175,19 +134,44 @@ static struct drm_plane_funcs exynos_plane_funcs = {
- static int exynos_plane_atomic_check(struct drm_plane *plane,
- 				     struct drm_plane_state *state)
+ static bool
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+index 0648ba4..7b89fd5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+@@ -81,17 +81,9 @@ static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
  {
--	return exynos_check_plane(plane, state->fb);
-+	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-+	int nr;
-+	int i;
-+
-+	nr = exynos_drm_fb_get_buf_cnt(state->fb);
-+	for (i = 0; i < nr; i++) {
-+		struct exynos_drm_gem_buf *buffer =
-+					exynos_drm_fb_buffer(state->fb, i);
-+
-+		if (!buffer) {
-+			DRM_DEBUG_KMS("buffer is null\n");
-+			return -EFAULT;
-+		}
-+
-+		exynos_plane->dma_addr[i] = buffer->dma_addr;
-+
-+		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
-+				i, (unsigned long)exynos_plane->dma_addr[i]);
-+	}
-+
-+	return 0;
+ 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+ 	struct exynos_drm_display *display = exynos_encoder->display;
+-	struct drm_plane *plane;
+-	struct drm_device *dev = encoder->dev;
+ 
+ 	if (display->ops->dpms)
+ 		display->ops->dpms(display, DRM_MODE_DPMS_OFF);
+-
+-	/* all planes connected to this encoder should be also disabled. */
+-	drm_for_each_legacy_plane(plane, &dev->mode_config.plane_list) {
+-		if (plane->crtc && (plane->crtc == encoder->crtc))
+-			plane->funcs->disable_plane(plane);
+-	}
  }
  
- static void exynos_plane_atomic_update(struct drm_plane *plane,
- 				       struct drm_plane_state *old_state)
- {
- 	struct drm_plane_state *state = plane->state;
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(state->crtc);
-+	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 
--	exynos_update_plane(plane, state->crtc, state->fb,
--			    state->crtc_x, state->crtc_y,
--			    state->crtc_w, state->crtc_h,
--			    state->src_x >> 16, state->src_y >> 16,
--			    state->src_w >> 16, state->src_h >> 16);
-+	exynos_plane_mode_set(plane, state->crtc, state->fb,
-+			      state->crtc_x, state->crtc_y,
-+			      state->crtc_w, state->crtc_h,
-+			      state->src_x >> 16, state->src_y >> 16,
-+			      state->src_w >> 16, state->src_h >> 16);
-+
-+	if (exynos_crtc->ops->win_commit)
-+		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
- }
- 
- static void exynos_plane_atomic_disable(struct drm_plane *plane,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
-index 560ca71..8c88ae9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
-@@ -9,17 +9,6 @@
-  *
-  */
- 
--int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb);
--void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
--			   struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--			   unsigned int crtc_w, unsigned int crtc_h,
--			   uint32_t src_x, uint32_t src_y,
--			   uint32_t src_w, uint32_t src_h);
--void exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
--			struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--			unsigned int crtc_w, unsigned int crtc_h,
--			uint32_t src_x, uint32_t src_y,
--			uint32_t src_w, uint32_t src_h);
- int exynos_plane_init(struct drm_device *dev,
- 		      struct exynos_drm_plane *exynos_plane,
- 		      unsigned long possible_crtcs, enum drm_plane_type type,
+ static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
 -- 
 2.1.0
