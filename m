@@ -1,114 +1,181 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 Subject: Re: [RFC 1/5] drm/exynos: mixer: refactor layer setup
-Date: Thu, 30 Apr 2015 22:48:57 +0200
-Message-ID: <55429539.1020006@gmx.net>
+Date: Thu, 30 Apr 2015 18:23:11 -0300
+Message-ID: <20150430212311.GA1571@joana>
 References: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
  <1430405816-4183-2-git-send-email-tjakobi@math.uni-bielefeld.de>
  <20150430202935.GA15382@joana>
+ <55429539.1020006@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150430202935.GA15382@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57009 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751307AbbD3VXT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Apr 2015 17:23:19 -0400
+Content-Disposition: inline
+In-Reply-To: <55429539.1020006@gmx.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <liquid.acid@gmx.net>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-SGVsbG8gR3VzdGF2byEKCgpHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gSGkgVG9iaWFzLAo+IAo+
-IDIwMTUtMDQtMzAgVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+
-Ogo+IAo+PiBGaXJzdCBzdGVwIGluIGFsbG93aW5nIGEgbW9yZSBnZW5lcmljIHdheSB0byBzZXR1
-cCBjb21wbGV4Cj4+IGJsZW5kaW5nIGZvciB0aGUgZGlmZmVyZW50IGxheWVycy4KPj4KPj4gU2ln
-bmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+
-Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDc0ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNjMg
-aW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfbWl4ZXIuYwo+PiBpbmRleCA0MTU1ZjQzLi5hMDZiOGUyIDEwMDY0NAo+PiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gQEAgLTYzLDYgKzYzLDEyIEBAIHN0cnVjdCBt
-aXhlcl9yZXNvdXJjZXMgewo+PiAgCXN0cnVjdCBjbGsJCSptb3V0X21peGVyOwo+PiAgfTsKPj4g
-IAo+PiArc3RydWN0IGxheWVyX2NvbmZpZyB7Cj4+ICsJdW5zaWduZWQgaW50IGluZGV4Owo+PiAr
-CXVuc2lnbmVkIGludCBwcmlvcml0eTsKPj4gKwl1MzIgY2ZnOwo+PiArfTsKPiAKPiBJIGRvbid0
-IHNlZSB3aHkgeW91IGFyZSBjcmVhdGluZyB0aGlzIHN0cnVjdCwgaW5kZXggYW5kIHByaW9yaXR5
-IGFyZQo+IG5ldmVyIHVzZWQgaW4gdGhpcyBwYXRjaCBzZXJpZXMuCkdvb2QgY2F0Y2ggYWJvdXQg
-J3ByaW9yaXR5Jy4gQnV0ICdpbmRleCcgaXMgdXNlZCwgc2VlIHRoZSBzZWNvbmQgcGF0Y2guCgoK
-Cj4gCj4+ICsKPj4gIGVudW0gbWl4ZXJfdmVyc2lvbl9pZCB7Cj4+ICAJTVhSX1ZFUl8wXzBfMF8x
-NiwKPj4gIAlNWFJfVkVSXzE2XzBfMzNfMCwKPj4gQEAgLTc1LDYgKzgxLDggQEAgc3RydWN0IG1p
-eGVyX2NvbnRleHQgewo+PiAgCXN0cnVjdCBkcm1fZGV2aWNlCSpkcm1fZGV2Owo+PiAgCXN0cnVj
-dCBleHlub3NfZHJtX2NydGMJKmNydGM7Cj4+ICAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUJcGxh
-bmVzW01JWEVSX1dJTl9OUl07Cj4+ICsJY29uc3Qgc3RydWN0IGxheWVyX2NvbmZpZyAqbGF5ZXJf
-Y29uZmlnOwo+PiArCXVuc2lnbmVkIGludCBudW1fbGF5ZXI7Cj4+ICAJaW50CQkJcGlwZTsKPj4g
-IAlib29sCQkJaW50ZXJsYWNlOwo+PiAgCWJvb2wJCQlwb3dlcmVkOwo+PiBAQCAtOTUsNiArMTAz
-LDQwIEBAIHN0cnVjdCBtaXhlcl9kcnZfZGF0YSB7Cj4+ICAJYm9vbAkJCQkJaGFzX3NjbGs7Cj4+
-ICB9Owo+PiAgCj4+ICsvKgo+PiArICogVGhlIGRlZmF1bHQgbGF5ZXIgcHJpb3JpdGllcy4gQSBo
-aWdoZXIgcHJpb3JpdHkgbWVhbnMgdGhhdAo+PiArICogdGhlIGxheWVyIGlzIGF0IHRoZSB0b3Ag
-b2YgbGF5ZXIgc3RhY2suCj4+ICsgKiBUaGUgY3VycmVudCBjb25maWd1cmF0aW9uIGFzc3VtZXMg
-dGhlIGZvbGxvd2luZyB1c2FnZSBzY2VuYXJpbzoKPj4gKyAqIGxheWVyMTogT1NEIFt0b3BdCj4+
-ICsgKiBsYXllcjA6IG1haW4gZnJhbWVidWZmZXIKPj4gKyAqIHZpZGVvIGxheWVyOiB2aWRlbyBv
-dmVybGF5IFtib3R0b21dCj4+ICsgKiBOb3RlIHRoYXQgdGhlIHZpZGVvIGxheWVyIGlzIG9ubHkg
-dXNhYmxlIHdoZW4gdGhlCj4+ICsgKiB2aWRlbyBwcm9jZXNzb3IgaXMgYXZhaWxhYmxlLgo+PiAr
-ICovCj4+ICsKPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbGF5ZXJfY29uZmlnIGRlZmF1bHRfbGF5
-ZXJfY29uZmlnW10gPSB7Cj4+ICsJewo+PiArCQkuaW5kZXggPSAwLCAucHJpb3JpdHkgPSAxLCAv
-KiBsYXllcjAgKi8KPj4gKwkJLmNmZyA9IE1YUl9MQVlFUl9DRkdfR1JQMF9WQUwoMSkKPj4gKwl9
-LCB7Cj4+ICsJCS5pbmRleCA9IDEsIC5wcmlvcml0eSA9IDIsIC8qIGxheWVyMSAqLwo+PiArCQku
-Y2ZnID0gTVhSX0xBWUVSX0NGR19HUlAxX1ZBTCgyKQo+PiArCX0KPj4gK307Cj4+ICsKPj4gK3N0
-YXRpYyBjb25zdCBzdHJ1Y3QgbGF5ZXJfY29uZmlnIHZwX2xheWVyX2NvbmZpZ1tdID0gewo+PiAr
-CXsKPj4gKwkJLmluZGV4ID0gMiwgLnByaW9yaXR5ID0gMSwgLyogdmlkZW8gbGF5ZXIgKi8KPj4g
-KwkJLmNmZyA9IE1YUl9MQVlFUl9DRkdfVlBfVkFMKDEpCj4+ICsJfSwgewo+PiArCQkuaW5kZXgg
-PSAwLCAucHJpb3JpdHkgPSAyLCAvKiBsYXllcjAgKi8KPj4gKwkJLmNmZyA9IE1YUl9MQVlFUl9D
-RkdfR1JQMF9WQUwoMikKPj4gKwl9LCB7Cj4+ICsJCS5pbmRleCA9IDEsIC5wcmlvcml0eSA9IDMs
-IC8qIGxheWVyMSAqLwo+PiArCQkuY2ZnID0gTVhSX0xBWUVSX0NGR19HUlAxX1ZBTCgzKQo+PiAr
-CX0KPj4gK307Cj4+ICsKPj4gIHN0YXRpYyBjb25zdCB1OCBmaWx0ZXJfeV9ob3Jpel90YXA4W10g
-PSB7Cj4+ICAJMCwJLTEsCS0xLAktMSwJLTEsCS0xLAktMSwJLTEsCj4+ICAJLTEsCS0xLAktMSwJ
-LTEsCS0xLAkwLAkwLAkwLAo+PiBAQCAtMjUzLDYgKzI5NSwxNyBAQCBzdGF0aWMgdm9pZCB2cF9k
-ZWZhdWx0X2ZpbHRlcihzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMpCj4+ICAJCWZpbHRlcl9j
-cl9ob3Jpel90YXA0LCBzaXplb2YoZmlsdGVyX2NyX2hvcml6X3RhcDQpKTsKPj4gIH0KPj4gIAo+
-PiArc3RhdGljIHZvaWQgbWl4ZXJfbGF5ZXJfcHJpb3JpdHkoc3RydWN0IG1peGVyX2NvbnRleHQg
-KmN0eCkKPj4gK3sKPj4gKwl1MzIgdmFsID0gMDsKPj4gKwl1bnNpZ25lZCBpbnQgaTsKPj4gKwo+
-PiArCWZvciAoaSA9IDA7IGkgPCBjdHgtPm51bV9sYXllcjsgKytpKQo+PiArCQl2YWwgfD0gY3R4
-LT5sYXllcl9jb25maWdbaV0uY2ZnOwo+PiArCj4+ICsJbWl4ZXJfcmVnX3dyaXRlKCZjdHgtPm1p
-eGVyX3JlcywgTVhSX0xBWUVSX0NGRywgdmFsKTsKPj4gK30KPj4gKwo+PiAgc3RhdGljIHZvaWQg
-bWl4ZXJfdnN5bmNfc2V0X3VwZGF0ZShzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBib29sIGVu
-YWJsZSkKPj4gIHsKPj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhl
-cl9yZXM7Cj4+IEBAIC02NTUsMTcgKzcwOCw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9yZXNl
-dChzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+PiAgCW1peGVyX3JlZ193cml0ZW1hc2socmVz
-LCBNWFJfU1RBVFVTLCBNWFJfU1RBVFVTXzE2X0JVUlNULAo+PiAgCQlNWFJfU1RBVFVTX0JVUlNU
-X01BU0spOwo+PiAgCj4+IC0JLyogc2V0dGluZyBkZWZhdWx0IGxheWVyIHByaW9yaXR5OiBsYXll
-cjEgPiBsYXllcjAgPiB2aWRlbwo+PiAtCSAqIGJlY2F1c2UgdHlwaWNhbCB1c2FnZSBzY2VuYXJp
-byB3b3VsZCBiZQo+PiAtCSAqIGxheWVyMSAtIE9TRAo+PiAtCSAqIGxheWVyMCAtIGZyYW1lYnVm
-ZmVyCj4+IC0JICogdmlkZW8gLSB2aWRlbyBvdmVybGF5Cj4+IC0JICovCj4+IC0JdmFsID0gTVhS
-X0xBWUVSX0NGR19HUlAxX1ZBTCgzKTsKPj4gLQl2YWwgfD0gTVhSX0xBWUVSX0NGR19HUlAwX1ZB
-TCgyKTsKPj4gLQlpZiAoY3R4LT52cF9lbmFibGVkKQo+PiAtCQl2YWwgfD0gTVhSX0xBWUVSX0NG
-R19WUF9WQUwoMSk7Cj4+IC0JbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0xBWUVSX0NGRywgdmFs
-KTsKPiAKPiBJIHdvdWxkIG1vdmUgdGhpcyBleGFjbHR5IHBpZWNlIG9mIGNvZGUgaW50byBtaXhl
-cl9sYXllcl9wcmlvcml0eSgpLgpUaGVuIHdlIGVuZCB1cCB3aXRoIHRoZSBzYW1lIHN0YXRpYy9o
-YXJkY29kZWQgc2V0dXAgYXMgYmVmb3JlLiBUaGF0J3MKc29tZXRoaW5nIEkgd2FudCB0byBtb3Zl
-IGF3YXkgZnJvbS4gVGhlIGVudGlyZSBpbmZvcm1hdGlvbiBhYm91dCBsYXllcgpvcmRlcmluZyBz
-aG91bGQgYmUgc3RvcmVkIGluICdsYXllcl9jb25maWcnLgoKCgo+PiArCW1peGVyX2xheWVyX3By
-aW9yaXR5KGN0eCk7Cj4+ICAKPj4gIAkvKiBzZXR0aW5nIGJhY2tncm91bmQgY29sb3IgKi8KPj4g
-IAltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfQkdfQ09MT1IwLCAweDAwODA4MCk7Cj4+IEBAIC0x
-Mjc0LDYgKzEzMTcsMTUgQEAgc3RhdGljIGludCBtaXhlcl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpwZGV2KQo+PiAgCWN0eC0+dnBfZW5hYmxlZCA9IGRydi0+aXNfdnBfZW5hYmxlZDsK
-Pj4gIAljdHgtPmhhc19zY2xrID0gZHJ2LT5oYXNfc2NsazsKPj4gIAljdHgtPm14cl92ZXIgPSBk
-cnYtPnZlcnNpb247Cj4+ICsKPj4gKwlpZiAoZHJ2LT5pc192cF9lbmFibGVkKSB7Cj4+ICsJCWN0
-eC0+bGF5ZXJfY29uZmlnID0gdnBfbGF5ZXJfY29uZmlnOwo+PiArCQljdHgtPm51bV9sYXllciA9
-IEFSUkFZX1NJWkUodnBfbGF5ZXJfY29uZmlnKTsKPj4gKwl9IGVsc2Ugewo+PiArCQljdHgtPmxh
-eWVyX2NvbmZpZyA9IGRlZmF1bHRfbGF5ZXJfY29uZmlnOwo+PiArCQljdHgtPm51bV9sYXllciA9
-IEFSUkFZX1NJWkUoZGVmYXVsdF9sYXllcl9jb25maWcpOwo+PiArCX0KPiAKPiBUaGVuIHRoaXMg
-cGllY2Ugb2YgY29kZSBpcyB1c2VsZXNzLgpObywgc2luY2UgdGhlIHNlY29uZCBwYXRjaCBkZXBl
-bmRzIG9uIGl0LgoKCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IAo+IAlHdXN0YXZvCj4g
-LS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJz
-Y3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1h
-am9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8v
-dmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+2015-04-30 Tobias Jakobi <liquid.acid@gmx.net>:
+
+> Hello Gustavo!
+> 
+> 
+> Gustavo Padovan wrote:
+> > Hi Tobias,
+> > 
+> > 2015-04-30 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+> > 
+> >> First step in allowing a more generic way to setup complex
+> >> blending for the different layers.
+> >>
+> >> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> >> ---
+> >>  drivers/gpu/drm/exynos/exynos_mixer.c | 74 +++++++++++++++++++++++++++++------
+> >>  1 file changed, 63 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> >> index 4155f43..a06b8e2 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> >> @@ -63,6 +63,12 @@ struct mixer_resources {
+> >>  	struct clk		*mout_mixer;
+> >>  };
+> >>  
+> >> +struct layer_config {
+> >> +	unsigned int index;
+> >> +	unsigned int priority;
+> >> +	u32 cfg;
+> >> +};
+> > 
+> > I don't see why you are creating this struct, index and priority are
+> > never used in this patch series.
+> Good catch about 'priority'. But 'index' is used, see the second patch.
+> 
+> 
+> 
+> > 
+> >> +
+> >>  enum mixer_version_id {
+> >>  	MXR_VER_0_0_0_16,
+> >>  	MXR_VER_16_0_33_0,
+> >> @@ -75,6 +81,8 @@ struct mixer_context {
+> >>  	struct drm_device	*drm_dev;
+> >>  	struct exynos_drm_crtc	*crtc;
+> >>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+> >> +	const struct layer_config *layer_config;
+> >> +	unsigned int num_layer;
+> >>  	int			pipe;
+> >>  	bool			interlace;
+> >>  	bool			powered;
+> >> @@ -95,6 +103,40 @@ struct mixer_drv_data {
+> >>  	bool					has_sclk;
+> >>  };
+> >>  
+> >> +/*
+> >> + * The default layer priorities. A higher priority means that
+> >> + * the layer is at the top of layer stack.
+> >> + * The current configuration assumes the following usage scenario:
+> >> + * layer1: OSD [top]
+> >> + * layer0: main framebuffer
+> >> + * video layer: video overlay [bottom]
+> >> + * Note that the video layer is only usable when the
+> >> + * video processor is available.
+> >> + */
+> >> +
+> >> +static const struct layer_config default_layer_config[] = {
+> >> +	{
+> >> +		.index = 0, .priority = 1, /* layer0 */
+> >> +		.cfg = MXR_LAYER_CFG_GRP0_VAL(1)
+> >> +	}, {
+> >> +		.index = 1, .priority = 2, /* layer1 */
+> >> +		.cfg = MXR_LAYER_CFG_GRP1_VAL(2)
+> >> +	}
+> >> +};
+> >> +
+> >> +static const struct layer_config vp_layer_config[] = {
+> >> +	{
+> >> +		.index = 2, .priority = 1, /* video layer */
+> >> +		.cfg = MXR_LAYER_CFG_VP_VAL(1)
+> >> +	}, {
+> >> +		.index = 0, .priority = 2, /* layer0 */
+> >> +		.cfg = MXR_LAYER_CFG_GRP0_VAL(2)
+> >> +	}, {
+> >> +		.index = 1, .priority = 3, /* layer1 */
+> >> +		.cfg = MXR_LAYER_CFG_GRP1_VAL(3)
+> >> +	}
+> >> +};
+> >> +
+> >>  static const u8 filter_y_horiz_tap8[] = {
+> >>  	0,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
+> >>  	-1,	-1,	-1,	-1,	-1,	0,	0,	0,
+> >> @@ -253,6 +295,17 @@ static void vp_default_filter(struct mixer_resources *res)
+> >>  		filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
+> >>  }
+> >>  
+> >> +static void mixer_layer_priority(struct mixer_context *ctx)
+> >> +{
+> >> +	u32 val = 0;
+> >> +	unsigned int i;
+> >> +
+> >> +	for (i = 0; i < ctx->num_layer; ++i)
+> >> +		val |= ctx->layer_config[i].cfg;
+> >> +
+> >> +	mixer_reg_write(&ctx->mixer_res, MXR_LAYER_CFG, val);
+> >> +}
+> >> +
+> >>  static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
+> >>  {
+> >>  	struct mixer_resources *res = &ctx->mixer_res;
+> >> @@ -655,17 +708,7 @@ static void mixer_win_reset(struct mixer_context *ctx)
+> >>  	mixer_reg_writemask(res, MXR_STATUS, MXR_STATUS_16_BURST,
+> >>  		MXR_STATUS_BURST_MASK);
+> >>  
+> >> -	/* setting default layer priority: layer1 > layer0 > video
+> >> -	 * because typical usage scenario would be
+> >> -	 * layer1 - OSD
+> >> -	 * layer0 - framebuffer
+> >> -	 * video - video overlay
+> >> -	 */
+> >> -	val = MXR_LAYER_CFG_GRP1_VAL(3);
+> >> -	val |= MXR_LAYER_CFG_GRP0_VAL(2);
+> >> -	if (ctx->vp_enabled)
+> >> -		val |= MXR_LAYER_CFG_VP_VAL(1);
+> >> -	mixer_reg_write(res, MXR_LAYER_CFG, val);
+> > 
+> > I would move this exaclty piece of code into mixer_layer_priority().
+> Then we end up with the same static/hardcoded setup as before. That's
+> something I want to move away from. The entire information about layer
+> ordering should be stored in 'layer_config'.
+> 
+> 
+> 
+> >> +	mixer_layer_priority(ctx);
+> >>  
+> >>  	/* setting background color */
+> >>  	mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
+> >> @@ -1274,6 +1317,15 @@ static int mixer_probe(struct platform_device *pdev)
+> >>  	ctx->vp_enabled = drv->is_vp_enabled;
+> >>  	ctx->has_sclk = drv->has_sclk;
+> >>  	ctx->mxr_ver = drv->version;
+> >> +
+> >> +	if (drv->is_vp_enabled) {
+> >> +		ctx->layer_config = vp_layer_config;
+> >> +		ctx->num_layer = ARRAY_SIZE(vp_layer_config);
+> >> +	} else {
+> >> +		ctx->layer_config = default_layer_config;
+> >> +		ctx->num_layer = ARRAY_SIZE(default_layer_config);
+> >> +	}
+> > 
+> > Then this piece of code is useless.
+> No, since the second patch depends on it.
+
+Right, I did a second look on patch 2 and realized that index is still
+used and this code is actually needed here.
+
+	Gustavo
