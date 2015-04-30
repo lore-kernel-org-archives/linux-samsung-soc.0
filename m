@@ -1,181 +1,66 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [RFC 1/5] drm/exynos: mixer: refactor layer setup
-Date: Thu, 30 Apr 2015 18:23:11 -0300
-Message-ID: <20150430212311.GA1571@joana>
-References: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1430405816-4183-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20150430202935.GA15382@joana>
- <55429539.1020006@gmx.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: drm/exynos: Add atomic modesetting support
+Date: Thu, 30 Apr 2015 18:50:39 -0300
+Message-ID: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:57009 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751307AbbD3VXT (ORCPT
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:33218 "EHLO
+	mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750878AbbD3VvS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Apr 2015 17:23:19 -0400
-Content-Disposition: inline
-In-Reply-To: <55429539.1020006@gmx.net>
+	Thu, 30 Apr 2015 17:51:18 -0400
+Received: by qkx62 with SMTP id 62so41847915qkx.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2015 14:51:17 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com
 
-2015-04-30 Tobias Jakobi <liquid.acid@gmx.net>:
+Hi,
 
-> Hello Gustavo!
-> 
-> 
-> Gustavo Padovan wrote:
-> > Hi Tobias,
-> > 
-> > 2015-04-30 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
-> > 
-> >> First step in allowing a more generic way to setup complex
-> >> blending for the different layers.
-> >>
-> >> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> >> ---
-> >>  drivers/gpu/drm/exynos/exynos_mixer.c | 74 +++++++++++++++++++++++++++++------
-> >>  1 file changed, 63 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> >> index 4155f43..a06b8e2 100644
-> >> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> >> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> >> @@ -63,6 +63,12 @@ struct mixer_resources {
-> >>  	struct clk		*mout_mixer;
-> >>  };
-> >>  
-> >> +struct layer_config {
-> >> +	unsigned int index;
-> >> +	unsigned int priority;
-> >> +	u32 cfg;
-> >> +};
-> > 
-> > I don't see why you are creating this struct, index and priority are
-> > never used in this patch series.
-> Good catch about 'priority'. But 'index' is used, see the second patch.
-> 
-> 
-> 
-> > 
-> >> +
-> >>  enum mixer_version_id {
-> >>  	MXR_VER_0_0_0_16,
-> >>  	MXR_VER_16_0_33_0,
-> >> @@ -75,6 +81,8 @@ struct mixer_context {
-> >>  	struct drm_device	*drm_dev;
-> >>  	struct exynos_drm_crtc	*crtc;
-> >>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
-> >> +	const struct layer_config *layer_config;
-> >> +	unsigned int num_layer;
-> >>  	int			pipe;
-> >>  	bool			interlace;
-> >>  	bool			powered;
-> >> @@ -95,6 +103,40 @@ struct mixer_drv_data {
-> >>  	bool					has_sclk;
-> >>  };
-> >>  
-> >> +/*
-> >> + * The default layer priorities. A higher priority means that
-> >> + * the layer is at the top of layer stack.
-> >> + * The current configuration assumes the following usage scenario:
-> >> + * layer1: OSD [top]
-> >> + * layer0: main framebuffer
-> >> + * video layer: video overlay [bottom]
-> >> + * Note that the video layer is only usable when the
-> >> + * video processor is available.
-> >> + */
-> >> +
-> >> +static const struct layer_config default_layer_config[] = {
-> >> +	{
-> >> +		.index = 0, .priority = 1, /* layer0 */
-> >> +		.cfg = MXR_LAYER_CFG_GRP0_VAL(1)
-> >> +	}, {
-> >> +		.index = 1, .priority = 2, /* layer1 */
-> >> +		.cfg = MXR_LAYER_CFG_GRP1_VAL(2)
-> >> +	}
-> >> +};
-> >> +
-> >> +static const struct layer_config vp_layer_config[] = {
-> >> +	{
-> >> +		.index = 2, .priority = 1, /* video layer */
-> >> +		.cfg = MXR_LAYER_CFG_VP_VAL(1)
-> >> +	}, {
-> >> +		.index = 0, .priority = 2, /* layer0 */
-> >> +		.cfg = MXR_LAYER_CFG_GRP0_VAL(2)
-> >> +	}, {
-> >> +		.index = 1, .priority = 3, /* layer1 */
-> >> +		.cfg = MXR_LAYER_CFG_GRP1_VAL(3)
-> >> +	}
-> >> +};
-> >> +
-> >>  static const u8 filter_y_horiz_tap8[] = {
-> >>  	0,	-1,	-1,	-1,	-1,	-1,	-1,	-1,
-> >>  	-1,	-1,	-1,	-1,	-1,	0,	0,	0,
-> >> @@ -253,6 +295,17 @@ static void vp_default_filter(struct mixer_resources *res)
-> >>  		filter_cr_horiz_tap4, sizeof(filter_cr_horiz_tap4));
-> >>  }
-> >>  
-> >> +static void mixer_layer_priority(struct mixer_context *ctx)
-> >> +{
-> >> +	u32 val = 0;
-> >> +	unsigned int i;
-> >> +
-> >> +	for (i = 0; i < ctx->num_layer; ++i)
-> >> +		val |= ctx->layer_config[i].cfg;
-> >> +
-> >> +	mixer_reg_write(&ctx->mixer_res, MXR_LAYER_CFG, val);
-> >> +}
-> >> +
-> >>  static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
-> >>  {
-> >>  	struct mixer_resources *res = &ctx->mixer_res;
-> >> @@ -655,17 +708,7 @@ static void mixer_win_reset(struct mixer_context *ctx)
-> >>  	mixer_reg_writemask(res, MXR_STATUS, MXR_STATUS_16_BURST,
-> >>  		MXR_STATUS_BURST_MASK);
-> >>  
-> >> -	/* setting default layer priority: layer1 > layer0 > video
-> >> -	 * because typical usage scenario would be
-> >> -	 * layer1 - OSD
-> >> -	 * layer0 - framebuffer
-> >> -	 * video - video overlay
-> >> -	 */
-> >> -	val = MXR_LAYER_CFG_GRP1_VAL(3);
-> >> -	val |= MXR_LAYER_CFG_GRP0_VAL(2);
-> >> -	if (ctx->vp_enabled)
-> >> -		val |= MXR_LAYER_CFG_VP_VAL(1);
-> >> -	mixer_reg_write(res, MXR_LAYER_CFG, val);
-> > 
-> > I would move this exaclty piece of code into mixer_layer_priority().
-> Then we end up with the same static/hardcoded setup as before. That's
-> something I want to move away from. The entire information about layer
-> ordering should be stored in 'layer_config'.
-> 
-> 
-> 
-> >> +	mixer_layer_priority(ctx);
-> >>  
-> >>  	/* setting background color */
-> >>  	mixer_reg_write(res, MXR_BG_COLOR0, 0x008080);
-> >> @@ -1274,6 +1317,15 @@ static int mixer_probe(struct platform_device *pdev)
-> >>  	ctx->vp_enabled = drv->is_vp_enabled;
-> >>  	ctx->has_sclk = drv->has_sclk;
-> >>  	ctx->mxr_ver = drv->version;
-> >> +
-> >> +	if (drv->is_vp_enabled) {
-> >> +		ctx->layer_config = vp_layer_config;
-> >> +		ctx->num_layer = ARRAY_SIZE(vp_layer_config);
-> >> +	} else {
-> >> +		ctx->layer_config = default_layer_config;
-> >> +		ctx->num_layer = ARRAY_SIZE(default_layer_config);
-> >> +	}
-> > 
-> > Then this piece of code is useless.
-> No, since the second patch depends on it.
+Here goes the full support for atomic modesetting on exynos. I've
+split the patches in the various phases of atomic support.
 
-Right, I did a second look on patch 2 and realized that index is still
-used and this code is actually needed here.
+v2: fixes comments by Joonyoung
+        - remove unused var in patch 09
+        - use ->disable instead of outdated ->dpms in hdmi code
+        - remove WARN_ON from crtc enable/disable
+
+v3: fixes comment by Joonyoung
+        - move the removal of drm_helper_disable_unused_functions() to
+        separated patch
+
+v4: add patches that remove unnecessary calls to disable_plane()
 
 	Gustavo
+
+---
+Gustavo Padovan (12):
+      drm/exynos: atomic phase 1: use drm_plane_helper_update()
+      drm/exynos: atomic phase 1: use drm_plane_helper_disable()
+      drm/exynos: atomic phase 1: add .mode_set_nofb() callback
+      drm/exynos: atomic phase 2: wire up state reset(), duplicate() and destroy()
+      drm/exynos: atomic phase 2: keep track of framebuffer pointer
+      drm/exynos: atomic phase 3: atomic updates of planes
+      drm/exynos: atomic phase 3: use atomic .set_config helper
+      drm/exynos: atomic phase 3: convert page flips
+      drm/exynos: remove exported functions from exynos_drm_plane
+      drm/exynos: don't disable unused functions at init
+      drm/exynos: atomic dpms support
+      drm/exynos: remove unnecessary calls to disable_plane()
+
+ drivers/gpu/drm/bridge/ps8622.c             |   6 +-
+ drivers/gpu/drm/bridge/ptn3460.c            |   6 +-
+ drivers/gpu/drm/exynos/exynos_dp_core.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 215 +++++++++----------------------
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |   2 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c |  35 +----
+ drivers/gpu/drm/exynos/exynos_drm_fb.c      |  12 +-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c   |   3 -
+ drivers/gpu/drm/exynos/exynos_drm_plane.c   | 115 +++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h   |  11 --
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    |   6 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c        |  10 +-
+ 15 files changed, 178 insertions(+), 265 deletions(-)
