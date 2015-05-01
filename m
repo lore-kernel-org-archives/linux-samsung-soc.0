@@ -1,55 +1,81 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm
- IRQ on Arndale Octa
-Date: Fri, 1 May 2015 17:04:49 +0900
-Message-ID: <CAJKOXPexEcG==NefbYaNcZQCq9qtYSaS_qq8tKTthvbGNWFB3A@mail.gmail.com>
-References: <1427985376-20420-1-git-send-email-k.kozlowski@samsung.com>
-	<1427985376-20420-3-git-send-email-k.kozlowski@samsung.com>
-	<CAJKOXPfbsrkvXT_CBxZeDTLYdbwGMH=+5mnBLoy9Yfyp4thVQg@mail.gmail.com>
-	<7hy4l9liav.fsf@deeprootsystems.com>
+Subject: Re: [RFT PATCH] drm/exynos: Enable DP clock to fix display on
+ Exynos5250 and other
+Date: Fri, 1 May 2015 18:14:55 +0900
+Message-ID: <CAJKOXPfFYs2nob5tKi2WgihV05SNPg9aHCE6PU_eivTYkkpzBg@mail.gmail.com>
+References: <1427471856-20918-1-git-send-email-k.kozlowski@samsung.com>
+ <7h8udau9he.fsf@deeprootsystems.com>
+ <CAJKOXPc6Epy_L+djManggcaYLaOrQ_c2S0=_GgU=dikuY1UU0g@mail.gmail.com>
+ <7h8ud9pqmm.fsf@deeprootsystems.com>
+ <CAOesGMiHbcVK+BjiidPphGuoETyUroXtKgKqcVEgdSBiZQ+GmQ@mail.gmail.com>
+ <55425AFB.8020904@collabora.co.uk>
+ <CAOesGMiA7DCGCg2xgLwu_r_rRYKUjpw2HUePCW5Q9ewU61WbdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7hy4l9liav.fsf@deeprootsystems.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAOesGMiA7DCGCg2xgLwu_r_rRYKUjpw2HUePCW5Q9ewU61WbdA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, stable <stable@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-05-01 0:58 GMT+09:00 Kevin Hilman <khilman@kernel.org>:
-> Hi Krzystof,
->
-> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
->
->> 2015-04-02 23:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->>> On Arndale Octa the S2MPS11 RTC alarm interrupt was not handled at all
->>> because of wrong configuration of interrupt and gpx3-2.
->>> 1. Interrupt is signaled by falling edge.
->>> 2. This GPIO line is hard-wired on the board to PVDD_APIO_1V8 through a
->>>    resistor so pull-up/down must be disabled.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos5420-arndale-octa.dts | 13 ++++++++++++-
->>>  1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> Dear Kukjin,
->>
->> Any comments  on this and other patches. A lot of emails waits for
->> your opinion. Is there anything I could do to help you in smooth
->> review or applying?
->
-> IMO, I think you you should just start collecting fixes and features and
-> queuing them for Kukjin and then start working as a co-maintainer.
-
-Seems an interesting and challenging idea. Let's try it and see if it helps.
-
->
-> The samsung platforms have been in a near constant state of breakage
-> over the last *several* cycles, and something really needs to change in
-> how these are being monitored and maintained.
-
-We have been struggling with this for some time... It is annoying also to me.
-
-Best regards,
-Krzysztof
+MjAxNS0wNS0wMSAxOjUwIEdNVCswOTowMCBPbG9mIEpvaGFuc3NvbiA8b2xvZkBsaXhvbS5uZXQ+
+Ogo+IE9uIFRodSwgQXByIDMwLCAyMDE1IGF0IDk6NDAgQU0sIEphdmllciBNYXJ0aW5leiBDYW5p
+bGxhcwo+IDxqYXZpZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPiB3cm90ZToKPj4gSGVsbG8g
+T2xvZiwKPj4KPj4gT24gMDQvMzAvMjAxNSAwNTo1NyBQTSwgT2xvZiBKb2hhbnNzb24gd3JvdGU6
+Cj4+PiBPbiBUaHUsIEFwciAzMCwgMjAxNSBhdCA4OjQ0IEFNLCBLZXZpbiBIaWxtYW4gPGtoaWxt
+YW5Aa2VybmVsLm9yZz4gd3JvdGU6Cj4+Pj4gS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dz
+a2lAc2Ftc3VuZy5jb20+IHdyaXRlczoKPj4+Pj4+Pgo+Pj4+Pj4+IFRoaXMgc2hvdWxkIGZpeCBp
+c3N1ZSByZXBvcnRlZCBieSBKYXZpZXIgWzFdWzJdLgo+Pj4+Pj4+Cj4+Pj4+Pj4gVGVzdGVkIG9u
+IENocm9tZWJvb2sgU25vdyAoRXh5bm9zIDUyNTApLiBNb3JlIHRlc3Rpbmcgd291bGQgYmUgZ3Jl
+YXQsCj4+Pj4+Pj4gZXNwZWNpYWxseSBvbiBvdGhlciBFeHlub3MgNXh4eCBwcm9kdWN0cy4KPj4+
+Pj4+Cj4+Pj4+PiBJIGhvcGVkIHRvIHRyeSB0aGlzIG9uIG15IGV4eW5vczUgYm9hcmRzLCBidXQg
+aXQgZG9lc24ndCBzZWVtIHRvIGFwcGx5Cj4+Pj4+PiB0byBsaW51eC1uZXh0IG9yIHRvIExpbnVz
+JyBtYXN0ZXIgYnJhbmNoLgo+Pj4+Pj4KPj4+Pj4+IEFyZSB0aGVyZSBzb21lIG90aGVyIGRlcGVu
+ZGVuY2llcyBoZXJlPwo+Pj4+Pgo+Pj4+PiBJdCBpcyBhbHJlYWR5IGFwcGxpZWQ6Cj4+Pj4+IGh0
+dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4
+LmdpdC9jb21taXQvP2lkPTFjMzYzYzdjY2NmNjQxMjgwODcwMDJiMDc3OTk4NmFkMTZhZmY2ZGMK
+Pj4+Pgo+Pj4+IEVyLCB5dXAuICBUaGF0IHdvdWxkIGV4cGxhaW4gaXQuIDspCj4+Pj4KPj4+PiBT
+b3JyeSBmb3IgdGhlIG5vaXNlLAo+Pj4KPj4+IFdlbGwsIG5vaXNlIG9yIG5vdCwgRXh5bm9zIGlz
+IHN0aWxsIGJyb2tlbiBpbiBtYWlubGluZSBhbmQgd2FzIGJyb2tlbgo+Pj4gb24gLW5leHQgZm9y
+IHNvIGxvbmcgaW4gZGlmZmVyZW50IHdheXMgdGhhdCBiaXNlY3RpbmcgaXQgaXMgYSBmdXRpbGUK
+Pj4+IGV4ZXJjaXNlIGluIGZydXN0cmF0aW9uLgo+Pj4KPj4+IEl0IGRvZXNuJ3Qgc2VlbSB0byBz
+aG93IHVwIHdpdGggYSB0cml2aWFsIGJvb3QgdXNpbmcgb25seSByYW1kaXNrLCBidXQKPj4+IHdo
+ZW4gYm9vdGluZyBhIHJlYWwgZGlzdHJvIGZyb20gZGlzaywgaXQgY2VydGFpbmx5IGRvZXMuCj4+
+Pgo+Pj4gRm9yIGV4YW1wbGU6Cj4+Pgo+Pj4gaHR0cDovL2FybS1zb2MubGl4b20ubmV0L2Jvb3Rs
+b2dzL21haW5saW5lL3Y0LjEtcmMxLTU2LWczZDk5ZTNmL3BpLWFybS1leHlub3NfZGVmY29uZmln
+Lmh0bWwKPj4+Cj4+PiBEaXNhYmxpbmcgQ09ORklHX0RSTSBtYWtlcyBpdCBib290IHJlbGlhYmx5
+Lgo+Pj4KPj4+IEFybmRhbGUgZG9lc24ndCBzaG93IGl0IGZvciBtZSwgYnV0IGl0IGFsc28gZG9l
+c24ndCBoYXZlIHdvcmtpbmcgZ3JhcGhpY3MuCj4+Pgo+Pgo+PiBCb3RoIEV4eW5vczUyNTAgYW5k
+IEV4eW5vczU0MjAgaGFkIHNpbWlsYXIgaXNzdWVzIGFuZCAkc3ViamVjdCBpcyB0aGUgZml4Cj4+
+IGZvciA1MjUwIHdoaWxlIDU0MjAgaXMgZml4ZWQgYnkgbXkgIkFSTTogZHRzOiBNYWtlIERQIGEg
+Y29uc3VtZXIgb2YgRElTUDEKPj4gcG93ZXIgZG9tYWluIG9uIEV4eW5vczU0MjAiIHBhdGNoIHRo
+YXQgd2FzIHBvc3RlZCBhIGxvbmcgdGltZSBhZ28uIEkgaGF2ZQo+PiBwaW5nZWQgS3VramluIHNl
+dmVyYWwgdGltZXMgYWJvdXQgdGhpcyBwYXRjaCBhbmQgaGUgc2FpZCB0aGF0IGhlIHdpbGwgcGlj
+awo+PiBpdCB0aGlzIHdlZWtlbmQgWzBdLgo+Pgo+PiBJdCBpcyBpbmRlZWQgdmVyeSBmcnVzdHJh
+dGluZyBob3cgbWFueSBFeHlub3MgcGF0Y2hlcyBzZWVtcyB0byBiZSBmYWxsaW5nCj4+IHRocm91
+Z2ggdGhlIGNyYWNrLCBldmVuIGltcG9ydGFudCBmaXhlcyBsaWtlIHRoZXNlIG9uZXMgdGhhdCBh
+bGxvdyBib2FyZHMKPj4gdG8gYm9vdCBhZ2Fpbi4KPj4KPj4gS2V2aW4gc3VnZ2VzdGVkIHRoYXQg
+S3J6eXN6dG9mIGNvdWxkIGNvbGxlY3QgYW5kIHF1ZXVlIHBhdGNoZXMgWzFdIHRvIGhlbHAKPj4g
+S3VramluIGFuZCBzdGFydCBhY3RpbmcgYXMgYSBjby1tYWludGF0aW5lciB3aGljaCBJIHRoaW5r
+IGl0J3MgYSB2ZXJ5IGdvb2QKPj4gaWRlYSBhbmQgS3J6eXN6dG9mIGFscmVhZHkgZGlkIGZvciBz
+b21lIHBhdGNoZXMgZHVyaW5nIHRoZSA0LjEgY3ljbGUuCgpZZXMsIEkgZGlkLiBJdCB0dXJuZWQg
+cXVpdGUgd2VsbCwgbW9zdCBvZiB0aGUgcGF0Y2hlcyBJIGNvbGxlY3RlZCB3ZXJlCnB1bGxlZCA6
+KSAuCgo+IFllcywgdGhhdCdzIGEgbXVjaCBuZWVkZWQgaW1wcm92ZW1lbnQuIEkgc3VnZ2VzdCBz
+dGFydGluZyBvdXQgYnkKPiBjb2xsZWN0aW5nIGNyaXRpY2FsIGZpeGVzIGxpa2UgdGhlc2UsIGFu
+ZCB3ZSdkIGJlIGhhcHB5IHRvIG1lcmdlIHRoZW0KPiBkaXJlY3RseSBpZiBnb2luZyB0aHJvdWdo
+IEt1a2ppbiB3aWxsIGFkZCBsYXRlbmN5Lgo+Cj4gS3J6eXN6dG9mLCBpZiB5b3UgY2FuLCBtYWtl
+IHN1cmUgeW91IGdldCBhIFBHUCBrZXkgc2V0dXAgYW5kIHN0YXJ0Cj4gY29sbGVjdGluZyBzaWdu
+YXR1cmVzIGZyb20ga2VybmVsIGRldmVsb3BlcnMuCgpTdXJlLCBJJ2xsIHN0YXJ0IHJpZ2h0IGF3
+YXkhCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
