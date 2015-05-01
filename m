@@ -1,35 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 2/4] i2c: mxs: Constify platform_device_id
-Date: Sat,  2 May 2015 00:54:26 +0900
-Message-ID: <1430495668-31878-2-git-send-email-k.kozlowski.k@gmail.com>
-References: <1430495668-31878-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430495668-31878-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/4] spi: imx: Constify platform_device_id
+Date: Fri, 1 May 2015 17:37:35 +0100
+Message-ID: <20150501163735.GH22845@sirena.org.uk>
+References: <1430495047-31122-1-git-send-email-k.kozlowski.k@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lzmAV/UDz8M1R67T"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46005 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751287AbbEAQhu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 May 2015 12:37:50 -0400
+Content-Disposition: inline
+In-Reply-To: <1430495047-31122-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-The platform_device_id is not modified by the driver and core uses it as
-const.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- drivers/i2c/busses/i2c-mxs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--lzmAV/UDz8M1R67T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/i2c/busses/i2c-mxs.c b/drivers/i2c/busses/i2c-mxs.c
-index 3e84f6c090a5..033846cdf266 100644
---- a/drivers/i2c/busses/i2c-mxs.c
-+++ b/drivers/i2c/busses/i2c-mxs.c
-@@ -784,7 +784,7 @@ static int mxs_i2c_get_ofdata(struct mxs_i2c_dev *i2c)
- 	return 0;
- }
- 
--static struct platform_device_id mxs_i2c_devtype[] = {
-+static const struct platform_device_id mxs_i2c_devtype[] = {
- 	{
- 		.name = "imx23-i2c",
- 		.driver_data = MXS_I2C_V1,
--- 
-2.1.4
+On Sat, May 02, 2015 at 12:44:04AM +0900, Krzysztof Kozlowski wrote:
+> The platform_device_id is not modified by the driver and core uses it as
+> const.
+
+Applied, thanks.
+
+--lzmAV/UDz8M1R67T
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVQ6vPAAoJECTWi3JdVIfQIj8H/ja69wEkubAD/4XVc9slGrx7
+lMP2hlRP3/aEWcBv5tcK85gLQbtOYDi4C5nM09Nt/Gfb62VMW8k2oVopla4XCZYF
+0AwWc5DOaVX+OwRz7/xkvalF1ZAMUrtxb0HjZFtq28dwKMm1TFPtcIvbGcbw7q6J
+4LxoyK4HUjvt8rlUuuffes9sEFIfIabZtLb8COoIiS2wUQDaf3L/+uzYDbawo3ja
+VlHJXhUMas4hqKwtqLQR2bvbE+0AxfDUX80EoPFVxGHbgtjGfbwleI+wS2sBlQuJ
+zbDoc84P4SVsyDs9jzbFaIHNOamsNJaCr9DfSs+J0jlBEe/Hix5yZ4YchMO54Zk=
+=nrP8
+-----END PGP SIGNATURE-----
+
+--lzmAV/UDz8M1R67T--
