@@ -1,10 +1,12 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH] drm/exynos: mixer: Constify platform_device_id
-Date: Sat,  2 May 2015 00:56:36 +0900
-Message-ID: <1430495796-32016-1-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH 3/4] ASoC: fsl: Constify platform_device_id
+Date: Sat,  2 May 2015 01:00:13 +0900
+Message-ID: <1430496014-32309-3-git-send-email-k.kozlowski.k@gmail.com>
+References: <1430496014-32309-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430496014-32309-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Timur Tabi <timur@tabi.org>, Nicolin Chen <nicoleotsuka@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
@@ -13,21 +15,21 @@ const.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
+ sound/soc/fsl/imx-audmux.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index fbec750574e6..512549a35e96 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1156,7 +1156,7 @@ static struct mixer_drv_data exynos4210_mxr_drv_data = {
- 	.has_sclk = 1,
- };
+diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
+index d9050d946ae7..fc57da341d61 100644
+--- a/sound/soc/fsl/imx-audmux.c
++++ b/sound/soc/fsl/imx-audmux.c
+@@ -184,7 +184,7 @@ static enum imx_audmux_type {
+ 	IMX31_AUDMUX,
+ } audmux_type;
  
--static struct platform_device_id mixer_driver_types[] = {
-+static const struct platform_device_id mixer_driver_types[] = {
+-static struct platform_device_id imx_audmux_ids[] = {
++static const struct platform_device_id imx_audmux_ids[] = {
  	{
- 		.name		= "s5p-mixer",
- 		.driver_data	= (unsigned long)&exynos4210_mxr_drv_data,
+ 		.name = "imx21-audmux",
+ 		.driver_data = IMX21_AUDMUX,
 -- 
 2.1.4
