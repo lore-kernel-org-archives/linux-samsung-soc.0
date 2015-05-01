@@ -1,40 +1,46 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 2/2] clk: s3c2410: Constify platform_device_id
-Date: Sat,  2 May 2015 01:02:48 +0900
-Message-ID: <1430496168-32408-2-git-send-email-k.kozlowski.k@gmail.com>
-References: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:32912 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030266AbbEAQDF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 May 2015 12:03:05 -0400
-In-Reply-To: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] i2c: rcar: Constify platform_device_id
+Date: Sat,  2 May 2015 00:54:27 +0900
+Message-ID: <1430495668-31878-3-git-send-email-k.kozlowski.k@gmail.com>
+References: <1430495668-31878-1-git-send-email-k.kozlowski.k@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1430495668-31878-1-git-send-email-k.kozlowski.k@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 The platform_device_id is not modified by the driver and core uses it as
 const.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- drivers/clk/samsung/clk-s3c2410-dclk.c | 2 +-
+ drivers/i2c/busses/i2c-rcar.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index db6fddb211d4..e56df5064889 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -404,7 +404,7 @@ static struct s3c24xx_dclk_drv_data dclk_variants[] = {
- 	},
- };
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 5a84bea5b845..06f34d1c5121 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -713,7 +713,7 @@ static int rcar_i2c_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
--static struct platform_device_id s3c24xx_dclk_driver_ids[] = {
-+static const struct platform_device_id s3c24xx_dclk_driver_ids[] = {
- 	{
- 		.name		= "s3c2410-dclk",
- 		.driver_data	= (kernel_ulong_t)&dclk_variants[S3C2410],
+-static struct platform_device_id rcar_i2c_id_table[] = {
++static const struct platform_device_id rcar_i2c_id_table[] = {
+ 	{ "i2c-rcar",		I2C_RCAR_GEN1 },
+ 	{ "i2c-rcar_gen1",	I2C_RCAR_GEN1 },
+ 	{ "i2c-rcar_gen2",	I2C_RCAR_GEN2 },
 -- 
 2.1.4
