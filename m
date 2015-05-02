@@ -1,102 +1,55 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [GIT PULL] ARM: EXYNOS: Fixes and improvements for v4.2
-Date: Sat,  2 May 2015 15:31:24 +0900
-Message-ID: <1430548284-23827-1-git-send-email-k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: fix clk_enable() WARNing in S3C24XX ADC
+Date: Sat, 02 May 2015 16:15:00 +0900
+Message-ID: <55447974.4050209@gmail.com>
+References: <1430112584-6170-1-git-send-email-sakib@meta.ua>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:33537 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750778AbbEBGbl (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:34754 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750920AbbEBHPF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 May 2015 02:31:41 -0400
+	Sat, 2 May 2015 03:15:05 -0400
+Received: by pacyx8 with SMTP id yx8so111344267pac.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 May 2015 00:15:04 -0700 (PDT)
+In-Reply-To: <1430112584-6170-1-git-send-email-sakib@meta.ua>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@kernel.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+To: Sergiy Kibrik <sakib@meta.ua>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-Dear Kukjin,
+W dniu 27.04.2015 o 14:29, Sergiy Kibrik pisze:
+> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+> calls as required by common clock framework. Removes this warning on probe:
+> 
+>  ------------[ cut here ]------------
+>  WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:889 __clk_enable+0x28/0x9c()
+>  Modules linked in:
+>  CPU: 0 PID: 1 Comm: swapper Not tainted 3.19.0+ #46
+>  [<c0013a98>] (unwind_backtrace) from [<c0010d8c>] (show_stack+0x10/0x14)
+>  [<c0010d8c>] (show_stack) from [<c001b018>] (warn_slowpath_common+0x7c/0xa4)
+>  [<c001b018>] (warn_slowpath_common) from [<c001b0d0>] (warn_slowpath_null+0x18/0x20)
+>  [<c001b0d0>] (warn_slowpath_null) from [<c01a5f80>] (__clk_enable+0x28/0x9c)
+>  [<c01a5f80>] (__clk_enable) from [<c01a600c>] (clk_enable+0x18/0x2c)
+>  [<c01a600c>] (clk_enable) from [<c001860c>] (s3c_adc_probe+0x11c/0x18c)
+>  [<c001860c>] (s3c_adc_probe) from [<c0153a10>] (platform_drv_probe+0x30/0x78)
+>  [<c0153a10>] (platform_drv_probe) from [<c01523e0>] (driver_probe_device+0xb0/0x1fc)
+>  [<c01523e0>] (driver_probe_device) from [<c01525dc>] (__driver_attach+0x68/0x88)
+>  [<c01525dc>] (__driver_attach) from [<c0150df0>] (bus_for_each_dev+0x70/0x94)
+>  [<c0150df0>] (bus_for_each_dev) from [<c0151c80>] (bus_add_driver+0xdc/0x1c4)
+>  [<c0151c80>] (bus_add_driver) from [<c0152ba4>] (driver_register+0x9c/0xe0)
+>  [<c0152ba4>] (driver_register) from [<c03041cc>] (adc_init+0x10/0x34)
+>  [<c03041cc>] (adc_init) from [<c00087fc>] (do_one_initcall+0x110/0x1cc)
+>  [<c00087fc>] (do_one_initcall) from [<c02ffccc>] (kernel_init_freeable+0xf4/0x1ac)
+>  [<c02ffccc>] (kernel_init_freeable) from [<c022f4fc>] (kernel_init+0x8/0xe0)
+>  [<c022f4fc>] (kernel_init) from [<c000e098>] (ret_from_fork+0x14/0x3c)
+>  ---[ end trace f4a1ea39a114fecf ]---
+> 
+> Signed-off-by: Sergiy Kibrik <sakib@meta.ua>
 
-
-This groups important fixes and typical improvements for Exynos
-SoC for next v4.2 merge window.
-
-I hope you will find useful grouping these commits together.
-
-Everything can be also found on github:
-https://github.com/krzk/linux
-Branches:
-1. fixes-samsung
-2. for-next-samsung
-
-
-If you have any comments, do not hesitate as I would welcome any feedback.
-I can also split it into separate fixes and normal updates if you want.
-
-
-Description:
-1. Fix second suspend to RAM on Trats2 board. This has shown up
-   after enabling L2 cache but actually the "use delayed reset
-   assertion" is to be blamed.
-2. Fix imprecise external abort on Exynos5420 boards when exynos-dp
-   driver tries to access the DP controller registers and the PD
-   was turned off.
-3. Various fixes for missing return checks in power domain code.
-4. Fix RTC alarm on Arndale Octa board.
-5. Improvements of reparenting clocks on power domain on/off.
-6. Enabling S3C RTC on various boards.
-
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
 Best regards,
 Krzysztof
-
-
-----------------------------------------------------------------
-The following changes since commit 5d5443b9c3bac7231ae473c01bcfe4c7650b13c5:
-
-  Merge branch 'v4.1-next/mach-samsung' into for-next (2015-03-27 02:36:43 +0900)
-
-are available in the git repository at:
-
-  https://github.com/krzk/linux.git for-next-samsung
-
-for you to fetch changes up to c06f3b9943fbea71ad921ea614e331f571d59c02:
-
-  ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa (2015-05-02 15:02:50 +0900)
-
-----------------------------------------------------------------
-Javier Martinez Canillas (1):
-      ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
-
-Krzysztof Kozlowski (11):
-      ARM: EXYNOS: Handle of of_iomap() failure
-      ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
-      ARM: EXYNOS: Add missing of_node_put() when parsing power domains
-      ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ on Arndale Octa
-      ARM: EXYNOS: Fix failed second suspend on Exynos4
-      ARM: EXYNOS: Get current parent clock for power domain on/off
-      ARM: dts: Use last parent for clocks during power domain on/off
-      ARM: dts: s3c-rtc: Use s3c6410-rtc instead of exynos3250-rtc
-      ARM: dts: Use define for s3c-rtc clock id
-      ARM: dts: Use define for s3c-rtc clock id
-      ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa
-
-Markus Reichl (1):
-      ARM: dts: Add bindings for 32kHz clocks from s2mps11
-
- .../bindings/arm/exynos/power_domain.txt           |  7 ++--
- Documentation/devicetree/bindings/rtc/s3c-rtc.txt  |  3 +-
- arch/arm/boot/dts/exynos3250-monk.dts              |  3 +-
- arch/arm/boot/dts/exynos3250-rinato.dts            |  3 +-
- arch/arm/boot/dts/exynos3250.dtsi                  |  2 +-
- arch/arm/boot/dts/exynos4.dtsi                     |  2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts            |  9 ++++-
- arch/arm/boot/dts/exynos4415.dtsi                  |  2 +-
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 24 ++++++++++---
- arch/arm/boot/dts/exynos5420.dtsi                  | 14 +++-----
- arch/arm/mach-exynos/common.h                      |  2 ++
- arch/arm/mach-exynos/exynos.c                      | 27 +++++++++++++++
- arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
- arch/arm/mach-exynos/pm_domains.c                  | 37 ++++++++++++++------
- arch/arm/mach-exynos/suspend.c                     |  3 ++
- include/dt-bindings/clock/samsung,s2mps11.h        | 23 +++++++++++++
- 16 files changed, 129 insertions(+), 71 deletions(-)
- create mode 100644 include/dt-bindings/clock/samsung,s2mps11.h
