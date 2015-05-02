@@ -1,77 +1,48 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
- to 'sclk_mipi'
-Date: Tue, 23 Jun 2015 13:00:14 +0900
-Message-ID: <5588D9CE.2090103@samsung.com>
-References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
- <1434113958-15877-16-git-send-email-human.hwang@samsung.com>
- <5587D111.9090602@samsung.com> <5587F4A1.2090502@samsung.com>
- <CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
- <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
- <5588C444.1000301@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] Show proper respect for Heinrich Hertz by using the
+ correct unit for frequency
+Date: Sat, 2 May 2015 16:59:47 +0200
+Message-ID: <20150502145947.GA8156@xo-6d-61-c0.localdomain>
+References: <20150511131952.GD2067@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5588C444.1000301@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58530 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754568AbbFWQvh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Jun 2015 12:51:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20150511131952.GD2067@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 
-T24gMjMuMDYuMjAxNSAxMToyOCwgSW5raSBEYWUgd3JvdGU6Cj4gT24gMjAxNeuFhCAwNuyblCAy
-M+ydvCAxMToxMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPj4gMjAxNS0wNi0yMiAyMToz
-NSBHTVQrMDk6MDAgS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+
-Ogo+Pj4gMjAxNS0wNi0yMiAyMDo0MiBHTVQrMDk6MDAgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1
-bmcuY29tPjoKPj4+PiArIEtyenlzenRvZgo+Pj4+Cj4+Pj4gT24gMjAxNeuFhCAwNuyblCAyMuyd
-vCAxODoxMCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+IE9uIDIwMTXrhYQgMDbsm5QgMTLsnbwgMjE6
-NTksIEh5dW5nd29uIEh3YW5nIHdyb3RlOgo+Pj4+Pj4gVGhlIGNsb2NrIHdoaWNoIHdhcyBuYW1l
-ZCBhcyAncGxsX2NsaycgaXMgYWN0dWFsbHkgbm90IHRoZSBjbG9jayBzb3VyY2UKPj4+Pj4+IG9m
-IFBMTCBpbiBNSVBJIERTSS4gVGhpcyBwYXRjaCBmaXhlcyB0aGlzIGRpc2FncmVlbWVudC4KPj4+
-Pj4KPj4+Pj4gTXIuIEt1a2ppbiBhbmQgS3J6eXN6dG9mLCBjYW4geW91IGdpdmUgbWUgQWNrZWQt
-Ynkgb3IgU2luZ2VkLW9mZi1ieT8gSSdkCj4+Pj4+IGxpa2UgdG8gbWVyZ2UgdGhpcyBwYXRjaCB0
-byBtYWlubGluZSB0aHJvdWdoIGRybS1uZXh0Lgo+Pj4KPj4+IFRoYW5rcyBmb3IgZm9yd2FyZGlu
-ZyBtZSBvdGhlciBuZWNlc3NhcnkgcGF0Y2guIEFsbCB0aGF0IGJ1cmRlbiBjb3VsZAo+Pj4gYmUg
-ZWFzaWx5IGF2b2lkZWQgYnkgc2VuZGluZyBldmVyeXRoaW5nIHRvIHNhbXN1bmctc29jIGFueXdh
-eS4KPj4+Cj4+PiBUaGUgcGF0Y2ggaXRzZWxmIGxvb2tzIGdvb2Q6Cj4+PiBBY2tlZC1ieTogS3J6
-eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Cj4+Pgo+Pj4gQmVzdCBy
-ZWdhcmRzLAo+Pj4gS3J6eXN6dG9mCj4+Cj4+IFRvIGNsYXJpZnkuIFRoZXJlIHdlcmUgc2V2ZW4g
-dmVyc2lvbnMgb2YgdGhpcyBwYXRjaCBhbmQgbm9uZSBvZiB0aGVtCj4+IHdlcmUgc2VudCB0byBz
-YW1zdW5nLXNvYyBsaXN0LCB0byBLdWtqaW4gS2ltIG9yIHRvIG1lLgo+Pgo+PiBJIGFsc28gd29u
-ZGVyIGFib3V0IHBhdGNoIDI6ICJvZjogYWRkIGhlbHBlciBmb3IgZ2V0dGluZyBlbmRwb2ludCBu
-b2RlCj4+IHdpdGggc3BlY2lmaWMgaWRlbnRpZmllcnMiCj4+IGZvciB3aGljaCBJIGNhbid0IGZp
-bmQgcmVzcGVjdGl2ZSBhY2sgZnJvbSBSb2IgSGVycmluZyAoK0NjKS4gSSBvbmx5IGZvdW5kIHRo
-aXM6Cj4+IGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvZGV2aWNldHJlZS9tc2c2OTMzNi5o
-dG1sCj4+IGJ1dCB0aGVyZSBhcmUgb25seSBjb21tZW50cywgbm90IGFuIGFjay4KPiAKPiBCZWxv
-dyBpcyB0aGUgY29tbWVudHMgZnJvbSBSb2IgSGVycmluZy4gSG93IGFib3V0IHN1YnNjcmliaW5n
-IGRldmljZQo+IHRyZWUgbWFpbmxpbmcgbGlzdD8gWW91IGFyZSBhIG1haW50YWluZXIgb2YgRXh5
-bm9zIFNvQy4gVGhpcyBwYXRjaCB3YXMKPiBwb3N0ZWQgdG8gZGV2aWNlIHRyZWUgbWFpbGluZyBs
-aXN0IGNjaW5nIEdyYW50IGFuZCBSb2IuIElmIHlvdSBsaXN0ZW4gdG8KPiBvbmx5IFNhbXN1bmcg
-U29DIG1haWxpbmcgbGlzdCB0aGVuIHlvdSBjb3VsZG4ndCBmaW5kIHRoaXMgcGF0Y2ggaW4geW91
-cgo+IGVtYWlsIGJveC4KClNvbWUgdGltZSBhZ28gSSB3YXMgc3Vic2NyaWJpbmcgZGV2aWNldHJl
-ZSwgYnV0IGFzIEkgYW0gbm90IGRldmljZSB0cmVlCm1haW50YWluZXIgYW5kIHRoZSB0cmFmZmlj
-IHRoZXJlIGlzIHJlYWxseSBodWdlLCBJIHVuc3Vic2NyaWJlZC4KCj4gCj4gIk9uIFN1biwgRmVi
-IDIyLCAyMDE1IGF0IDc6NDEgUE0sIEh5dW5nd29uIEh3YW5nCj4gPGh1bWFuLmh3YW5nQHNhbXN1
-bmcuY29tPiB3cm90ZToKPiAgPiBXaGVuIHRoZXJlIGFyZSBtdWx0aXBsZSBwb3J0cyBvciBtdWx0
-aXBsZSBlbmRwb2ludHMgaW4gYSBwb3J0LCB0aGV5Cj4gaGF2ZSB0byBiZQo+ICA+IGRpc3Rpbmd1
-aXNoZWQgYnkgdGhlIHZhbHVlIG9mIHJlZyBwcm9wZXJ0eS4gSXQgaXMgY29tbW9uLiBUaGUgZHJp
-dmVycwo+IGNhbiBnZXQKPiAgPiB0aGUgc3BlY2lmaWMgZW5kcG9pbnQgaW4gdGhlIHNwZWNpZmlj
-IHBvcnQgdmlhIHRoaXMgZnVuY3Rpb24uIE5vdyB0aGUKPiBkcml2ZXJzCj4gID4gaGF2ZSB0byBp
-bXBsZW1lbnQgdGhpcyBjb2RlIGluIHRoZW1zZWx2ZXMgb3IgaGF2ZSB0byBmb3JjZSB0aGUgb3Jk
-ZXIKPiBvZiBkdCBub2Rlcwo+ICA+IHRvIGdldCB0aGUgcmlnaHQgbm9kZS4KPiAgPgo+ICA+IFNp
-Z25lZC1vZmYtYnk6IEh5dW5nd29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5nLmNvbT4KPiAK
-PiBBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KPiAKPiAgSSdtIG5vdCBh
-cHBseWluZyBhcyB0aGVyZSBpcyBubyB1c2VyLCBzbyBhcHBseSB0aGlzIHBhdGNoIGFsb25nIHdp
-dGggYQo+ICB1c2VyIG9mIHRoZSBmdW5jdGlvbi4iCgpUaGFua3MhIFRoYXQgaGVscGVkIG1lIGZp
-bmRpbmcgaXQgaW4gdGhlIGFyY2hpdmVzLgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi!
+
+> The SI unit of frequency is Hertz, named after Heinrich Hertz, and is
+> given the symbol "Hz" to denote this.  "hz" is not the unit of frequency,
+> and is in fact meaningless.
+> 
+> Fix arch/arm to correctly use "Hz", thereby acknowledging Heinrich Hertz
+> contribution to the modern world.
+> 
+
+> --- a/arch/arm/mach-ixp4xx/include/mach/platform.h
+> +++ b/arch/arm/mach-ixp4xx/include/mach/platform.h
+> @@ -74,7 +74,7 @@ extern unsigned long ixp4xx_exp_bus_size;
+>  /*
+>   * Clock Speed Definitions.
+>   */
+> -#define IXP4XX_PERIPHERAL_BUS_CLOCK 	(66) /* 66Mhzi APB BUS   */ 
+> +#define IXP4XX_PERIPHERAL_BUS_CLOCK 	(66) /* 66MHzi APB BUS   */ 
+>  #define IXP4XX_UART_XTAL        	14745600
+>  
+
+Speaking about meaningless... What is MHzi supposed to mean?
+
+ACK for the rest.
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
