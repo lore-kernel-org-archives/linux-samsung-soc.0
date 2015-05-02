@@ -1,48 +1,85 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V4 2/2] ARM: dts: exynos5422-odroidxu3: add 'rtc_src'
- clock to rtc node
-Date: Sat, 02 May 2015 14:14:20 +0900
-Message-ID: <55445D2C.7030204@samsung.com>
-References: <551A8991.7080706@fivetechno.de>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: Re: [2/2] ARM: dts: Add missing irq pinctrl for max77686 on smdk5250
+Date: Sat, 02 May 2015 14:49:46 +0900
+Message-ID: <5544657A.7010006@gmail.com>
+References: <1416312509-11530-2-git-send-email-yadi.brar@samsung.com> <553F68CC.6030504@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:33554 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750785AbbEBFO0 (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34120 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750920AbbEBFtv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 May 2015 01:14:26 -0400
-Received: by pdbnk13 with SMTP id nk13so111168595pdb.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 May 2015 22:14:25 -0700 (PDT)
-In-Reply-To: <551A8991.7080706@fivetechno.de>
+	Sat, 2 May 2015 01:49:51 -0400
+In-Reply-To: <553F68CC.6030504@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org
-Cc: Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, cw00.choi@samsung.com
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
+Cc: robh+dt@kernel.org, yadi.brar01@gmail.com
 
-W dniu 31.03.2015 o 20:48, Markus Reichl pisze:
-> The Exynos5422 SoC has a s3c6410 RTC where the source clock
-> is now a mandatory property.
+W dniu 28.04.2015 o 20:02, Pankaj Dubey pisze:
+> Hi Kukjin,
 > 
-> This patch fixes probe failure of s3c-rtc on Odroid-XU3 boards.
-> It is based on v4.0-rc2.
+> Any updated for this patch. Without this PMIC RTC is not working on
+> SMDK5250.
 > 
-> ---
-> Changes since v3:
-> 1. Readded slipped #include statement.
-> Sorry for the mess.
-> Changes since v2:
-> 1. Dropped unused phandle.
-> Changes since v1:
-> 1. Dropped Documentation.
-> 2. Split into 2 parts.
-> 
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
 
-Please re-send the patch with:
-1. Accumulated reviews.
-2. Signed-off-by and other tags BEFORE delimiter '---'
+Could you resend the patch after rebasing it?
 
 Best regards,
 Krzysztof
+
+> Thanks,
+> Pankaj Dubey
+> 
+> On Tuesday 18 November 2014 05:38 PM, Yadwinder Singh Brar wrote:
+>> This patch adds pinctrl configuration for using configuring gpx3-2 as an
+>> external interrupt from max77686. Though max77686 RTC is enabled and gets
+>> probed by default, it doesnt work as its unable to get interrupt.
+>>
+>> This patch makes max77686 RTC work and also configures it as wakeup
+>> source.
+>>
+>> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>>
+>> ---
+>> arch/arm/boot/dts/exynos5250-smdk5250.dts |   12 ++++++++++++
+>>   1 files changed, 12 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> index 95b5b51..19cd918 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -131,6 +131,9 @@
+>>           reg = <0x09>;
+>>           interrupt-parent = <&gpx3>;
+>>           interrupts = <2 IRQ_TYPE_NONE>;
+>> +        pinctrl-names = "default";
+>> +        pinctrl-0 = <&max77686_irq>;
+>> +        wakeup-source;
+>>
+>>           voltage-regulators {
+>>               ldo1_reg: LDO1 {
+>> @@ -411,3 +414,12 @@
+>>           };
+>>       };
+>>   };
+>> +
+>> +&pinctrl_0 {
+>> +    max77686_irq: max77686-irq {
+>> +        samsung,pins = "gpx3-2";
+>> +        samsung,pin-function = <0xf>;
+>> +        samsung,pin-pud = <0>;
+>> +        samsung,pin-drv = <0>;
+>> +    };
+>> +};
+>>
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
