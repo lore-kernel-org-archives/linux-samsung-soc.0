@@ -1,157 +1,82 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: exynos4412: misc issues on Hardkernel Odroid boards
-Date: Sun, 03 May 2015 14:39:28 +0200
-Message-ID: <55461700.1000308@math.uni-bielefeld.de>
-References: <54D779FB.9070306@math.uni-bielefeld.de> <54D86913.2050109@samsung.com> <54D9185A.10607@math.uni-bielefeld.de> <54D9EDC8.6020508@samsung.com> <f6d45cc1b5bcc8d3a6a3672cd953113a@math.uni-bielefeld.de> <54F5C0C1.2020902@samsung.com> <553A27EE.5000800@samsung.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [RESEND] [PATCH V4 2/2] ARM: dts: exynos5422-odroidxu3: add 'rtc_src' clock to rtc node
+Date: Sun, 03 May 2015 18:34:29 +0200
+Message-ID: <18118883.KTZmm2WyxS@dell2.five-lan.de>
+References: <551A8991.7080706@fivetechno.de> <55445D2C.7030204@samsung.com>
+Reply-To: m.reichl@fivetechno.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57041 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750886AbbECMjg (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:53599 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750899AbbECQep (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 May 2015 08:39:36 -0400
-In-Reply-To: <553A27EE.5000800@samsung.com>
+	Sun, 3 May 2015 12:34:45 -0400
+In-Reply-To: <55445D2C.7030204@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, cw00.choi@samsung.com, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello Marek,
+The Exynos5422 SoC has a s3c6410 RTC where the source clock
+is now a mandatory property.
 
-Marek Szyprowski wrote:
-> Hello Tobias,
-> 
-> On 2015-03-03 15:10, Marek Szyprowski wrote:
->> Hello,
->>
->> On 2015-02-24 14:39, Tobias Jakobi wrote:
->>> Hello Marek,
->>>
->>> sorry for the late response!
->>>
->>>
->>> On 2015-02-10 12:38, Marek Szyprowski wrote:
->>>> Hello,
->>>>
->>>> On 2015-02-09 21:28, Tobias Jakobi wrote:
->>>>> Hello!
->>>>>
->>>>> Marek Szyprowski wrote:
->>>>>> I didn't observe any issues with 'ondemand' governor. I've just
->>>>>> tested it
->>>>>> on next-20150204 with "[PATCH v2 0/3] Add support for hardware
->>>>>> reset of
->>>>>> eMMC
->>>>>> card on reboot" patches added
->>>>>> (http://www.spinics.net/lists/linux-mmc/msg30621.html) and reboot
->>>>>> works
->>>>>> fine.
->>>>> Since I'm not using an eMMC card, I don't think the pwrseq stuff is
->>>>> going to make a difference here.
->>>>> Have you checked this with the PS_HOLD patch applied, or without?
->>>>> Anyway, guess I'm going to recheck this, maybe with some other
->>>>> governors
->>>>> too.
->>>>
->>>> PS_HOLD patch is related to shutdown behavior. Reboot doesn't use
->>>> it. Could you
->>>> point which exactly version did you use and provide the .config
->>>> which causes
->>>> problems with normal reboot when system runs from SD card? For eMMC
->>>> you would
->>>> need patches from last linux-next.
->>>
->>> I'm currently using this tree:
->>> https://github.com/tobiasjakobi/linux-odroid
->>>
->>> In this is the config:
->>> https://raw.githubusercontent.com/tobiasjakobi/odroid-environment/master/sourcecode/system/vanilla-3.19-debug.conf
->>>
->>>
->>> Upon issuing reboot I get this here on the UART:
->>> chidori ~ # reboot
->>>
->>> Broadcast message from root@chidori (ttySAC1) (Mon Feb 23 17:04:44
->>> 2015):
->>>
->>> The system is going down for reboot NOW!
->>> INIT: Switching to runlevel: 6
->>> INIT: Sending processes the TERM signal
->>> chidori ~ #  * Stopping
->>> local                                             [ ok ]
->>>  * Stopping vixie-cron
->>> ...                                                [ ok ]
->>>  * Saving random seed
->>> ...                                                 [ ok ]
->>>  * Deactivating additional swap space
->>> ...                                 [ ok ]
->>>  * Stopping sshd
->>> ...                                                      [ ok ]
->>>  * Unmounting network filesystems
->>> ...                                     [ ok ]
->>>  * Stopping chronyd
->>> ...                                                   [ ok ]
->>>  * Stopping BlueTooth NAP
->>> ...                                             [ ok ]
->>>  * Stopping dnsmasq
->>> ...                                                   [ ok ]
->>>  * Stopping syslog-ng
->>> ...                                                 [ ok ]
->>>  * Shutting down bluetooth
->>> ...                                            [ ok ]
->>>  * Stopping D-BUS system messagebus
->>> ...                                   [ ok ]
->>>  * Unmounting loop devices
->>>  * Unmounting filesystems
->>>  *   Unmounting /usr/local/emu
->>> ...                                        [ ok ]
->>>  *   Unmounting /home
->>> ...                                                 [ ok ]
->>>  *   Unmounting /var
->>> ...                                                  [ ok ]
->>>  * Deactivating swap devices
->>> ...                                          [ ok ]
->>>  * Stopping udev
->>> ...                                                      [ ok ]
->>>  * Saving the shutdown time
->>> ...                                           [ ok ]
->>>  * Terminating remaining processes
->>> ...                                    [ ok ]
->>>  * Killing remaining processes
->>> ...                                        [ ok ]
->>>  * Saving dependency cache
->>> ...                                            [ ok ]
->>>  * Remounting remaining filesystems read-only ...
->>>  *   Remounting / read only ...
->>> [  113.526626] EXT4-fs (mmcblk0p2): re-mounted. Opts:
->>> (null)              [ ok ]
->>> [  115.609592] sd 0:0:0:0: [sda] Synchronizing SCSI cache
->>> [
->>>
->>>
->>> Notice the open bracket in the last line. Seems like there is still
->>> output in the kernel buffer, but the UART is maybe switched off
->>> before one can see that. At least there is nothing after that, and I
->>> have to manually restart the board then.
->>
->> I've just checked and it works fine with my Odroid U3+ board booted
->> from SD card. I have really no idea what wrong here... Could you check
->> if the same problem exist with vanilla v4.0-rc1 kernel?
-> 
-> I believe that patch e91d863d1aaeda0349aed42dfbd75c98e042a2c9 ("serial:
-> samsung:
-> Clear operation mode on UART shutdown") solves this issue. It has been
-> merged to
-> v4.0-rc7. Could you confirm it?
-I've tried some reboot cycles without modifying the cpu governor and so
-far all reboot worked. So this issue looks like its fixed.
+This patch fixes probe failure of s3c-rtc on Odroid-XU3 boards.
+It is based on v4.0-rc2.
 
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+Added accumulated reviews for RESEND
+Changes since v3:
+1. Readded slipped #include statement.
+Sorry for the mess.
+Changes since v2:
+1. Dropped unused phandle.
+Changes since v1:
+1. Dropped Documentation.
+2. Split into 2 parts.
 
-With best wishes,
-Tobias
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-
-> 
-> Best regards
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index a519c86..d086398 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -11,6 +11,7 @@
+ */
+ 
+ /dts-v1/;
++#include <dt-bindings/clock/samsung,s2mps11.h>
+ #include "exynos5800.dtsi"
+ 
+ / {
+@@ -274,10 +275,6 @@
+ 			reg = <0x50>;
+ 		};
+ 	};
+-
+-	rtc@101E0000 {
+-		status = "okay";
+-	};
+ };
+ 
+ &hdmi {
+@@ -369,3 +366,9 @@
+ 		shunt-resistor = <10000>;
+ 	};
+ };
++
++&rtc {
++	status = "okay";
++	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
++	clock-names = "rtc", "rtc_src";
++};
+-- 
+1.9.1
