@@ -1,36 +1,46 @@
 From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt platforms
-Date: Sun,  3 May 2015 21:13:10 +0300
-Message-ID: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
+Subject: [PATCH 1/3] ARM: s3c24xx: add dma_coherent_mask for DMA devices
+Date: Sun,  3 May 2015 21:15:08 +0300
+Message-ID: <1430676910-30657-1-git-send-email-anarsoul@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:32836 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751294AbbECSNj (ORCPT
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:33331 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751283AbbECSPV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 May 2015 14:13:39 -0400
+	Sun, 3 May 2015 14:15:21 -0400
+Received: by lbbzk7 with SMTP id zk7so92236846lbb.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 May 2015 11:15:19 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Vasily Khoruzhick <anarsoul@gmail.com>
 
-Initialize sysreg by default, otherwise driver will crash in suspend callback.
+Otherwise dma_alloc_coherent() fails.
 
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- drivers/i2c/busses/i2c-s3c2410.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-s3c24xx/common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 958c8db..297e9c9 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1143,6 +1143,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	i2c->quirks = s3c24xx_get_device_quirks(pdev);
-+	i2c->sysreg = ERR_PTR(-ENOENT);
- 	if (pdata)
- 		memcpy(i2c->pdata, pdata, sizeof(*pdata));
- 	else
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index bf50328..7ed0853 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -355,6 +355,7 @@ struct platform_device s3c2410_device_dma = {
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+ 		.platform_data	= &s3c2410_dma_platdata,
++		.coherent_dma_mask = ~0,
+ 	},
+ };
+ #endif
+@@ -452,6 +453,7 @@ struct platform_device s3c2440_device_dma = {
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+ 		.platform_data	= &s3c2440_dma_platdata,
++		.coherent_dma_mask = ~0,
+ 	},
+ };
+ #endif
 -- 
 2.3.5
