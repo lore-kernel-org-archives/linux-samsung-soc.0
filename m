@@ -1,50 +1,33 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH 3/3] ARM: s3c24xx: H1940: Move gpiochip_add call into core_init() callback
-Date: Sun,  3 May 2015 21:15:10 +0300
-Message-ID: <1430676910-30657-3-git-send-email-anarsoul@gmail.com>
-References: <1430676910-30657-1-git-send-email-anarsoul@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt platforms
+Date: Mon, 4 May 2015 08:50:22 +0900
+Message-ID: <CAJKOXPd71vnup-RZYAh7UM2Tky2M64tA=u0Ydy=ti0yOC6h5aQ@mail.gmail.com>
+References: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:32997 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751314AbbECSPY (ORCPT
+Received: from mail-vn0-f43.google.com ([209.85.216.43]:34755 "EHLO
+	mail-vn0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751181AbbECXuX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 May 2015 14:15:24 -0400
-Received: by layy10 with SMTP id y10so91561457lay.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 May 2015 11:15:22 -0700 (PDT)
-In-Reply-To: <1430676910-30657-1-git-send-email-anarsoul@gmail.com>
+	Sun, 3 May 2015 19:50:23 -0400
+In-Reply-To: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 
-gpiochip_add() allocates memory, however it's not possible anymore from
-machine map_io() callback thus it failed and prevented machine from booting
-properly.
+2015-05-04 3:13 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
+> Initialize sysreg by default, otherwise driver will crash in suspend callback.
+>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- arch/arm/mach-s3c24xx/mach-h1940.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I think the crash is possible if device node is missing in DT or pdata
+is supplied. If you agree, could you add this information to commit
+message, along with Cc-stable and Fixes tag?
 
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index 86d9ec7..744aa4f 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -777,9 +777,14 @@ static void __init h1940_map_io(void)
- 
- 	/* Add latch gpio chip, set latch initial value */
- 	h1940_latch_control(0, 0);
--	WARN_ON(gpiochip_add(&h1940_latch_gpiochip));
- }
- 
-+static __init int h1940_gpiolib_init(void)
-+{
-+	return gpiochip_add(&h1940_latch_gpiochip);
-+}
-+core_initcall(h1940_gpiolib_init);
-+
- static void __init h1940_init_time(void)
- {
- 	s3c2410_init_clocks(12000000);
--- 
-2.3.5
+Anyway, the patch itself looks good:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
