@@ -1,147 +1,157 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v5 11/11] DocBook/media: add CEC documentation
-Date: Sun, 03 May 2015 12:59:17 +0200
-Message-ID: <5545FF85.2050508@xs4all.nl>
-References: <1430301765-22202-1-git-send-email-k.debski@samsung.com>
- <1430301765-22202-12-git-send-email-k.debski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: exynos4412: misc issues on Hardkernel Odroid boards
+Date: Sun, 03 May 2015 14:39:28 +0200
+Message-ID: <55461700.1000308@math.uni-bielefeld.de>
+References: <54D779FB.9070306@math.uni-bielefeld.de> <54D86913.2050109@samsung.com> <54D9185A.10607@math.uni-bielefeld.de> <54D9EDC8.6020508@samsung.com> <f6d45cc1b5bcc8d3a6a3672cd953113a@math.uni-bielefeld.de> <54F5C0C1.2020902@samsung.com> <553A27EE.5000800@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1430301765-22202-12-git-send-email-k.debski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, sean@mess.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>, kyungmin.park@samsung.com, thomas@tommie-lie.de, linux-input@vger.kernel.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57041 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750886AbbECMjg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 3 May 2015 08:39:36 -0400
+In-Reply-To: <553A27EE.5000800@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-U29tZSBjb21tZW50czoKCk9uIDA0LzI5LzIwMTUgMTI6MDIgUE0sIEthbWlsIERlYnNraSB3cm90
-ZToKPiBGcm9tOiBIYW5zIFZlcmt1aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD4KPiAKPiBBZGQgRG9j
-Qm9vayBkb2N1bWVudGF0aW9uIGZvciB0aGUgQ0VDIEFQSS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBI
-YW5zIFZlcmt1aWwgPGhhbnN2ZXJrQGNpc2NvLmNvbT4KPiBbay5kZWJza2lAc2Ftc3VuZy5jb206
-IGFkZCBkb2N1bWVudGF0aW9uIGZvciBwYXNzdGhyb3VnaCBtb2RlXQo+IFtrLmRlYnNraUBzYW1z
-dW5nLmNvbTogbWlub3IgZml4ZXMgYW5kIGNoYW5nZSBvZiByZXNlcnZlZCBmaWVsZCBzaXplc10K
-PiBTaWduZWQtb2ZmLWJ5OiBLYW1pbCBEZWJza2kgPGsuZGVic2tpQHNhbXN1bmcuY29tPgo+IC0t
-LQo+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEvTWFrZWZpbGUgICAgICAgICAgICAgICB8
-ICAgIDQgKy0KPiAgRG9jdW1lbnRhdGlvbi9Eb2NCb29rL21lZGlhL3Y0bC9iaWJsaW8ueG1sICAg
-ICAgICAgfCAgIDEwICsKPiAgRG9jdW1lbnRhdGlvbi9Eb2NCb29rL21lZGlhL3Y0bC9jZWMtYXBp
-LnhtbCAgICAgICAgfCAgIDc0ICsrKysrKwo+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEv
-djRsL2NlYy1mdW5jLWNsb3NlLnhtbCB8ICAgNTkgKysrKysKPiAgRG9jdW1lbnRhdGlvbi9Eb2NC
-b29rL21lZGlhL3Y0bC9jZWMtZnVuYy1pb2N0bC54bWwgfCAgIDczICsrKysrKwo+ICBEb2N1bWVu
-dGF0aW9uL0RvY0Jvb2svbWVkaWEvdjRsL2NlYy1mdW5jLW9wZW4ueG1sICB8ICAgOTQgKysrKysr
-Kwo+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEvdjRsL2NlYy1mdW5jLXBvbGwueG1sICB8
-ICAgODkgKysrKysrKwo+ICAuLi4vRG9jQm9vay9tZWRpYS92NGwvY2VjLWlvYy1nLWFkYXAtbG9n
-LWFkZHJzLnhtbCB8ICAyNzUgKysrKysrKysrKysrKysrKysrKysKPiAgLi4uL0RvY0Jvb2svbWVk
-aWEvdjRsL2NlYy1pb2MtZy1hZGFwLXBoeXMtYWRkci54bWwgfCAgIDc4ICsrKysrKwo+ICAuLi4v
-RG9jQm9vay9tZWRpYS92NGwvY2VjLWlvYy1nLWFkYXAtc3RhdGUueG1sICAgICB8ICAgODcgKysr
-KysrKwo+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEvdjRsL2NlYy1pb2MtZy1jYXBzLnht
-bCB8ICAxNjcgKysrKysrKysrKysrCj4gIC4uLi9Eb2NCb29rL21lZGlhL3Y0bC9jZWMtaW9jLWct
-ZXZlbnQueG1sICAgICAgICAgIHwgIDE0MiArKysrKysrKysrCj4gIC4uLi9Eb2NCb29rL21lZGlh
-L3Y0bC9jZWMtaW9jLWctdmVuZG9yLWlkLnhtbCAgICAgIHwgICA3MCArKysrKwo+ICAuLi4vRG9j
-Qm9vay9tZWRpYS92NGwvY2VjLWlvYy1yZWNlaXZlLnhtbCAgICAgICAgICB8ICAxODUgKysrKysr
-KysrKysrKwo+ICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWFfYXBpLnRtcGwgICAgICAgICAg
-ICAgICB8ICAgIDYgKy0KPiAgMTUgZmlsZXMgY2hhbmdlZCwgMTQxMCBpbnNlcnRpb25zKCspLCAz
-IGRlbGV0aW9ucygtKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9Eb2NCb29r
-L21lZGlhL3Y0bC9jZWMtYXBpLnhtbAo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlv
-bi9Eb2NCb29rL21lZGlhL3Y0bC9jZWMtZnVuYy1jbG9zZS54bWwKPiAgY3JlYXRlIG1vZGUgMTAw
-NjQ0IERvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwvY2VjLWZ1bmMtaW9jdGwueG1sCj4g
-IGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEvdjRsL2NlYy1m
-dW5jLW9wZW4ueG1sCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL0RvY0Jvb2sv
-bWVkaWEvdjRsL2NlYy1mdW5jLXBvbGwueG1sCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
-dGF0aW9uL0RvY0Jvb2svbWVkaWEvdjRsL2NlYy1pb2MtZy1hZGFwLWxvZy1hZGRycy54bWwKPiAg
-Y3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwvY2VjLWlv
-Yy1nLWFkYXAtcGh5cy1hZGRyLnhtbAo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlv
-bi9Eb2NCb29rL21lZGlhL3Y0bC9jZWMtaW9jLWctYWRhcC1zdGF0ZS54bWwKPiAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwvY2VjLWlvYy1nLWNhcHMu
-eG1sCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEvdjRs
-L2NlYy1pb2MtZy1ldmVudC54bWwKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24v
-RG9jQm9vay9tZWRpYS92NGwvY2VjLWlvYy1nLXZlbmRvci1pZC54bWwKPiAgY3JlYXRlIG1vZGUg
-MTAwNjQ0IERvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwvY2VjLWlvYy1yZWNlaXZlLnht
-bAo+IAoKPHNuaXA+Cgo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEv
-djRsL2NlYy1pb2MtZy1jYXBzLnhtbCBiL0RvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwv
-Y2VjLWlvYy1nLWNhcHMueG1sCgo8c25pcD4KCj4gKyAgICA8dGFibGUgcGd3aWRlPSIxIiBmcmFt
-ZT0ibm9uZSIgaWQ9ImNlYy1jYXBhYmlsaXRpZXMiPgo+ICsgICAgICA8dGl0bGU+Q0VDIENhcGFi
-aWxpdGllcyBGbGFnczwvdGl0bGU+Cj4gKyAgICAgIDx0Z3JvdXAgY29scz0iMyI+Cj4gKwkmY3Mt
-ZGVmOwo+ICsJPHRib2R5IHZhbGlnbj0idG9wIj4KPiArCSAgPHJvdz4KPiArCSAgICA8ZW50cnk+
-PGNvbnN0YW50PkNFQ19DQVBfU1RBVEU8L2NvbnN0YW50PjwvZW50cnk+Cj4gKwkgICAgPGVudHJ5
-PjB4MDAwMDAwMDE8L2VudHJ5Pgo+ICsJICAgIDxlbnRyeT5Vc2Vyc3BhY2UgaGFzIHRvIGNvbmZp
-Z3VyZSB0aGUgYWRhcHRlciBzdGF0ZSAoZW5hYmxlIG9yIGRpc2FibGUgaXQpIGJ5Cj4gKwkgICAg
-Y2FsbGluZyAmQ0VDLVMtQURBUC1TVEFURTsuPC9lbnRyeT4KPiArCSAgPC9yb3c+Cj4gKwkgIDxy
-b3c+Cj4gKwkgICAgPGVudHJ5Pjxjb25zdGFudD5DRUNfQ0FQX1BIWVNfQUREUjwvY29uc3RhbnQ+
-PC9lbnRyeT4KPiArCSAgICA8ZW50cnk+MHgwMDAwMDAwMjwvZW50cnk+Cj4gKwkgICAgPGVudHJ5
-PlVzZXJzcGFjZSBoYXMgdG8gY29uZmlndXJlIHRoZSBwaHlzaWNhbCBhZGRyZXNzIGJ5Cj4gKwkg
-ICAgY2FsbGluZyAmQ0VDLVMtQURBUC1QSFlTLUFERFI7LjwvZW50cnk+Cj4gKwkgIDwvcm93Pgo+
-ICsJICA8cm93Pgo+ICsJICAgIDxlbnRyeT48Y29uc3RhbnQ+Q0VDX0NBUF9MT0dfQUREUlM8L2Nv
-bnN0YW50PjwvZW50cnk+Cj4gKwkgICAgPGVudHJ5PjB4MDAwMDAwMDQ8L2VudHJ5Pgo+ICsJICAg
-IDxlbnRyeT5Vc2Vyc3BhY2UgaGFzIHRvIGNvbmZpZ3VyZSB0aGUgbG9naWNhbCBhZGRyZXNzZXMg
-YnkKPiArCSAgICBjYWxsaW5nICZDRUMtUy1BREFQLUxPRy1BRERSUzsuPC9lbnRyeT4KPiArCSAg
-PC9yb3c+Cj4gKwkgIDxyb3c+Cj4gKwkgICAgPGVudHJ5Pjxjb25zdGFudD5DRUNfQ0FQX1RSQU5T
-TUlUPC9jb25zdGFudD48L2VudHJ5Pgo+ICsJICAgIDxlbnRyeT4weDAwMDAwMDA4PC9lbnRyeT4K
-PiArCSAgICA8ZW50cnk+VXNlcnNwYWNlIGNhbiB0cmFuc21pdCBtZXNzYWdlcyBieSBjYWxsaW5n
-ICZDRUMtVFJBTlNNSVQ7LjwvZW50cnk+Cj4gKwkgIDwvcm93Pgo+ICsJICA8cm93Pgo+ICsJICAg
-IDxlbnRyeT48Y29uc3RhbnQ+Q0VDX0NBUF9SRUNFSVZFPC9jb25zdGFudD48L2VudHJ5Pgo+ICsJ
-ICAgIDxlbnRyeT4weDAwMDAwMDEwPC9lbnRyeT4KPiArCSAgICA8ZW50cnk+VXNlcnNwYWNlIGNh
-biByZWNlaXZlIG1lc3NhZ2VzIGJ5IGNhbGxpbmcgJkNFQy1SRUNFSVZFOy48L2VudHJ5Pgo+ICsJ
-ICA8L3Jvdz4KPiArCSAgPHJvdz4KPiArCSAgICA8ZW50cnk+PGNvbnN0YW50PkNFQ19DQVBfVkVO
-RE9SX0lEPC9jb25zdGFudD48L2VudHJ5Pgo+ICsJICAgIDxlbnRyeT4weDAwMDAwMDIwPC9lbnRy
-eT4KPiArCSAgICA8ZW50cnk+VXNlcnNwYWNlIGhhcyB0byBjb25maWd1cmUgdGhlIHZlbmRvciBJ
-RCBieQo+ICsJICAgIGNhbGxpbmcgJkNFQy1TLVZFTkRPUi1JRDsuPC9lbnRyeT4KPiArCSAgPC9y
-b3c+CgpDQVBfUEFTU1RIUk9VR0ggaXMgbWlzc2luZyBoZXJlLgoKPiArCTwvdGJvZHk+Cj4gKyAg
-ICAgIDwvdGdyb3VwPgo+ICsgICAgPC90YWJsZT4KPiArICA8L3JlZnNlY3QxPgo+ICsKPiArICA8
-cmVmc2VjdDE+Cj4gKyAgICAmcmV0dXJuLXZhbHVlOwo+ICsgIDwvcmVmc2VjdDE+Cj4gKzwvcmVm
-ZW50cnk+Cj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwvY2Vj
-LWlvYy1nLWV2ZW50LnhtbCBiL0RvY3VtZW50YXRpb24vRG9jQm9vay9tZWRpYS92NGwvY2VjLWlv
-Yy1nLWV2ZW50LnhtbAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMC4uMmI3
-ZThlOQo+IC0tLSAvZGV2L251bGwKPiArKysgYi9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svbWVkaWEv
-djRsL2NlYy1pb2MtZy1ldmVudC54bWwKCjxzbmlwPgoKPiArICA8cmVmc2VjdDE+Cj4gKyAgICA8
-dGl0bGU+RGVzY3JpcHRpb248L3RpdGxlPgo+ICsKPiArICAgIDxwYXJhPkNFQyBkZXZpY2VzIGNh
-biBzZW5kIGFzeW5jaHJvbm91cyBldmVudHMuIFRoZXNlIGNhbiBiZSByZXRyaWV2ZWQgYnkgY2Fs
-bGluZwo+ICsgICAgdGhlIDxjb25zdGFudD5DRUNfR19FVkVOVDwvY29uc3RhbnQ+IGlvY3RsLiBJ
-ZiB0aGUgZmlsZSBkZXNjcmlwdG9yIGlzIGluIG5vbi1ibG9ja2luZwo+ICsgICAgbW9kZSBhbmQg
-bm8gZXZlbnQgaXMgcGVuZGluZywgdGhlbiBpdCB3aWxsIHJldHVybiAtMSBhbmQgc2V0IGVycm5v
-IHRvIHRoZSAmRUFHQUlOOy48L3BhcmE+CgpXZSBzaG91bGQgYWRkIHNvbWV0aGluZyBsaWtlIHRo
-aXM6Cgo8cGFyYT5UaGVyZSBjYW4gYmUgdXAgdG8gMTYgZXZlbnRzIHF1ZXVlZCB1cC4gSWYgbW9y
-ZSBldmVudHMgYXJlIGFkZGVkLCB0aGVuIHRoZSBvbGRlc3QKZXZlbnQgd2lsbCBiZSBkaXNjYXJk
-ZWQuPC9wYXJhPgoKSSB0aGluayB3ZSBzaG91bGQgaW5jcmVhc2UgdGhlIG51bWJlciBvZiBldmVu
-dHMgdG8gNDA6IGdpdmVuIHRoZSBzcGVlZCBvZiB0aGUgYnVzIChvciBsYWNrCnRoZXJlb2YpIHRo
-aXMgc2hvdWxkIGJlIG1vcmUgdGhhbiBzdWZmaWNpZW50IHByb3ZpZGVkIHRoZSBhcHBsaWNhdGlv
-biB3aWxsIGNoZWNrIGV2ZW50cwphdCBsZWFzdCBvbmNlIHBlciBzZWNvbmQuIFRoZSBhbHRlcm5h
-dGl2ZSB3b3VsZCBiZSB0byB1c2UgYSBmcmFtZXdvcmsgbGlrZSB2NGwyX2V2ZW50LCBidXQKdGhh
-dCBpcyBJTUhPIG92ZXJraWxsIGZvciBhIGJ1cyBsaWtlIHRoaXMuCgo8c25pcD4KCj4gKyAgICA8
-dGFibGUgcGd3aWRlPSIxIiBmcmFtZT0ibm9uZSIgaWQ9ImNlYy1ldmVudHMiPgo+ICsgICAgICA8
-dGl0bGU+Q0VDIEV2ZW50czwvdGl0bGU+Cj4gKyAgICAgIDx0Z3JvdXAgY29scz0iMyI+Cj4gKwkm
-Y3MtZGVmOwo+ICsJPHRib2R5IHZhbGlnbj0idG9wIj4KPiArCSAgPHJvdz4KPiArCSAgICA8ZW50
-cnk+PGNvbnN0YW50PkNFQ19FVkVOVF9DT05ORUNUPC9jb25zdGFudD48L2VudHJ5Pgo+ICsJICAg
-IDxlbnRyeT4xPC9lbnRyeT4KPiArCSAgICA8ZW50cnk+R2VuZXJhdGVkIHdoZW4gdGhlIEhETUkg
-Y2FibGUgaXMgY29ubmVjdGVkLjwvZW50cnk+Cj4gKwkgIDwvcm93Pgo+ICsJICA8cm93Pgo+ICsJ
-ICAgIDxlbnRyeT48Y29uc3RhbnQ+Q0VDX0VWRU5UX1JFQURZPC9jb25zdGFudD48L2VudHJ5Pgo+
-ICsJICAgIDxlbnRyeT4yPC9lbnRyeT4KPiArCSAgICA8ZW50cnk+R2VuZXJhdGVkIHdoZW4gYWxs
-IGxvZ2ljYWwgYWRkcmVzc2VzIGFyZSBjbGFpbWVkLjwvZW50cnk+Cj4gKwkgIDwvcm93Pgo+ICsJ
-ICA8cm93Pgo+ICsJICAgIDxlbnRyeT48Y29uc3RhbnQ+Q0VDX0VWRU5UX0RJU0NPTk5FQ1Q8L2Nv
-bnN0YW50PjwvZW50cnk+Cj4gKwkgICAgPGVudHJ5PjM8L2VudHJ5Pgo+ICsJICAgIDxlbnRyeT5H
-ZW5lcmF0ZWQgd2hlbiB0aGUgSERNSSBjYWJsZSBpcyBkaXNjb25uZWN0ZWQuPC9lbnRyeT4KPiAr
-CSAgPC9yb3c+Cj4gKwkgIDxyb3c+Cj4gKwkgICAgPGVudHJ5Pjxjb25zdGFudD5DRUNfRVZFTlRf
-R09UX1JFUExZPC9jb25zdGFudD48L2VudHJ5Pgo+ICsJICAgIDxlbnRyeT40PC9lbnRyeT4KPiAr
-CSAgICA8ZW50cnk+R2VuZXJhdGVkIHdoZW4gYSBwcmVseSBpcyByZWNlaXZlZCBmb3IgYSBwcmV2
-aW91c2x5IHNlbnQKCnByZWx5IC0+IHJlcGx5Cgo+ICsJICAgIG1lc3NhZ2UuIEdlbmVyYXRlZCBv
-bmx5IGlmIGEgcmVwbHkgd2FzIHJlcXVlc3RlZCBhbmQgb25seSBpZiB0aGUKPiArCSAgICBtZXNz
-YWdlIHdhcyBzZW50IGluIG5vbi1ibG9ja2luZyBtb2RlLjwvZW50cnk+CgpMb29raW5nIGF0IHRo
-ZSBjb2RlIGluIGNlYy5jLCBjZWNfcmVjZWl2ZWRfbXNnKCk6CgoJaWYgKCFpc19yZXBseSB8fCAo
-aXNfcmVwbHkgJiYgIWRzdF9kYXRhLT5ibG9ja2luZykpCgkJYWRhcC0+cmVjdl9ub3RpZmllcihh
-ZGFwLCBtc2cpOwoJaWYgKGlzX3JlcGx5KQoJCWNlY19wb3N0X2V2ZW50KGFkYXAsIENFQ19FVkVO
-VF9HT1RfUkVQTFksIG1zZy0+c2VxdWVuY2UpOwp9CgppdCBzZWVtcyB0aGF0IHRoZSBldmVudCBp
-cyBwb3N0ZWQgYWxzbyBpZiBkc3RfZGF0YS0+YmxvY2tpbmcgaXMgdHJ1ZS4KClRoYXQgY29uZmxp
-Y3RzIHdpdGggdGhlIGRvY3VtZW50YXRpb24uIEkgdGhpbmsgdGhlIGNvZGUgc2hvdWxkIGZvbGxv
-dyB0aGUKZG9jdW1lbnRhdGlvbi4KCjxzbmlwPgoKRmluYWxseSwgdGhlIHBhc3N0aHJvdWdoIGRv
-Y3VtZW50YXRpb24gaXMgbWlzc2luZywgZGlkIHlvdSBmb3JnZXQgdG8gZG8KJ2dpdCBhZGQnPwoK
-UmVnYXJkcywKCglIYW5zCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Hello Marek,
+
+Marek Szyprowski wrote:
+> Hello Tobias,
+> 
+> On 2015-03-03 15:10, Marek Szyprowski wrote:
+>> Hello,
+>>
+>> On 2015-02-24 14:39, Tobias Jakobi wrote:
+>>> Hello Marek,
+>>>
+>>> sorry for the late response!
+>>>
+>>>
+>>> On 2015-02-10 12:38, Marek Szyprowski wrote:
+>>>> Hello,
+>>>>
+>>>> On 2015-02-09 21:28, Tobias Jakobi wrote:
+>>>>> Hello!
+>>>>>
+>>>>> Marek Szyprowski wrote:
+>>>>>> I didn't observe any issues with 'ondemand' governor. I've just
+>>>>>> tested it
+>>>>>> on next-20150204 with "[PATCH v2 0/3] Add support for hardware
+>>>>>> reset of
+>>>>>> eMMC
+>>>>>> card on reboot" patches added
+>>>>>> (http://www.spinics.net/lists/linux-mmc/msg30621.html) and reboot
+>>>>>> works
+>>>>>> fine.
+>>>>> Since I'm not using an eMMC card, I don't think the pwrseq stuff is
+>>>>> going to make a difference here.
+>>>>> Have you checked this with the PS_HOLD patch applied, or without?
+>>>>> Anyway, guess I'm going to recheck this, maybe with some other
+>>>>> governors
+>>>>> too.
+>>>>
+>>>> PS_HOLD patch is related to shutdown behavior. Reboot doesn't use
+>>>> it. Could you
+>>>> point which exactly version did you use and provide the .config
+>>>> which causes
+>>>> problems with normal reboot when system runs from SD card? For eMMC
+>>>> you would
+>>>> need patches from last linux-next.
+>>>
+>>> I'm currently using this tree:
+>>> https://github.com/tobiasjakobi/linux-odroid
+>>>
+>>> In this is the config:
+>>> https://raw.githubusercontent.com/tobiasjakobi/odroid-environment/master/sourcecode/system/vanilla-3.19-debug.conf
+>>>
+>>>
+>>> Upon issuing reboot I get this here on the UART:
+>>> chidori ~ # reboot
+>>>
+>>> Broadcast message from root@chidori (ttySAC1) (Mon Feb 23 17:04:44
+>>> 2015):
+>>>
+>>> The system is going down for reboot NOW!
+>>> INIT: Switching to runlevel: 6
+>>> INIT: Sending processes the TERM signal
+>>> chidori ~ #  * Stopping
+>>> local                                             [ ok ]
+>>>  * Stopping vixie-cron
+>>> ...                                                [ ok ]
+>>>  * Saving random seed
+>>> ...                                                 [ ok ]
+>>>  * Deactivating additional swap space
+>>> ...                                 [ ok ]
+>>>  * Stopping sshd
+>>> ...                                                      [ ok ]
+>>>  * Unmounting network filesystems
+>>> ...                                     [ ok ]
+>>>  * Stopping chronyd
+>>> ...                                                   [ ok ]
+>>>  * Stopping BlueTooth NAP
+>>> ...                                             [ ok ]
+>>>  * Stopping dnsmasq
+>>> ...                                                   [ ok ]
+>>>  * Stopping syslog-ng
+>>> ...                                                 [ ok ]
+>>>  * Shutting down bluetooth
+>>> ...                                            [ ok ]
+>>>  * Stopping D-BUS system messagebus
+>>> ...                                   [ ok ]
+>>>  * Unmounting loop devices
+>>>  * Unmounting filesystems
+>>>  *   Unmounting /usr/local/emu
+>>> ...                                        [ ok ]
+>>>  *   Unmounting /home
+>>> ...                                                 [ ok ]
+>>>  *   Unmounting /var
+>>> ...                                                  [ ok ]
+>>>  * Deactivating swap devices
+>>> ...                                          [ ok ]
+>>>  * Stopping udev
+>>> ...                                                      [ ok ]
+>>>  * Saving the shutdown time
+>>> ...                                           [ ok ]
+>>>  * Terminating remaining processes
+>>> ...                                    [ ok ]
+>>>  * Killing remaining processes
+>>> ...                                        [ ok ]
+>>>  * Saving dependency cache
+>>> ...                                            [ ok ]
+>>>  * Remounting remaining filesystems read-only ...
+>>>  *   Remounting / read only ...
+>>> [  113.526626] EXT4-fs (mmcblk0p2): re-mounted. Opts:
+>>> (null)              [ ok ]
+>>> [  115.609592] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+>>> [
+>>>
+>>>
+>>> Notice the open bracket in the last line. Seems like there is still
+>>> output in the kernel buffer, but the UART is maybe switched off
+>>> before one can see that. At least there is nothing after that, and I
+>>> have to manually restart the board then.
+>>
+>> I've just checked and it works fine with my Odroid U3+ board booted
+>> from SD card. I have really no idea what wrong here... Could you check
+>> if the same problem exist with vanilla v4.0-rc1 kernel?
+> 
+> I believe that patch e91d863d1aaeda0349aed42dfbd75c98e042a2c9 ("serial:
+> samsung:
+> Clear operation mode on UART shutdown") solves this issue. It has been
+> merged to
+> v4.0-rc7. Could you confirm it?
+I've tried some reboot cycles without modifying the cpu governor and so
+far all reboot worked. So this issue looks like its fixed.
+
+
+With best wishes,
+Tobias
+
+
+> 
+> Best regards
