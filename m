@@ -1,61 +1,99 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [2/3] rtc: rtc-s3c: Add spin_lock_irq in s3c_rtc_setaie
-Date: Sat, 2 May 2015 16:00:25 +0200
-Message-ID: <20150502140025.GL12076@piout.net>
-References: <1289865774-31073-3-git-send-email-kgene.kim@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v5 06/11] cec: add HDMI CEC framework
+Date: Sun, 03 May 2015 12:41:19 +0200
+Message-ID: <5545FB4F.1060003@xs4all.nl>
+References: <1430301765-22202-1-git-send-email-k.debski@samsung.com>
+ <1430301765-22202-7-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:32782 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751159AbbEBOA1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 May 2015 10:00:27 -0400
-Content-Disposition: inline
-In-Reply-To: <1289865774-31073-3-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1430301765-22202-7-git-send-email-k.debski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, sean@mess.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>, kyungmin.park@samsung.com, thomas@tommie-lie.de, linux-input@vger.kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, Wan ZongShun <mcuos.com@gmail.com>
 
-Hi Kukjin,
-
-On 16/11/2010 at 09:02:53 +0900, Kukjin Kim wrote :
-> This patch adds spin_lock_irq() and spin_unlock_irq() during
-> alarm interrupt configuration to avoid interrupt missing.
-> 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Wan ZongShun <mcuos.com@gmail.com>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-This patch never made it in the mainline, is it still necessary?
-
-> ---
->  drivers/rtc/rtc-s3c.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index e2636ff..bb88027 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -82,12 +82,14 @@ static int s3c_rtc_setaie(struct device *dev, unsigned int enabled)
->  
->  	pr_debug("%s: aie=%d\n", __func__, enabled);
->  
-> +	spin_lock_irq(&s3c_rtc_pie_lock);
->  	tmp = readb(s3c_rtc_base + S3C2410_RTCALM) & ~S3C2410_RTCALM_ALMEN;
->  
->  	if (enabled)
->  		tmp |= S3C2410_RTCALM_ALMEN;
->  
->  	writeb(tmp, s3c_rtc_base + S3C2410_RTCALM);
-> +	spin_unlock_irq(&s3c_rtc_pie_lock);
->  
->  	return 0;
->  }
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+SGkgS2FtaWwsCgpIZXJlIGlzIG15IHJldmlldzoKCk9uIDA0LzI5LzIwMTUgMTI6MDIgUE0sIEth
+bWlsIERlYnNraSB3cm90ZToKPiBGcm9tOiBIYW5zIFZlcmt1aWwgPGhhbnN2ZXJrQGNpc2NvLmNv
+bT4KPiAKPiBUaGUgYWRkZWQgSERNSSBDRUMgZnJhbWV3b3JrIHByb3ZpZGVzIGEgZ2VuZXJpYyBr
+ZXJuZWwgaW50ZXJmYWNlIGZvcgo+IEhETUkgQ0VDIGRldmljZXMuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogSGFucyBWZXJrdWlsIDxoYW5zdmVya0BjaXNjby5jb20+Cj4gW2suZGVic2tpQHNhbXN1bmcu
+Y29tOiBNZXJnZWQgQ0VDIFVwZGF0ZXMgY29tbWl0IGJ5IEhhbnMgVmVya3VpbF0KPiBbay5kZWJz
+a2lAc2Ftc3VuZy5jb206IE1lcmdlZCBVcGRhdGUgYXV0aG9yIGNvbW1pdCBieSBIYW5zIFZlcmt1
+aWxdCj4gW2suZGVic2tpQHNhbXN1bmcuY29tOiBjaGFuZ2Uga3RocmVhZCBoYW5kbGluZyB3aGVu
+IHNldHRpbmcgbG9naWNhbAo+IGFkZHJlc3NdCj4gW2suZGVic2tpQHNhbXN1bmcuY29tOiBjb2Rl
+IGNsZWFudXAgYW5kIGZpeGVzXQo+IFtrLmRlYnNraUBzYW1zdW5nLmNvbTogYWRkIG1pc3Npbmcg
+Q0VDIGNvbW1hbmRzIHRvIG1hdGNoIHNwZWNdCj4gW2suZGVic2tpQHNhbXN1bmcuY29tOiBhZGQg
+UkMgZnJhbWV3b3JrIHN1cHBvcnRdCj4gW2suZGVic2tpQHNhbXN1bmcuY29tOiBtb3ZlIGFuZCBl
+ZGl0IGRvY3VtZW50YXRpb25dCj4gW2suZGVic2tpQHNhbXN1bmcuY29tOiBhZGQgdmVuZG9yIGlk
+IHJlcG9ydGluZ10KPiBbay5kZWJza2lAc2Ftc3VuZy5jb206IGFkZCBwb3NzaWJpbGl0eSB0byBj
+bGVhciBhc3NpZ25lZCBsb2dpY2FsCj4gYWRkcmVzc2VzXQo+IFtrLmRlYnNraUBzYW1zdW5nLmNv
+bTogZG9jdW1lbnRhdGlvbiBmaXhlcywgY2xlbmF1cCBhbmQgZXhwYW5zaW9uXQo+IFtrLmRlYnNr
+aUBzYW1zdW5nLmNvbTogcmVvcmRlciBvZiBBUEkgc3RydWN0cyBhbmQgYWRkIHJlc2VydmVkIGZp
+ZWxkc10KPiBbay5kZWJza2lAc2Ftc3VuZy5jb206IGZpeCBoYW5kbGluZyBvZiBldmVudHMgYW5k
+IGZpeCAzMi82NGJpdCB0aW1lc3BlYwo+IHByb2JsZW1dCj4gW2suZGVic2tpQHNhbXN1bmcuY29t
+OiBhZGQgY2VjLmggdG8gaW5jbHVkZS91YXBpL2xpbnV4L0tidWlsZF0KPiBbay5kZWJza2lAc2Ft
+c3VuZy5jb206IGFkZCBzZXF1ZW5jZSBudW1iZXIgaGFuZGxpbmddCj4gW2suZGVic2tpQHNhbXN1
+bmcuY29tOiBhZGQgcGFzc3Rocm91Z2ggbW9kZV0KPiBbay5kZWJza2lAc2Ftc3VuZy5jb206IGZp
+eCBDRUMgZGVmaW5lcywgYWRkIG1pc3NpbmcgQ0VDIDIuMCBjb21tYW5kc10KPiBbay5kZWJza2lA
+c2Ftc3VuZy5jb206IGFkZCBEb2NCb29rIGRvY3VtZW50YXRpb24gYnkgSGFucyBWZXJrdWlsLCB3
+aXRoCj4gbWlub3IgYWRkaXRpb25zXQo+IFNpZ25lZC1vZmYtYnk6IEthbWlsIERlYnNraSA8ay5k
+ZWJza2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIERvY3VtZW50YXRpb24vY2VjLnR4dCAgICAgfCAg
+Mzk2ICsrKysrKysrKysrKysrKwo+ICBkcml2ZXJzL21lZGlhL0tjb25maWcgICAgIHwgICAgNiAr
+Cj4gIGRyaXZlcnMvbWVkaWEvTWFrZWZpbGUgICAgfCAgICAyICsKPiAgZHJpdmVycy9tZWRpYS9j
+ZWMuYyAgICAgICB8IDEyMDAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrCj4gIGluY2x1ZGUvbWVkaWEvY2VjLmggICAgICAgfCAgMTQyICsrKysrKwo+ICBpbmNs
+dWRlL3VhcGkvbGludXgvS2J1aWxkIHwgICAgMSArCj4gIGluY2x1ZGUvdWFwaS9saW51eC9jZWMu
+aCAgfCAgMzM3ICsrKysrKysrKysrKysKPiAgNyBmaWxlcyBjaGFuZ2VkLCAyMDg0IGluc2VydGlv
+bnMoKykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vY2VjLnR4dAo+ICBjcmVh
+dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9jZWMuYwo+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
+aW5jbHVkZS9tZWRpYS9jZWMuaAo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS91YXBpL2xp
+bnV4L2NlYy5oCj4gCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vY2VjLnR4dCBiL0RvY3Vt
+ZW50YXRpb24vY2VjLnR4dAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMC4u
+MmI2YzA4YQo+IC0tLSAvZGV2L251bGwKPiArKysgYi9Eb2N1bWVudGF0aW9uL2NlYy50eHQKCjxz
+bmlwPgoKPiArVGhlIGZvbGxvd2luZyBjYXBhYmlsaXRpZXMgYXJlIGRlZmluZWQ6Cj4gKwo+ICsv
+KiBVc2Vyc3BhY2UgaGFzIHRvIGNvbmZpZ3VyZSB0aGUgYWRhcHRlciBzdGF0ZSAoZW5hYmxlL2Rp
+c2FibGUpICovCj4gKyNkZWZpbmUgQ0VDX0NBUF9TVEFURQkJKDEgPDwgMCkKPiArLyogVXNlcnNw
+YWNlIGhhcyB0byBjb25maWd1cmUgdGhlIHBoeXNpY2FsIGFkZHJlc3MgKi8KPiArI2RlZmluZSBD
+RUNfQ0FQX1BIWVNfQUREUgkoMSA8PCAxKQo+ICsvKiBVc2Vyc3BhY2UgaGFzIHRvIGNvbmZpZ3Vy
+ZSB0aGUgbG9naWNhbCBhZGRyZXNzZXMgKi8KPiArI2RlZmluZSBDRUNfQ0FQX0xPR19BRERSUwko
+MSA8PCAyKQo+ICsvKiBVc2Vyc3BhY2UgY2FuIHRyYW5zbWl0IG1lc3NhZ2VzICovCj4gKyNkZWZp
+bmUgQ0VDX0NBUF9UUkFOU01JVAkoMSA8PCAzKQo+ICsvKiBVc2Vyc3BhY2UgY2FuIHJlY2VpdmUg
+bWVzc2FnZXMgKi8KPiArI2RlZmluZSBDRUNfQ0FQX1JFQ0VJVkUJCSgxIDw8IDQpCj4gKy8qIFVz
+ZXJzcGFjZSBoYXMgdG8gY29uZmlndXJlIHRoZSB2ZW5kb3IgaWQgKi8KPiArI2RlZmluZSBDRUNf
+Q0FQX1ZFTkRPUl9JRAkoMSA8PCA1KQo+ICsvKiBUaGUgaGFyZHdhcmUgaGFzIHRoZSBwb3NzaWJp
+bGl0eSB0byB3b3JrIGluIHRoZSBwcm9taXNjdW91cyBtb2RlICovCj4gKyNkZWZpbmUgQ0VDX0NB
+UF9QUk9NSVNDVU9VUwkoMSA8PCA2KQoKQ0FQX1BST01JU0NVT1VTIGRvZXNuJ3QgZXhpc3QgYW55
+bW9yZSwgdGhpcyBjYW4gYmUgcmVtb3ZlZC4KCkluc3RlYWQgYWRkIHRoZSBQQVNTVEhST1VHSCBj
+YXBhYmlsaXR5LgoKRnJhbmtseSwgSSB3b25kZXIgaWYgdGhpcyBjZWMudHh0IGRvY3VtZW50IHNo
+b3VsZCBkb2N1bWVudCB0aGUgdXNlcnNwYWNlCkFQSSBhdCBhbGwgbm93IHRoYXQgdGhhdCBpcyBw
+YXJ0IG9mIERvY0Jvb2suIEkgdGhpbmsgaXQgaXMgYmV0dGVyIGlmIGl0Cm9ubHkgZGVzY3JpYmVz
+IHRoZSBrZXJuZWwgQVBJIGFuZCBqdXN0IHJlZmVycyB0byB0aGUgRG9jQm9vayBmb3IgdGhlCnVz
+ZXJzcGFjZSBwYXJ0cy4KCkNFQ19HL1NfUEFTU1RIUk9VR0ggYXJlbid0IGRlc2NyaWJlZCBoZXJl
+IGFzIHdlbGwsIHdoaWNoIG9ubHkgc2hvd3MgdGhhdAp0aGUgdXNlcnNwYWNlIEFQSSBzaG91bGQg
+anVzdCBiZSBkcm9wcGVkLgoKPHNuaXA+Cgo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvbGlu
+dXgvY2VjLmggYi9pbmNsdWRlL3VhcGkvbGludXgvY2VjLmgKCjxzbmlwPgoKPiArLyogVGhlIGhh
+cmR3YXJlIGhhcyB0aGUgcG9zc2liaWxpdHkgdG8gd29yayBpbiB0aGUgcGFzc3Rocm91Z2ggKi8K
+CnMvdGhlIHBhc3N0aHJvdWdoL3Bhc3N0aHJvdWdoIG1vZGUvCgo+ICsjZGVmaW5lIENFQ19DQVBf
+UEFTU1RIUk9VR0gJKDEgPDwgNikKCjxzbmlwPgoKPiArI2RlZmluZSBDRUNfR19FVkVOVAkJX0lP
+V1IoJ2EnLCA5LCBzdHJ1Y3QgY2VjX2V2ZW50KQo+ICsvKgo+ICsgICBSZWFkIGFuZCBzZXQgdGhl
+IHZlbmRvciBJRCBvZiB0aGUgQ0VDIGFkYXB0ZXIuCj4gKyAqLwo+ICsjZGVmaW5lIENFQ19HX1ZF
+TkRPUl9JRAkJX0lPUignYScsIDksIF9fdTMyKQoKOSAtPiAxMCwgc2FtZSBmb3IgdGhlIGZvbGxv
+d2luZyBpb2N0bHMsIGFsbCBuZWVkIHRvIGJlIGluY3JlYXNlZCBieSAxCnNpbmNlIGN1cnJlbnQg
+R19FVkVOVCBhbmQgR19WRU5ET1JfSUQgaGF2ZSB0aGUgc2FtZSBpb2N0bCBudW1iZXIuCgo+ICsj
+ZGVmaW5lIENFQ19TX1ZFTkRPUl9JRAkJX0lPVygnYScsIDEwLCBfX3UzMikKPiArLyoKPiArICAg
+RW5hYmxlL2Rpc2FibGUgdGhlIHBhc3N0aHJvdWdoIG1vZGUKPiArICovCj4gKyNkZWZpbmUgQ0VD
+X0dfUEFTU1RIUk9VR0gJX0lPUignYScsIDExLCBfX3UzMikKPiArI2RlZmluZSBDRUNfU19QQVNT
+VEhST1VHSAlfSU9XKCdhJywgMTIsIF9fdTMyKQo+ICsKPiArI2VuZGlmCj4gCgpSZWdhcmRzLAoK
+CUhhbnMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
