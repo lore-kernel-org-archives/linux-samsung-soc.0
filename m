@@ -1,94 +1,62 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 27/26] iommu: exynos: add system suspend/resume support
-Date: Mon, 04 May 2015 12:30:26 +0200
-Message-ID: <1430735426-23172-1-git-send-email-m.szyprowski@samsung.com>
-References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1430727380-10912-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH RESEND] ARM: dts: exynos5422-odroidxu3: add mmc detect gpio
+Date: Mon, 04 May 2015 13:28:43 +0200
+Message-ID: <1430738923-7435-1-git-send-email-a.hajda@samsung.com>
+References: <55473FD1.7060605@gmail.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <55473FD1.7060605@gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When system goes into suspend state, iommu should save it's state and
-restore after system resume. This is handled by 'late' pm ops to ensure
-that sysmmu will be suspended after its master devices and restored
-before them.
+The patch adds gpio for detecting presence of MMC card.
+It fixes issue with kernel hang when MMC card is missing.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
-Hello,
+Hi Krzysztof,
 
-This patch got lost in the rebase, I'm really sorry. Please process it
-together with other iommu patches from "[PATCH v6 00/25] Exynos SYSMMU
-(IOMMU) integration with DT and DMA-mapping subsystem" patchset.
+This is 2nd try today, previously there were missing some
+addresses in Cc.
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
+The patch is rebased on the latest next.
+
+Regards
+Andrzej
 ---
- drivers/iommu/exynos-iommu.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 821797328c52..074e6cb05cc8 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -606,6 +606,36 @@ static int __init exynos_sysmmu_probe(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index edc25cf..cb649b1 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -11,6 +11,7 @@
+ */
  
-+#ifdef CONFIG_PM_SLEEP
-+static int exynos_sysmmu_suspend(struct device *dev)
-+{
-+	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-+
-+	dev_dbg(dev, "suspend\n");
-+	if (is_sysmmu_active(data)) {
-+		__sysmmu_disable_nocount(data);
-+		pm_runtime_put(dev);
-+	}
-+	return 0;
-+}
-+
-+static int exynos_sysmmu_resume(struct device *dev)
-+{
-+	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
-+
-+	dev_dbg(dev, "resume\n");
-+	if (is_sysmmu_active(data)) {
-+		pm_runtime_get_sync(dev);
-+		__sysmmu_enable_nocount(data);
-+	}
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops sysmmu_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_sysmmu_suspend, exynos_sysmmu_resume)
-+};
-+
- static const struct of_device_id sysmmu_of_match[] __initconst = {
- 	{ .compatible	= "samsung,exynos-sysmmu", },
- 	{ },
-@@ -616,6 +646,7 @@ static struct platform_driver exynos_sysmmu_driver __refdata = {
- 	.driver	= {
- 		.name		= "exynos-sysmmu",
- 		.of_match_table	= sysmmu_of_match,
-+		.pm		= &sysmmu_pm_ops,
- 	}
+ /dts-v1/;
++#include <dt-bindings/gpio/gpio.h>
+ #include "exynos5800.dtsi"
+ 
+ / {
+@@ -306,13 +307,13 @@
+ &mmc_0 {
+ 	status = "okay";
+ 	mmc-pwrseq = <&emmc_pwrseq>;
+-	broken-cd;
++	cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
  };
- 
 -- 
-1.9.2
+1.9.1
+
