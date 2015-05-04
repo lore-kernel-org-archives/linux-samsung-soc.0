@@ -1,34 +1,77 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/3] ARM: s3c24xx: Add DMA resources for SDI and I2S
-Date: Mon, 4 May 2015 12:45:01 +0900
-Message-ID: <CAJKOXPewZb_26GgA27T8fkXvTrg3FEYMkErapqoaMaSHDNy3ug@mail.gmail.com>
-References: <1430676910-30657-1-git-send-email-anarsoul@gmail.com>
-	<1430676910-30657-2-git-send-email-anarsoul@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/4] drm/exynos: fb: use drm_format_num_planes to get
+ buffer count
+Date: Mon, 04 May 2015 16:21:16 +0900
+Message-ID: <55471DEC.8070303@samsung.com>
+References: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f43.google.com ([209.85.216.43]:37250 "EHLO
-	mail-vn0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751549AbbEDDpD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 May 2015 23:45:03 -0400
-Received: by vnbg129 with SMTP id g129so13851225vnb.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 May 2015 20:45:01 -0700 (PDT)
-In-Reply-To: <1430676910-30657-2-git-send-email-anarsoul@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1430169016-4966-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-2015-05-04 3:15 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-
-"Add DMA resources for SDI and I2S".,.. what for? why? The commit
-message would be appropriate place to put such details.
-
-The patch itself looks good.
-
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+T24gMjAxNeuFhCAwNOyblCAyOOydvCAwNjoxMCwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBUaGUg
+cHJldmlvdXMgY29kZSBoYWQgc29tZSBzcGVjaWFsIGNhc2UgaGFuZGxpbmcgZm9yIHRoZSBidWZm
+ZXIKPiBjb3VudCBpbiBleHlub3NfZHJtX2Zvcm1hdF9udW1fYnVmZmVycygpLgo+IAo+IFRoaXMg
+Y29kZSB3YXMgaW5jb3JyZWN0IHRob3VnaCwgc2luY2UgdGhpcyBzcGVjaWFsIGNhc2UgZG9lc24n
+dAo+IGV4aXN0IGZvciBEUk0uIEl0IHN0ZW1tZWQgZnJvbSB0aGUgZXhpc3RlbmNlIG9mIHRoZSBz
+cGVjaWFsIE5WMTJNCj4gVjRMMiBmb3JtYXQuIE5WMTIgaXMgYSBiaS1wbGFuYXIgZm9ybWF0IChz
+ZXBhcmF0ZSBwbGFuZXMgZm9yIGx1bWEKPiBhbmQgY2hyb21hKSBhbmQgVjRMMiBkaWZmZXJlbnRp
+YXRlcyBiZXR3ZWVuIGEgTlYxMiBidWZmZXIgd2hlcmUKPiBsdW1hIGFuZCBjaHJvbWEgaXMgY29u
+dGlndW91cyBpbiBtZW1vcnkgKHNvIG5vIGRhdGEgYmV0d2Vlbgo+IGx1bWEvY2hyb21hKSwgYW5k
+IGEgTlYxMiBidWZmZXIgd2hlcmUgbHVtYSBhbmQgY2hyb21hIGhhdmUgdHdvCj4gZXhwbGljaXQg
+bWVtb3J5IGxvY2F0aW9ucyAod2hpY2ggaXMgdGhlbiBjYWxsZWQgTlYxMk0pLgo+IAo+IFRoaXMg
+ZGlzdGluY3Rpb24gZG9lc24ndCBleGlzdCBmb3IgRFJNLiBBIGJpLXBsYW5hciBmb3JtYXQgYWx3
+YXlzCj4gZXhwbGljaXRseSBjb21lcyB3aXRoIHRoZSBpbmZvcm1hdGlvbiBhYm91dCBpdHMgdHdv
+IHBsYW5lcyAoZXZlbgo+IGlmIHRoZXNlIHBsYW5lcyBzaG91bGQgYmUgY29udGlndW91cykuCj4g
+CgpGb3IgYWxsIHBhdGNoZXMsIEFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IFNpZ25lZC1v
+ZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+IC0t
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyB8IDM5ICstLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
+KCspLCAzOCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZiLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZmIuYwo+IGluZGV4IDkyOWNiMDMuLjE0MmViNGUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmIuYwo+IEBAIC0xNzEsNDMgKzE3MSw2IEBAIGV4eW5vc19kcm1fZnJhbWVi
+dWZmZXJfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+ICAJcmV0dXJuICZleHlub3NfZmIt
+PmZiOwo+ICB9Cj4gIAo+IC1zdGF0aWMgdTMyIGV4eW5vc19kcm1fZm9ybWF0X251bV9idWZmZXJz
+KHN0cnVjdCBkcm1fbW9kZV9mYl9jbWQyICptb2RlX2NtZCkKPiAtewo+IC0JdW5zaWduZWQgaW50
+IGNudCA9IDA7Cj4gLQo+IC0JaWYgKG1vZGVfY21kLT5waXhlbF9mb3JtYXQgIT0gRFJNX0ZPUk1B
+VF9OVjEyKQo+IC0JCXJldHVybiBkcm1fZm9ybWF0X251bV9wbGFuZXMobW9kZV9jbWQtPnBpeGVs
+X2Zvcm1hdCk7Cj4gLQo+IC0Jd2hpbGUgKGNudCAhPSBNQVhfRkJfQlVGRkVSKSB7Cj4gLQkJaWYg
+KCFtb2RlX2NtZC0+aGFuZGxlc1tjbnRdKQo+IC0JCQlicmVhazsKPiAtCQljbnQrKzsKPiAtCX0K
+PiAtCj4gLQkvKgo+IC0JICogY2hlY2sgaWYgTlYxMiBvciBOVjEyTS4KPiAtCSAqCj4gLQkgKiBO
+VjEyCj4gLQkgKiBoYW5kbGVzWzBdID0gYmFzZTEsIG9mZnNldHNbMF0gPSAwCj4gLQkgKiBoYW5k
+bGVzWzFdID0gYmFzZTEsIG9mZnNldHNbMV0gPSBZX3NpemUKPiAtCSAqCj4gLQkgKiBOVjEyTQo+
+IC0JICogaGFuZGxlc1swXSA9IGJhc2UxLCBvZmZzZXRzWzBdID0gMAo+IC0JICogaGFuZGxlc1sx
+XSA9IGJhc2UyLCBvZmZzZXRzWzFdID0gMAo+IC0JICovCj4gLQlpZiAoY250ID09IDIpIHsKPiAt
+CQkvKgo+IC0JCSAqIGluIGNhc2Ugb2YgTlYxMiBmb3JtYXQsIG9mZnNldHNbMV0gaXMgbm90IDAg
+YW5kCj4gLQkJICogaGFuZGxlc1swXSBpcyBzYW1lIGFzIGhhbmRsZXNbMV0uCj4gLQkJICovCj4g
+LQkJaWYgKG1vZGVfY21kLT5vZmZzZXRzWzFdICYmCj4gLQkJCW1vZGVfY21kLT5oYW5kbGVzWzBd
+ID09IG1vZGVfY21kLT5oYW5kbGVzWzFdKQo+IC0JCQljbnQgPSAxOwo+IC0JfQo+IC0KPiAtCXJl
+dHVybiBjbnQ7Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICoKPiAg
+ZXh5bm9zX3VzZXJfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1f
+ZmlsZSAqZmlsZV9wcml2LAo+ICAJCSAgICAgIHN0cnVjdCBkcm1fbW9kZV9mYl9jbWQyICptb2Rl
+X2NtZCkKPiBAQCAtMjMwLDcgKzE5Myw3IEBAIGV4eW5vc191c2VyX2ZiX2NyZWF0ZShzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGVfcHJpdiwKPiAgCj4gIAlkcm1f
+aGVscGVyX21vZGVfZmlsbF9mYl9zdHJ1Y3QoJmV4eW5vc19mYi0+ZmIsIG1vZGVfY21kKTsKPiAg
+CWV4eW5vc19mYi0+ZXh5bm9zX2dlbV9vYmpbMF0gPSB0b19leHlub3NfZ2VtX29iaihvYmopOwo+
+IC0JZXh5bm9zX2ZiLT5idWZfY250ID0gZXh5bm9zX2RybV9mb3JtYXRfbnVtX2J1ZmZlcnMobW9k
+ZV9jbWQpOwo+ICsJZXh5bm9zX2ZiLT5idWZfY250ID0gZHJtX2Zvcm1hdF9udW1fcGxhbmVzKG1v
+ZGVfY21kLT5waXhlbF9mb3JtYXQpOwo+ICAKPiAgCURSTV9ERUJVR19LTVMoImJ1Zl9jbnQgPSAl
+ZFxuIiwgZXh5bm9zX2ZiLT5idWZfY250KTsKPiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
