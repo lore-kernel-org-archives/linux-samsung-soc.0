@@ -1,33 +1,35 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt platforms
-Date: Mon, 4 May 2015 08:50:22 +0900
-Message-ID: <CAJKOXPd71vnup-RZYAh7UM2Tky2M64tA=u0Ydy=ti0yOC6h5aQ@mail.gmail.com>
-References: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/8] clk: tegra: Fix inconsistent indenting
+Date: Mon, 04 May 2015 10:47:33 +0900
+Message-ID: <5546CFB5.3040105@samsung.com>
+References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+ <1430196383-9190-4-git-send-email-k.kozlowski@samsung.com>
+ <20150501184655.GA29653@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f43.google.com ([209.85.216.43]:34755 "EHLO
-	mail-vn0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181AbbECXuX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 May 2015 19:50:23 -0400
-In-Reply-To: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20150501184655.GA29653-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 
-2015-05-04 3:13 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
-> Initialize sysreg by default, otherwise driver will crash in suspend callback.
+On 02.05.2015 03:46, Stephen Boyd wrote:
+> On 04/28, Krzysztof Kozlowski wrote:
+>> Fix the indentation - spaces used instead of tabs and actually wrong
+>> number of spaces.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   drivers/clk/tegra/clk-emc.c | 16 ++++++++--------
+>>   1 file changed, 8 insertions(+), 8 deletions(-)
 >
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> What branch is this against? I don't see this in linux-next or
+> clk-next.
 
-I think the crash is possible if device node is missing in DT or pdata
-is supplied. If you agree, could you add this information to commit
-message, along with Cc-stable and Fixes tag?
-
-Anyway, the patch itself looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+It was rebased on next-20150427. But now I cannot find it in newer 
+next... Could you skip these two patches then?
 
 Best regards,
 Krzysztof
