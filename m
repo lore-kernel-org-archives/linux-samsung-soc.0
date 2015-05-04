@@ -1,49 +1,106 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [RFC] drm/exynos: rework layer blending setup
-Date: Mon, 04 May 2015 11:15:18 +0200
-Message-ID: <554738A6.8040906@math.uni-bielefeld.de>
-References: <1430405816-4183-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <55471F88.7080803@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH RESEND] ARM: dts: exynos5422-odroidxu3: add mmc detect
+ gpio
+Date: Mon, 04 May 2015 18:45:53 +0900
+Message-ID: <55473FD1.7060605@gmail.com>
+References: <1423813734-20664-1-git-send-email-a.hajda@samsung.com> <CABxcv==sgCGGsVY8=RtdTGw501zUybufkpW-N_h-fopg37UFPg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <55471F88.7080803@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CABxcv==sgCGGsVY8=RtdTGw501zUybufkpW-N_h-fopg37UFPg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8gSW5raSEKCklua2kgRGFlIHdyb3RlOgo+IEhpIFRvYmlhcywKPiAKPiBUbyBtYWtlIHBh
-dGNoIGZpbGVzLCB5b3UgY291bGQgdXNlIGJlbG93IGNvbW1hbmQsCj4gI2dpdCBmb3JtYXQtcGF0
-Y2ggLS1jb3Zlci1sZXR0ZXIgZnJvbS4udG8KVGhhbmtzLCBJJ20gZ29pbmcgdG8gYWRkIHRoZSBj
-b3ZlciBsZXR0ZXIgdG8gdGhlIG5leHQgcmV2aXNpb24uCgoKPiBXaXRoIHRoaXMgY29tbWFuZCwg
-YSBjb3ZlciBmaWxlIHdpbGwgYmUgY3JlYXRlZCBhbmQgeW91IGNvdWxkIGRlc2NyaWJlCj4gd2hh
-dCB0aGlzIHBhdGNoIHNlcmllcyBtZWFuIGluIHRoZSBjb3ZlciBmaWxlLgpJIGxlZnQgb3V0IGEg
-ZGV0YWlsZWQgZGVzY3JpcHRpb24gc2luY2UgdGhlIHNlcmllcyBpc24ndCByZWFsbHkgZmluaXNo
-ZWQKeWV0IGFuZCBJIG1vcmUgb3IgbGVzcyB3YW50ZWQgdG8gaGVhciBKb29ueW91bmcnIHRob3Vn
-aHRzLCB3aG8gSQpkaXNjdXNzZWQgc3R1ZmYgd2l0aC4KCkkgc3RpbGwgaGF2ZSB0byBjaGFuZ2Ug
-c29tZSBkZXRhaWxzIGFuZCByZW1vdmUgdGhlIFRPRE9zLiBPbmNlIHRoYXQncwpkb25lIEknbSBn
-b2luZyB0byB3cml0ZSBhIGZ1bGwgZGVzY3JpcHRpb24uCgoKV2l0aCBiZXN0IHdpc2hlcywKVG9i
-aWFzCgo+IAo+IFRoYW5rcywKPiBJbmtpIERhZQo+IAo+IE9uIDIwMTXrhYQgMDTsm5QgMzDsnbwg
-MjM6NTYsIFRvYmlhcyBKYWtvYmkgd3JvdGU6Cj4+IEhlbGxvLAo+Pgo+PiBoZXJlJ3MgdGhlIHJl
-d29yayBvZiB0aGUgbGF5ZXIgYmxlbmRpbmcgc2V0dXAgdGhhdCBJIGRpc2N1c3NlZCB3aXRoIEpv
-b255b3VuZyBpbiB0aGUgcGFzdCBkYXlzLiBUaGVyZSdzIHN0aWxsIAo+PiBzb21lIFRPRE9zIGlu
-IHRoZSBjb2RlLCBidXQgbW9yZSBvciBsZXNzIGl0IGRvZXMgd2hhdCBpdCdzIHN1cHBvc2VkIHRv
-IGRvLiBXaGF0IHN0aWxsIGJvdGhlcnMgbWUgYSBiaXQgaXMgdGhhdCBJIAo+PiBjdXJyZW50bHkg
-Y2FsbCBibGVuZGluZyByZWNvbmZpZyBpbiBtaXhlcl9jZmdfbGF5ZXIoKS4gSXQgd291bGQgYmUg
-bmljZSBpZiB0aGlzIGNvdWxkIGJlIHJlZHVjZWQgdG8gb25lIGNhbGwgcGVyIAo+PiAiZnJhbWUi
-IChzbyB3aXRoIHRoZSBsYXN0IHdpbl97Y29tbWl0LGRpc2FibGV9IGNhbGwpLiBNYXliZSBhdG9t
-aWMgcHJvdmlkZXMgc3VjaCBhbiBpbmZyYXN0cnVjdHVyZT8KPj4KPj4gV2l0aCBiZXN0IHdpc2hl
-cywKPj4gVG9iaWFzCj4+Cj4+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+W dniu 13.02.2015 o 19:03, Javier Martinez Canillas pisze:
+> Hello Andrzej,
+> 
+> On Fri, Feb 13, 2015 at 8:48 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>> The patch adds gpio for detecting presence of MMC card.
+>> It fixes issue with kernel hang due when MMC card is missing.
+> 
+> Maybe s/MMC/eMMC here? to make more clear that this patch is solving
+> an issue when the eMMC and not the uSD is missing.
+> 
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>> Hi,
+>>
+>> This is just resend of the patch with added mmc ML and dw-mmc maintainers.
+>>
+>> Javier, I have no access to peach-pi(t) schematics, so I do not know if they
+>> have mmc-cd line connected to gpc0-2 gpio, but I guess it could be the case.
+>> You could check if similar patches will fix the issue for them.
+>>
+> 
+> Yes, both the eMMC and uSD card detection lines in the Peach Pit/Pi
+> are connected to the XMMC0CDN and XMMC2CDN built-in CD# pins so is the
+> same than the Odroid XU3 if I read the schematics correctly since the
+> those pins are also GPC0_2 and GPC2_2.
+> 
+> Now, in the Peach Pit Chromebook the eMMC is not removable so card
+> detection is not an issue there, the problem I'm having is that card
+> detection for the uSD seems to be broken after adding Addy's patches:
+> 
+> mmc: dw_mmc: fix bug that cause 'Timeout sending command'
+> mmc: dw_mmc: Don't start command while data busy
+> 
+> And adding a cd-gpios property with a phandle to gpc2_2 to the mmc2
+> device node does not help.
+> 
+> But without those patches, I've timeouts when mmc commands are sent to
+> the SDIO slot which has the wifi chip connected to.
+> 
+>> Regards
+>> Andrzej
+>>
+>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> index 47ec9bf..a563811 100644
+>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> @@ -11,6 +11,7 @@
+>>  */
+>>
+>>  /dts-v1/;
+>> +#include <dt-bindings/gpio/gpio.h>
+>>  #include "exynos5800.dtsi"
+>>
+>>  / {
+>> @@ -355,13 +356,13 @@
+>>
+>>  &mmc_0 {
+>>         status = "okay";
+>> -       broken-cd;
+>> +       cd-gpios = <&gpc0 2 GPIO_ACTIVE_LOW>;
+>>         card-detect-delay = <200>;
+>>         samsung,dw-mshc-ciu-div = <3>;
+>>         samsung,dw-mshc-sdr-timing = <0 4>;
+>>         samsung,dw-mshc-ddr-timing = <0 2>;
+>>         pinctrl-names = "default";
+>> -       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8 &sd0_cd>;
+>>         bus-width = <8>;
+>>         cap-mmc-highspeed;
+>>  };
+>> --
+> 
+> Your patch looks good to me though from what I've seen in the Odroid
+> XU3 schematic and taking into account that the eMMC can be removed in
+> that board.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Hi Andrzej,
+
+The patch no longer applies cleanly, so could you re-spin it with
+Javier's tag above?
+
+Best regards,
+Krzysztof
+
