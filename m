@@ -1,81 +1,97 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 Subject: Re: [PATCH] drm/exynos: Fix build breakage on !DRM_EXYNOS_FIMD
-Date: Mon, 04 May 2015 15:15:13 +0200
-Message-ID: <554770E1.2000401@samsung.com>
-References: <1430539706-2945-1-git-send-email-k.kozlowski.k@gmail.com>
- <55472339.8040408@samsung.com>
- <CAPj87rM-utcjuWD+ZB7_m01X3qUsNnwJmabCYZAAQUkAdRabaQ@mail.gmail.com>
- <5547696D.8000300@gmail.com>
+Date: Mon, 04 May 2015 22:24:06 +0900
+Message-ID: <554772F6.3020003@gmail.com>
+References: <1430539706-2945-1-git-send-email-k.kozlowski.k@gmail.com> <55472339.8040408@samsung.com> <CAPj87rM-utcjuWD+ZB7_m01X3qUsNnwJmabCYZAAQUkAdRabaQ@mail.gmail.com> <5547696D.8000300@gmail.com> <554770E1.2000401@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5547696D.8000300@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Daniel Stone <daniel@fooishbar.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:36111 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752675AbbEDNYM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 May 2015 09:24:12 -0400
+In-Reply-To: <554770E1.2000401@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Daniel Stone <daniel@fooishbar.org>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-SGksCgoKT24gMDUvMDQvMjAxNSAwMjo0MyBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiAyMDE1LTA1LTA0IDIwOjM0IEdNVCswOTowMCBEYW5pZWwgU3RvbmUgPGRhbmllbEBmb29pc2hi
-YXIub3JnPjoKPj4gSGksCj4+Cj4+IE9uIDQgTWF5IDIwMTUgYXQgMDg6NDMsIElua2kgRGFlIDxp
-bmtpLmRhZUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+PiBPbiAyMDE164WEIDA17JuUIDAy7J28IDEz
-OjA4LCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+Pj4+IFNlbGVjdGluZyBDT05GSUdfRkJf
-UzNDIGRpc2FibGVzIENPTkZJR19EUk1fRVhZTk9TX0ZJTUQgbGVhZGluZyB0byBidWlsZAo+Pj4+
-IGVycm9yOgo+Pj4KPj4+IE5vLCBlRFAgaGFzIG5vIGFueSBkZXBlbmRlbmN5IG9mIEZJTUQgYnV0
-IERFQ09OLiBKdXN0IGFkZCBkZXBlbmRlbmN5Cj4+PiBjb2RlIGxpa2UgYmVsb3csCj4+Pgo+Pj4g
-IGNvbmZpZyBEUk1fRVhZTk9TN19ERUNPTgo+Pj4gICAgICAgICBib29sICJFeHlub3MgRFJNIERF
-Q09OIgo+Pj4gLSAgICAgICBkZXBlbmRzIG9uIERSTV9FWFlOT1MKPj4+ICsgICAgICAgZGVwZW5k
-cyBvbiBEUk1fRVhZTk9TICYmICFGQl9TM0MKPiAKPiBBY3R1YWxseSBteSBjb21taXQgbWVzc2Fn
-ZSB3YXMgbm90IGRldGFpbGVkIGVub3VnaC4gVGhlIEZCX1MzQyBoZXJlCj4gd29uJ3Qgc29sdmUg
-dGhlIGlzc3VlIGJlY2F1c2UgeW91IG1heToKPiAxLCBkaXNhYmxlIEZJTUQgYW5kIEZCX1MzQywK
-PiAyLCBlbmFia2UgREVDT04gYW5kIERQLAo+IGFuZCBpdCB3b24ndCBjb21waWxlLgo+IAo+IEN1
-cnJlbnRseSB0aGUgRklNRCBtdXN0IGJlIGVuYWJsZWQgaWYgRFJNX0VYWU5PU19EUCBpcyBlbmFi
-bGVkLgo+IAo+Pgo+PiBCdXQgaXQgZG9lcyBjbGVhcmx5IGFuZCBleHBsaWNpdGx5IGNhbGwgZmlt
-ZF9kcF9jbG9ja19lbmFibGUgZnJvbQo+PiBleHlub3NfZHBfcG93ZXJve24sZmZ9LiBTbyB0aGUg
-ZGVwZW5kZW5jeSB5b3UncmUgcHJvcG9zaW5nIHNlZW1zCj4+IGJhY2t3YXJkczogaXQncyBub3Qg
-YW4gZXhwcmVzc2lvbiBvZiB0aGUgcmVxdWlyZW1lbnRzIG9mIHRoZSBjdXJyZW50Cj4+IGNvZGUg
-KHRoYXQgRklNRCBEUCBjb2RlIGJlIGF2YWlsYWJsZSwgaS5lLiBDT05GSUdfRFJNX0VYWU5PU19G
-SU1EIGlzCj4+IHNlbGVjdGVkKSwgYnV0IGFuIGluZGlyZWN0IGV4cHJlc3Npb24gb2YgYW5vdGhl
-ciBkZXBlbmRlbmN5Cj4+IChDT05GSUdfRkJfUzNDIGRpc2FibGVzIENPTkZJR19EUk1fRVhZTk9T
-X0ZJTUQsIHNvIGRpc2FibGUKPj4gQ09ORklHX0ZCX1MzQykuCj4+Cj4+IEFkZGl0aW9uYWxseSwg
-YXMgdGhlIGNhbGwgY29tZXMgZnJvbSBleHlub3NfZHBfY29yZS5jLCB3aGljaCBpcyBidWlsdAo+
-PiBieSBDT05GSUdfRFJNX0VYWU5PU19EUCAoYW4gZXhwbGljaXRseSB1c2VyLXNlbGVjdGFibGUg
-b3B0aW9uKSwgd2h5Cj4+IHNob3VsZG4ndCB0aGUgZGVwZW5kZW5jeSBiZSB0aGVyZT8gQWgsIGJl
-Y2F1c2UgdGhlIGRlcGVuZGVuY3kgb24gRFAgaXMKPj4gZm9yIChERUNPTiB8fCBGSU1EKSwgYnV0
-IGFzIERFQ09OIGRvZXNuJ3QgcHJvdmlkZQo+PiBmaW1kX2RwX2Nsb2NrX2VuYWJsZSgpLCBpdCBk
-b2Vzbid0IHNlZW0gbGlrZSBpdCB3b3VsZCBjb21waWxlIGlmIHlvdQo+PiBzZWxlY3RlZCBERUNP
-TiBhbmQgbm90IEZJTUQuCj4+Cj4+IFNvLCBmb3IgbWUsIHRoZSBjbGVhbmVzdCBzb2x1dGlvbiB3
-b3VsZCBiZSBjb25maWcgRFJNX0VYWU5PU19EUCBnYWlucwo+PiBhIGhhcmQgZGVwZW5kZW5jeSBv
-biBEUk1fRVhZTk9TX0ZJTUQsIGF0IGxlYXN0IHVudGlsIGl0IGNhbiBiZSBmaXhlZAo+PiB0byBj
-b21waWxlIHdpdGhvdXQgRklNRC4KPiAKPiBSaWdodCwgeW91IGNvcnJlY3RseSBwb2ludGVkIGN1
-cnJlbnQgZGVwZW5kZW5jaWVzLiBTdGlsbCBpdCBsb29rcyBsaXR0bGUKPiBoYWNreSBiZWNhdXNl
-IEVYWU5PU19EUCBtYXkgd29yayB3aXRoIEZJTUQgb3IgREVDT04uIAoKQXJlIHlvdSBzdXJlPyBJ
-IGhhdmUgbm90IHNlZW4gYW55IGNoaXBzZXQgaGF2aW5nIERFQ09OIGFuZCBEUC4gSW4gYWxsCmNo
-aXBzZXRzIGtub3duIHRvIG1lIERQIGlzIGFsd2F5cyBhY2NvbXBhbmllZCBieSBGSU1ELiBJIGd1
-ZXNzIGl0IGNhbgpjaGFuZ2UgaW4gdGhlIGZ1dHVyZSwgYnV0IGZvciBub3cgaGFyZCBkZXBlbmRl
-bmN5IG9uIEZJTUQgc2VlbXMgdG8gYmUgT0sKLSBpdCBqdXN0IHJlZmxlY3RzIGhhcmR3YXJlIGRl
-c2lnbi4KT2YgY291cnNlIHRoaXMgaXMganVzdCBteSBodW1ibGUgb3BpbmlvbiA6KQoKUmVnYXJk
-cwpBbmRyemVqCgpJdCBkb2VzIG5vdCByZWFsbHkKPiBuZWVkIEZJTUQuIFVzaW5nIGlmZGVmcyBp
-biBoZWFkZXJzIGlzIG5vdCB1bmNvbW1vbiAtIG1hbnkgY29yZQo+IHN1YnN5c3RlbXMgZG8gdGhp
-cyB0aGF0IHdheSB0byBwcm92aWRlIHN0dWJzLgo+IAo+IFByb2JhYmx5IHRoZSBjbGVhbmVzdCB3
-YXkgd291bGQgYmUgdG8gcHJvdmlkZSBieSBGSU1EIGFuZCBERUNPTiBhIGNvbW1vbgo+IGludGVy
-ZmFjZSBmb3IgRFAgZm9yIHN1Y2ggb3BlcmF0aW9uLCBzb21ldGhpbmcgbGlrZToKPiBzdHJ1Y3Qg
-ZXh5bm9zX2RybV9jcnRjIHsKPiAJc3RydWN0IGRybV9jcnRjICAgICAgICAgICAgICAgICBiYXNl
-Owo+IAkuLi4KPiAJdm9pZCAoKmNsb2NrX2VuYWJsZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAq
-Y3J0YywgYm9vbCBlbmFibGUpCj4gKTsKPiAKPiB3aGljaCwgaWYgbm9uLU5VTEwsIHdpbGwgYmUg
-Y2FsbGVkIGJ5IGV4eW5vc19kcF9jb3JlLmM6Cj4gc3RhdGljIHZvaWQgZXh5bm9zX2RwX3Bvd2Vy
-b24oc3RydWN0IGV4eW5vc19kcF9kZXZpY2UgKmRwKQo+IHsKPiAJLi4uCj4gCWlmIChjcnRjLT5j
-bG9ja19lbmFibGUpCj4gCQljcnRjLT5jbG9ja19lbmFibGUoY3J0YywgdHJ1ZSk7Cj4gfQo+IAo+
-IFdoYXQgZG8geW91IHRoaW5rPwo+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+W dniu 04.05.2015 o 22:15, Andrzej Hajda pisze:
+> Hi,
+>=20
+>=20
+> On 05/04/2015 02:43 PM, Krzysztof Kozlowski wrote:
+>> 2015-05-04 20:34 GMT+09:00 Daniel Stone <daniel@fooishbar.org>:
+>>> Hi,
+>>>
+>>> On 4 May 2015 at 08:43, Inki Dae <inki.dae@samsung.com> wrote:
+>>>> On 2015=EB=85=84 05=EC=9B=94 02=EC=9D=BC 13:08, Krzysztof Kozlowsk=
+i wrote:
+>>>>> Selecting CONFIG_FB_S3C disables CONFIG_DRM_EXYNOS_FIMD leading t=
+o build
+>>>>> error:
+>>>>
+>>>> No, eDP has no any dependency of FIMD but DECON. Just add dependen=
+cy
+>>>> code like below,
+>>>>
+>>>>  config DRM_EXYNOS7_DECON
+>>>>         bool "Exynos DRM DECON"
+>>>> -       depends on DRM_EXYNOS
+>>>> +       depends on DRM_EXYNOS && !FB_S3C
+>>
+>> Actually my commit message was not detailed enough. The FB_S3C here
+>> won't solve the issue because you may:
+>> 1, disable FIMD and FB_S3C,
+>> 2, enabke DECON and DP,
+>> and it won't compile.
+>>
+>> Currently the FIMD must be enabled if DRM_EXYNOS_DP is enabled.
+>>
+>>>
+>>> But it does clearly and explicitly call fimd_dp_clock_enable from
+>>> exynos_dp_powero{n,ff}. So the dependency you're proposing seems
+>>> backwards: it's not an expression of the requirements of the curren=
+t
+>>> code (that FIMD DP code be available, i.e. CONFIG_DRM_EXYNOS_FIMD i=
+s
+>>> selected), but an indirect expression of another dependency
+>>> (CONFIG_FB_S3C disables CONFIG_DRM_EXYNOS_FIMD, so disable
+>>> CONFIG_FB_S3C).
+>>>
+>>> Additionally, as the call comes from exynos_dp_core.c, which is bui=
+lt
+>>> by CONFIG_DRM_EXYNOS_DP (an explicitly user-selectable option), why
+>>> shouldn't the dependency be there? Ah, because the dependency on DP=
+ is
+>>> for (DECON || FIMD), but as DECON doesn't provide
+>>> fimd_dp_clock_enable(), it doesn't seem like it would compile if yo=
+u
+>>> selected DECON and not FIMD.
+>>>
+>>> So, for me, the cleanest solution would be config DRM_EXYNOS_DP gai=
+ns
+>>> a hard dependency on DRM_EXYNOS_FIMD, at least until it can be fixe=
+d
+>>> to compile without FIMD.
+>>
+>> Right, you correctly pointed current dependencies. Still it looks li=
+ttle
+>> hacky because EXYNOS_DP may work with FIMD or DECON.=20
+>=20
+> Are you sure? I have not seen any chipset having DECON and DP. In all
+> chipsets known to me DP is always accompanied by FIMD. I guess it can
+> change in the future, but for now hard dependency on FIMD seems to be=
+ OK
+> - it just reflects hardware design.
+> Of course this is just my humble opinion :)
+
+OK, so my next question would be: does DECON requires similar clock
+handling like FIMD on certain SoCs? In other words - does something lik=
+e
+fimd_dp_clock_enable() have any sense in context of DECON?
+
+Best regards,
+Krzysztof
