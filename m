@@ -1,50 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [Y2038] [PATCH v4 06/10] cec: add HDMI CEC framework: y2038 question
-Date: Mon, 04 May 2015 12:14:39 +0200
-Message-ID: <4726638.QZKcRc97FC@wuerfel>
-References: <1429794192-20541-1-git-send-email-k.debski@samsung.com> <553DE7EB.6090900@xs4all.nl> <554722EC.3060301@xs4all.nl>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung fixes for 4.1
+Date: Mon, 04 May 2015 12:19:18 +0200
+Message-ID: <554747A6.7030605@samsung.com>
+References: <554105AC.8060800@samsung.com> <20150429231820.16410.26690@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <554722EC.3060301@xs4all.nl>
-Sender: linux-input-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: y2038@lists.linaro.org, Kamil Debski <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, thomas@tommie-lie.de, linux-input@vger.kernel.org, linux-media@vger.kernel.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:48565 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751344AbbEDKTo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 May 2015 06:19:44 -0400
+In-reply-to: <20150429231820.16410.26690@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Michael Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Monday 04 May 2015 09:42:36 Hans Verkuil wrote:
-> Ping! (Added Arnd to the CC list)
+Hello Mike,
 
-Hi Hans,
+On 30/04/15 01:18, Michael Turquette wrote:
+> Quoting Sylwester Nawrocki (2015-04-29 09:24:12)
 
-sorry I missed this the first time
+>> ----------------------------------------------------------------
+>> clk/samsung fixes for 4.1
+>>
+>> Fixes of clk definitions in recently added clock controller driver for
+>> exynos5433 SoC and enhancements for DVFS, proper system sleep and secure
+>> monitor calls support in this SoC. The exynos5420 patch fixes a serious
+>> system sleep regression introduced in 3.19.
+>>
+>> ----------------------------------------------------------------
 
-> On 04/27/2015 09:40 AM, Hans Verkuil wrote:
-> > Added the y2038 mailinglist since I would like to get their input for
-> > this API.
-> > 
-> > Y2038 experts, can you take a look at my comment in the code below?
-> > 
-> > Thanks!
+>>       clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LITTLE core
 > 
-> Arnd, I just saw your patch series adding struct __kernel_timespec to
-> uapi/linux/time.h. I get the feeling that it might take a few kernel
-> cycles before we have a timespec64 available in userspace. Based on that
-> I think this CEC API should drop the timestamps for now and wait until
-> timespec64 becomes available before adding it.
+> Above patch doesn't look like a fix for an introduced regression.
+
+>> Hyungwon Hwang (1):
+>>       clk: exynos5433: Add DIV_CPIF to the list of stored registers on suspend
 > 
-> The timestamps are a nice-to-have, but not critical. So adding it later
-> shouldn't be a problem. What is your opinion?
+> Above patch doesn't look like a fix for an introduced regression.
 
-It will take a little while for the patches to make it in, I would guess
-4.3 at the earliest. Using your own struct works just as well and would
-be less ambiguous.
+>>       clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
+> 
+> Above patch doesn't look like a fix for an introduced regression.
 
-However, for timestamps, I would recommend not using timespec anyway.
-Instead, just use a single 64-bit nanosecond value from ktime_get_ns()
-(or ktime_get_boot_ns() if you need a time that keeps ticking across
-suspend). This is more efficient to get and simpler to use as long
-as you don't need to convert from nanosecond to timespec.
+>> Joonyoung Shim (1):
+>>       clk: exynos5433: Add clock flag to support the DVFS of GPU
+> 
+> Above patch doesn't look like a fix for an introduced regression.
 
-	Arnd
+Apologies for mixing them up, I'm going to resend above 4 patches
+for 4.2. The DVFS related patches are indeed not critical, I thought
+especially the second and third patch above are good for early -rc,
+since they fix bugs in a driver which was first added in 4.1-rc1.
+Anyway, I'll resend the dropped patches for 4.2, thanks for queueing
+the remaining ones.
+
+-- 
+Regards,
+Sylwester
