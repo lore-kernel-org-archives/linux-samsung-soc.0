@@ -1,51 +1,53 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: Fix build breakage on !DRM_EXYNOS_FIMD
-Date: Mon, 04 May 2015 16:43:53 +0900
-Message-ID: <55472339.8040408@samsung.com>
-References: <1430539706-2945-1-git-send-email-k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH] drm/exynos: mixer: Constify platform_device_id
+Date: Mon, 04 May 2015 16:47:24 +0900
+Message-ID: <5547240C.3090107@samsung.com>
+References: <1430495796-32016-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1430539706-2945-1-git-send-email-k.kozlowski.k@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57033 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752118AbbEDHr1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 May 2015 03:47:27 -0400
+In-reply-to: <1430495796-32016-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMjAxNeuFhCAwNeyblCAwMuydvCAxMzowOCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBTZWxlY3RpbmcgQ09ORklHX0ZCX1MzQyBkaXNhYmxlcyBDT05GSUdfRFJNX0VYWU5PU19GSU1E
-IGxlYWRpbmcgdG8gYnVpbGQKPiBlcnJvcjoKCk5vLCBlRFAgaGFzIG5vIGFueSBkZXBlbmRlbmN5
-IG9mIEZJTUQgYnV0IERFQ09OLiBKdXN0IGFkZCBkZXBlbmRlbmN5CmNvZGUgbGlrZSBiZWxvdywK
-CiBjb25maWcgRFJNX0VYWU5PUzdfREVDT04KICAgICAgICBib29sICJFeHlub3MgRFJNIERFQ09O
-IgotICAgICAgIGRlcGVuZHMgb24gRFJNX0VYWU5PUworICAgICAgIGRlcGVuZHMgb24gRFJNX0VY
-WU5PUyAmJiAhRkJfUzNDCgo+IAo+IGRyaXZlcnMvYnVpbHQtaW4ubzogSW4gZnVuY3Rpb24gYGV4
-eW5vc19kcF9kcG1zJzoKPiBiaW5kZXIuYzooLnRleHQrMHhkNmE4NDApOiB1bmRlZmluZWQgcmVm
-ZXJlbmNlIHRvIGBmaW1kX2RwX2Nsb2NrX2VuYWJsZScKPiBiaW5kZXIuYzooLnRleHQrMHhkNmFi
-NTQpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBmaW1kX2RwX2Nsb2NrX2VuYWJsZScKPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraS5rQGdtYWlsLmNv
-bT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuaCB8IDQg
-KysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmggYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5oCj4gaW5kZXggYjRmY2FhNTY4NDU2Li5kYjY3ZjNk
-OTc4NmQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
-bWQuaAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmgKPiBA
-QCAtMTAsNiArMTAsMTAgQEAKPiAgI2lmbmRlZiBfRVhZTk9TX0RSTV9GSU1EX0hfCj4gICNkZWZp
-bmUgX0VYWU5PU19EUk1fRklNRF9IXwo+ICAKPiArI2lmZGVmIENPTkZJR19EUk1fRVhZTk9TX0ZJ
-TUQKPiAgZXh0ZXJuIHZvaWQgZmltZF9kcF9jbG9ja19lbmFibGUoc3RydWN0IGV4eW5vc19kcm1f
-Y3J0YyAqY3J0YywgYm9vbCBlbmFibGUpOwo+ICsjZWxzZQo+ICtzdGF0aWMgaW5saW5lIHZvaWQg
-ZmltZF9kcF9jbG9ja19lbmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgYm9vbCBl
-bmFibGUpIHt9Owo+ICsjZW5kaWYKClNvIGFib3ZlIGNvZGVzIGFyZSB1bm5lY2Vzc2FyeS4gSXQn
-cyByZWFsbHkgbm90IGdvb2QgdG8gYWRkICNpZmRlZiB+ICNlbmRpZi4KClRoYW5rcywKSW5raSBE
-YWUKCj4gIAo+ICAjZW5kaWYgLyogX0VYWU5PU19EUk1fRklNRF9IXyAqLwo+IAoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 2015=EB=85=84 05=EC=9B=94 02=EC=9D=BC 00:56, Krzysztof Kozlowski wro=
+te:
+> The platform_device_id is not modified by the driver and core uses it=
+ as
+> const.
+
+Applied.
+
+Thanks,
+Inki Dae
+
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index fbec750574e6..512549a35e96 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1156,7 +1156,7 @@ static struct mixer_drv_data exynos4210_mxr_drv=
+_data =3D {
+>  	.has_sclk =3D 1,
+>  };
+> =20
+> -static struct platform_device_id mixer_driver_types[] =3D {
+> +static const struct platform_device_id mixer_driver_types[] =3D {
+>  	{
+>  		.name		=3D "s5p-mixer",
+>  		.driver_data	=3D (unsigned long)&exynos4210_mxr_drv_data,
+>=20
