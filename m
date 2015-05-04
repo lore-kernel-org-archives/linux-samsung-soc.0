@@ -1,35 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 3/8] clk: tegra: Fix inconsistent indenting
-Date: Mon, 04 May 2015 10:47:33 +0900
-Message-ID: <5546CFB5.3040105@samsung.com>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
- <1430196383-9190-4-git-send-email-k.kozlowski@samsung.com>
- <20150501184655.GA29653@codeaurora.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: s3c24xx: H1940: Move gpiochip_add call into
+ core_init() callback
+Date: Mon, 4 May 2015 12:23:39 +0900
+Message-ID: <CAJKOXPd8XgpcoS2knB8JYNeRVRjO=jetwM64tVYW9hPCYN8UoA@mail.gmail.com>
+References: <1430676910-30657-1-git-send-email-anarsoul@gmail.com>
+	<1430676910-30657-3-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20150501184655.GA29653-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f43.google.com ([209.85.216.43]:33177 "EHLO
+	mail-vn0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751915AbbEDDXk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 3 May 2015 23:23:40 -0400
+Received: by vnbf1 with SMTP id f1so13853388vnb.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 May 2015 20:23:39 -0700 (PDT)
+In-Reply-To: <1430676910-30657-3-git-send-email-anarsoul@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 02.05.2015 03:46, Stephen Boyd wrote:
-> On 04/28, Krzysztof Kozlowski wrote:
->> Fix the indentation - spaces used instead of tabs and actually wrong
->> number of spaces.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>   drivers/clk/tegra/clk-emc.c | 16 ++++++++--------
->>   1 file changed, 8 insertions(+), 8 deletions(-)
+2015-05-04 3:15 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
+> gpiochip_add() allocates memory, however it's not possible anymore
+
+"...to call it..."? Something is missing in the sentence.
+
+> from
+> machine map_io() callback thus it failed and prevented machine from booting
+> properly.
 >
-> What branch is this against? I don't see this in linux-next or
-> clk-next.
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  arch/arm/mach-s3c24xx/mach-h1940.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+> index 86d9ec7..744aa4f 100644
+> --- a/arch/arm/mach-s3c24xx/mach-h1940.c
+> +++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+> @@ -777,9 +777,14 @@ static void __init h1940_map_io(void)
+>
+>         /* Add latch gpio chip, set latch initial value */
+>         h1940_latch_control(0, 0);
+> -       WARN_ON(gpiochip_add(&h1940_latch_gpiochip));
+>  }
+>
+> +static __init int h1940_gpiolib_init(void)
+> +{
+> +       return gpiochip_add(&h1940_latch_gpiochip);
+> +}
+> +core_initcall(h1940_gpiolib_init);
+> +
 
-It was rebased on next-20150427. But now I cannot find it in newer 
-next... Could you skip these two patches then?
+arch_initcall() or init_machine() callback seems more appropriate.
+What do you think?
 
 Best regards,
 Krzysztof
