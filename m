@@ -1,78 +1,119 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH] drm/exynos: Fix build breakage on !DRM_EXYNOS_FIMD
-Date: Mon, 4 May 2015 23:31:38 +0900
-Message-ID: <CAAQKjZM7ROus=zUK5n2Sk2psobEUMZo_Aom-u5eWaTu4S+0aEA@mail.gmail.com>
+Date: Mon, 4 May 2015 23:42:50 +0900
+Message-ID: <CAAQKjZP=6afztY3tzG3W2AhzsT5akTrWTUyCaTeSjG8bc9AzuQ@mail.gmail.com>
 References: <1430539706-2945-1-git-send-email-k.kozlowski.k@gmail.com>
- <55472339.8040408@samsung.com>
- <CAPj87rM-utcjuWD+ZB7_m01X3qUsNnwJmabCYZAAQUkAdRabaQ@mail.gmail.com>
+	<55472339.8040408@samsung.com>
+	<CAPj87rM-utcjuWD+ZB7_m01X3qUsNnwJmabCYZAAQUkAdRabaQ@mail.gmail.com>
+	<5547696D.8000300@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPj87rM-utcjuWD+ZB7_m01X3qUsNnwJmabCYZAAQUkAdRabaQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:36247 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863AbbEDOmw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 May 2015 10:42:52 -0400
+In-Reply-To: <5547696D.8000300@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Daniel Stone <daniel@fooishbar.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-MjAxNS0wNS0wNCAyMDozNCBHTVQrMDk6MDAgRGFuaWVsIFN0b25lIDxkYW5pZWxAZm9vaXNoYmFy
-Lm9yZz46Cj4gSGksCj4KPiBPbiA0IE1heSAyMDE1IGF0IDA4OjQzLCBJbmtpIERhZSA8aW5raS5k
-YWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiBPbiAyMDE164WEIDA17JuUIDAy7J28IDEzOjA4LCBL
-cnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+Pj4gU2VsZWN0aW5nIENPTkZJR19GQl9TM0MgZGlz
-YWJsZXMgQ09ORklHX0RSTV9FWFlOT1NfRklNRCBsZWFkaW5nIHRvIGJ1aWxkCj4+PiBlcnJvcjoK
-Pj4KPj4gTm8sIGVEUCBoYXMgbm8gYW55IGRlcGVuZGVuY3kgb2YgRklNRCBidXQgREVDT04uIEp1
-c3QgYWRkIGRlcGVuZGVuY3kKPj4gY29kZSBsaWtlIGJlbG93LAo+Pgo+PiAgY29uZmlnIERSTV9F
-WFlOT1M3X0RFQ09OCj4+ICAgICAgICAgYm9vbCAiRXh5bm9zIERSTSBERUNPTiIKPj4gLSAgICAg
-ICBkZXBlbmRzIG9uIERSTV9FWFlOT1MKPj4gKyAgICAgICBkZXBlbmRzIG9uIERSTV9FWFlOT1Mg
-JiYgIUZCX1MzQwo+Cj4gQnV0IGl0IGRvZXMgY2xlYXJseSBhbmQgZXhwbGljaXRseSBjYWxsIGZp
-bWRfZHBfY2xvY2tfZW5hYmxlIGZyb20KPiBleHlub3NfZHBfcG93ZXJve24sZmZ9LiBTbyB0aGUg
-ZGVwZW5kZW5jeSB5b3UncmUgcHJvcG9zaW5nIHNlZW1zCj4gYmFja3dhcmRzOiBpdCdzIG5vdCBh
-biBleHByZXNzaW9uIG9mIHRoZSByZXF1aXJlbWVudHMgb2YgdGhlIGN1cnJlbnQKPiBjb2RlICh0
-aGF0IEZJTUQgRFAgY29kZSBiZSBhdmFpbGFibGUsIGkuZS4gQ09ORklHX0RSTV9FWFlOT1NfRklN
-RCBpcwo+IHNlbGVjdGVkKSwgYnV0IGFuIGluZGlyZWN0IGV4cHJlc3Npb24gb2YgYW5vdGhlciBk
-ZXBlbmRlbmN5Cj4gKENPTkZJR19GQl9TM0MgZGlzYWJsZXMgQ09ORklHX0RSTV9FWFlOT1NfRklN
-RCwgc28gZGlzYWJsZQo+IENPTkZJR19GQl9TM0MpLgo+Cj4gQWRkaXRpb25hbGx5LCBhcyB0aGUg
-Y2FsbCBjb21lcyBmcm9tIGV4eW5vc19kcF9jb3JlLmMsIHdoaWNoIGlzIGJ1aWx0Cj4gYnkgQ09O
-RklHX0RSTV9FWFlOT1NfRFAgKGFuIGV4cGxpY2l0bHkgdXNlci1zZWxlY3RhYmxlIG9wdGlvbiks
-IHdoeQo+IHNob3VsZG4ndCB0aGUgZGVwZW5kZW5jeSBiZSB0aGVyZT8gQWgsIGJlY2F1c2UgdGhl
-IGRlcGVuZGVuY3kgb24gRFAgaXMKPiBmb3IgKERFQ09OIHx8IEZJTUQpLCBidXQgYXMgREVDT04g
-ZG9lc24ndCBwcm92aWRlCj4gZmltZF9kcF9jbG9ja19lbmFibGUoKSwgaXQgZG9lc24ndCBzZWVt
-IGxpa2UgaXQgd291bGQgY29tcGlsZSBpZiB5b3UKClBsZWFzZSBrbm93IHRoYXQgdGhlIG91dHB1
-dCBkYXRhIG9mIERFQ09OIGFuZCBGSU1EIGNhbiBnbyB0byBEU0kgb3IKUGFuZWwgZGlyZWN0bHkg
-bm90IHRocm91Z2ggZURQLiBUaGlzIG1lYW5zIHRoYXQgdGhleSAtIEZJTUQgYW5kIGVEUCBvcgpE
-RUNPTiBhbmQgZURQIC0gaGF2ZSBoYXJkd2FyZSBkZXBlbmRlbmN5IGVhY2ggb3RoZXIuIERFQ09O
-IGRyaXZlcgptaXNzZWQgdGhpcyAtIG9ubHkgb25lIG9mIExpbnV4IGZyYW1lYnVmZmVyIGFuZCBE
-Uk0gS01TIGRyaXZlciBzaG91bGQKYmUgc2VsZWN0ZWQgYmVjYXVzZSBMaW51eCBmcmFtZWJ1ZmZl
-ciBhbmQgRFJNIEtNUyBkcml2ZXJzIGNvbnRyb2wgc2FtZQpoYXJkd2FyZS4gU28gdGhlIHJlYXNv
-biB0aGF0IERFQ09OIGRyaXZlciBzaG91bGQgaGF2ZSBkZXBlbmRlbmN5IG9uCmVEUCBpcyBub3Qg
-YmVjYXVzZSBkcCBjb3JlIGZ1bmN0aW9ucyBhcmUgY2FsbGVkIGJ5IEZJTUQgZHJpdmVyLgoKSW4g
-YWRkaXRpb24sIGZyb20gaHcgcG9pbnQgb2YgdmlldywgZURQIGhhcyBkZXBlbmNlbmN5IG9uIERF
-Q09OIGFuZApGSU1EIGJlY2F1c2UgZURQIGNhbm5vdCB3b3JrIGl0c2VsZiB3aXRob3V0IERFQ09O
-IG9yIEZJTUQuIFRoZXJlZm9yZSwKaWYgREVDT04gb3IgRklNRCBpcyBub3Qgc2VsZWN0ZWQsIHRo
-ZW4gZURQIHNob3VsZCBhbHNvIGJlIGRpc2FibGVkICBzbwp0aGF0IHVzZXIgY2Fubm90IGRpc2Fi
-bGUgZURQIHdpdGggRklNRCBiZWNhdXNlIEZJTUQgZHJpdmVyIGNhbGxzIGVEUCdzCmZ1bmN0aW9u
-cyBkaXJlY3RseS4gTXkgbWlzc2luZyBwb2ludCB3YXMgdGhhdCBldmVuIHRob3VnaCB3ZSBhZGQK
-IVMzQ19GQiB0byBERUNPTiBLY29uZmlnLCB3ZSBjYW4gZGlzYWJsZSBlRFAgd2l0aCBGSU1EIHNv
-IGJ1aWxkIGVycm9yCmNhbiBzdGlsbCBvY2N1ci4gVGhlIGJlc3Qgd2F5IHRvIHJlc29sdmUgdGhp
-cyBpc3N1ZSB3b3VsZCBiZSB0byBtb3ZlCnRoZSBmdW5jdGlvbnMgY2FsbGVkIGJ5IEZJTUQgZHJp
-dmVyIGRpcmVjdGx5IHRvIEV4eW5vcyBzcGVjaWZpYyBLTVMKc3RydWN0dXJlIHN1Y2ggYXMgZXh5
-bm9zIGNydGMgLSBlRFAgZHJpdmVyIGltcGxlbWVudHMgZW5jb2RlciB3aGljaAprbm93IGNydGMg
-dG8gRklNRCBvciBERUNPTi4gVGhlIGRpcmVjdGx5IGNhbGwgd2FzIG5vdCBnb29kIHdheS4KClRo
-YW5rcywKSW5raSBEYWUKCj4gc2VsZWN0ZWQgREVDT04gYW5kIG5vdCBGSU1ELgo+Cj4gU28sIGZv
-ciBtZSwgdGhlIGNsZWFuZXN0IHNvbHV0aW9uIHdvdWxkIGJlIGNvbmZpZyBEUk1fRVhZTk9TX0RQ
-IGdhaW5zCj4gYSBoYXJkIGRlcGVuZGVuY3kgb24gRFJNX0VYWU5PU19GSU1ELCBhdCBsZWFzdCB1
-bnRpbCBpdCBjYW4gYmUgZml4ZWQKPiB0byBjb21waWxlIHdpdGhvdXQgRklNRC4KPgo+IENoZWVy
-cywKPiBEYW5pZWwKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+2015-05-04 21:43 GMT+09:00 Krzysztof Kozlowski <k.kozlowski.k@gmail.com=
+>:
+> 2015-05-04 20:34 GMT+09:00 Daniel Stone <daniel@fooishbar.org>:
+>> Hi,
+>>
+>> On 4 May 2015 at 08:43, Inki Dae <inki.dae@samsung.com> wrote:
+>>> On 2015=B3=E2 05=BF=F9 02=C0=CF 13:08, Krzysztof Kozlowski wrote:
+>>>> Selecting CONFIG_FB_S3C disables CONFIG_DRM_EXYNOS_FIMD leading to=
+ build
+>>>> error:
+>>>
+>>> No, eDP has no any dependency of FIMD but DECON. Just add dependenc=
+y
+>>> code like below,
+>>>
+>>>  config DRM_EXYNOS7_DECON
+>>>         bool "Exynos DRM DECON"
+>>> -       depends on DRM_EXYNOS
+>>> +       depends on DRM_EXYNOS && !FB_S3C
+>
+> Actually my commit message was not detailed enough. The FB_S3C here
+> won't solve the issue because you may:
+> 1, disable FIMD and FB_S3C,
+> 2, enabke DECON and DP,
+> and it won't compile.
+>
+> Currently the FIMD must be enabled if DRM_EXYNOS_DP is enabled.
+>
+>>
+>> But it does clearly and explicitly call fimd_dp_clock_enable from
+>> exynos_dp_powero{n,ff}. So the dependency you're proposing seems
+>> backwards: it's not an expression of the requirements of the current
+>> code (that FIMD DP code be available, i.e. CONFIG_DRM_EXYNOS_FIMD is
+>> selected), but an indirect expression of another dependency
+>> (CONFIG_FB_S3C disables CONFIG_DRM_EXYNOS_FIMD, so disable
+>> CONFIG_FB_S3C).
+>>
+>> Additionally, as the call comes from exynos_dp_core.c, which is buil=
+t
+>> by CONFIG_DRM_EXYNOS_DP (an explicitly user-selectable option), why
+>> shouldn't the dependency be there? Ah, because the dependency on DP =
+is
+>> for (DECON || FIMD), but as DECON doesn't provide
+>> fimd_dp_clock_enable(), it doesn't seem like it would compile if you
+>> selected DECON and not FIMD.
+>>
+>> So, for me, the cleanest solution would be config DRM_EXYNOS_DP gain=
+s
+>> a hard dependency on DRM_EXYNOS_FIMD, at least until it can be fixed
+>> to compile without FIMD.
+>
+> Right, you correctly pointed current dependencies. Still it looks lit=
+tle
+> hacky because EXYNOS_DP may work with FIMD or DECON. It does not real=
+ly
+> need FIMD. Using ifdefs in headers is not uncommon - many core
+> subsystems do this that way to provide stubs.
+>
+> Probably the cleanest way would be to provide by FIMD and DECON a com=
+mon
+> interface for DP for such operation, something like:
+> struct exynos_drm_crtc {
+>         struct drm_crtc                 base;
+>         ...
+>         void (*clock_enable)(struct exynos_drm_crtc *crtc, bool enabl=
+e)
+> );
+>
+> which, if non-NULL, will be called by exynos_dp_core.c:
+> static void exynos_dp_poweron(struct exynos_dp_device *dp)
+> {
+>         ...
+>         if (crtc->clock_enable)
+>                 crtc->clock_enable(crtc, true);
+> }
+>
+> What do you think?
+
+Good idea and you should have done so. the directly call was not good
+way. Anyway, with this, fimd driver can set fimd's callbacks to
+exynos_drm_crtc structure and eDP driver can call the callbacks
+through its encoder. But please, keep in mind that you should set the
+callbacks to Exynos specific structure - exynos_drm_crtc - because
+this hardware dependency is really specific to Exynos SoC.
+
+Thanks,
+Inki Dae
+
+>
+> Best regards,
+> Krzysztof
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
