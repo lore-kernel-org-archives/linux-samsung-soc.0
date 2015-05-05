@@ -1,49 +1,41 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt platforms
-Date: Tue, 5 May 2015 10:46:36 +0900
-Message-ID: <CAJKOXPd6ED1X9yU-JTTrw8=49S=tQgQ75U5nHrMVhXn3KzVRMw@mail.gmail.com>
-References: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
-	<CAJKOXPd71vnup-RZYAh7UM2Tky2M64tA=u0Ydy=ti0yOC6h5aQ@mail.gmail.com>
-	<CA+E=qVdjvx=0PSh-ead_pABd9D=bG3ua1FFRTSN2U5BVf2a=Og@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: s3c24xx: add dma_coherent_mask for DMA devices
+Date: Tue, 5 May 2015 12:38:18 +0900
+Message-ID: <CAJKOXPcjdnAyr+wxzfPtmw+-QQnQeBuUL-gMrnuEs-SvOYs1pA@mail.gmail.com>
+References: <1430676910-30657-1-git-send-email-anarsoul@gmail.com>
+	<CAJKOXPfbF0RDPisY-PvKKKVT1kHDrR60b7VmcjTkco5UPm-WTg@mail.gmail.com>
+	<CA+E=qVf5MLsdV+U82Smv-weKQ3eJAEob7J+hdbhtZ-E1qrOsYw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+E=qVdjvx=0PSh-ead_pABd9D=bG3ua1FFRTSN2U5BVf2a=Og-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f48.google.com ([209.85.216.48]:35954 "EHLO
+	mail-vn0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754994AbbEEDiT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 May 2015 23:38:19 -0400
+Received: by vnbf62 with SMTP id f62so16068032vnb.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 May 2015 20:38:18 -0700 (PDT)
+In-Reply-To: <CA+E=qVf5MLsdV+U82Smv-weKQ3eJAEob7J+hdbhtZ-E1qrOsYw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-2015-05-05 2:52 GMT+09:00 Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> On Mon, May 4, 2015 at 2:50 AM, Krzysztof Kozlowski
-> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> 2015-05-04 3:13 GMT+09:00 Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>> Initialize sysreg by default, otherwise driver will crash in suspend callback.
->>>
->>> Signed-off-by: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+2015-05-05 2:54 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
+> On Mon, May 4, 2015 at 6:42 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> 2015-05-04 3:15 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
+>>> Otherwise dma_alloc_coherent() fails.
 >>
->> I think the crash is possible if device node is missing in DT or pdata
->> is supplied.
+>> Could you say few more words about the failure?
+>> Also the patch looks like a candidate for CC-stable along with Fixes tag.
 >
-> And it's exactly the case for non-DT boot, right?
+> Hm, any call of dma_alloc_coherent() will fail for s3c24xx-dmac
+> device. For example, asoc dmaengine driver. What exactly do
+> you want me to precise?
 
-Right, please add this to commit message.
-
->
->> If you agree, could you add this information to commit
->> message, along with Cc-stable and Fixes tag?
->
-> How do I add "Fixes tag"?
-
-In tbe commit message just add below Signed-off-by:
-1. Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-2. Fixes: abbreviated SHA ("commit subject")
-The SHA of commit which introduced this error. It indicates how far
-your patch should be backported.
-
-Look for examples in kernel GIT and
-Documentation/stable_kernel_rules.txt. For example:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=1c363c7cccf64128087002b0779986ad16aff6dc
+Anything more than just "fails" would be welcome. Especially for
+backporting to stable.
 
 Best regards,
 Krzysztof
