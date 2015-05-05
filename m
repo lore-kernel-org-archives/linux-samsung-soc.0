@@ -1,28 +1,117 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 5/8] mfd: cros-ec: Support multiple EC in a system
-Date: Tue, 05 May 2015 17:40:31 +0200
-Message-ID: <5548E46F.6060603@collabora.co.uk>
-References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-6-git-send-email-javier.martinez@collabora.co.uk> <CAMHSBOXMgYjxZL=rkB7rvg_192sbFGryD6hX2oSPMDPT+6OGog@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [GIT PULL] ARM: EXYNOS: Fixes and improvements for v4.2
+Date: Wed, 06 May 2015 06:23:35 +0900
+Message-ID: <554934D7.2030903@kernel.org>
+References: <1430548284-23827-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMHSBOXMgYjxZL=rkB7rvg_192sbFGryD6hX2oSPMDPT+6OGog@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gwendal Grignou <gwendal@google.com>
-Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Gwendal Grignou <gwendal@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:36554 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1945943AbbEEVXm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 May 2015 17:23:42 -0400
+In-Reply-To: <1430548284-23827-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@kernel.org>
 
-Hello Gwendal,
+On 05/02/15 15:31, Krzysztof Kozlowski wrote:
+> Dear Kukjin,
+> 
+Hi Krzysztof,
 
-On 04/24/2015 01:54 AM, Gwendal Grignou wrote:
-> This patch needs  https://chromium-review.googlesource.com/217297:
-> /dev/cros_ec0 was not a good idea, because it is difficult to know
-> what it represents.
->
+> This groups important fixes and typical improvements for Exynos
+> SoC for next v4.2 merge window.
+> 
+> I hope you will find useful grouping these commits together.
+> 
+> Everything can be also found on github:
+> https://github.com/krzk/linux
+> Branches:
+> 1. fixes-samsung
+> 2. for-next-samsung
+> 
+> 
+> If you have any comments, do not hesitate as I would welcome any feedback.
+> I can also split it into separate fixes and normal updates if you want.
+> 
+Thanks for your kind reminder and I'll take these series after looking
+at them within a couple of days. Sorry for the late response and the
+fixes will be handled before -rc3.
 
-Thanks for the information, I'll squash $subject and the patch you
-pointed out then if you agree.
+Thanks.
 
-Best regards,
-Javier
+- Kukjin
+
+> 
+> Description:
+> 1. Fix second suspend to RAM on Trats2 board. This has shown up
+>    after enabling L2 cache but actually the "use delayed reset
+>    assertion" is to be blamed.
+> 2. Fix imprecise external abort on Exynos5420 boards when exynos-dp
+>    driver tries to access the DP controller registers and the PD
+>    was turned off.
+> 3. Various fixes for missing return checks in power domain code.
+> 4. Fix RTC alarm on Arndale Octa board.
+> 5. Improvements of reparenting clocks on power domain on/off.
+> 6. Enabling S3C RTC on various boards.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> ----------------------------------------------------------------
+> The following changes since commit 5d5443b9c3bac7231ae473c01bcfe4c7650b13c5:
+> 
+>   Merge branch 'v4.1-next/mach-samsung' into for-next (2015-03-27 02:36:43 +0900)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/krzk/linux.git for-next-samsung
+> 
+> for you to fetch changes up to c06f3b9943fbea71ad921ea614e331f571d59c02:
+> 
+>   ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa (2015-05-02 15:02:50 +0900)
+> 
+> ----------------------------------------------------------------
+> Javier Martinez Canillas (1):
+>       ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
+> 
+> Krzysztof Kozlowski (11):
+>       ARM: EXYNOS: Handle of of_iomap() failure
+>       ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
+>       ARM: EXYNOS: Add missing of_node_put() when parsing power domains
+>       ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ on Arndale Octa
+>       ARM: EXYNOS: Fix failed second suspend on Exynos4
+>       ARM: EXYNOS: Get current parent clock for power domain on/off
+>       ARM: dts: Use last parent for clocks during power domain on/off
+>       ARM: dts: s3c-rtc: Use s3c6410-rtc instead of exynos3250-rtc
+>       ARM: dts: Use define for s3c-rtc clock id
+>       ARM: dts: Use define for s3c-rtc clock id
+>       ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa
+> 
+> Markus Reichl (1):
+>       ARM: dts: Add bindings for 32kHz clocks from s2mps11
+> 
+>  .../bindings/arm/exynos/power_domain.txt           |  7 ++--
+>  Documentation/devicetree/bindings/rtc/s3c-rtc.txt  |  3 +-
+>  arch/arm/boot/dts/exynos3250-monk.dts              |  3 +-
+>  arch/arm/boot/dts/exynos3250-rinato.dts            |  3 +-
+>  arch/arm/boot/dts/exynos3250.dtsi                  |  2 +-
+>  arch/arm/boot/dts/exynos4.dtsi                     |  2 +-
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |  9 ++++-
+>  arch/arm/boot/dts/exynos4415.dtsi                  |  2 +-
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 24 ++++++++++---
+>  arch/arm/boot/dts/exynos5420.dtsi                  | 14 +++-----
+>  arch/arm/mach-exynos/common.h                      |  2 ++
+>  arch/arm/mach-exynos/exynos.c                      | 27 +++++++++++++++
+>  arch/arm/mach-exynos/platsmp.c                     | 39 ++--------------------
+>  arch/arm/mach-exynos/pm_domains.c                  | 37 ++++++++++++++------
+>  arch/arm/mach-exynos/suspend.c                     |  3 ++
+>  include/dt-bindings/clock/samsung,s2mps11.h        | 23 +++++++++++++
+>  16 files changed, 129 insertions(+), 71 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/samsung,s2mps11.h
