@@ -1,54 +1,63 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH] libgencec: Add userspace library for the generic CEC
- kernel interface
-Date: Tue, 5 May 2015 16:03:26 +0100
-Message-ID: <CACvgo50jMOCG5K1iM=SFE2CFYR6JMN3LBPmNtKO__Tra3KkCRQ@mail.gmail.com>
-References: <1430301765-22202-1-git-send-email-k.debski@samsung.com>
- <1430301765-22202-13-git-send-email-k.debski@samsung.com>
- <CACvgo52hDYpgv2FY8X-O7SC=+2YMn7osHt_V=NJxP+4REaw1=Q@mail.gmail.com>
- <0af301d0832f$f0ffec70$d2ffc550$@debski@samsung.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 00/25] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Tue, 5 May 2015 17:05:54 +0200
+Message-ID: <20150505150554.GN15736@8bytes.org>
+References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <0af301d0832f$f0ffec70$d2ffc550$@debski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kamil Debski <k.debski@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, sean@mess.org, mchehab@osg.samsung.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, ML dri-devel <dri-devel@lists.freedesktop.org>, lars@opdenkamp.eu, thomas@tommie-lie.de, linux-input@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1430727380-10912-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgS2FtaWwsCgpJdCBzZWVtcyB0aGF0IHlvdSd2ZSBvbmx5IGluY29ycG9yYXRlZCB0aGUgbGli
-Z2VuY2VjLnBjIHN1Z2dlc3Rpb24uCkRpZCB5b3UgY2hhbmdlIHlvdXIgbWluZCBhYm91dCB0aGUg
-b3RoZXJzLCBmb3VuZCBvdXQgc29tZXRoaW5nIGZ1bm55CndpdGggdGhlbSAoaWYgc28gY2FuIHlv
-dSBsZXQgbWUga25vdyB3aGF0KSBvciBzaW1wbHkgZm9yZ290IGFib3V0IHRoZW0KPwoKT24gMzAg
-QXByaWwgMjAxNSBhdCAxMToyNSwgS2FtaWwgRGVic2tpIDxrLmRlYnNraUBzYW1zdW5nLmNvbT4g
-d3JvdGU6Cj4gSGkgRW1pbCwKPgo+IEZyb206IGxpbnV4LW1lZGlhLW93bmVyQHZnZXIua2VybmVs
-Lm9yZyBbbWFpbHRvOmxpbnV4LW1lZGlhLQo+IG93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVo
-YWxmIE9mIEVtaWwgVmVsaWtvdgo+IFNlbnQ6IFdlZG5lc2RheSwgQXByaWwgMjksIDIwMTUgNTow
-MCBQTQo+Pgo+PiBIaSBLYW1pbCwKPj4KPj4gQWxsb3cgbWUgdG8gcHV0IGEgZmV3IHN1Z2dlc3Rp
-b25zOgo+Pgo+PiBPbiAyOSBBcHJpbCAyMDE1IGF0IDExOjAyLCBLYW1pbCBEZWJza2kgPGsuZGVi
-c2tpQHNhbXN1bmcuY29tPiB3cm90ZToKCj4+ID4gZGlmZiAtLWdpdCBhL200Ly5naXRrZWVwIGIv
-bTQvLmdpdGtlZXAgbmV3IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXgKPj4gPiAwMDAwMDAwLi5lNjlk
-ZTI5Cj4+IEhhdmVuJ3Qgc2VlbiBhbnkgcHJvamVjdHMgZG9pbmcgdGhpcy4gQ3VyaW91cyB3aGF0
-IHRoZSBiZW5lZml0cyBvZgo+PiBrZWVwaW5nIGFuZCBlbXB0eSBmb2xkZXIgbWlnaHQgYmUgPwo+
-Cj4gV2hlbiBJIHJ1biBhdXRvcmVjb25mIC1pIGl0IGNvbXBsYWluZWQgYWJvdXQgbWlzc2luZyBt
-NCBmb2xkZXIsIGhlbmNlIEkgYWRkZWQKPiB0aGlzIGZpbGxlciBmaWxlIHN1Y2ggdGhhdCB0aGUg
-Zm9sZGVyIGlzIGNyZWF0ZWQuIEFueSBzdWdnZXN0aW9uIG9uIGhvdyB0byBkbwo+IHRoaXMgYmV0
-dGVyPwo+CkFoaCB5ZXMgLSB0aGF0IGxvdmVseSBtZXNzYWdlLiBJdCB0dXJucyBvdXQgdGhhdCBv
-bGRlciB2ZXJzaW9ucyBvZgphdXRvbWFrZSB3aWxsIGV2ZW4gZXJyb3Igb3V0IFsxXSwgcmF0aGVy
-IHRoYW4ganVzdCBwcmludGluZyBvdXQgYQp3YXJuaW5nLiBBIGhhbmR5IHdvcmthcm91bmQgd291
-bGQgYmUgdG8gYWRkIGEgLmdpdGlnbm9yZSAoYW5kIGEgc2Vjb25kCm9uZSBpbiB0aGUgdG9wIGZv
-bGRlcikgbGlzdC4gUGx1cyBpdCB3aWxsIHNsaW0gZG93biB0aGUgdW50cmFja2VkCmZpbGVzIGxp
-c3QgYW5kIGxldCB5b3UgY2xlYXJseSBzZWUgd2hlbiBnaXQgYWRkIHdhcyBtaXNzZWQgOi0pCgpD
-aGVlcnMKRW1pbAoKWzFdIGh0dHBzOi8vYnVnemlsbGEucmVkaGF0LmNvbS9zaG93X2J1Zy5jZ2k/
-aWQ9OTAxMzMzCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Marek,
+
+On Mon, May 04, 2015 at 10:15:55AM +0200, Marek Szyprowski wrote:
+>   iommu: exynos: don't read version register on every tlb operation
+
+Please use 'iommu/exynos:' as prefix for the iommu patches and start
+the remaining subject with a capital letter, like this:
+
+	iommu/exynos: Don't read version register on every tlb operation
+
+>  Documentation/devicetree/bindings/iommu/iommu.txt |  44 ++
+>  arch/arm/boot/dts/exynos3250-rinato.dts           |   1 +
+>  arch/arm/boot/dts/exynos3250.dtsi                 |  22 +
+>  arch/arm/boot/dts/exynos4.dtsi                    | 118 ++++++
+>  arch/arm/boot/dts/exynos4210-trats.dts            |   1 +
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts   |   1 +
+>  arch/arm/boot/dts/exynos4210.dtsi                 |  23 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts           |   1 +
+>  arch/arm/boot/dts/exynos4415.dtsi                 |  11 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                 |  82 ++++
+>  arch/arm/boot/dts/exynos5250-snow.dts             |   1 +
+>  arch/arm/boot/dts/exynos5250-spring.dts           |   1 +
+>  arch/arm/boot/dts/exynos5250.dtsi                 | 250 +++++++++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts        |   1 +
+>  arch/arm/boot/dts/exynos5420.dtsi                 | 181 ++++++++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts         |   1 +
+>  arch/arm/mach-exynos/pm_domains.c                 |  18 +-
+>  arch/arm/mm/dma-mapping.c                         | 112 +++++
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c          |  27 +-
+>  drivers/gpu/drm/exynos/exynos_drm_iommu.c         |   3 +
+>  drivers/iommu/exynos-iommu.c                      | 495 ++++++++++------------
+>  21 files changed, 1098 insertions(+), 296 deletions(-)
+
+What is the plan for merging this, should it go through the iommu tree
+or some other path?
+
+
+	Joerg
