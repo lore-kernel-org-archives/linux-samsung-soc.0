@@ -1,73 +1,51 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RESEND-v2-PATCH] ARM: dts: Add missing irq pinctrl for max77686 on
- smdk5250
-Date: Tue, 05 May 2015 10:09:56 +0530
-Message-ID: <1430800796-30960-1-git-send-email-pankaj.dubey@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH RESEND] ARM: dts: exynos3250: add JPEG codec device node
+Date: Tue, 05 May 2015 14:00:30 +0900
+Message-ID: <55484E6E.20906@gmail.com>
+References: <1422027597-12984-1-git-send-email-j.anaszewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47627 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751290AbbEEEhS (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:35262 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754996AbbEEFAe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 May 2015 00:37:18 -0400
+	Tue, 5 May 2015 01:00:34 -0400
+Received: by pabtp1 with SMTP id tp1so180519413pab.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 May 2015 22:00:33 -0700 (PDT)
+In-Reply-To: <1422027597-12984-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh+dt@kernel.org, kgene@kernel.org, yadi.brar01@gmail.com, k.kozlowski.k@gmail.com, k.kozlowski@samsung.com, Yadwinder Singh Brar <yadi.brar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, Kukjin Kim <kgene@kernel.org>
 
-From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+W dniu 24.01.2015 o 00:39, Jacek Anaszewski pisze:
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 2246549..3c043d9 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -228,6 +228,19 @@
+>  			interrupts = <0 240 0>;
+>  		};
+>  
+> +		jpeg: codec@11830000 {
+> +			compatible = "samsung,exynos3250-jpeg";
+> +			reg = <0x11830000 0x1000>;
+> +			interrupts = <0 171 0>;
+> +			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
+> +			clock-names = "jpeg", "sclk";
+> +			samsung,power-domain = <&pd_cam>;
 
-This patch adds pinctrl configuration for using configuring gpx3-2 as an
-external interrupt from max77686. Though max77686 RTC is enabled and gets
-probed by default, it doesnt work as its unable to get interrupt.
+Please switch to generic binding: power-domains.
 
-This patch makes max77686 RTC work and also configures it as wakeup source.
-
-Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-[pankaj.dubey: resubmitted after rebasing to latest kgene tree]
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-Initial version of this patch was part of following series, though
-they are not dependent on each other, resubmitting after rebasing
-and detaching second one from first patch in the series [1]
-
-[1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/303652.html
-
-v2:
- -Included my Signed-off-by for touching this patch.
- -Included Acked-by from Krzysztof Kozlowski.
-
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index bc27cc2..4fe186d 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -131,6 +131,9 @@
- 		reg = <0x09>;
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <2 IRQ_TYPE_NONE>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max77686_irq>;
-+		wakeup-source;
- 
- 		voltage-regulators {
- 			ldo1_reg: LDO1 {
-@@ -410,3 +413,12 @@
- 		};
- 	};
- };
-+
-+&pinctrl_0 {
-+	max77686_irq: max77686-irq {
-+		samsung,pins = "gpx3-2";
-+		samsung,pin-function = <0xf>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
--- 
-2.2.0
+Best regards,
+Krzysztof
