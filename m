@@ -1,44 +1,81 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt
- platforms
-Date: Wed, 06 May 2015 06:30:42 +0900
-Message-ID: <55493682.6040309@kernel.org>
-References: <1430676790-30500-1-git-send-email-anarsoul@gmail.com> <CAJKOXPd71vnup-RZYAh7UM2Tky2M64tA=u0Ydy=ti0yOC6h5aQ@mail.gmail.com> <55493607.3070400@kernel.org>
+Subject: Re: [RESEND-v2-PATCH] ARM: dts: Add missing irq pinctrl for max77686
+ on smdk5250
+Date: Wed, 06 May 2015 06:35:34 +0900
+Message-ID: <554937A6.1030906@kernel.org>
+References: <1430800796-30960-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:36928 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:37533 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1946064AbbEEVas (ORCPT
+	id S2992488AbbEEVfk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 May 2015 17:30:48 -0400
-In-Reply-To: <55493607.3070400@kernel.org>
+	Tue, 5 May 2015 17:35:40 -0400
+In-Reply-To: <1430800796-30960-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vasily Khoruzhick <anarsoul@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, kgene@kernel.org, yadi.brar01@gmail.com, k.kozlowski.k@gmail.com, k.kozlowski@samsung.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-On 05/06/15 06:28, Kukjin Kim wrote:
-> On 05/04/15 08:50, Krzysztof Kozlowski wrote:
->> 2015-05-04 3:13 GMT+09:00 Vasily Khoruzhick <anarsoul@gmail.com>:
->>> Initialize sysreg by default, otherwise driver will crash in suspend callback.
->>>
->>> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
->>
->> I think the crash is possible if device node is missing in DT or pdata
->> is supplied. If you agree, could you add this information to commit
->> message, along with Cc-stable and Fixes tag?
->>
->> Anyway, the patch itself looks good:
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
-> Can you please add me in Cc in your next posting?
+On 05/05/15 13:39, Pankaj Dubey wrote:
+> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
 > 
-> I can't see the patch in my mail box...
+> This patch adds pinctrl configuration for using configuring gpx3-2 as an
+> external interrupt from max77686. Though max77686 RTC is enabled and gets
+> probed by default, it doesnt work as its unable to get interrupt.
 > 
-Oops, sorry for the noise. My email client had a problem and I can see
-the patch now. Please kindly ignore the request :)
+> This patch makes max77686 RTC work and also configures it as wakeup source.
+> 
+> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> [pankaj.dubey: resubmitted after rebasing to latest kgene tree]
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+> Initial version of this patch was part of following series, though
+> they are not dependent on each other, resubmitting after rebasing
+> and detaching second one from first patch in the series [1]
+> 
+> [1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/303652.html
+> 
+> v2:
+>  -Included my Signed-off-by for touching this patch.
+>  -Included Acked-by from Krzysztof Kozlowski.
+> 
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index bc27cc2..4fe186d 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -131,6 +131,9 @@
+>  		reg = <0x09>;
+>  		interrupt-parent = <&gpx3>;
+>  		interrupts = <2 IRQ_TYPE_NONE>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&max77686_irq>;
+> +		wakeup-source;
+>  
+>  		voltage-regulators {
+>  			ldo1_reg: LDO1 {
+> @@ -410,3 +413,12 @@
+>  		};
+>  	};
+>  };
+> +
+> +&pinctrl_0 {
+> +	max77686_irq: max77686-irq {
+> +		samsung,pins = "gpx3-2";
+> +		samsung,pin-function = <0xf>;
+> +		samsung,pin-pud = <0>;
+> +		samsung,pin-drv = <0>;
+> +	};
+> +};
 
-Thanks,
-Kukjin
+Applied, thanks.
+
+- Kukjin
