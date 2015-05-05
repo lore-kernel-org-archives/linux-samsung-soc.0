@@ -1,59 +1,66 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH RESEND] ARM: dts: exynos3250: add JPEG codec device node
-Date: Tue, 05 May 2015 09:20:24 +0200
-Message-ID: <55486F38.7080508@samsung.com>
-References: <1422027597-12984-1-git-send-email-j.anaszewski@samsung.com>
- <55484E6E.20906@gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH 1/8] mfd: cros ec: Remove parent field
+Date: Tue, 05 May 2015 11:06:50 +0200
+Message-ID: <5548882A.50400@collabora.co.uk>
+References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-2-git-send-email-javier.martinez@collabora.co.uk> <CAMHSBOV3PxRqeHtMsDvqOaCLX7QpJ-ncvrfES_oixWAG1ZkDQg@mail.gmail.com> <20150429103734.GU9169@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:24202 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756539AbbEEHU1 (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:34308 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031094AbbEEJG4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 May 2015 03:20:27 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NNV0052O8E1XQ20@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 May 2015 08:20:25 +0100 (BST)
-In-reply-to: <55484E6E.20906@gmail.com>
+	Tue, 5 May 2015 05:06:56 -0400
+In-Reply-To: <20150429103734.GU9169@x1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, Kukjin Kim <kgene@kernel.org>
+To: Lee Jones <lee.jones@linaro.org>, Gwendal Grignou <gwendal@chromium.org>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On 05/05/2015 07:00 AM, Krzysztof Kozlowski wrote:
-> W dniu 24.01.2015 o 00:39, Jacek Anaszewski pisze:
->> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> ---
->>   arch/arm/boot/dts/exynos3250.dtsi |   13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->> index 2246549..3c043d9 100644
->> --- a/arch/arm/boot/dts/exynos3250.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->> @@ -228,6 +228,19 @@
->>   			interrupts = <0 240 0>;
->>   		};
->>
->> +		jpeg: codec@11830000 {
->> +			compatible = "samsung,exynos3250-jpeg";
->> +			reg = <0x11830000 0x1000>;
->> +			interrupts = <0 171 0>;
->> +			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
->> +			clock-names = "jpeg", "sclk";
->> +			samsung,power-domain = <&pd_cam>;
+Hello Lee,
+
+On 04/29/2015 12:37 PM, Lee Jones wrote:
+> On Thu, 23 Apr 2015, Gwendal Grignou wrote:
+> 
+>> Be consistent, use cros_ec instead of "cros ec" or "cros-ec".
+> 
+> What is this in reference to?
 >
-> Please switch to generic binding: power-domains.
 
-I've sent updated version, thanks.
+I think Gwendal meant that I should be consistent in general and was not
+referring to this patch particular.
+ 
+>> Otherwise:
+>> 
+>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>> 
+>> On Mon, Apr 6, 2015 at 9:14 AM, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>> > From: Gwendal Grignou <gwendal@chromium.org>
+>> >
+>> > parent and dev were pointing to the same device structure.
+>> > parent is unused, removed.
+>> >
+>> > Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+>> > Reviewed-by: Stephen Barber <smbarber@chromium.org>
+>> > Tested-by: Stephen Barber <smbarber@chromium.org>
+>> > Reviewed-by: Puthikorn Voravootivat <puthik@chromium.org>
+>> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> > ---
+>> >  drivers/mfd/cros_ec_i2c.c             | 1 -
+>> >  drivers/mfd/cros_ec_spi.c             | 1 -
+>> >  drivers/platform/chrome/cros_ec_lpc.c | 1 -
+>> >  include/linux/mfd/cros_ec.h           | 2 --
+>> >  4 files changed, 5 deletions(-)
+> 
+> For when you re-submit:
+> 
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> 
 
--- 
-Best Regards,
-Jacek Anaszewski
+Thanks a lot for your ack.
+
+Best regards,
+Javier
