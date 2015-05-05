@@ -1,56 +1,68 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [RESEND-PATCH] ARM: dts: Add missing irq pinctrl for max77686
- on smdk5250
-Date: Wed, 06 May 2015 06:40:57 +0900
-Message-ID: <554938E9.10907@kernel.org>
-References: <1430798855-27271-1-git-send-email-pankaj.dubey@samsung.com> <CAJKOXPd2x_DiD8EAq202=scTuK0HHH8evvD_TkLn4oO_6hrRhg@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos3250: add JPEG codec device node
+Date: Wed, 06 May 2015 08:29:32 +0900
+Message-ID: <5549525C.4060503@samsung.com>
+References: <1430810299-23512-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37939 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752209AbbEEVlD (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:18938 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751878AbbEEX3f (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 May 2015 17:41:03 -0400
-In-Reply-To: <CAJKOXPd2x_DiD8EAq202=scTuK0HHH8evvD_TkLn4oO_6hrRhg@mail.gmail.com>
+	Tue, 5 May 2015 19:29:35 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NNW00AMNH99E440@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 May 2015 08:29:34 +0900 (KST)
+In-reply-to: <1430810299-23512-1-git-send-email-j.anaszewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski.k@gmail.com>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, kgene@kernel.org, yadi.brar01@gmail.com, Kozik <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-On 05/05/15 13:14, Krzysztof Koz=C5=82owski wrote:
-> 2015-05-05 13:07 GMT+09:00 Pankaj Dubey <pankaj.dubey@samsung.com>:
->> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->>
->> This patch adds pinctrl configuration for using configuring gpx3-2 a=
-s an
->> external interrupt from max77686. Though max77686 RTC is enabled and=
- gets
->> probed by default, it doesnt work as its unable to get interrupt.
->>
->> This patch makes max77686 RTC work and also configures it as wakeup =
-source.
->>
->> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
->> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.=
-uk>
->> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>
->> Initial version of this patch was part of following series, though
->> they are not dependent on each other, resubmitting after rebasing
->> and detaching second one from first patch in the series [1]
->>
->> [1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-Nove=
-mber/303652.html
->=20
-> Thanks, but now it needs your Signed-off-by because you touched it.
->=20
-Just note, to more clarify, Signed-off-by should be added who wants to
-submit anything into mailing-list even no updating and just posting...
+Hi Jacek,
 
-> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
+This patch don't include any patach description.
+I think you better to add it.
+
 Thanks,
-Kukjin
+Chanwoo Choi
+
+On 05/05/2015 04:18 PM, Jacek Anaszewski wrote:
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index e3bfb11..e25088c 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -243,6 +243,19 @@
+>  			interrupts = <0 240 0>;
+>  		};
+>  
+> +		jpeg: codec@11830000 {
+> +			compatible = "samsung,exynos3250-jpeg";
+> +			reg = <0x11830000 0x1000>;
+> +			interrupts = <0 171 0>;
+> +			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
+> +			clock-names = "jpeg", "sclk";
+> +			power-domains = <&pd_cam>;
+> +			assigned-clocks = <&cmu CLK_MOUT_CAM_BLK>, <&cmu CLK_SCLK_JPEG>;
+> +			assigned-clock-rates = <0>, <150000000>;
+> +			assigned-clock-parents = <&cmu CLK_DIV_MPLL_PRE>;
+> +			status = "disabled";
+> +		};
+> +
+>  		fimd: fimd@11c00000 {
+>  			compatible = "samsung,exynos3250-fimd";
+>  			reg = <0x11c00000 0x30000>;
+> 
