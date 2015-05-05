@@ -1,104 +1,61 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 3/8] mfd: cros_ec: Instantiate sub-devices from
- device tree
-Date: Tue, 05 May 2015 11:21:42 +0200
-Message-ID: <55488BA6.9030500@collabora.co.uk>
-References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-4-git-send-email-javier.martinez@collabora.co.uk> <20150429103943.GV9169@x1>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL v2] clk/samsung fixes for 4.1
+Date: Tue, 05 May 2015 11:39:50 +0200
+Message-ID: <55488FE6.4040003@samsung.com>
+References: <554105AC.8060800@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34327 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030978AbbEEJVr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 May 2015 05:21:47 -0400
-In-Reply-To: <20150429103943.GV9169@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <554105AC.8060800@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Lee,
+Mike,
 
-On 04/29/2015 12:39 PM, Lee Jones wrote:
-> On Mon, 06 Apr 2015, Javier Martinez Canillas wrote:
-> 
->> From: Todd Broch <tbroch@chromium.org>
->> 
->> If the EC device tree node has sub-nodes, try to instantiate them as
->> MFD sub-devices.  We can configure the EC features provided by the board.
->> 
->> Signed-off-by: Todd Broch <tbroch@chromium.org>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
->>  drivers/mfd/cros_ec.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
->> 
->> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
->> index c4aecc6f8373..8aa83b91e25c 100644
->> --- a/drivers/mfd/cros_ec.c
->> +++ b/drivers/mfd/cros_ec.c
->> @@ -17,6 +17,7 @@
->>   * battery charging and regulator control, firmware update.
->>   */
->>  
->> +#include <linux/of_platform.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/slab.h>
->>  #include <linux/module.h>
->> @@ -109,18 +110,8 @@ EXPORT_SYMBOL(cros_ec_cmd_xfer);
->>  
->>  static const struct mfd_cell cros_devs[] = {
->>  	{
->> -		.name = "cros-ec-keyb",
->> -		.id = 1,
->> -		.of_compatible = "google,cros-ec-keyb",
->> -	},
->> -	{
->> -		.name = "cros-ec-i2c-tunnel",
->> -		.id = 2,
->> -		.of_compatible = "google,cros-ec-i2c-tunnel",
->> -	},
->> -	{
->>  		.name = "cros-ec-ctl",
->> -		.id = 3,
->> +		.id = 1,
-> 
-> Can't you use PLATFORM_DEVID_AUTO?
->
+this is a corrected version of pull request I sent on 29/04/15.
 
-Yes, I think that will work as well so I'll change it.
- 
->>  	},
->>  };
->>  
->> @@ -150,6 +141,15 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>  		return err;
->>  	}
->>  
->> +#ifdef CONFIG_OF
->> +	err = of_platform_populate(dev->of_node, NULL, NULL, dev);
->> +	if (err) {
->> +		mfd_remove_devices(dev);
->> +		dev_err(dev, "Failed to register sub-devices\n");
->> +		return err;
->> +	}
->> +#endif
-> 
-> And if we don't support OF?
->
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
 
-These sub-devices are only present on machines that support OF so
-is more flexible to use of_platform_populate() to register those.
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
 
-Both machines using and not using DT, register a cros-ec-ctl which
-is still a mfd_cell in the cros_devs array.
+are available in the git repository at:
 
->>  	dev_info(dev, "Chrome EC device registered\n");
->>  
->>  	return 0;
-> 
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-fixes-4.1-2
 
-Best regards,
-Javier
+for you to fetch changes up to 97372e5a99449b4fffa824a382ad6358066a9918:
+
+  clk: exynos5420: Restore GATE_BUS_TOP on suspend (2015-05-05 10:51:04 +0200)
+
+----------------------------------------------------------------
+clk/samsung fixes for 4.1
+
+ - missing CONFIG_ARCH_EXYNOS5433 -> CONFIG_ARCH_EXYNOS substitution
+   to actually enable clk-exynos5433.c compilation,
+ - fixes of exynos5433 clk tree definitions: register offsets, parent
+   clocks, PLL coefficients,
+ - fix for exynos5420 system sleep regression introduced in 3.19.
+
+----------------------------------------------------------------
+Chanwoo Choi (3):
+      clk: Use CONFIG_ARCH_EXYNOS instead of CONFIG_ARCH_EXYNOS5433
+      clk: exynos5433: Fix wrong parent clock of sclk_apollo clock
+      clk: exynos5433: Fix wrong PMS value of exynos5433_pll_rates
+
+Javier Martinez Canillas (1):
+      clk: exynos5420: Restore GATE_BUS_TOP on suspend
+
+Jonghwa Lee (2):
+      clk: exynos5433: Fix wrong offset of PCLK_MSCL_SECURE_SMMU_JPEG
+      clk: exynos5433: Fix CLK_PCLK_MONOTONIC_CNT clk register assignment
+
+ drivers/clk/samsung/Makefile         |    2 +-
+ drivers/clk/samsung/clk-exynos5420.c |    1 +
+ drivers/clk/samsung/clk-exynos5433.c |   12 ++++++------
+ 3 files changed, 8 insertions(+), 7 deletions(-)
+
+-- 
+Thanks,
+Sylwester
