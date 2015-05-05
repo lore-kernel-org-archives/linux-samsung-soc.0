@@ -1,114 +1,49 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 01/25] arm: dma-mapping: add support for creating
- reserved mappings in iova space
-Date: Mon, 4 May 2015 17:12:00 -0500
-Message-ID: <CAL_JsqKB4F8tspydBFrL-PH3gXcyu-pwQwBETMizJzTpAF3yzg@mail.gmail.com>
-References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com> <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt platforms
+Date: Tue, 5 May 2015 10:46:36 +0900
+Message-ID: <CAJKOXPd6ED1X9yU-JTTrw8=49S=tQgQ75U5nHrMVhXn3KzVRMw@mail.gmail.com>
+References: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
+	<CAJKOXPd71vnup-RZYAh7UM2Tky2M64tA=u0Ydy=ti0yOC6h5aQ@mail.gmail.com>
+	<CA+E=qVdjvx=0PSh-ead_pABd9D=bG3ua1FFRTSN2U5BVf2a=Og@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f54.google.com ([209.85.213.54]:36381 "EHLO
-	mail-yh0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752008AbbEDWMV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 May 2015 18:12:21 -0400
-Received: by yhrr66 with SMTP id r66so35443866yhr.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 May 2015 15:12:20 -0700 (PDT)
-In-Reply-To: <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+E=qVdjvx=0PSh-ead_pABd9D=bG3ua1FFRTSN2U5BVf2a=Og-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linux IOMMU <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-On Mon, May 4, 2015 at 3:15 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Some devices (like frame buffers) are enabled by bootloader and configured
-> to perform DMA operations automatically (like displaying boot logo or splash
-> screen). Such devices operate and perform DMA operation usually until the
-> proper driver for them is loaded and probed. However before that happens,
-> system usually loads IOMMU drivers and configures dma parameters for each
-> device. When such initial configuration is created and enabled, it usually
-> contains empty translation rules betweem IO address space and physical
-> memory, because no buffers nor memory regions have been requested by the
-> respective driver.
+2015-05-05 2:52 GMT+09:00 Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> On Mon, May 4, 2015 at 2:50 AM, Krzysztof Kozlowski
+> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> 2015-05-04 3:13 GMT+09:00 Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>> Initialize sysreg by default, otherwise driver will crash in suspend callback.
+>>>
+>>> Signed-off-by: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>
+>> I think the crash is possible if device node is missing in DT or pdata
+>> is supplied.
 >
-> This patch adds support for "iommu-reserved-mapping", which can be used
-> to provide definitions for mappings that need to be created on system
-> boot to let such devices (enabled by bootloader) to operate properly
-> until respective driver is probed.
+> And it's exactly the case for non-DT boot, right?
+
+Right, please add this to commit message.
+
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/iommu/iommu.txt |  44 +++++++++
->  arch/arm/mm/dma-mapping.c                         | 112 ++++++++++++++++++++++
->  2 files changed, 156 insertions(+)
+>> If you agree, could you add this information to commit
+>> message, along with Cc-stable and Fixes tag?
 >
-> diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
-> index 5a8b4624defc..fd54e6b597f0 100644
-> --- a/Documentation/devicetree/bindings/iommu/iommu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/iommu.txt
-> @@ -86,6 +86,35 @@ have a means to turn off translation. But it is invalid in such cases to
->  disable the IOMMU's device tree node in the first place because it would
->  prevent any driver from properly setting up the translations.
->
-> +Optional properties:
-> +--------------------
-> +- iommu-reserved-mapping: A list of entries describing additional
-> +  reserved mapping, that will be inserted to the default IO address space
-> +  created for given master device. Each entry consist of IO address,
-> +  physical memory address and size of the region.
-> +
-> +Some devices (like frame buffers) are enabled by bootloader and configured
-> +to perform DMA operations automatically (like displaying boot logo or splash
-> +screen). Such devices operate and perform DMA operation usually until the
-> +proper driver for them is loaded and probed. However before that happens,
-> +system usually loads IOMMU drivers and configures dma parameters for each
+> How do I add "Fixes tag"?
 
-s/dma/DMA/
+In tbe commit message just add below Signed-off-by:
+1. Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+2. Fixes: abbreviated SHA ("commit subject")
+The SHA of commit which introduced this error. It indicates how far
+your patch should be backported.
 
-> +device. When such initial configuration is created and enabled, it usually
-> +contains empty translation rules betweem IO address space and physical
+Look for examples in kernel GIT and
+Documentation/stable_kernel_rules.txt. For example:
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=1c363c7cccf64128087002b0779986ad16aff6dc
 
-s/betweem/between/
-
-> +memory, because no buffers nor memory regions have been requested by the
-> +respective driver.
-> +
-> +To avoid IOMMU page fault, one can provide "iommu-reserved-mapping"
-> +property, which defines all memory regions which must be mapped to IO
-> +address space to boot properly when device has been enabled by the
-> +bootloader. More than one region can be defined for given master device.
-> +Each region is defined by the following triplet: first entry is IO
-> +address (encoded in "address" cells), second is base physical memory
-> +address for this regions (also encoded in "address" cells) and the last
-> +is size of the region (encoded in "size" cells). To ensure that that
-> +given master device will not trigger page fault after enabling IOMMU,
-> +one should define identity mapping between physical memory and IO
-> +address space for the range of addresses accessed by the device.
-> +
->
->  Notes:
->  ======
-> @@ -113,6 +142,21 @@ Single-master IOMMU:
->                 iommus = <&{/iommu}>;
->         };
->
-> +
-> +Single-master IOMMU, which has been left enabled by bootloader:
-> +---------------------------------------------------------------
-> +
-> +       iommu {
-> +               #iommu-cells = <0>;
-> +       };
-> +
-> +       master {
-> +               iommus = <&{/iommu}>;
-> +               /* bootloader configures framebuffer at 0x40000000 (32MiB)
-> +               iommu-reserved-mapping = <0x40000000 0x40000000 0x2000000>;
-
-Is there not an ordering problem if kernel initializes the IOMMU
-before parsing this for each master? I would think the IOMMU driver
-needs to find all of these mappings and cleanly switch the page tables
-with the new reserved mapping.
-
-Rob
+Best regards,
+Krzysztof
