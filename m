@@ -1,33 +1,28 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 4/8] mfd: cros_ec: Use a zero-length array for
- command data
-Date: Tue, 05 May 2015 17:53:01 +0200
-Message-ID: <5548E75D.5050407@collabora.co.uk>
-References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-5-git-send-email-javier.martinez@collabora.co.uk> <CAMHSBOUz+-cQO0zg3VaK1fwJV0m79-hwVf5Nw5ko7JpUGDRntg@mail.gmail.com>
+Subject: Re: [RESEND PATCH 5/8] mfd: cros-ec: Support multiple EC in a system
+Date: Tue, 05 May 2015 17:40:31 +0200
+Message-ID: <5548E46F.6060603@collabora.co.uk>
+References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-6-git-send-email-javier.martinez@collabora.co.uk> <CAMHSBOXMgYjxZL=rkB7rvg_192sbFGryD6hX2oSPMDPT+6OGog@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMHSBOUz+-cQO0zg3VaK1fwJV0m79-hwVf5Nw5ko7JpUGDRntg@mail.gmail.com>
+In-Reply-To: <CAMHSBOXMgYjxZL=rkB7rvg_192sbFGryD6hX2oSPMDPT+6OGog@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gwendal Grignou <gwendal@chromium.org>
-Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Gwendal Grignou <gwendal@google.com>
+Cc: Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Gwendal Grignou <gwendal@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hello Gwendal,
 
-Thanks a lot for your feedback.
-
-On 04/24/2015 07:19 AM, Gwendal Grignou wrote:
-> In general we can use kmalloc instead of kzalloc. Also some commands
-> do not need malloc at all. We could allocate on stack for known small
-> commands and for the keyboard case use the caller argument.
+On 04/24/2015 01:54 AM, Gwendal Grignou wrote:
+> This patch needs  https://chromium-review.googlesource.com/217297:
+> /dev/cros_ec0 was not a good idea, because it is difficult to know
+> what it represents.
 >
 
-Sure, I'll do all the changes that you suggested when respinning the patches.
- 
-> Gwendal.
-> 
+Thanks for the information, I'll squash $subject and the patch you
+pointed out then if you agree.
 
 Best regards,
 Javier
