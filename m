@@ -1,45 +1,39 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Add keep-power-in-suspend to WiFi SDIO node
- for Snow
-Date: Wed, 6 May 2015 09:36:21 -0700
-Message-ID: <CAD=FV=XJXHjXxirjwPfrJ3=xOj46GTqdSxxFstzjTVJ9HP1Q=w@mail.gmail.com>
-References: <1430929979-18119-1-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430929979-18119-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] mfd: max77686: Remove unused struct max77686_opmode_data
+Date: Wed,  6 May 2015 19:07:16 +0200
+Message-ID: <1430932036-23971-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:36389 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751591AbbEFRHa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 May 2015 13:07:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Javier,
+The defined struct max77686_opmode_data isn't used neither by
+the max77686 mfd driver nor the drivers for its sub-devices.
 
-On Wed, May 6, 2015 at 9:32 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> The Marvell mwifiex driver prevents the system to enter into a suspend
-> state if the card power is not preserved during a suspend/resume cycle.
->
-> So Suspend-to-RAM and Suspend-to-idle are failing on Exynos5250 Snow.
->
-> Add the keep-power-in-suspend Power Management property to the SDIO/MMC
-> node so the mwifiex suspend handler doesn't fail and the system is able
-> to enter into a suspend state.
->
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->
-> Kukjin and Krzysztof,
->
-> I didn't notice that Snow was also missing this property when I did the
-> same change for Peach Pit and and Pi Chromebooks [0], sorry about that.
->
-> Best regards,
-> Javier
->
-> [0]: https://lkml.org/lkml/2015/4/7/377
-> ---
->  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
->  1 file changed, 1 insertion(+)
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ include/linux/mfd/max77686.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
+index bb995ab9a575..d4b72d519115 100644
+--- a/include/linux/mfd/max77686.h
++++ b/include/linux/mfd/max77686.h
+@@ -125,9 +125,4 @@ enum max77686_opmode {
+ 	MAX77686_OPMODE_STANDBY,
+ };
+ 
+-struct max77686_opmode_data {
+-	int id;
+-	int mode;
+-};
+-
+ #endif /* __LINUX_MFD_MAX77686_H */
+-- 
+2.1.4
