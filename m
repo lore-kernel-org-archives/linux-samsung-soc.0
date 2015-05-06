@@ -1,53 +1,86 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/8] clk: Minor cleanups
-Date: Wed, 6 May 2015 13:33:55 +0200
-Message-ID: <20150506113354.GA9421@ulmo>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 2/2] drm/exynos: 'win' is always unsigned
+Date: Wed,  6 May 2015 14:10:22 +0200
+Message-ID: <1430914222-3603-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1430914222-3603-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1430196383-9190-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1430914222-3603-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---h31gzZEtNLTqOjlF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Apr 28, 2015 at 01:46:15PM +0900, Krzysztof Kozlowski wrote:
-[...]
->   clk: tegra: Fix inconsistent indenting
->   clk: tegra: Fix duplicate const for parent names
-
-I've squashed these into the patches that add the EMC driver.
-
-Thanks,
-Thierry
-
---h31gzZEtNLTqOjlF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVSfwfAAoJEN0jrNd/PrOhVSwQAJ/rA3S2D6xMynluMc5UstEk
-UZ72ZR6v0z5S9VzLenuIhtSsuk7oVJbTmDgMvf8XAbbOWtbGHJQn6ZmR3Me6GG+x
-zzIGolMjNHrBRK9MOdni1ryv3/F81BE7QZrGHvnMpeXRbDerQJz3C+PUlcZ1nsu6
-6hGfCl6+QCVT82nX3oj3qEdQScMMbiG37VTTluW63wQY3qaSZARouMLou1/MY+ln
-4GUa09KVJdiAlASQ6llRQVAPVas1WGX2OCmhNeqhk8ERQVJj1orjxl4rOyTVux14
-PvHHdfJrTA1w8WxzrLKjvUCm1aJgc5sNTQqZV9TcA0ktdjMtjkFaWAFS70J9oWrG
-/bk+CbeJtEDWhTOIvclVlbwQ0kyZtFexSZgc1uICHB3PABb2LdZ3HDHrZs3KskCD
-7FrUSakBBB5c9USKnaBDmBxuRW5ORDHQfPlrAB46Ye6SBB2GvgsW/S9JxVDRioqX
-BB83VnMMxSxPyGCqgmvAkAV06wHMy3RwVs+OMi8FqhQwb7f+QTo/ERxwTBbtk/WC
-SRJaopAR/sz6igINaL1Nx21Z/kju4xMjCZraLcII4p3CJvT6YtT9Q78xWJGGribj
-U6bHROgmnJxNnb9PTq/nYL4j4GeOfr6+sbp/If0v4WkS7BBtQAxXHXLgVbmPR1Un
-IO7lmnPDceWy7YJedk4F
-=LSUk
------END PGP SIGNATURE-----
-
---h31gzZEtNLTqOjlF--
+VGhlIGluZGV4IGZvciB0aGUgaGFyZHdhcmUgbGF5ZXIgaXMgYWx3YXlzID49MC4gUHJldmlvdXMK
+Y29kZSB0aGF0IGFsc28gdXNlZCAtMSBhcyBzcGVjaWFsIGluZGV4IGlzIG5vdyBnb25lLgoKQWxz
+byBhcHBseSB0aGlzIHRvICdjaF9lbmFibGVkJyAoZGVjb24vZmltZCksIHNpbmNlIHRoZQp2YXJp
+YWJsZSBpcyBvbiB0aGUgc2FtZSBsaW5lIChhbmQgaXMgYWdhaW4gYWx3YXlzIHVuc2lnbmVkKS4K
+ClNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxk
+LmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyB8IDIg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDYgKysrLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgfCA2ICsrKy0tLQog
+MyBmaWxlcyBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCmluZGV4IDFmN2UzM2YuLjVjMGIy
+Y2MgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24u
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKQEAgLTkx
+LDcgKzkxLDcgQEAgc3RhdGljIHZvaWQgZGVjb25fd2FpdF9mb3JfdmJsYW5rKHN0cnVjdCBleHlu
+b3NfZHJtX2NydGMgKmNydGMpCiAKIHN0YXRpYyB2b2lkIGRlY29uX2NsZWFyX2NoYW5uZWwoc3Ry
+dWN0IGRlY29uX2NvbnRleHQgKmN0eCkKIHsKLQlpbnQgd2luLCBjaF9lbmFibGVkID0gMDsKKwl1
+bnNpZ25lZCBpbnQgd2luLCBjaF9lbmFibGVkID0gMDsKIAogCURSTV9ERUJVR19LTVMoIiVzXG4i
+LCBfX0ZJTEVfXyk7CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmlu
+ZGV4IDk4MTlmYTYuLmVlMTFlYTYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYwpAQCAtMjE2LDcgKzIxNiw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2FpdF9mb3JfdmJs
+YW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJCURSTV9ERUJVR19LTVMoInZibGFu
+ayB3YWl0IHRpbWVkIG91dC5cbiIpOwogfQogCi1zdGF0aWMgdm9pZCBmaW1kX2VuYWJsZV92aWRl
+b19vdXRwdXQoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4LCBpbnQgd2luLAorc3RhdGljIHZvaWQg
+ZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgdW5zaWdu
+ZWQgaW50IHdpbiwKIAkJCQkJYm9vbCBlbmFibGUpCiB7CiAJdTMyIHZhbCA9IHJlYWRsKGN0eC0+
+cmVncyArIFdJTkNPTih3aW4pKTsKQEAgLTIyOSw3ICsyMjksNyBAQCBzdGF0aWMgdm9pZCBmaW1k
+X2VuYWJsZV92aWRlb19vdXRwdXQoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4LCBpbnQgd2luLAog
+CXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFdJTkNPTih3aW4pKTsKIH0KIAotc3RhdGljIHZvaWQg
+ZmltZF9lbmFibGVfc2hhZG93X2NoYW5uZWxfcGF0aChzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgs
+IGludCB3aW4sCitzdGF0aWMgdm9pZCBmaW1kX2VuYWJsZV9zaGFkb3dfY2hhbm5lbF9wYXRoKHN0
+cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IHdpbiwKIAkJCQkJCWJvb2wgZW5h
+YmxlKQogewogCXUzMiB2YWwgPSByZWFkbChjdHgtPnJlZ3MgKyBTSEFET1dDT04pOwpAQCAtMjQ0
+LDcgKzI0NCw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfZW5hYmxlX3NoYWRvd19jaGFubmVsX3BhdGgo
+c3RydWN0IGZpbWRfY29udGV4dCAqY3R4LCBpbnQgd2luLAogCiBzdGF0aWMgdm9pZCBmaW1kX2Ns
+ZWFyX2NoYW5uZWwoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4KQogewotCWludCB3aW4sIGNoX2Vu
+YWJsZWQgPSAwOworCXVuc2lnbmVkIGludCB3aW4sIGNoX2VuYWJsZWQgPSAwOwogCiAJRFJNX0RF
+QlVHX0tNUygiJXNcbiIsIF9fRklMRV9fKTsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMKaW5kZXggZmYxNTcwMi4uNGExNjU2YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jCkBAIC0zMzMsNyArMzMzLDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3JnYl9m
+bXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IGhlaWdodCkKIAltaXhl
+cl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLCBNWFJfQ0ZHX1JHQl9GTVRfTUFTSyk7
+CiB9CiAKLXN0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXllcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAq
+Y3R4LCBpbnQgd2luLCBib29sIGVuYWJsZSkKK3N0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXllcihz
+dHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luLCBib29sIGVuYWJsZSkK
+IHsKIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJdTMy
+IHZhbCA9IGVuYWJsZSA/IH4wIDogMDsKQEAgLTM3OSw3ICszNzksNyBAQCBzdGF0aWMgdm9pZCBt
+aXhlcl9zdG9wKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCiAJCXVzbGVlcF9yYW5nZSgxMDAw
+MCwgMTIwMDApOwogfQogCi1zdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1peGVy
+X2NvbnRleHQgKmN0eCwgaW50IHdpbikKK3N0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1
+Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luKQogewogCXN0cnVjdCBtaXhl
+cl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKIAl1bnNpZ25lZCBsb25nIGZsYWdz
+OwpAQCAtNTExLDcgKzUxMSw3IEBAIGZhaWw6CiAJcmV0dXJuIC1FTk9UU1VQUDsKIH0KIAotc3Rh
+dGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGlu
+dCB3aW4pCitzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRl
+eHQgKmN0eCwgdW5zaWduZWQgaW50IHdpbikKIHsKIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpy
+ZXMgPSAmY3R4LT5taXhlcl9yZXM7CiAJdW5zaWduZWQgbG9uZyBmbGFnczsKLS0gCjIuMC41Cgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
