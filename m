@@ -1,76 +1,85 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to
- use get_vaddr_frames()
-Date: Wed, 6 May 2015 17:02:02 +0200
-Message-ID: <20150506150202.GC27648@quack.suse.cz>
-References: <1430897296-5469-1-git-send-email-jack@suse.cz>
- <1430897296-5469-10-git-send-email-jack@suse.cz>
- <5549F147.3050800@suse.cz>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH v3] libgencec: Add userspace library for the generic CEC
+ kernel interface
+Date: Wed, 6 May 2015 16:09:19 +0100
+Message-ID: <CACvgo52weKaFL44jbYiWTeQDFv9WqFNXFW+RMhPp4kcPt7L6cw@mail.gmail.com>
+References: <1430915838-20547-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:42867 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751034AbbEFPCG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 11:02:06 -0400
-Content-Disposition: inline
-In-Reply-To: <5549F147.3050800@suse.cz>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1430915838-20547-1-git-send-email-k.debski@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: ML dri-devel <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, mchehab@osg.samsung.com, hverkuil@xs4all.nl, Kyungmin Park <kyungmin.park@samsung.com>, thomas@tommie-lie.de, sean@mess.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, lars@opdenkamp.eu
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Wed 06-05-15 12:47:35, Vlastimil Babka wrote:
-> On 05/06/2015 09:28 AM, Jan Kara wrote:
-> >Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_frames().
-> >This removes the knowledge about vmas and mmap_sem locking from exynos
-> >driver. Also it fixes a problem that the function has been mapping user
-> >provided address without holding mmap_sem.
-> >
-> >Signed-off-by: Jan Kara <jack@suse.cz>
-> >---
-> >  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 89 ++++++++++--------------------
-> >  drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 ---------------------------------
-> >  2 files changed, 29 insertions(+), 157 deletions(-)
-> >
-> >diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> >index 81a250830808..265519c0fe2d 100644
-> >--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> >+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> ...
-> >@@ -456,65 +458,37 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
-> >  		return ERR_PTR(-ENOMEM);
-> >
-> >  	atomic_set(&g2d_userptr->refcount, 1);
-> >+	g2d_userptr->size = size;
-> >
-> >  	start = userptr & PAGE_MASK;
-> >  	offset = userptr & ~PAGE_MASK;
-> >  	end = PAGE_ALIGN(userptr + size);
-> >  	npages = (end - start) >> PAGE_SHIFT;
-> >-	g2d_userptr->npages = npages;
-> >-
-> >-	pages = drm_calloc_large(npages, sizeof(struct page *));
-> >-	if (!pages) {
-> >-		DRM_ERROR("failed to allocate pages.\n");
-> >-		ret = -ENOMEM;
-> >+	vec = g2d_userptr->vec = frame_vector_create(npages);
-> >+	if (!vec)
-> >  		goto err_free;
-> >-	}
-> >
-> >-	down_read(&current->mm->mmap_sem);
-> >-	vma = find_vma(current->mm, userptr);
-> >-	if (!vma) {
-> >-		up_read(&current->mm->mmap_sem);
-> >-		DRM_ERROR("failed to get vm region.\n");
-> >+	ret = get_vaddr_frames(start, npages, 1, 1, vec);
-> 
-> Use true instead of 1.
-  Yes, thanks!
+Hi Kamil,
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+There are a couple of bits that I've missed out previously. All but
+the missing install of libgencec.pc are general cleanups.
+
+On 6 May 2015 at 13:37, Kamil Debski <k.debski@samsung.com> wrote:
+
+> --- /dev/null
+> +++ b/.gitignore
+> @@ -0,0 +1,26 @@
+
+> +/ar-lib
+You can drop this (see the configure.ac note).
+
+> +/aclocal.m4
+> +/autom4te.cache/*
+> +/config.*
+> +/configure
+> +/depcomp
+> +/install-sh
+> +/missing
+Normally one can drop the leading forward slash in .gitignore files.
+This way git won't bother if you build in a subdirectory - for example
+$(project_top)/build.
+
+> +/examples/.deps/*
+> +/examples/.libs/*
+> +src/.deps/*
+> +src/.libs/*
+One can replace these four with
+.deps/
+.libs/
+
+> +/examples/cectest
+echo cectest > examples/.gitignore
+
+
+> --- /dev/null
+> +++ b/Makefile.am
+> @@ -0,0 +1,4 @@
+> +SUBDIRS = src examples
+> +ACLOCAL_AMFLAGS = -I m4
+> +library_includedir=$(includedir)
+> +library_include_HEADERS = include/gencec.h
+We want to install the pc file. Otherwise one cannot really use it.
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libgencec.pc
+
+
+> --- /dev/null
+> +++ b/configure.ac
+> @@ -0,0 +1,27 @@
+> +AC_PREREQ(2.60)
+> +
+> +AC_INIT([libgencec], [0.1], [k.debski@samsung.com])
+> +AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+> +
+> +AC_PROG_CC
+> +AM_PROG_AR
+There is not plan to use the library on Windows is there ? If so we
+can remove this as per the manual [1].
+
+"You must use this macro when you use the archiver in your project, if
+you want support for unusual archivers such as Microsoft lib"
+
+Cheers,
+Emil
+
+[1] http://www.gnu.org/software/automake/manual/html_node/Public-Macros.html
