@@ -1,39 +1,70 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] mfd: max77686: Remove unused struct max77686_opmode_data
-Date: Wed,  6 May 2015 19:07:16 +0200
-Message-ID: <1430932036-23971-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36389 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751591AbbEFRHa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 13:07:30 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: drm/exynos: Add atomic modesetting support
+Date: Wed, 6 May 2015 18:45:04 -0300
+Message-ID: <20150506214504.GA25751@joana>
+References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The defined struct max77686_opmode_data isn't used neither by
-the max77686 mfd driver nor the drivers for its sub-devices.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- include/linux/mfd/max77686.h | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
-index bb995ab9a575..d4b72d519115 100644
---- a/include/linux/mfd/max77686.h
-+++ b/include/linux/mfd/max77686.h
-@@ -125,9 +125,4 @@ enum max77686_opmode {
- 	MAX77686_OPMODE_STANDBY,
- };
- 
--struct max77686_opmode_data {
--	int id;
--	int mode;
--};
--
- #endif /* __LINUX_MFD_MAX77686_H */
--- 
-2.1.4
+SGkgSW5raSBhbmQgSm9vbnlvdW5nLgoKQW55IHRob3VnaHRzIG9uIHRoaXM/CgoyMDE1LTA0LTMw
+IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2b0BwYWRvdmFuLm9yZz46Cgo+IEhpLAo+IAo+IEhlcmUg
+Z29lcyB0aGUgZnVsbCBzdXBwb3J0IGZvciBhdG9taWMgbW9kZXNldHRpbmcgb24gZXh5bm9zLiBJ
+J3ZlCj4gc3BsaXQgdGhlIHBhdGNoZXMgaW4gdGhlIHZhcmlvdXMgcGhhc2VzIG9mIGF0b21pYyBz
+dXBwb3J0Lgo+IAo+IHYyOiBmaXhlcyBjb21tZW50cyBieSBKb29ueW91bmcKPiAgICAgICAgIC0g
+cmVtb3ZlIHVudXNlZCB2YXIgaW4gcGF0Y2ggMDkKPiAgICAgICAgIC0gdXNlIC0+ZGlzYWJsZSBp
+bnN0ZWFkIG9mIG91dGRhdGVkIC0+ZHBtcyBpbiBoZG1pIGNvZGUKPiAgICAgICAgIC0gcmVtb3Zl
+IFdBUk5fT04gZnJvbSBjcnRjIGVuYWJsZS9kaXNhYmxlCj4gCj4gdjM6IGZpeGVzIGNvbW1lbnQg
+YnkgSm9vbnlvdW5nCj4gICAgICAgICAtIG1vdmUgdGhlIHJlbW92YWwgb2YgZHJtX2hlbHBlcl9k
+aXNhYmxlX3VudXNlZF9mdW5jdGlvbnMoKSB0bwo+ICAgICAgICAgc2VwYXJhdGVkIHBhdGNoCj4g
+Cj4gdjQ6IGFkZCBwYXRjaGVzIHRoYXQgcmVtb3ZlIHVubmVjZXNzYXJ5IGNhbGxzIHRvIGRpc2Fi
+bGVfcGxhbmUoKQo+IAo+IAlHdXN0YXZvCj4gCj4gLS0tCj4gR3VzdGF2byBQYWRvdmFuICgxMik6
+Cj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDE6IHVzZSBkcm1fcGxhbmVfaGVscGVy
+X3VwZGF0ZSgpCj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDE6IHVzZSBkcm1fcGxh
+bmVfaGVscGVyX2Rpc2FibGUoKQo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAxOiBh
+ZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxsYmFjawo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBw
+aGFzZSAyOiB3aXJlIHVwIHN0YXRlIHJlc2V0KCksIGR1cGxpY2F0ZSgpIGFuZCBkZXN0cm95KCkK
+PiAgICAgICBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2UgMjoga2VlcCB0cmFjayBvZiBmcmFtZWJ1
+ZmZlciBwb2ludGVyCj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6IGF0b21pYyB1
+cGRhdGVzIG9mIHBsYW5lcwo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAzOiB1c2Ug
+YXRvbWljIC5zZXRfY29uZmlnIGhlbHBlcgo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFz
+ZSAzOiBjb252ZXJ0IHBhZ2UgZmxpcHMKPiAgICAgICBkcm0vZXh5bm9zOiByZW1vdmUgZXhwb3J0
+ZWQgZnVuY3Rpb25zIGZyb20gZXh5bm9zX2RybV9wbGFuZQo+ICAgICAgIGRybS9leHlub3M6IGRv
+bid0IGRpc2FibGUgdW51c2VkIGZ1bmN0aW9ucyBhdCBpbml0Cj4gICAgICAgZHJtL2V4eW5vczog
+YXRvbWljIGRwbXMgc3VwcG9ydAo+ICAgICAgIGRybS9leHlub3M6IHJlbW92ZSB1bm5lY2Vzc2Fy
+eSBjYWxscyB0byBkaXNhYmxlX3BsYW5lKCkKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9w
+czg2MjIuYyAgICAgICAgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0
+bjM0NjAuYyAgICAgICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RwX2NvcmUuYyAgICAgfCAgIDYgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2NydGMuYyAgICB8IDIxNSArKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgfCAgIDYgKy0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICB8ICAgMiArCj4gIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgfCAgIDQgKy0KPiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAgICB8ICAgNiArLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jIHwgIDM1ICstLS0tCj4gIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgfCAgMTIgKy0KPiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgICB8ICAgMyAtCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgfCAxMTUgKysrKysrKysrLS0t
+LS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggICB8ICAx
+MSAtLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgIHwgICA2
+ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgfCAgMTAg
+Ky0KPiAgMTUgZmlsZXMgY2hhbmdlZCwgMTc4IGluc2VydGlvbnMoKyksIDI2NSBkZWxldGlvbnMo
+LSkKPiAKCglHdXN0YXZvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
