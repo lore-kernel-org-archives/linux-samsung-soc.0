@@ -1,152 +1,141 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v6 01/25] arm: dma-mapping: add support for creating reserved
- mappings in iova space
-Date: Wed, 06 May 2015 15:01:00 +0100
-Message-ID: <554A1E9C.7060101@arm.com>
-References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com> <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
+Date: Wed, 6 May 2015 16:58:52 +0200
+Message-ID: <20150506145852.GA27648@quack.suse.cz>
+References: <1430897296-5469-1-git-send-email-jack@suse.cz>
+ <1430897296-5469-3-git-send-email-jack@suse.cz>
+ <5549F0DF.4030205@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:32151 "EHLO
-	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751699AbbEFOBM convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 10:01:12 -0400
-In-Reply-To: <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <5549F0DF.4030205@suse.cz>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Will Deacon <Will.Deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Javier Martinez Canillas <javier@dowhile0.org>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
 
-Hi Marek,
-
-On 04/05/15 09:15, Marek Szyprowski wrote:
-> Some devices (like frame buffers) are enabled by bootloader and configured
-> to perform DMA operations automatically (like displaying boot logo or splash
-> screen). Such devices operate and perform DMA operation usually until the
-> proper driver for them is loaded and probed. However before that happens,
-> system usually loads IOMMU drivers and configures dma parameters for each
-> device. When such initial configuration is created and enabled, it usually
-> contains empty translation rules betweem IO address space and physical
-> memory, because no buffers nor memory regions have been requested by the
-> respective driver.
->
-> This patch adds support for "iommu-reserved-mapping", which can be used
-> to provide definitions for mappings that need to be created on system
-> boot to let such devices (enabled by bootloader) to operate properly
-> until respective driver is probed.
-
-This appears to only work if you assume the driver is going to tear down 
-the existing domain entirely; what about drivers that don't manage 
-IOMMUs explicitly, or if there are multiple active devices behind the 
-same IOMMU which (in future) start out in the same default domain? If 
-any device is happy to remain in the default domain then it would be 
-nice to clear the reservations once they are no longer needed.
-
-Could we not address the issue in a more robust way, like fleshing out 
-an implementation of the nascent IOMMU_DOMAIN_IDENTITY type, then just 
-flagging such devices to stipulate that their boot-time default domain 
-must be an identity-mapped one?
-
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   Documentation/devicetree/bindings/iommu/iommu.txt |  44 +++++++++
->   arch/arm/mm/dma-mapping.c                         | 112 ++++++++++++++++++++++
->   2 files changed, 156 insertions(+)
->
-[...]
-> @@ -2048,6 +2092,66 @@ void arm_iommu_detach_device(struct device *dev)
->   }
->   EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
->
-> +static int arm_iommu_add_reserved(struct device *dev,
-> +                       struct dma_iommu_mapping *domain, phys_addr_t phys,
-> +                       dma_addr_t dma, size_t size)
-> +{
-> +       int ret;
-> +
-> +       ret = __reserve_iova(domain, dma, size);
-> +       if (ret) {
-> +               dev_err(dev, "failed to reserve mapping\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       ret = iommu_map(domain->domain, dma, phys, size, IOMMU_READ);
-> +       if (ret != 0) {
-> +               dev_err(dev, "create IOMMU mapping\n");
-> +               return ret;
-> +       }
-> +
-> +       dev_info(dev, "created reserved DMA mapping (%pa -> %pad, %zu bytes)\n",
-> +                &phys, &dma, size);
-> +
-> +       return 0;
-> +}
-> +
-> +static int arm_iommu_init_reserved(struct device *dev,
-> +                                  struct dma_iommu_mapping *domain)
-> +{
-> +       const char *name = "iommu-reserved-mapping";
-> +       const __be32 *prop = NULL;
-> +       int len, naddr, nsize;
-> +       struct device_node *node = dev->of_node;
-> +       phys_addr_t phys;
-> +       dma_addr_t dma;
-> +       size_t size;
-> +
-> +       if (!node)
-> +               return 0;
-> +
-> +       naddr = of_n_addr_cells(node);
-> +       nsize = of_n_size_cells(node);
-> +
-> +       prop = of_get_property(node, name, &len);
-> +       if (!prop)
-> +               return 0;
-> +
-> +       len /= sizeof(u32);
-> +
-> +       if (len < 2 * naddr + nsize) {
-> +               dev_err(dev, "invalid length (%d cells) of %s property\n",
-> +                       len, name);
-> +               return -EINVAL;
-> +       }
-> +
-> +       phys = of_read_number(prop, naddr);
-> +       dma = of_read_number(prop + naddr, naddr);
-> +       size = of_read_number(prop + 2*naddr, nsize);
-> +
-> +       return arm_iommu_add_reserved(dev, domain, phys, dma, size);
- > +}
-
-I may be missing something, but I don't see how this can handle multiple 
-ranges for the same device as the binding says.
-
->   static struct dma_map_ops *arm_get_iommu_dma_map_ops(bool coherent)
->   {
->          return coherent ? &iommu_coherent_ops : &iommu_ops;
-> @@ -2068,6 +2172,14 @@ static bool arm_setup_iommu_dma_ops(struct device *dev, u64 dma_base, u64 size,
->                  return false;
->          }
->
-> +       if (arm_iommu_init_reserved(dev, mapping) != 0) {
-> +               pr_warn("Failed to initialize reserved mapping for device %s\n",
-> +                       dev_name(dev));
-> +               __arm_iommu_detach_device(dev);
-> +               arm_iommu_release_mapping(mapping);
-> +               return false;
-> +       }
-> +
->          if (__arm_iommu_attach_device(dev, mapping)) {
->                  pr_warn("Failed to attached device %s to IOMMU_mapping\n",
->                                  dev_name(dev));
-
-I'm hoping Joerg is still working on his default domain series, because 
-the domain creation in arch_setup_dma_ops turns out to be horrible on a 
-number of levels (like everything happening in the wrong order for 
-platform devices). If that doesn't negate this issue entirely, it's 
-going to significantly break this way of hooking up the solution 
-(depending on what the drivers do) - worth some consideration, at least.
-
-Robin.
+T24gV2VkIDA2LTA1LTE1IDEyOjQ1OjUxLCBWbGFzdGltaWwgQmFia2Egd3JvdGU6Cj4gT24gMDUv
+MDYvMjAxNSAwOToyOCBBTSwgSmFuIEthcmEgd3JvdGU6Cj4gPlByb3ZpZGUgbmV3IGZ1bmN0aW9u
+IGdldF92YWRkcl9mcmFtZXMoKS4gIFRoaXMgZnVuY3Rpb24gbWFwcyB2aXJ0dWFsCj4gPmFkZHJl
+c3NlcyBmcm9tIGdpdmVuIHN0YXJ0IGFuZCBmaWxscyBnaXZlbiBhcnJheSB3aXRoIHBhZ2UgZnJh
+bWUgbnVtYmVycyBvZgo+ID50aGUgY29ycmVzcG9uZGluZyBwYWdlcy4gSWYgZ2l2ZW4gc3RhcnQg
+YmVsb25ncyB0byBhIG5vcm1hbCB2bWEsIHRoZSBmdW5jdGlvbgo+ID5ncmFicyByZWZlcmVuY2Ug
+dG8gZWFjaCBvZiB0aGUgcGFnZXMgdG8gcGluIHRoZW0gaW4gbWVtb3J5LiBJZiBzdGFydAo+ID5i
+ZWxvbmdzIHRvIFZNX0lPIHwgVk1fUEZOTUFQIHZtYSwgd2UgZG9uJ3QgdG91Y2ggcGFnZSBzdHJ1
+Y3R1cmVzLiBDYWxsZXIKPiA+bXVzdCBtYWtlIHN1cmUgcGZucyBhcmVuJ3QgcmV1c2VkIGZvciBh
+bnl0aGluZyBlbHNlIHdoaWxlIGhlIGlzIHVzaW5nCj4gPnRoZW0uCj4gPgo+ID5UaGlzIGZ1bmN0
+aW9uIGlzIGNyZWF0ZWQgZm9yIHZhcmlvdXMgZHJpdmVycyB0byBzaW1wbGlmeSBoYW5kbGluZyBv
+Zgo+ID50aGVpciBidWZmZXJzLgo+ID4KPiA+U2lnbmVkLW9mZi1ieTogSmFuIEthcmEgPGphY2tA
+c3VzZS5jej4KPiAKPiBBY2tlZC1ieTogVmxhc3RpbWlsIEJhYmthIDx2YmFia2FAc3VzZS5jej4K
+PiAKPiBXaXRoIHNvbWUgbml0cGlja3MgYmVsb3cuLi4KPiAKPiA+LS0tCj4gPiAgaW5jbHVkZS9s
+aW51eC9tbS5oIHwgIDQ0ICsrKysrKysrKysrCj4gPiAgbW0vZ3VwLmMgICAgICAgICAgIHwgMjE0
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4g
+PiAgMiBmaWxlcyBjaGFuZ2VkLCAyNTggaW5zZXJ0aW9ucygrKQo+ID4KPiA+ZGlmZiAtLWdpdCBh
+L2luY2x1ZGUvbGludXgvbW0uaCBiL2luY2x1ZGUvbGludXgvbW0uaAo+ID5pbmRleCAwNzU1Yjlm
+ZDAzYTcuLmRjZDFmMDJhNzhlOSAxMDA2NDQKPiA+LS0tIGEvaW5jbHVkZS9saW51eC9tbS5oCj4g
+PisrKyBiL2luY2x1ZGUvbGludXgvbW0uaAo+ID5AQCAtMjAsNiArMjAsNyBAQAo+ID4gICNpbmNs
+dWRlIDxsaW51eC9zaHJpbmtlci5oPgo+ID4gICNpbmNsdWRlIDxsaW51eC9yZXNvdXJjZS5oPgo+
+ID4gICNpbmNsdWRlIDxsaW51eC9wYWdlX2V4dC5oPgo+ID4rI2luY2x1ZGUgPGxpbnV4L2Vyci5o
+Pgo+ID4KPiA+ICBzdHJ1Y3QgbWVtcG9saWN5Owo+ID4gIHN0cnVjdCBhbm9uX3ZtYTsKPiA+QEAg
+LTExOTcsNiArMTE5OCw0OSBAQCBsb25nIGdldF91c2VyX3BhZ2VzX3VubG9ja2VkKHN0cnVjdCB0
+YXNrX3N0cnVjdCAqdHNrLCBzdHJ1Y3QgbW1fc3RydWN0ICptbSwKPiA+ICAJCSAgICBpbnQgd3Jp
+dGUsIGludCBmb3JjZSwgc3RydWN0IHBhZ2UgKipwYWdlcyk7Cj4gPiAgaW50IGdldF91c2VyX3Bh
+Z2VzX2Zhc3QodW5zaWduZWQgbG9uZyBzdGFydCwgaW50IG5yX3BhZ2VzLCBpbnQgd3JpdGUsCj4g
+PiAgCQkJc3RydWN0IHBhZ2UgKipwYWdlcyk7Cj4gPisKPiA+Ky8qIENvbnRhaW5lciBmb3IgcGlu
+bmVkIHBmbnMgLyBwYWdlcyAqLwo+ID4rc3RydWN0IGZyYW1lX3ZlY3RvciB7Cj4gPisJdW5zaWdu
+ZWQgaW50IG5yX2FsbG9jYXRlZDsJLyogTnVtYmVyIG9mIGZyYW1lcyB3ZSBoYXZlIHNwYWNlIGZv
+ciAqLwo+ID4rCXVuc2lnbmVkIGludCBucl9mcmFtZXM7CS8qIE51bWJlciBvZiBmcmFtZXMgc3Rv
+cmVkIGluIHB0cnMgYXJyYXkgKi8KPiA+Kwlib29sIGdvdF9yZWY7CQkvKiBEaWQgd2UgcGluIHBh
+Z2VzIGJ5IGdldHRpbmcgcGFnZSByZWY/ICovCj4gPisJYm9vbCBpc19wZm5zOwkJLyogRG9lcyBh
+cnJheSBjb250YWluIHBhZ2VzIG9yIHBmbnM/ICovCj4gPisJdm9pZCAqcHRyc1swXTsJCS8qIEFy
+cmF5IG9mIHBpbm5lZCBwZm5zIC8gcGFnZXMuIFVzZQo+ID4rCQkJCSAqIHBmbnNfdmVjdG9yX3Bh
+Z2VzKCkgb3IgcGZuc192ZWN0b3JfcGZucygpCj4gPisJCQkJICogZm9yIGFjY2VzcyAqLwo+ID4r
+fTsKPiA+Kwo+ID4rc3RydWN0IGZyYW1lX3ZlY3RvciAqZnJhbWVfdmVjdG9yX2NyZWF0ZSh1bnNp
+Z25lZCBpbnQgbnJfZnJhbWVzKTsKPiA+K3ZvaWQgZnJhbWVfdmVjdG9yX2Rlc3Ryb3koc3RydWN0
+IGZyYW1lX3ZlY3RvciAqdmVjKTsKPiA+K2ludCBnZXRfdmFkZHJfZnJhbWVzKHVuc2lnbmVkIGxv
+bmcgc3RhcnQsIHVuc2lnbmVkIGludCBucl9wZm5zLAo+ID4rCQkgICAgIGJvb2wgd3JpdGUsIGJv
+b2wgZm9yY2UsIHN0cnVjdCBmcmFtZV92ZWN0b3IgKnZlYyk7Cj4gPit2b2lkIHB1dF92YWRkcl9m
+cmFtZXMoc3RydWN0IGZyYW1lX3ZlY3RvciAqdmVjKTsKPiA+K2ludCBmcmFtZV92ZWN0b3JfdG9f
+cGFnZXMoc3RydWN0IGZyYW1lX3ZlY3RvciAqdmVjKTsKPiA+K3ZvaWQgZnJhbWVfdmVjdG9yX3Rv
+X3BmbnMoc3RydWN0IGZyYW1lX3ZlY3RvciAqdmVjKTsKPiA+Kwo+ID4rc3RhdGljIGlubGluZSB1
+bnNpZ25lZCBpbnQgZnJhbWVfdmVjdG9yX2NvdW50KHN0cnVjdCBmcmFtZV92ZWN0b3IgKnZlYykK
+PiA+K3sKPiA+KwlyZXR1cm4gdmVjLT5ucl9mcmFtZXM7Cj4gPit9Cj4gPisKPiA+K3N0YXRpYyBp
+bmxpbmUgc3RydWN0IHBhZ2UgKipmcmFtZV92ZWN0b3JfcGFnZXMoc3RydWN0IGZyYW1lX3ZlY3Rv
+ciAqdmVjKQo+ID4rewo+ID4rCWlmICh2ZWMtPmlzX3BmbnMpIHsKPiA+KwkJaW50IGVyciA9IGZy
+YW1lX3ZlY3Rvcl90b19wYWdlcyh2ZWMpOwo+ID4rCj4gPisJCWlmIChlcnIpCj4gPisJCQlyZXR1
+cm4gRVJSX1BUUihlcnIpOwo+ID4rCX0KPiA+KwlyZXR1cm4gKHN0cnVjdCBwYWdlICoqKSh2ZWMt
+PnB0cnMpOwo+ID4rfQo+ID4rCj4gPitzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcgKmZyYW1l
+X3ZlY3Rvcl9wZm5zKHN0cnVjdCBmcmFtZV92ZWN0b3IgKnZlYykKPiA+K3sKPiA+KwlpZiAoIXZl
+Yy0+aXNfcGZucykKPiA+KwkJZnJhbWVfdmVjdG9yX3RvX3BmbnModmVjKTsKPiA+KwlyZXR1cm4g
+KHVuc2lnbmVkIGxvbmcgKikodmVjLT5wdHJzKTsKPiA+K30KPiA+Kwo+ID4gIHN0cnVjdCBrdmVj
+Owo+ID4gIGludCBnZXRfa2VybmVsX3BhZ2VzKGNvbnN0IHN0cnVjdCBrdmVjICppb3YsIGludCBu
+cl9wYWdlcywgaW50IHdyaXRlLAo+ID4gIAkJCXN0cnVjdCBwYWdlICoqcGFnZXMpOwo+ID5kaWZm
+IC0tZ2l0IGEvbW0vZ3VwLmMgYi9tbS9ndXAuYwo+ID5pbmRleCA2Mjk3ZjZiY2NmYjEuLjhkYjVj
+NDBlNjVjNCAxMDA2NDQKPiA+LS0tIGEvbW0vZ3VwLmMKPiA+KysrIGIvbW0vZ3VwLmMKPiA+QEAg
+LTgsNiArOCw3IEBACj4gPiAgI2luY2x1ZGUgPGxpbnV4L3JtYXAuaD4KPiA+ICAjaW5jbHVkZSA8
+bGludXgvc3dhcC5oPgo+ID4gICNpbmNsdWRlIDxsaW51eC9zd2Fwb3BzLmg+Cj4gPisjaW5jbHVk
+ZSA8bGludXgvdm1hbGxvYy5oPgo+ID4KPiA+ICAjaW5jbHVkZSA8bGludXgvc2NoZWQuaD4KPiA+
+ICAjaW5jbHVkZSA8bGludXgvcndzZW0uaD4KPiA+QEAgLTkzNiw2ICs5MzcsMjE5IEBAIGludCBf
+X21tX3BvcHVsYXRlKHVuc2lnbmVkIGxvbmcgc3RhcnQsIHVuc2lnbmVkIGxvbmcgbGVuLCBpbnQg
+aWdub3JlX2Vycm9ycykKPiA+ICAJcmV0dXJuIHJldDsJLyogMCBvciBuZWdhdGl2ZSBlcnJvciBj
+b2RlICovCj4gPiAgfQo+ID4KPiA+Ky8qCj4gPisgKiBnZXRfdmFkZHJfZnJhbWVzKCkgLSBtYXAg
+dmlydHVhbCBhZGRyZXNzZXMgdG8gcGZucwo+ID4rICogQHN0YXJ0OglzdGFydGluZyB1c2VyIGFk
+ZHJlc3MKPiA+KyAqIEBucl9mcmFtZXM6CW51bWJlciBvZiBwYWdlcyAvIHBmbnMgZnJvbSBzdGFy
+dCB0byBtYXAKPiA+KyAqIEB3cml0ZToJd2hldGhlciBwYWdlcyB3aWxsIGJlIHdyaXR0ZW4gdG8g
+YnkgdGhlIGNhbGxlcgo+ID4rICogQGZvcmNlOgl3aGV0aGVyIHRvIGZvcmNlIHdyaXRlIGFjY2Vz
+cyBldmVuIGlmIHVzZXIgbWFwcGluZyBpcwo+ID4rICoJCXJlYWRvbmx5LiBUaGlzIHdpbGwgcmVz
+dWx0IGluIHRoZSBwYWdlIGJlaW5nIENPV2VkIGV2ZW4KPiA+KyAqCQlpbiBNQVBfU0hBUkVEIG1h
+cHBpbmdzLiBZb3UgZG8gbm90IHdhbnQgdGhpcy4KPiAKPiAiWW91IGRvIG5vdCB3YW50IHRoaXMi
+IGFuZCB5ZXQgc29tZSBvZiB0aGUgZHJpdmVycyBpbiBsYXRlciBwYXRjaGVzCj4gZG8uIFRoYXQg
+bG9va3Mgd2VpcmQuIEV4cGxhaW4gYmV0dGVyPwogIFRoYXQgd2FzIGNvcGllZCBmcm9tIGdldF91
+c2VyX3BhZ2VzKCkgY29tbWVudCBidXQgdGhhdCBnb3QgY2hhbmdlZCBpbiB0aGUKbWVhbiB0aW1l
+LiBJJ3ZlIHJlZmVyZW5jZWQgdGhhdCBpbnN0ZWFkIG9mIGNvcHlpbmcgaXQuCgo+ID4rICogQHZl
+YzoJc3RydWN0dXJlIHdoaWNoIHJlY2VpdmVzIHBhZ2VzIC8gcGZucyBvZiB0aGUgYWRkcmVzc2Vz
+IG1hcHBlZC4KPiA+KyAqCQlJdCBzaG91bGQgaGF2ZSBzcGFjZSBmb3IgYXQgbGVhc3QgbnJfZnJh
+bWVzIGVudHJpZXMuCj4gPisgKgo+ID4rICogVGhpcyBmdW5jdGlvbiBtYXBzIHZpcnR1YWwgYWRk
+cmVzc2VzIGZyb20gQHN0YXJ0IGFuZCBmaWxscyBAdmVjIHN0cnVjdHVyZQo+ID4rICogd2l0aCBw
+YWdlIGZyYW1lIG51bWJlcnMgb3IgcGFnZSBwb2ludGVycyB0byBjb3JyZXNwb25kaW5nIHBhZ2Vz
+IChjaG9pY2UKPiA+KyAqIGRlcGVuZHMgb24gdGhlIHR5cGUgb2YgdGhlIHZtYSB1bmRlcmx5aW5n
+IHRoZSB2aXJ0dWFsIGFkZHJlc3MpLiBJZiBAc3RhcnQKPiA+KyAqIGJlbG9uZ3MgdG8gYSBub3Jt
+YWwgdm1hLCB0aGUgZnVuY3Rpb24gZ3JhYnMgcmVmZXJlbmNlIHRvIGVhY2ggb2YgdGhlIHBhZ2Vz
+Cj4gPisgKiB0byBwaW4gdGhlbSBpbiBtZW1vcnkuIElmIEBzdGFydCBiZWxvbmdzIHRvIFZNX0lP
+IHwgVk1fUEZOTUFQIHZtYSwgd2UgZG9uJ3QKPiA+KyAqIHRvdWNoIHBhZ2Ugc3RydWN0dXJlcyBh
+bmQgdGhlIGNhbGxlciBtdXN0IG1ha2Ugc3VyZSBwZm5zIGFyZW4ndCByZXVzZWQgZm9yCj4gPisg
+KiBhbnl0aGluZyBlbHNlIHdoaWxlIGhlIGlzIHVzaW5nIHRoZW0uCj4gPisgKgo+ID4rICogVGhl
+IGZ1bmN0aW9uIHJldHVybnMgbnVtYmVyIG9mIHBhZ2VzIG1hcHBlZCB3aGljaCBtYXkgYmUgbGVz
+cyB0aGFuCj4gPisgKiBAbnJfZnJhbWVzLiBJbiBwYXJ0aWN1bGFyIHdlIHN0b3AgbWFwcGluZyBp
+ZiB0aGVyZSBhcmUgbW9yZSB2bWFzIG9mCj4gPisgKiBkaWZmZXJlbnQgdHlwZSB1bmRlcmx5aW5n
+IHRoZSBzcGVjaWZpZWQgcmFuZ2Ugb2YgdmlydHVhbCBhZGRyZXNzZXMuCj4gCj4gVGhlIGZ1bmN0
+aW9uIGNhbiBhbHNvIHJldHVybiBlLmcuIC1FRkFVTFQsIHNob3VsZG4ndCB0aGF0IGJlIGRvY3Vt
+ZW50ZWQgdG9vPwogIEkndmUgYWRkZWQgYSBjb21tZW50IHRoYXQgdGhlIGZ1bmN0aW9uIGNhbiBy
+ZXR1cm4gZXJyb3IuCgo+ID4rICoKPiA+KyAqIFRoaXMgZnVuY3Rpb24gdGFrZXMgY2FyZSBvZiBn
+cmFiYmluZyBtbWFwX3NlbSBhcyBuZWNlc3NhcnkuCj4gPisgKi8KPiA+K2ludCBnZXRfdmFkZHJf
+ZnJhbWVzKHVuc2lnbmVkIGxvbmcgc3RhcnQsIHVuc2lnbmVkIGludCBucl9mcmFtZXMsCj4gPisJ
+CSAgICAgYm9vbCB3cml0ZSwgYm9vbCBmb3JjZSwgc3RydWN0IGZyYW1lX3ZlY3RvciAqdmVjKQo+
+ID4rewo+ID4rCXN0cnVjdCBtbV9zdHJ1Y3QgKm1tID0gY3VycmVudC0+bW07Cj4gPisJc3RydWN0
+IHZtX2FyZWFfc3RydWN0ICp2bWE7Cj4gPisJaW50IHJldCA9IDA7Cj4gPisJaW50IGVycjsKPiA+
+KwlpbnQgbG9ja2VkID0gMTsKPiAKPiBJdCBsb29rcyBzdHJhbmdlIHRoYXQgbG9ja2VkIGlzIHNl
+dCB0byAxIGJlZm9yZSB0YWtpbmcgdGhlIGFjdHVhbAo+IG1tYXBfc2VtLiBBbHNvIGZ1dHVyZS1w
+cm9vZmluZy4KICBPSy4KCj4gPisvKioKPiA+KyAqIGZyYW1lX3ZlY3Rvcl9kZXN0cm95KCkgLSBm
+cmVlIG1lbW9yeSBhbGxvY2F0ZWQgdG8gY2FycnkgZnJhbWUgdmVjdG9yCj4gPisgKiBAdmVjOglG
+cmFtZSB2ZWN0b3IgdG8gZnJlZQo+ID4rICoKPiA+KyAqIEZyZWUgc3RydWN0dXJlIGFsbG9jYXRl
+ZCBieSBmcmFtZV92ZWN0b3JfY3JlYXRlKCkgdG8gY2FycnkgZnJhbWVzLgo+ID4rICovCj4gPit2
+b2lkIGZyYW1lX3ZlY3Rvcl9kZXN0cm95KHN0cnVjdCBmcmFtZV92ZWN0b3IgKnZlYykKPiA+K3sK
+PiAKPiBBZGQgc29tZSBWTV9CVUdfT04oKSdzIGZvciBucl9mcmFtZXMgYW5kIGdvdF9yZWYgcGVy
+aGFwcz8KICBHb29kIGlkZWEuIEFkZGVkOgpWTV9CVUdfT04odmVjLT5ucl9mcmFtZXMgPiAwKTsK
+ICBBc3NlcnRpbmcgZ290X3JlZiB3aGVuIG5yX2ZyYW1lcyBpcyAwIGlzIHBvaW50bGVzcy4uLiBU
+aGFua3MgZm9yIHJldmlldyEKCgkJCQkJCQkJSG9uemEKCi0tIApKYW4gS2FyYSA8amFja0BzdXNl
+LmN6PgpTVVNFIExhYnMsIENSCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
