@@ -1,49 +1,50 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [alsa-devel] [PATCH v2 RESEND] ARM: dts: Support audio on
- Exynos5422-odroidxu3 using simple-audio-card
-Date: Wed, 6 May 2015 15:23:44 +0200
-Message-ID: <CABxcv=mpPOfDDnD0RJGb-W313jpxqiW2O_o_tFJgSwEhOZnKew@mail.gmail.com>
-References: <1428651178-18186-1-git-send-email-ideal.song@samsung.com>
-	<552791A4.40203@fivetechno.de>
-	<CANAwSgS98n0kX8oBUk5Ehk1fwU4DA_DNuAqztp3LrOBcmrtAZw@mail.gmail.com>
-	<20150506104714.498f8da5@songinha-Samsung-DeskTop-System>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 0/5] drm/exynos: rework layer blending setup
+Date: Wed,  6 May 2015 15:36:45 +0200
+Message-ID: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f182.google.com ([209.85.160.182]:34526 "EHLO
-	mail-yk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751988AbbEFNXp (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34777 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751295AbbEFNhD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 09:23:45 -0400
-Received: by ykft189 with SMTP id t189so2338187ykf.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2015 06:23:44 -0700 (PDT)
-In-Reply-To: <20150506104714.498f8da5@songinha-Samsung-DeskTop-System>
+	Wed, 6 May 2015 09:37:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inha Song <ideal.song@samsung.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-+Krzysztof Kozlowski
+Hello,
 
-Hello Inha,
+this is a rework of the layer blending setup in the Exynos DRM mixer. The current setup is static and spread out through the mixer code. This rework pushes all the configuration details into a layer_config array, which specifies the priority of each layer.
 
-On Wed, May 6, 2015 at 3:47 AM, Inha Song <ideal.song@samsung.com> wrote:
-> Hi Kukjin,
->
-> Any comments about this patch?
->
-> Best Regards,
-> Inha Song.
->
+Two arrays are currently found in the code, one for SoC versions with a video processor (VP) and one for SoC versions without VP. The VP gives us one additional layer, the video layer, which natively supports the NV12/NV21 pixelformat.
 
-It seems Kukjin didn't have time lately to deal with the huge backlog
-of patches for Exynos so Krzysztof (added as cc) has kindly
-volunteered to help him by acting as a co-maintainer and queuing
-patches.
+The blending setup roughly works like this:
+1) Find the bottom-most enabled layer. Disable all blending for this layer. This is done because we currently don't expose modification of the mixer background to userspace. Once this is done we can add more flexibility here.
+2) Find the next enabled layer in our layer stack. If the layer has a framebuffer with an alpha-pixelformat attached, enable blending for this layer. If not, disable blending.
+3) Iterate (2) until all enabled layers are processed.
 
-So could you please for any patches that my have been forgotten (like
-$subject),  rebase on current head, carry all the obtained tags and
-re-send cc'ing Krzysztof so he can be aware of them?
+The series has been tested on a Hardkernel Odroid-X2 (Exynos4412, which has a VP).
 
-Best regards,
-Javier
+If you want to use libdrm's modetest to check the series, please apply patches [1] and [2]. This should make it possible to also test a plane with NV12 format (which is located 'behind' the primary plane).
+
+With best wishes,
+Tobias
+
+[1] https://patchwork.kernel.org/patch/6349241/
+[2] https://patchwork.kernel.org/patch/6349261/
+
+
+Tobias Jakobi (5):
+  drm/exynos: mixer: refactor layer setup
+  drm/exynos: mixer: introduce mixer_layer_blending()
+  drm/exynos: mixer: remove all static blending setup
+  drm/exynos: mixer: do blending setup in mixer_cfg_layer()
+  drm/exynos: mixer: also allow ARGB1555 and ARGB4444
+
+ drivers/gpu/drm/exynos/exynos_mixer.c | 246 +++++++++++++++++++++++++++++-----
+ drivers/gpu/drm/exynos/regs-mixer.h   |   1 +
+ 2 files changed, 213 insertions(+), 34 deletions(-)
+
+-- 
+2.0.5
