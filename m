@@ -1,107 +1,152 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: ARM: EXYNOS: dts: Improvements for 4.2
-Date: Wed, 06 May 2015 15:48:13 +0200
-Message-ID: <554A1B9D.3060405@collabora.co.uk>
-References: <1430873981-22902-1-git-send-email-k.kozlowski@samsung.com>	<5549E1AB.8000400@collabora.co.uk> <CAJKOXPfQO+Zd9njc3VGTQPcE2d=5hF8H-RpURCJMfA8kV8ZnWA@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v6 01/25] arm: dma-mapping: add support for creating reserved
+ mappings in iova space
+Date: Wed, 06 May 2015 15:01:00 +0100
+Message-ID: <554A1E9C.7060101@arm.com>
+References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com> <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36119 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751761AbbEFNsT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 09:48:19 -0400
-In-Reply-To: <CAJKOXPfQO+Zd9njc3VGTQPcE2d=5hF8H-RpURCJMfA8kV8ZnWA@mail.gmail.com>
+Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:32151 "EHLO
+	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751699AbbEFOBM convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 May 2015 10:01:12 -0400
+In-Reply-To: <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>, Andrzej Hajda <a.hajda@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Will Deacon <Will.Deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Javier Martinez Canillas <javier@dowhile0.org>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
 
-Hello Krzysztof,
+Hi Marek,
 
-On 05/06/2015 12:32 PM, Krzysztof Kozlowski wrote:
-> 2015-05-06 18:40 GMT+09:00 Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk>:
->> Hello Krzysztof,
->>
->> On 05/06/2015 02:59 AM, Krzysztof Kozlowski wrote:
->>> Dear Kukjin,
->>>
->>> I gathered various improvements for upcoming 4.2 merge window.
->>> Description along with a tag.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>> ----------------------------------------------------------------
->>> The following changes since commit 5ebe6afaf0057ac3eaeb98defd5456894b446d22:
->>>
->>>   Linux 4.1-rc2 (2015-05-03 19:22:23 -0700)
->>>
->>> are available in the git repository at:
->>>
->>>   https://github.com/krzk/linux.git tags/samsung-dt-for-next-4.2
->>>
->>> for you to fetch changes up to 98155ec454a40212434c83c1388c420a61d62854:
->>>
->>>   ARM: dts: exynos4: add nodes for jpeg codec (2015-05-05 19:19:18 +0900)
->>>
->>> ----------------------------------------------------------------
->>> Device Tree improvements for Exynos based boards:
->>> 1. Fix PMIC's RTC alarm on Arndale Octa (S2MPS11 PMIC) and SMDK5250 (MAXIM77686
->>>    PMIC).
->>> 2. Fix suspend on Peach Pit Chromebooks prevented by Marvell mwifiex
->>>    driver.
->>> 3. Fix hang on Odroid XU3 on MMC card detect.
->>> 4. Enable the S3C RTC (the clock present on SoC) on various Exynos boards.
->>> 5. Minor improvements to S3C RTC driver.
->>> 6. Add nodes for JPEG codec on Exynos4.
->>>
->>> ----------------------------------------------------------------
->>> Andrzej Hajda (1):
->>>       ARM: dts: exynos5422-odroidxu3: add mmc detect gpio
->>>
->>> Javier Martinez Canillas (2):
->>>       ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
->>
->> This one is already in your "ARM: EXYNOS: dts: DTS fixes for 4.1" pull
->> request so it seems is a left over and should not be in this branch?
-> 
-> Yes, I rebased the work for v4.2 on top of fixes. Typically one would
-> not send fixes and for-next release pull at the same time. Anyway it
-> should not harm as merging or rebasing would ignore such commits.
-> 
->>
->>>       ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
->>>
->>
->> This patch is also rc material IMHO since the mwifiex driver prevents
->> the system to enter into a suspend state and the driver is enabled in
->> exynos_defconfig after commit "040464888a1a ("ARM: exynos_defconfig:
->> Enable Marvell WiFi-Ex support") which landed in v4.1-rc1.
-> 
-> That information was missing. I suspected this was a fix for an older
-> issue not for regression introduced in 4.1-rc1. Now I agree.
-> 
-
-Technically you are right since the fix is for an old issue that was just
-exposed when the driver was enabled by default. But yes, sorry for not
-adding that information in the commit message and making it more clear.
-
-Also, I thought that fixes were always a good candidate for the -rc cycle
-even if the regression was not introduced during the last merge window.
-
-IOW, it is better to fix issues sooner rather than later.
-
-> Dear Kukjin, could pick this patch also for current RC cycle?
+On 04/05/15 09:15, Marek Szyprowski wrote:
+> Some devices (like frame buffers) are enabled by bootloader and configured
+> to perform DMA operations automatically (like displaying boot logo or splash
+> screen). Such devices operate and perform DMA operation usually until the
+> proper driver for them is loaded and probed. However before that happens,
+> system usually loads IOMMU drivers and configures dma parameters for each
+> device. When such initial configuration is created and enabled, it usually
+> contains empty translation rules betweem IO address space and physical
+> memory, because no buffers nor memory regions have been requested by the
+> respective driver.
 >
+> This patch adds support for "iommu-reserved-mapping", which can be used
+> to provide definitions for mappings that need to be created on system
+> boot to let such devices (enabled by bootloader) to operate properly
+> until respective driver is probed.
 
-Thanks a lot.
+This appears to only work if you assume the driver is going to tear down 
+the existing domain entirely; what about drivers that don't manage 
+IOMMUs explicitly, or if there are multiple active devices behind the 
+same IOMMU which (in future) start out in the same default domain? If 
+any device is happy to remain in the default domain then it would be 
+nice to clear the reservations once they are no longer needed.
 
-> Best regards,
-> Krzysztof
-> 
+Could we not address the issue in a more robust way, like fleshing out 
+an implementation of the nascent IOMMU_DOMAIN_IDENTITY type, then just 
+flagging such devices to stipulate that their boot-time default domain 
+must be an identity-mapped one?
 
-Best regards,
-Javier
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>   Documentation/devicetree/bindings/iommu/iommu.txt |  44 +++++++++
+>   arch/arm/mm/dma-mapping.c                         | 112 ++++++++++++++++++++++
+>   2 files changed, 156 insertions(+)
+>
+[...]
+> @@ -2048,6 +2092,66 @@ void arm_iommu_detach_device(struct device *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
+>
+> +static int arm_iommu_add_reserved(struct device *dev,
+> +                       struct dma_iommu_mapping *domain, phys_addr_t phys,
+> +                       dma_addr_t dma, size_t size)
+> +{
+> +       int ret;
+> +
+> +       ret = __reserve_iova(domain, dma, size);
+> +       if (ret) {
+> +               dev_err(dev, "failed to reserve mapping\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       ret = iommu_map(domain->domain, dma, phys, size, IOMMU_READ);
+> +       if (ret != 0) {
+> +               dev_err(dev, "create IOMMU mapping\n");
+> +               return ret;
+> +       }
+> +
+> +       dev_info(dev, "created reserved DMA mapping (%pa -> %pad, %zu bytes)\n",
+> +                &phys, &dma, size);
+> +
+> +       return 0;
+> +}
+> +
+> +static int arm_iommu_init_reserved(struct device *dev,
+> +                                  struct dma_iommu_mapping *domain)
+> +{
+> +       const char *name = "iommu-reserved-mapping";
+> +       const __be32 *prop = NULL;
+> +       int len, naddr, nsize;
+> +       struct device_node *node = dev->of_node;
+> +       phys_addr_t phys;
+> +       dma_addr_t dma;
+> +       size_t size;
+> +
+> +       if (!node)
+> +               return 0;
+> +
+> +       naddr = of_n_addr_cells(node);
+> +       nsize = of_n_size_cells(node);
+> +
+> +       prop = of_get_property(node, name, &len);
+> +       if (!prop)
+> +               return 0;
+> +
+> +       len /= sizeof(u32);
+> +
+> +       if (len < 2 * naddr + nsize) {
+> +               dev_err(dev, "invalid length (%d cells) of %s property\n",
+> +                       len, name);
+> +               return -EINVAL;
+> +       }
+> +
+> +       phys = of_read_number(prop, naddr);
+> +       dma = of_read_number(prop + naddr, naddr);
+> +       size = of_read_number(prop + 2*naddr, nsize);
+> +
+> +       return arm_iommu_add_reserved(dev, domain, phys, dma, size);
+ > +}
+
+I may be missing something, but I don't see how this can handle multiple 
+ranges for the same device as the binding says.
+
+>   static struct dma_map_ops *arm_get_iommu_dma_map_ops(bool coherent)
+>   {
+>          return coherent ? &iommu_coherent_ops : &iommu_ops;
+> @@ -2068,6 +2172,14 @@ static bool arm_setup_iommu_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>                  return false;
+>          }
+>
+> +       if (arm_iommu_init_reserved(dev, mapping) != 0) {
+> +               pr_warn("Failed to initialize reserved mapping for device %s\n",
+> +                       dev_name(dev));
+> +               __arm_iommu_detach_device(dev);
+> +               arm_iommu_release_mapping(mapping);
+> +               return false;
+> +       }
+> +
+>          if (__arm_iommu_attach_device(dev, mapping)) {
+>                  pr_warn("Failed to attached device %s to IOMMU_mapping\n",
+>                                  dev_name(dev));
+
+I'm hoping Joerg is still working on his default domain series, because 
+the domain creation in arch_setup_dma_ops turns out to be horrible on a 
+number of levels (like everything happening in the wrong order for 
+platform devices). If that doesn't negate this issue entirely, it's 
+going to significantly break this way of hooking up the solution 
+(depending on what the drivers do) - worth some consideration, at least.
+
+Robin.
