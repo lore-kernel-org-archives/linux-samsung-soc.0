@@ -1,173 +1,62 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/5] drm/exynos: mixer: introduce mixer_layer_blending()
-Date: Wed,  6 May 2015 15:36:47 +0200
-Message-ID: <1430919410-9917-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 3/5] drm/exynos: mixer: remove all static blending setup
+Date: Wed,  6 May 2015 15:36:48 +0200
+Message-ID: <1430919410-9917-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34791 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751130AbbEFNid (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 09:38:33 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This analyses the current layer configuration (which layers
-are enabled, which have alpha-pixelformat, etc.) and setups
-blending accordingly.
-
-We currently disable all kinds of blending for the bottom-most
-layer, since configuration of the mixer background is not
-yet exposed.
-Also blending is only enabled when the layer has a pixelformat
-with alpha attached.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 108 ++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/exynos/regs-mixer.h   |   1 +
- 2 files changed, 109 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index e4a5e76..5e95ef2 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -165,6 +165,18 @@ static const u8 filter_cr_horiz_tap4[] = {
- 	70,	59,	48,	37,	27,	19,	11,	5,
- };
- 
-+static inline bool is_alpha_format(const struct mixer_context* ctx, unsigned int win)
-+{
-+	switch (ctx->planes[win].pixel_format) {
-+	case DRM_FORMAT_ARGB8888:
-+	case DRM_FORMAT_ARGB1555:
-+	case DRM_FORMAT_ARGB4444:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
- {
- 	return readl(res->vp_regs + reg_id);
-@@ -322,6 +334,102 @@ static void mixer_layer_priority(struct mixer_context *ctx)
- 	mixer_reg_write(&ctx->mixer_res, MXR_LAYER_CFG, val);
- }
- 
-+/* Configure blending for bottom-most layer. */
-+static void mixer_bottom_layer(struct mixer_context *ctx,
-+		const struct layer_config *cfg)
-+{
-+	u32 val;
-+	struct mixer_resources *res = &ctx->mixer_res;
-+
-+	if (cfg->index == 2) {
-+		val = 0; /* use defaults for video layer */
-+		mixer_reg_write(res, MXR_VIDEO_CFG, val);
-+	} else {
-+		val = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
-+
-+		/* Don't blend bottom-most layer onto the mixer background. */
-+		mixer_reg_writemask(res, MXR_GRAPHIC_CFG(cfg->index),
-+				val, MXR_GRP_CFG_MISC_MASK);
-+	}
-+}
-+
-+static void mixer_general_layer(struct mixer_context *ctx,
-+		const struct layer_config *cfg)
-+{
-+	u32 val;
-+	struct mixer_resources *res = &ctx->mixer_res;
-+
-+	if (is_alpha_format(ctx, cfg->index)) {
-+		val = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
-+		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
-+		val |= MXR_GRP_CFG_PIXEL_BLEND_EN; /* blending based on pixel alpha */
-+
-+		/* The video layer never has an alpha pixelformat. */
-+		mixer_reg_writemask(res, MXR_GRAPHIC_CFG(cfg->index),
-+				val, MXR_GRP_CFG_MISC_MASK);
-+	} else {
-+		if (cfg->index == 2) {
-+			/*
-+			 * No blending at the moment since the NV12/NV21 pixelformats don't
-+			 * have an alpha channel. However the mixer supports a global alpha
-+			 * value for a layer. Once this functionality is exposed, we can
-+			 * support blending of the video layer through this.
-+			 */
-+			val = 0;
-+			mixer_reg_write(res, MXR_VIDEO_CFG, val);
-+		} else {
-+			val = MXR_GRP_CFG_COLOR_KEY_DISABLE;
-+			mixer_reg_writemask(res, MXR_GRAPHIC_CFG(cfg->index),
-+					val, MXR_GRP_CFG_MISC_MASK);
-+		}
-+	}
-+}
-+
-+static void mixer_layer_blending(struct mixer_context *ctx, unsigned int enable_state)
-+{
-+	const struct layer_config *cfg;
-+	unsigned int i = 0;
-+	unsigned int index;
-+
-+	/* Find bottom-most enabled layer. */
-+	cfg = NULL;
-+	while (i < ctx->num_layer) {
-+		index = ctx->layer_config[i].index;
-+		++i;
-+
-+		if (enable_state & (1 << index)) {
-+			cfg = &ctx->layer_config[i-1];
-+			break;
-+		}
-+	}
-+
-+	/* No enabled layers found, nothing to do. */
-+	if (!cfg)
-+		return;
-+
-+	mixer_bottom_layer(ctx, cfg);
-+
-+	while (1) {
-+		/* Find the next layer. */
-+		cfg = NULL;
-+		while (i < ctx->num_layer) {
-+			index = ctx->layer_config[i].index;
-+			++i;
-+
-+			if (enable_state & (1 << index)) {
-+				cfg = &ctx->layer_config[i-1];
-+				break;
-+			}
-+		}
-+
-+		/* No more enabled layers found. */
-+		if (!cfg)
-+			return;
-+
-+		mixer_general_layer(ctx, cfg);
-+	}
-+}
-+
- static void mixer_vsync_set_update(struct mixer_context *ctx, bool enable)
- {
- 	struct mixer_resources *res = &ctx->mixer_res;
-diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
-index ac60260..118872e 100644
---- a/drivers/gpu/drm/exynos/regs-mixer.h
-+++ b/drivers/gpu/drm/exynos/regs-mixer.h
-@@ -113,6 +113,7 @@
- #define MXR_GRP_CFG_BLEND_PRE_MUL	(1 << 20)
- #define MXR_GRP_CFG_WIN_BLEND_EN	(1 << 17)
- #define MXR_GRP_CFG_PIXEL_BLEND_EN	(1 << 16)
-+#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20))
- #define MXR_GRP_CFG_FORMAT_VAL(x)	MXR_MASK_VAL(x, 11, 8)
- #define MXR_GRP_CFG_FORMAT_MASK		MXR_GRP_CFG_FORMAT_VAL(~0)
- #define MXR_GRP_CFG_ALPHA_VAL(x)	MXR_MASK_VAL(x, 7, 0)
--- 
-2.0.5
+UHJldmlvdXNseSBibGVuZGluZyBzZXR1cCB3YXMgc3RhdGljIGFuZCBtb3N0IG9mIGl0IHdhcwpk
+b25lIGluIG1peGVyX3dpbl9yZXNldCgpLgoKU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8
+dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfbWl4ZXIuYyB8IDIzIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hh
+bmdlZCwgMjMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
+aW5kZXggNWU5NWVmMi4uM2FiN2EwMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
+ci5jCkBAIC01MjcsMTEgKzUyNyw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXllcihzdHJ1
+Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luLCBib29sIGVuCiAJCQl2cF9y
+ZWdfd3JpdGVtYXNrKHJlcywgVlBfRU5BQkxFLCB2YWwsIFZQX0VOQUJMRV9PTik7CiAJCQltaXhl
+cl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFsLAogCQkJCU1YUl9DRkdfVlBfRU5BQkxF
+KTsKLQotCQkJLyogY29udHJvbCBibGVuZGluZyBvZiBncmFwaGljIGxheWVyIDAgKi8KLQkJCW1p
+eGVyX3JlZ193cml0ZW1hc2socmVzLCBNWFJfR1JBUEhJQ19DRkcoMCksIHZhbCwKLQkJCQkJTVhS
+X0dSUF9DRkdfQkxFTkRfUFJFX01VTCB8Ci0JCQkJCU1YUl9HUlBfQ0ZHX1BJWEVMX0JMRU5EX0VO
+KTsKIAkJfQogCQlicmVhazsKIAl9CkBAIC04MTcsNyArODEyLDYgQEAgc3RhdGljIHZvaWQgbWl4
+ZXJfd2luX3Jlc2V0KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCiB7CiAJc3RydWN0IG1peGVy
+X3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7
+Ci0JdTMyIHZhbDsgLyogdmFsdWUgc3RvcmVkIHRvIHJlZ2lzdGVyICovCiAKIAlzcGluX2xvY2tf
+aXJxc2F2ZSgmcmVzLT5yZWdfc2xvY2ssIGZsYWdzKTsKIAltaXhlcl92c3luY19zZXRfdXBkYXRl
+KGN0eCwgZmFsc2UpOwpAQCAtODM4LDIzICs4MzIsNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl93aW5f
+cmVzZXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKIAltaXhlcl9yZWdfd3JpdGUocmVzLCBN
+WFJfQkdfQ09MT1IxLCAweDAwODA4MCk7CiAJbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0JHX0NP
+TE9SMiwgMHgwMDgwODApOwogCi0JLyogc2V0dGluZyBncmFwaGljYWwgbGF5ZXJzICovCi0JdmFs
+ICA9IE1YUl9HUlBfQ0ZHX0NPTE9SX0tFWV9ESVNBQkxFOyAvKiBubyBibGFuayBrZXkgKi8KLQl2
+YWwgfD0gTVhSX0dSUF9DRkdfV0lOX0JMRU5EX0VOOwotCXZhbCB8PSBNWFJfR1JQX0NGR19BTFBI
+QV9WQUwoMHhmZik7IC8qIG5vbi10cmFuc3BhcmVudCBhbHBoYSAqLwotCi0JLyogRG9uJ3QgYmxl
+bmQgbGF5ZXIgMCBvbnRvIHRoZSBtaXhlciBiYWNrZ3JvdW5kICovCi0JbWl4ZXJfcmVnX3dyaXRl
+KHJlcywgTVhSX0dSQVBISUNfQ0ZHKDApLCB2YWwpOwotCi0JLyogQmxlbmQgbGF5ZXIgMSBpbnRv
+IGxheWVyIDAgKi8KLQl2YWwgfD0gTVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTDsKLQl2YWwgfD0g
+TVhSX0dSUF9DRkdfUElYRUxfQkxFTkRfRU47Ci0JbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX0dS
+QVBISUNfQ0ZHKDEpLCB2YWwpOwotCi0JLyogc2V0dGluZyB2aWRlbyBsYXllcnMgKi8KLQl2YWwg
+PSBNWFJfR1JQX0NGR19BTFBIQV9WQUwoMCk7Ci0JbWl4ZXJfcmVnX3dyaXRlKHJlcywgTVhSX1ZJ
+REVPX0NGRywgdmFsKTsKLQogCWlmIChjdHgtPnZwX2VuYWJsZWQpIHsKIAkJLyogY29uZmlndXJh
+dGlvbiBvZiBWaWRlbyBQcm9jZXNzb3IgUmVnaXN0ZXJzICovCiAJCXZwX3dpbl9yZXNldChjdHgp
+OwotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
