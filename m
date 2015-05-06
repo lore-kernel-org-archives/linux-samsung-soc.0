@@ -1,67 +1,30 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] MAINTAINERS: Extend Samsung MFD drivers entry and add myself
-Date: Wed, 06 May 2015 14:19:36 +0900
-Message-ID: <1430889576-7779-1-git-send-email-k.kozlowski@samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: s3c2410: Staticize local symbols
+Date: Tue, 5 May 2015 22:54:56 -0700
+Message-ID: <20150506055456.GD10871@codeaurora.org>
+References: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:11775 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752537AbbEFFUP (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:51617 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753155AbbEFFy6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 01:20:15 -0400
+	Wed, 6 May 2015 01:54:58 -0400
+Content-Disposition: inline
+In-Reply-To: <1430496168-32408-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, rtc-linux@googlegroups.com, devicetree@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Extend the entry for Samsung MFD drivers for PMIC devices (Power
-Management Integrated Circuit) with bindings documentation, clock
-(clk-s2mps11.c) and RTC drivers (rtc-s5m.c).
+On 05/02, Krzysztof Kozlowski wrote:
+> Staticize symbols not exported and not used outside of file.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-These PMIC devices are used on many Exynos-based boards like Arndale
-Octa (S2MPS11), Gear 2 (S2MPS14).
+Applied to clk-next
 
-Add myself as a supporter for reviewing them.
-I am not the author of these drivers. However I have recently
-contributed to most of them and I have access to datasheets and hardware.
-
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-CC: Mike Turquette <mturquette@linaro.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>
-CC: Alessandro Zummo <a.zummo@towertech.it>
-CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-CC: Lee Jones <lee.jones@linaro.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>
-CC: Mark Brown <broonie@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- MAINTAINERS | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e278814388f7..fc01dc9f96af 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8533,14 +8533,20 @@ L:	linux-fbdev@vger.kernel.org
- S:	Maintained
- F:	drivers/video/fbdev/s3c-fb.c
- 
--SAMSUNG MULTIFUNCTION DEVICE DRIVERS
-+SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
- M:	Sangbeom Kim <sbkim73@samsung.com>
-+M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
- L:	linux-kernel@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
- S:	Supported
- F:	drivers/mfd/sec*.c
- F:	drivers/regulator/s2m*.c
- F:	drivers/regulator/s5m*.c
-+F:	drivers/clk/clk-s2mps11.c
-+F:	drivers/rtc/rtc-s5m.c
- F:	include/linux/mfd/samsung/
-+F:	Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
-+F:	Documentation/devicetree/bindings/mfd/s2mp*.txt
- 
- SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
- M:	Kyungmin Park <kyungmin.park@samsung.com>
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
