@@ -1,40 +1,78 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 5/5] drm/exynos: mixer: also allow ARGB1555 and ARGB4444
-Date: Wed,  6 May 2015 15:36:50 +0200
-Message-ID: <1430919410-9917-6-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 4/5] drm/exynos: mixer: do blending setup in mixer_cfg_layer()
+Date: Wed,  6 May 2015 15:36:49 +0200
+Message-ID: <1430919410-9917-5-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:34804 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751393AbbEFNkL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 May 2015 09:40:11 -0400
 In-Reply-To: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, jy0922.shim@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-QWxsb3cgdGhlIHJlbWFpbmluZyBhbHBoYSBmb3JtYXRzIG5vdyB0aGF0IGJsZW5kaW5nCmlzIHBy
-b3Blcmx5IHNldHVwLgoKU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRo
-LnVuaS1iaWVsZWZlbGQuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYyB8IDIgKysKIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfbWl4ZXIuYwppbmRleCA0MzBkMTBjLi41NGU3OWUwIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTcyMSwxMCArNzIxLDEyIEBAIHN0YXRpYyB2
-b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25l
-ZCBpbnQgd2luKQogCiAJc3dpdGNoIChwbGFuZS0+cGl4ZWxfZm9ybWF0KSB7CiAJY2FzZSBEUk1f
-Rk9STUFUX1hSR0I0NDQ0OgorCWNhc2UgRFJNX0ZPUk1BVF9BUkdCNDQ0NDoKIAkJZm10ID0gTVhS
-X0ZPUk1BVF9BUkdCNDQ0NDsKIAkJYnJlYWs7CiAKIAljYXNlIERSTV9GT1JNQVRfWFJHQjE1NTU6
-CisJY2FzZSBEUk1fRk9STUFUX0FSR0IxNTU1OgogCQlmbXQgPSBNWFJfRk9STUFUX0FSR0IxNTU1
-OwogCQlicmVhazsKIAotLSAKMi4wLjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+This updates the blending setup when the layer configuration
+changes (triggered by mixer_win_{commit,disable}).
+
+Extra care has to be taken for the layer that is currently
+being enabled/disabled.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 3ab7a01..430d10c 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -177,6 +177,18 @@ static inline bool is_alpha_format(const struct mixer_context* ctx, unsigned int
+ 	}
+ }
+ 
++static inline unsigned int layer_bitmask(const struct mixer_context* ctx)
++{
++	unsigned int i, mask = 0;
++
++	for (i = 0; i < MIXER_WIN_NR; ++i) {
++		if (ctx->planes[i].enabled)
++			mask |= (1 << i);
++	}
++
++	return mask;
++}
++
+ static inline u32 vp_reg_read(struct mixer_resources *res, u32 reg_id)
+ {
+ 	return readl(res->vp_regs + reg_id);
+@@ -513,6 +525,7 @@ static void mixer_cfg_rgb_fmt(struct mixer_context *ctx, unsigned int height)
+ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win, bool enable)
+ {
+ 	struct mixer_resources *res = &ctx->mixer_res;
++	unsigned int enable_state;
+ 	u32 val = enable ? ~0 : 0;
+ 
+ 	switch (win) {
+@@ -530,6 +543,16 @@ static void mixer_cfg_layer(struct mixer_context *ctx, unsigned int win, bool en
+ 		}
+ 		break;
+ 	}
++
++	/* Determine the current enabled/disabled state of the layers. */
++	enable_state = layer_bitmask(ctx);
++	if (enable)
++		enable_state |= (1 << win);
++	else
++		enable_state &= ~(1 << win);
++
++	/* Layer configuration has changed, update blending setup. */
++	mixer_layer_blending(ctx, enable_state);
+ }
+ 
+ static void mixer_run(struct mixer_context *ctx)
+-- 
+2.0.5
