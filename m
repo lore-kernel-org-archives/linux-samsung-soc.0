@@ -1,87 +1,350 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: ARM: EXYNOS: dts: Improvements for 4.2
-Date: Wed, 6 May 2015 19:32:49 +0900
-Message-ID: <CAJKOXPfQO+Zd9njc3VGTQPcE2d=5hF8H-RpURCJMfA8kV8ZnWA@mail.gmail.com>
-References: <1430873981-22902-1-git-send-email-k.kozlowski@samsung.com>
-	<5549E1AB.8000400@collabora.co.uk>
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
+Date: Wed, 06 May 2015 12:45:51 +0200
+Message-ID: <5549F0DF.4030205@suse.cz>
+References: <1430897296-5469-1-git-send-email-jack@suse.cz> <1430897296-5469-3-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f42.google.com ([209.85.216.42]:36337 "EHLO
-	mail-vn0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750837AbbEFKcu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 May 2015 06:32:50 -0400
-In-Reply-To: <5549E1AB.8000400@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1430897296-5469-3-git-send-email-jack@suse.cz>
+Sender: linux-media-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>, linux-mm@kvack.org
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>, Andrzej Hajda <a.hajda@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-2015-05-06 18:40 GMT+09:00 Javier Martinez Canillas
-<javier.martinez@collabora.co.uk>:
-> Hello Krzysztof,
+On 05/06/2015 09:28 AM, Jan Kara wrote:
+> Provide new function get_vaddr_frames().  This function maps virtual
+> addresses from given start and fills given array with page frame numbers of
+> the corresponding pages. If given start belongs to a normal vma, the function
+> grabs reference to each of the pages to pin them in memory. If start
+> belongs to VM_IO | VM_PFNMAP vma, we don't touch page structures. Caller
+> must make sure pfns aren't reused for anything else while he is using
+> them.
 >
-> On 05/06/2015 02:59 AM, Krzysztof Kozlowski wrote:
->> Dear Kukjin,
->>
->> I gathered various improvements for upcoming 4.2 merge window.
->> Description along with a tag.
->>
->> Best regards,
->> Krzysztof
->>
->> ----------------------------------------------------------------
->> The following changes since commit 5ebe6afaf0057ac3eaeb98defd5456894b446d22:
->>
->>   Linux 4.1-rc2 (2015-05-03 19:22:23 -0700)
->>
->> are available in the git repository at:
->>
->>   https://github.com/krzk/linux.git tags/samsung-dt-for-next-4.2
->>
->> for you to fetch changes up to 98155ec454a40212434c83c1388c420a61d62854:
->>
->>   ARM: dts: exynos4: add nodes for jpeg codec (2015-05-05 19:19:18 +0900)
->>
->> ----------------------------------------------------------------
->> Device Tree improvements for Exynos based boards:
->> 1. Fix PMIC's RTC alarm on Arndale Octa (S2MPS11 PMIC) and SMDK5250 (MAXIM77686
->>    PMIC).
->> 2. Fix suspend on Peach Pit Chromebooks prevented by Marvell mwifiex
->>    driver.
->> 3. Fix hang on Odroid XU3 on MMC card detect.
->> 4. Enable the S3C RTC (the clock present on SoC) on various Exynos boards.
->> 5. Minor improvements to S3C RTC driver.
->> 6. Add nodes for JPEG codec on Exynos4.
->>
->> ----------------------------------------------------------------
->> Andrzej Hajda (1):
->>       ARM: dts: exynos5422-odroidxu3: add mmc detect gpio
->>
->> Javier Martinez Canillas (2):
->>       ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
+> This function is created for various drivers to simplify handling of
+> their buffers.
 >
-> This one is already in your "ARM: EXYNOS: dts: DTS fixes for 4.1" pull
-> request so it seems is a left over and should not be in this branch?
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-Yes, I rebased the work for v4.2 on top of fixes. Typically one would
-not send fixes and for-next release pull at the same time. Anyway it
-should not harm as merging or rebasing would ignore such commits.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
+With some nitpicks below...
+
+> ---
+>   include/linux/mm.h |  44 +++++++++++
+>   mm/gup.c           | 214 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 258 insertions(+)
 >
->>       ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
->>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 0755b9fd03a7..dcd1f02a78e9 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -20,6 +20,7 @@
+>   #include <linux/shrinker.h>
+>   #include <linux/resource.h>
+>   #include <linux/page_ext.h>
+> +#include <linux/err.h>
 >
-> This patch is also rc material IMHO since the mwifiex driver prevents
-> the system to enter into a suspend state and the driver is enabled in
-> exynos_defconfig after commit "040464888a1a ("ARM: exynos_defconfig:
-> Enable Marvell WiFi-Ex support") which landed in v4.1-rc1.
+>   struct mempolicy;
+>   struct anon_vma;
+> @@ -1197,6 +1198,49 @@ long get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
+>   		    int write, int force, struct page **pages);
+>   int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>   			struct page **pages);
+> +
+> +/* Container for pinned pfns / pages */
+> +struct frame_vector {
+> +	unsigned int nr_allocated;	/* Number of frames we have space for */
+> +	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
+> +	bool got_ref;		/* Did we pin pages by getting page ref? */
+> +	bool is_pfns;		/* Does array contain pages or pfns? */
+> +	void *ptrs[0];		/* Array of pinned pfns / pages. Use
+> +				 * pfns_vector_pages() or pfns_vector_pfns()
+> +				 * for access */
+> +};
+> +
+> +struct frame_vector *frame_vector_create(unsigned int nr_frames);
+> +void frame_vector_destroy(struct frame_vector *vec);
+> +int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
+> +		     bool write, bool force, struct frame_vector *vec);
+> +void put_vaddr_frames(struct frame_vector *vec);
+> +int frame_vector_to_pages(struct frame_vector *vec);
+> +void frame_vector_to_pfns(struct frame_vector *vec);
+> +
+> +static inline unsigned int frame_vector_count(struct frame_vector *vec)
+> +{
+> +	return vec->nr_frames;
+> +}
+> +
+> +static inline struct page **frame_vector_pages(struct frame_vector *vec)
+> +{
+> +	if (vec->is_pfns) {
+> +		int err = frame_vector_to_pages(vec);
+> +
+> +		if (err)
+> +			return ERR_PTR(err);
+> +	}
+> +	return (struct page **)(vec->ptrs);
+> +}
+> +
+> +static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
+> +{
+> +	if (!vec->is_pfns)
+> +		frame_vector_to_pfns(vec);
+> +	return (unsigned long *)(vec->ptrs);
+> +}
+> +
+>   struct kvec;
+>   int get_kernel_pages(const struct kvec *iov, int nr_pages, int write,
+>   			struct page **pages);
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 6297f6bccfb1..8db5c40e65c4 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -8,6 +8,7 @@
+>   #include <linux/rmap.h>
+>   #include <linux/swap.h>
+>   #include <linux/swapops.h>
+> +#include <linux/vmalloc.h>
+>
+>   #include <linux/sched.h>
+>   #include <linux/rwsem.h>
+> @@ -936,6 +937,219 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
+>   	return ret;	/* 0 or negative error code */
+>   }
+>
+> +/*
+> + * get_vaddr_frames() - map virtual addresses to pfns
+> + * @start:	starting user address
+> + * @nr_frames:	number of pages / pfns from start to map
+> + * @write:	whether pages will be written to by the caller
+> + * @force:	whether to force write access even if user mapping is
+> + *		readonly. This will result in the page being COWed even
+> + *		in MAP_SHARED mappings. You do not want this.
 
-That information was missing. I suspected this was a fix for an older
-issue not for regression introduced in 4.1-rc1. Now I agree.
+"You do not want this" and yet some of the drivers in later patches do. 
+That looks weird. Explain better?
 
-Dear Kukjin, could pick this patch also for current RC cycle?
+> + * @vec:	structure which receives pages / pfns of the addresses mapped.
+> + *		It should have space for at least nr_frames entries.
+> + *
+> + * This function maps virtual addresses from @start and fills @vec structure
+> + * with page frame numbers or page pointers to corresponding pages (choice
+> + * depends on the type of the vma underlying the virtual address). If @start
+> + * belongs to a normal vma, the function grabs reference to each of the pages
+> + * to pin them in memory. If @start belongs to VM_IO | VM_PFNMAP vma, we don't
+> + * touch page structures and the caller must make sure pfns aren't reused for
+> + * anything else while he is using them.
+> + *
+> + * The function returns number of pages mapped which may be less than
+> + * @nr_frames. In particular we stop mapping if there are more vmas of
+> + * different type underlying the specified range of virtual addresses.
 
-Best regards,
-Krzysztof
+The function can also return e.g. -EFAULT, shouldn't that be documented too?
+
+> + *
+> + * This function takes care of grabbing mmap_sem as necessary.
+> + */
+> +int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+> +		     bool write, bool force, struct frame_vector *vec)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	struct vm_area_struct *vma;
+> +	int ret = 0;
+> +	int err;
+> +	int locked = 1;
+
+It looks strange that locked is set to 1 before taking the actual 
+mmap_sem. Also future-proofing.
+
+> +
+> +	if (nr_frames == 0)
+> +		return 0;
+> +
+> +	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
+> +		nr_frames = vec->nr_allocated;
+> +
+> +	down_read(&mm->mmap_sem);
+> +	vma = find_vma_intersection(mm, start, start + 1);
+> +	if (!vma) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+> +		vec->got_ref = 1;
+> +		vec->is_pfns = 0;
+> +		ret = get_user_pages_locked(current, mm, start, nr_frames,
+> +			write, force, (struct page **)(vec->ptrs), &locked);
+> +		goto out;
+> +	}
+> +
+> +	vec->got_ref = 0;
+> +	vec->is_pfns = 1;
+> +	do {
+> +		unsigned long *nums = frame_vector_pfns(vec);
+> +
+> +		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
+> +			err = follow_pfn(vma, start, &nums[ret]);
+> +			if (err) {
+> +				if (ret == 0)
+> +					ret = err;
+> +				goto out;
+> +			}
+> +			start += PAGE_SIZE;
+> +			ret++;
+> +		}
+> +		/*
+> +		 * We stop if we have enough pages or if VMA doesn't completely
+> +		 * cover the tail page.
+> +		 */
+> +		if (ret >= nr_frames || start < vma->vm_end)
+> +			break;
+> +		vma = find_vma_intersection(mm, start, start + 1);
+> +	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
+> +out:
+> +	if (locked)
+> +		up_read(&mm->mmap_sem);
+> +	if (!ret)
+> +		ret = -EFAULT;
+> +	if (ret > 0)
+> +		vec->nr_frames = ret;
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(get_vaddr_frames);
+> +
+> +/**
+> + * put_vaddr_frames() - drop references to pages if get_vaddr_frames() acquired
+> + *			them
+> + * @vec:	frame vector to put
+> + *
+> + * Drop references to pages if get_vaddr_frames() acquired them. We also
+> + * invalidate the frame vector so that it is prepared for the next call into
+> + * get_vaddr_frames().
+> + */
+> +void put_vaddr_frames(struct frame_vector *vec)
+> +{
+> +	int i;
+> +	struct page **pages;
+> +
+> +	if (!vec->got_ref)
+> +		goto out;
+> +	pages = frame_vector_pages(vec);
+> +	/*
+> +	 * frame_vector_pages() might needed to do a conversion when we
+
+                                                           remove "we" ^
+
+> +	 * get_vaddr_frames() got pages but vec was later converted to pfns.
+> +	 * But it shouldn't really fail to convert pfns back...
+> +	 */
+> +	BUG_ON(IS_ERR(pages));
+> +	for (i = 0; i < vec->nr_frames; i++)
+> +		put_page(pages[i]);
+> +	vec->got_ref = 0;
+> +out:
+> +	vec->nr_frames = 0;
+> +}
+> +EXPORT_SYMBOL(put_vaddr_frames);
+> +
+> +/**
+> + * frame_vector_to_pages - convert frame vector to contain page pointers
+> + * @vec:	frame vector to convert
+> + *
+> + * Convert @vec to contain array of page pointers.  If the conversion is
+> + * successful, return 0. Otherwise return an error.
+> + */
+> +int frame_vector_to_pages(struct frame_vector *vec)
+> +{
+> +	int i;
+> +	unsigned long *nums;
+> +	struct page **pages;
+> +
+> +	if (!vec->is_pfns)
+> +		return 0;
+> +	nums = frame_vector_pfns(vec);
+> +	for (i = 0; i < vec->nr_frames; i++)
+> +		if (!pfn_valid(nums[i]))
+> +			return -EINVAL;
+> +	pages = (struct page **)nums;
+> +	for (i = 0; i < vec->nr_frames; i++)
+> +		pages[i] = pfn_to_page(nums[i]);
+> +	vec->is_pfns = 0;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(frame_vector_to_pages);
+> +
+> +/**
+> + * frame_vector_to_pfns - convert frame vector to contain pfns
+> + * @vec:	frame vector to convert
+> + *
+> + * Convert @vec to contain array of pfns.
+> + */
+> +void frame_vector_to_pfns(struct frame_vector *vec)
+> +{
+> +	int i;
+> +	unsigned long *nums;
+> +	struct page **pages;
+> +
+> +	if (vec->is_pfns)
+> +		return;
+> +	pages = (struct page **)(vec->ptrs);
+> +	nums = (unsigned long *)pages;
+> +	for (i = 0; i < vec->nr_frames; i++)
+> +		nums[i] = page_to_pfn(pages[i]);
+> +	vec->is_pfns = 1;
+> +}
+> +EXPORT_SYMBOL(frame_vector_to_pfns);
+> +
+> +/**
+> + * frame_vector_create() - allocate & initialize structure for pinned pfns
+> + * @nr_frames:	number of pfns slots we should reserve
+> + *
+> + * Allocate and initialize struct pinned_pfns to be able to hold @nr_pfns
+> + * pfns.
+> + */
+> +struct frame_vector *frame_vector_create(unsigned int nr_frames)
+> +{
+> +	struct frame_vector *vec;
+> +	int size = sizeof(struct frame_vector) + sizeof(void *) * nr_frames;
+> +
+> +	if (WARN_ON_ONCE(nr_frames == 0))
+> +		return NULL;
+> +	/*
+> +	 * Avoid higher order allocations, use vmalloc instead. It should
+> +	 * be rare anyway.
+> +	 */
+> +	if (size <= PAGE_SIZE)
+> +		vec = kmalloc(size, GFP_KERNEL);
+> +	else
+> +		vec = vmalloc(size);
+> +	if (!vec)
+> +		return NULL;
+> +	vec->nr_allocated = nr_frames;
+> +	vec->nr_frames = 0;
+> +	return vec;
+> +}
+> +EXPORT_SYMBOL(frame_vector_create);
+> +
+> +/**
+> + * frame_vector_destroy() - free memory allocated to carry frame vector
+> + * @vec:	Frame vector to free
+> + *
+> + * Free structure allocated by frame_vector_create() to carry frames.
+> + */
+> +void frame_vector_destroy(struct frame_vector *vec)
+> +{
+
+Add some VM_BUG_ON()'s for nr_frames and got_ref perhaps?
+
+> +	if (!is_vmalloc_addr(vec))
+> +		kfree(vec);
+> +	else
+> +		vfree(vec);
+> +}
+> +EXPORT_SYMBOL(frame_vector_destroy);
+> +
+>   /**
+>    * get_dump_page() - pin user page in memory while writing it to core dump
+>    * @addr: user address
+>
