@@ -1,70 +1,57 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: drm/exynos: Add atomic modesetting support
-Date: Wed, 6 May 2015 18:45:04 -0300
-Message-ID: <20150506214504.GA25751@joana>
-References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [alsa-devel] [PATCH v2 RESEND] ARM: dts: Support audio on
+ Exynos5422-odroidxu3 using simple-audio-card
+Date: Thu, 07 May 2015 08:49:03 +0900
+Message-ID: <554AA86F.8090100@samsung.com>
+References: <1428651178-18186-1-git-send-email-ideal.song@samsung.com>
+ <552791A4.40203@fivetechno.de>
+ <CANAwSgS98n0kX8oBUk5Ehk1fwU4DA_DNuAqztp3LrOBcmrtAZw@mail.gmail.com>
+ <20150506104714.498f8da5@songinha-Samsung-DeskTop-System>
+ <CABxcv=mpPOfDDnD0RJGb-W313jpxqiW2O_o_tFJgSwEhOZnKew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57280 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403AbbEFXtM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 May 2015 19:49:12 -0400
+In-reply-to: <CABxcv=mpPOfDDnD0RJGb-W313jpxqiW2O_o_tFJgSwEhOZnKew@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Inha Song <ideal.song@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-SGkgSW5raSBhbmQgSm9vbnlvdW5nLgoKQW55IHRob3VnaHRzIG9uIHRoaXM/CgoyMDE1LTA0LTMw
-IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2b0BwYWRvdmFuLm9yZz46Cgo+IEhpLAo+IAo+IEhlcmUg
-Z29lcyB0aGUgZnVsbCBzdXBwb3J0IGZvciBhdG9taWMgbW9kZXNldHRpbmcgb24gZXh5bm9zLiBJ
-J3ZlCj4gc3BsaXQgdGhlIHBhdGNoZXMgaW4gdGhlIHZhcmlvdXMgcGhhc2VzIG9mIGF0b21pYyBz
-dXBwb3J0Lgo+IAo+IHYyOiBmaXhlcyBjb21tZW50cyBieSBKb29ueW91bmcKPiAgICAgICAgIC0g
-cmVtb3ZlIHVudXNlZCB2YXIgaW4gcGF0Y2ggMDkKPiAgICAgICAgIC0gdXNlIC0+ZGlzYWJsZSBp
-bnN0ZWFkIG9mIG91dGRhdGVkIC0+ZHBtcyBpbiBoZG1pIGNvZGUKPiAgICAgICAgIC0gcmVtb3Zl
-IFdBUk5fT04gZnJvbSBjcnRjIGVuYWJsZS9kaXNhYmxlCj4gCj4gdjM6IGZpeGVzIGNvbW1lbnQg
-YnkgSm9vbnlvdW5nCj4gICAgICAgICAtIG1vdmUgdGhlIHJlbW92YWwgb2YgZHJtX2hlbHBlcl9k
-aXNhYmxlX3VudXNlZF9mdW5jdGlvbnMoKSB0bwo+ICAgICAgICAgc2VwYXJhdGVkIHBhdGNoCj4g
-Cj4gdjQ6IGFkZCBwYXRjaGVzIHRoYXQgcmVtb3ZlIHVubmVjZXNzYXJ5IGNhbGxzIHRvIGRpc2Fi
-bGVfcGxhbmUoKQo+IAo+IAlHdXN0YXZvCj4gCj4gLS0tCj4gR3VzdGF2byBQYWRvdmFuICgxMik6
-Cj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDE6IHVzZSBkcm1fcGxhbmVfaGVscGVy
-X3VwZGF0ZSgpCj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDE6IHVzZSBkcm1fcGxh
-bmVfaGVscGVyX2Rpc2FibGUoKQo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAxOiBh
-ZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxsYmFjawo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBw
-aGFzZSAyOiB3aXJlIHVwIHN0YXRlIHJlc2V0KCksIGR1cGxpY2F0ZSgpIGFuZCBkZXN0cm95KCkK
-PiAgICAgICBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2UgMjoga2VlcCB0cmFjayBvZiBmcmFtZWJ1
-ZmZlciBwb2ludGVyCj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6IGF0b21pYyB1
-cGRhdGVzIG9mIHBsYW5lcwo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAzOiB1c2Ug
-YXRvbWljIC5zZXRfY29uZmlnIGhlbHBlcgo+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFz
-ZSAzOiBjb252ZXJ0IHBhZ2UgZmxpcHMKPiAgICAgICBkcm0vZXh5bm9zOiByZW1vdmUgZXhwb3J0
-ZWQgZnVuY3Rpb25zIGZyb20gZXh5bm9zX2RybV9wbGFuZQo+ICAgICAgIGRybS9leHlub3M6IGRv
-bid0IGRpc2FibGUgdW51c2VkIGZ1bmN0aW9ucyBhdCBpbml0Cj4gICAgICAgZHJtL2V4eW5vczog
-YXRvbWljIGRwbXMgc3VwcG9ydAo+ICAgICAgIGRybS9leHlub3M6IHJlbW92ZSB1bm5lY2Vzc2Fy
-eSBjYWxscyB0byBkaXNhYmxlX3BsYW5lKCkKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9w
-czg2MjIuYyAgICAgICAgICAgICB8ICAgNiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0
-bjM0NjAuYyAgICAgICAgICAgIHwgICA2ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RwX2NvcmUuYyAgICAgfCAgIDYgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYyAgICB8IDIxNSArKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgfCAgIDYgKy0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICB8ICAgMiArCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgfCAgIDQgKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAgICB8ICAgNiArLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jIHwgIDM1ICstLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgfCAgMTIgKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgICB8ICAgMyAtCj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgfCAxMTUgKysrKysrKysrLS0t
-LS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggICB8ICAx
-MSAtLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgIHwgICA2
-ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgfCAgMTAg
-Ky0KPiAgMTUgZmlsZXMgY2hhbmdlZCwgMTc4IGluc2VydGlvbnMoKyksIDI2NSBkZWxldGlvbnMo
-LSkKPiAKCglHdXN0YXZvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+On 06.05.2015 22:23, Javier Martinez Canillas wrote:
+> +Krzysztof Kozlowski
+>
+> Hello Inha,
+>
+> On Wed, May 6, 2015 at 3:47 AM, Inha Song <ideal.song@samsung.com> wrote:
+>> Hi Kukjin,
+>>
+>> Any comments about this patch?
+>>
+>> Best Regards,
+>> Inha Song.
+>>
+>
+> It seems Kukjin didn't have time lately to deal with the huge backlog
+> of patches for Exynos so Krzysztof (added as cc) has kindly
+> volunteered to help him by acting as a co-maintainer and queuing
+> patches.
+>
+> So could you please for any patches that my have been forgotten (like
+> $subject),  rebase on current head, carry all the obtained tags and
+> re-send cc'ing Krzysztof so he can be aware of them?
+
+Thanks Javier, I queued this already with test-by tags. I'll try to push 
+it next time... which I don't know when it happens as current pull 
+request stalled.
+
+Anyway I won't forget about the patch. It can be found here:
+https://github.com/krzk/linux/commits/samsung-for-next
+
+Best regards,
+Krzysztof
