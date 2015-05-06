@@ -1,62 +1,86 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/8] clk: Minor cleanups
-Date: Tue, 5 May 2015 22:56:53 -0700
-Message-ID: <20150506055653.GF10871@codeaurora.org>
-References: <1430196383-9190-1-git-send-email-k.kozlowski@samsung.com>
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 4/9] vb2: Provide helpers for mapping virtual addresses
+Date: Wed,  6 May 2015 09:28:11 +0200
+Message-ID: <1430897296-5469-5-git-send-email-jack@suse.cz>
+References: <1430897296-5469-1-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1430196383-9190-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Max Filippov <jcmvbkbc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1430897296-5469-1-git-send-email-jack@suse.cz>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-mm@kvack.org
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/28, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> Changes since v1
-> ================
-> 1. Rebase on next-20150427 and Sascha Hauer's:
->    clk: make strings in parent name arrays const [1]
-> 2. Add patch "clk: tegra: Fix inconsistent indenting".
-> 
-> 
-> Description and dependencies
-> ============================
-> Small cleanups for different clock drivers.
-> 
-> The first three patches are independent.
-> 
-> Rest of the patches (these related to constifying parent names,
-> including the change for MIPS) depend on the "clk: make strings in
-> parent name arrays const" from Sascha Hauer [1].
-> 
-> 
-> Tested on Arndale Octa (Exynos5420) and Trats2 (Exynos4412). Other
-> drivers (and MIPS related) only compile tested plus some static
-> checkers.
-> 
-> 
-> [1] http://www.spinics.net/lists/arm-kernel/msg413763.html
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (8):
->   clk: rockchip: Staticize file-scope declarations
->   clk: exynos: Staticize file-scope declarations
->   clk: tegra: Fix inconsistent indenting
->   clk: tegra: Fix duplicate const for parent names
->   clk: cdce706: Constify parent names in clock init data
->   clk: sirf: Constify parent names in clock init data
->   clk: ls1x: Fix duplicate const for parent names
->   MIPS: Alchemy: Remove unneeded cast removing const
-
-Applied 1,2,5,6,7 to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+UHJvdmlkZSBzaW1wbGUgaGVscGVyIGZ1bmN0aW9ucyB0byBtYXAgdmlydHVhbCBhZGRyZXNzIHJh
+bmdlIGludG8gYW4KYXJyYXkgb2YgcGZucyAvIHBhZ2VzLgoKQWNrZWQtYnk6IE1hcmVrIFN6eXBy
+b3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KVGVzdGVkLWJ5OiBNYXJlayBTenlwcm93
+c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+ClNpZ25lZC1vZmYtYnk6IEphbiBLYXJhIDxq
+YWNrQHN1c2UuY3o+Ci0tLQogZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9idWYyLW1lbW9w
+cy5jIHwgNTggKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBpbmNsdWRlL21lZGlhL3Zp
+ZGVvYnVmMi1tZW1vcHMuaCAgICAgICAgICAgfCAgNSArKysKIDIgZmlsZXMgY2hhbmdlZCwgNjMg
+aW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVv
+YnVmMi1tZW1vcHMuYyBiL2RyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi1tZW1vcHMu
+YwppbmRleCA4MWMxYWQ4YjJjZjEuLjBlYzE4NmQ0MWI5YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9t
+ZWRpYS92NGwyLWNvcmUvdmlkZW9idWYyLW1lbW9wcy5jCisrKyBiL2RyaXZlcnMvbWVkaWEvdjRs
+Mi1jb3JlL3ZpZGVvYnVmMi1tZW1vcHMuYwpAQCAtMTM3LDYgKzEzNyw2NCBAQCBpbnQgdmIyX2dl
+dF9jb250aWdfdXNlcnB0cih1bnNpZ25lZCBsb25nIHZhZGRyLCB1bnNpZ25lZCBsb25nIHNpemUs
+CiBFWFBPUlRfU1lNQk9MX0dQTCh2YjJfZ2V0X2NvbnRpZ191c2VycHRyKTsKIAogLyoqCisgKiB2
+YjJfY3JlYXRlX2ZyYW1ldmVjKCkgLSBtYXAgdmlydHVhbCBhZGRyZXNzZXMgdG8gcGZucworICog
+QHN0YXJ0OglWaXJ0dWFsIHVzZXIgYWRkcmVzcyB3aGVyZSB3ZSBzdGFydCBtYXBwaW5nCisgKiBA
+bGVuZ3RoOglMZW5ndGggb2YgYSByYW5nZSB0byBtYXAKKyAqIEB3cml0ZToJU2hvdWxkIHdlIG1h
+cCBmb3Igd3JpdGluZyBpbnRvIHRoZSBhcmVhCisgKgorICogVGhpcyBmdW5jdGlvbiBhbGxvY2F0
+ZXMgYW5kIGZpbGxzIGluIGEgdmVjdG9yIHdpdGggcGZucyBjb3JyZXNwb25kaW5nIHRvCisgKiB2
+aXJ0dWFsIGFkZHJlc3MgcmFuZ2UgcGFzc2VkIGluIGFyZ3VtZW50cy4gSWYgcGZucyBoYXZlIGNv
+cnJlc3BvbmRpbmcgcGFnZXMsCisgKiBwYWdlIHJlZmVyZW5jZXMgYXJlIGFsc28gZ3JhYmJlZCB0
+byBwaW4gcGFnZXMgaW4gbWVtb3J5LiBUaGUgZnVuY3Rpb24KKyAqIHJldHVybnMgcG9pbnRlciB0
+byB0aGUgdmVjdG9yIG9uIHN1Y2Nlc3MgYW5kIGVycm9yIHBvaW50ZXIgaW4gY2FzZSBvZgorICog
+ZmFpbHVyZS4gUmV0dXJuZWQgdmVjdG9yIG5lZWRzIHRvIGJlIGZyZWVkIHZpYSB2YjJfZGVzdHJv
+eV9wZm52ZWMoKS4KKyAqLworc3RydWN0IGZyYW1lX3ZlY3RvciAqdmIyX2NyZWF0ZV9mcmFtZXZl
+Yyh1bnNpZ25lZCBsb25nIHN0YXJ0LAorCQkJCQkgdW5zaWduZWQgbG9uZyBsZW5ndGgsCisJCQkJ
+CSBib29sIHdyaXRlKQoreworCWludCByZXQ7CisJdW5zaWduZWQgbG9uZyBmaXJzdCwgbGFzdDsK
+Kwl1bnNpZ25lZCBsb25nIG5yOworCXN0cnVjdCBmcmFtZV92ZWN0b3IgKnZlYzsKKworCWZpcnN0
+ID0gc3RhcnQgPj4gUEFHRV9TSElGVDsKKwlsYXN0ID0gKHN0YXJ0ICsgbGVuZ3RoIC0gMSkgPj4g
+UEFHRV9TSElGVDsKKwluciA9IGxhc3QgLSBmaXJzdCArIDE7CisJdmVjID0gZnJhbWVfdmVjdG9y
+X2NyZWF0ZShucik7CisJaWYgKCF2ZWMpCisJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOworCXJl
+dCA9IGdldF92YWRkcl9mcmFtZXMoc3RhcnQsIG5yLCB3cml0ZSwgMSwgdmVjKTsKKwlpZiAocmV0
+IDwgMCkKKwkJZ290byBvdXRfZGVzdHJveTsKKwkvKiBXZSBhY2NlcHQgb25seSBjb21wbGV0ZSBz
+ZXQgb2YgUEZOcyAqLworCWlmIChyZXQgIT0gbnIpIHsKKwkJcmV0ID0gLUVGQVVMVDsKKwkJZ290
+byBvdXRfcmVsZWFzZTsKKwl9CisJcmV0dXJuIHZlYzsKK291dF9yZWxlYXNlOgorCXB1dF92YWRk
+cl9mcmFtZXModmVjKTsKK291dF9kZXN0cm95OgorCWZyYW1lX3ZlY3Rvcl9kZXN0cm95KHZlYyk7
+CisJcmV0dXJuIEVSUl9QVFIocmV0KTsKK30KK0VYUE9SVF9TWU1CT0wodmIyX2NyZWF0ZV9mcmFt
+ZXZlYyk7CisKKy8qKgorICogdmIyX2Rlc3Ryb3lfZnJhbWV2ZWMoKSAtIHJlbGVhc2UgdmVjdG9y
+IG9mIG1hcHBlZCBwZm5zCisgKiBAdmVjOgl2ZWN0b3Igb2YgcGZucyAvIHBhZ2VzIHRvIHJlbGVh
+c2UKKyAqCisgKiBUaGlzIHJlbGVhc2VzIHJlZmVyZW5jZXMgdG8gYWxsIHBhZ2VzIGluIHRoZSB2
+ZWN0b3IgQHZlYyAoaWYgY29ycmVzcG9uZGluZworICogcGZucyBhcmUgYmFja2VkIGJ5IHBhZ2Vz
+KSBhbmQgZnJlZXMgdGhlIHBhc3NlZCB2ZWN0b3IuCisgKi8KK3ZvaWQgdmIyX2Rlc3Ryb3lfZnJh
+bWV2ZWMoc3RydWN0IGZyYW1lX3ZlY3RvciAqdmVjKQoreworCXB1dF92YWRkcl9mcmFtZXModmVj
+KTsKKwlmcmFtZV92ZWN0b3JfZGVzdHJveSh2ZWMpOworfQorRVhQT1JUX1NZTUJPTCh2YjJfZGVz
+dHJveV9mcmFtZXZlYyk7CisKKy8qKgogICogdmIyX2NvbW1vbl92bV9vcGVuKCkgLSBpbmNyZWFz
+ZSByZWZjb3VudCBvZiB0aGUgdm1hCiAgKiBAdm1hOgl2aXJ0dWFsIG1lbW9yeSByZWdpb24gZm9y
+IHRoZSBtYXBwaW5nCiAgKgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9tZWRpYS92aWRlb2J1ZjItbWVt
+b3BzLmggYi9pbmNsdWRlL21lZGlhL3ZpZGVvYnVmMi1tZW1vcHMuaAppbmRleCBmMDU0NDRjYThj
+MGMuLjJmMDU2NGZmNWYzMSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9tZWRpYS92aWRlb2J1ZjItbWVt
+b3BzLmgKKysrIGIvaW5jbHVkZS9tZWRpYS92aWRlb2J1ZjItbWVtb3BzLmgKQEAgLTE1LDYgKzE1
+LDcgQEAKICNkZWZpbmUgX01FRElBX1ZJREVPQlVGMl9NRU1PUFNfSAogCiAjaW5jbHVkZSA8bWVk
+aWEvdmlkZW9idWYyLWNvcmUuaD4KKyNpbmNsdWRlIDxsaW51eC9tbS5oPgogCiAvKioKICAqIHZi
+Ml92bWFyZWFfaGFuZGxlciAtIGNvbW1vbiB2bWEgcmVmY291bnQgdHJhY2tpbmcgaGFuZGxlcgpA
+QCAtMzYsNSArMzcsOSBAQCBpbnQgdmIyX2dldF9jb250aWdfdXNlcnB0cih1bnNpZ25lZCBsb25n
+IHZhZGRyLCB1bnNpZ25lZCBsb25nIHNpemUsCiBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZiMl9n
+ZXRfdm1hKHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKTsKIHZvaWQgdmIyX3B1dF92bWEoc3Ry
+dWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpOwogCitzdHJ1Y3QgZnJhbWVfdmVjdG9yICp2YjJfY3Jl
+YXRlX2ZyYW1ldmVjKHVuc2lnbmVkIGxvbmcgc3RhcnQsCisJCQkJCSB1bnNpZ25lZCBsb25nIGxl
+bmd0aCwKKwkJCQkJIGJvb2wgd3JpdGUpOwordm9pZCB2YjJfZGVzdHJveV9mcmFtZXZlYyhzdHJ1
+Y3QgZnJhbWVfdmVjdG9yICp2ZWMpOwogCiAjZW5kaWYKLS0gCjIuMS40CgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
