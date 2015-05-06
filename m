@@ -1,71 +1,49 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [Y2038] [PATCH v4 06/10] cec: add HDMI CEC framework: y2038 question
-Date: Wed, 06 May 2015 18:17:05 +0200
-Message-ID: <10564120.sr4VXNmXf3@wuerfel>
-References: <1429794192-20541-1-git-send-email-k.debski@samsung.com> <4726638.QZKcRc97FC@wuerfel> <554A3A09.9050208@xs4all.nl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <554A3A09.9050208@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: y2038@lists.linaro.org
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Kamil Debski <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, thomas@tommie-lie.de, linux-input@vger.kernel.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Snow
+Date: Wed,  6 May 2015 18:32:59 +0200
+Message-ID: <1430929979-18119-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday 06 May 2015 17:58:01 Hans Verkuil wrote:
-> 
-> On 05/04/2015 12:14 PM, Arnd Bergmann wrote:
-> > On Monday 04 May 2015 09:42:36 Hans Verkuil wrote:
-> >> Ping! (Added Arnd to the CC list)
-> > 
-> > Hi Hans,
-> > 
-> > sorry I missed this the first time
-> > 
-> >> On 04/27/2015 09:40 AM, Hans Verkuil wrote:
-> >>> Added the y2038 mailinglist since I would like to get their input for
-> >>> this API.
-> >>>
-> >>> Y2038 experts, can you take a look at my comment in the code below?
-> >>>
-> >>> Thanks!
-> >>
-> >> Arnd, I just saw your patch series adding struct __kernel_timespec to
-> >> uapi/linux/time.h. I get the feeling that it might take a few kernel
-> >> cycles before we have a timespec64 available in userspace. Based on that
-> >> I think this CEC API should drop the timestamps for now and wait until
-> >> timespec64 becomes available before adding it.
-> >>
-> >> The timestamps are a nice-to-have, but not critical. So adding it later
-> >> shouldn't be a problem. What is your opinion?
-> > 
-> > It will take a little while for the patches to make it in, I would guess
-> > 4.3 at the earliest. Using your own struct works just as well and would
-> > be less ambiguous.
-> > 
-> > However, for timestamps, I would recommend not using timespec anyway.
-> > Instead, just use a single 64-bit nanosecond value from ktime_get_ns()
-> > (or ktime_get_boot_ns() if you need a time that keeps ticking across
-> > suspend). This is more efficient to get and simpler to use as long
-> > as you don't need to convert from nanosecond to timespec.
-> 
-> Possibly stupid follow-up question:
-> 
-> is ktime_get_ns() just a different representation as ktime_get_ts64()?
+The Marvell mwifiex driver prevents the system to enter into a suspend
+state if the card power is not preserved during a suspend/resume cycle.
 
-Yes.
+So Suspend-to-RAM and Suspend-to-idle are failing on Exynos5250 Snow.
 
-> Or is there some offset between the two? They seem to be identical based
-> on a quick test, but I'd like to be certain that that's always the case.
->
-> Users need to be able to relate this timestamp to a struct timespec as
-> returned by V4L2 (and others).
+Add the keep-power-in-suspend Power Management property to the SDIO/MMC
+node so the mwifiex suspend handler doesn't fail and the system is able
+to enter into a suspend state.
 
-* ktime_get_ns() uses the same timebase as ktime_get_ts64().
-* ktime_get_boot_ns() uses the same timebase as ktime_get_boottime() or
-  getboottime64(), which differs from the first after suspend
-* ktime_get_real_ns() uses the same time as gettimeofday() in user space,
-  which is always different from the other two.
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
-	Arnd
+Kukjin and Krzysztof,
+
+I didn't notice that Snow was also missing this property when I did the
+same change for Peach Pit and and Pi Chromebooks [0], sorry about that.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/4/7/377
+---
+ arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 2657e842e5a5..1eca97ee4bd6 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -567,6 +567,7 @@
+ 	num-slots = <1>;
+ 	broken-cd;
+ 	cap-sdio-irq;
++	keep-power-in-suspend;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <2 3>;
+-- 
+2.1.4
