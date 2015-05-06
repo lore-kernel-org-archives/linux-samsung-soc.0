@@ -1,83 +1,179 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: ARM: EXYNOS: Improvements for 4.2
-Date: Wed, 06 May 2015 10:01:00 +0900
-Message-ID: <1430874060-23074-1-git-send-email-k.kozlowski@samsung.com>
+From: Inha Song <ideal.song@samsung.com>
+Subject: Re: [alsa-devel] [PATCH v2 RESEND] ARM: dts: Support audio on
+ Exynos5422-odroidxu3 using simple-audio-card
+Date: Wed, 06 May 2015 10:47:14 +0900
+Message-ID: <20150506104714.498f8da5@songinha-Samsung-DeskTop-System>
+References: <1428651178-18186-1-git-send-email-ideal.song@samsung.com>
+ <552791A4.40203@fivetechno.de>
+ <CANAwSgS98n0kX8oBUk5Ehk1fwU4DA_DNuAqztp3LrOBcmrtAZw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:65051 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751537AbbEFBBP (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:23259 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755944AbbEFBrS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 May 2015 21:01:15 -0400
+	Tue, 5 May 2015 21:47:18 -0400
+In-reply-to: <CANAwSgS98n0kX8oBUk5Ehk1fwU4DA_DNuAqztp3LrOBcmrtAZw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sergiy Kibrik <sakib@meta.ua>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, broonie@kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Dear Kukjin,
+Hi Kukjin,
 
-This adds coupled cpuidle for Exynos3250 and improves the Exynos
-code in few places. Everything for upcoming 4.2 merge window.
-Description along with a tag.
+Any comments about this patch?
 
-Best regards,
-Krzysztof
+Best Regards,
+Inha Song.
 
-----------------------------------------------------------------
-The following changes since commit 5ebe6afaf0057ac3eaeb98defd5456894b446d22:
+On Fri, 10 Apr 2015 14:48:13 +0530
+Anand Moon <linux.amoon@gmail.com> wrote:
 
-  Linux 4.1-rc2 (2015-05-03 19:22:23 -0700)
-
-are available in the git repository at:
-
-  https://github.com/krzk/linux.git tags/samsung-for-next-4.2
-
-for you to fetch changes up to 87f3d5e884120f080bd541203b5433c312267445:
-
-  ARM: plat-samsung: Constify platform_device_id (2015-05-05 19:21:21 +0900)
-
-----------------------------------------------------------------
-Extending cpuidle driver and improvements for Exynos based boards:
-1. Add missing return-value checks and of_node_put() for power domain
-   driver.
-2. Fix missing clk_prepare in S3C24XX ADC driver.
-3. Rework clock handling when switching power domains on/off. Instead
-   of settting fixed parent in DTS we grab the parent clock before
-   turning the domain off.
-4. Add coupled cpuidle support for Exynos3250 to an existing
-   cpuidle-exynos driver. As a result it enables AFTR mode
-   (ARM-Off Top-Running) to be used by default on Exynos3250
-   without the need to hot unplug CPU1 first.
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (5):
-      ARM: EXYNOS: fix exynos_boot_secondary() return value on timeout
-      ARM: EXYNOS: make exynos_core_restart() less verbose
-      ARM: EXYNOS: add exynos_set_boot_addr() helper
-      ARM: EXYNOS: add exynos_get_boot_addr() helper
-      cpuidle: exynos: add coupled cpuidle support for Exynos3250
-
-Krzysztof Kozlowski (8):
-      ARM: EXYNOS: Fix failed second suspend on Exynos4
-      ARM: EXYNOS: Handle of of_iomap() failure
-      ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
-      ARM: EXYNOS: Add missing of_node_put() when parsing power domains
-      ARM: EXYNOS: Get current parent clock for power domain on/off
-      ARM: dts: Use last parent for clocks during power domain on/off
-      ARM: EXYNOS: Constify irq_domain_ops
-      ARM: plat-samsung: Constify platform_device_id
-
-Sergiy Kibrik (1):
-      ARM: SAMSUNG: fix clk_enable() WARNing in S3C24XX ADC
-
- .../bindings/arm/exynos/power_domain.txt           |   7 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |  13 +--
- arch/arm/include/asm/firmware.h                    |   4 +
- arch/arm/mach-exynos/common.h                      |   6 +-
- arch/arm/mach-exynos/exynos.c                      |  30 ++++-
- arch/arm/mach-exynos/firmware.c                    |  18 +++
- arch/arm/mach-exynos/platsmp.c                     | 123 ++++++++++-----------
- arch/arm/mach-exynos/pm.c                          |  51 +++++++--
- arch/arm/mach-exynos/pm_domains.c                  |  37 +++++--
- arch/arm/mach-exynos/suspend.c                     |   5 +-
- arch/arm/plat-samsung/adc.c                        |   6 +-
- 11 files changed, 201 insertions(+), 99 deletions(-)
+> Hi Inha,
+> 
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
+> 
+> -Anand Moon
+> 
+> On 10 April 2015 at 14:32, Markus Reichl <m.reichl@fivetechno.de> wrote:
+> > Hi Inha,
+> >
+> > I have tested this on XU3 (Headphone output).
+> >
+> > Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> >
+> > Best Regards
+> > --
+> > Markus Reichl
+> >
+> > Am 10.04.2015 um 09:32 schrieb Inha Song:
+> >> Add MAX98090 audio codec, I2S interface and the sound nodes to support
+> >> audio on Exynos5422 SoC Based Odroid-XU3 board. Now we can support audio
+> >> in Odroid-XU3 board using simple-audio-card DT binding.
+> >>
+> >> Signed-off-by: Inha Song <ideal.song@samsung.com>
+> >> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> ---
+> >>  arch/arm/boot/dts/exynos5420.dtsi          |  9 +++++
+> >>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 59 ++++++++++++++++++++++++++++++
+> >>  2 files changed, 68 insertions(+)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> >> index ac6f860..73886d6 100644
+> >> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> >> @@ -415,6 +415,9 @@
+> >>                       <&clock_audss EXYNOS_I2S_BUS>,
+> >>                       <&clock_audss EXYNOS_SCLK_I2S>;
+> >>               clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+> >> +             #clock-cells = <1>;
+> >> +             clock-output-names = "i2s_cdclk0";
+> >> +             #sound-dai-cells = <1>;
+> >>               samsung,idma-addr = <0x03000000>;
+> >>               pinctrl-names = "default";
+> >>               pinctrl-0 = <&i2s0_bus>;
+> >> @@ -429,6 +432,9 @@
+> >>               dma-names = "tx", "rx";
+> >>               clocks = <&clock CLK_I2S1>, <&clock CLK_SCLK_I2S1>;
+> >>               clock-names = "iis", "i2s_opclk0";
+> >> +             #clock-cells = <1>;
+> >> +             clock-output-names = "i2s_cdclk1";
+> >> +             #sound-dai-cells = <1>;
+> >>               pinctrl-names = "default";
+> >>               pinctrl-0 = <&i2s1_bus>;
+> >>               status = "disabled";
+> >> @@ -442,6 +448,9 @@
+> >>               dma-names = "tx", "rx";
+> >>               clocks = <&clock CLK_I2S2>, <&clock CLK_SCLK_I2S2>;
+> >>               clock-names = "iis", "i2s_opclk0";
+> >> +             #clock-cells = <1>;
+> >> +             clock-output-names = "i2s_cdclk2";
+> >> +             #sound-dai-cells = <1>;
+> >>               pinctrl-names = "default";
+> >>               pinctrl-0 = <&i2s2_bus>;
+> >>               status = "disabled";
+> >> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> >> index edc25cf..c038f0d 100644
+> >> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> >> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> >> @@ -11,6 +11,7 @@
+> >>  */
+> >>
+> >>  /dts-v1/;
+> >> +#include <dt-bindings/sound/samsung-i2s.h>
+> >>  #include "exynos5800.dtsi"
+> >>
+> >>  / {
+> >> @@ -285,6 +286,64 @@
+> >>       rtc@101E0000 {
+> >>               status = "okay";
+> >>       };
+> >> +
+> >> +     sound: sound {
+> >> +             compatible = "simple-audio-card";
+> >> +
+> >> +             simple-audio-card,name = "Odroid-XU3";
+> >> +             simple-audio-card,widgets =
+> >> +                     "Headphone", "Headphone Jack",
+> >> +                     "Speakers", "Speakers";
+> >> +             simple-audio-card,routing =
+> >> +                     "Headphone Jack", "HPL",
+> >> +                     "Headphone Jack", "HPR",
+> >> +                     "Headphone Jack", "MICBIAS",
+> >> +                     "IN1", "Headphone Jack",
+> >> +                     "Speakers", "SPKL",
+> >> +                     "Speakers", "SPKR";
+> >> +
+> >> +             simple-audio-card,format = "i2s";
+> >> +             simple-audio-card,bitclock-master = <&link0_codec>;
+> >> +             simple-audio-card,frame-master = <&link0_codec>;
+> >> +
+> >> +             simple-audio-card,cpu {
+> >> +                     sound-dai = <&i2s0 0>;
+> >> +                     system-clock-frequency = <19200000>;
+> >> +             };
+> >> +
+> >> +             link0_codec: simple-audio-card,codec {
+> >> +                     sound-dai = <&max98090>;
+> >> +                     clocks = <&i2s0 CLK_I2S_CDCLK>;
+> >> +             };
+> >> +     };
+> >> +};
+> >> +
+> >> +&clock_audss {
+> >> +     assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
+> >> +                     <&clock_audss EXYNOS_MOUT_I2S>,
+> >> +                     <&clock_audss EXYNOS_DOUT_AUD_BUS>;
+> >> +     assigned-clock-parents = <&clock CLK_FIN_PLL>,
+> >> +                     <&clock_audss EXYNOS_MOUT_AUDSS>;
+> >> +     assigned-clock-rates = <0>,
+> >> +                     <0>,
+> >> +                     <19200000>;
+> >> +};
+> >> +
+> >> +&hsi2c_5 {
+> >> +     status = "okay";
+> >> +     max98090: max98090@10 {
+> >> +             compatible = "maxim,max98090";
+> >> +             reg = <0x10>;
+> >> +             interrupt-parent = <&gpx3>;
+> >> +             interrupts = <2 0>;
+> >> +             clocks = <&i2s0 CLK_I2S_CDCLK>;
+> >> +             clock-names = "mclk";
+> >> +             #sound-dai-cells = <0>;
+> >> +     };
+> >> +};
+> >> +
+> >> +&i2s0 {
+> >> +     status = "okay";
+> >>  };
+> >>
+> >>  &hdmi {
+> >>
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
