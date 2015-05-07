@@ -1,44 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT PATCH v2 0/3] drm/exynos: Fix build breakage on
- !DRM_EXYNOS_FIMD
-Date: Thu, 7 May 2015 18:19:05 +0900
-Message-ID: <CAJKOXPdbBAGk+QFLY3YmwUhfDr6iY6s5AsD-oaVBFcGtXqVd0Q@mail.gmail.com>
-References: <1430957086-25005-1-git-send-email-k.kozlowski@samsung.com>
- <554B2D8A.6070209@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <554B2D8A.6070209@collabora.co.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to mout_apll and mout_kpll clock.
+Date: Fri,  8 May 2015 03:18:55 +0930
+Message-ID: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:36114 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750986AbbEGRtc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 7 May 2015 13:49:32 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-MjAxNS0wNS0wNyAxODoxNiBHTVQrMDk6MDAgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzCjxqYXZp
-ZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPjoKPiBIZWxsbyBLcnp5c3p0b2YsCj4KPiBPbiAw
-NS8wNy8yMDE1IDAyOjA0IEFNLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+PiBGcm9tOiBL
-cnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraS5rQGdtYWlsLmNvbT4KPj4KPj4gSGksCj4+
-Cj4+IFRoaXMgaXMgc2Vjb25kIHRyeSB0byBmaXggdGhlIGJ1aWxkIGJyZWFrYWdlIGludHJvZHVj
-ZWQgaW4gMWMzNjNjN2NjY2Y2Cj4+ICgiZHJtL2V4eW5vczogRW5hYmxlIERQIGNsb2NrIHRvIGZp
-eCBkaXNwbGF5IG9uIEV4eW5vczUyNTAgYW5kIG90aGVyIikuCj4+Cj4+IFRoZSBmaXggaXMgbm90
-IHRyaXZpYWwgc28gSSBhbSBraW5kbHkgYXNraW5nIGZvciB0ZXN0aW5nIG9uIENocm9tZWJvb2sK
-Pj4gYW5kIG90aGVyIERQLWVuYWJsZWQgYm9hcmRzIChJIGRvbid0IGhhdmUgQ2hyb21lYm9vayBy
-aWdodCBub3cpLgo+Pgo+Cj4gRm9yIGFsbCB0aGUgc2VyaWVzOgo+Cj4gUmV2aWV3ZWQtYnk6IEph
-dmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4K
-Pgo+PiBUZXN0ZWQgb24gRXh5bm9zNDQxMiBUcmF0czIgYm9hcmQuCj4+Cj4KPiBPbiBFeHlub3M1
-MjUwIFNub3csIEV4eW5vczU0MjAgUGVhY2ggUGl0IGFuZCBFeHlub3M1ODAwIFBlYWNoIFBpIENo
-cm9tZWJvb2tzOgo+Cj4gVGVzdGVkLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmll
-ci5tYXJ0aW5lekBjb2xsYWJvcmEuY28udWs+CgpUaGFua3MsIHlvdXIgaGVscCBpcyBhcHByZWNp
-YXRlZC4KS3J6eXN6dG9mCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Addition of CLK_RECALC_NEW_RATES flag to support Exynos5 cpu clk so that
+correct divider values are re-calculated after both pre/post
+clock notifiers had run for for mout_apll clock and mout_kpll clock.
+
+Depend on https://lkml.org/lkml/2015/4/3/388
+
+Tested on OdroidXU3 Board.
+
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 462aaee..6c7458c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+ 
+ 	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ 	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+ 
+ 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+-- 
+1.9.1
