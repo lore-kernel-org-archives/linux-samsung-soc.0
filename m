@@ -1,46 +1,37 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 0/5] drm/exynos: rework layer blending setup
-Date: Thu, 7 May 2015 17:57:48 -0300
-Message-ID: <20150507205748.GA14159@joana>
-References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Fix typo in trip point temperature for
+ exynos5420/5440
+Date: Fri, 08 May 2015 08:48:02 +0900
+Message-ID: <554BF9B2.8080401@samsung.com>
+References: <1430988887-6743-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f43.google.com ([209.85.192.43]:33250 "EHLO
-	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751253AbbEGU5w (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46254 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750843AbbEGXsH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 May 2015 16:57:52 -0400
-Received: by qgdy78 with SMTP id y78so27495243qgd.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 May 2015 13:57:52 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Thu, 7 May 2015 19:48:07 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NO000H5W7G49L10@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 May 2015 00:48:05 +0100 (BST)
+In-reply-to: <1430988887-6743-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>, kgene@kernel.org, l.majewski@samsung.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com
 
-2015-05-06 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
-
-> Hello,
+On 07.05.2015 17:54, Abhilash Kesavan wrote:
+> Remove the extra zero in the "cpu-crit-0" trip point for exynos5420
+> and exynos5440.
 > 
-> this is a rework of the layer blending setup in the Exynos DRM mixer. The current setup is static and spread out through the mixer code. This rework pushes all the configuration details into a layer_config array, which specifies the priority of each layer.
-> 
-> Two arrays are currently found in the code, one for SoC versions with a video processor (VP) and one for SoC versions without VP. The VP gives us one additional layer, the video layer, which natively supports the NV12/NV21 pixelformat.
-> 
-> The blending setup roughly works like this:
-> 1) Find the bottom-most enabled layer. Disable all blending for this layer. This is done because we currently don't expose modification of the mixer background to userspace. Once this is done we can add more flexibility here.
-> 2) Find the next enabled layer in our layer stack. If the layer has a framebuffer with an alpha-pixelformat attached, enable blending for this layer. If not, disable blending.
-> 3) Iterate (2) until all enabled layers are processed.
-> 
-> The series has been tested on a Hardkernel Odroid-X2 (Exynos4412, which has a VP).
-> 
-> If you want to use libdrm's modetest to check the series, please apply patches [1] and [2]. This should make it possible to also test a plane with NV12 format (which is located 'behind' the primary plane).
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 
+Looks good, thank you.
+Applied to my tree, I'll push it later to Kukjin.
 
-The whole series works fine for me on Samsung Snow 5250 (which doesn't
-have a VP).
-
-Tested-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-	Gustavo
+Best regards,
+Krzysztof
