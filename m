@@ -1,29 +1,103 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH 1/3] mtd: mxc-nand: Constify platform_device_id
-Date: Thu, 7 May 2015 00:14:01 -0700
-Message-ID: <20150507071401.GI6055@norris-Latitude-E6410>
-References: <1430495403-31560-1-git-send-email-k.kozlowski.k@gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Thu, 7 May 2015 09:37:02 +0200
+Message-ID: <20150507093702.0b58753d@bbrezillon>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+	<20150507063953.GC32399@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:36353 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751873AbbEGHOG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 May 2015 03:14:06 -0400
-Content-Disposition: inline
-In-Reply-To: <1430495403-31560-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20150507063953.GC32399@codeaurora.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Sat, May 02, 2015 at 12:50:01AM +0900, Krzysztof Kozlowski wrote:
-> The platform_device_id is not modified by the driver and core uses it as
-> const.
+Hi Stephen,
+
+On Wed, 6 May 2015 23:39:53 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
+
+> On 04/30, Boris Brezillon wrote:
+> > Clock rates are stored in an unsigned long field, but ->round_rate()
+> > (which returns a rounded rate from a requested one) returns a long
+> > value (errors are reported using negative error codes), which can lead
+> > to long overflow if the clock rate exceed 2Ghz.
+> > 
+> > Change ->round_rate() prototype to return 0 or an error code, and pass the
+> > requested rate as a pointer so that it can be adjusted depending on
+> > hardware capabilities.
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> This patch is fairly invasive, and it probably doesn't even
+> matter for most of these clock providers to be able to round a
+> rate above 2GHz.
 
-Pushed all 3 to l2-mtd.git.
+Fair enough.
 
-Brian
+> I've been trying to remove the .round_rate op
+> from the framework by encouraging new features via the
+> .determine_rate op.
+
+Oh, I wasn't aware of that (BTW, that's a good thing).
+Maybe this should be clearly stated (both in the struct clk_ops
+kerneldoc header and in Documentation/clk.txt).
+
+> Sadly, we still have to do a flag day and
+> change all the .determine_rate ops when we want to add things.
+
+Yes, but the number of clk drivers implementing ->determine_rate() is
+still quite limited compared to those implementing ->round_rate().
+
+> 
+> What if we changed determine_rate ops to take a struct
+> clk_determine_info (or some better named structure) instead of
+> the current list of arguments that it currently takes? Then when
+> we want to make these sorts of framework wide changes we can just
+> throw a new member into that structure and be done.
+
+I really like this idea, especially since I was wondering if we could
+pass other 'clk rate requirements' like the rounding policy (down,
+closest, up), or the maximum clk inaccuracy.
+
+> 
+> It doesn't solve the unsigned long to int return value problem
+> though. We can solve that by gradually introducing a new op and
+> handling another case in the rounding path. If we can come up
+> with some good name for that new op like .decide_rate or
+> something then it makes things nicer in the long run. I like the
+> name .determine_rate though :/
+
+Why not changing the ->determine_rate() prototype. As said above, the
+number of clk drivers implementing this function is still quite
+limited, and I guess we can have an ack for all of them.
+
+> 
+> The benefit of all this is that we don't have to worry about
+> finding the random clk providers that get added into other
+> subsystems and fixing them up. If drivers actually care about
+> this problem then they'll be fixed to use the proper op. FYI,
+> last time we updated the function signature of .determine_rate we
+> broke a couple drivers along the way.
+> 
+
+Hm, IMHO, adding a new op is not a good thing. I agree that it eases
+the transition, but ITOH you'll have to live with old/deprecated ops in
+your clk_ops structure with people introducing new drivers still using
+the old ops (see the number of clk drivers implementing ->round_rate()
+instead of ->determine_rate()).
+
+Best Regards,
+
+Boris
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
