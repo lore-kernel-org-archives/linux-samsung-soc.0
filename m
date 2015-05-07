@@ -1,59 +1,46 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] ARM: dts: Fix typo in trip point temperature for
- exynos5420/5440
-Date: Thu, 07 May 2015 14:24:47 +0530
-Message-ID: <1430988887-6743-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:61845 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751995AbbEGIyW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 May 2015 04:54:22 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NNZ007DN22KQL50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 May 2015 17:54:21 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFT PATCH v2 0/3] drm/exynos: Fix build breakage on !DRM_EXYNOS_FIMD
+Date: Thu, 07 May 2015 11:16:58 +0200
+Message-ID: <554B2D8A.6070209@collabora.co.uk>
+References: <1430957086-25005-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430957086-25005-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, k.kozlowski@samsung.com, l.majewski@samsung.com, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com
 
-Remove the extra zero in the "cpu-crit-0" trip point for exynos5420
-and exynos5440.
+Hello Krzysztof,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm/boot/dts/exynos5420-trip-points.dtsi | 2 +-
- arch/arm/boot/dts/exynos5440-trip-points.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On 05/07/2015 02:04 AM, Krzysztof Kozlowski wrote:
+> From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> 
+> Hi,
+> 
+> This is second try to fix the build breakage introduced in 1c363c7cccf6
+> ("drm/exynos: Enable DP clock to fix display on Exynos5250 and other").
+> 
+> The fix is not trivial so I am kindly asking for testing on Chromebook
+> and other DP-enabled boards (I don't have Chromebook right now).
+> 
 
-diff --git a/arch/arm/boot/dts/exynos5420-trip-points.dtsi b/arch/arm/boot/dts/exynos5420-trip-points.dtsi
-index 5d31fc1..2180a01 100644
---- a/arch/arm/boot/dts/exynos5420-trip-points.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-trip-points.dtsi
-@@ -28,7 +28,7 @@ trips {
- 		type = "active";
- 	};
- 	cpu-crit-0 {
--		temperature = <1200000>; /* millicelsius */
-+		temperature = <120000>; /* millicelsius */
- 		hysteresis = <0>; /* millicelsius */
- 		type = "critical";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5440-trip-points.dtsi b/arch/arm/boot/dts/exynos5440-trip-points.dtsi
-index 48adfa8..356e963 100644
---- a/arch/arm/boot/dts/exynos5440-trip-points.dtsi
-+++ b/arch/arm/boot/dts/exynos5440-trip-points.dtsi
-@@ -18,7 +18,7 @@ trips {
- 		type = "active";
- 	};
- 	cpu-crit-0 {
--		temperature = <1050000>; /* millicelsius */
-+		temperature = <105000>; /* millicelsius */
- 		hysteresis = <0>; /* millicelsius */
- 		type = "critical";
- 	};
--- 
-1.9.1
+For all the series:
+
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+> Tested on Exynos4412 Trats2 board.
+> 
+
+On Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800 Peach Pi Chromebooks:
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Javier
