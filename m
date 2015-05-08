@@ -1,36 +1,92 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
- mout_apll and mout_kpll clock.
-Date: Fri, 08 May 2015 13:05:43 +0900
-Message-ID: <554C3617.10906@samsung.com>
-References: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
- <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [RESEND] [PATCH 1/1] ARM: dts: Add LEDs on odroid XU3 board
+Date: Fri, 08 May 2015 09:34:12 +0200
+Message-ID: <554C66F4.4070005@fivetechno.de>
+Reply-To: m.reichl@fivetechno.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="wghd0a3xKfaa2wLO7fonCLKXckBjKL0Jd"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48358 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260AbbEHEFt (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:41418 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750725AbbEHHeW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 00:05:49 -0400
-In-reply-to: <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
+	Fri, 8 May 2015 03:34:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>
 
-On 08.05.2015 13:01, Anand Moon wrote:
-> Hi Krysztof,
-> 
-> Actually the patch is based on https://lkml.org/lkml/2015/4/3/389
-> I don't know how to measure the energy consumption when compared to
-> cpufreq-exynos.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--wghd0a3xKfaa2wLO7fonCLKXckBjKL0Jd
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-It does not have to be energy consumption. It may be something else
-visible, like wrong values for clock rates. I don't know, it is your
-patch so you should know *what is fixed* (or changed).
+This patch adds the RGB-LED on XU3 as 3 gpio-leds.
 
-Best regards,
-Krzysztof
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+---
+It is derived from hardkernel's 3.10 tree.
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 24 ++++++++++++++++++++++++=
+
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/d=
+ts/exynos5422-odroidxu3.dts
+index a519c86..0a32302 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -278,6 +278,30 @@
+ 	rtc@101E0000 {
+ 		status =3D "okay";
+ 	};
++
++	leds {
++		compatible =3D "gpio-leds";
++		heartbeat {
++			label =3D "blue:heartbeart";
++			gpios =3D <&gpb2 2 0>;
++			default-state =3D "off";
++			linux,default-trigger =3D "heartbeat";
++		};
++
++		eMMC {
++			label =3D "green:eMMC";
++			gpios =3D <&gpb2 1 0>;
++			default-state =3D "off";
++			linux,default-trigger =3D "mmc0";
++		};
++
++		microSD {
++			label =3D "red:microSD";
++			gpios =3D <&gpx2 3 0>;
++			default-state =3D "off";
++			linux,default-trigger =3D "mmc1";
++		};
++	};
+ };
+=20
+ &hdmi {
+--=20
+1.9.1
+
+
+
+
+--wghd0a3xKfaa2wLO7fonCLKXckBjKL0Jd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEARECAAYFAlVMZvoACgkQ7DLr+WDJfp5B4ACgr1PUnXf1wCQJgRxf2BblW1yS
+O18AmwdXwd6jrFZoAifPWoeEr9ECI3kI
+=sgBs
+-----END PGP SIGNATURE-----
+
+--wghd0a3xKfaa2wLO7fonCLKXckBjKL0Jd--
