@@ -1,28 +1,32 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: ARM: EXYNOS: dts: DTS fixes for 4.1
-Date: Sat, 09 May 2015 03:33:33 +0900
-Message-ID: <554D017D.4050201@kernel.org>
-References: <1430873903-22787-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL] ARM: EXYNOS: Improvements for 4.2, try 2
+Date: Sat, 09 May 2015 03:54:29 +0900
+Message-ID: <554D0665.9090009@kernel.org>
+References: <1430878748-30149-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49570 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:50478 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932164AbbEHSdk (ORCPT
+	id S1752899AbbEHSyh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 14:33:40 -0400
-In-Reply-To: <1430873903-22787-1-git-send-email-k.kozlowski@samsung.com>
+	Fri, 8 May 2015 14:54:37 -0400
+In-Reply-To: <1430878748-30149-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sergiy Kibrik <sakib@meta.ua>
 
-On 05/06/15 09:58, Krzysztof Kozlowski wrote:
+On 05/06/15 11:19, Krzysztof Kozlowski wrote:
 > Dear Kukjin,
 > 
-> This groups important fix for current RC cycle, well tested and
-> present on mailing list for some time.
+> Updated pull request. The first one contained an older version
+> of my patch.
+> 
+> This adds coupled cpuidle for Exynos3250 and improves the Exynos
+> code in few places. Everything for upcoming 4.2 merge window.
+> Description along with a tag.
 > 
 > Best regards,
 > Krzysztof
@@ -34,24 +38,76 @@ On 05/06/15 09:58, Krzysztof Kozlowski wrote:
 > 
 > are available in the git repository at:
 > 
->   https://github.com/krzk/linux.git tags/samsung-dt-fixes-4.1
+>   https://github.com/krzk/linux.git tags/samsung-for-next-4.2
 > 
-> for you to fetch changes up to d52ccd7b731f881df051331c92a5c54a94adf516:
+> for you to fetch changes up to 182be665abb95fcddd656355ae6208d02533b6b9:
 > 
->   ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420 (2015-05-05 19:15:57 +0900)
-> 
-> ----------------------------------------------------------------
-> Fix for imprecise external abort on Exynos5420 boards introduced after adding
-> display power domain in DTS.
+>   ARM: plat-samsung: Constify platform_device_id (2015-05-06 11:05:43 +0900)
 > 
 > ----------------------------------------------------------------
-> Javier Martinez Canillas (1):
->       ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
+> Extending cpuidle driver and improvements for Exynos based boards:
+> 1. Add missing return-value checks and of_node_put() for power domain
+>    driver.
+> 2. Fix missing clk_prepare in S3C24XX ADC driver.
+> 3. Rework clock handling when switching power domains on/off. Instead
+>    of settting fixed parent in DTS we grab the parent clock before
+>    turning the domain off.
+> 4. Add coupled cpuidle support for Exynos3250 to an existing
+>    cpuidle-exynos driver. As a result it enables AFTR mode
+>    (ARM-Off Top-Running) to be used by default on Exynos3250
+>    without the need to hot unplug CPU1 first.
 > 
->  arch/arm/boot/dts/exynos5420.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+> ----------------------------------------------------------------
+> Bartlomiej Zolnierkiewicz (5):
+>       ARM: EXYNOS: fix exynos_boot_secondary() return value on timeout
+>       ARM: EXYNOS: make exynos_core_restart() less verbose
+>       ARM: EXYNOS: add exynos_set_boot_addr() helper
+>       ARM: EXYNOS: add exynos_get_boot_addr() helper
+>       cpuidle: exynos: add coupled cpuidle support for Exynos3250
+> 
+> Krzysztof Kozlowski (8):
+>       ARM: EXYNOS: Fix failed second suspend on Exynos4
+>       ARM: EXYNOS: Handle of of_iomap() failure
+>       ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
+>       ARM: EXYNOS: Add missing of_node_put() when parsing power domains
+>       ARM: EXYNOS: Get current parent clock for power domain on/off
+>       ARM: dts: Use last parent for clocks during power domain on/off
+>       ARM: EXYNOS: Constify irq_domain_ops
+>       ARM: plat-samsung: Constify platform_device_id
+> 
+> Sergiy Kibrik (1):
+>       ARM: SAMSUNG: fix clk_enable() WARNing in S3C24XX ADC
+> 
+>  .../bindings/arm/exynos/power_domain.txt           |   7 +-
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  13 +--
+>  arch/arm/include/asm/firmware.h                    |   4 +
+>  arch/arm/mach-exynos/common.h                      |   6 +-
+>  arch/arm/mach-exynos/exynos.c                      |  30 ++++-
+>  arch/arm/mach-exynos/firmware.c                    |  18 +++
+>  arch/arm/mach-exynos/platsmp.c                     | 123 ++++++++++-----------
+>  arch/arm/mach-exynos/pm.c                          |  51 +++++++--
+>  arch/arm/mach-exynos/pm_domains.c                  |  44 ++++++--
+>  arch/arm/mach-exynos/suspend.c                     |   5 +-
+>  arch/arm/plat-samsung/adc.c                        |   6 +-
+>  11 files changed, 208 insertions(+), 99 deletions(-)
 > --
 
-I've applied it directly. Thanks for your gentle reminder.
+Hi Krzysztof,
 
-- Kukjin
+Firstly, thanks for your gentle reminder and effort.
+
+By the way, this cannot be pulled because some of them are old patches
+even though I've missed them at that time. Sorry about that and if it is
+required, it should be re-submitted based on latest mainline after
+testing then reviewed in ml again...
+
+And please do use 'git am' or some relevant git commend when applying
+patches in your tree because I found there are some comments below '---'
+in git log such as 'changes since' or some 'note' but that is not
+required. Just it is for information in ml not git log basically.
+
+Anyway I'm going to sort them out including your patches in my tree
+directly for 4.2.
+
+Thanks again,
+Kukjin
