@@ -1,19 +1,42 @@
-From: y Huerta <yahuerta@gmail.com>
-Subject: (unknown)
-Date: Fri, 8 May 2015 12:49:10 -0500
-Message-ID: <CA+GoMWyRGKpJQ+9vV1gHqjiURWjTngPWNsiKMtj4W9mbJ8+Lgw@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [RESEND][PATCH] ARM: dts: exynos4412-odroid: add 'rtc_src' clockto
+ rtc node
+Date: Sat, 09 May 2015 02:59:14 +0900
+Message-ID: <554CF972.4060800@kernel.org>
+References: <554C8319.70203@fivetechno.de> <554C9A71.9080408@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:36675 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932472AbbEHRtK (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:47634 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932546AbbEHR7X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 13:49:10 -0400
-Received: by igbpi8 with SMTP id pi8so27097304igb.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2015 10:49:10 -0700 (PDT)
-Subject: 
+	Fri, 8 May 2015 13:59:23 -0400
+In-Reply-To: <554C9A71.9080408@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
+On 05/08/15 20:13, Krzysztof Kozlowski wrote:
+> W dniu 08.05.2015 o 18:34, Markus Reichl pisze:
+>> The Exynos4412 SoC has a s3c6410 RTC where the source clock is now
+>> a mandatory property.
+>>
+>> This patch fixes probe failure of s3c-rtc on Odroid-X2/U2/U3
+>> boards.
+>>
+>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> Tested-by:
+>> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> Reviewed-by: Chanwoo
+>> Choi <cw00.choi@samsung.com> Reviewed-by: Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> Tested-by: Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com>
+> 
+> Thanks, applied. I'll push it to Kukjin a little later, depending on
+> status of previous pull requests.
+> 
+Applied in my tree directly.
+
+Thanks,
+Kukjin
