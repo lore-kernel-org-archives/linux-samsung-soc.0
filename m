@@ -1,89 +1,41 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to mout_apll and mout_kpll clock.
-Date: Fri,  8 May 2015 20:37:27 +0930
-Message-ID: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESEND][PATCH] ARM: dts: exynos4412-odroid: add 'rtc_src' clock
+ to rtc node
+Date: Fri, 08 May 2015 20:13:53 +0900
+Message-ID: <554C9A71.9080408@samsung.com>
+References: <554C8319.70203@fivetechno.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:34312 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751751AbbEHLIo (ORCPT
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:34926 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753203AbbEHLOT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 07:08:44 -0400
+	Fri, 8 May 2015 07:14:19 -0400
+Received: by pdbqd1 with SMTP id qd1so77591825pdb.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2015 04:14:19 -0700 (PDT)
+In-Reply-To: <554C8319.70203@fivetechno.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
+To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org
+Cc: javier.martinez@collabora.co.uk, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
-correct divider values are re-calculated after both pre/post
-clock notifiers had run for mout_apll clock and mout_kpll clock.
+W dniu 08.05.2015 o 18:34, Markus Reichl pisze:
+> The Exynos4412 SoC has a s3c6410 RTC where the source clock is now
+> a mandatory property.
+> 
+> This patch fixes probe failure of s3c-rtc on Odroid-X2/U2/U3
+> boards.
+> 
+> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> Tested-by:
+> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> Reviewed-by: Chanwoo
+> Choi <cw00.choi@samsung.com> Reviewed-by: Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> Tested-by: Krzysztof Kozlowski
+> <k.kozlowski@samsung.com>
 
-Observation their is considerable improvement in cpufreq stats
-after applying this patch.
+Thanks, applied. I'll push it to Kukjin a little later, depending on
+status of previous pull requests.
 
-Governer : "performance"
-$ cpupower -c 1 frequency-info
-
-Below is table format of the output.
-cpufreq stats:  Frequency| Before | After  |
-CPU 1
-		200 MHz  | 22.07% | 46.57% |
-	       	300 MHz  | 1.08%  | 8.18%  |
-	       	400 MHz  | 0.17%  | 1.93%  |
-	       	500 MHz  | 0.24%  | 3.51%  |
-	       	600 MHz  | 0.37%  | 2.13%  |
-	       	700 MHz  | 0.20%  | 0.88%  |
-	       	800 MHz  | 0.09%  | 1.69%  |
-		900 MHz  | 0.05%  | 1.02%  |
-		1000 MHz | 0.02%  | 2.55%  |
-		1.10 GHz | 0.12%  | 1.17%  |
-		1.20 GHz | 0.05%  | 0.88%  |
-		1.30 GHz | 0.07%  | 0.38%  |
-		1.40 GHz | 0.04%  | 0.38%  |
-		1.50 GHz | 0.02%  | 0.00%  |
-		1.60 GHz | 0.00%  | 0.15%  |
-		1.70 GHz | 0.00%  | 0.44%  |
-		1.80 GHz | 75.43% | 28.26% |
-
-Governer : "performance"
-$ cpupower -c 0 frequency-info
-
-Below is table format of the output.
-cpufreq stats:	Frequency| Before | After  |
-CPU0 		200 MHz  | 33.95% | 60.31% |
-		300 MHz  | 4.64%  | 2.13%  |
-		400 MHz  | 1.50%  | 0.79%  |
-		500 MHz  | 1.46%  | 0.49%  |
-		600 MHz  | 0.05%  | 0.27%  |
-		700 MHz  | 0.68%  | 0.21%  |
-		800 MHz  | 0.08%  | 0.19%  |
-		900 MHz  | 0.09%  | 0.12%  |
-		1000 MHz | 0.20%  | 0.10%  |
-		1.10 GHz | 0.21%  | 0.11%, |
-		1.20 GHz | 0.51%  | 0.28%, |
-		1.30 GHz | 56.64% | 35.01% |
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 462aaee..6c7458c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
- 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
- 
- 	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
--	      CLK_SET_RATE_PARENT, 0),
-+	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
- 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
- 	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
--	      CLK_SET_RATE_PARENT, 0),
-+	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
- 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
- 
- 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
--- 
-1.9.1
+Best regards,
+Krzysztof
