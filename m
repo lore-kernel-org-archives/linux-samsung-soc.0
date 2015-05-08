@@ -1,57 +1,57 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] ARM: dts: Add syscon property to the MIPI phy in exynos5420
-Date: Fri, 8 May 2015 18:38:53 +0200
-Message-ID: <CABxcv=kMY6hLWqG93FjOhsjJc9AKg93T3MWDOjr+1Puv3KS0gQ@mail.gmail.com>
-References: <1431091805-11451-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: exynos3250: add JPEG codec device node
+Date: Sat, 09 May 2015 02:25:33 +0900
+Message-ID: <554CF18D.4010903@kernel.org>
+References: <1430810299-23512-1-git-send-email-j.anaszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431091805-11451-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:45431 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932068AbbEHRZo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 May 2015 13:25:44 -0400
+In-Reply-To: <1430810299-23512-1-git-send-email-j.anaszewski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-Hello Tomeu,
-
-I'm adding Krzysztof to the cc list since he is queuing Exynos patches
-for Kukjin so is aware of this patch as well.
-
-On Fri, May 8, 2015 at 3:30 PM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
-> Since e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression by
-> adding support for PMU regmap") the syscon property is required in
-> samsung,s5pv210-mipi-video-phy nodes, but this DTS hadn't been updated
-> yet.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On 05/05/15 16:18, Jacek Anaszewski wrote:
+> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos5420.dtsi | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index f67b23f..72a56f1 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -541,6 +541,7 @@
->         mipi_phy: video-phy@10040714 {
->                 compatible = "samsung,s5pv210-mipi-video-phy";
->                 reg = <0x10040714 12>;
+>  arch/arm/boot/dts/exynos3250.dtsi |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index e3bfb11..e25088c 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -243,6 +243,19 @@
+>  			interrupts = <0 240 0>;
+>  		};
+>  
+> +		jpeg: codec@11830000 {
+> +			compatible = "samsung,exynos3250-jpeg";
+> +			reg = <0x11830000 0x1000>;
+> +			interrupts = <0 171 0>;
+> +			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
+> +			clock-names = "jpeg", "sclk";
+> +			power-domains = <&pd_cam>;
+> +			assigned-clocks = <&cmu CLK_MOUT_CAM_BLK>, <&cmu CLK_SCLK_JPEG>;
+> +			assigned-clock-rates = <0>, <150000000>;
+> +			assigned-clock-parents = <&cmu CLK_DIV_MPLL_PRE>;
+> +			status = "disabled";
+> +		};
+> +
+>  		fimd: fimd@11c00000 {
+>  			compatible = "samsung,exynos3250-fimd";
+>  			reg = <0x11c00000 0x30000>;
 
-Shouldn't you remove the reg property too? the commit you mention
-removes that property from the DT binding so it shouldn't be there.
+Applied, thanks.
 
-> +               syscon = <&pmu_system_controller>;
->                 #phy-cells = <1>;
->         };
->
-> --
-> 2.4.0
->
-
-With that change the patch looks good to me.
-
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Best regards,
-Javier
+- Kukjin
