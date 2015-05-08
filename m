@@ -1,34 +1,89 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v6 05/11] rc: Add HDMI CEC protoctol handling
-Date: Fri, 08 May 2015 13:02:27 +0200
-Message-ID: <554C97C3.5030806@xs4all.nl>
-References: <1430760785-1169-1-git-send-email-k.debski@samsung.com>
- <1430760785-1169-6-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1430760785-1169-6-git-send-email-k.debski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, sean@mess.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, kyungmin.park@samsung.com, thomas@tommie-lie.de, linux-input@vger.kernel.org, m.szyprowski@samsung.com
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to mout_apll and mout_kpll clock.
+Date: Fri,  8 May 2015 20:37:27 +0930
+Message-ID: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:34312 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751751AbbEHLIo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 May 2015 07:08:44 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-T24gMDUvMDQvMjAxNSAwNzozMiBQTSwgS2FtaWwgRGVic2tpIHdyb3RlOgo+IEFkZCBoYW5kbGlu
-ZyBvZiByZW1vdGUgY29udHJvbCBldmVudHMgY29taW5nIGZyb20gdGhlIEhETUkgQ0VDIGJ1cy4K
-PiBUaGlzIHBhdGNoIGluY2x1ZGVzIGEgbmV3IGtleW1hcCB0aGF0IG1hcHMgdmFsdWVzIGZvdW5k
-IGluIHRoZSBDRUMKPiBtZXNzYWdlcyB0byB0aGUga2V5cyBwcmVzc2VkIGFuZCByZWxlYXNlZC4g
-QWxzbywgYSBuZXcgcHJvdG9jb2wgaGFzCj4gYmVlbiBhZGRlZCB0byB0aGUgY29yZS4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBLYW1pbCBEZWJza2kgPGsuZGVic2tpQHNhbXN1bmcuY29tPgoKQWNrZWQt
-Ynk6IEhhbnMgVmVya3VpbCA8aGFucy52ZXJrdWlsQGNpc2NvLmNvbT4KX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
+correct divider values are re-calculated after both pre/post
+clock notifiers had run for mout_apll clock and mout_kpll clock.
+
+Observation their is considerable improvement in cpufreq stats
+after applying this patch.
+
+Governer : "performance"
+$ cpupower -c 1 frequency-info
+
+Below is table format of the output.
+cpufreq stats:  Frequency| Before | After  |
+CPU 1
+		200 MHz  | 22.07% | 46.57% |
+	       	300 MHz  | 1.08%  | 8.18%  |
+	       	400 MHz  | 0.17%  | 1.93%  |
+	       	500 MHz  | 0.24%  | 3.51%  |
+	       	600 MHz  | 0.37%  | 2.13%  |
+	       	700 MHz  | 0.20%  | 0.88%  |
+	       	800 MHz  | 0.09%  | 1.69%  |
+		900 MHz  | 0.05%  | 1.02%  |
+		1000 MHz | 0.02%  | 2.55%  |
+		1.10 GHz | 0.12%  | 1.17%  |
+		1.20 GHz | 0.05%  | 0.88%  |
+		1.30 GHz | 0.07%  | 0.38%  |
+		1.40 GHz | 0.04%  | 0.38%  |
+		1.50 GHz | 0.02%  | 0.00%  |
+		1.60 GHz | 0.00%  | 0.15%  |
+		1.70 GHz | 0.00%  | 0.44%  |
+		1.80 GHz | 75.43% | 28.26% |
+
+Governer : "performance"
+$ cpupower -c 0 frequency-info
+
+Below is table format of the output.
+cpufreq stats:	Frequency| Before | After  |
+CPU0 		200 MHz  | 33.95% | 60.31% |
+		300 MHz  | 4.64%  | 2.13%  |
+		400 MHz  | 1.50%  | 0.79%  |
+		500 MHz  | 1.46%  | 0.49%  |
+		600 MHz  | 0.05%  | 0.27%  |
+		700 MHz  | 0.68%  | 0.21%  |
+		800 MHz  | 0.08%  | 0.19%  |
+		900 MHz  | 0.09%  | 0.12%  |
+		1000 MHz | 0.20%  | 0.10%  |
+		1.10 GHz | 0.21%  | 0.11%, |
+		1.20 GHz | 0.51%  | 0.28%, |
+		1.30 GHz | 56.64% | 35.01% |
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 462aaee..6c7458c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+ 
+ 	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ 	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+ 
+ 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+-- 
+1.9.1
