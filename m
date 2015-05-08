@@ -1,88 +1,19 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Make DP a consumer of DISP1 power domain
- on Exynos5420
-Date: Sat, 09 May 2015 02:32:56 +0900
-Message-ID: <554CF348.30803@kernel.org>
-References: <1428870659-5525-1-git-send-email-javier.martinez@collabora.co.uk>
+From: y Huerta <yahuerta@gmail.com>
+Subject: (unknown)
+Date: Fri, 8 May 2015 12:49:10 -0500
+Message-ID: <CA+GoMWyRGKpJQ+9vV1gHqjiURWjTngPWNsiKMtj4W9mbJ8+Lgw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:45752 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932172AbbEHRdF (ORCPT
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:36675 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932472AbbEHRtK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 13:33:05 -0400
-In-Reply-To: <1428870659-5525-1-git-send-email-javier.martinez@collabora.co.uk>
+	Fri, 8 May 2015 13:49:10 -0400
+Received: by igbpi8 with SMTP id pi8so27097304igb.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2015 10:49:10 -0700 (PDT)
+Subject: 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kevin Hilman <khilman@linaro.org>, Tyler Baker <tyler.baker@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 04/13/15 05:30, Javier Martinez Canillas wrote:
-> Commit ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
-> added a device node for the Exynos5420 DISP1 power domain but dit not
-> make the DP controller a consumer of that power domain.
-> 
-> This causes an "Unhandled fault: imprecise external abort" error if the
-> exynos-dp driver tries to access the DP controller registers and the PD
-> was turned off. This lead to a kernel panic and a complete system hang.
-> 
-> Make the DP controller device node a consumer of the DISP1 power domain
-> to ensure that the PD is turned on when the exynos-dp driver is probed.
-> 
-> Fixes: ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
-> 
-> Hello,
-> 
-> This latent bug was not exposed before since drivers for other devices
-> marked as DISP1 power domain consumers were probed before exynos-dp so
-> the PD was already on which made possible to access the DP registers.
-> 
-> But "regulator: Defer lookup of supply to regulator_get" [0] that is in
-> linux-next from a couple of days now, changed the order on which the
-> drivers' probes succeed so the PD was disabled during exynos-dp probe.
-> 
-> Exynos5420 machines with a display such as the Exynos5420 Peach Pit and
-> Exynos5800 Peach Pi were failing to boot due this issue, i.e: [1].
-> 
-> Olof,
-> 
-> Could you please confirm $subject fixes the issue catched by your farm?
-> 
-> Krzysztof,
-> 
-> This patch conflicts with your Exynos5 phandle notation cleanup [2] but
-> I preferred to send it on top of linux-next instead of making your series
-> a dependency since it fixes a very important bug that had caused -next to
-> be broken on these matchines for days now.
-> 
-> Thanks a lot and best regards,
-> Javier
-> 
-> [0]: https://lkml.org/lkml/2015/3/24/1167
-> [1]: http://arm-soc.lixom.net/bootlogs/next/next-20150409/pi-arm-exynos_defconfig.html
-> [2]: https://lkml.org/lkml/2015/4/12/49
-> 
->  arch/arm/boot/dts/exynos5420.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index f67b23f303c3..45317538bbae 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -536,6 +536,7 @@
->  		clock-names = "dp";
->  		phys = <&dp_phy>;
->  		phy-names = "dp";
-> +		power-domains = <&disp_pd>;
->  	};
->  
->  	mipi_phy: video-phy@10040714 {
-
-Sorry for the late response. I've applied in -fixes and will be sent to
-arm-soc soon. Thanks.
-
-- Kukjin
