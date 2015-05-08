@@ -1,56 +1,36 @@
-From: Anand Moon <linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [PATCH] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
  mout_apll and mout_kpll clock.
-Date: Fri, 8 May 2015 09:31:43 +0530
-Message-ID: <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
-References: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com> <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
+Date: Fri, 08 May 2015 13:05:43 +0900
+Message-ID: <554C3617.10906@samsung.com>
+References: <1431020935-5025-1-git-send-email-linux.amoon@gmail.com>
+ <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
+ <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcCc8j=i5FPdF62bGKar74+4U=C9BPN9ar2j52Y8dSMwA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48358 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751260AbbEHEFt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 May 2015 00:05:49 -0400
+In-reply-to: <CANAwSgT8aa5svHgLbkNkSPXWT_hLez8e4cBws2ajEB9p56WHFA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Krysztof,
+On 08.05.2015 13:01, Anand Moon wrote:
+> Hi Krysztof,
+> 
+> Actually the patch is based on https://lkml.org/lkml/2015/4/3/389
+> I don't know how to measure the energy consumption when compared to
+> cpufreq-exynos.
 
-Actually the patch is based on https://lkml.org/lkml/2015/4/3/389
-I don't know how to measure the energy consumption when compared to
-cpufreq-exynos.
+It does not have to be energy consumption. It may be something else
+visible, like wrong values for clock rates. I don't know, it is your
+patch so you should know *what is fixed* (or changed).
 
-I will update the commit log and resend it with you review.
-
--Anand Moon
-
-
-
-
-On 8 May 2015 at 05:44, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> 2015-05-08 2:48 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->> Addition of CLK_RECALC_NEW_RATES flag to support Exynos5 cpu clk so that
->> correct divider values are re-calculated after both pre/post
->> clock notifiers had run for for mout_apll clock and mout_kpll clock.
-> s/for for/for/
->
-> Could you precise in commit message the observational effects
-> *without* this patch? In other words: what is fixed? The divider will
-> have incorrect values?
->
->>
->> Depend on https://lkml.org/lkml/2015/4/3/388
->>
->> Tested on OdroidXU3 Board.
->
-> Thanks for providing this information. However
-> 1. Patch dependency should not be part of commit message, It simply
-> won't provide any meaningful information when they are merged.
-> 2. Similarly testing platform also is not always put in commit message.
->
-> So just put them after separator (triple-dash).
->
-> After fixing the commit message:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> Best regards,
-> Krzysztof
+Best regards,
+Krzysztof
