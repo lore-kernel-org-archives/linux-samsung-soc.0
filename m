@@ -1,67 +1,91 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND] [PATCH 1/1] ARM: dts: Add LEDs on odroid XU3 board
-Date: Fri, 08 May 2015 16:52:08 +0900
-Message-ID: <554C6B28.7000306@samsung.com>
-References: <554C66F4.4070005@fivetechno.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:57225 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751424AbbEHHwL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 03:52:11 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NO000GFGTUXXJ50@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 May 2015 08:52:09 +0100 (BST)
-In-reply-to: <554C66F4.4070005@fivetechno.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv2] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to mout_apll and mout_kpll clock.
+Date: Fri,  8 May 2015 17:40:05 +0930
+Message-ID: <1431072605-12234-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: m.reichl@fivetechno.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>
-Cc: Anand Moon <linux.amoon@gmail.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
+correct divider values are re-calculated after both pre/post
+clock notifiers had run for mout_apll clock and mout_kpll clock.
 
-On 08.05.2015 16:34, Markus Reichl wrote:
-> This patch adds the RGB-LED on XU3 as 3 gpio-leds.
-> 
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
+Below is the output of cpupower utility.
+Observation their is considreable improvement in cpufreq stats
+after applying this patch.
 
-Unfortunately I could not found on LKML email from Anand that he
-tested it. You sent the patch first time on 2nd of April - without
-Anand's tested-by. On 13th of April it appeared with his tag.
+Before this patch applied below is the output of cpupower.
+----------------------------------------------------------
+root@odroidxu3:/usr/src/odroidxu3-4.y-testing# echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+performance
+root@odroidxu3:/usr/src/odroidxu3-4.y-testing#
+root@odroidxu3:/usr/src/odroidxu3-4.y-testing#
+root@odroidxu3:/usr/src/odroidxu3-4.y-testing# cpupower -c 1 frequency-info
+analyzing CPU 1:
+  driver: arm-big-little
+  CPUs which run at the same hardware frequency: 1 2 3 4
+  CPUs which need to have their frequency coordinated by software: 1 2 3 4
+  maximum transition latency: 154 us.
+  hardware limits: 200 MHz - 1.80 GHz
+  available frequency steps: 200 MHz, 300 MHz, 400 MHz, 500 MHz, 600 MHz, 700 MHz, 800 MHz, 900 MHz, 1000 MHz, 1.10 GHz, 1.20 GHz, 1.30 GHz, 1.40 GHz, 1.50 GHz, 1.60 GHz, 1.70 GHz, 1.80 GHz
+  available cpufreq governors: ondemand, conservative, userspace, powersave, performance
+  current policy: frequency should be within 200 MHz and 1.80 GHz.
+                  The governor "performance" may decide which speed to use
+                  within this range.
+  current CPU frequency is 1.80 GHz (asserted by call to hardware).
+  cpufreq stats: 200 MHz:22.07%, 300 MHz:1.08%, 400 MHz:0.17%, 500 MHz:0.24%, 600 MHz:0.37%, 700 MHz:0.20%, 800 MHz:0.09%, 900 MHz:0.05%, 1000 MHz:0.02%, 1.10 GHz:0.12%, 1.20 GHz:0.05%, 1.30 GHz:0.07%, 1.40 GHz:0.04%, 1.50 GHz:0.02%, 1.60 GHz:0.00%, 1.70 GHz:0.00%, 1.80 GHz:75.43%  (137)
 
-Guys, even when you work closely please send all tags publicly on LKML
-so everyone could see them.
+After applied this patch below is the output of cpupower.
+---------------------------------------------------------
+root@odroidxu3:~# echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+performance
+root@odroidxu3:~# cpupower -c 1 frequency-info
+analyzing CPU 1:
+  driver: arm-big-little
+  CPUs which run at the same hardware frequency: 1 2 3 4
+  CPUs which need to have their frequency coordinated by software: 1 2 3 4
+  maximum transition latency: 154 us.
+  hardware limits: 200 MHz - 1.80 GHz
+  available frequency steps: 200 MHz, 300 MHz, 400 MHz, 500 MHz, 600 MHz, 700 MHz, 800 MHz, 900 MHz, 1000 MHz, 1.10 GHz, 1.20 GHz, 1.30 GHz, 1.40 GHz, 1.50 GHz, 1.60 GHz, 1.70 GHz, 1.80 GHz
+  available cpufreq governors: ondemand, conservative, userspace, powersave, performance
+  current policy: frequency should be within 200 MHz and 1.80 GHz.
+                  The governor "performance" may decide which speed to use
+                  within this range.
+  current CPU frequency is 1.80 GHz (asserted by call to hardware).
+  cpufreq stats: 200 MHz:46.57%, 300 MHz:8.18%, 400 MHz:1.93%, 500 MHz:3.51%, 600 MHz:2.13%, 700 MHz:0.88%, 800 MHz:1.69%, 900 MHz:1.02%, 1000 MHz:2.55%, 1.10 GHz:1.17%, 1.20 GHz:0.88%, 1.30 GHz:0.38%, 1.40 GHz:0.27%, 1.50 GHz:0.00%, 1.60 GHz:0.15%, 1.70 GHz:0.44%, 1.80 GHz:28.26%  (95)
 
-Anand, do you confirm the tested-by?
+---------------------------------------------------------
+PATCHv2 Fixed the commit log with stats.
 
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> --- It is
-> derived from hardkernel's 3.10 tree.
+Depend on https://lkml.org/lkml/2015/4/3/388
 
-Hmmm... Whose original code it was? Shouldn't there be someone else
-Signed-off-by here?
+Tested on OdroidXU3 Board
+---------------------------------------------------------
 
-Best regards,
-Krzysztof
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-iQIcBAEBAgAGBQJVTGsoAAoJEME3ZuaGi4PXbPAP/jDFtVian19v6L1MsnPYGJtk
-xD+V+JhpgcDWRaxTIBlS3xdcrTO1Ci/+C/b1Me7a1amczvNPEL2iT53d0rSDX+QA
-UufqWylu0n/QScthCOn3en0ghGibCoAT2d5hIyeAMPPka66xBrIgkp7ZffOQfpnR
-+rNyouireSHm38Mu2utyRPUACiS/KMps1GFZ8uNy+I/JZ1hVjiZulqHItvBSpPh/
-Vaya0BupC9D6zNfp3lBjSJBgjuFSe+v2GCqjpcZIiACLs6t31J/jrzo1Sthc24jC
-d15SD/H484P3r9yvERLwUMc7s+e8d4f9yFN3X2eIT1mKzrKbPlRZ4jKfmlHi2nO9
-4mnfI2S7D6YpLTax997ESPb6KSLkcxstrT6ISham1sz2E3Ge/JbkJGrv4jZbgzot
-KVO+I4BHVDHb8J5Rw8c2oUQsyqoEB3qHDVbnCZXsWRL8KLylVse+h01pp3zyuMTW
-OmC0zLKY+4I1Webj9DCCaFlA8w3UDnD5AvEd3zU77RkShYop8MIU8ltvTbIOOyvH
-NPejZKx0fPHksKEMypWWfF8z7LIMI+tVON2WJ5O4zKg5lh9X0a2MCRlYAAoxM3Gu
-iSOEe6c/+CrnsVWlEynfUTshdU0FUxcw5296puQMEX52jQVBWHY8plIgoUdDW2j+
-hz9CTaBt5uq46wb+KhOa
-=IxJs
------END PGP SIGNATURE-----
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 462aaee..6c7458c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+ 
+ 	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+ 	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+ 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
+ 
+ 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
+-- 
+1.9.1
