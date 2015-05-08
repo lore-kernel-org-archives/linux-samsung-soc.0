@@ -1,38 +1,67 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v6 05/11] rc: Add HDMI CEC protoctol handling
-Date: Fri, 08 May 2015 13:18:16 +0200
-Message-ID: <554C9B78.2060808@xs4all.nl>
-References: <1430760785-1169-1-git-send-email-k.debski@samsung.com> <1430760785-1169-6-git-send-email-k.debski@samsung.com> <554C97C3.5030806@xs4all.nl>
+Subject: Re: [PATCH v6 06/11] cec: add HDMI CEC framework
+Date: Fri, 08 May 2015 13:30:13 +0200
+Message-ID: <554C9E45.7090800@xs4all.nl>
+References: <1430760785-1169-1-git-send-email-k.debski@samsung.com>
+ <1430760785-1169-7-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <554C97C3.5030806@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1430760785-1169-7-git-send-email-k.debski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu
+Cc: linux-samsung-soc@vger.kernel.org, sean@mess.org, mchehab@osg.samsung.com, dmitry.torokhov@gmail.com, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>, kyungmin.park@samsung.com, thomas@tommie-lie.de, linux-input@vger.kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/08/2015 01:02 PM, Hans Verkuil wrote:
-> On 05/04/2015 07:32 PM, Kamil Debski wrote:
->> Add handling of remote control events coming from the HDMI CEC bus.
->> This patch includes a new keymap that maps values found in the CEC
->> messages to the keys pressed and released. Also, a new protocol has
->> been added to the core.
->>
->> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> 
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-But if you could fix the typo in the subject: protoctol -> protocol, then
-that would be appreciated...
-
-Regards,
-
-	Hans
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+SGkgS2FtaWwsCgpKdXN0IHR3byB0aW55IGlzc3VlcywgYW5kIGFmdGVyIHRoYXQgeW91IGNhbiBh
+ZGQgbXk6CgpSZXZpZXdlZC1ieTogSGFucyBWZXJrdWlsIDxoYW5zLnZlcmt1aWxAY2lzby5jb20+
+Cgp0byB0aGlzLgoKT24gMDUvMDQvMjAxNSAwNzozMiBQTSwgS2FtaWwgRGVic2tpIHdyb3RlOgo+
+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvbGludXgvY2VjLmggYi9pbmNsdWRlL3VhcGkvbGlu
+dXgvY2VjLmgKPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+IGluZGV4IDAwMDAwMDAuLjY3YjAwNDkK
+PiAtLS0gL2Rldi9udWxsCj4gKysrIGIvaW5jbHVkZS91YXBpL2xpbnV4L2NlYy5oCj4gQEAgLTAs
+MCArMSwzMzIgQEAKPiArI2lmbmRlZiBfQ0VDX0gKPiArI2RlZmluZSBfQ0VDX0gKPiArCj4gKyNp
+bmNsdWRlIDxsaW51eC90eXBlcy5oPgo+ICsKPiArc3RydWN0IGNlY19tc2cgewo+ICsJX191NjQg
+dHM7Cj4gKwlfX3UzMiBsZW47Cj4gKwlfX3UzMiBzdGF0dXM7Cj4gKwlfX3UzMiB0aW1lb3V0Owo+
+ICsJLyogdGltZW91dCAoaW4gbXMpIGlzIHVzZWQgdG8gdGltZW91dCBDRUNfUkVDRUlWRS4KPiAr
+CSAgIFNldCB0byAwIGlmIHlvdSB3YW50IHRvIHdhaXQgZm9yZXZlci4gKi8KPiArCV9fdTggIG1z
+Z1sxNl07Cj4gKwlfX3U4ICByZXBseTsKPiArCS8qIElmIG5vbi16ZXJvLCB0aGVuIHdhaXQgZm9y
+IGEgcmVwbHkgd2l0aCB0aGlzIG9wY29kZS4KPiArCSAgIElmIHRoZXJlIHdhcyBhbiBlcnJvciB3
+aGVuIHNlbmRpbmcgdGhlIG1zZyBvciBGZWF0dXJlQWJvcnQKPiArCSAgIHdhcyByZXR1cm5lZCwg
+dGhlbiByZXBseSBpcyBzZXQgdG8gMC4KPiArCSAgIElmIHJlcGx5IGlzIG5vbi16ZXJvIHVwb24g
+cmV0dXJuLCB0aGVuIGxlbi9tc2cgYXJlIHNldCB0bwo+ICsJICAgdGhlIHJlY2VpdmVkIG1lc3Nh
+Z2UuCj4gKwkgICBJZiByZXBseSBpcyB6ZXJvIHVwb24gcmV0dXJuIGFuZCBzdGF0dXMgaGFzIHRo
+ZQo+ICsJICAgQ0VDX1RYX1NUQVRVU19GRUFUVVJFX0FCT1JUIGJpdCBzZXQsIHRoZW4gbGVuL21z
+ZyBhcmUgc2V0IHRvIHRoZQo+ICsJICAgcmVjZWl2ZWQgZmVhdHVyZSBhYm9ydCBtZXNzYWdlLgo+
+ICsJICAgSWYgcmVwbHkgaXMgemVybyB1cG9uIHJldHVybiBhbmQgc3RhdHVzIGhhcyB0aGUKPiAr
+CSAgIENFQ19UWF9TVEFUVVNfUkVQTFlfVElNRU9VVAo+ICsJICAgYml0IHNldCwgdGhlbiBubyBy
+ZXBseSB3YXMgc2VlbiBhdCBhbGwuCj4gKwkgICBUaGlzIGZpZWxkIGlzIGlnbm9yZWQgd2l0aCBD
+RUNfUkVDRUlWRS4KPiArCSAgIElmIHJlcGx5IGlzIG5vbi16ZXJvIGZvciBDRUNfVFJBTlNNSVQg
+YW5kIHRoZSBtZXNzYWdlIGlzIGEgYnJvYWRjYXN0LAo+ICsJICAgdGhlbiAtRUlOVkFMIGlzIHJl
+dHVybmVkLgo+ICsJICAgaWYgcmVwbHkgaXMgbm9uLXplcm8sIHRoZW4gdGltZW91dCBpcyBzZXQg
+dG8gMTAwMCAodGhlIHJlcXVpcmVkCj4gKwkgICBtYXhpbXVtIHJlc3BvbnNlIHRpbWUpLgo+ICsJ
+ICovCj4gKwlfX3UzMiBzZXF1ZW5jZTsKPiArCS8qIFRoZSBmcmFtZXdvcmsgYXNzaWducyBhIHNl
+cXVlbmNlIG51bWJlciB0byBtZXNzYWdlcyB0aGF0IGFyZSBzZW50Lgo+ICsJICogVGhpcyBjYW4g
+YmUgdXNlZCB0byB0cmFjayByZXBsaWVzIHRvIHByZXZpb3VzbHkgc2VudCBtZXNzYWdlcy4KPiAr
+CSAqLwo+ICsJX191OCByZXNlcnZlZFszNV07Cj4gK307CgpJdCBpcyBjb25mdXNpbmcgaW4gc3Ry
+dWN0IGNlY19tc2cgdGhhdCB0aGUgY29tbWVudHMgY29tZSAqYWZ0ZXIqIHRoZSBmaWVsZAp0aGV5
+IGJlbG9uZyB0byBpbnN0ZWFkIG9mIGp1c3QgYmVmb3JlLiBDYW4geW91IGNoYW5nZSB0aGlzPwoK
+PiArCj4gKyNkZWZpbmUgQ0VDX0dfRVZFTlQJCV9JT1dSKCdhJywgOSwgc3RydWN0IGNlY19ldmVu
+dCkKClRoaXMgY2FuIGJlIF9fSU9SIHNpbmNlIHdlIG5ldmVyIHdyaXRlIGFueXRoaW5nLgoKPiAr
+LyoKPiArICAgUmVhZCBhbmQgc2V0IHRoZSB2ZW5kb3IgSUQgb2YgdGhlIENFQyBhZGFwdGVyLgo+
+ICsgKi8KPiArI2RlZmluZSBDRUNfR19WRU5ET1JfSUQJCV9JT1IoJ2EnLCAxMCwgX191MzIpCj4g
+KyNkZWZpbmUgQ0VDX1NfVkVORE9SX0lECQlfSU9XKCdhJywgMTEsIF9fdTMyKQo+ICsvKgo+ICsg
+ICBFbmFibGUvZGlzYWJsZSB0aGUgcGFzc3Rocm91Z2ggbW9kZQo+ICsgKi8KPiArI2RlZmluZSBD
+RUNfR19QQVNTVEhST1VHSAlfSU9SKCdhJywgMTIsIF9fdTMyKQo+ICsjZGVmaW5lIENFQ19TX1BB
+U1NUSFJPVUdICV9JT1coJ2EnLCAxMywgX191MzIpCj4gKwo+ICsjZW5kaWYKPiAKClJlZ2FyZHMs
+CgoJSGFucwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
