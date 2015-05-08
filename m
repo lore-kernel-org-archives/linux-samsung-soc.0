@@ -1,92 +1,72 @@
 From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: Re: [RESEND][PATCH 1/1] ARM: dts: Add HS400 support for exynos5422-odroidxu3
-Date: Fri, 08 May 2015 11:21:34 +0200
-Message-ID: <554C801E.2070401@fivetechno.de>
-References: <554C6899.4070400@fivetechno.de> <554C706B.9070506@samsung.com>
+Subject: [RESEND][PATCH] ARM: dts: exynos4412-odroid: add 'rtc_src' clock
+ to rtc node
+Date: Fri, 08 May 2015 11:34:17 +0200
+Message-ID: <554C8319.70203@fivetechno.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
  protocol="application/pgp-signature";
- boundary="l3kUn14LvdbRj4D2scExt4cjhg7mhF7O0"
+ boundary="tBsKNrqL53QKW45V4XHUNlVuDOAic1cvb"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:51154 "EHLO
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:35459 "EHLO
 	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751332AbbEHJVh (ORCPT
+	by vger.kernel.org with ESMTP id S1750968AbbEHJeW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 05:21:37 -0400
-In-Reply-To: <554C706B.9070506@samsung.com>
+	Fri, 8 May 2015 05:34:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Anand Moon <linux.amoon@gmail.com>
+To: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: m.reichl@fivetechno.de, javier.martinez@collabora.co.uk, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---l3kUn14LvdbRj4D2scExt4cjhg7mhF7O0
+--tBsKNrqL53QKW45V4XHUNlVuDOAic1cvb
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+The Exynos4412 SoC has a s3c6410 RTC where the source clock
+is now a mandatory property.
 
-Am 08.05.2015 um 10:14 schrieb Krzysztof Kozlowski:
-> On 08.05.2015 16:41, Markus Reichl wrote:
->> HS400 timing values are added for exynos5422-odroidxu3 board.
->>
->> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> Tested-by:
->> Anand Moon <linux.amoon@gmail.com>
->=20
-> Once again, I did not see email from Anand.
->=20
->> --- This patch is analog to [0], which is applied already. This
->> patch needs [0] for the pin-ctrl definition of sd0_rclk.
->>
->> [0]:
->> https://www.mail-archive.com/linux-samsung-soc%40vger.kernel.org/msg42=
-902.html
->>
->>
-> ---
->> arch/arm/boot/dts/exynos5422-odroidxu3.dts | 7 ++++++- 1 file
->> changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> b/arch/arm/boot/dts/exynos5422-odroidxu3.dts index a519c86..0408ec0
->> 100644 --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts +++
->> b/arch/arm/boot/dts/exynos5422-odroidxu3.dts @@ -298,15 +298,20 @@
->>
->> &mmc_0 { status =3D "okay"; +	num-slots =3D <1>;
->=20
-> This looks unrelated...  If it is really not needed for HS400 then
-> please prepare separate patch.
+This patch fixes probe failure of s3c-rtc on Odroid-X2/U2/U3 boards.
 
-I will come up with a 2. version after Anand's tag and split these.
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
->=20
->> broken-cd; card-detect-delay =3D <200>; samsung,dw-mshc-ciu-div =3D
->> <3>; samsung,dw-mshc-sdr-timing =3D <0 4>; samsung,dw-mshc-ddr-timing
->> =3D <0 2>; +	samsung,dw-mshc-hs400-timing =3D <0 2>; +
->> samsung,read-strobe-delay =3D <90>; pinctrl-names =3D "default"; -
->> pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>; +	pinctrl-0 =3D=
-
->> <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_rclk>;
->=20
-> Did you checked this with board schematics?
-
-Yes, I checked that the sd0_rclk is connected to=20
-gpc0-7 as in base patch.
-
->=20
-> A reviewed-by tag from someone would be nice.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-
-Best Regards,
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/b=
+oot/dts/exynos4412-odroid-common.dtsi
+index 1ff4c88..0a8e6aa4 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -9,6 +9,7 @@
+=20
+ #include <dt-bindings/sound/samsung-i2s.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/clock/maxim,max77686.h>
+ #include "exynos4412.dtsi"
+=20
+ / {
+@@ -143,6 +144,8 @@
+=20
+ 	rtc@10070000 {
+ 		status =3D "okay";
++		clocks =3D <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
++		clock-names =3D "rtc", "rtc_src";
+ 	};
+=20
+ 	g2d@10800000 {
 --=20
-Markus Reichl
+2.0.5
 
 
---l3kUn14LvdbRj4D2scExt4cjhg7mhF7O0
+
+
+
+--tBsKNrqL53QKW45V4XHUNlVuDOAic1cvb
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -94,9 +74,9 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iEYEARECAAYFAlVMgB4ACgkQ7DLr+WDJfp77cgCfcpKEA/mqmJL5X98b//AsGrva
-QMUAmwYJVVJ5fgqt5lBq5D2ZImglYyoR
-=ZVxe
+iEYEARECAAYFAlVMgxkACgkQ7DLr+WDJfp61MACdGkO0FN/BSJosHrl9vXe9IV2C
+1GYAoKJKBxN8YP4g+VWJ5HsobiWqRzPf
+=mozO
 -----END PGP SIGNATURE-----
 
---l3kUn14LvdbRj4D2scExt4cjhg7mhF7O0--
+--tBsKNrqL53QKW45V4XHUNlVuDOAic1cvb--
