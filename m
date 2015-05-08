@@ -1,41 +1,38 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND][PATCH] ARM: dts: exynos4412-odroid: add 'rtc_src' clock
- to rtc node
-Date: Fri, 08 May 2015 20:13:53 +0900
-Message-ID: <554C9A71.9080408@samsung.com>
-References: <554C8319.70203@fivetechno.de>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v6 05/11] rc: Add HDMI CEC protoctol handling
+Date: Fri, 08 May 2015 13:18:16 +0200
+Message-ID: <554C9B78.2060808@xs4all.nl>
+References: <1430760785-1169-1-git-send-email-k.debski@samsung.com> <1430760785-1169-6-git-send-email-k.debski@samsung.com> <554C97C3.5030806@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:34926 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753203AbbEHLOT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 07:14:19 -0400
-Received: by pdbqd1 with SMTP id qd1so77591825pdb.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2015 04:14:19 -0700 (PDT)
-In-Reply-To: <554C8319.70203@fivetechno.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <554C97C3.5030806@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org
-Cc: javier.martinez@collabora.co.uk, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-W dniu 08.05.2015 o 18:34, Markus Reichl pisze:
-> The Exynos4412 SoC has a s3c6410 RTC where the source clock is now
-> a mandatory property.
+On 05/08/2015 01:02 PM, Hans Verkuil wrote:
+> On 05/04/2015 07:32 PM, Kamil Debski wrote:
+>> Add handling of remote control events coming from the HDMI CEC bus.
+>> This patch includes a new keymap that maps values found in the CEC
+>> messages to the keys pressed and released. Also, a new protocol has
+>> been added to the core.
+>>
+>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
 > 
-> This patch fixes probe failure of s3c-rtc on Odroid-X2/U2/U3
-> boards.
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+But if you could fix the typo in the subject: protoctol -> protocol, then
+that would be appreciated...
+
+Regards,
+
+	Hans
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> Tested-by:
-> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> Reviewed-by: Chanwoo
-> Choi <cw00.choi@samsung.com> Reviewed-by: Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> Tested-by: Krzysztof Kozlowski
-> <k.kozlowski@samsung.com>
-
-Thanks, applied. I'll push it to Kukjin a little later, depending on
-status of previous pull requests.
-
-Best regards,
-Krzysztof
