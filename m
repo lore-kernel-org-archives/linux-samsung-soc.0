@@ -1,42 +1,61 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [RESEND][PATCH] ARM: dts: exynos4412-odroid: add 'rtc_src' clockto
- rtc node
-Date: Sat, 09 May 2015 02:59:14 +0900
-Message-ID: <554CF972.4060800@kernel.org>
-References: <554C8319.70203@fivetechno.de> <554C9A71.9080408@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Fix typo in trip point temperature forexynos5420/5440
+Date: Sat, 09 May 2015 03:10:04 +0900
+Message-ID: <554CFBFC.7010604@kernel.org>
+References: <1430988887-6743-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47634 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:48310 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932546AbbEHR7X (ORCPT
+	id S1752214AbbEHSKJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 13:59:23 -0400
-In-Reply-To: <554C9A71.9080408@samsung.com>
+	Fri, 8 May 2015 14:10:09 -0400
+In-Reply-To: <1430988887-6743-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Markus Reichl <m.reichl@fivetechno.de>, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, l.majewski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com
 
-On 05/08/15 20:13, Krzysztof Kozlowski wrote:
-> W dniu 08.05.2015 o 18:34, Markus Reichl pisze:
->> The Exynos4412 SoC has a s3c6410 RTC where the source clock is now
->> a mandatory property.
->>
->> This patch fixes probe failure of s3c-rtc on Odroid-X2/U2/U3
->> boards.
->>
->> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> Tested-by:
->> Tobias Jakobi <tjakobi@math.uni-bielefeld.de> Reviewed-by: Chanwoo
->> Choi <cw00.choi@samsung.com> Reviewed-by: Javier Martinez Canillas
->> <javier.martinez@collabora.co.uk> Tested-by: Krzysztof Kozlowski
->> <k.kozlowski@samsung.com>
+On 05/07/15 17:54, Abhilash Kesavan wrote:
+> Remove the extra zero in the "cpu-crit-0" trip point for exynos5420
+> and exynos5440.
 > 
-> Thanks, applied. I'll push it to Kukjin a little later, depending on
-> status of previous pull requests.
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-trip-points.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos5440-trip-points.dtsi | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-Applied in my tree directly.
+> diff --git a/arch/arm/boot/dts/exynos5420-trip-points.dtsi b/arch/arm/boot/dts/exynos5420-trip-points.dtsi
+> index 5d31fc1..2180a01 100644
+> --- a/arch/arm/boot/dts/exynos5420-trip-points.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-trip-points.dtsi
+> @@ -28,7 +28,7 @@ trips {
+>  		type = "active";
+>  	};
+>  	cpu-crit-0 {
+> -		temperature = <1200000>; /* millicelsius */
+> +		temperature = <120000>; /* millicelsius */
+>  		hysteresis = <0>; /* millicelsius */
+>  		type = "critical";
+>  	};
+> diff --git a/arch/arm/boot/dts/exynos5440-trip-points.dtsi b/arch/arm/boot/dts/exynos5440-trip-points.dtsi
+> index 48adfa8..356e963 100644
+> --- a/arch/arm/boot/dts/exynos5440-trip-points.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440-trip-points.dtsi
+> @@ -18,7 +18,7 @@ trips {
+>  		type = "active";
+>  	};
+>  	cpu-crit-0 {
+> -		temperature = <1050000>; /* millicelsius */
+> +		temperature = <105000>; /* millicelsius */
+>  		hysteresis = <0>; /* millicelsius */
+>  		type = "critical";
+>  	};
+
+Applied into fixes.
 
 Thanks,
 Kukjin
