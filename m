@@ -1,89 +1,67 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: [RESEND][PATCH 1/1] ARM: dts: Add HS400 support for exynos5422-odroidxu3
-Date: Fri, 08 May 2015 09:40:19 +0200
-Message-ID: <554C6863.5060706@fivetechno.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESEND] [PATCH 1/1] ARM: dts: Add LEDs on odroid XU3 board
+Date: Fri, 08 May 2015 16:52:08 +0900
+Message-ID: <554C6B28.7000306@samsung.com>
+References: <554C66F4.4070005@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="nxVIkclFtoaVDAvKp2KBoVGBIa49phStp"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:46317 "EHLO
-	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751319AbbEHHkV (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57225 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751424AbbEHHwL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 03:40:21 -0400
-Received: from [192.168.34.101] (reichl-x64.fritz.box [192.168.34.101])
-	(authenticated bits=0)
-	by linuxbbg.five-lan.de (8.14.9/8.14.5/SuSE Linux 0.8) with ESMTP id t487eJl4026392
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO)
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 8 May 2015 09:40:19 +0200
+	Fri, 8 May 2015 03:52:11 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NO000GFGTUXXJ50@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 May 2015 08:52:09 +0100 (BST)
+In-reply-to: <554C66F4.4070005@fivetechno.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: m.reichl@fivetechno.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>
+Cc: Anand Moon <linux.amoon@gmail.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---nxVIkclFtoaVDAvKp2KBoVGBIa49phStp
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-HS400 timing values are added for exynos5422-odroidxu3 board.
+On 08.05.2015 16:34, Markus Reichl wrote:
+> This patch adds the RGB-LED on XU3 as 3 gpio-leds.
+> 
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
 
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
----
-This patch is analog to [0], which is applied already.
-This patch needs [0] for the pin-ctrl definition of sd0_rclk.
+Unfortunately I could not found on LKML email from Anand that he
+tested it. You sent the patch first time on 2nd of April - without
+Anand's tested-by. On 13th of April it appeared with his tag.
 
-[0]: https://www.mail-archive.com/linux-samsung-soc%40vger.kernel.org/msg=
-42902.html
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Guys, even when you work closely please send all tags publicly on LKML
+so everyone could see them.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/d=
-ts/exynos5422-odroidxu3.dts
-index a519c86..0408ec0 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -298,15 +298,20 @@
-=20
- &mmc_0 {
- 	status =3D "okay";
-+	num-slots =3D <1>;
- 	broken-cd;
- 	card-detect-delay =3D <200>;
- 	samsung,dw-mshc-ciu-div =3D <3>;
- 	samsung,dw-mshc-sdr-timing =3D <0 4>;
- 	samsung,dw-mshc-ddr-timing =3D <0 2>;
-+	samsung,dw-mshc-hs400-timing =3D <0 2>;
-+	samsung,read-strobe-delay =3D <90>;
- 	pinctrl-names =3D "default";
--	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_rcl=
-k>;
- 	bus-width =3D <8>;
- 	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
- };
-=20
- &mmc_2 {
---=20
-1.9.1
+Anand, do you confirm the tested-by?
 
+> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de> --- It is
+> derived from hardkernel's 3.10 tree.
 
+Hmmm... Whose original code it was? Shouldn't there be someone else
+Signed-off-by here?
 
---nxVIkclFtoaVDAvKp2KBoVGBIa49phStp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
+Best regards,
+Krzysztof
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iEYEARECAAYFAlVMaGMACgkQ7DLr+WDJfp66pwCglECXb8317T34J400AvA+B9uw
-5kQAn3UjwPnQALJQhxhYkbzPS/NXnPEW
-=ToJc
+iQIcBAEBAgAGBQJVTGsoAAoJEME3ZuaGi4PXbPAP/jDFtVian19v6L1MsnPYGJtk
+xD+V+JhpgcDWRaxTIBlS3xdcrTO1Ci/+C/b1Me7a1amczvNPEL2iT53d0rSDX+QA
+UufqWylu0n/QScthCOn3en0ghGibCoAT2d5hIyeAMPPka66xBrIgkp7ZffOQfpnR
++rNyouireSHm38Mu2utyRPUACiS/KMps1GFZ8uNy+I/JZ1hVjiZulqHItvBSpPh/
+Vaya0BupC9D6zNfp3lBjSJBgjuFSe+v2GCqjpcZIiACLs6t31J/jrzo1Sthc24jC
+d15SD/H484P3r9yvERLwUMc7s+e8d4f9yFN3X2eIT1mKzrKbPlRZ4jKfmlHi2nO9
+4mnfI2S7D6YpLTax997ESPb6KSLkcxstrT6ISham1sz2E3Ge/JbkJGrv4jZbgzot
+KVO+I4BHVDHb8J5Rw8c2oUQsyqoEB3qHDVbnCZXsWRL8KLylVse+h01pp3zyuMTW
+OmC0zLKY+4I1Webj9DCCaFlA8w3UDnD5AvEd3zU77RkShYop8MIU8ltvTbIOOyvH
+NPejZKx0fPHksKEMypWWfF8z7LIMI+tVON2WJ5O4zKg5lh9X0a2MCRlYAAoxM3Gu
+iSOEe6c/+CrnsVWlEynfUTshdU0FUxcw5296puQMEX52jQVBWHY8plIgoUdDW2j+
+hz9CTaBt5uq46wb+KhOa
+=IxJs
 -----END PGP SIGNATURE-----
-
---nxVIkclFtoaVDAvKp2KBoVGBIa49phStp--
