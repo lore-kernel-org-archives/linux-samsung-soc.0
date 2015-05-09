@@ -1,51 +1,56 @@
-From: Dmitry Torokhov <dtor@chromium.org>
-Subject: [PATCH] iommu: exynos: tell kmemleak to ignore 2nd level page tables
-Date: Fri, 8 May 2015 17:05:44 -0700
-Message-ID: <20150509000544.GA29904@dtor-ws>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: ARM: EXYNOS: Fixes for 4.1
+Date: Sat, 9 May 2015 09:42:45 +0900
+Message-ID: <CAJKOXPfXX5s-hubOESKU7b=-Akg1aWkqMUEUM5fqm6y397tRFQ@mail.gmail.com>
+References: <1430873718-22726-1-git-send-email-k.kozlowski@samsung.com>
+	<554CFFEB.1010703@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:35652 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753033AbbEIAFs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 20:05:48 -0400
-Received: by ieczm2 with SMTP id zm2so75215504iec.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2015 17:05:47 -0700 (PDT)
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <554CFFEB.1010703@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Colin Cross <ccross@android.com>, Doug Anderson <dianders@chromium.org>, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Colin Cross <ccross@android.com>
+2015-05-09 3:26 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+> On 05/06/15 09:55, Krzysztof Kozlowski wrote:
+>> Krzysztof Kozlowski (1):
+>>       ARM: EXYNOS: Fix failed second suspend on Exynos4
+>>
+>>  arch/arm/mach-exynos/common.h  |  2 ++
+>>  arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
+>>  arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
+>>  arch/arm/mach-exynos/suspend.c |  3 +++
+>>  4 files changed, 34 insertions(+), 37 deletions(-)
+>> --
+>
+> Hi Krzysztof,
+>
+> Yeah, the patch is old thing but if I remember correctly, I couldn't
+> apply it because of soc_is_xxx() macro. Yes, I agree with the way,
+> firstly fix something and if required, then update it later....But!
+>
+> Please address comments about that, if not, it will not be accepted by
+> arm-soc tree.
 
-The pointers to the 2nd level page tables are converted to 1st level
-page table entries, which means kmemleak can't find them and assumes
-they have been leaked.  Call kmemleak_ignore on the 2nd level page
-tables to prevent them from showing up in kmemleak reports.
+Hi,
 
-Signed-off-by: Colin Cross <ccross@android.com>
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
----
- drivers/iommu/exynos-iommu.c | 1 +
- 1 file changed, 1 insertion(+)
+Actually during previous discussion I addressed all the issues:
+https://lkml.org/lkml/2015/3/18/108
+but there was no response from your side.
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index dc14fec4..16920b2 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -855,6 +855,7 @@ static sysmmu_pte_t *alloc_lv2entry(struct exynos_iommu_domain *priv,
- 			return ERR_PTR(-ENOMEM);
- 
- 		*sent = mk_lv1ent_page(virt_to_phys(pent));
-+		kmemleak_ignore(pent);
- 		*pgcounter = NUM_LV2ENTRIES;
- 		pgtable_flush(pent, pent + NUM_LV2ENTRIES);
- 		pgtable_flush(sent, sent + 1);
--- 
-2.2.0.rc0.207.ga3a616c
+In previous thread you also asked about proper way of using the
+DELAYED_RESET_ASSERTION. I tried to obtain additional docs from LSI
+but couldn't. In current documentation it was described vaguely so I
+looked at vendor source code. The patch IMHO is the best solution.
+Additionally it was tested (Chanwoo and Bartlomiej) and fixes the
+issue.
 
+As for the soc_is_exynos -> of_machine_is_compatible I will prepare a
+follow up to fix this.
 
--- 
-Dmitry
+Let me know if you have any other comments about it.
+
+Best regards,
+Krzysztof
