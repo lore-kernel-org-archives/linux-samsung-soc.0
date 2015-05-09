@@ -1,86 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: ARM: EXYNOS: dts: Improvements for 4.2
-Date: Sat, 9 May 2015 09:53:29 +0900
-Message-ID: <CAJKOXPeSbL94thCLq2mLTBfr3KLuH4y4S=HyS-phkHuanae15A@mail.gmail.com>
-References: <1430873981-22902-1-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH 1/8] mfd: cros ec: Remove parent field
+Date: Sat, 09 May 2015 03:38:08 +0200
+Message-ID: <554D6500.4070106@collabora.co.uk>
+References: <1428336906-14906-1-git-send-email-javier.martinez@collabora.co.uk> <1428336906-14906-2-git-send-email-javier.martinez@collabora.co.uk> <CAMHSBOV3PxRqeHtMsDvqOaCLX7QpJ-ncvrfES_oixWAG1ZkDQg@mail.gmail.com> <20150429103734.GU9169@x1> <5548882A.50400@collabora.co.uk> <20150505105439.GB4047@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f52.google.com ([209.85.216.52]:41588 "EHLO
-	mail-vn0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751361AbbEIAxa (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:39904 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568AbbEIBiQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 May 2015 20:53:30 -0400
-In-Reply-To: <1430873981-22902-1-git-send-email-k.kozlowski@samsung.com>
+	Fri, 8 May 2015 21:38:16 -0400
+In-Reply-To: <20150505105439.GB4047@x1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>, Andrzej Hajda <a.hajda@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Gwendal Grignou <gwendal@chromium.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 
-2015-05-06 9:59 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> Dear Kukjin,
->
-> I gathered various improvements for upcoming 4.2 merge window.
-> Description along with a tag.
->
-> Best regards,
-> Krzysztof
->
-> ----------------------------------------------------------------
-> The following changes since commit 5ebe6afaf0057ac3eaeb98defd5456894b446d22:
->
->   Linux 4.1-rc2 (2015-05-03 19:22:23 -0700)
->
-> are available in the git repository at:
->
->   https://github.com/krzk/linux.git tags/samsung-dt-for-next-4.2
->
-> for you to fetch changes up to 98155ec454a40212434c83c1388c420a61d62854:
->
->   ARM: dts: exynos4: add nodes for jpeg codec (2015-05-05 19:19:18 +0900)
->
-> ----------------------------------------------------------------
-> Device Tree improvements for Exynos based boards:
-> 1. Fix PMIC's RTC alarm on Arndale Octa (S2MPS11 PMIC) and SMDK5250 (MAXIM77686
->    PMIC).
-> 2. Fix suspend on Peach Pit Chromebooks prevented by Marvell mwifiex
->    driver.
-> 3. Fix hang on Odroid XU3 on MMC card detect.
-> 4. Enable the S3C RTC (the clock present on SoC) on various Exynos boards.
-> 5. Minor improvements to S3C RTC driver.
-> 6. Add nodes for JPEG codec on Exynos4.
->
-> ----------------------------------------------------------------
-> Andrzej Hajda (1):
->       ARM: dts: exynos5422-odroidxu3: add mmc detect gpio
->
-> Javier Martinez Canillas (2):
->       ARM: dts: Make DP a consumer of DISP1 power domain on Exynos5420
->       ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
->
-> Krzysztof Kozlowski (5):
->       ARM: dts: Fix pinctrl settings for S2MPS11 RTC alarm IRQ on Arndale Octa
->       ARM: dts: s3c-rtc: Use s3c6410-rtc instead of exynos3250-rtc
->       ARM: dts: Use define for s3c-rtc clock id
->       ARM: dts: Use define for s3c-rtc clock id
->       ARM: dts: Enable S3C RTC on Trats2 and Arndale Octa
->
-> Marek Szyprowski (1):
->       ARM: dts: exynos4: add nodes for jpeg codec
->
-> Markus Reichl (2):
->       ARM: dts: Add bindings for 32kHz clocks from s2mps11
->       ARM: dts: exynos5422-odroidxu3: add 'rtc_src' clock to rtc node
->
-> Yadwinder Singh Brar (1):
->       ARM: dts: Add missing irq pinctrl for max77686 on smdk5250
+Hello Lee,
 
+On 05/05/2015 12:54 PM, Lee Jones wrote:
+> On Tue, 05 May 2015, Javier Martinez Canillas wrote:
+>> On 04/29/2015 12:37 PM, Lee Jones wrote:
+>> > On Thu, 23 Apr 2015, Gwendal Grignou wrote:
+>> > 
+>> >> Be consistent, use cros_ec instead of "cros ec" or "cros-ec".
+>> > 
+>> > What is this in reference to?
+>> >
+>> 
+>> I think Gwendal meant that I should be consistent in general and was not
+>> referring to this patch particular.
+> 
+> Better to quote one of the offending occurrences than to randomly
+> top-post helpful comments.
+> 
 
-Dear Kukjin,
+Just for clarification, on a second read I noticed that Gwendal was talking
+about the subject line since $subject uses "mfd: cros ec" as a prefix while
+most of the commits in the subsystem (and in the series) use "mfd: cros_ec".
+Also, there is another patch (5/8) that used "mfd: cros-ec" so he is right
+that I should had used cros_ec consistently.
 
-Gentle reminder, it seems this one was missed.
-Could you apply these patches as well? Above you will find description
-of the pull request.
+Sorry for missing that and I will fix when posting v2.
 
 Best regards,
-Krzysztof
+Javier
