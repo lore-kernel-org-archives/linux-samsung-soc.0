@@ -1,121 +1,93 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 10/10] mfd: cros_ec: spi: Add delay for asserting CS
-Date: Sat,  9 May 2015 12:10:41 +0200
-Message-ID: <1431166241-15775-11-git-send-email-javier.martinez@collabora.co.uk>
-References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:40358 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932535AbbEIKMz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 9 May 2015 06:12:55 -0400
-In-Reply-To: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: drm/exynos: Add atomic modesetting support
+Date: Sat, 9 May 2015 19:23:21 +0900
+Message-ID: <CAAQKjZPCQZV7DxTuf12NyPbT2H5PJhNQs4CwtM8g563Zuw8-6w@mail.gmail.com>
+References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
+ <554D2FC7.1070208@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <554D2FC7.1070208@gmx.net>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <liquid.acid@gmx.net>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Alexandru M Stan <amstan@chromium.org>
-
-Some ECs need a little time for waking up before they can accept
-SPI data at a high speed. This is configurable via a DT property
-"google,cros-ec-spi-pre-delay".
-
-If this property isn't set, then no delay will be added. However,
-if set it will cause a delay equal to the value passed to it to
-be inserted at the beginning of a transaction.
-
-Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-
-Changes since v1: None, new patch
----
- Documentation/devicetree/bindings/mfd/cros-ec.txt |  4 ++++
- drivers/mfd/cros_ec_spi.c                         | 21 +++++++++++++++++++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Documentation/devicetree/bindings/mfd/cros-ec.txt
-index 8009c3d87f33..1777916e9e28 100644
---- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
-+++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
-@@ -18,6 +18,10 @@ Required properties (SPI):
- - reg: SPI chip select
- 
- Optional properties (SPI):
-+- google,cros-ec-spi-pre-delay: Some implementations of the EC need a little
-+  time to wake up from sleep before they can receive SPI transfers at a high
-+  clock rate. This property specifies the delay, in usecs, between the
-+  assertion of the CS to the start of the first clock pulse.
- - google,cros-ec-spi-msg-delay: Some implementations of the EC require some
-   additional processing time in order to accept new transactions. If the delay
-   between transactions is not long enough the EC may not be able to respond
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index faba03e2f1ef..16f228dc243f 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -71,12 +71,15 @@
-  * @spi: SPI device we are connected to
-  * @last_transfer_ns: time that we last finished a transfer, or 0 if there
-  *	if no record
-+ * @start_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-+ *      is sent when we want to turn on CS at the start of a transaction.
-  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-  *      is sent when we want to turn off CS at the end of a transaction.
-  */
- struct cros_ec_spi {
- 	struct spi_device *spi;
- 	s64 last_transfer_ns;
-+	unsigned int start_of_msg_delay;
- 	unsigned int end_of_msg_delay;
- };
- 
-@@ -366,7 +369,7 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
- 	struct ec_host_request *request;
- 	struct ec_host_response *response;
- 	struct cros_ec_spi *ec_spi = ec_dev->priv;
--	struct spi_transfer trans;
-+	struct spi_transfer trans, trans_delay;
- 	struct spi_message msg;
- 	int i, len;
- 	u8 *ptr;
-@@ -393,13 +396,23 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
- 		goto exit;
- 	}
- 
-+	/*
-+	 * Leave a gap between CS assertion and clocking of data to allow the
-+	 * EC time to wakeup.
-+	 */
-+	spi_message_init(&msg);
-+	if (ec_spi->start_of_msg_delay) {
-+		memset(&trans_delay, 0, sizeof(trans_delay));
-+		trans_delay.delay_usecs = ec_spi->start_of_msg_delay;
-+		spi_message_add_tail(&trans_delay, &msg);
-+	}
-+
- 	/* Transmit phase - send our message */
- 	memset(&trans, 0, sizeof(trans));
- 	trans.tx_buf = ec_dev->dout;
- 	trans.rx_buf = rx_buf;
- 	trans.len = len;
- 	trans.cs_change = 1;
--	spi_message_init(&msg);
- 	spi_message_add_tail(&trans, &msg);
- 	ret = spi_sync(ec_spi->spi, &msg);
- 
-@@ -602,6 +615,10 @@ static void cros_ec_spi_dt_probe(struct cros_ec_spi *ec_spi, struct device *dev)
- 	u32 val;
- 	int ret;
- 
-+	ret = of_property_read_u32(np, "google,cros-ec-spi-pre-delay", &val);
-+	if (!ret)
-+		ec_spi->start_of_msg_delay = val;
-+
- 	ret = of_property_read_u32(np, "google,cros-ec-spi-msg-delay", &val);
- 	if (!ret)
- 		ec_spi->end_of_msg_delay = val;
--- 
-2.1.4
+SGksCgoyMDE1LTA1LTA5IDY6NTEgR01UKzA5OjAwIFRvYmlhcyBKYWtvYmkgPGxpcXVpZC5hY2lk
+QGdteC5uZXQ+Ogo+IEhlbGxvLAo+Cj4gSSd2ZSB0ZXN0ZWQgdGhpcyBvbiBteSBIYXJka2VybmVs
+IE9kcm9pZC1YMiAoY29ubmVjdGVkIHZpYSBIRE1JIHRvIGEKPiAxMDgwcCBwYW5lbCkuCj4KPiBS
+dW4gdGhlIHVzdWFsIG1vZGV0ZXN0IHRlc3RzIChqdXN0IHByaW1hcnkgcGxhbmUsIHByaW1hcnkg
+cGxhbmUgd2l0aAo+IHZzeW5jLCBwcmltYXJ5IHBsYW5lIHdpdGggb3ZlcmxheSwgcHJpbWFyeSBw
+bGFuZSB3aXRoIG92ZXJsYXkgYW5kIHZpZGVvCj4gb3ZlcmxheSwgb3ZlcmxheSBwYXJ0aWFsbHkg
+b3V0c2lkZSBvZiBjcnRjIGFyZWEsIGV0Yy4pIGFuZCBoYXZlbid0Cj4gbm90aWNlZCBhbnkgaXNz
+dWVzIHNvIGZhci4KCkFzIEkgbWVudGlvbmVkIHNldmVyYWwgdGltZXMsIGl0IHdvcmtzIHdlbGwg
+aW4gY2FzZSB0aGF0IG9ubHkgb25lIGNydGMKZHJpdmVyIGlzIGVuYWJsZWQuIENvdWxkIHlvdSBj
+aGVjayBpdCBhZ2FpbiBhZnRlciB5b3UgZW5hYmxlIHR3byBvcgptb3JlIGNydGMgZHJpdmVycyBz
+dWNoIGFzIEZJTUQgYW5kIEhETUkgb3IgRklNRCwgSERNSSBhbmQgVklESQp0b2dldGhlcj8gRm9y
+IHRoaXMsIGR0cyBmaWxlIGZvciBYMiBzaG91bGQgY29udGFpbiB0aGVpciBkZXZpY2Ugbm9kZXMK
+YW5kIGFsc28gc2hvdWxkIGJlIGNvbmZpZ3VyYXRlZCB0aG91Z2ggbWVudWNvbmZpZy4KCj4KPiBL
+ZXJuZWwgbG9nIGlzICdjbGVhbicsIHNvIHRoZSBzZXJpZXMgd29ya3MgZmluZSBmb3IgbWUuCj4K
+PiBZb3UgY2FuIGFkZCBteQo+IFRlc3RlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRo
+LnVuaS1iaWVsZWZlbGQuZGU+CgpTbyB5b3UgZGlkbid0IHRlc3QgaXQgY29ycmVjdGx5IHlldC4K
+ClRoYW5rcywKSW5raSBEYWUKCj4KPiBXaXRoIGJlc3Qgd2lzaGVzLAo+IFRvYmlhcwo+Cj4KPiBH
+dXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4+IEhpLAo+Pgo+PiBIZXJlIGdvZXMgdGhlIGZ1bGwgc3Vw
+cG9ydCBmb3IgYXRvbWljIG1vZGVzZXR0aW5nIG9uIGV4eW5vcy4gSSd2ZQo+PiBzcGxpdCB0aGUg
+cGF0Y2hlcyBpbiB0aGUgdmFyaW91cyBwaGFzZXMgb2YgYXRvbWljIHN1cHBvcnQuCj4+Cj4+IHYy
+OiBmaXhlcyBjb21tZW50cyBieSBKb29ueW91bmcKPj4gICAgICAgICAtIHJlbW92ZSB1bnVzZWQg
+dmFyIGluIHBhdGNoIDA5Cj4+ICAgICAgICAgLSB1c2UgLT5kaXNhYmxlIGluc3RlYWQgb2Ygb3V0
+ZGF0ZWQgLT5kcG1zIGluIGhkbWkgY29kZQo+PiAgICAgICAgIC0gcmVtb3ZlIFdBUk5fT04gZnJv
+bSBjcnRjIGVuYWJsZS9kaXNhYmxlCj4+Cj4+IHYzOiBmaXhlcyBjb21tZW50IGJ5IEpvb255b3Vu
+Zwo+PiAgICAgICAgIC0gbW92ZSB0aGUgcmVtb3ZhbCBvZiBkcm1faGVscGVyX2Rpc2FibGVfdW51
+c2VkX2Z1bmN0aW9ucygpIHRvCj4+ICAgICAgICAgc2VwYXJhdGVkIHBhdGNoCj4+Cj4+IHY0OiBh
+ZGQgcGF0Y2hlcyB0aGF0IHJlbW92ZSB1bm5lY2Vzc2FyeSBjYWxscyB0byBkaXNhYmxlX3BsYW5l
+KCkKPj4KPj4gICAgICAgR3VzdGF2bwo+Pgo+PiAtLS0KPj4gR3VzdGF2byBQYWRvdmFuICgxMik6
+Cj4+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAxOiB1c2UgZHJtX3BsYW5lX2hlbHBl
+cl91cGRhdGUoKQo+PiAgICAgICBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2UgMTogdXNlIGRybV9w
+bGFuZV9oZWxwZXJfZGlzYWJsZSgpCj4+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAx
+OiBhZGQgLm1vZGVfc2V0X25vZmIoKSBjYWxsYmFjawo+PiAgICAgICBkcm0vZXh5bm9zOiBhdG9t
+aWMgcGhhc2UgMjogd2lyZSB1cCBzdGF0ZSByZXNldCgpLCBkdXBsaWNhdGUoKSBhbmQgZGVzdHJv
+eSgpCj4+ICAgICAgIGRybS9leHlub3M6IGF0b21pYyBwaGFzZSAyOiBrZWVwIHRyYWNrIG9mIGZy
+YW1lYnVmZmVyIHBvaW50ZXIKPj4gICAgICAgZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDM6IGF0
+b21pYyB1cGRhdGVzIG9mIHBsYW5lcwo+PiAgICAgICBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2Ug
+MzogdXNlIGF0b21pYyAuc2V0X2NvbmZpZyBoZWxwZXIKPj4gICAgICAgZHJtL2V4eW5vczogYXRv
+bWljIHBoYXNlIDM6IGNvbnZlcnQgcGFnZSBmbGlwcwo+PiAgICAgICBkcm0vZXh5bm9zOiByZW1v
+dmUgZXhwb3J0ZWQgZnVuY3Rpb25zIGZyb20gZXh5bm9zX2RybV9wbGFuZQo+PiAgICAgICBkcm0v
+ZXh5bm9zOiBkb24ndCBkaXNhYmxlIHVudXNlZCBmdW5jdGlvbnMgYXQgaW5pdAo+PiAgICAgICBk
+cm0vZXh5bm9zOiBhdG9taWMgZHBtcyBzdXBwb3J0Cj4+ICAgICAgIGRybS9leHlub3M6IHJlbW92
+ZSB1bm5lY2Vzc2FyeSBjYWxscyB0byBkaXNhYmxlX3BsYW5lKCkKPj4KPj4gIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvcHM4NjIyLmMgICAgICAgICAgICAgfCAgIDYgKy0KPj4gIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvcHRuMzQ2MC5jICAgICAgICAgICAgfCAgIDYgKy0KPj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgICAgfCAgIDYgKy0KPj4gIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgfCAyMTUgKysrKysrKysrLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RwaS5j
+ICAgICB8ICAgNiArLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5j
+ICAgICB8ICAgMiArCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2Lmgg
+ICAgIHwgICA0ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMg
+ICAgIHwgICA2ICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rl
+ci5jIHwgIDM1ICstLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIu
+YyAgICAgIHwgIDEyICstCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmJk
+ZXYuYyAgIHwgICAzIC0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
+ZS5jICAgfCAxMTUgKysrKysrKysrLS0tLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9wbGFuZS5oICAgfCAgMTEgLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV92aWRpLmMgICAgfCAgIDYgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2hkbWkuYyAgICAgICAgfCAgMTAgKy0KPj4gIDE1IGZpbGVzIGNoYW5nZWQsIDE3OCBp
+bnNlcnRpb25zKCspLCAyNjUgZGVsZXRpb25zKC0pCj4+Cj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJl
+IGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5n
+LXNvYyIgaW4KPj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5l
+bC5vcmcKPj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9t
+YWpvcmRvbW8taW5mby5odG1sCj4+Cj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
