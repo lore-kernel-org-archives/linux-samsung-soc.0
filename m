@@ -1,889 +1,852 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 08/10] mfd: cros_ec: Support multiple EC in a system
-Date: Sat,  9 May 2015 12:10:39 +0200
-Message-ID: <1431166241-15775-9-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 07/10] mfd: cros_ec: add bus-specific proto v3 code
+Date: Sat,  9 May 2015 12:10:38 +0200
+Message-ID: <1431166241-15775-8-git-send-email-javier.martinez@collabora.co.uk>
 References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:40333 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932427AbbEIKM3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 9 May 2015 06:12:29 -0400
 In-Reply-To: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Gwendal Grignou <gwendal@chromium.org>
+From: Stephen Barber <smbarber@chromium.org>
 
-Chromebooks can have more than one Embedded Controller so the
-cros_ec device id has to be incremented for each EC registered.
+Add proto v3 support to the SPI, I2C, and LPC.
 
-Add code to handle multiple EC. First ec found is cros-ec0,
-second cros-ec1 and so on.
-
-Add a new structure to represent multiple EC as different char
-devices (e.g: /dev/cros_ec, /dev/cros_pd). It connects to
-cros_ec_device and allows sysfs inferface for cros_pd.
-
-Also reduce number of allocated objects, make chromeos sysfs
-class object a static and add refcounting to prevent object
-deletion while command is in progress.
-
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+Signed-off-by: Stephen Barber <smbarber@chromium.org>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
 ---
 
 Changes since v1:
- - Squash patch that adds support to represent EC's as different
-   char devices (e.g: /dev/cros_ec, /dev/cros_pd):
-   https://chromium-review.googlesource.com/#/c/217297/
-   Suggested by Gwendal Grignou
- - Use cros_ec instead of cros-ec in the subject line to be consistent.
-   Suggested by Gwendal Grignou
+ - Added Gwendal Grignou Reviewed-by and Tested-by tags
 ---
- drivers/input/keyboard/cros_ec_keyb.c      |   2 +-
- drivers/mfd/cros_ec.c                      |  66 +++++++++++++--
- drivers/mfd/cros_ec_i2c.c                  |   1 -
- drivers/mfd/cros_ec_spi.c                  |   1 -
- drivers/platform/chrome/cros_ec_dev.c      | 128 ++++++++++++++++++++---------
- drivers/platform/chrome/cros_ec_dev.h      |   7 --
- drivers/platform/chrome/cros_ec_lightbar.c |  75 +++++++++--------
- drivers/platform/chrome/cros_ec_lpc.c      |   1 -
- drivers/platform/chrome/cros_ec_sysfs.c    |  50 +++++------
- include/linux/mfd/cros_ec.h                |  44 ++++++++--
- 10 files changed, 248 insertions(+), 127 deletions(-)
+ drivers/mfd/cros_ec_i2c.c             | 166 ++++++++++++++-
+ drivers/mfd/cros_ec_spi.c             | 382 +++++++++++++++++++++++++++++-----
+ drivers/platform/chrome/cros_ec_lpc.c |  73 ++++++-
+ include/linux/mfd/cros_ec.h           |   6 +
+ 4 files changed, 569 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 090f8a75412a..ef3ba20f4560 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -269,7 +269,7 @@ static int cros_ec_keyb_probe(struct platform_device *pdev)
- 	ckdev->dev = dev;
- 	dev_set_drvdata(&pdev->dev, ckdev);
- 
--	idev->name = ec->ec_name;
-+	idev->name = CROS_EC_DEV_NAME;
- 	idev->phys = ec->phys_name;
- 	__set_bit(EV_REP, idev->evbit);
- 
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 956a827de826..6acf350b3ce6 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -289,6 +289,8 @@ exit:
- 	return ret;
- }
- 
-+static int dev_id;
-+
- int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 		       struct cros_ec_command *msg)
- {
-@@ -379,12 +381,46 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
- }
- EXPORT_SYMBOL(cros_ec_cmd_xfer);
- 
--static const struct mfd_cell cros_devs[] = {
--	{
-+static int cros_ec_dev_register(struct cros_ec_device *ec_dev,
-+				int dev_id, int devidx)
-+{
-+	struct device *dev = ec_dev->dev;
-+	struct cros_ec_platform ec_p = {
-+		.cmd_offset = 0,
-+	};
-+
-+	struct mfd_cell ec_cell = {
- 		.name = "cros-ec-ctl",
- 		.id = PLATFORM_DEVID_AUTO,
--	},
--};
-+		.platform_data = &ec_p,
-+		.pdata_size = sizeof(ec_p),
-+	};
-+
-+	switch (devidx) {
-+	case 0:
-+		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-+			ec_p.ec_name = of_get_property(dev->of_node, "devname",
-+						       NULL);
-+			if (ec_p.ec_name == NULL) {
-+				dev_dbg(dev,
-+					"Device name not found, using default");
-+				ec_p.ec_name = CROS_EC_DEV_NAME;
-+			}
-+		} else {
-+			ec_p.ec_name = CROS_EC_DEV_NAME;
-+		}
-+		break;
-+	case 1:
-+		ec_p.ec_name = CROS_EC_DEV_PD_NAME;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ec_p.cmd_offset = EC_CMD_PASSTHRU_OFFSET(devidx);
-+	return mfd_add_devices(dev, dev_id, &ec_cell, 1,
-+			       NULL, ec_dev->irq, NULL);
-+}
- 
- int cros_ec_register(struct cros_ec_device *ec_dev)
- {
-@@ -407,14 +443,28 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 
- 	cros_ec_probe_all(ec_dev);
- 
--	err = mfd_add_devices(dev, 0, cros_devs,
--			      ARRAY_SIZE(cros_devs),
--			      NULL, ec_dev->irq, NULL);
-+	err = cros_ec_dev_register(ec_dev, dev_id++, 0);
- 	if (err) {
--		dev_err(dev, "failed to add mfd devices\n");
-+		dev_err(dev, "failed to add ec\n");
- 		return err;
- 	}
- 
-+	if (ec_dev->max_passthru) {
-+		/*
-+		 * Register a PD device as well on top of this device.
-+		 * We make the following assumptions:
-+		 * - behind an EC, we have a pd
-+		 * - only one device added.
-+		 * - the EC is responsive at init time (it is not true for a
-+		 *   sensor hub.
-+		 */
-+		err = cros_ec_dev_register(ec_dev, dev_id++, 1);
-+		if (err) {
-+			dev_err(dev, "failed to add additional ec\n");
-+			return err;
-+		}
-+	}
-+
- 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
- 		err = of_platform_populate(dev->of_node, NULL, NULL, dev);
- 		if (err) {
 diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index 22e8a4ae1711..b9a0963ca5c3 100644
+index b400bfa2772a..22e8a4ae1711 100644
 --- a/drivers/mfd/cros_ec_i2c.c
 +++ b/drivers/mfd/cros_ec_i2c.c
-@@ -302,7 +302,6 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
- 	ec_dev->irq = client->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
--	ec_dev->ec_name = client->name;
- 	ec_dev->phys_name = client->adapter->name;
- 	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
- 			   sizeof(struct ec_response_get_protocol_info);
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 4e6f2f6b1095..faba03e2f1ef 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -637,7 +637,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev->irq = spi->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
--	ec_dev->ec_name = ec_spi->spi->modalias;
- 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
- 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
- 			   sizeof(struct ec_host_response) +
-diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform/chrome/cros_ec_dev.c
-index 7f7e3db59234..e52c636da404 100644
---- a/drivers/platform/chrome/cros_ec_dev.c
-+++ b/drivers/platform/chrome/cros_ec_dev.c
-@@ -29,11 +29,22 @@
- #define CROS_MAX_DEV 128
- /* Most EC commands size is ~64 bytes so allocate a buffer for the usual case */
- #define PREALLOC_SIZE 64
--static struct class *cros_class;
- static int ec_major;
- 
-+static const struct attribute_group *cros_ec_groups[] = {
-+	&cros_ec_attr_group,
-+	&cros_ec_lightbar_attr_group,
-+	NULL,
-+};
-+
-+static struct class cros_class = {
-+	.owner          = THIS_MODULE,
-+	.name           = "chromeos",
-+	.dev_groups     = cros_ec_groups,
-+};
-+
- /* Basic communication */
--static int ec_get_version(struct cros_ec_device *ec, char *str, int maxlen)
-+static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
- {
- 	struct ec_response_get_version *resp;
- 	static const char * const current_image_name[] = {
-@@ -49,7 +60,7 @@ static int ec_get_version(struct cros_ec_device *ec, char *str, int maxlen)
- 	msg->insize = sizeof(*resp);
- 	msg->outsize = 0;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -74,8 +85,10 @@ static int ec_get_version(struct cros_ec_device *ec, char *str, int maxlen)
- /* Device file ops */
- static int ec_device_open(struct inode *inode, struct file *filp)
- {
--	filp->private_data = container_of(inode->i_cdev,
--					  struct cros_ec_device, cdev);
-+	struct cros_ec_dev *ec = container_of(inode->i_cdev,
-+					      struct cros_ec_dev, cdev);
-+	filp->private_data = ec;
-+	nonseekable_open(inode, filp);
- 	return 0;
- }
- 
-@@ -87,7 +100,7 @@ static int ec_device_release(struct inode *inode, struct file *filp)
- static ssize_t ec_device_read(struct file *filp, char __user *buffer,
- 			      size_t length, loff_t *offset)
- {
--	struct cros_ec_device *ec = filp->private_data;
-+	struct cros_ec_dev *ec = filp->private_data;
- 	char msg[sizeof(struct ec_response_get_version) +
- 		 sizeof(CROS_EC_DEV_VERSION)];
- 	size_t count;
-@@ -110,7 +123,7 @@ static ssize_t ec_device_read(struct file *filp, char __user *buffer,
- }
- 
- /* Ioctls */
--static long ec_device_ioctl_xcmd(struct cros_ec_device *ec, void __user *arg)
-+static long ec_device_ioctl_xcmd(struct cros_ec_dev *ec, void __user *arg)
- {
- 	long ret;
- 	int alloc_size;
-@@ -137,7 +150,8 @@ static long ec_device_ioctl_xcmd(struct cros_ec_device *ec, void __user *arg)
- 		goto exit;
- 	}
- 
--	ret = cros_ec_cmd_xfer(ec, s_cmd);
-+	s_cmd->command += ec->cmd_offset;
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, s_cmd);
- 	/* Only copy data to userland if data was received. */
- 	if (ret < 0)
- 		goto exit;
-@@ -150,19 +164,21 @@ exit:
- 	return ret;
- }
- 
--static long ec_device_ioctl_readmem(struct cros_ec_device *ec, void __user *arg)
-+static long ec_device_ioctl_readmem(struct cros_ec_dev *ec, void __user *arg)
- {
-+	struct cros_ec_device *ec_dev = ec->ec_dev;
- 	struct cros_ec_readmem s_mem = { };
- 	long num;
- 
- 	/* Not every platform supports direct reads */
--	if (!ec->cmd_readmem)
-+	if (!ec_dev->cmd_readmem)
- 		return -ENOTTY;
- 
- 	if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
- 		return -EFAULT;
- 
--	num = ec->cmd_readmem(ec, s_mem.offset, s_mem.bytes, s_mem.buffer);
-+	num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
-+				  s_mem.buffer);
- 	if (num <= 0)
- 		return num;
- 
-@@ -175,7 +191,7 @@ static long ec_device_ioctl_readmem(struct cros_ec_device *ec, void __user *arg)
- static long ec_device_ioctl(struct file *filp, unsigned int cmd,
- 			    unsigned long arg)
- {
--	struct cros_ec_device *ec = filp->private_data;
-+	struct cros_ec_dev *ec = filp->private_data;
- 
- 	if (_IOC_TYPE(cmd) != CROS_EC_DEV_IOC)
- 		return -ENOTTY;
-@@ -198,45 +214,81 @@ static const struct file_operations fops = {
- 	.unlocked_ioctl = ec_device_ioctl,
- };
- 
-+static void __remove(struct device *dev)
-+{
-+	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
-+					      class_dev);
-+	kfree(ec);
-+}
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
--	struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
--	int retval = -ENOTTY;
--	dev_t devno = MKDEV(ec_major, 0);
-+	int retval = -ENOMEM;
-+	struct device *dev = &pdev->dev;
-+	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
-+	dev_t devno = MKDEV(ec_major, pdev->id);
-+	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
-+
-+	if (!ec)
-+		return retval;
- 
--	/* Instantiate it (and remember the EC) */
-+	dev_set_drvdata(dev, ec);
-+	ec->ec_dev = dev_get_drvdata(dev->parent);
-+	ec->dev = dev;
-+	ec->cmd_offset = ec_platform->cmd_offset;
-+	device_initialize(&ec->class_dev);
- 	cdev_init(&ec->cdev, &fops);
- 
-+	/*
-+	 * Add the character device
-+	 * Link cdev to the class device to be sure device is not used
-+	 * before unbinding it.
-+	 */
-+	ec->cdev.kobj.parent = &ec->class_dev.kobj;
- 	retval = cdev_add(&ec->cdev, devno, 1);
- 	if (retval) {
--		dev_err(&pdev->dev, ": failed to add character device\n");
--		return retval;
-+		dev_err(dev, ": failed to add character device\n");
-+		goto cdev_add_failed;
- 	}
- 
--	ec->vdev = device_create(cros_class, NULL, devno, ec,
--				 CROS_EC_DEV_NAME);
--	if (IS_ERR(ec->vdev)) {
--		retval = PTR_ERR(ec->vdev);
--		dev_err(&pdev->dev, ": failed to create device\n");
--		cdev_del(&ec->cdev);
--		return retval;
-+	/*
-+	 * Add the class device
-+	 * Link to the character device for creating the /dev entry
-+	 * in devtmpfs.
-+	 */
-+	ec->class_dev.devt = ec->cdev.dev;
-+	ec->class_dev.class = &cros_class;
-+	ec->class_dev.parent = dev;
-+	ec->class_dev.release = __remove;
-+
-+	retval = dev_set_name(&ec->class_dev, "%s", ec_platform->ec_name);
-+	if (retval) {
-+		dev_err(dev, "dev_set_name failed => %d\n", retval);
-+		goto set_named_failed;
- 	}
- 
--	/* Initialize extra interfaces */
--	ec_dev_sysfs_init(ec);
--	ec_dev_lightbar_init(ec);
-+	retval = device_add(&ec->class_dev);
-+	if (retval) {
-+		dev_err(dev, "device_register failed => %d\n", retval);
-+		goto dev_reg_failed;
-+	}
- 
- 	return 0;
-+
-+dev_reg_failed:
-+set_named_failed:
-+	dev_set_drvdata(dev, NULL);
-+	cdev_del(&ec->cdev);
-+cdev_add_failed:
-+	kfree(ec);
-+	return retval;
- }
- 
- static int ec_device_remove(struct platform_device *pdev)
- {
--	struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
--
--	ec_dev_lightbar_remove(ec);
--	ec_dev_sysfs_remove(ec);
--	device_destroy(cros_class, MKDEV(ec_major, 0));
-+	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
- 	cdev_del(&ec->cdev);
-+	device_unregister(&ec->class_dev);
- 	return 0;
- }
- 
-@@ -253,10 +305,10 @@ static int __init cros_ec_dev_init(void)
- 	int ret;
- 	dev_t dev = 0;
- 
--	cros_class = class_create(THIS_MODULE, "chromeos");
--	if (IS_ERR(cros_class)) {
-+	ret  = class_register(&cros_class);
-+	if (ret) {
- 		pr_err(CROS_EC_DEV_NAME ": failed to register device class\n");
--		return PTR_ERR(cros_class);
-+		return ret;
- 	}
- 
- 	/* Get a range of minor numbers (starting with 0) to work with */
-@@ -278,7 +330,7 @@ static int __init cros_ec_dev_init(void)
- failed_devreg:
- 	unregister_chrdev_region(MKDEV(ec_major, 0), CROS_MAX_DEV);
- failed_chrdevreg:
--	class_destroy(cros_class);
-+	class_unregister(&cros_class);
- 	return ret;
- }
- 
-@@ -286,7 +338,7 @@ static void __exit cros_ec_dev_exit(void)
- {
- 	platform_driver_unregister(&cros_ec_dev_driver);
- 	unregister_chrdev(ec_major, CROS_EC_DEV_NAME);
--	class_destroy(cros_class);
-+	class_unregister(&cros_class);
- }
- 
- module_init(cros_ec_dev_init);
-diff --git a/drivers/platform/chrome/cros_ec_dev.h b/drivers/platform/chrome/cros_ec_dev.h
-index 45d67f7e518c..bfd2c84c3571 100644
---- a/drivers/platform/chrome/cros_ec_dev.h
-+++ b/drivers/platform/chrome/cros_ec_dev.h
-@@ -24,7 +24,6 @@
- #include <linux/types.h>
- #include <linux/mfd/cros_ec.h>
- 
--#define CROS_EC_DEV_NAME "cros_ec"
- #define CROS_EC_DEV_VERSION "1.0.0"
- 
- /*
-@@ -44,10 +43,4 @@ struct cros_ec_readmem {
- #define CROS_EC_DEV_IOCXCMD   _IOWR(CROS_EC_DEV_IOC, 0, struct cros_ec_command)
- #define CROS_EC_DEV_IOCRDMEM  _IOWR(CROS_EC_DEV_IOC, 1, struct cros_ec_readmem)
- 
--void ec_dev_sysfs_init(struct cros_ec_device *);
--void ec_dev_sysfs_remove(struct cros_ec_device *);
--
--void ec_dev_lightbar_init(struct cros_ec_device *);
--void ec_dev_lightbar_remove(struct cros_ec_device *);
--
- #endif /* _CROS_EC_DEV_H_ */
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 6e1986a2dce1..144e09df9b84 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -92,7 +92,7 @@ out:
- 	return ret;
- }
- 
--static struct cros_ec_command *alloc_lightbar_cmd_msg(void)
-+static struct cros_ec_command *alloc_lightbar_cmd_msg(struct cros_ec_dev *ec)
- {
- 	struct cros_ec_command *msg;
- 	int len;
-@@ -105,14 +105,14 @@ static struct cros_ec_command *alloc_lightbar_cmd_msg(void)
- 		return NULL;
- 
- 	msg->version = 0;
--	msg->command = EC_CMD_LIGHTBAR_CMD;
-+	msg->command = EC_CMD_LIGHTBAR_CMD + ec->cmd_offset;
- 	msg->outsize = sizeof(struct ec_params_lightbar);
- 	msg->insize = sizeof(struct ec_response_lightbar);
- 
- 	return msg;
- }
- 
--static int get_lightbar_version(struct cros_ec_device *ec,
-+static int get_lightbar_version(struct cros_ec_dev *ec,
- 				uint32_t *ver_ptr, uint32_t *flg_ptr)
- {
- 	struct ec_params_lightbar *param;
-@@ -120,13 +120,13 @@ static int get_lightbar_version(struct cros_ec_device *ec,
- 	struct cros_ec_command *msg;
- 	int ret;
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return 0;
- 
- 	param = (struct ec_params_lightbar *)msg->data;
- 	param->cmd = LIGHTBAR_CMD_VERSION;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0) {
- 		ret = 0;
- 		goto exit;
-@@ -165,7 +165,8 @@ static ssize_t version_show(struct device *dev,
- 			    struct device_attribute *attr, char *buf)
- {
- 	uint32_t version = 0, flags = 0;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 	int ret;
- 
- 	ret = lb_throttle();
-@@ -187,12 +188,13 @@ static ssize_t brightness_store(struct device *dev,
- 	struct cros_ec_command *msg;
- 	int ret;
- 	unsigned int val;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	if (kstrtouint(buf, 0, &val))
- 		return -EINVAL;
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -203,7 +205,7 @@ static ssize_t brightness_store(struct device *dev,
- 	if (ret)
- 		goto exit;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 
-@@ -231,11 +233,12 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
- {
- 	struct ec_params_lightbar *param;
- 	struct cros_ec_command *msg;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 	unsigned int val[4];
- 	int ret, i = 0, j = 0, ok = 0;
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -268,7 +271,7 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
- 					return ret;
- 			}
- 
--			ret = cros_ec_cmd_xfer(ec, msg);
-+			ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 			if (ret < 0)
- 				goto exit;
- 
-@@ -304,9 +307,10 @@ static ssize_t sequence_show(struct device *dev,
- 	struct ec_response_lightbar *resp;
- 	struct cros_ec_command *msg;
- 	int ret;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -316,7 +320,7 @@ static ssize_t sequence_show(struct device *dev,
- 	if (ret)
- 		goto exit;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 
-@@ -345,9 +349,10 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	struct cros_ec_command *msg;
- 	unsigned int num;
- 	int ret, len;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -372,7 +377,7 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		return ret;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -397,25 +402,27 @@ static struct attribute *__lb_cmds_attrs[] = {
- 	&dev_attr_sequence.attr,
- 	NULL,
- };
--static struct attribute_group lb_cmds_attr_group = {
--	.name = "lightbar",
--	.attrs = __lb_cmds_attrs,
--};
- 
--void ec_dev_lightbar_init(struct cros_ec_device *ec)
-+static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
-+						  struct attribute *a, int n)
- {
--	int ret = 0;
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
-+	struct platform_device *pdev = container_of(ec->dev,
-+						   struct platform_device, dev);
-+	if (pdev->id != 0)
-+		return 0;
- 
- 	/* Only instantiate this stuff if the EC has a lightbar */
--	if (!get_lightbar_version(ec, NULL, NULL))
--		return;
--
--	ret = sysfs_create_group(&ec->vdev->kobj, &lb_cmds_attr_group);
--	if (ret)
--		pr_warn("sysfs_create_group() failed: %d\n", ret);
-+	if (get_lightbar_version(ec, NULL, NULL))
-+		return a->mode;
-+	else
-+		return 0;
- }
- 
--void ec_dev_lightbar_remove(struct cros_ec_device *ec)
--{
--	sysfs_remove_group(&ec->vdev->kobj, &lb_cmds_attr_group);
--}
-+struct attribute_group cros_ec_lightbar_attr_group = {
-+	.name = "lightbar",
-+	.attrs = __lb_cmds_attrs,
-+	.is_visible = cros_ec_lightbar_attrs_are_visible,
-+};
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index e98b0345288a..ca7cdc6eef0b 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -273,7 +273,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, ec_dev);
- 	ec_dev->dev = dev;
--	ec_dev->ec_name = pdev->name;
- 	ec_dev->phys_name = dev_name(dev);
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_lpc;
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 88d0a7c9bbff..056855c32187 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -73,7 +73,8 @@ static ssize_t store_ec_reboot(struct device *dev,
- 	int got_cmd = 0, offset = 0;
- 	int i;
- 	int ret;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	msg = (struct cros_ec_command *)msg_buf;
- 	param = (struct ec_params_reboot_ec *)msg->data;
-@@ -107,13 +108,13 @@ static ssize_t store_ec_reboot(struct device *dev,
- 	if (!got_cmd)
- 		return -EINVAL;
- 
--	msg->command = EC_CMD_REBOOT_EC;
-+	msg->command = EC_CMD_REBOOT_EC + ec->cmd_offset;
- 	msg->outsize = sizeof(*param);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		return ret;
- 	if (msg->result != EC_RES_SUCCESS) {
--		dev_dbg(ec->dev, "EC result %d\n", msg->result);
-+		dev_dbg(&ec->class_dev, "EC result %d\n", msg->result);
- 		return -EINVAL;
- 	}
- 
-@@ -131,14 +132,15 @@ static ssize_t show_ec_version(struct device *dev,
- 	u8 msg_buf[sizeof(*msg) + EC_HOST_PARAM_SIZE] = { 0 };
- 	int ret;
- 	int count = 0;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	msg = (struct cros_ec_command *)msg_buf;
- 
- 	/* Get versions. RW may change. */
--	msg->command = EC_CMD_GET_VERSION;
-+	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
- 	msg->insize = sizeof(*r_ver);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		return ret;
- 	if (msg->result != EC_RES_SUCCESS)
-@@ -159,9 +161,9 @@ static ssize_t show_ec_version(struct device *dev,
- 			    image_names[r_ver->current_image] : "?"));
- 
- 	/* Get build info. */
--	msg->command = EC_CMD_GET_BUILD_INFO;
-+	msg->command = EC_CMD_GET_BUILD_INFO + ec->cmd_offset;
- 	msg->insize = EC_HOST_PARAM_SIZE;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Build info:    XFER ERROR %d\n", ret);
-@@ -175,9 +177,9 @@ static ssize_t show_ec_version(struct device *dev,
- 	}
- 
- 	/* Get chip info. */
--	msg->command = EC_CMD_GET_CHIP_INFO;
-+	msg->command = EC_CMD_GET_CHIP_INFO + ec->cmd_offset;
- 	msg->insize = sizeof(*r_chip);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Chip info:     XFER ERROR %d\n", ret);
-@@ -199,9 +201,9 @@ static ssize_t show_ec_version(struct device *dev,
- 	}
- 
- 	/* Get board version */
--	msg->command = EC_CMD_GET_BOARD_VERSION;
-+	msg->command = EC_CMD_GET_BOARD_VERSION + ec->cmd_offset;
- 	msg->insize = sizeof(*r_board);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Board version: XFER ERROR %d\n", ret);
-@@ -225,15 +227,16 @@ static ssize_t show_ec_flashinfo(struct device *dev,
- 	struct ec_response_flash_info *resp;
- 	struct cros_ec_command *msg;
- 	int ret;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 	u8 msg_buf[sizeof(*msg) + sizeof(*resp)] = { 0 };
- 
- 	msg = (struct cros_ec_command *)msg_buf;
- 
- 	/* The flash info shouldn't ever change, but ask each time anyway. */
--	msg->command = EC_CMD_FLASH_INFO;
-+	msg->command = EC_CMD_FLASH_INFO + ec->cmd_offset;
- 	msg->insize = sizeof(*resp);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		return ret;
- 	if (msg->result != EC_RES_SUCCESS)
-@@ -262,20 +265,7 @@ static struct attribute *__ec_attrs[] = {
- 	NULL,
- };
- 
--static struct attribute_group ec_attr_group = {
-+struct attribute_group cros_ec_attr_group = {
- 	.attrs = __ec_attrs,
- };
- 
--void ec_dev_sysfs_init(struct cros_ec_device *ec)
--{
--	int error;
--
--	error = sysfs_create_group(&ec->vdev->kobj, &ec_attr_group);
--	if (error)
--		pr_warn("failed to create group: %d\n", error);
--}
--
--void ec_dev_sysfs_remove(struct cros_ec_device *ec)
--{
--	sysfs_remove_group(&ec->vdev->kobj, &ec_attr_group);
--}
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 15dc8317a767..fd5b92b60d62 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -17,10 +17,14 @@
- #define __LINUX_MFD_CROS_EC_H
- 
- #include <linux/cdev.h>
-+#include <linux/device.h>
- #include <linux/notifier.h>
- #include <linux/mfd/cros_ec_commands.h>
- #include <linux/mutex.h>
- 
-+#define CROS_EC_DEV_NAME "cros_ec"
-+#define CROS_EC_DEV_PD_NAME "cros_pd"
-+
- /*
-  * The EC is unresponsive for a time after a reboot command.  Add a
-  * simple delay to make sure that the bus stays locked.
-@@ -71,11 +75,8 @@ struct cros_ec_command {
- /**
-  * struct cros_ec_device - Information about a ChromeOS EC device
-  *
-- * @ec_name: name of EC device (e.g. 'chromeos-ec')
-  * @phys_name: name of physical comms layer (e.g. 'i2c-4')
-  * @dev: Device pointer for physical comms device
-- * @vdev: Device pointer for virtual comms device
-- * @cdev: Character device structure for virtual comms device
-  * @was_wake_device: true if this device was set to wake the system from
-  * sleep at the last suspend
-  * @cmd_readmem: direct read of the EC memory-mapped region, if supported
-@@ -87,6 +88,7 @@ struct cros_ec_command {
-  *
-  * @priv: Private data
-  * @irq: Interrupt to use
-+ * @id: Device id
-  * @din: input buffer (for data from EC)
-  * @dout: output buffer (for data to EC)
-  * \note
-@@ -109,11 +111,8 @@ struct cros_ec_command {
- struct cros_ec_device {
- 
- 	/* These are used by other drivers that want to talk to the EC */
--	const char *ec_name;
- 	const char *phys_name;
- 	struct device *dev;
--	struct device *vdev;
--	struct cdev cdev;
- 	bool was_wake_device;
- 	struct class *cros_class;
- 	int (*cmd_readmem)(struct cros_ec_device *ec, unsigned int offset,
-@@ -138,6 +137,35 @@ struct cros_ec_device {
- 	struct mutex lock;
- };
- 
-+/* struct cros_ec_platform - ChromeOS EC platform information
-+ *
-+ * @ec_name: name of EC device (e.g. 'cros-ec', 'cros-pd', ...)
-+ * used in /dev/ and sysfs.
-+ * @cmd_offset: offset to apply for each command. Set when
-+ * registering a devicde behind another one.
+@@ -13,6 +13,7 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
+@@ -22,6 +23,32 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ 
++/**
++ * Request format for protocol v3
++ * byte 0	0xda (EC_COMMAND_PROTOCOL_3)
++ * byte 1-8	struct ec_host_request
++ * byte 10-	response data
 + */
-+struct cros_ec_platform {
-+	const char *ec_name;
-+	u16 cmd_offset;
-+};
++struct ec_host_request_i2c {
++	/* Always 0xda to backward compatible with v2 struct */
++	uint8_t  command_protocol;
++	struct ec_host_request ec_request;
++} __packed;
++
 +
 +/*
-+ * struct cros_ec_dev - ChromeOS EC device entry point
-+ *
-+ * @class_dev: Device structure used in sysfs
-+ * @cdev: Character device structure in /dev
-+ * @ec_dev: cros_ec_device structure to talk to the physical device
-+ * @dev: pointer to the platform device
-+ * @cmd_offset: offset to apply for each command.
++ * Response format for protocol v3
++ * byte 0	result code
++ * byte 1	packet_length
++ * byte 2-9	struct ec_host_response
++ * byte 10-	response data
 + */
-+struct cros_ec_dev {
-+	struct device class_dev;
-+	struct cdev cdev;
-+	struct cros_ec_device *ec_dev;
-+	struct device *dev;
-+	u16 cmd_offset;
-+};
++struct ec_host_response_i2c {
++	uint8_t result;
++	uint8_t packet_length;
++	struct ec_host_response ec_response;
++} __packed;
++
+ static inline struct cros_ec_device *to_ec_dev(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+@@ -29,6 +56,134 @@ static inline struct cros_ec_device *to_ec_dev(struct device *dev)
+ 	return i2c_get_clientdata(client);
+ }
+ 
++static int cros_ec_pkt_xfer_i2c(struct cros_ec_device *ec_dev,
++				struct cros_ec_command *msg)
++{
++	struct i2c_client *client = ec_dev->priv;
++	int ret = -ENOMEM;
++	int i;
++	int packet_len;
++	u8 *out_buf = NULL;
++	u8 *in_buf = NULL;
++	u8 sum;
++	struct i2c_msg i2c_msg[2];
++	struct ec_host_response *ec_response;
++	struct ec_host_request_i2c *ec_request_i2c;
++	struct ec_host_response_i2c *ec_response_i2c;
++	int request_header_size = sizeof(struct ec_host_request_i2c);
++	int response_header_size = sizeof(struct ec_host_response_i2c);
++
++	i2c_msg[0].addr = client->addr;
++	i2c_msg[0].flags = 0;
++	i2c_msg[1].addr = client->addr;
++	i2c_msg[1].flags = I2C_M_RD;
++
++	packet_len = msg->insize + response_header_size;
++	BUG_ON(packet_len > ec_dev->din_size);
++	in_buf = ec_dev->din;
++	i2c_msg[1].len = packet_len;
++	i2c_msg[1].buf = (char *) in_buf;
++
++	packet_len = msg->outsize + request_header_size;
++	BUG_ON(packet_len > ec_dev->dout_size);
++	out_buf = ec_dev->dout;
++	i2c_msg[0].len = packet_len;
++	i2c_msg[0].buf = (char *) out_buf;
++
++	/* create request data */
++	ec_request_i2c = (struct ec_host_request_i2c *) out_buf;
++	ec_request_i2c->command_protocol = EC_COMMAND_PROTOCOL_3;
++
++	ec_dev->dout++;
++	ret = cros_ec_prepare_tx(ec_dev, msg);
++	ec_dev->dout--;
++
++	/* send command to EC and read answer */
++	ret = i2c_transfer(client->adapter, i2c_msg, 2);
++	if (ret < 0) {
++		dev_dbg(ec_dev->dev, "i2c transfer failed: %d\n", ret);
++		goto done;
++	} else if (ret != 2) {
++		dev_err(ec_dev->dev, "failed to get response: %d\n", ret);
++		ret = -EIO;
++		goto done;
++	}
++
++	ec_response_i2c = (struct ec_host_response_i2c *) in_buf;
++	msg->result = ec_response_i2c->result;
++	ec_response = &ec_response_i2c->ec_response;
++
++	switch (msg->result) {
++	case EC_RES_SUCCESS:
++		break;
++	case EC_RES_IN_PROGRESS:
++		ret = -EAGAIN;
++		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
++			msg->command);
++		goto done;
++
++	default:
++		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
++			msg->command, msg->result);
++		/*
++		 * When we send v3 request to v2 ec, ec won't recognize the
++		 * 0xda (EC_COMMAND_PROTOCOL_3) and will return with status
++		 * EC_RES_INVALID_COMMAND with zero data length.
++		 *
++		 * In case of invalid command for v3 protocol the data length
++		 * will be at least sizeof(struct ec_host_response)
++		 */
++		if (ec_response_i2c->result == EC_RES_INVALID_COMMAND &&
++		    ec_response_i2c->packet_length == 0) {
++			ret = -EPROTONOSUPPORT;
++			goto done;
++		}
++	}
++
++	if (ec_response_i2c->packet_length < sizeof(struct ec_host_response)) {
++		dev_err(ec_dev->dev,
++			"response of %u bytes too short; not a full header\n",
++			ec_response_i2c->packet_length);
++		ret = -EBADMSG;
++		goto done;
++	}
++
++	if (msg->insize < ec_response->data_len) {
++		dev_err(ec_dev->dev,
++			"response data size is too large: expected %u, got %u\n",
++			msg->insize,
++			ec_response->data_len);
++		ret = -EMSGSIZE;
++		goto done;
++	}
++
++	/* copy response packet payload and compute checksum */
++	sum = 0;
++	for (i = 0; i < sizeof(struct ec_host_response); i++)
++		sum += ((u8 *)ec_response)[i];
++
++	memcpy(msg->data,
++	       in_buf + response_header_size,
++	       ec_response->data_len);
++	for (i = 0; i < ec_response->data_len; i++)
++		sum += msg->data[i];
++
++	/* All bytes should sum to zero */
++	if (sum) {
++		dev_err(ec_dev->dev, "bad packet checksum\n");
++		ret = -EBADMSG;
++		goto done;
++	}
++
++	ret = ec_response->data_len;
++
++done:
++	if (msg->command == EC_CMD_REBOOT_EC)
++		msleep(EC_REBOOT_DELAY_MS);
++
++	return ret;
++}
++
+ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
+ 				struct cros_ec_command *msg)
+ {
+@@ -121,9 +276,12 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
+ 	}
+ 
+ 	ret = len;
+- done:
++done:
+ 	kfree(in_buf);
+ 	kfree(out_buf);
++	if (msg->command == EC_CMD_REBOOT_EC)
++		msleep(EC_REBOOT_DELAY_MS);
++
+ 	return ret;
+ }
+ 
+@@ -143,12 +301,12 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
+ 	ec_dev->priv = client;
+ 	ec_dev->irq = client->irq;
+ 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
+-	ec_dev->pkt_xfer = NULL;
++	ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
+ 	ec_dev->ec_name = client->name;
+ 	ec_dev->phys_name = client->adapter->name;
+-	ec_dev->din_size = sizeof(struct ec_host_response) +
++	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+-	ec_dev->dout_size = sizeof(struct ec_host_request);
++	ec_dev->dout_size = sizeof(struct ec_host_request_i2c);
+ 
+ 	err = cros_ec_register(ec_dev);
+ 	if (err) {
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index 04da2f288ef8..4e6f2f6b1095 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -65,12 +65,6 @@
+   */
+ #define EC_SPI_RECOVERY_TIME_NS	(200 * 1000)
+ 
+-/*
+- * The EC is unresponsive for a time after a reboot command.  Add a
+- * simple delay to make sure that the bus stays locked.
+- */
+-#define EC_REBOOT_DELAY_MS	50
+-
+ /**
+  * struct cros_ec_spi - information about a SPI-connected EC
+  *
+@@ -87,7 +81,7 @@ struct cros_ec_spi {
+ };
+ 
+ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
+-			  int len)
++			 int len)
+ {
+ #ifdef DEBUG
+ 	int i;
+@@ -100,6 +94,172 @@ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
+ #endif
+ }
+ 
++static int terminate_request(struct cros_ec_device *ec_dev)
++{
++	struct cros_ec_spi *ec_spi = ec_dev->priv;
++	struct spi_message msg;
++	struct spi_transfer trans;
++	int ret;
++
++	/*
++	 * Turn off CS, possibly adding a delay to ensure the rising edge
++	 * doesn't come too soon after the end of the data.
++	 */
++	spi_message_init(&msg);
++	memset(&trans, 0, sizeof(trans));
++	trans.delay_usecs = ec_spi->end_of_msg_delay;
++	spi_message_add_tail(&trans, &msg);
++
++	ret = spi_sync(ec_spi->spi, &msg);
++
++	/* Reset end-of-response timer */
++	ec_spi->last_transfer_ns = ktime_get_ns();
++	if (ret < 0) {
++		dev_err(ec_dev->dev,
++			"cs-deassert spi transfer failed: %d\n",
++			ret);
++	}
++
++	return ret;
++}
++
++/**
++ * receive_n_bytes - receive n bytes from the EC.
++ *
++ * Assumes buf is a pointer into the ec_dev->din buffer
++ */
++static int receive_n_bytes(struct cros_ec_device *ec_dev, u8 *buf, int n)
++{
++	struct cros_ec_spi *ec_spi = ec_dev->priv;
++	struct spi_transfer trans;
++	struct spi_message msg;
++	int ret;
++
++	BUG_ON(buf - ec_dev->din + n > ec_dev->din_size);
++
++	memset(&trans, 0, sizeof(trans));
++	trans.cs_change = 1;
++	trans.rx_buf = buf;
++	trans.len = n;
++
++	spi_message_init(&msg);
++	spi_message_add_tail(&trans, &msg);
++	ret = spi_sync(ec_spi->spi, &msg);
++	if (ret < 0)
++		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
++
++	return ret;
++}
++
++/**
++ * cros_ec_spi_receive_packet - Receive a packet from the EC.
++ *
++ * This function has two phases: reading the preamble bytes (since if we read
++ * data from the EC before it is ready to send, we just get preamble) and
++ * reading the actual message.
++ *
++ * The received data is placed into ec_dev->din.
++ *
++ * @ec_dev: ChromeOS EC device
++ * @need_len: Number of message bytes we need to read
++ */
++static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
++				      int need_len)
++{
++	struct ec_host_response *response;
++	u8 *ptr, *end;
++	int ret;
++	unsigned long deadline;
++	int todo;
++
++	BUG_ON(EC_MSG_PREAMBLE_COUNT > ec_dev->din_size);
++
++	/* Receive data until we see the header byte */
++	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
++	while (true) {
++		unsigned long start_jiffies = jiffies;
++
++		ret = receive_n_bytes(ec_dev,
++				      ec_dev->din,
++				      EC_MSG_PREAMBLE_COUNT);
++		if (ret < 0)
++			return ret;
++
++		ptr = ec_dev->din;
++		for (end = ptr + EC_MSG_PREAMBLE_COUNT; ptr != end; ptr++) {
++			if (*ptr == EC_SPI_FRAME_START) {
++				dev_dbg(ec_dev->dev, "msg found at %zd\n",
++					ptr - ec_dev->din);
++				break;
++			}
++		}
++		if (ptr != end)
++			break;
++
++		/*
++		 * Use the time at the start of the loop as a timeout.  This
++		 * gives us one last shot at getting the transfer and is useful
++		 * in case we got context switched out for a while.
++		 */
++		if (time_after(start_jiffies, deadline)) {
++			dev_warn(ec_dev->dev, "EC failed to respond in time\n");
++			return -ETIMEDOUT;
++		}
++	}
++
++	/*
++	 * ptr now points to the header byte. Copy any valid data to the
++	 * start of our buffer
++	 */
++	todo = end - ++ptr;
++	BUG_ON(todo < 0 || todo > ec_dev->din_size);
++	todo = min(todo, need_len);
++	memmove(ec_dev->din, ptr, todo);
++	ptr = ec_dev->din + todo;
++	dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
++		need_len, todo);
++	need_len -= todo;
++
++	/* If the entire response struct wasn't read, get the rest of it. */
++	if (todo < sizeof(*response)) {
++		ret = receive_n_bytes(ec_dev, ptr, sizeof(*response) - todo);
++		if (ret < 0)
++			return -EBADMSG;
++		ptr += (sizeof(*response) - todo);
++		todo = sizeof(*response);
++	}
++
++	response = (struct ec_host_response *)ec_dev->din;
++
++	/* Abort if data_len is too large. */
++	if (response->data_len > ec_dev->din_size)
++		return -EMSGSIZE;
++
++	/* Receive data until we have it all */
++	while (need_len > 0) {
++		/*
++		 * We can't support transfers larger than the SPI FIFO size
++		 * unless we have DMA. We don't have DMA on the ISP SPI ports
++		 * for Exynos. We need a way of asking SPI driver for
++		 * maximum-supported transfer size.
++		 */
++		todo = min(need_len, 256);
++		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
++			todo, need_len, ptr - ec_dev->din);
++
++		ret = receive_n_bytes(ec_dev, ptr, todo);
++		if (ret < 0)
++			return ret;
++
++		ptr += todo;
++		need_len -= todo;
++	}
++
++	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
++
++	return 0;
++}
 +
  /**
-  * cros_ec_suspend - Handle a suspend operation for the ChromeOS EC device
+  * cros_ec_spi_receive_response - Receive a response from the EC.
   *
-@@ -216,4 +244,8 @@ int cros_ec_remove(struct cros_ec_device *ec_dev);
-  */
- int cros_ec_register(struct cros_ec_device *ec_dev);
+@@ -115,34 +275,27 @@ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
+ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
+ 					int need_len)
+ {
+-	struct cros_ec_spi *ec_spi = ec_dev->priv;
+-	struct spi_transfer trans;
+-	struct spi_message msg;
+ 	u8 *ptr, *end;
+ 	int ret;
+ 	unsigned long deadline;
+ 	int todo;
  
-+/* sysfs stuff */
-+extern struct attribute_group cros_ec_attr_group;
-+extern struct attribute_group cros_ec_lightbar_attr_group;
++	BUG_ON(EC_MSG_PREAMBLE_COUNT > ec_dev->din_size);
 +
- #endif /* __LINUX_MFD_CROS_EC_H */
+ 	/* Receive data until we see the header byte */
+ 	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
+ 	while (true) {
+ 		unsigned long start_jiffies = jiffies;
+ 
+-		memset(&trans, 0, sizeof(trans));
+-		trans.cs_change = 1;
+-		trans.rx_buf = ptr = ec_dev->din;
+-		trans.len = EC_MSG_PREAMBLE_COUNT;
+-
+-		spi_message_init(&msg);
+-		spi_message_add_tail(&trans, &msg);
+-		ret = spi_sync(ec_spi->spi, &msg);
+-		if (ret < 0) {
+-			dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
++		ret = receive_n_bytes(ec_dev,
++				      ec_dev->din,
++				      EC_MSG_PREAMBLE_COUNT);
++		if (ret < 0)
+ 			return ret;
+-		}
+ 
++		ptr = ec_dev->din;
+ 		for (end = ptr + EC_MSG_PREAMBLE_COUNT; ptr != end; ptr++) {
+-			if (*ptr == EC_MSG_HEADER) {
++			if (*ptr == EC_SPI_FRAME_START) {
+ 				dev_dbg(ec_dev->dev, "msg found at %zd\n",
+ 					ptr - ec_dev->din);
+ 				break;
+@@ -187,21 +340,9 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
+ 		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
+ 			todo, need_len, ptr - ec_dev->din);
+ 
+-		memset(&trans, 0, sizeof(trans));
+-		trans.cs_change = 1;
+-		trans.rx_buf = ptr;
+-		trans.len = todo;
+-		spi_message_init(&msg);
+-		spi_message_add_tail(&trans, &msg);
+-
+-		/* send command to EC and read answer */
+-		BUG_ON((u8 *)trans.rx_buf - ec_dev->din + todo >
+-				ec_dev->din_size);
+-		ret = spi_sync(ec_spi->spi, &msg);
+-		if (ret < 0) {
+-			dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
++		ret = receive_n_bytes(ec_dev, ptr, todo);
++		if (ret < 0)
+ 			return ret;
+-		}
+ 
+ 		debug_packet(ec_dev->dev, "interim", ptr, todo);
+ 		ptr += todo;
+@@ -214,6 +355,128 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
+ }
+ 
+ /**
++ * cros_ec_pkt_xfer_spi - Transfer a packet over SPI and receive the reply
++ *
++ * @ec_dev: ChromeOS EC device
++ * @ec_msg: Message to transfer
++ */
++static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
++				struct cros_ec_command *ec_msg)
++{
++	struct ec_host_request *request;
++	struct ec_host_response *response;
++	struct cros_ec_spi *ec_spi = ec_dev->priv;
++	struct spi_transfer trans;
++	struct spi_message msg;
++	int i, len;
++	u8 *ptr;
++	u8 *rx_buf;
++	u8 sum;
++	int ret = 0, final_ret;
++
++	len = cros_ec_prepare_tx(ec_dev, ec_msg);
++	request = (struct ec_host_request *)ec_dev->dout;
++	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
++
++	/* If it's too soon to do another transaction, wait */
++	if (ec_spi->last_transfer_ns) {
++		unsigned long delay;	/* The delay completed so far */
++
++		delay = ktime_get_ns() - ec_spi->last_transfer_ns;
++		if (delay < EC_SPI_RECOVERY_TIME_NS)
++			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
++	}
++
++	rx_buf = kzalloc(len, GFP_KERNEL);
++	if (!rx_buf) {
++		ret = -ENOMEM;
++		goto exit;
++	}
++
++	/* Transmit phase - send our message */
++	memset(&trans, 0, sizeof(trans));
++	trans.tx_buf = ec_dev->dout;
++	trans.rx_buf = rx_buf;
++	trans.len = len;
++	trans.cs_change = 1;
++	spi_message_init(&msg);
++	spi_message_add_tail(&trans, &msg);
++	ret = spi_sync(ec_spi->spi, &msg);
++
++	/* Get the response */
++	if (!ret) {
++		/* Verify that EC can process command */
++		for (i = 0; i < len; i++) {
++			switch (rx_buf[i]) {
++			case EC_SPI_PAST_END:
++			case EC_SPI_RX_BAD_DATA:
++			case EC_SPI_NOT_READY:
++				ret = -EAGAIN;
++				ec_msg->result = EC_RES_IN_PROGRESS;
++			default:
++				break;
++			}
++			if (ret)
++				break;
++		}
++		if (!ret)
++			ret = cros_ec_spi_receive_packet(ec_dev,
++					ec_msg->insize + sizeof(*response));
++	} else {
++		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
++	}
++
++	final_ret = terminate_request(ec_dev);
++	if (!ret)
++		ret = final_ret;
++	if (ret < 0)
++		goto exit;
++
++	ptr = ec_dev->din;
++
++	/* check response error code */
++	response = (struct ec_host_response *)ptr;
++	ec_msg->result = response->result;
++
++	ret = cros_ec_check_result(ec_dev, ec_msg);
++	if (ret)
++		goto exit;
++
++	len = response->data_len;
++	sum = 0;
++	if (len > ec_msg->insize) {
++		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
++			len, ec_msg->insize);
++		ret = -EMSGSIZE;
++		goto exit;
++	}
++
++	for (i = 0; i < sizeof(*response); i++)
++		sum += ptr[i];
++
++	/* copy response packet payload and compute checksum */
++	memcpy(ec_msg->data, ptr + sizeof(*response), len);
++	for (i = 0; i < len; i++)
++		sum += ec_msg->data[i];
++
++	if (sum) {
++		dev_err(ec_dev->dev,
++			"bad packet checksum, calculated %x\n",
++			sum);
++		ret = -EBADMSG;
++		goto exit;
++	}
++
++	ret = len;
++exit:
++	kfree(rx_buf);
++	if (ec_msg->command == EC_CMD_REBOOT_EC)
++		msleep(EC_REBOOT_DELAY_MS);
++
++	return ret;
++}
++
++/**
+  * cros_ec_cmd_xfer_spi - Transfer a message over SPI and receive the reply
+  *
+  * @ec_dev: ChromeOS EC device
+@@ -227,6 +490,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 	struct spi_message msg;
+ 	int i, len;
+ 	u8 *ptr;
++	u8 *rx_buf;
+ 	int sum;
+ 	int ret = 0, final_ret;
+ 
+@@ -242,10 +506,17 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+ 	}
+ 
++	rx_buf = kzalloc(len, GFP_KERNEL);
++	if (!rx_buf) {
++		ret = -ENOMEM;
++		goto exit;
++	}
++
+ 	/* Transmit phase - send our message */
+ 	debug_packet(ec_dev->dev, "out", ec_dev->dout, len);
+ 	memset(&trans, 0, sizeof(trans));
+ 	trans.tx_buf = ec_dev->dout;
++	trans.rx_buf = rx_buf;
+ 	trans.len = len;
+ 	trans.cs_change = 1;
+ 	spi_message_init(&msg);
+@@ -254,29 +525,32 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 
+ 	/* Get the response */
+ 	if (!ret) {
+-		ret = cros_ec_spi_receive_response(ec_dev,
+-				ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
++		/* Verify that EC can process command */
++		for (i = 0; i < len; i++) {
++			switch (rx_buf[i]) {
++			case EC_SPI_PAST_END:
++			case EC_SPI_RX_BAD_DATA:
++			case EC_SPI_NOT_READY:
++				ret = -EAGAIN;
++				ec_msg->result = EC_RES_IN_PROGRESS;
++			default:
++				break;
++			}
++			if (ret)
++				break;
++		}
++		if (!ret)
++			ret = cros_ec_spi_receive_response(ec_dev,
++					ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
+ 	} else {
+ 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+ 	}
+ 
+-	/*
+-	 * Turn off CS, possibly adding a delay to ensure the rising edge
+-	 * doesn't come too soon after the end of the data.
+-	 */
+-	spi_message_init(&msg);
+-	memset(&trans, 0, sizeof(trans));
+-	trans.delay_usecs = ec_spi->end_of_msg_delay;
+-	spi_message_add_tail(&trans, &msg);
+-
+-	final_ret = spi_sync(ec_spi->spi, &msg);
+-	ec_spi->last_transfer_ns = ktime_get_ns();
++	final_ret = terminate_request(ec_dev);
+ 	if (!ret)
+ 		ret = final_ret;
+-	if (ret < 0) {
+-		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
++	if (ret < 0)
+ 		goto exit;
+-	}
+ 
+ 	ptr = ec_dev->din;
+ 
+@@ -315,6 +589,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 
+ 	ret = len;
+ exit:
++	kfree(rx_buf);
+ 	if (ec_msg->command == EC_CMD_REBOOT_EC)
+ 		msleep(EC_REBOOT_DELAY_MS);
+ 
+@@ -361,7 +636,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	ec_dev->priv = ec_spi;
+ 	ec_dev->irq = spi->irq;
+ 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
+-	ec_dev->pkt_xfer = NULL;
++	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
+ 	ec_dev->ec_name = ec_spi->spi->modalias;
+ 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
+ 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
+@@ -369,6 +644,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 			   sizeof(struct ec_response_get_protocol_info);
+ 	ec_dev->dout_size = sizeof(struct ec_host_request);
+ 
++
+ 	err = cros_ec_register(ec_dev);
+ 	if (err) {
+ 		dev_err(dev, "cannot register EC\n");
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index d56dfb9dd463..e98b0345288a 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -46,6 +46,77 @@ static int ec_response_timed_out(void)
+ 	return 1;
+ }
+ 
++static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
++				struct cros_ec_command *msg)
++{
++	struct ec_host_request *request;
++	struct ec_host_response response;
++	u8 sum = 0;
++	int i;
++	int ret = 0;
++	u8 *dout;
++
++	ret = cros_ec_prepare_tx(ec, msg);
++
++	/* Write buffer */
++	for (i = 0; i < ret; i++)
++		outb(ec->dout[i], EC_LPC_ADDR_HOST_PACKET + i);
++
++	request = (struct ec_host_request *)ec->dout;
++
++	/* Here we go */
++	outb(EC_COMMAND_PROTOCOL_3, EC_LPC_ADDR_HOST_CMD);
++
++	if (ec_response_timed_out()) {
++		dev_warn(ec->dev, "EC responsed timed out\n");
++		ret = -EIO;
++		goto done;
++	}
++
++	/* Check result */
++	msg->result = inb(EC_LPC_ADDR_HOST_DATA);
++	ret = cros_ec_check_result(ec, msg);
++	if (ret)
++		goto done;
++
++	/* Read back response */
++	dout = (u8 *)&response;
++	for (i = 0; i < sizeof(response); i++) {
++		dout[i] = inb(EC_LPC_ADDR_HOST_PACKET + i);
++		sum += dout[i];
++	}
++
++	msg->result = response.result;
++
++	if (response.data_len > msg->insize) {
++		dev_err(ec->dev,
++			"packet too long (%d bytes, expected %d)",
++			response.data_len, msg->insize);
++		ret = -EMSGSIZE;
++		goto done;
++	}
++
++	/* Read response and process checksum */
++	for (i = 0; i < response.data_len; i++) {
++		msg->data[i] =
++			inb(EC_LPC_ADDR_HOST_PACKET + sizeof(response) + i);
++		sum += msg->data[i];
++	}
++
++	if (sum) {
++		dev_err(ec->dev,
++			"bad packet checksum %02x\n",
++			response.checksum);
++		ret = -EBADMSG;
++		goto done;
++	}
++
++	/* Return actual amount of data received */
++	ret = response.data_len;
++done:
++	return ret;
++}
++
+ static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
+ 				struct cros_ec_command *msg)
+ {
+@@ -205,7 +276,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	ec_dev->ec_name = pdev->name;
+ 	ec_dev->phys_name = dev_name(dev);
+ 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
+-	ec_dev->pkt_xfer = NULL;
++	ec_dev->pkt_xfer = cros_ec_pkt_xfer_lpc;
+ 	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
+ 	ec_dev->din_size = sizeof(struct ec_host_response) +
+ 			   sizeof(struct ec_response_get_protocol_info);
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index a2e87e81c956..15dc8317a767 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -22,6 +22,12 @@
+ #include <linux/mutex.h>
+ 
+ /*
++ * The EC is unresponsive for a time after a reboot command.  Add a
++ * simple delay to make sure that the bus stays locked.
++ */
++#define EC_REBOOT_DELAY_MS             50
++
++/*
+  * Max bus-specific overhead incurred by request/responses.
+  * I2C requires 1 additional byte for requests.
+  * I2C requires 2 additional bytes for responses.
 -- 
 2.1.4
