@@ -1,67 +1,54 @@
-From: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH] Show proper respect for Heinrich Hertz by using the correct
- unit for frequency
-Date: Mon, 11 May 2015 23:39:08 +0200
-Message-ID: <5551217C.9090504@suse.de>
-References: <20150511131952.GD2067@n2100.arm.linux.org.uk>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v2 04/10] mfd: cros_ec: Use a zero-length array for command data
+Date: Mon, 11 May 2015 23:47:25 +0200
+Message-ID: <4091454.JTEcLO5LxH@phil>
+References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk> <CAMHSBOXj3QvtCWX3WprDpfr2VN2+OpviCbazqr7EBZtt7m_i4g@mail.gmail.com> <55512034.3000206@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59235 "EHLO mx2.suse.de"
+Received: from gloria.sntech.de ([95.129.55.99]:51764 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752474AbbEKVjM (ORCPT
+	id S1752268AbbEKVqm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 May 2015 17:39:12 -0400
-In-Reply-To: <20150511131952.GD2067@n2100.arm.linux.org.uk>
+	Mon, 11 May 2015 17:46:42 -0400
+In-Reply-To: <55512034.3000206@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Gwendal Grignou <gwendal@chromium.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Am 11.05.2015 um 15:19 schrieb Russell King - ARM Linux:
-> The SI unit of frequency is Hertz, named after Heinrich Hertz, and is
-> given the symbol "Hz" to denote this.  "hz" is not the unit of freque=
-ncy,
-> and is in fact meaningless.
->=20
-> Fix arch/arm to correctly use "Hz", thereby acknowledging Heinrich He=
-rtz
-> contribution to the modern world.
->=20
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Heiko, Alexandru,
+> 
+> I don't have access to my Chromebooks right now but could you please test
+> the following patch [0] to see if that is the problem?
+> 
+> It seems I got it working on my test just out of luck since it happened that
+> version was initialized to 0 due the data it was on the stack.
+> 
+> Tomorrow when I've access to the Chromebooks I'll do more extensive testing
+> and see if I can reproduce the issue and if my assumption is correct.
+> 
+> Best regards,
+> Javier
+> 
+> [0]
+> diff --git a/drivers/input/keyboard/cros_ec_keyb.c
+> b/drivers/input/keyboard/cros_ec_keyb.c index ef3ba20f4560..4f233e248a4d
+> 100644
+> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> @@ -151,6 +151,7 @@ static int cros_ec_keyb_get_state(struct cros_ec_keyb
+> *ckdev, uint8_t *kb_state) int ret;
+>  	struct cros_ec_command *msg = (struct cros_ec_command *)kb_state;
+> 
+> +	msg->version = 0;
+>  	msg->command = EC_CMD_MKBP_STATE;
+>  	msg->insize = ckdev->cols;
+>  	msg->outsize = 0;
 
-Nice. :) Since you're being exact, should it be "Hertz' contribution"?
+on my rk3288-pinky this seems to fix the issue ... keyboard works out of the 
+box again.
 
-> diff --git a/arch/arm/boot/dts/omap3-cm-t3517.dts b/arch/arm/boot/dts=
-/omap3-cm-t3517.dts
-> index f5b5a1d96cd7..53ae04f9104d 100644
-> --- a/arch/arm/boot/dts/omap3-cm-t3517.dts
-> +++ b/arch/arm/boot/dts/omap3-cm-t3517.dts
-> @@ -66,7 +66,7 @@
-> =20
->  	otg_drv_vbus: pinmux_otg_drv_vbus {
->  		pinctrl-single,pins =3D <
-> -			OMAP3_CORE1_IOPAD(0x2210, PIN_INPUT_PULLDOWN | MUX_MODE0) /* rmii=
-_50Mhz_clk.usb0_drvvbus */
-> +			OMAP3_CORE1_IOPAD(0x2210, PIN_INPUT_PULLDOWN | MUX_MODE0) /* rmii=
-_50MHz_clk.usb0_drvvbus */
 
-This one looks like an identifier - did you check where it comes from
-and whether it needs to be fixed there as well?
-
->  		>;
->  	};
-> =20
-
-Rest looks good,
-
-Reviewed-by: Andreas F=E4rber <afaerber@suse.de>
-
-Cheers,
-Andreas
-
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Dilip Upmanyu, Graham Norton; H=
-RB
-21284 (AG N=FCrnberg)
+Heiko
