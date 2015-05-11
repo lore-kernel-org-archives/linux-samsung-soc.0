@@ -1,96 +1,51 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] clocksource: exynos_mct: fix for sleeping in atomic
- ctx handling cpu hotplug notif.
-Date: Mon, 11 May 2015 10:33:35 +0900
-Message-ID: <CAJKOXPcXk+xiYUoy6QnfRC2bPsNpTqLYp6-0X1xgCvZ4s5nGGw@mail.gmail.com>
-References: <1426151496-5509-1-git-send-email-d.eppel@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [GIT PULL] ARM: EXYNOS: dts: DTS fixes for 4.1, second try
+Date: Mon, 11 May 2015 12:10:19 +0900
+Message-ID: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f46.google.com ([209.85.216.46]:45156 "EHLO
-	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751653AbbEKBdg (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:58888 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751870AbbEKDL2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 May 2015 21:33:36 -0400
-In-Reply-To: <1426151496-5509-1-git-send-email-d.eppel@samsung.com>
+	Sun, 10 May 2015 23:11:28 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, Damian Eppel <d.eppel@samsung.com>, m.jabrzyk@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-2015-03-12 18:11 GMT+09:00 Damian Eppel <d.eppel@samsung.com>:
-> This is to fix an issue of sleeping in atomic context when processing
-> hotplug notifications in Exynos MCT(Multi-Core Timer).
-> The issue was reproducible on Exynos 3250 (Rinato board) and Exynos 5420
-> (Arndale Octa board).
->
-> Whilst testing cpu hotplug events on kernel configured with DEBUG_PREEMPT
-> and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by calling
-> request_irq() and free_irq() in the context of hotplug notification
-> (which is in this case atomic context).
->
-> root@target:~# echo 0 > /sys/devices/system/cpu/cpu1/online
->
-> [   25.157867] IRQ18 no longer affine to CPU1
-> ...
-> [   25.158445] CPU1: shutdown
->
-> root@target:~# echo 1 > /sys/devices/system/cpu/cpu1/online
->
-> [   40.785859] CPU1: Software reset
-> [   40.786660] BUG: sleeping function called from invalid context at mm/slub.c:1241
-> [   40.786668] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
-> [   40.786678] Preemption disabled at:[<  (null)>]   (null)
-> [   40.786681]
-> [   40.786692] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.19.0-rc4-00024-g7dca860 #36
-> [   40.786698] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [   40.786728] [<c0014a00>] (unwind_backtrace) from [<c0011980>] (show_stack+0x10/0x14)
-> [   40.786747] [<c0011980>] (show_stack) from [<c0449ba0>] (dump_stack+0x70/0xbc)
-> [   40.786767] [<c0449ba0>] (dump_stack) from [<c00c6124>] (kmem_cache_alloc+0xd8/0x170)
-> [   40.786785] [<c00c6124>] (kmem_cache_alloc) from [<c005d6f8>] (request_threaded_irq+0x64/0x128)
-> [   40.786804] [<c005d6f8>] (request_threaded_irq) from [<c0350b8c>] (exynos4_local_timer_setup+0xc0/0x13c)
-> [   40.786820] [<c0350b8c>] (exynos4_local_timer_setup) from [<c0350ca8>] (exynos4_mct_cpu_notify+0x30/0xa8)
-> [   40.786838] [<c0350ca8>] (exynos4_mct_cpu_notify) from [<c003b330>] (notifier_call_chain+0x44/0x84)
-> [   40.786857] [<c003b330>] (notifier_call_chain) from [<c0022fd4>] (__cpu_notify+0x28/0x44)
-> [   40.786873] [<c0022fd4>] (__cpu_notify) from [<c0013714>] (secondary_start_kernel+0xec/0x150)
-> [   40.786886] [<c0013714>] (secondary_start_kernel) from [<40008764>] (0x40008764)
->
-> Solution:
-> Clockevent irqs cannot be requested/freed every time cpu is
-> hot-plugged/unplugged as CPU_STARTING/CPU_DYING notifications
-> that signals hotplug or unplug events are sent with both preemption
-> and local interrupts disabled. Since request_irq() may sleep it is
-> moved to the initialization stage and performed for all possible
-> cpus prior putting them online. Then, in the case of hotplug event
-> the irq asociated with the given cpu will simply be enabled.
-> Similarly on cpu unplug event the interrupt is not freed but just
-> disabled.
->
-> Note that after successful request_irq() call for a clockevent device
-> associated to given cpu the requested irq is disabled (via disable_irq()).
-> That is to make things symmetric as we expect hotplug event as a next
-> thing (which will enable irq again). This should not pose any problems
-> because at the time of requesting irq the clockevent device is not
-> fully initialized yet, therefore should not produce interrupts at that point.
->
-> For disabling an irq at cpu unplug notification disable_irq_nosync() is
-> chosen which is a non-blocking function. This again shouldn't be a problem as
-> prior sending CPU_DYING notification interrupts are migrated away
-> from the cpu.
->
-> Fixes: 7114cd749a12 ("clocksource: exynos_mct: use (request/free)_irq calls for local timer registration")
-> Signed-off-by: Damian Eppel <d.eppel@samsung.com>
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> (Tested on Arndale Octa Board)
-> Tested-by: Marcin Jabrzyk <m.jabrzyk@samsung.com>
-> (Tested on Rinato B2 (Exynos 3250) board)
+Dear Kukjin,
 
-Hi Daniel and Thomas,
-
-Do you have any comments on this patch? Could you pick it up?
+This groups one fix missed in your last pull requst. This fixes suspend
+on Peach boards related to Marvell mwifiex driver. The driver was
+enabled for Exynos defconfig during merge window so currently
+the suspend on these boards on this config fails.
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit 77b0ffdc4bbd267e9589aa025047e512322fc643:
+
+  Merge branch 'v4.2-next/dt-samsung' into for-next (2015-05-09 04:03:46 +0900)
+
+are available in the git repository at:
+
+
+  https://github.com/krzk/linux.git tags/samsung-dt-fixes-4.1-2
+
+for you to fetch changes up to 2495ae559826c60e3ccde9850e3b38815725b9c9:
+
+  ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards (2015-05-11 11:00:00 +0900)
+
+----------------------------------------------------------------
+Fix for suspend on Peach boards related to Marvell mwifiex driver.
+The driver was enabled for Exynos defconfig during 4.1 merge window
+so currently the suspend on these boards on this config fails.
+
+----------------------------------------------------------------
+Javier Martinez Canillas (1):
+      ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
+
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
+ 2 files changed, 2 insertions(+)
