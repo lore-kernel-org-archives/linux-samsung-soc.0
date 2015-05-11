@@ -1,75 +1,64 @@
-From: Michal Suchanek <hramrach@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [PATCH] ARM: exynos_defconfig: add options to make wifi usable
-Date: Mon, 11 May 2015 14:23:09 +0200
-Message-ID: <CAOMqctTDwwbacrLZ8iS_VZKNTBayEfaSX-s50ekcuGE4E=eNfw@mail.gmail.com>
-References: <20150511105034.40580.qmail@dec59.ruk.cuni.cz> <5550919A.9090703@collabora.co.uk>
+Date: Mon, 11 May 2015 21:37:05 +0900
+Message-ID: <CAJKOXPdj9QH13nD14wQUZBt8iGRmrAWEgHH4LNjz11+b8Ydu1Q@mail.gmail.com>
+References: <20150511105034.40580.qmail@dec59.ruk.cuni.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5550919A.9090703@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f49.google.com ([209.85.216.49]:36627 "EHLO
+	mail-vn0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751290AbbEKMhG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 May 2015 08:37:06 -0400
+In-Reply-To: <20150511105034.40580.qmail@dec59.ruk.cuni.cz>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Michal Suchanek <hramrach@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11 May 2015 at 13:25, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Michal,
+2015-05-11 19:22 GMT+09:00 Michal Suchanek <hramrach@gmail.com>:
 >
-> On 05/11/2015 12:22 PM, Michal Suchanek wrote:
->> The Exynos defconfig includes mwifiex sdio support which is present on
->> some of the Exynos boards.
->>
->> For the WiFi to be usable two extra options are needed. Usermode
+> The Exynos defconfig includes mwifiex sdio support which is present on
+> some of the Exynos boards.
 >
-> Your subject line and the commit message are somehow misleading since
-> these options are needed to make the WiFi usable with your current setup.
+> For the WiFi to be usable two extra options are needed. Usermode
+> firmware helper to load out-of-kernel firmware and wireless extensions
+> so the interface can be configured with wireless-tools.
 >
->> firmware helper to load out-of-kernel firmware and wireless extensions
+> Signed-off-by: Michal Suchanek <hramrach@gmail.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> For example, this is only needed if the in-kernel fw loader is not
-> able to find the firmware but isn't needed if the fw is for example
-> in an initial ramdisk and the kernel is able to load it, built in the
-> kernel or if the mwifiex driver is built as a module.
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index d034c96..5d4ee83f 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -42,6 +42,7 @@ CONFIG_IP_PNP_BOOTP=y
+>  CONFIG_IP_PNP_RARP=y
+>  CONFIG_WIRELESS=y
+>  CONFIG_CFG80211=y
+> +CONFIG_CFG80211_WEXT=y
 
-I am not sure how is including the firmware in a ramdisk going to
-improve things over including it in my root filesystem. As far as I am
-aware it does not make any difference for the kernel.
+Hi,
 
-The firmware is not included in the kernel tree nor configured as
-extra firmware option in the defconfig, either. Otherwise the firmware
-loader would supposedly find the firmware and we would not have this
-discussion.
+No, the CFG80211_WEXT is the old interface. I think there were some
+plans to mark it deprecated. Anyway it should not be enabled by
+default and almost none of configs enable it.
 
-The mwifiex driver is configured as built-in in the defconfig so what
-happens when the driver is built as a module is not relevant for this
-defconfig.
+>  CONFIG_MWIFIEX=y
+>  CONFIG_MWIFIEX_SDIO=y
+>  CONFIG_RFKILL_REGULATOR=y
+> @@ -49,6 +50,7 @@ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+>  CONFIG_DEVTMPFS=y
+>  CONFIG_DEVTMPFS_MOUNT=y
+>  CONFIG_PROC_DEVICETREE=y
+> +CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
 
->
->> so the interface can be configured with wireless-tools.
->>
->
-> And wireless extensions is deprecated AFAIK and is only needed for old
-> user-space since most tools should had been converted to use the netlink
-> based CONFIG_CFG80211 interface instead.
->
-> I'm booting a debian jessie and have WiFi working without CFG80211_WEXT
-> for example.
+It is an fallback, not usual way of loading firmware. In typical cases
+this should not be needed. Why Exynos defconfig should be exceptional
+here?
 
-I'm booting Debian Jessie as well and for me WiFi is not working
-without CFG80211_WEXT for another example.
-
-So it might be that some tools have migrated to another interface but
-at first glance I have no idea what those tools might be in Debian so
-for me the WiFi is unusable without wireless extensions.
-
->
-> That doesn't mean that I'm against your patch (I'm always happy to enable
-> more config options if that makes the defconfig more useful) but the commit
-> message should be accurate about why a change has to be done.
-
-Do you have some specific suggestions about improvements to the commit message?
-
-Thanks
-
-Michal
+Best regards,
+Krzysztof
