@@ -1,121 +1,88 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RFT PATCH v2 2/3] drm/exynos: Constify exynos_drm_crtc_ops
-Date: Mon, 11 May 2015 22:29:25 +0900
-Message-ID: <5550AEB5.4020709@samsung.com>
-References: <1430957086-25005-1-git-send-email-k.kozlowski@samsung.com>
- <1430957086-25005-3-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1430957086-25005-3-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 00/13] ARM: dts: exynos4: labels for overriding nodes
+Date: Mon, 11 May 2015 22:42:40 +0900
+Message-ID: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:36660 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751857AbbEKNoT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 May 2015 09:44:19 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-T24gMjAxNeuFhCAwNeyblCAwN+ydvCAwOTowNCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBGcm9tOiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraS5rQGdtYWlsLmNvbT4KPiAK
-PiBUaGUgRXh5bm9zIERSTSBjb2RlIGRvZXMgbm90IG1vZGlmeSB0aGUgb3BzIHByb3ZpZGVkIGJ5
-IENSVEMgZHJpdmVyIGluCj4gZXh5bm9zX2RybV9jcnRjX2NyZWF0ZSgpIGNhbGwuCgpQbGVhc2Ug
-Y2hlY2sgY29kaW5nIHN0eWxlIHdpdGggY2hlY2twYXRjaC5wbCBiZWZvcmUgcG9zdGluZyBpdC4g
-SSBjYW4Kc2VlIGJlbG93IHdhcm5pbmcsCgpXQVJOSU5HOiBsaW5lIG92ZXIgODAgY2hhcmFjdGVy
-cwojMTQ2OiBGSUxFOiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jOjI0
-NDoKKwkJCQkJICAgICAgIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzICpvcHMsCgpX
-QVJOSU5HOiBsaW5lIG92ZXIgODAgY2hhcmFjdGVycwojMTU5OiBGSUxFOiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oOjI0OgorCQkJCQkgICAgICAgY29uc3Qgc3RydWN0
-IGV4eW5vc19kcm1fY3J0Y19vcHMgKm9wcywKCgpJIG1vZGlmaWVkIGFuZCBtZXJnZWQgYWxsIHBh
-dGNoZXMuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBL
-b3psb3dza2kgPGsua296bG93c2tpLmtAZ21haWwuY29tPgo+IAo+IC0tLQo+IENoYW5nZXMgc2lu
-Y2UgdjE6Cj4gTmV3IHBhdGNoLgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-czdfZHJtX2RlY29uLmMgfCAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9jcnRjLmMgICB8IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
-dGMuaCAgIHwgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2Lmgg
-ICAgfCAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8
-IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgIHwgMiAr
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgfCAyICstCj4g
-IDcgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKPiBpbmRleCAxZjdlMzNm
-NTlkZTYuLjNkMDBkZjc2MjIwZCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vczdfZHJtX2RlY29uLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-czdfZHJtX2RlY29uLmMKPiBAQCAtNzEwLDcgKzcxMCw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX2Rw
-bXMoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgaW50IG1vZGUpCj4gIAl9Cj4gIH0KPiAg
-Cj4gLXN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBkZWNvbl9jcnRjX29wcyA9IHsK
-PiArc3RhdGljIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzIGRlY29uX2NydGNfb3Bz
-ID0gewo+ICAJLmRwbXMgPSBkZWNvbl9kcG1zLAo+ICAJLm1vZGVfZml4dXAgPSBkZWNvbl9tb2Rl
-X2ZpeHVwLAo+ICAJLmNvbW1pdCA9IGRlY29uX2NvbW1pdCwKPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jcnRjLmMKPiBpbmRleCBlYjQ5MTk1Y2VjNWMuLjkzZjg3M2YxMWY2NCAx
-MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC0yNDEs
-NyArMjQxLDcgQEAgc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2RybV9jcnRjX2NyZWF0
-ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKPiAgCQkJCQkgICAgICAgc3RydWN0IGRybV9w
-bGFuZSAqcGxhbmUsCj4gIAkJCQkJICAgICAgIGludCBwaXBlLAo+ICAJCQkJCSAgICAgICBlbnVt
-IGV4eW5vc19kcm1fb3V0cHV0X3R5cGUgdHlwZSwKPiAtCQkJCQkgICAgICAgc3RydWN0IGV4eW5v
-c19kcm1fY3J0Y19vcHMgKm9wcywKPiArCQkJCQkgICAgICAgY29uc3Qgc3RydWN0IGV4eW5vc19k
-cm1fY3J0Y19vcHMgKm9wcywKPiAgCQkJCQkgICAgICAgdm9pZCAqY3R4KQo+ICB7Cj4gIAlzdHJ1
-Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YzsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmgKPiBpbmRleCAwZWNkOGZjNDVjZmYuLmVkMDk5NGIzY2I0NyAxMDA2
-NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oCj4gKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaAo+IEBAIC0yMSw3ICsy
-MSw3IEBAIHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19kcm1fY3J0Y19jcmVhdGUoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCj4gIAkJCQkJICAgICAgIHN0cnVjdCBkcm1fcGxhbmUg
-KnBsYW5lLAo+ICAJCQkJCSAgICAgICBpbnQgcGlwZSwKPiAgCQkJCQkgICAgICAgZW51bSBleHlu
-b3NfZHJtX291dHB1dF90eXBlIHR5cGUsCj4gLQkJCQkJICAgICAgIHN0cnVjdCBleHlub3NfZHJt
-X2NydGNfb3BzICpvcHMsCj4gKwkJCQkJICAgICAgIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2Ny
-dGNfb3BzICpvcHMsCj4gIAkJCQkJICAgICAgIHZvaWQgKmNvbnRleHQpOwo+ICBpbnQgZXh5bm9z
-X2RybV9jcnRjX2VuYWJsZV92Ymxhbmsoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IHBpcGUp
-Owo+ICB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZGV2LCBpbnQgcGlwZSk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-aAo+IGluZGV4IDQ0ZjEyOGEwM2FlYS4uMGU5NTEyMjZjYTA2IDEwMDY0NAo+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+IEBAIC0yMjYsNyArMjI2LDcgQEAgc3RydWN0IGV4
-eW5vc19kcm1fY3J0YyB7Cj4gIAl1bnNpZ25lZCBpbnQJCQlkcG1zOwo+ICAJd2FpdF9xdWV1ZV9o
-ZWFkX3QJCXBlbmRpbmdfZmxpcF9xdWV1ZTsKPiAgCXN0cnVjdCBkcm1fcGVuZGluZ192Ymxhbmtf
-ZXZlbnQJKmV2ZW50Owo+IC0Jc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMJKm9wczsKPiArCWNv
-bnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzCSpvcHM7Cj4gIAl2b2lkCQkJCSpjdHg7Cj4g
-IH07Cj4gIAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+IGluZGV4
-IDJmYjk1Y2NiNTg0MS4uNWMxYTE0ODUyNWY4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZmltZC5jCj4gQEAgLTk2Miw3ICs5NjIsNyBAQCBzdGF0aWMgdm9pZCBmaW1k
-X2RwX2Nsb2NrX2VuYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCBib29sIGVuYWJs
-ZSkKPiAgCXdyaXRlbChEUF9NSUVfQ0xLX0RQX0VOQUJMRSwgY3R4LT5yZWdzICsgRFBfTUlFX0NM
-S0NPTik7Cj4gIH0KPiAgCj4gLXN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBmaW1k
-X2NydGNfb3BzID0gewo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMg
-ZmltZF9jcnRjX29wcyA9IHsKPiAgCS5kcG1zID0gZmltZF9kcG1zLAo+ICAJLm1vZGVfZml4dXAg
-PSBmaW1kX21vZGVfZml4dXAsCj4gIAkuY29tbWl0ID0gZmltZF9jb21taXQsCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCj4gaW5kZXggMjdlODRlYzIxNjk0Li4xYjM0
-NzlhOGRiNWYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X3ZpZGkuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMK
-PiBAQCAtMjE3LDcgKzIxNyw3IEBAIHN0YXRpYyBpbnQgdmlkaV9jdHhfaW5pdGlhbGl6ZShzdHJ1
-Y3QgdmlkaV9jb250ZXh0ICpjdHgsCj4gIAlyZXR1cm4gMDsKPiAgfQo+ICAKPiAtc3RhdGljIHN0
-cnVjdCBleHlub3NfZHJtX2NydGNfb3BzIHZpZGlfY3J0Y19vcHMgPSB7Cj4gK3N0YXRpYyBjb25z
-dCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB2aWRpX2NydGNfb3BzID0gewo+ICAJLmRwbXMg
-PSB2aWRpX2RwbXMsCj4gIAkuZW5hYmxlX3ZibGFuayA9IHZpZGlfZW5hYmxlX3ZibGFuaywKPiAg
-CS5kaXNhYmxlX3ZibGFuayA9IHZpZGlfZGlzYWJsZV92YmxhbmssCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19taXhlci5jCj4gaW5kZXggZmJlYzc1MDU3NGU2Li5kNGFmZDFhYmUzNzMgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtMTEyNiw3ICsxMTI2
-LDcgQEAgaW50IG1peGVyX2NoZWNrX21vZGUoc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUp
-Cj4gIAlyZXR1cm4gLUVJTlZBTDsKPiAgfQo+ICAKPiAtc3RhdGljIHN0cnVjdCBleHlub3NfZHJt
-X2NydGNfb3BzIG1peGVyX2NydGNfb3BzID0gewo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5v
-c19kcm1fY3J0Y19vcHMgbWl4ZXJfY3J0Y19vcHMgPSB7Cj4gIAkuZHBtcwkJCT0gbWl4ZXJfZHBt
-cywKPiAgCS5lbmFibGVfdmJsYW5rCQk9IG1peGVyX2VuYWJsZV92YmxhbmssCj4gIAkuZGlzYWJs
-ZV92YmxhbmsJCT0gbWl4ZXJfZGlzYWJsZV92YmxhbmssCj4gCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+
+Changes since v3
+================
+1. New patches (12 and 13) for Exynos4412 Origen and Tiny4412.
+2. Rebased on top of my DTS-for-next branch:
+   repo: https://github.com/krzk/linux/
+   tag: samsung-dt-for-next-4.2-2
+
+Changes since v2
+================
+1. Fix typo in commit msg (lablels -> labels).
+
+
+Changes since v1
+================
+1. Re-phrased the description (phandle->label). Suggested by Arnd.
+
+Description
+===========
+
+The label-based notation reduces possible mistakes when overriding
+nodes by child DTSI and board files and reduces duplication
+of addresses.
+
+The patchset refactors Exynos4 boards to use labels for overriding nodes.
+
+Tested by comparison of decompiled DTB for each commit. The output DTB
+is the same.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (13):
+  ARM: dts: Add labels to Exynos4 nodes
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4210
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4210
+    Origen
+  ARM: dts: exynos4: Use labels for overriding nodes in SMDKv310
+  ARM: dts: exynos4: Use labels for overriding nodes in Trats
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4212
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4x12
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4412
+  ARM: dts: exynos4: Use labels for overriding nodes in Odroid
+  ARM: dts: exynos4: Use labels for overriding nodes in SMDK4412
+  ARM: dts: exynos4: Use labels for overriding nodes in Trats2
+  ARM: dts: exynos4: Use labels for overriding nodes in Exynos4412
+    Origen
+  ARM: dts: exynos4: Use labels for overriding nodes in Tiny4412
+
+ arch/arm/boot/dts/exynos4.dtsi                  |   22 +-
+ arch/arm/boot/dts/exynos4210-origen.dts         |  418 +++----
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi       |    6 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |  280 ++---
+ arch/arm/boot/dts/exynos4210-trats.dts          |  592 +++++-----
+ arch/arm/boot/dts/exynos4210.dtsi               |   49 +-
+ arch/arm/boot/dts/exynos4212.dtsi               |   12 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  732 ++++++-------
+ arch/arm/boot/dts/exynos4412-odroidx.dts        |   16 +-
+ arch/arm/boot/dts/exynos4412-origen.dts         |  892 +++++++--------
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |  210 ++--
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |   54 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 1332 ++++++++++++-----------
+ arch/arm/boot/dts/exynos4412.dtsi               |   20 +-
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi       |    8 +-
+ arch/arm/boot/dts/exynos4x12.dtsi               |  218 ++--
+ 16 files changed, 2431 insertions(+), 2430 deletions(-)
+
+-- 
+2.1.4
