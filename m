@@ -1,126 +1,57 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCHv3 2/4] phy: core: Add devm_of_phy_get_by_index to phy-core
-Date: Mon, 11 May 2015 20:39:57 +0530
-Message-ID: <5550C645.6090106@ti.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com> <1429743853-10254-3-git-send-email-arun.ramamurthy@broadcom.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH v3] ARM: dts: Add HS400 support for exynos5422-odroidxu3
+Date: Mon, 11 May 2015 17:26:05 +0200
+Message-ID: <5550CA0D.3050003@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1429743853-10254-3-git-send-email-arun.ramamurthy@broadcom.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>Gregory CLEMENT <gre>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, Jonathan Richardson <jonathar@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:48113 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754463AbbEKP0J (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 May 2015 11:26:09 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>, 'Jaehoon Chung' <jh80.chung@samsung.com>
 
-Hi,
+HS400 timing values are added for exynos5422-odroidxu3 board.
 
-On Thursday 23 April 2015 04:34 AM, Arun Ramamurthy wrote:
-> Some generic drivers, such as ehci, may use multiple phys and for such
-> drivers referencing phy(s) by name(s) does not make sense. Instead of
-> inventing new naming schemes and using custom code to iterate through them,
-> such drivers are better of using nameless phy bindings and using this newly
-> introduced API to iterate through them.
->
-> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-> Reviewed-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> ---
->   Documentation/phy.txt   |  7 ++++++-
->   drivers/phy/phy-core.c  | 32 ++++++++++++++++++++++++++++++++
->   include/linux/phy/phy.h |  8 ++++++++
->   3 files changed, 46 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/phy.txt b/Documentation/phy.txt
-> index 371361c..b388c5a 100644
-> --- a/Documentation/phy.txt
-> +++ b/Documentation/phy.txt
-> @@ -76,6 +76,8 @@ struct phy *phy_get(struct device *dev, const char *string);
->   struct phy *phy_optional_get(struct device *dev, const char *string);
->   struct phy *devm_phy_get(struct device *dev, const char *string);
->   struct phy *devm_phy_optional_get(struct device *dev, const char *string);
-> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
-> +				     int index);
->
->   phy_get, phy_optional_get, devm_phy_get and devm_phy_optional_get can
->   be used to get the PHY. In the case of dt boot, the string arguments
-> @@ -86,7 +88,10 @@ successful PHY get. On driver detach, release function is invoked on
->   the the devres data and devres data is freed. phy_optional_get and
->   devm_phy_optional_get should be used when the phy is optional. These
->   two functions will never return -ENODEV, but instead returns NULL when
-> -the phy cannot be found.
-> +the phy cannot be found.Some generic drivers, such as ehci, may use multiple
-> +phys and for such drivers referencing phy(s) by name(s) does not make sense. In
-> +this case, devm_of_phy_get_by_index can be used to get a phy reference based on
-> +the index.
->
->   It should be noted that NULL is a valid phy reference. All phy
->   consumer calls on the NULL phy become NOPs. That is the release calls,
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 3791838..964a84d 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -623,6 +623,38 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
->   EXPORT_SYMBOL_GPL(devm_of_phy_get);
->
->   /**
-> + * devm_of_phy_get_by_index() - lookup and obtain a reference to a phy by index.
-> + * @dev: device that requests this phy
-> + * @np: node containing the phy
-> + * @index: index of the phy
-> + *
-> + * Gets the phy using _of_phy_get(), and associates a device with it using
-> + * devres. On driver detach, release function is invoked on the devres data,
-> + * then, devres data is freed.
-> + *
-> + */
-> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
-> +				     int index)
-> +{
-> +	struct phy **ptr, *phy;
-> +
-> +	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
-> +	if (!ptr)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	phy = _of_phy_get(np, index);
-> +	if (!IS_ERR(phy)) {
-> +		*ptr = phy;
-> +		devres_add(dev, ptr);
-> +	} else {
-> +		devres_free(ptr);
-> +	}
-> +
-> +	return phy;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
-> +
-> +/**
->    * phy_create() - create a new phy
->    * @dev: device that is creating the new phy
->    * @node: device node of the phy
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index a0197fa..978d5af 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -133,6 +133,8 @@ struct phy *devm_phy_get(struct device *dev, const char *string);
->   struct phy *devm_phy_optional_get(struct device *dev, const char *string);
->   struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
->   			    const char *con_id);
-> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
-> +				     int index);
->   void phy_put(struct phy *phy);
->   void devm_phy_put(struct device *dev, struct phy *phy);
->   struct phy *of_phy_get(struct device_node *np, const char *con_id);
-> @@ -261,6 +263,12 @@ static inline struct phy *devm_of_phy_get(struct device *dev,
->   	return ERR_PTR(-ENOSYS);
->   }
->
-> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
-> +				     int index);
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+Changes since v2:
+1. Rebased onto linux-samsung/for-next
+2. Added Acked-by tag
+Changes since v1:
+1. Dropped num_slots
+2. Rebased onto 4.1-rc3
+3. Added Acked-by tag
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Fixed the compilation error because of the ';' in the end and merged it to 
-linux-phy.
-
-Thanks
-Kishon
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index cb649b1..8dd8e8e 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -312,10 +312,14 @@
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
++	samsung,dw-mshc-hs400-timing = <0 2>;
++	samsung,read-strobe-delay = <90>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
+ };
+ 
+ &mmc_2 {
+--
+1.9.1 
