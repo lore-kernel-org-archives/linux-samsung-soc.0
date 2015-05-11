@@ -1,24 +1,27 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: EXYNOS: dts: DTS fixes for 4.1, second try
-Date: Mon, 11 May 2015 12:10:19 +0900
-Message-ID: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [GIT PULL] ARM: EXYNOS: Fixes for 4.1, second try
+Date: Mon, 11 May 2015 12:11:34 +0900
+Message-ID: <1431313894-16934-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:58888 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751870AbbEKDL2 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:53830 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752218AbbEKDLs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 May 2015 23:11:28 -0400
+	Sun, 10 May 2015 23:11:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Dear Kukjin,
 
-This groups one fix missed in your last pull requst. This fixes suspend
-on Peach boards related to Marvell mwifiex driver. The driver was
-enabled for Exynos defconfig during merge window so currently
-the suspend on these boards on this config fails.
+This groups important fix for current RC cycle. The patch was present
+on mailing list for quite long. It was tested. 
+
+I responded to all your questions without any follow ups from your side.
+The only issue left - replacing soc_is_exynos() with
+of_machine_is_compatible() is done in separate patch because the fix
+should not contain unrelated changes.
 
 Best regards,
 Krzysztof
@@ -31,21 +34,23 @@ The following changes since commit 77b0ffdc4bbd267e9589aa025047e512322fc643:
 are available in the git repository at:
 
 
-  https://github.com/krzk/linux.git tags/samsung-dt-fixes-4.1-2
+  https://github.com/krzk/linux.git tags/samsung-fixes-4.1-2
 
-for you to fetch changes up to 2495ae559826c60e3ccde9850e3b38815725b9c9:
+for you to fetch changes up to b82f3a05ff0b5eaf2c9900eeb34e58a6624db8d9:
 
-  ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards (2015-05-11 11:00:00 +0900)
-
-----------------------------------------------------------------
-Fix for suspend on Peach boards related to Marvell mwifiex driver.
-The driver was enabled for Exynos defconfig during 4.1 merge window
-so currently the suspend on these boards on this config fails.
+  ARM: EXYNOS: Fix failed second suspend on Exynos4 (2015-05-11 11:03:09 +0900)
 
 ----------------------------------------------------------------
-Javier Martinez Canillas (1):
-      ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
+Fixes failed second suspend to RAM on Exynos4412 based Trats2 board. This has
+shown up after enabling L2 cache but actually the "use delayed reset assertion"
+feature is to be blamed.
 
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
- 2 files changed, 2 insertions(+)
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: EXYNOS: Fix failed second suspend on Exynos4
+
+ arch/arm/mach-exynos/common.h  |  2 ++
+ arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
+ arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
+ arch/arm/mach-exynos/suspend.c |  3 +++
+ 4 files changed, 34 insertions(+), 37 deletions(-)
