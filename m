@@ -1,89 +1,127 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: EXYNOS: Improvements for 4.2, second try
-Date: Mon, 11 May 2015 12:14:24 +0900
-Message-ID: <1431314064-17118-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:53842 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751679AbbEKDOo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 May 2015 23:14:44 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2] clocksource: exynos_mct: fix for sleeping in atomic
+ ctx handling cpu hotplug notif.
+Date: Mon, 11 May 2015 09:30:15 +0200
+Message-ID: <55505A87.3030807@linaro.org>
+References: <1426151496-5509-1-git-send-email-d.eppel@samsung.com> <CAJKOXPcXk+xiYUoy6QnfRC2bPsNpTqLYp6-0X1xgCvZ4s5nGGw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPcXk+xiYUoy6QnfRC2bPsNpTqLYp6-0X1xgCvZ4s5nGGw@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, tglx@linutronix.de
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, Damian Eppel <d.eppel@samsung.com>, m.jabrzyk@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Sergiy Kibrik <sakib@meta.ua>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Dear Kukjin,
+On 05/11/2015 03:33 AM, Krzysztof Kozlowski wrote:
+> 2015-03-12 18:11 GMT+09:00 Damian Eppel <d.eppel@samsung.com>:
+>> This is to fix an issue of sleeping in atomic context when processin=
+g
+>> hotplug notifications in Exynos MCT(Multi-Core Timer).
+>> The issue was reproducible on Exynos 3250 (Rinato board) and Exynos =
+5420
+>> (Arndale Octa board).
+>>
+>> Whilst testing cpu hotplug events on kernel configured with DEBUG_PR=
+EEMPT
+>> and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by calli=
+ng
+>> request_irq() and free_irq() in the context of hotplug notification
+>> (which is in this case atomic context).
+>>
+>> root@target:~# echo 0 > /sys/devices/system/cpu/cpu1/online
+>>
+>> [   25.157867] IRQ18 no longer affine to CPU1
+>> ...
+>> [   25.158445] CPU1: shutdown
+>>
+>> root@target:~# echo 1 > /sys/devices/system/cpu/cpu1/online
+>>
+>> [   40.785859] CPU1: Software reset
+>> [   40.786660] BUG: sleeping function called from invalid context at=
+ mm/slub.c:1241
+>> [   40.786668] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: s=
+wapper/1
+>> [   40.786678] Preemption disabled at:[<  (null)>]   (null)
+>> [   40.786681]
+>> [   40.786692] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.19.0-rc4-=
+00024-g7dca860 #36
+>> [   40.786698] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+>> [   40.786728] [<c0014a00>] (unwind_backtrace) from [<c0011980>] (sh=
+ow_stack+0x10/0x14)
+>> [   40.786747] [<c0011980>] (show_stack) from [<c0449ba0>] (dump_sta=
+ck+0x70/0xbc)
+>> [   40.786767] [<c0449ba0>] (dump_stack) from [<c00c6124>] (kmem_cac=
+he_alloc+0xd8/0x170)
+>> [   40.786785] [<c00c6124>] (kmem_cache_alloc) from [<c005d6f8>] (re=
+quest_threaded_irq+0x64/0x128)
+>> [   40.786804] [<c005d6f8>] (request_threaded_irq) from [<c0350b8c>]=
+ (exynos4_local_timer_setup+0xc0/0x13c)
+>> [   40.786820] [<c0350b8c>] (exynos4_local_timer_setup) from [<c0350=
+ca8>] (exynos4_mct_cpu_notify+0x30/0xa8)
+>> [   40.786838] [<c0350ca8>] (exynos4_mct_cpu_notify) from [<c003b330=
+>] (notifier_call_chain+0x44/0x84)
+>> [   40.786857] [<c003b330>] (notifier_call_chain) from [<c0022fd4>] =
+(__cpu_notify+0x28/0x44)
+>> [   40.786873] [<c0022fd4>] (__cpu_notify) from [<c0013714>] (second=
+ary_start_kernel+0xec/0x150)
+>> [   40.786886] [<c0013714>] (secondary_start_kernel) from [<40008764=
+>] (0x40008764)
+>>
+>> Solution:
+>> Clockevent irqs cannot be requested/freed every time cpu is
+>> hot-plugged/unplugged as CPU_STARTING/CPU_DYING notifications
+>> that signals hotplug or unplug events are sent with both preemption
+>> and local interrupts disabled. Since request_irq() may sleep it is
+>> moved to the initialization stage and performed for all possible
+>> cpus prior putting them online. Then, in the case of hotplug event
+>> the irq asociated with the given cpu will simply be enabled.
+>> Similarly on cpu unplug event the interrupt is not freed but just
+>> disabled.
+>>
+>> Note that after successful request_irq() call for a clockevent devic=
+e
+>> associated to given cpu the requested irq is disabled (via disable_i=
+rq()).
+>> That is to make things symmetric as we expect hotplug event as a nex=
+t
+>> thing (which will enable irq again). This should not pose any proble=
+ms
+>> because at the time of requesting irq the clockevent device is not
+>> fully initialized yet, therefore should not produce interrupts at th=
+at point.
+>>
+>> For disabling an irq at cpu unplug notification disable_irq_nosync()=
+ is
+>> chosen which is a non-blocking function. This again shouldn't be a p=
+roblem as
+>> prior sending CPU_DYING notification interrupts are migrated away
+>> from the cpu.
+>>
+>> Fixes: 7114cd749a12 ("clocksource: exynos_mct: use (request/free)_ir=
+q calls for local timer registration")
+>> Signed-off-by: Damian Eppel <d.eppel@samsung.com>
+>> Cc: <stable@vger.kernel.org>
+>> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> (Tested on Arndale Octa Board)
+>> Tested-by: Marcin Jabrzyk <m.jabrzyk@samsung.com>
+>> (Tested on Rinato B2 (Exynos 3250) board)
+>
+> Hi Daniel and Thomas,
+>
+> Do you have any comments on this patch? Could you pick it up?
 
-Updated pull request, replacing also the usage of soc_is_exynos4()
-with of_machine_is_compatible(). You requested this in comments
-for "ARM: EXYNOS: Fix failed second suspend on Exynos4".
-
-This adds coupled cpuidle for Exynos3250 and improves the Exynos
-code in few places. Everything for upcoming 4.2 merge window.
-Description along with a tag.
-
-Best regards,
-Krzysztof
+Not yet.
 
 
-The following changes since commit b82f3a05ff0b5eaf2c9900eeb34e58a6624db8d9:
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
-  ARM: EXYNOS: Fix failed second suspend on Exynos4 (2015-05-11 11:03:09 +0900)
-
-are available in the git repository at:
-
-  https://github.com/krzk/linux.git tags/samsung-for-next-4.2-2
-
-for you to fetch changes up to c91889378098ff0bb5fe6f422a3c0eb554b34930:
-
-  ARM: plat-samsung: Constify platform_device_id (2015-05-11 11:05:31 +0900)
-
-----------------------------------------------------------------
-Extending cpuidle driver and improvements for Exynos based boards:
-1. Replace soc_is_exynos4() with of_machine_is_compatible().
-2. Add missing return-value checks and of_node_put() for power domain
-   driver.
-3. Fix missing clk_prepare in S3C24XX ADC driver.
-4. Rework clock handling when switching power domains on/off. Instead
-   of settting fixed parent in DTS we grab the parent clock before
-   turning the domain off.
-5. Add coupled cpuidle support for Exynos3250 to an existing
-   cpuidle-exynos driver. As a result it enables AFTR mode
-   (ARM-Off Top-Running) to be used by default on Exynos3250
-   without the need to hot unplug CPU1 first.
-6. Constify irq_domain_ops and platform_device_id.
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (5):
-      ARM: EXYNOS: fix exynos_boot_secondary() return value on timeout
-      ARM: EXYNOS: make exynos_core_restart() less verbose
-      ARM: EXYNOS: add exynos_set_boot_addr() helper
-      ARM: EXYNOS: add exynos_get_boot_addr() helper
-      cpuidle: exynos: add coupled cpuidle support for Exynos3250
-
-Krzysztof Kozlowski (8):
-      ARM: EXYNOS: Use of_machine_is_compatible instead of soc_is_exynos4
-      ARM: EXYNOS: Handle of of_iomap() failure
-      ARM: EXYNOS: Handle of_find_device_by_node and kstrdup failures
-      ARM: EXYNOS: Add missing of_node_put() when parsing power domains
-      ARM: EXYNOS: Get current parent clock for power domain on/off
-      ARM: dts: Use last parent for clocks during power domain on/off
-      ARM: EXYNOS: Constify irq_domain_ops
-      ARM: plat-samsung: Constify platform_device_id
-
-Sergiy Kibrik (1):
-      ARM: SAMSUNG: fix clk_enable() WARNing in S3C24XX ADC
-
- .../bindings/arm/exynos/power_domain.txt           |  7 +-
- arch/arm/boot/dts/exynos5420.dtsi                  | 13 +---
- arch/arm/include/asm/firmware.h                    |  4 +
- arch/arm/mach-exynos/common.h                      |  4 +-
- arch/arm/mach-exynos/exynos.c                      |  5 +-
- arch/arm/mach-exynos/firmware.c                    | 18 +++++
- arch/arm/mach-exynos/platsmp.c                     | 86 +++++++++++++++-------
- arch/arm/mach-exynos/pm.c                          | 51 +++++++++++--
- arch/arm/mach-exynos/pm_domains.c                  | 44 ++++++++---
- arch/arm/mach-exynos/suspend.c                     |  2 +-
- arch/arm/plat-samsung/adc.c                        |  6 +-
- 11 files changed, 176 insertions(+), 64 deletions(-)
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
