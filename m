@@ -1,37 +1,63 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 3/3] clocksource: exynos_mct: Remove old platform mct_init()
-Date: Mon, 11 May 2015 16:06:25 +0200
-Message-ID: <5550B761.9080208@linaro.org>
-References: <1430368973-23786-1-git-send-email-k.kozlowski@samsung.com> <1430368973-23786-3-git-send-email-k.kozlowski@samsung.com>
+From: Mel Gorman <mgorman@suse.de>
+Subject: Re: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
+Date: Mon, 11 May 2015 15:47:07 +0100
+Message-ID: <20150511144707.GP2462@suse.de>
+References: <1430897296-5469-1-git-send-email-jack@suse.cz>
+ <1430897296-5469-3-git-send-email-jack@suse.cz>
+ <20150508144922.GO2462@suse.de>
+ <20150511140019.GD25034@quack.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430368973-23786-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Content-Type: text/plain; charset=iso-8859-15
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:55884 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751292AbbEKOrN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 May 2015 10:47:13 -0400
+Content-Disposition: inline
+In-Reply-To: <20150511140019.GD25034@quack.suse.cz>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On 04/30/2015 06:42 AM, Krzysztof Kozlowski wrote:
-> Since commit 228e3023eb04 ("Merge tag 'mct-exynos-for-v3.10' of ...")=
- the
-> mct_init() was superseded by mct_init_dt() and is not referenced
-> anywhere. Remove it.
+On Mon, May 11, 2015 at 04:00:19PM +0200, Jan Kara wrote:
+> > > +int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+> > > +		     bool write, bool force, struct frame_vector *vec)
+> > > +{
+> > > +	struct mm_struct *mm = current->mm;
+> > > +	struct vm_area_struct *vma;
+> > > +	int ret = 0;
+> > > +	int err;
+> > > +	int locked = 1;
+> > > +
+> > 
+> > bool locked.
+>   It cannot be bool. It is passed to get_user_pages_locked() which expects
+> int *.
+> 
+
+My bad.
+
+> > > +int frame_vector_to_pages(struct frame_vector *vec)
+> > > +{
+> > 
+> > I think it's probably best to make the relevant counters in frame_vector
+> > signed and limit the maximum possible size of it. It's still not putting
+> > any practical limit on the size of the frame_vector.
 >
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>   I don't see a reason why counters in frame_vector should be signed... Can
+> you share your reason?  I've added a check into frame_vector_create() to
+> limit number of frames to INT_MAX / sizeof(void *) / 2 to avoid arithmetics
+> overflow. Thanks for review!
+> 
 
-Applied to my tree for 4.2
+Only that the return value of frame_vector_to_pages() returns int where
+as the potential range that is converted is unsigned int. I don't think
+there are any mistakes dealing with signed/unsigned but I don't see any
+advantage of using unsigned either and limiting it to INT_MAX either.
+It's not a big deal.
 
-Thanks !
-
-   -- Daniel
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+-- 
+Mel Gorman
+SUSE Labs
