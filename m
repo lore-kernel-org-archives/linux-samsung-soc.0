@@ -1,78 +1,61 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: [PATCH v2] ARM: dts: Add HS400 support for exynos5422-odroidxu3
-Date: Mon, 11 May 2015 15:49:16 +0200
-Message-ID: <5550B35C.7040302@fivetechno.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo"
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 08/13] ARM: dts: exynos4: Use labels for overriding nodes in Exynos4412
+Date: Mon, 11 May 2015 22:42:48 +0900
+Message-ID: <1431351773-2031-9-git-send-email-k.kozlowski.k@gmail.com>
+References: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:46125 "EHLO
-	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754457AbbEKNt3 (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:35535 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932206AbbEKNor (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 May 2015 09:49:29 -0400
+	Mon, 11 May 2015 09:44:47 -0400
+In-Reply-To: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Usage of labels instead of full paths reduces possible mistakes when
+overriding nodes.
 
-HS400 timing values are added for exynos5422-odroidxu3 board.
-
-Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
-Changes since v1:
-1. Dropped num_slots
-2. Rebased onto 4.1-rc3
-3. Added Acked-by tag
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/d=
-ts/exynos5422-odroidxu3.dts
-index edc25cf..cf86ab2 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -311,10 +311,14 @@
- 	samsung,dw-mshc-ciu-div =3D <3>;
- 	samsung,dw-mshc-sdr-timing =3D <0 4>;
- 	samsung,dw-mshc-ddr-timing =3D <0 2>;
-+	samsung,dw-mshc-hs400-timing =3D <0 2>;
-+	samsung,read-strobe-delay =3D <90>;
- 	pinctrl-names =3D "default";
--	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_rcl=
-k>;
- 	bus-width =3D <8>;
- 	cap-mmc-highspeed;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 68ad43b391ae..b78ada70bd05 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -54,19 +54,19 @@
+ 		};
+ 	};
+ 
+-	combiner: interrupt-controller@10440000 {
+-		samsung,combiner-nr = <20>;
+-	};
+-
+ 	pmu {
+ 		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
+ 	};
++};
+ 
+-	gic: interrupt-controller@10490000 {
+-		cpu-offset = <0x4000>;
+-	};
++&pmu_system_controller {
++	compatible = "samsung,exynos4412-pmu", "syscon";
++};
+ 
+-	pmu_system_controller: system-controller@10020000 {
+-		compatible = "samsung,exynos4412-pmu", "syscon";
+-	};
++&combiner {
++	samsung,combiner-nr = <20>;
++};
++
++&gic {
++	cpu-offset = <0x4000>;
  };
-=20
- &mmc_2 {
---=20
-1.9.1
-
-
-
---rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEARECAAYFAlVQs2QACgkQ7DLr+WDJfp5h0wCgqnCthM23Eqs4PwvPAfd0ZPJW
-+IUAn2YWUA0+JnEqlTzFLPtJjusb7RJP
-=Zg/X
------END PGP SIGNATURE-----
-
---rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo--
+-- 
+2.1.4
