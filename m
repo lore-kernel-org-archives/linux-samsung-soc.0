@@ -1,50 +1,91 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v4 06/13] ARM: dts: exynos4: Use labels for overriding nodes in Exynos4212
-Date: Mon, 11 May 2015 22:42:46 +0900
-Message-ID: <1431351773-2031-7-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 13/13] ARM: dts: exynos4: Use labels for overriding nodes in Tiny4412
+Date: Mon, 11 May 2015 22:42:53 +0900
+Message-ID: <1431351773-2031-14-git-send-email-k.kozlowski.k@gmail.com>
 References: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:34437 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932173AbbEKNol (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 May 2015 09:44:41 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Usage of labels instead of full paths reduces possible mistakes when
 overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos4212.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/exynos4412-tiny4412.dts | 54 +++++++++++++++----------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 5be03288f1ee..d9c8efeef208 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -41,12 +41,12 @@
- 			reg = <0xA01>;
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index d46fd4c2aeaa..525684ca8dc0 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -56,33 +56,6 @@
  		};
  	};
-+};
  
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <18>;
+-	rtc@10070000 {
+-		status = "okay";
 -	};
-+&combiner {
-+	samsung,combiner-nr = <18>;
-+};
- 
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x8000>;
+-
+-	sdhci@12530000 {
+-		bus-width = <4>;
+-		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-		pinctrl-names = "default";
+-		status = "okay";
 -	};
-+&gic {
-+	cpu-offset = <0x8000>;
+-
+-	serial@13800000 {
+-		status = "okay";
+-	};
+-
+-	serial@13810000 {
+-		status = "okay";
+-	};
+-
+-	serial@13820000 {
+-		status = "okay";
+-	};
+-
+-	serial@13830000 {
+-		status = "okay";
+-	};
+-
+ 	fixed-rate-clocks {
+ 		xxti {
+ 			compatible = "samsung,clock-xxti";
+@@ -95,3 +68,30 @@
+ 		};
+ 	};
  };
++
++&rtc {
++	status = "okay";
++};
++
++&sdhci_2 {
++	bus-width = <4>;
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&serial_0 {
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&serial_2 {
++	status = "okay";
++};
++
++&serial_3 {
++	status = "okay";
++};
 -- 
 2.1.4
