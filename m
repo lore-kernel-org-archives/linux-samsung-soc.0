@@ -1,286 +1,78 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v4 07/13] ARM: dts: exynos4: Use labels for overriding nodes
- in Exynos4x12
-Date: Mon, 11 May 2015 22:42:47 +0900
-Message-ID: <1431351773-2031-8-git-send-email-k.kozlowski.k@gmail.com>
-References: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH v2] ARM: dts: Add HS400 support for exynos5422-odroidxu3
+Date: Mon, 11 May 2015 15:49:16 +0200
+Message-ID: <5550B35C.7040302@fivetechno.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:46125 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754457AbbEKNt3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 May 2015 09:49:29 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>, Markus Reichl <m.reichl@fivetechno.de>, 'Jaehoon Chung' <jh80.chung@samsung.com>
 
-Usage of labels instead of full paths reduces possible mistakes when
-overriding nodes.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+HS400 timing values are added for exynos5422-odroidxu3 board.
+
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
 ---
- arch/arm/boot/dts/exynos4x12.dtsi | 216 +++++++++++++++++++-------------------
- 1 file changed, 108 insertions(+), 108 deletions(-)
+Changes since v1:
+1. Dropped num_slots
+2. Rebased onto 4.1-rc3
+3. Added Acked-by tag
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 8cd27641cfb7..802116eed11b 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -96,32 +96,6 @@
- 		};
- 	};
- 
--	combiner: interrupt-controller@10440000 {
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
--	};
--
--	pinctrl_0: pinctrl@11400000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x11400000 0x1000>;
--		interrupts = <0 47 0>;
--	};
--
--	pinctrl_1: pinctrl@11000000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x11000000 0x1000>;
--		interrupts = <0 46 0>;
--
--		wakup_eint: wakeup-interrupt-controller {
--			compatible = "samsung,exynos4210-wakeup-eint";
--			interrupt-parent = <&gic>;
--			interrupts = <0 32 0>;
--		};
--	};
--
- 	adc: adc@126C0000 {
- 		compatible = "samsung,exynos-adc-v1";
- 		reg = <0x126C0000 0x100>;
-@@ -135,30 +109,6 @@
- 		status = "disabled";
- 	};
- 
--	pinctrl_2: pinctrl@03860000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x03860000 0x1000>;
--		interrupt-parent = <&combiner>;
--		interrupts = <10 0>;
--	};
--
--	pinctrl_3: pinctrl@106E0000 {
--		compatible = "samsung,exynos4x12-pinctrl";
--		reg = <0x106E0000 0x1000>;
--		interrupts = <0 72 0>;
--	};
--
--	pmu_system_controller: system-controller@10020000 {
--		compatible = "samsung,exynos4212-pmu", "syscon";
--		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--				"clkout4", "clkout8", "clkout9";
--		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--			<&clock CLK_XUSBXTI>;
--		#clock-cells = <1>;
--	};
--
- 	g2d: g2d@10800000 {
- 		compatible = "samsung,exynos4212-g2d";
- 		reg = <0x10800000 0x1000>;
-@@ -173,40 +123,7 @@
- 			 <&clock CLK_PIXELASYNCM0>, <&clock CLK_PIXELASYNCM1>;
- 		clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
- 
--		fimc_0: fimc@11800000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <4224 8192 1920 4224>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,cam-if;
--		};
--
--		fimc_1: fimc@11810000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <4224 8192 1920 4224>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,cam-if;
--		};
--
--		fimc_2: fimc@11820000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <4224 8192 1920 4224>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,lcd-wb;
--			samsung,cam-if;
--		};
--
--		fimc_3: fimc@11830000 {
--			compatible = "samsung,exynos4212-fimc";
--			samsung,pix-limits = <1920 8192 1366 1920>;
--			samsung,rotators = <0>;
--			samsung,mainscaler-ext;
--			samsung,isp-wb;
--			samsung,lcd-wb;
--		};
--
-+		/* fimc_[0-3] are configured outside, under phandles */
- 		fimc_lite_0: fimc-lite@12390000 {
- 			compatible = "samsung,exynos4212-fimc-lite";
- 			reg = <0x12390000 0x1000>;
-@@ -283,34 +200,117 @@
- 		clock-names = "biu", "ciu";
- 		status = "disabled";
- 	};
-+};
- 
--	exynos-usbphy@125B0000 {
--		compatible = "samsung,exynos4x12-usb2-phy";
--		samsung,sysreg-phandle = <&sys_reg>;
--	};
-+&combiner {
-+	interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+		     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+		     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-+		     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
-+};
- 
--	tmu@100C0000 {
--		compatible = "samsung,exynos4412-tmu";
--		interrupt-parent = <&combiner>;
--		interrupts = <2 4>;
--		reg = <0x100C0000 0x100>;
--		clocks = <&clock 383>;
--		clock-names = "tmu_apbif";
--		status = "disabled";
--	};
-+&exynos_usbphy {
-+	compatible = "samsung,exynos4x12-usb2-phy";
-+	samsung,sysreg-phandle = <&sys_reg>;
-+};
- 
--	jpeg-codec@11840000 {
--		compatible = "samsung,exynos4212-jpeg";
--	};
-+&fimc_0 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <4224 8192 1920 4224>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,cam-if;
-+};
- 
--	hdmi: hdmi@12D00000 {
--		compatible = "samsung,exynos4212-hdmi";
--	};
-+&fimc_1 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <4224 8192 1920 4224>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,cam-if;
-+};
-+
-+&fimc_2 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <4224 8192 1920 4224>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,lcd-wb;
-+	samsung,cam-if;
-+};
-+
-+&fimc_3 {
-+	compatible = "samsung,exynos4212-fimc";
-+	samsung,pix-limits = <1920 8192 1366 1920>;
-+	samsung,rotators = <0>;
-+	samsung,mainscaler-ext;
-+	samsung,isp-wb;
-+	samsung,lcd-wb;
-+};
-+
-+&hdmi {
-+	compatible = "samsung,exynos4212-hdmi";
-+};
-+
-+&jpeg_codec {
-+	compatible = "samsung,exynos4212-jpeg";
-+};
-+
-+&mixer {
-+	compatible = "samsung,exynos4212-mixer";
-+	clock-names = "mixer", "hdmi", "sclk_hdmi", "vp";
-+	clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
-+		 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>;
-+};
- 
--	mixer: mixer@12C10000 {
--		compatible = "samsung,exynos4212-mixer";
--		clock-names = "mixer", "hdmi", "sclk_hdmi", "vp";
--		clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
--			 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>;
-+&pinctrl_0 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x11400000 0x1000>;
-+	interrupts = <0 47 0>;
-+};
-+
-+&pinctrl_1 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x11000000 0x1000>;
-+	interrupts = <0 46 0>;
-+
-+	wakup_eint: wakeup-interrupt-controller {
-+		compatible = "samsung,exynos4210-wakeup-eint";
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 32 0>;
- 	};
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/d=
+ts/exynos5422-odroidxu3.dts
+index edc25cf..cf86ab2 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -311,10 +311,14 @@
+ 	samsung,dw-mshc-ciu-div =3D <3>;
+ 	samsung,dw-mshc-sdr-timing =3D <0 4>;
+ 	samsung,dw-mshc-ddr-timing =3D <0 2>;
++	samsung,dw-mshc-hs400-timing =3D <0 2>;
++	samsung,read-strobe-delay =3D <90>;
+ 	pinctrl-names =3D "default";
+-	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_rcl=
+k>;
+ 	bus-width =3D <8>;
+ 	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
  };
-+
-+&pinctrl_2 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x03860000 0x1000>;
-+	interrupt-parent = <&combiner>;
-+	interrupts = <10 0>;
-+};
-+
-+&pinctrl_3 {
-+	compatible = "samsung,exynos4x12-pinctrl";
-+	reg = <0x106E0000 0x1000>;
-+	interrupts = <0 72 0>;
-+};
-+
-+&pmu_system_controller {
-+	compatible = "samsung,exynos4212-pmu", "syscon";
-+	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+			"clkout4", "clkout8", "clkout9";
-+	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
-+	#clock-cells = <1>;
-+};
-+
-+&tmu {
-+	compatible = "samsung,exynos4412-tmu";
-+	interrupt-parent = <&combiner>;
-+	interrupts = <2 4>;
-+	reg = <0x100C0000 0x100>;
-+	clocks = <&clock 383>;
-+	clock-names = "tmu_apbif";
-+	status = "disabled";
-+};
--- 
-2.1.4
+=20
+ &mmc_2 {
+--=20
+1.9.1
+
+
+
+--rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEARECAAYFAlVQs2QACgkQ7DLr+WDJfp5h0wCgqnCthM23Eqs4PwvPAfd0ZPJW
++IUAn2YWUA0+JnEqlTzFLPtJjusb7RJP
+=Zg/X
+-----END PGP SIGNATURE-----
+
+--rm7x4OS7edDvTx1UklRmxdwV4Gtvi3Ujo--
