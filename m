@@ -1,85 +1,115 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v2 00/10] mfd: cros_ec: Add multi EC and proto v3 support
-Date: Mon, 11 May 2015 19:53:31 +0200
-Message-ID: <3484439.G156sKhj6L@phil>
-References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH 2/2] drm/exynos: 'win' is always unsigned
+Date: Mon, 11 May 2015 20:04:23 +0200
+Message-ID: <5550EF27.2070004@gmx.net>
+References: <1430914222-3603-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1430914222-3603-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5550ADFC.90508@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:50470 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751527AbbEKRws (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 May 2015 13:52:48 -0400
-In-Reply-To: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5550ADFC.90508@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Javier,
-
-Am Samstag, 9. Mai 2015, 12:10:31 schrieb Javier Martinez Canillas:
-> Newer Chromebooks have more than one Embedded Controller (EC) in the
-> system. These additional ECs are connected through I2C with a host EC
-> which is the one that is connected to the Application Processor (AP)
-> through different transports (I2C, SPI or LPC).
-> 
-> So on these platforms, sub-processors are chained to each other:
-> 
-> AP <--> Host EC <--> Power Delivery (PD) EC
-> 
-> The AP sends commands to the additional EC through the host EC using
-> a set of passthru commands and the host redirects to the correct EC.
-> 
-> This is a v2 of a series that adds support for multiple EC in a system
-> and also for the protocol version 3 that is used on newer ECs.
-> 
-> Most patches were taken from the downstream ChromiumOS v3.14 tree with
-> fixes squashed, split to minimise the cross subsystem churn and changes
-> for mainline inclusion but were not modified functionality wise.
-> 
-> This version addresses a lot of issues pointed out by Gwendal Grignou
-> and Heiko Stuebner on the v1 posted before [0].
-> 
-> The patches were tested on a x86 Pixel Chromebook 2 (Samus) that uses the
-> new protocol v3 and has 2 EC (cros_ec and cros_pd) using a modified ectool
-> [1] that supports the new cros_ec IOCTL API.
-> 
-> Also, testing was done on some Chromebooks that have a single EC and support
-> protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and
-> Exynos5800 Peach Pi to be sure that no regressions were introduced for
-> these machines.
-> 
-> Gwendal Grignou and Heiko Stuebner tested the first version of the series
-> but I did not carry their Tested-by tags for the patches that had not
-> trivial changes. So testing on more platforms will be highly appreciated.
-
-hmm, while it largely works (generally, as well as the touchpad) the keyboard 
-seems to have some problem on rk3288-pinky, it didn't have before with v1 + 
-the two patches on top that are now folded into this v2.
-
-Doing an evtest /dev/input/event0 does not result in key events, now after 
-some keypresses I got a
-[   48.352023] cros-ec-spi spi0.0: EC failed to respond in time
-[   48.357695] cros-ec-spi spi0.0: Error transferring EC message -110
-[   48.363884] cros-ec-spi spi0.0: failed to get keyboard state: -110
-[  226.478588] cros-ec-spi spi0.0: Error transferring EC message -11
-[  226.484690] cros-ec-spi spi0.0: failed to get keyboard state: -11
-
-a (regular) reboot seems to result in a working keyboard, while a 
-poweroff+poweron via dut-control brings me again back to a non-working 
-keyboard.
-
-
-in my very first try it started similarly non-working but after some time 
-started magically working again, but now in subsequent tries I always get the 
-spi error + working keyboard after a reboot.
-
-
-Strangely this really seems to be limited to the keyboard, touchpad works 
-flawlessly it seems.
-
-
-Heiko
+SGV5IElua2ksCgpJbmtpIERhZSB3cm90ZToKPiBPbiAyMDE164WEIDA17JuUIDA27J28IDIxOjEw
+LCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+PiBUaGUgaW5kZXggZm9yIHRoZSBoYXJkd2FyZSBsYXll
+ciBpcyBhbHdheXMgPj0wLiBQcmV2aW91cwo+PiBjb2RlIHRoYXQgYWxzbyB1c2VkIC0xIGFzIHNw
+ZWNpYWwgaW5kZXggaXMgbm93IGdvbmUuCj4+Cj4+IEFsc28gYXBwbHkgdGhpcyB0byAnY2hfZW5h
+YmxlZCcgKGRlY29uL2ZpbWQpLCBzaW5jZSB0aGUKPj4gdmFyaWFibGUgaXMgb24gdGhlIHNhbWUg
+bGluZSAoYW5kIGlzIGFnYWluIGFsd2F5cyB1bnNpZ25lZCkuCj4gCj4gSSBjYW4gc2VlIGJlbG93
+IGVycm9yIHdpdGggY2hlY2twYXRjaC5wbCwKPiAKPiBXQVJOSU5HOiBsaW5lIG92ZXIgODAgY2hh
+cmFjdGVycwo+ICMxMjU6IEZJTEU6IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+aW1kLmM6MjMyOgo+ICtzdGF0aWMgdm9pZCBmaW1kX2VuYWJsZV9zaGFkb3dfY2hhbm5lbF9wYXRo
+KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwKPiB1bnNpZ25lZCBpbnQgd2luLAo+IAo+IFdBUk5J
+Tkc6IGxpbmUgb3ZlciA4MCBjaGFyYWN0ZXJzCj4gIzE0NzogRklMRTogZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYzozMzY6Cj4gK3N0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXll
+cihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQKPiB3aW4sIGJvb2wgZW5h
+YmxlKQo+IAo+IFBsZWFzZSBjaGVjayBjb2Rpbmcgc3R5bGUgd2l0aCBjaGVja3BhdGgucGwgYmVm
+b3JlIHBvc3RpbmcgaXQgbmV4dCB0aW1lLgo+IEkgbW9kaWZpZWQgYW5kIG1lcmdlZCB0aGVtLgpz
+b3JyeSwgSSdtIGdvaW5nIHRvIGNoZWNrIG1vcmUgdGhvcm91Z2hseSBuZXh0IHRpbWUuCgpBbHNv
+LCBJIHRoaW5rIHlvdSBtaWdodCBoYXZlIG1pc3NlZCBvbmUgb2YgbXkgY2xlYW51cCBwYXRjaGVz
+OgpodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzYyNzUxMTEvCgpBdCBsZWFzdCBJ
+IGhhdmVuJ3Qgc2VlbiBpdCB5ZXQgaW4gZm9yLW5leHQgb3IgZml4ZXMuCgpBbmQgaWYgeW91IGNv
+dWxkIHNheSBhIGZldyB3b3JkcyBhYm91dCB0aGUgbGF5ZXIgcmV3b3JrIHNlcmllcwooaHR0cDov
+L3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2c0NDE5OS5odG1sKSwg
+dGhhdAp3b3VsZCBiZSBncmVhdCEgOikKCgoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgo+IAo+
+IFRoYW5rcywKPiBJbmtpIERhZQo+IAo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2Jp
+IDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgfCAyICstCj4+ICBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgfCA2ICsrKy0tLQo+PiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgIHwgNiArKystLS0KPj4gIDMgZmlsZXMgY2hhbmdl
+ZCwgNyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4+IGluZGV4IDFmN2UzM2YuLjVjMGIyY2MgMTAw
+NjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwo+
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKPj4gQEAg
+LTkxLDcgKzkxLDcgQEAgc3RhdGljIHZvaWQgZGVjb25fd2FpdF9mb3JfdmJsYW5rKHN0cnVjdCBl
+eHlub3NfZHJtX2NydGMgKmNydGMpCj4+ICAKPj4gIHN0YXRpYyB2b2lkIGRlY29uX2NsZWFyX2No
+YW5uZWwoc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCkKPj4gIHsKPj4gLQlpbnQgd2luLCBjaF9l
+bmFibGVkID0gMDsKPj4gKwl1bnNpZ25lZCBpbnQgd2luLCBjaF9lbmFibGVkID0gMDsKPj4gIAo+
+PiAgCURSTV9ERUJVR19LTVMoIiVzXG4iLCBfX0ZJTEVfXyk7Cj4+ICAKPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4+IGluZGV4IDk4MTlmYTYuLmVlMTFlYTYgMTAw
+NjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPj4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+PiBAQCAtMjE2
+LDcgKzIxNiw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2FpdF9mb3JfdmJsYW5rKHN0cnVjdCBleHlu
+b3NfZHJtX2NydGMgKmNydGMpCj4+ICAJCURSTV9ERUJVR19LTVMoInZibGFuayB3YWl0IHRpbWVk
+IG91dC5cbiIpOwo+PiAgfQo+PiAgCj4+IC1zdGF0aWMgdm9pZCBmaW1kX2VuYWJsZV92aWRlb19v
+dXRwdXQoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4LCBpbnQgd2luLAo+PiArc3RhdGljIHZvaWQg
+ZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgdW5zaWdu
+ZWQgaW50IHdpbiwKPj4gIAkJCQkJYm9vbCBlbmFibGUpCj4+ICB7Cj4+ICAJdTMyIHZhbCA9IHJl
+YWRsKGN0eC0+cmVncyArIFdJTkNPTih3aW4pKTsKPj4gQEAgLTIyOSw3ICsyMjksNyBAQCBzdGF0
+aWMgdm9pZCBmaW1kX2VuYWJsZV92aWRlb19vdXRwdXQoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4
+LCBpbnQgd2luLAo+PiAgCXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFdJTkNPTih3aW4pKTsKPj4g
+IH0KPj4gIAo+PiAtc3RhdGljIHZvaWQgZmltZF9lbmFibGVfc2hhZG93X2NoYW5uZWxfcGF0aChz
+dHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsIGludCB3aW4sCj4+ICtzdGF0aWMgdm9pZCBmaW1kX2Vu
+YWJsZV9zaGFkb3dfY2hhbm5lbF9wYXRoKHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgdW5zaWdu
+ZWQgaW50IHdpbiwKPj4gIAkJCQkJCWJvb2wgZW5hYmxlKQo+PiAgewo+PiAgCXUzMiB2YWwgPSBy
+ZWFkbChjdHgtPnJlZ3MgKyBTSEFET1dDT04pOwo+PiBAQCAtMjQ0LDcgKzI0NCw3IEBAIHN0YXRp
+YyB2b2lkIGZpbWRfZW5hYmxlX3NoYWRvd19jaGFubmVsX3BhdGgoc3RydWN0IGZpbWRfY29udGV4
+dCAqY3R4LCBpbnQgd2luLAo+PiAgCj4+ICBzdGF0aWMgdm9pZCBmaW1kX2NsZWFyX2NoYW5uZWwo
+c3RydWN0IGZpbWRfY29udGV4dCAqY3R4KQo+PiAgewo+PiAtCWludCB3aW4sIGNoX2VuYWJsZWQg
+PSAwOwo+PiArCXVuc2lnbmVkIGludCB3aW4sIGNoX2VuYWJsZWQgPSAwOwo+PiAgCj4+ICAJRFJN
+X0RFQlVHX0tNUygiJXNcbiIsIF9fRklMRV9fKTsKPj4gIAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX21peGVyLmMKPj4gaW5kZXggZmYxNTcwMi4uNGExNjU2YiAxMDA2NDQKPj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+PiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+IEBAIC0zMzMsNyArMzMzLDcgQEAgc3RhdGlj
+IHZvaWQgbWl4ZXJfY2ZnX3JnYl9mbXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWdu
+ZWQgaW50IGhlaWdodCkKPj4gIAltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgdmFs
+LCBNWFJfQ0ZHX1JHQl9GTVRfTUFTSyk7Cj4+ICB9Cj4+ICAKPj4gLXN0YXRpYyB2b2lkIG1peGVy
+X2NmZ19sYXllcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luLCBib29sIGVuYWJs
+ZSkKPj4gK3N0YXRpYyB2b2lkIG1peGVyX2NmZ19sYXllcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAq
+Y3R4LCB1bnNpZ25lZCBpbnQgd2luLCBib29sIGVuYWJsZSkKPj4gIHsKPj4gIAlzdHJ1Y3QgbWl4
+ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+ICAJdTMyIHZhbCA9IGVuYWJs
+ZSA/IH4wIDogMDsKPj4gQEAgLTM3OSw3ICszNzksNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9zdG9w
+KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4+ICAJCXVzbGVlcF9yYW5nZSgxMDAwMCwgMTIw
+MDApOwo+PiAgfQo+PiAgCj4+IC1zdGF0aWMgdm9pZCB2cF92aWRlb19idWZmZXIoc3RydWN0IG1p
+eGVyX2NvbnRleHQgKmN0eCwgaW50IHdpbikKPj4gK3N0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZl
+cihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgd2luKQo+PiAgewo+PiAg
+CXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVyX3JlczsKPj4gIAl1bnNp
+Z25lZCBsb25nIGZsYWdzOwo+PiBAQCAtNTExLDcgKzUxMSw3IEBAIGZhaWw6Cj4+ICAJcmV0dXJu
+IC1FTk9UU1VQUDsKPj4gIH0KPj4gIAo+PiAtc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVy
+KHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4+ICtzdGF0aWMgdm9pZCBtaXhl
+cl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50IHdp
+bikKPj4gIHsKPj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9y
+ZXM7Cj4+ICAJdW5zaWduZWQgbG9uZyBmbGFnczsKPj4KPiAKPiAtLQo+IFRvIHVuc3Vic2NyaWJl
+IGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5n
+LXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
+Lm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
+b3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
