@@ -1,53 +1,267 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCHv3 0/4] add devm_of_phy_get_by_index and update platform
- drivers
-Date: Mon, 11 May 2015 19:14:53 +0530
-Message-ID: <5550B255.3040404@ti.com>
-References: <Pine.LNX.4.44L0.1504231031170.1529-100000@iolanthe.rowland.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1504231031170.1529-100000@iolanthe.rowland.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>, Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 10/13] ARM: dts: exynos4: Use labels for overriding nodes in SMDK4412
+Date: Mon, 11 May 2015 22:42:50 +0900
+Message-ID: <1431351773-2031-11-git-send-email-k.kozlowski.k@gmail.com>
+References: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Usage of labels instead of full paths reduces possible mistakes when
+overriding nodes.
 
-On Thursday 23 April 2015 08:01 PM, Alan Stern wrote:
-> On Wed, 22 Apr 2015, Arun Ramamurthy wrote:
->
->> This patch set adds a new API to get phy by index when multiple
->> phys are present. This patch is based on discussion with Arnd Bergmann
->> about dt bindings for multiple phys.
->>
->> History:
->> v1:
->>      - Removed null pointers on Dmitry's suggestion
->>      - Improved documentation in commit messages
->>      - Exported new phy api
->> v2:
->>      - EHCI and OHCI platform Kconfigs select Generic Phy
->>        to fix build errors in certain configs.
->> v3:
->>      - Made GENERIC_PHY an invisible option so
->>      that other configs can select it
->>      - Added stubs for devm_of_phy_get_by_index
->>      - Reformated code
->>
->> Arun Ramamurthy (4):
->>    phy: phy-core: Make GENERIC_PHY an invisible option
->>    phy: core: Add devm_of_phy_get_by_index to phy-core
->>    usb: ehci-platform: Use devm_of_phy_get_by_index
->>    usb: ohci-platform: Use devm_of_phy_get_by_index
->
-> For patches 3 and 4:
->
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ arch/arm/boot/dts/exynos4412-smdk4412.dts | 210 +++++++++++++++---------------
+ 1 file changed, 105 insertions(+), 105 deletions(-)
 
-merged this to linux-phy.
-
-Thanks
-Kishon
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index b9256afbcc68..c2421df1fa43 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -28,135 +28,135 @@
+ 		stdout-path = &serial_1;
+ 	};
+ 
+-	g2d@10800000 {
+-		status = "okay";
+-	};
+-
+-	pinctrl@11000000 {
+-		keypad_rows: keypad-rows {
+-			samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti";
++			clock-frequency = <0>;
+ 		};
+ 
+-		keypad_cols: keypad-cols {
+-			samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
+-				       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
++		xusbxti {
++			compatible = "samsung,clock-xusbxti";
++			clock-frequency = <24000000>;
+ 		};
+ 	};
++};
+ 
+-	keypad@100A0000 {
+-		samsung,keypad-num-rows = <3>;
+-		samsung,keypad-num-columns = <8>;
+-		linux,keypad-no-autorepeat;
+-		linux,keypad-wakeup;
+-		pinctrl-0 = <&keypad_rows &keypad_cols>;
+-		pinctrl-names = "default";
+-		status = "okay";
+-
+-		key_1 {
+-			keypad,row = <1>;
+-			keypad,column = <3>;
+-			linux,code = <2>;
+-		};
+-
+-		key_2 {
+-			keypad,row = <1>;
+-			keypad,column = <4>;
+-			linux,code = <3>;
+-		};
+-
+-		key_3 {
+-			keypad,row = <1>;
+-			keypad,column = <5>;
+-			linux,code = <4>;
+-		};
+-
+-		key_4 {
+-			keypad,row = <1>;
+-			keypad,column = <6>;
+-			linux,code = <5>;
+-		};
++&g2d {
++	status = "okay";
++};
+ 
+-		key_5 {
+-			keypad,row = <1>;
+-			keypad,column = <7>;
+-			linux,code = <6>;
+-		};
++&keypad {
++	samsung,keypad-num-rows = <3>;
++	samsung,keypad-num-columns = <8>;
++	linux,keypad-no-autorepeat;
++	linux,keypad-wakeup;
++	pinctrl-0 = <&keypad_rows &keypad_cols>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	key_1 {
++		keypad,row = <1>;
++		keypad,column = <3>;
++		linux,code = <2>;
++	};
+ 
+-		key_A {
+-			keypad,row = <2>;
+-			keypad,column = <6>;
+-			linux,code = <30>;
+-		};
++	key_2 {
++		keypad,row = <1>;
++		keypad,column = <4>;
++		linux,code = <3>;
++	};
+ 
+-		key_B {
+-			keypad,row = <2>;
+-			keypad,column = <7>;
+-			linux,code = <48>;
+-		};
++	key_3 {
++		keypad,row = <1>;
++		keypad,column = <5>;
++		linux,code = <4>;
++	};
+ 
+-		key_C {
+-			keypad,row = <0>;
+-			keypad,column = <5>;
+-			linux,code = <46>;
+-		};
++	key_4 {
++		keypad,row = <1>;
++		keypad,column = <6>;
++		linux,code = <5>;
++	};
+ 
+-		key_D {
+-			keypad,row = <2>;
+-			keypad,column = <5>;
+-			linux,code = <32>;
+-		};
++	key_5 {
++		keypad,row = <1>;
++		keypad,column = <7>;
++		linux,code = <6>;
++	};
+ 
+-		key_E {
+-			keypad,row = <0>;
+-			keypad,column = <7>;
+-			linux,code = <18>;
+-		};
++	key_A {
++		keypad,row = <2>;
++		keypad,column = <6>;
++		linux,code = <30>;
+ 	};
+ 
+-	sdhci@12530000 {
+-		bus-width = <4>;
+-		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
+-		pinctrl-names = "default";
+-		status = "okay";
++	key_B {
++		keypad,row = <2>;
++		keypad,column = <7>;
++		linux,code = <48>;
+ 	};
+ 
+-	codec@13400000 {
+-		samsung,mfc-r = <0x43000000 0x800000>;
+-		samsung,mfc-l = <0x51000000 0x800000>;
+-		status = "okay";
++	key_C {
++		keypad,row = <0>;
++		keypad,column = <5>;
++		linux,code = <46>;
+ 	};
+ 
+-	serial@13800000 {
+-		status = "okay";
++	key_D {
++		keypad,row = <2>;
++		keypad,column = <5>;
++		linux,code = <32>;
+ 	};
+ 
+-	serial@13810000 {
+-		status = "okay";
++	key_E {
++		keypad,row = <0>;
++		keypad,column = <7>;
++		linux,code = <18>;
+ 	};
++};
++
++&mfc {
++	samsung,mfc-r = <0x43000000 0x800000>;
++	samsung,mfc-l = <0x51000000 0x800000>;
++	status = "okay";
++};
+ 
+-	serial@13820000 {
+-		status = "okay";
++&pinctrl_1 {
++	keypad_rows: keypad-rows {
++		samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
+ 	};
+ 
+-	serial@13830000 {
+-		status = "okay";
++	keypad_cols: keypad-cols {
++		samsung,pins = "gpx1-0", "gpx1-1", "gpx1-2", "gpx1-3",
++			       "gpx1-4", "gpx1-5", "gpx1-6", "gpx1-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
+ 	};
++};
+ 
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
++&sdhci_2 {
++	bus-width = <4>;
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
++	pinctrl-names = "default";
++	status = "okay";
++};
+ 
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
++&serial_0 {
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&serial_2 {
++	status = "okay";
++};
++
++&serial_3 {
++	status = "okay";
+ };
+-- 
+2.1.4
