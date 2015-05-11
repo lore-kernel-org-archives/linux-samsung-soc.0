@@ -1,63 +1,126 @@
-From: Mel Gorman <mgorman@suse.de>
-Subject: Re: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
-Date: Mon, 11 May 2015 15:47:07 +0100
-Message-ID: <20150511144707.GP2462@suse.de>
-References: <1430897296-5469-1-git-send-email-jack@suse.cz>
- <1430897296-5469-3-git-send-email-jack@suse.cz>
- <20150508144922.GO2462@suse.de>
- <20150511140019.GD25034@quack.suse.cz>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCHv3 2/4] phy: core: Add devm_of_phy_get_by_index to phy-core
+Date: Mon, 11 May 2015 20:39:57 +0530
+Message-ID: <5550C645.6090106@ti.com>
+References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com> <1429743853-10254-3-git-send-email-arun.ramamurthy@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:55884 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751292AbbEKOrN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 May 2015 10:47:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20150511140019.GD25034@quack.suse.cz>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1429743853-10254-3-git-send-email-arun.ramamurthy@broadcom.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>Gregory CLEMENT <gre>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, Jonathan Richardson <jonathar@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Mon, May 11, 2015 at 04:00:19PM +0200, Jan Kara wrote:
-> > > +int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
-> > > +		     bool write, bool force, struct frame_vector *vec)
-> > > +{
-> > > +	struct mm_struct *mm = current->mm;
-> > > +	struct vm_area_struct *vma;
-> > > +	int ret = 0;
-> > > +	int err;
-> > > +	int locked = 1;
-> > > +
-> > 
-> > bool locked.
->   It cannot be bool. It is passed to get_user_pages_locked() which expects
-> int *.
-> 
+Hi,
 
-My bad.
-
-> > > +int frame_vector_to_pages(struct frame_vector *vec)
-> > > +{
-> > 
-> > I think it's probably best to make the relevant counters in frame_vector
-> > signed and limit the maximum possible size of it. It's still not putting
-> > any practical limit on the size of the frame_vector.
+On Thursday 23 April 2015 04:34 AM, Arun Ramamurthy wrote:
+> Some generic drivers, such as ehci, may use multiple phys and for such
+> drivers referencing phy(s) by name(s) does not make sense. Instead of
+> inventing new naming schemes and using custom code to iterate through them,
+> such drivers are better of using nameless phy bindings and using this newly
+> introduced API to iterate through them.
 >
->   I don't see a reason why counters in frame_vector should be signed... Can
-> you share your reason?  I've added a check into frame_vector_create() to
-> limit number of frames to INT_MAX / sizeof(void *) / 2 to avoid arithmetics
-> overflow. Thanks for review!
-> 
+> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
+> Reviewed-by: Ray Jui <rjui@broadcom.com>
+> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+> ---
+>   Documentation/phy.txt   |  7 ++++++-
+>   drivers/phy/phy-core.c  | 32 ++++++++++++++++++++++++++++++++
+>   include/linux/phy/phy.h |  8 ++++++++
+>   3 files changed, 46 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/phy.txt b/Documentation/phy.txt
+> index 371361c..b388c5a 100644
+> --- a/Documentation/phy.txt
+> +++ b/Documentation/phy.txt
+> @@ -76,6 +76,8 @@ struct phy *phy_get(struct device *dev, const char *string);
+>   struct phy *phy_optional_get(struct device *dev, const char *string);
+>   struct phy *devm_phy_get(struct device *dev, const char *string);
+>   struct phy *devm_phy_optional_get(struct device *dev, const char *string);
+> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+> +				     int index);
+>
+>   phy_get, phy_optional_get, devm_phy_get and devm_phy_optional_get can
+>   be used to get the PHY. In the case of dt boot, the string arguments
+> @@ -86,7 +88,10 @@ successful PHY get. On driver detach, release function is invoked on
+>   the the devres data and devres data is freed. phy_optional_get and
+>   devm_phy_optional_get should be used when the phy is optional. These
+>   two functions will never return -ENODEV, but instead returns NULL when
+> -the phy cannot be found.
+> +the phy cannot be found.Some generic drivers, such as ehci, may use multiple
+> +phys and for such drivers referencing phy(s) by name(s) does not make sense. In
+> +this case, devm_of_phy_get_by_index can be used to get a phy reference based on
+> +the index.
+>
+>   It should be noted that NULL is a valid phy reference. All phy
+>   consumer calls on the NULL phy become NOPs. That is the release calls,
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 3791838..964a84d 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -623,6 +623,38 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
+>   EXPORT_SYMBOL_GPL(devm_of_phy_get);
+>
+>   /**
+> + * devm_of_phy_get_by_index() - lookup and obtain a reference to a phy by index.
+> + * @dev: device that requests this phy
+> + * @np: node containing the phy
+> + * @index: index of the phy
+> + *
+> + * Gets the phy using _of_phy_get(), and associates a device with it using
+> + * devres. On driver detach, release function is invoked on the devres data,
+> + * then, devres data is freed.
+> + *
+> + */
+> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+> +				     int index)
+> +{
+> +	struct phy **ptr, *phy;
+> +
+> +	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	phy = _of_phy_get(np, index);
+> +	if (!IS_ERR(phy)) {
+> +		*ptr = phy;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return phy;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
+> +
+> +/**
+>    * phy_create() - create a new phy
+>    * @dev: device that is creating the new phy
+>    * @node: device node of the phy
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index a0197fa..978d5af 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -133,6 +133,8 @@ struct phy *devm_phy_get(struct device *dev, const char *string);
+>   struct phy *devm_phy_optional_get(struct device *dev, const char *string);
+>   struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
+>   			    const char *con_id);
+> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+> +				     int index);
+>   void phy_put(struct phy *phy);
+>   void devm_phy_put(struct device *dev, struct phy *phy);
+>   struct phy *of_phy_get(struct device_node *np, const char *con_id);
+> @@ -261,6 +263,12 @@ static inline struct phy *devm_of_phy_get(struct device *dev,
+>   	return ERR_PTR(-ENOSYS);
+>   }
+>
+> +struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+> +				     int index);
 
-Only that the return value of frame_vector_to_pages() returns int where
-as the potential range that is converted is unsigned int. I don't think
-there are any mistakes dealing with signed/unsigned but I don't see any
-advantage of using unsigned either and limiting it to INT_MAX either.
-It's not a big deal.
+Fixed the compilation error because of the ';' in the end and merged it to 
+linux-phy.
 
--- 
-Mel Gorman
-SUSE Labs
+Thanks
+Kishon
