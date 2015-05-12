@@ -1,110 +1,137 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] arm/mach-exynos: suspend: Don't try to initialize suspend/suspend
- on old DT
-Date: Wed, 13 May 2015 02:18:51 +0900
-Message-ID: <555235FB.3040804@kernel.org>
-References: <1431438307-25410-1-git-send-email-julien.grall@citrix.com>
+Subject: Re: [PATCH v2] ARM: dts: Odroid XU3 -- Hook up PWM and use it for
+ LEDs
+Date: Wed, 13 May 2015 02:47:55 +0900
+Message-ID: <55523CCB.2040008@kernel.org>
+References: <84vbfyk4w4.wl-peter.chubb@nicta.com.au>	<CAJKOXPcjPOWNqBbyHLjw-1SS2GLtscgVjKFcz3EzYQKEJ5O8uQ@mail.gmail.com>	<84r3qmk2n6.wl-peter.chubb@nicta.com.au>	<CAJKOXPcPGHcP26hLK0V0Rrr3ABB+HQAqQg4PpZN7ytsn2O78Qg@mail.gmail.com> <84pp66k1aa.wl-peter.chubb@nicta.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:50981 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:53864 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932776AbbELRTC (ORCPT
+	id S933003AbbELRsF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 May 2015 13:19:02 -0400
-In-Reply-To: <1431438307-25410-1-git-send-email-julien.grall@citrix.com>
+	Tue, 12 May 2015 13:48:05 -0400
+In-Reply-To: <84pp66k1aa.wl-peter.chubb@nicta.com.au>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julien Grall <julien.grall@citrix.com>
-Cc: kgene@kernel.org, marc.zyngier@arm.com, ian.campbell@citrix.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Peter Chubb <peter.chubb@nicta.com.au>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 05/12/15 22:45, Julien Grall wrote:
-> Since commit 8b283c0 "ARM: exynos4/5: convert pmu wakeup to stacked domains",
-> a suspend/resume is not supported on old DT.
+On 05/12/15 09:29, Peter Chubb wrote:
 > 
-> Although, rather than printing a warning and continue to boot, the
-> kernel will segfault just after:
+> PWM output wasn't working because it wasn't hooked up to its pincontrol.
+> This patch:
+>    -- hooks up PWM to its pincontrol, and documents what
+
+don't use '--' can occur some confusing in git... just '-' is enough.
+
+>       the outputs are on the XU3
+>    -- switches the LEDs that are on PWM outputs to use PWM
+>       rather than GPIO.
 > 
-> ------------[ cut here ]------------
+> The main effect is that the brightness of the LEDs can be controlled, and
+> user-mode fan control is enabled via /sys/class/pwm
+
+the purpose of this patch looks good, but there are small comments.
+
 > 
-> WARNING: CPU: 1 PID: 1 at arch/arm/mach-exynos/suspend.c:726 exynos_pm_init+0x4c/0xc8()
-> Modules linked in:
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.1.0-rc3 #1
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [<c02181c4>] (unwind_backtrace) from [<c0213b2c>] (show_stack+0x10/0x14)
-> [<c0213b2c>] (show_stack) from [<c0949890>] (dump_stack+0x70/0x8c)
-> [<c0949890>] (dump_stack) from [<c024f0b0>] (warn_slowpath_common+0x74/0xac)
-> [<c024f0b0>] (warn_slowpath_common) from [<c024f104>] (warn_slowpath_null+0x1c/0x24)
-> [<c024f104>] (warn_slowpath_null) from [<c0cf1d28>] (exynos_pm_init+0x4c/0xc8)
-> [<c0cf1d28>] (exynos_pm_init) from [<c0ceaae8>] (init_machine_late+0x1c/0x28)
-> [<c0ceaae8>] (init_machine_late) from [<c020aa64>] (do_one_initcall+0x80/0x1d0)
-> [<c020aa64>] (do_one_initcall) from [<c0ce8d4c>] (kernel_init_freeable+0x10c/0x1d8)
-> [<c0ce8d4c>] (kernel_init_freeable) from [<c0944a2c>] (kernel_init+0x8/0xe4)
-> [<c0944a2c>] (kernel_init) from [<c0210e60>] (ret_from_fork+0x14/0x34)
-> ---[ end trace 335bd937d409f3c7 ]---
-> Outdated DT detected, suspend/resume will NOT work
-> Unable to handle kernel NULL pointer dereference at virtual address 00000608
-> pgd = c0204000
-> [00000608] *pgd=00000000
-> Internal error: Oops: 5 [#1] SMP ARM
-> Modules linked in:
-> CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W       4.1.0-rc3 #1
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> task: db06c000 ti: db05a000 task.ti: db05a000
-> PC is at exynos_pm_init+0x6c/0xc8
-> LR is at exynos_pm_init+0x54/0xc8
-> pc : [<c0cf1d48>]    lr : [<c0cf1d30>]    psr: 60000113
-> sp : db05bee8  ip : 00000000  fp : 00000000
-> r10: 00000116  r9 : c0dab2d4  r8 : d8d5f440
-> r7 : c0db7ad8  r6 : c0db7ad8  r5 : 00000000  r4 : c0ceaacc
-> r3 : c0eb2aec  r2 : c0951e40  r1 : 00000000  r0 : c0eb2acc
-> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-> Control: 10c5387d  Table: 6020406a  DAC: 00000015
-> Process swapper/0 (pid: 1, stack limit = 0xdb05a220)
-> Stack: (0xdb05bee8 to 0xdb05c000)
-> bee0:                   c0db7ad8 c0d8fe34 c0cf17c8 c0ceaae8 00000000 c020aa64
-> bf00: 00000033 c09580b8 db04fd00 c0ed79a4 c0eb1000 c0ce8588 c0ca2bc4 c0353fcc
-> bf20: 00000000 c0df358c 60000113 00000000 dbfffba4 00000000 c0ca2bc4 c026654c
-> bf40: c0b80134 c0ca1a64 00000007 00000007 c0df3554 c0d6c2f4 00000007 c0d6c2d4
-> bf60: c0eb1000 c0ce8588 c0dab2d4 00000116 00000000 c0ce8d4c 00000007 00000007
-> bf80: c0ce8588 c0944a24 00000000 c0944a24 00000000 00000000 00000000 00000000
-> bfa0: 00000000 c0944a2c 00000000 c0210e60 00000000 00000000 00000000 00000000
-> bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> bfe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> [<c0cf1d48>] (exynos_pm_init) from [<c0ceaae8>] (init_machine_late+0x1c/0x28)
-> [<c0ceaae8>] (init_machine_late) from [<c020aa64>] (do_one_initcall+0x80/0x1d0)
-> [<c020aa64>] (do_one_initcall) from [<c0ce8d4c>] (kernel_init_freeable+0x10c/0x1d8)
-> [<c0ce8d4c>] (kernel_init_freeable) from [<c0944a2c>] (kernel_init+0x8/0xe4)
-> [<c0944a2c>] (kernel_init) from [<c0210e60>] (ret_from_fork+0x14/0x34)
-> Code: e59f005c e59220c0 e5901000 e5832000 (e591e608)
-> ---[ end trace 335bd937d409f3c8 ]---
-> 
-> This is happening because pmu_base_addr is only initialized when the
-> PMU is an interrupt controller. It's not the case on old DT.
-> 
-> Signed-off-by: Julien Grall <julien.grall@citrix.com>
+> Signed-off-by: Peter Chubb <peter.chubb@nicta.com.au>
 > ---
->  arch/arm/mach-exynos/suspend.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 58 +++++++++++++++++++++---------
+>  1 file changed, 41 insertions(+), 17 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index 3e6aea7..b6f3ddc 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -723,8 +723,10 @@ void __init exynos_pm_init(void)
->  		return;
->  	}
->  
-> -	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL)))
-> +	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
->  		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
-> +		return;
-> +	}
->  
->  	pm_data = (const struct exynos_pm_data *) match->data;
->  
-I'm fine on this, applied.
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> index 026f83e..095282b 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -13,6 +13,7 @@
+>  /dts-v1/;
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include "exynos5800.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
 
-Thanks,
-Kukjin
+Don't add same inclusion.
+
+> 
+>  / {
+>         model = "Hardkernel Odroid XU3";
+> @@ -287,25 +288,35 @@
+>                 status = "okay";
+>         };
+> 
+> -       leds {
+> -               compatible = "gpio-leds";
+> -               heartbeat {
+> -                       label = "blue:heartbeart";
+> -                       gpios = <&gpb2 2 0>;
+> -                       default-state = "off";
+> -                       linux,default-trigger = "heartbeat";
+> -               };
+> -
+> -               eMMC {
+> -                       label = "green:eMMC";
+> -                       gpios = <&gpb2 1 0>;
+> -                       default-state = "off";
+> -                       linux,default-trigger = "mmc0";
+> -               };
+> +       pwmleds {
+> +            compatible = "pwm-leds";
+> +
+> +            greenled {
+> +                    label = "green:mmc0";
+> +                    pwms = <&pwm 1 2000000 0>;
+> +                    pwm-names = "pwm1";
+> +                    /*
+> +                     * Green LED is much brighter than the others
+> +                     * so limit its max brightness
+> +                     */
+> +                    max_brightness = <127>;
+> +                    linux,default-trigger = "mmc0";
+> +            };
+> +
+> +            blueled {
+> +                    label = "blue:heartbeat";
+> +                    pwms = <&pwm 2 2000000 0>;
+> +                    pwm-names = "pwm2";
+> +                    max_brightness = <255>;
+> +                    linux,default-trigger = "heartbeat";
+> +            };
+> +       };
+> 
+> -               microSD {
+> +       gpioleds {
+> +               compatible = "gpio-leds";
+> +               redled {
+>                         label = "red:microSD";
+> -                       gpios = <&gpx2 3 0>;
+> +                       gpios = <&gpx2 3 GPIO_ACTIVE_HIGH>;
+>                         default-state = "off";
+>                         linux,default-trigger = "mmc1";
+>                 };
+
+I need to check about gpx2-3...
+
+> @@ -411,3 +422,16 @@
+>                 shunt-resistor = <10000>;
+>         };
+>  };
+> +
+> +&pwm {
+> +       /*
+> +        * PWM 0 -- fan
+> +        * PWM 1 -- Green LED
+> +        * PWM 2 -- Blue LED
+> +        * PWM 3 -- on MIPI connector for backlight
+> +        */
+> +       pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
+> +       pinctrl-names = "default";
+> +       status = "okay";
+> +};
+> +
+
+Please don't add last empty line.
+
+> --
+> 2.1.4
