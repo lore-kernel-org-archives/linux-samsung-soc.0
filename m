@@ -1,62 +1,67 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [GIT PULL] ARM: EXYNOS: dts: DTS fixes for 4.1, second try
-Date: Wed, 13 May 2015 03:27:38 +0900
-Message-ID: <5552461A.6070304@kernel.org>
-References: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: drm/exynos: Add atomic modesetting support
+Date: Tue, 12 May 2015 15:29:08 -0300
+Message-ID: <20150512182908.GB3327@joana>
+References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
+ <554D2FC7.1070208@gmx.net>
+ <CAAQKjZPCQZV7DxTuf12NyPbT2H5PJhNQs4CwtM8g563Zuw8-6w@mail.gmail.com>
+ <554DF9DE.7000200@gmx.net>
+ <CAAQKjZMRG_a1FrTRD9dACSBz8w3zvrLYWSSM0-wUbaVePaPA2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f179.google.com ([209.85.216.179]:32830 "EHLO
+	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933013AbbELS3M (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 May 2015 14:29:12 -0400
+Received: by qcvo8 with SMTP id o8so9479207qcv.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 May 2015 11:29:11 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAAQKjZMRG_a1FrTRD9dACSBz8w3zvrLYWSSM0-wUbaVePaPA2Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-On 05/11/15 12:10, Krzysztof Kozlowski wrote:
-> Dear Kukjin,
-> 
-> This groups one fix missed in your last pull requst. This fixes suspend
-> on Peach boards related to Marvell mwifiex driver. The driver was
-> enabled for Exynos defconfig during merge window so currently
-> the suspend on these boards on this config fails.
-> 
-Yes, you're right. Only exynos5250-snow related patch has been fixed
-before and this should be sent to upstream together. I've applied this
-into samsung-fixes-2 with your signed-off-by.
+2015-05-10 Inki Dae <inki.dae@samsung.com>:
 
-Note this will be sent to arm-soc before a couple of days of -rc4 with
-your other fix for suspend on exynos4.
+> 2015-05-09 21:13 GMT+09:00 Tobias Jakobi <liquid.acid@gmx.net>:
+> > Hello Inki,
+> >
+> >
+> > Inki Dae wrote:
+> >> Hi,
+> >>
+> >> 2015-05-09 6:51 GMT+09:00 Tobias Jakobi <liquid.acid@gmx.net>:
+> >>> Hello,
+> >>>
+> >>> I've tested this on my Hardkernel Odroid-X2 (connected via HDMI to a
+> >>> 1080p panel).
+> >>>
+> >>> Run the usual modetest tests (just primary plane, primary plane with
+> >>> vsync, primary plane with overlay, primary plane with overlay and video
+> >>> overlay, overlay partially outside of crtc area, etc.) and haven't
+> >>> noticed any issues so far.
+> >>
+> >> As I mentioned several times, it works well in case that only one crtc
+> >> driver is enabled. Could you check it again after you enable two or
+> >> more crtc drivers such as FIMD and HDMI or FIMD, HDMI and VIDI
+> >> together? For this, dts file for X2 should contain their device nodes
+> >> and also should be configurated though menuconfig.
+> > I've enabled VIDI and FIMD and confirmed that they should up properly in
+> > modetest before applying the series.
+> >
+> > Booting with the atomic series works fine, but I get a segfault when
+> > calling modetest. I've attached the kernel log below.
+> 
+> Below panic issue is same as one I faced with at previous patch seris,
+> v3, which was invalid memory access - state->crtc is NULL whille
+> modetest is being performed. It seems that the last patch of v4 didn't
+> resolve this issue yet.
 
-Thanks,
-Kukjin
+The weird thing is that it works quite fine on my exynos 5 hardware.
+I'll take a look on what could be be happening to cause this kind of
+crash.
 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 77b0ffdc4bbd267e9589aa025047e512322fc643:
-> 
->   Merge branch 'v4.2-next/dt-samsung' into for-next (2015-05-09 04:03:46 +0900)
-> 
-> are available in the git repository at:
-> 
-> 
->   https://github.com/krzk/linux.git tags/samsung-dt-fixes-4.1-2
-> 
-> for you to fetch changes up to 2495ae559826c60e3ccde9850e3b38815725b9c9:
-> 
->   ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards (2015-05-11 11:00:00 +0900)
-> 
-> ----------------------------------------------------------------
-> Fix for suspend on Peach boards related to Marvell mwifiex driver.
-> The driver was enabled for Exynos defconfig during 4.1 merge window
-> so currently the suspend on these boards on this config fails.
-> 
-> ----------------------------------------------------------------
-> Javier Martinez Canillas (1):
->       ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
-> 
->  arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
->  2 files changed, 2 insertions(+)
+	Gustavo
