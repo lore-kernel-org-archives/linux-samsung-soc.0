@@ -1,128 +1,41 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [GIT PULL 4/5] Samsung arm64 DT updates for v4.1
-Date: Wed, 13 May 2015 03:39:33 +0900
-Message-ID: <555248E5.6010709@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: exynos_defconfig: Enable CONFIG_SENSORS_PWM_FAN
+ for odroidxu3 pmw-fan
+Date: Wed, 13 May 2015 08:46:32 +0900
+Message-ID: <CAJKOXPcXRWm7T29LCYMMkW0FDF8LXEsAoMjwrTqBvSiQ+q5czg@mail.gmail.com>
+References: <linux.amoon@gmail.com>
+	<1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
+	<1431444262-29531-2-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56688 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933013AbbELSjo (ORCPT
+Received: from mail-vn0-f46.google.com ([209.85.216.46]:42080 "EHLO
+	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964862AbbELXqd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 May 2015 14:39:44 -0400
+	Tue, 12 May 2015 19:46:33 -0400
+Received: by vnbf129 with SMTP id f129so1785727vnb.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 May 2015 16:46:33 -0700 (PDT)
+In-Reply-To: <1431444262-29531-2-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-> Olof Johansson wrote:
-> >
-> > On Thu, Apr 02, 2015 at 03:16:55AM +0900, Kukjin Kim wrote:
-> > > The following changes since commit
-c517d838eb7d07bbe9507871fab3931deccff539:
-> > >
-> > >   Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
-> > >
-> > > are available in the git repository at:
-> > >
-> > >
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > > tags/samsung-dt-64
-> > >
-> > > for you to fetch changes up to
-423c716151e254e42650ad78b30c2cd782c6f654:
-> > >
-> > >   arm64: dts: Add thermal-zones dt node for exynos5433 (2015-03-27
-> > > 02:13:43 +0900)
-> > >
-> > > ----------------------------------------------------------------
-> > > Samsung arm64 DT updates for v4.1
-> > >
-> > > - add new SoC for arm64 based exynos5433 SoC
-> > >   : exynos5433 - Octa cores for big.LITTLE architecture
-> > >   (Quad Cortex-A57 big and Quad Cortex-A53 LITTLE cores)
-> > >
-> > >   : added thermal-zones, TMU sensor and I2S dt nodes
-> > >   : added ADMA, RTC, ADC, PMU, SPI/PDMA and MSHC dt nodes
-> > >   : added pinctrl, HS-I2C, Serial and basic system dt nodes
-> > >
-> > > ----------------------------------------------------------------
-> > > Chanwoo Choi (6):
-> > >       arm64: dts: Add dts files for 64-bit Exynos5433 SoC
-> > >       arm64: dts: Add SPI/PDMA dt node for exynos5433
-> > >       arm64: dts: Add PMU dt node for exynos5433
-> > >       arm64: dts: Add RTC and ADC dt node for exynos5433
-> > >       arm64: dts: Add TMU sensor dt node for exynos5433
-> > >       arm64: dts: Add thermal-zones dt node for exynos5433
-> > >
-> > > Inha Song (2):
-> > >       arm64: dts: Add ADMA dt node for exynos5433
-> > >       arm64: dts: Add I2S dt node for exynos5433
-> > >
-> > > Jaehoon Chung (1):
-> > >       arm64: dts: Add MSHC dt node for exynos5433
-> > >
-> > >  .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
-> > >  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698
-+++++++++++++++
-> > >  .../dts/exynos/exynos5433-tmu-sensor-conf.dtsi     |  22 +
-> > >  arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     | 231 +++++
-> > >  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 931
-> > > +++++++++++++++++++++
-> > >  5 files changed, 1883 insertions(+)
-> > >  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
-> > >  create mode 100644
-> > > arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
-> > >  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
-> > >  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> >
-> + Chanwoo, Mike
+2015-05-13 0:24 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+> Enable CONFIG_SENSORS_PWM_FAN on exynos_defconfig to control fan power on Odroidxu3.
 >
-> Hi Olof,
+> ---
+> Depends on http://www.spinics.net/lists/arm-kernel/msg412031.html
+> Tested on OdroidXU3 Board.
+> ---
 >
-> Thanks for your taking other pull-requests :-)
->
-> > How do you even build these dts files? How did you test this branch
-before
-> > you sent it to us?
-> >
-> Yeah, your pointing out is exact. In my side, I've tested with 1) creating
-> exynos5433-smdk5433 board dt file and 2) adding ARCH_EXYNOS5433 config in
-> arch/arm64 and 3) including 5433 related clk tree, actually in linux-next.
-> Sorry for missing the explaining in my pull-request.
->
-> For 1), I've talked to Chanwoo about that and he is not ready to post its
-> board dt now and I want actual board dt for mass product would be better
-> in mainline. Maybe need some time...
->
-> For 2), we can add regarding updates for exynos-64 Kconfig/Makefile
-including
-> Arnd's suggestion to collapse all exynos-64 config entries in
-arm64/Kconfig
-> _later_, because current the exynos5433 dt has a dependency with 1)
-and clk
-> tree to support exynos5433 SoC.
->
-> For 3), same as For 2). Additionally as you know tipically arm-soc and clk
-> trees could have dependencies when new SoC supporting is added.
->
-> > Not merged.
-> >
-> Yeah, I agreed why you didn't. In this case, how do you think about adding
-> support new SoC then adding board dt including above changes later?
->
-> Thanks,
-> Kukjin
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-Hi Chanwoo,
+This is mixed up. Try it yourself:
+1. Save the email as mbox.
+2. Apply with "git am" to a vanilla tree.
+Do you see the Signed-off-by in commit?
 
-As you know, the arm64-exynos5433 couldn't be sent to upstream during
-previous merge window because it cannot be built without other stuff
-such as board DT file. I think, you need to post its regarding board DT
-file, I could test the exynos5433 series in my side with smdk5433 dt
-file though. Maybe as you know, I have no plan to upstream the smdk5433
-DT file because it will not be used outside of Samsung S.LSI.
-
-Thanks,
-Kukjin
+Best regards,
+Krzysztof
