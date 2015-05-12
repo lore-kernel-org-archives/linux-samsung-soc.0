@@ -1,56 +1,54 @@
 From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH] i2c: s3c2410: fix oops in suspend callback for non-dt
- platforms
-Date: Tue, 12 May 2015 18:15:03 +0200
-Message-ID: <20150512161503.GD6805@schokonusskuchen.bad>
-References: <1430676790-30500-1-git-send-email-anarsoul@gmail.com>
+Subject: Re: [PATCH 1/4] i2c: imx: Constify platform_device_id
+Date: Tue, 12 May 2015 18:29:17 +0200
+Message-ID: <20150512162917.GE6805@schokonusskuchen.bad>
+References: <1430495668-31878-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Hf61M2y+wYpnELGG"
+	protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1430676790-30500-1-git-send-email-anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1430495668-31878-1-git-send-email-k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---Hf61M2y+wYpnELGG
+--2qXFWqzzG3v1+95a
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 03, 2015 at 09:13:10PM +0300, Vasily Khoruzhick wrote:
-> Initialize sysreg by default, otherwise driver will crash in suspend call=
-back.
+On Sat, May 02, 2015 at 12:54:25AM +0900, Krzysztof Kozlowski wrote:
+> The platform_device_id is not modified by the driver and core uses it as
+> const.
 >=20
-> Signed-off-by: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Applied to for-current, thanks!
-Added stable and the fixes tag, too.
+Squashed the 4 patches and applied to for-next, thanks!
 
 
---Hf61M2y+wYpnELGG
+--2qXFWqzzG3v1+95a
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJVUicHAAoJEBQN5MwUoCm262wP/iVENEKtodfC3wqRRB06teIr
-hLrXVMS7iBoNozqx5HE7+hrPd7HjG0iPgxsdni1B94fXGH5Gd95KNomymTYNVnwN
-e0k2FkZCSoK5X2xs2V6GayuvEWpwTebc8lSue/SSsCLd11tZro4jzFDxX3JiWAKi
-idptA6jcXUkQrtA6TVrN2xDL5o7L7/3mGq3Pg/fDPAwCOciTBSXg/1fTd+opZQ1i
-VFdc/CMHeN8IlqjjU7E7ObCMDxvLtmzfQ1FscX7um7wiKkRlbF9VbfQlhbSCqtAK
-7GWande0jo6CTgys66Dy/YeMIfAqJ+LWeglOzsVWpyQY5MtO+SU8xSqKYhhI9V2Q
-pWXepqSWD1r1Zac5XIutV6GJSkB9+6SovdXFN0kqEr1lCaJlN1kjiEBedksW7ofd
-otnNp6ogGb+6SMx1cTCvTpc9TGBt4Ss+M5WVpWndQgB2pKhpoC8L1dsg6oBVcBBg
-hpJ4WLbYs6GzRmCWWZk8CdCQ2hPdMJ24Lzh87kGDncbmDBkkWNIaixonoVG1OUEY
-VsHGeOR3d+ecpqpa+ssh7z8YESWqap2boen5tF2ft+gAi/QxorZeZWXXFsu9IWrY
-NoFhoJiR7uOsP9jChi6asEsUZDZGoKjOAwOf9LM3KXGvfgZFsrKb/WC2K8uJZYYo
-/neRUT4ieATUz6DVSW27
-=gsPy
+iQIcBAEBAgAGBQJVUipcAAoJEBQN5MwUoCm2QXUQAK02DyQbfwff7yZV8jh6aQ+j
+IPHdsU14HxsZ4zayTMLyCxNYKSsCi+N9XDsdS2HQ+iOghUQ1o6/R0G968Qb51/jc
+9WuaMqV0HftNPkxvIDO40j6lLX8eOrRPnoI7fIDnLlTNvCoLi2mlhyzo3QF5ASJP
+faCoMGl+B07ENdP5+z1uv2EudMczz1FHEOa7klsEi++avApFasoSi9ST4FIR4cSi
+9gEsUR6je+iDe4x2mAxzbUbUbhze0jfxfJ8rtJsQXCnGOO9Gz97zWvpQr+m+jTps
+M+dx+XLTCzEODtY/n9QcUY1OgbDib03nd0BtNtFIF4sawAXF+UOSTh0hBSGbtgcR
+9/xANt+G/h8sbSRKCAhtF31t4g13T6pEmDeK+Autfo2JhQpWeLAs1mx6y6//UEoR
+j+Mk7eh9zkkH+cHyv5gQsdpbuybemvsYbHhT+Yfw3PCc4WLzDPTiJHsnNJMYl0ka
+kJJQWfMuAzDivHWrWftjVVeR8a0Xvpxt2ghldSX6TzYMiYOMxRNv6hGpfauIcHxS
+eUyzUX6yY6+JEoGw7sjx3uSA/wo369zy8O5FdYl+AH46G/fr/W3AunG5jhrFU0Nu
+zwwSVDWhyXBoZKoWqD2eMXiT0ZNV2qWOn/hij//3Sc1q4X/4tltd5bipGama3yjJ
+9OKHeXZxI9EySkZq/iLU
+=ti2d
 -----END PGP SIGNATURE-----
 
---Hf61M2y+wYpnELGG--
+--2qXFWqzzG3v1+95a--
