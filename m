@@ -1,31 +1,62 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: exynos_defconfig: Enable SENSORS_PWM_FAN, SENSORS_INA2XX, LEDS
- for OdroidXU3
-Date: Wed, 13 May 2015 03:01:26 +0900
-Message-ID: <55523FF6.7020505@kernel.org>
-References: <Anand Moon <linux.amoon@gmail.com> <1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
+Subject: Re: [GIT PULL] ARM: EXYNOS: dts: DTS fixes for 4.1, second try
+Date: Wed, 13 May 2015 03:27:38 +0900
+Message-ID: <5552461A.6070304@kernel.org>
+References: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54726 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932788AbbELSBg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 May 2015 14:01:36 -0400
-In-Reply-To: <1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/13/15 00:24, Anand Moon wrote:
-> Enable SENSORS_PWM_FAN, SENSORS_INA2XX, LEDS for OdroidXU3.
+On 05/11/15 12:10, Krzysztof Kozlowski wrote:
+> Dear Kukjin,
 > 
-Basically, I have no objection on this series so for the test on other
-exynos boards. Of course, if any problems on other boards, need to fix
-it maybe it will not be happened...anyway, I'll pick them in my tree
-once the dependent patch you mentioned is ready.
+> This groups one fix missed in your last pull requst. This fixes suspend
+> on Peach boards related to Marvell mwifiex driver. The driver was
+> enabled for Exynos defconfig during merge window so currently
+> the suspend on these boards on this config fails.
+> 
+Yes, you're right. Only exynos5250-snow related patch has been fixed
+before and this should be sent to upstream together. I've applied this
+into samsung-fixes-2 with your signed-off-by.
+
+Note this will be sent to arm-soc before a couple of days of -rc4 with
+your other fix for suspend on exynos4.
 
 Thanks,
 Kukjin
+
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 77b0ffdc4bbd267e9589aa025047e512322fc643:
+> 
+>   Merge branch 'v4.2-next/dt-samsung' into for-next (2015-05-09 04:03:46 +0900)
+> 
+> are available in the git repository at:
+> 
+> 
+>   https://github.com/krzk/linux.git tags/samsung-dt-fixes-4.1-2
+> 
+> for you to fetch changes up to 2495ae559826c60e3ccde9850e3b38815725b9c9:
+> 
+>   ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards (2015-05-11 11:00:00 +0900)
+> 
+> ----------------------------------------------------------------
+> Fix for suspend on Peach boards related to Marvell mwifiex driver.
+> The driver was enabled for Exynos defconfig during 4.1 merge window
+> so currently the suspend on these boards on this config fails.
+> 
+> ----------------------------------------------------------------
+> Javier Martinez Canillas (1):
+>       ARM: dts: Add keep-power-in-suspend to WiFi SDIO node for Peach Boards
+> 
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
+>  2 files changed, 2 insertions(+)
