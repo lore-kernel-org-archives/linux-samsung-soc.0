@@ -1,64 +1,31 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v3] ARM: dts: Add HS400 support for exynos5422-odroidxu3
-Date: Wed, 13 May 2015 02:50:35 +0900
-Message-ID: <55523D6B.9080605@kernel.org>
-References: <5550CA0D.3050003@fivetechno.de>
+Subject: Re: exynos_defconfig: Enable SENSORS_PWM_FAN, SENSORS_INA2XX, LEDS
+ for OdroidXU3
+Date: Wed, 13 May 2015 03:01:26 +0900
+Message-ID: <55523FF6.7020505@kernel.org>
+References: <Anand Moon <linux.amoon@gmail.com> <1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54117 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:54726 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933091AbbELRun (ORCPT
+	id S932788AbbELSBg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 May 2015 13:50:43 -0400
-In-Reply-To: <5550CA0D.3050003@fivetechno.de>
+	Tue, 12 May 2015 14:01:36 -0400
+In-Reply-To: <1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Markus Reichl <m.reichl@fivetechno.de>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/12/15 00:26, Markus Reichl wrote:
-> HS400 timing values are added for exynos5422-odroidxu3 board.
+On 05/13/15 00:24, Anand Moon wrote:
+> Enable SENSORS_PWM_FAN, SENSORS_INA2XX, LEDS for OdroidXU3.
 > 
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
-> Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
-> Changes since v2:
-> 1. Rebased onto linux-samsung/for-next
-> 2. Added Acked-by tag
-> Changes since v1:
-> 1. Dropped num_slots
-> 2. Rebased onto 4.1-rc3
-> 3. Added Acked-by tag
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index cb649b1..8dd8e8e 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -312,10 +312,14 @@
->  	samsung,dw-mshc-ciu-div = <3>;
->  	samsung,dw-mshc-sdr-timing = <0 4>;
->  	samsung,dw-mshc-ddr-timing = <0 2>;
-> +	samsung,dw-mshc-hs400-timing = <0 2>;
-> +	samsung,read-strobe-delay = <90>;
->  	pinctrl-names = "default";
-> -	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd>;
-> +	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
->  	bus-width = <8>;
->  	cap-mmc-highspeed;
-> +	mmc-hs200-1_8v;
-> +	mmc-hs400-1_8v;
->  };
->  
->  &mmc_2 {
-> --
-
-Looks good to me, applied.
+Basically, I have no objection on this series so for the test on other
+exynos boards. Of course, if any problems on other boards, need to fix
+it maybe it will not be happened...anyway, I'll pick them in my tree
+once the dependent patch you mentioned is ready.
 
 Thanks,
 Kukjin
