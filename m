@@ -1,110 +1,55 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 6/9] media: vb2: Convert vb2_vmalloc_get_userptr() to use
- frame vector
-Date: Wed, 13 May 2015 15:08:12 +0200
-Message-ID: <1431522495-4692-7-git-send-email-jack@suse.cz>
-References: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-mm@kvack.org
-Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+Subject: [PATCH 0/9 v5] Helper to abstract vma handling in media layer
+Date: Wed, 13 May 2015 15:08:06 +0200
+Message-ID: <1431522495-4692-1-git-send-email-jack@suse.cz>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:49542 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934260AbbEMNIa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 May 2015 09:08:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mm@kvack.org
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-Q29udmVydCB2YjJfdm1hbGxvY19nZXRfdXNlcnB0cigpIHRvIHVzZSBmcmFtZSB2ZWN0b3IgaW5m
-cmFzdHJ1Y3R1cmUuCldoZW4gd2UgYXJlIGRvaW5nIHRoYXQgdGhlcmUncyBubyBuZWVkIHRvIGFs
-bG9jYXRlIHBhZ2UgYXJyYXkgYW5kIHNvbWUKY29kZSBjYW4gYmUgc2ltcGxpZmllZC4KCkFja2Vk
-LWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+ClRlc3RlZC1i
-eTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgpTaWduZWQtb2Zm
-LWJ5OiBKYW4gS2FyYSA8amFja0BzdXNlLmN6PgotLS0KIGRyaXZlcnMvbWVkaWEvdjRsMi1jb3Jl
-L3ZpZGVvYnVmMi12bWFsbG9jLmMgfCA5NCArKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLQog
-MSBmaWxlIGNoYW5nZWQsIDM2IGluc2VydGlvbnMoKyksIDU4IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi12bWFsbG9jLmMgYi9kcml2
-ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItdm1hbGxvYy5jCmluZGV4IDBiYTQwYmUyMWVi
-ZC4uZDJjZTgxZmEyY2RmIDEwMDY0NAotLS0gYS9kcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRl
-b2J1ZjItdm1hbGxvYy5jCisrKyBiL2RyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi12
-bWFsbG9jLmMKQEAgLTIzLDExICsyMyw5IEBACiAKIHN0cnVjdCB2YjJfdm1hbGxvY19idWYgewog
-CXZvaWQJCQkJKnZhZGRyOwotCXN0cnVjdCBwYWdlCQkJKipwYWdlczsKLQlzdHJ1Y3Qgdm1fYXJl
-YV9zdHJ1Y3QJCSp2bWE7CisJc3RydWN0IGZyYW1lX3ZlY3RvcgkJKnZlYzsKIAllbnVtIGRtYV9k
-YXRhX2RpcmVjdGlvbgkJZG1hX2RpcjsKIAl1bnNpZ25lZCBsb25nCQkJc2l6ZTsKLQl1bnNpZ25l
-ZCBpbnQJCQluX3BhZ2VzOwogCWF0b21pY190CQkJcmVmY291bnQ7CiAJc3RydWN0IHZiMl92bWFy
-ZWFfaGFuZGxlcgloYW5kbGVyOwogCXN0cnVjdCBkbWFfYnVmCQkJKmRidWY7CkBAIC03NiwxMCAr
-NzQsOCBAQCBzdGF0aWMgdm9pZCAqdmIyX3ZtYWxsb2NfZ2V0X3VzZXJwdHIodm9pZCAqYWxsb2Nf
-Y3R4LCB1bnNpZ25lZCBsb25nIHZhZGRyLAogCQkJCSAgICAgZW51bSBkbWFfZGF0YV9kaXJlY3Rp
-b24gZG1hX2RpcikKIHsKIAlzdHJ1Y3QgdmIyX3ZtYWxsb2NfYnVmICpidWY7Ci0JdW5zaWduZWQg
-bG9uZyBmaXJzdCwgbGFzdDsKLQlpbnQgbl9wYWdlcywgb2Zmc2V0OwotCXN0cnVjdCB2bV9hcmVh
-X3N0cnVjdCAqdm1hOwotCWRtYV9hZGRyX3QgcGh5c3A7CisJc3RydWN0IGZyYW1lX3ZlY3RvciAq
-dmVjOworCWludCBuX3BhZ2VzLCBvZmZzZXQsIGk7CiAKIAlidWYgPSBremFsbG9jKHNpemVvZigq
-YnVmKSwgR0ZQX0tFUk5FTCk7CiAJaWYgKCFidWYpCkBAIC04OCw1MyArODQsMzYgQEAgc3RhdGlj
-IHZvaWQgKnZiMl92bWFsbG9jX2dldF91c2VycHRyKHZvaWQgKmFsbG9jX2N0eCwgdW5zaWduZWQg
-bG9uZyB2YWRkciwKIAlidWYtPmRtYV9kaXIgPSBkbWFfZGlyOwogCW9mZnNldCA9IHZhZGRyICYg
-flBBR0VfTUFTSzsKIAlidWYtPnNpemUgPSBzaXplOwotCi0JZG93bl9yZWFkKCZjdXJyZW50LT5t
-bS0+bW1hcF9zZW0pOwotCXZtYSA9IGZpbmRfdm1hKGN1cnJlbnQtPm1tLCB2YWRkcik7Ci0JaWYg
-KHZtYSAmJiAodm1hLT52bV9mbGFncyAmIFZNX1BGTk1BUCkgJiYgKHZtYS0+dm1fcGdvZmYpKSB7
-Ci0JCWlmICh2YjJfZ2V0X2NvbnRpZ191c2VycHRyKHZhZGRyLCBzaXplLCAmdm1hLCAmcGh5c3Ap
-KQotCQkJZ290byBmYWlsX3BhZ2VzX2FycmF5X2FsbG9jOwotCQlidWYtPnZtYSA9IHZtYTsKLQkJ
-YnVmLT52YWRkciA9IChfX2ZvcmNlIHZvaWQgKilpb3JlbWFwX25vY2FjaGUocGh5c3AsIHNpemUp
-OwotCQlpZiAoIWJ1Zi0+dmFkZHIpCi0JCQlnb3RvIGZhaWxfcGFnZXNfYXJyYXlfYWxsb2M7CisJ
-dmVjID0gdmIyX2NyZWF0ZV9mcmFtZXZlYyh2YWRkciwgc2l6ZSwgZG1hX2RpciA9PSBETUFfRlJP
-TV9ERVZJQ0UpOworCWlmIChJU19FUlIodmVjKSkKKwkJZ290byBmYWlsX3BmbnZlY19jcmVhdGU7
-CisJYnVmLT52ZWMgPSB2ZWM7CisJbl9wYWdlcyA9IGZyYW1lX3ZlY3Rvcl9jb3VudCh2ZWMpOwor
-CWlmIChmcmFtZV92ZWN0b3JfdG9fcGFnZXModmVjKSA8IDApIHsKKwkJdW5zaWduZWQgbG9uZyAq
-bnVtcyA9IGZyYW1lX3ZlY3Rvcl9wZm5zKHZlYyk7CisKKwkJLyoKKwkJICogV2UgY2Fubm90IGdl
-dCBwYWdlIHBvaW50ZXJzIGZvciB0aGVzZSBwZm5zLiBDaGVjayBtZW1vcnkgaXMKKwkJICogcGh5
-c2ljYWxseSBjb250aWd1b3VzIGFuZCB1c2UgZGlyZWN0IG1hcHBpbmcuCisJCSAqLworCQlmb3Ig
-KGkgPSAxOyBpIDwgbl9wYWdlczsgaSsrKQorCQkJaWYgKG51bXNbaS0xXSArIDEgIT0gbnVtc1tp
-XSkKKwkJCQlnb3RvIGZhaWxfbWFwOworCQlidWYtPnZhZGRyID0gKF9fZm9yY2Ugdm9pZCAqKQor
-CQkJCWlvcmVtYXBfbm9jYWNoZShudW1zWzBdIDw8IFBBR0VfU0hJRlQsIHNpemUpOwogCX0gZWxz
-ZSB7Ci0JCWZpcnN0ID0gdmFkZHIgPj4gUEFHRV9TSElGVDsKLQkJbGFzdCAgPSAodmFkZHIgKyBz
-aXplIC0gMSkgPj4gUEFHRV9TSElGVDsKLQkJYnVmLT5uX3BhZ2VzID0gbGFzdCAtIGZpcnN0ICsg
-MTsKLQkJYnVmLT5wYWdlcyA9IGt6YWxsb2MoYnVmLT5uX3BhZ2VzICogc2l6ZW9mKHN0cnVjdCBw
-YWdlICopLAotCQkJCSAgICAgR0ZQX0tFUk5FTCk7Ci0JCWlmICghYnVmLT5wYWdlcykKLQkJCWdv
-dG8gZmFpbF9wYWdlc19hcnJheV9hbGxvYzsKLQotCQkvKiBjdXJyZW50LT5tbS0+bW1hcF9zZW0g
-aXMgdGFrZW4gYnkgdmlkZW9idWYyIGNvcmUgKi8KLQkJbl9wYWdlcyA9IGdldF91c2VyX3BhZ2Vz
-KGN1cnJlbnQsIGN1cnJlbnQtPm1tLAotCQkJCQkgdmFkZHIgJiBQQUdFX01BU0ssIGJ1Zi0+bl9w
-YWdlcywKLQkJCQkJIGRtYV9kaXIgPT0gRE1BX0ZST01fREVWSUNFLAotCQkJCQkgMSwgLyogZm9y
-Y2UgKi8KLQkJCQkJIGJ1Zi0+cGFnZXMsIE5VTEwpOwotCQlpZiAobl9wYWdlcyAhPSBidWYtPm5f
-cGFnZXMpCi0JCQlnb3RvIGZhaWxfZ2V0X3VzZXJfcGFnZXM7Ci0KLQkJYnVmLT52YWRkciA9IHZt
-X21hcF9yYW0oYnVmLT5wYWdlcywgYnVmLT5uX3BhZ2VzLCAtMSwKKwkJYnVmLT52YWRkciA9IHZt
-X21hcF9yYW0oZnJhbWVfdmVjdG9yX3BhZ2VzKHZlYyksIG5fcGFnZXMsIC0xLAogCQkJCQlQQUdF
-X0tFUk5FTCk7Ci0JCWlmICghYnVmLT52YWRkcikKLQkJCWdvdG8gZmFpbF9nZXRfdXNlcl9wYWdl
-czsKIAl9Ci0JdXBfcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsKIAorCWlmICghYnVmLT52
-YWRkcikKKwkJZ290byBmYWlsX21hcDsKIAlidWYtPnZhZGRyICs9IG9mZnNldDsKIAlyZXR1cm4g
-YnVmOwogCi1mYWlsX2dldF91c2VyX3BhZ2VzOgotCXByX2RlYnVnKCJnZXRfdXNlcl9wYWdlcyBy
-ZXF1ZXN0ZWQvZ290OiAlZC8lZF1cbiIsIG5fcGFnZXMsCi0JCSBidWYtPm5fcGFnZXMpOwotCXdo
-aWxlICgtLW5fcGFnZXMgPj0gMCkKLQkJcHV0X3BhZ2UoYnVmLT5wYWdlc1tuX3BhZ2VzXSk7Ci0J
-a2ZyZWUoYnVmLT5wYWdlcyk7Ci0KLWZhaWxfcGFnZXNfYXJyYXlfYWxsb2M6Ci0JdXBfcmVhZCgm
-Y3VycmVudC0+bW0tPm1tYXBfc2VtKTsKK2ZhaWxfbWFwOgorCXZiMl9kZXN0cm95X2ZyYW1ldmVj
-KHZlYyk7CitmYWlsX3BmbnZlY19jcmVhdGU6CiAJa2ZyZWUoYnVmKTsKIAogCXJldHVybiBOVUxM
-OwpAQCAtMTQ1LDIyICsxMjQsMjEgQEAgc3RhdGljIHZvaWQgdmIyX3ZtYWxsb2NfcHV0X3VzZXJw
-dHIodm9pZCAqYnVmX3ByaXYpCiAJc3RydWN0IHZiMl92bWFsbG9jX2J1ZiAqYnVmID0gYnVmX3By
-aXY7CiAJdW5zaWduZWQgbG9uZyB2YWRkciA9ICh1bnNpZ25lZCBsb25nKWJ1Zi0+dmFkZHIgJiBQ
-QUdFX01BU0s7CiAJdW5zaWduZWQgaW50IGk7CisJc3RydWN0IHBhZ2UgKipwYWdlczsKKwl1bnNp
-Z25lZCBpbnQgbl9wYWdlczsKIAotCWRvd25fcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsK
-LQlpZiAoYnVmLT5wYWdlcykgeworCWlmICghYnVmLT52ZWMtPmlzX3BmbnMpIHsKKwkJbl9wYWdl
-cyA9IGZyYW1lX3ZlY3Rvcl9jb3VudChidWYtPnZlYyk7CisJCXBhZ2VzID0gZnJhbWVfdmVjdG9y
-X3BhZ2VzKGJ1Zi0+dmVjKTsKIAkJaWYgKHZhZGRyKQotCQkJdm1fdW5tYXBfcmFtKCh2b2lkICop
-dmFkZHIsIGJ1Zi0+bl9wYWdlcyk7Ci0JCWZvciAoaSA9IDA7IGkgPCBidWYtPm5fcGFnZXM7ICsr
-aSkgewotCQkJaWYgKGJ1Zi0+ZG1hX2RpciA9PSBETUFfRlJPTV9ERVZJQ0UpCi0JCQkJc2V0X3Bh
-Z2VfZGlydHlfbG9jayhidWYtPnBhZ2VzW2ldKTsKLQkJCXB1dF9wYWdlKGJ1Zi0+cGFnZXNbaV0p
-OwotCQl9Ci0JCWtmcmVlKGJ1Zi0+cGFnZXMpOworCQkJdm1fdW5tYXBfcmFtKCh2b2lkICopdmFk
-ZHIsIG5fcGFnZXMpOworCQlpZiAoYnVmLT5kbWFfZGlyID09IERNQV9GUk9NX0RFVklDRSkKKwkJ
-CWZvciAoaSA9IDA7IGkgPCBuX3BhZ2VzOyBpKyspCisJCQkJc2V0X3BhZ2VfZGlydHlfbG9jayhw
-YWdlc1tpXSk7CiAJfSBlbHNlIHsKLQkJdmIyX3B1dF92bWEoYnVmLT52bWEpOwogCQlpb3VubWFw
-KChfX2ZvcmNlIHZvaWQgX19pb21lbSAqKWJ1Zi0+dmFkZHIpOwogCX0KLQl1cF9yZWFkKCZjdXJy
-ZW50LT5tbS0+bW1hcF9zZW0pOworCXZiMl9kZXN0cm95X2ZyYW1ldmVjKGJ1Zi0+dmVjKTsKIAlr
-ZnJlZShidWYpOwogfQogCi0tIAoyLjEuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+  Hello,
+
+I'm sending the fifth version of my patch series to abstract vma handling
+from the various media drivers. The patches got some review from mm people and
+testing from device driver guys so unless someone objects, patches will be
+queued in media tree for the next merge window.
+
+After this patch set drivers have to know much less details about vmas, their
+types, and locking. Also quite some code is removed from them. As a bonus
+drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
+this series is to remove knowledge about mmap_sem locking from as many places a
+possible so that we can change it with reasonable effort.
+
+The core of the series is the new helper get_vaddr_frames() which is given a
+virtual address and it fills in PFNs / struct page pointers (depending on VMA
+type) into the provided array. If PFNs correspond to normal pages it also grabs
+references to these pages. The difference from get_user_pages() is that this
+function can also deal with pfnmap, and io mappings which is what the media
+drivers need.
+
+I have tested the patches with vivid driver so at least vb2 code got some
+exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
+exynos driver which is only for Samsung platform is completely untested).
+
+								Honza
+Changes since v4:
+* Minor cleanups and fixes pointed out by Mel and Vlasta
+* Added Acked-by tags
+
+Changes since v3:
+* Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
+* Fixed error path for exynos driver
+
+Changes since v2:
+* Renamed functions and structures as Mel suggested
+* Other minor changes suggested by Mel
+* Rebased on top of 4.1-rc2
+* Changed functions to get pointer to array of pages / pfns to perform
+  conversion if necessary. This fixes possible issue in the omap I may have
+  introduced in v2 and generally makes the API less errorprone.
