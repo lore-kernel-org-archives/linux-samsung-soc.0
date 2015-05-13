@@ -1,52 +1,48 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH v4 03/13] ARM: dts: exynos4: Use labels for overriding
- nodes in Exynos4210 Origen
-Date: Wed, 13 May 2015 18:55:59 +0900
-Message-ID: <55531FAF.2000704@gmail.com>
-References: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com> <1431351773-2031-4-git-send-email-k.kozlowski.k@gmail.com> <55531536.4040608@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix dereference of ERR_PTR returned byof_genpd_get_from_provider
+Date: Wed, 13 May 2015 19:01:45 +0900
+Message-ID: <CAJKOXPczZJEauicZRgstkufuj5s8pkrXbiDQoAkRp1mx79TNPw@mail.gmail.com>
+References: <1431487072-17567-1-git-send-email-k.kozlowski@samsung.com>
+	<55530F07.5080503@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:36158 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933159AbbEMJ4F (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 05:56:05 -0400
-In-Reply-To: <55531536.4040608@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <55530F07.5080503@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 13.05.2015 o 18:11, Kukjin Kim pisze:
-> On 05/11/15 22:42, Krzysztof Kozlowski wrote:
->> Usage of labels instead of full paths reduces possible mistakes when
->> overriding nodes.
+2015-05-13 17:44 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+> On 05/13/15 12:17, Krzysztof Kozlowski wrote:
+>> ERR_PTR was dereferenced during sub domain parsing, if parent domain
+>> could not be obtained (because of invalid phandle or deferred
+>> registration of parent domain).
 >>
-> 
-> In case of this changes, I have no objection.
-> But I can't see the 'codec' node you deleted in this patch?
+>> The Exynos power domain code checked whether
+>> of_genpd_get_from_provider() returned NULL and in that case it skipped
+>> that power domain node. However this function returns ERR_PTR or valid
+>> pointer, not NULL.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Cc: <stable@vger.kernel.org>
+>
+> Maybe [4.0+]? but as you mentioned this patch has a dependency with
 
-It is under label "mfc". This label was already defined in exynos4.dtsi
-before:
+Tag fixes with commit ID is sufficient for stable backporting.
 
->> +&mfc {
->> +	samsung,mfc-r = <0x43000000 0x800000>;
->> +	samsung,mfc-l = <0x51000000 0x800000>;
->> +	status = "okay";
->> +};
+> Patch "ARM: EXYNOS: Add missing of_node_put() when parsing power domain"
+> and it means this cannot be applied into stable tree...
+>
+> So I'll apply this patch firstly then please re-submit them I've missed
+> before based on samsung tree. I think, it would be better...
+>
+>> Fixes: 0f7807518fe1 ("ARM: EXYNOS: add support for sub-power domains")
 
-> 
-> And if possible, can you please put the labels in alphabetically when
-> you create this patch again? so that we could find the labels easily...
-
-Yes, when I switched to the "label convention" I put them in
-alphabetical order. However I did not re-order other (existing) nodes.
-This makes some confusion but I wanted to limit the scope of this change
-and do only one thing - switch to "label convention".
-
-Do you want me to reorder alphabetically everything?
+I will get an notification when this patch won't apply to stable tree
+(like v4.0) because of conflicts. Then usually I fix/rebase the patch
+and send to the stable tree. So don't worry about this, I will handle
+the backport.
 
 Best regards,
 Krzysztof
