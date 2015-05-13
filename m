@@ -1,33 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv5 3/5] ARM: dts: define default thermal-zones for exynos5422
-Date: Wed, 13 May 2015 16:23:04 +0900
-Message-ID: <CAJKOXPerF9xgGzFuU+HC_9QaOAAMkoQo2DxH0Y=NwLJ7TMWH0A@mail.gmail.com>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
-	<1431499020-3912-4-git-send-email-linux.amoon@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH] s5p-mfc: fix state check from encoder queue_setup
+Date: Wed, 13 May 2015 16:25:25 +0900
+Message-ID: <1431501925-16905-1-git-send-email-sw0312.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f41.google.com ([209.85.216.41]:34682 "EHLO
-	mail-vn0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753839AbbEMHXF (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:30641 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752635AbbEMHZb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 03:23:05 -0400
-In-Reply-To: <1431499020-3912-4-git-send-email-linux.amoon@gmail.com>
+	Wed, 13 May 2015 03:25:31 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, mchehab@osg.samsung.com
+Cc: m.szyprowski@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com
 
-2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> Trip points corresponding to the one defined in the exynos_tmu_data.c
-> for Exynos5 have been included.
-> This thermal-zones attribute is afterwards reused for Exynos5422.
->
-> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+MFCINST_GOT_INST state is set to encoder context with set_format
+only for catpure buffer. In queue_setup of encoder called during
+reqbufs, it is checked MFCINST_GOT_INST state for both capture
+and output buffer. So this patch fixes to encoder to check
+MFCINST_GOT_INST state only for capture buffer from queue_setup.
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+index e65993f..2e57e9f 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+@@ -1819,11 +1819,12 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
+ 	struct s5p_mfc_ctx *ctx = fh_to_ctx(vq->drv_priv);
+ 	struct s5p_mfc_dev *dev = ctx->dev;
+ 
+-	if (ctx->state != MFCINST_GOT_INST) {
+-		mfc_err("inavlid state: %d\n", ctx->state);
+-		return -EINVAL;
+-	}
+ 	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++		if (ctx->state != MFCINST_GOT_INST) {
++			mfc_err("inavlid state: %d\n", ctx->state);
++			return -EINVAL;
++		}
++
+ 		if (ctx->dst_fmt)
+ 			*plane_count = ctx->dst_fmt->num_planes;
+ 		else
+-- 
+1.7.4.1
