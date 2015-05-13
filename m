@@ -1,37 +1,57 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: exynos_defconfig: Enable CONFIG_SENSORS_PWM_FAN
- for odroidxu3 pmw-fan
-Date: Wed, 13 May 2015 10:56:49 +0900
-Message-ID: <CAJKOXPe8dM8Wk7y9QTMz_BaQvqxvRK44+h=A1_msyr6tfkbEiA@mail.gmail.com>
-References: <linux.amoon@gmail.com>
-	<1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
-	<1431444262-29531-2-git-send-email-linux.amoon@gmail.com>
-	<CAJKOXPcXRWm7T29LCYMMkW0FDF8LXEsAoMjwrTqBvSiQ+q5czg@mail.gmail.com>
-	<CANAwSgSasMN-mgZWRg_FvnHL1AWf=wFRkUG4MP3JzieFF4NisQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f51.google.com ([209.85.216.51]:42711 "EHLO
-	mail-vn0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964909AbbEMB4t (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 May 2015 21:56:49 -0400
-Received: by vnbf129 with SMTP id f129so1951773vnb.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 May 2015 18:56:49 -0700 (PDT)
-In-Reply-To: <CANAwSgSasMN-mgZWRg_FvnHL1AWf=wFRkUG4MP3JzieFF4NisQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] ARM: EXYNOS: Fix dereference of ERR_PTR returned by
+ of_genpd_get_from_provider
+Date: Wed, 13 May 2015 12:17:52 +0900
+Message-ID: <1431487072-17567-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 
-2015-05-13 10:47 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> Hi Krzysztof,
->
-> Actually It's my mistake. This patch had double signed-off. So I
-> removed one from the patch.
-> Do I need to resend this.
+ERR_PTR was dereferenced during sub domain parsing, if parent domain
+could not be obtained (because of invalid phandle or deferred
+registration of parent domain).
 
-Yes, please resend all patches with proper commit message and signed off.
+The Exynos power domain code checked whether
+of_genpd_get_from_provider() returned NULL and in that case it skipped
+that power domain node. However this function returns ERR_PTR or valid
+pointer, not NULL.
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 0f7807518fe1 ("ARM: EXYNOS: add support for sub-power domains")
+
+---
+
+The patchset is rebased on top of my fixes for pm_domains.c to avoid the
+conflicts:
+https://lkml.org/lkml/2015/3/27/321
+---
+ arch/arm/mach-exynos/pm_domains.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 1a90c5da2fd7..440324c94d28 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -209,7 +209,7 @@ no_clk:
+ 		args.np = np;
+ 		args.args_count = 0;
+ 		child_domain = of_genpd_get_from_provider(&args);
+-		if (!child_domain)
++		if (IS_ERR(child_domain))
+ 			goto next_pd;
+ 
+ 		if (of_parse_phandle_with_args(np, "power-domains",
+@@ -217,7 +217,7 @@ no_clk:
+ 			goto next_pd;
+ 
+ 		parent_domain = of_genpd_get_from_provider(&args);
+-		if (!parent_domain)
++		if (IS_ERR(parent_domain))
+ 			goto next_pd;
+ 
+ 		if (pm_genpd_add_subdomain(parent_domain, child_domain))
+-- 
+1.9.1
