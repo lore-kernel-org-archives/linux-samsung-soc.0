@@ -1,53 +1,85 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCHv5 3/5] ARM: dts: define default thermal-zones for exynos5422
-Date: Wed, 13 May 2015 15:16:24 +0200
-Message-ID: <20150513151624.688cf12b@amdc2363>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
- <1431499020-3912-4-git-send-email-linux.amoon@gmail.com>
- <CAJKOXPerF9xgGzFuU+HC_9QaOAAMkoQo2DxH0Y=NwLJ7TMWH0A@mail.gmail.com>
- <CAJKOXPeTvB2J0KjTc-YGqgaptXAyNM3Gv7Xsm5F74NmUwALQbQ@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3] ARM: dts: exynos5422-odroidxu3: Hook up PWM and use
+ it for LEDs
+Date: Wed, 13 May 2015 22:17:38 +0900
+Message-ID: <55534EF2.1090307@samsung.com>
+References: <84vbfyk4w4.wl-peter.chubb@nicta.com.au>	<CAJKOXPcjPOWNqBbyHLjw-1SS2GLtscgVjKFcz3EzYQKEJ5O8uQ@mail.gmail.com>	<84r3qmk2n6.wl-peter.chubb@nicta.com.au>	<CAJKOXPcPGHcP26hLK0V0Rrr3ABB+HQAqQg4PpZN7ytsn2O78Qg@mail.gmail.com>	<84pp66k1aa.wl-peter.chubb@nicta.com.au> <843831qg6h.wl-peter.chubb@nicta.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48141 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932378AbbEMNQe (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34138 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965201AbbEMNRm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 09:16:34 -0400
-In-reply-to: <CAJKOXPeTvB2J0KjTc-YGqgaptXAyNM3Gv7Xsm5F74NmUwALQbQ@mail.gmail.com>
+	Wed, 13 May 2015 09:17:42 -0400
+Received: by pacyx8 with SMTP id yx8so50598584pac.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 May 2015 06:17:42 -0700 (PDT)
+In-Reply-To: <843831qg6h.wl-peter.chubb@nicta.com.au>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Peter Chubb <peter.chubb@nicta.com.au>, kgene@kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-> 2015-05-13 16:23 GMT+09:00 Krzysztof Kozlowski
-> <k.kozlowski@samsung.com>:
-> > 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> >> Trip points corresponding to the one defined in the
-> >> exynos_tmu_data.c for Exynos5 have been included.
-> >> This thermal-zones attribute is afterwards reused for Exynos5422.
-> >>
-> >> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-> >> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+W dniu 13.05.2015 o 13:01, Peter Chubb pisze:
 > 
-> I cannot find email with Lukasz's acked-by. Could you point me to it?
+> PWM output wasn't working because it wasn't hooked up to its pincontrol.
+> This patch:
+>    - hooks up PWM to its pincontrol, and documents what
+>      the outputs are on the XU3
+>    - switches the LEDs that are on PWM outputs to use PWM
+>      rather than GPIO.
 > 
-> Lukasz, is the file OK?
-
-Yes, it is OK.
-
+> The main effect is that the brightness of the LEDs can be controlled, and
+> user-mode fan control is enabled via /sys/class/pwm
 > 
-> Best regards,
-> Krzysztof
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Peter Chubb <peter.chubb@nicta.com.au>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 56 +++++++++++++++++++++---------
+>  1 file changed, 39 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> index f0ce60b..6f96b3d 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -287,25 +287,35 @@
+>  		status = "okay";
+>  	};
+>  
+> -	leds {
+> -		compatible = "gpio-leds";
+> -		heartbeat {
+> -			label = "blue:heartbeart";
+> -			gpios = <&gpb2 2 0>;
+> -			default-state = "off";
+> -			linux,default-trigger = "heartbeat";
+> -		};
+> -
+> -		eMMC {
+> -			label = "green:eMMC";
+> -			gpios = <&gpb2 1 0>;
+> -			default-state = "off";
+> -			linux,default-trigger = "mmc0";
+> -		};
+> +	pwmleds {
+> +	     compatible = "pwm-leds";
+> +
+> +	     greenled {
+> +		     label = "green:mmc0";
+> +		     pwms = <&pwm 1 2000000 0>;
+> +		     pwm-names = "pwm1";
+> +		     /*
+> +		      * Green LED is much brighter than the others
+> +		      * so limit its max brightness
+> +		      */
+> +		     max_brightness = <127>; 
 
+Please run checkpatch before sending a patch. Here you have trailing
+whitespace error.
 
+Additionally the indentation is broken in most of the lines - mixed tabs
+with spaces. Just stick to the kernel coding convention - tabs (8
+characters wide).
 
--- 
 Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Krzysztof
