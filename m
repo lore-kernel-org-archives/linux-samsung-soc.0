@@ -1,73 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
-Date: Wed, 13 May 2015 17:32:43 +0900
-Message-ID: <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv5 5/5] ARM: dts: Enable thermal_zone for exynos5422-odroidxu3
+Date: Wed, 13 May 2015 14:09:43 +0530
+Message-ID: <CANAwSgTaM+Fthmu=bVjsg-5-iojWRS+om32APY=NDG5nK2iPQQ@mail.gmail.com>
 References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
-	<1431499020-3912-3-git-send-email-linux.amoon@gmail.com>
-	<CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
-	<CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
+ <1431499020-3912-6-git-send-email-linux.amoon@gmail.com> <CAJKOXPeNB=BXoY6CAxE8MNZ90cchhbdbUg3Xgef3qAgBR2UWJA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f47.google.com ([209.85.216.47]:42335 "EHLO
-	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051AbbEMIco (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:34499 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751820AbbEMIkF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 04:32:44 -0400
-In-Reply-To: <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
+	Wed, 13 May 2015 04:40:05 -0400
+In-Reply-To: <CAJKOXPeNB=BXoY6CAxE8MNZ90cchhbdbUg3Xgef3qAgBR2UWJA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->>> device.
->>>
->>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
->>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>> ---
->>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
->>>  1 file changed, 25 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> index 9446e28..cd78816 100644
->>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>> @@ -319,6 +319,31 @@
->>>                 #cooling-cells = <2>;
->>>                 cooling-levels = <0 130 170 230>;
->>>         };
->>> +
->>> +       tmu@10060000 {
->>
->> Here and for other overrides please use label notation, like:
->>
->> &tmu_cpu0 {
->>               ...
->> };
->>
->>> +               vtmu-supply = <&ldo10_reg>;
->>
->> I am curious, how did you find that LDO10 supplies TMU unit?
->>
->> Best regards,
->> Krzysztof
+On 13 May 2015 at 13:10, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> 2015-05-13 15:37 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> Include exynos5-cpu-thermal.dtsi to enable thermal_zone support.
 >
-> Hi Krzysztof,
+> I am a little confused because you named this file as
+> exynos5-cpu-thermal, meaning it is common for all Exynos5 boards. But:
+> 1. It references some specific phandles like &fan0 (cooling-device =
+> <&fan0 2 3>).
+> 2. You include it only here.
 >
-> I have re-base my work on earlier Lukasz Majewski patches.
+> So the question: is "exynos5-cpu-thermal.dtsi" a generic thermal DTSI?
+> What is your intention?
 >
-> https://patchwork.kernel.org/patch/5693201/
+> Lukasz, you acked the patchset, is it fine?
+>
+> Best regards,
+> Krzysztof
 
-NAK.
-I am sorry, but this is not sufficient explanation. Actually such
-explanation could mean that you did just blindly copied everything
-instead of developing it.
+Hi Krysxtof,
 
-You cannot use some regulator here just because some Exynos4 boards
-use it. You have to be sure that this regulator supplies this part of
-SoC or device.
+This file almost similar to below patch
+
+https://patchwork.kernel.org/patch/5693321/
+
+I had to create this new file as I was not able to register
+#thermal-sensors to tmu_cpu0.
+
++       thermal-zones {
++               cpu0_thermal: cpu0-thermal {
++                       thermal-sensors = <&tmu_cpu0 0>;
++                       polling-delay-passive = <0>;
++                       polling-delay = <0>;
+
+Earlier the DTS sensor's were not getting registers to the tmu_cpu0 sensors.
+
+I am not aware If this file will be common to Exynos5 series.
+I could not include any common dts file as I would through me
+compilation error hence .dtsi  extension,
+
+-Anand Moon
