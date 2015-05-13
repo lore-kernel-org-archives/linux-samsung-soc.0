@@ -1,78 +1,74 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv5 5/5] ARM: dts: Enable thermal_zone for exynos5422-odroidxu3
-Date: Wed, 13 May 2015 19:05:41 +0900
-Message-ID: <CAJKOXPc859+ne2P_V9ckznwEEcXSC8WRMkVRUEQAP97zXALAGA@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv5 4/5] ARM: dts: exynos5420 update the cooling cells for
+ core cpu0
+Date: Wed, 13 May 2015 15:37:37 +0530
+Message-ID: <CANAwSgTdQk6BGD4xxB6k=p=YOV+CHv_+Q_bSyrxiPsdXVps92g@mail.gmail.com>
 References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
-	<1431499020-3912-6-git-send-email-linux.amoon@gmail.com>
-	<CAJKOXPeNB=BXoY6CAxE8MNZ90cchhbdbUg3Xgef3qAgBR2UWJA@mail.gmail.com>
-	<CANAwSgTaM+Fthmu=bVjsg-5-iojWRS+om32APY=NDG5nK2iPQQ@mail.gmail.com>
+ <1431499020-3912-5-git-send-email-linux.amoon@gmail.com> <CAJKOXPdKtMO3f8YzHXtuZ042jkFRL4wa978=TggSQk8FahubRg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f43.google.com ([209.85.216.43]:42048 "EHLO
-	mail-vn0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933258AbbEMKFl convert rfc822-to-8bit (ORCPT
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:33462 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932204AbbEMKH6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 06:05:41 -0400
-In-Reply-To: <CANAwSgTaM+Fthmu=bVjsg-5-iojWRS+om32APY=NDG5nK2iPQQ@mail.gmail.com>
+	Wed, 13 May 2015 06:07:58 -0400
+In-Reply-To: <CAJKOXPdKtMO3f8YzHXtuZ042jkFRL4wa978=TggSQk8FahubRg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-2015-05-13 17:39 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> On 13 May 2015 at 13:10, Krzysztof Kozlowski <k.kozlowski@samsung.com=
-> wrote:
->> 2015-05-13 15:37 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>> Include exynos5-cpu-thermal.dtsi to enable thermal_zone support.
+On 13 May 2015 at 13:01, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> update the cooling level for cpu0 to avoid following message.
+>
+> Capitalize sentence.
+> In commit subject add missing colon after "exynos5420".
+>
 >>
->> I am a little confused because you named this file as
->> exynos5-cpu-thermal, meaning it is common for all Exynos5 boards. Bu=
-t:
->> 1. It references some specific phandles like &fan0 (cooling-device =3D
->> <&fan0 2 3>).
->> 2. You include it only here.
+>> root@odroidxu3:~# dmesg | grep ther
+>
+> This command not needed, we all know how to use dmesg and grep.
+>
+>> [    0.241511] /thermal-zones/cpu-thermal/cooling-maps/map0:
+>>                          could not get #cooling-cells for /cpus/cpu@0
 >>
->> So the question: is "exynos5-cpu-thermal.dtsi" a generic thermal DTS=
-I?
->> What is your intention?
+>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
+>>  1 file changed, 4 insertions(+)
 >>
->> Lukasz, you acked the patchset, is it fine?
->>
->> Best regards,
->> Krzysztof
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 4531753..c75ed16 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -61,6 +61,10 @@
+>>                         reg = <0x0>;
+>>                         clock-frequency = <1800000000>;
+>>                         cci-control-port = <&cci_control1>;
+>> +
+>> +                       cooling-min-level = <10>;
+>> +                       cooling-max-level = <7>;
+>> +                       #cooling-cells = <2>; /* min followed by max */
 >
-> Hi Krysxtof,
+> I might be missing something but I do not understand which cooling
+> levels are referenced here. In my exynos5420.dtsi file there are no
+> frequencies for cpu0 node. Could you help me understand this?
 >
-> This file almost similar to below patch
->
-> https://patchwork.kernel.org/patch/5693321/
+> Best regards,
+> Krzysztof
 
-It is similar but it has major difference: it references external (to
-the file) phandle: fan0.
+Hi Krzysztof,
 
-> I had to create this new file as I was not able to register
-> #thermal-sensors to tmu_cpu0.
->
-> +       thermal-zones {
-> +               cpu0_thermal: cpu0-thermal {
-> +                       thermal-sensors =3D <&tmu_cpu0 0>;
-> +                       polling-delay-passive =3D <0>;
-> +                       polling-delay =3D <0>;
->
-> Earlier the DTS sensor's were not getting registers to the tmu_cpu0 s=
-ensors.
->
-> I am not aware If this file will be common to Exynos5 series.
-> I could not include any common dts file as I would through me
-> compilation error hence .dtsi  extension,
+http://lxr.free-electrons.com/source/Documentation/devicetree/bindings/cpufreq/cpufreq-dt.txt
+http://lxr.free-electrons.com/source/Documentation/devicetree/bindings/thermal/thermal.txt#L201
 
-So this looks exynos5420-odroidxu3 specific.
+These two documents provide the description on cooling-min-level and
+cooling-max-level.
 
-=C5=81ukasz, does this design looks good to you? You acked this but:
-1. I cannot find your ack for patch 3/5.
-2. I have doubts. :)
+I will correctly update the value in the next updated patch.
 
-Best regards,
-Krzysztof
+-Anand Moon
