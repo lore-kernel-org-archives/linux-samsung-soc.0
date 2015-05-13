@@ -1,57 +1,20 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Fix dereference of ERR_PTR returned by
- of_genpd_get_from_provider
-Date: Wed, 13 May 2015 12:17:52 +0900
-Message-ID: <1431487072-17567-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: v2 exynos_defconfig: Enable SENSORS_PWM_FAN, SENSORS_INA2XX, LEDS for OdroidXU3
+Date: Wed, 13 May 2015 13:22:51 +0930
+Message-ID: <1431489174-4479-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:34991 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751583AbbEMDxI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 May 2015 23:53:08 -0400
+Received: by pdbqd1 with SMTP id qd1so37333692pdb.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 May 2015 20:53:08 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-ERR_PTR was dereferenced during sub domain parsing, if parent domain
-could not be obtained (because of invalid phandle or deferred
-registration of parent domain).
+Enable SENSORS_PWM_FAN, SENSORS_INA2XX, LEDS for OdroidXU3 on exynos_defonfig.
 
-The Exynos power domain code checked whether
-of_genpd_get_from_provider() returned NULL and in that case it skipped
-that power domain node. However this function returns ERR_PTR or valid
-pointer, not NULL.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 0f7807518fe1 ("ARM: EXYNOS: add support for sub-power domains")
-
----
-
-The patchset is rebased on top of my fixes for pm_domains.c to avoid the
-conflicts:
-https://lkml.org/lkml/2015/3/27/321
----
- arch/arm/mach-exynos/pm_domains.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 1a90c5da2fd7..440324c94d28 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -209,7 +209,7 @@ no_clk:
- 		args.np = np;
- 		args.args_count = 0;
- 		child_domain = of_genpd_get_from_provider(&args);
--		if (!child_domain)
-+		if (IS_ERR(child_domain))
- 			goto next_pd;
- 
- 		if (of_parse_phandle_with_args(np, "power-domains",
-@@ -217,7 +217,7 @@ no_clk:
- 			goto next_pd;
- 
- 		parent_domain = of_genpd_get_from_provider(&args);
--		if (!parent_domain)
-+		if (IS_ERR(parent_domain))
- 			goto next_pd;
- 
- 		if (pm_genpd_add_subdomain(parent_domain, child_domain))
--- 
-1.9.1
+-Anand Moon
