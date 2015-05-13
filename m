@@ -1,42 +1,63 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCHv5 1/5] ARM: dts: exynos5422-odroidxu3 Add pwm-fan node
- tothe Odroid-XU3 board
-Date: Wed, 13 May 2015 17:17:42 +0900
-Message-ID: <555308A6.308@kernel.org>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com> <1431499020-3912-2-git-send-email-linux.amoon@gmail.com> <CAJKOXPefJwqvfZPDovQ6EjEOBfuJkidgeYDF_=KC9O+=2=_KoQ@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
+Date: Wed, 13 May 2015 13:51:30 +0530
+Message-ID: <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
+References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
+ <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40886 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932611AbbEMIRz (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:35803 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753843AbbEMIVw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 04:17:55 -0400
-In-Reply-To: <CAJKOXPefJwqvfZPDovQ6EjEOBfuJkidgeYDF_=KC9O+=2=_KoQ@mail.gmail.com>
+	Wed, 13 May 2015 04:21:52 -0400
+In-Reply-To: <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Guenter Roeck <linux@roeck-us.net>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 05/13/15 16:11, Krzysztof Kozlowski wrote:
+On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
 > 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->> Add pwm-fan node to the Odroid-XU3 board.
+>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+>> device.
 >>
 >> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
 >> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
 >> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> 
-> Please fix the title of commit (missing colon, duplicated name of board) to:
-> "ARM: dts: exynos5422-odroidxu3: Add pwm-fan node"
-> 
-Well, I'd preferred to use the following format:
-"ARM: dts: add pwm-fan node for exynos5422-odroidxu3"
+>> ---
+>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> index 9446e28..cd78816 100644
+>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> @@ -319,6 +319,31 @@
+>>                 #cooling-cells = <2>;
+>>                 cooling-levels = <0 130 170 230>;
+>>         };
+>> +
+>> +       tmu@10060000 {
+>
+> Here and for other overrides please use label notation, like:
+>
+> &tmu_cpu0 {
+>               ...
+> };
+>
+>> +               vtmu-supply = <&ldo10_reg>;
+>
+> I am curious, how did you find that LDO10 supplies TMU unit?
+>
+> Best regards,
+> Krzysztof
 
-But I can change it when I apply it ;-)
+Hi Krzysztof,
 
-> Rest looks good:
-> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-Thanks,
-Kukjin
+I have re-base my work on earlier Lukasz Majewski patches.
+
+https://patchwork.kernel.org/patch/5693201/
+
+-Anand Moon
