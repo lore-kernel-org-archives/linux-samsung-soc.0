@@ -1,344 +1,174 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
-Date: Wed, 13 May 2015 15:08:08 +0200
-Message-ID: <1431522495-4692-3-git-send-email-jack@suse.cz>
+Subject: [PATCH 7/9] media: vb2: Convert vb2_dc_get_userptr() to use frame
+ vector
+Date: Wed, 13 May 2015 15:08:13 +0200
+Message-ID: <1431522495-4692-8-git-send-email-jack@suse.cz>
 References: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:49546 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933388AbbEMNIa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 09:08:30 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-mm@kvack.org
-Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Provide new function get_vaddr_frames().  This function maps virtual
-addresses from given start and fills given array with page frame numbers of
-the corresponding pages. If given start belongs to a normal vma, the function
-grabs reference to each of the pages to pin them in memory. If start
-belongs to VM_IO | VM_PFNMAP vma, we don't touch page structures. Caller
-must make sure pfns aren't reused for anything else while he is using
-them.
-
-This function is created for various drivers to simplify handling of
-their buffers.
-
-Acked-by: Mel Gorman <mgorman@suse.de>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- include/linux/mm.h |  44 +++++++++++
- mm/gup.c           | 226 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 270 insertions(+)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0755b9fd03a7..dcd1f02a78e9 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -20,6 +20,7 @@
- #include <linux/shrinker.h>
- #include <linux/resource.h>
- #include <linux/page_ext.h>
-+#include <linux/err.h>
- 
- struct mempolicy;
- struct anon_vma;
-@@ -1197,6 +1198,49 @@ long get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
- 		    int write, int force, struct page **pages);
- int get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 			struct page **pages);
-+
-+/* Container for pinned pfns / pages */
-+struct frame_vector {
-+	unsigned int nr_allocated;	/* Number of frames we have space for */
-+	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
-+	bool got_ref;		/* Did we pin pages by getting page ref? */
-+	bool is_pfns;		/* Does array contain pages or pfns? */
-+	void *ptrs[0];		/* Array of pinned pfns / pages. Use
-+				 * pfns_vector_pages() or pfns_vector_pfns()
-+				 * for access */
-+};
-+
-+struct frame_vector *frame_vector_create(unsigned int nr_frames);
-+void frame_vector_destroy(struct frame_vector *vec);
-+int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
-+		     bool write, bool force, struct frame_vector *vec);
-+void put_vaddr_frames(struct frame_vector *vec);
-+int frame_vector_to_pages(struct frame_vector *vec);
-+void frame_vector_to_pfns(struct frame_vector *vec);
-+
-+static inline unsigned int frame_vector_count(struct frame_vector *vec)
-+{
-+	return vec->nr_frames;
-+}
-+
-+static inline struct page **frame_vector_pages(struct frame_vector *vec)
-+{
-+	if (vec->is_pfns) {
-+		int err = frame_vector_to_pages(vec);
-+
-+		if (err)
-+			return ERR_PTR(err);
-+	}
-+	return (struct page **)(vec->ptrs);
-+}
-+
-+static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
-+{
-+	if (!vec->is_pfns)
-+		frame_vector_to_pfns(vec);
-+	return (unsigned long *)(vec->ptrs);
-+}
-+
- struct kvec;
- int get_kernel_pages(const struct kvec *iov, int nr_pages, int write,
- 			struct page **pages);
-diff --git a/mm/gup.c b/mm/gup.c
-index 6297f6bccfb1..9d7f4fde30cb 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -8,6 +8,7 @@
- #include <linux/rmap.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/vmalloc.h>
- 
- #include <linux/sched.h>
- #include <linux/rwsem.h>
-@@ -936,6 +937,231 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
- 	return ret;	/* 0 or negative error code */
- }
- 
-+/*
-+ * get_vaddr_frames() - map virtual addresses to pfns
-+ * @start:	starting user address
-+ * @nr_frames:	number of pages / pfns from start to map
-+ * @write:	whether pages will be written to by the caller
-+ * @force:	whether to force write access even if user mapping is
-+ *		readonly. See description of the same argument of
-+		get_user_pages().
-+ * @vec:	structure which receives pages / pfns of the addresses mapped.
-+ *		It should have space for at least nr_frames entries.
-+ *
-+ * This function maps virtual addresses from @start and fills @vec structure
-+ * with page frame numbers or page pointers to corresponding pages (choice
-+ * depends on the type of the vma underlying the virtual address). If @start
-+ * belongs to a normal vma, the function grabs reference to each of the pages
-+ * to pin them in memory. If @start belongs to VM_IO | VM_PFNMAP vma, we don't
-+ * touch page structures and the caller must make sure pfns aren't reused for
-+ * anything else while he is using them.
-+ *
-+ * The function returns number of pages mapped which may be less than
-+ * @nr_frames. In particular we stop mapping if there are more vmas of
-+ * different type underlying the specified range of virtual addresses.
-+ * When the function isn't able to map a single page, it returns error.
-+ *
-+ * This function takes care of grabbing mmap_sem as necessary.
-+ */
-+int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
-+		     bool write, bool force, struct frame_vector *vec)
-+{
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	int ret = 0;
-+	int err;
-+	int locked;
-+
-+	if (nr_frames == 0)
-+		return 0;
-+
-+	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
-+		nr_frames = vec->nr_allocated;
-+
-+	down_read(&mm->mmap_sem);
-+	locked = 1;
-+	vma = find_vma_intersection(mm, start, start + 1);
-+	if (!vma) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
-+		vec->got_ref = true;
-+		vec->is_pfns = false;
-+		ret = get_user_pages_locked(current, mm, start, nr_frames,
-+			write, force, (struct page **)(vec->ptrs), &locked);
-+		goto out;
-+	}
-+
-+	vec->got_ref = false;
-+	vec->is_pfns = true;
-+	do {
-+		unsigned long *nums = frame_vector_pfns(vec);
-+
-+		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
-+			err = follow_pfn(vma, start, &nums[ret]);
-+			if (err) {
-+				if (ret == 0)
-+					ret = err;
-+				goto out;
-+			}
-+			start += PAGE_SIZE;
-+			ret++;
-+		}
-+		/*
-+		 * We stop if we have enough pages or if VMA doesn't completely
-+		 * cover the tail page.
-+		 */
-+		if (ret >= nr_frames || start < vma->vm_end)
-+			break;
-+		vma = find_vma_intersection(mm, start, start + 1);
-+	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
-+out:
-+	if (locked)
-+		up_read(&mm->mmap_sem);
-+	if (!ret)
-+		ret = -EFAULT;
-+	if (ret > 0)
-+		vec->nr_frames = ret;
-+	return ret;
-+}
-+EXPORT_SYMBOL(get_vaddr_frames);
-+
-+/**
-+ * put_vaddr_frames() - drop references to pages if get_vaddr_frames() acquired
-+ *			them
-+ * @vec:	frame vector to put
-+ *
-+ * Drop references to pages if get_vaddr_frames() acquired them. We also
-+ * invalidate the frame vector so that it is prepared for the next call into
-+ * get_vaddr_frames().
-+ */
-+void put_vaddr_frames(struct frame_vector *vec)
-+{
-+	int i;
-+	struct page **pages;
-+
-+	if (!vec->got_ref)
-+		goto out;
-+	pages = frame_vector_pages(vec);
-+	/*
-+	 * frame_vector_pages() might needed to do a conversion when
-+	 * get_vaddr_frames() got pages but vec was later converted to pfns.
-+	 * But it shouldn't really fail to convert pfns back...
-+	 */
-+	if (WARN_ON(IS_ERR(pages)))
-+		goto out;
-+	for (i = 0; i < vec->nr_frames; i++)
-+		put_page(pages[i]);
-+	vec->got_ref = false;
-+out:
-+	vec->nr_frames = 0;
-+}
-+EXPORT_SYMBOL(put_vaddr_frames);
-+
-+/**
-+ * frame_vector_to_pages - convert frame vector to contain page pointers
-+ * @vec:	frame vector to convert
-+ *
-+ * Convert @vec to contain array of page pointers.  If the conversion is
-+ * successful, return 0. Otherwise return an error. Note that we do not grab
-+ * page references for the page structures.
-+ */
-+int frame_vector_to_pages(struct frame_vector *vec)
-+{
-+	int i;
-+	unsigned long *nums;
-+	struct page **pages;
-+
-+	if (!vec->is_pfns)
-+		return 0;
-+	nums = frame_vector_pfns(vec);
-+	for (i = 0; i < vec->nr_frames; i++)
-+		if (!pfn_valid(nums[i]))
-+			return -EINVAL;
-+	pages = (struct page **)nums;
-+	for (i = 0; i < vec->nr_frames; i++)
-+		pages[i] = pfn_to_page(nums[i]);
-+	vec->is_pfns = false;
-+	return 0;
-+}
-+EXPORT_SYMBOL(frame_vector_to_pages);
-+
-+/**
-+ * frame_vector_to_pfns - convert frame vector to contain pfns
-+ * @vec:	frame vector to convert
-+ *
-+ * Convert @vec to contain array of pfns.
-+ */
-+void frame_vector_to_pfns(struct frame_vector *vec)
-+{
-+	int i;
-+	unsigned long *nums;
-+	struct page **pages;
-+
-+	if (vec->is_pfns)
-+		return;
-+	pages = (struct page **)(vec->ptrs);
-+	nums = (unsigned long *)pages;
-+	for (i = 0; i < vec->nr_frames; i++)
-+		nums[i] = page_to_pfn(pages[i]);
-+	vec->is_pfns = true;
-+}
-+EXPORT_SYMBOL(frame_vector_to_pfns);
-+
-+/**
-+ * frame_vector_create() - allocate & initialize structure for pinned pfns
-+ * @nr_frames:	number of pfns slots we should reserve
-+ *
-+ * Allocate and initialize struct pinned_pfns to be able to hold @nr_pfns
-+ * pfns.
-+ */
-+struct frame_vector *frame_vector_create(unsigned int nr_frames)
-+{
-+	struct frame_vector *vec;
-+	int size = sizeof(struct frame_vector) + sizeof(void *) * nr_frames;
-+
-+	if (WARN_ON_ONCE(nr_frames == 0))
-+		return NULL;
-+	/*
-+	 * This is absurdly high. It's here just to avoid strange effects when
-+	 * arithmetics overflows.
-+	 */
-+	if (WARN_ON_ONCE(nr_frames > INT_MAX / sizeof(void *) / 2))
-+		return NULL;
-+	/*
-+	 * Avoid higher order allocations, use vmalloc instead. It should
-+	 * be rare anyway.
-+	 */
-+	if (size <= PAGE_SIZE)
-+		vec = kmalloc(size, GFP_KERNEL);
-+	else
-+		vec = vmalloc(size);
-+	if (!vec)
-+		return NULL;
-+	vec->nr_allocated = nr_frames;
-+	vec->nr_frames = 0;
-+	return vec;
-+}
-+EXPORT_SYMBOL(frame_vector_create);
-+
-+/**
-+ * frame_vector_destroy() - free memory allocated to carry frame vector
-+ * @vec:	Frame vector to free
-+ *
-+ * Free structure allocated by frame_vector_create() to carry frames.
-+ */
-+void frame_vector_destroy(struct frame_vector *vec)
-+{
-+	/* Make sure put_vaddr_frames() got called properly... */
-+	VM_BUG_ON(vec->nr_frames > 0);
-+	if (!is_vmalloc_addr(vec))
-+		kfree(vec);
-+	else
-+		vfree(vec);
-+}
-+EXPORT_SYMBOL(frame_vector_destroy);
-+
- /**
-  * get_dump_page() - pin user page in memory while writing it to core dump
-  * @addr: user address
--- 
-2.1.4
+Q29udmVydCB2YjJfZGNfZ2V0X3VzZXJwdHIoKSB0byB1c2UgZnJhbWUgdmVjdG9yIGluZnJhc3Ry
+dWN0dXJlLiBXaGVuIHdlCmFyZSBkb2luZyB0aGF0IHRoZXJlJ3Mgbm8gbmVlZCB0byBhbGxvY2F0
+ZSBwYWdlIGFycmF5IGFuZCBzb21lIGNvZGUgY2FuCmJlIHNpbXBsaWZpZWQuCgpBY2tlZC1ieTog
+TWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgpUZXN0ZWQtYnk6IE1h
+cmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KU2lnbmVkLW9mZi1ieTog
+SmFuIEthcmEgPGphY2tAc3VzZS5jej4KLS0tCiBkcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRl
+b2J1ZjItZG1hLWNvbnRpZy5jIHwgMjE0ICsrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmls
+ZSBjaGFuZ2VkLCAzNCBpbnNlcnRpb25zKCspLCAxODAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9idWYyLWRtYS1jb250aWcuYyBiL2RyaXZl
+cnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi1kbWEtY29udGlnLmMKaW5kZXggNjIwYzRhYTc4
+ODgxLi5lNmNlYTQ1MjMwMmIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3Zp
+ZGVvYnVmMi1kbWEtY29udGlnLmMKKysrIGIvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9i
+dWYyLWRtYS1jb250aWcuYwpAQCAtMzIsMTUgKzMyLDEzIEBAIHN0cnVjdCB2YjJfZGNfYnVmIHsK
+IAlkbWFfYWRkcl90CQkJZG1hX2FkZHI7CiAJZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24JCWRtYV9k
+aXI7CiAJc3RydWN0IHNnX3RhYmxlCQkJKmRtYV9zZ3Q7CisJc3RydWN0IGZyYW1lX3ZlY3RvcgkJ
+KnZlYzsKIAogCS8qIE1NQVAgcmVsYXRlZCAqLwogCXN0cnVjdCB2YjJfdm1hcmVhX2hhbmRsZXIJ
+aGFuZGxlcjsKIAlhdG9taWNfdAkJCXJlZmNvdW50OwogCXN0cnVjdCBzZ190YWJsZQkJCSpzZ3Rf
+YmFzZTsKIAotCS8qIFVTRVJQVFIgcmVsYXRlZCAqLwotCXN0cnVjdCB2bV9hcmVhX3N0cnVjdAkJ
+KnZtYTsKLQogCS8qIERNQUJVRiByZWxhdGVkICovCiAJc3RydWN0IGRtYV9idWZfYXR0YWNobWVu
+dAkqZGJfYXR0YWNoOwogfTsKQEAgLTQ5LDI0ICs0Nyw2IEBAIHN0cnVjdCB2YjJfZGNfYnVmIHsK
+IC8qICAgICAgICBzY2F0dGVybGlzdCB0YWJsZSBmdW5jdGlvbnMgICAgICAgICovCiAvKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwogCi0KLXN0YXRpYyB2b2lk
+IHZiMl9kY19zZ3RfZm9yZWFjaF9wYWdlKHN0cnVjdCBzZ190YWJsZSAqc2d0LAotCXZvaWQgKCpj
+Yikoc3RydWN0IHBhZ2UgKnBnKSkKLXsKLQlzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnM7Ci0JdW5zaWdu
+ZWQgaW50IGk7Ci0KLQlmb3JfZWFjaF9zZyhzZ3QtPnNnbCwgcywgc2d0LT5vcmlnX25lbnRzLCBp
+KSB7Ci0JCXN0cnVjdCBwYWdlICpwYWdlID0gc2dfcGFnZShzKTsKLQkJdW5zaWduZWQgaW50IG5f
+cGFnZXMgPSBQQUdFX0FMSUdOKHMtPm9mZnNldCArIHMtPmxlbmd0aCkKLQkJCT4+IFBBR0VfU0hJ
+RlQ7Ci0JCXVuc2lnbmVkIGludCBqOwotCi0JCWZvciAoaiA9IDA7IGogPCBuX3BhZ2VzOyArK2os
+ICsrcGFnZSkKLQkJCWNiKHBhZ2UpOwotCX0KLX0KLQogc3RhdGljIHVuc2lnbmVkIGxvbmcgdmIy
+X2RjX2dldF9jb250aWd1b3VzX3NpemUoc3RydWN0IHNnX3RhYmxlICpzZ3QpCiB7CiAJc3RydWN0
+IHNjYXR0ZXJsaXN0ICpzOwpAQCAtNDI5LDkyICs0MDksMTIgQEAgc3RhdGljIHN0cnVjdCBkbWFf
+YnVmICp2YjJfZGNfZ2V0X2RtYWJ1Zih2b2lkICpidWZfcHJpdiwgdW5zaWduZWQgbG9uZyBmbGFn
+cykKIC8qICAgICAgIGNhbGxiYWNrcyBmb3IgVVNFUlBUUiBidWZmZXJzICAgICAgICovCiAvKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwogCi1zdGF0aWMgaW5s
+aW5lIGludCB2bWFfaXNfaW8oc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpCi17Ci0JcmV0dXJu
+ICEhKHZtYS0+dm1fZmxhZ3MgJiAoVk1fSU8gfCBWTV9QRk5NQVApKTsKLX0KLQotc3RhdGljIGlu
+dCB2YjJfZGNfZ2V0X3VzZXJfcGZuKHVuc2lnbmVkIGxvbmcgc3RhcnQsIGludCBuX3BhZ2VzLAot
+CXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hLCB1bnNpZ25lZCBsb25nICpyZXMpCi17Ci0JdW5z
+aWduZWQgbG9uZyBwZm4sIHN0YXJ0X3BmbiwgcHJldl9wZm47Ci0JdW5zaWduZWQgaW50IGk7Ci0J
+aW50IHJldDsKLQotCWlmICghdm1hX2lzX2lvKHZtYSkpCi0JCXJldHVybiAtRUZBVUxUOwotCi0J
+cmV0ID0gZm9sbG93X3Bmbih2bWEsIHN0YXJ0LCAmcGZuKTsKLQlpZiAocmV0KQotCQlyZXR1cm4g
+cmV0OwotCi0Jc3RhcnRfcGZuID0gcGZuOwotCXN0YXJ0ICs9IFBBR0VfU0laRTsKLQotCWZvciAo
+aSA9IDE7IGkgPCBuX3BhZ2VzOyArK2ksIHN0YXJ0ICs9IFBBR0VfU0laRSkgewotCQlwcmV2X3Bm
+biA9IHBmbjsKLQkJcmV0ID0gZm9sbG93X3Bmbih2bWEsIHN0YXJ0LCAmcGZuKTsKLQotCQlpZiAo
+cmV0KSB7Ci0JCQlwcl9lcnIoIm5vIHBhZ2UgZm9yIGFkZHJlc3MgJWx1XG4iLCBzdGFydCk7Ci0J
+CQlyZXR1cm4gcmV0OwotCQl9Ci0JCWlmIChwZm4gIT0gcHJldl9wZm4gKyAxKQotCQkJcmV0dXJu
+IC1FSU5WQUw7Ci0JfQotCi0JKnJlcyA9IHN0YXJ0X3BmbjsKLQlyZXR1cm4gMDsKLX0KLQotc3Rh
+dGljIGludCB2YjJfZGNfZ2V0X3VzZXJfcGFnZXModW5zaWduZWQgbG9uZyBzdGFydCwgc3RydWN0
+IHBhZ2UgKipwYWdlcywKLQlpbnQgbl9wYWdlcywgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEs
+Ci0JZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZG1hX2RpcikKLXsKLQlpZiAodm1hX2lzX2lvKHZt
+YSkpIHsKLQkJdW5zaWduZWQgaW50IGk7Ci0KLQkJZm9yIChpID0gMDsgaSA8IG5fcGFnZXM7ICsr
+aSwgc3RhcnQgKz0gUEFHRV9TSVpFKSB7Ci0JCQl1bnNpZ25lZCBsb25nIHBmbjsKLQkJCWludCBy
+ZXQgPSBmb2xsb3dfcGZuKHZtYSwgc3RhcnQsICZwZm4pOwotCi0JCQlpZiAoIXBmbl92YWxpZChw
+Zm4pKQotCQkJCXJldHVybiAtRUlOVkFMOwotCi0JCQlpZiAocmV0KSB7Ci0JCQkJcHJfZXJyKCJu
+byBwYWdlIGZvciBhZGRyZXNzICVsdVxuIiwgc3RhcnQpOwotCQkJCXJldHVybiByZXQ7Ci0JCQl9
+Ci0JCQlwYWdlc1tpXSA9IHBmbl90b19wYWdlKHBmbik7Ci0JCX0KLQl9IGVsc2UgewotCQlpbnQg
+bjsKLQotCQluID0gZ2V0X3VzZXJfcGFnZXMoY3VycmVudCwgY3VycmVudC0+bW0sIHN0YXJ0ICYg
+UEFHRV9NQVNLLAotCQkJbl9wYWdlcywgZG1hX2RpciA9PSBETUFfRlJPTV9ERVZJQ0UsIDEsIHBh
+Z2VzLCBOVUxMKTsKLQkJLyogbmVnYXRpdmUgZXJyb3IgbWVhbnMgdGhhdCBubyBwYWdlIHdhcyBw
+aW5uZWQgKi8KLQkJbiA9IG1heChuLCAwKTsKLQkJaWYgKG4gIT0gbl9wYWdlcykgewotCQkJcHJf
+ZXJyKCJnb3Qgb25seSAlZCBvZiAlZCB1c2VyIHBhZ2VzXG4iLCBuLCBuX3BhZ2VzKTsKLQkJCXdo
+aWxlIChuKQotCQkJCXB1dF9wYWdlKHBhZ2VzWy0tbl0pOwotCQkJcmV0dXJuIC1FRkFVTFQ7Ci0J
+CX0KLQl9Ci0KLQlyZXR1cm4gMDsKLX0KLQotc3RhdGljIHZvaWQgdmIyX2RjX3B1dF9kaXJ0eV9w
+YWdlKHN0cnVjdCBwYWdlICpwYWdlKQotewotCXNldF9wYWdlX2RpcnR5X2xvY2socGFnZSk7Ci0J
+cHV0X3BhZ2UocGFnZSk7Ci19Ci0KIHN0YXRpYyB2b2lkIHZiMl9kY19wdXRfdXNlcnB0cih2b2lk
+ICpidWZfcHJpdikKIHsKIAlzdHJ1Y3QgdmIyX2RjX2J1ZiAqYnVmID0gYnVmX3ByaXY7CiAJc3Ry
+dWN0IHNnX3RhYmxlICpzZ3QgPSBidWYtPmRtYV9zZ3Q7CisJaW50IGk7CisJc3RydWN0IHBhZ2Ug
+KipwYWdlczsKIAogCWlmIChzZ3QpIHsKIAkJREVGSU5FX0RNQV9BVFRSUyhhdHRycyk7CkBAIC01
+MjYsMTUgKzQyNiwxNSBAQCBzdGF0aWMgdm9pZCB2YjJfZGNfcHV0X3VzZXJwdHIodm9pZCAqYnVm
+X3ByaXYpCiAJCSAqLwogCQlkbWFfdW5tYXBfc2dfYXR0cnMoYnVmLT5kZXYsIHNndC0+c2dsLCBz
+Z3QtPm9yaWdfbmVudHMsCiAJCQkJICAgYnVmLT5kbWFfZGlyLCAmYXR0cnMpOwotCQlpZiAoIXZt
+YV9pc19pbyhidWYtPnZtYSkpCi0JCQl2YjJfZGNfc2d0X2ZvcmVhY2hfcGFnZShzZ3QsIHZiMl9k
+Y19wdXRfZGlydHlfcGFnZSk7Ci0KKwkJcGFnZXMgPSBmcmFtZV92ZWN0b3JfcGFnZXMoYnVmLT52
+ZWMpOworCQkvKiBzZ3Qgc2hvdWxkIGV4aXN0IG9ubHkgaWYgdmVjdG9yIGNvbnRhaW5zIHBhZ2Vz
+Li4uICovCisJCUJVR19PTihJU19FUlIocGFnZXMpKTsKKwkJZm9yIChpID0gMDsgaSA8IGZyYW1l
+X3ZlY3Rvcl9jb3VudChidWYtPnZlYyk7IGkrKykKKwkJCXNldF9wYWdlX2RpcnR5X2xvY2socGFn
+ZXNbaV0pOwogCQlzZ19mcmVlX3RhYmxlKHNndCk7CiAJCWtmcmVlKHNndCk7CiAJfQotCWRvd25f
+cmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsKLQl2YjJfcHV0X3ZtYShidWYtPnZtYSk7Ci0J
+dXBfcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsKKwl2YjJfZGVzdHJveV9mcmFtZXZlYyhi
+dWYtPnZlYyk7CiAJa2ZyZWUoYnVmKTsKIH0KIApAQCAtNTc0LDEzICs0NzQsMTAgQEAgc3RhdGlj
+IHZvaWQgKnZiMl9kY19nZXRfdXNlcnB0cih2b2lkICphbGxvY19jdHgsIHVuc2lnbmVkIGxvbmcg
+dmFkZHIsCiB7CiAJc3RydWN0IHZiMl9kY19jb25mICpjb25mID0gYWxsb2NfY3R4OwogCXN0cnVj
+dCB2YjJfZGNfYnVmICpidWY7Ci0JdW5zaWduZWQgbG9uZyBzdGFydDsKLQl1bnNpZ25lZCBsb25n
+IGVuZDsKKwlzdHJ1Y3QgZnJhbWVfdmVjdG9yICp2ZWM7CiAJdW5zaWduZWQgbG9uZyBvZmZzZXQ7
+Ci0Jc3RydWN0IHBhZ2UgKipwYWdlczsKLQlpbnQgbl9wYWdlczsKKwlpbnQgbl9wYWdlcywgaTsK
+IAlpbnQgcmV0ID0gMDsKLQlzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYTsKIAlzdHJ1Y3Qgc2df
+dGFibGUgKnNndDsKIAl1bnNpZ25lZCBsb25nIGNvbnRpZ19zaXplOwogCXVuc2lnbmVkIGxvbmcg
+ZG1hX2FsaWduID0gZG1hX2dldF9jYWNoZV9hbGlnbm1lbnQoKTsKQEAgLTYwNiw3NSArNTAzLDQz
+IEBAIHN0YXRpYyB2b2lkICp2YjJfZGNfZ2V0X3VzZXJwdHIodm9pZCAqYWxsb2NfY3R4LCB1bnNp
+Z25lZCBsb25nIHZhZGRyLAogCWJ1Zi0+ZGV2ID0gY29uZi0+ZGV2OwogCWJ1Zi0+ZG1hX2RpciA9
+IGRtYV9kaXI7CiAKLQlzdGFydCA9IHZhZGRyICYgUEFHRV9NQVNLOwogCW9mZnNldCA9IHZhZGRy
+ICYgflBBR0VfTUFTSzsKLQllbmQgPSBQQUdFX0FMSUdOKHZhZGRyICsgc2l6ZSk7Ci0Jbl9wYWdl
+cyA9IChlbmQgLSBzdGFydCkgPj4gUEFHRV9TSElGVDsKLQotCXBhZ2VzID0ga21hbGxvYyhuX3Bh
+Z2VzICogc2l6ZW9mKHBhZ2VzWzBdKSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKCFwYWdlcykgewotCQly
+ZXQgPSAtRU5PTUVNOwotCQlwcl9lcnIoImZhaWxlZCB0byBhbGxvY2F0ZSBwYWdlcyB0YWJsZVxu
+Iik7CisJdmVjID0gdmIyX2NyZWF0ZV9mcmFtZXZlYyh2YWRkciwgc2l6ZSwgZG1hX2RpciA9PSBE
+TUFfRlJPTV9ERVZJQ0UpOworCWlmIChJU19FUlIodmVjKSkgeworCQlyZXQgPSBQVFJfRVJSKHZl
+Yyk7CiAJCWdvdG8gZmFpbF9idWY7CiAJfQorCWJ1Zi0+dmVjID0gdmVjOworCW5fcGFnZXMgPSBm
+cmFtZV92ZWN0b3JfY291bnQodmVjKTsKKwlyZXQgPSBmcmFtZV92ZWN0b3JfdG9fcGFnZXModmVj
+KTsKKwlpZiAocmV0IDwgMCkgeworCQl1bnNpZ25lZCBsb25nICpudW1zID0gZnJhbWVfdmVjdG9y
+X3BmbnModmVjKTsKIAotCWRvd25fcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsKLQkvKiBj
+dXJyZW50LT5tbS0+bW1hcF9zZW0gaXMgdGFrZW4gYnkgdmlkZW9idWYyIGNvcmUgKi8KLQl2bWEg
+PSBmaW5kX3ZtYShjdXJyZW50LT5tbSwgdmFkZHIpOwotCWlmICghdm1hKSB7Ci0JCXByX2Vycigi
+bm8gdm1hIGZvciBhZGRyZXNzICVsdVxuIiwgdmFkZHIpOwotCQlyZXQgPSAtRUZBVUxUOwotCQln
+b3RvIGZhaWxfcGFnZXM7Ci0JfQotCi0JaWYgKHZtYS0+dm1fZW5kIDwgdmFkZHIgKyBzaXplKSB7
+Ci0JCXByX2Vycigidm1hIGF0ICVsdSBpcyB0b28gc21hbGwgZm9yICVsdSBieXRlc1xuIiwgdmFk
+ZHIsIHNpemUpOwotCQlyZXQgPSAtRUZBVUxUOwotCQlnb3RvIGZhaWxfcGFnZXM7Ci0JfQotCi0J
+YnVmLT52bWEgPSB2YjJfZ2V0X3ZtYSh2bWEpOwotCWlmICghYnVmLT52bWEpIHsKLQkJcHJfZXJy
+KCJmYWlsZWQgdG8gY29weSB2bWFcbiIpOwotCQlyZXQgPSAtRU5PTUVNOwotCQlnb3RvIGZhaWxf
+cGFnZXM7Ci0JfQotCi0JLyogZXh0cmFjdCBwYWdlIGxpc3QgZnJvbSB1c2Vyc3BhY2UgbWFwcGlu
+ZyAqLwotCXJldCA9IHZiMl9kY19nZXRfdXNlcl9wYWdlcyhzdGFydCwgcGFnZXMsIG5fcGFnZXMs
+IHZtYSwgZG1hX2Rpcik7Ci0JaWYgKHJldCkgewotCQl1bnNpZ25lZCBsb25nIHBmbjsKLQkJaWYg
+KHZiMl9kY19nZXRfdXNlcl9wZm4oc3RhcnQsIG5fcGFnZXMsIHZtYSwgJnBmbikgPT0gMCkgewot
+CQkJdXBfcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsKLQkJCWJ1Zi0+ZG1hX2FkZHIgPSB2
+YjJfZGNfcGZuX3RvX2RtYShidWYtPmRldiwgcGZuKTsKLQkJCWJ1Zi0+c2l6ZSA9IHNpemU7Ci0J
+CQlrZnJlZShwYWdlcyk7Ci0JCQlyZXR1cm4gYnVmOwotCQl9Ci0KLQkJcHJfZXJyKCJmYWlsZWQg
+dG8gZ2V0IHVzZXIgcGFnZXNcbiIpOwotCQlnb3RvIGZhaWxfdm1hOworCQkvKgorCQkgKiBGYWls
+ZWQgdG8gY29udmVydCB0byBwYWdlcy4uLiBDaGVjayB0aGUgbWVtb3J5IGlzIHBoeXNpY2FsbHkK
+KwkJICogY29udGlndW91cyBhbmQgdXNlIGRpcmVjdCBtYXBwaW5nCisJCSAqLworCQlmb3IgKGkg
+PSAxOyBpIDwgbl9wYWdlczsgaSsrKQorCQkJaWYgKG51bXNbaS0xXSArIDEgIT0gbnVtc1tpXSkK
+KwkJCQlnb3RvIGZhaWxfcGZudmVjOworCQlidWYtPmRtYV9hZGRyID0gdmIyX2RjX3Bmbl90b19k
+bWEoYnVmLT5kZXYsIG51bXNbMF0pOworCQlnb3RvIG91dDsKIAl9Ci0JdXBfcmVhZCgmY3VycmVu
+dC0+bW0tPm1tYXBfc2VtKTsKIAogCXNndCA9IGt6YWxsb2Moc2l6ZW9mKCpzZ3QpLCBHRlBfS0VS
+TkVMKTsKIAlpZiAoIXNndCkgewogCQlwcl9lcnIoImZhaWxlZCB0byBhbGxvY2F0ZSBzZyB0YWJs
+ZVxuIik7CiAJCXJldCA9IC1FTk9NRU07Ci0JCWdvdG8gZmFpbF9nZXRfdXNlcl9wYWdlczsKKwkJ
+Z290byBmYWlsX3BmbnZlYzsKIAl9CiAKLQlyZXQgPSBzZ19hbGxvY190YWJsZV9mcm9tX3BhZ2Vz
+KHNndCwgcGFnZXMsIG5fcGFnZXMsCisJcmV0ID0gc2dfYWxsb2NfdGFibGVfZnJvbV9wYWdlcyhz
+Z3QsIGZyYW1lX3ZlY3Rvcl9wYWdlcyh2ZWMpLCBuX3BhZ2VzLAogCQlvZmZzZXQsIHNpemUsIEdG
+UF9LRVJORUwpOwogCWlmIChyZXQpIHsKIAkJcHJfZXJyKCJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBz
+ZyB0YWJsZVxuIik7CiAJCWdvdG8gZmFpbF9zZ3Q7CiAJfQogCi0JLyogcGFnZXMgYXJlIG5vIGxv
+bmdlciBuZWVkZWQgKi8KLQlrZnJlZShwYWdlcyk7Ci0JcGFnZXMgPSBOVUxMOwotCiAJLyoKIAkg
+KiBObyBuZWVkIHRvIHN5bmMgdG8gdGhlIGRldmljZSwgdGhpcyB3aWxsIGhhcHBlbiBsYXRlciB3
+aGVuIHRoZQogCSAqIHByZXBhcmUoKSBtZW1vcCBpcyBjYWxsZWQuCkBAIC02OTYsOCArNTYxLDkg
+QEAgc3RhdGljIHZvaWQgKnZiMl9kY19nZXRfdXNlcnB0cih2b2lkICphbGxvY19jdHgsIHVuc2ln
+bmVkIGxvbmcgdmFkZHIsCiAJfQogCiAJYnVmLT5kbWFfYWRkciA9IHNnX2RtYV9hZGRyZXNzKHNn
+dC0+c2dsKTsKLQlidWYtPnNpemUgPSBzaXplOwogCWJ1Zi0+ZG1hX3NndCA9IHNndDsKK291dDoK
+KwlidWYtPnNpemUgPSBzaXplOwogCiAJcmV0dXJuIGJ1ZjsKIApAQCAtNzA2LDI1ICs1NzIsMTMg
+QEAgZmFpbF9tYXBfc2c6CiAJCQkgICBidWYtPmRtYV9kaXIsICZhdHRycyk7CiAKIGZhaWxfc2d0
+X2luaXQ6Ci0JaWYgKCF2bWFfaXNfaW8oYnVmLT52bWEpKQotCQl2YjJfZGNfc2d0X2ZvcmVhY2hf
+cGFnZShzZ3QsIHB1dF9wYWdlKTsKIAlzZ19mcmVlX3RhYmxlKHNndCk7CiAKIGZhaWxfc2d0Ogog
+CWtmcmVlKHNndCk7CiAKLWZhaWxfZ2V0X3VzZXJfcGFnZXM6Ci0JaWYgKHBhZ2VzICYmICF2bWFf
+aXNfaW8oYnVmLT52bWEpKQotCQl3aGlsZSAobl9wYWdlcykKLQkJCXB1dF9wYWdlKHBhZ2VzWy0t
+bl9wYWdlc10pOwotCi0JZG93bl9yZWFkKCZjdXJyZW50LT5tbS0+bW1hcF9zZW0pOwotZmFpbF92
+bWE6Ci0JdmIyX3B1dF92bWEoYnVmLT52bWEpOwotCi1mYWlsX3BhZ2VzOgotCXVwX3JlYWQoJmN1
+cnJlbnQtPm1tLT5tbWFwX3NlbSk7Ci0Ja2ZyZWUocGFnZXMpOyAvKiBrZnJlZSBpcyBOVUxMLXBy
+b29mICovCitmYWlsX3BmbnZlYzoKKwl2YjJfZGVzdHJveV9mcmFtZXZlYyh2ZWMpOwogCiBmYWls
+X2J1ZjoKIAlrZnJlZShidWYpOwotLSAKMi4xLjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
