@@ -1,41 +1,40 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v4 8/9] tests/exynos: use XRGB8888 for framebuffer
-Date: Wed, 13 May 2015 19:34:52 +0200
-Message-ID: <1431538493-11431-9-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v4 9/9] exynos/fimg2d: simplify g2d_fini()
+Date: Wed, 13 May 2015 19:34:53 +0200
+Message-ID: <1431538493-11431-10-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1431538493-11431-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:55361 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932862AbbEMRi5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 May 2015 13:38:57 -0400
 In-Reply-To: <1431538493-11431-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhpcyBtYXRjaGVzIHRoZSBHMkQgY29sb3IgbW9kZSB0aGF0IGlzIHVzZWQgaW4gdGhlIGVudGly
-ZSBjb2RlLgpUaGUgcHJldmlvdXMgKGluY29ycmVjdCkgUkdCQTg4ODggd291bGQgb25seSB3b3Jr
-IHNpbmNlIHRoZQpFeHlub3MgbWl4ZXIgZGlkIGl0cyBjb25maWd1cmF0aW9uIGJhc2VkIG9uIHRo
-ZSBicHAsIGFuZCBub3QKYmFzZWQgb24gdGhlIGFjdHVhbCBwaXhlbGZvcm1hdC4KClNpZ25lZC1v
-ZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0K
-IHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL3Rlc3RzL2V4eW5v
-cy9leHlub3NfZmltZzJkX3Rlc3QuYyBiL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3Qu
-YwppbmRleCA2NGRhY2ZhLi5jZTMyMDQ1IDEwMDY0NAotLS0gYS90ZXN0cy9leHlub3MvZXh5bm9z
-X2ZpbWcyZF90ZXN0LmMKKysrIGIvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jCkBA
-IC03NDUsNyArNzQ1LDcgQEAgaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KQogCW9mZnNl
-dHNbMF0gPSAwOwogCiAJcmV0ID0gZHJtTW9kZUFkZEZCMihkZXYtPmZkLCBzY3JlZW5fd2lkdGgs
-IHNjcmVlbl9oZWlnaHQsCi0JCQkJRFJNX0ZPUk1BVF9SR0JBODg4OCwgaGFuZGxlcywKKwkJCQlE
-Uk1fRk9STUFUX1hSR0I4ODg4LCBoYW5kbGVzLAogCQkJCXBpdGNoZXMsIG9mZnNldHMsICZmYl9p
-ZCwgMCk7CiAJaWYgKHJldCA8IDApCiAJCWdvdG8gZXJyX2Rlc3Ryb3lfYnVmZmVyOwotLSAKMi4w
-LjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+free()ing a nullptr is a noop, so remove the check.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 9bf2aa9..8527dde 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -261,8 +261,7 @@ struct g2d_context *g2d_init(int fd)
+ 
+ void g2d_fini(struct g2d_context *ctx)
+ {
+-	if (ctx)
+-		free(ctx);
++	free(ctx);
+ }
+ 
+ /**
+-- 
+2.0.5
