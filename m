@@ -1,124 +1,42 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: 'win' is always unsigned
-Date: Wed, 13 May 2015 13:25:04 +0900
-Message-ID: <5552D220.2000603@samsung.com>
-References: <1430914222-3603-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1430914222-3603-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <5550ADFC.90508@samsung.com> <5550EF27.2070004@gmx.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5550EF27.2070004@gmx.net>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv3 1/3] ARM: exynos_defconfig: Enable CONFIG_SENSORS_PWM_FAN for Odroid-XU3 pmw-fan
+Date: Wed, 13 May 2015 14:32:05 +0930
+Message-ID: <1431493327-5387-2-git-send-email-linux.amoon@gmail.com>
+References: <1431493327-5387-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:36842 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750849AbbEMFCW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 May 2015 01:02:22 -0400
+Received: by pabsx10 with SMTP id sx10so38238546pab.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 May 2015 22:02:22 -0700 (PDT)
+In-Reply-To: <1431493327-5387-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwNeyblCAxMuydvCAwMzowNCwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZXkg
-SW5raSwKPiAKPiBJbmtpIERhZSB3cm90ZToKPj4gT24gMjAxNeuFhCAwNeyblCAwNuydvCAyMTox
-MCwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4+IFRoZSBpbmRleCBmb3IgdGhlIGhhcmR3YXJlIGxh
-eWVyIGlzIGFsd2F5cyA+PTAuIFByZXZpb3VzCj4+PiBjb2RlIHRoYXQgYWxzbyB1c2VkIC0xIGFz
-IHNwZWNpYWwgaW5kZXggaXMgbm93IGdvbmUuCj4+Pgo+Pj4gQWxzbyBhcHBseSB0aGlzIHRvICdj
-aF9lbmFibGVkJyAoZGVjb24vZmltZCksIHNpbmNlIHRoZQo+Pj4gdmFyaWFibGUgaXMgb24gdGhl
-IHNhbWUgbGluZSAoYW5kIGlzIGFnYWluIGFsd2F5cyB1bnNpZ25lZCkuCj4+Cj4+IEkgY2FuIHNl
-ZSBiZWxvdyBlcnJvciB3aXRoIGNoZWNrcGF0Y2gucGwsCj4+Cj4+IFdBUk5JTkc6IGxpbmUgb3Zl
-ciA4MCBjaGFyYWN0ZXJzCj4+ICMxMjU6IEZJTEU6IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9maW1kLmM6MjMyOgo+PiArc3RhdGljIHZvaWQgZmltZF9lbmFibGVfc2hhZG93X2No
-YW5uZWxfcGF0aChzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsCj4+IHVuc2lnbmVkIGludCB3aW4s
-Cj4+Cj4+IFdBUk5JTkc6IGxpbmUgb3ZlciA4MCBjaGFyYWN0ZXJzCj4+ICMxNDc6IEZJTEU6IGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmM6MzM2Ogo+PiArc3RhdGljIHZvaWQg
-bWl4ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludAo+
-PiB3aW4sIGJvb2wgZW5hYmxlKQo+Pgo+PiBQbGVhc2UgY2hlY2sgY29kaW5nIHN0eWxlIHdpdGgg
-Y2hlY2twYXRoLnBsIGJlZm9yZSBwb3N0aW5nIGl0IG5leHQgdGltZS4KPj4gSSBtb2RpZmllZCBh
-bmQgbWVyZ2VkIHRoZW0uCj4gc29ycnksIEknbSBnb2luZyB0byBjaGVjayBtb3JlIHRob3JvdWdo
-bHkgbmV4dCB0aW1lLgo+IAo+IEFsc28sIEkgdGhpbmsgeW91IG1pZ2h0IGhhdmUgbWlzc2VkIG9u
-ZSBvZiBteSBjbGVhbnVwIHBhdGNoZXM6Cj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9w
-YXRjaC82Mjc1MTExLwoKUmlnaHQsIHRoYXQgaXMgb25lIEkgbWlzc2VkLiBBcHBsaWVkLgoKPiAK
-PiBBdCBsZWFzdCBJIGhhdmVuJ3Qgc2VlbiBpdCB5ZXQgaW4gZm9yLW5leHQgb3IgZml4ZXMuCj4g
-Cj4gQW5kIGlmIHlvdSBjb3VsZCBzYXkgYSBmZXcgd29yZHMgYWJvdXQgdGhlIGxheWVyIHJld29y
-ayBzZXJpZXMKPiAoaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNv
-Yy9tc2c0NDE5OS5odG1sKSwgdGhhdAo+IHdvdWxkIGJlIGdyZWF0ISA6KQo+IAoKR290IGl0LiBJ
-IHdpbGwgdGFrZSBhIGxvb2sgYXQgdGhpcyBwYXRjaCBzZXJpZXMgc29vbi4KClRoYW5rcywKSW5r
-aSBEYWUKCj4gCj4gCj4gV2l0aCBiZXN0IHdpc2hlcywKPiBUb2JpYXMKPiAKPj4KPj4gVGhhbmtz
-LAo+PiBJbmtpIERhZQo+Pgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRq
-YWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+Pj4gLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIHwgMiArLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9maW1kLmMgICB8IDYgKysrLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgIHwgNiArKystLS0KPj4+ICAzIGZpbGVzIGNoYW5n
-ZWQsIDcgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4+PiBpbmRleCAxZjdlMzNmLi41YzBiMmNj
-IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNv
-bi5jCj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMK
-Pj4+IEBAIC05MSw3ICs5MSw3IEBAIHN0YXRpYyB2b2lkIGRlY29uX3dhaXRfZm9yX3ZibGFuayhz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+Pj4gIAo+Pj4gIHN0YXRpYyB2b2lkIGRlY29u
-X2NsZWFyX2NoYW5uZWwoc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCkKPj4+ICB7Cj4+PiAtCWlu
-dCB3aW4sIGNoX2VuYWJsZWQgPSAwOwo+Pj4gKwl1bnNpZ25lZCBpbnQgd2luLCBjaF9lbmFibGVk
-ID0gMDsKPj4+ICAKPj4+ICAJRFJNX0RFQlVHX0tNUygiJXNcbiIsIF9fRklMRV9fKTsKPj4+ICAK
-Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+Pj4gaW5kZXggOTgx
-OWZhNi4uZWUxMWVhNiAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9maW1kLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMKPj4+IEBAIC0yMTYsNyArMjE2LDcgQEAgc3RhdGljIHZvaWQgZmltZF93YWl0X2Zv
-cl92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPj4+ICAJCURSTV9ERUJVR19L
-TVMoInZibGFuayB3YWl0IHRpbWVkIG91dC5cbiIpOwo+Pj4gIH0KPj4+ICAKPj4+IC1zdGF0aWMg
-dm9pZCBmaW1kX2VuYWJsZV92aWRlb19vdXRwdXQoc3RydWN0IGZpbWRfY29udGV4dCAqY3R4LCBp
-bnQgd2luLAo+Pj4gK3N0YXRpYyB2b2lkIGZpbWRfZW5hYmxlX3ZpZGVvX291dHB1dChzdHJ1Y3Qg
-ZmltZF9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4sCj4+PiAgCQkJCQlib29sIGVuYWJs
-ZSkKPj4+ICB7Cj4+PiAgCXUzMiB2YWwgPSByZWFkbChjdHgtPnJlZ3MgKyBXSU5DT04od2luKSk7
-Cj4+PiBAQCAtMjI5LDcgKzIyOSw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfZW5hYmxlX3ZpZGVvX291
-dHB1dChzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsIGludCB3aW4sCj4+PiAgCXdyaXRlbCh2YWws
-IGN0eC0+cmVncyArIFdJTkNPTih3aW4pKTsKPj4+ICB9Cj4+PiAgCj4+PiAtc3RhdGljIHZvaWQg
-ZmltZF9lbmFibGVfc2hhZG93X2NoYW5uZWxfcGF0aChzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgs
-IGludCB3aW4sCj4+PiArc3RhdGljIHZvaWQgZmltZF9lbmFibGVfc2hhZG93X2NoYW5uZWxfcGF0
-aChzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4sCj4+PiAgCQkJCQkJ
-Ym9vbCBlbmFibGUpCj4+PiAgewo+Pj4gIAl1MzIgdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgU0hB
-RE9XQ09OKTsKPj4+IEBAIC0yNDQsNyArMjQ0LDcgQEAgc3RhdGljIHZvaWQgZmltZF9lbmFibGVf
-c2hhZG93X2NoYW5uZWxfcGF0aChzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsIGludCB3aW4sCj4+
-PiAgCj4+PiAgc3RhdGljIHZvaWQgZmltZF9jbGVhcl9jaGFubmVsKHN0cnVjdCBmaW1kX2NvbnRl
-eHQgKmN0eCkKPj4+ICB7Cj4+PiAtCWludCB3aW4sIGNoX2VuYWJsZWQgPSAwOwo+Pj4gKwl1bnNp
-Z25lZCBpbnQgd2luLCBjaF9lbmFibGVkID0gMDsKPj4+ICAKPj4+ICAJRFJNX0RFQlVHX0tNUygi
-JXNcbiIsIF9fRklMRV9fKTsKPj4+ICAKPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
-ZXIuYwo+Pj4gaW5kZXggZmYxNTcwMi4uNGExNjU2YiAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMKPj4+IEBAIC0zMzMsNyArMzMzLDcgQEAgc3RhdGljIHZvaWQg
-bWl4ZXJfY2ZnX3JnYl9mbXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgdW5zaWduZWQgaW50
-IGhlaWdodCkKPj4+ICAJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIHZhbCwgTVhS
-X0NGR19SR0JfRk1UX01BU0spOwo+Pj4gIH0KPj4+ICAKPj4+IC1zdGF0aWMgdm9pZCBtaXhlcl9j
-ZmdfbGF5ZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgaW50IHdpbiwgYm9vbCBlbmFibGUp
-Cj4+PiArc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpj
-dHgsIHVuc2lnbmVkIGludCB3aW4sIGJvb2wgZW5hYmxlKQo+Pj4gIHsKPj4+ICAJc3RydWN0IG1p
-eGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+Pj4gIAl1MzIgdmFsID0gZW5h
-YmxlID8gfjAgOiAwOwo+Pj4gQEAgLTM3OSw3ICszNzksNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9z
-dG9wKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4+PiAgCQl1c2xlZXBfcmFuZ2UoMTAwMDAs
-IDEyMDAwKTsKPj4+ICB9Cj4+PiAgCj4+PiAtc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0
-cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4+PiArc3RhdGljIHZvaWQgdnBfdmlk
-ZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4pCj4+
-PiAgewo+Pj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7
-Cj4+PiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4+PiBAQCAtNTExLDcgKzUxMSw3IEBAIGZhaWw6
-Cj4+PiAgCXJldHVybiAtRU5PVFNVUFA7Cj4+PiAgfQo+Pj4gIAo+Pj4gLXN0YXRpYyB2b2lkIG1p
-eGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQo+Pj4g
-K3N0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4
-LCB1bnNpZ25lZCBpbnQgd2luKQo+Pj4gIHsKPj4+ICAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAq
-cmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+Pj4gIAl1bnNpZ25lZCBsb25nIGZsYWdzOwo+Pj4KPj4K
-Pj4gLS0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
-c3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2Ug
-dG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBo
-dHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPj4KPiAKPiAtLQo+IFRv
-IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBs
-aW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
-QHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
-cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Enable CONFIG_SENSORS_PWM_FAN on exynos_defconfig to control fan power
+on Odroid-XU3.
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index d034c96..3c2784f 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -101,6 +101,7 @@ CONFIG_CHARGER_MAX77693=y
+ CONFIG_CHARGER_TPS65090=y
+ CONFIG_HWMON=y
+ CONFIG_SENSORS_LM90=y
++CONFIG_SENSORS_PWM_FAN=y
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_THERMAL=y
+ CONFIG_THERMAL=y
+-- 
+1.9.1
