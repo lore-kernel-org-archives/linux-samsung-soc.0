@@ -1,49 +1,61 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH] s5p-mfc: fix state check from encoder queue_setup
-Date: Wed, 13 May 2015 16:25:25 +0900
-Message-ID: <1431501925-16905-1-git-send-email-sw0312.kim@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv5 4/5] ARM: dts: exynos5420 update the cooling cells for
+ core cpu0
+Date: Wed, 13 May 2015 16:31:37 +0900
+Message-ID: <CAJKOXPdKtMO3f8YzHXtuZ042jkFRL4wa978=TggSQk8FahubRg@mail.gmail.com>
+References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
+	<1431499020-3912-5-git-send-email-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30641 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752635AbbEMHZb (ORCPT
+Received: from mail-vn0-f41.google.com ([209.85.216.41]:37377 "EHLO
+	mail-vn0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751762AbbEMHbi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 03:25:31 -0400
+	Wed, 13 May 2015 03:31:38 -0400
+In-Reply-To: <1431499020-3912-5-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, mchehab@osg.samsung.com
-Cc: m.szyprowski@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-MFCINST_GOT_INST state is set to encoder context with set_format
-only for catpure buffer. In queue_setup of encoder called during
-reqbufs, it is checked MFCINST_GOT_INST state for both capture
-and output buffer. So this patch fixes to encoder to check
-MFCINST_GOT_INST state only for capture buffer from queue_setup.
+2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+> update the cooling level for cpu0 to avoid following message.
 
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |    9 +++++----
- 1 files changed, 5 insertions(+), 4 deletions(-)
+Capitalize sentence.
+In commit subject add missing colon after "exynos5420".
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index e65993f..2e57e9f 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -1819,11 +1819,12 @@ static int s5p_mfc_queue_setup(struct vb2_queue *vq,
- 	struct s5p_mfc_ctx *ctx = fh_to_ctx(vq->drv_priv);
- 	struct s5p_mfc_dev *dev = ctx->dev;
- 
--	if (ctx->state != MFCINST_GOT_INST) {
--		mfc_err("inavlid state: %d\n", ctx->state);
--		return -EINVAL;
--	}
- 	if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-+		if (ctx->state != MFCINST_GOT_INST) {
-+			mfc_err("inavlid state: %d\n", ctx->state);
-+			return -EINVAL;
-+		}
-+
- 		if (ctx->dst_fmt)
- 			*plane_count = ctx->dst_fmt->num_planes;
- 		else
--- 
-1.7.4.1
+>
+> root@odroidxu3:~# dmesg | grep ther
+
+This command not needed, we all know how to use dmesg and grep.
+
+> [    0.241511] /thermal-zones/cpu-thermal/cooling-maps/map0:
+>                          could not get #cooling-cells for /cpus/cpu@0
+>
+> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 4531753..c75ed16 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -61,6 +61,10 @@
+>                         reg = <0x0>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+> +
+> +                       cooling-min-level = <10>;
+> +                       cooling-max-level = <7>;
+> +                       #cooling-cells = <2>; /* min followed by max */
+
+I might be missing something but I do not understand which cooling
+levels are referenced here. In my exynos5420.dtsi file there are no
+frequencies for cpu0 node. Could you help me understand this?
+
+Best regards,
+Krzysztof
