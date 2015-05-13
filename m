@@ -1,41 +1,45 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: exynos_defconfig: Enable CONFIG_SENSORS_PWM_FAN
- for odroidxu3 pmw-fan
-Date: Wed, 13 May 2015 08:46:32 +0900
-Message-ID: <CAJKOXPcXRWm7T29LCYMMkW0FDF8LXEsAoMjwrTqBvSiQ+q5czg@mail.gmail.com>
-References: <linux.amoon@gmail.com>
-	<1431444262-29531-1-git-send-email-linux.amoon@gmail.com>
-	<1431444262-29531-2-git-send-email-linux.amoon@gmail.com>
+Subject: Re: [GIT PULL] ARM: EXYNOS: dts: DTS fixes for 4.1, second try
+Date: Wed, 13 May 2015 09:47:23 +0900
+Message-ID: <55529F1B.3050703@samsung.com>
+References: <1431313819-16843-1-git-send-email-k.kozlowski@samsung.com>
+ <5552461A.6070304@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f46.google.com ([209.85.216.46]:42080 "EHLO
-	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964862AbbELXqd (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36084 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964800AbbEMAr3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 May 2015 19:46:33 -0400
-Received: by vnbf129 with SMTP id f129so1785727vnb.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 May 2015 16:46:33 -0700 (PDT)
-In-Reply-To: <1431444262-29531-2-git-send-email-linux.amoon@gmail.com>
+	Tue, 12 May 2015 20:47:29 -0400
+In-reply-to: <5552461A.6070304@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 
-2015-05-13 0:24 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> Enable CONFIG_SENSORS_PWM_FAN on exynos_defconfig to control fan power on Odroidxu3.
->
-> ---
-> Depends on http://www.spinics.net/lists/arm-kernel/msg412031.html
-> Tested on OdroidXU3 Board.
-> ---
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+On 13.05.2015 03:27, Kukjin Kim wrote:
+> On 05/11/15 12:10, Krzysztof Kozlowski wrote:
+>> Dear Kukjin,
+>>
+>> This groups one fix missed in your last pull requst. This fixes suspend
+>> on Peach boards related to Marvell mwifiex driver. The driver was
+>> enabled for Exynos defconfig during merge window so currently
+>> the suspend on these boards on this config fails.
+>>
+> Yes, you're right. Only exynos5250-snow related patch has been fixed
+> before and this should be sent to upstream together. I've applied this
+> into samsung-fixes-2 with your signed-off-by.
+> 
+> Note this will be sent to arm-soc before a couple of days of -rc4 with
+> your other fix for suspend on exynos4.
 
-This is mixed up. Try it yourself:
-1. Save the email as mbox.
-2. Apply with "git am" to a vanilla tree.
-Do you see the Signed-off-by in commit?
+Great, thank you!
+
+What about the patches for next release (v4.2 or v4.3)? Do you have any
+comments on them? These are mostly small improvements except one: the
+coupled cpuidle driver for Exynos3250.
 
 Best regards,
 Krzysztof
