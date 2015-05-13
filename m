@@ -1,63 +1,29 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
-Date: Wed, 13 May 2015 13:51:30 +0530
-Message-ID: <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
- <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v6 06/11] cec: add HDMI CEC framework
+Date: Wed, 13 May 2015 10:28:07 +0200
+Message-ID: <55530B17.4050606@xs4all.nl>
+References: <1430760785-1169-1-git-send-email-k.debski@samsung.com> <1430760785-1169-7-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:35803 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753843AbbEMIVw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 04:21:52 -0400
-In-Reply-To: <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1430760785-1169-7-git-send-email-k.debski@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->> device.
->>
->> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
->> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
->>  1 file changed, 25 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> index 9446e28..cd78816 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> @@ -319,6 +319,31 @@
->>                 #cooling-cells = <2>;
->>                 cooling-levels = <0 130 170 230>;
->>         };
->> +
->> +       tmu@10060000 {
->
-> Here and for other overrides please use label notation, like:
->
-> &tmu_cpu0 {
->               ...
-> };
->
->> +               vtmu-supply = <&ldo10_reg>;
->
-> I am curious, how did you find that LDO10 supplies TMU unit?
->
-> Best regards,
-> Krzysztof
+Hi Kamil,
 
-Hi Krzysztof,
+Here is the first cec-compliance bug report:
 
-I have re-base my work on earlier Lukasz Majewski patches.
+CEC_G_CAPS doesn't zero the reserved field!
 
-https://patchwork.kernel.org/patch/5693201/
+cec.c needs a memset there.
 
--Anand Moon
+I think this is missing in cec.c for all structs with a reserved
+field in them. Only G_EVENT looks to be OK.
+
+Regards,
+
+	Hans
