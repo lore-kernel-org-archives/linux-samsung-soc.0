@@ -1,108 +1,121 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 8/9] media: vb2: Remove unused functions
-Date: Wed, 13 May 2015 15:08:14 +0200
-Message-ID: <1431522495-4692-9-git-send-email-jack@suse.cz>
+Subject: [PATCH 4/9] vb2: Provide helpers for mapping virtual addresses
+Date: Wed, 13 May 2015 15:08:10 +0200
+Message-ID: <1431522495-4692-5-git-send-email-jack@suse.cz>
 References: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:49544 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934251AbbEMNIa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 May 2015 09:08:30 -0400
 In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-mm@kvack.org
-Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mm@kvack.org
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-Q29udmVyc2lvbiB0byB0aGUgdXNlIG9mIHBpbm5lZCBwZm5zIG1hZGUgc29tZSBmdW5jdGlvbnMg
-dW51c2VkLiBSZW1vdmUKdGhlbS4gQWxzbyB0aGVyZSdzIG5vIG5lZWQgdG8gbG9jayBtbWFwX3Nl
-bSBpbiBfX2J1Zl9wcmVwYXJlKCkgYW55bW9yZS4KCkFja2VkLWJ5OiBNYXJlayBTenlwcm93c2tp
-IDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+ClRlc3RlZC1ieTogTWFyZWsgU3p5cHJvd3NraSA8
-bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBKYW4gS2FyYSA8amFja0Bz
-dXNlLmN6PgotLS0KIGRyaXZlcnMvbWVkaWEvdjRsMi1jb3JlL3ZpZGVvYnVmMi1tZW1vcHMuYyB8
-IDExNCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9tZWRpYS92aWRlb2J1
-ZjItbWVtb3BzLmggICAgICAgICAgIHwgICA2IC0tCiAyIGZpbGVzIGNoYW5nZWQsIDEyMCBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjIt
-bWVtb3BzLmMgYi9kcml2ZXJzL21lZGlhL3Y0bDItY29yZS92aWRlb2J1ZjItbWVtb3BzLmMKaW5k
-ZXggMGVjMTg2ZDQxYjliLi40OGM2YTQ5YzQ5MjggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEv
-djRsMi1jb3JlL3ZpZGVvYnVmMi1tZW1vcHMuYworKysgYi9kcml2ZXJzL21lZGlhL3Y0bDItY29y
-ZS92aWRlb2J1ZjItbWVtb3BzLmMKQEAgLTIzLDEyMCArMjMsNiBAQAogI2luY2x1ZGUgPG1lZGlh
-L3ZpZGVvYnVmMi1tZW1vcHMuaD4KIAogLyoqCi0gKiB2YjJfZ2V0X3ZtYSgpIC0gYWNxdWlyZSBh
-bmQgbG9jayB0aGUgdmlydHVhbCBtZW1vcnkgYXJlYQotICogQHZtYToJZ2l2ZW4gdmlydHVhbCBt
-ZW1vcnkgYXJlYQotICoKLSAqIFRoaXMgZnVuY3Rpb24gYXR0ZW1wdHMgdG8gYWNxdWlyZSBhbiBh
-cmVhIG1hcHBlZCBpbiB0aGUgdXNlcnNwYWNlIGZvcgotICogdGhlIGR1cmF0aW9uIG9mIGEgaGFy
-ZHdhcmUgb3BlcmF0aW9uLiBUaGUgYXJlYSBpcyAibG9ja2VkIiBieSBwZXJmb3JtaW5nCi0gKiB0
-aGUgc2FtZSBzZXQgb2Ygb3BlcmF0aW9uIHRoYXQgYXJlIGRvbmUgd2hlbiBwcm9jZXNzIGNhbGxz
-IGZvcmsoKSBhbmQKLSAqIG1lbW9yeSBhcmVhcyBhcmUgZHVwbGljYXRlZC4KLSAqCi0gKiBSZXR1
-cm5zIGEgY29weSBvZiBhIHZpcnR1YWwgbWVtb3J5IHJlZ2lvbiBvbiBzdWNjZXNzIG9yIE5VTEwu
-Ci0gKi8KLXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdmIyX2dldF92bWEoc3RydWN0IHZtX2FyZWFf
-c3RydWN0ICp2bWEpCi17Ci0Jc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWFfY29weTsKLQotCXZt
-YV9jb3B5ID0ga21hbGxvYyhzaXplb2YoKnZtYV9jb3B5KSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKHZt
-YV9jb3B5ID09IE5VTEwpCi0JCXJldHVybiBOVUxMOwotCi0JaWYgKHZtYS0+dm1fb3BzICYmIHZt
-YS0+dm1fb3BzLT5vcGVuKQotCQl2bWEtPnZtX29wcy0+b3Blbih2bWEpOwotCi0JaWYgKHZtYS0+
-dm1fZmlsZSkKLQkJZ2V0X2ZpbGUodm1hLT52bV9maWxlKTsKLQotCW1lbWNweSh2bWFfY29weSwg
-dm1hLCBzaXplb2YoKnZtYSkpOwotCi0Jdm1hX2NvcHktPnZtX21tID0gTlVMTDsKLQl2bWFfY29w
-eS0+dm1fbmV4dCA9IE5VTEw7Ci0Jdm1hX2NvcHktPnZtX3ByZXYgPSBOVUxMOwotCi0JcmV0dXJu
-IHZtYV9jb3B5OwotfQotRVhQT1JUX1NZTUJPTF9HUEwodmIyX2dldF92bWEpOwotCi0vKioKLSAq
-IHZiMl9wdXRfdXNlcnB0cigpIC0gcmVsZWFzZSBhIHVzZXJzcGFjZSB2aXJ0dWFsIG1lbW9yeSBh
-cmVhCi0gKiBAdm1hOgl2aXJ0dWFsIG1lbW9yeSByZWdpb24gYXNzb2NpYXRlZCB3aXRoIHRoZSBh
-cmVhIHRvIGJlIHJlbGVhc2VkCi0gKgotICogVGhpcyBmdW5jdGlvbiByZWxlYXNlcyB0aGUgcHJl
-dmlvdXNseSBhY3F1aXJlZCBtZW1vcnkgYXJlYSBhZnRlciBhIGhhcmR3YXJlCi0gKiBvcGVyYXRp
-b24uCi0gKi8KLXZvaWQgdmIyX3B1dF92bWEoc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpCi17
-Ci0JaWYgKCF2bWEpCi0JCXJldHVybjsKLQotCWlmICh2bWEtPnZtX29wcyAmJiB2bWEtPnZtX29w
-cy0+Y2xvc2UpCi0JCXZtYS0+dm1fb3BzLT5jbG9zZSh2bWEpOwotCi0JaWYgKHZtYS0+dm1fZmls
-ZSkKLQkJZnB1dCh2bWEtPnZtX2ZpbGUpOwotCi0Ja2ZyZWUodm1hKTsKLX0KLUVYUE9SVF9TWU1C
-T0xfR1BMKHZiMl9wdXRfdm1hKTsKLQotLyoqCi0gKiB2YjJfZ2V0X2NvbnRpZ191c2VycHRyKCkg
-LSBsb2NrIHBoeXNpY2FsbHkgY29udGlndW91cyB1c2Vyc3BhY2UgbWFwcGVkIG1lbW9yeQotICog
-QHZhZGRyOglzdGFydGluZyB2aXJ0dWFsIGFkZHJlc3Mgb2YgdGhlIGFyZWEgdG8gYmUgdmVyaWZp
-ZWQKLSAqIEBzaXplOglzaXplIG9mIHRoZSBhcmVhCi0gKiBAcmVzX3BhZGRyOgl3aWxsIHJldHVy
-biBwaHlzaWNhbCBhZGRyZXNzIGZvciB0aGUgZ2l2ZW4gdmFkZHIKLSAqIEByZXNfdm1hOgl3aWxs
-IHJldHVybiBsb2NrZWQgY29weSBvZiBzdHJ1Y3Qgdm1fYXJlYSBmb3IgdGhlIGdpdmVuIGFyZWEK
-LSAqCi0gKiBUaGlzIGZ1bmN0aW9uIHdpbGwgZ28gdGhyb3VnaCBtZW1vcnkgYXJlYSBvZiBzaXpl
-IEBzaXplIG1hcHBlZCBhdCBAdmFkZHIgYW5kCi0gKiB2ZXJpZnkgdGhhdCB0aGUgdW5kZXJseWlu
-ZyBwaHlzaWNhbCBwYWdlcyBhcmUgY29udGlndW91cy4gSWYgdGhleSBhcmUKLSAqIGNvbnRpZ3Vv
-dXMgdGhlIHZpcnR1YWwgbWVtb3J5IGFyZWEgaXMgbG9ja2VkIGFuZCBhIEByZXNfdm1hIGlzIGZp
-bGxlZCB3aXRoCi0gKiB0aGUgY29weSBhbmQgQHJlc19wYSBzZXQgdG8gdGhlIHBoeXNpY2FsIGFk
-ZHJlc3Mgb2YgdGhlIGJ1ZmZlci4KLSAqCi0gKiBSZXR1cm5zIDAgb24gc3VjY2Vzcy4KLSAqLwot
-aW50IHZiMl9nZXRfY29udGlnX3VzZXJwdHIodW5zaWduZWQgbG9uZyB2YWRkciwgdW5zaWduZWQg
-bG9uZyBzaXplLAotCQkJICAgc3RydWN0IHZtX2FyZWFfc3RydWN0ICoqcmVzX3ZtYSwgZG1hX2Fk
-ZHJfdCAqcmVzX3BhKQotewotCXN0cnVjdCBtbV9zdHJ1Y3QgKm1tID0gY3VycmVudC0+bW07Ci0J
-c3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWE7Ci0JdW5zaWduZWQgbG9uZyBvZmZzZXQsIHN0YXJ0
-LCBlbmQ7Ci0JdW5zaWduZWQgbG9uZyB0aGlzX3BmbiwgcHJldl9wZm47Ci0JZG1hX2FkZHJfdCBw
-YSA9IDA7Ci0KLQlzdGFydCA9IHZhZGRyOwotCW9mZnNldCA9IHN0YXJ0ICYgflBBR0VfTUFTSzsK
-LQllbmQgPSBzdGFydCArIHNpemU7Ci0KLQl2bWEgPSBmaW5kX3ZtYShtbSwgc3RhcnQpOwotCi0J
-aWYgKHZtYSA9PSBOVUxMIHx8IHZtYS0+dm1fZW5kIDwgZW5kKQotCQlyZXR1cm4gLUVGQVVMVDsK
-LQotCWZvciAocHJldl9wZm4gPSAwOyBzdGFydCA8IGVuZDsgc3RhcnQgKz0gUEFHRV9TSVpFKSB7
-Ci0JCWludCByZXQgPSBmb2xsb3dfcGZuKHZtYSwgc3RhcnQsICZ0aGlzX3Bmbik7Ci0JCWlmIChy
-ZXQpCi0JCQlyZXR1cm4gcmV0OwotCi0JCWlmIChwcmV2X3BmbiA9PSAwKQotCQkJcGEgPSB0aGlz
-X3BmbiA8PCBQQUdFX1NISUZUOwotCQllbHNlIGlmICh0aGlzX3BmbiAhPSBwcmV2X3BmbiArIDEp
-Ci0JCQlyZXR1cm4gLUVGQVVMVDsKLQotCQlwcmV2X3BmbiA9IHRoaXNfcGZuOwotCX0KLQotCS8q
-Ci0JICogTWVtb3J5IGlzIGNvbnRpZ291cywgbG9jayB2bWEgYW5kIHJldHVybiB0byB0aGUgY2Fs
-bGVyCi0JICovCi0JKnJlc192bWEgPSB2YjJfZ2V0X3ZtYSh2bWEpOwotCWlmICgqcmVzX3ZtYSA9
-PSBOVUxMKQotCQlyZXR1cm4gLUVOT01FTTsKLQotCSpyZXNfcGEgPSBwYSArIG9mZnNldDsKLQly
-ZXR1cm4gMDsKLX0KLUVYUE9SVF9TWU1CT0xfR1BMKHZiMl9nZXRfY29udGlnX3VzZXJwdHIpOwot
-Ci0vKioKICAqIHZiMl9jcmVhdGVfZnJhbWV2ZWMoKSAtIG1hcCB2aXJ0dWFsIGFkZHJlc3NlcyB0
-byBwZm5zCiAgKiBAc3RhcnQ6CVZpcnR1YWwgdXNlciBhZGRyZXNzIHdoZXJlIHdlIHN0YXJ0IG1h
-cHBpbmcKICAqIEBsZW5ndGg6CUxlbmd0aCBvZiBhIHJhbmdlIHRvIG1hcApkaWZmIC0tZ2l0IGEv
-aW5jbHVkZS9tZWRpYS92aWRlb2J1ZjItbWVtb3BzLmggYi9pbmNsdWRlL21lZGlhL3ZpZGVvYnVm
-Mi1tZW1vcHMuaAppbmRleCAyZjA1NjRmZjVmMzEuLjgzMGI1MjM5ZmQ4YiAxMDA2NDQKLS0tIGEv
-aW5jbHVkZS9tZWRpYS92aWRlb2J1ZjItbWVtb3BzLmgKKysrIGIvaW5jbHVkZS9tZWRpYS92aWRl
-b2J1ZjItbWVtb3BzLmgKQEAgLTMxLDEyICszMSw2IEBAIHN0cnVjdCB2YjJfdm1hcmVhX2hhbmRs
-ZXIgewogCiBleHRlcm4gY29uc3Qgc3RydWN0IHZtX29wZXJhdGlvbnNfc3RydWN0IHZiMl9jb21t
-b25fdm1fb3BzOwogCi1pbnQgdmIyX2dldF9jb250aWdfdXNlcnB0cih1bnNpZ25lZCBsb25nIHZh
-ZGRyLCB1bnNpZ25lZCBsb25nIHNpemUsCi0JCQkgICBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKipy
-ZXNfdm1hLCBkbWFfYWRkcl90ICpyZXNfcGEpOwotCi1zdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZi
-Ml9nZXRfdm1hKHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKTsKLXZvaWQgdmIyX3B1dF92bWEo
-c3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEpOwotCiBzdHJ1Y3QgZnJhbWVfdmVjdG9yICp2YjJf
-Y3JlYXRlX2ZyYW1ldmVjKHVuc2lnbmVkIGxvbmcgc3RhcnQsCiAJCQkJCSB1bnNpZ25lZCBsb25n
-IGxlbmd0aCwKIAkJCQkJIGJvb2wgd3JpdGUpOwotLSAKMi4xLjQKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Provide simple helper functions to map virtual address range into an
+array of pfns / pages.
+
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ drivers/media/v4l2-core/videobuf2-memops.c | 58 ++++++++++++++++++++++++++++++
+ include/media/videobuf2-memops.h           |  5 +++
+ 2 files changed, 63 insertions(+)
+
+diff --git a/drivers/media/v4l2-core/videobuf2-memops.c b/drivers/media/v4l2-core/videobuf2-memops.c
+index 81c1ad8b2cf1..0ec186d41b9b 100644
+--- a/drivers/media/v4l2-core/videobuf2-memops.c
++++ b/drivers/media/v4l2-core/videobuf2-memops.c
+@@ -137,6 +137,64 @@ int vb2_get_contig_userptr(unsigned long vaddr, unsigned long size,
+ EXPORT_SYMBOL_GPL(vb2_get_contig_userptr);
+ 
+ /**
++ * vb2_create_framevec() - map virtual addresses to pfns
++ * @start:	Virtual user address where we start mapping
++ * @length:	Length of a range to map
++ * @write:	Should we map for writing into the area
++ *
++ * This function allocates and fills in a vector with pfns corresponding to
++ * virtual address range passed in arguments. If pfns have corresponding pages,
++ * page references are also grabbed to pin pages in memory. The function
++ * returns pointer to the vector on success and error pointer in case of
++ * failure. Returned vector needs to be freed via vb2_destroy_pfnvec().
++ */
++struct frame_vector *vb2_create_framevec(unsigned long start,
++					 unsigned long length,
++					 bool write)
++{
++	int ret;
++	unsigned long first, last;
++	unsigned long nr;
++	struct frame_vector *vec;
++
++	first = start >> PAGE_SHIFT;
++	last = (start + length - 1) >> PAGE_SHIFT;
++	nr = last - first + 1;
++	vec = frame_vector_create(nr);
++	if (!vec)
++		return ERR_PTR(-ENOMEM);
++	ret = get_vaddr_frames(start, nr, write, 1, vec);
++	if (ret < 0)
++		goto out_destroy;
++	/* We accept only complete set of PFNs */
++	if (ret != nr) {
++		ret = -EFAULT;
++		goto out_release;
++	}
++	return vec;
++out_release:
++	put_vaddr_frames(vec);
++out_destroy:
++	frame_vector_destroy(vec);
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL(vb2_create_framevec);
++
++/**
++ * vb2_destroy_framevec() - release vector of mapped pfns
++ * @vec:	vector of pfns / pages to release
++ *
++ * This releases references to all pages in the vector @vec (if corresponding
++ * pfns are backed by pages) and frees the passed vector.
++ */
++void vb2_destroy_framevec(struct frame_vector *vec)
++{
++	put_vaddr_frames(vec);
++	frame_vector_destroy(vec);
++}
++EXPORT_SYMBOL(vb2_destroy_framevec);
++
++/**
+  * vb2_common_vm_open() - increase refcount of the vma
+  * @vma:	virtual memory region for the mapping
+  *
+diff --git a/include/media/videobuf2-memops.h b/include/media/videobuf2-memops.h
+index f05444ca8c0c..2f0564ff5f31 100644
+--- a/include/media/videobuf2-memops.h
++++ b/include/media/videobuf2-memops.h
+@@ -15,6 +15,7 @@
+ #define _MEDIA_VIDEOBUF2_MEMOPS_H
+ 
+ #include <media/videobuf2-core.h>
++#include <linux/mm.h>
+ 
+ /**
+  * vb2_vmarea_handler - common vma refcount tracking handler
+@@ -36,5 +37,9 @@ int vb2_get_contig_userptr(unsigned long vaddr, unsigned long size,
+ struct vm_area_struct *vb2_get_vma(struct vm_area_struct *vma);
+ void vb2_put_vma(struct vm_area_struct *vma);
+ 
++struct frame_vector *vb2_create_framevec(unsigned long start,
++					 unsigned long length,
++					 bool write);
++void vb2_destroy_framevec(struct frame_vector *vec);
+ 
+ #endif
+-- 
+2.1.4
