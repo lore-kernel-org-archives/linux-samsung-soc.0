@@ -1,62 +1,88 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 06/10] mfd: cros_ec: add proto v3 skeleton
-Date: Wed, 13 May 2015 14:25:47 +0200
-Message-ID: <555342CB.8000504@collabora.co.uk>
-References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk> <1431166241-15775-7-git-send-email-javier.martinez@collabora.co.uk> <20150513120510.GK3394@x1>
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 3/9] media: omap_vout: Convert omap_vout_uservirt_to_phys() to
+ use get_vaddr_pfns()
+Date: Wed, 13 May 2015 15:08:09 +0200
+Message-ID: <1431522495-4692-4-git-send-email-jack@suse.cz>
+References: <1431522495-4692-1-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150513120510.GK3394@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-mm@kvack.org
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
-
-Thanks a lot for your feedback.
-
-On 05/13/2015 02:05 PM, Lee Jones wrote:
-> On Sat, 09 May 2015, Javier Martinez Canillas wrote:
-> 
->> From: Stephen Barber <smbarber@chromium.org>
->> 
->> Add support in cros_ec.c to handle EC host command protocol v3.
->> For v3+, probe for maximum shared protocol version and max
->> request, response, and passthrough sizes. For now, this will
->> always fall back to v2, since there is no bus-specific code
->> for handling proto v3 packets.
->> 
->> Signed-off-by: Stephen Barber <smbarber@chromium.org>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
->> Tested-by: Gwendal Grignou <gwendal@chromium.org>
->> ---
->> 
->> Changes since v1:
->>  - Squash change https://chromium-review.googlesource.com/#/c/262870/ in
->>    the patch. Suggested by Gwendal Grignou
->>  - Add Reviewed-by and Tested-by tags from Gwendal Grignou
->> ---
->>  drivers/mfd/cros_ec.c                 | 354 ++++++++++++++++++++++++++++++----
->>  drivers/mfd/cros_ec_i2c.c             |   4 +
->>  drivers/mfd/cros_ec_spi.c             |   7 +-
->>  drivers/platform/chrome/cros_ec_lpc.c |   4 +
->>  include/linux/mfd/cros_ec.h           |  20 +-
->>  5 files changed, 344 insertions(+), 45 deletions(-)
-> 
-> This patch nearly triples the size of the driver, which I'm less than
-> happy about.  This driver is starting to suffer from feature-creep
-> when comparing against the original implementation.  I'd like to extract
-> 'protocol drivers' out if possible.  Would this be better suited in
-> drivers/platform?
-> 
-
-Agreed that this mfd driver is getting too complex. I'll see how I can
-split the communication/transport logic into a separate driver under
-platforms/chrome and only keep the mfd cells registration logic in
-drivers/mfd/cros_ec.c
-
-Best regards,
-Javier
+Q29udmVydCBvbWFwX3ZvdXRfdXNlcnZpcnRfdG9fcGh5cygpIHRvIHVzZSBnZXRfdmFkZHJfcGZu
+cygpIGluc3RlYWQgb2YKaGFuZCBtYWRlIG1hcHBpbmcgb2YgdmlydHVhbCBhZGRyZXNzIHRvIHBo
+eXNpY2FsIGFkZHJlc3MuIEFsc28gdGhlCmZ1bmN0aW9uIGxlYWtlZCBwYWdlIHJlZmVyZW5jZSBm
+cm9tIGdldF91c2VyX3BhZ2VzKCkgc28gZml4IHRoYXQgYnkKcHJvcGVybHkgcmVsZWFzZSB0aGUg
+cmVmZXJlbmNlIHdoZW4gb21hcF92b3V0X2J1ZmZlcl9yZWxlYXNlKCkgaXMKY2FsbGVkLgoKU2ln
+bmVkLW9mZi1ieTogSmFuIEthcmEgPGphY2tAc3VzZS5jej4KLS0tCiBkcml2ZXJzL21lZGlhL3Bs
+YXRmb3JtL29tYXAvb21hcF92b3V0LmMgfCA2NyArKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
+LS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspLCAzNiBkZWxldGlvbnMoLSkK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAvb21hcF92b3V0LmMgYi9k
+cml2ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAvb21hcF92b3V0LmMKaW5kZXggMTdiMTg5YTgxZWM1
+Li4wZTRiM2NmYWNjNWQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vb21hcC9v
+bWFwX3ZvdXQuYworKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL29tYXAvb21hcF92b3V0LmMK
+QEAgLTE5NSw0NiArMTk1LDM0IEBAIHN0YXRpYyBpbnQgb21hcF92b3V0X3RyeV9mb3JtYXQoc3Ry
+dWN0IHY0bDJfcGl4X2Zvcm1hdCAqcGl4KQogfQogCiAvKgotICogb21hcF92b3V0X3VzZXJ2aXJ0
+X3RvX3BoeXM6IFRoaXMgaW5saW5lIGZ1bmN0aW9uIGlzIHVzZWQgdG8gY29udmVydCB1c2VyCi0g
+KiBzcGFjZSB2aXJ0dWFsIGFkZHJlc3MgdG8gcGh5c2ljYWwgYWRkcmVzcy4KKyAqIG9tYXBfdm91
+dF9nZXRfdXNlcnB0cjogQ29udmVydCB1c2VyIHNwYWNlIHZpcnR1YWwgYWRkcmVzcyB0byBwaHlz
+aWNhbAorICogYWRkcmVzcy4KICAqLwotc3RhdGljIHVuc2lnbmVkIGxvbmcgb21hcF92b3V0X3Vz
+ZXJ2aXJ0X3RvX3BoeXModW5zaWduZWQgbG9uZyB2aXJ0cCkKK3N0YXRpYyBpbnQgb21hcF92b3V0
+X2dldF91c2VycHRyKHN0cnVjdCB2aWRlb2J1Zl9idWZmZXIgKnZiLCB1MzIgdmlydHAsCisJCQkJ
+IHUzMiAqcGh5c3ApCiB7Ci0JdW5zaWduZWQgbG9uZyBwaHlzcCA9IDA7Ci0Jc3RydWN0IHZtX2Fy
+ZWFfc3RydWN0ICp2bWE7Ci0Jc3RydWN0IG1tX3N0cnVjdCAqbW0gPSBjdXJyZW50LT5tbTsKKwlz
+dHJ1Y3QgZnJhbWVfdmVjdG9yICp2ZWM7CisJaW50IHJldDsKIAogCS8qIEZvciBrZXJuZWwgZGly
+ZWN0LW1hcHBlZCBtZW1vcnksIHRha2UgdGhlIGVhc3kgd2F5ICovCi0JaWYgKHZpcnRwID49IFBB
+R0VfT0ZGU0VUKQotCQlyZXR1cm4gdmlydF90b19waHlzKCh2b2lkICopIHZpcnRwKTsKLQotCWRv
+d25fcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsKLQl2bWEgPSBmaW5kX3ZtYShtbSwgdmly
+dHApOwotCWlmICh2bWEgJiYgKHZtYS0+dm1fZmxhZ3MgJiBWTV9JTykgJiYgdm1hLT52bV9wZ29m
+ZikgewotCQkvKiB0aGlzIHdpbGwgY2F0Y2gsIGtlcm5lbC1hbGxvY2F0ZWQsIG1tYXBlZC10by11
+c2VybW9kZQotCQkgICBhZGRyZXNzZXMgKi8KLQkJcGh5c3AgPSAodm1hLT52bV9wZ29mZiA8PCBQ
+QUdFX1NISUZUKSArICh2aXJ0cCAtIHZtYS0+dm1fc3RhcnQpOwotCQl1cF9yZWFkKCZjdXJyZW50
+LT5tbS0+bW1hcF9zZW0pOwotCX0gZWxzZSB7Ci0JCS8qIG90aGVyd2lzZSwgdXNlIGdldF91c2Vy
+X3BhZ2VzKCkgZm9yIGdlbmVyYWwgdXNlcmxhbmQgcGFnZXMgKi8KLQkJaW50IHJlcywgbnJfcGFn
+ZXMgPSAxOwotCQlzdHJ1Y3QgcGFnZSAqcGFnZXM7CisJaWYgKHZpcnRwID49IFBBR0VfT0ZGU0VU
+KSB7CisJCSpwaHlzcCA9IHZpcnRfdG9fcGh5cygodm9pZCAqKXZpcnRwKTsKKwkJcmV0dXJuIDA7
+CisJfQogCi0JCXJlcyA9IGdldF91c2VyX3BhZ2VzKGN1cnJlbnQsIGN1cnJlbnQtPm1tLCB2aXJ0
+cCwgbnJfcGFnZXMsIDEsCi0JCQkJMCwgJnBhZ2VzLCBOVUxMKTsKLQkJdXBfcmVhZCgmY3VycmVu
+dC0+bW0tPm1tYXBfc2VtKTsKKwl2ZWMgPSBmcmFtZV92ZWN0b3JfY3JlYXRlKDEpOworCWlmICgh
+dmVjKQorCQlyZXR1cm4gLUVOT01FTTsKIAotCQlpZiAocmVzID09IG5yX3BhZ2VzKSB7Ci0JCQlw
+aHlzcCA9ICBfX3BhKHBhZ2VfYWRkcmVzcygmcGFnZXNbMF0pICsKLQkJCQkJKHZpcnRwICYgflBB
+R0VfTUFTSykpOwotCQl9IGVsc2UgewotCQkJcHJpbnRrKEtFUk5fV0FSTklORyBWT1VUX05BTUUK
+LQkJCQkJImdldF91c2VyX3BhZ2VzIGZhaWxlZFxuIik7Ci0JCQlyZXR1cm4gMDsKLQkJfQorCXJl
+dCA9IGdldF92YWRkcl9mcmFtZXModmlydHAsIDEsIHRydWUsIGZhbHNlLCB2ZWMpOworCWlmIChy
+ZXQgIT0gMSkgeworCQlmcmFtZV92ZWN0b3JfZGVzdHJveSh2ZWMpOworCQlyZXR1cm4gLUVJTlZB
+TDsKIAl9CisJKnBoeXNwID0gX19wZm5fdG9fcGh5cyhmcmFtZV92ZWN0b3JfcGZucyh2ZWMpWzBd
+KTsKKwl2Yi0+cHJpdiA9IHZlYzsKIAotCXJldHVybiBwaHlzcDsKKwlyZXR1cm4gMDsKIH0KIAog
+LyoKQEAgLTc4OCwxMSArNzc2LDE1IEBAIHN0YXRpYyBpbnQgb21hcF92b3V0X2J1ZmZlcl9wcmVw
+YXJlKHN0cnVjdCB2aWRlb2J1Zl9xdWV1ZSAqcSwKIAkgKiBhZGRyZXNzIG9mIHRoZSBidWZmZXIK
+IAkgKi8KIAlpZiAoVjRMMl9NRU1PUllfVVNFUlBUUiA9PSB2Yi0+bWVtb3J5KSB7CisJCWludCBy
+ZXQ7CisKIAkJaWYgKDAgPT0gdmItPmJhZGRyKQogCQkJcmV0dXJuIC1FSU5WQUw7CiAJCS8qIFBo
+eXNpY2FsIGFkZHJlc3MgKi8KLQkJdm91dC0+cXVldWVkX2J1Zl9hZGRyW3ZiLT5pXSA9ICh1OCAq
+KQotCQkJb21hcF92b3V0X3VzZXJ2aXJ0X3RvX3BoeXModmItPmJhZGRyKTsKKwkJcmV0ID0gb21h
+cF92b3V0X2dldF91c2VycHRyKHZiLCB2Yi0+YmFkZHIsCisJCQkJKHUzMiAqKSZ2b3V0LT5xdWV1
+ZWRfYnVmX2FkZHJbdmItPmldKTsKKwkJaWYgKHJldCA8IDApCisJCQlyZXR1cm4gcmV0OwogCX0g
+ZWxzZSB7CiAJCXVuc2lnbmVkIGxvbmcgYWRkciwgZG1hX2FkZHI7CiAJCXVuc2lnbmVkIGxvbmcg
+c2l6ZTsKQEAgLTg0MSw5ICs4MzMsMTIgQEAgc3RhdGljIHZvaWQgb21hcF92b3V0X2J1ZmZlcl9y
+ZWxlYXNlKHN0cnVjdCB2aWRlb2J1Zl9xdWV1ZSAqcSwKIAlzdHJ1Y3Qgb21hcF92b3V0X2Rldmlj
+ZSAqdm91dCA9IHEtPnByaXZfZGF0YTsKIAogCXZiLT5zdGF0ZSA9IFZJREVPQlVGX05FRURTX0lO
+SVQ7CisJaWYgKHZiLT5tZW1vcnkgPT0gVjRMMl9NRU1PUllfVVNFUlBUUiAmJiB2Yi0+cHJpdikg
+eworCQlzdHJ1Y3QgZnJhbWVfdmVjdG9yICp2ZWMgPSB2Yi0+cHJpdjsKIAotCWlmIChWNEwyX01F
+TU9SWV9NTUFQICE9IHZvdXQtPm1lbW9yeSkKLQkJcmV0dXJuOworCQlwdXRfdmFkZHJfZnJhbWVz
+KHZlYyk7CisJCWZyYW1lX3ZlY3Rvcl9kZXN0cm95KHZlYyk7CisJfQogfQogCiAvKgotLSAKMi4x
+LjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
