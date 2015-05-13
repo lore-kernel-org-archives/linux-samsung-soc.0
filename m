@@ -1,36 +1,44 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv5 5/5] ARM: dts: Enable thermal_zone for exynos5422-odroidxu3
-Date: Wed, 13 May 2015 16:40:36 +0900
-Message-ID: <CAJKOXPeNB=BXoY6CAxE8MNZ90cchhbdbUg3Xgef3qAgBR2UWJA@mail.gmail.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv5 1/5] ARM: dts: exynos5422-odroidxu3 Add pwm-fan node to
+ the Odroid-XU3 board
+Date: Wed, 13 May 2015 13:16:38 +0530
+Message-ID: <CANAwSgTCaBgmBQ9HNb_2O+eUeZK2XngMkGon7x8Q4h86xP5hKA@mail.gmail.com>
 References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
-	<1431499020-3912-6-git-send-email-linux.amoon@gmail.com>
+ <1431499020-3912-2-git-send-email-linux.amoon@gmail.com> <CAJKOXPefJwqvfZPDovQ6EjEOBfuJkidgeYDF_=KC9O+=2=_KoQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f53.google.com ([209.85.216.53]:36894 "EHLO
-	mail-vn0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753325AbbEMHkh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 03:40:37 -0400
-In-Reply-To: <1431499020-3912-6-git-send-email-linux.amoon@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPefJwqvfZPDovQ6EjEOBfuJkidgeYDF_=KC9O+=2=_KoQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-2015-05-13 15:37 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> Include exynos5-cpu-thermal.dtsi to enable thermal_zone support.
+Hi Krzysztof,
 
-I am a little confused because you named this file as
-exynos5-cpu-thermal, meaning it is common for all Exynos5 boards. But:
-1. It references some specific phandles like &fan0 (cooling-device =
-<&fan0 2 3>).
-2. You include it only here.
+Will make the changes.
 
-So the question: is "exynos5-cpu-thermal.dtsi" a generic thermal DTSI?
-What is your intention?
+Thanks for the review.
 
-Lukasz, you acked the patchset, is it fine?
+-Anand Moon
 
-Best regards,
-Krzysztof
+On 13 May 2015 at 12:41, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>> Add pwm-fan node to the Odroid-XU3 board.
+>>
+>> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+>> Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>
+> Please fix the title of commit (missing colon, duplicated name of board) to:
+> "ARM: dts: exynos5422-odroidxu3: Add pwm-fan node"
+>
+> Rest looks good:
+> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> Best regards,
+> Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
