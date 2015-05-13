@@ -1,155 +1,153 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 04/10] mfd: cros_ec: Use a zero-length array for
- command data
-Date: Wed, 13 May 2015 12:10:34 +0100
-Message-ID: <20150513111034.GH3394@x1>
+Subject: Re: [PATCH v2 10/10] mfd: cros_ec: spi: Add delay for asserting CS
+Date: Wed, 13 May 2015 12:16:25 +0100
+Message-ID: <20150513111625.GI3394@x1>
 References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk>
- <1431166241-15775-5-git-send-email-javier.martinez@collabora.co.uk>
+ <1431166241-15775-11-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:33730 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754474AbbEMLKj (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:36947 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933809AbbEMLQa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 07:10:39 -0400
-Received: by wgin8 with SMTP id n8so39784346wgi.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 May 2015 04:10:38 -0700 (PDT)
+	Wed, 13 May 2015 07:16:30 -0400
+Received: by widdi4 with SMTP id di4so51223771wid.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 May 2015 04:16:29 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1431166241-15775-5-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1431166241-15775-11-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>
 
 On Sat, 09 May 2015, Javier Martinez Canillas wrote:
 
-> Commit 1b84f2a4cd4a ("mfd: cros_ec: Use fixed size arrays to transfer
-> data with the EC") modified the struct cros_ec_command fields to not
-> use pointers for the input and output buffers and use fixed length
-> arrays instead.
+> From: Alexandru M Stan <amstan@chromium.org>
 >=20
-> This change was made because the cros_ec ioctl API uses that struct
-> cros_ec_command to allow user-space to send commands to the EC and
-> to get data from the EC. So using pointers made the API not 64-bit
-> safe. Unfortunately this approach was not flexible enough for all
-> the use-cases since there may be a need to send larger commands
-> on newer versions of the EC command protocol.
+> Some ECs need a little time for waking up before they can accept
+> SPI data at a high speed. This is configurable via a DT property
+> "google,cros-ec-spi-pre-delay".
 >=20
-> So to avoid to choose a constant length that it may be too big for
-> most commands and thus wasting memory and CPU cycles on copy from
-> and to user-space or having a size that is too small for some big
-> commands, use a zero-length array that is both 64-bit safe and
-> flexible. The same buffer is used for both output and input data
-> so the maximum of these values should be used to allocate it.
+> If this property isn't set, then no delay will be added. However,
+> if set it will cause a delay equal to the value passed to it to
+> be inserted at the beginning of a transaction.
 >=20
-> Suggested-by: Gwendal Grignou <gwendal@chromium.org>
+> Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
 =2Euk>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
 > ---
 >=20
-> Changes since v1:
->  - Add Heiko Stuebner Tested-by tag
->  - Removed a new blank line at EOF warning. Reported by Heiko Stuebne=
-r
->  - Use kmalloc instead of kzalloc when the message is later initializ=
-ed
->    Suggested by Gwendal Grignou
->  - Pre-allocate struct cros_ec_command instead of dynamically allocat=
-e it
->    whenever is possible. Suggested by Gwendal Grignou
->  - Pre-allocate buffers for the usual cases and only allocate dynamic=
-ally
->    in the heap for bigger sizes. Suggested by Gwendal Grignou
->  - Don't access the cros_ec_command received from user-space before d=
-oing
->    a copy_from_user. Suggested by Gwendal Grignou
->  - Only copy from user-space outsize bytes and copy_to_user insize by=
-tes
->    Suggested by Gwendal Grignou
->  - ec_device_ioctl_xcmd() must return the numbers of bytes read and n=
-ot 0
->    on success. Suggested by Gwendal Grignou
->  - Rename alloc_cmd_msg to alloc_lightbar_cmd_msg. Suggested by Gwend=
-al Grignou
+> Changes since v1: None, new patch
 > ---
->  drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  59 ++++++++---
->  drivers/input/keyboard/cros_ec_keyb.c      |  19 ++--
->  drivers/mfd/cros_ec.c                      |  18 ++--
->  drivers/mfd/cros_ec_i2c.c                  |   4 +-
->  drivers/mfd/cros_ec_spi.c                  |   2 +-
->  drivers/platform/chrome/cros_ec_dev.c      |  66 +++++++++----
->  drivers/platform/chrome/cros_ec_lightbar.c | 152 +++++++++++++++++++=
-----------
->  drivers/platform/chrome/cros_ec_lpc.c      |   8 +-
->  drivers/platform/chrome/cros_ec_sysfs.c    |  92 +++++++++--------
->  include/linux/mfd/cros_ec.h                |   6 +-
->  10 files changed, 273 insertions(+), 153 deletions(-)
+>  Documentation/devicetree/bindings/mfd/cros-ec.txt |  4 ++++
+>  drivers/mfd/cros_ec_spi.c                         | 21 +++++++++++++=
+++++++--
+>  2 files changed, 23 insertions(+), 2 deletions(-)
 
-[...]
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index 1574a9352a6d..ee8aa8142932 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -41,7 +41,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_de=
-v,
->  	out[2] =3D msg->outsize;
->  	csum =3D out[0] + out[1] + out[2];
->  	for (i =3D 0; i < msg->outsize; i++)
-> -		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->outdata[i];
-> +		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->data[i];
->  	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] =3D (uint8_t)(csum & 0xf=
-f);
+> diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Docu=
+mentation/devicetree/bindings/mfd/cros-ec.txt
+> index 8009c3d87f33..1777916e9e28 100644
+> --- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
+> +++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+> @@ -18,6 +18,10 @@ Required properties (SPI):
+>  - reg: SPI chip select
 > =20
->  	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
-> @@ -75,11 +75,13 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_de=
-v,
->  	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
->  	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
->  		int i;
-> -		struct cros_ec_command status_msg =3D { };
-> +		struct cros_ec_command *status_msg;
->  		struct ec_response_get_comms_status *status;
-> +		u8 buf[sizeof(*status_msg) + sizeof(*status)] =3D { };
-
-This sort of thing is usually frowned upon.  Can you allocate and free
-buf's memory using the normal kernel helpers please?
-
-[...]
-
-> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
-h
-> index 14cf522123dd..7eee38abd02a 100644
-> --- a/include/linux/mfd/cros_ec.h
-> +++ b/include/linux/mfd/cros_ec.h
-> @@ -42,8 +42,7 @@ enum {
->   * @outsize: Outgoing length in bytes
->   * @insize: Max number of bytes to accept from EC
->   * @result: EC's response to the command (separate from communicatio=
-n failure)
-> - * @outdata: Outgoing data to EC
-> - * @indata: Where to put the incoming data from EC
-> + * @data: Where to put the incoming data from EC and outgoing data t=
-o EC
+>  Optional properties (SPI):
+> +- google,cros-ec-spi-pre-delay: Some implementations of the EC need =
+a little
+> +  time to wake up from sleep before they can receive SPI transfers a=
+t a high
+> +  clock rate. This property specifies the delay, in usecs, between t=
+he
+> +  assertion of the CS to the start of the first clock pulse.
+>  - google,cros-ec-spi-msg-delay: Some implementations of the EC requi=
+re some
+>    additional processing time in order to accept new transactions. If=
+ the delay
+>    between transactions is not long enough the EC may not be able to =
+respond
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index faba03e2f1ef..16f228dc243f 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -71,12 +71,15 @@
+>   * @spi: SPI device we are connected to
+>   * @last_transfer_ns: time that we last finished a transfer, or 0 if=
+ there
+>   *	if no record
+> + * @start_of_msg_delay: used to set the delay_usecs on the spi_trans=
+fer that
+> + *      is sent when we want to turn on CS at the start of a transac=
+tion.
+>   * @end_of_msg_delay: used to set the delay_usecs on the spi_transfe=
+r that
+>   *      is sent when we want to turn off CS at the end of a transact=
+ion.
 >   */
->  struct cros_ec_command {
->  	uint32_t version;
-> @@ -51,8 +50,7 @@ struct cros_ec_command {
->  	uint32_t outsize;
->  	uint32_t insize;
->  	uint32_t result;
-> -	uint8_t outdata[EC_PROTO2_MAX_PARAM_SIZE];
-> -	uint8_t indata[EC_PROTO2_MAX_PARAM_SIZE];
-> +	uint8_t data[0];
-
-uint8_t *data?
-
+>  struct cros_ec_spi {
+>  	struct spi_device *spi;
+>  	s64 last_transfer_ns;
+> +	unsigned int start_of_msg_delay;
+>  	unsigned int end_of_msg_delay;
 >  };
 > =20
->  /**
+> @@ -366,7 +369,7 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_de=
+vice *ec_dev,
+>  	struct ec_host_request *request;
+>  	struct ec_host_response *response;
+>  	struct cros_ec_spi *ec_spi =3D ec_dev->priv;
+> -	struct spi_transfer trans;
+> +	struct spi_transfer trans, trans_delay;
+>  	struct spi_message msg;
+>  	int i, len;
+>  	u8 *ptr;
+> @@ -393,13 +396,23 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_=
+device *ec_dev,
+>  		goto exit;
+>  	}
+> =20
+> +	/*
+> +	 * Leave a gap between CS assertion and clocking of data to allow t=
+he
+> +	 * EC time to wakeup.
+> +	 */
+> +	spi_message_init(&msg);
+> +	if (ec_spi->start_of_msg_delay) {
+> +		memset(&trans_delay, 0, sizeof(trans_delay));
+> +		trans_delay.delay_usecs =3D ec_spi->start_of_msg_delay;
+> +		spi_message_add_tail(&trans_delay, &msg);
+> +	}
+> +
+>  	/* Transmit phase - send our message */
+>  	memset(&trans, 0, sizeof(trans));
+>  	trans.tx_buf =3D ec_dev->dout;
+>  	trans.rx_buf =3D rx_buf;
+>  	trans.len =3D len;
+>  	trans.cs_change =3D 1;
+> -	spi_message_init(&msg);
+>  	spi_message_add_tail(&trans, &msg);
+>  	ret =3D spi_sync(ec_spi->spi, &msg);
+> =20
+> @@ -602,6 +615,10 @@ static void cros_ec_spi_dt_probe(struct cros_ec_=
+spi *ec_spi, struct device *dev)
+>  	u32 val;
+>  	int ret;
+> =20
+> +	ret =3D of_property_read_u32(np, "google,cros-ec-spi-pre-delay", &v=
+al);
+> +	if (!ret)
+> +		ec_spi->start_of_msg_delay =3D val;
+> +
+>  	ret =3D of_property_read_u32(np, "google,cros-ec-spi-msg-delay", &v=
+al);
+>  	if (!ret)
+>  		ec_spi->end_of_msg_delay =3D val;
 
 --=20
 Lee Jones
