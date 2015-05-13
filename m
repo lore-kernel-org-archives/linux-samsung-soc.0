@@ -1,114 +1,344 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 5/9] media: vb2: Convert vb2_dma_sg_get_userptr() to use frame
- vector
-Date: Wed, 13 May 2015 15:08:11 +0200
-Message-ID: <1431522495-4692-6-git-send-email-jack@suse.cz>
+Subject: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
+Date: Wed, 13 May 2015 15:08:08 +0200
+Message-ID: <1431522495-4692-3-git-send-email-jack@suse.cz>
 References: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:49546 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933388AbbEMNIa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 May 2015 09:08:30 -0400
 In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-mm@kvack.org
-Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mm@kvack.org
+Cc: linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-QWNrZWQtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KVGVz
-dGVkLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+ClNpZ25l
-ZC1vZmYtYnk6IEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+Ci0tLQogZHJpdmVycy9tZWRpYS92NGwy
-LWNvcmUvdmlkZW9idWYyLWRtYS1zZy5jIHwgOTcgKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCiAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgODIgZGVsZXRpb25zKC0pCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9idWYyLWRtYS1zZy5jIGIv
-ZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9idWYyLWRtYS1zZy5jCmluZGV4IGFmZDRiNTE0
-YWZmYy4uNGVlMWIzZmJmZTJhIDEwMDY0NAotLS0gYS9kcml2ZXJzL21lZGlhL3Y0bDItY29yZS92
-aWRlb2J1ZjItZG1hLXNnLmMKKysrIGIvZHJpdmVycy9tZWRpYS92NGwyLWNvcmUvdmlkZW9idWYy
-LWRtYS1zZy5jCkBAIC0zOCw2ICszOCw3IEBAIHN0cnVjdCB2YjJfZG1hX3NnX2J1ZiB7CiAJc3Ry
-dWN0IGRldmljZQkJCSpkZXY7CiAJdm9pZAkJCQkqdmFkZHI7CiAJc3RydWN0IHBhZ2UJCQkqKnBh
-Z2VzOworCXN0cnVjdCBmcmFtZV92ZWN0b3IJCSp2ZWM7CiAJaW50CQkJCW9mZnNldDsKIAllbnVt
-IGRtYV9kYXRhX2RpcmVjdGlvbgkJZG1hX2RpcjsKIAlzdHJ1Y3Qgc2dfdGFibGUJCQlzZ190YWJs
-ZTsKQEAgLTUxLDcgKzUyLDYgQEAgc3RydWN0IHZiMl9kbWFfc2dfYnVmIHsKIAl1bnNpZ25lZCBp
-bnQJCQludW1fcGFnZXM7CiAJYXRvbWljX3QJCQlyZWZjb3VudDsKIAlzdHJ1Y3QgdmIyX3ZtYXJl
-YV9oYW5kbGVyCWhhbmRsZXI7Ci0Jc3RydWN0IHZtX2FyZWFfc3RydWN0CQkqdm1hOwogCiAJc3Ry
-dWN0IGRtYV9idWZfYXR0YWNobWVudAkqZGJfYXR0YWNoOwogfTsKQEAgLTIyNCwyNSArMjI0LDE3
-IEBAIHN0YXRpYyB2b2lkIHZiMl9kbWFfc2dfZmluaXNoKHZvaWQgKmJ1Zl9wcml2KQogCWRtYV9z
-eW5jX3NnX2Zvcl9jcHUoYnVmLT5kZXYsIHNndC0+c2dsLCBzZ3QtPm5lbnRzLCBidWYtPmRtYV9k
-aXIpOwogfQogCi1zdGF0aWMgaW5saW5lIGludCB2bWFfaXNfaW8oc3RydWN0IHZtX2FyZWFfc3Ry
-dWN0ICp2bWEpCi17Ci0JcmV0dXJuICEhKHZtYS0+dm1fZmxhZ3MgJiAoVk1fSU8gfCBWTV9QRk5N
-QVApKTsKLX0KLQogc3RhdGljIHZvaWQgKnZiMl9kbWFfc2dfZ2V0X3VzZXJwdHIodm9pZCAqYWxs
-b2NfY3R4LCB1bnNpZ25lZCBsb25nIHZhZGRyLAogCQkJCSAgICB1bnNpZ25lZCBsb25nIHNpemUs
-CiAJCQkJICAgIGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRtYV9kaXIpCiB7CiAJc3RydWN0IHZi
-Ml9kbWFfc2dfY29uZiAqY29uZiA9IGFsbG9jX2N0eDsKIAlzdHJ1Y3QgdmIyX2RtYV9zZ19idWYg
-KmJ1ZjsKLQl1bnNpZ25lZCBsb25nIGZpcnN0LCBsYXN0OwotCWludCBudW1fcGFnZXNfZnJvbV91
-c2VyOwotCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hOwogCXN0cnVjdCBzZ190YWJsZSAqc2d0
-OwogCURFRklORV9ETUFfQVRUUlMoYXR0cnMpOworCXN0cnVjdCBmcmFtZV92ZWN0b3IgKnZlYzsK
-IAogCWRtYV9zZXRfYXR0cihETUFfQVRUUl9TS0lQX0NQVV9TWU5DLCAmYXR0cnMpOwotCiAJYnVm
-ID0ga3phbGxvYyhzaXplb2YgKmJ1ZiwgR0ZQX0tFUk5FTCk7CiAJaWYgKCFidWYpCiAJCXJldHVy
-biBOVUxMOwpAQCAtMjUzLDYzICsyNDUsMTkgQEAgc3RhdGljIHZvaWQgKnZiMl9kbWFfc2dfZ2V0
-X3VzZXJwdHIodm9pZCAqYWxsb2NfY3R4LCB1bnNpZ25lZCBsb25nIHZhZGRyLAogCWJ1Zi0+b2Zm
-c2V0ID0gdmFkZHIgJiB+UEFHRV9NQVNLOwogCWJ1Zi0+c2l6ZSA9IHNpemU7CiAJYnVmLT5kbWFf
-c2d0ID0gJmJ1Zi0+c2dfdGFibGU7CisJdmVjID0gdmIyX2NyZWF0ZV9mcmFtZXZlYyh2YWRkciwg
-c2l6ZSwgYnVmLT5kbWFfZGlyID09IERNQV9GUk9NX0RFVklDRSk7CisJaWYgKElTX0VSUih2ZWMp
-KQorCQlnb3RvIHVzZXJwdHJfZmFpbF9wZm52ZWM7CisJYnVmLT52ZWMgPSB2ZWM7CiAKLQlmaXJz
-dCA9ICh2YWRkciAgICAgICAgICAgJiBQQUdFX01BU0spID4+IFBBR0VfU0hJRlQ7Ci0JbGFzdCAg
-PSAoKHZhZGRyICsgc2l6ZSAtIDEpICYgUEFHRV9NQVNLKSA+PiBQQUdFX1NISUZUOwotCWJ1Zi0+
-bnVtX3BhZ2VzID0gbGFzdCAtIGZpcnN0ICsgMTsKLQotCWJ1Zi0+cGFnZXMgPSBremFsbG9jKGJ1
-Zi0+bnVtX3BhZ2VzICogc2l6ZW9mKHN0cnVjdCBwYWdlICopLAotCQkJICAgICBHRlBfS0VSTkVM
-KTsKLQlpZiAoIWJ1Zi0+cGFnZXMpCi0JCWdvdG8gdXNlcnB0cl9mYWlsX2FsbG9jX3BhZ2VzOwot
-Ci0JZG93bl9yZWFkKCZjdXJyZW50LT5tbS0+bW1hcF9zZW0pOwotCXZtYSA9IGZpbmRfdm1hKGN1
-cnJlbnQtPm1tLCB2YWRkcik7Ci0JaWYgKCF2bWEpIHsKLQkJZHByaW50aygxLCAibm8gdm1hIGZv
-ciBhZGRyZXNzICVsdVxuIiwgdmFkZHIpOwotCQlnb3RvIHVzZXJwdHJfZmFpbF9maW5kX3ZtYTsK
-LQl9Ci0KLQlpZiAodm1hLT52bV9lbmQgPCB2YWRkciArIHNpemUpIHsKLQkJZHByaW50aygxLCAi
-dm1hIGF0ICVsdSBpcyB0b28gc21hbGwgZm9yICVsdSBieXRlc1xuIiwKLQkJCXZhZGRyLCBzaXpl
-KTsKLQkJZ290byB1c2VycHRyX2ZhaWxfZmluZF92bWE7Ci0JfQotCi0JYnVmLT52bWEgPSB2YjJf
-Z2V0X3ZtYSh2bWEpOwotCWlmICghYnVmLT52bWEpIHsKLQkJZHByaW50aygxLCAiZmFpbGVkIHRv
-IGNvcHkgdm1hXG4iKTsKLQkJZ290byB1c2VycHRyX2ZhaWxfZmluZF92bWE7Ci0JfQotCi0JaWYg
-KHZtYV9pc19pbyhidWYtPnZtYSkpIHsKLQkJZm9yIChudW1fcGFnZXNfZnJvbV91c2VyID0gMDsK
-LQkJICAgICBudW1fcGFnZXNfZnJvbV91c2VyIDwgYnVmLT5udW1fcGFnZXM7Ci0JCSAgICAgKytu
-dW1fcGFnZXNfZnJvbV91c2VyLCB2YWRkciArPSBQQUdFX1NJWkUpIHsKLQkJCXVuc2lnbmVkIGxv
-bmcgcGZuOwotCi0JCQlpZiAoZm9sbG93X3Bmbih2bWEsIHZhZGRyLCAmcGZuKSkgewotCQkJCWRw
-cmludGsoMSwgIm5vIHBhZ2UgZm9yIGFkZHJlc3MgJWx1XG4iLCB2YWRkcik7Ci0JCQkJYnJlYWs7
-Ci0JCQl9Ci0JCQlidWYtPnBhZ2VzW251bV9wYWdlc19mcm9tX3VzZXJdID0gcGZuX3RvX3BhZ2Uo
-cGZuKTsKLQkJfQotCX0gZWxzZQotCQludW1fcGFnZXNfZnJvbV91c2VyID0gZ2V0X3VzZXJfcGFn
-ZXMoY3VycmVudCwgY3VycmVudC0+bW0sCi0JCQkJCSAgICAgdmFkZHIgJiBQQUdFX01BU0ssCi0J
-CQkJCSAgICAgYnVmLT5udW1fcGFnZXMsCi0JCQkJCSAgICAgYnVmLT5kbWFfZGlyID09IERNQV9G
-Uk9NX0RFVklDRSwKLQkJCQkJICAgICAxLCAvKiBmb3JjZSAqLwotCQkJCQkgICAgIGJ1Zi0+cGFn
-ZXMsCi0JCQkJCSAgICAgTlVMTCk7Ci0JdXBfcmVhZCgmY3VycmVudC0+bW0tPm1tYXBfc2VtKTsK
-LQotCWlmIChudW1fcGFnZXNfZnJvbV91c2VyICE9IGJ1Zi0+bnVtX3BhZ2VzKQotCQlnb3RvIHVz
-ZXJwdHJfZmFpbF9nZXRfdXNlcl9wYWdlczsKKwlidWYtPnBhZ2VzID0gZnJhbWVfdmVjdG9yX3Bh
-Z2VzKHZlYyk7CisJaWYgKElTX0VSUihidWYtPnBhZ2VzKSkKKwkJZ290byB1c2VycHRyX2ZhaWxf
-c2d0YWJsZTsKKwlidWYtPm51bV9wYWdlcyA9IGZyYW1lX3ZlY3Rvcl9jb3VudCh2ZWMpOwogCiAJ
-aWYgKHNnX2FsbG9jX3RhYmxlX2Zyb21fcGFnZXMoYnVmLT5kbWFfc2d0LCBidWYtPnBhZ2VzLAog
-CQkJYnVmLT5udW1fcGFnZXMsIGJ1Zi0+b2Zmc2V0LCBzaXplLCAwKSkKLQkJZ290byB1c2VycHRy
-X2ZhaWxfYWxsb2NfdGFibGVfZnJvbV9wYWdlczsKKwkJZ290byB1c2VycHRyX2ZhaWxfc2d0YWJs
-ZTsKIAogCXNndCA9ICZidWYtPnNnX3RhYmxlOwogCS8qCkBAIC0zMjMsMTkgKzI3MSw5IEBAIHN0
-YXRpYyB2b2lkICp2YjJfZG1hX3NnX2dldF91c2VycHRyKHZvaWQgKmFsbG9jX2N0eCwgdW5zaWdu
-ZWQgbG9uZyB2YWRkciwKIAogdXNlcnB0cl9mYWlsX21hcDoKIAlzZ19mcmVlX3RhYmxlKCZidWYt
-PnNnX3RhYmxlKTsKLXVzZXJwdHJfZmFpbF9hbGxvY190YWJsZV9mcm9tX3BhZ2VzOgotdXNlcnB0
-cl9mYWlsX2dldF91c2VyX3BhZ2VzOgotCWRwcmludGsoMSwgImdldF91c2VyX3BhZ2VzIHJlcXVl
-c3RlZC9nb3Q6ICVkLyVkXVxuIiwKLQkJYnVmLT5udW1fcGFnZXMsIG51bV9wYWdlc19mcm9tX3Vz
-ZXIpOwotCWlmICghdm1hX2lzX2lvKGJ1Zi0+dm1hKSkKLQkJd2hpbGUgKC0tbnVtX3BhZ2VzX2Zy
-b21fdXNlciA+PSAwKQotCQkJcHV0X3BhZ2UoYnVmLT5wYWdlc1tudW1fcGFnZXNfZnJvbV91c2Vy
-XSk7Ci0JZG93bl9yZWFkKCZjdXJyZW50LT5tbS0+bW1hcF9zZW0pOwotCXZiMl9wdXRfdm1hKGJ1
-Zi0+dm1hKTsKLXVzZXJwdHJfZmFpbF9maW5kX3ZtYToKLQl1cF9yZWFkKCZjdXJyZW50LT5tbS0+
-bW1hcF9zZW0pOwotCWtmcmVlKGJ1Zi0+cGFnZXMpOwotdXNlcnB0cl9mYWlsX2FsbG9jX3BhZ2Vz
-OgordXNlcnB0cl9mYWlsX3NndGFibGU6CisJdmIyX2Rlc3Ryb3lfZnJhbWV2ZWModmVjKTsKK3Vz
-ZXJwdHJfZmFpbF9wZm52ZWM6CiAJa2ZyZWUoYnVmKTsKIAlyZXR1cm4gTlVMTDsKIH0KQEAgLTM2
-MiwxMyArMzAwLDggQEAgc3RhdGljIHZvaWQgdmIyX2RtYV9zZ19wdXRfdXNlcnB0cih2b2lkICpi
-dWZfcHJpdikKIAl3aGlsZSAoLS1pID49IDApIHsKIAkJaWYgKGJ1Zi0+ZG1hX2RpciA9PSBETUFf
-RlJPTV9ERVZJQ0UpCiAJCQlzZXRfcGFnZV9kaXJ0eV9sb2NrKGJ1Zi0+cGFnZXNbaV0pOwotCQlp
-ZiAoIXZtYV9pc19pbyhidWYtPnZtYSkpCi0JCQlwdXRfcGFnZShidWYtPnBhZ2VzW2ldKTsKIAl9
-Ci0Ja2ZyZWUoYnVmLT5wYWdlcyk7Ci0JZG93bl9yZWFkKCZjdXJyZW50LT5tbS0+bW1hcF9zZW0p
-OwotCXZiMl9wdXRfdm1hKGJ1Zi0+dm1hKTsKLQl1cF9yZWFkKCZjdXJyZW50LT5tbS0+bW1hcF9z
-ZW0pOworCXZiMl9kZXN0cm95X2ZyYW1ldmVjKGJ1Zi0+dmVjKTsKIAlrZnJlZShidWYpOwogfQog
-Ci0tIAoyLjEuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Provide new function get_vaddr_frames().  This function maps virtual
+addresses from given start and fills given array with page frame numbers of
+the corresponding pages. If given start belongs to a normal vma, the function
+grabs reference to each of the pages to pin them in memory. If start
+belongs to VM_IO | VM_PFNMAP vma, we don't touch page structures. Caller
+must make sure pfns aren't reused for anything else while he is using
+them.
+
+This function is created for various drivers to simplify handling of
+their buffers.
+
+Acked-by: Mel Gorman <mgorman@suse.de>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ include/linux/mm.h |  44 +++++++++++
+ mm/gup.c           | 226 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 270 insertions(+)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0755b9fd03a7..dcd1f02a78e9 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -20,6 +20,7 @@
+ #include <linux/shrinker.h>
+ #include <linux/resource.h>
+ #include <linux/page_ext.h>
++#include <linux/err.h>
+ 
+ struct mempolicy;
+ struct anon_vma;
+@@ -1197,6 +1198,49 @@ long get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
+ 		    int write, int force, struct page **pages);
+ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 			struct page **pages);
++
++/* Container for pinned pfns / pages */
++struct frame_vector {
++	unsigned int nr_allocated;	/* Number of frames we have space for */
++	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
++	bool got_ref;		/* Did we pin pages by getting page ref? */
++	bool is_pfns;		/* Does array contain pages or pfns? */
++	void *ptrs[0];		/* Array of pinned pfns / pages. Use
++				 * pfns_vector_pages() or pfns_vector_pfns()
++				 * for access */
++};
++
++struct frame_vector *frame_vector_create(unsigned int nr_frames);
++void frame_vector_destroy(struct frame_vector *vec);
++int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
++		     bool write, bool force, struct frame_vector *vec);
++void put_vaddr_frames(struct frame_vector *vec);
++int frame_vector_to_pages(struct frame_vector *vec);
++void frame_vector_to_pfns(struct frame_vector *vec);
++
++static inline unsigned int frame_vector_count(struct frame_vector *vec)
++{
++	return vec->nr_frames;
++}
++
++static inline struct page **frame_vector_pages(struct frame_vector *vec)
++{
++	if (vec->is_pfns) {
++		int err = frame_vector_to_pages(vec);
++
++		if (err)
++			return ERR_PTR(err);
++	}
++	return (struct page **)(vec->ptrs);
++}
++
++static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
++{
++	if (!vec->is_pfns)
++		frame_vector_to_pfns(vec);
++	return (unsigned long *)(vec->ptrs);
++}
++
+ struct kvec;
+ int get_kernel_pages(const struct kvec *iov, int nr_pages, int write,
+ 			struct page **pages);
+diff --git a/mm/gup.c b/mm/gup.c
+index 6297f6bccfb1..9d7f4fde30cb 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -8,6 +8,7 @@
+ #include <linux/rmap.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/vmalloc.h>
+ 
+ #include <linux/sched.h>
+ #include <linux/rwsem.h>
+@@ -936,6 +937,231 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
+ 	return ret;	/* 0 or negative error code */
+ }
+ 
++/*
++ * get_vaddr_frames() - map virtual addresses to pfns
++ * @start:	starting user address
++ * @nr_frames:	number of pages / pfns from start to map
++ * @write:	whether pages will be written to by the caller
++ * @force:	whether to force write access even if user mapping is
++ *		readonly. See description of the same argument of
++		get_user_pages().
++ * @vec:	structure which receives pages / pfns of the addresses mapped.
++ *		It should have space for at least nr_frames entries.
++ *
++ * This function maps virtual addresses from @start and fills @vec structure
++ * with page frame numbers or page pointers to corresponding pages (choice
++ * depends on the type of the vma underlying the virtual address). If @start
++ * belongs to a normal vma, the function grabs reference to each of the pages
++ * to pin them in memory. If @start belongs to VM_IO | VM_PFNMAP vma, we don't
++ * touch page structures and the caller must make sure pfns aren't reused for
++ * anything else while he is using them.
++ *
++ * The function returns number of pages mapped which may be less than
++ * @nr_frames. In particular we stop mapping if there are more vmas of
++ * different type underlying the specified range of virtual addresses.
++ * When the function isn't able to map a single page, it returns error.
++ *
++ * This function takes care of grabbing mmap_sem as necessary.
++ */
++int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
++		     bool write, bool force, struct frame_vector *vec)
++{
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma;
++	int ret = 0;
++	int err;
++	int locked;
++
++	if (nr_frames == 0)
++		return 0;
++
++	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
++		nr_frames = vec->nr_allocated;
++
++	down_read(&mm->mmap_sem);
++	locked = 1;
++	vma = find_vma_intersection(mm, start, start + 1);
++	if (!vma) {
++		ret = -EFAULT;
++		goto out;
++	}
++	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
++		vec->got_ref = true;
++		vec->is_pfns = false;
++		ret = get_user_pages_locked(current, mm, start, nr_frames,
++			write, force, (struct page **)(vec->ptrs), &locked);
++		goto out;
++	}
++
++	vec->got_ref = false;
++	vec->is_pfns = true;
++	do {
++		unsigned long *nums = frame_vector_pfns(vec);
++
++		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
++			err = follow_pfn(vma, start, &nums[ret]);
++			if (err) {
++				if (ret == 0)
++					ret = err;
++				goto out;
++			}
++			start += PAGE_SIZE;
++			ret++;
++		}
++		/*
++		 * We stop if we have enough pages or if VMA doesn't completely
++		 * cover the tail page.
++		 */
++		if (ret >= nr_frames || start < vma->vm_end)
++			break;
++		vma = find_vma_intersection(mm, start, start + 1);
++	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
++out:
++	if (locked)
++		up_read(&mm->mmap_sem);
++	if (!ret)
++		ret = -EFAULT;
++	if (ret > 0)
++		vec->nr_frames = ret;
++	return ret;
++}
++EXPORT_SYMBOL(get_vaddr_frames);
++
++/**
++ * put_vaddr_frames() - drop references to pages if get_vaddr_frames() acquired
++ *			them
++ * @vec:	frame vector to put
++ *
++ * Drop references to pages if get_vaddr_frames() acquired them. We also
++ * invalidate the frame vector so that it is prepared for the next call into
++ * get_vaddr_frames().
++ */
++void put_vaddr_frames(struct frame_vector *vec)
++{
++	int i;
++	struct page **pages;
++
++	if (!vec->got_ref)
++		goto out;
++	pages = frame_vector_pages(vec);
++	/*
++	 * frame_vector_pages() might needed to do a conversion when
++	 * get_vaddr_frames() got pages but vec was later converted to pfns.
++	 * But it shouldn't really fail to convert pfns back...
++	 */
++	if (WARN_ON(IS_ERR(pages)))
++		goto out;
++	for (i = 0; i < vec->nr_frames; i++)
++		put_page(pages[i]);
++	vec->got_ref = false;
++out:
++	vec->nr_frames = 0;
++}
++EXPORT_SYMBOL(put_vaddr_frames);
++
++/**
++ * frame_vector_to_pages - convert frame vector to contain page pointers
++ * @vec:	frame vector to convert
++ *
++ * Convert @vec to contain array of page pointers.  If the conversion is
++ * successful, return 0. Otherwise return an error. Note that we do not grab
++ * page references for the page structures.
++ */
++int frame_vector_to_pages(struct frame_vector *vec)
++{
++	int i;
++	unsigned long *nums;
++	struct page **pages;
++
++	if (!vec->is_pfns)
++		return 0;
++	nums = frame_vector_pfns(vec);
++	for (i = 0; i < vec->nr_frames; i++)
++		if (!pfn_valid(nums[i]))
++			return -EINVAL;
++	pages = (struct page **)nums;
++	for (i = 0; i < vec->nr_frames; i++)
++		pages[i] = pfn_to_page(nums[i]);
++	vec->is_pfns = false;
++	return 0;
++}
++EXPORT_SYMBOL(frame_vector_to_pages);
++
++/**
++ * frame_vector_to_pfns - convert frame vector to contain pfns
++ * @vec:	frame vector to convert
++ *
++ * Convert @vec to contain array of pfns.
++ */
++void frame_vector_to_pfns(struct frame_vector *vec)
++{
++	int i;
++	unsigned long *nums;
++	struct page **pages;
++
++	if (vec->is_pfns)
++		return;
++	pages = (struct page **)(vec->ptrs);
++	nums = (unsigned long *)pages;
++	for (i = 0; i < vec->nr_frames; i++)
++		nums[i] = page_to_pfn(pages[i]);
++	vec->is_pfns = true;
++}
++EXPORT_SYMBOL(frame_vector_to_pfns);
++
++/**
++ * frame_vector_create() - allocate & initialize structure for pinned pfns
++ * @nr_frames:	number of pfns slots we should reserve
++ *
++ * Allocate and initialize struct pinned_pfns to be able to hold @nr_pfns
++ * pfns.
++ */
++struct frame_vector *frame_vector_create(unsigned int nr_frames)
++{
++	struct frame_vector *vec;
++	int size = sizeof(struct frame_vector) + sizeof(void *) * nr_frames;
++
++	if (WARN_ON_ONCE(nr_frames == 0))
++		return NULL;
++	/*
++	 * This is absurdly high. It's here just to avoid strange effects when
++	 * arithmetics overflows.
++	 */
++	if (WARN_ON_ONCE(nr_frames > INT_MAX / sizeof(void *) / 2))
++		return NULL;
++	/*
++	 * Avoid higher order allocations, use vmalloc instead. It should
++	 * be rare anyway.
++	 */
++	if (size <= PAGE_SIZE)
++		vec = kmalloc(size, GFP_KERNEL);
++	else
++		vec = vmalloc(size);
++	if (!vec)
++		return NULL;
++	vec->nr_allocated = nr_frames;
++	vec->nr_frames = 0;
++	return vec;
++}
++EXPORT_SYMBOL(frame_vector_create);
++
++/**
++ * frame_vector_destroy() - free memory allocated to carry frame vector
++ * @vec:	Frame vector to free
++ *
++ * Free structure allocated by frame_vector_create() to carry frames.
++ */
++void frame_vector_destroy(struct frame_vector *vec)
++{
++	/* Make sure put_vaddr_frames() got called properly... */
++	VM_BUG_ON(vec->nr_frames > 0);
++	if (!is_vmalloc_addr(vec))
++		kfree(vec);
++	else
++		vfree(vec);
++}
++EXPORT_SYMBOL(frame_vector_destroy);
++
+ /**
+  * get_dump_page() - pin user page in memory while writing it to core dump
+  * @addr: user address
+-- 
+2.1.4
