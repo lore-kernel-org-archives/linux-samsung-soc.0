@@ -1,79 +1,192 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 01/13] ARM: dts: Add labels to Exynos4 nodes
-Date: Wed, 13 May 2015 18:42:16 +0900
-Message-ID: <CAJKOXPfUVKvFTSgCdK4rpeGDe7oDwP3-dViXxwtXiQ-vSpCKSQ@mail.gmail.com>
-References: <1431351773-2031-1-git-send-email-k.kozlowski.k@gmail.com>
-	<1431351773-2031-2-git-send-email-k.kozlowski.k@gmail.com>
-	<5553125A.6090404@kernel.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v6 06/11] cec: add HDMI CEC framework
+Date: Wed, 13 May 2015 11:43:34 +0200
+Message-ID: <55531CC6.5020907@xs4all.nl>
+References: <1430760785-1169-1-git-send-email-k.debski@samsung.com> <1430760785-1169-7-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5553125A.6090404-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1430760785-1169-7-git-send-email-k.debski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-05-13 17:59 GMT+09:00 Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
-> On 05/11/15 22:42, Krzysztof Kozlowski wrote:
->> Add new labels to certain nodes so they could be easily referenced by
->> Exynos4 board DTS files.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/exynos4.dtsi            | 22 +++++++++++-----------
->>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  6 +++---
->>  arch/arm/boot/dts/exynos4210.dtsi         |  6 +++---
->>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |  8 ++++----
->>  arch/arm/boot/dts/exynos4x12.dtsi         |  2 +-
->>  5 files changed, 22 insertions(+), 22 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
->> index 1c74c1296ab7..0ec292d25b6e 100644
->> --- a/arch/arm/boot/dts/exynos4.dtsi
->> +++ b/arch/arm/boot/dts/exynos4.dtsi
->
-> [...]
->
->> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
->> index a7c212891674..4704e7bb2628 100644
->> --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
->> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
->> @@ -15,7 +15,7 @@
->>  */
->>
->>  / {
->> -     pinctrl@11400000 {
->> +     pinctrl_0: pinctrl@11400000 {
->>               gpa0: gpa0 {
->>                       gpio-controller;
->>                       #gpio-cells = <2>;
->> @@ -421,7 +421,7 @@
->>               };
->>       };
->>
->> -     pinctrl@11000000 {
->> +     pinctrl_1: pinctrl@11000000 {
->>               gpj0: gpj0 {
->>                       gpio-controller;
->>                       #gpio-cells = <2>;
->> @@ -822,7 +822,7 @@
->>               };
->>       };
->>
->> -     pinctrl@03860000 {
->> +     pinctrl_3: pinctrl@03860000 {
->
-> Maybe,
-> +       pinctrl_2: pinctrl@03860000 { ?
-Yes, you are right. Actually I made mistake here because in
-exynos4210.dtsi these labels are defined.
+Typo and question:
 
-I will fix it and re-spin.
+On 05/04/15 19:32, Kamil Debski wrote:
+> +static long cec_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct cec_devnode *cecdev = cec_devnode_data(filp);
+> +	struct cec_adapter *adap = to_cec_adapter(cecdev);
+> +	void __user *parg = (void __user *)arg;
+> +	int err;
+> +
+> +	if (!cec_devnode_is_registered(cecdev))
+> +		return -EIO;
+> +
+> +	switch (cmd) {
 
-Thanks for feedback,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+snip
+
+> +	case CEC_G_ADAP_STATE: {
+> +		u32 state = adap->state != CEC_ADAP_STATE_DISABLED;
+> +
+> +		if (copy_to_user(parg, &state, sizeof(state)))
+> +			return -EFAULT;
+> +		break;
+> +	}
+> +
+> +	case CEC_S_ADAP_STATE: {
+> +		u32 state;
+> +
+> +		if (!(adap->capabilities & CEC_CAP_STATE))
+> +			return -ENOTTY;
+> +		if (copy_from_user(&state, parg, sizeof(state)))
+> +			return -EFAULT;
+> +		if (!state && adap->state == CEC_ADAP_STATE_DISABLED)
+> +			return 0;
+> +		if (state && adap->state != CEC_ADAP_STATE_DISABLED)
+> +			return 0;
+> +		cec_enable(adap, !!state);
+> +		break;
+> +	}
+> +
+> +	case CEC_G_ADAP_PHYS_ADDR:
+> +		if (copy_to_user(parg, &adap->phys_addr,
+> +						sizeof(adap->phys_addr)))
+> +			return -EFAULT;
+
+If the adapter requires that userspace sets up the phys addr, then what
+should this return if no such address has been set up?
+
+I see two options: either 0xffff (which should be used if the HDMI cable
+is disconnected), or return an error (perhaps ENODATA).
+
+I think 0xffff might be best. This will still allow the unregistered
+logical address.
+
+Note that the comment in uapi/linux/cec.h for G_ADAP_LOG_ADDRS says that it
+will return an error if the physical address is not set. That's not true
+as far as I can tell, and if we go for 0xffff as the default in a case like
+that, then it isn't necessary either to return an error.
+
+cec_create_adapter already initialized the physical address to 0xffff, so
+that looks good. But it should be documented in cec-ioc-g-adap-phys-addr.xml.
+
+> +		break;
+> +
+> +	case CEC_S_ADAP_PHYS_ADDR: {
+> +		u16 phys_addr;
+> +
+> +		if (!(adap->capabilities & CEC_CAP_PHYS_ADDR))
+> +			return -ENOTTY;
+> +		if (copy_from_user(&phys_addr, parg, sizeof(phys_addr)))
+> +			return -EFAULT;
+> +		adap->phys_addr = phys_addr;
+> +		break;
+> +	}
+> +
+> +	case CEC_G_ADAP_LOG_ADDRS: {
+> +		struct cec_log_addrs log_addrs;
+> +
+> +		log_addrs.cec_version = adap->version;
+> +		log_addrs.num_log_addrs = adap->num_log_addrs;
+> +		memcpy(log_addrs.primary_device_type, adap->prim_device,
+> +							CEC_MAX_LOG_ADDRS);
+> +		memcpy(log_addrs.log_addr_type, adap->log_addr_type,
+> +							CEC_MAX_LOG_ADDRS);
+> +		memcpy(log_addrs.log_addr, adap->log_addr,
+> +							CEC_MAX_LOG_ADDRS);
+> +
+> +		if (copy_to_user(parg, &log_addrs, sizeof(log_addrs)))
+> +			return -EFAULT;
+> +		break;
+> +	}
+> +
+> +	case CEC_S_ADAP_LOG_ADDRS: {
+> +		struct cec_log_addrs log_addrs;
+> +
+> +		if (!(adap->capabilities & CEC_CAP_LOG_ADDRS))
+> +			return -ENOTTY;
+> +		if (copy_from_user(&log_addrs, parg, sizeof(log_addrs)))
+> +			return -EFAULT;
+> +		err = cec_claim_log_addrs(adap, &log_addrs,
+> +					!(filp->f_flags & O_NONBLOCK));
+> +		if (err)
+> +			return err;
+> +
+> +		if (copy_to_user(parg, &log_addrs, sizeof(log_addrs)))
+> +			return -EFAULT;
+> +		break;
+> +	}
+> +
+> +	case CEC_G_VENDOR_ID:
+> +		if (copy_to_user(parg, &adap->vendor_id,
+> +						sizeof(adap->vendor_id)))
+> +			return -EFAULT;
+
+I've been reading up on this. If I understand it correctly, then this is
+optional (only if a device supports vendor commands does it have to implement
+this).
+
+So if the VENDOR capability is set, then userspace *may* change it. If it is
+left undefined, then no vendor commands are allowed.
+
+I think this should be redesigned:
+
+One CEC_CAP_VENDOR_CMDS: if set, then vendor commands are allowed.
+One CEC_CAP_VENDOR_ID: userspace may set the Vendor ID. No vendor commands are
+allowed as long as no vendor ID was set.
+
+So if VENDOR_CMDS is set and VENDOR_ID isn't, then that means that the driver
+will have set the vendor ID and the application can retrieve it with G_VENDOR_ID.
+If both are set, then userspace has to provide a vendor ID before vendor commands
+will be allowed.
+
+That leaves the problem of determining that no vendor ID was set. Unfortunately
+the whole range of 0x000000-0xffffff is valid (and 0x000000 maps in fact to a
+company (Xerox) according to the IEEE Registration Authority Committee website.
+
+We can define a CEC_VENDOR_ID_INVALID 0xffffffff, that might be the easiest way
+of doing this.
+
+A related question: should userspace be allowed to change a valid physical
+address or a valid vendor ID to something else once the logical addresses have
+been claimed? Or should that result in -EBUSY? I'm leaning towards that.
+
+Actually, the same question is true for S_LOG_ADDRS: that should be done only
+once as well as long as the adapter is enabled.
+
+BTW, the documentation does not mention the order in which S_PHYS_ADDR and
+S_VENDOR_ID should be issued: should this be done before the adapter is
+enabled or before the logical addresses are claimed?
+
+> +		break;
+> +
+> +	case CEC_S_VENDOR_ID: {
+> +		u32 vendor_id;
+> +
+> +		if (!(adap->capabilities & CEC_CAP_VENDOR_ID))
+> +			return -ENOTTY;
+> +		if (copy_from_user(&vendor_id, parg, sizeof(vendor_id)))
+> +			return -EFAULT;
+> +		/* Vendori ID is a 24 bit number, so check if the value is
+
+Typo: Vendori -> Vendor
+
+
+> +		 * within the correct range. */
+> +		if ((vendor_id & 0xff000000) != 0)
+> +			return -EINVAL;
+> +		adap->vendor_id = vendor_id;
+> +		break;
+> +	}
+
+Working on a compliance test is always a great way of finding all these
+corner cases...
+
+Regards,
+
+	Hans
