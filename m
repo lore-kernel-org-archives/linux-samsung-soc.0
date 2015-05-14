@@ -1,44 +1,52 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH] platform/chrome: cros_ec_dev - Add a platform device ID table
-Date: Thu, 14 May 2015 02:58:08 +0200
-Message-ID: <1431565088-24070-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Use of_machine_is_compatible instead
+ ofsoc_is_exynos4
+Date: Thu, 14 May 2015 11:41:19 +0900
+Message-ID: <55540B4F.6060607@kernel.org>
+References: <1431307646-10779-1-git-send-email-k.kozlowski@samsung.com> <1431307646-10779-2-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:46297 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933091AbbENA6c (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:53311 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753839AbbENClw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 May 2015 20:58:32 -0400
+	Wed, 13 May 2015 22:41:52 -0400
+In-Reply-To: <1431307646-10779-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-If the cros_ec_dev driver is built as a module, modalias information is
-not filled so the module is not autoloaded. Add a platform device table
-and use the MODULE_DEVICE_TABLE() macro to export that information in
-the module so user-space can match the modalias uevent and autoload it.
+On 05/11/15 10:27, Krzysztof Kozlowski wrote:
+> of_machine_is_compatible() seems to be preferred over soc_is_exynos4().
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> Changes since v2:
+> 1. New patch, requested by Kukjin Kim.
+> ---
+>  arch/arm/mach-exynos/exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index c3bfbba3006d..5917a30eee33 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -179,7 +179,7 @@ static void __init exynos_init_io(void)
+>   */
+>  void exynos_set_delayed_reset_assertion(bool enable)
+>  {
+> -	if (soc_is_exynos4()) {
+> +	if (of_machine_is_compatible("samsung,exynos4")) {
+>  		unsigned int tmp, core_id;
+>  
+>  		for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/platform/chrome/cros_ec_dev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Maybe we need to change the compatible for exynos4415.dtsi? because no
+exynos4 in the compatible...Applied, anyway.
 
-diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform/chrome/cros_ec_dev.c
-index 6090d0b2826f..4232c8136939 100644
---- a/drivers/platform/chrome/cros_ec_dev.c
-+++ b/drivers/platform/chrome/cros_ec_dev.c
-@@ -216,6 +216,12 @@ static int ec_device_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct platform_device_id cros_ec_id[] = {
-+	{ "cros-ec-ctl", 0 },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, cros_ec_id);
-+
- static struct platform_driver cros_ec_dev_driver = {
- 	.driver = {
- 		.name = "cros-ec-ctl",
--- 
-2.1.4
+Thanks,
+Kukjin
