@@ -1,122 +1,102 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible
- option
-Date: Thu, 14 May 2015 18:57:10 -0300
-Message-ID: <20150514185710.2f8889a3@recife.lan>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
-	<1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add Krzysztof Kozlowski asco-maintainer
+Date: Fri, 15 May 2015 08:50:07 +0900
+Message-ID: <CAJKOXPcsAuv0XgTOYQMo1VVReH8U+g1g+VzcCKg+kN2vhBKWVA@mail.gmail.com>
+References: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>
+	<55549C56.6050509@kernel.org>
+	<CABxcv==2ouDFPE2sBdqCwpACYXCCGnJYQFtbOV2PuVNGnv2q=g@mail.gmail.com>
+	<5554ABF4.80002@gmx.net>
+	<7hfv6z17iw.fsf@deeprootsystems.com>
+	<CAOesGMg6vETz1dCgHE1WYUJZ3XdHjdku9YCauYPS-a-avk89HQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>Laurent Pinchart <l>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f49.google.com ([209.85.216.49]:41452 "EHLO
+	mail-vn0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423088AbbENXuI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 May 2015 19:50:08 -0400
+In-Reply-To: <CAOesGMg6vETz1dCgHE1WYUJZ3XdHjdku9YCauYPS-a-avk89HQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kevin Hilman <khilman@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Linux Kernel <linux-kernel@vger.kernel.org>, Tobias Jakobi <liquid.acid@gmx.net>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Em Wed, 22 Apr 2015 16:04:10 -0700
-Arun Ramamurthy <arun.ramamurthy@broadcom.com> escreveu:
+2015-05-15 1:45 GMT+09:00 Olof Johansson <olof@lixom.net>:
+> On Thu, May 14, 2015 at 8:52 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> Tobias Jakobi <liquid.acid@gmx.net> writes:
+>>
+>>> Javier Martinez Canillas wrote:
+>>>> Hello Kukjin,
+>>>>
+>>>> On Thu, May 14, 2015 at 3:00 PM, Kukjin Kim <kgene@kernel.org> wrote:
+>>>>> On 05/14/15 21:15, Krzysztof Kozlowski wrote:
+>>>>>> Add Krzysztof Kozlowski as a co-maintainer of Samsung Exynos ARM
+>>>>>> architecture to review the patches. Patches will go as usual - picked up
+>>>>>> by Kukjin Kim.
+>>>>>>
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> Sorry, I don't agree with this patch because you can review any exynos
+>>>>> patches without maintainer title. And I can focus on the maintainer'r
+>>>>> role more than now because of change of role ;-) Of course your review
+>>>>> would be helpful to me.
+>>>>>
+>>>>
+>>>> Sorry but I disagree. Krzysztof has been very active reviewing Exynos
+>>>> patches and even picking/queuing important fixes while it seems you
+>>>> were too busy and couldn't pay close attention.
+>>> I would even go further than that. We're in this situation because the
+>>> current maintainer didn't do his job properly.
+>>>
+>>> I want to point out what gregkh once said about this matter:
+>>> https://youtu.be/iiED1K98lnw?t=1745
+>>>
+>>>
+>>>
+>>>> It's really great that due a role change you will have more time to
+>>>> focus on the maintainership but I don't see why having more
+>>>> maintainers could be something negative. As long as you work in a
+>>>> coordinate manner, the more maintainers we have the better IMHO. It
+>>>> may be that in the future you change your role at your company again
+>>>> and then it will be good to have something else to take care of the
+>>>> posted patches ;-)
+>>> I very much agree with Javier here. Krzysztof promptly responds to
+>>> patches and usually provides detailed feedback when things need changes.
+>>> It would be stupid not to accept him as an additional maintainer.
+>>
+>> I'll take this as an Acked-by then.
+>>
+>> FWIW, I agree with Tobias and Javier, extra help for exynos has been
+>> sorely needed for a long time, and I am very happy to see someone
+>> stepping up to help.  Thank you Krzysztof!  (and I apologize in advance
+>> for the many times I'm likely to misspell your name ;)
+>>
+>> I'll be applying this to the arm-soc tree,
+>
+> I agree, I think it's a great improvement to get another official
+> maintainer of Samsung's platforms that can share the load and send us
+> code.
+>
+> While I often also use the argument that anyone can help review code
+> without being named a maintainer, in the particular case of Exynos
+> platforms there's a dire need for more close attention: They're
+> frequently broken for long periods of time and there's been high
+> latency for fixes, which has made bisecting hard or impossible for new
+> failures. Naming Krzysztof as co-maintainer makes it more clear that
+> we're happy to merge code from him directly as appropriate for latency
+> reasons and so on.
+>
+> So:
+>
+> Acked-by: Olof Johansson <olof@lixom.net>
 
-> Most of the phy providers use "select" to enable GENERIC_PHY. Since select
-> is only recommended when the config is not visible, GENERIC_PHY is changed
-> an invisible option. To maintain consistency, all phy providers are changed
-> to "select" GENERIC_PHY and all non-phy drivers use "depends on" when the
-> phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
-> dependency, so it is left as "select".
-> 
-> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-> ---
->  drivers/ata/Kconfig                       | 1 -
+Thank you Javier, Tobias, Kevin and Olof for your support.
+Receiving patches directly to the mailbox should help in smooth review
+although my gmail filters work quite good to grab them from the lists.
 
->  drivers/media/platform/exynos4-is/Kconfig | 2 +-
-For media part:
-	Acked-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+P.S. Kevin, the hardest part would be to pronounce my name, but
+fortunately there is a nice English version of it - Christopher. :)
 
->  drivers/phy/Kconfig                       | 4 ++--
->  drivers/usb/host/Kconfig                  | 4 ++--
->  drivers/video/fbdev/exynos/Kconfig        | 2 +-
->  5 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> index 5f60155..6d2e881 100644
-> --- a/drivers/ata/Kconfig
-> +++ b/drivers/ata/Kconfig
-> @@ -301,7 +301,6 @@ config SATA_MV
->  	tristate "Marvell SATA support"
->  	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
->  		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
-> -	select GENERIC_PHY
->  	help
->  	  This option enables support for the Marvell Serial ATA family.
->  	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
-> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-> index b7b2e47..b6f3eaa 100644
-> --- a/drivers/media/platform/exynos4-is/Kconfig
-> +++ b/drivers/media/platform/exynos4-is/Kconfig
-> @@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
->  config VIDEO_S5P_MIPI_CSIS
->  	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
->  	depends on REGULATOR
-> -	select GENERIC_PHY
-> +	depends on GENERIC_PHY
->  	help
->  	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
->  	  receiver (MIPI-CSIS) devices.
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 2962de2..edecdb1 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -5,7 +5,7 @@
->  menu "PHY Subsystem"
->  
->  config GENERIC_PHY
-> -	bool "PHY Core"
-> +	bool
->  	help
->  	  Generic PHY support.
->  
-> @@ -72,7 +72,7 @@ config PHY_MIPHY365X
->  config PHY_RCAR_GEN2
->  	tristate "Renesas R-Car generation 2 USB PHY driver"
->  	depends on ARCH_SHMOBILE
-> -	depends on GENERIC_PHY
-> +	select GENERIC_PHY
->  	help
->  	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
->  
-> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index 5ad60e4..e2197e2 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
->  config USB_EHCI_HCD_STI
->  	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
->  	depends on ARCH_STI && OF
-> -	select GENERIC_PHY
-> +	depends on GENERIC_PHY
->  	select USB_EHCI_HCD_PLATFORM
->  	help
->  	  Enable support for the on-chip EHCI controller found on
-> @@ -409,7 +409,7 @@ config USB_OHCI_HCD_SPEAR
->  config USB_OHCI_HCD_STI
->  	tristate "Support for ST STiHxxx on-chip OHCI USB controller"
->  	depends on ARCH_STI && OF
-> -	select GENERIC_PHY
-> +	depends on GENERIC_PHY
->  	select USB_OHCI_HCD_PLATFORM
->  	help
->  	  Enable support for the on-chip OHCI controller found on
-> diff --git a/drivers/video/fbdev/exynos/Kconfig b/drivers/video/fbdev/exynos/Kconfig
-> index 1f16b46..6c53894 100644
-> --- a/drivers/video/fbdev/exynos/Kconfig
-> +++ b/drivers/video/fbdev/exynos/Kconfig
-> @@ -16,7 +16,7 @@ if EXYNOS_VIDEO
->  
->  config EXYNOS_MIPI_DSI
->  	bool "EXYNOS MIPI DSI driver support."
-> -	select GENERIC_PHY
-> +	depends on GENERIC_PHY
->  	help
->  	  This enables support for MIPI-DSI device.
->  
+Best regards,
+Krzysztof
