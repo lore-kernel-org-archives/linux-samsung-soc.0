@@ -1,92 +1,88 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
-Date: Thu, 14 May 2015 21:46:17 +0530
-Message-ID: <CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
- <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
- <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com> <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add Krzysztof Kozlowski asco-maintainer
+Date: Thu, 14 May 2015 09:45:12 -0700
+Message-ID: <CAOesGMg6vETz1dCgHE1WYUJZ3XdHjdku9YCauYPS-a-avk89HQ@mail.gmail.com>
+References: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>
+	<55549C56.6050509@kernel.org>
+	<CABxcv==2ouDFPE2sBdqCwpACYXCCGnJYQFtbOV2PuVNGnv2q=g@mail.gmail.com>
+	<5554ABF4.80002@gmx.net>
+	<7hfv6z17iw.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7hfv6z17iw.fsf@deeprootsystems.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->>>> device.
->>>>
->>>> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
->>>> Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> ---
->>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
->>>>  1 file changed, 25 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>> index 9446e28..cd78816 100644
->>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>> @@ -319,6 +319,31 @@
->>>>                 #cooling-cells = <2>;
->>>>                 cooling-levels = <0 130 170 230>;
->>>>         };
->>>> +
->>>> +       tmu@10060000 {
->>>
->>> Here and for other overrides please use label notation, like:
->>>
->>> &tmu_cpu0 {
->>>               ...
->>> };
->>>
->>>> +               vtmu-supply = <&ldo10_reg>;
->>>
->>> I am curious, how did you find that LDO10 supplies TMU unit?
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Hi Krzysztof,
->>
->> I have re-base my work on earlier Lukasz Majewski patches.
->>
->> https://patchwork.kernel.org/patch/5693201/
+On Thu, May 14, 2015 at 8:52 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Tobias Jakobi <liquid.acid@gmx.net> writes:
 >
-> NAK.
-> I am sorry, but this is not sufficient explanation. Actually such
-> explanation could mean that you did just blindly copied everything
-> instead of developing it.
+>> Javier Martinez Canillas wrote:
+>>> Hello Kukjin,
+>>>
+>>> On Thu, May 14, 2015 at 3:00 PM, Kukjin Kim <kgene@kernel.org> wrote:
+>>>> On 05/14/15 21:15, Krzysztof Kozlowski wrote:
+>>>>> Add Krzysztof Kozlowski as a co-maintainer of Samsung Exynos ARM
+>>>>> architecture to review the patches. Patches will go as usual - picked up
+>>>>> by Kukjin Kim.
+>>>>>
+>>>> Hi Krzysztof,
+>>>>
+>>>> Sorry, I don't agree with this patch because you can review any exynos
+>>>> patches without maintainer title. And I can focus on the maintainer'r
+>>>> role more than now because of change of role ;-) Of course your review
+>>>> would be helpful to me.
+>>>>
+>>>
+>>> Sorry but I disagree. Krzysztof has been very active reviewing Exynos
+>>> patches and even picking/queuing important fixes while it seems you
+>>> were too busy and couldn't pay close attention.
+>> I would even go further than that. We're in this situation because the
+>> current maintainer didn't do his job properly.
+>>
+>> I want to point out what gregkh once said about this matter:
+>> https://youtu.be/iiED1K98lnw?t=1745
+>>
+>>
+>>
+>>> It's really great that due a role change you will have more time to
+>>> focus on the maintainership but I don't see why having more
+>>> maintainers could be something negative. As long as you work in a
+>>> coordinate manner, the more maintainers we have the better IMHO. It
+>>> may be that in the future you change your role at your company again
+>>> and then it will be good to have something else to take care of the
+>>> posted patches ;-)
+>> I very much agree with Javier here. Krzysztof promptly responds to
+>> patches and usually provides detailed feedback when things need changes.
+>> It would be stupid not to accept him as an additional maintainer.
 >
-> You cannot use some regulator here just because some Exynos4 boards
-> use it. You have to be sure that this regulator supplies this part of
-> SoC or device.
+> I'll take this as an Acked-by then.
+>
+> FWIW, I agree with Tobias and Javier, extra help for exynos has been
+> sorely needed for a long time, and I am very happy to see someone
+> stepping up to help.  Thank you Krzysztof!  (and I apologize in advance
+> for the many times I'm likely to misspell your name ;)
+>
+> I'll be applying this to the arm-soc tree,
 
-Hi Krzysztof,
+I agree, I think it's a great improvement to get another official
+maintainer of Samsung's platforms that can share the load and send us
+code.
 
-After going through the schematics, I came to understanding that their is
-missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
+While I often also use the argument that anyone can help review code
+without being named a maintainer, in the particular case of Exynos
+platforms there's a dire need for more close attention: They're
+frequently broken for long periods of time and there's been high
+latency for fixes, which has made bisecting hard or impossible for new
+failures. Naming Krzysztof as co-maintainer makes it more clear that
+we're happy to merge code from him directly as appropriate for latency
+reasons and so on.
 
-Below is the schematic of the board.
+So:
 
-http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
+Acked-by: Olof Johansson <olof@lixom.net>
 
-  ldo18_reg: LDO18 {
-                                         regulator-name = "vdd_ldo18";
-                                         regulator-min-microvolt = <1800000>;
-                                         regulator-max-microvolt = <1800000>;
-                                         regulator-always-on;
-                               };
 
-Please share your thought on this.
-
--Anand Moon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Olof
