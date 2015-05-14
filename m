@@ -1,29 +1,464 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 0/6] cpufreq: use generic cpufreq drivers for
- Exynos4210platform
-Date: Thu, 14 May 2015 16:47:15 +0530
-Message-ID: <20150514111715.GA23999@linux>
-References: <'@samsung.com>
- <55541F92.4020404@kernel.org>
- <20150514051046.GB9887@linux>
- <3051718.I09JWVi0Gb@amdc1976>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to
+ use get_vaddr_frames()
+Date: Thu, 14 May 2015 13:39:53 +0200
+Message-ID: <20150514113953.GA10093@quack.suse.cz>
+References: <1431522495-4692-1-git-send-email-jack@suse.cz>
+ <1431522495-4692-10-git-send-email-jack@suse.cz>
+ <55547E2B.6080307@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="2oS5YaxWCcQjTEyO"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <3051718.I09JWVi0Gb@amdc1976>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <55547E2B.6080307@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, linux-media@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 14-05-15, 12:53, Bartlomiej Zolnierkiewicz wrote:
-> This doesn't seem to be a case.  His email doesn't bounce and his
-> id exists (I've just checked this).  I think that he is just very
-> busy with some other work.
 
-Looks like I was thinking about someone else and thought he was
-Thomas. Sorry Thomas. :)
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu 14-05-15 19:51:23, Inki Dae wrote:
+> Hi,
+>=20
+> On 2015=EB=85=84 05=EC=9B=94 13=EC=9D=BC 22:08, Jan Kara wrote:
+> > Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_frame=
+s().
+> > This removes the knowledge about vmas and mmap_sem locking from exyno=
+s
+> > driver. Also it fixes a problem that the function has been mapping us=
+er
+> > provided address without holding mmap_sem.
+> >=20
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 89 ++++++++++-------------=
+-------
+> >  drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 -----------------------=
+----------
+> >  2 files changed, 29 insertions(+), 157 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/dr=
+m/exynos/exynos_drm_g2d.c
+> > index 81a250830808..265519c0fe2d 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> > @@ -190,10 +190,8 @@ struct g2d_cmdlist_userptr {
+> >  	dma_addr_t		dma_addr;
+> >  	unsigned long		userptr;
+> >  	unsigned long		size;
+> > -	struct page		**pages;
+> > -	unsigned int		npages;
+> > +	struct frame_vector	*vec;
+> >  	struct sg_table		*sgt;
+> > -	struct vm_area_struct	*vma;
+> >  	atomic_t		refcount;
+> >  	bool			in_pool;
+> >  	bool			out_of_list;
+> > @@ -363,6 +361,7 @@ static void g2d_userptr_put_dma_addr(struct drm_d=
+evice *drm_dev,
+> >  {
+> >  	struct g2d_cmdlist_userptr *g2d_userptr =3D
+> >  					(struct g2d_cmdlist_userptr *)obj;
+> > +	struct page **pages;
+> > =20
+> >  	if (!obj)
+> >  		return;
+> > @@ -382,19 +381,21 @@ out:
+> >  	exynos_gem_unmap_sgt_from_dma(drm_dev, g2d_userptr->sgt,
+> >  					DMA_BIDIRECTIONAL);
+> > =20
+> > -	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
+> > -					g2d_userptr->npages,
+> > -					g2d_userptr->vma);
+> > +	pages =3D frame_vector_pages(g2d_userptr->vec);
+> > +	if (!IS_ERR(pages)) {
+> > +		int i;
+> > =20
+> > -	exynos_gem_put_vma(g2d_userptr->vma);
+> > +		for (i =3D 0; i < frame_vector_count(g2d_userptr->vec); i++)
+> > +			set_page_dirty_lock(pages[i]);
+> > +	}
+> > +	put_vaddr_frames(g2d_userptr->vec);
+> > +	frame_vector_destroy(g2d_userptr->vec);
+> > =20
+> >  	if (!g2d_userptr->out_of_list)
+> >  		list_del_init(&g2d_userptr->list);
+> > =20
+> >  	sg_free_table(g2d_userptr->sgt);
+> >  	kfree(g2d_userptr->sgt);
+> > -
+> > -	drm_free_large(g2d_userptr->pages);
+> >  	kfree(g2d_userptr);
+> >  }
+> > =20
+> > @@ -413,6 +414,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struc=
+t drm_device *drm_dev,
+> >  	struct vm_area_struct *vma;
+> >  	unsigned long start, end;
+> >  	unsigned int npages, offset;
+> > +	struct frame_vector *vec;
+> >  	int ret;
+> > =20
+> >  	if (!size) {
+> > @@ -456,65 +458,37 @@ static dma_addr_t *g2d_userptr_get_dma_addr(str=
+uct drm_device *drm_dev,
+> >  		return ERR_PTR(-ENOMEM);
+> > =20
+> >  	atomic_set(&g2d_userptr->refcount, 1);
+> > +	g2d_userptr->size =3D size;
+> > =20
+> >  	start =3D userptr & PAGE_MASK;
+> >  	offset =3D userptr & ~PAGE_MASK;
+> >  	end =3D PAGE_ALIGN(userptr + size);
+> >  	npages =3D (end - start) >> PAGE_SHIFT;
+> > -	g2d_userptr->npages =3D npages;
+> > -
+> > -	pages =3D drm_calloc_large(npages, sizeof(struct page *));
+>=20
+> The declaration to pages isn't needed anymore because you removed it.
+>=20
+> > -	if (!pages) {
+> > -		DRM_ERROR("failed to allocate pages.\n");
+> > -		ret =3D -ENOMEM;
+> > +	vec =3D g2d_userptr->vec =3D frame_vector_create(npages);
+>=20
+> I think you can use g2d_userptr->vec so it seems that vec isn't needed.
+>=20
+> > +	if (!vec)
+> >  		goto err_free;
+> > -	}
+> > =20
+> > -	down_read(&current->mm->mmap_sem);
+> > -	vma =3D find_vma(current->mm, userptr);
+>=20
+> For vma, ditto.
+  Thanks for review! Attached is a new version of the patch.
+
+								Honza
+
+--=20
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
+
+--2oS5YaxWCcQjTEyO
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-drm-exynos-Convert-g2d_userptr_get_dma_addr-to-use-g.patch"
+
+>From 24c5c89b5c8a1bd9f230b91a258ea41b42386bb3 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 4 Dec 2013 14:41:22 +0100
+Subject: [PATCH] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
+ get_vaddr_frames()
+
+Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_frames().
+This removes the knowledge about vmas and mmap_sem locking from exynos
+driver. Also it fixes a problem that the function has been mapping user
+provided address without holding mmap_sem.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 91 ++++++++++---------------------
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 ---------------------------------
+ 2 files changed, 29 insertions(+), 159 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 81a250830808..810e1ee7c07d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -190,10 +190,8 @@ struct g2d_cmdlist_userptr {
+ 	dma_addr_t		dma_addr;
+ 	unsigned long		userptr;
+ 	unsigned long		size;
+-	struct page		**pages;
+-	unsigned int		npages;
++	struct frame_vector	*vec;
+ 	struct sg_table		*sgt;
+-	struct vm_area_struct	*vma;
+ 	atomic_t		refcount;
+ 	bool			in_pool;
+ 	bool			out_of_list;
+@@ -363,6 +361,7 @@ static void g2d_userptr_put_dma_addr(struct drm_device *drm_dev,
+ {
+ 	struct g2d_cmdlist_userptr *g2d_userptr =
+ 					(struct g2d_cmdlist_userptr *)obj;
++	struct page **pages;
+ 
+ 	if (!obj)
+ 		return;
+@@ -382,19 +381,21 @@ out:
+ 	exynos_gem_unmap_sgt_from_dma(drm_dev, g2d_userptr->sgt,
+ 					DMA_BIDIRECTIONAL);
+ 
+-	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
+-					g2d_userptr->npages,
+-					g2d_userptr->vma);
++	pages = frame_vector_pages(g2d_userptr->vec);
++	if (!IS_ERR(pages)) {
++		int i;
+ 
+-	exynos_gem_put_vma(g2d_userptr->vma);
++		for (i = 0; i < frame_vector_count(g2d_userptr->vec); i++)
++			set_page_dirty_lock(pages[i]);
++	}
++	put_vaddr_frames(g2d_userptr->vec);
++	frame_vector_destroy(g2d_userptr->vec);
+ 
+ 	if (!g2d_userptr->out_of_list)
+ 		list_del_init(&g2d_userptr->list);
+ 
+ 	sg_free_table(g2d_userptr->sgt);
+ 	kfree(g2d_userptr->sgt);
+-
+-	drm_free_large(g2d_userptr->pages);
+ 	kfree(g2d_userptr);
+ }
+ 
+@@ -408,9 +409,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 	struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
+ 	struct g2d_cmdlist_userptr *g2d_userptr;
+ 	struct g2d_data *g2d;
+-	struct page **pages;
+ 	struct sg_table	*sgt;
+-	struct vm_area_struct *vma;
+ 	unsigned long start, end;
+ 	unsigned int npages, offset;
+ 	int ret;
+@@ -456,65 +455,38 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	atomic_set(&g2d_userptr->refcount, 1);
++	g2d_userptr->size = size;
+ 
+ 	start = userptr & PAGE_MASK;
+ 	offset = userptr & ~PAGE_MASK;
+ 	end = PAGE_ALIGN(userptr + size);
+ 	npages = (end - start) >> PAGE_SHIFT;
+-	g2d_userptr->npages = npages;
+-
+-	pages = drm_calloc_large(npages, sizeof(struct page *));
+-	if (!pages) {
+-		DRM_ERROR("failed to allocate pages.\n");
+-		ret = -ENOMEM;
++	g2d_userptr->vec = frame_vector_create(npages);
++	if (!vec)
+ 		goto err_free;
+-	}
+ 
+-	down_read(&current->mm->mmap_sem);
+-	vma = find_vma(current->mm, userptr);
+-	if (!vma) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("failed to get vm region.\n");
++	ret = get_vaddr_frames(start, npages, true, true, g2d_userptr->vec);
++	if (ret != npages) {
++		DRM_ERROR("failed to get user pages from userptr.\n");
++		if (ret < 0)
++			goto err_destroy_framevec;
+ 		ret = -EFAULT;
+-		goto err_free_pages;
++		goto err_put_framevec;
+ 	}
+-
+-	if (vma->vm_end < userptr + size) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("vma is too small.\n");
++	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
+ 		ret = -EFAULT;
+-		goto err_free_pages;
++		goto err_put_framevec;
+ 	}
+ 
+-	g2d_userptr->vma = exynos_gem_get_vma(vma);
+-	if (!g2d_userptr->vma) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("failed to copy vma.\n");
+-		ret = -ENOMEM;
+-		goto err_free_pages;
+-	}
+-
+-	g2d_userptr->size = size;
+-
+-	ret = exynos_gem_get_pages_from_userptr(start & PAGE_MASK,
+-						npages, pages, vma);
+-	if (ret < 0) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("failed to get user pages from userptr.\n");
+-		goto err_put_vma;
+-	}
+-
+-	up_read(&current->mm->mmap_sem);
+-	g2d_userptr->pages = pages;
+-
+ 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+ 	if (!sgt) {
+ 		ret = -ENOMEM;
+-		goto err_free_userptr;
++		goto err_put_framevec;
+ 	}
+ 
+-	ret = sg_alloc_table_from_pages(sgt, pages, npages, offset,
+-					size, GFP_KERNEL);
++	ret = sg_alloc_table_from_pages(sgt,
++					frame_vector_pages(g2d_userptr->vec),
++					npages, offset, size, GFP_KERNEL);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to get sgt from pages.\n");
+ 		goto err_free_sgt;
+@@ -549,16 +521,11 @@ err_sg_free_table:
+ err_free_sgt:
+ 	kfree(sgt);
+ 
+-err_free_userptr:
+-	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
+-					g2d_userptr->npages,
+-					g2d_userptr->vma);
+-
+-err_put_vma:
+-	exynos_gem_put_vma(g2d_userptr->vma);
++err_put_framevec:
++	put_vaddr_frames(g2d_userptr->vec);
+ 
+-err_free_pages:
+-	drm_free_large(pages);
++err_destroy_framevec:
++	frame_vector_destroy(g2d_userptr->vec);
+ 
+ err_free:
+ 	kfree(g2d_userptr);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 0d5b9698d384..47068ae44ced 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -378,103 +378,6 @@ int exynos_drm_gem_get_ioctl(struct drm_device *dev, void *data,
+ 	return 0;
+ }
+ 
+-struct vm_area_struct *exynos_gem_get_vma(struct vm_area_struct *vma)
+-{
+-	struct vm_area_struct *vma_copy;
+-
+-	vma_copy = kmalloc(sizeof(*vma_copy), GFP_KERNEL);
+-	if (!vma_copy)
+-		return NULL;
+-
+-	if (vma->vm_ops && vma->vm_ops->open)
+-		vma->vm_ops->open(vma);
+-
+-	if (vma->vm_file)
+-		get_file(vma->vm_file);
+-
+-	memcpy(vma_copy, vma, sizeof(*vma));
+-
+-	vma_copy->vm_mm = NULL;
+-	vma_copy->vm_next = NULL;
+-	vma_copy->vm_prev = NULL;
+-
+-	return vma_copy;
+-}
+-
+-void exynos_gem_put_vma(struct vm_area_struct *vma)
+-{
+-	if (!vma)
+-		return;
+-
+-	if (vma->vm_ops && vma->vm_ops->close)
+-		vma->vm_ops->close(vma);
+-
+-	if (vma->vm_file)
+-		fput(vma->vm_file);
+-
+-	kfree(vma);
+-}
+-
+-int exynos_gem_get_pages_from_userptr(unsigned long start,
+-						unsigned int npages,
+-						struct page **pages,
+-						struct vm_area_struct *vma)
+-{
+-	int get_npages;
+-
+-	/* the memory region mmaped with VM_PFNMAP. */
+-	if (vma_is_io(vma)) {
+-		unsigned int i;
+-
+-		for (i = 0; i < npages; ++i, start += PAGE_SIZE) {
+-			unsigned long pfn;
+-			int ret = follow_pfn(vma, start, &pfn);
+-			if (ret)
+-				return ret;
+-
+-			pages[i] = pfn_to_page(pfn);
+-		}
+-
+-		if (i != npages) {
+-			DRM_ERROR("failed to get user_pages.\n");
+-			return -EINVAL;
+-		}
+-
+-		return 0;
+-	}
+-
+-	get_npages = get_user_pages(current, current->mm, start,
+-					npages, 1, 1, pages, NULL);
+-	get_npages = max(get_npages, 0);
+-	if (get_npages != npages) {
+-		DRM_ERROR("failed to get user_pages.\n");
+-		while (get_npages)
+-			put_page(pages[--get_npages]);
+-		return -EFAULT;
+-	}
+-
+-	return 0;
+-}
+-
+-void exynos_gem_put_pages_to_userptr(struct page **pages,
+-					unsigned int npages,
+-					struct vm_area_struct *vma)
+-{
+-	if (!vma_is_io(vma)) {
+-		unsigned int i;
+-
+-		for (i = 0; i < npages; i++) {
+-			set_page_dirty_lock(pages[i]);
+-
+-			/*
+-			 * undo the reference we took when populating
+-			 * the table.
+-			 */
+-			put_page(pages[i]);
+-		}
+-	}
+-}
+-
+ int exynos_gem_map_sgt_with_dma(struct drm_device *drm_dev,
+ 				struct sg_table *sgt,
+ 				enum dma_data_direction dir)
 -- 
-viresh
+2.1.4
+
+
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--2oS5YaxWCcQjTEyO--
