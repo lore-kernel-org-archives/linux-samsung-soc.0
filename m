@@ -1,37 +1,38 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] drm/exynos: dp: Lower level of EDID read success message
-Date: Thu, 14 May 2015 09:03:06 +0900
-Message-ID: <1431561786-12413-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH] pwm: samsung: Use MODULE_DEVICE_TABLE() to include OF modalias
+Date: Thu, 14 May 2015 02:32:31 +0200
+Message-ID: <1431563551-9461-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:46273 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754674AbbENAct (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 May 2015 20:32:49 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-RG9uJ3QgcG9sbHV0ZSB0aGUgZG1lc2cgd2l0aCBFRElEIHJlYWQgc3VjY2VzcyBtZXNzYWdlIGFz
-IGFuIGVycm9yLgpQcmludGluZyBhcyBkZWJ1ZyBzaG91bGQgYmUgZmluZS4KClNpZ25lZC1vZmYt
-Ynk6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyB8IDIgKy0KIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RwX2NvcmUuYwppbmRleCA0NDFlZjA2Yjg4OTQuLjMwZmViN2QwNjYyNCAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwpAQCAtMTk1LDcgKzE5NSw3IEBAIHN0
-YXRpYyBpbnQgZXh5bm9zX2RwX3JlYWRfZWRpZChzdHJ1Y3QgZXh5bm9zX2RwX2RldmljZSAqZHAp
-CiAJCX0KIAl9CiAKLQlkZXZfZXJyKGRwLT5kZXYsICJFRElEIFJlYWQgc3VjY2VzcyFcbiIpOwor
-CWRldl9kYmcoZHAtPmRldiwgIkVESUQgUmVhZCBzdWNjZXNzIVxuIik7CiAJcmV0dXJuIDA7CiB9
-CiAKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+If the pwm-samsung driver is built as a module, modalias information is
+not filled so the module is not autoloaded. Use the MODULE_DEVICE_TABLE()
+macro to export the OF device ID so the module contains that information.
+
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ drivers/pwm/pwm-samsung.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index ff201e1b9219..ada2d326dc3e 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -456,6 +456,7 @@ static const struct of_device_id samsung_pwm_matches[] = {
+ 	{ .compatible = "samsung,exynos4210-pwm", .data = &s5p64x0_variant },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, samsung_pwm_matches);
+ 
+ static int pwm_samsung_parse_dt(struct samsung_pwm_chip *chip)
+ {
+-- 
+2.1.4
