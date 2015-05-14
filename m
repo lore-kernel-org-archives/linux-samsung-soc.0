@@ -1,54 +1,59 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/1] drm/bridge: ptn3460: Fix I2C ID table to match the
- reported modalias
-Date: Thu, 14 May 2015 08:08:56 -0700
-Message-ID: <CAD=FV=UGGrJmVQ9yXRDdSvS6YcueOkwDrY4qooKiLQyo6iX=-w@mail.gmail.com>
-References: <1431613889-32737-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] Show proper respect for Heinrich Hertz by using the
+ correct unit for frequency
+Date: Thu, 14 May 2015 16:20:32 +0100
+Message-ID: <20150514152032.GA29132@n2100.arm.linux.org.uk>
+References: <20150511131952.GD2067@n2100.arm.linux.org.uk>
+ <5551217C.9090504@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431613889-32737-1-git-send-email-javier.martinez@collabora.co.uk>
+Content-Disposition: inline
+In-Reply-To: <5551217C.9090504@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, David Airlie <airlied@linux.ie>, Ajay Kumar <ajaykumar.rs@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Javier,
+On Mon, May 11, 2015 at 11:39:08PM +0200, Andreas F=E4rber wrote:
+> Am 11.05.2015 um 15:19 schrieb Russell King - ARM Linux:
+> > The SI unit of frequency is Hertz, named after Heinrich Hertz, and =
+is
+> > given the symbol "Hz" to denote this.  "hz" is not the unit of freq=
+uency,
+> > and is in fact meaningless.
+> >=20
+> > Fix arch/arm to correctly use "Hz", thereby acknowledging Heinrich =
+Hertz
+> > contribution to the modern world.
+> >=20
+> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+>=20
+> Nice. :) Since you're being exact, should it be "Hertz' contribution"=
+?
+>=20
+> > diff --git a/arch/arm/boot/dts/omap3-cm-t3517.dts b/arch/arm/boot/d=
+ts/omap3-cm-t3517.dts
+> > index f5b5a1d96cd7..53ae04f9104d 100644
+> > --- a/arch/arm/boot/dts/omap3-cm-t3517.dts
+> > +++ b/arch/arm/boot/dts/omap3-cm-t3517.dts
+> > @@ -66,7 +66,7 @@
+> > =20
+> >  	otg_drv_vbus: pinmux_otg_drv_vbus {
+> >  		pinctrl-single,pins =3D <
+> > -			OMAP3_CORE1_IOPAD(0x2210, PIN_INPUT_PULLDOWN | MUX_MODE0) /* rm=
+ii_50Mhz_clk.usb0_drvvbus */
+> > +			OMAP3_CORE1_IOPAD(0x2210, PIN_INPUT_PULLDOWN | MUX_MODE0) /* rm=
+ii_50MHz_clk.usb0_drvvbus */
+>=20
+> This one looks like an identifier - did you check where it comes from
+> and whether it needs to be fixed there as well?
 
-On Thu, May 14, 2015 at 7:31 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> I2C drivers that support OF, have both an I2C and OF device ID tables
-> that are used to fill the supported module aliases. But currently the
-> I2C core only uses the OF table to match a device with a driver and
-> the aliases information are always reported in the form i2c:<name>.
->
-> The client->name is used as the name postfix and when booting with OF
-> this is obtained with of_modalias_node() which drops the compatible
-> string vendor prefix.
->
-> So for I2C drivers, the I2C and OF device ID tables should be keep in
-> sync in order to make module auto-loading to work but the I2C device
-> entries shouldn't have the vendor prefix since that is not reported.
->
-> Before this patch:
->
-> MODALIAS=i2c:ptn3460
->
-> $ modinfo | grep alias
-> alias:          i2c:nxp,ptn3460
-> alias:          of:N*T*Cnxp,ptn3460*
->
-> After this patch:
->
-> MODALIAS=i2c:ptn3460
->
-> $ modinfo | grep alias
-> alias:          i2c:ptn3460
-> alias:          of:N*T*Cnxp,ptn3460*
->
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  drivers/gpu/drm/bridge/ptn3460.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There isn't any other reference to it in arch/arm (if there were, the
+grep to find these would itself have found it.)
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+--=20
+=46TTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps u=
+p
+according to speedtest.net.
