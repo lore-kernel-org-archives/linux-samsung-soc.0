@@ -1,88 +1,96 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add Krzysztof Kozlowski asco-maintainer
-Date: Thu, 14 May 2015 09:45:12 -0700
-Message-ID: <CAOesGMg6vETz1dCgHE1WYUJZ3XdHjdku9YCauYPS-a-avk89HQ@mail.gmail.com>
-References: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>
-	<55549C56.6050509@kernel.org>
-	<CABxcv==2ouDFPE2sBdqCwpACYXCCGnJYQFtbOV2PuVNGnv2q=g@mail.gmail.com>
-	<5554ABF4.80002@gmx.net>
-	<7hfv6z17iw.fsf@deeprootsystems.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: drm/exynos: Add atomic modesetting support
+Date: Thu, 14 May 2015 15:41:13 -0300
+Message-ID: <20150514184113.GB23061@joana>
+References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
+ <554D2FC7.1070208@gmx.net>
+ <CAAQKjZPCQZV7DxTuf12NyPbT2H5PJhNQs4CwtM8g563Zuw8-6w@mail.gmail.com>
+ <554DF9DE.7000200@gmx.net>
+ <CAAQKjZMRG_a1FrTRD9dACSBz8w3zvrLYWSSM0-wUbaVePaPA2Q@mail.gmail.com>
+ <20150512182908.GB3327@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7hfv6z17iw.fsf@deeprootsystems.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Tobias Jakobi <liquid.acid@gmx.net>, Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:35020 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933401AbbENSlR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 May 2015 14:41:17 -0400
+Received: by qgej70 with SMTP id j70so42065007qge.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2015 11:41:17 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20150512182908.GB3327@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-On Thu, May 14, 2015 at 8:52 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Tobias Jakobi <liquid.acid@gmx.net> writes:
->
->> Javier Martinez Canillas wrote:
->>> Hello Kukjin,
->>>
->>> On Thu, May 14, 2015 at 3:00 PM, Kukjin Kim <kgene@kernel.org> wrote:
->>>> On 05/14/15 21:15, Krzysztof Kozlowski wrote:
->>>>> Add Krzysztof Kozlowski as a co-maintainer of Samsung Exynos ARM
->>>>> architecture to review the patches. Patches will go as usual - picked up
->>>>> by Kukjin Kim.
->>>>>
->>>> Hi Krzysztof,
->>>>
->>>> Sorry, I don't agree with this patch because you can review any exynos
->>>> patches without maintainer title. And I can focus on the maintainer'r
->>>> role more than now because of change of role ;-) Of course your review
->>>> would be helpful to me.
->>>>
->>>
->>> Sorry but I disagree. Krzysztof has been very active reviewing Exynos
->>> patches and even picking/queuing important fixes while it seems you
->>> were too busy and couldn't pay close attention.
->> I would even go further than that. We're in this situation because the
->> current maintainer didn't do his job properly.
->>
->> I want to point out what gregkh once said about this matter:
->> https://youtu.be/iiED1K98lnw?t=1745
->>
->>
->>
->>> It's really great that due a role change you will have more time to
->>> focus on the maintainership but I don't see why having more
->>> maintainers could be something negative. As long as you work in a
->>> coordinate manner, the more maintainers we have the better IMHO. It
->>> may be that in the future you change your role at your company again
->>> and then it will be good to have something else to take care of the
->>> posted patches ;-)
->> I very much agree with Javier here. Krzysztof promptly responds to
->> patches and usually provides detailed feedback when things need changes.
->> It would be stupid not to accept him as an additional maintainer.
->
-> I'll take this as an Acked-by then.
->
-> FWIW, I agree with Tobias and Javier, extra help for exynos has been
-> sorely needed for a long time, and I am very happy to see someone
-> stepping up to help.  Thank you Krzysztof!  (and I apologize in advance
-> for the many times I'm likely to misspell your name ;)
->
-> I'll be applying this to the arm-soc tree,
+Hi Inki and Tobias,
 
-I agree, I think it's a great improvement to get another official
-maintainer of Samsung's platforms that can share the load and send us
-code.
+2015-05-12 Gustavo Padovan <gustavo@padovan.org>:
 
-While I often also use the argument that anyone can help review code
-without being named a maintainer, in the particular case of Exynos
-platforms there's a dire need for more close attention: They're
-frequently broken for long periods of time and there's been high
-latency for fixes, which has made bisecting hard or impossible for new
-failures. Naming Krzysztof as co-maintainer makes it more clear that
-we're happy to merge code from him directly as appropriate for latency
-reasons and so on.
+> 2015-05-10 Inki Dae <inki.dae@samsung.com>:
+> 
+> > 2015-05-09 21:13 GMT+09:00 Tobias Jakobi <liquid.acid@gmx.net>:
+> > > Hello Inki,
+> > >
+> > >
+> > > Inki Dae wrote:
+> > >> Hi,
+> > >>
+> > >> 2015-05-09 6:51 GMT+09:00 Tobias Jakobi <liquid.acid@gmx.net>:
+> > >>> Hello,
+> > >>>
+> > >>> I've tested this on my Hardkernel Odroid-X2 (connected via HDMI to a
+> > >>> 1080p panel).
+> > >>>
+> > >>> Run the usual modetest tests (just primary plane, primary plane with
+> > >>> vsync, primary plane with overlay, primary plane with overlay and video
+> > >>> overlay, overlay partially outside of crtc area, etc.) and haven't
+> > >>> noticed any issues so far.
+> > >>
+> > >> As I mentioned several times, it works well in case that only one crtc
+> > >> driver is enabled. Could you check it again after you enable two or
+> > >> more crtc drivers such as FIMD and HDMI or FIMD, HDMI and VIDI
+> > >> together? For this, dts file for X2 should contain their device nodes
+> > >> and also should be configurated though menuconfig.
+> > > I've enabled VIDI and FIMD and confirmed that they should up properly in
+> > > modetest before applying the series.
+> > >
+> > > Booting with the atomic series works fine, but I get a segfault when
+> > > calling modetest. I've attached the kernel log below.
+> > 
+> > Below panic issue is same as one I faced with at previous patch seris,
+> > v3, which was invalid memory access - state->crtc is NULL whille
+> > modetest is being performed. It seems that the last patch of v4 didn't
+> > resolve this issue yet.
+> 
+> The weird thing is that it works quite fine on my exynos 5 hardware.
+> I'll take a look on what could be be happening to cause this kind of
+> crash.
 
-So:
+Can you please check if the following diff solves the issue?
 
-Acked-by: Olof Johansson <olof@lixom.net>
-
-
--Olof
+iff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 8a1cd8b..3d64799 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -163,6 +163,9 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
+        struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(state->crtc);
+        struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+ 
++       if (!state->crtc)
++               return;
++
+        exynos_plane_mode_set(plane, state->crtc, state->fb,
+                              state->crtc_x, state->crtc_y,
+                              state->crtc_w, state->crtc_h,
+@@ -179,6 +182,9 @@ static void exynos_plane_atomic_disable(struct drm_plane *plane,
+        struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+        struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(old_state->crtc);
+ 
++       if (!old_state->crtc)
++               return;
++
+        if (exynos_crtc->ops->disable_plane)
+                exynos_crtc->ops->disable_plane(exynos_crtc,
+                                                exynos_plane->zpos);
