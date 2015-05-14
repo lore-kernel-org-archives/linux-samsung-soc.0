@@ -1,87 +1,85 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
- get_vaddr_frames()
-Date: Thu, 14 May 2015 19:51:23 +0900
-Message-ID: <55547E2B.6080307@samsung.com>
-References: <1431522495-4692-1-git-send-email-jack@suse.cz>
- <1431522495-4692-10-git-send-email-jack@suse.cz>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 0/6] cpufreq: use generic cpufreq drivers for
+ Exynos4210platform
+Date: Thu, 14 May 2015 12:53:14 +0200
+Message-ID: <3051718.I09JWVi0Gb@amdc1976>
+References: <'@samsung.com> <55541F92.4020404@kernel.org>
+ <20150514051046.GB9887@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1431522495-4692-10-git-send-email-jack@suse.cz>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-samsung-soc@vger.kernel.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, linux-media@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:59668 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932299AbbENKx4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 May 2015 06:53:56 -0400
+In-reply-to: <20150514051046.GB9887@linux>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-SGksCgpPbiAyMDE164WEIDA17JuUIDEz7J28IDIyOjA4LCBKYW4gS2FyYSB3cm90ZToKPiBDb252
-ZXJ0IGcyZF91c2VycHRyX2dldF9kbWFfYWRkcigpIHRvIHBpbiBwYWdlcyB1c2luZyBnZXRfdmFk
-ZHJfZnJhbWVzKCkuCj4gVGhpcyByZW1vdmVzIHRoZSBrbm93bGVkZ2UgYWJvdXQgdm1hcyBhbmQg
-bW1hcF9zZW0gbG9ja2luZyBmcm9tIGV4eW5vcwo+IGRyaXZlci4gQWxzbyBpdCBmaXhlcyBhIHBy
-b2JsZW0gdGhhdCB0aGUgZnVuY3Rpb24gaGFzIGJlZW4gbWFwcGluZyB1c2VyCj4gcHJvdmlkZWQg
-YWRkcmVzcyB3aXRob3V0IGhvbGRpbmcgbW1hcF9zZW0uCj4gCj4gU2lnbmVkLW9mZi1ieTogSmFu
-IEthcmEgPGphY2tAc3VzZS5jej4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2cyZC5jIHwgODkgKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyB8IDk3IC0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQo+ICAyIGZpbGVzIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDE1
-NyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2cyZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5j
-Cj4gaW5kZXggODFhMjUwODMwODA4Li4yNjU1MTljMGZlMmQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gQEAgLTE5MCwxMCArMTkwLDggQEAgc3RydWN0IGcy
-ZF9jbWRsaXN0X3VzZXJwdHIgewo+ICAJZG1hX2FkZHJfdAkJZG1hX2FkZHI7Cj4gIAl1bnNpZ25l
-ZCBsb25nCQl1c2VycHRyOwo+ICAJdW5zaWduZWQgbG9uZwkJc2l6ZTsKPiAtCXN0cnVjdCBwYWdl
-CQkqKnBhZ2VzOwo+IC0JdW5zaWduZWQgaW50CQlucGFnZXM7Cj4gKwlzdHJ1Y3QgZnJhbWVfdmVj
-dG9yCSp2ZWM7Cj4gIAlzdHJ1Y3Qgc2dfdGFibGUJCSpzZ3Q7Cj4gLQlzdHJ1Y3Qgdm1fYXJlYV9z
-dHJ1Y3QJKnZtYTsKPiAgCWF0b21pY190CQlyZWZjb3VudDsKPiAgCWJvb2wJCQlpbl9wb29sOwo+
-ICAJYm9vbAkJCW91dF9vZl9saXN0Owo+IEBAIC0zNjMsNiArMzYxLDcgQEAgc3RhdGljIHZvaWQg
-ZzJkX3VzZXJwdHJfcHV0X2RtYV9hZGRyKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+ICB7
-Cj4gIAlzdHJ1Y3QgZzJkX2NtZGxpc3RfdXNlcnB0ciAqZzJkX3VzZXJwdHIgPQo+ICAJCQkJCShz
-dHJ1Y3QgZzJkX2NtZGxpc3RfdXNlcnB0ciAqKW9iajsKPiArCXN0cnVjdCBwYWdlICoqcGFnZXM7
-Cj4gIAo+ICAJaWYgKCFvYmopCj4gIAkJcmV0dXJuOwo+IEBAIC0zODIsMTkgKzM4MSwyMSBAQCBv
-dXQ6Cj4gIAlleHlub3NfZ2VtX3VubWFwX3NndF9mcm9tX2RtYShkcm1fZGV2LCBnMmRfdXNlcnB0
-ci0+c2d0LAo+ICAJCQkJCURNQV9CSURJUkVDVElPTkFMKTsKPiAgCj4gLQlleHlub3NfZ2VtX3B1
-dF9wYWdlc190b191c2VycHRyKGcyZF91c2VycHRyLT5wYWdlcywKPiAtCQkJCQlnMmRfdXNlcnB0
-ci0+bnBhZ2VzLAo+IC0JCQkJCWcyZF91c2VycHRyLT52bWEpOwo+ICsJcGFnZXMgPSBmcmFtZV92
-ZWN0b3JfcGFnZXMoZzJkX3VzZXJwdHItPnZlYyk7Cj4gKwlpZiAoIUlTX0VSUihwYWdlcykpIHsK
-PiArCQlpbnQgaTsKPiAgCj4gLQlleHlub3NfZ2VtX3B1dF92bWEoZzJkX3VzZXJwdHItPnZtYSk7
-Cj4gKwkJZm9yIChpID0gMDsgaSA8IGZyYW1lX3ZlY3Rvcl9jb3VudChnMmRfdXNlcnB0ci0+dmVj
-KTsgaSsrKQo+ICsJCQlzZXRfcGFnZV9kaXJ0eV9sb2NrKHBhZ2VzW2ldKTsKPiArCX0KPiArCXB1
-dF92YWRkcl9mcmFtZXMoZzJkX3VzZXJwdHItPnZlYyk7Cj4gKwlmcmFtZV92ZWN0b3JfZGVzdHJv
-eShnMmRfdXNlcnB0ci0+dmVjKTsKPiAgCj4gIAlpZiAoIWcyZF91c2VycHRyLT5vdXRfb2ZfbGlz
-dCkKPiAgCQlsaXN0X2RlbF9pbml0KCZnMmRfdXNlcnB0ci0+bGlzdCk7Cj4gIAo+ICAJc2dfZnJl
-ZV90YWJsZShnMmRfdXNlcnB0ci0+c2d0KTsKPiAgCWtmcmVlKGcyZF91c2VycHRyLT5zZ3QpOwo+
-IC0KPiAtCWRybV9mcmVlX2xhcmdlKGcyZF91c2VycHRyLT5wYWdlcyk7Cj4gIAlrZnJlZShnMmRf
-dXNlcnB0cik7Cj4gIH0KPiAgCj4gQEAgLTQxMyw2ICs0MTQsNyBAQCBzdGF0aWMgZG1hX2FkZHJf
-dCAqZzJkX3VzZXJwdHJfZ2V0X2RtYV9hZGRyKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+
-ICAJc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWE7Cj4gIAl1bnNpZ25lZCBsb25nIHN0YXJ0LCBl
-bmQ7Cj4gIAl1bnNpZ25lZCBpbnQgbnBhZ2VzLCBvZmZzZXQ7Cj4gKwlzdHJ1Y3QgZnJhbWVfdmVj
-dG9yICp2ZWM7Cj4gIAlpbnQgcmV0Owo+ICAKPiAgCWlmICghc2l6ZSkgewo+IEBAIC00NTYsNjUg
-KzQ1OCwzNyBAQCBzdGF0aWMgZG1hX2FkZHJfdCAqZzJkX3VzZXJwdHJfZ2V0X2RtYV9hZGRyKHN0
-cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+ICAJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+
-ICAKPiAgCWF0b21pY19zZXQoJmcyZF91c2VycHRyLT5yZWZjb3VudCwgMSk7Cj4gKwlnMmRfdXNl
-cnB0ci0+c2l6ZSA9IHNpemU7Cj4gIAo+ICAJc3RhcnQgPSB1c2VycHRyICYgUEFHRV9NQVNLOwo+
-ICAJb2Zmc2V0ID0gdXNlcnB0ciAmIH5QQUdFX01BU0s7Cj4gIAllbmQgPSBQQUdFX0FMSUdOKHVz
-ZXJwdHIgKyBzaXplKTsKPiAgCW5wYWdlcyA9IChlbmQgLSBzdGFydCkgPj4gUEFHRV9TSElGVDsK
-PiAtCWcyZF91c2VycHRyLT5ucGFnZXMgPSBucGFnZXM7Cj4gLQo+IC0JcGFnZXMgPSBkcm1fY2Fs
-bG9jX2xhcmdlKG5wYWdlcywgc2l6ZW9mKHN0cnVjdCBwYWdlICopKTsKClRoZSBkZWNsYXJhdGlv
-biB0byBwYWdlcyBpc24ndCBuZWVkZWQgYW55bW9yZSBiZWNhdXNlIHlvdSByZW1vdmVkIGl0LgoK
-PiAtCWlmICghcGFnZXMpIHsKPiAtCQlEUk1fRVJST1IoImZhaWxlZCB0byBhbGxvY2F0ZSBwYWdl
-cy5cbiIpOwo+IC0JCXJldCA9IC1FTk9NRU07Cj4gKwl2ZWMgPSBnMmRfdXNlcnB0ci0+dmVjID0g
-ZnJhbWVfdmVjdG9yX2NyZWF0ZShucGFnZXMpOwoKSSB0aGluayB5b3UgY2FuIHVzZSBnMmRfdXNl
-cnB0ci0+dmVjIHNvIGl0IHNlZW1zIHRoYXQgdmVjIGlzbid0IG5lZWRlZC4KCj4gKwlpZiAoIXZl
-YykKPiAgCQlnb3RvIGVycl9mcmVlOwo+IC0JfQo+ICAKPiAtCWRvd25fcmVhZCgmY3VycmVudC0+
-bW0tPm1tYXBfc2VtKTsKPiAtCXZtYSA9IGZpbmRfdm1hKGN1cnJlbnQtPm1tLCB1c2VycHRyKTsK
-CkZvciB2bWEsIGRpdHRvLgoKVGhhbmtzLApJbmtpIERhZQoKWy0tU05JUC0tXQpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Thursday, May 14, 2015 10:40:46 AM Viresh Kumar wrote:
+> On 14-05-15, 13:07, Kukjin Kim wrote:
+> > On 05/13/15 23:08, Bartlomiej Zolnierkiewicz wrote:
+> > > 
+> > > Hi,
+> > > 
+> > Hi Bart,
+> > 
+> > > On Friday, April 03, 2015 06:43:43 PM Bartlomiej Zolnierkiewicz wrote:
+> > >> Hi,
+> > >>
+> > >> This patch series removes the use of Exynos4210 specific support
+> > >> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+> > >> for this platform.
+> > > 
+> > > Gentle Ping.  Mike/Kukjin/Viresh could you please review/ack relevant
+> > > patches (patches #1-3 are for clock subsystem, patches #4-5 for Exynos
+> > > mach/dts and patch #6 is for cpufreq subsystem)?
+> 
+> Sorry I thought I already Acked an older version of this set and so
+> didn't went for it again. Done now.
+
+Thanks!
+
+> > Yes, I totally agreed with this patches for arch side changes and this
+> > approach when Thomas posted.
+> > 
+> > > Also what is your
+> > > preferred way to upstream them (patches are not independent so it would
+> > > be best to merge them through one tree, otherwise synchronization of
+> > > git pulls between different subsystem trees will be needed)?
+> > > 
+> > I can provide topic branch for arch side changes even it is small. I
+> > think once Viresh and Mike make each topic branch based on -rc or the
+> > smallest changes from each subsystem then I could handle this series or
+> > Viresh or Mike need to handle this series with merging each topic
+> > branches in subsystem. I'm fine either way.
+> > 
+> > Viresh and Mike, how do you think about that?
+> 
+> For cpufreq subsystem changes, you can take them in your tree.
+> 
+> > > I'm still hoping that this patchset will make it into v4.2 as there are
+> > > no known issues with it (except minor coding nit for patch #5)...
+> > > 
+> > Sure, why not :-)
+> 
+> One thing that looked wrong to me is the email id of Thomas..
+> I believe he has already left Samsung and his id wouldn't exist
+> anymore. Right ?
+
+This doesn't seem to be a case.  His email doesn't bounce and his
+id exists (I've just checked this).  I think that he is just very
+busy with some other work.
+
+> Then I wouldn't recommend something that doesn't exist to get merged
+> now. Probably use another email id of his.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
