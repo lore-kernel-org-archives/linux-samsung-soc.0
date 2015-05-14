@@ -1,49 +1,40 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 7/9] ARM: multi_v7_defconfig: Enable options for Exynos display support
-Date: Thu, 14 May 2015 17:40:14 +0200
-Message-ID: <1431618016-2087-8-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH 9/9] ARM: multi_v7_defconfig: Enable Cypress APA I2C Trackpad support
+Date: Thu, 14 May 2015 17:40:16 +0200
+Message-ID: <1431618016-2087-10-git-send-email-javier.martinez@collabora.co.uk>
 References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47190 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964953AbbENPkt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 May 2015 11:40:49 -0400
 In-Reply-To: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: arm@kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Many Exynos devices have devices attached to their display ports.
-This patch enables the needed Kconfig options to support different
-configuration such as simple panel, embedded DisplayPort (eDP) to
-LVDS bridges and HDMI displays.
+The Cypress All Points Addressable (APA) I2C Trackpad is used in the
+Samsung Exynos 5250 Snow Chromebook. Build the driver as a module so
+the device is supported.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- arch/arm/configs/multi_v7_defconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f587f2214202..e89bd6999aa3 100644
+index ca011472a5d3..78d3b0365070 100644
 --- a/arch/arm/configs/multi_v7_defconfig
 +++ b/arch/arm/configs/multi_v7_defconfig
-@@ -402,6 +402,12 @@ CONFIG_VIDEO_RENESAS_VSP1=m
- # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
- CONFIG_VIDEO_ADV7180=m
- CONFIG_DRM=y
-+CONFIG_DRM_PTN3460=m
-+CONFIG_DRM_PS8622=m
-+CONFIG_DRM_EXYNOS=m
-+CONFIG_DRM_EXYNOS_FIMD=y
-+CONFIG_DRM_EXYNOS_DP=y
-+CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_RCAR_DU=m
- CONFIG_DRM_TEGRA=y
- CONFIG_DRM_PANEL_SIMPLE=y
-@@ -411,6 +417,7 @@ CONFIG_FB_SH_MOBILE_LCDC=y
- CONFIG_FB_SIMPLE=y
- CONFIG_FB_SH_MOBILE_MERAM=y
- CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_LCD_PLATFORM=m
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
- CONFIG_BACKLIGHT_PWM=y
- CONFIG_BACKLIGHT_AS3711=y
+@@ -222,6 +222,7 @@ CONFIG_KEYBOARD_SPEAR=y
+ CONFIG_KEYBOARD_ST_KEYSCAN=y
+ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
++CONFIG_MOUSE_CYAPA=m
+ CONFIG_MOUSE_ELAN_I2C=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
 -- 
 2.1.4
