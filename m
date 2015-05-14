@@ -1,52 +1,55 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2] ARM: dts: Add syscon property to the MIPI phy in exynos5420
-Date: Thu, 14 May 2015 14:40:40 +0200
-Message-ID: <1431607240-14549-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add Krzysztof Kozlowski asco-maintainer
+Date: Thu, 14 May 2015 22:00:06 +0900
+Message-ID: <55549C56.6050509@kernel.org>
+References: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:36452 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932694AbbENMli (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 08:41:38 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, =?UTF-8?q?Krzysztof=20Koz=C5=82owski?= <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Since e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression by
-adding support for PMU regmap") the syscon property is required in
-samsung,s5pv210-mipi-video-phy nodes, but this DTS hadn't been updated
-yet.
+On 05/14/15 21:15, Krzysztof Kozlowski wrote:
+> Add Krzysztof Kozlowski as a co-maintainer of Samsung Exynos ARM
+> architecture to review the patches. Patches will go as usual - picked up
+> by Kukjin Kim.
+> 
+Hi Krzysztof,
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Koz=C5=82owski <k.kozlowski@samsung.com>
+Sorry, I don't agree with this patch because you can review any exynos
+patches without maintainer title. And I can focus on the maintainer'r
+role more than now because of change of role ;-) Of course your review
+would be helpful to me.
 
---
+Thanks,
+Kukjin
 
-v2:	* Remove reg property as suggested by Javier
-	* Added his Reviewed-by
----
- arch/arm/boot/dts/exynos5420.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exyn=
-os5420.dtsi
-index 4531753..78bcbc0 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -541,7 +541,7 @@
-=20
- 	mipi_phy: video-phy@10040714 {
- 		compatible =3D "samsung,s5pv210-mipi-video-phy";
--		reg =3D <0x10040714 12>;
-+		syscon =3D <&pmu_system_controller>;
- 		#phy-cells =3D <1>;
- 	};
-=20
---=20
-2.4.0
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2dc517cd4835..a3cb77c0ae23 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1380,6 +1380,7 @@ N:	rockchip
+>  
+>  ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+>  M:	Kukjin Kim <kgene@kernel.org>
+> +M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:	Maintained
