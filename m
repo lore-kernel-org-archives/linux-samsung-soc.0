@@ -1,39 +1,54 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 6/9] ARM: multi_v7_defconfig: Enable Samsung S3C SoC RTC
-Date: Thu, 14 May 2015 17:40:13 +0200
-Message-ID: <1431618016-2087-7-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator, rtc and clock drivers
+Date: Thu, 14 May 2015 17:40:09 +0200
+Message-ID: <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47170 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964913AbbENPko (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 11:40:44 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: arm@kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The rtc-s3c driver supports a range of S3C series Real-Time-Clocks found
-on many Samsung SoCs. Build the driver as a module to support these RTC.
+The Maxim max77802 Power Management IC is used on many Exynos machines.
+Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
+and 2-channel 32kHz clock outputs.
+
+Enable the kernel config options to have the drivers for these devices
+built as a module.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/configs/multi_v7_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index bc7da5659e5d..f587f2214202 100644
+index 2349584b6e08..080120fe5580 100644
 --- a/arch/arm/configs/multi_v7_defconfig
 +++ b/arch/arm/configs/multi_v7_defconfig
-@@ -520,6 +520,7 @@ CONFIG_RTC_DRV_TPS65910=y
- CONFIG_RTC_DRV_S35390A=m
- CONFIG_RTC_DRV_EM3027=y
- CONFIG_RTC_DRV_DIGICOLOR=m
-+CONFIG_RTC_DRV_S3C=m
- CONFIG_RTC_DRV_PL031=y
- CONFIG_RTC_DRV_VT8500=y
- CONFIG_RTC_DRV_SUN6I=y
+@@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
+ CONFIG_REGULATOR_MAX8907=y
+ CONFIG_REGULATOR_MAX8973=y
+ CONFIG_REGULATOR_MAX77686=y
++CONFIG_REGULATOR_MAX77802=m
+ CONFIG_REGULATOR_PALMAS=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+@@ -507,6 +508,7 @@ CONFIG_RTC_DRV_AS3722=y
+ CONFIG_RTC_DRV_DS1307=y
+ CONFIG_RTC_DRV_MAX8907=y
+ CONFIG_RTC_DRV_MAX77686=y
++CONFIG_RTC_DRV_MAX77802=m
+ CONFIG_RTC_DRV_RS5C372=m
+ CONFIG_RTC_DRV_PALMAS=y
+ CONFIG_RTC_DRV_ST_LPC=y
+@@ -548,6 +550,7 @@ CONFIG_NVEC_PAZ00=y
+ CONFIG_QCOM_GSBI=y
+ CONFIG_COMMON_CLK_QCOM=y
+ CONFIG_COMMON_CLK_MAX77686=y
++CONFIG_COMMON_CLK_MAX77802=m
+ CONFIG_APQ_MMCC_8084=y
+ CONFIG_MSM_GCC_8660=y
+ CONFIG_MSM_MMCC_8960=y
 -- 
 2.1.4
