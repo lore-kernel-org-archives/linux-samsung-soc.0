@@ -1,59 +1,53 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] Show proper respect for Heinrich Hertz by using the
- correct unit for frequency
-Date: Thu, 14 May 2015 16:20:32 +0100
-Message-ID: <20150514152032.GA29132@n2100.arm.linux.org.uk>
-References: <20150511131952.GD2067@n2100.arm.linux.org.uk>
- <5551217C.9090504@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/9] multi_v7_defconfig: Enable options for Exynos Chromebooks
+Date: Thu, 14 May 2015 17:40:07 +0200
+Message-ID: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5551217C.9090504@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: arm@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 11, 2015 at 11:39:08PM +0200, Andreas F=E4rber wrote:
-> Am 11.05.2015 um 15:19 schrieb Russell King - ARM Linux:
-> > The SI unit of frequency is Hertz, named after Heinrich Hertz, and =
-is
-> > given the symbol "Hz" to denote this.  "hz" is not the unit of freq=
-uency,
-> > and is in fact meaningless.
-> >=20
-> > Fix arch/arm to correctly use "Hz", thereby acknowledging Heinrich =
-Hertz
-> > contribution to the modern world.
-> >=20
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
->=20
-> Nice. :) Since you're being exact, should it be "Hertz' contribution"=
-?
->=20
-> > diff --git a/arch/arm/boot/dts/omap3-cm-t3517.dts b/arch/arm/boot/d=
-ts/omap3-cm-t3517.dts
-> > index f5b5a1d96cd7..53ae04f9104d 100644
-> > --- a/arch/arm/boot/dts/omap3-cm-t3517.dts
-> > +++ b/arch/arm/boot/dts/omap3-cm-t3517.dts
-> > @@ -66,7 +66,7 @@
-> > =20
-> >  	otg_drv_vbus: pinmux_otg_drv_vbus {
-> >  		pinctrl-single,pins =3D <
-> > -			OMAP3_CORE1_IOPAD(0x2210, PIN_INPUT_PULLDOWN | MUX_MODE0) /* rm=
-ii_50Mhz_clk.usb0_drvvbus */
-> > +			OMAP3_CORE1_IOPAD(0x2210, PIN_INPUT_PULLDOWN | MUX_MODE0) /* rm=
-ii_50MHz_clk.usb0_drvvbus */
->=20
-> This one looks like an identifier - did you check where it comes from
-> and whether it needs to be fixed there as well?
+Hello arm-soc maintainers,
 
-There isn't any other reference to it in arch/arm (if there were, the
-grep to find these would itself have found it.)
+This series is an attempt to reduce the delta between exynos_defconfig
+and multi_v7_defconfig. Primarily to enable the needed Kconfig symbols
+to make all Exynos Chromebooks peripherals to be working when building
+an image using the ARMv7 multi-platform default config.
 
---=20
-=46TTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps u=
-p
-according to speedtest.net.
+Since the policy is now to now enable as much as possible, I did build
+as a module all the Kconfig symbols that were tristate and only enable
+as built-in those that can't be a module because are boolean options.
+
+A nice side effect of this series is that I found that many drivers
+were not working properly when built as a module because the modalias
+information was not filled properly or at all. I've posted patches to
+fix the issues I found when testing this series.
+
+The patches have been tested on an Exynos5250 Snow, Exynos5420 Peach
+Pit and Exynos5800 Peach Pi Chromebooks but most config options will
+be useful for others Exynos5 or other Samsung SoCs.
+
+The series is composed of the following patches that can be applied on
+top of your next/defconfig branch [0].
+
+Javier Martinez Canillas (9):
+  ARM: multi_v7_defconfig: Enable support for Samsung S3C64XX SPI
+  ARM: multi_v7_defconfig: Enable max77802 regulator, rtc and clock
+    drivers
+  ARM: multi_v7_defconfig: Enable Exynos USB PHY drivers support
+  ARM: multi_v7_defconfig: Enable support for missing ChromeOS EC
+    drivers
+  ARM: multi_v7_defconfig: Enable Samsung PWM support
+  ARM: multi_v7_defconfig: Enable Samsung S3C SoC RTC
+  ARM: multi_v7_defconfig: Enable options for Exynos display support
+  ARM: multi_v7_defconfig: Enable GPIO-based I2C arbitration support
+  ARM: multi_v7_defconfig: Enable Cypress APA I2C Trackpad support
+
+ arch/arm/configs/multi_v7_defconfig | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+Best regards,
+Javier
+
+[0]: git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git next/defconfig
