@@ -1,34 +1,71 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/9] ARM: multi_v7_defconfig: Enable support for Samsung S3C64XX SPI
-Date: Thu, 14 May 2015 17:40:08 +0200
-Message-ID: <1431618016-2087-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add Krzysztof Kozlowski asco-maintainer
+Date: Thu, 14 May 2015 08:52:07 -0700
+Message-ID: <7hfv6z17iw.fsf@deeprootsystems.com>
+References: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>
+	<55549C56.6050509@kernel.org>
+	<CABxcv==2ouDFPE2sBdqCwpACYXCCGnJYQFtbOV2PuVNGnv2q=g@mail.gmail.com>
+	<5554ABF4.80002@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <5554ABF4.80002@gmx.net> (Tobias Jakobi's message of "Thu, 14 May
+	2015 16:06:44 +0200")
 Sender: linux-kernel-owner@vger.kernel.org
-To: arm@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Tobias Jakobi <liquid.acid@gmx.net>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Build the spi-s3c64xx driver as a module to have support for
-the SPI controller in several Samsung SoCs.
+Tobias Jakobi <liquid.acid@gmx.net> writes:
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> Javier Martinez Canillas wrote:
+>> Hello Kukjin,
+>> 
+>> On Thu, May 14, 2015 at 3:00 PM, Kukjin Kim <kgene@kernel.org> wrote:
+>>> On 05/14/15 21:15, Krzysztof Kozlowski wrote:
+>>>> Add Krzysztof Kozlowski as a co-maintainer of Samsung Exynos ARM
+>>>> architecture to review the patches. Patches will go as usual - picked up
+>>>> by Kukjin Kim.
+>>>>
+>>> Hi Krzysztof,
+>>>
+>>> Sorry, I don't agree with this patch because you can review any exynos
+>>> patches without maintainer title. And I can focus on the maintainer'r
+>>> role more than now because of change of role ;-) Of course your review
+>>> would be helpful to me.
+>>>
+>> 
+>> Sorry but I disagree. Krzysztof has been very active reviewing Exynos
+>> patches and even picking/queuing important fixes while it seems you
+>> were too busy and couldn't pay close attention.
+> I would even go further than that. We're in this situation because the
+> current maintainer didn't do his job properly.
+>
+> I want to point out what gregkh once said about this matter:
+> https://youtu.be/iiED1K98lnw?t=1745
+>
+>
+>
+>> It's really great that due a role change you will have more time to
+>> focus on the maintainership but I don't see why having more
+>> maintainers could be something negative. As long as you work in a
+>> coordinate manner, the more maintainers we have the better IMHO. It
+>> may be that in the future you change your role at your company again
+>> and then it will be good to have something else to take care of the
+>> posted patches ;-)
+> I very much agree with Javier here. Krzysztof promptly responds to
+> patches and usually provides detailed feedback when things need changes.
+> It would be stupid not to accept him as an additional maintainer.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 492f6289a29e..2349584b6e08 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -293,6 +293,7 @@ CONFIG_SPI_OMAP24XX=y
- CONFIG_SPI_ORION=y
- CONFIG_SPI_PL022=y
- CONFIG_SPI_RSPI=y
-+CONFIG_SPI_S3C64XX=m
- CONFIG_SPI_SH_MSIOF=m
- CONFIG_SPI_SH_HSPI=y
- CONFIG_SPI_SIRF=y
--- 
-2.1.4
+I'll take this as an Acked-by then.
+
+FWIW, I agree with Tobias and Javier, extra help for exynos has been
+sorely needed for a long time, and I am very happy to see someone
+stepping up to help.  Thank you Krzysztof!  (and I apologize in advance
+for the many times I'm likely to misspell your name ;)
+
+I'll be applying this to the arm-soc tree,
+
+Thanks,
+
+Kevin
