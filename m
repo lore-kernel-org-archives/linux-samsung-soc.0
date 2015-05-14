@@ -1,96 +1,122 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: drm/exynos: Add atomic modesetting support
-Date: Thu, 14 May 2015 15:41:13 -0300
-Message-ID: <20150514184113.GB23061@joana>
-References: <1430430651-22416-1-git-send-email-gustavo@padovan.org>
- <554D2FC7.1070208@gmx.net>
- <CAAQKjZPCQZV7DxTuf12NyPbT2H5PJhNQs4CwtM8g563Zuw8-6w@mail.gmail.com>
- <554DF9DE.7000200@gmx.net>
- <CAAQKjZMRG_a1FrTRD9dACSBz8w3zvrLYWSSM0-wUbaVePaPA2Q@mail.gmail.com>
- <20150512182908.GB3327@joana>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible
+ option
+Date: Thu, 14 May 2015 18:57:10 -0300
+Message-ID: <20150514185710.2f8889a3@recife.lan>
+References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
+	<1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:35020 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933401AbbENSlR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 14:41:17 -0400
-Received: by qgej70 with SMTP id j70so42065007qge.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2015 11:41:17 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20150512182908.GB3327@joana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>Laurent Pinchart <l>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-Hi Inki and Tobias,
+Em Wed, 22 Apr 2015 16:04:10 -0700
+Arun Ramamurthy <arun.ramamurthy@broadcom.com> escreveu:
 
-2015-05-12 Gustavo Padovan <gustavo@padovan.org>:
-
-> 2015-05-10 Inki Dae <inki.dae@samsung.com>:
+> Most of the phy providers use "select" to enable GENERIC_PHY. Since select
+> is only recommended when the config is not visible, GENERIC_PHY is changed
+> an invisible option. To maintain consistency, all phy providers are changed
+> to "select" GENERIC_PHY and all non-phy drivers use "depends on" when the
+> phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
+> dependency, so it is left as "select".
 > 
-> > 2015-05-09 21:13 GMT+09:00 Tobias Jakobi <liquid.acid@gmx.net>:
-> > > Hello Inki,
-> > >
-> > >
-> > > Inki Dae wrote:
-> > >> Hi,
-> > >>
-> > >> 2015-05-09 6:51 GMT+09:00 Tobias Jakobi <liquid.acid@gmx.net>:
-> > >>> Hello,
-> > >>>
-> > >>> I've tested this on my Hardkernel Odroid-X2 (connected via HDMI to a
-> > >>> 1080p panel).
-> > >>>
-> > >>> Run the usual modetest tests (just primary plane, primary plane with
-> > >>> vsync, primary plane with overlay, primary plane with overlay and video
-> > >>> overlay, overlay partially outside of crtc area, etc.) and haven't
-> > >>> noticed any issues so far.
-> > >>
-> > >> As I mentioned several times, it works well in case that only one crtc
-> > >> driver is enabled. Could you check it again after you enable two or
-> > >> more crtc drivers such as FIMD and HDMI or FIMD, HDMI and VIDI
-> > >> together? For this, dts file for X2 should contain their device nodes
-> > >> and also should be configurated though menuconfig.
-> > > I've enabled VIDI and FIMD and confirmed that they should up properly in
-> > > modetest before applying the series.
-> > >
-> > > Booting with the atomic series works fine, but I get a segfault when
-> > > calling modetest. I've attached the kernel log below.
-> > 
-> > Below panic issue is same as one I faced with at previous patch seris,
-> > v3, which was invalid memory access - state->crtc is NULL whille
-> > modetest is being performed. It seems that the last patch of v4 didn't
-> > resolve this issue yet.
+> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
+> ---
+>  drivers/ata/Kconfig                       | 1 -
+
+>  drivers/media/platform/exynos4-is/Kconfig | 2 +-
+For media part:
+	Acked-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+
+>  drivers/phy/Kconfig                       | 4 ++--
+>  drivers/usb/host/Kconfig                  | 4 ++--
+>  drivers/video/fbdev/exynos/Kconfig        | 2 +-
+>  5 files changed, 6 insertions(+), 7 deletions(-)
 > 
-> The weird thing is that it works quite fine on my exynos 5 hardware.
-> I'll take a look on what could be be happening to cause this kind of
-> crash.
-
-Can you please check if the following diff solves the issue?
-
-iff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 8a1cd8b..3d64799 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -163,6 +163,9 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
-        struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(state->crtc);
-        struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 
-+       if (!state->crtc)
-+               return;
-+
-        exynos_plane_mode_set(plane, state->crtc, state->fb,
-                              state->crtc_x, state->crtc_y,
-                              state->crtc_w, state->crtc_h,
-@@ -179,6 +182,9 @@ static void exynos_plane_atomic_disable(struct drm_plane *plane,
-        struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-        struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(old_state->crtc);
- 
-+       if (!old_state->crtc)
-+               return;
-+
-        if (exynos_crtc->ops->disable_plane)
-                exynos_crtc->ops->disable_plane(exynos_crtc,
-                                                exynos_plane->zpos);
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index 5f60155..6d2e881 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -301,7 +301,6 @@ config SATA_MV
+>  	tristate "Marvell SATA support"
+>  	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
+>  		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
+> -	select GENERIC_PHY
+>  	help
+>  	  This option enables support for the Marvell Serial ATA family.
+>  	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
+> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+> index b7b2e47..b6f3eaa 100644
+> --- a/drivers/media/platform/exynos4-is/Kconfig
+> +++ b/drivers/media/platform/exynos4-is/Kconfig
+> @@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
+>  config VIDEO_S5P_MIPI_CSIS
+>  	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
+>  	depends on REGULATOR
+> -	select GENERIC_PHY
+> +	depends on GENERIC_PHY
+>  	help
+>  	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
+>  	  receiver (MIPI-CSIS) devices.
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 2962de2..edecdb1 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -5,7 +5,7 @@
+>  menu "PHY Subsystem"
+>  
+>  config GENERIC_PHY
+> -	bool "PHY Core"
+> +	bool
+>  	help
+>  	  Generic PHY support.
+>  
+> @@ -72,7 +72,7 @@ config PHY_MIPHY365X
+>  config PHY_RCAR_GEN2
+>  	tristate "Renesas R-Car generation 2 USB PHY driver"
+>  	depends on ARCH_SHMOBILE
+> -	depends on GENERIC_PHY
+> +	select GENERIC_PHY
+>  	help
+>  	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
+>  
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index 5ad60e4..e2197e2 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
+>  config USB_EHCI_HCD_STI
+>  	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
+>  	depends on ARCH_STI && OF
+> -	select GENERIC_PHY
+> +	depends on GENERIC_PHY
+>  	select USB_EHCI_HCD_PLATFORM
+>  	help
+>  	  Enable support for the on-chip EHCI controller found on
+> @@ -409,7 +409,7 @@ config USB_OHCI_HCD_SPEAR
+>  config USB_OHCI_HCD_STI
+>  	tristate "Support for ST STiHxxx on-chip OHCI USB controller"
+>  	depends on ARCH_STI && OF
+> -	select GENERIC_PHY
+> +	depends on GENERIC_PHY
+>  	select USB_OHCI_HCD_PLATFORM
+>  	help
+>  	  Enable support for the on-chip OHCI controller found on
+> diff --git a/drivers/video/fbdev/exynos/Kconfig b/drivers/video/fbdev/exynos/Kconfig
+> index 1f16b46..6c53894 100644
+> --- a/drivers/video/fbdev/exynos/Kconfig
+> +++ b/drivers/video/fbdev/exynos/Kconfig
+> @@ -16,7 +16,7 @@ if EXYNOS_VIDEO
+>  
+>  config EXYNOS_MIPI_DSI
+>  	bool "EXYNOS MIPI DSI driver support."
+> -	select GENERIC_PHY
+> +	depends on GENERIC_PHY
+>  	help
+>  	  This enables support for MIPI-DSI device.
+>  
