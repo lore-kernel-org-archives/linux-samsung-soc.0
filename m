@@ -1,83 +1,64 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH] MAINTAINERS: ARM: EXYNOS: Add Krzysztof Kozlowski
- asco-maintainer
-Date: Thu, 14 May 2015 16:06:44 +0200
-Message-ID: <5554ABF4.80002@gmx.net>
-References: <1431605720-828-1-git-send-email-k.kozlowski@samsung.com>	<55549C56.6050509@kernel.org> <CABxcv==2ouDFPE2sBdqCwpACYXCCGnJYQFtbOV2PuVNGnv2q=g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] drm/bridge: ptn3460: Fix I2C ID table to match the reported modalias
+Date: Thu, 14 May 2015 16:31:29 +0200
+Message-ID: <1431613889-32737-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:56661 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933597AbbENOHj (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47038 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750893AbbENObz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 10:07:39 -0400
-In-Reply-To: <CABxcv==2ouDFPE2sBdqCwpACYXCCGnJYQFtbOV2PuVNGnv2q=g@mail.gmail.com>
+	Thu, 14 May 2015 10:31:55 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>
+Cc: David Airlie <airlied@linux.ie>, Ajay Kumar <ajaykumar.rs@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Javier Martinez Canillas wrote:
-> Hello Kukjin,
-> 
-> On Thu, May 14, 2015 at 3:00 PM, Kukjin Kim <kgene@kernel.org> wrote:
->> On 05/14/15 21:15, Krzysztof Kozlowski wrote:
->>> Add Krzysztof Kozlowski as a co-maintainer of Samsung Exynos ARM
->>> architecture to review the patches. Patches will go as usual - picked up
->>> by Kukjin Kim.
->>>
->> Hi Krzysztof,
->>
->> Sorry, I don't agree with this patch because you can review any exynos
->> patches without maintainer title. And I can focus on the maintainer'r
->> role more than now because of change of role ;-) Of course your review
->> would be helpful to me.
->>
-> 
-> Sorry but I disagree. Krzysztof has been very active reviewing Exynos
-> patches and even picking/queuing important fixes while it seems you
-> were too busy and couldn't pay close attention.
-I would even go further than that. We're in this situation because the
-current maintainer didn't do his job properly.
+I2C drivers that support OF, have both an I2C and OF device ID tables
+that are used to fill the supported module aliases. But currently the
+I2C core only uses the OF table to match a device with a driver and
+the aliases information are always reported in the form i2c:<name>.
 
-I want to point out what gregkh once said about this matter:
-https://youtu.be/iiED1K98lnw?t=1745
+The client->name is used as the name postfix and when booting with OF
+this is obtained with of_modalias_node() which drops the compatible
+string vendor prefix.
 
+So for I2C drivers, the I2C and OF device ID tables should be keep in
+sync in order to make module auto-loading to work but the I2C device
+entries shouldn't have the vendor prefix since that is not reported.
 
+Before this patch:
 
-> It's really great that due a role change you will have more time to
-> focus on the maintainership but I don't see why having more
-> maintainers could be something negative. As long as you work in a
-> coordinate manner, the more maintainers we have the better IMHO. It
-> may be that in the future you change your role at your company again
-> and then it will be good to have something else to take care of the
-> posted patches ;-)
-I very much agree with Javier here. Krzysztof promptly responds to
-patches and usually provides detailed feedback when things need changes.
-It would be stupid not to accept him as an additional maintainer.
+MODALIAS=i2c:ptn3460
 
+$ modinfo | grep alias
+alias:          i2c:nxp,ptn3460
+alias:          of:N*T*Cnxp,ptn3460*
 
+After this patch:
 
-With best wishes,
-Tobias
+MODALIAS=i2c:ptn3460
 
+$ modinfo | grep alias
+alias:          i2c:ptn3460
+alias:          of:N*T*Cnxp,ptn3460*
 
-> It's true that Krzysztof can review any Exynos patches (like anyone
-> subscribed to the lists) without a co-maintainer title, but being
-> listed in MAINTAINERS will make sure that people know that he is
-> willing to review and ack Exynos patches so they should add him to the
-> cc list.
-> 
->> Thanks,
->> Kukjin
->>
-> 
-> Best regards,
-> Javier
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ drivers/gpu/drm/bridge/ptn3460.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index 9d2f053382e1..2cc15419088d 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -389,7 +389,7 @@ static int ptn3460_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id ptn3460_i2c_table[] = {
+-	{"nxp,ptn3460", 0},
++	{"ptn3460", 0},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, ptn3460_i2c_table);
+-- 
+2.1.4
