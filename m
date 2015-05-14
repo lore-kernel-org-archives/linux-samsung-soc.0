@@ -1,57 +1,45 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Use of_machine_is_compatible instead ofsoc_is_exynos4
-Date: Thu, 14 May 2015 13:37:35 +0900
-Message-ID: <CAJKOXPe4cfcWOQjpwnoR56wOGwH6ezuQzWjsfYkXiMdgkd7gxQ@mail.gmail.com>
-References: <1431307646-10779-1-git-send-email-k.kozlowski@samsung.com>
-	<1431307646-10779-2-git-send-email-k.kozlowski@samsung.com>
-	<55540B4F.6060607@kernel.org>
+Subject: Re: SMP not working on Odroid XU3
+Date: Thu, 14 May 2015 13:50:00 +0900
+Message-ID: <CAJKOXPcaAOanurwWy8nN8Yqh14J4KuHaj7NPJALqJOGKSO_5pQ@mail.gmail.com>
+References: <848ucrvou4.wl-peter.chubb@nicta.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f44.google.com ([209.85.216.44]:34236 "EHLO
-	mail-vn0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932942AbbENEhg (ORCPT
+Received: from mail-vn0-f49.google.com ([209.85.216.49]:39002 "EHLO
+	mail-vn0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751093AbbENEuB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 00:37:36 -0400
-In-Reply-To: <55540B4F.6060607@kernel.org>
+	Thu, 14 May 2015 00:50:01 -0400
+Received: by vnbg1 with SMTP id g1so2730080vnb.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 May 2015 21:50:00 -0700 (PDT)
+In-Reply-To: <848ucrvou4.wl-peter.chubb@nicta.com.au>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Peter Chubb <peter.chubb@nicta.com.au>
+Cc: linux-samsung-soc@vger.kernel.org
 
-2015-05-14 11:41 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
-> On 05/11/15 10:27, Krzysztof Kozlowski wrote:
->> of_machine_is_compatible() seems to be preferred over soc_is_exynos4().
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> ---
->> Changes since v2:
->> 1. New patch, requested by Kukjin Kim.
->> ---
->>  arch/arm/mach-exynos/exynos.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index c3bfbba3006d..5917a30eee33 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -179,7 +179,7 @@ static void __init exynos_init_io(void)
->>   */
->>  void exynos_set_delayed_reset_assertion(bool enable)
->>  {
->> -     if (soc_is_exynos4()) {
->> +     if (of_machine_is_compatible("samsung,exynos4")) {
->>               unsigned int tmp, core_id;
->>
->>               for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
+2015-05-14 12:07 GMT+09:00 Peter Chubb <peter.chubb@nicta.com.au>:
+> Hi,
+>         Is there any info on the web at present as to what's supposed
+>         to work and what doesn't in the upstream kernel?
+
+I think there isn't.
+
+>         I'm currently seeing only two out of eight processors come up
+>         at boot time using the samsung-linux tree, both A7s.  All
+>         eight come up in HYP mode using the Hardkernel linux tree.
+
+That is strange, I would expect the opposite - six out of eight should
+come up on current next and mainline.
+
 >
-> Maybe we need to change the compatible for exynos4415.dtsi? because no
-> exynos4 in the compatible...Applied, anyway.
+>         There's one obvious error in arch/arm/mach-exynos/firmware.c -- the
+>         address in the samsung,secure-firmware node isn't saved
+>         anywhere or used anywhere.  Instead the SMC communication area
+>         is taken from the samsung,exynos4210-sysram-ns node.
 
-It could be quite significant change and each path checking for
-compatibility with exynos4 should be tested. There is no board DTS for
-Exynos4415 so I am not quite convinced that we should care about it.
+exynos5420.dtsi and sysram-ns.
 
 Best regards,
 Krzysztof
