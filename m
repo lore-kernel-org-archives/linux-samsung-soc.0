@@ -1,34 +1,91 @@
-From: Ian Campbell <ian.campbell@citrix.com>
-Subject: Re: [PATCH] arm/mach-exynos: suspend: Don't try to initialize
- suspend/suspend on old DT
-Date: Thu, 14 May 2015 09:50:13 +0100
-Message-ID: <1431593413.13579.9.camel@citrix.com>
-References: <1431438307-25410-1-git-send-email-julien.grall@citrix.com>
-	 <555235FB.3040804@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.citrix.com ([66.165.176.89]:54352 "EHLO SMTP.CITRIX.COM"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752977AbbENIuQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 04:50:16 -0400
-In-Reply-To: <555235FB.3040804@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v5 00/13] ARM: dts: exynos4: labels for overriding nodes
+Date: Thu, 14 May 2015 19:12:07 +0900
+Message-ID: <1431598340-3319-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Julien Grall <julien.grall@citrix.com>, marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, 2015-05-13 at 02:18 +0900, Kukjin Kim wrote:
-> On 05/12/15 22:45, Julien Grall wrote:
-> > Since commit 8b283c0 "ARM: exynos4/5: convert pmu wakeup to stacked domains",
-> > a suspend/resume is not supported on old DT.
-[...]
-> I'm fine on this, applied.
 
-Thanks. Do you also plan to send it to Linus (or to whomeever you feed
-things through) for 4.1-rc$NEXT?
+Hi,
 
-Cheers,
-Ian.
+
+Changes since v4
+================
+1. Patch 1: Don't add labels in exynos4210-pinctrl.dtsi because
+   these are already defined in exynos4210.dtsi.
+2. Patch 9: Add ack from Eduardo Valentin.
+
+Changes since v3
+================
+1. New patches (12 and 13) for Exynos4412 Origen and Tiny4412.
+2. Rebased on top of my DTS-for-next branch:
+   repo: https://github.com/krzk/linux/
+   tag: samsung-dt-for-next-4.2-2
+
+Changes since v2
+================
+1. Fix typo in commit msg (lablels -> labels).
+
+Changes since v1
+================
+1. Re-phrased the description (phandle->label). Suggested by Arnd.
+
+Description
+===========
+
+The label-based notation reduces possible mistakes when overriding
+nodes by child DTSI and board files and reduces duplication
+of addresses.
+
+The patchset refactors Exynos4 boards to use labels for overriding nodes.
+
+Tested by comparison of decompiled DTB for each commit. The output DTB
+is the same.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (13):
+  ARM: dts: Add labels to exynos4 nodes
+  ARM: dts: Use labels for overriding nodes in exynos4210
+  ARM: dts: Use labels for overriding nodes in exynos4210-origen
+  ARM: dts: Use labels for overriding nodes in exynos4210-smdkv310
+  ARM: dts: Use labels for overriding nodes in exynos4210-trats
+  ARM: dts: Use labels for overriding nodes in exynos4212
+  ARM: dts: Use labels for overriding nodes in exynos4x12
+  ARM: dts: Use labels for overriding nodes in exynos4412
+  ARM: dts: Use labels for overriding nodes in exynos4412-odroid
+  ARM: dts: Use labels for overriding nodes in exynos4412-smdk4412
+  ARM: dts: Use labels for overriding nodes in exynos4412-trats2
+  ARM: dts: Use labels for overriding nodes in exynos4412-origen
+  ARM: dts: Use labels for overriding nodes in exynos4412-tiny4412
+
+ arch/arm/boot/dts/exynos4.dtsi                  |   22 +-
+ arch/arm/boot/dts/exynos4210-origen.dts         |  418 +++----
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |  280 ++---
+ arch/arm/boot/dts/exynos4210-trats.dts          |  592 +++++-----
+ arch/arm/boot/dts/exynos4210.dtsi               |   49 +-
+ arch/arm/boot/dts/exynos4212.dtsi               |   12 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  732 ++++++-------
+ arch/arm/boot/dts/exynos4412-odroidx.dts        |   16 +-
+ arch/arm/boot/dts/exynos4412-origen.dts         |  892 +++++++--------
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |  210 ++--
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |   54 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 1332 ++++++++++++-----------
+ arch/arm/boot/dts/exynos4412.dtsi               |   20 +-
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi       |    8 +-
+ arch/arm/boot/dts/exynos4x12.dtsi               |  218 ++--
+ 15 files changed, 2428 insertions(+), 2427 deletions(-)
+
+-- 
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
