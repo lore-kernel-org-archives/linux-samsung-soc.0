@@ -1,68 +1,80 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v3 0/8] ARM: dts: exynos5: labels for overriding nodes
-Date: Thu, 14 May 2015 19:53:45 +0900
-Message-ID: <1431600833-3361-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v3 1/8] ARM: dts: Add labels to exynos5 nodes
+Date: Thu, 14 May 2015 19:53:46 +0900
+Message-ID: <1431600833-3361-2-git-send-email-k.kozlowski.k@gmail.com>
+References: <1431600833-3361-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:33534 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933250AbbENKyJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 May 2015 06:54:09 -0400
+In-Reply-To: <1431600833-3361-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Add new labels to certain nodes so they could be easily referenced by
+Exynos5 board DTS files.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ arch/arm/boot/dts/exynos5.dtsi    | 6 +++---
+ arch/arm/boot/dts/exynos5440.dtsi | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Changes since v2
-================
-1. New patch 8/8: ARM: dts: Use labels for overriding nodes
-   in exynos5422-odroidxu3
-2. To avoid conflicts rebased on my "for-next" branch of
-   https://github.com/krzk/linux
-   The branch above contains some patches for Exynos5 boards
-   applied from LKML.
-
-Changes since v1
-================
-1. Re-phrased the description (phandle->label). Suggested by Arnd.
-
-
-Description
-===========
-The label-based notation reduces possible mistakes when overriding
-nodes by child DTSI and board files and reduces duplication
-of addresses.
-
-The patchset refactors Exynos5 boards to use labels for overriding nodes.
-
-Tested by comparison of decompiled DTB for each commit.
-
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (8):
-  ARM: dts: Add labels to exynos5 nodes
-  ARM: dts: Use labels for overriding nodes in exynos5250
-  ARM: dts: Remove duplicated I2C7 nodes in exynos5250-snow
-  ARM: dts: Use labels for overriding nodes in exynos5420-arndale-octa
-  ARM: dts: Use labels for overriding nodes in exynos542x
-  ARM: dts: Use labels for overriding nodes in exynos5420-smdk5420
-  ARM: dts: Use labels for overriding nodes in exynos5440 boards
-  ARM: dts: Use labels for overriding nodes in exynos5422-odroidxu3
-
- arch/arm/boot/dts/exynos5.dtsi                |   6 +-
- arch/arm/boot/dts/exynos5250-snow.dts         |  46 +-
- arch/arm/boot/dts/exynos5250.dtsi             |  82 ++--
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 634 ++++++++++++-------------
- arch/arm/boot/dts/exynos5420-peach-pit.dts    |   2 +-
- arch/arm/boot/dts/exynos5420-smdk5420.dts     | 645 +++++++++++++-------------
- arch/arm/boot/dts/exynos5420.dtsi             |  82 ++--
- arch/arm/boot/dts/exynos5422-odroidxu3.dts    | 573 +++++++++++------------
- arch/arm/boot/dts/exynos5440-sd5v1.dts        |  10 +-
- arch/arm/boot/dts/exynos5440-ssdk5440.dts     |  85 ++--
- arch/arm/boot/dts/exynos5440.dtsi             |   4 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts     |   2 +-
- 12 files changed, 1085 insertions(+), 1086 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index a0cc0b6f8f96..110dbd4fb884 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -81,14 +81,14 @@
+ 		interrupts = <0 54 0>;
+ 	};
+ 
+-	rtc@101E0000 {
++	rtc: rtc@101E0000 {
+ 		compatible = "samsung,s3c6410-rtc";
+ 		reg = <0x101E0000 0x100>;
+ 		interrupts = <0 43 0>, <0 44 0>;
+ 		status = "disabled";
+ 	};
+ 
+-	fimd@14400000 {
++	fimd: fimd@14400000 {
+ 		compatible = "samsung,exynos5250-fimd";
+ 		interrupt-parent = <&combiner>;
+ 		reg = <0x14400000 0x40000>;
+@@ -98,7 +98,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	dp-controller@145B0000 {
++	dp: dp-controller@145B0000 {
+ 		compatible = "samsung,exynos5-dp";
+ 		reg = <0x145B0000 0x1000>;
+ 		interrupts = <10 3>;
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index 59d9416b3b03..f18b51f2eeaa 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -279,7 +279,7 @@
+ 		clock-names = "usbhost";
+ 	};
+ 
+-	pcie@290000 {
++	pcie_0: pcie@290000 {
+ 		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+ 		reg = <0x290000 0x1000
+ 			0x270000 0x1000
+@@ -300,7 +300,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	pcie@2a0000 {
++	pcie_1: pcie@2a0000 {
+ 		compatible = "samsung,exynos5440-pcie", "snps,dw-pcie";
+ 		reg = <0x2a0000 0x1000
+ 			0x272000 0x1000
 -- 
 2.1.4
