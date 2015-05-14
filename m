@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 4/9] ARM: multi_v7_defconfig: Enable support for missing ChromeOS EC drivers
-Date: Thu, 14 May 2015 17:40:11 +0200
-Message-ID: <1431618016-2087-5-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH 7/9] ARM: multi_v7_defconfig: Enable options for Exynos display support
+Date: Thu, 14 May 2015 17:40:14 +0200
+Message-ID: <1431618016-2087-8-git-send-email-javier.martinez@collabora.co.uk>
 References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,42 +10,40 @@ To: arm@kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Enable the needed Kconfig options to have support for the ChromeOS EC
-I2C transport, I2C tunnel and chardev user-space interface.
+Many Exynos devices have devices attached to their display ports.
+This patch enables the needed Kconfig options to support different
+configuration such as simple panel, embedded DisplayPort (eDP) to
+LVDS bridges and HDMI displays.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- arch/arm/configs/multi_v7_defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e81125364ae2..fcaa82448be3 100644
+index f587f2214202..e89bd6999aa3 100644
 --- a/arch/arm/configs/multi_v7_defconfig
 +++ b/arch/arm/configs/multi_v7_defconfig
-@@ -286,6 +286,7 @@ CONFIG_I2C_ST=y
- CONFIG_I2C_TEGRA=y
- CONFIG_I2C_XILINX=y
- CONFIG_I2C_RCAR=y
-+CONFIG_I2C_CROS_EC_TUNNEL=m
- CONFIG_SPI=y
- CONFIG_SPI_CADENCE=y
- CONFIG_SPI_DAVINCI=y
-@@ -352,6 +353,7 @@ CONFIG_MFD_AS3722=y
- CONFIG_MFD_BCM590XX=y
- CONFIG_MFD_AXP20X=y
- CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_I2C=m
- CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX8907=y
-@@ -547,6 +549,8 @@ CONFIG_KEYBOARD_NVEC=y
- CONFIG_SERIO_NVEC_PS2=y
- CONFIG_NVEC_POWER=y
- CONFIG_NVEC_PAZ00=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_QCOM_GSBI=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_COMMON_CLK_MAX77686=y
+@@ -402,6 +402,12 @@ CONFIG_VIDEO_RENESAS_VSP1=m
+ # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+ CONFIG_VIDEO_ADV7180=m
+ CONFIG_DRM=y
++CONFIG_DRM_PTN3460=m
++CONFIG_DRM_PS8622=m
++CONFIG_DRM_EXYNOS=m
++CONFIG_DRM_EXYNOS_FIMD=y
++CONFIG_DRM_EXYNOS_DP=y
++CONFIG_DRM_EXYNOS_HDMI=y
+ CONFIG_DRM_RCAR_DU=m
+ CONFIG_DRM_TEGRA=y
+ CONFIG_DRM_PANEL_SIMPLE=y
+@@ -411,6 +417,7 @@ CONFIG_FB_SH_MOBILE_LCDC=y
+ CONFIG_FB_SIMPLE=y
+ CONFIG_FB_SH_MOBILE_MERAM=y
+ CONFIG_BACKLIGHT_LCD_SUPPORT=y
++CONFIG_LCD_PLATFORM=m
+ CONFIG_BACKLIGHT_CLASS_DEVICE=y
+ CONFIG_BACKLIGHT_PWM=y
+ CONFIG_BACKLIGHT_AS3711=y
 -- 
 2.1.4
