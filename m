@@ -1,45 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: SMP not working on Odroid XU3
-Date: Thu, 14 May 2015 13:50:00 +0900
-Message-ID: <CAJKOXPcaAOanurwWy8nN8Yqh14J4KuHaj7NPJALqJOGKSO_5pQ@mail.gmail.com>
-References: <848ucrvou4.wl-peter.chubb@nicta.com.au>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 6/6] cpufreq: exynos: remove Exynos4210 specific cpufreq
+ driver support
+Date: Thu, 14 May 2015 10:33:12 +0530
+Message-ID: <20150514050312.GA26341@linux>
+References: <'@samsung.com>
+ <1428079429-4252-1-git-send-email-b.zolnierkie@samsung.com>
+ <1428079429-4252-7-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f49.google.com ([209.85.216.49]:39002 "EHLO
-	mail-vn0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751093AbbENEuB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 00:50:01 -0400
-Received: by vnbg1 with SMTP id g1so2730080vnb.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 May 2015 21:50:00 -0700 (PDT)
-In-Reply-To: <848ucrvou4.wl-peter.chubb@nicta.com.au>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1428079429-4252-7-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Peter Chubb <peter.chubb@nicta.com.au>
-Cc: linux-samsung-soc@vger.kernel.org
 
-2015-05-14 12:07 GMT+09:00 Peter Chubb <peter.chubb@nicta.com.au>:
-> Hi,
->         Is there any info on the web at present as to what's supposed
->         to work and what doesn't in the upstream kernel?
+On 03-04-15, 18:43, Bartlomiej Zolnierkiewicz wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> Exynos4210 based platforms have switched over to use generic
+> cpufreq driver for cpufreq functionality. So the Exynos
+> specific cpufreq support for these platforms can be removed.
+> 
+> Changes by Bartlomiej:
+> - dropped Exynos5250 support removal for now
+> - updated exynos-cpufreq.[c,h]
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |   11 --
+>  drivers/cpufreq/Makefile             |    1 -
+>  drivers/cpufreq/exynos-cpufreq.c     |    5 +-
+>  drivers/cpufreq/exynos-cpufreq.h     |    9 --
+>  drivers/cpufreq/exynos4210-cpufreq.c |  184 ----------------------------------
+>  5 files changed, 1 insertion(+), 209 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
 
-I think there isn't.
-
->         I'm currently seeing only two out of eight processors come up
->         at boot time using the samsung-linux tree, both A7s.  All
->         eight come up in HYP mode using the Hardkernel linux tree.
-
-That is strange, I would expect the opposite - six out of eight should
-come up on current next and mainline.
-
->
->         There's one obvious error in arch/arm/mach-exynos/firmware.c -- the
->         address in the samsung,secure-firmware node isn't saved
->         anywhere or used anywhere.  Instead the SMC communication area
->         is taken from the samsung,exynos4210-sysram-ns node.
-
-exynos5420.dtsi and sysram-ns.
-
-Best regards,
-Krzysztof
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
