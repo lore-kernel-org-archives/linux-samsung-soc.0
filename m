@@ -1,92 +1,87 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v5 02/13] ARM: dts: Use labels for overriding nodes in exynos4210
-Date: Thu, 14 May 2015 19:12:09 +0900
-Message-ID: <1431598340-3319-3-git-send-email-k.kozlowski.k@gmail.com>
-References: <1431598340-3319-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:34014 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933022AbbENKMy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 06:12:54 -0400
-In-Reply-To: <1431598340-3319-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
+ get_vaddr_frames()
+Date: Thu, 14 May 2015 19:51:23 +0900
+Message-ID: <55547E2B.6080307@samsung.com>
+References: <1431522495-4692-1-git-send-email-jack@suse.cz>
+ <1431522495-4692-10-git-send-email-jack@suse.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1431522495-4692-10-git-send-email-jack@suse.cz>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-samsung-soc@vger.kernel.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, linux-media@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Usage of labels instead of full paths reduces possible mistakes when
-overriding nodes.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- arch/arm/boot/dts/exynos4210.dtsi | 43 +++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 22 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 76b84852f29c..a9a55304e31a 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -52,16 +52,6 @@
- 		};
- 	};
- 
--	pmu_system_controller: system-controller@10020000 {
--		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--				"clkout4", "clkout8", "clkout9";
--		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--			<&clock CLK_XUSBXTI>;
--		#clock-cells = <1>;
--	};
--
- 	sysram: sysram@02020000 {
- 		compatible = "mmio-sram";
- 		reg = <0x02020000 0x20000>;
-@@ -95,18 +85,6 @@
- 		arm,data-latency = <2 2 1>;
- 	};
- 
--	gic: interrupt-controller@10490000 {
--		cpu-offset = <0x8000>;
--	};
--
--	combiner: interrupt-controller@10440000 {
--		samsung,combiner-nr = <16>;
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
--	};
--
- 	mct: mct@10050000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x10050000 0x800>;
-@@ -245,3 +223,24 @@
- 		status = "disabled";
- 	};
- };
-+
-+&gic {
-+	cpu-offset = <0x8000>;
-+};
-+
-+&combiner {
-+	samsung,combiner-nr = <16>;
-+	interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+		     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+		     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+		     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
-+};
-+
-+&pmu_system_controller {
-+	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+			"clkout4", "clkout8", "clkout9";
-+	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
-+	#clock-cells = <1>;
-+};
--- 
-2.1.4
+SGksCgpPbiAyMDE164WEIDA17JuUIDEz7J28IDIyOjA4LCBKYW4gS2FyYSB3cm90ZToKPiBDb252
+ZXJ0IGcyZF91c2VycHRyX2dldF9kbWFfYWRkcigpIHRvIHBpbiBwYWdlcyB1c2luZyBnZXRfdmFk
+ZHJfZnJhbWVzKCkuCj4gVGhpcyByZW1vdmVzIHRoZSBrbm93bGVkZ2UgYWJvdXQgdm1hcyBhbmQg
+bW1hcF9zZW0gbG9ja2luZyBmcm9tIGV4eW5vcwo+IGRyaXZlci4gQWxzbyBpdCBmaXhlcyBhIHBy
+b2JsZW0gdGhhdCB0aGUgZnVuY3Rpb24gaGFzIGJlZW4gbWFwcGluZyB1c2VyCj4gcHJvdmlkZWQg
+YWRkcmVzcyB3aXRob3V0IGhvbGRpbmcgbW1hcF9zZW0uCj4gCj4gU2lnbmVkLW9mZi1ieTogSmFu
+IEthcmEgPGphY2tAc3VzZS5jej4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2cyZC5jIHwgODkgKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyB8IDk3IC0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQo+ICAyIGZpbGVzIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDE1
+NyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2cyZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5j
+Cj4gaW5kZXggODFhMjUwODMwODA4Li4yNjU1MTljMGZlMmQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCj4gQEAgLTE5MCwxMCArMTkwLDggQEAgc3RydWN0IGcy
+ZF9jbWRsaXN0X3VzZXJwdHIgewo+ICAJZG1hX2FkZHJfdAkJZG1hX2FkZHI7Cj4gIAl1bnNpZ25l
+ZCBsb25nCQl1c2VycHRyOwo+ICAJdW5zaWduZWQgbG9uZwkJc2l6ZTsKPiAtCXN0cnVjdCBwYWdl
+CQkqKnBhZ2VzOwo+IC0JdW5zaWduZWQgaW50CQlucGFnZXM7Cj4gKwlzdHJ1Y3QgZnJhbWVfdmVj
+dG9yCSp2ZWM7Cj4gIAlzdHJ1Y3Qgc2dfdGFibGUJCSpzZ3Q7Cj4gLQlzdHJ1Y3Qgdm1fYXJlYV9z
+dHJ1Y3QJKnZtYTsKPiAgCWF0b21pY190CQlyZWZjb3VudDsKPiAgCWJvb2wJCQlpbl9wb29sOwo+
+ICAJYm9vbAkJCW91dF9vZl9saXN0Owo+IEBAIC0zNjMsNiArMzYxLDcgQEAgc3RhdGljIHZvaWQg
+ZzJkX3VzZXJwdHJfcHV0X2RtYV9hZGRyKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+ICB7
+Cj4gIAlzdHJ1Y3QgZzJkX2NtZGxpc3RfdXNlcnB0ciAqZzJkX3VzZXJwdHIgPQo+ICAJCQkJCShz
+dHJ1Y3QgZzJkX2NtZGxpc3RfdXNlcnB0ciAqKW9iajsKPiArCXN0cnVjdCBwYWdlICoqcGFnZXM7
+Cj4gIAo+ICAJaWYgKCFvYmopCj4gIAkJcmV0dXJuOwo+IEBAIC0zODIsMTkgKzM4MSwyMSBAQCBv
+dXQ6Cj4gIAlleHlub3NfZ2VtX3VubWFwX3NndF9mcm9tX2RtYShkcm1fZGV2LCBnMmRfdXNlcnB0
+ci0+c2d0LAo+ICAJCQkJCURNQV9CSURJUkVDVElPTkFMKTsKPiAgCj4gLQlleHlub3NfZ2VtX3B1
+dF9wYWdlc190b191c2VycHRyKGcyZF91c2VycHRyLT5wYWdlcywKPiAtCQkJCQlnMmRfdXNlcnB0
+ci0+bnBhZ2VzLAo+IC0JCQkJCWcyZF91c2VycHRyLT52bWEpOwo+ICsJcGFnZXMgPSBmcmFtZV92
+ZWN0b3JfcGFnZXMoZzJkX3VzZXJwdHItPnZlYyk7Cj4gKwlpZiAoIUlTX0VSUihwYWdlcykpIHsK
+PiArCQlpbnQgaTsKPiAgCj4gLQlleHlub3NfZ2VtX3B1dF92bWEoZzJkX3VzZXJwdHItPnZtYSk7
+Cj4gKwkJZm9yIChpID0gMDsgaSA8IGZyYW1lX3ZlY3Rvcl9jb3VudChnMmRfdXNlcnB0ci0+dmVj
+KTsgaSsrKQo+ICsJCQlzZXRfcGFnZV9kaXJ0eV9sb2NrKHBhZ2VzW2ldKTsKPiArCX0KPiArCXB1
+dF92YWRkcl9mcmFtZXMoZzJkX3VzZXJwdHItPnZlYyk7Cj4gKwlmcmFtZV92ZWN0b3JfZGVzdHJv
+eShnMmRfdXNlcnB0ci0+dmVjKTsKPiAgCj4gIAlpZiAoIWcyZF91c2VycHRyLT5vdXRfb2ZfbGlz
+dCkKPiAgCQlsaXN0X2RlbF9pbml0KCZnMmRfdXNlcnB0ci0+bGlzdCk7Cj4gIAo+ICAJc2dfZnJl
+ZV90YWJsZShnMmRfdXNlcnB0ci0+c2d0KTsKPiAgCWtmcmVlKGcyZF91c2VycHRyLT5zZ3QpOwo+
+IC0KPiAtCWRybV9mcmVlX2xhcmdlKGcyZF91c2VycHRyLT5wYWdlcyk7Cj4gIAlrZnJlZShnMmRf
+dXNlcnB0cik7Cj4gIH0KPiAgCj4gQEAgLTQxMyw2ICs0MTQsNyBAQCBzdGF0aWMgZG1hX2FkZHJf
+dCAqZzJkX3VzZXJwdHJfZ2V0X2RtYV9hZGRyKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+
+ICAJc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWE7Cj4gIAl1bnNpZ25lZCBsb25nIHN0YXJ0LCBl
+bmQ7Cj4gIAl1bnNpZ25lZCBpbnQgbnBhZ2VzLCBvZmZzZXQ7Cj4gKwlzdHJ1Y3QgZnJhbWVfdmVj
+dG9yICp2ZWM7Cj4gIAlpbnQgcmV0Owo+ICAKPiAgCWlmICghc2l6ZSkgewo+IEBAIC00NTYsNjUg
+KzQ1OCwzNyBAQCBzdGF0aWMgZG1hX2FkZHJfdCAqZzJkX3VzZXJwdHJfZ2V0X2RtYV9hZGRyKHN0
+cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAo+ICAJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+
+ICAKPiAgCWF0b21pY19zZXQoJmcyZF91c2VycHRyLT5yZWZjb3VudCwgMSk7Cj4gKwlnMmRfdXNl
+cnB0ci0+c2l6ZSA9IHNpemU7Cj4gIAo+ICAJc3RhcnQgPSB1c2VycHRyICYgUEFHRV9NQVNLOwo+
+ICAJb2Zmc2V0ID0gdXNlcnB0ciAmIH5QQUdFX01BU0s7Cj4gIAllbmQgPSBQQUdFX0FMSUdOKHVz
+ZXJwdHIgKyBzaXplKTsKPiAgCW5wYWdlcyA9IChlbmQgLSBzdGFydCkgPj4gUEFHRV9TSElGVDsK
+PiAtCWcyZF91c2VycHRyLT5ucGFnZXMgPSBucGFnZXM7Cj4gLQo+IC0JcGFnZXMgPSBkcm1fY2Fs
+bG9jX2xhcmdlKG5wYWdlcywgc2l6ZW9mKHN0cnVjdCBwYWdlICopKTsKClRoZSBkZWNsYXJhdGlv
+biB0byBwYWdlcyBpc24ndCBuZWVkZWQgYW55bW9yZSBiZWNhdXNlIHlvdSByZW1vdmVkIGl0LgoK
+PiAtCWlmICghcGFnZXMpIHsKPiAtCQlEUk1fRVJST1IoImZhaWxlZCB0byBhbGxvY2F0ZSBwYWdl
+cy5cbiIpOwo+IC0JCXJldCA9IC1FTk9NRU07Cj4gKwl2ZWMgPSBnMmRfdXNlcnB0ci0+dmVjID0g
+ZnJhbWVfdmVjdG9yX2NyZWF0ZShucGFnZXMpOwoKSSB0aGluayB5b3UgY2FuIHVzZSBnMmRfdXNl
+cnB0ci0+dmVjIHNvIGl0IHNlZW1zIHRoYXQgdmVjIGlzbid0IG5lZWRlZC4KCj4gKwlpZiAoIXZl
+YykKPiAgCQlnb3RvIGVycl9mcmVlOwo+IC0JfQo+ICAKPiAtCWRvd25fcmVhZCgmY3VycmVudC0+
+bW0tPm1tYXBfc2VtKTsKPiAtCXZtYSA9IGZpbmRfdm1hKGN1cnJlbnQtPm1tLCB1c2VycHRyKTsK
+CkZvciB2bWEsIGRpdHRvLgoKVGhhbmtzLApJbmtpIERhZQoKWy0tU05JUC0tXQpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
