@@ -1,98 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 2/4] ARM: multi_v7_defconfig: Enable PMIC and MUIC drivers for Exynos boards
-Date: Fri, 15 May 2015 21:49:00 +0900
-Message-ID: <1431694142-32141-3-git-send-email-k.kozlowski.k@gmail.com>
-References: <1431694142-32141-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431694142-32141-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: dts: Add syscon property to the MIPI phy in exynos5420
+Date: Fri, 15 May 2015 22:22:39 +0900
+Message-ID: <CAJKOXPd7=wnjCd6Xz9ZNuvbxWi=cSr+eRj9YdPWA0PHR+AOTeA@mail.gmail.com>
+References: <1431607240-14549-1-git-send-email-tomeu.vizoso@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431607240-14549-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+2015-05-14 21:40 GMT+09:00 Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>:
+> Since e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression b=
+y
+> adding support for PMU regmap") the syscon property is required in
+> samsung,s5pv210-mipi-video-phy nodes, but this DTS hadn't been update=
+d
+> yet.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8oXa1LcwEujcA@public.gmane.org=
+k>
+> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Krzysztof Koz=C5=82owski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> --
 
-Enable drivers for PMICs and MUICs present on Exynos-based devices:
- - max14577: charger, fuel gauge (max17040), regulator,
-   used on: Gear 1, Gear 2,
- - max7693: charger, fuel gauge (max17042),
-   used on: Trats2,
- - s5m/s2mps: RTC, clock,
-   used on: Arndale, Arndale Octa, Gear 1, Gear 2
+Triple-dash please, because this won't be cut by "git am".
 
-This allows full usage of charging stack on these devices along with RTC
-and 32 kHz clocks.
+Everything else looks fine, thank you.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-The I2C_GPIO is necessary for MAX77693 on Trats2 because the device is
-wired to Exynos4412 over GPIO.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/multi_v7_defconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index d524d2e9633c..6a6a292c5bf8 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -280,6 +280,7 @@ CONFIG_I2C_DESIGNWARE_PLATFORM=y
- CONFIG_I2C_DIGICOLOR=m
- CONFIG_I2C_GPIO=m
- CONFIG_I2C_EXYNOS5=y
-+CONFIG_I2C_GPIO=y
- CONFIG_I2C_MV64XXX=y
- CONFIG_I2C_RIIC=y
- CONFIG_I2C_S3C2410=y
-@@ -328,7 +329,11 @@ CONFIG_GPIO_SYSCON=y
- CONFIG_GPIO_TPS6586X=y
- CONFIG_GPIO_TPS65910=y
- CONFIG_BATTERY_SBS=y
-+CONFIG_BATTERY_MAX17040=y
-+CONFIG_BATTERY_MAX17042=y
-+CONFIG_CHARGER_MAX14577=y
- CONFIG_CHARGER_TPS65090=y
-+CONFIG_CHARGER_MAX77693=y
- CONFIG_POWER_RESET_AS3722=y
- CONFIG_POWER_RESET_GPIO=y
- CONFIG_POWER_RESET_GPIO_RESTART=y
-@@ -357,8 +362,10 @@ CONFIG_MFD_AXP20X=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_I2C=m
- CONFIG_MFD_CROS_EC_SPI=y
-+CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX8907=y
-+CONFIG_MFD_MAX77693=y
- CONFIG_MFD_SEC_CORE=y
- CONFIG_MFD_STMPE=y
- CONFIG_MFD_PALMAS=y
-@@ -374,9 +381,11 @@ CONFIG_REGULATOR_DA9210=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_MFD_SYSCON=y
- CONFIG_POWER_RESET_SYSCON=y
-+CONFIG_REGULATOR_MAX14577=y
- CONFIG_REGULATOR_MAX8907=y
- CONFIG_REGULATOR_MAX8973=y
- CONFIG_REGULATOR_MAX77686=y
-+CONFIG_REGULATOR_MAX77693=y
- CONFIG_REGULATOR_MAX77802=m
- CONFIG_REGULATOR_PALMAS=y
- CONFIG_REGULATOR_S2MPS11=y
-@@ -529,6 +538,7 @@ CONFIG_RTC_DRV_SUN6I=y
- CONFIG_RTC_DRV_SUNXI=y
- CONFIG_RTC_DRV_MV=y
- CONFIG_RTC_DRV_TEGRA=y
-+CONFIG_RTC_DRV_S5M=y
- CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_MV_XOR=y
-@@ -558,6 +568,7 @@ CONFIG_QCOM_GSBI=y
- CONFIG_COMMON_CLK_QCOM=y
- CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_COMMON_CLK_MAX77802=m
-+CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_APQ_MMCC_8084=y
- CONFIG_MSM_GCC_8660=y
- CONFIG_MSM_MMCC_8960=y
--- 
-2.1.4
+Best regards,
+Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
