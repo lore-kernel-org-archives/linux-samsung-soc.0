@@ -1,49 +1,46 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/9] multi_v7_defconfig: Enable options for Exynos Chromebooks
-Date: Fri, 15 May 2015 21:00:02 +0900
-Message-ID: <CAJKOXPer-GF1QuZ7-3J+WKQ=VUQoGmGxSSscf9t32iHzevtK3g@mail.gmail.com>
-References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-	<8715756.FNaYjNk3ol@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8715756.FNaYjNk3ol@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, arm@kernel.org, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 0/4] ARM: multi_v7_defconfig: Stuff for Exynos
+Date: Fri, 15 May 2015 21:48:58 +0900
+Message-ID: <1431694142-32141-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:36432 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161018AbbEOMtx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 May 2015 08:49:53 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-2015-05-15 20:37 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> On Thursday 14 May 2015 17:40:07 Javier Martinez Canillas wrote:
->> Hello arm-soc maintainers,
->>
->> This series is an attempt to reduce the delta between exynos_defconfig
->> and multi_v7_defconfig. Primarily to enable the needed Kconfig symbols
->> to make all Exynos Chromebooks peripherals to be working when building
->> an image using the ARMv7 multi-platform default config.
->>
->> Since the policy is now to now enable as much as possible, I did build
->> as a module all the Kconfig symbols that were tristate and only enable
->> as built-in those that can't be a module because are boolean options.
->>
->> A nice side effect of this series is that I found that many drivers
->> were not working properly when built as a module because the modalias
->> information was not filled properly or at all. I've posted patches to
->> fix the issues I found when testing this series.
->>
->> The patches have been tested on an Exynos5250 Snow, Exynos5420 Peach
->> Pit and Exynos5800 Peach Pi Chromebooks but most config options will
->> be useful for others Exynos5 or other Samsung SoCs.
->>
->> The series is composed of the following patches that can be applied on
->> top of your next/defconfig branch [0].
->
-> Looks good to me. My preferred approach for merging would be to have
-> Kukjin pick up these patches and send a pull request, along with other
-> defconfig changes he might have for exynos.
+Dear Kukjin,
 
-I have some other old patches in the same topic - related to important
-stuff for Exynos boards. I'll rebase them and ask Kukjin for picking.
+The patchset enables various config options on multi_v7 config
+for Exynos boards. The first two patches are actually resend.
+
+Arnd suggested [0] that this can go through your tree.
+
+Patchset is rebased on next-20150515 and Javier's patchset [1]
+(to avoid conflicts around regulators and clocks).
+
+Please let me know if this should be rebased on other commit.
+
+[0] http://www.spinics.net/lists/kernel/msg1991518.html
+[1] http://www.spinics.net/lists/kernel/msg1990767.html
 
 Best regards,
 Krzysztof
+
+
+Krzysztof Kozlowski (4):
+  ARM: multi_v7_defconfig: Enable CPU idle for Exynos
+  ARM: multi_v7_defconfig: Enable PMIC and MUIC drivers for Exynos
+    boards
+  ARM: multi_v7_defconfig: Enable TMU for Exynos
+  ARM: multi_v7_defconfig: Enable OHCI on Exynos
+
+ arch/arm/configs/multi_v7_defconfig | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+-- 
+2.1.4
