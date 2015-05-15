@@ -1,43 +1,62 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: Add syscon property to the MIPI phy in exynos5420
-Date: Fri, 15 May 2015 22:22:39 +0900
-Message-ID: <CAJKOXPd7=wnjCd6Xz9ZNuvbxWi=cSr+eRj9YdPWA0PHR+AOTeA@mail.gmail.com>
-References: <1431607240-14549-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 0/4] ARM: multi_v7_defconfig: Stuff for Exynos
+Date: Fri, 15 May 2015 16:12:20 +0200
+Message-ID: <5555FEC4.6050204@collabora.co.uk>
+References: <1431694142-32141-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431607240-14549-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:48395 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423113AbbEOOMZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 May 2015 10:12:25 -0400
+In-Reply-To: <1431694142-32141-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-2015-05-14 21:40 GMT+09:00 Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>:
-> Since e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression b=
-y
-> adding support for PMU regmap") the syscon property is required in
-> samsung,s5pv210-mipi-video-phy nodes, but this DTS hadn't been update=
-d
-> yet.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8oXa1LcwEujcA@public.gmane.org=
-k>
-> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Krzysztof Koz=C5=82owski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> --
+Hello Krzysztof,
 
-Triple-dash please, because this won't be cut by "git am".
+On 05/15/2015 02:48 PM, Krzysztof Kozlowski wrote:
+> Dear Kukjin,
+> 
+> The patchset enables various config options on multi_v7 config
+> for Exynos boards. The first two patches are actually resend.
+> 
+> Arnd suggested [0] that this can go through your tree.
+> 
+> Patchset is rebased on next-20150515 and Javier's patchset [1]
+> (to avoid conflicts around regulators and clocks).
+> 
+> Please let me know if this should be rebased on other commit.
+> 
+> [0] http://www.spinics.net/lists/kernel/msg1991518.html
+> [1] http://www.spinics.net/lists/kernel/msg1990767.html
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> Krzysztof Kozlowski (4):
+>   ARM: multi_v7_defconfig: Enable CPU idle for Exynos
+>   ARM: multi_v7_defconfig: Enable PMIC and MUIC drivers for Exynos
+>     boards
+>   ARM: multi_v7_defconfig: Enable TMU for Exynos
+>   ARM: multi_v7_defconfig: Enable OHCI on Exynos
+> 
+>  arch/arm/configs/multi_v7_defconfig | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
 
-Everything else looks fine, thank you.
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On a first look, I agree with all the Kconfig symbols but I noticed that
+you are adding them to be built-in while the current policy for multi_v7
+is to build as much as possible as a module.
+
+Could you please add as =m for all the tristate symbols that can be build
+as a module?
 
 Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Javier
