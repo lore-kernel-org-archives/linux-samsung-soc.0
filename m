@@ -1,89 +1,117 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 7/9] ARM: multi_v7_defconfig: Enable options for Exynos
- display support
-Date: Fri, 15 May 2015 10:08:56 +0900
-Message-ID: <CAJKOXPdWb3onJcTOSGJpaqwE4NWd=QN4FDarWj1jVZM1sTv1VQ@mail.gmail.com>
-References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1431618016-2087-8-git-send-email-javier.martinez@collabora.co.uk>
-	<CAJKOXPfSZnrpv2g=T-UyYi-_cSN=g9DG4e8eKszY+a_rVknTqw@mail.gmail.com>
-	<CABxcv=kyM8KCp+QtJrrjuBO+hXx1Y-9xYOZGQx8BWyOdLqsCiA@mail.gmail.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
+Date: Fri, 15 May 2015 07:06:19 +0530
+Message-ID: <CANAwSgTY17oAc3T0uE3CHaha02ddriJb-YgtYLXUofysfJiF4Q@mail.gmail.com>
+References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
+ <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
+ <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
+ <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
+ <CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com> <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f42.google.com ([209.85.216.42]:46635 "EHLO
-	mail-vn0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933661AbbEOBI5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 21:08:57 -0400
-In-Reply-To: <CABxcv=kyM8KCp+QtJrrjuBO+hXx1Y-9xYOZGQx8BWyOdLqsCiA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-2015-05-15 9:58 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
-> Hello Krzysztof,
->
-> On Fri, May 15, 2015 at 2:36 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> 2015-05-15 0:40 GMT+09:00 Javier Martinez Canillas
->> <javier.martinez@collabora.co.uk>:
->>> Many Exynos devices have devices attached to their display ports.
->>> This patch enables the needed Kconfig options to support different
->>> configuration such as simple panel, embedded DisplayPort (eDP) to
->>> LVDS bridges and HDMI displays.
+Hi Krzysztof,
+
+I will verify this and test it.
+
+-Anand Moon
+
+On 15 May 2015 at 05:42, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> 2015-05-15 1:16 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>> On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>>> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>>>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+>>>>>> device.
+>>>>>>
+>>>>>> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+>>>>>> Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>>> ---
+>>>>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
+>>>>>>  1 file changed, 25 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>>>>> index 9446e28..cd78816 100644
+>>>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>>>>> @@ -319,6 +319,31 @@
+>>>>>>                 #cooling-cells = <2>;
+>>>>>>                 cooling-levels = <0 130 170 230>;
+>>>>>>         };
+>>>>>> +
+>>>>>> +       tmu@10060000 {
+>>>>>
+>>>>> Here and for other overrides please use label notation, like:
+>>>>>
+>>>>> &tmu_cpu0 {
+>>>>>               ...
+>>>>> };
+>>>>>
+>>>>>> +               vtmu-supply = <&ldo10_reg>;
+>>>>>
+>>>>> I am curious, how did you find that LDO10 supplies TMU unit?
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>
+>>>> Hi Krzysztof,
+>>>>
+>>>> I have re-base my work on earlier Lukasz Majewski patches.
+>>>>
+>>>> https://patchwork.kernel.org/patch/5693201/
+>>>
+>>> NAK.
+>>> I am sorry, but this is not sufficient explanation. Actually such
+>>> explanation could mean that you did just blindly copied everything
+>>> instead of developing it.
+>>>
+>>> You cannot use some regulator here just because some Exynos4 boards
+>>> use it. You have to be sure that this regulator supplies this part of
+>>> SoC or device.
 >>
->> Enabling the display would be nice but for some quite long time we had
->> issues with DRM on Exynos. exynos_defconfig has it enabled and most of
->> boards boot fine with it. Exception is Arndale 5250:
->
-> Yes, like I said in the other thread, the fact that Exynos DRM is
-> working fine now on most boards is mostly because the bugs were
-> exposed when the Exynos DRM options were enabled.
-
-I saw your response in email 0/9 but let us stick to one thread.
-So these are my only concerns - instability in the past.
-
->> http://storage.kernelci.org/next/next-20150514/arm-exynos_defconfig/lab-khilman/boot-exynos5250-arndale.html
->> [    1.630290] [drm:exynos_dp_bind] *ERROR* failed: of_get_videomode() : -22
->> [    1.637071] exynos-drm exynos-drm: failed to bind
->> 145b0000.dp-controller (ops exynos_dp_ops): -22
->> [    1.646504] exynos-drm exynos-drm: master bind failed: -22
->> [    1.651391] exynos-drm: probe of exynos-drm failed with error -22
+>> Hi Krzysztof,
 >>
->
-> Ajay Kumar changed the DT bindings for the Exynos DRM Display Panel
-> driver some time ago but it seems that the Arndale 5250 DTS was never
-> updated. Something along the lines of commit [0] is needed.
-
-Thanks,
-
->
->> Anyway it is not like I am against it... just wondering. On the other
->> hand enabling it could help in early detection of errors.
+>> After going through the schematics, I came to understanding that their is
+>> missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
 >>
+>> Below is the schematic of the board.
+>>
+>> http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
+>>
+>>   ldo18_reg: LDO18 {
+>>                                          regulator-name = "vdd_ldo18";
+>>                                          regulator-min-microvolt = <1800000>;
+>>                                          regulator-max-microvolt = <1800000>;
+>>                                          regulator-always-on;
+>>                                };
 >
-> I think that not enabling these options will just make latent bugs to
-> not be exposed. As an example I found that module auto-loading was
-> broken for the driver of the PTN3460 eDP to LVDS bridge used in the
-> Exynos5250 Snow Chromebook and already posted a fix [1].
-
-Right, enabling the options helps in exposing problems so they could
-be spotted and fixed.
-
-
-> I would had never found that bug if wouldn't had tried enabling these
-> options in multi_v7 as a module. Also remember that the consumer
-> version of these machines don't have a serial console so for users
-> building images with multi_v7, not having display support means that
-> the machine is pretty useless.
-
-That is indeed good reason.
-
-FWIW, I tested multi_v7 with your patches on Exynos4412 Trats2 board
-and it worked fine.
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
+>
+> I think the schematics are missing some of details but it can be deducted that:
+> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
+> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
+> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
+> S2MPS11 PMIC.
+> 3. I confirmed with the Exynos5422 datasheet that these
+> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
+>
+> So the LDO7 it is... but before using it there is a caveat. The LDO7
+> is also connected to VDD of MIPI, HDMI and few more. So when you use
+> this regulator in TMU it may be turned off by TMU driver (e.g. during
+> unbind). In such case these other blocks also should be tested and
+> checked whether they take this regulator and enable it.
+>
+> Best regards,
+> Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
