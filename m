@@ -1,112 +1,43 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
-Date: Fri, 15 May 2015 09:12:11 +0900
-Message-ID: <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw@mail.gmail.com>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
-	<1431499020-3912-3-git-send-email-linux.amoon@gmail.com>
-	<CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
-	<CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
-	<CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
-	<CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com>
+Subject: Re: [PATCH 0/9] multi_v7_defconfig: Enable options for Exynos Chromebooks
+Date: Fri, 15 May 2015 09:18:10 +0900
+Message-ID: <CAJKOXPeDV=0agQdJ2G7x3ok4wnX66nZ_SF=cGQOW8N96=GnDJA@mail.gmail.com>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f46.google.com ([209.85.216.46]:45474 "EHLO
-	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933532AbbEOAMM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 May 2015 20:12:12 -0400
-In-Reply-To: <CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-2015-05-15 1:16 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->>>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->>>>> device.
->>>>>
->>>>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
->>>>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
->>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>> ---
->>>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
->>>>>  1 file changed, 25 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>> index 9446e28..cd78816 100644
->>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>> @@ -319,6 +319,31 @@
->>>>>                 #cooling-cells = <2>;
->>>>>                 cooling-levels = <0 130 170 230>;
->>>>>         };
->>>>> +
->>>>> +       tmu@10060000 {
->>>>
->>>> Here and for other overrides please use label notation, like:
->>>>
->>>> &tmu_cpu0 {
->>>>               ...
->>>> };
->>>>
->>>>> +               vtmu-supply = <&ldo10_reg>;
->>>>
->>>> I am curious, how did you find that LDO10 supplies TMU unit?
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>
->>> Hi Krzysztof,
->>>
->>> I have re-base my work on earlier Lukasz Majewski patches.
->>>
->>> https://patchwork.kernel.org/patch/5693201/
->>
->> NAK.
->> I am sorry, but this is not sufficient explanation. Actually such
->> explanation could mean that you did just blindly copied everything
->> instead of developing it.
->>
->> You cannot use some regulator here just because some Exynos4 boards
->> use it. You have to be sure that this regulator supplies this part of
->> SoC or device.
+2015-05-15 0:40 GMT+09:00 Javier Martinez Canillas
+<javier.martinez@collabora.co.uk>:
+> Hello arm-soc maintainers,
 >
-> Hi Krzysztof,
+> This series is an attempt to reduce the delta between exynos_defconfig
+> and multi_v7_defconfig. Primarily to enable the needed Kconfig symbols
+> to make all Exynos Chromebooks peripherals to be working when building
+> an image using the ARMv7 multi-platform default config.
 >
-> After going through the schematics, I came to understanding that their is
-> missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
+> Since the policy is now to now enable as much as possible, I did build
+> as a module all the Kconfig symbols that were tristate and only enable
+> as built-in those that can't be a module because are boolean options.
 >
-> Below is the schematic of the board.
+> A nice side effect of this series is that I found that many drivers
+> were not working properly when built as a module because the modalias
+> information was not filled properly or at all. I've posted patches to
+> fix the issues I found when testing this series.
 >
-> http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
->
->   ldo18_reg: LDO18 {
->                                          regulator-name = "vdd_ldo18";
->                                          regulator-min-microvolt = <1800000>;
->                                          regulator-max-microvolt = <1800000>;
->                                          regulator-always-on;
->                                };
+> The patches have been tested on an Exynos5250 Snow, Exynos5420 Peach
+> Pit and Exynos5800 Peach Pi Chromebooks but most config options will
+> be useful for others Exynos5 or other Samsung SoCs.
 
-The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
-
-I think the schematics are missing some of details but it can be deducted that:
-1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
-pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
-2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
-S2MPS11 PMIC.
-3. I confirmed with the Exynos5422 datasheet that these
-VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
-
-So the LDO7 it is... but before using it there is a caveat. The LDO7
-is also connected to VDD of MIPI, HDMI and few more. So when you use
-this regulator in TMU it may be turned off by TMU driver (e.g. during
-unbind). In such case these other blocks also should be tested and
-checked whether they take this regulator and enable it.
+I think enabling these config options would help using the multi_v7 on
+Exynos boards. I have doubts only for patch 7 (DRM), so for rest of
+them:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
