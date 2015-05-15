@@ -1,135 +1,71 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible option
-Date: Thu, 14 May 2015 19:52:10 -0500
-Message-ID: <20150515005210.GA31534@saruman.tx.rr.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
- <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
-Reply-To: <balbi@ti.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 7/9] ARM: multi_v7_defconfig: Enable options for Exynos
+ display support
+Date: Fri, 15 May 2015 02:58:40 +0200
+Message-ID: <CABxcv=kyM8KCp+QtJrrjuBO+hXx1Y-9xYOZGQx8BWyOdLqsCiA@mail.gmail.com>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1431618016-2087-8-git-send-email-javier.martinez@collabora.co.uk>
+	<CAJKOXPfSZnrpv2g=T-UyYi-_cSN=g9DG4e8eKszY+a_rVknTqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.cle>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPfSZnrpv2g=T-UyYi-_cSN=g9DG4e8eKszY+a_rVknTqw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Krzysztof,
 
-Hi,
+On Fri, May 15, 2015 at 2:36 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> 2015-05-15 0:40 GMT+09:00 Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk>:
+>> Many Exynos devices have devices attached to their display ports.
+>> This patch enables the needed Kconfig options to support different
+>> configuration such as simple panel, embedded DisplayPort (eDP) to
+>> LVDS bridges and HDMI displays.
+>
+> Enabling the display would be nice but for some quite long time we had
+> issues with DRM on Exynos. exynos_defconfig has it enabled and most of
+> boards boot fine with it. Exception is Arndale 5250:
 
-On Wed, Apr 22, 2015 at 04:04:10PM -0700, Arun Ramamurthy wrote:
-> Most of the phy providers use "select" to enable GENERIC_PHY. Since select
-> is only recommended when the config is not visible, GENERIC_PHY is changed
-> an invisible option. To maintain consistency, all phy providers are chang=
-ed
-> to "select" GENERIC_PHY and all non-phy drivers use "depends on" when the
-> phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
-> dependency, so it is left as "select".
->=20
-> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-> ---
->  drivers/ata/Kconfig                       | 1 -
->  drivers/media/platform/exynos4-is/Kconfig | 2 +-
->  drivers/phy/Kconfig                       | 4 ++--
->  drivers/usb/host/Kconfig                  | 4 ++--
->  drivers/video/fbdev/exynos/Kconfig        | 2 +-
->  5 files changed, 6 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> index 5f60155..6d2e881 100644
-> --- a/drivers/ata/Kconfig
-> +++ b/drivers/ata/Kconfig
-> @@ -301,7 +301,6 @@ config SATA_MV
->  	tristate "Marvell SATA support"
->  	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
->  		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
-> -	select GENERIC_PHY
->  	help
->  	  This option enables support for the Marvell Serial ATA family.
->  	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
-> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/pl=
-atform/exynos4-is/Kconfig
-> index b7b2e47..b6f3eaa 100644
-> --- a/drivers/media/platform/exynos4-is/Kconfig
-> +++ b/drivers/media/platform/exynos4-is/Kconfig
-> @@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
->  config VIDEO_S5P_MIPI_CSIS
->  	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
->  	depends on REGULATOR
-> -	select GENERIC_PHY
-> +	depends on GENERIC_PHY
->  	help
->  	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
->  	  receiver (MIPI-CSIS) devices.
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 2962de2..edecdb1 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -5,7 +5,7 @@
->  menu "PHY Subsystem"
-> =20
->  config GENERIC_PHY
-> -	bool "PHY Core"
-> +	bool
->  	help
->  	  Generic PHY support.
-> =20
-> @@ -72,7 +72,7 @@ config PHY_MIPHY365X
->  config PHY_RCAR_GEN2
->  	tristate "Renesas R-Car generation 2 USB PHY driver"
->  	depends on ARCH_SHMOBILE
-> -	depends on GENERIC_PHY
-> +	select GENERIC_PHY
+Yes, like I said in the other thread, the fact that Exynos DRM is
+working fine now on most boards is mostly because the bugs were
+exposed when the Exynos DRM options were enabled.
 
-so some you changed from depends to select...
+> http://storage.kernelci.org/next/next-20150514/arm-exynos_defconfig/lab-khilman/boot-exynos5250-arndale.html
+> [    1.630290] [drm:exynos_dp_bind] *ERROR* failed: of_get_videomode() : -22
+> [    1.637071] exynos-drm exynos-drm: failed to bind
+> 145b0000.dp-controller (ops exynos_dp_ops): -22
+> [    1.646504] exynos-drm exynos-drm: master bind failed: -22
+> [    1.651391] exynos-drm: probe of exynos-drm failed with error -22
+>
 
->  	help
->  	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
-> =20
-> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index 5ad60e4..e2197e2 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
->  config USB_EHCI_HCD_STI
->  	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
->  	depends on ARCH_STI && OF
-> -	select GENERIC_PHY
-> +	depends on GENERIC_PHY
+Ajay Kumar changed the DT bindings for the Exynos DRM Display Panel
+driver some time ago but it seems that the Arndale 5250 DTS was never
+updated. Something along the lines of commit [0] is needed.
 
-while others you changed from select to depends.
+> Anyway it is not like I am against it... just wondering. On the other
+> hand enabling it could help in early detection of errors.
+>
 
-NAK.
+I think that not enabling these options will just make latent bugs to
+not be exposed. As an example I found that module auto-loading was
+broken for the driver of the PTN3460 eDP to LVDS bridge used in the
+Exynos5250 Snow Chromebook and already posted a fix [1].
 
---=20
-balbi
+I would had never found that bug if wouldn't had tried enabling these
+options in multi_v7 as a module. Also remember that the consumer
+version of these machines don't have a serial console so for users
+building images with multi_v7, not having display support means that
+the machine is pretty useless.
 
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> Best regards,
+> Krzysztof
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Best regards,
+Javier
 
-iQIcBAEBAgAGBQJVVUM6AAoJEIaOsuA1yqRE1EwP/RDMwkCFyZHRfZL/OOXOfdof
-EFZFSuW7QcNT5MceiWlbo0uWjo7xiUSSyHUe4/D66pntOQEWobnJhQJrqQA5WoPl
-+c74g5NE/dkjdOmPcHoA9nyfi4M+uW7X1JI34+Y2oSfDAETWKNu5QGxTFulm9tKp
-4vNODYmU2lbe+4+xl71iSYyjbkpliuhM/sRj6P2hNhV24kysfsL1Nqh5dEatR/un
-XvBqVxxDAMXe7T647CI9R+urW1zQ2ix8ALVcYBD9lot4gDL5Lru1zadHkOBx7RPr
-43wI9PSgEIb/Z+Ur6M0b4OsJkq0VVK42dkRd3gMyKeC7Djf2nfSU/XmtyWkewTwO
-1ACWBo+9lnpIvGiblkZFtuNqehTupdVvGakXrRXojtIytt8ipCVGDYsl//IPmahC
-JkZG4BnhsLgmXYlwSYlDEtmE/82Mg7w1n2AyLjbWgwbkbzZmT+iYiLiorhlNJO9H
-U+kq+cd0RQK3mQqRc8GiE6Y2OeLoOWzRgQKrcFhQ5jrIbeEwqhAnxAH35uHywcgp
-Mx4VmyOQRuNWkytQJEj0WNetvkwjs6pVRjyxPgs+T7h9JKuPxGTlkhYmLoczz8zx
-5J3EKJ2c6/PpRYdYXpl18dFdRhaDDV6R0rSHCBdqw/G8uczcGxifNHErfnAlIs/h
-OltLWaE+xPlWhGZS0xSx
-=urxV
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+[0]: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=0a0752c6ee58f28a29e78f1a8c38f2f1b11cba9f
+[1]: https://lkml.org/lkml/2015/5/14/363
