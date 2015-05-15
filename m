@@ -1,117 +1,106 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
-Date: Fri, 15 May 2015 07:06:19 +0530
-Message-ID: <CANAwSgTY17oAc3T0uE3CHaha02ddriJb-YgtYLXUofysfJiF4Q@mail.gmail.com>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
- <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
- <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
- <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
- <CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com> <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw@mail.gmail.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH 1/1] drm/bridge: ptn3460: Fix I2C ID table to match the
+ reported modalias
+Date: Fri, 15 May 2015 11:21:05 +0200
+Message-ID: <20150515092103.GF4984@ulmo.nvidia.com>
+References: <1431613889-32737-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1901050635=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1431613889-32737-1-git-send-email-javier.martinez@collabora.co.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Doug Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+--===============1901050635==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1Y7d0dPL928TPQbc"
+Content-Disposition: inline
 
-I will verify this and test it.
+--1Y7d0dPL928TPQbc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Anand Moon
+On Thu, May 14, 2015 at 04:31:29PM +0200, Javier Martinez Canillas wrote:
+> I2C drivers that support OF, have both an I2C and OF device ID tables
+> that are used to fill the supported module aliases. But currently the
+> I2C core only uses the OF table to match a device with a driver and
+> the aliases information are always reported in the form i2c:<name>.
+>=20
+> The client->name is used as the name postfix and when booting with OF
+> this is obtained with of_modalias_node() which drops the compatible
+> string vendor prefix.
+>=20
+> So for I2C drivers, the I2C and OF device ID tables should be keep in
+> sync in order to make module auto-loading to work but the I2C device
+> entries shouldn't have the vendor prefix since that is not reported.
+>=20
+> Before this patch:
+>=20
+> MODALIAS=3Di2c:ptn3460
+>=20
+> $ modinfo | grep alias
+> alias:          i2c:nxp,ptn3460
+> alias:          of:N*T*Cnxp,ptn3460*
+>=20
+> After this patch:
+>=20
+> MODALIAS=3Di2c:ptn3460
+>=20
+> $ modinfo | grep alias
+> alias:          i2c:ptn3460
+> alias:          of:N*T*Cnxp,ptn3460*
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/bridge/ptn3460.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 15 May 2015 at 05:42, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> 2015-05-15 1:16 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->> On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>>> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>>>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->>>>>> device.
->>>>>>
->>>>>> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
->>>>>> Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>>> ---
->>>>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
->>>>>>  1 file changed, 25 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>>> index 9446e28..cd78816 100644
->>>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>>> @@ -319,6 +319,31 @@
->>>>>>                 #cooling-cells = <2>;
->>>>>>                 cooling-levels = <0 130 170 230>;
->>>>>>         };
->>>>>> +
->>>>>> +       tmu@10060000 {
->>>>>
->>>>> Here and for other overrides please use label notation, like:
->>>>>
->>>>> &tmu_cpu0 {
->>>>>               ...
->>>>> };
->>>>>
->>>>>> +               vtmu-supply = <&ldo10_reg>;
->>>>>
->>>>> I am curious, how did you find that LDO10 supplies TMU unit?
->>>>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>
->>>> Hi Krzysztof,
->>>>
->>>> I have re-base my work on earlier Lukasz Majewski patches.
->>>>
->>>> https://patchwork.kernel.org/patch/5693201/
->>>
->>> NAK.
->>> I am sorry, but this is not sufficient explanation. Actually such
->>> explanation could mean that you did just blindly copied everything
->>> instead of developing it.
->>>
->>> You cannot use some regulator here just because some Exynos4 boards
->>> use it. You have to be sure that this regulator supplies this part of
->>> SoC or device.
->>
->> Hi Krzysztof,
->>
->> After going through the schematics, I came to understanding that their is
->> missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
->>
->> Below is the schematic of the board.
->>
->> http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
->>
->>   ldo18_reg: LDO18 {
->>                                          regulator-name = "vdd_ldo18";
->>                                          regulator-min-microvolt = <1800000>;
->>                                          regulator-max-microvolt = <1800000>;
->>                                          regulator-always-on;
->>                                };
->
-> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
->
-> I think the schematics are missing some of details but it can be deducted that:
-> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
-> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
-> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
-> S2MPS11 PMIC.
-> 3. I confirmed with the Exynos5422 datasheet that these
-> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
->
-> So the LDO7 it is... but before using it there is a caveat. The LDO7
-> is also connected to VDD of MIPI, HDMI and few more. So when you use
-> this regulator in TMU it may be turned off by TMU driver (e.g. during
-> unbind). In such case these other blocks also should be tested and
-> checked whether they take this regulator and enable it.
->
-> Best regards,
-> Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied, thanks.
+
+Thierry
+
+--1Y7d0dPL928TPQbc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVVbp9AAoJEN0jrNd/PrOh0X0QAKdZMamtIk3nWGAX+m3VuR/Q
+hoMzSHdVr3IKW4Qja5LVvLP7hdYtWQ4ECN28gztwt+IhFGe7CjcyZZCrcwhO1mLn
+oX3zv63ZpZIYDZ6wF/jQYEzNCqzYMEyMGcnSFbQx8i5xAxFIIHDB7ObHpvezciUB
+L5ZKdDdGKQ1ZYYqWf0/b2XOZSvuNudvsD8f5sneyRW/Ng4dwHYGORp8USslhYYMY
+4edsVmf1EaAAQa5cw/i3IJKLqPeOnmNZDJ0Lpn25/Y36M28XUhBw4FIqCLwXASA4
+aq+6VNAU6wXeFzwPMJyc/WWhNUFpf8YSCIkEcdkGQSQwCEBTRBM7ovf9jUEfNrPb
+jhl/MzRDx34oihKKyReo7RWpv/XiRXUSQoxNDxo/r9LL99pfr3CJ6rWF0NuDfUUs
+WfW6VcidKoG4zaGDjCRnqaD/Z+rUjYI6wYh+Rf5p6c7GXwwNK1k33kvPdbp6qV06
+mOMgIt0eAPWjVWEcjlNC8JKRz2mLzBIIBHUnUbWYq38ahUp9ptUbcs01CUNz6qZ0
+TtUWX4M/Yql9CJwyRTVLOaafo2ZAM9TRwz+N/OQvYIyGaJg8Ob6LeQu321oYfz/r
+WhyOA0FetmgmoB0GTtgS+fnpO47u1fCrksimVIn1oBGvePE9UUPST8eESg34lsty
+sPMm2QvltU1be/EJJQqu
+=p3e9
+-----END PGP SIGNATURE-----
+
+--1Y7d0dPL928TPQbc--
+
+--===============1901050635==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============1901050635==--
