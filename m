@@ -1,246 +1,147 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
-Date: Sat, 16 May 2015 09:22:36 +0530
-Message-ID: <CANAwSgQDqATS8WcM4YF1v2WVgygoguMdY3_L3EDudgDBQvkXJw@mail.gmail.com>
-References: <1428946441-17058-1-git-send-email-b.zolnierkie@samsung.com>
- <5439319.JYC6t7bzy4@amdc1032> <7hsibtavuz.fsf@deeprootsystems.com>
- <4008289.pQOxzKW0Ir@amdc1032> <55563152.3000407@collabora.co.uk>
+From: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Sat, 16 May 2015 14:14:05 +0300
+Message-ID: <5557267D.7080209@kapsi.fi>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>	<1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>	<20150507063953.GC32399@codeaurora.org>	<20150507093702.0b58753d@bbrezillon> <20150515174048.4a31af49@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <55563152.3000407@collabora.co.uk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20150515174048.4a31af49@bbrezillon>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, =?windows-1252?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15 May 2015 at 23:18, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Bartlomiej,
+On 05/15/2015 06:40 PM, Boris Brezillon wrote:
+> Hi Stephen,
 >
-> On 04/22/2015 07:37 PM, Bartlomiej Zolnierkiewicz wrote:
->>
->> On Tuesday, April 21, 2015 04:45:56 PM Kevin Hilman wrote:
->>> Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> writes:
->>>
->>> > On Monday, April 20, 2015 02:07:33 PM Kevin Hilman wrote:
->>> >> Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> writes:
->>> >>
->>> >> > Hi,
->>> >> >
->>> >> > This patch series removes the use of Exynos5250 specific support
->>> >> > from exynos-cpufreq driver and enables the use of cpufreq-dt driver
->>> >> > for this platform.  The exynos-cpufreq driver itself is also removed
->>> >> > as it is no longer used/needed after Exynos5250 support removal.
->>> >> >
->>> >> > This patch series has been tested on Exynos5250 based Arndale board.
->>> >> >
->>> >> > Depends on:
->>> >> > - next-20150330 branch of linux-next kernel tree
->>> >> > - "[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4210
->>> >> >   platform" [1]
->>> >> > - "[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
->>> >> >   platform" [2]
->>> >> > - "[PATCH] cpufreq: exynos: remove dead ->need_apll_change method" [3]
->>> >>
->>> >> Any chance you could prepare a branch with all the dependencies for easy
->>> >> testing?
->>> >
->>> > All cpufreq changes with needed dependencies are now availble in
->>> >
->>> >     https://github.com/bzolnier/linux.git
->>> >
->>> > repository and the branch is
->>> >
->>> >     next-20150330-generic-cpufreq-exynos5420-5800-v2
->>>
->>> Great, thanks.
->>>
->>> >> Also, The previous version from Thomas was v12, and this one is neither
->>> >> versioned nor has any reference to what may have changed since that
->>> >
->>> > Please note that Thomas' patchset was split on separate parts (this is
->>> > part #3) and heavily modified so the previous versioning was dropped.
->>> >
->>> > The cover letter of part #1 ("[PATCH 0/6] cpufreq: use generic cpufreq
->>> > drivers for Exynos4210 platform") contains detailed changelog on what has
->>> > been changed since Thomas' original v12 patch series.  Individual Thomas'
->>> > patches which were modified by me also contain such information.
->>> >
->>> > Part #2 ("[PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
->>> > platform") was entirely new code when compared to Thomas' v12 patchset so
->>> > its cover letter doesn't contain such detailed changelog as part #1.
->>> >
->>> > The newly posted part #4 ("[PATCH 0/8] cpufreq: add generic cpufreq driver
->>> > support for Exynos5250/5800 platforms" https://lkml.org/lkml/2015/4/21/314)
->>> > also contains the detailed changelog.
->>> >
->>> > However for part #3 (this one, "[PATCH 0/4] cpufreq: use generic cpufreq
->>> > drivers for Exynos5250 platform") such summary changelog got missed for
->>> > some reason.  Here it is:
->>> > - split Exynos5250 support from the original patch
->>> > - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
->>> > - added CPU regulator supply property for Google Spring board
->>> > - removed exynos-cpufreq driver entirely as it is no longer used/needed
->>>
->>> Great, thanks for clarifying.
->>>
->>> >> version.  Also, on v12, I had several comments[1] and wonder if they've
->>> >> been addressed.
->>> >
->>> > All issues previously reported should have been fixed.  If you still see
->>> > some problems please let me know.
->>> >
->>> > [ I see now that exynos5420-arndale-octa.dts, exynos5420-peach-pit.dts,
->>> >   exynos5420-smdk5420.dts and exynos5800-peach-pi.dts should also have
->>> >   been updated to contain CPU cluster regulator supply properties or else
->>> >   if the default vdd_arm/vdd_kfc regulator state is set to too low value
->>> >   there may be problems with stability when switching to higher than
->>> >   default frequencies.  I have posted v2 version of patch #2/8 of part #4
->>> >   and pushed v2 combined branch on github.  Sorry for the inconvenience. ]
->>>
->>> I've now tested your v2 branch with the bL switcher disabled, CPUidle
->>> enabled and CPUfreq enabled.
->>>
->>> With the default governor set to performance, it fails to boot.  The last
->>> kernel messages on the console are:
->>
->> [ Small explanation for people not following the discussion from
->>   the start:
->>
->>   This testing is relevant to part #4 of the rework: "[PATCH 0/8]
->>   cpufreq: add generic cpufreq driver support for Exynos5250/5800
->>   platforms" (https://lkml.org/lkml/2015/4/21/314"), not this one
->>   which is part #3 and has no known issues. ]
->>
->
-> I know that Exynos5420/5422/5800 is related to part #4 and not #3 but I
-> wanted to answer in this thread since here is where Kevin reported the
-> issue. I tried your next-20150330-generic-cpufreq-exynos5420-5800-v2-debug
-> branch with exynos_defconfig plus CONFIG_BL_SWITCHER disabled and:
->
-> CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
-> CONFIG_ARM_DT_BL_CPUFREQ=y
->
-> By default CONFIG_CPU_FREQ_GOV_PERFORMANCE=y but with that option it fails
-> to boot as well on my Exynos5420 Peach Pit so seems to be exactly what Kevin
-> reported on the Exynos5800 Peach Pi Chromebook.
->
->>> [...]
->>> [    3.426021] cpu cpu0: bL_cpufreq_init: CPU 0 initialized
->>> [    3.431189] cpu cpu4: bL_cpufreq_init: CPU 4 initialized
->>>
->>> However, with the default governor set to userspace it boots fine until
->>> my userspace (ubuntu) tries to enable the ondemand governor, and then it
->>> hangs.
->>>
->>> For it to boot, I have to disable the ondemand governor, and set the
->>> default governor to userspace.
->
-> Disabling CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE and the performance
-> governor and enabling the userpace governor and setting it as default
-> makes the kernel to boot again which is the same behaviour Kevin had.
->
-> Also I can see that the CPUS have a cpufreq and the scaling driver
-> is the arm b.L one:
->
-> # cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_driver
-> arm-big-little
-> arm-big-little
-> arm-big-little
-> arm-big-little
-> arm-big-little
-> arm-big-little
-> arm-big-little
-> arm-big-little
->
->>
->> I've tried with ARM big.LITTLE cpuidle support enabled (I've just noticed
->> that it is not turned on in exynos_defconfig) and my ODROID-XU3 board
->> fails to boot.  This happens even with cpufreq support disabled (hard
->> lockup happens during mmc initialization which is done just after cpufreq
->> initialization).
->>
->> Could you please check if disabling cpuidle support helps?
->
-> I don't have CPUIdle enabled since as you said is not turned on in exynos
-> defconfig by default so I think that is just a red herring.
->
->>
->>> As I reported earlier on Thomas' series, I suspect this is related to
->>> the fact that the higher OPPs aren't really functional without voltage
->>> scaling also supported.
->>
->> Part #4 contains voltage scaling support for arm_big_little[_dt] driver
->> so this should not be a problem any longer.
->>
->> You may try next-20150330-generic-cpufreq-exynos5420-5800-v2-debug
->> branch from my github (with cpufreq debugging printks enabled) to check
->> whether the voltage scaling is indeed done on your board.
->>
->
-> The last boot log shown on the serial console with your debug branch is:
->
-> [    3.078885] cpu cpu0: _get_cluster_clk_and_freq_table: clk: ee516a80 & freq table: ee511540, cluster: 0
-> [    3.088128] cpu cpu0: bL_cpufreq_init: CPU 0 physical_cluster 0
-> [    3.094024] cpu cpu0: bL_cpufreq_init: CPU 1 physical_cluster 0
-> [    3.099912] cpu cpu0: bL_cpufreq_init: CPU 2 physical_cluster 0
-> [    3.105871] cpu cpu0: bL_cpufreq_init: CPU 3 physical_cluster 0
-> [    3.111710] cpu cpu0: bL_cpufreq_init: CPU 0 initialized
-> [    3.117291] cpu cpu4: _get_cluster_clk_and_freq_table: clk: ee516d80 & freq table: ee50c180, cluster: 1
-> [    3.126379] cpu cpu4: bL_cpufreq_init: CPU 4 physical_cluster 1
-> [    3.132276] cpu cpu4: bL_cpufreq_init: CPU 5 physical_cluster 1
-> [    3.138169] cpu cpu4: bL_cpufreq_init: CPU 6 physical_cluster 1
-> [    3.144069] cpu cpu4: bL_cpufreq_init: CPU 7 physical_cluster 1
-> [    3.149967] cpu cpu4: bL_cpufreq_init: CPU 4 initialized
-> [    3.155453] arm_big_little: bL_cpufreq_set_rate: cpu: 4, old cluster: 1, new cluster: 1, freq: 1300000
-> [    3.164551] arm_big_little: bL_cpufreq_set_rate_cluster: cpu 4, cluster: 1, 600 MHz, -1 mV --> 1300 MHz, -1 mV
-> [    3.174646] arm_big_little: bL_cpufreq_register: Registered platform driver: dt-bl
-> [    3.182305] Unable to handle kernel paging request at virtual address 60000186
->
-> so it seems to be a bug in the code and not about OPPs not functional due
-> voltage scaling not working as Kevin guessed.
->
-> However, as Kevin mentioned is strange that the regulator voltages are -1
-> as you can see in the above boot log.
->
-> Also when setting a scaling_setspeed to one of the scaling available
-> frequencies for a given CPU, I see in the log that the frequency is
-> scaled for all the cluster and correctly reported in scaling_cur_freq
-> but the scaled voltage is always reported as -1 again:
->
-> [  899.002840] arm_big_little: bL_cpufreq_set_rate_cluster: cpu 0, cluster: 0, 1800 MHz, -1 mV --> 1100 MHz, -1 mV
-> [  946.153852] arm_big_little: bL_cpufreq_set_rate: cpu: 0, old cluster: 0, new cluster: 0, freq: 1200000
-> [  946.161785] arm_big_little: bL_cpufreq_set_rate_cluster: cpu 0, cluster: 0, 1100 MHz, -1 mV --> 1200 MHz, -1 mV
-> [  975.328748] arm_big_little: bL_cpufreq_set_rate: cpu: 4, old cluster: 1, new cluster: 1, freq: 1200000
-> [  975.336663] arm_big_little: bL_cpufreq_set_rate_cluster: cpu 4, cluster: 1, 600 MHz, -1 mV --> 1200 MHz, -1 mV
->
->>> I'm also seeing the wait_until_divider_stable errors when switching
->>> between the available A7 OPPs.  I'd reported this one earlier as well,
->>> along with the script to reproduce it.
->>
->> I've tried your script and it works fine for me (I only needed to change
->> cpu4 to cpu0 as on ODROID-XU3 CPUs 0,5,6,7 are A7 and 1,2,3,4 are A15).
->>
->> Best regards,
->> --
->> Bartlomiej Zolnierkiewicz
->> Samsung R&D Institute Poland
->> Samsung Electronics
->>
->
-> Best regards,
-> Javier
+> Adding Mikko in the loop (after all, he was the one complaining about
+> this signed long limitation in the first place, and I forgot to add
+> him in the Cc list :-/).
 
-Hi Javier/Bartlomiej,
+I think I got it through linux-tegra anyway, but thanks :)
 
-Below patch helps debug this problem.
+>
+> Mikko, are you okay with the approach proposed by Stephen (adding a
+> new method) ?
 
-http://article.gmane.org/gmane.linux.power-management.general/58549/match=cpufreq+arm_big_little+check+if+frequency+set+correctly
+Yes, sounds good to me. If a driver uses the existing methods with too 
+large frequencies, the issue is pretty discoverable anyway. I think 
+"adjust_rate" sounds a bit too much like it sets the clock's rate, 
+though; perhaps "adjust_rate_request" or something like that?
 
--Anand Moon
+Thanks,
+Mikko
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> On Thu, 7 May 2015 09:37:02 +0200
+> Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
+>
+>> Hi Stephen,
+>>
+>> On Wed, 6 May 2015 23:39:53 -0700
+>> Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>
+>>> On 04/30, Boris Brezillon wrote:
+>>>> Clock rates are stored in an unsigned long field, but ->round_rate()
+>>>> (which returns a rounded rate from a requested one) returns a long
+>>>> value (errors are reported using negative error codes), which can lead
+>>>> to long overflow if the clock rate exceed 2Ghz.
+>>>>
+>>>> Change ->round_rate() prototype to return 0 or an error code, and pass the
+>>>> requested rate as a pointer so that it can be adjusted depending on
+>>>> hardware capabilities.
+>>>>
+>>>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>>> Tested-by: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+>>>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>>>
+>>> This patch is fairly invasive, and it probably doesn't even
+>>> matter for most of these clock providers to be able to round a
+>>> rate above 2GHz.
+>>
+>> Fair enough.
+>>
+>>> I've been trying to remove the .round_rate op
+>>> from the framework by encouraging new features via the
+>>> .determine_rate op.
+>>
+>> Oh, I wasn't aware of that (BTW, that's a good thing).
+>> Maybe this should be clearly stated (both in the struct clk_ops
+>> kerneldoc header and in Documentation/clk.txt).
+>>
+>>> Sadly, we still have to do a flag day and
+>>> change all the .determine_rate ops when we want to add things.
+>>
+>> Yes, but the number of clk drivers implementing ->determine_rate() is
+>> still quite limited compared to those implementing ->round_rate().
+>>
+>>>
+>>> What if we changed determine_rate ops to take a struct
+>>> clk_determine_info (or some better named structure) instead of
+>>> the current list of arguments that it currently takes? Then when
+>>> we want to make these sorts of framework wide changes we can just
+>>> throw a new member into that structure and be done.
+>>
+>> I really like this idea, especially since I was wondering if we could
+>> pass other 'clk rate requirements' like the rounding policy (down,
+>> closest, up), or the maximum clk inaccuracy.
+>>
+>>>
+>>> It doesn't solve the unsigned long to int return value problem
+>>> though. We can solve that by gradually introducing a new op and
+>>> handling another case in the rounding path. If we can come up
+>>> with some good name for that new op like .decide_rate or
+>>> something then it makes things nicer in the long run. I like the
+>>> name .determine_rate though :/
+>
+> Okay, if you want a new method, how about this one:
+>
+> struct clk_adjust_rate_req {
+> 	/* fields filled by the caller */
+> 	unsigned long rate; /* rate is updated by the clk driver */
+> 	unsigned long min;
+> 	unsigned long max;
+>
+> 	/* fields filled by the clk driver */
+> 	struct clk_hw *best_parent;
+> 	unsigned long best_parent_rate;
+>
+> 	/*
+> 	 * new fields I'd like to add at some point:
+> 	 * unsigned long max_inaccuracy;
+> 	 * something about the power consumption constraints :-)
+> 	 */
+> };
+>
+> int (*adjust_rate)(struct clk_hw *hw, struct clk_adjust_rate_req *req);
+>
+>>
+>> Why not changing the ->determine_rate() prototype. As said above, the
+>> number of clk drivers implementing this function is still quite
+>> limited, and I guess we can have an ack for all of them.
+>>
+>>>
+>>> The benefit of all this is that we don't have to worry about
+>>> finding the random clk providers that get added into other
+>>> subsystems and fixing them up. If drivers actually care about
+>>> this problem then they'll be fixed to use the proper op. FYI,
+>>> last time we updated the function signature of .determine_rate we
+>>> broke a couple drivers along the way.
+>>>
+>>
+>> Hm, IMHO, adding a new op is not a good thing. I agree that it eases
+>> the transition, but ITOH you'll have to live with old/deprecated ops in
+>> your clk_ops structure with people introducing new drivers still using
+>> the old ops (see the number of clk drivers implementing ->round_rate()
+>> instead of ->determine_rate()).
+>>
+>> Best Regards,
+>>
+>> Boris
+>>
+>
+>
+>
