@@ -1,59 +1,45 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 0/9] multi_v7_defconfig: Enable options for Exynos Chromebooks
-Date: Sat, 16 May 2015 12:25:11 +0900
-Message-ID: <5556B897.7020102@kernel.org>
-References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>	<8715756.FNaYjNk3ol@wuerfel> <CAJKOXPer-GF1QuZ7-3J+WKQ=VUQoGmGxSSscf9t32iHzevtK3g@mail.gmail.com>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: dts: Add syscon property to the MIPI phy in exynos5420
+Date: Sat, 16 May 2015 12:27:27 +0900
+Message-ID: <5556B91F.20103@kernel.org>
+References: <1431607240-14549-1-git-send-email-tomeu.vizoso@collabora.com> <CAJKOXPd7=wnjCd6Xz9ZNuvbxWi=cSr+eRj9YdPWA0PHR+AOTeA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40109 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S2992586AbbEPDZW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 May 2015 23:25:22 -0400
-In-Reply-To: <CAJKOXPer-GF1QuZ7-3J+WKQ=VUQoGmGxSSscf9t32iHzevtK3g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPd7=wnjCd6Xz9ZNuvbxWi=cSr+eRj9YdPWA0PHR+AOTeA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, arm@kernel.org, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/15/15 21:00, Krzysztof Kozlowski wrote:
-> 2015-05-15 20:37 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->> On Thursday 14 May 2015 17:40:07 Javier Martinez Canillas wrote:
->>> Hello arm-soc maintainers,
->>>
->>> This series is an attempt to reduce the delta between exynos_defconfig
->>> and multi_v7_defconfig. Primarily to enable the needed Kconfig symbols
->>> to make all Exynos Chromebooks peripherals to be working when building
->>> an image using the ARMv7 multi-platform default config.
->>>
->>> Since the policy is now to now enable as much as possible, I did build
->>> as a module all the Kconfig symbols that were tristate and only enable
->>> as built-in those that can't be a module because are boolean options.
->>>
->>> A nice side effect of this series is that I found that many drivers
->>> were not working properly when built as a module because the modalias
->>> information was not filled properly or at all. I've posted patches to
->>> fix the issues I found when testing this series.
->>>
->>> The patches have been tested on an Exynos5250 Snow, Exynos5420 Peach
->>> Pit and Exynos5800 Peach Pi Chromebooks but most config options will
->>> be useful for others Exynos5 or other Samsung SoCs.
->>>
->>> The series is composed of the following patches that can be applied on
->>> top of your next/defconfig branch [0].
+On 05/15/15 22:22, Krzysztof Kozlowski wrote:
+> 2015-05-14 21:40 GMT+09:00 Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>:
+>> Since e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression =
+by
+>> adding support for PMU regmap") the syscon property is required in
+>> samsung,s5pv210-mipi-video-phy nodes, but this DTS hadn't been updat=
+ed
+>> yet.
 >>
->> Looks good to me. My preferred approach for merging would be to have
->> Kukjin pick up these patches and send a pull request, along with other
->> defconfig changes he might have for exynos.
-> 
-OK, I'll in this weekend.
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8p/WX4DV1PbvA@public.gmane.org=
+uk>
+>> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Krzysztof Koz=C5=82owski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>
+>> --
+>=20
+> Triple-dash please, because this won't be cut by "git am".
+>=20
+> Everything else looks fine, thank you.
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>=20
+Applied, thanks for you guys' effort.
 
-> I have some other old patches in the same topic - related to important
-> stuff for Exynos boards. I'll rebase them and ask Kukjin for picking.
-> 
-Yeah, OK.
-
-Thanks,
-Kukjin
+- Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
