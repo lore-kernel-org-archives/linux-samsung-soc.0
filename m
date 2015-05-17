@@ -1,144 +1,92 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v4 2/8] ARM: dts: Use labels for overriding nodes in exynos5250
-Date: Sun, 17 May 2015 17:26:09 +0900
-Message-ID: <1431851175-32624-3-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 3/8] ARM: dts: Remove duplicated I2C7 nodes in exynos5250-snow
+Date: Sun, 17 May 2015 17:26:10 +0900
+Message-ID: <1431851175-32624-4-git-send-email-k.kozlowski.k@gmail.com>
 References: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:34561 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752207AbbEQI0h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 17 May 2015 04:26:37 -0400
 In-Reply-To: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Usage of labels instead of full paths reduces possible mistakes when
-overriding nodes.
+The i2c_7 node (i2c@12CD0000) with LVDS bridge child node was put in
+Exynos5250 Snow DTS file twice. Move the LVDS bridge to proper existing
+i2c_7 node.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi | 82 +++++++++++++++++++--------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+ arch/arm/boot/dts/exynos5250-snow.dts | 46 +++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 257e2f10525d..916871bb3f05 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -241,13 +241,6 @@
- 		clock-names = "mfc";
- 	};
- 
--	rtc: rtc@101E0000 {
--		clocks = <&clock CLK_RTC>;
--		clock-names = "rtc";
--		interrupt-parent = <&pmu_system_controller>;
--		status = "disabled";
--	};
--
- 	tmu: tmu@10060000 {
- 		compatible = "samsung,exynos5250-tmu";
- 		reg = <0x10060000 0x100>;
-@@ -276,26 +269,6 @@
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 1eca97ee4bd6..b7f4122df456 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -177,30 +177,6 @@
  		};
  	};
  
--	serial@12C00000 {
--		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
--		clock-names = "uart", "clk_uart_baud0";
+-	i2c@12CD0000 {
+-		ptn3460: lvds-bridge@20 {
+-			compatible = "nxp,ptn3460";
+-			reg = <0x20>;
+-			powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
+-			reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
+-			edid-emulation = <5>;
+-
+-			ports {
+-				port@0 {
+-					bridge_out: endpoint {
+-						remote-endpoint = <&panel_in>;
+-					};
+-				};
+-
+-				port@1 {
+-					bridge_in: endpoint {
+-						remote-endpoint = <&dp_out>;
+-					};
+-				};
+-			};
+-		};
 -	};
 -
--	serial@12C10000 {
--		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	serial@12C20000 {
--		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	serial@12C30000 {
--		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
- 	sata: sata@122F0000 {
- 		compatible = "snps,dwc-ahci";
- 		samsung,sata-freq = <66>;
-@@ -778,20 +751,6 @@
- 		#phy-cells = <0>;
- 	};
+ 	sound {
+ 		compatible = "google,snow-audio-max98095";
  
--	dp: dp-controller@145B0000 {
--		power-domains = <&pd_disp1>;
--		clocks = <&clock CLK_DP>;
--		clock-names = "dp";
--		phys = <&dp_phy>;
--		phy-names = "dp";
--	};
--
--	fimd: fimd@14400000 {
--		power-domains = <&pd_disp1>;
--		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
--		clock-names = "sclk_fimd", "fimd";
--	};
--
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v1";
- 		reg = <0x12D10000 0x100>;
-@@ -812,3 +771,44 @@
- 		clock-names = "secss";
- 	};
- };
+@@ -507,6 +483,28 @@
+ 	samsung,i2c-sda-delay = <100>;
+ 	samsung,i2c-max-bus-freq = <66000>;
+ 
++	ptn3460: lvds-bridge@20 {
++		compatible = "nxp,ptn3460";
++		reg = <0x20>;
++		powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
++		edid-emulation = <5>;
 +
-+&dp {
-+	power-domains = <&pd_disp1>;
-+	clocks = <&clock CLK_DP>;
-+	clock-names = "dp";
-+	phys = <&dp_phy>;
-+	phy-names = "dp";
-+};
++		ports {
++			port@0 {
++				bridge_out: endpoint {
++					remote-endpoint = <&panel_in>;
++				};
++			};
 +
-+&fimd {
-+	power-domains = <&pd_disp1>;
-+	clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
-+	clock-names = "sclk_fimd", "fimd";
-+};
++			port@1 {
++				bridge_in: endpoint {
++					remote-endpoint = <&dp_out>;
++				};
++			};
++		};
++	};
 +
-+&rtc {
-+	clocks = <&clock CLK_RTC>;
-+	clock-names = "rtc";
-+	interrupt-parent = <&pmu_system_controller>;
-+	status = "disabled";
-+};
-+
-+&serial_0 {
-+	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_1 {
-+	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_2 {
-+	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_3 {
-+	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
+ 	max98095: codec@11 {
+ 		compatible = "maxim,max98095";
+ 		reg = <0x11>;
 -- 
 2.1.4
