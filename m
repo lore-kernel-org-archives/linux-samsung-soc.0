@@ -1,11 +1,22 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v4 7/8] ARM: dts: Use labels for overriding nodes in exynos5440 boards
-Date: Sun, 17 May 2015 17:26:14 +0900
-Message-ID: <1431851175-32624-8-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 2/8] ARM: dts: Use labels for overriding nodes in exynos5250
+Date: Sun, 17 May 2015 17:26:09 +0900
+Message-ID: <1431851175-32624-3-git-send-email-k.kozlowski.k@gmail.com>
 References: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -15,138 +26,119 @@ overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos5440-sd5v1.dts    | 10 ++--
- arch/arm/boot/dts/exynos5440-ssdk5440.dts | 85 +++++++++++++++----------------
- 2 files changed, 47 insertions(+), 48 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi | 82 +++++++++++++++++++--------------------
+ 1 file changed, 41 insertions(+), 41 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
-index 268609a42b2c..a98501bab6fc 100644
---- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
-+++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
-@@ -27,13 +27,13 @@
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 257e2f10525d..916871bb3f05 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -241,13 +241,6 @@
+ 		clock-names = "mfc";
+ 	};
+ 
+-	rtc: rtc@101E0000 {
+-		clocks = <&clock CLK_RTC>;
+-		clock-names = "rtc";
+-		interrupt-parent = <&pmu_system_controller>;
+-		status = "disabled";
+-	};
+-
+ 	tmu: tmu@10060000 {
+ 		compatible = "samsung,exynos5250-tmu";
+ 		reg = <0x10060000 0x100>;
+@@ -276,26 +269,6 @@
  		};
  	};
  
--	gmac: ethernet@00230000 {
--		fixed_phy;
--		phy_addr = <1>;
+-	serial@12C00000 {
+-		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+-		clock-names = "uart", "clk_uart_baud0";
 -	};
 -
- 	spi {
- 		status = "disabled";
+-	serial@12C10000 {
+-		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+-		clock-names = "uart", "clk_uart_baud0";
+-	};
+-
+-	serial@12C20000 {
+-		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+-		clock-names = "uart", "clk_uart_baud0";
+-	};
+-
+-	serial@12C30000 {
+-		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+-		clock-names = "uart", "clk_uart_baud0";
+-	};
+-
+ 	sata: sata@122F0000 {
+ 		compatible = "snps,dwc-ahci";
+ 		samsung,sata-freq = <66>;
+@@ -778,20 +751,6 @@
+ 		#phy-cells = <0>;
  	};
  
+-	dp: dp-controller@145B0000 {
+-		power-domains = <&pd_disp1>;
+-		clocks = <&clock CLK_DP>;
+-		clock-names = "dp";
+-		phys = <&dp_phy>;
+-		phy-names = "dp";
+-	};
+-
+-	fimd: fimd@14400000 {
+-		power-domains = <&pd_disp1>;
+-		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
+-		clock-names = "sclk_fimd", "fimd";
+-	};
+-
+ 	adc: adc@12D10000 {
+ 		compatible = "samsung,exynos-adc-v1";
+ 		reg = <0x12D10000 0x100>;
+@@ -812,3 +771,44 @@
+ 		clock-names = "secss";
+ 	};
  };
 +
-+&gmac {
-+	fixed_phy;
-+	phy_addr = <1>;
++&dp {
++	power-domains = <&pd_disp1>;
++	clocks = <&clock CLK_DP>;
++	clock-names = "dp";
++	phys = <&dp_phy>;
++	phy-names = "dp";
 +};
-diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-index ff55dac6e219..e4443f4e6572 100644
---- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-+++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-@@ -20,59 +20,58 @@
- 		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
- 	};
- 
--	spi_0: spi@D0000 {
--
--		flash: w25q128@0 {
--			#address-cells = <1>;
--			#size-cells = <1>;
--			compatible = "winbond,w25q128";
--			spi-max-frequency = <15625000>;
--			reg = <0>;
--			controller-data {
--				samsung,spi-feedback-delay = <0>;
--			};
-+	fixed-rate-clocks {
-+		xtal {
-+			compatible = "samsung,clock-xtal";
-+			clock-frequency = <50000000>;
-+		};
-+	};
++
++&fimd {
++	power-domains = <&pd_disp1>;
++	clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
++	clock-names = "sclk_fimd", "fimd";
 +};
- 
--			partition@00000 {
--				label = "BootLoader";
--				reg = <0x60000 0x80000>;
--				read-only;
--			};
-+&pcie_0 {
-+	reset-gpio = <&pin_ctrl 5 0>;
-+	status = "okay";
++
++&rtc {
++	clocks = <&clock CLK_RTC>;
++	clock-names = "rtc";
++	interrupt-parent = <&pmu_system_controller>;
++	status = "disabled";
 +};
- 
--			partition@e0000 {
--				label = "Recovery-Kernel";
--				reg = <0xe0000 0x300000>;
--				read-only;
--			};
-+&pcie_1 {
-+	reset-gpio = <&pin_ctrl 22 0>;
-+	status = "okay";
++
++&serial_0 {
++	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
++	clock-names = "uart", "clk_uart_baud0";
 +};
- 
--			partition@3e0000 {
--				label = "CRAM-FS";
--				reg = <0x3e0000 0x700000>;
--				read-only;
--			};
-+&spi_0 {
-+	flash: w25q128@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "winbond,w25q128";
-+		spi-max-frequency = <15625000>;
-+		reg = <0>;
-+		controller-data {
-+			samsung,spi-feedback-delay = <0>;
-+		};
- 
--			partition@ae0000 {
--				label = "User-Data";
--				reg = <0xae0000 0x520000>;
--			};
-+		partition@00000 {
-+			label = "BootLoader";
-+			reg = <0x60000 0x80000>;
-+			read-only;
-+		};
- 
-+		partition@e0000 {
-+			label = "Recovery-Kernel";
-+			reg = <0xe0000 0x300000>;
-+			read-only;
- 		};
- 
--	};
-+		partition@3e0000 {
-+			label = "CRAM-FS";
-+			reg = <0x3e0000 0x700000>;
-+			read-only;
-+		};
- 
--	fixed-rate-clocks {
--		xtal {
--			compatible = "samsung,clock-xtal";
--			clock-frequency = <50000000>;
-+		partition@ae0000 {
-+			label = "User-Data";
-+			reg = <0xae0000 0x520000>;
- 		};
--	};
- 
--	pcie@290000 {
--		reset-gpio = <&pin_ctrl 5 0>;
--		status = "okay";
- 	};
- 
--	pcie@2a0000 {
--		reset-gpio = <&pin_ctrl 22 0>;
--		status = "okay";
--	};
- };
++
++&serial_1 {
++	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
++	clock-names = "uart", "clk_uart_baud0";
++};
++
++&serial_2 {
++	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
++	clock-names = "uart", "clk_uart_baud0";
++};
++
++&serial_3 {
++	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
++	clock-names = "uart", "clk_uart_baud0";
++};
 -- 
 2.1.4
