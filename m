@@ -1,174 +1,152 @@
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH v4 5/8] ARM: dts: Use labels for overriding nodes in exynos542x
-Date: Sun, 17 May 2015 17:26:12 +0900
-Message-ID: <1431851175-32624-6-git-send-email-k.kozlowski.k@gmail.com>
+Subject: [PATCH v4 7/8] ARM: dts: Use labels for overriding nodes in exynos5440 boards
+Date: Sun, 17 May 2015 17:26:14 +0900
+Message-ID: <1431851175-32624-8-git-send-email-k.kozlowski.k@gmail.com>
 References: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:32991 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752586AbbEQI0n (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 May 2015 04:26:43 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Usage of labels instead of full paths reduces possible mistakes when
-overriding nodes. Additionally remove duplicated serial and uart labels
-for serial.
+overriding nodes.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts |  2 +-
- arch/arm/boot/dts/exynos5420.dtsi          | 82 +++++++++++++++---------------
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |  2 +-
- 3 files changed, 43 insertions(+), 43 deletions(-)
+ arch/arm/boot/dts/exynos5440-sd5v1.dts    | 10 ++--
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts | 85 +++++++++++++++----------------
+ 2 files changed, 47 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 146e71118a72..8f4d76c5e11c 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -1027,7 +1027,7 @@
- 	};
- };
- 
--&uart_3 {
-+&serial_3 {
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index db6cd6302667..487d2176605f 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -328,13 +328,6 @@
- 		interrupts = <0 47 0>;
+diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+index 268609a42b2c..a98501bab6fc 100644
+--- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
++++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+@@ -27,13 +27,13 @@
+ 		};
  	};
  
--	rtc: rtc@101E0000 {
--		clocks = <&clock CLK_RTC>;
--		clock-names = "rtc";
--		interrupt-parent = <&pmu_system_controller>;
--		status = "disabled";
+-	gmac: ethernet@00230000 {
+-		fixed_phy;
+-		phy_addr = <1>;
 -	};
 -
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -505,26 +498,6 @@
+ 	spi {
  		status = "disabled";
  	};
  
--	uart_0: serial@12C00000 {
--		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	uart_1: serial@12C10000 {
--		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	uart_2: serial@12C20000 {
--		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
--	uart_3: serial@12C30000 {
--		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
- 	pwm: pwm@12dd0000 {
- 		compatible = "samsung,exynos4210-pwm";
- 		reg = <0x12dd0000 0x100>;
-@@ -540,14 +513,6 @@
- 		#phy-cells = <0>;
- 	};
- 
--	dp: dp-controller@145B0000 {
--		clocks = <&clock CLK_DP1>;
--		clock-names = "dp";
--		phys = <&dp_phy>;
--		phy-names = "dp";
--		power-domains = <&disp_pd>;
--	};
--
- 	mipi_phy: video-phy@10040714 {
- 		compatible = "samsung,s5pv210-mipi-video-phy";
- 		syscon = <&pmu_system_controller>;
-@@ -567,12 +532,6 @@
- 		status = "disabled";
- 	};
- 
--	fimd: fimd@14400000 {
--		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
--		clock-names = "sclk_fimd", "fimd";
--		power-domains = <&disp_pd>;
--	};
--
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v2";
- 		reg = <0x12D10000 0x100>;
-@@ -972,3 +931,44 @@
- 		samsung,pmureg-phandle = <&pmu_system_controller>;
- 	};
  };
 +
-+&dp {
-+	clocks = <&clock CLK_DP1>;
-+	clock-names = "dp";
-+	phys = <&dp_phy>;
-+	phy-names = "dp";
-+	power-domains = <&disp_pd>;
++&gmac {
++	fixed_phy;
++	phy_addr = <1>;
 +};
-+
-+&fimd {
-+	clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
-+	clock-names = "sclk_fimd", "fimd";
-+	power-domains = <&disp_pd>;
-+};
-+
-+&rtc {
-+	clocks = <&clock CLK_RTC>;
-+	clock-names = "rtc";
-+	interrupt-parent = <&pmu_system_controller>;
-+	status = "disabled";
-+};
-+
-+&serial_0 {
-+	clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_1 {
-+	clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_2 {
-+	clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-+
-+&serial_3 {
-+	clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
-+	clock-names = "uart", "clk_uart_baud0";
-+};
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 02eb8b15374f..7d5b386b5ae6 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -990,7 +990,7 @@
+diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+index ff55dac6e219..e4443f4e6572 100644
+--- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
++++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+@@ -20,59 +20,58 @@
+ 		bootargs = "root=/dev/sda2 rw rootwait ignore_loglevel earlyprintk no_console_suspend mem=2048M@0x80000000 mem=6144M@0x100000000 console=ttySAC0,115200";
  	};
- };
  
--&uart_3 {
-+&serial_3 {
- 	status = "okay";
- };
+-	spi_0: spi@D0000 {
+-
+-		flash: w25q128@0 {
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			compatible = "winbond,w25q128";
+-			spi-max-frequency = <15625000>;
+-			reg = <0>;
+-			controller-data {
+-				samsung,spi-feedback-delay = <0>;
+-			};
++	fixed-rate-clocks {
++		xtal {
++			compatible = "samsung,clock-xtal";
++			clock-frequency = <50000000>;
++		};
++	};
++};
  
+-			partition@00000 {
+-				label = "BootLoader";
+-				reg = <0x60000 0x80000>;
+-				read-only;
+-			};
++&pcie_0 {
++	reset-gpio = <&pin_ctrl 5 0>;
++	status = "okay";
++};
+ 
+-			partition@e0000 {
+-				label = "Recovery-Kernel";
+-				reg = <0xe0000 0x300000>;
+-				read-only;
+-			};
++&pcie_1 {
++	reset-gpio = <&pin_ctrl 22 0>;
++	status = "okay";
++};
+ 
+-			partition@3e0000 {
+-				label = "CRAM-FS";
+-				reg = <0x3e0000 0x700000>;
+-				read-only;
+-			};
++&spi_0 {
++	flash: w25q128@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "winbond,w25q128";
++		spi-max-frequency = <15625000>;
++		reg = <0>;
++		controller-data {
++			samsung,spi-feedback-delay = <0>;
++		};
+ 
+-			partition@ae0000 {
+-				label = "User-Data";
+-				reg = <0xae0000 0x520000>;
+-			};
++		partition@00000 {
++			label = "BootLoader";
++			reg = <0x60000 0x80000>;
++			read-only;
++		};
+ 
++		partition@e0000 {
++			label = "Recovery-Kernel";
++			reg = <0xe0000 0x300000>;
++			read-only;
+ 		};
+ 
+-	};
++		partition@3e0000 {
++			label = "CRAM-FS";
++			reg = <0x3e0000 0x700000>;
++			read-only;
++		};
+ 
+-	fixed-rate-clocks {
+-		xtal {
+-			compatible = "samsung,clock-xtal";
+-			clock-frequency = <50000000>;
++		partition@ae0000 {
++			label = "User-Data";
++			reg = <0xae0000 0x520000>;
+ 		};
+-	};
+ 
+-	pcie@290000 {
+-		reset-gpio = <&pin_ctrl 5 0>;
+-		status = "okay";
+ 	};
+ 
+-	pcie@2a0000 {
+-		reset-gpio = <&pin_ctrl 22 0>;
+-		status = "okay";
+-	};
+ };
 -- 
 2.1.4
