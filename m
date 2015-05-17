@@ -1,94 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 00/13] ARM: dts: exynos4: labels for overriding nodes
-Date: Sun, 17 May 2015 17:09:42 +0900
-Message-ID: <1431850195-9558-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 1/4] ARM: multi_v7_defconfig: Enable CPU idle for Exynos
+Date: Sun, 17 May 2015 17:09:44 +0900
+Message-ID: <1431850195-9558-3-git-send-email-k.kozlowski.k@gmail.com>
+References: <1431850195-9558-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:34802 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249AbbEQIKl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 17 May 2015 04:10:41 -0400
+In-Reply-To: <1431850195-9558-1-git-send-email-k.kozlowski.k@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi,
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+Current Exynos CPU idle driver supports entering AFTR (Arm Off, Top
+Running) mode on Exynos3250, Exynos4210 (coupled), Exynos4x12 and
+Exynos5250. Enable it in default configuration to reduce energy
+consumption.
 
-Changes since v5
-================
-1. Rebased on current Kukjin's for-next branch:
-   v4.1-rc3-34-gfcfae6b049cf
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes since v4
-================
-1. Patch 1: Don't add labels in exynos4210-pinctrl.dtsi because
-   these are already defined in exynos4210.dtsi.
-2. Patch 9: Add ack from Eduardo Valentin.
-
-Changes since v3
-================
-1. New patches (12 and 13) for Exynos4412 Origen and Tiny4412.
-2. Rebased on top of my DTS-for-next branch:
-   repo: https://github.com/krzk/linux/
-   tag: samsung-dt-for-next-4.2-2
-
-Changes since v2
-================
-1. Fix typo in commit msg (lablels -> labels).
-
-Changes since v1
-================
-1. Re-phrased the description (phandle->label). Suggested by Arnd.
-
-Description
-===========
-
-The label-based notation reduces possible mistakes when overriding
-nodes by child DTSI and board files and reduces duplication
-of addresses.
-
-The patchset refactors Exynos4 boards to use labels for overriding nodes.
-
-Tested by comparison of decompiled DTB for each commit. The output DTB
-is the same.
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (13):
-  ARM: dts: Add labels to exynos4 nodes
-  ARM: dts: Use labels for overriding nodes in exynos4210
-  ARM: dts: Use labels for overriding nodes in exynos4210-origen
-  ARM: dts: Use labels for overriding nodes in exynos4210-smdkv310
-  ARM: dts: Use labels for overriding nodes in exynos4210-trats
-  ARM: dts: Use labels for overriding nodes in exynos4212
-  ARM: dts: Use labels for overriding nodes in exynos4x12
-  ARM: dts: Use labels for overriding nodes in exynos4412
-  ARM: dts: Use labels for overriding nodes in exynos4412-odroid
-  ARM: dts: Use labels for overriding nodes in exynos4412-smdk4412
-  ARM: dts: Use labels for overriding nodes in exynos4412-trats2
-  ARM: dts: Use labels for overriding nodes in exynos4412-origen
-  ARM: dts: Use labels for overriding nodes in exynos4412-tiny4412
-
- arch/arm/boot/dts/exynos4.dtsi                  |   22 +-
- arch/arm/boot/dts/exynos4210-origen.dts         |  418 +++----
- arch/arm/boot/dts/exynos4210-smdkv310.dts       |  280 ++---
- arch/arm/boot/dts/exynos4210-trats.dts          |  592 +++++-----
- arch/arm/boot/dts/exynos4210.dtsi               |   49 +-
- arch/arm/boot/dts/exynos4212.dtsi               |   12 +-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  732 ++++++-------
- arch/arm/boot/dts/exynos4412-odroidx.dts        |   16 +-
- arch/arm/boot/dts/exynos4412-origen.dts         |  892 +++++++--------
- arch/arm/boot/dts/exynos4412-smdk4412.dts       |  210 ++--
- arch/arm/boot/dts/exynos4412-tiny4412.dts       |   54 +-
- arch/arm/boot/dts/exynos4412-trats2.dts         | 1332 ++++++++++++-----------
- arch/arm/boot/dts/exynos4412.dtsi               |   20 +-
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi       |    8 +-
- arch/arm/boot/dts/exynos4x12.dtsi               |  218 ++--
- 15 files changed, 2428 insertions(+), 2427 deletions(-)
-
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 76cbb81cbaa3..d524d2e9633c 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -117,6 +117,7 @@ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+ CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+ CONFIG_CPU_IDLE=y
++CONFIG_ARM_EXYNOS_CPUIDLE=y
+ CONFIG_NEON=y
+ CONFIG_KERNEL_MODE_NEON=y
+ CONFIG_ARM_ZYNQ_CPUIDLE=y
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
