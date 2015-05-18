@@ -1,24 +1,19 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/4] ARM: multi_v7_defconfig: Enable TMU for Exynos
-Date: Mon, 18 May 2015 10:47:15 +0900
-Message-ID: <1431913636-31854-4-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 4/4] ARM: multi_v7_defconfig: Enable OHCI on Exynos
+Date: Mon, 18 May 2015 10:47:16 +0900
+Message-ID: <1431913636-31854-5-git-send-email-k.kozlowski@samsung.com>
 References: <1431913636-31854-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19422 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752051AbbERBri (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 May 2015 21:47:38 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1431913636-31854-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Enable support for Thermal Monitoring Unit present on Exynos SoCs. This
-allows detection of overheat and handling this gracefully.
+Enable the USB OHCI driver for Exynos SoCs: S5PV210, Exynos4 family,
+Exynos5250, Exynos5440 and Exynos542x/5800 family.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
@@ -26,16 +21,16 @@ Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f09ae2089284..8fa7171b12f3 100644
+index 8fa7171b12f3..fe88429b9279 100644
 --- a/arch/arm/configs/multi_v7_defconfig
 +++ b/arch/arm/configs/multi_v7_defconfig
-@@ -342,6 +342,7 @@ CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_LM95245=y
- CONFIG_THERMAL=y
- CONFIG_CPU_THERMAL=y
-+CONFIG_EXYNOS_THERMAL=m
- CONFIG_RCAR_THERMAL=y
- CONFIG_ARMADA_THERMAL=y
- CONFIG_DAVINCI_WATCHDOG
+@@ -455,6 +455,7 @@ CONFIG_USB_ISP1760_HCD=y
+ CONFIG_USB_OHCI_HCD=y
+ CONFIG_USB_OHCI_HCD_STI=y
+ CONFIG_USB_OHCI_HCD_PLATFORM=y
++CONFIG_USB_OHCI_EXYNOS=m
+ CONFIG_USB_R8A66597_HCD=m
+ CONFIG_USB_RENESAS_USBHS=m
+ CONFIG_USB_STORAGE=y
 -- 
 1.9.1
