@@ -1,49 +1,52 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH 0/2] rtc: Fix module autoload for max77xx RTC drivers
-Date: Tue, 19 May 2015 00:45:34 +0200
-Message-ID: <20150518224534.GZ3338@piout.net>
-References: <1431530282-10672-1-git-send-email-javier.martinez@collabora.co.uk>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH] drm/exynos: dp: Lower level of EDID read success message
+Date: Tue, 19 May 2015 08:30:14 +0900
+Message-ID: <000101d091c2$9c1d1920$d4574b60$@com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:42455 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754349AbbERWpg (ORCPT
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:36310 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754942AbbERXmb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 May 2015 18:45:36 -0400
-Content-Disposition: inline
-In-Reply-To: <1431530282-10672-1-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 18 May 2015 19:42:31 -0400
+Content-Language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
+Cc: 'Inki Dae' <inki.dae@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>, 'Kukjin Kim' <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 13/05/2015 at 17:18:00 +0200, Javier Martinez Canillas wrote :
-> Hello Alexandre and Alessandro,
-> 
-> This is a trivial series that fixes module autoloading for the Maxim
-> MAX77686 and MAX77802 RTC drivers that didn't export their platform
-> device ID table with MODULE_DEVICE_TABLE() so modalias information
-> was not available.
-> 
-> The series is composed of the following patches:
-> 
-> Javier Martinez Canillas (2):
->   rtc: max77686: Report platform modalias to fix module autoload
->   rtc: max77802: Report platform modalias to fix module autoload
-> 
+> Don't pollute the dmesg with EDID read success message as an error.
+> Printing as debug should be fine.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Both applied, thanks.
+Right, dev_err() is not right.
+Thank you for sending the patch.
 
->  drivers/rtc/rtc-max77686.c | 1 +
->  drivers/rtc/rtc-max77802.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> Best regards,
-> Javier
-> 
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Best regards,
+Jingoo Han
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index 441ef06b8894..30feb7d06624 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -195,7 +195,7 @@ static int exynos_dp_read_edid(struct exynos_dp_device *dp)
+>  		}
+>  	}
+>  
+> -	dev_err(dp->dev, "EDID Read success!\n");
+> +	dev_dbg(dp->dev, "EDID Read success!\n");
+>  	return 0;
+>  }
+>  
+> -- 
+> 1.9.1
