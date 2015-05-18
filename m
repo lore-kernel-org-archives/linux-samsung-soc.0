@@ -1,57 +1,70 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: Re: [PATCH v1 1/1] ARM: EXYNOS: fix DEBUG_LL on Cortex-A7.
-Date: Mon, 18 May 2015 10:52:14 +0900
-Message-ID: <CAPTzV17YWyTiFU4wGs=Wy9quC_NzguXuqrheY_JoqAWN=VRniA@mail.gmail.com>
-References: <1431844923-4654-1-git-send-email-t.dakhran@gmail.com>
-	<1431844923-4654-2-git-send-email-t.dakhran@gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2 0/4] ARM: multi_v7_defconfig: Stuff for Exynos
+Date: Mon, 18 May 2015 09:03:44 +0200
+Message-ID: <CABxcv=ns1B+qm01n-LegXz3=sxxwD8gFccVNghgB_RaU-pd7sQ@mail.gmail.com>
+References: <1431913636-31854-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:36194 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751958AbbERBwP (ORCPT
+Received: from mail-yk0-f177.google.com ([209.85.160.177]:36385 "EHLO
+	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752196AbbERHDo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 May 2015 21:52:15 -0400
-In-Reply-To: <1431844923-4654-2-git-send-email-t.dakhran@gmail.com>
+	Mon, 18 May 2015 03:03:44 -0400
+Received: by ykep21 with SMTP id p21so50809180yke.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 May 2015 00:03:44 -0700 (PDT)
+In-Reply-To: <1431913636-31854-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@gmail.com>
-Cc: kgene@kernel.org, Russell King <linux@arm.linux.org.uk>, k.kozlowski@samsung.com, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jy0922.shim@samsung.com
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hi Tarek,
+Hello Krzysztof,
 
-On Sun, May 17, 2015 at 3:42 PM, Tarek Dakhran <t.dakhran@gmail.com> wrote:
-> Cortex-A7 has EXYNOS5_PA_UART base address for UART.
-> If system boots from Cortex-A7 CPU addruart loads wrong
-> address. This patch fixex this.
+On Mon, May 18, 2015 at 3:47 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> Dear Kukjin,
 >
-> Signed-off-by: Tarek Dakhran <t.dakhran@gmail.com>
-> ---
->  arch/arm/include/debug/exynos.S | 1 +
->  1 file changed, 1 insertion(+)
 >
-> diff --git a/arch/arm/include/debug/exynos.S b/arch/arm/include/debug/exynos.S
-> index b17fdb7..a61b3ea 100644
-> --- a/arch/arm/include/debug/exynos.S
-> +++ b/arch/arm/include/debug/exynos.S
-> @@ -24,6 +24,7 @@
->                 mrc     p15, 0, \tmp, c0, c0, 0
->                 and     \tmp, \tmp, #0xf0
->                 teq     \tmp, #0xf0             @@ A15
-> +               teqne   \tmp, #0x70             @@ A7
->                 ldreq   \rp, =EXYNOS5_PA_UART
->                 movne   \rp, #EXYNOS4_PA_UART   @@ EXYNOS4
->                 ldr     \rv, =S3C_VA_UART
-> --
-> 1.9.1
+> Changes since v1:
+> =================
+> 1. Select drivers as modules, whenever possible. Suggested by Javier.
+> 2. Patch 2: The I2C_GPIO is already enabled as module.
+>
+>
+> Description
+> ===========
+> The patchset enables various config options on multi_v7 config
+> for Exynos boards.
+>
+> Arnd suggested [0] that this can go through your tree.
+>
+> Patchset is rebased on next-20150515 and Javier's patchset [1]
+> (to avoid conflicts around regulators and clocks).
+>
+> Please let me know if this should be rebased on other commit.
+>
+> [0] http://www.spinics.net/lists/kernel/msg1991518.html
+> [1] http://www.spinics.net/lists/kernel/msg1990767.html
+>
+>
+> Best regards,
+> Krzysztof
+>
+> Krzysztof Kozlowski (4):
+>   ARM: multi_v7_defconfig: Enable CPU idle for Exynos
+>   ARM: multi_v7_defconfig: Enable PMIC and MUIC drivers for Exynos
+>     boards
+>   ARM: multi_v7_defconfig: Enable TMU for Exynos
+>   ARM: multi_v7_defconfig: Enable OHCI on Exynos
+>
+>  arch/arm/configs/multi_v7_defconfig | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 >
 
-Please see previous Joonyoung's patch. Your patch could break
-exynos3250 because it has not only two cortex-a7 cpus but also uses
-EXYOS4_PA_UART.
+For all the series:
 
-http://www.spinics.net/lists/linux-samsung-soc/msg37318.html
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
--- 
-Best Regards,
-Chanho Park
+Best regards,
+Javier
