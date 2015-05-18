@@ -1,54 +1,61 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [PATCH v6 10/25] iommu: exynos: remove useless device_add/remove
-	callbacks
-Date: Mon, 18 May 2015 22:37:35 +0300
-Message-ID: <3790451.FWdEsNZUcL@avalon>
-References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com>
-	<5559D66A.5070406@samsung.com> <20150518170430.GK20611@8bytes.org>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: drm/exynos: Add atomic modesetting support
+Date: Mon, 18 May 2015 16:51:01 -0300
+Message-ID: <20150518195101.GA18856@joana>
+References: <10cea26ae89c8bf2f26c2d258dcabd3a@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20150518170430.GK20611-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:35624 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754525AbbERTvH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 May 2015 15:51:07 -0400
+Received: by qcbgu10 with SMTP id gu10so94470274qcb.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 May 2015 12:51:06 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <10cea26ae89c8bf2f26c2d258dcabd3a@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, liquid.acid@gmx.net
 
-Hi Joerg,
+Hi Tobias,
 
-On Monday 18 May 2015 19:04:30 Joerg Roedel wrote:
-> On Mon, May 18, 2015 at 02:09:14PM +0200, Marek Szyprowski wrote:
-> > > Hmm, will this remove support for iommu-groups in the exynos driver? I
-> > > am still working on the default-domain patch-set which makes iommu-group
-> > > support mandatory for iommu-drivers.
-> > 
-> > I you wish, I can leave this code. iommu-groups were not used at all
-> > on Exynos, so I thought that there is no point keeping useless code.
+2015-05-15 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+
+> Hello,
 > 
-> Yes, please keep the iommu-goups support, it will be required at some
-> point.
+> I did another run with drm.debug=0xff and also tried to figure out where the
+> div-by-zero comes from.
+> 
+> The only division I see is in fimd_calc_clkdiv() (which is called by
+> fimd_commit()). So it looks like 'ideal_clk' is zero when calling
+> DIV_ROUND_UP().
+> 
+> 'htotal' and 'vtotal' can't be zero, since this is checked early in
+> fimd_commit(). So 'vrefresh' has to be zero. Maybe this helps?
 
-I think the concept of iommu groups isn't very well understood, hence the 
-little love it receives from developers who conclude it's useless. I can't 
-blame anyone, I don't do any better. Could I convince you to include 
-documentation in your next patch series that touches iommu groups ?
+What is is the output when you run with this patch:
 
-Could you please have a look at my "[RFC/PATCH 0/9] IOMMU probe deferral 
-support" patch series in the context of iommu groups ? The series pretty much 
-drops groups support from the ipmmu-vmsa driver, not because of a real desire 
-to do so, but because I wasn't sure how to keep them. Tips would be 
-appreciated.
-
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 12ab80c..f5d215d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -310,6 +310,8 @@ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
+        unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
+        u32 clkdiv;
+ 
++       DRM_DEBUG_KMS("vrefresh %d\n", mode->vrefresh);
++
+        if (ctx->i80_if) {
+                /*
+                 * The frame done interrupt should be occurred prior to the
+@@ -328,6 +330,7 @@ static bool fimd_mode_fixup(struct exynos_drm_crtc *crtc,
+                const struct drm_display_mode *mode,
+                struct drm_display_mode *adjusted_mode)
+ {
++       DRM_DEBUG_KMS("vrefresh %d\n", adjusted_mode->vrefresh);
+        if (adjusted_mode->vrefresh == 0)
+                adjusted_mode->vrefresh = FIMD_DEFAULT_FRAMERATE;
+ 
