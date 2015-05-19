@@ -1,66 +1,66 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2 0/4] ARM: multi_v7_defconfig: Stuff for Exynos
-Date: Tue, 19 May 2015 15:14:16 +0900
-Message-ID: <555AD4B8.3010505@kernel.org>
-References: <1431913636-31854-1-git-send-email-k.kozlowski@samsung.com> <CABxcv=ns1B+qm01n-LegXz3=sxxwD8gFccVNghgB_RaU-pd7sQ@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: EXYNOS: Improvements for 4.2, second try
+Date: Tue, 19 May 2015 15:21:37 +0900
+Message-ID: <555AD671.7050202@kernel.org>
+References: <1431314064-17118-1-git-send-email-k.kozlowski@samsung.com> <CAJKOXPdyvQoEdxh6QPYA4r5GXq5LSGFu4=4kTasDmFMVf10S=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABxcv=ns1B+qm01n-LegXz3=sxxwD8gFccVNghgB_RaU-pd7sQ@mail.gmail.com>
+In-Reply-To: <CAJKOXPdyvQoEdxh6QPYA4r5GXq5LSGFu4=4kTasDmFMVf10S=A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Sergiy Kibrik <sakib@meta.ua>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/18/15 16:03, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On Mon, May 18, 2015 at 3:47 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
+On 05/17/15 17:52, Krzysztof Kozlowski wrote:
+> 2015-05-11 12:14 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
 >> Dear Kukjin,
 >>
+>> Updated pull request, replacing also the usage of soc_is_exynos4()
+>> with of_machine_is_compatible(). You requested this in comments
+>> for "ARM: EXYNOS: Fix failed second suspend on Exynos4".
 >>
->> Changes since v1:
->> =================
->> 1. Select drivers as modules, whenever possible. Suggested by Javier.
->> 2. Patch 2: The I2C_GPIO is already enabled as module.
->>
->>
->> Description
->> ===========
->> The patchset enables various config options on multi_v7 config
->> for Exynos boards.
->>
->> Arnd suggested [0] that this can go through your tree.
->>
->> Patchset is rebased on next-20150515 and Javier's patchset [1]
->> (to avoid conflicts around regulators and clocks).
->>
->> Please let me know if this should be rebased on other commit.
->>
->> [0] http://www.spinics.net/lists/kernel/msg1991518.html
->> [1] http://www.spinics.net/lists/kernel/msg1990767.html
->>
+>> This adds coupled cpuidle for Exynos3250 and improves the Exynos
+>> code in few places. Everything for upcoming 4.2 merge window.
+>> Description along with a tag.
 >>
 >> Best regards,
 >> Krzysztof
 >>
->> Krzysztof Kozlowski (4):
->>   ARM: multi_v7_defconfig: Enable CPU idle for Exynos
->>   ARM: multi_v7_defconfig: Enable PMIC and MUIC drivers for Exynos
->>     boards
->>   ARM: multi_v7_defconfig: Enable TMU for Exynos
->>   ARM: multi_v7_defconfig: Enable OHCI on Exynos
 >>
->>  arch/arm/configs/multi_v7_defconfig | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
+>> The following changes since commit b82f3a05ff0b5eaf2c9900eeb34e58a6624db8d9:
 >>
+>>   ARM: EXYNOS: Fix failed second suspend on Exynos4 (2015-05-11 11:03:09 +0900)
+>>
+>> are available in the git repository at:
+>>
+>>   https://github.com/krzk/linux.git tags/samsung-for-next-4.2-2
+>>
+>> for you to fetch changes up to c91889378098ff0bb5fe6f422a3c0eb554b34930:
+>>
+>>   ARM: plat-samsung: Constify platform_device_id (2015-05-11 11:05:31 +0900)
+>>
+>> ----------------------------------------------------------------
+>> Extending cpuidle driver and improvements for Exynos based boards:
+>> 1. Replace soc_is_exynos4() with of_machine_is_compatible().
+>> 2. Add missing return-value checks and of_node_put() for power domain
+>>    driver.
+>> 3. Fix missing clk_prepare in S3C24XX ADC driver.
+>> 4. Rework clock handling when switching power domains on/off. Instead
+>>    of settting fixed parent in DTS we grab the parent clock before
+>>    turning the domain off.
+>> 5. Add coupled cpuidle support for Exynos3250 to an existing
+>>    cpuidle-exynos driver. As a result it enables AFTR mode
+>>    (ARM-Off Top-Running) to be used by default on Exynos3250
+>>    without the need to hot unplug CPU1 first.
+>> 6. Constify irq_domain_ops and platform_device_id.
 > 
-> For all the series:
+> Dear Kukjin,
 > 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Just humbly reminding - this stuff still waits for you :).
 > 
-Applied, thanks.
+Sure, why not. I'll update it soon ;-)
 
-- Kukjin
+Thanks,
+Kukjin
