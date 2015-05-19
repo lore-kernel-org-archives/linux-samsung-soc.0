@@ -1,66 +1,132 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [GIT PULL] ARM: EXYNOS: Improvements for 4.2, second try
-Date: Tue, 19 May 2015 15:21:37 +0900
-Message-ID: <555AD671.7050202@kernel.org>
-References: <1431314064-17118-1-git-send-email-k.kozlowski@samsung.com> <CAJKOXPdyvQoEdxh6QPYA4r5GXq5LSGFu4=4kTasDmFMVf10S=A@mail.gmail.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
+Date: Tue, 19 May 2015 12:58:17 +0530
+Message-ID: <CANAwSgTbjmSxhJj4o2pnD5pR2V9JbQ3az+TSSCDwgwNnvF7P9w@mail.gmail.com>
+References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
+ <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
+ <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
+ <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
+ <CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com> <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdyvQoEdxh6QPYA4r5GXq5LSGFu4=4kTasDmFMVf10S=A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Sergiy Kibrik <sakib@meta.ua>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/17/15 17:52, Krzysztof Kozlowski wrote:
-> 2015-05-11 12:14 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> Dear Kukjin,
+On 15 May 2015 at 05:42, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> 2015-05-15 1:16 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>> On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>>> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>>>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+>>>>>> device.
+>>>>>>
+>>>>>> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+>>>>>> Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>>> ---
+>>>>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
+>>>>>>  1 file changed, 25 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>>>>> index 9446e28..cd78816 100644
+>>>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>>>>>> @@ -319,6 +319,31 @@
+>>>>>>                 #cooling-cells = <2>;
+>>>>>>                 cooling-levels = <0 130 170 230>;
+>>>>>>         };
+>>>>>> +
+>>>>>> +       tmu@10060000 {
+>>>>>
+>>>>> Here and for other overrides please use label notation, like:
+>>>>>
+>>>>> &tmu_cpu0 {
+>>>>>               ...
+>>>>> };
+>>>>>
+>>>>>> +               vtmu-supply = <&ldo10_reg>;
+>>>>>
+>>>>> I am curious, how did you find that LDO10 supplies TMU unit?
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>
+>>>> Hi Krzysztof,
+>>>>
+>>>> I have re-base my work on earlier Lukasz Majewski patches.
+>>>>
+>>>> https://patchwork.kernel.org/patch/5693201/
+>>>
+>>> NAK.
+>>> I am sorry, but this is not sufficient explanation. Actually such
+>>> explanation could mean that you did just blindly copied everything
+>>> instead of developing it.
+>>>
+>>> You cannot use some regulator here just because some Exynos4 boards
+>>> use it. You have to be sure that this regulator supplies this part of
+>>> SoC or device.
 >>
->> Updated pull request, replacing also the usage of soc_is_exynos4()
->> with of_machine_is_compatible(). You requested this in comments
->> for "ARM: EXYNOS: Fix failed second suspend on Exynos4".
+>> Hi Krzysztof,
 >>
->> This adds coupled cpuidle for Exynos3250 and improves the Exynos
->> code in few places. Everything for upcoming 4.2 merge window.
->> Description along with a tag.
+>> After going through the schematics, I came to understanding that their is
+>> missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
 >>
->> Best regards,
->> Krzysztof
+>> Below is the schematic of the board.
 >>
+>> http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
 >>
->> The following changes since commit b82f3a05ff0b5eaf2c9900eeb34e58a6624db8d9:
->>
->>   ARM: EXYNOS: Fix failed second suspend on Exynos4 (2015-05-11 11:03:09 +0900)
->>
->> are available in the git repository at:
->>
->>   https://github.com/krzk/linux.git tags/samsung-for-next-4.2-2
->>
->> for you to fetch changes up to c91889378098ff0bb5fe6f422a3c0eb554b34930:
->>
->>   ARM: plat-samsung: Constify platform_device_id (2015-05-11 11:05:31 +0900)
->>
->> ----------------------------------------------------------------
->> Extending cpuidle driver and improvements for Exynos based boards:
->> 1. Replace soc_is_exynos4() with of_machine_is_compatible().
->> 2. Add missing return-value checks and of_node_put() for power domain
->>    driver.
->> 3. Fix missing clk_prepare in S3C24XX ADC driver.
->> 4. Rework clock handling when switching power domains on/off. Instead
->>    of settting fixed parent in DTS we grab the parent clock before
->>    turning the domain off.
->> 5. Add coupled cpuidle support for Exynos3250 to an existing
->>    cpuidle-exynos driver. As a result it enables AFTR mode
->>    (ARM-Off Top-Running) to be used by default on Exynos3250
->>    without the need to hot unplug CPU1 first.
->> 6. Constify irq_domain_ops and platform_device_id.
-> 
-> Dear Kukjin,
-> 
-> Just humbly reminding - this stuff still waits for you :).
-> 
-Sure, why not. I'll update it soon ;-)
+>>   ldo18_reg: LDO18 {
+>>                                          regulator-name = "vdd_ldo18";
+>>                                          regulator-min-microvolt = <1800000>;
+>>                                          regulator-max-microvolt = <1800000>;
+>>                                          regulator-always-on;
+>>                                };
+>
+> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
+>
+> I think the schematics are missing some of details but it can be deducted that:
+> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
+> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
+> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
+> S2MPS11 PMIC.
+> 3. I confirmed with the Exynos5422 datasheet that these
+> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
+>
+> So the LDO7 it is... but before using it there is a caveat. The LDO7
+> is also connected to VDD of MIPI, HDMI and few more. So when you use
+> this regulator in TMU it may be turned off by TMU driver (e.g. during
+> unbind). In such case these other blocks also should be tested and
+> checked whether they take this regulator and enable it.
 
-Thanks,
-Kukjin
+hi Krzysztof,
+
+I tried to use the LDO7 regulator for TMU but it failed to register.
+
+[    3.231329] ina2xx 0-0045: power monitor ina231 (Rshunt = 10000 uOhm)
+[    3.237691] thermal thermal_zone0: failed to read out thermal zone (-22)
+[    3.243033] exynos-tmu 10060000.tmu: Looking up vtmu-supply from device tree
+[    3.243936] thermal thermal_zone1: failed to read out thermal zone (-22)
+[    3.249791] exynos-tmu 10064000.tmu: Looking up vtmu-supply from device tree
+[    3.250677] thermal thermal_zone2: failed to read out thermal zone (-22)
+[    3.256410] exynos-tmu 10068000.tmu: Looking up vtmu-supply from device tree
+[    3.257345] thermal thermal_zone3: failed to read out thermal zone (-22)
+[    3.263050] exynos-tmu 1006c000.tmu: Looking up vtmu-supply from device tree
+[    3.263984] thermal thermal_zone4: failed to read out thermal zone (-22)
+[    3.269769] exynos-tmu 100a0000.tmu: Looking up vtmu-supply from device tree
+[    3.270363] usb 5-1: New USB device found, idVendor=0424, idProduct=9514
+[    3.276389] usb 5-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+
+-Anand Moon
+
+>
+> Best regards,
+> Krzysztof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
