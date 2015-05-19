@@ -1,65 +1,47 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: drm/exynos: Add atomic modesetting support
-Date: Tue, 19 May 2015 19:54:42 +0100
-Message-ID: <CAPj87rPAGCXBhB7Wyn9o7cO=P069Fop0UQGsuwbD5CSUvid_Cg@mail.gmail.com>
-References: <10cea26ae89c8bf2f26c2d258dcabd3a@math.uni-bielefeld.de>
-	<20150518195101.GA18856@joana>
-	<CAPj87rOnseYOzPqetbxKpq7_4855Vup2cySzZJmz8JejBHFPMw@mail.gmail.com>
-	<20150518210239.GB18856@joana>
-	<182ac8915516e85d964fca30afa1702a@math.uni-bielefeld.de>
-	<CAPj87rM-oNsqb+=7HyJ4k7GMJA80nfq_AwYVx5ct1J7hYL12PA@mail.gmail.com>
-	<933513a3ff2090c9ec2921e8cb71effb@math.uni-bielefeld.de>
-	<20150519184300.GA12704@joana>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [RFC PATCH 1/4] spi: spidev: Add Google SPI flash compatible
+ string
+Date: Tue, 19 May 2015 22:53:05 +0300
+Message-ID: <20150519195305.GA2586@tarshish>
+References: <1432042454-19234-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1432042454-19234-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:33058 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751100AbbESSyn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 May 2015 14:54:43 -0400
-Received: by igbpi8 with SMTP id pi8so114535852igb.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2015 11:54:42 -0700 (PDT)
-In-Reply-To: <20150519184300.GA12704@joana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1432042454-19234-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, David Hendricks <dhendrix@google.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Stone <daniel@fooishbar.org>, InKi Dae <inki.dae@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, liquid.acid@gmx.net
 
-Hi,
+Hi Javier,
 
-On 19 May 2015 at 19:43, Gustavo Padovan <gustavo@padovan.org> wrote:
-> 2015-05-19 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
->> so Daniel helped me track down this issue. It came from an incorrect
->> 'clock-frequency' entry in my DTS. The freq was 500000. Daniel recommended
->> 70600000 which works 'fine' (and according to modetest produces a 59Hz
->> mode). I say 'fine' because I can't confirm that FIMD is actually working. I
->> just see that with that change I no longer get any div-by-zeros in the
->> kernel.
->
-> That is good to hear! So maybe we are now ready to have the atomic
-> modesetting patches merged in. I'll send a new version with the last
-> fix to avoid crashes with null CRTC.
+On Tue, May 19, 2015 at 03:34:11PM +0200, Javier Martinez Canillas wrote:
+> Google Chromebooks have a SPI flash that is used to store firmware and
+> different system parameters and data (i.e: Google Binary Block flags).
+> 
+> Since there isn't a driver for it yet, the spidev interface is used to
+> access the flash from user-space (i.e: using the flashrom tool).
+> 
+> Add a "google,spi-flash" compatible string so the Device Tree sources
+> use it instead of the "spidev" compatible which does not describe the
+> real HW and is just a Linux implementation detail.
+> 
+> A generic "google,spi-flash" OF device ID is used instead of the actual
+> vendor/model because these chips are commodity parts that are sourced
+> from multiple vendors. So specifying the exact vendor and model in the
+> DTS will add a maintenance burden with no real gain (the parts are 100%
+> compatible anyways) and will likely result in it simply being wrong for
+> a sizeable fraction of the machines.
 
-Indeed. Though as he says below:
+The compatible string and dt binding should be documented somewhere under 
+Documentation/devicetree/bindings/. Also, please keep the dt list on Cc for dt 
+related patches.
 
->> So fimd_calc_clkdiv needs some sanitizing for 'ideal_clk' at least.
+baruch
 
-It would be nice to:
-  a) reject any mode with an impossible clock in mode_valid (filter
-connector modes) + mode_fixup (explicit request)
-  b) WARN_ON and return during FIMD commit if clk_div ends up being zero
-
->> What still bothers me though is the fact that FIMD actually gets enabled.
->> I'm just calling 'modetest -M exynos', so it's just doing probing. Why does
->> that trigger dpms?
->
-> That comes from restore_fbdev_mode() when modetest closes the file
-> descriptor, but I'm not sure why a update happens at this time.
-
-It comes from lastclose: when the last client exits, DRM tries to
-restore the mode that fbcon was using. Quite why it didn't fail before
-this point (i.e. when doing it initially), I'm not quite sure, but oh
-well.
-
-Cheers,
-Daniel
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
