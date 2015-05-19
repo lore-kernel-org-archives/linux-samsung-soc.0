@@ -1,137 +1,108 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v6 06/11] cec: add HDMI CEC framework
-Date: Tue, 19 May 2015 13:03:18 +0200
-Message-ID: <555B1876.3040702@xs4all.nl>
-References: <1430760785-1169-1-git-send-email-k.debski@samsung.com> <1430760785-1169-7-git-send-email-k.debski@samsung.com> <20150513111017.GA2191@gofer.mess.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20150513111017.GA2191@gofer.mess.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Sean Young <sean@mess.org>, Kamil Debski <k.debski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>
+From: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [RESEND PATCH 1/2] ARM: dts: s3c2416: Add labels to S3C2416 nodes
+Date: Tue, 19 May 2015 20:52:50 +0900
+Message-ID: <1432036371-6407-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sean,
+Add new labels to certain nodes on S3C2416 so they could be easily
+referenced by board DTS files.
 
-I'm taking over this patch series from Kamil for the time being with his
-permission (he's switching jobs and moving house so he can't spend any time
-on this for a while).
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/boot/dts/s3c2416.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-On 05/13/15 13:10, Sean Young wrote:
-> On Mon, May 04, 2015 at 07:32:59PM +0200, Kamil Debski wrote:
->> From: Hans Verkuil <hansverk@cisco.com>
->>
->> The added HDMI CEC framework provides a generic kernel interface for
->> HDMI CEC devices.
->>
->> Signed-off-by: Hans Verkuil <hansverk@cisco.com>
-> 
-> -snip-
-> 
->> +int cec_create_adapter(struct cec_adapter *adap, const char *name, u32 caps)
->> +{
->> +	int res = 0;
->> +
->> +	adap->state = CEC_ADAP_STATE_DISABLED;
->> +	adap->name = name;
->> +	adap->phys_addr = 0xffff;
->> +	adap->capabilities = caps;
->> +	adap->version = CEC_VERSION_1_4;
->> +	adap->sequence = 0;
->> +	mutex_init(&adap->lock);
->> +	adap->kthread = kthread_run(cec_thread_func, adap, name);
->> +	init_waitqueue_head(&adap->kthread_waitq);
->> +	init_waitqueue_head(&adap->waitq);
->> +	if (IS_ERR(adap->kthread)) {
->> +		pr_err("cec-%s: kernel_thread() failed\n", name);
->> +		return PTR_ERR(adap->kthread);
->> +	}
->> +	if (caps) {
->> +		res = cec_devnode_register(&adap->devnode, adap->owner);
->> +		if (res)
->> +			kthread_stop(adap->kthread);
->> +	}
->> +	adap->recv_notifier = cec_receive_notify;
->> +
->> +	/* Prepare the RC input device */
->> +	adap->rc = rc_allocate_device();
->> +	if (!adap->rc) {
->> +		pr_err("cec-%s: failed to allocate memory for rc_dev\n", name);
->> +		cec_devnode_unregister(&adap->devnode);
->> +		kthread_stop(adap->kthread);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	snprintf(adap->input_name, sizeof(adap->input_name), "RC for %s", name);
->> +	snprintf(adap->input_phys, sizeof(adap->input_phys), "%s/input0", name);
->> +	strncpy(adap->input_drv, name, sizeof(adap->input_drv));
->> +
->> +	adap->rc->input_name = adap->input_name;
->> +	adap->rc->input_phys = adap->input_phys;
->> +	adap->rc->dev.parent = &adap->devnode.dev;
->> +	adap->rc->driver_name = adap->input_drv;
->> +	adap->rc->driver_type = RC_DRIVER_CEC;
->> +	adap->rc->allowed_protocols = RC_BIT_CEC;
->> +	adap->rc->priv = adap;
->> +	adap->rc->map_name = RC_MAP_CEC;
->> +	adap->rc->timeout = MS_TO_NS(100);
->> +
-> 
-> rc->input_id is not populated. It would be nice if input_phys has some 
-> resemblance to a physical path (like the output of usb_make_path() if it
-> is a usb device).
+diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
+index 30b8f7e47454..a5184ff56933 100644
+--- a/arch/arm/boot/dts/s3c2416.dtsi
++++ b/arch/arm/boot/dts/s3c2416.dtsi
+@@ -17,7 +17,7 @@
+ 	compatible = "samsung,s3c2416";
+ 
+ 	aliases {
+-		serial3 = &uart3;
++		serial3 = &uart_3;
+ 	};
+ 
+ 	cpus {
+@@ -48,7 +48,7 @@
+ 		clock-names = "timers";
+ 	};
+ 
+-	serial@50000000 {
++	uart_0: serial@50000000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		clock-names = "uart", "clk_uart_baud2",
+ 				"clk_uart_baud3";
+@@ -56,7 +56,7 @@
+ 				<&clocks SCLK_UART>;
+ 	};
+ 
+-	serial@50004000 {
++	uart_1: serial@50004000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		clock-names = "uart", "clk_uart_baud2",
+ 				"clk_uart_baud3";
+@@ -64,7 +64,7 @@
+ 				<&clocks SCLK_UART>;
+ 	};
+ 
+-	serial@50008000 {
++	uart_2: serial@50008000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		clock-names = "uart", "clk_uart_baud2",
+ 				"clk_uart_baud3";
+@@ -72,7 +72,7 @@
+ 				<&clocks SCLK_UART>;
+ 	};
+ 
+-	uart3: serial@5000C000 {
++	uart_3: serial@5000C000 {
+ 		compatible = "samsung,s3c2440-uart";
+ 		reg = <0x5000C000 0x4000>;
+ 		interrupts = <1 18 24 4>, <1 18 25 4>;
+@@ -83,7 +83,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	sdhci@4AC00000 {
++	sdhci_1: sdhci@4AC00000 {
+ 		compatible = "samsung,s3c6410-sdhci";
+ 		reg = <0x4AC00000 0x100>;
+ 		interrupts = <0 0 21 3>;
+@@ -94,7 +94,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	sdhci@4A800000 {
++	sdhci_0: sdhci@4A800000 {
+ 		compatible = "samsung,s3c6410-sdhci";
+ 		reg = <0x4A800000 0x100>;
+ 		interrupts = <0 0 20 3>;
+@@ -105,13 +105,13 @@
+ 		status = "disabled";
+ 	};
+ 
+-	watchdog@53000000 {
++	watchdog: watchdog@53000000 {
+ 		interrupts = <1 9 27 3>;
+ 		clocks = <&clocks PCLK_WDT>;
+ 		clock-names = "watchdog";
+ 	};
+ 
+-	rtc@57000000 {
++	rtc: rtc@57000000 {
+ 		compatible = "samsung,s3c2416-rtc";
+ 		clocks = <&clocks PCLK_RTC>;
+ 		clock-names = "rtc";
+-- 
+2.1.4
 
-I've added a BUS_CEC type, the version field can probably get the CEC version
-used, but the vendor/product IDs are difficult: there isn't a product ID in
-the CEC protocol, but there is a 24-bit vendor ID. I'm wondering whether I
-should just put the top 8 bits of the vendor ID in the vendor field and the
-remaining 16 in the product field. That way the combination of the two will be
-unique.
-
-What do you think?
-
->> +	res = rc_register_device(adap->rc);
->> +
->> +	if (res) {
->> +		pr_err("cec-%s: failed to prepare input device\n", name);
->> +		cec_devnode_unregister(&adap->devnode);
->> +		rc_free_device(adap->rc);
->> +		kthread_stop(adap->kthread);
->> +	}
->> +
->> +	return res;
->> +}
->> +EXPORT_SYMBOL_GPL(cec_create_adapter);
->> +
->> +void cec_delete_adapter(struct cec_adapter *adap)
->> +{
->> +	if (adap->kthread == NULL)
->> +		return;
->> +	kthread_stop(adap->kthread);
->> +	if (adap->kthread_config)
->> +		kthread_stop(adap->kthread_config);
->> +	adap->state = CEC_ADAP_STATE_DISABLED;
->> +	if (cec_devnode_is_registered(&adap->devnode))
->> +		cec_devnode_unregister(&adap->devnode);
-> 
-> I think you're missing a rc_unregister_device() here.
-
-Yes indeed. Added.
-
-Regards,
-
-	Hans
-
-> 
->> +}
->> +EXPORT_SYMBOL_GPL(cec_delete_adapter);
-> 
-> 
-> Sean
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
