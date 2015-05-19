@@ -1,68 +1,65 @@
-From: Daniel Stone <daniel@fooishbar.org>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: drm/exynos: Add atomic modesetting support
-Date: Tue, 19 May 2015 15:06:54 +0100
-Message-ID: <CAPj87rM-oNsqb+=7HyJ4k7GMJA80nfq_AwYVx5ct1J7hYL12PA@mail.gmail.com>
+Date: Tue, 19 May 2015 16:52:24 +0200
+Message-ID: <cb041ef94a174660be2b70ca6ce6c54e@math.uni-bielefeld.de>
 References: <10cea26ae89c8bf2f26c2d258dcabd3a@math.uni-bielefeld.de>
-	<20150518195101.GA18856@joana>
-	<CAPj87rOnseYOzPqetbxKpq7_4855Vup2cySzZJmz8JejBHFPMw@mail.gmail.com>
-	<20150518210239.GB18856@joana>
-	<182ac8915516e85d964fca30afa1702a@math.uni-bielefeld.de>
+ <20150518195101.GA18856@joana>
+ <CAPj87rOnseYOzPqetbxKpq7_4855Vup2cySzZJmz8JejBHFPMw@mail.gmail.com>
+ <20150518210239.GB18856@joana>
+ <182ac8915516e85d964fca30afa1702a@math.uni-bielefeld.de>
+ <CAPj87rM-oNsqb+=7HyJ4k7GMJA80nfq_AwYVx5ct1J7hYL12PA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:34651 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932468AbbESOGz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 May 2015 10:06:55 -0400
-Received: by ieczm2 with SMTP id zm2so14454236iec.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2015 07:06:54 -0700 (PDT)
-In-Reply-To: <182ac8915516e85d964fca30afa1702a@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAPj87rM-oNsqb+=7HyJ4k7GMJA80nfq_AwYVx5ct1J7hYL12PA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, liquid.acid@gmx.net
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Gustavo Padovan <gustavo@padovan.org>, InKi Dae <inki.dae@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, liquid.acid@gmx.net
 
-Hi Tobias,
-
-On 19 May 2015 at 14:53, Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
-> On 2015-05-18 23:02, Gustavo Padovan wrote:
->> So better try this. Ideally fimd_mode_fixup should go away too, I'll do a
->> proper
->> patch once we know this works.
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> index 12ab80c..363353b 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -307,9 +307,17 @@ static void fimd_iommu_detach_devices(struct
->> fimd_context *ctx)
->>  static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
->>                 const struct drm_display_mode *mode)
->>  {
->> -       unsigned long ideal_clk = mode->htotal * mode->vtotal *
->> mode->vrefresh;
->> +       unsigned long ideal_clk;
->> +       int vrefresh;
->>         u32 clkdiv;
->>
->> +       if (mode->vrefresh == 0)
->> +               vrefresh = drm_mode_vrefresh(mode);
->> +       else
->> +               vrefresh = mode->vrefresh;
->> +
->> +       ideal_clk =  mode->htotal * mode->vtotal * vrefresh;
->> +
->>         if (ctx->i80_if) {
->>                 /*
->>                  * The frame done interrupt should be occurred prior to
->> the
->
-> I've applied this and the debug output patch, but I still get a div-by-zero.
-
-Can you please add a drm_mode_debug_printmodeline(mode) and give the
-output there?
-
-Cheers,
-Daniel
+SGV5IERhbmllbCwKCk9uIDIwMTUtMDUtMTkgMTY6MDYsIERhbmllbCBTdG9uZSB3cm90ZToKPiBI
+aSBUb2JpYXMsCj4gCj4gT24gMTkgTWF5IDIwMTUgYXQgMTQ6NTMsIFRvYmlhcyBKYWtvYmkgPHRq
+YWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiAKPiB3cm90ZToKPj4gT24gMjAxNS0wNS0xOCAy
+MzowMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4gU28gYmV0dGVyIHRyeSB0aGlzLiBJZGVh
+bGx5IGZpbWRfbW9kZV9maXh1cCBzaG91bGQgZ28gYXdheSB0b28sIEknbGwgCj4+PiBkbyBhCj4+
+PiBwcm9wZXIKPj4+IHBhdGNoIG9uY2Ugd2Uga25vdyB0aGlzIHdvcmtzLgo+Pj4gCj4+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+Pj4gYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4+PiBpbmRleCAxMmFiODBj
+Li4zNjMzNTNiIDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZpbWQuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
+bWQuYwo+Pj4gQEAgLTMwNyw5ICszMDcsMTcgQEAgc3RhdGljIHZvaWQgZmltZF9pb21tdV9kZXRh
+Y2hfZGV2aWNlcyhzdHJ1Y3QKPj4+IGZpbWRfY29udGV4dCAqY3R4KQo+Pj4gIHN0YXRpYyB1MzIg
+ZmltZF9jYWxjX2Nsa2RpdihzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsCj4+PiAgICAgICAgICAg
+ICAgICAgY29uc3Qgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUpCj4+PiAgewo+Pj4gLSAg
+ICAgICB1bnNpZ25lZCBsb25nIGlkZWFsX2NsayA9IG1vZGUtPmh0b3RhbCAqIG1vZGUtPnZ0b3Rh
+bCAqCj4+PiBtb2RlLT52cmVmcmVzaDsKPj4+ICsgICAgICAgdW5zaWduZWQgbG9uZyBpZGVhbF9j
+bGs7Cj4+PiArICAgICAgIGludCB2cmVmcmVzaDsKPj4+ICAgICAgICAgdTMyIGNsa2RpdjsKPj4+
+IAo+Pj4gKyAgICAgICBpZiAobW9kZS0+dnJlZnJlc2ggPT0gMCkKPj4+ICsgICAgICAgICAgICAg
+ICB2cmVmcmVzaCA9IGRybV9tb2RlX3ZyZWZyZXNoKG1vZGUpOwo+Pj4gKyAgICAgICBlbHNlCj4+
+PiArICAgICAgICAgICAgICAgdnJlZnJlc2ggPSBtb2RlLT52cmVmcmVzaDsKPj4+ICsKPj4+ICsg
+ICAgICAgaWRlYWxfY2xrID0gIG1vZGUtPmh0b3RhbCAqIG1vZGUtPnZ0b3RhbCAqIHZyZWZyZXNo
+Owo+Pj4gKwo+Pj4gICAgICAgICBpZiAoY3R4LT5pODBfaWYpIHsKPj4+ICAgICAgICAgICAgICAg
+ICAvKgo+Pj4gICAgICAgICAgICAgICAgICAqIFRoZSBmcmFtZSBkb25lIGludGVycnVwdCBzaG91
+bGQgYmUgb2NjdXJyZWQgcHJpb3IgCj4+PiB0bwo+Pj4gdGhlCj4+IAo+PiBJJ3ZlIGFwcGxpZWQg
+dGhpcyBhbmQgdGhlIGRlYnVnIG91dHB1dCBwYXRjaCwgYnV0IEkgc3RpbGwgZ2V0IGEgCj4+IGRp
+di1ieS16ZXJvLgo+IAo+IENhbiB5b3UgcGxlYXNlIGFkZCBhIGRybV9tb2RlX2RlYnVnX3ByaW50
+bW9kZWxpbmUobW9kZSkgYW5kIGdpdmUgdGhlCj4gb3V0cHV0IHRoZXJlPwpJJ3ZlIGFsc28gYWRk
+ZWQgcHJpbnRrIGZvciBpZGVhbF9jbGssIGhlcmUncyB0aGUgb3V0cHV0LgoKa2VybmVsIG91dHB1
+dDoKWyAgIDgxLjIwNDY4Ml0gW2RybTpmaW1kX2NhbGNfY2xrZGl2XSB2cmVmcmVzaCAwClsgICA4
+MS4yMDQ3MDBdIFtkcm06ZHJtX21vZGVfZGVidWdfcHJpbnRtb2RlbGluZV0gTW9kZWxpbmUgMDoi
+MTM2Nng3NjgiIAowIDUwMCAxMzY2IDE0MTQgMTQ0NiAxNTI2IDc2OCA3NzEgNzc2IDc5MCAweDQ4
+IDB4NQpbICAgODEuMjA0NzEwXSBbZHJtOmZpbWRfY2FsY19jbGtkaXZdIGlkZWFsX2NsayAwCgpT
+byB2cmVmcmVzaCByZW1haW5zIHplcm8gYWZ0ZXIgYWxsLgoKV2l0aCBiZXN0IHdpc2hlcywKVG9i
+aWFzCgoKPiAKPiBDaGVlcnMsCj4gRGFuaWVsCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
