@@ -1,135 +1,202 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
-Date: Tue, 19 May 2015 16:42:06 +0900
-Message-ID: <CAJKOXPcQGnc1O9-MwqeNwsQE3ax1n8nvad4Sqt47NYKnOSmJPg@mail.gmail.com>
-References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
-	<1431499020-3912-3-git-send-email-linux.amoon@gmail.com>
-	<CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
-	<CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
-	<CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
-	<CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com>
-	<CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw@mail.gmail.com>
-	<CANAwSgTbjmSxhJj4o2pnD5pR2V9JbQ3az+TSSCDwgwNnvF7P9w@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 01/25] arm: dma-mapping: add support for creating
+ reserved mappings in iova space
+Date: Tue, 19 May 2015 12:49:36 +0200
+Message-ID: <555B1540.4040104@samsung.com>
+References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com>
+ <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
+ <554A1E9C.7060101@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CANAwSgTbjmSxhJj4o2pnD5pR2V9JbQ3az+TSSCDwgwNnvF7P9w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:31651 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751532AbbESKtl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 May 2015 06:49:41 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NOL001REFEQ0990@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 May 2015 11:49:38 +0100 (BST)
+In-reply-to: <554A1E9C.7060101@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Robin Murphy <robin.murphy@arm.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Will Deacon <Will.Deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Javier Martinez Canillas <javier@dowhile0.org>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
 
-2015-05-19 16:28 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> On 15 May 2015 at 05:42, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> 2015-05-15 1:16 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>> On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>>>> On 13 May 2015 at 12:51, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>>>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->>>>>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->>>>>>> device.
->>>>>>>
->>>>>>> Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
->>>>>>> Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>>>>> ---
->>>>>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25 +++++++++++++++++++++++++
->>>>>>>  1 file changed, 25 insertions(+)
->>>>>>>
->>>>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>>>> index 9446e28..cd78816 100644
->>>>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->>>>>>> @@ -319,6 +319,31 @@
->>>>>>>                 #cooling-cells = <2>;
->>>>>>>                 cooling-levels = <0 130 170 230>;
->>>>>>>         };
->>>>>>> +
->>>>>>> +       tmu@10060000 {
->>>>>>
->>>>>> Here and for other overrides please use label notation, like:
->>>>>>
->>>>>> &tmu_cpu0 {
->>>>>>               ...
->>>>>> };
->>>>>>
->>>>>>> +               vtmu-supply = <&ldo10_reg>;
->>>>>>
->>>>>> I am curious, how did you find that LDO10 supplies TMU unit?
->>>>>>
->>>>>> Best regards,
->>>>>> Krzysztof
->>>>>
->>>>> Hi Krzysztof,
->>>>>
->>>>> I have re-base my work on earlier Lukasz Majewski patches.
->>>>>
->>>>> https://patchwork.kernel.org/patch/5693201/
->>>>
->>>> NAK.
->>>> I am sorry, but this is not sufficient explanation. Actually such
->>>> explanation could mean that you did just blindly copied everything
->>>> instead of developing it.
->>>>
->>>> You cannot use some regulator here just because some Exynos4 boards
->>>> use it. You have to be sure that this regulator supplies this part of
->>>> SoC or device.
->>>
->>> Hi Krzysztof,
->>>
->>> After going through the schematics, I came to understanding that their is
->>> missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
->>>
->>> Below is the schematic of the board.
->>>
->>> http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
->>>
->>>   ldo18_reg: LDO18 {
->>>                                          regulator-name = "vdd_ldo18";
->>>                                          regulator-min-microvolt = <1800000>;
->>>                                          regulator-max-microvolt = <1800000>;
->>>                                          regulator-always-on;
->>>                                };
->>
->> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
->>
->> I think the schematics are missing some of details but it can be deducted that:
->> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
->> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
->> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
->> S2MPS11 PMIC.
->> 3. I confirmed with the Exynos5422 datasheet that these
->> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
->>
->> So the LDO7 it is... but before using it there is a caveat. The LDO7
->> is also connected to VDD of MIPI, HDMI and few more. So when you use
->> this regulator in TMU it may be turned off by TMU driver (e.g. during
->> unbind). In such case these other blocks also should be tested and
->> checked whether they take this regulator and enable it.
->
-> hi Krzysztof,
->
-> I tried to use the LDO7 regulator for TMU but it failed to register.
->
-> [    3.231329] ina2xx 0-0045: power monitor ina231 (Rshunt = 10000 uOhm)
-> [    3.237691] thermal thermal_zone0: failed to read out thermal zone (-22)
-> [    3.243033] exynos-tmu 10060000.tmu: Looking up vtmu-supply from device tree
-> [    3.243936] thermal thermal_zone1: failed to read out thermal zone (-22)
-> [    3.249791] exynos-tmu 10064000.tmu: Looking up vtmu-supply from device tree
-> [    3.250677] thermal thermal_zone2: failed to read out thermal zone (-22)
-> [    3.256410] exynos-tmu 10068000.tmu: Looking up vtmu-supply from device tree
-> [    3.257345] thermal thermal_zone3: failed to read out thermal zone (-22)
-> [    3.263050] exynos-tmu 1006c000.tmu: Looking up vtmu-supply from device tree
-> [    3.263984] thermal thermal_zone4: failed to read out thermal zone (-22)
-> [    3.269769] exynos-tmu 100a0000.tmu: Looking up vtmu-supply from device tree
-> [    3.270363] usb 5-1: New USB device found, idVendor=0424, idProduct=9514
-> [    3.276389] usb 5-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+Hello,
 
-Indeed.
+On 2015-05-06 16:01, Robin Murphy wrote:
+> Hi Marek,
+>
+> On 04/05/15 09:15, Marek Szyprowski wrote:
+>> Some devices (like frame buffers) are enabled by bootloader and 
+>> configured
+>> to perform DMA operations automatically (like displaying boot logo or 
+>> splash
+>> screen). Such devices operate and perform DMA operation usually until 
+>> the
+>> proper driver for them is loaded and probed. However before that 
+>> happens,
+>> system usually loads IOMMU drivers and configures dma parameters for 
+>> each
+>> device. When such initial configuration is created and enabled, it 
+>> usually
+>> contains empty translation rules betweem IO address space and physical
+>> memory, because no buffers nor memory regions have been requested by the
+>> respective driver.
+>>
+>> This patch adds support for "iommu-reserved-mapping", which can be used
+>> to provide definitions for mappings that need to be created on system
+>> boot to let such devices (enabled by bootloader) to operate properly
+>> until respective driver is probed.
+>
+> This appears to only work if you assume the driver is going to tear 
+> down the existing domain entirely; what about drivers that don't 
+> manage IOMMUs explicitly, or if there are multiple active devices 
+> behind the same IOMMU which (in future) start out in the same default 
+> domain? If any device is happy to remain in the default domain then it 
+> would be nice to clear the reservations once they are no longer needed.
 
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Right, this need to be somehow worked out, but frankly right now I don't 
+have
+good idea which code should do it. The only idea that comes to my mind 
+is using
+a BUS_NOTIFY_BOUND_DRIVER notifier, but I don't like this approach.
+
+> Could we not address the issue in a more robust way, like fleshing out 
+> an implementation of the nascent IOMMU_DOMAIN_IDENTITY type, then just 
+> flagging such devices to stipulate that their boot-time default domain 
+> must be an identity-mapped one?
+
+I'm open for any solution that will cover this case. Maybe my idea of iommu
+reserved regions is a bit over-engineered? Maybe instead of defining 
+reserved
+ranges it will be enough to add something like 
+'iommu-on-boot-identity-mapping'
+property? This way one can later use it for IOMMU_DOMAIN_IDENTITY 
+approach or
+something else what will be agreed?
+
+>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   Documentation/devicetree/bindings/iommu/iommu.txt |  44 +++++++++
+>>   arch/arm/mm/dma-mapping.c                         | 112 
+>> ++++++++++++++++++++++
+>>   2 files changed, 156 insertions(+)
+>>
+> [...]
+>> @@ -2048,6 +2092,66 @@ void arm_iommu_detach_device(struct device *dev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
+>>
+>> +static int arm_iommu_add_reserved(struct device *dev,
+>> +                       struct dma_iommu_mapping *domain, phys_addr_t 
+>> phys,
+>> +                       dma_addr_t dma, size_t size)
+>> +{
+>> +       int ret;
+>> +
+>> +       ret = __reserve_iova(domain, dma, size);
+>> +       if (ret) {
+>> +               dev_err(dev, "failed to reserve mapping\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       ret = iommu_map(domain->domain, dma, phys, size, IOMMU_READ);
+>> +       if (ret != 0) {
+>> +               dev_err(dev, "create IOMMU mapping\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       dev_info(dev, "created reserved DMA mapping (%pa -> %pad, %zu 
+>> bytes)\n",
+>> +                &phys, &dma, size);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int arm_iommu_init_reserved(struct device *dev,
+>> +                                  struct dma_iommu_mapping *domain)
+>> +{
+>> +       const char *name = "iommu-reserved-mapping";
+>> +       const __be32 *prop = NULL;
+>> +       int len, naddr, nsize;
+>> +       struct device_node *node = dev->of_node;
+>> +       phys_addr_t phys;
+>> +       dma_addr_t dma;
+>> +       size_t size;
+>> +
+>> +       if (!node)
+>> +               return 0;
+>> +
+>> +       naddr = of_n_addr_cells(node);
+>> +       nsize = of_n_size_cells(node);
+>> +
+>> +       prop = of_get_property(node, name, &len);
+>> +       if (!prop)
+>> +               return 0;
+>> +
+>> +       len /= sizeof(u32);
+>> +
+>> +       if (len < 2 * naddr + nsize) {
+>> +               dev_err(dev, "invalid length (%d cells) of %s 
+>> property\n",
+>> +                       len, name);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       phys = of_read_number(prop, naddr);
+>> +       dma = of_read_number(prop + naddr, naddr);
+>> +       size = of_read_number(prop + 2*naddr, nsize);
+>> +
+>> +       return arm_iommu_add_reserved(dev, domain, phys, dma, size);
+> > +}
+>
+> I may be missing something, but I don't see how this can handle 
+> multiple ranges for the same device as the binding says.
+>
+
+Right, loop is missing in the above calls.
+
+>>   static struct dma_map_ops *arm_get_iommu_dma_map_ops(bool coherent)
+>>   {
+>>          return coherent ? &iommu_coherent_ops : &iommu_ops;
+>> @@ -2068,6 +2172,14 @@ static bool arm_setup_iommu_dma_ops(struct 
+>> device *dev, u64 dma_base, u64 size,
+>>                  return false;
+>>          }
+>>
+>> +       if (arm_iommu_init_reserved(dev, mapping) != 0) {
+>> +               pr_warn("Failed to initialize reserved mapping for 
+>> device %s\n",
+>> +                       dev_name(dev));
+>> +               __arm_iommu_detach_device(dev);
+>> +               arm_iommu_release_mapping(mapping);
+>> +               return false;
+>> +       }
+>> +
+>>          if (__arm_iommu_attach_device(dev, mapping)) {
+>>                  pr_warn("Failed to attached device %s to 
+>> IOMMU_mapping\n",
+>>                                  dev_name(dev));
+>
+> I'm hoping Joerg is still working on his default domain series, 
+> because the domain creation in arch_setup_dma_ops turns out to be 
+> horrible on a number of levels (like everything happening in the wrong 
+> order for platform devices). If that doesn't negate this issue 
+> entirely, it's going to significantly break this way of hooking up the 
+> solution (depending on what the drivers do) - worth some 
+> consideration, at least.
+
+I would really like to have something working soon, it's been a lot of 
+discussion but still
+very little of code that actually implements anything...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
