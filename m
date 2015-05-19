@@ -1,47 +1,54 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [RFC PATCH 1/4] spi: spidev: Add Google SPI flash compatible
- string
-Date: Tue, 19 May 2015 22:53:05 +0300
-Message-ID: <20150519195305.GA2586@tarshish>
-References: <1432042454-19234-1-git-send-email-javier.martinez@collabora.co.uk>
- <1432042454-19234-2-git-send-email-javier.martinez@collabora.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] serial: samsung: only use earlycon for console
+Date: Tue, 19 May 2015 22:26:04 +0200
+Message-ID: <3397068.2Doeo7zeZ1@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1432042454-19234-2-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, David Hendricks <dhendrix@google.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:52150 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751450AbbESU0f (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 May 2015 16:26:35 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, peter@hurleysoftware.com, tfiga@google.com, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Javier,
+A configuration that enables earlycon but not the core console
+code causes a link error:
 
-On Tue, May 19, 2015 at 03:34:11PM +0200, Javier Martinez Canillas wrote:
-> Google Chromebooks have a SPI flash that is used to store firmware and
-> different system parameters and data (i.e: Google Binary Block flags).
-> 
-> Since there isn't a driver for it yet, the spidev interface is used to
-> access the flash from user-space (i.e: using the flashrom tool).
-> 
-> Add a "google,spi-flash" compatible string so the Device Tree sources
-> use it instead of the "spidev" compatible which does not describe the
-> real HW and is just a Linux implementation detail.
-> 
-> A generic "google,spi-flash" OF device ID is used instead of the actual
-> vendor/model because these chips are commodity parts that are sourced
-> from multiple vendors. So specifying the exact vendor and model in the
-> DTS will add a maintenance burden with no real gain (the parts are 100%
-> compatible anyways) and will likely result in it simply being wrong for
-> a sizeable fraction of the machines.
+  drivers/built-in.o: In function `setup_earlycon':
+  drivers/tty/serial/earlycon.c:70: undefined reference to `uart_parse_earlycon'
 
-The compatible string and dt binding should be documented somewhere under 
-Documentation/devicetree/bindings/. Also, please keep the dt list on Cc for dt 
-related patches.
+That error can be triggered by the newly added samsung earlycon support,
+which is missing a 'select' statement.
 
-baruch
+As suggested by Peter Hurley, solves the problem by moving the
+'select SERIAL_EARLYCON' statement to the samsung console driver
+option, as it is done by all other console drivers.
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: b94ba0328d3b3 ("serial: samsung: Add support for early console")
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 43b61f8e3e74..9adfd0997865 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -241,7 +241,6 @@ config SERIAL_SAMSUNG
+ 	tristate "Samsung SoC serial support"
+ 	depends on PLAT_SAMSUNG || ARCH_EXYNOS
+ 	select SERIAL_CORE
+-	select SERIAL_EARLYCON
+ 	help
+ 	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+ 	  providing /dev/ttySAC0, 1 and 2 (note, some machines may not
+@@ -277,6 +276,7 @@ config SERIAL_SAMSUNG_CONSOLE
+ 	bool "Support for console on Samsung SoC serial port"
+ 	depends on SERIAL_SAMSUNG=y
+ 	select SERIAL_CORE_CONSOLE
++	select SERIAL_EARLYCON
+ 	help
+ 	  Allow selection of the S3C24XX on-board serial ports for use as
+ 	  an virtual console.
