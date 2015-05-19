@@ -1,202 +1,137 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v6 01/25] arm: dma-mapping: add support for creating
- reserved mappings in iova space
-Date: Tue, 19 May 2015 12:49:36 +0200
-Message-ID: <555B1540.4040104@samsung.com>
-References: <1430727380-10912-1-git-send-email-m.szyprowski@samsung.com>
- <1430727380-10912-2-git-send-email-m.szyprowski@samsung.com>
- <554A1E9C.7060101@arm.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v6 06/11] cec: add HDMI CEC framework
+Date: Tue, 19 May 2015 13:03:18 +0200
+Message-ID: <555B1876.3040702@xs4all.nl>
+References: <1430760785-1169-1-git-send-email-k.debski@samsung.com> <1430760785-1169-7-git-send-email-k.debski@samsung.com> <20150513111017.GA2191@gofer.mess.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:31651 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751532AbbESKtl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 May 2015 06:49:41 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NOL001REFEQ0990@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 May 2015 11:49:38 +0100 (BST)
-In-reply-to: <554A1E9C.7060101@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20150513111017.GA2191@gofer.mess.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Sean Young <sean@mess.org>, Kamil Debski <k.debski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, m.szyprowski@samsung.com, mchehab@osg.samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, Hans Verkuil <hansverk@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Will Deacon <Will.Deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Javier Martinez Canillas <javier@dowhile0.org>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
 
-Hello,
+Hi Sean,
 
-On 2015-05-06 16:01, Robin Murphy wrote:
-> Hi Marek,
->
-> On 04/05/15 09:15, Marek Szyprowski wrote:
->> Some devices (like frame buffers) are enabled by bootloader and 
->> configured
->> to perform DMA operations automatically (like displaying boot logo or 
->> splash
->> screen). Such devices operate and perform DMA operation usually until 
->> the
->> proper driver for them is loaded and probed. However before that 
->> happens,
->> system usually loads IOMMU drivers and configures dma parameters for 
->> each
->> device. When such initial configuration is created and enabled, it 
->> usually
->> contains empty translation rules betweem IO address space and physical
->> memory, because no buffers nor memory regions have been requested by the
->> respective driver.
+I'm taking over this patch series from Kamil for the time being with his
+permission (he's switching jobs and moving house so he can't spend any time
+on this for a while).
+
+On 05/13/15 13:10, Sean Young wrote:
+> On Mon, May 04, 2015 at 07:32:59PM +0200, Kamil Debski wrote:
+>> From: Hans Verkuil <hansverk@cisco.com>
 >>
->> This patch adds support for "iommu-reserved-mapping", which can be used
->> to provide definitions for mappings that need to be created on system
->> boot to let such devices (enabled by bootloader) to operate properly
->> until respective driver is probed.
->
-> This appears to only work if you assume the driver is going to tear 
-> down the existing domain entirely; what about drivers that don't 
-> manage IOMMUs explicitly, or if there are multiple active devices 
-> behind the same IOMMU which (in future) start out in the same default 
-> domain? If any device is happy to remain in the default domain then it 
-> would be nice to clear the reservations once they are no longer needed.
-
-Right, this need to be somehow worked out, but frankly right now I don't 
-have
-good idea which code should do it. The only idea that comes to my mind 
-is using
-a BUS_NOTIFY_BOUND_DRIVER notifier, but I don't like this approach.
-
-> Could we not address the issue in a more robust way, like fleshing out 
-> an implementation of the nascent IOMMU_DOMAIN_IDENTITY type, then just 
-> flagging such devices to stipulate that their boot-time default domain 
-> must be an identity-mapped one?
-
-I'm open for any solution that will cover this case. Maybe my idea of iommu
-reserved regions is a bit over-engineered? Maybe instead of defining 
-reserved
-ranges it will be enough to add something like 
-'iommu-on-boot-identity-mapping'
-property? This way one can later use it for IOMMU_DOMAIN_IDENTITY 
-approach or
-something else what will be agreed?
-
->
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   Documentation/devicetree/bindings/iommu/iommu.txt |  44 +++++++++
->>   arch/arm/mm/dma-mapping.c                         | 112 
->> ++++++++++++++++++++++
->>   2 files changed, 156 insertions(+)
+>> The added HDMI CEC framework provides a generic kernel interface for
+>> HDMI CEC devices.
 >>
-> [...]
->> @@ -2048,6 +2092,66 @@ void arm_iommu_detach_device(struct device *dev)
->>   }
->>   EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
->>
->> +static int arm_iommu_add_reserved(struct device *dev,
->> +                       struct dma_iommu_mapping *domain, phys_addr_t 
->> phys,
->> +                       dma_addr_t dma, size_t size)
+>> Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+> 
+> -snip-
+> 
+>> +int cec_create_adapter(struct cec_adapter *adap, const char *name, u32 caps)
 >> +{
->> +       int ret;
+>> +	int res = 0;
 >> +
->> +       ret = __reserve_iova(domain, dma, size);
->> +       if (ret) {
->> +               dev_err(dev, "failed to reserve mapping\n");
->> +               return -EINVAL;
->> +       }
+>> +	adap->state = CEC_ADAP_STATE_DISABLED;
+>> +	adap->name = name;
+>> +	adap->phys_addr = 0xffff;
+>> +	adap->capabilities = caps;
+>> +	adap->version = CEC_VERSION_1_4;
+>> +	adap->sequence = 0;
+>> +	mutex_init(&adap->lock);
+>> +	adap->kthread = kthread_run(cec_thread_func, adap, name);
+>> +	init_waitqueue_head(&adap->kthread_waitq);
+>> +	init_waitqueue_head(&adap->waitq);
+>> +	if (IS_ERR(adap->kthread)) {
+>> +		pr_err("cec-%s: kernel_thread() failed\n", name);
+>> +		return PTR_ERR(adap->kthread);
+>> +	}
+>> +	if (caps) {
+>> +		res = cec_devnode_register(&adap->devnode, adap->owner);
+>> +		if (res)
+>> +			kthread_stop(adap->kthread);
+>> +	}
+>> +	adap->recv_notifier = cec_receive_notify;
 >> +
->> +       ret = iommu_map(domain->domain, dma, phys, size, IOMMU_READ);
->> +       if (ret != 0) {
->> +               dev_err(dev, "create IOMMU mapping\n");
->> +               return ret;
->> +       }
+>> +	/* Prepare the RC input device */
+>> +	adap->rc = rc_allocate_device();
+>> +	if (!adap->rc) {
+>> +		pr_err("cec-%s: failed to allocate memory for rc_dev\n", name);
+>> +		cec_devnode_unregister(&adap->devnode);
+>> +		kthread_stop(adap->kthread);
+>> +		return -ENOMEM;
+>> +	}
 >> +
->> +       dev_info(dev, "created reserved DMA mapping (%pa -> %pad, %zu 
->> bytes)\n",
->> +                &phys, &dma, size);
+>> +	snprintf(adap->input_name, sizeof(adap->input_name), "RC for %s", name);
+>> +	snprintf(adap->input_phys, sizeof(adap->input_phys), "%s/input0", name);
+>> +	strncpy(adap->input_drv, name, sizeof(adap->input_drv));
 >> +
->> +       return 0;
+>> +	adap->rc->input_name = adap->input_name;
+>> +	adap->rc->input_phys = adap->input_phys;
+>> +	adap->rc->dev.parent = &adap->devnode.dev;
+>> +	adap->rc->driver_name = adap->input_drv;
+>> +	adap->rc->driver_type = RC_DRIVER_CEC;
+>> +	adap->rc->allowed_protocols = RC_BIT_CEC;
+>> +	adap->rc->priv = adap;
+>> +	adap->rc->map_name = RC_MAP_CEC;
+>> +	adap->rc->timeout = MS_TO_NS(100);
+>> +
+> 
+> rc->input_id is not populated. It would be nice if input_phys has some 
+> resemblance to a physical path (like the output of usb_make_path() if it
+> is a usb device).
+
+I've added a BUS_CEC type, the version field can probably get the CEC version
+used, but the vendor/product IDs are difficult: there isn't a product ID in
+the CEC protocol, but there is a 24-bit vendor ID. I'm wondering whether I
+should just put the top 8 bits of the vendor ID in the vendor field and the
+remaining 16 in the product field. That way the combination of the two will be
+unique.
+
+What do you think?
+
+>> +	res = rc_register_device(adap->rc);
+>> +
+>> +	if (res) {
+>> +		pr_err("cec-%s: failed to prepare input device\n", name);
+>> +		cec_devnode_unregister(&adap->devnode);
+>> +		rc_free_device(adap->rc);
+>> +		kthread_stop(adap->kthread);
+>> +	}
+>> +
+>> +	return res;
 >> +}
+>> +EXPORT_SYMBOL_GPL(cec_create_adapter);
 >> +
->> +static int arm_iommu_init_reserved(struct device *dev,
->> +                                  struct dma_iommu_mapping *domain)
+>> +void cec_delete_adapter(struct cec_adapter *adap)
 >> +{
->> +       const char *name = "iommu-reserved-mapping";
->> +       const __be32 *prop = NULL;
->> +       int len, naddr, nsize;
->> +       struct device_node *node = dev->of_node;
->> +       phys_addr_t phys;
->> +       dma_addr_t dma;
->> +       size_t size;
->> +
->> +       if (!node)
->> +               return 0;
->> +
->> +       naddr = of_n_addr_cells(node);
->> +       nsize = of_n_size_cells(node);
->> +
->> +       prop = of_get_property(node, name, &len);
->> +       if (!prop)
->> +               return 0;
->> +
->> +       len /= sizeof(u32);
->> +
->> +       if (len < 2 * naddr + nsize) {
->> +               dev_err(dev, "invalid length (%d cells) of %s 
->> property\n",
->> +                       len, name);
->> +               return -EINVAL;
->> +       }
->> +
->> +       phys = of_read_number(prop, naddr);
->> +       dma = of_read_number(prop + naddr, naddr);
->> +       size = of_read_number(prop + 2*naddr, nsize);
->> +
->> +       return arm_iommu_add_reserved(dev, domain, phys, dma, size);
-> > +}
->
-> I may be missing something, but I don't see how this can handle 
-> multiple ranges for the same device as the binding says.
->
+>> +	if (adap->kthread == NULL)
+>> +		return;
+>> +	kthread_stop(adap->kthread);
+>> +	if (adap->kthread_config)
+>> +		kthread_stop(adap->kthread_config);
+>> +	adap->state = CEC_ADAP_STATE_DISABLED;
+>> +	if (cec_devnode_is_registered(&adap->devnode))
+>> +		cec_devnode_unregister(&adap->devnode);
+> 
+> I think you're missing a rc_unregister_device() here.
 
-Right, loop is missing in the above calls.
+Yes indeed. Added.
 
->>   static struct dma_map_ops *arm_get_iommu_dma_map_ops(bool coherent)
->>   {
->>          return coherent ? &iommu_coherent_ops : &iommu_ops;
->> @@ -2068,6 +2172,14 @@ static bool arm_setup_iommu_dma_ops(struct 
->> device *dev, u64 dma_base, u64 size,
->>                  return false;
->>          }
->>
->> +       if (arm_iommu_init_reserved(dev, mapping) != 0) {
->> +               pr_warn("Failed to initialize reserved mapping for 
->> device %s\n",
->> +                       dev_name(dev));
->> +               __arm_iommu_detach_device(dev);
->> +               arm_iommu_release_mapping(mapping);
->> +               return false;
->> +       }
->> +
->>          if (__arm_iommu_attach_device(dev, mapping)) {
->>                  pr_warn("Failed to attached device %s to 
->> IOMMU_mapping\n",
->>                                  dev_name(dev));
->
-> I'm hoping Joerg is still working on his default domain series, 
-> because the domain creation in arch_setup_dma_ops turns out to be 
-> horrible on a number of levels (like everything happening in the wrong 
-> order for platform devices). If that doesn't negate this issue 
-> entirely, it's going to significantly break this way of hooking up the 
-> solution (depending on what the drivers do) - worth some 
-> consideration, at least.
+Regards,
 
-I would really like to have something working soon, it's been a lot of 
-discussion but still
-very little of code that actually implements anything...
+	Hans
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> 
+>> +}
+>> +EXPORT_SYMBOL_GPL(cec_delete_adapter);
+> 
+> 
+> Sean
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
