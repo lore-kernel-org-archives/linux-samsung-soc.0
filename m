@@ -1,92 +1,92 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] video: exynos: fix modular build
-Date: Tue, 19 May 2015 14:17:23 +0200
-Message-ID: <2708563.ADEZz3igC5@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v7 04/25] iommu/exynos: Don't read version register on every
+ tlb operation
+Date: Tue, 19 May 2015 15:20:24 +0200
+Message-ID: <1432041645-11172-5-git-send-email-m.szyprowski@samsung.com>
+References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:61740 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754560AbbESMRf (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:41231 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755863AbbESNU7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 May 2015 08:17:35 -0400
+	Tue, 19 May 2015 09:20:59 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NOL001VWMEY0B10@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 May 2015 14:20:58 +0100 (BST)
+In-reply-to: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-fbdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The s6e8ax0 driver has a dependency on BACKLIGHT_CLASS_DEVICE,
-which can be configured as a loadable module, so we have to
-make the driver a tristate symbol as well, to avoid this error:
+This patch removes reading of REG_MMU_VERSION register on every tlb
+operation and caches SYSMMU version in driver's internal data.
 
-drivers/built-in.o: In function `s6e8ax0_probe':
-:(.text+0x23a48): undefined reference to `devm_backlight_device_register'
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/iommu/exynos-iommu.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-This also means we get another error from a missing export, which
-this fixes as well:
-
-ERROR: "exynos_mipi_dsi_register_lcd_driver" [drivers/video/fbdev/exynos/s6e8ax0.ko] undefined!
-
-Finally, the EXYNOS_VIDEO option is turned into tristate as well
-for good measure, as all framebuffer drivers should be configurable
-as modules.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/drivers/video/fbdev/exynos/Kconfig b/drivers/video/fbdev/exynos/Kconfig
-index 1f16b4678c71..d916bef94f25 100644
---- a/drivers/video/fbdev/exynos/Kconfig
-+++ b/drivers/video/fbdev/exynos/Kconfig
-@@ -3,7 +3,7 @@
- #
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 3e898504a7c4..e9385ef0b8df 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -213,6 +213,7 @@ struct sysmmu_drvdata {
+ 	spinlock_t lock;
+ 	struct iommu_domain *domain;
+ 	phys_addr_t pgtable;
++	unsigned int version;
+ };
  
- menuconfig EXYNOS_VIDEO
--	bool "Exynos Video driver support"
-+	tristate "Exynos Video driver support"
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS
- 	help
- 	  This enables support for EXYNOS Video device.
-@@ -15,13 +15,13 @@ if EXYNOS_VIDEO
- #
- 
- config EXYNOS_MIPI_DSI
--	bool "EXYNOS MIPI DSI driver support."
-+	tristate "EXYNOS MIPI DSI driver support."
- 	select GENERIC_PHY
- 	help
- 	  This enables support for MIPI-DSI device.
- 
- config EXYNOS_LCD_S6E8AX0
--	bool "S6E8AX0 MIPI AMOLED LCD Driver"
-+	tristate "S6E8AX0 MIPI AMOLED LCD Driver"
- 	depends on EXYNOS_MIPI_DSI && BACKLIGHT_CLASS_DEVICE
- 	depends on (LCD_CLASS_DEVICE = y)
- 	default n
-diff --git a/drivers/video/fbdev/exynos/Makefile b/drivers/video/fbdev/exynos/Makefile
-index b5b1bd228abb..02d8dc522fea 100644
---- a/drivers/video/fbdev/exynos/Makefile
-+++ b/drivers/video/fbdev/exynos/Makefile
-@@ -2,6 +2,8 @@
- # Makefile for the exynos video drivers.
- #
- 
--obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
--				     	exynos_mipi_dsi_lowlevel.o
-+obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos-mipi-dsi-mod.o
-+
-+exynos-mipi-dsi-mod-objs		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
-+					   exynos_mipi_dsi_lowlevel.o
- obj-$(CONFIG_EXYNOS_LCD_S6E8AX0)	+= s6e8ax0.o
-diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-index b527fe464628..18edc724bf57 100644
---- a/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-+++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi.c
-@@ -263,6 +263,7 @@ int exynos_mipi_dsi_register_lcd_driver(struct mipi_dsim_lcd_driver *lcd_drv)
- 	return 0;
- 
+ static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
+@@ -244,11 +245,6 @@ static void sysmmu_unblock(void __iomem *sfrbase)
+ 	__raw_writel(CTRL_ENABLE, sfrbase + REG_MMU_CTRL);
  }
-+EXPORT_SYMBOL_GPL(exynos_mipi_dsi_register_lcd_driver);
  
- static struct mipi_dsim_ddi *exynos_mipi_dsi_bind_lcd_ddi(
- 						struct mipi_dsim_device *dsim,
+-static unsigned int __raw_sysmmu_version(struct sysmmu_drvdata *data)
+-{
+-	return MMU_RAW_VER(__raw_readl(data->sfrbase + REG_MMU_VERSION));
+-}
+-
+ static bool sysmmu_block(void __iomem *sfrbase)
+ {
+ 	int i = 120;
+@@ -408,7 +404,7 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
+ 	unsigned int cfg = CFG_LRU | CFG_QOS(15);
+ 	unsigned int ver;
+ 
+-	ver = __raw_sysmmu_version(data);
++	ver = MMU_RAW_VER(__raw_readl(data->sfrbase + REG_MMU_VERSION));
+ 	if (MMU_MAJ_VER(ver) == 3) {
+ 		if (MMU_MIN_VER(ver) >= 2) {
+ 			cfg |= CFG_FLPDCACHE;
+@@ -422,6 +418,7 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
+ 	}
+ 
+ 	__raw_writel(cfg, data->sfrbase + REG_MMU_CFG);
++	data->version = ver;
+ }
+ 
+ static void __sysmmu_enable_nocount(struct sysmmu_drvdata *data)
+@@ -531,7 +528,7 @@ static bool exynos_sysmmu_disable(struct device *dev)
+ static void __sysmmu_tlb_invalidate_flpdcache(struct sysmmu_drvdata *data,
+ 					      sysmmu_iova_t iova)
+ {
+-	if (__raw_sysmmu_version(data) == MAKE_MMU_VER(3, 3))
++	if (data->version == MAKE_MMU_VER(3, 3))
+ 		__raw_writel(iova | 0x1, data->sfrbase + REG_MMU_FLUSH_ENTRY);
+ }
+ 
+@@ -580,7 +577,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, sysmmu_iova_t iova,
+ 		 * 1MB page can be cached in one of all sets.
+ 		 * 64KB page can be one of 16 consecutive sets.
+ 		 */
+-		if (MMU_MAJ_VER(__raw_sysmmu_version(data)) == 2)
++		if (MMU_MAJ_VER(data->version) == 2)
+ 			num_inv = min_t(unsigned int, size / PAGE_SIZE, 64);
+ 
+ 		if (sysmmu_block(data->sfrbase)) {
+-- 
+1.9.2
