@@ -1,67 +1,123 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC PATCH 3/4] ARM: dts: Add SPI flash node to exynos5250-snow
-Date: Tue, 19 May 2015 15:34:13 +0200
-Message-ID: <1432042454-19234-4-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [RFC PATCH 2/4] ARM: dts: Add SPI flash node for Peach boards
+Date: Tue, 19 May 2015 15:34:12 +0200
+Message-ID: <1432042454-19234-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1432042454-19234-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:52920 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755824AbbESNew (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 May 2015 09:34:52 -0400
 In-Reply-To: <1432042454-19234-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, David Hendricks <dhendrix@google.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, David Hendricks <dhendrix@google.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Simon Glass <sjg@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Doug Anderson <dianders@chromium.org>
+From: Simon Glass <sjg@chromium.org>
 
-Exynos5250 Snow machine has a SPI flash memory that is used to
+Peach Pit and Pi machines have a SPI flash memory that is used to
 store firmware and different system parameters and data.
 
 Add information about the SPI flash chip so that user-space tools
 can access it.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Olof Johansson <olofj@chromium.org>
+Signed-off-by: Simon Glass <sjg@chromium.org>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- arch/arm/boot/dts/exynos5250-snow.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 26 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 26 ++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1eca97ee4bd6..e9a2dbe2e0b9 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -615,6 +615,13 @@
- 		samsung,pin-drv = <0>;
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 146e71118a72..8e88088d6815 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -892,6 +892,13 @@
+ 		samsung,pin-drv = <2>;
  	};
  
-+	spi_cs: spi-cs {
++	spi_flash_cs: spi-flash-cs {
 +		samsung,pins = "gpa2-5";
 +		samsung,pin-function = <1>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <3>;
 +	};
 +
- 	tps65090_irq: tps65090-irq {
- 		samsung,pins = "gpx2-6";
- 		samsung,pin-function = <0>;
-@@ -690,6 +697,19 @@
- 	status = "okay";
- 	samsung,spi-src-clk = <0>;
- 	num-cs = <1>;
+ 	usb300_vbus_en: usb300-vbus-en {
+ 		samsung,pins = "gph0-0";
+ 		samsung,pin-function = <1>;
+@@ -921,6 +928,25 @@
+ 	clock-names = "rtc", "rtc_src";
+ };
+ 
++&spi_1 {
++	status = "okay";
++	samsung,spi-src-clk = <0>;
++	num-cs = <1>;
 +	cs-gpios = <&gpa2 5 0>;
 +
 +	spidev@0 {
 +		compatible = "google,spi-flash";
 +		reg = <0>;
-+		spi-max-frequency = <10000000>;
++		spi-max-frequency = <50000000>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&spi_cs>;
++		pinctrl-0 = <&spi_flash_cs>;
 +
 +		controller-data {
 +			samsung,spi-feedback-delay = <2>;
 +		};
 +	};
++};
++
+ &spi_2 {
+ 	status = "okay";
+ 	num-cs = <1>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 02eb8b15374f..f2b89991b224 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -855,6 +855,13 @@
+ 		samsung,pin-drv = <2>;
+ 	};
+ 
++	spi_flash_cs: spi-flash-cs {
++		samsung,pins = "gpa2-5";
++		samsung,pin-function = <1>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <3>;
++	};
++
+ 	usb300_vbus_en: usb300-vbus-en {
+ 		samsung,pins = "gph0-0";
+ 		samsung,pin-function = <1>;
+@@ -884,6 +891,25 @@
+ 	clock-names = "rtc", "rtc_src";
  };
  
- &usbdrd_dwc3 {
++&spi_1 {
++	status = "okay";
++	samsung,spi-src-clk = <0>;
++	num-cs = <1>;
++	cs-gpios = <&gpa2 5 0>;
++
++	spidev@0 {
++		compatible = "google,spi-flash";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&spi_flash_cs>;
++
++		controller-data {
++			samsung,spi-feedback-delay = <2>;
++		};
++	};
++};
++
+ &spi_2 {
+ 	status = "okay";
+ 	num-cs = <1>;
 -- 
 2.1.4
