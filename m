@@ -1,63 +1,84 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] exynos: pmu: use PS_HOLD based poweroff for all supported SoCs
-Date: Wed, 20 May 2015 15:31:16 +0900
-Message-ID: <CAJKOXPcFH4_udSmSjttON4AEJ84QUUu+8u-uaN1qtNeWU3NntA@mail.gmail.com>
-References: <1423466741-11421-1-git-send-email-m.szyprowski@samsung.com>
-	<CAJKOXPeeUjcwO6qBdHA8DJaviPxRwjAsSe7ciyGDFOUoNhZvcQ@mail.gmail.com>
-	<CAJKOXPe4=DHsV3_axDUhpimRaqSHA3=HLiSJ1K3DYZoGRRiTTg@mail.gmail.com>
-	<550C3888.7050905@samsung.com>
-	<020001d06609$74970ee0$5dc52ca0$@kernel.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH] video: exynos: fix modular build
+Date: Wed, 20 May 2015 09:05:40 +0200
+Message-ID: <1432105540.21715.26.camel@x220>
+References: <2708563.ADEZz3igC5@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f47.google.com ([209.85.216.47]:35605 "EHLO
-	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751822AbbETGbR (ORCPT
+Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:46209 "EHLO
+	lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750794AbbETHFp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 02:31:17 -0400
-Received: by vnbf1 with SMTP id f1so2897610vnb.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2015 23:31:16 -0700 (PDT)
-In-Reply-To: <020001d06609$74970ee0$5dc52ca0$@kernel.org>
+	Wed, 20 May 2015 03:05:45 -0400
+In-Reply-To: <2708563.ADEZz3igC5@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Daniel Drake <drake@endlessm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-2015-03-24 17:06 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
-> Marek Szyprowski wrote:
->>
->> Hello,
->>
-> Hi,
->
->> On 2015-02-09 11:58, Krzysztof Kozlowski wrote:
->> > 2015-02-09 10:06 GMT+01:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> >> 2015-02-09 8:25 GMT+01:00 Marek Szyprowski <m.szyprowski@samsung.com>:
->> >>> PS_HOLD based power off procedure is common for all Exynos SoCs, so use
->> >>> it for every Exynos SoC.
->> >>>
->> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> >>> ---
->> >>>   arch/arm/mach-exynos/pmu.c | 6 +++---
->> >>>   1 file changed, 3 insertions(+), 3 deletions(-)
->> >> I tried this on Trats2 board (Exynos 4412) and message "Power down
->> >> failed, please power off system manually." appears. Is it expected? Or
->> >> am I missing some patches (I applied this on top of next-20150129)?
->> > It was my fault (I left attached JIG cable which prevents power off).
->> > Now it works fine.
->> >
->> > Tested on Trats2 (Exynos4412):
->> > Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> >
->> > Patch also looks good, so:
->> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> Gentle ping for merging this in v4.1-next...
->>
-> OK, I'll queue this into v4.1-next/mach-samsung.
+On Tue, 2015-05-19 at 14:17 +0200, Arnd Bergmann wrote:
+> Finally, the EXYNOS_VIDEO option is turned into tristate as well
+> for good measure, as all framebuffer drivers should be configurable
+> as modules.
 
-This patch is waiting enough time and it missed the 4.1. Kukjin, could
-you apply it for 4.2? I'll apply it anyway to my tree.
+EXYNOS_MIPI_DSI and EXYNOS_LCD_S6E8AX0 are made tristate too. And that
+is, I think, what counts. See below.
 
-Best regards,
-Krzysztof
+For anyone wondering how these two drivers can be made modular with only
+a few tweaks to the build system: that is because exynos_mipi_dsi.c and
+s6e8ax0.c already contain module specific boilerplate. They probably
+already contained that boilerplate when they were added three years ago.
+(Perhaps the changelog should mention this.)
+
+> --- a/drivers/video/fbdev/exynos/Kconfig
+> +++ b/drivers/video/fbdev/exynos/Kconfig
+
+>  menuconfig EXYNOS_VIDEO
+> -	bool "Exynos Video driver support"
+> +	tristate "Exynos Video driver support"
+>  	depends on ARCH_S5PV210 || ARCH_EXYNOS
+>  	help
+>  	  This enables support for EXYNOS Video device.
+
+I have tested this only lightly but I do think this hunk is not needed.
+Because basically all that this entry does is making EXYNOS_MIPI_DSI and
+EXYNOS_LCD_S6E8AX0 available. And that works just as well if it's a
+bool. Correct?
+
+>  config EXYNOS_MIPI_DSI
+> -	bool "EXYNOS MIPI DSI driver support."
+> +	tristate "EXYNOS MIPI DSI driver support."
+>  	select GENERIC_PHY
+>  	help
+>  	  This enables support for MIPI-DSI device.
+>  
+>  config EXYNOS_LCD_S6E8AX0
+> -	bool "S6E8AX0 MIPI AMOLED LCD Driver"
+> +	tristate "S6E8AX0 MIPI AMOLED LCD Driver"
+>  	depends on EXYNOS_MIPI_DSI && BACKLIGHT_CLASS_DEVICE
+>  	depends on (LCD_CLASS_DEVICE = y)
+>  	default n
+
+> --- a/drivers/video/fbdev/exynos/Makefile
+> +++ b/drivers/video/fbdev/exynos/Makefile
+
+> -obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
+> -				     	exynos_mipi_dsi_lowlevel.o
+> +obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos-mipi-dsi-mod.o
+> +
+> +exynos-mipi-dsi-mod-objs		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
+> +					   exynos_mipi_dsi_lowlevel.o
+
+I don't speak Makefilese fluently, so I have to ask. Is the -mod
+extension needed because a module built from multiple files can't have a
+name that matches the name of one of its .c files (minus the .c
+extension, of course)?
+
+>  obj-$(CONFIG_EXYNOS_LCD_S6E8AX0)	+= s6e8ax0.o
+
+Thanks,
+
+
+Paul Bolle
