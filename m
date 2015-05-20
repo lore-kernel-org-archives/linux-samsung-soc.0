@@ -1,64 +1,33 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 1/2] drm/exynos: calculate vrefresh instead of use a
- fixed value
-Date: Wed, 20 May 2015 15:46:44 -0300
-Message-ID: <20150520184644.GA4438@joana>
-References: <1432132428-13519-1-git-send-email-gustavo@padovan.org>
- <1cc31b31acff58a75e86ceec3f5d1102@math.uni-bielefeld.de>
- <CAPj87rOTp48jTi=67Zt3nyOyiqtiV7f-pueqNBrC6RVnB9r59Q@mail.gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [RFC v1 15/25] genirq: Kill the first parameter 'irq' of irq_flow_handler_t
+Date: Wed, 20 May 2015 20:54:12 +0200
+Message-ID: <87mw0zhygb.fsf@belgarion.home>
+References: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com>
+	<1432116013-25902-16-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAPj87rOTp48jTi=67Zt3nyOyiqtiV7f-pueqNBrC6RVnB9r59Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1432116013-25902-16-git-send-email-jiang.liu@linux.intel.com>
+	(Jiang Liu's message of "Wed, 20 May 2015 18:00:03 +0800")
+Sender: linux-pci-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Rajendra Nayak <rnayak@ti.com>, Paul Walmsley <paul@pwsan.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgoyMDE1LTA1LTIwIERhbmllbCBTdG9uZSA8ZGFuaWVsQGZvb2lzaGJhci5vcmc+OgoKPiBI
-aSwKPiAKPiBPbiAyMCBNYXkgMjAxNSBhdCAxNzo1OCwgVG9iaWFzIEpha29iaSA8dGpha29iaUBt
-YXRoLnVuaS1iaWVsZWZlbGQuZGU+IHdyb3RlOgo+ID4gT24gMjAxNS0wNS0yMCAxNjozMywgR3Vz
-dGF2byBQYWRvdmFuIHdyb3RlOgo+ID4+IFdoZW4gbW9kZSdzIHZyZWZyZXNoIGlzIHplcm8gd2Ug
-c2hvdWxkIGFzayBEUk0gY29yZSB0byBjYWxjdWxhdGUgdnJlZnJlc2gKPiA+PiBmb3IgdXMgc28g
-d2UgY2FuIGdldCB0aGUgY29ycmVjdCB2YWx1ZSBpbnN0ZWFkIG9mIHJlbHlpbmcgb24gZml4ZWQg
-dmFsdWUKPiA+PiBkZWZpbmVkIGluIGEgbWFjcm8uCj4gPj4KPiA+PiBTaWduZWQtb2ZmLWJ5OiBH
-dXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gPj4gLS0t
-Cj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAzICstLQo+
-ID4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRpb25zKC0pCj4gPj4K
-PiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
-Ywo+ID4+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+ID4+IGlu
-ZGV4IDk4MTlmYTYuLjA4ZjcxOTcgMTAwNjQ0Cj4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+ID4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1kLmMKPiA+PiBAQCAtNDIsNyArNDIsNiBAQAo+ID4+ICAgKiBDUFUgSW50
-ZXJmYWNlLgo+ID4+ICAgKi8KPiA+Pgo+ID4+IC0jZGVmaW5lIEZJTURfREVGQVVMVF9GUkFNRVJB
-VEUgNjAKPiA+PiAgI2RlZmluZSBNSU5fRkJfV0lEVEhfRk9SXzE2V09SRF9CVVJTVCAxMjgKPiA+
-Pgo+ID4+ICAvKiBwb3NpdGlvbiBjb250cm9sIHJlZ2lzdGVyIGZvciBoYXJkd2FyZSB3aW5kb3cg
-MCwgMiB+IDQuKi8KPiA+PiBAQCAtMzI5LDcgKzMyOCw3IEBAIHN0YXRpYyBib29sIGZpbWRfbW9k
-ZV9maXh1cChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjCj4gPj4gKmNydGMsCj4gPj4gICAgICAgICAg
-ICAgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICphZGp1c3RlZF9tb2RlKQo+ID4+ICB7Cj4g
-Pj4gICAgICAgICBpZiAoYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggPT0gMCkKPiA+Cj4gPiBXZWxs
-LCBJJ20gbm90IGNvbXBsZXRseSBzdXJlIGhvdyB0aGlzIGFsbCB3b3JrcywgYnV0IHNob3VsZG4n
-dCB3ZSBjaGVjawo+ID4gJ21vZGUnIGhlcmUsIGFuZCBub3QgJ2FkanVzdGVkX21vZGUnPwo+IAo+
-IGFkanVzdGVkX21vZGUgaXMgZmluZTsgaXQgaXMgcHJlLXBvcHVsYXRlZCB3aXRoIHRoZSB2YWx1
-ZSBmcm9tIG1vZGUuCj4gJ21vZGUnIGl0c2VsZiBfbXVzdCBub3RfIGJlIG1vZGlmaWVkLgo+IAo+
-IE1pbmQgeW91LCB0aGlzIGlzIG1pc3NpbmcgYSBodW5rIHRvIHJlamVjdCBlbnRpcmVseSBpbnZh
-bGlkIG1vZGVzLCBpLmUuOgo+IGlmIChhZGp1c3RlZF9tb2RlLT52cmVmcmVzaCA9PSAwKQo+ICAg
-ICAgICAgYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggPSBkcm1fbW9kZV92cmVmcmVzaChhZGp1c3Rl
-ZF9tb2RlKTsKPiBpZiAoYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggPT0gMCkKPiAgICAgICAgIHJl
-dHVybiBmYWxzZTsKCkkgaGF2ZSBzZW50IGEgdjIgd2l0aCB0aGUgcHJvcG9zZWQgY2hhbmdlLiBJ
-IGNhbid0IHJlYWxseSB0ZXN0IHRoaXMgaGVyZQphcyBJIGRvbid0IGhhdmUgdGhlIGhhcmR3YXJl
-IHdoZXJlIGl0IGZhaWxzLiBTbyBpbiB2MSBJIHdhcyBqdXN0Cmd1ZXNzaW5nIHRoYXQgaXQgd291
-bGQgZml4IHRoZSBpc3N1ZS4KCglHdXN0YXZvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+Jiang Liu <jiang.liu@linux.intel.com> writes:
+
+> diff --git a/arch/arm/mach-pxa/pcm990-baseboard.c b/arch/arm/mach-pxa/pcm990-baseboard.c
+> index 2897da2a5df6..0d8331f8536e 100644
+> --- a/arch/arm/mach-pxa/pcm990-baseboard.c
+> +++ b/arch/arm/mach-pxa/pcm990-baseboard.c
+> @@ -287,6 +287,7 @@ static struct irq_chip pcm990_irq_chip = {
+>  static void pcm990_irq_handler(unsigned int irq, struct irq_desc *desc)
+>  {
+>  	unsigned long pending;
+> +	unsigned int irq;
+That doesn't look good, double irq definition.
+
+Cheers.
+
+-- 
+Robert
