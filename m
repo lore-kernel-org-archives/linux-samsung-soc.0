@@ -1,54 +1,41 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2] drm/exynos: calculate vrefresh instead of use
- a fixed value
-Date: Wed, 20 May 2015 21:11:43 +0200
-Message-ID: <555CDC6F.9070000@math.uni-bielefeld.de>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v2] drm/exynos: calculate vrefresh instead of use a fixed
+ value
+Date: Wed, 20 May 2015 17:50:55 -0300
+Message-ID: <20150520205055.GB4438@joana>
 References: <1432147477-12650-1-git-send-email-gustavo@padovan.org>
+ <555CDC6F.9070000@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1432147477-12650-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:34102 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754070AbbETUvB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 May 2015 16:51:01 -0400
+Received: by qgez61 with SMTP id z61so26016525qge.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2015 13:51:00 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <555CDC6F.9070000@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, daniel@fooishbar.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-R3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5w
-YWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBXaGVuIG1vZGUncyB2cmVmcmVzaCBpcyB6ZXJv
-IHdlIHNob3VsZCBhc2sgRFJNIGNvcmUgdG8gY2FsY3VsYXRlIHZyZWZyZXNoCj4gZm9yIHVzIHNv
-IHdlIGNhbiBnZXQgdGhlIGNvcnJlY3QgdmFsdWUgaW5zdGVhZCBvZiByZWx5aW5nIG9uIGZpeGVk
-IHZhbHVlCj4gZGVmaW5lZCBpbiBhIG1hY3JvLiBCdXQgaWYgdnJlZnJlc2ggaXMgc3RpbGwgemVy
-byB3ZSBzaG91bGQgZmFpbCB0aGUKPiB1cGRhdGUuCkV2ZW4gd2l0aCB0aGlzIHdlIHN0aWxsIG5l
-ZWQgdG8gY29uc2lkZXIgY3J0Yy0+c3RhdGUtPmFkanVzdGVkX21vZGUgaW4KZmltZF9jb21taXQo
-KSwgb3RoZXJ3aXNlIHZyZWZyZXNoIGNvbXB1dGVkIGJ5IGRybV9tb2RlX3ZyZWZyZXNoKCkgaXMK
-bmV2ZXIgYWN0dWFsbHkgdXNlZC4KCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IFN1Z2dl
-c3RlZC1ieTogRGFuaWVsIFN0b25lIDxkYW5pZWxzQGNvbGxhYm9yYS5jb20+Cj4gU2lnbmVkLW9m
-Zi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+
-IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgNSArKyst
-LQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+IGluZGV4IDk4MTlmYTYu
-LmVhN2RhMGUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMK
-PiBAQCAtNDIsNyArNDIsNiBAQAo+ICAgKiBDUFUgSW50ZXJmYWNlLgo+ICAgKi8KPiAgCj4gLSNk
-ZWZpbmUgRklNRF9ERUZBVUxUX0ZSQU1FUkFURSA2MAo+ICAjZGVmaW5lIE1JTl9GQl9XSURUSF9G
-T1JfMTZXT1JEX0JVUlNUIDEyOAo+ICAKPiAgLyogcG9zaXRpb24gY29udHJvbCByZWdpc3RlciBm
-b3IgaGFyZHdhcmUgd2luZG93IDAsIDIgfiA0LiovCj4gQEAgLTMyOSw3ICszMjgsOSBAQCBzdGF0
-aWMgYm9vbCBmaW1kX21vZGVfZml4dXAoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKPiAg
-CQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSkKPiAgewo+ICAJaWYgKGFk
-anVzdGVkX21vZGUtPnZyZWZyZXNoID09IDApCj4gLQkJYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2gg
-PSBGSU1EX0RFRkFVTFRfRlJBTUVSQVRFOwo+ICsJCWFkanVzdGVkX21vZGUtPnZyZWZyZXNoID0g
-ZHJtX21vZGVfdnJlZnJlc2gobW9kZSk7Cj4gKwlpZiAoYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2gg
-PT0gMCkKPiArCQlyZXR1cm4gZmFsc2U7Cj4gIAo+ICAJcmV0dXJuIHRydWU7Cj4gIH0KPiAKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+2015-05-20 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+
+> Gustavo Padovan wrote:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > 
+> > When mode's vrefresh is zero we should ask DRM core to calculate vrefresh
+> > for us so we can get the correct value instead of relying on fixed value
+> > defined in a macro. But if vrefresh is still zero we should fail the
+> > update.
+> Even with this we still need to consider crtc->state->adjusted_mode in
+> fimd_commit(), otherwise vrefresh computed by drm_mode_vrefresh() is
+> never actually used.
+
+You are right, I think we should pass crtc->state->adjusted_mode to
+fimd_calc_clkdiv(). I'll send a v3 with this change.
+
+	Gustavo
