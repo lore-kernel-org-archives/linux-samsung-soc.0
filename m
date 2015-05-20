@@ -1,44 +1,204 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 2/2] drm/exynos: WARN_ON if ideal_clk is zero
-Date: Wed, 20 May 2015 11:33:48 -0300
-Message-ID: <1432132428-13519-2-git-send-email-gustavo@padovan.org>
-References: <1432132428-13519-1-git-send-email-gustavo@padovan.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv5 2/5] ARM: dts: Odroid-XU3 Enable TMU at Exynos5422 base
+Date: Wed, 20 May 2015 20:29:20 +0530
+Message-ID: <CANAwSgSyoesxQG9hBj3KfBb_5CiqUrHWbkUymU3LYcKOnLdOzA@mail.gmail.com>
+References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
+ <1431499020-3912-3-git-send-email-linux.amoon@gmail.com> <CAJKOXPca-2qdYOoMQOnu0jigOYwUvMTWZwdM2kRTkBXw-ws4yw@mail.gmail.com>
+ <CANAwSgQ=30j4A_nCd26kzxi=rdsh32+Srwuc5EaJigLhJ2r4jA@mail.gmail.com>
+ <CAJKOXPfC9nGEsYJ3qJ6m_iMsB=D8_6sOEpLQzEvmLry5zS5j3g@mail.gmail.com>
+ <CANAwSgTOaz+mMhFZTeXYoXF+xPR2qon2Tkfsw5aqO42AK1m1-Q@mail.gmail.com>
+ <CAJKOXPd_1rTZZCz66nQKidUOOEBmgUD+05fHUBvXN-VuD5mTCw@mail.gmail.com>
+ <CANAwSgTbjmSxhJj4o2pnD5pR2V9JbQ3az+TSSCDwgwNnvF7P9w@mail.gmail.com>
+ <CAJKOXPcQGnc1O9-MwqeNwsQE3ax1n8nvad4Sqt47NYKnOSmJPg@mail.gmail.com> <CADoNuNfuDCn_vvACc0=xj0MjdKr4pYcj_-Xh0--Q8_qciuW5YA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:35195 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752681AbbETOeC (ORCPT
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:36390 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932154AbbETO7m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 10:34:02 -0400
-Received: by qceb3 with SMTP id b3so22759283qce.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2015 07:34:01 -0700 (PDT)
-In-Reply-To: <1432132428-13519-1-git-send-email-gustavo@padovan.org>
+	Wed, 20 May 2015 10:59:42 -0400
+In-Reply-To: <CADoNuNfuDCn_vvACc0=xj0MjdKr4pYcj_-Xh0--Q8_qciuW5YA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, daniel@fooishbar.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Markus Reichl <m.reichl@fivetechno.de>, linux-arm-kernel@lists.infradead.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+On 20 May 2015 at 08:57, Dongjin Kim <tobetter@gmail.com> wrote:
+> Hello Kryzsztof,
+>
+> Are you able to check if TMU is under VDDI power domain from Exynos5422
+> datasheet?
+> If it is, XU3 use BUCK3 for TMU and more internal blocks.
+>
+> Thank you,
+> Dongjin.
+>
+> On Tue, May 19, 2015 at 4:42 PM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>>
+>> 2015-05-19 16:28 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> > On 15 May 2015 at 05:42, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> > wrote:
+>> >> 2015-05-15 1:16 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> >>> On 13 May 2015 at 14:02, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> >>> wrote:
+>> >>>> 2015-05-13 17:21 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> >>>>> On 13 May 2015 at 12:51, Krzysztof Kozlowski
+>> >>>>> <k.kozlowski@samsung.com> wrote:
+>> >>>>>> 2015-05-13 15:36 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> >>>>>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+>> >>>>>>> device.
+>> >>>>>>>
+>> >>>>>>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+>> >>>>>>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+>> >>>>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> >>>>>>> ---
+>> >>>>>>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 25
+>> >>>>>>> +++++++++++++++++++++++++
+>> >>>>>>>  1 file changed, 25 insertions(+)
+>> >>>>>>>
+>> >>>>>>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> >>>>>>> b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> >>>>>>> index 9446e28..cd78816 100644
+>> >>>>>>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> >>>>>>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> >>>>>>> @@ -319,6 +319,31 @@
+>> >>>>>>>                 #cooling-cells = <2>;
+>> >>>>>>>                 cooling-levels = <0 130 170 230>;
+>> >>>>>>>         };
+>> >>>>>>> +
+>> >>>>>>> +       tmu@10060000 {
+>> >>>>>>
+>> >>>>>> Here and for other overrides please use label notation, like:
+>> >>>>>>
+>> >>>>>> &tmu_cpu0 {
+>> >>>>>>               ...
+>> >>>>>> };
+>> >>>>>>
+>> >>>>>>> +               vtmu-supply = <&ldo10_reg>;
+>> >>>>>>
+>> >>>>>> I am curious, how did you find that LDO10 supplies TMU unit?
+>> >>>>>>
+>> >>>>>> Best regards,
+>> >>>>>> Krzysztof
+>> >>>>>
+>> >>>>> Hi Krzysztof,
+>> >>>>>
+>> >>>>> I have re-base my work on earlier Lukasz Majewski patches.
+>> >>>>>
+>> >>>>> https://patchwork.kernel.org/patch/5693201/
+>> >>>>
+>> >>>> NAK.
+>> >>>> I am sorry, but this is not sufficient explanation. Actually such
+>> >>>> explanation could mean that you did just blindly copied everything
+>> >>>> instead of developing it.
+>> >>>>
+>> >>>> You cannot use some regulator here just because some Exynos4 boards
+>> >>>> use it. You have to be sure that this regulator supplies this part of
+>> >>>> SoC or device.
+>> >>>
+>> >>> Hi Krzysztof,
+>> >>>
+>> >>> After going through the schematics, I came to understanding that their
+>> >>> is
+>> >>> missing regulator related to TEMP SE in the exynos5422-odroidxu3.dts.
+>> >>>
+>> >>> Below is the schematic of the board.
+>> >>>
+>> >>> http://dn.odroid.com/5422/ODROID-XU3/Schematics/XU3_MAIN_REV0.2.PDF
+>> >>>
+>> >>>   ldo18_reg: LDO18 {
+>> >>>                                          regulator-name = "vdd_ldo18";
+>> >>>                                          regulator-min-microvolt =
+>> >>> <1800000>;
+>> >>>                                          regulator-max-microvolt =
+>> >>> <1800000>;
+>> >>>                                          regulator-always-on;
+>> >>>                                };
+>> >>
+>> >> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for
+>> >> TMU.
+>> >>
+>> >> I think the schematics are missing some of details but it can be
+>> >> deducted that:
+>> >> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
+>> >> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
+>> >> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to theL DO7 of
+>> >> S2MPS11 PMIC.
+>> >> 3. I confirmed with the Exynos5422 datasheet that these
+>> >> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
+>> >>
+>> >> So the LDO7 it is... but before using it there is a caveat. The LDO7
+>> >> is also connected to VDD of MIPI, HDMI and few more. So when you use
+>> >> this regulator in TMU it may be turned off by TMU driver (e.g. during
+>> >> unbind). In such case these other blocks also should be tested and
+>> >> checked whether they take this regulator and enable it.
+>> >
+>> > hi Krzysztof,
+>> >
+>> > I tried to use the LDO7 regulator for TMU but it failed to register.
+>> >
+>> > [    3.231329] ina2xx 0-0045: power monitor ina231 (Rshunt = 10000 uOhm)
+>> > [    3.237691] thermal thermal_zone0: failed to read out thermal zone
+>> > (-22)
+>> > [    3.243033] exynos-tmu 10060000.tmu: Looking up vtmu-supply from
+>> > device tree
+>> > [    3.243936] thermal thermal_zone1: failed to read out thermal zone
+>> > (-22)
+>> > [    3.249791] exynos-tmu 10064000.tmu: Looking up vtmu-supply from
+>> > device tree
+>> > [    3.250677] thermal thermal_zone2: failed to read out thermal zone
+>> > (-22)
+>> > [    3.256410] exynos-tmu 10068000.tmu: Looking up vtmu-supply from
+>> > device tree
+>> > [    3.257345] thermal thermal_zone3: failed to read out thermal zone
+>> > (-22)
+>> > [    3.263050] exynos-tmu 1006c000.tmu: Looking up vtmu-supply from
+>> > device tree
+>> > [    3.263984] thermal thermal_zone4: failed to read out thermal zone
+>> > (-22)
+>> > [    3.269769] exynos-tmu 100a0000.tmu: Looking up vtmu-supply from
+>> > device tree
+>> > [    3.270363] usb 5-1: New USB device found, idVendor=0424,
+>> > idProduct=9514
+>> > [    3.276389] usb 5-1: New USB device strings: Mfr=0, Product=0,
+>> > SerialNumber=0
+>>
+>> Indeed.
+>>
 
-ideal_clk is the divisor in an operation to find the clock divider so
-it can't never be zero or we will end up with a division by zero error.
+Hi Krzysztof/Dongjin
 
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 ++
- 1 file changed, 2 insertions(+)
+BUCK3 is option for TMU as suggested by Dongjin
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 08f7197..294f9cf 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -309,6 +309,8 @@ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
- 	unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
- 	u32 clkdiv;
- 
-+	WARN_ON(ideal_clk == 0);
-+
- 	if (ctx->i80_if) {
- 		/*
- 		 * The frame done interrupt should be occurred prior to the
--- 
-2.1.0
+Earlier I have some missing CONFIG option's hence It was not working.
+Now its registering with TMU.
+
+Bellow is the output device tree.
+
+root@odroidxu3: cd /sys/firmware/devicetree/base/
+root@odroidxu3:/sys/firmware/devicetree/base# cat tmu@10060000/status
+okay
+root@odroidxu3:/sys/firmware/devicetree/base#
+root@odroidxu3:/sys/firmware/devicetree/base# cat tmu@10064000/status
+okay
+root@odroidxu3:/sys/firmware/devicetree/base# cat tmu@10068000/status
+okay
+root@odroidxu3:/sys/firmware/devicetree/base# cat tmu@1006c000/status
+okay
+root@odroidxu3:/sys/firmware/devicetree/base# cat tmu@100a0000/status
+okay
+root@odroidxu3:/sys/firmware/devicetree/base#
+
+-Anand Moon
+
+>> Best regards,
+>> Krzysztof
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
