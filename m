@@ -1,59 +1,49 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 2/2] drm/exynos: =?UTF-8?Q?WARN=5FON=20if=20ideal=5Fcl?=
- =?UTF-8?Q?k=20is=20zero?=
-Date: Wed, 20 May 2015 18:04:27 +0200
-Message-ID: <0ed39f733f049e17b350b9ec5b22c389@math.uni-bielefeld.de>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH 2/2] drm/exynos: WARN_ON if ideal_clk is zero
+Date: Wed, 20 May 2015 17:14:26 +0100
+Message-ID: <CAPj87rPSzvvUiMrau5kjxnQf=gk6d75JpXU2V7q2CSs_tHCZHA@mail.gmail.com>
 References: <1432132428-13519-1-git-send-email-gustavo@padovan.org>
- <1432132428-13519-2-git-send-email-gustavo@padovan.org>
+	<1432132428-13519-2-git-send-email-gustavo@padovan.org>
+	<0ed39f733f049e17b350b9ec5b22c389@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1432132428-13519-2-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:38806 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754143AbbETQO1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 May 2015 12:14:27 -0400
+Received: by igcau1 with SMTP id au1so43617697igc.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2015 09:14:26 -0700 (PDT)
+In-Reply-To: <0ed39f733f049e17b350b9ec5b22c389@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, InKi Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-SG1tLAoKSSB3b25kZXIgaWYgdGhhdCByZWFsbHkgJ2ZpeGVzJyBhbnl0aGluZywgYmVjYXVzZSBu
-b3cgd2UgZ2V0IGEgV0FSTl9PTiAKd2hpY2ggaXMgaW1tZWRpYXRlbHkgZm9sbG93ZWQgYnkgYSBk
-aXYtYnktemVyby4gRnVydGhlcm1vcmUgd2UgdGhlbiAKc3RpbGwgdXNlIHRoZSByZXN1bHQgb2Yg
-dGhhdCBvcGVyYXRpb24gYXMgaW5wdXQgZm9yIGEgaHcgcmVnaXN0ZXIgKGJhZCAKaWRlYT8pCgpJ
-IHRob3VnaHQgb2Ygc29tZXRoaW5nIGxpa2UgdGhpcy4gQ2hhbmdlIGZpbWRfY2FsY19jbGtkaXYo
-KSB0byByZXR1cm4gYSAKc2lnbmVkIHZhbHVlICh0aGlzIHNob3VsZG4ndCBiZSBhIHByb2JsZW0s
-IHNpbmNlIHRoZSByZXR1cm5lZCBudW1iZXIgCnJhbmdlIGlzIHNtYWxsIGFueXdhcnkpLiBMZXQg
-ZmltZF9jYWxjX2Nsa2RpdigpIHJldHVybiAtMSB3aGVuIGl0IAplbmNvdW50ZXJzIHRoZSAnaWRl
-YWxfY2xrID09IDAnIGNhc2UuIE1vdmUgY29tcHV0YXRpb24gb2YgY2xrZGl2IGluIApmaW1kX2Nv
-bW1pdCgpIHRvIHRoZSB0b3Agb2YgdGhlIGZ1bmN0aW9uIChyaWdodCBhZnRlciB0aGUge2gsdn10
-b3RhbCAKY2hlY2tzKS4gSWYgJ2Nsa2RpdiA9PSAtMScgY2FzZSBpcyBlbmNvdW50ZXJlZCwgdGhl
-biBkbyBXQVJOX09OIGFuZCAKcmV0dXJuIGltbWVkaWF0ZWx5IGZyb20gZmltZF9jb21taXQoKS4K
-ClNob3VsZCBJIHByZXBhcmUgYSBwYXRjaCBmb3IgdGhpcywgb3IgZG9lcyBzb21lb25lIHNlZSBh
-biBpc3N1ZSB3aXRoIAp0aGlzIGFwcHJvYWNoPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoK
-T24gMjAxNS0wNS0yMCAxNjozMywgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1c3Rh
-dm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBpZGVhbF9j
-bGsgaXMgdGhlIGRpdmlzb3IgaW4gYW4gb3BlcmF0aW9uIHRvIGZpbmQgdGhlIGNsb2NrIGRpdmlk
-ZXIgc28KPiBpdCBjYW4ndCBuZXZlciBiZSB6ZXJvIG9yIHdlIHdpbGwgZW5kIHVwIHdpdGggYSBk
-aXZpc2lvbiBieSB6ZXJvIGVycm9yLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3Zh
-biA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDIgKysKPiAgMSBmaWxlIGNoYW5nZWQsIDIg
-aW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmltZC5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
-ZC5jCj4gaW5kZXggMDhmNzE5Ny4uMjk0ZjljZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZpbWQuYwo+IEBAIC0zMDksNiArMzA5LDggQEAgc3RhdGljIHUzMiBmaW1k
-X2NhbGNfY2xrZGl2KHN0cnVjdCBmaW1kX2NvbnRleHQgCj4gKmN0eCwKPiAgCXVuc2lnbmVkIGxv
-bmcgaWRlYWxfY2xrID0gbW9kZS0+aHRvdGFsICogbW9kZS0+dnRvdGFsICogCj4gbW9kZS0+dnJl
-ZnJlc2g7Cj4gIAl1MzIgY2xrZGl2Owo+IAo+ICsJV0FSTl9PTihpZGVhbF9jbGsgPT0gMCk7Cj4g
-Kwo+ICAJaWYgKGN0eC0+aTgwX2lmKSB7Cj4gIAkJLyoKPiAgCQkgKiBUaGUgZnJhbWUgZG9uZSBp
-bnRlcnJ1cHQgc2hvdWxkIGJlIG9jY3VycmVkIHByaW9yIHRvIHRoZQoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+On 20 May 2015 at 17:04, Tobias Jakobi <tjakobi@math.uni-bielefeld.de> wrote:
+> Hmm,
+>
+> I wonder if that really 'fixes' anything, because now we get a WARN_ON which
+> is immediately followed by a div-by-zero. Furthermore we then still use the
+> result of that operation as input for a hw register (bad idea?)
+>
+> I thought of something like this. Change fimd_calc_clkdiv() to return a
+> signed value (this shouldn't be a problem, since the returned number range
+> is small anywary). Let fimd_calc_clkdiv() return -1 when it encounters the
+> 'ideal_clk == 0' case. Move computation of clkdiv in fimd_commit() to the
+> top of the function (right after the {h,v}total checks). If 'clkdiv == -1'
+> case is encountered, then do WARN_ON and return immediately from
+> fimd_commit().
+>
+> Should I prepare a patch for this, or does someone see an issue with this
+> approach?
+
+Commit should never fail; as I said earlier, the right fix is to
+reject these modes during checking, by making sure that any mode which
+passes mode_fixup() and/or mode_valid() never trips this condition.
+
+Cheers,
+Daniel
