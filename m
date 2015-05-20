@@ -1,84 +1,71 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH] video: exynos: fix modular build
-Date: Wed, 20 May 2015 09:05:40 +0200
-Message-ID: <1432105540.21715.26.camel@x220>
-References: <2708563.ADEZz3igC5@wuerfel>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v7 00/25] Exynos SYSMMU (IOMMU) integration with DT and
+ DMA-mapping subsystem
+Date: Wed, 20 May 2015 09:31:27 +0200
+Message-ID: <CABxcv=nP5n1d=yv5EyD3aUcBBuD7Bka_7VQ1KsbFb9=ju37rdA@mail.gmail.com>
+References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:46209 "EHLO
-	lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750794AbbETHFp (ORCPT
+Received: from mail-yh0-f43.google.com ([209.85.213.43]:36037 "EHLO
+	mail-yh0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751184AbbETHb2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 03:05:45 -0400
-In-Reply-To: <2708563.ADEZz3igC5@wuerfel>
+	Wed, 20 May 2015 03:31:28 -0400
+Received: by yhrr66 with SMTP id r66so10655274yhr.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2015 00:31:27 -0700 (PDT)
+In-Reply-To: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof
 
-On Tue, 2015-05-19 at 14:17 +0200, Arnd Bergmann wrote:
-> Finally, the EXYNOS_VIDEO option is turned into tristate as well
-> for good measure, as all framebuffer drivers should be configurable
-> as modules.
+Hello Marek,
 
-EXYNOS_MIPI_DSI and EXYNOS_LCD_S6E8AX0 are made tristate too. And that
-is, I think, what counts. See below.
+On Tue, May 19, 2015 at 3:20 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello Everyone,
+>
+> This is yet another attempt to get Exynos SYSMMU driver with integrated
+> with IOMMU & DMA-mapping subsystems. This version includes minor fixes
+> suggested by Joerg Roedel, Cho KyongHo and Robin Murphy.
+>
+> All patches are also available in the following git repository:
+> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git
+> branch v4.1-exynos-iommu-v7.
+>
+> My plan for merging this patchset is as follows:
+> - DTS changes and power domain changes should go via Samsung tree to avoid
+>   conflicts with other pending DTS patches
+> - all exynos-iommu patches and dma-mapping/reserved iommu region should go
+>   via IOMMU tree,
+> - all Exynos DRM patches should go via DRM/Exynos tree.
+>
+> There are no build cross-subsystem dependencies and IOMMU on Exynos is
+> already nonfunctional (and disabled in defconfig), so merging patches in
+> parts doesn't break anything.
+>
+> There are knowns issues with Exynos DRM driver and IOMMU support
+> (i.e. Xorg freeze reported by Javier Martinez Canillas:
+> http://www.spinics.net/lists/linux-samsung-soc/msg44350.html ). They
+> will be handled by a separate fixes to Exynos DRM drivers. This patchset
+> fixes only those issues in Exynos DRM FIMD driver, which prevents
+> booting to console.
+>
 
-For anyone wondering how these two drivers can be made modular with only
-a few tweaks to the build system: that is because exynos_mipi_dsi.c and
-s6e8ax0.c already contain module specific boilerplate. They probably
-already contained that boilerplate when they were added three years ago.
-(Perhaps the changelog should mention this.)
+I tested your v7 using exynos_defconfig + CONFIG_EXYNOS_IOMMU on both
+Exynos5250 Snow and Exynos5420 Peach Pit Chromebooks.
 
-> --- a/drivers/video/fbdev/exynos/Kconfig
-> +++ b/drivers/video/fbdev/exynos/Kconfig
+I can only reproduce the complete system hang on Xorg if I use the
+xf86-video-armsoc DDX. If I use the -fbdev DDX instead, X starts
+correctly and the system does not freeze. Also, this only happens on
+Exynos5420 Peach Pit, Exynos5250 Snow is working correctly even when
+using the -armsoc DDX.
 
->  menuconfig EXYNOS_VIDEO
-> -	bool "Exynos Video driver support"
-> +	tristate "Exynos Video driver support"
->  	depends on ARCH_S5PV210 || ARCH_EXYNOS
->  	help
->  	  This enables support for EXYNOS Video device.
+So as you said, this is a separate issue with the Exynos DRM driver
+IOMMU support and is not related to your series. For the whole series:
 
-I have tested this only lightly but I do think this hunk is not needed.
-Because basically all that this entry does is making EXYNOS_MIPI_DSI and
-EXYNOS_LCD_S6E8AX0 available. And that works just as well if it's a
-bool. Correct?
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
->  config EXYNOS_MIPI_DSI
-> -	bool "EXYNOS MIPI DSI driver support."
-> +	tristate "EXYNOS MIPI DSI driver support."
->  	select GENERIC_PHY
->  	help
->  	  This enables support for MIPI-DSI device.
->  
->  config EXYNOS_LCD_S6E8AX0
-> -	bool "S6E8AX0 MIPI AMOLED LCD Driver"
-> +	tristate "S6E8AX0 MIPI AMOLED LCD Driver"
->  	depends on EXYNOS_MIPI_DSI && BACKLIGHT_CLASS_DEVICE
->  	depends on (LCD_CLASS_DEVICE = y)
->  	default n
-
-> --- a/drivers/video/fbdev/exynos/Makefile
-> +++ b/drivers/video/fbdev/exynos/Makefile
-
-> -obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
-> -				     	exynos_mipi_dsi_lowlevel.o
-> +obj-$(CONFIG_EXYNOS_MIPI_DSI)		+= exynos-mipi-dsi-mod.o
-> +
-> +exynos-mipi-dsi-mod-objs		+= exynos_mipi_dsi.o exynos_mipi_dsi_common.o \
-> +					   exynos_mipi_dsi_lowlevel.o
-
-I don't speak Makefilese fluently, so I have to ask. Is the -mod
-extension needed because a module built from multiple files can't have a
-name that matches the name of one of its .c files (minus the .c
-extension, of course)?
-
->  obj-$(CONFIG_EXYNOS_LCD_S6E8AX0)	+= s6e8ax0.o
-
-Thanks,
-
-
-Paul Bolle
+Best regards,
+Javier
