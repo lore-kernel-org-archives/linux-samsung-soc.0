@@ -1,41 +1,52 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v2] drm/exynos: calculate vrefresh instead of use a fixed
- value
-Date: Wed, 20 May 2015 17:50:55 -0300
-Message-ID: <20150520205055.GB4438@joana>
-References: <1432147477-12650-1-git-send-email-gustavo@padovan.org>
- <555CDC6F.9070000@math.uni-bielefeld.de>
+Subject: [PATCH v3] drm/exynos: calculate vrefresh instead of use a fixed value
+Date: Wed, 20 May 2015 17:56:39 -0300
+Message-ID: <1432155399-5586-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:34102 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754070AbbETUvB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 16:51:01 -0400
-Received: by qgez61 with SMTP id z61so26016525qge.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2015 13:51:00 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <555CDC6F.9070000@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, daniel@fooishbar.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-2015-05-20 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
-
-> Gustavo Padovan wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > 
-> > When mode's vrefresh is zero we should ask DRM core to calculate vrefresh
-> > for us so we can get the correct value instead of relying on fixed value
-> > defined in a macro. But if vrefresh is still zero we should fail the
-> > update.
-> Even with this we still need to consider crtc->state->adjusted_mode in
-> fimd_commit(), otherwise vrefresh computed by drm_mode_vrefresh() is
-> never actually used.
-
-You are right, I think we should pass crtc->state->adjusted_mode to
-fimd_calc_clkdiv(). I'll send a v3 with this change.
-
-	Gustavo
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+V2hlbiBtb2RlJ3MgdnJlZnJlc2ggaXMgemVybyB3ZSBzaG91bGQgYXNrIERSTSBjb3JlIHRvIGNh
+bGN1bGF0ZSB2cmVmcmVzaApmb3IgdXMgc28gd2UgY2FuIGdldCB0aGUgY29ycmVjdCB2YWx1ZSBp
+bnN0ZWFkIG9mIHJlbHlpbmcgb24gZml4ZWQgdmFsdWUKZGVmaW5lZCBpbiBhIG1hY3JvLiBCdXQg
+aWYgdnJlZnJlc2ggaXMgc3RpbGwgemVybyB3ZSBzaG91bGQgZmFpbCB0aGUKdXBkYXRlLgoKU3Vn
+Z2VzdGVkLWJ5OiBEYW5pZWwgU3RvbmUgPGRhbmllbHNAY29sbGFib3JhLmNvbT4KU2lnbmVkLW9m
+Zi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgot
+LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCA3ICsrKystLS0K
+IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggOTgxOWZhNi4uM2Y5NjQ2ZCAx
+MDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYworKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCkBAIC00Miw3ICs0Miw2
+IEBACiAgKiBDUFUgSW50ZXJmYWNlLgogICovCiAKLSNkZWZpbmUgRklNRF9ERUZBVUxUX0ZSQU1F
+UkFURSA2MAogI2RlZmluZSBNSU5fRkJfV0lEVEhfRk9SXzE2V09SRF9CVVJTVCAxMjgKIAogLyog
+cG9zaXRpb24gY29udHJvbCByZWdpc3RlciBmb3IgaGFyZHdhcmUgd2luZG93IDAsIDIgfiA0Liov
+CkBAIC0zMjksNyArMzI4LDkgQEAgc3RhdGljIGJvb2wgZmltZF9tb2RlX2ZpeHVwKHN0cnVjdCBl
+eHlub3NfZHJtX2NydGMgKmNydGMsCiAJCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICphZGp1c3Rl
+ZF9tb2RlKQogewogCWlmIChhZGp1c3RlZF9tb2RlLT52cmVmcmVzaCA9PSAwKQotCQlhZGp1c3Rl
+ZF9tb2RlLT52cmVmcmVzaCA9IEZJTURfREVGQVVMVF9GUkFNRVJBVEU7CisJCWFkanVzdGVkX21v
+ZGUtPnZyZWZyZXNoID0gZHJtX21vZGVfdnJlZnJlc2gobW9kZSk7CisJaWYgKGFkanVzdGVkX21v
+ZGUtPnZyZWZyZXNoID09IDApCisJCXJldHVybiBmYWxzZTsKIAogCXJldHVybiB0cnVlOwogfQpA
+QCAtNDI3LDcgKzQyOCw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfY29tbWl0KHN0cnVjdCBleHlub3Nf
+ZHJtX2NydGMgKmNydGMpCiAJaWYgKGN0eC0+ZHJpdmVyX2RhdGEtPmhhc19jbGtzZWwpCiAJCXZh
+bCB8PSBWSURDT04wX0NMS1NFTF9MQ0Q7CiAKLQljbGtkaXYgPSBmaW1kX2NhbGNfY2xrZGl2KGN0
+eCwgbW9kZSk7CisJY2xrZGl2ID0gZmltZF9jYWxjX2Nsa2RpdihjdHgsICZjcnRjLT5iYXNlLnN0
+YXRlLT5hZGp1c3RlZF9tb2RlKTsKIAlpZiAoY2xrZGl2ID4gMSkKIAkJdmFsIHw9IFZJRENPTjBf
+Q0xLVkFMX0YoY2xrZGl2IC0gMSkgfCBWSURDT04wX0NMS0RJUjsKIAotLSAKMi4xLjAKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
