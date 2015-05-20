@@ -1,18 +1,18 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH v3] drm/exynos: calculate vrefresh instead of use
  a fixed value
-Date: Wed, 20 May 2015 23:07:46 +0200
-Message-ID: <555CF7A2.8050108@math.uni-bielefeld.de>
+Date: Thu, 21 May 2015 00:19:27 +0200
+Message-ID: <555D086F.4000104@math.uni-bielefeld.de>
 References: <1432155399-5586-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:38438 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:38484 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753246AbbETVHs (ORCPT
+	by vger.kernel.org with ESMTP id S1751962AbbETWT3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 17:07:48 -0400
+	Wed, 20 May 2015 18:19:29 -0400
 In-Reply-To: <1432155399-5586-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -26,6 +26,39 @@ Gustavo Padovan wrote:
 > for us so we can get the correct value instead of relying on fixed value
 > defined in a macro. But if vrefresh is still zero we should fail the
 > update.
+This works better for me:
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index dc834b8..26e8ae4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -346,11 +346,16 @@ static bool fimd_mode_fixup(struct exynos_drm_crtc
+*crtc,
+ static void fimd_commit(struct exynos_drm_crtc *crtc)
+ {
+        struct fimd_context *ctx = crtc->ctx;
+-       struct drm_display_mode *mode = &crtc->base.mode;
++       struct drm_display_mode *mode;
+        struct fimd_driver_data *driver_data = ctx->driver_data;
+        void *timing_base = ctx->regs + driver_data->timing_base;
+        u32 val, clkdiv;
+
++       if (crtc->base.state)
++               mode = &crtc->base.state->adjusted_mode;
++       else
++               mode = &crtc->base.mode;
++
+        if (ctx->suspended)
+                return;
+
+Otherwise I get an oops (nullptr deref) on boot, so 'state' is probably
+not initialized yet at this point.
+
+
+With best wishes,
+Tobias Jakobi
+
+
 > 
 > Suggested-by: Daniel Stone <daniels@collabora.com>
 > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
@@ -62,13 +95,6 @@ Gustavo Padovan wrote:
 >  
 > -	clkdiv = fimd_calc_clkdiv(ctx, mode);
 > +	clkdiv = fimd_calc_clkdiv(ctx, &crtc->base.state->adjusted_mode);
-I would suggest to just change 'mode' at the top:
-struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
-
-With best wishes,
-Tobias
-
-
 >  	if (clkdiv > 1)
 >  		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
 >  
