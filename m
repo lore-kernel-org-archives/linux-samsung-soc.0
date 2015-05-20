@@ -1,51 +1,45 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Tue, 19 May 2015 18:01:44 -0700
-Message-ID: <20150520010144.GA31054@codeaurora.org>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
- <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
- <20150507063953.GC32399@codeaurora.org>
- <20150507093702.0b58753d@bbrezillon>
- <20150515174048.4a31af49@bbrezillon>
- <5557267D.7080209@kapsi.fi>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] video: exynos: fix modular build
+Date: Wed, 20 May 2015 10:14:21 +0900
+Message-ID: <555BDFED.7060607@samsung.com>
+References: <2708563.ADEZz3igC5@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5557267D.7080209@kapsi.fi>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio L?pez <emilio@elopez.com.ar>, Maxime Ripard <maxime.rip>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:54062 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751858AbbETBOY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 May 2015 21:14:24 -0400
+In-reply-to: <2708563.ADEZz3igC5@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 05/16, Mikko Perttunen wrote:
-> On 05/15/2015 06:40 PM, Boris Brezillon wrote:
-> >Hi Stephen,
-> >
-> >Adding Mikko in the loop (after all, he was the one complaining about
-> >this signed long limitation in the first place, and I forgot to add
-> >him in the Cc list :-/).
+On 19.05.2015 21:17, Arnd Bergmann wrote:
+> The s6e8ax0 driver has a dependency on BACKLIGHT_CLASS_DEVICE,
+> which can be configured as a loadable module, so we have to
+> make the driver a tristate symbol as well, to avoid this error:
 > 
-> I think I got it through linux-tegra anyway, but thanks :)
+> drivers/built-in.o: In function `s6e8ax0_probe':
+> :(.text+0x23a48): undefined reference to `devm_backlight_device_register'
 > 
-> >
-> >Mikko, are you okay with the approach proposed by Stephen (adding a
-> >new method) ?
+> This also means we get another error from a missing export, which
+> this fixes as well:
 > 
-> Yes, sounds good to me. If a driver uses the existing methods with
-> too large frequencies, the issue is pretty discoverable anyway. I
-> think "adjust_rate" sounds a bit too much like it sets the clock's
-> rate, though; perhaps "adjust_rate_request" or something like that?
+> ERROR: "exynos_mipi_dsi_register_lcd_driver" [drivers/video/fbdev/exynos/s6e8ax0.ko] undefined!
 > 
+> Finally, the EXYNOS_VIDEO option is turned into tristate as well
+> for good measure, as all framebuffer drivers should be configurable
+> as modules.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Well I'm also OK with changing the determine_rate API one more
-time, but we'll have to be careful. Invariably someone will push
-a new clock driver through some non-clk tree path and we'll get
-build breakage. They shouldn't be doing that, so either we do the
-change now and push it to -next and see what breaks, or we do
-this after -rc1 comes out and make sure everyone has lots of
-warning.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Looks good:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
