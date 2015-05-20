@@ -1,40 +1,59 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC v1 15/25] genirq: Kill the first parameter 'irq' of
- irq_flow_handler_t
-Date: Wed, 20 May 2015 17:48:19 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1505201748000.4225@nanos>
-References: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com> <1432116013-25902-16-git-send-email-jiang.liu@linux.intel.com> <alpine.DEB.2.11.1505201715380.4225@nanos> <555CA929.3080306@linux.intel.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 2/2] drm/exynos: =?UTF-8?Q?WARN=5FON=20if=20ideal=5Fcl?=
+ =?UTF-8?Q?k=20is=20zero?=
+Date: Wed, 20 May 2015 18:04:27 +0200
+Message-ID: <0ed39f733f049e17b350b9ec5b22c389@math.uni-bielefeld.de>
+References: <1432132428-13519-1-git-send-email-gustavo@padovan.org>
+ <1432132428-13519-2-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:33790 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932494AbbETPsw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 11:48:52 -0400
-In-Reply-To: <555CA929.3080306@linux.intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1432132428-13519-2-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Rajendra Nayak <rnayak@ti.com>, Paul Walmsley <paul@pwsan.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free>
 
-On Wed, 20 May 2015, Jiang Liu wrote:
-
-> On 2015/5/20 23:28, Thomas Gleixner wrote:
-> > On Wed, 20 May 2015, Jiang Liu wrote:
-> >> -static void locomo_handler(unsigned int irq, struct irq_desc *desc)
-> >> +static void locomo_handler(struct irq_desc *desc)
-> >>  {
-> >>  	struct locomo *lchip = irq_desc_get_chip_data(desc);
-> >> +	unsigned int irq;
-> >>  	int req, i;
-> > 
-> > That leaves irq unitialized ....
-> That should be OK, 'irq' here is just a local variable.
-> Actually it may be changed as:
->         if (req) {
->                 /* generate the next interrupt(s) */
-> -                irq = lchip->irq_base;
-> +                unsigned int irq = lchip->irq_base;
-
-Indeed. 
+SG1tLAoKSSB3b25kZXIgaWYgdGhhdCByZWFsbHkgJ2ZpeGVzJyBhbnl0aGluZywgYmVjYXVzZSBu
+b3cgd2UgZ2V0IGEgV0FSTl9PTiAKd2hpY2ggaXMgaW1tZWRpYXRlbHkgZm9sbG93ZWQgYnkgYSBk
+aXYtYnktemVyby4gRnVydGhlcm1vcmUgd2UgdGhlbiAKc3RpbGwgdXNlIHRoZSByZXN1bHQgb2Yg
+dGhhdCBvcGVyYXRpb24gYXMgaW5wdXQgZm9yIGEgaHcgcmVnaXN0ZXIgKGJhZCAKaWRlYT8pCgpJ
+IHRob3VnaHQgb2Ygc29tZXRoaW5nIGxpa2UgdGhpcy4gQ2hhbmdlIGZpbWRfY2FsY19jbGtkaXYo
+KSB0byByZXR1cm4gYSAKc2lnbmVkIHZhbHVlICh0aGlzIHNob3VsZG4ndCBiZSBhIHByb2JsZW0s
+IHNpbmNlIHRoZSByZXR1cm5lZCBudW1iZXIgCnJhbmdlIGlzIHNtYWxsIGFueXdhcnkpLiBMZXQg
+ZmltZF9jYWxjX2Nsa2RpdigpIHJldHVybiAtMSB3aGVuIGl0IAplbmNvdW50ZXJzIHRoZSAnaWRl
+YWxfY2xrID09IDAnIGNhc2UuIE1vdmUgY29tcHV0YXRpb24gb2YgY2xrZGl2IGluIApmaW1kX2Nv
+bW1pdCgpIHRvIHRoZSB0b3Agb2YgdGhlIGZ1bmN0aW9uIChyaWdodCBhZnRlciB0aGUge2gsdn10
+b3RhbCAKY2hlY2tzKS4gSWYgJ2Nsa2RpdiA9PSAtMScgY2FzZSBpcyBlbmNvdW50ZXJlZCwgdGhl
+biBkbyBXQVJOX09OIGFuZCAKcmV0dXJuIGltbWVkaWF0ZWx5IGZyb20gZmltZF9jb21taXQoKS4K
+ClNob3VsZCBJIHByZXBhcmUgYSBwYXRjaCBmb3IgdGhpcywgb3IgZG9lcyBzb21lb25lIHNlZSBh
+biBpc3N1ZSB3aXRoIAp0aGlzIGFwcHJvYWNoPwoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoK
+T24gMjAxNS0wNS0yMCAxNjozMywgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1c3Rh
+dm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBpZGVhbF9j
+bGsgaXMgdGhlIGRpdmlzb3IgaW4gYW4gb3BlcmF0aW9uIHRvIGZpbmQgdGhlIGNsb2NrIGRpdmlk
+ZXIgc28KPiBpdCBjYW4ndCBuZXZlciBiZSB6ZXJvIG9yIHdlIHdpbGwgZW5kIHVwIHdpdGggYSBk
+aXZpc2lvbiBieSB6ZXJvIGVycm9yLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3Zh
+biA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDIgKysKPiAgMSBmaWxlIGNoYW5nZWQsIDIg
+aW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmltZC5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
+ZC5jCj4gaW5kZXggMDhmNzE5Ny4uMjk0ZjljZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2ZpbWQuYwo+IEBAIC0zMDksNiArMzA5LDggQEAgc3RhdGljIHUzMiBmaW1k
+X2NhbGNfY2xrZGl2KHN0cnVjdCBmaW1kX2NvbnRleHQgCj4gKmN0eCwKPiAgCXVuc2lnbmVkIGxv
+bmcgaWRlYWxfY2xrID0gbW9kZS0+aHRvdGFsICogbW9kZS0+dnRvdGFsICogCj4gbW9kZS0+dnJl
+ZnJlc2g7Cj4gIAl1MzIgY2xrZGl2Owo+IAo+ICsJV0FSTl9PTihpZGVhbF9jbGsgPT0gMCk7Cj4g
+Kwo+ICAJaWYgKGN0eC0+aTgwX2lmKSB7Cj4gIAkJLyoKPiAgCQkgKiBUaGUgZnJhbWUgZG9uZSBp
+bnRlcnJ1cHQgc2hvdWxkIGJlIG9jY3VycmVkIHByaW9yIHRvIHRoZQoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
