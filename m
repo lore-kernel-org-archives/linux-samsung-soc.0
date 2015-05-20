@@ -1,130 +1,125 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 04/10] mfd: cros_ec: Use a zero-length array for command
- data
-Date: Wed, 20 May 2015 09:43:39 +0200
-Message-ID: <555C3B2B.7060703@collabora.co.uk>
-References: <1431166241-15775-1-git-send-email-javier.martinez@collabora.co.uk> <1431166241-15775-5-git-send-email-javier.martinez@collabora.co.uk> <20150513111034.GH3394@x1> <55533785.7080303@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:53873 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750923AbbETHnr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 03:43:47 -0400
-In-Reply-To: <55533785.7080303@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jiang Liu <jiang.liu@linux.intel.com>
+Subject: [RFC v1 07/25] irqchip: Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc
+Date: Wed, 20 May 2015 17:59:55 +0800
+Message-ID: <1432116013-25902-8-git-send-email-jiang.liu@linux.intel.com>
+References: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Jiang Liu <jiang.liu@linux.intel.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Lee,
+Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+already have a pointer to corresponding irq_desc.
 
-On 05/13/2015 01:37 PM, Javier Martinez Canillas wrote:
-> 
-> On 05/13/2015 01:10 PM, Lee Jones wrote:
->> On Sat, 09 May 2015, Javier Martinez Canillas wrote:
->> 
->>> Commit 1b84f2a4cd4a ("mfd: cros_ec: Use fixed size arrays to transfer
->>> data with the EC") modified the struct cros_ec_command fields to not
->>> use pointers for the input and output buffers and use fixed length
->>> arrays instead.
->>> 
->>> This change was made because the cros_ec ioctl API uses that struct
->>> cros_ec_command to allow user-space to send commands to the EC and
->>> to get data from the EC. So using pointers made the API not 64-bit
->>> safe. Unfortunately this approach was not flexible enough for all
->>> the use-cases since there may be a need to send larger commands
->>> on newer versions of the EC command protocol.
->>> 
->>> So to avoid to choose a constant length that it may be too big for
->>> most commands and thus wasting memory and CPU cycles on copy from
->>> and to user-space or having a size that is too small for some big
->>> commands, use a zero-length array that is both 64-bit safe and
->>> flexible. The same buffer is used for both output and input data
->>> so the maximum of these values should be used to allocate it.
->>> 
->>> Suggested-by: Gwendal Grignou <gwendal@chromium.org>
->>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>> Tested-by: Heiko Stuebner <heiko@sntech.de>
->>> ---
->>> 
->>> Changes since v1:
->>>  - Add Heiko Stuebner Tested-by tag
->>>  - Removed a new blank line at EOF warning. Reported by Heiko Stuebner
->>>  - Use kmalloc instead of kzalloc when the message is later initialized
->>>    Suggested by Gwendal Grignou
->>>  - Pre-allocate struct cros_ec_command instead of dynamically allocate it
->>>    whenever is possible. Suggested by Gwendal Grignou
->>>  - Pre-allocate buffers for the usual cases and only allocate dynamically
->>>    in the heap for bigger sizes. Suggested by Gwendal Grignou
->>>  - Don't access the cros_ec_command received from user-space before doing
->>>    a copy_from_user. Suggested by Gwendal Grignou
->>>  - Only copy from user-space outsize bytes and copy_to_user insize bytes
->>>    Suggested by Gwendal Grignou
->>>  - ec_device_ioctl_xcmd() must return the numbers of bytes read and not 0
->>>    on success. Suggested by Gwendal Grignou
->>>  - Rename alloc_cmd_msg to alloc_lightbar_cmd_msg. Suggested by Gwendal Grignou
->>> ---
->>>  drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  59 ++++++++---
->>>  drivers/input/keyboard/cros_ec_keyb.c      |  19 ++--
->>>  drivers/mfd/cros_ec.c                      |  18 ++--
->>>  drivers/mfd/cros_ec_i2c.c                  |   4 +-
->>>  drivers/mfd/cros_ec_spi.c                  |   2 +-
->>>  drivers/platform/chrome/cros_ec_dev.c      |  66 +++++++++----
->>>  drivers/platform/chrome/cros_ec_lightbar.c | 152 +++++++++++++++++++----------
->>>  drivers/platform/chrome/cros_ec_lpc.c      |   8 +-
->>>  drivers/platform/chrome/cros_ec_sysfs.c    |  92 +++++++++--------
->>>  include/linux/mfd/cros_ec.h                |   6 +-
->>>  10 files changed, 273 insertions(+), 153 deletions(-)
->> 
->> [...]
->> 
->>> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
->>> index 1574a9352a6d..ee8aa8142932 100644
->>> --- a/drivers/mfd/cros_ec.c
->>> +++ b/drivers/mfd/cros_ec.c
->>> @@ -41,7 +41,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->>>  	out[2] = msg->outsize;
->>>  	csum = out[0] + out[1] + out[2];
->>>  	for (i = 0; i < msg->outsize; i++)
->>> -		csum += out[EC_MSG_TX_HEADER_BYTES + i] = msg->outdata[i];
->>> +		csum += out[EC_MSG_TX_HEADER_BYTES + i] = msg->data[i];
->>>  	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = (uint8_t)(csum & 0xff);
->>>  
->>>  	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
->>> @@ -75,11 +75,13 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->>>  	ret = ec_dev->cmd_xfer(ec_dev, msg);
->>>  	if (msg->result == EC_RES_IN_PROGRESS) {
->>>  		int i;
->>> -		struct cros_ec_command status_msg = { };
->>> +		struct cros_ec_command *status_msg;
->>>  		struct ec_response_get_comms_status *status;
->>> +		u8 buf[sizeof(*status_msg) + sizeof(*status)] = { };
->> 
->> This sort of thing is usually frowned upon.  Can you allocate and free
->> buf's memory using the normal kernel helpers please?
->>
-> 
-> The first version of this patch used kmalloc (actually kzalloc) and kfree
-> to allocate and free the buffers but Gwendal suggested that we could
-> allocate in the stack instead as an optimization [0].
-> 
-> I have no strong opinion on this so I'm happy to change it again when
-> re-spinning the patches.
->
+Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+---
+ drivers/irqchip/exynos-combiner.c   |    4 ++--
+ drivers/irqchip/irq-armada-370-xp.c |    2 +-
+ drivers/irqchip/irq-dw-apb-ictl.c   |    4 ++--
+ drivers/irqchip/irq-gic.c           |    4 ++--
+ drivers/irqchip/irq-orion.c         |    2 +-
+ drivers/irqchip/irq-sunxi-nmi.c     |    2 +-
+ drivers/irqchip/spear-shirq.c       |    2 +-
+ 7 files changed, 10 insertions(+), 10 deletions(-)
 
-[snip]
-
-> 
-> [0]: https://lkml.org/lkml/2015/4/24/8
-> 
-
-You didn't answer if you agree with Gwendal that we can allocate things on
-the stack or if you still prefer to use kmalloc/kfree. As I said I don't
-have a strong argument on either approach but just want to agree to avoid
-doing the same change on each revision.
-
-Best regards,
-Javier
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index 5945223b73fa..039ceb46fcc0 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -62,8 +62,8 @@ static void combiner_unmask_irq(struct irq_data *data)
+ 
+ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct combiner_chip_data *chip_data = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct combiner_chip_data *chip_data = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int cascade_irq, combiner_irq;
+ 	unsigned long status;
+ 
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+index daccc8bdbb42..40b5fe99a1d5 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -451,7 +451,7 @@ static void armada_370_xp_handle_msi_irq(struct pt_regs *r, bool b) {}
+ static void armada_370_xp_mpic_handle_cascade_irq(unsigned int irq,
+ 						  struct irq_desc *desc)
+ {
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned long irqmap, irqn, irqsrc, cpuid;
+ 	unsigned int cascade_irq;
+ 
+diff --git a/drivers/irqchip/irq-dw-apb-ictl.c b/drivers/irqchip/irq-dw-apb-ictl.c
+index 53bb7326a60a..cddcd3b75f00 100644
+--- a/drivers/irqchip/irq-dw-apb-ictl.c
++++ b/drivers/irqchip/irq-dw-apb-ictl.c
+@@ -28,8 +28,8 @@
+ 
+ static void dw_apb_ictl_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct irq_chip *chip = irq_get_chip(irq);
+-	struct irq_chip_generic *gc = irq_get_handler_data(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct irq_chip_generic *gc = irq_desc_get_handler_data(desc);
+ 	struct irq_domain *d = gc->private;
+ 	u32 stat;
+ 	int n;
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 01999d74bd3a..6c8a5a7fb4a0 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -288,8 +288,8 @@ static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+ 
+ static void gic_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct gic_chip_data *chip_data = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct gic_chip_data *chip_data = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int cascade_irq, gic_irq;
+ 	unsigned long status;
+ 
+diff --git a/drivers/irqchip/irq-orion.c b/drivers/irqchip/irq-orion.c
+index ad0c0f6f1d65..58e034db0e7c 100644
+--- a/drivers/irqchip/irq-orion.c
++++ b/drivers/irqchip/irq-orion.c
+@@ -109,7 +109,7 @@ IRQCHIP_DECLARE(orion_intc, "marvell,orion-intc", orion_irq_init);
+ 
+ static void orion_bridge_irq_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct irq_domain *d = irq_get_handler_data(irq);
++	struct irq_domain *d = irq_desc_get_handler_data(desc);
+ 
+ 	struct irq_chip_generic *gc = irq_get_domain_generic_chip(d, 0);
+ 	u32 stat = readl_relaxed(gc->reg_base + ORION_BRIDGE_IRQ_CAUSE) &
+diff --git a/drivers/irqchip/irq-sunxi-nmi.c b/drivers/irqchip/irq-sunxi-nmi.c
+index 4a9ce5b50c5b..2eaa9d9df241 100644
+--- a/drivers/irqchip/irq-sunxi-nmi.c
++++ b/drivers/irqchip/irq-sunxi-nmi.c
+@@ -61,7 +61,7 @@ static inline u32 sunxi_sc_nmi_read(struct irq_chip_generic *gc, u32 off)
+ static void sunxi_sc_nmi_handle_irq(unsigned int irq, struct irq_desc *desc)
+ {
+ 	struct irq_domain *domain = irq_desc_get_handler_data(desc);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int virq = irq_find_mapping(domain, 0);
+ 
+ 	chained_irq_enter(chip, desc);
+diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
+index 9c145a7cb056..fb68ee9c0424 100644
+--- a/drivers/irqchip/spear-shirq.c
++++ b/drivers/irqchip/spear-shirq.c
+@@ -185,7 +185,7 @@ static struct spear_shirq *spear320_shirq_blocks[] = {
+ 
+ static void shirq_handler(unsigned irq, struct irq_desc *desc)
+ {
+-	struct spear_shirq *shirq = irq_get_handler_data(irq);
++	struct spear_shirq *shirq = irq_desc_get_handler_data(desc);
+ 	u32 pend;
+ 
+ 	pend = readl(shirq->base + shirq->status_reg) & shirq->mask;
+-- 
+1.7.10.4
