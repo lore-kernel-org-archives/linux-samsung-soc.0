@@ -1,45 +1,45 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] video: exynos: fix modular build
-Date: Wed, 20 May 2015 10:14:21 +0900
-Message-ID: <555BDFED.7060607@samsung.com>
-References: <2708563.ADEZz3igC5@wuerfel>
+Subject: Re: [RFC PATCH 2/4] ARM: dts: Add SPI flash node for Peach boards
+Date: Wed, 20 May 2015 12:37:29 +0900
+Message-ID: <555C0179.8040102@samsung.com>
+References: <1432042454-19234-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1432042454-19234-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54062 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751858AbbETBOY (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55050 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750994AbbETDhg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 May 2015 21:14:24 -0400
-In-reply-to: <2708563.ADEZz3igC5@wuerfel>
+	Tue, 19 May 2015 23:37:36 -0400
+In-reply-to: <1432042454-19234-3-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, David Hendricks <dhendrix@google.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Simon Glass <sjg@chromium.org>
 
-On 19.05.2015 21:17, Arnd Bergmann wrote:
-> The s6e8ax0 driver has a dependency on BACKLIGHT_CLASS_DEVICE,
-> which can be configured as a loadable module, so we have to
-> make the driver a tristate symbol as well, to avoid this error:
+On 19.05.2015 22:34, Javier Martinez Canillas wrote:
+> From: Simon Glass <sjg@chromium.org>
 > 
-> drivers/built-in.o: In function `s6e8ax0_probe':
-> :(.text+0x23a48): undefined reference to `devm_backlight_device_register'
+> Peach Pit and Pi machines have a SPI flash memory that is used to
+> store firmware and different system parameters and data.
 > 
-> This also means we get another error from a missing export, which
-> this fixes as well:
+> Add information about the SPI flash chip so that user-space tools
+> can access it.
 > 
-> ERROR: "exynos_mipi_dsi_register_lcd_driver" [drivers/video/fbdev/exynos/s6e8ax0.ko] undefined!
-> 
-> Finally, the EXYNOS_VIDEO option is turned into tristate as well
-> for good measure, as all framebuffer drivers should be configurable
-> as modules.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Simon Glass <sjg@chromium.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I assume this can go through samsung-soc tree (after documenting new
+compatible)?
+
+The exynos5800-peach-pi.dts and exynos5420-peach-pit.dts have a lot of
+common nodes. I wonder if there is a common part which could have its
+own dtsi? Like exynos4412-odroid-common.dtsi?
 
 Best regards,
 Krzysztof
