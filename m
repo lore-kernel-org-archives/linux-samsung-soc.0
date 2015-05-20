@@ -1,33 +1,54 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [RFC v1 15/25] genirq: Kill the first parameter 'irq' of irq_flow_handler_t
-Date: Wed, 20 May 2015 20:54:12 +0200
-Message-ID: <87mw0zhygb.fsf@belgarion.home>
-References: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com>
-	<1432116013-25902-16-git-send-email-jiang.liu@linux.intel.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v2] drm/exynos: calculate vrefresh instead of use
+ a fixed value
+Date: Wed, 20 May 2015 21:11:43 +0200
+Message-ID: <555CDC6F.9070000@math.uni-bielefeld.de>
+References: <1432147477-12650-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1432116013-25902-16-git-send-email-jiang.liu@linux.intel.com>
-	(Jiang Liu's message of "Wed, 20 May 2015 18:00:03 +0800")
-Sender: linux-pci-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Rajendra Nayak <rnayak@ti.com>, Paul Walmsley <paul@pwsan.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1432147477-12650-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Jiang Liu <jiang.liu@linux.intel.com> writes:
-
-> diff --git a/arch/arm/mach-pxa/pcm990-baseboard.c b/arch/arm/mach-pxa/pcm990-baseboard.c
-> index 2897da2a5df6..0d8331f8536e 100644
-> --- a/arch/arm/mach-pxa/pcm990-baseboard.c
-> +++ b/arch/arm/mach-pxa/pcm990-baseboard.c
-> @@ -287,6 +287,7 @@ static struct irq_chip pcm990_irq_chip = {
->  static void pcm990_irq_handler(unsigned int irq, struct irq_desc *desc)
->  {
->  	unsigned long pending;
-> +	unsigned int irq;
-That doesn't look good, double irq definition.
-
-Cheers.
-
--- 
-Robert
+R3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5w
+YWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBXaGVuIG1vZGUncyB2cmVmcmVzaCBpcyB6ZXJv
+IHdlIHNob3VsZCBhc2sgRFJNIGNvcmUgdG8gY2FsY3VsYXRlIHZyZWZyZXNoCj4gZm9yIHVzIHNv
+IHdlIGNhbiBnZXQgdGhlIGNvcnJlY3QgdmFsdWUgaW5zdGVhZCBvZiByZWx5aW5nIG9uIGZpeGVk
+IHZhbHVlCj4gZGVmaW5lZCBpbiBhIG1hY3JvLiBCdXQgaWYgdnJlZnJlc2ggaXMgc3RpbGwgemVy
+byB3ZSBzaG91bGQgZmFpbCB0aGUKPiB1cGRhdGUuCkV2ZW4gd2l0aCB0aGlzIHdlIHN0aWxsIG5l
+ZWQgdG8gY29uc2lkZXIgY3J0Yy0+c3RhdGUtPmFkanVzdGVkX21vZGUgaW4KZmltZF9jb21taXQo
+KSwgb3RoZXJ3aXNlIHZyZWZyZXNoIGNvbXB1dGVkIGJ5IGRybV9tb2RlX3ZyZWZyZXNoKCkgaXMK
+bmV2ZXIgYWN0dWFsbHkgdXNlZC4KCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgo+IFN1Z2dl
+c3RlZC1ieTogRGFuaWVsIFN0b25lIDxkYW5pZWxzQGNvbGxhYm9yYS5jb20+Cj4gU2lnbmVkLW9m
+Zi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+
+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgNSArKyst
+LQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+IGluZGV4IDk4MTlmYTYu
+LmVhN2RhMGUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMK
+PiBAQCAtNDIsNyArNDIsNiBAQAo+ICAgKiBDUFUgSW50ZXJmYWNlLgo+ICAgKi8KPiAgCj4gLSNk
+ZWZpbmUgRklNRF9ERUZBVUxUX0ZSQU1FUkFURSA2MAo+ICAjZGVmaW5lIE1JTl9GQl9XSURUSF9G
+T1JfMTZXT1JEX0JVUlNUIDEyOAo+ICAKPiAgLyogcG9zaXRpb24gY29udHJvbCByZWdpc3RlciBm
+b3IgaGFyZHdhcmUgd2luZG93IDAsIDIgfiA0LiovCj4gQEAgLTMyOSw3ICszMjgsOSBAQCBzdGF0
+aWMgYm9vbCBmaW1kX21vZGVfZml4dXAoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywKPiAg
+CQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSkKPiAgewo+ICAJaWYgKGFk
+anVzdGVkX21vZGUtPnZyZWZyZXNoID09IDApCj4gLQkJYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2gg
+PSBGSU1EX0RFRkFVTFRfRlJBTUVSQVRFOwo+ICsJCWFkanVzdGVkX21vZGUtPnZyZWZyZXNoID0g
+ZHJtX21vZGVfdnJlZnJlc2gobW9kZSk7Cj4gKwlpZiAoYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2gg
+PT0gMCkKPiArCQlyZXR1cm4gZmFsc2U7Cj4gIAo+ICAJcmV0dXJuIHRydWU7Cj4gIH0KPiAKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
