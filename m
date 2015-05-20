@@ -1,68 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 1/4] spi: spidev: Add Google SPI flash compatible
- string
-Date: Wed, 20 May 2015 12:41:58 +0100
-Message-ID: <20150520114158.GF21577@sirena.org.uk>
-References: <1432042454-19234-1-git-send-email-javier.martinez@collabora.co.uk>
- <1432042454-19234-2-git-send-email-javier.martinez@collabora.co.uk>
- <20150520101318.GB21577@sirena.org.uk>
- <555C5F65.7010204@collabora.co.uk>
- <20150520103746.GD21577@sirena.org.uk>
- <555C6E51.5030601@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2FkSFaIQeDFoAt0B"
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 1/2] drm/exynos: calculate vrefresh instead of use a fixed value
+Date: Wed, 20 May 2015 11:33:47 -0300
+Message-ID: <1432132428-13519-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48502 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751682AbbETLmR (ORCPT
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:34413 "EHLO
+	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752681AbbETOd6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 May 2015 07:42:17 -0400
-Content-Disposition: inline
-In-Reply-To: <555C6E51.5030601@collabora.co.uk>
+	Wed, 20 May 2015 10:33:58 -0400
+Received: by qkgx75 with SMTP id x75so32854342qkg.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2015 07:33:57 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, David Hendricks <dhendrix@google.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, daniel@fooishbar.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
---2FkSFaIQeDFoAt0B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+When mode's vrefresh is zero we should ask DRM core to calculate vrefresh
+for us so we can get the correct value instead of relying on fixed value
+defined in a macro.
 
-On Wed, May 20, 2015 at 01:21:53PM +0200, Javier Martinez Canillas wrote:
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> The ChromeOS user-space just uses flashrom to send a raw stream of bytes
-> via spidev to the SPI NOR flash chip. There is drivers/mtd/spi-nor/spi-nor.c
-> but AFAIU there are some limitations when interfacing the flash through
-> the MTD layer, for example there isn't a way to set the SPI flash write
-> protection through MTD. But I'll do some investigation before re-spinning
-> the patches.
-
-OK, that's a bit concerning - perhaps what's needed here is to extend
-MTD and so on (if only to find some way for it to coexist with spidev
-for the time being)?
-
-> BTW, the other "rohm,dh2228fv" compatible string in spidev added by commit
-> 8fad805bdc52 ("spi: spidev: Add Rohm DH2228FV DAC compatible string"), also
-> does not have a documented DT binding so that should be fixed as well.
-
-wv :)
-
---2FkSFaIQeDFoAt0B
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVXHMFAAoJECTWi3JdVIfQu6IH/232pUm3HWOrIjFBSL1rduzT
-eTGGZDu2m0jYeGqMdtdSX4uutH+CTi3MKl2jRBzKAa1HRGqhAnBQkEZ6H9n9ZIIx
-j+R0wDbeiSJ8MqxPemqb1+2zSXsPz2tgeQdDrTBJxJJrSTsP1xoCe2K10uwqRvcf
-+6lrbG89Bjq5LWoLduSBJv4PKCqYTgZxVzyQPu4SOj3K9PuSqoa7UpJKrjMRTsGX
-+EV4b3lqZb2hADZF8zUynuH9Ddma6wFqYvZZsZ6Yxxo83GJcn4VkbV9+J2kbijmv
-5cN9VhjFiOUy7Ari4xx6ivx1Z+kxJSMjblHp9gqJL8ivOfDVrAiVIMk7ZkbJ15I=
-=4o9R
------END PGP SIGNATURE-----
-
---2FkSFaIQeDFoAt0B--
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 9819fa6..08f7197 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -42,7 +42,6 @@
+  * CPU Interface.
+  */
+ 
+-#define FIMD_DEFAULT_FRAMERATE 60
+ #define MIN_FB_WIDTH_FOR_16WORD_BURST 128
+ 
+ /* position control register for hardware window 0, 2 ~ 4.*/
+@@ -329,7 +328,7 @@ static bool fimd_mode_fixup(struct exynos_drm_crtc *crtc,
+ 		struct drm_display_mode *adjusted_mode)
+ {
+ 	if (adjusted_mode->vrefresh == 0)
+-		adjusted_mode->vrefresh = FIMD_DEFAULT_FRAMERATE;
++		adjusted_mode->vrefresh = drm_mode_vrefresh(mode);
+ 
+ 	return true;
+ }
+-- 
+2.1.0
