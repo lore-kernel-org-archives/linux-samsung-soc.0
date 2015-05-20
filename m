@@ -1,45 +1,51 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v7 18/25] ARM: Exynos: pm_domains: register power domain
- driver from core_initcall
-Date: Wed, 20 May 2015 09:51:23 +0900
-Message-ID: <555BDA8B.30402@samsung.com>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
- <1432041645-11172-19-git-send-email-m.szyprowski@samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Tue, 19 May 2015 18:01:44 -0700
+Message-ID: <20150520010144.GA31054@codeaurora.org>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+ <20150507063953.GC32399@codeaurora.org>
+ <20150507093702.0b58753d@bbrezillon>
+ <20150515174048.4a31af49@bbrezillon>
+ <5557267D.7080209@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58544 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472AbbETAv3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 May 2015 20:51:29 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NOM006X4IDQZX80@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 May 2015 01:51:26 +0100 (BST)
-In-reply-to: <1432041645-11172-19-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5557267D.7080209@kapsi.fi>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio L?pez <emilio@elopez.com.ar>, Maxime Ripard <maxime.rip>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-On 19.05.2015 22:20, Marek Szyprowski wrote:
-> SYSMMU devices are registered very early in arch_initcall, so ensure
-> that they can get access to power domains by registering power domain
-> driver from earlier initcall. This change requires dropping usage of the
-> platform device associated with each power domain and replacing clock
-> calls with respective of_clk_* equivalents.
+On 05/16, Mikko Perttunen wrote:
+> On 05/15/2015 06:40 PM, Boris Brezillon wrote:
+> >Hi Stephen,
+> >
+> >Adding Mikko in the loop (after all, he was the one complaining about
+> >this signed long limitation in the first place, and I forgot to add
+> >him in the Cc list :-/).
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/mach-exynos/pm_domains.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
+> I think I got it through linux-tegra anyway, but thanks :)
+> 
+> >
+> >Mikko, are you okay with the approach proposed by Stephen (adding a
+> >new method) ?
+> 
+> Yes, sounds good to me. If a driver uses the existing methods with
+> too large frequencies, the issue is pretty discoverable anyway. I
+> think "adjust_rate" sounds a bit too much like it sets the clock's
+> rate, though; perhaps "adjust_rate_request" or something like that?
+> 
 
-Looks good:
+Well I'm also OK with changing the determine_rate API one more
+time, but we'll have to be careful. Invariably someone will push
+a new clock driver through some non-clk tree path and we'll get
+build breakage. They shouldn't be doing that, so either we do the
+change now and push it to -next and see what breaks, or we do
+this after -rc1 comes out and make sure everyone has lots of
+warning.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
