@@ -1,44 +1,67 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v6 10/12] drm/exynos: don't disable unused functions at init
-Date: Thu, 21 May 2015 17:02:49 -0300
-Message-ID: <1432238571-31621-11-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v6 12/12] drm/exynos: remove unnecessary calls to
+ disable_plane()
+Date: Thu, 21 May 2015 17:02:51 -0300
+Message-ID: <1432238571-31621-13-git-send-email-gustavo@padovan.org>
 References: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f51.google.com ([209.85.192.51]:34958 "EHLO
-	mail-qg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756554AbbEUUDb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 May 2015 16:03:31 -0400
-Received: by qgew3 with SMTP id w3so47707009qge.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2015 13:03:31 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Everything starts disabled so we don't really need to disable anything.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index e71e331..e0b085b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -275,9 +275,6 @@ int exynos_drm_fbdev_init(struct drm_device *dev)
- 
- 	}
- 
--	/* disable all the possible outputs/crtcs before entering KMS mode */
--	drm_helper_disable_unused_functions(dev);
--
- 	ret = drm_fb_helper_initial_config(helper, PREFERRED_BPP);
- 	if (ret < 0) {
- 		DRM_ERROR("failed to set up hw configuration.\n");
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlIHBsYW5lcyBhcmUgYWxyZWFkeSBkaXNhYmxlZCBieSB0aGUgZHJtX2F0b21pY19oZWxwZXJf
+Y29tbWl0KCkgY29kZQpzbyB3ZSBkb24ndCBuZWVkIHRvIGRpc2FibGUgdGhlIGluIHRoZXNlIHR3
+byBwbGFjZXMuCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3Zh
+bkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2NydGMuYyAgICB8IDExIC0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZW5jb2Rlci5jIHwgIDggLS0tLS0tLS0KIDIgZmlsZXMgY2hhbmdlZCwgMTkgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
+dGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKaW5kZXggOTJh
+NTU5NS4uYjMxMjM2NCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
+CkBAIC00Nyw4ICs0Nyw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19lbmFibGUoc3Ry
+dWN0IGRybV9jcnRjICpjcnRjKQogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUo
+c3RydWN0IGRybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5v
+c19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Ci0Jc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7
+Ci0JaW50IHJldDsKIAogCWlmICghZXh5bm9zX2NydGMtPmVuYWJsZWQpCiAJCXJldHVybjsKQEAg
+LTY0LDE1ICs2Miw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVj
+dCBkcm1fY3J0YyAqY3J0YykKIAkJZXh5bm9zX2NydGMtPm9wcy0+ZHBtcyhleHlub3NfY3J0Yywg
+RFJNX01PREVfRFBNU19PRkYpOwogCiAJZXh5bm9zX2NydGMtPmVuYWJsZWQgPSBmYWxzZTsKLQot
+CWRybV9mb3JfZWFjaF9sZWdhY3lfcGxhbmUocGxhbmUsICZjcnRjLT5kZXYtPm1vZGVfY29uZmln
+LnBsYW5lX2xpc3QpIHsKLQkJaWYgKHBsYW5lLT5jcnRjICE9IGNydGMpCi0JCQljb250aW51ZTsK
+LQotCQlyZXQgPSBwbGFuZS0+ZnVuY3MtPmRpc2FibGVfcGxhbmUocGxhbmUpOwotCQlpZiAocmV0
+KQotCQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gZGlzYWJsZSBwbGFuZSAlZFxuIiwgcmV0KTsKLQl9
+CiB9CiAKIHN0YXRpYyBib29sCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZW5jb2Rlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Vu
+Y29kZXIuYwppbmRleCAwNjQ4YmE0Li43Yjg5ZmQ1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9lbmNvZGVyLmMKQEAgLTgxLDE3ICs4MSw5IEBAIHN0YXRpYyB2b2lkIGV4
+eW5vc19kcm1fZW5jb2Rlcl9kaXNhYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKIHsK
+IAlzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICpleHlub3NfZW5jb2RlciA9IHRvX2V4eW5vc19l
+bmNvZGVyKGVuY29kZXIpOwogCXN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXkgPSBl
+eHlub3NfZW5jb2Rlci0+ZGlzcGxheTsKLQlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKLQlzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2ID0gZW5jb2Rlci0+ZGV2OwogCiAJaWYgKGRpc3BsYXktPm9wcy0+
+ZHBtcykKIAkJZGlzcGxheS0+b3BzLT5kcG1zKGRpc3BsYXksIERSTV9NT0RFX0RQTVNfT0ZGKTsK
+LQotCS8qIGFsbCBwbGFuZXMgY29ubmVjdGVkIHRvIHRoaXMgZW5jb2RlciBzaG91bGQgYmUgYWxz
+byBkaXNhYmxlZC4gKi8KLQlkcm1fZm9yX2VhY2hfbGVnYWN5X3BsYW5lKHBsYW5lLCAmZGV2LT5t
+b2RlX2NvbmZpZy5wbGFuZV9saXN0KSB7Ci0JCWlmIChwbGFuZS0+Y3J0YyAmJiAocGxhbmUtPmNy
+dGMgPT0gZW5jb2Rlci0+Y3J0YykpCi0JCQlwbGFuZS0+ZnVuY3MtPmRpc2FibGVfcGxhbmUocGxh
+bmUpOwotCX0KIH0KIAogc3RhdGljIHN0cnVjdCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgZXh5
+bm9zX2VuY29kZXJfaGVscGVyX2Z1bmNzID0gewotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
