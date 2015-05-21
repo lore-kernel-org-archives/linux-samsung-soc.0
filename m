@@ -1,139 +1,79 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v5 09/12] drm/exynos: remove exported functions from
- =?UTF-8?Q?exynos=5Fdrm=5Fplane?=
-Date: Thu, 21 May 2015 17:09:42 +0200
-Message-ID: <d7371b0c9e0e68b22cc66325d9b84625@math.uni-bielefeld.de>
-References: <1432220576-18532-1-git-send-email-gustavo@padovan.org>
- <1432220576-18532-11-git-send-email-gustavo@padovan.org>
+Subject: Re: [PATCH v3] drm/exynos: calculate vrefresh instead of use a
+ fixed value
+Date: Thu, 21 May 2015 17:10:27 +0200
+Message-ID: <7a30ec3e61155af403236be170d0ee63@math.uni-bielefeld.de>
+References: <1432155399-5586-1-git-send-email-gustavo@padovan.org>
+ <555D086F.4000104@math.uni-bielefeld.de> <20150521140635.GB10615@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1432220576-18532-11-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39189 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755849AbbEUPK3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 May 2015 11:10:29 -0400
+In-Reply-To: <20150521140635.GB10615@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, daniel@fooishbar.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-SGksCgpsaWtlIEkgc2FpZCBiZWZvcmUsIHRoaXMgY2xhc2hlcyB3aXRoIG15IGNvbW1pdCAnZHJt
-L2V4eW5vczogcGxhbmU6IApob25vciBidWZmZXIgb2Zmc2V0IGZvciBkbWFfYWRkcicgCig1ZDg3
-OGJkYjUxYmQ3OTE1YmEzZGVmOGI1MzEyMzhjNjc2MjRhYTU4KSwgd2hpY2ggaXMgY3VycmVudGx5
-IHNpdHRpbmcgCmluIGFpcmxpZWQncyBkcm0tZml4ZXMuCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2Jp
-YXMKCgoKT24gMjAxNS0wNS0yMSAxNzowMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206
-IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBO
-b3cgdGhhdCBubyBvbmUgaXMgdXNpbmcgdGhlIGZ1bmN0aW9ucyBleHBvcnRlZCBieSBleHlub3Nf
-ZHJtX3BsYW5lIGR1ZQo+IHRvIHRoZSBhdG9taWMgY29udmVyc2lvbiB3ZSBjYW4gbWFrZSByZW1v
-dmUgc29tZSBvZiB0aGUgdGhlbSBvciBtYWtlIAo+IHRoZW0KPiBzdGF0aWMuCj4gCj4gdjI6IHJl
-bW92ZSB1bnVzZWQgZXh5bm9zX2RybV9jcnRjCj4gCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQ
-YWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IC0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDkwIAo+ICsrKysrKysrKysrKyst
-LS0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Bs
-YW5lLmggfCAxMSAtLS0tCj4gIDIgZmlsZXMgY2hhbmdlZCwgMzcgaW5zZXJ0aW9ucygrKSwgNjQg
-ZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9wbGFuZS5jCj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxh
-bmUuYwo+IGluZGV4IGFiNTBiYjcuLmIzODVmZWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fcGxhbmUuYwo+IEBAIC02MiwzNSArNjIsMTIgQEAgc3RhdGljIGludCBl
-eHlub3NfcGxhbmVfZ2V0X3NpemUoaW50IHN0YXJ0LAo+IHVuc2lnbmVkIGxlbmd0aCwgdW5zaWdu
-ZWQgbGFzdCkKPiAgCXJldHVybiBzaXplOwo+ICB9Cj4gCj4gLWludCBleHlub3NfY2hlY2tfcGxh
-bmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgCj4gKmZi
-KQo+IC17Cj4gLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5
-bm9zX3BsYW5lKHBsYW5lKTsKPiAtCWludCBucjsKPiAtCWludCBpOwo+IC0KPiAtCW5yID0gZXh5
-bm9zX2RybV9mYl9nZXRfYnVmX2NudChmYik7Cj4gLQlmb3IgKGkgPSAwOyBpIDwgbnI7IGkrKykg
-ewo+IC0JCXN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYgKmJ1ZmZlciA9IGV4eW5vc19kcm1fZmJf
-YnVmZmVyKGZiLCBpKTsKPiAtCj4gLQkJaWYgKCFidWZmZXIpIHsKPiAtCQkJRFJNX0RFQlVHX0tN
-UygiYnVmZmVyIGlzIG51bGxcbiIpOwo+IC0JCQlyZXR1cm4gLUVGQVVMVDsKPiAtCQl9Cj4gLQo+
-IC0JCWV4eW5vc19wbGFuZS0+ZG1hX2FkZHJbaV0gPSBidWZmZXItPmRtYV9hZGRyOwo+IC0KPiAt
-CQlEUk1fREVCVUdfS01TKCJidWZmZXI6ICVkLCBkbWFfYWRkciA9IDB4JWx4XG4iLAo+IC0JCQkJ
-aSwgKHVuc2lnbmVkIGxvbmcpZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltpXSk7Cj4gLQl9Cj4gLQo+
-IC0JcmV0dXJuIDA7Cj4gLX0KPiAtCj4gLXZvaWQgZXh5bm9zX3BsYW5lX21vZGVfc2V0KHN0cnVj
-dCBkcm1fcGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJtX2NydGMgCj4gKmNydGMsCj4gLQkJCSAgc3Ry
-dWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIsIGludCBjcnRjX3gsIGludCBjcnRjX3ksCj4gLQkJCSAg
-dW5zaWduZWQgaW50IGNydGNfdywgdW5zaWduZWQgaW50IGNydGNfaCwKPiAtCQkJICB1aW50MzJf
-dCBzcmNfeCwgdWludDMyX3Qgc3JjX3ksCj4gLQkJCSAgdWludDMyX3Qgc3JjX3csIHVpbnQzMl90
-IHNyY19oKQo+ICtzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGRybV9w
-bGFuZSAqcGxhbmUsIHN0cnVjdAo+IGRybV9jcnRjICpjcnRjLAo+ICsJCQkJICBzdHJ1Y3QgZHJt
-X2ZyYW1lYnVmZmVyICpmYiwKPiArCQkJCSAgaW50IGNydGNfeCwgaW50IGNydGNfeSwKPiArCQkJ
-CSAgdW5zaWduZWQgaW50IGNydGNfdywgdW5zaWduZWQgaW50IGNydGNfaCwKPiArCQkJCSAgdWlu
-dDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAo+ICsJCQkJICB1aW50MzJfdCBzcmNfdywgdWlu
-dDMyX3Qgc3JjX2gpCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxh
-bmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwo+ICAJdW5zaWduZWQgaW50IGFjdHVhbF93Owo+
-IEBAIC0xNDUsMjQgKzEyMiw2IEBAIHZvaWQgZXh5bm9zX3BsYW5lX21vZGVfc2V0KHN0cnVjdCBk
-cm1fcGxhbmUKPiAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAgCXBsYW5lLT5jcnRj
-ID0gY3J0YzsKPiAgfQo+IAo+IC12b2lkCj4gLWV4eW5vc191cGRhdGVfcGxhbmUoc3RydWN0IGRy
-bV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAtCQkgICAgIHN0cnVjdCBk
-cm1fZnJhbWVidWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAo+IC0JCSAgICAgdW5z
-aWduZWQgaW50IGNydGNfdywgdW5zaWduZWQgaW50IGNydGNfaCwKPiAtCQkgICAgIHVpbnQzMl90
-IHNyY194LCB1aW50MzJfdCBzcmNfeSwKPiAtCQkgICAgIHVpbnQzMl90IHNyY193LCB1aW50MzJf
-dCBzcmNfaCkKPiAtewo+IC0Jc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0
-b19leHlub3NfY3J0YyhjcnRjKTsKPiAtCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3Nf
-cGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwo+IC0KPiAtCWV4eW5vc19wbGFuZV9tb2Rl
-X3NldChwbGFuZSwgY3J0YywgZmIsIGNydGNfeCwgY3J0Y195LAo+IC0JCQkgICAgICBjcnRjX3cs
-IGNydGNfaCwgc3JjX3ggPj4gMTYsIHNyY195ID4+IDE2LAo+IC0JCQkgICAgICBzcmNfdyA+PiAx
-Niwgc3JjX2ggPj4gMTYpOwo+IC0KPiAtCWlmIChleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0
-KQo+IC0JCWV4eW5vc19jcnRjLT5vcHMtPndpbl9jb21taXQoZXh5bm9zX2NydGMsIGV4eW5vc19w
-bGFuZS0+enBvcyk7Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4
-eW5vc19wbGFuZV9mdW5jcyA9IHsKPiAgCS51cGRhdGVfcGxhbmUJPSBkcm1fYXRvbWljX2hlbHBl
-cl91cGRhdGVfcGxhbmUsCj4gIAkuZGlzYWJsZV9wbGFuZQk9IGRybV9hdG9taWNfaGVscGVyX2Rp
-c2FibGVfcGxhbmUsCj4gQEAgLTE3NSwyMiArMTM0LDQ3IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX3Bs
-YW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyAKPiA9IHsKPiAgc3RhdGljIGludCBleHlub3Nf
-cGxhbmVfYXRvbWljX2NoZWNrKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICAJCQkJICAgICBz
-dHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSkKPiAgewo+IC0JcmV0dXJuIGV4eW5vc19jaGVj
-a19wbGFuZShwbGFuZSwgc3RhdGUtPmZiKTsKPiArCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpl
-eHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwo+ICsJaW50IG5yOwo+ICsJaW50
-IGk7Cj4gKwo+ICsJbnIgPSBleHlub3NfZHJtX2ZiX2dldF9idWZfY250KHN0YXRlLT5mYik7Cj4g
-Kwlmb3IgKGkgPSAwOyBpIDwgbnI7IGkrKykgewo+ICsJCXN0cnVjdCBleHlub3NfZHJtX2dlbV9i
-dWYgKmJ1ZmZlciA9Cj4gKwkJCQkJZXh5bm9zX2RybV9mYl9idWZmZXIoc3RhdGUtPmZiLCBpKTsK
-PiArCj4gKwkJaWYgKCFidWZmZXIpIHsKPiArCQkJRFJNX0RFQlVHX0tNUygiYnVmZmVyIGlzIG51
-bGxcbiIpOwo+ICsJCQlyZXR1cm4gLUVGQVVMVDsKPiArCQl9Cj4gKwo+ICsJCWV4eW5vc19wbGFu
-ZS0+ZG1hX2FkZHJbaV0gPSBidWZmZXItPmRtYV9hZGRyOwo+ICsKPiArCQlEUk1fREVCVUdfS01T
-KCJidWZmZXI6ICVkLCBkbWFfYWRkciA9IDB4JWx4XG4iLAo+ICsJCQkJaSwgKHVuc2lnbmVkIGxv
-bmcpZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltpXSk7Cj4gKwl9Cj4gKwo+ICsJcmV0dXJuIDA7Cj4g
-IH0KPiAKPiAgc3RhdGljIHZvaWQgZXh5bm9zX3BsYW5lX2F0b21pY191cGRhdGUoc3RydWN0IGRy
-bV9wbGFuZSAqcGxhbmUsCj4gIAkJCQkgICAgICAgc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqb2xk
-X3N0YXRlKQo+ICB7Cj4gIAlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSA9IHBsYW5lLT5z
-dGF0ZTsKPiArCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9z
-X2NydGMoc3RhdGUtPmNydGMpOwo+ICsJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19w
-bGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7Cj4gCj4gIAlpZiAoIXN0YXRlLT5jcnRjKQo+
-ICAJCXJldHVybjsKPiAKPiAtCWV4eW5vc191cGRhdGVfcGxhbmUocGxhbmUsIHN0YXRlLT5jcnRj
-LCBzdGF0ZS0+ZmIsCj4gLQkJCSAgICBzdGF0ZS0+Y3J0Y194LCBzdGF0ZS0+Y3J0Y195LAo+IC0J
-CQkgICAgc3RhdGUtPmNydGNfdywgc3RhdGUtPmNydGNfaCwKPiAtCQkJICAgIHN0YXRlLT5zcmNf
-eCA+PiAxNiwgc3RhdGUtPnNyY195ID4+IDE2LAo+IC0JCQkgICAgc3RhdGUtPnNyY193ID4+IDE2
-LCBzdGF0ZS0+c3JjX2ggPj4gMTYpOwo+ICsJZXh5bm9zX3BsYW5lX21vZGVfc2V0KHBsYW5lLCBz
-dGF0ZS0+Y3J0Yywgc3RhdGUtPmZiLAo+ICsJCQkgICAgICBzdGF0ZS0+Y3J0Y194LCBzdGF0ZS0+
-Y3J0Y195LAo+ICsJCQkgICAgICBzdGF0ZS0+Y3J0Y193LCBzdGF0ZS0+Y3J0Y19oLAo+ICsJCQkg
-ICAgICBzdGF0ZS0+c3JjX3ggPj4gMTYsIHN0YXRlLT5zcmNfeSA+PiAxNiwKPiArCQkJICAgICAg
-c3RhdGUtPnNyY193ID4+IDE2LCBzdGF0ZS0+c3JjX2ggPj4gMTYpOwo+ICsKPiArCWlmIChleHlu
-b3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KQo+ICsJCWV4eW5vc19jcnRjLT5vcHMtPndpbl9jb21t
-aXQoZXh5bm9zX2NydGMsIGV4eW5vc19wbGFuZS0+enBvcyk7Cj4gIH0KPiAKPiAgc3RhdGljIHZv
-aWQgZXh5bm9zX3BsYW5lX2F0b21pY19kaXNhYmxlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaAo+
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgKPiBpbmRleCA1NjBj
-YTcxLi44Yzg4YWU5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9wbGFuZS5oCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Bs
-YW5lLmgKPiBAQCAtOSwxNyArOSw2IEBACj4gICAqCj4gICAqLwo+IAo+IC1pbnQgZXh5bm9zX2No
-ZWNrX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVy
-IAo+ICpmYik7Cj4gLXZvaWQgZXh5bm9zX3BsYW5lX21vZGVfc2V0KHN0cnVjdCBkcm1fcGxhbmUg
-KnBsYW5lLCBzdHJ1Y3QgZHJtX2NydGMgCj4gKmNydGMsCj4gLQkJCSAgIHN0cnVjdCBkcm1fZnJh
-bWVidWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAo+IC0JCQkgICB1bnNpZ25lZCBp
-bnQgY3J0Y193LCB1bnNpZ25lZCBpbnQgY3J0Y19oLAo+IC0JCQkgICB1aW50MzJfdCBzcmNfeCwg
-dWludDMyX3Qgc3JjX3ksCj4gLQkJCSAgIHVpbnQzMl90IHNyY193LCB1aW50MzJfdCBzcmNfaCk7
-Cj4gLXZvaWQgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3Ry
-dWN0IGRybV9jcnRjIAo+ICpjcnRjLAo+IC0JCQlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiwg
-aW50IGNydGNfeCwgaW50IGNydGNfeSwKPiAtCQkJdW5zaWduZWQgaW50IGNydGNfdywgdW5zaWdu
-ZWQgaW50IGNydGNfaCwKPiAtCQkJdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAo+IC0J
-CQl1aW50MzJfdCBzcmNfdywgdWludDMyX3Qgc3JjX2gpOwo+ICBpbnQgZXh5bm9zX3BsYW5lX2lu
-aXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiAgCQkgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9w
-bGFuZSAqZXh5bm9zX3BsYW5lLAo+ICAJCSAgICAgIHVuc2lnbmVkIGxvbmcgcG9zc2libGVfY3J0
-Y3MsIGVudW0gZHJtX3BsYW5lX3R5cGUgdHlwZSwKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+Hey,
+
+On 2015-05-21 16:06, Gustavo Padovan wrote:
+> Hi Tobias,
+> 
+> 2015-05-21 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+> 
+>> Gustavo Padovan wrote:
+>> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>> >
+>> > When mode's vrefresh is zero we should ask DRM core to calculate vrefresh
+>> > for us so we can get the correct value instead of relying on fixed value
+>> > defined in a macro. But if vrefresh is still zero we should fail the
+>> > update.
+>> This works better for me:
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> index dc834b8..26e8ae4 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> @@ -346,11 +346,16 @@ static bool fimd_mode_fixup(struct 
+>> exynos_drm_crtc
+>> *crtc,
+>>  static void fimd_commit(struct exynos_drm_crtc *crtc)
+>>  {
+>>         struct fimd_context *ctx = crtc->ctx;
+>> -       struct drm_display_mode *mode = &crtc->base.mode;
+>> +       struct drm_display_mode *mode;
+>>         struct fimd_driver_data *driver_data = ctx->driver_data;
+>>         void *timing_base = ctx->regs + driver_data->timing_base;
+>>         u32 val, clkdiv;
+>> 
+>> +       if (crtc->base.state)
+>> +               mode = &crtc->base.state->adjusted_mode;
+>> +       else
+>> +               mode = &crtc->base.mode;
+>> +
+>>         if (ctx->suspended)
+>>                 return;
+>> 
+>> Otherwise I get an oops (nullptr deref) on boot, so 'state' is 
+>> probably
+>> not initialized yet at this point.
+> 
+> Would you like to send a proper git patch of this? You can move the
+> drm_mode_vrefresh() part to your patch.
+I'll try to send out something later this day.
+
+
+With best wishes,
+Tobias
+
+
+
+
+> 
+> 	Gustavo
