@@ -1,78 +1,256 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v6 03/12] drm/exynos: atomic phase 1: add .mode_set_nofb()
- callback
-Date: Thu, 21 May 2015 17:02:42 -0300
-Message-ID: <1432238571-31621-4-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v6 04/12] drm/exynos: atomic phase 2: wire up state reset(), duplicate() and destroy()
+Date: Thu, 21 May 2015 17:02:43 -0300
+Message-ID: <1432238571-31621-5-git-send-email-gustavo@padovan.org>
 References: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f47.google.com ([209.85.192.47]:33776 "EHLO
+	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756523AbbEUUDM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 May 2015 16:03:12 -0400
+Received: by qgfa63 with SMTP id a63so28236460qgf.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2015 13:03:12 -0700 (PDT)
 In-Reply-To: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIG5ldyBhdG9taWMgaW5mcmFzdHJ1Y3R1cmUgbmVlZHMgdGhlIC5tb2RlX3NldF9ub2ZiKCkg
-Y2FsbGJhY2sgdG8KdXBkYXRlIENSVEMgdGltaW5ncyBiZWZvcmUgc2V0dGluZyBhbnkgcGxhbmUu
-CgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJv
-cmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8
-IDYwICsrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgOSBp
-bnNlcnRpb25zKCspLCA1MSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYwppbmRleCA2MWI4Y2ZlLi41NGI3NGUxIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9jcnRjLmMKQEAgLTgxLDU5ICs4MSwxNiBAQCBleHlub3NfZHJtX2Ny
-dGNfbW9kZV9maXh1cChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiAJcmV0dXJuIHRydWU7CiB9CiAK
-LXN0YXRpYyBpbnQKLWV4eW5vc19kcm1fY3J0Y19tb2RlX3NldChzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMsIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAotCQkJICBzdHJ1Y3QgZHJtX2Rpc3Bs
-YXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSwgaW50IHgsIGludCB5LAotCQkJICBzdHJ1Y3QgZHJtX2Zy
-YW1lYnVmZmVyICpvbGRfZmIpCi17Ci0Jc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRj
-LT5wcmltYXJ5LT5mYjsKLQl1bnNpZ25lZCBpbnQgY3J0Y193OwotCXVuc2lnbmVkIGludCBjcnRj
-X2g7Ci0JaW50IHJldDsKLQotCS8qCi0JICogY29weSB0aGUgbW9kZSBkYXRhIGFkanVzdGVkIGJ5
-IG1vZGVfZml4dXAoKSBpbnRvIGNydGMtPm1vZGUKLQkgKiBzbyB0aGF0IGhhcmR3YXJlIGNhbiBi
-ZSBzZWV0IHRvIHByb3BlciBtb2RlLgotCSAqLwotCW1lbWNweSgmY3J0Yy0+bW9kZSwgYWRqdXN0
-ZWRfbW9kZSwgc2l6ZW9mKCphZGp1c3RlZF9tb2RlKSk7Ci0KLQlyZXQgPSBleHlub3NfY2hlY2tf
-cGxhbmUoY3J0Yy0+cHJpbWFyeSwgZmIpOwotCWlmIChyZXQgPCAwKQotCQlyZXR1cm4gcmV0Owot
-Ci0JY3J0Y193ID0gZmItPndpZHRoIC0geDsKLQljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKLQll
-eHlub3NfcGxhbmVfbW9kZV9zZXQoY3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCi0JCQkg
-ICAgICBjcnRjX3csIGNydGNfaCwgeCwgeSwgY3J0Y193LCBjcnRjX2gpOwotCi0JcmV0dXJuIDA7
-Ci19Ci0KLXN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRy
-bV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCi0JCQkJCSAgc3RydWN0IGRybV9mcmFtZWJ1ZmZl
-ciAqb2xkX2ZiKQorc3RhdGljIHZvaWQKK2V4eW5vc19kcm1fY3J0Y19tb2RlX3NldF9ub2ZiKHN0
-cnVjdCBkcm1fY3J0YyAqY3J0YykKIHsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3Nf
-Y3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwotCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZi
-ID0gY3J0Yy0+cHJpbWFyeS0+ZmI7Ci0JdW5zaWduZWQgaW50IGNydGNfdzsKLQl1bnNpZ25lZCBp
-bnQgY3J0Y19oOwotCWludCByZXQ7CiAKLQkvKiB3aGVuIGZyYW1lYnVmZmVyIGNoYW5naW5nIGlz
-IHJlcXVlc3RlZCwgY3J0YydzIGRwbXMgc2hvdWxkIGJlIG9uICovCi0JaWYgKGV4eW5vc19jcnRj
-LT5kcG1zID4gRFJNX01PREVfRFBNU19PTikgewotCQlEUk1fRVJST1IoImZhaWxlZCBmcmFtZWJ1
-ZmZlciBjaGFuZ2luZyByZXF1ZXN0LlxuIik7Ci0JCXJldHVybiAtRVBFUk07Ci0JfQotCi0JcmV0
-ID0gZXh5bm9zX2NoZWNrX3BsYW5lKGNydGMtPnByaW1hcnksIGZiKTsKLQlpZiAocmV0KQotCQly
-ZXR1cm4gcmV0OwotCi0JY3J0Y193ID0gZmItPndpZHRoIC0geDsKLQljcnRjX2ggPSBmYi0+aGVp
-Z2h0IC0geTsKLQlleHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAw
-LCAwLAotCQkJICAgIGNydGNfdywgY3J0Y19oLCB4LCB5LCBjcnRjX3csIGNydGNfaCk7CisJaWYg
-KFdBUk5fT04oIWNydGMtPnN0YXRlKSkKKwkJcmV0dXJuOwogCi0JcmV0dXJuIDA7CisJaWYgKGV4
-eW5vc19jcnRjLT5vcHMtPmNvbW1pdCkKKwkJZXh5bm9zX2NydGMtPm9wcy0+Y29tbWl0KGV4eW5v
-c19jcnRjKTsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0
-IGRybV9jcnRjICpjcnRjKQpAQCAtMTU4LDggKzExNSw5IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX2Ny
-dGNfaGVscGVyX2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKIAkucHJlcGFyZQk9
-IGV4eW5vc19kcm1fY3J0Y19wcmVwYXJlLAogCS5jb21taXQJCT0gZXh5bm9zX2RybV9jcnRjX2Nv
-bW1pdCwKIAkubW9kZV9maXh1cAk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX2ZpeHVwLAotCS5tb2Rl
-X3NldAk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX3NldCwKLQkubW9kZV9zZXRfYmFzZQk9IGV4eW5v
-c19kcm1fY3J0Y19tb2RlX3NldF9iYXNlLAorCS5tb2RlX3NldAk9IGRybV9oZWxwZXJfY3J0Y19t
-b2RlX3NldCwKKwkubW9kZV9zZXRfbm9mYgk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX3NldF9ub2Zi
-LAorCS5tb2RlX3NldF9iYXNlCT0gZHJtX2hlbHBlcl9jcnRjX21vZGVfc2V0X2Jhc2UsCiAJLmRp
-c2FibGUJPSBleHlub3NfZHJtX2NydGNfZGlzYWJsZSwKIH07CiAKLS0gCjIuMS4wCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Set CRTC, planes and connectors to use the default implementations from
+the atomic helper library. The helpers will work to keep track of state
+for each DRM object.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/bridge/ps8622.c           | 4 ++++
+ drivers/gpu/drm/bridge/ptn3460.c          | 4 ++++
+ drivers/gpu/drm/exynos/exynos_dp_core.c   | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 6 ++++++
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c   | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 2 ++
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c   | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 4 ++++
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c  | 4 ++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c      | 4 ++++
+ 10 files changed, 40 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge/ps8622.c
+index e895aa7..b604326 100644
+--- a/drivers/gpu/drm/bridge/ps8622.c
++++ b/drivers/gpu/drm/bridge/ps8622.c
+@@ -31,6 +31,7 @@
+ #include "drmP.h"
+ #include "drm_crtc.h"
+ #include "drm_crtc_helper.h"
++#include "drm_atomic_helper.h"
+ 
+ /* Brightness scale on the Parade chip */
+ #define PS8622_MAX_BRIGHTNESS 0xff
+@@ -502,6 +503,9 @@ static const struct drm_connector_funcs ps8622_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = ps8622_detect,
+ 	.destroy = ps8622_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int ps8622_attach(struct drm_bridge *bridge)
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index 9d2f053..8ed3617 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -27,6 +27,7 @@
+ 
+ #include "drm_crtc.h"
+ #include "drm_crtc_helper.h"
++#include "drm_atomic_helper.h"
+ #include "drm_edid.h"
+ #include "drmP.h"
+ 
+@@ -263,6 +264,9 @@ static struct drm_connector_funcs ptn3460_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = ptn3460_detect,
+ 	.destroy = ptn3460_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int ptn3460_bridge_attach(struct drm_bridge *bridge)
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 30feb7d..195fe60 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -28,6 +28,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ #include <drm/drm_panel.h>
+ #include <drm/bridge/ptn3460.h>
+ 
+@@ -957,6 +958,9 @@ static struct drm_connector_funcs exynos_dp_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = exynos_dp_detect,
+ 	.destroy = exynos_dp_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int exynos_dp_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 54b74e1..dbaf161 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -14,6 +14,8 @@
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+@@ -194,8 +196,12 @@ static struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_crtc_helper_set_config,
+ 	.page_flip	= exynos_drm_crtc_page_flip,
+ 	.destroy	= exynos_drm_crtc_destroy,
++	.reset = drm_atomic_helper_crtc_reset,
++	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+ };
+ 
++
+ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+ 					struct drm_plane *plane,
+ 					int pipe,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 37678cf..ced5c23 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -13,6 +13,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_panel.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include <linux/regulator/consumer.h>
+ 
+@@ -63,6 +64,9 @@ static struct drm_connector_funcs exynos_dpi_connector_funcs = {
+ 	.detect = exynos_dpi_detect,
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.destroy = exynos_dpi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int exynos_dpi_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 8ac4652..08b9a8c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -98,6 +98,8 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	if (ret)
+ 		goto err_cleanup_vblank;
+ 
++	drm_mode_config_reset(dev);
++
+ 	/*
+ 	 * enable drm irq mode.
+ 	 * - with irq_enabled = true, we can use the vblank feature.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 0492715..e4e7f74 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -14,6 +14,7 @@
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_panel.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include <linux/clk.h>
+ #include <linux/gpio/consumer.h>
+@@ -1461,6 +1462,9 @@ static struct drm_connector_funcs exynos_dsi_connector_funcs = {
+ 	.detect = exynos_dsi_detect,
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.destroy = exynos_dsi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int exynos_dsi_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 87078db..6af4636 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -13,6 +13,7 @@
+ 
+ #include <drm/exynos_drm.h>
+ #include <drm/drm_plane_helper.h>
++#include <drm/drm_atomic_helper.h>
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_fb.h"
+@@ -166,6 +167,9 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_plane_helper_update,
+ 	.disable_plane	= drm_plane_helper_disable,
+ 	.destroy	= drm_plane_cleanup,
++	.reset = drm_atomic_helper_plane_reset,
++	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+ };
+ 
+ static int exynos_plane_atomic_check(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 1b3479a..fc3a14b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -20,6 +20,7 @@
+ 
+ #include <drm/drm_edid.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+@@ -388,6 +389,9 @@ static struct drm_connector_funcs vidi_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = vidi_detect,
+ 	.destroy = vidi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int vidi_get_modes(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5eba971..471e486 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -17,6 +17,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_atomic_helper.h>
+ 
+ #include "regs-hdmi.h"
+ 
+@@ -1054,6 +1055,9 @@ static struct drm_connector_funcs hdmi_connector_funcs = {
+ 	.fill_modes = drm_helper_probe_single_connector_modes,
+ 	.detect = hdmi_detect,
+ 	.destroy = hdmi_connector_destroy,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ };
+ 
+ static int hdmi_get_modes(struct drm_connector *connector)
+-- 
+2.1.0
