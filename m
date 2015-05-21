@@ -1,51 +1,57 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v5 09/12] drm/exynos: remove exported functions from
- exynos_drm_plane
-Date: Thu, 21 May 2015 13:26:15 -0300
-Message-ID: <20150521162615.GA14089@joana>
-References: <1432220576-18532-1-git-send-email-gustavo@padovan.org>
- <1432220576-18532-11-git-send-email-gustavo@padovan.org>
- <d7371b0c9e0e68b22cc66325d9b84625@math.uni-bielefeld.de>
- <20150521153357.GB1641@joana>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH v5 09/12] drm/exynos: remove exported functions
+ from exynos_drm_plane
+Date: Thu, 21 May 2015 19:52:16 +0200
+Message-ID: <555E1B50.100@math.uni-bielefeld.de>
+References: <1432220576-18532-1-git-send-email-gustavo@padovan.org> <1432220576-18532-11-git-send-email-gustavo@padovan.org> <d7371b0c9e0e68b22cc66325d9b84625@math.uni-bielefeld.de> <20150521153357.GB1641@joana> <20150521162615.GA14089@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20150521153357.GB1641@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39414 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753908AbbEURwU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 May 2015 13:52:20 -0400
+In-Reply-To: <20150521162615.GA14089@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com
 
-MjAxNS0wNS0yMSBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+OgoKPiAyMDE1LTA1LTIxIFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVm
-ZWxkLmRlPjoKPiAKPiA+IEhpLAo+ID4gCj4gPiBsaWtlIEkgc2FpZCBiZWZvcmUsIHRoaXMgY2xh
-c2hlcyB3aXRoIG15IGNvbW1pdCAnZHJtL2V4eW5vczogcGxhbmU6IGhvbm9yCj4gPiBidWZmZXIg
-b2Zmc2V0IGZvciBkbWFfYWRkcicgKDVkODc4YmRiNTFiZDc5MTViYTNkZWY4YjUzMTIzOGM2NzYy
-NGFhNTgpLAo+ID4gd2hpY2ggaXMgY3VycmVudGx5IHNpdHRpbmcgaW4gYWlybGllZCdzIGRybS1m
-aXhlcy4KPiAKPiBJbmtpIGhhcyB0byBtZXJnZSBoaXMgLWZpeGVzIHRyZWUgaW50byBleHlub3Mt
-ZHJtLW5leHQgdG8gc29sdmUgdGhpcy4KPiBJdCBpcyB0aGUgb25seSB3YXkgSSBjYW4gcmViYXNl
-IG9uIHRvcCBvZiB5b3VyIGNvbW1pdCBhbmQgc29sdmUgdGhlCj4gY29uZmxpY3QuCj4gQW55d2F5
-LCBJIGp1c3QgZmlndXJlZCB0aGF0IGV4eW5vcy1kcm0tbmV4dCB3YXMgdXBkYXRlZCBmcm9tIHll
-c3RlcmRheQo+IHRvIHRvZGF5IHNvIHRoaXMgdjUgZG9lc24ndCBhcHBseSBvbiB0b2RheSdzIHRy
-ZWUuIEknbGwgc2VuZCBhIHY2IG9uY2UKPiBJbmtpIG1lcmdlcyAiZHJtL2V4eW5vczogcGxhbmU6
-IGhvbm9yIGJ1ZmZlciBvZmZzZXQgZm9yIGRtYV9hZGRyIiBpbnRvCj4gZXh5bm9zLWRybS1uZXh0
-Lgo+IAo+IElua2ksIGNhbiB5b3UgcGxlYXNlIGRvIHRoYXQ/IHNvIHdlIGNhbiBwcm9jZWVkIHdp
-dGggYXRvbWljIGFuZAo+IGhvcGVmdWxseSBoYXZlIGl0IHJlYWR5IGZvciA0LjIgbWVyZ2Ugd2lu
-ZG93LgoKQWN0dWFsbHkgdGhlIHBhdGNoIGlzIG9uIGV4eW5vcy1kcm0tbmV4dCBidXQgd2l0aCBh
-IGRpZmZlcmVudCBjb21taXQgaWQuCkkgd29uZGVyIHdoeS4gV2h5IGRpZCB5b3UgYXBwbGllZCBp
-dCBkaXJlY3RseSB0byB5b3VyIGJyYW5jaCBpbnN0ZWFkIG9mCm1lcmdpbmcgdGhlIC1maXhlcyB0
-cmVlPyBOb3cgd2UgaGF2ZSB0aGUgc2FtZSBjb21taXQgd2l0aCB0aGUgZGlmZmVyZW50cwpoYXNo
-ZXMgaW4gdGhlIHRyZWUuCgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Gustavo Padovan wrote:
+> 2015-05-21 Gustavo Padovan <gustavo.padovan@collabora.co.uk>:
+> 
+>> 2015-05-21 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+>>
+>>> Hi,
+>>>
+>>> like I said before, this clashes with my commit 'drm/exynos: plane: honor
+>>> buffer offset for dma_addr' (5d878bdb51bd7915ba3def8b531238c67624aa58),
+>>> which is currently sitting in airlied's drm-fixes.
+>>
+>> Inki has to merge his -fixes tree into exynos-drm-next to solve this.
+>> It is the only way I can rebase on top of your commit and solve the
+>> conflict.
+>> Anyway, I just figured that exynos-drm-next was updated from yesterday
+>> to today so this v5 doesn't apply on today's tree. I'll send a v6 once
+>> Inki merges "drm/exynos: plane: honor buffer offset for dma_addr" into
+>> exynos-drm-next.
+>>
+>> Inki, can you please do that? so we can proceed with atomic and
+>> hopefully have it ready for 4.2 merge window.
+> 
+> Actually the patch is on exynos-drm-next but with a different commit id.
+> I wonder why. Why did you applied it directly to your branch instead of
+> merging the -fixes tree? Now we have the same commit with the differents
+> hashes in the tree.
+I never do merges for my tree, I always rebase (either on stable/linux
+or torvalds/master). For submitting patches I cherry-pick stuff to the
+corresponding upstream branch (exynos-drm-next in this case) and then
+submit via git-send-email.
+
+With best wishes,
+Tobias
+
+> 
+> 	Gustavo
+> 
