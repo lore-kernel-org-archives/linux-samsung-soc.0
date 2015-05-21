@@ -1,33 +1,30 @@
-From: Shailendra Verma <shailendra.capricorn@gmail.com>
-Subject: [PATCH] cpufreq:exynos-cpufreq - Fix for memory leak in case SOC name does not match.
-Date: Thu, 21 May 2015 23:59:41 +0530
-Message-ID: <1432232981-3917-1-git-send-email-shailendra.capricorn@gmail.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Shailendra Verma <shailendra.capricorn@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk:samsung:clk - Fix typo in panic log.
+Date: Thu, 21 May 2015 11:54:38 -0700
+Message-ID: <20150521185438.GB21195@codeaurora.org>
+References: <1432230963-3355-1-git-send-email-shailendra.capricorn@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:40809 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753908AbbEUSyk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 May 2015 14:54:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1432230963-3355-1-git-send-email-shailendra.capricorn@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shailendra Verma <shailendra.capricorn@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-During probe free the memory allocated to "exynos_info" in case of unknown
-SOC type.
+On 05/21, Shailendra Verma wrote:
+> 
+> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
+> ---
 
-Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
----
- drivers/cpufreq/exynos-cpufreq.c |    1 +
- 1 file changed, 1 insertion(+)
+Applied to clk-next
 
-diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index 82d2fbb..b77923a 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -182,6 +182,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
- 		ret = exynos5250_cpufreq_init(exynos_info);
- 	} else {
- 		pr_err("%s: Unknown SoC type\n", __func__);
-+		kfree(exynos_info);
- 		return -ENODEV;
- 	}
- 
 -- 
-1.7.9.5
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
