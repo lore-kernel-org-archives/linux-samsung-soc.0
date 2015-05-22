@@ -1,53 +1,106 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: Enable display on Trats2
- board
-Date: Fri, 22 May 2015 11:11:17 +0200
-Message-ID: <555EF2B5.1000504@collabora.co.uk>
-References: <1432255718-11695-1-git-send-email-k.kozlowski@samsung.com> <1432255718-11695-2-git-send-email-k.kozlowski@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/5] drm/exynos: mixer: refactor layer setup
+Date: Fri, 22 May 2015 18:12:21 +0900
+Message-ID: <555EF2F5.5090701@samsung.com>
+References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1430919410-9917-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:56572 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946153AbbEVJLX (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:32637 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1946153AbbEVJMW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 May 2015 05:11:23 -0400
-In-Reply-To: <1432255718-11695-2-git-send-email-k.kozlowski@samsung.com>
+	Fri, 22 May 2015 05:12:22 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NOQ00M4MUWKIL30@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 May 2015 18:12:21 +0900 (KST)
+In-reply-to: <1430919410-9917-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-Hello Krzysztof,
-
-On 05/22/2015 02:48 AM, Krzysztof Kozlowski wrote:
-> Enable the Exynos DSI and S6E8AA0 panel for full X11 display on Trats2.
+On 05/06/2015 10:36 PM, Tobias Jakobi wrote:
+> First step in allowing a more generic way to setup complex
+> blending for the different layers.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 > ---
->  arch/arm/configs/multi_v7_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 90 ++++++++++++++++++++++++++++++-----
+>  1 file changed, 79 insertions(+), 11 deletions(-)
 > 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 0848337a2a01..e9785020aab1 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -413,10 +413,12 @@ CONFIG_DRM=y
->  CONFIG_DRM_PTN3460=m
->  CONFIG_DRM_PS8622=m
->  CONFIG_DRM_EXYNOS=m
-> +CONFIG_DRM_EXYNOS_DSI=y
->  CONFIG_DRM_EXYNOS_FIMD=y
->  CONFIG_DRM_EXYNOS_HDMI=y
->  CONFIG_DRM_RCAR_DU=m
->  CONFIG_DRM_TEGRA=y
-> +CONFIG_DRM_PANEL_S6E8AA0=m
->  CONFIG_DRM_PANEL_SIMPLE=y
->  CONFIG_FB_ARMCLCD=y
->  CONFIG_FB_WM8505=y
-> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 4a1656b..e4a5e76 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -63,6 +63,11 @@ struct mixer_resources {
+>  	struct clk		*mout_mixer;
+>  };
+>  
+> +struct layer_config {
+> +	unsigned int index;
+> +	unsigned int priority;
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+I think layer index and priority information can go to struct
+exynos_drm_plane.
 
-Best regards,
-Javier
+> +};
+> +
+>  enum mixer_version_id {
+>  	MXR_VER_0_0_0_16,
+>  	MXR_VER_16_0_33_0,
+> @@ -75,6 +80,8 @@ struct mixer_context {
+>  	struct drm_device	*drm_dev;
+>  	struct exynos_drm_crtc	*crtc;
+>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+> +	const struct layer_config *layer_config;
+> +	unsigned int num_layer;
+>  	int			pipe;
+>  	bool			interlace;
+>  	bool			powered;
+> @@ -95,6 +102,40 @@ struct mixer_drv_data {
+>  	bool					has_sclk;
+>  };
+>  
+> +/*
+> + * The default layer priorities. A higher priority means that
+> + * the layer is at the top of layer stack.
+> + * The current configuration assumes the following usage scenario:
+> + * layer1: OSD [top]
+> + * layer0: main framebuffer
+> + * video layer: video overlay [bottom]
+> + * Note that the video layer is only usable when the
+> + * video processor is available.
+> + */
+> +
+> +static const struct layer_config default_layer_config[] = {
+> +	{
+> +		.index = 0,			/* layer0 */
+> +		.priority = 1
+> +	}, {
+> +		.index = 1,			/* layer1 */
+> +		.priority = 2
+> +	}
+> +};
+> +
+> +static const struct layer_config vp_layer_config[] = {
+> +	{
+> +		.index = 2,			/* video layer */
+> +		.priority = 1
+> +	}, {
+> +		.index = 0,			/* layer0 */
+> +		.priority = 2
+> +	}, {
+> +		.index = 1,			/* layer1 */
+> +		.priority = 3
+> +	}
+> +};
+> +
+
+I feel there is no reason to split config, actually video layer exists
+and video layer isn't enabled if no vp even if we use 3 layer.
