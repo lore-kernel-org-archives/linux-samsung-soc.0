@@ -1,107 +1,91 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v6 04/12] drm/exynos: atomic phase 2: wire up state
- reset(), duplicate() and destroy()
-Date: Fri, 22 May 2015 12:46:58 +0900
-Message-ID: <555EA6B2.3000404@samsung.com>
+Subject: Re: [PATCH v6 09/12] drm/exynos: remove exported functions from
+ exynos_drm_plane
+Date: Fri, 22 May 2015 12:47:03 +0900
+Message-ID: <555EA6B7.9070200@samsung.com>
 References: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
- <1432238571-31621-5-git-send-email-gustavo@padovan.org>
+ <1432238571-31621-10-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1432238571-31621-5-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:31460 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753854AbbEVDrE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 May 2015 23:47:04 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NOQ00FUAFUFNM80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 May 2015 12:47:03 +0900 (KST)
+In-reply-to: <1432238571-31621-10-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMDUvMjIvMjAxNSAwNTowMiBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
-c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBTZXQg
-Q1JUQywgcGxhbmVzIGFuZCBjb25uZWN0b3JzIHRvIHVzZSB0aGUgZGVmYXVsdCBpbXBsZW1lbnRh
-dGlvbnMgZnJvbQo+IHRoZSBhdG9taWMgaGVscGVyIGxpYnJhcnkuIFRoZSBoZWxwZXJzIHdpbGwg
-d29yayB0byBrZWVwIHRyYWNrIG9mIHN0YXRlCj4gZm9yIGVhY2ggRFJNIG9iamVjdC4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEu
-Y28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHM4NjIyLmMgICAgICAgICAg
-IHwgNCArKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jICAgICAgICAgIHwg
-NCArKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgIHwgNCAr
-KysrCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgIHwgNiArKysr
-KysKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RwaS5jICAgfCA0ICsrKysK
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgfCAyICsrCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgIHwgNCArKysrCj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgNCArKysrCj4gIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgIHwgNCArKysrCj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgIHwgNCArKysrCj4gIDEwIGZpbGVzIGNoYW5n
-ZWQsIDQwIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9wczg2MjIuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHM4NjIyLmMKPiBpbmRleCBl
-ODk1YWE3Li5iNjA0MzI2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHM4
-NjIyLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jCj4gQEAgLTMxLDYg
-KzMxLDcgQEAKPiAgI2luY2x1ZGUgImRybVAuaCIKPiAgI2luY2x1ZGUgImRybV9jcnRjLmgiCj4g
-ICNpbmNsdWRlICJkcm1fY3J0Y19oZWxwZXIuaCIKPiArI2luY2x1ZGUgImRybV9hdG9taWNfaGVs
-cGVyLmgiCj4gIAo+ICAvKiBCcmlnaHRuZXNzIHNjYWxlIG9uIHRoZSBQYXJhZGUgY2hpcCAqLwo+
-ICAjZGVmaW5lIFBTODYyMl9NQVhfQlJJR0hUTkVTUyAweGZmCj4gQEAgLTUwMiw2ICs1MDMsOSBA
-QCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHM4NjIyX2Nvbm5lY3Rv
-cl9mdW5jcyA9IHsKPiAgCS5maWxsX21vZGVzID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29u
-bmVjdG9yX21vZGVzLAo+ICAJLmRldGVjdCA9IHBzODYyMl9kZXRlY3QsCj4gIAkuZGVzdHJveSA9
-IHBzODYyMl9jb25uZWN0b3JfZGVzdHJveSwKPiArCS5yZXNldCA9IGRybV9hdG9taWNfaGVscGVy
-X2Nvbm5lY3Rvcl9yZXNldCwKPiArCS5hdG9taWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21p
-Y19oZWxwZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSwKPiArCS5hdG9taWNfZGVzdHJveV9z
-dGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAo+ICB9Owo+
-ICAKPiAgc3RhdGljIGludCBwczg2MjJfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2Up
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMKPiBpbmRleCA5ZDJmMDUzLi44ZWQzNjE3IDEwMDY0
-NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMKPiBAQCAtMjcsNiArMjcsNyBAQAo+ICAKPiAgI2lu
-Y2x1ZGUgImRybV9jcnRjLmgiCj4gICNpbmNsdWRlICJkcm1fY3J0Y19oZWxwZXIuaCIKPiArI2lu
-Y2x1ZGUgImRybV9hdG9taWNfaGVscGVyLmgiCj4gICNpbmNsdWRlICJkcm1fZWRpZC5oIgo+ICAj
-aW5jbHVkZSAiZHJtUC5oIgo+ICAKPiBAQCAtMjYzLDYgKzI2NCw5IEBAIHN0YXRpYyBzdHJ1Y3Qg
-ZHJtX2Nvbm5lY3Rvcl9mdW5jcyBwdG4zNDYwX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKPiAgCS5maWxs
-X21vZGVzID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAo+ICAJLmRl
-dGVjdCA9IHB0bjM0NjBfZGV0ZWN0LAo+ICAJLmRlc3Ryb3kgPSBwdG4zNDYwX2Nvbm5lY3Rvcl9k
-ZXN0cm95LAo+ICsJLnJlc2V0ID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX3Jlc2V0LAo+
-ICsJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3Jf
-ZHVwbGljYXRlX3N0YXRlLAo+ICsJLmF0b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21pY19o
-ZWxwZXJfY29ubmVjdG9yX2Rlc3Ryb3lfc3RhdGUsCj4gIH07Cj4gIAo+ICBzdGF0aWMgaW50IHB0
-bjM0NjBfYnJpZGdlX2F0dGFjaChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKQo+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKPiBpbmRleCAzMGZlYjdkLi4xOTVmZTYwIDEw
-MDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+ICsr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+IEBAIC0yOCw2ICsy
-OCw3IEBACj4gICNpbmNsdWRlIDxkcm0vZHJtUC5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRj
-Lmg+Cj4gICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+Cj4gKyNpbmNsdWRlIDxkcm0v
-ZHJtX2F0b21pY19oZWxwZXIuaD4KPiAgI2luY2x1ZGUgPGRybS9kcm1fcGFuZWwuaD4KPiAgI2lu
-Y2x1ZGUgPGRybS9icmlkZ2UvcHRuMzQ2MC5oPgo+ICAKPiBAQCAtOTU3LDYgKzk1OCw5IEBAIHN0
-YXRpYyBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBleHlub3NfZHBfY29ubmVjdG9yX2Z1bmNz
-ID0gewo+ICAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9jb25uZWN0b3Jf
-bW9kZXMsCj4gIAkuZGV0ZWN0ID0gZXh5bm9zX2RwX2RldGVjdCwKPiAgCS5kZXN0cm95ID0gZXh5
-bm9zX2RwX2Nvbm5lY3Rvcl9kZXN0cm95LAo+ICsJLnJlc2V0ID0gZHJtX2F0b21pY19oZWxwZXJf
-Y29ubmVjdG9yX3Jlc2V0LAo+ICsJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWlj
-X2hlbHBlcl9jb25uZWN0b3JfZHVwbGljYXRlX3N0YXRlLAo+ICsJLmF0b21pY19kZXN0cm95X3N0
-YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2Rlc3Ryb3lfc3RhdGUsCj4gIH07Cj4g
-IAo+ICBzdGF0aWMgaW50IGV4eW5vc19kcF9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3Ig
-KmNvbm5lY3RvcikKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiBp
-bmRleCA1NGI3NGUxLi5kYmFmMTYxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jcnRjLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jCj4gQEAgLTE0LDYgKzE0LDggQEAKPiAgCj4gICNpbmNsdWRlIDxkcm0vZHJt
-UC5oPgo+ICAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgo+ICsjaW5jbHVkZSA8ZHJt
-L2RybV9hdG9taWMuaD4KPiArI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPgo+ICAK
-PiAgI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0Yy5oIgo+ICAjaW5jbHVkZSAiZXh5bm9zX2RybV9k
-cnYuaCIKPiBAQCAtMTk0LDggKzE5NiwxMiBAQCBzdGF0aWMgc3RydWN0IGRybV9jcnRjX2Z1bmNz
-IGV4eW5vc19jcnRjX2Z1bmNzID0gewo+ICAJLnNldF9jb25maWcJPSBkcm1fY3J0Y19oZWxwZXJf
-c2V0X2NvbmZpZywKPiAgCS5wYWdlX2ZsaXAJPSBleHlub3NfZHJtX2NydGNfcGFnZV9mbGlwLAo+
-ICAJLmRlc3Ryb3kJPSBleHlub3NfZHJtX2NydGNfZGVzdHJveSwKPiArCS5yZXNldCA9IGRybV9h
-dG9taWNfaGVscGVyX2NydGNfcmVzZXQsCj4gKwkuYXRvbWljX2R1cGxpY2F0ZV9zdGF0ZSA9IGRy
-bV9hdG9taWNfaGVscGVyX2NydGNfZHVwbGljYXRlX3N0YXRlLAo+ICsJLmF0b21pY19kZXN0cm95
-X3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kZXN0cm95X3N0YXRlLAo+ICB9Owo+ICAK
-PiArCgpQbGVhc2UgcmVtb3ZlIGEgYmxhbmsgbGluZS4KClRoYW5rcy4KX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 05/22/2015 05:02 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> Now that no one is using the functions exported by exynos_drm_plane due
+> to the atomic conversion we can make remove some of the them or make them
+> static.
+> 
+> v2: remove unused exynos_drm_crtc
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c | 91 +++++++++++++------------------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.h | 11 ----
+>  2 files changed, 38 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> index e952cbd..c6e5114 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> @@ -62,35 +62,12 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
+>  	return size;
+>  }
+>  
+> -int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
+> -{
+> -	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+> -	int nr;
+> -	int i;
+> -
+> -	nr = exynos_drm_fb_get_buf_cnt(fb);
+> -	for (i = 0; i < nr; i++) {
+> -		struct exynos_drm_gem_buf *buffer = exynos_drm_fb_buffer(fb, i);
+> -
+> -		if (!buffer) {
+> -			DRM_DEBUG_KMS("buffer is null\n");
+> -			return -EFAULT;
+> -		}
+> -
+> -		exynos_plane->dma_addr[i] = buffer->dma_addr + fb->offsets[i];
+> -
+> -		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
+> -				i, (unsigned long)exynos_plane->dma_addr[i]);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+> -			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+> -			  unsigned int crtc_w, unsigned int crtc_h,
+> -			  uint32_t src_x, uint32_t src_y,
+> -			  uint32_t src_w, uint32_t src_h)
+> +static void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+
+checkpatch error:
+
+WARNING: line over 80 characters
+#56: FILE: drivers/gpu/drm/exynos/exynos_drm_plane.c:65:
++static void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+
+total: 0 errors, 1 warnings, 136 lines checked
+
+Thanks.
