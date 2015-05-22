@@ -1,86 +1,154 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v6 02/12] drm/exynos: atomic phase 1: use
- drm_plane_helper_disable()
-Date: Fri, 22 May 2015 12:45:51 +0900
-Message-ID: <555EA66F.7040702@samsung.com>
+Subject: Re: [PATCH v6 03/12] drm/exynos: atomic phase 1: add .mode_set_nofb()
+ callback
+Date: Fri, 22 May 2015 12:46:51 +0900
+Message-ID: <555EA6AB.6070701@samsung.com>
 References: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
- <1432238571-31621-3-git-send-email-gustavo@padovan.org>
+ <1432238571-31621-4-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1432238571-31621-3-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:14538 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754448AbbEVDqw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 May 2015 23:46:52 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NOQ008DEFU2APE0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 May 2015 12:46:50 +0900 (KST)
+In-reply-to: <1432238571-31621-4-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMDUvMjIvMjAxNSAwNTowMiBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
-c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBUaGUg
-YXRvbWljIGhlbHBlciB0byBkaXNhYmxlIHBsYW5lcyBhbHNvIHVzZXMgdGhlIG9wdGlvbmFsCj4g
-LmF0b21pY19kaXNhYmxlKCkgaGVscGVyLiBUaGUgdW5pcXVlIG9wZXJhdGlvbiBpdCBkb2VzIGlz
-IGNhbGxpbmcKPiAud2luX2Rpc2FibGUoKQo+IAo+IGV4eW5vc19kcm1fZmJfZ2V0X2J1Zl9jbnQo
-KSBuZWVkcyBhIGZiIGNoZWNrIHRvbyB0byBhdm9pZCBhIG51bGwgcG9pbnRlci4KPiAKPiBTaWdu
-ZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgIHwg
-IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCAyOSAr
-KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQo+ICAyIGZpbGVzIGNoYW5nZWQsIDE3IGluc2Vy
-dGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9mYi5jCj4gaW5kZXggMTQyZWI0ZS4uYmY4MTRjOCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9mYi5jCj4gQEAgLTEzNiw3ICsxMzYsNyBAQCB1bnNpZ25lZCBpbnQg
-ZXh5bm9zX2RybV9mYl9nZXRfYnVmX2NudChzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikKPiAg
-Cj4gIAlleHlub3NfZmIgPSB0b19leHlub3NfZmIoZmIpOwo+ICAKPiAtCXJldHVybiBleHlub3Nf
-ZmItPmJ1Zl9jbnQ7Cj4gKwlyZXR1cm4gZXh5bm9zX2ZiID8gZXh5bm9zX2ZiLT5idWZfY250IDog
-MDsKCkkgdGhpbmsgdGhpcyBzaG91bGQgYmUgY2hlY2tlZCBieSBleHlub3NfY2hlY2tfcGxhbmUg
-b24gcGxhbmUgZGlzYWJsaW5nCnJvdXRpbmUgd2hldGhlciBmYiBpcyBOVUxMIG9yIG5vdC4KCj4g
-IH0KPiAgCj4gIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKgo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gaW5kZXggYjIxOGI3YS4uODcwNzhkYiAxMDA2NDQKPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gQEAgLTE2MiwyMSArMTYy
-LDkgQEAgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0
-IGRybV9jcnRjICpjcnRjLAo+ICAJCWV4eW5vc19jcnRjLT5vcHMtPndpbl9jb21taXQoZXh5bm9z
-X2NydGMsIGV4eW5vc19wbGFuZS0+enBvcyk7Cj4gIH0KPiAgCj4gLXN0YXRpYyBpbnQgZXh5bm9z
-X2Rpc2FibGVfcGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gLXsKPiAtCXN0cnVjdCBl
-eHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwo+
-IC0Jc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0Yyhw
-bGFuZS0+Y3J0Yyk7Cj4gLQo+IC0JaWYgKGV4eW5vc19jcnRjICYmIGV4eW5vc19jcnRjLT5vcHMt
-Pndpbl9kaXNhYmxlKQo+IC0JCWV4eW5vc19jcnRjLT5vcHMtPndpbl9kaXNhYmxlKGV4eW5vc19j
-cnRjLAo+IC0JCQkJCSAgICAgIGV4eW5vc19wbGFuZS0+enBvcyk7Cj4gLQo+IC0JcmV0dXJuIDA7
-Cj4gLX0KPiAtCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9m
-dW5jcyA9IHsKPiAgCS51cGRhdGVfcGxhbmUJPSBkcm1fcGxhbmVfaGVscGVyX3VwZGF0ZSwKPiAt
-CS5kaXNhYmxlX3BsYW5lCT0gZXh5bm9zX2Rpc2FibGVfcGxhbmUsCj4gKwkuZGlzYWJsZV9wbGFu
-ZQk9IGRybV9wbGFuZV9oZWxwZXJfZGlzYWJsZSwKPiAgCS5kZXN0cm95CT0gZHJtX3BsYW5lX2Ns
-ZWFudXAsCj4gIH07Cj4gIAo+IEBAIC0yMDEsOSArMTg5LDI0IEBAIHN0YXRpYyB2b2lkIGV4eW5v
-c19wbGFuZV9hdG9taWNfdXBkYXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAo+ICAJCQkgICAg
-c3RhdGUtPnNyY193ID4+IDE2LCBzdGF0ZS0+c3JjX2ggPj4gMTYpOwo+ICB9Cj4gIAo+ICtzdGF0
-aWMgdm9pZCBleHlub3NfcGxhbmVfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9wbGFuZSAqcGxh
-bmUsCj4gKwkJCQkgICAgICAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKm9sZF9zdGF0ZSkKCmNo
-ZWNrcGF0Y2ggZXJyb3I6CgpFUlJPUjogY29kZSBpbmRlbnQgc2hvdWxkIHVzZSB0YWJzIHdoZXJl
-IHBvc3NpYmxlCiM2NDogRklMRTogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Bs
-YW5lLmM6MTkzOgorXkleSV5JXkkgICAgICAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKm9sZF9z
-dGF0ZSkkCgp0b3RhbDogMSBlcnJvcnMsIDAgd2FybmluZ3MsIDU0IGxpbmVzIGNoZWNrZWQKCj4g
-K3sKPiArCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3Nf
-cGxhbmUocGxhbmUpOwo+ICsJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0
-b19leHlub3NfY3J0YyhvbGRfc3RhdGUtPmNydGMpOwo+ICsKPiArCWlmICghb2xkX3N0YXRlLT5j
-cnRjKQo+ICsJCXJldHVybjsKPiArCj4gKwlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2Fi
-bGUpCj4gKwkJZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUoZXh5bm9zX2NydGMsCj4gKwkJ
-CQkJICAgICAgZXh5bm9zX3BsYW5lLT56cG9zKTsKPiArfQo+ICsKPiAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBkcm1fcGxhbmVfaGVscGVyX2Z1bmNzIHBsYW5lX2hlbHBlcl9mdW5jcyA9IHsKPiAgCS5h
-dG9taWNfY2hlY2sgPSBleHlub3NfcGxhbmVfYXRvbWljX2NoZWNrLAo+ICAJLmF0b21pY191cGRh
-dGUgPSBleHlub3NfcGxhbmVfYXRvbWljX3VwZGF0ZSwKPiArCS5hdG9taWNfZGlzYWJsZSA9IGV4
-eW5vc19wbGFuZV9hdG9taWNfZGlzYWJsZSwKPiAgfTsKPiAgCj4gIHN0YXRpYyB2b2lkIGV4eW5v
-c19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPiAK
-ClRoYW5rcy4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 05/22/2015 05:02 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> The new atomic infrastructure needs the .mode_set_nofb() callback to
+> update CRTC timings before setting any plane.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 60 +++++---------------------------
+>  1 file changed, 9 insertions(+), 51 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 61b8cfe..54b74e1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -81,59 +81,16 @@ exynos_drm_crtc_mode_fixup(struct drm_crtc *crtc,
+>  	return true;
+>  }
+>  
+> -static int
+> -exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+> -			  struct drm_display_mode *adjusted_mode, int x, int y,
+> -			  struct drm_framebuffer *old_fb)
+> -{
+> -	struct drm_framebuffer *fb = crtc->primary->fb;
+> -	unsigned int crtc_w;
+> -	unsigned int crtc_h;
+> -	int ret;
+> -
+> -	/*
+> -	 * copy the mode data adjusted by mode_fixup() into crtc->mode
+> -	 * so that hardware can be seet to proper mode.
+> -	 */
+> -	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
+
+This can cause any problem because exynos drm drivers use crtc->mode
+directly as adjusted_mode. It's necessary to consider using
+crtc_state->adjusted_mode in exynos drm drivers.
+
+Please refer a patch of Daniel Stone using hwmode instead of mode but it
+cannot use for atomic.
+
+http://lists.freedesktop.org/archives/dri-devel/2015-March/079546.html
+
+> -
+> -	ret = exynos_check_plane(crtc->primary, fb);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	crtc_w = fb->width - x;
+> -	crtc_h = fb->height - y;
+> -	exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
+> -			      crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+> -
+> -	return 0;
+> -}
+> -
+> -static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+> -					  struct drm_framebuffer *old_fb)
+> +static void
+> +exynos_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  {
+>  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> -	struct drm_framebuffer *fb = crtc->primary->fb;
+> -	unsigned int crtc_w;
+> -	unsigned int crtc_h;
+> -	int ret;
+>  
+> -	/* when framebuffer changing is requested, crtc's dpms should be on */
+> -	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+> -		DRM_ERROR("failed framebuffer changing request.\n");
+> -		return -EPERM;
+> -	}
+> -
+> -	ret = exynos_check_plane(crtc->primary, fb);
+> -	if (ret)
+> -		return ret;
+> -
+> -	crtc_w = fb->width - x;
+> -	crtc_h = fb->height - y;
+> -	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+> -			    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+> +	if (WARN_ON(!crtc->state))
+> +		return;
+>  
+> -	return 0;
+> +	if (exynos_crtc->ops->commit)
+> +		exynos_crtc->ops->commit(exynos_crtc);
+
+This will be called again by crtc_funcs->commit from
+drm_crtc_helper_set_mode. It seems to need to remove the call from
+exynos_drm_crtc_commit like below.
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 48ccab7..aa981c2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -63,9 +63,6 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
+ 
+ 	if (exynos_crtc->ops->win_commit)
+ 		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+-
+-	if (exynos_crtc->ops->commit)
+-		exynos_crtc->ops->commit(exynos_crtc);
+ }
+ 
+ static bool
+
+>  }
+>  
+>  static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+> @@ -158,8 +115,9 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+>  	.prepare	= exynos_drm_crtc_prepare,
+>  	.commit		= exynos_drm_crtc_commit,
+>  	.mode_fixup	= exynos_drm_crtc_mode_fixup,
+> -	.mode_set	= exynos_drm_crtc_mode_set,
+> -	.mode_set_base	= exynos_drm_crtc_mode_set_base,
+> +	.mode_set	= drm_helper_crtc_mode_set,
+> +	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
+> +	.mode_set_base	= drm_helper_crtc_mode_set_base,
+>  	.disable	= exynos_drm_crtc_disable,
+>  };
+>  
+> 
+
+Thanks.
