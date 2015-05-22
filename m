@@ -1,69 +1,123 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v7 13/13] drm/exynos: remove unnecessary calls to
- disable_plane()
-Date: Fri, 22 May 2015 12:40:53 -0300
-Message-ID: <1432309253-18572-14-git-send-email-gustavo@padovan.org>
-References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 0/7] mfd: cros_ec: Add multi EC and proto v3 support
+Date: Fri, 22 May 2015 17:42:13 +0200
+Message-ID: <1432309340-13688-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:56942 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757714AbbEVPmn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 May 2015 11:42:43 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIHBsYW5lcyBhcmUgYWxyZWFkeSBkaXNhYmxlZCBieSB0aGUgZHJtX2F0b21pY19oZWxwZXJf
-Y29tbWl0KCkgY29kZQpzbyB3ZSBkb24ndCBuZWVkIHRvIGRpc2FibGUgdGhlIGluIHRoZXNlIHR3
-byBwbGFjZXMuCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3Zh
-bkBjb2xsYWJvcmEuY28udWs+ClJldmlld2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNo
-aW1Ac2Ftc3VuZy5jb20+ClRlc3RlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVu
-aS1iaWVsZWZlbGQuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
-dGMuYyAgICB8IDExIC0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZW5jb2Rlci5jIHwgIDggLS0tLS0tLS0KIDIgZmlsZXMgY2hhbmdlZCwgMTkgZGVsZXRpb25z
-KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKaW5kZXggY2E1MDFh
-OS4uM2ZiYzU0MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCkBA
-IC00NCw4ICs0NCw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19lbmFibGUoc3RydWN0
-IGRybV9jcnRjICpjcnRjKQogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUoc3Ry
-dWN0IGRybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19j
-cnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Ci0Jc3RydWN0IGRybV9wbGFuZSAqcGxhbmU7Ci0J
-aW50IHJldDsKIAogCWlmICghZXh5bm9zX2NydGMtPmVuYWJsZWQpCiAJCXJldHVybjsKQEAgLTYx
-LDE1ICs1OSw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVjdCBk
-cm1fY3J0YyAqY3J0YykKIAkJZXh5bm9zX2NydGMtPm9wcy0+ZHBtcyhleHlub3NfY3J0YywgRFJN
-X01PREVfRFBNU19PRkYpOwogCiAJZXh5bm9zX2NydGMtPmVuYWJsZWQgPSBmYWxzZTsKLQotCWRy
-bV9mb3JfZWFjaF9sZWdhY3lfcGxhbmUocGxhbmUsICZjcnRjLT5kZXYtPm1vZGVfY29uZmlnLnBs
-YW5lX2xpc3QpIHsKLQkJaWYgKHBsYW5lLT5jcnRjICE9IGNydGMpCi0JCQljb250aW51ZTsKLQot
-CQlyZXQgPSBwbGFuZS0+ZnVuY3MtPmRpc2FibGVfcGxhbmUocGxhbmUpOwotCQlpZiAocmV0KQot
-CQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gZGlzYWJsZSBwbGFuZSAlZFxuIiwgcmV0KTsKLQl9CiB9
-CiAKIHN0YXRpYyBib29sCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZW5jb2Rlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29k
-ZXIuYwppbmRleCAwNjQ4YmE0Li43Yjg5ZmQ1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9lbmNvZGVyLmMKQEAgLTgxLDE3ICs4MSw5IEBAIHN0YXRpYyB2b2lkIGV4eW5v
-c19kcm1fZW5jb2Rlcl9kaXNhYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKIHsKIAlz
-dHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICpleHlub3NfZW5jb2RlciA9IHRvX2V4eW5vc19lbmNv
-ZGVyKGVuY29kZXIpOwogCXN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXkgPSBleHlu
-b3NfZW5jb2Rlci0+ZGlzcGxheTsKLQlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZTsKLQlzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2ID0gZW5jb2Rlci0+ZGV2OwogCiAJaWYgKGRpc3BsYXktPm9wcy0+ZHBt
-cykKIAkJZGlzcGxheS0+b3BzLT5kcG1zKGRpc3BsYXksIERSTV9NT0RFX0RQTVNfT0ZGKTsKLQot
-CS8qIGFsbCBwbGFuZXMgY29ubmVjdGVkIHRvIHRoaXMgZW5jb2RlciBzaG91bGQgYmUgYWxzbyBk
-aXNhYmxlZC4gKi8KLQlkcm1fZm9yX2VhY2hfbGVnYWN5X3BsYW5lKHBsYW5lLCAmZGV2LT5tb2Rl
-X2NvbmZpZy5wbGFuZV9saXN0KSB7Ci0JCWlmIChwbGFuZS0+Y3J0YyAmJiAocGxhbmUtPmNydGMg
-PT0gZW5jb2Rlci0+Y3J0YykpCi0JCQlwbGFuZS0+ZnVuY3MtPmRpc2FibGVfcGxhbmUocGxhbmUp
-OwotCX0KIH0KIAogc3RhdGljIHN0cnVjdCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgZXh5bm9z
-X2VuY29kZXJfaGVscGVyX2Z1bmNzID0gewotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello,
+
+Newer Chromebooks have more than one Embedded Controller (EC) in the
+system. These additional ECs are connected through I2C with a host EC
+which is the one that is connected to the Application Processor (AP)
+through different transports (I2C, SPI or LPC).
+
+So on these platforms, sub-processors are chained to each other:
+
+AP <--> Host EC <--> Power Delivery (PD) EC
+
+The AP sends commands to the additional EC through the host EC using
+a set of passthru commands and the host redirects to the correct EC.
+
+This is a v3 of a series that adds support for multiple EC in a system
+and also for the protocol version 3 that is used on newer ECs.
+
+Most patches were taken from the downstream ChromiumOS v3.14 tree with
+fixes squashed, split to minimise the cross subsystem churn and changes
+for mainline inclusion but were not modified functionality wise.
+
+This version addresses a lot of issues pointed out by Lee Jones on the v2
+posted before [0].
+
+The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cleanups"
+[1] that were posted before and was already picked by Lee Jones.
+
+Testing was done on some Chromebooks that have a single EC and support
+protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800
+Peach Pi to be sure that no regressions were introduced for these machines.
+
+The series were tested using a modified ectool [2] that supports the new
+cros_ec IOCTL API. They were also tested on a x86 Pixel Chromebook 2 (Samus)
+that uses the new protocol v3 and has 2 EC (cros_ec and cros_pd). But for
+testing on Samus, also the posted "[PATCH 0/3] platform/chrome: Changes for
+cros_ec_lpc and cros_ec_dev" series [3] are needed.
+
+Gwendal Grignou and Heiko Stuebner tested the first versions of the series
+but I did not carry their Tested-by tags for the patches that had not trivial
+changes. So testing on more platforms will be highly appreciated.
+
+The series is composed of the following patches:
+
+Alexandru M Stan (1):
+  mfd: cros_ec: spi: Add delay for asserting CS
+
+Gwendal Grignou (1):
+  mfd: cros_ec: Support multiple EC in a system
+
+Javier Martinez Canillas (2):
+  mfd: cros_ec: Use a zero-length array for command data
+  mfd: cros_ec: Move protocol helpers out of the MFD driver
+
+Stephen Barber (3):
+  mfd: cros_ec: rev cros_ec_commands.h
+  mfd: cros_ec: add proto v3 skeleton
+  mfd: cros_ec: add bus-specific proto v3 code
+
+ Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
+ drivers/i2c/busses/Kconfig                        |   2 +-
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c           |  45 ++-
+ drivers/input/keyboard/Kconfig                    |   2 +-
+ drivers/input/keyboard/cros_ec_keyb.c             |  31 +-
+ drivers/mfd/Kconfig                               |   5 +-
+ drivers/mfd/cros_ec.c                             | 163 ++++-----
+ drivers/mfd/cros_ec_i2c.c                         | 169 ++++++++-
+ drivers/mfd/cros_ec_spi.c                         | 407 +++++++++++++++++++---
+ drivers/platform/chrome/Kconfig                   |   9 +-
+ drivers/platform/chrome/Makefile                  |   1 +
+ drivers/platform/chrome/cros_ec_dev.c             | 189 ++++++----
+ drivers/platform/chrome/cros_ec_dev.h             |   7 -
+ drivers/platform/chrome/cros_ec_lightbar.c        | 217 +++++++-----
+ drivers/platform/chrome/cros_ec_lpc.c             |  84 ++++-
+ drivers/platform/chrome/cros_ec_proto.c           | 382 ++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_sysfs.c           | 178 ++++++----
+ include/linux/mfd/cros_ec.h                       |  84 ++++-
+ include/linux/mfd/cros_ec_commands.h              | 277 +++++++++++++--
+ 19 files changed, 1808 insertions(+), 448 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_proto.c
+
+Patch #1 modifies the struct cros_ec_command to use a zero-length array for
+the buffer used for EC input and output data.
+
+Patch #2 synchronises the cros_ec_commands.h with a newer version of the
+file in the EC firmware repository.
+
+Patch #3 moves the EC communication protocol helper functions out of the MFD
+driver.
+
+Patch #4 adds the EC host command protocol v3 support to the cros_ec driver
+and patch #5 adds the bus specific proto v3 support for I2C, SPI and LPC.
+
+Patch #6 adds support to make multiple EC have a different device id and
+also exposing a per EC character device interface.
+
+Patch #7 adds support to the cros_ec_spi driver to specify a delay before
+receiving SPI transfers to make sure that the EC has already waked up.
+
+Since the changes are quite intrusive and affects all ChromeOS EC related
+drivers, the patches should be merged through the MFD subsystem tree.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/5/9/73
+[1]: https://lkml.org/lkml/2015/5/20/235
+[2]: http://cgit.collabora.com/git/user/javier/ec.git/log/?h=mainline-ioctl-zero-length
+[3]: https://lkml.org/lkml/2015/5/20/184
