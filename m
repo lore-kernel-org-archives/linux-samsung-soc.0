@@ -1,106 +1,117 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 1/5] drm/exynos: mixer: refactor layer setup
-Date: Fri, 22 May 2015 18:12:21 +0900
-Message-ID: <555EF2F5.5090701@samsung.com>
+Subject: Re: [PATCH 2/5] drm/exynos: mixer: introduce mixer_layer_blending()
+Date: Fri, 22 May 2015 18:12:28 +0900
+Message-ID: <555EF2FC.5030800@samsung.com>
 References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1430919410-9917-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1430919410-9917-3-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32637 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946153AbbEVJMW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 May 2015 05:12:22 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NOQ00M4MUWKIL30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 May 2015 18:12:21 +0900 (KST)
-In-reply-to: <1430919410-9917-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1430919410-9917-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
+Cc: gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/06/2015 10:36 PM, Tobias Jakobi wrote:
-> First step in allowing a more generic way to setup complex
-> blending for the different layers.
-> 
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 90 ++++++++++++++++++++++++++++++-----
->  1 file changed, 79 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 4a1656b..e4a5e76 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -63,6 +63,11 @@ struct mixer_resources {
->  	struct clk		*mout_mixer;
->  };
->  
-> +struct layer_config {
-> +	unsigned int index;
-> +	unsigned int priority;
-
-I think layer index and priority information can go to struct
-exynos_drm_plane.
-
-> +};
-> +
->  enum mixer_version_id {
->  	MXR_VER_0_0_0_16,
->  	MXR_VER_16_0_33_0,
-> @@ -75,6 +80,8 @@ struct mixer_context {
->  	struct drm_device	*drm_dev;
->  	struct exynos_drm_crtc	*crtc;
->  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
-> +	const struct layer_config *layer_config;
-> +	unsigned int num_layer;
->  	int			pipe;
->  	bool			interlace;
->  	bool			powered;
-> @@ -95,6 +102,40 @@ struct mixer_drv_data {
->  	bool					has_sclk;
->  };
->  
-> +/*
-> + * The default layer priorities. A higher priority means that
-> + * the layer is at the top of layer stack.
-> + * The current configuration assumes the following usage scenario:
-> + * layer1: OSD [top]
-> + * layer0: main framebuffer
-> + * video layer: video overlay [bottom]
-> + * Note that the video layer is only usable when the
-> + * video processor is available.
-> + */
-> +
-> +static const struct layer_config default_layer_config[] = {
-> +	{
-> +		.index = 0,			/* layer0 */
-> +		.priority = 1
-> +	}, {
-> +		.index = 1,			/* layer1 */
-> +		.priority = 2
-> +	}
-> +};
-> +
-> +static const struct layer_config vp_layer_config[] = {
-> +	{
-> +		.index = 2,			/* video layer */
-> +		.priority = 1
-> +	}, {
-> +		.index = 0,			/* layer0 */
-> +		.priority = 2
-> +	}, {
-> +		.index = 1,			/* layer1 */
-> +		.priority = 3
-> +	}
-> +};
-> +
-
-I feel there is no reason to split config, actually video layer exists
-and video layer isn't enabled if no vp even if we use 3 layer.
+T24gMDUvMDYvMjAxNSAxMDozNiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBUaGlzIGFuYWx5
+c2VzIHRoZSBjdXJyZW50IGxheWVyIGNvbmZpZ3VyYXRpb24gKHdoaWNoIGxheWVycwo+IGFyZSBl
+bmFibGVkLCB3aGljaCBoYXZlIGFscGhhLXBpeGVsZm9ybWF0LCBldGMuKSBhbmQgc2V0dXBzCj4g
+YmxlbmRpbmcgYWNjb3JkaW5nbHkuCj4gCj4gV2UgY3VycmVudGx5IGRpc2FibGUgYWxsIGtpbmRz
+IG9mIGJsZW5kaW5nIGZvciB0aGUgYm90dG9tLW1vc3QKPiBsYXllciwgc2luY2UgY29uZmlndXJh
+dGlvbiBvZiB0aGUgbWl4ZXIgYmFja2dyb3VuZCBpcyBub3QKPiB5ZXQgZXhwb3NlZC4KPiBBbHNv
+IGJsZW5kaW5nIGlzIG9ubHkgZW5hYmxlZCB3aGVuIHRoZSBsYXllciBoYXMgYSBwaXhlbGZvcm1h
+dAo+IHdpdGggYWxwaGEgYXR0YWNoZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29i
+aSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAxMDggKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL3JlZ3MtbWl4ZXIuaCAgIHwgICAxICsK
+PiAgMiBmaWxlcyBjaGFuZ2VkLCAxMDkgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfbWl4ZXIuYwo+IGluZGV4IGU0YTVlNzYuLjVlOTVlZjIgMTAwNjQ0Cj4gLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPiBAQCAtMTY1LDYgKzE2NSwxOCBAQCBzdGF0
+aWMgY29uc3QgdTggZmlsdGVyX2NyX2hvcml6X3RhcDRbXSA9IHsKPiAgCTcwLAk1OSwJNDgsCTM3
+LAkyNywJMTksCTExLAk1LAo+ICB9Owo+ICAKPiArc3RhdGljIGlubGluZSBib29sIGlzX2FscGhh
+X2Zvcm1hdChjb25zdCBzdHJ1Y3QgbWl4ZXJfY29udGV4dCogY3R4LCB1bnNpZ25lZCBpbnQgd2lu
+KQo+ICt7Cj4gKwlzd2l0Y2ggKGN0eC0+cGxhbmVzW3dpbl0ucGl4ZWxfZm9ybWF0KSB7Cj4gKwlj
+YXNlIERSTV9GT1JNQVRfQVJHQjg4ODg6Cj4gKwljYXNlIERSTV9GT1JNQVRfQVJHQjE1NTU6Cj4g
+KwljYXNlIERSTV9GT1JNQVRfQVJHQjQ0NDQ6Cj4gKwkJcmV0dXJuIHRydWU7Cj4gKwlkZWZhdWx0
+Ogo+ICsJCXJldHVybiBmYWxzZTsKPiArCX0KPiArfQo+ICsKPiAgc3RhdGljIGlubGluZSB1MzIg
+dnBfcmVnX3JlYWQoc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzLCB1MzIgcmVnX2lkKQo+ICB7
+Cj4gIAlyZXR1cm4gcmVhZGwocmVzLT52cF9yZWdzICsgcmVnX2lkKTsKPiBAQCAtMzIyLDYgKzMz
+NCwxMDIgQEAgc3RhdGljIHZvaWQgbWl4ZXJfbGF5ZXJfcHJpb3JpdHkoc3RydWN0IG1peGVyX2Nv
+bnRleHQgKmN0eCkKPiAgCW1peGVyX3JlZ193cml0ZSgmY3R4LT5taXhlcl9yZXMsIE1YUl9MQVlF
+Ul9DRkcsIHZhbCk7Cj4gIH0KPiAgCj4gKy8qIENvbmZpZ3VyZSBibGVuZGluZyBmb3IgYm90dG9t
+LW1vc3QgbGF5ZXIuICovCj4gK3N0YXRpYyB2b2lkIG1peGVyX2JvdHRvbV9sYXllcihzdHJ1Y3Qg
+bWl4ZXJfY29udGV4dCAqY3R4LAo+ICsJCWNvbnN0IHN0cnVjdCBsYXllcl9jb25maWcgKmNmZykK
+PiArewo+ICsJdTMyIHZhbDsKPiArCXN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgt
+Pm1peGVyX3JlczsKPiArCj4gKwlpZiAoY2ZnLT5pbmRleCA9PSAyKSB7Cj4gKwkJdmFsID0gMDsg
+LyogdXNlIGRlZmF1bHRzIGZvciB2aWRlbyBsYXllciAqLwo+ICsJCW1peGVyX3JlZ193cml0ZShy
+ZXMsIE1YUl9WSURFT19DRkcsIHZhbCk7Cj4gKwl9IGVsc2Ugewo+ICsJCXZhbCA9IE1YUl9HUlBf
+Q0ZHX0NPTE9SX0tFWV9ESVNBQkxFOyAvKiBubyBibGFuayBrZXkgKi8KPiArCj4gKwkJLyogRG9u
+J3QgYmxlbmQgYm90dG9tLW1vc3QgbGF5ZXIgb250byB0aGUgbWl4ZXIgYmFja2dyb3VuZC4gKi8K
+PiArCQltaXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0dSQVBISUNfQ0ZHKGNmZy0+aW5kZXgp
+LAo+ICsJCQkJdmFsLCBNWFJfR1JQX0NGR19NSVNDX01BU0spOwo+ICsJfQo+ICt9Cj4gKwo+ICtz
+dGF0aWMgdm9pZCBtaXhlcl9nZW5lcmFsX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgs
+Cj4gKwkJY29uc3Qgc3RydWN0IGxheWVyX2NvbmZpZyAqY2ZnKQo+ICt7Cj4gKwl1MzIgdmFsOwo+
+ICsJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+ICsKPiAr
+CWlmIChpc19hbHBoYV9mb3JtYXQoY3R4LCBjZmctPmluZGV4KSkgewo+ICsJCXZhbCA9IE1YUl9H
+UlBfQ0ZHX0NPTE9SX0tFWV9ESVNBQkxFOyAvKiBubyBibGFuayBrZXkgKi8KPiArCQl2YWwgfD0g
+TVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTDsKPiArCQl2YWwgfD0gTVhSX0dSUF9DRkdfUElYRUxf
+QkxFTkRfRU47IC8qIGJsZW5kaW5nIGJhc2VkIG9uIHBpeGVsIGFscGhhICovCj4gKwo+ICsJCS8q
+IFRoZSB2aWRlbyBsYXllciBuZXZlciBoYXMgYW4gYWxwaGEgcGl4ZWxmb3JtYXQuICovCj4gKwkJ
+bWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9HUkFQSElDX0NGRyhjZmctPmluZGV4KSwKPiAr
+CQkJCXZhbCwgTVhSX0dSUF9DRkdfTUlTQ19NQVNLKTsKPiArCX0gZWxzZSB7Cj4gKwkJaWYgKGNm
+Zy0+aW5kZXggPT0gMikgewo+ICsJCQkvKgo+ICsJCQkgKiBObyBibGVuZGluZyBhdCB0aGUgbW9t
+ZW50IHNpbmNlIHRoZSBOVjEyL05WMjEgcGl4ZWxmb3JtYXRzIGRvbid0Cj4gKwkJCSAqIGhhdmUg
+YW4gYWxwaGEgY2hhbm5lbC4gSG93ZXZlciB0aGUgbWl4ZXIgc3VwcG9ydHMgYSBnbG9iYWwgYWxw
+aGEKPiArCQkJICogdmFsdWUgZm9yIGEgbGF5ZXIuIE9uY2UgdGhpcyBmdW5jdGlvbmFsaXR5IGlz
+IGV4cG9zZWQsIHdlIGNhbgo+ICsJCQkgKiBzdXBwb3J0IGJsZW5kaW5nIG9mIHRoZSB2aWRlbyBs
+YXllciB0aHJvdWdoIHRoaXMuCj4gKwkJCSAqLwo+ICsJCQl2YWwgPSAwOwo+ICsJCQltaXhlcl9y
+ZWdfd3JpdGUocmVzLCBNWFJfVklERU9fQ0ZHLCB2YWwpOwo+ICsJCX0gZWxzZSB7Cj4gKwkJCXZh
+bCA9IE1YUl9HUlBfQ0ZHX0NPTE9SX0tFWV9ESVNBQkxFOwo+ICsJCQltaXhlcl9yZWdfd3JpdGVt
+YXNrKHJlcywgTVhSX0dSQVBISUNfQ0ZHKGNmZy0+aW5kZXgpLAo+ICsJCQkJCXZhbCwgTVhSX0dS
+UF9DRkdfTUlTQ19NQVNLKTsKPiArCQl9Cj4gKwl9Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkIG1p
+eGVyX2xheWVyX2JsZW5kaW5nKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGlu
+dCBlbmFibGVfc3RhdGUpCj4gK3sKPiArCWNvbnN0IHN0cnVjdCBsYXllcl9jb25maWcgKmNmZzsK
+PiArCXVuc2lnbmVkIGludCBpID0gMDsKPiArCXVuc2lnbmVkIGludCBpbmRleDsKPiArCj4gKwkv
+KiBGaW5kIGJvdHRvbS1tb3N0IGVuYWJsZWQgbGF5ZXIuICovCj4gKwljZmcgPSBOVUxMOwo+ICsJ
+d2hpbGUgKGkgPCBjdHgtPm51bV9sYXllcikgewo+ICsJCWluZGV4ID0gY3R4LT5sYXllcl9jb25m
+aWdbaV0uaW5kZXg7Cj4gKwkJKytpOwoKRG9uJ3QgdXNlIHByaW9yaXR5PwoKPiArCj4gKwkJaWYg
+KGVuYWJsZV9zdGF0ZSAmICgxIDw8IGluZGV4KSkgewo+ICsJCQljZmcgPSAmY3R4LT5sYXllcl9j
+b25maWdbaS0xXTsKPiArCQkJYnJlYWs7Cj4gKwkJfQo+ICsJfQo+ICsKPiArCS8qIE5vIGVuYWJs
+ZWQgbGF5ZXJzIGZvdW5kLCBub3RoaW5nIHRvIGRvLiAqLwo+ICsJaWYgKCFjZmcpCj4gKwkJcmV0
+dXJuOwo+ICsKPiArCW1peGVyX2JvdHRvbV9sYXllcihjdHgsIGNmZyk7Cj4gKwo+ICsJd2hpbGUg
+KDEpIHsKPiArCQkvKiBGaW5kIHRoZSBuZXh0IGxheWVyLiAqLwo+ICsJCWNmZyA9IE5VTEw7Cj4g
+KwkJd2hpbGUgKGkgPCBjdHgtPm51bV9sYXllcikgewo+ICsJCQlpbmRleCA9IGN0eC0+bGF5ZXJf
+Y29uZmlnW2ldLmluZGV4Owo+ICsJCQkrK2k7Cj4gKwo+ICsJCQlpZiAoZW5hYmxlX3N0YXRlICYg
+KDEgPDwgaW5kZXgpKSB7Cj4gKwkJCQljZmcgPSAmY3R4LT5sYXllcl9jb25maWdbaS0xXTsKPiAr
+CQkJCWJyZWFrOwo+ICsJCQl9Cj4gKwkJfQo+ICsKPiArCQkvKiBObyBtb3JlIGVuYWJsZWQgbGF5
+ZXJzIGZvdW5kLiAqLwo+ICsJCWlmICghY2ZnKQo+ICsJCQlyZXR1cm47Cj4gKwo+ICsJCW1peGVy
+X2dlbmVyYWxfbGF5ZXIoY3R4LCBjZmcpOwo+ICsJfQo+ICt9Cj4gKwo+ICBzdGF0aWMgdm9pZCBt
+aXhlcl92c3luY19zZXRfdXBkYXRlKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGJvb2wgZW5h
+YmxlKQo+ICB7Cj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMgPSAmY3R4LT5taXhlcl9y
+ZXM7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPiBpbmRleCBhYzYwMjYwLi4xMTg4
+NzJlIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1taXhlci5oCj4g
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLW1peGVyLmgKPiBAQCAtMTEzLDYgKzEx
+Myw3IEBACj4gICNkZWZpbmUgTVhSX0dSUF9DRkdfQkxFTkRfUFJFX01VTAkoMSA8PCAyMCkKPiAg
+I2RlZmluZSBNWFJfR1JQX0NGR19XSU5fQkxFTkRfRU4JKDEgPDwgMTcpCj4gICNkZWZpbmUgTVhS
+X0dSUF9DRkdfUElYRUxfQkxFTkRfRU4JKDEgPDwgMTYpCj4gKyNkZWZpbmUgTVhSX0dSUF9DRkdf
+TUlTQ19NQVNLCQkoKDMgPDwgMTYpIHwgKDMgPDwgMjApKQo+ICAjZGVmaW5lIE1YUl9HUlBfQ0ZH
+X0ZPUk1BVF9WQUwoeCkJTVhSX01BU0tfVkFMKHgsIDExLCA4KQo+ICAjZGVmaW5lIE1YUl9HUlBf
+Q0ZHX0ZPUk1BVF9NQVNLCQlNWFJfR1JQX0NGR19GT1JNQVRfVkFMKH4wKQo+ICAjZGVmaW5lIE1Y
+Ul9HUlBfQ0ZHX0FMUEhBX1ZBTCh4KQlNWFJfTUFTS19WQUwoeCwgNywgMCkKPiAKCkkgdGhpbmsg
+dGhpcyBwYXRjaCBjYW4gYmUgY2xlYW4gbW9yZSwKCmUuZy4gcmVtb3ZlIGR1cGxpY2F0ZWQgY29k
+ZXMgYW5kIHdoaWxlICgxKSAuLi4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
