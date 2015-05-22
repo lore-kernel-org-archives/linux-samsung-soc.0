@@ -1,49 +1,122 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 0/5] drm/exynos: rework layer blending setup
-Date: Fri, 22 May 2015 18:13:03 +0900
-Message-ID: <555EF31F.2080504@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 1/5] drm/exynos: mixer: refactor layer setup
+Date: Fri, 22 May 2015 11:47:39 +0200
+Message-ID: <fb2e66e17eb2675dd06be06b186a95d5@math.uni-bielefeld.de>
 References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <555E43B5.2000000@math.uni-bielefeld.de> <555EAAE1.9030406@samsung.com>
- <b64b1d76e98e038c5b57355c06e31fdb@math.uni-bielefeld.de>
+ <1430919410-9917-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <555EF2F5.5090701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <b64b1d76e98e038c5b57355c06e31fdb@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:40740 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757647AbbEVJrm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 May 2015 05:47:42 -0400
+In-Reply-To: <555EF2F5.5090701@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com
 
-SGkgVG9iaWFzLAoKT24gMDUvMjIvMjAxNSAwNTowNyBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
-PiBIZWxsbyBKb29ueW91bmcsCj4gCj4gT24gMjAxNS0wNS0yMiAwNjowNCwgSm9vbnlvdW5nIFNo
-aW0gd3JvdGU6Cj4+IEhpIFRvYmlhcywKPj4KPj4gT24gMDUvMjIvMjAxNSAwNTo0NCBBTSwgVG9i
-aWFzIEpha29iaSB3cm90ZToKPj4+IEdlbnRsZSByZW1pbmRlciB0aGF0IEkgc3RpbGwgaGF2ZW4n
-dCBoZWFyZCBhbnl0aGluZyBhYm91dCB0aGUgc2VyaWVzIGJ5Cj4+PiB0aGUgU2Ftc3VuZyBndXlz
-IDspCj4+Pgo+Pgo+PiBTb3JyeSBmb3IgbGF0ZSwgaSdtIGJ1c3kgYW5kIGkgdGhpbmsgd2hldGhl
-ciBpdCdzIHBvc3NpYmxlIGFueSB3YXkgZm9yCj4+IHRoaXMgYmxlbmRpbmcgZnJvbSBleHlub3Mg
-ZHJtIGZyYW1ld29yayBhZnRlciBhdG9taWMgZmVhdHVyZSBvZiBleHlub3MKPj4gbWVyZ2VkLgo+
-IHRoZSBjb2RlIGlzIGxhcmdlbHkgaW5kZXBlbmRlbnQgb2YgR3VzdGF2bydzIHBhdGNoZXMuIEl0
-IGRvZXNuJ3QgcmVhbGx5IG1ha2UgYSBsb3Qgb2YgZGlmZmVyZW5jZSBpZiBpdCdzIG1lcmdlZCBi
-ZWZvcmUgb3IgYWZ0ZXIgYXRvbWljLiBJbiBmYWN0IEkndmUgYWxyZWFkeSB0ZXN0ZWQgaXQgd2l0
-aCBhbmQgd2l0aG91dCBhdG9taWMuCj4gCj4gSWYgcG9zc2libGUgSSB3b3VsZCBsaWtlIHRoaXMg
-dG8gYmUgbWVyZ2VkIG5vdywgc28gdGhhdCBpdCBjYW4gZ28gaW50byA0LjIuIEkgYWxzbyBoYXZl
-IHRoZSBwYXRjaGVzIGZpeGluZyB0aGUgenBvcyBpc3N1ZSB3YWl0aW5nLCB3aGljaCBJJ20gcGxh
-bm5pbmcgdG8gYmFzZSBvbiBHdXN0YXZvJ3MgbmV4dCBjbGVhbnVwIHNlcmllcy4gQnV0IGZvciB0
-aGlzIGJvdGggdGhlIGF0b21pYyBhbmQgdGhlIGxheWVyIHdvcmsgc2VyaWVzIG5lZWQgdG8gZ2V0
-IG1lcmdlZCBmaXJzdC4KPiAKClNvcnJ5IGZvciBub3QgZGV0YWlsZWQgcmV2aWV3LCBpIGRvbid0
-IGtub3cgd2hhdCBpcyBJbmtpJ3Mgb3BpbmlvbiBidXQgaQpmZWVsIHRoZXkgbmVlZCB0byBiZSBp
-bXByb3ZlZCBtb3JlLgoKUGxlYXNlIHJ1biAuL3NjcmlwdHMvY2hlY2twYXRjaC5wbCBiZWZvcmUg
-cG9zdGluZyBhbmQgY291bGQgeW91IHVzZSB3b3JkCndyYXA/IGl0J3MgdG9vIGxvbmcgc28gZGlm
-ZmljdWx0IHRvIHJlYWQuCgpUaGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+Hello Joonyoung,
+
+On 2015-05-22 11:12, Joonyoung Shim wrote:
+> On 05/06/2015 10:36 PM, Tobias Jakobi wrote:
+>> First step in allowing a more generic way to setup complex
+>> blending for the different layers.
+>> 
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_mixer.c | 90 
+>> ++++++++++++++++++++++++++++++-----
+>>  1 file changed, 79 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c 
+>> b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index 4a1656b..e4a5e76 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -63,6 +63,11 @@ struct mixer_resources {
+>>  	struct clk		*mout_mixer;
+>>  };
+>> 
+>> +struct layer_config {
+>> +	unsigned int index;
+>> +	unsigned int priority;
+> 
+> I think layer index and priority information can go to struct
+> exynos_drm_plane.
+No, because of two reasons:
+- plane configuration is done at run-time while this here is const 
+static
+- this is specific to the mixer
+
+
+> 
+>> +};
+>> +
+>>  enum mixer_version_id {
+>>  	MXR_VER_0_0_0_16,
+>>  	MXR_VER_16_0_33_0,
+>> @@ -75,6 +80,8 @@ struct mixer_context {
+>>  	struct drm_device	*drm_dev;
+>>  	struct exynos_drm_crtc	*crtc;
+>>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+>> +	const struct layer_config *layer_config;
+>> +	unsigned int num_layer;
+>>  	int			pipe;
+>>  	bool			interlace;
+>>  	bool			powered;
+>> @@ -95,6 +102,40 @@ struct mixer_drv_data {
+>>  	bool					has_sclk;
+>>  };
+>> 
+>> +/*
+>> + * The default layer priorities. A higher priority means that
+>> + * the layer is at the top of layer stack.
+>> + * The current configuration assumes the following usage scenario:
+>> + * layer1: OSD [top]
+>> + * layer0: main framebuffer
+>> + * video layer: video overlay [bottom]
+>> + * Note that the video layer is only usable when the
+>> + * video processor is available.
+>> + */
+>> +
+>> +static const struct layer_config default_layer_config[] = {
+>> +	{
+>> +		.index = 0,			/* layer0 */
+>> +		.priority = 1
+>> +	}, {
+>> +		.index = 1,			/* layer1 */
+>> +		.priority = 2
+>> +	}
+>> +};
+>> +
+>> +static const struct layer_config vp_layer_config[] = {
+>> +	{
+>> +		.index = 2,			/* video layer */
+>> +		.priority = 1
+>> +	}, {
+>> +		.index = 0,			/* layer0 */
+>> +		.priority = 2
+>> +	}, {
+>> +		.index = 1,			/* layer1 */
+>> +		.priority = 3
+>> +	}
+>> +};
+>> +
+> 
+> I feel there is no reason to split config, actually video layer exists
+> and video layer isn't enabled if no vp even if we use 3 layer.
+Well, as you point out yourself the current code is totally broken. Even 
+if we don't support the video processor we still expose the 
+corresponding DRM plane to userspace, but then just ignore any 
+operations to it. This needs fixing (!), and my series is a first step 
+in that direction.
+
+
+With best wishes,
+Tobias
