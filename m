@@ -1,50 +1,64 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq:exynos-cpufreq - Fix for memory leak in case SOC
- name does not match.
-Date: Fri, 22 May 2015 07:47:30 +0530
-Message-ID: <20150522021730.GA7730@linux>
-References: <1432232981-3917-1-git-send-email-shailendra.capricorn@gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v6 01/12] drm/exynos: atomic phase 1: use
+ drm_plane_helper_update()
+Date: Fri, 22 May 2015 12:45:36 +0900
+Message-ID: <555EA660.3030109@samsung.com>
+References: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
+ <1432238571-31621-2-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:34296 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751362AbbEVCRf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 May 2015 22:17:35 -0400
-Received: by pabru16 with SMTP id ru16so6657535pab.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2015 19:17:34 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1432232981-3917-1-git-send-email-shailendra.capricorn@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1432238571-31621-2-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shailendra Verma <shailendra.capricorn@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 21-05-15, 23:59, Shailendra Verma wrote:
-> During probe free the memory allocated to "exynos_info" in case of unknown
-> SOC type.
-> 
-> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index 82d2fbb..b77923a 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -182,6 +182,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->  		ret = exynos5250_cpufreq_init(exynos_info);
->  	} else {
->  		pr_err("%s: Unknown SoC type\n", __func__);
-> +		kfree(exynos_info);
->  		return -ENODEV;
->  	}
-
-There is no point replicating this stuff. Use labels like: err_vdd_arm
-to get this done. But you also need to make sure the right error gets
-propagated.
-
--- 
-viresh
+T24gMDUvMjIvMjAxNSAwNTowMiBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
+c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBSaXAg
+b3V0IHRoZSBjaGVjayBmcm9tIGV4eW5vc191cGRhdGVfcGxhbmUoKSBhbmQgY3JlYXRlCj4gZXh5
+bm9zX2NoZWNrX3BsYW5lKCkgZm9yIHRoZSBjaGVjayBwaGFzZSBlbmFibGluZyB1c2UgdG8gdXNl
+Cj4gdGhlIGF0b21pYyBoZWxwZXJzIHRvIGNhbGwgb3VyIGNoZWNrIGFuZCB1cGRhdGUgcGhhc2Vz
+IHdoZW4gdXBkYXRpbmcKPiBwbGFuZXMuCj4gCj4gVXBkYXRlIGFsbCB1c2VycyBvZiBleHlub3Nf
+dXBkYXRlX3BsYW5lKCkgYWNjb3JkaW5nbHkgdG8gY2FsbAo+IGV4eW5vc19jaGVja19wbGFuZSgp
+IGJlZm9yZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFk
+b3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMgIHwgMjkgKysrKysrKysrKystLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDQwICsrKysrKysrKysrKysrKysrKysr
+KysrLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgg
+fCAgMiArLQo+ICAzIGZpbGVzIGNoYW5nZWQsIDQ2IGluc2VydGlvbnMoKyksIDI1IGRlbGV0aW9u
+cygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Y3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IGluZGV4
+IDkwMDZiOTQuLjYxYjhjZmUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMKPiBAQCAtMTE2LDYgKzExNiw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRj
+X21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCj4gIAlz
+dHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IGNydGMtPnByaW1hcnktPmZiOwo+ICAJdW5zaWdu
+ZWQgaW50IGNydGNfdzsKPiAgCXVuc2lnbmVkIGludCBjcnRjX2g7Cj4gKwlpbnQgcmV0Owo+ICAK
+PiAgCS8qIHdoZW4gZnJhbWVidWZmZXIgY2hhbmdpbmcgaXMgcmVxdWVzdGVkLCBjcnRjJ3MgZHBt
+cyBzaG91bGQgYmUgb24gKi8KPiAgCWlmIChleHlub3NfY3J0Yy0+ZHBtcyA+IERSTV9NT0RFX0RQ
+TVNfT04pIHsKPiBAQCAtMTIzLDExICsxMjQsMTYgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2Ny
+dGNfbW9kZV9zZXRfYmFzZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCB4LCBpbnQgeSwKPiAg
+CQlyZXR1cm4gLUVQRVJNOwo+ICAJfQo+ICAKPiArCXJldCA9IGV4eW5vc19jaGVja19wbGFuZShj
+cnRjLT5wcmltYXJ5LCBmYik7Cj4gKwlpZiAocmV0KQo+ICsJCXJldHVybiByZXQ7Cj4gKwo+ICAJ
+Y3J0Y193ID0gZmItPndpZHRoIC0geDsKPiAgCWNydGNfaCA9IGZiLT5oZWlnaHQgLSB5Owo+ICsJ
+ZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiArCQkJ
+ICAgIGNydGNfdywgY3J0Y19oLCB4LCB5LCBjcnRjX3csIGNydGNfaCk7Cj4gIAo+IC0JcmV0dXJu
+IGV4eW5vc191cGRhdGVfcGxhbmUoY3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCj4gLQkJ
+CQkgICBjcnRjX3csIGNydGNfaCwgeCwgeSwgY3J0Y193LCBjcnRjX2gpOwoKSSBzdGlsbCB0aGlu
+ayB0byBuZWVkICJbUEFUQ0hdIGRybS9leHlub3M6IGZpeCBzb3VyY2UgZGF0YSBhcmd1bWVudCBm
+b3IKcGxhbmUiIGJlZm9yZSBtZXJnZWQgYXRvbWljIHBhdGNoZXMgZm9yIGJpc2VjdC4KCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtQXByaWwvMDgx
+MzY4Lmh0bWwKClRoYW5rcy4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
