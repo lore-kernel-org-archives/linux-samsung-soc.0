@@ -1,400 +1,132 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v7 12/13] drm/exynos: atomic dpms support
-Date: Fri, 22 May 2015 12:40:52 -0300
-Message-ID: <1432309253-18572-13-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v7 10/13] drm/exynos: remove exported functions from
+ exynos_drm_plane
+Date: Fri, 22 May 2015 12:40:50 -0300
+Message-ID: <1432309253-18572-11-git-send-email-gustavo@padovan.org>
 References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f54.google.com ([209.85.192.54]:34263 "EHLO
-	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757630AbbEVPlc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 May 2015 11:41:32 -0400
-Received: by qgez61 with SMTP id z61so10341920qge.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2015 08:41:31 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Run dpms operations through the atomic intefaces. This basically removes
-the .dpms() callback from econders and crtcs and use .disable() and
-.enable() to turn the crtc on and off.
-
-v2: Address comments by Joonyoung:
-	- make hdmi code call ->disable() instead of ->dpms()
-	- do not use WARN_ON on crtc enable/disable
-
-v3: - Fix build failure after the hdmi change in v2
-    - Change dpms helper of ptn3460 bridge
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/bridge/ps8622.c             |  2 +-
- drivers/gpu/drm/bridge/ptn3460.c            |  2 +-
- drivers/gpu/drm/exynos/exynos_dp_core.c     |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 95 ++++++++++++++++-------------
- drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.h     |  4 +-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_encoder.c | 27 ++------
- drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  2 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c        |  6 +-
- 10 files changed, 69 insertions(+), 75 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge/ps8622.c
-index b604326..d686235 100644
---- a/drivers/gpu/drm/bridge/ps8622.c
-+++ b/drivers/gpu/drm/bridge/ps8622.c
-@@ -499,7 +499,7 @@ static void ps8622_connector_destroy(struct drm_connector *connector)
- }
- 
- static const struct drm_connector_funcs ps8622_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = ps8622_detect,
- 	.destroy = ps8622_connector_destroy,
-diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-index 8ed3617..260bc9f 100644
---- a/drivers/gpu/drm/bridge/ptn3460.c
-+++ b/drivers/gpu/drm/bridge/ptn3460.c
-@@ -260,7 +260,7 @@ static void ptn3460_connector_destroy(struct drm_connector *connector)
- }
- 
- static struct drm_connector_funcs ptn3460_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = ptn3460_detect,
- 	.destroy = ptn3460_connector_destroy,
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 195fe60..c9995b1 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -954,7 +954,7 @@ static void exynos_dp_connector_destroy(struct drm_connector *connector)
- }
- 
- static struct drm_connector_funcs exynos_dp_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = exynos_dp_detect,
- 	.destroy = exynos_dp_connector_destroy,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index fd5ef2c..ca501a9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -22,48 +22,54 @@
- #include "exynos_drm_encoder.h"
- #include "exynos_drm_plane.h"
- 
--static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
-+static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-+	struct exynos_drm_plane *exynos_plane = to_exynos_plane(crtc->primary);
- 
--	DRM_DEBUG_KMS("crtc[%d] mode[%d]\n", crtc->base.id, mode);
--
--	if (exynos_crtc->dpms == mode) {
--		DRM_DEBUG_KMS("desired dpms mode is same as previous one.\n");
-+	if (exynos_crtc->enabled)
- 		return;
--	}
--
--	if (mode > DRM_MODE_DPMS_ON) {
--		/* wait for the completion of page flip. */
--		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
--				(exynos_crtc->event == NULL), HZ/20))
--			exynos_crtc->event = NULL;
--		drm_crtc_vblank_off(crtc);
--	}
- 
- 	if (exynos_crtc->ops->dpms)
--		exynos_crtc->ops->dpms(exynos_crtc, mode);
-+		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_ON);
- 
--	exynos_crtc->dpms = mode;
-+	exynos_crtc->enabled = true;
- 
--	if (mode == DRM_MODE_DPMS_ON)
--		drm_crtc_vblank_on(crtc);
--}
-+	drm_crtc_vblank_on(crtc);
- 
--static void exynos_drm_crtc_prepare(struct drm_crtc *crtc)
--{
--	/* drm framework doesn't check NULL. */
-+	if (exynos_crtc->ops->win_commit)
-+		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
- }
- 
--static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
-+static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(crtc->primary);
-+	struct drm_plane *plane;
-+	int ret;
- 
--	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
-+	if (!exynos_crtc->enabled)
-+		return;
- 
--	if (exynos_crtc->ops->win_commit)
--		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
-+	/* wait for the completion of page flip. */
-+	if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
-+				(exynos_crtc->event == NULL), HZ/20))
-+		exynos_crtc->event = NULL;
-+
-+	drm_crtc_vblank_off(crtc);
-+
-+	if (exynos_crtc->ops->dpms)
-+		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_OFF);
-+
-+	exynos_crtc->enabled = false;
-+
-+	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
-+		if (plane->crtc != crtc)
-+			continue;
-+
-+		ret = plane->funcs->disable_plane(plane);
-+		if (ret)
-+			DRM_ERROR("Failed to disable plane %d\n", ret);
-+	}
- }
- 
- static bool
-@@ -92,32 +98,36 @@ exynos_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 		exynos_crtc->ops->commit(exynos_crtc);
- }
- 
--static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
-+static int exynos_crtc_atomic_check(struct drm_crtc *crtc,
-+				     struct drm_crtc_state *state)
- {
--	struct drm_plane *plane;
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 	int ret;
- 
--	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
-+	if (exynos_crtc->event)
-+		return -EBUSY;
- 
--	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
--		if (plane->crtc != crtc)
--			continue;
-+	if (state->event) {
-+		ret = drm_vblank_get(crtc->dev, exynos_crtc->pipe);
-+		if (ret) {
-+			DRM_ERROR("failed to acquire vblank counter\n");
-+			return ret;
-+		}
- 
--		ret = plane->funcs->disable_plane(plane);
--		if (ret)
--			DRM_ERROR("Failed to disable plane %d\n", ret);
-+		exynos_crtc->event = state->event;
- 	}
-+
-+	return 0;
- }
- 
- static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
--	.dpms		= exynos_drm_crtc_dpms,
--	.prepare	= exynos_drm_crtc_prepare,
--	.commit		= exynos_drm_crtc_commit,
-+	.enable		= exynos_drm_crtc_enable,
-+	.disable	= exynos_drm_crtc_disable,
- 	.mode_fixup	= exynos_drm_crtc_mode_fixup,
- 	.mode_set	= drm_helper_crtc_mode_set,
- 	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
- 	.mode_set_base	= drm_helper_crtc_mode_set_base,
--	.disable	= exynos_drm_crtc_disable,
-+	.atomic_check	= exynos_crtc_atomic_check,
- };
- 
- static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
-@@ -158,7 +168,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
- 
- 	init_waitqueue_head(&exynos_crtc->pending_flip_queue);
- 
--	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
- 	exynos_crtc->pipe = pipe;
- 	exynos_crtc->type = type;
- 	exynos_crtc->ops = ops;
-@@ -189,7 +198,7 @@ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe)
- 	struct exynos_drm_crtc *exynos_crtc =
- 		to_exynos_crtc(private->crtc[pipe]);
- 
--	if (exynos_crtc->dpms != DRM_MODE_DPMS_ON)
-+	if (!exynos_crtc->enabled)
- 		return -EPERM;
- 
- 	if (exynos_crtc->ops->enable_vblank)
-@@ -204,7 +213,7 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe)
- 	struct exynos_drm_crtc *exynos_crtc =
- 		to_exynos_crtc(private->crtc[pipe]);
- 
--	if (exynos_crtc->dpms != DRM_MODE_DPMS_ON)
-+	if (!exynos_crtc->enabled)
- 		return;
- 
- 	if (exynos_crtc->ops->disable_vblank)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index ced5c23..6dc328e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -60,7 +60,7 @@ static void exynos_dpi_connector_destroy(struct drm_connector *connector)
- }
- 
- static struct drm_connector_funcs exynos_dpi_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = exynos_dpi_detect,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.destroy = exynos_dpi_connector_destroy,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 29e3fb7..86d6894 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -201,7 +201,7 @@ struct exynos_drm_crtc_ops {
-  *	drm framework doesn't support multiple irq yet.
-  *	we can refer to the crtc to current hardware interrupt occurred through
-  *	this pipe value.
-- * @dpms: store the crtc dpms value
-+ * @enabled: if the crtc is enabled or not
-  * @event: vblank event that is currently queued for flip
-  * @ops: pointer to callbacks for exynos drm specific functionality
-  * @ctx: A pointer to the crtc's implementation specific context
-@@ -210,7 +210,7 @@ struct exynos_drm_crtc {
- 	struct drm_crtc			base;
- 	enum exynos_drm_output_type	type;
- 	unsigned int			pipe;
--	unsigned int			dpms;
-+	bool				enabled;
- 	wait_queue_head_t		pending_flip_queue;
- 	struct drm_pending_vblank_event	*event;
- 	const struct exynos_drm_crtc_ops	*ops;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e4e7f74..190f3b3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1458,7 +1458,7 @@ static void exynos_dsi_connector_destroy(struct drm_connector *connector)
- }
- 
- static struct drm_connector_funcs exynos_dsi_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = exynos_dsi_detect,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.destroy = exynos_dsi_connector_destroy,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-index 57de0bd..0648ba4 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-@@ -32,17 +32,6 @@ struct exynos_drm_encoder {
- 	struct exynos_drm_display	*display;
- };
- 
--static void exynos_drm_encoder_dpms(struct drm_encoder *encoder, int mode)
--{
--	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
--	struct exynos_drm_display *display = exynos_encoder->display;
--
--	DRM_DEBUG_KMS("encoder dpms: %d\n", mode);
--
--	if (display->ops->dpms)
--		display->ops->dpms(display, mode);
--}
--
- static bool
- exynos_drm_encoder_mode_fixup(struct drm_encoder *encoder,
- 			       const struct drm_display_mode *mode,
-@@ -76,12 +65,7 @@ static void exynos_drm_encoder_mode_set(struct drm_encoder *encoder,
- 		display->ops->mode_set(display, adjusted_mode);
- }
- 
--static void exynos_drm_encoder_prepare(struct drm_encoder *encoder)
--{
--	/* drm framework doesn't check NULL. */
--}
--
--static void exynos_drm_encoder_commit(struct drm_encoder *encoder)
-+static void exynos_drm_encoder_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
- 	struct exynos_drm_display *display = exynos_encoder->display;
-@@ -95,10 +79,13 @@ static void exynos_drm_encoder_commit(struct drm_encoder *encoder)
- 
- static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
- {
-+	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
-+	struct exynos_drm_display *display = exynos_encoder->display;
- 	struct drm_plane *plane;
- 	struct drm_device *dev = encoder->dev;
- 
--	exynos_drm_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
-+	if (display->ops->dpms)
-+		display->ops->dpms(display, DRM_MODE_DPMS_OFF);
- 
- 	/* all planes connected to this encoder should be also disabled. */
- 	drm_for_each_legacy_plane(plane, &dev->mode_config.plane_list) {
-@@ -108,11 +95,9 @@ static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
- }
- 
- static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
--	.dpms		= exynos_drm_encoder_dpms,
- 	.mode_fixup	= exynos_drm_encoder_mode_fixup,
- 	.mode_set	= exynos_drm_encoder_mode_set,
--	.prepare	= exynos_drm_encoder_prepare,
--	.commit		= exynos_drm_encoder_commit,
-+	.enable		= exynos_drm_encoder_enable,
- 	.disable	= exynos_drm_encoder_disable,
- };
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index fc3a14b..63c1536 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -385,7 +385,7 @@ static void vidi_connector_destroy(struct drm_connector *connector)
- }
- 
- static struct drm_connector_funcs vidi_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = vidi_detect,
- 	.destroy = vidi_connector_destroy,
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 471e486..8c3c27b 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1051,7 +1051,7 @@ static void hdmi_connector_destroy(struct drm_connector *connector)
- }
- 
- static struct drm_connector_funcs hdmi_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
-+	.dpms = drm_atomic_helper_connector_dpms,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = hdmi_detect,
- 	.destroy = hdmi_connector_destroy,
-@@ -2127,8 +2127,8 @@ static void hdmi_dpms(struct exynos_drm_display *display, int mode)
- 		 */
- 		if (crtc)
- 			funcs = crtc->helper_private;
--		if (funcs && funcs->dpms)
--			(*funcs->dpms)(crtc, mode);
-+		if (funcs && funcs->disable)
-+			(*funcs->disable)(crtc);
- 
- 		hdmi_poweroff(hdata);
- 		break;
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+Tm93IHRoYXQgbm8gb25lIGlzIHVzaW5nIHRoZSBmdW5jdGlvbnMgZXhwb3J0ZWQgYnkgZXh5bm9z
+X2RybV9wbGFuZSBkdWUKdG8gdGhlIGF0b21pYyBjb252ZXJzaW9uIHdlIGNhbiBtYWtlIHJlbW92
+ZSBzb21lIG9mIHRoZSB0aGVtIG9yIG1ha2UgdGhlbQpzdGF0aWMuCgp2MjogcmVtb3ZlIHVudXNl
+ZCBleHlub3NfZHJtX2NydGMKCnYzOiBmaXggY2hlY2twYXRjaCBlcnJvciAocmVwb3J0ZWQgYnkg
+Sm9vbnlvdW5nKQoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92
+YW5AY29sbGFib3JhLmNvLnVrPgpSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5z
+aGltQHNhbXN1bmcuY29tPgpUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51
+bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9w
+bGFuZS5jIHwgOTggKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggfCAxMSAtLS0tCiAyIGZpbGVzIGNoYW5nZWQs
+IDQyIGluc2VydGlvbnMoKyksIDY3IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX3BsYW5lLmMKaW5kZXggZTA1MmM3Mi4uNTRhODNlZSAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKQEAgLTYyLDM4ICs2MiwxMyBAQCBzdGF0
+aWMgaW50IGV4eW5vc19wbGFuZV9nZXRfc2l6ZShpbnQgc3RhcnQsIHVuc2lnbmVkIGxlbmd0aCwg
+dW5zaWduZWQgbGFzdCkKIAlyZXR1cm4gc2l6ZTsKIH0KIAotaW50IGV4eW5vc19jaGVja19wbGFu
+ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIpCi17
+Ci0Jc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFu
+ZShwbGFuZSk7Ci0JaW50IG5yOwotCWludCBpOwotCi0JaWYgKCFmYikKLQkJcmV0dXJuIDA7Ci0K
+LQluciA9IGV4eW5vc19kcm1fZmJfZ2V0X2J1Zl9jbnQoZmIpOwotCWZvciAoaSA9IDA7IGkgPCBu
+cjsgaSsrKSB7Ci0JCXN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYgKmJ1ZmZlciA9IGV4eW5vc19k
+cm1fZmJfYnVmZmVyKGZiLCBpKTsKLQotCQlpZiAoIWJ1ZmZlcikgewotCQkJRFJNX0RFQlVHX0tN
+UygiYnVmZmVyIGlzIG51bGxcbiIpOwotCQkJcmV0dXJuIC1FRkFVTFQ7Ci0JCX0KLQotCQlleHlu
+b3NfcGxhbmUtPmRtYV9hZGRyW2ldID0gYnVmZmVyLT5kbWFfYWRkciArIGZiLT5vZmZzZXRzW2ld
+OwotCi0JCURSTV9ERUJVR19LTVMoImJ1ZmZlcjogJWQsIGRtYV9hZGRyID0gMHglbHhcbiIsCi0J
+CQkJaSwgKHVuc2lnbmVkIGxvbmcpZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltpXSk7Ci0JfQotCi0J
+cmV0dXJuIDA7Ci19Ci0KLXZvaWQgZXh5bm9zX3BsYW5lX21vZGVfc2V0KHN0cnVjdCBkcm1fcGxh
+bmUgKnBsYW5lLCBzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCi0JCQkgIHN0cnVjdCBkcm1fZnJhbWVi
+dWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAotCQkJICB1bnNpZ25lZCBpbnQgY3J0
+Y193LCB1bnNpZ25lZCBpbnQgY3J0Y19oLAotCQkJICB1aW50MzJfdCBzcmNfeCwgdWludDMyX3Qg
+c3JjX3ksCi0JCQkgIHVpbnQzMl90IHNyY193LCB1aW50MzJfdCBzcmNfaCkKK3N0YXRpYyB2b2lk
+IGV4eW5vc19wbGFuZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKKwkJCQkgIHN0
+cnVjdCBkcm1fY3J0YyAqY3J0YywKKwkJCQkgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLAor
+CQkJCSAgaW50IGNydGNfeCwgaW50IGNydGNfeSwKKwkJCQkgIHVuc2lnbmVkIGludCBjcnRjX3cs
+IHVuc2lnbmVkIGludCBjcnRjX2gsCisJCQkJICB1aW50MzJfdCBzcmNfeCwgdWludDMyX3Qgc3Jj
+X3ksCisJCQkJICB1aW50MzJfdCBzcmNfdywgdWludDMyX3Qgc3JjX2gpCiB7CiAJc3RydWN0IGV4
+eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7CiAJ
+dW5zaWduZWQgaW50IGFjdHVhbF93OwpAQCAtMTQ4LDI0ICsxMjMsNiBAQCB2b2lkIGV4eW5vc19w
+bGFuZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpj
+cnRjLAogCXBsYW5lLT5jcnRjID0gY3J0YzsKIH0KIAotdm9pZAotZXh5bm9zX3VwZGF0ZV9wbGFu
+ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAotCQkgICAg
+IHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAotCQkg
+ICAgIHVuc2lnbmVkIGludCBjcnRjX3csIHVuc2lnbmVkIGludCBjcnRjX2gsCi0JCSAgICAgdWlu
+dDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAotCQkgICAgIHVpbnQzMl90IHNyY193LCB1aW50
+MzJfdCBzcmNfaCkKLXsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRv
+X2V4eW5vc19jcnRjKGNydGMpOwotCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpleHlub3NfcGxh
+bmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwotCi0JZXh5bm9zX3BsYW5lX21vZGVfc2V0KHBs
+YW5lLCBjcnRjLCBmYiwgY3J0Y194LCBjcnRjX3ksCi0JCQkgICAgICBjcnRjX3csIGNydGNfaCwg
+c3JjX3ggPj4gMTYsIHNyY195ID4+IDE2LAotCQkJICAgICAgc3JjX3cgPj4gMTYsIHNyY19oID4+
+IDE2KTsKLQotCWlmIChleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KQotCQlleHlub3NfY3J0
+Yy0+b3BzLT53aW5fY29tbWl0KGV4eW5vc19jcnRjLCBleHlub3NfcGxhbmUtPnpwb3MpOwotfQot
+CiBzdGF0aWMgc3RydWN0IGRybV9wbGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3MgPSB7CiAJ
+LnVwZGF0ZV9wbGFuZQk9IGRybV9hdG9taWNfaGVscGVyX3VwZGF0ZV9wbGFuZSwKIAkuZGlzYWJs
+ZV9wbGFuZQk9IGRybV9hdG9taWNfaGVscGVyX2Rpc2FibGVfcGxhbmUsCkBAIC0xNzgsMjIgKzEz
+NSw1MSBAQCBzdGF0aWMgc3RydWN0IGRybV9wbGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3Mg
+PSB7CiBzdGF0aWMgaW50IGV4eW5vc19wbGFuZV9hdG9taWNfY2hlY2soc3RydWN0IGRybV9wbGFu
+ZSAqcGxhbmUsCiAJCQkJICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0ZSkKIHsKLQly
+ZXR1cm4gZXh5bm9zX2NoZWNrX3BsYW5lKHBsYW5lLCBzdGF0ZS0+ZmIpOworCXN0cnVjdCBleHlu
+b3NfZHJtX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOworCWlu
+dCBucjsKKwlpbnQgaTsKKworCWlmICghc3RhdGUtPmZiKQorCQlyZXR1cm4gMDsKKworCW5yID0g
+ZXh5bm9zX2RybV9mYl9nZXRfYnVmX2NudChzdGF0ZS0+ZmIpOworCWZvciAoaSA9IDA7IGkgPCBu
+cjsgaSsrKSB7CisJCXN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYgKmJ1ZmZlciA9CisJCQkJCWV4
+eW5vc19kcm1fZmJfYnVmZmVyKHN0YXRlLT5mYiwgaSk7CisKKwkJaWYgKCFidWZmZXIpIHsKKwkJ
+CURSTV9ERUJVR19LTVMoImJ1ZmZlciBpcyBudWxsXG4iKTsKKwkJCXJldHVybiAtRUZBVUxUOwor
+CQl9CisKKwkJZXh5bm9zX3BsYW5lLT5kbWFfYWRkcltpXSA9IGJ1ZmZlci0+ZG1hX2FkZHIgKwor
+CQkJCQkgICAgc3RhdGUtPmZiLT5vZmZzZXRzW2ldOworCisJCURSTV9ERUJVR19LTVMoImJ1ZmZl
+cjogJWQsIGRtYV9hZGRyID0gMHglbHhcbiIsCisJCQkJaSwgKHVuc2lnbmVkIGxvbmcpZXh5bm9z
+X3BsYW5lLT5kbWFfYWRkcltpXSk7CisJfQorCisJcmV0dXJuIDA7CiB9CiAKIHN0YXRpYyB2b2lk
+IGV4eW5vc19wbGFuZV9hdG9taWNfdXBkYXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogCQkJ
+CSAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpvbGRfc3RhdGUpCiB7CiAJc3RydWN0IGRy
+bV9wbGFuZV9zdGF0ZSAqc3RhdGUgPSBwbGFuZS0+c3RhdGU7CisJc3RydWN0IGV4eW5vc19kcm1f
+Y3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhzdGF0ZS0+Y3J0Yyk7CisJc3RydWN0
+IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7
+CiAKIAlpZiAoIXN0YXRlLT5jcnRjKQogCQlyZXR1cm47CiAKLQlleHlub3NfdXBkYXRlX3BsYW5l
+KHBsYW5lLCBzdGF0ZS0+Y3J0Yywgc3RhdGUtPmZiLAotCQkJICAgIHN0YXRlLT5jcnRjX3gsIHN0
+YXRlLT5jcnRjX3ksCi0JCQkgICAgc3RhdGUtPmNydGNfdywgc3RhdGUtPmNydGNfaCwKLQkJCSAg
+ICBzdGF0ZS0+c3JjX3ggPj4gMTYsIHN0YXRlLT5zcmNfeSA+PiAxNiwKLQkJCSAgICBzdGF0ZS0+
+c3JjX3cgPj4gMTYsIHN0YXRlLT5zcmNfaCA+PiAxNik7CisJZXh5bm9zX3BsYW5lX21vZGVfc2V0
+KHBsYW5lLCBzdGF0ZS0+Y3J0Yywgc3RhdGUtPmZiLAorCQkJICAgICAgc3RhdGUtPmNydGNfeCwg
+c3RhdGUtPmNydGNfeSwKKwkJCSAgICAgIHN0YXRlLT5jcnRjX3csIHN0YXRlLT5jcnRjX2gsCisJ
+CQkgICAgICBzdGF0ZS0+c3JjX3ggPj4gMTYsIHN0YXRlLT5zcmNfeSA+PiAxNiwKKwkJCSAgICAg
+IHN0YXRlLT5zcmNfdyA+PiAxNiwgc3RhdGUtPnNyY19oID4+IDE2KTsKKworCWlmIChleHlub3Nf
+Y3J0Yy0+b3BzLT53aW5fY29tbWl0KQorCQlleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KGV4
+eW5vc19jcnRjLCBleHlub3NfcGxhbmUtPnpwb3MpOwogfQogCiBzdGF0aWMgdm9pZCBleHlub3Nf
+cGxhbmVfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCmluZGV4IDU2MGNhNzEuLjhjODhhZTkgMTAw
+NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oCkBAIC05LDE3ICs5LDYg
+QEAKICAqCiAgKi8KIAotaW50IGV4eW5vc19jaGVja19wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpw
+bGFuZSwgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIpOwotdm9pZCBleHlub3NfcGxhbmVfbW9k
+ZV9zZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKLQkJ
+CSAgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAot
+CQkJICAgdW5zaWduZWQgaW50IGNydGNfdywgdW5zaWduZWQgaW50IGNydGNfaCwKLQkJCSAgIHVp
+bnQzMl90IHNyY194LCB1aW50MzJfdCBzcmNfeSwKLQkJCSAgIHVpbnQzMl90IHNyY193LCB1aW50
+MzJfdCBzcmNfaCk7Ci12b2lkIGV4eW5vc191cGRhdGVfcGxhbmUoc3RydWN0IGRybV9wbGFuZSAq
+cGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKLQkJCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIg
+KmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAotCQkJdW5zaWduZWQgaW50IGNydGNfdywgdW5z
+aWduZWQgaW50IGNydGNfaCwKLQkJCXVpbnQzMl90IHNyY194LCB1aW50MzJfdCBzcmNfeSwKLQkJ
+CXVpbnQzMl90IHNyY193LCB1aW50MzJfdCBzcmNfaCk7CiBpbnQgZXh5bm9zX3BsYW5lX2luaXQo
+c3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJICAgICAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUg
+KmV4eW5vc19wbGFuZSwKIAkJICAgICAgdW5zaWduZWQgbG9uZyBwb3NzaWJsZV9jcnRjcywgZW51
+bSBkcm1fcGxhbmVfdHlwZSB0eXBlLAotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
