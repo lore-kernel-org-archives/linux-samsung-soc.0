@@ -1,72 +1,166 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 4/5] drm/exynos: mixer: do blending setup in
- =?UTF-8?Q?mixer=5Fcfg=5Flayer=28=29?=
-Date: Fri, 22 May 2015 11:50:44 +0200
-Message-ID: <75f1ddb7be890d0adace39976c0e2a45@math.uni-bielefeld.de>
-References: <1430919410-9917-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1430919410-9917-5-git-send-email-tjakobi@math.uni-bielefeld.de>
- <555EF305.3030001@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v6 11/12] drm/exynos: atomic dpms support
+Date: Fri, 22 May 2015 22:00:24 +0900
+Message-ID: <555F2868.8060109@samsung.com>
+References: <1432238571-31621-1-git-send-email-gustavo@padovan.org>
+ <1432238571-31621-12-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <555EF305.3030001@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, gustavo.padovan@collabora.co.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44826 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964803AbbEVNA0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 May 2015 09:00:26 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NOR000BA5GOV690@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 May 2015 22:00:25 +0900 (KST)
+In-reply-to: <1432238571-31621-12-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-SGVsbG8gSm9vbnlvdW5nLAoKT24gMjAxNS0wNS0yMiAxMToxMiwgSm9vbnlvdW5nIFNoaW0gd3Jv
-dGU6Cj4gT24gMDUvMDYvMjAxNSAxMDozNiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4gVGhp
-cyB1cGRhdGVzIHRoZSBibGVuZGluZyBzZXR1cCB3aGVuIHRoZSBsYXllciBjb25maWd1cmF0aW9u
-Cj4+IGNoYW5nZXMgKHRyaWdnZXJlZCBieSBtaXhlcl93aW5fe2NvbW1pdCxkaXNhYmxlfSkuCj4+
-IAo+PiBFeHRyYSBjYXJlIGhhcyB0byBiZSB0YWtlbiBmb3IgdGhlIGxheWVyIHRoYXQgaXMgY3Vy
-cmVudGx5Cj4+IGJlaW5nIGVuYWJsZWQvZGlzYWJsZWQuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBU
-b2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPj4gLS0tCj4+ICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMjMgKysrKysrKysrKysrKysr
-KysrKysrKysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspCj4+IAo+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAKPj4gYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+IGluZGV4IDNhYjdhMDEuLjQzMGQx
-MGMgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMK
-Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+PiBAQCAtMTc3
-LDYgKzE3NywxOCBAQCBzdGF0aWMgaW5saW5lIGJvb2wgaXNfYWxwaGFfZm9ybWF0KGNvbnN0IHN0
-cnVjdCAKPj4gbWl4ZXJfY29udGV4dCogY3R4LCB1bnNpZ25lZCBpbnQKPj4gIAl9Cj4+ICB9Cj4+
-IAo+PiArc3RhdGljIGlubGluZSB1bnNpZ25lZCBpbnQgbGF5ZXJfYml0bWFzayhjb25zdCBzdHJ1
-Y3QgbWl4ZXJfY29udGV4dCogCj4+IGN0eCkKPj4gK3sKPj4gKwl1bnNpZ25lZCBpbnQgaSwgbWFz
-ayA9IDA7Cj4+ICsKPj4gKwlmb3IgKGkgPSAwOyBpIDwgTUlYRVJfV0lOX05SOyArK2kpIHsKPj4g
-KwkJaWYgKGN0eC0+cGxhbmVzW2ldLmVuYWJsZWQpCj4+ICsJCQltYXNrIHw9ICgxIDw8IGkpOwo+
-PiArCX0KPj4gKwo+PiArCXJldHVybiBtYXNrOwo+PiArfQo+PiArCj4+ICBzdGF0aWMgaW5saW5l
-IHUzMiB2cF9yZWdfcmVhZChzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2VzICpyZXMsIHUzMiAKPj4gcmVn
-X2lkKQo+PiAgewo+PiAgCXJldHVybiByZWFkbChyZXMtPnZwX3JlZ3MgKyByZWdfaWQpOwo+PiBA
-QCAtNTEzLDYgKzUyNSw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ19yZ2JfZm10KHN0cnVjdCBt
-aXhlcl9jb250ZXh0IAo+PiAqY3R4LCB1bnNpZ25lZCBpbnQgaGVpZ2h0KQo+PiAgc3RhdGljIHZv
-aWQgbWl4ZXJfY2ZnX2xheWVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGlu
-dCAKPj4gd2luLCBib29sIGVuYWJsZSkKPj4gIHsKPj4gIAlzdHJ1Y3QgbWl4ZXJfcmVzb3VyY2Vz
-ICpyZXMgPSAmY3R4LT5taXhlcl9yZXM7Cj4+ICsJdW5zaWduZWQgaW50IGVuYWJsZV9zdGF0ZTsK
-Pj4gIAl1MzIgdmFsID0gZW5hYmxlID8gfjAgOiAwOwo+PiAKPj4gIAlzd2l0Y2ggKHdpbikgewo+
-PiBAQCAtNTMwLDYgKzU0MywxNiBAQCBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfbGF5ZXIoc3RydWN0
-IG1peGVyX2NvbnRleHQgCj4+ICpjdHgsIHVuc2lnbmVkIGludCB3aW4sIGJvb2wgZW4KPj4gIAkJ
-fQo+PiAgCQlicmVhazsKPj4gIAl9Cj4+ICsKPj4gKwkvKiBEZXRlcm1pbmUgdGhlIGN1cnJlbnQg
-ZW5hYmxlZC9kaXNhYmxlZCBzdGF0ZSBvZiB0aGUgbGF5ZXJzLiAqLwo+PiArCWVuYWJsZV9zdGF0
-ZSA9IGxheWVyX2JpdG1hc2soY3R4KTsKPj4gKwlpZiAoZW5hYmxlKQo+PiArCQllbmFibGVfc3Rh
-dGUgfD0gKDEgPDwgd2luKTsKPj4gKwllbHNlCj4+ICsJCWVuYWJsZV9zdGF0ZSAmPSB+KDEgPDwg
-d2luKTsKPiAKPiBJIHRoaW5rIHdheSB0byByZW1vdmUgdG8gZ2V0IGVuYWJsZV9zdGF0ZSBvZiBw
-bGFuZSBldmVyeXRpbWUsIG1heWJlCj4gdXNpbmcgYXRvbWljIHN0YXRlIGluZm9ybWF0aW9uPwpJ
-IGhhZCB0aGUgc2FtZSBpZGVhLCBidXQgSSBkb24ndCBrbm93IGV2ZW4gYWJvdXQgdGhlIGF0b21p
-YyAKaW5mcmFzdHJ1Y3R1cmUgdG8gZXZhbHVhdGUgaWYgdGhpcyBpcyBwb3NzaWJsZS4gSSBndWVz
-cyBHdXN0YXZvIHdvdWxkIGJlIAp0aGUgb25lIHdobyBjb3VsZCBhbnN3ZXIgdGhpcy4KCgoKPiAK
-Pj4gKwo+PiArCS8qIExheWVyIGNvbmZpZ3VyYXRpb24gaGFzIGNoYW5nZWQsIHVwZGF0ZSBibGVu
-ZGluZyBzZXR1cC4gKi8KPj4gKwltaXhlcl9sYXllcl9ibGVuZGluZyhjdHgsIGVuYWJsZV9zdGF0
-ZSk7Cj4+ICB9Cj4+IAo+PiAgc3RhdGljIHZvaWQgbWl4ZXJfcnVuKHN0cnVjdCBtaXhlcl9jb250
-ZXh0ICpjdHgpCj4+IAoKV2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi,
+
+On 2015=EB=85=84 05=EC=9B=94 22=EC=9D=BC 05:02, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>=20
+> Run dpms operations through the atomic intefaces. This basically remo=
+ves
+> the .dpms() callback from econders and crtcs and use .disable() and
+> .enable() to turn the crtc on and off.
+>=20
+> v2: Address comments by Joonyoung:
+> 	- make hdmi code call ->disable() instead of ->dpms()
+> 	- do not use WARN_ON on crtc enable/disable
+>=20
+> v3: - Fix build failure after the hdmi change in v2
+>     - Change dpms helper of ptn3460 bridge
+>=20
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/bridge/ps8622.c             |  2 +-
+>  drivers/gpu/drm/bridge/ptn3460.c            |  2 +-
+>  drivers/gpu/drm/exynos/exynos_dp_core.c     |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 99 ++++++++++++++++---=
+----------
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h     |  4 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_encoder.c | 27 ++------
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  2 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c        |  6 +-
+>  10 files changed, 71 insertions(+), 77 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge=
+/ps8622.c
+> index b604326..d686235 100644
+> --- a/drivers/gpu/drm/bridge/ps8622.c
+> +++ b/drivers/gpu/drm/bridge/ps8622.c
+> @@ -499,7 +499,7 @@ static void ps8622_connector_destroy(struct drm_c=
+onnector *connector)
+>  }
+> =20
+>  static const struct drm_connector_funcs ps8622_connector_funcs =3D {
+> -	.dpms =3D drm_helper_connector_dpms,
+> +	.dpms =3D drm_atomic_helper_connector_dpms,
+>  	.fill_modes =3D drm_helper_probe_single_connector_modes,
+>  	.detect =3D ps8622_detect,
+>  	.destroy =3D ps8622_connector_destroy,
+> diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridg=
+e/ptn3460.c
+> index 8ed3617..260bc9f 100644
+> --- a/drivers/gpu/drm/bridge/ptn3460.c
+> +++ b/drivers/gpu/drm/bridge/ptn3460.c
+> @@ -260,7 +260,7 @@ static void ptn3460_connector_destroy(struct drm_=
+connector *connector)
+>  }
+> =20
+>  static struct drm_connector_funcs ptn3460_connector_funcs =3D {
+> -	.dpms =3D drm_helper_connector_dpms,
+> +	.dpms =3D drm_atomic_helper_connector_dpms,
+>  	.fill_modes =3D drm_helper_probe_single_connector_modes,
+>  	.detect =3D ptn3460_detect,
+>  	.destroy =3D ptn3460_connector_destroy,
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/dr=
+m/exynos/exynos_dp_core.c
+> index 195fe60..c9995b1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -954,7 +954,7 @@ static void exynos_dp_connector_destroy(struct dr=
+m_connector *connector)
+>  }
+> =20
+>  static struct drm_connector_funcs exynos_dp_connector_funcs =3D {
+> -	.dpms =3D drm_helper_connector_dpms,
+> +	.dpms =3D drm_atomic_helper_connector_dpms,
+>  	.fill_modes =3D drm_helper_probe_single_connector_modes,
+>  	.detect =3D exynos_dp_detect,
+>  	.destroy =3D exynos_dp_connector_destroy,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_crtc.c
+> index 3251652..92a5595 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -22,51 +22,57 @@
+>  #include "exynos_drm_encoder.h"
+>  #include "exynos_drm_plane.h"
+> =20
+> -static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+> +static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
+>  {
+>  	struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(crtc);
+> +	struct exynos_drm_plane *exynos_plane =3D to_exynos_plane(crtc->pri=
+mary);
+> =20
+> -	DRM_DEBUG_KMS("crtc[%d] mode[%d]\n", crtc->base.id, mode);
+> -
+> -	if (exynos_crtc->dpms =3D=3D mode) {
+> -		DRM_DEBUG_KMS("desired dpms mode is same as previous one.\n");
+> +	if (exynos_crtc->enabled)
+>  		return;
+> -	}
+> -
+> -	if (mode > DRM_MODE_DPMS_ON) {
+> -		/* wait for the completion of page flip. */
+> -		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+> -				(exynos_crtc->event =3D=3D NULL), HZ/20))
+> -			exynos_crtc->event =3D NULL;
+> -		drm_crtc_vblank_off(crtc);
+> -	}
+> =20
+>  	if (exynos_crtc->ops->dpms)
+> -		exynos_crtc->ops->dpms(exynos_crtc, mode);
+> +		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_ON);
+> =20
+> -	exynos_crtc->dpms =3D mode;
+> +	exynos_crtc->enabled =3D true;
+> =20
+> -	if (mode =3D=3D DRM_MODE_DPMS_ON)
+> -		drm_crtc_vblank_on(crtc);
+> -}
+> +	drm_crtc_vblank_on(crtc);
+> =20
+> -static void exynos_drm_crtc_prepare(struct drm_crtc *crtc)
+> -{
+> -	/* drm framework doesn't check NULL. */
+> +	if (exynos_crtc->ops->win_commit)
+> +		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+> +
+> +	if (exynos_crtc->ops->commit)
+> +		exynos_crtc->ops->commit(exynos_crtc);
+
+crtc commit already was called by mode_set_nofb callback as soon as it
+disables crtc and encoder devices so I think unnecessary. Please see th=
+e
+drm_atomic_helper_commit_modeset_disable function.
+
+<--snip-->
+
+Thanks,
+Inki Dae
