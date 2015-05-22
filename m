@@ -1,62 +1,47 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v7 07/13] drm/exynos: atomic phase 3: atomic updates of planes
-Date: Fri, 22 May 2015 12:40:47 -0300
-Message-ID: <1432309253-18572-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v7 06/13] drm/exynos: atomic phase 2: keep track of framebuffer pointer
+Date: Fri, 22 May 2015 12:40:46 -0300
+Message-ID: <1432309253-18572-7-git-send-email-gustavo@padovan.org>
 References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f43.google.com ([209.85.192.43]:34043 "EHLO
+	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1946045AbbEVPlQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 May 2015 11:41:16 -0400
+Received: by qgez61 with SMTP id z61so10336536qge.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2015 08:41:16 -0700 (PDT)
 In-Reply-To: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-Tm93IHRoYXQgcGhhc2UgMSBhbmQgMiBhcmUgY29tcGxldGUgd2UgY2FuIHN3aXRjaCB0aGUgdXBk
-YXRlL2Rpc2FibGVfcGxhbmUKY2FsbGJhY2tzIHRvIHRoZWlyIGF0b21pYyB2ZXJzaW9uLgoKU2ln
-bmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNv
-LnVrPgpSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29t
-PgpUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRl
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgIHwgMyArKysK
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgNCArKy0tCiAyIGZp
-bGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9mYi5jCmluZGV4IDE0MmViNGUuLjE5YzA2NDIgMTAwNjQ0Ci0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCkBAIC0xNiw2ICsxNiw3IEBACiAjaW5jbHVk
-ZSA8ZHJtL2RybV9jcnRjLmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgogI2lu
-Y2x1ZGUgPGRybS9kcm1fZmJfaGVscGVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVs
-cGVyLmg+CiAjaW5jbHVkZSA8dWFwaS9kcm0vZXh5bm9zX2RybS5oPgogCiAjaW5jbHVkZSAiZXh5
-bm9zX2RybV9kcnYuaCIKQEAgLTI2OCw2ICsyNjksOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJt
-X291dHB1dF9wb2xsX2NoYW5nZWQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIHN0YXRpYyBjb25z
-dCBzdHJ1Y3QgZHJtX21vZGVfY29uZmlnX2Z1bmNzIGV4eW5vc19kcm1fbW9kZV9jb25maWdfZnVu
-Y3MgPSB7CiAJLmZiX2NyZWF0ZSA9IGV4eW5vc191c2VyX2ZiX2NyZWF0ZSwKIAkub3V0cHV0X3Bv
-bGxfY2hhbmdlZCA9IGV4eW5vc19kcm1fb3V0cHV0X3BvbGxfY2hhbmdlZCwKKwkuYXRvbWljX2No
-ZWNrID0gZHJtX2F0b21pY19oZWxwZXJfY2hlY2ssCisJLmF0b21pY19jb21taXQgPSBkcm1fYXRv
-bWljX2hlbHBlcl9jb21taXQsCiB9OwogCiB2b2lkIGV4eW5vc19kcm1fbW9kZV9jb25maWdfaW5p
-dChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fcGxhbmUuYwppbmRleCA0M2FkYTg2Li5lMDUyYzcyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMTY3LDggKzE2Nyw4IEBAIGV4eW5vc191cGRhdGVf
-cGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKIH0K
-IAogc3RhdGljIHN0cnVjdCBkcm1fcGxhbmVfZnVuY3MgZXh5bm9zX3BsYW5lX2Z1bmNzID0gewot
-CS51cGRhdGVfcGxhbmUJPSBkcm1fcGxhbmVfaGVscGVyX3VwZGF0ZSwKLQkuZGlzYWJsZV9wbGFu
-ZQk9IGRybV9wbGFuZV9oZWxwZXJfZGlzYWJsZSwKKwkudXBkYXRlX3BsYW5lCT0gZHJtX2F0b21p
-Y19oZWxwZXJfdXBkYXRlX3BsYW5lLAorCS5kaXNhYmxlX3BsYW5lCT0gZHJtX2F0b21pY19oZWxw
-ZXJfZGlzYWJsZV9wbGFuZSwKIAkuZGVzdHJveQk9IGRybV9wbGFuZV9jbGVhbnVwLAogCS5yZXNl
-dCA9IGRybV9hdG9taWNfaGVscGVyX3BsYW5lX3Jlc2V0LAogCS5hdG9taWNfZHVwbGljYXRlX3N0
-YXRlID0gZHJtX2F0b21pY19oZWxwZXJfcGxhbmVfZHVwbGljYXRlX3N0YXRlLAotLSAKMi4xLjAK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Use drm_atomic_set_fb_for_plane() in the legacy page_flip path to keep
+track of the framebuffer pointer and reference.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 5bfee9b..fe77516 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -171,6 +171,9 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 			    crtc_w, crtc_h, crtc->x << 16, crtc->y << 16,
+ 			    crtc_w << 16, crtc_h << 16);
+ 
++	if (crtc->primary->state)
++		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
++
+ 	return 0;
+ 
+ out:
+-- 
+2.1.0
