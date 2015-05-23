@@ -1,50 +1,56 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [GIT PULL] Samsung related to updating multi_v7_defconfig
-Date: Sat, 23 May 2015 11:16:36 +0900
-Message-ID: <555FE304.5090706@kernel.org>
-References: <555D4BF5.20008@kernel.org> <2227456.dXyEpqfCYe@wuerfel>
+Subject: Re: [PATCH 1/2] ARM: exynos_defconfig: Enable display on Trats2 board
+Date: Sat, 23 May 2015 11:17:43 +0900
+Message-ID: <555FE347.6060908@kernel.org>
+References: <1432255718-11695-1-git-send-email-k.kozlowski@samsung.com> <555EF265.30608@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:38956 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:39089 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756569AbbEWCQr (ORCPT
+	id S1756390AbbEWCRv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 May 2015 22:16:47 -0400
-In-Reply-To: <2227456.dXyEpqfCYe@wuerfel>
+	Fri, 22 May 2015 22:17:51 -0400
+In-Reply-To: <555EF265.30608@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/23/15 00:15, Arnd Bergmann wrote:
-> On Thursday 21 May 2015 12:07:33 Kukjin Kim wrote:
->>
->> Here is multi_v7_defconfig update and mostly including regarding exynos
->> stuff based on savedefconfig which could remove useless configs based on
->> checking of dependencies.
->>
->> This series is based on v4.1-rc1 and I can provide resolution of
->> conflicts with arm-soc/next/defconfig. See below.
->>
->> Note that, IMHO we need to check 'savedefconfig when defconfig is
->> updated so that we could remove useless lines and avoid to miss some
->> defconfigs because of dependency.
->>
->> Anyway please pull and if any concerns, please kindly let me know.
->>
+On 05/22/15 18:09, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
 Hi,
 
-> The conflict got a little too wild for my taste, so I dropped your
-> 'savedefconfig' commit and rebased the other ones on top of the
-> branch I already had.
+> On 05/22/2015 02:48 AM, Krzysztof Kozlowski wrote:
+>> Enable the Exynos DSI and S6E8AA0 panel for full X11 display on Trats2.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>  arch/arm/configs/exynos_defconfig | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+>> index d034c96c039b..e7ccec487422 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -135,9 +135,11 @@ CONFIG_DRM_BRIDGE=y
+>>  CONFIG_DRM_PTN3460=y
+>>  CONFIG_DRM_PS8622=y
+>>  CONFIG_DRM_EXYNOS=y
+>> +CONFIG_DRM_EXYNOS_DSI=y
+>>  CONFIG_DRM_EXYNOS_FIMD=y
+>>  CONFIG_DRM_EXYNOS_DP=y
+>>  CONFIG_DRM_PANEL=y
+>> +CONFIG_DRM_PANEL_S6E8AA0=y
+>>  CONFIG_DRM_PANEL_SIMPLE=y
+>>  CONFIG_FB=y
+>>  CONFIG_FB_MODE_HELPERS=y
+>>
 > 
-OK, no problem :-)
-
-> Please check that the result is still ok for you.
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > 
-When I checked, I didn't find any missing stuff from my side. Looks
-good, thanks.
+Thanks, applied.
 
 - Kukjin
