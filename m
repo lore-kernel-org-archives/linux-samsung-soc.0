@@ -1,57 +1,89 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v4 0/8] ARM: dts: exynos5: labels for overriding nodes
-Date: Sat, 23 May 2015 13:00:58 +0900
-Message-ID: <555FFB7A.7040300@kernel.org>
-References: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq:exynos-cpufreq - Fix for memory leak in case SOC
+ name does not match.
+Date: Sat, 23 May 2015 10:12:02 +0530
+Message-ID: <20150523044202.GA5751@linux>
+References: <1432350171-2414-1-git-send-email-shailendra.capricorn@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:41403 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750969AbbEWEBI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 23 May 2015 00:01:08 -0400
-In-Reply-To: <1431851175-32624-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1432350171-2414-1-git-send-email-shailendra.capricorn@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Shailendra Verma <shailendra.capricorn@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/17/15 17:26, Krzysztof Kozlowski wrote:
-> Hi,
+On 23-05-15, 08:32, Shailendra Verma wrote:
+> During probe free the memory allocated to "exynos_info" in case of
+> unknown SOC type.
 > 
+> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
+> ---
+>  drivers/cpufreq/exynos-cpufreq.c |   15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
 > 
-> Changes since v3
-> ================
-> 1. Rebased on current Kukjin's for-next branch:
->    v4.1-rc3-34-gfcfae6b049cf
-> 
-> Changes since v2
-> ================
-> 1. New patch 8/8: ARM: dts: Use labels for overriding nodes
->    in exynos5422-odroidxu3
-> 2. To avoid conflicts rebased on my "for-next" branch of
->    https://github.com/krzk/linux
->    The branch above contains some patches for Exynos5 boards
->    applied from LKML.
-> 
-> Changes since v1
-> ================
-> 1. Re-phrased the description (phandle->label). Suggested by Arnd.
-> 
-> 
-> Description
-> ===========
-> The label-based notation reduces possible mistakes when overriding
-> nodes by child DTSI and board files and reduces duplication
-> of addresses.
-> 
-> The patchset refactors Exynos5 boards to use labels for overriding nodes.
-> 
-> Tested by comparison of decompiled DTB for each commit.
-> 
-Same, will sort out.
+> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+> index 82d2fbb..5b57a0f 100644
+> --- a/drivers/cpufreq/exynos-cpufreq.c
+> +++ b/drivers/cpufreq/exynos-cpufreq.c
+> @@ -182,20 +182,25 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+>  		ret = exynos5250_cpufreq_init(exynos_info);
+>  	} else {
+>  		pr_err("%s: Unknown SoC type\n", __func__);
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto err_vdd_arm;
 
-Thanks,
-Kukjin
+Because we are going to check ret again, don't add the goto here. The
+below code will take care of this.
+
+>  	}
+>  
+> -	if (ret)
+> +	if (ret) {
+> +		ret = -EINVAL;
+
+Why update ret here ?
+
+>  		goto err_vdd_arm;
+> +	}
+>  
+>  	if (exynos_info->set_freq == NULL) {
+>  		dev_err(&pdev->dev, "No set_freq function (ERR)\n");
+> +		ret = -EINVAL;
+>  		goto err_vdd_arm;
+>  	}
+>  
+>  	arm_regulator = regulator_get(NULL, "vdd_arm");
+>  	if (IS_ERR(arm_regulator)) {
+>  		dev_err(&pdev->dev, "failed to get resource vdd_arm\n");
+> +		ret = -EINVAL;
+>  		goto err_vdd_arm;
+>  	}
+>  
+> @@ -203,8 +208,10 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+>  	locking_frequency = clk_get_rate(exynos_info->cpu_clk) / 1000;
+>  
+>  	ret = cpufreq_register_driver(&exynos_driver);
+> -	if (ret)
+> +	if (ret) {
+> +		ret = -EINVAL;
+
+Wrong again.
+
+>  		goto err_cpufreq_reg;
+> +	}
+>  
+>  	cpu0 = of_get_cpu_node(0, NULL);
+>  	if (!cpu0) {
+> @@ -227,7 +234,7 @@ err_cpufreq_reg:
+>  	regulator_put(arm_regulator);
+>  err_vdd_arm:
+>  	kfree(exynos_info);
+> -	return -EINVAL;
+> +	return ret;
+>  }
+
+-- 
+viresh
