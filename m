@@ -1,37 +1,50 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v3 0/7] mfd: cros_ec: Add multi EC and proto v3 support
-Date: Fri, 22 May 2015 21:28:12 +0200
-Message-ID: <34956392.X7yifgxE7d@phil>
-References: <1432309340-13688-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [GIT PULL] Samsung related to updating multi_v7_defconfig
+Date: Sat, 23 May 2015 11:16:36 +0900
+Message-ID: <555FE304.5090706@kernel.org>
+References: <555D4BF5.20008@kernel.org> <2227456.dXyEpqfCYe@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1432309340-13688-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:38956 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756569AbbEWCQr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 May 2015 22:16:47 -0400
+In-Reply-To: <2227456.dXyEpqfCYe@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hi Javier,
+On 05/23/15 00:15, Arnd Bergmann wrote:
+> On Thursday 21 May 2015 12:07:33 Kukjin Kim wrote:
+>>
+>> Here is multi_v7_defconfig update and mostly including regarding exynos
+>> stuff based on savedefconfig which could remove useless configs based on
+>> checking of dependencies.
+>>
+>> This series is based on v4.1-rc1 and I can provide resolution of
+>> conflicts with arm-soc/next/defconfig. See below.
+>>
+>> Note that, IMHO we need to check 'savedefconfig when defconfig is
+>> updated so that we could remove useless lines and avoid to miss some
+>> defconfigs because of dependency.
+>>
+>> Anyway please pull and if any concerns, please kindly let me know.
+>>
+Hi,
 
-Am Freitag, 22. Mai 2015, 17:42:13 schrieb Javier Martinez Canillas:
-> Newer Chromebooks have more than one Embedded Controller (EC) in the
-> system. These additional ECs are connected through I2C with a host EC
-> which is the one that is connected to the Application Processor (AP)
-> through different transports (I2C, SPI or LPC).
-[...]
-> The series were tested using a modified ectool [2] that supports the new
-> cros_ec IOCTL API. They were also tested on a x86 Pixel Chromebook 2 (Samus)
-> that uses the new protocol v3 and has 2 EC (cros_ec and cros_pd). But for
-> testing on Samus, also the posted "[PATCH 0/3] platform/chrome: Changes for
-> cros_ec_lpc and cros_ec_dev" series [3] are needed.
+> The conflict got a little too wild for my taste, so I dropped your
+> 'savedefconfig' commit and rebased the other ones on top of the
+> branch I already had.
 > 
-> Gwendal Grignou and Heiko Stuebner tested the first versions of the series
-> but I did not carry their Tested-by tags for the patches that had not
-> trivial changes. So testing on more platforms will be highly appreciated.
+OK, no problem :-)
 
-Everything is still working nicely on rk3288-pinky and rk3288-jerry on
-4.1-rc4, so still
+> Please check that the result is still ok for you.
+> 
+When I checked, I didn't find any missing stuff from my side. Looks
+good, thanks.
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+- Kukjin
