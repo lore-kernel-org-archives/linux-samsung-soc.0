@@ -1,73 +1,67 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 0/9 v5] Helper to abstract vma handling in media layer
-Date: Mon, 25 May 2015 13:37:56 +0200
-Message-ID: <55630994.7040006@xs4all.nl>
-References: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
-Sender: linux-media-owner@vger.kernel.org
-To: Jan Kara <jack@suse.cz>, linux-mm@kvack.org
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH] ARM: dts: odroidxu3: Enable wake alarm of S2MPS11 RTC
+Date: Mon, 25 May 2015 20:44:13 +0900
+Message-ID: <1432554253-25886-1-git-send-email-k.kozlowski.k@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:33234 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751520AbbEYLot (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 May 2015 07:44:49 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Hi Jan,
+The IRQB of S2MPS11 PMIC is wired to XEINT4 (GPX0-4) through pull-up
+resistor.
 
-On 05/13/2015 03:08 PM, Jan Kara wrote:
->   Hello,
-> 
-> I'm sending the fifth version of my patch series to abstract vma handling
-> from the various media drivers. The patches got some review from mm people and
-> testing from device driver guys so unless someone objects, patches will be
-> queued in media tree for the next merge window.
+Add interrupt properties and pinctrl configuration to enable RTC wake
+alarm of rtc-s5m driver. This also removes a warning:
+sec_pmic 4-0066: No interrupt specified, no interrupts
 
-What is the current status? I saw one comment for patch 9, so I assume it is not
-quite ready yet.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Let me know when you think it is time to merge.
-
-Regards,
-
-	Hans
-
-> 
-> After this patch set drivers have to know much less details about vmas, their
-> types, and locking. Also quite some code is removed from them. As a bonus
-> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
-> this series is to remove knowledge about mmap_sem locking from as many places a
-> possible so that we can change it with reasonable effort.
-> 
-> The core of the series is the new helper get_vaddr_frames() which is given a
-> virtual address and it fills in PFNs / struct page pointers (depending on VMA
-> type) into the provided array. If PFNs correspond to normal pages it also grabs
-> references to these pages. The difference from get_user_pages() is that this
-> function can also deal with pfnmap, and io mappings which is what the media
-> drivers need.
-> 
-> I have tested the patches with vivid driver so at least vb2 code got some
-> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
-> exynos driver which is only for Samsung platform is completely untested).
-> 
-> 								Honza
-> Changes since v4:
-> * Minor cleanups and fixes pointed out by Mel and Vlasta
-> * Added Acked-by tags
-> 
-> Changes since v3:
-> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
-> * Fixed error path for exynos driver
-> 
-> Changes since v2:
-> * Renamed functions and structures as Mel suggested
-> * Other minor changes suggested by Mel
-> * Rebased on top of 4.1-rc2
-> * Changed functions to get pointer to array of pages / pfns to perform
->   conversion if necessary. This fixes possible issue in the omap I may have
->   introduced in v2 and generally makes the API less errorprone.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index c16987950aa1..27014bb0c586 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -12,6 +12,7 @@
+ 
+ /dts-v1/;
+ #include <dt-bindings/clock/samsung,s2mps11.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5800.dtsi"
+@@ -153,6 +154,11 @@
+ 		s2mps11,buck3-ramp-enable = <1>;
+ 		s2mps11,buck4-ramp-enable = <1>;
+ 
++		interrupt-parent = <&gpx0>;
++		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&s2mps11_irq>;
++
+ 		s2mps11_osc: clocks {
+ 			#clock-cells = <1>;
+ 			clock-output-names = "s2mps11_ap",
+@@ -473,6 +479,13 @@
+ 		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <0>;
+ 	};
++
++	s2mps11_irq: s2mps11-irq {
++		samsung,pins = "gpx0-4";
++		samsung,pin-function = <0xf>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
+ };
+ 
+ &pwm {
+-- 
+2.1.4
