@@ -1,204 +1,106 @@
-From: Damian Eppel <d.eppel@samsung.com>
-Subject: Re: [PATCH v2] clocksource: exynos_mct: fix for sleeping in atomic ctx
- handling cpu hotplug notif.
-Date: Mon, 25 May 2015 17:24:30 +0200
-Message-ID: <1432567470.13951.2.camel@AMDC1552.digital.local>
-References: <1426151496-5509-1-git-send-email-d.eppel@samsung.com>
- <55509013.3040901@linaro.org>
-Reply-To: d.eppel@samsung.com
+From: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
+Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible option
+Date: Mon, 25 May 2015 14:19:58 -0700
+Message-ID: <556391FE.1020503@broadcom.com>
+References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com> <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com> <20150515005210.GA31534@saruman.tx.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <55509013.3040901@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, kgene@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, k.kozlowski@samsung.com, m.jabrzyk@samsung.com, d.eppel@samsung.com, stable@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20150515005210.GA31534@saruman.tx.rr.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: balbi@ti.com
+Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 2015-05-11 at 13:18 +0200, Daniel Lezcano wrote:
-> On 03/12/2015 10:11 AM, Damian Eppel wrote:
-> > This is to fix an issue of sleeping in atomic context when processing
-> > hotplug notifications in Exynos MCT(Multi-Core Timer).
-> > The issue was reproducible on Exynos 3250 (Rinato board) and Exynos 5420
-> > (Arndale Octa board).
-> >
-> > Whilst testing cpu hotplug events on kernel configured with DEBUG_PREEMPT
-> > and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by calling
-> > request_irq() and free_irq() in the context of hotplug notification
-> > (which is in this case atomic context).
-> >
-> > root@target:~# echo 0 > /sys/devices/system/cpu/cpu1/online
-> >
-> > [   25.157867] IRQ18 no longer affine to CPU1
-> > ...
-> > [   25.158445] CPU1: shutdown
-> >
-> > root@target:~# echo 1 > /sys/devices/system/cpu/cpu1/online
-> >
-> > [   40.785859] CPU1: Software reset
-> > [   40.786660] BUG: sleeping function called from invalid context at mm/slub.c:1241
-> > [   40.786668] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
-> > [   40.786678] Preemption disabled at:[<  (null)>]   (null)
-> > [   40.786681]
-> > [   40.786692] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.19.0-rc4-00024-g7dca860 #36
-> > [   40.786698] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> > [   40.786728] [<c0014a00>] (unwind_backtrace) from [<c0011980>] (show_stack+0x10/0x14)
-> > [   40.786747] [<c0011980>] (show_stack) from [<c0449ba0>] (dump_stack+0x70/0xbc)
-> > [   40.786767] [<c0449ba0>] (dump_stack) from [<c00c6124>] (kmem_cache_alloc+0xd8/0x170)
-> > [   40.786785] [<c00c6124>] (kmem_cache_alloc) from [<c005d6f8>] (request_threaded_irq+0x64/0x128)
-> > [   40.786804] [<c005d6f8>] (request_threaded_irq) from [<c0350b8c>] (exynos4_local_timer_setup+0xc0/0x13c)
-> > [   40.786820] [<c0350b8c>] (exynos4_local_timer_setup) from [<c0350ca8>] (exynos4_mct_cpu_notify+0x30/0xa8)
-> > [   40.786838] [<c0350ca8>] (exynos4_mct_cpu_notify) from [<c003b330>] (notifier_call_chain+0x44/0x84)
-> > [   40.786857] [<c003b330>] (notifier_call_chain) from [<c0022fd4>] (__cpu_notify+0x28/0x44)
-> > [   40.786873] [<c0022fd4>] (__cpu_notify) from [<c0013714>] (secondary_start_kernel+0xec/0x150)
-> > [   40.786886] [<c0013714>] (secondary_start_kernel) from [<40008764>] (0x40008764)
-> >
-> > Solution:
-> > Clockevent irqs cannot be requested/freed every time cpu is
-> > hot-plugged/unplugged as CPU_STARTING/CPU_DYING notifications
-> > that signals hotplug or unplug events are sent with both preemption
-> > and local interrupts disabled. Since request_irq() may sleep it is
-> > moved to the initialization stage and performed for all possible
-> > cpus prior putting them online. Then, in the case of hotplug event
-> > the irq asociated with the given cpu will simply be enabled.
-> > Similarly on cpu unplug event the interrupt is not freed but just
-> > disabled.
-> >
-> > Note that after successful request_irq() call for a clockevent device
-> > associated to given cpu the requested irq is disabled (via disable_irq()).
-> > That is to make things symmetric as we expect hotplug event as a next
-> > thing (which will enable irq again). This should not pose any problems
-> > because at the time of requesting irq the clockevent device is not
-> > fully initialized yet, therefore should not produce interrupts at that point.
-> >
-> > For disabling an irq at cpu unplug notification disable_irq_nosync() is
-> > chosen which is a non-blocking function. This again shouldn't be a problem as
-> > prior sending CPU_DYING notification interrupts are migrated away
-> > from the cpu.
-> 
-> The code sounds very complex for what it is supposed to do.
-> 
-> Perhaps I am missing something but you have more or less the same 
-> functionality than the smp_twd timers and these ones don't look so complex.
-> 
-> Could you please look at the smp_twd.c implementation ?
 
-Hi Daniel,
 
-exynos_mct.c driver looks more complex as it supports two types of timer
-interrupts - private and shared peripheral interrupts (for exynos4412
-and exynos4210 accordingly). In smp_twd.c driver I can see only PPI type
-of irqs supported. SPI and PPI irqs differs slightly in setup - thus two
-different code paths appears in the driver in initialization and
-handling of CPU notifications. The fix is addressing issue that appears
-only for hardware using SPI irqs so it is hard to compare it to
-smp_twd.c.
-BTW, If we remove support for SPI irqs in exynos_mct.c it would look
-almost the same as smp_twd.c. 
-
-Best Regards,
-Damian
-> 
-> 
-> > Fixes: 7114cd749a12 ("clocksource: exynos_mct: use (request/free)_irq calls for local timer registration")
-> > Signed-off-by: Damian Eppel <d.eppel@samsung.com>
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > (Tested on Arndale Octa Board)
-> > Tested-by: Marcin Jabrzyk <m.jabrzyk@samsung.com>
-> > (Tested on Rinato B2 (Exynos 3250) board)
-> > ---
-> >
-> > Notes:
-> >      Changes since v1:
-> >              o added Krzysztof's and Marcin's Reviewed-by / Tested-by
-> >                with information about the test HW.
-> >
-> >   drivers/clocksource/exynos_mct.c | 45 ++++++++++++++++++++++++++++------------
-> >   1 file changed, 32 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> > index 83564c9..9beca58 100644
-> > --- a/drivers/clocksource/exynos_mct.c
-> > +++ b/drivers/clocksource/exynos_mct.c
-> > @@ -466,15 +466,12 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
-> >   	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
-> >
-> >   	if (mct_int_type == MCT_INT_SPI) {
-> > -		evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
-> > -		if (request_irq(evt->irq, exynos4_mct_tick_isr,
-> > -				IRQF_TIMER | IRQF_NOBALANCING,
-> > -				evt->name, mevt)) {
-> > -			pr_err("exynos-mct: cannot register IRQ %d\n",
-> > -				evt->irq);
-> > +
-> > +		if (evt->irq == -1)
-> >   			return -EIO;
-> > -		}
-> > -		irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
-> > +
-> > +		irq_force_affinity(evt->irq, cpumask_of(cpu));
-> > +		enable_irq(evt->irq);
-> >   	} else {
-> >   		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
-> >   	}
-> > @@ -487,10 +484,12 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
-> >   static void exynos4_local_timer_stop(struct clock_event_device *evt)
-> >   {
-> >   	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-> > -	if (mct_int_type == MCT_INT_SPI)
-> > -		free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
-> > -	else
-> > +	if (mct_int_type == MCT_INT_SPI) {
-> > +		if (evt->irq != -1)
-> > +			disable_irq_nosync(evt->irq);
-> > +	} else {
-> >   		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
-> > +	}
-> >   }
-> >
-> >   static int exynos4_mct_cpu_notify(struct notifier_block *self,
-> > @@ -522,7 +521,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
-> >
-> >   static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
-> >   {
-> > -	int err;
-> > +	int err, cpu;
-> >   	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
-> >   	struct clk *mct_clk, *tick_clk;
-> >
-> > @@ -549,7 +548,27 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
-> >   		WARN(err, "MCT: can't request IRQ %d (%d)\n",
-> >   		     mct_irqs[MCT_L0_IRQ], err);
-> >   	} else {
-> > -		irq_set_affinity(mct_irqs[MCT_L0_IRQ], cpumask_of(0));
-> > +		for_each_possible_cpu(cpu) {
-> > +			int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
-> > +			struct mct_clock_event_device *pcpu_mevt =
-> > +				per_cpu_ptr(&percpu_mct_tick, cpu);
-> > +
-> > +			pcpu_mevt->evt.irq = -1;
-> > +
-> > +			if (request_irq(mct_irq,
-> > +					exynos4_mct_tick_isr,
-> > +					IRQF_TIMER | IRQF_NOBALANCING,
-> > +					pcpu_mevt->name, pcpu_mevt)) {
-> > +				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
-> > +									cpu);
-> > +
-> > +				continue;
-> > +			}
-> > +			pcpu_mevt->evt.irq = mct_irq;
-> > +			irq_force_affinity(mct_irq, cpumask_of(cpu));
-> > +
-> > +			disable_irq(mct_irq);
-> > +		}
-> >   	}
-> >
-> >   	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
-> >
-> 
-> 
+On 15-05-14 05:52 PM, Felipe Balbi wrote:
+> Hi,
+>
+> On Wed, Apr 22, 2015 at 04:04:10PM -0700, Arun Ramamurthy wrote:
+>> Most of the phy providers use "select" to enable GENERIC_PHY. Since select
+>> is only recommended when the config is not visible, GENERIC_PHY is changed
+>> an invisible option. To maintain consistency, all phy providers are changed
+>> to "select" GENERIC_PHY and all non-phy drivers use "depends on" when the
+>> phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
+>> dependency, so it is left as "select".
+>>
+>> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
+>> ---
+>>   drivers/ata/Kconfig                       | 1 -
+>>   drivers/media/platform/exynos4-is/Kconfig | 2 +-
+>>   drivers/phy/Kconfig                       | 4 ++--
+>>   drivers/usb/host/Kconfig                  | 4 ++--
+>>   drivers/video/fbdev/exynos/Kconfig        | 2 +-
+>>   5 files changed, 6 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+>> index 5f60155..6d2e881 100644
+>> --- a/drivers/ata/Kconfig
+>> +++ b/drivers/ata/Kconfig
+>> @@ -301,7 +301,6 @@ config SATA_MV
+>>   	tristate "Marvell SATA support"
+>>   	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
+>>   		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
+>> -	select GENERIC_PHY
+>>   	help
+>>   	  This option enables support for the Marvell Serial ATA family.
+>>   	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
+>> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+>> index b7b2e47..b6f3eaa 100644
+>> --- a/drivers/media/platform/exynos4-is/Kconfig
+>> +++ b/drivers/media/platform/exynos4-is/Kconfig
+>> @@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
+>>   config VIDEO_S5P_MIPI_CSIS
+>>   	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
+>>   	depends on REGULATOR
+>> -	select GENERIC_PHY
+>> +	depends on GENERIC_PHY
+>>   	help
+>>   	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
+>>   	  receiver (MIPI-CSIS) devices.
+>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+>> index 2962de2..edecdb1 100644
+>> --- a/drivers/phy/Kconfig
+>> +++ b/drivers/phy/Kconfig
+>> @@ -5,7 +5,7 @@
+>>   menu "PHY Subsystem"
+>>
+>>   config GENERIC_PHY
+>> -	bool "PHY Core"
+>> +	bool
+>>   	help
+>>   	  Generic PHY support.
+>>
+>> @@ -72,7 +72,7 @@ config PHY_MIPHY365X
+>>   config PHY_RCAR_GEN2
+>>   	tristate "Renesas R-Car generation 2 USB PHY driver"
+>>   	depends on ARCH_SHMOBILE
+>> -	depends on GENERIC_PHY
+>> +	select GENERIC_PHY
+>
+> so some you changed from depends to select...
+>
+>>   	help
+>>   	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
+>>
+>> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+>> index 5ad60e4..e2197e2 100644
+>> --- a/drivers/usb/host/Kconfig
+>> +++ b/drivers/usb/host/Kconfig
+>> @@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
+>>   config USB_EHCI_HCD_STI
+>>   	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
+>>   	depends on ARCH_STI && OF
+>> -	select GENERIC_PHY
+>> +	depends on GENERIC_PHY
+>
+> while others you changed from select to depends.
+>
+> NAK.
+>
+Felipe, I dont understand your concern, could you please explain it more 
+detail?  The logic behind the changes is that in cases where there was 
+an explicit dependency, I changed it to "depends on" and in other cases 
+I changed it to "selects". Thanks
