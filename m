@@ -1,67 +1,31 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq:exynos-cpufreq - Fix for memory leak in case SOC
- name does not match.
-Date: Mon, 25 May 2015 13:01:49 +0530
-Message-ID: <20150525073149.GF9992@linux>
-References: <1432519780-2910-1-git-send-email-shailendra.capricorn@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv3 1/2] ARM: dts: exynos5420: add nodes for jpeg codec
+Date: Mon, 25 May 2015 18:14:55 +0900
+Message-ID: <CAJKOXPfSo-_ngR452V=ucjOLpOt=sNaSMMnVfuFEJEdb4oTt6g@mail.gmail.com>
+References: <1425904366-14447-1-git-send-email-andrzej.p@samsung.com>
+	<1425904366-14447-2-git-send-email-andrzej.p@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1432519780-2910-1-git-send-email-shailendra.capricorn@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Shailendra Verma <shailendra.capricorn@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1425904366-14447-2-git-send-email-andrzej.p@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 25-05-15, 07:39, Shailendra Verma wrote:
-> During probe free the memory allocated to "exynos_info" in case of
-> unknown SOC type.
-> 
-> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
+2015-03-09 21:32 GMT+09:00 Andrzej Pietrasiewicz <andrzej.p@samsung.com>:
+> Add nodes for jpeg codec in Exynos5420 SoC.
+>
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 > ---
->  drivers/cpufreq/exynos-cpufreq.c |    6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index 82d2fbb..8682378 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -182,7 +182,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->  		ret = exynos5250_cpufreq_init(exynos_info);
->  	} else {
->  		pr_err("%s: Unknown SoC type\n", __func__);
-> -		return -ENODEV;
-> +		ret = -ENODEV;
->  	}
->  
->  	if (ret)
-> @@ -190,12 +190,14 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->  
->  	if (exynos_info->set_freq == NULL) {
->  		dev_err(&pdev->dev, "No set_freq function (ERR)\n");
-> +		ret = -EINVAL;
->  		goto err_vdd_arm;
->  	}
->  
->  	arm_regulator = regulator_get(NULL, "vdd_arm");
->  	if (IS_ERR(arm_regulator)) {
->  		dev_err(&pdev->dev, "failed to get resource vdd_arm\n");
-> +		ret = -EINVAL;
->  		goto err_vdd_arm;
->  	}
->  
-> @@ -227,7 +229,7 @@ err_cpufreq_reg:
->  	regulator_put(arm_regulator);
->  err_vdd_arm:
->  	kfree(exynos_info);
-> -	return -EINVAL;
-> +	return ret;
->  }
->  
->  static struct platform_driver exynos_cpufreq_platdrv = {
+>  arch/arm/boot/dts/exynos5420.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-viresh
+The patch adding bindings documentation and changing s5p-jpeg driver
+was merged (7c15fd4bf3d3 merged in 4.1-rc1 cycle) so this can be
+safely picked up by Samsung tree. Kukjin, can you apply it?
+
+Best regards,
+Krzysztof
