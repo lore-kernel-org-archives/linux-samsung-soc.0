@@ -1,78 +1,121 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 0/9 v5] Helper to abstract vma handling in media layer
-Date: Mon, 25 May 2015 15:55:33 +0200
-Message-ID: <20150525135533.GA15663@quack.suse.cz>
-References: <1431522495-4692-1-git-send-email-jack@suse.cz>
- <55630994.7040006@xs4all.nl>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH 00/21] On-demand device registration
+Date: Mon, 25 May 2015 16:53:04 +0200
+Message-ID: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <55630994.7040006@xs4all.nl>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?St=C3=A9phane=20Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Dan Williams <dan.j.williams@intel.com>, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uIDI1LTA1LTE1IDEzOjM3OjU2LCBIYW5zIFZlcmt1aWwgd3JvdGU6Cj4gSGkgSmFuLAo+
-IAo+IE9uIDA1LzEzLzIwMTUgMDM6MDggUE0sIEphbiBLYXJhIHdyb3RlOgo+ID4gICBIZWxsbywK
-PiA+IAo+ID4gSSdtIHNlbmRpbmcgdGhlIGZpZnRoIHZlcnNpb24gb2YgbXkgcGF0Y2ggc2VyaWVz
-IHRvIGFic3RyYWN0IHZtYSBoYW5kbGluZwo+ID4gZnJvbSB0aGUgdmFyaW91cyBtZWRpYSBkcml2
-ZXJzLiBUaGUgcGF0Y2hlcyBnb3Qgc29tZSByZXZpZXcgZnJvbSBtbSBwZW9wbGUgYW5kCj4gPiB0
-ZXN0aW5nIGZyb20gZGV2aWNlIGRyaXZlciBndXlzIHNvIHVubGVzcyBzb21lb25lIG9iamVjdHMs
-IHBhdGNoZXMgd2lsbCBiZQo+ID4gcXVldWVkIGluIG1lZGlhIHRyZWUgZm9yIHRoZSBuZXh0IG1l
-cmdlIHdpbmRvdy4KPiAKPiBXaGF0IGlzIHRoZSBjdXJyZW50IHN0YXR1cz8gSSBzYXcgb25lIGNv
-bW1lbnQgZm9yIHBhdGNoIDksIHNvIEkgYXNzdW1lIGl0IGlzIG5vdAo+IHF1aXRlIHJlYWR5IHll
-dC4KPiAKPiBMZXQgbWUga25vdyB3aGVuIHlvdSB0aGluayBpdCBpcyB0aW1lIHRvIG1lcmdlLgog
-IFRoZXJlIHdhcyBhIG1pbm9yIGNvbW1lbnQgdG8gdGhlIGV4eW5vcyBwYXRjaCAtIEkndmUgc2Vu
-dCB1cGRhdGVkIHZlcnNpb24Kb2YgdGhhdCBwYXRjaCBhcyBhIHJlcGx5IHRvIHRoZSBjb21tZW50
-LiBEbyB5b3Ugd2FudCBtZSB0byByZXNlbmQgdGhlIHdob2xlCnNlcmllcz8gT3RoZXJ3aXNlIEkg
-dGhpbmsgeW91IGNhbiBqdXN0IHBpY2sgdXAgdGhlIHBhdGNoZXMgYW5kIG1lcmdlIHRoZW0uClRo
-YW5rcyEKCgkJCQkJCQkJSG9uemEKCj4gPiBBZnRlciB0aGlzIHBhdGNoIHNldCBkcml2ZXJzIGhh
-dmUgdG8ga25vdyBtdWNoIGxlc3MgZGV0YWlscyBhYm91dCB2bWFzLCB0aGVpcgo+ID4gdHlwZXMs
-IGFuZCBsb2NraW5nLiBBbHNvIHF1aXRlIHNvbWUgY29kZSBpcyByZW1vdmVkIGZyb20gdGhlbS4g
-QXMgYSBib251cwo+ID4gZHJpdmVycyBnZXQgYXV0b21hdGljYWxseSBWTV9GQVVMVF9SRVRSWSBo
-YW5kbGluZy4gVGhlIHByaW1hcnkgbW90aXZhdGlvbiBmb3IKPiA+IHRoaXMgc2VyaWVzIGlzIHRv
-IHJlbW92ZSBrbm93bGVkZ2UgYWJvdXQgbW1hcF9zZW0gbG9ja2luZyBmcm9tIGFzIG1hbnkgcGxh
-Y2VzIGEKPiA+IHBvc3NpYmxlIHNvIHRoYXQgd2UgY2FuIGNoYW5nZSBpdCB3aXRoIHJlYXNvbmFi
-bGUgZWZmb3J0Lgo+ID4gCj4gPiBUaGUgY29yZSBvZiB0aGUgc2VyaWVzIGlzIHRoZSBuZXcgaGVs
-cGVyIGdldF92YWRkcl9mcmFtZXMoKSB3aGljaCBpcyBnaXZlbiBhCj4gPiB2aXJ0dWFsIGFkZHJl
-c3MgYW5kIGl0IGZpbGxzIGluIFBGTnMgLyBzdHJ1Y3QgcGFnZSBwb2ludGVycyAoZGVwZW5kaW5n
-IG9uIFZNQQo+ID4gdHlwZSkgaW50byB0aGUgcHJvdmlkZWQgYXJyYXkuIElmIFBGTnMgY29ycmVz
-cG9uZCB0byBub3JtYWwgcGFnZXMgaXQgYWxzbyBncmFicwo+ID4gcmVmZXJlbmNlcyB0byB0aGVz
-ZSBwYWdlcy4gVGhlIGRpZmZlcmVuY2UgZnJvbSBnZXRfdXNlcl9wYWdlcygpIGlzIHRoYXQgdGhp
-cwo+ID4gZnVuY3Rpb24gY2FuIGFsc28gZGVhbCB3aXRoIHBmbm1hcCwgYW5kIGlvIG1hcHBpbmdz
-IHdoaWNoIGlzIHdoYXQgdGhlIG1lZGlhCj4gPiBkcml2ZXJzIG5lZWQuCj4gPiAKPiA+IEkgaGF2
-ZSB0ZXN0ZWQgdGhlIHBhdGNoZXMgd2l0aCB2aXZpZCBkcml2ZXIgc28gYXQgbGVhc3QgdmIyIGNv
-ZGUgZ290IHNvbWUKPiA+IGV4cG9zdXJlLiBDb252ZXJzaW9uIG9mIG90aGVyIGRyaXZlcnMgd2Fz
-IGp1c3QgY29tcGlsZS10ZXN0ZWQgKGZvciB4ODYgc28gZS5nLgo+ID4gZXh5bm9zIGRyaXZlciB3
-aGljaCBpcyBvbmx5IGZvciBTYW1zdW5nIHBsYXRmb3JtIGlzIGNvbXBsZXRlbHkgdW50ZXN0ZWQp
-Lgo+ID4gCj4gPiAJCQkJCQkJCUhvbnphCj4gPiBDaGFuZ2VzIHNpbmNlIHY0Ogo+ID4gKiBNaW5v
-ciBjbGVhbnVwcyBhbmQgZml4ZXMgcG9pbnRlZCBvdXQgYnkgTWVsIGFuZCBWbGFzdGEKPiA+ICog
-QWRkZWQgQWNrZWQtYnkgdGFncwo+ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYzOgo+ID4gKiBBZGRl
-ZCBpbmNsdWRlIDxsaW51eC92bWFsbG9jLmg+IGludG8gbW0vZ3VwLmMgYXMgaXQncyBuZWVkZWQg
-Zm9yIHNvbWUgYXJjaHMKPiA+ICogRml4ZWQgZXJyb3IgcGF0aCBmb3IgZXh5bm9zIGRyaXZlcgo+
-ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYyOgo+ID4gKiBSZW5hbWVkIGZ1bmN0aW9ucyBhbmQgc3Ry
-dWN0dXJlcyBhcyBNZWwgc3VnZ2VzdGVkCj4gPiAqIE90aGVyIG1pbm9yIGNoYW5nZXMgc3VnZ2Vz
-dGVkIGJ5IE1lbAo+ID4gKiBSZWJhc2VkIG9uIHRvcCBvZiA0LjEtcmMyCj4gPiAqIENoYW5nZWQg
-ZnVuY3Rpb25zIHRvIGdldCBwb2ludGVyIHRvIGFycmF5IG9mIHBhZ2VzIC8gcGZucyB0byBwZXJm
-b3JtCj4gPiAgIGNvbnZlcnNpb24gaWYgbmVjZXNzYXJ5LiBUaGlzIGZpeGVzIHBvc3NpYmxlIGlz
-c3VlIGluIHRoZSBvbWFwIEkgbWF5IGhhdmUKPiA+ICAgaW50cm9kdWNlZCBpbiB2MiBhbmQgZ2Vu
-ZXJhbGx5IG1ha2VzIHRoZSBBUEkgbGVzcyBlcnJvcnByb25lLgo+ID4gLS0KPiA+IFRvIHVuc3Vi
-c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1t
-ZWRpYSIgaW4KPiA+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnCj4gPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3Jn
-L21ham9yZG9tby1pbmZvLmh0bWwKPiA+IAo+IAotLSAKSmFuIEthcmEgPGphY2tAc3VzZS5jej4K
-U1VTRSBMYWJzLCBDUgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Hello,
+
+I have a problem with the panel on my Tegra Chromebook taking longer th=
+an
+expected to be ready during boot (St=C3=A9phane Marchesin reported what=
+ is
+basically the same issue in [0]), and have looked into ordered probing =
+as a
+better way of solving this than moving nodes around in the DT or playin=
+g with
+initcall levels.
+
+While reading the thread [1] that Alexander Holler started with his ser=
+ies to
+make probing order deterministic, it occurred to me that it should be p=
+ossible
+to achieve the same by registering devices as they are referenced by ot=
+her
+devices.
+
+This basically reuses the information that is already implicit in the p=
+robe()
+implementations, saving us from refactoring existing drivers or adding
+information to DTBs.
+
+Something I'm not completely happy with is that I have had to move the =
+call to
+of_platform_populate after all platform drivers have been registered.
+Otherwise I don't see how I could register drivers on demand as we don'=
+t have
+yet each driver's compatible strings.
+
+=46or machs that don't move of_platform_populate() to a later point, th=
+ese
+patches shouldn't cause any problems but it's not guaranteed that we'll=
+ avoid
+all the deferred probes as some drivers may not be registered yet.
+
+I have tested this on boards with Tegra, iMX.6 and Exynos SoCs, and the=
+se
+patches were enough to eliminate all the deferred probes.
+
+With this series I get the kernel to output to the panel in 0.5s, inste=
+ad of 2.8s.
+
+Regards,
+
+Tomeu
+
+[0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066527.=
+html
+
+[1] https://lkml.org/lkml/2014/5/12/452
+
+Tomeu Vizoso (21):
+  regulator: core: Reduce critical area in _regulator_get
+  ARM: tegra: Add gpio-ranges property
+  ARM: tegra: Register drivers before devices
+  ARM: EXYNOS: Register drivers before devices
+  ARM i.MX6q: Register drivers before devices
+  of/platform: Add of_platform_device_ensure()
+  of/platform: Ensure device registration on lookup
+  gpio: Probe GPIO drivers on demand
+  gpio: Probe pinctrl devices on demand
+  regulator: core: Probe regulators on demand
+  drm: Probe panels on demand
+  drm/tegra: Probe dpaux devices on demand
+  i2c: core: Probe i2c master devices on demand
+  pwm: Probe PWM chip devices on demand
+  backlight: Probe backlight devices on demand
+  usb: phy: Probe phy devices on demand
+  clk: Probe clk providers on demand
+  pinctrl: Probe pinctrl devices on demand
+  phy: core: Probe phy providers on demand
+  dma: of: Probe DMA controllers on demand
+  power-supply: Probe power supplies on demand
+
+ arch/arm/boot/dts/tegra124.dtsi     |  1 +
+ arch/arm/mach-exynos/exynos.c       |  4 +--
+ arch/arm/mach-imx/mach-imx6q.c      | 12 ++++-----
+ arch/arm/mach-tegra/tegra.c         | 21 ++++++---------
+ drivers/clk/clk.c                   |  3 +++
+ drivers/dma/of-dma.c                |  3 +++
+ drivers/gpio/gpiolib-of.c           |  5 ++++
+ drivers/gpu/drm/drm_panel.c         |  3 +++
+ drivers/gpu/drm/tegra/dpaux.c       |  3 +++
+ drivers/i2c/i2c-core.c              |  3 +++
+ drivers/of/platform.c               | 53 +++++++++++++++++++++++++++++=
+++++++++
+ drivers/phy/phy-core.c              |  3 +++
+ drivers/pinctrl/devicetree.c        |  2 ++
+ drivers/power/power_supply_core.c   |  3 +++
+ drivers/pwm/core.c                  |  3 +++
+ drivers/regulator/core.c            | 45 +++++++++++++++--------------=
+--
+ drivers/usb/phy/phy.c               |  3 +++
+ drivers/video/backlight/backlight.c |  3 +++
+ include/linux/of_platform.h         |  2 ++
+ 19 files changed, 130 insertions(+), 45 deletions(-)
+
+--=20
+2.4.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
