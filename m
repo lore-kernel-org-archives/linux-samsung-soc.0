@@ -1,48 +1,78 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/2] of: Add vendor prefix for Hardkernel
-Date: Mon, 25 May 2015 14:29:00 +0200
-Message-ID: <5563158C.2040404@collabora.co.uk>
-References: <1432556810-11597-1-git-send-email-k.kozlowski.k@gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/9 v5] Helper to abstract vma handling in media layer
+Date: Mon, 25 May 2015 15:55:33 +0200
+Message-ID: <20150525135533.GA15663@quack.suse.cz>
+References: <1431522495-4692-1-git-send-email-jack@suse.cz>
+ <55630994.7040006@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59816 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751924AbbEYM3H (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 May 2015 08:29:07 -0400
-In-Reply-To: <1432556810-11597-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <55630994.7040006@xs4all.nl>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-Hello Krzysztof,
-
-On 05/25/2015 02:26 PM, Krzysztof Kozlowski wrote:
-> Add Hardkernel Co., Ltd. to the list of device tree vendor prefixes.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 80339192c93e..e8a00b74d8fe 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -90,6 +90,7 @@ gumstix	Gumstix, Inc.
->  gw	Gateworks Corporation
->  hannstar	HannStar Display Corporation
->  haoyu	Haoyu Microelectronic Co. Ltd.
-> +hardkernel	Hardkernel Co., Ltd
->  himax	Himax Technologies, Inc.
->  hisilicon	Hisilicon Limited.
->  hit	Hitachi Ltd.
-> 
-
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Best regards,
-Javier
+T24gTW9uIDI1LTA1LTE1IDEzOjM3OjU2LCBIYW5zIFZlcmt1aWwgd3JvdGU6Cj4gSGkgSmFuLAo+
+IAo+IE9uIDA1LzEzLzIwMTUgMDM6MDggUE0sIEphbiBLYXJhIHdyb3RlOgo+ID4gICBIZWxsbywK
+PiA+IAo+ID4gSSdtIHNlbmRpbmcgdGhlIGZpZnRoIHZlcnNpb24gb2YgbXkgcGF0Y2ggc2VyaWVz
+IHRvIGFic3RyYWN0IHZtYSBoYW5kbGluZwo+ID4gZnJvbSB0aGUgdmFyaW91cyBtZWRpYSBkcml2
+ZXJzLiBUaGUgcGF0Y2hlcyBnb3Qgc29tZSByZXZpZXcgZnJvbSBtbSBwZW9wbGUgYW5kCj4gPiB0
+ZXN0aW5nIGZyb20gZGV2aWNlIGRyaXZlciBndXlzIHNvIHVubGVzcyBzb21lb25lIG9iamVjdHMs
+IHBhdGNoZXMgd2lsbCBiZQo+ID4gcXVldWVkIGluIG1lZGlhIHRyZWUgZm9yIHRoZSBuZXh0IG1l
+cmdlIHdpbmRvdy4KPiAKPiBXaGF0IGlzIHRoZSBjdXJyZW50IHN0YXR1cz8gSSBzYXcgb25lIGNv
+bW1lbnQgZm9yIHBhdGNoIDksIHNvIEkgYXNzdW1lIGl0IGlzIG5vdAo+IHF1aXRlIHJlYWR5IHll
+dC4KPiAKPiBMZXQgbWUga25vdyB3aGVuIHlvdSB0aGluayBpdCBpcyB0aW1lIHRvIG1lcmdlLgog
+IFRoZXJlIHdhcyBhIG1pbm9yIGNvbW1lbnQgdG8gdGhlIGV4eW5vcyBwYXRjaCAtIEkndmUgc2Vu
+dCB1cGRhdGVkIHZlcnNpb24Kb2YgdGhhdCBwYXRjaCBhcyBhIHJlcGx5IHRvIHRoZSBjb21tZW50
+LiBEbyB5b3Ugd2FudCBtZSB0byByZXNlbmQgdGhlIHdob2xlCnNlcmllcz8gT3RoZXJ3aXNlIEkg
+dGhpbmsgeW91IGNhbiBqdXN0IHBpY2sgdXAgdGhlIHBhdGNoZXMgYW5kIG1lcmdlIHRoZW0uClRo
+YW5rcyEKCgkJCQkJCQkJSG9uemEKCj4gPiBBZnRlciB0aGlzIHBhdGNoIHNldCBkcml2ZXJzIGhh
+dmUgdG8ga25vdyBtdWNoIGxlc3MgZGV0YWlscyBhYm91dCB2bWFzLCB0aGVpcgo+ID4gdHlwZXMs
+IGFuZCBsb2NraW5nLiBBbHNvIHF1aXRlIHNvbWUgY29kZSBpcyByZW1vdmVkIGZyb20gdGhlbS4g
+QXMgYSBib251cwo+ID4gZHJpdmVycyBnZXQgYXV0b21hdGljYWxseSBWTV9GQVVMVF9SRVRSWSBo
+YW5kbGluZy4gVGhlIHByaW1hcnkgbW90aXZhdGlvbiBmb3IKPiA+IHRoaXMgc2VyaWVzIGlzIHRv
+IHJlbW92ZSBrbm93bGVkZ2UgYWJvdXQgbW1hcF9zZW0gbG9ja2luZyBmcm9tIGFzIG1hbnkgcGxh
+Y2VzIGEKPiA+IHBvc3NpYmxlIHNvIHRoYXQgd2UgY2FuIGNoYW5nZSBpdCB3aXRoIHJlYXNvbmFi
+bGUgZWZmb3J0Lgo+ID4gCj4gPiBUaGUgY29yZSBvZiB0aGUgc2VyaWVzIGlzIHRoZSBuZXcgaGVs
+cGVyIGdldF92YWRkcl9mcmFtZXMoKSB3aGljaCBpcyBnaXZlbiBhCj4gPiB2aXJ0dWFsIGFkZHJl
+c3MgYW5kIGl0IGZpbGxzIGluIFBGTnMgLyBzdHJ1Y3QgcGFnZSBwb2ludGVycyAoZGVwZW5kaW5n
+IG9uIFZNQQo+ID4gdHlwZSkgaW50byB0aGUgcHJvdmlkZWQgYXJyYXkuIElmIFBGTnMgY29ycmVz
+cG9uZCB0byBub3JtYWwgcGFnZXMgaXQgYWxzbyBncmFicwo+ID4gcmVmZXJlbmNlcyB0byB0aGVz
+ZSBwYWdlcy4gVGhlIGRpZmZlcmVuY2UgZnJvbSBnZXRfdXNlcl9wYWdlcygpIGlzIHRoYXQgdGhp
+cwo+ID4gZnVuY3Rpb24gY2FuIGFsc28gZGVhbCB3aXRoIHBmbm1hcCwgYW5kIGlvIG1hcHBpbmdz
+IHdoaWNoIGlzIHdoYXQgdGhlIG1lZGlhCj4gPiBkcml2ZXJzIG5lZWQuCj4gPiAKPiA+IEkgaGF2
+ZSB0ZXN0ZWQgdGhlIHBhdGNoZXMgd2l0aCB2aXZpZCBkcml2ZXIgc28gYXQgbGVhc3QgdmIyIGNv
+ZGUgZ290IHNvbWUKPiA+IGV4cG9zdXJlLiBDb252ZXJzaW9uIG9mIG90aGVyIGRyaXZlcnMgd2Fz
+IGp1c3QgY29tcGlsZS10ZXN0ZWQgKGZvciB4ODYgc28gZS5nLgo+ID4gZXh5bm9zIGRyaXZlciB3
+aGljaCBpcyBvbmx5IGZvciBTYW1zdW5nIHBsYXRmb3JtIGlzIGNvbXBsZXRlbHkgdW50ZXN0ZWQp
+Lgo+ID4gCj4gPiAJCQkJCQkJCUhvbnphCj4gPiBDaGFuZ2VzIHNpbmNlIHY0Ogo+ID4gKiBNaW5v
+ciBjbGVhbnVwcyBhbmQgZml4ZXMgcG9pbnRlZCBvdXQgYnkgTWVsIGFuZCBWbGFzdGEKPiA+ICog
+QWRkZWQgQWNrZWQtYnkgdGFncwo+ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYzOgo+ID4gKiBBZGRl
+ZCBpbmNsdWRlIDxsaW51eC92bWFsbG9jLmg+IGludG8gbW0vZ3VwLmMgYXMgaXQncyBuZWVkZWQg
+Zm9yIHNvbWUgYXJjaHMKPiA+ICogRml4ZWQgZXJyb3IgcGF0aCBmb3IgZXh5bm9zIGRyaXZlcgo+
+ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYyOgo+ID4gKiBSZW5hbWVkIGZ1bmN0aW9ucyBhbmQgc3Ry
+dWN0dXJlcyBhcyBNZWwgc3VnZ2VzdGVkCj4gPiAqIE90aGVyIG1pbm9yIGNoYW5nZXMgc3VnZ2Vz
+dGVkIGJ5IE1lbAo+ID4gKiBSZWJhc2VkIG9uIHRvcCBvZiA0LjEtcmMyCj4gPiAqIENoYW5nZWQg
+ZnVuY3Rpb25zIHRvIGdldCBwb2ludGVyIHRvIGFycmF5IG9mIHBhZ2VzIC8gcGZucyB0byBwZXJm
+b3JtCj4gPiAgIGNvbnZlcnNpb24gaWYgbmVjZXNzYXJ5LiBUaGlzIGZpeGVzIHBvc3NpYmxlIGlz
+c3VlIGluIHRoZSBvbWFwIEkgbWF5IGhhdmUKPiA+ICAgaW50cm9kdWNlZCBpbiB2MiBhbmQgZ2Vu
+ZXJhbGx5IG1ha2VzIHRoZSBBUEkgbGVzcyBlcnJvcnByb25lLgo+ID4gLS0KPiA+IFRvIHVuc3Vi
+c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1t
+ZWRpYSIgaW4KPiA+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
+ZWwub3JnCj4gPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3Jn
+L21ham9yZG9tby1pbmZvLmh0bWwKPiA+IAo+IAotLSAKSmFuIEthcmEgPGphY2tAc3VzZS5jej4K
+U1VTRSBMYWJzLCBDUgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
