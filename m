@@ -1,31 +1,73 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv3 1/2] ARM: dts: exynos5420: add nodes for jpeg codec
-Date: Mon, 25 May 2015 18:14:55 +0900
-Message-ID: <CAJKOXPfSo-_ngR452V=ucjOLpOt=sNaSMMnVfuFEJEdb4oTt6g@mail.gmail.com>
-References: <1425904366-14447-1-git-send-email-andrzej.p@samsung.com>
-	<1425904366-14447-2-git-send-email-andrzej.p@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 0/9 v5] Helper to abstract vma handling in media layer
+Date: Mon, 25 May 2015 13:37:56 +0200
+Message-ID: <55630994.7040006@xs4all.nl>
+References: <1431522495-4692-1-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1425904366-14447-2-git-send-email-andrzej.p@samsung.com>
+In-Reply-To: <1431522495-4692-1-git-send-email-jack@suse.cz>
 Sender: linux-media-owner@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>
+To: Jan Kara <jack@suse.cz>, linux-mm@kvack.org
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-03-09 21:32 GMT+09:00 Andrzej Pietrasiewicz <andrzej.p@samsung.com>:
-> Add nodes for jpeg codec in Exynos5420 SoC.
->
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+Hi Jan,
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 05/13/2015 03:08 PM, Jan Kara wrote:
+>   Hello,
+> 
+> I'm sending the fifth version of my patch series to abstract vma handling
+> from the various media drivers. The patches got some review from mm people and
+> testing from device driver guys so unless someone objects, patches will be
+> queued in media tree for the next merge window.
 
-The patch adding bindings documentation and changing s5p-jpeg driver
-was merged (7c15fd4bf3d3 merged in 4.1-rc1 cycle) so this can be
-safely picked up by Samsung tree. Kukjin, can you apply it?
+What is the current status? I saw one comment for patch 9, so I assume it is not
+quite ready yet.
 
-Best regards,
-Krzysztof
+Let me know when you think it is time to merge.
+
+Regards,
+
+	Hans
+
+> 
+> After this patch set drivers have to know much less details about vmas, their
+> types, and locking. Also quite some code is removed from them. As a bonus
+> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
+> this series is to remove knowledge about mmap_sem locking from as many places a
+> possible so that we can change it with reasonable effort.
+> 
+> The core of the series is the new helper get_vaddr_frames() which is given a
+> virtual address and it fills in PFNs / struct page pointers (depending on VMA
+> type) into the provided array. If PFNs correspond to normal pages it also grabs
+> references to these pages. The difference from get_user_pages() is that this
+> function can also deal with pfnmap, and io mappings which is what the media
+> drivers need.
+> 
+> I have tested the patches with vivid driver so at least vb2 code got some
+> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
+> exynos driver which is only for Samsung platform is completely untested).
+> 
+> 								Honza
+> Changes since v4:
+> * Minor cleanups and fixes pointed out by Mel and Vlasta
+> * Added Acked-by tags
+> 
+> Changes since v3:
+> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
+> * Fixed error path for exynos driver
+> 
+> Changes since v2:
+> * Renamed functions and structures as Mel suggested
+> * Other minor changes suggested by Mel
+> * Rebased on top of 4.1-rc2
+> * Changed functions to get pointer to array of pages / pfns to perform
+>   conversion if necessary. This fixes possible issue in the omap I may have
+>   introduced in v2 and generally makes the API less errorprone.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
