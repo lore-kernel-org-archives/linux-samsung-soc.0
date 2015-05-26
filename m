@@ -1,106 +1,32 @@
-From: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible option
-Date: Mon, 25 May 2015 14:19:58 -0700
-Message-ID: <556391FE.1020503@broadcom.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com> <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com> <20150515005210.GA31534@saruman.tx.rr.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 04/21] ARM: EXYNOS: Register drivers before devices
+Date: Tue, 26 May 2015 09:41:19 +0900
+Message-ID: <CAJKOXPc7F=qT3UzVJ5cQ+Z+_KkjkJrj8bwOn6=+Heb7nH0PxAw@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1432565608-26036-5-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20150515005210.GA31534@saruman.tx.rr.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f44.google.com ([209.85.216.44]:45523 "EHLO
+	mail-vn0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751211AbbEZAlV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 May 2015 20:41:21 -0400
+In-Reply-To: <1432565608-26036-5-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>
 
+2015-05-25 23:53 GMT+09:00 Tomeu Vizoso <tomeu.vizoso@collabora.com>:
+> So devices can be probed on demand, we need to have the drivers already
+> registered as we don't have enough information to register a driver on
+> demand.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
+This is 4/21 but I can't see other patches. I found the cover letter
+on samsung-soc list but where is the rest of this?
 
-On 15-05-14 05:52 PM, Felipe Balbi wrote:
-> Hi,
->
-> On Wed, Apr 22, 2015 at 04:04:10PM -0700, Arun Ramamurthy wrote:
->> Most of the phy providers use "select" to enable GENERIC_PHY. Since select
->> is only recommended when the config is not visible, GENERIC_PHY is changed
->> an invisible option. To maintain consistency, all phy providers are changed
->> to "select" GENERIC_PHY and all non-phy drivers use "depends on" when the
->> phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
->> dependency, so it is left as "select".
->>
->> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
->> ---
->>   drivers/ata/Kconfig                       | 1 -
->>   drivers/media/platform/exynos4-is/Kconfig | 2 +-
->>   drivers/phy/Kconfig                       | 4 ++--
->>   drivers/usb/host/Kconfig                  | 4 ++--
->>   drivers/video/fbdev/exynos/Kconfig        | 2 +-
->>   5 files changed, 6 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
->> index 5f60155..6d2e881 100644
->> --- a/drivers/ata/Kconfig
->> +++ b/drivers/ata/Kconfig
->> @@ -301,7 +301,6 @@ config SATA_MV
->>   	tristate "Marvell SATA support"
->>   	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
->>   		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
->> -	select GENERIC_PHY
->>   	help
->>   	  This option enables support for the Marvell Serial ATA family.
->>   	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
->> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
->> index b7b2e47..b6f3eaa 100644
->> --- a/drivers/media/platform/exynos4-is/Kconfig
->> +++ b/drivers/media/platform/exynos4-is/Kconfig
->> @@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
->>   config VIDEO_S5P_MIPI_CSIS
->>   	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
->>   	depends on REGULATOR
->> -	select GENERIC_PHY
->> +	depends on GENERIC_PHY
->>   	help
->>   	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
->>   	  receiver (MIPI-CSIS) devices.
->> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->> index 2962de2..edecdb1 100644
->> --- a/drivers/phy/Kconfig
->> +++ b/drivers/phy/Kconfig
->> @@ -5,7 +5,7 @@
->>   menu "PHY Subsystem"
->>
->>   config GENERIC_PHY
->> -	bool "PHY Core"
->> +	bool
->>   	help
->>   	  Generic PHY support.
->>
->> @@ -72,7 +72,7 @@ config PHY_MIPHY365X
->>   config PHY_RCAR_GEN2
->>   	tristate "Renesas R-Car generation 2 USB PHY driver"
->>   	depends on ARCH_SHMOBILE
->> -	depends on GENERIC_PHY
->> +	select GENERIC_PHY
->
-> so some you changed from depends to select...
->
->>   	help
->>   	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
->>
->> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
->> index 5ad60e4..e2197e2 100644
->> --- a/drivers/usb/host/Kconfig
->> +++ b/drivers/usb/host/Kconfig
->> @@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
->>   config USB_EHCI_HCD_STI
->>   	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
->>   	depends on ARCH_STI && OF
->> -	select GENERIC_PHY
->> +	depends on GENERIC_PHY
->
-> while others you changed from select to depends.
->
-> NAK.
->
-Felipe, I dont understand your concern, could you please explain it more 
-detail?  The logic behind the changes is that in cases where there was 
-an explicit dependency, I changed it to "depends on" and in other cases 
-I changed it to "selects". Thanks
+Best regards,
+Krzysztof
