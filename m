@@ -1,32 +1,52 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 04/21] ARM: EXYNOS: Register drivers before devices
-Date: Tue, 26 May 2015 09:41:19 +0900
-Message-ID: <CAJKOXPc7F=qT3UzVJ5cQ+Z+_KkjkJrj8bwOn6=+Heb7nH0PxAw@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<1432565608-26036-5-git-send-email-tomeu.vizoso@collabora.com>
+From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@outlook.com>
+Subject: Re: [PATCH RESEND] ARM: dts: exynos4412: Enable AX88760 USB hub on
+ Origen board
+Date: Tue, 26 May 2015 17:08:31 +0900
+Message-ID: <BLU436-SMTP64BEEAC702E695B18320ACE2CC0@phx.gbl>
+References: <1428944566-17132-1-git-send-email-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f44.google.com ([209.85.216.44]:45523 "EHLO
-	mail-vn0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751211AbbEZAlV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 May 2015 20:41:21 -0400
-In-Reply-To: <1432565608-26036-5-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1428944566-17132-1-git-send-email-matthew@mattleach.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Matthew Leach <matthew@mattleach.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>
 
-2015-05-25 23:53 GMT+09:00 Tomeu Vizoso <tomeu.vizoso@collabora.com>:
-> So devices can be probed on demand, we need to have the drivers already
-> registered as we don't have enough information to register a driver on
-> demand.
+2015-04-14 2:02 GMT+09:00 Matthew Leach <matthew@mattleach.net>:
+> Enable the Origen's usb phy and ohci devices in the device tree.  Also
+> add the "samsung,vbus-gpio" property to enable the GPX3(5) gpio pin so
+> the AX88760 hub is powered.
 >
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Signed-off-by: Matthew Leach <matthew@mattleach.net>
+> ---
+>  arch/arm/boot/dts/exynos4412-origen.dts | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+> index bd8b730..c810ca3 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -531,4 +531,19 @@
+>                         clock-frequency = <24000000>;
+>                 };
+>         };
+> +
+> +       exynos-usbphy@125B0000 {
 
-This is 4/21 but I can't see other patches. I found the cover letter
-on samsung-soc list but where is the rest of this?
+Could you use label notation here?
+&exynos_usbphy {
+...
+}
 
 Best regards,
 Krzysztof
