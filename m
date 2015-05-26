@@ -2,25 +2,21 @@ From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@outlook.com>
 Subject: Re: [PATCH RESEND] ARM: dts: exynos4412: Enable AX88760 USB hub on
  Origen board
 Date: Tue, 26 May 2015 17:08:31 +0900
-Message-ID: <BLU436-SMTP64BEEAC702E695B18320ACE2CC0@phx.gbl>
+Message-ID: <BLU437-SMTP416B1C52FF19BD228DA610E2CC0@phx.gbl>
 References: <1428944566-17132-1-git-send-email-matthew@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from blu004-omc1s9.hotmail.com ([65.55.116.20]:56876 "EHLO
+	BLU004-OMC1S9.hotmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751972AbbEZINg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 May 2015 04:13:36 -0400
 In-Reply-To: <1428944566-17132-1-git-send-email-matthew@mattleach.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Matthew Leach <matthew@mattleach.net>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Matthew Leach <matthew@mattleach.net>
+Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 2015-04-14 2:02 GMT+09:00 Matthew Leach <matthew@mattleach.net>:
 > Enable the Origen's usb phy and ohci devices in the device tree.  Also
