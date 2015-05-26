@@ -1,48 +1,71 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@outlook.com>
-Subject: Re: [PATCH RESEND] ARM: dts: exynos4412: Enable AX88760 USB hub on
- Origen board
-Date: Tue, 26 May 2015 17:08:31 +0900
-Message-ID: <BLU437-SMTP416B1C52FF19BD228DA610E2CC0@phx.gbl>
-References: <1428944566-17132-1-git-send-email-matthew@mattleach.net>
+From: Beata Michalska <b.michalska@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Update video-phy node with syscon phandle for
+ Exynos3250
+Date: Tue, 26 May 2015 10:50:30 +0200
+Message-ID: <556433D6.8070307@samsung.com>
+References: <1426762587-24923-1-git-send-email-b.michalska@samsung.com>
+ <CAJKOXPfumy5a6A275ETy7vnztzE20qSuXD_i=ebY9Br47p93Dg@mail.gmail.com>
+ <CAJKOXPcnYq0pS-akXNDd8TE6wqeq0pg-cx4PK0jeke9z3tHsOw@mail.gmail.com>
+ <CABxcv=npaHemH_KcYgGf-_x8Bo=V2UMDJREfUY6LRmDT1iQYpw@mail.gmail.com>
+ <555FF9AC.1060909@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from blu004-omc1s9.hotmail.com ([65.55.116.20]:56876 "EHLO
-	BLU004-OMC1S9.hotmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751972AbbEZINg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 May 2015 04:13:36 -0400
-In-Reply-To: <1428944566-17132-1-git-send-email-matthew@mattleach.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <555FF9AC.1060909@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Matthew Leach <matthew@mattleach.net>
-Cc: Kukjin Kim <kgene@kernel.org>, Russell King <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2015-04-14 2:02 GMT+09:00 Matthew Leach <matthew@mattleach.net>:
-> Enable the Origen's usb phy and ohci devices in the device tree.  Also
-> add the "samsung,vbus-gpio" property to enable the GPX3(5) gpio pin so
-> the AX88760 hub is powered.
->
-> Signed-off-by: Matthew Leach <matthew@mattleach.net>
-> ---
->  arch/arm/boot/dts/exynos4412-origen.dts | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-> index bd8b730..c810ca3 100644
-> --- a/arch/arm/boot/dts/exynos4412-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
-> @@ -531,4 +531,19 @@
->                         clock-frequency = <24000000>;
->                 };
->         };
-> +
-> +       exynos-usbphy@125B0000 {
+Hi,
 
-Could you use label notation here?
-&exynos_usbphy {
-...
-}
+On 05/23/2015 05:53 AM, Kukjin Kim wrote:
+> On 05/21/15 16:25, Javier Martinez Canillas wrote:
+>> On Thu, May 21, 2015 at 4:04 AM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> 2015-05-21 10:57 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+>>>> 2015-03-19 19:56 GMT+09:00 Beata Michalska <b.michalska@samsung.com>:
+>>>>> As a follow-up to recent changes to Exynos mipi video phy
+>>>>> driver, introducing support for PMU regmap in commit
+>>>>> e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression
+>>>>> by adding support for PMU regmap") add a syscon phandle to
+>>>>> video-phy node to bring back to life both MIPI DSI displays
+>>>>> and MIPI CSIS-2 camera sensors on Exynos3250.
+>>>>>
+>>>>> Signed-off-by: Beata Michalska <b.michalska@samsung.com>
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>
+>>>> Tested on Gear 2 (Exynos3250) board.
+>>>
+>>> Oh, I was too fast. It seems that "reg" property is not needed
+>>> anymore. Can you remove it?
+>>>
+>>
+>> After removing the reg property as Krzysztof suggested.
+>>
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>
+> will apply with changing as per you guys' review comment ;-)
+> 
+> Thanks,
+> Kukjin
+> 
 
-Best regards,
-Krzysztof
+Apologies for not jumping in earlier, but  I've been away for a while,
+with basically no e-mail access. Would You like me to resend the patch 
+with the 'reg' property removed or will You handle it while applying
+the change ?
+
+Best Regards
+Beata
