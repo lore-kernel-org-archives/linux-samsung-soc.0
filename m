@@ -1,169 +1,103 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible option
-Date: Tue, 26 May 2015 13:39:55 -0500
-Message-ID: <20150526183955.GW26599@saruman.tx.rr.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
- <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
- <20150515005210.GA31534@saruman.tx.rr.com>
- <556391FE.1020503@broadcom.com>
- <20150526141938.GA25686@saruman.tx.rr.com>
- <5564BD5D.1070601@broadcom.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SqGHvGqRphKoTacN"
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5564BD5D.1070601@broadcom.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-Cc: balbi@ti.com, Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-el>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] regulator: s2mps11: Fix GPIO suspend enable shift wrapping bug
+Date: Wed, 27 May 2015 12:22:08 +0900
+Message-ID: <1432696928-4690-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---SqGHvGqRphKoTacN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Status of enabling suspend mode for regulator was stored in bitmap-like
+long integer.
 
-On Tue, May 26, 2015 at 11:37:17AM -0700, Arun Ramamurthy wrote:
-> Hi
->=20
-> On 15-05-26 07:19 AM, Felipe Balbi wrote:
-> >HI,
-> >
-> >On Mon, May 25, 2015 at 02:19:58PM -0700, Arun Ramamurthy wrote:
-> >>
-> >>
-> >>On 15-05-14 05:52 PM, Felipe Balbi wrote:
-> >>>Hi,
-> >>>
-> >>>On Wed, Apr 22, 2015 at 04:04:10PM -0700, Arun Ramamurthy wrote:
-> >>>>Most of the phy providers use "select" to enable GENERIC_PHY. Since s=
-elect
-> >>>>is only recommended when the config is not visible, GENERIC_PHY is ch=
-anged
-> >>>>an invisible option. To maintain consistency, all phy providers are c=
-hanged
-> >>>>to "select" GENERIC_PHY and all non-phy drivers use "depends on" when=
- the
-> >>>>phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
-> >>>>dependency, so it is left as "select".
-> >>>>
-> >>>>Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-> >>>>---
-> >>>>  drivers/ata/Kconfig                       | 1 -
-> >>>>  drivers/media/platform/exynos4-is/Kconfig | 2 +-
-> >>>>  drivers/phy/Kconfig                       | 4 ++--
-> >>>>  drivers/usb/host/Kconfig                  | 4 ++--
-> >>>>  drivers/video/fbdev/exynos/Kconfig        | 2 +-
-> >>>>  5 files changed, 6 insertions(+), 7 deletions(-)
-> >>>>
-> >>>>diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> >>>>index 5f60155..6d2e881 100644
-> >>>>--- a/drivers/ata/Kconfig
-> >>>>+++ b/drivers/ata/Kconfig
-> >>>>@@ -301,7 +301,6 @@ config SATA_MV
-> >>>>  	tristate "Marvell SATA support"
-> >>>>  	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
-> >>>>  		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
-> >>>>-	select GENERIC_PHY
-> >>>>  	help
-> >>>>  	  This option enables support for the Marvell Serial ATA family.
-> >>>>  	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
-> >>>>diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/medi=
-a/platform/exynos4-is/Kconfig
-> >>>>index b7b2e47..b6f3eaa 100644
-> >>>>--- a/drivers/media/platform/exynos4-is/Kconfig
-> >>>>+++ b/drivers/media/platform/exynos4-is/Kconfig
-> >>>>@@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
-> >>>>  config VIDEO_S5P_MIPI_CSIS
-> >>>>  	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
-> >>>>  	depends on REGULATOR
-> >>>>-	select GENERIC_PHY
-> >>>>+	depends on GENERIC_PHY
-> >>>>  	help
-> >>>>  	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
-> >>>>  	  receiver (MIPI-CSIS) devices.
-> >>>>diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> >>>>index 2962de2..edecdb1 100644
-> >>>>--- a/drivers/phy/Kconfig
-> >>>>+++ b/drivers/phy/Kconfig
-> >>>>@@ -5,7 +5,7 @@
-> >>>>  menu "PHY Subsystem"
-> >>>>
-> >>>>  config GENERIC_PHY
-> >>>>-	bool "PHY Core"
-> >>>>+	bool
-> >>>>  	help
-> >>>>  	  Generic PHY support.
-> >>>>
-> >>>>@@ -72,7 +72,7 @@ config PHY_MIPHY365X
-> >>>>  config PHY_RCAR_GEN2
-> >>>>  	tristate "Renesas R-Car generation 2 USB PHY driver"
-> >>>>  	depends on ARCH_SHMOBILE
-> >>>>-	depends on GENERIC_PHY
-> >>>>+	select GENERIC_PHY
-> >>>
-> >>>so some you changed from depends to select...
-> >>>
-> >>>>  	help
-> >>>>  	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
-> >>>>
-> >>>>diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> >>>>index 5ad60e4..e2197e2 100644
-> >>>>--- a/drivers/usb/host/Kconfig
-> >>>>+++ b/drivers/usb/host/Kconfig
-> >>>>@@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
-> >>>>  config USB_EHCI_HCD_STI
-> >>>>  	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
-> >>>>  	depends on ARCH_STI && OF
-> >>>>-	select GENERIC_PHY
-> >>>>+	depends on GENERIC_PHY
-> >>>
-> >>>while others you changed from select to depends.
-> >>>
-> >>>NAK.
-> >>>
-> >>Felipe, I dont understand your concern, could you please explain it more
-> >>detail?  The logic behind the changes is that in cases where there was =
-an
-> >>explicit dependency, I changed it to "depends on" and in other cases I
-> >>changed it to "selects". Thanks
-> >
-> >Since GENERIC_PHY is visible from Kconfig, it would be much nicer to
-> >avoid select altogether.
-> >
-> Felipe, after discussion with the maintainers, I have made GENERIC_PHY an
-> invisible option as part of this change. Thanks
+However since adding support for S2MPU02 the number of regulators
+exceeded 32 so on devices with more than 32 regulators (S2MPU02 and
+S2MPS13) overflow happens when shifting the bit. This could lead to
+enabling suspend mode for completely different regulator than intended
+or to switching different regulator to other mode (e.g. from always
+enabled to controlled by PWRHOLD pin). Both cases could result in larger
+energy usage and issues when suspending to RAM.
 
-Then, if the option is invisible, how can you "depend" on it ? It can
-never be selected by poking around in Kconfig. IMO, it's
-counterintuitive that you need to enable a PHY driver before you can see
-your EHCI/OHCI/whatever controller listed in Kconfig.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 00e2573d2c10 ("regulator: s2mps11: Add support S2MPU02 regulator device")
+---
+ drivers/regulator/s2mps11.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---=20
-balbi
-
---SqGHvGqRphKoTacN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVZL37AAoJEIaOsuA1yqREYmsP/0GcYQ1JlJr3bXCNwKT+F1mh
-kdMtcehzUFKWeWue/IvtHlGUQ89VtA2nBnVCUPz3Kydvw+anUJTIxQ3zwEeuE2sf
-W65h4mgH1ykSnFBVY0CBK1LSvyVJ4qxqPTnKANvKrl99tdjEmtJzWPPxnZBw6pnr
-/y96MhL1zm2Hn3Pm/CPe8NcdnNOd7MXgWif6VxOWpC3ody5z9aMM8ZhLt2bTf9Sw
-hAEfI1Nb8NdSv+z/CSLqkvZS589bgQps2A4Btv9ZQJ9tBEQqeZC4wcLAC9Rm3ddB
-auALPyjuw/QPwEoglnS/eE0X36kucY7ddWIQb+OjeXV4I39pqa0s9KovTD42wONG
-MxvlmlZLoxh4OtgET4KJksC4/lWTjET7loAM9AkXmrtYlkZqozNG+cMBYsIkzUul
-DJpA/nuwAyqei4ks2k6i2P1vFQ8M42g/Dtiy+/Wz/EYT4+nOx2fvnHXIqZO52Nou
-TqoFDUgsViBCmR0cNZnja+CFHn6PJoqd/yBzWvFV9E5Xe1yUMgpT//EZDp9XkOGJ
-Q9vYmNRVPEjpnSj9TPCIZzct8mg0U1pu3GB99mGPb75ECk/FKsVG5s4/t+PfLFHX
-sYnt0udk+pbVrM6UX0LOVLASWikYtQKqS0M8uV4fGbKhf1w5Xf3E0RJyk8LkTFPW
-Cm1xrgHiwn3os+aIWRvx
-=bNqk
------END PGP SIGNATURE-----
-
---SqGHvGqRphKoTacN--
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 326ffb553371..72fc3c32db49 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -34,6 +34,8 @@
+ #include <linux/mfd/samsung/s2mps14.h>
+ #include <linux/mfd/samsung/s2mpu02.h>
+ 
++/* The highest number of possible regulators for supported devices. */
++#define S2MPS_REGULATOR_MAX		S2MPS13_REGULATOR_MAX
+ struct s2mps11_info {
+ 	unsigned int rdev_num;
+ 	int ramp_delay2;
+@@ -49,7 +51,7 @@ struct s2mps11_info {
+ 	 * One bit for each S2MPS13/S2MPS14/S2MPU02 regulator whether
+ 	 * the suspend mode was enabled.
+ 	 */
+-	unsigned long long s2mps14_suspend_state:50;
++	DECLARE_BITMAP(suspend_state, S2MPS_REGULATOR_MAX);
+ 
+ 	/* Array of size rdev_num with GPIO-s for external sleep control */
+ 	int *ext_control_gpio;
+@@ -500,7 +502,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 	switch (s2mps11->dev_type) {
+ 	case S2MPS13X:
+ 	case S2MPS14X:
+-		if (s2mps11->s2mps14_suspend_state & (1 << rdev_get_id(rdev)))
++		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+ 		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+@@ -508,7 +510,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 			val = rdev->desc->enable_mask;
+ 		break;
+ 	case S2MPU02:
+-		if (s2mps11->s2mps14_suspend_state & (1 << rdev_get_id(rdev)))
++		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPU02_ENABLE_SUSPEND;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -562,7 +564,7 @@ static int s2mps14_regulator_set_suspend_disable(struct regulator_dev *rdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	s2mps11->s2mps14_suspend_state |= (1 << rdev_get_id(rdev));
++	set_bit(rdev_get_id(rdev), s2mps11->suspend_state);
+ 	/*
+ 	 * Don't enable suspend mode if regulator is already disabled because
+ 	 * this would effectively for a short time turn on the regulator after
+@@ -960,18 +962,22 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	case S2MPS11X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
+ 		regulators = s2mps11_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	case S2MPS13X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps13_regulators);
+ 		regulators = s2mps13_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	case S2MPS14X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps14_regulators);
+ 		regulators = s2mps14_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	case S2MPU02:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mpu02_regulators);
+ 		regulators = s2mpu02_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	default:
+ 		dev_err(&pdev->dev, "Invalid device type: %u\n",
+-- 
+1.9.1
