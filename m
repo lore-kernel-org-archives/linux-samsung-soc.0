@@ -1,209 +1,163 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 6/7] mfd: cros_ec: Support multiple EC in a system
-Date: Wed, 27 May 2015 10:11:54 +0100
-Message-ID: <20150527091154.GX11677@x1>
+Subject: Re: [PATCH v3 7/7] mfd: cros_ec: spi: Add delay for asserting CS
+Date: Wed, 27 May 2015 10:14:50 +0100
+Message-ID: <20150527091450.GY11677@x1>
 References: <1432309340-13688-1-git-send-email-javier.martinez@collabora.co.uk>
- <1432309340-13688-7-git-send-email-javier.martinez@collabora.co.uk>
+ <1432309340-13688-8-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:34029 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751210AbbE0JOz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 May 2015 05:14:55 -0400
+Received: by wgv5 with SMTP id 5so3774505wgv.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 May 2015 02:14:54 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1432309340-13688-7-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>
+In-Reply-To: <1432309340-13688-8-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>
 
 On Fri, 22 May 2015, Javier Martinez Canillas wrote:
 
-> From: Gwendal Grignou <gwendal@chromium.org>
+> From: Alexandru M Stan <amstan@chromium.org>
 >=20
-> Chromebooks can have more than one Embedded Controller so the
-> cros_ec device id has to be incremented for each EC registered.
+> Some ECs need a little time for waking up before they can accept
+> SPI data at a high speed. This is configurable via a DT property
+> "google,cros-ec-spi-pre-delay".
 >=20
-> Add code to handle multiple EC. First ec found is cros-ec0,
-> second cros-ec1 and so on.
+> If this property isn't set, then no delay will be added. However,
+> if set it will cause a delay equal to the value passed to it to
+> be inserted at the beginning of a transaction.
 >=20
-> Add a new structure to represent multiple EC as different char
-> devices (e.g: /dev/cros_ec, /dev/cros_pd). It connects to
-> cros_ec_device and allows sysfs inferface for cros_pd.
->=20
-> Also reduce number of allocated objects, make chromeos sysfs
-> class object a static and add refcounting to prevent object
-> deletion while command is in progress.
->=20
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+> Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
 =2Euk>
 > ---
 >=20
 > Changes since v2: None
 >=20
-> Changes since v1:
->   - Squash patch that adds support to represent EC's as different
->     char devices (e.g: /dev/cros_ec, /dev/cros_pd):
->     https://chromium-review.googlesource.com/#/c/217297/
->     Suggested by Gwendal Grignou
->   - Use cros_ec instead of cros-ec in the subject line to be consiste=
-nt.
->     Suggested by Gwendal Grignou
+> Changes since v1: None, new patch
 > ---
->  drivers/input/keyboard/cros_ec_keyb.c      |   2 +-
->  drivers/mfd/cros_ec.c                      |  66 +++++++++++++--
->  drivers/mfd/cros_ec_i2c.c                  |   1 -
->  drivers/mfd/cros_ec_spi.c                  |   1 -
->  drivers/platform/chrome/cros_ec_dev.c      | 128 +++++++++++++++++++=
-+---------
->  drivers/platform/chrome/cros_ec_dev.h      |   7 --
->  drivers/platform/chrome/cros_ec_lightbar.c |  75 +++++++++--------
->  drivers/platform/chrome/cros_ec_lpc.c      |   1 -
->  drivers/platform/chrome/cros_ec_sysfs.c    |  48 +++++------
->  include/linux/mfd/cros_ec.h                |  44 ++++++++--
->  10 files changed, 247 insertions(+), 126 deletions(-)
+>  Documentation/devicetree/bindings/mfd/cros-ec.txt |  4 ++++
+>  drivers/mfd/cros_ec_spi.c                         | 21 +++++++++++++=
+++++++--
+
+These two should be separate patches.
+
+>  2 files changed, 23 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/ke=
-yboard/cros_ec_keyb.c
-> index 974154a74505..b01966dc7eb3 100644
-> --- a/drivers/input/keyboard/cros_ec_keyb.c
-> +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> @@ -275,7 +275,7 @@ static int cros_ec_keyb_probe(struct platform_dev=
-ice *pdev)
->  	ckdev->dev =3D dev;
->  	dev_set_drvdata(&pdev->dev, ckdev);
+> diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Docu=
+mentation/devicetree/bindings/mfd/cros-ec.txt
+> index 8009c3d87f33..1777916e9e28 100644
+> --- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
+> +++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+> @@ -18,6 +18,10 @@ Required properties (SPI):
+>  - reg: SPI chip select
 > =20
-> -	idev->name =3D ec->ec_name;
-> +	idev->name =3D CROS_EC_DEV_NAME;
->  	idev->phys =3D ec->phys_name;
->  	__set_bit(EV_REP, idev->evbit);
+>  Optional properties (SPI):
+> +- google,cros-ec-spi-pre-delay: Some implementations of the EC need =
+a little
+> +  time to wake up from sleep before they can receive SPI transfers a=
+t a high
+> +  clock rate. This property specifies the delay, in usecs, between t=
+he
+> +  assertion of the CS to the start of the first clock pulse.
+>  - google,cros-ec-spi-msg-delay: Some implementations of the EC requi=
+re some
+>    additional processing time in order to accept new transactions. If=
+ the delay
+>    between transactions is not long enough the EC may not be able to =
+respond
+
+When re-submitting as seperate patches:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index faba03e2f1ef..16f228dc243f 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -71,12 +71,15 @@
+>   * @spi: SPI device we are connected to
+>   * @last_transfer_ns: time that we last finished a transfer, or 0 if=
+ there
+>   *	if no record
+> + * @start_of_msg_delay: used to set the delay_usecs on the spi_trans=
+fer that
+> + *      is sent when we want to turn on CS at the start of a transac=
+tion.
+>   * @end_of_msg_delay: used to set the delay_usecs on the spi_transfe=
+r that
+>   *      is sent when we want to turn off CS at the end of a transact=
+ion.
+>   */
+>  struct cros_ec_spi {
+>  	struct spi_device *spi;
+>  	s64 last_transfer_ns;
+> +	unsigned int start_of_msg_delay;
+>  	unsigned int end_of_msg_delay;
+>  };
 > =20
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index 08d82bfc5268..99292bc2fe5f 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -24,12 +24,48 @@
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/cros_ec.h>
-> =20
-> -static const struct mfd_cell cros_devs[] =3D {
-> -	{
-> +static int dev_id;
-> +
-> +static int cros_ec_dev_register(struct cros_ec_device *ec_dev,
-> +				int dev_id, int devidx)
-
-What's the difference between dev_id and devidx.
-
-Confusing don't you think?
-
-> +{
-> +	struct device *dev =3D ec_dev->dev;
-> +	struct cros_ec_platform ec_p =3D {
-> +		.cmd_offset =3D 0,
-> +	};
-> +
-> +	struct mfd_cell ec_cell =3D {
->  		.name =3D "cros-ec-ctl",
->  		.id =3D PLATFORM_DEVID_AUTO,
-> -	},
-> -};
-> +		.platform_data =3D &ec_p,
-> +		.pdata_size =3D sizeof(ec_p),
-> +	};
-
-Why have you bought this into here?  The convention is usually to have
-this at the top of the file, outside any functions.  Declaring and
-initialising structs inside functions makes things looks messy IMHO.
-
-
-
-> +	switch (devidx) {
-> +	case 0:
-
-Please define these.  I have no idea what devidx 0 or 1 is.
-
-> +		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-> +			ec_p.ec_name =3D of_get_property(dev->of_node, "devname",
-> +						       NULL);
-> +			if (ec_p.ec_name =3D=3D NULL) {
-
-if (!ec_p.ec_name)
-
-> +				dev_dbg(dev,
-> +					"Device name not found, using default");
-> +				ec_p.ec_name =3D CROS_EC_DEV_NAME;
-> +			}
-> +		} else {
-> +			ec_p.ec_name =3D CROS_EC_DEV_NAME;
-> +		}
-
-I'd save yourself a few lines and do:
-
-if (OF)
-   name =3D get_name();
-
-if (!name)
-   name =3D DEFAULT_NAME;
-
-Then rid the 'else'.  Rid the dev_dbg() too if you can.
-
-> +		break;
-> +	case 1:
-> +		ec_p.ec_name =3D CROS_EC_DEV_PD_NAME;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ec_p.cmd_offset =3D EC_CMD_PASSTHRU_OFFSET(devidx);
-
-'\n' here.
-
-> +	return mfd_add_devices(dev, dev_id, &ec_cell, 1,
-> +			       NULL, ec_dev->irq, NULL);
-> +}
-> =20
->  int cros_ec_register(struct cros_ec_device *ec_dev)
->  {
-> @@ -52,14 +88,28 @@ int cros_ec_register(struct cros_ec_device *ec_de=
-v)
-> =20
->  	cros_ec_query_all(ec_dev);
-> =20
-> -	err =3D mfd_add_devices(dev, 0, cros_devs,
-> -			      ARRAY_SIZE(cros_devs),
-> -			      NULL, ec_dev->irq, NULL);
-> +	err =3D cros_ec_dev_register(ec_dev, dev_id++, 0);
->  	if (err) {
-> -		dev_err(dev, "failed to add mfd devices\n");
-> +		dev_err(dev, "failed to add ec\n");
->  		return err;
+> @@ -366,7 +369,7 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_de=
+vice *ec_dev,
+>  	struct ec_host_request *request;
+>  	struct ec_host_response *response;
+>  	struct cros_ec_spi *ec_spi =3D ec_dev->priv;
+> -	struct spi_transfer trans;
+> +	struct spi_transfer trans, trans_delay;
+>  	struct spi_message msg;
+>  	int i, len;
+>  	u8 *ptr;
+> @@ -393,13 +396,23 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_=
+device *ec_dev,
+>  		goto exit;
 >  	}
 > =20
-> +	if (ec_dev->max_passthru) {
-> +		/*
-> +		 * Register a PD device as well on top of this device.
-> +		 * We make the following assumptions:
-> +		 * - behind an EC, we have a pd
-> +		 * - only one device added.
-> +		 * - the EC is responsive at init time (it is not true for a
-> +		 *   sensor hub.
-> +		 */
-> +		err =3D cros_ec_dev_register(ec_dev, dev_id++, 1);
-
-I don't really like this devidx business.  Just keep it simple and
-define more than one mfd_cell structure.
-
-> +		if (err) {
-> +			dev_err(dev, "failed to add additional ec\n");
-> +			return err;
-> +		}
+> +	/*
+> +	 * Leave a gap between CS assertion and clocking of data to allow t=
+he
+> +	 * EC time to wakeup.
+> +	 */
+> +	spi_message_init(&msg);
+> +	if (ec_spi->start_of_msg_delay) {
+> +		memset(&trans_delay, 0, sizeof(trans_delay));
+> +		trans_delay.delay_usecs =3D ec_spi->start_of_msg_delay;
+> +		spi_message_add_tail(&trans_delay, &msg);
 > +	}
 > +
->  	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
->  		err =3D of_platform_populate(dev->of_node, NULL, NULL, dev);
->  		if (err) {
+>  	/* Transmit phase - send our message */
+>  	memset(&trans, 0, sizeof(trans));
+>  	trans.tx_buf =3D ec_dev->dout;
+>  	trans.rx_buf =3D rx_buf;
+>  	trans.len =3D len;
+>  	trans.cs_change =3D 1;
+> -	spi_message_init(&msg);
+>  	spi_message_add_tail(&trans, &msg);
+>  	ret =3D spi_sync(ec_spi->spi, &msg);
+> =20
+> @@ -602,6 +615,10 @@ static void cros_ec_spi_dt_probe(struct cros_ec_=
+spi *ec_spi, struct device *dev)
+>  	u32 val;
+>  	int ret;
+> =20
+> +	ret =3D of_property_read_u32(np, "google,cros-ec-spi-pre-delay", &v=
+al);
+> +	if (!ret)
+> +		ec_spi->start_of_msg_delay =3D val;
+> +
+>  	ret =3D of_property_read_u32(np, "google,cros-ec-spi-msg-delay", &v=
+al);
+>  	if (!ret)
+>  		ec_spi->end_of_msg_delay =3D val;
+
+And for this patch:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
 
 --=20
 Lee Jones
