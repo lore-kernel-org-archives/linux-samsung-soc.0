@@ -1,89 +1,1075 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v7 02/13] drm/exynos: atomic phase 1: use
- drm_plane_helper_update()
-Date: Wed, 27 May 2015 17:35:16 +0900
-Message-ID: <556581C4.30606@samsung.com>
-References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
- <1432309253-18572-3-git-send-email-gustavo@padovan.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 1/7] mfd: cros_ec: Use a zero-length array for command
+ data
+Date: Wed, 27 May 2015 09:36:59 +0100
+Message-ID: <20150527083659.GT11677@x1>
+References: <1432309340-13688-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1432309340-13688-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1432309253-18572-3-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1432309340-13688-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDUvMjMvMjAxNSAxMjo0MCBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
-c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBSaXAg
-b3V0IHRoZSBjaGVjayBmcm9tIGV4eW5vc191cGRhdGVfcGxhbmUoKSBhbmQgY3JlYXRlCj4gZXh5
-bm9zX2NoZWNrX3BsYW5lKCkgZm9yIHRoZSBjaGVjayBwaGFzZSBlbmFibGluZyB1c2UgdG8gdXNl
-Cj4gdGhlIGF0b21pYyBoZWxwZXJzIHRvIGNhbGwgb3VyIGNoZWNrIGFuZCB1cGRhdGUgcGhhc2Vz
-IHdoZW4gdXBkYXRpbmcKPiBwbGFuZXMuCj4gCj4gVXBkYXRlIGFsbCB1c2VycyBvZiBleHlub3Nf
-dXBkYXRlX3BsYW5lKCkgYWNjb3JkaW5nbHkgdG8gY2FsbAo+IGV4eW5vc19jaGVja19wbGFuZSgp
-IGJlZm9yZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFk
-b3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gUmV2aWV3ZWQtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5
-MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlA
-bWF0aC51bmktYmllbGVmZWxkLmRlPnkKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2NydGMuYyAgfCAyMyArKysrKysrKysrKysrKy0tLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCA0MCArKysrKysrKysrKysrKysrKysrKysr
-Ky0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oIHwg
-IDIgKy0KPiAgMyBmaWxlcyBjaGFuZ2VkLCA1MCBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlvbnMo
-LSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
-dGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiBpbmRleCAz
-NjNiMDE5Li4yN2NjNDUwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-Y3J0Yy5jCj4gQEAgLTExNiw2ICsxMTYsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0Y19t
-b2RlX3NldF9iYXNlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywgaW50IHgsIGludCB5LAo+ICAJc3Ry
-dWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsKPiAgCXVuc2lnbmVk
-IGludCBjcnRjX3c7Cj4gIAl1bnNpZ25lZCBpbnQgY3J0Y19oOwo+ICsJaW50IHJldDsKPiAgCj4g
-IAkvKiB3aGVuIGZyYW1lYnVmZmVyIGNoYW5naW5nIGlzIHJlcXVlc3RlZCwgY3J0YydzIGRwbXMg
-c2hvdWxkIGJlIG9uICovCj4gIAlpZiAoZXh5bm9zX2NydGMtPmRwbXMgPiBEUk1fTU9ERV9EUE1T
-X09OKSB7Cj4gQEAgLTEyMywxMiArMTI0LDE3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRj
-X21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCj4gIAkJ
-cmV0dXJuIC1FUEVSTTsKPiAgCX0KPiAgCj4gKwlyZXQgPSBleHlub3NfY2hlY2tfcGxhbmUoY3J0
-Yy0+cHJpbWFyeSwgZmIpOwo+ICsJaWYgKHJldCkKPiArCQlyZXR1cm4gcmV0Owo+ICsKPiAgCWNy
-dGNfdyA9IGZiLT53aWR0aCAtIHg7Cj4gIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKPiArCWV4
-eW5vc191cGRhdGVfcGxhbmUoY3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCj4gKwkJCSAg
-ICBjcnRjX3csIGNydGNfaCwgeCA8PCAxNiwgeSA8PCAxNiwKPiArCQkJICAgIGNydGNfdyA8PCAx
-NiwgY3J0Y19oIDw8IDE2KTsKPiAgCj4gLQlyZXR1cm4gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRj
-LT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiAtCQkJCSAgIGNydGNfdywgY3J0Y19oLCB4IDw8
-IDE2LCB5IDw8IDE2LAo+IC0JCQkJICAgY3J0Y193IDw8IDE2LCBjcnRjX2ggPDwgMTYpOwo+ICsJ
-cmV0dXJuIDA7Cj4gIH0KPiAgCj4gIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxl
-KHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiBAQCAtMTY1LDcgKzE3MSw2IEBAIHN0YXRpYyBpbnQg
-ZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gIHsKPiAg
-CXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjcnRjLT5kZXY7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2Ry
-bV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwo+IC0Jc3RydWN0IGRy
-bV9mcmFtZWJ1ZmZlciAqb2xkX2ZiID0gY3J0Yy0+cHJpbWFyeS0+ZmI7Cj4gIAl1bnNpZ25lZCBp
-bnQgY3J0Y193LCBjcnRjX2g7Cj4gIAlpbnQgcmV0Owo+ICAKPiBAQCAtMTg0LDYgKzE4OSwxMCBA
-QCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9jcnRjICpj
-cnRjLAo+ICAJCWdvdG8gb3V0Owo+ICAJfQo+ICAKPiArCXJldCA9IGV4eW5vc19jaGVja19wbGFu
-ZShjcnRjLT5wcmltYXJ5LCBmYik7Cj4gKwlpZiAocmV0KQo+ICsJCWdvdG8gb3V0Owo+ICsKPiAg
-CXJldCA9IGRybV92YmxhbmtfZ2V0KGRldiwgZXh5bm9zX2NydGMtPnBpcGUpOwo+ICAJaWYgKHJl
-dCkgewo+ICAJCURSTV9ERUJVRygiZmFpbGVkIHRvIGFjcXVpcmUgdmJsYW5rIGNvdW50ZXJcbiIp
-Owo+IEBAIC0yMDIsNiArMjExLDcgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2NydGNfcGFnZV9m
-bGlwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAgCWNydGMtPnByaW1hcnktPmZiID0gZmI7Cj4g
-IAljcnRjX3cgPSBmYi0+d2lkdGggLSBjcnRjLT54Owo+ICAJY3J0Y19oID0gZmItPmhlaWdodCAt
-IGNydGMtPnk7Cj4gKzw8PDw8PDwgSEVBRAo+ICAJcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShj
-cnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiAgCQkJCSAgY3J0Y193LCBjcnRjX2gsIGNy
-dGMtPnggPDwgMTYsIGNydGMtPnkgPDwgMTYsCj4gIAkJCQkgIGNydGNfdyA8PCAxNiwgY3J0Y19o
-IDw8IDE2KTsKPiBAQCAtMjEzLDYgKzIyMywxMSBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0
-Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+ICAJCXNwaW5fdW5sb2NrX2lycSgm
-ZGV2LT5ldmVudF9sb2NrKTsKPiAgCQlyZXR1cm4gcmV0Owo+ICAJfQo+ICs9PT09PT09Cj4gKwll
-eHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAo+ICsJCQkg
-ICAgY3J0Y193LCBjcnRjX2gsIGNydGMtPngsIGNydGMtPnksCj4gKwkJCSAgICBjcnRjX3csIGNy
-dGNfaCk7Cj4gKz4+Pj4+Pj4gMmY2ZDFmNC4uLiBkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2UgMTog
-dXNlIGRybV9wbGFuZV9oZWxwZXJfdXBkYXRlKCkKCk1heWJlIHVuaGFuZGxlZCBvdXRwdXQgb2Yg
-bWVyZ2UsIGNvdWxkIHlvdSBmaXggaXQ/Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+On Fri, 22 May 2015, Javier Martinez Canillas wrote:
+
+> Commit 1b84f2a4cd4a ("mfd: cros_ec: Use fixed size arrays to transfer
+> data with the EC") modified the struct cros_ec_command fields to not
+> use pointers for the input and output buffers and use fixed length
+> arrays instead.
+>=20
+> This change was made because the cros_ec ioctl API uses that struct
+> cros_ec_command to allow user-space to send commands to the EC and
+> to get data from the EC. So using pointers made the API not 64-bit
+> safe. Unfortunately this approach was not flexible enough for all
+> the use-cases since there may be a need to send larger commands
+> on newer versions of the EC command protocol.
+>=20
+> So to avoid to choose a constant length that it may be too big for
+> most commands and thus wasting memory and CPU cycles on copy from
+> and to user-space or having a size that is too small for some big
+> commands, use a zero-length array that is both 64-bit safe and
+> flexible. The same buffer is used for both output and input data
+> so the maximum of these values should be used to allocate it.
+>=20
+> Suggested-by: Gwendal Grignou <gwendal@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>=20
+> Changes since v2:
+>  - Set the version field in the cros_ec_command. Reported by Heiko St=
+uebner
+>  - Use kmalloc/kfree instead of pre-allocating using variables in the=
+ stack.
+>    Suggested by Lee Jones.
+>=20
+> Changes since v1:
+>  - Add Heiko Stuebner Tested-by tag
+>  - Removed a new blank line at EOF warning. Reported by Heiko Stuebne=
+r
+>  - Use kmalloc instead of kzalloc when the message is later initializ=
+ed
+>    Suggested by Gwendal Grignou
+>  - Pre-allocate struct cros_ec_command instead of dynamically allocat=
+e it
+>    whenever is possible. Suggested by Gwendal Grignou
+>  - Pre-allocate buffers for the usual cases and only allocate dynamic=
+ally
+>    in the heap for bigger sizes. Suggested by Gwendal Grignou
+>  - Don't access the cros_ec_command received from user-space before d=
+oing
+>    a copy_from_user. Suggested by Gwendal Grignou
+>  - Only copy from user-space outsize bytes and copy_to_user insize by=
+tes
+>    Suggested by Gwendal Grignou
+>  - ec_device_ioctl_xcmd() must return the numbers of bytes read and n=
+ot 0
+>    on success. Suggested by Gwendal Grignou
+>  - Rename alloc_cmd_msg to alloc_lightbar_cmd_msg. Suggested by Gwend=
+al Grignou
+> ---
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  45 ++++++---
+>  drivers/input/keyboard/cros_ec_keyb.c      |  29 ++++--
+>  drivers/mfd/cros_ec.c                      |  28 ++++--
+>  drivers/mfd/cros_ec_i2c.c                  |   4 +-
+>  drivers/mfd/cros_ec_spi.c                  |   2 +-
+
+=46or the MFD changes:
+ Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  drivers/platform/chrome/cros_ec_dev.c      |  65 +++++++-----
+>  drivers/platform/chrome/cros_ec_lightbar.c | 152 +++++++++++++++++++=
+---------
+>  drivers/platform/chrome/cros_ec_lpc.c      |   8 +-
+>  drivers/platform/chrome/cros_ec_sysfs.c    | 154 ++++++++++++++++++-=
+----------
+>  include/linux/mfd/cros_ec.h                |   6 +-
+>  10 files changed, 318 insertions(+), 175 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/bu=
+sses/i2c-cros-ec-tunnel.c
+> index fa8dedd8c3a2..a0d95ff682ae 100644
+> --- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> +++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> @@ -182,8 +182,9 @@ static int ec_i2c_xfer(struct i2c_adapter *adap, =
+struct i2c_msg i2c_msgs[],
+>  	const u16 bus_num =3D bus->remote_bus;
+>  	int request_len;
+>  	int response_len;
+> +	int alloc_size;
+>  	int result;
+> -	struct cros_ec_command msg =3D { };
+> +	struct cros_ec_command *msg;
+> =20
+>  	request_len =3D ec_i2c_count_message(i2c_msgs, num);
+>  	if (request_len < 0) {
+> @@ -198,25 +199,39 @@ static int ec_i2c_xfer(struct i2c_adapter *adap=
+, struct i2c_msg i2c_msgs[],
+>  		return response_len;
+>  	}
+> =20
+> -	result =3D ec_i2c_construct_message(msg.outdata, i2c_msgs, num, bus=
+_num);
+> -	if (result)
+> -		return result;
+> +	alloc_size =3D max(request_len, response_len);
+> +	msg =3D kmalloc(sizeof(*msg) + alloc_size, GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> =20
+> -	msg.version =3D 0;
+> -	msg.command =3D EC_CMD_I2C_PASSTHRU;
+> -	msg.outsize =3D request_len;
+> -	msg.insize =3D response_len;
+> +	result =3D ec_i2c_construct_message(msg->data, i2c_msgs, num, bus_n=
+um);
+> +	if (result) {
+> +		dev_err(dev, "Error constructing EC i2c message %d\n", result);
+> +		goto exit;
+> +	}
+> =20
+> -	result =3D cros_ec_cmd_xfer(bus->ec, &msg);
+> -	if (result < 0)
+> -		return result;
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_I2C_PASSTHRU;
+> +	msg->outsize =3D request_len;
+> +	msg->insize =3D response_len;
+> =20
+> -	result =3D ec_i2c_parse_response(msg.indata, i2c_msgs, &num);
+> -	if (result < 0)
+> -		return result;
+> +	result =3D cros_ec_cmd_xfer(bus->ec, msg);
+> +	if (result < 0) {
+> +		dev_err(dev, "Error transferring EC i2c message %d\n", result);
+> +		goto exit;
+> +	}
+> +
+> +	result =3D ec_i2c_parse_response(msg->data, i2c_msgs, &num);
+> +	if (result < 0) {
+> +		dev_err(dev, "Error parsing EC i2c message %d\n", result);
+> +		goto exit;
+> +	}
+> =20
+>  	/* Indicate success by saying how many messages were sent */
+> -	return num;
+> +	result =3D num;
+> +exit:
+> +	kfree(msg);
+> +	return result;
+>  }
+> =20
+>  static u32 ec_i2c_functionality(struct i2c_adapter *adap)
+> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/ke=
+yboard/cros_ec_keyb.c
+> index b50c5b8b8a4d..974154a74505 100644
+> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> @@ -148,19 +148,28 @@ static void cros_ec_keyb_process(struct cros_ec=
+_keyb *ckdev,
+> =20
+>  static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uint8_=
+t *kb_state)
+>  {
+> -	int ret;
+> -	struct cros_ec_command msg =3D {
+> -		.command =3D EC_CMD_MKBP_STATE,
+> -		.insize =3D ckdev->cols,
+> -	};
+> +	int ret =3D 0;
+> +	struct cros_ec_command *msg;
+> =20
+> -	ret =3D cros_ec_cmd_xfer(ckdev->ec, &msg);
+> -	if (ret < 0)
+> -		return ret;
+> +	msg =3D kmalloc(sizeof(*msg) + ckdev->cols, GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> =20
+> -	memcpy(kb_state, msg.indata, ckdev->cols);
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_MKBP_STATE;
+> +	msg->insize =3D ckdev->cols;
+> +	msg->outsize =3D 0;
+> =20
+> -	return 0;
+> +	ret =3D cros_ec_cmd_xfer(ckdev->ec, msg);
+> +	if (ret < 0) {
+> +		dev_err(ckdev->dev, "Error transferring EC message %d\n", ret);
+> +		goto exit;
+> +	}
+> +
+> +	memcpy(kb_state, msg->data, ckdev->cols);
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+>  }
+> =20
+>  static irqreturn_t cros_ec_keyb_irq(int irq, void *data)
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index 1574a9352a6d..4a0f6dfcd376 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -41,7 +41,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_de=
+v,
+>  	out[2] =3D msg->outsize;
+>  	csum =3D out[0] + out[1] + out[2];
+>  	for (i =3D 0; i < msg->outsize; i++)
+> -		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->outdata[i];
+> +		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->data[i];
+>  	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] =3D (uint8_t)(csum & 0xf=
+f);
+> =20
+>  	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
+> @@ -75,11 +75,20 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_de=
+v,
+>  	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
+>  	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
+>  		int i;
+> -		struct cros_ec_command status_msg =3D { };
+> +		struct cros_ec_command *status_msg;
+>  		struct ec_response_get_comms_status *status;
+> =20
+> -		status_msg.command =3D EC_CMD_GET_COMMS_STATUS;
+> -		status_msg.insize =3D sizeof(*status);
+> +		status_msg =3D kmalloc(sizeof(*status_msg) + sizeof(*status),
+> +				     GFP_KERNEL);
+> +		if (!status_msg) {
+> +			ret =3D -ENOMEM;
+> +			goto exit;
+> +		}
+> +
+> +		status_msg->version =3D 0;
+> +		status_msg->command =3D EC_CMD_GET_COMMS_STATUS;
+> +		status_msg->insize =3D sizeof(*status);
+> +		status_msg->outsize =3D 0;
+> =20
+>  		/*
+>  		 * Query the EC's status until it's no longer busy or
+> @@ -88,20 +97,23 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_de=
+v,
+>  		for (i =3D 0; i < EC_COMMAND_RETRIES; i++) {
+>  			usleep_range(10000, 11000);
+> =20
+> -			ret =3D ec_dev->cmd_xfer(ec_dev, &status_msg);
+> +			ret =3D ec_dev->cmd_xfer(ec_dev, status_msg);
+>  			if (ret < 0)
+>  				break;
+> =20
+> -			msg->result =3D status_msg.result;
+> -			if (status_msg.result !=3D EC_RES_SUCCESS)
+> +			msg->result =3D status_msg->result;
+> +			if (status_msg->result !=3D EC_RES_SUCCESS)
+>  				break;
+> =20
+>  			status =3D (struct ec_response_get_comms_status *)
+> -				 status_msg.indata;
+> +				 status_msg->data;
+>  			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
+>  				break;
+>  		}
+> +
+> +		kfree(status_msg);
+>  	}
+> +exit:
+>  	mutex_unlock(&ec_dev->lock);
+> =20
+>  	return ret;
+> diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
+> index 82b4d6148698..fbf7819f5de5 100644
+> --- a/drivers/mfd/cros_ec_i2c.c
+> +++ b/drivers/mfd/cros_ec_i2c.c
+> @@ -76,7 +76,7 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_devi=
+ce *ec_dev,
+>  	/* copy message payload and compute checksum */
+>  	sum =3D out_buf[0] + out_buf[1] + out_buf[2];
+>  	for (i =3D 0; i < msg->outsize; i++) {
+> -		out_buf[3 + i] =3D msg->outdata[i];
+> +		out_buf[3 + i] =3D msg->data[i];
+>  		sum +=3D out_buf[3 + i];
+>  	}
+>  	out_buf[3 + msg->outsize] =3D sum;
+> @@ -109,7 +109,7 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_de=
+vice *ec_dev,
+>  	/* copy response packet payload and compute checksum */
+>  	sum =3D in_buf[0] + in_buf[1];
+>  	for (i =3D 0; i < len; i++) {
+> -		msg->indata[i] =3D in_buf[2 + i];
+> +		msg->data[i] =3D in_buf[2 + i];
+>  		sum +=3D in_buf[2 + i];
+>  	}
+>  	dev_dbg(ec_dev->dev, "packet: %*ph, sum =3D %02x\n",
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 27bd52e5e8b7..573730fec947 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -299,7 +299,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_de=
+vice *ec_dev,
+>  	for (i =3D 0; i < len; i++) {
+>  		sum +=3D ptr[i + 2];
+>  		if (ec_msg->insize)
+> -			ec_msg->indata[i] =3D ptr[i + 2];
+> +			ec_msg->data[i] =3D ptr[i + 2];
+>  	}
+>  	sum &=3D 0xff;
+> =20
+> diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform=
+/chrome/cros_ec_dev.c
+> index 6090d0b2826f..e91ced1cb8ce 100644
+> --- a/drivers/platform/chrome/cros_ec_dev.c
+> +++ b/drivers/platform/chrome/cros_ec_dev.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/slab.h>
+>  #include <linux/uaccess.h>
+> =20
+>  #include "cros_ec_dev.h"
+> @@ -36,28 +37,31 @@ static int ec_get_version(struct cros_ec_device *=
+ec, char *str, int maxlen)
+>  	static const char * const current_image_name[] =3D {
+>  		"unknown", "read-only", "read-write", "invalid",
+>  	};
+> -	struct cros_ec_command msg =3D {
+> -		.version =3D 0,
+> -		.command =3D EC_CMD_GET_VERSION,
+> -		.outdata =3D { 0 },
+> -		.outsize =3D 0,
+> -		.indata =3D { 0 },
+> -		.insize =3D sizeof(*resp),
+> -	};
+> +	struct cros_ec_command *msg;
+>  	int ret;
+> =20
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	msg =3D kmalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_GET_VERSION;
+> +	msg->insize =3D sizeof(*resp);
+> +	msg->outsize =3D 0;
+> +
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto exit;
+> =20
+> -	if (msg.result !=3D EC_RES_SUCCESS) {
+> +	if (msg->result !=3D EC_RES_SUCCESS) {
+>  		snprintf(str, maxlen,
+>  			 "%s\nUnknown EC version: EC returned %d\n",
+> -			 CROS_EC_DEV_VERSION, msg.result);
+> -		return 0;
+> +			 CROS_EC_DEV_VERSION, msg->result);
+> +		ret =3D -EINVAL;
+> +		goto exit;
+>  	}
+> =20
+> -	resp =3D (struct ec_response_get_version *)msg.indata;
+> +	resp =3D (struct ec_response_get_version *)msg->data;
+>  	if (resp->current_image >=3D ARRAY_SIZE(current_image_name))
+>  		resp->current_image =3D 3; /* invalid */
+> =20
+> @@ -65,7 +69,10 @@ static int ec_get_version(struct cros_ec_device *e=
+c, char *str, int maxlen)
+>  		 resp->version_string_ro, resp->version_string_rw,
+>  		 current_image_name[resp->current_image]);
+> =20
+> -	return 0;
+> +	ret =3D 0;
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+>  }
+> =20
+>  /* Device file ops */
+> @@ -110,20 +117,32 @@ static ssize_t ec_device_read(struct file *filp=
+, char __user *buffer,
+>  static long ec_device_ioctl_xcmd(struct cros_ec_device *ec, void __u=
+ser *arg)
+>  {
+>  	long ret;
+> -	struct cros_ec_command s_cmd =3D { };
+> +	struct cros_ec_command u_cmd;
+> +	struct cros_ec_command *s_cmd;
+> =20
+> -	if (copy_from_user(&s_cmd, arg, sizeof(s_cmd)))
+> +	if (copy_from_user(&u_cmd, arg, sizeof(u_cmd)))
+>  		return -EFAULT;
+> =20
+> -	ret =3D cros_ec_cmd_xfer(ec, &s_cmd);
+> +	s_cmd =3D kmalloc(sizeof(*s_cmd) + max(u_cmd.outsize, u_cmd.insize)=
+,
+> +			GFP_KERNEL);
+> +	if (!s_cmd)
+> +		return -ENOMEM;
+> +
+> +	if (copy_from_user(s_cmd, arg, sizeof(*s_cmd) + u_cmd.outsize)) {
+> +		ret =3D -EFAULT;
+> +		goto exit;
+> +	}
+> +
+> +	ret =3D cros_ec_cmd_xfer(ec, s_cmd);
+>  	/* Only copy data to userland if data was received. */
+>  	if (ret < 0)
+> -		return ret;
+> +		goto exit;
+> =20
+> -	if (copy_to_user(arg, &s_cmd, sizeof(s_cmd)))
+> -		return -EFAULT;
+> -
+> -	return 0;
+> +	if (copy_to_user(arg, s_cmd, sizeof(*s_cmd) + u_cmd.insize))
+> +		ret =3D -EFAULT;
+> +exit:
+> +	kfree(s_cmd);
+> +	return ret;
+>  }
+> =20
+>  static long ec_device_ioctl_readmem(struct cros_ec_device *ec, void =
+__user *arg)
+> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/pla=
+tform/chrome/cros_ec_lightbar.c
+> index b4ff47a9069a..560e5d41b7ae 100644
+> --- a/drivers/platform/chrome/cros_ec_lightbar.c
+> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/slab.h>
+> =20
+>  #include "cros_ec_dev.h"
+> =20
+> @@ -91,54 +92,79 @@ out:
+>  	return ret;
+>  }
+> =20
+> -#define INIT_MSG(P, R) { \
+> -		.command =3D EC_CMD_LIGHTBAR_CMD, \
+> -		.outsize =3D sizeof(*P), \
+> -		.insize =3D sizeof(*R), \
+> -	}
+> +static struct cros_ec_command *alloc_lightbar_cmd_msg(void)
+> +{
+> +	struct cros_ec_command *msg;
+> +	int len;
+> +
+> +	len =3D max(sizeof(struct ec_params_lightbar),
+> +		  sizeof(struct ec_response_lightbar));
+> +
+> +	msg =3D kmalloc(sizeof(*msg) + len, GFP_KERNEL);
+> +	if (!msg)
+> +		return NULL;
+> +
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_LIGHTBAR_CMD;
+> +	msg->outsize =3D sizeof(struct ec_params_lightbar);
+> +	msg->insize =3D sizeof(struct ec_response_lightbar);
+> +
+> +	return msg;
+> +}
+> =20
+>  static int get_lightbar_version(struct cros_ec_device *ec,
+>  				uint32_t *ver_ptr, uint32_t *flg_ptr)
+>  {
+>  	struct ec_params_lightbar *param;
+>  	struct ec_response_lightbar *resp;
+> -	struct cros_ec_command msg =3D INIT_MSG(param, resp);
+> +	struct cros_ec_command *msg;
+>  	int ret;
+> =20
+> -	param =3D (struct ec_params_lightbar *)msg.outdata;
+> -	param->cmd =3D LIGHTBAR_CMD_VERSION;
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> -	if (ret < 0)
+> +	msg =3D alloc_lightbar_cmd_msg();
+> +	if (!msg)
+>  		return 0;
+> =20
+> -	switch (msg.result) {
+> +	param =3D (struct ec_params_lightbar *)msg->data;
+> +	param->cmd =3D LIGHTBAR_CMD_VERSION;
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+> +	if (ret < 0) {
+> +		ret =3D 0;
+> +		goto exit;
+> +	}
+> +
+> +	switch (msg->result) {
+>  	case EC_RES_INVALID_PARAM:
+>  		/* Pixel had no version command. */
+>  		if (ver_ptr)
+>  			*ver_ptr =3D 0;
+>  		if (flg_ptr)
+>  			*flg_ptr =3D 0;
+> -		return 1;
+> +		ret =3D 1;
+> +		goto exit;
+> =20
+>  	case EC_RES_SUCCESS:
+> -		resp =3D (struct ec_response_lightbar *)msg.indata;
+> +		resp =3D (struct ec_response_lightbar *)msg->data;
+> =20
+>  		/* Future devices w/lightbars should implement this command */
+>  		if (ver_ptr)
+>  			*ver_ptr =3D resp->version.num;
+>  		if (flg_ptr)
+>  			*flg_ptr =3D resp->version.flags;
+> -		return 1;
+> +		ret =3D 1;
+> +		goto exit;
+>  	}
+> =20
+>  	/* Anything else (ie, EC_RES_INVALID_COMMAND) - no lightbar */
+> -	return 0;
+> +	ret =3D 0;
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+>  }
+> =20
+>  static ssize_t version_show(struct device *dev,
+>  			    struct device_attribute *attr, char *buf)
+>  {
+> -	uint32_t version, flags;
+> +	uint32_t version =3D 0, flags =3D 0;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+>  	int ret;
+> =20
+> @@ -158,8 +184,7 @@ static ssize_t brightness_store(struct device *de=
+v,
+>  				const char *buf, size_t count)
+>  {
+>  	struct ec_params_lightbar *param;
+> -	struct ec_response_lightbar *resp;
+> -	struct cros_ec_command msg =3D INIT_MSG(param, resp);
+> +	struct cros_ec_command *msg;
+>  	int ret;
+>  	unsigned int val;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+> @@ -167,21 +192,30 @@ static ssize_t brightness_store(struct device *=
+dev,
+>  	if (kstrtouint(buf, 0, &val))
+>  		return -EINVAL;
+> =20
+> -	param =3D (struct ec_params_lightbar *)msg.outdata;
+> +	msg =3D alloc_lightbar_cmd_msg();
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	param =3D (struct ec_params_lightbar *)msg->data;
+>  	param->cmd =3D LIGHTBAR_CMD_BRIGHTNESS;
+>  	param->brightness.num =3D val;
+>  	ret =3D lb_throttle();
+>  	if (ret)
+> -		return ret;
+> +		goto exit;
+> =20
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto exit;
+> =20
+> -	if (msg.result !=3D EC_RES_SUCCESS)
+> -		return -EINVAL;
+> +	if (msg->result !=3D EC_RES_SUCCESS) {
+> +		ret =3D -EINVAL;
+> +		goto exit;
+> +	}
+> =20
+> -	return count;
+> +	ret =3D count;
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+>  }
+> =20
+> =20
+> @@ -196,12 +230,15 @@ static ssize_t led_rgb_store(struct device *dev=
+, struct device_attribute *attr,
+>  			     const char *buf, size_t count)
+>  {
+>  	struct ec_params_lightbar *param;
+> -	struct ec_response_lightbar *resp;
+> -	struct cros_ec_command msg =3D INIT_MSG(param, resp);
+> +	struct cros_ec_command *msg;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+>  	unsigned int val[4];
+>  	int ret, i =3D 0, j =3D 0, ok =3D 0;
+> =20
+> +	msg =3D alloc_lightbar_cmd_msg();
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>  	do {
+>  		/* Skip any whitespace */
+>  		while (*buf && isspace(*buf))
+> @@ -215,7 +252,7 @@ static ssize_t led_rgb_store(struct device *dev, =
+struct device_attribute *attr,
+>  			return -EINVAL;
+> =20
+>  		if (i =3D=3D 4) {
+> -			param =3D (struct ec_params_lightbar *)msg.outdata;
+> +			param =3D (struct ec_params_lightbar *)msg->data;
+>  			param->cmd =3D LIGHTBAR_CMD_RGB;
+>  			param->rgb.led =3D val[0];
+>  			param->rgb.red =3D val[1];
+> @@ -231,12 +268,14 @@ static ssize_t led_rgb_store(struct device *dev=
+, struct device_attribute *attr,
+>  					return ret;
+>  			}
+> =20
+> -			ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +			ret =3D cros_ec_cmd_xfer(ec, msg);
+>  			if (ret < 0)
+> -				return ret;
+> +				goto exit;
+> =20
+> -			if (msg.result !=3D EC_RES_SUCCESS)
+> -				return -EINVAL;
+> +			if (msg->result !=3D EC_RES_SUCCESS) {
+> +				ret =3D -EINVAL;
+> +				goto exit;
+> +			}
+> =20
+>  			i =3D 0;
+>  			ok =3D 1;
+> @@ -248,6 +287,8 @@ static ssize_t led_rgb_store(struct device *dev, =
+struct device_attribute *attr,
+> =20
+>  	} while (*buf);
+> =20
+> +exit:
+> +	kfree(msg);
+>  	return (ok && i =3D=3D 0) ? count : -EINVAL;
+>  }
+> =20
+> @@ -261,42 +302,55 @@ static ssize_t sequence_show(struct device *dev=
+,
+>  {
+>  	struct ec_params_lightbar *param;
+>  	struct ec_response_lightbar *resp;
+> -	struct cros_ec_command msg =3D INIT_MSG(param, resp);
+> +	struct cros_ec_command *msg;
+>  	int ret;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+> =20
+> -	param =3D (struct ec_params_lightbar *)msg.outdata;
+> +	msg =3D alloc_lightbar_cmd_msg();
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	param =3D (struct ec_params_lightbar *)msg->data;
+>  	param->cmd =3D LIGHTBAR_CMD_GET_SEQ;
+>  	ret =3D lb_throttle();
+>  	if (ret)
+> -		return ret;
+> +		goto exit;
+> =20
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto exit;
+> =20
+> -	if (msg.result !=3D EC_RES_SUCCESS)
+> -		return scnprintf(buf, PAGE_SIZE,
+> -				 "ERROR: EC returned %d\n", msg.result);
+> +	if (msg->result !=3D EC_RES_SUCCESS) {
+> +		ret =3D scnprintf(buf, PAGE_SIZE,
+> +				"ERROR: EC returned %d\n", msg->result);
+> +		goto exit;
+> +	}
+> =20
+> -	resp =3D (struct ec_response_lightbar *)msg.indata;
+> +	resp =3D (struct ec_response_lightbar *)msg->data;
+>  	if (resp->get_seq.num >=3D ARRAY_SIZE(seqname))
+> -		return scnprintf(buf, PAGE_SIZE, "%d\n", resp->get_seq.num);
+> +		ret =3D scnprintf(buf, PAGE_SIZE, "%d\n", resp->get_seq.num);
+>  	else
+> -		return scnprintf(buf, PAGE_SIZE, "%s\n",
+> -				 seqname[resp->get_seq.num]);
+> +		ret =3D scnprintf(buf, PAGE_SIZE, "%s\n",
+> +				seqname[resp->get_seq.num]);
+> +
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+>  }
+> =20
+>  static ssize_t sequence_store(struct device *dev, struct device_attr=
+ibute *attr,
+>  			      const char *buf, size_t count)
+>  {
+>  	struct ec_params_lightbar *param;
+> -	struct ec_response_lightbar *resp;
+> -	struct cros_ec_command msg =3D INIT_MSG(param, resp);
+> +	struct cros_ec_command *msg;
+>  	unsigned int num;
+>  	int ret, len;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+> =20
+> +	msg =3D alloc_lightbar_cmd_msg();
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>  	for (len =3D 0; len < count; len++)
+>  		if (!isalnum(buf[len]))
+>  			break;
+> @@ -311,18 +365,18 @@ static ssize_t sequence_store(struct device *de=
+v, struct device_attribute *attr,
+>  			return ret;
+>  	}
+> =20
+> -	param =3D (struct ec_params_lightbar *)msg.outdata;
+> +	param =3D (struct ec_params_lightbar *)msg->data;
+>  	param->cmd =3D LIGHTBAR_CMD_SEQ;
+>  	param->seq.num =3D num;
+>  	ret =3D lb_throttle();
+>  	if (ret)
+>  		return ret;
+> =20
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> -	if (msg.result !=3D EC_RES_SUCCESS)
+> +	if (msg->result !=3D EC_RES_SUCCESS)
+>  		return -EINVAL;
+> =20
+>  	return count;
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform=
+/chrome/cros_ec_lpc.c
+> index 860310513cf0..4c7f0df33bf8 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -73,8 +73,8 @@ static int cros_ec_cmd_xfer_lpc(struct cros_ec_devi=
+ce *ec,
+> =20
+>  	/* Copy data and update checksum */
+>  	for (i =3D 0; i < msg->outsize; i++) {
+> -		outb(msg->outdata[i], EC_LPC_ADDR_HOST_PARAM + i);
+> -		csum +=3D msg->outdata[i];
+> +		outb(msg->data[i], EC_LPC_ADDR_HOST_PARAM + i);
+> +		csum +=3D msg->data[i];
+>  	}
+> =20
+>  	/* Finalize checksum and write args */
+> @@ -129,8 +129,8 @@ static int cros_ec_cmd_xfer_lpc(struct cros_ec_de=
+vice *ec,
+> =20
+>  	/* Read response and update checksum */
+>  	for (i =3D 0; i < args.data_size; i++) {
+> -		msg->indata[i] =3D inb(EC_LPC_ADDR_HOST_PARAM + i);
+> -		csum +=3D msg->indata[i];
+> +		msg->data[i] =3D inb(EC_LPC_ADDR_HOST_PARAM + i);
+> +		csum +=3D msg->data[i];
+>  	}
+> =20
+>  	/* Verify checksum */
+> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platfo=
+rm/chrome/cros_ec_sysfs.c
+> index fb62ab6cc659..78ba82d670cb 100644
+> --- a/drivers/platform/chrome/cros_ec_sysfs.c
+> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/printk.h>
+> +#include <linux/slab.h>
+>  #include <linux/stat.h>
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+> @@ -66,14 +67,19 @@ static ssize_t store_ec_reboot(struct device *dev=
+,
+>  		{"hibernate",    EC_REBOOT_HIBERNATE, 0},
+>  		{"at-shutdown",  -1, EC_REBOOT_FLAG_ON_AP_SHUTDOWN},
+>  	};
+> -	struct cros_ec_command msg =3D { 0 };
+> -	struct ec_params_reboot_ec *param =3D
+> -		(struct ec_params_reboot_ec *)msg.outdata;
+> +	struct cros_ec_command *msg;
+> +	struct ec_params_reboot_ec *param;
+>  	int got_cmd =3D 0, offset =3D 0;
+>  	int i;
+>  	int ret;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+> =20
+> +	msg =3D kmalloc(sizeof(*msg) + sizeof(*param), GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	param =3D (struct ec_params_reboot_ec *)msg->data;
+> +
+>  	param->flags =3D 0;
+>  	while (1) {
+>  		/* Find word to start scanning */
+> @@ -100,19 +106,26 @@ static ssize_t store_ec_reboot(struct device *d=
+ev,
+>  			offset++;
+>  	}
+> =20
+> -	if (!got_cmd)
+> -		return -EINVAL;
+> -
+> -	msg.command =3D EC_CMD_REBOOT_EC;
+> -	msg.outsize =3D sizeof(param);
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> -	if (ret < 0)
+> -		return ret;
+> -	if (msg.result !=3D EC_RES_SUCCESS) {
+> -		dev_dbg(ec->dev, "EC result %d\n", msg.result);
+> -		return -EINVAL;
+> +	if (!got_cmd) {
+> +		count =3D -EINVAL;
+> +		goto exit;
+>  	}
+> =20
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_REBOOT_EC;
+> +	msg->outsize =3D sizeof(*param);
+> +	msg->insize =3D 0;
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+> +	if (ret < 0) {
+> +		count =3D ret;
+> +		goto exit;
+> +	}
+> +	if (msg->result !=3D EC_RES_SUCCESS) {
+> +		dev_dbg(ec->dev, "EC result %d\n", msg->result);
+> +		count =3D -EINVAL;
+> +	}
+> +exit:
+> +	kfree(msg);
+>  	return count;
+>  }
+> =20
+> @@ -123,22 +136,32 @@ static ssize_t show_ec_version(struct device *d=
+ev,
+>  	struct ec_response_get_version *r_ver;
+>  	struct ec_response_get_chip_info *r_chip;
+>  	struct ec_response_board_version *r_board;
+> -	struct cros_ec_command msg =3D { 0 };
+> +	struct cros_ec_command *msg;
+>  	int ret;
+>  	int count =3D 0;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+> =20
+> +	msg =3D kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>  	/* Get versions. RW may change. */
+> -	msg.command =3D EC_CMD_GET_VERSION;
+> -	msg.insize =3D sizeof(*r_ver);
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> -	if (ret < 0)
+> -		return ret;
+> -	if (msg.result !=3D EC_RES_SUCCESS)
+> -		return scnprintf(buf, PAGE_SIZE,
+> -				 "ERROR: EC returned %d\n", msg.result);
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_GET_VERSION;
+> +	msg->insize =3D sizeof(*r_ver);
+> +	msg->outsize =3D 0;
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+> +	if (ret < 0) {
+> +		count =3D ret;
+> +		goto exit;
+> +	}
+> +	if (msg->result !=3D EC_RES_SUCCESS) {
+> +		count =3D scnprintf(buf, PAGE_SIZE,
+> +				  "ERROR: EC returned %d\n", msg->result);
+> +		goto exit;
+> +	}
+> =20
+> -	r_ver =3D (struct ec_response_get_version *)msg.indata;
+> +	r_ver =3D (struct ec_response_get_version *)msg->data;
+>  	/* Strings should be null-terminated, but let's be sure. */
+>  	r_ver->version_string_ro[sizeof(r_ver->version_string_ro) - 1] =3D =
+'\0';
+>  	r_ver->version_string_rw[sizeof(r_ver->version_string_rw) - 1] =3D =
+'\0';
+> @@ -152,33 +175,33 @@ static ssize_t show_ec_version(struct device *d=
+ev,
+>  			    image_names[r_ver->current_image] : "?"));
+> =20
+>  	/* Get build info. */
+> -	msg.command =3D EC_CMD_GET_BUILD_INFO;
+> -	msg.insize =3D sizeof(msg.indata);
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	msg->command =3D EC_CMD_GET_BUILD_INFO;
+> +	msg->insize =3D EC_HOST_PARAM_SIZE;
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+>  				   "Build info:    XFER ERROR %d\n", ret);
+> -	else if (msg.result !=3D EC_RES_SUCCESS)
+> +	else if (msg->result !=3D EC_RES_SUCCESS)
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+> -				   "Build info:    EC error %d\n", msg.result);
+> +				   "Build info:    EC error %d\n", msg->result);
+>  	else {
+> -		msg.indata[sizeof(msg.indata) - 1] =3D '\0';
+> +		msg->data[sizeof(msg->data) - 1] =3D '\0';
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+> -				   "Build info:    %s\n", msg.indata);
+> +				   "Build info:    %s\n", msg->data);
+>  	}
+> =20
+>  	/* Get chip info. */
+> -	msg.command =3D EC_CMD_GET_CHIP_INFO;
+> -	msg.insize =3D sizeof(*r_chip);
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	msg->command =3D EC_CMD_GET_CHIP_INFO;
+> +	msg->insize =3D sizeof(*r_chip);
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+>  				   "Chip info:     XFER ERROR %d\n", ret);
+> -	else if (msg.result !=3D EC_RES_SUCCESS)
+> +	else if (msg->result !=3D EC_RES_SUCCESS)
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+> -				   "Chip info:     EC error %d\n", msg.result);
+> +				   "Chip info:     EC error %d\n", msg->result);
+>  	else {
+> -		r_chip =3D (struct ec_response_get_chip_info *)msg.indata;
+> +		r_chip =3D (struct ec_response_get_chip_info *)msg->data;
+> =20
+>  		r_chip->vendor[sizeof(r_chip->vendor) - 1] =3D '\0';
+>  		r_chip->name[sizeof(r_chip->name) - 1] =3D '\0';
+> @@ -192,23 +215,25 @@ static ssize_t show_ec_version(struct device *d=
+ev,
+>  	}
+> =20
+>  	/* Get board version */
+> -	msg.command =3D EC_CMD_GET_BOARD_VERSION;
+> -	msg.insize =3D sizeof(*r_board);
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	msg->command =3D EC_CMD_GET_BOARD_VERSION;
+> +	msg->insize =3D sizeof(*r_board);
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+>  				   "Board version: XFER ERROR %d\n", ret);
+> -	else if (msg.result !=3D EC_RES_SUCCESS)
+> +	else if (msg->result !=3D EC_RES_SUCCESS)
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+> -				   "Board version: EC error %d\n", msg.result);
+> +				   "Board version: EC error %d\n", msg->result);
+>  	else {
+> -		r_board =3D (struct ec_response_board_version *)msg.indata;
+> +		r_board =3D (struct ec_response_board_version *)msg->data;
+> =20
+>  		count +=3D scnprintf(buf + count, PAGE_SIZE - count,
+>  				   "Board version: %d\n",
+>  				   r_board->board_version);
+>  	}
+> =20
+> +exit:
+> +	kfree(msg);
+>  	return count;
+>  }
+> =20
+> @@ -216,27 +241,38 @@ static ssize_t show_ec_flashinfo(struct device =
+*dev,
+>  				 struct device_attribute *attr, char *buf)
+>  {
+>  	struct ec_response_flash_info *resp;
+> -	struct cros_ec_command msg =3D { 0 };
+> +	struct cros_ec_command *msg;
+>  	int ret;
+>  	struct cros_ec_device *ec =3D dev_get_drvdata(dev);
+> =20
+> +	msg =3D kmalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>  	/* The flash info shouldn't ever change, but ask each time anyway. =
+*/
+> -	msg.command =3D EC_CMD_FLASH_INFO;
+> -	msg.insize =3D sizeof(*resp);
+> -	ret =3D cros_ec_cmd_xfer(ec, &msg);
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_FLASH_INFO;
+> +	msg->insize =3D sizeof(*resp);
+> +	msg->outsize =3D 0;
+> +	ret =3D cros_ec_cmd_xfer(ec, msg);
+>  	if (ret < 0)
+> -		return ret;
+> -	if (msg.result !=3D EC_RES_SUCCESS)
+> -		return scnprintf(buf, PAGE_SIZE,
+> -				 "ERROR: EC returned %d\n", msg.result);
+> -
+> -	resp =3D (struct ec_response_flash_info *)msg.indata;
+> -
+> -	return scnprintf(buf, PAGE_SIZE,
+> -			 "FlashSize %d\nWriteSize %d\n"
+> -			 "EraseSize %d\nProtectSize %d\n",
+> -			 resp->flash_size, resp->write_block_size,
+> -			 resp->erase_block_size, resp->protect_block_size);
+> +		goto exit;
+> +	if (msg->result !=3D EC_RES_SUCCESS) {
+> +		ret =3D scnprintf(buf, PAGE_SIZE,
+> +				"ERROR: EC returned %d\n", msg->result);
+> +		goto exit;
+> +	}
+> +
+> +	resp =3D (struct ec_response_flash_info *)msg->data;
+> +
+> +	ret =3D scnprintf(buf, PAGE_SIZE,
+> +			"FlashSize %d\nWriteSize %d\n"
+> +			"EraseSize %d\nProtectSize %d\n",
+> +			resp->flash_size, resp->write_block_size,
+> +			resp->erase_block_size, resp->protect_block_size);
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+>  }
+> =20
+>  /* Module initialization */
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
+h
+> index 14cf522123dd..7eee38abd02a 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -42,8 +42,7 @@ enum {
+>   * @outsize: Outgoing length in bytes
+>   * @insize: Max number of bytes to accept from EC
+>   * @result: EC's response to the command (separate from communicatio=
+n failure)
+> - * @outdata: Outgoing data to EC
+> - * @indata: Where to put the incoming data from EC
+> + * @data: Where to put the incoming data from EC and outgoing data t=
+o EC
+>   */
+>  struct cros_ec_command {
+>  	uint32_t version;
+> @@ -51,8 +50,7 @@ struct cros_ec_command {
+>  	uint32_t outsize;
+>  	uint32_t insize;
+>  	uint32_t result;
+> -	uint8_t outdata[EC_PROTO2_MAX_PARAM_SIZE];
+> -	uint8_t indata[EC_PROTO2_MAX_PARAM_SIZE];
+> +	uint8_t data[0];
+>  };
+> =20
+>  /**
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
