@@ -1,150 +1,96 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH] ARM: dts: add exynos5422.dtsi to correct cpu order
-Date: Thu, 28 May 2015 00:15:54 +0900
-Message-ID: <1432739754-19511-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14756 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751358AbbE0PQH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 May 2015 11:16:07 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NP000A19L2T7A20@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 28 May 2015 00:16:05 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v7 02/13] drm/exynos: atomic phase 1: use
+ drm_plane_helper_update()
+Date: Wed, 27 May 2015 15:48:15 -0300
+Message-ID: <20150527184815.GA20774@joana>
+References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
+ <1432309253-18572-3-git-send-email-gustavo@padovan.org>
+ <556581C4.30606@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <556581C4.30606@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, k.kozlowski@samsung.com
-Cc: jy0922.shim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, khilman@linaro.org, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, Chanho Park <chanho61.park@samsung.com>
 
-The odroid-xu3 board which is based on exynos5422 not exynos5800 is
-booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
-is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
-cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
-and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
-cpu4-7 are cortex-a15.
-
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts |  5 +-
- arch/arm/boot/dts/exynos5422.dtsi          | 88 ++++++++++++++++++++++++++++++
- 2 files changed, 91 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5422.dtsi
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index edc25cf..0f0784b 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -11,11 +11,12 @@
- */
- 
- /dts-v1/;
--#include "exynos5800.dtsi"
-+#include "exynos5422.dtsi"
- 
- / {
- 	model = "Hardkernel Odroid XU3";
--	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
-+	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800",
-+		     "samsung,exynos5422", "samsung,exynos5";
- 
- 	memory {
- 		reg = <0x40000000 0x7EA00000>;
-diff --git a/arch/arm/boot/dts/exynos5422.dtsi b/arch/arm/boot/dts/exynos5422.dtsi
-new file mode 100644
-index 0000000..3ac12bc
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5422.dtsi
-@@ -0,0 +1,88 @@
-+/*
-+ * SAMSUNG EXYNOS5422 SoC device tree source
-+ *
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * The only difference between EXYNOS5422 and EXYNOS5800 is cpu ordering. The
-+ * EXYNOS5422 is booting from Cortex-A7 core while the EXYNOS5800 is booting
-+ * from Cortex-A15 core.
-+ *
-+ * EXYNOS5422 based board files can include this file and provide
-+ * values for board specfic bindings.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include "exynos5800.dtsi"
-+
-+/ {
-+	compatible = "samsung,exynos5800", "samsung,exynos5422",
-+		     "samsung,exynos5";
-+};
-+
-+&cpu0 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x100>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu1 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x101>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu2 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x102>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu3 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x103>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu4 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x0>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu5 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x1>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu6 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x2>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu7 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x3>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
--- 
-1.9.1
+SGkgSm9vbnlvdW5nLAoKMjAxNS0wNS0yNyBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ft
+c3VuZy5jb20+OgoKPiBPbiAwNS8yMy8yMDE1IDEyOjQwIEFNLCBHdXN0YXZvIFBhZG92YW4gd3Jv
+dGU6Cj4gPiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEu
+Y28udWs+Cj4gPiAKPiA+IFJpcCBvdXQgdGhlIGNoZWNrIGZyb20gZXh5bm9zX3VwZGF0ZV9wbGFu
+ZSgpIGFuZCBjcmVhdGUKPiA+IGV4eW5vc19jaGVja19wbGFuZSgpIGZvciB0aGUgY2hlY2sgcGhh
+c2UgZW5hYmxpbmcgdXNlIHRvIHVzZQo+ID4gdGhlIGF0b21pYyBoZWxwZXJzIHRvIGNhbGwgb3Vy
+IGNoZWNrIGFuZCB1cGRhdGUgcGhhc2VzIHdoZW4gdXBkYXRpbmcKPiA+IHBsYW5lcy4KPiA+IAo+
+ID4gVXBkYXRlIGFsbCB1c2VycyBvZiBleHlub3NfdXBkYXRlX3BsYW5lKCkgYWNjb3JkaW5nbHkg
+dG8gY2FsbAo+ID4gZXh5bm9zX2NoZWNrX3BsYW5lKCkgYmVmb3JlLgo+ID4gCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+
+Cj4gPiBSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29t
+Pgo+ID4gVGVzdGVkLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVs
+ZC5kZT55Cj4gPiAtLS0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
+Yy5jICB8IDIzICsrKysrKysrKysrKysrLS0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9wbGFuZS5jIHwgNDAgKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQo+
+ID4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oIHwgIDIgKy0KPiA+
+ICAzIGZpbGVzIGNoYW5nZWQsIDUwIGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQo+ID4g
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiA+IGluZGV4IDM2
+M2IwMTkuLjI3Y2M0NTAgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fY3J0Yy5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fY3J0Yy5jCj4gPiBAQCAtMTE2LDYgKzExNiw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9j
+cnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHksCj4g
+PiAgCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiID0gY3J0Yy0+cHJpbWFyeS0+ZmI7Cj4gPiAg
+CXVuc2lnbmVkIGludCBjcnRjX3c7Cj4gPiAgCXVuc2lnbmVkIGludCBjcnRjX2g7Cj4gPiArCWlu
+dCByZXQ7Cj4gPiAgCj4gPiAgCS8qIHdoZW4gZnJhbWVidWZmZXIgY2hhbmdpbmcgaXMgcmVxdWVz
+dGVkLCBjcnRjJ3MgZHBtcyBzaG91bGQgYmUgb24gKi8KPiA+ICAJaWYgKGV4eW5vc19jcnRjLT5k
+cG1zID4gRFJNX01PREVfRFBNU19PTikgewo+ID4gQEAgLTEyMywxMiArMTI0LDE3IEBAIHN0YXRp
+YyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRj
+LCBpbnQgeCwgaW50IHksCj4gPiAgCQlyZXR1cm4gLUVQRVJNOwo+ID4gIAl9Cj4gPiAgCj4gPiAr
+CXJldCA9IGV4eW5vc19jaGVja19wbGFuZShjcnRjLT5wcmltYXJ5LCBmYik7Cj4gPiArCWlmIChy
+ZXQpCj4gPiArCQlyZXR1cm4gcmV0Owo+ID4gKwo+ID4gIAljcnRjX3cgPSBmYi0+d2lkdGggLSB4
+Owo+ID4gIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKPiA+ICsJZXh5bm9zX3VwZGF0ZV9wbGFu
+ZShjcnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiA+ICsJCQkgICAgY3J0Y193LCBjcnRj
+X2gsIHggPDwgMTYsIHkgPDwgMTYsCj4gPiArCQkJICAgIGNydGNfdyA8PCAxNiwgY3J0Y19oIDw8
+IDE2KTsKPiA+ICAKPiA+IC0JcmV0dXJuIGV4eW5vc191cGRhdGVfcGxhbmUoY3J0Yy0+cHJpbWFy
+eSwgY3J0YywgZmIsIDAsIDAsCj4gPiAtCQkJCSAgIGNydGNfdywgY3J0Y19oLCB4IDw8IDE2LCB5
+IDw8IDE2LAo+ID4gLQkJCQkgICBjcnRjX3cgPDwgMTYsIGNydGNfaCA8PCAxNik7Cj4gPiArCXJl
+dHVybiAwOwo+ID4gIH0KPiA+ICAKPiA+ICBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZGlz
+YWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gPiBAQCAtMTY1LDcgKzE3MSw2IEBAIHN0YXRp
+YyBpbnQgZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4g
+PiAgewo+ID4gIAlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2ID0gY3J0Yy0+ZGV2Owo+ID4gIAlzdHJ1
+Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwo+
+ID4gLQlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpvbGRfZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsK
+PiA+ICAJdW5zaWduZWQgaW50IGNydGNfdywgY3J0Y19oOwo+ID4gIAlpbnQgcmV0Owo+ID4gIAo+
+ID4gQEAgLTE4NCw2ICsxODksMTAgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2NydGNfcGFnZV9m
+bGlwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiA+ICAJCWdvdG8gb3V0Owo+ID4gIAl9Cj4gPiAg
+Cj4gPiArCXJldCA9IGV4eW5vc19jaGVja19wbGFuZShjcnRjLT5wcmltYXJ5LCBmYik7Cj4gPiAr
+CWlmIChyZXQpCj4gPiArCQlnb3RvIG91dDsKPiA+ICsKPiA+ICAJcmV0ID0gZHJtX3ZibGFua19n
+ZXQoZGV2LCBleHlub3NfY3J0Yy0+cGlwZSk7Cj4gPiAgCWlmIChyZXQpIHsKPiA+ICAJCURSTV9E
+RUJVRygiZmFpbGVkIHRvIGFjcXVpcmUgdmJsYW5rIGNvdW50ZXJcbiIpOwo+ID4gQEAgLTIwMiw2
+ICsyMTEsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRy
+bV9jcnRjICpjcnRjLAo+ID4gIAljcnRjLT5wcmltYXJ5LT5mYiA9IGZiOwo+ID4gIAljcnRjX3cg
+PSBmYi0+d2lkdGggLSBjcnRjLT54Owo+ID4gIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0gY3J0Yy0+
+eTsKPiA+ICs8PDw8PDw8IEhFQUQKPiA+ICAJcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRj
+LT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiA+ICAJCQkJICBjcnRjX3csIGNydGNfaCwgY3J0
+Yy0+eCA8PCAxNiwgY3J0Yy0+eSA8PCAxNiwKPiA+ICAJCQkJICBjcnRjX3cgPDwgMTYsIGNydGNf
+aCA8PCAxNik7Cj4gPiBAQCAtMjEzLDYgKzIyMywxMSBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1f
+Y3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+ID4gIAkJc3Bpbl91bmxvY2tf
+aXJxKCZkZXYtPmV2ZW50X2xvY2spOwo+ID4gIAkJcmV0dXJuIHJldDsKPiA+ICAJfQo+ID4gKz09
+PT09PT0KPiA+ICsJZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwg
+MCwgMCwKPiA+ICsJCQkgICAgY3J0Y193LCBjcnRjX2gsIGNydGMtPngsIGNydGMtPnksCj4gPiAr
+CQkJICAgIGNydGNfdywgY3J0Y19oKTsKPiA+ICs+Pj4+Pj4+IDJmNmQxZjQuLi4gZHJtL2V4eW5v
+czogYXRvbWljIHBoYXNlIDE6IHVzZSBkcm1fcGxhbmVfaGVscGVyX3VwZGF0ZSgpCj4gCj4gTWF5
+YmUgdW5oYW5kbGVkIG91dHB1dCBvZiBtZXJnZSwgY291bGQgeW91IGZpeCBpdD8KClN1cmUuIEZp
+eGVkLgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
