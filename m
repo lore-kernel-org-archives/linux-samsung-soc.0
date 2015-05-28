@@ -1,64 +1,61 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v8 08/14] drm/exynos: atomic phase 3: use atomic
- .set_config helper
-Date: Thu, 28 May 2015 17:25:10 +0900
-Message-ID: <5566D0E6.5060302@samsung.com>
-References: <1432760183-4342-1-git-send-email-gustavo@padovan.org>
- <1432760183-4342-9-git-send-email-gustavo@padovan.org>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: RE: [PATCH] ARM: dts: add exynos5422.dtsi to correct cpu order
+Date: Thu, 28 May 2015 17:43:13 +0900
+Message-ID: <030f01d09922$55a2e120$00e8a360$@samsung.com>
+References: <1432739754-19511-1-git-send-email-chanho61.park@samsung.com>
+ <55667652.5050102@samsung.com> <025901d098fa$da62d320$8f287960$@samsung.com>
+ <5566A7A0.4080608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1432760183-4342-9-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:33716 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751525AbbE1InP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 04:43:15 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NP100MAYXJW5J80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 28 May 2015 17:43:08 +0900 (KST)
+In-reply-to: <5566A7A0.4080608@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, khilman@linaro.org, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
 
-T24gMDUvMjgvMjAxNSAwNTo1NiBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
-c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBOb3cg
-dGhhdCBwaGFzZSAxIGFuZCAyIGFyZSBjb21wbGV0ZSBzd2l0Y2ggLnNldF9jb25maWcgaGVscGVy
-IHRvCj4gdXNlIHRoZSBhdG9taWMgb25lLgo+IAo+IHYyOiBhbHNvIHJlbW92ZSAucHJlcGFyZSgp
-IGNhbGxiYWNrCj4gCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBh
-ZG92YW5AY29sbGFib3JhLmNvLnVrPgo+IFJldmlld2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankw
-OTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4gVGVzdGVkLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
-QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2NydGMuYyB8IDggKy0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
-aW9uKCspLCA3IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuYwo+IGluZGV4IGZlNzc1MTYuLmM0OTAwNjQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiBAQCAtNTAsMTEgKzUwLDYgQEAgc3RhdGljIHZv
-aWQgZXh5bm9zX2RybV9jcnRjX2RwbXMoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgbW9kZSkK
-PiAgCQlkcm1fY3J0Y192Ymxhbmtfb24oY3J0Yyk7Cj4gIH0KPiAgCj4gLXN0YXRpYyB2b2lkIGV4
-eW5vc19kcm1fY3J0Y19wcmVwYXJlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiAtewo+IC0JLyog
-ZHJtIGZyYW1ld29yayBkb2Vzbid0IGNoZWNrIE5VTEwuICovCj4gLX0KPiAtCj4gIHN0YXRpYyB2
-b2lkIGV4eW5vc19kcm1fY3J0Y19jb21taXQoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+ICB7Cj4g
-IAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNy
-dGMpOwo+IEBAIC0xMTEsNyArMTA2LDYgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rp
-c2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+ICAKPiAgc3RhdGljIHN0cnVjdCBkcm1fY3J0
-Y19oZWxwZXJfZnVuY3MgZXh5bm9zX2NydGNfaGVscGVyX2Z1bmNzID0gewo+ICAJLmRwbXMJCT0g
-ZXh5bm9zX2RybV9jcnRjX2RwbXMsCj4gLQkucHJlcGFyZQk9IGV4eW5vc19kcm1fY3J0Y19wcmVw
-YXJlLAoKQXMgaSBzYWlkLCBjYW4gcmVtb3ZlIC5wcmVwYXJlIG9mIGRybV9lbmNvZGVyX2hlbHBl
-cl9mdW5jcyBhbHNvLgoKPiAgCS5jb21taXQJCT0gZXh5bm9zX2RybV9jcnRjX2NvbW1pdCwKPiAg
-CS5tb2RlX2ZpeHVwCT0gZXh5bm9zX2RybV9jcnRjX21vZGVfZml4dXAsCj4gIAkubW9kZV9zZXQJ
-PSBkcm1faGVscGVyX2NydGNfbW9kZV9zZXQsCgpBbHNvLCBjYW4gcmVtb3ZlIC5tb2RlX3NldCBh
-bmQgLm1vZGVfc2V0X2Jhc2UgYmVjYXVzZSB3ZSB1c2UKZHJtX2F0b21pY19oZWxwZXJfc2V0X2Nv
-bmZpZy4KCj4gQEAgLTE5Myw3ICsxODcsNyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNf
-ZGVzdHJveShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIH0KPiAgCj4gIHN0YXRpYyBzdHJ1Y3Qg
-ZHJtX2NydGNfZnVuY3MgZXh5bm9zX2NydGNfZnVuY3MgPSB7Cj4gLQkuc2V0X2NvbmZpZwk9IGRy
-bV9jcnRjX2hlbHBlcl9zZXRfY29uZmlnLAo+ICsJLnNldF9jb25maWcJPSBkcm1fYXRvbWljX2hl
-bHBlcl9zZXRfY29uZmlnLAo+ICAJLnBhZ2VfZmxpcAk9IGV4eW5vc19kcm1fY3J0Y19wYWdlX2Zs
-aXAsCj4gIAkuZGVzdHJveQk9IGV4eW5vc19kcm1fY3J0Y19kZXN0cm95LAo+ICAJLnJlc2V0ID0g
-ZHJtX2F0b21pY19oZWxwZXJfY3J0Y19yZXNldCwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi,
+
+> When adding new 5422 board we can split out CPU configuration to
+> separate DTSI file. I already posted patches for Odroid XU3-family
+> common DTSI file for XU3 Lite board:
+> http://www.spinics.net/lists/linux-samsung-soc/msg44868.html
+
+IMHO, all of the exynos5422 boards will be same cpu configurations. That's
+why I added new exynos5422.dtsi.
+
+> 
+> > BTW, booting of secondary cpus are still broken. Is there any progress
+> of
+> > the patch[1]?
+> > This patch is also generated top of the patch with some fixes.
+> >
+> > [1]. http://www.spinics.net/lists/linux-samsung-soc/msg39523.html
+> 
+> No progress so far. Apparently nobody knows why this works and what to
+> do with it. I would suspect booted CPUs stuck somewhere in BL1 or BL2
+> and writing to PMU_SPARE2 kicks them. However this is just a guess.
+> 
+> Kukjin which could be the closest person to the real knowledge (LSI) did
+> not gave his feedback.
+> 
+> We have a lot of such hacks and undocumented interfaces between kernel
+> and bootloaders. IMHO it would be good to start documenting them.
+
+Good. But, who can do it?
+
+Best Regards,
+Chanho Park
