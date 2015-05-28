@@ -1,193 +1,84 @@
-From: Damian Eppel <d.eppel@samsung.com>
-Subject: Re: [PATCH v2] clocksource: exynos_mct: fix for sleeping in atomic ctx
- handling cpu hotplug notif.
-Date: Thu, 28 May 2015 17:37:54 +0200
-Message-ID: <1432827474.26384.4.camel@AMDC1552.digital.local>
-References: <1426151496-5509-1-git-send-email-d.eppel@samsung.com>
- <5566E417.1090508@samsung.com>
-Reply-To: d.eppel@samsung.com
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH] ARM: dts: add exynos5422.dtsi to correct cpu order
+Date: Thu, 28 May 2015 10:19:26 -0700
+Message-ID: <7h1ti0k4bl.fsf@linaro.org>
+References: <1432739754-19511-1-git-send-email-chanho61.park@samsung.com>
+	<55667652.5050102@samsung.com>
+	<025901d098fa$da62d320$8f287960$@samsung.com>
+	<5566D681.2030107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5566E417.1090508@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, kgene@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, k.kozlowski@samsung.com, m.jabrzyk@samsung.com, d.eppel@samsung.com, stable@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:36559 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754217AbbE1RT3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 13:19:29 -0400
+Received: by pdfh10 with SMTP id h10so46174426pdf.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 10:19:28 -0700 (PDT)
+In-Reply-To: <5566D681.2030107@samsung.com> (Marek Szyprowski's message of
+	"Thu, 28 May 2015 10:49:05 +0200")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chanho Park <chanho61.park@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, kgene@kernel.org, k.kozlowski@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, Przemyslaw Marczak <p.marczak@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, 2015-05-28 at 11:47 +0200, Marek Szyprowski wrote:
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
+
 > Hello,
-> 
-> On 2015-03-12 10:11, Damian Eppel wrote:
-> > This is to fix an issue of sleeping in atomic context when processing
-> > hotplug notifications in Exynos MCT(Multi-Core Timer).
-> > The issue was reproducible on Exynos 3250 (Rinato board) and Exynos 5420
-> > (Arndale Octa board).
-> >
-> > Whilst testing cpu hotplug events on kernel configured with DEBUG_PREEMPT
-> > and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by calling
-> > request_irq() and free_irq() in the context of hotplug notification
-> > (which is in this case atomic context).
-> >
-> > root@target:~# echo 0 > /sys/devices/system/cpu/cpu1/online
-> >
-> > [   25.157867] IRQ18 no longer affine to CPU1
-> > ...
-> > [   25.158445] CPU1: shutdown
-> >
-> > root@target:~# echo 1 > /sys/devices/system/cpu/cpu1/online
-> >
-> > [   40.785859] CPU1: Software reset
-> > [   40.786660] BUG: sleeping function called from invalid context at mm/slub.c:1241
-> > [   40.786668] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
-> > [   40.786678] Preemption disabled at:[<  (null)>]   (null)
-> > [   40.786681]
-> > [   40.786692] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.19.0-rc4-00024-g7dca860 #36
-> > [   40.786698] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> > [   40.786728] [<c0014a00>] (unwind_backtrace) from [<c0011980>] (show_stack+0x10/0x14)
-> > [   40.786747] [<c0011980>] (show_stack) from [<c0449ba0>] (dump_stack+0x70/0xbc)
-> > [   40.786767] [<c0449ba0>] (dump_stack) from [<c00c6124>] (kmem_cache_alloc+0xd8/0x170)
-> > [   40.786785] [<c00c6124>] (kmem_cache_alloc) from [<c005d6f8>] (request_threaded_irq+0x64/0x128)
-> > [   40.786804] [<c005d6f8>] (request_threaded_irq) from [<c0350b8c>] (exynos4_local_timer_setup+0xc0/0x13c)
-> > [   40.786820] [<c0350b8c>] (exynos4_local_timer_setup) from [<c0350ca8>] (exynos4_mct_cpu_notify+0x30/0xa8)
-> > [   40.786838] [<c0350ca8>] (exynos4_mct_cpu_notify) from [<c003b330>] (notifier_call_chain+0x44/0x84)
-> > [   40.786857] [<c003b330>] (notifier_call_chain) from [<c0022fd4>] (__cpu_notify+0x28/0x44)
-> > [   40.786873] [<c0022fd4>] (__cpu_notify) from [<c0013714>] (secondary_start_kernel+0xec/0x150)
-> > [   40.786886] [<c0013714>] (secondary_start_kernel) from [<40008764>] (0x40008764)
-> >
-> > Solution:
-> > Clockevent irqs cannot be requested/freed every time cpu is
-> > hot-plugged/unplugged as CPU_STARTING/CPU_DYING notifications
-> > that signals hotplug or unplug events are sent with both preemption
-> > and local interrupts disabled. Since request_irq() may sleep it is
-> > moved to the initialization stage and performed for all possible
-> > cpus prior putting them online. Then, in the case of hotplug event
-> > the irq asociated with the given cpu will simply be enabled.
-> > Similarly on cpu unplug event the interrupt is not freed but just
-> > disabled.
-> >
-> > Note that after successful request_irq() call for a clockevent device
-> > associated to given cpu the requested irq is disabled (via disable_irq()).
-> > That is to make things symmetric as we expect hotplug event as a next
-> > thing (which will enable irq again). This should not pose any problems
-> > because at the time of requesting irq the clockevent device is not
-> > fully initialized yet, therefore should not produce interrupts at that point.
-> >
-> > For disabling an irq at cpu unplug notification disable_irq_nosync() is
-> > chosen which is a non-blocking function. This again shouldn't be a problem as
-> > prior sending CPU_DYING notification interrupts are migrated away
-> > from the cpu.
-> >
-> > Fixes: 7114cd749a12 ("clocksource: exynos_mct: use (request/free)_irq calls for local timer registration")
-> > Signed-off-by: Damian Eppel <d.eppel@samsung.com>
-> > Cc: <stable@vger.kernel.org>
-> > Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > (Tested on Arndale Octa Board)
-> > Tested-by: Marcin Jabrzyk <m.jabrzyk@samsung.com>
-> > (Tested on Rinato B2 (Exynos 3250) board)
-> > ---
-> >
-> > Notes:
-> >      Changes since v1:
-> >              o added Krzysztof's and Marcin's Reviewed-by / Tested-by
-> >                with information about the test HW.
-> >
-> >   drivers/clocksource/exynos_mct.c | 45 ++++++++++++++++++++++++++++------------
-> >   1 file changed, 32 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> > index 83564c9..9beca58 100644
-> > --- a/drivers/clocksource/exynos_mct.c
-> > +++ b/drivers/clocksource/exynos_mct.c
-> > @@ -466,15 +466,12 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
-> >   	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
-> >   
-> >   	if (mct_int_type == MCT_INT_SPI) {
-> > -		evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
-> > -		if (request_irq(evt->irq, exynos4_mct_tick_isr,
-> > -				IRQF_TIMER | IRQF_NOBALANCING,
-> > -				evt->name, mevt)) {
-> > -			pr_err("exynos-mct: cannot register IRQ %d\n",
-> > -				evt->irq);
-> > +
-> > +		if (evt->irq == -1)
-> >   			return -EIO;
-> > -		}
-> > -		irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
-> > +
-> > +		irq_force_affinity(evt->irq, cpumask_of(cpu));
-> > +		enable_irq(evt->irq);
-> >   	} else {
-> >   		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
-> >   	}
-> > @@ -487,10 +484,12 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
-> >   static void exynos4_local_timer_stop(struct clock_event_device *evt)
-> >   {
-> >   	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-> > -	if (mct_int_type == MCT_INT_SPI)
-> > -		free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
-> > -	else
-> > +	if (mct_int_type == MCT_INT_SPI) {
-> > +		if (evt->irq != -1)
-> > +			disable_irq_nosync(evt->irq);
-> > +	} else {
-> >   		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
-> > +	}
-> >   }
-> >   
-> >   static int exynos4_mct_cpu_notify(struct notifier_block *self,
-> > @@ -522,7 +521,7 @@ static struct notifier_block exynos4_mct_cpu_nb = {
-> >   
-> >   static void __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
-> >   {
-> > -	int err;
-> > +	int err, cpu;
-> >   	struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
-> >   	struct clk *mct_clk, *tick_clk;
-> >   
-> > @@ -549,7 +548,27 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
-> >   		WARN(err, "MCT: can't request IRQ %d (%d)\n",
-> >   		     mct_irqs[MCT_L0_IRQ], err);
-> >   	} else {
-> > -		irq_set_affinity(mct_irqs[MCT_L0_IRQ], cpumask_of(0));
-> > +		for_each_possible_cpu(cpu) {
-> > +			int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
-> > +			struct mct_clock_event_device *pcpu_mevt =
-> > +				per_cpu_ptr(&percpu_mct_tick, cpu);
-> > +
-> > +			pcpu_mevt->evt.irq = -1;
-> > +
-> > +			if (request_irq(mct_irq,
-> > +					exynos4_mct_tick_isr,
-> > +					IRQF_TIMER | IRQF_NOBALANCING,
-> > +					pcpu_mevt->name, pcpu_mevt)) {
-> > +				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
-> > +									cpu);
-> > +
-> > +				continue;
-> > +			}
-> > +			pcpu_mevt->evt.irq = mct_irq;
-> > +			irq_force_affinity(mct_irq, cpumask_of(cpu));
-> > +
-> > +			disable_irq(mct_irq);
-> 
-> Maybe it will be better to simply request this irq in disabled state? 
-> Just call
-> irq_set_status_flags(mct_irq, IRQ_NOAUTOEN) before request_irq().
-> 
+>
+> On 2015-05-28 06:00, Chanho Park wrote:
+>>> -----Original Message-----
+>>> From: Joonyoung Shim [mailto:jy0922.shim@samsung.com]
+>>> Sent: Thursday, May 28, 2015 10:59 AM
+>>> To: Chanho Park; kgene@kernel.org; k.kozlowski@samsung.com
+>>> Cc: cw00.choi@samsung.com; linux-samsung-soc@vger.kernel.org;
+>>> javier.martinez@collabora.co.uk; khilman@linaro.org;
+>>> sjoerd.simons@collabora.co.uk; heesub.shin@samsung.com
+>>> Subject: Re: [PATCH] ARM: dts: add exynos5422.dtsi to correct cpu order
+>>>
+>>> Hi Chanho,
+>>>
+>>> On 05/28/2015 12:15 AM, Chanho Park wrote:
+>>>> The odroid-xu3 board which is based on exynos5422 not exynos5800 is
+>>>> booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu
+>>> order
+>>>> is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
+>>>> cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
+>>>> and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7
+>>> and
+>>>> cpu4-7 are cortex-a15.
+>>> The exynos5422 SoC can boot using cortex-a15 cpu depending on gpio
+>>> GPG2CON[1],
+>> Yes, But, the pin is not controllable because it's checked in  the iROM
+>> area.
+>>
+>>> i think this is just Odroid-XU3 board problem. Is it
+>>> possible to overwrite cpus information directly from
+>>> exynos5422-odroidxu3.dts?
+>> It's possible to override the info in the odroidxu3.dts. As you know,
+>> however, a new exynos5422 board will be added soon. The board also has same
+>> configuration of the gpio pin and booted cpu0 from a cortex-a7 core.
+>>
+>> BTW, booting of secondary cpus are still broken. Is there any progress of
+>> the patch[1]?
+>> This patch is also generated top of the patch with some fixes.
 
-Good point, thanks. I will correct that in patch V3.
+Note that even with that hack/patch from me, all cores may boot, but you
+cannot let them hit deeper idle states with CPUidle.  This is because
+the firmware appears to have configured CCI in secure mode, which mean
+that the kernel cannot control CCI, which essentially breaks MCPM  and
+everthing built on it (idle, suspend, etc.)
 
-Best Regards,
-Damian
+> Przemyslaw is checking how to solve this issue in the bootloader like it has
+> been solved for Exynos 5800 based Chromebooks. The plan is to use the same
+> SPL code as mentioned here:
+> https://www.mail-archive.com/u-boot@lists.denx.de/msg159960.html
 
-> 
-> > +		}
-> >   	}
-> >   
-> >   	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
-> 
-> Best regards
+This is good news!   I'd be happy to test any work in progress on this.
+
+We really need the other exynos platforms to follow the bootloader of
+the chromebooks which includes a working CCI and thus kernel MCPM
+functionality.
+
+Kevin
