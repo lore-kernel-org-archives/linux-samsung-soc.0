@@ -1,128 +1,246 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v7 12/13] drm/exynos: atomic dpms support
-Date: Thu, 28 May 2015 20:53:29 +0900
-Message-ID: <556701B9.5030505@samsung.com>
-References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
- <1432309253-18572-13-git-send-email-gustavo@padovan.org>
- <5565B817.6080001@samsung.com> <20150527202749.GC20774@joana>
- <5566AA04.4080400@samsung.com> <5566D0A9.2000109@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 6/7] mfd: cros_ec: Support multiple EC in a system
+Date: Thu, 28 May 2015 16:00:47 +0200
+Message-ID: <55671F8F.1090500@collabora.co.uk>
+References: <1432309340-13688-1-git-send-email-javier.martinez@collabora.co.uk> <1432309340-13688-7-git-send-email-javier.martinez@collabora.co.uk> <20150527091154.GX11677@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5566D0A9.2000109@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35305 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753904AbbE1OAx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 10:00:53 -0400
+In-Reply-To: <20150527091154.GX11677@x1>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>
 
-T24gMDUvMjgvMjAxNSAwNToyNCBQTSwgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gT24gMDUvMjgv
-MjAxNSAwMjozOSBQTSwgSW5raSBEYWUgd3JvdGU6Cj4+IEhpIEd1c3Rhdm8sCj4+Cj4+IE9uIDIw
-MTXrhYQgMDXsm5QgMjjsnbwgMDU6MjcsIEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPj4+IEhpIElu
-a2ksCj4+Pgo+Pj4gMjAxNS0wNS0yNyBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ogo+
-Pj4KPj4+PiBIaSBHdXN0YXZvLAo+Pj4+Cj4+Pj4gT24gMjAxNeuFhCAwNeyblCAyM+ydvCAwMDo0
-MCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1
-c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+Pj4+Cj4+Pj4+IFJ1biBkcG1zIG9wZXJh
-dGlvbnMgdGhyb3VnaCB0aGUgYXRvbWljIGludGVmYWNlcy4gVGhpcyBiYXNpY2FsbHkgcmVtb3Zl
-cwo+Pj4+PiB0aGUgLmRwbXMoKSBjYWxsYmFjayBmcm9tIGVjb25kZXJzIGFuZCBjcnRjcyBhbmQg
-dXNlIC5kaXNhYmxlKCkgYW5kCj4+Pj4+IC5lbmFibGUoKSB0byB0dXJuIHRoZSBjcnRjIG9uIGFu
-ZCBvZmYuCj4+Pj4+Cj4+Pj4+IHYyOiBBZGRyZXNzIGNvbW1lbnRzIGJ5IEpvb255b3VuZzoKPj4+
-Pj4gCS0gbWFrZSBoZG1pIGNvZGUgY2FsbCAtPmRpc2FibGUoKSBpbnN0ZWFkIG9mIC0+ZHBtcygp
-Cj4+Pj4+IAktIGRvIG5vdCB1c2UgV0FSTl9PTiBvbiBjcnRjIGVuYWJsZS9kaXNhYmxlCj4+Pj4+
-Cj4+Pj4+IHYzOiAtIEZpeCBidWlsZCBmYWlsdXJlIGFmdGVyIHRoZSBoZG1pIGNoYW5nZSBpbiB2
-Mgo+Pj4+PiAgICAgLSBDaGFuZ2UgZHBtcyBoZWxwZXIgb2YgcHRuMzQ2MCBicmlkZ2UKPj4+Pj4K
-Pj4+Pj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
-bGFib3JhLmNvLnVrPgo+Pj4+PiBSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5z
-aGltQHNhbXN1bmcuY29tPgo+Pj4+PiBUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlA
-bWF0aC51bmktYmllbGVmZWxkLmRlPgo+Pj4+PiAtLS0KPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvcHM4NjIyLmMgICAgICAgICAgICAgfCAgMiArLQo+Pj4+PiAgZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAgICB8ICAyICstCj4+Pj4+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMgICAgIHwgIDIgKy0KPj4+Pj4gIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgfCA5NSArKysrKysrKysrKysrKysrLS0t
-LS0tLS0tLS0tLQo+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RwaS5j
-ICAgICB8ICAyICstCj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
-LmggICAgIHwgIDQgKy0KPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-c2kuYyAgICAgfCAgMiArLQo+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2VuY29kZXIuYyB8IDI3ICsrLS0tLS0tCj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fdmlkaS5jICAgIHwgIDIgKy0KPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2hkbWkuYyAgICAgICAgfCAgNiArLQo+Pj4+PiAgMTAgZmlsZXMgY2hhbmdlZCwgNjkg
-aW5zZXJ0aW9ucygrKSwgNzUgZGVsZXRpb25zKC0pCj4+Pj4+Cj4+Pj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9w
-czg2MjIuYwo+Pj4+PiBpbmRleCBiNjA0MzI2Li5kNjg2MjM1IDEwMDY0NAo+Pj4+PiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jCj4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9icmlkZ2UvcHM4NjIyLmMKPj4+Pj4gQEAgLTQ5OSw3ICs0OTksNyBAQCBzdGF0aWMgdm9pZCBw
-czg2MjJfY29ubmVjdG9yX2Rlc3Ryb3koc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikK
-Pj4+Pj4gIH0KPj4+Pj4gIAo+Pj4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY29ubmVjdG9y
-X2Z1bmNzIHBzODYyMl9jb25uZWN0b3JfZnVuY3MgPSB7Cj4+Pj4+IC0JLmRwbXMgPSBkcm1faGVs
-cGVyX2Nvbm5lY3Rvcl9kcG1zLAo+Pj4+PiArCS5kcG1zID0gZHJtX2F0b21pY19oZWxwZXJfY29u
-bmVjdG9yX2RwbXMsCj4+Pj4+ICAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3Npbmds
-ZV9jb25uZWN0b3JfbW9kZXMsCj4+Pj4+ICAJLmRldGVjdCA9IHBzODYyMl9kZXRlY3QsCj4+Pj4+
-ICAJLmRlc3Ryb3kgPSBwczg2MjJfY29ubmVjdG9yX2Rlc3Ryb3ksCj4+Pj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvcHRuMzQ2MC5jCj4+Pj4+IGluZGV4IDhlZDM2MTcuLjI2MGJjOWYgMTAwNjQ0Cj4+Pj4+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCj4+Pj4+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCj4+Pj4+IEBAIC0yNjAsNyArMjYwLDcgQEAgc3RhdGlj
-IHZvaWQgcHRuMzQ2MF9jb25uZWN0b3JfZGVzdHJveShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29u
-bmVjdG9yKQo+Pj4+PiAgfQo+Pj4+PiAgCj4+Pj4+ICBzdGF0aWMgc3RydWN0IGRybV9jb25uZWN0
-b3JfZnVuY3MgcHRuMzQ2MF9jb25uZWN0b3JfZnVuY3MgPSB7Cj4+Pj4+IC0JLmRwbXMgPSBkcm1f
-aGVscGVyX2Nvbm5lY3Rvcl9kcG1zLAo+Pj4+PiArCS5kcG1zID0gZHJtX2F0b21pY19oZWxwZXJf
-Y29ubmVjdG9yX2RwbXMsCj4+Pj4+ICAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3Np
-bmdsZV9jb25uZWN0b3JfbW9kZXMsCj4+Pj4+ICAJLmRldGVjdCA9IHB0bjM0NjBfZGV0ZWN0LAo+
-Pj4+PiAgCS5kZXN0cm95ID0gcHRuMzQ2MF9jb25uZWN0b3JfZGVzdHJveSwKPj4+Pj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+Pj4+PiBpbmRleCAxOTVmZTYwLi5jOTk5
-NWIxIDEwMDY0NAo+Pj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9j
-b3JlLmMKPj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5j
-Cj4+Pj4+IEBAIC05NTQsNyArOTU0LDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RwX2Nvbm5lY3Rv
-cl9kZXN0cm95KHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCj4+Pj4+ICB9Cj4+Pj4+
-ICAKPj4+Pgo+Pj4+IFstLXNuaXAtLV0KPj4+Pgo+Pj4+PiAgCj4+Pj4+ICBzdGF0aWMgc3RydWN0
-IGRybV9jcnRjX2hlbHBlcl9mdW5jcyBleHlub3NfY3J0Y19oZWxwZXJfZnVuY3MgPSB7Cj4+Pj4+
-IC0JLmRwbXMJCT0gZXh5bm9zX2RybV9jcnRjX2RwbXMsCj4+Pj4+IC0JLnByZXBhcmUJPSBleHlu
-b3NfZHJtX2NydGNfcHJlcGFyZSwKPj4+Pj4gLQkuY29tbWl0CQk9IGV4eW5vc19kcm1fY3J0Y19j
-b21taXQsCj4+Pj4+ICsJLmVuYWJsZQkJPSBleHlub3NfZHJtX2NydGNfZW5hYmxlLAo+Pj4+PiAr
-CS5kaXNhYmxlCT0gZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUsCj4+Pj4+ICAJLm1vZGVfZml4dXAJ
-PSBleHlub3NfZHJtX2NydGNfbW9kZV9maXh1cCwKPj4+Pj4gIAkubW9kZV9zZXQJPSBkcm1faGVs
-cGVyX2NydGNfbW9kZV9zZXQsCj4+Pj4+ICAJLm1vZGVfc2V0X25vZmIJPSBleHlub3NfZHJtX2Ny
-dGNfbW9kZV9zZXRfbm9mYiwKPj4+Pgo+Pj4+IEkgdGhpbmsgaXQnZCBiZSBiZXR0ZXIgdG8gdXNl
-IGF0b21pY19mbHVzaCBjYWxsYmFjayB0byBlbmFibGUgZ2xvYmFsIGRtYQo+Pj4+IGxpa2UgY29t
-bWl0IGNhbGxiYWNrIGRpZC4gSXMgdGhlcmUgYW55IHJlYXNvbiB0aGF0IHlvdSBkb24ndCB1c2UK
-Pj4+PiBhdG9taWNfYmVnaW4gYW5kIGF0b21pY19mbHVzaCBjYWxsYmFja3M/Cj4+Pj4KPj4+PiBh
-dG9taWMgcmVsZXZhbnQgY29kZXMgSSBsb29rZWQgaW50byBkbyBhcyBmb2xsb3dzLAo+Pj4+Cj4+
-Pj4gYXRvbWljX2JlZ2luKCk7Cj4+Pj4KPj4+PiBhdG9taWNfdXBkYXRlKCk7ICAvKiB0aGlzIHdp
-bGwgY2FsbCB3aW5fY29tbWl0IGNhbGxiYWNrIHRvIHNldCBhIG92ZXJsYXkKPj4+PiByZWxldmFu
-dCByZWdpc3RlcnMgYW5kIGVuYWJsZSBpdHMgZG1hIGNoYW5uZWwuICovCj4+Pj4KPj4+PiBhdG9t
-aWNfZmx1c2goKTsKPj4+Pgo+Pj4+IFNvIGF0b21pYyBvdmVybGF5IHVwZGF0aW5nIGJldHdlZW4g
-YXRvbWljX2JlZ2luKCkgfiBhdG9taWNfZmx1c2goKSB3aWxsCj4+Pj4gYmUgZ3VhcmFudGVlZC4K
-Pj4+Cj4+PiBJIHRoaW5rIHdlIGNhbiBnbyBkb3duIHRoYXQgcm9hZCwgYnV0IEknZCBzdWdnZXN0
-IHdlIHB1c2ggdGhlIGF0b21pYwo+Pj4gcGF0Y2hlcyB2OCAod2l0aCB0aGUgbGFzdGVzdCBjb21t
-ZW50cyBmcm9tIEpvb255b3VuZyBmaXhlZCkgYW5kIHRoZW4gCj4+PiB3b3JrIG9uIHRoZSBjaGFu
-Z2UgeW91IGFyZSBwcm9wb3NpbmcgYXMgYSBmb2xsb3ctdXAgdG9nZXRoZXIgd2l0aCB0aGUgCj4+
-PiBvdGhlciBpbXByb3ZlbWVudHMgZm9yIGF0b21pYyBJIGFscmVhZHkgaGF2ZSBxdWV1ZWQgaGVy
-ZS4gVGhpcyB3YXkKPj4+IHdlIGRvbid0IHRha2UgdGhlIHJpc2sgb2YgbWlzc2luZyBvbmUgbW9y
-ZSBtZXJnZSB3aW5kb3cuCj4+Cj4+IFdlKEkgYW5kIEpvb255b3VuZykgd2lsbCBoYXZlIGRpc2N1
-c3Npb24gYWJvdXQgdGhpcyBwYXRjaCBzZXJpZXMuIEZvcgo+PiB0aGlzLCB3ZSBoYXZlIGFscmVh
-ZHkgc3RhcnRlZCB0byBhbmFseXplIGVudGlyZSBhdG9taWMgZmVhdHVyZXMKPj4gaW5jbHVkaW5n
-IHlvdXIgcGF0Y2ggc2V0IHNvIEknZCBtZXJnZSBpdCBhdCBlbmQgb2YgbmV4dCB3ZWVrIGFjY29y
-ZGluZwo+PiB0byB0aGUgZGlzY3Vzc2lvbi4gSSdtIG5vdCBraW5kIG9mIHN1cmUgeWV0IGJ1dCBJ
-IHdpbGwgbWVyZ2UgaXQgYXMgbG9uZwo+PiBhcyB0aGVyZSBpcyBubyBiaWcgcHJvYmxlbS4KPj4K
-PiAKPiBBY3R1YWxseSBpIGFncmVlIHRvIG9waW5pb24gb2YgR3VzdGF2byBhbmQgd2lsbCByZXBv
-c3QgdGhlIHBhdGNoc2V0IG9mCj4gR3VzdGF2byB3aXRoIHNvbWUgcGF0Y2hlcyBmaXhlZCBieSBt
-ZS4KPiAKCkhtbSwgaSBtZWV0IHByb2JsZW0gb2Ygb3BlcmF0aW9ucyBvcmRlci4gSXQncyBjYWxs
-ZWQgLmF0b21pY191cGRhdGUKYmVmb3JlIGVuYWJsZSBjcnRjIGFuZCBjYWxsZWQgLmF0b21pY19k
-aXNhYmxlIGFmdGVyIGRpc2FibGUgY3J0Yy4gSXQKbWVhbnMgLndpbl9jb21taXQgYW5kIC53aW5f
-ZGlzYWJsZSBqdXN0IHJldHVybiAwIHdpdGhvdXQgYW55IG9wZXJhdGlvbnMKYmVjYXVzZSBlLmcu
-IG1peGVyX2N0eC0+cG93ZXJlZCBpcyAwIGluIG1peGVyIGRyaXZlciwgc28gd2UgY2Fubm90CmVu
-YWJsZSBvciBkaXNhYmxlIG92ZXJsYXkgbm9ybWFsbHkuCgpUbyByZXByb2R1Y2UgdGhlIHByb2Js
-ZW0sIHVzZSBtb2RldGVzdCAtcyBhbmQgYWZ0ZXIgdGVybWluYXRlIGl0LCBpCmNhbid0IHNlZSBm
-cmFtZWJ1ZmZlciBvdXRwdXQgb2YgZmJkZXYgYmVjYXVzZSBwcmltYXJ5IG92ZXJsYXkgaXNuJ3QK
-ZW5hYmxlZCB5ZXQuCgpUaGFua3MuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+Hello Lee,
+
+Thanks a lot for your feedback.
+
+On 05/27/2015 11:11 AM, Lee Jones wrote:
+> On Fri, 22 May 2015, Javier Martinez Canillas wrote:
+> 
+>> From: Gwendal Grignou <gwendal@chromium.org>
+>> 
+>> Chromebooks can have more than one Embedded Controller so the
+>> cros_ec device id has to be incremented for each EC registered.
+>> 
+>> Add code to handle multiple EC. First ec found is cros-ec0,
+>> second cros-ec1 and so on.
+>> 
+>> Add a new structure to represent multiple EC as different char
+>> devices (e.g: /dev/cros_ec, /dev/cros_pd). It connects to
+>> cros_ec_device and allows sysfs inferface for cros_pd.
+>> 
+>> Also reduce number of allocated objects, make chromeos sysfs
+>> class object a static and add refcounting to prevent object
+>> deletion while command is in progress.
+>> 
+>> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+>> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>> 
+>> Changes since v2: None
+>> 
+>> Changes since v1:
+>>   - Squash patch that adds support to represent EC's as different
+>>     char devices (e.g: /dev/cros_ec, /dev/cros_pd):
+>>     https://chromium-review.googlesource.com/#/c/217297/
+>>     Suggested by Gwendal Grignou
+>>   - Use cros_ec instead of cros-ec in the subject line to be consistent.
+>>     Suggested by Gwendal Grignou
+>> ---
+>>  drivers/input/keyboard/cros_ec_keyb.c      |   2 +-
+>>  drivers/mfd/cros_ec.c                      |  66 +++++++++++++--
+>>  drivers/mfd/cros_ec_i2c.c                  |   1 -
+>>  drivers/mfd/cros_ec_spi.c                  |   1 -
+>>  drivers/platform/chrome/cros_ec_dev.c      | 128 ++++++++++++++++++++---------
+>>  drivers/platform/chrome/cros_ec_dev.h      |   7 --
+>>  drivers/platform/chrome/cros_ec_lightbar.c |  75 +++++++++--------
+>>  drivers/platform/chrome/cros_ec_lpc.c      |   1 -
+>>  drivers/platform/chrome/cros_ec_sysfs.c    |  48 +++++------
+>>  include/linux/mfd/cros_ec.h                |  44 ++++++++--
+>>  10 files changed, 247 insertions(+), 126 deletions(-)
+>> 
+>> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+>> index 974154a74505..b01966dc7eb3 100644
+>> --- a/drivers/input/keyboard/cros_ec_keyb.c
+>> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+>> @@ -275,7 +275,7 @@ static int cros_ec_keyb_probe(struct platform_device *pdev)
+>>  	ckdev->dev = dev;
+>>  	dev_set_drvdata(&pdev->dev, ckdev);
+>>  
+>> -	idev->name = ec->ec_name;
+>> +	idev->name = CROS_EC_DEV_NAME;
+>>  	idev->phys = ec->phys_name;
+>>  	__set_bit(EV_REP, idev->evbit);
+>>  
+>> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+>> index 08d82bfc5268..99292bc2fe5f 100644
+>> --- a/drivers/mfd/cros_ec.c
+>> +++ b/drivers/mfd/cros_ec.c
+>> @@ -24,12 +24,48 @@
+>>  #include <linux/mfd/core.h>
+>>  #include <linux/mfd/cros_ec.h>
+>>  
+>> -static const struct mfd_cell cros_devs[] = {
+>> -	{
+>> +static int dev_id;
+>> +
+>> +static int cros_ec_dev_register(struct cros_ec_device *ec_dev,
+>> +				int dev_id, int devidx)
+> 
+> What's the difference between dev_id and devidx.
+> 
+> Confusing don't you think?
+
+dev_id is the id that mfd_add_devices() expects and devidx is the ChromeOS
+EC device index. Since the first EC is called "cros_ec" and the second one
+is called "cros_pd".
+
+I'll rename devidx to ec_dev_index to make it more clear.
+
+> 
+>> +{
+>> +	struct device *dev = ec_dev->dev;
+>> +	struct cros_ec_platform ec_p = {
+>> +		.cmd_offset = 0,
+>> +	};
+>> +
+>> +	struct mfd_cell ec_cell = {
+>>  		.name = "cros-ec-ctl",
+>>  		.id = PLATFORM_DEVID_AUTO,
+>> -	},
+>> -};
+>> +		.platform_data = &ec_p,
+>> +		.pdata_size = sizeof(ec_p),
+>> +	};
+> 
+> Why have you bought this into here?  The convention is usually to have
+> this at the top of the file, outside any functions.  Declaring and
+> initialising structs inside functions makes things looks messy IMHO.
+>
+
+The problem is that not all ChromeOS EC have a chained Power Delivery (PD)
+EC so on runtime the Application Processor (AP) asks the host EC if there
+is a PD and only in that case calls cros_ec_dev_register() for the PD EC.
+
+That's why the struct mfd_cell is allocated inside the function as a stack
+local variable and is not declared as a static mfd cells array at the top
+as it is in other MFD drivers.
+
+> 
+> 
+>> +	switch (devidx) {
+>> +	case 0:
+> 
+> Please define these.  I have no idea what devidx 0 or 1 is.
+>
+
+Ok, those are just a device index but I'll define it as CROS_EC_DEV_EC_INDEX
+and CROS_EC_DEV_PD_INDEX to make it more readable.
+
+>> +		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+>> +			ec_p.ec_name = of_get_property(dev->of_node, "devname",
+>> +						       NULL);
+>> +			if (ec_p.ec_name == NULL) {
+> 
+> if (!ec_p.ec_name)
+>
+
+Ok.
+
+>> +				dev_dbg(dev,
+>> +					"Device name not found, using default");
+>> +				ec_p.ec_name = CROS_EC_DEV_NAME;
+>> +			}
+>> +		} else {
+>> +			ec_p.ec_name = CROS_EC_DEV_NAME;
+>> +		}
+> 
+> I'd save yourself a few lines and do:
+> 
+> if (OF)
+>    name = get_name();
+> 
+> if (!name)
+>    name = DEFAULT_NAME;
+> 
+> Then rid the 'else'.  Rid the dev_dbg() too if you can.
+>
+
+Ok.
+
+>> +		break;
+>> +	case 1:
+>> +		ec_p.ec_name = CROS_EC_DEV_PD_NAME;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ec_p.cmd_offset = EC_CMD_PASSTHRU_OFFSET(devidx);
+> 
+> '\n' here.
+>
+
+Ok.
+
+>> +	return mfd_add_devices(dev, dev_id, &ec_cell, 1,
+>> +			       NULL, ec_dev->irq, NULL);
+>> +}
+>>  
+>>  int cros_ec_register(struct cros_ec_device *ec_dev)
+>>  {
+>> @@ -52,14 +88,28 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>>  
+>>  	cros_ec_query_all(ec_dev);
+>>  
+>> -	err = mfd_add_devices(dev, 0, cros_devs,
+>> -			      ARRAY_SIZE(cros_devs),
+>> -			      NULL, ec_dev->irq, NULL);
+>> +	err = cros_ec_dev_register(ec_dev, dev_id++, 0);
+>>  	if (err) {
+>> -		dev_err(dev, "failed to add mfd devices\n");
+>> +		dev_err(dev, "failed to add ec\n");
+>>  		return err;
+>>  	}
+>>  
+>> +	if (ec_dev->max_passthru) {
+>> +		/*
+>> +		 * Register a PD device as well on top of this device.
+>> +		 * We make the following assumptions:
+>> +		 * - behind an EC, we have a pd
+>> +		 * - only one device added.
+>> +		 * - the EC is responsive at init time (it is not true for a
+>> +		 *   sensor hub.
+>> +		 */
+>> +		err = cros_ec_dev_register(ec_dev, dev_id++, 1);
+> 
+> I don't really like this devidx business.  Just keep it simple and
+> define more than one mfd_cell structure.
+>
+
+I explained to you that this is done because the number of cells depends on
+the system. I can have an array of mfd_cell structures and use the index to
+register but I don't think that is easier to understand.
+
+>> +		if (err) {
+>> +			dev_err(dev, "failed to add additional ec\n");
+>> +			return err;
+>> +		}
+>> +	}
+>> +
+>>  	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+>>  		err = of_platform_populate(dev->of_node, NULL, NULL, dev);
+>>  		if (err) {
+> 
+
+Best regards,
+Javier
