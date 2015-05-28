@@ -1,70 +1,72 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v9 07/18] drm/exynos: atomic phase 3: atomic updates of planes
-Date: Thu, 28 May 2015 18:42:45 -0300
-Message-ID: <1432849376-12828-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v9 03/18] drm/exynos: atomic phase 1: use
+ drm_plane_helper_disable()
+Date: Thu, 28 May 2015 18:42:41 -0300
+Message-ID: <1432849376-12828-4-git-send-email-gustavo@padovan.org>
 References: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f53.google.com ([209.85.216.53]:41934 "EHLO
-	mail-vn0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754566AbbE1Vnc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 May 2015 17:43:32 -0400
-Received: by vnbg62 with SMTP id g62so6396148vnb.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 14:43:32 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Now that phase 1 and 2 are complete we can switch the update/disable_plane
-callbacks to their atomic version.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_fb.c    | 3 +++
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 4 ++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index 142eb4e..19c0642 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -16,6 +16,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_fb_helper.h>
-+#include <drm/drm_atomic_helper.h>
- #include <uapi/drm/exynos_drm.h>
- 
- #include "exynos_drm_drv.h"
-@@ -268,6 +269,8 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
- static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
- 	.fb_create = exynos_user_fb_create,
- 	.output_poll_changed = exynos_drm_output_poll_changed,
-+	.atomic_check = drm_atomic_helper_check,
-+	.atomic_commit = drm_atomic_helper_commit,
- };
- 
- void exynos_drm_mode_config_init(struct drm_device *dev)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index acefbca..e5e4eb0 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -167,8 +167,8 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
- }
- 
- static struct drm_plane_funcs exynos_plane_funcs = {
--	.update_plane	= drm_plane_helper_update,
--	.disable_plane	= drm_plane_helper_disable,
-+	.update_plane	= drm_atomic_helper_update_plane,
-+	.disable_plane	= drm_atomic_helper_disable_plane,
- 	.destroy	= drm_plane_cleanup,
- 	.reset = drm_atomic_helper_plane_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlIGF0b21pYyBoZWxwZXIgdG8gZGlzYWJsZSBwbGFuZXMgYWxzbyB1c2VzIHRoZSBvcHRpb25h
+bAouYXRvbWljX2Rpc2FibGUoKSBoZWxwZXIuIFRoZSB1bmlxdWUgb3BlcmF0aW9uIGl0IGRvZXMg
+aXMgY2FsbGluZwoud2luX2Rpc2FibGUoKQoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFu
+IDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgpSZXZpZXdlZC1ieTogSm9vbnlvdW5n
+IFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgpUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkg
+PHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9wbGFuZS5jIHwgMzIgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LQogMSBmaWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9ucygtKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKaW5kZXggMmFhZWQ2NC4uNmUx
+MzQxZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKQEAgLTY3
+LDYgKzY3LDkgQEAgaW50IGV4eW5vc19jaGVja19wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFu
+ZSwgc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIpCiAJaW50IG5yOwogCWludCBpOwogCisJaWYg
+KCFmYikKKwkJcmV0dXJuIDA7CisKIAluciA9IGV4eW5vc19kcm1fZmJfZ2V0X2J1Zl9jbnQoZmIp
+OwogCWZvciAoaSA9IDA7IGkgPCBucjsgaSsrKSB7CiAJCXN0cnVjdCBleHlub3NfZHJtX2dlbV9i
+dWYgKmJ1ZmZlciA9IGV4eW5vc19kcm1fZmJfYnVmZmVyKGZiLCBpKTsKQEAgLTE2MiwyMSArMTY1
+LDkgQEAgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0
+IGRybV9jcnRjICpjcnRjLAogCQlleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KGV4eW5vc19j
+cnRjLCBleHlub3NfcGxhbmUtPnpwb3MpOwogfQogCi1zdGF0aWMgaW50IGV4eW5vc19kaXNhYmxl
+X3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQotewotCXN0cnVjdCBleHlub3NfZHJtX3Bs
+YW5lICpleHlub3NfcGxhbmUgPSB0b19leHlub3NfcGxhbmUocGxhbmUpOwotCXN0cnVjdCBleHlu
+b3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMocGxhbmUtPmNydGMpOwot
+Ci0JaWYgKGV4eW5vc19jcnRjICYmIGV4eW5vc19jcnRjLT5vcHMtPndpbl9kaXNhYmxlKQotCQll
+eHlub3NfY3J0Yy0+b3BzLT53aW5fZGlzYWJsZShleHlub3NfY3J0YywKLQkJCQkJICAgICAgZXh5
+bm9zX3BsYW5lLT56cG9zKTsKLQotCXJldHVybiAwOwotfQotCiBzdGF0aWMgc3RydWN0IGRybV9w
+bGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3MgPSB7CiAJLnVwZGF0ZV9wbGFuZQk9IGRybV9w
+bGFuZV9oZWxwZXJfdXBkYXRlLAotCS5kaXNhYmxlX3BsYW5lCT0gZXh5bm9zX2Rpc2FibGVfcGxh
+bmUsCisJLmRpc2FibGVfcGxhbmUJPSBkcm1fcGxhbmVfaGVscGVyX2Rpc2FibGUsCiAJLmRlc3Ry
+b3kJPSBkcm1fcGxhbmVfY2xlYW51cCwKIH07CiAKQEAgLTIwMSw5ICsxOTIsMjQgQEAgc3RhdGlj
+IHZvaWQgZXh5bm9zX3BsYW5lX2F0b21pY191cGRhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUs
+CiAJCQkgICAgc3RhdGUtPnNyY193LCBzdGF0ZS0+c3JjX2gpOwogfQogCitzdGF0aWMgdm9pZCBl
+eHlub3NfcGxhbmVfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCisJCQkJ
+CXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKm9sZF9zdGF0ZSkKK3sKKwlzdHJ1Y3QgZXh5bm9zX2Ry
+bV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKKwlzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKG9sZF9zdGF0ZS0+
+Y3J0Yyk7CisKKwlpZiAoIW9sZF9zdGF0ZS0+Y3J0YykKKwkJcmV0dXJuOworCisJaWYgKGV4eW5v
+c19jcnRjLT5vcHMtPndpbl9kaXNhYmxlKQorCQlleHlub3NfY3J0Yy0+b3BzLT53aW5fZGlzYWJs
+ZShleHlub3NfY3J0YywKKwkJCQkJICAgICAgZXh5bm9zX3BsYW5lLT56cG9zKTsKK30KKwogc3Rh
+dGljIGNvbnN0IHN0cnVjdCBkcm1fcGxhbmVfaGVscGVyX2Z1bmNzIHBsYW5lX2hlbHBlcl9mdW5j
+cyA9IHsKIAkuYXRvbWljX2NoZWNrID0gZXh5bm9zX3BsYW5lX2F0b21pY19jaGVjaywKIAkuYXRv
+bWljX3VwZGF0ZSA9IGV4eW5vc19wbGFuZV9hdG9taWNfdXBkYXRlLAorCS5hdG9taWNfZGlzYWJs
+ZSA9IGV4eW5vc19wbGFuZV9hdG9taWNfZGlzYWJsZSwKIH07CiAKIHN0YXRpYyB2b2lkIGV4eW5v
+c19wbGFuZV9hdHRhY2hfenBvc19wcm9wZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKLS0g
+CjIuMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
