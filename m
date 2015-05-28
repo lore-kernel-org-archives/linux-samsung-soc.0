@@ -1,84 +1,146 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH] ARM: dts: add exynos5422.dtsi to correct cpu order
-Date: Thu, 28 May 2015 10:19:26 -0700
-Message-ID: <7h1ti0k4bl.fsf@linaro.org>
-References: <1432739754-19511-1-git-send-email-chanho61.park@samsung.com>
-	<55667652.5050102@samsung.com>
-	<025901d098fa$da62d320$8f287960$@samsung.com>
-	<5566D681.2030107@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v7 12/13] drm/exynos: atomic dpms support
+Date: Thu, 28 May 2015 18:36:48 -0300
+Message-ID: <20150528213648.GD20774@joana>
+References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
+ <1432309253-18572-13-git-send-email-gustavo@padovan.org>
+ <5565B817.6080001@samsung.com> <20150527202749.GC20774@joana>
+ <5566AA04.4080400@samsung.com> <5566D0A9.2000109@samsung.com>
+ <556701B9.5030505@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:36559 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754217AbbE1RT3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 May 2015 13:19:29 -0400
-Received: by pdfh10 with SMTP id h10so46174426pdf.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 10:19:28 -0700 (PDT)
-In-Reply-To: <5566D681.2030107@samsung.com> (Marek Szyprowski's message of
-	"Thu, 28 May 2015 10:49:05 +0200")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <556701B9.5030505@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chanho Park <chanho61.park@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, kgene@kernel.org, k.kozlowski@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, Przemyslaw Marczak <p.marczak@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
-
-> Hello,
->
-> On 2015-05-28 06:00, Chanho Park wrote:
->>> -----Original Message-----
->>> From: Joonyoung Shim [mailto:jy0922.shim@samsung.com]
->>> Sent: Thursday, May 28, 2015 10:59 AM
->>> To: Chanho Park; kgene@kernel.org; k.kozlowski@samsung.com
->>> Cc: cw00.choi@samsung.com; linux-samsung-soc@vger.kernel.org;
->>> javier.martinez@collabora.co.uk; khilman@linaro.org;
->>> sjoerd.simons@collabora.co.uk; heesub.shin@samsung.com
->>> Subject: Re: [PATCH] ARM: dts: add exynos5422.dtsi to correct cpu order
->>>
->>> Hi Chanho,
->>>
->>> On 05/28/2015 12:15 AM, Chanho Park wrote:
->>>> The odroid-xu3 board which is based on exynos5422 not exynos5800 is
->>>> booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu
->>> order
->>>> is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
->>>> cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
->>>> and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7
->>> and
->>>> cpu4-7 are cortex-a15.
->>> The exynos5422 SoC can boot using cortex-a15 cpu depending on gpio
->>> GPG2CON[1],
->> Yes, But, the pin is not controllable because it's checked in  the iROM
->> area.
->>
->>> i think this is just Odroid-XU3 board problem. Is it
->>> possible to overwrite cpus information directly from
->>> exynos5422-odroidxu3.dts?
->> It's possible to override the info in the odroidxu3.dts. As you know,
->> however, a new exynos5422 board will be added soon. The board also has same
->> configuration of the gpio pin and booted cpu0 from a cortex-a7 core.
->>
->> BTW, booting of secondary cpus are still broken. Is there any progress of
->> the patch[1]?
->> This patch is also generated top of the patch with some fixes.
-
-Note that even with that hack/patch from me, all cores may boot, but you
-cannot let them hit deeper idle states with CPUidle.  This is because
-the firmware appears to have configured CCI in secure mode, which mean
-that the kernel cannot control CCI, which essentially breaks MCPM  and
-everthing built on it (idle, suspend, etc.)
-
-> Przemyslaw is checking how to solve this issue in the bootloader like it has
-> been solved for Exynos 5800 based Chromebooks. The plan is to use the same
-> SPL code as mentioned here:
-> https://www.mail-archive.com/u-boot@lists.denx.de/msg159960.html
-
-This is good news!   I'd be happy to test any work in progress on this.
-
-We really need the other exynos platforms to follow the bootloader of
-the chromebooks which includes a working CCI and thus kernel MCPM
-functionality.
-
-Kevin
+MjAxNS0wNS0yOCBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+OgoKPiBP
+biAwNS8yOC8yMDE1IDA1OjI0IFBNLCBKb29ueW91bmcgU2hpbSB3cm90ZToKPiA+IE9uIDA1LzI4
+LzIwMTUgMDI6MzkgUE0sIElua2kgRGFlIHdyb3RlOgo+ID4+IEhpIEd1c3Rhdm8sCj4gPj4KPiA+
+PiBPbiAyMDE164WEIDA17JuUIDI47J28IDA1OjI3LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4g
+Pj4+IEhpIElua2ksCj4gPj4+Cj4gPj4+IDIwMTUtMDUtMjcgSW5raSBEYWUgPGlua2kuZGFlQHNh
+bXN1bmcuY29tPjoKPiA+Pj4KPiA+Pj4+IEhpIEd1c3Rhdm8sCj4gPj4+Pgo+ID4+Pj4gT24gMjAx
+NeuFhCAwNeyblCAyM+ydvCAwMDo0MCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+ID4+Pj4+IEZy
+b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiA+
+Pj4+Pgo+ID4+Pj4+IFJ1biBkcG1zIG9wZXJhdGlvbnMgdGhyb3VnaCB0aGUgYXRvbWljIGludGVm
+YWNlcy4gVGhpcyBiYXNpY2FsbHkgcmVtb3Zlcwo+ID4+Pj4+IHRoZSAuZHBtcygpIGNhbGxiYWNr
+IGZyb20gZWNvbmRlcnMgYW5kIGNydGNzIGFuZCB1c2UgLmRpc2FibGUoKSBhbmQKPiA+Pj4+PiAu
+ZW5hYmxlKCkgdG8gdHVybiB0aGUgY3J0YyBvbiBhbmQgb2ZmLgo+ID4+Pj4+Cj4gPj4+Pj4gdjI6
+IEFkZHJlc3MgY29tbWVudHMgYnkgSm9vbnlvdW5nOgo+ID4+Pj4+IAktIG1ha2UgaGRtaSBjb2Rl
+IGNhbGwgLT5kaXNhYmxlKCkgaW5zdGVhZCBvZiAtPmRwbXMoKQo+ID4+Pj4+IAktIGRvIG5vdCB1
+c2UgV0FSTl9PTiBvbiBjcnRjIGVuYWJsZS9kaXNhYmxlCj4gPj4+Pj4KPiA+Pj4+PiB2MzogLSBG
+aXggYnVpbGQgZmFpbHVyZSBhZnRlciB0aGUgaGRtaSBjaGFuZ2UgaW4gdjIKPiA+Pj4+PiAgICAg
+LSBDaGFuZ2UgZHBtcyBoZWxwZXIgb2YgcHRuMzQ2MCBicmlkZ2UKPiA+Pj4+Pgo+ID4+Pj4+IFNp
+Z25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5j
+by51az4KPiA+Pj4+PiBSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNh
+bXN1bmcuY29tPgo+ID4+Pj4+IFRlc3RlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRo
+LnVuaS1iaWVsZWZlbGQuZGU+Cj4gPj4+Pj4gLS0tCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvcHM4NjIyLmMgICAgICAgICAgICAgfCAgMiArLQo+ID4+Pj4+ICBkcml2ZXJzL2dwdS9k
+cm0vYnJpZGdlL3B0bjM0NjAuYyAgICAgICAgICAgIHwgIDIgKy0KPiA+Pj4+PiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAgICB8ICAyICstCj4gPj4+Pj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgfCA5NSArKysrKysrKysrKysr
+KysrLS0tLS0tLS0tLS0tLQo+ID4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHBpLmMgICAgIHwgIDIgKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5oICAgICB8ICA0ICstCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kc2kuYyAgICAgfCAgMiArLQo+ID4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jIHwgMjcgKystLS0tLS0KPiA+Pj4+PiAgZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICB8ICAyICstCj4gPj4+Pj4gIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgfCAgNiArLQo+ID4+Pj4+ICAx
+MCBmaWxlcyBjaGFuZ2VkLCA2OSBpbnNlcnRpb25zKCspLCA3NSBkZWxldGlvbnMoLSkKPiA+Pj4+
+Pgo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIuYwo+ID4+Pj4+IGluZGV4IGI2MDQzMjYuLmQ2
+ODYyMzUgMTAwNjQ0Cj4gPj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIu
+Ywo+ID4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHM4NjIyLmMKPiA+Pj4+PiBA
+QCAtNDk5LDcgKzQ5OSw3IEBAIHN0YXRpYyB2b2lkIHBzODYyMl9jb25uZWN0b3JfZGVzdHJveShz
+dHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ID4+Pj4+ICB9Cj4gPj4+Pj4gIAo+ID4+
+Pj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHM4NjIyX2Nvbm5l
+Y3Rvcl9mdW5jcyA9IHsKPiA+Pj4+PiAtCS5kcG1zID0gZHJtX2hlbHBlcl9jb25uZWN0b3JfZHBt
+cywKPiA+Pj4+PiArCS5kcG1zID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2RwbXMsCj4g
+Pj4+Pj4gIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9t
+b2RlcywKPiA+Pj4+PiAgCS5kZXRlY3QgPSBwczg2MjJfZGV0ZWN0LAo+ID4+Pj4+ICAJLmRlc3Ry
+b3kgPSBwczg2MjJfY29ubmVjdG9yX2Rlc3Ryb3ksCj4gPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4z
+NDYwLmMKPiA+Pj4+PiBpbmRleCA4ZWQzNjE3Li4yNjBiYzlmIDEwMDY0NAo+ID4+Pj4+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCj4gPj4+Pj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMKPiA+Pj4+PiBAQCAtMjYwLDcgKzI2MCw3IEBAIHN0YXRp
+YyB2b2lkIHB0bjM0NjBfY29ubmVjdG9yX2Rlc3Ryb3koc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
+bm5lY3RvcikKPiA+Pj4+PiAgfQo+ID4+Pj4+ICAKPiA+Pj4+PiAgc3RhdGljIHN0cnVjdCBkcm1f
+Y29ubmVjdG9yX2Z1bmNzIHB0bjM0NjBfY29ubmVjdG9yX2Z1bmNzID0gewo+ID4+Pj4+IC0JLmRw
+bXMgPSBkcm1faGVscGVyX2Nvbm5lY3Rvcl9kcG1zLAo+ID4+Pj4+ICsJLmRwbXMgPSBkcm1fYXRv
+bWljX2hlbHBlcl9jb25uZWN0b3JfZHBtcywKPiA+Pj4+PiAgCS5maWxsX21vZGVzID0gZHJtX2hl
+bHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAo+ID4+Pj4+ICAJLmRldGVjdCA9IHB0
+bjM0NjBfZGV0ZWN0LAo+ID4+Pj4+ICAJLmRlc3Ryb3kgPSBwdG4zNDYwX2Nvbm5lY3Rvcl9kZXN0
+cm95LAo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKPiA+Pj4+
+PiBpbmRleCAxOTVmZTYwLi5jOTk5NWIxIDEwMDY0NAo+ID4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+ID4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+ID4+Pj4+IEBAIC05NTQsNyArOTU0LDcgQEAgc3Rh
+dGljIHZvaWQgZXh5bm9zX2RwX2Nvbm5lY3Rvcl9kZXN0cm95KHN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3IpCj4gPj4+Pj4gIH0KPiA+Pj4+PiAgCj4gPj4+Pgo+ID4+Pj4gWy0tc25pcC0t
+XQo+ID4+Pj4KPiA+Pj4+PiAgCj4gPj4+Pj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2NydGNfaGVscGVy
+X2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKPiA+Pj4+PiAtCS5kcG1zCQk9IGV4
+eW5vc19kcm1fY3J0Y19kcG1zLAo+ID4+Pj4+IC0JLnByZXBhcmUJPSBleHlub3NfZHJtX2NydGNf
+cHJlcGFyZSwKPiA+Pj4+PiAtCS5jb21taXQJCT0gZXh5bm9zX2RybV9jcnRjX2NvbW1pdCwKPiA+
+Pj4+PiArCS5lbmFibGUJCT0gZXh5bm9zX2RybV9jcnRjX2VuYWJsZSwKPiA+Pj4+PiArCS5kaXNh
+YmxlCT0gZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUsCj4gPj4+Pj4gIAkubW9kZV9maXh1cAk9IGV4
+eW5vc19kcm1fY3J0Y19tb2RlX2ZpeHVwLAo+ID4+Pj4+ICAJLm1vZGVfc2V0CT0gZHJtX2hlbHBl
+cl9jcnRjX21vZGVfc2V0LAo+ID4+Pj4+ICAJLm1vZGVfc2V0X25vZmIJPSBleHlub3NfZHJtX2Ny
+dGNfbW9kZV9zZXRfbm9mYiwKPiA+Pj4+Cj4gPj4+PiBJIHRoaW5rIGl0J2QgYmUgYmV0dGVyIHRv
+IHVzZSBhdG9taWNfZmx1c2ggY2FsbGJhY2sgdG8gZW5hYmxlIGdsb2JhbCBkbWEKPiA+Pj4+IGxp
+a2UgY29tbWl0IGNhbGxiYWNrIGRpZC4gSXMgdGhlcmUgYW55IHJlYXNvbiB0aGF0IHlvdSBkb24n
+dCB1c2UKPiA+Pj4+IGF0b21pY19iZWdpbiBhbmQgYXRvbWljX2ZsdXNoIGNhbGxiYWNrcz8KPiA+
+Pj4+Cj4gPj4+PiBhdG9taWMgcmVsZXZhbnQgY29kZXMgSSBsb29rZWQgaW50byBkbyBhcyBmb2xs
+b3dzLAo+ID4+Pj4KPiA+Pj4+IGF0b21pY19iZWdpbigpOwo+ID4+Pj4KPiA+Pj4+IGF0b21pY191
+cGRhdGUoKTsgIC8qIHRoaXMgd2lsbCBjYWxsIHdpbl9jb21taXQgY2FsbGJhY2sgdG8gc2V0IGEg
+b3ZlcmxheQo+ID4+Pj4gcmVsZXZhbnQgcmVnaXN0ZXJzIGFuZCBlbmFibGUgaXRzIGRtYSBjaGFu
+bmVsLiAqLwo+ID4+Pj4KPiA+Pj4+IGF0b21pY19mbHVzaCgpOwo+ID4+Pj4KPiA+Pj4+IFNvIGF0
+b21pYyBvdmVybGF5IHVwZGF0aW5nIGJldHdlZW4gYXRvbWljX2JlZ2luKCkgfiBhdG9taWNfZmx1
+c2goKSB3aWxsCj4gPj4+PiBiZSBndWFyYW50ZWVkLgo+ID4+Pgo+ID4+PiBJIHRoaW5rIHdlIGNh
+biBnbyBkb3duIHRoYXQgcm9hZCwgYnV0IEknZCBzdWdnZXN0IHdlIHB1c2ggdGhlIGF0b21pYwo+
+ID4+PiBwYXRjaGVzIHY4ICh3aXRoIHRoZSBsYXN0ZXN0IGNvbW1lbnRzIGZyb20gSm9vbnlvdW5n
+IGZpeGVkKSBhbmQgdGhlbiAKPiA+Pj4gd29yayBvbiB0aGUgY2hhbmdlIHlvdSBhcmUgcHJvcG9z
+aW5nIGFzIGEgZm9sbG93LXVwIHRvZ2V0aGVyIHdpdGggdGhlIAo+ID4+PiBvdGhlciBpbXByb3Zl
+bWVudHMgZm9yIGF0b21pYyBJIGFscmVhZHkgaGF2ZSBxdWV1ZWQgaGVyZS4gVGhpcyB3YXkKPiA+
+Pj4gd2UgZG9uJ3QgdGFrZSB0aGUgcmlzayBvZiBtaXNzaW5nIG9uZSBtb3JlIG1lcmdlIHdpbmRv
+dy4KPiA+Pgo+ID4+IFdlKEkgYW5kIEpvb255b3VuZykgd2lsbCBoYXZlIGRpc2N1c3Npb24gYWJv
+dXQgdGhpcyBwYXRjaCBzZXJpZXMuIEZvcgo+ID4+IHRoaXMsIHdlIGhhdmUgYWxyZWFkeSBzdGFy
+dGVkIHRvIGFuYWx5emUgZW50aXJlIGF0b21pYyBmZWF0dXJlcwo+ID4+IGluY2x1ZGluZyB5b3Vy
+IHBhdGNoIHNldCBzbyBJJ2QgbWVyZ2UgaXQgYXQgZW5kIG9mIG5leHQgd2VlayBhY2NvcmRpbmcK
+PiA+PiB0byB0aGUgZGlzY3Vzc2lvbi4gSSdtIG5vdCBraW5kIG9mIHN1cmUgeWV0IGJ1dCBJIHdp
+bGwgbWVyZ2UgaXQgYXMgbG9uZwo+ID4+IGFzIHRoZXJlIGlzIG5vIGJpZyBwcm9ibGVtLgo+ID4+
+Cj4gPiAKPiA+IEFjdHVhbGx5IGkgYWdyZWUgdG8gb3BpbmlvbiBvZiBHdXN0YXZvIGFuZCB3aWxs
+IHJlcG9zdCB0aGUgcGF0Y2hzZXQgb2YKPiA+IEd1c3Rhdm8gd2l0aCBzb21lIHBhdGNoZXMgZml4
+ZWQgYnkgbWUuCj4gPiAKPiAKPiBIbW0sIGkgbWVldCBwcm9ibGVtIG9mIG9wZXJhdGlvbnMgb3Jk
+ZXIuIEl0J3MgY2FsbGVkIC5hdG9taWNfdXBkYXRlCj4gYmVmb3JlIGVuYWJsZSBjcnRjIGFuZCBj
+YWxsZWQgLmF0b21pY19kaXNhYmxlIGFmdGVyIGRpc2FibGUgY3J0Yy4gSXQKPiBtZWFucyAud2lu
+X2NvbW1pdCBhbmQgLndpbl9kaXNhYmxlIGp1c3QgcmV0dXJuIDAgd2l0aG91dCBhbnkgb3BlcmF0
+aW9ucwo+IGJlY2F1c2UgZS5nLiBtaXhlcl9jdHgtPnBvd2VyZWQgaXMgMCBpbiBtaXhlciBkcml2
+ZXIsIHNvIHdlIGNhbm5vdAo+IGVuYWJsZSBvciBkaXNhYmxlIG92ZXJsYXkgbm9ybWFsbHkuCgpU
+aGUgcmVtb3ZhbCBvZiB0aGUgZXh0cmEgd2luX2NvbW1pdCgpIGZyb20gZXh5bm9zX2RybV9jcnRj
+X2VuYWJsZSgpIHRoYXQKeW91IHBvaW50ZWQgb3V0IGluIHRoZSBsYXN0IHJldmlldyByb3VuZCBs
+ZWQgdG8gdGhpcyBpc3N1ZS4gVGhlCndpbl9jb21taXQoKSBjYWxsIHdhcyBoaWRpbmcgdGhlIGlz
+c3VlIHNpbmNlIHdlIHdlcmUgY2FsbGluZyBpdCBhIHNlY29uZAp0aW1lIHdpdGggdGhlIEZJTUQg
+ZGV2aWNlIGFscmVhZHkgZW5hYmxlZC4KCkkgdGhpbmsgd2UgY2FuIHNvbHZlIHRoaXMgYnkgY3Jl
+YXRpbmcgYSBzcGVjaWZpYyBleHlub3MgYXRvbWljX2NvbW1pdCgpCmNhbGxiYWNrIHRoYXQgZG9l
+cyBjYWxsCgpkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKGRldiwgc3Rh
+dGUpOyAgICAgICAgICAgICAgICAgICAKCmJlZm9yZQoKZHJtX2F0b21pY19oZWxwZXJfY29tbWl0
+X3BsYW5lcyhkZXYsIHN0YXRlKTsKCgpUaGlzIGlzIHRoZSBvcHBvc2l0ZSBvcmRlciBvZiB3aGF0
+IGRybSBhdG9taWMgZGVmYXVsdCBpbXBsZW1lbnRhdGlvbgp3b3VsZCBkbywgYnV0IHdlIHdvbid0
+IGhpdCB0aGUgaXNzdWUgb2YgaGF2aW5nIHRoZSBGSU1EIGNsa3MgZGlzYWJsZWQKd2hlbiB0cnlp
+bmcgdG8gc2V0dXAgdGhlIHBsYW5lLiBUaGlzIHNpbWlsYXIgdG8gcmNhci1kdSBzb2x1dGlvbiB0
+byB0aGUgCnNhbWUgcHJvYmxlbS4KCglHdXN0YXZvCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
