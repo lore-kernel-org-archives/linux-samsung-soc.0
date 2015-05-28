@@ -1,146 +1,104 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v7 12/13] drm/exynos: atomic dpms support
-Date: Thu, 28 May 2015 18:36:48 -0300
-Message-ID: <20150528213648.GD20774@joana>
-References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
- <1432309253-18572-13-git-send-email-gustavo@padovan.org>
- <5565B817.6080001@samsung.com> <20150527202749.GC20774@joana>
- <5566AA04.4080400@samsung.com> <5566D0A9.2000109@samsung.com>
- <556701B9.5030505@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <556701B9.5030505@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Subject: [PATCH v9 00/18] drm/exynos: atomic modesetting support
+Date: Thu, 28 May 2015 18:42:38 -0300
+Message-ID: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f49.google.com ([209.85.216.49]:45059 "EHLO
+	mail-vn0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751812AbbE1VnJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 17:43:09 -0400
+Received: by vnbg7 with SMTP id g7so6421062vnb.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 14:43:09 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-MjAxNS0wNS0yOCBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+OgoKPiBP
-biAwNS8yOC8yMDE1IDA1OjI0IFBNLCBKb29ueW91bmcgU2hpbSB3cm90ZToKPiA+IE9uIDA1LzI4
-LzIwMTUgMDI6MzkgUE0sIElua2kgRGFlIHdyb3RlOgo+ID4+IEhpIEd1c3Rhdm8sCj4gPj4KPiA+
-PiBPbiAyMDE164WEIDA17JuUIDI47J28IDA1OjI3LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4g
-Pj4+IEhpIElua2ksCj4gPj4+Cj4gPj4+IDIwMTUtMDUtMjcgSW5raSBEYWUgPGlua2kuZGFlQHNh
-bXN1bmcuY29tPjoKPiA+Pj4KPiA+Pj4+IEhpIEd1c3Rhdm8sCj4gPj4+Pgo+ID4+Pj4gT24gMjAx
-NeuFhCAwNeyblCAyM+ydvCAwMDo0MCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+ID4+Pj4+IEZy
-b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiA+
-Pj4+Pgo+ID4+Pj4+IFJ1biBkcG1zIG9wZXJhdGlvbnMgdGhyb3VnaCB0aGUgYXRvbWljIGludGVm
-YWNlcy4gVGhpcyBiYXNpY2FsbHkgcmVtb3Zlcwo+ID4+Pj4+IHRoZSAuZHBtcygpIGNhbGxiYWNr
-IGZyb20gZWNvbmRlcnMgYW5kIGNydGNzIGFuZCB1c2UgLmRpc2FibGUoKSBhbmQKPiA+Pj4+PiAu
-ZW5hYmxlKCkgdG8gdHVybiB0aGUgY3J0YyBvbiBhbmQgb2ZmLgo+ID4+Pj4+Cj4gPj4+Pj4gdjI6
-IEFkZHJlc3MgY29tbWVudHMgYnkgSm9vbnlvdW5nOgo+ID4+Pj4+IAktIG1ha2UgaGRtaSBjb2Rl
-IGNhbGwgLT5kaXNhYmxlKCkgaW5zdGVhZCBvZiAtPmRwbXMoKQo+ID4+Pj4+IAktIGRvIG5vdCB1
-c2UgV0FSTl9PTiBvbiBjcnRjIGVuYWJsZS9kaXNhYmxlCj4gPj4+Pj4KPiA+Pj4+PiB2MzogLSBG
-aXggYnVpbGQgZmFpbHVyZSBhZnRlciB0aGUgaGRtaSBjaGFuZ2UgaW4gdjIKPiA+Pj4+PiAgICAg
-LSBDaGFuZ2UgZHBtcyBoZWxwZXIgb2YgcHRuMzQ2MCBicmlkZ2UKPiA+Pj4+Pgo+ID4+Pj4+IFNp
-Z25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5j
-by51az4KPiA+Pj4+PiBSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNh
-bXN1bmcuY29tPgo+ID4+Pj4+IFRlc3RlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRo
-LnVuaS1iaWVsZWZlbGQuZGU+Cj4gPj4+Pj4gLS0tCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvcHM4NjIyLmMgICAgICAgICAgICAgfCAgMiArLQo+ID4+Pj4+ICBkcml2ZXJzL2dwdS9k
-cm0vYnJpZGdlL3B0bjM0NjAuYyAgICAgICAgICAgIHwgIDIgKy0KPiA+Pj4+PiAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAgICB8ICAyICstCj4gPj4+Pj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgfCA5NSArKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLS0tLQo+ID4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHBpLmMgICAgIHwgIDIgKy0KPiA+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2Rydi5oICAgICB8ICA0ICstCj4gPj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kc2kuYyAgICAgfCAgMiArLQo+ID4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jIHwgMjcgKystLS0tLS0KPiA+Pj4+PiAgZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICB8ICAyICstCj4gPj4+Pj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgfCAgNiArLQo+ID4+Pj4+ICAx
-MCBmaWxlcyBjaGFuZ2VkLCA2OSBpbnNlcnRpb25zKCspLCA3NSBkZWxldGlvbnMoLSkKPiA+Pj4+
-Pgo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jIGIv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIuYwo+ID4+Pj4+IGluZGV4IGI2MDQzMjYuLmQ2
-ODYyMzUgMTAwNjQ0Cj4gPj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIu
-Ywo+ID4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHM4NjIyLmMKPiA+Pj4+PiBA
-QCAtNDk5LDcgKzQ5OSw3IEBAIHN0YXRpYyB2b2lkIHBzODYyMl9jb25uZWN0b3JfZGVzdHJveShz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ID4+Pj4+ICB9Cj4gPj4+Pj4gIAo+ID4+
-Pj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHM4NjIyX2Nvbm5l
-Y3Rvcl9mdW5jcyA9IHsKPiA+Pj4+PiAtCS5kcG1zID0gZHJtX2hlbHBlcl9jb25uZWN0b3JfZHBt
-cywKPiA+Pj4+PiArCS5kcG1zID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2RwbXMsCj4g
-Pj4+Pj4gIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9t
-b2RlcywKPiA+Pj4+PiAgCS5kZXRlY3QgPSBwczg2MjJfZGV0ZWN0LAo+ID4+Pj4+ICAJLmRlc3Ry
-b3kgPSBwczg2MjJfY29ubmVjdG9yX2Rlc3Ryb3ksCj4gPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4z
-NDYwLmMKPiA+Pj4+PiBpbmRleCA4ZWQzNjE3Li4yNjBiYzlmIDEwMDY0NAo+ID4+Pj4+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCj4gPj4+Pj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMKPiA+Pj4+PiBAQCAtMjYwLDcgKzI2MCw3IEBAIHN0YXRp
-YyB2b2lkIHB0bjM0NjBfY29ubmVjdG9yX2Rlc3Ryb3koc3RydWN0IGRybV9jb25uZWN0b3IgKmNv
-bm5lY3RvcikKPiA+Pj4+PiAgfQo+ID4+Pj4+ICAKPiA+Pj4+PiAgc3RhdGljIHN0cnVjdCBkcm1f
-Y29ubmVjdG9yX2Z1bmNzIHB0bjM0NjBfY29ubmVjdG9yX2Z1bmNzID0gewo+ID4+Pj4+IC0JLmRw
-bXMgPSBkcm1faGVscGVyX2Nvbm5lY3Rvcl9kcG1zLAo+ID4+Pj4+ICsJLmRwbXMgPSBkcm1fYXRv
-bWljX2hlbHBlcl9jb25uZWN0b3JfZHBtcywKPiA+Pj4+PiAgCS5maWxsX21vZGVzID0gZHJtX2hl
-bHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAo+ID4+Pj4+ICAJLmRldGVjdCA9IHB0
-bjM0NjBfZGV0ZWN0LAo+ID4+Pj4+ICAJLmRlc3Ryb3kgPSBwdG4zNDYwX2Nvbm5lY3Rvcl9kZXN0
-cm95LAo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cF9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKPiA+Pj4+
-PiBpbmRleCAxOTVmZTYwLi5jOTk5NWIxIDEwMDY0NAo+ID4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+ID4+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+ID4+Pj4+IEBAIC05NTQsNyArOTU0LDcgQEAgc3Rh
-dGljIHZvaWQgZXh5bm9zX2RwX2Nvbm5lY3Rvcl9kZXN0cm95KHN0cnVjdCBkcm1fY29ubmVjdG9y
-ICpjb25uZWN0b3IpCj4gPj4+Pj4gIH0KPiA+Pj4+PiAgCj4gPj4+Pgo+ID4+Pj4gWy0tc25pcC0t
-XQo+ID4+Pj4KPiA+Pj4+PiAgCj4gPj4+Pj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2NydGNfaGVscGVy
-X2Z1bmNzIGV4eW5vc19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKPiA+Pj4+PiAtCS5kcG1zCQk9IGV4
-eW5vc19kcm1fY3J0Y19kcG1zLAo+ID4+Pj4+IC0JLnByZXBhcmUJPSBleHlub3NfZHJtX2NydGNf
-cHJlcGFyZSwKPiA+Pj4+PiAtCS5jb21taXQJCT0gZXh5bm9zX2RybV9jcnRjX2NvbW1pdCwKPiA+
-Pj4+PiArCS5lbmFibGUJCT0gZXh5bm9zX2RybV9jcnRjX2VuYWJsZSwKPiA+Pj4+PiArCS5kaXNh
-YmxlCT0gZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUsCj4gPj4+Pj4gIAkubW9kZV9maXh1cAk9IGV4
-eW5vc19kcm1fY3J0Y19tb2RlX2ZpeHVwLAo+ID4+Pj4+ICAJLm1vZGVfc2V0CT0gZHJtX2hlbHBl
-cl9jcnRjX21vZGVfc2V0LAo+ID4+Pj4+ICAJLm1vZGVfc2V0X25vZmIJPSBleHlub3NfZHJtX2Ny
-dGNfbW9kZV9zZXRfbm9mYiwKPiA+Pj4+Cj4gPj4+PiBJIHRoaW5rIGl0J2QgYmUgYmV0dGVyIHRv
-IHVzZSBhdG9taWNfZmx1c2ggY2FsbGJhY2sgdG8gZW5hYmxlIGdsb2JhbCBkbWEKPiA+Pj4+IGxp
-a2UgY29tbWl0IGNhbGxiYWNrIGRpZC4gSXMgdGhlcmUgYW55IHJlYXNvbiB0aGF0IHlvdSBkb24n
-dCB1c2UKPiA+Pj4+IGF0b21pY19iZWdpbiBhbmQgYXRvbWljX2ZsdXNoIGNhbGxiYWNrcz8KPiA+
-Pj4+Cj4gPj4+PiBhdG9taWMgcmVsZXZhbnQgY29kZXMgSSBsb29rZWQgaW50byBkbyBhcyBmb2xs
-b3dzLAo+ID4+Pj4KPiA+Pj4+IGF0b21pY19iZWdpbigpOwo+ID4+Pj4KPiA+Pj4+IGF0b21pY191
-cGRhdGUoKTsgIC8qIHRoaXMgd2lsbCBjYWxsIHdpbl9jb21taXQgY2FsbGJhY2sgdG8gc2V0IGEg
-b3ZlcmxheQo+ID4+Pj4gcmVsZXZhbnQgcmVnaXN0ZXJzIGFuZCBlbmFibGUgaXRzIGRtYSBjaGFu
-bmVsLiAqLwo+ID4+Pj4KPiA+Pj4+IGF0b21pY19mbHVzaCgpOwo+ID4+Pj4KPiA+Pj4+IFNvIGF0
-b21pYyBvdmVybGF5IHVwZGF0aW5nIGJldHdlZW4gYXRvbWljX2JlZ2luKCkgfiBhdG9taWNfZmx1
-c2goKSB3aWxsCj4gPj4+PiBiZSBndWFyYW50ZWVkLgo+ID4+Pgo+ID4+PiBJIHRoaW5rIHdlIGNh
-biBnbyBkb3duIHRoYXQgcm9hZCwgYnV0IEknZCBzdWdnZXN0IHdlIHB1c2ggdGhlIGF0b21pYwo+
-ID4+PiBwYXRjaGVzIHY4ICh3aXRoIHRoZSBsYXN0ZXN0IGNvbW1lbnRzIGZyb20gSm9vbnlvdW5n
-IGZpeGVkKSBhbmQgdGhlbiAKPiA+Pj4gd29yayBvbiB0aGUgY2hhbmdlIHlvdSBhcmUgcHJvcG9z
-aW5nIGFzIGEgZm9sbG93LXVwIHRvZ2V0aGVyIHdpdGggdGhlIAo+ID4+PiBvdGhlciBpbXByb3Zl
-bWVudHMgZm9yIGF0b21pYyBJIGFscmVhZHkgaGF2ZSBxdWV1ZWQgaGVyZS4gVGhpcyB3YXkKPiA+
-Pj4gd2UgZG9uJ3QgdGFrZSB0aGUgcmlzayBvZiBtaXNzaW5nIG9uZSBtb3JlIG1lcmdlIHdpbmRv
-dy4KPiA+Pgo+ID4+IFdlKEkgYW5kIEpvb255b3VuZykgd2lsbCBoYXZlIGRpc2N1c3Npb24gYWJv
-dXQgdGhpcyBwYXRjaCBzZXJpZXMuIEZvcgo+ID4+IHRoaXMsIHdlIGhhdmUgYWxyZWFkeSBzdGFy
-dGVkIHRvIGFuYWx5emUgZW50aXJlIGF0b21pYyBmZWF0dXJlcwo+ID4+IGluY2x1ZGluZyB5b3Vy
-IHBhdGNoIHNldCBzbyBJJ2QgbWVyZ2UgaXQgYXQgZW5kIG9mIG5leHQgd2VlayBhY2NvcmRpbmcK
-PiA+PiB0byB0aGUgZGlzY3Vzc2lvbi4gSSdtIG5vdCBraW5kIG9mIHN1cmUgeWV0IGJ1dCBJIHdp
-bGwgbWVyZ2UgaXQgYXMgbG9uZwo+ID4+IGFzIHRoZXJlIGlzIG5vIGJpZyBwcm9ibGVtLgo+ID4+
-Cj4gPiAKPiA+IEFjdHVhbGx5IGkgYWdyZWUgdG8gb3BpbmlvbiBvZiBHdXN0YXZvIGFuZCB3aWxs
-IHJlcG9zdCB0aGUgcGF0Y2hzZXQgb2YKPiA+IEd1c3Rhdm8gd2l0aCBzb21lIHBhdGNoZXMgZml4
-ZWQgYnkgbWUuCj4gPiAKPiAKPiBIbW0sIGkgbWVldCBwcm9ibGVtIG9mIG9wZXJhdGlvbnMgb3Jk
-ZXIuIEl0J3MgY2FsbGVkIC5hdG9taWNfdXBkYXRlCj4gYmVmb3JlIGVuYWJsZSBjcnRjIGFuZCBj
-YWxsZWQgLmF0b21pY19kaXNhYmxlIGFmdGVyIGRpc2FibGUgY3J0Yy4gSXQKPiBtZWFucyAud2lu
-X2NvbW1pdCBhbmQgLndpbl9kaXNhYmxlIGp1c3QgcmV0dXJuIDAgd2l0aG91dCBhbnkgb3BlcmF0
-aW9ucwo+IGJlY2F1c2UgZS5nLiBtaXhlcl9jdHgtPnBvd2VyZWQgaXMgMCBpbiBtaXhlciBkcml2
-ZXIsIHNvIHdlIGNhbm5vdAo+IGVuYWJsZSBvciBkaXNhYmxlIG92ZXJsYXkgbm9ybWFsbHkuCgpU
-aGUgcmVtb3ZhbCBvZiB0aGUgZXh0cmEgd2luX2NvbW1pdCgpIGZyb20gZXh5bm9zX2RybV9jcnRj
-X2VuYWJsZSgpIHRoYXQKeW91IHBvaW50ZWQgb3V0IGluIHRoZSBsYXN0IHJldmlldyByb3VuZCBs
-ZWQgdG8gdGhpcyBpc3N1ZS4gVGhlCndpbl9jb21taXQoKSBjYWxsIHdhcyBoaWRpbmcgdGhlIGlz
-c3VlIHNpbmNlIHdlIHdlcmUgY2FsbGluZyBpdCBhIHNlY29uZAp0aW1lIHdpdGggdGhlIEZJTUQg
-ZGV2aWNlIGFscmVhZHkgZW5hYmxlZC4KCkkgdGhpbmsgd2UgY2FuIHNvbHZlIHRoaXMgYnkgY3Jl
-YXRpbmcgYSBzcGVjaWZpYyBleHlub3MgYXRvbWljX2NvbW1pdCgpCmNhbGxiYWNrIHRoYXQgZG9l
-cyBjYWxsCgpkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKGRldiwgc3Rh
-dGUpOyAgICAgICAgICAgICAgICAgICAKCmJlZm9yZQoKZHJtX2F0b21pY19oZWxwZXJfY29tbWl0
-X3BsYW5lcyhkZXYsIHN0YXRlKTsKCgpUaGlzIGlzIHRoZSBvcHBvc2l0ZSBvcmRlciBvZiB3aGF0
-IGRybSBhdG9taWMgZGVmYXVsdCBpbXBsZW1lbnRhdGlvbgp3b3VsZCBkbywgYnV0IHdlIHdvbid0
-IGhpdCB0aGUgaXNzdWUgb2YgaGF2aW5nIHRoZSBGSU1EIGNsa3MgZGlzYWJsZWQKd2hlbiB0cnlp
-bmcgdG8gc2V0dXAgdGhlIHBsYW5lLiBUaGlzIHNpbWlsYXIgdG8gcmNhci1kdSBzb2x1dGlvbiB0
-byB0aGUgCnNhbWUgcHJvYmxlbS4KCglHdXN0YXZvCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Hi,
+
+Here goes the full support for atomic modesetting on exynos. I've
+split the patches in the various phases of atomic support.
+
+v2: fixes comments by Joonyoung
+        - remove unused var in patch 09
+        - use ->disable instead of outdated ->dpms in hdmi code
+        - remove WARN_ON from crtc enable/disable
+
+v3: fixes comment by Joonyoung
+        - move the removal of drm_helper_disable_unused_functions() to
+        separated patch
+
+v4: add patches that remove unnecessary calls to disable_plane()
+
+v5: fixes NULL CRTC crash on planes updates (reported by Inki and Tobias)
+
+v6: rebase on latest exynos_drm_next
+
+v7: fix comments by Joonyoung
+        - fix two checkpatch errors
+        - remove extra crtc->commit() call
+        - check for null fb on exynos_check_plane()
+
+v8: fix comments by Joonyoung
+        - fix merge error
+        - move drm_crtc_vblank_get to the commit that introduces atomic pageflip
+        - remove .prepare() in the apropiated patch
+        - add a new patch to move exynos_drm_crtc_disable()
+
+v9:  * fix comments by Joonyoung
+	- also remove encoder .prepare()
+	- do not shift exynos_update_plane() parameters
+	- remove unused .mode_set() and .mode_set_base()
+     * add specific exynos .atomic_commit()
+     * add split of exynos_crtc->ops->dpms() into enable() and disable()
+     * add other atomic clean ups
+
+
+Gustavo Padovan (17):
+  drm/exynos: atomic phase 1: use drm_plane_helper_update()
+  drm/exynos: atomic phase 1: use drm_plane_helper_disable()
+  drm/exynos: atomic phase 1: add .mode_set_nofb() callback
+  drm/exynos: atomic phase 2: wire up state reset(), duplicate() and
+    destroy()
+  drm/exynos: atomic phase 2: keep track of framebuffer pointer
+  drm/exynos: atomic phase 3: atomic updates of planes
+  drm/exynos: atomic phase 3: use atomic .set_config helper
+  drm/exynos: atomic phase 3: convert page flips
+  drm/exynos: remove exported functions from exynos_drm_plane
+  drm/exynos: don't disable unused functions at init
+  drm/exynos: move exynos_drm_crtc_disable()
+  drm/exynos: add exynos specific .atomic_commit()
+  drm/exynos: atomic dpms support
+  drm/exynos: remove unnecessary calls to disable_plane()
+  drm/exynos: split exynos_crtc->dpms in enable() and disable()
+  drm/exynos: rename win_commit/disable to atomic-like names
+  drm/exynos: don't disable planes already disabled
+
+Joonyoung Shim (1):
+  drm/exynos: fix source data argument for plane
+
+ drivers/gpu/drm/bridge/ps8622.c             |   6 +-
+ drivers/gpu/drm/bridge/ptn3460.c            |   6 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c  |  45 +++----
+ drivers/gpu/drm/exynos/exynos_dp_core.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 201 ++++++----------------------
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |   2 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |  14 +-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c |  35 +----
+ drivers/gpu/drm/exynos/exynos_drm_fb.c      |  35 +++++
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c   |   3 -
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  58 +++-----
+ drivers/gpu/drm/exynos/exynos_drm_plane.c   | 128 ++++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h   |  11 --
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  71 +++++-----
+ drivers/gpu/drm/exynos/exynos_hdmi.c        |  10 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c       |  44 +++---
+ 18 files changed, 276 insertions(+), 411 deletions(-)
+
+-- 
+2.1.0
