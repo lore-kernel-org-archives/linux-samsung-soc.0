@@ -1,44 +1,101 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v9 06/18] drm/exynos: atomic phase 2: keep track of
- framebuffer pointer
-Date: Thu, 28 May 2015 18:42:44 -0300
-Message-ID: <1432849376-12828-7-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v9 08/18] drm/exynos: atomic phase 3: use atomic .set_config helper
+Date: Thu, 28 May 2015 18:42:46 -0300
+Message-ID: <1432849376-12828-9-git-send-email-gustavo@padovan.org>
 References: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f47.google.com ([209.85.216.47]:45102 "EHLO
+	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754566AbbE1Vnf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 17:43:35 -0400
+Received: by vnbg7 with SMTP id g7so6422118vnb.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 14:43:35 -0700 (PDT)
 In-Reply-To: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VXNlIGRybV9hdG9taWNfc2V0X2ZiX2Zvcl9wbGFuZSgpIGluIHRoZSBsZWdhY3kgcGFnZV9mbGlw
-IHBhdGggdG8ga2VlcAp0cmFjayBvZiB0aGUgZnJhbWVidWZmZXIgcG9pbnRlciBhbmQgcmVmZXJl
-bmNlLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
-bGFib3JhLmNvLnVrPgpSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNh
-bXN1bmcuY29tPgpUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmll
-bGVmZWxkLmRlPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMg
-fCAzICsrKwogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IDczY2NmYTcuLmY3ODJkMWYgMTAwNjQ0Ci0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtMTY4LDYgKzE2OCw5IEBAIHN0
-YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMs
-CiAJCQkgICAgY3J0Y193LCBjcnRjX2gsIGNydGMtPnggPDwgMTYsIGNydGMtPnkgPDwgMTYsCiAJ
-CQkgICAgY3J0Y193IDw8IDE2LCBjcnRjX2ggPDwgMTYpOwogCisJaWYgKGNydGMtPnByaW1hcnkt
-PnN0YXRlKQorCQlkcm1fYXRvbWljX3NldF9mYl9mb3JfcGxhbmUoY3J0Yy0+cHJpbWFyeS0+c3Rh
-dGUsIGZiKTsKKwogCXJldHVybiAwOwogCiBvdXQ6Ci0tIAoyLjEuMAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Now that phase 1 and 2 are complete switch .set_config helper to
+use the atomic one.
+
+v2: also remove .prepare() callback
+
+v3: remove .mode_set() and .mode_set_base() and encoder's
+.prepare() callbacks
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 10 +---------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c |  6 ------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index f782d1f..dd1ee7f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -50,11 +50,6 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 		drm_crtc_vblank_on(crtc);
+ }
+ 
+-static void exynos_drm_crtc_prepare(struct drm_crtc *crtc)
+-{
+-	/* drm framework doesn't check NULL. */
+-}
+-
+ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+@@ -108,12 +103,9 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ 
+ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.dpms		= exynos_drm_crtc_dpms,
+-	.prepare	= exynos_drm_crtc_prepare,
+ 	.commit		= exynos_drm_crtc_commit,
+ 	.mode_fixup	= exynos_drm_crtc_mode_fixup,
+-	.mode_set	= drm_helper_crtc_mode_set,
+ 	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
+-	.mode_set_base	= drm_helper_crtc_mode_set_base,
+ 	.disable	= exynos_drm_crtc_disable,
+ };
+ 
+@@ -190,7 +182,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+ }
+ 
+ static struct drm_crtc_funcs exynos_crtc_funcs = {
+-	.set_config	= drm_crtc_helper_set_config,
++	.set_config	= drm_atomic_helper_set_config,
+ 	.page_flip	= exynos_drm_crtc_page_flip,
+ 	.destroy	= exynos_drm_crtc_destroy,
+ 	.reset = drm_atomic_helper_crtc_reset,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+index 57de0bd..915de13 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+@@ -76,11 +76,6 @@ static void exynos_drm_encoder_mode_set(struct drm_encoder *encoder,
+ 		display->ops->mode_set(display, adjusted_mode);
+ }
+ 
+-static void exynos_drm_encoder_prepare(struct drm_encoder *encoder)
+-{
+-	/* drm framework doesn't check NULL. */
+-}
+-
+ static void exynos_drm_encoder_commit(struct drm_encoder *encoder)
+ {
+ 	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+@@ -111,7 +106,6 @@ static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
+ 	.dpms		= exynos_drm_encoder_dpms,
+ 	.mode_fixup	= exynos_drm_encoder_mode_fixup,
+ 	.mode_set	= exynos_drm_encoder_mode_set,
+-	.prepare	= exynos_drm_encoder_prepare,
+ 	.commit		= exynos_drm_encoder_commit,
+ 	.disable	= exynos_drm_encoder_disable,
+ };
+-- 
+2.1.0
