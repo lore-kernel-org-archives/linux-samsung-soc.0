@@ -1,188 +1,194 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v9 05/18] drm/exynos: atomic phase 2: wire up state reset(),
- duplicate() and destroy()
-Date: Thu, 28 May 2015 18:42:43 -0300
-Message-ID: <1432849376-12828-6-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v9 10/18] drm/exynos: remove exported functions from exynos_drm_plane
+Date: Thu, 28 May 2015 18:42:48 -0300
+Message-ID: <1432849376-12828-11-git-send-email-gustavo@padovan.org>
 References: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f52.google.com ([209.85.216.52]:37483 "EHLO
+	mail-vn0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754566AbbE1Vnm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 17:43:42 -0400
+Received: by vnbg190 with SMTP id g190so6374547vnb.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 14:43:41 -0700 (PDT)
 In-Reply-To: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-U2V0IENSVEMsIHBsYW5lcyBhbmQgY29ubmVjdG9ycyB0byB1c2UgdGhlIGRlZmF1bHQgaW1wbGVt
-ZW50YXRpb25zIGZyb20KdGhlIGF0b21pYyBoZWxwZXIgbGlicmFyeS4gVGhlIGhlbHBlcnMgd2ls
-bCB3b3JrIHRvIGtlZXAgdHJhY2sgb2Ygc3RhdGUKZm9yIGVhY2ggRFJNIG9iamVjdC4KClNpZ25l
-ZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51
-az4KUmV2aWV3ZWQtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4K
-VGVzdGVkLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4K
-LS0tCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jICAgICAgICAgICB8IDQgKysrKwog
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAgfCA0ICsrKysKIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgIHwgNCArKysrCiBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jICB8IDUgKysrKysKIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgIHwgNCArKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmMgICB8IDIgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kc2kuYyAgIHwgNCArKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fcGxhbmUuYyB8IDQgKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Zp
-ZGkuYyAgfCA0ICsrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAg
-IHwgNCArKysrCiAxMCBmaWxlcyBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
-Z2UvcHM4NjIyLmMKaW5kZXggZTg5NWFhNy4uYjYwNDMyNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2JyaWRnZS9wczg2MjIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYy
-Mi5jCkBAIC0zMSw2ICszMSw3IEBACiAjaW5jbHVkZSAiZHJtUC5oIgogI2luY2x1ZGUgImRybV9j
-cnRjLmgiCiAjaW5jbHVkZSAiZHJtX2NydGNfaGVscGVyLmgiCisjaW5jbHVkZSAiZHJtX2F0b21p
-Y19oZWxwZXIuaCIKIAogLyogQnJpZ2h0bmVzcyBzY2FsZSBvbiB0aGUgUGFyYWRlIGNoaXAgKi8K
-ICNkZWZpbmUgUFM4NjIyX01BWF9CUklHSFRORVNTIDB4ZmYKQEAgLTUwMiw2ICs1MDMsOSBAQCBz
-dGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHM4NjIyX2Nvbm5lY3Rvcl9m
-dW5jcyA9IHsKIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rv
-cl9tb2RlcywKIAkuZGV0ZWN0ID0gcHM4NjIyX2RldGVjdCwKIAkuZGVzdHJveSA9IHBzODYyMl9j
-b25uZWN0b3JfZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3Jf
-cmVzZXQsCisJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25u
-ZWN0b3JfZHVwbGljYXRlX3N0YXRlLAorCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGRybV9hdG9t
-aWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAogfTsKIAogc3RhdGljIGludCBwczg2
-MjJfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2
-MC5jCmluZGV4IDlkMmYwNTMuLjhlZDM2MTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvcHRuMzQ2MC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCkBA
-IC0yNyw2ICsyNyw3IEBACiAKICNpbmNsdWRlICJkcm1fY3J0Yy5oIgogI2luY2x1ZGUgImRybV9j
-cnRjX2hlbHBlci5oIgorI2luY2x1ZGUgImRybV9hdG9taWNfaGVscGVyLmgiCiAjaW5jbHVkZSAi
-ZHJtX2VkaWQuaCIKICNpbmNsdWRlICJkcm1QLmgiCiAKQEAgLTI2Myw2ICsyNjQsOSBAQCBzdGF0
-aWMgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHRuMzQ2MF9jb25uZWN0b3JfZnVuY3MgPSB7
-CiAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9jb25uZWN0b3JfbW9kZXMs
-CiAJLmRldGVjdCA9IHB0bjM0NjBfZGV0ZWN0LAogCS5kZXN0cm95ID0gcHRuMzQ2MF9jb25uZWN0
-b3JfZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfcmVzZXQs
-CisJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3Jf
-ZHVwbGljYXRlX3N0YXRlLAorCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGRybV9hdG9taWNfaGVs
-cGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAogfTsKIAogc3RhdGljIGludCBwdG4zNDYwX2Jy
-aWRnZV9hdHRhY2goc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RwX2NvcmUuYwppbmRleCAzMGZlYjdkLi4xOTVmZTYwIDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCkBAIC0yOCw2ICsyOCw3IEBACiAjaW5jbHVkZSA8
-ZHJtL2RybVAuaD4KICNpbmNsdWRlIDxkcm0vZHJtX2NydGMuaD4KICNpbmNsdWRlIDxkcm0vZHJt
-X2NydGNfaGVscGVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+CiAjaW5j
-bHVkZSA8ZHJtL2RybV9wYW5lbC5oPgogI2luY2x1ZGUgPGRybS9icmlkZ2UvcHRuMzQ2MC5oPgog
-CkBAIC05NTcsNiArOTU4LDkgQEAgc3RhdGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIGV4
-eW5vc19kcF9jb25uZWN0b3JfZnVuY3MgPSB7CiAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3By
-b2JlX3NpbmdsZV9jb25uZWN0b3JfbW9kZXMsCiAJLmRldGVjdCA9IGV4eW5vc19kcF9kZXRlY3Qs
-CiAJLmRlc3Ryb3kgPSBleHlub3NfZHBfY29ubmVjdG9yX2Rlc3Ryb3ksCisJLnJlc2V0ID0gZHJt
-X2F0b21pY19oZWxwZXJfY29ubmVjdG9yX3Jlc2V0LAorCS5hdG9taWNfZHVwbGljYXRlX3N0YXRl
-ID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSwKKwkuYXRvbWlj
-X2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0
-ZSwKIH07CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5l
-Y3RvciAqY29ubmVjdG9yKQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMK
-aW5kZXggNzVlYjYxYi4uNzNjY2ZhNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fY3J0Yy5jCkBAIC0xNCw2ICsxNCw4IEBACiAKICNpbmNsdWRlIDxkcm0vZHJtUC5oPgogI2lu
-Y2x1ZGUgPGRybS9kcm1fY3J0Y19oZWxwZXIuaD4KKyNpbmNsdWRlIDxkcm0vZHJtX2F0b21pYy5o
-PgorI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPgogCiAjaW5jbHVkZSAiZXh5bm9z
-X2RybV9jcnRjLmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIKQEAgLTE4OCw2ICsxOTAs
-OSBAQCBzdGF0aWMgc3RydWN0IGRybV9jcnRjX2Z1bmNzIGV4eW5vc19jcnRjX2Z1bmNzID0gewog
-CS5zZXRfY29uZmlnCT0gZHJtX2NydGNfaGVscGVyX3NldF9jb25maWcsCiAJLnBhZ2VfZmxpcAk9
-IGV4eW5vc19kcm1fY3J0Y19wYWdlX2ZsaXAsCiAJLmRlc3Ryb3kJPSBleHlub3NfZHJtX2NydGNf
-ZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX3Jlc2V0LAorCS5hdG9t
-aWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kdXBsaWNhdGVfc3Rh
-dGUsCisJLmF0b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kZXN0
-cm95X3N0YXRlLAogfTsKIAogc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2RybV9jcnRj
-X2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kcGkuYwppbmRleCAzNzY3OGNmLi5jZWQ1YzIzIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2RwaS5jCkBAIC0xMyw2ICsxMyw3IEBACiAjaW5jbHVkZSA8ZHJt
-L2RybVAuaD4KICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+CiAjaW5jbHVkZSA8ZHJt
-L2RybV9wYW5lbC5oPgorI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPgogCiAjaW5j
-bHVkZSA8bGludXgvcmVndWxhdG9yL2NvbnN1bWVyLmg+CiAKQEAgLTYzLDYgKzY0LDkgQEAgc3Rh
-dGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIGV4eW5vc19kcGlfY29ubmVjdG9yX2Z1bmNz
-ID0gewogCS5kZXRlY3QgPSBleHlub3NfZHBpX2RldGVjdCwKIAkuZmlsbF9tb2RlcyA9IGRybV9o
-ZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9tb2RlcywKIAkuZGVzdHJveSA9IGV4eW5vc19k
-cGlfY29ubmVjdG9yX2Rlc3Ryb3ksCisJLnJlc2V0ID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVj
-dG9yX3Jlc2V0LAorCS5hdG9taWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJf
-Y29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSwKKwkuYXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1f
-YXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0ZSwKIH07CiAKIHN0YXRpYyBpbnQg
-ZXh5bm9zX2RwaV9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCA4YWM0NjUyLi4wOGI5YThj
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBAIC05OCw2ICs5OCw4
-IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVu
-c2lnbmVkIGxvbmcgZmxhZ3MpCiAJaWYgKHJldCkKIAkJZ290byBlcnJfY2xlYW51cF92Ymxhbms7
-CiAKKwlkcm1fbW9kZV9jb25maWdfcmVzZXQoZGV2KTsKKwogCS8qCiAJICogZW5hYmxlIGRybSBp
-cnEgbW9kZS4KIAkgKiAtIHdpdGggaXJxX2VuYWJsZWQgPSB0cnVlLCB3ZSBjYW4gdXNlIHRoZSB2
-YmxhbmsgZmVhdHVyZS4KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwppbmRl
-eCAwNDkyNzE1Li5lNGU3Zjc0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHNpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jCkBAIC0xNCw2ICsxNCw3IEBACiAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgog
-I2luY2x1ZGUgPGRybS9kcm1fbWlwaV9kc2kuaD4KICNpbmNsdWRlIDxkcm0vZHJtX3BhbmVsLmg+
-CisjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+CiAKICNpbmNsdWRlIDxsaW51eC9j
-bGsuaD4KICNpbmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+CkBAIC0xNDYxLDYgKzE0NjIs
-OSBAQCBzdGF0aWMgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgZXh5bm9zX2RzaV9jb25uZWN0
-b3JfZnVuY3MgPSB7CiAJLmRldGVjdCA9IGV4eW5vc19kc2lfZGV0ZWN0LAogCS5maWxsX21vZGVz
-ID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAogCS5kZXN0cm95ID0g
-ZXh5bm9zX2RzaV9jb25uZWN0b3JfZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBl
-cl9jb25uZWN0b3JfcmVzZXQsCisJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWlj
-X2hlbHBlcl9jb25uZWN0b3JfZHVwbGljYXRlX3N0YXRlLAorCS5hdG9taWNfZGVzdHJveV9zdGF0
-ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAogfTsKIAogc3Rh
-dGljIGludCBleHlub3NfZHNpX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVj
-dG9yKQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCA2ZTEz
-NDFlLi5hY2VmYmNhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
-YwpAQCAtMTMsNiArMTMsNyBAQAogCiAjaW5jbHVkZSA8ZHJtL2V4eW5vc19kcm0uaD4KICNpbmNs
-dWRlIDxkcm0vZHJtX3BsYW5lX2hlbHBlci5oPgorI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hl
-bHBlci5oPgogI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCiAjaW5jbHVkZSAiZXh5bm9zX2Ry
-bV9jcnRjLmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9mYi5oIgpAQCAtMTY5LDYgKzE3MCw5IEBA
-IHN0YXRpYyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKIAku
-dXBkYXRlX3BsYW5lCT0gZHJtX3BsYW5lX2hlbHBlcl91cGRhdGUsCiAJLmRpc2FibGVfcGxhbmUJ
-PSBkcm1fcGxhbmVfaGVscGVyX2Rpc2FibGUsCiAJLmRlc3Ryb3kJPSBkcm1fcGxhbmVfY2xlYW51
-cCwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCwKKwkuYXRvbWljX2R1
-cGxpY2F0ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX3BsYW5lX2R1cGxpY2F0ZV9zdGF0ZSwK
-KwkuYXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9kZXN0cm95
-X3N0YXRlLAogfTsKIAogc3RhdGljIGludCBleHlub3NfcGxhbmVfYXRvbWljX2NoZWNrKHN0cnVj
-dCBkcm1fcGxhbmUgKnBsYW5lLApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX3ZpZGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRp
-LmMKaW5kZXggMWIzNDc5YS4uZmMzYTE0YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fdmlkaS5jCkBAIC0yMCw2ICsyMCw3IEBACiAKICNpbmNsdWRlIDxkcm0vZHJtX2VkaWQu
-aD4KICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9h
-dG9taWNfaGVscGVyLmg+CiAKICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgogI2luY2x1ZGUg
-ImV4eW5vc19kcm1fY3J0Yy5oIgpAQCAtMzg4LDYgKzM4OSw5IEBAIHN0YXRpYyBzdHJ1Y3QgZHJt
-X2Nvbm5lY3Rvcl9mdW5jcyB2aWRpX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKIAkuZmlsbF9tb2RlcyA9
-IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9tb2RlcywKIAkuZGV0ZWN0ID0gdmlk
-aV9kZXRlY3QsCiAJLmRlc3Ryb3kgPSB2aWRpX2Nvbm5lY3Rvcl9kZXN0cm95LAorCS5yZXNldCA9
-IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9yZXNldCwKKwkuYXRvbWljX2R1cGxpY2F0ZV9z
-dGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kdXBsaWNhdGVfc3RhdGUsCisJLmF0
-b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2Rlc3Ryb3lf
-c3RhdGUsCiB9OwogCiBzdGF0aWMgaW50IHZpZGlfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVj
-dG9yICpjb25uZWN0b3IpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKaW5kZXggNWVi
-YTk3MS4uNDcxZTQ4NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-aGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpAQCAtMTcs
-NiArMTcsNyBAQAogI2luY2x1ZGUgPGRybS9kcm1QLmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9lZGlk
-Lmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgorI2luY2x1ZGUgPGRybS9kcm1f
-YXRvbWljX2hlbHBlci5oPgogCiAjaW5jbHVkZSAicmVncy1oZG1pLmgiCiAKQEAgLTEwNTQsNiAr
-MTA1NSw5IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBoZG1pX2Nvbm5lY3Rv
-cl9mdW5jcyA9IHsKIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5l
-Y3Rvcl9tb2RlcywKIAkuZGV0ZWN0ID0gaGRtaV9kZXRlY3QsCiAJLmRlc3Ryb3kgPSBoZG1pX2Nv
-bm5lY3Rvcl9kZXN0cm95LAorCS5yZXNldCA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9y
-ZXNldCwKKwkuYXRvbWljX2R1cGxpY2F0ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5l
-Y3Rvcl9kdXBsaWNhdGVfc3RhdGUsCisJLmF0b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21p
-Y19oZWxwZXJfY29ubmVjdG9yX2Rlc3Ryb3lfc3RhdGUsCiB9OwogCiBzdGF0aWMgaW50IGhkbWlf
-Z2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCi0tIAoyLjEuMAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Now that no one is using the functions exported by exynos_drm_plane due
+to the atomic conversion we can make remove some of the them or make them
+static.
+
+v2: remove unused exynos_drm_crtc
+
+v3: fix checkpatch error (reported by Joonyoung)
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 98 +++++++++++++------------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h | 11 ----
+ 2 files changed, 42 insertions(+), 67 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index e5e4eb0..54a83ee 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -62,38 +62,13 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
+ 	return size;
+ }
+ 
+-int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
+-{
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	int nr;
+-	int i;
+-
+-	if (!fb)
+-		return 0;
+-
+-	nr = exynos_drm_fb_get_buf_cnt(fb);
+-	for (i = 0; i < nr; i++) {
+-		struct exynos_drm_gem_buf *buffer = exynos_drm_fb_buffer(fb, i);
+-
+-		if (!buffer) {
+-			DRM_DEBUG_KMS("buffer is null\n");
+-			return -EFAULT;
+-		}
+-
+-		exynos_plane->dma_addr[i] = buffer->dma_addr + fb->offsets[i];
+-
+-		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
+-				i, (unsigned long)exynos_plane->dma_addr[i]);
+-	}
+-
+-	return 0;
+-}
+-
+-void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+-			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+-			  unsigned int crtc_w, unsigned int crtc_h,
+-			  uint32_t src_x, uint32_t src_y,
+-			  uint32_t src_w, uint32_t src_h)
++static void exynos_plane_mode_set(struct drm_plane *plane,
++				  struct drm_crtc *crtc,
++				  struct drm_framebuffer *fb,
++				  int crtc_x, int crtc_y,
++				  unsigned int crtc_w, unsigned int crtc_h,
++				  uint32_t src_x, uint32_t src_y,
++				  uint32_t src_w, uint32_t src_h)
+ {
+ 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+ 	unsigned int actual_w;
+@@ -148,24 +123,6 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 	plane->crtc = crtc;
+ }
+ 
+-void
+-exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+-		     struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+-		     unsigned int crtc_w, unsigned int crtc_h,
+-		     uint32_t src_x, uint32_t src_y,
+-		     uint32_t src_w, uint32_t src_h)
+-{
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-
+-	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
+-			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
+-			      src_w >> 16, src_h >> 16);
+-
+-	if (exynos_crtc->ops->win_commit)
+-		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_atomic_helper_update_plane,
+ 	.disable_plane	= drm_atomic_helper_disable_plane,
+@@ -178,22 +135,51 @@ static struct drm_plane_funcs exynos_plane_funcs = {
+ static int exynos_plane_atomic_check(struct drm_plane *plane,
+ 				     struct drm_plane_state *state)
+ {
+-	return exynos_check_plane(plane, state->fb);
++	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
++	int nr;
++	int i;
++
++	if (!state->fb)
++		return 0;
++
++	nr = exynos_drm_fb_get_buf_cnt(state->fb);
++	for (i = 0; i < nr; i++) {
++		struct exynos_drm_gem_buf *buffer =
++					exynos_drm_fb_buffer(state->fb, i);
++
++		if (!buffer) {
++			DRM_DEBUG_KMS("buffer is null\n");
++			return -EFAULT;
++		}
++
++		exynos_plane->dma_addr[i] = buffer->dma_addr +
++					    state->fb->offsets[i];
++
++		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
++				i, (unsigned long)exynos_plane->dma_addr[i]);
++	}
++
++	return 0;
+ }
+ 
+ static void exynos_plane_atomic_update(struct drm_plane *plane,
+ 				       struct drm_plane_state *old_state)
+ {
+ 	struct drm_plane_state *state = plane->state;
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(state->crtc);
++	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+ 
+ 	if (!state->crtc)
+ 		return;
+ 
+-	exynos_update_plane(plane, state->crtc, state->fb,
+-			    state->crtc_x, state->crtc_y,
+-			    state->crtc_w, state->crtc_h,
+-			    state->src_x, state->src_y,
+-			    state->src_w, state->src_h);
++	exynos_plane_mode_set(plane, state->crtc, state->fb,
++			      state->crtc_x, state->crtc_y,
++			      state->crtc_w, state->crtc_h,
++			      state->src_x >> 16, state->src_y >> 16,
++			      state->src_w >> 16, state->src_h >> 16);
++
++	if (exynos_crtc->ops->win_commit)
++		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+ }
+ 
+ static void exynos_plane_atomic_disable(struct drm_plane *plane,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+index 560ca71..8c88ae9 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+@@ -9,17 +9,6 @@
+  *
+  */
+ 
+-int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb);
+-void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+-			   struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+-			   unsigned int crtc_w, unsigned int crtc_h,
+-			   uint32_t src_x, uint32_t src_y,
+-			   uint32_t src_w, uint32_t src_h);
+-void exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+-			struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+-			unsigned int crtc_w, unsigned int crtc_h,
+-			uint32_t src_x, uint32_t src_y,
+-			uint32_t src_w, uint32_t src_h);
+ int exynos_plane_init(struct drm_device *dev,
+ 		      struct exynos_drm_plane *exynos_plane,
+ 		      unsigned long possible_crtcs, enum drm_plane_type type,
+-- 
+2.1.0
