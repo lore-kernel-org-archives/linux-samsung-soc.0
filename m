@@ -1,166 +1,188 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v9 09/18] drm/exynos: atomic phase 3: convert page flips
-Date: Thu, 28 May 2015 18:42:47 -0300
-Message-ID: <1432849376-12828-10-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v9 05/18] drm/exynos: atomic phase 2: wire up state reset(),
+ duplicate() and destroy()
+Date: Thu, 28 May 2015 18:42:43 -0300
+Message-ID: <1432849376-12828-6-git-send-email-gustavo@padovan.org>
 References: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f46.google.com ([209.85.216.46]:37477 "EHLO
-	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754566AbbE1Vni (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 May 2015 17:43:38 -0400
-Received: by vnbg190 with SMTP id g190so6374358vnb.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 14:43:38 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-PageFlips now use the atomic helper to work through the atomic modesetting
-API. Async page flips are not supported yet.
-
-v2: Add .atomic_begin() step to handle the vblank part we removed from
-exynos page_flip code.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 79 +++++++-------------------------
- drivers/gpu/drm/exynos/exynos_drm_fb.c   |  9 +++-
- 2 files changed, 25 insertions(+), 63 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index dd1ee7f..a137799 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -101,75 +101,30 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
- 	}
- }
- 
-+static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
-+{
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-+
-+	if (crtc->state->event) {
-+		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
-+		exynos_crtc->event = crtc->state->event;
-+	}
-+}
-+
-+static void exynos_crtc_atomic_flush(struct drm_crtc *crtc)
-+{
-+}
-+
- static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
- 	.dpms		= exynos_drm_crtc_dpms,
- 	.commit		= exynos_drm_crtc_commit,
- 	.mode_fixup	= exynos_drm_crtc_mode_fixup,
- 	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
- 	.disable	= exynos_drm_crtc_disable,
-+	.atomic_begin	= exynos_crtc_atomic_begin,
-+	.atomic_flush	= exynos_crtc_atomic_flush,
- };
- 
--static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
--				     struct drm_framebuffer *fb,
--				     struct drm_pending_vblank_event *event,
--				     uint32_t page_flip_flags)
--{
--	struct drm_device *dev = crtc->dev;
--	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	unsigned int crtc_w, crtc_h;
--	int ret;
--
--	/* when the page flip is requested, crtc's dpms should be on */
--	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
--		DRM_ERROR("failed page flip request.\n");
--		return -EINVAL;
--	}
--
--	if (!event)
--		return -EINVAL;
--
--	spin_lock_irq(&dev->event_lock);
--	if (exynos_crtc->event) {
--		ret = -EBUSY;
--		goto out;
--	}
--
--	ret = exynos_check_plane(crtc->primary, fb);
--	if (ret)
--		goto out;
--
--	ret = drm_vblank_get(dev, exynos_crtc->pipe);
--	if (ret) {
--		DRM_DEBUG("failed to acquire vblank counter\n");
--		goto out;
--	}
--
--	exynos_crtc->event = event;
--	spin_unlock_irq(&dev->event_lock);
--
--	/*
--	 * the pipe from user always is 0 so we can set pipe number
--	 * of current owner to event.
--	 */
--	event->pipe = exynos_crtc->pipe;
--
--	crtc->primary->fb = fb;
--	crtc_w = fb->width - crtc->x;
--	crtc_h = fb->height - crtc->y;
--	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
--			    crtc_w, crtc_h, crtc->x << 16, crtc->y << 16,
--			    crtc_w << 16, crtc_h << 16);
--
--	if (crtc->primary->state)
--		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
--
--	return 0;
--
--out:
--	spin_unlock_irq(&dev->event_lock);
--	return ret;
--}
--
- static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-@@ -183,7 +138,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
- 
- static struct drm_crtc_funcs exynos_crtc_funcs = {
- 	.set_config	= drm_atomic_helper_set_config,
--	.page_flip	= exynos_drm_crtc_page_flip,
-+	.page_flip	= drm_atomic_helper_page_flip,
- 	.destroy	= exynos_drm_crtc_destroy,
- 	.reset = drm_atomic_helper_crtc_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index 19c0642..05d229c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -266,11 +266,18 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
- 		exynos_drm_fbdev_init(dev);
- }
- 
-+static int exynos_atomic_commit(struct drm_device *dev,
-+				struct drm_atomic_state *state,
-+				bool async)
-+{
-+	return drm_atomic_helper_commit(dev, state, false);
-+}
-+
- static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
- 	.fb_create = exynos_user_fb_create,
- 	.output_poll_changed = exynos_drm_output_poll_changed,
- 	.atomic_check = drm_atomic_helper_check,
--	.atomic_commit = drm_atomic_helper_commit,
-+	.atomic_commit = exynos_atomic_commit,
- };
- 
- void exynos_drm_mode_config_init(struct drm_device *dev)
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+U2V0IENSVEMsIHBsYW5lcyBhbmQgY29ubmVjdG9ycyB0byB1c2UgdGhlIGRlZmF1bHQgaW1wbGVt
+ZW50YXRpb25zIGZyb20KdGhlIGF0b21pYyBoZWxwZXIgbGlicmFyeS4gVGhlIGhlbHBlcnMgd2ls
+bCB3b3JrIHRvIGtlZXAgdHJhY2sgb2Ygc3RhdGUKZm9yIGVhY2ggRFJNIG9iamVjdC4KClNpZ25l
+ZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51
+az4KUmV2aWV3ZWQtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4K
+VGVzdGVkLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZT4K
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jICAgICAgICAgICB8IDQgKysrKwog
+ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgICAgICAgICAgfCA0ICsrKysKIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgIHwgNCArKysrCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jICB8IDUgKysrKysKIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgIHwgNCArKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmMgICB8IDIgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kc2kuYyAgIHwgNCArKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fcGxhbmUuYyB8IDQgKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Zp
+ZGkuYyAgfCA0ICsrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAg
+IHwgNCArKysrCiAxMCBmaWxlcyBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
+Z2UvcHM4NjIyLmMKaW5kZXggZTg5NWFhNy4uYjYwNDMyNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9wczg2MjIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYy
+Mi5jCkBAIC0zMSw2ICszMSw3IEBACiAjaW5jbHVkZSAiZHJtUC5oIgogI2luY2x1ZGUgImRybV9j
+cnRjLmgiCiAjaW5jbHVkZSAiZHJtX2NydGNfaGVscGVyLmgiCisjaW5jbHVkZSAiZHJtX2F0b21p
+Y19oZWxwZXIuaCIKIAogLyogQnJpZ2h0bmVzcyBzY2FsZSBvbiB0aGUgUGFyYWRlIGNoaXAgKi8K
+ICNkZWZpbmUgUFM4NjIyX01BWF9CUklHSFRORVNTIDB4ZmYKQEAgLTUwMiw2ICs1MDMsOSBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHM4NjIyX2Nvbm5lY3Rvcl9m
+dW5jcyA9IHsKIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rv
+cl9tb2RlcywKIAkuZGV0ZWN0ID0gcHM4NjIyX2RldGVjdCwKIAkuZGVzdHJveSA9IHBzODYyMl9j
+b25uZWN0b3JfZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3Jf
+cmVzZXQsCisJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25u
+ZWN0b3JfZHVwbGljYXRlX3N0YXRlLAorCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGRybV9hdG9t
+aWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAogfTsKIAogc3RhdGljIGludCBwczg2
+MjJfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UpCmRpZmYgLS1naXQgYS9kcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2
+MC5jCmluZGV4IDlkMmYwNTMuLjhlZDM2MTcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvcHRuMzQ2MC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCkBA
+IC0yNyw2ICsyNyw3IEBACiAKICNpbmNsdWRlICJkcm1fY3J0Yy5oIgogI2luY2x1ZGUgImRybV9j
+cnRjX2hlbHBlci5oIgorI2luY2x1ZGUgImRybV9hdG9taWNfaGVscGVyLmgiCiAjaW5jbHVkZSAi
+ZHJtX2VkaWQuaCIKICNpbmNsdWRlICJkcm1QLmgiCiAKQEAgLTI2Myw2ICsyNjQsOSBAQCBzdGF0
+aWMgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgcHRuMzQ2MF9jb25uZWN0b3JfZnVuY3MgPSB7
+CiAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9jb25uZWN0b3JfbW9kZXMs
+CiAJLmRldGVjdCA9IHB0bjM0NjBfZGV0ZWN0LAogCS5kZXN0cm95ID0gcHRuMzQ2MF9jb25uZWN0
+b3JfZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfcmVzZXQs
+CisJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3Jf
+ZHVwbGljYXRlX3N0YXRlLAorCS5hdG9taWNfZGVzdHJveV9zdGF0ZSA9IGRybV9hdG9taWNfaGVs
+cGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAogfTsKIAogc3RhdGljIGludCBwdG4zNDYwX2Jy
+aWRnZV9hdHRhY2goc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RwX2NvcmUuYwppbmRleCAzMGZlYjdkLi4xOTVmZTYwIDEwMDY0NAotLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCkBAIC0yOCw2ICsyOCw3IEBACiAjaW5jbHVkZSA8
+ZHJtL2RybVAuaD4KICNpbmNsdWRlIDxkcm0vZHJtX2NydGMuaD4KICNpbmNsdWRlIDxkcm0vZHJt
+X2NydGNfaGVscGVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+CiAjaW5j
+bHVkZSA8ZHJtL2RybV9wYW5lbC5oPgogI2luY2x1ZGUgPGRybS9icmlkZ2UvcHRuMzQ2MC5oPgog
+CkBAIC05NTcsNiArOTU4LDkgQEAgc3RhdGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIGV4
+eW5vc19kcF9jb25uZWN0b3JfZnVuY3MgPSB7CiAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3By
+b2JlX3NpbmdsZV9jb25uZWN0b3JfbW9kZXMsCiAJLmRldGVjdCA9IGV4eW5vc19kcF9kZXRlY3Qs
+CiAJLmRlc3Ryb3kgPSBleHlub3NfZHBfY29ubmVjdG9yX2Rlc3Ryb3ksCisJLnJlc2V0ID0gZHJt
+X2F0b21pY19oZWxwZXJfY29ubmVjdG9yX3Jlc2V0LAorCS5hdG9taWNfZHVwbGljYXRlX3N0YXRl
+ID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSwKKwkuYXRvbWlj
+X2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0
+ZSwKIH07CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5l
+Y3RvciAqY29ubmVjdG9yKQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMK
+aW5kZXggNzVlYjYxYi4uNzNjY2ZhNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NydGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fY3J0Yy5jCkBAIC0xNCw2ICsxNCw4IEBACiAKICNpbmNsdWRlIDxkcm0vZHJtUC5oPgogI2lu
+Y2x1ZGUgPGRybS9kcm1fY3J0Y19oZWxwZXIuaD4KKyNpbmNsdWRlIDxkcm0vZHJtX2F0b21pYy5o
+PgorI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPgogCiAjaW5jbHVkZSAiZXh5bm9z
+X2RybV9jcnRjLmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIKQEAgLTE4OCw2ICsxOTAs
+OSBAQCBzdGF0aWMgc3RydWN0IGRybV9jcnRjX2Z1bmNzIGV4eW5vc19jcnRjX2Z1bmNzID0gewog
+CS5zZXRfY29uZmlnCT0gZHJtX2NydGNfaGVscGVyX3NldF9jb25maWcsCiAJLnBhZ2VfZmxpcAk9
+IGV4eW5vc19kcm1fY3J0Y19wYWdlX2ZsaXAsCiAJLmRlc3Ryb3kJPSBleHlub3NfZHJtX2NydGNf
+ZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jcnRjX3Jlc2V0LAorCS5hdG9t
+aWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kdXBsaWNhdGVfc3Rh
+dGUsCisJLmF0b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY3J0Y19kZXN0
+cm95X3N0YXRlLAogfTsKIAogc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2RybV9jcnRj
+X2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kcGkuYwppbmRleCAzNzY3OGNmLi5jZWQ1YzIzIDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2RwaS5jCkBAIC0xMyw2ICsxMyw3IEBACiAjaW5jbHVkZSA8ZHJt
+L2RybVAuaD4KICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+CiAjaW5jbHVkZSA8ZHJt
+L2RybV9wYW5lbC5oPgorI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPgogCiAjaW5j
+bHVkZSA8bGludXgvcmVndWxhdG9yL2NvbnN1bWVyLmg+CiAKQEAgLTYzLDYgKzY0LDkgQEAgc3Rh
+dGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIGV4eW5vc19kcGlfY29ubmVjdG9yX2Z1bmNz
+ID0gewogCS5kZXRlY3QgPSBleHlub3NfZHBpX2RldGVjdCwKIAkuZmlsbF9tb2RlcyA9IGRybV9o
+ZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9tb2RlcywKIAkuZGVzdHJveSA9IGV4eW5vc19k
+cGlfY29ubmVjdG9yX2Rlc3Ryb3ksCisJLnJlc2V0ID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVj
+dG9yX3Jlc2V0LAorCS5hdG9taWNfZHVwbGljYXRlX3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJf
+Y29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSwKKwkuYXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1f
+YXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0ZSwKIH07CiAKIHN0YXRpYyBpbnQg
+ZXh5bm9zX2RwaV9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCA4YWM0NjUyLi4wOGI5YThj
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBAIC05OCw2ICs5OCw4
+IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVu
+c2lnbmVkIGxvbmcgZmxhZ3MpCiAJaWYgKHJldCkKIAkJZ290byBlcnJfY2xlYW51cF92Ymxhbms7
+CiAKKwlkcm1fbW9kZV9jb25maWdfcmVzZXQoZGV2KTsKKwogCS8qCiAJICogZW5hYmxlIGRybSBp
+cnEgbW9kZS4KIAkgKiAtIHdpdGggaXJxX2VuYWJsZWQgPSB0cnVlLCB3ZSBjYW4gdXNlIHRoZSB2
+YmxhbmsgZmVhdHVyZS4KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwppbmRl
+eCAwNDkyNzE1Li5lNGU3Zjc0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHNpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jCkBAIC0xNCw2ICsxNCw3IEBACiAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgog
+I2luY2x1ZGUgPGRybS9kcm1fbWlwaV9kc2kuaD4KICNpbmNsdWRlIDxkcm0vZHJtX3BhbmVsLmg+
+CisjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+CiAKICNpbmNsdWRlIDxsaW51eC9j
+bGsuaD4KICNpbmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+CkBAIC0xNDYxLDYgKzE0NjIs
+OSBAQCBzdGF0aWMgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgZXh5bm9zX2RzaV9jb25uZWN0
+b3JfZnVuY3MgPSB7CiAJLmRldGVjdCA9IGV4eW5vc19kc2lfZGV0ZWN0LAogCS5maWxsX21vZGVz
+ID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAogCS5kZXN0cm95ID0g
+ZXh5bm9zX2RzaV9jb25uZWN0b3JfZGVzdHJveSwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBl
+cl9jb25uZWN0b3JfcmVzZXQsCisJLmF0b21pY19kdXBsaWNhdGVfc3RhdGUgPSBkcm1fYXRvbWlj
+X2hlbHBlcl9jb25uZWN0b3JfZHVwbGljYXRlX3N0YXRlLAorCS5hdG9taWNfZGVzdHJveV9zdGF0
+ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0YXRlLAogfTsKIAogc3Rh
+dGljIGludCBleHlub3NfZHNpX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVj
+dG9yKQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5l
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCA2ZTEz
+NDFlLi5hY2VmYmNhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
+YwpAQCAtMTMsNiArMTMsNyBAQAogCiAjaW5jbHVkZSA8ZHJtL2V4eW5vc19kcm0uaD4KICNpbmNs
+dWRlIDxkcm0vZHJtX3BsYW5lX2hlbHBlci5oPgorI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hl
+bHBlci5oPgogI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCiAjaW5jbHVkZSAiZXh5bm9zX2Ry
+bV9jcnRjLmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9mYi5oIgpAQCAtMTY5LDYgKzE3MCw5IEBA
+IHN0YXRpYyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5jcyA9IHsKIAku
+dXBkYXRlX3BsYW5lCT0gZHJtX3BsYW5lX2hlbHBlcl91cGRhdGUsCiAJLmRpc2FibGVfcGxhbmUJ
+PSBkcm1fcGxhbmVfaGVscGVyX2Rpc2FibGUsCiAJLmRlc3Ryb3kJPSBkcm1fcGxhbmVfY2xlYW51
+cCwKKwkucmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9yZXNldCwKKwkuYXRvbWljX2R1
+cGxpY2F0ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX3BsYW5lX2R1cGxpY2F0ZV9zdGF0ZSwK
+KwkuYXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hlbHBlcl9wbGFuZV9kZXN0cm95
+X3N0YXRlLAogfTsKIAogc3RhdGljIGludCBleHlub3NfcGxhbmVfYXRvbWljX2NoZWNrKHN0cnVj
+dCBkcm1fcGxhbmUgKnBsYW5lLApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX3ZpZGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRp
+LmMKaW5kZXggMWIzNDc5YS4uZmMzYTE0YiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fdmlkaS5jCkBAIC0yMCw2ICsyMCw3IEBACiAKICNpbmNsdWRlIDxkcm0vZHJtX2VkaWQu
+aD4KICNpbmNsdWRlIDxkcm0vZHJtX2NydGNfaGVscGVyLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9h
+dG9taWNfaGVscGVyLmg+CiAKICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgogI2luY2x1ZGUg
+ImV4eW5vc19kcm1fY3J0Yy5oIgpAQCAtMzg4LDYgKzM4OSw5IEBAIHN0YXRpYyBzdHJ1Y3QgZHJt
+X2Nvbm5lY3Rvcl9mdW5jcyB2aWRpX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKIAkuZmlsbF9tb2RlcyA9
+IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9tb2RlcywKIAkuZGV0ZWN0ID0gdmlk
+aV9kZXRlY3QsCiAJLmRlc3Ryb3kgPSB2aWRpX2Nvbm5lY3Rvcl9kZXN0cm95LAorCS5yZXNldCA9
+IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9yZXNldCwKKwkuYXRvbWljX2R1cGxpY2F0ZV9z
+dGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kdXBsaWNhdGVfc3RhdGUsCisJLmF0
+b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX2Rlc3Ryb3lf
+c3RhdGUsCiB9OwogCiBzdGF0aWMgaW50IHZpZGlfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVj
+dG9yICpjb25uZWN0b3IpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKaW5kZXggNWVi
+YTk3MS4uNDcxZTQ4NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+aGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpAQCAtMTcs
+NiArMTcsNyBAQAogI2luY2x1ZGUgPGRybS9kcm1QLmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9lZGlk
+Lmg+CiAjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgorI2luY2x1ZGUgPGRybS9kcm1f
+YXRvbWljX2hlbHBlci5oPgogCiAjaW5jbHVkZSAicmVncy1oZG1pLmgiCiAKQEAgLTEwNTQsNiAr
+MTA1NSw5IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBoZG1pX2Nvbm5lY3Rv
+cl9mdW5jcyA9IHsKIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5l
+Y3Rvcl9tb2RlcywKIAkuZGV0ZWN0ID0gaGRtaV9kZXRlY3QsCiAJLmRlc3Ryb3kgPSBoZG1pX2Nv
+bm5lY3Rvcl9kZXN0cm95LAorCS5yZXNldCA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9y
+ZXNldCwKKwkuYXRvbWljX2R1cGxpY2F0ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5l
+Y3Rvcl9kdXBsaWNhdGVfc3RhdGUsCisJLmF0b21pY19kZXN0cm95X3N0YXRlID0gZHJtX2F0b21p
+Y19oZWxwZXJfY29ubmVjdG9yX2Rlc3Ryb3lfc3RhdGUsCiB9OwogCiBzdGF0aWMgaW50IGhkbWlf
+Z2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCi0tIAoyLjEuMAoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
