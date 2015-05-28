@@ -1,55 +1,74 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] ARM: exynos: Fix wake-up interrupts for Exynos3250
-Date: Thu, 28 May 2015 10:55:08 +0100
-Message-ID: <5566E5FC.6020009@arm.com>
-References: <1429724452-26563-1-git-send-email-marc.zyngier@arm.com> <CAJKOXPd45=c5fybCiyExdyRUZcC9p8zdZqZPPYcjiZd5x28sHw@mail.gmail.com> <0d0201d08084$93191f80$b94b5e80$@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] ARM: dts: odroidxu3: Enable USB3 regulators
+Date: Thu, 28 May 2015 15:58:17 +0530
+Message-ID: <CANAwSgRpXxq2Y72crPd3U8f-DB=nsQ021e5MY0B7GdJrqwv=wA@mail.gmail.com>
+References: <1432803494-3516-1-git-send-email-linux.amoon@gmail.com> <5566DDA6.1080508@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:54328 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753047AbbE1JzL (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:38597 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751772AbbE1K2j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 May 2015 05:55:11 -0400
-In-Reply-To: <0d0201d08084$93191f80$b94b5e80$@kernel.org>
+	Thu, 28 May 2015 06:28:39 -0400
+In-Reply-To: <5566DDA6.1080508@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-On 27/04/15 01:53, Kukjin Kim wrote:
-> Krzysztof Kozlowski wrote:
+Hi Krzysztof,
+
+I will take care of these issue in the future.
+
+-Anand Moon
+
+On 28 May 2015 at 14:49, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> On 28.05.2015 17:58, Anand Moon wrote:
+>> Enable regulator for usbdrd3_0 and usbdrd3_1
+>>>From the schematic pin diagram USB3_0 and USB3_1
+>> is regulated by LDO9 and LD011.
+>
+> Please reformat statement above to proper sentence(s) without ">" before
+> "From".
+>
 >>
->> 2015-04-23 2:40 GMT+09:00 Marc Zyngier <marc.zyngier@arm.com>:
->>> Commit 8b283c025443 (ARM: exynos4/5: convert pmu wakeup to
->>> stacked domains) changed the Exynos PMU code to use stacked
->>> domains. This has led to a number of interrupt numbers to be
->>> fixed.
->>>
->>> In the meantime, support for Exynos 3250 was added, missing
->>> the required change to this platform. This amounts to revert
->>> ace283a04a4a (ARM: EXYNOS: Fix wrong hwirq of RTC interrupt
->>> for Exynos3250 SoC), as the initial patch was right, just a
->>> bit early...
->>>
->>> Cc: Chanwoo Choi <cw00.choi@samsung.com>
->>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> Cc: Kukjin Kim <kgene@kernel.org>
->>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->>> ---
->>>  arch/arm/mach-exynos/suspend.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> Fix the boot message of failed.
+>> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+>> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+>> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+>> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+>> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+>> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+>> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+>> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+>> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+>> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+>> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
 >>
->> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
-> Thanks and applied.
-
-Looks like this fix never made it to mainline. What happened?
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>> ---
+>> This patch is based on Krzysztof github branch work-next/odroid-xu3-s2mps11-irq
+>> ---
+>
+> I mentioned this already on previous postings. Let's make an exercise.
+> Please:
+> 1. Save your email as mbox format (from mailer).
+> 2. Go to a GIT repo with kernel and checkout base branch.
+> 3. git am 0001-the-name-of-file.mbox
+> 4. git show
+>
+> Do you see the signed-off-by in commit?
+>
+> The patch itself looks good, thanks for fixing this. Just please fix the
+> issues with commit message.
+>
+> By the way:
+> 1. The always-on from LDO9 could be probably removed if the ehci-exynos
+> driver had regulator consumer implemented.
+> 2. The Documentation/devicetree/bindings/usb/exynos-usb.txt (or dwc.txt)
+> should proably mention the vdd-supply property.
+>
+> Best regards,
+> Krzysztof
+>
+>
