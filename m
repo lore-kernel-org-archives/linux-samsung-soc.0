@@ -1,194 +1,69 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v9 10/18] drm/exynos: remove exported functions from exynos_drm_plane
-Date: Thu, 28 May 2015 18:42:48 -0300
-Message-ID: <1432849376-12828-11-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v9 12/18] drm/exynos: move exynos_drm_crtc_disable()
+Date: Thu, 28 May 2015 18:42:50 -0300
+Message-ID: <1432849376-12828-13-git-send-email-gustavo@padovan.org>
 References: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f52.google.com ([209.85.216.52]:37483 "EHLO
-	mail-vn0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754566AbbE1Vnm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 May 2015 17:43:42 -0400
-Received: by vnbg190 with SMTP id g190so6374547vnb.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2015 14:43:41 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Now that no one is using the functions exported by exynos_drm_plane due
-to the atomic conversion we can make remove some of the them or make them
-static.
-
-v2: remove unused exynos_drm_crtc
-
-v3: fix checkpatch error (reported by Joonyoung)
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 98 +++++++++++++------------------
- drivers/gpu/drm/exynos/exynos_drm_plane.h | 11 ----
- 2 files changed, 42 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index e5e4eb0..54a83ee 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -62,38 +62,13 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
- 	return size;
- }
- 
--int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
--{
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
--	int nr;
--	int i;
--
--	if (!fb)
--		return 0;
--
--	nr = exynos_drm_fb_get_buf_cnt(fb);
--	for (i = 0; i < nr; i++) {
--		struct exynos_drm_gem_buf *buffer = exynos_drm_fb_buffer(fb, i);
--
--		if (!buffer) {
--			DRM_DEBUG_KMS("buffer is null\n");
--			return -EFAULT;
--		}
--
--		exynos_plane->dma_addr[i] = buffer->dma_addr + fb->offsets[i];
--
--		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
--				i, (unsigned long)exynos_plane->dma_addr[i]);
--	}
--
--	return 0;
--}
--
--void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
--			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--			  unsigned int crtc_w, unsigned int crtc_h,
--			  uint32_t src_x, uint32_t src_y,
--			  uint32_t src_w, uint32_t src_h)
-+static void exynos_plane_mode_set(struct drm_plane *plane,
-+				  struct drm_crtc *crtc,
-+				  struct drm_framebuffer *fb,
-+				  int crtc_x, int crtc_y,
-+				  unsigned int crtc_w, unsigned int crtc_h,
-+				  uint32_t src_x, uint32_t src_y,
-+				  uint32_t src_w, uint32_t src_h)
- {
- 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 	unsigned int actual_w;
-@@ -148,24 +123,6 @@ void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
- 	plane->crtc = crtc;
- }
- 
--void
--exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
--		     struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--		     unsigned int crtc_w, unsigned int crtc_h,
--		     uint32_t src_x, uint32_t src_y,
--		     uint32_t src_w, uint32_t src_h)
--{
--	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
--
--	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
--			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
--			      src_w >> 16, src_h >> 16);
--
--	if (exynos_crtc->ops->win_commit)
--		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
--}
--
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= drm_atomic_helper_update_plane,
- 	.disable_plane	= drm_atomic_helper_disable_plane,
-@@ -178,22 +135,51 @@ static struct drm_plane_funcs exynos_plane_funcs = {
- static int exynos_plane_atomic_check(struct drm_plane *plane,
- 				     struct drm_plane_state *state)
- {
--	return exynos_check_plane(plane, state->fb);
-+	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-+	int nr;
-+	int i;
-+
-+	if (!state->fb)
-+		return 0;
-+
-+	nr = exynos_drm_fb_get_buf_cnt(state->fb);
-+	for (i = 0; i < nr; i++) {
-+		struct exynos_drm_gem_buf *buffer =
-+					exynos_drm_fb_buffer(state->fb, i);
-+
-+		if (!buffer) {
-+			DRM_DEBUG_KMS("buffer is null\n");
-+			return -EFAULT;
-+		}
-+
-+		exynos_plane->dma_addr[i] = buffer->dma_addr +
-+					    state->fb->offsets[i];
-+
-+		DRM_DEBUG_KMS("buffer: %d, dma_addr = 0x%lx\n",
-+				i, (unsigned long)exynos_plane->dma_addr[i]);
-+	}
-+
-+	return 0;
- }
- 
- static void exynos_plane_atomic_update(struct drm_plane *plane,
- 				       struct drm_plane_state *old_state)
- {
- 	struct drm_plane_state *state = plane->state;
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(state->crtc);
-+	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 
- 	if (!state->crtc)
- 		return;
- 
--	exynos_update_plane(plane, state->crtc, state->fb,
--			    state->crtc_x, state->crtc_y,
--			    state->crtc_w, state->crtc_h,
--			    state->src_x, state->src_y,
--			    state->src_w, state->src_h);
-+	exynos_plane_mode_set(plane, state->crtc, state->fb,
-+			      state->crtc_x, state->crtc_y,
-+			      state->crtc_w, state->crtc_h,
-+			      state->src_x >> 16, state->src_y >> 16,
-+			      state->src_w >> 16, state->src_h >> 16);
-+
-+	if (exynos_crtc->ops->win_commit)
-+		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
- }
- 
- static void exynos_plane_atomic_disable(struct drm_plane *plane,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
-index 560ca71..8c88ae9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
-@@ -9,17 +9,6 @@
-  *
-  */
- 
--int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb);
--void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
--			   struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--			   unsigned int crtc_w, unsigned int crtc_h,
--			   uint32_t src_x, uint32_t src_y,
--			   uint32_t src_w, uint32_t src_h);
--void exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
--			struct drm_framebuffer *fb, int crtc_x, int crtc_y,
--			unsigned int crtc_w, unsigned int crtc_h,
--			uint32_t src_x, uint32_t src_y,
--			uint32_t src_w, uint32_t src_h);
- int exynos_plane_init(struct drm_device *dev,
- 		      struct exynos_drm_plane *exynos_plane,
- 		      unsigned long possible_crtcs, enum drm_plane_type type,
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhpcyBpcyBhIHByZXBhcmF0aW9uIGNvbW1pdCB0byBtb3ZlIGV4eW5vc19kcm1fY3J0Y19kaXNh
+YmxlKCkgdG9nZXRoZXIKd2l0aCB0aGUgZnV0dXJlIGV4eW5vc19kcm1fY3J0Y19lbmFibGUoKSB0
+aGF0IHdpbGwgY29tZSBmcm9tIHRoZSBzcGxpdCBvZgpleHlub3NfZHJtX2NydGNfZHBtcygpIGNh
+bGxiYWNrLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5A
+Y29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
+cnRjLmMgfCAzNiArKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5n
+ZWQsIDE4IGluc2VydGlvbnMoKyksIDE4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IGExMzc3OTkuLjcxMjVmYmUgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtNTAsNiArNTAsMjMgQEAgc3RhdGlj
+IHZvaWQgZXh5bm9zX2RybV9jcnRjX2RwbXMoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgbW9k
+ZSkKIAkJZHJtX2NydGNfdmJsYW5rX29uKGNydGMpOwogfQogCitzdGF0aWMgdm9pZCBleHlub3Nf
+ZHJtX2NydGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCit7CisJc3RydWN0IGRybV9w
+bGFuZSAqcGxhbmU7CisJaW50IHJldDsKKworCWV4eW5vc19kcm1fY3J0Y19kcG1zKGNydGMsIERS
+TV9NT0RFX0RQTVNfT0ZGKTsKKworCWRybV9mb3JfZWFjaF9sZWdhY3lfcGxhbmUocGxhbmUsICZj
+cnRjLT5kZXYtPm1vZGVfY29uZmlnLnBsYW5lX2xpc3QpIHsKKwkJaWYgKHBsYW5lLT5jcnRjICE9
+IGNydGMpCisJCQljb250aW51ZTsKKworCQlyZXQgPSBwbGFuZS0+ZnVuY3MtPmRpc2FibGVfcGxh
+bmUocGxhbmUpOworCQlpZiAocmV0KQorCQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gZGlzYWJsZSBw
+bGFuZSAlZFxuIiwgcmV0KTsKKwl9Cit9CisKIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19j
+b21taXQoc3RydWN0IGRybV9jcnRjICpjcnRjKQogewogCXN0cnVjdCBleHlub3NfZHJtX2NydGMg
+KmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7CkBAIC04NCwyMyArMTAxLDYgQEAg
+ZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X25vZmIoc3RydWN0IGRybV9jcnRjICpjcnRjKQogCQll
+eHlub3NfY3J0Yy0+b3BzLT5jb21taXQoZXh5bm9zX2NydGMpOwogfQogCi1zdGF0aWMgdm9pZCBl
+eHlub3NfZHJtX2NydGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCi17Ci0Jc3RydWN0
+IGRybV9wbGFuZSAqcGxhbmU7Ci0JaW50IHJldDsKLQotCWV4eW5vc19kcm1fY3J0Y19kcG1zKGNy
+dGMsIERSTV9NT0RFX0RQTVNfT0ZGKTsKLQotCWRybV9mb3JfZWFjaF9sZWdhY3lfcGxhbmUocGxh
+bmUsICZjcnRjLT5kZXYtPm1vZGVfY29uZmlnLnBsYW5lX2xpc3QpIHsKLQkJaWYgKHBsYW5lLT5j
+cnRjICE9IGNydGMpCi0JCQljb250aW51ZTsKLQotCQlyZXQgPSBwbGFuZS0+ZnVuY3MtPmRpc2Fi
+bGVfcGxhbmUocGxhbmUpOwotCQlpZiAocmV0KQotCQkJRFJNX0VSUk9SKCJGYWlsZWQgdG8gZGlz
+YWJsZSBwbGFuZSAlZFxuIiwgcmV0KTsKLQl9Ci19Ci0KIHN0YXRpYyB2b2lkIGV4eW5vc19jcnRj
+X2F0b21pY19iZWdpbihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCiB7CiAJc3RydWN0IGV4eW5vc19k
+cm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsKQEAgLTExNywxMCAr
+MTE3LDEwIEBAIHN0YXRpYyB2b2lkIGV4eW5vc19jcnRjX2F0b21pY19mbHVzaChzdHJ1Y3QgZHJt
+X2NydGMgKmNydGMpCiAKIHN0YXRpYyBzdHJ1Y3QgZHJtX2NydGNfaGVscGVyX2Z1bmNzIGV4eW5v
+c19jcnRjX2hlbHBlcl9mdW5jcyA9IHsKIAkuZHBtcwkJPSBleHlub3NfZHJtX2NydGNfZHBtcywK
+KwkuZGlzYWJsZQk9IGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlLAogCS5jb21taXQJCT0gZXh5bm9z
+X2RybV9jcnRjX2NvbW1pdCwKIAkubW9kZV9maXh1cAk9IGV4eW5vc19kcm1fY3J0Y19tb2RlX2Zp
+eHVwLAogCS5tb2RlX3NldF9ub2ZiCT0gZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X25vZmIsCi0J
+LmRpc2FibGUJPSBleHlub3NfZHJtX2NydGNfZGlzYWJsZSwKIAkuYXRvbWljX2JlZ2luCT0gZXh5
+bm9zX2NydGNfYXRvbWljX2JlZ2luLAogCS5hdG9taWNfZmx1c2gJPSBleHlub3NfY3J0Y19hdG9t
+aWNfZmx1c2gsCiB9OwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
