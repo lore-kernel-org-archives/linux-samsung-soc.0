@@ -1,130 +1,142 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v8 02/14] drm/exynos: atomic phase 1: use
- drm_plane_helper_update()
-Date: Thu, 28 May 2015 17:24:26 +0900
-Message-ID: <5566D0BA.9070006@samsung.com>
+Subject: Re: [PATCH v8 04/14] drm/exynos: atomic phase 1: add .mode_set_nofb()
+ callback
+Date: Thu, 28 May 2015 17:24:52 +0900
+Message-ID: <5566D0D4.30100@samsung.com>
 References: <1432760183-4342-1-git-send-email-gustavo@padovan.org>
- <1432760183-4342-3-git-send-email-gustavo@padovan.org>
+ <1432760183-4342-5-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1432760183-4342-3-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:48852 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752703AbbE1IYr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 May 2015 04:24:47 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NP100LLCWPALE80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 28 May 2015 17:24:46 +0900 (KST)
+In-reply-to: <1432760183-4342-5-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMDUvMjgvMjAxNSAwNTo1NiBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
-c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBSaXAg
-b3V0IHRoZSBjaGVjayBmcm9tIGV4eW5vc191cGRhdGVfcGxhbmUoKSBhbmQgY3JlYXRlCj4gZXh5
-bm9zX2NoZWNrX3BsYW5lKCkgZm9yIHRoZSBjaGVjayBwaGFzZSBlbmFibGluZyB1c2UgdG8gdXNl
-Cj4gdGhlIGF0b21pYyBoZWxwZXJzIHRvIGNhbGwgb3VyIGNoZWNrIGFuZCB1cGRhdGUgcGhhc2Vz
-IHdoZW4gdXBkYXRpbmcKPiBwbGFuZXMuCj4gCj4gVXBkYXRlIGFsbCB1c2VycyBvZiBleHlub3Nf
-dXBkYXRlX3BsYW5lKCkgYWNjb3JkaW5nbHkgdG8gY2FsbAo+IGV4eW5vc19jaGVja19wbGFuZSgp
-IGJlZm9yZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFk
-b3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gUmV2aWV3ZWQtYnk6IEpvb255b3VuZyBTaGltIDxqeTA5
-MjIuc2hpbUBzYW1zdW5nLmNvbT4KPiBUZXN0ZWQtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlA
-bWF0aC51bmktYmllbGVmZWxkLmRlPnkKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2NydGMuYyAgfCAzMSArKysrKysrKysrKystLS0tLS0tLS0tLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCA0MCArKysrKysrKysrKysrKysr
-KysrKysrKy0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
-ZS5oIHwgIDIgKy0KPiAgMyBmaWxlcyBjaGFuZ2VkLCA0NyBpbnNlcnRpb25zKCspLCAyNiBkZWxl
-dGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiBp
-bmRleCAzNjNiMDE5Li5iYTQ0YzliIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9jcnRjLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jCj4gQEAgLTExNiw2ICsxMTYsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1f
-Y3J0Y19tb2RlX3NldF9iYXNlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywgaW50IHgsIGludCB5LAo+
-ICAJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsKPiAgCXVu
-c2lnbmVkIGludCBjcnRjX3c7Cj4gIAl1bnNpZ25lZCBpbnQgY3J0Y19oOwo+ICsJaW50IHJldDsK
-PiAgCj4gIAkvKiB3aGVuIGZyYW1lYnVmZmVyIGNoYW5naW5nIGlzIHJlcXVlc3RlZCwgY3J0Yydz
-IGRwbXMgc2hvdWxkIGJlIG9uICovCj4gIAlpZiAoZXh5bm9zX2NydGMtPmRwbXMgPiBEUk1fTU9E
-RV9EUE1TX09OKSB7Cj4gQEAgLTEyMywxMiArMTI0LDE3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Ry
-bV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50IHks
-Cj4gIAkJcmV0dXJuIC1FUEVSTTsKPiAgCX0KPiAgCj4gKwlyZXQgPSBleHlub3NfY2hlY2tfcGxh
-bmUoY3J0Yy0+cHJpbWFyeSwgZmIpOwo+ICsJaWYgKHJldCkKPiArCQlyZXR1cm4gcmV0Owo+ICsK
-PiAgCWNydGNfdyA9IGZiLT53aWR0aCAtIHg7Cj4gIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsK
-PiArCWV4eW5vc191cGRhdGVfcGxhbmUoY3J0Yy0+cHJpbWFyeSwgY3J0YywgZmIsIDAsIDAsCj4g
-KwkJCSAgICBjcnRjX3csIGNydGNfaCwgeCA8PCAxNiwgeSA8PCAxNiwKPiArCQkJICAgIGNydGNf
-dyA8PCAxNiwgY3J0Y19oIDw8IDE2KTsKPiAgCj4gLQlyZXR1cm4gZXh5bm9zX3VwZGF0ZV9wbGFu
-ZShjcnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiAtCQkJCSAgIGNydGNfdywgY3J0Y19o
-LCB4IDw8IDE2LCB5IDw8IDE2LAo+IC0JCQkJICAgY3J0Y193IDw8IDE2LCBjcnRjX2ggPDwgMTYp
-Owo+ICsJcmV0dXJuIDA7Cj4gIH0KPiAgCj4gIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19k
-aXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiBAQCAtMTY1LDcgKzE3MSw2IEBAIHN0YXRp
-YyBpbnQgZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4g
-IHsKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjcnRjLT5kZXY7Cj4gIAlzdHJ1Y3QgZXh5
-bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNydGMpOwo+IC0Jc3Ry
-dWN0IGRybV9mcmFtZWJ1ZmZlciAqb2xkX2ZiID0gY3J0Yy0+cHJpbWFyeS0+ZmI7Cj4gIAl1bnNp
-Z25lZCBpbnQgY3J0Y193LCBjcnRjX2g7Cj4gIAlpbnQgcmV0Owo+ICAKPiBAQCAtMTg0LDYgKzE4
-OSwxMCBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9j
-cnRjICpjcnRjLAo+ICAJCWdvdG8gb3V0Owo+ICAJfQo+ICAKPiArCXJldCA9IGV4eW5vc19jaGVj
-a19wbGFuZShjcnRjLT5wcmltYXJ5LCBmYik7Cj4gKwlpZiAocmV0KQo+ICsJCWdvdG8gb3V0Owo+
-ICsKPiAgCXJldCA9IGRybV92YmxhbmtfZ2V0KGRldiwgZXh5bm9zX2NydGMtPnBpcGUpOwo+ICAJ
-aWYgKHJldCkgewo+ICAJCURSTV9ERUJVRygiZmFpbGVkIHRvIGFjcXVpcmUgdmJsYW5rIGNvdW50
-ZXJcbiIpOwo+IEBAIC0yMDIsMTcgKzIxMSw5IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRj
-X3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gIAljcnRjLT5wcmltYXJ5LT5mYiA9
-IGZiOwo+ICAJY3J0Y193ID0gZmItPndpZHRoIC0gY3J0Yy0+eDsKPiAgCWNydGNfaCA9IGZiLT5o
-ZWlnaHQgLSBjcnRjLT55Owo+IC0JcmV0ID0gZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRjLT5wcmlt
-YXJ5LCBjcnRjLCBmYiwgMCwgMCwKPiAtCQkJCSAgY3J0Y193LCBjcnRjX2gsIGNydGMtPnggPDwg
-MTYsIGNydGMtPnkgPDwgMTYsCj4gLQkJCQkgIGNydGNfdyA8PCAxNiwgY3J0Y19oIDw8IDE2KTsK
-PiAtCWlmIChyZXQpIHsKPiAtCQljcnRjLT5wcmltYXJ5LT5mYiA9IG9sZF9mYjsKPiAtCQlzcGlu
-X2xvY2tfaXJxKCZkZXYtPmV2ZW50X2xvY2spOwo+IC0JCWV4eW5vc19jcnRjLT5ldmVudCA9IE5V
-TEw7Cj4gLQkJZHJtX3ZibGFua19wdXQoZGV2LCBleHlub3NfY3J0Yy0+cGlwZSk7Cj4gLQkJc3Bp
-bl91bmxvY2tfaXJxKCZkZXYtPmV2ZW50X2xvY2spOwo+IC0JCXJldHVybiByZXQ7Cj4gLQl9Cj4g
-KwlleHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAo+ICsJ
-CQkgICAgY3J0Y193LCBjcnRjX2gsIGNydGMtPnggPDwgMTYsIGNydGMtPnkgPDwgMTYsCj4gKwkJ
-CSAgICBjcnRjX3cgPDwgMTYsIGNydGNfaCA8PCAxNik7Cj4gIAo+ICAJcmV0dXJuIDA7Cj4gIAo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCj4gaW5kZXggYjExODBm
-Yi4uYjIxOGI3YSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fcGxhbmUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
-ZS5jCj4gQEAgLTE0NCwyMSArMTQ0LDE1IEBAIHZvaWQgZXh5bm9zX3BsYW5lX21vZGVfc2V0KHN0
-cnVjdCBkcm1fcGxhbmUgKnBsYW5lLCBzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gIAlwbGFuZS0+
-Y3J0YyA9IGNydGM7Cj4gIH0KPiAgCj4gLWludAo+ICt2b2lkCj4gIGV4eW5vc191cGRhdGVfcGxh
-bmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAgCQkg
-ICAgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAo+
-ICAJCSAgICAgdW5zaWduZWQgaW50IGNydGNfdywgdW5zaWduZWQgaW50IGNydGNfaCwKPiAgCQkg
-ICAgIHVpbnQzMl90IHNyY194LCB1aW50MzJfdCBzcmNfeSwKPiAgCQkgICAgIHVpbnQzMl90IHNy
-Y193LCB1aW50MzJfdCBzcmNfaCkKPiAgewo+IC0KPiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2Ry
-bV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5lKHBsYW5lKTsKPiAtCWludCBy
-ZXQ7Cj4gLQo+IC0JcmV0ID0gZXh5bm9zX2NoZWNrX3BsYW5lKHBsYW5lLCBmYik7Cj4gLQlpZiAo
-cmV0IDwgMCkKPiAtCQlyZXR1cm4gcmV0Owo+ICAKPiAgCWV4eW5vc19wbGFuZV9tb2RlX3NldChw
-bGFuZSwgY3J0YywgZmIsIGNydGNfeCwgY3J0Y195LAo+ICAJCQkgICAgICBjcnRjX3csIGNydGNf
-aCwgc3JjX3ggPj4gMTYsIHNyY195ID4+IDE2LAo+IEBAIC0xNjYsOCArMTYwLDYgQEAgZXh5bm9z
-X3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpj
-cnRjLAo+ICAKPiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KQo+ICAJCWV4eW5v
-c19jcnRjLT5vcHMtPndpbl9jb21taXQoZXh5bm9zX2NydGMsIGV4eW5vc19wbGFuZS0+enBvcyk7
-Cj4gLQo+IC0JcmV0dXJuIDA7Cj4gIH0KPiAgCj4gIHN0YXRpYyBpbnQgZXh5bm9zX2Rpc2FibGVf
-cGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4gQEAgLTE4MywxMSArMTc1LDM3IEBAIHN0
-YXRpYyBpbnQgZXh5bm9zX2Rpc2FibGVfcGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUpCj4g
-IH0KPiAgCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX3BsYW5lX2Z1bmNzIGV4eW5vc19wbGFuZV9mdW5j
-cyA9IHsKPiAtCS51cGRhdGVfcGxhbmUJPSBleHlub3NfdXBkYXRlX3BsYW5lLAo+ICsJLnVwZGF0
-ZV9wbGFuZQk9IGRybV9wbGFuZV9oZWxwZXJfdXBkYXRlLAo+ICAJLmRpc2FibGVfcGxhbmUJPSBl
-eHlub3NfZGlzYWJsZV9wbGFuZSwKPiAgCS5kZXN0cm95CT0gZHJtX3BsYW5lX2NsZWFudXAsCj4g
-IH07Cj4gIAo+ICtzdGF0aWMgaW50IGV4eW5vc19wbGFuZV9hdG9taWNfY2hlY2soc3RydWN0IGRy
-bV9wbGFuZSAqcGxhbmUsCj4gKwkJCQkgICAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRl
-KQo+ICt7Cj4gKwlyZXR1cm4gZXh5bm9zX2NoZWNrX3BsYW5lKHBsYW5lLCBzdGF0ZS0+ZmIpOwo+
-ICt9Cj4gKwo+ICtzdGF0aWMgdm9pZCBleHlub3NfcGxhbmVfYXRvbWljX3VwZGF0ZShzdHJ1Y3Qg
-ZHJtX3BsYW5lICpwbGFuZSwKPiArCQkJCSAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpv
-bGRfc3RhdGUpCj4gK3sKPiArCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlID0gcGxhbmUt
-PnN0YXRlOwo+ICsKPiArCWlmICghc3RhdGUtPmNydGMpCj4gKwkJcmV0dXJuOwo+ICsKPiArCWV4
-eW5vc191cGRhdGVfcGxhbmUocGxhbmUsIHN0YXRlLT5jcnRjLCBzdGF0ZS0+ZmIsCj4gKwkJCSAg
-ICBzdGF0ZS0+Y3J0Y194LCBzdGF0ZS0+Y3J0Y195LAo+ICsJCQkgICAgc3RhdGUtPmNydGNfdywg
-c3RhdGUtPmNydGNfaCwKPiArCQkJICAgIHN0YXRlLT5zcmNfeCA+PiAxNiwgc3RhdGUtPnNyY195
-ID4+IDE2LAo+ICsJCQkgICAgc3RhdGUtPnNyY193ID4+IDE2LCBzdGF0ZS0+c3JjX2ggPj4gMTYp
-OwoKc2hvdWxkIGJlCgorICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RhdGUtPnNyY194LCBz
-dGF0ZS0+c3JjX3ksCisgICAgICAgICAgICAgICAgICAgICAgICAgICBzdGF0ZS0+c3JjX3csIHN0
-YXRlLT5zcmNfaCk7Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+On 05/28/2015 05:56 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> The new atomic infrastructure needs the .mode_set_nofb() callback to
+> update CRTC timings before setting any plane.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 64 +++++---------------------------
+>  1 file changed, 9 insertions(+), 55 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index ba44c9b..c524f0c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -62,9 +62,6 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
+>  
+>  	if (exynos_crtc->ops->win_commit)
+>  		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+> -
+> -	if (exynos_crtc->ops->commit)
+> -		exynos_crtc->ops->commit(exynos_crtc);
+>  }
+>  
+>  static bool
+> @@ -81,60 +78,16 @@ exynos_drm_crtc_mode_fixup(struct drm_crtc *crtc,
+>  	return true;
+>  }
+>  
+> -static int
+> -exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+> -			  struct drm_display_mode *adjusted_mode, int x, int y,
+> -			  struct drm_framebuffer *old_fb)
+> -{
+> -	struct drm_framebuffer *fb = crtc->primary->fb;
+> -	unsigned int crtc_w;
+> -	unsigned int crtc_h;
+> -	int ret;
+> -
+> -	/*
+> -	 * copy the mode data adjusted by mode_fixup() into crtc->mode
+> -	 * so that hardware can be seet to proper mode.
+> -	 */
+> -	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
+
+Let's apply using crtc->state->adjusted_mode instead of crtc->mode on
+exynos drm.
+
+> -
+> -	ret = exynos_check_plane(crtc->primary, fb);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	crtc_w = fb->width - x;
+> -	crtc_h = fb->height - y;
+> -	exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
+> -			      crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+> -
+> -	return 0;
+> -}
+> -
+> -static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+> -					  struct drm_framebuffer *old_fb)
+> +static void
+> +exynos_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  {
+>  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+> -	struct drm_framebuffer *fb = crtc->primary->fb;
+> -	unsigned int crtc_w;
+> -	unsigned int crtc_h;
+> -	int ret;
+> -
+> -	/* when framebuffer changing is requested, crtc's dpms should be on */
+> -	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+> -		DRM_ERROR("failed framebuffer changing request.\n");
+> -		return -EPERM;
+> -	}
+>  
+> -	ret = exynos_check_plane(crtc->primary, fb);
+> -	if (ret)
+> -		return ret;
+> -
+> -	crtc_w = fb->width - x;
+> -	crtc_h = fb->height - y;
+> -	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+> -			    crtc_w, crtc_h, x << 16, y << 16,
+> -			    crtc_w << 16, crtc_h << 16);
+> +	if (WARN_ON(!crtc->state))
+> +		return;
+
+crtc->state cannot be NULL if we use drm_helper_crtc_mode_set.
+
+>  
+> -	return 0;
+> +	if (exynos_crtc->ops->commit)
+> +		exynos_crtc->ops->commit(exynos_crtc);
+>  }
+>  
+>  static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+> @@ -159,8 +112,9 @@ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+>  	.prepare	= exynos_drm_crtc_prepare,
+>  	.commit		= exynos_drm_crtc_commit,
+>  	.mode_fixup	= exynos_drm_crtc_mode_fixup,
+> -	.mode_set	= exynos_drm_crtc_mode_set,
+> -	.mode_set_base	= exynos_drm_crtc_mode_set_base,
+> +	.mode_set	= drm_helper_crtc_mode_set,
+> +	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
+> +	.mode_set_base	= drm_helper_crtc_mode_set_base,
+>  	.disable	= exynos_drm_crtc_disable,
+>  };
+>  
+> 
