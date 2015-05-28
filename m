@@ -1,33 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: make several parent names const
-Date: Thu, 28 May 2015 11:04:27 +0200
-Message-ID: <5566DA1B.8090205@samsung.com>
-References: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: odroidxu3: Enable USB3 regulators
+Date: Thu, 28 May 2015 18:19:34 +0900
+Message-ID: <5566DDA6.1080508@samsung.com>
+References: <1432803494-3516-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:58413 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753209AbbE1JEl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 May 2015 05:04:41 -0400
-In-reply-to: <1432802751-6397-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1432803494-3516-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>, Michal Simek <michal.simek@xilinx.com>, kernel@pengutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 28/05/15 10:45, Uwe Kleine-K=C3=B6nig wrote:
-> Since commit 2893c379461a ("clk: make strings in parent name arrays
-> const") the name of parent clocks can be const. So add more const in
-> several clock drivers.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+On 28.05.2015 17:58, Anand Moon wrote:
+> Enable regulator for usbdrd3_0 and usbdrd3_1
+>>From the schematic pin diagram USB3_0 and USB3_1
+> is regulated by LDO9 and LD011.
 
-Thanks for the patch,
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Please reformat statement above to proper sentence(s) without ">" before
+"From".
 
---=20
-Regards,
-Sylwester
+> 
+> Fix the boot message of failed.
+> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
+> 
+> ---
+> This patch is based on Krzysztof github branch work-next/odroid-xu3-s2mps11-irq
+> ---
+
+I mentioned this already on previous postings. Let's make an exercise.
+Please:
+1. Save your email as mbox format (from mailer).
+2. Go to a GIT repo with kernel and checkout base branch.
+3. git am 0001-the-name-of-file.mbox
+4. git show
+
+Do you see the signed-off-by in commit?
+
+The patch itself looks good, thanks for fixing this. Just please fix the
+issues with commit message.
+
+By the way:
+1. The always-on from LDO9 could be probably removed if the ehci-exynos
+driver had regulator consumer implemented.
+2. The Documentation/devicetree/bindings/usb/exynos-usb.txt (or dwc.txt)
+should proably mention the vdd-supply property.
+
+Best regards,
+Krzysztof
