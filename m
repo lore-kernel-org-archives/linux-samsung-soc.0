@@ -1,189 +1,248 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible option
-Date: Fri, 29 May 2015 10:04:13 -0500
-Message-ID: <20150529150413.GB2026@saruman.tx.rr.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
- <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
- <20150515005210.GA31534@saruman.tx.rr.com>
- <556391FE.1020503@broadcom.com>
- <20150526141938.GA25686@saruman.tx.rr.com>
- <5564BD5D.1070601@broadcom.com>
- <20150526183955.GW26599@saruman.tx.rr.com>
- <55684ECE.9060003@ti.com>
-Reply-To: <balbi@ti.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v7 12/13] drm/exynos: atomic dpms support
+Date: Fri, 29 May 2015 18:33:40 -0300
+Message-ID: <20150529213340.GE20774@joana>
+References: <1432309253-18572-1-git-send-email-gustavo@padovan.org>
+ <1432309253-18572-13-git-send-email-gustavo@padovan.org>
+ <5565B817.6080001@samsung.com>
+ <20150527202749.GC20774@joana>
+ <5566AA04.4080400@samsung.com>
+ <5566D0A9.2000109@samsung.com>
+ <556701B9.5030505@samsung.com>
+ <20150528213648.GD20774@joana>
+ <55680544.2000404@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
-Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f41.google.com ([209.85.216.41]:33655 "EHLO
+	mail-vn0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756718AbbE2Vdr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 May 2015 17:33:47 -0400
+Received: by vnbf190 with SMTP id f190so9818006vnb.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2015 14:33:47 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <55684ECE.9060003@ti.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: balbi@ti.com, Arun Ramamurthy <arun.ramamurthy@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@>
+In-Reply-To: <55680544.2000404@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2015-05-29 Joonyoung Shim <jy0922.shim@samsung.com>:
 
-Hi,
-
-On Fri, May 29, 2015 at 05:04:38PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Felipe,
->=20
-> On Wednesday 27 May 2015 12:09 AM, Felipe Balbi wrote:
-> >On Tue, May 26, 2015 at 11:37:17AM -0700, Arun Ramamurthy wrote:
-> >>Hi
+> On 05/29/2015 06:36 AM, Gustavo Padovan wrote:
+> > 2015-05-28 Joonyoung Shim <jy0922.shim@samsung.com>:
+> >=20
+> >> On 05/28/2015 05:24 PM, Joonyoung Shim wrote:
+> >>> On 05/28/2015 02:39 PM, Inki Dae wrote:
+> >>>> Hi Gustavo,
+> >>>>
+> >>>> On 2015=EB=85=84 05=EC=9B=94 28=EC=9D=BC 05:27, Gustavo Padovan =
+wrote:
+> >>>>> Hi Inki,
+> >>>>>
+> >>>>> 2015-05-27 Inki Dae <inki.dae@samsung.com>:
+> >>>>>
+> >>>>>> Hi Gustavo,
+> >>>>>>
+> >>>>>> On 2015=EB=85=84 05=EC=9B=94 23=EC=9D=BC 00:40, Gustavo Padova=
+n wrote:
+> >>>>>>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >>>>>>>
+> >>>>>>> Run dpms operations through the atomic intefaces. This basica=
+lly removes
+> >>>>>>> the .dpms() callback from econders and crtcs and use .disable=
+() and
+> >>>>>>> .enable() to turn the crtc on and off.
+> >>>>>>>
+> >>>>>>> v2: Address comments by Joonyoung:
+> >>>>>>> 	- make hdmi code call ->disable() instead of ->dpms()
+> >>>>>>> 	- do not use WARN_ON on crtc enable/disable
+> >>>>>>>
+> >>>>>>> v3: - Fix build failure after the hdmi change in v2
+> >>>>>>>     - Change dpms helper of ptn3460 bridge
+> >>>>>>>
+> >>>>>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.=
+uk>
+> >>>>>>> Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> >>>>>>> Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> >>>>>>> ---
+> >>>>>>>  drivers/gpu/drm/bridge/ps8622.c             |  2 +-
+> >>>>>>>  drivers/gpu/drm/bridge/ptn3460.c            |  2 +-
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_dp_core.c     |  2 +-
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c    | 95 +++++++++++=
++++++-------------
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  2 +-
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h     |  4 +-
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  2 +-
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_drm_encoder.c | 27 ++------
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  2 +-
+> >>>>>>>  drivers/gpu/drm/exynos/exynos_hdmi.c        |  6 +-
+> >>>>>>>  10 files changed, 69 insertions(+), 75 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/dr=
+m/bridge/ps8622.c
+> >>>>>>> index b604326..d686235 100644
+> >>>>>>> --- a/drivers/gpu/drm/bridge/ps8622.c
+> >>>>>>> +++ b/drivers/gpu/drm/bridge/ps8622.c
+> >>>>>>> @@ -499,7 +499,7 @@ static void ps8622_connector_destroy(stru=
+ct drm_connector *connector)
+> >>>>>>>  }
+> >>>>>>> =20
+> >>>>>>>  static const struct drm_connector_funcs ps8622_connector_fun=
+cs =3D {
+> >>>>>>> -	.dpms =3D drm_helper_connector_dpms,
+> >>>>>>> +	.dpms =3D drm_atomic_helper_connector_dpms,
+> >>>>>>>  	.fill_modes =3D drm_helper_probe_single_connector_modes,
+> >>>>>>>  	.detect =3D ps8622_detect,
+> >>>>>>>  	.destroy =3D ps8622_connector_destroy,
+> >>>>>>> diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/d=
+rm/bridge/ptn3460.c
+> >>>>>>> index 8ed3617..260bc9f 100644
+> >>>>>>> --- a/drivers/gpu/drm/bridge/ptn3460.c
+> >>>>>>> +++ b/drivers/gpu/drm/bridge/ptn3460.c
+> >>>>>>> @@ -260,7 +260,7 @@ static void ptn3460_connector_destroy(str=
+uct drm_connector *connector)
+> >>>>>>>  }
+> >>>>>>> =20
+> >>>>>>>  static struct drm_connector_funcs ptn3460_connector_funcs =3D=
+ {
+> >>>>>>> -	.dpms =3D drm_helper_connector_dpms,
+> >>>>>>> +	.dpms =3D drm_atomic_helper_connector_dpms,
+> >>>>>>>  	.fill_modes =3D drm_helper_probe_single_connector_modes,
+> >>>>>>>  	.detect =3D ptn3460_detect,
+> >>>>>>>  	.destroy =3D ptn3460_connector_destroy,
+> >>>>>>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/driver=
+s/gpu/drm/exynos/exynos_dp_core.c
+> >>>>>>> index 195fe60..c9995b1 100644
+> >>>>>>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> >>>>>>> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> >>>>>>> @@ -954,7 +954,7 @@ static void exynos_dp_connector_destroy(s=
+truct drm_connector *connector)
+> >>>>>>>  }
+> >>>>>>> =20
+> >>>>>>
+> >>>>>> [--snip--]
+> >>>>>>
+> >>>>>>> =20
+> >>>>>>>  static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs=
+ =3D {
+> >>>>>>> -	.dpms		=3D exynos_drm_crtc_dpms,
+> >>>>>>> -	.prepare	=3D exynos_drm_crtc_prepare,
+> >>>>>>> -	.commit		=3D exynos_drm_crtc_commit,
+> >>>>>>> +	.enable		=3D exynos_drm_crtc_enable,
+> >>>>>>> +	.disable	=3D exynos_drm_crtc_disable,
+> >>>>>>>  	.mode_fixup	=3D exynos_drm_crtc_mode_fixup,
+> >>>>>>>  	.mode_set	=3D drm_helper_crtc_mode_set,
+> >>>>>>>  	.mode_set_nofb	=3D exynos_drm_crtc_mode_set_nofb,
+> >>>>>>
+> >>>>>> I think it'd be better to use atomic_flush callback to enable =
+global dma
+> >>>>>> like commit callback did. Is there any reason that you don't u=
+se
+> >>>>>> atomic_begin and atomic_flush callbacks?
+> >>>>>>
+> >>>>>> atomic relevant codes I looked into do as follows,
+> >>>>>>
+> >>>>>> atomic_begin();
+> >>>>>>
+> >>>>>> atomic_update();  /* this will call win_commit callback to set=
+ a overlay
+> >>>>>> relevant registers and enable its dma channel. */
+> >>>>>>
+> >>>>>> atomic_flush();
+> >>>>>>
+> >>>>>> So atomic overlay updating between atomic_begin() ~ atomic_flu=
+sh() will
+> >>>>>> be guaranteed.
+> >>>>>
+> >>>>> I think we can go down that road, but I'd suggest we push the a=
+tomic
+> >>>>> patches v8 (with the lastest comments from Joonyoung fixed) and=
+ then=20
+> >>>>> work on the change you are proposing as a follow-up together wi=
+th the=20
+> >>>>> other improvements for atomic I already have queued here. This =
+way
+> >>>>> we don't take the risk of missing one more merge window.
+> >>>>
+> >>>> We(I and Joonyoung) will have discussion about this patch series=
+=2E For
+> >>>> this, we have already started to analyze entire atomic features
+> >>>> including your patch set so I'd merge it at end of next week acc=
+ording
+> >>>> to the discussion. I'm not kind of sure yet but I will merge it =
+as long
+> >>>> as there is no big problem.
+> >>>>
+> >>>
+> >>> Actually i agree to opinion of Gustavo and will repost the patchs=
+et of
+> >>> Gustavo with some patches fixed by me.
+> >>>
 > >>
-> >>On 15-05-26 07:19 AM, Felipe Balbi wrote:
-> >>>HI,
-> >>>
-> >>>On Mon, May 25, 2015 at 02:19:58PM -0700, Arun Ramamurthy wrote:
-> >>>>
-> >>>>
-> >>>>On 15-05-14 05:52 PM, Felipe Balbi wrote:
-> >>>>>Hi,
-> >>>>>
-> >>>>>On Wed, Apr 22, 2015 at 04:04:10PM -0700, Arun Ramamurthy wrote:
-> >>>>>>Most of the phy providers use "select" to enable GENERIC_PHY. Since=
- select
-> >>>>>>is only recommended when the config is not visible, GENERIC_PHY is =
-changed
-> >>>>>>an invisible option. To maintain consistency, all phy providers are=
- changed
-> >>>>>>to "select" GENERIC_PHY and all non-phy drivers use "depends on" wh=
-en the
-> >>>>>>phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
-> >>>>>>dependency, so it is left as "select".
-> >>>>>>
-> >>>>>>Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-> >>>>>>---
-> >>>>>>  drivers/ata/Kconfig                       | 1 -
-> >>>>>>  drivers/media/platform/exynos4-is/Kconfig | 2 +-
-> >>>>>>  drivers/phy/Kconfig                       | 4 ++--
-> >>>>>>  drivers/usb/host/Kconfig                  | 4 ++--
-> >>>>>>  drivers/video/fbdev/exynos/Kconfig        | 2 +-
-> >>>>>>  5 files changed, 6 insertions(+), 7 deletions(-)
-> >>>>>>
-> >>>>>>diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-> >>>>>>index 5f60155..6d2e881 100644
-> >>>>>>--- a/drivers/ata/Kconfig
-> >>>>>>+++ b/drivers/ata/Kconfig
-> >>>>>>@@ -301,7 +301,6 @@ config SATA_MV
-> >>>>>>  	tristate "Marvell SATA support"
-> >>>>>>  	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
-> >>>>>>  		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
-> >>>>>>-	select GENERIC_PHY
-> >>>>>>  	help
-> >>>>>>  	  This option enables support for the Marvell Serial ATA family.
-> >>>>>>  	  Currently supports 88SX[56]0[48][01] PCI(-X) chips,
-> >>>>>>diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/me=
-dia/platform/exynos4-is/Kconfig
-> >>>>>>index b7b2e47..b6f3eaa 100644
-> >>>>>>--- a/drivers/media/platform/exynos4-is/Kconfig
-> >>>>>>+++ b/drivers/media/platform/exynos4-is/Kconfig
-> >>>>>>@@ -31,7 +31,7 @@ config VIDEO_S5P_FIMC
-> >>>>>>  config VIDEO_S5P_MIPI_CSIS
-> >>>>>>  	tristate "S5P/EXYNOS MIPI-CSI2 receiver (MIPI-CSIS) driver"
-> >>>>>>  	depends on REGULATOR
-> >>>>>>-	select GENERIC_PHY
-> >>>>>>+	depends on GENERIC_PHY
-> >>>>>>  	help
-> >>>>>>  	  This is a V4L2 driver for Samsung S5P and EXYNOS4 SoC MIPI-CSI2
-> >>>>>>  	  receiver (MIPI-CSIS) devices.
-> >>>>>>diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> >>>>>>index 2962de2..edecdb1 100644
-> >>>>>>--- a/drivers/phy/Kconfig
-> >>>>>>+++ b/drivers/phy/Kconfig
-> >>>>>>@@ -5,7 +5,7 @@
-> >>>>>>  menu "PHY Subsystem"
-> >>>>>>
-> >>>>>>  config GENERIC_PHY
-> >>>>>>-	bool "PHY Core"
-> >>>>>>+	bool
-> >>>>>>  	help
-> >>>>>>  	  Generic PHY support.
-> >>>>>>
-> >>>>>>@@ -72,7 +72,7 @@ config PHY_MIPHY365X
-> >>>>>>  config PHY_RCAR_GEN2
-> >>>>>>  	tristate "Renesas R-Car generation 2 USB PHY driver"
-> >>>>>>  	depends on ARCH_SHMOBILE
-> >>>>>>-	depends on GENERIC_PHY
-> >>>>>>+	select GENERIC_PHY
-> >>>>>
-> >>>>>so some you changed from depends to select...
-> >>>>>
-> >>>>>>  	help
-> >>>>>>  	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
-> >>>>>>
-> >>>>>>diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> >>>>>>index 5ad60e4..e2197e2 100644
-> >>>>>>--- a/drivers/usb/host/Kconfig
-> >>>>>>+++ b/drivers/usb/host/Kconfig
-> >>>>>>@@ -182,7 +182,7 @@ config USB_EHCI_HCD_SPEAR
-> >>>>>>  config USB_EHCI_HCD_STI
-> >>>>>>  	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
-> >>>>>>  	depends on ARCH_STI && OF
-> >>>>>>-	select GENERIC_PHY
-> >>>>>>+	depends on GENERIC_PHY
-> >>>>>
-> >>>>>while others you changed from select to depends.
-> >>>>>
-> >>>>>NAK.
-> >>>>>
-> >>>>Felipe, I dont understand your concern, could you please explain it m=
-ore
-> >>>>detail?  The logic behind the changes is that in cases where there wa=
-s an
-> >>>>explicit dependency, I changed it to "depends on" and in other cases I
-> >>>>changed it to "selects". Thanks
-> >>>
-> >>>Since GENERIC_PHY is visible from Kconfig, it would be much nicer to
-> >>>avoid select altogether.
-> >>>
-> >>Felipe, after discussion with the maintainers, I have made GENERIC_PHY =
-an
-> >>invisible option as part of this change. Thanks
-> >
-> >Then, if the option is invisible, how can you "depend" on it ? It can
-> >never be selected by poking around in Kconfig. IMO, it's
-> >counterintuitive that you need to enable a PHY driver before you can see
-> >your EHCI/OHCI/whatever controller listed in Kconfig.
+> >> Hmm, i meet problem of operations order. It's called .atomic_updat=
+e
+> >> before enable crtc and called .atomic_disable after disable crtc. =
+It
+> >> means .win_commit and .win_disable just return 0 without any opera=
+tions
+> >> because e.g. mixer_ctx->powered is 0 in mixer driver, so we cannot
+> >> enable or disable overlay normally.
+> >=20
+> > The removal of the extra win_commit() from exynos_drm_crtc_enable()=
+ that
+> > you pointed out in the last review round led to this issue. The
+> > win_commit() call was hiding the issue since we were calling it a s=
+econd
+> > time with the FIMD device already enabled.
+> >=20
+> > I think we can solve this by creating a specific exynos atomic_comm=
+it()
+> > callback that does call
+> >=20
+> > drm_atomic_helper_commit_modeset_enables(dev, state);              =
+    =20
+> >=20
+> > before
+> >=20
+> > drm_atomic_helper_commit_planes(dev, state);
+> >=20
+> >=20
+> > This is the opposite order of what drm atomic default implementatio=
+n
+> > would do, but we won't hit the issue of having the FIMD clks disabl=
+ed
+> > when trying to setup the plane. This similar to rcar-du solution to=
+ the=20
+> > same problem.
+> >=20
 >=20
-> If the controller requires PHY for it to be functional, it is okay to make
-> the controller depend on PHY IMHO. We want to try and minimize the usage =
-of
-> 'select' wherever possible or else 'select' is the most intuitive way. The
-> other option is just to leave the 'depends on' and let the user select PH=
-Y.
+> Yeah, but it can solve only enable operation order, disable operation
+> order still is wrong. It's not big problem yet because drm drivers
+> internally disable planes when crtc is disabled so try to disable aga=
+in
+> already disabled plane.
+>=20
+> I'm not sure this is workaround but it seems be simple solution at
+> present.
 
-How can you 'depend' on something that the user can't select by
-navigating through Kconfig ?
+This is not workaround, is a valid change according to the atomic doc:
 
---=20
-balbi
+ * For compatability with legacy crtc helpers this should be called bef=
+ore     =20
+ * drm_atomic_helper_commit_planes(), which is what the default commit =
+function=20
+ * does. But drivers with different needs can group the modeset commits=
+ together
+ * and do the plane commits at the end. This is useful for drivers doin=
+g runtime
+ * PM since planes updates then only happen when the CRTC is actually e=
+nabled.
 
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+So it is completely fine to go ahead with this change as we are now ful=
+ly ported
+to the atomic helpers.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVaH/tAAoJEIaOsuA1yqREncYP/0Bf6sz5ibBKp3UqMkSomgPM
-dGk6n9ffhf6Lx2wikCJpNmPCOFs/vi5xxSsHtg3sl7qLhcF7NJ/HXh+rEZ49z5fH
-25Q5C9qUrZNbwRLhN64v9NFOvQ0nFFWMQNzqrjNGIAelnS+qYXIhaV3ZlNmJKZrz
-54xLU6+9Jmrk/sQlNUhyyyEScTlw5kZBsrSJXbnEvqi0fbi09Zag/3OpPiqgC4hs
-zqSVHvF8PpfcAP3AvjIfZArAFQ7zMdieJ0+EOzeGk3RfSkhDydWbCOrCi8Edwwhs
-atHaA1VbFTxlpkdwtVVacfQlrvAAfgyj4pebA6hnZGZohl3dD/56/0P7L+COaK9s
-MRYl3+biXMzm2OIaVZ2JU4UbzaO2CxDt/JwU9BloKrYGzgV1kWLTpZs0SKUi1nDM
-IzGd/DL05uAw6WAhJoOqgEkk4Ccs6yhBXnUaxX4cKNW5cYNWxcVnd6laezhuIReb
-flICFrDhp+keA/qedKv9pfKd1Et4SgTfGbjlyDXwOR2vM3h+xDmLEEG07SAZTPrT
-YZEVj/UvJtwZ1gb7AduA/D9xmsbAsjXT2iKvtdvQy+FmxeKburbp8tDoVMQQ0e4f
-RdDfWkDJ0lN/kqXKZQMyjT9iLC7Q28dpJSJggEINZgo1TJ5LmkJF6RNipKYBbCTB
-Q8UmcSYZIrFZoA32zi+r
-=3Lq8
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
+	Gustavo
