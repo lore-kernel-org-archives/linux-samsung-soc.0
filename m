@@ -1,64 +1,94 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v8 04/14] drm/exynos: atomic phase 1: add .mode_set_nofb()
- callback
-Date: Fri, 29 May 2015 15:21:12 +0900
-Message-ID: <55680558.2070405@samsung.com>
-References: <1432760183-4342-1-git-send-email-gustavo@padovan.org>
- <1432760183-4342-5-git-send-email-gustavo@padovan.org>
- <5566D0D4.30100@samsung.com>
+Subject: Re: [PATCH v9 13/18] drm/exynos: add exynos specific .atomic_commit()
+Date: Fri, 29 May 2015 15:21:25 +0900
+Message-ID: <55680565.3070603@samsung.com>
+References: <1432849376-12828-1-git-send-email-gustavo@padovan.org>
+ <1432849376-12828-14-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5566D0D4.30100@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:36443 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755244AbbE2GVT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 May 2015 02:21:19 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NP301Z0ULNC1M60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 29 May 2015 15:21:12 +0900 (KST)
+In-reply-to: <1432849376-12828-14-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-T24gMDUvMjgvMjAxNSAwNToyNCBQTSwgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gT24gMDUvMjgv
-MjAxNSAwNTo1NiBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+PiBGcm9tOiBHdXN0YXZvIFBh
-ZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+Cj4+IFRoZSBuZXcgYXRv
-bWljIGluZnJhc3RydWN0dXJlIG5lZWRzIHRoZSAubW9kZV9zZXRfbm9mYigpIGNhbGxiYWNrIHRv
-Cj4+IHVwZGF0ZSBDUlRDIHRpbWluZ3MgYmVmb3JlIHNldHRpbmcgYW55IHBsYW5lLgo+Pgo+PiBT
-aWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEu
-Y28udWs+Cj4+IFJldmlld2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3Vu
-Zy5jb20+Cj4+IFRlc3RlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVs
-ZWZlbGQuZGU+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
-dGMuYyB8IDY0ICsrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZpbGUgY2hh
-bmdlZCwgOSBpbnNlcnRpb25zKCspLCA1NSBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+IGluZGV4IGJhNDRjOWIuLmM1MjRmMGMgMTAw
-NjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPj4g
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+PiBAQCAtNjIs
-OSArNjIsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfY29tbWl0KHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YykKPj4gIAo+PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KQo+
-PiAgCQlleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KGV4eW5vc19jcnRjLCBleHlub3NfcGxh
-bmUtPnpwb3MpOwo+PiAtCj4+IC0JaWYgKGV4eW5vc19jcnRjLT5vcHMtPmNvbW1pdCkKPj4gLQkJ
-ZXh5bm9zX2NydGMtPm9wcy0+Y29tbWl0KGV4eW5vc19jcnRjKTsKPj4gIH0KPj4gIAo+PiAgc3Rh
-dGljIGJvb2wKPj4gQEAgLTgxLDYwICs3OCwxNiBAQCBleHlub3NfZHJtX2NydGNfbW9kZV9maXh1
-cChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4+ICAJcmV0dXJuIHRydWU7Cj4+ICB9Cj4+ICAKPj4g
-LXN0YXRpYyBpbnQKPj4gLWV4eW5vc19kcm1fY3J0Y19tb2RlX3NldChzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMsIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAo+PiAtCQkJICBzdHJ1Y3QgZHJt
-X2Rpc3BsYXlfbW9kZSAqYWRqdXN0ZWRfbW9kZSwgaW50IHgsIGludCB5LAo+PiAtCQkJICBzdHJ1
-Y3QgZHJtX2ZyYW1lYnVmZmVyICpvbGRfZmIpCj4+IC17Cj4+IC0Jc3RydWN0IGRybV9mcmFtZWJ1
-ZmZlciAqZmIgPSBjcnRjLT5wcmltYXJ5LT5mYjsKPj4gLQl1bnNpZ25lZCBpbnQgY3J0Y193Owo+
-PiAtCXVuc2lnbmVkIGludCBjcnRjX2g7Cj4+IC0JaW50IHJldDsKPj4gLQo+PiAtCS8qCj4+IC0J
-ICogY29weSB0aGUgbW9kZSBkYXRhIGFkanVzdGVkIGJ5IG1vZGVfZml4dXAoKSBpbnRvIGNydGMt
-Pm1vZGUKPj4gLQkgKiBzbyB0aGF0IGhhcmR3YXJlIGNhbiBiZSBzZWV0IHRvIHByb3BlciBtb2Rl
-Lgo+PiAtCSAqLwo+PiAtCW1lbWNweSgmY3J0Yy0+bW9kZSwgYWRqdXN0ZWRfbW9kZSwgc2l6ZW9m
-KCphZGp1c3RlZF9tb2RlKSk7Cj4gCj4gTGV0J3MgYXBwbHkgdXNpbmcgY3J0Yy0+c3RhdGUtPmFk
-anVzdGVkX21vZGUgaW5zdGVhZCBvZiBjcnRjLT5tb2RlIG9uCj4gZXh5bm9zIGRybS4KPiAKCkkg
-d2lsbCBtYWtlIGEgcGF0Y2ggZm9yIHRoaXMsIGNvdWxkIHlvdSByZWJhc2UgZnJvbSAwNS8xOCBv
-ZiB5b3VyCnBhdGNoc2V0IG9uIHRoZSBwYXRjaCBpZiBubyBhbnkgcHJvYmxlbT8KX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 05/29/2015 06:42 AM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> exynos needs to update planes with the crtc enabled (mainly for the FIMD
+> case) so this specific atomic commit changes the order of
+> drm_atomic_helper_commit_modeset_enables() and
+> drm_atomic_helper_commit_planes() to commit planes after we enable crtc
+> and encoders.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fb.c | 27 ++++++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> index 05d229c..b11047c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+> @@ -16,6 +16,7 @@
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_fb_helper.h>
+> +#include <drm/drm_atomic.h>
+>  #include <drm/drm_atomic_helper.h>
+>  #include <uapi/drm/exynos_drm.h>
+>  
+> @@ -270,7 +271,31 @@ static int exynos_atomic_commit(struct drm_device *dev,
+>  				struct drm_atomic_state *state,
+>  				bool async)
+>  {
+> -	return drm_atomic_helper_commit(dev, state, false);
+> +	int ret;
+> +
+> +	ret = drm_atomic_helper_prepare_planes(dev, state);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * This is the point of no return
+> +	 */
+
+Just oneline comment is enough.
+
+> +
+> +	drm_atomic_helper_swap_state(dev, state);
+> +
+> +	drm_atomic_helper_commit_modeset_disables(dev, state);
+> +
+> +	drm_atomic_helper_commit_modeset_enables(dev, state);
+
+Maybe need description as comments about why need to change operation
+order.
+
+> +
+> +	drm_atomic_helper_commit_planes(dev, state);
+> +
+> +	drm_atomic_helper_wait_for_vblanks(dev, state);
+> +
+> +	drm_atomic_helper_cleanup_planes(dev, state);
+> +
+> +	drm_atomic_state_free(state);
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+> 
