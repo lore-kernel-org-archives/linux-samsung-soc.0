@@ -1,41 +1,76 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCHv3 1/4] phy: phy-core: Make GENERIC_PHY an invisible option
-Date: Fri, 29 May 2015 15:13:42 +0200
-Message-ID: <55686606.1010701@samsung.com>
-References: <1429743853-10254-1-git-send-email-arun.ramamurthy@broadcom.com>
- <1429743853-10254-2-git-send-email-arun.ramamurthy@broadcom.com>
- <55685D7E.9000700@ti.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: odroidxu3: Enable USB3 regulators
+Date: Fri, 29 May 2015 18:47:47 +0530
+Message-ID: <CANAwSgSaY2W6y-zrsF=p68Phqf7D-hTPsCxNaqFiwVc45849RQ@mail.gmail.com>
+References: <1432803494-3516-1-git-send-email-linux.amoon@gmail.com> <5566DDA6.1080508@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <55685D7E.9000700@ti.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Tony Prisk <linux@prisktech.co.nz>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Arnd Bergmann <arnd@arndb.de>, Felipe Balbi <balbi@ti.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Bolle <pebolle@tiscali.nl>, Thomas Pugliese <thomas.pugliese@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Masanari Iida <standby24x7@gmail.com>, David Mosberger <davidm@egauge.net>, Peter Griffin <peter.griffin@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kevin
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5566DDA6.1080508-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 29/05/15 14:37, Kishon Vijay Abraham I wrote:
-> Tejun, Maxime, Sylwester, Kyungmin
-> 
-> On Thursday 23 April 2015 04:34 AM, Arun Ramamurthy wrote:
->> Most of the phy providers use "select" to enable GENERIC_PHY. Since select
->> is only recommended when the config is not visible, GENERIC_PHY is changed
->> an invisible option. To maintain consistency, all phy providers are changed
->> to "select" GENERIC_PHY and all non-phy drivers use "depends on" when the
->> phy framework is explicity required. USB_MUSB_OMAP2PLUS has a cyclic
->> dependency, so it is left as "select".
+On 28 May 2015 at 14:49, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On 28.05.2015 17:58, Anand Moon wrote:
+>> Enable regulator for usbdrd3_0 and usbdrd3_1
+>>>From the schematic pin diagram USB3_0 and USB3_1
+>> is regulated by LDO9 and LD011.
+>
+> Please reformat statement above to proper sentence(s) without ">" before
+> "From".
+>
 >>
->> Signed-off-by: Arun Ramamurthy <arun.ramamurthy@broadcom.com>
-> 
-> Need your ACK for this patch.
+>> Fix the boot message of failed.
+>> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+>> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+>> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+>> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+>> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+>> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+>> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+>> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+>> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+>> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+>> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
+>>
+>> ---
+>> This patch is based on Krzysztof github branch work-next/odroid-xu3-s2mps11-irq
+>> ---
+>
+> I mentioned this already on previous postings. Let's make an exercise.
+> Please:
+> 1. Save your email as mbox format (from mailer).
+> 2. Go to a GIT repo with kernel and checkout base branch.
+> 3. git am 0001-the-name-of-file.mbox
+> 4. git show
+>
+> Do you see the signed-off-by in commit?
+>
+> The patch itself looks good, thanks for fixing this. Just please fix the
+> issues with commit message.
+>
+> By the way:
+> 1. The always-on from LDO9 could be probably removed if the ehci-exynos
+> driver had regulator consumer implemented.
+> 2. The Documentation/devicetree/bindings/usb/exynos-usb.txt (or dwc.txt)
+> should proably mention the vdd-supply property.
 
-For
-	drivers/media/platform/exynos4-is/Kconfig
-	drivers/video/fbdev/exynos/Kconfig
+Hi Krzysztof,
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Please find the patch already send by Vivek Gautam
+<gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> which address this issue.
 
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266418.html
+
+-Anand Moon
+>
+> Best regards,
+> Krzysztof
+>
+>
 --
-Thanks,
-Sylwester
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
