@@ -1,47 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv3] ARM: dts: odroidxu3: Enable USB3 regulators
-Date: Sat, 30 May 2015 09:26:18 +0900
-Message-ID: <556903AA.6080208@samsung.com>
-References: <1432909836-3952-1-git-send-email-linux.amoon@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1432909836-3952-1-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [GIT PULL] ARM: EXYNOS: More defconfig for 4.2
+Date: Sat, 30 May 2015 14:21:29 +0900
+Message-ID: <1432963289-32664-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34470 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbbE3FVz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 30 May 2015 01:21:55 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-W dniu 29.05.2015 o 23:30, Anand Moon pisze:
-> Enable regulator for usbdrd3_0 and usbdrd3_1.
-> Looking at the schematic pin diagram for MAX77802
-> USB3_0 and USB3_1 is regulated by LDO9 and LD011.
-> 
-> Fix the boot message of failed.
-> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
-> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
-> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
-> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
-> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
-> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
-> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
-> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
-> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
-> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
-> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
-> 
-> Tested-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Dear Kukjin,
 
-Looks good now, thanks.
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Minor defconfig changes from Anand Moon for Odroid XU3 board.
+You can find them also on the lists with my reviewed-by.
 
 Best regards,
 Krzysztof
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+The following changes since commit 030bbdbf4c833bc69f502eae58498bc5572db736:
+
+  Linux 4.1-rc3 (2015-05-10 15:12:29 -0700)
+
+are available in the git repository at:
+
+  https://github.com/krzk/linux.git tags/samsung-defconfig-for-4.2
+
+for you to fetch changes up to 314be0834460dfde70b614f1a2e5d041684ce796:
+
+  ARM: exynos_defconfig: Enable LEDs for Odroid-XU3 (2015-05-30 13:19:49 +0900)
+
+----------------------------------------------------------------
+Enable in exynos_defconfig options for Odroid XU3:
+1. sensors (fan, ina231),
+2. LED.
+
+----------------------------------------------------------------
+Anand Moon (3):
+      ARM: exynos_defconfig: Enable CONFIG_SENSORS_PWM_FAN for Odroid-XU3 pmw-fan
+      ARM: exynos_defconfig: Enable CONFIG_SENSORS_INA2XX for Odroid-XU3
+      ARM: exynos_defconfig: Enable LEDs for Odroid-XU3
+
+ arch/arm/configs/exynos_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
