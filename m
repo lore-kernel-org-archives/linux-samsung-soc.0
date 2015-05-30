@@ -1,44 +1,75 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: EXYNOS: Improvements for 4.2, 3rd
-Date: Sat, 30 May 2015 14:30:39 +0900
-Message-ID: <1432963839-19051-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH v2] ARM: dts: odroidxu3: Enable wake alarm of S2MPS11 RTC
+Date: Sat, 30 May 2015 15:37:14 +0900
+Message-ID: <1432967834-5539-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:36555 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757177AbbE3Fat (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:33342 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751718AbbE3Ghy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 May 2015 01:30:49 -0400
+	Sat, 30 May 2015 02:37:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Dear Kukjin,
+The IRQB of S2MPS11 PMIC is wired to XEINT4 (GPX0-4) through pull-up
+resistor.
 
-Old patch from Marek related to powering down of Exynos boards.
+Add interrupt properties and pinctrl configuration to enable RTC wake
+alarm of rtc-s5m driver. This also removes a warning:
+sec_pmic 4-0066: No interrupt specified, no interrupts
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+---
 
-The following changes since commit 8164b91ee8f4bb009fb16ef7c54e94a55e83dd35:
+Changes since v1:
+1. Choose proper pinctrl node for gpx0-4: this should be pinctrl_0, not
+   pinctrl_1.
+2. Add Javier's reviewed-by.
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-  ARM: exynos: Fix wake-up interrupts for Exynos3250 (2015-05-30 13:29:34 +0900)
-
-are available in the git repository at:
-
-  https://github.com/krzk/linux.git tags/samsung-for-4.2-3
-
-for you to fetch changes up to 126bdccac56b97449a603133a2d389d280630d9a:
-
-  exynos: pmu: use PS_HOLD based poweroff for all supported SoCs (2015-05-30 13:30:17 +0900)
-
-----------------------------------------------------------------
-Old fix for proper power down of Exynos boards.
-
-----------------------------------------------------------------
-Marek Szyprowski (1):
-      exynos: pmu: use PS_HOLD based poweroff for all supported SoCs
-
- arch/arm/mach-exynos/pmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index c16987950aa1..1df2f38e2fcb 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -12,6 +12,7 @@
+ 
+ /dts-v1/;
+ #include <dt-bindings/clock/samsung,s2mps11.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5800.dtsi"
+@@ -153,6 +154,11 @@
+ 		s2mps11,buck3-ramp-enable = <1>;
+ 		s2mps11,buck4-ramp-enable = <1>;
+ 
++		interrupt-parent = <&gpx0>;
++		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&s2mps11_irq>;
++
+ 		s2mps11_osc: clocks {
+ 			#clock-cells = <1>;
+ 			clock-output-names = "s2mps11_ap",
+@@ -464,6 +470,13 @@
+ 		samsung,pin-pud = <1>;
+ 		samsung,pin-drv = <0>;
+ 	};
++
++	s2mps11_irq: s2mps11-irq {
++		samsung,pins = "gpx0-4";
++		samsung,pin-function = <0xf>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
+ };
+ 
+ &pinctrl_1 {
+-- 
+2.1.4
