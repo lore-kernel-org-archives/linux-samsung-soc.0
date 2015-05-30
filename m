@@ -1,43 +1,70 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 05/98] exynos_drm.h: use __u64 from linux/types.h
-Date: Sat, 30 May 2015 17:46:56 +0100
-Message-ID: <20150530164655.GM2067@n2100.arm.linux.org.uk>
-References: <1433000370-19509-1-git-send-email-mikko.rapeli@iki.fi>
- <1433000370-19509-6-git-send-email-mikko.rapeli@iki.fi>
+From: gabriel@unseen.is
+Subject: exynos4412: Audio dies after one day on kernel 4.0
+Date: Sat, 30 May 2015 19:32:37 +0200
+Message-ID: <5569F435.5040708@unseen.is>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1433000370-19509-6-git-send-email-mikko.rapeli-X3B1VOXEql0@public.gmane.org>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Rapeli <mikko.rapeli-X3B1VOXEql0@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from outmail02.unseen.is ([82.221.107.197]:42178 "EHLO
+	outmail02.unseen.is" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755677AbbE3RxK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 30 May 2015 13:53:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: sylvester.nawrocki@gmail.com
 
-On Sat, May 30, 2015 at 05:37:57PM +0200, Mikko Rapeli wrote:
-> Fixes userspace compilation error:
->=20
-> drm/exynos_drm.h:30:2: error: unknown type name =E2=80=98uint64_t=E2=80=
-=99
->=20
-> Signed-off-by: Mikko Rapeli <mikko.rapeli-X3B1VOXEql0@public.gmane.org>
 
-This is another thing which we need to address.  We should not be using
-unsigned int/unsigned long/uintXX_t/etc in here, but the __uXX and __sX=
-X
-types.
+Hello,
 
-The lesson learned from other DRM developers is that using these types
-simplifies the API especially when it comes to the differences between
-32-bit and 64-bit machines, and compat applications.
+I've been successfully using a self compiled linux kernel until version
+3.19 together with Debian Stretch.
 
-Note that drm/drm.h is all that should need to be included - drm/drm.h
-takes care of including linux/types.h when building on Linux platforms.
-(note: if your compiler doesn't set __linux__ then you're probably not
-using the proper compiler...)
+After upgrading the kernel to version 4.0 I see strange messages in the
+logs i.e.
 
---=20
-=46TTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps u=
-p
-according to speedtest.net.
+May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+alsa-sink.c: ALSA woke us up to write new data to the device, but there
+was actually nothing to write!
+May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+alsa-sink.c: Most likely this is a bug in the ALSA driver
+'snd_soc_simple_card'. Please report this issue to the ALSA developers.
+May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+alsa-sink.c: We were woken up with POLLOUT set -- however a subsequent
+snd_pcm_avail() returned 0 or another value < min_avail.
+
+
+I can easily play sound in perfect quality for approx the first 24h.
+After that time the sound becomes distorted and is choppy/crackling.
+After rebooting then the sound is optimal again.
+
+
+I have tried to use kernel 4.0 with almost exactly the same
+configuration than for 3.19 to no avail.
+
+Then somebody on
+http://forum.odroid.com/viewtopic.php?f=82&t=13281&p=91186 gave me the
+hint that the followin patch might solve the issue:
+
+https://github.com/prahal/linux/commit/5e60cfc9fa5101a346e29ef5f944fbbad300c72d
+
+
+The patch did help something. I can now still play music after 2 days
+but what happens is that each time I turn on music I get a choppy sound
+for some time. That means the sound comes clear but every 2 seconds the
+sound pauses for a fraction of a second. Which is somewhat comparable to
+the issue earlier but without the heavy crackling - and that this goes
+away after a couple of minutes.
+
+
+But furthermore the sound has now simple cracklings. One in two second
+approx. and they do not disappear.
+
+
+Does anybody have an idea what could be the matter here?
+
+Thanks in advance.
+
+Gabriel
