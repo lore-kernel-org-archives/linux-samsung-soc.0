@@ -1,40 +1,72 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH] drm/exynos/ipp: Replace struct timeval usage
-Date: Mon, 1 Jun 2015 06:31:37 +0300
-Message-ID: <20150601033137.GR2282@tarshish>
-References: <20150601031308.GA2785@tinar>
+From: Tina Ruchandani <ruchandani.tina@gmail.com>
+Subject: [PATCH] drm/exynos/ipp: Replace struct timeval usage
+Date: Mon, 1 Jun 2015 09:09:00 +0530
+Message-ID: <20150601033859.GA3254@tinar>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:56973 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752078AbbFADbq (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:35893 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754529AbbFADjF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 31 May 2015 23:31:46 -0400
+	Sun, 31 May 2015 23:39:05 -0400
+Received: by pacux9 with SMTP id ux9so59442275pac.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 May 2015 20:39:04 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20150601031308.GA2785@tinar>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tina Ruchandani <ruchandani.tina@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, y2038@lists.linaro.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, y2038@lists.linaro.org
 
-Hi Tina,
+'struct timeval' uses a 32-bit seconds representation which
+will overflow in the year 2038 and beyond. This patch
+replaces the use of struct timeval with struct timespec64
+which uses a 64-bit seconds representation and is y2038 safe.
 
-On Mon, Jun 01, 2015 at 08:43:08AM +0530, Tina Ruchandani wrote:
-> 'struct timeval' uses a 32-bit seconds representation which
-> will overflow in the year 2038 and beyond. This patch
-> replaces the use of struct timeval with struct timespec64
-> which uses a 64-bit seconds representation and is y2038 safe.
-> 
-> The patch is part of a larger effort to remove all 32-bit
-> timekeeping variables (timeval, time_t and timespec) from the
-> kernel.
+The patch is part of a larger effort to remove all 32-bit
+timekeeping variables (timeval, time_t and timespec) from the
+kernel.
 
-Your sing-off is missing.
+Signed-off-by: Tina Ruchandani <ruchandani.tina@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-baruch
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index b7f1cbc..7cd4a97 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -16,6 +16,7 @@
+ #include <linux/types.h>
+ #include <linux/clk.h>
+ #include <linux/pm_runtime.h>
++#include <linux/time64.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
+@@ -1414,7 +1415,7 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
+ 	struct drm_exynos_ipp_queue_buf qbuf;
+ 	struct drm_exynos_ipp_send_event *e;
+ 	struct list_head *head;
+-	struct timeval now;
++	struct timespec64 now;
+ 	unsigned long flags;
+ 	u32 tbuf_id[EXYNOS_DRM_OPS_MAX] = {0, };
+ 	int ret, i;
+@@ -1518,10 +1519,11 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
+ 	e = list_first_entry(&c_node->event_list,
+ 		struct drm_exynos_ipp_send_event, base.link);
+ 
+-	do_gettimeofday(&now);
+-	DRM_DEBUG_KMS("tv_sec[%ld]tv_usec[%ld]\n", now.tv_sec, now.tv_usec);
++	getnstimeofday64(&now);
++	DRM_DEBUG_KMS("tv_sec[%lld]tv_usec[%lld]\n", now.tv_sec, (now.tv_nsec /
++								NSEC_PER_SEC));
+ 	e->event.tv_sec = now.tv_sec;
+-	e->event.tv_usec = now.tv_usec;
++	e->event.tv_usec = now.tv_nsec / NSEC_PER_SEC;
+ 	e->event.prop_id = property->prop_id;
+ 
+ 	/* set buffer id about source destination */
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+2.2.0.rc0.207.ga3a616c
