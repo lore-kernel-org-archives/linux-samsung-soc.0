@@ -1,141 +1,96 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v10 03/17] drm/exynos: atomic phase 1: use
- drm_plane_helper_update()
-Date: Mon,  1 Jun 2015 12:04:41 -0300
-Message-ID: <1433171095-23773-4-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v10 04/17] drm/exynos: atomic phase 1: use drm_plane_helper_disable()
+Date: Mon,  1 Jun 2015 12:04:42 -0300
+Message-ID: <1433171095-23773-5-git-send-email-gustavo@padovan.org>
 References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f52.google.com ([209.85.216.52]:45171 "EHLO
+	mail-vn0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751879AbbFAPFN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Jun 2015 11:05:13 -0400
+Received: by vnbg7 with SMTP id g7so16603907vnb.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 08:05:13 -0700 (PDT)
 In-Reply-To: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-UmlwIG91dCB0aGUgY2hlY2sgZnJvbSBleHlub3NfdXBkYXRlX3BsYW5lKCkgYW5kIGNyZWF0ZQpl
-eHlub3NfY2hlY2tfcGxhbmUoKSBmb3IgdGhlIGNoZWNrIHBoYXNlIGVuYWJsaW5nIHVzZSB0byB1
-c2UKdGhlIGF0b21pYyBoZWxwZXJzIHRvIGNhbGwgb3VyIGNoZWNrIGFuZCB1cGRhdGUgcGhhc2Vz
-IHdoZW4gdXBkYXRpbmcKcGxhbmVzLgoKVXBkYXRlIGFsbCB1c2VycyBvZiBleHlub3NfdXBkYXRl
-X3BsYW5lKCkgYWNjb3JkaW5nbHkgdG8gY2FsbApleHlub3NfY2hlY2tfcGxhbmUoKSBiZWZvcmUu
-CgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJv
-cmEuY28udWs+ClJldmlld2VkLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3Vu
-Zy5jb20+ClRlc3RlZC1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZl
-bGQuZGU+eQotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgIHwg
-MzEgKysrKysrKysrKysrLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fcGxhbmUuYyB8IDQwICsrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0KIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oIHwgIDIgKy0KIDMgZmlsZXMgY2hh
-bmdlZCwgNDcgaW5zZXJ0aW9ucygrKSwgMjYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9jcnRjLmMKaW5kZXggMzYzYjAxOS4uYmE0NGM5YiAxMDA2NDQKLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYworKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCkBAIC0xMTYsNiArMTE2LDcgQEAgc3Rh
-dGljIGludCBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfYmFzZShzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMsIGludCB4LCBpbnQgeSwKIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYiA9IGNydGMtPnBy
-aW1hcnktPmZiOwogCXVuc2lnbmVkIGludCBjcnRjX3c7CiAJdW5zaWduZWQgaW50IGNydGNfaDsK
-KwlpbnQgcmV0OwogCiAJLyogd2hlbiBmcmFtZWJ1ZmZlciBjaGFuZ2luZyBpcyByZXF1ZXN0ZWQs
-IGNydGMncyBkcG1zIHNob3VsZCBiZSBvbiAqLwogCWlmIChleHlub3NfY3J0Yy0+ZHBtcyA+IERS
-TV9NT0RFX0RQTVNfT04pIHsKQEAgLTEyMywxMiArMTI0LDE3IEBAIHN0YXRpYyBpbnQgZXh5bm9z
-X2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRjLCBpbnQgeCwgaW50
-IHksCiAJCXJldHVybiAtRVBFUk07CiAJfQogCisJcmV0ID0gZXh5bm9zX2NoZWNrX3BsYW5lKGNy
-dGMtPnByaW1hcnksIGZiKTsKKwlpZiAocmV0KQorCQlyZXR1cm4gcmV0OworCiAJY3J0Y193ID0g
-ZmItPndpZHRoIC0geDsKIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0geTsKKwlleHlub3NfdXBkYXRl
-X3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAorCQkJICAgIGNydGNfdywgY3J0
-Y19oLCB4IDw8IDE2LCB5IDw8IDE2LAorCQkJICAgIGNydGNfdyA8PCAxNiwgY3J0Y19oIDw8IDE2
-KTsKIAotCXJldHVybiBleHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZi
-LCAwLCAwLAotCQkJCSAgIGNydGNfdywgY3J0Y19oLCB4IDw8IDE2LCB5IDw8IDE2LAotCQkJCSAg
-IGNydGNfdyA8PCAxNiwgY3J0Y19oIDw8IDE2KTsKKwlyZXR1cm4gMDsKIH0KIAogc3RhdGljIHZv
-aWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQpAQCAtMTY1
-LDcgKzE3MSw2IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3Qg
-ZHJtX2NydGMgKmNydGMsCiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IGNydGMtPmRldjsK
-IAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9IHRvX2V4eW5vc19jcnRjKGNy
-dGMpOwotCXN0cnVjdCBkcm1fZnJhbWVidWZmZXIgKm9sZF9mYiA9IGNydGMtPnByaW1hcnktPmZi
-OwogCXVuc2lnbmVkIGludCBjcnRjX3csIGNydGNfaDsKIAlpbnQgcmV0OwogCkBAIC0xODQsNiAr
-MTg5LDEwIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcChzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMsCiAJCWdvdG8gb3V0OwogCX0KIAorCXJldCA9IGV4eW5vc19jaGVja19wbGFu
-ZShjcnRjLT5wcmltYXJ5LCBmYik7CisJaWYgKHJldCkKKwkJZ290byBvdXQ7CisKIAlyZXQgPSBk
-cm1fdmJsYW5rX2dldChkZXYsIGV4eW5vc19jcnRjLT5waXBlKTsKIAlpZiAocmV0KSB7CiAJCURS
-TV9ERUJVRygiZmFpbGVkIHRvIGFjcXVpcmUgdmJsYW5rIGNvdW50ZXJcbiIpOwpAQCAtMjAyLDE3
-ICsyMTEsOSBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fY3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRy
-bV9jcnRjICpjcnRjLAogCWNydGMtPnByaW1hcnktPmZiID0gZmI7CiAJY3J0Y193ID0gZmItPndp
-ZHRoIC0gY3J0Yy0+eDsKIAljcnRjX2ggPSBmYi0+aGVpZ2h0IC0gY3J0Yy0+eTsKLQlyZXQgPSBl
-eHlub3NfdXBkYXRlX3BsYW5lKGNydGMtPnByaW1hcnksIGNydGMsIGZiLCAwLCAwLAotCQkJCSAg
-Y3J0Y193LCBjcnRjX2gsIGNydGMtPnggPDwgMTYsIGNydGMtPnkgPDwgMTYsCi0JCQkJICBjcnRj
-X3cgPDwgMTYsIGNydGNfaCA8PCAxNik7Ci0JaWYgKHJldCkgewotCQljcnRjLT5wcmltYXJ5LT5m
-YiA9IG9sZF9mYjsKLQkJc3Bpbl9sb2NrX2lycSgmZGV2LT5ldmVudF9sb2NrKTsKLQkJZXh5bm9z
-X2NydGMtPmV2ZW50ID0gTlVMTDsKLQkJZHJtX3ZibGFua19wdXQoZGV2LCBleHlub3NfY3J0Yy0+
-cGlwZSk7Ci0JCXNwaW5fdW5sb2NrX2lycSgmZGV2LT5ldmVudF9sb2NrKTsKLQkJcmV0dXJuIHJl
-dDsKLQl9CisJZXh5bm9zX3VwZGF0ZV9wbGFuZShjcnRjLT5wcmltYXJ5LCBjcnRjLCBmYiwgMCwg
-MCwKKwkJCSAgICBjcnRjX3csIGNydGNfaCwgY3J0Yy0+eCA8PCAxNiwgY3J0Yy0+eSA8PCAxNiwK
-KwkJCSAgICBjcnRjX3cgPDwgMTYsIGNydGNfaCA8PCAxNik7CiAKIAlyZXR1cm4gMDsKIApkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwppbmRleCAwMWQyOTE4Li42YjEw
-MzczIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwpAQCAtMTQ1
-LDIxICsxNDUsMTUgQEAgdm9pZCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKIAlwbGFuZS0+Y3J0YyA9IGNydGM7CiB9
-CiAKLWludAordm9pZAogZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFu
-ZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAogCQkgICAgIHN0cnVjdCBkcm1fZnJhbWVidWZmZXIg
-KmZiLCBpbnQgY3J0Y194LCBpbnQgY3J0Y195LAogCQkgICAgIHVuc2lnbmVkIGludCBjcnRjX3cs
-IHVuc2lnbmVkIGludCBjcnRjX2gsCiAJCSAgICAgdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNy
-Y195LAogCQkgICAgIHVpbnQzMl90IHNyY193LCB1aW50MzJfdCBzcmNfaCkKIHsKLQogCXN0cnVj
-dCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7CiAJ
-c3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShw
-bGFuZSk7Ci0JaW50IHJldDsKLQotCXJldCA9IGV4eW5vc19jaGVja19wbGFuZShwbGFuZSwgZmIp
-OwotCWlmIChyZXQgPCAwKQotCQlyZXR1cm4gcmV0OwogCiAJZXh5bm9zX3BsYW5lX21vZGVfc2V0
-KHBsYW5lLCBjcnRjLCBmYiwgY3J0Y194LCBjcnRjX3ksCiAJCQkgICAgICBjcnRjX3csIGNydGNf
-aCwgc3JjX3ggPj4gMTYsIHNyY195ID4+IDE2LApAQCAtMTY3LDggKzE2MSw2IEBAIGV4eW5vc191
-cGRhdGVfcGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0
-YywKIAogCWlmIChleHlub3NfY3J0Yy0+b3BzLT53aW5fY29tbWl0KQogCQlleHlub3NfY3J0Yy0+
-b3BzLT53aW5fY29tbWl0KGV4eW5vc19jcnRjLCBleHlub3NfcGxhbmUtPnpwb3MpOwotCi0JcmV0
-dXJuIDA7CiB9CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2Rpc2FibGVfcGxhbmUoc3RydWN0IGRybV9w
-bGFuZSAqcGxhbmUpCkBAIC0xODQsMTEgKzE3NiwzNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kaXNh
-YmxlX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQogfQogCiBzdGF0aWMgc3RydWN0IGRy
-bV9wbGFuZV9mdW5jcyBleHlub3NfcGxhbmVfZnVuY3MgPSB7Ci0JLnVwZGF0ZV9wbGFuZQk9IGV4
-eW5vc191cGRhdGVfcGxhbmUsCisJLnVwZGF0ZV9wbGFuZQk9IGRybV9wbGFuZV9oZWxwZXJfdXBk
-YXRlLAogCS5kaXNhYmxlX3BsYW5lCT0gZXh5bm9zX2Rpc2FibGVfcGxhbmUsCiAJLmRlc3Ryb3kJ
-PSBkcm1fcGxhbmVfY2xlYW51cCwKIH07CiAKK3N0YXRpYyBpbnQgZXh5bm9zX3BsYW5lX2F0b21p
-Y19jaGVjayhzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKKwkJCQkgICAgIHN0cnVjdCBkcm1fcGxh
-bmVfc3RhdGUgKnN0YXRlKQoreworCXJldHVybiBleHlub3NfY2hlY2tfcGxhbmUocGxhbmUsIHN0
-YXRlLT5mYik7Cit9CisKK3N0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdG9taWNfdXBkYXRlKHN0
-cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAorCQkJCSAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRl
-ICpvbGRfc3RhdGUpCit7CisJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUgPSBwbGFuZS0+
-c3RhdGU7CisKKwlpZiAoIXN0YXRlLT5jcnRjKQorCQlyZXR1cm47CisKKwlleHlub3NfdXBkYXRl
-X3BsYW5lKHBsYW5lLCBzdGF0ZS0+Y3J0Yywgc3RhdGUtPmZiLAorCQkJICAgIHN0YXRlLT5jcnRj
-X3gsIHN0YXRlLT5jcnRjX3ksCisJCQkgICAgc3RhdGUtPmNydGNfdywgc3RhdGUtPmNydGNfaCwK
-KwkJCSAgICBzdGF0ZS0+c3JjX3gsIHN0YXRlLT5zcmNfeSwKKwkJCSAgICBzdGF0ZS0+c3JjX3cs
-IHN0YXRlLT5zcmNfaCk7Cit9CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBl
-cl9mdW5jcyBwbGFuZV9oZWxwZXJfZnVuY3MgPSB7CisJLmF0b21pY19jaGVjayA9IGV4eW5vc19w
-bGFuZV9hdG9taWNfY2hlY2ssCisJLmF0b21pY191cGRhdGUgPSBleHlub3NfcGxhbmVfYXRvbWlj
-X3VwZGF0ZSwKK307CisKIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdHRhY2hfenBvc19wcm9w
-ZXJ0eShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKIAkJCQkJICAgICAgdW5zaWduZWQgaW50IHpw
-b3MpCiB7CkBAIC0yMjQsNiArMjQyLDggQEAgaW50IGV4eW5vc19wbGFuZV9pbml0KHN0cnVjdCBk
-cm1fZGV2aWNlICpkZXYsCiAJCXJldHVybiBlcnI7CiAJfQogCisJZHJtX3BsYW5lX2hlbHBlcl9h
-ZGQoJmV4eW5vc19wbGFuZS0+YmFzZSwgJnBsYW5lX2hlbHBlcl9mdW5jcyk7CisKIAlleHlub3Nf
-cGxhbmUtPnpwb3MgPSB6cG9zOwogCiAJaWYgKHR5cGUgPT0gRFJNX1BMQU5FX1RZUEVfT1ZFUkxB
-WSkKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5o
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgKaW5kZXggZjM2MDU5
-MC4uNTYwY2E3MSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X3BsYW5lLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmgK
-QEAgLTE1LDcgKzE1LDcgQEAgdm9pZCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGRybV9w
-bGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKIAkJCSAgIHVuc2lnbmVkIGludCBj
-cnRjX3csIHVuc2lnbmVkIGludCBjcnRjX2gsCiAJCQkgICB1aW50MzJfdCBzcmNfeCwgdWludDMy
-X3Qgc3JjX3ksCiAJCQkgICB1aW50MzJfdCBzcmNfdywgdWludDMyX3Qgc3JjX2gpOwotaW50IGV4
-eW5vc191cGRhdGVfcGxhbmUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0
-YyAqY3J0YywKK3ZvaWQgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFu
-ZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAogCQkJc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIs
-IGludCBjcnRjX3gsIGludCBjcnRjX3ksCiAJCQl1bnNpZ25lZCBpbnQgY3J0Y193LCB1bnNpZ25l
-ZCBpbnQgY3J0Y19oLAogCQkJdWludDMyX3Qgc3JjX3gsIHVpbnQzMl90IHNyY195LAotLSAKMi4x
-LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+The atomic helper to disable planes also uses the optional
+.atomic_disable() helper. The unique operation it does is calling
+.win_disable()
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 32 ++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 6b10373..f0067f7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -67,6 +67,9 @@ int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
+ 	int nr;
+ 	int i;
+ 
++	if (!fb)
++		return 0;
++
+ 	nr = exynos_drm_fb_get_buf_cnt(fb);
+ 	for (i = 0; i < nr; i++) {
+ 		struct exynos_drm_gem_buf *buffer = exynos_drm_fb_buffer(fb, i);
+@@ -163,21 +166,9 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+ }
+ 
+-static int exynos_disable_plane(struct drm_plane *plane)
+-{
+-	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(plane->crtc);
+-
+-	if (exynos_crtc && exynos_crtc->ops->win_disable)
+-		exynos_crtc->ops->win_disable(exynos_crtc,
+-					      exynos_plane->zpos);
+-
+-	return 0;
+-}
+-
+ static struct drm_plane_funcs exynos_plane_funcs = {
+ 	.update_plane	= drm_plane_helper_update,
+-	.disable_plane	= exynos_disable_plane,
++	.disable_plane	= drm_plane_helper_disable,
+ 	.destroy	= drm_plane_cleanup,
+ };
+ 
+@@ -202,9 +193,24 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
+ 			    state->src_w, state->src_h);
+ }
+ 
++static void exynos_plane_atomic_disable(struct drm_plane *plane,
++					struct drm_plane_state *old_state)
++{
++	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(old_state->crtc);
++
++	if (!old_state->crtc)
++		return;
++
++	if (exynos_crtc->ops->win_disable)
++		exynos_crtc->ops->win_disable(exynos_crtc,
++					      exynos_plane->zpos);
++}
++
+ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+ 	.atomic_check = exynos_plane_atomic_check,
+ 	.atomic_update = exynos_plane_atomic_update,
++	.atomic_disable = exynos_plane_atomic_disable,
+ };
+ 
+ static void exynos_plane_attach_zpos_property(struct drm_plane *plane,
+-- 
+2.1.0
