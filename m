@@ -1,72 +1,60 @@
-From: Tina Ruchandani <ruchandani.tina@gmail.com>
-Subject: [PATCH] drm/exynos/ipp: Replace struct timeval usage
-Date: Mon, 1 Jun 2015 09:09:00 +0530
-Message-ID: <20150601033859.GA3254@tinar>
+From: =?UTF-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>
+Subject: Re: [PATCH 05/98] exynos_drm.h: use __u64 from linux/types.h
+Date: Mon, 1 Jun 2015 10:20:10 +0200
+Message-ID: <556C15BA.7000909@amd.com>
+References: <1433000370-19509-1-git-send-email-mikko.rapeli@iki.fi>
+ <1433000370-19509-6-git-send-email-mikko.rapeli@iki.fi>
+ <20150530164655.GM2067@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:35893 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754529AbbFADjF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 31 May 2015 23:39:05 -0400
-Received: by pacux9 with SMTP id ux9so59442275pac.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 May 2015 20:39:04 -0700 (PDT)
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150530164655.GM2067@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Mikko Rapeli <mikko.rapeli@iki.fi>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-api@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, y2038@lists.linaro.org
 
-'struct timeval' uses a 32-bit seconds representation which
-will overflow in the year 2038 and beyond. This patch
-replaces the use of struct timeval with struct timespec64
-which uses a 64-bit seconds representation and is y2038 safe.
-
-The patch is part of a larger effort to remove all 32-bit
-timekeeping variables (timeval, time_t and timespec) from the
-kernel.
-
-Signed-off-by: Tina Ruchandani <ruchandani.tina@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index b7f1cbc..7cd4a97 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -16,6 +16,7 @@
- #include <linux/types.h>
- #include <linux/clk.h>
- #include <linux/pm_runtime.h>
-+#include <linux/time64.h>
- 
- #include <drm/drmP.h>
- #include <drm/exynos_drm.h>
-@@ -1414,7 +1415,7 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
- 	struct drm_exynos_ipp_queue_buf qbuf;
- 	struct drm_exynos_ipp_send_event *e;
- 	struct list_head *head;
--	struct timeval now;
-+	struct timespec64 now;
- 	unsigned long flags;
- 	u32 tbuf_id[EXYNOS_DRM_OPS_MAX] = {0, };
- 	int ret, i;
-@@ -1518,10 +1519,11 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
- 	e = list_first_entry(&c_node->event_list,
- 		struct drm_exynos_ipp_send_event, base.link);
- 
--	do_gettimeofday(&now);
--	DRM_DEBUG_KMS("tv_sec[%ld]tv_usec[%ld]\n", now.tv_sec, now.tv_usec);
-+	getnstimeofday64(&now);
-+	DRM_DEBUG_KMS("tv_sec[%lld]tv_usec[%lld]\n", now.tv_sec, (now.tv_nsec /
-+								NSEC_PER_SEC));
- 	e->event.tv_sec = now.tv_sec;
--	e->event.tv_usec = now.tv_usec;
-+	e->event.tv_usec = now.tv_nsec / NSEC_PER_SEC;
- 	e->event.prop_id = property->prop_id;
- 
- 	/* set buffer id about source destination */
--- 
-2.2.0.rc0.207.ga3a616c
+T24gMzAuMDUuMjAxNSAxODo0NiwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4IHdyb3RlOgo+IE9u
+IFNhdCwgTWF5IDMwLCAyMDE1IGF0IDA1OjM3OjU3UE0gKzAyMDAsIE1pa2tvIFJhcGVsaSB3cm90
+ZToKPj4gRml4ZXMgdXNlcnNwYWNlIGNvbXBpbGF0aW9uIGVycm9yOgo+Pgo+PiBkcm0vZXh5bm9z
+X2RybS5oOjMwOjI6IGVycm9yOiB1bmtub3duIHR5cGUgbmFtZSDigJh1aW50NjRfdOKAmQo+Pgo+
+PiBTaWduZWQtb2ZmLWJ5OiBNaWtrbyBSYXBlbGkgPG1pa2tvLnJhcGVsaUBpa2kuZmk+Cj4gVGhp
+cyBpcyBhbm90aGVyIHRoaW5nIHdoaWNoIHdlIG5lZWQgdG8gYWRkcmVzcy4gIFdlIHNob3VsZCBu
+b3QgYmUgdXNpbmcKPiB1bnNpZ25lZCBpbnQvdW5zaWduZWQgbG9uZy91aW50WFhfdC9ldGMgaW4g
+aGVyZSwgYnV0IHRoZSBfX3VYWCBhbmQgX19zWFgKPiB0eXBlcy4KPgo+IFRoZSBsZXNzb24gbGVh
+cm5lZCBmcm9tIG90aGVyIERSTSBkZXZlbG9wZXJzIGlzIHRoYXQgdXNpbmcgdGhlc2UgdHlwZXMK
+PiBzaW1wbGlmaWVzIHRoZSBBUEkgZXNwZWNpYWxseSB3aGVuIGl0IGNvbWVzIHRvIHRoZSBkaWZm
+ZXJlbmNlcyBiZXR3ZWVuCj4gMzItYml0IGFuZCA2NC1iaXQgbWFjaGluZXMsIGFuZCBjb21wYXQg
+YXBwbGljYXRpb25zLgo+Cj4gTm90ZSB0aGF0IGRybS9kcm0uaCBpcyBhbGwgdGhhdCBzaG91bGQg
+bmVlZCB0byBiZSBpbmNsdWRlZCAtIGRybS9kcm0uaAo+IHRha2VzIGNhcmUgb2YgaW5jbHVkaW5n
+IGxpbnV4L3R5cGVzLmggd2hlbiBidWlsZGluZyBvbiBMaW51eCBwbGF0Zm9ybXMuCj4gKG5vdGU6
+IGlmIHlvdXIgY29tcGlsZXIgZG9lc24ndCBzZXQgX19saW51eF9fIHRoZW4geW91J3JlIHByb2Jh
+Ymx5IG5vdAo+IHVzaW5nIHRoZSBwcm9wZXIgY29tcGlsZXIuLi4pCj4KClVzaW5nIHR5cGVzIHRo
+YXQgZGlmZmVycyBvbiAzMi1iaXQgYW5kIDY0LWJpdCBtYWNoaW5lcyBmb3IgYSBrZXJuZWwgCmlu
+dGVyZmFjZSBpcyBpbmRlZWQgYSByYXRoZXIgYmFkIGlkZWEuIFRoaXMgbm90IG9ubHkgaW5jbHVk
+ZXMgbG9uZ3MsIGJ1dCAKcG9pbnRlcnMgYXMgd2VsbC4KCkJ1dCB0aGUgaW50OF90LCBpbnQxNl90
+IGludDMyX3QsIGludDY0X3QgYW5kIHRoZWlyIHVuc2lnbmVkIGNvdW50ZXJwYXJ0cyAKYXJlIGRl
+ZmluZWQgaW4gc3RkaW50Lmggd2hpY2ggaXMgcGFydCBvZiB0aGUgSVNPL0lFQyA5ODk5OjE5OTkg
+c3RhbmRhcmQsIApzaW1pbGFyIGlzIHRydWUgZm9yIHNpemVfdC4KClRoZSBfX3VYWCwgX19zWFgg
+YW5kIF9rZXJuZWxfc2l6ZV90IHR5cGVzIGFyZSBsaW51eCBzcGVjaWZpYyBhcyBmYXIgYXMgSSAK
+a25vdy4KCkZvciBiZXN0IGludGVyb3BlcmFiaWxpdHkgYW5kIHN0YW5kYXJkIGNvbmZvcm1hbmNl
+IEkgdGhpbmsgdGhhdCAKZGVmaW5pdGlvbnMgZnJvbSB0aGUgQyBzdGFuZGFyZCB3ZSB1c2Ugc2hv
+dWxkIG91dC1ydWxlIGxpbnV4IHNwZWNpZmljIApkZWZpbml0aW9ucy4KCkFkZGl0aW9uYWwgdG8g
+dGhhdCAibGludXgvdHlwZXMuaCIgaXMgbm90IHBhcnQgb2YgdGhlIHVhcGkgYXMgZmFyIGFzIEkg
+Cmtub3csIHNvIGluY2x1ZGluZyBpdCBpbiBhIGhlYWRlciB3aGljaCBpcyBwYXJ0IG9mIHRoZSB1
+YXBpIHNob3VsZCBiZSAKZm9yYmlkZGVuLgoKU28gdGhpcyBpcyBhIE5BSyBmcm9tIG15IHNpZGUg
+Zm9yIHRoZSB3aG9sZSBzZXJpZXMsIHVzZXJzcGFjZSBwcm9ncmFtcyAKc2hvdWxkIGluY2x1ZGUg
+PHN0ZGludC5oPiBmb3IgdGhlIGRlZmluaXRpb24gb2YgdGhlIElTTy9JRUMgOTg5OToxOTk5IApz
+dGFuZGFyZCB0eXBlcyBpZiBuZWNlc3NhcnkuCgpSZWdhcmRzLApDaHJpc3RpYW4uCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVs
+IG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
+L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
