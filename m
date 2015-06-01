@@ -1,146 +1,52 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: [PATCHv3] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
-Date: Mon,  1 Jun 2015 21:24:19 +0900
-Message-ID: <1433161459-10901-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:36607 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751750AbbFAMYe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jun 2015 08:24:34 -0400
-Received: by pdjm12 with SMTP id m12so23713585pdj.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 05:24:34 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 2/9] mm: Provide new get_vaddr_frames() helper
+Date: Mon, 1 Jun 2015 14:40:17 +0200
+Message-ID: <20150601124017.GC20288@quack.suse.cz>
+References: <1431522495-4692-1-git-send-email-jack@suse.cz>
+ <1431522495-4692-3-git-send-email-jack@suse.cz>
+ <20150528162402.19a0a26a5b9eae36aa8050e5@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20150528162402.19a0a26a5b9eae36aa8050e5@linux-foundation.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, dri-devel@lists.freedesktop.org, linux-mm@kvack.org, mgorman@suse.de, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, k.kozlowski@samsung.com
-Cc: jy0922.shim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, khilman@linaro.org, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Chanho Park <chanho61.park@samsung.com>
 
-The odroid-xu3 board which is based on exynos5422 not exynos5800 is
-booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
-is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
-cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
-and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
-cpu4-7 are cortex-a15.
-
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
-Change from v2:
- - drop inclusion of exynos5420.dtsi from exynos5422-cpus.dtsi
- - drop compatibles from exynos5422-cpus.dtsi
-
-Changes from v1:
- - rename exynos5422.dtsi to exynos5422-cpus.dtsi
- - include the dtsi file top of the exynos5422-odroidxu3.dts
-
- arch/arm/boot/dts/exynos5422-cpus.dtsi     | 81 ++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroidxu3.dts |  4 +-
- 2 files changed, 84 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/exynos5422-cpus.dtsi
-
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-new file mode 100644
-index 0000000..b7f60c8
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -0,0 +1,81 @@
-+/*
-+ * SAMSUNG EXYNOS5422 SoC cpu device tree source
-+ *
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * The only difference between EXYNOS5422 and EXYNOS5800 is cpu ordering. The
-+ * EXYNOS5422 is booting from Cortex-A7 core while the EXYNOS5800 is booting
-+ * from Cortex-A15 core.
-+ *
-+ * EXYNOS5422 based board files can include this file to provide cpu ordering
-+ * which could boot a cortex-a7 from cpu0.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+&cpu0 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x100>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu1 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x101>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu2 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x102>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu3 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x103>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu4 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x0>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu5 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x1>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu6 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x2>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu7 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x3>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index edc25cf..00f45c9 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -12,10 +12,12 @@
- 
- /dts-v1/;
- #include "exynos5800.dtsi"
-+#include "exynos5422-cpus.dtsi"
- 
- / {
- 	model = "Hardkernel Odroid XU3";
--	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
-+	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800",
-+		     "samsung,exynos5422", "samsung,exynos5";
- 
- 	memory {
- 		reg = <0x40000000 0x7EA00000>;
--- 
-2.1.0
+T24gVGh1IDI4LTA1LTE1IDE2OjI0OjAyLCBBbmRyZXcgTW9ydG9uIHdyb3RlOgo+IE9uIFdlZCwg
+MTMgTWF5IDIwMTUgMTU6MDg6MDggKzAyMDAgSmFuIEthcmEgPGphY2tAc3VzZS5jej4gd3JvdGU6
+Cj4gCj4gPiBQcm92aWRlIG5ldyBmdW5jdGlvbiBnZXRfdmFkZHJfZnJhbWVzKCkuICBUaGlzIGZ1
+bmN0aW9uIG1hcHMgdmlydHVhbAo+ID4gYWRkcmVzc2VzIGZyb20gZ2l2ZW4gc3RhcnQgYW5kIGZp
+bGxzIGdpdmVuIGFycmF5IHdpdGggcGFnZSBmcmFtZSBudW1iZXJzIG9mCj4gPiB0aGUgY29ycmVz
+cG9uZGluZyBwYWdlcy4gSWYgZ2l2ZW4gc3RhcnQgYmVsb25ncyB0byBhIG5vcm1hbCB2bWEsIHRo
+ZSBmdW5jdGlvbgo+ID4gZ3JhYnMgcmVmZXJlbmNlIHRvIGVhY2ggb2YgdGhlIHBhZ2VzIHRvIHBp
+biB0aGVtIGluIG1lbW9yeS4gSWYgc3RhcnQKPiA+IGJlbG9uZ3MgdG8gVk1fSU8gfCBWTV9QRk5N
+QVAgdm1hLCB3ZSBkb24ndCB0b3VjaCBwYWdlIHN0cnVjdHVyZXMuIENhbGxlcgo+ID4gbXVzdCBt
+YWtlIHN1cmUgcGZucyBhcmVuJ3QgcmV1c2VkIGZvciBhbnl0aGluZyBlbHNlIHdoaWxlIGhlIGlz
+IHVzaW5nCj4gPiB0aGVtLgo+ID4gCj4gPiBUaGlzIGZ1bmN0aW9uIGlzIGNyZWF0ZWQgZm9yIHZh
+cmlvdXMgZHJpdmVycyB0byBzaW1wbGlmeSBoYW5kbGluZyBvZgo+ID4gdGhlaXIgYnVmZmVycy4K
+PiA+IAo+ID4gQWNrZWQtYnk6IE1lbCBHb3JtYW4gPG1nb3JtYW5Ac3VzZS5kZT4KPiA+IEFja2Vk
+LWJ5OiBWbGFzdGltaWwgQmFia2EgPHZiYWJrYUBzdXNlLmN6Pgo+ID4gU2lnbmVkLW9mZi1ieTog
+SmFuIEthcmEgPGphY2tAc3VzZS5jej4KPiA+IC0tLQo+ID4gIGluY2x1ZGUvbGludXgvbW0uaCB8
+ICA0NCArKysrKysrKysrKwo+ID4gIG1tL2d1cC5jICAgICAgICAgICB8IDIyNiArKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+IAo+IFRoYXQncyBh
+IGx1bXAgb2YgbmV3IGNvZGUgd2hpY2ggbWFueSBrZXJuZWxzIHdvbid0IGJlIG5lZWRpbmcuICBD
+YW4gd2UKPiBwdXQgYWxsIHRoaXMgaW4gYSBuZXcgLmMgZmlsZSBhbmQgc2VsZWN0IGl0IHdpdGhp
+biBkcml2ZXJzL21lZGlhCj4gS2NvbmZpZz8KICBZZWFoLCBtYWtlcyBzZW5zZS4gSSdsbCB3cml0
+ZSBhIHBhdGNoLiBIYW5zLCBpcyBpdCBPSyB3aXRoIHlvdSBpZiBJCmp1c3QgY3JlYXRlIGEgcGF0
+Y2ggb24gdG9wIG9mIHRoZSBzZXJpZXMgeW91IGhhdmUgaW4geW91ciB0cmVlPwoKCQkJCQkJCQlI
+b256YQotLSAKSmFuIEthcmEgPGphY2tAc3VzZS5jej4KU1VTRSBMYWJzLCBDUgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
