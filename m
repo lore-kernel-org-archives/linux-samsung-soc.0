@@ -1,251 +1,488 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v10 15/17] drm/exynos: atomic dpms support
-Date: Mon,  1 Jun 2015 12:04:53 -0300
-Message-ID: <1433171095-23773-16-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v10 17/17] drm/exynos: split exynos_crtc->dpms in enable() and disable()
+Date: Mon,  1 Jun 2015 12:04:55 -0300
+Message-ID: <1433171095-23773-18-git-send-email-gustavo@padovan.org>
 References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f51.google.com ([209.85.216.51]:37822 "EHLO
+	mail-vn0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751783AbbFAPFs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Jun 2015 11:05:48 -0400
+Received: by vnbg190 with SMTP id g190so16530283vnb.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 08:05:47 -0700 (PDT)
 In-Reply-To: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-UnVuIGRwbXMgb3BlcmF0aW9ucyB0aHJvdWdoIHRoZSBhdG9taWMgaW50ZWZhY2VzLiBUaGlzIGJh
-c2ljYWxseSByZW1vdmVzCnRoZSAuZHBtcygpIGNhbGxiYWNrIGZyb20gZWNvbmRlcnMgYW5kIGNy
-dGNzIGFuZCB1c2UgLmRpc2FibGUoKSBhbmQKLmVuYWJsZSgpIHRvIHR1cm4gdGhlIGNydGMgb24g
-YW5kIG9mZi4KCnYyOiBBZGRyZXNzIGNvbW1lbnRzIGJ5IEpvb255b3VuZzoKCS0gbWFrZSBoZG1p
-IGNvZGUgY2FsbCAtPmRpc2FibGUoKSBpbnN0ZWFkIG9mIC0+ZHBtcygpCgktIGRvIG5vdCB1c2Ug
-V0FSTl9PTiBvbiBjcnRjIGVuYWJsZS9kaXNhYmxlCgp2MzogLSBGaXggYnVpbGQgZmFpbHVyZSBh
-ZnRlciB0aGUgaGRtaSBjaGFuZ2UgaW4gdjIKICAgIC0gQ2hhbmdlIGRwbXMgaGVscGVyIG9mIHB0
-bjM0NjAgYnJpZGdlCgp2NDogLSByZW1vdmUgd2luX2NvbW1pdCgpIGNhbGwgZnJvbSAuZW5hYmxl
-KCkKCnY1OiAtIG1vdmUgLmF0b21pY19jaGVjaygpIHRvIHRoZSBhdG9taWMgUGFnZUZsaXAgcGF0
-Y2gsIGFuZCB0cmFuc2Zvcm0gaXQKaW4gLmF0b21pY19iZWdpbigpCgpTaWduZWQtb2ZmLWJ5OiBH
-dXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+ClJldmlld2Vk
-LWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+ClRlc3RlZC1ieTog
-VG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZlbGQuZGU+Ci0tLQogZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9wczg2MjIuYyAgICAgICAgICAgICB8ICAyICstCiBkcml2ZXJzL2dw
-dS9kcm0vYnJpZGdlL3B0bjM0NjAuYyAgICAgICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICB8IDU4ICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0t
-LS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMgICAgIHwgIDIgKy0K
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgfCAgNCArLQogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAgICB8ICAyICstCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jIHwgMjEgKysrLS0tLS0tLS0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgfCAgMiArLQogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgICB8ICA2ICstLQogMTAgZmlsZXMg
-Y2hhbmdlZCwgNDAgaW5zZXJ0aW9ucygrKSwgNjEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uv
-cHM4NjIyLmMKaW5kZXggYjYwNDMyNi4uZDY4NjIzNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2JyaWRnZS9wczg2MjIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5j
-CkBAIC00OTksNyArNDk5LDcgQEAgc3RhdGljIHZvaWQgcHM4NjIyX2Nvbm5lY3Rvcl9kZXN0cm95
-KHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCiB9CiAKIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBwczg2MjJfY29ubmVjdG9yX2Z1bmNzID0gewotCS5kcG1z
-ID0gZHJtX2hlbHBlcl9jb25uZWN0b3JfZHBtcywKKwkuZHBtcyA9IGRybV9hdG9taWNfaGVscGVy
-X2Nvbm5lY3Rvcl9kcG1zLAogCS5maWxsX21vZGVzID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVf
-Y29ubmVjdG9yX21vZGVzLAogCS5kZXRlY3QgPSBwczg2MjJfZGV0ZWN0LAogCS5kZXN0cm95ID0g
-cHM4NjIyX2Nvbm5lY3Rvcl9kZXN0cm95LApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9wdG4zNDYwLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYwppbmRleCA4
-ZWQzNjE3Li4yNjBiYzlmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0
-NjAuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYwpAQCAtMjYwLDcgKzI2
-MCw3IEBAIHN0YXRpYyB2b2lkIHB0bjM0NjBfY29ubmVjdG9yX2Rlc3Ryb3koc3RydWN0IGRybV9j
-b25uZWN0b3IgKmNvbm5lY3RvcikKIH0KIAogc3RhdGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1
-bmNzIHB0bjM0NjBfY29ubmVjdG9yX2Z1bmNzID0gewotCS5kcG1zID0gZHJtX2hlbHBlcl9jb25u
-ZWN0b3JfZHBtcywKKwkuZHBtcyA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kcG1zLAog
-CS5maWxsX21vZGVzID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAog
-CS5kZXRlY3QgPSBwdG4zNDYwX2RldGVjdCwKIAkuZGVzdHJveSA9IHB0bjM0NjBfY29ubmVjdG9y
-X2Rlc3Ryb3ksCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9j
-b3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKaW5kZXggMTk1
-ZmU2MC4uYzk5OTViMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHBfY29yZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwpA
-QCAtOTU0LDcgKzk1NCw3IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcF9jb25uZWN0b3JfZGVzdHJv
-eShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQogfQogCiBzdGF0aWMgc3RydWN0IGRy
-bV9jb25uZWN0b3JfZnVuY3MgZXh5bm9zX2RwX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKLQkuZHBtcyA9
-IGRybV9oZWxwZXJfY29ubmVjdG9yX2RwbXMsCisJLmRwbXMgPSBkcm1fYXRvbWljX2hlbHBlcl9j
-b25uZWN0b3JfZHBtcywKIAkuZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nv
-bm5lY3Rvcl9tb2RlcywKIAkuZGV0ZWN0ID0gZXh5bm9zX2RwX2RldGVjdCwKIAkuZGVzdHJveSA9
-IGV4eW5vc19kcF9jb25uZWN0b3JfZGVzdHJveSwKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jCmluZGV4IDcxMjVmYmUuLmRkOGU0NTQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtMjIsNDAgKzIyLDQxIEBACiAjaW5jbHVkZSAiZXh5
-bm9zX2RybV9lbmNvZGVyLmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9wbGFuZS5oIgogCi1zdGF0
-aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZHBtcyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCBt
-b2RlKQorc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2VuYWJsZShzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMpCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlu
-b3NfY3J0YyhjcnRjKTsKIAotCURSTV9ERUJVR19LTVMoImNydGNbJWRdIG1vZGVbJWRdXG4iLCBj
-cnRjLT5iYXNlLmlkLCBtb2RlKTsKLQotCWlmIChleHlub3NfY3J0Yy0+ZHBtcyA9PSBtb2RlKSB7
-Ci0JCURSTV9ERUJVR19LTVMoImRlc2lyZWQgZHBtcyBtb2RlIGlzIHNhbWUgYXMgcHJldmlvdXMg
-b25lLlxuIik7CisJaWYgKGV4eW5vc19jcnRjLT5lbmFibGVkKQogCQlyZXR1cm47Ci0JfQotCi0J
-aWYgKG1vZGUgPiBEUk1fTU9ERV9EUE1TX09OKSB7Ci0JCS8qIHdhaXQgZm9yIHRoZSBjb21wbGV0
-aW9uIG9mIHBhZ2UgZmxpcC4gKi8KLQkJaWYgKCF3YWl0X2V2ZW50X3RpbWVvdXQoZXh5bm9zX2Ny
-dGMtPnBlbmRpbmdfZmxpcF9xdWV1ZSwKLQkJCQkoZXh5bm9zX2NydGMtPmV2ZW50ID09IE5VTEwp
-LCBIWi8yMCkpCi0JCQlleHlub3NfY3J0Yy0+ZXZlbnQgPSBOVUxMOwotCQlkcm1fY3J0Y192Ymxh
-bmtfb2ZmKGNydGMpOwotCX0KIAogCWlmIChleHlub3NfY3J0Yy0+b3BzLT5kcG1zKQotCQlleHlu
-b3NfY3J0Yy0+b3BzLT5kcG1zKGV4eW5vc19jcnRjLCBtb2RlKTsKKwkJZXh5bm9zX2NydGMtPm9w
-cy0+ZHBtcyhleHlub3NfY3J0YywgRFJNX01PREVfRFBNU19PTik7CiAKLQlleHlub3NfY3J0Yy0+
-ZHBtcyA9IG1vZGU7CisJZXh5bm9zX2NydGMtPmVuYWJsZWQgPSB0cnVlOwogCi0JaWYgKG1vZGUg
-PT0gRFJNX01PREVfRFBNU19PTikKLQkJZHJtX2NydGNfdmJsYW5rX29uKGNydGMpOworCWRybV9j
-cnRjX3ZibGFua19vbihjcnRjKTsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rp
-c2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQogeworCXN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7CiAJc3RydWN0IGRybV9wbGFuZSAq
-cGxhbmU7CiAJaW50IHJldDsKIAotCWV4eW5vc19kcm1fY3J0Y19kcG1zKGNydGMsIERSTV9NT0RF
-X0RQTVNfT0ZGKTsKKwlpZiAoIWV4eW5vc19jcnRjLT5lbmFibGVkKQorCQlyZXR1cm47CisKKwkv
-KiB3YWl0IGZvciB0aGUgY29tcGxldGlvbiBvZiBwYWdlIGZsaXAuICovCisJaWYgKCF3YWl0X2V2
-ZW50X3RpbWVvdXQoZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcF9xdWV1ZSwKKwkJCQkoZXh5bm9z
-X2NydGMtPmV2ZW50ID09IE5VTEwpLCBIWi8yMCkpCisJCWV4eW5vc19jcnRjLT5ldmVudCA9IE5V
-TEw7CisKKwlkcm1fY3J0Y192Ymxhbmtfb2ZmKGNydGMpOworCisJaWYgKGV4eW5vc19jcnRjLT5v
-cHMtPmRwbXMpCisJCWV4eW5vc19jcnRjLT5vcHMtPmRwbXMoZXh5bm9zX2NydGMsIERSTV9NT0RF
-X0RQTVNfT0ZGKTsKKworCWV4eW5vc19jcnRjLT5lbmFibGVkID0gZmFsc2U7CiAKIAlkcm1fZm9y
-X2VhY2hfbGVnYWN5X3BsYW5lKHBsYW5lLCAmY3J0Yy0+ZGV2LT5tb2RlX2NvbmZpZy5wbGFuZV9s
-aXN0KSB7CiAJCWlmIChwbGFuZS0+Y3J0YyAhPSBjcnRjKQpAQCAtNjcsMTcgKzY4LDYgQEAgc3Rh
-dGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQog
-CX0KIH0KIAotc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2NvbW1pdChzdHJ1Y3QgZHJtX2Ny
-dGMgKmNydGMpCi17Ci0Jc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19l
-eHlub3NfY3J0YyhjcnRjKTsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5l
-ID0gdG9fZXh5bm9zX3BsYW5lKGNydGMtPnByaW1hcnkpOwotCi0JZXh5bm9zX2RybV9jcnRjX2Rw
-bXMoY3J0YywgRFJNX01PREVfRFBNU19PTik7Ci0KLQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2lu
-X2NvbW1pdCkKLQkJZXh5bm9zX2NydGMtPm9wcy0+d2luX2NvbW1pdChleHlub3NfY3J0YywgZXh5
-bm9zX3BsYW5lLT56cG9zKTsKLX0KLQogc3RhdGljIGJvb2wKIGV4eW5vc19kcm1fY3J0Y19tb2Rl
-X2ZpeHVwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKIAkJCSAgICBjb25zdCBzdHJ1Y3QgZHJtX2Rp
-c3BsYXlfbW9kZSAqbW9kZSwKQEAgLTExNiw5ICsxMDYsOCBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
-Y3J0Y19hdG9taWNfZmx1c2goc3RydWN0IGRybV9jcnRjICpjcnRjKQogfQogCiBzdGF0aWMgc3Ry
-dWN0IGRybV9jcnRjX2hlbHBlcl9mdW5jcyBleHlub3NfY3J0Y19oZWxwZXJfZnVuY3MgPSB7Ci0J
-LmRwbXMJCT0gZXh5bm9zX2RybV9jcnRjX2RwbXMsCisJLmVuYWJsZQkJPSBleHlub3NfZHJtX2Ny
-dGNfZW5hYmxlLAogCS5kaXNhYmxlCT0gZXh5bm9zX2RybV9jcnRjX2Rpc2FibGUsCi0JLmNvbW1p
-dAkJPSBleHlub3NfZHJtX2NydGNfY29tbWl0LAogCS5tb2RlX2ZpeHVwCT0gZXh5bm9zX2RybV9j
-cnRjX21vZGVfZml4dXAsCiAJLm1vZGVfc2V0X25vZmIJPSBleHlub3NfZHJtX2NydGNfbW9kZV9z
-ZXRfbm9mYiwKIAkuYXRvbWljX2JlZ2luCT0gZXh5bm9zX2NydGNfYXRvbWljX2JlZ2luLApAQCAt
-MTYzLDcgKzE1Miw2IEBAIHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19kcm1fY3J0Y19j
-cmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAKIAlpbml0X3dhaXRxdWV1ZV9oZWFk
-KCZleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwX3F1ZXVlKTsKIAotCWV4eW5vc19jcnRjLT5kcG1z
-ID0gRFJNX01PREVfRFBNU19PRkY7CiAJZXh5bm9zX2NydGMtPnBpcGUgPSBwaXBlOwogCWV4eW5v
-c19jcnRjLT50eXBlID0gdHlwZTsKIAlleHlub3NfY3J0Yy0+b3BzID0gb3BzOwpAQCAtMTk0LDcg
-KzE4Miw3IEBAIGludCBleHlub3NfZHJtX2NydGNfZW5hYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2Rl
-dmljZSAqZGV2LCBpbnQgcGlwZSkKIAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0
-YyA9CiAJCXRvX2V4eW5vc19jcnRjKHByaXZhdGUtPmNydGNbcGlwZV0pOwogCi0JaWYgKGV4eW5v
-c19jcnRjLT5kcG1zICE9IERSTV9NT0RFX0RQTVNfT04pCisJaWYgKCFleHlub3NfY3J0Yy0+ZW5h
-YmxlZCkKIAkJcmV0dXJuIC1FUEVSTTsKIAogCWlmIChleHlub3NfY3J0Yy0+b3BzLT5lbmFibGVf
-dmJsYW5rKQpAQCAtMjA5LDcgKzE5Nyw3IEBAIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGVf
-dmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBwaXBlKQogCXN0cnVjdCBleHlub3Nf
-ZHJtX2NydGMgKmV4eW5vc19jcnRjID0KIAkJdG9fZXh5bm9zX2NydGMocHJpdmF0ZS0+Y3J0Y1tw
-aXBlXSk7CiAKLQlpZiAoZXh5bm9zX2NydGMtPmRwbXMgIT0gRFJNX01PREVfRFBNU19PTikKKwlp
-ZiAoIWV4eW5vc19jcnRjLT5lbmFibGVkKQogCQlyZXR1cm47CiAKIAlpZiAoZXh5bm9zX2NydGMt
-Pm9wcy0+ZGlzYWJsZV92YmxhbmspCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZHBpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBp
-LmMKaW5kZXggY2VkNWMyMy4uNmRjMzI4ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2RwaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kcGkuYwpAQCAtNjAsNyArNjAsNyBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHBpX2Nvbm5l
-Y3Rvcl9kZXN0cm95KHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCiB9CiAKIHN0YXRp
-YyBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBleHlub3NfZHBpX2Nvbm5lY3Rvcl9mdW5jcyA9
-IHsKLQkuZHBtcyA9IGRybV9oZWxwZXJfY29ubmVjdG9yX2RwbXMsCisJLmRwbXMgPSBkcm1fYXRv
-bWljX2hlbHBlcl9jb25uZWN0b3JfZHBtcywKIAkuZGV0ZWN0ID0gZXh5bm9zX2RwaV9kZXRlY3Qs
-CiAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9jb25uZWN0b3JfbW9kZXMs
-CiAJLmRlc3Ryb3kgPSBleHlub3NfZHBpX2Nvbm5lY3Rvcl9kZXN0cm95LApkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4IDI5ZTNmYjcuLjg2ZDY4OTQgMTAwNjQ0Ci0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTIwMSw3ICsyMDEsNyBAQCBzdHJ1
-Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB7CiAgKglkcm0gZnJhbWV3b3JrIGRvZXNuJ3Qgc3VwcG9y
-dCBtdWx0aXBsZSBpcnEgeWV0LgogICoJd2UgY2FuIHJlZmVyIHRvIHRoZSBjcnRjIHRvIGN1cnJl
-bnQgaGFyZHdhcmUgaW50ZXJydXB0IG9jY3VycmVkIHRocm91Z2gKICAqCXRoaXMgcGlwZSB2YWx1
-ZS4KLSAqIEBkcG1zOiBzdG9yZSB0aGUgY3J0YyBkcG1zIHZhbHVlCisgKiBAZW5hYmxlZDogaWYg
-dGhlIGNydGMgaXMgZW5hYmxlZCBvciBub3QKICAqIEBldmVudDogdmJsYW5rIGV2ZW50IHRoYXQg
-aXMgY3VycmVudGx5IHF1ZXVlZCBmb3IgZmxpcAogICogQG9wczogcG9pbnRlciB0byBjYWxsYmFj
-a3MgZm9yIGV4eW5vcyBkcm0gc3BlY2lmaWMgZnVuY3Rpb25hbGl0eQogICogQGN0eDogQSBwb2lu
-dGVyIHRvIHRoZSBjcnRjJ3MgaW1wbGVtZW50YXRpb24gc3BlY2lmaWMgY29udGV4dApAQCAtMjEw
-LDcgKzIxMCw3IEBAIHN0cnVjdCBleHlub3NfZHJtX2NydGMgewogCXN0cnVjdCBkcm1fY3J0YwkJ
-CWJhc2U7CiAJZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlCXR5cGU7CiAJdW5zaWduZWQgaW50
-CQkJcGlwZTsKLQl1bnNpZ25lZCBpbnQJCQlkcG1zOworCWJvb2wJCQkJZW5hYmxlZDsKIAl3YWl0
-X3F1ZXVlX2hlYWRfdAkJcGVuZGluZ19mbGlwX3F1ZXVlOwogCXN0cnVjdCBkcm1fcGVuZGluZ192
-YmxhbmtfZXZlbnQJKmV2ZW50OwogCWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzCSpv
-cHM7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKaW5kZXggZTRlN2Y3NC4u
-MTkwZjNiMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwpAQCAtMTQ1
-OCw3ICsxNDU4LDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9jb25uZWN0b3JfZGVzdHJveShz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQogfQogCiBzdGF0aWMgc3RydWN0IGRybV9j
-b25uZWN0b3JfZnVuY3MgZXh5bm9zX2RzaV9jb25uZWN0b3JfZnVuY3MgPSB7Ci0JLmRwbXMgPSBk
-cm1faGVscGVyX2Nvbm5lY3Rvcl9kcG1zLAorCS5kcG1zID0gZHJtX2F0b21pY19oZWxwZXJfY29u
-bmVjdG9yX2RwbXMsCiAJLmRldGVjdCA9IGV4eW5vc19kc2lfZGV0ZWN0LAogCS5maWxsX21vZGVz
-ID0gZHJtX2hlbHBlcl9wcm9iZV9zaW5nbGVfY29ubmVjdG9yX21vZGVzLAogCS5kZXN0cm95ID0g
-ZXh5bm9zX2RzaV9jb25uZWN0b3JfZGVzdHJveSwKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZW5jb2Rlci5jCmluZGV4IDkxNWRlMTMuLjA2NDhiYTQgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuYwpAQCAtMzIsMTcgKzMyLDYgQEAgc3Ry
-dWN0IGV4eW5vc19kcm1fZW5jb2RlciB7CiAJc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheQkqZGlz
-cGxheTsKIH07CiAKLXN0YXRpYyB2b2lkIGV4eW5vc19kcm1fZW5jb2Rlcl9kcG1zKHN0cnVjdCBk
-cm1fZW5jb2RlciAqZW5jb2RlciwgaW50IG1vZGUpCi17Ci0Jc3RydWN0IGV4eW5vc19kcm1fZW5j
-b2RlciAqZXh5bm9zX2VuY29kZXIgPSB0b19leHlub3NfZW5jb2RlcihlbmNvZGVyKTsKLQlzdHJ1
-Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5ID0gZXh5bm9zX2VuY29kZXItPmRpc3BsYXk7
-Ci0KLQlEUk1fREVCVUdfS01TKCJlbmNvZGVyIGRwbXM6ICVkXG4iLCBtb2RlKTsKLQotCWlmIChk
-aXNwbGF5LT5vcHMtPmRwbXMpCi0JCWRpc3BsYXktPm9wcy0+ZHBtcyhkaXNwbGF5LCBtb2RlKTsK
-LX0KLQogc3RhdGljIGJvb2wKIGV4eW5vc19kcm1fZW5jb2Rlcl9tb2RlX2ZpeHVwKHN0cnVjdCBk
-cm1fZW5jb2RlciAqZW5jb2RlciwKIAkJCSAgICAgICBjb25zdCBzdHJ1Y3QgZHJtX2Rpc3BsYXlf
-bW9kZSAqbW9kZSwKQEAgLTc2LDcgKzY1LDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9lbmNv
-ZGVyX21vZGVfc2V0KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlciwKIAkJZGlzcGxheS0+b3Bz
-LT5tb2RlX3NldChkaXNwbGF5LCBhZGp1c3RlZF9tb2RlKTsKIH0KIAotc3RhdGljIHZvaWQgZXh5
-bm9zX2RybV9lbmNvZGVyX2NvbW1pdChzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCitzdGF0
-aWMgdm9pZCBleHlub3NfZHJtX2VuY29kZXJfZW5hYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-b2RlcikKIHsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICpleHlub3NfZW5jb2RlciA9IHRv
-X2V4eW5vc19lbmNvZGVyKGVuY29kZXIpOwogCXN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRp
-c3BsYXkgPSBleHlub3NfZW5jb2Rlci0+ZGlzcGxheTsKQEAgLTkwLDEwICs3OSwxMyBAQCBzdGF0
-aWMgdm9pZCBleHlub3NfZHJtX2VuY29kZXJfY29tbWl0KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-b2RlcikKIAogc3RhdGljIHZvaWQgZXh5bm9zX2RybV9lbmNvZGVyX2Rpc2FibGUoc3RydWN0IGRy
-bV9lbmNvZGVyICplbmNvZGVyKQogeworCXN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmV4eW5v
-c19lbmNvZGVyID0gdG9fZXh5bm9zX2VuY29kZXIoZW5jb2Rlcik7CisJc3RydWN0IGV4eW5vc19k
-cm1fZGlzcGxheSAqZGlzcGxheSA9IGV4eW5vc19lbmNvZGVyLT5kaXNwbGF5OwogCXN0cnVjdCBk
-cm1fcGxhbmUgKnBsYW5lOwogCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBlbmNvZGVyLT5kZXY7
-CiAKLQlleHlub3NfZHJtX2VuY29kZXJfZHBtcyhlbmNvZGVyLCBEUk1fTU9ERV9EUE1TX09GRik7
-CisJaWYgKGRpc3BsYXktPm9wcy0+ZHBtcykKKwkJZGlzcGxheS0+b3BzLT5kcG1zKGRpc3BsYXks
-IERSTV9NT0RFX0RQTVNfT0ZGKTsKIAogCS8qIGFsbCBwbGFuZXMgY29ubmVjdGVkIHRvIHRoaXMg
-ZW5jb2RlciBzaG91bGQgYmUgYWxzbyBkaXNhYmxlZC4gKi8KIAlkcm1fZm9yX2VhY2hfbGVnYWN5
-X3BsYW5lKHBsYW5lLCAmZGV2LT5tb2RlX2NvbmZpZy5wbGFuZV9saXN0KSB7CkBAIC0xMDMsMTAg
-Kzk1LDkgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9lbmNvZGVyX2Rpc2FibGUoc3RydWN0IGRy
-bV9lbmNvZGVyICplbmNvZGVyKQogfQogCiBzdGF0aWMgc3RydWN0IGRybV9lbmNvZGVyX2hlbHBl
-cl9mdW5jcyBleHlub3NfZW5jb2Rlcl9oZWxwZXJfZnVuY3MgPSB7Ci0JLmRwbXMJCT0gZXh5bm9z
-X2RybV9lbmNvZGVyX2RwbXMsCiAJLm1vZGVfZml4dXAJPSBleHlub3NfZHJtX2VuY29kZXJfbW9k
-ZV9maXh1cCwKIAkubW9kZV9zZXQJPSBleHlub3NfZHJtX2VuY29kZXJfbW9kZV9zZXQsCi0JLmNv
-bW1pdAkJPSBleHlub3NfZHJtX2VuY29kZXJfY29tbWl0LAorCS5lbmFibGUJCT0gZXh5bm9zX2Ry
-bV9lbmNvZGVyX2VuYWJsZSwKIAkuZGlzYWJsZQk9IGV4eW5vc19kcm1fZW5jb2Rlcl9kaXNhYmxl
-LAogfTsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Zp
-ZGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggZmMz
-YTE0Yi4uNjNjMTUzNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5j
-CkBAIC0zODUsNyArMzg1LDcgQEAgc3RhdGljIHZvaWQgdmlkaV9jb25uZWN0b3JfZGVzdHJveShz
-dHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQogfQogCiBzdGF0aWMgc3RydWN0IGRybV9j
-b25uZWN0b3JfZnVuY3MgdmlkaV9jb25uZWN0b3JfZnVuY3MgPSB7Ci0JLmRwbXMgPSBkcm1faGVs
-cGVyX2Nvbm5lY3Rvcl9kcG1zLAorCS5kcG1zID0gZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9y
-X2RwbXMsCiAJLmZpbGxfbW9kZXMgPSBkcm1faGVscGVyX3Byb2JlX3NpbmdsZV9jb25uZWN0b3Jf
-bW9kZXMsCiAJLmRldGVjdCA9IHZpZGlfZGV0ZWN0LAogCS5kZXN0cm95ID0gdmlkaV9jb25uZWN0
-b3JfZGVzdHJveSwKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
-bWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRleCA0NzFlNDg2
-Li44YzNjMjdiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
-LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCkBAIC0xMDUxLDcg
-KzEwNTEsNyBAQCBzdGF0aWMgdm9pZCBoZG1pX2Nvbm5lY3Rvcl9kZXN0cm95KHN0cnVjdCBkcm1f
-Y29ubmVjdG9yICpjb25uZWN0b3IpCiB9CiAKIHN0YXRpYyBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9m
-dW5jcyBoZG1pX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKLQkuZHBtcyA9IGRybV9oZWxwZXJfY29ubmVj
-dG9yX2RwbXMsCisJLmRwbXMgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZHBtcywKIAku
-ZmlsbF9tb2RlcyA9IGRybV9oZWxwZXJfcHJvYmVfc2luZ2xlX2Nvbm5lY3Rvcl9tb2RlcywKIAku
-ZGV0ZWN0ID0gaGRtaV9kZXRlY3QsCiAJLmRlc3Ryb3kgPSBoZG1pX2Nvbm5lY3Rvcl9kZXN0cm95
-LApAQCAtMjEyNyw4ICsyMTI3LDggQEAgc3RhdGljIHZvaWQgaGRtaV9kcG1zKHN0cnVjdCBleHlu
-b3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksIGludCBtb2RlKQogCQkgKi8KIAkJaWYgKGNydGMpCiAJ
-CQlmdW5jcyA9IGNydGMtPmhlbHBlcl9wcml2YXRlOwotCQlpZiAoZnVuY3MgJiYgZnVuY3MtPmRw
-bXMpCi0JCQkoKmZ1bmNzLT5kcG1zKShjcnRjLCBtb2RlKTsKKwkJaWYgKGZ1bmNzICYmIGZ1bmNz
-LT5kaXNhYmxlKQorCQkJKCpmdW5jcy0+ZGlzYWJsZSkoY3J0Yyk7CiAKIAkJaGRtaV9wb3dlcm9m
-ZihoZGF0YSk7CiAJCWJyZWFrOwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+To follow more closely the new atomic API we split the dpms()
+helper into the enable() and disable() helper to get exactly the
+same semantics.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 87 ++++++------------------------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c   |  8 +--
+ drivers/gpu/drm/exynos/exynos_drm_drv.h    |  6 ++-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 69 +++++-------------------
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c   | 53 +++++++-----------
+ drivers/gpu/drm/exynos/exynos_mixer.c      | 26 +++------
+ 6 files changed, 62 insertions(+), 187 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index f29e4be..d659ba2 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -603,75 +603,39 @@ static void decon_init(struct decon_context *ctx)
+ 		writel(VIDCON1_VCLK_HOLD, ctx->regs + VIDCON1(0));
+ }
+ 
+-static int decon_poweron(struct decon_context *ctx)
++static void decon_enable(struct exynos_drm_crtc *crtc)
+ {
+-	int ret;
++	struct decon_context *ctx = crtc->ctx;
+ 
+ 	if (!ctx->suspended)
+-		return 0;
++		return;
+ 
+ 	ctx->suspended = false;
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+-	ret = clk_prepare_enable(ctx->pclk);
+-	if (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
+-		goto pclk_err;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->aclk);
+-	if (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
+-		goto aclk_err;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->eclk);
+-	if  (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
+-		goto eclk_err;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->vclk);
+-	if  (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
+-		goto vclk_err;
+-	}
++	clk_prepare_enable(ctx->pclk);
++	clk_prepare_enable(ctx->aclk);
++	clk_prepare_enable(ctx->eclk);
++	clk_prepare_enable(ctx->vclk);
+ 
+ 	decon_init(ctx);
+ 
+ 	/* if vblank was enabled status, enable it again. */
+-	if (test_and_clear_bit(0, &ctx->irq_flags)) {
+-		ret = decon_enable_vblank(ctx->crtc);
+-		if (ret) {
+-			DRM_ERROR("Failed to re-enable vblank [%d]\n", ret);
+-			goto err;
+-		}
+-	}
++	if (test_and_clear_bit(0, &ctx->irq_flags))
++		decon_enable_vblank(ctx->crtc);
+ 
+ 	decon_window_resume(ctx);
+ 
+ 	decon_apply(ctx);
+-
+-	return 0;
+-
+-err:
+-	clk_disable_unprepare(ctx->vclk);
+-vclk_err:
+-	clk_disable_unprepare(ctx->eclk);
+-eclk_err:
+-	clk_disable_unprepare(ctx->aclk);
+-aclk_err:
+-	clk_disable_unprepare(ctx->pclk);
+-pclk_err:
+-	ctx->suspended = true;
+-	return ret;
+ }
+ 
+-static int decon_poweroff(struct decon_context *ctx)
++static void decon_disable(struct exynos_drm_crtc *crtc)
+ {
++	struct decon_context *ctx = crtc->ctx;
++
+ 	if (ctx->suspended)
+-		return 0;
++		return;
+ 
+ 	/*
+ 	 * We need to make sure that all windows are disabled before we
+@@ -688,30 +652,11 @@ static int decon_poweroff(struct decon_context *ctx)
+ 	pm_runtime_put_sync(ctx->dev);
+ 
+ 	ctx->suspended = true;
+-	return 0;
+-}
+-
+-static void decon_dpms(struct exynos_drm_crtc *crtc, int mode)
+-{
+-	DRM_DEBUG_KMS("%s, %d\n", __FILE__, mode);
+-
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		decon_poweron(crtc->ctx);
+-		break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		decon_poweroff(crtc->ctx);
+-		break;
+-	default:
+-		DRM_DEBUG_KMS("unspecified mode %d\n", mode);
+-		break;
+-	}
+ }
+ 
+ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+-	.dpms = decon_dpms,
++	.enable = decon_enable,
++	.disable = decon_disable,
+ 	.mode_fixup = decon_mode_fixup,
+ 	.commit = decon_commit,
+ 	.enable_vblank = decon_enable_vblank,
+@@ -796,7 +741,7 @@ static void decon_unbind(struct device *dev, struct device *master,
+ {
+ 	struct decon_context *ctx = dev_get_drvdata(dev);
+ 
+-	decon_dpms(ctx->crtc, DRM_MODE_DPMS_OFF);
++	decon_disable(ctx->crtc);
+ 
+ 	if (ctx->display)
+ 		exynos_dpi_remove(ctx->display);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index b7c6d51..644b4b7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -29,8 +29,8 @@ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
+ 	if (exynos_crtc->enabled)
+ 		return;
+ 
+-	if (exynos_crtc->ops->dpms)
+-		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_ON);
++	if (exynos_crtc->ops->enable)
++		exynos_crtc->ops->enable(exynos_crtc);
+ 
+ 	exynos_crtc->enabled = true;
+ 
+@@ -51,8 +51,8 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ 
+ 	drm_crtc_vblank_off(crtc);
+ 
+-	if (exynos_crtc->ops->dpms)
+-		exynos_crtc->ops->dpms(exynos_crtc, DRM_MODE_DPMS_OFF);
++	if (exynos_crtc->ops->disable)
++		exynos_crtc->ops->disable(exynos_crtc);
+ 
+ 	exynos_crtc->enabled = false;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 86d6894..1c66f65 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -157,7 +157,8 @@ struct exynos_drm_display {
+ /*
+  * Exynos drm crtc ops
+  *
+- * @dpms: control device power.
++ * @enable: enable the device
++ * @disable: disable the device
+  * @mode_fixup: fix mode data before applying it
+  * @commit: set current hw specific display mode to hw.
+  * @enable_vblank: specific driver callback for enabling vblank interrupt.
+@@ -175,7 +176,8 @@ struct exynos_drm_display {
+  */
+ struct exynos_drm_crtc;
+ struct exynos_drm_crtc_ops {
+-	void (*dpms)(struct exynos_drm_crtc *crtc, int mode);
++	void (*enable)(struct exynos_drm_crtc *crtc);
++	void (*disable)(struct exynos_drm_crtc *crtc);
+ 	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
+ 				const struct drm_display_mode *mode,
+ 				struct drm_display_mode *adjusted_mode);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index b326b31..9661853 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -805,57 +805,35 @@ static void fimd_apply(struct fimd_context *ctx)
+ 	fimd_commit(ctx->crtc);
+ }
+ 
+-static int fimd_poweron(struct fimd_context *ctx)
++static void fimd_enable(struct exynos_drm_crtc *crtc)
+ {
+-	int ret;
++	struct fimd_context *ctx = crtc->ctx;
+ 
+ 	if (!ctx->suspended)
+-		return 0;
++		return;
+ 
+ 	ctx->suspended = false;
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+-	ret = clk_prepare_enable(ctx->bus_clk);
+-	if (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the bus clk [%d]\n", ret);
+-		goto bus_clk_err;
+-	}
+-
+-	ret = clk_prepare_enable(ctx->lcd_clk);
+-	if  (ret < 0) {
+-		DRM_ERROR("Failed to prepare_enable the lcd clk [%d]\n", ret);
+-		goto lcd_clk_err;
+-	}
++	clk_prepare_enable(ctx->bus_clk);
++	clk_prepare_enable(ctx->lcd_clk);
+ 
+ 	/* if vblank was enabled status, enable it again. */
+-	if (test_and_clear_bit(0, &ctx->irq_flags)) {
+-		ret = fimd_enable_vblank(ctx->crtc);
+-		if (ret) {
+-			DRM_ERROR("Failed to re-enable vblank [%d]\n", ret);
+-			goto enable_vblank_err;
+-		}
+-	}
++	if (test_and_clear_bit(0, &ctx->irq_flags))
++		fimd_enable_vblank(ctx->crtc);
+ 
+ 	fimd_window_resume(ctx);
+ 
+ 	fimd_apply(ctx);
+-
+-	return 0;
+-
+-enable_vblank_err:
+-	clk_disable_unprepare(ctx->lcd_clk);
+-lcd_clk_err:
+-	clk_disable_unprepare(ctx->bus_clk);
+-bus_clk_err:
+-	ctx->suspended = true;
+-	return ret;
+ }
+ 
+-static int fimd_poweroff(struct fimd_context *ctx)
++static void fimd_disable(struct exynos_drm_crtc *crtc)
+ {
++	struct fimd_context *ctx = crtc->ctx;
++
+ 	if (ctx->suspended)
+-		return 0;
++		return;
+ 
+ 	/*
+ 	 * We need to make sure that all windows are disabled before we
+@@ -870,26 +848,6 @@ static int fimd_poweroff(struct fimd_context *ctx)
+ 	pm_runtime_put_sync(ctx->dev);
+ 
+ 	ctx->suspended = true;
+-	return 0;
+-}
+-
+-static void fimd_dpms(struct exynos_drm_crtc *crtc, int mode)
+-{
+-	DRM_DEBUG_KMS("%s, %d\n", __FILE__, mode);
+-
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		fimd_poweron(crtc->ctx);
+-		break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		fimd_poweroff(crtc->ctx);
+-		break;
+-	default:
+-		DRM_DEBUG_KMS("unspecified mode %d\n", mode);
+-		break;
+-	}
+ }
+ 
+ static void fimd_trigger(struct device *dev)
+@@ -964,7 +922,8 @@ static void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable)
+ }
+ 
+ static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
+-	.dpms = fimd_dpms,
++	.enable = fimd_enable,
++	.disable = fimd_disable,
+ 	.mode_fixup = fimd_mode_fixup,
+ 	.commit = fimd_commit,
+ 	.enable_vblank = fimd_enable_vblank,
+@@ -1051,7 +1010,7 @@ static void fimd_unbind(struct device *dev, struct device *master,
+ {
+ 	struct fimd_context *ctx = dev_get_drvdata(dev);
+ 
+-	fimd_dpms(ctx->crtc, DRM_MODE_DPMS_OFF);
++	fimd_disable(ctx->crtc);
+ 
+ 	fimd_iommu_detach_devices(ctx);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 63c1536..abe4ee0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -153,56 +153,38 @@ static void vidi_win_disable(struct exynos_drm_crtc *crtc, unsigned int win)
+ 	/* TODO. */
+ }
+ 
+-static int vidi_power_on(struct vidi_context *ctx, bool enable)
++static void vidi_enable(struct exynos_drm_crtc *crtc)
+ {
++	struct vidi_context *ctx = crtc->ctx;
+ 	struct exynos_drm_plane *plane;
+ 	int i;
+ 
+-	DRM_DEBUG_KMS("%s\n", __FILE__);
+-
+-	if (enable != false && enable != true)
+-		return -EINVAL;
++	mutex_lock(&ctx->lock);
+ 
+-	if (enable) {
+-		ctx->suspended = false;
++	ctx->suspended = false;
+ 
+-		/* if vblank was enabled status, enable it again. */
+-		if (test_and_clear_bit(0, &ctx->irq_flags))
+-			vidi_enable_vblank(ctx->crtc);
++	/* if vblank was enabled status, enable it again. */
++	if (test_and_clear_bit(0, &ctx->irq_flags))
++		vidi_enable_vblank(ctx->crtc);
+ 
+-		for (i = 0; i < WINDOWS_NR; i++) {
+-			plane = &ctx->planes[i];
+-			if (plane->enabled)
+-				vidi_win_commit(ctx->crtc, i);
+-		}
+-	} else {
+-		ctx->suspended = true;
++	for (i = 0; i < WINDOWS_NR; i++) {
++		plane = &ctx->planes[i];
++		if (plane->enabled)
++			vidi_win_commit(ctx->crtc, i);
+ 	}
+ 
+-	return 0;
++	mutex_unlock(&ctx->lock);
+ }
+ 
+-static void vidi_dpms(struct exynos_drm_crtc *crtc, int mode)
++static void vidi_disable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct vidi_context *ctx = crtc->ctx;
+-
+-	DRM_DEBUG_KMS("%d\n", mode);
++	struct exynos_drm_plane *plane;
++	int i;
+ 
+ 	mutex_lock(&ctx->lock);
+ 
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		vidi_power_on(ctx, true);
+-		break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		vidi_power_on(ctx, false);
+-		break;
+-	default:
+-		DRM_DEBUG_KMS("unspecified mode %d\n", mode);
+-		break;
+-	}
++	ctx->suspended = true;
+ 
+ 	mutex_unlock(&ctx->lock);
+ }
+@@ -219,7 +201,8 @@ static int vidi_ctx_initialize(struct vidi_context *ctx,
+ }
+ 
+ static const struct exynos_drm_crtc_ops vidi_crtc_ops = {
+-	.dpms = vidi_dpms,
++	.enable = vidi_enable,
++	.disable = vidi_disable,
+ 	.enable_vblank = vidi_enable_vblank,
+ 	.disable_vblank = vidi_disable_vblank,
+ 	.win_commit = vidi_win_commit,
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 8874c1f..6bab717 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1027,8 +1027,9 @@ static void mixer_window_resume(struct mixer_context *ctx)
+ 	}
+ }
+ 
+-static void mixer_poweron(struct mixer_context *ctx)
++static void mixer_enable(struct exynos_drm_crtc *crtc)
+ {
++	struct mixer_context *ctx = crtc->ctx;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 
+ 	mutex_lock(&ctx->mixer_mutex);
+@@ -1061,8 +1062,9 @@ static void mixer_poweron(struct mixer_context *ctx)
+ 	mixer_window_resume(ctx);
+ }
+ 
+-static void mixer_poweroff(struct mixer_context *ctx)
++static void mixer_disable(struct exynos_drm_crtc *crtc)
+ {
++	struct mixer_context *ctx = crtc->ctx;
+ 	struct mixer_resources *res = &ctx->mixer_res;
+ 
+ 	mutex_lock(&ctx->mixer_mutex);
+@@ -1093,23 +1095,6 @@ static void mixer_poweroff(struct mixer_context *ctx)
+ 	pm_runtime_put_sync(ctx->dev);
+ }
+ 
+-static void mixer_dpms(struct exynos_drm_crtc *crtc, int mode)
+-{
+-	switch (mode) {
+-	case DRM_MODE_DPMS_ON:
+-		mixer_poweron(crtc->ctx);
+-		break;
+-	case DRM_MODE_DPMS_STANDBY:
+-	case DRM_MODE_DPMS_SUSPEND:
+-	case DRM_MODE_DPMS_OFF:
+-		mixer_poweroff(crtc->ctx);
+-		break;
+-	default:
+-		DRM_DEBUG_KMS("unknown dpms mode: %d\n", mode);
+-		break;
+-	}
+-}
+-
+ /* Only valid for Mixer version 16.0.33.0 */
+ int mixer_check_mode(struct drm_display_mode *mode)
+ {
+@@ -1131,7 +1116,8 @@ int mixer_check_mode(struct drm_display_mode *mode)
+ }
+ 
+ static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
+-	.dpms			= mixer_dpms,
++	.enable			= mixer_enable,
++	.disable		= mixer_disable,
+ 	.enable_vblank		= mixer_enable_vblank,
+ 	.disable_vblank		= mixer_disable_vblank,
+ 	.wait_for_vblank	= mixer_wait_for_vblank,
+-- 
+2.1.0
