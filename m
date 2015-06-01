@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v10 07/17] drm/exynos: atomic phase 2: keep track of framebuffer pointer
-Date: Mon,  1 Jun 2015 12:04:45 -0300
-Message-ID: <1433171095-23773-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v10 10/17] drm/exynos: atomic phase 3: convert page flips
+Date: Mon,  1 Jun 2015 12:04:48 -0300
+Message-ID: <1433171095-23773-11-git-send-email-gustavo@padovan.org>
 References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f45.google.com ([209.85.216.45]:33618 "EHLO
-	mail-vn0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752860AbbFAPFV (ORCPT
+Received: from mail-vn0-f48.google.com ([209.85.216.48]:40685 "EHLO
+	mail-vn0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753099AbbFAPF3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jun 2015 11:05:21 -0400
-Received: by vnbf190 with SMTP id f190so16439823vnb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 08:05:21 -0700 (PDT)
+	Mon, 1 Jun 2015 11:05:29 -0400
+Received: by vnbf62 with SMTP id f62so16475630vnb.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 08:05:28 -0700 (PDT)
 In-Reply-To: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,29 +19,148 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.c
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Use drm_atomic_set_fb_for_plane() in the legacy page_flip path to keep
-track of the framebuffer pointer and reference.
+PageFlips now use the atomic helper to work through the atomic modesetting
+API. Async page flips are not supported yet.
+
+v2: Add .atomic_begin() step to handle the vblank part we removed from
+exynos page_flip code.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 Tested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 79 +++++++-------------------------
+ drivers/gpu/drm/exynos/exynos_drm_fb.c   |  9 +++-
+ 2 files changed, 25 insertions(+), 63 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 73ccfa7..f782d1f 100644
+index dd1ee7f..a137799 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -168,6 +168,9 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 			    crtc_w, crtc_h, crtc->x << 16, crtc->y << 16,
- 			    crtc_w << 16, crtc_h << 16);
+@@ -101,75 +101,30 @@ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ 	}
+ }
  
-+	if (crtc->primary->state)
-+		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
++static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
++{
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
 +
- 	return 0;
++	if (crtc->state->event) {
++		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
++		exynos_crtc->event = crtc->state->event;
++	}
++}
++
++static void exynos_crtc_atomic_flush(struct drm_crtc *crtc)
++{
++}
++
+ static struct drm_crtc_helper_funcs exynos_crtc_helper_funcs = {
+ 	.dpms		= exynos_drm_crtc_dpms,
+ 	.commit		= exynos_drm_crtc_commit,
+ 	.mode_fixup	= exynos_drm_crtc_mode_fixup,
+ 	.mode_set_nofb	= exynos_drm_crtc_mode_set_nofb,
+ 	.disable	= exynos_drm_crtc_disable,
++	.atomic_begin	= exynos_crtc_atomic_begin,
++	.atomic_flush	= exynos_crtc_atomic_flush,
+ };
  
- out:
+-static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+-				     struct drm_framebuffer *fb,
+-				     struct drm_pending_vblank_event *event,
+-				     uint32_t page_flip_flags)
+-{
+-	struct drm_device *dev = crtc->dev;
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	unsigned int crtc_w, crtc_h;
+-	int ret;
+-
+-	/* when the page flip is requested, crtc's dpms should be on */
+-	if (exynos_crtc->dpms > DRM_MODE_DPMS_ON) {
+-		DRM_ERROR("failed page flip request.\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!event)
+-		return -EINVAL;
+-
+-	spin_lock_irq(&dev->event_lock);
+-	if (exynos_crtc->event) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
+-
+-	ret = exynos_check_plane(crtc->primary, fb);
+-	if (ret)
+-		goto out;
+-
+-	ret = drm_vblank_get(dev, exynos_crtc->pipe);
+-	if (ret) {
+-		DRM_DEBUG("failed to acquire vblank counter\n");
+-		goto out;
+-	}
+-
+-	exynos_crtc->event = event;
+-	spin_unlock_irq(&dev->event_lock);
+-
+-	/*
+-	 * the pipe from user always is 0 so we can set pipe number
+-	 * of current owner to event.
+-	 */
+-	event->pipe = exynos_crtc->pipe;
+-
+-	crtc->primary->fb = fb;
+-	crtc_w = fb->width - crtc->x;
+-	crtc_h = fb->height - crtc->y;
+-	exynos_update_plane(crtc->primary, crtc, fb, 0, 0,
+-			    crtc_w, crtc_h, crtc->x << 16, crtc->y << 16,
+-			    crtc_w << 16, crtc_h << 16);
+-
+-	if (crtc->primary->state)
+-		drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
+-
+-	return 0;
+-
+-out:
+-	spin_unlock_irq(&dev->event_lock);
+-	return ret;
+-}
+-
+ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+@@ -183,7 +138,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+ 
+ static struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_atomic_helper_set_config,
+-	.page_flip	= exynos_drm_crtc_page_flip,
++	.page_flip	= drm_atomic_helper_page_flip,
+ 	.destroy	= exynos_drm_crtc_destroy,
+ 	.reset = drm_atomic_helper_crtc_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+index 19c0642..05d229c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
+@@ -266,11 +266,18 @@ static void exynos_drm_output_poll_changed(struct drm_device *dev)
+ 		exynos_drm_fbdev_init(dev);
+ }
+ 
++static int exynos_atomic_commit(struct drm_device *dev,
++				struct drm_atomic_state *state,
++				bool async)
++{
++	return drm_atomic_helper_commit(dev, state, false);
++}
++
+ static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs = {
+ 	.fb_create = exynos_user_fb_create,
+ 	.output_poll_changed = exynos_drm_output_poll_changed,
+ 	.atomic_check = drm_atomic_helper_check,
+-	.atomic_commit = drm_atomic_helper_commit,
++	.atomic_commit = exynos_atomic_commit,
+ };
+ 
+ void exynos_drm_mode_config_init(struct drm_device *dev)
 -- 
 2.1.0
