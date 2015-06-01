@@ -1,52 +1,94 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/6] Exynos SYSMMU (IOMMU) dts and arch updates
-Date: Mon, 01 Jun 2015 20:34:26 +0900
-Message-ID: <556C4342.6060506@samsung.com>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com> <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
+From: Chanho Park <parkch98@gmail.com>
+Subject: Re: [PATCHv2] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+Date: Mon, 1 Jun 2015 21:18:08 +0900
+Message-ID: <CAPTzV16p1wdjiQoSBc5RA1S2jvLH4of2jyT=KsZP7SbidtuFHg@mail.gmail.com>
+References: <1433082867-32359-1-git-send-email-chanho61.park@samsung.com>
+	<556BA64E.9070404@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:33313 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507AbbFALec (ORCPT
+Received: from mail-yk0-f175.google.com ([209.85.160.175]:34742 "EHLO
+	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751357AbbFAMSJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jun 2015 07:34:32 -0400
-Received: by pdbqa5 with SMTP id qa5so105779402pdb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 04:34:32 -0700 (PDT)
-In-Reply-To: <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
+	Mon, 1 Jun 2015 08:18:09 -0400
+Received: by ykfl8 with SMTP id l8so42980656ykf.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 05:18:08 -0700 (PDT)
+In-Reply-To: <556BA64E.9070404@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: kgene@kernel.org, jy0922.shim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, khilman@linaro.org, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Chanho Park <chanho61.park@samsung.com>
 
-W dniu 01.06.2015 o 19:10, Marek Szyprowski pisze:
-> Hello,
-> 
-> Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
-> for merging - see
-> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
-> In meantime there have been quite a lot of changes related to Exynos DTS
-> files queued for merging and my patches don't apply anymore. To ease
-> merge process I've decided to rebased all Exynos SYSMMU dts changes onto
-> latest exynos next tree from: https://github.com/krzk/linux dt-for-next
-> 
-> While rebasing I've fixes a few spotted issues: some nodes still used
-> old 'samsung,power-domain' properties (now replaced with 'power-domains')
-> and added properties to jpeg codec merged recently.
-> 
+Hi,
 
-Thanks for rebasing this stuff.
+On Mon, Jun 1, 2015 at 9:24 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 31.05.2015 23:34, Chanho Park wrote:
+>> The odroid-xu3 board which is based on exynos5422 not exynos5800 is
+>> booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
+>> is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
+>> cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
+>> and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
+>> cpu4-7 are cortex-a15.
+>>
+>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>> ---
+>> Changes from v1:
+>>  - rename exynos5422.dtsi to exynos5422-cpus.dtsi
+>>  - include the dtsi file top of the exynos5422-odroidxu3.dts
+>>
+>>  arch/arm/boot/dts/exynos5422-cpus.dtsi     | 88 ++++++++++++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts |  4 +-
+>>  2 files changed, 91 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/arm/boot/dts/exynos5422-cpus.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+>> new file mode 100644
+>> index 0000000..d39db49
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+>> @@ -0,0 +1,88 @@
+>> +/*
+>> + * SAMSUNG EXYNOS5422 SoC cpu device tree source
+>> + *
+>> + * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+>> + *           http://www.samsung.com
+>> + *
+>> + * The only difference between EXYNOS5422 and EXYNOS5800 is cpu ordering. The
+>> + * EXYNOS5422 is booting from Cortex-A7 core while the EXYNOS5800 is booting
+>> + * from Cortex-A15 core.
+>> + *
+>> + * EXYNOS5422 based board files can include this file to provide cpu ordering
+>> + * which could boot a cortex-a7 from cpu0.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include "exynos5420.dtsi"
+>> +
+>> +/ {
+>> +     compatible = "samsung,exynos5800", "samsung,exynos5422",
+>> +                  "samsung,exynos5";
+>> +};
+>
+> Drop the include and compatible.
+>
+> The goal of the file is to override only cpus, not to introduce whole
+> Exynos5420 node tree.
+>
+> The exynos5420.dtsi is already included by board file through
+> exynos5800.dtsi.
 
-I picked whole patchset with Javier's tested-by. I'll send it to Kukjin
-later or directly to arm-soc (depending what will happen with last pull
-request).
+Actually, I concerned when someone want to change cpu nodes of the
+exynos5420.dtsi file, he need to take care of the exynos5422-cpu.dtsi.
+Yes. it's just override values. I'll drop the inclusion and
+compatibles.
 
-Kukjin, you mentioned that you will do something with this patchset the
-previous weekend. Since then nothing happened so I am not sure what are
-your plans... Can you share them? Do you want to pick it by yourself, do
-you have any comments or maybe you need something from our side? (I
-checked the patches and they look fine)
+Thanks.
 
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Chanho Park
