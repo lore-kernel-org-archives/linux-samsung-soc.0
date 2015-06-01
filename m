@@ -1,57 +1,47 @@
-From: Ben Gamari <ben@smart-cactus.org>
-Subject: Exynos 5410 support (was [PATCH 6/6] ARM: dts: exynos5420: add sysmmu
- nodes)
-Date: Mon, 01 Jun 2015 15:12:24 -0400
-Message-ID: <556CAE98.1080906@smart-cactus.org>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
- <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
- <1433153450-3680-7-git-send-email-m.szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] drm/exynos/ipp: Replace struct timeval usage
+Date: Mon, 01 Jun 2015 21:26:35 +0200
+Message-ID: <1520355.0EVvn96T68@wuerfel>
+References: <20150601033859.GA3254@tinar>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1433153450-3680-7-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.130]:52927 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751425AbbFAT0l (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Jun 2015 15:26:41 -0400
+In-Reply-To: <20150601033859.GA3254@tinar>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tina Ruchandani <ruchandani.tina@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, y2038@lists.linaro.org
 
-On 06/01/2015 06:10 AM, Marek Szyprowski wrote:
-> This patch adds System MMU nodes to all defined devices that are specific
-> to Exynos5420/5800/5422 series.
+On Monday 01 June 2015 09:09:00 Tina Ruchandani wrote:
+> @@ -1518,10 +1519,11 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
+>         e = list_first_entry(&c_node->event_list,
+>                 struct drm_exynos_ipp_send_event, base.link);
+>  
+> -       do_gettimeofday(&now);
+> -       DRM_DEBUG_KMS("tv_sec[%ld]tv_usec[%ld]\n", now.tv_sec, now.tv_usec);
+> +       getnstimeofday64(&now);
+> +       DRM_DEBUG_KMS("tv_sec[%lld]tv_usec[%lld]\n", now.tv_sec, (now.tv_nsec /
+> +                                                               NSEC_PER_SEC));
+>         e->event.tv_sec = now.tv_sec;
+> -       e->event.tv_usec = now.tv_usec;
+> +       e->event.tv_usec = now.tv_nsec / NSEC_PER_SEC;
+>         e->event.prop_id = property->prop_id;
+>  
 
-Apologies in advance if Thunderbird mangles this message; my usual mail 
-configuration has suffered an unfortunate run-in with a mug of tea.
+Unfortunately, this has two important bugs:
 
-As someone who has devoted a few weekends trying to make the mainline 
-kernel usable on an Odroid XU2, I can't help but notice that nearly 
-every patchset that has hit this list recently excludes the Exynos 541x 
-devices, including series which appear to go out of their way to support 
-older devices. I would attribute this to the lack of publicly accessible 
-documentation, but many of these patches are coming from Samsung 
-employees.  Worse, the few patches that have been submitted for the 5410 
-have languished in queue-purgatory. What is going on with support for 
-this silicon?
+* e->event.tv_sec is defined as a '__u32' variable and is used in a public
+  user space API, so the code is just as broken afterwards as it was before.
+  Fixing this will require adding new ioctl commands.
 
-These devices really aren't that old but if Samsung insists that they 
-aren't worth putting engineering time towards then perhaps they could at 
-least release documentation? The Hardkernel folks are on the record[2] 
-as saying there was a document under review. Perhaps this document could 
-be quickly trimmed into a disclosable state? Even a quick-and-dirty 
-documentation release would help my efforts substantially.
+* You have a typo above: I assume you mean NSEC_PER_USEC instead of
+  NSEC_PER_SEC, the current code will always assign tv_usec to zero,
+  because now.tv_nsec is by definition smaller than NSEC_PER_SEC.
 
-Cheers,
-
-- Ben
-
-
-[1] https://github.com/bgamari/linux/commits/odroid-3.19
-[2] http://forum.odroid.com/viewtopic.php?f=65&t=1932#p20457
+	Arnd
