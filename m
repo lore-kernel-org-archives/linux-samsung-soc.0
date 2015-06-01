@@ -1,277 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 6/6] ARM: dts: exynos5420: add sysmmu nodes
-Date: Mon, 01 Jun 2015 12:10:50 +0200
-Message-ID: <1433153450-3680-7-git-send-email-m.szyprowski@samsung.com>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
- <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17060 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752589AbbFAKL3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jun 2015 06:11:29 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NP900I57GB25F20@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 01 Jun 2015 11:11:27 +0100 (BST)
-In-reply-to: <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/3] Exynos SYSMMU (IOMMU) updates for Exynos DRM
+Date: Mon, 01 Jun 2015 13:15:13 +0200
+Message-ID: <1433157316-6341-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-This patch adds System MMU nodes to all defined devices that are specific
-to Exynos5420/5800/5422 series.
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 183 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 183 insertions(+)
+Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
+for merging - see
+https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index d0be412dfbea..534f27ceb10b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -179,6 +179,8 @@
- 		clocks = <&clock CLK_MFC>;
- 		clock-names = "mfc";
- 		power-domains = <&mfc_pd>;
-+		iommus = <&sysmmu_mfc_l>, <&sysmmu_mfc_r>;
-+		iommu-names = "left", "right";
- 	};
- 
- 	mmc_0: mmc@12200000 {
-@@ -713,6 +715,7 @@
- 			 <&clock CLK_SCLK_HDMI>;
- 		clock-names = "mixer", "hdmi", "sclk_hdmi";
- 		power-domains = <&disp_pd>;
-+		iommus = <&sysmmu_tv>;
- 	};
- 
- 	gsc_0: video-scaler@13e00000 {
-@@ -722,6 +725,7 @@
- 		clocks = <&clock CLK_GSCL0>;
- 		clock-names = "gscl";
- 		power-domains = <&gsc_pd>;
-+		iommus = <&sysmmu_gscl0>;
- 	};
- 
- 	gsc_1: video-scaler@13e10000 {
-@@ -731,6 +735,7 @@
- 		clocks = <&clock CLK_GSCL1>;
- 		clock-names = "gscl";
- 		power-domains = <&gsc_pd>;
-+		iommus = <&sysmmu_gscl1>;
- 	};
- 
- 	jpeg_0: jpeg@11F50000 {
-@@ -739,6 +744,7 @@
- 		interrupts = <0 89 0>;
- 		clock-names = "jpeg";
- 		clocks = <&clock CLK_JPEG>;
-+		iommus = <&sysmmu_jpeg0>;
- 	};
- 
- 	jpeg_1: jpeg@11F60000 {
-@@ -747,6 +753,7 @@
- 		interrupts = <0 168 0>;
- 		clock-names = "jpeg";
- 		clocks = <&clock CLK_JPEG2>;
-+		iommus = <&sysmmu_jpeg1>;
- 	};
- 
- 	pmu_system_controller: system-controller@10040000 {
-@@ -941,6 +948,180 @@
- 		samsung,sysreg-phandle = <&sysreg_system_controller>;
- 		samsung,pmureg-phandle = <&pmu_system_controller>;
- 	};
-+
-+	sysmmu_g2dr: sysmmu@0x10A60000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x10A60000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <24 5>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_G2D>, <&clock CLK_G2D>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_g2dw: sysmmu@0x10A70000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x10A70000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <22 2>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_G2D>, <&clock CLK_G2D>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_tv: sysmmu@0x14650000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x14650000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <7 4>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MIXER>, <&clock CLK_MIXER>;
-+		power-domains = <&disp_pd>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_gscl0: sysmmu@0x13E80000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x13E80000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 0>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_GSCL0>, <&clock CLK_GSCL0>;
-+		power-domains = <&gsc_pd>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_gscl1: sysmmu@0x13E90000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x13E90000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 2>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_GSCL1>, <&clock CLK_GSCL1>;
-+		power-domains = <&gsc_pd>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_scaler0r: sysmmu@0x12880000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x12880000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <22 4>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MSCL0>, <&clock CLK_MSCL0>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_scaler1r: sysmmu@0x12890000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x12890000 0x1000>;
-+		interrupts = <0 186 0>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MSCL1>, <&clock CLK_MSCL1>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_scaler2r: sysmmu@0x128A0000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x128A0000 0x1000>;
-+		interrupts = <0 188 0>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MSCL2>, <&clock CLK_MSCL2>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_scaler0w: sysmmu@0x128C0000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x128C0000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <27 2>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MSCL0>, <&clock CLK_MSCL0>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_scaler1w: sysmmu@0x128D0000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x128D0000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <22 6>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MSCL1>, <&clock CLK_MSCL1>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_scaler2w: sysmmu@0x128E0000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x128E0000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <19 6>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MSCL2>, <&clock CLK_MSCL2>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_jpeg0: sysmmu@0x11F10000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x11F10000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 2>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_JPEG>, <&clock CLK_JPEG>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_jpeg1: sysmmu@0x11F20000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x11F20000 0x1000>;
-+		interrupts = <0 169 0>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_JPEG2>, <&clock CLK_JPEG2>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_mfc_l: sysmmu@0x11200000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x11200000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <6 2>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MFCL>, <&clock CLK_MFC>;
-+		power-domains = <&mfc_pd>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_mfc_r: sysmmu@0x11210000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x11210000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <8 5>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_MFCR>, <&clock CLK_MFC>;
-+		power-domains = <&mfc_pd>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_fimd1_0: sysmmu@0x14640000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x14640000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <3 2>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_FIMD1M0>, <&clock CLK_FIMD1>;
-+		power-domains = <&disp_pd>;
-+		#iommu-cells = <0>;
-+	};
-+
-+	sysmmu_fimd1_1: sysmmu@0x14680000 {
-+		compatible = "samsung,exynos-sysmmu";
-+		reg = <0x14680000 0x1000>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <3 0>;
-+		clock-names = "sysmmu", "master";
-+		clocks = <&clock CLK_SMMU_FIMD1M0>, <&clock CLK_FIMD1>;
-+		power-domains = <&disp_pd>;
-+		#iommu-cells = <0>;
-+	};
- };
- 
- &dp {
-@@ -955,6 +1136,8 @@
- 	clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
- 	clock-names = "sclk_fimd", "fimd";
- 	power-domains = <&disp_pd>;
-+	iommus = <&sysmmu_fimd1_0>, <&sysmmu_fimd1_1>;
-+	iommu-names = "m0", "m1";
- };
- 
- &rtc {
+To let Exynos IOMMU driver work correctly, some fixes are also needed in
+Exynos DRM driver. To ease merge process I've decided to rebased Exynos
+DRM changes onto latest exynos-drm-next tree from:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+exynos-drm-next
+
+I've also added one more patch fixing issue, which can be observed when
+upcoming IOMMU probe deferal patches has been applied. To hide
+dma-mapping internals from Exynos DRM driver, a direct check for NULL
+has been replaced by more error-proof comparison of dma_get_ops()
+values.
+
+Inki: could you queue those patches to exynos-drm-next and get them
+merged to v4.2 to have it functional for the release?
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Marek Szyprowski (3):
+  drm/exynos: fimd: ensure proper hw state in fimd_clear_channel()
+  drm/exynos: iommu: detach from default dma-mapping domain on init
+  drm/exynos: iommu: improve a check for non-iommu dma_ops
+
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 26 +++++++++++++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_iommu.c |  7 +++++--
+ 2 files changed, 22 insertions(+), 11 deletions(-)
+
 -- 
 1.9.2
