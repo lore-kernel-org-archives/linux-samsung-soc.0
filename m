@@ -1,54 +1,54 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: Exynos 5410 support (was [PATCH 6/6] ARM: dts: exynos5420: add
- sysmmu nodes)
-Date: Tue, 2 Jun 2015 08:51:11 +0900
-Message-ID: <CAJKOXPf1FA7exH=Qj-dKjuH0heYXVy0tUK-ZwayC40b_0eLb6w@mail.gmail.com>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
-	<1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
-	<1433153450-3680-7-git-send-email-m.szyprowski@samsung.com>
-	<556CAE98.1080906@smart-cactus.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv3] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+Date: Tue, 02 Jun 2015 08:55:17 +0900
+Message-ID: <556CF0E5.5060808@samsung.com>
+References: <1433161459-10901-1-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f41.google.com ([209.85.216.41]:44595 "EHLO
-	mail-vn0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753528AbbFAXvN (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:43427 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753976AbbFAXzX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jun 2015 19:51:13 -0400
-Received: by vnbg129 with SMTP id g129so18418831vnb.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2015 16:51:12 -0700 (PDT)
-In-Reply-To: <556CAE98.1080906@smart-cactus.org>
+	Mon, 1 Jun 2015 19:55:23 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NPA009AYIG94Y10@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Jun 2015 00:55:21 +0100 (BST)
+In-reply-to: <1433161459-10901-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Gamari <ben@smart-cactus.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+To: Chanho Park <parkch98@gmail.com>, kgene@kernel.org
+Cc: jy0922.shim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, javier.martinez@collabora.co.uk, khilman@linaro.org, sjoerd.simons@collabora.co.uk, heesub.shin@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Chanho Park <chanho61.park@samsung.com>
 
-2015-06-02 4:12 GMT+09:00 Ben Gamari <ben@smart-cactus.org>:
-> On 06/01/2015 06:10 AM, Marek Szyprowski wrote:
->>
->> This patch adds System MMU nodes to all defined devices that are specific
->> to Exynos5420/5800/5422 series.
->
->
+On 01.06.2015 21:24, Chanho Park wrote:
+> The odroid-xu3 board which is based on exynos5422 not exynos5800 is
+> booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
+> is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
+> cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
+> and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
+> cpu4-7 are cortex-a15.
+> 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+> Change from v2:
+>  - drop inclusion of exynos5420.dtsi from exynos5422-cpus.dtsi
+>  - drop compatibles from exynos5422-cpus.dtsi
+> 
+> Changes from v1:
+>  - rename exynos5422.dtsi to exynos5422-cpus.dtsi
+>  - include the dtsi file top of the exynos5422-odroidxu3.dts
+> 
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi     | 81 ++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts |  4 +-
+>  2 files changed, 84 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/exynos5422-cpus.dtsi
 
-(...)
 
-> Worse, the few patches
-> that have been submitted for the 5410 have languished in queue-purgatory.
-
-What patches do you have in mind?
-
-Beside of that actually many submissions for different Exynos SoCs and
-parts of it were ignored on the list. It is a pity because that means
-someone's effort got lost.
-Recently I tried to help in that matter and replied to some emails
-about resubmitting. If you have anything pending just please let me
-know.
-
-To make it clear - I am speaking for myself, not for any company or
-employer. Also I do not know anything about other people's motivation
-behind doing patches only for chosen SoCs. I leave these questions to
-them.
+Looks good,
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
