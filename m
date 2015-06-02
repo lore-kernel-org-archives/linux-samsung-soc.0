@@ -1,34 +1,97 @@
-From: Mikko Rapeli <mikko.rapeli@iki.fi>
-Subject: Re: [PATCH 05/98] exynos_drm.h: use __u64 from linux/types.h
-Date: Tue, 2 Jun 2015 21:59:24 +0300
-Message-ID: <20150602185924.GO12550@lakka.kapsi.fi>
-References: <1433000370-19509-1-git-send-email-mikko.rapeli@iki.fi>
- <1433000370-19509-6-git-send-email-mikko.rapeli@iki.fi>
- <20150530164655.GM2067@n2100.arm.linux.org.uk>
+From: gabriel@unseen.is
+Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
+Date: Tue, 02 Jun 2015 21:51:13 +0200
+Message-ID: <556E0931.9030703@unseen.is>
+References: <5569F435.5040708@unseen.is> <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kapsi.fi ([217.30.184.167]:54173 "EHLO mail.kapsi.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754140AbbFBS7i (ORCPT
+Received: from outmail08.unseen.is ([82.221.107.95]:56842 "EHLO
+	outmail08.unseen.is" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbbFBTvc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 14:59:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20150530164655.GM2067@n2100.arm.linux.org.uk>
+	Tue, 2 Jun 2015 15:51:32 -0400
+In-Reply-To: <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, dmaengine@vger.kernel.org
 
-On Sat, May 30, 2015 at 05:46:56PM +0100, Russell King - ARM Linux wrote:
-> Note that drm/drm.h is all that should need to be included - drm/drm.h
-> takes care of including linux/types.h when building on Linux platforms.
-> (note: if your compiler doesn't set __linux__ then you're probably not
-> using the proper compiler...)
+On 05/31/2015 08:47 AM, Krzysztof Kozlowski wrote:
+> 2015-05-31 2:32 GMT+09:00  <gabriel@unseen.is>:
+>>
+>> Hello,
+>>
+>> I've been successfully using a self compiled linux kernel until version
+>> 3.19 together with Debian Stretch.
+>>
+>> After upgrading the kernel to version 4.0 I see strange messages in the
+>> logs i.e.
+>>
+>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+>> alsa-sink.c: ALSA woke us up to write new data to the device, but there
+>> was actually nothing to write!
+>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+>> alsa-sink.c: Most likely this is a bug in the ALSA driver
+>> 'snd_soc_simple_card'. Please report this issue to the ALSA developers.
+>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+>> alsa-sink.c: We were woken up with POLLOUT set -- however a subsequent
+>> snd_pcm_avail() returned 0 or another value < min_avail.
+>>
+>>
+>> I can easily play sound in perfect quality for approx the first 24h.
+>> After that time the sound becomes distorted and is choppy/crackling.
+>> After rebooting then the sound is optimal again.
+>>
+>>
+>> I have tried to use kernel 4.0 with almost exactly the same
+>> configuration than for 3.19 to no avail.
+>>
+>> Then somebody on
+>> http://forum.odroid.com/viewtopic.php?f=82&t=13281&p=91186 gave me the
+>> hint that the followin patch might solve the issue:
+>>
+>> https://github.com/prahal/linux/commit/5e60cfc9fa5101a346e29ef5f944fbbad300c72d
+>>
+>>
+>> The patch did help something. I can now still play music after 2 days
+>> but what happens is that each time I turn on music I get a choppy sound
+>> for some time. That means the sound comes clear but every 2 seconds the
+>> sound pauses for a fraction of a second. Which is somewhat comparable to
+>> the issue earlier but without the heavy crackling - and that this goes
+>> away after a couple of minutes.
+>>
+>>
+>> But furthermore the sound has now simple cracklings. One in two second
+>> approx. and they do not disappear.
+>>
+>>
+>> Does anybody have an idea what could be the matter here?
+>>
+>> Thanks in advance.
+> 
+> +Cc Robert, dmaengine list.
+> 
+> Bisecting would be helpful. You could also try reverting following commits:
+> 88987d2c75
+> aee4d1fac8
+> 
+> Other possible test case would be disabling runtime PM for pl330 DMA driver:
+> 
+> for i in /sys/bus/amba/drivers/dma-pl330/*.[amp]dma/power ; do
+>   echo "on" > ${i}/control
+> done
+> 
 
-Thanks, I'll fix this by including only drm/drm.h in exynos_drm.h,
-nouveau_drm.h, radeon_drm.h and via_drm.h patches.
+Thanks a lot Krzysztof,
 
-I'm using standard gcc from Debian for the x86 compilation.
+I have reverted 88987d2c75 and aee4d1fac8 from 4.0.4 and I have still
+audio working after 1 and 1/2 day. Unluckily the alsa error message
+occured still once but they don't seem to be the issue here.
 
--Mikko
+
+Do you need to have tested out something else?
+
+Best regards,
+Gabriel
