@@ -1,97 +1,56 @@
-From: gabriel@unseen.is
-Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
-Date: Tue, 02 Jun 2015 21:51:13 +0200
-Message-ID: <556E0931.9030703@unseen.is>
-References: <5569F435.5040708@unseen.is> <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v4 0/8] mfd: cros_ec: Add multi EC and proto v3 support
+Date: Tue, 02 Jun 2015 23:15:49 +0200
+Message-ID: <2123062.dmIBPlf795@diego>
+References: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from outmail08.unseen.is ([82.221.107.95]:56842 "EHLO
-	outmail08.unseen.is" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750836AbbFBTvc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 15:51:32 -0400
-In-Reply-To: <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, dmaengine@vger.kernel.org
 
-On 05/31/2015 08:47 AM, Krzysztof Kozlowski wrote:
-> 2015-05-31 2:32 GMT+09:00  <gabriel@unseen.is>:
->>
->> Hello,
->>
->> I've been successfully using a self compiled linux kernel until version
->> 3.19 together with Debian Stretch.
->>
->> After upgrading the kernel to version 4.0 I see strange messages in the
->> logs i.e.
->>
->> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->> alsa-sink.c: ALSA woke us up to write new data to the device, but there
->> was actually nothing to write!
->> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->> alsa-sink.c: Most likely this is a bug in the ALSA driver
->> 'snd_soc_simple_card'. Please report this issue to the ALSA developers.
->> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->> alsa-sink.c: We were woken up with POLLOUT set -- however a subsequent
->> snd_pcm_avail() returned 0 or another value < min_avail.
->>
->>
->> I can easily play sound in perfect quality for approx the first 24h.
->> After that time the sound becomes distorted and is choppy/crackling.
->> After rebooting then the sound is optimal again.
->>
->>
->> I have tried to use kernel 4.0 with almost exactly the same
->> configuration than for 3.19 to no avail.
->>
->> Then somebody on
->> http://forum.odroid.com/viewtopic.php?f=82&t=13281&p=91186 gave me the
->> hint that the followin patch might solve the issue:
->>
->> https://github.com/prahal/linux/commit/5e60cfc9fa5101a346e29ef5f944fbbad300c72d
->>
->>
->> The patch did help something. I can now still play music after 2 days
->> but what happens is that each time I turn on music I get a choppy sound
->> for some time. That means the sound comes clear but every 2 seconds the
->> sound pauses for a fraction of a second. Which is somewhat comparable to
->> the issue earlier but without the heavy crackling - and that this goes
->> away after a couple of minutes.
->>
->>
->> But furthermore the sound has now simple cracklings. One in two second
->> approx. and they do not disappear.
->>
->>
->> Does anybody have an idea what could be the matter here?
->>
->> Thanks in advance.
+Am Dienstag, 2. Juni 2015, 10:11:03 schrieb Javier Martinez Canillas:
+> Hello,
 > 
-> +Cc Robert, dmaengine list.
+> Newer Chromebooks have more than one Embedded Controller (EC) in the
+> system. These additional ECs are connected through I2C with a host EC
+> which is the one that is connected to the Application Processor (AP)
+> through different transports (I2C, SPI or LPC).
 > 
-> Bisecting would be helpful. You could also try reverting following commits:
-> 88987d2c75
-> aee4d1fac8
+> So on these platforms, sub-processors are chained to each other:
 > 
-> Other possible test case would be disabling runtime PM for pl330 DMA driver:
+> AP <--> Host EC <--> Power Delivery (PD) EC
 > 
-> for i in /sys/bus/amba/drivers/dma-pl330/*.[amp]dma/power ; do
->   echo "on" > ${i}/control
-> done
+> The AP sends commands to the additional EC through the host EC using
+> a set of passthru commands and the host redirects to the correct EC.
 > 
+> This is a v4 of a series that adds support for multiple EC in a system
+> and also for the protocol version 3 that is used on newer ECs.
+> 
+> Most patches were taken from the downstream ChromiumOS v3.14 tree with
+> fixes squashed, split to minimise the cross subsystem churn and changes
+> for mainline inclusion but were not modified functionality wise.
+> 
+> This version addresses a lot of issues pointed out by Lee Jones on the v3
+> posted before [0].
+> 
+> The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cleanups"
+> [1] that were posted before and was already picked by Lee Jones.
+> 
+> Testing was done on some Chromebooks that have a single EC and support
+> protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800
+> Peach Pi to be sure that no regressions were introduced for these machines.
 
-Thanks a lot Krzysztof,
+I just gave this a try on veyron and everything still works as expected.
 
-I have reverted 88987d2c75 and aee4d1fac8 from 4.0.4 and I have still
-audio working after 1 and 1/2 day. Unluckily the alsa error message
-occured still once but they don't seem to be the issue here.
+All patches except "[PATCH v4 6/8] mfd: cros_ec: Support multiple EC in a 
+system" already have Tested-by tags, so this patch now is also
+
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
 
-Do you need to have tested out something else?
-
-Best regards,
-Gabriel
+Heiko
