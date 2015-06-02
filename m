@@ -1,61 +1,141 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 02/11] clocksource/drivers/exynos_mct: Change exynos4_mct_tick_clear return type to void
-Date: Tue,  2 Jun 2015 14:31:47 +0200
-Message-ID: <1433248316-26320-2-git-send-email-daniel.lezcano@linaro.org>
-References: <556DA1E5.1030601@linaro.org>
- <1433248316-26320-1-git-send-email-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v4 2/5] ARM: dts: Prepare exynos5410-odroidxu device tree
+Date: Tue, 02 Jun 2015 21:43:16 +0900
+Message-ID: <556DA4E4.1060303@samsung.com>
+References: <1426456834-6308-1-git-send-email-afaerber@suse.de>	<1426456834-6308-3-git-send-email-afaerber@suse.de> <CABxcv==cnFQ75qaykfkOcFo8FNqkzVswu8iYOB3riZJT9=4U_Q@mail.gmail.com> <5506B02D.3000400@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:35439 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755639AbbFBMcf (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:35675 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752948AbbFBMnX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 08:32:35 -0400
-Received: by wgme6 with SMTP id e6so138640297wgm.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2015 05:32:34 -0700 (PDT)
-In-Reply-To: <1433248316-26320-1-git-send-email-daniel.lezcano@linaro.org>
+	Tue, 2 Jun 2015 08:43:23 -0400
+In-Reply-To: <5506B02D.3000400@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tglx@linutronix.de, mingo@kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "open list:CLOCKSOURCE, CLOC..." <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG
-	EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Humberto Naves <hsnaves@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>, Tomasz Figa <tomasz.figa@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, Ben Gamari <bgamari.foss@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+W dniu 16.03.2015 o 19:27, Andreas F=C3=A4rber pisze:
+> Hi Javier,
+>=20
+> Am 16.03.2015 um 08:56 schrieb Javier Martinez Canillas:
+>> On Sun, Mar 15, 2015 at 11:00 PM, Andreas F=C3=A4rber <afaerber@suse=
+=2Ede> wrote:
+>>> Derived from exynos5410-smdk5410.dts.
+>>>
+>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>>> ---
+>>>  v1 -> v2 -> v3: Unchanged
+>=20
+> Forgot to update the in-patch changelogs: v4 is unchanged as well
+>=20
+>>>
+>>>  arch/arm/boot/dts/Makefile                |  1 +
+>>>  arch/arm/boot/dts/exynos5410-odroidxu.dts | 78 +++++++++++++++++++=
+++++++++++++
+>>>  2 files changed, 79 insertions(+)
+>>>  create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+>>>
+>>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefil=
+e
+>>> index a1c776b8dcec..b040737edcbc 100644
+>>> --- a/arch/arm/boot/dts/Makefile
+>>> +++ b/arch/arm/boot/dts/Makefile
+>>> @@ -103,6 +103,7 @@ dtb-$(CONFIG_ARCH_EXYNOS5) +=3D \
+>>>         exynos5250-snow.dtb \
+>>>         exynos5250-spring.dtb \
+>>>         exynos5260-xyref5260.dtb \
+>>> +       exynos5410-odroidxu.dtb \
+>>>         exynos5410-smdk5410.dtb \
+>>>         exynos5420-arndale-octa.dtb \
+>>>         exynos5420-peach-pit.dtb \
+>>> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/b=
+oot/dts/exynos5410-odroidxu.dts
+>>> new file mode 100644
+>>> index 000000000000..97310bb727e2
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+>>> @@ -0,0 +1,78 @@
+>>> +/*
+>>> + * Hardkernel ODROID-XU device tree source
+>>> + *
+>>> + * Copyright (c) 2014 SUSE LINUX Products GmbH
+>>> + *
+>>> + * Based on exynos5410-smdk5410.dts:
+>>> + *
+>>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>>> + *             http://www.samsung.com
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or m=
+odify
+>>> + * it under the terms of the GNU General Public License version 2 =
+as
+>>> + * published by the Free Software Foundation.
+>>> +*/
+>>> +
+>>> +/dts-v1/;
+>>> +#include "exynos5410.dtsi"
+>>> +/ {
+>>> +       model =3D "ODROID-XU based on EXYNOS5410";
+>>> +       compatible =3D "hardkernel,odroid-xu", "samsung,exynos5410"=
+, "samsung,exynos5";
+>>> +
+>>> +       memory {
+>>> +               reg =3D <0x40000000 0x80000000>;
+>>> +       };
+>>> +
+>>> +       chosen {
+>>> +               bootargs =3D "console=3DttySAC2,115200";
+>>> +       };
+>>> +
+>>
+>> After commit a208ffd251d0 ("of: Enable console on serial ports
+>> specified by /chosen/stdout-path") the kernel is able to know what
+>> serial console to use if the DT defined an stdout-path property so
+>> should be preferred instead of using a console=3D parameter.
+>>
+>> I'll post today a series to change that on all exynos5 boards so you
+>> can base on that.
+>=20
+> Okay, if no one else does, I could update smdk5410 before splitting.
 
-Return value of exynos4_mct_tick_clear() was never checked so it can
-be safely changed to void.
+Could you do this? At least for new board if you cannot test it on SMDK=
+5410.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/exynos_mct.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+>=20
+>>> +       fin_pll: xxti {
+>>> +               compatible =3D "fixed-clock";
+>>> +               clock-frequency =3D <24000000>;
+>>> +               clock-output-names =3D "fin_pll";
+>>> +               #clock-cells =3D <0>;
+>>> +       };
+>>> +
+>>
+>> I think this should be defined in exynos5410.dtsi instead since is a=
+n
+>> IP block in the SoC and referenced in the .dts using a label to chan=
+ge
+>> the clock-frequency in the board.
+>=20
+> I hope you understood that this is a literal copy of smdk5410, so I'm
+> not going to make random changes here. If the Samsung guys want to ma=
+ke
+> this change for smdk5410, then fine, but otherwise - like for Snow an=
+d
+> Spring - I want to keep the diff -u low between the two.
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 83564c9..87c2e55 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -413,7 +413,7 @@ static inline void exynos4_tick_set_mode(enum clock_event_mode mode,
- 	}
- }
- 
--static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
-+static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
- {
- 	struct clock_event_device *evt = &mevt->evt;
- 
-@@ -426,12 +426,8 @@ static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
- 		exynos4_mct_tick_stop(mevt);
- 
- 	/* Clear the MCT tick interrupt */
--	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1) {
-+	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1)
- 		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
--		return 1;
--	} else {
--		return 0;
--	}
- }
- 
- static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
--- 
-1.9.1
+Moving the node to DTSI won't change the DTB for boards so the change i=
+s
+safe. However to me it looks unusual that exynos5410.dtsi references
+fin_pll phandle which is defined in the board.
+
+However Kukjin mentioned that it is fine so it is okay with me also.
+
+The rest looks fine, so:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
