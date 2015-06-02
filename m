@@ -1,132 +1,115 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL] ARM: EXYNOS: DTS improvements for 4.2, 3rd
-Date: Tue, 02 Jun 2015 03:40:06 +0000 (GMT)
-Message-ID: <451852203.401141433216406853.JavaMail.weblogic@epmlwas09b>
-Reply-To: kgene.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58516 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751587AbbFBDkJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jun 2015 23:40:09 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NPA00BD0SULWW30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Jun 2015 12:39:57 +0900 (KST)
-MIME-version: 1.0
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 0/8] mfd: cros_ec: Add multi EC and proto v3 support
+Date: Tue,  2 Jun 2015 10:11:03 +0200
+Message-ID: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Peter Chubb <peter.chubb@nicta.com.au>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-S3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gRGVhciBLdWtqaW4sDQo+IA0KPiBRdWl0ZSBi
-aWcgc2V0IG9mIGNoYW5nZXMsIG1vc3RseSByZWZhY3Rvci4NCj4gDQo+IFlvdSBjYW4gZmluZCB0
-aGVtIGFsc28gb24gdGhlIGxpc3RzIHdpdGggbXkgcmV2aWV3ZWQtYnkuDQoNClRoYW5rcyBmb3Ig
-eW91ciBnZW50bGUgcmVtaW5kZXIgYW5kIGdhdGhlcmluZy4NCg0KSSdtIHNvcnRpbmcgdGhlbSBv
-dXQgYW5kIGl0IHNob3VsZCBiZSBmaW5lIHRvbmlnaHQgaW4gbXkgdHJlZS4uLg0KSWYgYW55IGRp
-ZmZlcmVuY2VzIHdpdGggeW91cnMsIEknbGwgbGV0IHlvdSBrbm93IGFuZCBwbGVhc2UgY2hlY2sg
-dGhlbQ0KdG9tb3Jyb3cgbW9ybmluZyBzbyB0aGF0IGl0IGNvdWxkIGJlIHNlbnQgb3V0IHRvIGFy
-bS1zb2MgdG9tb3Jyb3cgZm9yIDQuMi4gIA0KDQpUaGFua3MsDQpLdWtqaW4NCg0KPiANCj4gQmVz
-dCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCj4gDQo+IA0KPiBUaGUgZm9sbG93aW5nIGNoYW5nZXMg
-c2luY2UgY29tbWl0IDVjNzhiYzFiNDY2NzAxYzFiMTNkN2I3MzRmNWIzOWNkZDY1YmFiYWI6DQo+
-IA0KPiAgIE1lcmdlIGJyYW5jaCAnc2Ftc3VuZy1kZWZjb25maWctMm5kJyBpbnRvIGZvci1uZXh0
-ICgyMDE1LTA1LTIzIDEyOjI4OjU5ICswOTAwKQ0KPiANCj4gYXJlIGF2YWlsYWJsZSBpbiB0aGUg
-Z2l0IHJlcG9zaXRvcnkgYXQ6DQo+IA0KPiAgIGh0dHBzOi8vZ2l0aHViLmNvbS9rcnprL2xpbnV4
-LmdpdCB0YWdzL3NhbXN1bmctZHQtZm9yLTQuMi0zDQo+IA0KPiBmb3IgeW91IHRvIGZldGNoIGNo
-YW5nZXMgdXAgdG8gYTMzYTIyMDE3MmNkODMyZmQ0YjlmOGMyNmY0ZTYwNTM4OTlkNjhjNDoNCj4g
-DQo+ICAgQVJNOiBkdHM6IEFkZCBPZHJvaWQgWFUzIExpdGUgc3VwcG9ydCAoMjAxNS0wNS0zMCAx
-MzoyMjo0NSArMDkwMCkNCj4gDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gRGV2aWNlIFRyZWUgaW1wcm92ZW1lbnRz
-IGZvciBFeHlub3MgYmFzZWQgYm9hcmRzOg0KPiAxLiBSZWZhY3RvciBEVCBzb3VyY2VzIHRvIGxh
-YmVsIG5vdGF0aW9uLiBBbGwgbmV3IEV4eW5vcyBib2FyZHMgZm9sbG93DQo+ICAgIHRoaXMgY29u
-dmVudGlvbiBzbyBvbmx5IG9sZCBEVFMgYXJlIGNoYW5nZWQ6IEV4eW5vczQgZmFtaWx5LCBFeHlu
-b3M1DQo+ICAgIGFuZCBzM2MyNDE2Lg0KPiAgICBUaGlzIGNvbnZlbnRpb24gcmVkdWNlcyBkdXBs
-aWNhdGlvbiBvZiBhZGRyZXNzZXMgaW4gbm9kZXMNCj4gICAgYW5kIHJlZHVjZXMgcG9zc2libGUg
-bWlzdGFrZXMgd2hlbiBvdmVycmlkaW5nIG5vZGVzLg0KPiAyLiBTd2l0Y2ggTEVEcyBvbiBPZHJv
-aWQgWFUzIHRvIFBXTSBjb250cm9sLg0KPiAzLiBBZGQgbm9kZXMgZm9yIEpQRUcgY29kZWMgb24g
-RXh5bm9zNTQyeC4NCj4gNC4gRW5hYmxlIHdha2UgYWxhcm0gb24gT2Ryb2lkIFhVMy4NCj4gNS4g
-QWRkIHN1cHBvcnQgZm9yIG5ldyBib2FyZDogT2Ryb2lkIFhVMyBMaXRlLiBUaGUgYm9hcmQgaXMg
-YWN0dWFsbHkNCj4gICAgdmVyeSBzaW1pbGFyIHRvIGV4aXN0aW5nIE9kcm9pZCBYVTMuDQo+IA0K
-PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tDQo+IEFuZHJ6ZWogUGlldHJhc2lld2ljeiAoMSk6DQo+ICAgICAgIEFSTTogZHRz
-OiBleHlub3M1NDIwOiBhZGQgbm9kZXMgZm9yIGpwZWcgY29kZWMNCj4gDQo+IEtyenlzenRvZiBL
-b3psb3dza2kgKDI2KToNCj4gICAgICAgQVJNOiBkdHM6IEFkZCBsYWJlbHMgdG8gZXh5bm9zNCBu
-b2Rlcw0KPiAgICAgICBBUk06IGR0czogVXNlIGxhYmVscyBmb3Igb3ZlcnJpZGluZyBub2RlcyBp
-biBleHlub3M0MjEwDQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFiZWxzIGZvciBvdmVycmlkaW5n
-IG5vZGVzIGluIGV4eW5vczQyMTAtb3JpZ2VuDQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFiZWxz
-IGZvciBvdmVycmlkaW5nIG5vZGVzIGluIGV4eW5vczQyMTAtc21ka3YzMTANCj4gICAgICAgQVJN
-OiBkdHM6IFVzZSBsYWJlbHMgZm9yIG92ZXJyaWRpbmcgbm9kZXMgaW4gZXh5bm9zNDIxMC10cmF0
-cw0KPiAgICAgICBBUk06IGR0czogVXNlIGxhYmVscyBmb3Igb3ZlcnJpZGluZyBub2RlcyBpbiBl
-eHlub3M0MjEyDQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFiZWxzIGZvciBvdmVycmlkaW5nIG5v
-ZGVzIGluIGV4eW5vczR4MTINCj4gICAgICAgQVJNOiBkdHM6IFVzZSBsYWJlbHMgZm9yIG92ZXJy
-aWRpbmcgbm9kZXMgaW4gZXh5bm9zNDQxMg0KPiAgICAgICBBUk06IGR0czogVXNlIGxhYmVscyBm
-b3Igb3ZlcnJpZGluZyBub2RlcyBpbiBleHlub3M0NDEyLW9kcm9pZA0KPiAgICAgICBBUk06IGR0
-czogVXNlIGxhYmVscyBmb3Igb3ZlcnJpZGluZyBub2RlcyBpbiBleHlub3M0NDEyLXNtZGs0NDEy
-DQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFiZWxzIGZvciBvdmVycmlkaW5nIG5vZGVzIGluIGV4
-eW5vczQ0MTItdHJhdHMyDQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFiZWxzIGZvciBvdmVycmlk
-aW5nIG5vZGVzIGluIGV4eW5vczQ0MTItb3JpZ2VuDQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFi
-ZWxzIGZvciBvdmVycmlkaW5nIG5vZGVzIGluIGV4eW5vczQ0MTItdGlueTQ0MTINCj4gICAgICAg
-QVJNOiBkdHM6IEFkZCBsYWJlbHMgdG8gZXh5bm9zNSBub2Rlcw0KPiAgICAgICBBUk06IGR0czog
-VXNlIGxhYmVscyBmb3Igb3ZlcnJpZGluZyBub2RlcyBpbiBleHlub3M1MjUwDQo+ICAgICAgIEFS
-TTogZHRzOiBSZW1vdmUgZHVwbGljYXRlZCBJMkM3IG5vZGVzIGluIGV4eW5vczUyNTAtc25vdw0K
-PiAgICAgICBBUk06IGR0czogVXNlIGxhYmVscyBmb3Igb3ZlcnJpZGluZyBub2RlcyBpbiBleHlu
-b3M1NDIwLWFybmRhbGUtb2N0YQ0KPiAgICAgICBBUk06IGR0czogVXNlIGxhYmVscyBmb3Igb3Zl
-cnJpZGluZyBub2RlcyBpbiBleHlub3M1NDJ4DQo+ICAgICAgIEFSTTogZHRzOiBVc2UgbGFiZWxz
-IGZvciBvdmVycmlkaW5nIG5vZGVzIGluIGV4eW5vczU0MjAtc21kazU0MjANCj4gICAgICAgQVJN
-OiBkdHM6IFVzZSBsYWJlbHMgZm9yIG92ZXJyaWRpbmcgbm9kZXMgaW4gZXh5bm9zNTQ0MCBib2Fy
-ZHMNCj4gICAgICAgQVJNOiBkdHM6IFVzZSBsYWJlbHMgZm9yIG92ZXJyaWRpbmcgbm9kZXMgaW4g
-ZXh5bm9zNTQyMi1vZHJvaWR4dTMNCj4gICAgICAgQVJNOiBkdHM6IHMzYzI0MTY6IEFkZCBsYWJl
-bHMgdG8gUzNDMjQxNiBub2Rlcw0KPiAgICAgICBBUk06IGR0czogczNjMjQxNjogVXNlIGxhYmVs
-cyBmb3Igb3ZlcnJpZGluZyBub2RlcyBpbiBTTURLMjQxNg0KPiAgICAgICBBUk06IGR0czogb2Ry
-b2lkeHUzOiBFbmFibGUgd2FrZSBhbGFybSBvZiBTMk1QUzExIFJUQw0KPiAgICAgICBvZjogQWRk
-IHZlbmRvciBwcmVmaXggZm9yIEhhcmRrZXJuZWwNCj4gICAgICAgQVJNOiBkdHM6IEFkZCBPZHJv
-aWQgWFUzIExpdGUgc3VwcG9ydA0KPiANCj4gUGV0ZXIgQ2h1YmIgKDEpOg0KPiAgICAgICBBUk06
-IGR0czogZXh5bm9zNTQyMi1vZHJvaWR4dTM6IEhvb2sgdXAgUFdNIGFuZCB1c2UgaXQgZm9yIExF
-RHMNCj4gDQo+IC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZlbmRvci1wcmVmaXhlcy50eHQgICAg
-ICAgIHwgICAgMSArDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgICAgMSArDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaSAgICAg
-ICAgICAgICAgICAgICAgIHwgICAyMiArLQ0KPiBhcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEw
-LW9yaWdlbi5kdHMgICAgICAgICAgICB8ICA0MTggKysrLS0tDQo+IGFyY2gvYXJtL2Jvb3QvZHRz
-L2V4eW5vczQyMTAtc21ka3YzMTAuZHRzICAgICAgICAgIHwgIDI4MCArKy0tDQo+IGFyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczQyMTAtdHJhdHMuZHRzICAgICAgICAgICAgIHwgIDU5MiArKysrLS0t
-LS0NCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC5kdHNpICAgICAgICAgICAgICAgICAg
-fCAgIDQ5ICstDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTIuZHRzaSAgICAgICAgICAg
-ICAgICAgIHwgICAxMiArLQ0KPiBhcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLW9kcm9pZC1j
-b21tb24uZHRzaSAgICB8ICA3MzIgKysrKystLS0tLS0NCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNDQxMi1vZHJvaWR4LmR0cyAgICAgICAgICAgfCAgIDE2ICstDQo+IGFyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczQ0MTItb3JpZ2VuLmR0cyAgICAgICAgICAgIHwgIDg5MiArKysrKystLS0tLS0t
-DQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItc21kazQ0MTIuZHRzICAgICAgICAgIHwg
-IDIxMCArLS0NCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi10aW55NDQxMi5kdHMgICAg
-ICAgICAgfCAgIDU0ICstDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTItdHJhdHMyLmR0
-cyAgICAgICAgICAgIHwgMTMzMiArKysrKysrKysrLS0tLS0tLS0tLQ0KPiBhcmNoL2FybS9ib290
-L2R0cy9leHlub3M0NDEyLmR0c2kgICAgICAgICAgICAgICAgICB8ICAgMjAgKy0NCj4gYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNHgxMi1waW5jdHJsLmR0c2kgICAgICAgICAgfCAgICA4ICstDQo+
-IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczR4MTIuZHRzaSAgICAgICAgICAgICAgICAgIHwgIDIx
-OCArKy0tDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUuZHRzaSAgICAgICAgICAgICAgICAg
-ICAgIHwgICAgNiArLQ0KPiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNub3cuZHRzICAg
-ICAgICAgICAgICB8ICAgNDYgKy0NCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNp
-ICAgICAgICAgICAgICAgICAgfCAgIDgyICstDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0
-MjAtYXJuZGFsZS1vY3RhLmR0cyAgICAgIHwgIDYzNCArKysrKy0tLS0tDQo+IGFyY2gvYXJtL2Jv
-b3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cyAgICAgICAgIHwgICAgMiArLQ0KPiBhcmNo
-L2FybS9ib290L2R0cy9leHlub3M1NDIwLXNtZGs1NDIwLmR0cyAgICAgICAgICB8ICA2NDUgKysr
-KystLS0tLQ0KPiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kgICAgICAgICAgICAg
-ICAgICB8ICAgOTggKy0NCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4dTMt
-Y29tbW9uLmR0c2kgfCAgNDc5ICsrKysrKysNCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQy
-Mi1vZHJvaWR4dTMtbGl0ZS5kdHMgICAgfCAgIDIwICsNCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5
-bm9zNTQyMi1vZHJvaWR4dTMuZHRzICAgICAgICAgfCAgNDMwICstLS0tLS0NCj4gYXJjaC9hcm0v
-Ym9vdC9kdHMvZXh5bm9zNTQ0MC1zZDV2MS5kdHMgICAgICAgICAgICAgfCAgIDEwICstDQo+IGFy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0NDAtc3NkazU0NDAuZHRzICAgICAgICAgIHwgICA4NSAr
-LQ0KPiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDQwLmR0c2kgICAgICAgICAgICAgICAgICB8
-ICAgIDQgKy0NCj4gYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgwMC1wZWFjaC1waS5kdHMgICAg
-ICAgICAgfCAgICAyICstDQo+IGFyY2gvYXJtL2Jvb3QvZHRzL3MzYzI0MTYtc21kazI0MTYuZHRz
-ICAgICAgICAgICAgIHwgICA4NiArLQ0KPiBhcmNoL2FybS9ib290L2R0cy9zM2MyNDE2LmR0c2kg
-ICAgICAgICAgICAgICAgICAgICB8ICAgMTggKy0NCj4gMzMgZmlsZXMgY2hhbmdlZCwgMzc5NiBp
-bnNlcnRpb25zKCspLCAzNzA4IGRlbGV0aW9ucygtKQ0KPiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kNCj4gY3JlYXRl
-IG1vZGUgMTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjItb2Ryb2lkeHUzLWxpdGUu
-ZHRz
+Hello,
+
+Newer Chromebooks have more than one Embedded Controller (EC) in the
+system. These additional ECs are connected through I2C with a host EC
+which is the one that is connected to the Application Processor (AP)
+through different transports (I2C, SPI or LPC).
+
+So on these platforms, sub-processors are chained to each other:
+
+AP <--> Host EC <--> Power Delivery (PD) EC
+
+The AP sends commands to the additional EC through the host EC using
+a set of passthru commands and the host redirects to the correct EC.
+
+This is a v4 of a series that adds support for multiple EC in a system
+and also for the protocol version 3 that is used on newer ECs.
+
+Most patches were taken from the downstream ChromiumOS v3.14 tree with
+fixes squashed, split to minimise the cross subsystem churn and changes
+for mainline inclusion but were not modified functionality wise.
+
+This version addresses a lot of issues pointed out by Lee Jones on the v3
+posted before [0].
+
+The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cleanups"
+[1] that were posted before and was already picked by Lee Jones.
+
+Testing was done on some Chromebooks that have a single EC and support
+protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800
+Peach Pi to be sure that no regressions were introduced for these machines.
+
+The series were tested using a modified ectool [2] that supports the new
+cros_ec IOCTL API. They were also tested on a x86 Pixel Chromebook 2 (Samus)
+that uses the new protocol v3 and has 2 EC (cros_ec and cros_pd). But for
+testing on Samus, also the posted "[PATCH 0/3] platform/chrome: Changes for
+cros_ec_lpc and cros_ec_dev" series [3] are needed.
+
+The series is composed of the following patches:
+
+Alexandru M Stan (2):
+  mfd: cros_ec: spi: Add a DT property to delay asserting the CS
+  mfd: cros_ec: spi: Add delay for asserting CS
+
+Gwendal Grignou (1):
+  mfd: cros_ec: Support multiple EC in a system
+
+Javier Martinez Canillas (2):
+  mfd: cros_ec: Use a zero-length array for command data
+  mfd: cros_ec: Move protocol helpers out of the MFD driver
+
+Stephen Barber (3):
+  mfd: cros_ec: rev cros_ec_commands.h
+  mfd: cros_ec: add proto v3 skeleton
+  mfd: cros_ec: add bus-specific proto v3 code
+
+ Documentation/devicetree/bindings/mfd/cros-ec.txt |   4 +
+ drivers/i2c/busses/Kconfig                        |   2 +-
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c           |  45 ++-
+ drivers/input/keyboard/Kconfig                    |   2 +-
+ drivers/input/keyboard/cros_ec_keyb.c             |  31 +-
+ drivers/mfd/Kconfig                               |   6 +-
+ drivers/mfd/cros_ec.c                             | 158 ++++-----
+ drivers/mfd/cros_ec_i2c.c                         | 169 ++++++++-
+ drivers/mfd/cros_ec_spi.c                         | 407 +++++++++++++++++++---
+ drivers/platform/chrome/Kconfig                   |   9 +-
+ drivers/platform/chrome/Makefile                  |   1 +
+ drivers/platform/chrome/cros_ec_dev.c             | 189 ++++++----
+ drivers/platform/chrome/cros_ec_dev.h             |   7 -
+ drivers/platform/chrome/cros_ec_lightbar.c        | 217 +++++++-----
+ drivers/platform/chrome/cros_ec_lpc.c             |  84 ++++-
+ drivers/platform/chrome/cros_ec_proto.c           | 382 ++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_sysfs.c           | 178 ++++++----
+ include/linux/mfd/cros_ec.h                       |  84 ++++-
+ include/linux/mfd/cros_ec_commands.h              | 277 +++++++++++++--
+ 19 files changed, 1803 insertions(+), 449 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_proto.c
+
+Patch #1 modifies the struct cros_ec_command to use a zero-length array for
+the buffer used for EC input and output data.
+
+Patch #2 synchronises the cros_ec_commands.h with a newer version of the
+file in the EC firmware repository.
+
+Patch #3 moves the EC communication protocol helper functions out of the MFD
+driver.
+
+Patch #4 adds the EC host command protocol v3 support to the cros_ec driver
+and patch #5 adds the bus specific proto v3 support for I2C, SPI and LPC.
+
+Patch #6 adds support to make multiple EC have a different device id and
+also exposing a per EC character device interface.
+
+Patch #7 adds support to the cros_ec_spi driver to specify a delay before
+receiving SPI transfers to make sure that the EC has already waked up.
+
+Since the changes are quite intrusive and affects all ChromeOS EC related
+drivers, the patches should be merged through the MFD subsystem tree.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/5/9/73
+[1]: https://lkml.org/lkml/2015/5/20/235
+[2]: http://cgit.collabora.com/git/user/javier/ec.git/log/?h=mainline-ioctl-zero-length
+[3]: https://lkml.org/lkml/2015/5/20/184
