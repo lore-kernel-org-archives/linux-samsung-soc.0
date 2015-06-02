@@ -1,61 +1,56 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v10 17/17] drm/exynos: split exynos_crtc->dpms in
- enable() and disable()
-Date: Tue, 2 Jun 2015 11:06:23 -0300
-Message-ID: <20150602140623.GF20774@joana>
+Subject: Re: [PATCH v10 02/17] drm/exynos: use adjusted_mode of crtc_state
+ instead of mode
+Date: Tue, 2 Jun 2015 11:09:58 -0300
+Message-ID: <20150602140958.GG20774@joana>
 References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
- <1433171095-23773-18-git-send-email-gustavo@padovan.org>
- <556D9D0D.6010408@samsung.com>
+ <1433171095-23773-3-git-send-email-gustavo@padovan.org>
+ <519a97890c97fc23d5980ab1a70b1c3d@math.uni-bielefeld.de>
+ <556CF2D1.1000709@samsung.com> <556D9DBF.3000009@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f46.google.com ([209.85.216.46]:37682 "EHLO
-	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756203AbbFBOG2 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 10:06:28 -0400
-Received: by vnbg190 with SMTP id g190so20655323vnb.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2015 07:06:27 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <556D9D0D.6010408@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <556D9DBF.3000009@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
-
-2015-06-02 Inki Dae <inki.dae@samsung.com>:
-
-> Hi,
->=20
-> On 2015=EB=85=84 06=EC=9B=94 02=EC=9D=BC 00:04, Gustavo Padovan wrote=
-:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> > To follow more closely the new atomic API we split the dpms()
-> > helper into the enable() and disable() helper to get exactly the
-> > same semantics.
->=20
-> Below is the result from checkpatch.pl. Please fix all errors and che=
-ck
-> your patch with checkpatch.pl before posting it.
->=20
-> Thanks,
-> Inki Dae
->=20
-> total: 62 errors, 0 warnings, 410 lines checked
-
-I think you did something wrong when checking, for me it looks like
-this:
-
-0016-drm-exynos-split-exynos_crtc-dpms-in-enable-and-disa.patch has no
-obvious style problems and is ready for submission.
-WARNING: Do not use whitespace before Signed-off-by:
-#12:=20
-    Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-total: 0 errors, 1 warnings, 594 lines checked
-
-	Gustavo
+SGkgSW5raSwKCjIwMTUtMDYtMDIgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPjoKCj4g
+T24gMjAxNeuFhCAwNuyblCAwMuydvCAwOTowMywgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gPiBP
+biAwNi8wMi8yMDE1IDEyOjA5IEFNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+ID4+IEhlbGxvLAo+
+ID4+Cj4gPj4gYXMgcG9pbnRlZCBvdXQgaW4gWzFdIGJlZm9yZSwgdGhpcyBnaXZlcyBtZSBhbiBr
+ZXJuZWwgb29wcyBkdXJpbmcgYm9vdC4KPiA+Pgo+ID4+IFdpdGggYmVzdCB3aXNoZXMsCj4gPj4g
+VG9iaWFzCj4gPj4KPiA+PiBbMV0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1z
+YW1zdW5nLXNvYy9tc2c0NDczNi5odG1sCj4gPj4KPiA+Cj4gPiBZZWFoLCB0aGlzIHBhdGNoIHNo
+b3VsZCBnbyBhZnRlciBzd2l0Y2hlZCBieSBkcm1faGVscGVyX2NydGNfbW9kZV9zZXQsCj4gPiBl
+LmcuIGFmdGVyIHRoZSBwYXRjaCAiZHJtL2V4eW5vczogYXRvbWljIHBoYXNlIDE6IGFkZCAubW9k
+ZV9zZXRfbm9mYigpCj4gPiBjYWxsYmFjayIuIFRoZW4gY3J0Yy0+YmFzZS5zdGF0ZSBjYW5ub3Qg
+YmUgTlVMTC4KPiA+Cj4gPiBHdXN0YXZvLCBzb3JyeSBmb3IgdGhhdCwgaSBtZWFudCByZWJhc2Ug
+YmFzZWQgb24gdGhlIHBhdGNoICJkcm0vZXh5bm9zOgo+ID4gYXRvbWljIHBoYXNlIDE6IGFkZCAu
+bW9kZV9zZXRfbm9mYigpIGNhbGxiYWNrIgo+ID4KPiA+IElua2ksIGkgdGhpbmsgaXQncyB0aW1l
+IHRvIG1lcmdlIHRoaXMgcGF0Y2hzZXQgZm9yIHN3aXRjaCB0byBhdG9taWMKPiA+IG1vZGVzZXQg
+ZnVuY3Rpb25zIGlmIG5vIGFueSBvYmplY3Rpb24sIGp1c3QgbmVlZCB0byByZWJhc2Ugb2YgdGhp
+cyBwYXRjaAo+ID4gYmFzZWQgb24gdGhlIHBhdGNoICJkcm0vZXh5bm9zOiBhdG9taWMgcGhhc2Ug
+MSA6IGFkZCAubW9kZV9zZXRfbm9mYigpCj4gPiBjYWxsYmFjayIgYW5kIGV4Y2VwdCBhIHBhdGNo
+IDE3LzE3IGZyb20gdGhpcyBtZXJnZSwgaSB0aGluayBjbGVhbiB1cAo+ID4gcGF0Y2hlcyBsaWtl
+IGl0IG5lZWQgdG8gbW9yZSByZXZpZXcgYWZ0ZXIgbWVyZ2UgYXRvbWljIHBhdGNoc2V0Lgo+IAo+
+IFRoYW5rcyBKb29ueW91bmcuIEdvdCBpdC4gSSB3aWxsIG1lcmdlIHRoaXMgcGF0Y2ggc2VyaWVz
+IHRvIG15IGxvY2FsCj4gcmVwb3NpdG9yeSBmb3IgdGVzdCBhbmQgZmluYWwgcmV2aWV3LiBJZiB0
+aGVyZSBpcyBubyBhbnkgYmlnIHByb2JsZW0sCj4gd2lsbCBtZXJnZSBpdC4KClRoYW5rcyBmb3Ig
+dGhhdCEgQXMgSSB3aWxsIGtlZXAgd29ya2luZyBvbiBleHlub3MgSSB3aWxsIGJlIGFyb3VuZCB0
+bwpzZW5kIGFueSBmb2xsb3cgdXAgcGF0Y2ggdG8gc2VuZCBhbnkgZm9sbG93IHVwIHBhdGNoIHRv
+IGZpeCBwb3RlbnRpYWwKaXNzdWVzIG9mIHRoZSBhdG9taWMgbW9kZXNldHRpbmcgcGF0Y2hlcy4K
+CglHdXN0YXZvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
