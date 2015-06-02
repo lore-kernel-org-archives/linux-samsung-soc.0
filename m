@@ -1,57 +1,61 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH v4 5/5] ARM: dts: Add LEDs to exynos5410-odroidxu
-Date: Tue, 02 Jun 2015 22:38:42 +0900
-Message-ID: <556DB1E2.5080607@suse.de>
-References: <1426456834-6308-1-git-send-email-afaerber@suse.de> <1426456834-6308-6-git-send-email-afaerber@suse.de> <556DA96A.90800@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v10 17/17] drm/exynos: split exynos_crtc->dpms in
+ enable() and disable()
+Date: Tue, 2 Jun 2015 11:06:23 -0300
+Message-ID: <20150602140623.GF20774@joana>
+References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
+ <1433171095-23773-18-git-send-email-gustavo@padovan.org>
+ <556D9D0D.6010408@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36654 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753884AbbFBNi5 (ORCPT
+Received: from mail-vn0-f46.google.com ([209.85.216.46]:37682 "EHLO
+	mail-vn0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756203AbbFBOG2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 09:38:57 -0400
-In-Reply-To: <556DA96A.90800@samsung.com>
+	Tue, 2 Jun 2015 10:06:28 -0400
+Received: by vnbg190 with SMTP id g190so20655323vnb.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2015 07:06:27 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <556D9D0D.6010408@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Tomasz Figa <tomasz.figa@gmail.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, Ben Gamari <bgamari.foss@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Am 02.06.2015 um 22:02 schrieb Krzysztof Kozlowski:
-> W dniu 16.03.2015 o 07:00, Andreas F=C3=A4rber pisze:
->> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
->> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
->> ---
->>  v2 -> v3: Unchanged
->> =20
->>  v1 -> v2:
->>  * Filled in Sob from Hakjoo Kim
->> =20
->>  arch/arm/boot/dts/exynos5410-odroidxu.dts | 25 ++++++++++++++++++++=
-+++++
->>  1 file changed, 25 insertions(+)
+Hi Inki,
+
+2015-06-02 Inki Dae <inki.dae@samsung.com>:
+
+> Hi,
 >=20
-> What is the rationale behind doing this in separate patch, not as par=
-t
-> of 2/5? You can just add new board DTS with all of its features at on=
-ce,
-> but maybe I am missing something?
+> On 2015=EB=85=84 06=EC=9B=94 02=EC=9D=BC 00:04, Gustavo Padovan wrote=
+:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >
+> > To follow more closely the new atomic API we split the dpms()
+> > helper into the enable() and disable() helper to get exactly the
+> > same semantics.
+>=20
+> Below is the result from checkpatch.pl. Please fix all errors and che=
+ck
+> your patch with checkpatch.pl before posting it.
+>=20
+> Thanks,
+> Inki Dae
+>=20
+> total: 62 errors, 0 warnings, 410 lines checked
 
-This patch depends on the pinctrl driver, 2/5 on nothing.
+I think you did something wrong when checking, for me it looks like
+this:
 
-By keeping it a separate patch it was intended to go in more quickly
-(clear fail there ;)) and it's easier to review the actual changes -
-squashing is always easier than picking apart.
+0016-drm-exynos-split-exynos_crtc-dpms-in-enable-and-disa.patch has no
+obvious style problems and is ready for submission.
+WARNING: Do not use whitespace before Signed-off-by:
+#12:=20
+    Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Thanks for your review! Both me and Ben have follow-ups once this moves
-forward.
+total: 0 errors, 1 warnings, 594 lines checked
 
-Kind regards,
-Andreas
-
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Felix Imend=C3=B6rffer, Jane Smithard, Dilip Upmanyu, Graham Norton=
-; HRB
-21284 (AG N=C3=BCrnberg)
+	Gustavo
