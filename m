@@ -1,858 +1,476 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v4 5/8] mfd: cros_ec: add bus-specific proto v3 code
-Date: Tue,  2 Jun 2015 10:11:08 +0200
-Message-ID: <1433232671-27679-6-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 2/8] mfd: cros_ec: rev cros_ec_commands.h
+Date: Tue,  2 Jun 2015 10:11:05 +0200
+Message-ID: <1433232671-27679-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1433232671-27679-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Gwendal Grignou <gwendal-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Filipe Brandenburger <filbranden-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alexandru M Stan <amstan-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:40611 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922AbbFBILu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Jun 2015 04:11:50 -0400
+In-Reply-To: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Stephen Barber <smbarber@chromium.org>
 
-Add proto v3 support to the SPI, I2C, and LPC.
+Update cros_ec_commands.h to the latest version in the EC
+firmware sources and add power domain and passthru commands.
 
-Signed-off-by: Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Reviewed-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Also, update lightbar to use new command names.
+
+Signed-off-by: Stephen Barber <smbarber@chromium.org>
+Reviewed-by: Randall Spangler <rspangler@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 
-Changes since v3:
- - Added acked-by tag from Lee Jones.
+Changes since v3: None
 
 Changes since v2: None
 
 Changes since v1:
- - Added Gwendal Grignou Reviewed-by and Tested-by tags
+ - Added Gwendal Grignou and Heiko Stuebner Tested-by tags
+ - Added Gwendal Grignou Reviewed-by tag
+ - Added Lee Jones Acked-by tag
 ---
- drivers/mfd/cros_ec_i2c.c             | 166 ++++++++++++++-
- drivers/mfd/cros_ec_spi.c             | 382 +++++++++++++++++++++++++++++-----
- drivers/platform/chrome/cros_ec_lpc.c |  73 ++++++-
- include/linux/mfd/cros_ec.h           |   6 +
- 4 files changed, 569 insertions(+), 58 deletions(-)
+ drivers/platform/chrome/cros_ec_lightbar.c |  14 +-
+ include/linux/mfd/cros_ec_commands.h       | 277 ++++++++++++++++++++++++++---
+ 2 files changed, 262 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index b400bfa2772a..22e8a4ae1711 100644
---- a/drivers/mfd/cros_ec_i2c.c
-+++ b/drivers/mfd/cros_ec_i2c.c
-@@ -13,6 +13,7 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+index 560e5d41b7ae..6e1986a2dce1 100644
+--- a/drivers/platform/chrome/cros_ec_lightbar.c
++++ b/drivers/platform/chrome/cros_ec_lightbar.c
+@@ -197,8 +197,8 @@ static ssize_t brightness_store(struct device *dev,
+ 		return -ENOMEM;
  
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -22,6 +23,32 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
+ 	param = (struct ec_params_lightbar *)msg->data;
+-	param->cmd = LIGHTBAR_CMD_BRIGHTNESS;
+-	param->brightness.num = val;
++	param->cmd = LIGHTBAR_CMD_SET_BRIGHTNESS;
++	param->set_brightness.num = val;
+ 	ret = lb_throttle();
+ 	if (ret)
+ 		goto exit;
+@@ -253,11 +253,11 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
  
-+/**
-+ * Request format for protocol v3
-+ * byte 0	0xda (EC_COMMAND_PROTOCOL_3)
-+ * byte 1-8	struct ec_host_request
-+ * byte 10-	response data
-+ */
-+struct ec_host_request_i2c {
-+	/* Always 0xda to backward compatible with v2 struct */
-+	uint8_t  command_protocol;
-+	struct ec_host_request ec_request;
-+} __packed;
-+
-+
-+/*
-+ * Response format for protocol v3
-+ * byte 0	result code
-+ * byte 1	packet_length
-+ * byte 2-9	struct ec_host_response
-+ * byte 10-	response data
-+ */
-+struct ec_host_response_i2c {
-+	uint8_t result;
-+	uint8_t packet_length;
-+	struct ec_host_response ec_response;
-+} __packed;
-+
- static inline struct cros_ec_device *to_ec_dev(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
-@@ -29,6 +56,134 @@ static inline struct cros_ec_device *to_ec_dev(struct device *dev)
- 	return i2c_get_clientdata(client);
- }
- 
-+static int cros_ec_pkt_xfer_i2c(struct cros_ec_device *ec_dev,
-+				struct cros_ec_command *msg)
-+{
-+	struct i2c_client *client = ec_dev->priv;
-+	int ret = -ENOMEM;
-+	int i;
-+	int packet_len;
-+	u8 *out_buf = NULL;
-+	u8 *in_buf = NULL;
-+	u8 sum;
-+	struct i2c_msg i2c_msg[2];
-+	struct ec_host_response *ec_response;
-+	struct ec_host_request_i2c *ec_request_i2c;
-+	struct ec_host_response_i2c *ec_response_i2c;
-+	int request_header_size = sizeof(struct ec_host_request_i2c);
-+	int response_header_size = sizeof(struct ec_host_response_i2c);
-+
-+	i2c_msg[0].addr = client->addr;
-+	i2c_msg[0].flags = 0;
-+	i2c_msg[1].addr = client->addr;
-+	i2c_msg[1].flags = I2C_M_RD;
-+
-+	packet_len = msg->insize + response_header_size;
-+	BUG_ON(packet_len > ec_dev->din_size);
-+	in_buf = ec_dev->din;
-+	i2c_msg[1].len = packet_len;
-+	i2c_msg[1].buf = (char *) in_buf;
-+
-+	packet_len = msg->outsize + request_header_size;
-+	BUG_ON(packet_len > ec_dev->dout_size);
-+	out_buf = ec_dev->dout;
-+	i2c_msg[0].len = packet_len;
-+	i2c_msg[0].buf = (char *) out_buf;
-+
-+	/* create request data */
-+	ec_request_i2c = (struct ec_host_request_i2c *) out_buf;
-+	ec_request_i2c->command_protocol = EC_COMMAND_PROTOCOL_3;
-+
-+	ec_dev->dout++;
-+	ret = cros_ec_prepare_tx(ec_dev, msg);
-+	ec_dev->dout--;
-+
-+	/* send command to EC and read answer */
-+	ret = i2c_transfer(client->adapter, i2c_msg, 2);
-+	if (ret < 0) {
-+		dev_dbg(ec_dev->dev, "i2c transfer failed: %d\n", ret);
-+		goto done;
-+	} else if (ret != 2) {
-+		dev_err(ec_dev->dev, "failed to get response: %d\n", ret);
-+		ret = -EIO;
-+		goto done;
-+	}
-+
-+	ec_response_i2c = (struct ec_host_response_i2c *) in_buf;
-+	msg->result = ec_response_i2c->result;
-+	ec_response = &ec_response_i2c->ec_response;
-+
-+	switch (msg->result) {
-+	case EC_RES_SUCCESS:
-+		break;
-+	case EC_RES_IN_PROGRESS:
-+		ret = -EAGAIN;
-+		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-+			msg->command);
-+		goto done;
-+
-+	default:
-+		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
-+			msg->command, msg->result);
-+		/*
-+		 * When we send v3 request to v2 ec, ec won't recognize the
-+		 * 0xda (EC_COMMAND_PROTOCOL_3) and will return with status
-+		 * EC_RES_INVALID_COMMAND with zero data length.
-+		 *
-+		 * In case of invalid command for v3 protocol the data length
-+		 * will be at least sizeof(struct ec_host_response)
-+		 */
-+		if (ec_response_i2c->result == EC_RES_INVALID_COMMAND &&
-+		    ec_response_i2c->packet_length == 0) {
-+			ret = -EPROTONOSUPPORT;
-+			goto done;
-+		}
-+	}
-+
-+	if (ec_response_i2c->packet_length < sizeof(struct ec_host_response)) {
-+		dev_err(ec_dev->dev,
-+			"response of %u bytes too short; not a full header\n",
-+			ec_response_i2c->packet_length);
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	if (msg->insize < ec_response->data_len) {
-+		dev_err(ec_dev->dev,
-+			"response data size is too large: expected %u, got %u\n",
-+			msg->insize,
-+			ec_response->data_len);
-+		ret = -EMSGSIZE;
-+		goto done;
-+	}
-+
-+	/* copy response packet payload and compute checksum */
-+	sum = 0;
-+	for (i = 0; i < sizeof(struct ec_host_response); i++)
-+		sum += ((u8 *)ec_response)[i];
-+
-+	memcpy(msg->data,
-+	       in_buf + response_header_size,
-+	       ec_response->data_len);
-+	for (i = 0; i < ec_response->data_len; i++)
-+		sum += msg->data[i];
-+
-+	/* All bytes should sum to zero */
-+	if (sum) {
-+		dev_err(ec_dev->dev, "bad packet checksum\n");
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	ret = ec_response->data_len;
-+
-+done:
-+	if (msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
-+
-+	return ret;
-+}
-+
- static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
- 				struct cros_ec_command *msg)
- {
-@@ -121,9 +276,12 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
- 	}
- 
- 	ret = len;
-- done:
-+done:
- 	kfree(in_buf);
- 	kfree(out_buf);
-+	if (msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
-+
- 	return ret;
- }
- 
-@@ -143,12 +301,12 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
- 	ec_dev->priv = client;
- 	ec_dev->irq = client->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
--	ec_dev->pkt_xfer = NULL;
-+	ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
- 	ec_dev->ec_name = client->name;
- 	ec_dev->phys_name = client->adapter->name;
--	ec_dev->din_size = sizeof(struct ec_host_response) +
-+	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
- 			   sizeof(struct ec_response_get_protocol_info);
--	ec_dev->dout_size = sizeof(struct ec_host_request);
-+	ec_dev->dout_size = sizeof(struct ec_host_request_i2c);
- 
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 04da2f288ef8..4e6f2f6b1095 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -65,12 +65,6 @@
-   */
- #define EC_SPI_RECOVERY_TIME_NS	(200 * 1000)
- 
--/*
-- * The EC is unresponsive for a time after a reboot command.  Add a
-- * simple delay to make sure that the bus stays locked.
-- */
--#define EC_REBOOT_DELAY_MS	50
--
- /**
-  * struct cros_ec_spi - information about a SPI-connected EC
+ 		if (i == 4) {
+ 			param = (struct ec_params_lightbar *)msg->data;
+-			param->cmd = LIGHTBAR_CMD_RGB;
+-			param->rgb.led = val[0];
+-			param->rgb.red = val[1];
+-			param->rgb.green = val[2];
+-			param->rgb.blue = val[3];
++			param->cmd = LIGHTBAR_CMD_SET_RGB;
++			param->set_rgb.led = val[0];
++			param->set_rgb.red = val[1];
++			param->set_rgb.green = val[2];
++			param->set_rgb.blue = val[3];
+ 			/*
+ 			 * Throttle only the first of every four transactions,
+ 			 * so that the user can update all four LEDs at once.
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index a49cd41feea7..13b630c10d4c 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -515,7 +515,7 @@ struct ec_host_response {
+ /*
+  * Notes on commands:
   *
-@@ -87,7 +81,7 @@ struct cros_ec_spi {
+- * Each command is an 8-byte command value.  Commands which take params or
++ * Each command is an 16-bit command value.  Commands which take params or
+  * return response data specify structs for that data.  If no struct is
+  * specified, the command does not input or output data, respectively.
+  * Parameter/response length is implicit in the structs.  Some underlying
+@@ -966,7 +966,7 @@ struct rgb_s {
+ /* List of tweakable parameters. NOTE: It's __packed so it can be sent in a
+  * host command, but the alignment is the same regardless. Keep it that way.
+  */
+-struct lightbar_params {
++struct lightbar_params_v0 {
+ 	/* Timing */
+ 	int32_t google_ramp_up;
+ 	int32_t google_ramp_down;
+@@ -1000,32 +1000,81 @@ struct lightbar_params {
+ 	struct rgb_s color[8];			/* 0-3 are Google colors */
+ } __packed;
+ 
++struct lightbar_params_v1 {
++	/* Timing */
++	int32_t google_ramp_up;
++	int32_t google_ramp_down;
++	int32_t s3s0_ramp_up;
++	int32_t s0_tick_delay[2];		/* AC=0/1 */
++	int32_t s0a_tick_delay[2];		/* AC=0/1 */
++	int32_t s0s3_ramp_down;
++	int32_t s3_sleep_for;
++	int32_t s3_ramp_up;
++	int32_t s3_ramp_down;
++	int32_t tap_tick_delay;
++	int32_t tap_display_time;
++
++	/* Tap-for-battery params */
++	uint8_t tap_pct_red;
++	uint8_t tap_pct_green;
++	uint8_t tap_seg_min_on;
++	uint8_t tap_seg_max_on;
++	uint8_t tap_seg_osc;
++	uint8_t tap_idx[3];
++
++	/* Oscillation */
++	uint8_t osc_min[2];			/* AC=0/1 */
++	uint8_t osc_max[2];			/* AC=0/1 */
++	uint8_t w_ofs[2];			/* AC=0/1 */
++
++	/* Brightness limits based on the backlight and AC. */
++	uint8_t bright_bl_off_fixed[2];		/* AC=0/1 */
++	uint8_t bright_bl_on_min[2];		/* AC=0/1 */
++	uint8_t bright_bl_on_max[2];		/* AC=0/1 */
++
++	/* Battery level thresholds */
++	uint8_t battery_threshold[LB_BATTERY_LEVELS - 1];
++
++	/* Map [AC][battery_level] to color index */
++	uint8_t s0_idx[2][LB_BATTERY_LEVELS];	/* AP is running */
++	uint8_t s3_idx[2][LB_BATTERY_LEVELS];	/* AP is sleeping */
++
++	/* Color palette */
++	struct rgb_s color[8];			/* 0-3 are Google colors */
++} __packed;
++
+ struct ec_params_lightbar {
+ 	uint8_t cmd;		      /* Command (see enum lightbar_command) */
+ 	union {
+ 		struct {
+ 			/* no args */
+-		} dump, off, on, init, get_seq, get_params, version;
++		} dump, off, on, init, get_seq, get_params_v0, get_params_v1,
++			version, get_brightness, get_demo;
+ 
+-		struct num {
++		struct {
+ 			uint8_t num;
+-		} brightness, seq, demo;
++		} set_brightness, seq, demo;
+ 
+-		struct reg {
++		struct {
+ 			uint8_t ctrl, reg, value;
+ 		} reg;
+ 
+-		struct rgb {
++		struct {
+ 			uint8_t led, red, green, blue;
+-		} rgb;
++		} set_rgb;
++
++		struct {
++			uint8_t led;
++		} get_rgb;
+ 
+-		struct lightbar_params set_params;
++		struct lightbar_params_v0 set_params_v0;
++		struct lightbar_params_v1 set_params_v1;
+ 	};
+ } __packed;
+ 
+ struct ec_response_lightbar {
+ 	union {
+-		struct dump {
++		struct {
+ 			struct {
+ 				uint8_t reg;
+ 				uint8_t ic0;
+@@ -1033,20 +1082,26 @@ struct ec_response_lightbar {
+ 			} vals[23];
+ 		} dump;
+ 
+-		struct get_seq {
++		struct  {
+ 			uint8_t num;
+-		} get_seq;
++		} get_seq, get_brightness, get_demo;
+ 
+-		struct lightbar_params get_params;
++		struct lightbar_params_v0 get_params_v0;
++		struct lightbar_params_v1 get_params_v1;
+ 
+-		struct version {
++		struct {
+ 			uint32_t num;
+ 			uint32_t flags;
+ 		} version;
+ 
+ 		struct {
++			uint8_t red, green, blue;
++		} get_rgb;
++
++		struct {
+ 			/* no return params */
+-		} off, on, init, brightness, seq, reg, rgb, demo, set_params;
++		} off, on, init, set_brightness, seq, reg, set_rgb,
++			demo, set_params_v0, set_params_v1;
+ 	};
+ } __packed;
+ 
+@@ -1056,15 +1111,20 @@ enum lightbar_command {
+ 	LIGHTBAR_CMD_OFF = 1,
+ 	LIGHTBAR_CMD_ON = 2,
+ 	LIGHTBAR_CMD_INIT = 3,
+-	LIGHTBAR_CMD_BRIGHTNESS = 4,
++	LIGHTBAR_CMD_SET_BRIGHTNESS = 4,
+ 	LIGHTBAR_CMD_SEQ = 5,
+ 	LIGHTBAR_CMD_REG = 6,
+-	LIGHTBAR_CMD_RGB = 7,
++	LIGHTBAR_CMD_SET_RGB = 7,
+ 	LIGHTBAR_CMD_GET_SEQ = 8,
+ 	LIGHTBAR_CMD_DEMO = 9,
+-	LIGHTBAR_CMD_GET_PARAMS = 10,
+-	LIGHTBAR_CMD_SET_PARAMS = 11,
++	LIGHTBAR_CMD_GET_PARAMS_V0 = 10,
++	LIGHTBAR_CMD_SET_PARAMS_V0 = 11,
+ 	LIGHTBAR_CMD_VERSION = 12,
++	LIGHTBAR_CMD_GET_BRIGHTNESS = 13,
++	LIGHTBAR_CMD_GET_RGB = 14,
++	LIGHTBAR_CMD_GET_DEMO = 15,
++	LIGHTBAR_CMD_GET_PARAMS_V1 = 16,
++	LIGHTBAR_CMD_SET_PARAMS_V1 = 17,
+ 	LIGHTBAR_NUM_CMDS
  };
  
- static void debug_packet(struct device *dev, const char *name, u8 *ptr,
--			  int len)
-+			 int len)
- {
- #ifdef DEBUG
- 	int i;
-@@ -100,6 +94,172 @@ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
- #endif
- }
+@@ -1421,8 +1481,40 @@ struct ec_response_rtc {
+ /*****************************************************************************/
+ /* Port80 log access */
  
-+static int terminate_request(struct cros_ec_device *ec_dev)
-+{
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct spi_message msg;
-+	struct spi_transfer trans;
-+	int ret;
++/* Maximum entries that can be read/written in a single command */
++#define EC_PORT80_SIZE_MAX 32
 +
-+	/*
-+	 * Turn off CS, possibly adding a delay to ensure the rising edge
-+	 * doesn't come too soon after the end of the data.
-+	 */
-+	spi_message_init(&msg);
-+	memset(&trans, 0, sizeof(trans));
-+	trans.delay_usecs = ec_spi->end_of_msg_delay;
-+	spi_message_add_tail(&trans, &msg);
+ /* Get last port80 code from previous boot */
+ #define EC_CMD_PORT80_LAST_BOOT 0x48
++#define EC_CMD_PORT80_READ 0x48
 +
-+	ret = spi_sync(ec_spi->spi, &msg);
++enum ec_port80_subcmd {
++	EC_PORT80_GET_INFO = 0,
++	EC_PORT80_READ_BUFFER,
++};
 +
-+	/* Reset end-of-response timer */
-+	ec_spi->last_transfer_ns = ktime_get_ns();
-+	if (ret < 0) {
-+		dev_err(ec_dev->dev,
-+			"cs-deassert spi transfer failed: %d\n",
-+			ret);
-+	}
++struct ec_params_port80_read {
++	uint16_t subcmd;
++	union {
++		struct {
++			uint32_t offset;
++			uint32_t num_entries;
++		} read_buffer;
++	};
++} __packed;
 +
-+	return ret;
-+}
-+
-+/**
-+ * receive_n_bytes - receive n bytes from the EC.
-+ *
-+ * Assumes buf is a pointer into the ec_dev->din buffer
-+ */
-+static int receive_n_bytes(struct cros_ec_device *ec_dev, u8 *buf, int n)
-+{
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct spi_transfer trans;
-+	struct spi_message msg;
-+	int ret;
-+
-+	BUG_ON(buf - ec_dev->din + n > ec_dev->din_size);
-+
-+	memset(&trans, 0, sizeof(trans));
-+	trans.cs_change = 1;
-+	trans.rx_buf = buf;
-+	trans.len = n;
-+
-+	spi_message_init(&msg);
-+	spi_message_add_tail(&trans, &msg);
-+	ret = spi_sync(ec_spi->spi, &msg);
-+	if (ret < 0)
-+		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+/**
-+ * cros_ec_spi_receive_packet - Receive a packet from the EC.
-+ *
-+ * This function has two phases: reading the preamble bytes (since if we read
-+ * data from the EC before it is ready to send, we just get preamble) and
-+ * reading the actual message.
-+ *
-+ * The received data is placed into ec_dev->din.
-+ *
-+ * @ec_dev: ChromeOS EC device
-+ * @need_len: Number of message bytes we need to read
-+ */
-+static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
-+				      int need_len)
-+{
-+	struct ec_host_response *response;
-+	u8 *ptr, *end;
-+	int ret;
-+	unsigned long deadline;
-+	int todo;
-+
-+	BUG_ON(EC_MSG_PREAMBLE_COUNT > ec_dev->din_size);
-+
-+	/* Receive data until we see the header byte */
-+	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
-+	while (true) {
-+		unsigned long start_jiffies = jiffies;
-+
-+		ret = receive_n_bytes(ec_dev,
-+				      ec_dev->din,
-+				      EC_MSG_PREAMBLE_COUNT);
-+		if (ret < 0)
-+			return ret;
-+
-+		ptr = ec_dev->din;
-+		for (end = ptr + EC_MSG_PREAMBLE_COUNT; ptr != end; ptr++) {
-+			if (*ptr == EC_SPI_FRAME_START) {
-+				dev_dbg(ec_dev->dev, "msg found at %zd\n",
-+					ptr - ec_dev->din);
-+				break;
-+			}
-+		}
-+		if (ptr != end)
-+			break;
-+
-+		/*
-+		 * Use the time at the start of the loop as a timeout.  This
-+		 * gives us one last shot at getting the transfer and is useful
-+		 * in case we got context switched out for a while.
-+		 */
-+		if (time_after(start_jiffies, deadline)) {
-+			dev_warn(ec_dev->dev, "EC failed to respond in time\n");
-+			return -ETIMEDOUT;
-+		}
-+	}
-+
-+	/*
-+	 * ptr now points to the header byte. Copy any valid data to the
-+	 * start of our buffer
-+	 */
-+	todo = end - ++ptr;
-+	BUG_ON(todo < 0 || todo > ec_dev->din_size);
-+	todo = min(todo, need_len);
-+	memmove(ec_dev->din, ptr, todo);
-+	ptr = ec_dev->din + todo;
-+	dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
-+		need_len, todo);
-+	need_len -= todo;
-+
-+	/* If the entire response struct wasn't read, get the rest of it. */
-+	if (todo < sizeof(*response)) {
-+		ret = receive_n_bytes(ec_dev, ptr, sizeof(*response) - todo);
-+		if (ret < 0)
-+			return -EBADMSG;
-+		ptr += (sizeof(*response) - todo);
-+		todo = sizeof(*response);
-+	}
-+
-+	response = (struct ec_host_response *)ec_dev->din;
-+
-+	/* Abort if data_len is too large. */
-+	if (response->data_len > ec_dev->din_size)
-+		return -EMSGSIZE;
-+
-+	/* Receive data until we have it all */
-+	while (need_len > 0) {
-+		/*
-+		 * We can't support transfers larger than the SPI FIFO size
-+		 * unless we have DMA. We don't have DMA on the ISP SPI ports
-+		 * for Exynos. We need a way of asking SPI driver for
-+		 * maximum-supported transfer size.
-+		 */
-+		todo = min(need_len, 256);
-+		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
-+			todo, need_len, ptr - ec_dev->din);
-+
-+		ret = receive_n_bytes(ec_dev, ptr, todo);
-+		if (ret < 0)
-+			return ret;
-+
-+		ptr += todo;
-+		need_len -= todo;
-+	}
-+
-+	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
-+
-+	return 0;
-+}
-+
- /**
-  * cros_ec_spi_receive_response - Receive a response from the EC.
-  *
-@@ -115,34 +275,27 @@ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
- static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
- 					int need_len)
- {
--	struct cros_ec_spi *ec_spi = ec_dev->priv;
--	struct spi_transfer trans;
--	struct spi_message msg;
- 	u8 *ptr, *end;
- 	int ret;
- 	unsigned long deadline;
- 	int todo;
++struct ec_response_port80_read {
++	union {
++		struct {
++			uint32_t writes;
++			uint32_t history_size;
++			uint32_t last_boot;
++		} get_info;
++		struct {
++			uint16_t codes[EC_PORT80_SIZE_MAX];
++		} data;
++	};
++} __packed;
  
-+	BUG_ON(EC_MSG_PREAMBLE_COUNT > ec_dev->din_size);
-+
- 	/* Receive data until we see the header byte */
- 	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
- 	while (true) {
- 		unsigned long start_jiffies = jiffies;
+ struct ec_response_port80_last_boot {
+ 	uint16_t code;
+@@ -1782,6 +1874,7 @@ struct ec_params_gpio_set {
+ /* Get GPIO value */
+ #define EC_CMD_GPIO_GET 0x93
  
--		memset(&trans, 0, sizeof(trans));
--		trans.cs_change = 1;
--		trans.rx_buf = ptr = ec_dev->din;
--		trans.len = EC_MSG_PREAMBLE_COUNT;
--
--		spi_message_init(&msg);
--		spi_message_add_tail(&trans, &msg);
--		ret = spi_sync(ec_spi->spi, &msg);
--		if (ret < 0) {
--			dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+		ret = receive_n_bytes(ec_dev,
-+				      ec_dev->din,
-+				      EC_MSG_PREAMBLE_COUNT);
-+		if (ret < 0)
- 			return ret;
--		}
++/* Version 0 of input params and response */
+ struct ec_params_gpio_get {
+ 	char name[32];
+ } __packed;
+@@ -1789,6 +1882,38 @@ struct ec_response_gpio_get {
+ 	uint8_t val;
+ } __packed;
  
-+		ptr = ec_dev->din;
- 		for (end = ptr + EC_MSG_PREAMBLE_COUNT; ptr != end; ptr++) {
--			if (*ptr == EC_MSG_HEADER) {
-+			if (*ptr == EC_SPI_FRAME_START) {
- 				dev_dbg(ec_dev->dev, "msg found at %zd\n",
- 					ptr - ec_dev->din);
- 				break;
-@@ -187,21 +340,9 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
- 		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
- 			todo, need_len, ptr - ec_dev->din);
++/* Version 1 of input params and response */
++struct ec_params_gpio_get_v1 {
++	uint8_t subcmd;
++	union {
++		struct {
++			char name[32];
++		} get_value_by_name;
++		struct {
++			uint8_t index;
++		} get_info;
++	};
++} __packed;
++
++struct ec_response_gpio_get_v1 {
++	union {
++		struct {
++			uint8_t val;
++		} get_value_by_name, get_count;
++		struct {
++			uint8_t val;
++			char name[32];
++			uint32_t flags;
++		} get_info;
++	};
++} __packed;
++
++enum gpio_get_subcmd {
++	EC_GPIO_GET_BY_NAME = 0,
++	EC_GPIO_GET_COUNT = 1,
++	EC_GPIO_GET_INFO = 2,
++};
++
+ /*****************************************************************************/
+ /* I2C commands. Only available when flash write protect is unlocked. */
  
--		memset(&trans, 0, sizeof(trans));
--		trans.cs_change = 1;
--		trans.rx_buf = ptr;
--		trans.len = todo;
--		spi_message_init(&msg);
--		spi_message_add_tail(&trans, &msg);
--
--		/* send command to EC and read answer */
--		BUG_ON((u8 *)trans.rx_buf - ec_dev->din + todo >
--				ec_dev->din_size);
--		ret = spi_sync(ec_spi->spi, &msg);
--		if (ret < 0) {
--			dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+		ret = receive_n_bytes(ec_dev, ptr, todo);
-+		if (ret < 0)
- 			return ret;
--		}
- 
- 		debug_packet(ec_dev->dev, "interim", ptr, todo);
- 		ptr += todo;
-@@ -214,6 +355,128 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
- }
- 
- /**
-+ * cros_ec_pkt_xfer_spi - Transfer a packet over SPI and receive the reply
-+ *
-+ * @ec_dev: ChromeOS EC device
-+ * @ec_msg: Message to transfer
-+ */
-+static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
-+				struct cros_ec_command *ec_msg)
-+{
-+	struct ec_host_request *request;
-+	struct ec_host_response *response;
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct spi_transfer trans;
-+	struct spi_message msg;
-+	int i, len;
-+	u8 *ptr;
-+	u8 *rx_buf;
-+	u8 sum;
-+	int ret = 0, final_ret;
-+
-+	len = cros_ec_prepare_tx(ec_dev, ec_msg);
-+	request = (struct ec_host_request *)ec_dev->dout;
-+	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
-+
-+	/* If it's too soon to do another transaction, wait */
-+	if (ec_spi->last_transfer_ns) {
-+		unsigned long delay;	/* The delay completed so far */
-+
-+		delay = ktime_get_ns() - ec_spi->last_transfer_ns;
-+		if (delay < EC_SPI_RECOVERY_TIME_NS)
-+			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
-+	}
-+
-+	rx_buf = kzalloc(len, GFP_KERNEL);
-+	if (!rx_buf) {
-+		ret = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	/* Transmit phase - send our message */
-+	memset(&trans, 0, sizeof(trans));
-+	trans.tx_buf = ec_dev->dout;
-+	trans.rx_buf = rx_buf;
-+	trans.len = len;
-+	trans.cs_change = 1;
-+	spi_message_init(&msg);
-+	spi_message_add_tail(&trans, &msg);
-+	ret = spi_sync(ec_spi->spi, &msg);
-+
-+	/* Get the response */
-+	if (!ret) {
-+		/* Verify that EC can process command */
-+		for (i = 0; i < len; i++) {
-+			switch (rx_buf[i]) {
-+			case EC_SPI_PAST_END:
-+			case EC_SPI_RX_BAD_DATA:
-+			case EC_SPI_NOT_READY:
-+				ret = -EAGAIN;
-+				ec_msg->result = EC_RES_IN_PROGRESS;
-+			default:
-+				break;
-+			}
-+			if (ret)
-+				break;
-+		}
-+		if (!ret)
-+			ret = cros_ec_spi_receive_packet(ec_dev,
-+					ec_msg->insize + sizeof(*response));
-+	} else {
-+		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+	}
-+
-+	final_ret = terminate_request(ec_dev);
-+	if (!ret)
-+		ret = final_ret;
-+	if (ret < 0)
-+		goto exit;
-+
-+	ptr = ec_dev->din;
-+
-+	/* check response error code */
-+	response = (struct ec_host_response *)ptr;
-+	ec_msg->result = response->result;
-+
-+	ret = cros_ec_check_result(ec_dev, ec_msg);
-+	if (ret)
-+		goto exit;
-+
-+	len = response->data_len;
-+	sum = 0;
-+	if (len > ec_msg->insize) {
-+		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
-+			len, ec_msg->insize);
-+		ret = -EMSGSIZE;
-+		goto exit;
-+	}
-+
-+	for (i = 0; i < sizeof(*response); i++)
-+		sum += ptr[i];
-+
-+	/* copy response packet payload and compute checksum */
-+	memcpy(ec_msg->data, ptr + sizeof(*response), len);
-+	for (i = 0; i < len; i++)
-+		sum += ec_msg->data[i];
-+
-+	if (sum) {
-+		dev_err(ec_dev->dev,
-+			"bad packet checksum, calculated %x\n",
-+			sum);
-+		ret = -EBADMSG;
-+		goto exit;
-+	}
-+
-+	ret = len;
-+exit:
-+	kfree(rx_buf);
-+	if (ec_msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
-+
-+	return ret;
-+}
-+
-+/**
-  * cros_ec_cmd_xfer_spi - Transfer a message over SPI and receive the reply
-  *
-  * @ec_dev: ChromeOS EC device
-@@ -227,6 +490,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 	struct spi_message msg;
- 	int i, len;
- 	u8 *ptr;
-+	u8 *rx_buf;
- 	int sum;
- 	int ret = 0, final_ret;
- 
-@@ -242,10 +506,17 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
- 	}
- 
-+	rx_buf = kzalloc(len, GFP_KERNEL);
-+	if (!rx_buf) {
-+		ret = -ENOMEM;
-+		goto exit;
-+	}
-+
- 	/* Transmit phase - send our message */
- 	debug_packet(ec_dev->dev, "out", ec_dev->dout, len);
- 	memset(&trans, 0, sizeof(trans));
- 	trans.tx_buf = ec_dev->dout;
-+	trans.rx_buf = rx_buf;
- 	trans.len = len;
- 	trans.cs_change = 1;
- 	spi_message_init(&msg);
-@@ -254,29 +525,32 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 
- 	/* Get the response */
- 	if (!ret) {
--		ret = cros_ec_spi_receive_response(ec_dev,
--				ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
-+		/* Verify that EC can process command */
-+		for (i = 0; i < len; i++) {
-+			switch (rx_buf[i]) {
-+			case EC_SPI_PAST_END:
-+			case EC_SPI_RX_BAD_DATA:
-+			case EC_SPI_NOT_READY:
-+				ret = -EAGAIN;
-+				ec_msg->result = EC_RES_IN_PROGRESS;
-+			default:
-+				break;
-+			}
-+			if (ret)
-+				break;
-+		}
-+		if (!ret)
-+			ret = cros_ec_spi_receive_response(ec_dev,
-+					ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
- 	} else {
- 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
- 	}
- 
--	/*
--	 * Turn off CS, possibly adding a delay to ensure the rising edge
--	 * doesn't come too soon after the end of the data.
--	 */
--	spi_message_init(&msg);
--	memset(&trans, 0, sizeof(trans));
--	trans.delay_usecs = ec_spi->end_of_msg_delay;
--	spi_message_add_tail(&trans, &msg);
--
--	final_ret = spi_sync(ec_spi->spi, &msg);
--	ec_spi->last_transfer_ns = ktime_get_ns();
-+	final_ret = terminate_request(ec_dev);
- 	if (!ret)
- 		ret = final_ret;
--	if (ret < 0) {
--		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+	if (ret < 0)
- 		goto exit;
--	}
- 
- 	ptr = ec_dev->din;
- 
-@@ -315,6 +589,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 
- 	ret = len;
- exit:
-+	kfree(rx_buf);
- 	if (ec_msg->command == EC_CMD_REBOOT_EC)
- 		msleep(EC_REBOOT_DELAY_MS);
- 
-@@ -361,7 +636,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev->priv = ec_spi;
- 	ec_dev->irq = spi->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
--	ec_dev->pkt_xfer = NULL;
-+	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
- 	ec_dev->ec_name = ec_spi->spi->modalias;
- 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
- 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
-@@ -369,6 +644,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 			   sizeof(struct ec_response_get_protocol_info);
- 	ec_dev->dout_size = sizeof(struct ec_host_request);
- 
-+
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
- 		dev_err(dev, "cannot register EC\n");
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 06c5790b2c28..92b633324aaa 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -46,6 +46,77 @@ static int ec_response_timed_out(void)
- 	return 1;
- }
- 
-+static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
-+				struct cros_ec_command *msg)
-+{
-+	struct ec_host_request *request;
-+	struct ec_host_response response;
-+	u8 sum = 0;
-+	int i;
-+	int ret = 0;
-+	u8 *dout;
-+
-+	ret = cros_ec_prepare_tx(ec, msg);
-+
-+	/* Write buffer */
-+	for (i = 0; i < ret; i++)
-+		outb(ec->dout[i], EC_LPC_ADDR_HOST_PACKET + i);
-+
-+	request = (struct ec_host_request *)ec->dout;
-+
-+	/* Here we go */
-+	outb(EC_COMMAND_PROTOCOL_3, EC_LPC_ADDR_HOST_CMD);
-+
-+	if (ec_response_timed_out()) {
-+		dev_warn(ec->dev, "EC responsed timed out\n");
-+		ret = -EIO;
-+		goto done;
-+	}
-+
-+	/* Check result */
-+	msg->result = inb(EC_LPC_ADDR_HOST_DATA);
-+	ret = cros_ec_check_result(ec, msg);
-+	if (ret)
-+		goto done;
-+
-+	/* Read back response */
-+	dout = (u8 *)&response;
-+	for (i = 0; i < sizeof(response); i++) {
-+		dout[i] = inb(EC_LPC_ADDR_HOST_PACKET + i);
-+		sum += dout[i];
-+	}
-+
-+	msg->result = response.result;
-+
-+	if (response.data_len > msg->insize) {
-+		dev_err(ec->dev,
-+			"packet too long (%d bytes, expected %d)",
-+			response.data_len, msg->insize);
-+		ret = -EMSGSIZE;
-+		goto done;
-+	}
-+
-+	/* Read response and process checksum */
-+	for (i = 0; i < response.data_len; i++) {
-+		msg->data[i] =
-+			inb(EC_LPC_ADDR_HOST_PACKET + sizeof(response) + i);
-+		sum += msg->data[i];
-+	}
-+
-+	if (sum) {
-+		dev_err(ec->dev,
-+			"bad packet checksum %02x\n",
-+			response.checksum);
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	/* Return actual amount of data received */
-+	ret = response.data_len;
-+done:
-+	return ret;
-+}
-+
- static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
- 				struct cros_ec_command *msg)
- {
-@@ -205,7 +276,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 	ec_dev->ec_name = pdev->name;
- 	ec_dev->phys_name = dev_name(dev);
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
--	ec_dev->pkt_xfer = NULL;
-+	ec_dev->pkt_xfer = cros_ec_pkt_xfer_lpc;
- 	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
- 	ec_dev->din_size = sizeof(struct ec_host_response) +
- 			   sizeof(struct ec_response_get_protocol_info);
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 59d909434efd..92e13aaa450c 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -22,6 +22,12 @@
- #include <linux/mutex.h>
+@@ -1857,13 +1982,21 @@ struct ec_params_charge_control {
+ /*****************************************************************************/
  
  /*
-+ * The EC is unresponsive for a time after a reboot command.  Add a
-+ * simple delay to make sure that the bus stays locked.
-+ */
-+#define EC_REBOOT_DELAY_MS             50
+- * Cut off battery power output if the battery supports.
++ * Cut off battery power immediately or after the host has shut down.
+  *
+- * For unsupported battery, just don't implement this command and lets EC
+- * return EC_RES_INVALID_COMMAND.
++ * return EC_RES_INVALID_COMMAND if unsupported by a board/battery.
++ *	  EC_RES_SUCCESS if the command was successful.
++ *	  EC_RES_ERROR if the cut off command failed.
+  */
 +
+ #define EC_CMD_BATTERY_CUT_OFF 0x99
+ 
++#define EC_BATTERY_CUTOFF_FLAG_AT_SHUTDOWN	(1 << 0)
++
++struct ec_params_battery_cutoff {
++	uint8_t flags;
++} __packed;
++
+ /*****************************************************************************/
+ /* USB port mux control. */
+ 
+@@ -2142,6 +2275,32 @@ struct ec_params_sb_wr_block {
+ } __packed;
+ 
+ /*****************************************************************************/
++/* Battery vendor parameters
++ *
++ * Get or set vendor-specific parameters in the battery. Implementations may
++ * differ between boards or batteries. On a set operation, the response
++ * contains the actual value set, which may be rounded or clipped from the
++ * requested value.
++ */
++
++#define EC_CMD_BATTERY_VENDOR_PARAM 0xb4
++
++enum ec_battery_vendor_param_mode {
++	BATTERY_VENDOR_PARAM_MODE_GET = 0,
++	BATTERY_VENDOR_PARAM_MODE_SET,
++};
++
++struct ec_params_battery_vendor_param {
++	uint32_t param;
++	uint32_t value;
++	uint8_t mode;
++} __packed;
++
++struct ec_response_battery_vendor_param {
++	uint32_t value;
++} __packed;
++
++/*****************************************************************************/
+ /* System commands */
+ 
+ /*
+@@ -2338,6 +2497,80 @@ struct ec_params_reboot_ec {
+ 
+ /*****************************************************************************/
+ /*
++ * PD commands
++ *
++ * These commands are for PD MCU communication.
++ */
++
++/* EC to PD MCU exchange status command */
++#define EC_CMD_PD_EXCHANGE_STATUS 0x100
++
++/* Status of EC being sent to PD */
++struct ec_params_pd_status {
++	int8_t batt_soc; /* battery state of charge */
++} __packed;
++
++/* Status of PD being sent back to EC */
++struct ec_response_pd_status {
++	int8_t status;        /* PD MCU status */
++	uint32_t curr_lim_ma; /* input current limit */
++} __packed;
++
++/* Set USB type-C port role and muxes */
++#define EC_CMD_USB_PD_CONTROL 0x101
++
++enum usb_pd_control_role {
++	USB_PD_CTRL_ROLE_NO_CHANGE = 0,
++	USB_PD_CTRL_ROLE_TOGGLE_ON = 1, /* == AUTO */
++	USB_PD_CTRL_ROLE_TOGGLE_OFF = 2,
++	USB_PD_CTRL_ROLE_FORCE_SINK = 3,
++	USB_PD_CTRL_ROLE_FORCE_SOURCE = 4,
++};
++
++enum usb_pd_control_mux {
++	USB_PD_CTRL_MUX_NO_CHANGE = 0,
++	USB_PD_CTRL_MUX_NONE = 1,
++	USB_PD_CTRL_MUX_USB = 2,
++	USB_PD_CTRL_MUX_DP = 3,
++	USB_PD_CTRL_MUX_DOCK = 4,
++	USB_PD_CTRL_MUX_AUTO = 5,
++};
++
++struct ec_params_usb_pd_control {
++	uint8_t port;
++	uint8_t role;
++	uint8_t mux;
++} __packed;
++
++/*****************************************************************************/
 +/*
-  * Max bus-specific overhead incurred by request/responses.
-  * I2C requires 1 additional byte for requests.
-  * I2C requires 2 additional bytes for responses.
++ * Passthru commands
++ *
++ * Some platforms have sub-processors chained to each other.  For example.
++ *
++ *     AP <--> EC <--> PD MCU
++ *
++ * The top 2 bits of the command number are used to indicate which device the
++ * command is intended for.  Device 0 is always the device receiving the
++ * command; other device mapping is board-specific.
++ *
++ * When a device receives a command to be passed to a sub-processor, it passes
++ * it on with the device number set back to 0.  This allows the sub-processor
++ * to remain blissfully unaware of whether the command originated on the next
++ * device up the chain, or was passed through from the AP.
++ *
++ * In the above example, if the AP wants to send command 0x0002 to the PD MCU,
++ *     AP sends command 0x4002 to the EC
++ *     EC sends command 0x0002 to the PD MCU
++ *     EC forwards PD MCU response back to the AP
++ */
++
++/* Offset and max command number for sub-device n */
++#define EC_CMD_PASSTHRU_OFFSET(n) (0x4000 * (n))
++#define EC_CMD_PASSTHRU_MAX(n) (EC_CMD_PASSTHRU_OFFSET(n) + 0x3fff)
++
++/*****************************************************************************/
++/*
+  * Deprecated constants. These constants have been renamed for clarity. The
+  * meaning and size has not changed. Programs that use the old names should
+  * switch to the new names soon, as the old names may not be carried forward
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
