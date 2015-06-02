@@ -1,47 +1,51 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 03/11] clocksource/drivers/exynos_mct: Staticize struct clocksource
-Date: Tue,  2 Jun 2015 14:31:48 +0200
-Message-ID: <1433248316-26320-3-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 04/11] clocksource/drivers/exynos_mct: Remove old platform mct_init()
+Date: Tue,  2 Jun 2015 14:31:49 +0200
+Message-ID: <1433248316-26320-4-git-send-email-daniel.lezcano@linaro.org>
 References: <556DA1E5.1030601@linaro.org>
  <1433248316-26320-1-git-send-email-daniel.lezcano@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:34458 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758812AbbFBMcs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 08:32:48 -0400
-Received: by wibut5 with SMTP id ut5so67693384wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2015 05:32:47 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1433248316-26320-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: tglx@linutronix.de, mingo@kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, "open list:CLOCKSOURCE, CLOC..." <linux-kernel@vger.kernel.org>, "moderated list:ARM/SAMSUNG
 	EXYNO..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNO..." <linux-samsung-soc@vger.kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The struct clocksource 'mct_frc' is not exported and used outside so
-make it static.
+Since commit 228e3023eb04 ("Merge tag 'mct-exynos-for-v3.10' of ...") the
+mct_init() was superseded by mct_init_dt() and is not referenced
+anywhere. Remove it.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/exynos_mct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 87c2e55..8b2a9fc 100644
+index 8b2a9fc..935b059 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -209,7 +209,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
- 	exynos4_mct_frc_start();
+@@ -560,18 +560,6 @@ out_irq:
+ 	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
  }
  
--struct clocksource mct_frc = {
-+static struct clocksource mct_frc = {
- 	.name		= "mct-frc",
- 	.rating		= 400,
- 	.read		= exynos4_frc_read,
+-void __init mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1)
+-{
+-	mct_irqs[MCT_G0_IRQ] = irq_g0;
+-	mct_irqs[MCT_L0_IRQ] = irq_l0;
+-	mct_irqs[MCT_L1_IRQ] = irq_l1;
+-	mct_int_type = MCT_INT_SPI;
+-
+-	exynos4_timer_resources(NULL, base);
+-	exynos4_clocksource_init();
+-	exynos4_clockevent_init();
+-}
+-
+ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ {
+ 	u32 nr_irqs, i;
 -- 
 1.9.1
