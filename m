@@ -1,66 +1,67 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: Enable display on Trats2board
-Date: Wed, 03 Jun 2015 10:04:12 +0900
-Message-ID: <556E528C.6020806@kernel.org>
-References: <1432255718-11695-1-git-send-email-k.kozlowski@samsung.com> <555EF2B5.1000504@collabora.co.uk> <555FE392.5030409@kernel.org> <6222475.TyjQftkmuB@wuerfel>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v10 17/17] drm/exynos: split exynos_crtc->dpms in enable()
+ and disable()
+Date: Wed, 03 Jun 2015 10:08:47 +0900
+Message-ID: <556E539F.9080706@samsung.com>
+References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
+ <1433171095-23773-18-git-send-email-gustavo@padovan.org>
+ <556D9D0D.6010408@samsung.com> <20150602140623.GF20774@joana>
+ <CABxcv=kwcnjudw0vQ1gHcoNfDC4xQGMu_WJTZ3_vhcxG70R02Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39145 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751378AbbFCBES (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 21:04:18 -0400
-In-Reply-To: <6222475.TyjQftkmuB@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CABxcv=kwcnjudw0vQ1gHcoNfDC4xQGMu_WJTZ3_vhcxG70R02Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/24/15 05:27, Arnd Bergmann wrote:
-> On Saturday 23 May 2015 11:18:58 Kukjin Kim wrote:
->> On 05/22/15 18:11, Javier Martinez Canillas wrote:
->>> Hello Krzysztof,
->>>
->>> On 05/22/2015 02:48 AM, Krzysztof Kozlowski wrote:
->>>> Enable the Exynos DSI and S6E8AA0 panel for full X11 display on Trats2.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>  arch/arm/configs/multi_v7_defconfig | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
->>>> index 0848337a2a01..e9785020aab1 100644
->>>> --- a/arch/arm/configs/multi_v7_defconfig
->>>> +++ b/arch/arm/configs/multi_v7_defconfig
->>>> @@ -413,10 +413,12 @@ CONFIG_DRM=y
->>>>  CONFIG_DRM_PTN3460=m
->>>>  CONFIG_DRM_PS8622=m
->>>>  CONFIG_DRM_EXYNOS=m
->>>> +CONFIG_DRM_EXYNOS_DSI=y
->>>>  CONFIG_DRM_EXYNOS_FIMD=y
->>>>  CONFIG_DRM_EXYNOS_HDMI=y
->>>>  CONFIG_DRM_RCAR_DU=m
->>>>  CONFIG_DRM_TEGRA=y
->>>> +CONFIG_DRM_PANEL_S6E8AA0=m
->>>>  CONFIG_DRM_PANEL_SIMPLE=y
->>>>  CONFIG_FB_ARMCLCD=y
->>>>  CONFIG_FB_WM8505=y
->>>>
->>>
->>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>>
->> Looks good to me and this would be handled by arm-soc guys directly 
->>
->> Acked-by: Kukjin Kim <kgene@kernel.org>
->>
-> 
-> I'd actually prefer if you could put this into the same branch as your
-> other defconfig changes. We'll handle any conflicts when merging that in.
-> 
-OK, done.
-
-Thanks,
-Kukjin
+T24gMjAxNeuFhCAwNuyblCAwMuydvCAyMzoxOSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdy
+b3RlOgo+IEhlbGxvIEd1c3Rhdm8sCj4gCj4gT24gVHVlLCBKdW4gMiwgMjAxNSBhdCA0OjA2IFBN
+LCBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFkb3Zhbi5vcmc+IHdyb3RlOgo+PiBIaSBJbmtp
+LAo+Pgo+PiAyMDE1LTA2LTAyIElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4+Cj4+
+PiBIaSwKPj4+Cj4+PiBPbiAyMDE164WEIDA27JuUIDAy7J28IDAwOjA0LCBHdXN0YXZvIFBhZG92
+YW4gd3JvdGU6Cj4+Pj4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
+bGFib3JhLmNvLnVrPgo+Pj4+Cj4+Pj4gVG8gZm9sbG93IG1vcmUgY2xvc2VseSB0aGUgbmV3IGF0
+b21pYyBBUEkgd2Ugc3BsaXQgdGhlIGRwbXMoKQo+Pj4+IGhlbHBlciBpbnRvIHRoZSBlbmFibGUo
+KSBhbmQgZGlzYWJsZSgpIGhlbHBlciB0byBnZXQgZXhhY3RseSB0aGUKPj4+PiBzYW1lIHNlbWFu
+dGljcy4KPj4+Cj4+PiBCZWxvdyBpcyB0aGUgcmVzdWx0IGZyb20gY2hlY2twYXRjaC5wbC4gUGxl
+YXNlIGZpeCBhbGwgZXJyb3JzIGFuZCBjaGVjawo+Pj4geW91ciBwYXRjaCB3aXRoIGNoZWNrcGF0
+Y2gucGwgYmVmb3JlIHBvc3RpbmcgaXQuCj4+Pgo+Pj4gVGhhbmtzLAo+Pj4gSW5raSBEYWUKPj4+
+Cj4+PiB0b3RhbDogNjIgZXJyb3JzLCAwIHdhcm5pbmdzLCA0MTAgbGluZXMgY2hlY2tlZAo+Pgo+
+PiBJIHRoaW5rIHlvdSBkaWQgc29tZXRoaW5nIHdyb25nIHdoZW4gY2hlY2tpbmcsIGZvciBtZSBp
+dCBsb29rcyBsaWtlCj4+IHRoaXM6Cj4+Cj4+IDAwMTYtZHJtLWV4eW5vcy1zcGxpdC1leHlub3Nf
+Y3J0Yy1kcG1zLWluLWVuYWJsZS1hbmQtZGlzYS5wYXRjaCBoYXMgbm8KPj4gb2J2aW91cyBzdHls
+ZSBwcm9ibGVtcyBhbmQgaXMgcmVhZHkgZm9yIHN1Ym1pc3Npb24uCj4+IFdBUk5JTkc6IERvIG5v
+dCB1c2Ugd2hpdGVzcGFjZSBiZWZvcmUgU2lnbmVkLW9mZi1ieToKPj4gIzEyOgo+PiAgICAgU2ln
+bmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNv
+LnVrPgo+Pgo+PiB0b3RhbDogMCBlcnJvcnMsIDEgd2FybmluZ3MsIDU5NCBsaW5lcyBjaGVja2Vk
+Cj4+Cj4gCj4gSSBhbHNvIGRvbid0IGdldCBhbnkgY2hlY2twYXRjaC5wbCBlcnJvciBvciB3YXJu
+aW5ncyB3aGVuIHRlc3RpbmcgeW91ciBwYXRjaDoKPiAKPiAkIHB3Y2xpZW50IGdldCA2NTIzMjUx
+Cj4gU2F2ZWQgcGF0Y2ggdG8gdjEwLTE3LTE3LWRybS1leHlub3Mtc3BsaXQtZXh5bm9zX2NydGMt
+LWRwbXMtaW4tZW5hYmxlLWFuZC1kaXNhYmxlLnBhdGNoLjAKPiAKPiAkIC4vc2NyaXB0cy9jaGVj
+a3BhdGNoLnBsCj4gdjEwLTE3LTE3LWRybS1leHlub3Mtc3BsaXQtZXh5bm9zX2NydGMtLWRwbXMt
+aW4tZW5hYmxlLWFuZC1kaXNhYmxlLnBhdGNoCj4gdG90YWw6IDAgZXJyb3JzLCAwIHdhcm5pbmdz
+LCA0MTAgbGluZXMgY2hlY2tlZAo+IAo+IHYxMC0xNy0xNy1kcm0tZXh5bm9zLXNwbGl0LWV4eW5v
+c19jcnRjLS1kcG1zLWluLWVuYWJsZS1hbmQtZGlzYWJsZS5wYXRjaAo+IGhhcyBubyBvYnZpb3Vz
+IHN0eWxlIHByb2JsZW1zIGFuZCBpcyByZWFkeSBmb3Igc3VibWlzc2lvbi4KClllcywgdGhlcmUg
+d2FzIHNvbWV0aGluZyB3cm9uZy4gV2hpbGUgY29waW5nIHRoaXMgcGF0Y2ggc2VyaWVzIHRvIG15
+IFBDLAppdCBzZWVtcyB0aGF0IHRoZSB0ZXh0IGZvcm1hdCBvZiB0aGlzIHBhdGNoIGZpbGUgd2Fz
+IG11dGF0ZWQuCgpUaGFua3MgZm9yIGNoZWNraW5nLApJbmtpIERhZQoKPiAKPj4gICAgICAgICBH
+dXN0YXZvCj4gCj4gQmVzdCByZWdhcmRzLAo+IEphdmllcgo+IC0tCj4gVG8gdW5zdWJzY3JpYmUg
+ZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmct
+c29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwu
+b3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpv
+cmRvbW8taW5mby5odG1sCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
