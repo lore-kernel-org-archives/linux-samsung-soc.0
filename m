@@ -1,860 +1,597 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v5 5/9] mfd: cros_ec: add bus-specific proto v3 code
-Date: Wed,  3 Jun 2015 15:04:00 +0200
-Message-ID: <1433336644-20532-6-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v5 4/9] mfd: cros_ec: add proto v3 skeleton
+Date: Wed,  3 Jun 2015 15:03:59 +0200
+Message-ID: <1433336644-20532-5-git-send-email-javier.martinez@collabora.co.uk>
 References: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1433336644-20532-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Gwendal Grignou <gwendal-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Filipe Brandenburger <filbranden-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alexandru M Stan <amstan-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:42477 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760122AbbFCNFV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Jun 2015 09:05:21 -0400
+In-Reply-To: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Stephen Barber <smbarber@chromium.org>
 
-Add proto v3 support to the SPI, I2C, and LPC.
+Add support in cros_ec.c to handle EC host command protocol v3.
+For v3+, probe for maximum shared protocol version and max
+request, response, and passthrough sizes. For now, this will
+always fall back to v2, since there is no bus-specific code
+for handling proto v3 packets.
 
-Signed-off-by: Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Reviewed-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Stephen Barber <smbarber@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 
 Changes since v4: None
 
 Changes since v3:
+ - Added tested-by from Heiko Stuebner.
  - Added acked-by tag from Lee Jones.
 
-Changes since v2: None
+Changes since v2:
+ - Add the helpers to the drivers/platform/chrome/cros_ec_proto.c driver
+   instead of drivers/mfd/cros_ec.c. Suggested by Lee Jones.
+ - Rename the proto probe functions for proto_query since probe has a
+   special meaning in Linux so is confusing.
 
 Changes since v1:
- - Added Gwendal Grignou Reviewed-by and Tested-by tags
+ - Squash change https://chromium-review.googlesource.com/#/c/262870/ in
+   the patch. Suggested by Gwendal Grignou
+ - Add Reviewed-by and Tested-by tags from Gwendal Grignou
 ---
- drivers/mfd/cros_ec_i2c.c             | 166 ++++++++++++++-
- drivers/mfd/cros_ec_spi.c             | 382 +++++++++++++++++++++++++++++-----
- drivers/platform/chrome/cros_ec_lpc.c |  73 ++++++-
- include/linux/mfd/cros_ec.h           |   6 +
- 4 files changed, 569 insertions(+), 58 deletions(-)
+ drivers/mfd/cros_ec.c                   |  23 ++-
+ drivers/mfd/cros_ec_i2c.c               |   4 +
+ drivers/mfd/cros_ec_spi.c               |   7 +-
+ drivers/platform/chrome/cros_ec_lpc.c   |   4 +
+ drivers/platform/chrome/cros_ec_proto.c | 339 ++++++++++++++++++++++++++++----
+ include/linux/mfd/cros_ec.h             |  28 ++-
+ 6 files changed, 355 insertions(+), 50 deletions(-)
 
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index d857f6a2b57b..08d82bfc5268 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -36,19 +36,22 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 	struct device *dev = ec_dev->dev;
+ 	int err = 0;
+ 
+-	if (ec_dev->din_size) {
+-		ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
+-		if (!ec_dev->din)
+-			return -ENOMEM;
+-	}
+-	if (ec_dev->dout_size) {
+-		ec_dev->dout = devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
+-		if (!ec_dev->dout)
+-			return -ENOMEM;
+-	}
++	ec_dev->max_request = sizeof(struct ec_params_hello);
++	ec_dev->max_response = sizeof(struct ec_response_get_protocol_info);
++	ec_dev->max_passthru = 0;
++
++	ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
++	if (!ec_dev->din)
++		return -ENOMEM;
++
++	ec_dev->dout = devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
++	if (!ec_dev->dout)
++		return -ENOMEM;
+ 
+ 	mutex_init(&ec_dev->lock);
+ 
++	cros_ec_query_all(ec_dev);
++
+ 	err = mfd_add_devices(dev, 0, cros_devs,
+ 			      ARRAY_SIZE(cros_devs),
+ 			      NULL, ec_dev->irq, NULL);
 diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index b400bfa2772a..22e8a4ae1711 100644
+index fbf7819f5de5..b400bfa2772a 100644
 --- a/drivers/mfd/cros_ec_i2c.c
 +++ b/drivers/mfd/cros_ec_i2c.c
-@@ -13,6 +13,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -22,6 +23,32 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-+/**
-+ * Request format for protocol v3
-+ * byte 0	0xda (EC_COMMAND_PROTOCOL_3)
-+ * byte 1-8	struct ec_host_request
-+ * byte 10-	response data
-+ */
-+struct ec_host_request_i2c {
-+	/* Always 0xda to backward compatible with v2 struct */
-+	uint8_t  command_protocol;
-+	struct ec_host_request ec_request;
-+} __packed;
-+
-+
-+/*
-+ * Response format for protocol v3
-+ * byte 0	result code
-+ * byte 1	packet_length
-+ * byte 2-9	struct ec_host_response
-+ * byte 10-	response data
-+ */
-+struct ec_host_response_i2c {
-+	uint8_t result;
-+	uint8_t packet_length;
-+	struct ec_host_response ec_response;
-+} __packed;
-+
- static inline struct cros_ec_device *to_ec_dev(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
-@@ -29,6 +56,134 @@ static inline struct cros_ec_device *to_ec_dev(struct device *dev)
- 	return i2c_get_clientdata(client);
- }
- 
-+static int cros_ec_pkt_xfer_i2c(struct cros_ec_device *ec_dev,
-+				struct cros_ec_command *msg)
-+{
-+	struct i2c_client *client = ec_dev->priv;
-+	int ret = -ENOMEM;
-+	int i;
-+	int packet_len;
-+	u8 *out_buf = NULL;
-+	u8 *in_buf = NULL;
-+	u8 sum;
-+	struct i2c_msg i2c_msg[2];
-+	struct ec_host_response *ec_response;
-+	struct ec_host_request_i2c *ec_request_i2c;
-+	struct ec_host_response_i2c *ec_response_i2c;
-+	int request_header_size = sizeof(struct ec_host_request_i2c);
-+	int response_header_size = sizeof(struct ec_host_response_i2c);
-+
-+	i2c_msg[0].addr = client->addr;
-+	i2c_msg[0].flags = 0;
-+	i2c_msg[1].addr = client->addr;
-+	i2c_msg[1].flags = I2C_M_RD;
-+
-+	packet_len = msg->insize + response_header_size;
-+	BUG_ON(packet_len > ec_dev->din_size);
-+	in_buf = ec_dev->din;
-+	i2c_msg[1].len = packet_len;
-+	i2c_msg[1].buf = (char *) in_buf;
-+
-+	packet_len = msg->outsize + request_header_size;
-+	BUG_ON(packet_len > ec_dev->dout_size);
-+	out_buf = ec_dev->dout;
-+	i2c_msg[0].len = packet_len;
-+	i2c_msg[0].buf = (char *) out_buf;
-+
-+	/* create request data */
-+	ec_request_i2c = (struct ec_host_request_i2c *) out_buf;
-+	ec_request_i2c->command_protocol = EC_COMMAND_PROTOCOL_3;
-+
-+	ec_dev->dout++;
-+	ret = cros_ec_prepare_tx(ec_dev, msg);
-+	ec_dev->dout--;
-+
-+	/* send command to EC and read answer */
-+	ret = i2c_transfer(client->adapter, i2c_msg, 2);
-+	if (ret < 0) {
-+		dev_dbg(ec_dev->dev, "i2c transfer failed: %d\n", ret);
-+		goto done;
-+	} else if (ret != 2) {
-+		dev_err(ec_dev->dev, "failed to get response: %d\n", ret);
-+		ret = -EIO;
-+		goto done;
-+	}
-+
-+	ec_response_i2c = (struct ec_host_response_i2c *) in_buf;
-+	msg->result = ec_response_i2c->result;
-+	ec_response = &ec_response_i2c->ec_response;
-+
-+	switch (msg->result) {
-+	case EC_RES_SUCCESS:
-+		break;
-+	case EC_RES_IN_PROGRESS:
-+		ret = -EAGAIN;
-+		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-+			msg->command);
-+		goto done;
-+
-+	default:
-+		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
-+			msg->command, msg->result);
-+		/*
-+		 * When we send v3 request to v2 ec, ec won't recognize the
-+		 * 0xda (EC_COMMAND_PROTOCOL_3) and will return with status
-+		 * EC_RES_INVALID_COMMAND with zero data length.
-+		 *
-+		 * In case of invalid command for v3 protocol the data length
-+		 * will be at least sizeof(struct ec_host_response)
-+		 */
-+		if (ec_response_i2c->result == EC_RES_INVALID_COMMAND &&
-+		    ec_response_i2c->packet_length == 0) {
-+			ret = -EPROTONOSUPPORT;
-+			goto done;
-+		}
-+	}
-+
-+	if (ec_response_i2c->packet_length < sizeof(struct ec_host_response)) {
-+		dev_err(ec_dev->dev,
-+			"response of %u bytes too short; not a full header\n",
-+			ec_response_i2c->packet_length);
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	if (msg->insize < ec_response->data_len) {
-+		dev_err(ec_dev->dev,
-+			"response data size is too large: expected %u, got %u\n",
-+			msg->insize,
-+			ec_response->data_len);
-+		ret = -EMSGSIZE;
-+		goto done;
-+	}
-+
-+	/* copy response packet payload and compute checksum */
-+	sum = 0;
-+	for (i = 0; i < sizeof(struct ec_host_response); i++)
-+		sum += ((u8 *)ec_response)[i];
-+
-+	memcpy(msg->data,
-+	       in_buf + response_header_size,
-+	       ec_response->data_len);
-+	for (i = 0; i < ec_response->data_len; i++)
-+		sum += msg->data[i];
-+
-+	/* All bytes should sum to zero */
-+	if (sum) {
-+		dev_err(ec_dev->dev, "bad packet checksum\n");
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	ret = ec_response->data_len;
-+
-+done:
-+	if (msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
-+
-+	return ret;
-+}
-+
- static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
- 				struct cros_ec_command *msg)
- {
-@@ -121,9 +276,12 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
- 	}
- 
- 	ret = len;
-- done:
-+done:
- 	kfree(in_buf);
- 	kfree(out_buf);
-+	if (msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
-+
- 	return ret;
- }
- 
-@@ -143,12 +301,12 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
+@@ -143,8 +143,12 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
  	ec_dev->priv = client;
  	ec_dev->irq = client->irq;
  	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
--	ec_dev->pkt_xfer = NULL;
-+	ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
++	ec_dev->pkt_xfer = NULL;
  	ec_dev->ec_name = client->name;
  	ec_dev->phys_name = client->adapter->name;
--	ec_dev->din_size = sizeof(struct ec_host_response) +
-+	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
- 			   sizeof(struct ec_response_get_protocol_info);
--	ec_dev->dout_size = sizeof(struct ec_host_request);
-+	ec_dev->dout_size = sizeof(struct ec_host_request_i2c);
++	ec_dev->din_size = sizeof(struct ec_host_response) +
++			   sizeof(struct ec_response_get_protocol_info);
++	ec_dev->dout_size = sizeof(struct ec_host_request);
  
  	err = cros_ec_register(ec_dev);
  	if (err) {
 diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 04da2f288ef8..4e6f2f6b1095 100644
+index 573730fec947..04da2f288ef8 100644
 --- a/drivers/mfd/cros_ec_spi.c
 +++ b/drivers/mfd/cros_ec_spi.c
-@@ -65,12 +65,6 @@
-   */
- #define EC_SPI_RECOVERY_TIME_NS	(200 * 1000)
+@@ -361,10 +361,13 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	ec_dev->priv = ec_spi;
+ 	ec_dev->irq = spi->irq;
+ 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
++	ec_dev->pkt_xfer = NULL;
+ 	ec_dev->ec_name = ec_spi->spi->modalias;
+ 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
+-	ec_dev->din_size = EC_MSG_BYTES + EC_MSG_PREAMBLE_COUNT;
+-	ec_dev->dout_size = EC_MSG_BYTES;
++	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
++			   sizeof(struct ec_host_response) +
++			   sizeof(struct ec_response_get_protocol_info);
++	ec_dev->dout_size = sizeof(struct ec_host_request);
  
--/*
-- * The EC is unresponsive for a time after a reboot command.  Add a
-- * simple delay to make sure that the bus stays locked.
-- */
--#define EC_REBOOT_DELAY_MS	50
--
- /**
-  * struct cros_ec_spi - information about a SPI-connected EC
-  *
-@@ -87,7 +81,7 @@ struct cros_ec_spi {
- };
+ 	err = cros_ec_register(ec_dev);
+ 	if (err) {
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 214ae7fef984..06c5790b2c28 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -205,7 +205,11 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	ec_dev->ec_name = pdev->name;
+ 	ec_dev->phys_name = dev_name(dev);
+ 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
++	ec_dev->pkt_xfer = NULL;
+ 	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
++	ec_dev->din_size = sizeof(struct ec_host_response) +
++			   sizeof(struct ec_response_get_protocol_info);
++	ec_dev->dout_size = sizeof(struct ec_host_request);
  
- static void debug_packet(struct device *dev, const char *name, u8 *ptr,
--			  int len)
-+			 int len)
- {
- #ifdef DEBUG
- 	int i;
-@@ -100,6 +94,172 @@ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
- #endif
- }
+ 	ret = cros_ec_register(ec_dev);
+ 	if (ret) {
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index 58e98a24fd08..990308ca384f 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -22,11 +22,100 @@
  
-+static int terminate_request(struct cros_ec_device *ec_dev)
+ #define EC_COMMAND_RETRIES	50
+ 
++static int prepare_packet(struct cros_ec_device *ec_dev,
++			  struct cros_ec_command *msg)
 +{
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct spi_message msg;
-+	struct spi_transfer trans;
-+	int ret;
++	struct ec_host_request *request;
++	u8 *out;
++	int i;
++	u8 csum = 0;
 +
-+	/*
-+	 * Turn off CS, possibly adding a delay to ensure the rising edge
-+	 * doesn't come too soon after the end of the data.
-+	 */
-+	spi_message_init(&msg);
-+	memset(&trans, 0, sizeof(trans));
-+	trans.delay_usecs = ec_spi->end_of_msg_delay;
-+	spi_message_add_tail(&trans, &msg);
++	BUG_ON(ec_dev->proto_version != EC_HOST_REQUEST_VERSION);
++	BUG_ON(msg->outsize + sizeof(*request) > ec_dev->dout_size);
 +
-+	ret = spi_sync(ec_spi->spi, &msg);
++	out = ec_dev->dout;
++	request = (struct ec_host_request *)out;
++	request->struct_version = EC_HOST_REQUEST_VERSION;
++	request->checksum = 0;
++	request->command = msg->command;
++	request->command_version = msg->version;
++	request->reserved = 0;
++	request->data_len = msg->outsize;
 +
-+	/* Reset end-of-response timer */
-+	ec_spi->last_transfer_ns = ktime_get_ns();
-+	if (ret < 0) {
-+		dev_err(ec_dev->dev,
-+			"cs-deassert spi transfer failed: %d\n",
-+			ret);
-+	}
++	for (i = 0; i < sizeof(*request); i++)
++		csum += out[i];
 +
-+	return ret;
++	/* Copy data and update checksum */
++	memcpy(out + sizeof(*request), msg->data, msg->outsize);
++	for (i = 0; i < msg->outsize; i++)
++		csum += msg->data[i];
++
++	request->checksum = -csum;
++
++	return sizeof(*request) + msg->outsize;
 +}
 +
-+/**
-+ * receive_n_bytes - receive n bytes from the EC.
-+ *
-+ * Assumes buf is a pointer into the ec_dev->din buffer
-+ */
-+static int receive_n_bytes(struct cros_ec_device *ec_dev, u8 *buf, int n)
++static int send_command(struct cros_ec_device *ec_dev,
++			struct cros_ec_command *msg)
 +{
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct spi_transfer trans;
-+	struct spi_message msg;
 +	int ret;
 +
-+	BUG_ON(buf - ec_dev->din + n > ec_dev->din_size);
++	if (ec_dev->proto_version > 2)
++		ret = ec_dev->pkt_xfer(ec_dev, msg);
++	else
++		ret = ec_dev->cmd_xfer(ec_dev, msg);
 +
-+	memset(&trans, 0, sizeof(trans));
-+	trans.cs_change = 1;
-+	trans.rx_buf = buf;
-+	trans.len = n;
++	if (msg->result == EC_RES_IN_PROGRESS) {
++		int i;
++		struct cros_ec_command *status_msg;
++		struct ec_response_get_comms_status *status;
 +
-+	spi_message_init(&msg);
-+	spi_message_add_tail(&trans, &msg);
-+	ret = spi_sync(ec_spi->spi, &msg);
-+	if (ret < 0)
-+		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
++		status_msg = kmalloc(sizeof(*status_msg) + sizeof(*status),
++				     GFP_KERNEL);
++		if (!status_msg)
++			return -ENOMEM;
 +
-+	return ret;
-+}
++		status_msg->version = 0;
++		status_msg->command = EC_CMD_GET_COMMS_STATUS;
++		status_msg->insize = sizeof(*status);
++		status_msg->outsize = 0;
 +
-+/**
-+ * cros_ec_spi_receive_packet - Receive a packet from the EC.
-+ *
-+ * This function has two phases: reading the preamble bytes (since if we read
-+ * data from the EC before it is ready to send, we just get preamble) and
-+ * reading the actual message.
-+ *
-+ * The received data is placed into ec_dev->din.
-+ *
-+ * @ec_dev: ChromeOS EC device
-+ * @need_len: Number of message bytes we need to read
-+ */
-+static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
-+				      int need_len)
-+{
-+	struct ec_host_response *response;
-+	u8 *ptr, *end;
-+	int ret;
-+	unsigned long deadline;
-+	int todo;
++		/*
++		 * Query the EC's status until it's no longer busy or
++		 * we encounter an error.
++		 */
++		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
++			usleep_range(10000, 11000);
 +
-+	BUG_ON(EC_MSG_PREAMBLE_COUNT > ec_dev->din_size);
-+
-+	/* Receive data until we see the header byte */
-+	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
-+	while (true) {
-+		unsigned long start_jiffies = jiffies;
-+
-+		ret = receive_n_bytes(ec_dev,
-+				      ec_dev->din,
-+				      EC_MSG_PREAMBLE_COUNT);
-+		if (ret < 0)
-+			return ret;
-+
-+		ptr = ec_dev->din;
-+		for (end = ptr + EC_MSG_PREAMBLE_COUNT; ptr != end; ptr++) {
-+			if (*ptr == EC_SPI_FRAME_START) {
-+				dev_dbg(ec_dev->dev, "msg found at %zd\n",
-+					ptr - ec_dev->din);
++			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
++			if (ret < 0)
 +				break;
-+			}
-+		}
-+		if (ptr != end)
-+			break;
 +
-+		/*
-+		 * Use the time at the start of the loop as a timeout.  This
-+		 * gives us one last shot at getting the transfer and is useful
-+		 * in case we got context switched out for a while.
-+		 */
-+		if (time_after(start_jiffies, deadline)) {
-+			dev_warn(ec_dev->dev, "EC failed to respond in time\n");
-+			return -ETIMEDOUT;
++			msg->result = status_msg->result;
++			if (status_msg->result != EC_RES_SUCCESS)
++				break;
++
++			status = (struct ec_response_get_comms_status *)
++				 status_msg->data;
++			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
++				break;
 +		}
++
++		kfree(status_msg);
 +	}
 +
++	return ret;
++}
++
+ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+ 		       struct cros_ec_command *msg)
+ {
+-	uint8_t *out;
+-	int csum, i;
++	u8 *out;
++	u8 csum;
++	int i;
++
++	if (ec_dev->proto_version > 2)
++		return prepare_packet(ec_dev, msg);
+ 
+ 	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
+ 	out = ec_dev->dout;
+@@ -36,7 +125,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+ 	csum = out[0] + out[1] + out[2];
+ 	for (i = 0; i < msg->outsize; i++)
+ 		csum += out[EC_MSG_TX_HEADER_BYTES + i] = msg->data[i];
+-	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = (uint8_t)(csum & 0xff);
++	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = csum;
+ 
+ 	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
+ }
+@@ -60,54 +149,232 @@ int cros_ec_check_result(struct cros_ec_device *ec_dev,
+ }
+ EXPORT_SYMBOL(cros_ec_check_result);
+ 
+-int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+-		     struct cros_ec_command *msg)
++static int cros_ec_host_command_proto_query(struct cros_ec_device *ec_dev,
++					    int devidx,
++					    struct cros_ec_command *msg)
+ {
 +	/*
-+	 * ptr now points to the header byte. Copy any valid data to the
-+	 * start of our buffer
++	 * Try using v3+ to query for supported protocols. If this
++	 * command fails, fall back to v2. Returns the highest protocol
++	 * supported by the EC.
++	 * Also sets the max request/response/passthru size.
 +	 */
-+	todo = end - ++ptr;
-+	BUG_ON(todo < 0 || todo > ec_dev->din_size);
-+	todo = min(todo, need_len);
-+	memmove(ec_dev->din, ptr, todo);
-+	ptr = ec_dev->din + todo;
-+	dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
-+		need_len, todo);
-+	need_len -= todo;
+ 	int ret;
+ 
+-	mutex_lock(&ec_dev->lock);
+-	ret = ec_dev->cmd_xfer(ec_dev, msg);
+-	if (msg->result == EC_RES_IN_PROGRESS) {
+-		int i;
+-		struct cros_ec_command *status_msg;
+-		struct ec_response_get_comms_status *status;
++	if (!ec_dev->pkt_xfer)
++		return -EPROTONOSUPPORT;
+ 
+-		status_msg = kmalloc(sizeof(*status_msg) + sizeof(*status),
+-				     GFP_KERNEL);
+-		if (!status_msg) {
+-			ret = -ENOMEM;
+-			goto exit;
+-		}
++	memset(msg, 0, sizeof(*msg));
++	msg->command = EC_CMD_PASSTHRU_OFFSET(devidx) | EC_CMD_GET_PROTOCOL_INFO;
++	msg->insize = sizeof(struct ec_response_get_protocol_info);
+ 
+-		status_msg->version = 0;
+-		status_msg->command = EC_CMD_GET_COMMS_STATUS;
+-		status_msg->insize = sizeof(*status);
+-		status_msg->outsize = 0;
++	ret = send_command(ec_dev, msg);
 +
-+	/* If the entire response struct wasn't read, get the rest of it. */
-+	if (todo < sizeof(*response)) {
-+		ret = receive_n_bytes(ec_dev, ptr, sizeof(*response) - todo);
-+		if (ret < 0)
-+			return -EBADMSG;
-+		ptr += (sizeof(*response) - todo);
-+		todo = sizeof(*response);
++	if (ret < 0) {
++		dev_dbg(ec_dev->dev,
++			"failed to check for EC[%d] protocol version: %d\n",
++			devidx, ret);
++		return ret;
 +	}
 +
-+	response = (struct ec_host_response *)ec_dev->din;
-+
-+	/* Abort if data_len is too large. */
-+	if (response->data_len > ec_dev->din_size)
-+		return -EMSGSIZE;
-+
-+	/* Receive data until we have it all */
-+	while (need_len > 0) {
-+		/*
-+		 * We can't support transfers larger than the SPI FIFO size
-+		 * unless we have DMA. We don't have DMA on the ISP SPI ports
-+		 * for Exynos. We need a way of asking SPI driver for
-+		 * maximum-supported transfer size.
-+		 */
-+		todo = min(need_len, 256);
-+		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
-+			todo, need_len, ptr - ec_dev->din);
-+
-+		ret = receive_n_bytes(ec_dev, ptr, todo);
-+		if (ret < 0)
-+			return ret;
-+
-+		ptr += todo;
-+		need_len -= todo;
-+	}
-+
-+	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
++	if (devidx > 0 && msg->result == EC_RES_INVALID_COMMAND)
++		return -ENODEV;
++	else if (msg->result != EC_RES_SUCCESS)
++		return msg->result;
 +
 +	return 0;
 +}
 +
- /**
-  * cros_ec_spi_receive_response - Receive a response from the EC.
-  *
-@@ -115,34 +275,27 @@ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
- static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
- 					int need_len)
- {
--	struct cros_ec_spi *ec_spi = ec_dev->priv;
--	struct spi_transfer trans;
--	struct spi_message msg;
- 	u8 *ptr, *end;
- 	int ret;
- 	unsigned long deadline;
- 	int todo;
- 
-+	BUG_ON(EC_MSG_PREAMBLE_COUNT > ec_dev->din_size);
-+
- 	/* Receive data until we see the header byte */
- 	deadline = jiffies + msecs_to_jiffies(EC_MSG_DEADLINE_MS);
- 	while (true) {
- 		unsigned long start_jiffies = jiffies;
- 
--		memset(&trans, 0, sizeof(trans));
--		trans.cs_change = 1;
--		trans.rx_buf = ptr = ec_dev->din;
--		trans.len = EC_MSG_PREAMBLE_COUNT;
--
--		spi_message_init(&msg);
--		spi_message_add_tail(&trans, &msg);
--		ret = spi_sync(ec_spi->spi, &msg);
--		if (ret < 0) {
--			dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+		ret = receive_n_bytes(ec_dev,
-+				      ec_dev->din,
-+				      EC_MSG_PREAMBLE_COUNT);
-+		if (ret < 0)
- 			return ret;
--		}
- 
-+		ptr = ec_dev->din;
- 		for (end = ptr + EC_MSG_PREAMBLE_COUNT; ptr != end; ptr++) {
--			if (*ptr == EC_MSG_HEADER) {
-+			if (*ptr == EC_SPI_FRAME_START) {
- 				dev_dbg(ec_dev->dev, "msg found at %zd\n",
- 					ptr - ec_dev->din);
- 				break;
-@@ -187,21 +340,9 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
- 		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
- 			todo, need_len, ptr - ec_dev->din);
- 
--		memset(&trans, 0, sizeof(trans));
--		trans.cs_change = 1;
--		trans.rx_buf = ptr;
--		trans.len = todo;
--		spi_message_init(&msg);
--		spi_message_add_tail(&trans, &msg);
--
--		/* send command to EC and read answer */
--		BUG_ON((u8 *)trans.rx_buf - ec_dev->din + todo >
--				ec_dev->din_size);
--		ret = spi_sync(ec_spi->spi, &msg);
--		if (ret < 0) {
--			dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+		ret = receive_n_bytes(ec_dev, ptr, todo);
-+		if (ret < 0)
- 			return ret;
--		}
- 
- 		debug_packet(ec_dev->dev, "interim", ptr, todo);
- 		ptr += todo;
-@@ -214,6 +355,128 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
- }
- 
- /**
-+ * cros_ec_pkt_xfer_spi - Transfer a packet over SPI and receive the reply
-+ *
-+ * @ec_dev: ChromeOS EC device
-+ * @ec_msg: Message to transfer
-+ */
-+static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
-+				struct cros_ec_command *ec_msg)
++static int cros_ec_host_command_proto_query_v2(struct cros_ec_device *ec_dev)
 +{
-+	struct ec_host_request *request;
-+	struct ec_host_response *response;
-+	struct cros_ec_spi *ec_spi = ec_dev->priv;
-+	struct spi_transfer trans;
-+	struct spi_message msg;
-+	int i, len;
-+	u8 *ptr;
-+	u8 *rx_buf;
-+	u8 sum;
-+	int ret = 0, final_ret;
++	struct cros_ec_command *msg;
++	struct ec_params_hello *hello_params;
++	struct ec_response_hello *hello_response;
++	int ret;
++	int len = max(sizeof(*hello_params), sizeof(*hello_response));
 +
-+	len = cros_ec_prepare_tx(ec_dev, ec_msg);
-+	request = (struct ec_host_request *)ec_dev->dout;
-+	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
++	msg = kmalloc(sizeof(*msg) + len, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
 +
-+	/* If it's too soon to do another transaction, wait */
-+	if (ec_spi->last_transfer_ns) {
-+		unsigned long delay;	/* The delay completed so far */
++	msg->version = 0;
++	msg->command = EC_CMD_HELLO;
++	hello_params = (struct ec_params_hello *)msg->data;
++	msg->outsize = sizeof(*hello_params);
++	hello_response = (struct ec_response_hello *)msg->data;
++	msg->insize = sizeof(*hello_response);
 +
-+		delay = ktime_get_ns() - ec_spi->last_transfer_ns;
-+		if (delay < EC_SPI_RECOVERY_TIME_NS)
-+			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
-+	}
++	hello_params->in_data = 0xa0b0c0d0;
 +
-+	rx_buf = kzalloc(len, GFP_KERNEL);
-+	if (!rx_buf) {
-+		ret = -ENOMEM;
++	ret = send_command(ec_dev, msg);
++
++	if (ret < 0) {
++		dev_dbg(ec_dev->dev,
++			"EC failed to respond to v2 hello: %d\n",
++			ret);
 +		goto exit;
-+	}
-+
-+	/* Transmit phase - send our message */
-+	memset(&trans, 0, sizeof(trans));
-+	trans.tx_buf = ec_dev->dout;
-+	trans.rx_buf = rx_buf;
-+	trans.len = len;
-+	trans.cs_change = 1;
-+	spi_message_init(&msg);
-+	spi_message_add_tail(&trans, &msg);
-+	ret = spi_sync(ec_spi->spi, &msg);
-+
-+	/* Get the response */
-+	if (!ret) {
-+		/* Verify that EC can process command */
-+		for (i = 0; i < len; i++) {
-+			switch (rx_buf[i]) {
-+			case EC_SPI_PAST_END:
-+			case EC_SPI_RX_BAD_DATA:
-+			case EC_SPI_NOT_READY:
-+				ret = -EAGAIN;
-+				ec_msg->result = EC_RES_IN_PROGRESS;
-+			default:
-+				break;
-+			}
-+			if (ret)
-+				break;
-+		}
-+		if (!ret)
-+			ret = cros_ec_spi_receive_packet(ec_dev,
-+					ec_msg->insize + sizeof(*response));
-+	} else {
-+		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+	}
-+
-+	final_ret = terminate_request(ec_dev);
-+	if (!ret)
-+		ret = final_ret;
-+	if (ret < 0)
-+		goto exit;
-+
-+	ptr = ec_dev->din;
-+
-+	/* check response error code */
-+	response = (struct ec_host_response *)ptr;
-+	ec_msg->result = response->result;
-+
-+	ret = cros_ec_check_result(ec_dev, ec_msg);
-+	if (ret)
-+		goto exit;
-+
-+	len = response->data_len;
-+	sum = 0;
-+	if (len > ec_msg->insize) {
-+		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
-+			len, ec_msg->insize);
-+		ret = -EMSGSIZE;
-+		goto exit;
-+	}
-+
-+	for (i = 0; i < sizeof(*response); i++)
-+		sum += ptr[i];
-+
-+	/* copy response packet payload and compute checksum */
-+	memcpy(ec_msg->data, ptr + sizeof(*response), len);
-+	for (i = 0; i < len; i++)
-+		sum += ec_msg->data[i];
-+
-+	if (sum) {
++	} else if (msg->result != EC_RES_SUCCESS) {
 +		dev_err(ec_dev->dev,
-+			"bad packet checksum, calculated %x\n",
-+			sum);
++			"EC responded to v2 hello with error: %d\n",
++			msg->result);
++		ret = msg->result;
++		goto exit;
++	} else if (hello_response->out_data != 0xa1b2c3d4) {
++		dev_err(ec_dev->dev,
++			"EC responded to v2 hello with bad result: %u\n",
++			hello_response->out_data);
 +		ret = -EBADMSG;
 +		goto exit;
 +	}
 +
-+	ret = len;
-+exit:
-+	kfree(rx_buf);
-+	if (ec_msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
++	ret = 0;
 +
++ exit:
++	kfree(msg);
 +	return ret;
 +}
 +
-+/**
-  * cros_ec_cmd_xfer_spi - Transfer a message over SPI and receive the reply
-  *
-  * @ec_dev: ChromeOS EC device
-@@ -227,6 +490,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 	struct spi_message msg;
- 	int i, len;
- 	u8 *ptr;
-+	u8 *rx_buf;
- 	int sum;
- 	int ret = 0, final_ret;
++int cros_ec_query_all(struct cros_ec_device *ec_dev)
++{
++	struct device *dev = ec_dev->dev;
++	struct cros_ec_command *proto_msg;
++	struct ec_response_get_protocol_info *proto_info;
++	int ret;
++
++	proto_msg = kzalloc(sizeof(*proto_msg) + sizeof(*proto_info),
++			    GFP_KERNEL);
++	if (!proto_msg)
++		return -ENOMEM;
++
++	/* First try sending with proto v3. */
++	ec_dev->proto_version = 3;
++	ret = cros_ec_host_command_proto_query(ec_dev, 0, proto_msg);
++
++	if (ret == 0) {
++		proto_info = (struct ec_response_get_protocol_info *)
++			proto_msg->data;
++		ec_dev->max_request = proto_info->max_request_packet_size -
++			sizeof(struct ec_host_request);
++		ec_dev->max_response = proto_info->max_response_packet_size -
++			sizeof(struct ec_host_response);
++		ec_dev->proto_version =
++			min(EC_HOST_REQUEST_VERSION,
++					fls(proto_info->protocol_versions) - 1);
++		dev_dbg(ec_dev->dev,
++			"using proto v%u\n",
++			ec_dev->proto_version);
++
++		ec_dev->din_size = ec_dev->max_response +
++			sizeof(struct ec_host_response) +
++			EC_MAX_RESPONSE_OVERHEAD;
++		ec_dev->dout_size = ec_dev->max_request +
++			sizeof(struct ec_host_request) +
++			EC_MAX_REQUEST_OVERHEAD;
  
-@@ -242,10 +506,17 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 			ndelay(EC_SPI_RECOVERY_TIME_NS - delay);
+ 		/*
+-		 * Query the EC's status until it's no longer busy or
+-		 * we encounter an error.
++		 * Check for PD
+ 		 */
+-		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
+-			usleep_range(10000, 11000);
++		ret = cros_ec_host_command_proto_query(ec_dev, 1, proto_msg);
+ 
+-			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
+-			if (ret < 0)
+-				break;
++		if (ret) {
++			dev_dbg(ec_dev->dev, "no PD chip found: %d\n", ret);
++			ec_dev->max_passthru = 0;
++		} else {
++			dev_dbg(ec_dev->dev, "found PD chip\n");
++			ec_dev->max_passthru =
++				proto_info->max_request_packet_size -
++				sizeof(struct ec_host_request);
++		}
++	} else {
++		/* Try querying with a v2 hello message. */
++		ec_dev->proto_version = 2;
++		ret = cros_ec_host_command_proto_query_v2(ec_dev);
+ 
+-			msg->result = status_msg->result;
+-			if (status_msg->result != EC_RES_SUCCESS)
+-				break;
++		if (ret == 0) {
++			/* V2 hello succeeded. */
++			dev_dbg(ec_dev->dev, "falling back to proto v2\n");
+ 
+-			status = (struct ec_response_get_comms_status *)
+-				 status_msg->data;
+-			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
+-				break;
++			ec_dev->max_request = EC_PROTO2_MAX_PARAM_SIZE;
++			ec_dev->max_response = EC_PROTO2_MAX_PARAM_SIZE;
++			ec_dev->max_passthru = 0;
++			ec_dev->pkt_xfer = NULL;
++			ec_dev->din_size = EC_MSG_BYTES;
++			ec_dev->dout_size = EC_MSG_BYTES;
++		} else {
++			/*
++			 * It's possible for a test to occur too early when
++			 * the EC isn't listening. If this happens, we'll
++			 * test later when the first command is run.
++			 */
++			ec_dev->proto_version = EC_PROTO_VERSION_UNKNOWN;
++			dev_dbg(ec_dev->dev, "EC query failed: %d\n", ret);
++			goto exit;
+ 		}
++	}
+ 
+-		kfree(status_msg);
++	devm_kfree(dev, ec_dev->din);
++	devm_kfree(dev, ec_dev->dout);
++
++	ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
++	if (!ec_dev->din) {
++		ret = -ENOMEM;
++		goto exit;
  	}
- 
-+	rx_buf = kzalloc(len, GFP_KERNEL);
-+	if (!rx_buf) {
++
++	ec_dev->dout = devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
++	if (!ec_dev->dout) {
++		devm_kfree(dev, ec_dev->din);
 +		ret = -ENOMEM;
 +		goto exit;
 +	}
 +
- 	/* Transmit phase - send our message */
- 	debug_packet(ec_dev->dev, "out", ec_dev->dout, len);
- 	memset(&trans, 0, sizeof(trans));
- 	trans.tx_buf = ec_dev->dout;
-+	trans.rx_buf = rx_buf;
- 	trans.len = len;
- 	trans.cs_change = 1;
- 	spi_message_init(&msg);
-@@ -254,29 +525,32 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 
- 	/* Get the response */
- 	if (!ret) {
--		ret = cros_ec_spi_receive_response(ec_dev,
--				ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
-+		/* Verify that EC can process command */
-+		for (i = 0; i < len; i++) {
-+			switch (rx_buf[i]) {
-+			case EC_SPI_PAST_END:
-+			case EC_SPI_RX_BAD_DATA:
-+			case EC_SPI_NOT_READY:
-+				ret = -EAGAIN;
-+				ec_msg->result = EC_RES_IN_PROGRESS;
-+			default:
-+				break;
-+			}
-+			if (ret)
-+				break;
-+		}
-+		if (!ret)
-+			ret = cros_ec_spi_receive_response(ec_dev,
-+					ec_msg->insize + EC_MSG_TX_PROTO_BYTES);
- 	} else {
- 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
- 	}
- 
--	/*
--	 * Turn off CS, possibly adding a delay to ensure the rising edge
--	 * doesn't come too soon after the end of the data.
--	 */
--	spi_message_init(&msg);
--	memset(&trans, 0, sizeof(trans));
--	trans.delay_usecs = ec_spi->end_of_msg_delay;
--	spi_message_add_tail(&trans, &msg);
--
--	final_ret = spi_sync(ec_spi->spi, &msg);
--	ec_spi->last_transfer_ns = ktime_get_ns();
-+	final_ret = terminate_request(ec_dev);
- 	if (!ret)
- 		ret = final_ret;
--	if (ret < 0) {
--		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
-+	if (ret < 0)
- 		goto exit;
--	}
- 
- 	ptr = ec_dev->din;
- 
-@@ -315,6 +589,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 
- 	ret = len;
  exit:
-+	kfree(rx_buf);
- 	if (ec_msg->command == EC_CMD_REBOOT_EC)
- 		msleep(EC_REBOOT_DELAY_MS);
- 
-@@ -361,7 +636,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev->priv = ec_spi;
- 	ec_dev->irq = spi->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
--	ec_dev->pkt_xfer = NULL;
-+	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
- 	ec_dev->ec_name = ec_spi->spi->modalias;
- 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
- 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
-@@ -369,6 +644,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 			   sizeof(struct ec_response_get_protocol_info);
- 	ec_dev->dout_size = sizeof(struct ec_host_request);
- 
-+
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
- 		dev_err(dev, "cannot register EC\n");
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 06c5790b2c28..92b633324aaa 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -46,6 +46,77 @@ static int ec_response_timed_out(void)
- 	return 1;
- }
- 
-+static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
-+				struct cros_ec_command *msg)
-+{
-+	struct ec_host_request *request;
-+	struct ec_host_response response;
-+	u8 sum = 0;
-+	int i;
-+	int ret = 0;
-+	u8 *dout;
-+
-+	ret = cros_ec_prepare_tx(ec, msg);
-+
-+	/* Write buffer */
-+	for (i = 0; i < ret; i++)
-+		outb(ec->dout[i], EC_LPC_ADDR_HOST_PACKET + i);
-+
-+	request = (struct ec_host_request *)ec->dout;
-+
-+	/* Here we go */
-+	outb(EC_COMMAND_PROTOCOL_3, EC_LPC_ADDR_HOST_CMD);
-+
-+	if (ec_response_timed_out()) {
-+		dev_warn(ec->dev, "EC responsed timed out\n");
-+		ret = -EIO;
-+		goto done;
-+	}
-+
-+	/* Check result */
-+	msg->result = inb(EC_LPC_ADDR_HOST_DATA);
-+	ret = cros_ec_check_result(ec, msg);
-+	if (ret)
-+		goto done;
-+
-+	/* Read back response */
-+	dout = (u8 *)&response;
-+	for (i = 0; i < sizeof(response); i++) {
-+		dout[i] = inb(EC_LPC_ADDR_HOST_PACKET + i);
-+		sum += dout[i];
-+	}
-+
-+	msg->result = response.result;
-+
-+	if (response.data_len > msg->insize) {
-+		dev_err(ec->dev,
-+			"packet too long (%d bytes, expected %d)",
-+			response.data_len, msg->insize);
-+		ret = -EMSGSIZE;
-+		goto done;
-+	}
-+
-+	/* Read response and process checksum */
-+	for (i = 0; i < response.data_len; i++) {
-+		msg->data[i] =
-+			inb(EC_LPC_ADDR_HOST_PACKET + sizeof(response) + i);
-+		sum += msg->data[i];
-+	}
-+
-+	if (sum) {
-+		dev_err(ec->dev,
-+			"bad packet checksum %02x\n",
-+			response.checksum);
-+		ret = -EBADMSG;
-+		goto done;
-+	}
-+
-+	/* Return actual amount of data received */
-+	ret = response.data_len;
-+done:
++	kfree(proto_msg);
 +	return ret;
 +}
++EXPORT_SYMBOL(cros_ec_query_all);
 +
- static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
- 				struct cros_ec_command *msg)
- {
-@@ -205,7 +276,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 	ec_dev->ec_name = pdev->name;
- 	ec_dev->phys_name = dev_name(dev);
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
--	ec_dev->pkt_xfer = NULL;
-+	ec_dev->pkt_xfer = cros_ec_pkt_xfer_lpc;
- 	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
- 	ec_dev->din_size = sizeof(struct ec_host_response) +
- 			   sizeof(struct ec_response_get_protocol_info);
++int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
++		     struct cros_ec_command *msg)
++{
++	int ret;
++
++	mutex_lock(&ec_dev->lock);
++	if (ec_dev->proto_version == EC_PROTO_VERSION_UNKNOWN) {
++		ret = cros_ec_query_all(ec_dev);
++		if (ret) {
++			dev_err(ec_dev->dev,
++				"EC version unknown and query failed; aborting command\n");
++			mutex_unlock(&ec_dev->lock);
++			return ret;
++		}
++	}
++
++	if (msg->insize > ec_dev->max_response) {
++		dev_dbg(ec_dev->dev, "clamping message receive buffer\n");
++		msg->insize = ec_dev->max_response;
++	}
++
++	if (msg->command < EC_CMD_PASSTHRU_OFFSET(1)) {
++		if (msg->outsize > ec_dev->max_request) {
++			dev_err(ec_dev->dev,
++				"request of size %u is too big (max: %u)\n",
++				msg->outsize,
++				ec_dev->max_request);
++			mutex_unlock(&ec_dev->lock);
++			return -EMSGSIZE;
++		}
++	} else {
++		if (msg->outsize > ec_dev->max_passthru) {
++			dev_err(ec_dev->dev,
++				"passthru rq of size %u is too big (max: %u)\n",
++				msg->outsize,
++				ec_dev->max_passthru);
++			mutex_unlock(&ec_dev->lock);
++			return -EMSGSIZE;
++		}
++	}
++	ret = send_command(ec_dev, msg);
+ 	mutex_unlock(&ec_dev->lock);
+ 
+ 	return ret;
 diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 59d909434efd..92e13aaa450c 100644
+index 7eee38abd02a..59d909434efd 100644
 --- a/include/linux/mfd/cros_ec.h
 +++ b/include/linux/mfd/cros_ec.h
-@@ -22,6 +22,12 @@
+@@ -22,6 +22,15 @@
  #include <linux/mutex.h>
  
  /*
-+ * The EC is unresponsive for a time after a reboot command.  Add a
-+ * simple delay to make sure that the bus stays locked.
-+ */
-+#define EC_REBOOT_DELAY_MS             50
++ * Max bus-specific overhead incurred by request/responses.
++ * I2C requires 1 additional byte for requests.
++ * I2C requires 2 additional bytes for responses.
++ * */
++#define EC_PROTO_VERSION_UNKNOWN	0
++#define EC_MAX_REQUEST_OVERHEAD		1
++#define EC_MAX_RESPONSE_OVERHEAD	2
 +
 +/*
-  * Max bus-specific overhead incurred by request/responses.
-  * I2C requires 1 additional byte for requests.
-  * I2C requires 2 additional bytes for responses.
+  * Command interface between EC and AP, for LPC, I2C and SPI interfaces.
+  */
+ enum {
+@@ -88,6 +97,7 @@ struct cros_ec_command {
+  *     Returns the number of bytes received if the communication succeeded, but
+  *     that doesn't mean the EC was happy with the command. The caller
+  *     should check msg.result for the EC's result code.
++ * @pkt_xfer: send packet to EC and get response
+  * @lock: one transaction at a time
+  */
+ struct cros_ec_device {
+@@ -104,15 +114,21 @@ struct cros_ec_device {
+ 			   unsigned int bytes, void *dest);
+ 
+ 	/* These are used to implement the platform-specific interface */
++	u16 max_request;
++	u16 max_response;
++	u16 max_passthru;
++	u16 proto_version;
+ 	void *priv;
+ 	int irq;
+-	uint8_t *din;
+-	uint8_t *dout;
++	u8 *din;
++	u8 *dout;
+ 	int din_size;
+ 	int dout_size;
+ 	bool wake_enabled;
+ 	int (*cmd_xfer)(struct cros_ec_device *ec,
+ 			struct cros_ec_command *msg);
++	int (*pkt_xfer)(struct cros_ec_device *ec,
++			struct cros_ec_command *msg);
+ 	struct mutex lock;
+ };
+ 
+@@ -194,4 +210,12 @@ int cros_ec_remove(struct cros_ec_device *ec_dev);
+  */
+ int cros_ec_register(struct cros_ec_device *ec_dev);
+ 
++/**
++ * cros_ec_register -  Query the protocol version supported by the ChromeOS EC
++ *
++ * @ec_dev: Device to register
++ * @return 0 if ok, -ve on error
++ */
++int cros_ec_query_all(struct cros_ec_device *ec_dev);
++
+ #endif /* __LINUX_MFD_CROS_EC_H */
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
