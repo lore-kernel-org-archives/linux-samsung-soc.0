@@ -1,77 +1,159 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 7/9] mfd: cros_ec: Support multiple EC in a system
-Date: Wed, 03 Jun 2015 16:08:16 +0200
-Message-ID: <556F0A50.20600@collabora.co.uk>
-References: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk> <1433336644-20532-8-git-send-email-javier.martinez@collabora.co.uk> <20150603134951.GD12304@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 1/9] drm/exynos: add error messages if clks failed to get enabled
+Date: Wed,  3 Jun 2015 11:30:24 -0300
+Message-ID: <1433341832-2686-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42565 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755206AbbFCOIY (ORCPT
+Received: from mail-yh0-f48.google.com ([209.85.213.48]:35285 "EHLO
+	mail-yh0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753399AbbFCOak (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 10:08:24 -0400
-In-Reply-To: <20150603134951.GD12304@x1>
+	Wed, 3 Jun 2015 10:30:40 -0400
+Received: by yhda23 with SMTP id a23so2210671yhd.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2015 07:30:39 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hello Lee,
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On 06/03/2015 03:49 PM, Lee Jones wrote:
+Check error and call DRM_ERROR if clk_prepare_enable() fails.
 
-[...]
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 29 ++++++++++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 14 ++++++++++++--
+ drivers/gpu/drm/exynos/exynos_mixer.c      | 31 +++++++++++++++++++++++++-----
+ 3 files changed, 63 insertions(+), 11 deletions(-)
 
->>  
->>  int cros_ec_register(struct cros_ec_device *ec_dev)
->> @@ -52,14 +68,39 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>  
->>  	cros_ec_query_all(ec_dev);
->>  
->> -	err = mfd_add_devices(dev, 0, cros_devs,
->> -			      ARRAY_SIZE(cros_devs),
->> +	if (IS_ENABLED(CONFIG_OF) && dev->of_node)
->> +		ec_p.ec_name = of_get_property(dev->of_node,
->> +					       "google,cros-ec-name", NULL);
-> 
-> NACK
-> 
-> You either need to obtain this another way, or have a chat with the DT
-> Maintainers and explain why this platform is special enough to break
-> the normal conventions.
-> 
-> HINT: I different compatible string is normally more amenable, but
-> this will also require a DT ACK for me to take it through.
->
-
-Ok, I'll just remove the property then. After all the driver only supports
-two types of controllers currently, the normal host EC and the Power Delivery
-(PD) one. And there isn't a DTS even in the downstream ChromiumOS tree that
-is setting a different EC name right now.
-
-I guess the idea of the binding was to make it future proof from when the
-driver supports more types of controllers but I'll let Gwendal to comment on
-this since he is the author of these patches.
-
->> +	if (!ec_p.ec_name)
->> +		ec_p.ec_name = CROS_EC_DEV_NAME;
->> +
->> +	err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell, 1,
->>  			      NULL, ec_dev->irq, NULL);
->>  	if (err) {
->> -		dev_err(dev, "failed to add mfd devices\n");
->> +		dev_err(dev, "failed to add ec\n");
-> 
-> Might be nice to expand 'ec' so your users have half a chance in
-> deciphering what just went wrong.
->
-
-I will, thanks a lot for your feedback.
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index d659ba2..ffd7c3b 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -606,6 +606,7 @@ static void decon_init(struct decon_context *ctx)
+ static void decon_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
++	int ret;
  
-> [...]
-> 
-
-Best regards,
-Javier
+ 	if (!ctx->suspended)
+ 		return;
+@@ -614,10 +615,30 @@ static void decon_enable(struct exynos_drm_crtc *crtc)
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+-	clk_prepare_enable(ctx->pclk);
+-	clk_prepare_enable(ctx->aclk);
+-	clk_prepare_enable(ctx->eclk);
+-	clk_prepare_enable(ctx->vclk);
++	ret = clk_prepare_enable(ctx->pclk);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
++		return;
++		goto pclk_err;
++	}
++
++	ret = clk_prepare_enable(ctx->aclk);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
++		return;
++	}
++
++	ret = clk_prepare_enable(ctx->eclk);
++	if  (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
++		return;
++	}
++
++	ret = clk_prepare_enable(ctx->vclk);
++	if  (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
++		return;
++	}
+ 
+ 	decon_init(ctx);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 9661853..7c8ba61 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -808,6 +808,7 @@ static void fimd_apply(struct fimd_context *ctx)
+ static void fimd_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct fimd_context *ctx = crtc->ctx;
++	int ret;
+ 
+ 	if (!ctx->suspended)
+ 		return;
+@@ -816,8 +817,17 @@ static void fimd_enable(struct exynos_drm_crtc *crtc)
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+-	clk_prepare_enable(ctx->bus_clk);
+-	clk_prepare_enable(ctx->lcd_clk);
++	ret = clk_prepare_enable(ctx->bus_clk);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the bus clk [%d]\n", ret);
++		return;
++	}
++
++	ret = clk_prepare_enable(ctx->lcd_clk);
++	if  (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the lcd clk [%d]\n", ret);
++		return;
++	}
+ 
+ 	/* if vblank was enabled status, enable it again. */
+ 	if (test_and_clear_bit(0, &ctx->irq_flags))
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 6bab717..1b77fc7 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1031,6 +1031,7 @@ static void mixer_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct mixer_context *ctx = crtc->ctx;
+ 	struct mixer_resources *res = &ctx->mixer_res;
++	int ret;
+ 
+ 	mutex_lock(&ctx->mixer_mutex);
+ 	if (ctx->powered) {
+@@ -1042,12 +1043,32 @@ static void mixer_enable(struct exynos_drm_crtc *crtc)
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
+-	clk_prepare_enable(res->mixer);
+-	clk_prepare_enable(res->hdmi);
++	ret = clk_prepare_enable(res->mixer);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the mixer clk [%d]\n", ret);
++		return;
++	}
++	ret = clk_prepare_enable(res->hdmi);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the hdmi clk [%d]\n", ret);
++		return;
++	}
+ 	if (ctx->vp_enabled) {
+-		clk_prepare_enable(res->vp);
+-		if (ctx->has_sclk)
+-			clk_prepare_enable(res->sclk_mixer);
++		ret = clk_prepare_enable(res->vp);
++		if (ret < 0) {
++			DRM_ERROR("Failed to prepare_enable the vp clk [%d]\n",
++				  ret);
++			return;
++		}
++		if (ctx->has_sclk) {
++			ret = clk_prepare_enable(res->sclk_mixer);
++			if (ret < 0) {
++				DRM_ERROR("Failed to prepare_enable the " \
++					   "sclk_mixer clk [%d]\n",
++					  ret);
++				return;
++			}
++		}
+ 	}
+ 
+ 	mutex_lock(&ctx->mixer_mutex);
+-- 
+2.1.0
