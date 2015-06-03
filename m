@@ -1,67 +1,120 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v10 17/17] drm/exynos: split exynos_crtc->dpms in enable()
- and disable()
-Date: Wed, 03 Jun 2015 10:08:47 +0900
-Message-ID: <556E539F.9080706@samsung.com>
-References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
- <1433171095-23773-18-git-send-email-gustavo@padovan.org>
- <556D9D0D.6010408@samsung.com> <20150602140623.GF20774@joana>
- <CABxcv=kwcnjudw0vQ1gHcoNfDC4xQGMu_WJTZ3_vhcxG70R02Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm/exynos: fimd: ensure proper hw state in
+ fimd_clear_channel()
+Date: Wed, 03 Jun 2015 11:18:56 +0900
+Message-ID: <556E6410.3040600@samsung.com>
+References: <1433157316-6341-1-git-send-email-m.szyprowski@samsung.com>
+ <1433157316-6341-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CABxcv=kwcnjudw0vQ1gHcoNfDC4xQGMu_WJTZ3_vhcxG70R02Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:51083 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751904AbbFCCS7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Jun 2015 22:18:59 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NPC016R5JRKQKB0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 03 Jun 2015 11:18:56 +0900 (KST)
+In-reply-to: <1433157316-6341-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-T24gMjAxNeuFhCAwNuyblCAwMuydvCAyMzoxOSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdy
-b3RlOgo+IEhlbGxvIEd1c3Rhdm8sCj4gCj4gT24gVHVlLCBKdW4gMiwgMjAxNSBhdCA0OjA2IFBN
-LCBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFkb3Zhbi5vcmc+IHdyb3RlOgo+PiBIaSBJbmtp
-LAo+Pgo+PiAyMDE1LTA2LTAyIElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4+Cj4+
-PiBIaSwKPj4+Cj4+PiBPbiAyMDE164WEIDA27JuUIDAy7J28IDAwOjA0LCBHdXN0YXZvIFBhZG92
-YW4gd3JvdGU6Cj4+Pj4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
-bGFib3JhLmNvLnVrPgo+Pj4+Cj4+Pj4gVG8gZm9sbG93IG1vcmUgY2xvc2VseSB0aGUgbmV3IGF0
-b21pYyBBUEkgd2Ugc3BsaXQgdGhlIGRwbXMoKQo+Pj4+IGhlbHBlciBpbnRvIHRoZSBlbmFibGUo
-KSBhbmQgZGlzYWJsZSgpIGhlbHBlciB0byBnZXQgZXhhY3RseSB0aGUKPj4+PiBzYW1lIHNlbWFu
-dGljcy4KPj4+Cj4+PiBCZWxvdyBpcyB0aGUgcmVzdWx0IGZyb20gY2hlY2twYXRjaC5wbC4gUGxl
-YXNlIGZpeCBhbGwgZXJyb3JzIGFuZCBjaGVjawo+Pj4geW91ciBwYXRjaCB3aXRoIGNoZWNrcGF0
-Y2gucGwgYmVmb3JlIHBvc3RpbmcgaXQuCj4+Pgo+Pj4gVGhhbmtzLAo+Pj4gSW5raSBEYWUKPj4+
-Cj4+PiB0b3RhbDogNjIgZXJyb3JzLCAwIHdhcm5pbmdzLCA0MTAgbGluZXMgY2hlY2tlZAo+Pgo+
-PiBJIHRoaW5rIHlvdSBkaWQgc29tZXRoaW5nIHdyb25nIHdoZW4gY2hlY2tpbmcsIGZvciBtZSBp
-dCBsb29rcyBsaWtlCj4+IHRoaXM6Cj4+Cj4+IDAwMTYtZHJtLWV4eW5vcy1zcGxpdC1leHlub3Nf
-Y3J0Yy1kcG1zLWluLWVuYWJsZS1hbmQtZGlzYS5wYXRjaCBoYXMgbm8KPj4gb2J2aW91cyBzdHls
-ZSBwcm9ibGVtcyBhbmQgaXMgcmVhZHkgZm9yIHN1Ym1pc3Npb24uCj4+IFdBUk5JTkc6IERvIG5v
-dCB1c2Ugd2hpdGVzcGFjZSBiZWZvcmUgU2lnbmVkLW9mZi1ieToKPj4gIzEyOgo+PiAgICAgU2ln
-bmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNv
-LnVrPgo+Pgo+PiB0b3RhbDogMCBlcnJvcnMsIDEgd2FybmluZ3MsIDU5NCBsaW5lcyBjaGVja2Vk
-Cj4+Cj4gCj4gSSBhbHNvIGRvbid0IGdldCBhbnkgY2hlY2twYXRjaC5wbCBlcnJvciBvciB3YXJu
-aW5ncyB3aGVuIHRlc3RpbmcgeW91ciBwYXRjaDoKPiAKPiAkIHB3Y2xpZW50IGdldCA2NTIzMjUx
-Cj4gU2F2ZWQgcGF0Y2ggdG8gdjEwLTE3LTE3LWRybS1leHlub3Mtc3BsaXQtZXh5bm9zX2NydGMt
-LWRwbXMtaW4tZW5hYmxlLWFuZC1kaXNhYmxlLnBhdGNoLjAKPiAKPiAkIC4vc2NyaXB0cy9jaGVj
-a3BhdGNoLnBsCj4gdjEwLTE3LTE3LWRybS1leHlub3Mtc3BsaXQtZXh5bm9zX2NydGMtLWRwbXMt
-aW4tZW5hYmxlLWFuZC1kaXNhYmxlLnBhdGNoCj4gdG90YWw6IDAgZXJyb3JzLCAwIHdhcm5pbmdz
-LCA0MTAgbGluZXMgY2hlY2tlZAo+IAo+IHYxMC0xNy0xNy1kcm0tZXh5bm9zLXNwbGl0LWV4eW5v
-c19jcnRjLS1kcG1zLWluLWVuYWJsZS1hbmQtZGlzYWJsZS5wYXRjaAo+IGhhcyBubyBvYnZpb3Vz
-IHN0eWxlIHByb2JsZW1zIGFuZCBpcyByZWFkeSBmb3Igc3VibWlzc2lvbi4KClllcywgdGhlcmUg
-d2FzIHNvbWV0aGluZyB3cm9uZy4gV2hpbGUgY29waW5nIHRoaXMgcGF0Y2ggc2VyaWVzIHRvIG15
-IFBDLAppdCBzZWVtcyB0aGF0IHRoZSB0ZXh0IGZvcm1hdCBvZiB0aGlzIHBhdGNoIGZpbGUgd2Fz
-IG11dGF0ZWQuCgpUaGFua3MgZm9yIGNoZWNraW5nLApJbmtpIERhZQoKPiAKPj4gICAgICAgICBH
-dXN0YXZvCj4gCj4gQmVzdCByZWdhcmRzLAo+IEphdmllcgo+IC0tCj4gVG8gdW5zdWJzY3JpYmUg
-ZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmct
-c29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwu
-b3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpv
-cmRvbW8taW5mby5odG1sCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Hi Marek,
+
+I have merged atomic patch series. Can you re-base your patch series on
+top of exynos-drm-next?
+
+Thanks,
+Inki Dae
+
+On 2015=EB=85=84 06=EC=9B=94 01=EC=9D=BC 20:15, Marek Szyprowski wrote:
+> One should not do any assumptions on the stare of the fimd hardware
+> during driver initialization, so to properly reset fimd before enabli=
+ng
+> IOMMU, one should ensure that all power domains and clocks are really
+> enabled. This patch adds calls to power on/off in the
+> fimd_clear_channel() function to ensure that any access to fimd
+> registers will be performed with clocks and power domains enabled.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 26 +++++++++++++++++-----=
+----
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_fimd.c
+> index a0edab833148..d10ad3920e78 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -242,12 +242,21 @@ static void fimd_enable_shadow_channel_path(str=
+uct fimd_context *ctx,
+>  	writel(val, ctx->regs + SHADOWCON);
+>  }
+> =20
+> -static void fimd_clear_channel(struct fimd_context *ctx)
+> +static int fimd_poweron(struct fimd_context *ctx);
+> +static int fimd_poweroff(struct fimd_context *ctx);
+> +
+> +static int fimd_clear_channel(struct fimd_context *ctx)
+>  {
+>  	unsigned int win, ch_enabled =3D 0;
+> +	int ret;
+> =20
+>  	DRM_DEBUG_KMS("%s\n", __FILE__);
+> =20
+> +	/* Hardware is in unknown state, so ensure it get enabled properly =
+*/
+> +	ret =3D fimd_poweron(ctx);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Check if any channel is enabled. */
+>  	for (win =3D 0; win < WINDOWS_NR; win++) {
+>  		u32 val =3D readl(ctx->regs + WINCON(win));
+> @@ -258,19 +267,15 @@ static void fimd_clear_channel(struct fimd_cont=
+ext *ctx)
+>  			if (ctx->driver_data->has_shadowcon)
+>  				fimd_enable_shadow_channel_path(ctx, win,
+>  								false);
+> -
+>  			ch_enabled =3D 1;
+>  		}
+>  	}
+> =20
+>  	/* Wait for vsync, as disable channel takes effect at next vsync */
+> -	if (ch_enabled) {
+> -		unsigned int state =3D ctx->suspended;
+> -
+> -		ctx->suspended =3D 0;
+> +	if (ch_enabled)
+>  		fimd_wait_for_vblank(ctx->crtc);
+> -		ctx->suspended =3D state;
+> -	}
+> +
+> +	return fimd_poweroff(ctx);
+>  }
+> =20
+>  static int fimd_iommu_attach_devices(struct fimd_context *ctx,
+> @@ -285,7 +290,10 @@ static int fimd_iommu_attach_devices(struct fimd=
+_context *ctx,
+>  		 * If any channel is already active, iommu will throw
+>  		 * a PAGE FAULT when enabled. So clear any channel if enabled.
+>  		 */
+> -		fimd_clear_channel(ctx);
+> +		ret =3D fimd_clear_channel(ctx);
+> +		if (ret)
+> +			return ret;
+> +
+>  		ret =3D drm_iommu_attach_device(ctx->drm_dev, ctx->dev);
+>  		if (ret) {
+>  			DRM_ERROR("drm_iommu_attach failed.\n");
+>=20
