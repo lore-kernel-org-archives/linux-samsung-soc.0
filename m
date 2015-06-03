@@ -1,72 +1,61 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v4 6/8] mfd: cros_ec: Support multiple EC in a system
-Date: Wed, 03 Jun 2015 13:49:03 +0200
-Message-ID: <556EE9AF.6030303@collabora.co.uk>
-References: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk> <1433232671-27679-7-git-send-email-javier.martinez@collabora.co.uk> <20150603085340.GL3329@x1> <556ED303.6090401@collabora.co.uk> <20150603112741.GA12304@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42356 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755059AbbFCLtK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 07:49:10 -0400
-In-Reply-To: <20150603112741.GA12304@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v5 8/9] mfd: cros_ec: spi: Add a DT property to delay asserting the CS
+Date: Wed,  3 Jun 2015 15:04:03 +0200
+Message-ID: <1433336644-20532-9-git-send-email-javier.martinez@collabora.co.uk>
+References: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+From: Alexandru M Stan <amstan@chromium.org>
 
-On 06/03/2015 01:27 PM, Lee Jones wrote:
-> On Wed, 03 Jun 2015, Javier Martinez Canillas wrote:
+Some ECs need a little time for waking up before they can accept
+SPI data at a high speed. Add a "google,cros-ec-spi-pre-delay"
+property to the DT binding to configure this.
 
-[snip]
+If this property isn't set, then no delay will be added. However,
+if set it will cause a delay equal to the value passed to it to
+be inserted at the beginning of a transaction.
 
->> >>  
->> >> -	err = mfd_add_devices(dev, 0, cros_devs,
->> >> -			      ARRAY_SIZE(cros_devs),
->> >> +	if (IS_ENABLED(CONFIG_OF) && dev->of_node)
->> >> +		ec_p.ec_name = of_get_property(dev->of_node, "devname",
->> >> +					       NULL);
->> > 
->> > Has this binding already been accepted?  We don't normally allow
->> > "device name"properties in DT.
->> > 
->> 
->> Sigh, I now noticed that I missed the DT binding change when originally
->> forward porting the patches from the downstream ChromiumOS tree. I'm so
->> sorry about that.
->> 
->> ChromiumOS tree has in Documentation/devicetree/bindings/mfd/cros-ec.txt:
->> 
->> Optional properties (All):
->> - devname: name of the EC. Can be based on its function: for instance,
->>   for Sensor Hub, 'cros_sh', for Power Delivery MCU 'cros_pd'.
->>   If not present, 'cros_ec' can be assumed.
->> 
->> When you say that normally device names are not allowed in DT, do you mean
->> that "devname" is a too generic property name? (which I totally agree) or
->> that DT bindings shouldn't have a property to change a device's name for
->> something more descriptive?
->> 
->> Because for example, the regulator bindings has a "regulator-name" property.
->> If you agree I can change the property to "google,cros-ec-name" which should
->> be more precise.
-> 
-> I mean, no names of devices are allowed in Device Tree:
-> 
->   `git grep name -- arch/arm/boot/dts/ | grep dev`
-> 
+Signed-off-by: Alexandru M Stan <amstan@chromium.org>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
 
-Ok, but do you agree on having a "google,cros-ec-name" (with no dev on it)
-property to define the resource name just like regulators have "regulator-name"
-that changes what is shown in /sys/kernel/debug/regulator/$name?
+Changes since v4: None.
 
-Otherwise all the EC's will be named cros_ec or regardless of their function
-and this is shown in both /dev/$name and /sys/class/chromeos/$name.
+Changes since v3:
+ - Split DT binding and driver change as suggested by Lee Jones.
+ - Add tested-by tag from Heiko Stuebner
+ - Add acked-by tag from Lee Jones.
 
-Best regards,
-Javier
+Changes since v2: None
+
+Changes since v1: None, new patch
+---
+ Documentation/devicetree/bindings/mfd/cros-ec.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+index dcf404d16067..e03a61c54954 100644
+--- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
++++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
+@@ -18,6 +18,10 @@ Required properties (SPI):
+ - reg: SPI chip select
+ 
+ Optional properties (SPI):
++- google,cros-ec-spi-pre-delay: Some implementations of the EC need a little
++  time to wake up from sleep before they can receive SPI transfers at a high
++  clock rate. This property specifies the delay, in usecs, between the
++  assertion of the CS to the start of the first clock pulse.
+ - google,cros-ec-spi-msg-delay: Some implementations of the EC require some
+   additional processing time in order to accept new transactions. If the delay
+   between transactions is not long enough the EC may not be able to respond
+-- 
+2.1.4
