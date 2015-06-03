@@ -1,70 +1,32 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 0/6] cpufreq: use generic cpufreq drivers forExynos4210platform
-Date: Thu, 04 Jun 2015 08:22:05 +0900
-Message-ID: <556F8C1D.9050906@kernel.org>
-References: <'@samsung.com> <1428079429-4252-1-git-send-email-b.zolnierkie@samsung.com> <2036292.PZC6aPyUyX@amdc1976> <55541F92.4020404@kernel.org> <20150514051046.GB9887@linux> <55549E03.6040105@kernel.org>
+From: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Subject: Re: [PATCH 04/11] mtd: ofpart: do not fail probe when no partitions exist
+Date: Thu, 4 Jun 2015 00:58:52 +0200
+Message-ID: <201506040058.52882.marex@denx.de>
+References: <cover.1433364398.git.hramrach@gmail.com> <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55549E03.6040105@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kevin Hilman <khilman@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Han Xu <han.xu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>,  =?utf-8?q?Rafa=C5=82?= =?utf-8?q?_Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Huang Shijie <b32955-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, Knut Wohlrab <knut.wohlrab-V5te9oGctAVWk0Htik3J/w@public.gmane.org>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/14/15 22:07, Kukjin Kim wrote:
-> On 05/14/15 14:10, Viresh Kumar wrote:
->> On 14-05-15, 13:07, Kukjin Kim wrote:
->>> On 05/13/15 23:08, Bartlomiej Zolnierkiewicz wrote:
->>>>
->>>> Hi,
->>>>
->>> Hi Bart,
->>>
->>>> On Friday, April 03, 2015 06:43:43 PM Bartlomiej Zolnierkiewicz wrote:
->>>>> Hi,
->>>>>
->>>>> This patch series removes the use of Exynos4210 specific support
->>>>> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
->>>>> for this platform.
->>>>
->>>> Gentle Ping.  Mike/Kukjin/Viresh could you please review/ack relevant
->>>> patches (patches #1-3 are for clock subsystem, patches #4-5 for Exynos
->>>> mach/dts and patch #6 is for cpufreq subsystem)?
->>
->> Sorry I thought I already Acked an older version of this set and so
->> didn't went for it again. Done now.
->>
->>> Yes, I totally agreed with this patches for arch side changes and this
->>> approach when Thomas posted.
->>>
->>>> Also what is your
->>>> preferred way to upstream them (patches are not independent so it would
->>>> be best to merge them through one tree, otherwise synchronization of
->>>> git pulls between different subsystem trees will be needed)?
->>>>
->>> I can provide topic branch for arch side changes even it is small. I
->>> think once Viresh and Mike make each topic branch based on -rc or the
->>> smallest changes from each subsystem then I could handle this series or
->>> Viresh or Mike need to handle this series with merging each topic
->>> branches in subsystem. I'm fine either way.
->>>
->>> Viresh and Mike, how do you think about that?
->>
->> For cpufreq subsystem changes, you can take them in your tree.
->>
-> Hi Viresh, OK, I will take the cpufreq changes with your ack. Thanks for
-> your confirmation.
-> 
-> Hi Mike and Sylwester,
-> How can we handle this series well without any problems? hmm...
-> 
-Still I need to get clock guys' ack or any comments on this series...
+On Wednesday, June 03, 2015 at 11:26:40 PM, Michal Suchanek wrote:
+> On Exynos it is necessary to set SPI controller parameters that apply to
+> a SPI slave in a DT subnode of the slave device. The ofpart code returns
+> an error when there are subnodes of the SPI flash but no partitions are
+> found. Change this condition to a warning so that flash without
+> partitions can be accessed on Exynos.
 
-- Kukjin
+I have to admit the rationale for this patch is not very clear to me, sorry.
+Can you please explain this a bit more ?
 
->>>> I'm still hoping that this patchset will make it into v4.2 as there are
->>>> no known issues with it (except minor coding nit for patch #5)...
->>>>
->>> Sure, why not :-)
+Best regards,
+Marek Vasut
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
