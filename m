@@ -1,86 +1,199 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v4 0/8] mfd: cros_ec: Add multi EC and proto v3 support
-Date: Wed, 03 Jun 2015 08:45:32 +0200
-Message-ID: <556EA28C.2080200@collabora.co.uk>
-References: <1433232671-27679-1-git-send-email-javier.martinez@collabora.co.uk> <2123062.dmIBPlf795@diego>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2123062.dmIBPlf795@diego>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Gwendal Grignou <gwendal-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Filipe Brandenburger <filbranden-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alexandru M Stan <amstan-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH stable-4.0] ARM: EXYNOS: Fix failed second suspend on Exynos4
+Date: Wed, 03 Jun 2015 16:03:26 +0900
+Message-ID: <1433315006-30129-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:43329 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752652AbbFCHDi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Jun 2015 03:03:38 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: stable@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, b.zolnierkie@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello Heiko,
+commit 6f024978e74bda616b27183adee029b65eb27032 upstream.
 
-On 06/02/2015 11:15 PM, Heiko St=FCbner wrote:
-> Am Dienstag, 2. Juni 2015, 10:11:03 schrieb Javier Martinez Canillas:
->> Hello,
->>=20
->> Newer Chromebooks have more than one Embedded Controller (EC) in the
->> system. These additional ECs are connected through I2C with a host E=
-C
->> which is the one that is connected to the Application Processor (AP)
->> through different transports (I2C, SPI or LPC).
->>=20
->> So on these platforms, sub-processors are chained to each other:
->>=20
->> AP <--> Host EC <--> Power Delivery (PD) EC
->>=20
->> The AP sends commands to the additional EC through the host EC using
->> a set of passthru commands and the host redirects to the correct EC.
->>=20
->> This is a v4 of a series that adds support for multiple EC in a syst=
-em
->> and also for the protocol version 3 that is used on newer ECs.
->>=20
->> Most patches were taken from the downstream ChromiumOS v3.14 tree wi=
-th
->> fixes squashed, split to minimise the cross subsystem churn and chan=
-ges
->> for mainline inclusion but were not modified functionality wise.
->>=20
->> This version addresses a lot of issues pointed out by Lee Jones on t=
-he v3
->> posted before [0].
->>=20
->> The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cle=
-anups"
->> [1] that were posted before and was already picked by Lee Jones.
->>=20
->> Testing was done on some Chromebooks that have a single EC and suppo=
-rt
->> protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Ex=
-ynos5800
->> Peach Pi to be sure that no regressions were introduced for these ma=
-chines.
->=20
-> I just gave this a try on veyron and everything still works as expect=
-ed.
->=20
-> All patches except "[PATCH v4 6/8] mfd: cros_ec: Support multiple EC =
-in a=20
-> system" already have Tested-by tags, so this patch now is also
->=20
-> Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
->=20
+On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
+56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
+controller") the second suspend to RAM failed. First suspend worked fine
+but the next one hang just after powering down of secondary CPUs (system
+consumed energy as it would be running but was not responsive).
 
-Thanks a lot for testing the series again.
+The issue was caused by enabling delayed reset assertion for CPU0 just
+after issuing power down of cores. This was introduced for Exynos4 in
+13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
 
-Now let's wait for Olof to review/ack/provide feedback on patches #1-#6
-that touches drivers/platform/chrome, so Lee can merge through his tree=
-=2E
+The whole behavior is not well documented but after checking with vendor
+code this should be done like this (on Exynos4):
+1. Enable delayed reset assertion when system is running (for all CPUs).
+2. Disable delayed reset assertion before suspending the system.
+   This can be done after powering off secondary CPUs.
+3. Re-enable the delayed reset assertion when system is resumed.
 
->=20
-> Heiko
->
+Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kukjin Kim <kgene@kernel.org>
+---
+ arch/arm/mach-exynos/common.h  |  2 ++
+ arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
+ arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
+ arch/arm/mach-exynos/suspend.c |  3 +++
+ 4 files changed, 34 insertions(+), 37 deletions(-)
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index f70eca7ee705..0ef8d4b47102 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -153,6 +153,8 @@ extern void exynos_enter_aftr(void);
+ 
+ extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
+ 
++extern void exynos_set_delayed_reset_assertion(bool enable);
++
+ extern void s5p_init_cpu(void __iomem *cpuid_addr);
+ extern unsigned int samsung_rev(void);
+ extern void __iomem *cpu_boot_reg_base(void);
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 9e9dfdfad9d7..1081ff1f03c6 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -166,6 +166,33 @@ static void __init exynos_init_io(void)
+ 	exynos_map_io();
+ }
+ 
++/*
++ * Set or clear the USE_DELAYED_RESET_ASSERTION option. Used by smp code
++ * and suspend.
++ *
++ * This is necessary only on Exynos4 SoCs. When system is running
++ * USE_DELAYED_RESET_ASSERTION should be set so the ARM CLK clock down
++ * feature could properly detect global idle state when secondary CPU is
++ * powered down.
++ *
++ * However this should not be set when such system is going into suspend.
++ */
++void exynos_set_delayed_reset_assertion(bool enable)
++{
++	if (soc_is_exynos4()) {
++		unsigned int tmp, core_id;
++
++		for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
++			tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
++			if (enable)
++				tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
++			else
++				tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
++			pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
++		}
++	}
++}
++
+ static const struct of_device_id exynos_dt_pmu_match[] = {
+ 	{ .compatible = "samsung,exynos3250-pmu" },
+ 	{ .compatible = "samsung,exynos4210-pmu" },
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index d2e9f12d12f1..d45e8cd23925 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -34,30 +34,6 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
+-/*
+- * Set or clear the USE_DELAYED_RESET_ASSERTION option, set on Exynos4 SoCs
+- * during hot-(un)plugging CPUx.
+- *
+- * The feature can be cleared safely during first boot of secondary CPU.
+- *
+- * Exynos4 SoCs require setting USE_DELAYED_RESET_ASSERTION during powering
+- * down a CPU so the CPU idle clock down feature could properly detect global
+- * idle state when CPUx is off.
+- */
+-static void exynos_set_delayed_reset_assertion(u32 core_id, bool enable)
+-{
+-	if (soc_is_exynos4()) {
+-		unsigned int tmp;
+-
+-		tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
+-		if (enable)
+-			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
+-		else
+-			tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
+-		pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
+-	}
+-}
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ static inline void cpu_leave_lowpower(u32 core_id)
+ {
+@@ -73,8 +49,6 @@ static inline void cpu_leave_lowpower(u32 core_id)
+ 	  : "=&r" (v)
+ 	  : "Ir" (CR_C), "Ir" (0x40)
+ 	  : "cc");
+-
+-	 exynos_set_delayed_reset_assertion(core_id, false);
+ }
+ 
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+@@ -87,14 +61,6 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 		/* Turn the CPU off on next WFI instruction. */
+ 		exynos_cpu_power_down(core_id);
+ 
+-		/*
+-		 * Exynos4 SoCs require setting
+-		 * USE_DELAYED_RESET_ASSERTION so the CPU idle
+-		 * clock down feature could properly detect
+-		 * global idle state when CPUx is off.
+-		 */
+-		exynos_set_delayed_reset_assertion(core_id, true);
+-
+ 		wfi();
+ 
+ 		if (pen_release == core_id) {
+@@ -354,9 +320,6 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 		udelay(10);
+ 	}
+ 
+-	/* No harm if this is called during first boot of secondary CPU */
+-	exynos_set_delayed_reset_assertion(core_id, false);
+-
+ 	/*
+ 	 * now the secondary core is starting up let it run its
+ 	 * calibrations, then wait for it to finish
+@@ -403,6 +366,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+ 
+ 	exynos_sysram_init();
+ 
++	exynos_set_delayed_reset_assertion(true);
++
+ 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+ 		scu_enable(scu_base_addr());
+ 
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index 318d127df147..582ef2df960d 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -235,6 +235,8 @@ static void exynos_pm_enter_sleep_mode(void)
+ 
+ static void exynos_pm_prepare(void)
+ {
++	exynos_set_delayed_reset_assertion(false);
++
+ 	/* Set wake-up mask registers */
+ 	exynos_pm_set_wakeup_mask();
+ 
+@@ -383,6 +385,7 @@ early_wakeup:
+ 
+ 	/* Clear SLEEP mode set in INFORM1 */
+ 	pmu_raw_writel(0x0, S5P_INFORM1);
++	exynos_set_delayed_reset_assertion(true);
+ }
+ 
+ static void exynos3250_pm_resume(void)
+-- 
+1.9.1
