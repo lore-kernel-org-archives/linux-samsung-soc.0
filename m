@@ -1,112 +1,121 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v5 9/9] mfd: cros_ec: spi: Add delay for asserting CS
-Date: Wed,  3 Jun 2015 15:04:04 +0200
-Message-ID: <1433336644-20532-10-git-send-email-javier.martinez@collabora.co.uk>
-References: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42508 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757567AbbFCNFb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 09:05:31 -0400
-In-Reply-To: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v5 0/9] mfd: cros_ec: Add multi EC and proto v3 support
+Date: Wed,  3 Jun 2015 15:03:55 +0200
+Message-ID: <1433336644-20532-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Alexandru M Stan <amstan@chromium.org>
+Hello,
 
-Some ECs need a little time for waking up before they can accept
-SPI data at a high speed. This is configurable via a DT property
-"google,cros-ec-spi-pre-delay".
+Newer Chromebooks have more than one Embedded Controller (EC) in the
+system. These additional ECs are connected through I2C with a host EC
+which is the one that is connected to the Application Processor (AP)
+through different transports (I2C, SPI or LPC).
 
-Use this DT property to cause a delay before the beginning of a
-SPI transaction to make sure that the EC has already woken up.
+So on these platforms, sub-processors are chained to each other:
 
-Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
+AP <--> Host EC <--> Power Delivery (PD) EC
 
-Changes since v4: None.
+The AP sends commands to the additional EC through the host EC using
+a set of passthru commands and the host redirects to the correct EC.
 
-Changes since v3:
- - New patch, split DT binding and driver implementation as suggested
-   by Lee Jones.
- - Add tested-by tag from Heiko Stuebner.
- - Add acked-by tag from Lee Jones.
----
- drivers/mfd/cros_ec_spi.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+This is a v5 of a series that adds support for multiple EC in a system
+and also for the protocol version 3 that is used on newer ECs.
 
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index faba03e2f1ef..16f228dc243f 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -71,12 +71,15 @@
-  * @spi: SPI device we are connected to
-  * @last_transfer_ns: time that we last finished a transfer, or 0 if there
-  *	if no record
-+ * @start_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-+ *      is sent when we want to turn on CS at the start of a transaction.
-  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-  *      is sent when we want to turn off CS at the end of a transaction.
-  */
- struct cros_ec_spi {
- 	struct spi_device *spi;
- 	s64 last_transfer_ns;
-+	unsigned int start_of_msg_delay;
- 	unsigned int end_of_msg_delay;
- };
- 
-@@ -366,7 +369,7 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
- 	struct ec_host_request *request;
- 	struct ec_host_response *response;
- 	struct cros_ec_spi *ec_spi = ec_dev->priv;
--	struct spi_transfer trans;
-+	struct spi_transfer trans, trans_delay;
- 	struct spi_message msg;
- 	int i, len;
- 	u8 *ptr;
-@@ -393,13 +396,23 @@ static int cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
- 		goto exit;
- 	}
- 
-+	/*
-+	 * Leave a gap between CS assertion and clocking of data to allow the
-+	 * EC time to wakeup.
-+	 */
-+	spi_message_init(&msg);
-+	if (ec_spi->start_of_msg_delay) {
-+		memset(&trans_delay, 0, sizeof(trans_delay));
-+		trans_delay.delay_usecs = ec_spi->start_of_msg_delay;
-+		spi_message_add_tail(&trans_delay, &msg);
-+	}
-+
- 	/* Transmit phase - send our message */
- 	memset(&trans, 0, sizeof(trans));
- 	trans.tx_buf = ec_dev->dout;
- 	trans.rx_buf = rx_buf;
- 	trans.len = len;
- 	trans.cs_change = 1;
--	spi_message_init(&msg);
- 	spi_message_add_tail(&trans, &msg);
- 	ret = spi_sync(ec_spi->spi, &msg);
- 
-@@ -602,6 +615,10 @@ static void cros_ec_spi_dt_probe(struct cros_ec_spi *ec_spi, struct device *dev)
- 	u32 val;
- 	int ret;
- 
-+	ret = of_property_read_u32(np, "google,cros-ec-spi-pre-delay", &val);
-+	if (!ret)
-+		ec_spi->start_of_msg_delay = val;
-+
- 	ret = of_property_read_u32(np, "google,cros-ec-spi-msg-delay", &val);
- 	if (!ret)
- 		ec_spi->end_of_msg_delay = val;
--- 
-2.1.4
+Most patches were taken from the downstream ChromiumOS v3.14 tree with
+fixes squashed, split to minimise the cross subsystem churn and changes
+for mainline inclusion but were not modified functionality wise.
+
+This version addresses a lot of issues pointed out by Lee Jones on the
+v4 posted before [0].
+
+The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cleanups"
+[1] that were posted before and was already picked by Lee Jones.
+
+Testing was done on some Chromebooks that have a single EC and support
+protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800
+Peach Pi to be sure that no regressions were introduced for these machines.
+
+The series were tested using a modified ectool [2] that supports the new
+cros_ec IOCTL API. They were also tested on a x86 Pixel Chromebook 2 (Samus)
+that uses the new protocol v3 and has 2 EC (cros_ec and cros_pd). But for
+testing on Samus, also the posted "[PATCH 0/3] platform/chrome: Changes for
+cros_ec_lpc and cros_ec_dev" series [3] are needed.
+
+The series is composed of the following patches:
+
+Alexandru M Stan (2):
+  mfd: cros_ec: spi: Add a DT property to delay asserting the CS
+  mfd: cros_ec: spi: Add delay for asserting CS
+
+Gwendal Grignou (2):
+  mfd: cros_ec: Add DT property to define ChromeOS EC name
+  mfd: cros_ec: Support multiple EC in a system
+
+Javier Martinez Canillas (2):
+  mfd: cros_ec: Use a zero-length array for command data
+  mfd: cros_ec: Move protocol helpers out of the MFD driver
+
+Stephen Barber (3):
+  mfd: cros_ec: rev cros_ec_commands.h
+  mfd: cros_ec: add proto v3 skeleton
+  mfd: cros_ec: add bus-specific proto v3 code
+
+ Documentation/devicetree/bindings/mfd/cros-ec.txt |   9 +
+ drivers/i2c/busses/Kconfig                        |   2 +-
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c           |  45 ++-
+ drivers/input/keyboard/Kconfig                    |   2 +-
+ drivers/input/keyboard/cros_ec_keyb.c             |  31 +-
+ drivers/mfd/Kconfig                               |   6 +-
+ drivers/mfd/cros_ec.c                             | 156 +++------
+ drivers/mfd/cros_ec_i2c.c                         | 169 ++++++++-
+ drivers/mfd/cros_ec_spi.c                         | 407 +++++++++++++++++++---
+ drivers/platform/chrome/Kconfig                   |   9 +-
+ drivers/platform/chrome/Makefile                  |   1 +
+ drivers/platform/chrome/cros_ec_dev.c             | 189 ++++++----
+ drivers/platform/chrome/cros_ec_dev.h             |   7 -
+ drivers/platform/chrome/cros_ec_lightbar.c        | 217 +++++++-----
+ drivers/platform/chrome/cros_ec_lpc.c             |  84 ++++-
+ drivers/platform/chrome/cros_ec_proto.c           | 382 ++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_sysfs.c           | 178 ++++++----
+ include/linux/mfd/cros_ec.h                       |  84 ++++-
+ include/linux/mfd/cros_ec_commands.h              | 277 +++++++++++++--
+ 19 files changed, 1806 insertions(+), 449 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_proto.c
+
+Patch #1 modifies the struct cros_ec_command to use a zero-length array for
+the buffer used for EC input and output data.
+
+Patch #2 synchronises the cros_ec_commands.h with a newer version of the
+file in the EC firmware repository.
+
+Patch #3 moves the EC communication protocol helper functions out of the MFD
+driver.
+
+Patch #4 adds the EC host command protocol v3 support to the cros_ec driver
+and patch #5 adds the bus specific proto v3 support for I2C, SPI and LPC.
+
+Patch #6 adds a DT property to specify the ChromeOS EC name according to its
+function.
+
+Patch #7 adds support to make multiple EC have a different device id and
+also exposing a per EC character device interface.
+
+Patch #8 adds a DT property to the cros_ec DT binding to specify a delay
+before receiving SPI transfers to make sure that the EC has already waked
+up and patch #9 implements it in the cros_ec_spi driver.
+
+Since the changes are quite intrusive and affects all ChromeOS EC related
+drivers, the patches should be merged through the MFD subsystem tree with
+the ack of the drivers/platform/chrome maintainer.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2015/6/2/111
+[1]: https://lkml.org/lkml/2015/5/20/235
+[2]: http://cgit.collabora.com/git/user/javier/ec.git/log/?h=mainline-ioctl-zero-length
+[3]: https://lkml.org/lkml/2015/5/20/184
