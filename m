@@ -1,102 +1,66 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
-Date: Wed, 03 Jun 2015 09:05:11 +0900
-Message-ID: <556E44B7.10303@samsung.com>
-References: <5569F435.5040708@unseen.is>
- <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
- <556E0931.9030703@unseen.is>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: Enable display on Trats2board
+Date: Wed, 03 Jun 2015 10:04:12 +0900
+Message-ID: <556E528C.6020806@kernel.org>
+References: <1432255718-11695-1-git-send-email-k.kozlowski@samsung.com> <555EF2B5.1000504@collabora.co.uk> <555FE392.5030409@kernel.org> <6222475.TyjQftkmuB@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36190 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751832AbbFCAFO (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:39145 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751378AbbFCBES (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jun 2015 20:05:14 -0400
-In-reply-to: <556E0931.9030703@unseen.is>
+	Tue, 2 Jun 2015 21:04:18 -0400
+In-Reply-To: <6222475.TyjQftkmuB@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gabriel@unseen.is
-Cc: linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, dmaengine@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03.06.2015 04:51, gabriel@unseen.is wrote:
-> On 05/31/2015 08:47 AM, Krzysztof Kozlowski wrote:
->> 2015-05-31 2:32 GMT+09:00  <gabriel@unseen.is>:
+On 05/24/15 05:27, Arnd Bergmann wrote:
+> On Saturday 23 May 2015 11:18:58 Kukjin Kim wrote:
+>> On 05/22/15 18:11, Javier Martinez Canillas wrote:
+>>> Hello Krzysztof,
 >>>
->>> Hello,
+>>> On 05/22/2015 02:48 AM, Krzysztof Kozlowski wrote:
+>>>> Enable the Exynos DSI and S6E8AA0 panel for full X11 display on Trats2.
+>>>>
+>>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> ---
+>>>>  arch/arm/configs/multi_v7_defconfig | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+>>>> index 0848337a2a01..e9785020aab1 100644
+>>>> --- a/arch/arm/configs/multi_v7_defconfig
+>>>> +++ b/arch/arm/configs/multi_v7_defconfig
+>>>> @@ -413,10 +413,12 @@ CONFIG_DRM=y
+>>>>  CONFIG_DRM_PTN3460=m
+>>>>  CONFIG_DRM_PS8622=m
+>>>>  CONFIG_DRM_EXYNOS=m
+>>>> +CONFIG_DRM_EXYNOS_DSI=y
+>>>>  CONFIG_DRM_EXYNOS_FIMD=y
+>>>>  CONFIG_DRM_EXYNOS_HDMI=y
+>>>>  CONFIG_DRM_RCAR_DU=m
+>>>>  CONFIG_DRM_TEGRA=y
+>>>> +CONFIG_DRM_PANEL_S6E8AA0=m
+>>>>  CONFIG_DRM_PANEL_SIMPLE=y
+>>>>  CONFIG_FB_ARMCLCD=y
+>>>>  CONFIG_FB_WM8505=y
+>>>>
 >>>
->>> I've been successfully using a self compiled linux kernel until version
->>> 3.19 together with Debian Stretch.
+>>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 >>>
->>> After upgrading the kernel to version 4.0 I see strange messages in the
->>> logs i.e.
->>>
->>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->>> alsa-sink.c: ALSA woke us up to write new data to the device, but there
->>> was actually nothing to write!
->>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->>> alsa-sink.c: Most likely this is a bug in the ALSA driver
->>> 'snd_soc_simple_card'. Please report this issue to the ALSA developers.
->>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->>> alsa-sink.c: We were woken up with POLLOUT set -- however a subsequent
->>> snd_pcm_avail() returned 0 or another value < min_avail.
->>>
->>>
->>> I can easily play sound in perfect quality for approx the first 24h.
->>> After that time the sound becomes distorted and is choppy/crackling.
->>> After rebooting then the sound is optimal again.
->>>
->>>
->>> I have tried to use kernel 4.0 with almost exactly the same
->>> configuration than for 3.19 to no avail.
->>>
->>> Then somebody on
->>> http://forum.odroid.com/viewtopic.php?f=82&t=13281&p=91186 gave me the
->>> hint that the followin patch might solve the issue:
->>>
->>> https://github.com/prahal/linux/commit/5e60cfc9fa5101a346e29ef5f944fbbad300c72d
->>>
->>>
->>> The patch did help something. I can now still play music after 2 days
->>> but what happens is that each time I turn on music I get a choppy sound
->>> for some time. That means the sound comes clear but every 2 seconds the
->>> sound pauses for a fraction of a second. Which is somewhat comparable to
->>> the issue earlier but without the heavy crackling - and that this goes
->>> away after a couple of minutes.
->>>
->>>
->>> But furthermore the sound has now simple cracklings. One in two second
->>> approx. and they do not disappear.
->>>
->>>
->>> Does anybody have an idea what could be the matter here?
->>>
->>> Thanks in advance.
+>> Looks good to me and this would be handled by arm-soc guys directly 
 >>
->> +Cc Robert, dmaengine list.
->>
->> Bisecting would be helpful. You could also try reverting following commits:
->> 88987d2c75
->> aee4d1fac8
->>
->> Other possible test case would be disabling runtime PM for pl330 DMA driver:
->>
->> for i in /sys/bus/amba/drivers/dma-pl330/*.[amp]dma/power ; do
->>   echo "on" > ${i}/control
->> done
+>> Acked-by: Kukjin Kim <kgene@kernel.org>
 >>
 > 
-> Thanks a lot Krzysztof,
+> I'd actually prefer if you could put this into the same branch as your
+> other defconfig changes. We'll handle any conflicts when merging that in.
 > 
-> I have reverted 88987d2c75 and aee4d1fac8 from 4.0.4 and I have still
-> audio working after 1 and 1/2 day. Unluckily the alsa error message
-> occured still once but they don't seem to be the issue here.
+OK, done.
 
-
-+CC Marek,
-
-Robert, Marek, do you have any idea for the cause?
-
-Best regards,
-Krzysztof
+Thanks,
+Kukjin
