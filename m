@@ -1,80 +1,54 @@
-From: Michael Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.2
-Date: Wed, 03 Jun 2015 16:05:59 -0700
-Message-ID: <20150603230559.6017.43918@quantum>
-References: <556F26C3.9080302@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH 0/6] Exynos SYSMMU (IOMMU) dts and arch updates
+Date: Thu, 04 Jun 2015 08:11:46 +0900
+Message-ID: <556F89B2.9010607@kernel.org>
+References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com> <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com> <556C4342.6060506@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:35596 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607AbbFCXGD convert rfc822-to-8bit (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:33238 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752539AbbFCXMD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 19:06:03 -0400
-Received: by pdbnf5 with SMTP id nf5so17142307pdb.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2015 16:06:03 -0700 (PDT)
-In-Reply-To: <556F26C3.9080302@samsung.com>
+	Wed, 3 Jun 2015 19:12:03 -0400
+In-Reply-To: <556C4342.6060506@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-Quoting Sylwester Nawrocki (2015-06-03 09:09:39)
+On 06/01/15 20:34, Krzysztof Kozlowski wrote:
+> W dniu 01.06.2015 o 19:10, Marek Szyprowski pisze:
+>> Hello,
+>>
+>> Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
+>> for merging - see
+>> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
+>> In meantime there have been quite a lot of changes related to Exynos DTS
+>> files queued for merging and my patches don't apply anymore. To ease
+>> merge process I've decided to rebased all Exynos SYSMMU dts changes onto
+>> latest exynos next tree from: https://github.com/krzk/linux dt-for-next
+>>
+>> While rebasing I've fixes a few spotted issues: some nodes still used
+>> old 'samsung,power-domain' properties (now replaced with 'power-domains')
+>> and added properties to jpeg codec merged recently.
+>>
 > 
-> The following changes since commit 20db7092e478c33a2bf5254063c51f5db6443959:
+> Thanks for rebasing this stuff.
 > 
->   Merge branch 'clk-next-hi6220' into clk-next (2015-05-27 22:06:42 -0700)
-> 
-> are available in the git repository at:
-> 
-> 
->   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-for-4.2
+Same here ;-)
 
-Sylwester,
+> I picked whole patchset with Javier's tested-by. I'll send it to Kukjin
+> later or directly to arm-soc (depending what will happen with last pull
+> request).
+> 
+> Kukjin, you mentioned that you will do something with this patchset the
+> previous weekend. Since then nothing happened so I am not sure what are
+> your plans... Can you share them? Do you want to pick it by yourself, do
+> you have any comments or maybe you need something from our side? (I
+> checked the patches and they look fine)
+> 
+Done, thanks.
 
-Pulled towards 4.2. Thanks for the pull request.
-
-One small thing: clk-next isn't considered stable.  I had some stuff in
-there (Stephen's amba assigned-clock-rates patch) which I had to pull
-out (no ACK from maintainer) and it crept back in because this PR was
-based on top of it. No big deal because I caught it when it happened
-(this time).
-
-In the future I am always happy to take PRs based on -rc1 (or any -rc
-that is already present in clk-next). Of course if you have a dependency
-on stuff already merged in clk-next then just let me know.
-
-Regards,
-Mike
-
-> 
-> for you to fetch changes up to e5c6fc4f271a27d5b236b5f4929bf0f2dab80a7d:
-> 
->   clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC (2015-06-02
-> 14:52:12 +0200)
-> 
-> ----------------------------------------------------------------
-> Updates of the exynos5433 clock definitions for proper support of SMC,
-> DVFS of GPU and CPU big.LITTLE cores and a fix for system suspend adding
-> one of the clock controller's registers to save/restore list.
-> 
-> ----------------------------------------------------------------
-> Chanwoo Choi (1):
->       clk: exynos5433: Add CLK_SET_RATE_PARENT to support DVFS for big.LITTLE core
-> 
-> Hyungwon Hwang (1):
->       clk: exynos5433: Add DIV_CPIF to the list of stored registers on suspend
-> 
-> Jonghwa Lee (1):
->       clk: exynos5433: Add CLK_IGNORE_UNUSED flag to clocks for SMC
-> 
-> Joonyoung Shim (1):
->       clk: exynos5433: Add clock flag to support the DVFS of GPU
-> 
->  drivers/clk/samsung/clk-exynos5433.c |   81 +++++++++++++++++-----------------
->  1 file changed, 40 insertions(+), 41 deletions(-)
-> 
-> -- 
-> Thanks,
-> Sylwester
+- Kukjin
