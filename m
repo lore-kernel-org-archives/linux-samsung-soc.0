@@ -1,54 +1,70 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 0/6] Exynos SYSMMU (IOMMU) dts and arch updates
-Date: Thu, 04 Jun 2015 08:11:46 +0900
-Message-ID: <556F89B2.9010607@kernel.org>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com> <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com> <556C4342.6060506@samsung.com>
+Subject: Re: [PATCH 0/6] cpufreq: use generic cpufreq drivers forExynos4210platform
+Date: Thu, 04 Jun 2015 08:22:05 +0900
+Message-ID: <556F8C1D.9050906@kernel.org>
+References: <'@samsung.com> <1428079429-4252-1-git-send-email-b.zolnierkie@samsung.com> <2036292.PZC6aPyUyX@amdc1976> <55541F92.4020404@kernel.org> <20150514051046.GB9887@linux> <55549E03.6040105@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33238 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752539AbbFCXMD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 19:12:03 -0400
-In-Reply-To: <556C4342.6060506@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55549E03.6040105@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kevin Hilman <khilman@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene@kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-On 06/01/15 20:34, Krzysztof Kozlowski wrote:
-> W dniu 01.06.2015 o 19:10, Marek Szyprowski pisze:
->> Hello,
+On 05/14/15 22:07, Kukjin Kim wrote:
+> On 05/14/15 14:10, Viresh Kumar wrote:
+>> On 14-05-15, 13:07, Kukjin Kim wrote:
+>>> On 05/13/15 23:08, Bartlomiej Zolnierkiewicz wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>> Hi Bart,
+>>>
+>>>> On Friday, April 03, 2015 06:43:43 PM Bartlomiej Zolnierkiewicz wrote:
+>>>>> Hi,
+>>>>>
+>>>>> This patch series removes the use of Exynos4210 specific support
+>>>>> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+>>>>> for this platform.
+>>>>
+>>>> Gentle Ping.  Mike/Kukjin/Viresh could you please review/ack relevant
+>>>> patches (patches #1-3 are for clock subsystem, patches #4-5 for Exynos
+>>>> mach/dts and patch #6 is for cpufreq subsystem)?
 >>
->> Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
->> for merging - see
->> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
->> In meantime there have been quite a lot of changes related to Exynos DTS
->> files queued for merging and my patches don't apply anymore. To ease
->> merge process I've decided to rebased all Exynos SYSMMU dts changes onto
->> latest exynos next tree from: https://github.com/krzk/linux dt-for-next
+>> Sorry I thought I already Acked an older version of this set and so
+>> didn't went for it again. Done now.
 >>
->> While rebasing I've fixes a few spotted issues: some nodes still used
->> old 'samsung,power-domain' properties (now replaced with 'power-domains')
->> and added properties to jpeg codec merged recently.
+>>> Yes, I totally agreed with this patches for arch side changes and this
+>>> approach when Thomas posted.
+>>>
+>>>> Also what is your
+>>>> preferred way to upstream them (patches are not independent so it would
+>>>> be best to merge them through one tree, otherwise synchronization of
+>>>> git pulls between different subsystem trees will be needed)?
+>>>>
+>>> I can provide topic branch for arch side changes even it is small. I
+>>> think once Viresh and Mike make each topic branch based on -rc or the
+>>> smallest changes from each subsystem then I could handle this series or
+>>> Viresh or Mike need to handle this series with merging each topic
+>>> branches in subsystem. I'm fine either way.
+>>>
+>>> Viresh and Mike, how do you think about that?
 >>
+>> For cpufreq subsystem changes, you can take them in your tree.
+>>
+> Hi Viresh, OK, I will take the cpufreq changes with your ack. Thanks for
+> your confirmation.
 > 
-> Thanks for rebasing this stuff.
+> Hi Mike and Sylwester,
+> How can we handle this series well without any problems? hmm...
 > 
-Same here ;-)
-
-> I picked whole patchset with Javier's tested-by. I'll send it to Kukjin
-> later or directly to arm-soc (depending what will happen with last pull
-> request).
-> 
-> Kukjin, you mentioned that you will do something with this patchset the
-> previous weekend. Since then nothing happened so I am not sure what are
-> your plans... Can you share them? Do you want to pick it by yourself, do
-> you have any comments or maybe you need something from our side? (I
-> checked the patches and they look fine)
-> 
-Done, thanks.
+Still I need to get clock guys' ack or any comments on this series...
 
 - Kukjin
+
+>>>> I'm still hoping that this patchset will make it into v4.2 as there are
+>>>> no known issues with it (except minor coding nit for patch #5)...
+>>>>
+>>> Sure, why not :-)
