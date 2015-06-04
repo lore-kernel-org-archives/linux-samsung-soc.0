@@ -1,84 +1,84 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH] drm/exynos: dsi: check whether dsi is enabled before sending
- data
-Date: Thu, 04 Jun 2015 15:07:26 +0900
-Message-ID: <1433398046-4177-1-git-send-email-human.hwang@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 0/6] Exynos SYSMMU (IOMMU) dts and arch updates
+Date: Thu, 04 Jun 2015 15:10:22 +0900
+Message-ID: <556FEBCE.9050604@samsung.com>
+References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
+ <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
+ <556C4342.6060506@samsung.com> <556F89B2.9010607@kernel.org>
+ <556FCB2B.8090406@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
-Cc: cw00.choi@samsung.com, sw0312.kim@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35746 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868AbbFDGKX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Jun 2015 02:10:23 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NPE000VZP59QN00@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Jun 2015 07:10:21 +0100 (BST)
+In-reply-to: <556FCB2B.8090406@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-ZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyKCkgY2FuIGJlIGNhbGxlZCB0aHJvdWdoIGEgcGFuZWwg
-ZHJpdmVyIHdoaWxlCkRTSSBpcyB0dXJuaW5nIGRvd24uIEl0IGlzIHBvc3NpYmxlIGJlY2F1c2Ug
-dGhlIGZ1bmN0aW9uIGNoZWNrcyBvbmx5CndoZXRoZXIgRFNJIGlzIGluaXRpYWxpemVkIG9yIG5v
-dCwgYW5kIHRoZXJlIGlzIGEgbW9tZW50IHdoaWNoIERTSSBpcwpzZXQgYnkgdW5pbml0aWFsaXpl
-ZCwgYnV0IERTSSBpcyBzdGlsbCB0dXJuaW5nIGRvd24uIFRvIHByZXZlbnQgaXQsCkRTSSBtdXN0
-IGJlIHNldCBieSBkaXNhYmxlZCBiZWZvcmUgc3RhcnRpbmcgdG8gYmUgdHVybmVkIGRvd24sIGFu
-ZApleHlub3NfZHNpX2hvc3RfdHJhbnNmZXIoKSBtdXN0IGNoZWNrIHdoZXRoZXIgRFNJIGlzIGVu
-YWJsZWQgb3Igbm90LgoKS2VybmVsIGR1bXA6ClsgNDcyMS4zNTE0NDhdIFVuaGFuZGxlZCBmYXVs
-dDogc3luY2hyb25vdXMgZXh0ZXJuYWwgYWJvcnQgKDB4OTYwMDAyMTApIGF0IDB4ZmZmZmZmODAw
-MDE1ZTAxOApbIDQ3MjEuMzUxODA5XSBJbnRlcm5hbCBlcnJvcjogOiA5NjAwMDIxMCBbIzFdIFBS
-RUVNUFQgU01QClsgNDcyMS4zNTIwMzFdIE1vZHVsZXMgbGlua2VkIGluOgpbIDQ3MjEuMzUyMTcz
-XSBDUFU6IDIgUElEOiAzMDAgQ29tbTogZGV2aWNlZCBUYWludGVkOiBHICAgICAgICBXICAgICAg
-IDQuMC40LTAxMDE3LWc3OTY0YTg3ICMxClsgNDcyMS4zNTM5ODldIEhhcmR3YXJlIG5hbWU6IFNh
-bXN1bmcgRFJBQ08gYm9hcmQgKERUKQpbIDQ3MjEuMzU4ODUyXSB0YXNrOiBmZmZmZmZjMGEwYjcw
-MDAwIHRpOiBmZmZmZmZjMGEwMGVjMDAwIHRhc2sudGk6IGZmZmZmZmMwYTAwZWMwMDAKWyA0NzIx
-LjM2NjMyN10gUEMgaXMgYXQgZXh5bm9zX2RzaV9lbmFibGVfbGFuZSsweDE0LzB4NWMKWyA0NzIx
-LjM3MTM1M10gTFIgaXMgYXQgZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyKzB4ODM0LzB4OGQ4Clsg
-NDcyMS4zNzY3MzFdIHBjIDogWzxmZmZmZmZjMDAwNDMyYmNjPl0gbHIgOiBbPGZmZmZmZmMwMDA0
-MzQ1OTA+XSBwc3RhdGU6IDYwMDAwMTQ1ClsgNDcyMS4zODQxMDddIHNwIDogZmZmZmZmYzBhMDBl
-ZmJlMApbIDQ3MjEuMzg3NDA1XSB4Mjk6IGZmZmZmZmMwYTAwZWZiZTAgeDI4OiBmZmZmZmZjMGEw
-MGVjMDAwClsgNDcyMS4zOTI2OTldIHgyNzogZmZmZmZmYzAwMDk2ODAwMCB4MjY6IDAwMDAwMDAw
-MDAwMDAwNDAKWyA0NzIxLjM5Nzk5NF0geDI1OiBmZmZmZmZjMDAwZjc0ZGMwIHgyNDogZmZmZmZm
-YzBhMDBlZmVjOApbIDQ3MjEuNDAzMjkwXSB4MjM6IGZmZmZmZmMwYTQ4MTU0MDAgeDIyOiBmZmZm
-ZmZjMDAwOWYyNzI5ClsgNDcyMS40MDg1ODRdIHgyMTogZmZmZmZmYzBhMDBlZmNjOCB4MjA6IGZm
-ZmZmZmMwYTRhMmE4NDgKWyA0NzIxLjQxMzg3OV0geDE5OiBmZmZmZmZjMGE0YTJhODE4IHgxODog
-MDAwMDAwMDAwMDAwMDAwNApbIDQ3MjEuNDE5MTczXSB4MTc6IDAwMDAwMDdmYWE1Y2RkZjAgeDE2
-OiBmZmZmZmZjMDAwMWE0MGE4ClsgNDcyMS40MjQ0NjldIHgxNTogMDAwMDAwMDAwMDAwMDAwOSB4
-MTQ6IDAwMDAwMDAwMDAwMDAwMGQKWyA0NzIxLjQyOTc2Ml0geDEzOiA2ZTZlNmY2MzIwNmI3MjZm
-IHgxMjogMDAwMDAwMDAwMDAwMDAxMApbIDQ3MjEuNDM1MDU4XSB4MTE6IDAxMDEwMTAxMDEwMTAx
-MDEgeDEwOiAwMDAwMDAwMDAwMDAwMDAwClsgNDcyMS40NDAzNTNdIHg5IDogMDAwMDAwMDAwMDAw
-MDAwYSB4OCA6IDgzODY4MzgyODI4MTgzODEKWyA0NzIxLjQ0NTY0OF0geDcgOiBmZmZmZmZjMGEy
-MDFlZmU4IHg2IDogMDAwMDAwMDAwMDAwMDAwMApbIDQ3MjEuNDUwOTQzXSB4NSA6IDAwMDAwMDAw
-ZmZmZmZmZmEgeDQgOiBmZmZmZmZjMGEyMDFmMTcwClsgNDcyMS40NTYyMzddIHgzIDogZmZmZmZm
-ODAwMDE1ZTAwMCB4MiA6IGZmZmZmZjgwMDAxNWUwMTgKWyA0NzIxLjQ2MTUzMV0geDEgOiAwMDAw
-MDAwMDAwMDAwMDBmIHgwIDogZmZmZmZmYzBhNGEyYTgxOApbIDQ3MjEuNDY2ODI2XQpbIDQ3MjEu
-NDY4MzA1XSBQcm9jZXNzIGRldmljZWQgKHBpZDogMzAwLCBzdGFjayBsaW1pdCA9IDB4ZmZmZmZm
-YzBhMDBlYzAyOCkKWyA0NzIxLjQ3NDk4OV0gU3RhY2s6ICgweGZmZmZmZmMwYTAwZWZiZTAgdG8g
-MHhmZmZmZmZjMGEwMGYwMDAwKQpbIDQ3MjEuNDgwNzIwXSBmYmUwOiBhMDBlZmNhMCBmZmZmZmZj
-MCAwMDQyYzk0NCBmZmZmZmZjMCBhMGYyZDY4MCBmZmZmZmZjMCAwMDAwMDAyNCAwMDAwMDAwMApb
-IDQ3MjEuNDg4ODk1XSBmYzAwOiBhNGI2ZDAwMCBmZmZmZmZjMCAwMDlmMjcyOSBmZmZmZmZjMCBh
-NDgxNTQwMCBmZmZmZmZjMCBhMDBlZmVjOCBmZmZmZmZjMAoKU2lnbmVkLW9mZi1ieTogSHl1bmd3
-b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kc2kuYyB8IDYgKysrKystCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNl
-cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2RzaS5jCmluZGV4IDFjZmM0YmUwNy4uNjQxMzMzOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kc2kuYwpAQCAtMTQwOCw2ICsxNDA4LDkgQEAgc3RhdGljIHNzaXplX3QgZXh5
-bm9zX2RzaV9ob3N0X3RyYW5zZmVyKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0LAogCXN0cnVj
-dCBleHlub3NfZHNpX3RyYW5zZmVyIHhmZXI7CiAJaW50IHJldDsKIAorCWlmICghKGRzaS0+c3Rh
-dGUgJiBEU0lNX1NUQVRFX0VOQUJMRUQpKQorCQlyZXR1cm4gLUVJTlZBTDsKKwogCWlmICghKGRz
-aS0+c3RhdGUgJiBEU0lNX1NUQVRFX0lOSVRJQUxJWkVEKSkgewogCQlyZXQgPSBleHlub3NfZHNp
-X2luaXQoZHNpKTsKIAkJaWYgKHJldCkKQEAgLTE1NTEsOSArMTU1NCwxMCBAQCBzdGF0aWMgdm9p
-ZCBleHlub3NfZHNpX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kc2kgKmRzaSkKIAlkcm1fcGFuZWxf
-ZGlzYWJsZShkc2ktPnBhbmVsKTsKIAlleHlub3NfZHNpX3NldF9kaXNwbGF5X2VuYWJsZShkc2ks
-IGZhbHNlKTsKIAlkcm1fcGFuZWxfdW5wcmVwYXJlKGRzaS0+cGFuZWwpOwotCWV4eW5vc19kc2lf
-cG93ZXJvZmYoZHNpKTsKIAogCWRzaS0+c3RhdGUgJj0gfkRTSU1fU1RBVEVfRU5BQkxFRDsKKwor
-CWV4eW5vc19kc2lfcG93ZXJvZmYoZHNpKTsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9k
-cG1zKHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksIGludCBtb2RlKQotLSAKMS45
-LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 04.06.2015 12:51, Krzysztof Kozlowski wrote:
+> On 04.06.2015 08:11, Kukjin Kim wrote:
+>> On 06/01/15 20:34, Krzysztof Kozlowski wrote:
+>>> W dniu 01.06.2015 o 19:10, Marek Szyprowski pisze:
+>>>> Hello,
+>>>>
+>>>> Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
+>>>> for merging - see
+>>>> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
+>>>> In meantime there have been quite a lot of changes related to Exynos DTS
+>>>> files queued for merging and my patches don't apply anymore. To ease
+>>>> merge process I've decided to rebased all Exynos SYSMMU dts changes onto
+>>>> latest exynos next tree from: https://github.com/krzk/linux dt-for-next
+>>>>
+>>>> While rebasing I've fixes a few spotted issues: some nodes still used
+>>>> old 'samsung,power-domain' properties (now replaced with 'power-domains')
+>>>> and added properties to jpeg codec merged recently.
+>>>>
+>>>
+>>> Thanks for rebasing this stuff.
+>>>
+>> Same here ;-)
+>>
+>>> I picked whole patchset with Javier's tested-by. I'll send it to Kukjin
+>>> later or directly to arm-soc (depending what will happen with last pull
+>>> request).
+>>>
+>>> Kukjin, you mentioned that you will do something with this patchset the
+>>> previous weekend. Since then nothing happened so I am not sure what are
+>>> your plans... Can you share them? Do you want to pick it by yourself, do
+>>> you have any comments or maybe you need something from our side? (I
+>>> checked the patches and they look fine)
+>>>
+>> Done, thanks.
+> 
+> Thank you, I tested the for-next branch on some of my boards and
+> everything looked fine.
+
+Oh, something wrong happened on some of configs/boards:
+
+Arndale Octa: multi_v7_defconfig
+Last tests on samsung tree fail:
+1.
+http://kernelci.org/boot/exynos5420-arndale-octa_rootfs:nfs/job/samsung/kernel/v4.1-rc6-146-g1c07c562d9d5/defconfig/multi_v7_defconfig/lab/lab-tbaker/?_id=556fbaee59b5146b5cda4447
+2.
+http://kernelci.org/boot/exynos5420-arndale-octa_rootfs:nfs/job/samsung/kernel/v4.1-rc6-137-g1730fe10f4a8/defconfig/multi_v7_defconfig/lab/lab-tbaker/?_id=556e948659b5144e74da4445
+
+Odroid XU3: multi_v7_defconfig
+Last commit fails:
+http://kernelci.org/boot/exynos5422-odroidxu3_rootfs:nfs/job/samsung/kernel/v4.1-rc6-146-g1c07c562d9d5/defconfig/multi_v7_defconfig/lab/lab-tbaker/?_id=556fbb2d59b5146b63da4449
+
+I can test tonight on Odroid XU3 but I don't have access to Arndale Octa
+board. Maybe guys from SRPOL could test it?
+
+Best regards,
+Krzysztof
