@@ -1,54 +1,87 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 10/11] spi: add more debug prints in s3c64xx
-Date: Thu, 4 Jun 2015 11:56:53 +0100
-Message-ID: <20150604105653.GD14071@sirena.org.uk>
-References: <cover.1433364398.git.hramrach@gmail.com>
- <305830ebf9c0ae98c4f6e0ebbdec7414d6762b36.1433364398.git.hramrach@gmail.com>
- <20150604091634.GY14071@sirena.org.uk>
- <CAOMqctQxn6UY2DJ9Syp6Ay9SYKLgdU+8EjiTK_48-R3dZ8PcvA@mail.gmail.com>
- <20150604102621.GB14071@sirena.org.uk>
- <CAOMqctRFXWT3m8H4YBH0tzQAL3Y2NUs6XCo2LiF1R0Xz+iWUzw@mail.gmail.com>
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] drm/exynos: fimd: ensure proper hw state in
+	fimd_clear_channel()
+Date: Thu, 04 Jun 2015 22:08:16 +0900
+Message-ID: <55704DC0.8000608@samsung.com>
+References: <1433319984-18683-1-git-send-email-m.szyprowski@samsung.com>
+	<1433319984-18683-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jNp2UUAAd0DeWbgM"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOMqctRFXWT3m8H4YBH0tzQAL3Y2NUs6XCo2LiF1R0Xz+iWUzw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Han Xu <han.xu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Huang Shijie <b32955-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, Knut Wohlrab <knut.wohlrab-V5te9oGctAVWk0Htik3J/w@public.gmane.org>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>"grmoore-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org" <g>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1433319984-18683-2-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---jNp2UUAAd0DeWbgM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Jun 04, 2015 at 12:52:19PM +0200, Michal Suchanek wrote:
-
-> There is no code interdependency with the other patches so if it's
-> preferred I can send patches like this separately.
-
-Yes, that's better practice.
-
---jNp2UUAAd0DeWbgM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVcC71AAoJECTWi3JdVIfQBj8H/2IDwTMKds4nyc0wJHt1b/zn
-r2Xjn1gr2EEPJL71yeJewRKgUFS3df/m3czmwxQ1bLcweAhoDVnHjDQ/DMB0Aqmh
-UYbI1tuqCf83hxyDqlNcKsxkZ4hvvtDHxNKQtsVU1LNGsVb+yHFMLDmtQktZtycF
-BjLTw15SNHyixdXHrMej+qZt+NjozC7Y38ff9jdo4AAp3B65yokISIVatc93S6iy
-wow+h4THuzm+DMrKCXaUwtkqx6kmTEZ1DaxXf8QcKkXyKTzXL1b1riP/0Q1vA+rT
-SYgloqyo4pbXTmiyQkOwhARysxqNBpuQ/mesUvlqIS+f60HvJvrTaVgzEIbokVk=
-=giwp
------END PGP SIGNATURE-----
-
---jNp2UUAAd0DeWbgM--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgTWFyZWssCgpPbiAyMDE164WEIDA27JuUIDAz7J28IDE3OjI2LCBNYXJlayBTenlwcm93c2tp
+IHdyb3RlOgo+IE9uZSBzaG91bGQgbm90IGRvIGFueSBhc3N1bXB0aW9ucyBvbiB0aGUgc3RhcmUg
+b2YgdGhlIGZpbWQgaGFyZHdhcmUKPiBkdXJpbmcgZHJpdmVyIGluaXRpYWxpemF0aW9uLCBzbyB0
+byBwcm9wZXJseSByZXNldCBmaW1kIGJlZm9yZSBlbmFibGluZwo+IElPTU1VLCBvbmUgc2hvdWxk
+IGVuc3VyZSB0aGF0IGFsbCBwb3dlciBkb21haW5zIGFuZCBjbG9ja3MgYXJlIHJlYWxseQo+IGVu
+YWJsZWQuIFRoaXMgcGF0Y2ggYWRkcyBwbV9ydW50aW1lIGFuZCBjbG9ja3MgbWFuYWdlbWVudCBp
+biB0aGUKPiBmaW1kX2NsZWFyX2NoYW5uZWwoKSBmdW5jdGlvbiB0byBlbnN1cmUgdGhhdCBhbnkg
+YWNjZXNzIHRvIGZpbWQKPiByZWdpc3RlcnMgd2lsbCBiZSBwZXJmb3JtZWQgd2l0aCBjbG9ja3Mg
+YW5kIHBvd2VyIGRvbWFpbnMgZW5hYmxlZC4KCkkgaGF2ZSB0ZXN0ZWQgdGhpcyBwYXRjaCBzZXJp
+ZXMgb24gdHJhdHMyIGJvYXJkIHdoaWNoIHVzZXMgRXh5bm9zNDQxMgpTb0MuIEhvd2V2ZXIsIHRo
+ZSBib290aW5nIGlzIGhhbHRlZCBvdXQuIFdpdGhvdXQgaW9tbXUsIHRoZSBib290aW5nIGFuZApk
+aXNwbGF5IHdvcmtzIHdlbGwuCgpGb3IgdGhpcyB0ZXN0LCBJIGFsc28gbWVyZ2VkIGFub3RoZXIg
+eW91ciBwYXRjaCBzZXJpZXMgaW4gaW9tbXUgZXh5bm9zCnRyZWUgYW5kIGFkZGVkIGRldmljZSBu
+b2RlIHJlbGV2YW50IGNvZGVzIGxpa2UgYmVsb3csCgppbiBleHlub3M0LmR0c2kgZmlsZToKZmlt
+ZDogZmltZEAxMWMwMDAwMCB7CiAgICAgICAgICAgICAgICAgLi4uCiAgICAgICAgICAgICAgIGlv
+bW11cyA9IDwmc3lzbW11X2ZpbWQwPjsKICAgICAgICAgICAgICAgICAuLi4KCnN5c21tdV9maW1k
+MDogc3lzbW11QDExRTIwMDAwIHsKICAgICAgICBjb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9z
+LXN5c21tdSI7CiAgICAgICAgcmVnID0gPDB4MTFFMjAwMDAgMHgxMDAwPjsKICAgICAgICBpbnRl
+cnJ1cHQtcGFyZW50ID0gPCZjb21iaW5lcj47CiAgICAgICAgaW50ZXJydXB0cyA9IDw1IDI+Owog
+ICAgICAgIGNsb2NrLW5hbWVzID0gInN5c21tdSIsICJtYXN0ZXIiOwogICAgICAgIGNsb2NrcyA9
+IDwmY2xvY2sgQ0xLX1NNTVVfRklNRDA+LCA8JmNsb2NrIENMS19GSU1EMD47CiAgICAgICAgIHBv
+d2VyLWRvbWFpbnMgPSA8JnBkX2xjZDA+OwogICAgICAgICNpb21tdS1jZWxscyA9IDwwPjsKfTsK
+CmluIGV4eW5vczQ0MTItdHJhdHMyLmR0cyBmaWxlOgpmaW1kQDExYzAwMDAwIHsKICAgICAgICAg
+ICAgICAgIHN0YXR1cyA9ICJva2F5IjsKICAgICAgICAgICAgICAgIGlvbW11LXJlc2VydmVkLW1h
+cHBpbmcgPSA8MHg0MDAwMDAwMCAweDQwMDAwMDAwIDB4NDAwMDAwMDA+Owp9OwoKQ2FuIHlvdSBj
+aGVjayBpdCBvdXQ/CgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hcmVr
+IFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiBUZXN0ZWQtYnk6IEphdmll
+ciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4KPiAt
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8IDIyICsrKysr
+KysrKysrKysrKysrKy0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDQg
+ZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
+Cj4gaW5kZXggOTY2MTg1MzQzNThlLi4zZWM5ZDQyOTlhODYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBAQCAtMjQyLDEyICsyNDIsMjEgQEAgc3RhdGlj
+IHZvaWQgZmltZF9lbmFibGVfc2hhZG93X2NoYW5uZWxfcGF0aChzdHJ1Y3QgZmltZF9jb250ZXh0
+ICpjdHgsCj4gIAl3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBTSEFET1dDT04pOwo+ICB9Cj4gIAo+
+ICtzdGF0aWMgaW50IGZpbWRfZW5hYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
+cnRjKTsKPiArc3RhdGljIHZvaWQgZmltZF9kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2Ry
+bV9jcnRjICpjcnRjKTsKPiArCj4gIHN0YXRpYyB2b2lkIGZpbWRfY2xlYXJfY2hhbm5lbChzdHJ1
+Y3QgZmltZF9jb250ZXh0ICpjdHgpCj4gIHsKPiAgCXVuc2lnbmVkIGludCB3aW4sIGNoX2VuYWJs
+ZWQgPSAwOwo+ICAKPiAgCURSTV9ERUJVR19LTVMoIiVzXG4iLCBfX0ZJTEVfXyk7Cj4gIAo+ICsJ
+LyogSGFyZHdhcmUgaXMgaW4gdW5rbm93biBzdGF0ZSwgc28gZW5zdXJlIGl0IGdldHMgZW5hYmxl
+ZCBwcm9wZXJseSAqLwo+ICsJcG1fcnVudGltZV9nZXRfc3luYyhjdHgtPmRldik7Cj4gKwo+ICsJ
+Y2xrX3ByZXBhcmVfZW5hYmxlKGN0eC0+YnVzX2Nsayk7Cj4gKwljbGtfcHJlcGFyZV9lbmFibGUo
+Y3R4LT5sY2RfY2xrKTsKPiArCj4gIAkvKiBDaGVjayBpZiBhbnkgY2hhbm5lbCBpcyBlbmFibGVk
+LiAqLwo+ICAJZm9yICh3aW4gPSAwOyB3aW4gPCBXSU5ET1dTX05SOyB3aW4rKykgewo+ICAJCXUz
+MiB2YWwgPSByZWFkbChjdHgtPnJlZ3MgKyBXSU5DT04od2luKSk7Cj4gQEAgLTI2NSwxMiArMjc0
+LDE3IEBAIHN0YXRpYyB2b2lkIGZpbWRfY2xlYXJfY2hhbm5lbChzdHJ1Y3QgZmltZF9jb250ZXh0
+ICpjdHgpCj4gIAo+ICAJLyogV2FpdCBmb3IgdnN5bmMsIGFzIGRpc2FibGUgY2hhbm5lbCB0YWtl
+cyBlZmZlY3QgYXQgbmV4dCB2c3luYyAqLwo+ICAJaWYgKGNoX2VuYWJsZWQpIHsKPiAtCQl1bnNp
+Z25lZCBpbnQgc3RhdGUgPSBjdHgtPnN1c3BlbmRlZDsKPiAtCj4gLQkJY3R4LT5zdXNwZW5kZWQg
+PSAwOwo+ICsJCWN0eC0+c3VzcGVuZGVkID0gZmFsc2U7Cj4gKwkJZmltZF9lbmFibGVfdmJsYW5r
+KGN0eC0+Y3J0Yyk7Cj4gIAkJZmltZF93YWl0X2Zvcl92YmxhbmsoY3R4LT5jcnRjKTsKPiAtCQlj
+dHgtPnN1c3BlbmRlZCA9IHN0YXRlOwo+ICsJCWZpbWRfZGlzYWJsZV92YmxhbmsoY3R4LT5jcnRj
+KTsKPiArCQljdHgtPnN1c3BlbmRlZCA9IHRydWU7Cj4gIAl9Cj4gKwo+ICsJY2xrX2Rpc2FibGVf
+dW5wcmVwYXJlKGN0eC0+bGNkX2Nsayk7Cj4gKwljbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5i
+dXNfY2xrKTsKPiArCj4gKwlwbV9ydW50aW1lX3B1dChjdHgtPmRldik7Cj4gIH0KPiAgCj4gIHN0
+YXRpYyBpbnQgZmltZF9pb21tdV9hdHRhY2hfZGV2aWNlcyhzdHJ1Y3QgZmltZF9jb250ZXh0ICpj
+dHgsCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpp
+b21tdSBtYWlsaW5nIGxpc3QKaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcKaHR0cHM6
+Ly9saXN0cy5saW51eGZvdW5kYXRpb24ub3JnL21haWxtYW4vbGlzdGluZm8vaW9tbXU=
