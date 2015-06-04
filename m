@@ -1,53 +1,35 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable usb3503
-Date: Wed, 03 Jun 2015 18:08:37 -0700
-Message-ID: <7hsia846wa.fsf@deeprootsystems.com>
-References: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] drivers/cpufreq: include <module.h> for modular
+ exynos-cpufreq.c code
+Date: Thu, 04 Jun 2015 11:00:58 +0900
+Message-ID: <556FB15A.8010409@samsung.com>
+References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com>
+ <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:36691 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753527AbbFDBIl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 21:08:41 -0400
-Received: by pabqy3 with SMTP id qy3so17966327pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2015 18:08:40 -0700 (PDT)
-In-Reply-To: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org> (riku
-	voipio's message of "Fri, 13 Mar 2015 15:54:26 +0200")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: riku.voipio@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tyler.baker@linaro.org, javier.martinez@collabora.co.uk
 
-riku.voipio@linaro.org writes:
+On 04.06.2015 06:18, Paul Gortmaker wrote:
+> This file is built off of a tristate Kconfig option ("ARM_EXYNOS_CPUFREQ")
+> and also contains modular function calls so it should explicitly include
+> module.h to avoid compile breakage during pending header shuffles.
+> 
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-> From: Riku Voipio <riku.voipio@linaro.org>
->
-> CONFIG_USB_HSIC_USB3503 is needed by exynos5250-arndale for the on-board
-> asix network controller. Enable it so networking works with
-> multi_v7_defconfig out of box like it does with exynos_defconfig.
->
-> USB3503 is also referenced from exynos4412-odroidu3.dts and
-> exynos5250-spring.dts so this patch should improve
-> multi_v7_defconfig on those platforms as well.
->
-> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Tyler pointed me to this in order to get arndale networking on mainline,
-but looks like this might need to be revisited for current mainline.  
-
-I tested this and it doesn't work because as of commit 7de7c6717f2c
-(ARM: multi_v7_defconfig: Enable Exynos USB PHY) the PHY that this
-depends on is built as a module in multi_v7_config, so having this
-driver built-in doesn't help.  Even after the PHY driver is loaded, this
-driver will not detect the hardware.
-
-So instead, I think this driver should be built as a module as well.
-Testing that, I can get networking by doing loading both the phy and
-this driver after boot:
-
- # modprobe phy-exynos-usb2
- # modprobe usb3503
-
-Kevin
+Best regards,
+Krzysztof
