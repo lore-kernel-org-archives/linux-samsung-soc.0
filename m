@@ -1,899 +1,379 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v6 6/8] mfd: cros_ec: Support multiple EC in a system
-Date: Thu,  4 Jun 2015 10:05:52 +0200
-Message-ID: <1433405154-16273-7-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 3/8] mfd: cros_ec: Move protocol helpers out of the MFD driver
+Date: Thu,  4 Jun 2015 10:05:49 +0200
+Message-ID: <1433405154-16273-4-git-send-email-javier.martinez@collabora.co.uk>
 References: <1433405154-16273-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:43413 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:43381 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752784AbbFDIG4 (ORCPT
+	with ESMTP id S1752739AbbFDIGj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Jun 2015 04:06:56 -0400
+	Thu, 4 Jun 2015 04:06:39 -0400
 In-Reply-To: <1433405154-16273-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Gwendal Grignou <gwendal@chromium.org>
+The MFD driver should only have the logic to instantiate its child devices
+and setup any shared resources that will be used by the subdevices drivers.
 
-Chromebooks can have more than one Embedded Controller so the
-cros_ec device id has to be incremented for each EC registered.
+The cros_ec MFD is more complex than expected since it also has helpers to
+communicate with the EC. So the driver will only get more bigger as other
+protocols are supported in the future. So move the communication protocol
+helpers to its own driver as drivers/platform/chrome/cros_ec_proto.c.
 
-Add a new structure to represent multiple EC as different char
-devices (e.g: /dev/cros_ec, /dev/cros_pd). It connects to
-cros_ec_device and allows sysfs inferface for cros_pd.
-
-Also reduce number of allocated objects, make chromeos sysfs
-class object a static and add refcounting to prevent object
-deletion while command is in progress.
-
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+Suggested-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 
-Changes since v5:
- - Don't allow to change the device name from DT. Suggested by Lee Jones.
- - Expand error messages in case of mfd_add_devices() failure.
-   Suggested by Lee Jones.
+Changes since v5: None
 
-Changes since v4:
- - Use cros-ec-name DT property instead of devname. Suggested by Lee Jones.
- - Pass PLATFORM_DEVID_AUTO directly to mfd_add_devices().
-   Suggested by Lee Jones.
- - Add Heiko Stuebner tested-by tag.
- - Fix get_version by passing the cmd_offset to EC_CMD_GET_VERSION.
+Changes since v4: None
 
 Changes since v3:
- - Add defines for the EC and PD index constants.
- - Remove cros_ec_dev_register() and declare the mfd_cells as static structs.
-   Suggested by Lee Jones.
- - Add a new line before the return statement in cros_ec_dev_register().
-   Suggested by Lee Jones.
+ - Added tested-by tag from Heiko Stuebner.
+ - Added acked-by tag from Lee Jones.
 
-Changes since v2: None
-
-Changes since v1:
-  - Squash patch that adds support to represent EC's as different
-    char devices (e.g: /dev/cros_ec, /dev/cros_pd):
-    https://chromium-review.googlesource.com/#/c/217297/
-    Suggested by Gwendal Grignou
-  - Use cros_ec instead of cros-ec in the subject line to be consistent.
-    Suggested by Gwendal Grignou
+Changes since v2: None, new patch.
 ---
- drivers/input/keyboard/cros_ec_keyb.c      |   2 +-
- drivers/mfd/cros_ec.c                      |  52 ++++++++++--
- drivers/mfd/cros_ec_i2c.c                  |   1 -
- drivers/mfd/cros_ec_spi.c                  |   1 -
- drivers/platform/chrome/cros_ec_dev.c      | 130 ++++++++++++++++++++---------
- drivers/platform/chrome/cros_ec_dev.h      |   7 --
- drivers/platform/chrome/cros_ec_lightbar.c |  75 +++++++++--------
- drivers/platform/chrome/cros_ec_lpc.c      |   1 -
- drivers/platform/chrome/cros_ec_sysfs.c    |  48 +++++------
- include/linux/mfd/cros_ec.h                |  44 ++++++++--
- 10 files changed, 234 insertions(+), 127 deletions(-)
+ drivers/i2c/busses/Kconfig              |   2 +-
+ drivers/input/keyboard/Kconfig          |   2 +-
+ drivers/mfd/Kconfig                     |   6 +-
+ drivers/mfd/cros_ec.c                   |  96 --------------------------
+ drivers/platform/chrome/Kconfig         |   9 ++-
+ drivers/platform/chrome/Makefile        |   1 +
+ drivers/platform/chrome/cros_ec_proto.c | 115 ++++++++++++++++++++++++++++++++
+ 7 files changed, 129 insertions(+), 102 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_ec_proto.c
 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 974154a74505..b01966dc7eb3 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -275,7 +275,7 @@ static int cros_ec_keyb_probe(struct platform_device *pdev)
- 	ckdev->dev = dev;
- 	dev_set_drvdata(&pdev->dev, ckdev);
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 2255af23b9c7..5f1c1c4f5d87 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -1103,7 +1103,7 @@ config I2C_SIBYTE
  
--	idev->name = ec->ec_name;
-+	idev->name = CROS_EC_DEV_NAME;
- 	idev->phys = ec->phys_name;
- 	__set_bit(EV_REP, idev->evbit);
+ config I2C_CROS_EC_TUNNEL
+ 	tristate "ChromeOS EC tunnel I2C bus"
+-	depends on MFD_CROS_EC
++	depends on CROS_EC_PROTO
+ 	help
+ 	  If you say yes here you get an I2C bus that will tunnel i2c commands
+ 	  through to the other side of the ChromeOS EC to the i2c bus
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 106fbac7f8c5..e8eb60c6d83e 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -677,7 +677,7 @@ config KEYBOARD_W90P910
+ config KEYBOARD_CROS_EC
+ 	tristate "ChromeOS EC keyboard"
+ 	select INPUT_MATRIXKMAP
+-	depends on MFD_CROS_EC
++	depends on CROS_EC_PROTO
+ 	help
+ 	  Say Y here to enable the matrix keyboard used by ChromeOS devices
+ 	  and implemented on the ChromeOS EC. You must enable one bus option
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index d5ad04dad081..cf3b86d441f7 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -94,6 +94,8 @@ config MFD_AXP20X
+ config MFD_CROS_EC
+ 	tristate "ChromeOS Embedded Controller"
+ 	select MFD_CORE
++	select CHROME_PLATFORMS
++	select CROS_EC_PROTO
+ 	help
+ 	  If you say Y here you get support for the ChromeOS Embedded
+ 	  Controller (EC) providing keyboard, battery and power services.
+@@ -102,7 +104,7 @@ config MFD_CROS_EC
  
+ config MFD_CROS_EC_I2C
+ 	tristate "ChromeOS Embedded Controller (I2C)"
+-	depends on MFD_CROS_EC && I2C
++	depends on MFD_CROS_EC && CROS_EC_PROTO && I2C
+ 
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS
+@@ -112,7 +114,7 @@ config MFD_CROS_EC_I2C
+ 
+ config MFD_CROS_EC_SPI
+ 	tristate "ChromeOS Embedded Controller (SPI)"
+-	depends on MFD_CROS_EC && SPI && OF
++	depends on MFD_CROS_EC && CROS_EC_PROTO && SPI && OF
+ 
+ 	---help---
+ 	  If you say Y here, you get support for talking to the ChromeOS EC
 diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 08d82bfc5268..d5919ee65059 100644
+index 4a0f6dfcd376..d857f6a2b57b 100644
 --- a/drivers/mfd/cros_ec.c
 +++ b/drivers/mfd/cros_ec.c
-@@ -24,11 +24,29 @@
+@@ -23,102 +23,6 @@
+ #include <linux/module.h>
  #include <linux/mfd/core.h>
  #include <linux/mfd/cros_ec.h>
- 
--static const struct mfd_cell cros_devs[] = {
--	{
--		.name = "cros-ec-ctl",
--		.id = PLATFORM_DEVID_AUTO,
--	},
-+#define CROS_EC_DEV_EC_INDEX 0
-+#define CROS_EC_DEV_PD_INDEX 1
-+
-+struct cros_ec_platform ec_p = {
-+	.ec_name = CROS_EC_DEV_NAME,
-+	.cmd_offset = EC_CMD_PASSTHRU_OFFSET(CROS_EC_DEV_EC_INDEX),
-+};
-+
-+struct cros_ec_platform pd_p = {
-+	.ec_name = CROS_EC_DEV_PD_NAME,
-+	.cmd_offset = EC_CMD_PASSTHRU_OFFSET(CROS_EC_DEV_PD_INDEX),
-+};
-+
-+struct mfd_cell ec_cell = {
-+	.name = "cros-ec-ctl",
-+	.platform_data = &ec_p,
-+	.pdata_size = sizeof(ec_p),
-+};
-+
-+struct mfd_cell ec_pd_cell = {
-+	.name = "cros-ec-ctl",
-+	.platform_data = &pd_p,
-+	.pdata_size = sizeof(pd_p),
- };
- 
- int cros_ec_register(struct cros_ec_device *ec_dev)
-@@ -52,14 +70,32 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 
- 	cros_ec_query_all(ec_dev);
- 
--	err = mfd_add_devices(dev, 0, cros_devs,
--			      ARRAY_SIZE(cros_devs),
-+	err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell, 1,
- 			      NULL, ec_dev->irq, NULL);
- 	if (err) {
--		dev_err(dev, "failed to add mfd devices\n");
-+		dev_err(dev, "add Embedded Controller mfd device failed %d\n",
-+			err);
- 		return err;
- 	}
- 
-+	if (ec_dev->max_passthru) {
-+		/*
-+		 * Register a PD device as well on top of this device.
-+		 * We make the following assumptions:
-+		 * - behind an EC, we have a pd
-+		 * - only one device added.
-+		 * - the EC is responsive at init time (it is not true for a
-+		 *   sensor hub.
-+		 */
-+		err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
-+				      &ec_pd_cell, 1, NULL, ec_dev->irq, NULL);
-+		if (err) {
-+			dev_err(dev, "add Power Delivery mfd device failed %d\n",
-+				err);
-+			return err;
-+		}
-+	}
-+
- 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
- 		err = of_platform_populate(dev->of_node, NULL, NULL, dev);
- 		if (err) {
-diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index 22e8a4ae1711..b9a0963ca5c3 100644
---- a/drivers/mfd/cros_ec_i2c.c
-+++ b/drivers/mfd/cros_ec_i2c.c
-@@ -302,7 +302,6 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
- 	ec_dev->irq = client->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
--	ec_dev->ec_name = client->name;
- 	ec_dev->phys_name = client->adapter->name;
- 	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
- 			   sizeof(struct ec_response_get_protocol_info);
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 4e6f2f6b1095..faba03e2f1ef 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -637,7 +637,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev->irq = spi->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
--	ec_dev->ec_name = ec_spi->spi->modalias;
- 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
- 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
- 			   sizeof(struct ec_host_response) +
-diff --git a/drivers/platform/chrome/cros_ec_dev.c b/drivers/platform/chrome/cros_ec_dev.c
-index 14111e32658b..2f4099820480 100644
---- a/drivers/platform/chrome/cros_ec_dev.c
-+++ b/drivers/platform/chrome/cros_ec_dev.c
-@@ -27,11 +27,22 @@
- 
- /* Device variables */
- #define CROS_MAX_DEV 128
--static struct class *cros_class;
- static int ec_major;
- 
-+static const struct attribute_group *cros_ec_groups[] = {
-+	&cros_ec_attr_group,
-+	&cros_ec_lightbar_attr_group,
-+	NULL,
-+};
-+
-+static struct class cros_class = {
-+	.owner          = THIS_MODULE,
-+	.name           = "chromeos",
-+	.dev_groups     = cros_ec_groups,
-+};
-+
- /* Basic communication */
--static int ec_get_version(struct cros_ec_device *ec, char *str, int maxlen)
-+static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
- {
- 	struct ec_response_get_version *resp;
- 	static const char * const current_image_name[] = {
-@@ -45,11 +56,11 @@ static int ec_get_version(struct cros_ec_device *ec, char *str, int maxlen)
- 		return -ENOMEM;
- 
- 	msg->version = 0;
--	msg->command = EC_CMD_GET_VERSION;
-+	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
- 	msg->insize = sizeof(*resp);
- 	msg->outsize = 0;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 
-@@ -78,8 +89,10 @@ exit:
- /* Device file ops */
- static int ec_device_open(struct inode *inode, struct file *filp)
- {
--	filp->private_data = container_of(inode->i_cdev,
--					  struct cros_ec_device, cdev);
-+	struct cros_ec_dev *ec = container_of(inode->i_cdev,
-+					      struct cros_ec_dev, cdev);
-+	filp->private_data = ec;
-+	nonseekable_open(inode, filp);
- 	return 0;
- }
- 
-@@ -91,7 +104,7 @@ static int ec_device_release(struct inode *inode, struct file *filp)
- static ssize_t ec_device_read(struct file *filp, char __user *buffer,
- 			      size_t length, loff_t *offset)
- {
--	struct cros_ec_device *ec = filp->private_data;
-+	struct cros_ec_dev *ec = filp->private_data;
- 	char msg[sizeof(struct ec_response_get_version) +
- 		 sizeof(CROS_EC_DEV_VERSION)];
- 	size_t count;
-@@ -114,7 +127,7 @@ static ssize_t ec_device_read(struct file *filp, char __user *buffer,
- }
- 
- /* Ioctls */
--static long ec_device_ioctl_xcmd(struct cros_ec_device *ec, void __user *arg)
-+static long ec_device_ioctl_xcmd(struct cros_ec_dev *ec, void __user *arg)
- {
- 	long ret;
- 	struct cros_ec_command u_cmd;
-@@ -133,7 +146,8 @@ static long ec_device_ioctl_xcmd(struct cros_ec_device *ec, void __user *arg)
- 		goto exit;
- 	}
- 
--	ret = cros_ec_cmd_xfer(ec, s_cmd);
-+	s_cmd->command += ec->cmd_offset;
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, s_cmd);
- 	/* Only copy data to userland if data was received. */
- 	if (ret < 0)
- 		goto exit;
-@@ -145,19 +159,21 @@ exit:
- 	return ret;
- }
- 
--static long ec_device_ioctl_readmem(struct cros_ec_device *ec, void __user *arg)
-+static long ec_device_ioctl_readmem(struct cros_ec_dev *ec, void __user *arg)
- {
-+	struct cros_ec_device *ec_dev = ec->ec_dev;
- 	struct cros_ec_readmem s_mem = { };
- 	long num;
- 
- 	/* Not every platform supports direct reads */
--	if (!ec->cmd_readmem)
-+	if (!ec_dev->cmd_readmem)
- 		return -ENOTTY;
- 
- 	if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
- 		return -EFAULT;
- 
--	num = ec->cmd_readmem(ec, s_mem.offset, s_mem.bytes, s_mem.buffer);
-+	num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
-+				  s_mem.buffer);
- 	if (num <= 0)
- 		return num;
- 
-@@ -170,7 +186,7 @@ static long ec_device_ioctl_readmem(struct cros_ec_device *ec, void __user *arg)
- static long ec_device_ioctl(struct file *filp, unsigned int cmd,
- 			    unsigned long arg)
- {
--	struct cros_ec_device *ec = filp->private_data;
-+	struct cros_ec_dev *ec = filp->private_data;
- 
- 	if (_IOC_TYPE(cmd) != CROS_EC_DEV_IOC)
- 		return -ENOTTY;
-@@ -193,45 +209,81 @@ static const struct file_operations fops = {
- 	.unlocked_ioctl = ec_device_ioctl,
- };
- 
-+static void __remove(struct device *dev)
-+{
-+	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
-+					      class_dev);
-+	kfree(ec);
-+}
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
--	struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
--	int retval = -ENOTTY;
--	dev_t devno = MKDEV(ec_major, 0);
-+	int retval = -ENOMEM;
-+	struct device *dev = &pdev->dev;
-+	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
-+	dev_t devno = MKDEV(ec_major, pdev->id);
-+	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
-+
-+	if (!ec)
-+		return retval;
- 
--	/* Instantiate it (and remember the EC) */
-+	dev_set_drvdata(dev, ec);
-+	ec->ec_dev = dev_get_drvdata(dev->parent);
-+	ec->dev = dev;
-+	ec->cmd_offset = ec_platform->cmd_offset;
-+	device_initialize(&ec->class_dev);
- 	cdev_init(&ec->cdev, &fops);
- 
-+	/*
-+	 * Add the character device
-+	 * Link cdev to the class device to be sure device is not used
-+	 * before unbinding it.
-+	 */
-+	ec->cdev.kobj.parent = &ec->class_dev.kobj;
- 	retval = cdev_add(&ec->cdev, devno, 1);
- 	if (retval) {
--		dev_err(&pdev->dev, ": failed to add character device\n");
--		return retval;
-+		dev_err(dev, ": failed to add character device\n");
-+		goto cdev_add_failed;
- 	}
- 
--	ec->vdev = device_create(cros_class, NULL, devno, ec,
--				 CROS_EC_DEV_NAME);
--	if (IS_ERR(ec->vdev)) {
--		retval = PTR_ERR(ec->vdev);
--		dev_err(&pdev->dev, ": failed to create device\n");
--		cdev_del(&ec->cdev);
--		return retval;
-+	/*
-+	 * Add the class device
-+	 * Link to the character device for creating the /dev entry
-+	 * in devtmpfs.
-+	 */
-+	ec->class_dev.devt = ec->cdev.dev;
-+	ec->class_dev.class = &cros_class;
-+	ec->class_dev.parent = dev;
-+	ec->class_dev.release = __remove;
-+
-+	retval = dev_set_name(&ec->class_dev, "%s", ec_platform->ec_name);
-+	if (retval) {
-+		dev_err(dev, "dev_set_name failed => %d\n", retval);
-+		goto set_named_failed;
- 	}
- 
--	/* Initialize extra interfaces */
--	ec_dev_sysfs_init(ec);
--	ec_dev_lightbar_init(ec);
-+	retval = device_add(&ec->class_dev);
-+	if (retval) {
-+		dev_err(dev, "device_register failed => %d\n", retval);
-+		goto dev_reg_failed;
-+	}
- 
- 	return 0;
-+
-+dev_reg_failed:
-+set_named_failed:
-+	dev_set_drvdata(dev, NULL);
-+	cdev_del(&ec->cdev);
-+cdev_add_failed:
-+	kfree(ec);
-+	return retval;
- }
- 
- static int ec_device_remove(struct platform_device *pdev)
- {
--	struct cros_ec_device *ec = dev_get_drvdata(pdev->dev.parent);
+-#include <linux/mfd/cros_ec_commands.h>
+-#include <linux/delay.h>
 -
--	ec_dev_lightbar_remove(ec);
--	ec_dev_sysfs_remove(ec);
--	device_destroy(cros_class, MKDEV(ec_major, 0));
-+	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
- 	cdev_del(&ec->cdev);
-+	device_unregister(&ec->class_dev);
- 	return 0;
- }
- 
-@@ -254,10 +306,10 @@ static int __init cros_ec_dev_init(void)
- 	int ret;
- 	dev_t dev = 0;
- 
--	cros_class = class_create(THIS_MODULE, "chromeos");
--	if (IS_ERR(cros_class)) {
-+	ret  = class_register(&cros_class);
-+	if (ret) {
- 		pr_err(CROS_EC_DEV_NAME ": failed to register device class\n");
--		return PTR_ERR(cros_class);
-+		return ret;
- 	}
- 
- 	/* Get a range of minor numbers (starting with 0) to work with */
-@@ -279,7 +331,7 @@ static int __init cros_ec_dev_init(void)
- failed_devreg:
- 	unregister_chrdev_region(MKDEV(ec_major, 0), CROS_MAX_DEV);
- failed_chrdevreg:
--	class_destroy(cros_class);
-+	class_unregister(&cros_class);
- 	return ret;
- }
- 
-@@ -287,7 +339,7 @@ static void __exit cros_ec_dev_exit(void)
- {
- 	platform_driver_unregister(&cros_ec_dev_driver);
- 	unregister_chrdev(ec_major, CROS_EC_DEV_NAME);
--	class_destroy(cros_class);
-+	class_unregister(&cros_class);
- }
- 
- module_init(cros_ec_dev_init);
-diff --git a/drivers/platform/chrome/cros_ec_dev.h b/drivers/platform/chrome/cros_ec_dev.h
-index 45d67f7e518c..bfd2c84c3571 100644
---- a/drivers/platform/chrome/cros_ec_dev.h
-+++ b/drivers/platform/chrome/cros_ec_dev.h
-@@ -24,7 +24,6 @@
- #include <linux/types.h>
- #include <linux/mfd/cros_ec.h>
- 
--#define CROS_EC_DEV_NAME "cros_ec"
- #define CROS_EC_DEV_VERSION "1.0.0"
- 
- /*
-@@ -44,10 +43,4 @@ struct cros_ec_readmem {
- #define CROS_EC_DEV_IOCXCMD   _IOWR(CROS_EC_DEV_IOC, 0, struct cros_ec_command)
- #define CROS_EC_DEV_IOCRDMEM  _IOWR(CROS_EC_DEV_IOC, 1, struct cros_ec_readmem)
- 
--void ec_dev_sysfs_init(struct cros_ec_device *);
--void ec_dev_sysfs_remove(struct cros_ec_device *);
+-#define EC_COMMAND_RETRIES	50
 -
--void ec_dev_lightbar_init(struct cros_ec_device *);
--void ec_dev_lightbar_remove(struct cros_ec_device *);
--
- #endif /* _CROS_EC_DEV_H_ */
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 6e1986a2dce1..144e09df9b84 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -92,7 +92,7 @@ out:
- 	return ret;
- }
- 
--static struct cros_ec_command *alloc_lightbar_cmd_msg(void)
-+static struct cros_ec_command *alloc_lightbar_cmd_msg(struct cros_ec_dev *ec)
- {
- 	struct cros_ec_command *msg;
- 	int len;
-@@ -105,14 +105,14 @@ static struct cros_ec_command *alloc_lightbar_cmd_msg(void)
- 		return NULL;
- 
- 	msg->version = 0;
--	msg->command = EC_CMD_LIGHTBAR_CMD;
-+	msg->command = EC_CMD_LIGHTBAR_CMD + ec->cmd_offset;
- 	msg->outsize = sizeof(struct ec_params_lightbar);
- 	msg->insize = sizeof(struct ec_response_lightbar);
- 
- 	return msg;
- }
- 
--static int get_lightbar_version(struct cros_ec_device *ec,
-+static int get_lightbar_version(struct cros_ec_dev *ec,
- 				uint32_t *ver_ptr, uint32_t *flg_ptr)
- {
- 	struct ec_params_lightbar *param;
-@@ -120,13 +120,13 @@ static int get_lightbar_version(struct cros_ec_device *ec,
- 	struct cros_ec_command *msg;
- 	int ret;
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return 0;
- 
- 	param = (struct ec_params_lightbar *)msg->data;
- 	param->cmd = LIGHTBAR_CMD_VERSION;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0) {
- 		ret = 0;
- 		goto exit;
-@@ -165,7 +165,8 @@ static ssize_t version_show(struct device *dev,
- 			    struct device_attribute *attr, char *buf)
- {
- 	uint32_t version = 0, flags = 0;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 	int ret;
- 
- 	ret = lb_throttle();
-@@ -187,12 +188,13 @@ static ssize_t brightness_store(struct device *dev,
- 	struct cros_ec_command *msg;
- 	int ret;
- 	unsigned int val;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	if (kstrtouint(buf, 0, &val))
- 		return -EINVAL;
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -203,7 +205,7 @@ static ssize_t brightness_store(struct device *dev,
- 	if (ret)
- 		goto exit;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 
-@@ -231,11 +233,12 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
- {
- 	struct ec_params_lightbar *param;
- 	struct cros_ec_command *msg;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 	unsigned int val[4];
- 	int ret, i = 0, j = 0, ok = 0;
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -268,7 +271,7 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
- 					return ret;
- 			}
- 
--			ret = cros_ec_cmd_xfer(ec, msg);
-+			ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 			if (ret < 0)
- 				goto exit;
- 
-@@ -304,9 +307,10 @@ static ssize_t sequence_show(struct device *dev,
- 	struct ec_response_lightbar *resp;
- 	struct cros_ec_command *msg;
- 	int ret;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -316,7 +320,7 @@ static ssize_t sequence_show(struct device *dev,
- 	if (ret)
- 		goto exit;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 
-@@ -345,9 +349,10 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	struct cros_ec_command *msg;
- 	unsigned int num;
- 	int ret, len;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
--	msg = alloc_lightbar_cmd_msg();
-+	msg = alloc_lightbar_cmd_msg(ec);
- 	if (!msg)
- 		return -ENOMEM;
- 
-@@ -372,7 +377,7 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	if (ret)
- 		return ret;
- 
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -397,25 +402,27 @@ static struct attribute *__lb_cmds_attrs[] = {
- 	&dev_attr_sequence.attr,
- 	NULL,
- };
--static struct attribute_group lb_cmds_attr_group = {
--	.name = "lightbar",
--	.attrs = __lb_cmds_attrs,
--};
- 
--void ec_dev_lightbar_init(struct cros_ec_device *ec)
-+static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
-+						  struct attribute *a, int n)
- {
--	int ret = 0;
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
-+	struct platform_device *pdev = container_of(ec->dev,
-+						   struct platform_device, dev);
-+	if (pdev->id != 0)
-+		return 0;
- 
- 	/* Only instantiate this stuff if the EC has a lightbar */
--	if (!get_lightbar_version(ec, NULL, NULL))
--		return;
--
--	ret = sysfs_create_group(&ec->vdev->kobj, &lb_cmds_attr_group);
--	if (ret)
--		pr_warn("sysfs_create_group() failed: %d\n", ret);
-+	if (get_lightbar_version(ec, NULL, NULL))
-+		return a->mode;
-+	else
-+		return 0;
- }
- 
--void ec_dev_lightbar_remove(struct cros_ec_device *ec)
+-int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+-		       struct cros_ec_command *msg)
 -{
--	sysfs_remove_group(&ec->vdev->kobj, &lb_cmds_attr_group);
--}
-+struct attribute_group cros_ec_lightbar_attr_group = {
-+	.name = "lightbar",
-+	.attrs = __lb_cmds_attrs,
-+	.is_visible = cros_ec_lightbar_attrs_are_visible,
-+};
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 92b633324aaa..f9a245465fd0 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -273,7 +273,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, ec_dev);
- 	ec_dev->dev = dev;
--	ec_dev->ec_name = pdev->name;
- 	ec_dev->phys_name = dev_name(dev);
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_lpc;
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 78ba82d670cb..f3baf9973989 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -72,7 +72,8 @@ static ssize_t store_ec_reboot(struct device *dev,
- 	int got_cmd = 0, offset = 0;
- 	int i;
- 	int ret;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	msg = kmalloc(sizeof(*msg) + sizeof(*param), GFP_KERNEL);
- 	if (!msg)
-@@ -112,10 +113,10 @@ static ssize_t store_ec_reboot(struct device *dev,
- 	}
- 
- 	msg->version = 0;
--	msg->command = EC_CMD_REBOOT_EC;
-+	msg->command = EC_CMD_REBOOT_EC + ec->cmd_offset;
- 	msg->outsize = sizeof(*param);
- 	msg->insize = 0;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0) {
- 		count = ret;
- 		goto exit;
-@@ -139,7 +140,8 @@ static ssize_t show_ec_version(struct device *dev,
- 	struct cros_ec_command *msg;
- 	int ret;
- 	int count = 0;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	msg = kmalloc(sizeof(*msg) + EC_HOST_PARAM_SIZE, GFP_KERNEL);
- 	if (!msg)
-@@ -147,10 +149,10 @@ static ssize_t show_ec_version(struct device *dev,
- 
- 	/* Get versions. RW may change. */
- 	msg->version = 0;
--	msg->command = EC_CMD_GET_VERSION;
-+	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
- 	msg->insize = sizeof(*r_ver);
- 	msg->outsize = 0;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0) {
- 		count = ret;
- 		goto exit;
-@@ -175,9 +177,9 @@ static ssize_t show_ec_version(struct device *dev,
- 			    image_names[r_ver->current_image] : "?"));
- 
- 	/* Get build info. */
--	msg->command = EC_CMD_GET_BUILD_INFO;
-+	msg->command = EC_CMD_GET_BUILD_INFO + ec->cmd_offset;
- 	msg->insize = EC_HOST_PARAM_SIZE;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Build info:    XFER ERROR %d\n", ret);
-@@ -191,9 +193,9 @@ static ssize_t show_ec_version(struct device *dev,
- 	}
- 
- 	/* Get chip info. */
--	msg->command = EC_CMD_GET_CHIP_INFO;
-+	msg->command = EC_CMD_GET_CHIP_INFO + ec->cmd_offset;
- 	msg->insize = sizeof(*r_chip);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Chip info:     XFER ERROR %d\n", ret);
-@@ -215,9 +217,9 @@ static ssize_t show_ec_version(struct device *dev,
- 	}
- 
- 	/* Get board version */
--	msg->command = EC_CMD_GET_BOARD_VERSION;
-+	msg->command = EC_CMD_GET_BOARD_VERSION + ec->cmd_offset;
- 	msg->insize = sizeof(*r_board);
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		count += scnprintf(buf + count, PAGE_SIZE - count,
- 				   "Board version: XFER ERROR %d\n", ret);
-@@ -243,7 +245,8 @@ static ssize_t show_ec_flashinfo(struct device *dev,
- 	struct ec_response_flash_info *resp;
- 	struct cros_ec_command *msg;
- 	int ret;
--	struct cros_ec_device *ec = dev_get_drvdata(dev);
-+	struct cros_ec_dev *ec = container_of(dev,
-+					      struct cros_ec_dev, class_dev);
- 
- 	msg = kmalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
- 	if (!msg)
-@@ -251,10 +254,10 @@ static ssize_t show_ec_flashinfo(struct device *dev,
- 
- 	/* The flash info shouldn't ever change, but ask each time anyway. */
- 	msg->version = 0;
--	msg->command = EC_CMD_FLASH_INFO;
-+	msg->command = EC_CMD_FLASH_INFO + ec->cmd_offset;
- 	msg->insize = sizeof(*resp);
- 	msg->outsize = 0;
--	ret = cros_ec_cmd_xfer(ec, msg);
-+	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
- 	if (ret < 0)
- 		goto exit;
- 	if (msg->result != EC_RES_SUCCESS) {
-@@ -288,20 +291,7 @@ static struct attribute *__ec_attrs[] = {
- 	NULL,
- };
- 
--static struct attribute_group ec_attr_group = {
-+struct attribute_group cros_ec_attr_group = {
- 	.attrs = __ec_attrs,
- };
- 
--void ec_dev_sysfs_init(struct cros_ec_device *ec)
--{
--	int error;
+-	uint8_t *out;
+-	int csum, i;
 -
--	error = sysfs_create_group(&ec->vdev->kobj, &ec_attr_group);
--	if (error)
--		pr_warn("failed to create group: %d\n", error);
--}
+-	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
+-	out = ec_dev->dout;
+-	out[0] = EC_CMD_VERSION0 + msg->version;
+-	out[1] = msg->command;
+-	out[2] = msg->outsize;
+-	csum = out[0] + out[1] + out[2];
+-	for (i = 0; i < msg->outsize; i++)
+-		csum += out[EC_MSG_TX_HEADER_BYTES + i] = msg->data[i];
+-	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = (uint8_t)(csum & 0xff);
 -
--void ec_dev_sysfs_remove(struct cros_ec_device *ec)
--{
--	sysfs_remove_group(&ec->vdev->kobj, &ec_attr_group);
+-	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
 -}
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 92e13aaa450c..da72671a42fa 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -17,10 +17,14 @@
- #define __LINUX_MFD_CROS_EC_H
+-EXPORT_SYMBOL(cros_ec_prepare_tx);
+-
+-int cros_ec_check_result(struct cros_ec_device *ec_dev,
+-			 struct cros_ec_command *msg)
+-{
+-	switch (msg->result) {
+-	case EC_RES_SUCCESS:
+-		return 0;
+-	case EC_RES_IN_PROGRESS:
+-		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
+-			msg->command);
+-		return -EAGAIN;
+-	default:
+-		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
+-			msg->command, msg->result);
+-		return 0;
+-	}
+-}
+-EXPORT_SYMBOL(cros_ec_check_result);
+-
+-int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+-		     struct cros_ec_command *msg)
+-{
+-	int ret;
+-
+-	mutex_lock(&ec_dev->lock);
+-	ret = ec_dev->cmd_xfer(ec_dev, msg);
+-	if (msg->result == EC_RES_IN_PROGRESS) {
+-		int i;
+-		struct cros_ec_command *status_msg;
+-		struct ec_response_get_comms_status *status;
+-
+-		status_msg = kmalloc(sizeof(*status_msg) + sizeof(*status),
+-				     GFP_KERNEL);
+-		if (!status_msg) {
+-			ret = -ENOMEM;
+-			goto exit;
+-		}
+-
+-		status_msg->version = 0;
+-		status_msg->command = EC_CMD_GET_COMMS_STATUS;
+-		status_msg->insize = sizeof(*status);
+-		status_msg->outsize = 0;
+-
+-		/*
+-		 * Query the EC's status until it's no longer busy or
+-		 * we encounter an error.
+-		 */
+-		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
+-			usleep_range(10000, 11000);
+-
+-			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
+-			if (ret < 0)
+-				break;
+-
+-			msg->result = status_msg->result;
+-			if (status_msg->result != EC_RES_SUCCESS)
+-				break;
+-
+-			status = (struct ec_response_get_comms_status *)
+-				 status_msg->data;
+-			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
+-				break;
+-		}
+-
+-		kfree(status_msg);
+-	}
+-exit:
+-	mutex_unlock(&ec_dev->lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(cros_ec_cmd_xfer);
  
- #include <linux/cdev.h>
-+#include <linux/device.h>
- #include <linux/notifier.h>
- #include <linux/mfd/cros_ec_commands.h>
- #include <linux/mutex.h>
+ static const struct mfd_cell cros_devs[] = {
+ 	{
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 2a6531a5fde8..cb1329919527 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -40,7 +40,7 @@ config CHROMEOS_PSTORE
  
-+#define CROS_EC_DEV_NAME "cros_ec"
-+#define CROS_EC_DEV_PD_NAME "cros_pd"
+ config CROS_EC_CHARDEV
+         tristate "Chrome OS Embedded Controller userspace device interface"
+-        depends on MFD_CROS_EC
++        depends on CROS_EC_PROTO
+         ---help---
+           This driver adds support to talk with the ChromeOS EC from userspace.
+ 
+@@ -49,7 +49,7 @@ config CROS_EC_CHARDEV
+ 
+ config CROS_EC_LPC
+         tristate "ChromeOS Embedded Controller (LPC)"
+-        depends on MFD_CROS_EC && (X86 || COMPILE_TEST)
++        depends on MFD_CROS_EC && CROS_EC_PROTO && (X86 || COMPILE_TEST)
+         help
+           If you say Y here, you get support for talking to the ChromeOS EC
+           over an LPC bus. This uses a simple byte-level protocol with a
+@@ -59,4 +59,9 @@ config CROS_EC_LPC
+           To compile this driver as a module, choose M here: the
+           module will be called cros_ec_lpc.
+ 
++config CROS_EC_PROTO
++        bool
++        help
++          ChromeOS EC communication protocol helpers.
 +
- /*
-  * The EC is unresponsive for a time after a reboot command.  Add a
-  * simple delay to make sure that the bus stays locked.
-@@ -71,11 +75,8 @@ struct cros_ec_command {
- /**
-  * struct cros_ec_device - Information about a ChromeOS EC device
-  *
-- * @ec_name: name of EC device (e.g. 'chromeos-ec')
-  * @phys_name: name of physical comms layer (e.g. 'i2c-4')
-  * @dev: Device pointer for physical comms device
-- * @vdev: Device pointer for virtual comms device
-- * @cdev: Character device structure for virtual comms device
-  * @was_wake_device: true if this device was set to wake the system from
-  * sleep at the last suspend
-  * @cmd_readmem: direct read of the EC memory-mapped region, if supported
-@@ -87,6 +88,7 @@ struct cros_ec_command {
-  *
-  * @priv: Private data
-  * @irq: Interrupt to use
-+ * @id: Device id
-  * @din: input buffer (for data from EC)
-  * @dout: output buffer (for data to EC)
-  * \note
-@@ -109,11 +111,8 @@ struct cros_ec_command {
- struct cros_ec_device {
- 
- 	/* These are used by other drivers that want to talk to the EC */
--	const char *ec_name;
- 	const char *phys_name;
- 	struct device *dev;
--	struct device *vdev;
--	struct cdev cdev;
- 	bool was_wake_device;
- 	struct class *cros_class;
- 	int (*cmd_readmem)(struct cros_ec_device *ec, unsigned int offset,
-@@ -138,6 +137,35 @@ struct cros_ec_device {
- 	struct mutex lock;
- };
- 
-+/* struct cros_ec_platform - ChromeOS EC platform information
-+ *
-+ * @ec_name: name of EC device (e.g. 'cros-ec', 'cros-pd', ...)
-+ * used in /dev/ and sysfs.
-+ * @cmd_offset: offset to apply for each command. Set when
-+ * registering a devicde behind another one.
-+ */
-+struct cros_ec_platform {
-+	const char *ec_name;
-+	u16 cmd_offset;
-+};
-+
+ endif # CHROMEOS_PLATFORMS
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index bd8d8601e875..4a11b010f5d8 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -4,3 +4,4 @@ obj-$(CONFIG_CHROMEOS_PSTORE)	+= chromeos_pstore.o
+ cros_ec_devs-objs               := cros_ec_dev.o cros_ec_sysfs.o cros_ec_lightbar.o
+ obj-$(CONFIG_CROS_EC_CHARDEV)   += cros_ec_devs.o
+ obj-$(CONFIG_CROS_EC_LPC)       += cros_ec_lpc.o
++obj-$(CONFIG_CROS_EC_PROTO)	+= cros_ec_proto.o
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+new file mode 100644
+index 000000000000..58e98a24fd08
+--- /dev/null
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -0,0 +1,115 @@
 +/*
-+ * struct cros_ec_dev - ChromeOS EC device entry point
++ * ChromeOS EC communication protocol helper functions
 + *
-+ * @class_dev: Device structure used in sysfs
-+ * @cdev: Character device structure in /dev
-+ * @ec_dev: cros_ec_device structure to talk to the physical device
-+ * @dev: pointer to the platform device
-+ * @cmd_offset: offset to apply for each command.
++ * Copyright (C) 2015 Google, Inc
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
 + */
-+struct cros_ec_dev {
-+	struct device class_dev;
-+	struct cdev cdev;
-+	struct cros_ec_device *ec_dev;
-+	struct device *dev;
-+	u16 cmd_offset;
-+};
 +
- /**
-  * cros_ec_suspend - Handle a suspend operation for the ChromeOS EC device
-  *
-@@ -224,4 +252,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev);
-  */
- int cros_ec_query_all(struct cros_ec_device *ec_dev);
- 
-+/* sysfs stuff */
-+extern struct attribute_group cros_ec_attr_group;
-+extern struct attribute_group cros_ec_lightbar_attr_group;
++#include <linux/mfd/cros_ec.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/slab.h>
 +
- #endif /* __LINUX_MFD_CROS_EC_H */
++#define EC_COMMAND_RETRIES	50
++
++int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
++		       struct cros_ec_command *msg)
++{
++	uint8_t *out;
++	int csum, i;
++
++	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
++	out = ec_dev->dout;
++	out[0] = EC_CMD_VERSION0 + msg->version;
++	out[1] = msg->command;
++	out[2] = msg->outsize;
++	csum = out[0] + out[1] + out[2];
++	for (i = 0; i < msg->outsize; i++)
++		csum += out[EC_MSG_TX_HEADER_BYTES + i] = msg->data[i];
++	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = (uint8_t)(csum & 0xff);
++
++	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
++}
++EXPORT_SYMBOL(cros_ec_prepare_tx);
++
++int cros_ec_check_result(struct cros_ec_device *ec_dev,
++			 struct cros_ec_command *msg)
++{
++	switch (msg->result) {
++	case EC_RES_SUCCESS:
++		return 0;
++	case EC_RES_IN_PROGRESS:
++		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
++			msg->command);
++		return -EAGAIN;
++	default:
++		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
++			msg->command, msg->result);
++		return 0;
++	}
++}
++EXPORT_SYMBOL(cros_ec_check_result);
++
++int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
++		     struct cros_ec_command *msg)
++{
++	int ret;
++
++	mutex_lock(&ec_dev->lock);
++	ret = ec_dev->cmd_xfer(ec_dev, msg);
++	if (msg->result == EC_RES_IN_PROGRESS) {
++		int i;
++		struct cros_ec_command *status_msg;
++		struct ec_response_get_comms_status *status;
++
++		status_msg = kmalloc(sizeof(*status_msg) + sizeof(*status),
++				     GFP_KERNEL);
++		if (!status_msg) {
++			ret = -ENOMEM;
++			goto exit;
++		}
++
++		status_msg->version = 0;
++		status_msg->command = EC_CMD_GET_COMMS_STATUS;
++		status_msg->insize = sizeof(*status);
++		status_msg->outsize = 0;
++
++		/*
++		 * Query the EC's status until it's no longer busy or
++		 * we encounter an error.
++		 */
++		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
++			usleep_range(10000, 11000);
++
++			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
++			if (ret < 0)
++				break;
++
++			msg->result = status_msg->result;
++			if (status_msg->result != EC_RES_SUCCESS)
++				break;
++
++			status = (struct ec_response_get_comms_status *)
++				 status_msg->data;
++			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
++				break;
++		}
++
++		kfree(status_msg);
++	}
++exit:
++	mutex_unlock(&ec_dev->lock);
++
++	return ret;
++}
++EXPORT_SYMBOL(cros_ec_cmd_xfer);
 -- 
 2.1.4
