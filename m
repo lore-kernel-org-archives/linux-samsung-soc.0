@@ -1,63 +1,70 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v6 7/8] mfd: cros_ec: spi: Add a DT property to delay asserting the CS
-Date: Thu,  4 Jun 2015 10:05:53 +0200
-Message-ID: <1433405154-16273-8-git-send-email-javier.martinez@collabora.co.uk>
-References: <1433405154-16273-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1433405154-16273-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Chris Zhong <zyw@rock-chips.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Michal Suchanek <hramrach@gmail.com>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Thu, 4 Jun 2015 10:31:45 +0200
+Message-ID: <CAOMqctS6KNrTATB6MYCZLBnZUQmX=e0qQvGf78YtLaF8pkibhQ@mail.gmail.com>
+References: <cover.1433364398.git.hramrach@gmail.com> <8fc4b9f5291a509c4c35782a1337bf536f1019af.1433364398.git.hramrach@gmail.com>
+ <CAMuHMdVT2M7pPHDDHmoNF_zVXhz1PUm5PiYxDKcAjSAcfSDiZg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:38793 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751371AbbFDIc2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Jun 2015 04:32:28 -0400
+In-Reply-To: <CAMuHMdVT2M7pPHDDHmoNF_zVXhz1PUm5PiYxDKcAjSAcfSDiZg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Han Xu <han.xu@freescale.com>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Marek Vasut <marex@denx.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alison Chaiken <alison_chaiken@mentor.com>, Huang Shijie <b32955@freescale.com>, Ben Hutchings <ben@decadent.org.uk>, Knut Wohlrab <knut.wohlrab@de.bosch.com>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@>
 
-From: Alexandru M Stan <amstan@chromium.org>
+On 4 June 2015 at 08:42, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Jun 3, 2015 at 11:26 PM, Michal Suchanek <hramrach@gmail.com> wrote:
+>> On sunxi the SPI controller currently does not have DMA support and fails
+>> any transfer larger than 63 bytes.
+>
+> This is a driver limitation, not a hardware limitation.
+>
+>> On Exynos the pl330 DMA controller fails any transfer larger than 64kb
+>> when using slower speed like 40MHz and any transfer larger than 128bytes
+>> when running at 133MHz.
+>
+> This may be a driver bug.
+>
+>> The best thing is that in both cases the controller can just lock up and
+>> never finish potentially leaving the hardware in unusable state.
+>>
+>> So it is required that the m25p80 driver actively prevents doing
+>> transfers that are too large for the current driver state on a
+>> particular piece of hardware.
+>
+> OK.
+>
 
-Some ECs need a little time for waking up before they can accept
-SPI data at a high speed. Add a "google,cros-ec-spi-pre-delay"
-property to the DT binding to configure this.
+> DT describes the hardware, not buggy drivers.
+>
+> So IMHO this doesn't belong in DT, but it can be a field in struct spi_master.
+>
 
-If this property isn't set, then no delay will be added. However,
-if set it will cause a delay equal to the value passed to it to
-be inserted at the beginning of a transaction.
+Unfortunately, this cannot be a field in struct spi_master. The value
+can and does vary with device configuration and device configuration
+is only available in DT.
 
-Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
+For example, on the Snow board one working configuration is
 
-Changes since v5: None.
+40MHz spi bus speed, feedback delay 0 and maximum transfer size 64k.
 
-Changes since v4: None.
+Another working configuration is 133MHz bus speed, feedback delay 3,
+and maximum transfer size 128 bytes.
 
-Changes since v3:
- - Split DT binding and driver change as suggested by Lee Jones.
- - Add tested-by tag from Heiko Stuebner
- - Add acked-by tag from Lee Jones.
+You might want to try to run the bus at 60MHz or 80MHz and then the
+values would probably again be different.
 
-Changes since v2: None
+The first two values are set in DT so the logical place for setting
+the third is also in DT.
 
-Changes since v1: None, new patch
----
- Documentation/devicetree/bindings/mfd/cros-ec.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Otherwise you would need some in-kernel table of these settings.
 
-diff --git a/Documentation/devicetree/bindings/mfd/cros-ec.txt b/Documentation/devicetree/bindings/mfd/cros-ec.txt
-index 8009c3d87f33..1777916e9e28 100644
---- a/Documentation/devicetree/bindings/mfd/cros-ec.txt
-+++ b/Documentation/devicetree/bindings/mfd/cros-ec.txt
-@@ -18,6 +18,10 @@ Required properties (SPI):
- - reg: SPI chip select
- 
- Optional properties (SPI):
-+- google,cros-ec-spi-pre-delay: Some implementations of the EC need a little
-+  time to wake up from sleep before they can receive SPI transfers at a high
-+  clock rate. This property specifies the delay, in usecs, between the
-+  assertion of the CS to the start of the first clock pulse.
- - google,cros-ec-spi-msg-delay: Some implementations of the EC require some
-   additional processing time in order to accept new transactions. If the delay
-   between transactions is not long enough the EC may not be able to respond
--- 
-2.1.4
+Thanks
+
+Michal
