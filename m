@@ -1,84 +1,66 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/6] Exynos SYSMMU (IOMMU) dts and arch updates
-Date: Thu, 04 Jun 2015 15:10:22 +0900
-Message-ID: <556FEBCE.9050604@samsung.com>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
- <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
- <556C4342.6060506@samsung.com> <556F89B2.9010607@kernel.org>
- <556FCB2B.8090406@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable usb3503
+Date: Thu, 04 Jun 2015 08:38:24 +0200
+Message-ID: <556FF260.5060006@collabora.co.uk>
+References: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org> <7hsia846wa.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35746 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbbFDGKX (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:43288 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868AbbFDGib (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Jun 2015 02:10:23 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NPE000VZP59QN00@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Jun 2015 07:10:21 +0100 (BST)
-In-reply-to: <556FCB2B.8090406@samsung.com>
+	Thu, 4 Jun 2015 02:38:31 -0400
+In-Reply-To: <7hsia846wa.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Kevin Hilman <khilman@kernel.org>, riku.voipio@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tyler.baker@linaro.org
 
-On 04.06.2015 12:51, Krzysztof Kozlowski wrote:
-> On 04.06.2015 08:11, Kukjin Kim wrote:
->> On 06/01/15 20:34, Krzysztof Kozlowski wrote:
->>> W dniu 01.06.2015 o 19:10, Marek Szyprowski pisze:
->>>> Hello,
->>>>
->>>> Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
->>>> for merging - see
->>>> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
->>>> In meantime there have been quite a lot of changes related to Exynos DTS
->>>> files queued for merging and my patches don't apply anymore. To ease
->>>> merge process I've decided to rebased all Exynos SYSMMU dts changes onto
->>>> latest exynos next tree from: https://github.com/krzk/linux dt-for-next
->>>>
->>>> While rebasing I've fixes a few spotted issues: some nodes still used
->>>> old 'samsung,power-domain' properties (now replaced with 'power-domains')
->>>> and added properties to jpeg codec merged recently.
->>>>
->>>
->>> Thanks for rebasing this stuff.
->>>
->> Same here ;-)
->>
->>> I picked whole patchset with Javier's tested-by. I'll send it to Kukjin
->>> later or directly to arm-soc (depending what will happen with last pull
->>> request).
->>>
->>> Kukjin, you mentioned that you will do something with this patchset the
->>> previous weekend. Since then nothing happened so I am not sure what are
->>> your plans... Can you share them? Do you want to pick it by yourself, do
->>> you have any comments or maybe you need something from our side? (I
->>> checked the patches and they look fine)
->>>
->> Done, thanks.
+Hello Kevin,
+
+On 06/04/2015 03:08 AM, Kevin Hilman wrote:
+> riku.voipio@linaro.org writes:
 > 
-> Thank you, I tested the for-next branch on some of my boards and
-> everything looked fine.
+>> From: Riku Voipio <riku.voipio@linaro.org>
+>>
+>> CONFIG_USB_HSIC_USB3503 is needed by exynos5250-arndale for the on-board
+>> asix network controller. Enable it so networking works with
+>> multi_v7_defconfig out of box like it does with exynos_defconfig.
+>>
+>> USB3503 is also referenced from exynos4412-odroidu3.dts and
+>> exynos5250-spring.dts so this patch should improve
+>> multi_v7_defconfig on those platforms as well.
+>>
+>> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
+> 
+> Tyler pointed me to this in order to get arndale networking on mainline,
+> but looks like this might need to be revisited for current mainline.  
+> 
+> I tested this and it doesn't work because as of commit 7de7c6717f2c
+> (ARM: multi_v7_defconfig: Enable Exynos USB PHY) the PHY that this
+> depends on is built as a module in multi_v7_config, so having this
+> driver built-in doesn't help.  Even after the PHY driver is loaded, this
+> driver will not detect the hardware.
+> 
+> So instead, I think this driver should be built as a module as well.
+> Testing that, I can get networking by doing loading both the phy and
+> this driver after boot:
+> 
+>  # modprobe phy-exynos-usb2
+>  # modprobe usb3503
+>
 
-Oh, something wrong happened on some of configs/boards:
+Current policy is to have as much as possible built as a module
+in multi_v7_config so regardless of your issue I think that the
+patch should be re-spun to change this.
 
-Arndale Octa: multi_v7_defconfig
-Last tests on samsung tree fail:
-1.
-http://kernelci.org/boot/exynos5420-arndale-octa_rootfs:nfs/job/samsung/kernel/v4.1-rc6-146-g1c07c562d9d5/defconfig/multi_v7_defconfig/lab/lab-tbaker/?_id=556fbaee59b5146b5cda4447
-2.
-http://kernelci.org/boot/exynos5420-arndale-octa_rootfs:nfs/job/samsung/kernel/v4.1-rc6-137-g1730fe10f4a8/defconfig/multi_v7_defconfig/lab/lab-tbaker/?_id=556e948659b5144e74da4445
+But I wonder why is not working, shouldn't the driver defer and
+be probed again once the PHY driver probe succeeds?
 
-Odroid XU3: multi_v7_defconfig
-Last commit fails:
-http://kernelci.org/boot/exynos5422-odroidxu3_rootfs:nfs/job/samsung/kernel/v4.1-rc6-146-g1c07c562d9d5/defconfig/multi_v7_defconfig/lab/lab-tbaker/?_id=556fbb2d59b5146b63da4449
-
-I can test tonight on Odroid XU3 but I don't have access to Arndale Octa
-board. Maybe guys from SRPOL could test it?
+> Kevin
+> 
 
 Best regards,
-Krzysztof
+Javier
