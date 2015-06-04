@@ -1,39 +1,53 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 00/11] Enable access to SPI NOR flash on Samsung Snow board
-Date: Thu, 4 Jun 2015 00:53:29 +0200
-Message-ID: <201506040053.29482.marex@denx.de>
-References: <cover.1433364398.git.hramrach@gmail.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable usb3503
+Date: Wed, 03 Jun 2015 18:08:37 -0700
+Message-ID: <7hsia846wa.fsf@deeprootsystems.com>
+References: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1433364398.git.hramrach@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Han Xu <han.xu@freescale.com>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,  =?utf-8?q?Rafa=C5=82?= =?utf-8?q?_Mi=C5=82ecki?= <zajec5@gmail.com>, Alison Chaiken <alison_chaiken@mentor.com>, Huang Shijie <b32955@freescale.com>, Ben Hutchings <ben@decadent.org.uk>, Knut Wohlrab <knut.wohlrab@de.bosch.com>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:36691 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753527AbbFDBIl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Jun 2015 21:08:41 -0400
+Received: by pabqy3 with SMTP id qy3so17966327pab.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2015 18:08:40 -0700 (PDT)
+In-Reply-To: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org> (riku
+	voipio's message of "Fri, 13 Mar 2015 15:54:26 +0200")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: riku.voipio@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tyler.baker@linaro.org, javier.martinez@collabora.co.uk
 
-On Wednesday, June 03, 2015 at 11:26:39 PM, Michal Suchanek wrote:
-> Hello,
+riku.voipio@linaro.org writes:
 
-Hi,
+> From: Riku Voipio <riku.voipio@linaro.org>
+>
+> CONFIG_USB_HSIC_USB3503 is needed by exynos5250-arndale for the on-board
+> asix network controller. Enable it so networking works with
+> multi_v7_defconfig out of box like it does with exynos_defconfig.
+>
+> USB3503 is also referenced from exynos4412-odroidu3.dts and
+> exynos5250-spring.dts so this patch should improve
+> multi_v7_defconfig on those platforms as well.
+>
+> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
 
-> this patch series makes it possible to access the SPI NOR flash in the
-> Samsung XE303 'Snow' Chromebook.
-> 
-> Unfortunately not all issues are resolved. To work around an issue with the
-> pl330 dma engine I respun the patch for limiting transfer size in m25p80
-> driver.
+Tyler pointed me to this in order to get arndale networking on mainline,
+but looks like this might need to be revisited for current mainline.  
 
-Looks like fixing a bug at the wrong place to me ...
+I tested this and it doesn't work because as of commit 7de7c6717f2c
+(ARM: multi_v7_defconfig: Enable Exynos USB PHY) the PHY that this
+depends on is built as a module in multi_v7_config, so having this
+driver built-in doesn't help.  Even after the PHY driver is loaded, this
+driver will not detect the hardware.
 
-> As the flash does not contain any sane filesystem and is only likely to be
-> accessed with mtd_debug or similar tool the limit of the dma engine is
-> easily reached. Filesystems using shorter data transfers are less likely
-> to be affected.
+So instead, I think this driver should be built as a module as well.
+Testing that, I can get networking by doing loading both the phy and
+this driver after boot:
 
-Sounds like the DMA engine driver should be fixed.
+ # modprobe phy-exynos-usb2
+ # modprobe usb3503
 
-Best regards,
-Marek Vasut
+Kevin
