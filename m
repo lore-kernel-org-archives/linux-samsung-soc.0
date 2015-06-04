@@ -1,599 +1,480 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v6 4/8] mfd: cros_ec: add proto v3 skeleton
-Date: Thu,  4 Jun 2015 10:05:50 +0200
-Message-ID: <1433405154-16273-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 2/8] mfd: cros_ec: rev cros_ec_commands.h
+Date: Thu,  4 Jun 2015 10:05:48 +0200
+Message-ID: <1433405154-16273-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1433405154-16273-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1433405154-16273-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Gwendal Grignou <gwendal-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Filipe Brandenburger <filbranden-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alexandru M Stan <amstan-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:43378 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752724AbbFDIGg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Jun 2015 04:06:36 -0400
+In-Reply-To: <1433405154-16273-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Stephen Barber <smbarber@chromium.org>
 
-Add support in cros_ec.c to handle EC host command protocol v3.
-For v3+, probe for maximum shared protocol version and max
-request, response, and passthrough sizes. For now, this will
-always fall back to v2, since there is no bus-specific code
-for handling proto v3 packets.
+Update cros_ec_commands.h to the latest version in the EC
+firmware sources and add power domain and passthru commands.
 
-Signed-off-by: Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Reviewed-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Also, update lightbar to use new command names.
+
+Signed-off-by: Stephen Barber <smbarber@chromium.org>
+Reviewed-by: Randall Spangler <rspangler@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
 
 Changes since v5: None
 
 Changes since v4: None
 
-Changes since v3:
- - Added tested-by from Heiko Stuebner.
- - Added acked-by tag from Lee Jones.
+Changes since v3: None
 
-Changes since v2:
- - Add the helpers to the drivers/platform/chrome/cros_ec_proto.c driver
-   instead of drivers/mfd/cros_ec.c. Suggested by Lee Jones.
- - Rename the proto probe functions for proto_query since probe has a
-   special meaning in Linux so is confusing.
+Changes since v2: None
 
 Changes since v1:
- - Squash change https://chromium-review.googlesource.com/#/c/262870/ in
-   the patch. Suggested by Gwendal Grignou
- - Add Reviewed-by and Tested-by tags from Gwendal Grignou
+ - Added Gwendal Grignou and Heiko Stuebner Tested-by tags
+ - Added Gwendal Grignou Reviewed-by tag
+ - Added Lee Jones Acked-by tag
 ---
- drivers/mfd/cros_ec.c                   |  23 ++-
- drivers/mfd/cros_ec_i2c.c               |   4 +
- drivers/mfd/cros_ec_spi.c               |   7 +-
- drivers/platform/chrome/cros_ec_lpc.c   |   4 +
- drivers/platform/chrome/cros_ec_proto.c | 339 ++++++++++++++++++++++++++++----
- include/linux/mfd/cros_ec.h             |  28 ++-
- 6 files changed, 355 insertions(+), 50 deletions(-)
+ drivers/platform/chrome/cros_ec_lightbar.c |  14 +-
+ include/linux/mfd/cros_ec_commands.h       | 277 ++++++++++++++++++++++++++---
+ 2 files changed, 262 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index d857f6a2b57b..08d82bfc5268 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -36,19 +36,22 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 	struct device *dev = ec_dev->dev;
- 	int err = 0;
+diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+index 560e5d41b7ae..6e1986a2dce1 100644
+--- a/drivers/platform/chrome/cros_ec_lightbar.c
++++ b/drivers/platform/chrome/cros_ec_lightbar.c
+@@ -197,8 +197,8 @@ static ssize_t brightness_store(struct device *dev,
+ 		return -ENOMEM;
  
--	if (ec_dev->din_size) {
--		ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
--		if (!ec_dev->din)
--			return -ENOMEM;
--	}
--	if (ec_dev->dout_size) {
--		ec_dev->dout = devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
--		if (!ec_dev->dout)
--			return -ENOMEM;
--	}
-+	ec_dev->max_request = sizeof(struct ec_params_hello);
-+	ec_dev->max_response = sizeof(struct ec_response_get_protocol_info);
-+	ec_dev->max_passthru = 0;
-+
-+	ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
-+	if (!ec_dev->din)
-+		return -ENOMEM;
-+
-+	ec_dev->dout = devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
-+	if (!ec_dev->dout)
-+		return -ENOMEM;
+ 	param = (struct ec_params_lightbar *)msg->data;
+-	param->cmd = LIGHTBAR_CMD_BRIGHTNESS;
+-	param->brightness.num = val;
++	param->cmd = LIGHTBAR_CMD_SET_BRIGHTNESS;
++	param->set_brightness.num = val;
+ 	ret = lb_throttle();
+ 	if (ret)
+ 		goto exit;
+@@ -253,11 +253,11 @@ static ssize_t led_rgb_store(struct device *dev, struct device_attribute *attr,
  
- 	mutex_init(&ec_dev->lock);
- 
-+	cros_ec_query_all(ec_dev);
-+
- 	err = mfd_add_devices(dev, 0, cros_devs,
- 			      ARRAY_SIZE(cros_devs),
- 			      NULL, ec_dev->irq, NULL);
-diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index fbf7819f5de5..b400bfa2772a 100644
---- a/drivers/mfd/cros_ec_i2c.c
-+++ b/drivers/mfd/cros_ec_i2c.c
-@@ -143,8 +143,12 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
- 	ec_dev->priv = client;
- 	ec_dev->irq = client->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
-+	ec_dev->pkt_xfer = NULL;
- 	ec_dev->ec_name = client->name;
- 	ec_dev->phys_name = client->adapter->name;
-+	ec_dev->din_size = sizeof(struct ec_host_response) +
-+			   sizeof(struct ec_response_get_protocol_info);
-+	ec_dev->dout_size = sizeof(struct ec_host_request);
- 
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 573730fec947..04da2f288ef8 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -361,10 +361,13 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev->priv = ec_spi;
- 	ec_dev->irq = spi->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
-+	ec_dev->pkt_xfer = NULL;
- 	ec_dev->ec_name = ec_spi->spi->modalias;
- 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
--	ec_dev->din_size = EC_MSG_BYTES + EC_MSG_PREAMBLE_COUNT;
--	ec_dev->dout_size = EC_MSG_BYTES;
-+	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
-+			   sizeof(struct ec_host_response) +
-+			   sizeof(struct ec_response_get_protocol_info);
-+	ec_dev->dout_size = sizeof(struct ec_host_request);
- 
- 	err = cros_ec_register(ec_dev);
- 	if (err) {
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 214ae7fef984..06c5790b2c28 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -205,7 +205,11 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 	ec_dev->ec_name = pdev->name;
- 	ec_dev->phys_name = dev_name(dev);
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
-+	ec_dev->pkt_xfer = NULL;
- 	ec_dev->cmd_readmem = cros_ec_lpc_readmem;
-+	ec_dev->din_size = sizeof(struct ec_host_response) +
-+			   sizeof(struct ec_response_get_protocol_info);
-+	ec_dev->dout_size = sizeof(struct ec_host_request);
- 
- 	ret = cros_ec_register(ec_dev);
- 	if (ret) {
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 58e98a24fd08..990308ca384f 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -22,11 +22,100 @@
- 
- #define EC_COMMAND_RETRIES	50
- 
-+static int prepare_packet(struct cros_ec_device *ec_dev,
-+			  struct cros_ec_command *msg)
-+{
-+	struct ec_host_request *request;
-+	u8 *out;
-+	int i;
-+	u8 csum = 0;
-+
-+	BUG_ON(ec_dev->proto_version != EC_HOST_REQUEST_VERSION);
-+	BUG_ON(msg->outsize + sizeof(*request) > ec_dev->dout_size);
-+
-+	out = ec_dev->dout;
-+	request = (struct ec_host_request *)out;
-+	request->struct_version = EC_HOST_REQUEST_VERSION;
-+	request->checksum = 0;
-+	request->command = msg->command;
-+	request->command_version = msg->version;
-+	request->reserved = 0;
-+	request->data_len = msg->outsize;
-+
-+	for (i = 0; i < sizeof(*request); i++)
-+		csum += out[i];
-+
-+	/* Copy data and update checksum */
-+	memcpy(out + sizeof(*request), msg->data, msg->outsize);
-+	for (i = 0; i < msg->outsize; i++)
-+		csum += msg->data[i];
-+
-+	request->checksum = -csum;
-+
-+	return sizeof(*request) + msg->outsize;
-+}
-+
-+static int send_command(struct cros_ec_device *ec_dev,
-+			struct cros_ec_command *msg)
-+{
-+	int ret;
-+
-+	if (ec_dev->proto_version > 2)
-+		ret = ec_dev->pkt_xfer(ec_dev, msg);
-+	else
-+		ret = ec_dev->cmd_xfer(ec_dev, msg);
-+
-+	if (msg->result == EC_RES_IN_PROGRESS) {
-+		int i;
-+		struct cros_ec_command *status_msg;
-+		struct ec_response_get_comms_status *status;
-+
-+		status_msg = kmalloc(sizeof(*status_msg) + sizeof(*status),
-+				     GFP_KERNEL);
-+		if (!status_msg)
-+			return -ENOMEM;
-+
-+		status_msg->version = 0;
-+		status_msg->command = EC_CMD_GET_COMMS_STATUS;
-+		status_msg->insize = sizeof(*status);
-+		status_msg->outsize = 0;
-+
-+		/*
-+		 * Query the EC's status until it's no longer busy or
-+		 * we encounter an error.
-+		 */
-+		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
-+			usleep_range(10000, 11000);
-+
-+			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
-+			if (ret < 0)
-+				break;
-+
-+			msg->result = status_msg->result;
-+			if (status_msg->result != EC_RES_SUCCESS)
-+				break;
-+
-+			status = (struct ec_response_get_comms_status *)
-+				 status_msg->data;
-+			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
-+				break;
-+		}
-+
-+		kfree(status_msg);
-+	}
-+
-+	return ret;
-+}
-+
- int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 		       struct cros_ec_command *msg)
- {
--	uint8_t *out;
--	int csum, i;
-+	u8 *out;
-+	u8 csum;
-+	int i;
-+
-+	if (ec_dev->proto_version > 2)
-+		return prepare_packet(ec_dev, msg);
- 
- 	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
- 	out = ec_dev->dout;
-@@ -36,7 +125,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 	csum = out[0] + out[1] + out[2];
- 	for (i = 0; i < msg->outsize; i++)
- 		csum += out[EC_MSG_TX_HEADER_BYTES + i] = msg->data[i];
--	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = (uint8_t)(csum & 0xff);
-+	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] = csum;
- 
- 	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
- }
-@@ -60,54 +149,232 @@ int cros_ec_check_result(struct cros_ec_device *ec_dev,
- }
- EXPORT_SYMBOL(cros_ec_check_result);
- 
--int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
--		     struct cros_ec_command *msg)
-+static int cros_ec_host_command_proto_query(struct cros_ec_device *ec_dev,
-+					    int devidx,
-+					    struct cros_ec_command *msg)
- {
-+	/*
-+	 * Try using v3+ to query for supported protocols. If this
-+	 * command fails, fall back to v2. Returns the highest protocol
-+	 * supported by the EC.
-+	 * Also sets the max request/response/passthru size.
-+	 */
- 	int ret;
- 
--	mutex_lock(&ec_dev->lock);
--	ret = ec_dev->cmd_xfer(ec_dev, msg);
--	if (msg->result == EC_RES_IN_PROGRESS) {
--		int i;
--		struct cros_ec_command *status_msg;
--		struct ec_response_get_comms_status *status;
-+	if (!ec_dev->pkt_xfer)
-+		return -EPROTONOSUPPORT;
- 
--		status_msg = kmalloc(sizeof(*status_msg) + sizeof(*status),
--				     GFP_KERNEL);
--		if (!status_msg) {
--			ret = -ENOMEM;
--			goto exit;
--		}
-+	memset(msg, 0, sizeof(*msg));
-+	msg->command = EC_CMD_PASSTHRU_OFFSET(devidx) | EC_CMD_GET_PROTOCOL_INFO;
-+	msg->insize = sizeof(struct ec_response_get_protocol_info);
- 
--		status_msg->version = 0;
--		status_msg->command = EC_CMD_GET_COMMS_STATUS;
--		status_msg->insize = sizeof(*status);
--		status_msg->outsize = 0;
-+	ret = send_command(ec_dev, msg);
-+
-+	if (ret < 0) {
-+		dev_dbg(ec_dev->dev,
-+			"failed to check for EC[%d] protocol version: %d\n",
-+			devidx, ret);
-+		return ret;
-+	}
-+
-+	if (devidx > 0 && msg->result == EC_RES_INVALID_COMMAND)
-+		return -ENODEV;
-+	else if (msg->result != EC_RES_SUCCESS)
-+		return msg->result;
-+
-+	return 0;
-+}
-+
-+static int cros_ec_host_command_proto_query_v2(struct cros_ec_device *ec_dev)
-+{
-+	struct cros_ec_command *msg;
-+	struct ec_params_hello *hello_params;
-+	struct ec_response_hello *hello_response;
-+	int ret;
-+	int len = max(sizeof(*hello_params), sizeof(*hello_response));
-+
-+	msg = kmalloc(sizeof(*msg) + len, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	msg->version = 0;
-+	msg->command = EC_CMD_HELLO;
-+	hello_params = (struct ec_params_hello *)msg->data;
-+	msg->outsize = sizeof(*hello_params);
-+	hello_response = (struct ec_response_hello *)msg->data;
-+	msg->insize = sizeof(*hello_response);
-+
-+	hello_params->in_data = 0xa0b0c0d0;
-+
-+	ret = send_command(ec_dev, msg);
-+
-+	if (ret < 0) {
-+		dev_dbg(ec_dev->dev,
-+			"EC failed to respond to v2 hello: %d\n",
-+			ret);
-+		goto exit;
-+	} else if (msg->result != EC_RES_SUCCESS) {
-+		dev_err(ec_dev->dev,
-+			"EC responded to v2 hello with error: %d\n",
-+			msg->result);
-+		ret = msg->result;
-+		goto exit;
-+	} else if (hello_response->out_data != 0xa1b2c3d4) {
-+		dev_err(ec_dev->dev,
-+			"EC responded to v2 hello with bad result: %u\n",
-+			hello_response->out_data);
-+		ret = -EBADMSG;
-+		goto exit;
-+	}
-+
-+	ret = 0;
-+
-+ exit:
-+	kfree(msg);
-+	return ret;
-+}
-+
-+int cros_ec_query_all(struct cros_ec_device *ec_dev)
-+{
-+	struct device *dev = ec_dev->dev;
-+	struct cros_ec_command *proto_msg;
-+	struct ec_response_get_protocol_info *proto_info;
-+	int ret;
-+
-+	proto_msg = kzalloc(sizeof(*proto_msg) + sizeof(*proto_info),
-+			    GFP_KERNEL);
-+	if (!proto_msg)
-+		return -ENOMEM;
-+
-+	/* First try sending with proto v3. */
-+	ec_dev->proto_version = 3;
-+	ret = cros_ec_host_command_proto_query(ec_dev, 0, proto_msg);
-+
-+	if (ret == 0) {
-+		proto_info = (struct ec_response_get_protocol_info *)
-+			proto_msg->data;
-+		ec_dev->max_request = proto_info->max_request_packet_size -
-+			sizeof(struct ec_host_request);
-+		ec_dev->max_response = proto_info->max_response_packet_size -
-+			sizeof(struct ec_host_response);
-+		ec_dev->proto_version =
-+			min(EC_HOST_REQUEST_VERSION,
-+					fls(proto_info->protocol_versions) - 1);
-+		dev_dbg(ec_dev->dev,
-+			"using proto v%u\n",
-+			ec_dev->proto_version);
-+
-+		ec_dev->din_size = ec_dev->max_response +
-+			sizeof(struct ec_host_response) +
-+			EC_MAX_RESPONSE_OVERHEAD;
-+		ec_dev->dout_size = ec_dev->max_request +
-+			sizeof(struct ec_host_request) +
-+			EC_MAX_REQUEST_OVERHEAD;
- 
- 		/*
--		 * Query the EC's status until it's no longer busy or
--		 * we encounter an error.
-+		 * Check for PD
- 		 */
--		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
--			usleep_range(10000, 11000);
-+		ret = cros_ec_host_command_proto_query(ec_dev, 1, proto_msg);
- 
--			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
--			if (ret < 0)
--				break;
-+		if (ret) {
-+			dev_dbg(ec_dev->dev, "no PD chip found: %d\n", ret);
-+			ec_dev->max_passthru = 0;
-+		} else {
-+			dev_dbg(ec_dev->dev, "found PD chip\n");
-+			ec_dev->max_passthru =
-+				proto_info->max_request_packet_size -
-+				sizeof(struct ec_host_request);
-+		}
-+	} else {
-+		/* Try querying with a v2 hello message. */
-+		ec_dev->proto_version = 2;
-+		ret = cros_ec_host_command_proto_query_v2(ec_dev);
- 
--			msg->result = status_msg->result;
--			if (status_msg->result != EC_RES_SUCCESS)
--				break;
-+		if (ret == 0) {
-+			/* V2 hello succeeded. */
-+			dev_dbg(ec_dev->dev, "falling back to proto v2\n");
- 
--			status = (struct ec_response_get_comms_status *)
--				 status_msg->data;
--			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
--				break;
-+			ec_dev->max_request = EC_PROTO2_MAX_PARAM_SIZE;
-+			ec_dev->max_response = EC_PROTO2_MAX_PARAM_SIZE;
-+			ec_dev->max_passthru = 0;
-+			ec_dev->pkt_xfer = NULL;
-+			ec_dev->din_size = EC_MSG_BYTES;
-+			ec_dev->dout_size = EC_MSG_BYTES;
-+		} else {
-+			/*
-+			 * It's possible for a test to occur too early when
-+			 * the EC isn't listening. If this happens, we'll
-+			 * test later when the first command is run.
-+			 */
-+			ec_dev->proto_version = EC_PROTO_VERSION_UNKNOWN;
-+			dev_dbg(ec_dev->dev, "EC query failed: %d\n", ret);
-+			goto exit;
- 		}
-+	}
- 
--		kfree(status_msg);
-+	devm_kfree(dev, ec_dev->din);
-+	devm_kfree(dev, ec_dev->dout);
-+
-+	ec_dev->din = devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
-+	if (!ec_dev->din) {
-+		ret = -ENOMEM;
-+		goto exit;
- 	}
-+
-+	ec_dev->dout = devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
-+	if (!ec_dev->dout) {
-+		devm_kfree(dev, ec_dev->din);
-+		ret = -ENOMEM;
-+		goto exit;
-+	}
-+
- exit:
-+	kfree(proto_msg);
-+	return ret;
-+}
-+EXPORT_SYMBOL(cros_ec_query_all);
-+
-+int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
-+		     struct cros_ec_command *msg)
-+{
-+	int ret;
-+
-+	mutex_lock(&ec_dev->lock);
-+	if (ec_dev->proto_version == EC_PROTO_VERSION_UNKNOWN) {
-+		ret = cros_ec_query_all(ec_dev);
-+		if (ret) {
-+			dev_err(ec_dev->dev,
-+				"EC version unknown and query failed; aborting command\n");
-+			mutex_unlock(&ec_dev->lock);
-+			return ret;
-+		}
-+	}
-+
-+	if (msg->insize > ec_dev->max_response) {
-+		dev_dbg(ec_dev->dev, "clamping message receive buffer\n");
-+		msg->insize = ec_dev->max_response;
-+	}
-+
-+	if (msg->command < EC_CMD_PASSTHRU_OFFSET(1)) {
-+		if (msg->outsize > ec_dev->max_request) {
-+			dev_err(ec_dev->dev,
-+				"request of size %u is too big (max: %u)\n",
-+				msg->outsize,
-+				ec_dev->max_request);
-+			mutex_unlock(&ec_dev->lock);
-+			return -EMSGSIZE;
-+		}
-+	} else {
-+		if (msg->outsize > ec_dev->max_passthru) {
-+			dev_err(ec_dev->dev,
-+				"passthru rq of size %u is too big (max: %u)\n",
-+				msg->outsize,
-+				ec_dev->max_passthru);
-+			mutex_unlock(&ec_dev->lock);
-+			return -EMSGSIZE;
-+		}
-+	}
-+	ret = send_command(ec_dev, msg);
- 	mutex_unlock(&ec_dev->lock);
- 
- 	return ret;
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 7eee38abd02a..59d909434efd 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -22,6 +22,15 @@
- #include <linux/mutex.h>
- 
+ 		if (i == 4) {
+ 			param = (struct ec_params_lightbar *)msg->data;
+-			param->cmd = LIGHTBAR_CMD_RGB;
+-			param->rgb.led = val[0];
+-			param->rgb.red = val[1];
+-			param->rgb.green = val[2];
+-			param->rgb.blue = val[3];
++			param->cmd = LIGHTBAR_CMD_SET_RGB;
++			param->set_rgb.led = val[0];
++			param->set_rgb.red = val[1];
++			param->set_rgb.green = val[2];
++			param->set_rgb.blue = val[3];
+ 			/*
+ 			 * Throttle only the first of every four transactions,
+ 			 * so that the user can update all four LEDs at once.
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index a49cd41feea7..13b630c10d4c 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -515,7 +515,7 @@ struct ec_host_response {
  /*
-+ * Max bus-specific overhead incurred by request/responses.
-+ * I2C requires 1 additional byte for requests.
-+ * I2C requires 2 additional bytes for responses.
-+ * */
-+#define EC_PROTO_VERSION_UNKNOWN	0
-+#define EC_MAX_REQUEST_OVERHEAD		1
-+#define EC_MAX_RESPONSE_OVERHEAD	2
-+
-+/*
-  * Command interface between EC and AP, for LPC, I2C and SPI interfaces.
+  * Notes on commands:
+  *
+- * Each command is an 8-byte command value.  Commands which take params or
++ * Each command is an 16-bit command value.  Commands which take params or
+  * return response data specify structs for that data.  If no struct is
+  * specified, the command does not input or output data, respectively.
+  * Parameter/response length is implicit in the structs.  Some underlying
+@@ -966,7 +966,7 @@ struct rgb_s {
+ /* List of tweakable parameters. NOTE: It's __packed so it can be sent in a
+  * host command, but the alignment is the same regardless. Keep it that way.
   */
- enum {
-@@ -88,6 +97,7 @@ struct cros_ec_command {
-  *     Returns the number of bytes received if the communication succeeded, but
-  *     that doesn't mean the EC was happy with the command. The caller
-  *     should check msg.result for the EC's result code.
-+ * @pkt_xfer: send packet to EC and get response
-  * @lock: one transaction at a time
-  */
- struct cros_ec_device {
-@@ -104,15 +114,21 @@ struct cros_ec_device {
- 			   unsigned int bytes, void *dest);
+-struct lightbar_params {
++struct lightbar_params_v0 {
+ 	/* Timing */
+ 	int32_t google_ramp_up;
+ 	int32_t google_ramp_down;
+@@ -1000,32 +1000,81 @@ struct lightbar_params {
+ 	struct rgb_s color[8];			/* 0-3 are Google colors */
+ } __packed;
  
- 	/* These are used to implement the platform-specific interface */
-+	u16 max_request;
-+	u16 max_response;
-+	u16 max_passthru;
-+	u16 proto_version;
- 	void *priv;
- 	int irq;
--	uint8_t *din;
--	uint8_t *dout;
-+	u8 *din;
-+	u8 *dout;
- 	int din_size;
- 	int dout_size;
- 	bool wake_enabled;
- 	int (*cmd_xfer)(struct cros_ec_device *ec,
- 			struct cros_ec_command *msg);
-+	int (*pkt_xfer)(struct cros_ec_device *ec,
-+			struct cros_ec_command *msg);
- 	struct mutex lock;
++struct lightbar_params_v1 {
++	/* Timing */
++	int32_t google_ramp_up;
++	int32_t google_ramp_down;
++	int32_t s3s0_ramp_up;
++	int32_t s0_tick_delay[2];		/* AC=0/1 */
++	int32_t s0a_tick_delay[2];		/* AC=0/1 */
++	int32_t s0s3_ramp_down;
++	int32_t s3_sleep_for;
++	int32_t s3_ramp_up;
++	int32_t s3_ramp_down;
++	int32_t tap_tick_delay;
++	int32_t tap_display_time;
++
++	/* Tap-for-battery params */
++	uint8_t tap_pct_red;
++	uint8_t tap_pct_green;
++	uint8_t tap_seg_min_on;
++	uint8_t tap_seg_max_on;
++	uint8_t tap_seg_osc;
++	uint8_t tap_idx[3];
++
++	/* Oscillation */
++	uint8_t osc_min[2];			/* AC=0/1 */
++	uint8_t osc_max[2];			/* AC=0/1 */
++	uint8_t w_ofs[2];			/* AC=0/1 */
++
++	/* Brightness limits based on the backlight and AC. */
++	uint8_t bright_bl_off_fixed[2];		/* AC=0/1 */
++	uint8_t bright_bl_on_min[2];		/* AC=0/1 */
++	uint8_t bright_bl_on_max[2];		/* AC=0/1 */
++
++	/* Battery level thresholds */
++	uint8_t battery_threshold[LB_BATTERY_LEVELS - 1];
++
++	/* Map [AC][battery_level] to color index */
++	uint8_t s0_idx[2][LB_BATTERY_LEVELS];	/* AP is running */
++	uint8_t s3_idx[2][LB_BATTERY_LEVELS];	/* AP is sleeping */
++
++	/* Color palette */
++	struct rgb_s color[8];			/* 0-3 are Google colors */
++} __packed;
++
+ struct ec_params_lightbar {
+ 	uint8_t cmd;		      /* Command (see enum lightbar_command) */
+ 	union {
+ 		struct {
+ 			/* no args */
+-		} dump, off, on, init, get_seq, get_params, version;
++		} dump, off, on, init, get_seq, get_params_v0, get_params_v1,
++			version, get_brightness, get_demo;
+ 
+-		struct num {
++		struct {
+ 			uint8_t num;
+-		} brightness, seq, demo;
++		} set_brightness, seq, demo;
+ 
+-		struct reg {
++		struct {
+ 			uint8_t ctrl, reg, value;
+ 		} reg;
+ 
+-		struct rgb {
++		struct {
+ 			uint8_t led, red, green, blue;
+-		} rgb;
++		} set_rgb;
++
++		struct {
++			uint8_t led;
++		} get_rgb;
+ 
+-		struct lightbar_params set_params;
++		struct lightbar_params_v0 set_params_v0;
++		struct lightbar_params_v1 set_params_v1;
+ 	};
+ } __packed;
+ 
+ struct ec_response_lightbar {
+ 	union {
+-		struct dump {
++		struct {
+ 			struct {
+ 				uint8_t reg;
+ 				uint8_t ic0;
+@@ -1033,20 +1082,26 @@ struct ec_response_lightbar {
+ 			} vals[23];
+ 		} dump;
+ 
+-		struct get_seq {
++		struct  {
+ 			uint8_t num;
+-		} get_seq;
++		} get_seq, get_brightness, get_demo;
+ 
+-		struct lightbar_params get_params;
++		struct lightbar_params_v0 get_params_v0;
++		struct lightbar_params_v1 get_params_v1;
+ 
+-		struct version {
++		struct {
+ 			uint32_t num;
+ 			uint32_t flags;
+ 		} version;
+ 
+ 		struct {
++			uint8_t red, green, blue;
++		} get_rgb;
++
++		struct {
+ 			/* no return params */
+-		} off, on, init, brightness, seq, reg, rgb, demo, set_params;
++		} off, on, init, set_brightness, seq, reg, set_rgb,
++			demo, set_params_v0, set_params_v1;
+ 	};
+ } __packed;
+ 
+@@ -1056,15 +1111,20 @@ enum lightbar_command {
+ 	LIGHTBAR_CMD_OFF = 1,
+ 	LIGHTBAR_CMD_ON = 2,
+ 	LIGHTBAR_CMD_INIT = 3,
+-	LIGHTBAR_CMD_BRIGHTNESS = 4,
++	LIGHTBAR_CMD_SET_BRIGHTNESS = 4,
+ 	LIGHTBAR_CMD_SEQ = 5,
+ 	LIGHTBAR_CMD_REG = 6,
+-	LIGHTBAR_CMD_RGB = 7,
++	LIGHTBAR_CMD_SET_RGB = 7,
+ 	LIGHTBAR_CMD_GET_SEQ = 8,
+ 	LIGHTBAR_CMD_DEMO = 9,
+-	LIGHTBAR_CMD_GET_PARAMS = 10,
+-	LIGHTBAR_CMD_SET_PARAMS = 11,
++	LIGHTBAR_CMD_GET_PARAMS_V0 = 10,
++	LIGHTBAR_CMD_SET_PARAMS_V0 = 11,
+ 	LIGHTBAR_CMD_VERSION = 12,
++	LIGHTBAR_CMD_GET_BRIGHTNESS = 13,
++	LIGHTBAR_CMD_GET_RGB = 14,
++	LIGHTBAR_CMD_GET_DEMO = 15,
++	LIGHTBAR_CMD_GET_PARAMS_V1 = 16,
++	LIGHTBAR_CMD_SET_PARAMS_V1 = 17,
+ 	LIGHTBAR_NUM_CMDS
  };
  
-@@ -194,4 +210,12 @@ int cros_ec_remove(struct cros_ec_device *ec_dev);
-  */
- int cros_ec_register(struct cros_ec_device *ec_dev);
+@@ -1421,8 +1481,40 @@ struct ec_response_rtc {
+ /*****************************************************************************/
+ /* Port80 log access */
  
-+/**
-+ * cros_ec_register -  Query the protocol version supported by the ChromeOS EC
-+ *
-+ * @ec_dev: Device to register
-+ * @return 0 if ok, -ve on error
-+ */
-+int cros_ec_query_all(struct cros_ec_device *ec_dev);
++/* Maximum entries that can be read/written in a single command */
++#define EC_PORT80_SIZE_MAX 32
 +
- #endif /* __LINUX_MFD_CROS_EC_H */
+ /* Get last port80 code from previous boot */
+ #define EC_CMD_PORT80_LAST_BOOT 0x48
++#define EC_CMD_PORT80_READ 0x48
++
++enum ec_port80_subcmd {
++	EC_PORT80_GET_INFO = 0,
++	EC_PORT80_READ_BUFFER,
++};
++
++struct ec_params_port80_read {
++	uint16_t subcmd;
++	union {
++		struct {
++			uint32_t offset;
++			uint32_t num_entries;
++		} read_buffer;
++	};
++} __packed;
++
++struct ec_response_port80_read {
++	union {
++		struct {
++			uint32_t writes;
++			uint32_t history_size;
++			uint32_t last_boot;
++		} get_info;
++		struct {
++			uint16_t codes[EC_PORT80_SIZE_MAX];
++		} data;
++	};
++} __packed;
+ 
+ struct ec_response_port80_last_boot {
+ 	uint16_t code;
+@@ -1782,6 +1874,7 @@ struct ec_params_gpio_set {
+ /* Get GPIO value */
+ #define EC_CMD_GPIO_GET 0x93
+ 
++/* Version 0 of input params and response */
+ struct ec_params_gpio_get {
+ 	char name[32];
+ } __packed;
+@@ -1789,6 +1882,38 @@ struct ec_response_gpio_get {
+ 	uint8_t val;
+ } __packed;
+ 
++/* Version 1 of input params and response */
++struct ec_params_gpio_get_v1 {
++	uint8_t subcmd;
++	union {
++		struct {
++			char name[32];
++		} get_value_by_name;
++		struct {
++			uint8_t index;
++		} get_info;
++	};
++} __packed;
++
++struct ec_response_gpio_get_v1 {
++	union {
++		struct {
++			uint8_t val;
++		} get_value_by_name, get_count;
++		struct {
++			uint8_t val;
++			char name[32];
++			uint32_t flags;
++		} get_info;
++	};
++} __packed;
++
++enum gpio_get_subcmd {
++	EC_GPIO_GET_BY_NAME = 0,
++	EC_GPIO_GET_COUNT = 1,
++	EC_GPIO_GET_INFO = 2,
++};
++
+ /*****************************************************************************/
+ /* I2C commands. Only available when flash write protect is unlocked. */
+ 
+@@ -1857,13 +1982,21 @@ struct ec_params_charge_control {
+ /*****************************************************************************/
+ 
+ /*
+- * Cut off battery power output if the battery supports.
++ * Cut off battery power immediately or after the host has shut down.
+  *
+- * For unsupported battery, just don't implement this command and lets EC
+- * return EC_RES_INVALID_COMMAND.
++ * return EC_RES_INVALID_COMMAND if unsupported by a board/battery.
++ *	  EC_RES_SUCCESS if the command was successful.
++ *	  EC_RES_ERROR if the cut off command failed.
+  */
++
+ #define EC_CMD_BATTERY_CUT_OFF 0x99
+ 
++#define EC_BATTERY_CUTOFF_FLAG_AT_SHUTDOWN	(1 << 0)
++
++struct ec_params_battery_cutoff {
++	uint8_t flags;
++} __packed;
++
+ /*****************************************************************************/
+ /* USB port mux control. */
+ 
+@@ -2142,6 +2275,32 @@ struct ec_params_sb_wr_block {
+ } __packed;
+ 
+ /*****************************************************************************/
++/* Battery vendor parameters
++ *
++ * Get or set vendor-specific parameters in the battery. Implementations may
++ * differ between boards or batteries. On a set operation, the response
++ * contains the actual value set, which may be rounded or clipped from the
++ * requested value.
++ */
++
++#define EC_CMD_BATTERY_VENDOR_PARAM 0xb4
++
++enum ec_battery_vendor_param_mode {
++	BATTERY_VENDOR_PARAM_MODE_GET = 0,
++	BATTERY_VENDOR_PARAM_MODE_SET,
++};
++
++struct ec_params_battery_vendor_param {
++	uint32_t param;
++	uint32_t value;
++	uint8_t mode;
++} __packed;
++
++struct ec_response_battery_vendor_param {
++	uint32_t value;
++} __packed;
++
++/*****************************************************************************/
+ /* System commands */
+ 
+ /*
+@@ -2338,6 +2497,80 @@ struct ec_params_reboot_ec {
+ 
+ /*****************************************************************************/
+ /*
++ * PD commands
++ *
++ * These commands are for PD MCU communication.
++ */
++
++/* EC to PD MCU exchange status command */
++#define EC_CMD_PD_EXCHANGE_STATUS 0x100
++
++/* Status of EC being sent to PD */
++struct ec_params_pd_status {
++	int8_t batt_soc; /* battery state of charge */
++} __packed;
++
++/* Status of PD being sent back to EC */
++struct ec_response_pd_status {
++	int8_t status;        /* PD MCU status */
++	uint32_t curr_lim_ma; /* input current limit */
++} __packed;
++
++/* Set USB type-C port role and muxes */
++#define EC_CMD_USB_PD_CONTROL 0x101
++
++enum usb_pd_control_role {
++	USB_PD_CTRL_ROLE_NO_CHANGE = 0,
++	USB_PD_CTRL_ROLE_TOGGLE_ON = 1, /* == AUTO */
++	USB_PD_CTRL_ROLE_TOGGLE_OFF = 2,
++	USB_PD_CTRL_ROLE_FORCE_SINK = 3,
++	USB_PD_CTRL_ROLE_FORCE_SOURCE = 4,
++};
++
++enum usb_pd_control_mux {
++	USB_PD_CTRL_MUX_NO_CHANGE = 0,
++	USB_PD_CTRL_MUX_NONE = 1,
++	USB_PD_CTRL_MUX_USB = 2,
++	USB_PD_CTRL_MUX_DP = 3,
++	USB_PD_CTRL_MUX_DOCK = 4,
++	USB_PD_CTRL_MUX_AUTO = 5,
++};
++
++struct ec_params_usb_pd_control {
++	uint8_t port;
++	uint8_t role;
++	uint8_t mux;
++} __packed;
++
++/*****************************************************************************/
++/*
++ * Passthru commands
++ *
++ * Some platforms have sub-processors chained to each other.  For example.
++ *
++ *     AP <--> EC <--> PD MCU
++ *
++ * The top 2 bits of the command number are used to indicate which device the
++ * command is intended for.  Device 0 is always the device receiving the
++ * command; other device mapping is board-specific.
++ *
++ * When a device receives a command to be passed to a sub-processor, it passes
++ * it on with the device number set back to 0.  This allows the sub-processor
++ * to remain blissfully unaware of whether the command originated on the next
++ * device up the chain, or was passed through from the AP.
++ *
++ * In the above example, if the AP wants to send command 0x0002 to the PD MCU,
++ *     AP sends command 0x4002 to the EC
++ *     EC sends command 0x0002 to the PD MCU
++ *     EC forwards PD MCU response back to the AP
++ */
++
++/* Offset and max command number for sub-device n */
++#define EC_CMD_PASSTHRU_OFFSET(n) (0x4000 * (n))
++#define EC_CMD_PASSTHRU_MAX(n) (EC_CMD_PASSTHRU_OFFSET(n) + 0x3fff)
++
++/*****************************************************************************/
++/*
+  * Deprecated constants. These constants have been renamed for clarity. The
+  * meaning and size has not changed. Programs that use the old names should
+  * switch to the new names soon, as the old names may not be carried forward
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
