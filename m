@@ -1,73 +1,84 @@
-From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/11] mtd: ofpart: do not fail probe when no partitions exist
-Date: Thu, 4 Jun 2015 06:54:00 +0200
-Message-ID: <CAOMqctTB2AYOQZUc9o-R4PF1DQ-HY0RfSw5T-T28r5uP2s=qZA@mail.gmail.com>
-References: <cover.1433364398.git.hramrach@gmail.com> <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach@gmail.com>
- <201506040058.52882.marex@denx.de>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: [PATCH] drm/exynos: dsi: check whether dsi is enabled before sending
+ data
+Date: Thu, 04 Jun 2015 15:07:26 +0900
+Message-ID: <1433398046-4177-1-git-send-email-human.hwang@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201506040058.52882.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Han Xu <han.xu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Huang Shijie <b32955-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, Knut Wohlrab <knut.wohlrab-V5te9oGctAVWk0Htik3J/w@public.gmane.org>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>, grmoore@altera.c
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
+Cc: cw00.choi@samsung.com, sw0312.kim@samsung.com, Hyungwon Hwang <human.hwang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4 June 2015 at 00:58, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
-> On Wednesday, June 03, 2015 at 11:26:40 PM, Michal Suchanek wrote:
->> On Exynos it is necessary to set SPI controller parameters that apply to
->> a SPI slave in a DT subnode of the slave device. The ofpart code returns
->> an error when there are subnodes of the SPI flash but no partitions are
->> found. Change this condition to a warning so that flash without
->> partitions can be accessed on Exynos.
->
-> I have to admit the rationale for this patch is not very clear to me, sorry.
-> Can you please explain this a bit more ?
-
-This is how the DT entry for SPI slave looks with s3c64xx:
-flash: m25p80@0 {
-        #address-cells = <1>;
-        #size-cells = <1>;
-        compatible = "jedec,spi-nor";
-        reg = <0>;
-        spi-max-frequency = <40000000>;
-        linux,max_tx_len = <65536>;
-        m25p,fast-read;
-        controller-data {
-            samsung,spi-feedback-delay = <0>;
-        };
-    };
-
-this is example of flash partitions:
-flash@0 {
-        #address-cells = <1>;
-        #size-cells = <1>;
-
-        partition@0 {
-                label = "u-boot";
-                reg = <0x0000000 0x100000>;
-                read-only;
-        };
-
-        uimage@100000 {
-                reg = <0x0100000 0x200000>;
-        };
-};
-
-The parser ignores any flash without subnodes and returns 0 (no
-partititon). When there is a subnode it assumes the flash is
-partitioned and tries to parse the subnodes as partitions. When there
-are subnodes and none parses as partition an error is returned. As
-shown above it is valid to have subnodes on unpartitioned flash.
-
-When an error is returned from a partition parser the mtdpart code
-passes on this error to the flash probe function and the proble of the
-flash fails.
-
-Thanks
-
-Michal
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyKCkgY2FuIGJlIGNhbGxlZCB0aHJvdWdoIGEgcGFuZWwg
+ZHJpdmVyIHdoaWxlCkRTSSBpcyB0dXJuaW5nIGRvd24uIEl0IGlzIHBvc3NpYmxlIGJlY2F1c2Ug
+dGhlIGZ1bmN0aW9uIGNoZWNrcyBvbmx5CndoZXRoZXIgRFNJIGlzIGluaXRpYWxpemVkIG9yIG5v
+dCwgYW5kIHRoZXJlIGlzIGEgbW9tZW50IHdoaWNoIERTSSBpcwpzZXQgYnkgdW5pbml0aWFsaXpl
+ZCwgYnV0IERTSSBpcyBzdGlsbCB0dXJuaW5nIGRvd24uIFRvIHByZXZlbnQgaXQsCkRTSSBtdXN0
+IGJlIHNldCBieSBkaXNhYmxlZCBiZWZvcmUgc3RhcnRpbmcgdG8gYmUgdHVybmVkIGRvd24sIGFu
+ZApleHlub3NfZHNpX2hvc3RfdHJhbnNmZXIoKSBtdXN0IGNoZWNrIHdoZXRoZXIgRFNJIGlzIGVu
+YWJsZWQgb3Igbm90LgoKS2VybmVsIGR1bXA6ClsgNDcyMS4zNTE0NDhdIFVuaGFuZGxlZCBmYXVs
+dDogc3luY2hyb25vdXMgZXh0ZXJuYWwgYWJvcnQgKDB4OTYwMDAyMTApIGF0IDB4ZmZmZmZmODAw
+MDE1ZTAxOApbIDQ3MjEuMzUxODA5XSBJbnRlcm5hbCBlcnJvcjogOiA5NjAwMDIxMCBbIzFdIFBS
+RUVNUFQgU01QClsgNDcyMS4zNTIwMzFdIE1vZHVsZXMgbGlua2VkIGluOgpbIDQ3MjEuMzUyMTcz
+XSBDUFU6IDIgUElEOiAzMDAgQ29tbTogZGV2aWNlZCBUYWludGVkOiBHICAgICAgICBXICAgICAg
+IDQuMC40LTAxMDE3LWc3OTY0YTg3ICMxClsgNDcyMS4zNTM5ODldIEhhcmR3YXJlIG5hbWU6IFNh
+bXN1bmcgRFJBQ08gYm9hcmQgKERUKQpbIDQ3MjEuMzU4ODUyXSB0YXNrOiBmZmZmZmZjMGEwYjcw
+MDAwIHRpOiBmZmZmZmZjMGEwMGVjMDAwIHRhc2sudGk6IGZmZmZmZmMwYTAwZWMwMDAKWyA0NzIx
+LjM2NjMyN10gUEMgaXMgYXQgZXh5bm9zX2RzaV9lbmFibGVfbGFuZSsweDE0LzB4NWMKWyA0NzIx
+LjM3MTM1M10gTFIgaXMgYXQgZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyKzB4ODM0LzB4OGQ4Clsg
+NDcyMS4zNzY3MzFdIHBjIDogWzxmZmZmZmZjMDAwNDMyYmNjPl0gbHIgOiBbPGZmZmZmZmMwMDA0
+MzQ1OTA+XSBwc3RhdGU6IDYwMDAwMTQ1ClsgNDcyMS4zODQxMDddIHNwIDogZmZmZmZmYzBhMDBl
+ZmJlMApbIDQ3MjEuMzg3NDA1XSB4Mjk6IGZmZmZmZmMwYTAwZWZiZTAgeDI4OiBmZmZmZmZjMGEw
+MGVjMDAwClsgNDcyMS4zOTI2OTldIHgyNzogZmZmZmZmYzAwMDk2ODAwMCB4MjY6IDAwMDAwMDAw
+MDAwMDAwNDAKWyA0NzIxLjM5Nzk5NF0geDI1OiBmZmZmZmZjMDAwZjc0ZGMwIHgyNDogZmZmZmZm
+YzBhMDBlZmVjOApbIDQ3MjEuNDAzMjkwXSB4MjM6IGZmZmZmZmMwYTQ4MTU0MDAgeDIyOiBmZmZm
+ZmZjMDAwOWYyNzI5ClsgNDcyMS40MDg1ODRdIHgyMTogZmZmZmZmYzBhMDBlZmNjOCB4MjA6IGZm
+ZmZmZmMwYTRhMmE4NDgKWyA0NzIxLjQxMzg3OV0geDE5OiBmZmZmZmZjMGE0YTJhODE4IHgxODog
+MDAwMDAwMDAwMDAwMDAwNApbIDQ3MjEuNDE5MTczXSB4MTc6IDAwMDAwMDdmYWE1Y2RkZjAgeDE2
+OiBmZmZmZmZjMDAwMWE0MGE4ClsgNDcyMS40MjQ0NjldIHgxNTogMDAwMDAwMDAwMDAwMDAwOSB4
+MTQ6IDAwMDAwMDAwMDAwMDAwMGQKWyA0NzIxLjQyOTc2Ml0geDEzOiA2ZTZlNmY2MzIwNmI3MjZm
+IHgxMjogMDAwMDAwMDAwMDAwMDAxMApbIDQ3MjEuNDM1MDU4XSB4MTE6IDAxMDEwMTAxMDEwMTAx
+MDEgeDEwOiAwMDAwMDAwMDAwMDAwMDAwClsgNDcyMS40NDAzNTNdIHg5IDogMDAwMDAwMDAwMDAw
+MDAwYSB4OCA6IDgzODY4MzgyODI4MTgzODEKWyA0NzIxLjQ0NTY0OF0geDcgOiBmZmZmZmZjMGEy
+MDFlZmU4IHg2IDogMDAwMDAwMDAwMDAwMDAwMApbIDQ3MjEuNDUwOTQzXSB4NSA6IDAwMDAwMDAw
+ZmZmZmZmZmEgeDQgOiBmZmZmZmZjMGEyMDFmMTcwClsgNDcyMS40NTYyMzddIHgzIDogZmZmZmZm
+ODAwMDE1ZTAwMCB4MiA6IGZmZmZmZjgwMDAxNWUwMTgKWyA0NzIxLjQ2MTUzMV0geDEgOiAwMDAw
+MDAwMDAwMDAwMDBmIHgwIDogZmZmZmZmYzBhNGEyYTgxOApbIDQ3MjEuNDY2ODI2XQpbIDQ3MjEu
+NDY4MzA1XSBQcm9jZXNzIGRldmljZWQgKHBpZDogMzAwLCBzdGFjayBsaW1pdCA9IDB4ZmZmZmZm
+YzBhMDBlYzAyOCkKWyA0NzIxLjQ3NDk4OV0gU3RhY2s6ICgweGZmZmZmZmMwYTAwZWZiZTAgdG8g
+MHhmZmZmZmZjMGEwMGYwMDAwKQpbIDQ3MjEuNDgwNzIwXSBmYmUwOiBhMDBlZmNhMCBmZmZmZmZj
+MCAwMDQyYzk0NCBmZmZmZmZjMCBhMGYyZDY4MCBmZmZmZmZjMCAwMDAwMDAyNCAwMDAwMDAwMApb
+IDQ3MjEuNDg4ODk1XSBmYzAwOiBhNGI2ZDAwMCBmZmZmZmZjMCAwMDlmMjcyOSBmZmZmZmZjMCBh
+NDgxNTQwMCBmZmZmZmZjMCBhMDBlZmVjOCBmZmZmZmZjMAoKU2lnbmVkLW9mZi1ieTogSHl1bmd3
+b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kc2kuYyB8IDYgKysrKystCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2RzaS5jCmluZGV4IDFjZmM0YmUwNy4uNjQxMzMzOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9kc2kuYwpAQCAtMTQwOCw2ICsxNDA4LDkgQEAgc3RhdGljIHNzaXplX3QgZXh5
+bm9zX2RzaV9ob3N0X3RyYW5zZmVyKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0LAogCXN0cnVj
+dCBleHlub3NfZHNpX3RyYW5zZmVyIHhmZXI7CiAJaW50IHJldDsKIAorCWlmICghKGRzaS0+c3Rh
+dGUgJiBEU0lNX1NUQVRFX0VOQUJMRUQpKQorCQlyZXR1cm4gLUVJTlZBTDsKKwogCWlmICghKGRz
+aS0+c3RhdGUgJiBEU0lNX1NUQVRFX0lOSVRJQUxJWkVEKSkgewogCQlyZXQgPSBleHlub3NfZHNp
+X2luaXQoZHNpKTsKIAkJaWYgKHJldCkKQEAgLTE1NTEsOSArMTU1NCwxMCBAQCBzdGF0aWMgdm9p
+ZCBleHlub3NfZHNpX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kc2kgKmRzaSkKIAlkcm1fcGFuZWxf
+ZGlzYWJsZShkc2ktPnBhbmVsKTsKIAlleHlub3NfZHNpX3NldF9kaXNwbGF5X2VuYWJsZShkc2ks
+IGZhbHNlKTsKIAlkcm1fcGFuZWxfdW5wcmVwYXJlKGRzaS0+cGFuZWwpOwotCWV4eW5vc19kc2lf
+cG93ZXJvZmYoZHNpKTsKIAogCWRzaS0+c3RhdGUgJj0gfkRTSU1fU1RBVEVfRU5BQkxFRDsKKwor
+CWV4eW5vc19kc2lfcG93ZXJvZmYoZHNpKTsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9k
+cG1zKHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksIGludCBtb2RlKQotLSAKMS45
+LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
