@@ -1,66 +1,137 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/6] Exynos SYSMMU (IOMMU) dts and arch updates
-Date: Thu, 04 Jun 2015 12:51:07 +0900
-Message-ID: <556FCB2B.8090406@samsung.com>
-References: <1432041645-11172-1-git-send-email-m.szyprowski@samsung.com>
- <1433153450-3680-1-git-send-email-m.szyprowski@samsung.com>
- <556C4342.6060506@samsung.com> <556F89B2.9010607@kernel.org>
+From: Jiang Liu <jiang.liu@linux.intel.com>
+Subject: [RFT v2 10/48] irqchip: Use irq_desc_get_xxx() to avoid redundant
+ lookup of irq_desc
+Date: Thu,  4 Jun 2015 12:13:20 +0800
+Message-ID: <1433391238-19471-11-git-send-email-jiang.liu@linux.intel.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:32532 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751373AbbFDDvN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Jun 2015 23:51:13 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NPE00D4PIPBZKA0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Jun 2015 04:51:11 +0100 (BST)
-In-reply-to: <556F89B2.9010607@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Tony Luck <tony.luck@intel.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, linux-pci@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-On 04.06.2015 08:11, Kukjin Kim wrote:
-> On 06/01/15 20:34, Krzysztof Kozlowski wrote:
->> W dniu 01.06.2015 o 19:10, Marek Szyprowski pisze:
->>> Hello,
->>>
->>> Main changes for Exynos SYSMMU (IOMMU) driver has been finally scheduled
->>> for merging - see
->>> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/commit/?h=next
->>> In meantime there have been quite a lot of changes related to Exynos DTS
->>> files queued for merging and my patches don't apply anymore. To ease
->>> merge process I've decided to rebased all Exynos SYSMMU dts changes onto
->>> latest exynos next tree from: https://github.com/krzk/linux dt-for-next
->>>
->>> While rebasing I've fixes a few spotted issues: some nodes still used
->>> old 'samsung,power-domain' properties (now replaced with 'power-domains')
->>> and added properties to jpeg codec merged recently.
->>>
->>
->> Thanks for rebasing this stuff.
->>
-> Same here ;-)
-> 
->> I picked whole patchset with Javier's tested-by. I'll send it to Kukjin
->> later or directly to arm-soc (depending what will happen with last pull
->> request).
->>
->> Kukjin, you mentioned that you will do something with this patchset the
->> previous weekend. Since then nothing happened so I am not sure what are
->> your plans... Can you share them? Do you want to pick it by yourself, do
->> you have any comments or maybe you need something from our side? (I
->> checked the patches and they look fine)
->>
-> Done, thanks.
+Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+already have a pointer to corresponding irq_desc.
 
-Thank you, I tested the for-next branch on some of my boards and
-everything looked fine.
+Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+---
+ drivers/irqchip/exynos-combiner.c   |    4 ++--
+ drivers/irqchip/irq-armada-370-xp.c |    2 +-
+ drivers/irqchip/irq-dw-apb-ictl.c   |    4 ++--
+ drivers/irqchip/irq-gic.c           |    4 ++--
+ drivers/irqchip/irq-orion.c         |    2 +-
+ drivers/irqchip/irq-sunxi-nmi.c     |    2 +-
+ drivers/irqchip/spear-shirq.c       |    2 +-
+ 7 files changed, 10 insertions(+), 10 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index 5945223b73fa..039ceb46fcc0 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -62,8 +62,8 @@ static void combiner_unmask_irq(struct irq_data *data)
+ 
+ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct combiner_chip_data *chip_data = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct combiner_chip_data *chip_data = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int cascade_irq, combiner_irq;
+ 	unsigned long status;
+ 
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+index daccc8bdbb42..40b5fe99a1d5 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -451,7 +451,7 @@ static void armada_370_xp_handle_msi_irq(struct pt_regs *r, bool b) {}
+ static void armada_370_xp_mpic_handle_cascade_irq(unsigned int irq,
+ 						  struct irq_desc *desc)
+ {
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned long irqmap, irqn, irqsrc, cpuid;
+ 	unsigned int cascade_irq;
+ 
+diff --git a/drivers/irqchip/irq-dw-apb-ictl.c b/drivers/irqchip/irq-dw-apb-ictl.c
+index 53bb7326a60a..cddcd3b75f00 100644
+--- a/drivers/irqchip/irq-dw-apb-ictl.c
++++ b/drivers/irqchip/irq-dw-apb-ictl.c
+@@ -28,8 +28,8 @@
+ 
+ static void dw_apb_ictl_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct irq_chip *chip = irq_get_chip(irq);
+-	struct irq_chip_generic *gc = irq_get_handler_data(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct irq_chip_generic *gc = irq_desc_get_handler_data(desc);
+ 	struct irq_domain *d = gc->private;
+ 	u32 stat;
+ 	int n;
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 01999d74bd3a..6c8a5a7fb4a0 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -288,8 +288,8 @@ static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+ 
+ static void gic_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct gic_chip_data *chip_data = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct gic_chip_data *chip_data = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int cascade_irq, gic_irq;
+ 	unsigned long status;
+ 
+diff --git a/drivers/irqchip/irq-orion.c b/drivers/irqchip/irq-orion.c
+index ad0c0f6f1d65..58e034db0e7c 100644
+--- a/drivers/irqchip/irq-orion.c
++++ b/drivers/irqchip/irq-orion.c
+@@ -109,7 +109,7 @@ IRQCHIP_DECLARE(orion_intc, "marvell,orion-intc", orion_irq_init);
+ 
+ static void orion_bridge_irq_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct irq_domain *d = irq_get_handler_data(irq);
++	struct irq_domain *d = irq_desc_get_handler_data(desc);
+ 
+ 	struct irq_chip_generic *gc = irq_get_domain_generic_chip(d, 0);
+ 	u32 stat = readl_relaxed(gc->reg_base + ORION_BRIDGE_IRQ_CAUSE) &
+diff --git a/drivers/irqchip/irq-sunxi-nmi.c b/drivers/irqchip/irq-sunxi-nmi.c
+index 4a9ce5b50c5b..2eaa9d9df241 100644
+--- a/drivers/irqchip/irq-sunxi-nmi.c
++++ b/drivers/irqchip/irq-sunxi-nmi.c
+@@ -61,7 +61,7 @@ static inline u32 sunxi_sc_nmi_read(struct irq_chip_generic *gc, u32 off)
+ static void sunxi_sc_nmi_handle_irq(unsigned int irq, struct irq_desc *desc)
+ {
+ 	struct irq_domain *domain = irq_desc_get_handler_data(desc);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int virq = irq_find_mapping(domain, 0);
+ 
+ 	chained_irq_enter(chip, desc);
+diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
+index 9c145a7cb056..fb68ee9c0424 100644
+--- a/drivers/irqchip/spear-shirq.c
++++ b/drivers/irqchip/spear-shirq.c
+@@ -185,7 +185,7 @@ static struct spear_shirq *spear320_shirq_blocks[] = {
+ 
+ static void shirq_handler(unsigned irq, struct irq_desc *desc)
+ {
+-	struct spear_shirq *shirq = irq_get_handler_data(irq);
++	struct spear_shirq *shirq = irq_desc_get_handler_data(desc);
+ 	u32 pend;
+ 
+ 	pend = readl(shirq->base + shirq->status_reg) & shirq->mask;
+-- 
+1.7.10.4
