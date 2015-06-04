@@ -1,19 +1,24 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT v2 46/48] genirq, irqchip: Kill the first parameter 'irq' of
- irq_flow_handler_t
-Date: Thu, 04 Jun 2015 13:52:49 +0900
-Message-ID: <556FD9A1.5000406@samsung.com>
+Subject: Re: [RFT v2 36/48] genirq,
+ arm: Kill the first parameter 'irq' of irq_flow_handler_t
+Date: Thu, 04 Jun 2015 13:52:57 +0900
+Message-ID: <556FD9A9.8090704@samsung.com>
 References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
- <1433391238-19471-47-git-send-email-jiang.liu@linux.intel.com>
+ <1433391238-19471-37-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <1433391238-19471-47-git-send-email-jiang.liu@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Kevin Cernekee <cernekee@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, James Hogan <james.hogan@imgtec.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-metag@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:33757 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752195AbbFDExF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Jun 2015 00:53:05 -0400
+In-reply-to: <1433391238-19471-37-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Rajendra Nayak <rnayak@ti.com>, Paul Walmsley <paul@pwsan.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
 On 04.06.2015 13:13, Jiang Liu wrote:
 > Now most IRQ flow handlers make no use of the first parameter 'irq'.
@@ -25,11 +30,34 @@ On 04.06.2015 13:13, Jiang Liu wrote:
 > they should be merge as one to support bisecting.
 > 
 > Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
-> Acked-by: Ralf Baechle <ralf@linux-mips.org>
+> Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
 > ---
->  drivers/irqchip/exynos-combiner.c    |    4 ++--
+>  arch/arm/common/it8152.c               |    2 +-
+>  arch/arm/common/locomo.c               |    2 +-
+>  arch/arm/common/sa1111.c               |    4 ++--
+>  arch/arm/include/asm/hardware/it8152.h |    2 +-
+>  arch/arm/include/asm/mach/irq.h        |    4 ++--
+>  arch/arm/mach-dove/irq.c               |    4 ++--
+>  arch/arm/mach-footbridge/isa-irq.c     |    4 ++--
+>  arch/arm/mach-gemini/gpio.c            |    2 +-
+>  arch/arm/mach-imx/3ds_debugboard.c     |    2 +-
+>  arch/arm/mach-imx/mach-mx31ads.c       |    2 +-
+>  arch/arm/mach-iop13xx/msi.c            |    2 +-
+>  arch/arm/mach-lpc32xx/irq.c            |    4 ++--
+>  arch/arm/mach-netx/generic.c           |    2 +-
+>  arch/arm/mach-omap1/fpga.c             |    2 +-
+>  arch/arm/mach-omap2/prm_common.c       |    2 +-
+>  arch/arm/mach-pxa/balloon3.c           |    2 +-
+>  arch/arm/mach-pxa/cm-x2xx-pci.c        |    4 ++--
+>  arch/arm/mach-pxa/lpd270.c             |    2 +-
+>  arch/arm/mach-pxa/pcm990-baseboard.c   |    2 +-
+>  arch/arm/mach-pxa/viper.c              |    2 +-
+>  arch/arm/mach-pxa/zeus.c               |    2 +-
+>  arch/arm/mach-rpc/ecard.c              |    2 +-
+>  arch/arm/mach-s3c24xx/bast-irq.c       |    3 +--
+>  arch/arm/mach-s3c64xx/common.c         |    8 ++++----
 
-For exynos:
+For s3c24xx/s3c64xx:
 Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
