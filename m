@@ -1,58 +1,47 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
 Subject: Re: [PATCH] extcon: max77843: Clear IRQ bits state before request IRQ
-Date: Fri, 05 Jun 2015 13:53:56 +0900
-Message-ID: <55712B64.3090205@samsung.com>
-References: <1433478747-12254-1-git-send-email-jaewon02.kim@samsung.com>
+Date: Fri, 05 Jun 2015 04:54:13 +0000 (GMT)
+Message-ID: <1462057843.591181433480053438.JavaMail.weblogic@epmlwas08a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48188 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752339AbbFEEx7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Jun 2015 00:53:59 -0400
-In-reply-to: <1433478747-12254-1-git-send-email-jaewon02.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?=EA=B9=80=EC=9E=AC=EC=9B=90?= <jaewon02.kim@samsung.com>, =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Jaewon,
-
-On 06/05/2015 01:32 PM, Jaewon Kim wrote:
-> IRQ signal before driver probe is needless because driver sends
-> current state after platform booting done.
-> So, this patch clears MUIC IRQ bits before request IRQ.
-> 
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
->  drivers/extcon/extcon-max77843.c |    9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
-> index d78a64d..11e09d1 100644
-> --- a/drivers/extcon/extcon-max77843.c
-> +++ b/drivers/extcon/extcon-max77843.c
-> @@ -781,6 +781,15 @@ static int max77843_muic_probe(struct platform_device *pdev)
->  	/* Support virtual irq domain for max77843 MUIC device */
->  	INIT_WORK(&info->irq_work, max77843_muic_irq_work);
->  
-> +	/* Clear IRQ bits before request IRQs */
-> +	ret = regmap_bulk_read(max77843->regmap_muic,
-> +			MAX77843_MUIC_REG_INT1, info->status,
-> +			MAX77843_MUIC_IRQ_NUM);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to Clear IRQ bits\n");
-> +		goto err_muic_irq;
-> +	}
-> +
->  	for (i = 0; i < ARRAY_SIZE(max77843_muic_irqs); i++) {
->  		struct max77843_muic_irq *muic_irq = &max77843_muic_irqs[i];
->  		unsigned int virq = 0;
-> 
-
-Applied it.
-
-Thanks,
-Chanwoo Choi
+PiAgIA0KPiAgSVJRIHNpZ25hbCBiZWZvcmUgZHJpdmVyIHByb2JlIGlzIG5lZWRsZXNzIGJlY2F1
+c2UgZHJpdmVyIHNlbmRzDQo+IGN1cnJlbnQgc3RhdGUgYWZ0ZXIgcGxhdGZvcm0gYm9vdGluZyBk
+b25lLg0KPiBTbywgdGhpcyBwYXRjaCBjbGVhcnMgTVVJQyBJUlEgYml0cyBiZWZvcmUgcmVxdWVz
+dCBJUlEuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKYWV3b24gS2ltIDxqYWV3b24wMi5raW1Ac2Ft
+c3VuZy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9leHRjb24vZXh0Y29uLW1heDc3ODQzLmMgfCAg
+ICA5ICsrKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQ0KDQpRMS4g
+SXMgdGhpcyBiZWNhdXNlIHRoZSBwZW5kaW5nIGJpdHMgYXJlIFVTRUxFU1M/DQpvciBiZWNhdXNl
+IHRoZSBwZW5kZWluZyBiaXRzIGluY3VycyBJTkNPUlJFQ1QgYmVoYXZpb3JzPw0KDQpRMi4gRG9l
+cyBjbGVhcmluZyAoYnkgcmVhZGluZykgSU5UMSBkbyBldmVyeXRoaW5nIHlvdSBuZWVkPw0KV2hh
+dCBhYm91dCBJTlQyIGFuZCBJTlQzPw0KDQpRMy4gSSBwcmVzdW1lIHRoYXQgImRyaXZlciBzZW5k
+cyBjdXJyZW50IHN0YXRlIGFmdGVyLi4uIiBpcw0KY29taW5nIGZyb20gdGhlIGludm9rYXRpb24g
+b2YgInF1ZXVlX2RlbGF5ZWRfd29yaygpIiBhdCB0aGUgZW5kIA0Kb2YgdGhlIHByb2JlIGZ1bmN0
+aW9uLiBJdCBhcHBlYXJzIHRoYXQgeW91IGFyZSBvbmx5IHNlcnZpbmcNCnRoZSBwZW5kaW5nIHN0
+YXR1cyBvZiAiY2FibGUgZGV0ZWN0aW9uIiB3aXRoIGl0IHdoaWxlIElOVDENCnNlZW1zIHRvIGhh
+dmUgbW9yZSBmdW5jdGlvbmFsaXRpZXMuIERvZXMgdGhhdCBkZWxheWVkIHdvcmsNCmRvIGV2ZXJ5
+dGhpbmcgdGhhdCBhcmUgcGVuZGluZywgcmVhbGx5Pw0KDQoNCkNoZWVycywNCk15dW5nSm9vDQoN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2V4dGNvbi9leHRjb24tbWF4Nzc4NDMuYyBiL2Ry
+aXZlcnMvZXh0Y29uL2V4dGNvbi1tYXg3Nzg0My5jDQo+IGluZGV4IGQ3OGE2NGQuLjExZTA5ZDEg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZXh0Y29uL2V4dGNvbi1tYXg3Nzg0My5jDQo+ICsrKyBi
+L2RyaXZlcnMvZXh0Y29uL2V4dGNvbi1tYXg3Nzg0My5jDQo+IEBAIC03ODEsNiArNzgxLDE1IEBA
+IHN0YXRpYyBpbnQgbWF4Nzc4NDNfbXVpY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQ0KPiAgCS8qIFN1cHBvcnQgdmlydHVhbCBpcnEgZG9tYWluIGZvciBtYXg3Nzg0MyBNVUlD
+IGRldmljZSAqLw0KPiAgCUlOSVRfV09SSygmaW5mby0+aXJxX3dvcmssIG1heDc3ODQzX211aWNf
+aXJxX3dvcmspOw0KPiAgDQo+ICsJLyogQ2xlYXIgSVJRIGJpdHMgYmVmb3JlIHJlcXVlc3QgSVJR
+cyAqLw0KPiArCXJldCA9IHJlZ21hcF9idWxrX3JlYWQobWF4Nzc4NDMtPnJlZ21hcF9tdWljLA0K
+PiArCQkJTUFYNzc4NDNfTVVJQ19SRUdfSU5UMSwgaW5mby0+c3RhdHVzLA0KPiArCQkJTUFYNzc4
+NDNfTVVJQ19JUlFfTlVNKTsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCWRldl9lcnIoJnBkZXYtPmRl
+diwgIkZhaWxlZCB0byBDbGVhciBJUlEgYml0c1xuIik7DQo+ICsJCWdvdG8gZXJyX211aWNfaXJx
+Ow0KPiArCX0NCj4gKw0KPiAgCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKG1heDc3ODQzX211
+aWNfaXJxcyk7IGkrKykgew0KPiAgCQlzdHJ1Y3QgbWF4Nzc4NDNfbXVpY19pcnEgKm11aWNfaXJx
+ID0gJm1heDc3ODQzX211aWNfaXJxc1tpXTsNCj4gIAkJdW5zaWduZWQgaW50IHZpcnEgPSAwOw0K
+PiAtLSANCj4gMS43LjkuNQ0KPiANCg==
