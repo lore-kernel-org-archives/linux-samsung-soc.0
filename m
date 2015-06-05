@@ -1,62 +1,63 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFT v2 44/48] genirq,
- pinctrl: Kill the first parameter 'irq' of irq_flow_handler_t
-Date: Fri, 5 Jun 2015 12:08:06 +0900
-Message-ID: <CA+Ln22EHa-Bnybf2bd2-U1QvNOBThjpjj_uuz95aBAzniN2f1Q@mail.gmail.com>
-References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
- <1433391238-19471-45-git-send-email-jiang.liu@linux.intel.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
+Date: Fri, 5 Jun 2015 09:46:09 +0100
+Message-ID: <557161D1.3040107@nvidia.com>
+References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com> <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com> <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1433391238-19471-45-git-send-email-jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson@sonymobile>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Paul Walmsley <paul@pwsan.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-2015-06-04 13:13 GMT+09:00 Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>:
-> Now most IRQ flow handlers make no use of the first parameter 'irq'.
-> And for those who do make use of 'irq', we could easily get the irq
-> number through irq_desc->irq_data->irq. So kill the first parameter
-> 'irq' of irq_flow_handler_t.
->
-> To ease review, I have split the changes into several parts, though
-> they should be merge as one to support bisecting.
->
-> Signed-off-by: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> ---
->  drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c     |    2 +-
->  drivers/pinctrl/intel/pinctrl-baytrail.c      |    2 +-
->  drivers/pinctrl/intel/pinctrl-cherryview.c    |    2 +-
->  drivers/pinctrl/intel/pinctrl-intel.c         |    2 +-
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |    4 ++--
->  drivers/pinctrl/pinctrl-adi2.c                |    3 +--
->  drivers/pinctrl/pinctrl-amd.c                 |    4 ++--
->  drivers/pinctrl/pinctrl-at91.c                |    2 +-
->  drivers/pinctrl/pinctrl-coh901.c              |    2 +-
->  drivers/pinctrl/pinctrl-rockchip.c            |    2 +-
->  drivers/pinctrl/pinctrl-single.c              |    2 +-
->  drivers/pinctrl/pinctrl-st.c                  |    4 ++--
->  drivers/pinctrl/qcom/pinctrl-msm.c            |    4 ++--
->  drivers/pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |    8 ++++----
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |   10 +++++-----
+On 05/06/15 00:02, Paul Walmsley wrote:
+> Hi folks
+> 
+> just a brief comment on this one:
+> 
+> On Thu, 30 Apr 2015, Boris Brezillon wrote:
+> 
+>> Clock rates are stored in an unsigned long field, but ->round_rate()
+>> (which returns a rounded rate from a requested one) returns a long
+>> value (errors are reported using negative error codes), which can lead
+>> to long overflow if the clock rate exceed 2Ghz.
+>>
+>> Change ->round_rate() prototype to return 0 or an error code, and pass the
+>> requested rate as a pointer so that it can be adjusted depending on
+>> hardware capabilities.
+> 
+> ...
+> 
+>> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
+>> index 0e4f90a..fca8b7a 100644
+>> --- a/Documentation/clk.txt
+>> +++ b/Documentation/clk.txt
+>> @@ -68,8 +68,8 @@ the operations defined in clk.h:
+>>  		int		(*is_enabled)(struct clk_hw *hw);
+>>  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
+>>  						unsigned long parent_rate);
+>> -		long		(*round_rate)(struct clk_hw *hw,
+>> -						unsigned long rate,
+>> +		int		(*round_rate)(struct clk_hw *hw,
+>> +						unsigned long *rate,
+>>  						unsigned long *parent_rate);
+>>  		long		(*determine_rate)(struct clk_hw *hw,
+>>  						unsigned long rate,
+> 
+> I'd suggest that we should probably go straight to 64-bit rates.  There 
+> are already plenty of clock sources that can generate rates higher than 
+> 4GiHz.
 
-Assuming that it was properly compile tested, for Samsung stuff:
+An alternative would be to introduce to a frequency "base" the default
+could be Hz (for backwards compatibility), but for CPUs we probably only
+care about MHz (or may be kHz) and so 32-bits would still suffice. Even
+if CPUs cared about Hz they could still use Hz, but in that case they
+probably don't care about GHz. Obviously, we don't want to break DT
+compatibility but may be the frequency base could be defined in DT and
+if it is missing then Hz is assumed. Just a thought ...
 
-Acked-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Best regards,
-Tomasz
+Jon
