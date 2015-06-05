@@ -1,53 +1,46 @@
-From: Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Thu, 4 Jun 2015 23:02:25 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com> <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFT v2 06/48] pinctrl: Use irq_desc_get_xxx() to avoid redundant
+ lookup of irq_desc
+Date: Fri, 5 Jun 2015 12:06:06 +0900
+Message-ID: <CA+Ln22Euot24co7qKLTej43j3Z2BS-p5WhjRq9WgRb-+U=Tyqw@mail.gmail.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+	<1433391238-19471-7-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, =?ISO-8859-15?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Peter
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433391238-19471-7-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Heiko Stuebner <heiko@sntech.de>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Barry
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi folks
+Hi,
 
-just a brief comment on this one:
+2015-06-04 13:13 GMT+09:00 Jiang Liu <jiang.liu@linux.intel.com>:
+> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+> already have a pointer to corresponding irq_desc.
+>
+> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/pinctrl/intel/pinctrl-cherryview.c    |    2 +-
+>  drivers/pinctrl/intel/pinctrl-intel.c         |    2 +-
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    4 ++--
+>  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |   12 +++++-------
+>  drivers/pinctrl/pinctrl-amd.c                 |    2 +-
+>  drivers/pinctrl/pinctrl-at91.c                |    2 +-
+>  drivers/pinctrl/pinctrl-coh901.c              |    4 ++--
+>  drivers/pinctrl/pinctrl-rockchip.c            |    4 ++--
+>  drivers/pinctrl/pinctrl-single.c              |    2 +-
+>  drivers/pinctrl/pinctrl-st.c                  |    6 +++---
+>  drivers/pinctrl/qcom/pinctrl-msm.c            |    2 +-
+>  drivers/pinctrl/samsung/pinctrl-exynos.c      |    8 ++++----
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |   18 +++++++++---------
+>  drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |   22 ++++++++++------------
 
-On Thu, 30 Apr 2015, Boris Brezillon wrote:
+For Samsung stuff:
 
-> Clock rates are stored in an unsigned long field, but ->round_rate()
-> (which returns a rounded rate from a requested one) returns a long
-> value (errors are reported using negative error codes), which can lead
-> to long overflow if the clock rate exceed 2Ghz.
-> 
-> Change ->round_rate() prototype to return 0 or an error code, and pass the
-> requested rate as a pointer so that it can be adjusted depending on
-> hardware capabilities.
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-...
-
-> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
-> index 0e4f90a..fca8b7a 100644
-> --- a/Documentation/clk.txt
-> +++ b/Documentation/clk.txt
-> @@ -68,8 +68,8 @@ the operations defined in clk.h:
->  		int		(*is_enabled)(struct clk_hw *hw);
->  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
->  						unsigned long parent_rate);
-> -		long		(*round_rate)(struct clk_hw *hw,
-> -						unsigned long rate,
-> +		int		(*round_rate)(struct clk_hw *hw,
-> +						unsigned long *rate,
->  						unsigned long *parent_rate);
->  		long		(*determine_rate)(struct clk_hw *hw,
->  						unsigned long rate,
-
-I'd suggest that we should probably go straight to 64-bit rates.  There 
-are already plenty of clock sources that can generate rates higher than 
-4GiHz.
-
-
-- Paul
+Best regards,
+Tomasz
