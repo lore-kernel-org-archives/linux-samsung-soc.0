@@ -1,43 +1,123 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable usb3503
-Date: Fri, 05 Jun 2015 14:45:51 +0200
-Message-ID: <4414616.t6CSY5FxHU@wuerfel>
-References: <1426254866-24772-1-git-send-email-riku.voipio@linaro.org> <556FF260.5060006@collabora.co.uk> <7hd21b2wo4.fsf@deeprootsystems.com>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH 04/11] mtd: ofpart: do not fail probe when no partitions exist
+Date: Fri, 5 Jun 2015 16:13:09 +0200
+Message-ID: <201506051613.09187.marex@denx.de>
+References: <cover.1433364398.git.hramrach@gmail.com> <201506041728.50227.marex@denx.de> <CAOMqctQTxVZspcocDsNP6GzsRw5-0zPqkNScS8PzNvkFjBWatQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:63402 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751287AbbFEMq1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Jun 2015 08:46:27 -0400
-In-Reply-To: <7hd21b2wo4.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOMqctQTxVZspcocDsNP6GzsRw5-0zPqkNScS8PzNvkFjBWatQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Suchanek <hramrach@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Han Xu <han.xu@freescale.com>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Alison Chaiken <alison_chaiken@mentor.com>, Huang Shijie <b32955@freescale.com>, Ben Hutchings <ben@decadent.org.uk>, Knut Wohlrab <knut.wohlrab@de.bosch.com>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@micron.com>, grmoo
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, riku.voipio@linaro.org, linux-samsung-soc@vger.kernel.org, tyler.baker@linaro.org
 
-On Thursday 04 June 2015 10:47:07 Kevin Hilman wrote:
+On Thursday, June 04, 2015 at 05:40:58 PM, Michal Suchanek wrote:
+> On 4 June 2015 at 17:28, Marek Vasut <marex@denx.de> wrote:
+> > On Thursday, June 04, 2015 at 06:54:00 AM, Michal Suchanek wrote:
+> >> On 4 June 2015 at 00:58, Marek Vasut <marex@denx.de> wrote:
+> >> > On Wednesday, June 03, 2015 at 11:26:40 PM, Michal Suchanek wrote:
+> >> >> On Exynos it is necessary to set SPI controller parameters that apply
+> >> >> to a SPI slave in a DT subnode of the slave device. The ofpart code
+> >> >> returns an error when there are subnodes of the SPI flash but no
+> >> >> partitions are found. Change this condition to a warning so that
+> >> >> flash without partitions can be accessed on Exynos.
+> >> > 
+> >> > I have to admit the rationale for this patch is not very clear to me,
+> >> > sorry. Can you please explain this a bit more ?
+> >> 
+> >> This is how the DT entry for SPI slave looks with s3c64xx:
+> >> flash: m25p80@0 {
+> >> 
+> >>         #address-cells = <1>;
+> >>         #size-cells = <1>;
+> >>         compatible = "jedec,spi-nor";
+> >>         reg = <0>;
+> >>         spi-max-frequency = <40000000>;
+> >>         linux,max_tx_len = <65536>;
+> > 
+> > SIDENOTE: I thought this was actually added by your patch #8 in this
+> > series. The underscores in the name of the property are not really
+> > consistent with the rest of the names.
+> > 
+> >>         m25p,fast-read;
+> >>         controller-data {
+> >>         
+> >>             samsung,spi-feedback-delay = <0>;
+> >>         
+> >>         };
+> >>     
+> >>     };
+> >> 
+> >> this is example of flash partitions:
+> >> flash@0 {
+> >> 
+> >>         #address-cells = <1>;
+> >>         #size-cells = <1>;
+> >>         
+> >>         partition@0 {
+> >>         
+> >>                 label = "u-boot";
+> >>                 reg = <0x0000000 0x100000>;
+> >>                 read-only;
+> >>         
+> >>         };
+> >>         
+> >>         uimage@100000 {
+> >>         
+> >>                 reg = <0x0100000 0x200000>;
+> >>         
+> >>         };
+> >> 
+> >> };
+> >> 
+> >> The parser ignores any flash without subnodes and returns 0 (no
+> >> partititon). When there is a subnode it assumes the flash is
+> >> partitioned and tries to parse the subnodes as partitions. When there
+> >> are subnodes and none parses as partition an error is returned. As
+> >> shown above it is valid to have subnodes on unpartitioned flash.
+> >> 
+> >> When an error is returned from a partition parser the mtdpart code
+> >> passes on this error to the flash probe function and the proble of the
+> >> flash fails.
+> > 
+> > What does /proc/mtd tell you when you have no partitions defined
+> > in the DT ? It should provide you with the entire MTD device and
+> > the code shouldn't even try to parse any OF partitions, since you
+> > don't have any.
 > 
-> > But I wonder why is not working, shouldn't the driver defer and
-> > be probed again once the PHY driver probe succeeds?
+> mtdinfo shows I have no mtd devices and the log shows that probe
+> failed unless I patch the kernel.
 > 
-> Yeah, I'm not sure why that isn't working, and didn't look into it.
+> When there is *support* for of partitions the ofparser is run on mtd
+> probe. If it fails because it considers
 > 
-> FWIW, the same problem happens when both are modules.  If you modprobe
-> usb3503 first, then the phy, it doesn't work.  You have to load the phy
-> before the usb3503.
+> >>         controller-data {
+> >>         
+> >>             samsung,spi-feedback-delay = <0>;
+> >>         
+> >>         };
 > 
-> 
+> an invalid partition and does not find any valid partition the probe fails.
 
-The driver does not try to get a reference to the phy, and it does
-not return -EPROBE_DEFER in any circumstance, so I assume it just
-runs into an error condition on the first probe and does not
-try again.
+OK, now it has become clearer to me, thanks!
 
-I don't really understand why the driver registers both an i2c_driver
-and a platform_driver, or if that is required, but it may also
-complicate getting deferred probing to work here.
+> There are two problems here
+> 
+> 1) the above is not invalid. It just is not a partition. The parser
+> should not fail seeing this
 
-	Arnd
+The parser should complain verbosely and ignore this I guess ?
+
+> 2) the mtd probe should not fail when a partition parser fails and
+> should present the unpartitioned device
+
+OK
+
+> Both are addressed in separate patches.
+> 
+> Thanks
+> 
+> Michal
