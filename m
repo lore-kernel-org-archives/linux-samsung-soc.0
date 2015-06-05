@@ -1,47 +1,60 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCH] extcon: max77843: Clear IRQ bits state before request IRQ
-Date: Fri, 05 Jun 2015 04:54:13 +0000 (GMT)
-Message-ID: <1462057843.591181433480053438.JavaMail.weblogic@epmlwas08a>
-Reply-To: myungjoo.ham@samsung.com
+Date: Fri, 05 Jun 2015 14:13:13 +0900
+Message-ID: <55712FE9.1070006@samsung.com>
+References: <1462057843.591181433480053438.JavaMail.weblogic@epmlwas08a>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
+In-reply-to: <1462057843.591181433480053438.JavaMail.weblogic@epmlwas08a>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?=EA=B9=80=EC=9E=AC=EC=9B=90?= <jaewon02.kim@samsung.com>, =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: myungjoo.ham@samsung.com
+Cc: =?UTF-8?B?6rmA7J6s7JuQ?= <jaewon02.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PiAgIA0KPiAgSVJRIHNpZ25hbCBiZWZvcmUgZHJpdmVyIHByb2JlIGlzIG5lZWRsZXNzIGJlY2F1
-c2UgZHJpdmVyIHNlbmRzDQo+IGN1cnJlbnQgc3RhdGUgYWZ0ZXIgcGxhdGZvcm0gYm9vdGluZyBk
-b25lLg0KPiBTbywgdGhpcyBwYXRjaCBjbGVhcnMgTVVJQyBJUlEgYml0cyBiZWZvcmUgcmVxdWVz
-dCBJUlEuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKYWV3b24gS2ltIDxqYWV3b24wMi5raW1Ac2Ft
-c3VuZy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9leHRjb24vZXh0Y29uLW1heDc3ODQzLmMgfCAg
-ICA5ICsrKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQ0KDQpRMS4g
-SXMgdGhpcyBiZWNhdXNlIHRoZSBwZW5kaW5nIGJpdHMgYXJlIFVTRUxFU1M/DQpvciBiZWNhdXNl
-IHRoZSBwZW5kZWluZyBiaXRzIGluY3VycyBJTkNPUlJFQ1QgYmVoYXZpb3JzPw0KDQpRMi4gRG9l
-cyBjbGVhcmluZyAoYnkgcmVhZGluZykgSU5UMSBkbyBldmVyeXRoaW5nIHlvdSBuZWVkPw0KV2hh
-dCBhYm91dCBJTlQyIGFuZCBJTlQzPw0KDQpRMy4gSSBwcmVzdW1lIHRoYXQgImRyaXZlciBzZW5k
-cyBjdXJyZW50IHN0YXRlIGFmdGVyLi4uIiBpcw0KY29taW5nIGZyb20gdGhlIGludm9rYXRpb24g
-b2YgInF1ZXVlX2RlbGF5ZWRfd29yaygpIiBhdCB0aGUgZW5kIA0Kb2YgdGhlIHByb2JlIGZ1bmN0
-aW9uLiBJdCBhcHBlYXJzIHRoYXQgeW91IGFyZSBvbmx5IHNlcnZpbmcNCnRoZSBwZW5kaW5nIHN0
-YXR1cyBvZiAiY2FibGUgZGV0ZWN0aW9uIiB3aXRoIGl0IHdoaWxlIElOVDENCnNlZW1zIHRvIGhh
-dmUgbW9yZSBmdW5jdGlvbmFsaXRpZXMuIERvZXMgdGhhdCBkZWxheWVkIHdvcmsNCmRvIGV2ZXJ5
-dGhpbmcgdGhhdCBhcmUgcGVuZGluZywgcmVhbGx5Pw0KDQoNCkNoZWVycywNCk15dW5nSm9vDQoN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2V4dGNvbi9leHRjb24tbWF4Nzc4NDMuYyBiL2Ry
-aXZlcnMvZXh0Y29uL2V4dGNvbi1tYXg3Nzg0My5jDQo+IGluZGV4IGQ3OGE2NGQuLjExZTA5ZDEg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZXh0Y29uL2V4dGNvbi1tYXg3Nzg0My5jDQo+ICsrKyBi
-L2RyaXZlcnMvZXh0Y29uL2V4dGNvbi1tYXg3Nzg0My5jDQo+IEBAIC03ODEsNiArNzgxLDE1IEBA
-IHN0YXRpYyBpbnQgbWF4Nzc4NDNfbXVpY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
-ZGV2KQ0KPiAgCS8qIFN1cHBvcnQgdmlydHVhbCBpcnEgZG9tYWluIGZvciBtYXg3Nzg0MyBNVUlD
-IGRldmljZSAqLw0KPiAgCUlOSVRfV09SSygmaW5mby0+aXJxX3dvcmssIG1heDc3ODQzX211aWNf
-aXJxX3dvcmspOw0KPiAgDQo+ICsJLyogQ2xlYXIgSVJRIGJpdHMgYmVmb3JlIHJlcXVlc3QgSVJR
-cyAqLw0KPiArCXJldCA9IHJlZ21hcF9idWxrX3JlYWQobWF4Nzc4NDMtPnJlZ21hcF9tdWljLA0K
-PiArCQkJTUFYNzc4NDNfTVVJQ19SRUdfSU5UMSwgaW5mby0+c3RhdHVzLA0KPiArCQkJTUFYNzc4
-NDNfTVVJQ19JUlFfTlVNKTsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCWRldl9lcnIoJnBkZXYtPmRl
-diwgIkZhaWxlZCB0byBDbGVhciBJUlEgYml0c1xuIik7DQo+ICsJCWdvdG8gZXJyX211aWNfaXJx
-Ow0KPiArCX0NCj4gKw0KPiAgCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKG1heDc3ODQzX211
-aWNfaXJxcyk7IGkrKykgew0KPiAgCQlzdHJ1Y3QgbWF4Nzc4NDNfbXVpY19pcnEgKm11aWNfaXJx
-ID0gJm1heDc3ODQzX211aWNfaXJxc1tpXTsNCj4gIAkJdW5zaWduZWQgaW50IHZpcnEgPSAwOw0K
-PiAtLSANCj4gMS43LjkuNQ0KPiANCg==
+On 06/05/2015 01:54 PM, MyungJoo Ham wrote:
+>>   
+>>  IRQ signal before driver probe is needless because driver sends
+>> current state after platform booting done.
+>> So, this patch clears MUIC IRQ bits before request IRQ.
+>>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> ---
+>>  drivers/extcon/extcon-max77843.c |    9 +++++++++
+>>  1 file changed, 9 insertions(+)
+> 
+> Q1. Is this because the pending bits are USELESS?
+> or because the pendeing bits incurs INCORRECT behaviors?
+
+The max77843 datasheet includes following sentence:
+- "All bits are cleared after a read" about INT1/INT2/INT3 register.
+There are no problem about interrupt handling.
+
+> 
+> Q2. Does clearing (by reading) INT1 do everything you need?
+> What about INT2 and INT3?
+
+The MAXIM MAX77843 MUIC support the one more interrupts (e.g., ADC1K, VBVolt, ChgTyp ...).
+The each interrupt is included in the one register among INT1/2/3.
+
+This patch clear the all interrupts of MAX77843 before requesting the interrupts.
+
+> 
+> Q3. I presume that "driver sends current state after..." is
+> coming from the invokation of "queue_delayed_work()" at the end 
+> of the probe function. It appears that you are only serving
+> the pending status of "cable detection" with it while INT1
+> seems to have more functionalities. Does that delayed work
+> do everything that are pending, really?
+
+When completed kernel booting, the delayed work of extcon-max77843.c driver
+use the MAX77843_MUIC_STATUSx register to detect the type of connected
+external connectors. So, there are no problme about clearing all bits of INT1/2/3 interrupt register.
+
+If user-space platform don't finish the initialization of all user-process daemons
+and extcon driver send the uevent during only kernel booting, the uevent is not handled
+on user-space daemons.
+
+Thanks,
+Chanwoo Choi
