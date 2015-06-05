@@ -1,66 +1,58 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 1/5] Samsung defconfig updates for v4.2
-Date: Sat, 06 Jun 2015 03:04:14 +0900
-Message-ID: <5571E49E.3050707@kernel.org>
+Subject: [GIT PULL 2/5] Samsung 2nd defconfig for v4.2
+Date: Sat, 06 Jun 2015 03:04:32 +0900
+Message-ID: <5571E4B0.5090001@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58502 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:58538 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751584AbbFESE2 (ORCPT
+	id S1751732AbbFESEp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Jun 2015 14:04:28 -0400
+	Fri, 5 Jun 2015 14:04:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Arnd, Olof, Kevin
+Hi,
 
-Here is exynos_defconfig updates for v4.2.
-Please pull.
+Here is 2nd defconfig updates for v4.2 but actually just one patch for
+Samsung updates for multi_v7_defconfig. Please pull or apply the patch
+directly, anyway I'm fine either way.
+
+Note that this is based on arm-soc/next/defconfig to avoid useless merge
+conflicts and I've merged previous tags/samsung-defconfig-2.
 
 Thanks,
 Kukjin
 
-The following changes since commit 030bbdbf4c833bc69f502eae58498bc5572db736:
+The following changes since commit 8c56c43021002d5983021481e05fa64ec8f6822e:
 
-  Linux 4.1-rc3 (2015-05-10 15:12:29 -0700)
+  Merge branch 'samsung-defconfig-2nd' into samsung-defconfig-3rd
+(2015-06-03 10:12:27 +0900)
 
 are available in the git repository at:
 
+
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-defconfig-2
+tags/samsung-defconfig-3
 
-for you to fetch changes up to f882d3cfe87800000e5fa91160db401bb7a38d28:
+for you to fetch changes up to 296e4f2e1e8f269a923d6488bac71e501ddca30e:
 
-  ARM: exynos_defconfig: Enable CONFIG_SENSORS_INA2XX for Odroid-XU3
-(2015-06-03 09:31:29 +0900)
+  ARM: multi_v7_defconfig: Enable display on Trats2 board (2015-06-03
+10:12:50 +0900)
 
 ----------------------------------------------------------------
-exynos_defconfig updates for v4.2
+multi_v7_defconfig updates for Samsung stuff
 
 - enable DRM_EXYNOS_DSI and DRM_PANEL_S6E8AA0
-  for full X11 display on Trats2 board
-- enable SENSORS_PWM_FAN
-  to control fan power on Odroid-XU3 board
-- enable SENSORS_INA2XX
-  for power monitor sensor on Odriod-XU3 board
-- do savedefconfig
-  to remove useless configs and check its dependencies
+  in multi_v7_defconfig to support full X11 display
 
 ----------------------------------------------------------------
-Anand Moon (2):
-      ARM: exynos_defconfig: Enable CONFIG_SENSORS_PWM_FAN for Odroid-XU3
-      ARM: exynos_defconfig: Enable CONFIG_SENSORS_INA2XX for Odroid-XU3
-
 Krzysztof Kozlowski (1):
-      ARM: exynos_defconfig: Enable display on Trats2 board
+      ARM: multi_v7_defconfig: Enable display on Trats2 board
 
-Kukjin Kim (1):
-      ARM: exynos_defconfig: savedefconfig
-
- arch/arm/configs/exynos_defconfig | 50
-+++++++++++++--------------------------
- 1 file changed, 16 insertions(+), 34 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
