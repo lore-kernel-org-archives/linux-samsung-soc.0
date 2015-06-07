@@ -1,46 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
 Subject: Re: [PATCHv3] ARM: dts: odroidxu3: Enable USB3 regulators
-Date: Sun, 07 Jun 2015 11:32:25 +0900
-Message-ID: <5573AD39.2020105@samsung.com>
-References: <1432909836-3952-1-git-send-email-linux.amoon@gmail.com>
+Date: Sun, 7 Jun 2015 08:10:24 +0530
+Message-ID: <CANAwSgS47vZJOhAdL85z9NVWvONZhwXZ+ZcCJ5tB7ie_UL7EUA@mail.gmail.com>
+References: <1432909836-3952-1-git-send-email-linux.amoon@gmail.com> <5573AD39.2020105@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:35205 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751572AbbFGCcd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 6 Jun 2015 22:32:33 -0400
-In-Reply-To: <1432909836-3952-1-git-send-email-linux.amoon@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5573AD39.2020105@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-W dniu 29.05.2015 o 23:30, Anand Moon pisze:
-> Enable regulator for usbdrd3_0 and usbdrd3_1.
-> Looking at the schematic pin diagram for MAX77802
-> USB3_0 and USB3_1 is regulated by LDO9 and LD011.
-> 
-> Fix the boot message of failed.
-> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
-> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
-> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
-> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
-> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
-> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
-> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
-> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
-> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
-> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
-> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
-> 
-> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+On 7 June 2015 at 08:02, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> W dniu 29.05.2015 o 23:30, Anand Moon pisze:
+>> Enable regulator for usbdrd3_0 and usbdrd3_1.
+>> Looking at the schematic pin diagram for MAX77802
+>> USB3_0 and USB3_1 is regulated by LDO9 and LD011.
+>>
+>> Fix the boot message of failed.
+>> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+>> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+>> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+>> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+>> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+>> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+>> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+>> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+>> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+>> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+>> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
+>>
+>> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>
+> The patch no longer applies because of creation of common Odroid DTSI.
+> Can you rebase it on Kukjin's for-next?
+>
+> Best regards,
+> Krzysztof
+>
 
-The patch no longer applies because of creation of common Odroid DTSI.
-Can you rebase it on Kukjin's for-next?
+Hi Krzysztof
 
-Best regards,
-Krzysztof
+Ok will do this.
+
+-Anand Moon
+>
