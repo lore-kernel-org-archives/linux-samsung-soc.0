@@ -1,39 +1,54 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: odroidxu3: Enable USB3 regulators
-Date: Sun, 7 Jun 2015 12:51:26 +0900
-Message-ID: <CAJKOXPeARffLrqz87cqX6FYFVU5tumO12+CrUMUw-3+nW2wc0w@mail.gmail.com>
-References: <1432803494-3516-1-git-send-email-linux.amoon@gmail.com>
-	<5566DDA6.1080508@samsung.com>
-	<CANAwSgTk=YwH23F4981j6z9m4+=_Yrratz6BRSQU7PmPHGT0Bg@mail.gmail.com>
-	<CANAwSgR7a6dQ=yspvwqW2qyvPZ6OhXyAxdZORmhwUnH01ATh6Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f54.google.com ([209.85.216.54]:37460 "EHLO
-	mail-vn0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752652AbbFGDv1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 6 Jun 2015 23:51:27 -0400
-In-Reply-To: <CANAwSgR7a6dQ=yspvwqW2qyvPZ6OhXyAxdZORmhwUnH01ATh6Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [RESEND] ARM: dts: odroidxu3: Enable USB3 regulators
+Date: Sun,  7 Jun 2015 21:23:47 +0930
+Message-ID: <1433678028-8441-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-2015-06-07 11:50 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->
-> Hi Krzysztof
->
-> Do you want me to resend this. Along with above.
->
-> https://patchwork.kernel.org/patch/4420061/
-> https://patchwork.kernel.org/patch/4420071/
+Enable regulator for usbdrd3_0 and usbdrd3_1.
+Looking at the schematic pin diagram for MAX77802
+USB3_0 and USB3_1 is regulated by LDO9 and LD011.
 
-If Vivek is not planning to continue to work on them then sure, please
-take care of them and resend. Then I'll review them.
+Fix the boot message of failed.
+[    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+[    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+[    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+[    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+[    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+[    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+[    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+[    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+[    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+[    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+[    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
 
-If you have any other patches which were not applied recently, then
-please rebase and resend. There were some changes in Odroid DTS.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 8adf455..deb8d78 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -477,3 +477,13 @@
+ &usbdrd_dwc3_1 {
+ 	dr_mode = "otg";
+ };
++
++&usbdrd3_0 {
++	vdd33-supply = <&ldo9_reg>;
++	vdd10-supply = <&ldo11_reg>;
++};
++
++&usbdrd3_1 {
++	vdd33-supply = <&ldo9_reg>;
++	vdd10-supply = <&ldo11_reg>;
++};
+-- 
+2.4.3
