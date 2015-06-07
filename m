@@ -1,56 +1,46 @@
-From: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH] Documentation: ARM: EXYNOS: Describe boot loaders interface
-Date: Sat, 6 Jun 2015 20:43:45 +0900
-Message-ID: <CAJKOXPefY1jCddwAL=uSg28St9rZbgxsLcDSmjmFfjYH-8EmGg@mail.gmail.com>
-References: <1433585151-3627-1-git-send-email-k.kozlowski.k@gmail.com>
-	<848ubx2j9v.wl-peter.chubb@nicta.com.au>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv3] ARM: dts: odroidxu3: Enable USB3 regulators
+Date: Sun, 07 Jun 2015 11:32:25 +0900
+Message-ID: <5573AD39.2020105@samsung.com>
+References: <1432909836-3952-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <848ubx2j9v.wl-peter.chubb@nicta.com.au>
-Sender: linux-doc-owner@vger.kernel.org
-To: Peter Chubb <peter.chubb@nicta.com.au>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, =?UTF-8?Q?=C5=81ukasz_Majewski?= <l.majewski@samsung.com>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:35205 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751572AbbFGCcd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 6 Jun 2015 22:32:33 -0400
+In-Reply-To: <1432909836-3952-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2015-06-06 20:01 GMT+09:00 Peter Chubb <peter.chubb@nicta.com.au>:
->>>>>> "Krzysztof" =3D=3D Krzysztof Kozlowski <k.kozlowski.k@gmail.com>=
- writes:
->
-> Krzysztof> Various boot loaders for Exynos based boards use certain
-> Krzysztof> memory addresses during booting for different
-> Krzysztof> purposes. Mostly this is one of following : 1. as a CPU
-> Krzysztof> boot address, 2. for storing magic cookie related to low
-> Krzysztof> power mode (AFTR, sleep).
->
-> Krzysztof> The document, based solely on kernel source code, tries to
-> Krzysztof> group the information scattered over different files. This
-> Krzysztof> would help in the future when adding support for new SoC o=
-r
-> Krzysztof> when extending features related to low power modes.
->
-> Is it worth grabbing the info from u=3Dboot and documenting it here
-> (it's not documented other than in the hardkenel U=3DBoot source)?
->
-> I can send you the info, or you can see it in
-> https://github.com/hardkernel/u-boot/blob/odroidxu3-v2012.07/board/sa=
-msung/smdk5420/lowlevel_init.S
-> at symbol nscode_base near line 104
+W dniu 29.05.2015 o 23:30, Anand Moon pisze:
+> Enable regulator for usbdrd3_0 and usbdrd3_1.
+> Looking at the schematic pin diagram for MAX77802
+> USB3_0 and USB3_1 is regulated by LDO9 and LD011.
+> 
+> Fix the boot message of failed.
+> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
+> 
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-Hi,
-
-+CC =C5=81ukasz Majewski (u-boot)
-
-The patch actually covers u-boot. What is missing:
-1, Reset - I think kernel does not set it.
-2. LPA - There is no mainline support for it yet so I did not add it.
-It should be added along with cpuidle LPA.
-3. MCPM and Exynos542x stuff. There are some exceptions and weird
-comments in the kernel (like "To increase the stability of KFC reset
-we need to program  the PMU SPARE3 register"). It would take me some
-more time to understand it so I wanted to start with basic version and
-get comments.
+The patch no longer applies because of creation of common Odroid DTSI.
+Can you rebase it on Kukjin's for-next?
 
 Best regards,
 Krzysztof
