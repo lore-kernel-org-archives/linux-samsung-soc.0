@@ -1,200 +1,62 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [RESEND 1/2] usb: ehci-exynos: Make provision for vdd regulators
-Date: Mon, 08 Jun 2015 14:39:18 +0530
-Message-ID: <06FEAF76061E419A8501A0984F92A574@sisodomain.com>
-References: <1433683242-3945-1-git-send-email-linux.amoon@gmail.com>
- <5574F97A.5030104@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=Windows-1252;
- reply-type=original
-Content-Transfer-Encoding: 7bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/3] exynos_drm initialization fix
+Date: Mon, 08 Jun 2015 12:15:39 +0200
+Message-ID: <1433758542-9843-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56674 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753028AbbFHJJe (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48325 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751081AbbFHKQZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Jun 2015 05:09:34 -0400
-In-reply-to: <5574F97A.5030104@samsung.com>
+	Mon, 8 Jun 2015 06:16:25 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NPM000E5F7BJO90@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Jun 2015 11:16:23 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+
+Hi Inki,
+
+Those patches fixes issue of exynos_drm initialization with more than one pipeline,
+which is present in exynos_drm drivers for long time.
+On most platforms at least two of three following pipelines are present:
+1. VIDI.
+2. FIMD/DECON -> DSI/DPI -> Panel.
+3. MIXER/DECON -> HDMI -> TV.
+In case we want use two or three pipelines simultaneously and one of KMS drivers
+defers probing only some drivers will be bound to drm driver and usually only one
+pipeline will be available. This patchset fixes it.
+
+Beside bugfixing the patchset significantly simplifies and clears the code - about
+300 lines removed.
+
+The patchset is based on exynos-drm-next branch.
+The patchset was tested on universal_c210 board.
+
+Regards
+Andrzej
 
 
+Andrzej Hajda (3):
+  drm/exynos: consolidate driver/device initialization code
+  drm/exynos: fix broken component binding in case of multiple pipelines
+  drm/exynos: remove SoC checking code
 
---------------------------------------------------
-From: "Krzysztof Kozlowski" <k.kozlowski@samsung.com>
-Sent: Monday, June 08, 2015 7:40 AM
-To: "Anand Moon" <linux.amoon@gmail.com>; "Rob Herring" 
-<robh+dt@kernel.org>; "Pawel Moll" <pawel.moll@arm.com>; "Mark Rutland" 
-<mark.rutland@arm.com>; "Ian Campbell" <ijc+devicetree@hellion.org.uk>; 
-"Kumar Gala" <galak@codeaurora.org>; "Kukjin Kim" <kgene@kernel.org>; "Alan 
-Stern" <stern@rowland.harvard.edu>; "Greg Kroah-Hartman" 
-<gregkh@linuxfoundation.org>; "Vivek Gautam" <gautam.vivek@samsung.com>; 
-"Felipe Balbi" <balbi@ti.com>
-Cc: <devicetree@vger.kernel.org>; <linux-arm-kernel@lists.infradead.org>; 
-<linux-samsung-soc@vger.kernel.org>; <linux-kernel@vger.kernel.org>; 
-<linux-usb@vger.kernel.org>; "Jingoo Han" <jg1.han@samsung.com>
-Subject: Re: [RESEND 1/2] usb: ehci-exynos: Make provision for vdd 
-regulators
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c |  14 +-
+ drivers/gpu/drm/exynos/exynos_dp_core.c    |  13 +-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c    |  20 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c    | 427 +++++++++++------------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h    |  17 --
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c    |  29 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   |  28 +-
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c    |  27 --
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c   |  53 +---
+ drivers/gpu/drm/exynos/exynos_hdmi.c       |  22 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c      |  14 +-
+ 11 files changed, 187 insertions(+), 477 deletions(-)
 
-> On 07.06.2015 22:20, Anand Moon wrote:
->> Facilitate getting required 3.3V and 1.0V VDD supply for
->> EHCI controller on Exynos.
->>
->> With the patches for regulators' nodes merged in 3.15:
->> c8c253f ARM: dts: Add regulator entries to smdk5420
->> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
->> the exynos systems turn on only minimal number of regulators.
->>
->> Until now, the VDD regulator supplies were either turned on
->> by the bootloader, or the regulators were enabled by default
->> in the kernel, so that the controller drivers did not need to
->> care about turning on these regulators on their own.
->> This was rather bad about these controller drivers.
->> So ensuring now that the controller driver requests the necessary
->> VDD regulators (if available, unless there are direct VDD rails),
->> and enable them so as to make them working.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->> Cc: Jingoo Han <jg1.han@samsung.com>
->> Cc: Alan Stern <stern@rowland.harvard.edu>
->> ---
->> Initial version of this patch was part of following series, though
->> they are not dependent on each other, resubmitting after rebasing.
->>
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266418.html
->
-> So you just took Vivek's patch along with all the credits... That is not
-> how we usually do this.
->
-> I would expect that rebasing a patch won't change the author unless this
-> is fine with Vivek.
->
->> ---
->>  .../devicetree/bindings/usb/exynos-usb.txt         |  2 +
->>  drivers/usb/host/ehci-exynos.c                     | 55 
->> +++++++++++++++++++++-
->>  2 files changed, 56 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt 
->> b/Documentation/devicetree/bindings/usb/exynos-usb.txt
->> index 9b4dbe3..776fa03 100644
->> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
->> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
->> @@ -23,6 +23,8 @@ Required properties:
->>  Optional properties:
->>   - samsung,vbus-gpio:  if present, specifies the GPIO that
->>     needs to be pulled up for the bus to be powered.
->> + - vdd33-supply: handle to 3.3V Vdd supply regulator for the controller.
->> + - vdd10-supply: handle to 1.0V Vdd supply regulator for the controller.
->>
->>  Example:
->>
->> diff --git a/drivers/usb/host/ehci-exynos.c 
->> b/drivers/usb/host/ehci-exynos.c
->> index df538fd..4f8f9d2 100644
->> --- a/drivers/usb/host/ehci-exynos.c
->> +++ b/drivers/usb/host/ehci-exynos.c
->> @@ -21,6 +21,7 @@
->>  #include <linux/of_gpio.h>
->>  #include <linux/phy/phy.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/regulator/consumer.h>
->>  #include <linux/usb.h>
->>  #include <linux/usb/hcd.h>
->>
->> @@ -45,6 +46,8 @@ static struct hc_driver __read_mostly 
->> exynos_ehci_hc_driver;
->>  struct exynos_ehci_hcd {
->>  struct clk *clk;
->>  struct phy *phy[PHY_NUMBER];
->> + struct regulator *vdd33;
->> + struct regulator *vdd10;
->>  };
->>
->>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd 
->> *)(hcd_to_ehci(hcd)->priv)
->> @@ -170,7 +173,27 @@ static int exynos_ehci_probe(struct platform_device 
->> *pdev)
->>
->>  err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
->>  if (err)
->> - goto fail_clk;
->> + goto fail_regulator1;
->> +
->> + exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
->> + if (!IS_ERR(exynos_ehci->vdd33)) {
->> + err = regulator_enable(exynos_ehci->vdd33);
->> + if (err) {
->> + dev_err(&pdev->dev,
->> + "Failed to enable 3.3V Vdd supply\n");
->> + goto fail_regulator1;
->> + }
->> + }
->> +
->> + exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
->> + if (!IS_ERR(exynos_ehci->vdd10)) {
->> + err = regulator_enable(exynos_ehci->vdd10);
->> + if (err) {
->> + dev_err(&pdev->dev,
->> + "Failed to enable 1.0V Vdd supply\n");
->> + goto fail_regulator2;
->> + }
->> + }
->>
->>  skip_phy:
->>
->> @@ -231,6 +254,10 @@ fail_add_hcd:
->>  fail_io:
->>  clk_disable_unprepare(exynos_ehci->clk);
->>  fail_clk:
->> + regulator_disable(exynos_ehci->vdd10);
->> +fail_regulator2:
->> + regulator_disable(exynos_ehci->vdd33);
->
-> if (!IS_ERR()).
->
->> +fail_regulator1:
->>  usb_put_hcd(hcd);
->>  return err;
->>  }
->> @@ -246,6 +273,11 @@ static int exynos_ehci_remove(struct platform_device 
->> *pdev)
->>
->>  clk_disable_unprepare(exynos_ehci->clk);
->>
->> + if (!IS_ERR(exynos_ehci->vdd33))
->> + regulator_disable(exynos_ehci->vdd33);
->> + if (!IS_ERR(exynos_ehci->vdd10))
->> + regulator_disable(exynos_ehci->vdd10);
->> +
->>  usb_put_hcd(hcd);
->>
->>  return 0;
->> @@ -268,6 +300,11 @@ static int exynos_ehci_suspend(struct device *dev)
->>
->>  clk_disable_unprepare(exynos_ehci->clk);
->>
->> + if (!IS_ERR(exynos_ehci->vdd33))
->> + regulator_disable(exynos_ehci->vdd33);
->> + if (!IS_ERR(exynos_ehci->vdd10))
->> + regulator_disable(exynos_ehci->vdd10);
->> +
->
->
-> Is EHCI a wakeup source? If yes then how disabling regulators during
-> suspend affects waking up process?
-
->From my knowledge of Exynos5 USB controller, EHCI could not be used as the 
-wake up source
-for suspend.
-That's the reason we tried this approach of gating the regulator supplies to 
-the controller during
-suspend.
-
->
-> Best regards,
-> Krzysztof
-> 
+-- 
+1.9.1
