@@ -1,49 +1,164 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] thermal: exynos: Disable the regulator on probe failure
-Date: Mon, 08 Jun 2015 10:35:49 +0900
-Message-ID: <1433727349-23330-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
+Subject: Re: [RESEND 1/2] usb: ehci-exynos: Make provision for vdd regulators
+Date: Mon, 08 Jun 2015 11:10:02 +0900
+Message-ID: <5574F97A.5030104@samsung.com>
+References: <1433683242-3945-1-git-send-email-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:27829 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750872AbbFHCKM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 7 Jun 2015 22:10:12 -0400
+In-reply-to: <1433683242-3945-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-During probe the regulator (if present) was enabled but not disabled in
-case of failure. So an unsuccessful probe lead to enabling the
-regulator which was actually not needed because the device was not
-enabled.
+On 07.06.2015 22:20, Anand Moon wrote:
+> Facilitate getting required 3.3V and 1.0V VDD supply for
+> EHCI controller on Exynos.
+> 
+> With the patches for regulators' nodes merged in 3.15:
+> c8c253f ARM: dts: Add regulator entries to smdk5420
+> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+> the exynos systems turn on only minimal number of regulators.
+> 
+> Until now, the VDD regulator supplies were either turned on
+> by the bootloader, or the regulators were enabled by default
+> in the kernel, so that the controller drivers did not need to
+> care about turning on these regulators on their own.
+> This was rather bad about these controller drivers.
+> So ensuring now that the controller driver requests the necessary
+> VDD regulators (if available, unless there are direct VDD rails),
+> and enable them so as to make them working.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> ---
+> Initial version of this patch was part of following series, though
+> they are not dependent on each other, resubmitting after rebasing.
+> 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266418.html
 
-Additionally each deferred probe lead to increase of regulator enable
-count so it would not be effectively disabled during removal of the
-device.
+So you just took Vivek's patch along with all the credits... That is not
+how we usually do this.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Fixes: 498d22f616f6 ("thermal: exynos: Support for TMU regulator defined at device tree")
-Cc: <stable@vger.kernel.org>
+I would expect that rebasing a patch won't change the author unless this
+is fine with Vivek.
 
----
+> ---
+>  .../devicetree/bindings/usb/exynos-usb.txt         |  2 +
+>  drivers/usb/host/ehci-exynos.c                     | 55 +++++++++++++++++++++-
+>  2 files changed, 56 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> index 9b4dbe3..776fa03 100644
+> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> @@ -23,6 +23,8 @@ Required properties:
+>  Optional properties:
+>   - samsung,vbus-gpio:  if present, specifies the GPIO that
+>     needs to be pulled up for the bus to be powered.
+> + - vdd33-supply: handle to 3.3V Vdd supply regulator for the controller.
+> + - vdd10-supply: handle to 1.0V Vdd supply regulator for the controller.
+>  
+>  Example:
+>  
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index df538fd..4f8f9d2 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/usb.h>
+>  #include <linux/usb/hcd.h>
+>  
+> @@ -45,6 +46,8 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+>  struct exynos_ehci_hcd {
+>  	struct clk *clk;
+>  	struct phy *phy[PHY_NUMBER];
+> +	struct regulator *vdd33;
+> +	struct regulator *vdd10;
+>  };
+>  
+>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+> @@ -170,7 +173,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>  
+>  	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+>  	if (err)
+> -		goto fail_clk;
+> +		goto fail_regulator1;
+> +
+> +	exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
+> +	if (!IS_ERR(exynos_ehci->vdd33)) {
+> +		err = regulator_enable(exynos_ehci->vdd33);
+> +		if (err) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to enable 3.3V Vdd supply\n");
+> +			goto fail_regulator1;
+> +		}
+> +	}
+> +
+> +	exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
+> +	if (!IS_ERR(exynos_ehci->vdd10)) {
+> +		err = regulator_enable(exynos_ehci->vdd10);
+> +		if (err) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to enable 1.0V Vdd supply\n");
+> +			goto fail_regulator2;
+> +		}
+> +	}
+>  
+>  skip_phy:
+>  
+> @@ -231,6 +254,10 @@ fail_add_hcd:
+>  fail_io:
+>  	clk_disable_unprepare(exynos_ehci->clk);
+>  fail_clk:
+> +	regulator_disable(exynos_ehci->vdd10);
+> +fail_regulator2:
+> +	regulator_disable(exynos_ehci->vdd33);
 
-I am not entirely convinced that this should go to stable. Leaving a
-regulator enabled in case of probe failure (no exynos TMU device) or
-after deferred probe (regulator won't be disabled during device removal)
-is not a critical issue, just leaks power.
----
- drivers/thermal/samsung/exynos_tmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+if (!IS_ERR()).
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 531f4b179871..13c3aceed19d 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1392,6 +1392,8 @@ err_clk_sec:
- 	if (!IS_ERR(data->clk_sec))
- 		clk_unprepare(data->clk_sec);
- err_sensor:
-+	if (!IS_ERR_OR_NULL(data->regulator))
-+		regulator_disable(data->regulator);
- 	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
- 
- 	return ret;
--- 
-1.9.1
+> +fail_regulator1:
+>  	usb_put_hcd(hcd);
+>  	return err;
+>  }
+> @@ -246,6 +273,11 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+>  
+>  	clk_disable_unprepare(exynos_ehci->clk);
+>  
+> +	if (!IS_ERR(exynos_ehci->vdd33))
+> +		regulator_disable(exynos_ehci->vdd33);
+> +	if (!IS_ERR(exynos_ehci->vdd10))
+> +		regulator_disable(exynos_ehci->vdd10);
+> +
+>  	usb_put_hcd(hcd);
+>  
+>  	return 0;
+> @@ -268,6 +300,11 @@ static int exynos_ehci_suspend(struct device *dev)
+>  
+>  	clk_disable_unprepare(exynos_ehci->clk);
+>  
+> +	if (!IS_ERR(exynos_ehci->vdd33))
+> +		regulator_disable(exynos_ehci->vdd33);
+> +	if (!IS_ERR(exynos_ehci->vdd10))
+> +		regulator_disable(exynos_ehci->vdd10);
+> +
 
+
+Is EHCI a wakeup source? If yes then how disabling regulators during
+suspend affects waking up process?
+
+Best regards,
+Krzysztof
