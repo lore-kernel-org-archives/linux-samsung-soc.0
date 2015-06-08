@@ -1,58 +1,92 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCHv2 2/2] ARM: exynos_defconfig: Enable CONFIG_LEDS_PWM for
- Odroid-XU3
-Date: Mon, 08 Jun 2015 17:11:16 +0200
-Message-ID: <20150608171116.258b0f42@amdc2363>
-References: <1433696621-4763-1-git-send-email-linux.amoon@gmail.com>
- <1433696621-4763-2-git-send-email-linux.amoon@gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v4 1/2] usb: ehci-exynos: Make provision for vdd regulators
+Date: Mon, 8 Jun 2015 11:17:13 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1506081111050.1574-100000@iolanthe.rowland.org>
+References: <1433761633-8542-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56182 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752526AbbFHPL0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Jun 2015 11:11:26 -0400
-In-reply-to: <1433696621-4763-2-git-send-email-linux.amoon@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433761633-8542-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Anand,
+On Mon, 8 Jun 2015, Vivek Gautam wrote:
 
-> Enable CONFIG_LEDS_PWM amd CONFIG_LEDS_TRIGGER_HEARTBEAT for
-> Odroid-XU3 board.
+> Facilitate getting required 3.3V and 1.0V VDD supply for
+> EHCI controller on Exynos.
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 6 ++++++
->  1 file changed, 6 insertions(+)
+> For example, patches for regulators' nodes:
+> c8c253f ARM: dts: Add regulator entries to smdk5420
+> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+> enable only minimum number of regulators on smdk5250.
 > 
-> diff --git a/arch/arm/configs/exynos_defconfig
-> b/arch/arm/configs/exynos_defconfig index 1b7253b..2bbdf80 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -165,6 +165,12 @@ CONFIG_MMC_SDHCI_S3C_DMA=y
->  CONFIG_MMC_DW=y
->  CONFIG_MMC_DW_IDMAC=y
->  CONFIG_MMC_DW_EXYNOS=y
-> +CONFIG_NEW_LEDS=y
-> +CONFIG_LEDS_CLASS=m
-> +CONFIG_LEDS_PWM=m
-> +CONFIG_LEDS_TRIGGERS=y
-> +CONFIG_LEDS_TRIGGER_TIMER=m
-> +CONFIG_LEDS_TRIGGER_HEARTBEAT=m
->  CONFIG_RTC_CLASS=y
->  CONFIG_RTC_DRV_MAX77686=y
->  CONFIG_RTC_DRV_MAX77802=y
+> So ensuring now that the controller driver requests the necessary
+> VDD regulators (if available, unless there are direct VDD rails),
+> and enable them so as to make them working on exynos systems.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 
-Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+Something about this looks a little fishy...
 
--- 
-Best regards,
+> @@ -170,7 +173,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>  
+>  	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+>  	if (err)
+> -		goto fail_clk;
+> +		goto fail_regulator1;
+> +
+> +	exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
 
-Lukasz Majewski
+Just before this region of code, there is:
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+	if (of_device_is_compatible(pdev->dev.of_node,
+					"samsung,exynos5440-ehci"))
+		goto skip_phy;
+
+If that "goto" is taken, exynos_ehci->vdd33 and ->vdd10 will be NULL, 
+not an ERR_PTR code.
+
+> +	if (!IS_ERR(exynos_ehci->vdd33)) {
+> +		err = regulator_enable(exynos_ehci->vdd33);
+> +		if (err) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to enable 3.3V Vdd supply\n");
+> +			goto fail_regulator1;
+> +		}
+> +	}
+> +
+> +	exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
+> +	if (!IS_ERR(exynos_ehci->vdd10)) {
+> +		err = regulator_enable(exynos_ehci->vdd10);
+> +		if (err) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to enable 1.0V Vdd supply\n");
+> +			goto fail_regulator2;
+> +		}
+> +	}
+>  
+>  skip_phy:
+>  
+> @@ -231,6 +254,12 @@ fail_add_hcd:
+>  fail_io:
+>  	clk_disable_unprepare(exynos_ehci->clk);
+>  fail_clk:
+> +	if (!IS_ERR(exynos_ehci->vdd10))
+> +		regulator_disable(exynos_ehci->vdd10);
+> +fail_regulator2:
+> +	if (!IS_ERR(exynos_ehci->vdd33))
+> +		regulator_disable(exynos_ehci->vdd33);
+
+Which means these regulator_disable() calls will crash when they 
+dereference a NULL pointer.
+
+I think it would be simpler in the end to let a NULL pointer mean the 
+regulator isn't present.  If devm_regulator_get_optional() returns an 
+error, convert it to NULL (or don't do the assignment to 
+exynos_ehci->vdd?? in the first place).
+
+The same criticism applies to the other patch in this series.
+
+Alan Stern
