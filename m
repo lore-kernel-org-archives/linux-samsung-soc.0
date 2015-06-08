@@ -1,53 +1,49 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: Re: [PATCH] extcon: max77843: Clear IRQ bits state before request
- IRQ
-Date: Mon, 08 Jun 2015 01:29:50 +0000 (GMT)
-Message-ID: <411808660.660571433726990534.JavaMail.weblogic@epmlwas07c>
-Reply-To: myungjoo.ham@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
-Cc: =?utf-8?Q?=EA=B9=80=EC=9E=AC=EC=9B=90?= <jaewon02.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] thermal: exynos: Disable the regulator on probe failure
+Date: Mon, 08 Jun 2015 10:35:49 +0900
+Message-ID: <1433727349-23330-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PiAgIA0KPiAgT24gMDYvMDUvMjAxNSAwMTo1NCBQTSwgTXl1bmdKb28gSGFtIHdyb3RlOg0KPiA+
-PiAgIA0KPiA+PiAgSVJRIHNpZ25hbCBiZWZvcmUgZHJpdmVyIHByb2JlIGlzIG5lZWRsZXNzIGJl
-Y2F1c2UgZHJpdmVyIHNlbmRzDQo+ID4+IGN1cnJlbnQgc3RhdGUgYWZ0ZXIgcGxhdGZvcm0gYm9v
-dGluZyBkb25lLg0KPiA+PiBTbywgdGhpcyBwYXRjaCBjbGVhcnMgTVVJQyBJUlEgYml0cyBiZWZv
-cmUgcmVxdWVzdCBJUlEuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IEphZXdvbiBLaW0gPGph
-ZXdvbjAyLmtpbUBzYW1zdW5nLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL2V4dGNvbi9l
-eHRjb24tbWF4Nzc4NDMuYyB8ICAgIDkgKysrKysrKysrDQo+ID4+ICAxIGZpbGUgY2hhbmdlZCwg
-OSBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gUTEuIElzIHRoaXMgYmVjYXVzZSB0aGUgcGVuZGlu
-ZyBiaXRzIGFyZSBVU0VMRVNTPw0KPiA+IG9yIGJlY2F1c2UgdGhlIHBlbmRlaW5nIGJpdHMgaW5j
-dXJzIElOQ09SUkVDVCBiZWhhdmlvcnM/DQo+IA0KPiBUaGUgbWF4Nzc4NDMgZGF0YXNoZWV0IGlu
-Y2x1ZGVzIGZvbGxvd2luZyBzZW50ZW5jZToNCj4gLSAiQWxsIGJpdHMgYXJlIGNsZWFyZWQgYWZ0
-ZXIgYSByZWFkIiBhYm91dCBJTlQxL0lOVDIvSU5UMyByZWdpc3Rlci4NCj4gVGhlcmUgYXJlIG5v
-IHByb2JsZW0gYWJvdXQgaW50ZXJydXB0IGhhbmRsaW5nLg0KPiANCj4gPiANCj4gPiBRMi4gRG9l
-cyBjbGVhcmluZyAoYnkgcmVhZGluZykgSU5UMSBkbyBldmVyeXRoaW5nIHlvdSBuZWVkPw0KPiA+
-IFdoYXQgYWJvdXQgSU5UMiBhbmQgSU5UMz8NCj4gDQo+IFRoZSBNQVhJTSBNQVg3Nzg0MyBNVUlD
-IHN1cHBvcnQgdGhlIG9uZSBtb3JlIGludGVycnVwdHMgKGUuZy4sIEFEQzFLLCBWQlZvbHQsIENo
-Z1R5cCAuLi4pLg0KPiBUaGUgZWFjaCBpbnRlcnJ1cHQgaXMgaW5jbHVkZWQgaW4gdGhlIG9uZSBy
-ZWdpc3RlciBhbW9uZyBJTlQxLzIvMy4NCj4gDQo+IFRoaXMgcGF0Y2ggY2xlYXIgdGhlIGFsbCBp
-bnRlcnJ1cHRzIG9mIE1BWDc3ODQzIGJlZm9yZSByZXF1ZXN0aW5nIHRoZSBpbnRlcnJ1cHRzLg0K
-PiANCj4gPiANCj4gPiBRMy4gSSBwcmVzdW1lIHRoYXQgImRyaXZlciBzZW5kcyBjdXJyZW50IHN0
-YXRlIGFmdGVyLi4uIiBpcw0KPiA+IGNvbWluZyBmcm9tIHRoZSBpbnZva2F0aW9uIG9mICJxdWV1
-ZV9kZWxheWVkX3dvcmsoKSIgYXQgdGhlIGVuZCANCj4gPiBvZiB0aGUgcHJvYmUgZnVuY3Rpb24u
-IEl0IGFwcGVhcnMgdGhhdCB5b3UgYXJlIG9ubHkgc2VydmluZw0KPiA+IHRoZSBwZW5kaW5nIHN0
-YXR1cyBvZiAiY2FibGUgZGV0ZWN0aW9uIiB3aXRoIGl0IHdoaWxlIElOVDENCj4gPiBzZWVtcyB0
-byBoYXZlIG1vcmUgZnVuY3Rpb25hbGl0aWVzLiBEb2VzIHRoYXQgZGVsYXllZCB3b3JrDQo+ID4g
-ZG8gZXZlcnl0aGluZyB0aGF0IGFyZSBwZW5kaW5nLCByZWFsbHk/DQo+IA0KPiBXaGVuIGNvbXBs
-ZXRlZCBrZXJuZWwgYm9vdGluZywgdGhlIGRlbGF5ZWQgd29yayBvZiBleHRjb24tbWF4Nzc4NDMu
-YyBkcml2ZXINCj4gdXNlIHRoZSBNQVg3Nzg0M19NVUlDX1NUQVRVU3ggcmVnaXN0ZXIgdG8gZGV0
-ZWN0IHRoZSB0eXBlIG9mIGNvbm5lY3RlZA0KPiBleHRlcm5hbCBjb25uZWN0b3JzLiBTbywgdGhl
-cmUgYXJlIG5vIHByb2JsbWUgYWJvdXQgY2xlYXJpbmcgYWxsIGJpdHMgb2YgSU5UMS8yLzMgaW50
-ZXJydXB0IHJlZ2lzdGVyLg0KPiANCj4gSWYgdXNlci1zcGFjZSBwbGF0Zm9ybSBkb24ndCBmaW5p
-c2ggdGhlIGluaXRpYWxpemF0aW9uIG9mIGFsbCB1c2VyLXByb2Nlc3MgZGFlbW9ucw0KPiBhbmQg
-ZXh0Y29uIGRyaXZlciBzZW5kIHRoZSB1ZXZlbnQgZHVyaW5nIG9ubHkga2VybmVsIGJvb3Rpbmcs
-IHRoZSB1ZXZlbnQgaXMgbm90IGhhbmRsZWQNCj4gb24gdXNlci1zcGFjZSBkYWVtb25zLg0KPiAN
-Cj4gVGhhbmtzLA0KPiBDaGFud29vIENob2kNCg0KT2suIExvb2tzIEdvb2QuIFRoYW5rcyBmb3Ig
-dGhlIGV4cGxhbmF0aW9uLg0KDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxteXVuZ2pvby5oYW1A
-c2Ftc3VuZy5jb20+DQoNCg0K
+During probe the regulator (if present) was enabled but not disabled in
+case of failure. So an unsuccessful probe lead to enabling the
+regulator which was actually not needed because the device was not
+enabled.
+
+Additionally each deferred probe lead to increase of regulator enable
+count so it would not be effectively disabled during removal of the
+device.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Fixes: 498d22f616f6 ("thermal: exynos: Support for TMU regulator defined at device tree")
+Cc: <stable@vger.kernel.org>
+
+---
+
+I am not entirely convinced that this should go to stable. Leaving a
+regulator enabled in case of probe failure (no exynos TMU device) or
+after deferred probe (regulator won't be disabled during device removal)
+is not a critical issue, just leaks power.
+---
+ drivers/thermal/samsung/exynos_tmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 531f4b179871..13c3aceed19d 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -1392,6 +1392,8 @@ err_clk_sec:
+ 	if (!IS_ERR(data->clk_sec))
+ 		clk_unprepare(data->clk_sec);
+ err_sensor:
++	if (!IS_ERR_OR_NULL(data->regulator))
++		regulator_disable(data->regulator);
+ 	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+ 
+ 	return ret;
+-- 
+1.9.1
+
