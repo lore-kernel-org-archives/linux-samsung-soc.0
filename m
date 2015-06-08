@@ -1,51 +1,133 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/3] drm/exynos: remove SoC checking code
-Date: Mon, 08 Jun 2015 12:15:42 +0200
-Message-ID: <1433758542-9843-4-git-send-email-a.hajda@samsung.com>
-References: <1433758542-9843-1-git-send-email-a.hajda@samsung.com>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RESEND 1/2] usb: ehci-exynos: Make provision for vdd regulators
+Date: Mon, 8 Jun 2015 15:50:06 +0530
+Message-ID: <CANAwSgTi114wO63-sx=UmbxPerqKvstq=coVyqhRkzX44CDe_w@mail.gmail.com>
+References: <1433683242-3945-1-git-send-email-linux.amoon@gmail.com>
+ <5574F97A.5030104@samsung.com> <CANAwSgTjx8uxyOTW8uuiqrcNzF+UwLMmML2OcDgG5Ku_56=vJQ@mail.gmail.com>
+ <CAJKOXPfDmt5VMqr-P+OpWy1+jz675CFRPmtS_N0HjN4tWxfwtA@mail.gmail.com> <44B5E2FDCD3244AAA418BB8EC28FEA25@sisodomain.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1433758542-9843-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <44B5E2FDCD3244AAA418BB8EC28FEA25-htTAPpqcxwk4Q++5jOxPmw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U29DIGNoZWNraW5nIGNvZGUgaXMgbm90IG5lY2Vzc2FyeSBhbnltb3JlLCBhcyBleHlub3NfZHJt
-X21hdGNoX2FkZCBhbmQKZXh5bm9zX2RybV9wbGF0Zm9ybV9wcm9iZSBhbHJlYWR5IHByb3Blcmx5
-IGhhbmRsZXMgc2l0dWF0aW9uIHdoZW4gdGhlcmUgYXJlCm5vIEV4eW5vcyBEUk0gY29tcG9uZW50
-cy4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0t
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgMjcgKy0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDI2IGRl
-bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCBj
-ZmJmYjZjLi45ZWM0MDI3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5j
-CkBAIC01NjAsMzQgKzU2MCw5IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBleHlub3NfZHJtX3VucmVn
-aXN0ZXJfbm9uX2ttc19kcml2ZXJzKHZvaWQpCiAJCQkJCUFSUkFZX1NJWkUoZXh5bm9zX2RybV9u
-b25fa21zX2RyaXZlcnMpKTsKIH0KIAotc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBzdHJpbmdz
-W10gPSB7Ci0JInNhbXN1bmcsZXh5bm9zMyIsCi0JInNhbXN1bmcsZXh5bm9zNCIsCi0JInNhbXN1
-bmcsZXh5bm9zNSIsCi0JInNhbXN1bmcsZXh5bm9zNyIsCi19OwotCiBzdGF0aWMgaW50IGV4eW5v
-c19kcm1faW5pdCh2b2lkKQogewotCWJvb2wgaXNfZXh5bm9zID0gZmFsc2U7Ci0JaW50IHJldCwg
-aTsKLQotCS8qCi0JICogUmVnaXN0ZXIgZGV2aWNlIG9iamVjdCBvbmx5IGluIGNhc2Ugb2YgRXh5
-bm9zIFNvQy4KLQkgKgotCSAqIEJlbG93IGNvZGVzIHJlc29sdmVzIHRlbXBvcmFyaWx5IGluZmlu
-aXRlIGxvb3AgaXNzdWUgaW5jdXJyZWQKLQkgKiBieSBFeHlub3MgZHJtIGRyaXZlciB3aGVuIHVz
-aW5nIG11bHRpLXBsYXRmb3JtIGtlcm5lbC4KLQkgKiBTbyB0aGVzZSBjb2RlcyB3aWxsIGJlIHJl
-cGxhY2VkIHdpdGggbW9yZSBnZW5lcmljIHdheSBsYXRlci4KLQkgKi8KLQlmb3IgKGkgPSAwOyBp
-IDwgQVJSQVlfU0laRShzdHJpbmdzKTsgaSsrKSB7Ci0JCWlmIChvZl9tYWNoaW5lX2lzX2NvbXBh
-dGlibGUoc3RyaW5nc1tpXSkpIHsKLQkJCWlzX2V4eW5vcyA9IHRydWU7Ci0JCQlicmVhazsKLQkJ
-fQotCX0KLQotCWlmICghaXNfZXh5bm9zKQotCQlyZXR1cm4gLUVOT0RFVjsKKwlpbnQgcmV0Owog
-CiAJcmV0ID0gZXh5bm9zX2RybV9yZWdpc3Rlcl9kZXZpY2VzKCk7CiAJaWYgKHJldCkKLS0gCjEu
-OS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 8 June 2015 at 10:58, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi,
+>
+>
+>
+> On Monday, June 08, 2015 10:44 AM, "Krzysztof Kozlowski"
+> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>
+> my apologies for being late in replying to this thread.
+>
+>> 2015-06-08 13:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>>
+>>> Hi Krzysztof ,
+>>>
+>>> On 8 June 2015 at 07:40, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> wrote:
+>>>>
+>>>> On 07.06.2015 22:20, Anand Moon wrote:
+>>>>>
+>>>>> Facilitate getting required 3.3V and 1.0V VDD supply for
+>>>>> EHCI controller on Exynos.
+>>>>>
+>>>>> With the patches for regulators' nodes merged in 3.15:
+>>>>> c8c253f ARM: dts: Add regulator entries to smdk5420
+>>>>> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+>>>>> the exynos systems turn on only minimal number of regulators.
+>>>>>
+>>>>> Until now, the VDD regulator supplies were either turned on
+>>>>> by the bootloader, or the regulators were enabled by default
+>>>>> in the kernel, so that the controller drivers did not need to
+>>>>> care about turning on these regulators on their own.
+>>>>> This was rather bad about these controller drivers.
+>>>>> So ensuring now that the controller driver requests the necessary
+>>>>> VDD regulators (if available, unless there are direct VDD rails),
+>>>>> and enable them so as to make them working.
+>>>>>
+>>>>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>>> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+>>>>> ---
+>>>>> Initial version of this patch was part of following series, though
+>>>>> they are not dependent on each other, resubmitting after rebasing.
+>>>>>
+>>>>>
+>>>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266418.html
+>>>>
+>>>>
+>>>> So you just took Vivek's patch along with all the credits... That is not
+>>>> how we usually do this.
+>>>>
+>>>> I would expect that rebasing a patch won't change the author unless this
+>>>> is fine with Vivek.
+>>>>
+>>>
+>>> Sorry If I have done some mistake on my part.
+>>> I just looked at below mail chain. Before I send it.
+>>>
+>>> http://www.spinics.net/lists/linux-samsung-soc/msg44136.html
+>>
+>>
+>> I don't get it. The patch you are referring to has a proper "From"
+>> field. So please use it as an example.
+>>
+>>>
+>>> I don't want to take any credit out of it. I just re-base on the new
+>>> kernel.
+>
+> Perhaps, you would have maintained the authorship !
+>
+>>> I could not test this patch as it meant for exynos5440 boards.
+>>
+>>
+>> Are you sure? I think the driver is used on almost all of Exynos SoCs
+>> (Exynos4, Exynos5250, Exynos542x).
+>
+>
+> That's correct, as pointed by Krzysztof Kozlowski, the driver is same for
+> Exynos4 and Exynos5 series
+> of SoCs.
+>
+>> Untested code should not go to the kernel. Additionally you should
+>> mark it as not-tested. Marking such patch as non-tested could help you
+>> finding some independent tests (tests performed by someone else).
+>>
+>> To summarize my point of view:
+>> 1. Unless Vivek's says otherwise, please give him the credits with
+>> proper "from" field.
+>> 2. Issues mentioned in previous mail should be addressed (missing
+>> IS_ERR(), how disabling the regulator during suspend affects waking
+>> up).
+>> 3. The patchset must be tested, even after rebasing.
+>
+>
+> Unfortunately, I got busy  with a different project and lost track of the
+> patches posted upstream.
+> If it's not too late I can post a rebased version of the patch with previous
+> review comments addressed.
+>
+>>
+>> Best regards,
+>> Krzysztof
+>
+>
+
+Hi All,
+
+I have learned my lesson not to interfere in others work.
+It will never happen from my side again.
+
+Please accept my apology.
+
+-Anand Moon
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
