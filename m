@@ -1,67 +1,32 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH] thermal: exynos: Disable the regulator on probe failure
-Date: Mon, 08 Jun 2015 18:14:59 +0200
-Message-ID: <20150608181459.454c9067@amdc2363>
-References: <1433727349-23330-1-git-send-email-k.kozlowski@samsung.com>
+From: Alexander Holler <holler@ahsoftware.de>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Mon, 08 Jun 2015 20:14:37 +0200
+Message-ID: <5575DB8D.50000@ahsoftware.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de> <557589D9.1050008@melag.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <1433727349-23330-1-git-send-email-k.kozlowski@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from h1446028.stratoserver.net ([85.214.92.142]:48645 "EHLO
+	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752750AbbFHSO5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Jun 2015 14:14:57 -0400
+In-Reply-To: <557589D9.1050008@melag.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dan Williams <dan.j.williams@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel>
 
-Hi Krzysztof,
+Am 08.06.2015 um 14:26 schrieb Enrico Weigelt, metux IT consult:
+> Am 04.06.2015 um 22:39 schrieb Alexander Holler:
+>
+>  > As it seems to have been forgotten or overread, I've mentioned in my
+>> series of patches last year that, with a few changes, it's possible to
+>> let the algorithm I've used (dfs) to spit out all drivers which can be
+>> initialized in parallel.
+>
+> Unfortunately, I've missed that ... could you please resend you patches?
+> Boot time reduction is one of the topics on my 2do in several weeks.
 
-> During probe the regulator (if present) was enabled but not disabled
-> in case of failure. So an unsuccessful probe lead to enabling the
-> regulator which was actually not needed because the device was not
-> enabled.
-> 
-> Additionally each deferred probe lead to increase of regulator enable
-> count so it would not be effectively disabled during removal of the
-> device.
-
-Thanks for catching this.
-
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Fixes: 498d22f616f6 ("thermal: exynos: Support for TMU regulator
-> defined at device tree") Cc: <stable@vger.kernel.org>
-> 
-> ---
-> 
-> I am not entirely convinced that this should go to stable. Leaving a
-> regulator enabled in case of probe failure (no exynos TMU device) or
-> after deferred probe (regulator won't be disabled during device
-> removal) is not a critical issue, just leaks power.
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> b/drivers/thermal/samsung/exynos_tmu.c index
-> 531f4b179871..13c3aceed19d 100644 ---
-> a/drivers/thermal/samsung/exynos_tmu.c +++
-> b/drivers/thermal/samsung/exynos_tmu.c @@ -1392,6 +1392,8 @@
-> err_clk_sec: if (!IS_ERR(data->clk_sec))
->  		clk_unprepare(data->clk_sec);
->  err_sensor:
-> +	if (!IS_ERR_OR_NULL(data->regulator))
-> +		regulator_disable(data->regulator);
->  	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
->  
->  	return ret;
-
-Acked-by: Lukasz Majewski <l.majewski@samsung.com>
-
-I will test it and afterwards add to samsung-thermal tree.
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+https://lkml.org/lkml/2014/5/12/452
