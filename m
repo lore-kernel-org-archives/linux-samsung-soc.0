@@ -1,177 +1,88 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [RESEND 1/2] usb: ehci-exynos: Make provision for vdd regulators
-Date: Mon, 8 Jun 2015 09:51:08 +0530
-Message-ID: <CANAwSgTjx8uxyOTW8uuiqrcNzF+UwLMmML2OcDgG5Ku_56=vJQ@mail.gmail.com>
-References: <1433683242-3945-1-git-send-email-linux.amoon@gmail.com> <5574F97A.5030104@samsung.com>
+Date: Mon, 8 Jun 2015 14:14:52 +0900
+Message-ID: <CAJKOXPfDmt5VMqr-P+OpWy1+jz675CFRPmtS_N0HjN4tWxfwtA@mail.gmail.com>
+References: <1433683242-3945-1-git-send-email-linux.amoon@gmail.com>
+	<5574F97A.5030104@samsung.com>
+	<CANAwSgTjx8uxyOTW8uuiqrcNzF+UwLMmML2OcDgG5Ku_56=vJQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5574F97A.5030104-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANAwSgTjx8uxyOTW8uuiqrcNzF+UwLMmML2OcDgG5Ku_56=vJQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof ,
+2015-06-08 13:21 GMT+09:00 Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> Hi Krzysztof ,
+>
+> On 8 June 2015 at 07:40, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> On 07.06.2015 22:20, Anand Moon wrote:
+>>> Facilitate getting required 3.3V and 1.0V VDD supply for
+>>> EHCI controller on Exynos.
+>>>
+>>> With the patches for regulators' nodes merged in 3.15:
+>>> c8c253f ARM: dts: Add regulator entries to smdk5420
+>>> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+>>> the exynos systems turn on only minimal number of regulators.
+>>>
+>>> Until now, the VDD regulator supplies were either turned on
+>>> by the bootloader, or the regulators were enabled by default
+>>> in the kernel, so that the controller drivers did not need to
+>>> care about turning on these regulators on their own.
+>>> This was rather bad about these controller drivers.
+>>> So ensuring now that the controller driver requests the necessary
+>>> VDD regulators (if available, unless there are direct VDD rails),
+>>> and enable them so as to make them working.
+>>>
+>>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+>>> ---
+>>> Initial version of this patch was part of following series, though
+>>> they are not dependent on each other, resubmitting after rebasing.
+>>>
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266418.html
+>>
+>> So you just took Vivek's patch along with all the credits... That is not
+>> how we usually do this.
+>>
+>> I would expect that rebasing a patch won't change the author unless this
+>> is fine with Vivek.
+>>
+>
+> Sorry If I have done some mistake on my part.
+> I just looked at below mail chain. Before I send it.
+>
+> http://www.spinics.net/lists/linux-samsung-soc/msg44136.html
 
-On 8 June 2015 at 07:40, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 07.06.2015 22:20, Anand Moon wrote:
->> Facilitate getting required 3.3V and 1.0V VDD supply for
->> EHCI controller on Exynos.
->>
->> With the patches for regulators' nodes merged in 3.15:
->> c8c253f ARM: dts: Add regulator entries to smdk5420
->> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
->> the exynos systems turn on only minimal number of regulators.
->>
->> Until now, the VDD regulator supplies were either turned on
->> by the bootloader, or the regulators were enabled by default
->> in the kernel, so that the controller drivers did not need to
->> care about turning on these regulators on their own.
->> This was rather bad about these controller drivers.
->> So ensuring now that the controller driver requests the necessary
->> VDD regulators (if available, unless there are direct VDD rails),
->> and enable them so as to make them working.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
->> ---
->> Initial version of this patch was part of following series, though
->> they are not dependent on each other, resubmitting after rebasing.
->>
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266418.html
->
-> So you just took Vivek's patch along with all the credits... That is not
-> how we usually do this.
->
-> I would expect that rebasing a patch won't change the author unless this
-> is fine with Vivek.
->
+I don't get it. The patch you are referring to has a proper "From"
+field. So please use it as an example.
 
-Sorry If I have done some mistake on my part.
-I just looked at below mail chain. Before I send it.
+>
+> I don't want to take any credit out of it. I just re-base on the new kernel.
+> I could not test this patch as it meant for exynos5440 boards.
 
-http://www.spinics.net/lists/linux-samsung-soc/msg44136.html
+Are you sure? I think the driver is used on almost all of Exynos SoCs
+(Exynos4, Exynos5250, Exynos542x).
 
-I don't want to take any credit out of it. I just re-base on the new kernel.
-I could not test this patch as it meant for exynos5440 boards.
+Untested code should not go to the kernel. Additionally you should
+mark it as not-tested. Marking such patch as non-tested could help you
+finding some independent tests (tests performed by someone else).
 
--Anand Moon
+To summarize my point of view:
+1. Unless Vivek's says otherwise, please give him the credits with
+proper "from" field.
+2. Issues mentioned in previous mail should be addressed (missing
+IS_ERR(), how disabling the regulator during suspend affects waking
+up).
+3. The patchset must be tested, even after rebasing.
 
->> ---
->>  .../devicetree/bindings/usb/exynos-usb.txt         |  2 +
->>  drivers/usb/host/ehci-exynos.c                     | 55 +++++++++++++++++++++-
->>  2 files changed, 56 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
->> index 9b4dbe3..776fa03 100644
->> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
->> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
->> @@ -23,6 +23,8 @@ Required properties:
->>  Optional properties:
->>   - samsung,vbus-gpio:  if present, specifies the GPIO that
->>     needs to be pulled up for the bus to be powered.
->> + - vdd33-supply: handle to 3.3V Vdd supply regulator for the controller.
->> + - vdd10-supply: handle to 1.0V Vdd supply regulator for the controller.
->>
->>  Example:
->>
->> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
->> index df538fd..4f8f9d2 100644
->> --- a/drivers/usb/host/ehci-exynos.c
->> +++ b/drivers/usb/host/ehci-exynos.c
->> @@ -21,6 +21,7 @@
->>  #include <linux/of_gpio.h>
->>  #include <linux/phy/phy.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/regulator/consumer.h>
->>  #include <linux/usb.h>
->>  #include <linux/usb/hcd.h>
->>
->> @@ -45,6 +46,8 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
->>  struct exynos_ehci_hcd {
->>       struct clk *clk;
->>       struct phy *phy[PHY_NUMBER];
->> +     struct regulator *vdd33;
->> +     struct regulator *vdd10;
->>  };
->>
->>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
->> @@ -170,7 +173,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->>
->>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
->>       if (err)
->> -             goto fail_clk;
->> +             goto fail_regulator1;
->> +
->> +     exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
->> +     if (!IS_ERR(exynos_ehci->vdd33)) {
->> +             err = regulator_enable(exynos_ehci->vdd33);
->> +             if (err) {
->> +                     dev_err(&pdev->dev,
->> +                             "Failed to enable 3.3V Vdd supply\n");
->> +                     goto fail_regulator1;
->> +             }
->> +     }
->> +
->> +     exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
->> +     if (!IS_ERR(exynos_ehci->vdd10)) {
->> +             err = regulator_enable(exynos_ehci->vdd10);
->> +             if (err) {
->> +                     dev_err(&pdev->dev,
->> +                             "Failed to enable 1.0V Vdd supply\n");
->> +                     goto fail_regulator2;
->> +             }
->> +     }
->>
->>  skip_phy:
->>
->> @@ -231,6 +254,10 @@ fail_add_hcd:
->>  fail_io:
->>       clk_disable_unprepare(exynos_ehci->clk);
->>  fail_clk:
->> +     regulator_disable(exynos_ehci->vdd10);
->> +fail_regulator2:
->> +     regulator_disable(exynos_ehci->vdd33);
->
-> if (!IS_ERR()).
->
->> +fail_regulator1:
->>       usb_put_hcd(hcd);
->>       return err;
->>  }
->> @@ -246,6 +273,11 @@ static int exynos_ehci_remove(struct platform_device *pdev)
->>
->>       clk_disable_unprepare(exynos_ehci->clk);
->>
->> +     if (!IS_ERR(exynos_ehci->vdd33))
->> +             regulator_disable(exynos_ehci->vdd33);
->> +     if (!IS_ERR(exynos_ehci->vdd10))
->> +             regulator_disable(exynos_ehci->vdd10);
->> +
->>       usb_put_hcd(hcd);
->>
->>       return 0;
->> @@ -268,6 +300,11 @@ static int exynos_ehci_suspend(struct device *dev)
->>
->>       clk_disable_unprepare(exynos_ehci->clk);
->>
->> +     if (!IS_ERR(exynos_ehci->vdd33))
->> +             regulator_disable(exynos_ehci->vdd33);
->> +     if (!IS_ERR(exynos_ehci->vdd10))
->> +             regulator_disable(exynos_ehci->vdd10);
->> +
->
->
-> Is EHCI a wakeup source? If yes then how disabling regulators during
-> suspend affects waking up process?
->
-> Best regards,
-> Krzysztof
->
+Best regards,
+Krzysztof
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
