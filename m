@@ -1,38 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Set max17047 over heat and over voltage
- thresholds
-Date: Mon, 08 Jun 2015 10:11:39 +0900
-Message-ID: <1433725899-13849-2-git-send-email-k.kozlowski@samsung.com>
-References: <1433725899-13849-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1433725899-13849-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: Re: [PATCH] extcon: max77843: Clear IRQ bits state before request
+ IRQ
+Date: Mon, 08 Jun 2015 01:29:50 +0000 (GMT)
+Message-ID: <411808660.660571433726990534.JavaMail.weblogic@epmlwas07c>
+Reply-To: myungjoo.ham@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
+Cc: =?utf-8?Q?=EA=B9=80=EC=9E=AC=EC=9B=90?= <jaewon02.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add some safe values for over head and over voltage. The Trats2 uses 3.8
-V battery and during testing it operated properly under 4.48 V.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 0b228ee14c64..8a87d39a28a0 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -595,6 +595,9 @@
- 			interrupt-parent = <&gpx2>;
- 			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
- 			reg = <0x36>;
-+
-+			maxim,over-heat-temp = <700>;
-+			maxim,over-volt = <4500>;
- 		};
- 	};
- 
--- 
-1.9.1
-
+PiAgIA0KPiAgT24gMDYvMDUvMjAxNSAwMTo1NCBQTSwgTXl1bmdKb28gSGFtIHdyb3RlOg0KPiA+
+PiAgIA0KPiA+PiAgSVJRIHNpZ25hbCBiZWZvcmUgZHJpdmVyIHByb2JlIGlzIG5lZWRsZXNzIGJl
+Y2F1c2UgZHJpdmVyIHNlbmRzDQo+ID4+IGN1cnJlbnQgc3RhdGUgYWZ0ZXIgcGxhdGZvcm0gYm9v
+dGluZyBkb25lLg0KPiA+PiBTbywgdGhpcyBwYXRjaCBjbGVhcnMgTVVJQyBJUlEgYml0cyBiZWZv
+cmUgcmVxdWVzdCBJUlEuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IEphZXdvbiBLaW0gPGph
+ZXdvbjAyLmtpbUBzYW1zdW5nLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL2V4dGNvbi9l
+eHRjb24tbWF4Nzc4NDMuYyB8ICAgIDkgKysrKysrKysrDQo+ID4+ICAxIGZpbGUgY2hhbmdlZCwg
+OSBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4gUTEuIElzIHRoaXMgYmVjYXVzZSB0aGUgcGVuZGlu
+ZyBiaXRzIGFyZSBVU0VMRVNTPw0KPiA+IG9yIGJlY2F1c2UgdGhlIHBlbmRlaW5nIGJpdHMgaW5j
+dXJzIElOQ09SUkVDVCBiZWhhdmlvcnM/DQo+IA0KPiBUaGUgbWF4Nzc4NDMgZGF0YXNoZWV0IGlu
+Y2x1ZGVzIGZvbGxvd2luZyBzZW50ZW5jZToNCj4gLSAiQWxsIGJpdHMgYXJlIGNsZWFyZWQgYWZ0
+ZXIgYSByZWFkIiBhYm91dCBJTlQxL0lOVDIvSU5UMyByZWdpc3Rlci4NCj4gVGhlcmUgYXJlIG5v
+IHByb2JsZW0gYWJvdXQgaW50ZXJydXB0IGhhbmRsaW5nLg0KPiANCj4gPiANCj4gPiBRMi4gRG9l
+cyBjbGVhcmluZyAoYnkgcmVhZGluZykgSU5UMSBkbyBldmVyeXRoaW5nIHlvdSBuZWVkPw0KPiA+
+IFdoYXQgYWJvdXQgSU5UMiBhbmQgSU5UMz8NCj4gDQo+IFRoZSBNQVhJTSBNQVg3Nzg0MyBNVUlD
+IHN1cHBvcnQgdGhlIG9uZSBtb3JlIGludGVycnVwdHMgKGUuZy4sIEFEQzFLLCBWQlZvbHQsIENo
+Z1R5cCAuLi4pLg0KPiBUaGUgZWFjaCBpbnRlcnJ1cHQgaXMgaW5jbHVkZWQgaW4gdGhlIG9uZSBy
+ZWdpc3RlciBhbW9uZyBJTlQxLzIvMy4NCj4gDQo+IFRoaXMgcGF0Y2ggY2xlYXIgdGhlIGFsbCBp
+bnRlcnJ1cHRzIG9mIE1BWDc3ODQzIGJlZm9yZSByZXF1ZXN0aW5nIHRoZSBpbnRlcnJ1cHRzLg0K
+PiANCj4gPiANCj4gPiBRMy4gSSBwcmVzdW1lIHRoYXQgImRyaXZlciBzZW5kcyBjdXJyZW50IHN0
+YXRlIGFmdGVyLi4uIiBpcw0KPiA+IGNvbWluZyBmcm9tIHRoZSBpbnZva2F0aW9uIG9mICJxdWV1
+ZV9kZWxheWVkX3dvcmsoKSIgYXQgdGhlIGVuZCANCj4gPiBvZiB0aGUgcHJvYmUgZnVuY3Rpb24u
+IEl0IGFwcGVhcnMgdGhhdCB5b3UgYXJlIG9ubHkgc2VydmluZw0KPiA+IHRoZSBwZW5kaW5nIHN0
+YXR1cyBvZiAiY2FibGUgZGV0ZWN0aW9uIiB3aXRoIGl0IHdoaWxlIElOVDENCj4gPiBzZWVtcyB0
+byBoYXZlIG1vcmUgZnVuY3Rpb25hbGl0aWVzLiBEb2VzIHRoYXQgZGVsYXllZCB3b3JrDQo+ID4g
+ZG8gZXZlcnl0aGluZyB0aGF0IGFyZSBwZW5kaW5nLCByZWFsbHk/DQo+IA0KPiBXaGVuIGNvbXBs
+ZXRlZCBrZXJuZWwgYm9vdGluZywgdGhlIGRlbGF5ZWQgd29yayBvZiBleHRjb24tbWF4Nzc4NDMu
+YyBkcml2ZXINCj4gdXNlIHRoZSBNQVg3Nzg0M19NVUlDX1NUQVRVU3ggcmVnaXN0ZXIgdG8gZGV0
+ZWN0IHRoZSB0eXBlIG9mIGNvbm5lY3RlZA0KPiBleHRlcm5hbCBjb25uZWN0b3JzLiBTbywgdGhl
+cmUgYXJlIG5vIHByb2JsbWUgYWJvdXQgY2xlYXJpbmcgYWxsIGJpdHMgb2YgSU5UMS8yLzMgaW50
+ZXJydXB0IHJlZ2lzdGVyLg0KPiANCj4gSWYgdXNlci1zcGFjZSBwbGF0Zm9ybSBkb24ndCBmaW5p
+c2ggdGhlIGluaXRpYWxpemF0aW9uIG9mIGFsbCB1c2VyLXByb2Nlc3MgZGFlbW9ucw0KPiBhbmQg
+ZXh0Y29uIGRyaXZlciBzZW5kIHRoZSB1ZXZlbnQgZHVyaW5nIG9ubHkga2VybmVsIGJvb3Rpbmcs
+IHRoZSB1ZXZlbnQgaXMgbm90IGhhbmRsZWQNCj4gb24gdXNlci1zcGFjZSBkYWVtb25zLg0KPiAN
+Cj4gVGhhbmtzLA0KPiBDaGFud29vIENob2kNCg0KT2suIExvb2tzIEdvb2QuIFRoYW5rcyBmb3Ig
+dGhlIGV4cGxhbmF0aW9uLg0KDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxteXVuZ2pvby5oYW1A
+c2Ftc3VuZy5jb20+DQoNCg0K
