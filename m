@@ -1,105 +1,52 @@
-From: gabriel@unseen.is
-Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
-Date: Tue, 09 Jun 2015 13:25:52 +0200
-Message-ID: <5576CD40.8060301@unseen.is>
-References: <5569F435.5040708@unseen.is> <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com> <556E0931.9030703@unseen.is> <556E44B7.10303@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RESEND] ARM: dts: odroidxu3: Enable USB3 regulators
+Date: Tue, 09 Jun 2015 21:32:19 +0900
+Message-ID: <5576DCD3.2010709@samsung.com>
+References: <1433678028-8441-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-2
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from outmail20.unseen.is ([82.221.107.107]:52434 "EHLO
-	outmail20.unseen.is" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751956AbbFIL0V (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jun 2015 07:26:21 -0400
-In-Reply-To: <556E44B7.10303@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1433678028-8441-1-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, sylvester.nawrocki@gmail.com, r.baldyga@samsung.com, m.szyprowski@samsung.comRobert Baldyga <r.baldyga@samsung.com>dmaengine@vger.kernel.orgMarek Szyprowski <m.szyprowski@samsung.com>
 
-On 06/03/2015 02:05 AM, Krzysztof Kozlowski wrote:
-> On 03.06.2015 04:51, gabriel@unseen.is wrote:
->> On 05/31/2015 08:47 AM, Krzysztof Kozlowski wrote:
->>> 2015-05-31 2:32 GMT+09:00  <gabriel@unseen.is>:
->>>>
->>>> Hello,
->>>>
->>>> I've been successfully using a self compiled linux kernel until version
->>>> 3.19 together with Debian Stretch.
->>>>
->>>> After upgrading the kernel to version 4.0 I see strange messages in the
->>>> logs i.e.
->>>>
->>>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->>>> alsa-sink.c: ALSA woke us up to write new data to the device, but there
->>>> was actually nothing to write!
->>>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->>>> alsa-sink.c: Most likely this is a bug in the ALSA driver
->>>> 'snd_soc_simple_card'. Please report this issue to the ALSA developers.
->>>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
->>>> alsa-sink.c: We were woken up with POLLOUT set -- however a subsequent
->>>> snd_pcm_avail() returned 0 or another value < min_avail.
->>>>
->>>>
->>>> I can easily play sound in perfect quality for approx the first 24h.
->>>> After that time the sound becomes distorted and is choppy/crackling.
->>>> After rebooting then the sound is optimal again.
->>>>
->>>>
->>>> I have tried to use kernel 4.0 with almost exactly the same
->>>> configuration than for 3.19 to no avail.
->>>>
->>>> Then somebody on
->>>> http://forum.odroid.com/viewtopic.php?f=82&t=13281&p=91186 gave me the
->>>> hint that the followin patch might solve the issue:
->>>>
->>>> https://github.com/prahal/linux/commit/5e60cfc9fa5101a346e29ef5f944fbbad300c72d
->>>>
->>>>
->>>> The patch did help something. I can now still play music after 2 days
->>>> but what happens is that each time I turn on music I get a choppy sound
->>>> for some time. That means the sound comes clear but every 2 seconds the
->>>> sound pauses for a fraction of a second. Which is somewhat comparable to
->>>> the issue earlier but without the heavy crackling - and that this goes
->>>> away after a couple of minutes.
->>>>
->>>>
->>>> But furthermore the sound has now simple cracklings. One in two second
->>>> approx. and they do not disappear.
->>>>
->>>>
->>>> Does anybody have an idea what could be the matter here?
->>>>
->>>> Thanks in advance.
->>>
->>> +Cc Robert, dmaengine list.
->>>
->>> Bisecting would be helpful. You could also try reverting following commits:
->>> 88987d2c75
->>> aee4d1fac8
->>>
->>> Other possible test case would be disabling runtime PM for pl330 DMA driver:
->>>
->>> for i in /sys/bus/amba/drivers/dma-pl330/*.[amp]dma/power ; do
->>>   echo "on" > ${i}/control
->>> done
->>>
->>
->> Thanks a lot Krzysztof,
->>
->> I have reverted 88987d2c75 and aee4d1fac8 from 4.0.4 and I have still
->> audio working after 1 and 1/2 day. Unluckily the alsa error message
->> occured still once but they don't seem to be the issue here.
+W dniu 07.06.2015 o 20:53, Anand Moon pisze:
+> Enable regulator for usbdrd3_0 and usbdrd3_1.
+> Looking at the schematic pin diagram for MAX77802
+> USB3_0 and USB3_1 is regulated by LDO9 and LD011.
 > 
+> Fix the boot message of failed.
+> [    3.503539] exynos-dwc3 usb@12000000: Looking up vdd33-supply from device tree
+> [    3.503556] exynos-dwc3 usb@12000000: Looking up vdd33-supply property in node /usb@12000000 failed
+> [    3.503568] usb@12000000 supply vdd33 not found, using dummy regulator
+> [    3.509154] exynos-dwc3 usb@12000000: Looking up vdd10-supply from device tree
+> [    3.509170] exynos-dwc3 usb@12000000: Looking up vdd10-supply property in node /usb@12000000 failed
+> [    3.509181] usb@12000000 supply vdd10 not found, using dummy regulator
+> [    3.917548] exynos-dwc3 usb@12400000: Looking up vdd33-supply from device tree
+> [    3.917565] exynos-dwc3 usb@12400000: Looking up vdd33-supply property in node /usb@12400000 failed
+> [    3.917578] usb@12400000 supply vdd33 not found, using dummy regulator
+> [    3.922731] exynos-dwc3 usb@12400000: Looking up vdd10-supply from device tree
+> [    3.922747] exynos-dwc3 usb@12400000: Looking up vdd10-supply property in node /usb@12400000 failed
 > 
-> +CC Marek,
-> 
-> Robert, Marek, do you have any idea for the cause?
-> 
+> Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
-I can now say for sure that the commits 88987d2c75 and aee4d1fac8 are
-the cause for the problem. Audio was working now for 7 days.
+Thanks, applied with minor adjustments in commit message (joined first
+three sentences into one paragraph, changed description of dmesg).
 
-Cheers,
-Gabriel
+I'll send later to Kukjin for 4.3 (unless he picks it also).
+
+Best regards,
+Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
