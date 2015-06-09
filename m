@@ -1,43 +1,96 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv2] ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2 for Odroid-XU3
-Date: Tue,  9 Jun 2015 13:37:59 +0930
-Message-ID: <1433822879-3908-1-git-send-email-linux.amoon@gmail.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH] cpufreq:exynos-cpufreq - Fix for memory leak in case SOC
+ name does not match.
+Date: Tue, 09 Jun 2015 09:07:22 +0200
+Message-ID: <20150609090722.43965fa0@amdc2363>
+References: <1432519780-2910-1-git-send-email-shailendra.capricorn@gmail.com>
+ <20150525073149.GF9992@linux> <20150608103100.57f0473b@amdc2363>
+ <8344426.BL3KyufMos@vostro.rjw.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:35028 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751344AbbFIEIK (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47551 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752586AbbFIHIF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jun 2015 00:08:10 -0400
+	Tue, 9 Jun 2015 03:08:05 -0400
+In-reply-to: <8344426.BL3KyufMos@vostro.rjw.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lukasz Majewski <l.majewski@samsung.com>, Anand Moon <linux.amoon@gmail.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Shailendra Verma <shailendra.capricorn@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Enable CONFIG_SND_SOC_ODROIDX2 and CONFIG_SND_SIMPLE_CARD to enable
-sound on Odroid-XU3 board using the max98090 audio codec.
+Hi Rafael,
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
----
-Changes v2: Fixed the commit log.
+> On Monday, June 08, 2015 10:31:00 AM Lukasz Majewski wrote:
+> > Hi Viresh,
+> > 
+> > > On 25-05-15, 07:39, Shailendra Verma wrote:
+> > > > During probe free the memory allocated to "exynos_info" in case
+> > > > of unknown SOC type.
+> > > > 
+> > > > Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
+> > > > ---
+> > > >  drivers/cpufreq/exynos-cpufreq.c |    6 ++++--
+> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/cpufreq/exynos-cpufreq.c
+> > > > b/drivers/cpufreq/exynos-cpufreq.c index 82d2fbb..8682378 100644
+> > > > --- a/drivers/cpufreq/exynos-cpufreq.c
+> > > > +++ b/drivers/cpufreq/exynos-cpufreq.c
+> > > > @@ -182,7 +182,7 @@ static int exynos_cpufreq_probe(struct
+> > > > platform_device *pdev) ret =
+> > > > exynos5250_cpufreq_init(exynos_info); } else {
+> > > >  		pr_err("%s: Unknown SoC type\n", __func__);
+> > > > -		return -ENODEV;
+> > > > +		ret = -ENODEV;
+> > > >  	}
+> > > >  
+> > > >  	if (ret)
+> > > > @@ -190,12 +190,14 @@ static int exynos_cpufreq_probe(struct
+> > > > platform_device *pdev) 
+> > > >  	if (exynos_info->set_freq == NULL) {
+> > > >  		dev_err(&pdev->dev, "No set_freq function
+> > > > (ERR)\n");
+> > > > +		ret = -EINVAL;
+> > > >  		goto err_vdd_arm;
+> > > >  	}
+> > > >  
+> > > >  	arm_regulator = regulator_get(NULL, "vdd_arm");
+> > > >  	if (IS_ERR(arm_regulator)) {
+> > > >  		dev_err(&pdev->dev, "failed to get resource
+> > > > vdd_arm\n");
+> > > > +		ret = -EINVAL;
+> > > >  		goto err_vdd_arm;
+> > > >  	}
+> > > >  
+> > > > @@ -227,7 +229,7 @@ err_cpufreq_reg:
+> > > >  	regulator_put(arm_regulator);
+> > > >  err_vdd_arm:
+> > > >  	kfree(exynos_info);
+> > > > -	return -EINVAL;
+> > > > +	return ret;
+> > > >  }
+> > > >  
+> > > >  static struct platform_driver exynos_cpufreq_platdrv = {
+> > > 
+> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > 
+> > 
+> > Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+> 
+> I'm assuming that it will go it through the Samsung tree.
+> 
+> 
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+That would be the easiest way to proceed. 
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 9504e77..1b7253b 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -144,6 +144,8 @@ CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_SNOW=y
-+CONFIG_SND_SOC_ODROIDX2=y
-+CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
- CONFIG_USB_XHCI_HCD=y
+Krzystof would you like to grab this patch?
+
 -- 
-2.4.3
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
