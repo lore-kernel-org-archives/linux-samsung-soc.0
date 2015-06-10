@@ -1,61 +1,40 @@
-From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 3/3] drm/exynos: remove SoC checking code
-Date: Wed, 10 Jun 2015 11:14:45 +0900
-Message-ID: <20150610111445.4d63c49d@hwh-ubuntu>
-References: <1433758542-9843-1-git-send-email-a.hajda@samsung.com>
- <1433758542-9843-4-git-send-email-a.hajda@samsung.com>
- <20150609194652.GB22853@joana>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv2] ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2
+ for Odroid-XU3
+Date: Wed, 10 Jun 2015 14:27:24 +0900
+Message-ID: <5577CABC.9000609@samsung.com>
+References: <1433822879-3908-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52214 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751748AbbFJCOs (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:15334 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751222AbbFJF11 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jun 2015 22:14:48 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NPP00W34I8M12B0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 10 Jun 2015 11:14:46 +0900 (KST)
-In-reply-to: <20150609194652.GB22853@joana>
+	Wed, 10 Jun 2015 01:27:27 -0400
+In-reply-to: <1433822879-3908-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Anand Moon <linux.amoon@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lukasz Majewski <l.majewski@samsung.com>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Andrzej,
-
-On Tue, 09 Jun 2015 16:46:52 -0300
-Gustavo Padovan <gustavo@padovan.org> wrote:
-
-> Hi Andrzej,
+On 09.06.2015 13:07, Anand Moon wrote:
+> Enable CONFIG_SND_SOC_ODROIDX2 and CONFIG_SND_SIMPLE_CARD to enable
+> sound on Odroid-XU3 board using the max98090 audio codec.
 > 
-> 2015-06-08 Andrzej Hajda <a.hajda@samsung.com>:
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
+> Changes v2: Fixed the commit log.
 > 
-> > SoC checking code is not necessary anymore, as exynos_drm_match_add
-> > and exynos_drm_platform_probe already properly handles situation
-> > when there are no Exynos DRM components.
-> > 
-> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_drv.c | 27
-> > +-------------------------- 1 file changed, 1 insertion(+), 26
-> > deletions(-)
-> 
-> This series looks goods to me and works fine on my snow machine:
-> 
-> Tested-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> 	Gustavo
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-It looks good to me.
+Thanks, applied.
 
-Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
+I'll send later to Kukjin for 4.3.
+Unless he picks it also, in that case:
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Best regards,
+Krzysztof
