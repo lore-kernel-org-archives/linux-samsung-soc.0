@@ -1,78 +1,94 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
-Date: Wed, 10 Jun 2015 12:03:14 +0200
-Message-ID: <55780B62.1060005@samsung.com>
-References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 10 Jun 2015 12:19:49 +0200
+Message-ID: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+ <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com> <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.o>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8sCgpPbiAyMDE1LTA2LTAxIDE3OjA0LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gRnJv
-bTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+Cj4g
-SGksCj4KPiBIZXJlIGdvZXMgdGhlIGZ1bGwgc3VwcG9ydCBmb3IgYXRvbWljIG1vZGVzZXR0aW5n
-IG9uIGV4eW5vcy4gSSd2ZQo+IHNwbGl0IHRoZSBwYXRjaGVzIGluIHRoZSB2YXJpb3VzIHBoYXNl
-cyBvZiBhdG9taWMgc3VwcG9ydC4KClRoYW5rcyBmb3IgdGhpcyBwYXRjaHNlcywgaG93ZXZlciBJ
-J3ZlIG5vdGljZWQgYSBwcm9ibGVtIGFmdGVyIGFwcGx5aW5nIAp0aGVtLgpUaGUgaXNzdWUgZ2V0
-cyByZXZlYWxlZCB3aGVuIHN1cHBvcnQgZm9yIElPTU1VIGlzIGVuYWJsZWQuIEkndmUgZGlkIG15
-IHRlc3RzCndpdGggRXh5bm9zIEhETUkgZHJpdmVyIG9uIE9kcm9pZCBVMyBib2FyZC4KClRvIGRl
-bW9uc3RyYXRlZCB0aGUgaXNzdWUgSSd2ZSBhZGRlZCBmb2xsb3dpbmcgYWRkaXRpb25hbCBkZWJ1
-ZyBpbiB0aGUgCmV4eW5vcwptaXhlciBkcml2ZXIgaW4gbWl4ZXJfZ3JhcGhfYnVmZmVyKCkgZnVu
-Y3Rpb246CnByX2luZm8oImRtYSBhZGRyICVwYWQgcGxhbmUtPnNyY193aWR0aCAlZCBwbGFuZS0+
-c3JjX2hlaWdodCAlZFxuIiwgCiZwbGFuZS0+ZG1hX2FkZHJbMF0sIHBsYW5lLT5zcmNfd2lkdGgs
-IHBsYW5lLT5zcmNfaGVpZ2h0KTsKCkJlZm9yZSBhcHBseWluZyBwYXRjaGVzIHNldHRpbmcgNjQw
-eDQ4MCBtb2RlIGFuZCBnZXR0aW5nIGJhY2sgdG8gMTkyMHgxMDgwCmNvbnNvbGUgZ2VuZXJhdGVz
-IGZvbGxvd2luZyBsb2c6CgojIG1vZGV0ZXN0IC1NIGV4eW5vcyAtcyAyMzo2NDB4NDgwCnNldHRp
-bmcgbW9kZSA2NDB4NDgwLTYwSHpAWFIyNCBvbiBjb25uZWN0b3JzIDIzLCBjcnRjIDIxClsgMzg2
-MC42MTcxNTFdIGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lkdGggNjQwIHBsYW5lLT5zcmNf
-aGVpZ2h0IDQ4MApeQwpbIDM4NzAuNTU1MjMyXSBkbWEgMHhiYmQwMDAwMCBwbGFuZS0+c3JjX3dp
-ZHRoIDE5MjAgcGxhbmUtPnNyY19oZWlnaHQgMTA4MApbIDM4NzAuNTY1Njk2XSBkbWEgMHhiYmQw
-MDAwMCBwbGFuZS0+c3JjX3dpZHRoIDE5MjAgcGxhbmUtPnNyY19oZWlnaHQgMTA4MAoKQWZ0ZXIg
-YXBwbHlpbmcgYXRvbWljIG1vZGVzZXR0aW5nIHBhdGNoc2V0OgojIG1vZGV0ZXN0IC1NIGV4eW5v
-cyAtcyAyNDo2NDB4NDgwClsgIDE0Mi41NDAxMjJdIGRtYSAweGJiZDAwMDAwIHBsYW5lLT5zcmNf
-d2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAxMDgwClsgIDE0Mi41NTA3MjZdIGRtYSAweGJi
-ZDAwMDAwIHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAxMDgwCnNldHRp
-bmcgbW9kZSA2NDB4NDgwLTYwSHpAWFIyNCBvbiBjb25uZWN0b3JzIDI0LCBjcnRjIDIyClsgIDE0
-Mi42NDM2NzJdIGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3Jj
-X2hlaWdodCAxMDgwClsgIDE0Mi43NTk5ODJdIGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lk
-dGggNjQwIHBsYW5lLT5zcmNfaGVpZ2h0IDQ4MApeQwpbICAxNTQuOTg2MDQwXSBkbWEgMHhiYmQw
-MDAwMCBwbGFuZS0+c3JjX3dpZHRoIDE5MjAgcGxhbmUtPnNyY19oZWlnaHQgMTA4MAoKQXMgeW91
-IGNhbiBzZWUgZnJvbSB0aGUgYWJvdmUgbG9nLCBtaXhlcl9ncmFwaF9idWZmZXIgZnVuY3Rpb24g
-aXMgY2FsbGVkCnNldmVyYWwgdGltZXMuIDB4YmJkMDAwMDAgaXMgdGhlIERNQSBhZGRyZXNzIG9m
-IHRoZSAxOTIweDEwODAgZnJhbWVidWZmZXIKYW5kIDB4YmM1MDAwMDAgaXMgdGhlIERNQSBhZGRy
-ZXNzIG9mIHRoZSBhbGxvY2F0ZWQgNjQweDQ4MCBidWZmZXIuCm1peGVyX2dyYXBoX2J1ZmZlcigp
-IGlzIGZpcnN0IGNhbGxlZCB3aXRoIHRoZSBuZXcgRE1BIGFkZHJlc3Mgb2YgdGhlCmZyYW1lYnVm
-ZmVyLCBidXQgd2l0aCB0aGUgb2xkIG1vZGUgcGFyYW1ldGVycyAoMTkyMHgxMDgwIHNpemUpIGFu
-ZCB0aGVuCmluIHRoZSBuZXh0IGNhbGwgaXQgdXBkYXRlcyB0aGUgcGxhbmUgcGFyYW1ldGVycyB0
-byB0aGUgY29ycmVjdCB2YWx1ZXMKKHNpemUgY2hhbmdlZCB0byA2NDB4NDgwKS4gV2hlbiBJT01N
-VSBpcyBub3QgdXNlZCwgdGhpcyBjYW4gYmUgZWFzaWx5Cm1pc3NlZCwgYnV0IGFmdGVyIGVuYWJs
-aW5nIElPTU1VIHN1cHBvcnQsIGFueSBETUEgYWNjZXNzIHRvIHVuYWxsb2NhdGVkCmFkZHJlc3Mg
-Y2F1c2VzIElPTU1VIFBBR0UgRkFVTFQuIEhlcmUgaXQgd2lsbCBoYXBwZW4gYWZ0ZXIgY2hhbmdp
-bmcgRE1BCmFkZHJlc3Mgb2YgdGhlIGJ1ZmZlciB3aXRob3V0IGNoYW5naW5nIHRoZSBzaXplLgoK
-QSBxdWljayB3b3JrYXJvdW5kIHRvIHJlc29sdmUgdGhpcyBtdWx0aXBsZSBjYWxscyB0byBtaXhl
-cl9ncmFwaF9idWZmZXIoKQp3aXRoIHBhcnRpYWxseSB1cGRhdGVkIG1vZGUgdmFsdWVzIGlzIHRv
-IHJlbW92ZSBjYWxscyB0bwptaXhlcl93aW5kb3dfc3VzcGVuZC9taXhlcl93aW5kb3dfcmVzdW1l
-IGZyb20gbWl4ZXJfZGlzYWJsZSBhbmQKbWl4ZXJfZGlzYWJsZSBmdW5jdGlvbnMsIGJ1dCBJIGV4
-cGVjdCB0aGF0IHRoaXMgaXMgbm90IHRoZSByaWdodAphcHByb2FjaC4KClByb2JhYmx5IHRoZSBz
-YW1lIHByb2JsZW0gY2FuIGJlIG9ic2VydmVkIHdpdGggRXh5bm9zIEZJTUQgZHJpdmVyLgoKR3Vz
-dGF2bzogY291bGQgeW91IGNoZWNrIGlmIG1peGVyX2VuYWJsZSBmdW5jdGlvbnMgc2hvdWxkIHJl
-YWxseQpjYWxsIG1peGVyX3dpbmRvd19yZXN1bWUgZnVuY3Rpb24sIHdoaWNoIGluIHR1cm4gY2Fs
-bHMgbWl4ZXJfd2luX2NvbW1pdCwKd2hpY2ggY2FsbHMgbWl4ZXJfZ3JhcGhfYnVmZmVyIHdpdGgg
-cGFydGlhbGx5IHVwZGF0ZWQgZGlzcGxheSBidWZmZXIKZGF0YT8KCiA+ICguLi4pCgpCZXN0IHJl
-Z2FyZHMKLS0gCk1hcmVrIFN6eXByb3dza2ksIFBoRApTYW1zdW5nIFImRCBJbnN0aXR1dGUgUG9s
-YW5kCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jun 2, 2015 at 12:14 PM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>>> This is what systemd is doing in userspace for starting services:
+>>> ask for your dependencies and wait for them if they are not
+>>> there. So drivers ask for resources and wait for them. It also
+>>> needs to be abstract, so for example we need to be able to
+>>> hang on regulator_get() until the driver is up and providing that
+>>> regulator, and as long as everything is in slowpath it should
+>>> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
+>>> control, interrupts (!) and DMA channels for example.)
+>>
+>> I understood above that you propose probing devices in order, but now
+>> you mention that resource getters would block until the dependency is
+>> fulfilled which confuses me because if we are probing in order then
+>> all dependencies would be fulfilled before the device in question gets
+>> probed.
+>
+> Sorry, the problem space is a bit convoluted so the answers
+> get a bit convoluted. Maybe I'm thinking aloud and altering the course
+> of my thoughts as I type...
+>
+> I guess there can be explicit dependencies for resources like this
+> patch does, but another way would be for all resource fetch functions
+> to be instrumented, so that you do not block until you try to take
+> a resource that is not yet there, e.g.:
+>
+> regulator_get(...) -> not available, so:
+> - identify target regulator provider - this will need instrumentation
+> - probe it
+>
+> It then turns out the regulator driver is on the i2c bus, so we
+> need to probe the i2c driver:
+> - identify target i2c host for the regulator driver - this will need
+>   instrumentation
+> - probe the i2c host driver
+>
+> i2c host comes out, probes the regulator driver, regulator driver
+> probes and then the regulator_get() call returns.
+
+Hmm, if I understand correctly what you say, this is exactly what this
+particular series does:
+
+regulator_get -> of_platform_device_ensure -> probe() on the platform
+device that encloses the requested device node (i2c host) -> i2c slave
+gets probed and the regulator registered -> regulator_get returns the
+requested resource
+
+The downside I'm currently looking at is that an explicit dependency
+graph would be useful to have for other purposes. For example to print
+a neat warning when a dependency cannot be fulfilled. Or to refuse to
+unbind a device which other devices depend on, or to automatically
+unbind the devices that depend on it, or to print a warning if a
+device is hotplugged off and other devices depend on it.
+
+> This requires instrumentation on anything providing a resource
+> to another driver like those I mentioned and a lot of overhead
+> infrastructure, but I think it's the right approach. However I don't
+> know if I would ever be able to pull that off myself, I know talk
+> is cheap and I should show the code instead.
+
+Yeah, if you can give it a second look and say if it matches what you
+wrote above, it would be very much appreciated.
+
+> Deepest respect for your efforts!
+
+Thanks!
+
+Tomeu
+
+> Yours,
+> Linus Walleij
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
