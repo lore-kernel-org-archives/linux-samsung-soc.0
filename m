@@ -1,37 +1,40 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 2/9] tests/exynos: replace return by break
-Date: Wed, 10 Jun 2015 15:42:21 +0200
-Message-ID: <1433943748-15849-3-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 3/9] exynos/fimg2d: simplify g2d_fini()
+Date: Wed, 10 Jun 2015 15:42:22 +0200
+Message-ID: <1433943748-15849-4-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1433943748-15849-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33617 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933740AbbFJNng (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Jun 2015 09:43:36 -0400
 In-Reply-To: <1433943748-15849-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-VGhlICd1c2FnZScgZnVuY3Rpb24gYWxyZWFkeSBkb2VzIGV4aXQoMCksIHNvIHRoYXQgdGhpcwon
-cmV0dXJuIC1FSU5WQUwnIGlzIG5ldmVyIGNhbGxlZC4gSnVzdCBwdXQgYSBicmVhayB0aGVyZQp0
-byBhdm9pZCBjb25mdXNpb24uCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2Jp
-QG1hdGgudW5pLWJpZWxlZmVsZC5kZT4KLS0tCiB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90
-ZXN0LmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24o
-LSkKCmRpZmYgLS1naXQgYS90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMgYi90ZXN0
-cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKaW5kZXggZTY0YmIzMi4uNjRkYWNmYSAxMDA2
-NDQKLS0tIGEvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jCisrKyBiL3Rlc3RzL2V4
-eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYwpAQCAtNjg5LDcgKzY4OSw3IEBAIGludCBtYWluKGlu
-dCBhcmdjLCBjaGFyICoqYXJndikKIAkJCWJyZWFrOwogCQlkZWZhdWx0OgogCQkJdXNhZ2UoYXJn
-dlswXSk7Ci0JCQlyZXR1cm4gLUVJTlZBTDsKKwkJCWJyZWFrOwogCQl9CiAJfQogCi0tIAoyLjAu
-NQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
-dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+free()ing a nullptr is a noop, so remove the check.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 5ea42e6..24a06d0 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -254,8 +254,7 @@ struct g2d_context *g2d_init(int fd)
+ 
+ void g2d_fini(struct g2d_context *ctx)
+ {
+-	if (ctx)
+-		free(ctx);
++	free(ctx);
+ }
+ 
+ /**
+-- 
+2.0.5
