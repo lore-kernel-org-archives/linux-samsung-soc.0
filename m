@@ -1,96 +1,182 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
-Date: Wed, 10 Jun 2015 10:36:44 -0300
-Message-ID: <20150610133644.GC13493@joana>
-References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
- <55780B62.1060005@samsung.com>
+From: Chanho Park <parkch98@gmail.com>
+Subject: Re: [PATCH 1/1] irqchip: exynos-combiner: Save IRQ enable set on suspend
+Date: Wed, 10 Jun 2015 22:40:02 +0900
+Message-ID: <CAPTzV16uP9GFeq9hPLvk2kg2F9aaB_936UdR_rpRbqoUh_q9zg@mail.gmail.com>
+References: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:51094 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753877AbbFJNgv (ORCPT
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:32852 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754259AbbFJNkD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jun 2015 09:36:51 -0400
-Content-Disposition: inline
-In-Reply-To: <55780B62.1060005@samsung.com>
+	Wed, 10 Jun 2015 09:40:03 -0400
+In-Reply-To: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Andrzej Hajda <a.hajda@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi,
 
-2015-06-10 Marek Szyprowski <m.szyprowski@samsung.com>:
-
+On Wed, Jun 10, 2015 at 10:10 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> The Exynos interrupt combiner IP looses its state when the SoC enters
+> into a low power state during a Suspend-to-RAM. This means that if a
+> IRQ is used as a source, the interrupts for the devices are disabled
+> when the system is resumed from a sleep state so are not triggered.
+>
+> Save the interrupt enable set register for each combiner group and
+> restore it after resume to make sure that the interrupts are enabled.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
 > Hello,
-> 
-> On 2015-06-01 17:04, Gustavo Padovan wrote:
-> >From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> >Hi,
-> >
-> >Here goes the full support for atomic modesetting on exynos. I've
-> >split the patches in the various phases of atomic support.
-> 
-> Thanks for this patchses, however I've noticed a problem after applying
-> them.
-> The issue gets revealed when support for IOMMU is enabled. I've did my tests
-> with Exynos HDMI driver on Odroid U3 board.
-> 
-> To demonstrated the issue I've added following additional debug in the
-> exynos
-> mixer driver in mixer_graph_buffer() function:
-> pr_info("dma addr %pad plane->src_width %d plane->src_height %d\n",
-> &plane->dma_addr[0], plane->src_width, plane->src_height);
-> 
-> Before applying patches setting 640x480 mode and getting back to 1920x1080
-> console generates following log:
-> 
-> # modetest -M exynos -s 23:640x480
-> setting mode 640x480-60Hz@XR24 on connectors 23, crtc 21
-> [ 3860.617151] dma 0xbc500000 plane->src_width 640 plane->src_height 480
-> ^C
-> [ 3870.555232] dma 0xbbd00000 plane->src_width 1920 plane->src_height 1080
-> [ 3870.565696] dma 0xbbd00000 plane->src_width 1920 plane->src_height 1080
-> 
-> After applying atomic modesetting patchset:
-> # modetest -M exynos -s 24:640x480
-> [  142.540122] dma 0xbbd00000 plane->src_width 1920 plane->src_height 1080
-> [  142.550726] dma 0xbbd00000 plane->src_width 1920 plane->src_height 1080
-> setting mode 640x480-60Hz@XR24 on connectors 24, crtc 22
-> [  142.643672] dma 0xbc500000 plane->src_width 1920 plane->src_height 1080
-> [  142.759982] dma 0xbc500000 plane->src_width 640 plane->src_height 480
-> ^C
-> [  154.986040] dma 0xbbd00000 plane->src_width 1920 plane->src_height 1080
-> 
-> As you can see from the above log, mixer_graph_buffer function is called
-> several times. 0xbbd00000 is the DMA address of the 1920x1080 framebuffer
-> and 0xbc500000 is the DMA address of the allocated 640x480 buffer.
-> mixer_graph_buffer() is first called with the new DMA address of the
-> framebuffer, but with the old mode parameters (1920x1080 size) and then
-> in the next call it updates the plane parameters to the correct values
-> (size changed to 640x480). When IOMMU is not used, this can be easily
-> missed, but after enabling IOMMU support, any DMA access to unallocated
-> address causes IOMMU PAGE FAULT. Here it will happen after changing DMA
-> address of the buffer without changing the size.
-> 
-> A quick workaround to resolve this multiple calls to mixer_graph_buffer()
-> with partially updated mode values is to remove calls to
-> mixer_window_suspend/mixer_window_resume from mixer_disable and
-> mixer_disable functions, but I expect that this is not the right
-> approach.
-> 
-> Probably the same problem can be observed with Exynos FIMD driver.
-> 
-> Gustavo: could you check if mixer_enable functions should really
-> call mixer_window_resume function, which in turn calls mixer_win_commit,
-> which calls mixer_graph_buffer with partially updated display buffer
-> data?
+>
+> I noticed this issue because after a S2R, IRQs for some devices didn't
+> trigger anymore but others continued working and all of them had lines
+> from a GPIO chip as their interrupt source.
+>
+> The only difference was that the GPIO pins that were not working after
+> a resume, were the ones that had the interrupt combiner as interrupt
+> parent.
+>
+> With this patch now all perhiperals are working correctly after a resume.
+> Tested on an Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800 Peach Pi
+> Chromebooks.
+>
+> Best regards,
+> Javier
+>
+>  drivers/irqchip/exynos-combiner.c | 61 +++++++++++++++++++++++++++++++++++----
+>  1 file changed, 56 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+> index 5945223b73fa..69c710641bfa 100644
+> --- a/drivers/irqchip/exynos-combiner.c
+> +++ b/drivers/irqchip/exynos-combiner.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+>  #include <linux/slab.h>
+> +#include <linux/syscore_ops.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/irqchip/chained_irq.h>
+>  #include <linux/interrupt.h>
+> @@ -34,9 +35,14 @@ struct combiner_chip_data {
+>         unsigned int irq_mask;
+>         void __iomem *base;
+>         unsigned int parent_irq;
+> +#ifdef CONFIG_PM
+> +       u32 pm_save;
+> +#endif
+>  };
+>
+> +static struct combiner_chip_data *combiner_data;
+>  static struct irq_domain *combiner_irq_domain;
+> +static unsigned int max_nr = 20;
+>
+>  static inline void __iomem *combiner_base(struct irq_data *data)
+>  {
+> @@ -170,12 +176,10 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
+>  };
+>
+>  static void __init combiner_init(void __iomem *combiner_base,
+> -                                struct device_node *np,
+> -                                unsigned int max_nr)
+> +                                struct device_node *np)
+>  {
+>         int i, irq;
+>         unsigned int nr_irq;
+> -       struct combiner_chip_data *combiner_data;
+>
+>         nr_irq = max_nr * IRQ_IN_COMBINER;
+>
+> @@ -201,11 +205,56 @@ static void __init combiner_init(void __iomem *combiner_base,
+>         }
+>  }
+>
+> +#ifdef CONFIG_PM
+> +
+> +/**
+> + * combiner_suspend - save interrupt combiner state before suspend
+> + *
+> + * Save the interrupt enable set register for all combiner groups since
+> + * the state is lost when the system enters into a sleep state.
+> + *
+> + */
+> +static int combiner_suspend(void)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < max_nr; i++)
+> +               combiner_data[i].pm_save =
+> +                       __raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET);
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * combiner_resume - restore interrupt combiner state after resume
+> + *
+> + * Restore the interrupt enable set register for all combiner groups since
+> + * the state is lost when the system enters into a sleep state on suspend.
+> + *
+> + */
+> +static void combiner_resume(void)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < max_nr; i++)
 
-It should not, you are right. This is actually the correct fix. Atomic
-modesetting should not do chained calls, e.g., crtc_disable calling
-plane_disable. This change was already in my plan actually, but as I had
-IOMMU disabled I didn't see it here, and I didn't create this patch yet.
+Don't you need to clear masking bits of the COMBINER_ENABLE_CLEAR
+before enabling the bits?
 
-	Gustavo
+> +               __raw_writel(combiner_data[i].pm_save,
+> +                            combiner_data[i].base + COMBINER_ENABLE_SET);
+> +}
+> +
+> +#else
+> +#define combiner_suspend       NULL
+> +#define combiner_resume                NULL
+> +#endif
+> +
+> +static struct syscore_ops combiner_syscore_ops = {
+> +       .suspend        = combiner_suspend,
+> +       .resume         = combiner_resume,
+> +};
+> +
+>  static int __init combiner_of_init(struct device_node *np,
+>                                    struct device_node *parent)
+>  {
+>         void __iomem *combiner_base;
+> -       unsigned int max_nr = 20;
+>
+>         combiner_base = of_iomap(np, 0);
+>         if (!combiner_base) {
+> @@ -219,7 +268,9 @@ static int __init combiner_of_init(struct device_node *np,
+>                         __func__, max_nr);
+>         }
+>
+> -       combiner_init(combiner_base, np, max_nr);
+> +       combiner_init(combiner_base, np);
+> +
+> +       register_syscore_ops(&combiner_syscore_ops);
+>
+>         return 0;
+>  }
+> --
+> 2.1.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+
+-- 
+Best Regards,
+Chanho Park
