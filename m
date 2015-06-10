@@ -1,107 +1,77 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH 9/9] tests/exynos: handle G2D_IMGBUF_COLOR in switch statements
-Date: Wed, 10 Jun 2015 15:42:28 +0200
-Message-ID: <1433943748-15849-10-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1433943748-15849-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:33663 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S964976AbbFJNst (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jun 2015 09:48:49 -0400
-In-Reply-To: <1433943748-15849-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH] drm/exynos: mixer: remove chained calls to enable/disable
+ planes
+Date: Wed, 10 Jun 2015 11:08:29 -0300
+Message-ID: <1433945309-19650-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This fixes a compiler warning about missing handling of enum
-values in the switch statements.
-
-Also remove the silent mapping to G2D_IMGBUF_GEM when an
-unknown buffer type is encountered. We have full control
-about the type here, and if it's unknown then we obviously
-have a bug in the code.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- tests/exynos/exynos_fimg2d_test.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
-index 59de4ba..8794dac 100644
---- a/tests/exynos/exynos_fimg2d_test.c
-+++ b/tests/exynos/exynos_fimg2d_test.c
-@@ -270,9 +270,10 @@ static int g2d_copy_test(struct exynos_device *dev, struct exynos_bo *src,
- 		src_img.user_ptr[0].userptr = userptr;
- 		src_img.user_ptr[0].size = size;
- 		break;
-+	case G2D_IMGBUF_COLOR:
- 	default:
--		type = G2D_IMGBUF_GEM;
--		break;
-+		ret = -EFAULT;
-+		goto fail;
- 	}
- 
- 	printf("copy test with %s.\n",
-@@ -306,6 +307,7 @@ err_free_userptr:
- 		if (userptr)
- 			free((void *)userptr);
- 
-+fail:
- 	g2d_fini(ctx);
- 
- 	return ret;
-@@ -349,9 +351,10 @@ static int g2d_copy_with_scale_test(struct exynos_device *dev,
- 		src_img.user_ptr[0].userptr = userptr;
- 		src_img.user_ptr[0].size = size;
- 		break;
-+	case G2D_IMGBUF_COLOR:
- 	default:
--		type = G2D_IMGBUF_GEM;
--		break;
-+		ret = -EFAULT;
-+		goto fail;
- 	}
- 
- 	printf("copy and scale test with %s.\n",
-@@ -390,6 +393,7 @@ err_free_userptr:
- 		if (userptr)
- 			free((void *)userptr);
- 
-+fail:
- 	g2d_fini(ctx);
- 
- 	return 0;
-@@ -435,9 +439,10 @@ static int g2d_blend_test(struct exynos_device *dev,
- 		src_img.user_ptr[0].userptr = userptr;
- 		src_img.user_ptr[0].size = size;
- 		break;
-+	case G2D_IMGBUF_COLOR:
- 	default:
--		type = G2D_IMGBUF_GEM;
--		break;
-+		ret = -EFAULT;
-+		goto fail;
- 	}
- 
- 	printf("blend test with %s.\n",
-@@ -487,6 +492,7 @@ err_free_userptr:
- 		if (userptr)
- 			free((void *)userptr);
- 
-+fail:
- 	g2d_fini(ctx);
- 
- 	return 0;
-@@ -532,6 +538,7 @@ static int g2d_checkerboard_test(struct exynos_device *dev,
- 		src_img.user_ptr[0].userptr = (unsigned long)checkerboard;
- 		src_img.user_ptr[0].size = img_w * img_h * 4;
- 		break;
-+	case G2D_IMGBUF_COLOR:
- 	default:
- 		ret = -EFAULT;
- 		goto fail;
--- 
-2.0.5
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+V2l0aCBhdG9taWMgbW9kZXNldHRpbmcgYWxsIHRoZSBjb250cm9sIGZvciBDUlRDLCBQbGFuZXMs
+IEVuY29kZXJzIGFuZApDb25uZWN0b3JzIHNob3VsZCBjb21lIGZyb20gRFJNIGNvcmUsIHNvIHRo
+ZSBkcml2ZXIgaXMgbm90IGFsbG93ZWQgdG8KZGlzYWJsZSBwbGFuZXMgZnJvbSBpbnNpZGUgdGhl
+IGNydGNfZGlzYWJsZSgpIGNhbGwuIFRoaXMgcGF0Y2gKcmVtb3ZlcyB0aGlzIGNoYWlubmVkIGNh
+bGxzIGZyb20gbWl4ZXIgY29kZSBsZXR0aW5nIG9ubHkgRFJNIGNvcmUgdG91Y2gKcGxhbmVzLgoK
+U2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3Jh
+LmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzNSAt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDM1IGRl
+bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDZiYWI3
+MTcuLjBlNGQwODMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtOTM3
+LDggKzkzNyw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9jb21taXQoc3RydWN0IGV4eW5vc19k
+cm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKIAkJdnBfdmlkZW9fYnVmZmVyKG1peGVy
+X2N0eCwgd2luKTsKIAllbHNlCiAJCW1peGVyX2dyYXBoX2J1ZmZlcihtaXhlcl9jdHgsIHdpbik7
+Ci0KLQltaXhlcl9jdHgtPnBsYW5lc1t3aW5dLmVuYWJsZWQgPSB0cnVlOwogfQogCiBzdGF0aWMg
+dm9pZCBtaXhlcl93aW5fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNp
+Z25lZCBpbnQgd2luKQpAQCAtOTUyLDcgKzk1MCw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9k
+aXNhYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGludCB3aW4pCiAJ
+bXV0ZXhfbG9jaygmbWl4ZXJfY3R4LT5taXhlcl9tdXRleCk7CiAJaWYgKCFtaXhlcl9jdHgtPnBv
+d2VyZWQpIHsKIAkJbXV0ZXhfdW5sb2NrKCZtaXhlcl9jdHgtPm1peGVyX211dGV4KTsKLQkJbWl4
+ZXJfY3R4LT5wbGFuZXNbd2luXS5yZXN1bWUgPSBmYWxzZTsKIAkJcmV0dXJuOwogCX0KIAltdXRl
+eF91bmxvY2soJm1peGVyX2N0eC0+bWl4ZXJfbXV0ZXgpOwpAQCAtOTY0LDggKzk2MSw2IEBAIHN0
+YXRpYyB2b2lkIG1peGVyX3dpbl9kaXNhYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMs
+IHVuc2lnbmVkIGludCB3aW4pCiAKIAltaXhlcl92c3luY19zZXRfdXBkYXRlKG1peGVyX2N0eCwg
+dHJ1ZSk7CiAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcmVzLT5yZWdfc2xvY2ssIGZsYWdzKTsK
+LQotCW1peGVyX2N0eC0+cGxhbmVzW3dpbl0uZW5hYmxlZCA9IGZhbHNlOwogfQogCiBzdGF0aWMg
+dm9pZCBtaXhlcl93YWl0X2Zvcl92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykK
+QEAgLTEwMDAsMzMgKzk5NSw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dhaXRfZm9yX3ZibGFuayhz
+dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCWRybV92YmxhbmtfcHV0KG1peGVyX2N0eC0+
+ZHJtX2RldiwgbWl4ZXJfY3R4LT5waXBlKTsKIH0KIAotc3RhdGljIHZvaWQgbWl4ZXJfd2luZG93
+X3N1c3BlbmQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKLXsKLQlzdHJ1Y3QgZXh5bm9zX2Ry
+bV9wbGFuZSAqcGxhbmU7Ci0JaW50IGk7Ci0KLQlmb3IgKGkgPSAwOyBpIDwgTUlYRVJfV0lOX05S
+OyBpKyspIHsKLQkJcGxhbmUgPSAmY3R4LT5wbGFuZXNbaV07Ci0JCXBsYW5lLT5yZXN1bWUgPSBw
+bGFuZS0+ZW5hYmxlZDsKLQkJbWl4ZXJfd2luX2Rpc2FibGUoY3R4LT5jcnRjLCBpKTsKLQl9Ci0J
+bWl4ZXJfd2FpdF9mb3JfdmJsYW5rKGN0eC0+Y3J0Yyk7Ci19Ci0KLXN0YXRpYyB2b2lkIG1peGVy
+X3dpbmRvd19yZXN1bWUoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKLXsKLQlzdHJ1Y3QgZXh5
+bm9zX2RybV9wbGFuZSAqcGxhbmU7Ci0JaW50IGk7Ci0KLQlmb3IgKGkgPSAwOyBpIDwgTUlYRVJf
+V0lOX05SOyBpKyspIHsKLQkJcGxhbmUgPSAmY3R4LT5wbGFuZXNbaV07Ci0JCXBsYW5lLT5lbmFi
+bGVkID0gcGxhbmUtPnJlc3VtZTsKLQkJcGxhbmUtPnJlc3VtZSA9IGZhbHNlOwotCQlpZiAocGxh
+bmUtPmVuYWJsZWQpCi0JCQltaXhlcl93aW5fY29tbWl0KGN0eC0+Y3J0YywgaSk7Ci0JfQotfQot
+CiBzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykK
+IHsKIAlzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwpAQCAtMTA1OCw4ICsx
+MDI2LDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMg
+KmNydGMpCiAKIAltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfSU5UX0VOLCBjdHgtPmludF9lbik7
+CiAJbWl4ZXJfd2luX3Jlc2V0KGN0eCk7Ci0KLQltaXhlcl93aW5kb3dfcmVzdW1lKGN0eCk7CiB9
+CiAKIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
+YykKQEAgLTEwNzYsNyArMTA0Miw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGUoc3RydWN0
+IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAogCW1peGVyX3N0b3AoY3R4KTsKIAltaXhlcl9yZWdz
+X2R1bXAoY3R4KTsKLQltaXhlcl93aW5kb3dfc3VzcGVuZChjdHgpOwogCiAJY3R4LT5pbnRfZW4g
+PSBtaXhlcl9yZWdfcmVhZChyZXMsIE1YUl9JTlRfRU4pOwogCi0tIAoyLjEuMAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
