@@ -1,189 +1,70 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] irqchip: exynos-combiner: Save IRQ enable set on
- suspend
-Date: Wed, 10 Jun 2015 16:32:32 +0200
-Message-ID: <55784A80.7000603@collabora.co.uk>
-References: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk> <CAPTzV16uP9GFeq9hPLvk2kg2F9aaB_936UdR_rpRbqoUh_q9zg@mail.gmail.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 1/2] power_supply: max17042: Add OF support for setting
+ thresholds
+Date: Wed, 10 Jun 2015 16:46:48 +0200
+Message-ID: <20150610144648.GC11618@earth>
+References: <1433725899-13849-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QRj9sO5tAVLaXnSD"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:51171 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754217AbbFJOcj (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:52664 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754445AbbFJOqz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jun 2015 10:32:39 -0400
-In-Reply-To: <CAPTzV16uP9GFeq9hPLvk2kg2F9aaB_936UdR_rpRbqoUh_q9zg@mail.gmail.com>
+	Wed, 10 Jun 2015 10:46:55 -0400
+Content-Disposition: inline
+In-Reply-To: <1433725899-13849-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <parkch98@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello Chanho,
 
-Thanks a lot for your feedback.
+--QRj9sO5tAVLaXnSD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06/10/2015 03:40 PM, Chanho Park wrote:
-> Hi,
-> 
-> On Wed, Jun 10, 2015 at 10:10 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> The Exynos interrupt combiner IP looses its state when the SoC enters
->> into a low power state during a Suspend-to-RAM. This means that if a
->> IRQ is used as a source, the interrupts for the devices are disabled
->> when the system is resumed from a sleep state so are not triggered.
->>
->> Save the interrupt enable set register for each combiner group and
->> restore it after resume to make sure that the interrupts are enabled.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
->>
->> Hello,
->>
->> I noticed this issue because after a S2R, IRQs for some devices didn't
->> trigger anymore but others continued working and all of them had lines
->> from a GPIO chip as their interrupt source.
->>
->> The only difference was that the GPIO pins that were not working after
->> a resume, were the ones that had the interrupt combiner as interrupt
->> parent.
->>
->> With this patch now all perhiperals are working correctly after a resume.
->> Tested on an Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800 Peach Pi
->> Chromebooks.
->>
->> Best regards,
->> Javier
->>
->>  drivers/irqchip/exynos-combiner.c | 61 +++++++++++++++++++++++++++++++++++----
->>  1 file changed, 56 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
->> index 5945223b73fa..69c710641bfa 100644
->> --- a/drivers/irqchip/exynos-combiner.c
->> +++ b/drivers/irqchip/exynos-combiner.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/init.h>
->>  #include <linux/io.h>
->>  #include <linux/slab.h>
->> +#include <linux/syscore_ops.h>
->>  #include <linux/irqdomain.h>
->>  #include <linux/irqchip/chained_irq.h>
->>  #include <linux/interrupt.h>
->> @@ -34,9 +35,14 @@ struct combiner_chip_data {
->>         unsigned int irq_mask;
->>         void __iomem *base;
->>         unsigned int parent_irq;
->> +#ifdef CONFIG_PM
->> +       u32 pm_save;
->> +#endif
->>  };
->>
->> +static struct combiner_chip_data *combiner_data;
->>  static struct irq_domain *combiner_irq_domain;
->> +static unsigned int max_nr = 20;
->>
->>  static inline void __iomem *combiner_base(struct irq_data *data)
->>  {
->> @@ -170,12 +176,10 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
->>  };
->>
->>  static void __init combiner_init(void __iomem *combiner_base,
->> -                                struct device_node *np,
->> -                                unsigned int max_nr)
->> +                                struct device_node *np)
->>  {
->>         int i, irq;
->>         unsigned int nr_irq;
->> -       struct combiner_chip_data *combiner_data;
->>
->>         nr_irq = max_nr * IRQ_IN_COMBINER;
->>
->> @@ -201,11 +205,56 @@ static void __init combiner_init(void __iomem *combiner_base,
->>         }
->>  }
->>
->> +#ifdef CONFIG_PM
->> +
->> +/**
->> + * combiner_suspend - save interrupt combiner state before suspend
->> + *
->> + * Save the interrupt enable set register for all combiner groups since
->> + * the state is lost when the system enters into a sleep state.
->> + *
->> + */
->> +static int combiner_suspend(void)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i < max_nr; i++)
->> +               combiner_data[i].pm_save =
->> +                       __raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET);
->> +
->> +       return 0;
->> +}
->> +
->> +/**
->> + * combiner_resume - restore interrupt combiner state after resume
->> + *
->> + * Restore the interrupt enable set register for all combiner groups since
->> + * the state is lost when the system enters into a sleep state on suspend.
->> + *
->> + */
->> +static void combiner_resume(void)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i < max_nr; i++)
-> 
-> Don't you need to clear masking bits of the COMBINER_ENABLE_CLEAR
-> before enabling the bits?
->
+Hi,
 
-I thought that was not needed since the enable bits are all cleared to 0
-(default reset value) after a suspend.
+On Mon, Jun 08, 2015 at 10:11:38AM +0900, Krzysztof Kozlowski wrote:
+> The commit edd4ab055931 ("power: max17042_battery: add HEALTH and TEMP_*
+> properties support") added support for setting voltage and temperature
+> thresholds with platform data. For DeviceTree default of 0 was always
+> used.
+>=20
+> This caused reporting battery health always as over voltage or
+> over heated.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Fixes: edd4ab055931 ("power: max17042_battery: add HEALTH and TEMP_* prop=
+erties support")
 
-But I can add the following if you think that it is needed or more safe:
+Thanks, queued.
 
-		/* Disable all interrupts */
-		__raw_writel(combiner_data[i].irq_mask,
-			     combiner_data[i].base + COMBINER_ENABLE_CLEAR);
- 
->> +               __raw_writel(combiner_data[i].pm_save,
->> +                            combiner_data[i].base + COMBINER_ENABLE_SET);
->> +}
->> +
->> +#else
->> +#define combiner_suspend       NULL
->> +#define combiner_resume                NULL
->> +#endif
->> +
->> +static struct syscore_ops combiner_syscore_ops = {
->> +       .suspend        = combiner_suspend,
->> +       .resume         = combiner_resume,
->> +};
->> +
->>  static int __init combiner_of_init(struct device_node *np,
->>                                    struct device_node *parent)
->>  {
->>         void __iomem *combiner_base;
->> -       unsigned int max_nr = 20;
->>
->>         combiner_base = of_iomap(np, 0);
->>         if (!combiner_base) {
->> @@ -219,7 +268,9 @@ static int __init combiner_of_init(struct device_node *np,
->>                         __func__, max_nr);
->>         }
->>
->> -       combiner_init(combiner_base, np, max_nr);
->> +       combiner_init(combiner_base, np);
->> +
->> +       register_syscore_ops(&combiner_syscore_ops);
->>
->>         return 0;
->>  }
->> --
+-- Sebastian
 
-Best regards,
-Javier
+--QRj9sO5tAVLaXnSD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJVeE3YAAoJENju1/PIO/qaZTEP/RIvjxtyyEeKMRqNFOpRINN2
+iBIDYkjkwZ78PSnMy4GX27N4LLavS/O472tRkM5m/+qW74Qv0G4L2fiCfQVAUltb
+IFzKcvQpPNH+enfhKUe4M2W8+xLnli2FvVVgyfMHt2ShICJgZfalB7a5S8LYUCRi
+1aWsd6Ufnk7nupkhyacraOC4FcO30WbHgOs7KMShc9nisz4BdaBAz/faGxe8iTQT
+awZa6vcg1mL8lqwP8C7Ej0hpm65BQ3kn6/JmDU1chQnVzU5ygERsp23nfkzX23eE
+IeVG9YJCjRKqIAMo+Gz0f0I2GvGRUyWjGC6vN8ivJhOAmZeSKry9CiX5YIXmqpGj
+bfW8toQlrroKu5y19mCoftBjeaOa96i+DZss0UFUKQamcXvzbxpCVDmmiW3CSJiX
+TBgv7eoEyPy1ldbSbYM4sv1QyXisCd2S2L4AyQ0hEhGkypmKpKEn+XgoSdpl7enZ
+d1jARwduBdSy5x8KsmNWDCLrSqnX0s+CeVnGXj5K9ditZF6in6FqLSOB8/4+ktgw
+04SOWJWyFyzYOD/2nWv9z5ZtX5DT+1ESfm48Nnm/t1PJ3tu2SfnVa+0EWhptbude
+uDgLAATUDhy9wU77PaRNn8pn9aZ3QxrkSLTrhhr76tOLVEBk+L6/N6mE/l1ne+Z2
+RPlWW8YVWrI7z5bJsguP
+=pwbv
+-----END PGP SIGNATURE-----
+
+--QRj9sO5tAVLaXnSD--
