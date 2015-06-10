@@ -1,565 +1,112 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 9/9] [media] mm: Move get_vaddr_frames() behind a config option
-Date: Wed, 10 Jun 2015 06:20:52 -0300
-Message-ID: <3ca4b53f5bcf016d98c875e22cd9cf02a3495f3e.1433927458.git.mchehab@osg.samsung.com>
-References: <cover.1433927458.git.mchehab@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:37280 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933565AbbFJJVa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jun 2015 05:21:30 -0400
-In-Reply-To: <cover.1433927458.git.mchehab@osg.samsung.com>
-In-Reply-To: <cover.1433927458.git.mchehab@osg.samsung.com>
-References: <cover.1433927458.git.mchehab@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 2/9] drm/exynos: add atomic asynchronous commit
+Date: Wed, 10 Jun 2015 18:45:02 +0900
+Message-ID: <5578071E.9000700@samsung.com>
+References: <1433341832-2686-1-git-send-email-gustavo@padovan.org>
+ <1433341832-2686-2-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1433341832-2686-2-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Paul Bolle <pebolle@tiscali.nl>, Randy Dunlap <rdunlap@infradead.org>, Jiri Kosina <jkosina@suse.cz>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Brown <broonie@kernel.org>, Dan Streetman <ddstreet@ieee.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Minchan Kim <minchan@kernel.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Steve Capper <steve.capper@linaro.org>, Sasha Levin <sasha.levin@oracle.com>, Ganesh Mahendran <opensource.ganesh@gmail.com>, Christoph Jaeger <cj@linux>
 
-From: Jan Kara <jack@suse.cz>
-
-get_vaddr_frames() is used by relatively rare drivers so hide it and the
-related functions behind a config option that is selected only by
-drivers that need the infrastructure.
-
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-
- create mode 100644 mm/frame_vector.c
-
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 0a6780367d28..fc678289cf79 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -71,6 +71,7 @@ config DRM_EXYNOS_VIDI
- config DRM_EXYNOS_G2D
- 	bool "Exynos DRM G2D"
- 	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_G2D
-+	select FRAME_VECTOR
- 	help
- 	  Choose this option if you want to use Exynos G2D for DRM.
- 
-diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform/omap/Kconfig
-index dc2aaab54aef..217d613b0fe7 100644
---- a/drivers/media/platform/omap/Kconfig
-+++ b/drivers/media/platform/omap/Kconfig
-@@ -10,6 +10,7 @@ config VIDEO_OMAP2_VOUT
- 	select OMAP2_DSS if HAS_IOMEM && ARCH_OMAP2PLUS
- 	select OMAP2_VRFB if ARCH_OMAP2 || ARCH_OMAP3
- 	select VIDEO_OMAP2_VOUT_VRFB if VIDEO_OMAP2_VOUT && OMAP2_VRFB
-+	select FRAME_VECTOR
- 	default n
- 	---help---
- 	  V4L2 Display driver support for OMAP2/3 based boards.
-diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
-index f7a01a72eb9e..f38f6e387f04 100644
---- a/drivers/media/v4l2-core/Kconfig
-+++ b/drivers/media/v4l2-core/Kconfig
-@@ -73,6 +73,7 @@ config VIDEOBUF2_CORE
- 
- config VIDEOBUF2_MEMOPS
- 	tristate
-+	select FRAME_VECTOR
- 
- config VIDEOBUF2_DMA_CONTIG
- 	tristate
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 390214da4546..2ca52e9986f0 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -635,3 +635,6 @@ config MAX_STACK_SIZE_MB
- 	  changed to a smaller value in which case that is used.
- 
- 	  A sane initial value is 80 MB.
-+
-+config FRAME_VECTOR
-+	bool
-diff --git a/mm/Makefile b/mm/Makefile
-index 98c4eaeabdcb..be5d5c866305 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -78,3 +78,4 @@ obj-$(CONFIG_CMA)	+= cma.o
- obj-$(CONFIG_MEMORY_BALLOON) += balloon_compaction.o
- obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
- obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
-+obj-$(CONFIG_FRAME_VECTOR) += frame_vector.o
-diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-new file mode 100644
-index 000000000000..31a2bd5f41d5
---- /dev/null
-+++ b/mm/frame_vector.c
-@@ -0,0 +1,232 @@
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/err.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/pagemap.h>
-+#include <linux/sched.h>
-+
-+/*
-+ * get_vaddr_frames() - map virtual addresses to pfns
-+ * @start:	starting user address
-+ * @nr_frames:	number of pages / pfns from start to map
-+ * @write:	whether pages will be written to by the caller
-+ * @force:	whether to force write access even if user mapping is
-+ *		readonly. See description of the same argument of
-+		get_user_pages().
-+ * @vec:	structure which receives pages / pfns of the addresses mapped.
-+ *		It should have space for at least nr_frames entries.
-+ *
-+ * This function maps virtual addresses from @start and fills @vec structure
-+ * with page frame numbers or page pointers to corresponding pages (choice
-+ * depends on the type of the vma underlying the virtual address). If @start
-+ * belongs to a normal vma, the function grabs reference to each of the pages
-+ * to pin them in memory. If @start belongs to VM_IO | VM_PFNMAP vma, we don't
-+ * touch page structures and the caller must make sure pfns aren't reused for
-+ * anything else while he is using them.
-+ *
-+ * The function returns number of pages mapped which may be less than
-+ * @nr_frames. In particular we stop mapping if there are more vmas of
-+ * different type underlying the specified range of virtual addresses.
-+ * When the function isn't able to map a single page, it returns error.
-+ *
-+ * This function takes care of grabbing mmap_sem as necessary.
-+ */
-+int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
-+		     bool write, bool force, struct frame_vector *vec)
-+{
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
-+	int ret = 0;
-+	int err;
-+	int locked;
-+
-+	if (nr_frames == 0)
-+		return 0;
-+
-+	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
-+		nr_frames = vec->nr_allocated;
-+
-+	down_read(&mm->mmap_sem);
-+	locked = 1;
-+	vma = find_vma_intersection(mm, start, start + 1);
-+	if (!vma) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
-+		vec->got_ref = true;
-+		vec->is_pfns = false;
-+		ret = get_user_pages_locked(current, mm, start, nr_frames,
-+			write, force, (struct page **)(vec->ptrs), &locked);
-+		goto out;
-+	}
-+
-+	vec->got_ref = false;
-+	vec->is_pfns = true;
-+	do {
-+		unsigned long *nums = frame_vector_pfns(vec);
-+
-+		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
-+			err = follow_pfn(vma, start, &nums[ret]);
-+			if (err) {
-+				if (ret == 0)
-+					ret = err;
-+				goto out;
-+			}
-+			start += PAGE_SIZE;
-+			ret++;
-+		}
-+		/*
-+		 * We stop if we have enough pages or if VMA doesn't completely
-+		 * cover the tail page.
-+		 */
-+		if (ret >= nr_frames || start < vma->vm_end)
-+			break;
-+		vma = find_vma_intersection(mm, start, start + 1);
-+	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
-+out:
-+	if (locked)
-+		up_read(&mm->mmap_sem);
-+	if (!ret)
-+		ret = -EFAULT;
-+	if (ret > 0)
-+		vec->nr_frames = ret;
-+	return ret;
-+}
-+EXPORT_SYMBOL(get_vaddr_frames);
-+
-+/**
-+ * put_vaddr_frames() - drop references to pages if get_vaddr_frames() acquired
-+ *			them
-+ * @vec:	frame vector to put
-+ *
-+ * Drop references to pages if get_vaddr_frames() acquired them. We also
-+ * invalidate the frame vector so that it is prepared for the next call into
-+ * get_vaddr_frames().
-+ */
-+void put_vaddr_frames(struct frame_vector *vec)
-+{
-+	int i;
-+	struct page **pages;
-+
-+	if (!vec->got_ref)
-+		goto out;
-+	pages = frame_vector_pages(vec);
-+	/*
-+	 * frame_vector_pages() might needed to do a conversion when
-+	 * get_vaddr_frames() got pages but vec was later converted to pfns.
-+	 * But it shouldn't really fail to convert pfns back...
-+	 */
-+	if (WARN_ON(IS_ERR(pages)))
-+		goto out;
-+	for (i = 0; i < vec->nr_frames; i++)
-+		put_page(pages[i]);
-+	vec->got_ref = false;
-+out:
-+	vec->nr_frames = 0;
-+}
-+EXPORT_SYMBOL(put_vaddr_frames);
-+
-+/**
-+ * frame_vector_to_pages - convert frame vector to contain page pointers
-+ * @vec:	frame vector to convert
-+ *
-+ * Convert @vec to contain array of page pointers.  If the conversion is
-+ * successful, return 0. Otherwise return an error. Note that we do not grab
-+ * page references for the page structures.
-+ */
-+int frame_vector_to_pages(struct frame_vector *vec)
-+{
-+	int i;
-+	unsigned long *nums;
-+	struct page **pages;
-+
-+	if (!vec->is_pfns)
-+		return 0;
-+	nums = frame_vector_pfns(vec);
-+	for (i = 0; i < vec->nr_frames; i++)
-+		if (!pfn_valid(nums[i]))
-+			return -EINVAL;
-+	pages = (struct page **)nums;
-+	for (i = 0; i < vec->nr_frames; i++)
-+		pages[i] = pfn_to_page(nums[i]);
-+	vec->is_pfns = false;
-+	return 0;
-+}
-+EXPORT_SYMBOL(frame_vector_to_pages);
-+
-+/**
-+ * frame_vector_to_pfns - convert frame vector to contain pfns
-+ * @vec:	frame vector to convert
-+ *
-+ * Convert @vec to contain array of pfns.
-+ */
-+void frame_vector_to_pfns(struct frame_vector *vec)
-+{
-+	int i;
-+	unsigned long *nums;
-+	struct page **pages;
-+
-+	if (vec->is_pfns)
-+		return;
-+	pages = (struct page **)(vec->ptrs);
-+	nums = (unsigned long *)pages;
-+	for (i = 0; i < vec->nr_frames; i++)
-+		nums[i] = page_to_pfn(pages[i]);
-+	vec->is_pfns = true;
-+}
-+EXPORT_SYMBOL(frame_vector_to_pfns);
-+
-+/**
-+ * frame_vector_create() - allocate & initialize structure for pinned pfns
-+ * @nr_frames:	number of pfns slots we should reserve
-+ *
-+ * Allocate and initialize struct pinned_pfns to be able to hold @nr_pfns
-+ * pfns.
-+ */
-+struct frame_vector *frame_vector_create(unsigned int nr_frames)
-+{
-+	struct frame_vector *vec;
-+	int size = sizeof(struct frame_vector) + sizeof(void *) * nr_frames;
-+
-+	if (WARN_ON_ONCE(nr_frames == 0))
-+		return NULL;
-+	/*
-+	 * This is absurdly high. It's here just to avoid strange effects when
-+	 * arithmetics overflows.
-+	 */
-+	if (WARN_ON_ONCE(nr_frames > INT_MAX / sizeof(void *) / 2))
-+		return NULL;
-+	/*
-+	 * Avoid higher order allocations, use vmalloc instead. It should
-+	 * be rare anyway.
-+	 */
-+	if (size <= PAGE_SIZE)
-+		vec = kmalloc(size, GFP_KERNEL);
-+	else
-+		vec = vmalloc(size);
-+	if (!vec)
-+		return NULL;
-+	vec->nr_allocated = nr_frames;
-+	vec->nr_frames = 0;
-+	return vec;
-+}
-+EXPORT_SYMBOL(frame_vector_create);
-+
-+/**
-+ * frame_vector_destroy() - free memory allocated to carry frame vector
-+ * @vec:	Frame vector to free
-+ *
-+ * Free structure allocated by frame_vector_create() to carry frames.
-+ */
-+void frame_vector_destroy(struct frame_vector *vec)
-+{
-+	/* Make sure put_vaddr_frames() got called properly... */
-+	VM_BUG_ON(vec->nr_frames > 0);
-+	if (!is_vmalloc_addr(vec))
-+		kfree(vec);
-+	else
-+		vfree(vec);
-+}
-+EXPORT_SYMBOL(frame_vector_destroy);
-diff --git a/mm/gup.c b/mm/gup.c
-index 9d7f4fde30cb..222d57e335f9 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -937,231 +937,6 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
- 	return ret;	/* 0 or negative error code */
- }
- 
--/*
-- * get_vaddr_frames() - map virtual addresses to pfns
-- * @start:	starting user address
-- * @nr_frames:	number of pages / pfns from start to map
-- * @write:	whether pages will be written to by the caller
-- * @force:	whether to force write access even if user mapping is
-- *		readonly. See description of the same argument of
--		get_user_pages().
-- * @vec:	structure which receives pages / pfns of the addresses mapped.
-- *		It should have space for at least nr_frames entries.
-- *
-- * This function maps virtual addresses from @start and fills @vec structure
-- * with page frame numbers or page pointers to corresponding pages (choice
-- * depends on the type of the vma underlying the virtual address). If @start
-- * belongs to a normal vma, the function grabs reference to each of the pages
-- * to pin them in memory. If @start belongs to VM_IO | VM_PFNMAP vma, we don't
-- * touch page structures and the caller must make sure pfns aren't reused for
-- * anything else while he is using them.
-- *
-- * The function returns number of pages mapped which may be less than
-- * @nr_frames. In particular we stop mapping if there are more vmas of
-- * different type underlying the specified range of virtual addresses.
-- * When the function isn't able to map a single page, it returns error.
-- *
-- * This function takes care of grabbing mmap_sem as necessary.
-- */
--int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
--		     bool write, bool force, struct frame_vector *vec)
--{
--	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma;
--	int ret = 0;
--	int err;
--	int locked;
--
--	if (nr_frames == 0)
--		return 0;
--
--	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
--		nr_frames = vec->nr_allocated;
--
--	down_read(&mm->mmap_sem);
--	locked = 1;
--	vma = find_vma_intersection(mm, start, start + 1);
--	if (!vma) {
--		ret = -EFAULT;
--		goto out;
--	}
--	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
--		vec->got_ref = true;
--		vec->is_pfns = false;
--		ret = get_user_pages_locked(current, mm, start, nr_frames,
--			write, force, (struct page **)(vec->ptrs), &locked);
--		goto out;
--	}
--
--	vec->got_ref = false;
--	vec->is_pfns = true;
--	do {
--		unsigned long *nums = frame_vector_pfns(vec);
--
--		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
--			err = follow_pfn(vma, start, &nums[ret]);
--			if (err) {
--				if (ret == 0)
--					ret = err;
--				goto out;
--			}
--			start += PAGE_SIZE;
--			ret++;
--		}
--		/*
--		 * We stop if we have enough pages or if VMA doesn't completely
--		 * cover the tail page.
--		 */
--		if (ret >= nr_frames || start < vma->vm_end)
--			break;
--		vma = find_vma_intersection(mm, start, start + 1);
--	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
--out:
--	if (locked)
--		up_read(&mm->mmap_sem);
--	if (!ret)
--		ret = -EFAULT;
--	if (ret > 0)
--		vec->nr_frames = ret;
--	return ret;
--}
--EXPORT_SYMBOL(get_vaddr_frames);
--
--/**
-- * put_vaddr_frames() - drop references to pages if get_vaddr_frames() acquired
-- *			them
-- * @vec:	frame vector to put
-- *
-- * Drop references to pages if get_vaddr_frames() acquired them. We also
-- * invalidate the frame vector so that it is prepared for the next call into
-- * get_vaddr_frames().
-- */
--void put_vaddr_frames(struct frame_vector *vec)
--{
--	int i;
--	struct page **pages;
--
--	if (!vec->got_ref)
--		goto out;
--	pages = frame_vector_pages(vec);
--	/*
--	 * frame_vector_pages() might needed to do a conversion when
--	 * get_vaddr_frames() got pages but vec was later converted to pfns.
--	 * But it shouldn't really fail to convert pfns back...
--	 */
--	if (WARN_ON(IS_ERR(pages)))
--		goto out;
--	for (i = 0; i < vec->nr_frames; i++)
--		put_page(pages[i]);
--	vec->got_ref = false;
--out:
--	vec->nr_frames = 0;
--}
--EXPORT_SYMBOL(put_vaddr_frames);
--
--/**
-- * frame_vector_to_pages - convert frame vector to contain page pointers
-- * @vec:	frame vector to convert
-- *
-- * Convert @vec to contain array of page pointers.  If the conversion is
-- * successful, return 0. Otherwise return an error. Note that we do not grab
-- * page references for the page structures.
-- */
--int frame_vector_to_pages(struct frame_vector *vec)
--{
--	int i;
--	unsigned long *nums;
--	struct page **pages;
--
--	if (!vec->is_pfns)
--		return 0;
--	nums = frame_vector_pfns(vec);
--	for (i = 0; i < vec->nr_frames; i++)
--		if (!pfn_valid(nums[i]))
--			return -EINVAL;
--	pages = (struct page **)nums;
--	for (i = 0; i < vec->nr_frames; i++)
--		pages[i] = pfn_to_page(nums[i]);
--	vec->is_pfns = false;
--	return 0;
--}
--EXPORT_SYMBOL(frame_vector_to_pages);
--
--/**
-- * frame_vector_to_pfns - convert frame vector to contain pfns
-- * @vec:	frame vector to convert
-- *
-- * Convert @vec to contain array of pfns.
-- */
--void frame_vector_to_pfns(struct frame_vector *vec)
--{
--	int i;
--	unsigned long *nums;
--	struct page **pages;
--
--	if (vec->is_pfns)
--		return;
--	pages = (struct page **)(vec->ptrs);
--	nums = (unsigned long *)pages;
--	for (i = 0; i < vec->nr_frames; i++)
--		nums[i] = page_to_pfn(pages[i]);
--	vec->is_pfns = true;
--}
--EXPORT_SYMBOL(frame_vector_to_pfns);
--
--/**
-- * frame_vector_create() - allocate & initialize structure for pinned pfns
-- * @nr_frames:	number of pfns slots we should reserve
-- *
-- * Allocate and initialize struct pinned_pfns to be able to hold @nr_pfns
-- * pfns.
-- */
--struct frame_vector *frame_vector_create(unsigned int nr_frames)
--{
--	struct frame_vector *vec;
--	int size = sizeof(struct frame_vector) + sizeof(void *) * nr_frames;
--
--	if (WARN_ON_ONCE(nr_frames == 0))
--		return NULL;
--	/*
--	 * This is absurdly high. It's here just to avoid strange effects when
--	 * arithmetics overflows.
--	 */
--	if (WARN_ON_ONCE(nr_frames > INT_MAX / sizeof(void *) / 2))
--		return NULL;
--	/*
--	 * Avoid higher order allocations, use vmalloc instead. It should
--	 * be rare anyway.
--	 */
--	if (size <= PAGE_SIZE)
--		vec = kmalloc(size, GFP_KERNEL);
--	else
--		vec = vmalloc(size);
--	if (!vec)
--		return NULL;
--	vec->nr_allocated = nr_frames;
--	vec->nr_frames = 0;
--	return vec;
--}
--EXPORT_SYMBOL(frame_vector_create);
--
--/**
-- * frame_vector_destroy() - free memory allocated to carry frame vector
-- * @vec:	Frame vector to free
-- *
-- * Free structure allocated by frame_vector_create() to carry frames.
-- */
--void frame_vector_destroy(struct frame_vector *vec)
--{
--	/* Make sure put_vaddr_frames() got called properly... */
--	VM_BUG_ON(vec->nr_frames > 0);
--	if (!is_vmalloc_addr(vec))
--		kfree(vec);
--	else
--		vfree(vec);
--}
--EXPORT_SYMBOL(frame_vector_destroy);
--
- /**
-  * get_dump_page() - pin user page in memory while writing it to core dump
-  * @addr: user address
--- 
-2.4.2
+T24gMDYvMDMvMjAxNSAxMTozMCBQTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
+c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBUaGUg
+YXRvbWljIG1vZGVzZXR0aW5nIGludGVyZmFjZXMgc3VwcG9ydHMgYXN5bmMgY29tbWl0cyB0aGF0
+IHNob3VsZCBiZQo+IGltcGxlbWVudGVkIGJ5IHRoZSBkcml2ZXJzLiBJZiBkcm0gY29yZSByZXF1
+ZXN0cyBhbiBhc3luYyBjb21taXQKPiBleHlub3NfYXRvbWljX2NvbW1pdCgpIHdpbGwgc2NoZWR1
+bGUgYSB3b3JrIHRhc2sgdG8gcnVuIHRoZSB1cGRhdGUgbGF0ZXIuCj4gSXQgYWxzbyB3YWl0cyB0
+byBhbiB1cGRhdGUgdG8gZmluaXNoZXMgdG8gc2NoZWR1bGUgYSBuZXcgb25lLgo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51
+az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgIDYg
+KysrKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggfCAgNiArKysr
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICB8IDUxICsrKysrKysr
+KysrKysrKysrKysrKysrKysrLS0tLS0tLQo+ICAzIGZpbGVzIGNoYW5nZWQsIDUyIGluc2VydGlv
+bnMoKyksIDExIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmMKPiBpbmRleCAwOGI5YThjLi44Y2NmZjM2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kcnYuYwo+IEBAIC02MCw2ICs2MCw5IEBAIHN0YXRpYyBpbnQgZXh5
+bm9zX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVuc2lnbmVkIGxvbmcgZmxhZ3Mp
+Cj4gIAlpZiAoIXByaXZhdGUpCj4gIAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+ICsJSU5JVF9XT1JL
+KCZwcml2YXRlLT53b3JrLCBleHlub3NfZHJtX2F0b21pY193b3JrKTsKPiArCXByaXZhdGUtPmRl
+diA9IGRldjsKPiArCj4gIAlkZXZfc2V0X2RydmRhdGEoZGV2LT5kZXYsIGRldik7Cj4gIAlkZXYt
+PmRldl9wcml2YXRlID0gKHZvaWQgKilwcml2YXRlOwo+ICAKPiBAQCAtMTQwLDYgKzE0Myw4IEBA
+IGVycl9mcmVlX3ByaXZhdGU6Cj4gIAo+ICBzdGF0aWMgaW50IGV4eW5vc19kcm1fdW5sb2FkKHN0
+cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4gIHsKPiArCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUg
+KnByaXZhdGUgPSBkZXYtPmRldl9wcml2YXRlOwo+ICsKPiAgCWV4eW5vc19kcm1fZGV2aWNlX3N1
+YmRydl9yZW1vdmUoZGV2KTsKPiAgCj4gIAlleHlub3NfZHJtX2ZiZGV2X2ZpbmkoZGV2KTsKPiBA
+QCAtMTUwLDYgKzE1NSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV91bmxvYWQoc3RydWN0IGRy
+bV9kZXZpY2UgKmRldikKPiAgCWRybV9tb2RlX2NvbmZpZ19jbGVhbnVwKGRldik7Cj4gIAlkcm1f
+cmVsZWFzZV9pb21tdV9tYXBwaW5nKGRldik7Cj4gIAo+ICsJZmx1c2hfd29yaygmcHJpdmF0ZS0+
+d29yayk7Cj4gIAlrZnJlZShkZXYtPmRldl9wcml2YXRlKTsKPiAgCWRldi0+ZGV2X3ByaXZhdGUg
+PSBOVUxMOwo+ICAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gaW5k
+ZXggMWM2NmY2NS4uNTUyY2E0YSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZHJ2LmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHJ2LmgKPiBAQCAtMjU1LDYgKzI1NSwxMCBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRl
+IHsKPiAgCXVuc2lnbmVkIGxvbmcgZGFfc3BhY2Vfc2l6ZTsKPiAgCj4gIAl1bnNpZ25lZCBpbnQg
+cGlwZTsKPiArCj4gKwlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2Owo+ICsJc3RydWN0IHdvcmtfc3Ry
+dWN0IHdvcms7Cj4gKwlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGU7Cj4gIH07Cj4gIAo+
+ICAvKgo+IEBAIC0zMjQsNiArMzI4LDggQEAgc3RhdGljIGlubGluZSBpbnQgZXh5bm9zX2RybV9w
+cm9iZV92aWRpKHZvaWQpIHsgcmV0dXJuIDA7IH0KPiAgc3RhdGljIGlubGluZSB2b2lkIGV4eW5v
+c19kcm1fcmVtb3ZlX3ZpZGkodm9pZCkge30KPiAgI2VuZGlmCj4gIAo+ICt2b2lkIGV4eW5vc19k
+cm1fYXRvbWljX3dvcmsoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKTsKPiArCj4gIC8qIFRoaXMg
+ZnVuY3Rpb24gY3JlYXRlcyBhIGVuY29kZXIgYW5kIGEgY29ubmVjdG9yLCBhbmQgaW5pdGlhbGl6
+ZXMgdGhlbS4gKi8KPiAgaW50IGV4eW5vc19kcm1fY3JlYXRlX2VuY19jb25uKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsCj4gIAkJCQlzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KTsK
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+IGluZGV4IDc4OWRiNmYuLjI4
+NjI2ZGIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zi
+LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+IEBAIC0y
+NjcsMjAgKzI2NywxOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX291dHB1dF9wb2xsX2NoYW5n
+ZWQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPiAgCQlleHlub3NfZHJtX2ZiZGV2X2luaXQoZGV2
+KTsKPiAgfQo+ICAKPiAtc3RhdGljIGludCBleHlub3NfYXRvbWljX2NvbW1pdChzdHJ1Y3QgZHJt
+X2RldmljZSAqZGV2LAo+IC0JCQkJc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlLAo+IC0J
+CQkJYm9vbCBhc3luYykKPiArc3RhdGljIHZvaWQgZXh5bm9zX2F0b21pY19jb21taXRfc2NoZWR1
+bGUoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiArCQkJCXN0cnVjdCBkcm1fYXRvbWljX3N0YXRl
+ICpzdGF0ZSkKPiAgewo+IC0JaW50IHJldDsKPiAtCj4gLQlyZXQgPSBkcm1fYXRvbWljX2hlbHBl
+cl9wcmVwYXJlX3BsYW5lcyhkZXYsIHN0YXRlKTsKPiAtCWlmIChyZXQpCj4gLQkJcmV0dXJuIHJl
+dDsKPiAtCj4gLQkvKiBUaGlzIGlzIHRoZSBwb2ludCBvZiBubyByZXR1cm4gKi8KPiArCXN0cnVj
+dCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXZhdGUgPSBkZXYtPmRldl9wcml2YXRlOwo+ICAKPiAt
+CWRybV9hdG9taWNfaGVscGVyX3N3YXBfc3RhdGUoZGV2LCBzdGF0ZSk7Cj4gKwlwcml2YXRlLT5z
+dGF0ZSA9IHN0YXRlOwo+ICsJc2NoZWR1bGVfd29yaygmcHJpdmF0ZS0+d29yayk7Cj4gK30KPiAg
+Cj4gK3N0YXRpYyB2b2lkIGV4eW5vc19hdG9taWNfY29tbWl0X2NvbXBsZXRlKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsCj4gKwkJCQkJICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4g
+K3sKPiAgCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVzKGRldiwgc3Rh
+dGUpOwo+ICAKPiAgCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2VuYWJsZXMoZGV2
+LCBzdGF0ZSk7Cj4gQEAgLTMwMCw2ICsyOTgsMzcgQEAgc3RhdGljIGludCBleHlub3NfYXRvbWlj
+X2NvbW1pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+ICAJZHJtX2F0b21pY19oZWxwZXJfY2xl
+YW51cF9wbGFuZXMoZGV2LCBzdGF0ZSk7Cj4gIAo+ICAJZHJtX2F0b21pY19zdGF0ZV9mcmVlKHN0
+YXRlKTsKPiArfQo+ICsKPiArdm9pZCBleHlub3NfZHJtX2F0b21pY193b3JrKHN0cnVjdCB3b3Jr
+X3N0cnVjdCAqd29yaykKPiArewo+ICsJc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0
+ZSA9IGNvbnRhaW5lcl9vZih3b3JrLAo+ICsJCQkJc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSwg
+d29yayk7Cj4gKwo+ICsJZXh5bm9zX2F0b21pY19jb21taXRfY29tcGxldGUocHJpdmF0ZS0+ZGV2
+LCBwcml2YXRlLT5zdGF0ZSk7Cj4gK30KPiArCj4gK3N0YXRpYyBpbnQgZXh5bm9zX2F0b21pY19j
+b21taXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKPiArCQkJCXN0cnVjdCBkcm1fYXRvbWljX3N0
+YXRlICpzdGF0ZSwKPiArCQkJCWJvb2wgYXN5bmMpCj4gK3sKPiArCXN0cnVjdCBleHlub3NfZHJt
+X3ByaXZhdGUgKnByaXZhdGUgPSBkZXYtPmRldl9wcml2YXRlOwo+ICsJaW50IHJldDsKPiArCj4g
+KwlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wcmVwYXJlX3BsYW5lcyhkZXYsIHN0YXRlKTsKPiAr
+CWlmIChyZXQpCj4gKwkJcmV0dXJuIHJldDsKPiArCj4gKwkvKiBUaGlzIGlzIHRoZSBwb2ludCBv
+ZiBubyByZXR1cm4gKi8KPiArCj4gKwlkcm1fYXRvbWljX2hlbHBlcl9zd2FwX3N0YXRlKGRldiwg
+c3RhdGUpOwo+ICsKPiArCWZsdXNoX3dvcmsoJnByaXZhdGUtPndvcmspOwoKSXQgc2VlbXMgYmUg
+d3JvbmcgdG8gc3dhcCBzdGF0ZSBiZWZvcmUgZmx1c2ggd29yay4KCkknbSBub3Qgc3VyZSB3aGV0
+aGVyIG5lZWQgbG9ja2luZyBidXQgb3RoZXIgZHJpdmVycyBjaGFuZ2VkIHRvIGF0b21pYwptb2Rl
+c2V0IGZlYXR1cmUgdXNlIGxvY2tpbmcgaGVyZS4KCj4gKwo+ICsJaWYgKGFzeW5jKQo+ICsJCWV4
+eW5vc19hdG9taWNfY29tbWl0X3NjaGVkdWxlKGRldiwgc3RhdGUpOwo+ICsJZWxzZQo+ICsJCWV4
+eW5vc19hdG9taWNfY29tbWl0X2NvbXBsZXRlKGRldiwgc3RhdGUpOwo+ICAKPiAgCXJldHVybiAw
+Owo+ICB9Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
