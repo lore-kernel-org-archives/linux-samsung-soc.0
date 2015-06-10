@@ -1,44 +1,118 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFT v2 44/48] genirq,
- pinctrl: Kill the first parameter 'irq' of irq_flow_handler_t
-Date: Wed, 10 Jun 2015 10:12:37 +0200
-Message-ID: <CACRpkdZDxAPxLAuvD5cD7XLLKM45aS7_oAcPhKBM1ewmUn9+BA@mail.gmail.com>
-References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
- <1433391238-19471-45-git-send-email-jiang.liu@linux.intel.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
+Date: Wed, 10 Jun 2015 17:22:07 +0900
+Message-ID: <CAJKOXPeehj++Ojt2Zo4sgNjVASzZ8r_6OROM6FK_BRRQqVzcGg@mail.gmail.com>
+References: <5569F435.5040708@unseen.is>
+	<CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
+	<556E0931.9030703@unseen.is>
+	<556E44B7.10303@samsung.com>
+	<5576CD40.8060301@unseen.is>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1433391238-19471-45-git-send-email-jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Abraham <thomas.abraham@>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f48.google.com ([209.85.216.48]:36941 "EHLO
+	mail-vn0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754057AbbFJIWI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Jun 2015 04:22:08 -0400
+In-Reply-To: <5576CD40.8060301@unseen.is>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gabriel@unseen.is
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Vinod Koul <vinod.koul@intel.com>
 
-On Thu, Jun 4, 2015 at 6:13 AM, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org> wrote:
-
-> Now most IRQ flow handlers make no use of the first parameter 'irq'.
-> And for those who do make use of 'irq', we could easily get the irq
-> number through irq_desc->irq_data->irq. So kill the first parameter
-> 'irq' of irq_flow_handler_t.
+2015-06-09 20:25 GMT+09:00  <gabriel@unseen.is>:
+> On 06/03/2015 02:05 AM, Krzysztof Kozlowski wrote:
+>> On 03.06.2015 04:51, gabriel@unseen.is wrote:
+>>> On 05/31/2015 08:47 AM, Krzysztof Kozlowski wrote:
+>>>> 2015-05-31 2:32 GMT+09:00  <gabriel@unseen.is>:
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> I've been successfully using a self compiled linux kernel until version
+>>>>> 3.19 together with Debian Stretch.
+>>>>>
+>>>>> After upgrading the kernel to version 4.0 I see strange messages in the
+>>>>> logs i.e.
+>>>>>
+>>>>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+>>>>> alsa-sink.c: ALSA woke us up to write new data to the device, but there
+>>>>> was actually nothing to write!
+>>>>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+>>>>> alsa-sink.c: Most likely this is a bug in the ALSA driver
+>>>>> 'snd_soc_simple_card'. Please report this issue to the ALSA developers.
+>>>>> May 27 22:44:01 pulseaudio[1027]: [alsa-sink-3830000.i2s-HiFi HiFi-0]
+>>>>> alsa-sink.c: We were woken up with POLLOUT set -- however a subsequent
+>>>>> snd_pcm_avail() returned 0 or another value < min_avail.
+>>>>>
+>>>>>
+>>>>> I can easily play sound in perfect quality for approx the first 24h.
+>>>>> After that time the sound becomes distorted and is choppy/crackling.
+>>>>> After rebooting then the sound is optimal again.
+>>>>>
+>>>>>
+>>>>> I have tried to use kernel 4.0 with almost exactly the same
+>>>>> configuration than for 3.19 to no avail.
+>>>>>
+>>>>> Then somebody on
+>>>>> http://forum.odroid.com/viewtopic.php?f=82&t=13281&p=91186 gave me the
+>>>>> hint that the followin patch might solve the issue:
+>>>>>
+>>>>> https://github.com/prahal/linux/commit/5e60cfc9fa5101a346e29ef5f944fbbad300c72d
+>>>>>
+>>>>>
+>>>>> The patch did help something. I can now still play music after 2 days
+>>>>> but what happens is that each time I turn on music I get a choppy sound
+>>>>> for some time. That means the sound comes clear but every 2 seconds the
+>>>>> sound pauses for a fraction of a second. Which is somewhat comparable to
+>>>>> the issue earlier but without the heavy crackling - and that this goes
+>>>>> away after a couple of minutes.
+>>>>>
+>>>>>
+>>>>> But furthermore the sound has now simple cracklings. One in two second
+>>>>> approx. and they do not disappear.
+>>>>>
+>>>>>
+>>>>> Does anybody have an idea what could be the matter here?
+>>>>>
+>>>>> Thanks in advance.
+>>>>
+>>>> +Cc Robert, dmaengine list.
+>>>>
+>>>> Bisecting would be helpful. You could also try reverting following commits:
+>>>> 88987d2c75
+>>>> aee4d1fac8
+>>>>
+>>>> Other possible test case would be disabling runtime PM for pl330 DMA driver:
+>>>>
+>>>> for i in /sys/bus/amba/drivers/dma-pl330/*.[amp]dma/power ; do
+>>>>   echo "on" > ${i}/control
+>>>> done
+>>>>
+>>>
+>>> Thanks a lot Krzysztof,
+>>>
+>>> I have reverted 88987d2c75 and aee4d1fac8 from 4.0.4 and I have still
+>>> audio working after 1 and 1/2 day. Unluckily the alsa error message
+>>> occured still once but they don't seem to be the issue here.
+>>
+>>
+>> +CC Marek,
+>>
+>> Robert, Marek, do you have any idea for the cause?
+>>
 >
-> To ease review, I have split the changes into several parts, though
-> they should be merge as one to support bisecting.
->
-> Signed-off-by: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> I can now say for sure that the commits 88987d2c75 and aee4d1fac8 are
+> the cause for the problem. Audio was working now for 7 days.
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
++CC Vinod
 
-Assume that I can't apply this directly. If I can during
-next kernel cycle, push me.
+Gabriel,
 
-Yours,
-Linus Walleij
+I sent a patch which should fix the issue. Could you give it a try? Of
+course don't revert the other patches and don't use other workarounds.
+Just apply the patch on clean (vanilla would be the best) kernel.
+[RFT PATCH] dmaengine: Fix choppy sound because of unimplemented resume
+
+Best regards,
+Krzysztof
