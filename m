@@ -1,30 +1,32 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Subject: Re: [PATCH 1/1] irqchip: exynos-combiner: Save IRQ enable set on
  suspend
-Date: Wed, 10 Jun 2015 16:28:18 +0200
-Message-ID: <55784982.80303@collabora.co.uk>
-References: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk> <CAKocOONxcWMoqtLKpLpDxf=kv8esdPBOdkJqT-sT=bsSQCNBjg@mail.gmail.com>
+Date: Wed, 10 Jun 2015 16:32:32 +0200
+Message-ID: <55784A80.7000603@collabora.co.uk>
+References: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk> <CAPTzV16uP9GFeq9hPLvk2kg2F9aaB_936UdR_rpRbqoUh_q9zg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:51156 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51171 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964938AbbFJO23 (ORCPT
+	with ESMTP id S1754217AbbFJOcj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jun 2015 10:28:29 -0400
-In-Reply-To: <CAKocOONxcWMoqtLKpLpDxf=kv8esdPBOdkJqT-sT=bsSQCNBjg@mail.gmail.com>
+	Wed, 10 Jun 2015 10:32:39 -0400
+In-Reply-To: <CAPTzV16uP9GFeq9hPLvk2kg2F9aaB_936UdR_rpRbqoUh_q9zg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shuah Khan <shuahkhan@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Chanho Park <parkch98@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello Shuah,
+Hello Chanho,
 
 Thanks a lot for your feedback.
 
-On 06/10/2015 03:30 PM, Shuah Khan wrote:
-> On Wed, Jun 10, 2015 at 7:10 AM, Javier Martinez Canillas
+On 06/10/2015 03:40 PM, Chanho Park wrote:
+> Hi,
+> 
+> On Wed, Jun 10, 2015 at 10:10 PM, Javier Martinez Canillas
 > <javier.martinez@collabora.co.uk> wrote:
 >> The Exynos interrupt combiner IP looses its state when the SoC enters
 >> into a low power state during a Suspend-to-RAM. This means that if a
@@ -134,6 +136,20 @@ On 06/10/2015 03:30 PM, Shuah Khan wrote:
 >> +       int i;
 >> +
 >> +       for (i = 0; i < max_nr; i++)
+> 
+> Don't you need to clear masking bits of the COMBINER_ENABLE_CLEAR
+> before enabling the bits?
+>
+
+I thought that was not needed since the enable bits are all cleared to 0
+(default reset value) after a suspend.
+
+But I can add the following if you think that it is needed or more safe:
+
+		/* Disable all interrupts */
+		__raw_writel(combiner_data[i].irq_mask,
+			     combiner_data[i].base + COMBINER_ENABLE_CLEAR);
+ 
 >> +               __raw_writel(combiner_data[i].pm_save,
 >> +                            combiner_data[i].base + COMBINER_ENABLE_SET);
 >> +}
@@ -148,13 +164,6 @@ On 06/10/2015 03:30 PM, Shuah Khan wrote:
 >> +       .resume         = combiner_resume,
 >> +};
 >> +
-> 
-> Should this be static const  struct syscore_ops?
->
-
-That would cause a compile warning since register_syscore_ops() expects a
-struct syscore_ops * as its argument and not a const struct syscore_ops *
- 
 >>  static int __init combiner_of_init(struct device_node *np,
 >>                                    struct device_node *parent)
 >>  {
@@ -174,6 +183,7 @@ struct syscore_ops * as its argument and not a const struct syscore_ops *
 >>
 >>         return 0;
 >>  }
+>> --
 
 Best regards,
 Javier
