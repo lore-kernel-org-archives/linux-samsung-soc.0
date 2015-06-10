@@ -1,77 +1,179 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos: mixer: remove chained calls to enable/disable
- planes
-Date: Wed, 10 Jun 2015 11:08:29 -0300
-Message-ID: <1433945309-19650-1-git-send-email-gustavo@padovan.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] irqchip: exynos-combiner: Save IRQ enable set on
+ suspend
+Date: Wed, 10 Jun 2015 16:28:18 +0200
+Message-ID: <55784982.80303@collabora.co.uk>
+References: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk> <CAKocOONxcWMoqtLKpLpDxf=kv8esdPBOdkJqT-sT=bsSQCNBjg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51156 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964938AbbFJO23 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Jun 2015 10:28:29 -0400
+In-Reply-To: <CAKocOONxcWMoqtLKpLpDxf=kv8esdPBOdkJqT-sT=bsSQCNBjg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shuah Khan <shuahkhan@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-V2l0aCBhdG9taWMgbW9kZXNldHRpbmcgYWxsIHRoZSBjb250cm9sIGZvciBDUlRDLCBQbGFuZXMs
-IEVuY29kZXJzIGFuZApDb25uZWN0b3JzIHNob3VsZCBjb21lIGZyb20gRFJNIGNvcmUsIHNvIHRo
-ZSBkcml2ZXIgaXMgbm90IGFsbG93ZWQgdG8KZGlzYWJsZSBwbGFuZXMgZnJvbSBpbnNpZGUgdGhl
-IGNydGNfZGlzYWJsZSgpIGNhbGwuIFRoaXMgcGF0Y2gKcmVtb3ZlcyB0aGlzIGNoYWlubmVkIGNh
-bGxzIGZyb20gbWl4ZXIgY29kZSBsZXR0aW5nIG9ubHkgRFJNIGNvcmUgdG91Y2gKcGxhbmVzLgoK
-U2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3Jh
-LmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAzNSAt
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDM1IGRl
-bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
-eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDZiYWI3
-MTcuLjBlNGQwODMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
-eGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtOTM3
-LDggKzkzNyw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9jb21taXQoc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKIAkJdnBfdmlkZW9fYnVmZmVyKG1peGVy
-X2N0eCwgd2luKTsKIAllbHNlCiAJCW1peGVyX2dyYXBoX2J1ZmZlcihtaXhlcl9jdHgsIHdpbik7
-Ci0KLQltaXhlcl9jdHgtPnBsYW5lc1t3aW5dLmVuYWJsZWQgPSB0cnVlOwogfQogCiBzdGF0aWMg
-dm9pZCBtaXhlcl93aW5fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNp
-Z25lZCBpbnQgd2luKQpAQCAtOTUyLDcgKzk1MCw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9k
-aXNhYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGludCB3aW4pCiAJ
-bXV0ZXhfbG9jaygmbWl4ZXJfY3R4LT5taXhlcl9tdXRleCk7CiAJaWYgKCFtaXhlcl9jdHgtPnBv
-d2VyZWQpIHsKIAkJbXV0ZXhfdW5sb2NrKCZtaXhlcl9jdHgtPm1peGVyX211dGV4KTsKLQkJbWl4
-ZXJfY3R4LT5wbGFuZXNbd2luXS5yZXN1bWUgPSBmYWxzZTsKIAkJcmV0dXJuOwogCX0KIAltdXRl
-eF91bmxvY2soJm1peGVyX2N0eC0+bWl4ZXJfbXV0ZXgpOwpAQCAtOTY0LDggKzk2MSw2IEBAIHN0
-YXRpYyB2b2lkIG1peGVyX3dpbl9kaXNhYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMs
-IHVuc2lnbmVkIGludCB3aW4pCiAKIAltaXhlcl92c3luY19zZXRfdXBkYXRlKG1peGVyX2N0eCwg
-dHJ1ZSk7CiAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcmVzLT5yZWdfc2xvY2ssIGZsYWdzKTsK
-LQotCW1peGVyX2N0eC0+cGxhbmVzW3dpbl0uZW5hYmxlZCA9IGZhbHNlOwogfQogCiBzdGF0aWMg
-dm9pZCBtaXhlcl93YWl0X2Zvcl92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykK
-QEAgLTEwMDAsMzMgKzk5NSw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dhaXRfZm9yX3ZibGFuayhz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCWRybV92YmxhbmtfcHV0KG1peGVyX2N0eC0+
-ZHJtX2RldiwgbWl4ZXJfY3R4LT5waXBlKTsKIH0KIAotc3RhdGljIHZvaWQgbWl4ZXJfd2luZG93
-X3N1c3BlbmQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKLXsKLQlzdHJ1Y3QgZXh5bm9zX2Ry
-bV9wbGFuZSAqcGxhbmU7Ci0JaW50IGk7Ci0KLQlmb3IgKGkgPSAwOyBpIDwgTUlYRVJfV0lOX05S
-OyBpKyspIHsKLQkJcGxhbmUgPSAmY3R4LT5wbGFuZXNbaV07Ci0JCXBsYW5lLT5yZXN1bWUgPSBw
-bGFuZS0+ZW5hYmxlZDsKLQkJbWl4ZXJfd2luX2Rpc2FibGUoY3R4LT5jcnRjLCBpKTsKLQl9Ci0J
-bWl4ZXJfd2FpdF9mb3JfdmJsYW5rKGN0eC0+Y3J0Yyk7Ci19Ci0KLXN0YXRpYyB2b2lkIG1peGVy
-X3dpbmRvd19yZXN1bWUoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKLXsKLQlzdHJ1Y3QgZXh5
-bm9zX2RybV9wbGFuZSAqcGxhbmU7Ci0JaW50IGk7Ci0KLQlmb3IgKGkgPSAwOyBpIDwgTUlYRVJf
-V0lOX05SOyBpKyspIHsKLQkJcGxhbmUgPSAmY3R4LT5wbGFuZXNbaV07Ci0JCXBsYW5lLT5lbmFi
-bGVkID0gcGxhbmUtPnJlc3VtZTsKLQkJcGxhbmUtPnJlc3VtZSA9IGZhbHNlOwotCQlpZiAocGxh
-bmUtPmVuYWJsZWQpCi0JCQltaXhlcl93aW5fY29tbWl0KGN0eC0+Y3J0YywgaSk7Ci0JfQotfQot
-CiBzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykK
-IHsKIAlzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwpAQCAtMTA1OCw4ICsx
-MDI2LDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmNydGMpCiAKIAltaXhlcl9yZWdfd3JpdGUocmVzLCBNWFJfSU5UX0VOLCBjdHgtPmludF9lbik7
-CiAJbWl4ZXJfd2luX3Jlc2V0KGN0eCk7Ci0KLQltaXhlcl93aW5kb3dfcmVzdW1lKGN0eCk7CiB9
-CiAKIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
-YykKQEAgLTEwNzYsNyArMTA0Miw2IEBAIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGUoc3RydWN0
-IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAogCW1peGVyX3N0b3AoY3R4KTsKIAltaXhlcl9yZWdz
-X2R1bXAoY3R4KTsKLQltaXhlcl93aW5kb3dfc3VzcGVuZChjdHgpOwogCiAJY3R4LT5pbnRfZW4g
-PSBtaXhlcl9yZWdfcmVhZChyZXMsIE1YUl9JTlRfRU4pOwogCi0tIAoyLjEuMAoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Shuah,
+
+Thanks a lot for your feedback.
+
+On 06/10/2015 03:30 PM, Shuah Khan wrote:
+> On Wed, Jun 10, 2015 at 7:10 AM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>> The Exynos interrupt combiner IP looses its state when the SoC enters
+>> into a low power state during a Suspend-to-RAM. This means that if a
+>> IRQ is used as a source, the interrupts for the devices are disabled
+>> when the system is resumed from a sleep state so are not triggered.
+>>
+>> Save the interrupt enable set register for each combiner group and
+>> restore it after resume to make sure that the interrupts are enabled.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>>
+>> Hello,
+>>
+>> I noticed this issue because after a S2R, IRQs for some devices didn't
+>> trigger anymore but others continued working and all of them had lines
+>> from a GPIO chip as their interrupt source.
+>>
+>> The only difference was that the GPIO pins that were not working after
+>> a resume, were the ones that had the interrupt combiner as interrupt
+>> parent.
+>>
+>> With this patch now all perhiperals are working correctly after a resume.
+>> Tested on an Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800 Peach Pi
+>> Chromebooks.
+>>
+>> Best regards,
+>> Javier
+>>
+>>  drivers/irqchip/exynos-combiner.c | 61 +++++++++++++++++++++++++++++++++++----
+>>  1 file changed, 56 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+>> index 5945223b73fa..69c710641bfa 100644
+>> --- a/drivers/irqchip/exynos-combiner.c
+>> +++ b/drivers/irqchip/exynos-combiner.c
+>> @@ -13,6 +13,7 @@
+>>  #include <linux/init.h>
+>>  #include <linux/io.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/syscore_ops.h>
+>>  #include <linux/irqdomain.h>
+>>  #include <linux/irqchip/chained_irq.h>
+>>  #include <linux/interrupt.h>
+>> @@ -34,9 +35,14 @@ struct combiner_chip_data {
+>>         unsigned int irq_mask;
+>>         void __iomem *base;
+>>         unsigned int parent_irq;
+>> +#ifdef CONFIG_PM
+>> +       u32 pm_save;
+>> +#endif
+>>  };
+>>
+>> +static struct combiner_chip_data *combiner_data;
+>>  static struct irq_domain *combiner_irq_domain;
+>> +static unsigned int max_nr = 20;
+>>
+>>  static inline void __iomem *combiner_base(struct irq_data *data)
+>>  {
+>> @@ -170,12 +176,10 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
+>>  };
+>>
+>>  static void __init combiner_init(void __iomem *combiner_base,
+>> -                                struct device_node *np,
+>> -                                unsigned int max_nr)
+>> +                                struct device_node *np)
+>>  {
+>>         int i, irq;
+>>         unsigned int nr_irq;
+>> -       struct combiner_chip_data *combiner_data;
+>>
+>>         nr_irq = max_nr * IRQ_IN_COMBINER;
+>>
+>> @@ -201,11 +205,56 @@ static void __init combiner_init(void __iomem *combiner_base,
+>>         }
+>>  }
+>>
+>> +#ifdef CONFIG_PM
+>> +
+>> +/**
+>> + * combiner_suspend - save interrupt combiner state before suspend
+>> + *
+>> + * Save the interrupt enable set register for all combiner groups since
+>> + * the state is lost when the system enters into a sleep state.
+>> + *
+>> + */
+>> +static int combiner_suspend(void)
+>> +{
+>> +       int i;
+>> +
+>> +       for (i = 0; i < max_nr; i++)
+>> +               combiner_data[i].pm_save =
+>> +                       __raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/**
+>> + * combiner_resume - restore interrupt combiner state after resume
+>> + *
+>> + * Restore the interrupt enable set register for all combiner groups since
+>> + * the state is lost when the system enters into a sleep state on suspend.
+>> + *
+>> + */
+>> +static void combiner_resume(void)
+>> +{
+>> +       int i;
+>> +
+>> +       for (i = 0; i < max_nr; i++)
+>> +               __raw_writel(combiner_data[i].pm_save,
+>> +                            combiner_data[i].base + COMBINER_ENABLE_SET);
+>> +}
+>> +
+>> +#else
+>> +#define combiner_suspend       NULL
+>> +#define combiner_resume                NULL
+>> +#endif
+>> +
+>> +static struct syscore_ops combiner_syscore_ops = {
+>> +       .suspend        = combiner_suspend,
+>> +       .resume         = combiner_resume,
+>> +};
+>> +
+> 
+> Should this be static const  struct syscore_ops?
+>
+
+That would cause a compile warning since register_syscore_ops() expects a
+struct syscore_ops * as its argument and not a const struct syscore_ops *
+ 
+>>  static int __init combiner_of_init(struct device_node *np,
+>>                                    struct device_node *parent)
+>>  {
+>>         void __iomem *combiner_base;
+>> -       unsigned int max_nr = 20;
+>>
+>>         combiner_base = of_iomap(np, 0);
+>>         if (!combiner_base) {
+>> @@ -219,7 +268,9 @@ static int __init combiner_of_init(struct device_node *np,
+>>                         __func__, max_nr);
+>>         }
+>>
+>> -       combiner_init(combiner_base, np, max_nr);
+>> +       combiner_init(combiner_base, np);
+>> +
+>> +       register_syscore_ops(&combiner_syscore_ops);
+>>
+>>         return 0;
+>>  }
+
+Best regards,
+Javier
