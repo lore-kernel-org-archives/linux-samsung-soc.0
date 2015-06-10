@@ -1,191 +1,134 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
-Date: Wed, 10 Jun 2015 13:38:01 +0200
-Message-ID: <55782199.40900@samsung.com>
+Date: Wed, 10 Jun 2015 21:08:17 +0900
+Message-ID: <557828B1.9050608@samsung.com>
 References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
  <55780B62.1060005@samsung.com> <557818A0.6080204@samsung.com>
+ <55782199.40900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36444 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754142AbbFJLiF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jun 2015 07:38:05 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NPQ00FV18BETK60@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 10 Jun 2015 12:38:02 +0100 (BST)
-In-reply-to: <557818A0.6080204@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <55782199.40900@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andrzej Hajda <a.hajda@samsung.com>
 
-Hello,
-
-On 2015-06-10 12:59, Inki Dae wrote:
-> Hi Marek,
->
-> On 2015=EB=85=84 06=EC=9B=94 10=EC=9D=BC 19:03, Marek Szyprowski wrot=
-e:
->> Hello,
->>
->> On 2015-06-01 17:04, Gustavo Padovan wrote:
->>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->>>
->>> Hi,
->>>
->>> Here goes the full support for atomic modesetting on exynos. I've
->>> split the patches in the various phases of atomic support.
->> Thanks for this patchses, however I've noticed a problem after apply=
-ing
->> them.
->> The issue gets revealed when support for IOMMU is enabled. I've did =
-my
->> tests
->> with Exynos HDMI driver on Odroid U3 board.
->>
->> To demonstrated the issue I've added following additional debug in t=
-he
->> exynos
->> mixer driver in mixer_graph_buffer() function:
->> pr_info("dma addr %pad plane->src_width %d plane->src_height %d\n",
->> &plane->dma_addr[0], plane->src_width, plane->src_height);
->>
->> Before applying patches setting 640x480 mode and getting back to 192=
-0x1080
->> console generates following log:
->>
->> # modetest -M exynos -s 23:640x480
->> setting mode 640x480-60Hz@XR24 on connectors 23, crtc 21
->> [ 3860.617151] dma 0xbc500000 plane->src_width 640 plane->src_height=
- 480
->> ^C
->> [ 3870.555232] dma 0xbbd00000 plane->src_width 1920 plane->src_heigh=
-t 1080
->> [ 3870.565696] dma 0xbbd00000 plane->src_width 1920 plane->src_heigh=
-t 1080
->>
->> After applying atomic modesetting patchset:
->> # modetest -M exynos -s 24:640x480
->> [  142.540122] dma 0xbbd00000 plane->src_width 1920 plane->src_heigh=
-t 1080
->> [  142.550726] dma 0xbbd00000 plane->src_width 1920 plane->src_heigh=
-t 1080
->> setting mode 640x480-60Hz@XR24 on connectors 24, crtc 22
->> [  142.643672] dma 0xbc500000 plane->src_width 1920 plane->src_heigh=
-t 1080
->> [  142.759982] dma 0xbc500000 plane->src_width 640 plane->src_height=
- 480
->> ^C
->> [  154.986040] dma 0xbbd00000 plane->src_width 1920 plane->src_heigh=
-t 1080
->>
->> As you can see from the above log, mixer_graph_buffer function is ca=
-lled
->> several times. 0xbbd00000 is the DMA address of the 1920x1080 frameb=
-uffer
->> and 0xbc500000 is the DMA address of the allocated 640x480 buffer.
->> mixer_graph_buffer() is first called with the new DMA address of the
->> framebuffer, but with the old mode parameters (1920x1080 size) and t=
-hen
->> in the next call it updates the plane parameters to the correct valu=
-es
->> (size changed to 640x480). When IOMMU is not used, this can be easil=
-y
->> missed, but after enabling IOMMU support, any DMA access to unalloca=
-ted
->> address causes IOMMU PAGE FAULT. Here it will happen after changing =
-DMA
->> address of the buffer without changing the size.
->>
->> A quick workaround to resolve this multiple calls to mixer_graph_buf=
-fer()
->> with partially updated mode values is to remove calls to
->> mixer_window_suspend/mixer_window_resume from mixer_disable and
->> mixer_disable functions, but I expect that this is not the right
->> approach.
->>
->> Probably the same problem can be observed with Exynos FIMD driver.
->>
->> Gustavo: could you check if mixer_enable functions should really
->> call mixer_window_resume function, which in turn calls mixer_win_com=
-mit,
->> which calls mixer_graph_buffer with partially updated display buffer
->> data?
-> Marek, can you share how other people can test the atomic feature wit=
-h
-> iommu?
->
-> I should have merged below several patches and added device tree
-> relevant codes to test iommu.
->
-> 1. Merged iommu support patches for Exynos SoC below iommu exynos tre=
-e,
->
-> https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/log/?h=3D=
-arm/exynos
->
-> 2. Merged below patch,
->      [PATCH v7 24/25] ARM: DMA-mapping: add
-> support for creating reserved mappings in iova space
->
-> 3. Added device node relevant codes - I tested Exynos drm on trats2
-> board based on Exynos4412 SoC - like below,
-> in exynos4.dtsi file:
-> fimd: fimd@11c00000 {
->                   ...
->                 iommus =3D <&sysmmu_fimd0>;
->                   ...
->
-> sysmmu_fimd0: sysmmu@11E20000 {
->          compatible =3D "samsung,exynos-sysmmu";
->          reg =3D <0x11E20000 0x1000>;
->          interrupt-parent =3D <&combiner>;
->          interrupts =3D <5 2>;
->          clock-names =3D "sysmmu", "master";
->          clocks =3D <&clock CLK_SMMU_FIMD0>, <&clock CLK_FIMD0>;
->           power-domains =3D <&pd_lcd0>;
->          #iommu-cells =3D <0>;
-> };
->
-> in exynos4412-trats2.dts file:
-> fimd@11c00000 {
->                  status =3D "okay";
->                  iommu-reserved-mapping =3D <0x40000000 0x40000000 0x=
-40000000>;
-> };
->
-> Is that all? You would need to share exact guide about iommu enabling=
- to
-> other people so that they can test atomic feature with iommu.
-
-Right, the above should be enough. For convenience I've prepared a=20
-branch with all needed patches:
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git=20
-v4.1-exynos-drm-iommu
-
-I've included following branches:
-https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/log=
-/?h=3Dexynos-drm/for-next
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/lo=
-g/?h=3Dv4.2-next/dt-samsung-4th
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/lo=
-g/?h=3Dv4.2-next/mach-samsung
-https://git.kernel.org/cgit/linux/kernel/git/joro/iommu.git/log/?h=3Dar=
-m/exynos
-
-Then I've applied my Exynos DRM patches=20
-(http://www.spinics.net/lists/linux-samsung-soc/msg45114.html)
-as well as rebased patch 24/25 and 25/25 from my initial v7 IOMMU serie=
-s
-(http://www.spinics.net/lists/linux-samsung-soc/msg44652.html).
-
-Best regards
---=20
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+T24gMjAxNeuFhCAwNuyblCAxMOydvCAyMDozOCwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBI
+ZWxsbywKPiAKPiBPbiAyMDE1LTA2LTEwIDEyOjU5LCBJbmtpIERhZSB3cm90ZToKPj4gSGkgTWFy
+ZWssCj4+Cj4+IE9uIDIwMTXrhYQgMDbsm5QgMTDsnbwgMTk6MDMsIE1hcmVrIFN6eXByb3dza2kg
+d3JvdGU6Cj4+PiBIZWxsbywKPj4+Cj4+PiBPbiAyMDE1LTA2LTAxIDE3OjA0LCBHdXN0YXZvIFBh
+ZG92YW4gd3JvdGU6Cj4+Pj4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5A
+Y29sbGFib3JhLmNvLnVrPgo+Pj4+Cj4+Pj4gSGksCj4+Pj4KPj4+PiBIZXJlIGdvZXMgdGhlIGZ1
+bGwgc3VwcG9ydCBmb3IgYXRvbWljIG1vZGVzZXR0aW5nIG9uIGV4eW5vcy4gSSd2ZQo+Pj4+IHNw
+bGl0IHRoZSBwYXRjaGVzIGluIHRoZSB2YXJpb3VzIHBoYXNlcyBvZiBhdG9taWMgc3VwcG9ydC4K
+Pj4+IFRoYW5rcyBmb3IgdGhpcyBwYXRjaHNlcywgaG93ZXZlciBJJ3ZlIG5vdGljZWQgYSBwcm9i
+bGVtIGFmdGVyIGFwcGx5aW5nCj4+PiB0aGVtLgo+Pj4gVGhlIGlzc3VlIGdldHMgcmV2ZWFsZWQg
+d2hlbiBzdXBwb3J0IGZvciBJT01NVSBpcyBlbmFibGVkLiBJJ3ZlIGRpZCBteQo+Pj4gdGVzdHMK
+Pj4+IHdpdGggRXh5bm9zIEhETUkgZHJpdmVyIG9uIE9kcm9pZCBVMyBib2FyZC4KPj4+Cj4+PiBU
+byBkZW1vbnN0cmF0ZWQgdGhlIGlzc3VlIEkndmUgYWRkZWQgZm9sbG93aW5nIGFkZGl0aW9uYWwg
+ZGVidWcgaW4gdGhlCj4+PiBleHlub3MKPj4+IG1peGVyIGRyaXZlciBpbiBtaXhlcl9ncmFwaF9i
+dWZmZXIoKSBmdW5jdGlvbjoKPj4+IHByX2luZm8oImRtYSBhZGRyICVwYWQgcGxhbmUtPnNyY193
+aWR0aCAlZCBwbGFuZS0+c3JjX2hlaWdodCAlZFxuIiwKPj4+ICZwbGFuZS0+ZG1hX2FkZHJbMF0s
+IHBsYW5lLT5zcmNfd2lkdGgsIHBsYW5lLT5zcmNfaGVpZ2h0KTsKPj4+Cj4+PiBCZWZvcmUgYXBw
+bHlpbmcgcGF0Y2hlcyBzZXR0aW5nIDY0MHg0ODAgbW9kZSBhbmQgZ2V0dGluZyBiYWNrIHRvCj4+
+PiAxOTIweDEwODAKPj4+IGNvbnNvbGUgZ2VuZXJhdGVzIGZvbGxvd2luZyBsb2c6Cj4+Pgo+Pj4g
+IyBtb2RldGVzdCAtTSBleHlub3MgLXMgMjM6NjQweDQ4MAo+Pj4gc2V0dGluZyBtb2RlIDY0MHg0
+ODAtNjBIekBYUjI0IG9uIGNvbm5lY3RvcnMgMjMsIGNydGMgMjEKPj4+IFsgMzg2MC42MTcxNTFd
+IGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lkdGggNjQwIHBsYW5lLT5zcmNfaGVpZ2h0IDQ4
+MAo+Pj4gXkMKPj4+IFsgMzg3MC41NTUyMzJdIGRtYSAweGJiZDAwMDAwIHBsYW5lLT5zcmNfd2lk
+dGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodAo+Pj4gMTA4MAo+Pj4gWyAzODcwLjU2NTY5Nl0gZG1h
+IDB4YmJkMDAwMDAgcGxhbmUtPnNyY193aWR0aCAxOTIwIHBsYW5lLT5zcmNfaGVpZ2h0Cj4+PiAx
+MDgwCj4+Pgo+Pj4gQWZ0ZXIgYXBwbHlpbmcgYXRvbWljIG1vZGVzZXR0aW5nIHBhdGNoc2V0Ogo+
+Pj4gIyBtb2RldGVzdCAtTSBleHlub3MgLXMgMjQ6NjQweDQ4MAo+Pj4gWyAgMTQyLjU0MDEyMl0g
+ZG1hIDB4YmJkMDAwMDAgcGxhbmUtPnNyY193aWR0aCAxOTIwIHBsYW5lLT5zcmNfaGVpZ2h0Cj4+
+PiAxMDgwCj4+PiBbICAxNDIuNTUwNzI2XSBkbWEgMHhiYmQwMDAwMCBwbGFuZS0+c3JjX3dpZHRo
+IDE5MjAgcGxhbmUtPnNyY19oZWlnaHQKPj4+IDEwODAKPj4+IHNldHRpbmcgbW9kZSA2NDB4NDgw
+LTYwSHpAWFIyNCBvbiBjb25uZWN0b3JzIDI0LCBjcnRjIDIyCj4+PiBbICAxNDIuNjQzNjcyXSBk
+bWEgMHhiYzUwMDAwMCBwbGFuZS0+c3JjX3dpZHRoIDE5MjAgcGxhbmUtPnNyY19oZWlnaHQKPj4+
+IDEwODAKPj4+IFsgIDE0Mi43NTk5ODJdIGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lkdGgg
+NjQwIHBsYW5lLT5zcmNfaGVpZ2h0IDQ4MAo+Pj4gXkMKPj4+IFsgIDE1NC45ODYwNDBdIGRtYSAw
+eGJiZDAwMDAwIHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodAo+Pj4gMTA4
+MAo+Pj4KPj4+IEFzIHlvdSBjYW4gc2VlIGZyb20gdGhlIGFib3ZlIGxvZywgbWl4ZXJfZ3JhcGhf
+YnVmZmVyIGZ1bmN0aW9uIGlzIGNhbGxlZAo+Pj4gc2V2ZXJhbCB0aW1lcy4gMHhiYmQwMDAwMCBp
+cyB0aGUgRE1BIGFkZHJlc3Mgb2YgdGhlIDE5MjB4MTA4MAo+Pj4gZnJhbWVidWZmZXIKPj4+IGFu
+ZCAweGJjNTAwMDAwIGlzIHRoZSBETUEgYWRkcmVzcyBvZiB0aGUgYWxsb2NhdGVkIDY0MHg0ODAg
+YnVmZmVyLgo+Pj4gbWl4ZXJfZ3JhcGhfYnVmZmVyKCkgaXMgZmlyc3QgY2FsbGVkIHdpdGggdGhl
+IG5ldyBETUEgYWRkcmVzcyBvZiB0aGUKPj4+IGZyYW1lYnVmZmVyLCBidXQgd2l0aCB0aGUgb2xk
+IG1vZGUgcGFyYW1ldGVycyAoMTkyMHgxMDgwIHNpemUpIGFuZCB0aGVuCj4+PiBpbiB0aGUgbmV4
+dCBjYWxsIGl0IHVwZGF0ZXMgdGhlIHBsYW5lIHBhcmFtZXRlcnMgdG8gdGhlIGNvcnJlY3QgdmFs
+dWVzCj4+PiAoc2l6ZSBjaGFuZ2VkIHRvIDY0MHg0ODApLiBXaGVuIElPTU1VIGlzIG5vdCB1c2Vk
+LCB0aGlzIGNhbiBiZSBlYXNpbHkKPj4+IG1pc3NlZCwgYnV0IGFmdGVyIGVuYWJsaW5nIElPTU1V
+IHN1cHBvcnQsIGFueSBETUEgYWNjZXNzIHRvIHVuYWxsb2NhdGVkCj4+PiBhZGRyZXNzIGNhdXNl
+cyBJT01NVSBQQUdFIEZBVUxULiBIZXJlIGl0IHdpbGwgaGFwcGVuIGFmdGVyIGNoYW5naW5nIERN
+QQo+Pj4gYWRkcmVzcyBvZiB0aGUgYnVmZmVyIHdpdGhvdXQgY2hhbmdpbmcgdGhlIHNpemUuCj4+
+Pgo+Pj4gQSBxdWljayB3b3JrYXJvdW5kIHRvIHJlc29sdmUgdGhpcyBtdWx0aXBsZSBjYWxscyB0
+bwo+Pj4gbWl4ZXJfZ3JhcGhfYnVmZmVyKCkKPj4+IHdpdGggcGFydGlhbGx5IHVwZGF0ZWQgbW9k
+ZSB2YWx1ZXMgaXMgdG8gcmVtb3ZlIGNhbGxzIHRvCj4+PiBtaXhlcl93aW5kb3dfc3VzcGVuZC9t
+aXhlcl93aW5kb3dfcmVzdW1lIGZyb20gbWl4ZXJfZGlzYWJsZSBhbmQKPj4+IG1peGVyX2Rpc2Fi
+bGUgZnVuY3Rpb25zLCBidXQgSSBleHBlY3QgdGhhdCB0aGlzIGlzIG5vdCB0aGUgcmlnaHQKPj4+
+IGFwcHJvYWNoLgo+Pj4KPj4+IFByb2JhYmx5IHRoZSBzYW1lIHByb2JsZW0gY2FuIGJlIG9ic2Vy
+dmVkIHdpdGggRXh5bm9zIEZJTUQgZHJpdmVyLgo+Pj4KPj4+IEd1c3Rhdm86IGNvdWxkIHlvdSBj
+aGVjayBpZiBtaXhlcl9lbmFibGUgZnVuY3Rpb25zIHNob3VsZCByZWFsbHkKPj4+IGNhbGwgbWl4
+ZXJfd2luZG93X3Jlc3VtZSBmdW5jdGlvbiwgd2hpY2ggaW4gdHVybiBjYWxscyBtaXhlcl93aW5f
+Y29tbWl0LAo+Pj4gd2hpY2ggY2FsbHMgbWl4ZXJfZ3JhcGhfYnVmZmVyIHdpdGggcGFydGlhbGx5
+IHVwZGF0ZWQgZGlzcGxheSBidWZmZXIKPj4+IGRhdGE/Cj4+IE1hcmVrLCBjYW4geW91IHNoYXJl
+IGhvdyBvdGhlciBwZW9wbGUgY2FuIHRlc3QgdGhlIGF0b21pYyBmZWF0dXJlIHdpdGgKPj4gaW9t
+bXU/Cj4+Cj4+IEkgc2hvdWxkIGhhdmUgbWVyZ2VkIGJlbG93IHNldmVyYWwgcGF0Y2hlcyBhbmQg
+YWRkZWQgZGV2aWNlIHRyZWUKPj4gcmVsZXZhbnQgY29kZXMgdG8gdGVzdCBpb21tdS4KPj4KPj4g
+MS4gTWVyZ2VkIGlvbW11IHN1cHBvcnQgcGF0Y2hlcyBmb3IgRXh5bm9zIFNvQyBiZWxvdyBpb21t
+dSBleHlub3MgdHJlZSwKPj4KPj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tl
+cm5lbC9naXQvam9yby9pb21tdS5naXQvbG9nLz9oPWFybS9leHlub3MKPj4KPj4KPj4gMi4gTWVy
+Z2VkIGJlbG93IHBhdGNoLAo+PiAgICAgIFtQQVRDSCB2NyAyNC8yNV0gQVJNOiBETUEtbWFwcGlu
+ZzogYWRkCj4+IHN1cHBvcnQgZm9yIGNyZWF0aW5nIHJlc2VydmVkIG1hcHBpbmdzIGluIGlvdmEg
+c3BhY2UKPj4KPj4gMy4gQWRkZWQgZGV2aWNlIG5vZGUgcmVsZXZhbnQgY29kZXMgLSBJIHRlc3Rl
+ZCBFeHlub3MgZHJtIG9uIHRyYXRzMgo+PiBib2FyZCBiYXNlZCBvbiBFeHlub3M0NDEyIFNvQyAt
+IGxpa2UgYmVsb3csCj4+IGluIGV4eW5vczQuZHRzaSBmaWxlOgo+PiBmaW1kOiBmaW1kQDExYzAw
+MDAwIHsKPj4gICAgICAgICAgICAgICAgICAgLi4uCj4+ICAgICAgICAgICAgICAgICBpb21tdXMg
+PSA8JnN5c21tdV9maW1kMD47Cj4+ICAgICAgICAgICAgICAgICAgIC4uLgo+Pgo+PiBzeXNtbXVf
+ZmltZDA6IHN5c21tdUAxMUUyMDAwMCB7Cj4+ICAgICAgICAgIGNvbXBhdGlibGUgPSAic2Ftc3Vu
+ZyxleHlub3Mtc3lzbW11IjsKPj4gICAgICAgICAgcmVnID0gPDB4MTFFMjAwMDAgMHgxMDAwPjsK
+Pj4gICAgICAgICAgaW50ZXJydXB0LXBhcmVudCA9IDwmY29tYmluZXI+Owo+PiAgICAgICAgICBp
+bnRlcnJ1cHRzID0gPDUgMj47Cj4+ICAgICAgICAgIGNsb2NrLW5hbWVzID0gInN5c21tdSIsICJt
+YXN0ZXIiOwo+PiAgICAgICAgICBjbG9ja3MgPSA8JmNsb2NrIENMS19TTU1VX0ZJTUQwPiwgPCZj
+bG9jayBDTEtfRklNRDA+Owo+PiAgICAgICAgICAgcG93ZXItZG9tYWlucyA9IDwmcGRfbGNkMD47
+Cj4+ICAgICAgICAgICNpb21tdS1jZWxscyA9IDwwPjsKPj4gfTsKPj4KPj4gaW4gZXh5bm9zNDQx
+Mi10cmF0czIuZHRzIGZpbGU6Cj4+IGZpbWRAMTFjMDAwMDAgewo+PiAgICAgICAgICAgICAgICAg
+IHN0YXR1cyA9ICJva2F5IjsKPj4gICAgICAgICAgICAgICAgICBpb21tdS1yZXNlcnZlZC1tYXBw
+aW5nID0gPDB4NDAwMDAwMDAgMHg0MDAwMDAwMAo+PiAweDQwMDAwMDAwPjsKPj4gfTsKPj4KPj4g
+SXMgdGhhdCBhbGw/IFlvdSB3b3VsZCBuZWVkIHRvIHNoYXJlIGV4YWN0IGd1aWRlIGFib3V0IGlv
+bW11IGVuYWJsaW5nIHRvCj4+IG90aGVyIHBlb3BsZSBzbyB0aGF0IHRoZXkgY2FuIHRlc3QgYXRv
+bWljIGZlYXR1cmUgd2l0aCBpb21tdS4KPiAKPiBSaWdodCwgdGhlIGFib3ZlIHNob3VsZCBiZSBl
+bm91Z2guIEZvciBjb252ZW5pZW5jZSBJJ3ZlIHByZXBhcmVkIGEKPiBicmFuY2ggd2l0aCBhbGwg
+bmVlZGVkIHBhdGNoZXM6Cj4gaHR0cHM6Ly9naXQubGluYXJvLm9yZy9wZW9wbGUvbWFyZWsuc3p5
+cHJvd3NraS9saW51eC1zcnBvbC5naXQKPiB2NC4xLWV4eW5vcy1kcm0taW9tbXUKPiAKPiBJJ3Zl
+IGluY2x1ZGVkIGZvbGxvd2luZyBicmFuY2hlczoKPiBodHRwczovL2dpdC5rZXJuZWwub3JnL2Nn
+aXQvbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MuZ2l0L2xvZy8/aD1leHlub3Mt
+ZHJtL2Zvci1uZXh0Cj4gCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5l
+bC9naXQva2dlbmUvbGludXgtc2Ftc3VuZy5naXQvbG9nLz9oPXY0LjItbmV4dC9kdC1zYW1zdW5n
+LTR0aAo+IAo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2tn
+ZW5lL2xpbnV4LXNhbXN1bmcuZ2l0L2xvZy8/aD12NC4yLW5leHQvbWFjaC1zYW1zdW5nCj4gCj4g
+aHR0cHM6Ly9naXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvam9yby9pb21tdS5n
+aXQvbG9nLz9oPWFybS9leHlub3MKPiAKPiAKPiBUaGVuIEkndmUgYXBwbGllZCBteSBFeHlub3Mg
+RFJNIHBhdGNoZXMKPiAoaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5n
+LXNvYy9tc2c0NTExNC5odG1sKQo+IGFzIHdlbGwgYXMgcmViYXNlZCBwYXRjaCAyNC8yNSBhbmQg
+MjUvMjUgZnJvbSBteSBpbml0aWFsIHY3IElPTU1VIHNlcmllcwo+IChodHRwOi8vd3d3LnNwaW5p
+Y3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzQ0NjUyLmh0bWwpLgo+IAoKVGhhbmtz
+LCBNYXJlay4KCkd1c3Rhdm8gYW5kIEpvb255b3VuZywgbGV0J3MgcmVzb2x2ZSB0aGUgcGFnZSBm
+YXVsdCBpc3N1ZSB3aXRoIGlvbW11CnRoaXMgdGltZS4gSSdkIGxpa2UgdG8gbWVyZ2UgbW9zdCBw
+YXRjaCBzZXRzIC0gYXRvbWljIGZlYXR1cmUsIGlvbW11LApFeHlub3M1NDMzIElQIHN1cHBvcnQs
+IGFuZCBkcml2ZXIgaW5pdGlhbGl6YXRpb24gY29uc29saWRhdGluZy4gSSBzaG91bGQKaGF2ZSBw
+dWxsLXJlcXVlc3QgaW4gdGhlIG5lYXIgZmVhdHVyZS4gU28gd2UgbmVlZCB0byBkbyB0aGlzIGlu
+IGEgaHVycnkuCgpUaGFua3MsCklua2kgRGFlCgo+IEJlc3QgcmVnYXJkcwoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
