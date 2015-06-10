@@ -1,64 +1,61 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 2/3] drm/exynos: fix broken component binding in case of
- multiple pipelines
-Date: Tue, 9 Jun 2015 16:47:38 -0300
-Message-ID: <20150609194738.GC22853@joana>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH 3/3] drm/exynos: remove SoC checking code
+Date: Wed, 10 Jun 2015 11:14:45 +0900
+Message-ID: <20150610111445.4d63c49d@hwh-ubuntu>
 References: <1433758542-9843-1-git-send-email-a.hajda@samsung.com>
- <1433758542-9843-3-git-send-email-a.hajda@samsung.com>
+ <1433758542-9843-4-git-send-email-a.hajda@samsung.com>
+ <20150609194652.GB22853@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1433758542-9843-3-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:52214 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751748AbbFJCOs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Jun 2015 22:14:48 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NPP00W34I8M12B0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 10 Jun 2015 11:14:46 +0900 (KST)
+In-reply-to: <20150609194652.GB22853@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-SGkgQW5kcnplaiwKCjIwMTUtMDYtMDggQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNv
-bT46Cgo+IEluIGNhc2UgdGhlcmUgYXJlIG11bHRpcGxlIHBpcGVsaW5lcyBhbmQgZGVmZXJyZWQg
-cHJvYmUgb2NjdXJzLCBvbmx5IGNvbXBvbmVudHMKPiBvZiB0aGUgZmlyc3QgcGlwZWxpbmUgd2Vy
-ZSBib3VuZC4gQXMgYSByZXN1bHQgb25seSBvbmUgcGlwZWxpbmUgd2FzIGF2YWlsYWJsZS4KPiBU
-aGUgbWFpbiBjYXVzZSBvZiB0aGlzIGlzc3VlIHdhcyBkeW5hbWljIGdlbmVyYXRpb24gb2YgY29t
-cG9uZW50IG1hdGNoIHRhYmxlIC0KPiBldmVyeSBjb21wb25lbnQgZHJpdmVyIGR1cmluZyBwcm9i
-ZSByZWdpc3RlcmVkIGl0c2VsZiBvbiBoZWxwZXIgbGlzdCwgaWYgdGhlcmUKPiB3YXMgYXQgbGVh
-c3Qgb25lIHBpcGVsaW5lIHByZXNlbnQgb24gdGhpcyBsaXN0IGNvbXBvbmVudCBtYXRjaCB0YWJs
-ZSB3ZXJlCj4gY3JlYXRlZCB3aXRob3V0IGRlZmVycmVkIGNvbXBvbmVudHMuCj4gVGhpcyBwYXRj
-aCByZW1vdmVzIHRoaXMgaGVscGVyIGxpc3QsIGluc3RlYWQgaXQgY3JlYXRlcyBtYXRjaCB0YWJs
-ZSBmcm9tCj4gZXhpc3RpbmcgZGV2aWNlcyByZXF1aXJpbmcgZXh5bm9zX2RybSBLTVMgZHJpdmVy
-cy4gVGhpcyB3YXkgbWF0Y2ggdGFibGUgZG8gbm90Cj4gZGVwZW5kIG9uIHByb2JlL2RlZmVycmFs
-IG9yZGVyIGFuZCBjb250YWlucyBhbGwgS01TIGNvbXBvbmVudHMuCj4gQXMgYSBzaWRlIGVmZmVj
-dCBwYXRjaCBtYWtlcyB0aGUgY29kZSBjbGVhbmVyIGFuZCBzaWduaWZpY2FudGx5IHNtYWxsZXIu
-Cj4gCj4gU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4K
-PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIHwgIDE0
-ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgICB8ICAxMyAr
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMgICAgfCAgMjAgKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgIHwgMjgzICsrKysr
-KysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYyAgICB8ICAyOSArLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZpbWQuYyAgIHwgIDI4ICstLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fdmlkaS5jICAgfCAgMTggKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRt
-aS5jICAgICAgIHwgIDIyICstLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhl
-ci5jICAgICAgfCAgMTQgKy0KPiAgOSBmaWxlcyBjaGFuZ2VkLCA5OSBpbnNlcnRpb25zKCspLCAz
-NDIgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zN19kcm1fZGVjb24uYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1f
-ZGVjb24uYwo+IGluZGV4IGQ2NTliYTIuLjIyY2IwNjcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCj4gQEAgLTc2OSwxMSArNzY5LDYgQEAgc3RhdGlj
-IGludCBkZWNvbl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJaWYgKCFj
-dHgpCj4gIAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JcmV0ID0gZXh5bm9zX2RybV9jb21wb25l
-bnRfYWRkKGRldiwgRVhZTk9TX0RFVklDRV9UWVBFX0NSVEMsCj4gLQkJCQkJRVhZTk9TX0RJU1BM
-QVlfVFlQRV9MQ0QpOwoKUGxlYXNlIGFsc28gcmVtb3ZlIGVudW0gZXh5bm9zX2RybV9kZXZpY2Vf
-dHlwZSwgd2l0aCB0aGlzIHBhdGNoIGl0IGlzCm5vdCB1c2VkIGFueW1vcmUuCgoJR3VzdGF2bwpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Andrzej,
+
+On Tue, 09 Jun 2015 16:46:52 -0300
+Gustavo Padovan <gustavo@padovan.org> wrote:
+
+> Hi Andrzej,
+> 
+> 2015-06-08 Andrzej Hajda <a.hajda@samsung.com>:
+> 
+> > SoC checking code is not necessary anymore, as exynos_drm_match_add
+> > and exynos_drm_platform_probe already properly handles situation
+> > when there are no Exynos DRM components.
+> > 
+> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.c | 27
+> > +-------------------------- 1 file changed, 1 insertion(+), 26
+> > deletions(-)
+> 
+> This series looks goods to me and works fine on my snow machine:
+> 
+> Tested-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> 	Gustavo
+
+It looks good to me.
+
+Reviewed-by: Hyungwon Hwang <human.hwang@samsung.com>
+
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
