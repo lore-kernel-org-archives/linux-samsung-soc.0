@@ -1,64 +1,133 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Thu, 11 Jun 2015 18:40:08 +0200
-Message-ID: <5579B9E8.9040609@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de>	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>	<5579602F.1070801@ahsoftware.de> <CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v4 1/2] usb: ehci-exynos: Make provision for vdd regulators
+Date: Fri, 12 Jun 2015 00:13:26 +0530
+Message-ID: <CAFp+6iGqR-RCukOZ1AV22GXxOmNkhReLWCie-zS1tP_cC1bJ6A@mail.gmail.com>
+References: <1433761633-8542-1-git-send-email-gautam.vivek@samsung.com>
+	<Pine.LNX.4.44L0.1506081111050.1574-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "list@wandq.ahsoftware:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f194.google.com ([209.85.223.194]:34890 "EHLO
+	mail-ie0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750718AbbFKSn2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jun 2015 14:43:28 -0400
+In-Reply-To: <Pine.LNX.4.44L0.1506081111050.1574-100000@iolanthe.rowland.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Am 11.06.2015 um 14:30 schrieb Linus Walleij:
-> On Thu, Jun 11, 2015 at 12:17 PM, Alexander Holler <holler@ahsoftware.de> wrote:
->> Am 11.06.2015 um 10:12 schrieb Linus Walleij:
->>> On Wed, Jun 10, 2015 at 10:28 AM, Alexander Holler <holler@ahsoftware.de>
->>> wrote:
+Hi,
+
+
+On Mon, Jun 8, 2015 at 8:47 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Mon, 8 Jun 2015, Vivek Gautam wrote:
 >
->>>> You would end up with the same problem of deadlocks as currently, and you
->>>> would still need something ugly like the defered probe brutforce to avoid
->>>> them.
->>>
->>>
->>> Sorry I don't get that. Care to elaborate on why?
+>> Facilitate getting required 3.3V and 1.0V VDD supply for
+>> EHCI controller on Exynos.
 >>
+>> For example, patches for regulators' nodes:
+>> c8c253f ARM: dts: Add regulator entries to smdk5420
+>> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+>> enable only minimum number of regulators on smdk5250.
 >>
->> Because loading/initializing on demand doesn't give you any solved order of
->> drivers to initialize. And it can't because it has no idea about the
->> requirements of other drivers. The reason why it might work better in the
->> case of the tegra is that it might give you another initialization order
->> than the one which is currently choosen, which, by luck, might be a better
->> one.
+>> So ensuring now that the controller driver requests the necessary
+>> VDD regulators (if available, unless there are direct VDD rails),
+>> and enable them so as to make them working on exynos systems.
 >>
->> But maybe I missed something, I haven't looked at the patches at all. But
->> just loading on demand, can't magically give you a working order of drivers
->> to initialize. E.g. how do you choose the first driver to initialize?
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 >
-> So the current patch set introduces dependencies (just for device tree)
-> and Tomeu is working on a more generic dependency approach for
-> any HW description.
+> Something about this looks a little fishy...
+
+Sorry, i didn't get you.
+This patch was initially posted by me sometime back.
+
 >
-> The first driver to initialize will be as usual the first one in the list for
-> that initlevel, then walking up the initilevels.
+>> @@ -170,7 +173,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>>
+>>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+>>       if (err)
+>> -             goto fail_clk;
+>> +             goto fail_regulator1;
+>> +
+>> +     exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
 >
-> However if any driver runs into a resource roadblock it will postpone
-> and wait for dependencies to probe first.
+> Just before this region of code, there is:
 >
-> Certainly it is possible to create deadlocks in this scenario, but the
-> scope is not to create an ubreakable system.
+>         if (of_device_is_compatible(pdev->dev.of_node,
+>                                         "samsung,exynos5440-ehci"))
+>                 goto skip_phy;
+>
+> If that "goto" is taken, exynos_ehci->vdd33 and ->vdd10 will be NULL,
+> not an ERR_PTR code.
 
-IAnd what happens if you run into a deadlock? Do you print "you've lost, 
-try changing your kernel config" in some output hidden by a 
-splash-screen? ;)
+Right. This will hit NULL pointer dereferencing later in the code.
 
-That sounds like the fun with duck typed languages where you have to 
-test any and every possible screnario (something which is almost 
-impossible) in order to not run into something unexpected.
+>
+>> +     if (!IS_ERR(exynos_ehci->vdd33)) {
+>> +             err = regulator_enable(exynos_ehci->vdd33);
+>> +             if (err) {
+>> +                     dev_err(&pdev->dev,
+>> +                             "Failed to enable 3.3V Vdd supply\n");
+>> +                     goto fail_regulator1;
+>> +             }
+>> +     }
 
-Anyway, have fun, good luck.
+May be we can have something like this:
 
-Alexander Holler
+     if (IS_ERR(exynos_ehci->vdd33)) {
+             exynos_ehci->vdd33 = NULL;
+     } else {
+             err = regulator_enable(exynos_ehci->vdd33);
+             if (err) {
+                     dev_err(&pdev->dev,
+                             "Failed to enable 3.3V Vdd supply\n");
+                     goto fail_regulator1;
+             }
+     }
+
+and later in the code check for NULL pointer before enabling the regulator.
+
+>> +
+>> +     exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
+>> +     if (!IS_ERR(exynos_ehci->vdd10)) {
+>> +             err = regulator_enable(exynos_ehci->vdd10);
+>> +             if (err) {
+>> +                     dev_err(&pdev->dev,
+>> +                             "Failed to enable 1.0V Vdd supply\n");
+>> +                     goto fail_regulator2;
+>> +             }
+>> +     }
+>>
+>>  skip_phy:
+>>
+>> @@ -231,6 +254,12 @@ fail_add_hcd:
+>>  fail_io:
+>>       clk_disable_unprepare(exynos_ehci->clk);
+>>  fail_clk:
+>> +     if (!IS_ERR(exynos_ehci->vdd10))
+>> +             regulator_disable(exynos_ehci->vdd10);
+>> +fail_regulator2:
+>> +     if (!IS_ERR(exynos_ehci->vdd33))
+>> +             regulator_disable(exynos_ehci->vdd33);
+>
+> Which means these regulator_disable() calls will crash when they
+> dereference a NULL pointer.
+>
+> I think it would be simpler in the end to let a NULL pointer mean the
+> regulator isn't present.  If devm_regulator_get_optional() returns an
+> error, convert it to NULL (or don't do the assignment to
+> exynos_ehci->vdd?? in the first place).
+>
+> The same criticism applies to the other patch in this series.
+
+Sure, i will amend both the patches.
+
+Thanks !
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
