@@ -1,52 +1,75 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Fix wrong clock for Exynos4x12 ADC
-Date: Thu, 11 Jun 2015 17:26:30 +0900
-Message-ID: <1434011190-24563-2-git-send-email-k.kozlowski@samsung.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:14577 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750985AbbFKI0x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 04:26:53 -0400
-In-reply-to: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Thu, 11 Jun 2015 11:56:26 +0200
+Message-ID: <55795B4A.6030008@collabora.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+ <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-clk@vger.ker
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The TSADC gate clock is present only in Exynos4210. It should not be
-added to exynos4x12.dtsi because the register controlling it is reserved
-on Exynos4x12.
-
-Instead, the Analog to Digital Converter of Exynos4x12 uses PCLK_ADC
-gate clock from different register.
-
-By using proper clock this effectively enables usage of exynos-adc
-driver on Exynos4412 boards, enables accessing sensors connected to it
-on Trats2 board (ntc,ncp15wb473 AP and battery thermistors) and fixes
-following warnings during boot:
-[    2.248247] ERROR: could not get clock /adc@126C0000:adc(0)
-[    2.248262] exynos-adc 126c0000.adc: failed getting clock, err = -2
-[    2.248293] exynos-adc: probe of 126c0000.adc failed with error -2
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index b77dac61ffb5..d7738dd062b7 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -101,7 +101,7 @@
- 		reg = <0x126C0000 0x100>;
- 		interrupt-parent = <&combiner>;
- 		interrupts = <10 3>;
--		clocks = <&clock CLK_TSADC>;
-+		clocks = <&clock CLK_PCLK_ADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
--- 
-1.9.1
+T24gMDYvMTEvMjAxNSAxMDoxNSBBTSwgTGludXMgV2FsbGVpaiB3cm90ZToKPiBPbiBXZWQsIEp1
+biAxMCwgMjAxNSBhdCAxMjoxOSBQTSwgVG9tZXUgVml6b3NvCj4gPHRvbWV1LnZpem9zb0Bjb2xs
+YWJvcmEuY29tPiB3cm90ZToKPj4gT24gMTAgSnVuZSAyMDE1IGF0IDA5OjMwLCBMaW51cyBXYWxs
+ZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+IHdyb3RlOgo+IAo+Pj4gcmVndWxhdG9yX2dl
+dCguLi4pIC0+IG5vdCBhdmFpbGFibGUsIHNvOgo+Pj4gLSBpZGVudGlmeSB0YXJnZXQgcmVndWxh
+dG9yIHByb3ZpZGVyIC0gdGhpcyB3aWxsIG5lZWQgaW5zdHJ1bWVudGF0aW9uCj4+PiAtIHByb2Jl
+IGl0Cj4+Pgo+Pj4gSXQgdGhlbiB0dXJucyBvdXQgdGhlIHJlZ3VsYXRvciBkcml2ZXIgaXMgb24g
+dGhlIGkyYyBidXMsIHNvIHdlCj4+PiBuZWVkIHRvIHByb2JlIHRoZSBpMmMgZHJpdmVyOgo+Pj4g
+LSBpZGVudGlmeSB0YXJnZXQgaTJjIGhvc3QgZm9yIHRoZSByZWd1bGF0b3IgZHJpdmVyIC0gdGhp
+cyB3aWxsIG5lZWQKPj4+ICAgaW5zdHJ1bWVudGF0aW9uCj4+PiAtIHByb2JlIHRoZSBpMmMgaG9z
+dCBkcml2ZXIKPj4+Cj4+PiBpMmMgaG9zdCBjb21lcyBvdXQsIHByb2JlcyB0aGUgcmVndWxhdG9y
+IGRyaXZlciwgcmVndWxhdG9yIGRyaXZlcgo+Pj4gcHJvYmVzIGFuZCB0aGVuIHRoZSByZWd1bGF0
+b3JfZ2V0KCkgY2FsbCByZXR1cm5zLgo+Pgo+PiBIbW0sIGlmIEkgdW5kZXJzdGFuZCBjb3JyZWN0
+bHkgd2hhdCB5b3Ugc2F5LCB0aGlzIGlzIGV4YWN0bHkgd2hhdCB0aGlzCj4+IHBhcnRpY3VsYXIg
+c2VyaWVzIGRvZXM6Cj4+Cj4+IHJlZ3VsYXRvcl9nZXQgLT4gb2ZfcGxhdGZvcm1fZGV2aWNlX2Vu
+c3VyZSAtPiBwcm9iZSgpIG9uIHRoZSBwbGF0Zm9ybQo+PiBkZXZpY2UgdGhhdCBlbmNsb3NlcyB0
+aGUgcmVxdWVzdGVkIGRldmljZSBub2RlIChpMmMgaG9zdCkgLT4gaTJjIHNsYXZlCj4+IGdldHMg
+cHJvYmVkIGFuZCB0aGUgcmVndWxhdG9yIHJlZ2lzdGVyZWQgLT4gcmVndWxhdG9yX2dldCByZXR1
+cm5zIHRoZQo+PiByZXF1ZXN0ZWQgcmVzb3VyY2UKPiAKPiBZZXMuIEJ1dCBvbmx5IGZvciBkZXZp
+Y2UgdHJlZS4KPiAKPj4gVGhlIGRvd25zaWRlIEknbSBjdXJyZW50bHkgbG9va2luZyBhdCBpcyB0
+aGF0IGFuIGV4cGxpY2l0IGRlcGVuZGVuY3kKPj4gZ3JhcGggd291bGQgYmUgdXNlZnVsIHRvIGhh
+dmUgZm9yIG90aGVyIHB1cnBvc2VzLiBGb3IgZXhhbXBsZSB0byBwcmludAo+PiBhIG5lYXQgd2Fy
+bmluZyB3aGVuIGEgZGVwZW5kZW5jeSBjYW5ub3QgYmUgZnVsZmlsbGVkLiBPciB0byByZWZ1c2Ug
+dG8KPj4gdW5iaW5kIGEgZGV2aWNlIHdoaWNoIG90aGVyIGRldmljZXMgZGVwZW5kIG9uLCBvciB0
+byBhdXRvbWF0aWNhbGx5Cj4+IHVuYmluZCB0aGUgZGV2aWNlcyB0aGF0IGRlcGVuZCBvbiBpdCwg
+b3IgdG8gcHJpbnQgYSB3YXJuaW5nIGlmIGEKPj4gZGV2aWNlIGlzIGhvdHBsdWdnZWQgb2ZmIGFu
+ZCBvdGhlciBkZXZpY2VzIGRlcGVuZCBvbiBpdC4KPiAKPiBVbmJpbmQvcmVtb3ZlKCkgY2FsbHMg
+YXJlIHRoZSBpbnZlcnNlIHVzdWFsbHkgeWVzLgo+IAo+IEJ1dCBhbHNvIHRoZSBbcnVudGltZV0g
+cG93ZXIgdXAvZG93biBzZXF1ZW5jZXMgZm9yIHRoZQo+IGRldmljZXMgdGVuZCB0byBkZXBlbmQg
+b24gYSBzaW1pbGFyIG9yZGVyaW5nIG9yIG1vc3RseQo+IHRoZSBzYW1lLiAoTWVudGlvbmVkIHRo
+aXMgYmVmb3JlIEkgdGhpbmsuKQo+IAo+Pj4gVGhpcyByZXF1aXJlcyBpbnN0cnVtZW50YXRpb24g
+b24gYW55dGhpbmcgcHJvdmlkaW5nIGEgcmVzb3VyY2UKPj4+IHRvIGFub3RoZXIgZHJpdmVyIGxp
+a2UgdGhvc2UgSSBtZW50aW9uZWQgYW5kIGEgbG90IG9mIG92ZXJoZWFkCj4+PiBpbmZyYXN0cnVj
+dHVyZSwgYnV0IEkgdGhpbmsgaXQncyB0aGUgcmlnaHQgYXBwcm9hY2guIEhvd2V2ZXIgSSBkb24n
+dAo+Pj4ga25vdyBpZiBJIHdvdWxkIGV2ZXIgYmUgYWJsZSB0byBwdWxsIHRoYXQgb2ZmIG15c2Vs
+ZiwgSSBrbm93IHRhbGsKPj4+IGlzIGNoZWFwIGFuZCBJIHNob3VsZCBzaG93IHRoZSBjb2RlIGlu
+c3RlYWQuCj4+Cj4+IFllYWgsIGlmIHlvdSBjYW4gZ2l2ZSBpdCBhIHNlY29uZCBsb29rIGFuZCBz
+YXkgaWYgaXQgbWF0Y2hlcyB3aGF0IHlvdQo+PiB3cm90ZSBhYm92ZSwgaXQgd291bGQgYmUgdmVy
+eSBtdWNoIGFwcHJlY2lhdGVkLgo+IAo+IFllcyB5b3UgYXJlIHJpZ2h0LiBCdXQgd2hhdCBhYm91
+dCBBQ1BJLCBib2FyZCBmaWxlcywKPiBTaW1wbGUgRmlybXdhcmUgYW5kIGZ1dHVyZSBoYXJkd2Fy
+ZSBkZXNjcmlwdGlvbiBsYW5ndWFnZXMuLi4KCkFoIG9rLCBnb3QgaXQgbm93LiBXaXRoIGZ3bm9k
+ZSBhbmQgYnkgbW92aW5nIGEgYml0IG9mIGNvZGUgYXJvdW5kIHRoYXQKc2hvdWxkbid0IGJlIGEg
+cHJvYmxlbS4KCkknbSBhY3R1YWxseSBub3cgaW1wbGVtZW50aW5nIHRoZSBhbHRlcm5hdGl2ZSBh
+cHByb2FjaCBpbiB3aGljaApkZXBlbmRlbmNpZXMgYXJlIGRpc2NvdmVyZWQgYmVmb3JlIHRoZSBk
+ZXZpY2UgaXMgcHJvYmVkLCB0aGVuIHByb2JlZCBpbgp0dXJuIHVudGlsIGFsbCBhcmUgYXZhaWxh
+YmxlLiBTbyBmdW5jdGlvbmFsbHkgaXMgdmVyeSBzaW1pbGFyIGJ1dCBJCmV4cGVjdCB0byBmaW5k
+IGJpZyBkaWZmZXJlbmNlcyBpbiBob3cgdGhlIGNvZGViYXNlIGlzIGltcGFjdGVkLgoKUmVnYXJk
+cywKClRvbWV1Cgo+IFlvdXJzLAo+IExpbnVzIFdhbGxlaWoKPiAKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
