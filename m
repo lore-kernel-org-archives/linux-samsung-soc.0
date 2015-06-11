@@ -1,97 +1,38 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
-Date: Thu, 11 Jun 2015 15:21:33 +0900
-Message-ID: <557928ED.4010202@samsung.com>
-References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
- <55780B62.1060005@samsung.com> <20150610133644.GC13493@joana>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] irqchip: exynos-combiner: Save IRQ enable set on
+ suspend
+Date: Thu, 11 Jun 2015 08:46:02 +0200
+Message-ID: <55792EAA.1030309@collabora.co.uk>
+References: <1433941831-16637-1-git-send-email-javier.martinez@collabora.co.uk> <84ioavb2j9.wl-peter.chubb@nicta.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150610133644.GC13493@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, tjakobi@math.uni-bielefeld.de, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51871 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782AbbFKGqI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jun 2015 02:46:08 -0400
+In-Reply-To: <84ioavb2j9.wl-peter.chubb@nicta.com.au>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Peter Chubb <peter.chubb@nicta.com.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-T24gMDYvMTAvMjAxNSAxMDozNiBQTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEhpIE1hcmVr
-LAo+IAo+IDIwMTUtMDYtMTAgTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcu
-Y29tPjoKPiAKPj4gSGVsbG8sCj4+Cj4+IE9uIDIwMTUtMDYtMDEgMTc6MDQsIEd1c3Rhdm8gUGFk
-b3ZhbiB3cm90ZToKPj4+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNv
-bGxhYm9yYS5jby51az4KPj4+Cj4+PiBIaSwKPj4+Cj4+PiBIZXJlIGdvZXMgdGhlIGZ1bGwgc3Vw
-cG9ydCBmb3IgYXRvbWljIG1vZGVzZXR0aW5nIG9uIGV4eW5vcy4gSSd2ZQo+Pj4gc3BsaXQgdGhl
-IHBhdGNoZXMgaW4gdGhlIHZhcmlvdXMgcGhhc2VzIG9mIGF0b21pYyBzdXBwb3J0Lgo+Pgo+PiBU
-aGFua3MgZm9yIHRoaXMgcGF0Y2hzZXMsIGhvd2V2ZXIgSSd2ZSBub3RpY2VkIGEgcHJvYmxlbSBh
-ZnRlciBhcHBseWluZwo+PiB0aGVtLgo+PiBUaGUgaXNzdWUgZ2V0cyByZXZlYWxlZCB3aGVuIHN1
-cHBvcnQgZm9yIElPTU1VIGlzIGVuYWJsZWQuIEkndmUgZGlkIG15IHRlc3RzCj4+IHdpdGggRXh5
-bm9zIEhETUkgZHJpdmVyIG9uIE9kcm9pZCBVMyBib2FyZC4KPj4KPj4gVG8gZGVtb25zdHJhdGVk
-IHRoZSBpc3N1ZSBJJ3ZlIGFkZGVkIGZvbGxvd2luZyBhZGRpdGlvbmFsIGRlYnVnIGluIHRoZQo+
-PiBleHlub3MKPj4gbWl4ZXIgZHJpdmVyIGluIG1peGVyX2dyYXBoX2J1ZmZlcigpIGZ1bmN0aW9u
-Ogo+PiBwcl9pbmZvKCJkbWEgYWRkciAlcGFkIHBsYW5lLT5zcmNfd2lkdGggJWQgcGxhbmUtPnNy
-Y19oZWlnaHQgJWRcbiIsCj4+ICZwbGFuZS0+ZG1hX2FkZHJbMF0sIHBsYW5lLT5zcmNfd2lkdGgs
-IHBsYW5lLT5zcmNfaGVpZ2h0KTsKPj4KPj4gQmVmb3JlIGFwcGx5aW5nIHBhdGNoZXMgc2V0dGlu
-ZyA2NDB4NDgwIG1vZGUgYW5kIGdldHRpbmcgYmFjayB0byAxOTIweDEwODAKPj4gY29uc29sZSBn
-ZW5lcmF0ZXMgZm9sbG93aW5nIGxvZzoKPj4KPj4gIyBtb2RldGVzdCAtTSBleHlub3MgLXMgMjM6
-NjQweDQ4MAo+PiBzZXR0aW5nIG1vZGUgNjQweDQ4MC02MEh6QFhSMjQgb24gY29ubmVjdG9ycyAy
-MywgY3J0YyAyMQo+PiBbIDM4NjAuNjE3MTUxXSBkbWEgMHhiYzUwMDAwMCBwbGFuZS0+c3JjX3dp
-ZHRoIDY0MCBwbGFuZS0+c3JjX2hlaWdodCA0ODAKPj4gXkMKPj4gWyAzODcwLjU1NTIzMl0gZG1h
-IDB4YmJkMDAwMDAgcGxhbmUtPnNyY193aWR0aCAxOTIwIHBsYW5lLT5zcmNfaGVpZ2h0IDEwODAK
-Pj4gWyAzODcwLjU2NTY5Nl0gZG1hIDB4YmJkMDAwMDAgcGxhbmUtPnNyY193aWR0aCAxOTIwIHBs
-YW5lLT5zcmNfaGVpZ2h0IDEwODAKPj4KPj4gQWZ0ZXIgYXBwbHlpbmcgYXRvbWljIG1vZGVzZXR0
-aW5nIHBhdGNoc2V0Ogo+PiAjIG1vZGV0ZXN0IC1NIGV4eW5vcyAtcyAyNDo2NDB4NDgwCj4+IFsg
-IDE0Mi41NDAxMjJdIGRtYSAweGJiZDAwMDAwIHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+
-c3JjX2hlaWdodCAxMDgwCj4+IFsgIDE0Mi41NTA3MjZdIGRtYSAweGJiZDAwMDAwIHBsYW5lLT5z
-cmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAxMDgwCj4+IHNldHRpbmcgbW9kZSA2NDB4
-NDgwLTYwSHpAWFIyNCBvbiBjb25uZWN0b3JzIDI0LCBjcnRjIDIyCj4+IFsgIDE0Mi42NDM2NzJd
-IGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAx
-MDgwCj4+IFsgIDE0Mi43NTk5ODJdIGRtYSAweGJjNTAwMDAwIHBsYW5lLT5zcmNfd2lkdGggNjQw
-IHBsYW5lLT5zcmNfaGVpZ2h0IDQ4MAo+PiBeQwo+PiBbICAxNTQuOTg2MDQwXSBkbWEgMHhiYmQw
-MDAwMCBwbGFuZS0+c3JjX3dpZHRoIDE5MjAgcGxhbmUtPnNyY19oZWlnaHQgMTA4MAo+Pgo+PiBB
-cyB5b3UgY2FuIHNlZSBmcm9tIHRoZSBhYm92ZSBsb2csIG1peGVyX2dyYXBoX2J1ZmZlciBmdW5j
-dGlvbiBpcyBjYWxsZWQKPj4gc2V2ZXJhbCB0aW1lcy4gMHhiYmQwMDAwMCBpcyB0aGUgRE1BIGFk
-ZHJlc3Mgb2YgdGhlIDE5MjB4MTA4MCBmcmFtZWJ1ZmZlcgo+PiBhbmQgMHhiYzUwMDAwMCBpcyB0
-aGUgRE1BIGFkZHJlc3Mgb2YgdGhlIGFsbG9jYXRlZCA2NDB4NDgwIGJ1ZmZlci4KPj4gbWl4ZXJf
-Z3JhcGhfYnVmZmVyKCkgaXMgZmlyc3QgY2FsbGVkIHdpdGggdGhlIG5ldyBETUEgYWRkcmVzcyBv
-ZiB0aGUKPj4gZnJhbWVidWZmZXIsIGJ1dCB3aXRoIHRoZSBvbGQgbW9kZSBwYXJhbWV0ZXJzICgx
-OTIweDEwODAgc2l6ZSkgYW5kIHRoZW4KPj4gaW4gdGhlIG5leHQgY2FsbCBpdCB1cGRhdGVzIHRo
-ZSBwbGFuZSBwYXJhbWV0ZXJzIHRvIHRoZSBjb3JyZWN0IHZhbHVlcwo+PiAoc2l6ZSBjaGFuZ2Vk
-IHRvIDY0MHg0ODApLiBXaGVuIElPTU1VIGlzIG5vdCB1c2VkLCB0aGlzIGNhbiBiZSBlYXNpbHkK
-Pj4gbWlzc2VkLCBidXQgYWZ0ZXIgZW5hYmxpbmcgSU9NTVUgc3VwcG9ydCwgYW55IERNQSBhY2Nl
-c3MgdG8gdW5hbGxvY2F0ZWQKPj4gYWRkcmVzcyBjYXVzZXMgSU9NTVUgUEFHRSBGQVVMVC4gSGVy
-ZSBpdCB3aWxsIGhhcHBlbiBhZnRlciBjaGFuZ2luZyBETUEKPj4gYWRkcmVzcyBvZiB0aGUgYnVm
-ZmVyIHdpdGhvdXQgY2hhbmdpbmcgdGhlIHNpemUuCj4+Cj4+IEEgcXVpY2sgd29ya2Fyb3VuZCB0
-byByZXNvbHZlIHRoaXMgbXVsdGlwbGUgY2FsbHMgdG8gbWl4ZXJfZ3JhcGhfYnVmZmVyKCkKPj4g
-d2l0aCBwYXJ0aWFsbHkgdXBkYXRlZCBtb2RlIHZhbHVlcyBpcyB0byByZW1vdmUgY2FsbHMgdG8K
-Pj4gbWl4ZXJfd2luZG93X3N1c3BlbmQvbWl4ZXJfd2luZG93X3Jlc3VtZSBmcm9tIG1peGVyX2Rp
-c2FibGUgYW5kCj4+IG1peGVyX2Rpc2FibGUgZnVuY3Rpb25zLCBidXQgSSBleHBlY3QgdGhhdCB0
-aGlzIGlzIG5vdCB0aGUgcmlnaHQKPj4gYXBwcm9hY2guCj4+Cj4+IFByb2JhYmx5IHRoZSBzYW1l
-IHByb2JsZW0gY2FuIGJlIG9ic2VydmVkIHdpdGggRXh5bm9zIEZJTUQgZHJpdmVyLgo+Pgo+PiBH
-dXN0YXZvOiBjb3VsZCB5b3UgY2hlY2sgaWYgbWl4ZXJfZW5hYmxlIGZ1bmN0aW9ucyBzaG91bGQg
-cmVhbGx5Cj4+IGNhbGwgbWl4ZXJfd2luZG93X3Jlc3VtZSBmdW5jdGlvbiwgd2hpY2ggaW4gdHVy
-biBjYWxscyBtaXhlcl93aW5fY29tbWl0LAo+PiB3aGljaCBjYWxscyBtaXhlcl9ncmFwaF9idWZm
-ZXIgd2l0aCBwYXJ0aWFsbHkgdXBkYXRlZCBkaXNwbGF5IGJ1ZmZlcgo+PiBkYXRhPwo+IAo+IEl0
-IHNob3VsZCBub3QsIHlvdSBhcmUgcmlnaHQuIFRoaXMgaXMgYWN0dWFsbHkgdGhlIGNvcnJlY3Qg
-Zml4LiBBdG9taWMKPiBtb2Rlc2V0dGluZyBzaG91bGQgbm90IGRvIGNoYWluZWQgY2FsbHMsIGUu
-Zy4sIGNydGNfZGlzYWJsZSBjYWxsaW5nCj4gcGxhbmVfZGlzYWJsZS4gVGhpcyBjaGFuZ2Ugd2Fz
-IGFscmVhZHkgaW4gbXkgcGxhbiBhY3R1YWxseSwgYnV0IGFzIEkgaGFkCj4gSU9NTVUgZGlzYWJs
-ZWQgSSBkaWRuJ3Qgc2VlIGl0IGhlcmUsIGFuZCBJIGRpZG4ndCBjcmVhdGUgdGhpcyBwYXRjaCB5
-ZXQuCj4gCgpSaWdodCwgYnV0IGl0IG5lZWRzIHRoYXQgY3J0Y19kaXNhYmxlIGNhbGxzIHBsYW5l
-X2Rpc2FibGUgaW4gZXh5bm9zCmRyaXZlciBpbnRlcm5hbGx5LiBCZWNhdXNlIGNydGMgaXMgZGlz
-YWJsZWQgYmVmb3JlIHBsYW5lIGlzIGRpc2FibGVkLAppdCBtZWFucyBwbGFuZV9kaXNhYmxlIGp1
-c3QgcmV0dXJucyB3aXRob3V0IGFueSByZWdpc3RlciBjaGFuZ2VzLAp0aGVuIHdlIGNhbm5vdCBi
-ZSBzdXJlIHNldHRpbmcgcmVnaXN0ZXIgdG8gZGlzYWJsZSBwbGFuZSB3aGVuIGNydGMgaXMKZGlz
-YWJsZS4KCkkgdGhpbmsgYSBzb2x1dGlvbiBpcyBlbm91Z2ggb25seSB0byBlbGltaW5hdGUgY2Fs
-bGluZyB4eHhfcmVzdW1lCmZ1bmN0aW9uIGluIGV4eW5vcyBkcml2ZXIgZnVuY3Rpb24gd2hlbiBl
-bmFibGUgcGxhbmUsIHdlIGNhbiByZW1vdmUgaXQKYmVjYXVzZSBpdCdzIGNhbGxlZCB0byBlbmFi
-bGUgcGxhbmUgZnJvbSBkcm0gYXRvbWljIG1vZGVzZXQgZnJhbWV3b3JrLgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hello Peter,
+
+On 06/11/2015 12:51 AM, Peter Chubb wrote:
+>>>>>> "Javier" == Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+> 
+> Javier> The Exynos interrupt combiner IP looses its state when the SoC
+> 	    	   	     	         s/looses/loses/
+>
+
+Thanks for pointing out the typo, I'll fix it on the next version.
+ 
+> Peter C
+>
+
+Best regards,
+Javier
+ 
