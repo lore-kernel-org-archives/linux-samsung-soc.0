@@ -1,90 +1,108 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-Date: Thu, 11 Jun 2015 22:54:59 +0900
-Message-ID: <CA+Ln22EqW7_6h_0JoZqzSjV3ToC8gf8joGHiC2uUo6fLJ8aBVQ@mail.gmail.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-	<55796660.1070702@samsung.com>
-	<CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
-	<557981B7.3000303@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
+Date: Thu, 11 Jun 2015 11:01:52 -0300
+Message-ID: <20150611140152.GA28368@joana>
+References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
+ <55780B62.1060005@samsung.com> <20150610133644.GC13493@joana>
+ <557928ED.4010202@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33754 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752740AbbFKNy7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 09:54:59 -0400
-In-Reply-To: <557981B7.3000303@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <557928ED.4010202@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-2015-06-11 21:40 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
->> Hello Krzysztof,
->>
->> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
->>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
->>>> Exynos4x12.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
->>>>  2 files changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>>> index 714d6ba782c8..5f32410a01f8 100644
->>>> --- a/drivers/clk/samsung/clk-exynos4.c
->>>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>>> @@ -85,6 +85,7 @@
->>>>  #define DIV_PERIL4           0xc560
->>>>  #define DIV_PERIL5           0xc564
->>>>  #define E4X12_DIV_CAM1               0xc568
->>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
->>>>  #define GATE_SCLK_CAM                0xc820
->>>>  #define GATE_IP_CAM          0xc920
->>>>  #define GATE_IP_TV           0xc924
->>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>>>               0),
->>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->>>>               0),
->>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
->>>> +             0),
->>>
->>> Now I have even simpler idea. Don't add new clock id but just define
->>> here the CLK_TSADC as:
->>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
->>>
->>> With this change the second patch wouldn't be needed however this does
->>> not reflect the Exynos 4x12 datasheet.
->>>
->>> Any comments?
->>>
->>
->> I think it's better to reflect the datasheet so I prefer your original
->> patch.
->
-> Yeah, I also like sticking to datasheet but maybe it is not always worth
-> to reproduce the datasheet in 100%. It is just thinking out loud.
->
->> Also, wouldn't changing the CLK_TSADC gate definition cause a
->> regression on an Exynos4210 board that is using the tsadc clock? or
->> maybe I misunderstood the explanation of your Patch 2/2?
->
-> No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
-> in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
-> 1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
-> 2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
-> register of PCLK_ADC. The id would stay the same as on Exynos4210.
-
-Or we can:
-3. Add new CLK_PCLK_ADC macro equal to current CLK_TSADC. Then drivers
-and dtsi would be able to use the name matching the datasheet, but the
-ID (and so DT ABI) would be preserved.
-
-Best regards,
-Tomasz
+SGkgSm9vbnlvdW5nLAoKMjAxNS0wNi0xMSBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ft
+c3VuZy5jb20+OgoKPiBPbiAwNi8xMC8yMDE1IDEwOjM2IFBNLCBHdXN0YXZvIFBhZG92YW4gd3Jv
+dGU6Cj4gPiBIaSBNYXJlaywKPiA+IAo+ID4gMjAxNS0wNi0xMCBNYXJlayBTenlwcm93c2tpIDxt
+LnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Ogo+ID4gCj4gPj4gSGVsbG8sCj4gPj4KPiA+PiBPbiAy
+MDE1LTA2LTAxIDE3OjA0LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPj4+IEZyb206IEd1c3Rh
+dm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiA+Pj4KPiA+Pj4g
+SGksCj4gPj4+Cj4gPj4+IEhlcmUgZ29lcyB0aGUgZnVsbCBzdXBwb3J0IGZvciBhdG9taWMgbW9k
+ZXNldHRpbmcgb24gZXh5bm9zLiBJJ3ZlCj4gPj4+IHNwbGl0IHRoZSBwYXRjaGVzIGluIHRoZSB2
+YXJpb3VzIHBoYXNlcyBvZiBhdG9taWMgc3VwcG9ydC4KPiA+Pgo+ID4+IFRoYW5rcyBmb3IgdGhp
+cyBwYXRjaHNlcywgaG93ZXZlciBJJ3ZlIG5vdGljZWQgYSBwcm9ibGVtIGFmdGVyIGFwcGx5aW5n
+Cj4gPj4gdGhlbS4KPiA+PiBUaGUgaXNzdWUgZ2V0cyByZXZlYWxlZCB3aGVuIHN1cHBvcnQgZm9y
+IElPTU1VIGlzIGVuYWJsZWQuIEkndmUgZGlkIG15IHRlc3RzCj4gPj4gd2l0aCBFeHlub3MgSERN
+SSBkcml2ZXIgb24gT2Ryb2lkIFUzIGJvYXJkLgo+ID4+Cj4gPj4gVG8gZGVtb25zdHJhdGVkIHRo
+ZSBpc3N1ZSBJJ3ZlIGFkZGVkIGZvbGxvd2luZyBhZGRpdGlvbmFsIGRlYnVnIGluIHRoZQo+ID4+
+IGV4eW5vcwo+ID4+IG1peGVyIGRyaXZlciBpbiBtaXhlcl9ncmFwaF9idWZmZXIoKSBmdW5jdGlv
+bjoKPiA+PiBwcl9pbmZvKCJkbWEgYWRkciAlcGFkIHBsYW5lLT5zcmNfd2lkdGggJWQgcGxhbmUt
+PnNyY19oZWlnaHQgJWRcbiIsCj4gPj4gJnBsYW5lLT5kbWFfYWRkclswXSwgcGxhbmUtPnNyY193
+aWR0aCwgcGxhbmUtPnNyY19oZWlnaHQpOwo+ID4+Cj4gPj4gQmVmb3JlIGFwcGx5aW5nIHBhdGNo
+ZXMgc2V0dGluZyA2NDB4NDgwIG1vZGUgYW5kIGdldHRpbmcgYmFjayB0byAxOTIweDEwODAKPiA+
+PiBjb25zb2xlIGdlbmVyYXRlcyBmb2xsb3dpbmcgbG9nOgo+ID4+Cj4gPj4gIyBtb2RldGVzdCAt
+TSBleHlub3MgLXMgMjM6NjQweDQ4MAo+ID4+IHNldHRpbmcgbW9kZSA2NDB4NDgwLTYwSHpAWFIy
+NCBvbiBjb25uZWN0b3JzIDIzLCBjcnRjIDIxCj4gPj4gWyAzODYwLjYxNzE1MV0gZG1hIDB4YmM1
+MDAwMDAgcGxhbmUtPnNyY193aWR0aCA2NDAgcGxhbmUtPnNyY19oZWlnaHQgNDgwCj4gPj4gXkMK
+PiA+PiBbIDM4NzAuNTU1MjMyXSBkbWEgMHhiYmQwMDAwMCBwbGFuZS0+c3JjX3dpZHRoIDE5MjAg
+cGxhbmUtPnNyY19oZWlnaHQgMTA4MAo+ID4+IFsgMzg3MC41NjU2OTZdIGRtYSAweGJiZDAwMDAw
+IHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAxMDgwCj4gPj4KPiA+PiBB
+ZnRlciBhcHBseWluZyBhdG9taWMgbW9kZXNldHRpbmcgcGF0Y2hzZXQ6Cj4gPj4gIyBtb2RldGVz
+dCAtTSBleHlub3MgLXMgMjQ6NjQweDQ4MAo+ID4+IFsgIDE0Mi41NDAxMjJdIGRtYSAweGJiZDAw
+MDAwIHBsYW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAxMDgwCj4gPj4gWyAg
+MTQyLjU1MDcyNl0gZG1hIDB4YmJkMDAwMDAgcGxhbmUtPnNyY193aWR0aCAxOTIwIHBsYW5lLT5z
+cmNfaGVpZ2h0IDEwODAKPiA+PiBzZXR0aW5nIG1vZGUgNjQweDQ4MC02MEh6QFhSMjQgb24gY29u
+bmVjdG9ycyAyNCwgY3J0YyAyMgo+ID4+IFsgIDE0Mi42NDM2NzJdIGRtYSAweGJjNTAwMDAwIHBs
+YW5lLT5zcmNfd2lkdGggMTkyMCBwbGFuZS0+c3JjX2hlaWdodCAxMDgwCj4gPj4gWyAgMTQyLjc1
+OTk4Ml0gZG1hIDB4YmM1MDAwMDAgcGxhbmUtPnNyY193aWR0aCA2NDAgcGxhbmUtPnNyY19oZWln
+aHQgNDgwCj4gPj4gXkMKPiA+PiBbICAxNTQuOTg2MDQwXSBkbWEgMHhiYmQwMDAwMCBwbGFuZS0+
+c3JjX3dpZHRoIDE5MjAgcGxhbmUtPnNyY19oZWlnaHQgMTA4MAo+ID4+Cj4gPj4gQXMgeW91IGNh
+biBzZWUgZnJvbSB0aGUgYWJvdmUgbG9nLCBtaXhlcl9ncmFwaF9idWZmZXIgZnVuY3Rpb24gaXMg
+Y2FsbGVkCj4gPj4gc2V2ZXJhbCB0aW1lcy4gMHhiYmQwMDAwMCBpcyB0aGUgRE1BIGFkZHJlc3Mg
+b2YgdGhlIDE5MjB4MTA4MCBmcmFtZWJ1ZmZlcgo+ID4+IGFuZCAweGJjNTAwMDAwIGlzIHRoZSBE
+TUEgYWRkcmVzcyBvZiB0aGUgYWxsb2NhdGVkIDY0MHg0ODAgYnVmZmVyLgo+ID4+IG1peGVyX2dy
+YXBoX2J1ZmZlcigpIGlzIGZpcnN0IGNhbGxlZCB3aXRoIHRoZSBuZXcgRE1BIGFkZHJlc3Mgb2Yg
+dGhlCj4gPj4gZnJhbWVidWZmZXIsIGJ1dCB3aXRoIHRoZSBvbGQgbW9kZSBwYXJhbWV0ZXJzICgx
+OTIweDEwODAgc2l6ZSkgYW5kIHRoZW4KPiA+PiBpbiB0aGUgbmV4dCBjYWxsIGl0IHVwZGF0ZXMg
+dGhlIHBsYW5lIHBhcmFtZXRlcnMgdG8gdGhlIGNvcnJlY3QgdmFsdWVzCj4gPj4gKHNpemUgY2hh
+bmdlZCB0byA2NDB4NDgwKS4gV2hlbiBJT01NVSBpcyBub3QgdXNlZCwgdGhpcyBjYW4gYmUgZWFz
+aWx5Cj4gPj4gbWlzc2VkLCBidXQgYWZ0ZXIgZW5hYmxpbmcgSU9NTVUgc3VwcG9ydCwgYW55IERN
+QSBhY2Nlc3MgdG8gdW5hbGxvY2F0ZWQKPiA+PiBhZGRyZXNzIGNhdXNlcyBJT01NVSBQQUdFIEZB
+VUxULiBIZXJlIGl0IHdpbGwgaGFwcGVuIGFmdGVyIGNoYW5naW5nIERNQQo+ID4+IGFkZHJlc3Mg
+b2YgdGhlIGJ1ZmZlciB3aXRob3V0IGNoYW5naW5nIHRoZSBzaXplLgo+ID4+Cj4gPj4gQSBxdWlj
+ayB3b3JrYXJvdW5kIHRvIHJlc29sdmUgdGhpcyBtdWx0aXBsZSBjYWxscyB0byBtaXhlcl9ncmFw
+aF9idWZmZXIoKQo+ID4+IHdpdGggcGFydGlhbGx5IHVwZGF0ZWQgbW9kZSB2YWx1ZXMgaXMgdG8g
+cmVtb3ZlIGNhbGxzIHRvCj4gPj4gbWl4ZXJfd2luZG93X3N1c3BlbmQvbWl4ZXJfd2luZG93X3Jl
+c3VtZSBmcm9tIG1peGVyX2Rpc2FibGUgYW5kCj4gPj4gbWl4ZXJfZGlzYWJsZSBmdW5jdGlvbnMs
+IGJ1dCBJIGV4cGVjdCB0aGF0IHRoaXMgaXMgbm90IHRoZSByaWdodAo+ID4+IGFwcHJvYWNoLgo+
+ID4+Cj4gPj4gUHJvYmFibHkgdGhlIHNhbWUgcHJvYmxlbSBjYW4gYmUgb2JzZXJ2ZWQgd2l0aCBF
+eHlub3MgRklNRCBkcml2ZXIuCj4gPj4KPiA+PiBHdXN0YXZvOiBjb3VsZCB5b3UgY2hlY2sgaWYg
+bWl4ZXJfZW5hYmxlIGZ1bmN0aW9ucyBzaG91bGQgcmVhbGx5Cj4gPj4gY2FsbCBtaXhlcl93aW5k
+b3dfcmVzdW1lIGZ1bmN0aW9uLCB3aGljaCBpbiB0dXJuIGNhbGxzIG1peGVyX3dpbl9jb21taXQs
+Cj4gPj4gd2hpY2ggY2FsbHMgbWl4ZXJfZ3JhcGhfYnVmZmVyIHdpdGggcGFydGlhbGx5IHVwZGF0
+ZWQgZGlzcGxheSBidWZmZXIKPiA+PiBkYXRhPwo+ID4gCj4gPiBJdCBzaG91bGQgbm90LCB5b3Ug
+YXJlIHJpZ2h0LiBUaGlzIGlzIGFjdHVhbGx5IHRoZSBjb3JyZWN0IGZpeC4gQXRvbWljCj4gPiBt
+b2Rlc2V0dGluZyBzaG91bGQgbm90IGRvIGNoYWluZWQgY2FsbHMsIGUuZy4sIGNydGNfZGlzYWJs
+ZSBjYWxsaW5nCj4gPiBwbGFuZV9kaXNhYmxlLiBUaGlzIGNoYW5nZSB3YXMgYWxyZWFkeSBpbiBt
+eSBwbGFuIGFjdHVhbGx5LCBidXQgYXMgSSBoYWQKPiA+IElPTU1VIGRpc2FibGVkIEkgZGlkbid0
+IHNlZSBpdCBoZXJlLCBhbmQgSSBkaWRuJ3QgY3JlYXRlIHRoaXMgcGF0Y2ggeWV0Lgo+ID4gCj4g
+Cj4gUmlnaHQsIGJ1dCBpdCBuZWVkcyB0aGF0IGNydGNfZGlzYWJsZSBjYWxscyBwbGFuZV9kaXNh
+YmxlIGluIGV4eW5vcwo+IGRyaXZlciBpbnRlcm5hbGx5LiBCZWNhdXNlIGNydGMgaXMgZGlzYWJs
+ZWQgYmVmb3JlIHBsYW5lIGlzIGRpc2FibGVkLAo+IGl0IG1lYW5zIHBsYW5lX2Rpc2FibGUganVz
+dCByZXR1cm5zIHdpdGhvdXQgYW55IHJlZ2lzdGVyIGNoYW5nZXMsCj4gdGhlbiB3ZSBjYW5ub3Qg
+YmUgc3VyZSBzZXR0aW5nIHJlZ2lzdGVyIHRvIGRpc2FibGUgcGxhbmUgd2hlbiBjcnRjIGlzCj4g
+ZGlzYWJsZS4KPiAKPiBJIHRoaW5rIGEgc29sdXRpb24gaXMgZW5vdWdoIG9ubHkgdG8gZWxpbWlu
+YXRlIGNhbGxpbmcgeHh4X3Jlc3VtZQo+IGZ1bmN0aW9uIGluIGV4eW5vcyBkcml2ZXIgZnVuY3Rp
+b24gd2hlbiBlbmFibGUgcGxhbmUsIHdlIGNhbiByZW1vdmUgaXQKPiBiZWNhdXNlIGl0J3MgY2Fs
+bGVkIHRvIGVuYWJsZSBwbGFuZSBmcm9tIGRybSBhdG9taWMgbW9kZXNldCBmcmFtZXdvcmsuCgpJ
+IHRoaW5rIHRoaXMgc2hvdWxkIHdvcmsuIFdlIHJlYWxseSBuZWVkIHRvIGRpc2FibGUgdGhlIHBs
+YW5lcyBiZWZvcmUKdGhlIGNydGMgaXMgZGlzYWJsZWQsIGZvciBGSU1EIGZvciBleGFtcGxlLCB0
+aGUgb3ZlcmxheSBwbGFuZXMgYXJlCnJlbW92ZWQgZnJvbSB0aGUgc2NyZWVuIGlmIHdlIHJlbW92
+ZSB0aGUgX3N1c3BlbmQgY2FsbC4KCkknbGwgc2VudCBhIG5ldyBwYXRjaCB0byByZW1vdmUgb25s
+eSB0aGUgcmVzdW1lIHBhcnQgZnJvbSBhbGwgb3VyIGNydGMKZHJpdmVycy4KCglHdXN0YXZvCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
