@@ -1,94 +1,61 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-Date: Thu, 11 Jun 2015 14:58:33 +0200
-Message-ID: <CABxcv=myq4VeMamstjVR2cpWCiD_FM91ncYYVKd4jRF=nB5zZQ@mail.gmail.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
-	<55796660.1070702@samsung.com>
-	<CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
-	<557981B7.3000303@samsung.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Thu, 11 Jun 2015 15:09:45 +0200
+Message-ID: <55798899.10504@collabora.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de>
+ <CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>
+ <5579602F.1070801@ahsoftware.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <557981B7.3000303@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5579602F.1070801@ahsoftware.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexander Holler <holler@ahsoftware.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, open@wandq.ahsoftware, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "list@wandq.ahsoftware:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
-
-On Thu, Jun 11, 2015 at 2:40 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
->> Hello Krzysztof,
->>
->> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
->>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
->>>> Exynos4x12.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
->>>>  2 files changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>>> index 714d6ba782c8..5f32410a01f8 100644
->>>> --- a/drivers/clk/samsung/clk-exynos4.c
->>>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>>> @@ -85,6 +85,7 @@
->>>>  #define DIV_PERIL4           0xc560
->>>>  #define DIV_PERIL5           0xc564
->>>>  #define E4X12_DIV_CAM1               0xc568
->>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
->>>>  #define GATE_SCLK_CAM                0xc820
->>>>  #define GATE_IP_CAM          0xc920
->>>>  #define GATE_IP_TV           0xc924
->>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>>>               0),
->>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->>>>               0),
->>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
->>>> +             0),
->>>
->>> Now I have even simpler idea. Don't add new clock id but just define
->>> here the CLK_TSADC as:
->>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
->>>
->>> With this change the second patch wouldn't be needed however this does
->>> not reflect the Exynos 4x12 datasheet.
->>>
->>> Any comments?
->>>
->>
->> I think it's better to reflect the datasheet so I prefer your original
->> patch.
->
-> Yeah, I also like sticking to datasheet but maybe it is not always worth
-> to reproduce the datasheet in 100%. It is just thinking out loud.
->
-
-Agreed.
-
->> Also, wouldn't changing the CLK_TSADC gate definition cause a
->> regression on an Exynos4210 board that is using the tsadc clock? or
->> maybe I misunderstood the explanation of your Patch 2/2?
->
-> No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
-> in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
-> 1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
-> 2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
-> register of PCLK_ADC. The id would stay the same as on Exynos4210.
->
-
-I see, thanks for the explanation. Both approaches seems sensible for
-me then, I don't have a strong opinion on either though.
-
-> Best regards,
-> Krzysztof
->
-
-Best regards,
-Javier
+T24gMDYvMTEvMjAxNSAxMjoxNyBQTSwgQWxleGFuZGVyIEhvbGxlciB3cm90ZToKPiBBbSAxMS4w
+Ni4yMDE1IHVtIDEwOjEyIHNjaHJpZWIgTGludXMgV2FsbGVpajoKPj4gT24gV2VkLCBKdW4gMTAs
+IDIwMTUgYXQgMTA6MjggQU0sIEFsZXhhbmRlciBIb2xsZXIgPGhvbGxlckBhaHNvZnR3YXJlLmRl
+PiB3cm90ZToKPj4+IEFtIDEwLjA2LjIwMTUgdW0gMDk6MzAgc2NocmllYiBMaW51cyBXYWxsZWlq
+Ogo+Pgo+Pj4+IGkyYyBob3N0IGNvbWVzIG91dCwgcHJvYmVzIHRoZSByZWd1bGF0b3IgZHJpdmVy
+LCByZWd1bGF0b3IgZHJpdmVyCj4+Pj4gcHJvYmVzIGFuZCB0aGVuIHRoZSByZWd1bGF0b3JfZ2V0
+KCkgY2FsbCByZXR1cm5zLgo+Pj4+Cj4+Pj4gVGhpcyByZXF1aXJlcyBpbnN0cnVtZW50YXRpb24g
+b24gYW55dGhpbmcgcHJvdmlkaW5nIGEgcmVzb3VyY2UKPj4+PiB0byBhbm90aGVyIGRyaXZlciBs
+aWtlIHRob3NlIEkgbWVudGlvbmVkIGFuZCBhIGxvdCBvZiBvdmVyaGVhZAo+Pj4+IGluZnJhc3Ry
+dWN0dXJlLCBidXQgSSB0aGluayBpdCdzIHRoZSByaWdodCBhcHByb2FjaC4gSG93ZXZlciBJIGRv
+bid0Cj4+Pj4ga25vdyBpZiBJIHdvdWxkIGV2ZXIgYmUgYWJsZSB0byBwdWxsIHRoYXQgb2ZmIG15
+c2VsZiwgSSBrbm93IHRhbGsKPj4+PiBpcyBjaGVhcCBhbmQgSSBzaG91bGQgc2hvdyB0aGUgY29k
+ZSBpbnN0ZWFkLgo+Pj4KPj4+IFlvdSB3b3VsZCBlbmQgdXAgd2l0aCB0aGUgc2FtZSBwcm9ibGVt
+IG9mIGRlYWRsb2NrcyBhcyBjdXJyZW50bHksIGFuZCB5b3UKPj4+IHdvdWxkIHN0aWxsIG5lZWQg
+c29tZXRoaW5nIHVnbHkgbGlrZSB0aGUgZGVmZXJlZCBwcm9iZSBicnV0Zm9yY2UgdG8gYXZvaWQK
+Pj4+IHRoZW0uCj4+Cj4+IFNvcnJ5IEkgZG9uJ3QgZ2V0IHRoYXQuIENhcmUgdG8gZWxhYm9yYXRl
+IG9uIHdoeT8KPiAKPiBCZWNhdXNlIGxvYWRpbmcvaW5pdGlhbGl6aW5nIG9uIGRlbWFuZCBkb2Vz
+bid0IGdpdmUgeW91IGFueSBzb2x2ZWQgb3JkZXIgCj4gb2YgZHJpdmVycyB0byBpbml0aWFsaXpl
+LiBBbmQgaXQgY2FuJ3QgYmVjYXVzZSBpdCBoYXMgbm8gaWRlYSBhYm91dCB0aGUgCj4gcmVxdWly
+ZW1lbnRzIG9mIG90aGVyIGRyaXZlcnMuCgpTbywgdGhpcyBpcyBvbmx5IGFib3V0IG9yZGVyaW5n
+IGRldmljZSBwcm9iaW5nLiBBbGwgYnVpbHQtaW4gZHJpdmVycwpoYXZlIGFscmVhZHkgcmVnaXN0
+ZXJlZCB0aGVtc2VsdmVzIGJ5IHdoZW4gd2Ugc3RhcnQgcHJvYmluZy4KCj4gVGhlIHJlYXNvbiB3
+aHkgaXQgbWlnaHQgd29yayBiZXR0ZXIgaW4gCj4gdGhlIGNhc2Ugb2YgdGhlIHRlZ3JhIGlzIHRo
+YXQgaXQgbWlnaHQgZ2l2ZSB5b3UgYW5vdGhlciBpbml0aWFsaXphdGlvbiAKPiBvcmRlciB0aGFu
+IHRoZSBvbmUgd2hpY2ggaXMgY3VycmVudGx5IGNob29zZW4sIHdoaWNoLCBieSBsdWNrLCBtaWdo
+dCBiZSAKPiBhIGJldHRlciBvbmUuCgpOb3RlIHRoYXQgdGhpcyBzZXJpZXMgd2FzIGFsc28gdGVz
+dGVkIG9uIGlNWC42LCBFeHlub3MgYW5kIE9NQVA0LgoKPiBCdXQgbWF5YmUgSSBtaXNzZWQgc29t
+ZXRoaW5nLCBJIGhhdmVuJ3QgbG9va2VkIGF0IHRoZSBwYXRjaGVzIGF0IGFsbC4gCgpJdCdzIGEg
+cmVhbGx5IHNtYWxsIHBhdGNoc2V0IDopCgogIDE5IGZpbGVzIGNoYW5nZWQsIDEzMCBpbnNlcnRp
+b25zKCspLCA0NSBkZWxldGlvbnMoLSkKClRoYW5rcywKClRvbWV1Cgo+IEJ1dCBqdXN0IGxvYWRp
+bmcgb24gZGVtYW5kLCBjYW4ndCBtYWdpY2FsbHkgZ2l2ZSB5b3UgYSB3b3JraW5nIG9yZGVyIG9m
+IAo+IGRyaXZlcnMgdG8gaW5pdGlhbGl6ZS4gRS5nLiBob3cgZG8geW91IGNob29zZSB0aGUgZmly
+c3QgZHJpdmVyIHRvIAo+IGluaXRpYWxpemU/Cj4gCj4gUmVnYXJkcywKPiAKPiBBbGV4YW5kZXIg
+SG9sbGVyCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
