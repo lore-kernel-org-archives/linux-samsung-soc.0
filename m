@@ -1,123 +1,76 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: ipp: validate a GEM handle with multiple
- planes
-Date: Thu, 11 Jun 2015 23:53:23 +0900
-Message-ID: <5579A0E3.3060503@samsung.com>
-References: <1433821515-8952-1-git-send-email-human.hwang@samsung.com>
- <1433821515-8952-2-git-send-email-human.hwang@samsung.com>
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] drm/exynos: fimd: ensure proper hw state in
+	fimd_clear_channel()
+Date: Fri, 12 Jun 2015 00:04:44 +0900
+Message-ID: <5579A38C.8040604@samsung.com>
+References: <1433319984-18683-1-git-send-email-m.szyprowski@samsung.com>
+	<1433319984-18683-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54591 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752868AbbFKOxZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 10:53:25 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NPS019CTC0ZA380@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Jun 2015 23:53:23 +0900 (KST)
-In-reply-to: <1433821515-8952-2-git-send-email-human.hwang@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1433319984-18683-2-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyungwon Hwang <human.hwang@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com
 
-On 2015=EB=85=84 06=EC=9B=94 09=EC=9D=BC 12:45, Hyungwon Hwang wrote:
-> FIMC & GSC driver can calculate the offset of planes. So there are
-> use cases which IPP receives just one GEM handle of an image with
-> multiple plane. This patch extends ipp_validate_mem_node() to validat=
-e
-> this case.
-
-Applied.
-
-Thanks,
-Inki Dae
-
->=20
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 51 +++++++++++++++++++++++=
-+---------
->  1 file changed, 38 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_ipp.c
-> index 54c5cf4..b3dc778 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -482,8 +482,8 @@ static int ipp_validate_mem_node(struct drm_devic=
-e *drm_dev,
->  {
->  	struct drm_exynos_ipp_config *ipp_cfg;
->  	unsigned int num_plane;
-> -	unsigned long min_size, size;
-> -	unsigned int bpp;
-> +	unsigned long size, buf_size =3D 0, plane_size, img_size =3D 0;
-> +	unsigned int bpp, width, height;
->  	int i;
-> =20
->  	ipp_cfg =3D &c_node->property.config[m_node->ops_id];
-> @@ -497,20 +497,45 @@ static int ipp_validate_mem_node(struct drm_dev=
-ice *drm_dev,
->  	 * but it seems more than enough
->  	 */
->  	for (i =3D 0; i < num_plane; ++i) {
-> -		if (!m_node->buf_info.handles[i]) {
-> -			DRM_ERROR("invalid handle for plane %d\n", i);
-> -			return -EINVAL;
-> -		}
-> +		width =3D ipp_cfg->sz.hsize;
-> +		height =3D ipp_cfg->sz.vsize;
->  		bpp =3D drm_format_plane_cpp(ipp_cfg->fmt, i);
-> -		min_size =3D (ipp_cfg->sz.hsize * ipp_cfg->sz.vsize * bpp) >> 3;
-> -		size =3D exynos_drm_gem_get_size(drm_dev,
-> -					       m_node->buf_info.handles[i],
-> -					       c_node->filp);
-> -		if (min_size > size) {
-> -			DRM_ERROR("invalid size for plane %d\n", i);
-> -			return -EINVAL;
-> +
-> +		/*
-> +		 * The result of drm_format_plane_cpp() for chroma planes must
-> +		 * be used with drm_format_xxxx_chroma_subsampling() for
-> +		 * correct result.
-> +		 */
-> +		if (i > 0) {
-> +			width /=3D drm_format_horz_chroma_subsampling(
-> +								ipp_cfg->fmt);
-> +			height /=3D drm_format_vert_chroma_subsampling(
-> +								ipp_cfg->fmt);
->  		}
-> +		plane_size =3D width * height * bpp;
-> +		img_size +=3D plane_size;
-> +
-> +		if (m_node->buf_info.handles[i]) {
-> +			size =3D exynos_drm_gem_get_size(drm_dev,
-> +					m_node->buf_info.handles[i],
-> +					c_node->filp);
-> +			if (plane_size > size) {
-> +				DRM_ERROR(
-> +					"buffer %d is smaller than required\n",
-> +					i);
-> +				return -EINVAL;
-> +			}
-> +
-> +			buf_size +=3D size;
-> +		}
-> +	}
-> +
-> +	if (buf_size < img_size) {
-> +		DRM_ERROR("size of buffers(%lu) is smaller than image(%lu)\n",
-> +			buf_size, img_size);
-> +		return -EINVAL;
->  	}
-> +
->  	return 0;
->  }
-> =20
->=20
+T24gMjAxNeuFhCAwNuyblCAwM+ydvCAxNzoyNiwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBP
+bmUgc2hvdWxkIG5vdCBkbyBhbnkgYXNzdW1wdGlvbnMgb24gdGhlIHN0YXJlIG9mIHRoZSBmaW1k
+IGhhcmR3YXJlCj4gZHVyaW5nIGRyaXZlciBpbml0aWFsaXphdGlvbiwgc28gdG8gcHJvcGVybHkg
+cmVzZXQgZmltZCBiZWZvcmUgZW5hYmxpbmcKPiBJT01NVSwgb25lIHNob3VsZCBlbnN1cmUgdGhh
+dCBhbGwgcG93ZXIgZG9tYWlucyBhbmQgY2xvY2tzIGFyZSByZWFsbHkKPiBlbmFibGVkLiBUaGlz
+IHBhdGNoIGFkZHMgcG1fcnVudGltZSBhbmQgY2xvY2tzIG1hbmFnZW1lbnQgaW4gdGhlCj4gZmlt
+ZF9jbGVhcl9jaGFubmVsKCkgZnVuY3Rpb24gdG8gZW5zdXJlIHRoYXQgYW55IGFjY2VzcyB0byBm
+aW1kCj4gcmVnaXN0ZXJzIHdpbGwgYmUgcGVyZm9ybWVkIHdpdGggY2xvY2tzIGFuZCBwb3dlciBk
+b21haW5zIGVuYWJsZWQuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5z
+enlwcm93c2tpQHNhbXN1bmcuY29tPgo+IFRlc3RlZC1ieTogSmF2aWVyIE1hcnRpbmV6IENhbmls
+bGFzIDxqYXZpZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPgo+IC0tLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgMjIgKysrKysrKysrKysrKysrKysrLS0t
+LQo+ICAxIGZpbGUgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPiAK
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBpbmRleCA5NjYxODUz
+NDM1OGUuLjNlYzlkNDI5OWE4NiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmltZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZpbWQuYwo+IEBAIC0yNDIsMTIgKzI0MiwyMSBAQCBzdGF0aWMgdm9pZCBmaW1kX2VuYWJs
+ZV9zaGFkb3dfY2hhbm5lbF9wYXRoKHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwKPiAgCXdyaXRl
+bCh2YWwsIGN0eC0+cmVncyArIFNIQURPV0NPTik7Cj4gIH0KPiAgCj4gK3N0YXRpYyBpbnQgZmlt
+ZF9lbmFibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpOwo+ICtzdGF0aWMg
+dm9pZCBmaW1kX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpOwoK
+WW91IGNhbiByZW1vdmUgYWJ2b2UgZGVjbGFyYXRpb25zLiBTZWUgdGhlIGJlbG93IGNvbW1lbnQu
+Cgo+ICsKPiAgc3RhdGljIHZvaWQgZmltZF9jbGVhcl9jaGFubmVsKHN0cnVjdCBmaW1kX2NvbnRl
+eHQgKmN0eCkKPiAgewo+ICAJdW5zaWduZWQgaW50IHdpbiwgY2hfZW5hYmxlZCA9IDA7Cj4gIAo+
+ICAJRFJNX0RFQlVHX0tNUygiJXNcbiIsIF9fRklMRV9fKTsKPiAgCj4gKwkvKiBIYXJkd2FyZSBp
+cyBpbiB1bmtub3duIHN0YXRlLCBzbyBlbnN1cmUgaXQgZ2V0cyBlbmFibGVkIHByb3Blcmx5ICov
+Cj4gKwlwbV9ydW50aW1lX2dldF9zeW5jKGN0eC0+ZGV2KTsKPiArCj4gKwljbGtfcHJlcGFyZV9l
+bmFibGUoY3R4LT5idXNfY2xrKTsKPiArCWNsa19wcmVwYXJlX2VuYWJsZShjdHgtPmxjZF9jbGsp
+Owo+ICsKPiAgCS8qIENoZWNrIGlmIGFueSBjaGFubmVsIGlzIGVuYWJsZWQuICovCj4gIAlmb3Ig
+KHdpbiA9IDA7IHdpbiA8IFdJTkRPV1NfTlI7IHdpbisrKSB7Cj4gIAkJdTMyIHZhbCA9IHJlYWRs
+KGN0eC0+cmVncyArIFdJTkNPTih3aW4pKTsKPiBAQCAtMjY1LDEyICsyNzQsMTcgQEAgc3RhdGlj
+IHZvaWQgZmltZF9jbGVhcl9jaGFubmVsKHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCkKPiAgCj4g
+IAkvKiBXYWl0IGZvciB2c3luYywgYXMgZGlzYWJsZSBjaGFubmVsIHRha2VzIGVmZmVjdCBhdCBu
+ZXh0IHZzeW5jICovCj4gIAlpZiAoY2hfZW5hYmxlZCkgewo+IC0JCXVuc2lnbmVkIGludCBzdGF0
+ZSA9IGN0eC0+c3VzcGVuZGVkOwo+IC0KPiAtCQljdHgtPnN1c3BlbmRlZCA9IDA7Cj4gKwkJY3R4
+LT5zdXNwZW5kZWQgPSBmYWxzZTsKPiArCQlmaW1kX2VuYWJsZV92YmxhbmsoY3R4LT5jcnRjKTsK
+CkkgdGhpbmsgeW91IGNhbiBjYWxsIGVuYWJsZV92YmxhbmsgY2FsbGJhY2sgaW5zdGVhZCBvZgpm
+aW1kX2VuYWJsZV92YmxhbmsgZnVuY3Rpb24gYmVjYXVzZSBjdHggb2JqZWN0IGhhcyBleHlub3Nf
+Y3J0YyBvYmplY3QuCgppLmUuLAoJCXN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzICpvcHMgPSBj
+dHgtPmNydGMtPm9wczsKCQkuLi4KCQlpZiAob3BzLT5lbmFibGVfdmJsYW5rKQoJCQlvcHMtPmVu
+YWJsZV92YmxhbmsoY3R4LT5jcnRjKTsKCQkuLi4KCj4gIAkJZmltZF93YWl0X2Zvcl92Ymxhbmso
+Y3R4LT5jcnRjKTsKPiAtCQljdHgtPnN1c3BlbmRlZCA9IHN0YXRlOwo+ICsJCWZpbWRfZGlzYWJs
+ZV92YmxhbmsoY3R4LT5jcnRjKTsKCkRpdHRvLgoKVGhhbmtzLApJbmtpIERhZQoKPiArCQljdHgt
+PnN1c3BlbmRlZCA9IHRydWU7Cj4gIAl9Cj4gKwo+ICsJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKGN0
+eC0+bGNkX2Nsayk7Cj4gKwljbGtfZGlzYWJsZV91bnByZXBhcmUoY3R4LT5idXNfY2xrKTsKPiAr
+Cj4gKwlwbV9ydW50aW1lX3B1dChjdHgtPmRldik7Cj4gIH0KPiAgCj4gIHN0YXRpYyBpbnQgZmlt
+ZF9pb21tdV9hdHRhY2hfZGV2aWNlcyhzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgsCj4gCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwppb21tdSBtYWlsaW5n
+IGxpc3QKaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcKaHR0cHM6Ly9saXN0cy5saW51
+eGZvdW5kYXRpb24ub3JnL21haWxtYW4vbGlzdGluZm8vaW9tbXU=
