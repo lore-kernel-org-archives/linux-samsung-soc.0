@@ -1,76 +1,57 @@
-From: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Thu, 11 Jun 2015 13:49:22 +0200
-Message-ID: <557975C2.4090905@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de> <CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com> <5579602F.1070801@ahsoftware.de> <55796FDE.7080701@ahsoftware.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v7 0/8] mfd: cros_ec: Add multi EC and proto v3 support
+Date: Thu, 11 Jun 2015 13:50:37 +0200
+Message-ID: <24727363.WKhvMDQ6EE@diego>
+References: <1433847889-7220-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55796FDE.7080701-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "list-7NY9aMYB+ISttCpgsWEBFg@public.gmane.org:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:47724 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752647AbbFKLut (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jun 2015 07:50:49 -0400
+In-Reply-To: <1433847889-7220-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Stephen Barber <smbarber@chromium.org>, Filipe Brandenburger <filbranden@google.com>, Todd Broch <tbroch@chromium.org>, Alexandru M Stan <amstan@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Am 11.06.2015 um 13:24 schrieb Alexander Holler:
-> Am 11.06.2015 um 12:17 schrieb Alexander Holler:
->> Am 11.06.2015 um 10:12 schrieb Linus Walleij:
->>> On Wed, Jun 10, 2015 at 10:28 AM, Alexander Holler
->>> <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
->>>> Am 10.06.2015 um 09:30 schrieb Linus Walleij:
->>>
->>>>> i2c host comes out, probes the regulator driver, regulator driver
->>>>> probes and then the regulator_get() call returns.
->>>>>
->>>>> This requires instrumentation on anything providing a resource
->>>>> to another driver like those I mentioned and a lot of overhead
->>>>> infrastructure, but I think it's the right approach. However I don't
->>>>> know if I would ever be able to pull that off myself, I know talk
->>>>> is cheap and I should show the code instead.
->>>>
->>>> You would end up with the same problem of deadlocks as currently, and
->>>> you
->>>> would still need something ugly like the defered probe brutforce to
->>>> avoid
->>>> them.
->>>
->>> Sorry I don't get that. Care to elaborate on why?
->>
->> Because loading/initializing on demand doesn't give you any solved order
->> of drivers to initialize. And it can't because it has no idea about the
->> requirements of other drivers. The reason why it might work better in
->> the case of the tegra is that it might give you another initialization
->> order than the one which is currently choosen, which, by luck, might be
->> a better one.
->>
->> But maybe I missed something, I haven't looked at the patches at all.
->> But just loading on demand, can't magically give you a working order of
->> drivers to initialize. E.g. how do you choose the first driver to
->> initialize?
+Am Dienstag, 9. Juni 2015, 13:04:41 schrieb Javier Martinez Canillas:
+> Hello,
 > 
-> Other problems you will run into are time constraints and multithreaded
-> drivers.
+> This is a v7 of a series that adds support for multiple EC in a system
+> and also for the protocol version 3 that is used on newer ECs.
 > 
-> E.g. we all should know how tricky it sometimes is to avoid deadlocks.
-> And with loading on demand, you are extending this problem over the
-> initialization of maybe a whole bunch of other drivers which might be
-> started by calling one function of another driver. And a function call
-> might need a very long time to finish during which an unpredictable
-> amount of things may happen.
+> Most patches were taken from the downstream ChromiumOS v3.14 tree with
+> fixes squashed, split to minimise the cross subsystem churn and changes
+> for mainline inclusion but were not modified functionality wise.
 > 
-> It would make me wonder if that will end up with a good, usable and as
-> simple as possible solution.
+> This version addresses issues pointed out by Lee Jones on the v6 posted
+> before [0] and also adds the Acked-by tags of all the needed maintainers.
+> 
+> The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cleanups"
+> [1] that were posted before and already picked by Lee Jones.
+> 
+> Testing was done on some Chromebooks that have a single EC and support
+> protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800
+> Peach Pi to be sure that no regressions were introduced for these machines.
+> 
+> The series were tested using a modified ectool [2] that supports the new
+> cros_ec IOCTL API. They were also tested on a x86 Pixel Chromebook 2 (Samus)
+> that uses the new protocol v3 and has 2 EC (cros_ec and cros_pd). But for
+> testing on Samus, also the posted "[PATCH 0/3] platform/chrome: Changes for
+> cros_ec_lpc and cros_ec_dev" series [3] are needed.
 
-Besides that instrumenting every call to another driver in order to fix
-a onetime operation (the initialization) sounds like an enormous
-overhead. Initialization is done pnly once, regardless how long a system
-runs, but the instrumentation to fix this onetime operation would slow
-down the operation during the whole runtime of a system.
+everything still works as expected on a rk3288-veyron-jerry
 
-I don't think this is what should be done.
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+[tags are already present in the patches]
 
-> 
-> Regards,
-> 
-> Alexander Holler
+
+As the series now has Olof's Ack, can this still make it in time for 4.2 - as 
+there is still a bit more than a week left till the merge window?
+
+
+Heiko
