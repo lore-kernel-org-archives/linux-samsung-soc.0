@@ -1,72 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Thu, 11 Jun 2015 10:15:04 +0200
-Message-ID: <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-	<CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.o>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
+Date: Thu, 11 Jun 2015 17:26:29 +0900
+Message-ID: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:15409 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750825AbbFKI0u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jun 2015 04:26:50 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Wed, Jun 10, 2015 at 12:19 PM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+Add proper gate clock for the Analog to Digital Converter (ADC) on
+Exynos4x12.
 
->> regulator_get(...) -> not available, so:
->> - identify target regulator provider - this will need instrumentation
->> - probe it
->>
->> It then turns out the regulator driver is on the i2c bus, so we
->> need to probe the i2c driver:
->> - identify target i2c host for the regulator driver - this will need
->>   instrumentation
->> - probe the i2c host driver
->>
->> i2c host comes out, probes the regulator driver, regulator driver
->> probes and then the regulator_get() call returns.
->
-> Hmm, if I understand correctly what you say, this is exactly what this
-> particular series does:
->
-> regulator_get -> of_platform_device_ensure -> probe() on the platform
-> device that encloses the requested device node (i2c host) -> i2c slave
-> gets probed and the regulator registered -> regulator_get returns the
-> requested resource
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c   | 3 +++
+ include/dt-bindings/clock/exynos4.h | 5 ++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Yes. But only for device tree.
-
-> The downside I'm currently looking at is that an explicit dependency
-> graph would be useful to have for other purposes. For example to print
-> a neat warning when a dependency cannot be fulfilled. Or to refuse to
-> unbind a device which other devices depend on, or to automatically
-> unbind the devices that depend on it, or to print a warning if a
-> device is hotplugged off and other devices depend on it.
-
-Unbind/remove() calls are the inverse usually yes.
-
-But also the [runtime] power up/down sequences for the
-devices tend to depend on a similar ordering or mostly
-the same. (Mentioned this before I think.)
-
->> This requires instrumentation on anything providing a resource
->> to another driver like those I mentioned and a lot of overhead
->> infrastructure, but I think it's the right approach. However I don't
->> know if I would ever be able to pull that off myself, I know talk
->> is cheap and I should show the code instead.
->
-> Yeah, if you can give it a second look and say if it matches what you
-> wrote above, it would be very much appreciated.
-
-Yes you are right. But what about ACPI, board files,
-Simple Firmware and future hardware description languages...
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 714d6ba782c8..5f32410a01f8 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -85,6 +85,7 @@
+ #define DIV_PERIL4		0xc560
+ #define DIV_PERIL5		0xc564
+ #define E4X12_DIV_CAM1		0xc568
++#define E4X12_GATE_BUS_FSYS1	0xc744
+ #define GATE_SCLK_CAM		0xc820
+ #define GATE_IP_CAM		0xc920
+ #define GATE_IP_TV		0xc924
+@@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 		0),
+ 	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+ 		0),
++	GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
++		0),
+ 	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+ 	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+ 	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+index c4b1676ea674..4548531736c1 100644
+--- a/include/dt-bindings/clock/exynos4.h
++++ b/include/dt-bindings/clock/exynos4.h
+@@ -268,7 +268,10 @@
+ #define CLK_DIV_GDL		459
+ #define CLK_DIV_GDR		460
+ 
++/* Exynos4x12 only */
++#define CLK_PCLK_ADC		461
++
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		461
++#define CLK_NR_CLKS		462
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
+-- 
+1.9.1
