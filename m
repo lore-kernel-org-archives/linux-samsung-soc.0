@@ -1,75 +1,54 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [GIT PULL 5/5] Samsung mach updates for v4.2
-Date: Thu, 11 Jun 2015 14:46:07 -0700
-Message-ID: <7hlhfpdilc.fsf@deeprootsystems.com>
-References: <5571E4F7.40706@kernel.org>
+Subject: Re: [PATCH v2] MAINTAINERS: ARM64: EXYNOS: Extend entry for ARM64 DTS
+Date: Thu, 11 Jun 2015 14:48:02 -0700
+Message-ID: <CAMAWPa-3RhXgCjXcdQkPn3W1SJ++iAkfaBdp_p4Se9Ykg1A1mw@mail.gmail.com>
+References: <1433584939-3520-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:36767 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752638AbbFKVqK (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:34978 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752532AbbFKVsH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 17:46:10 -0400
-Received: by pabqy3 with SMTP id qy3so9855222pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 14:46:09 -0700 (PDT)
-In-Reply-To: <5571E4F7.40706@kernel.org> (Kukjin Kim's message of "Sat, 06 Jun
-	2015 03:05:43 +0900")
+	Thu, 11 Jun 2015 17:48:07 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id B244120416
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 21:48:06 +0000 (UTC)
+Received: from mail-wg0-f47.google.com (mail-wg0-f47.google.com [74.125.82.47])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPSA id 66C3520465
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 21:48:04 +0000 (UTC)
+Received: by wgme6 with SMTP id e6so12135198wgm.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 14:48:02 -0700 (PDT)
+In-Reply-To: <1433584939-3520-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-Kukjin Kim <kgene@kernel.org> writes:
+Hi Krzysztof,
 
-> Hi,
+On Sat, Jun 6, 2015 at 3:02 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> Extend the Exynos entry to ARM64 device tree sources.
 >
-> Here is Samsung mach updates for v4.2 and this is based on v4.1-rc4
-> because of dependencies with previous Samsung fixes during -rc
->
-> Please pull and if any problems, please let me know.
->
-> Thanks,
-> Kukjin
->
->
-> The following changes since commit e26081808edadfd257c6c9d81014e3b25e9a6118:
->
->   Linux 4.1-rc4 (2015-05-18 10:13:47 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-mach-1
->
-> for you to fetch changes up to 2be2a3ff42a52e926cbd1cc1d376a161a9a73667:
->
->   ARM: EXYNOS: register power domain driver from core_initcall
-> (2015-06-06 02:18:03 +0900)
->
-> ----------------------------------------------------------------
-> Samsung updates for v4.2
->
-> - add failure(exception) handling
->   : of_iomap(), of_find_device_by_node() and kstrdup()
->
-> - add common poweroff to use PS_HOLD based for all of exynos SoCs
-> - add exnos_get/set_boot_addr() helper
-> - constify platform_device_id and irq_domain_ops
-> - get current parent clock for power domain on/off
-> - use core_initcall to register power domain driver
-> - make exynos_core_restart() less verbose
->
-> - add support coupled CPUidle for exynos3250
->
-> - fix exynos_boot_secondary() return value on timeout
-> - fix clk_enable() in s3c24xx adc
-> - fix missing of_node_put() for power domains
->
-> ----------------------------------------------------------------
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Pulled into next/soc,
+Applied to arm-soc's next/soc branch.
 
-Thanks,
+Note I found this by chance.  It almost fell through the cracks
+because arm@kernel.org (for arm-soc maintainers) wasn't on the to/cc
+list.
 
 Kevin
