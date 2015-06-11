@@ -1,49 +1,81 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Thu, 11 Jun 2015 12:17:19 +0200
-Message-ID: <5579602F.1070801@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de> <CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
+Date: Thu, 11 Jun 2015 19:43:44 +0900
+Message-ID: <55796660.1070702@samsung.com>
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-2
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, open@wandq.ahsoftware, "list@wandq.ahsoftware:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-i2c@vg>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:32842 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751905AbbFKKnw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jun 2015 06:43:52 -0400
+In-Reply-To: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 
-Am 11.06.2015 um 10:12 schrieb Linus Walleij:
-> On Wed, Jun 10, 2015 at 10:28 AM, Alexander Holler <holler@ahsoftware.de> wrote:
->> Am 10.06.2015 um 09:30 schrieb Linus Walleij:
->
->>> i2c host comes out, probes the regulator driver, regulator driver
->>> probes and then the regulator_get() call returns.
->>>
->>> This requires instrumentation on anything providing a resource
->>> to another driver like those I mentioned and a lot of overhead
->>> infrastructure, but I think it's the right approach. However I don't
->>> know if I would ever be able to pull that off myself, I know talk
->>> is cheap and I should show the code instead.
->>
->> You would end up with the same problem of deadlocks as currently, and you
->> would still need something ugly like the defered probe brutforce to avoid
->> them.
->
-> Sorry I don't get that. Care to elaborate on why?
+W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
+> Add proper gate clock for the Analog to Digital Converter (ADC) on
+> Exynos4x12.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
+>  include/dt-bindings/clock/exynos4.h | 5 ++++-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 714d6ba782c8..5f32410a01f8 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -85,6 +85,7 @@
+>  #define DIV_PERIL4		0xc560
+>  #define DIV_PERIL5		0xc564
+>  #define E4X12_DIV_CAM1		0xc568
+> +#define E4X12_GATE_BUS_FSYS1	0xc744
+>  #define GATE_SCLK_CAM		0xc820
+>  #define GATE_IP_CAM		0xc920
+>  #define GATE_IP_TV		0xc924
+> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>  		0),
+>  	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>  		0),
+> +	GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
+> +		0),
 
-Because loading/initializing on demand doesn't give you any solved order 
-of drivers to initialize. And it can't because it has no idea about the 
-requirements of other drivers. The reason why it might work better in 
-the case of the tegra is that it might give you another initialization 
-order than the one which is currently choosen, which, by luck, might be 
-a better one.
+Now I have even simpler idea. Don't add new clock id but just define
+here the CLK_TSADC as:
+GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
 
-But maybe I missed something, I haven't looked at the patches at all. 
-But just loading on demand, can't magically give you a working order of 
-drivers to initialize. E.g. how do you choose the first driver to 
-initialize?
+With this change the second patch wouldn't be needed however this does
+not reflect the Exynos 4x12 datasheet.
 
-Regards,
+Any comments?
 
-Alexander Holler
+Best regards,
+Krzysztof
+
+
+>  	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+>  	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+>  	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+> diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+> index c4b1676ea674..4548531736c1 100644
+> --- a/include/dt-bindings/clock/exynos4.h
+> +++ b/include/dt-bindings/clock/exynos4.h
+> @@ -268,7 +268,10 @@
+>  #define CLK_DIV_GDL		459
+>  #define CLK_DIV_GDR		460
+>  
+> +/* Exynos4x12 only */
+> +#define CLK_PCLK_ADC		461
+> +
+>  /* must be greater than maximal clock id */
+> -#define CLK_NR_CLKS		461
+> +#define CLK_NR_CLKS		462
+>  
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
+> 
