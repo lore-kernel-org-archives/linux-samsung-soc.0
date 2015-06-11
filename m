@@ -1,83 +1,94 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
 Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
-Date: Thu, 11 Jun 2015 21:40:23 +0900
-Message-ID: <557981B7.3000303@samsung.com>
-References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com> <55796660.1070702@samsung.com> <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+Date: Thu, 11 Jun 2015 14:58:33 +0200
+Message-ID: <CABxcv=myq4VeMamstjVR2cpWCiD_FM91ncYYVKd4jRF=nB5zZQ@mail.gmail.com>
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+	<55796660.1070702@samsung.com>
+	<CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+	<557981B7.3000303@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <557981B7.3000303@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
-> Hello Krzysztof,
-> 
-> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
-> <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
->>> Add proper gate clock for the Analog to Digital Converter (ADC) on
->>> Exynos4x12.
+Hello Krzysztof,
+
+On Thu, Jun 11, 2015 at 2:40 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> W dniu 11.06.2015 o 21:15, Javier Martinez Canillas pisze:
+>> Hello Krzysztof,
+>>
+>> On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>>> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
+>>>> Add proper gate clock for the Analog to Digital Converter (ADC) on
+>>>> Exynos4x12.
+>>>>
+>>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> ---
+>>>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
+>>>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
+>>>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+>>>> index 714d6ba782c8..5f32410a01f8 100644
+>>>> --- a/drivers/clk/samsung/clk-exynos4.c
+>>>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>>>> @@ -85,6 +85,7 @@
+>>>>  #define DIV_PERIL4           0xc560
+>>>>  #define DIV_PERIL5           0xc564
+>>>>  #define E4X12_DIV_CAM1               0xc568
+>>>> +#define E4X12_GATE_BUS_FSYS1 0xc744
+>>>>  #define GATE_SCLK_CAM                0xc820
+>>>>  #define GATE_IP_CAM          0xc920
+>>>>  #define GATE_IP_TV           0xc924
+>>>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>>>>               0),
+>>>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>>>>               0),
+>>>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
+>>>> +             0),
 >>>
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
->>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
->>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>>> Now I have even simpler idea. Don't add new clock id but just define
+>>> here the CLK_TSADC as:
+>>> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
 >>>
->>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>> index 714d6ba782c8..5f32410a01f8 100644
->>> --- a/drivers/clk/samsung/clk-exynos4.c
->>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>> @@ -85,6 +85,7 @@
->>>  #define DIV_PERIL4           0xc560
->>>  #define DIV_PERIL5           0xc564
->>>  #define E4X12_DIV_CAM1               0xc568
->>> +#define E4X12_GATE_BUS_FSYS1 0xc744
->>>  #define GATE_SCLK_CAM                0xc820
->>>  #define GATE_IP_CAM          0xc920
->>>  #define GATE_IP_TV           0xc924
->>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>>               0),
->>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->>>               0),
->>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
->>> +             0),
+>>> With this change the second patch wouldn't be needed however this does
+>>> not reflect the Exynos 4x12 datasheet.
+>>>
+>>> Any comments?
+>>>
 >>
->> Now I have even simpler idea. Don't add new clock id but just define
->> here the CLK_TSADC as:
->> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
->>
->> With this change the second patch wouldn't be needed however this does
->> not reflect the Exynos 4x12 datasheet.
->>
->> Any comments?
->>
-> 
-> I think it's better to reflect the datasheet so I prefer your original
-> patch.
+>> I think it's better to reflect the datasheet so I prefer your original
+>> patch.
+>
+> Yeah, I also like sticking to datasheet but maybe it is not always worth
+> to reproduce the datasheet in 100%. It is just thinking out loud.
+>
 
-Yeah, I also like sticking to datasheet but maybe it is not always worth
-to reproduce the datasheet in 100%. It is just thinking out loud.
+Agreed.
 
-> Also, wouldn't changing the CLK_TSADC gate definition cause a
-> regression on an Exynos4210 board that is using the tsadc clock? or
-> maybe I misunderstood the explanation of your Patch 2/2?
+>> Also, wouldn't changing the CLK_TSADC gate definition cause a
+>> regression on an Exynos4210 board that is using the tsadc clock? or
+>> maybe I misunderstood the explanation of your Patch 2/2?
+>
+> No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
+> in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
+> 1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
+> 2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
+> register of PCLK_ADC. The id would stay the same as on Exynos4210.
+>
 
-No, no. The Exynos4210 would be unchanged. It has the CLK_TSADC - both
-in hardware and in kernel driver. The Exynos4x12 SoCs don't have so we can:
-1. Add new CLK_PCLK_ADC (id and clock) reflecting datasheet.
-2. Add only CLK_TSADC clock  on Exynos4x12 which will be using the
-register of PCLK_ADC. The id would stay the same as on Exynos4210.
+I see, thanks for the explanation. Both approaches seems sensible for
+me then, I don't have a strong opinion on either though.
+
+> Best regards,
+> Krzysztof
+>
 
 Best regards,
-Krzysztof
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Javier
