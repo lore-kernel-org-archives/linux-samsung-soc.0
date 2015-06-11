@@ -1,133 +1,65 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v4 1/2] usb: ehci-exynos: Make provision for vdd regulators
-Date: Fri, 12 Jun 2015 00:13:26 +0530
-Message-ID: <CAFp+6iGqR-RCukOZ1AV22GXxOmNkhReLWCie-zS1tP_cC1bJ6A@mail.gmail.com>
-References: <1433761633-8542-1-git-send-email-gautam.vivek@samsung.com>
-	<Pine.LNX.4.44L0.1506081111050.1574-100000@iolanthe.rowland.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [GIT PULL 1/5] Samsung defconfig updates for v4.2
+Date: Thu, 11 Jun 2015 14:28:07 -0700
+Message-ID: <7h381ydjfc.fsf@deeprootsystems.com>
+References: <5571E49E.3050707@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f194.google.com ([209.85.223.194]:34890 "EHLO
-	mail-ie0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750718AbbFKSn2 (ORCPT
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:36056 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751385AbbFKV2K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 14:43:28 -0400
-In-Reply-To: <Pine.LNX.4.44L0.1506081111050.1574-100000@iolanthe.rowland.org>
+	Thu, 11 Jun 2015 17:28:10 -0400
+Received: by pdjm12 with SMTP id m12so10501917pdj.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 14:28:10 -0700 (PDT)
+In-Reply-To: <5571E49E.3050707@kernel.org> (Kukjin Kim's message of "Sat, 06
+	Jun 2015 03:04:14 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+Kukjin Kim <kgene@kernel.org> writes:
 
-
-On Mon, Jun 8, 2015 at 8:47 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Mon, 8 Jun 2015, Vivek Gautam wrote:
+> Hi Arnd, Olof, Kevin
 >
->> Facilitate getting required 3.3V and 1.0V VDD supply for
->> EHCI controller on Exynos.
->>
->> For example, patches for regulators' nodes:
->> c8c253f ARM: dts: Add regulator entries to smdk5420
->> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
->> enable only minimum number of regulators on smdk5250.
->>
->> So ensuring now that the controller driver requests the necessary
->> VDD regulators (if available, unless there are direct VDD rails),
->> and enable them so as to make them working on exynos systems.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Here is exynos_defconfig updates for v4.2.
+> Please pull.
 >
-> Something about this looks a little fishy...
-
-Sorry, i didn't get you.
-This patch was initially posted by me sometime back.
-
+> Thanks,
+> Kukjin
 >
->> @@ -170,7 +173,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->>
->>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
->>       if (err)
->> -             goto fail_clk;
->> +             goto fail_regulator1;
->> +
->> +     exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
+> The following changes since commit 030bbdbf4c833bc69f502eae58498bc5572db736:
 >
-> Just before this region of code, there is:
+>   Linux 4.1-rc3 (2015-05-10 15:12:29 -0700)
 >
->         if (of_device_is_compatible(pdev->dev.of_node,
->                                         "samsung,exynos5440-ehci"))
->                 goto skip_phy;
+> are available in the git repository at:
 >
-> If that "goto" is taken, exynos_ehci->vdd33 and ->vdd10 will be NULL,
-> not an ERR_PTR code.
-
-Right. This will hit NULL pointer dereferencing later in the code.
-
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-defconfig-2
 >
->> +     if (!IS_ERR(exynos_ehci->vdd33)) {
->> +             err = regulator_enable(exynos_ehci->vdd33);
->> +             if (err) {
->> +                     dev_err(&pdev->dev,
->> +                             "Failed to enable 3.3V Vdd supply\n");
->> +                     goto fail_regulator1;
->> +             }
->> +     }
-
-May be we can have something like this:
-
-     if (IS_ERR(exynos_ehci->vdd33)) {
-             exynos_ehci->vdd33 = NULL;
-     } else {
-             err = regulator_enable(exynos_ehci->vdd33);
-             if (err) {
-                     dev_err(&pdev->dev,
-                             "Failed to enable 3.3V Vdd supply\n");
-                     goto fail_regulator1;
-             }
-     }
-
-and later in the code check for NULL pointer before enabling the regulator.
-
->> +
->> +     exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
->> +     if (!IS_ERR(exynos_ehci->vdd10)) {
->> +             err = regulator_enable(exynos_ehci->vdd10);
->> +             if (err) {
->> +                     dev_err(&pdev->dev,
->> +                             "Failed to enable 1.0V Vdd supply\n");
->> +                     goto fail_regulator2;
->> +             }
->> +     }
->>
->>  skip_phy:
->>
->> @@ -231,6 +254,12 @@ fail_add_hcd:
->>  fail_io:
->>       clk_disable_unprepare(exynos_ehci->clk);
->>  fail_clk:
->> +     if (!IS_ERR(exynos_ehci->vdd10))
->> +             regulator_disable(exynos_ehci->vdd10);
->> +fail_regulator2:
->> +     if (!IS_ERR(exynos_ehci->vdd33))
->> +             regulator_disable(exynos_ehci->vdd33);
+> for you to fetch changes up to f882d3cfe87800000e5fa91160db401bb7a38d28:
 >
-> Which means these regulator_disable() calls will crash when they
-> dereference a NULL pointer.
+>   ARM: exynos_defconfig: Enable CONFIG_SENSORS_INA2XX for Odroid-XU3
+> (2015-06-03 09:31:29 +0900)
 >
-> I think it would be simpler in the end to let a NULL pointer mean the
-> regulator isn't present.  If devm_regulator_get_optional() returns an
-> error, convert it to NULL (or don't do the assignment to
-> exynos_ehci->vdd?? in the first place).
+> ----------------------------------------------------------------
+> exynos_defconfig updates for v4.2
 >
-> The same criticism applies to the other patch in this series.
+> - enable DRM_EXYNOS_DSI and DRM_PANEL_S6E8AA0
+>   for full X11 display on Trats2 board
+> - enable SENSORS_PWM_FAN
+>   to control fan power on Odroid-XU3 board
+> - enable SENSORS_INA2XX
+>   for power monitor sensor on Odriod-XU3 board
+> - do savedefconfig
+>   to remove useless configs and check its dependencies
+>
+> ----------------------------------------------------------------
 
-Sure, i will amend both the patches.
+Pulled into next/defconfig.
 
-Thanks !
+Thanks,
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Kevin
