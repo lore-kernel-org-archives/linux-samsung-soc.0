@@ -1,18 +1,18 @@
 From: Kevin Hilman <khilman@kernel.org>
 Subject: Re: [GIT PULL 5/5] Samsung mach updates for v4.2
-Date: Thu, 11 Jun 2015 14:45:58 -0700
-Message-ID: <7hmw05dill.fsf@deeprootsystems.com>
+Date: Thu, 11 Jun 2015 14:46:07 -0700
+Message-ID: <7hlhfpdilc.fsf@deeprootsystems.com>
 References: <5571E4F7.40706@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:35088 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753104AbbFKVqF (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:36767 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752638AbbFKVqK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 17:46:05 -0400
-Received: by pacyx8 with SMTP id yx8so9912936pac.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 14:46:05 -0700 (PDT)
+	Thu, 11 Jun 2015 17:46:10 -0400
+Received: by pabqy3 with SMTP id qy3so9855222pab.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 14:46:09 -0700 (PDT)
 In-Reply-To: <5571E4F7.40706@kernel.org> (Kukjin Kim's message of "Sat, 06 Jun
 	2015 03:05:43 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
