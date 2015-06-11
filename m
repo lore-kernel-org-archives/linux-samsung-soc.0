@@ -1,90 +1,76 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v7 0/8] mfd: cros_ec: Add multi EC and proto v3 support
-Date: Thu, 11 Jun 2015 14:05:09 +0200
-Message-ID: <55797975.4010108@collabora.co.uk>
-References: <1433847889-7220-1-git-send-email-javier.martinez@collabora.co.uk> <24727363.WKhvMDQ6EE@diego>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 1/2] clk: exynos4: Add PCLK_ADC gate clock on Exynos4x12
+Date: Thu, 11 Jun 2015 14:15:38 +0200
+Message-ID: <CABxcv=kNb2ERqLL2gG73nkU+kpPsYAWKSyu=bkjfxZBMKOwyPQ@mail.gmail.com>
+References: <1434011190-24563-1-git-send-email-k.kozlowski@samsung.com>
+	<55796660.1070702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <24727363.WKhvMDQ6EE@diego>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Gwendal Grignou <gwendal-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Barber <smbarber-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Filipe Brandenburger <filbranden-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alexandru M Stan <amstan-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f46.google.com ([209.85.213.46]:36576 "EHLO
+	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751911AbbFKMPj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jun 2015 08:15:39 -0400
+Received: by yhan67 with SMTP id n67so1796932yha.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 05:15:38 -0700 (PDT)
+In-Reply-To: <55796660.1070702@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
 
-Hello Heiko,
+Hello Krzysztof,
 
-On 06/11/2015 01:50 PM, Heiko St=FCbner wrote:
-> Am Dienstag, 9. Juni 2015, 13:04:41 schrieb Javier Martinez Canillas:
->> Hello,
->>=20
->> This is a v7 of a series that adds support for multiple EC in a syst=
-em
->> and also for the protocol version 3 that is used on newer ECs.
->>=20
->> Most patches were taken from the downstream ChromiumOS v3.14 tree wi=
-th
->> fixes squashed, split to minimise the cross subsystem churn and chan=
-ges
->> for mainline inclusion but were not modified functionality wise.
->>=20
->> This version addresses issues pointed out by Lee Jones on the v6 pos=
-ted
->> before [0] and also adds the Acked-by tags of all the needed maintai=
-ners.
->>=20
->> The patches are based on top of "[PATCH 0/2] mfd: cros_ec: Small cle=
-anups"
->> [1] that were posted before and already picked by Lee Jones.
->>=20
->> Testing was done on some Chromebooks that have a single EC and suppo=
-rt
->> protocol v2 such as the Exynos5250 Snow, Exynos5420 Peach Pit and Ex=
-ynos5800
->> Peach Pi to be sure that no regressions were introduced for these ma=
-chines.
->>=20
->> The series were tested using a modified ectool [2] that supports the=
- new
->> cros_ec IOCTL API. They were also tested on a x86 Pixel Chromebook 2=
- (Samus)
->> that uses the new protocol v3 and has 2 EC (cros_ec and cros_pd). Bu=
-t for
->> testing on Samus, also the posted "[PATCH 0/3] platform/chrome: Chan=
-ges for
->> cros_ec_lpc and cros_ec_dev" series [3] are needed.
->=20
-> everything still works as expected on a rk3288-veyron-jerry
->=20
-> Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-> [tags are already present in the patches]
->=20
+On Thu, Jun 11, 2015 at 12:43 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> W dniu 11.06.2015 o 17:26, Krzysztof Kozlowski pisze:
+>> Add proper gate clock for the Analog to Digital Converter (ADC) on
+>> Exynos4x12.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos4.c   | 3 +++
+>>  include/dt-bindings/clock/exynos4.h | 5 ++++-
+>>  2 files changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+>> index 714d6ba782c8..5f32410a01f8 100644
+>> --- a/drivers/clk/samsung/clk-exynos4.c
+>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>> @@ -85,6 +85,7 @@
+>>  #define DIV_PERIL4           0xc560
+>>  #define DIV_PERIL5           0xc564
+>>  #define E4X12_DIV_CAM1               0xc568
+>> +#define E4X12_GATE_BUS_FSYS1 0xc744
+>>  #define GATE_SCLK_CAM                0xc820
+>>  #define GATE_IP_CAM          0xc920
+>>  #define GATE_IP_TV           0xc924
+>> @@ -1095,6 +1096,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>>               0),
+>>       GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>>               0),
+>> +     GATE(CLK_PCLK_ADC, "pclk_adc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0,
+>> +             0),
+>
+> Now I have even simpler idea. Don't add new clock id but just define
+> here the CLK_TSADC as:
+> GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0);
+>
+> With this change the second patch wouldn't be needed however this does
+> not reflect the Exynos 4x12 datasheet.
+>
+> Any comments?
 >
 
-Thanks a lot for testing again the patches.
-=20
-> As the series now has Olof's Ack, can this still make it in time for =
-4.2 - as=20
-> there is still a bit more than a week left till the merge window?
->
+I think it's better to reflect the datasheet so I prefer your original
+patch. Also, wouldn't changing the CLK_TSADC gate definition cause a
+regression on an Exynos4210 board that is using the tsadc clock? or
+maybe I misunderstood the explanation of your Patch 2/2?
 
-I hope so, the patch series have been in the lists for months now and b=
-een
-tested and reviewed in extensively. I also made sure that it doesn't ca=
-use
-any regressions on older Chromebook so it should be safe to pick for 4.=
-2
-
->=20
-> Heiko
+> Best regards,
+> Krzysztof
 >
 
 Best regards,
 Javier
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
