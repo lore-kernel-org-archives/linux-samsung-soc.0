@@ -1,488 +1,135 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/3] drm/exynos: consolidate driver/device initialization
- code
-Date: Thu, 11 Jun 2015 23:33:44 +0900
-Message-ID: <55799C48.5060203@samsung.com>
-References: <1433758542-9843-1-git-send-email-a.hajda@samsung.com>
- <1433758542-9843-2-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH v3] drm/exynos: dsi: check whether dsi is enabled before
+ sending data
+Date: Thu, 11 Jun 2015 23:52:52 +0900
+Message-ID: <5579A0C4.4060807@samsung.com>
+References: <1433819945-7346-1-git-send-email-human.hwang@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54121 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752432AbbFKOdr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 10:33:47 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NPS02BFHB491A10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Jun 2015 23:33:45 +0900 (KST)
-In-reply-to: <1433758542-9843-2-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1433819945-7346-1-git-send-email-human.hwang@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Hyungwon Hwang <human.hwang@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On 2015=EB=85=84 06=EC=9B=94 08=EC=9D=BC 19:15, Andrzej Hajda wrote:
-> Code registering different drivers and simple platform devices was di=
-spersed
-> across multiple sub-modules. This patch moves it to one place. As a r=
-esult
-> initialization code is shorter and cleaner and should simplify furthe=
-r
-> development.
-
-Applied all patches
-
-Thanks,
-Inki Dae
-
->=20
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c  | 221 +++++++++++++++++++--=
-----------
->  drivers/gpu/drm/exynos/exynos_drm_drv.h  |  17 ---
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c  |  27 ----
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c |  35 -----
->  4 files changed, 139 insertions(+), 161 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_drv.c
-> index 08b9a8c..5c5a72a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -38,8 +38,6 @@
->  #define DRIVER_MAJOR	1
->  #define DRIVER_MINOR	0
-> =20
-> -static struct platform_device *exynos_drm_pdev;
-> -
->  static DEFINE_MUTEX(drm_component_lock);
->  static LIST_HEAD(drm_component_list);
-> =20
-> @@ -527,7 +525,41 @@ static const struct component_master_ops exynos_=
-drm_ops =3D {
->  	.unbind		=3D exynos_drm_unbind,
->  };
-> =20
-> +static int exynos_drm_platform_probe(struct platform_device *pdev)
-> +{
-> +	struct component_match *match;
-> +
-> +	pdev->dev.coherent_dma_mask =3D DMA_BIT_MASK(32);
-> +	exynos_drm_driver.num_ioctls =3D ARRAY_SIZE(exynos_ioctls);
-> +
-> +	match =3D exynos_drm_match_add(&pdev->dev);
-> +	if (IS_ERR(match)) {
-> +		return PTR_ERR(match);
-> +	}
-> +
-> +	return component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
-> +					       match);
-> +}
-> +
-> +static int exynos_drm_platform_remove(struct platform_device *pdev)
-> +{
-> +	component_master_del(&pdev->dev, &exynos_drm_ops);
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver exynos_drm_platform_driver =3D {
-> +	.probe	=3D exynos_drm_platform_probe,
-> +	.remove	=3D exynos_drm_platform_remove,
-> +	.driver	=3D {
-> +		.name	=3D "exynos-drm",
-> +		.pm	=3D &exynos_drm_pm_ops,
-> +	},
-> +};
-> +
->  static struct platform_driver *const exynos_drm_kms_drivers[] =3D {
-> +#ifdef CONFIG_DRM_EXYNOS_VIDI
-> +	&vidi_driver,
-> +#endif
->  #ifdef CONFIG_DRM_EXYNOS_FIMD
->  	&fimd_driver,
->  #endif
-> @@ -562,30 +594,109 @@ static struct platform_driver *const exynos_dr=
-m_non_kms_drivers[] =3D {
->  #ifdef CONFIG_DRM_EXYNOS_IPP
->  	&ipp_driver,
->  #endif
-> +	&exynos_drm_platform_driver,
->  };
-> =20
-> -static int exynos_drm_platform_probe(struct platform_device *pdev)
-> +
-> +static struct platform_driver *const exynos_drm_drv_with_simple_dev[=
-] =3D {
-> +#ifdef CONFIG_DRM_EXYNOS_VIDI
-> +	&vidi_driver,
-> +#endif
-> +#ifdef CONFIG_DRM_EXYNOS_IPP
-> +	&ipp_driver,
-> +#endif
-> +	&exynos_drm_platform_driver,
-> +};
-> +
-> +#define PDEV_COUNT ARRAY_SIZE(exynos_drm_drv_with_simple_dev)
-> +
-> +static struct platform_device *exynos_drm_pdevs[PDEV_COUNT];
-> +
-> +static void exynos_drm_unregister_devices(void)
->  {
-> -	struct component_match *match;
-> +	int i =3D PDEV_COUNT;
-> =20
-> -	pdev->dev.coherent_dma_mask =3D DMA_BIT_MASK(32);
-> -	exynos_drm_driver.num_ioctls =3D ARRAY_SIZE(exynos_ioctls);
-> +	while (--i >=3D 0) {
-> +		platform_device_unregister(exynos_drm_pdevs[i]);
-> +		exynos_drm_pdevs[i] =3D NULL;
-> +	}
-> +}
-> =20
-> -	match =3D exynos_drm_match_add(&pdev->dev);
-> -	if (IS_ERR(match)) {
-> -		return PTR_ERR(match);
-> +static int exynos_drm_register_devices(void)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < PDEV_COUNT; ++i) {
-> +		struct platform_driver *d =3D exynos_drm_drv_with_simple_dev[i];
-> +		struct platform_device *pdev =3D
-> +			platform_device_register_simple(d->driver.name,-1, NULL,
-> +							0);
-> +
-> +		if (!IS_ERR(pdev)) {
-> +			exynos_drm_pdevs[i] =3D pdev;
-> +			continue;
-> +		}
-> +		while (--i >=3D 0) {
-> +			platform_device_unregister(exynos_drm_pdevs[i]);
-> +			exynos_drm_pdevs[i] =3D NULL;
-> +		}
-> +
-> +		return PTR_ERR(pdev);
->  	}
-> =20
-> -	return component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
-> -					       match);
-> +	return 0;
->  }
-> =20
-> -static int exynos_drm_platform_remove(struct platform_device *pdev)
-> +static void exynos_drm_unregister_drivers(struct platform_driver * c=
-onst *drv,
-> +					  int count)
->  {
-> -	component_master_del(&pdev->dev, &exynos_drm_ops);
-> +	while (--count >=3D 0)
-> +		platform_driver_unregister(drv[count]);
-> +}
-> +
-> +static int exynos_drm_register_drivers(struct platform_driver * cons=
-t *drv,
-> +				       int count)
-> +{
-> +	int i, ret;
-> +
-> +	for (i =3D 0; i < count; ++i) {
-> +		ret =3D platform_driver_register(drv[i]);
-> +		if (!ret)
-> +			continue;
-> +
-> +		while (--i >=3D 0)
-> +			platform_driver_unregister(drv[i]);
-> +
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> +static inline int exynos_drm_register_kms_drivers(void)
-> +{
-> +	return exynos_drm_register_drivers(exynos_drm_kms_drivers,
-> +					ARRAY_SIZE(exynos_drm_kms_drivers));
-> +}
-> +
-> +static inline int exynos_drm_register_non_kms_drivers(void)
-> +{
-> +	return exynos_drm_register_drivers(exynos_drm_non_kms_drivers,
-> +					ARRAY_SIZE(exynos_drm_non_kms_drivers));
-> +}
-> +
-> +static inline void exynos_drm_unregister_kms_drivers(void)
-> +{
-> +	exynos_drm_unregister_drivers(exynos_drm_kms_drivers,
-> +					ARRAY_SIZE(exynos_drm_kms_drivers));
-> +}
-> +
-> +static inline void exynos_drm_unregister_non_kms_drivers(void)
-> +{
-> +	exynos_drm_unregister_drivers(exynos_drm_non_kms_drivers,
-> +					ARRAY_SIZE(exynos_drm_non_kms_drivers));
-> +}
-> +
->  static const char * const strings[] =3D {
->  	"samsung,exynos3",
->  	"samsung,exynos4",
-> @@ -593,19 +704,10 @@ static const char * const strings[] =3D {
->  	"samsung,exynos7",
->  };
-> =20
-> -static struct platform_driver exynos_drm_platform_driver =3D {
-> -	.probe	=3D exynos_drm_platform_probe,
-> -	.remove	=3D exynos_drm_platform_remove,
-> -	.driver	=3D {
-> -		.name	=3D "exynos-drm",
-> -		.pm	=3D &exynos_drm_pm_ops,
-> -	},
-> -};
-> -
->  static int exynos_drm_init(void)
->  {
->  	bool is_exynos =3D false;
-> -	int ret, i, j;
-> +	int ret, i;
-> =20
->  	/*
->  	 * Register device object only in case of Exynos SoC.
-> @@ -624,79 +726,34 @@ static int exynos_drm_init(void)
->  	if (!is_exynos)
->  		return -ENODEV;
-> =20
-> -	exynos_drm_pdev =3D platform_device_register_simple("exynos-drm", -=
-1,
-> -								NULL, 0);
-> -	if (IS_ERR(exynos_drm_pdev))
-> -		return PTR_ERR(exynos_drm_pdev);
-> -
-> -	ret =3D exynos_drm_probe_vidi();
-> -	if (ret < 0)
-> -		goto err_unregister_pd;
-> -
-> -	for (i =3D 0; i < ARRAY_SIZE(exynos_drm_kms_drivers); ++i) {
-> -		ret =3D platform_driver_register(exynos_drm_kms_drivers[i]);
-> -		if (ret < 0)
-> -			goto err_unregister_kms_drivers;
-> -	}
-> -
-> -	for (j =3D 0; j < ARRAY_SIZE(exynos_drm_non_kms_drivers); ++j) {
-> -		ret =3D platform_driver_register(exynos_drm_non_kms_drivers[j]);
-> -		if (ret < 0)
-> -			goto err_unregister_non_kms_drivers;
-> -	}
-> +	ret =3D exynos_drm_register_devices();
-> +	if (ret)
-> +		return ret;
-> =20
-> -#ifdef CONFIG_DRM_EXYNOS_IPP
-> -	ret =3D exynos_platform_device_ipp_register();
-> -	if (ret < 0)
-> -		goto err_unregister_non_kms_drivers;
-> -#endif
-> +	ret =3D exynos_drm_register_kms_drivers();
-> +	if (ret)
-> +		goto err_unregister_pdevs;
-> =20
-> -	ret =3D platform_driver_register(&exynos_drm_platform_driver);
-> +	ret =3D exynos_drm_register_non_kms_drivers();
->  	if (ret)
-> -		goto err_unregister_resources;
-> +		goto err_unregister_kms_drivers;
-> =20
->  	return 0;
-> =20
-> -err_unregister_resources:
-> -#ifdef CONFIG_DRM_EXYNOS_IPP
-> -	exynos_platform_device_ipp_unregister();
-> -#endif
-> -
-> -err_unregister_non_kms_drivers:
-> -	while (--j >=3D 0)
-> -		platform_driver_unregister(exynos_drm_non_kms_drivers[j]);
-> -
->  err_unregister_kms_drivers:
-> -	while (--i >=3D 0)
-> -		platform_driver_unregister(exynos_drm_kms_drivers[i]);
-> +	exynos_drm_unregister_kms_drivers();
-> =20
-> -	exynos_drm_remove_vidi();
-> -
-> -err_unregister_pd:
-> -	platform_device_unregister(exynos_drm_pdev);
-> +err_unregister_pdevs:
-> +	exynos_drm_unregister_devices();
-> =20
->  	return ret;
->  }
-> =20
->  static void exynos_drm_exit(void)
->  {
-> -	int i;
-> -
-> -#ifdef CONFIG_DRM_EXYNOS_IPP
-> -	exynos_platform_device_ipp_unregister();
-> -#endif
-> -
-> -	for (i =3D ARRAY_SIZE(exynos_drm_non_kms_drivers) - 1; i >=3D 0; --=
-i)
-> -		platform_driver_unregister(exynos_drm_non_kms_drivers[i]);
-> -
-> -	for (i =3D ARRAY_SIZE(exynos_drm_kms_drivers) - 1; i >=3D 0; --i)
-> -		platform_driver_unregister(exynos_drm_kms_drivers[i]);
-> -
-> -	platform_driver_unregister(&exynos_drm_platform_driver);
-> -
-> -	exynos_drm_remove_vidi();
-> -
-> -	platform_device_unregister(exynos_drm_pdev);
-> +	exynos_drm_unregister_non_kms_drivers();
-> +	exynos_drm_unregister_kms_drivers();
-> +	exynos_drm_unregister_devices();
->  }
-> =20
->  module_init(exynos_drm_init);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/dr=
-m/exynos/exynos_drm_drv.h
-> index 1c66f65..b308e90 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -295,15 +295,6 @@ int exynos_drm_device_subdrv_remove(struct drm_d=
-evice *dev);
->  int exynos_drm_subdrv_open(struct drm_device *dev, struct drm_file *=
-file);
->  void exynos_drm_subdrv_close(struct drm_device *dev, struct drm_file=
- *file);
-> =20
-> -#ifdef CONFIG_DRM_EXYNOS_IPP
-> -int exynos_platform_device_ipp_register(void);
-> -void exynos_platform_device_ipp_unregister(void);
-> -#else
-> -static inline int exynos_platform_device_ipp_register(void) { return=
- 0; }
-> -static inline void exynos_platform_device_ipp_unregister(void) {}
-> -#endif
-> -
-> -
->  #ifdef CONFIG_DRM_EXYNOS_DPI
->  struct exynos_drm_display * exynos_dpi_probe(struct device *dev);
->  int exynos_dpi_remove(struct exynos_drm_display *display);
-> @@ -316,14 +307,6 @@ static inline int exynos_dpi_remove(struct exyno=
-s_drm_display *display)
->  }
->  #endif
-> =20
-> -#ifdef CONFIG_DRM_EXYNOS_VIDI
-> -int exynos_drm_probe_vidi(void);
-> -void exynos_drm_remove_vidi(void);
-> -#else
-> -static inline int exynos_drm_probe_vidi(void) { return 0; }
-> -static inline void exynos_drm_remove_vidi(void) {}
-> -#endif
-> -
->  /* This function creates a encoder and a connector, and initializes =
-them. */
->  int exynos_drm_create_enc_conn(struct drm_device *dev,
->  				struct exynos_drm_display *display);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_ipp.c
-> index b7f1cbc..f594dd7 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -45,9 +45,6 @@
->  #define get_ipp_context(dev)	platform_get_drvdata(to_platform_device=
-(dev))
->  #define ipp_is_m2m_cmd(c)	(c =3D=3D IPP_CMD_M2M)
-> =20
-> -/* platform device pointer for ipp device. */
-> -static struct platform_device *exynos_drm_ipp_pdev;
-> -
->  /*
->   * A structure of event.
->   *
-> @@ -102,30 +99,6 @@ static LIST_HEAD(exynos_drm_ippdrv_list);
->  static DEFINE_MUTEX(exynos_drm_ippdrv_lock);
->  static BLOCKING_NOTIFIER_HEAD(exynos_drm_ippnb_list);
-> =20
-> -int exynos_platform_device_ipp_register(void)
-> -{
-> -	struct platform_device *pdev;
-> -
-> -	if (exynos_drm_ipp_pdev)
-> -		return -EEXIST;
-> -
-> -	pdev =3D platform_device_register_simple("exynos-drm-ipp", -1, NULL=
-, 0);
-> -	if (IS_ERR(pdev))
-> -		return PTR_ERR(pdev);
-> -
-> -	exynos_drm_ipp_pdev =3D pdev;
-> -
-> -	return 0;
-> -}
-> -
-> -void exynos_platform_device_ipp_unregister(void)
-> -{
-> -	if (exynos_drm_ipp_pdev) {
-> -		platform_device_unregister(exynos_drm_ipp_pdev);
-> -		exynos_drm_ipp_pdev =3D NULL;
-> -	}
-> -}
-> -
->  int exynos_drm_ippdrv_register(struct exynos_drm_ippdrv *ippdrv)
->  {
->  	mutex_lock(&exynos_drm_ippdrv_lock);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_vidi.c
-> index abe4ee0..f63ac58 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> @@ -571,38 +571,3 @@ struct platform_driver vidi_driver =3D {
->  		.owner	=3D THIS_MODULE,
->  	},
->  };
-> -
-> -int exynos_drm_probe_vidi(void)
-> -{
-> -	struct platform_device *pdev;
-> -	int ret;
-> -
-> -	pdev =3D platform_device_register_simple("exynos-drm-vidi", -1, NUL=
-L, 0);
-> -	if (IS_ERR(pdev))
-> -		return PTR_ERR(pdev);
-> -
-> -	ret =3D platform_driver_register(&vidi_driver);
-> -	if (ret) {
-> -		platform_device_unregister(pdev);
-> -		return ret;
-> -	}
-> -
-> -	return ret;
-> -}
-> -
-> -static int exynos_drm_remove_vidi_device(struct device *dev, void *d=
-ata)
-> -{
-> -	platform_device_unregister(to_platform_device(dev));
-> -
-> -	return 0;
-> -}
-> -
-> -void exynos_drm_remove_vidi(void)
-> -{
-> -	int ret =3D driver_for_each_device(&vidi_driver.driver, NULL, NULL,
-> -					 exynos_drm_remove_vidi_device);
-> -	/* silence compiler warning */
-> -	(void)ret;
-> -
-> -	platform_driver_unregister(&vidi_driver);
-> -}
->=20
+T24gMjAxNeuFhCAwNuyblCAwOeydvCAxMjoxOSwgSHl1bmd3b24gSHdhbmcgd3JvdGU6Cj4gZXh5
+bm9zX2RzaV9ob3N0X3RyYW5zZmVyKCkgY2FuIGJlIGNhbGxlZCB0aHJvdWdoIGEgcGFuZWwgZHJp
+dmVyIHdoaWxlCj4gRFNJIGlzIHR1cm5pbmcgZG93bi4gSXQgaXMgcG9zc2libGUgYmVjYXVzZSB0
+aGUgZnVuY3Rpb24gY2hlY2tzIG9ubHkKPiB3aGV0aGVyIERTSSBpcyBpbml0aWFsaXplZCBvciBu
+b3QsIGFuZCB0aGVyZSBpcyBhIG1vbWVudCB3aGljaCBEU0kgaXMKPiBzZXQgYnkgdW5pbml0aWFs
+aXplZCwgYnV0IERTSSBpcyBzdGlsbCB0dXJuaW5nIGRvd24uIFRvIHByZXZlbnQgaXQsCj4gRFNJ
+IG11c3QgYmUgc2V0IGJ5IGRpc2FibGVkIGJlZm9yZSBzdGFydGluZyB0byBiZSB0dXJuZWQgZG93
+biwgYW5kCj4gZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyKCkgbXVzdCBjaGVjayB3aGV0aGVyIERT
+SSBpcyBlbmFibGVkIG9yIG5vdC4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IEtl
+cm5lbCBkdW1wOgo+IFsgNDcyMS4zNTE0NDhdIFVuaGFuZGxlZCBmYXVsdDogc3luY2hyb25vdXMg
+ZXh0ZXJuYWwgYWJvcnQgKDB4OTYwMDAyMTApIGF0IDB4ZmZmZmZmODAwMDE1ZTAxOAo+IFsgNDcy
+MS4zNTE4MDldIEludGVybmFsIGVycm9yOiA6IDk2MDAwMjEwIFsjMV0gUFJFRU1QVCBTTVAKPiBb
+IDQ3MjEuMzUyMDMxXSBNb2R1bGVzIGxpbmtlZCBpbjoKPiBbIDQ3MjEuMzUyMTczXSBDUFU6IDIg
+UElEOiAzMDAgQ29tbTogZGV2aWNlZCBUYWludGVkOiBHICAgICAgICBXICAgICAgIDQuMC40LTAx
+MDE3LWc3OTY0YTg3ICMxCj4gWyA0NzIxLjM1Mzk4OV0gSGFyZHdhcmUgbmFtZTogU2Ftc3VuZyBE
+UkFDTyBib2FyZCAoRFQpCj4gWyA0NzIxLjM1ODg1Ml0gdGFzazogZmZmZmZmYzBhMGI3MDAwMCB0
+aTogZmZmZmZmYzBhMDBlYzAwMCB0YXNrLnRpOiBmZmZmZmZjMGEwMGVjMDAwCj4gWyA0NzIxLjM2
+NjMyN10gUEMgaXMgYXQgZXh5bm9zX2RzaV9lbmFibGVfbGFuZSsweDE0LzB4NWMKPiBbIDQ3MjEu
+MzcxMzUzXSBMUiBpcyBhdCBleHlub3NfZHNpX2hvc3RfdHJhbnNmZXIrMHg4MzQvMHg4ZDgKPiBb
+IDQ3MjEuMzc2NzMxXSBwYyA6IFs8ZmZmZmZmYzAwMDQzMmJjYz5dIGxyIDogWzxmZmZmZmZjMDAw
+NDM0NTkwPl0gcHN0YXRlOiA2MDAwMDE0NQo+IFsgNDcyMS4zODQxMDddIHNwIDogZmZmZmZmYzBh
+MDBlZmJlMAo+IFsgNDcyMS4zODc0MDVdIHgyOTogZmZmZmZmYzBhMDBlZmJlMCB4Mjg6IGZmZmZm
+ZmMwYTAwZWMwMDAKPiBbIDQ3MjEuMzkyNjk5XSB4Mjc6IGZmZmZmZmMwMDA5NjgwMDAgeDI2OiAw
+MDAwMDAwMDAwMDAwMDQwCj4gWyA0NzIxLjM5Nzk5NF0geDI1OiBmZmZmZmZjMDAwZjc0ZGMwIHgy
+NDogZmZmZmZmYzBhMDBlZmVjOAo+IFsgNDcyMS40MDMyOTBdIHgyMzogZmZmZmZmYzBhNDgxNTQw
+MCB4MjI6IGZmZmZmZmMwMDA5ZjI3MjkKPiBbIDQ3MjEuNDA4NTg0XSB4MjE6IGZmZmZmZmMwYTAw
+ZWZjYzggeDIwOiBmZmZmZmZjMGE0YTJhODQ4Cj4gWyA0NzIxLjQxMzg3OV0geDE5OiBmZmZmZmZj
+MGE0YTJhODE4IHgxODogMDAwMDAwMDAwMDAwMDAwNAo+IFsgNDcyMS40MTkxNzNdIHgxNzogMDAw
+MDAwN2ZhYTVjZGRmMCB4MTY6IGZmZmZmZmMwMDAxYTQwYTgKPiBbIDQ3MjEuNDI0NDY5XSB4MTU6
+IDAwMDAwMDAwMDAwMDAwMDkgeDE0OiAwMDAwMDAwMDAwMDAwMDBkCj4gWyA0NzIxLjQyOTc2Ml0g
+eDEzOiA2ZTZlNmY2MzIwNmI3MjZmIHgxMjogMDAwMDAwMDAwMDAwMDAxMAo+IFsgNDcyMS40MzUw
+NThdIHgxMTogMDEwMTAxMDEwMTAxMDEwMSB4MTA6IDAwMDAwMDAwMDAwMDAwMDAKPiBbIDQ3MjEu
+NDQwMzUzXSB4OSA6IDAwMDAwMDAwMDAwMDAwMGEgeDggOiA4Mzg2ODM4MjgyODE4MzgxCj4gWyA0
+NzIxLjQ0NTY0OF0geDcgOiBmZmZmZmZjMGEyMDFlZmU4IHg2IDogMDAwMDAwMDAwMDAwMDAwMAo+
+IFsgNDcyMS40NTA5NDNdIHg1IDogMDAwMDAwMDBmZmZmZmZmYSB4NCA6IGZmZmZmZmMwYTIwMWYx
+NzAKPiBbIDQ3MjEuNDU2MjM3XSB4MyA6IGZmZmZmZjgwMDAxNWUwMDAgeDIgOiBmZmZmZmY4MDAw
+MTVlMDE4Cj4gWyA0NzIxLjQ2MTUzMV0geDEgOiAwMDAwMDAwMDAwMDAwMDBmIHgwIDogZmZmZmZm
+YzBhNGEyYTgxOAo+IFsgNDcyMS40NjY4MjZdCj4gWyA0NzIxLjQ2ODMwNV0gUHJvY2VzcyBkZXZp
+Y2VkIChwaWQ6IDMwMCwgc3RhY2sgbGltaXQgPSAweGZmZmZmZmMwYTAwZWMwMjgpCj4gWyA0NzIx
+LjQ3NDk4OV0gU3RhY2s6ICgweGZmZmZmZmMwYTAwZWZiZTAgdG8gMHhmZmZmZmZjMGEwMGYwMDAw
+KQo+IFsgNDcyMS40ODA3MjBdIGZiZTA6IGEwMGVmY2EwIGZmZmZmZmMwIDAwNDJjOTQ0IGZmZmZm
+ZmMwIGEwZjJkNjgwIGZmZmZmZmMwIDAwMDAwMDI0IDAwMDAwMDAwCj4gWyA0NzIxLjQ4ODg5NV0g
+ZmMwMDogYTRiNmQwMDAgZmZmZmZmYzAgMDA5ZjI3MjkgZmZmZmZmYzAgYTQ4MTU0MDAgZmZmZmZm
+YzAgYTAwZWZlYzggZmZmZmZmYzAKPiAKPiBTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8
+aHVtYW4uaHdhbmdAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBmb3IgdjI6Cj4gIC0gUHJl
+dmlvdXMgdmVyc2lvbiBvZiB0aGlzIHBhdGNoIG1ha2VzIGEgcHJvYmxlbSBpbiBpbml0aWFsaXpp
+bmcgdGhlIERTSS4gVGhpcwo+ICAgIHBhdGNoIGZpeGVzIGl0LCBieSBtb3ZpbmcgdGhlIHBvaW50
+IHdoaWNoIERTSSBpcyBzZXQgYnkgZW5hYmxlZCB0byB0aGUKPiAgICBwb2ludCBiZWZvcmUgZHJt
+X3BhbmVsX3ByZXBhcmUoKSBjYWxsZWQuIFRoaXMgaXMgd2hlcmUgdGhlIHNldHRpbmcgbXVzdAo+
+ICAgIGJlIGRvbmUsIGJlY2F1c2UgdG8gY2FsbCBkcm1fcGFuZWxfcHJlcGFyZSgpIHN1Y2Nlc3Nm
+dWxseSwgRFNJIG11c3QgYmUKPiAgICBlbmFibGVkLiBBbHNvIHRoaXMgcGF0Y2ggYWRkcyB0aGUg
+Y29uZGl0aW9uIHRvIFRFIGlycSBoYW5kbGVyLiBEU0kgbXVzdCBiZQo+ICAgIGVuYWJsZWQgYW5k
+IGluaXRpYWxpemVkLCBub3QganVzdCBlbmFibGVkIGJlZm9yZSBjYWxsaW5nIHRlX2hhbmRsZXIg
+aW4KPiAgICB0aGUgZGlzcGxheSBkcml2ZXIuCj4gQ2hhbmdlcyBmb3IgdjM6Cj4gIC0gTmV3IHN0
+YXRlIERTSU1fU1RBVEVfVklET1VUX0FWQUlMQUJMRSBmb3IgcmVwcmVzZW50aW5nIHZpZGVvIG91
+dHB1dAo+ICAgIGF2YWlsYWJpbGl0eSBpcyBpbnRyb2R1Y2VkLiBCZWNhdXNlIERTSU1fU1RBVEVf
+RU5BQkxFRCBiZWNvbWVzIHRvCj4gICAgcmVwcmVzZW50IHdoZXRoZXIgRFNJIGNhbiBiZSB1c2Vk
+IGZvciBkYXRhIHRyYW5zZmVyIG9yIG5vdCwgdGhpcwo+ICAgIHN0YXRlIGNhbiBiZSB1c2VkIGZv
+ciBjaGVja2luZyB3aGV0aGVyIHZpZGVvIG91cHV0IGlzIGF2YWlsYWJsZSBvcgo+ICAgIG5vdCBh
+bnltb3JlLiBTbyBuZXcgc3RhdGUgaGF2ZSB0byBiZSBpbnRyb2R1Y2VkLiBUaGUgc3RldGUKPiAg
+ICBEU0lNX1NUQVRFX1ZJRE9VVF9BVkFJTEFCTEUgcmVwcmVzZW50cyB3aGV0aGVyIERTSSBpcyBw
+cmVwYXJlZCBmb3IKPiAgICBvdXRwdXR0aW5nIHZpZGVvIHRvIGEgcGFuZWwgb3Igbm90Lgo+IAo+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgfCAxOCArKysrKysrKysr
+KysrKy0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25z
+KC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+c2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+IGluZGV4IDFj
+ZmM0YmUwNy4uOTI1MDM1NiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHNpLmMKPiBAQCAtMjQxLDYgKzI0MSw3IEBAIHN0cnVjdCBleHlub3NfZHNpX3RyYW5zZmVyIHsK
+PiAgI2RlZmluZSBEU0lNX1NUQVRFX0VOQUJMRUQJCUJJVCgwKQo+ICAjZGVmaW5lIERTSU1fU1RB
+VEVfSU5JVElBTElaRUQJCUJJVCgxKQo+ICAjZGVmaW5lIERTSU1fU1RBVEVfQ01EX0xQTQkJQklU
+KDIpCj4gKyNkZWZpbmUgRFNJTV9TVEFURV9WSURPVVRfQVZBSUxBQkxFCUJJVCgzKQo+IAo+ICBz
+dHJ1Y3QgZXh5bm9zX2RzaV9kcml2ZXJfZGF0YSB7Cj4gIAl1bnNpZ25lZCBpbnQgKnJlZ3M7Cj4g
+QEAgLTEyNjgsNyArMTI2OSw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBleHlub3NfZHNpX3RlX2ly
+cV9oYW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKPiAgCXN0cnVjdCBleHlub3NfZHNpICpk
+c2kgPSAoc3RydWN0IGV4eW5vc19kc2kgKilkZXZfaWQ7Cj4gIAlzdHJ1Y3QgZHJtX2VuY29kZXIg
+KmVuY29kZXIgPSBkc2ktPmRpc3BsYXkuZW5jb2RlcjsKPiAKPiAtCWlmIChkc2ktPnN0YXRlICYg
+RFNJTV9TVEFURV9FTkFCTEVEKQo+ICsJaWYgKGRzaS0+c3RhdGUgJiBEU0lNX1NUQVRFX1ZJRE9V
+VF9BVkFJTEFCTEUpCj4gIAkJZXh5bm9zX2RybV9jcnRjX3RlX2hhbmRsZXIoZW5jb2Rlci0+Y3J0
+Yyk7Cj4gCj4gIAlyZXR1cm4gSVJRX0hBTkRMRUQ7Cj4gQEAgLTE0MDgsNiArMTQwOSw5IEBAIHN0
+YXRpYyBzc2l6ZV90IGV4eW5vc19kc2lfaG9zdF90cmFuc2ZlcihzdHJ1Y3QgbWlwaV9kc2lfaG9z
+dCAqaG9zdCwKPiAgCXN0cnVjdCBleHlub3NfZHNpX3RyYW5zZmVyIHhmZXI7Cj4gIAlpbnQgcmV0
+Owo+IAo+ICsJaWYgKCEoZHNpLT5zdGF0ZSAmIERTSU1fU1RBVEVfRU5BQkxFRCkpCj4gKwkJcmV0
+dXJuIC1FSU5WQUw7Cj4gKwo+ICAJaWYgKCEoZHNpLT5zdGF0ZSAmIERTSU1fU1RBVEVfSU5JVElB
+TElaRUQpKSB7Cj4gIAkJcmV0ID0gZXh5bm9zX2RzaV9pbml0KGRzaSk7Cj4gIAkJaWYgKHJldCkK
+PiBAQCAtMTUyMCw4ICsxNTI0LDExIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9lbmFibGUoc3Ry
+dWN0IGV4eW5vc19kc2kgKmRzaSkKPiAgCWlmIChyZXQgPCAwKQo+ICAJCXJldHVybiByZXQ7Cj4g
+Cj4gKwlkc2ktPnN0YXRlIHw9IERTSU1fU1RBVEVfRU5BQkxFRDsKPiArCj4gIAlyZXQgPSBkcm1f
+cGFuZWxfcHJlcGFyZShkc2ktPnBhbmVsKTsKPiAgCWlmIChyZXQgPCAwKSB7Cj4gKwkJZHNpLT5z
+dGF0ZSAmPSB+RFNJTV9TVEFURV9FTkFCTEVEOwo+ICAJCWV4eW5vc19kc2lfcG93ZXJvZmYoZHNp
+KTsKPiAgCQlyZXR1cm4gcmV0Owo+ICAJfQo+IEBAIC0xNTI5LDggKzE1MzYsNiBAQCBzdGF0aWMg
+aW50IGV4eW5vc19kc2lfZW5hYmxlKHN0cnVjdCBleHlub3NfZHNpICpkc2kpCj4gIAlleHlub3Nf
+ZHNpX3NldF9kaXNwbGF5X21vZGUoZHNpKTsKPiAgCWV4eW5vc19kc2lfc2V0X2Rpc3BsYXlfZW5h
+YmxlKGRzaSwgdHJ1ZSk7Cj4gCj4gLQlkc2ktPnN0YXRlIHw9IERTSU1fU1RBVEVfRU5BQkxFRDsK
+PiAtCj4gIAlyZXQgPSBkcm1fcGFuZWxfZW5hYmxlKGRzaS0+cGFuZWwpOwo+ICAJaWYgKHJldCA8
+IDApIHsKPiAgCQlkc2ktPnN0YXRlICY9IH5EU0lNX1NUQVRFX0VOQUJMRUQ7Cj4gQEAgLTE1NDAs
+NiArMTU0NSw4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9lbmFibGUoc3RydWN0IGV4eW5vc19k
+c2kgKmRzaSkKPiAgCQlyZXR1cm4gcmV0Owo+ICAJfQo+IAo+ICsJZHNpLT5zdGF0ZSB8PSBEU0lN
+X1NUQVRFX1ZJRE9VVF9BVkFJTEFCTEU7Cj4gKwo+ICAJcmV0dXJuIDA7Cj4gIH0KPiAKPiBAQCAt
+MTU0OCwxMiArMTU1NSwxNSBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHNpX2Rpc2FibGUoc3RydWN0
+IGV4eW5vc19kc2kgKmRzaSkKPiAgCWlmICghKGRzaS0+c3RhdGUgJiBEU0lNX1NUQVRFX0VOQUJM
+RUQpKQo+ICAJCXJldHVybjsKPiAKPiArCWRzaS0+c3RhdGUgJj0gfkRTSU1fU1RBVEVfVklET1VU
+X0FWQUlMQUJMRTsKPiArCj4gIAlkcm1fcGFuZWxfZGlzYWJsZShkc2ktPnBhbmVsKTsKPiAgCWV4
+eW5vc19kc2lfc2V0X2Rpc3BsYXlfZW5hYmxlKGRzaSwgZmFsc2UpOwo+ICAJZHJtX3BhbmVsX3Vu
+cHJlcGFyZShkc2ktPnBhbmVsKTsKPiAtCWV4eW5vc19kc2lfcG93ZXJvZmYoZHNpKTsKPiAKPiAg
+CWRzaS0+c3RhdGUgJj0gfkRTSU1fU1RBVEVfRU5BQkxFRDsKPiArCj4gKwlleHlub3NfZHNpX3Bv
+d2Vyb2ZmKGRzaSk7Cj4gIH0KPiAKPiAgc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9kcG1zKHN0cnVj
+dCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksIGludCBtb2RlKQo+IC0tCj4gMS45LjEKPiAK
+PiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
