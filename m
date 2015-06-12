@@ -1,12 +1,13 @@
 From: Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 1/3] ARM: dts: Add the reference node for syscon to mipi phy
- for Exynos3250
-Date: Fri, 12 Jun 2015 18:03:24 +0900
-Message-ID: <1434099805-16989-1-git-send-email-human.hwang@samsung.com>
+Subject: [PATCH 2/3] ARM: dts: fix the clock-frequency of rinato board's panel
+Date: Fri, 12 Jun 2015 18:03:25 +0900
+Message-ID: <1434099805-16989-2-git-send-email-human.hwang@samsung.com>
+References: <1434099805-16989-1-git-send-email-human.hwang@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1434099805-16989-1-git-send-email-human.hwang@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,17 +21,20 @@ To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-ke
 Cc: sw0312.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RXh5bm9zIG1pcGkgcGh5IGRyaXZlciBuZWVkcyBzeXNjb24gbm9kZSB0byBiZSBwcm9iZWQgc3Vj
-Y2Vzc2Z1bGx5LgoKU2lnbmVkLW9mZi1ieTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNh
-bXN1bmcuY29tPgotLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRzaSB8IDEgKwog
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
-dC9kdHMvZXh5bm9zMzI1MC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC5kdHNp
-CmluZGV4IGUzYmZiMTEuLmY4YzAyZGQgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczMyNTAuZHRzaQorKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLmR0c2kKQEAg
-LTE0MCw2ICsxNDAsNyBAQAogCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM1cHYyMTAtbWlwaS12
-aWRlby1waHkiOwogCQkJcmVnID0gPDB4MTAwMjA3MTAgOD47CiAJCQkjcGh5LWNlbGxzID0gPDE+
-OworCQkJc3lzY29uID0gPCZwbXVfc3lzdGVtX2NvbnRyb2xsZXI+OwogCQl9OwogCiAJCXBkX2Nh
-bTogY2FtLXBvd2VyLWRvbWFpbkAxMDAyM0MwMCB7Ci0tIAoxLjkuMQoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+QmVjYXVzZSBvZiByZWNlbnQgdXBkYXRlLCBwcm9wZXIgY2xvY2stZnJlcXVlbmN5IGJlY29tZXMg
+bWFuZGF0b3J5CmZvciB2YWxpZGF0aW5nIHRoZSBtb2RlIG9mIHBhbmVsLiBUaGlzIGNsb2NrLWZy
+ZXF1ZW5jeSBtdXN0IGJlIHNldAphcHByb3ByaWF0ZWx5IGZvciBnZXR0aW5nIHJlcXVpcmVkIGZy
+YW1lIHJhdGUuCgpTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ft
+c3VuZy5jb20+Ci0tLQogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzIHwg
+MiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzIGIvYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzCmluZGV4IDBiOTkwNjguLjc1YWJhNDAg
+MTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cworKysg
+Yi9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMKQEAgLTE4MSw3ICsxODEs
+NyBAQAogCiAJCWRpc3BsYXktdGltaW5ncyB7CiAJCQl0aW1pbmctMCB7Ci0JCQkJY2xvY2stZnJl
+cXVlbmN5ID0gPDA+OworCQkJCWNsb2NrLWZyZXF1ZW5jeSA9IDw0NjAwMDAwPjsKIAkJCQloYWN0
+aXZlID0gPDMyMD47CiAJCQkJdmFjdGl2ZSA9IDwzMjA+OwogCQkJCWhmcm9udC1wb3JjaCA9IDwx
+PjsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
