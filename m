@@ -1,48 +1,36 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 01/15] ARM: kill off set_irq_flags usage
-Date: Fri, 12 Jun 2015 09:35:33 -0500
-Message-ID: <CAL_JsqKvLW-0p=A3BHoAYH_+ODCTt4C07OAHc__rUzC0jZ5p5g@mail.gmail.com>
-References: <1433874401-27161-1-git-send-email-robh@kernel.org>
- <1433874401-27161-2-git-send-email-robh@kernel.org> <alpine.LNX.2.00.1506121604200.30841@localhost>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH v2] ARM: dts: fix the clock-frequency of rinato board's
+ panel
+Date: Fri, 12 Jun 2015 08:38:42 -0700
+Message-ID: <20150612153842.GA12274@kroah.com>
+References: <1434103610-24182-1-git-send-email-human.hwang@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f50.google.com ([209.85.216.50]:42247 "EHLO
-	mail-vn0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752968AbbFLOfz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jun 2015 10:35:55 -0400
-In-Reply-To: <alpine.LNX.2.00.1506121604200.30841@localhost>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1434103610-24182-1-git-send-email-human.hwang@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Hyungwon Hwang <human.hwang@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com, stable@vger.kernel.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Greg Ungerer <gerg@uclinux.org>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Simtec Linux Team <linux@simtec.co.uk>, Kukjin
 
-On Fri, Jun 12, 2015 at 9:05 AM, Hans Ulli Kroll
-<ulli.kroll@googlemail.com> wrote:
->
->
-> On Tue, 9 Jun 2015, Rob Herring wrote:
->
->> set_irq_flags is ARM specific with custom flags which have genirq
->> equivalents. Convert drivers to use the genirq interfaces directly, so we
->> can kill off set_irq_flags. The translation of flags is as follows:
->>
->> IRQF_VALID -> !IRQ_NOREQUEST
->> IRQF_PROBE -> !IRQ_NOPROBE
->> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
->>
->> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
->> and setting IRQ_NOREQUEST already, so there is no need to do this in
->> .map() functions and we can simply remove the set_irq_flags calls. Some
->> users also set IRQ_NOPROBE and this has been maintained although it is not
->> clear that is really needed. There appears to be a great deal of blind
->> copy and paste of this code.
->>
->
-> for mach-gemini
-> Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+On Fri, Jun 12, 2015 at 07:06:50PM +0900, Hyungwon Hwang wrote:
+> After the commit abc0b1447d4974963548777a5ba4a4457c82c426
+> ("drm: Perform basic sanity checks on probed modes"), proper
+> clock-frequency becomes mandatory for validating the mode of panel.
+> The display does not work if there is no mode validated. Also, this
+> clock-frequency must be set appropriately for getting required frame
+> rate.
+> 
+> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-You mean acked-by, right?
+<formletter>
 
-Rob
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
+for how to do this properly.
+
+</formletter>
