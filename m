@@ -1,36 +1,124 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 5/9] tests/exynos: remove unused define
-Date: Fri, 12 Jun 2015 20:15:10 +0200
-Message-ID: <1434132914-3150-6-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 6/9] tests/exynos: remove struct fimg2d_test_case
+Date: Fri, 12 Jun 2015 20:15:11 +0200
+Message-ID: <1434132914-3150-7-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50902 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751247AbbFLSQg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Jun 2015 14:16:36 -0400
 In-Reply-To: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-SXQgZG9lc24ndCBtYWtlIHNlbnNlIHRvIGxpbWl0IHRoZSBudW1iZXIgb2YKdGVzdCBjYXNlcyBh
-bnl3YXkuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
-ZWxlZmVsZC5kZT4KLS0tCiB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMgfCAxIC0K
-IDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvdGVzdHMvZXh5bm9z
-L2V4eW5vc19maW1nMmRfdGVzdC5jIGIvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5j
-CmluZGV4IDZhZjkyNzcuLjA4MGQxNzggMTAwNjQ0Ci0tLSBhL3Rlc3RzL2V4eW5vcy9leHlub3Nf
-ZmltZzJkX3Rlc3QuYworKysgYi90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKQEAg
-LTM0LDcgKzM0LDYgQEAKICNpbmNsdWRlICJleHlub3NfZmltZzJkLmgiCiAKICNkZWZpbmUgRFJN
-X01PRFVMRV9OQU1FCQkiZXh5bm9zIgotI2RlZmluZSBNQVhfVEVTVF9DQVNFCQk4CiAKIHN0YXRp
-YyB1bnNpZ25lZCBpbnQgc2NyZWVuX3dpZHRoLCBzY3JlZW5faGVpZ2h0OwogCi0tIAoyLjAuNQoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+It doesn't make sense to keep this structure, since we
+can just call all tests directly. An inspection of the
+git history shows that no code ever used this
+abstraction in the past.
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ tests/exynos/exynos_fimg2d_test.c | 42 +++++----------------------------------
+ 1 file changed, 5 insertions(+), 37 deletions(-)
+
+diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
+index 080d178..de6a2b7 100644
+--- a/tests/exynos/exynos_fimg2d_test.c
++++ b/tests/exynos/exynos_fimg2d_test.c
+@@ -37,30 +37,6 @@
+ 
+ static unsigned int screen_width, screen_height;
+ 
+-/*
+- * A structure to test fimg2d hw.
+- *
+- * @solid_fill: fill given color data to source buffer.
+- * @copy: copy source to destination buffer.
+- * @copy_with_scale: copy source to destination buffer scaling up or
+- *	down properly.
+- * @blend: blend source to destination buffer.
+- */
+-struct fimg2d_test_case {
+-	int (*solid_fill)(struct exynos_device *dev, struct exynos_bo *dst);
+-	int (*copy)(struct exynos_device *dev, struct exynos_bo *src,
+-			struct exynos_bo *dst, enum e_g2d_buf_type);
+-	int (*copy_with_scale)(struct exynos_device *dev,
+-				struct exynos_bo *src, struct exynos_bo *dst,
+-				enum e_g2d_buf_type);
+-	int (*blend)(struct exynos_device *dev,
+-				struct exynos_bo *src, struct exynos_bo *dst,
+-				enum e_g2d_buf_type);
+-	int (*checkerboard)(struct exynos_device *dev,
+-				struct exynos_bo *src, struct exynos_bo *dst,
+-				enum e_g2d_buf_type);
+-};
+-
+ struct connector {
+ 	uint32_t id;
+ 	char mode_str[64];
+@@ -630,14 +606,6 @@ fail:
+ 	return ret;
+ }
+ 
+-static struct fimg2d_test_case test_case = {
+-	.solid_fill = &g2d_solid_fill_test,
+-	.copy = &g2d_copy_test,
+-	.copy_with_scale = &g2d_copy_with_scale_test,
+-	.blend = &g2d_blend_test,
+-	.checkerboard = &g2d_checkerboard_test,
+-};
+-
+ static void usage(char *name)
+ {
+ 	fprintf(stderr, "usage: %s [-s]\n", name);
+@@ -747,7 +715,7 @@ int main(int argc, char **argv)
+ 	if (ret < 0)
+ 		goto err_rm_fb;
+ 
+-	ret = test_case.solid_fill(dev, bo);
++	ret = g2d_solid_fill_test(dev, bo);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "failed to solid fill operation.\n");
+ 		goto err_rm_fb;
+@@ -761,7 +729,7 @@ int main(int argc, char **argv)
+ 		goto err_rm_fb;
+ 	}
+ 
+-	ret = test_case.copy(dev, src, bo, G2D_IMGBUF_GEM);
++	ret = g2d_copy_test(dev, src, bo, G2D_IMGBUF_GEM);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "failed to test copy operation.\n");
+ 		goto err_free_src;
+@@ -769,7 +737,7 @@ int main(int argc, char **argv)
+ 
+ 	wait_for_user_input(0);
+ 
+-	ret = test_case.copy_with_scale(dev, src, bo, G2D_IMGBUF_GEM);
++	ret = g2d_copy_with_scale_test(dev, src, bo, G2D_IMGBUF_GEM);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "failed to test copy and scale operation.\n");
+ 		goto err_free_src;
+@@ -777,7 +745,7 @@ int main(int argc, char **argv)
+ 
+ 	wait_for_user_input(0);
+ 
+-	ret = test_case.checkerboard(dev, src, bo, G2D_IMGBUF_GEM);
++	ret = g2d_checkerboard_test(dev, src, bo, G2D_IMGBUF_GEM);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "failed to issue checkerboard test.\n");
+ 		goto err_free_src;
+@@ -794,7 +762,7 @@ int main(int argc, char **argv)
+ 	 * Disable the test for now, until the kernel code has been sanitized.
+ 	 */
+ #if 0
+-	ret  = test_case.blend(dev, src, bo, G2D_IMGBUF_USERPTR);
++	ret  = g2d_blend_test(dev, src, bo, G2D_IMGBUF_USERPTR);
+ 	if (ret < 0)
+ 		fprintf(stderr, "failed to test blend operation.\n");
+ 
+-- 
+2.0.5
