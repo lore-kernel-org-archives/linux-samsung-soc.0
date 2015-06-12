@@ -1,98 +1,84 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
- on suspend
-Date: Fri, 12 Jun 2015 12:54:06 +0100
-Message-ID: <557AC85E.5070705@arm.com>
-References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk> <557AB00C.5040606@arm.com> <557AC23D.8040602@collabora.co.uk>
+From: Thomas-Karl Pietrowski <thopiekar@gmail.com>
+Subject: Boot hangs after "Starting kernel..." message [odroid u3]
+Date: Fri, 12 Jun 2015 14:00:52 +0200
+Message-ID: <2289383.JOvxAabN12@home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:58490 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752113AbbFLLyL (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:33240 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750852AbbFLMAz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jun 2015 07:54:11 -0400
-In-Reply-To: <557AC23D.8040602@collabora.co.uk>
+	Fri, 12 Jun 2015 08:00:55 -0400
+Received: by wiwd19 with SMTP id d19so16488929wiw.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2015 05:00:54 -0700 (PDT)
+Received: from home.localnet (p2003006F8F2D160002248CFFFE60634C.dip0.t-ipconnect.de. [2003:6f:8f2d:1600:224:8cff:fe60:634c])
+        by mx.google.com with ESMTPSA id x10sm5521618wjf.45.2015.06.12.05.00.53
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Fri, 12 Jun 2015 05:00:53 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org
+
+Hello everyone,
 
 
+I'm just trying to get my kernel built for my Odroid U3, but no matter whether 
+I use 4.0.x or the latest code from arm-soc repository 4.1.0-rc3, it ends at 
+this message during boot:
 
-On 12/06/15 12:27, Javier Martinez Canillas wrote:
-> Hello Sudeep,
->
-> Thanks a lot for the feedback.
->
-> On 06/12/2015 12:10 PM, Sudeep Holla wrote:
->>
->>
->> On 12/06/15 06:43, Javier Martinez Canillas wrote:
->>> The Exynos interrupt combiner IP loses its state when the SoC enters
->>> into a low power state during a Suspend-to-RAM. This means that if a
->>> IRQ is used as a source, the interrupts for the devices are disabled
->>> when the system is resumed from a sleep state so are not triggered.
->>>
->>> Save the interrupt enable set register for each combiner group and
->>> restore it after resume to make sure that the interrupts are enabled.
->>>
->>
->> Not sure if you need this. IMO it's not clean and redundant though I
->> admit many drivers do exactly same thing. I am trying to remove or point
->> out those redundant code as irqchip core has options/flags to do what
->> you need. I assume there are no wakeup sources connected to this
->
-> Yes, there are wakeup sources connected to this combiner. As Krzysztof
-> said some wakeup sources use a GPIO line as IRQ whose interrupt parent
-> is the combiner. As an example the Power gpio-key and cros_ec keyboard
-> for both Exynos5250 Snow and Exynos5420 Peach Pit/Pi.
->
-> Both drivers/input/keyboard/gpio_keysc and drivers/mfd/cros_ec.c do the
-> right thing though and call {enable,disable}_irq_wake() on the S2R path.
->
-> And in fact, the peripherals resume the system after a suspend but after
-> resume, interrupts are not triggered anymore.
->
+###
 
-I agree for the wakeup source, but I need to go through the irqchip core
-again to understand this better.
+U-Boot 2015.07-rc1-00408-g012681b (May 30 2015 - 17:49:11 +0000)
 
->> combiner. Setting irqchip flags should solve this problem. A
->> simple patch below should do the job ?
->>
->
-> I don't see how the below patch is going to work for the case I'm
-> trying to solve. If I understand correctly, the
-> IRQCHIP_MASK_ON_SUSPEND flag is used to force masking non wakeup
-> interrupt in the suspend path (instead of just disabling the
-> interrupts on suspend and not masking at the hardware level)
->
+CPU:    Exynos4412@1000MHz
+Model: Odroid based on Exynos4412
+DRAM:  2 GiB
+ERROR: "regulator-name" of dev: "ldo18", has nonunique value: "nc"
+at drivers/power/regulator/regulator-uclass.c:294/regulator_post_bind()
+ERROR: "regulator-name" of dev: "ldo19", has nonunique value: "nc"
+at drivers/power/regulator/regulator-uclass.c:294/regulator_post_bind()
+ERROR: "regulator-name" of dev: "ldo23", has nonunique value: "nc"
+at drivers/power/regulator/regulator-uclass.c:294/regulator_post_bind()
+ERROR: "regulator-name" of dev: "ldo24", has nonunique value: "nc"
+at drivers/power/regulator/regulator-uclass.c:294/regulator_post_bind()
+ERROR: "regulator-name" of dev: "ldo26", has nonunique value: "nc"
+at drivers/power/regulator/regulator-uclass.c:294/regulator_post_bind()
+ERROR: "regulator-name" of dev: "buck9", has nonunique value: "nc"
+at drivers/power/regulator/regulator-uclass.c:294/regulator_post_bind()
+ldo20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
+ldo22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
+ldo21@TFLASH_2.8V: set 2800000 uV; enabling
+MMC:   SAMSUNG SDHCI: 0, EXYNOS DWMMC: 1
+Net:   No ethernet found.
+Hit any key to stop autoboot:  0 
+reading boot.scr
+1143 bytes read in 18 ms (61.5 KiB/s)
+## Executing script at 40408000
+reading zImage-4.1
+2497840 bytes read in 141 ms (16.9 MiB/s)
+reading exynos4412-odroidu3.dtb
+54489 bytes read in 25 ms (2.1 MiB/s)
+Kernel image @ 0x40008000 [ 0x000000 - 0x261d30 ]
+## Flattened Device Tree blob at 41f00000
+   Booting using the fdt blob at 0x41f00000
+   reserving fdt memory region: addr=41f00000 size=e000
+   Using Device Tree in place at 41f00000, end 41f10fff
 
-It also takes re-enables all the IRQs in the resume path that were
-disabled on the suspend path.
+Starting kernel ...
 
-> But my problem is not about interrupts needed to be masked on suspend
-> but the opposite, that interrupts have to be unmasked on resume since
-> the IP loses its state so after a resume, interrupts are not
-> triggered anymore.
->
+###
 
-As I mentioned above this happens for all non-wake up interrupts.
-However this needs to done for wake up interrupts IIUC. BTW if these
-registers are lost assuming the combiner was powered down, even the
-status register will be lost and you will not know exactly the wakeup
-reason right ?
+The error messages during uboot loading just appear because there is something 
+missing in it's RC, but don't think it is the reason, because a old build 
+(3.19.x) just boots.
+Sadly my serial output does not give better error messages, so I'm asking 
+here, because google'ing around didn't point me to any solutions.
+Do you have any hints why that happens? My .config can be found here - 
+http://pastebin.com/qRLmtmmt . Is there a way to get early error messages 
+during boot?
 
-> So I also don't see how implementing irq_set_wake() as you suggested
-> is going to work. Maybe we need a IRQCHIP_UNMASK_ON_RESUME flag for
-> this case?
->
 
-IIRC these combiner feeds to main interrupt controller and you need to
-make sure that interrupt is set as wakeup if required. Right ? so you
-may still need irq_set_wake IMO.
-
-Regards,
-Sudeep
+Thanks!
