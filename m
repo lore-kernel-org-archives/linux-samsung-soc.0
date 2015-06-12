@@ -1,88 +1,73 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
- on suspend
-Date: Fri, 12 Jun 2015 13:27:57 +0200
-Message-ID: <557AC23D.8040602@collabora.co.uk>
-References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk> <557AB00C.5040606@arm.com>
+From: Alexander Holler <holler@ahsoftware.de>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Fri, 12 Jun 2015 13:36:23 +0200
+Message-ID: <557AC437.9000607@ahsoftware.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de>	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>	<5579602F.1070801@ahsoftware.de>	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>	<5579B9E8.9040609@ahsoftware.de> <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com> <557AC040.40803@ahsoftware.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:53390 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752751AbbFLL2F (ORCPT
+Received: from h1446028.stratoserver.net ([85.214.92.142]:44673 "EHLO
+	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751156AbbFLLgh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jun 2015 07:28:05 -0400
-In-Reply-To: <557AB00C.5040606@arm.com>
+	Fri, 12 Jun 2015 07:36:37 -0400
+In-Reply-To: <557AC040.40803@ahsoftware.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-usb@vger.kernel.org, linux-i2c@vger.kernel.org
 
-Hello Sudeep,
-
-Thanks a lot for the feedback.
-
-On 06/12/2015 12:10 PM, Sudeep Holla wrote:
-> 
-> 
-> On 12/06/15 06:43, Javier Martinez Canillas wrote:
->> The Exynos interrupt combiner IP loses its state when the SoC enters
->> into a low power state during a Suspend-to-RAM. This means that if a
->> IRQ is used as a source, the interrupts for the devices are disabled
->> when the system is resumed from a sleep state so are not triggered.
+Am 12.06.2015 um 13:19 schrieb Alexander Holler:
+> Am 12.06.2015 um 09:25 schrieb Linus Walleij:
+>> On Thu, Jun 11, 2015 at 6:40 PM, Alexander Holler
+>> <holler@ahsoftware.de> wrote:
+>>> Am 11.06.2015 um 14:30 schrieb Linus Walleij:
 >>
->> Save the interrupt enable set register for each combiner group and
->> restore it after resume to make sure that the interrupts are enabled.
+>>>> Certainly it is possible to create deadlocks in this scenario, but the
+>>>> scope is not to create an ubreakable system.
+>>>
+>>> IAnd what happens if you run into a deadlock? Do you print "you've
+>>> lost, try
+>>> changing your kernel config" in some output hidden by a
+>>> splash-screen? ;)
 >>
-> 
-> Not sure if you need this. IMO it's not clean and redundant though I
-> admit many drivers do exactly same thing. I am trying to remove or point
-> out those redundant code as irqchip core has options/flags to do what
-> you need. I assume there are no wakeup sources connected to this
-
-Yes, there are wakeup sources connected to this combiner. As Krzysztof
-said some wakeup sources use a GPIO line as IRQ whose interrupt parent
-is the combiner. As an example the Power gpio-key and cros_ec keyboard
-for both Exynos5250 Snow and Exynos5420 Peach Pit/Pi.
-
-Both drivers/input/keyboard/gpio_keysc and drivers/mfd/cros_ec.c do the
-right thing though and call {enable,disable}_irq_wake() on the S2R path.
-
-And in fact, the peripherals resume the system after a suspend but after
-resume, interrupts are not triggered anymore.
-
-> combiner. Setting irqchip flags should solve this problem. A simple
-> patch below should do the job ?
+>> Sorry it sounds like a blanket argument, the fact that there are
+>> mutexes in the kernel makes it possible to deadlock, it doesn't
+>> mean we don't use mutexes. Some programming problems are
+>> just like such.
 >
+> I'm not talking about specific deadlocks through mutexes. I'm talking
+> about what happens when driver A needs driver B which needs driver A.
+> How do you recognise and handle that with your instrumented on-demand
+> device initialization? Such a circular dependency might happen by just
+> adding a new fucntion call or by changing the kernel configuration. And
+> with the on-demand stuff, the possibility that the developer introducing
+> this new (maybe optional) call will never hit such a circular dependency
+> is high. So you will end up with a never ending stream of problem
+> reports whenever someone introduced such a circular dependecy without
+> having noticed it.
+>
+> And to come back to specific deadlocks, if you are extending function
+> calls from something former simple to something which might initialize a
+> whole bunch of drivers, needing maybe seconds, I wouldn't say this is a
+> blanket argument, but a real thread.
 
-I don't see how the below patch is going to work for the case I'm trying to
-solve. If I understand correctly, the IRQCHIP_MASK_ON_SUSPEND flag is used
-to force masking non wakeup interrupt in the suspend path (instead of just
-disabling the interrupts on suspend and not masking at the hardware level)
+Keep in mind, that the possibility that a function call ends up with 
+initializing a whole bunch of other drivers, is not determined 
+statically, but depends on the configuration and runtime behaviour of 
+the actual system the on-demand stuff actually happens.
 
-But my problem is not about interrupts needed to be masked on suspend but
-the opposite, that interrupts have to be unmasked on resume since the IP
-loses its state so after a resume, interrupts are not triggered anymore.
+E.g. if driver A is faster one system that driver B, the whole bunch of 
+drivers might become initialized by a call in driver A. But if driver B 
+was faster on the developers system (or the system is configured to 
+first init driver B), than the whole bunch of drivers might have become 
+initialized by driver B on the developers system. Thus he never might 
+have hit a possible problem when the whole bunch of drivers got 
+initialized in driver A.
 
-So I also don't see how implementing irq_set_wake() as you suggested is
-going to work. Maybe we need a IRQCHIP_UNMASK_ON_RESUME flag for this case?
+That means it isn't always a good idea to create dynamic systems (like 
+on-demand device initialization), because it's very hard to foresee and 
+correctly handle their runtime behaviour.
 
-> -->8
-> 
-> diff --git a/drivers/irqchip/exynos-combiner.c 
-> b/drivers/irqchip/exynos-combiner.c
-> index 5945223b73fa..c0bcec59f829 100644
-> --- a/drivers/irqchip/exynos-combiner.c
-> +++ b/drivers/irqchip/exynos-combiner.c
-> @@ -111,6 +111,7 @@ static struct irq_chip combiner_chip = {
->   #ifdef CONFIG_SMP
->          .irq_set_affinity       = combiner_set_affinity,
->   #endif
-> +       .flags                  = IRQCHIP_MASK_ON_SUSPEND,
->   };
-> 
-> 
-
-Best regards,
-Javier
+> Alexander Holler
