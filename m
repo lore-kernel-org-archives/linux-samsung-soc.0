@@ -1,67 +1,65 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 9/9] tests/exynos: handle G2D_IMGBUF_COLOR in switch
- statements
-Date: Fri, 12 Jun 2015 20:15:14 +0200
-Message-ID: <1434132914-3150-10-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
+ on suspend
+Date: Fri, 12 Jun 2015 21:36:07 +0200
+Message-ID: <557B34A7.4090507@collabora.co.uk>
+References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk> <557AB00C.5040606@arm.com> <557AC23D.8040602@collabora.co.uk> <557AC85E.5070705@arm.com> <557AD728.7090908@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <557AD728.7090908@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBmaXhlcyBhIGNvbXBpbGVyIHdhcm5pbmcgYWJvdXQgbWlzc2luZyBoYW5kbGluZyBvZiBl
-bnVtCnZhbHVlcyBpbiB0aGUgc3dpdGNoIHN0YXRlbWVudHMuCgpBbHNvIHJlbW92ZSB0aGUgc2ls
-ZW50IG1hcHBpbmcgdG8gRzJEX0lNR0JVRl9HRU0gd2hlbiBhbgp1bmtub3duIGJ1ZmZlciB0eXBl
-IGlzIGVuY291bnRlcmVkLiBXZSBoYXZlIGZ1bGwgY29udHJvbAphYm91dCB0aGUgdHlwZSBoZXJl
-LCBhbmQgaWYgaXQncyB1bmtub3duIHRoZW4gd2Ugb2J2aW91c2x5CmhhdmUgYSBidWcgaW4gdGhl
-IGNvZGUuCgpTaWduZWQtb2ZmLWJ5OiBUb2JpYXMgSmFrb2JpIDx0amFrb2JpQG1hdGgudW5pLWJp
-ZWxlZmVsZC5kZT4KLS0tCiB0ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMgfCAxOSAr
-KysrKysrKysrKysrLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgNiBk
-ZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0
-LmMgYi90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKaW5kZXggNTlkZTRiYS4uODc5
-NGRhYyAxMDA2NDQKLS0tIGEvdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jCisrKyBi
-L3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYwpAQCAtMjcwLDkgKzI3MCwxMCBAQCBz
-dGF0aWMgaW50IGcyZF9jb3B5X3Rlc3Qoc3RydWN0IGV4eW5vc19kZXZpY2UgKmRldiwgc3RydWN0
-IGV4eW5vc19ibyAqc3JjLAogCQlzcmNfaW1nLnVzZXJfcHRyWzBdLnVzZXJwdHIgPSB1c2VycHRy
-OwogCQlzcmNfaW1nLnVzZXJfcHRyWzBdLnNpemUgPSBzaXplOwogCQlicmVhazsKKwljYXNlIEcy
-RF9JTUdCVUZfQ09MT1I6CiAJZGVmYXVsdDoKLQkJdHlwZSA9IEcyRF9JTUdCVUZfR0VNOwotCQli
-cmVhazsKKwkJcmV0ID0gLUVGQVVMVDsKKwkJZ290byBmYWlsOwogCX0KIAogCXByaW50ZigiY29w
-eSB0ZXN0IHdpdGggJXMuXG4iLApAQCAtMzA2LDYgKzMwNyw3IEBAIGVycl9mcmVlX3VzZXJwdHI6
-CiAJCWlmICh1c2VycHRyKQogCQkJZnJlZSgodm9pZCAqKXVzZXJwdHIpOwogCitmYWlsOgogCWcy
-ZF9maW5pKGN0eCk7CiAKIAlyZXR1cm4gcmV0OwpAQCAtMzQ5LDkgKzM1MSwxMCBAQCBzdGF0aWMg
-aW50IGcyZF9jb3B5X3dpdGhfc2NhbGVfdGVzdChzdHJ1Y3QgZXh5bm9zX2RldmljZSAqZGV2LAog
-CQlzcmNfaW1nLnVzZXJfcHRyWzBdLnVzZXJwdHIgPSB1c2VycHRyOwogCQlzcmNfaW1nLnVzZXJf
-cHRyWzBdLnNpemUgPSBzaXplOwogCQlicmVhazsKKwljYXNlIEcyRF9JTUdCVUZfQ09MT1I6CiAJ
-ZGVmYXVsdDoKLQkJdHlwZSA9IEcyRF9JTUdCVUZfR0VNOwotCQlicmVhazsKKwkJcmV0ID0gLUVG
-QVVMVDsKKwkJZ290byBmYWlsOwogCX0KIAogCXByaW50ZigiY29weSBhbmQgc2NhbGUgdGVzdCB3
-aXRoICVzLlxuIiwKQEAgLTM5MCw2ICszOTMsNyBAQCBlcnJfZnJlZV91c2VycHRyOgogCQlpZiAo
-dXNlcnB0cikKIAkJCWZyZWUoKHZvaWQgKil1c2VycHRyKTsKIAorZmFpbDoKIAlnMmRfZmluaShj
-dHgpOwogCiAJcmV0dXJuIDA7CkBAIC00MzUsOSArNDM5LDEwIEBAIHN0YXRpYyBpbnQgZzJkX2Js
-ZW5kX3Rlc3Qoc3RydWN0IGV4eW5vc19kZXZpY2UgKmRldiwKIAkJc3JjX2ltZy51c2VyX3B0clsw
-XS51c2VycHRyID0gdXNlcnB0cjsKIAkJc3JjX2ltZy51c2VyX3B0clswXS5zaXplID0gc2l6ZTsK
-IAkJYnJlYWs7CisJY2FzZSBHMkRfSU1HQlVGX0NPTE9SOgogCWRlZmF1bHQ6Ci0JCXR5cGUgPSBH
-MkRfSU1HQlVGX0dFTTsKLQkJYnJlYWs7CisJCXJldCA9IC1FRkFVTFQ7CisJCWdvdG8gZmFpbDsK
-IAl9CiAKIAlwcmludGYoImJsZW5kIHRlc3Qgd2l0aCAlcy5cbiIsCkBAIC00ODcsNiArNDkyLDcg
-QEAgZXJyX2ZyZWVfdXNlcnB0cjoKIAkJaWYgKHVzZXJwdHIpCiAJCQlmcmVlKCh2b2lkICopdXNl
-cnB0cik7CiAKK2ZhaWw6CiAJZzJkX2ZpbmkoY3R4KTsKIAogCXJldHVybiAwOwpAQCAtNTMyLDYg
-KzUzOCw3IEBAIHN0YXRpYyBpbnQgZzJkX2NoZWNrZXJib2FyZF90ZXN0KHN0cnVjdCBleHlub3Nf
-ZGV2aWNlICpkZXYsCiAJCXNyY19pbWcudXNlcl9wdHJbMF0udXNlcnB0ciA9ICh1bnNpZ25lZCBs
-b25nKWNoZWNrZXJib2FyZDsKIAkJc3JjX2ltZy51c2VyX3B0clswXS5zaXplID0gaW1nX3cgKiBp
-bWdfaCAqIDQ7CiAJCWJyZWFrOworCWNhc2UgRzJEX0lNR0JVRl9DT0xPUjoKIAlkZWZhdWx0Ogog
-CQlyZXQgPSAtRUZBVUxUOwogCQlnb3RvIGZhaWw7Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Sudeep,
+
+On 06/12/2015 02:57 PM, Javier Martinez Canillas wrote:
+> On 06/12/2015 01:54 PM, Sudeep Holla wrote:
+
+[snip]
+
+> 
+>> registers are lost assuming the combiner was powered down, even the
+>> status register will be lost and you will not know exactly the wakeup
+>> reason right ?
+>>
+> 
+> Good question, I didn't find in the documentation I've access to that
+> this happen but just found through experimentation that the IRQ enable
+> set register values are lost after a resume and that saving/restoring
+> the values makes the interrupts to be triggered again.
+>
+
+I'll share here too the findings I mentioned over IRC. As you suggested I
+add some printouts and noticed that the ISTRn (Interrupt Status) registers
+values are indeed preserved on resume so I can know for example if the
+wakeup source was the power gpio-key or cros_ec keyboard. I've checked the
+values of the registers against the Exynos manual and they corresponds to
+the interrupt sources in each case so the values are correct.
+
+So as you said, it seems that is not that the IP block loses its state on
+S2R but that something is blindly writing the IESRn (Interrupt Enable Set)
+registers.
+
+To reduce the possible s/w components that could be doing this, I booted a
+signed FIT image directly using the RO U-Boot instead of chain loading a
+mainline nv-uboot. In this configuration I've the same issue so it seems
+that if something is zeroing those registers on S2R, this can't be changed
+without void the warranty of these machines.
+
+I also looked at the downstream ChromiumOS v3.8 tree [0] and I see that
+they have a very similar solution than my patch, the IESRn are also saved
+but using a notifier for the CPU_PM_ENTER and CPU_PM_EXIT events instead
+or registering a syscore ops but the idea is basically the same.
+
+I have to take a look to the U-boot that is shipped on the device, I think
+the correct branch is [1] but I'm not sure if that is the correct one.
+
+Best regards,
+Javier
+
+[0]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/arch/arm/mach-exynos/common.c#657
+[1]: https://chromium.googlesource.com/chromiumos/third_party/u-boot firmware-pit-4482.B
