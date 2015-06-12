@@ -1,74 +1,68 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v2] MAINTAINERS: ARM64: EXYNOS: Extend entry for ARM64 DTS
-Date: Thu, 11 Jun 2015 17:09:05 -0700
-Message-ID: <CAMAWPa_R6pKHBz8fZ+FhEXcvDxwGFC9oS=N8tNnJdJkKFFePSw@mail.gmail.com>
-References: <1433584939-3520-1-git-send-email-k.kozlowski@samsung.com>
-	<CAMAWPa-3RhXgCjXcdQkPn3W1SJ++iAkfaBdp_p4Se9Ykg1A1mw@mail.gmail.com>
-	<557A1B31.1090201@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39341 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751834AbbFLAJK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jun 2015 20:09:10 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 1E87420662
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2015 00:09:08 +0000 (UTC)
-Received: from mail-wi0-f173.google.com (mail-wi0-f173.google.com [209.85.212.173])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id 001C620658
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2015 00:09:06 +0000 (UTC)
-Received: by wiwd19 with SMTP id d19so3051872wiw.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2015 17:09:05 -0700 (PDT)
-In-Reply-To: <557A1B31.1090201@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+Date: Fri, 12 Jun 2015 10:53:25 +0900
+Message-ID: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-On Thu, Jun 11, 2015 at 4:35 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> W dniu 12.06.2015 o 06:48, Kevin Hilman pisze:
->> Hi Krzysztof,
->>
->> On Sat, Jun 6, 2015 at 3:02 AM, Krzysztof Kozlowski
->> <k.kozlowski@samsung.com> wrote:
->>> Extend the Exynos entry to ARM64 device tree sources.
->>>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will.deacon@arm.com>
->>> Cc: Russell King <linux@arm.linux.org.uk>
->>> Cc: Kukjin Kim <kgene@kernel.org>
->>> Cc: Kevin Hilman <khilman@kernel.org>
->>> Cc: Arnd Bergmann <arnd@arndb.de>
->>> Cc: Olof Johansson <olof@lixom.net>
->>> Cc: linux-samsung-soc@vger.kernel.org
->>> Cc: linux-arm-kernel@lists.infradead.org
->>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>
->> Applied to arm-soc's next/soc branch.
->>
->> Note I found this by chance.  It almost fell through the cracks
->> because arm@kernel.org (for arm-soc maintainers) wasn't on the to/cc
->> list.
->
-> Thanks. I was not aware of this email/list address. It isn't mentioned
-> in MAINTAINERS.
+The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+However TSADC is present only on Exynos4210 so on Trats2 board (with
+Exynos4412 SoC) the exynos-adc driver could not be probed:
+   ERROR: could not get clock /adc@126C0000:adc(0)
+   exynos-adc 126c0000.adc: failed getting clock, err = -2
+   exynos-adc: probe of 126c0000.adc failed with error -2
 
-Yes, that's kind of by design as it's not meant for general patch
-review/discussion.
+Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+Converter is located in different register and it is named in datasheet
+as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+is the same as purpose of TSADC from Exynos4210.
 
-> So I suspect that any stuff intended to go directly to
-> arm-soc maintainers (not through vendor SoC tree) should be sent there?
+The patch adds gate clock for Exynos4x12 using the proper register so
+backward compatibility is preserved. This fixes the probe of exynos-adc
+driver on Exynos4x12 boards and allows accessing sensors connected to it
+on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
 
-Yes, this list is specifically for subarch/platform maintainers (which
-now includes you :) to send stuff that would like to be applied to the
-arm-soc tree.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
+Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+Link: https://lkml.org/lkml/2015/6/11/85
 
-Thanks,
+---
 
-Kevin
+Changes since v1:
+1. After discussion on LKML this solution was chosen because it smaller,
+   simpler, self-contained (one patch to fix issue) and maintains backward
+   compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+   valuable comments.
+2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+   will be used on all Exynos4 boards.
+3. Added CC-stable.
+---
+ drivers/clk/samsung/clk-exynos4.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 714d6ba782c8..f7890bf652e6 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -85,6 +85,7 @@
+ #define DIV_PERIL4		0xc560
+ #define DIV_PERIL5		0xc564
+ #define E4X12_DIV_CAM1		0xc568
++#define E4X12_GATE_BUS_FSYS1	0xc744
+ #define GATE_SCLK_CAM		0xc820
+ #define GATE_IP_CAM		0xc920
+ #define GATE_IP_TV		0xc924
+@@ -1095,6 +1096,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 		0),
+ 	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+ 		0),
++	GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0),
+ 	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+ 	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+ 	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+-- 
+1.9.1
