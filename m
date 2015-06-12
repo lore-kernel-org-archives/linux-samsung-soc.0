@@ -1,54 +1,58 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 4/9] tests/exynos: clean struct connector
-Date: Fri, 12 Jun 2015 18:22:18 +0200
-Message-ID: <557B073A.5050401@math.uni-bielefeld.de>
-References: <1433943748-15849-1-git-send-email-tjakobi@math.uni-bielefeld.de>	<1433943748-15849-5-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CACvgo538xoZ-z-C=WHdZiTd4BJRncf-g1v+AMb49Y2rYzU9b4A@mail.gmail.com>
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH 01/15] ARM: kill off set_irq_flags usage
+Date: Fri, 12 Jun 2015 18:23:03 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1506121821530.16656@T520.local>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org> <1433874401-27161-2-git-send-email-robh@kernel.org> <alpine.LNX.2.00.1506121604200.30841@localhost> <CAL_JsqKvLW-0p=A3BHoAYH_+ODCTt4C07OAHc__rUzC0jZ5p5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACvgo538xoZ-z-C=WHdZiTd4BJRncf-g1v+AMb49Y2rYzU9b4A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.l.velikov@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, gustavo.padovan@collabora.co.uk, ML dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:34968 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753100AbbFLQXH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Jun 2015 12:23:07 -0400
+In-Reply-To: <CAL_JsqKvLW-0p=A3BHoAYH_+ODCTt4C07OAHc__rUzC0jZ5p5g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Greg Ungerer <gerg@uclinux.org>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Sim
 
-SGVsbG8gRW1pbCwKCkVtaWwgVmVsaWtvdiB3cm90ZToKPiBPbiAxMCBKdW5lIDIwMTUgYXQgMTQ6
-NDIsIFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPiB3cm90ZToK
-Pj4gUmVtb3ZlIGFsbCB1bnVzZWQgc3RydWN0IG1lbWJlcnMuCj4+Cj4gTWVudGlvbmluZyBpZiB0
-aGV5IHdlcmUgdXNlZCBhdCBzb21lIHBvaW50IGluIHRoZSBwYXN0IHdpbGwgYmUgZ3JlYXQuCk9L
-LCBJJ2xsIHRha2UgYSBsb29rIGF0IGdpdCBoaXN0b3J5IGJ1dCBBRkFJSyBpdCBpcyBub3QuCgoK
-V2l0aCBiZXN0IHdpc2hlcywKVG9iaWFzCgoKPiAKPiBUaGFua3MKPiBFbWlsCj4gCj4+IFNpZ25l
-ZC1vZmYtYnk6IFRvYmlhcyBKYWtvYmkgPHRqYWtvYmlAbWF0aC51bmktYmllbGVmZWxkLmRlPgo+
-PiAtLS0KPj4gIHRlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyB8IDEwIC0tLS0tLS0t
-LS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBh
-L3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyBiL3Rlc3RzL2V4eW5vcy9leHlub3Nf
-ZmltZzJkX3Rlc3QuYwo+PiBpbmRleCA2NGRhY2ZhLi42YWY5Mjc3IDEwMDY0NAo+PiAtLS0gYS90
-ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKPj4gKysrIGIvdGVzdHMvZXh5bm9zL2V4
-eW5vc19maW1nMmRfdGVzdC5jCj4+IEBAIC02NSwxNyArNjUsOSBAQCBzdHJ1Y3QgZmltZzJkX3Rl
-c3RfY2FzZSB7Cj4+ICBzdHJ1Y3QgY29ubmVjdG9yIHsKPj4gICAgICAgICB1aW50MzJfdCBpZDsK
-Pj4gICAgICAgICBjaGFyIG1vZGVfc3RyWzY0XTsKPj4gLSAgICAgICBjaGFyIGZvcm1hdF9zdHJb
-NV07Cj4+IC0gICAgICAgdW5zaWduZWQgaW50IGZvdXJjYzsKPj4gICAgICAgICBkcm1Nb2RlTW9k
-ZUluZm8gKm1vZGU7Cj4+ICAgICAgICAgZHJtTW9kZUVuY29kZXIgKmVuY29kZXI7Cj4+ICAgICAg
-ICAgaW50IGNydGM7Cj4+IC0gICAgICAgaW50IHBpcGU7Cj4+IC0gICAgICAgaW50IHBsYW5lX3pw
-b3M7Cj4+IC0gICAgICAgdW5zaWduZWQgaW50IGZiX2lkWzJdLCBjdXJyZW50X2ZiX2lkOwo+PiAt
-ICAgICAgIHN0cnVjdCB0aW1ldmFsIHN0YXJ0Owo+PiAtCj4+IC0gICAgICAgaW50IHN3YXBfY291
-bnQ7Cj4+ICB9Owo+Pgo+PiAgc3RhdGljIHZvaWQgY29ubmVjdG9yX2ZpbmRfbW9kZShpbnQgZmQs
-IHN0cnVjdCBjb25uZWN0b3IgKmMsCj4+IEBAIC03NTAsOCArNzQyLDYgQEAgaW50IG1haW4oaW50
-IGFyZ2MsIGNoYXIgKiphcmd2KQo+PiAgICAgICAgIGlmIChyZXQgPCAwKQo+PiAgICAgICAgICAg
-ICAgICAgZ290byBlcnJfZGVzdHJveV9idWZmZXI7Cj4+Cj4+IC0gICAgICAgY29uLnBsYW5lX3pw
-b3MgPSAtMTsKPj4gLQo+PiAgICAgICAgIG1lbXNldChiby0+dmFkZHIsIDB4ZmYsIHNjcmVlbl93
-aWR0aCAqIHNjcmVlbl9oZWlnaHQgKiA0KTsKPj4KPj4gICAgICAgICByZXQgPSBkcm1fc2V0X2Ny
-dGMoZGV2LCAmY29uLCBmYl9pZCk7Cj4+IC0tCj4+IDIuMC41Cj4+CgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+
+On Fri, 12 Jun 2015, Rob Herring wrote:
+
+> On Fri, Jun 12, 2015 at 9:05 AM, Hans Ulli Kroll
+> <ulli.kroll@googlemail.com> wrote:
+> >
+> >
+> > On Tue, 9 Jun 2015, Rob Herring wrote:
+> >
+> >> set_irq_flags is ARM specific with custom flags which have genirq
+> >> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> >> can kill off set_irq_flags. The translation of flags is as follows:
+> >>
+> >> IRQF_VALID -> !IRQ_NOREQUEST
+> >> IRQF_PROBE -> !IRQ_NOPROBE
+> >> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> >>
+> >> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> >> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> >> .map() functions and we can simply remove the set_irq_flags calls. Some
+> >> users also set IRQ_NOPROBE and this has been maintained although it is not
+> >> clear that is really needed. There appears to be a great deal of blind
+> >> copy and paste of this code.
+> >>
+> >
+> > for mach-gemini
+> > Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+> 
+> You mean acked-by, right?
+> 
+> Rob
+> 
+
+Yeah
+
+Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+
+Ulli
