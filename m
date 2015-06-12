@@ -1,68 +1,166 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-Date: Fri, 12 Jun 2015 10:53:25 +0900
-Message-ID: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, stable@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set on suspend
+Date: Fri, 12 Jun 2015 07:43:15 +0200
+Message-ID: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:53091 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbbFLFn3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Jun 2015 01:43:29 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Chanho Park <parkch98@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
-However TSADC is present only on Exynos4210 so on Trats2 board (with
-Exynos4412 SoC) the exynos-adc driver could not be probed:
-   ERROR: could not get clock /adc@126C0000:adc(0)
-   exynos-adc 126c0000.adc: failed getting clock, err = -2
-   exynos-adc: probe of 126c0000.adc failed with error -2
+The Exynos interrupt combiner IP loses its state when the SoC enters
+into a low power state during a Suspend-to-RAM. This means that if a
+IRQ is used as a source, the interrupts for the devices are disabled
+when the system is resumed from a sleep state so are not triggered.
 
-Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
-Converter is located in different register and it is named in datasheet
-as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
-is the same as purpose of TSADC from Exynos4210.
+Save the interrupt enable set register for each combiner group and
+restore it after resume to make sure that the interrupts are enabled.
 
-The patch adds gate clock for Exynos4x12 using the proper register so
-backward compatibility is preserved. This fixes the probe of exynos-adc
-driver on Exynos4x12 boards and allows accessing sensors connected to it
-on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: <stable@vger.kernel.org>
-Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
-Link: https://lkml.org/lkml/2015/6/11/85
-
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
+
+Hello,
+
+I noticed this issue because after a S2R, IRQs for some devices didn't
+trigger anymore but others continued working and all of them had lines
+from a GPIO chip as their interrupt source.
+
+The only difference was that the GPIO pins that were not working after
+a resume, were the ones that had the interrupt combiner as interrupt
+parent.
+
+With this patch now all perhiperals are working correctly after a resume.
+Tested on an Exynos5250 Snow, Exynos5420 Peach Pit and Exynos5800 Peach Pi
+Chromebooks.
+
+Best regards,
+Javier
 
 Changes since v1:
-1. After discussion on LKML this solution was chosen because it smaller,
-   simpler, self-contained (one patch to fix issue) and maintains backward
-   compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
-   valuable comments.
-2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
-   will be used on all Exynos4 boards.
-3. Added CC-stable.
----
- drivers/clk/samsung/clk-exynos4.c | 2 ++
- 1 file changed, 2 insertions(+)
+ - Clear masking bits before of the COMBINER_ENABLE_CLEAR register before
+   restore IRQ enable set the Suggested by Chanho Park.
+ - Fixes a typo in the commit message. Suggested by Peter Chubb.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 714d6ba782c8..f7890bf652e6 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -85,6 +85,7 @@
- #define DIV_PERIL4		0xc560
- #define DIV_PERIL5		0xc564
- #define E4X12_DIV_CAM1		0xc568
-+#define E4X12_GATE_BUS_FSYS1	0xc744
- #define GATE_SCLK_CAM		0xc820
- #define GATE_IP_CAM		0xc920
- #define GATE_IP_TV		0xc924
-@@ -1095,6 +1096,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 		0),
- 	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
- 		0),
-+	GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0),
- 	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
- 	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
- 	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+ drivers/irqchip/exynos-combiner.c | 64 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 59 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index 5945223b73fa..639e59c8eed3 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
++#include <linux/syscore_ops.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/interrupt.h>
+@@ -34,9 +35,14 @@ struct combiner_chip_data {
+ 	unsigned int irq_mask;
+ 	void __iomem *base;
+ 	unsigned int parent_irq;
++#ifdef CONFIG_PM
++	u32 pm_save;
++#endif
+ };
+ 
++static struct combiner_chip_data *combiner_data;
+ static struct irq_domain *combiner_irq_domain;
++static unsigned int max_nr = 20;
+ 
+ static inline void __iomem *combiner_base(struct irq_data *data)
+ {
+@@ -170,12 +176,10 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
+ };
+ 
+ static void __init combiner_init(void __iomem *combiner_base,
+-				 struct device_node *np,
+-				 unsigned int max_nr)
++				 struct device_node *np)
+ {
+ 	int i, irq;
+ 	unsigned int nr_irq;
+-	struct combiner_chip_data *combiner_data;
+ 
+ 	nr_irq = max_nr * IRQ_IN_COMBINER;
+ 
+@@ -201,11 +205,59 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 	}
+ }
+ 
++#ifdef CONFIG_PM
++
++/**
++ * combiner_suspend - save interrupt combiner state before suspend
++ *
++ * Save the interrupt enable set register for all combiner groups since
++ * the state is lost when the system enters into a sleep state.
++ *
++ */
++static int combiner_suspend(void)
++{
++	int i;
++
++	for (i = 0; i < max_nr; i++)
++		combiner_data[i].pm_save =
++			__raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET);
++
++	return 0;
++}
++
++/**
++ * combiner_resume - restore interrupt combiner state after resume
++ *
++ * Restore the interrupt enable set register for all combiner groups since
++ * the state is lost when the system enters into a sleep state on suspend.
++ *
++ */
++static void combiner_resume(void)
++{
++	int i;
++
++	for (i = 0; i < max_nr; i++) {
++		__raw_writel(combiner_data[i].irq_mask,
++			     combiner_data[i].base + COMBINER_ENABLE_CLEAR);
++		__raw_writel(combiner_data[i].pm_save,
++			     combiner_data[i].base + COMBINER_ENABLE_SET);
++	}
++}
++
++#else
++#define combiner_suspend	NULL
++#define combiner_resume		NULL
++#endif
++
++static struct syscore_ops combiner_syscore_ops = {
++	.suspend	= combiner_suspend,
++	.resume		= combiner_resume,
++};
++
+ static int __init combiner_of_init(struct device_node *np,
+ 				   struct device_node *parent)
+ {
+ 	void __iomem *combiner_base;
+-	unsigned int max_nr = 20;
+ 
+ 	combiner_base = of_iomap(np, 0);
+ 	if (!combiner_base) {
+@@ -219,7 +271,9 @@ static int __init combiner_of_init(struct device_node *np,
+ 			__func__, max_nr);
+ 	}
+ 
+-	combiner_init(combiner_base, np, max_nr);
++	combiner_init(combiner_base, np);
++
++	register_syscore_ops(&combiner_syscore_ops);
+ 
+ 	return 0;
+ }
 -- 
-1.9.1
+2.1.4
