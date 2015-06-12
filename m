@@ -1,124 +1,52 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 6/9] tests/exynos: remove struct fimg2d_test_case
-Date: Fri, 12 Jun 2015 20:15:11 +0200
-Message-ID: <1434132914-3150-7-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 8/9] tests/exynos: remove connector_find_plane
+Date: Fri, 12 Jun 2015 20:15:13 +0200
+Message-ID: <1434132914-3150-9-git-send-email-tjakobi@math.uni-bielefeld.de>
 References: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50902 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751247AbbFLSQg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jun 2015 14:16:36 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: emil.l.velikov@gmail.com, dri-devel@lists.freedesktop.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, gustavo.padovan@collabora.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-It doesn't make sense to keep this structure, since we
-can just call all tests directly. An inspection of the
-git history shows that no code ever used this
-abstraction in the past.
-
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- tests/exynos/exynos_fimg2d_test.c | 42 +++++----------------------------------
- 1 file changed, 5 insertions(+), 37 deletions(-)
-
-diff --git a/tests/exynos/exynos_fimg2d_test.c b/tests/exynos/exynos_fimg2d_test.c
-index 080d178..de6a2b7 100644
---- a/tests/exynos/exynos_fimg2d_test.c
-+++ b/tests/exynos/exynos_fimg2d_test.c
-@@ -37,30 +37,6 @@
- 
- static unsigned int screen_width, screen_height;
- 
--/*
-- * A structure to test fimg2d hw.
-- *
-- * @solid_fill: fill given color data to source buffer.
-- * @copy: copy source to destination buffer.
-- * @copy_with_scale: copy source to destination buffer scaling up or
-- *	down properly.
-- * @blend: blend source to destination buffer.
-- */
--struct fimg2d_test_case {
--	int (*solid_fill)(struct exynos_device *dev, struct exynos_bo *dst);
--	int (*copy)(struct exynos_device *dev, struct exynos_bo *src,
--			struct exynos_bo *dst, enum e_g2d_buf_type);
--	int (*copy_with_scale)(struct exynos_device *dev,
--				struct exynos_bo *src, struct exynos_bo *dst,
--				enum e_g2d_buf_type);
--	int (*blend)(struct exynos_device *dev,
--				struct exynos_bo *src, struct exynos_bo *dst,
--				enum e_g2d_buf_type);
--	int (*checkerboard)(struct exynos_device *dev,
--				struct exynos_bo *src, struct exynos_bo *dst,
--				enum e_g2d_buf_type);
--};
--
- struct connector {
- 	uint32_t id;
- 	char mode_str[64];
-@@ -630,14 +606,6 @@ fail:
- 	return ret;
- }
- 
--static struct fimg2d_test_case test_case = {
--	.solid_fill = &g2d_solid_fill_test,
--	.copy = &g2d_copy_test,
--	.copy_with_scale = &g2d_copy_with_scale_test,
--	.blend = &g2d_blend_test,
--	.checkerboard = &g2d_checkerboard_test,
--};
--
- static void usage(char *name)
- {
- 	fprintf(stderr, "usage: %s [-s]\n", name);
-@@ -747,7 +715,7 @@ int main(int argc, char **argv)
- 	if (ret < 0)
- 		goto err_rm_fb;
- 
--	ret = test_case.solid_fill(dev, bo);
-+	ret = g2d_solid_fill_test(dev, bo);
- 	if (ret < 0) {
- 		fprintf(stderr, "failed to solid fill operation.\n");
- 		goto err_rm_fb;
-@@ -761,7 +729,7 @@ int main(int argc, char **argv)
- 		goto err_rm_fb;
- 	}
- 
--	ret = test_case.copy(dev, src, bo, G2D_IMGBUF_GEM);
-+	ret = g2d_copy_test(dev, src, bo, G2D_IMGBUF_GEM);
- 	if (ret < 0) {
- 		fprintf(stderr, "failed to test copy operation.\n");
- 		goto err_free_src;
-@@ -769,7 +737,7 @@ int main(int argc, char **argv)
- 
- 	wait_for_user_input(0);
- 
--	ret = test_case.copy_with_scale(dev, src, bo, G2D_IMGBUF_GEM);
-+	ret = g2d_copy_with_scale_test(dev, src, bo, G2D_IMGBUF_GEM);
- 	if (ret < 0) {
- 		fprintf(stderr, "failed to test copy and scale operation.\n");
- 		goto err_free_src;
-@@ -777,7 +745,7 @@ int main(int argc, char **argv)
- 
- 	wait_for_user_input(0);
- 
--	ret = test_case.checkerboard(dev, src, bo, G2D_IMGBUF_GEM);
-+	ret = g2d_checkerboard_test(dev, src, bo, G2D_IMGBUF_GEM);
- 	if (ret < 0) {
- 		fprintf(stderr, "failed to issue checkerboard test.\n");
- 		goto err_free_src;
-@@ -794,7 +762,7 @@ int main(int argc, char **argv)
- 	 * Disable the test for now, until the kernel code has been sanitized.
- 	 */
- #if 0
--	ret  = test_case.blend(dev, src, bo, G2D_IMGBUF_USERPTR);
-+	ret  = g2d_blend_test(dev, src, bo, G2D_IMGBUF_USERPTR);
- 	if (ret < 0)
- 		fprintf(stderr, "failed to test blend operation.\n");
- 
--- 
-2.0.5
+Tm8gdGVzdCB1c2VzIERSTSBwbGFuZXMgYXQgdGhlIG1vbWVudCBzbyB0aGlzIGZ1bmN0aW9uCmlz
+IG5ldmVyIGNhbGxlZC4gSW5zcGVjdGlvbiBvZiB0aGUgZ2l0IGhpc3Rvcnkgc2hvd3MKdGhhdCBE
+Uk0gcGxhbmVzIHdlcmUgYWxzbyBuZXZlciB1c2VkIGluIHRoZXNlIHRlc3RzCmluIHRoZSBwYXN0
+LgoKU2lnbmVkLW9mZi1ieTogVG9iaWFzIEpha29iaSA8dGpha29iaUBtYXRoLnVuaS1iaWVsZWZl
+bGQuZGU+Ci0tLQogdGVzdHMvZXh5bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jIHwgMzEgLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDMxIGRlbGV0aW9ucygt
+KQoKZGlmZiAtLWdpdCBhL3Rlc3RzL2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYyBiL3Rlc3Rz
+L2V4eW5vcy9leHlub3NfZmltZzJkX3Rlc3QuYwppbmRleCAxZWM3MzQwLi41OWRlNGJhIDEwMDY0
+NAotLS0gYS90ZXN0cy9leHlub3MvZXh5bm9zX2ZpbWcyZF90ZXN0LmMKKysrIGIvdGVzdHMvZXh5
+bm9zL2V4eW5vc19maW1nMmRfdGVzdC5jCkBAIC0xMTIsMzcgKzExMiw2IEBAIHN0YXRpYyB2b2lk
+IGNvbm5lY3Rvcl9maW5kX21vZGUoaW50IGZkLCBzdHJ1Y3QgY29ubmVjdG9yICpjLAogCQljLT5j
+cnRjID0gYy0+ZW5jb2Rlci0+Y3J0Y19pZDsKIH0KIAotc3RhdGljIGludCBjb25uZWN0b3JfZmlu
+ZF9wbGFuZShpbnQgZmQsIHVuc2lnbmVkIGludCAqcGxhbmVfaWQpCi17Ci0JZHJtTW9kZVBsYW5l
+UmVzICpwbGFuZV9yZXNvdXJjZXM7Ci0JZHJtTW9kZVBsYW5lICpvdnI7Ci0JaW50IGk7Ci0KLQlw
+bGFuZV9yZXNvdXJjZXMgPSBkcm1Nb2RlR2V0UGxhbmVSZXNvdXJjZXMoZmQpOwotCWlmICghcGxh
+bmVfcmVzb3VyY2VzKSB7Ci0JCWZwcmludGYoc3RkZXJyLCAiZHJtTW9kZUdldFBsYW5lUmVzb3Vy
+Y2VzIGZhaWxlZDogJXNcbiIsCi0JCQlzdHJlcnJvcihlcnJubykpOwotCQlyZXR1cm4gLTE7Ci0J
+fQotCi0JZm9yIChpID0gMDsgaSA8IHBsYW5lX3Jlc291cmNlcy0+Y291bnRfcGxhbmVzOyBpKysp
+IHsKLQkJcGxhbmVfaWRbaV0gPSAwOwotCi0JCW92ciA9IGRybU1vZGVHZXRQbGFuZShmZCwgcGxh
+bmVfcmVzb3VyY2VzLT5wbGFuZXNbaV0pOwotCQlpZiAoIW92cikgewotCQkJZnByaW50ZihzdGRl
+cnIsICJkcm1Nb2RlR2V0UGxhbmUgZmFpbGVkOiAlc1xuIiwKLQkJCQlzdHJlcnJvcihlcnJubykp
+OwotCQkJY29udGludWU7Ci0JCX0KLQotCQlpZiAob3ZyLT5wb3NzaWJsZV9jcnRjcyAmICgxIDw8
+IDApKQotCQkJcGxhbmVfaWRbaV0gPSBvdnItPnBsYW5lX2lkOwotCQlkcm1Nb2RlRnJlZVBsYW5l
+KG92cik7Ci0JfQotCi0JcmV0dXJuIDA7Ci19Ci0KIHN0YXRpYyBpbnQgZHJtX3NldF9jcnRjKHN0
+cnVjdCBleHlub3NfZGV2aWNlICpkZXYsIHN0cnVjdCBjb25uZWN0b3IgKmMsCiAJCQl1bnNpZ25l
+ZCBpbnQgZmJfaWQpCiB7Ci0tIAoyLjAuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
