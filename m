@@ -1,34 +1,42 @@
-From: Thomas Pietrowski <thopiekar@gmail.com>
-Subject: Feedback on hardware support for Odroid U3
-Date: Fri, 12 Jun 2015 15:53:11 +0200
-Message-ID: <CAE-5t2tKeYTjS_1qiQ4oAZS1g5yheA2G1g0CMHRaHdY3Z84NBw@mail.gmail.com>
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH 01/15] ARM: kill off set_irq_flags usage
+Date: Fri, 12 Jun 2015 16:05:48 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1506121604200.30841@localhost>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org> <1433874401-27161-2-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f175.google.com ([209.85.160.175]:36415 "EHLO
-	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752847AbbFLNxL convert rfc822-to-8bit (ORCPT
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:36654 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752847AbbFLOFw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jun 2015 09:53:11 -0400
-Received: by ykaz81 with SMTP id z81so17891432yka.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2015 06:53:11 -0700 (PDT)
+	Fri, 12 Jun 2015 10:05:52 -0400
+In-Reply-To: <1433874401-27161-2-git-send-email-robh@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, arm@kernel.org, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Greg Ungerer <gerg@uclinux.org>, Roland Stigge <stigge@antcom.de>, Tony Lindgren <tony@atomide.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Simtec Linux Team <linux@simtec.co.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.koz>
 
-Hello again,
 
-first after fixing my booting problems I now get different warnings aft=
-er boot.
-- config: http://pastebin.com/MHUu51pF
-- log: http://pastebin.com/9YMgMmFL
-- repo: arm-soc
-I read the last days that you are still working on the clk drivers, so
-as these warnings appear to be related to that you might be interested
-on them.
 
-Additionally my CPU fan it running at full RPM all the time. I checked
-the temperature just to be sure and it says it's 20=C2=B0C. Is this pro=
-blem
-known or can I help debugging it?
+On Tue, 9 Jun 2015, Rob Herring wrote:
+
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+> 
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> 
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also set IRQ_NOPROBE and this has been maintained although it is not
+> clear that is really needed. There appears to be a great deal of blind
+> copy and paste of this code.
+> 
+
+for mach-gemini
+Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+y
