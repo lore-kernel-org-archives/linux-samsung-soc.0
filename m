@@ -1,36 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v2] ARM: dts: fix the clock-frequency of rinato board's
- panel
-Date: Fri, 12 Jun 2015 08:38:42 -0700
-Message-ID: <20150612153842.GA12274@kroah.com>
-References: <1434103610-24182-1-git-send-email-human.hwang@samsung.com>
+From: Thomas-Karl Pietrowski <thopiekar@gmail.com>
+Subject: Re: Feedback on hardware support for Odroid U3
+Date: Fri, 12 Jun 2015 08:53:02 -0700 (PDT)
+Message-ID: <11787514.t5ZmzSH1aL@home>
+References: <CAE-5t2tKeYTjS_1qiQ4oAZS1g5yheA2G1g0CMHRaHdY3Z84NBw@mail.gmail.com> <557AFEC3.3050806@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1434103610-24182-1-git-send-email-human.hwang@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Hyungwon Hwang <human.hwang@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com, stable@vger.kernel.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f195.google.com ([209.85.212.195]:34490 "EHLO
+	mail-wi0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751002AbbFLPxE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Jun 2015 11:53:04 -0400
+Received: by wivr20 with SMTP id r20so3240962wiv.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2015 08:53:03 -0700 (PDT)
+In-Reply-To: <557AFEC3.3050806@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mateusz Krawczuk <m.krawczuk@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 12, 2015 at 07:06:50PM +0900, Hyungwon Hwang wrote:
-> After the commit abc0b1447d4974963548777a5ba4a4457c82c426
-> ("drm: Perform basic sanity checks on probed modes"), proper
-> clock-frequency becomes mandatory for validating the mode of panel.
-> The display does not work if there is no mode validated. Also, this
-> clock-frequency must be set appropriately for getting required frame
-> rate.
-> 
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos3250-rinato.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Am Freitag, 12. Juni 2015, 17:46:11 schrieb Mateusz Krawczuk:
+> Could you send your config and log using gist.github.com, because
+> pastebin.com is forbidden by company IT.
+>=20
+>=20
+> Mateusz Krawczuk
+> Samsung R&D Institute Poland
+>=20
+> W dniu 12.06.2015 o 15:53, Thomas Pietrowski pisze:
+> > Hello again,
+> >=20
+> > first after fixing my booting problems I now get different warnings=
+ after
+> > boot. - config: http://pastebin.com/MHUu51pF
+> > - log: http://pastebin.com/9YMgMmFL
+> > - repo: arm-soc
+> > I read the last days that you are still working on the clk drivers,=
+ so
+> > as these warnings appear to be related to that you might be interes=
+ted
+> > on them.
+> >=20
+> > Additionally my CPU fan it running at full RPM all the time. I chec=
+ked
+> > the temperature just to be sure and it says it's 20=B0C. Is this pr=
+oblem
+> > known or can I help debugging it?
 
-<formletter>
+Of course I can. Didn't know about this restriction.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
-
-</formletter>
+-config: https://gist.github.com/thopiekar/440059953391ccadc324
+-log: https://gist.github.com/thopiekar/061d12802a4346eb783f
