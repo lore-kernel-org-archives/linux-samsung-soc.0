@@ -1,43 +1,89 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: [PATCH v2 0/9] drm/exynos: cleanups and small fixes for libdrm
-Date: Fri, 12 Jun 2015 20:15:05 +0200
-Message-ID: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2 1/9] exynos: fimg2d: fix return codes
+Date: Fri, 12 Jun 2015 20:15:06 +0200
+Message-ID: <1434132914-3150-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50865 "EHLO
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50872 "EHLO
 	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754552AbbFLSPM (ORCPT
+	by vger.kernel.org with ESMTP id S1753027AbbFLSPM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 12 Jun 2015 14:15:12 -0400
+In-Reply-To: <1434132914-3150-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, emil.l.velikov@gmail.com, jy0922.shim@samsung.com, gustavo.padovan@collabora.co.uk, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hello,
+Even if flushing the command buffer doesn't succeed, the
+G2D calls would still return zero. Fix this by just passing
+the flush return code.
 
-I've split off the Exynos specific bits, so this is just some cleanups and small fixes. Everything can be reviewed without knowledge about the Exynos platform. My hope is that I can get at least some of the patches from my last series upstream.
+In fact error handling currently ignores the fact that
+g2d_add_cmd() can fail. This is going to be handled
+in a later patch.
 
-With best wishes,
-Tobias
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ exynos/exynos_fimg2d.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-Changes in v2:
-- Made it clear that the error handling is currently 'unsatisfactory', but that this is going to be adressed in a later patch.
-- Point out that removed code also wasn't used anywhere in the past (by inspection of git history).
-
-Tobias Jakobi (9):
-  exynos: fimg2d: fix return codes
-  tests/exynos: replace return by break
-  exynos/fimg2d: simplify g2d_fini()
-  tests/exynos: clean struct connector
-  tests/exynos: remove unused define
-  tests/exynos: remove struct fimg2d_test_case
-  tests/exynos: simplify drm_set_crtc
-  tests/exynos: remove connector_find_plane
-  tests/exynos: handle G2D_IMGBUF_COLOR in switch statements
-
- exynos/exynos_fimg2d.c            |  23 ++------
- tests/exynos/exynos_fimg2d_test.c | 112 +++++++-------------------------------
- 2 files changed, 26 insertions(+), 109 deletions(-)
-
+diff --git a/exynos/exynos_fimg2d.c b/exynos/exynos_fimg2d.c
+index 86ae898..5ea42e6 100644
+--- a/exynos/exynos_fimg2d.c
++++ b/exynos/exynos_fimg2d.c
+@@ -330,9 +330,7 @@ g2d_solid_fill(struct g2d_context *ctx, struct g2d_image *img,
+ 	bitblt.data.fast_solid_color_fill_en = 1;
+ 	g2d_add_cmd(ctx, BITBLT_COMMAND_REG, bitblt.val);
+ 
+-	g2d_flush(ctx);
+-
+-	return 0;
++	return g2d_flush(ctx);
+ }
+ 
+ /**
+@@ -415,9 +413,7 @@ g2d_copy(struct g2d_context *ctx, struct g2d_image *src,
+ 	rop4.data.unmasked_rop3 = G2D_ROP3_SRC;
+ 	g2d_add_cmd(ctx, ROP4_REG, rop4.val);
+ 
+-	g2d_flush(ctx);
+-
+-	return 0;
++	return g2d_flush(ctx);
+ }
+ 
+ /**
+@@ -527,9 +523,7 @@ g2d_copy_with_scale(struct g2d_context *ctx, struct g2d_image *src,
+ 	pt.data.y = dst_y + dst_h;
+ 	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
+ 
+-	g2d_flush(ctx);
+-
+-	return 0;
++	return g2d_flush(ctx);
+ }
+ 
+ /**
+@@ -636,9 +630,7 @@ g2d_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 	pt.data.y = dst_y + h;
+ 	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
+ 
+-	g2d_flush(ctx);
+-
+-	return 0;
++	return g2d_flush(ctx);
+ }
+ 
+ /**
+@@ -766,7 +758,5 @@ g2d_scale_and_blend(struct g2d_context *ctx, struct g2d_image *src,
+ 	pt.data.y = dst_y + dst_h;
+ 	g2d_add_cmd(ctx, DST_RIGHT_BOTTOM_REG, pt.val);
+ 
+-	g2d_flush(ctx);
+-
+-	return 0;
++	return g2d_flush(ctx);
+ }
 -- 
 2.0.5
