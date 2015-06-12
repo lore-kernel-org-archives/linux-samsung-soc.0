@@ -1,38 +1,41 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Fri, 12 Jun 2015 09:25:53 +0200
-Message-ID: <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-	<5577F533.1060007@ahsoftware.de>
-	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>
-	<5579602F.1070801@ahsoftware.de>
-	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>
-	<5579B9E8.9040609@ahsoftware.de>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH v2 1/3] drm/exynos: remove to call mixer_wait_for_vblank
+Date: Fri, 12 Jun 2015 17:27:14 +0900
+Message-ID: <1434097636-10709-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5579B9E8.9040609-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "list-7NY9aMYB+ISttCpgsWEBFg@public.gmane.org:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, a.hajda@samsung.com, gustavo.padovan@collabora.co.uk, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 11, 2015 at 6:40 PM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
-> Am 11.06.2015 um 14:30 schrieb Linus Walleij:
-
->> Certainly it is possible to create deadlocks in this scenario, but the
->> scope is not to create an ubreakable system.
->
-> IAnd what happens if you run into a deadlock? Do you print "you've lost, try
-> changing your kernel config" in some output hidden by a splash-screen? ;)
-
-Sorry it sounds like a blanket argument, the fact that there are
-mutexes in the kernel makes it possible to deadlock, it doesn't
-mean we don't use mutexes. Some programming problems are
-just like such.
-
-Yours,
-Linus Walleij
+VGhlIHJlYXNvbiB3YWl0aW5nIHZibGFuayBpcyB0byBiZSBwb3dlciBnYXRlZCBhbmQgZGlzYWJs
+ZWQgY2xvY2tzIGFmdGVyCmRtYSBvcGVyYXRpb24gaXMgY29tcGxldGVkLiBUaGUgZG1hIG9wZXJh
+dGlvbiBpcyBzdG9wcGVkIGFscmVhZHkgYmVmb3JlCmJlIHBvd2VyIGdhdGVkIGFuZCBjbG9ja3Mg
+YXJlIGRpc2FibGVkIHdoZW4gbWl4ZXIgaXMgZGlzYWJsZWQgYnkgY29tbWl0CjM4MWJlMDI1YWMx
+YTYoImRybS9leHlub3M6IHN0b3AgbWl4ZXIgYmVmb3JlIGdhdGluZyBjbG9ja3MgZHVyaW5nCnBv
+d2Vyb2ZmIikuIERvbid0IG5lZWQgdG8gd2FpdCB2YmxhbmsgYW55bW9yZS4KClNpZ25lZC1vZmYt
+Ynk6IEpvb255b3VuZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgMSAtCiAxIGZpbGUgY2hhbmdlZCwgMSBk
+ZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDZiYWI3
+MTcuLmY5M2YwMzggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwpAQCAtMTAx
+MCw3ICsxMDEwLDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfd2luZG93X3N1c3BlbmQoc3RydWN0IG1p
+eGVyX2NvbnRleHQgKmN0eCkKIAkJcGxhbmUtPnJlc3VtZSA9IHBsYW5lLT5lbmFibGVkOwogCQlt
+aXhlcl93aW5fZGlzYWJsZShjdHgtPmNydGMsIGkpOwogCX0KLQltaXhlcl93YWl0X2Zvcl92Ymxh
+bmsoY3R4LT5jcnRjKTsKIH0KIAogc3RhdGljIHZvaWQgbWl4ZXJfd2luZG93X3Jlc3VtZShzdHJ1
+Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
