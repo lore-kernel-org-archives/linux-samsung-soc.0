@@ -1,71 +1,106 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
-Date: Sat, 13 Jun 2015 17:15:09 +0900
-Message-ID: <CAJKOXPcqgcKiZ_4=H9wEgpzoMy5LKUsgtaw82gp4DCbY6e=JFg@mail.gmail.com>
-References: <5569F435.5040708@unseen.is>
-	<CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
-	<556E0931.9030703@unseen.is>
-	<556E44B7.10303@samsung.com>
-	<5576CD40.8060301@unseen.is>
-	<CAJKOXPeehj++Ojt2Zo4sgNjVASzZ8r_6OROM6FK_BRRQqVzcGg@mail.gmail.com>
-	<557B53C6.8070600@unseen.is>
-	<557BC3DB.1030906@samsung.com>
+From: Thomas-Karl Pietrowski <thopiekar@gmail.com>
+Subject: Re: Feedback on hardware support for Odroid U3
+Date: Sat, 13 Jun 2015 11:11:54 +0200
+Message-ID: <16487700.5L20qaootX@home>
+References: <CAE-5t2tKeYTjS_1qiQ4oAZS1g5yheA2G1g0CMHRaHdY3Z84NBw@mail.gmail.com> <557BC91C.10007@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f44.google.com ([209.85.216.44]:33187 "EHLO
-	mail-vn0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127AbbFMIPK (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:35929 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751758AbbFMJL7 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Jun 2015 04:15:10 -0400
-In-Reply-To: <557BC3DB.1030906@samsung.com>
+	Sat, 13 Jun 2015 05:11:59 -0400
+Received: by wigg3 with SMTP id g3so34253668wig.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2015 02:11:58 -0700 (PDT)
+In-Reply-To: <557BC91C.10007@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>, gabriel@unseen.is
-Cc: linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-2015-06-13 14:47 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> W dniu 13.06.2015 o 06:48, gabriel@unseen.is pisze:
->> On 06/10/2015 10:22 AM, Krzysztof Kozlowski wrote:
->>>
->>> Gabriel,
->>>
->>> I sent a patch which should fix the issue. Could you give it a try? Of
->>> course don't revert the other patches and don't use other workarounds.
->>> Just apply the patch on clean (vanilla would be the best) kernel.
->>> [RFT PATCH] dmaengine: Fix choppy sound because of unimplemented resume
->>>
->>
->> hi krzysztof,
->>
->> thanks a lot for your work. having only that patch applied unfortunately
->> brought back the problem after something more than one day. the sound
->> became choppy/noisy again. I will now compile the -next kernel and give
->> it a try.
+Am Samstag, 13. Juni 2015, 15:09:32 schrieb Krzysztof Kozlowski:
+> W dniu 12.06.2015 o 22:53, Thomas Pietrowski pisze:
+> > Hello again,
+> >=20
+> > first after fixing my booting problems I now get different warnings=
+ after
+> > boot. - config: http://pastebin.com/MHUu51pF
+> > - log: http://pastebin.com/9YMgMmFL
+> > - repo: arm-soc
+> > I read the last days that you are still working on the clk drivers,=
+ so
+> > as these warnings appear to be related to that you might be interes=
+ted
+> > on them.
+>=20
+> You mean the warnings on clocks (starting from runtime PM and FIMC)? =
+I
+> hit them also on Trats2. Just need to find a person (or time) who wil=
+l
+> fix it...
 >
-> Thanks, I'll try to reproduce the issue on my Odroid. Can you share more
-> details how to reproduce it? The audio must play continuously or just
-> from time to time but the board must be turned on for more than one day?
+Ok then. I just don't remember that I had them when using 3.19.x code b=
+y=20
+Tobias Jakobi before. I'll test his latest code later. The reason I wan=
+ted to=20
+use code from arm-soc is that I thought his changes/patches are already=
+ here=20
+after two linux releases. However, in the past the CPU fan wasn't worki=
+ng at=20
+all (0 RPM) and /sys/class/thermal/[...]/temp reported more than 70=B0C=
+ (was=20
+compiling a newer kernel code at this moment). Don't believe it was hea=
+lthy.
 
-I bought some audio cables and successfully reproduced similar issue
-(choppy sound) on Odroid XU3-Lite. On current linux-next
-(next-20150612) the sound is awful (choppy) after few seconds of play.
-For example first four of:
-$ aplay /usr/share/sounds/alsa/Front_Right.wav
-work fine. But then it just gets worse and underruns are reported:
-$ Playing WAVE '/usr/share/sounds/alsa/Front_Right.wav' : Signed 16
-bit Little Endian, Rate 48000 Hz, Mono
-$ underrun!!! (at least 0.095 ms long)
+> > Additionally my CPU fan it running at full RPM all the time. I chec=
+ked
+> > the temperature just to be sure and it says it's 20=B0C. Is this pr=
+oblem
+> > known or can I help debugging it?
+>=20
+> After quick look at DTS, I think that on Exynos4412 Odroid family the=
+re
+> is no fan defined. No fan so cooling is done only through CPU
+> frequencies. The fan probably works on default setting from bootloade=
+r
+> or default register values.
+>=20
+Just something at this point which comes to my mind. Imagine we have th=
+e fan=20
+regulation/driver working. What happens when we simply disconnect the f=
+an and=20
+the CPU hits higher temperatures? Will it still work on high frequencie=
+s or=20
+will it self-protect by using lower CPU frequencies?
+CPU throttling and CPU cooling should be two seperate processes, isn't =
+it?
 
-Reverting the commit aee4d1fac887 ("dmaengine: pl330: improve
-pl330_tx_status() function") fixes this issue so this is not related
-to missing "resume" function. At least this particular issue on my
-Odroid is not related to missing resume but I did not try to play
-sound for 24 hours.
-My fix does not solve this. Probably "cc-stable" and "fixes" tags
-should be dropped.
+> The stock Odroid U3 has only passive cooler.
+>=20
+That's true, but they (hardkernel) also sell a optional fan and the soc=
+ket for=20
+is is still there when buying the board.
+See,=20
+http://www.hardkernel.com/main/products/prdt_info.php?g_code=3DG1387603=
+58261 for=20
+the optional fan.
+Therefore, it is not a hardware hack or whatever.
 
-Anyway I'll try to investigate it more. If anyone has any ideas, please share.
+> Probably support for fan could be added... If you would like to take
+> care of it, go for it! :)
+>=20
+I just browsed Tobias Jakobi's "linux-odroid" repository at github and =
+found=20
+out, that work is already made on that by people at Samsung :)
+https://github.com/tobiasjakobi/linux-odroid/commit/a2236c8f74321357e50=
+5be0a054032325a7e3a5d
+Hopefully both are also in this mailing list and interested in getting =
+this=20
+upstream. In the mean time I'll test it based on tobiasjakobi's codebas=
+e=20
+again.
 
-Best regards,
-Krzysztof
+Regards,
+Thomas
