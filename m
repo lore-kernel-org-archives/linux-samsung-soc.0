@@ -1,40 +1,100 @@
 From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv6 4/4] ARM: dts: exynos5422-odroidxu3: Enable thermal-zones
-Date: Sun, 14 Jun 2015 19:54:05 +0930
-Message-ID: <1434277445-5243-4-git-send-email-linux.amoon@gmail.com>
+Subject: [PATCHv6 3/4] ARM: dts: exynos5422-odroidxu3: Define default thermal-zones
+Date: Sun, 14 Jun 2015 19:54:04 +0930
+Message-ID: <1434277445-5243-3-git-send-email-linux.amoon@gmail.com>
 References: <1434277445-5243-1-git-send-email-linux.amoon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:34785 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752179AbbFNKZV (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:34755 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751524AbbFNKZP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Jun 2015 06:25:21 -0400
+	Sun, 14 Jun 2015 06:25:15 -0400
 In-Reply-To: <1434277445-5243-1-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-Include exynos5422-cpu-thermal.dtsi to enable thermal_zone support.
+Trip points corresponding to the one defined in the exynos_tmu_data.c
+for Exynos5422 have been included so define thermal-zones attribute.
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 Tested-by: Markus Reichl <m.reichl@fivetechno.de>
 Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Changes rebase on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung branch for-next
+Changes from v5 : Rename exynos5-cpu-thermal.dtsi to exynos5422-cpu-thermal.dtsi
+			as this file belongs to exynos5422 boards
+---
+ arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi | 59 +++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index b6570fc..1565667 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -15,6 +15,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
-+#include "exynos5422-cpu-thermal.dtsi"
- 
- / {
- 	memory {
+diff --git a/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi b/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
+new file mode 100644
+index 0000000..c73393a
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
+@@ -0,0 +1,59 @@
++/*
++ * Device tree sources for Exynos5422 thermal zone
++ *
++ * Copyright (c) 2015 Lukasz Majewski <l.majewski@samsung.com>
++ *			Anand Moon <linux.amoon@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <dt-bindings/thermal/thermal.h>
++
++/ {
++	thermal-zones {
++		cpu0_thermal: cpu0-thermal {
++			thermal-sensors = <&tmu_cpu0 0>;
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++			trips {
++				cpu_alert0: cpu-alert-0 {
++					temperature = <50000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu_alert1: cpu-alert-1 {
++					temperature = <60000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu_alert2: cpu-alert-2 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <5000>; /* millicelsius */
++					type = "active";
++				};
++				cpu_crit0: cpu-crit-0 {
++					temperature = <120000>; /* millicelsius */
++					hysteresis = <0>; /* millicelsius */
++					type = "critical";
++				};
++			};
++			cooling-maps {
++				map0 {
++				     trip = <&cpu_alert0>;
++				     cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++				     trip = <&cpu_alert1>;
++				     cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++				     trip = <&cpu_alert2>;
++				     cooling-device = <&fan0 2 3>;
++				};
++			};
++		};
++	};
++};
 -- 
 2.4.3
