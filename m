@@ -1,33 +1,36 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos4210-trats: add max8997 IRQ
-Date: Sun, 14 Jun 2015 13:31:28 +0900
-Message-ID: <CAJKOXPdFob6KB_bLCUMLeKT+eUc3BDATA0XRR00STia5rv1=jw@mail.gmail.com>
-References: <1395828429-11023-1-git-send-email-r.baldyga@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv5 1/5] ARM: dts: exynos5422-odroidxu3 Add pwm-fan node to
+ the Odroid-XU3 board
+Date: Sun, 14 Jun 2015 14:31:01 +0900
+Message-ID: <CAJKOXPetTDedD4GK1GsLJ6EYetELP0MTVoviQQ4RDE35W_oJZQ@mail.gmail.com>
+References: <1431499020-3912-1-git-send-email-linux.amoon@gmail.com>
+	<1431499020-3912-2-git-send-email-linux.amoon@gmail.com>
+	<CAJKOXPefJwqvfZPDovQ6EjEOBfuJkidgeYDF_=KC9O+=2=_KoQ@mail.gmail.com>
+	<CANAwSgTCaBgmBQ9HNb_2O+eUeZK2XngMkGon7x8Q4h86xP5hKA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1395828429-11023-1-git-send-email-r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f51.google.com ([209.85.216.51]:38743 "EHLO
+	mail-vn0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750968AbbFNFbC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 14 Jun 2015 01:31:02 -0400
+In-Reply-To: <CANAwSgTCaBgmBQ9HNb_2O+eUeZK2XngMkGon7x8Q4h86xP5hKA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Markus Reichl <m.reichl@fivetechno.de>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Guenter Roeck <linux@roeck-us.net>
 
-2014-03-26 19:07 GMT+09:00 Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
-> This patch adds IRQ line specification for the MAX8997 chip and necessary
-> pinctrl group to configure pull-up and driver strength of the pin.
-> It's needed for proper handling of IRQs coming from MAX8997 multifunction
-> device (IRQs are used by PMIC, MUIC and RTC).
+2015-05-13 16:46 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+> Hi Krzysztof,
 >
-> Signed-off-by: Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Will make the changes.
+>
+> Thanks for the review.
 
-(limit the CC list)
-Yet another old patch I found on LKML... Robert, is this patch still
-worth applying? If yes, would you be so kind to rebase it and resend?
+Hi Anand,
+
+Do you plan to continue working on this patchset?
 
 Best regards,
 Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
