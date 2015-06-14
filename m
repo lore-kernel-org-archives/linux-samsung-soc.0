@@ -1,57 +1,84 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCHv6 1/4] ARM: dts: exynos5422-odroidxu3: Add pwm-fan node
-Date: Sun, 14 Jun 2015 19:54:02 +0930
-Message-ID: <1434277445-5243-1-git-send-email-linux.amoon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:35711 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750968AbbFNKZD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Jun 2015 06:25:03 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCHv6 2/4] ARM: dts: exynos5422-odroidxu3: Enable TMU at Exynos5422 base
+Date: Sun, 14 Jun 2015 19:54:03 +0930
+Message-ID: <1434277445-5243-2-git-send-email-linux.amoon@gmail.com>
+References: <1434277445-5243-1-git-send-email-linux.amoon@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1434277445-5243-1-git-send-email-linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Moon <linux.amoon@gmail.com>
 
-Add pwm-fan node to the Odroid-XU3 board.
+This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+device.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-Acked-by: Lukasz Majewski <l.majewski@samsung.com>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Tested-by: Markus Reichl <m.reichl-SRyzfwRm/0rPTwkrwQOX7A@public.gmane.org>
+Acked-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
 Changes rebase on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung branch for-next
+Changes from v5: Use LDO7 regulator instead of LD010.
+
+The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
+
+I think the schematics are missing some of details but it can be deducted that:
+1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
+pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
+2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
+S2MPS11 PMIC.
+3. I confirmed with the Exynos5422 datasheet that these
+VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
+
+So the LDO7 it is... but before using it there is a caveat. The LDO7
+is also connected to VDD of MIPI, HDMI and few more. So when you use
+this regulator in TMU it may be turned off by TMU driver (e.g. during
+unbind). In such case these other blocks also should be tested and
+checked whether they take this regulator and enable it.
 ---
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index deb8d78..a2f9941 100644
+index a2f9941..b6570fc 100644
 --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
 +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -107,6 +107,15 @@
- 			clocks = <&i2s0 CLK_I2S_CDCLK>;
- 		};
- 	};
-+
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pwms = <&pwm 0 20972 0>;
-+		cooling-min-state = <0>;
-+		cooling-max-state = <3>;
-+		#cooling-cells = <2>;
-+		cooling-levels = <0 130 170 230>;
-+	};
- };
- 
- &clock_audss {
-@@ -461,6 +470,7 @@
- 	 */
- 	pinctrl-0 = <&pwm0_out &pwm1_out &pwm2_out &pwm3_out>;
- 	pinctrl-names = "default";
-+	samsung,pwm-outputs = <0>;
+@@ -474,6 +474,31 @@
  	status = "okay";
  };
  
++&tmu_cpu0 {
++	vtmu-supply = <&ldo7_reg>;
++	status = "okay";
++};
++
++&tmu_cpu1 {
++	vtmu-supply = <&ldo7_reg>;
++	status = "okay";
++};
++
++&tmu_cpu2 {
++	vtmu-supply = <&ldo7_reg>;
++	status = "okay";
++};
++
++&tmu_cpu3 {
++	vtmu-supply = <&ldo7_reg>;
++	status = "okay";
++};
++
++&tmu_gpu {
++	vtmu-supply = <&ldo7_reg>;
++	status = "okay";
++};
++
+ &rtc {
+ 	status = "okay";
+ 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
 -- 
 2.4.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
