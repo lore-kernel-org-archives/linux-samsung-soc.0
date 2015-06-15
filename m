@@ -1,51 +1,46 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] drivers/cpufreq: include <module.h> for modular
- exynos-cpufreq.c code
-Date: Tue, 16 Jun 2015 08:53:11 +0900
-Message-ID: <557F6567.1070901@samsung.com>
-References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com>
- <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
- <5110473.q5rJrrjs9a@vostro.rjw.lan>
+Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set on
+ suspend
+Date: Tue, 16 Jun 2015 08:57:43 +0900
+Message-ID: <557F6677.8080507@samsung.com>
+References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>
+ <557AB00C.5040606@arm.com> <557AC23D.8040602@collabora.co.uk>
+ <557AC85E.5070705@arm.com> <557AD728.7090908@collabora.co.uk>
+ <557B34A7.4090507@collabora.co.uk>
+ <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
+ <557E82BC.7080203@collabora.co.uk> <557E947B.3030804@arm.com>
+ <557EE890.2050001@collabora.co.uk> <557EEA6C.6020002@arm.com>
+ <557EEDFB.7080502@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41917 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751789AbbFOXxS (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:40570 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750989AbbFOX5u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 19:53:18 -0400
-In-reply-to: <5110473.q5rJrrjs9a@vostro.rjw.lan>
+	Mon, 15 Jun 2015 19:57:50 -0400
+In-reply-to: <557EEDFB.7080502@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sudeep Holla <sudeep.holla@arm.com>, Doug Anderson <dianders@chromium.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 16.06.2015 08:47, Rafael J. Wysocki wrote:
-> On Wednesday, June 03, 2015 05:18:18 PM Paul Gortmaker wrote:
->> This file is built off of a tristate Kconfig option ("ARM_EXYNOS_CPUFREQ")
->> and also contains modular function calls so it should explicitly include
->> module.h to avoid compile breakage during pending header shuffles.
+On 16.06.2015 00:23, Javier Martinez Canillas wrote:
+(...)
+>>> To do a more intrusive change, I should better understand the interactions
+>>> between the Exynos pinctrl / GPIO, interrupt combiner and the GIC and in the
+>>> meantime S2R will continue to be broken on these platforms unless someone
+>>> more familiar with all this could point me in the right direction.
+>>>
 >>
->> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> Cc: linux-pm@vger.kernel.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-samsung-soc@vger.kernel.org
->> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> 
-> I'm assuming that this will go in via the Samsung tree.
-> 
-> 
->> ---
+>> As I said I am fine with this patch for now and I don't want to block it.
 >>
->> [ patch will be appended to the implicit include fixup series, see:
->>   https://lkml.kernel.org/r/1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com
->>   for the original series posting.]
+> 
+> Thanks a lot, Krzysztof who is one of the Exynos maintainers has also agreed
+> with the patch so hopefully this can land sooner rather than later.
 
-Paul, will you handle the patch or should it go through Samsung tree?
+I assume this will go through irqchip tree, right?
 
 Best regards,
 Krzysztof
