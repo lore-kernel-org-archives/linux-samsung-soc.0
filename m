@@ -1,152 +1,52 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
- on suspend
-Date: Mon, 15 Jun 2015 09:46:04 +0200
-Message-ID: <557E82BC.7080203@collabora.co.uk>
-References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>	<557AB00C.5040606@arm.com>	<557AC23D.8040602@collabora.co.uk>	<557AC85E.5070705@arm.com>	<557AD728.7090908@collabora.co.uk>	<557B34A7.4090507@collabora.co.uk> <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Beata Michalska <b.michalska@samsung.com>
+Subject: [PATCH v2] ARM: dts: Update video-phy node with syscon phandle for
+ Exynos3250
+Date: Mon, 15 Jun 2015 10:12:46 +0200
+Message-ID: <1434355966-4566-1-git-send-email-b.michalska@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:57872 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753243AbbFOHqL (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:63676 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752177AbbFOIMz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 03:46:11 -0400
-In-Reply-To: <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
+	Mon, 15 Jun 2015 04:12:55 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: kgene@kernel.org, k.kozlowski@samsung.com, kishon@ti.com, javier.martinez@collabora.co.uk, s.nawrocki@samsung.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, human.hwang@samsung.com
 
-Hello Doug,
+As a follow-up to recent changes to Exynos mipi video phy
+driver, introducing support for PMU regmap in commit
+e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression
+by adding support for PMU regmap") add a syscon phandle to
+video-phy node to bring back to life both MIPI DSI display
+and MIPI CSIS-2 camera sensor on Exynos3250.
 
-Thanks a lot for your comments.
+Signed-off-by: Beata Michalska <b.michalska@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+v2:
+	- removed 'reg' property as this is no longer needed
+	- added signatures as stated in the original thread
 
-On 06/12/2015 10:17 PM, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Jun 12, 2015 at 12:36 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->>>> registers are lost assuming the combiner was powered down, even the
->>>> status register will be lost and you will not know exactly the wakeup
->>>> reason right ?
->>>>
->>>
->>> Good question, I didn't find in the documentation I've access to that
->>> this happen but just found through experimentation that the IRQ enable
->>> set register values are lost after a resume and that saving/restoring
->>> the values makes the interrupts to be triggered again.
->>>
->>
->> I'll share here too the findings I mentioned over IRC. As you suggested I
->> add some printouts and noticed that the ISTRn (Interrupt Status) registers
->> values are indeed preserved on resume so I can know for example if the
->> wakeup source was the power gpio-key or cros_ec keyboard. I've checked the
->> values of the registers against the Exynos manual and they corresponds to
->> the interrupt sources in each case so the values are correct.
->>
->> So as you said, it seems that is not that the IP block loses its state on
->> S2R but that something is blindly writing the IESRn (Interrupt Enable Set)
->> registers.
-> 
-> I'll postulate an alternate theory here.  You can tell me if you buy
-> it or if you think I've been out in the sun too long.
-> 
-> Let's say that the interrupt combiner's status registers show the raw
-> status as asserted by whatever is hooked up to the combiner.  This
-> means that even if the combiner got reset we could still read the
-> status register and get the status of the source.  Imagine that the
-> combiner is like a GPIO bank.  If you reset the GPIO bank, you'll lose
-> all kinds of config (input vs. output, edge interrupt status, maybe
-> pulls, etc).  ...but you can still read the state asserted by an
-> external source, right?
-> 
+---
+ arch/arm/boot/dts/exynos3250.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-That definitely makes a lot of sense to me.
-
-> In this case the combiner's interrupt source is 'EINT 11'.  ...and I'm
-> pretty sure that the controller managine 'EINT 11' _doesn't_ lose
-> power across suspend/resume...
->
-
-Yes, the External Interrupt sources come from the GPIO controller and the
-driver has a similar logic than $subject to save the registers state.
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index e3bfb11..f514ead 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -138,8 +138,8 @@
  
-> 
-> I'll further bolster my theory by saying that _almost nothing_ in the
-> exynos keeps power across suspend/resume.  The UART?  Nope.  The GPIO
-> controllers?  Nuh-uh.  The GIC?  Sorry, but no.  The clock tree?  It
-> might be nice, but you're out of luck.  ...so it would make me
-> terribly surprised to see the combiner keep power.
->
-
-It surprised me as well but I didn't think about what you said that the
-combiner interrupt source was restored so the status register could just
-be showing the combiner's input raw status even after the chip was reset.
-
-> 
->> To reduce the possible s/w components that could be doing this, I booted a
->> signed FIT image directly using the RO U-Boot instead of chain loading a
->> mainline nv-uboot. In this configuration I've the same issue so it seems
->> that if something is zeroing those registers on S2R, this can't be changed
->> without void the warranty of these machines.
->>
->> I also looked at the downstream ChromiumOS v3.8 tree [0] and I see that
->> they have a very similar solution than my patch, the IESRn are also saved
->> but using a notifier for the CPU_PM_ENTER and CPU_PM_EXIT events instead
->> or registering a syscore ops but the idea is basically the same.
-> 
-> Yup, you can see where kliegs added it in
-> <https://chromium-review.googlesource.com/#/c/27964/>.  As per the
-> comments in that CL, this was probably broken in:
-> 
-> 063bd6f ARM: EXYNOS: Remove GIC save & restore function
-> 
->
-
-Nod, thanks for the pointer.
-
->> I have to take a look to the U-boot that is shipped on the device, I think
->> the correct branch is [1] but I'm not sure if that is the correct one.
-> 
-> It is the right one.  If U-Boot were touching this (which would
-> greatly surprise me) it should be here:
-> 
-> arch/arm/include/asm/arch-exynos/cpu.h
-> 
-> ...and it's not.  Doing a grep for '10440000' (the combiner base
-> address) doesn't find anything in U-Boot either, which makes it less
-> likely.  ...and it's even less likely since the amount of code that is
-> in U-Boot that runs at resume time is a very small subset and I'm
-> fairly familiar with it and I would have remembered it touching the
-> combiner.
->
-
-That explains why I was also not able to find were U-Boot was overwriting
-those registers.
-
-> It's POSSIBLE that the internal ROM in exynos is clobbering this, but
-> as per above it seems crazy unlikely and I think it's just losing
-> power.
->
-
-Agreed.
-
-> 
-> -Doug
->
-
-Sudeep, so we may need something like $subject after all from Doug's
-explanations since the combiner chip state is lost during a S2R. I know
-that it adds more duplicated code (others irqchip drivers do the same)
-and it may not scale well if a chip has many registers but is the best
-solution I could came with.
-
-If you have a suggestion for a better alternative, I can give a try and
-write the patch. But I think $subject could also land to fix this issue
-since is a very non intrusive change and later can be changed once the
-irqchip core supports this use case.
-
-Best regards,
-Javier
+ 		mipi_phy: video-phy@10020710 {
+ 			compatible = "samsung,s5pv210-mipi-video-phy";
+-			reg = <0x10020710 8>;
+ 			#phy-cells = <1>;
++			syscon = <&pmu_system_controller>;
+ 		};
+ 
+ 		pd_cam: cam-power-domain@10023C00 {
+-- 
+1.7.9.5
