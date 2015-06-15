@@ -1,81 +1,130 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: Re: [PATCHv6 2/4] ARM: dts: exynos5422-odroidxu3: Enable TMU at Exynos5422
- base
-Date: Mon, 15 Jun 2015 10:41:11 +0200
-Message-ID: <557E8FA7.1090200@fivetechno.de>
-References: <1434277445-5243-1-git-send-email-linux.amoon@gmail.com> <1434277445-5243-2-git-send-email-linux.amoon@gmail.com> <557E181C.7070209@samsung.com> <CANAwSgTOY3MECYLTjgmfSo5WrRuNycSSet2ZDhNTb-=gy8DGYQ@mail.gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
+ on suspend
+Date: Mon, 15 Jun 2015 09:52:20 +0100
+Message-ID: <557E9244.7090106@arm.com>
+References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>	<557AB00C.5040606@arm.com>	<557AC23D.8040602@collabora.co.uk>	<557AC85E.5070705@arm.com>	<557AD728.7090908@collabora.co.uk>	<557B34A7.4090507@collabora.co.uk> <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:53889 "EHLO
-	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752177AbbFOIl1 (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:33949 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752168AbbFOIw0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 04:41:27 -0400
-In-Reply-To: <CANAwSgTOY3MECYLTjgmfSo5WrRuNycSSet2ZDhNTb-=gy8DGYQ@mail.gmail.com>
+	Mon, 15 Jun 2015 04:52:26 -0400
+In-Reply-To: <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Anand, Krzysztof
 
-Am 15.06.2015 um 04:23 schrieb Anand Moon:
-> hi Krzysztof
-> 
-> On 15 June 2015 at 05:41, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->> On 14.06.2015 19:24, Anand Moon wrote:
->>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
->>> device.
+
+On 12/06/15 21:17, Doug Anderson wrote:
+> Hi,
+>
+> On Fri, Jun 12, 2015 at 12:36 PM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>>>> registers are lost assuming the combiner was powered down, even the
+>>>> status register will be lost and you will not know exactly the wakeup
+>>>> reason right ?
+>>>>
 >>>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
->>
->> This does not look right.
->> You put this "Tested-by" since beginning of this patchset (v1) but first
->> it was LDO10. Then you proposed LDO18 and now you use LDO7 from my
->> suggestion. Which of this was tested by Markus because I cannot find his
->> emails with it on LKML?
-> 
-> Markus Reichl tested the earlier version with LDO10.
-
-This is right.
-
-> Commit logs got carry forward by mistake.
-> 
-> -Anand Moon
-> 
->>
->> Krzysztof
->>
->>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
->>> ---
->>> Changes rebase on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung branch for-next
->>> Changes from v5: Use LDO7 regulator instead of LD010.
+>>> Good question, I didn't find in the documentation I've access to that
+>>> this happen but just found through experimentation that the IRQ enable
+>>> set register values are lost after a resume and that saving/restoring
+>>> the values makes the interrupts to be triggered again.
 >>>
->>> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
->>>
->>> I think the schematics are missing some of details but it can be deducted that:
->>> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
->>> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
->>> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
->>> S2MPS11 PMIC.
->>> 3. I confirmed with the Exynos5422 datasheet that these
->>> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
->>>
->>> So the LDO7 it is... but before using it there is a caveat. The LDO7
->>> is also connected to VDD of MIPI, HDMI and few more. So when you use
->>> this regulator in TMU it may be turned off by TMU driver (e.g. during
->>> unbind). In such case these other blocks also should be tested and
->>> checked whether they take this regulator and enable it.
->>> ---
->>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 25 ++++++++++++++++++++++
->>>  1 file changed, 25 insertions(+)
 >>
-> 
-> 
+>> I'll share here too the findings I mentioned over IRC. As you suggested I
+>> add some printouts and noticed that the ISTRn (Interrupt Status) registers
+>> values are indeed preserved on resume so I can know for example if the
+>> wakeup source was the power gpio-key or cros_ec keyboard. I've checked the
+>> values of the registers against the Exynos manual and they corresponds to
+>> the interrupt sources in each case so the values are correct.
+>>
+>> So as you said, it seems that is not that the IP block loses its state on
+>> S2R but that something is blindly writing the IESRn (Interrupt Enable Set)
+>> registers.
+>
+> I'll postulate an alternate theory here.  You can tell me if you buy
+> it or if you think I've been out in the sun too long.
+>
+> Let's say that the interrupt combiner's status registers show the raw
+> status as asserted by whatever is hooked up to the combiner.  This
+> means that even if the combiner got reset we could still read the
+> status register and get the status of the source.  Imagine that the
+> combiner is like a GPIO bank.  If you reset the GPIO bank, you'll lose
+> all kinds of config (input vs. output, edge interrupt status, maybe
+> pulls, etc).  ...but you can still read the state asserted by an
+> external source, right?
+>
 
+Right, this makes sense. I assumed status was latched output and might
+be lost. But that's wrong assumption I believe.
 
--- 
-Markus Reichl
+> In this case the combiner's interrupt source is 'EINT 11'.  ...and I'm
+> pretty sure that the controller managine 'EINT 11' _doesn't_ lose
+> power across suspend/resume...
+>
+>
+> I'll further bolster my theory by saying that _almost nothing_ in the
+> exynos keeps power across suspend/resume.  The UART?  Nope.  The GPIO
+> controllers?  Nuh-uh.  The GIC?  Sorry, but no.  The clock tree?  It
+> might be nice, but you're out of luck.  ...so it would make me
+> terribly surprised to see the combiner keep power.
+>
+
+Interesting even GIC loses power ? I would be interested in knowing more
+details as who will wake up the system then. Is the wakeup source
+offloaded to some external power controller ?
+
+>
+>> To reduce the possible s/w components that could be doing this, I booted a
+>> signed FIT image directly using the RO U-Boot instead of chain loading a
+>> mainline nv-uboot. In this configuration I've the same issue so it seems
+>> that if something is zeroing those registers on S2R, this can't be changed
+>> without void the warranty of these machines.
+>>
+>> I also looked at the downstream ChromiumOS v3.8 tree [0] and I see that
+>> they have a very similar solution than my patch, the IESRn are also saved
+>> but using a notifier for the CPU_PM_ENTER and CPU_PM_EXIT events instead
+>> or registering a syscore ops but the idea is basically the same.
+>
+> Yup, you can see where kliegs added it in
+> <https://chromium-review.googlesource.com/#/c/27964/>.  As per the
+> comments in that CL, this was probably broken in:
+>
+> 063bd6f ARM: EXYNOS: Remove GIC save & restore function
+>
+>
+>> I have to take a look to the U-boot that is shipped on the device, I think
+>> the correct branch is [1] but I'm not sure if that is the correct one.
+>
+> It is the right one.  If U-Boot were touching this (which would
+> greatly surprise me) it should be here:
+>
+> arch/arm/include/asm/arch-exynos/cpu.h
+>
+> ...and it's not.  Doing a grep for '10440000' (the combiner base
+> address) doesn't find anything in U-Boot either, which makes it less
+> likely.  ...and it's even less likely since the amount of code that is
+> in U-Boot that runs at resume time is a very small subset and I'm
+> fairly familiar with it and I would have remembered it touching the
+> combiner.
+>
+
+Yes, I did search and find nothing, so definitely not U-Boot if I am
+looking at the right source.
+
+> It's POSSIBLE that the internal ROM in exynos is clobbering this, but
+> as per above it seems crazy unlikely and I think it's just losing
+> power.
+>
+
+Agreed, not because I believe ROM code are not crazy but because of the
+theory you have provided above :)
+
+Regards,
+Sudeep
