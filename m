@@ -1,155 +1,79 @@
-From: Przemyslaw Marczak <p.marczak@samsung.com>
-Subject: Re: [RFC] ARM: exynos: MCPM: [is this a] fix for secondary boot on
- 5422?
-Date: Mon, 15 Jun 2015 16:00:21 +0200
-Message-ID: <557EDA75.8060807@samsung.com>
-References: <1416896510-24612-1-git-send-email-khilman@kernel.org>
- <CAJKOXPfLEV1sQsz87ULDKX4vijqRpbGj7AcOEDiy83kukvVKVg@mail.gmail.com>
- <557EA6AE.304@samsung.com>
- <CAJKOXPfRgTf=6Z=pbz3zQj__Nt_uLtqhD65pYc3NMrF_NJ62=g@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
+ on suspend
+Date: Mon, 15 Jun 2015 17:00:32 +0200
+Message-ID: <557EE890.2050001@collabora.co.uk>
+References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>	<557AB00C.5040606@arm.com>	<557AC23D.8040602@collabora.co.uk>	<557AC85E.5070705@arm.com>	<557AD728.7090908@collabora.co.uk>	<557B34A7.4090507@collabora.co.uk> <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com> <557E82BC.7080203@collabora.co.uk> <557E947B.3030804@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:28577 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753292AbbFOOAs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 10:00:48 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NPZ00CDWO99UPC0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 15 Jun 2015 15:00:45 +0100 (BST)
-In-reply-to: <CAJKOXPfRgTf=6Z=pbz3zQj__Nt_uLtqhD65pYc3NMrF_NJ62=g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <557E947B.3030804@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>, Doug Anderson <dianders@chromium.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski.k@gmail.com>
-Cc: Kevin Hilman <khilman@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Olof Johansson <olof@lixom.net>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Doug Anderson <dianders@chromium.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
+Hello Sudeep,
 
-On 06/15/2015 02:17 PM, Krzysztof Koz=C5=82owski wrote:
-> 2015-06-15 19:19 GMT+09:00 Przemyslaw Marczak <p.marczak@samsung.com>=
-:
->> Hello Krzysztof,
+On 06/15/2015 11:01 AM, Sudeep Holla wrote:
+> 
+> 
+> On 15/06/15 08:46, Javier Martinez Canillas wrote:
+> [...]
+> 
 >>
+>> Sudeep, so we may need something like $subject after all from Doug's
+>> explanations since the combiner chip state is lost during a S2R. I know
+>> that it adds more duplicated code (others irqchip drivers do the same)
+>> and it may not scale well if a chip has many registers but is the best
+>> solution I could came with.
 >>
->> On 06/14/2015 10:56 AM, Krzysztof Koz=C5=82owski wrote:
->>>
->>>
->>> Hi,
->>>
->>> +Cc Marek, Bartlomiej, Kukjin Kim,
->>>
->>>
->>> I would like to bring back this topic. Unfortunately I don't have
->>> access to source code of BL1 (or any other firmware blob) so my
->>> knowledge here comes mostly from experimenting and from looking at
->>> sources of vendor kernel for Gear 2 (Exynos3250) and SM-G900H (Gala=
-xy
->>> S5, Exynos5422).
->>>
->>> It seems that some booting firmware (I would suspect BL1 because th=
-is
->>> ships Samsung to Hardkernel) uses SPARE2 as synchronization mechani=
-sm.
->>> For example vendor kernel, when booting little core, it waits till
->>> SPARE2=3D=3D1 and then executes software reset for this core.
->>>
->>> Observations shown that BL1 for Odroid, when booting secondary litt=
-le
->>> core:
->>> 1. Expects that SPARE2 register will be initialized to 1.
->>> 2. If it is, then it sets it to 0, proceeds further and little core=
- boots.
->>> 3. If it is not, then it sets it to 1 and waits. Maybe this is a
->>> notification to userspace - reset me please!
->>>
->>> Unfortunately executing software reset in that time (at point 3)
->>> stopped kernel from booting. No logs/dmesg and I was unable to turn=
- on
->>> early printk.
->>>
->>> The answer why two of little cores boot is quite simple now. At
->>> beginning the SPARE2=3D=3D0 so first little core will set it to 1 a=
-nd wait
->>> till software reset. Kernel timeouts on this CPU bring up so it sta=
-rts
->>> the sequence for next little core. Now the SPARE2=3D=3D1 so the cor=
-e boots
->>> fine and SPARE2 is set to 0. The last little core starts from
->>> SPARE2=3D=3D0, sets it to 1 and waits for software reset.
->>>
->>> Since no one knows how this exactly works and we are stuck with BL1
->>> provided as is, then IMHO the patch makes sense.
->>>
->>> Kevin, can you refresh the patch?
->>> It would be nice to:
->>> 1. set SPARE2 only for Odroid (of_machine_is_compatible()),
->>> 2. extend the explanation.
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>>
+> 
+> OK
+> 
+>> If you have a suggestion for a better alternative, I can give a try and
+>> write the patch. But I think $subject could also land to fix this issue
+>> since is a very non intrusive change and later can be changed once the
+>> irqchip core supports this use case.
 >>
->> I'm trying port the hardkernel's SPL to the mainline U-Boot at prese=
-nt. The
->> mainline SPL is implemented for E5420 and E5800. But there are few
->> differences:
->> - different DRAM
->> - different clocks
->> - different boot core (peach-pi boots from A15)
->> - bl2 signature
->> - hdk's SPL uses smc calls
->> ... and some more.
->>
->> The BL1 keeps signature key and some part of code, but it's code is
->> proprietary - but we should be able to setup the secondary cores in =
-BL2.
->>
->> When, I get the basic setup working, then I'm going to focus on the
->> secondary CPU's init. I don't have the documentation for iROM code, =
-so
->> everything takes a while.
->
-> Great, good luck!
+> 
+> Agreed. But I would suggest also to add MASK_ON_SUSPEND and set_irq_wake
+> also and then you can restore iff it's non-zero as irq core will take
+> care of most of the non-wakeup sources. Because I am planning to push
+
+I've looking at this and a problem I found is that IIUC the set_irq_wake
+is not propagated from the the Exynos pinctrl / GPIO driver which is the
+combiner's external interrupt source so the callback is never called.
+Which means that right now only the state of the wakeup source IRQs can't
+be saved since that information is not present.
+
+The drivers/pinctrl/samsung/pinctrl-exynos.c driver enables and disables
+the combiner interrupts but its .irq_set_wake handler only updates the
+wakeup source mask for the external interrupts but does not call the
+combiner .set_irq_wake so that should be changed as well.
+
+But even for non-wakeup interrupts, I found that they are not enabled when
+adding the MASK_ON_SUSPEND on my tests. I don't know if that is related
+to the pinctrl driver missing something else though.
+
+> MASK_ON_SUSPEND to GIC and it will break this combiner if it assumes the
+> combiner interrupts are always on in GIC. Implement set_irq_wake as
+> enable_irq_wake (comb_irq_to_GIC).
 >
 
-Thanks!
+Right, but can we do this as a follow-up? S2R is currently broken on these
+machines and $subject is I think a reasonable small fix that won't introduce
+any regressions.
 
->>
->>   If you looking for the lowlevel code, which is executed after wake=
-up,
->> please check this :
->> https://github.com/hardkernel/u-boot/blob/odroidxu3-v2012.07/board/s=
-amsung/smdk5422/lowlevel_init.S
->>
->> The 'lowlevel_init' label is always executed on boot.
->
-> I already looked at it without any success. I couldn't find the reaso=
-n
-> of this SPARE2 behaviour in that code. However I found there one smal=
-l
-> funny fact about magic values for low power modes - kernel and u-boot
-> expect some of the values in different places.
->
-> Best regards,
-> Krzysztof
->
+To do a more intrusive change, I should better understand the interactions
+between the Exynos pinctrl / GPIO, interrupt combiner and the GIC and in the
+meantime S2R will continue to be broken on these platforms unless someone
+more familiar with all this could point me in the right direction.
 
-I checked the SPARE registers, and only SPARE0 is set by iROM code to=20
-0xFCBA0D10, it is defined in the kernel as: S5P_CHECK_AFTR. I didn't=20
-analyzed the kernel code yet, however it looks, that it doesn't use=20
-SPARE0 register.
-
-I need finish the basic SPL support, and then will start synchronize=20
-with the kernel.
+> Regards,
+> Sudeep
+> 
 
 Best regards,
---=20
-Przemyslaw Marczak
-Samsung R&D Institute Poland
-Samsung Electronics
-p.marczak@samsung.com
+Javier
