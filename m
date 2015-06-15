@@ -1,23 +1,22 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v7 3/8] mfd: cros_ec: Move protocol helpers out of the
- MFD driver
-Date: Mon, 15 Jun 2015 13:23:38 +0100
-Message-ID: <20150615122338.GC3266@x1>
+Subject: Re: [PATCH v7 4/8] mfd: cros_ec: add proto v3 skeleton
+Date: Mon, 15 Jun 2015 13:23:55 +0100
+Message-ID: <20150615122355.GD3266@x1>
 References: <1433847889-7220-1-git-send-email-javier.martinez@collabora.co.uk>
- <1433847889-7220-4-git-send-email-javier.martinez@collabora.co.uk>
+ <1433847889-7220-5-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:33431 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932186AbbFOMXt (ORCPT
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:36814 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932208AbbFOMYL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 08:23:49 -0400
-Received: by wiwd19 with SMTP id d19so73312044wiw.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2015 05:23:48 -0700 (PDT)
+	Mon, 15 Jun 2015 08:24:11 -0400
+Received: by wgzl5 with SMTP id l5so42501073wgz.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2015 05:24:09 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1433847889-7220-4-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1433847889-7220-5-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
@@ -25,22 +24,19 @@ Cc: Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>, Doug 
 
 On Tue, 09 Jun 2015, Javier Martinez Canillas wrote:
 
-> The MFD driver should only have the logic to instantiate its child de=
-vices
-> and setup any shared resources that will be used by the subdevices dr=
-ivers.
+> From: Stephen Barber <smbarber@chromium.org>
 >=20
-> The cros_ec MFD is more complex than expected since it also has helpe=
-rs to
-> communicate with the EC. So the driver will only get more bigger as o=
-ther
-> protocols are supported in the future. So move the communication prot=
-ocol
-> helpers to its own driver as drivers/platform/chrome/cros_ec_proto.c.
+> Add support in cros_ec.c to handle EC host command protocol v3.
+> For v3+, probe for maximum shared protocol version and max
+> request, response, and passthrough sizes. For now, this will
+> always fall back to v2, since there is no bus-specific code
+> for handling proto v3 packets.
 >=20
-> Suggested-by: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Stephen Barber <smbarber@chromium.org>
 > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
 =2Euk>
+> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> Tested-by: Gwendal Grignou <gwendal@chromium.org>
 > Tested-by: Heiko Stuebner <heiko@sntech.de>
 > Acked-by: Lee Jones <lee.jones@linaro.org>
 > Acked-by: Olof Johansson <olof@lixom.net>
@@ -57,319 +53,179 @@ Applied, thanks.
 > Changes since v4: None
 >=20
 > Changes since v3:
->  - Added tested-by tag from Heiko Stuebner.
+>  - Added tested-by from Heiko Stuebner.
 >  - Added acked-by tag from Lee Jones.
 >=20
-> Changes since v2: None, new patch.
-> ---
->  drivers/i2c/busses/Kconfig              |   2 +-
->  drivers/input/keyboard/Kconfig          |   2 +-
->  drivers/mfd/Kconfig                     |   6 +-
->  drivers/mfd/cros_ec.c                   |  96 ----------------------=
-----
->  drivers/platform/chrome/Kconfig         |   9 ++-
->  drivers/platform/chrome/Makefile        |   1 +
->  drivers/platform/chrome/cros_ec_proto.c | 115 ++++++++++++++++++++++=
-++++++++++
->  7 files changed, 129 insertions(+), 102 deletions(-)
->  create mode 100644 drivers/platform/chrome/cros_ec_proto.c
+> Changes since v2:
+>  - Add the helpers to the drivers/platform/chrome/cros_ec_proto.c dri=
+ver
+>    instead of drivers/mfd/cros_ec.c. Suggested by Lee Jones.
+>  - Rename the proto probe functions for proto_query since probe has a
+>    special meaning in Linux so is confusing.
 >=20
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 2255af23b9c7..5f1c1c4f5d87 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -1103,7 +1103,7 @@ config I2C_SIBYTE
-> =20
->  config I2C_CROS_EC_TUNNEL
->  	tristate "ChromeOS EC tunnel I2C bus"
-> -	depends on MFD_CROS_EC
-> +	depends on CROS_EC_PROTO
->  	help
->  	  If you say yes here you get an I2C bus that will tunnel i2c comma=
-nds
->  	  through to the other side of the ChromeOS EC to the i2c bus
-> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/=
-Kconfig
-> index 106fbac7f8c5..e8eb60c6d83e 100644
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@ -677,7 +677,7 @@ config KEYBOARD_W90P910
->  config KEYBOARD_CROS_EC
->  	tristate "ChromeOS EC keyboard"
->  	select INPUT_MATRIXKMAP
-> -	depends on MFD_CROS_EC
-> +	depends on CROS_EC_PROTO
->  	help
->  	  Say Y here to enable the matrix keyboard used by ChromeOS devices
->  	  and implemented on the ChromeOS EC. You must enable one bus optio=
-n
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index d5ad04dad081..cf3b86d441f7 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -94,6 +94,8 @@ config MFD_AXP20X
->  config MFD_CROS_EC
->  	tristate "ChromeOS Embedded Controller"
->  	select MFD_CORE
-> +	select CHROME_PLATFORMS
-> +	select CROS_EC_PROTO
->  	help
->  	  If you say Y here you get support for the ChromeOS Embedded
->  	  Controller (EC) providing keyboard, battery and power services.
-> @@ -102,7 +104,7 @@ config MFD_CROS_EC
-> =20
->  config MFD_CROS_EC_I2C
->  	tristate "ChromeOS Embedded Controller (I2C)"
-> -	depends on MFD_CROS_EC && I2C
-> +	depends on MFD_CROS_EC && CROS_EC_PROTO && I2C
-> =20
->  	help
->  	  If you say Y here, you get support for talking to the ChromeOS
-> @@ -112,7 +114,7 @@ config MFD_CROS_EC_I2C
-> =20
->  config MFD_CROS_EC_SPI
->  	tristate "ChromeOS Embedded Controller (SPI)"
-> -	depends on MFD_CROS_EC && SPI && OF
-> +	depends on MFD_CROS_EC && CROS_EC_PROTO && SPI && OF
-> =20
->  	---help---
->  	  If you say Y here, you get support for talking to the ChromeOS EC
+> Changes since v1:
+>  - Squash change https://chromium-review.googlesource.com/#/c/262870/=
+ in
+>    the patch. Suggested by Gwendal Grignou
+>  - Add Reviewed-by and Tested-by tags from Gwendal Grignou
+> ---
+>  drivers/mfd/cros_ec.c                   |  23 ++-
+>  drivers/mfd/cros_ec_i2c.c               |   4 +
+>  drivers/mfd/cros_ec_spi.c               |   7 +-
+>  drivers/platform/chrome/cros_ec_lpc.c   |   4 +
+>  drivers/platform/chrome/cros_ec_proto.c | 339 ++++++++++++++++++++++=
+++++++----
+>  include/linux/mfd/cros_ec.h             |  28 ++-
+>  6 files changed, 355 insertions(+), 50 deletions(-)
+>=20
 > diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index 4a0f6dfcd376..d857f6a2b57b 100644
+> index d857f6a2b57b..08d82bfc5268 100644
 > --- a/drivers/mfd/cros_ec.c
 > +++ b/drivers/mfd/cros_ec.c
-> @@ -23,102 +23,6 @@
->  #include <linux/module.h>
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/cros_ec.h>
-> -#include <linux/mfd/cros_ec_commands.h>
-> -#include <linux/delay.h>
-> -
-> -#define EC_COMMAND_RETRIES	50
-> -
-> -int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
-> -		       struct cros_ec_command *msg)
-> -{
-> -	uint8_t *out;
-> -	int csum, i;
-> -
-> -	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
-> -	out =3D ec_dev->dout;
-> -	out[0] =3D EC_CMD_VERSION0 + msg->version;
-> -	out[1] =3D msg->command;
-> -	out[2] =3D msg->outsize;
-> -	csum =3D out[0] + out[1] + out[2];
-> -	for (i =3D 0; i < msg->outsize; i++)
-> -		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->data[i];
-> -	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] =3D (uint8_t)(csum & 0xf=
-f);
-> -
-> -	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
-> -}
-> -EXPORT_SYMBOL(cros_ec_prepare_tx);
-> -
-> -int cros_ec_check_result(struct cros_ec_device *ec_dev,
-> -			 struct cros_ec_command *msg)
-> -{
-> -	switch (msg->result) {
-> -	case EC_RES_SUCCESS:
-> -		return 0;
-> -	case EC_RES_IN_PROGRESS:
-> -		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-> -			msg->command);
-> -		return -EAGAIN;
-> -	default:
-> -		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
-> -			msg->command, msg->result);
-> -		return 0;
+> @@ -36,19 +36,22 @@ int cros_ec_register(struct cros_ec_device *ec_de=
+v)
+>  	struct device *dev =3D ec_dev->dev;
+>  	int err =3D 0;
+> =20
+> -	if (ec_dev->din_size) {
+> -		ec_dev->din =3D devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
+> -		if (!ec_dev->din)
+> -			return -ENOMEM;
 > -	}
-> -}
-> -EXPORT_SYMBOL(cros_ec_check_result);
-> -
-> -int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
-> -		     struct cros_ec_command *msg)
-> -{
-> -	int ret;
-> -
-> -	mutex_lock(&ec_dev->lock);
-> -	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
-> -	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
-> -		int i;
-> -		struct cros_ec_command *status_msg;
-> -		struct ec_response_get_comms_status *status;
-> -
-> -		status_msg =3D kmalloc(sizeof(*status_msg) + sizeof(*status),
-> -				     GFP_KERNEL);
-> -		if (!status_msg) {
-> -			ret =3D -ENOMEM;
-> -			goto exit;
-> -		}
-> -
-> -		status_msg->version =3D 0;
-> -		status_msg->command =3D EC_CMD_GET_COMMS_STATUS;
-> -		status_msg->insize =3D sizeof(*status);
-> -		status_msg->outsize =3D 0;
-> -
-> -		/*
-> -		 * Query the EC's status until it's no longer busy or
-> -		 * we encounter an error.
-> -		 */
-> -		for (i =3D 0; i < EC_COMMAND_RETRIES; i++) {
-> -			usleep_range(10000, 11000);
-> -
-> -			ret =3D ec_dev->cmd_xfer(ec_dev, status_msg);
-> -			if (ret < 0)
-> -				break;
-> -
-> -			msg->result =3D status_msg->result;
-> -			if (status_msg->result !=3D EC_RES_SUCCESS)
-> -				break;
-> -
-> -			status =3D (struct ec_response_get_comms_status *)
-> -				 status_msg->data;
-> -			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
-> -				break;
-> -		}
-> -
-> -		kfree(status_msg);
+> -	if (ec_dev->dout_size) {
+> -		ec_dev->dout =3D devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
+> -		if (!ec_dev->dout)
+> -			return -ENOMEM;
 > -	}
-> -exit:
-> -	mutex_unlock(&ec_dev->lock);
-> -
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL(cros_ec_cmd_xfer);
-> =20
->  static const struct mfd_cell cros_devs[] =3D {
->  	{
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrom=
-e/Kconfig
-> index 2a6531a5fde8..cb1329919527 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -40,7 +40,7 @@ config CHROMEOS_PSTORE
-> =20
->  config CROS_EC_CHARDEV
->          tristate "Chrome OS Embedded Controller userspace device int=
-erface"
-> -        depends on MFD_CROS_EC
-> +        depends on CROS_EC_PROTO
->          ---help---
->            This driver adds support to talk with the ChromeOS EC from=
- userspace.
-> =20
-> @@ -49,7 +49,7 @@ config CROS_EC_CHARDEV
-> =20
->  config CROS_EC_LPC
->          tristate "ChromeOS Embedded Controller (LPC)"
-> -        depends on MFD_CROS_EC && (X86 || COMPILE_TEST)
-> +        depends on MFD_CROS_EC && CROS_EC_PROTO && (X86 || COMPILE_T=
-EST)
->          help
->            If you say Y here, you get support for talking to the Chro=
-meOS EC
->            over an LPC bus. This uses a simple byte-level protocol wi=
-th a
-> @@ -59,4 +59,9 @@ config CROS_EC_LPC
->            To compile this driver as a module, choose M here: the
->            module will be called cros_ec_lpc.
-> =20
-> +config CROS_EC_PROTO
-> +        bool
-> +        help
-> +          ChromeOS EC communication protocol helpers.
+> +	ec_dev->max_request =3D sizeof(struct ec_params_hello);
+> +	ec_dev->max_response =3D sizeof(struct ec_response_get_protocol_inf=
+o);
+> +	ec_dev->max_passthru =3D 0;
 > +
->  endif # CHROMEOS_PLATFORMS
-> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chro=
-me/Makefile
-> index bd8d8601e875..4a11b010f5d8 100644
-> --- a/drivers/platform/chrome/Makefile
-> +++ b/drivers/platform/chrome/Makefile
-> @@ -4,3 +4,4 @@ obj-$(CONFIG_CHROMEOS_PSTORE)	+=3D chromeos_pstore.o
->  cros_ec_devs-objs               :=3D cros_ec_dev.o cros_ec_sysfs.o c=
-ros_ec_lightbar.o
->  obj-$(CONFIG_CROS_EC_CHARDEV)   +=3D cros_ec_devs.o
->  obj-$(CONFIG_CROS_EC_LPC)       +=3D cros_ec_lpc.o
-> +obj-$(CONFIG_CROS_EC_PROTO)	+=3D cros_ec_proto.o
+> +	ec_dev->din =3D devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
+> +	if (!ec_dev->din)
+> +		return -ENOMEM;
+> +
+> +	ec_dev->dout =3D devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
+> +	if (!ec_dev->dout)
+> +		return -ENOMEM;
+> =20
+>  	mutex_init(&ec_dev->lock);
+> =20
+> +	cros_ec_query_all(ec_dev);
+> +
+>  	err =3D mfd_add_devices(dev, 0, cros_devs,
+>  			      ARRAY_SIZE(cros_devs),
+>  			      NULL, ec_dev->irq, NULL);
+> diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
+> index fbf7819f5de5..b400bfa2772a 100644
+> --- a/drivers/mfd/cros_ec_i2c.c
+> +++ b/drivers/mfd/cros_ec_i2c.c
+> @@ -143,8 +143,12 @@ static int cros_ec_i2c_probe(struct i2c_client *=
+client,
+>  	ec_dev->priv =3D client;
+>  	ec_dev->irq =3D client->irq;
+>  	ec_dev->cmd_xfer =3D cros_ec_cmd_xfer_i2c;
+> +	ec_dev->pkt_xfer =3D NULL;
+>  	ec_dev->ec_name =3D client->name;
+>  	ec_dev->phys_name =3D client->adapter->name;
+> +	ec_dev->din_size =3D sizeof(struct ec_host_response) +
+> +			   sizeof(struct ec_response_get_protocol_info);
+> +	ec_dev->dout_size =3D sizeof(struct ec_host_request);
+> =20
+>  	err =3D cros_ec_register(ec_dev);
+>  	if (err) {
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 573730fec947..04da2f288ef8 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -361,10 +361,13 @@ static int cros_ec_spi_probe(struct spi_device =
+*spi)
+>  	ec_dev->priv =3D ec_spi;
+>  	ec_dev->irq =3D spi->irq;
+>  	ec_dev->cmd_xfer =3D cros_ec_cmd_xfer_spi;
+> +	ec_dev->pkt_xfer =3D NULL;
+>  	ec_dev->ec_name =3D ec_spi->spi->modalias;
+>  	ec_dev->phys_name =3D dev_name(&ec_spi->spi->dev);
+> -	ec_dev->din_size =3D EC_MSG_BYTES + EC_MSG_PREAMBLE_COUNT;
+> -	ec_dev->dout_size =3D EC_MSG_BYTES;
+> +	ec_dev->din_size =3D EC_MSG_PREAMBLE_COUNT +
+> +			   sizeof(struct ec_host_response) +
+> +			   sizeof(struct ec_response_get_protocol_info);
+> +	ec_dev->dout_size =3D sizeof(struct ec_host_request);
+> =20
+>  	err =3D cros_ec_register(ec_dev);
+>  	if (err) {
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform=
+/chrome/cros_ec_lpc.c
+> index 214ae7fef984..06c5790b2c28 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -205,7 +205,11 @@ static int cros_ec_lpc_probe(struct platform_dev=
+ice *pdev)
+>  	ec_dev->ec_name =3D pdev->name;
+>  	ec_dev->phys_name =3D dev_name(dev);
+>  	ec_dev->cmd_xfer =3D cros_ec_cmd_xfer_lpc;
+> +	ec_dev->pkt_xfer =3D NULL;
+>  	ec_dev->cmd_readmem =3D cros_ec_lpc_readmem;
+> +	ec_dev->din_size =3D sizeof(struct ec_host_response) +
+> +			   sizeof(struct ec_response_get_protocol_info);
+> +	ec_dev->dout_size =3D sizeof(struct ec_host_request);
+> =20
+>  	ret =3D cros_ec_register(ec_dev);
+>  	if (ret) {
 > diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platfo=
 rm/chrome/cros_ec_proto.c
-> new file mode 100644
-> index 000000000000..58e98a24fd08
-> --- /dev/null
+> index 58e98a24fd08..990308ca384f 100644
+> --- a/drivers/platform/chrome/cros_ec_proto.c
 > +++ b/drivers/platform/chrome/cros_ec_proto.c
-> @@ -0,0 +1,115 @@
-> +/*
-> + * ChromeOS EC communication protocol helper functions
-> + *
-> + * Copyright (C) 2015 Google, Inc
-> + *
-> + * This software is licensed under the terms of the GNU General Publ=
-ic
-> + * License version 2, as published by the Free Software Foundation, =
-and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/mfd/cros_ec.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +
-> +#define EC_COMMAND_RETRIES	50
-> +
-> +int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
-> +		       struct cros_ec_command *msg)
+> @@ -22,11 +22,100 @@
+> =20
+>  #define EC_COMMAND_RETRIES	50
+> =20
+> +static int prepare_packet(struct cros_ec_device *ec_dev,
+> +			  struct cros_ec_command *msg)
 > +{
-> +	uint8_t *out;
-> +	int csum, i;
+> +	struct ec_host_request *request;
+> +	u8 *out;
+> +	int i;
+> +	u8 csum =3D 0;
 > +
-> +	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
+> +	BUG_ON(ec_dev->proto_version !=3D EC_HOST_REQUEST_VERSION);
+> +	BUG_ON(msg->outsize + sizeof(*request) > ec_dev->dout_size);
+> +
 > +	out =3D ec_dev->dout;
-> +	out[0] =3D EC_CMD_VERSION0 + msg->version;
-> +	out[1] =3D msg->command;
-> +	out[2] =3D msg->outsize;
-> +	csum =3D out[0] + out[1] + out[2];
+> +	request =3D (struct ec_host_request *)out;
+> +	request->struct_version =3D EC_HOST_REQUEST_VERSION;
+> +	request->checksum =3D 0;
+> +	request->command =3D msg->command;
+> +	request->command_version =3D msg->version;
+> +	request->reserved =3D 0;
+> +	request->data_len =3D msg->outsize;
+> +
+> +	for (i =3D 0; i < sizeof(*request); i++)
+> +		csum +=3D out[i];
+> +
+> +	/* Copy data and update checksum */
+> +	memcpy(out + sizeof(*request), msg->data, msg->outsize);
 > +	for (i =3D 0; i < msg->outsize; i++)
-> +		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->data[i];
-> +	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] =3D (uint8_t)(csum & 0xf=
-f);
+> +		csum +=3D msg->data[i];
 > +
-> +	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
+> +	request->checksum =3D -csum;
+> +
+> +	return sizeof(*request) + msg->outsize;
 > +}
-> +EXPORT_SYMBOL(cros_ec_prepare_tx);
 > +
-> +int cros_ec_check_result(struct cros_ec_device *ec_dev,
-> +			 struct cros_ec_command *msg)
-> +{
-> +	switch (msg->result) {
-> +	case EC_RES_SUCCESS:
-> +		return 0;
-> +	case EC_RES_IN_PROGRESS:
-> +		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-> +			msg->command);
-> +		return -EAGAIN;
-> +	default:
-> +		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
-> +			msg->command, msg->result);
-> +		return 0;
-> +	}
-> +}
-> +EXPORT_SYMBOL(cros_ec_check_result);
-> +
-> +int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
-> +		     struct cros_ec_command *msg)
+> +static int send_command(struct cros_ec_device *ec_dev,
+> +			struct cros_ec_command *msg)
 > +{
 > +	int ret;
 > +
-> +	mutex_lock(&ec_dev->lock);
-> +	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
+> +	if (ec_dev->proto_version > 2)
+> +		ret =3D ec_dev->pkt_xfer(ec_dev, msg);
+> +	else
+> +		ret =3D ec_dev->cmd_xfer(ec_dev, msg);
+> +
 > +	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
 > +		int i;
 > +		struct cros_ec_command *status_msg;
@@ -377,10 +233,8 @@ f);
 > +
 > +		status_msg =3D kmalloc(sizeof(*status_msg) + sizeof(*status),
 > +				     GFP_KERNEL);
-> +		if (!status_msg) {
-> +			ret =3D -ENOMEM;
-> +			goto exit;
-> +		}
+> +		if (!status_msg)
+> +			return -ENOMEM;
 > +
 > +		status_msg->version =3D 0;
 > +		status_msg->command =3D EC_CMD_GET_COMMS_STATUS;
@@ -410,12 +264,376 @@ f);
 > +
 > +		kfree(status_msg);
 > +	}
-> +exit:
-> +	mutex_unlock(&ec_dev->lock);
 > +
 > +	return ret;
 > +}
-> +EXPORT_SYMBOL(cros_ec_cmd_xfer);
+> +
+>  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+>  		       struct cros_ec_command *msg)
+>  {
+> -	uint8_t *out;
+> -	int csum, i;
+> +	u8 *out;
+> +	u8 csum;
+> +	int i;
+> +
+> +	if (ec_dev->proto_version > 2)
+> +		return prepare_packet(ec_dev, msg);
+> =20
+>  	BUG_ON(msg->outsize > EC_PROTO2_MAX_PARAM_SIZE);
+>  	out =3D ec_dev->dout;
+> @@ -36,7 +125,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_d=
+ev,
+>  	csum =3D out[0] + out[1] + out[2];
+>  	for (i =3D 0; i < msg->outsize; i++)
+>  		csum +=3D out[EC_MSG_TX_HEADER_BYTES + i] =3D msg->data[i];
+> -	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] =3D (uint8_t)(csum & 0xf=
+f);
+> +	out[EC_MSG_TX_HEADER_BYTES + msg->outsize] =3D csum;
+> =20
+>  	return EC_MSG_TX_PROTO_BYTES + msg->outsize;
+>  }
+> @@ -60,54 +149,232 @@ int cros_ec_check_result(struct cros_ec_device =
+*ec_dev,
+>  }
+>  EXPORT_SYMBOL(cros_ec_check_result);
+> =20
+> -int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+> -		     struct cros_ec_command *msg)
+> +static int cros_ec_host_command_proto_query(struct cros_ec_device *e=
+c_dev,
+> +					    int devidx,
+> +					    struct cros_ec_command *msg)
+>  {
+> +	/*
+> +	 * Try using v3+ to query for supported protocols. If this
+> +	 * command fails, fall back to v2. Returns the highest protocol
+> +	 * supported by the EC.
+> +	 * Also sets the max request/response/passthru size.
+> +	 */
+>  	int ret;
+> =20
+> -	mutex_lock(&ec_dev->lock);
+> -	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
+> -	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
+> -		int i;
+> -		struct cros_ec_command *status_msg;
+> -		struct ec_response_get_comms_status *status;
+> +	if (!ec_dev->pkt_xfer)
+> +		return -EPROTONOSUPPORT;
+> =20
+> -		status_msg =3D kmalloc(sizeof(*status_msg) + sizeof(*status),
+> -				     GFP_KERNEL);
+> -		if (!status_msg) {
+> -			ret =3D -ENOMEM;
+> -			goto exit;
+> -		}
+> +	memset(msg, 0, sizeof(*msg));
+> +	msg->command =3D EC_CMD_PASSTHRU_OFFSET(devidx) | EC_CMD_GET_PROTOC=
+OL_INFO;
+> +	msg->insize =3D sizeof(struct ec_response_get_protocol_info);
+> =20
+> -		status_msg->version =3D 0;
+> -		status_msg->command =3D EC_CMD_GET_COMMS_STATUS;
+> -		status_msg->insize =3D sizeof(*status);
+> -		status_msg->outsize =3D 0;
+> +	ret =3D send_command(ec_dev, msg);
+> +
+> +	if (ret < 0) {
+> +		dev_dbg(ec_dev->dev,
+> +			"failed to check for EC[%d] protocol version: %d\n",
+> +			devidx, ret);
+> +		return ret;
+> +	}
+> +
+> +	if (devidx > 0 && msg->result =3D=3D EC_RES_INVALID_COMMAND)
+> +		return -ENODEV;
+> +	else if (msg->result !=3D EC_RES_SUCCESS)
+> +		return msg->result;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cros_ec_host_command_proto_query_v2(struct cros_ec_device=
+ *ec_dev)
+> +{
+> +	struct cros_ec_command *msg;
+> +	struct ec_params_hello *hello_params;
+> +	struct ec_response_hello *hello_response;
+> +	int ret;
+> +	int len =3D max(sizeof(*hello_params), sizeof(*hello_response));
+> +
+> +	msg =3D kmalloc(sizeof(*msg) + len, GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	msg->version =3D 0;
+> +	msg->command =3D EC_CMD_HELLO;
+> +	hello_params =3D (struct ec_params_hello *)msg->data;
+> +	msg->outsize =3D sizeof(*hello_params);
+> +	hello_response =3D (struct ec_response_hello *)msg->data;
+> +	msg->insize =3D sizeof(*hello_response);
+> +
+> +	hello_params->in_data =3D 0xa0b0c0d0;
+> +
+> +	ret =3D send_command(ec_dev, msg);
+> +
+> +	if (ret < 0) {
+> +		dev_dbg(ec_dev->dev,
+> +			"EC failed to respond to v2 hello: %d\n",
+> +			ret);
+> +		goto exit;
+> +	} else if (msg->result !=3D EC_RES_SUCCESS) {
+> +		dev_err(ec_dev->dev,
+> +			"EC responded to v2 hello with error: %d\n",
+> +			msg->result);
+> +		ret =3D msg->result;
+> +		goto exit;
+> +	} else if (hello_response->out_data !=3D 0xa1b2c3d4) {
+> +		dev_err(ec_dev->dev,
+> +			"EC responded to v2 hello with bad result: %u\n",
+> +			hello_response->out_data);
+> +		ret =3D -EBADMSG;
+> +		goto exit;
+> +	}
+> +
+> +	ret =3D 0;
+> +
+> + exit:
+> +	kfree(msg);
+> +	return ret;
+> +}
+> +
+> +int cros_ec_query_all(struct cros_ec_device *ec_dev)
+> +{
+> +	struct device *dev =3D ec_dev->dev;
+> +	struct cros_ec_command *proto_msg;
+> +	struct ec_response_get_protocol_info *proto_info;
+> +	int ret;
+> +
+> +	proto_msg =3D kzalloc(sizeof(*proto_msg) + sizeof(*proto_info),
+> +			    GFP_KERNEL);
+> +	if (!proto_msg)
+> +		return -ENOMEM;
+> +
+> +	/* First try sending with proto v3. */
+> +	ec_dev->proto_version =3D 3;
+> +	ret =3D cros_ec_host_command_proto_query(ec_dev, 0, proto_msg);
+> +
+> +	if (ret =3D=3D 0) {
+> +		proto_info =3D (struct ec_response_get_protocol_info *)
+> +			proto_msg->data;
+> +		ec_dev->max_request =3D proto_info->max_request_packet_size -
+> +			sizeof(struct ec_host_request);
+> +		ec_dev->max_response =3D proto_info->max_response_packet_size -
+> +			sizeof(struct ec_host_response);
+> +		ec_dev->proto_version =3D
+> +			min(EC_HOST_REQUEST_VERSION,
+> +					fls(proto_info->protocol_versions) - 1);
+> +		dev_dbg(ec_dev->dev,
+> +			"using proto v%u\n",
+> +			ec_dev->proto_version);
+> +
+> +		ec_dev->din_size =3D ec_dev->max_response +
+> +			sizeof(struct ec_host_response) +
+> +			EC_MAX_RESPONSE_OVERHEAD;
+> +		ec_dev->dout_size =3D ec_dev->max_request +
+> +			sizeof(struct ec_host_request) +
+> +			EC_MAX_REQUEST_OVERHEAD;
+> =20
+>  		/*
+> -		 * Query the EC's status until it's no longer busy or
+> -		 * we encounter an error.
+> +		 * Check for PD
+>  		 */
+> -		for (i =3D 0; i < EC_COMMAND_RETRIES; i++) {
+> -			usleep_range(10000, 11000);
+> +		ret =3D cros_ec_host_command_proto_query(ec_dev, 1, proto_msg);
+> =20
+> -			ret =3D ec_dev->cmd_xfer(ec_dev, status_msg);
+> -			if (ret < 0)
+> -				break;
+> +		if (ret) {
+> +			dev_dbg(ec_dev->dev, "no PD chip found: %d\n", ret);
+> +			ec_dev->max_passthru =3D 0;
+> +		} else {
+> +			dev_dbg(ec_dev->dev, "found PD chip\n");
+> +			ec_dev->max_passthru =3D
+> +				proto_info->max_request_packet_size -
+> +				sizeof(struct ec_host_request);
+> +		}
+> +	} else {
+> +		/* Try querying with a v2 hello message. */
+> +		ec_dev->proto_version =3D 2;
+> +		ret =3D cros_ec_host_command_proto_query_v2(ec_dev);
+> =20
+> -			msg->result =3D status_msg->result;
+> -			if (status_msg->result !=3D EC_RES_SUCCESS)
+> -				break;
+> +		if (ret =3D=3D 0) {
+> +			/* V2 hello succeeded. */
+> +			dev_dbg(ec_dev->dev, "falling back to proto v2\n");
+> =20
+> -			status =3D (struct ec_response_get_comms_status *)
+> -				 status_msg->data;
+> -			if (!(status->flags & EC_COMMS_STATUS_PROCESSING))
+> -				break;
+> +			ec_dev->max_request =3D EC_PROTO2_MAX_PARAM_SIZE;
+> +			ec_dev->max_response =3D EC_PROTO2_MAX_PARAM_SIZE;
+> +			ec_dev->max_passthru =3D 0;
+> +			ec_dev->pkt_xfer =3D NULL;
+> +			ec_dev->din_size =3D EC_MSG_BYTES;
+> +			ec_dev->dout_size =3D EC_MSG_BYTES;
+> +		} else {
+> +			/*
+> +			 * It's possible for a test to occur too early when
+> +			 * the EC isn't listening. If this happens, we'll
+> +			 * test later when the first command is run.
+> +			 */
+> +			ec_dev->proto_version =3D EC_PROTO_VERSION_UNKNOWN;
+> +			dev_dbg(ec_dev->dev, "EC query failed: %d\n", ret);
+> +			goto exit;
+>  		}
+> +	}
+> =20
+> -		kfree(status_msg);
+> +	devm_kfree(dev, ec_dev->din);
+> +	devm_kfree(dev, ec_dev->dout);
+> +
+> +	ec_dev->din =3D devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
+> +	if (!ec_dev->din) {
+> +		ret =3D -ENOMEM;
+> +		goto exit;
+>  	}
+> +
+> +	ec_dev->dout =3D devm_kzalloc(dev, ec_dev->dout_size, GFP_KERNEL);
+> +	if (!ec_dev->dout) {
+> +		devm_kfree(dev, ec_dev->din);
+> +		ret =3D -ENOMEM;
+> +		goto exit;
+> +	}
+> +
+>  exit:
+> +	kfree(proto_msg);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(cros_ec_query_all);
+> +
+> +int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+> +		     struct cros_ec_command *msg)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&ec_dev->lock);
+> +	if (ec_dev->proto_version =3D=3D EC_PROTO_VERSION_UNKNOWN) {
+> +		ret =3D cros_ec_query_all(ec_dev);
+> +		if (ret) {
+> +			dev_err(ec_dev->dev,
+> +				"EC version unknown and query failed; aborting command\n");
+> +			mutex_unlock(&ec_dev->lock);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if (msg->insize > ec_dev->max_response) {
+> +		dev_dbg(ec_dev->dev, "clamping message receive buffer\n");
+> +		msg->insize =3D ec_dev->max_response;
+> +	}
+> +
+> +	if (msg->command < EC_CMD_PASSTHRU_OFFSET(1)) {
+> +		if (msg->outsize > ec_dev->max_request) {
+> +			dev_err(ec_dev->dev,
+> +				"request of size %u is too big (max: %u)\n",
+> +				msg->outsize,
+> +				ec_dev->max_request);
+> +			mutex_unlock(&ec_dev->lock);
+> +			return -EMSGSIZE;
+> +		}
+> +	} else {
+> +		if (msg->outsize > ec_dev->max_passthru) {
+> +			dev_err(ec_dev->dev,
+> +				"passthru rq of size %u is too big (max: %u)\n",
+> +				msg->outsize,
+> +				ec_dev->max_passthru);
+> +			mutex_unlock(&ec_dev->lock);
+> +			return -EMSGSIZE;
+> +		}
+> +	}
+> +	ret =3D send_command(ec_dev, msg);
+>  	mutex_unlock(&ec_dev->lock);
+> =20
+>  	return ret;
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
+h
+> index 7eee38abd02a..59d909434efd 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -22,6 +22,15 @@
+>  #include <linux/mutex.h>
+> =20
+>  /*
+> + * Max bus-specific overhead incurred by request/responses.
+> + * I2C requires 1 additional byte for requests.
+> + * I2C requires 2 additional bytes for responses.
+> + * */
+> +#define EC_PROTO_VERSION_UNKNOWN	0
+> +#define EC_MAX_REQUEST_OVERHEAD		1
+> +#define EC_MAX_RESPONSE_OVERHEAD	2
+> +
+> +/*
+>   * Command interface between EC and AP, for LPC, I2C and SPI interfa=
+ces.
+>   */
+>  enum {
+> @@ -88,6 +97,7 @@ struct cros_ec_command {
+>   *     Returns the number of bytes received if the communication suc=
+ceeded, but
+>   *     that doesn't mean the EC was happy with the command. The call=
+er
+>   *     should check msg.result for the EC's result code.
+> + * @pkt_xfer: send packet to EC and get response
+>   * @lock: one transaction at a time
+>   */
+>  struct cros_ec_device {
+> @@ -104,15 +114,21 @@ struct cros_ec_device {
+>  			   unsigned int bytes, void *dest);
+> =20
+>  	/* These are used to implement the platform-specific interface */
+> +	u16 max_request;
+> +	u16 max_response;
+> +	u16 max_passthru;
+> +	u16 proto_version;
+>  	void *priv;
+>  	int irq;
+> -	uint8_t *din;
+> -	uint8_t *dout;
+> +	u8 *din;
+> +	u8 *dout;
+>  	int din_size;
+>  	int dout_size;
+>  	bool wake_enabled;
+>  	int (*cmd_xfer)(struct cros_ec_device *ec,
+>  			struct cros_ec_command *msg);
+> +	int (*pkt_xfer)(struct cros_ec_device *ec,
+> +			struct cros_ec_command *msg);
+>  	struct mutex lock;
+>  };
+> =20
+> @@ -194,4 +210,12 @@ int cros_ec_remove(struct cros_ec_device *ec_dev=
+);
+>   */
+>  int cros_ec_register(struct cros_ec_device *ec_dev);
+> =20
+> +/**
+> + * cros_ec_register -  Query the protocol version supported by the C=
+hromeOS EC
+> + *
+> + * @ec_dev: Device to register
+> + * @return 0 if ok, -ve on error
+> + */
+> +int cros_ec_query_all(struct cros_ec_device *ec_dev);
+> +
+>  #endif /* __LINUX_MFD_CROS_EC_H */
 
 --=20
 Lee Jones
