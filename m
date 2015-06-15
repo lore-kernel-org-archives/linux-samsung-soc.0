@@ -1,39 +1,38 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [question] [PATCH RFC] clocksource: exynos_mct: remove unneeded
- container_of()
-Date: Mon, 15 Jun 2015 12:39:16 -0700
-Message-ID: <20150615193916.GJ29640@codeaurora.org>
-References: <1434322238.5390.16.camel@mtux>
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Subject: Re: [PATCH v2 1/3] drm/exynos: remove to call mixer_wait_for_vblank
+Date: Mon, 15 Jun 2015 17:39:59 -0300
+Message-ID: <20150615203959.GA4650@joana>
+References: <1434097636-10709-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43532 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754117AbbFOTjS (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59103 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751864AbbFOUkJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 15:39:18 -0400
+	Mon, 15 Jun 2015 16:40:09 -0400
 Content-Disposition: inline
-In-Reply-To: <1434322238.5390.16.camel@mtux>
+In-Reply-To: <1434097636-10709-1-git-send-email-jy0922.shim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexey Klimov <klimov.linux@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, t.dakhran@gmail.com, yury.norov@gmail.com, kgene@kernel.org, k.kozlowski@samsung.com, thomas.abraham@linaro.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com
 
-On 06/15, Alexey Klimov wrote:
+Hi Joonyoung,
+
+2015-06-12 Joonyoung Shim <jy0922.shim@samsung.com>:
+
+> The reason waiting vblank is to be power gated and disabled clocks after
+> dma operation is completed. The dma operation is stopped already before
+> be power gated and clocks are disabled when mixer is disabled by commit
+> 381be025ac1a6("drm/exynos: stop mixer before gating clocks during
+> poweroff"). Don't need to wait vblank anymore.
 > 
-> Patch removes unneeded container_of() macro
-> in exynos4_local_timer_setup(). Instead let's pass mevt pointer
-> to setup and stop functions from exynos4_mct_cpu_notify() 
-> and let them get evt pointer.
-> 
-> Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 > ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-It was done this way to minimize the diff. I don't see any
-problem changing it as you propose.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Gustavo
