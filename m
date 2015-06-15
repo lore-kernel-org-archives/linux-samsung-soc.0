@@ -1,52 +1,81 @@
-From: Beata Michalska <b.michalska@samsung.com>
-Subject: [PATCH v2] ARM: dts: Update video-phy node with syscon phandle for
- Exynos3250
-Date: Mon, 15 Jun 2015 10:12:46 +0200
-Message-ID: <1434355966-4566-1-git-send-email-b.michalska@samsung.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Subject: Re: [PATCHv6 2/4] ARM: dts: exynos5422-odroidxu3: Enable TMU at Exynos5422
+ base
+Date: Mon, 15 Jun 2015 10:41:11 +0200
+Message-ID: <557E8FA7.1090200@fivetechno.de>
+References: <1434277445-5243-1-git-send-email-linux.amoon@gmail.com> <1434277445-5243-2-git-send-email-linux.amoon@gmail.com> <557E181C.7070209@samsung.com> <CANAwSgTOY3MECYLTjgmfSo5WrRuNycSSet2ZDhNTb-=gy8DGYQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:63676 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752177AbbFOIMz (ORCPT
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:53889 "EHLO
+	wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752177AbbFOIl1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 04:12:55 -0400
+	Mon, 15 Jun 2015 04:41:27 -0400
+In-Reply-To: <CANAwSgTOY3MECYLTjgmfSo5WrRuNycSSet2ZDhNTb-=gy8DGYQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, k.kozlowski@samsung.com, kishon@ti.com, javier.martinez@collabora.co.uk, s.nawrocki@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, human.hwang@samsung.com
+To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-As a follow-up to recent changes to Exynos mipi video phy
-driver, introducing support for PMU regmap in commit
-e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression
-by adding support for PMU regmap") add a syscon phandle to
-video-phy node to bring back to life both MIPI DSI display
-and MIPI CSIS-2 camera sensor on Exynos3250.
+Hi Anand, Krzysztof
 
-Signed-off-by: Beata Michalska <b.michalska@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-v2:
-	- removed 'reg' property as this is no longer needed
-	- added signatures as stated in the original thread
+Am 15.06.2015 um 04:23 schrieb Anand Moon:
+> hi Krzysztof
+> 
+> On 15 June 2015 at 05:41, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>> On 14.06.2015 19:24, Anand Moon wrote:
+>>> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+>>> device.
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>> Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+>>
+>> This does not look right.
+>> You put this "Tested-by" since beginning of this patchset (v1) but first
+>> it was LDO10. Then you proposed LDO18 and now you use LDO7 from my
+>> suggestion. Which of this was tested by Markus because I cannot find his
+>> emails with it on LKML?
+> 
+> Markus Reichl tested the earlier version with LDO10.
 
----
- arch/arm/boot/dts/exynos3250.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is right.
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index e3bfb11..f514ead 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -138,8 +138,8 @@
- 
- 		mipi_phy: video-phy@10020710 {
- 			compatible = "samsung,s5pv210-mipi-video-phy";
--			reg = <0x10020710 8>;
- 			#phy-cells = <1>;
-+			syscon = <&pmu_system_controller>;
- 		};
- 
- 		pd_cam: cam-power-domain@10023C00 {
+> Commit logs got carry forward by mistake.
+> 
+> -Anand Moon
+> 
+>>
+>> Krzysztof
+>>
+>>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+>>> ---
+>>> Changes rebase on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung branch for-next
+>>> Changes from v5: Use LDO7 regulator instead of LD010.
+>>>
+>>> The output of LDO18 goes to VDD_EMMC_1V8. This is not regulator for TMU.
+>>>
+>>> I think the schematics are missing some of details but it can be deducted that:
+>>> 1. TEMP SE is supplied by VDD18_TS power domain. It consists of 5
+>>> pairs of pins (XTSTEST_OUT[0-4], XTSEXT_RES[0-4]).
+>>> 2. The VDD18_TS01, VDD18_TS23 and VDD18_TS4 are wired to the LDO7 of
+>>> S2MPS11 PMIC.
+>>> 3. I confirmed with the Exynos5422 datasheet that these
+>>> VDD18_TS{01,23,4} supply the XTSTEST pins (OUT and RES).
+>>>
+>>> So the LDO7 it is... but before using it there is a caveat. The LDO7
+>>> is also connected to VDD of MIPI, HDMI and few more. So when you use
+>>> this regulator in TMU it may be turned off by TMU driver (e.g. during
+>>> unbind). In such case these other blocks also should be tested and
+>>> checked whether they take this regulator and enable it.
+>>> ---
+>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 25 ++++++++++++++++++++++
+>>>  1 file changed, 25 insertions(+)
+>>
+> 
+> 
+
+
 -- 
-1.7.9.5
+Markus Reichl
