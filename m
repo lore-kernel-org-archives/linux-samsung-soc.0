@@ -1,41 +1,58 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [PATCH v2 3/3] drm/exynos: initialize VIDCON0 when fimd is
- disabled
-Date: Mon, 15 Jun 2015 17:44:15 -0300
-Message-ID: <20150615204415.GC4650@joana>
-References: <1434097636-10709-1-git-send-email-jy0922.shim@samsung.com>
- <1434097636-10709-3-git-send-email-jy0922.shim@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] drivers/cpufreq: include <module.h> for modular exynos-cpufreq.c code
+Date: Tue, 16 Jun 2015 01:47:13 +0200
+Message-ID: <5110473.q5rJrrjs9a@vostro.rjw.lan>
+References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com> <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59115 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752028AbbFOUoY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 16:44:24 -0400
-Content-Disposition: inline
-In-Reply-To: <1434097636-10709-3-git-send-email-jy0922.shim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, m.szyprowski@samsung.com, a.hajda@samsung.com
 
-Hi Joonyoung,
-
-2015-06-12 Joonyoung Shim <jy0922.shim@samsung.com>:
-
-> When the fimd is disabled by fimd_disable(), enabled overlay layers also
-> are disabled. If clocks for fimd are enabled by fimd_enable() on this
-> case, it can lead IOMMU page fault. The reason is that VIDCON0_ENVID and
-> VIDCON0_ENVID_F bits of VIDCON0 register are set still even though fimd
-> is disabled, so it may continue display output of prior when clocks for
-> fimd are enabled again.
+On Wednesday, June 03, 2015 05:18:18 PM Paul Gortmaker wrote:
+> This file is built off of a tristate Kconfig option ("ARM_EXYNOS_CPUFREQ")
+> and also contains modular function calls so it should explicitly include
+> module.h to avoid compile breakage during pending header shuffles.
 > 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+I'm assuming that this will go in via the Samsung tree.
+
+
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 ++
->  1 file changed, 2 insertions(+)
+> 
+> [ patch will be appended to the implicit include fixup series, see:
+>   https://lkml.kernel.org/r/1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com
+>   for the original series posting.]
+> 
+>  drivers/cpufreq/exynos-cpufreq.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+> index 82d2fbb20f7e..4c157302365f 100644
+> --- a/drivers/cpufreq/exynos-cpufreq.c
+> +++ b/drivers/cpufreq/exynos-cpufreq.c
+> @@ -10,6 +10,7 @@
+>  */
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/module.h>
+>  #include <linux/err.h>
+>  #include <linux/clk.h>
+>  #include <linux/io.h>
+> 
 
-Reviewed-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-	Gustavo
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
