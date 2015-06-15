@@ -1,268 +1,152 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 (alternative) 1/3] drm/exynos: fimd: ensure proper hw
- state in fimd_clear_channel()
-Date: Mon, 15 Jun 2015 16:18:50 +0900
-Message-ID: <557E7C5A.4020300@samsung.com>
-References: <557AA0D3.8010808@samsung.com>
- <1434100037-12304-1-git-send-email-m.szyprowski@samsung.com>
- <1434100037-12304-2-git-send-email-m.szyprowski@samsung.com>
- <557ACC51.9090109@samsung.com> <557AD805.2050902@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
+ on suspend
+Date: Mon, 15 Jun 2015 09:46:04 +0200
+Message-ID: <557E82BC.7080203@collabora.co.uk>
+References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>	<557AB00C.5040606@arm.com>	<557AC23D.8040602@collabora.co.uk>	<557AC85E.5070705@arm.com>	<557AD728.7090908@collabora.co.uk>	<557B34A7.4090507@collabora.co.uk> <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60139 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753561AbbFOHSx convert rfc822-to-8bit (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57872 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753243AbbFOHqL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 03:18:53 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NPZ00ICF5NFQPE0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 15 Jun 2015 16:18:51 +0900 (KST)
-In-reply-to: <557AD805.2050902@samsung.com>
+	Mon, 15 Jun 2015 03:46:11 -0400
+In-Reply-To: <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 2015=EB=85=84 06=EC=9B=94 12=EC=9D=BC 22:00, Marek Szyprowski wrote:
-> Hello,
->=20
-> On 2015-06-12 14:10, Inki Dae wrote:
->> On 2015=EB=85=84 06=EC=9B=94 12=EC=9D=BC 18:07, Marek Szyprowski wro=
-te:
->>> One should not do any assumptions on the stare of the fimd hardware
->>> during driver initialization, so to properly reset fimd before enab=
-ling
->>> IOMMU, one should ensure that all power domains and clocks are real=
-ly
->>> enabled. This patch adds pm_runtime and clocks management in the
->>> fimd_clear_channel() function to ensure that any access to fimd
->>> registers will be performed with clocks and power domains enabled.
+Hello Doug,
+
+Thanks a lot for your comments.
+
+On 06/12/2015 10:17 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, Jun 12, 2015 at 12:36 PM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>>>> registers are lost assuming the combiner was powered down, even the
+>>>> status register will be lost and you will not know exactly the wakeup
+>>>> reason right ?
+>>>>
 >>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
-k>
->>> ---
->>> Changelog:
->>> v3 (alternative):
->>> - araranged code by moving fimd_{enable,disable}_vblank functions b=
-efore
->>>    fimd_clear_channel to avoid forward declaration usage
->> Marek,
+>>> Good question, I didn't find in the documentation I've access to that
+>>> this happen but just found through experimentation that the IRQ enable
+>>> set register values are lost after a resume and that saving/restoring
+>>> the values makes the interrupts to be triggered again.
+>>>
 >>
->> For the iommu and atomic feature test, I merged below patches in
->> addition and tested them.
+>> I'll share here too the findings I mentioned over IRC. As you suggested I
+>> add some printouts and noticed that the ISTRn (Interrupt Status) registers
+>> values are indeed preserved on resume so I can know for example if the
+>> wakeup source was the power gpio-key or cros_ec keyboard. I've checked the
+>> values of the registers against the Exynos manual and they corresponds to
+>> the interrupt sources in each case so the values are correct.
 >>
->> [PATCH v2 1/3] drm/exynos: remove to call mixer_wait_for_vblank
->> [PATCH v2 2/3] drm/exynos: remove chained calls to enable
->> [PATCH v2 3/3] drm/exynos: initialize VIDCON0 when fimd is disabled
->>
->>
->> However, I see below one warning log,
->>
->> [    1.227115] [drm] Initialized drm 1.1.0 20060810
->> [    1.235852] exynos-drm exynos-drm: bound exynos-drm-vidi (ops
->> vidi_component_ops)
->> [    1.253548] ------------[ cut here ]------------
->> [    1.256700] WARNING: CPU: 0 PID: 0 at drivers/gpu/drm/drm_irq.c:1=
-718
->> drm_handle_vblank+0x2a0/0x308()
->> [    1.265800] Modules linked in:
->> [    1.268844] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
->> 4.1.0-rc4-00574-gf8eb363-dirty #1412
->> [    1.277085] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [    1.283184] [<c0015464>] (unwind_backtrace) from [<c00123c0>]
->> (show_stack+0x10/0x14)
->> [    1.288540] exynos-drm exynos-drm: bound 11c00000.fimd (ops
->> fimd_component_ops)
->> [    1.288883] exynos-drm exynos-drm: bound 11c80000.dsi (ops
->> exynos_dsi_component_ops)
->> [    1.288888] [drm] Supports vblank timestamp caching Rev 2
->> (21.10.2013).
->> [    1.288891] [drm] No driver support for vblank timestamp query.
->> [    1.288932] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->> [    1.324248] [<c00123c0>] (show_stack) from [<c0528f74>]
->> (dump_stack+0x84/0xc4)
->> [    1.331437] [<c0528f74>] (dump_stack) from [<c00246ac>]
->> (warn_slowpath_common+0x80/0xb0)
->> [    1.339504] [<c00246ac>] (warn_slowpath_common) from [<c0024778>]
->> (warn_slowpath_null+0x1c/0x24)
->> [    1.348270] [<c0024778>] (warn_slowpath_null) from [<c029c898>]
->> (drm_handle_vblank+0x2a0/0x308)
->> [    1.356965] [<c029c898>] (drm_handle_vblank) from [<c02b8c80>]
->> (fimd_irq_handler+0x78/0xd0)
->> [    1.365292] [<c02b8c80>] (fimd_irq_handler) from [<c00608f8>]
->> (handle_irq_event_percpu+0x78/0x134)
->> [    1.374231] [<c00608f8>] (handle_irq_event_percpu) from [<c00609f=
-0>]
->> (handle_irq_event+0x3c/0x5c)
->> [    1.374244] [<c00609f0>] (handle_irq_event) from [<c0063698>]
->> (handle_level_irq+0xc4/0x13c)
->> [    1.374256] [<c0063698>] (handle_level_irq) from [<c005ff7c>]
->> (generic_handle_irq+0x2c/0x3c)
->> [    1.374269] [<c005ff7c>] (generic_handle_irq) from [<c02214ec>]
->> (combiner_handle_cascade_irq+0x94/0x100)
->> [    1.374281] [<c02214ec>] (combiner_handle_cascade_irq) from
->> [<c005ff7c>] (generic_handle_irq+0x2c/0x3c)
->> [    1.374290] [<c005ff7c>] (generic_handle_irq) from [<c0060248>]
->> (__handle_domain_irq+0x7c/0xec)
->> [    1.374300] [<c0060248>] (__handle_domain_irq) from [<c0009434>]
->> (gic_handle_irq+0x30/0x68)
->>
->>
->> And below one page fault error when modetest is terminated,
->>
->> # modetest -M exynos -v -s 31@29:720x1280
->> setting mode 720x1280-60Hz@XR24 on connectors 31, crtc 29
->> freq: 59.99Hz
->>
->> [   34.831025] PAGE FAULT occurred at 0x20400000 by 11e20000.sysmmu(=
-Page
->> table base: 0x6e324000)
->> [   34.838072]  Lv1 entry: 0x6e92dc01
->> [   34.841489] ------------[ cut here ]------------
->> [   34.846058] kernel BUG at drivers/iommu/exynos-iommu.c:364!
->> [   34.851614] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->> [   34.857428] Modules linked in:
->> [   34.860472] CPU: 0 PID: 6 Comm: kworker/u8:0 Tainted: G        W
->>    4.1.0-rc4-00574-gf8eb363-dirty #1412
->> [   34.870188] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [   34.876273] Workqueue: events_unbound async_run_entry_fn
->> [   34.881560] task: ee879540 ti: ee8a2000 task.ti: ee8a2000
->> [   34.886946] PC is at exynos_sysmmu_irq+0x184/0x208
->> [   34.891716] LR is at exynos_sysmmu_irq+0xd4/0x208
->> [   34.896404] pc : [<c02880d0>]    lr : [<c0288020>]    psr: 600001=
-93
->> [   34.896404] sp : ee8a3c00  ip : 00000000  fp : eeacbc10
->> [   34.907860] r10: c07c27ef  r9 : 00000204  r8 : 20400000
->> [   34.913068] r7 : ee324000  r6 : ee9b3428  r5 : ee9b3410  r4 : 000=
-00000
->> [   34.919577] r3 : 6e92dc01  r2 : 6e92dc01  r1 : eea55810  r0 : eeb=
-0a000
->> [   34.926089] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
->> Segment kernel
->> [   34.933466] Control: 10c5387d  Table: 6dd2c04a  DAC: 00000015
->> [   34.939195] Process kworker/u8:0 (pid: 6, stack limit =3D 0xee8a2=
-210)
->> [   34.945444] Stack: (0xee8a3c00 to 0xee8a4000)
->> [   34.949788] 3c00: ee8a3c0c c0049df8 00000000 6e324000 0003d4f3
->> ee9b13c0 ee84ad20 00000000
->> [   34.957947] 3c20: 00000000 00000026 ee84acc0 c00608f8 60000093
->> eef84580 ee84acc0 ee84ad20
->> [   34.966106] 3c40: ee9b13c0 00000015 ee804450 ee8a3cd8 ee808000
->> c00609f0 ee84acc0 ee84ad20
->> [   34.974265] 3c60: ee807000 c0063698 00000026 c079d6f8 ee807000
->> c005ff7c 0000000a c02214ec
->> [   34.982424] 3c80: 00000015 00000000 00000015 00000000 00000001
->> c005ff7c c0789aac c0060248
->> [   34.990583] 3ca0: f002000c 00000015 c078e7ac ee8a3cd8 f0020000
->> ee8a2000 00000001 c0009434
->> [   34.998742] 3cc0: c052e8fc 60000013 ffffffff ee8a3d0c 00000004
->> c0012ec0 eeacbd18 ee879540
->> [   35.006901] 3ce0: 00000000 00000271 eeacbd18 00000000 eea55010
->> c078e100 00000004 ee8a2000
->> [   35.015061] 3d00: 00000001 eeacbc10 eeacbd88 ee8a3d20 c052e8f8
->> c052e8fc 60000013 ffffffff
->> [   35.023220] 3d20: eeacbd18 c02dab48 20000113 00000003 60000013
->> eeacbd18 00000004 eeacbc60
->> [   35.031379] 3d40: ffff30d5 eeacbca8 eeacbd18 00000004 60000013
->> ffff30d5 c0802fe8 c02db05c
->> [   35.039538] 3d60: eeacbc60 00000002 c078e100 eeacbc60 ffff30d5
->> c03b0f2c c078bb40 ee8a3e28
->> [   35.047697] 3d80: 00000001 ee8a3db8 eeacbc70 00000002 eeacbc70
->> ee8a3db8 eeacbca8 c052e880
->> [   35.055857] 3da0: eeacbc70 c052d818 00000000 00000009 00000000
->> c002791c ee8a3db8 11111111
->> [   35.064016] 3dc0: 11111111 ee8a3dc4 11111111 eeacbc60 00000002
->> c078e100 ee8a3e28 ffff30d5
->> [   35.072175] 3de0: c0802fe8 00000001 ee80b400 c03ac4cc 00000000
->> eeacbc60 ee8a3e28 00000002
->> [   35.080334] 3e00: eea47ac0 00000000 ee849d00 c03ac69c 00000000
->> 00000001 00000001 eea47ac0
->> [   35.088493] 3e20: eea47ac0 c02e9f10 00000009 60000001 eea47ac0
->> 00010009 00000001 eea47ac0
->> [   35.096653] 3e40: ee29149c 00000000 ee00c200 c02e5bdc 00000001
->> c004425c ee00c200 00000047
->> [   35.104812] 3e60: ee00c200 ee00c200 ee8a3eb4 ee8a3eb4 00000000
->> c02e5c5c ee00c200 ee00c200
->> [   35.112971] 3e80: 00000047 c02e564c ee00c200 00000047 ee8a3eb4
->> ee80da00 00000000 c02e5704
->> [   35.121130] 3ea0: eeafd800 c07c5020 eeafd84c c025383c ee849d00
->> c052d110 eeafd800 c0252a48
->> [   35.129289] 3ec0: ee914724 c07c5020 edcc9c40 c0252f58 edcc9c50
->> c003ed48 eef84580 eea2f700
->> [   35.137448] 3ee0: ee849d00 edcc9c50 ee80b400 c0037944 ee8a2000
->> ee80b400 00000001 ee80b400
->> [   35.145608] 3f00: ee849d18 ee80b420 ee8a2000 00000088 c07c27bc
->> ee849d00 ee80b400 c0037ba0
->> [   35.153767] 3f20: c078e100 ee80b570 ee849d00 00000000 ee84b540
->> ee849d00 c0037b54 00000000
->> [   35.161926] 3f40: 00000000 00000000 00000000 c003c8b8 ffffffff
->> 00000000 ffffffff ee849d00
->> [   35.170085] 3f60: 00000000 00000000 dead4ead ffffffff ffffffff
->> ee8a3f74 ee8a3f74 00000000
->> [   35.178245] 3f80: 00000000 dead4ead ffffffff ffffffff ee8a3f90
->> ee8a3f90 ee8a3fac ee84b540
->> [   35.186403] 3fa0: c003c7dc 00000000 00000000 c000f5a0 00000000
->> 00000000 00000000 00000000
->> [   35.194562] 3fc0: 00000000 00000000 00000000 00000000 00000000
->> 00000000 00000000 00000000
->> [   35.202722] 3fe0: 00000000 00000000 00000000 00000000 00000013
->> 00000000 ffffffff ffffffff
->> [   35.210894] [<c02880d0>] (exynos_sysmmu_irq) from [<c00608f8>]
->> (handle_irq_event_percpu+0x78/0x134)
->> [   35.219914] [<c00608f8>] (handle_irq_event_percpu) from [<c00609f=
-0>]
->> (handle_irq_event+0x3c/0x5c)
->> [   35.228768] [<c00609f0>] (handle_irq_event) from [<c0063698>]
->> (handle_level_irq+0xc4/0x13c)
->> [   35.237101] [<c0063698>] (handle_level_irq) from [<c005ff7c>]
->> (generic_handle_irq+0x2c/0x3c)
->> [   35.245521] [<c005ff7c>] (generic_handle_irq) from [<c02214ec>]
->> (combiner_handle_cascade_irq+0x94/0x100)
->> [   35.254980] [<c02214ec>] (combiner_handle_cascade_irq) from
->> [<c005ff7c>] (generic_handle_irq+0x2c/0x3c)
->> [   35.264353] [<c005ff7c>] (generic_handle_irq) from [<c0060248>]
->> (__handle_domain_irq+0x7c/0xec)
->> [   35.273034] [<c0060248>] (__handle_domain_irq) from [<c0009434>]
->> (gic_handle_irq+0x30/0x68)
->> [   35.281366] [<c0009434>] (gic_handle_irq) from [<c0012ec0>]
->> (__irq_svc+0x40/0x74)
->>
->> Could you check the iommu with atomic feature? I tested these featur=
-es
->> on trats2 board, and enabled one more crtc drivers - HDMI, VIDI, and
->> FIMD.
->=20
-> I've tested it on Trats2 with FIMD and Odroid U3 with HDMI and I didn=
-'t
-> manage to
-> trigger page fault issue.
->=20
-> I've pushed the branch I've used for testing here:
-> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git
-> v4.1-exynos-drm-iommu
+>> So as you said, it seems that is not that the IP block loses its state on
+>> S2R but that something is blindly writing the IESRn (Interrupt Enable Set)
+>> registers.
+> 
+> I'll postulate an alternate theory here.  You can tell me if you buy
+> it or if you think I've been out in the sun too long.
+> 
+> Let's say that the interrupt combiner's status registers show the raw
+> status as asserted by whatever is hooked up to the combiner.  This
+> means that even if the combiner got reset we could still read the
+> status register and get the status of the source.  Imagine that the
+> combiner is like a GPIO bank.  If you reset the GPIO bank, you'll lose
+> all kinds of config (input vs. output, edge interrupt status, maybe
+> pulls, etc).  ...but you can still read the state asserted by an
+> external source, right?
+> 
 
-Hm.. I've also tested it on Trarts2 and above your git tree but I still
-see the page fault issue. Please run modetest app and terminate it
-repeatedly.
+That definitely makes a lot of sense to me.
 
-Thanks,
-Inki Dae
+> In this case the combiner's interrupt source is 'EINT 11'.  ...and I'm
+> pretty sure that the controller managine 'EINT 11' _doesn't_ lose
+> power across suspend/resume...
+>
 
->=20
->> To other Exynos guys,
->> could you guys check the same issues also? If you give some helps to=
- us,
->> we'd be glad.
+Yes, the External Interrupt sources come from the GPIO controller and the
+driver has a similar logic than $subject to save the registers state.
+ 
+> 
+> I'll further bolster my theory by saying that _almost nothing_ in the
+> exynos keeps power across suspend/resume.  The UART?  Nope.  The GPIO
+> controllers?  Nuh-uh.  The GIC?  Sorry, but no.  The clock tree?  It
+> might be nice, but you're out of luck.  ...so it would make me
+> terribly surprised to see the combiner keep power.
+>
+
+It surprised me as well but I didn't think about what you said that the
+combiner interrupt source was restored so the status register could just
+be showing the combiner's input raw status even after the chip was reset.
+
+> 
+>> To reduce the possible s/w components that could be doing this, I booted a
+>> signed FIT image directly using the RO U-Boot instead of chain loading a
+>> mainline nv-uboot. In this configuration I've the same issue so it seems
+>> that if something is zeroing those registers on S2R, this can't be changed
+>> without void the warranty of these machines.
 >>
->> Thanks,
->> Inki Dae
->=20
->> > (...)
->=20
-> Best regards
+>> I also looked at the downstream ChromiumOS v3.8 tree [0] and I see that
+>> they have a very similar solution than my patch, the IESRn are also saved
+>> but using a notifier for the CPU_PM_ENTER and CPU_PM_EXIT events instead
+>> or registering a syscore ops but the idea is basically the same.
+> 
+> Yup, you can see where kliegs added it in
+> <https://chromium-review.googlesource.com/#/c/27964/>.  As per the
+> comments in that CL, this was probably broken in:
+> 
+> 063bd6f ARM: EXYNOS: Remove GIC save & restore function
+> 
+>
+
+Nod, thanks for the pointer.
+
+>> I have to take a look to the U-boot that is shipped on the device, I think
+>> the correct branch is [1] but I'm not sure if that is the correct one.
+> 
+> It is the right one.  If U-Boot were touching this (which would
+> greatly surprise me) it should be here:
+> 
+> arch/arm/include/asm/arch-exynos/cpu.h
+> 
+> ...and it's not.  Doing a grep for '10440000' (the combiner base
+> address) doesn't find anything in U-Boot either, which makes it less
+> likely.  ...and it's even less likely since the amount of code that is
+> in U-Boot that runs at resume time is a very small subset and I'm
+> fairly familiar with it and I would have remembered it touching the
+> combiner.
+>
+
+That explains why I was also not able to find were U-Boot was overwriting
+those registers.
+
+> It's POSSIBLE that the internal ROM in exynos is clobbering this, but
+> as per above it seems crazy unlikely and I think it's just losing
+> power.
+>
+
+Agreed.
+
+> 
+> -Doug
+>
+
+Sudeep, so we may need something like $subject after all from Doug's
+explanations since the combiner chip state is lost during a S2R. I know
+that it adds more duplicated code (others irqchip drivers do the same)
+and it may not scale well if a chip has many registers but is the best
+solution I could came with.
+
+If you have a suggestion for a better alternative, I can give a try and
+write the patch. But I think $subject could also land to fix this issue
+since is a very non intrusive change and later can be changed once the
+irqchip core supports this use case.
+
+Best regards,
+Javier
