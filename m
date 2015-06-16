@@ -1,45 +1,48 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set on
- suspend
-Date: Tue, 16 Jun 2015 10:21:29 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1506161020510.4120@nanos>
-References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk> <557AB00C.5040606@arm.com> <557AC23D.8040602@collabora.co.uk> <557AC85E.5070705@arm.com> <557AD728.7090908@collabora.co.uk> <557B34A7.4090507@collabora.co.uk>
- <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com> <557E82BC.7080203@collabora.co.uk> <557E947B.3030804@arm.com> <557EE890.2050001@collabora.co.uk> <557EEA6C.6020002@arm.com> <557EEDFB.7080502@collabora.co.uk>
- <557F6677.8080507@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv7 2/4] ARM: dts: exynos5422-odroidxu3: Enable TMU at Exynos5422
+ base
+Date: Tue, 16 Jun 2015 20:05:58 +0900
+Message-ID: <55800316.9050406@samsung.com>
+References: <1434336803-4132-1-git-send-email-linux.amoon@gmail.com> <1434336803-4132-2-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:42978 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756292AbbFPIVh (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:36108 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753007AbbFPLGH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Jun 2015 04:21:37 -0400
-In-Reply-To: <557F6677.8080507@samsung.com>
+	Tue, 16 Jun 2015 07:06:07 -0400
+In-Reply-To: <1434336803-4132-2-git-send-email-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sudeep Holla <sudeep.holla@arm.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Markus Reichl <m.reichl@fivetechno.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 16 Jun 2015, Krzysztof Kozlowski wrote:
-
-> On 16.06.2015 00:23, Javier Martinez Canillas wrote:
-> (...)
-> >>> To do a more intrusive change, I should better understand the interactions
-> >>> between the Exynos pinctrl / GPIO, interrupt combiner and the GIC and in the
-> >>> meantime S2R will continue to be broken on these platforms unless someone
-> >>> more familiar with all this could point me in the right direction.
-> >>>
-> >>
-> >> As I said I am fine with this patch for now and I don't want to block it.
-> >>
-> > 
-> > Thanks a lot, Krzysztof who is one of the Exynos maintainers has also agreed
-> > with the patch so hopefully this can land sooner rather than later.
+W dniu 15.06.2015 o 11:53, Anand Moon pisze:
+> This changes enables TMU IP block on the Exynos5422 Odroid-XU3
+> device.
 > 
-> I assume this will go through irqchip tree, right?
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
+> Changes rebase on git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung branch for-next
+> Changes from v5 and v6: Use LDO7 regulator instead of LDO10 regulator to control TMU.
+> 	Fixed the commit log.
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 25 ++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 
-yes, picking it up now
+Thanks Anand for working on this!
 
-Thanks,
+Whole patchset tested on Odroid XU3-Lite board:
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-	tglx
+I already acked other patches, except this one:
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+I'll apply this to my tree and send for v4.3 to Kukjin (unless he picks
+it also).
+
+Best regards,
+Krzysztof
