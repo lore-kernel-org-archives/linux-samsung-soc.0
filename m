@@ -1,59 +1,66 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
- on suspend
-Date: Tue, 16 Jun 2015 14:11:29 +0100
-Message-ID: <55802081.8050200@arm.com>
-References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk>	<557AB00C.5040606@arm.com>	<557AC23D.8040602@collabora.co.uk>	<557AC85E.5070705@arm.com>	<557AD728.7090908@collabora.co.uk>	<557B34A7.4090507@collabora.co.uk>	<CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com>	<557E82BC.7080203@collabora.co.uk>	<557E947B.3030804@arm.com>	<557EE890.2050001@collabora.co.uk> <CA+Ln22H8A5xY4S=yEnftTKUdsAM3Oib2gZV_GG=m6nENn2fw0g@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] drivers/cpufreq: include <module.h> for modular
+ exynos-cpufreq.c code
+Date: Tue, 16 Jun 2015 11:29:45 -0400
+Message-ID: <558040E9.2060008@windriver.com>
+References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com>
+ <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
+ <5110473.q5rJrrjs9a@vostro.rjw.lan> <557F6567.1070901@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+Ln22H8A5xY4S=yEnftTKUdsAM3Oib2gZV_GG=m6nENn2fw0g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <557F6567.1070901@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-On 16/06/15 13:32, Tomasz Figa wrote:
-> 2015-06-16 0:00 GMT+09:00 Javier Martinez Canillas <javier.martinez@collabora.co.uk>:
->> On 06/15/2015 11:01 AM, Sudeep Holla wrote:
-
-[...]
-
+On 15-06-15 07:53 PM, Krzysztof Kozlowski wrote:
+> On 16.06.2015 08:47, Rafael J. Wysocki wrote:
+>> On Wednesday, June 03, 2015 05:18:18 PM Paul Gortmaker wrote:
+>>> This file is built off of a tristate Kconfig option ("ARM_EXYNOS_CPUFREQ")
+>>> and also contains modular function calls so it should explicitly include
+>>> module.h to avoid compile breakage during pending header shuffles.
 >>>
->>> Agreed. But I would suggest also to add MASK_ON_SUSPEND and
->>> set_irq_wake also and then you can restore iff it's non-zero as
->>> irq core will take care of most of the non-wakeup sources.
->>> Because I am planning to push
+>>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Cc: linux-pm@vger.kernel.org
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: linux-samsung-soc@vger.kernel.org
+>>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 >>
->> I've looking at this and a problem I found is that IIUC the
->> set_irq_wake is not propagated from the the Exynos pinctrl / GPIO
->> driver which is the combiner's external interrupt source so the
->> callback is never called. Which means that right now only the
->> state of the wakeup source IRQs can't be saved since that
->> information is not present.
+>> I'm assuming that this will go in via the Samsung tree.
 >>
->> The drivers/pinctrl/samsung/pinctrl-exynos.c driver enables and
->> disables the combiner interrupts but its .irq_set_wake handler
->> only updates the wakeup source mask for the external interrupts but
->> does not call the combiner .set_irq_wake so that should be changed
->> as well.
 >>
->
-> As far as I'm aware of, wake-up events from pin controllers don't go
->  through GIC, but rather directly to PMU, which is a dedicated unit
-> responsible for power management and not a standalone interrupt
-> controller (well actually I saw a series making it a cascaded
-> controller some time ago, but I'm not sure if that went in). Based on
-> this, I don't think we have to call set_irq_wake on GIC. Correct me
-> if I'm wrong, though.
+>>> ---
+>>>
+>>> [ patch will be appended to the implicit include fixup series, see:
+>>>   https://lkml.kernel.org/r/1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com
+>>>   for the original series posting.]
+> 
+> Paul, will you handle the patch or should it go through Samsung tree?
 
-Thanks for the details, this was my assumption when Doug confirmed that
-the combiner is also powered down, either there must be some bypass or a
-dedicated logic to wakeup. But I was not sure though so insisted
-set_irq_wake but based on what you say it's not required.
 
-Regards,
-Sudeep
+I have to keep a copy of the patch in the above series, since if
+I don't then we'll introduce build failures into the bisection
+history, so yes I'll handle it.
+
+Thanks,
+Paul.
+--
+
+> 
+> Best regards,
+> Krzysztof
+> 
