@@ -1,52 +1,71 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/1] irqchip: exynos-combiner: Save IRQ enable set
- on suspend
-Date: Tue, 16 Jun 2015 05:19:22 +0200
-Message-ID: <557F95BA.3030501@collabora.co.uk>
-References: <1434087795-13990-1-git-send-email-javier.martinez@collabora.co.uk> <557AB00C.5040606@arm.com> <557AC23D.8040602@collabora.co.uk> <557AC85E.5070705@arm.com> <557AD728.7090908@collabora.co.uk> <557B34A7.4090507@collabora.co.uk> <CAD=FV=UQF+n8AjSXYajqUb0qswcoUrSgnsasV82JaS3dBtNO8Q@mail.gmail.com> <557E82BC.7080203@collabora.co.uk> <557E947B.3030804@arm.com> <557EE890.2050001@collabora.co.uk> <557EEA6C.6020002@arm.com> <557EEDFB.7080502@collabora.co.uk> <557F6677.8080507@samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] drivers/cpufreq: include <module.h> for modular
+ exynos-cpufreq.c code
+Date: Mon, 15 Jun 2015 23:28:13 -0400
+Message-ID: <CAP=VYLpWLUbuq0C6hAKhhpRr8Kv4jv1EgAwKvsuxHmFKFHQw3w@mail.gmail.com>
+References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com>
+ <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
+ <5110473.q5rJrrjs9a@vostro.rjw.lan> <557F6567.1070901@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59617 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756061AbbFPDT1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jun 2015 23:19:27 -0400
-In-Reply-To: <557F6677.8080507@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <557F6567.1070901@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sudeep Holla <sudeep.holla@arm.com>, Doug Anderson <dianders@chromium.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Chanho Park <parkch98@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Peter Chubb <peter.chubb@nicta.com.au>, Shuah Khan <shuahkhan@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Krzysztof,
+On Mon, Jun 15, 2015 at 7:53 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 16.06.2015 08:47, Rafael J. Wysocki wrote:
+>> On Wednesday, June 03, 2015 05:18:18 PM Paul Gortmaker wrote:
+>>> This file is built off of a tristate Kconfig option ("ARM_EXYNOS_CPUFREQ")
+>>> and also contains modular function calls so it should explicitly include
+>>> module.h to avoid compile breakage during pending header shuffles.
+>>>
+>>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Cc: linux-pm@vger.kernel.org
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: linux-samsung-soc@vger.kernel.org
+>>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>>
+>> I'm assuming that this will go in via the Samsung tree.
+>>
+>>
+>>> ---
+>>>
+>>> [ patch will be appended to the implicit include fixup series, see:
+>>>   https://lkml.kernel.org/r/1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com
+>>>   for the original series posting.]
+>
+> Paul, will you handle the patch or should it go through Samsung tree?
 
-On 06/16/2015 01:57 AM, Krzysztof Kozlowski wrote:
-> On 16.06.2015 00:23, Javier Martinez Canillas wrote: (...)
->>>> To do a more intrusive change, I should better understand the
->>>> interactions between the Exynos pinctrl / GPIO, interrupt
->>>> combiner and the GIC and in the meantime S2R will continue to
->>>> be broken on these platforms unless someone more familiar with
->>>> all this could point me in the right direction.
->>>> 
->>> 
->>> As I said I am fine with this patch for now and I don't want to
->>> block it.
->>> 
->> 
->> Thanks a lot, Krzysztof who is one of the Exynos maintainers has
->> also agreed with the patch so hopefully this can land sooner rather
->> than later.
-> 
-> I assume this will go through irqchip tree, right?
-> 
+My fault for not explicitly stating the obvious...  If I don't keep the
+patch locally (or at least a version of it) then we can introduce a
+compile bisection fail.  So I will keep all patches locally unless there
+is a rebase where I can (also) rebase and drop said pach since it
+has become common history of the shared baseline...
 
-That is my assumption as well. I meant the fact that you as an Exynos
-maintainer thinks $subject is a sensible solution to the issue, would
-give confidence to the irqchip maintainers to pick this patch soon.
+Paul.
+--
 
-> Best regards, Krzysztof
-> 
-
-Best regards,
-Javier
+>
+> Best regards,
+> Krzysztof
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
