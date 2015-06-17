@@ -1,61 +1,71 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] drivers/cpufreq: include <module.h> for modular
- exynos-cpufreq.c code
-Date: Wed, 17 Jun 2015 09:36:14 +0900
-Message-ID: <5580C0FE.5010502@samsung.com>
-References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com>
- <1433366298-30016-1-git-send-email-paul.gortmaker@windriver.com>
- <5110473.q5rJrrjs9a@vostro.rjw.lan> <557F6567.1070901@samsung.com>
- <558040E9.2060008@windriver.com>
+From: Pavel Machek <pavel-ynQEQJNshbs@public.gmane.org>
+Subject: Re: [PATCH 11/11] dt: Exynos: add Snow SPI NOR node.
+Date: Wed, 17 Jun 2015 14:19:20 +0200
+Message-ID: <20150617121920.GB20728@amd>
+References: <cover.1433364398.git.hramrach@gmail.com>
+ <3234c12c90eabbeeb6d33604a324231937e309ec.1433364398.git.hramrach@gmail.com>
+ <556FB222.2070406@samsung.com>
+ <201506041720.54666.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:28682 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752356AbbFQAgR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Jun 2015 20:36:17 -0400
-In-reply-to: <558040E9.2060008@windriver.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <201506041720.54666.marex-ynQEQJNshbs@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Han Xu <han.xu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Huang Shijie <b32955-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, Knut Wohlrab <knut.wohlrab-V5te9oGctAVWk0Htik3J/w@public.gmane.org>Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <b>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 17.06.2015 00:29, Paul Gortmaker wrote:
-> On 15-06-15 07:53 PM, Krzysztof Kozlowski wrote:
->> On 16.06.2015 08:47, Rafael J. Wysocki wrote:
->>> On Wednesday, June 03, 2015 05:18:18 PM Paul Gortmaker wrote:
->>>> This file is built off of a tristate Kconfig option ("ARM_EXYNOS_CPUFREQ")
->>>> and also contains modular function calls so it should explicitly include
->>>> module.h to avoid compile breakage during pending header shuffles.
->>>>
->>>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->>>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->>>> Cc: Kukjin Kim <kgene@kernel.org>
->>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> Cc: linux-pm@vger.kernel.org
->>>> Cc: linux-arm-kernel@lists.infradead.org
->>>> Cc: linux-samsung-soc@vger.kernel.org
->>>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->>>
->>> I'm assuming that this will go in via the Samsung tree.
->>>
->>>
->>>> ---
->>>>
->>>> [ patch will be appended to the implicit include fixup series, see:
->>>>   https://lkml.kernel.org/r/1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com
->>>>   for the original series posting.]
->>
->> Paul, will you handle the patch or should it go through Samsung tree?
+On Thu 2015-06-04 17:20:54, Marek Vasut wrote:
+> On Thursday, June 04, 2015 at 04:04:18 AM, Krzysztof Kozlowski wrote:
+> > On 04.06.2015 06:26, Michal Suchanek wrote:
+> > > The Snow has onboard SPI NOR flash which contains the bootloader.
+> > > 
+> > > Add DT node for this flash chip. The flash is rated 133MHz but the pl330
+> > > controller can transfer only up to 128 bytes at this speed so use more
+> > > conservative settings. Even at 40MHz pl330 can transfer at most 64k with
+> > > the current driver.
+> > > 
+> > > Signed-off-by: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > > ---
+> > > 
+> > >  arch/arm/boot/dts/exynos5250-snow.dts | 12 ++++++++++++
+> > >  1 file changed, 12 insertions(+)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
+> > > b/arch/arm/boot/dts/exynos5250-snow.dts index 1fa72cf..38e4cda 100644
+> > > --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> > > +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> > > @@ -691,6 +691,18 @@
+> > > 
+> > >  	num-cs = <1>;
+> > >  	cs-gpios = <&gpa2 5 0>;
+> > >  	status = "okay";
+> > > 
+> > > +		flash: m25p80@0 {
+> > 
+> > The indentation looks odd. This should be at the same level as "status".
+> > 
+> > > +			#address-cells = <1>;
+> > > +			#size-cells = <1>;
+> > > +			compatible = "jedec,spi-nor";
+> > > +			reg = <0>;
+> > > +			spi-max-frequency = <40000000>;
+> > 
+> > So actually you wanted 133 MHz but as a workaround for DMA issue you use
+> > 40 MHz, right? Could you add here a small TODO note in comment about it?
 > 
-> 
-> I have to keep a copy of the patch in the above series, since if
-> I don't then we'll introduce build failures into the bisection
-> history, so yes I'll handle it.
+> I disagree. There is a problem, the problem should actually be analyzed and 
+> fixed, not just postponed with some TODO nonsense.
 
-Thank you, I'll leave the patch for you to handle.
-
-Best regards,
-Krzysztof
+Of course, that would be preferable if submitter has time. But OTOH
+slow SPI is probably better than no SPI at all, and debugging this can
+be nasty. I think that TODO is suitable.
+								Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
