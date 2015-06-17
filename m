@@ -1,71 +1,104 @@
-From: Pavel Machek <pavel-ynQEQJNshbs@public.gmane.org>
-Subject: Re: [PATCH 11/11] dt: Exynos: add Snow SPI NOR node.
-Date: Wed, 17 Jun 2015 14:19:20 +0200
-Message-ID: <20150617121920.GB20728@amd>
-References: <cover.1433364398.git.hramrach@gmail.com>
- <3234c12c90eabbeeb6d33604a324231937e309ec.1433364398.git.hramrach@gmail.com>
- <556FB222.2070406@samsung.com>
- <201506041720.54666.marex@denx.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
+Date: Wed, 17 Jun 2015 22:00:16 +0900
+Message-ID: <55816F60.4020307@samsung.com>
+References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
+ <557E6C19.7070103@samsung.com> <20150616203549.GA1598@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <201506041720.54666.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Han Xu <han.xu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Huang Shijie <b32955-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, Knut Wohlrab <knut.wohlrab-V5te9oGctAVWk0Htik3J/w@public.gmane.org>Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <b>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150616203549.GA1598@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu 2015-06-04 17:20:54, Marek Vasut wrote:
-> On Thursday, June 04, 2015 at 04:04:18 AM, Krzysztof Kozlowski wrote:
-> > On 04.06.2015 06:26, Michal Suchanek wrote:
-> > > The Snow has onboard SPI NOR flash which contains the bootloader.
-> > > 
-> > > Add DT node for this flash chip. The flash is rated 133MHz but the pl330
-> > > controller can transfer only up to 128 bytes at this speed so use more
-> > > conservative settings. Even at 40MHz pl330 can transfer at most 64k with
-> > > the current driver.
-> > > 
-> > > Signed-off-by: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > > ---
-> > > 
-> > >  arch/arm/boot/dts/exynos5250-snow.dts | 12 ++++++++++++
-> > >  1 file changed, 12 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
-> > > b/arch/arm/boot/dts/exynos5250-snow.dts index 1fa72cf..38e4cda 100644
-> > > --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> > > +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> > > @@ -691,6 +691,18 @@
-> > > 
-> > >  	num-cs = <1>;
-> > >  	cs-gpios = <&gpa2 5 0>;
-> > >  	status = "okay";
-> > > 
-> > > +		flash: m25p80@0 {
-> > 
-> > The indentation looks odd. This should be at the same level as "status".
-> > 
-> > > +			#address-cells = <1>;
-> > > +			#size-cells = <1>;
-> > > +			compatible = "jedec,spi-nor";
-> > > +			reg = <0>;
-> > > +			spi-max-frequency = <40000000>;
-> > 
-> > So actually you wanted 133 MHz but as a workaround for DMA issue you use
-> > 40 MHz, right? Could you add here a small TODO note in comment about it?
-> 
-> I disagree. There is a problem, the problem should actually be analyzed and 
-> fixed, not just postponed with some TODO nonsense.
-
-Of course, that would be preferable if submitter has time. But OTOH
-slow SPI is probably better than no SPI at all, and debugging this can
-be nasty. I think that TODO is suitable.
-								Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgR3VzdGF2bywKCk9uIDIwMTXrhYQgMDbsm5QgMTfsnbwgMDU6MzUsIEd1c3Rhdm8gUGFkb3Zh
+biB3cm90ZToKPiBISSBJbmtpLAo+IAo+IDIwMTUtMDYtMTUgSW5raSBEYWUgPGlua2kuZGFlQHNh
+bXN1bmcuY29tPjoKPiAKPj4gSGkgR3VzdGF2bywKPj4KPj4gT24gMjAxNeuFhCAwNuyblCAwMuyd
+vCAwMDowNCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+Pj4gRnJvbTogR3VzdGF2byBQYWRvdmFu
+IDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgo+Pj4KPj4+IEhpLAo+Pj4KPj4+IEhl
+cmUgZ29lcyB0aGUgZnVsbCBzdXBwb3J0IGZvciBhdG9taWMgbW9kZXNldHRpbmcgb24gZXh5bm9z
+LiBJJ3ZlCj4+PiBzcGxpdCB0aGUgcGF0Y2hlcyBpbiB0aGUgdmFyaW91cyBwaGFzZXMgb2YgYXRv
+bWljIHN1cHBvcnQuCj4+Pgo+Pj4gdjI6IGZpeGVzIGNvbW1lbnRzIGJ5IEpvb255b3VuZwo+Pj4g
+ICAgICAgICAtIHJlbW92ZSB1bnVzZWQgdmFyIGluIHBhdGNoIDA5Cj4+PiAgICAgICAgIC0gdXNl
+IC0+ZGlzYWJsZSBpbnN0ZWFkIG9mIG91dGRhdGVkIC0+ZHBtcyBpbiBoZG1pIGNvZGUKPj4+ICAg
+ICAgICAgLSByZW1vdmUgV0FSTl9PTiBmcm9tIGNydGMgZW5hYmxlL2Rpc2FibGUKPj4+Cj4+PiB2
+MzogZml4ZXMgY29tbWVudCBieSBKb29ueW91bmcKPj4+ICAgICAgICAgLSBtb3ZlIHRoZSByZW1v
+dmFsIG9mIGRybV9oZWxwZXJfZGlzYWJsZV91bnVzZWRfZnVuY3Rpb25zKCkgdG8KPj4+ICAgICAg
+ICAgc2VwYXJhdGVkIHBhdGNoCj4+Pgo+Pj4gdjQ6IGFkZCBwYXRjaGVzIHRoYXQgcmVtb3ZlIHVu
+bmVjZXNzYXJ5IGNhbGxzIHRvIGRpc2FibGVfcGxhbmUoKQo+Pj4KPj4+IHY1OiBmaXhlcyBOVUxM
+IENSVEMgY3Jhc2ggb24gcGxhbmVzIHVwZGF0ZXMgKHJlcG9ydGVkIGJ5IElua2kgYW5kIFRvYmlh
+cykKPj4+Cj4+PiB2NjogcmViYXNlIG9uIGxhdGVzdCBleHlub3NfZHJtX25leHQKPj4+Cj4+PiB2
+NzogZml4IGNvbW1lbnRzIGJ5IEpvb255b3VuZwo+Pj4gICAgICAgICAtIGZpeCB0d28gY2hlY2tw
+YXRjaCBlcnJvcnMKPj4+ICAgICAgICAgLSByZW1vdmUgZXh0cmEgY3J0Yy0+Y29tbWl0KCkgY2Fs
+bAo+Pj4gICAgICAgICAtIGNoZWNrIGZvciBudWxsIGZiIG9uIGV4eW5vc19jaGVja19wbGFuZSgp
+Cj4+Pgo+Pj4gdjg6IGZpeCBjb21tZW50cyBieSBKb29ueW91bmcKPj4+ICAgICAgICAgLSBmaXgg
+bWVyZ2UgZXJyb3IKPj4+ICAgICAgICAgLSBtb3ZlIGRybV9jcnRjX3ZibGFua19nZXQgdG8gdGhl
+IGNvbW1pdCB0aGF0IGludHJvZHVjZXMgYXRvbWljIHBhZ2VmbGlwCj4+PiAgICAgICAgIC0gcmVt
+b3ZlIC5wcmVwYXJlKCkgaW4gdGhlIGFwcm9waWF0ZWQgcGF0Y2gKPj4+ICAgICAgICAgLSBhZGQg
+YSBuZXcgcGF0Y2ggdG8gbW92ZSBleHlub3NfZHJtX2NydGNfZGlzYWJsZSgpCj4+Pgo+Pj4gdjk6
+ICAqIGZpeCBjb21tZW50cyBieSBKb29ueW91bmcKPj4+ICAgICAgICAgLSBhbHNvIHJlbW92ZSBl
+bmNvZGVyIC5wcmVwYXJlKCkKPj4+ICAgICAgICAgLSBkbyBub3Qgc2hpZnQgZXh5bm9zX3VwZGF0
+ZV9wbGFuZSgpIHBhcmFtZXRlcnMKPj4+ICAgICAgICAgLSByZW1vdmUgdW51c2VkIC5tb2RlX3Nl
+dCgpIGFuZCAubW9kZV9zZXRfYmFzZSgpCj4+PiAgICAgICogYWRkIHNwZWNpZmljIGV4eW5vcyAu
+YXRvbWljX2NvbW1pdCgpCj4+PiAgICAgICogYWRkIHNwbGl0IG9mIGV4eW5vc19jcnRjLT5vcHMt
+PmRwbXMoKSBpbnRvIGVuYWJsZSgpIGFuZCBkaXNhYmxlKCkKPj4+ICAgICAgKiBhZGQgb3RoZXIg
+YXRvbWljIGNsZWFuIHVwcwo+Pj4KPj4+IHYxMDogKiBmaXggY29tbWVudHMgYnkgSm9vbnlvdW5n
+Cj4+PiAJLSBhZGQgbW9yZSBjb21tZW50cyBvbiBleHlub3NfYXRvbWljX2NvbW1pdCgpCj4+PiAJ
+LSBtYWtlIGV4eW5vc19jcnRjJ3MgLmVuYWJsZSBhbmQgLmRpc2FibGUgdm9pZAo+Pgo+PiBJIGZv
+dW5kIG91dCBvbmUgaXNzdWUgdGhhdCByZWZyZXNoIHJhdGUgZ2V0cyBsb3cgd2l0aCBkaXNwbGF5
+IGV4dGVuc2lvbgo+PiBtb2RlIHRlc3QuCj4+Cj4+IEkgdGVzdGVkIGl0IHdpdGggdHdvIGNydGMg
+ZHJpdmVycyAtIHZpZGkgYW5kIGZpbWQgb24gVHJhdHMyIGJvYXJkLiBIZXJlCj4+IGlzIGhvdyB0
+byB0ZXN0IGl0LAo+Pgo+PiAjZWNobyAxID4gL3N5cy9kZXZpY2VzL3BsYXRmb3JtL2V4eW5vcy1k
+cm0tdmlkaS9jb25uZWN0aW9uCj4+ICMgbW9kZXRlc3QgLU0gZXh5bm9zIC12IC1zIDMxQDI5Ojcy
+MHgxMjgwIC1zIDIzQDIxOjY0MHg0ODAKPj4gc2V0dGluZyBtb2RlIDcyMHgxMjgwLTYwSHpAWFIy
+NCBvbiBjb25uZWN0b3JzIDMxLCBjcnRjIDI5Cj4+IHNldHRpbmcgbW9kZSA2NDB4NDgwLTc1SHpA
+WFIyNCBvbiBjb25uZWN0b3JzIDIzLCBjcnRjIDIxCj4+IGZyZXE6IDIwLjAwSHoKPj4gZnJlcTog
+MjAuMDBIego+Pgo+PiBBcyB5b3UgY2FuIHNlZSwgcmVmcmVzaCByYXRlIGlzIDIwLgo+Pgo+PiBC
+ZWxvdyBpcyB0aGUgcmVzdWx0IHdpdGhvdXQgYXRvbWljIHBhdGNoIHNlcmllcywKPj4gIyBtb2Rl
+dGVzdCAtTSBleHlub3MgLXYgLXMgMzFAMjk6NzIweDEyODAgLXMgMjNAMjE6NjQweDQ4MAo+PiBz
+ZXR0aW5nIG1vZGUgNzIweDEyODAtNjBIekBYUjI0IG9uIGNvbm5lY3RvcnMgMzEsIGNydGMgMjkK
+Pj4gc2V0dGluZyBtb2RlIDY0MHg0ODAtNzVIekBYUjI0IG9uIGNvbm5lY3RvcnMgMjMsIGNydGMg
+MjEKPj4gZnJlcTogNjAuMThIego+PiBmcmVxOiA0OS4wOUh6Cj4+Cj4+IEkgY2FuIHNlZSA2MEh6
+IGZvciBGSU1EIGFuZCA0OUh6IGZvciB2aWRpLgo+IAo+IEkgZ2F2ZSB0aGlzIGEgdHJ5IGFuZCBm
+aWd1cmVkIG91dCB0aGF0IHRoaXMgbWlnaHQgYmUgYSB2aWRpIHNwZWNpZmljCj4gcHJvYmxlbS4g
+SWYgSSB0cnkgVklESSBhbmQgRklNRCBJIGdldCB0aGUgc2FtZSByZXN1bHRzIGFzIHlvdSBidXQg
+d2l0aAo+IE1peGVyIGFuZCBGSU1EKHRoZSBzZXR1cCBJIGFjdHVhbGx5IHVzZSB0byB0ZXN0KSBl
+dmVyeXRoaW5nIHdvcmtzIGZpbmUuCgpIbS4uLiBEaWQgTWl4ZXIgYW5kIEZJTUQgY29tYmluYXRp
+b24gcmVhbGx5IHdvcmsgY29ycmVjdGx5IHdpdGgKZXh0ZW5zaW9uIG1vZGU/Cgo+IFNvIHNvbWVo
+b3cgbXkgcGF0Y2hlcyBjYXVzZWQgYSByZWdyZXNzaW9uIG9uIHZpZGkgdGhhdCBJJ20gc3RpbGwK
+PiBpdmVzdGlnYXRpbmcuCgpJIHRoaW5rIHRoaXMgaXNzdWUgaXMgYmVjYXVzZSBwYWdlIGZsaXAg
+b3BlcmF0aW9ucyBhcmUgcGVyZm9ybWVkIGluCmF0b21pYzogaWYgSSBzZWUgY29ycmVjdGx5LCB3
+aGVuIHBhZ2UgZmxpcCBpcyByZXF1ZXN0ZWQgYnkgbW9kZXRlc3QsIHRoZQpjYWxsIGZsb3cgaXMg
+YXMgZm9sbG93cywKCmRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcAoJZHJtX2F0b21pY19hc3lu
+Y19jb21taXQKCQlleHlub3NfYXRvbWljX2NvbW1pdAoJCQkuLi4KCQkJZHJtX2F0b21pY19oZWxw
+ZXJfd2FpdF9mb3JfdmJsYW5rcwoJCQkuLi4KCkhvd2V2ZXIsIHRoZSBmdW5jdGlvbiwgZHJtX2F0
+b21pY19oZWxwZXJfd2FpdF9mb3JfdmJsYW5rcyBjYWxsZWQgYnkKZXh5bm9zX2F0b21pY19jb21t
+aXQsIHdhaXRzIGZvciB0aGUgdmJsYW5rIGNvbXBsZXRpb24gb2YgZWFjaCBjcnRjCmRyaXZlciAu
+IFNlZSB3YWl0X2V2ZW50X3RpbWVvdXQgZnVuY3Rpb24gY2FsbCBpbgpkcm1fYXRvbWljX2hlbHBl
+cl93YWl0X2Zvcl92YmxhbmtzIGZ1bmN0aW9uLgoKVGhpcyBtZWFucyB0aGF0IGEgcGFnZSBmbGlw
+IHJlcXVlc3Qgb2YgYSBjcnRjIGRyaXZlciBjYW5ub3QgYmUgcGVyZm9ybWVkCnVudGlsIHRoZSB2
+YmxhbmsgY29tcGxldGlvbiBvZiBhbm90aGVyIGNydGMgZHJpdmVyLiBJIHRoaW5rIHlvdSBzaG91
+bGQKaGF2ZSBpbXBsZW1lbnRlZCBleHlub3NfYXRvbWljX2NvbW1pdCBmdW5jdGlvbiBhc3luY2hy
+b25vdXNseSwgbm90CnN5bmNocm9ub3VzbHkgbGlrZSB5b3UgZGlkLiBTbyBpdCBzZWVtcyB0aGF0
+IHRoaXMgZnVuY3Rpb24gc2hvdWxkIGJlCnJlLWltcGxlbWVudGVkLgoKSWYgbXkgYW5hbHlzaXMg
+aXMgY29ycmVjdCBhbmQgeW91IGNhbm5vdCBwb3N0IHRoZSBjaGFuZ2Ugc2V0IHdpdGhpbiB0aGlz
+CndlZWssIEknbSBub3Qgc3VyZSB3aGV0aGVyIHRoZSBhdG9taWMgcGF0Y2ggc2VyaWVzIHNob3Vs
+ZCBnbyB0bwptYWlubGluZS4gQW55d2F5LCBJIHdpbGwgZGVjaWRlIGl0IGFuZCBoYXZlIGEgcHVs
+bC1yZXF1ZXN0IGF0IHRoZSBlbmQgb2YKdGhpcyB3ZWVrIGF0IGxlYXN0LgoKVGhhbmtzLApJbmtp
+IERhZQoKPiAKPiAJR3VzdGF2bwo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6
+IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBi
+b2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpv
+cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
