@@ -1,239 +1,88 @@
-From: Alexey Klimov <klimov.linux@gmail.com>
-Subject: Re: [PATCH 06/41] clocksource: exynos_mct: Migrate to new 'set-state' interface
-Date: Thu, 18 Jun 2015 19:38:18 +0300
-Message-ID: <CALW4P+KrWdAPmG_H8uutDCh5OUgkiRC6UmwM3-C1WwV0CF2_Qg@mail.gmail.com>
-References: <cover.1434622147.git.viresh.kumar@linaro.org>
-	<a1d7ad942bfc08b91b7ae0d9ba3b19b579f469c9.1434622147.git.viresh.kumar@linaro.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 0/6] cpufreq: use generic cpufreq drivers
+ forExynos4210platform
+Date: Thu, 18 Jun 2015 19:53:14 +0200
+Message-ID: <1705390.i4bNz9zR7Y@amdc1976>
+References: <'@samsung.com> <55549E03.6040105@kernel.org>
+ <556F8C1D.9050906@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:35740 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751274AbbFRQiU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Jun 2015 12:38:20 -0400
-In-Reply-To: <a1d7ad942bfc08b91b7ae0d9ba3b19b579f469c9.1434622147.git.viresh.kumar@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <556F8C1D.9050906@kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
-
-Hi Viresh,
-
-(adding samsung list and Krzysztof to c/c)
-
-Please don't forget to send patches to platform list and platform maintainers.
-
-On Thu, Jun 18, 2015 at 1:54 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> Migrate exynos_mct driver to the new 'set-state' interface provided by
-> clockevents core, the earlier 'set-mode' interface is marked obsolete
-> now.
->
-> This also enables us to implement callbacks for new states of clockevent
-> devices, for example: ONESHOT_STOPPED.
->
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/clocksource/exynos_mct.c | 85 +++++++++++++++++++---------------------
->  1 file changed, 40 insertions(+), 45 deletions(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 935b05936dbd..82e060cb7b95 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -257,15 +257,14 @@ static void exynos4_mct_comp0_stop(void)
->         exynos4_mct_write(0, EXYNOS4_MCT_G_INT_ENB);
->  }
->
-> -static void exynos4_mct_comp0_start(enum clock_event_mode mode,
-> -                                   unsigned long cycles)
-> +static void exynos4_mct_comp0_start(bool periodic, unsigned long cycles)
->  {
->         unsigned int tcon;
->         cycle_t comp_cycle;
->
->         tcon = readl_relaxed(reg_base + EXYNOS4_MCT_G_TCON);
->
-> -       if (mode == CLOCK_EVT_MODE_PERIODIC) {
-> +       if (periodic) {
->                 tcon |= MCT_G_TCON_COMP0_AUTO_INC;
->                 exynos4_mct_write(cycles, EXYNOS4_MCT_G_COMP0_ADD_INCR);
->         }
-> @@ -283,38 +282,38 @@ static void exynos4_mct_comp0_start(enum clock_event_mode mode,
->  static int exynos4_comp_set_next_event(unsigned long cycles,
->                                        struct clock_event_device *evt)
->  {
-> -       exynos4_mct_comp0_start(evt->mode, cycles);
-> +       exynos4_mct_comp0_start(false, cycles);
->
->         return 0;
->  }
->
-> -static void exynos4_comp_set_mode(enum clock_event_mode mode,
-> -                                 struct clock_event_device *evt)
-> +static int mct_set_state_shutdown(struct clock_event_device *evt)
->  {
-> -       unsigned long cycles_per_jiffy;
->         exynos4_mct_comp0_stop();
-> +       return 0;
-> +}
->
-> -       switch (mode) {
-> -       case CLOCK_EVT_MODE_PERIODIC:
-> -               cycles_per_jiffy =
-> -                       (((unsigned long long) NSEC_PER_SEC / HZ * evt->mult) >> evt->shift);
-> -               exynos4_mct_comp0_start(mode, cycles_per_jiffy);
-> -               break;
-> +static int mct_set_state_periodic(struct clock_event_device *evt)
-> +{
-> +       unsigned long cycles_per_jiffy;
->
-> -       case CLOCK_EVT_MODE_ONESHOT:
-> -       case CLOCK_EVT_MODE_UNUSED:
-> -       case CLOCK_EVT_MODE_SHUTDOWN:
-> -       case CLOCK_EVT_MODE_RESUME:
-> -               break;
-> -       }
-> +       cycles_per_jiffy = (((unsigned long long)NSEC_PER_SEC / HZ * evt->mult)
-> +                           >> evt->shift);
-> +       exynos4_mct_comp0_stop();
-> +       exynos4_mct_comp0_start(true, cycles_per_jiffy);
-> +       return 0;
->  }
->
->  static struct clock_event_device mct_comp_device = {
-> -       .name           = "mct-comp",
-> -       .features       = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> -       .rating         = 250,
-> -       .set_next_event = exynos4_comp_set_next_event,
-> -       .set_mode       = exynos4_comp_set_mode,
-> +       .name                   = "mct-comp",
-> +       .features               = CLOCK_EVT_FEAT_PERIODIC |
-> +                                 CLOCK_EVT_FEAT_ONESHOT,
-> +       .rating                 = 250,
-> +       .set_next_event         = exynos4_comp_set_next_event,
-> +       .set_state_periodic     = mct_set_state_periodic,
-> +       .set_state_shutdown     = mct_set_state_shutdown,
-> +       .set_state_oneshot      = mct_set_state_shutdown,
-> +       .tick_resume            = mct_set_state_shutdown,
->  };
->
->  static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
-> @@ -390,39 +389,32 @@ static int exynos4_tick_set_next_event(unsigned long cycles,
->         return 0;
->  }
->
-> -static inline void exynos4_tick_set_mode(enum clock_event_mode mode,
-> -                                        struct clock_event_device *evt)
-> +static int set_state_shutdown(struct clock_event_device *evt)
-> +{
-> +       exynos4_mct_tick_stop(this_cpu_ptr(&percpu_mct_tick));
-
-Passed evt pointer isn't used and instead you're going to locate
-percpu_mct_tick struct knowing current cpu number offset.
-What do you think, since evt is embedded into percpu_mct_tick
-structure then maybe it will be cheaper to calculate percpu_mct_tick
-using container_of()?
-
-struct mct_clock_event_device *mevt;
-mevt = container_of(evt, struct mct_clock_event_device, evt);
 
 
-> +       return 0;
-> +}
-> +
-> +static int set_state_periodic(struct clock_event_device *evt)
->  {
->         struct mct_clock_event_device *mevt = this_cpu_ptr(&percpu_mct_tick);
->         unsigned long cycles_per_jiffy;
->
-> +       cycles_per_jiffy = (((unsigned long long)NSEC_PER_SEC / HZ * evt->mult)
-> +                           >> evt->shift);
->         exynos4_mct_tick_stop(mevt);
-> -
-> -       switch (mode) {
-> -       case CLOCK_EVT_MODE_PERIODIC:
-> -               cycles_per_jiffy =
-> -                       (((unsigned long long) NSEC_PER_SEC / HZ * evt->mult) >> evt->shift);
-> -               exynos4_mct_tick_start(cycles_per_jiffy, mevt);
-> -               break;
-> -
-> -       case CLOCK_EVT_MODE_ONESHOT:
-> -       case CLOCK_EVT_MODE_UNUSED:
-> -       case CLOCK_EVT_MODE_SHUTDOWN:
-> -       case CLOCK_EVT_MODE_RESUME:
-> -               break;
-> -       }
-> +       exynos4_mct_tick_start(cycles_per_jiffy, mevt);
-> +       return 0;
->  }
->
->  static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
->  {
-> -       struct clock_event_device *evt = &mevt->evt;
-> -
->         /*
->          * This is for supporting oneshot mode.
->          * Mct would generate interrupt periodically
->          * without explicit stopping.
->          */
-> -       if (evt->mode != CLOCK_EVT_MODE_PERIODIC)
-> +       if (!clockevent_state_periodic(&mevt->evt))
->                 exynos4_mct_tick_stop(mevt);
->
->         /* Clear the MCT tick interrupt */
-> @@ -455,7 +447,10 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
->         evt->name = mevt->name;
->         evt->cpumask = cpumask_of(cpu);
->         evt->set_next_event = exynos4_tick_set_next_event;
-> -       evt->set_mode = exynos4_tick_set_mode;
-> +       evt->set_state_periodic = set_state_periodic;
-> +       evt->set_state_shutdown = set_state_shutdown;
-> +       evt->set_state_oneshot = set_state_shutdown;
-> +       evt->tick_resume = set_state_shutdown;
+Hi,
 
-Do i correctly understand that during massive hot-plug cpu events (i
-guess that will lead to CPU_STARING notification) on power management
-this *_timer_setup() function will be called?
-And here code performs setting of rather constant values and copying.
-You're going to increase number of such strange assignments.
+Mike, could you please take a look at patches #1 and #2 (#1 is a 4 line
+change to a Common Clock Framework and #2 is ARM Exynos specific)?
 
-Well, just lazy-thinking. Can we do something like this:
+This series has been waiting on your feedback since 3rd of April. :(
 
-for_each_possible_cpu(cpu) {
-          exynos4_local_timer_setup_prepare(&per_cpu(percpu_mct_tick,
-cpu).evt, cpu);
-}
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-somewhere in exynos_mct init functions and assign most of these values
-for each evt structure?
-And make *_timer_setup() function lighter moving some code to
-prepare/init functions.
-If it makes any sense i can take a look and try to prepare patch.
+On Thursday, June 04, 2015 08:22:05 AM Kukjin Kim wrote:
+> On 05/14/15 22:07, Kukjin Kim wrote:
+> > On 05/14/15 14:10, Viresh Kumar wrote:
+> >> On 14-05-15, 13:07, Kukjin Kim wrote:
+> >>> On 05/13/15 23:08, Bartlomiej Zolnierkiewicz wrote:
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>> Hi Bart,
+> >>>
+> >>>> On Friday, April 03, 2015 06:43:43 PM Bartlomiej Zolnierkiewicz wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> This patch series removes the use of Exynos4210 specific support
+> >>>>> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+> >>>>> for this platform.
+> >>>>
+> >>>> Gentle Ping.  Mike/Kukjin/Viresh could you please review/ack relevant
+> >>>> patches (patches #1-3 are for clock subsystem, patches #4-5 for Exynos
+> >>>> mach/dts and patch #6 is for cpufreq subsystem)?
+> >>
+> >> Sorry I thought I already Acked an older version of this set and so
+> >> didn't went for it again. Done now.
+> >>
+> >>> Yes, I totally agreed with this patches for arch side changes and this
+> >>> approach when Thomas posted.
+> >>>
+> >>>> Also what is your
+> >>>> preferred way to upstream them (patches are not independent so it would
+> >>>> be best to merge them through one tree, otherwise synchronization of
+> >>>> git pulls between different subsystem trees will be needed)?
+> >>>>
+> >>> I can provide topic branch for arch side changes even it is small. I
+> >>> think once Viresh and Mike make each topic branch based on -rc or the
+> >>> smallest changes from each subsystem then I could handle this series or
+> >>> Viresh or Mike need to handle this series with merging each topic
+> >>> branches in subsystem. I'm fine either way.
+> >>>
+> >>> Viresh and Mike, how do you think about that?
+> >>
+> >> For cpufreq subsystem changes, you can take them in your tree.
+> >>
+> > Hi Viresh, OK, I will take the cpufreq changes with your ack. Thanks for
+> > your confirmation.
+> > 
+> > Hi Mike and Sylwester,
+> > How can we handle this series well without any problems? hmm...
+> > 
+> Still I need to get clock guys' ack or any comments on this series...
+> 
+> - Kukjin
+> 
+> >>>> I'm still hoping that this patchset will make it into v4.2 as there are
+> >>>> no known issues with it (except minor coding nit for patch #5)...
+> >>>>
+> >>> Sure, why not :-)
 
-
-
->         evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
->         evt->rating = 450;
->
-> @@ -482,7 +477,7 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
->
->  static void exynos4_local_timer_stop(struct clock_event_device *evt)
->  {
-> -       evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-> +       evt->set_state_shutdown(evt);
->         if (mct_int_type == MCT_INT_SPI)
->                 free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
->         else
-> --
-
-Do you need testers? I can test it on odroid-xu3.
-
-
-Can't find in emails similar patch for ARM arch timer. Any plans about
-it? Or if it's already converted to 'set-state' then could you please
-share a link?
-
-Thanks and best regards,
-Alexey Klimov
