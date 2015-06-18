@@ -1,46 +1,48 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 0/3] drm/exynos: improve vidi refresh rate + async commit
-Date: Thu, 18 Jun 2015 12:23:58 -0300
-Message-ID: <1434641041-17833-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, m.szyprowski@samsung.com
+Subject: [PATCH 2/3] drm/exynos: vidi: always handle vblank on planes updates
+Date: Thu, 18 Jun 2015 12:24:00 -0300
+Message-ID: <1434641041-17833-3-git-send-email-gustavo@padovan.org>
+References: <1434641041-17833-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:33780 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755998AbbFRPYO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Jun 2015 11:24:14 -0400
+Received: by qged89 with SMTP id d89so27214522qge.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Jun 2015 08:24:13 -0700 (PDT)
+In-Reply-To: <1434641041-17833-1-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, m.szyprowski@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-SGksCgpUaGUgZmlyc3QgcGF0Y2ggaW4gdGhpcyBzZXJpZXMgYWRkIHN1cHBvcnQgdG8gYXN5bmMg
-cGFnZSBmbGlwcywgYnV0IGl0IGRvZXNuJ3QKaW1wcm92ZSB0aGUgcmVmcmVzaCByYXRlIHdoZW4g
-dXNpbmcgdmlkaStmaW1kLgoKVGhlIHNlY29uZCBwYXRjaCBmaXhlcyBhbiBpc3N1ZSBvbiB2aWRp
-IHRoYXQgc29sdmVzIHRoZSByZWZyZXNoIHJhdGUgaXNzdWUgd2hlbgpvbmx5IHZpZGkgaXMgdXNl
-ZC4gRm9yIHRoZSBjYXNlIHdoZXJlIHZpZGkgKyBmaW1kIGlzIHVzZWQgaXQgaW1wcm92ZXMgdGhl
-CnJlZnJlc2ggcmF0ZSBmcm9tIDIwSHogdG8gMjhIei4gVGhlcmUgaXMgcm9vbSB0byBpbXByb3Zl
-IHRoaXMgbW9yZSwgYnV0IEkgdGhpbmsKdGhlc2UgcGF0Y2hlcyBjYW4gYWxyZWFkeSBiZSBwdXNo
-ZWQgdXBzdHJlYW0uCgpJdCBpcyBpbXBvcnRhbnQgdG8gcmVtZW1iZXIgdGhhdCB0aGUgbG93IHJl
-ZnJlc2ggcmF0ZSBpc3N1ZSBvbmx5IGhhcHBlbnMgd2hlbgp2aWRpIGlzIHVzZWQgYWxvbmcgd2l0
-aCBhbm90aGVyIGNydGMuIEl0IGRvZXNuJ3QgaGFwcGVuIGluIGEgc2V0dXAgdGhhdCBoYXMgb25s
-eQpGSU1EIGFuZC9vciBNaXhlciwgdGh1cyBtb3N0IG9mIHVzZSBjYXNlcyBvdXQgdGhlcmUgYXJl
-IG5vdCBhZmZlY3RlZC4KCglHdXN0YXZvCgotLS0KR3VzdGF2byBQYWRvdmFuICgzKToKICBkcm0v
-ZXh5bm9zOiBhZGQgYXRvbWljIGFzeW5jaHJvbm91cyBjb21taXQKICBkcm0vZXh5bm9zOiB2aWRp
-OiBhbHdheXMgaGFuZGxlIHZibGFuayBvbiBwbGFuZXMgdXBkYXRlcwogIGRybS9leHlub3M6IHBh
-c3MgdGhlIGNvcnJlY3QgcGlwZSBudW1iZXIKCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuYyAgfCAgNiArKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2Lmgg
-IHwgIDYgKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMgICB8IDUx
-ICsrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fdmlkaS5jIHwgIDMgKy0KIDUgZmlsZXMgY2hhbmdlZCwgNTUgaW5zZXJ0aW9u
-cygrKSwgMTMgZGVsZXRpb25zKC0pCgotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+We need to call drm_handle_vblank() after each successful plane update
+to update vblank counter and send the necessary events.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 3413393..4706d45 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -193,10 +193,11 @@ static void vidi_fake_vblank_handler(struct work_struct *work)
+ 	/* refresh rate is about 50Hz. */
+ 	usleep_range(16000, 20000);
+ 
++	drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++
+ 	mutex_lock(&ctx->lock);
+ 
+ 	if (ctx->direct_vblank) {
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+ 		ctx->direct_vblank = false;
+ 		mutex_unlock(&ctx->lock);
+ 		return;
+-- 
+2.1.0
