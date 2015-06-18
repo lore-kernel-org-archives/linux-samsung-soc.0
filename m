@@ -1,117 +1,40 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v10 00/17] drm/exynos: atomic modesetting support
-Date: Wed, 17 Jun 2015 11:33:08 -0300
-Message-ID: <20150617143308.GB1598@joana>
-References: <1433171095-23773-1-git-send-email-gustavo@padovan.org>
- <557E6C19.7070103@samsung.com> <20150616203549.GA1598@joana>
- <55816F60.4020307@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Update video-phy node with syscon phandle for
+ Exynos3250
+Date: Thu, 18 Jun 2015 12:58:08 +0900
+Message-ID: <558241D0.50002@samsung.com>
+References: <1434355966-4566-1-git-send-email-b.michalska@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <55816F60.4020307@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:21661 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751882AbbFRD6K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Jun 2015 23:58:10 -0400
+In-reply-to: <1434355966-4566-1-git-send-email-b.michalska@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Beata Michalska <b.michalska@samsung.com>, kgene@kernel.org, kishon@ti.com, javier.martinez@collabora.co.uk, s.nawrocki@samsung.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, human.hwang@samsung.com
 
-SGkgSW5raSwKCjIwMTUtMDYtMTcgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPjoKCj4g
-SGkgR3VzdGF2bywKPiAKPiBPbiAyMDE164WEIDA27JuUIDE37J28IDA1OjM1LCBHdXN0YXZvIFBh
-ZG92YW4gd3JvdGU6Cj4gPiBISSBJbmtpLAo+ID4gCj4gPiAyMDE1LTA2LTE1IElua2kgRGFlIDxp
-bmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4gPiAKPiA+PiBIaSBHdXN0YXZvLAo+ID4+Cj4gPj4gT24g
-MjAxNeuFhCAwNuyblCAwMuydvCAwMDowNCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+ID4+PiBG
-cm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4g
-Pj4+Cj4gPj4+IEhpLAo+ID4+Pgo+ID4+PiBIZXJlIGdvZXMgdGhlIGZ1bGwgc3VwcG9ydCBmb3Ig
-YXRvbWljIG1vZGVzZXR0aW5nIG9uIGV4eW5vcy4gSSd2ZQo+ID4+PiBzcGxpdCB0aGUgcGF0Y2hl
-cyBpbiB0aGUgdmFyaW91cyBwaGFzZXMgb2YgYXRvbWljIHN1cHBvcnQuCj4gPj4+Cj4gPj4+IHYy
-OiBmaXhlcyBjb21tZW50cyBieSBKb29ueW91bmcKPiA+Pj4gICAgICAgICAtIHJlbW92ZSB1bnVz
-ZWQgdmFyIGluIHBhdGNoIDA5Cj4gPj4+ICAgICAgICAgLSB1c2UgLT5kaXNhYmxlIGluc3RlYWQg
-b2Ygb3V0ZGF0ZWQgLT5kcG1zIGluIGhkbWkgY29kZQo+ID4+PiAgICAgICAgIC0gcmVtb3ZlIFdB
-Uk5fT04gZnJvbSBjcnRjIGVuYWJsZS9kaXNhYmxlCj4gPj4+Cj4gPj4+IHYzOiBmaXhlcyBjb21t
-ZW50IGJ5IEpvb255b3VuZwo+ID4+PiAgICAgICAgIC0gbW92ZSB0aGUgcmVtb3ZhbCBvZiBkcm1f
-aGVscGVyX2Rpc2FibGVfdW51c2VkX2Z1bmN0aW9ucygpIHRvCj4gPj4+ICAgICAgICAgc2VwYXJh
-dGVkIHBhdGNoCj4gPj4+Cj4gPj4+IHY0OiBhZGQgcGF0Y2hlcyB0aGF0IHJlbW92ZSB1bm5lY2Vz
-c2FyeSBjYWxscyB0byBkaXNhYmxlX3BsYW5lKCkKPiA+Pj4KPiA+Pj4gdjU6IGZpeGVzIE5VTEwg
-Q1JUQyBjcmFzaCBvbiBwbGFuZXMgdXBkYXRlcyAocmVwb3J0ZWQgYnkgSW5raSBhbmQgVG9iaWFz
-KQo+ID4+Pgo+ID4+PiB2NjogcmViYXNlIG9uIGxhdGVzdCBleHlub3NfZHJtX25leHQKPiA+Pj4K
-PiA+Pj4gdjc6IGZpeCBjb21tZW50cyBieSBKb29ueW91bmcKPiA+Pj4gICAgICAgICAtIGZpeCB0
-d28gY2hlY2twYXRjaCBlcnJvcnMKPiA+Pj4gICAgICAgICAtIHJlbW92ZSBleHRyYSBjcnRjLT5j
-b21taXQoKSBjYWxsCj4gPj4+ICAgICAgICAgLSBjaGVjayBmb3IgbnVsbCBmYiBvbiBleHlub3Nf
-Y2hlY2tfcGxhbmUoKQo+ID4+Pgo+ID4+PiB2ODogZml4IGNvbW1lbnRzIGJ5IEpvb255b3VuZwo+
-ID4+PiAgICAgICAgIC0gZml4IG1lcmdlIGVycm9yCj4gPj4+ICAgICAgICAgLSBtb3ZlIGRybV9j
-cnRjX3ZibGFua19nZXQgdG8gdGhlIGNvbW1pdCB0aGF0IGludHJvZHVjZXMgYXRvbWljIHBhZ2Vm
-bGlwCj4gPj4+ICAgICAgICAgLSByZW1vdmUgLnByZXBhcmUoKSBpbiB0aGUgYXByb3BpYXRlZCBw
-YXRjaAo+ID4+PiAgICAgICAgIC0gYWRkIGEgbmV3IHBhdGNoIHRvIG1vdmUgZXh5bm9zX2RybV9j
-cnRjX2Rpc2FibGUoKQo+ID4+Pgo+ID4+PiB2OTogICogZml4IGNvbW1lbnRzIGJ5IEpvb255b3Vu
-Zwo+ID4+PiAgICAgICAgIC0gYWxzbyByZW1vdmUgZW5jb2RlciAucHJlcGFyZSgpCj4gPj4+ICAg
-ICAgICAgLSBkbyBub3Qgc2hpZnQgZXh5bm9zX3VwZGF0ZV9wbGFuZSgpIHBhcmFtZXRlcnMKPiA+
-Pj4gICAgICAgICAtIHJlbW92ZSB1bnVzZWQgLm1vZGVfc2V0KCkgYW5kIC5tb2RlX3NldF9iYXNl
-KCkKPiA+Pj4gICAgICAqIGFkZCBzcGVjaWZpYyBleHlub3MgLmF0b21pY19jb21taXQoKQo+ID4+
-PiAgICAgICogYWRkIHNwbGl0IG9mIGV4eW5vc19jcnRjLT5vcHMtPmRwbXMoKSBpbnRvIGVuYWJs
-ZSgpIGFuZCBkaXNhYmxlKCkKPiA+Pj4gICAgICAqIGFkZCBvdGhlciBhdG9taWMgY2xlYW4gdXBz
-Cj4gPj4+Cj4gPj4+IHYxMDogKiBmaXggY29tbWVudHMgYnkgSm9vbnlvdW5nCj4gPj4+IAktIGFk
-ZCBtb3JlIGNvbW1lbnRzIG9uIGV4eW5vc19hdG9taWNfY29tbWl0KCkKPiA+Pj4gCS0gbWFrZSBl
-eHlub3NfY3J0YydzIC5lbmFibGUgYW5kIC5kaXNhYmxlIHZvaWQKPiA+Pgo+ID4+IEkgZm91bmQg
-b3V0IG9uZSBpc3N1ZSB0aGF0IHJlZnJlc2ggcmF0ZSBnZXRzIGxvdyB3aXRoIGRpc3BsYXkgZXh0
-ZW5zaW9uCj4gPj4gbW9kZSB0ZXN0Lgo+ID4+Cj4gPj4gSSB0ZXN0ZWQgaXQgd2l0aCB0d28gY3J0
-YyBkcml2ZXJzIC0gdmlkaSBhbmQgZmltZCBvbiBUcmF0czIgYm9hcmQuIEhlcmUKPiA+PiBpcyBo
-b3cgdG8gdGVzdCBpdCwKPiA+Pgo+ID4+ICNlY2hvIDEgPiAvc3lzL2RldmljZXMvcGxhdGZvcm0v
-ZXh5bm9zLWRybS12aWRpL2Nvbm5lY3Rpb24KPiA+PiAjIG1vZGV0ZXN0IC1NIGV4eW5vcyAtdiAt
-cyAzMUAyOTo3MjB4MTI4MCAtcyAyM0AyMTo2NDB4NDgwCj4gPj4gc2V0dGluZyBtb2RlIDcyMHgx
-MjgwLTYwSHpAWFIyNCBvbiBjb25uZWN0b3JzIDMxLCBjcnRjIDI5Cj4gPj4gc2V0dGluZyBtb2Rl
-IDY0MHg0ODAtNzVIekBYUjI0IG9uIGNvbm5lY3RvcnMgMjMsIGNydGMgMjEKPiA+PiBmcmVxOiAy
-MC4wMEh6Cj4gPj4gZnJlcTogMjAuMDBIego+ID4+Cj4gPj4gQXMgeW91IGNhbiBzZWUsIHJlZnJl
-c2ggcmF0ZSBpcyAyMC4KPiA+Pgo+ID4+IEJlbG93IGlzIHRoZSByZXN1bHQgd2l0aG91dCBhdG9t
-aWMgcGF0Y2ggc2VyaWVzLAo+ID4+ICMgbW9kZXRlc3QgLU0gZXh5bm9zIC12IC1zIDMxQDI5Ojcy
-MHgxMjgwIC1zIDIzQDIxOjY0MHg0ODAKPiA+PiBzZXR0aW5nIG1vZGUgNzIweDEyODAtNjBIekBY
-UjI0IG9uIGNvbm5lY3RvcnMgMzEsIGNydGMgMjkKPiA+PiBzZXR0aW5nIG1vZGUgNjQweDQ4MC03
-NUh6QFhSMjQgb24gY29ubmVjdG9ycyAyMywgY3J0YyAyMQo+ID4+IGZyZXE6IDYwLjE4SHoKPiA+
-PiBmcmVxOiA0OS4wOUh6Cj4gPj4KPiA+PiBJIGNhbiBzZWUgNjBIeiBmb3IgRklNRCBhbmQgNDlI
-eiBmb3IgdmlkaS4KPiA+IAo+ID4gSSBnYXZlIHRoaXMgYSB0cnkgYW5kIGZpZ3VyZWQgb3V0IHRo
-YXQgdGhpcyBtaWdodCBiZSBhIHZpZGkgc3BlY2lmaWMKPiA+IHByb2JsZW0uIElmIEkgdHJ5IFZJ
-REkgYW5kIEZJTUQgSSBnZXQgdGhlIHNhbWUgcmVzdWx0cyBhcyB5b3UgYnV0IHdpdGgKPiA+IE1p
-eGVyIGFuZCBGSU1EKHRoZSBzZXR1cCBJIGFjdHVhbGx5IHVzZSB0byB0ZXN0KSBldmVyeXRoaW5n
-IHdvcmtzIGZpbmUuCj4gCj4gSG0uLi4gRGlkIE1peGVyIGFuZCBGSU1EIGNvbWJpbmF0aW9uIHJl
-YWxseSB3b3JrIGNvcnJlY3RseSB3aXRoCj4gZXh0ZW5zaW9uIG1vZGU/CgpZZXMuCgpjb2xsYWJv
-cmFAc2luZ3VsYXJpdHk6fiQgbW9kZXRlc3QgLU0gZXh5bm9zIC1zIDMxOjE5MjB4MTA4MCAtdiAt
-cwoyNToxMzY2eDc2OApzZXR0aW5nIG1vZGUgMTkyMHgxMDgwLTYwSHpAWFIyNCBvbiBjb25uZWN0
-b3JzIDMxLCBjcnRjIDI5CnNldHRpbmcgbW9kZSAxMzY2eDc2OC02MEh6QFhSMjQgb24gY29ubmVj
-dG9ycyAyNSwgY3J0YyAyMwpmcmVxOiA1NS44Mkh6CmZyZXE6IDU1LjM4SHoKZnJlcTogNTUuMzBI
-egpmcmVxOiA1NS4zOEh6CmZyZXE6IDU1LjMwSHoKZnJlcTogNTUuMzhIegpmcmVxOiA1NS4zMEh6
-CmZyZXE6IDU1LjM4SHoKZnJlcTogNTUuMzBIegpmcmVxOiA1NS4zOEh6Cgo+IAo+ID4gU28gc29t
-ZWhvdyBteSBwYXRjaGVzIGNhdXNlZCBhIHJlZ3Jlc3Npb24gb24gdmlkaSB0aGF0IEknbSBzdGls
-bAo+ID4gaXZlc3RpZ2F0aW5nLgo+IAo+IEkgdGhpbmsgdGhpcyBpc3N1ZSBpcyBiZWNhdXNlIHBh
-Z2UgZmxpcCBvcGVyYXRpb25zIGFyZSBwZXJmb3JtZWQgaW4KPiBhdG9taWM6IGlmIEkgc2VlIGNv
-cnJlY3RseSwgd2hlbiBwYWdlIGZsaXAgaXMgcmVxdWVzdGVkIGJ5IG1vZGV0ZXN0LCB0aGUKPiBj
-YWxsIGZsb3cgaXMgYXMgZm9sbG93cywKPiAKPiBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAK
-PiAJZHJtX2F0b21pY19hc3luY19jb21taXQKPiAJCWV4eW5vc19hdG9taWNfY29tbWl0Cj4gCQkJ
-Li4uCj4gCQkJZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3JfdmJsYW5rcwo+IAkJCS4uLgo+IAo+
-IEhvd2V2ZXIsIHRoZSBmdW5jdGlvbiwgZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3JfdmJsYW5r
-cyBjYWxsZWQgYnkKPiBleHlub3NfYXRvbWljX2NvbW1pdCwgd2FpdHMgZm9yIHRoZSB2Ymxhbmsg
-Y29tcGxldGlvbiBvZiBlYWNoIGNydGMKPiBkcml2ZXIgLiBTZWUgd2FpdF9ldmVudF90aW1lb3V0
-IGZ1bmN0aW9uIGNhbGwgaW4KPiBkcm1fYXRvbWljX2hlbHBlcl93YWl0X2Zvcl92YmxhbmtzIGZ1
-bmN0aW9uLgo+IAo+IFRoaXMgbWVhbnMgdGhhdCBhIHBhZ2UgZmxpcCByZXF1ZXN0IG9mIGEgY3J0
-YyBkcml2ZXIgY2Fubm90IGJlIHBlcmZvcm1lZAo+IHVudGlsIHRoZSB2YmxhbmsgY29tcGxldGlv
-biBvZiBhbm90aGVyIGNydGMgZHJpdmVyLiBJIHRoaW5rIHlvdSBzaG91bGQKPiBoYXZlIGltcGxl
-bWVudGVkIGV4eW5vc19hdG9taWNfY29tbWl0IGZ1bmN0aW9uIGFzeW5jaHJvbm91c2x5LCBub3QK
-PiBzeW5jaHJvbm91c2x5IGxpa2UgeW91IGRpZC4gU28gaXQgc2VlbXMgdGhhdCB0aGlzIGZ1bmN0
-aW9uIHNob3VsZCBiZQo+IHJlLWltcGxlbWVudGVkLgoKSSBoYXZlIGEgcGF0Y2ggZm9yIGl0IGFs
-cmVhZHkuIEknbGwgcmVzZW5kIGEgdjIgb2YgbXkgbGFzdCBzZXJpZXMuIAoKPiAKPiBJZiBteSBh
-bmFseXNpcyBpcyBjb3JyZWN0IGFuZCB5b3UgY2Fubm90IHBvc3QgdGhlIGNoYW5nZSBzZXQgd2l0
-aGluIHRoaXMKPiB3ZWVrLCBJJ20gbm90IHN1cmUgd2hldGhlciB0aGUgYXRvbWljIHBhdGNoIHNl
-cmllcyBzaG91bGQgZ28gdG8KPiBtYWlubGluZS4gQW55d2F5LCBJIHdpbGwgZGVjaWRlIGl0IGFu
-ZCBoYXZlIGEgcHVsbC1yZXF1ZXN0IGF0IHRoZSBlbmQgb2YKPiB0aGlzIHdlZWsgYXQgbGVhc3Qu
-CgpXZSBoYXZlIGFib3V0IDMgbW9udGhzIHRvIGZpeCB0aGlzLCB1bnRpbCB2NC4yIGlzIG91dCwg
-bm90IG9uZSB3ZWVrLiBBbmQKaXQgaXMgd29ya2luZyBmb3IgRklNRCBhbmQgTWl4ZXIuCgoJR3Vz
-dGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 15.06.2015 17:12, Beata Michalska wrote:
+> As a follow-up to recent changes to Exynos mipi video phy
+> driver, introducing support for PMU regmap in commit
+> e4b3d38088df6f3acd40 ("phy: exynos-video-mipi: Fix regression
+> by adding support for PMU regmap") add a syscon phandle to
+> video-phy node to bring back to life both MIPI DSI display
+> and MIPI CSIS-2 camera sensor on Exynos3250.
+> 
+> Signed-off-by: Beata Michalska <b.michalska@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Thanks for the patch, I applied it to my tree. Since it is a fix for
+regression, I'll sent it to Kukjin for v4.2-rc cycle, unless he picks it
+up from LKML.
+
+Best regards,
+Krzysztof
