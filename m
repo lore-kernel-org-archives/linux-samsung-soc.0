@@ -1,167 +1,135 @@
 From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 8/10] media: vb2: Remove unused functions
-Date: Thu, 18 Jun 2015 16:08:38 +0200
-Message-ID: <1434636520-25116-9-git-send-email-jack@suse.cz>
+Subject: [PATCH 3/10] media: omap_vout: Convert omap_vout_uservirt_to_phys() to use get_vaddr_pfns()
+Date: Thu, 18 Jun 2015 16:08:33 +0200
+Message-ID: <1434636520-25116-4-git-send-email-jack@suse.cz>
 References: <1434636520-25116-1-git-send-email-jack@suse.cz>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
 In-Reply-To: <1434636520-25116-1-git-send-email-jack@suse.cz>
-Sender: linux-media-owner@vger.kernel.org
+Sender: owner-linux-mm@kvack.org
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Jan Kara <jack@suse.cz>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Conversion to the use of pinned pfns made some functions unused. Remove
-them. Also there's no need to lock mmap_sem in __buf_prepare() anymore.
+Convert omap_vout_uservirt_to_phys() to use get_vaddr_pfns() instead of
+hand made mapping of virtual address to physical address. Also the
+function leaked page reference from get_user_pages() so fix that by
+properly release the reference when omap_vout_buffer_release() is
+called.
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- drivers/media/v4l2-core/videobuf2-memops.c | 114 -----------------------------
- include/media/videobuf2-memops.h           |   6 --
- 2 files changed, 120 deletions(-)
+ drivers/media/platform/omap/omap_vout.c | 67 +++++++++++++++------------------
+ 1 file changed, 31 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/videobuf2-memops.c b/drivers/media/v4l2-core/videobuf2-memops.c
-index 0ec186d41b9b..48c6a49c4928 100644
---- a/drivers/media/v4l2-core/videobuf2-memops.c
-+++ b/drivers/media/v4l2-core/videobuf2-memops.c
-@@ -23,120 +23,6 @@
- #include <media/videobuf2-memops.h>
+diff --git a/drivers/media/platform/omap/omap_vout.c b/drivers/media/platform/omap/omap_vout.c
+index 17b189a81ec5..0e4b3cfacc5d 100644
+--- a/drivers/media/platform/omap/omap_vout.c
++++ b/drivers/media/platform/omap/omap_vout.c
+@@ -195,46 +195,34 @@ static int omap_vout_try_format(struct v4l2_pix_format *pix)
+ }
  
- /**
-- * vb2_get_vma() - acquire and lock the virtual memory area
-- * @vma:	given virtual memory area
-- *
-- * This function attempts to acquire an area mapped in the userspace for
-- * the duration of a hardware operation. The area is "locked" by performing
-- * the same set of operation that are done when process calls fork() and
-- * memory areas are duplicated.
-- *
-- * Returns a copy of a virtual memory region on success or NULL.
-- */
--struct vm_area_struct *vb2_get_vma(struct vm_area_struct *vma)
--{
--	struct vm_area_struct *vma_copy;
--
--	vma_copy = kmalloc(sizeof(*vma_copy), GFP_KERNEL);
--	if (vma_copy == NULL)
--		return NULL;
--
--	if (vma->vm_ops && vma->vm_ops->open)
--		vma->vm_ops->open(vma);
--
--	if (vma->vm_file)
--		get_file(vma->vm_file);
--
--	memcpy(vma_copy, vma, sizeof(*vma));
--
--	vma_copy->vm_mm = NULL;
--	vma_copy->vm_next = NULL;
--	vma_copy->vm_prev = NULL;
--
--	return vma_copy;
--}
--EXPORT_SYMBOL_GPL(vb2_get_vma);
--
--/**
-- * vb2_put_userptr() - release a userspace virtual memory area
-- * @vma:	virtual memory region associated with the area to be released
-- *
-- * This function releases the previously acquired memory area after a hardware
-- * operation.
-- */
--void vb2_put_vma(struct vm_area_struct *vma)
--{
--	if (!vma)
--		return;
--
--	if (vma->vm_ops && vma->vm_ops->close)
--		vma->vm_ops->close(vma);
--
--	if (vma->vm_file)
--		fput(vma->vm_file);
--
--	kfree(vma);
--}
--EXPORT_SYMBOL_GPL(vb2_put_vma);
--
--/**
-- * vb2_get_contig_userptr() - lock physically contiguous userspace mapped memory
-- * @vaddr:	starting virtual address of the area to be verified
-- * @size:	size of the area
-- * @res_paddr:	will return physical address for the given vaddr
-- * @res_vma:	will return locked copy of struct vm_area for the given area
-- *
-- * This function will go through memory area of size @size mapped at @vaddr and
-- * verify that the underlying physical pages are contiguous. If they are
-- * contiguous the virtual memory area is locked and a @res_vma is filled with
-- * the copy and @res_pa set to the physical address of the buffer.
-- *
-- * Returns 0 on success.
-- */
--int vb2_get_contig_userptr(unsigned long vaddr, unsigned long size,
--			   struct vm_area_struct **res_vma, dma_addr_t *res_pa)
--{
--	struct mm_struct *mm = current->mm;
+ /*
+- * omap_vout_uservirt_to_phys: This inline function is used to convert user
+- * space virtual address to physical address.
++ * omap_vout_get_userptr: Convert user space virtual address to physical
++ * address.
+  */
+-static unsigned long omap_vout_uservirt_to_phys(unsigned long virtp)
++static int omap_vout_get_userptr(struct videobuf_buffer *vb, u32 virtp,
++				 u32 *physp)
+ {
+-	unsigned long physp = 0;
 -	struct vm_area_struct *vma;
--	unsigned long offset, start, end;
--	unsigned long this_pfn, prev_pfn;
--	dma_addr_t pa = 0;
--
--	start = vaddr;
--	offset = start & ~PAGE_MASK;
--	end = start + size;
--
--	vma = find_vma(mm, start);
--
--	if (vma == NULL || vma->vm_end < end)
--		return -EFAULT;
--
--	for (prev_pfn = 0; start < end; start += PAGE_SIZE) {
--		int ret = follow_pfn(vma, start, &this_pfn);
--		if (ret)
--			return ret;
--
--		if (prev_pfn == 0)
--			pa = this_pfn << PAGE_SHIFT;
--		else if (this_pfn != prev_pfn + 1)
--			return -EFAULT;
--
--		prev_pfn = this_pfn;
--	}
--
--	/*
--	 * Memory is contigous, lock vma and return to the caller
--	 */
--	*res_vma = vb2_get_vma(vma);
--	if (*res_vma == NULL)
--		return -ENOMEM;
--
--	*res_pa = pa + offset;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(vb2_get_contig_userptr);
--
--/**
-  * vb2_create_framevec() - map virtual addresses to pfns
-  * @start:	Virtual user address where we start mapping
-  * @length:	Length of a range to map
-diff --git a/include/media/videobuf2-memops.h b/include/media/videobuf2-memops.h
-index 2f0564ff5f31..830b5239fd8b 100644
---- a/include/media/videobuf2-memops.h
-+++ b/include/media/videobuf2-memops.h
-@@ -31,12 +31,6 @@ struct vb2_vmarea_handler {
+-	struct mm_struct *mm = current->mm;
++	struct frame_vector *vec;
++	int ret;
  
- extern const struct vm_operations_struct vb2_common_vm_ops;
+ 	/* For kernel direct-mapped memory, take the easy way */
+-	if (virtp >= PAGE_OFFSET)
+-		return virt_to_phys((void *) virtp);
+-
+-	down_read(&current->mm->mmap_sem);
+-	vma = find_vma(mm, virtp);
+-	if (vma && (vma->vm_flags & VM_IO) && vma->vm_pgoff) {
+-		/* this will catch, kernel-allocated, mmaped-to-usermode
+-		   addresses */
+-		physp = (vma->vm_pgoff << PAGE_SHIFT) + (virtp - vma->vm_start);
+-		up_read(&current->mm->mmap_sem);
+-	} else {
+-		/* otherwise, use get_user_pages() for general userland pages */
+-		int res, nr_pages = 1;
+-		struct page *pages;
++	if (virtp >= PAGE_OFFSET) {
++		*physp = virt_to_phys((void *)virtp);
++		return 0;
++	}
  
--int vb2_get_contig_userptr(unsigned long vaddr, unsigned long size,
--			   struct vm_area_struct **res_vma, dma_addr_t *res_pa);
--
--struct vm_area_struct *vb2_get_vma(struct vm_area_struct *vma);
--void vb2_put_vma(struct vm_area_struct *vma);
--
- struct frame_vector *vb2_create_framevec(unsigned long start,
- 					 unsigned long length,
- 					 bool write);
+-		res = get_user_pages(current, current->mm, virtp, nr_pages, 1,
+-				0, &pages, NULL);
+-		up_read(&current->mm->mmap_sem);
++	vec = frame_vector_create(1);
++	if (!vec)
++		return -ENOMEM;
+ 
+-		if (res == nr_pages) {
+-			physp =  __pa(page_address(&pages[0]) +
+-					(virtp & ~PAGE_MASK));
+-		} else {
+-			printk(KERN_WARNING VOUT_NAME
+-					"get_user_pages failed\n");
+-			return 0;
+-		}
++	ret = get_vaddr_frames(virtp, 1, true, false, vec);
++	if (ret != 1) {
++		frame_vector_destroy(vec);
++		return -EINVAL;
+ 	}
++	*physp = __pfn_to_phys(frame_vector_pfns(vec)[0]);
++	vb->priv = vec;
+ 
+-	return physp;
++	return 0;
+ }
+ 
+ /*
+@@ -788,11 +776,15 @@ static int omap_vout_buffer_prepare(struct videobuf_queue *q,
+ 	 * address of the buffer
+ 	 */
+ 	if (V4L2_MEMORY_USERPTR == vb->memory) {
++		int ret;
++
+ 		if (0 == vb->baddr)
+ 			return -EINVAL;
+ 		/* Physical address */
+-		vout->queued_buf_addr[vb->i] = (u8 *)
+-			omap_vout_uservirt_to_phys(vb->baddr);
++		ret = omap_vout_get_userptr(vb, vb->baddr,
++				(u32 *)&vout->queued_buf_addr[vb->i]);
++		if (ret < 0)
++			return ret;
+ 	} else {
+ 		unsigned long addr, dma_addr;
+ 		unsigned long size;
+@@ -841,9 +833,12 @@ static void omap_vout_buffer_release(struct videobuf_queue *q,
+ 	struct omap_vout_device *vout = q->priv_data;
+ 
+ 	vb->state = VIDEOBUF_NEEDS_INIT;
++	if (vb->memory == V4L2_MEMORY_USERPTR && vb->priv) {
++		struct frame_vector *vec = vb->priv;
+ 
+-	if (V4L2_MEMORY_MMAP != vout->memory)
+-		return;
++		put_vaddr_frames(vec);
++		frame_vector_destroy(vec);
++	}
+ }
+ 
+ /*
 -- 
 2.1.4
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
