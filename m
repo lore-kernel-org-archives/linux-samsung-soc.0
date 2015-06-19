@@ -1,71 +1,34 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: Remove unused vma field of exynos_drm_gem_obj
-Date: Fri, 19 Jun 2015 15:03:20 +0900
-Message-ID: <5583B0A8.3040908@samsung.com>
-References: <1434691409-9509-1-git-send-email-k.kozlowski@samsung.com>
- <5583A87F.5090807@samsung.com>
- <CAJKOXPe5M-nxjcuopOo7GiSHELG6pQ8VOTN8VMVvt=AZ+AM_HA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [patch] pinctrl: samsung: don't truncate the last char of "-grp"
+Date: Fri, 19 Jun 2015 11:52:03 +0300
+Message-ID: <20150619085203.GO28762@mwanda>
+References: <20150611154631.GA13202@mwanda>
+ <CAJKOXPe8Pv5t9tLdFZAV+9CSiM302GTVt6_j3vKHkeFOK8U=Lw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAJKOXPe5M-nxjcuopOo7GiSHELG6pQ8VOTN8VMVvt=AZ+AM_HA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPe8Pv5t9tLdFZAV+9CSiM302GTVt6_j3vKHkeFOK8U=Lw@mail.gmail.com>
+Sender: kernel-janitors-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwNuyblCAxOeydvCAxNDo0NiwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiAyMDE1LTA2LTE5IDE0OjI4IEdNVCswOTowMCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5j
-b20+Ogo+PiBPbiAyMDE164WEIDA27JuUIDE57J28IDE0OjIzLCBLcnp5c3p0b2YgS296bG93c2tp
-IHdyb3RlOgo+Pj4gVGhlIGZpZWxkICd2bWEnIG9mICdleHlub3NfZHJtX2dlbV9vYmonIHN0cnVj
-dHVyZSB3YXMgaW50cm9kdWNlZCBpbgo+Pj4gMmEzMDk4ZmY2YzIxICgiZHJtL2V4eW5vczogYWRk
-IHVzZXJwdHIgZmVhdHVyZSBmb3IgZzJkIG1vZHVsZSIpIGJ1dCBpcwo+Pj4gbm90IHJlZmVyZW5j
-ZWQgYW55d2hlcmUuCj4+Pgo+Pj4gT25lIGluc3RhbmNlIG9mICdleHlub3NfZHJtX2dlbV9vYmon
-IG1heSBiZSBtYXBwZWQgdG8gbXVsdGlwbGUKPj4+IHVzZXItc3BhY2UgVk1BcyBzbyAndm1hJyBm
-aWVsZCBkb2VzIG5vdCBsb29rIHVzZWZ1bCBhbnl3YXkuCj4+Cj4+IEtyenlzenRvZiwKPj4KPj4g
-VGhlIHZtYSBtZW1iZXIgd291bGQgYmUgcmVtb3ZlZCBieSBiZWxvdyBwYXRjaCwKPj4gaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9kcmktZGV2ZWwvMjAxNS1NYXkvMDgyNzY0
-Lmh0bWwKPj4KPiAKPiBJIHRoaW5rIGl0IGlzIGEgZGlmZmVyZW50IG9iamVjdC4gVGhlIHBhdGNo
-IGFib3ZlIHJlbW92ZXMgaXQgZnJvbQo+IHN0cnVjdCBnMmRfY21kbGlzdF91c2VycHRyLgo+IEhv
-d2V2ZXIgSSByZW1vdmVkIGl0IGZyb20gc3RydWN0IGV4eW5vc19kcm1fZ2VtX29iaiwgd2hlcmUg
-aXQgd2FzCj4gbmV2ZXIgcmVmZXJlbmNlZC4KCkFoLCByaWdodC4gVGhlcmUgd2FzIG15IG1pc3Rh
-a2UuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAK
-Pj4gVGhhbmtzLAo+PiBJbmtpIERhZQo+Pgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRv
-ZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oIHwgMiAtLQo+Pj4gIDEgZmlsZSBjaGFu
-Z2VkLCAyIGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZ2VtLmgKPj4+IGluZGV4IDMwODE3M2NiNGYwYS4uNmY0MmUyMjQ4Mjg4IDEwMDY0NAo+Pj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oCj4+PiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmgKPj4+IEBAIC02MSw3ICs2MSw2
-IEBAIHN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYgewo+Pj4gICAqICAgb3IgYXQgZnJhbWVidWZm
-ZXIgY3JlYXRpb24uCj4+PiAgICogQHNpemU6IHNpemUgcmVxdWVzdGVkIGZyb20gdXNlciwgaW4g
-Ynl0ZXMgYW5kIHRoaXMgc2l6ZSBpcyBhbGlnbmVkCj4+PiAgICogICBpbiBwYWdlIHVuaXQuCj4+
-PiAtICogQHZtYTogYSBwb2ludGVyIHRvIHZtX2FyZWEuCj4+PiAgICogQGZsYWdzOiBpbmRpY2F0
-ZSBtZW1vcnkgdHlwZSB0byBhbGxvY2F0ZWQgYnVmZmVyIGFuZCBjYWNoZSBhdHRydWlidXRlLgo+
-Pj4gICAqCj4+PiAgICogUC5TLiB0aGlzIG9iamVjdCB3b3VsZCBiZSB0cmFuc2ZlcnJlZCB0byB1
-c2VyIGFzIGttc19iby5oYW5kbGUgc28KPj4+IEBAIC03MSw3ICs3MCw2IEBAIHN0cnVjdCBleHlu
-b3NfZHJtX2dlbV9vYmogewo+Pj4gICAgICAgc3RydWN0IGRybV9nZW1fb2JqZWN0ICAgICAgICAg
-ICBiYXNlOwo+Pj4gICAgICAgc3RydWN0IGV4eW5vc19kcm1fZ2VtX2J1ZiAgICAgICAqYnVmZmVy
-Owo+Pj4gICAgICAgdW5zaWduZWQgbG9uZyAgICAgICAgICAgICAgICAgICBzaXplOwo+Pj4gLSAg
-ICAgc3RydWN0IHZtX2FyZWFfc3RydWN0ICAgICAgICAgICAqdm1hOwo+Pj4gICAgICAgdW5zaWdu
-ZWQgaW50ICAgICAgICAgICAgICAgICAgICBmbGFnczsKPj4+ICB9Owo+Pj4KPj4+Cj4+Cj4+Cj4+
-IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IGxpbnV4
-LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0Cj4+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwo+PiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
-bnV4LWFybS1rZXJuZWwKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
-IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBv
-ZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Mon, Jun 15, 2015 at 01:17:36PM +0900, Krzysztof Kozlowski wrote:
+> I would prefer splitting this into two patches: one for fixing
+> truncated name (by usage of kasprintf) and second for ENOMEM message.
+> The second patch can get rid of ENOMEM message in other places as
+> well.
+> 
+> As for the first issue I think that function suffix would also be
+> truncated in the same way.
+
+Sorry for the delayed response, I've been offline for a few days.
+
+Yeah, you're right.
+
+Let me resend.
+
+regards,
+dan carpenter
+
