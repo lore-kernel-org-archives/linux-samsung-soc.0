@@ -1,85 +1,125 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos5422-odroidxu3: Add ramp delay for
- regulators
-Date: Fri, 19 Jun 2015 08:52:51 +0900
-Message-ID: <558359D3.9060201@samsung.com>
-References: <1434628563-3477-1-git-send-email-linux.amoon@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 06/41] clocksource: exynos_mct: Migrate to new
+ 'set-state' interface
+Date: Fri, 19 Jun 2015 07:44:46 +0530
+Message-ID: <20150619021446.GC4376@linux>
+References: <cover.1434622147.git.viresh.kumar@linaro.org>
+ <a1d7ad942bfc08b91b7ae0d9ba3b19b579f469c9.1434622147.git.viresh.kumar@linaro.org>
+ <CALW4P+KrWdAPmG_H8uutDCh5OUgkiRC6UmwM3-C1WwV0CF2_Qg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:61329 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751818AbbFRXww (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:35147 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752228AbbFSCOv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Jun 2015 19:52:52 -0400
-In-reply-to: <1434628563-3477-1-git-send-email-linux.amoon@gmail.com>
+	Thu, 18 Jun 2015 22:14:51 -0400
+Received: by pdbci14 with SMTP id ci14so20851120pdb.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Jun 2015 19:14:51 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CALW4P+KrWdAPmG_H8uutDCh5OUgkiRC6UmwM3-C1WwV0CF2_Qg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexey Klimov <klimov.linux@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski@samsung.com>
 
-On 18.06.2015 20:56, Anand Moon wrote:
-> Adds ramp delay for the vdd_ldo9, vdd_ldo13,
-> vdd_ldo15 and vdd_sd regulator. Changes removes
-> warning "ramp_delay not set" for all the above regulator.
+Hi Alexey,
+
+On 18-06-15, 19:38, Alexey Klimov wrote:
+> (adding samsung list and Krzysztof to c/c)
+
+Thanks.
+
+> Please don't forget to send patches to platform list and platform maintainers.
+
+Hmmm, I cc'd Kukjin on this patch as he was the one Acking most of the
+patches on this driver recently (had a look at git log). Also looked
+at MAINTAINERS and the driver itself to look for maintainers, and
+kukjin was all I can find. Yes, get_maintainers gave the two names you
+added, but many a times it generates list longer than required and so
+I don't completely depend on that.
+
+Anyway, thanks.
+
+> On Thu, Jun 18, 2015 at 1:54 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > +static int set_state_shutdown(struct clock_event_device *evt)
+> > +{
+> > +       exynos4_mct_tick_stop(this_cpu_ptr(&percpu_mct_tick));
+
+Let me clarify the purpose of this patch and the series.
+
+Its only about breaking the older ->set_mode() callback into state
+based callbacks and not change the way things were done. And so no
+improvements in this patch. If there are improvements possible on the
+driver, then they must be done separately.
+
+> Passed evt pointer isn't used
+
+Its a callback from clockevents core, and we can't get rid of the
+argument. :)
+
+> and instead you're going to locate
+> percpu_mct_tick struct knowing current cpu number offset.
+
+That's the way ->set_mode() was doing it and so I didn't touched it to
+keep this patch simple.
+
+> What do you think, since evt is embedded into percpu_mct_tick
+> structure then maybe it will be cheaper to calculate percpu_mct_tick
+> using container_of()?
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> Changes based on https://github.com/krzk/linux.git branch dt-for-next
-> Console message:
-> [    3.756440] vdd_ldo9: ramp_delay not set
-> [    3.767731] vdd_ldo13: ramp_delay not set
-> [    3.775260] vdd_ldo15: ramp_delay not set
-> [    3.786269] vdd_sd: ramp_delay not set
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> struct mct_clock_event_device *mevt;
+> mevt = container_of(evt, struct mct_clock_event_device, evt);
+
+Ofcourse, but that has to be fixed for many routines and should be
+done in a separate patch. It doesn't belong to this one.
+ 
+> > @@ -455,7 +447,10 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+> >         evt->name = mevt->name;
+> >         evt->cpumask = cpumask_of(cpu);
+> >         evt->set_next_event = exynos4_tick_set_next_event;
+> > -       evt->set_mode = exynos4_tick_set_mode;
+> > +       evt->set_state_periodic = set_state_periodic;
+> > +       evt->set_state_shutdown = set_state_shutdown;
+> > +       evt->set_state_oneshot = set_state_shutdown;
+> > +       evt->tick_resume = set_state_shutdown;
 > 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 1565667..7c97740 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -218,6 +218,8 @@
->  				regulator-name = "vdd_ldo9";
->  				regulator-min-microvolt = <3000000>;
->  				regulator-max-microvolt = <3000000>;
-> +				regulator-enable-ramp-delay = <200>;
-> +				regulator-ramp-delay = <8000>;
+> Do i correctly understand that during massive hot-plug cpu events (i
+> guess that will lead to CPU_STARING notification) on power management
+> this *_timer_setup() function will be called?
 
-How did you get this values?
+I hope so.
 
-Best regards,
-Krzysztof
-
->  				regulator-always-on;
->  			};
->  
-> @@ -246,6 +248,8 @@
->  				regulator-name = "vdd_ldo13";
->  				regulator-min-microvolt = <2800000>;
->  				regulator-max-microvolt = <2800000>;
-> +				regulator-enable-ramp-delay = <200>;
-> +				regulator-ramp-delay = <8000>;
->  				regulator-always-on;
->  			};
->  
-> @@ -253,6 +257,8 @@
->  				regulator-name = "vdd_ldo15";
->  				regulator-min-microvolt = <3100000>;
->  				regulator-max-microvolt = <3100000>;
-> +				regulator-enable-ramp-delay = <200>;
-> +				regulator-ramp-delay = <8000>;
->  				regulator-always-on;
->  			};
->  
-> @@ -274,6 +280,8 @@
->  				regulator-name = "vdd_sd";
->  				regulator-min-microvolt = <2800000>;
->  				regulator-max-microvolt = <2800000>;
-> +				regulator-enable-ramp-delay = <200>;
-> +				regulator-ramp-delay = <8000>;
->  				regulator-always-on;
->  			};
->  
+> And here code performs setting of rather constant values and copying.
+> You're going to increase number of such strange assignments.
 > 
+> Well, just lazy-thinking. Can we do something like this:
+> 
+> for_each_possible_cpu(cpu) {
+>           exynos4_local_timer_setup_prepare(&per_cpu(percpu_mct_tick,
+> cpu).evt, cpu);
+> }
+> 
+> somewhere in exynos_mct init functions and assign most of these values
+> for each evt structure?
+> And make *_timer_setup() function lighter moving some code to
+> prepare/init functions.
+
+I agree.. But again, that has to be done in a separate patch.
+
+> If it makes any sense i can take a look and try to prepare patch.
+
+Sure..
+
+> Do you need testers? I can test it on odroid-xu3.
+
+That will be good.
+
+> Can't find in emails similar patch for ARM arch timer. Any plans about
+> it? Or if it's already converted to 'set-state' then could you please
+> share a link?
+
+https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/heads/clockevents/4.3
+
+-- 
+viresh
