@@ -1,217 +1,207 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH stable-4.0] ARM: EXYNOS: Fix failed second suspend on
- Exynos4
-Date: Sat, 20 Jun 2015 18:32:46 +0900
-Message-ID: <5585333E.8010001@samsung.com>
-References: <1433315006-30129-1-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/6] clk: add CLK_RECALC_NEW_RATES clock flag for Exynos
+ cpu clock support
+Date: Sat, 20 Jun 2015 19:01:12 +0900
+Message-ID: <558539E8.5050101@samsung.com>
+References: <'@samsung.com> <20150618195846.9112.7144@quantum> <15113828.ygxT0eaek9@amdc1976> <3554100.H9OH7Yrz4m@amdc1976> <20150619145357.9112.63998@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:36322 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751331AbbFTJcw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 20 Jun 2015 05:32:52 -0400
-In-Reply-To: <1433315006-30129-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150619145357.9112.63998@quantum>
+Sender: linux-pm-owner@vger.kernel.org
+To: Michael Turquette <mturquette@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, b.zolnierkie@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Hi Greg,
+W dniu 19.06.2015 o 23:53, Michael Turquette pisze:
+> Quoting Bartlomiej Zolnierkiewicz (2015-06-19 05:35:23)
+>> On Friday, June 19, 2015 01:19:06 PM Bartlomiej Zolnierkiewicz wrote:
+>>>
+>>> Hi,
+>>>
+>>> On Thursday, June 18, 2015 12:58:46 PM Michael Turquette wrote:
+>>>> Quoting Sylwester Nawrocki (2015-05-13 07:13:13)
+>>>>> On 03/04/15 18:43, Bartlomiej Zolnierkiewicz wrote:
+>>>>>> This flag is needed to fix the issue with wrong dividers being setup
+>>>>>> by Common Clock Framework when using the new Exynos cpu clock support.
+>>>>>>
+>>>>>> The issue happens because clk_core_set_rate_nolock()  calls
+>>>>>> clk_calc_new_rates(clk, rate) before both pre/post clock notifiers have
+>>>>>> a chance to run.  In case of Exynos cpu clock support pre/post clock
+>>>>>> notifiers are registered for mout_apll clock which is a parent of armclk
+>>>>>> cpu clock and dividers are modified in both pre and post clock notifier.
+>>>>>> This results in wrong dividers values being later programmed by
+>>>>>> clk_change_rate(top).  To workaround the problem CLK_RECALC_NEW_RATES
+>>>>>> flag is added and it is set for mout_apll clock later so the correct
+>>>>>> divider values are re-calculated after both pre and post clock notifiers
+>>>>>> had run.
+>>>>>>
+>>>>>> For example when using "performance" governor on Exynos4210 Origen board
+>>>>>> the cpufreq-dt driver requests to change the frequency from 1000MHz to
+>>>>>> 1200MHz and after the change state of the relevant clocks is following:
+>>>>>>
+>>>>>> Without use of CLK_GET_RATE_NOCACHE flag:
+>>>>>>
+>>>>>>  fout_apll rate: 1200000000
+>>>>>>          fout_apll_div_2 rate: 600000000
+>>>>>>                  mout_clkout_cpu rate: 600000000
+>>>>>>                          div_clkout_cpu rate: 600000000
+>>>>>>                                  clkout_cpu rate: 600000000
+>>>>>>          mout_apll rate: 1200000000
+>>>>>>                  armclk rate: 1200000000
+>>>>>>                  mout_hpm rate: 1200000000
+>>>>>>                          div_copy rate: 300000000
+>>>>>>                                  div_hpm rate: 300000000
+>>>>>>                  mout_core rate: 1200000000
+>>>>>>                          div_core rate: 1200000000
+>>>>>>                                  div_core2 rate: 1200000000
+>>>>>>                                          arm_clk_div_2 rate: 600000000
+>>>>>>                                          div_corem0 rate: 300000000
+>>>>>>                                          div_corem1 rate: 150000000
+>>>>>>                                          div_periph rate: 300000000
+>>>>>>                          div_atb rate: 300000000
+>>>>>>                                  div_pclk_dbg rate: 150000000
+>>>>>>                  sclk_apll rate: 1200000000
+>>>>>>                          sclk_apll_div_2 rate: 600000000
+>>>>>>
+>>>>>>
+>>>>>> With use of CLK_GET_RATE_NOCACHE flag:
+>>>>>>
+>>>>>>  fout_apll rate: 1200000000
+>>>>>>          fout_apll_div_2 rate: 600000000
+>>>>>>                  mout_clkout_cpu rate: 600000000
+>>>>>>                          div_clkout_cpu rate: 600000000
+>>>>>>                                  clkout_cpu rate: 600000000
+>>>>>>          mout_apll rate: 1200000000
+>>>>>>                  armclk rate: 1200000000
+>>>>>>                  mout_hpm rate: 1200000000
+>>>>>>                          div_copy rate: 200000000
+>>>>>>                                  div_hpm rate: 200000000
+>>>>>>                  mout_core rate: 1200000000
+>>>>>>                          div_core rate: 1200000000
+>>>>>>                                  div_core2 rate: 1200000000
+>>>>>>                                          arm_clk_div_2 rate: 600000000
+>>>>>>                                          div_corem0 rate: 300000000
+>>>>>>                                          div_corem1 rate: 150000000
+>>>>>>                                          div_periph rate: 300000000
+>>>>>>                          div_atb rate: 240000000
+>>>>>>                                  div_pclk_dbg rate: 120000000
+>>>>>>                  sclk_apll rate: 150000000
+>>>>>>                          sclk_apll_div_2 rate: 75000000
+>>>>>>
+>>>>>> Without this change cpufreq-dt driver showed ~10 mA larger energy
+>>>>>> consumption when compared to cpufreq-exynos one when "performance"
+>>>>>> cpufreq governor was used on Exynos4210 SoC based Origen board.
+>>>>>>
+>>>>>> This issue was probably meant to be workarounded by use of
+>>>>>> CLK_GET_RATE_NOCACHE and CLK_DIVIDER_READ_ONLY clock flags in
+>>>>>> the original Exynos cpu clock patchset (in "[PATCH v12 6/6] clk:
+>>>>>> samsung: remove unused clock aliases and update clock flags" patch)
+>>>>>> but usage of these flags is not sufficient to fix the issue observed.
+>>>>>>
+>>>>>> Cc: Thomas Abraham <thomas.ab@samsung.com>
+>>>>>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>>>>>> Cc: Mike Turquette <mturquette@linaro.org>
+>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>>>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>>>>> ---
+>>>>>>  drivers/clk/clk.c            |    3 +++
+>>>>>>  include/linux/clk-provider.h |    1 +
+>>>>>>  2 files changed, 4 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>>>>> index f85c8e2..97cc73e 100644
+>>>>>> --- a/drivers/clk/clk.c
+>>>>>> +++ b/drivers/clk/clk.c
+>>>>>> @@ -1771,6 +1771,9 @@ static void clk_change_rate(struct clk_core *clk)
+>>>>>>       if (clk->notifier_count && old_rate != clk->rate)
+>>>>>>               __clk_notify(clk, POST_RATE_CHANGE, old_rate, clk->rate);
+>>>>>>  
+>>>>>> +     if (clk->flags & CLK_RECALC_NEW_RATES)
+>>>>>> +             (void)clk_calc_new_rates(clk, clk->new_rate);
+>>>>>> +
+>>>>>>       /*
+>>>>>>        * Use safe iteration, as change_rate can actually swap parents
+>>>>>>        * for certain clock types.
+>>>>>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>>>>>> index 28abf1b..8d1aebe 100644
+>>>>>> --- a/include/linux/clk-provider.h
+>>>>>> +++ b/include/linux/clk-provider.h
+>>>>>> @@ -31,6 +31,7 @@
+>>>>>>  #define CLK_GET_RATE_NOCACHE BIT(6) /* do not use the cached clk rate */
+>>>>>>  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+>>>>>>  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+>>>>>> +#define CLK_RECALC_NEW_RATES BIT(9) /* recalc rates after notifications */
+>>>>>
+>>>>> Mike, Stephen, what do you think about this? I'm rather resistant to
+>>>>> this new flag approach, it looks like a hack. I don't seem to have better
+>>>>> ideas to address the missing rate recalculation issue though.
+>>>>
+>>>> I also do not like it. The root of the problem is the use of clk
+>>>> notifiers to change clk rates. This is also a hack and it points towards
+>>>> some missing infrastructure in the clock framework.
+>>>
+>>> I'm very surprised by this.  Clock changes using clock notifiers in
+>>> Thomas' original patchset were Acked by you:
+>>>
+>>> "[PATCH v12 1/6] clk: samsung: add infrastructure to register cpu clocks"
+>>> https://www.marc.info/?l=linux-arm-kernel&m=141657613203808&w=2
+>>>
+>>> I've only fixed issues present within the original code (this 4 lines
+>>> workaround/hack change to clock subsystem is a result of this), I have
+>>> not changed it fundamentally.
+>>
+>> Moreover similar changes for rockchip SoCs (which were explicitly based
+>> on Thomas' patches as noted in the code!) have already been merged in
+>> 3.18:
+>>
+>> http://lkml.iu.edu/hypermail/linux/kernel/1410.1/02644.html
+>>
+>> and are available in commit f6fba5f6967dbc062a7c138d67e2314220f5dd04
+>> ("clk: rockchip: add new clock-type for the cpuclk").
+>>
+>> I understand that my findings have uncovered some clock subsystem
+>> deficiencies which resulted in afterthought about fundamental design
+>> of cpu clocks but I have a feeling that our patches are now being
+>> unjustly punished for making these issues public.
+>>
+>> I agree that current patches are not perfect (especially this patch)
+>> but they are good enough IMO.  Please also understand that there were
+>> some serious work put into validating and reviewing them.
+> 
+> You know what? You're right.
+> 
+> I don't really like this cpu-clock code (and similarly I don't like
+> Tegra's EMC code which requires access to clk_hw_reparent). But I slept
+> on this issue overnight and it doesn't seem right for me to hold back
+> these patches when the better solution is currently vaporware (I have
+> some code but it's far from ready).
+> 
+> It occurs to me that the best decision I can take is to merge it now and
+> then force you guys to switch over when the new infrastructure is
+> available. That is more reasonable than delaying the patches getting
+> pulled.
+> 
+> So how to merge it? Viresh has given his Ack and is OK for the cpufreq
+> changes to go through another tree. I can take the whole thing with
+> Kukjin's Ack on the ARM dts patch, or we can set up an immutable
+> branch.
 
-I backported the patch below for stable 4.0. It seems it was missed or
-maybe I sent it the wrong way? The backport was mailed to
-stable@vger.kernel.org
+I already acked the DTS [0] patch and I'm fine with it. However there
+would be some conflicts if this went through tree different than
+Samsung. There are many Exynos4 DTS changes in the queue for 4.2.
 
-Is the patch queued for next 4.0 stable release? Should I resent it?
+Are there any objections for picking the DTS patch to Samsung tree?
 
 Best regards,
 Krzysztof
 
+[0] https://lkml.org/lkml/2015/5/7/999
 
-W dniu 03.06.2015 o 16:03, Krzysztof Kozlowski pisze:
-> commit 6f024978e74bda616b27183adee029b65eb27032 upstream.
 > 
-> On Exynos4412 boards (Trats2, Odroid U3) after enabling L2 cache in
-> 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache
-> controller") the second suspend to RAM failed. First suspend worked fine
-> but the next one hang just after powering down of secondary CPUs (system
-> consumed energy as it would be running but was not responsive).
-> 
-> The issue was caused by enabling delayed reset assertion for CPU0 just
-> after issuing power down of cores. This was introduced for Exynos4 in
-> 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off").
-> 
-> The whole behavior is not well documented but after checking with vendor
-> code this should be done like this (on Exynos4):
-> 1. Enable delayed reset assertion when system is running (for all CPUs).
-> 2. Disable delayed reset assertion before suspending the system.
->    This can be done after powering off secondary CPUs.
-> 3. Re-enable the delayed reset assertion when system is resumed.
-> 
-> Fixes: 13cfa6c4f7fa ("ARM: EXYNOS: Fix CPU idle clock down after CPU off")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Tested-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene@kernel.org>
-> ---
->  arch/arm/mach-exynos/common.h  |  2 ++
->  arch/arm/mach-exynos/exynos.c  | 27 +++++++++++++++++++++++++++
->  arch/arm/mach-exynos/platsmp.c | 39 ++-------------------------------------
->  arch/arm/mach-exynos/suspend.c |  3 +++
->  4 files changed, 34 insertions(+), 37 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index f70eca7ee705..0ef8d4b47102 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -153,6 +153,8 @@ extern void exynos_enter_aftr(void);
->  
->  extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
->  
-> +extern void exynos_set_delayed_reset_assertion(bool enable);
-> +
->  extern void s5p_init_cpu(void __iomem *cpuid_addr);
->  extern unsigned int samsung_rev(void);
->  extern void __iomem *cpu_boot_reg_base(void);
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 9e9dfdfad9d7..1081ff1f03c6 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -166,6 +166,33 @@ static void __init exynos_init_io(void)
->  	exynos_map_io();
->  }
->  
-> +/*
-> + * Set or clear the USE_DELAYED_RESET_ASSERTION option. Used by smp code
-> + * and suspend.
-> + *
-> + * This is necessary only on Exynos4 SoCs. When system is running
-> + * USE_DELAYED_RESET_ASSERTION should be set so the ARM CLK clock down
-> + * feature could properly detect global idle state when secondary CPU is
-> + * powered down.
-> + *
-> + * However this should not be set when such system is going into suspend.
-> + */
-> +void exynos_set_delayed_reset_assertion(bool enable)
-> +{
-> +	if (soc_is_exynos4()) {
-> +		unsigned int tmp, core_id;
-> +
-> +		for (core_id = 0; core_id < num_possible_cpus(); core_id++) {
-> +			tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-> +			if (enable)
-> +				tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
-> +			else
-> +				tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> +			pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-> +		}
-> +	}
-> +}
-> +
->  static const struct of_device_id exynos_dt_pmu_match[] = {
->  	{ .compatible = "samsung,exynos3250-pmu" },
->  	{ .compatible = "samsung,exynos4210-pmu" },
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index d2e9f12d12f1..d45e8cd23925 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -34,30 +34,6 @@
->  
->  extern void exynos4_secondary_startup(void);
->  
-> -/*
-> - * Set or clear the USE_DELAYED_RESET_ASSERTION option, set on Exynos4 SoCs
-> - * during hot-(un)plugging CPUx.
-> - *
-> - * The feature can be cleared safely during first boot of secondary CPU.
-> - *
-> - * Exynos4 SoCs require setting USE_DELAYED_RESET_ASSERTION during powering
-> - * down a CPU so the CPU idle clock down feature could properly detect global
-> - * idle state when CPUx is off.
-> - */
-> -static void exynos_set_delayed_reset_assertion(u32 core_id, bool enable)
-> -{
-> -	if (soc_is_exynos4()) {
-> -		unsigned int tmp;
-> -
-> -		tmp = pmu_raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-> -		if (enable)
-> -			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
-> -		else
-> -			tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> -		pmu_raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-> -	}
-> -}
-> -
->  #ifdef CONFIG_HOTPLUG_CPU
->  static inline void cpu_leave_lowpower(u32 core_id)
->  {
-> @@ -73,8 +49,6 @@ static inline void cpu_leave_lowpower(u32 core_id)
->  	  : "=&r" (v)
->  	  : "Ir" (CR_C), "Ir" (0x40)
->  	  : "cc");
-> -
-> -	 exynos_set_delayed_reset_assertion(core_id, false);
->  }
->  
->  static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-> @@ -87,14 +61,6 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
->  		/* Turn the CPU off on next WFI instruction. */
->  		exynos_cpu_power_down(core_id);
->  
-> -		/*
-> -		 * Exynos4 SoCs require setting
-> -		 * USE_DELAYED_RESET_ASSERTION so the CPU idle
-> -		 * clock down feature could properly detect
-> -		 * global idle state when CPUx is off.
-> -		 */
-> -		exynos_set_delayed_reset_assertion(core_id, true);
-> -
->  		wfi();
->  
->  		if (pen_release == core_id) {
-> @@ -354,9 +320,6 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
->  		udelay(10);
->  	}
->  
-> -	/* No harm if this is called during first boot of secondary CPU */
-> -	exynos_set_delayed_reset_assertion(core_id, false);
-> -
->  	/*
->  	 * now the secondary core is starting up let it run its
->  	 * calibrations, then wait for it to finish
-> @@ -403,6 +366,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
->  
->  	exynos_sysram_init();
->  
-> +	exynos_set_delayed_reset_assertion(true);
-> +
->  	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
->  		scu_enable(scu_base_addr());
->  
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index 318d127df147..582ef2df960d 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -235,6 +235,8 @@ static void exynos_pm_enter_sleep_mode(void)
->  
->  static void exynos_pm_prepare(void)
->  {
-> +	exynos_set_delayed_reset_assertion(false);
-> +
->  	/* Set wake-up mask registers */
->  	exynos_pm_set_wakeup_mask();
->  
-> @@ -383,6 +385,7 @@ early_wakeup:
->  
->  	/* Clear SLEEP mode set in INFORM1 */
->  	pmu_raw_writel(0x0, S5P_INFORM1);
-> +	exynos_set_delayed_reset_assertion(true);
->  }
->  
->  static void exynos3250_pm_resume(void)
-> 
+> If you really want to make my life easy you can send a pull request for
+> these patches (and the other Exynos cpufreq/cpu-clock series).
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-pm" in
