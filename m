@@ -1,96 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
- to 'sclk_mipi'
-Date: Mon, 22 Jun 2015 20:59:36 +0900
-Message-ID: <CAJKOXPegwXD18tt2dFmHAE4imZSp2JUbEy7RDcRxqhiRQfoMvw@mail.gmail.com>
-References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
-	<1434113958-15877-16-git-send-email-human.hwang@samsung.com>
-	<5587D111.9090602@samsung.com>
-	<5587F4A1.2090502@samsung.com>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH v7 05/15] drm/exynos: add Exynos5433 decon driver
+Date: Mon, 22 Jun 2015 17:29:52 +0530
+Message-ID: <5587F8B8.2040307@gmail.com>
+References: <1434113958-15877-6-git-send-email-human.hwang@samsung.com> <1434971779-5342-1-git-send-email-inki.dae@samsung.com> <5587F47F.5050405@gmail.com> <5587F82A.6000409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f45.google.com ([209.85.216.45]:38134 "EHLO
-	mail-vn0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751938AbbFVL7h convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:34074 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753592AbbFVMAW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 07:59:37 -0400
-In-Reply-To: <5587F4A1.2090502@samsung.com>
+	Mon, 22 Jun 2015 08:00:22 -0400
+Received: by pabvl15 with SMTP id vl15so86665030pab.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jun 2015 05:00:21 -0700 (PDT)
+In-Reply-To: <5587F82A.6000409@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Hyungwon Hwang <human.hwang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, daniel@fooishbar.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-2015-06-22 20:42 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
-> + Krzysztof
+On 06/22/2015 05:27 PM, Inki Dae wrote:
+
+> On 2015=EB=85=84 06=EC=9B=94 22=EC=9D=BC 20:41, Varka Bhadram wrote:
 >
-> On 2015=EB=85=84 06=EC=9B=94 22=EC=9D=BC 18:10, Inki Dae wrote:
->> On 2015=EB=85=84 06=EC=9B=94 12=EC=9D=BC 21:59, Hyungwon Hwang wrote=
-:
->>> The clock which was named as 'pll_clk' is actually not the clock so=
-urce
->>> of PLL in MIPI DSI. This patch fixes this disagreement.
+(..)
+
+> +    platform_set_drvdata(pdev, ctx);
+>> You are setting the driver data as ctx..
 >>
->> Mr. Kukjin and Krzysztof, can you give me Acked-by or Singed-off-by?=
- I'd
->> like to merge this patch to mainline through drm-next.
-
-Dear Hyungwon Hwang,
-
-Please always CC samsung-soc mailing list on such patches. I won't
-receive it on my personal email if you don't CC the list. The
-get_maintainers.pl gives necessary addresses.
-
-Comment below,
-
+>> But no where you are using it...?
 >>
->> Thanks,
->> Inki Dae
->>
->>>
->>> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
->>> ---
->>> Changes before:
->>> - Refer https://patchwork.kernel.org/patch/6191811
->>> Changes for v6:
->>> - None
->>>
->>>  arch/arm/boot/dts/exynos4.dtsi | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exy=
-nos4.dtsi
->>> index e20cdc2..1538d7a 100644
->>> --- a/arch/arm/boot/dts/exynos4.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4.dtsi
->>> @@ -167,7 +167,7 @@
->>>              phys =3D <&mipi_phy 1>;
->>>              phy-names =3D "dsim";
->>>              clocks =3D <&clock CLK_DSIM0>, <&clock CLK_SCLK_MIPI0>=
-;
->>> -            clock-names =3D "bus_clk", "pll_clk";
->>> +            clock-names =3D "bus_clk", "sclk_mipi";
+>> Am i missing anything ?
+> See decon_bind and decon_unbind functions. :)
 
-It seems wrong. The driver fetches reference from a name of "pll_clk",
-not "sclk_mipi". Also bindings documentation mentions pll_clk and
-bus_clk only.
+Cleared. Thanks
 
+
+--=20
 Best regards,
-Krzysztof
-
-
->>>              status =3D "disabled";
->>>              #address-cells =3D <1>;
->>>              #size-cells =3D <0>;
->>> --
->>> 1.9.1
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe devicetre=
-e" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->
+Varka Bhadram.
