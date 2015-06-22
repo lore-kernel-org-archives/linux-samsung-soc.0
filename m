@@ -1,232 +1,129 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [patch v2 2/2] pinctrl: samsung: remove "out of memory" messages
-Date: Tue, 23 Jun 2015 08:53:04 +0900
-Message-ID: <55889FE0.7080101@samsung.com>
-References: <20150622151315.GB14156@mwanda>
+Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
+Date: Tue, 23 Jun 2015 08:57:03 +0900
+Message-ID: <5588A0CF.6000807@samsung.com>
+References: <5569F435.5040708@unseen.is>
+ <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
+ <556E0931.9030703@unseen.is> <556E44B7.10303@samsung.com>
+ <5576CD40.8060301@unseen.is>
+ <CAJKOXPeehj++Ojt2Zo4sgNjVASzZ8r_6OROM6FK_BRRQqVzcGg@mail.gmail.com>
+ <557B53C6.8070600@unseen.is> <557BC3DB.1030906@samsung.com>
+ <CAJKOXPcqgcKiZ_4=H9wEgpzoMy5LKUsgtaw82gp4DCbY6e=JFg@mail.gmail.com>
+ <CANAwSgQKFTG+ts=kVrZ1fR1EBcZL+7dgXqH1WhoJ7kZzz8hS3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52160 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753115AbbFVXxJ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55462 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752502AbbFVX5I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 19:53:09 -0400
-In-reply-to: <20150622151315.GB14156@mwanda>
+	Mon, 22 Jun 2015 19:57:08 -0400
+In-reply-to: <CANAwSgQKFTG+ts=kVrZ1fR1EBcZL+7dgXqH1WhoJ7kZzz8hS3Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, gabriel@unseen.is, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 23.06.2015 00:13, Dan Carpenter wrote:
-> Checkpatch.pl complains about these:
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> The messages use a little extra RAM and they add a few extra lines of
-> code.  We're probably never going to hit these out of memory situations
-> but if we did then kmalloc() has pretty good error messages built-in.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 23.06.2015 01:00, Anand Moon wrote:
+> Hi Krzysztof
+>=20
+> On 13 June 2015 at 13:45, Krzysztof Kozlowski <k.kozlowski@samsung.co=
+m
+> <mailto:k.kozlowski@samsung.com>> wrote:
+>=20
+>     2015-06-13 14:47 GMT+09:00 Krzysztof Kozlowski
+>     <k.kozlowski@samsung.com <mailto:k.kozlowski@samsung.com>>:
+>     > W dniu 13.06.2015 o 06:48, gabriel@unseen.is
+>     <mailto:gabriel@unseen.is> pisze:
+>     >> On 06/10/2015 10:22 AM, Krzysztof Kozlowski wrote:
+>     >>>
+>     >>> Gabriel,
+>     >>>
+>     >>> I sent a patch which should fix the issue. Could you give it =
+a
+>     try? Of
+>     >>> course don't revert the other patches and don't use other
+>     workarounds.
+>     >>> Just apply the patch on clean (vanilla would be the best) ker=
+nel.
+>     >>> [RFT PATCH] dmaengine: Fix choppy sound because of unimplemen=
+ted
+>     resume
+>     >>>
+>     >>
+>     >> hi krzysztof,
+>     >>
+>     >> thanks a lot for your work. having only that patch applied
+>     unfortunately
+>     >> brought back the problem after something more than one day. th=
+e sound
+>     >> became choppy/noisy again. I will now compile the -next kernel
+>     and give
+>     >> it a try.
+>     >
+>     > Thanks, I'll try to reproduce the issue on my Odroid. Can you
+>     share more
+>     > details how to reproduce it? The audio must play continuously o=
+r just
+>     > from time to time but the board must be turned on for more than
+>     one day?
+>=20
+>     I bought some audio cables and successfully reproduced similar is=
+sue
+>     (choppy sound) on Odroid XU3-Lite. On current linux-next
+>     (next-20150612) the sound is awful (choppy) after few seconds of =
+play.
+>     For example first four of:
+>     $ aplay /usr/share/sounds/alsa/Front_Right.wav
+>     work fine. But then it just gets worse and underruns are reported=
+:
+>     $ Playing WAVE '/usr/share/sounds/alsa/Front_Right.wav' : Signed =
+16
+>     bit Little Endian, Rate 48000 Hz, Mono
+>     $ underrun!!! (at least 0.095 ms long)
+>=20
+>     Reverting the commit aee4d1fac887 ("dmaengine: pl330: improve
+>     pl330_tx_status() function") fixes this issue so this is not rela=
+ted
+>     to missing "resume" function. At least this particular issue on m=
+y
+>     Odroid is not related to missing resume but I did not try to play
+>     sound for 24 hours.
+>     My fix does not solve this. Probably "cc-stable" and "fixes" tags
+>     should be dropped.
+>=20
+>     Anyway I'll try to investigate it more. If anyone has any ideas,
+>     please share.
+>=20
+>     Best regards,
+>     Krzysztof
+>     --
+>     To unsubscribe from this list: send the line "unsubscribe
+>     linux-samsung-soc" in
+>     the body of a message to majordomo@vger.kernel.org
+>     <mailto:majordomo@vger.kernel.org>
+>     More majordomo info at  http://vger.kernel.org/majordomo-info.htm=
+l
+>=20
+>=20
+> =E2=80=8BI gave it a try by enabling following config=E2=80=8B flags.
+>=20
+> CONFIG_SND_SEQUENCER=3Dm
+> CONFIG_SND_SEQ_DUMMY=3Dm
+> CONFIG_SND_USB_AUDIO=3Dm
+>=20
+> I am able to play mp3 songs on Odroid-XU3 boards on vlc.
+> Could you give it a try.
 
+What do you mean? Which patch are you talking about? Are you aware that
+I tried to fix this two times?
 
-Looks good:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I already tested the latest fix on Odroid XU3 - which I mentioned in
+commit. However it would be nice to get confirmation for fixing origina=
+l
+bug report (that specific conditions on that board which Gabriel report=
+ed).
 
 Best regards,
 Krzysztof
-
-
-> 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-> index fa84db6..5574b8a 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-> @@ -203,10 +203,8 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
->  
->  	/* Allocate memory for pin-map entries */
->  	map = kzalloc(sizeof(*map) * map_cnt, GFP_KERNEL);
-> -	if (!map) {
-> -		dev_err(dev, "could not alloc memory for pin-maps\n");
-> +	if (!map)
->  		return -ENOMEM;
-> -	}
->  	*nmaps = 0;
->  
->  	/*
-> @@ -214,10 +212,8 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
->  	 * from the node name from which these map entries are be created.
->  	 */
->  	gname = kasprintf(GFP_KERNEL, "%s%s", np->name, GROUP_SUFFIX);
-> -	if (!gname) {
-> -		dev_err(dev, "failed to alloc memory for group name\n");
-> +	if (!gname)
->  		goto free_map;
-> -	}
->  
->  	/*
->  	 * don't have config options? then skip over to creating function
-> @@ -228,10 +224,8 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
->  
->  	/* Allocate memory for config entries */
->  	cfg = kzalloc(sizeof(*cfg) * cfg_cnt, GFP_KERNEL);
-> -	if (!cfg) {
-> -		dev_err(dev, "failed to alloc memory for configs\n");
-> +	if (!cfg)
->  		goto free_gname;
-> -	}
->  
->  	/* Prepare a list of config settings */
->  	for (idx = 0, cfg_cnt = 0; idx < ARRAY_SIZE(pcfgs); idx++) {
-> @@ -253,10 +247,8 @@ skip_cfgs:
->  	if (of_find_property(np, "samsung,exynos5440-pin-function", NULL)) {
->  		fname = kasprintf(GFP_KERNEL,
->  				  "%s%s", np->name, FUNCTION_SUFFIX);
-> -		if (!fname) {
-> -			dev_err(dev, "failed to alloc memory for func name\n");
-> +		if (!fname)
->  			goto free_cfg;
-> -		}
->  
->  		map[*nmaps].data.mux.group = gname;
->  		map[*nmaps].data.mux.function = fname;
-> @@ -647,10 +639,8 @@ static int exynos5440_pinctrl_parse_dt_pins(struct platform_device *pdev,
->  	}
->  
->  	*pin_list = devm_kzalloc(dev, *npins * sizeof(**pin_list), GFP_KERNEL);
-> -	if (!*pin_list) {
-> -		dev_err(dev, "failed to allocate memory for pin list\n");
-> +	if (!*pin_list)
->  		return -ENOMEM;
-> -	}
->  
->  	return of_property_read_u32_array(cfg_np, "samsung,exynos5440-pins",
->  			*pin_list, *npins);
-> @@ -678,17 +668,15 @@ static int exynos5440_pinctrl_parse_dt(struct platform_device *pdev,
->  		return -EINVAL;
->  
->  	groups = devm_kzalloc(dev, grp_cnt * sizeof(*groups), GFP_KERNEL);
-> -	if (!groups) {
-> -		dev_err(dev, "failed allocate memory for ping group list\n");
-> +	if (!groups)
->  		return -EINVAL;
-> -	}
-> +
->  	grp = groups;
->  
->  	functions = devm_kzalloc(dev, grp_cnt * sizeof(*functions), GFP_KERNEL);
-> -	if (!functions) {
-> -		dev_err(dev, "failed to allocate memory for function list\n");
-> +	if (!functions)
->  		return -EINVAL;
-> -	}
-> +
->  	func = functions;
->  
->  	/*
-> @@ -708,10 +696,8 @@ static int exynos5440_pinctrl_parse_dt(struct platform_device *pdev,
->  		/* derive pin group name from the node name */
->  		gname = devm_kasprintf(dev, GFP_KERNEL,
->  				       "%s%s", cfg_np->name, GROUP_SUFFIX);
-> -		if (!gname) {
-> -			dev_err(dev, "failed to alloc memory for group name\n");
-> +		if (!gname)
->  			return -ENOMEM;
-> -		}
->  
->  		grp->name = gname;
->  		grp->pins = pin_list;
-> @@ -727,18 +713,13 @@ skip_to_pin_function:
->  		/* derive function name from the node name */
->  		fname = devm_kasprintf(dev, GFP_KERNEL,
->  				       "%s%s", cfg_np->name, FUNCTION_SUFFIX);
-> -		if (!fname) {
-> -			dev_err(dev, "failed to alloc memory for func name\n");
-> +		if (!fname)
->  			return -ENOMEM;
-> -		}
->  
->  		func->name = fname;
->  		func->groups = devm_kzalloc(dev, sizeof(char *), GFP_KERNEL);
-> -		if (!func->groups) {
-> -			dev_err(dev, "failed to alloc memory for group list "
-> -					"in pin function");
-> +		if (!func->groups)
->  			return -ENOMEM;
-> -		}
->  		func->groups[0] = gname;
->  		func->num_groups = gname ? 1 : 0;
->  		func->function = function;
-> @@ -766,10 +747,8 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
->  	int pin, ret;
->  
->  	ctrldesc = devm_kzalloc(dev, sizeof(*ctrldesc), GFP_KERNEL);
-> -	if (!ctrldesc) {
-> -		dev_err(dev, "could not allocate memory for pinctrl desc\n");
-> +	if (!ctrldesc)
->  		return -ENOMEM;
-> -	}
->  
->  	ctrldesc->name = "exynos5440-pinctrl";
->  	ctrldesc->owner = THIS_MODULE;
-> @@ -779,10 +758,8 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
->  
->  	pindesc = devm_kzalloc(&pdev->dev, sizeof(*pindesc) *
->  				EXYNOS5440_MAX_PINS, GFP_KERNEL);
-> -	if (!pindesc) {
-> -		dev_err(&pdev->dev, "mem alloc for pin descriptors failed\n");
-> +	if (!pindesc)
->  		return -ENOMEM;
-> -	}
->  	ctrldesc->pins = pindesc;
->  	ctrldesc->npins = EXYNOS5440_MAX_PINS;
->  
-> @@ -796,10 +773,8 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
->  	 */
->  	pin_names = devm_kzalloc(&pdev->dev, sizeof(char) * PIN_NAME_LENGTH *
->  					ctrldesc->npins, GFP_KERNEL);
-> -	if (!pin_names) {
-> -		dev_err(&pdev->dev, "mem alloc for pin names failed\n");
-> +	if (!pin_names)
->  		return -ENOMEM;
-> -	}
->  
->  	/* for each pin, set the name of the pin */
->  	for (pin = 0; pin < ctrldesc->npins; pin++) {
-> @@ -836,10 +811,8 @@ static int exynos5440_gpiolib_register(struct platform_device *pdev,
->  	int ret;
->  
->  	gc = devm_kzalloc(&pdev->dev, sizeof(*gc), GFP_KERNEL);
-> -	if (!gc) {
-> -		dev_err(&pdev->dev, "mem alloc for gpio_chip failed\n");
-> +	if (!gc)
->  		return -ENOMEM;
-> -	}
->  
->  	priv->gc = gc;
->  	gc->base = 0;
-> @@ -941,10 +914,8 @@ static int exynos5440_gpio_irq_init(struct platform_device *pdev,
->  
->  	intd = devm_kzalloc(dev, sizeof(*intd) * EXYNOS5440_MAX_GPIO_INT,
->  					GFP_KERNEL);
-> -	if (!intd) {
-> -		dev_err(dev, "failed to allocate memory for gpio intr data\n");
-> +	if (!intd)
->  		return -ENOMEM;
-> -	}
->  
->  	for (i = 0; i < EXYNOS5440_MAX_GPIO_INT; i++) {
->  		irq = irq_of_parse_and_map(dev->of_node, i);
-> @@ -987,10 +958,8 @@ static int exynos5440_pinctrl_probe(struct platform_device *pdev)
->  	}
->  
->  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> -	if (!priv) {
-> -		dev_err(dev, "could not allocate memory for private data\n");
-> +	if (!priv)
->  		return -ENOMEM;
-> -	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	priv->reg_base = devm_ioremap_resource(&pdev->dev, res);
-> 
