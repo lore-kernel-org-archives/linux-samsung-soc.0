@@ -1,43 +1,84 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH v7 05/15] drm/exynos: add Exynos5433 decon driver
-Date: Mon, 22 Jun 2015 17:29:52 +0530
-Message-ID: <5587F8B8.2040307@gmail.com>
-References: <1434113958-15877-6-git-send-email-human.hwang@samsung.com> <1434971779-5342-1-git-send-email-inki.dae@samsung.com> <5587F47F.5050405@gmail.com> <5587F82A.6000409@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
+ to 'sclk_mipi'
+Date: Mon, 22 Jun 2015 21:10:38 +0900
+Message-ID: <5587FB3E.9060803@samsung.com>
+References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
+ <1434113958-15877-16-git-send-email-human.hwang@samsung.com>
+ <5587D111.9090602@samsung.com> <5587F4A1.2090502@samsung.com>
+ <CAJKOXPegwXD18tt2dFmHAE4imZSp2JUbEy7RDcRxqhiRQfoMvw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:34074 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753592AbbFVMAW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 08:00:22 -0400
-Received: by pabvl15 with SMTP id vl15so86665030pab.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jun 2015 05:00:21 -0700 (PDT)
-In-Reply-To: <5587F82A.6000409@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAJKOXPegwXD18tt2dFmHAE4imZSp2JUbEy7RDcRxqhiRQfoMvw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-On 06/22/2015 05:27 PM, Inki Dae wrote:
-
-> On 2015=EB=85=84 06=EC=9B=94 22=EC=9D=BC 20:41, Varka Bhadram wrote:
->
-(..)
-
-> +    platform_set_drvdata(pdev, ctx);
->> You are setting the driver data as ctx..
->>
->> But no where you are using it...?
->>
->> Am i missing anything ?
-> See decon_bind and decon_unbind functions. :)
-
-Cleared. Thanks
-
-
---=20
-Best regards,
-Varka Bhadram.
+T24gMjAxNeuFhCAwNuyblCAyMuydvCAyMDo1OSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
+PiAyMDE1LTA2LTIyIDIwOjQyIEdNVCswOTowMCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5j
+b20+Ogo+PiArIEtyenlzenRvZgo+Pgo+PiBPbiAyMDE164WEIDA27JuUIDIy7J28IDE4OjEwLCBJ
+bmtpIERhZSB3cm90ZToKPj4+IE9uIDIwMTXrhYQgMDbsm5QgMTLsnbwgMjE6NTksIEh5dW5nd29u
+IEh3YW5nIHdyb3RlOgo+Pj4+IFRoZSBjbG9jayB3aGljaCB3YXMgbmFtZWQgYXMgJ3BsbF9jbGsn
+IGlzIGFjdHVhbGx5IG5vdCB0aGUgY2xvY2sgc291cmNlCj4+Pj4gb2YgUExMIGluIE1JUEkgRFNJ
+LiBUaGlzIHBhdGNoIGZpeGVzIHRoaXMgZGlzYWdyZWVtZW50Lgo+Pj4KPj4+IE1yLiBLdWtqaW4g
+YW5kIEtyenlzenRvZiwgY2FuIHlvdSBnaXZlIG1lIEFja2VkLWJ5IG9yIFNpbmdlZC1vZmYtYnk/
+IEknZAo+Pj4gbGlrZSB0byBtZXJnZSB0aGlzIHBhdGNoIHRvIG1haW5saW5lIHRocm91Z2ggZHJt
+LW5leHQuCj4gCj4gRGVhciBIeXVuZ3dvbiBId2FuZywKPiAKPiBQbGVhc2UgYWx3YXlzIENDIHNh
+bXN1bmctc29jIG1haWxpbmcgbGlzdCBvbiBzdWNoIHBhdGNoZXMuIEkgd29uJ3QKPiByZWNlaXZl
+IGl0IG9uIG15IHBlcnNvbmFsIGVtYWlsIGlmIHlvdSBkb24ndCBDQyB0aGUgbGlzdC4gVGhlCj4g
+Z2V0X21haW50YWluZXJzLnBsIGdpdmVzIG5lY2Vzc2FyeSBhZGRyZXNzZXMuCj4gCj4gQ29tbWVu
+dCBiZWxvdywKPiAKPj4+Cj4+PiBUaGFua3MsCj4+PiBJbmtpIERhZQo+Pj4KPj4+Pgo+Pj4+IFNp
+Z25lZC1vZmYtYnk6IEh5dW5nd29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5nLmNvbT4KPj4+
+PiAtLS0KPj4+PiBDaGFuZ2VzIGJlZm9yZToKPj4+PiAtIFJlZmVyIGh0dHBzOi8vcGF0Y2h3b3Jr
+Lmtlcm5lbC5vcmcvcGF0Y2gvNjE5MTgxMQo+Pj4+IENoYW5nZXMgZm9yIHY2Ogo+Pj4+IC0gTm9u
+ZQo+Pj4+Cj4+Pj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQuZHRzaSB8IDIgKy0KPj4+PiAg
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4+Pj4KPj4+PiBk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNC5kdHNpIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNC5kdHNpCj4+Pj4gaW5kZXggZTIwY2RjMi4uMTUzOGQ3YSAxMDA2NDQKPj4+
+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0LmR0c2kKPj4+PiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M0LmR0c2kKPj4+PiBAQCAtMTY3LDcgKzE2Nyw3IEBACj4+Pj4gICAg
+ICAgICAgICAgIHBoeXMgPSA8Jm1pcGlfcGh5IDE+Owo+Pj4+ICAgICAgICAgICAgICBwaHktbmFt
+ZXMgPSAiZHNpbSI7Cj4+Pj4gICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2sgQ0xLX0RTSU0w
+PiwgPCZjbG9jayBDTEtfU0NMS19NSVBJMD47Cj4+Pj4gLSAgICAgICAgICAgIGNsb2NrLW5hbWVz
+ID0gImJ1c19jbGsiLCAicGxsX2NsayI7Cj4+Pj4gKyAgICAgICAgICAgIGNsb2NrLW5hbWVzID0g
+ImJ1c19jbGsiLCAic2Nsa19taXBpIjsKPiAKPiBJdCBzZWVtcyB3cm9uZy4gVGhlIGRyaXZlciBm
+ZXRjaGVzIHJlZmVyZW5jZSBmcm9tIGEgbmFtZSBvZiAicGxsX2NsayIsCj4gbm90ICJzY2xrX21p
+cGkiLiBBbHNvIGJpbmRpbmdzIGRvY3VtZW50YXRpb24gbWVudGlvbnMgcGxsX2NsayBhbmQKPiBi
+dXNfY2xrIG9ubHkuCgpLcnp5c3p0b2YsCgpUaGVyZSBpcyB5b3VyIG1pc3NpbmcgcG9pbnQuIFRo
+ZSBkcml2ZXIgaXMgYWxyZWFkeSBjb25zaWRlcmVkIGZvcgpwbGxfY2xrIGFsc28uIFNlZSB0aGUg
+YmVsb3cgY29kZXMsCgojZGVmaW5lIE9MRF9TQ0xLX01JUElfQ0xLX05BTUUgInBsbF9jbGsiCi4u
+LgoKCWZvciAoaSA9IDA7IGkgPCBkc2ktPmRyaXZlcl9kYXRhLT5udW1fY2xrczsgaSsrKSB7CgkJ
+ZHNpLT5jbGtzW2ldID0gZGV2bV9jbGtfZ2V0KGRldiwgY2xrX25hbWVzW2ldKTsKCQlpZiAoSVNf
+RVJSKGRzaS0+Y2xrc1tpXSkpIHsKCQkJaWYgKHN0cmNtcChjbGtfbmFtZXNbaV0sICJzY2xrX21p
+cGkiKSA9PSAwKSB7CgkJCQlzdHJjcHkoY2xrX25hbWVzW2ldLCBPTERfU0NMS19NSVBJX0NMS19O
+QU1FKTsKCQkJCWktLTsKCQkJCWNvbnRpbnVlOwoJCQl9CgoJCQlkZXZfaW5mbyhkZXYsICJmYWls
+ZWQgdG8gZ2V0IHRoZSBjbG9jazogJXNcbiIsCgkJCQkJY2xrX25hbWVzW2ldKTsKCQkJcmV0dXJu
+IFBUUl9FUlIoZHNpLT5jbGtzW2ldKTsKCQl9Cgl9CgpBYm92ZSBjb2RlcyBtYWtlIHRoZSBkcml2
+ZXIgdG8gdHJ5IHRvIGdldCB0aGUgcGxsX2NsayAtIGRlZmluZWQgYXMKT0xEX1NDTEtfTUlQSV9D
+TEtfTkFNRSBtYWNybyAtIGFnYWluIGlmIGdldHRpbmcgc2Nsa19taXBpIGNsb2NrIGZhaWxlZApz
+byB0aGVyZSBpcyBubyBwcm9ibGVtIGV2ZW4gdGhvdWdoIGEgbGl0dGxlIGJpdCB1Z2x5LgoKQXMg
+eW91IGtub3csIHdlIHNob3VsZCBndWFyYW50ZWUgdGhlIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkg
+c28gdGhpcwpjb2RlcyBjaGVjayB0d28gY2xvY2sgbmFtZXMuCgpUaGFua3MsCklua2kgRGFlCgo+
+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKPiAKPj4+PiAgICAgICAgICAgICAgc3Rh
+dHVzID0gImRpc2FibGVkIjsKPj4+PiAgICAgICAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47
+Cj4+Pj4gICAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDA+Owo+Pj4+IC0tCj4+Pj4gMS45LjEK
+Pj4+Pgo+Pj4+IC0tCj4+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
+IGxpbmUgInVuc3Vic2NyaWJlIGRldmljZXRyZWUiIGluCj4+Pj4gdGhlIGJvZHkgb2YgYSBtZXNz
+YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+PiBNb3JlIG1ham9yZG9tbyBpbmZv
+IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPj4+Pgo+Pj4K
+Pj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1
+bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
