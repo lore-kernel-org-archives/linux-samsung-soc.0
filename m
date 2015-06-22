@@ -1,114 +1,75 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v7 05/15] drm/exynos: add Exynos5433 decon driver
-Date: Mon, 22 Jun 2015 17:11:51 +0530
-Message-ID: <5587F47F.5050405@gmail.com>
-References: <1434113958-15877-6-git-send-email-human.hwang@samsung.com> <1434971779-5342-1-git-send-email-inki.dae@samsung.com>
+Date: Mon, 22 Jun 2015 20:57:30 +0900
+Message-ID: <5587F82A.6000409@samsung.com>
+References: <1434113958-15877-6-git-send-email-human.hwang@samsung.com>
+ <1434971779-5342-1-git-send-email-inki.dae@samsung.com>
+ <5587F47F.5050405@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:34046 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754252AbbFVLmV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 07:42:21 -0400
-Received: by pdbki1 with SMTP id ki1so137357461pdb.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jun 2015 04:42:21 -0700 (PDT)
-In-Reply-To: <1434971779-5342-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <5587F47F.5050405@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Varka Bhadram <varkabhadram@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>
 
-Hi,
-
-On 06/22/2015 04:46 PM, Inki Dae wrote:
-
-> From: Joonyoung Shim <jy0922.shim@samsung.com>
->
-> DECON(Display and Enhancement Controller) is new IP replacing FIMD in
-> Exynos5433. This patch adds Exynos5433 decon driver.
->
-> Changelog v7:
-> - Rebased on top of exynos-drm-next.
-> - Added runtime pm support.
->
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> ---
->   
-
-(...)
-
-> +static int exynos5433_decon_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct decon_context *ctx;
-> +	struct resource *res;
-> +	int ret;
-> +	int i;
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	ctx->default_win = 0;
-> +	ctx->suspended = true;
-> +	ctx->dev = dev;
-> +	if (of_get_child_by_name(dev->of_node, "i80-if-timings"))
-> +		ctx->i80_if = true;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
-> +		struct clk *clk;
-> +
-> +		clk = devm_clk_get(ctx->dev, decon_clks_name[i]);
-> +		if (IS_ERR(clk))
-> +			return PTR_ERR(clk);
-> +
-> +		ctx->clks[i] = clk;
-> +	}
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(dev, "cannot find IO resource\n");
-> +		return -ENXIO;
-> +	}
-> +
-
-You people promised me to remove this check  :-)
-
-http://lists.freedesktop.org/archives/dri-devel/2015-April/081077.html
-
-> +	ctx->addr = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(ctx->addr)) {
-> +		dev_err(dev, "ioremap failed\n");
-> +		return PTR_ERR(ctx->addr);
-> +	}
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
-> +			ctx->i80_if ? "lcd_sys" : "vsync");
-> +	if (!res) {
-> +		dev_err(dev, "cannot find IRQ resource\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	ret = devm_request_irq(dev, res->start, ctx->i80_if ?
-> +			decon_lcd_sys_irq_handler : decon_vsync_irq_handler, 0,
-> +			"drm_decon", ctx);
-> +	if (ret < 0) {
-> +		dev_err(dev, "lcd_sys irq request failed\n");
-> +		return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, ctx);
-
-You are setting the driver data as ctx..
-
-But no where you are using it...?
-
-Am i missing anything ?
-
--- 
-Best regards,
-Varka Bhadram.
+T24gMjAxNeuFhCAwNuyblCAyMuydvCAyMDo0MSwgVmFya2EgQmhhZHJhbSB3cm90ZToKPiBIaSwK
+PiAKPiBPbiAwNi8yMi8yMDE1IDA0OjQ2IFBNLCBJbmtpIERhZSB3cm90ZToKPiAKPj4gRnJvbTog
+Sm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+Pgo+PiBERUNPTihEaXNw
+bGF5IGFuZCBFbmhhbmNlbWVudCBDb250cm9sbGVyKSBpcyBuZXcgSVAgcmVwbGFjaW5nIEZJTUQg
+aW4KPj4gRXh5bm9zNTQzMy4gVGhpcyBwYXRjaCBhZGRzIEV4eW5vczU0MzMgZGVjb24gZHJpdmVy
+Lgo+Pgo+PiBDaGFuZ2Vsb2cgdjc6Cj4+IC0gUmViYXNlZCBvbiB0b3Agb2YgZXh5bm9zLWRybS1u
+ZXh0Lgo+PiAtIEFkZGVkIHJ1bnRpbWUgcG0gc3VwcG9ydC4KPj4KPj4gU2lnbmVkLW9mZi1ieTog
+Sm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+PiBTaWduZWQtb2ZmLWJ5
+OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYt
+Ynk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAgCj4gCj4gKC4u
+LikKPiAKPj4gK3N0YXRpYyBpbnQgZXh5bm9zNTQzM19kZWNvbl9wcm9iZShzdHJ1Y3QgcGxhdGZv
+cm1fZGV2aWNlICpwZGV2KQo+PiArewo+PiArICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2
+LT5kZXY7Cj4+ICsgICAgc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eDsKPj4gKyAgICBzdHJ1Y3Qg
+cmVzb3VyY2UgKnJlczsKPj4gKyAgICBpbnQgcmV0Owo+PiArICAgIGludCBpOwo+PiArCj4+ICsg
+ICAgY3R4ID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpjdHgpLCBHRlBfS0VSTkVMKTsKPj4g
+KyAgICBpZiAoIWN0eCkKPj4gKyAgICAgICAgcmV0dXJuIC1FTk9NRU07Cj4+ICsKPj4gKyAgICBj
+dHgtPmRlZmF1bHRfd2luID0gMDsKPj4gKyAgICBjdHgtPnN1c3BlbmRlZCA9IHRydWU7Cj4+ICsg
+ICAgY3R4LT5kZXYgPSBkZXY7Cj4+ICsgICAgaWYgKG9mX2dldF9jaGlsZF9ieV9uYW1lKGRldi0+
+b2Zfbm9kZSwgImk4MC1pZi10aW1pbmdzIikpCj4+ICsgICAgICAgIGN0eC0+aTgwX2lmID0gdHJ1
+ZTsKPj4gKwo+PiArICAgIGZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKGRlY29uX2Nsa3NfbmFt
+ZSk7IGkrKykgewo+PiArICAgICAgICBzdHJ1Y3QgY2xrICpjbGs7Cj4+ICsKPj4gKyAgICAgICAg
+Y2xrID0gZGV2bV9jbGtfZ2V0KGN0eC0+ZGV2LCBkZWNvbl9jbGtzX25hbWVbaV0pOwo+PiArICAg
+ICAgICBpZiAoSVNfRVJSKGNsaykpCj4+ICsgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihjbGsp
+Owo+PiArCj4+ICsgICAgICAgIGN0eC0+Y2xrc1tpXSA9IGNsazsKPj4gKyAgICB9Cj4+ICsKPj4g
+KyAgICByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDAp
+Owo+PiArICAgIGlmICghcmVzKSB7Cj4+ICsgICAgICAgIGRldl9lcnIoZGV2LCAiY2Fubm90IGZp
+bmQgSU8gcmVzb3VyY2VcbiIpOwo+PiArICAgICAgICByZXR1cm4gLUVOWElPOwo+PiArICAgIH0K
+Pj4gKwo+IAo+IFlvdSBwZW9wbGUgcHJvbWlzZWQgbWUgdG8gcmVtb3ZlIHRoaXMgY2hlY2sgIDot
+KQoKUmlnaHQgYnV0IGlzbid0IGl0IGJldHRlciB0byBjaGVjayBhbiBlcnJvciBleHBsaWNpdGx5
+PyBBbnl3YXkgdHJpdmlhbCBvbmUuCgo+IAo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+YXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtQXByaWwvMDgxMDc3Lmh0bWwKPiAKPj4gKyAgICBjdHgt
+PmFkZHIgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXMpOwo+PiArICAgIGlmIChJU19F
+UlIoY3R4LT5hZGRyKSkgewo+PiArICAgICAgICBkZXZfZXJyKGRldiwgImlvcmVtYXAgZmFpbGVk
+XG4iKTsKPj4gKyAgICAgICAgcmV0dXJuIFBUUl9FUlIoY3R4LT5hZGRyKTsKPj4gKyAgICB9Cj4+
+ICsKPj4gKyAgICByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2VfYnluYW1lKHBkZXYsIElPUkVT
+T1VSQ0VfSVJRLAo+PiArICAgICAgICAgICAgY3R4LT5pODBfaWYgPyAibGNkX3N5cyIgOiAidnN5
+bmMiKTsKPj4gKyAgICBpZiAoIXJlcykgewo+PiArICAgICAgICBkZXZfZXJyKGRldiwgImNhbm5v
+dCBmaW5kIElSUSByZXNvdXJjZVxuIik7Cj4+ICsgICAgICAgIHJldHVybiAtRU5YSU87Cj4+ICsg
+ICAgfQo+PiArCj4+ICsgICAgcmV0ID0gZGV2bV9yZXF1ZXN0X2lycShkZXYsIHJlcy0+c3RhcnQs
+IGN0eC0+aTgwX2lmID8KPj4gKyAgICAgICAgICAgIGRlY29uX2xjZF9zeXNfaXJxX2hhbmRsZXIg
+OiBkZWNvbl92c3luY19pcnFfaGFuZGxlciwgMCwKPj4gKyAgICAgICAgICAgICJkcm1fZGVjb24i
+LCBjdHgpOwo+PiArICAgIGlmIChyZXQgPCAwKSB7Cj4+ICsgICAgICAgIGRldl9lcnIoZGV2LCAi
+bGNkX3N5cyBpcnEgcmVxdWVzdCBmYWlsZWRcbiIpOwo+PiArICAgICAgICByZXR1cm4gcmV0Owo+
+PiArICAgIH0KPj4gKwo+PiArICAgIHBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIGN0eCk7Cj4g
+Cj4gWW91IGFyZSBzZXR0aW5nIHRoZSBkcml2ZXIgZGF0YSBhcyBjdHguLgo+IAo+IEJ1dCBubyB3
+aGVyZSB5b3UgYXJlIHVzaW5nIGl0Li4uPwo+IAo+IEFtIGkgbWlzc2luZyBhbnl0aGluZyA/CgpT
+ZWUgZGVjb25fYmluZCBhbmQgZGVjb25fdW5iaW5kIGZ1bmN0aW9ucy4gOikKClRoYW5rcywKSW5r
+aSBEYWUKCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
