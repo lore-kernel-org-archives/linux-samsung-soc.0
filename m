@@ -1,75 +1,96 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v7 05/15] drm/exynos: add Exynos5433 decon driver
-Date: Mon, 22 Jun 2015 20:57:30 +0900
-Message-ID: <5587F82A.6000409@samsung.com>
-References: <1434113958-15877-6-git-send-email-human.hwang@samsung.com>
- <1434971779-5342-1-git-send-email-inki.dae@samsung.com>
- <5587F47F.5050405@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
+ to 'sclk_mipi'
+Date: Mon, 22 Jun 2015 20:59:36 +0900
+Message-ID: <CAJKOXPegwXD18tt2dFmHAE4imZSp2JUbEy7RDcRxqhiRQfoMvw@mail.gmail.com>
+References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
+	<1434113958-15877-16-git-send-email-human.hwang@samsung.com>
+	<5587D111.9090602@samsung.com>
+	<5587F4A1.2090502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <5587F47F.5050405@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Varka Bhadram <varkabhadram@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f45.google.com ([209.85.216.45]:38134 "EHLO
+	mail-vn0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751938AbbFVL7h convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Jun 2015 07:59:37 -0400
+In-Reply-To: <5587F4A1.2090502@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Hyungwon Hwang <human.hwang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, daniel@fooishbar.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwNuyblCAyMuydvCAyMDo0MSwgVmFya2EgQmhhZHJhbSB3cm90ZToKPiBIaSwK
-PiAKPiBPbiAwNi8yMi8yMDE1IDA0OjQ2IFBNLCBJbmtpIERhZSB3cm90ZToKPiAKPj4gRnJvbTog
-Sm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+Pgo+PiBERUNPTihEaXNw
-bGF5IGFuZCBFbmhhbmNlbWVudCBDb250cm9sbGVyKSBpcyBuZXcgSVAgcmVwbGFjaW5nIEZJTUQg
-aW4KPj4gRXh5bm9zNTQzMy4gVGhpcyBwYXRjaCBhZGRzIEV4eW5vczU0MzMgZGVjb24gZHJpdmVy
-Lgo+Pgo+PiBDaGFuZ2Vsb2cgdjc6Cj4+IC0gUmViYXNlZCBvbiB0b3Agb2YgZXh5bm9zLWRybS1u
-ZXh0Lgo+PiAtIEFkZGVkIHJ1bnRpbWUgcG0gc3VwcG9ydC4KPj4KPj4gU2lnbmVkLW9mZi1ieTog
-Sm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+PiBTaWduZWQtb2ZmLWJ5
-OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYt
-Ynk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICAgCj4gCj4gKC4u
-LikKPiAKPj4gK3N0YXRpYyBpbnQgZXh5bm9zNTQzM19kZWNvbl9wcm9iZShzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpwZGV2KQo+PiArewo+PiArICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2
-LT5kZXY7Cj4+ICsgICAgc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eDsKPj4gKyAgICBzdHJ1Y3Qg
-cmVzb3VyY2UgKnJlczsKPj4gKyAgICBpbnQgcmV0Owo+PiArICAgIGludCBpOwo+PiArCj4+ICsg
-ICAgY3R4ID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpjdHgpLCBHRlBfS0VSTkVMKTsKPj4g
-KyAgICBpZiAoIWN0eCkKPj4gKyAgICAgICAgcmV0dXJuIC1FTk9NRU07Cj4+ICsKPj4gKyAgICBj
-dHgtPmRlZmF1bHRfd2luID0gMDsKPj4gKyAgICBjdHgtPnN1c3BlbmRlZCA9IHRydWU7Cj4+ICsg
-ICAgY3R4LT5kZXYgPSBkZXY7Cj4+ICsgICAgaWYgKG9mX2dldF9jaGlsZF9ieV9uYW1lKGRldi0+
-b2Zfbm9kZSwgImk4MC1pZi10aW1pbmdzIikpCj4+ICsgICAgICAgIGN0eC0+aTgwX2lmID0gdHJ1
-ZTsKPj4gKwo+PiArICAgIGZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKGRlY29uX2Nsa3NfbmFt
-ZSk7IGkrKykgewo+PiArICAgICAgICBzdHJ1Y3QgY2xrICpjbGs7Cj4+ICsKPj4gKyAgICAgICAg
-Y2xrID0gZGV2bV9jbGtfZ2V0KGN0eC0+ZGV2LCBkZWNvbl9jbGtzX25hbWVbaV0pOwo+PiArICAg
-ICAgICBpZiAoSVNfRVJSKGNsaykpCj4+ICsgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihjbGsp
-Owo+PiArCj4+ICsgICAgICAgIGN0eC0+Y2xrc1tpXSA9IGNsazsKPj4gKyAgICB9Cj4+ICsKPj4g
-KyAgICByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDAp
-Owo+PiArICAgIGlmICghcmVzKSB7Cj4+ICsgICAgICAgIGRldl9lcnIoZGV2LCAiY2Fubm90IGZp
-bmQgSU8gcmVzb3VyY2VcbiIpOwo+PiArICAgICAgICByZXR1cm4gLUVOWElPOwo+PiArICAgIH0K
-Pj4gKwo+IAo+IFlvdSBwZW9wbGUgcHJvbWlzZWQgbWUgdG8gcmVtb3ZlIHRoaXMgY2hlY2sgIDot
-KQoKUmlnaHQgYnV0IGlzbid0IGl0IGJldHRlciB0byBjaGVjayBhbiBlcnJvciBleHBsaWNpdGx5
-PyBBbnl3YXkgdHJpdmlhbCBvbmUuCgo+IAo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-YXJjaGl2ZXMvZHJpLWRldmVsLzIwMTUtQXByaWwvMDgxMDc3Lmh0bWwKPiAKPj4gKyAgICBjdHgt
-PmFkZHIgPSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXMpOwo+PiArICAgIGlmIChJU19F
-UlIoY3R4LT5hZGRyKSkgewo+PiArICAgICAgICBkZXZfZXJyKGRldiwgImlvcmVtYXAgZmFpbGVk
-XG4iKTsKPj4gKyAgICAgICAgcmV0dXJuIFBUUl9FUlIoY3R4LT5hZGRyKTsKPj4gKyAgICB9Cj4+
-ICsKPj4gKyAgICByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2VfYnluYW1lKHBkZXYsIElPUkVT
-T1VSQ0VfSVJRLAo+PiArICAgICAgICAgICAgY3R4LT5pODBfaWYgPyAibGNkX3N5cyIgOiAidnN5
-bmMiKTsKPj4gKyAgICBpZiAoIXJlcykgewo+PiArICAgICAgICBkZXZfZXJyKGRldiwgImNhbm5v
-dCBmaW5kIElSUSByZXNvdXJjZVxuIik7Cj4+ICsgICAgICAgIHJldHVybiAtRU5YSU87Cj4+ICsg
-ICAgfQo+PiArCj4+ICsgICAgcmV0ID0gZGV2bV9yZXF1ZXN0X2lycShkZXYsIHJlcy0+c3RhcnQs
-IGN0eC0+aTgwX2lmID8KPj4gKyAgICAgICAgICAgIGRlY29uX2xjZF9zeXNfaXJxX2hhbmRsZXIg
-OiBkZWNvbl92c3luY19pcnFfaGFuZGxlciwgMCwKPj4gKyAgICAgICAgICAgICJkcm1fZGVjb24i
-LCBjdHgpOwo+PiArICAgIGlmIChyZXQgPCAwKSB7Cj4+ICsgICAgICAgIGRldl9lcnIoZGV2LCAi
-bGNkX3N5cyBpcnEgcmVxdWVzdCBmYWlsZWRcbiIpOwo+PiArICAgICAgICByZXR1cm4gcmV0Owo+
-PiArICAgIH0KPj4gKwo+PiArICAgIHBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIGN0eCk7Cj4g
-Cj4gWW91IGFyZSBzZXR0aW5nIHRoZSBkcml2ZXIgZGF0YSBhcyBjdHguLgo+IAo+IEJ1dCBubyB3
-aGVyZSB5b3UgYXJlIHVzaW5nIGl0Li4uPwo+IAo+IEFtIGkgbWlzc2luZyBhbnl0aGluZyA/CgpT
-ZWUgZGVjb25fYmluZCBhbmQgZGVjb25fdW5iaW5kIGZ1bmN0aW9ucy4gOikKClRoYW5rcywKSW5r
-aSBEYWUKCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+2015-06-22 20:42 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
+> + Krzysztof
+>
+> On 2015=EB=85=84 06=EC=9B=94 22=EC=9D=BC 18:10, Inki Dae wrote:
+>> On 2015=EB=85=84 06=EC=9B=94 12=EC=9D=BC 21:59, Hyungwon Hwang wrote=
+:
+>>> The clock which was named as 'pll_clk' is actually not the clock so=
+urce
+>>> of PLL in MIPI DSI. This patch fixes this disagreement.
+>>
+>> Mr. Kukjin and Krzysztof, can you give me Acked-by or Singed-off-by?=
+ I'd
+>> like to merge this patch to mainline through drm-next.
+
+Dear Hyungwon Hwang,
+
+Please always CC samsung-soc mailing list on such patches. I won't
+receive it on my personal email if you don't CC the list. The
+get_maintainers.pl gives necessary addresses.
+
+Comment below,
+
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>>>
+>>> Signed-off-by: Hyungwon Hwang <human.hwang@samsung.com>
+>>> ---
+>>> Changes before:
+>>> - Refer https://patchwork.kernel.org/patch/6191811
+>>> Changes for v6:
+>>> - None
+>>>
+>>>  arch/arm/boot/dts/exynos4.dtsi | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exy=
+nos4.dtsi
+>>> index e20cdc2..1538d7a 100644
+>>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>>> @@ -167,7 +167,7 @@
+>>>              phys =3D <&mipi_phy 1>;
+>>>              phy-names =3D "dsim";
+>>>              clocks =3D <&clock CLK_DSIM0>, <&clock CLK_SCLK_MIPI0>=
+;
+>>> -            clock-names =3D "bus_clk", "pll_clk";
+>>> +            clock-names =3D "bus_clk", "sclk_mipi";
+
+It seems wrong. The driver fetches reference from a name of "pll_clk",
+not "sclk_mipi". Also bindings documentation mentions pll_clk and
+bus_clk only.
+
+Best regards,
+Krzysztof
+
+
+>>>              status =3D "disabled";
+>>>              #address-cells =3D <1>;
+>>>              #size-cells =3D <0>;
+>>> --
+>>> 1.9.1
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe devicetre=
+e" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>
+>
