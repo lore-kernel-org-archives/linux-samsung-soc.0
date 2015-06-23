@@ -1,76 +1,1218 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 22/23] drm/exynos: fold encoder setup into exynos_drm_load()
-Date: Tue, 23 Jun 2015 18:35:35 -0300
-Message-ID: <1435095336-6196-23-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 23/23] drm/exynos: remove struct exynos_drm_encoder layer
+Date: Tue, 23 Jun 2015 18:35:36 -0300
+Message-ID: <1435095336-6196-24-git-send-email-gustavo@padovan.org>
 References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:32940 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933050AbbFWVgv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Jun 2015 17:36:51 -0400
+Received: by qged89 with SMTP id d89so8098550qge.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2015 14:36:51 -0700 (PDT)
 In-Reply-To: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-QXMgd2UgYXJlIHJlbW92aW5nIHRoZSBleHlub3MgZW5jb2RlciBtb3ZlIHRoZSBlbmNvZGVyIHNl
-dHVwIG9wZXJhdGlvbgpkaXJlY3RseSBpbnNpZGUgdGhlIGV4eW5vc19kcm1fbG9hZCgpCgpTaWdu
-ZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICB8IDEy
-ICsrKysrKysrKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
-YyB8IDEzIC0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9l
-bmNvZGVyLmggfCAgMSAtCiAzIGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDE2IGRl
-bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCBh
-YWZiNDE5Li4zOGZlMTA4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5j
-CkBAIC00MSw3ICs0MSw5IEBACiBzdGF0aWMgaW50IGV4eW5vc19kcm1fbG9hZChzdHJ1Y3QgZHJt
-X2RldmljZSAqZGV2LCB1bnNpZ25lZCBsb25nIGZsYWdzKQogewogCXN0cnVjdCBleHlub3NfZHJt
-X3ByaXZhdGUgKnByaXZhdGU7Ci0JaW50IHJldDsKKwlzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29k
-ZXI7CisJdW5zaWduZWQgaW50IGNsb25lX21hc2s7CisJaW50IGNudCwgcmV0OwogCiAJcHJpdmF0
-ZSA9IGt6YWxsb2Moc2l6ZW9mKHN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUpLCBHRlBfS0VSTkVM
-KTsKIAlpZiAoIXByaXZhdGUpCkBAIC03MCw3ICs3MiwxMyBAQCBzdGF0aWMgaW50IGV4eW5vc19k
-cm1fbG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBsb25nIGZsYWdzKQogCWV4
-eW5vc19kcm1fbW9kZV9jb25maWdfaW5pdChkZXYpOwogCiAJLyogc2V0dXAgcG9zc2libGVfY2xv
-bmVzLiAqLwotCWV4eW5vc19kcm1fZW5jb2Rlcl9zZXR1cChkZXYpOworCWNudCA9IDA7CisJY2xv
-bmVfbWFzayA9IDA7CisJbGlzdF9mb3JfZWFjaF9lbnRyeShlbmNvZGVyLCAmZGV2LT5tb2RlX2Nv
-bmZpZy5lbmNvZGVyX2xpc3QsIGhlYWQpCisJCWNsb25lX21hc2sgfD0gKDEgPDwgKGNudCsrKSk7
-CisKKwlsaXN0X2Zvcl9lYWNoX2VudHJ5KGVuY29kZXIsICZkZXYtPm1vZGVfY29uZmlnLmVuY29k
-ZXJfbGlzdCwgaGVhZCkKKwkJZW5jb2Rlci0+cG9zc2libGVfY2xvbmVzID0gY2xvbmVfbWFzazsK
-IAogCXBsYXRmb3JtX3NldF9kcnZkYXRhKGRldi0+cGxhdGZvcm1kZXYsIGRldik7CiAKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCmluZGV4IDRlZDM2MGIuLmQ0
-NWE1YzUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNv
-ZGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuYwpA
-QCAtNzgsMTkgKzc4LDYgQEAgc3RhdGljIHN0cnVjdCBkcm1fZW5jb2Rlcl9mdW5jcyBleHlub3Nf
-ZW5jb2Rlcl9mdW5jcyA9IHsKIAkuZGVzdHJveSA9IGRybV9lbmNvZGVyX2NsZWFudXAsCiB9Owog
-Ci12b2lkIGV4eW5vc19kcm1fZW5jb2Rlcl9zZXR1cChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQot
-ewotCXN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcjsKLQl1bnNpZ25lZCBpbnQgY2xvbmVfbWFz
-ayA9IDA7Ci0JaW50IGNudCA9IDA7Ci0KLQlsaXN0X2Zvcl9lYWNoX2VudHJ5KGVuY29kZXIsICZk
-ZXYtPm1vZGVfY29uZmlnLmVuY29kZXJfbGlzdCwgaGVhZCkKLQkJY2xvbmVfbWFzayB8PSAoMSA8
-PCAoY250KyspKTsKLQotCWxpc3RfZm9yX2VhY2hfZW50cnkoZW5jb2RlciwgJmRldi0+bW9kZV9j
-b25maWcuZW5jb2Rlcl9saXN0LCBoZWFkKQotCQllbmNvZGVyLT5wb3NzaWJsZV9jbG9uZXMgPSBj
-bG9uZV9tYXNrOwotfQotCiBpbnQgZXh5bm9zX2RybV9lbmNvZGVyX2NyZWF0ZShzdHJ1Y3QgZHJt
-X2RldmljZSAqZGV2LAogCQkJICAgICAgc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZXh5bm9z
-X2VuY29kZXIsCiAJCQkgICAgICBlbnVtIGV4eW5vc19kcm1fb3V0cHV0X3R5cGUgdHlwZSkKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmggYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5oCmluZGV4IGU5OThiODIu
-LjY2MTBkZWUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9l
-bmNvZGVyLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
-aApAQCAtMTYsNyArMTYsNiBAQAogCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIKIAotdm9p
-ZCBleHlub3NfZHJtX2VuY29kZXJfc2V0dXAoc3RydWN0IGRybV9kZXZpY2UgKmRldik7CiBpbnQg
-ZXh5bm9zX2RybV9lbmNvZGVyX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3Qg
-ZXh5bm9zX2RybV9lbmNvZGVyCiAJCQkgICAgICAqZW5jb2RlciwgZW51bSBleHlub3NfZHJtX291
-dHB1dF90eXBlIHR5cGUpOwogCi0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+struct exynos_drm_encoder was justing wrapping struct drm_encoder, it had
+only a drm_encoder member and the internal exynos_drm_encoders ops that
+was directly mapped to the drm_encoder helper funcs.
+
+So now exynos DRM uses struct drm_encoder directly, this removes
+completely the struct exynos_drm_encoder.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/Makefile             |   7 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c  |   2 +-
+ drivers/gpu/drm/exynos/exynos_dp_core.c     |  68 ++++++++++++------
+ drivers/gpu/drm/exynos/exynos_dp_core.h     |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_core.c    |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  51 ++++++++------
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |  47 ++-----------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  80 +++++++++++----------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c | 105 ----------------------------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.h |  22 ------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  71 ++++++++++++++-----
+ drivers/gpu/drm/exynos/exynos_hdmi.c        |  90 ++++++++++++++----------
+ 15 files changed, 238 insertions(+), 312 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.h
+
+diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+index cc90679..ab488b6 100644
+--- a/drivers/gpu/drm/exynos/Makefile
++++ b/drivers/gpu/drm/exynos/Makefile
+@@ -3,10 +3,9 @@
+ # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
+ 
+ ccflags-y := -Iinclude/drm -Idrivers/gpu/drm/exynos
+-exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
+-		exynos_drm_crtc.o exynos_drm_fbdev.o exynos_drm_fb.o \
+-		exynos_drm_buf.o exynos_drm_gem.o exynos_drm_core.o \
+-		exynos_drm_plane.o exynos_drm_dmabuf.o
++exynosdrm-y := exynos_drm_drv.o exynos_drm_crtc.o exynos_drm_fbdev.o \
++		exynos_drm_fb.o exynos_drm_buf.o exynos_drm_gem.o \
++		exynos_drm_core.o exynos_drm_plane.o exynos_drm_dmabuf.o
+ 
+ exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
+ exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 2949bd4..561aee1 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -61,7 +61,7 @@ struct decon_context {
+ 	atomic_t			wait_vsync_event;
+ 
+ 	struct exynos_drm_panel_info panel;
+-	struct exynos_drm_encoder *encoder;
++	struct drm_encoder *encoder;
+ };
+ 
+ static const struct of_device_id decon_driver_dt_match[] = {
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index f035944..32224a3 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -33,18 +33,18 @@
+ #include <drm/bridge/ptn3460.h>
+ 
+ #include "exynos_dp_core.h"
+-#include "exynos_drm_encoder.h"
++#include "exynos_drm_crtc.h"
+ 
+ #define ctx_from_connector(c)	container_of(c, struct exynos_dp_device, \
+ 					connector)
+ 
+ static inline struct exynos_drm_crtc *dp_to_crtc(struct exynos_dp_device *dp)
+ {
+-	return to_exynos_crtc(dp->encoder.base.crtc);
++	return to_exynos_crtc(dp->encoder.crtc);
+ }
+ 
+ static inline struct exynos_dp_device *encoder_to_dp(
+-						struct exynos_drm_encoder *e)
++						struct drm_encoder *e)
+ {
+ 	return container_of(e, struct exynos_dp_device, encoder);
+ }
+@@ -890,7 +890,7 @@ static void exynos_dp_hotplug(struct work_struct *work)
+ 		drm_helper_hpd_irq_event(dp->drm_dev);
+ }
+ 
+-static void exynos_dp_commit(struct exynos_drm_encoder *encoder)
++static void exynos_dp_commit(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
+ 	int ret;
+@@ -996,7 +996,7 @@ static struct drm_encoder *exynos_dp_best_encoder(
+ {
+ 	struct exynos_dp_device *dp = ctx_from_connector(connector);
+ 
+-	return &dp->encoder.base;
++	return &dp->encoder;
+ }
+ 
+ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
+@@ -1021,10 +1021,9 @@ static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
+ 	return 0;
+ }
+ 
+-static int exynos_dp_create_connector(struct exynos_drm_encoder *exynos_encoder)
++static int exynos_dp_create_connector(struct drm_encoder *encoder)
+ {
+-	struct exynos_dp_device *dp = encoder_to_dp(exynos_encoder);
+-	struct drm_encoder *encoder = &exynos_encoder->base;
++	struct exynos_dp_device *dp = encoder_to_dp(encoder);
+ 	struct drm_connector *connector = &dp->connector;
+ 	int ret;
+ 
+@@ -1054,7 +1053,20 @@ static int exynos_dp_create_connector(struct exynos_drm_encoder *exynos_encoder)
+ 	return ret;
+ }
+ 
+-static void exynos_dp_enable(struct exynos_drm_encoder *encoder)
++static bool exynos_dp_mode_fixup(struct drm_encoder *encoder,
++				 const struct drm_display_mode *mode,
++				 struct drm_display_mode *adjusted_mode)
++{
++	return true;
++}
++
++static void exynos_dp_mode_set(struct drm_encoder *encoder,
++			       struct drm_display_mode *mode,
++			       struct drm_display_mode *adjusted_mode)
++{
++}
++
++static void exynos_dp_enable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
+ 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
+@@ -1079,7 +1091,7 @@ static void exynos_dp_enable(struct exynos_drm_encoder *encoder)
+ 	exynos_dp_commit(&dp->encoder);
+ }
+ 
+-static void exynos_dp_disable(struct exynos_drm_encoder *encoder)
++static void exynos_dp_disable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
+ 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
+@@ -1105,11 +1117,17 @@ static void exynos_dp_disable(struct exynos_drm_encoder *encoder)
+ 	}
+ }
+ 
+-static struct exynos_drm_encoder_ops exynos_dp_encoder_ops = {
++static struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
++	.mode_fixup = exynos_dp_mode_fixup,
++	.mode_set = exynos_dp_mode_set,
+ 	.enable = exynos_dp_enable,
+ 	.disable = exynos_dp_disable,
+ };
+ 
++static struct drm_encoder_funcs exynos_dp_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
+ static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
+ {
+ 	struct device_node *dp_node = dev->of_node;
+@@ -1186,10 +1204,10 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct drm_device *drm_dev = data;
+-	struct exynos_drm_encoder *exynos_encoder = &dp->encoder;
++	struct drm_encoder *encoder = &dp->encoder;
+ 	struct resource *res;
+ 	unsigned int irq_flags;
+-	int ret = 0;
++	int pipe, ret = 0;
+ 
+ 	dp->dev = &pdev->dev;
+ 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+@@ -1279,17 +1297,24 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	dp->drm_dev = drm_dev;
+ 
+-	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
+-					EXYNOS_DISPLAY_TYPE_LCD);
+-	if (ret) {
+-		DRM_ERROR("failed to create encoder\n");
+-		return ret;
+-	}
++	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
++						  EXYNOS_DISPLAY_TYPE_LCD);
++	if (pipe < 0)
++		return pipe;
++
++	encoder->possible_crtcs = 1 << pipe;
++
++	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
++
++	drm_encoder_init(drm_dev, encoder, &exynos_dp_encoder_funcs,
++			 DRM_MODE_ENCODER_TMDS);
++
++	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
+ 
+-	ret = exynos_dp_create_connector(exynos_encoder);
++	ret = exynos_dp_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+-		drm_encoder_cleanup(&exynos_encoder->base);
++		drm_encoder_cleanup(encoder);
+ 		return ret;
+ 	}
+ 
+@@ -1320,7 +1345,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	if (!dp)
+ 		return -ENOMEM;
+ 
+-	dp->encoder.ops = &exynos_dp_encoder_ops;
+ 	platform_set_drvdata(pdev, dp);
+ 
+ 	panel_node = of_parse_phandle(dev->of_node, "panel", 0);
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
+index f8cc202..e413b6f 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.h
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
+@@ -147,7 +147,7 @@ struct link_train {
+ };
+ 
+ struct exynos_dp_device {
+-	struct exynos_drm_encoder encoder;
++	struct drm_encoder	encoder;
+ 	struct device		*dev;
+ 	struct drm_device	*drm_dev;
+ 	struct drm_connector	connector;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_core.c b/drivers/gpu/drm/exynos/exynos_drm_core.c
+index 1f38a44..c68a6a2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_core.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_core.c
+@@ -15,7 +15,6 @@
+ #include <drm/drmP.h>
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+-#include "exynos_drm_encoder.h"
+ #include "exynos_drm_fbdev.h"
+ 
+ static LIST_HEAD(exynos_drm_subdrv_list);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index c872860..26db6df 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -19,7 +19,6 @@
+ 
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+-#include "exynos_drm_encoder.h"
+ #include "exynos_drm_plane.h"
+ 
+ static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 6850ce5..0476260 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -20,11 +20,10 @@
+ #include <video/of_videomode.h>
+ #include <video/videomode.h>
+ 
+-#include "exynos_drm_encoder.h"
+ #include "exynos_drm_crtc.h"
+ 
+ struct exynos_dpi {
+-	struct exynos_drm_encoder encoder;
++	struct drm_encoder encoder;
+ 	struct device *dev;
+ 	struct device_node *panel_node;
+ 
+@@ -36,7 +35,7 @@ struct exynos_dpi {
+ 
+ #define connector_to_dpi(c) container_of(c, struct exynos_dpi, connector)
+ 
+-static inline struct exynos_dpi *encoder_to_dpi(struct exynos_drm_encoder *e)
++static inline struct exynos_dpi *encoder_to_dpi(struct drm_encoder *e)
+ {
+ 	return container_of(e, struct exynos_dpi, encoder);
+ }
+@@ -98,7 +97,7 @@ exynos_dpi_best_encoder(struct drm_connector *connector)
+ {
+ 	struct exynos_dpi *ctx = connector_to_dpi(connector);
+ 
+-	return &ctx->encoder.base;
++	return &ctx->encoder;
+ }
+ 
+ static struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
+@@ -106,11 +105,9 @@ static struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
+ 	.best_encoder = exynos_dpi_best_encoder,
+ };
+ 
+-static int exynos_dpi_create_connector(
+-				struct exynos_drm_encoder *exynos_encoder)
++static int exynos_dpi_create_connector(struct drm_encoder *encoder)
+ {
+-	struct exynos_dpi *ctx = encoder_to_dpi(exynos_encoder);
+-	struct drm_encoder *encoder = &exynos_encoder->base;
++	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
+ 	struct drm_connector *connector = &ctx->connector;
+ 	int ret;
+ 
+@@ -131,7 +128,7 @@ static int exynos_dpi_create_connector(
+ 	return 0;
+ }
+ 
+-static void exynos_dpi_enable(struct exynos_drm_encoder *encoder)
++static void exynos_dpi_enable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
+ 
+@@ -141,7 +138,7 @@ static void exynos_dpi_enable(struct exynos_drm_encoder *encoder)
+ 	}
+ }
+ 
+-static void exynos_dpi_disable(struct exynos_drm_encoder *encoder)
++static void exynos_dpi_disable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
+ 
+@@ -151,11 +148,15 @@ static void exynos_dpi_disable(struct exynos_drm_encoder *encoder)
+ 	}
+ }
+ 
+-static struct exynos_drm_encoder_ops exynos_dpi_encoder_ops = {
++static struct drm_encoder_helper_funcs exynos_dpi_encoder_helper_funcs = {
+ 	.enable = exynos_dpi_enable,
+ 	.disable = exynos_dpi_disable,
+ };
+ 
++static struct drm_encoder_funcs exynos_dpi_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
+ /* of_* functions will be removed after merge of of_graph patches */
+ static struct device_node *
+ of_get_child_by_name_reg(struct device_node *parent, const char *name, u32 reg)
+@@ -280,29 +281,34 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
+ 	return 0;
+ }
+ 
+-int exynos_dpi_bind(struct drm_device *dev,
+-		    struct exynos_drm_encoder *exynos_encoder)
++int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder)
+ {
+ 	int ret;
+ 
+-	ret = exynos_drm_encoder_create(dev, exynos_encoder,
+-					EXYNOS_DISPLAY_TYPE_LCD);
+-	if (ret) {
+-		DRM_ERROR("failed to create encoder\n");
++	ret = exynos_drm_crtc_get_pipe_from_type(dev, EXYNOS_DISPLAY_TYPE_LCD);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+-	ret = exynos_dpi_create_connector(exynos_encoder);
++	encoder->possible_crtcs = 1 << ret;
++
++	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
++
++	drm_encoder_init(dev, encoder, &exynos_dpi_encoder_funcs,
++			 DRM_MODE_ENCODER_TMDS);
++
++	drm_encoder_helper_add(encoder, &exynos_dpi_encoder_helper_funcs);
++
++	ret = exynos_dpi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+-		drm_encoder_cleanup(&exynos_encoder->base);
++		drm_encoder_cleanup(encoder);
+ 		return ret;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev)
++struct drm_encoder *exynos_dpi_probe(struct device *dev)
+ {
+ 	struct exynos_dpi *ctx;
+ 	int ret;
+@@ -311,7 +317,6 @@ struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev)
+ 	if (!ctx)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	ctx->encoder.ops = &exynos_dpi_encoder_ops;
+ 	ctx->dev = dev;
+ 
+ 	ret = exynos_dpi_parse_dt(ctx);
+@@ -329,7 +334,7 @@ struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev)
+ 	return &ctx->encoder;
+ }
+ 
+-int exynos_dpi_remove(struct exynos_drm_encoder *encoder)
++int exynos_dpi_remove(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 38fe108..faaa554 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -21,7 +21,6 @@
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+-#include "exynos_drm_encoder.h"
+ #include "exynos_drm_fbdev.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_gem.h"
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 24a84fe..07e3165 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -22,7 +22,6 @@
+ #define MAX_PLANE	5
+ #define MAX_FB_BUFFER	4
+ 
+-#define to_exynos_encoder(x)	container_of(x, struct exynos_drm_encoder, base)
+ #define to_exynos_crtc(x)	container_of(x, struct exynos_drm_crtc, base)
+ #define to_exynos_plane(x)	container_of(x, struct exynos_drm_plane, base)
+ 
+@@ -78,40 +77,6 @@ struct exynos_drm_plane {
+ };
+ 
+ /*
+- * Exynos DRM Encoder Structure.
+- *	- this structure is common to analog tv, digital tv and lcd panel.
+- *
+- * @mode_fixup: fix mode data comparing to hw specific display mode.
+- * @mode_set: convert drm_display_mode to hw specific display mode and
+- *	      would be called by encoder->mode_set().
+- * @enable: display device on.
+- * @disable: display device off.
+- */
+-struct exynos_drm_encoder;
+-struct exynos_drm_encoder_ops {
+-	void (*mode_fixup)(struct exynos_drm_encoder *encoder,
+-				struct drm_connector *connector,
+-				const struct drm_display_mode *mode,
+-				struct drm_display_mode *adjusted_mode);
+-	void (*mode_set)(struct exynos_drm_encoder *encoder,
+-				struct drm_display_mode *mode);
+-	void (*enable)(struct exynos_drm_encoder *encoder);
+-	void (*disable)(struct exynos_drm_encoder *encoder);
+-};
+-
+-/*
+- * exynos specific encoder structure.
+- *
+- * @drm_encoder: encoder object.
+- * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
+- * @ops: pointer to callbacks for exynos drm specific functionality
+- */
+-struct exynos_drm_encoder {
+-	struct drm_encoder		base;
+-	struct exynos_drm_encoder_ops	*ops;
+-};
+-
+-/*
+  * Exynos drm crtc ops
+  *
+  * @enable: enable the device
+@@ -258,18 +223,18 @@ int exynos_drm_subdrv_open(struct drm_device *dev, struct drm_file *file);
+ void exynos_drm_subdrv_close(struct drm_device *dev, struct drm_file *file);
+ 
+ #ifdef CONFIG_DRM_EXYNOS_DPI
+-struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev);
+-int exynos_dpi_remove(struct exynos_drm_encoder *encoder);
+-int exynos_dpi_bind(struct drm_device *dev, struct exynos_drm_encoder *encoder);
++struct drm_encoder *exynos_dpi_probe(struct device *dev);
++int exynos_dpi_remove(struct drm_encoder *encoder);
++int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder);
+ #else
+-static inline struct exynos_drm_encoder *
++static inline struct drm_encoder *
+ exynos_dpi_probe(struct device *dev) { return NULL; }
+-static inline int exynos_dpi_remove(struct exynos_drm_encoder *encoder)
++static inline int exynos_dpi_remove(struct drm_encoder *encoder)
+ {
+ 	return 0;
+ }
+ static inline int exynos_dpi_bind(struct drm_device *dev,
+-				  struct exynos_drm_encoder *encoder)
++				  struct drm_encoder *encoder)
+ {
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 6561e42..9de2904 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -29,7 +29,6 @@
+ #include <video/videomode.h>
+ 
+ #include "exynos_drm_crtc.h"
+-#include "exynos_drm_encoder.h"
+ #include "exynos_drm_drv.h"
+ 
+ /* returns true iff both arguments logically differs */
+@@ -271,7 +270,7 @@ struct exynos_dsi_driver_data {
+ };
+ 
+ struct exynos_dsi {
+-	struct exynos_drm_encoder encoder;
++	struct drm_encoder encoder;
+ 	struct mipi_dsi_host dsi_host;
+ 	struct drm_connector connector;
+ 	struct device_node *panel_node;
+@@ -307,7 +306,7 @@ struct exynos_dsi {
+ #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+ #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+ 
+-static inline struct exynos_dsi *encoder_to_dsi(struct exynos_drm_encoder *e)
++static inline struct exynos_dsi *encoder_to_dsi(struct drm_encoder *e)
+ {
+ 	return container_of(e, struct exynos_dsi, encoder);
+ }
+@@ -1119,7 +1118,7 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
+ static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
+ {
+ 	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
+-	struct drm_encoder *encoder = &dsi->encoder.base;
++	struct drm_encoder *encoder = &dsi->encoder;
+ 
+ 	if (dsi->state & DSIM_STATE_VIDOUT_AVAILABLE)
+ 		exynos_drm_crtc_te_handler(encoder->crtc);
+@@ -1364,7 +1363,7 @@ static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
+ 		dev_err(dsi->dev, "cannot disable regulators %d\n", ret);
+ }
+ 
+-static void exynos_dsi_enable(struct exynos_drm_encoder *encoder)
++static void exynos_dsi_enable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	int ret;
+@@ -1400,7 +1399,7 @@ static void exynos_dsi_enable(struct exynos_drm_encoder *encoder)
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+ }
+ 
+-static void exynos_dsi_disable(struct exynos_drm_encoder *encoder)
++static void exynos_dsi_disable(struct drm_encoder *encoder)
+ {
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 
+@@ -1428,7 +1427,7 @@ exynos_dsi_detect(struct drm_connector *connector, bool force)
+ 		if (dsi->panel)
+ 			drm_panel_attach(dsi->panel, &dsi->connector);
+ 	} else if (!dsi->panel_node) {
+-		struct exynos_drm_encoder *encoder;
++		struct drm_encoder *encoder;
+ 
+ 		encoder = platform_get_drvdata(to_platform_device(dsi->dev));
+ 		exynos_dsi_disable(encoder);
+@@ -1474,7 +1473,7 @@ exynos_dsi_best_encoder(struct drm_connector *connector)
+ {
+ 	struct exynos_dsi *dsi = connector_to_dsi(connector);
+ 
+-	return &dsi->encoder.base;
++	return &dsi->encoder;
+ }
+ 
+ static struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
+@@ -1482,11 +1481,9 @@ static struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
+ 	.best_encoder = exynos_dsi_best_encoder,
+ };
+ 
+-static int exynos_dsi_create_connector(
+-				struct exynos_drm_encoder *exynos_encoder)
++static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+ {
+-	struct exynos_dsi *dsi = encoder_to_dsi(exynos_encoder);
+-	struct drm_encoder *encoder = &exynos_encoder->base;
++	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	struct drm_connector *connector = &dsi->connector;
+ 	int ret;
+ 
+@@ -1507,28 +1504,34 @@ static int exynos_dsi_create_connector(
+ 	return 0;
+ }
+ 
+-static void exynos_dsi_mode_set(struct exynos_drm_encoder *encoder,
+-			 struct drm_display_mode *mode)
++static void exynos_dsi_mode_set(struct drm_encoder *encoder,
++				struct drm_display_mode *mode,
++				struct drm_display_mode *adjusted_mode)
+ {
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	struct videomode *vm = &dsi->vm;
+-
+-	vm->hactive = mode->hdisplay;
+-	vm->vactive = mode->vdisplay;
+-	vm->vfront_porch = mode->vsync_start - mode->vdisplay;
+-	vm->vback_porch = mode->vtotal - mode->vsync_end;
+-	vm->vsync_len = mode->vsync_end - mode->vsync_start;
+-	vm->hfront_porch = mode->hsync_start - mode->hdisplay;
+-	vm->hback_porch = mode->htotal - mode->hsync_end;
+-	vm->hsync_len = mode->hsync_end - mode->hsync_start;
++	struct drm_display_mode *m = adjusted_mode;
++
++	vm->hactive = m->hdisplay;
++	vm->vactive = m->vdisplay;
++	vm->vfront_porch = m->vsync_start - m->vdisplay;
++	vm->vback_porch = m->vtotal - m->vsync_end;
++	vm->vsync_len = m->vsync_end - m->vsync_start;
++	vm->hfront_porch = m->hsync_start - m->hdisplay;
++	vm->hback_porch = m->htotal - m->hsync_end;
++	vm->hsync_len = m->hsync_end - m->hsync_start;
+ }
+ 
+-static struct exynos_drm_encoder_ops exynos_dsi_encoder_ops = {
++static struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+ 	.mode_set = exynos_dsi_mode_set,
+ 	.enable = exynos_dsi_enable,
+ 	.disable = exynos_dsi_disable,
+ };
+ 
++static struct drm_encoder_funcs exynos_dsi_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
+ MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+ 
+ /* of_* functions will be removed after merge of of_graph patches */
+@@ -1634,22 +1637,29 @@ end:
+ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 				void *data)
+ {
+-	struct exynos_drm_encoder *exynos_encoder = dev_get_drvdata(dev);
+-	struct exynos_dsi *dsi = encoder_to_dsi(exynos_encoder);
++	struct drm_encoder *encoder = dev_get_drvdata(dev);
++	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	struct drm_device *drm_dev = data;
+ 	int ret;
+ 
+-	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
+-					EXYNOS_DISPLAY_TYPE_LCD);
+-	if (ret) {
+-		DRM_ERROR("failed to create encoder\n");
++	ret = exynos_drm_crtc_get_pipe_from_type(drm_dev,
++						  EXYNOS_DISPLAY_TYPE_LCD);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+-	ret = exynos_dsi_create_connector(exynos_encoder);
++	encoder->possible_crtcs = 1 << ret;
++
++	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
++
++	drm_encoder_init(drm_dev, encoder, &exynos_dsi_encoder_funcs,
++			 DRM_MODE_ENCODER_TMDS);
++
++	drm_encoder_helper_add(encoder, &exynos_dsi_encoder_helper_funcs);
++
++	ret = exynos_dsi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+-		drm_encoder_cleanup(&exynos_encoder->base);
++		drm_encoder_cleanup(encoder);
+ 		return ret;
+ 	}
+ 
+@@ -1659,7 +1669,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ static void exynos_dsi_unbind(struct device *dev, struct device *master,
+ 				void *data)
+ {
+-	struct exynos_drm_encoder *encoder = dev_get_drvdata(dev);
++	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 
+ 	exynos_dsi_disable(encoder);
+@@ -1683,8 +1693,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	if (!dsi)
+ 		return -ENOMEM;
+ 
+-	dsi->encoder.ops = &exynos_dsi_encoder_ops;
+-
+ 	/* To be checked as invalid one */
+ 	dsi->te_gpio = -ENOENT;
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+deleted file mode 100644
+index d45a5c5..0000000
+--- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
++++ /dev/null
+@@ -1,105 +0,0 @@
+-/* exynos_drm_encoder.c
+- *
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+- * Authors:
+- *	Inki Dae <inki.dae@samsung.com>
+- *	Joonyoung Shim <jy0922.shim@samsung.com>
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
+-
+-#include <drm/drmP.h>
+-#include <drm/drm_crtc_helper.h>
+-
+-#include "exynos_drm_drv.h"
+-#include "exynos_drm_encoder.h"
+-#include "exynos_drm_crtc.h"
+-
+-static bool
+-exynos_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+-			       const struct drm_display_mode *mode,
+-			       struct drm_display_mode *adjusted_mode)
+-{
+-	struct drm_device *dev = encoder->dev;
+-	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+-	struct drm_connector *connector;
+-
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+-		if (connector->encoder != encoder)
+-			continue;
+-
+-		if (exynos_encoder->ops->mode_fixup)
+-			exynos_encoder->ops->mode_fixup(exynos_encoder,
+-							connector, mode,
+-							adjusted_mode);
+-	}
+-
+-	return true;
+-}
+-
+-static void exynos_drm_encoder_mode_set(struct drm_encoder *encoder,
+-					 struct drm_display_mode *mode,
+-					 struct drm_display_mode *adjusted_mode)
+-{
+-	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+-
+-	if (exynos_encoder->ops->mode_set)
+-		exynos_encoder->ops->mode_set(exynos_encoder, adjusted_mode);
+-}
+-
+-static void exynos_drm_encoder_enable(struct drm_encoder *encoder)
+-{
+-	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+-
+-	if (exynos_encoder->ops->enable)
+-		exynos_encoder->ops->enable(exynos_encoder);
+-}
+-
+-static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
+-{
+-	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
+-
+-	if (exynos_encoder->ops->disable)
+-		exynos_encoder->ops->disable(exynos_encoder);
+-}
+-
+-static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
+-	.mode_fixup	= exynos_drm_encoder_mode_fixup,
+-	.mode_set	= exynos_drm_encoder_mode_set,
+-	.enable		= exynos_drm_encoder_enable,
+-	.disable	= exynos_drm_encoder_disable,
+-};
+-
+-static struct drm_encoder_funcs exynos_encoder_funcs = {
+-	.destroy = drm_encoder_cleanup,
+-};
+-
+-int exynos_drm_encoder_create(struct drm_device *dev,
+-			      struct exynos_drm_encoder *exynos_encoder,
+-			      enum exynos_drm_output_type type)
+-{
+-	struct drm_encoder *encoder;
+-	int pipe;
+-
+-	pipe = exynos_drm_crtc_get_pipe_from_type(dev, type);
+-	if (pipe < 0)
+-		return pipe;
+-
+-	encoder = &exynos_encoder->base;
+-	encoder->possible_crtcs = 1 << pipe;
+-
+-	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+-
+-	drm_encoder_init(dev, encoder, &exynos_encoder_funcs,
+-			DRM_MODE_ENCODER_TMDS);
+-
+-	drm_encoder_helper_add(encoder, &exynos_encoder_helper_funcs);
+-
+-	DRM_DEBUG_KMS("encoder has been created\n");
+-
+-	return 0;
+-}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.h b/drivers/gpu/drm/exynos/exynos_drm_encoder.h
+deleted file mode 100644
+index 6610dee..0000000
+--- a/drivers/gpu/drm/exynos/exynos_drm_encoder.h
++++ /dev/null
+@@ -1,22 +0,0 @@
+-/*
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+- * Authors:
+- *	Inki Dae <inki.dae@samsung.com>
+- *	Joonyoung Shim <jy0922.shim@samsung.com>
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
+-
+-#ifndef _EXYNOS_DRM_ENCODER_H_
+-#define _EXYNOS_DRM_ENCODER_H_
+-
+-#include "exynos_drm_drv.h"
+-
+-int exynos_drm_encoder_create(struct drm_device *dev, struct exynos_drm_encoder
+-			      *encoder, enum exynos_drm_output_type type);
+-
+-#endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 42c3963..1202228 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -168,7 +168,7 @@ struct fimd_context {
+ 
+ 	struct exynos_drm_panel_info panel;
+ 	struct fimd_driver_data *driver_data;
+-	struct exynos_drm_encoder *encoder;
++	struct drm_encoder *encoder;
+ };
+ 
+ static const struct of_device_id fimd_driver_dt_match[] = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 9b64c77..581af35 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -25,7 +25,6 @@
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_plane.h"
+-#include "exynos_drm_encoder.h"
+ #include "exynos_drm_vidi.h"
+ 
+ /* vidi has totally three virtual windows. */
+@@ -35,7 +34,7 @@
+ 					connector)
+ 
+ struct vidi_context {
+-	struct exynos_drm_encoder	encoder;
++	struct drm_encoder		encoder;
+ 	struct platform_device		*pdev;
+ 	struct drm_device		*drm_dev;
+ 	struct exynos_drm_crtc		*crtc;
+@@ -54,7 +53,7 @@ struct vidi_context {
+ 	int				pipe;
+ };
+ 
+-static inline struct vidi_context *encoder_to_vidi(struct exynos_drm_encoder *e)
++static inline struct vidi_context *encoder_to_vidi(struct drm_encoder *e)
+ {
+ 	return container_of(e, struct vidi_context, encoder);
+ }
+@@ -358,7 +357,7 @@ static struct drm_encoder *vidi_best_encoder(struct drm_connector *connector)
+ {
+ 	struct vidi_context *ctx = ctx_from_connector(connector);
+ 
+-	return &ctx->encoder.base;
++	return &ctx->encoder;
+ }
+ 
+ static struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
+@@ -366,10 +365,9 @@ static struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
+ 	.best_encoder = vidi_best_encoder,
+ };
+ 
+-static int vidi_create_connector(struct exynos_drm_encoder *exynos_encoder)
++static int vidi_create_connector(struct drm_encoder *encoder)
+ {
+-	struct vidi_context *ctx = encoder_to_vidi(exynos_encoder);
+-	struct drm_encoder *encoder = &exynos_encoder->base;
++	struct vidi_context *ctx = encoder_to_vidi(encoder);
+ 	struct drm_connector *connector = &ctx->connector;
+ 	int ret;
+ 
+@@ -389,15 +387,47 @@ static int vidi_create_connector(struct exynos_drm_encoder *exynos_encoder)
+ 	return 0;
+ }
+ 
++static bool exynos_vidi_mode_fixup(struct drm_encoder *encoder,
++				 const struct drm_display_mode *mode,
++				 struct drm_display_mode *adjusted_mode)
++{
++	return true;
++}
++
++static void exynos_vidi_mode_set(struct drm_encoder *encoder,
++			       struct drm_display_mode *mode,
++			       struct drm_display_mode *adjusted_mode)
++{
++}
++
++static void exynos_vidi_enable(struct drm_encoder *encoder)
++{
++}
++
++static void exynos_vidi_disable(struct drm_encoder *encoder)
++{
++}
++
++static struct drm_encoder_helper_funcs exynos_vidi_encoder_helper_funcs = {
++	.mode_fixup = exynos_vidi_mode_fixup,
++	.mode_set = exynos_vidi_mode_set,
++	.enable = exynos_vidi_enable,
++	.disable = exynos_vidi_disable,
++};
++
++static struct drm_encoder_funcs exynos_vidi_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
+ static int vidi_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct vidi_context *ctx = dev_get_drvdata(dev);
+ 	struct drm_device *drm_dev = data;
+-	struct exynos_drm_encoder *exynos_encoder = &ctx->encoder;
++	struct drm_encoder *encoder = &ctx->encoder;
+ 	struct exynos_drm_plane *exynos_plane;
+ 	enum drm_plane_type type;
+ 	unsigned int zpos;
+-	int ret;
++	int pipe, ret;
+ 
+ 	vidi_ctx_initialize(ctx, drm_dev);
+ 
+@@ -419,17 +449,24 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+ 		return PTR_ERR(ctx->crtc);
+ 	}
+ 
+-	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
+-					EXYNOS_DISPLAY_TYPE_VIDI);
+-	if (ret) {
+-		DRM_ERROR("failed to create encoder\n");
+-		return ret;
+-	}
++	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
++						  EXYNOS_DISPLAY_TYPE_VIDI);
++	if (pipe < 0)
++		return pipe;
++
++	encoder->possible_crtcs = 1 << pipe;
++
++	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
++
++	drm_encoder_init(drm_dev, encoder, &exynos_vidi_encoder_funcs,
++			 DRM_MODE_ENCODER_TMDS);
++
++	drm_encoder_helper_add(encoder, &exynos_vidi_encoder_helper_funcs);
+ 
+-	ret = vidi_create_connector(exynos_encoder);
++	ret = vidi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+-		drm_encoder_cleanup(&exynos_encoder->base);
++		drm_encoder_cleanup(encoder);
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 7d55070..2086b96 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -45,7 +45,6 @@
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+-#include "exynos_drm_encoder.h"
+ #include "exynos_mixer.h"
+ 
+ #include <linux/gpio.h>
+@@ -183,7 +182,7 @@ struct hdmi_conf_regs {
+ };
+ 
+ struct hdmi_context {
+-	struct exynos_drm_encoder	encoder;
++	struct drm_encoder		encoder;
+ 	struct device			*dev;
+ 	struct drm_device		*drm_dev;
+ 	struct drm_connector		connector;
+@@ -214,7 +213,7 @@ struct hdmi_context {
+ 	enum hdmi_type			type;
+ };
+ 
+-static inline struct hdmi_context *encoder_to_hdmi(struct exynos_drm_encoder *e)
++static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
+ {
+ 	return container_of(e, struct hdmi_context, encoder);
+ }
+@@ -1120,7 +1119,7 @@ static struct drm_encoder *hdmi_best_encoder(struct drm_connector *connector)
+ {
+ 	struct hdmi_context *hdata = ctx_from_connector(connector);
+ 
+-	return &hdata->encoder.base;
++	return &hdata->encoder;
+ }
+ 
+ static struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
+@@ -1129,9 +1128,9 @@ static struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
+ 	.best_encoder = hdmi_best_encoder,
+ };
+ 
+-static int hdmi_create_connector(struct exynos_drm_encoder *exynos_encoder)
++static int hdmi_create_connector(struct drm_encoder *encoder)
+ {
+-	struct hdmi_context *hdata = encoder_to_hdmi(exynos_encoder);
++	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct drm_connector *connector = &hdata->connector;
+ 	int ret;
+ 
+@@ -1147,28 +1146,35 @@ static int hdmi_create_connector(struct exynos_drm_encoder *exynos_encoder)
+ 
+ 	drm_connector_helper_add(connector, &hdmi_connector_helper_funcs);
+ 	drm_connector_register(connector);
+-	drm_mode_connector_attach_encoder(connector, &exynos_encoder->base);
++	drm_mode_connector_attach_encoder(connector, encoder);
+ 
+ 	return 0;
+ }
+ 
+-static void hdmi_mode_fixup(struct exynos_drm_encoder *encoder,
+-				struct drm_connector *connector,
+-				const struct drm_display_mode *mode,
+-				struct drm_display_mode *adjusted_mode)
++static bool hdmi_mode_fixup(struct drm_encoder *encoder,
++			    const struct drm_display_mode *mode,
++			    struct drm_display_mode *adjusted_mode)
+ {
++	struct drm_device *dev = encoder->dev;
++	struct drm_connector *connector;
+ 	struct drm_display_mode *m;
+ 	int mode_ok;
+ 
+-	DRM_DEBUG_KMS("%s\n", __FILE__);
+-
+ 	drm_mode_set_crtcinfo(adjusted_mode, 0);
+ 
++	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
++		if (connector->encoder == encoder)
++			break;
++	}
++
++	if (connector->encoder != encoder)
++		return true;
++
+ 	mode_ok = hdmi_mode_valid(connector, adjusted_mode);
+ 
+ 	/* just return if user desired mode exists. */
+ 	if (mode_ok == MODE_OK)
+-		return;
++		return true;
+ 
+ 	/*
+ 	 * otherwise, find the most suitable mode among modes and change it
+@@ -1188,6 +1194,8 @@ static void hdmi_mode_fixup(struct exynos_drm_encoder *encoder,
+ 			break;
+ 		}
+ 	}
++
++	return true;
+ }
+ 
+ static void hdmi_set_acr(u32 freq, u8 *acr)
+@@ -2000,11 +2008,12 @@ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
+ 	hdmi_set_reg(tg->tg_3d, 1, 0x0);
+ }
+ 
+-static void hdmi_mode_set(struct exynos_drm_encoder *encoder,
+-			struct drm_display_mode *mode)
++static void hdmi_mode_set(struct drm_encoder *encoder,
++			  struct drm_display_mode *mode,
++			  struct drm_display_mode *adjusted_mode)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+-	struct drm_display_mode *m = mode;
++	struct drm_display_mode *m = adjusted_mode;
+ 
+ 	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
+ 		m->hdisplay, m->vdisplay,
+@@ -2012,15 +2021,15 @@ static void hdmi_mode_set(struct exynos_drm_encoder *encoder,
+ 		"INTERLACED" : "PROGRESSIVE");
+ 
+ 	/* preserve mode information for later use. */
+-	drm_mode_copy(&hdata->current_mode, mode);
++	drm_mode_copy(&hdata->current_mode, m);
+ 
+ 	if (hdata->type == HDMI_TYPE13)
+-		hdmi_v13_mode_set(hdata, mode);
++		hdmi_v13_mode_set(hdata, m);
+ 	else
+-		hdmi_v14_mode_set(hdata, mode);
++		hdmi_v14_mode_set(hdata, m);
+ }
+ 
+-static void hdmi_enable(struct exynos_drm_encoder *encoder)
++static void hdmi_enable(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct hdmi_resources *res = &hdata->res;
+@@ -2051,11 +2060,11 @@ static void hdmi_enable(struct exynos_drm_encoder *encoder)
+ 	hdmi_conf_apply(hdata);
+ }
+ 
+-static void hdmi_disable(struct exynos_drm_encoder *encoder)
++static void hdmi_disable(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct hdmi_resources *res = &hdata->res;
+-	struct drm_crtc *crtc = hdata->encoder.base.crtc;
++	struct drm_crtc *crtc = encoder->crtc;
+ 	const struct drm_crtc_helper_funcs *funcs = NULL;
+ 
+ 	mutex_lock(&hdata->hdmi_mutex);
+@@ -2102,13 +2111,17 @@ out:
+ 	mutex_unlock(&hdata->hdmi_mutex);
+ }
+ 
+-static struct exynos_drm_encoder_ops hdmi_encoder_ops = {
++static struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+ 	.mode_fixup	= hdmi_mode_fixup,
+ 	.mode_set	= hdmi_mode_set,
+ 	.enable		= hdmi_enable,
+ 	.disable	= hdmi_disable,
+ };
+ 
++static struct drm_encoder_funcs exynos_hdmi_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
+ static void hdmi_hotplug_work_func(struct work_struct *work)
+ {
+ 	struct hdmi_context *hdata;
+@@ -2264,22 +2277,29 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct drm_device *drm_dev = data;
+ 	struct hdmi_context *hdata = dev_get_drvdata(dev);
+-	struct exynos_drm_encoder *exynos_encoder = &hdata->encoder;
+-	int ret;
++	struct drm_encoder *encoder = &hdata->encoder;
++	int ret, pipe;
+ 
+ 	hdata->drm_dev = drm_dev;
+ 
+-	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
+-					EXYNOS_DISPLAY_TYPE_HDMI);
+-	if (ret) {
+-		DRM_ERROR("failed to create encoder\n");
+-		return ret;
+-	}
++	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
++						  EXYNOS_DISPLAY_TYPE_HDMI);
++	if (pipe < 0)
++		return pipe;
+ 
+-	hdmi_create_connector(exynos_encoder);
++	encoder->possible_crtcs = 1 << pipe;
++
++	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
++
++	drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
++			 DRM_MODE_ENCODER_TMDS);
++
++	drm_encoder_helper_add(encoder, &exynos_hdmi_encoder_helper_funcs);
++
++	ret = hdmi_create_connector(encoder);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create connector ret = %d\n", ret);
+-		drm_encoder_cleanup(&exynos_encoder->base);
++		drm_encoder_cleanup(encoder);
+ 		return ret;
+ 	}
+ 
+@@ -2336,8 +2356,6 @@ static int hdmi_probe(struct platform_device *pdev)
+ 	if (!hdata)
+ 		return -ENOMEM;
+ 
+-	hdata->encoder.ops = &hdmi_encoder_ops;
+-
+ 	mutex_init(&hdata->hdmi_mutex);
+ 
+ 	platform_set_drvdata(pdev, hdata);
+-- 
+2.1.0
