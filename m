@@ -1,74 +1,120 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
- to 'sclk_mipi'
-Date: Tue, 23 Jun 2015 11:28:20 +0900
-Message-ID: <5588C444.1000301@samsung.com>
-References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
- <1434113958-15877-16-git-send-email-human.hwang@samsung.com>
- <5587D111.9090602@samsung.com> <5587F4A1.2090502@samsung.com>
- <CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
- <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
+Date: Tue, 23 Jun 2015 08:05:54 +0530
+Message-ID: <CANAwSgTK+7xxvE2RNCTn7TuhfD7ZE7o4cj2pX5i6XEhRNufvPw@mail.gmail.com>
+References: <5569F435.5040708@unseen.is> <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
+ <556E0931.9030703@unseen.is> <556E44B7.10303@samsung.com> <5576CD40.8060301@unseen.is>
+ <CAJKOXPeehj++Ojt2Zo4sgNjVASzZ8r_6OROM6FK_BRRQqVzcGg@mail.gmail.com>
+ <557B53C6.8070600@unseen.is> <557BC3DB.1030906@samsung.com>
+ <CAJKOXPcqgcKiZ_4=H9wEgpzoMy5LKUsgtaw82gp4DCbY6e=JFg@mail.gmail.com>
+ <CANAwSgQKFTG+ts=kVrZ1fR1EBcZL+7dgXqH1WhoJ7kZzz8hS3Q@mail.gmail.com> <5588A0CF.6000807@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:33521 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932213AbbFWCgQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Jun 2015 22:36:16 -0400
+In-Reply-To: <5588A0CF.6000807@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, gabriel@unseen.is, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Robert Baldyga <r.baldyga@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-T24gMjAxNeuFhCAwNuyblCAyM+ydvCAxMToxMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiAyMDE1LTA2LTIyIDIxOjM1IEdNVCswOTowMCBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxv
-d3NraUBzYW1zdW5nLmNvbT46Cj4+IDIwMTUtMDYtMjIgMjA6NDIgR01UKzA5OjAwIElua2kgRGFl
-IDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4+PiArIEtyenlzenRvZgo+Pj4KPj4+IE9uIDIwMTXr
-hYQgMDbsm5QgMjLsnbwgMTg6MTAsIElua2kgRGFlIHdyb3RlOgo+Pj4+IE9uIDIwMTXrhYQgMDbs
-m5QgMTLsnbwgMjE6NTksIEh5dW5nd29uIEh3YW5nIHdyb3RlOgo+Pj4+PiBUaGUgY2xvY2sgd2hp
-Y2ggd2FzIG5hbWVkIGFzICdwbGxfY2xrJyBpcyBhY3R1YWxseSBub3QgdGhlIGNsb2NrIHNvdXJj
-ZQo+Pj4+PiBvZiBQTEwgaW4gTUlQSSBEU0kuIFRoaXMgcGF0Y2ggZml4ZXMgdGhpcyBkaXNhZ3Jl
-ZW1lbnQuCj4+Pj4KPj4+PiBNci4gS3VramluIGFuZCBLcnp5c3p0b2YsIGNhbiB5b3UgZ2l2ZSBt
-ZSBBY2tlZC1ieSBvciBTaW5nZWQtb2ZmLWJ5PyBJJ2QKPj4+PiBsaWtlIHRvIG1lcmdlIHRoaXMg
-cGF0Y2ggdG8gbWFpbmxpbmUgdGhyb3VnaCBkcm0tbmV4dC4KPj4KPj4gVGhhbmtzIGZvciBmb3J3
-YXJkaW5nIG1lIG90aGVyIG5lY2Vzc2FyeSBwYXRjaC4gQWxsIHRoYXQgYnVyZGVuIGNvdWxkCj4+
-IGJlIGVhc2lseSBhdm9pZGVkIGJ5IHNlbmRpbmcgZXZlcnl0aGluZyB0byBzYW1zdW5nLXNvYyBh
-bnl3YXkuCj4+Cj4+IFRoZSBwYXRjaCBpdHNlbGYgbG9va3MgZ29vZDoKPj4gQWNrZWQtYnk6IEty
-enlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+Pgo+PiBCZXN0IHJl
-Z2FyZHMsCj4+IEtyenlzenRvZgo+IAo+IFRvIGNsYXJpZnkuIFRoZXJlIHdlcmUgc2V2ZW4gdmVy
-c2lvbnMgb2YgdGhpcyBwYXRjaCBhbmQgbm9uZSBvZiB0aGVtCj4gd2VyZSBzZW50IHRvIHNhbXN1
-bmctc29jIGxpc3QsIHRvIEt1a2ppbiBLaW0gb3IgdG8gbWUuCj4gCj4gSSBhbHNvIHdvbmRlciBh
-Ym91dCBwYXRjaCAyOiAib2Y6IGFkZCBoZWxwZXIgZm9yIGdldHRpbmcgZW5kcG9pbnQgbm9kZQo+
-IHdpdGggc3BlY2lmaWMgaWRlbnRpZmllcnMiCj4gZm9yIHdoaWNoIEkgY2FuJ3QgZmluZCByZXNw
-ZWN0aXZlIGFjayBmcm9tIFJvYiBIZXJyaW5nICgrQ2MpLiBJIG9ubHkgZm91bmQgdGhpczoKPiBo
-dHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2RldmljZXRyZWUvbXNnNjkzMzYuaHRtbAo+IGJ1
-dCB0aGVyZSBhcmUgb25seSBjb21tZW50cywgbm90IGFuIGFjay4KCkJlbG93IGlzIHRoZSBjb21t
-ZW50cyBmcm9tIFJvYiBIZXJyaW5nLiBIb3cgYWJvdXQgc3Vic2NyaWJpbmcgZGV2aWNlCnRyZWUg
-bWFpbmxpbmcgbGlzdD8gWW91IGFyZSBhIG1haW50YWluZXIgb2YgRXh5bm9zIFNvQy4gVGhpcyBw
-YXRjaCB3YXMKcG9zdGVkIHRvIGRldmljZSB0cmVlIG1haWxpbmcgbGlzdCBjY2luZyBHcmFudCBh
-bmQgUm9iLiBJZiB5b3UgbGlzdGVuIHRvCm9ubHkgU2Ftc3VuZyBTb0MgbWFpbGluZyBsaXN0IHRo
-ZW4geW91IGNvdWxkbid0IGZpbmQgdGhpcyBwYXRjaCBpbiB5b3VyCmVtYWlsIGJveC4KCiJPbiBT
-dW4sIEZlYiAyMiwgMjAxNSBhdCA3OjQxIFBNLCBIeXVuZ3dvbiBId2FuZwo8aHVtYW4uaHdhbmdA
-c2Ftc3VuZy5jb20+IHdyb3RlOgogPiBXaGVuIHRoZXJlIGFyZSBtdWx0aXBsZSBwb3J0cyBvciBt
-dWx0aXBsZSBlbmRwb2ludHMgaW4gYSBwb3J0LCB0aGV5CmhhdmUgdG8gYmUKID4gZGlzdGluZ3Vp
-c2hlZCBieSB0aGUgdmFsdWUgb2YgcmVnIHByb3BlcnR5LiBJdCBpcyBjb21tb24uIFRoZSBkcml2
-ZXJzCmNhbiBnZXQKID4gdGhlIHNwZWNpZmljIGVuZHBvaW50IGluIHRoZSBzcGVjaWZpYyBwb3J0
-IHZpYSB0aGlzIGZ1bmN0aW9uLiBOb3cgdGhlCmRyaXZlcnMKID4gaGF2ZSB0byBpbXBsZW1lbnQg
-dGhpcyBjb2RlIGluIHRoZW1zZWx2ZXMgb3IgaGF2ZSB0byBmb3JjZSB0aGUgb3JkZXIKb2YgZHQg
-bm9kZXMKID4gdG8gZ2V0IHRoZSByaWdodCBub2RlLgogPgogPiBTaWduZWQtb2ZmLWJ5OiBIeXVu
-Z3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3VuZy5jb20+CgpBY2tlZC1ieTogUm9iIEhlcnJp
-bmcgPHJvYmhAa2VybmVsLm9yZz4KCiBJJ20gbm90IGFwcGx5aW5nIGFzIHRoZXJlIGlzIG5vIHVz
-ZXIsIHNvIGFwcGx5IHRoaXMgcGF0Y2ggYWxvbmcgd2l0aCBhCiB1c2VyIG9mIHRoZSBmdW5jdGlv
-bi4iCgpUaGF0IGlzIHdoeSBJIG1lcmdlZCB0aGlzIHBhdGNoIHRvIGV4eW5vcy1kcm0tbmV4dC4K
-ClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo+IC0tCj4g
-VG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJl
-IGRldmljZXRyZWUiIGluCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Hi Krzysztof
+
+On 23 June 2015 at 05:27, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> On 23.06.2015 01:00, Anand Moon wrote:
+>> Hi Krzysztof
+>>
+>> On 13 June 2015 at 13:45, Krzysztof Kozlowski <k.kozlowski@samsung.com
+>> <mailto:k.kozlowski@samsung.com>> wrote:
+>>
+>>     2015-06-13 14:47 GMT+09:00 Krzysztof Kozlowski
+>>     <k.kozlowski@samsung.com <mailto:k.kozlowski@samsung.com>>:
+>>     > W dniu 13.06.2015 o 06:48, gabriel@unseen.is
+>>     <mailto:gabriel@unseen.is> pisze:
+>>     >> On 06/10/2015 10:22 AM, Krzysztof Kozlowski wrote:
+>>     >>>
+>>     >>> Gabriel,
+>>     >>>
+>>     >>> I sent a patch which should fix the issue. Could you give it a
+>>     try? Of
+>>     >>> course don't revert the other patches and don't use other
+>>     workarounds.
+>>     >>> Just apply the patch on clean (vanilla would be the best) kernel.
+>>     >>> [RFT PATCH] dmaengine: Fix choppy sound because of unimplemented
+>>     resume
+>>     >>>
+>>     >>
+>>     >> hi krzysztof,
+>>     >>
+>>     >> thanks a lot for your work. having only that patch applied
+>>     unfortunately
+>>     >> brought back the problem after something more than one day. the sound
+>>     >> became choppy/noisy again. I will now compile the -next kernel
+>>     and give
+>>     >> it a try.
+>>     >
+>>     > Thanks, I'll try to reproduce the issue on my Odroid. Can you
+>>     share more
+>>     > details how to reproduce it? The audio must play continuously or just
+>>     > from time to time but the board must be turned on for more than
+>>     one day?
+>>
+>>     I bought some audio cables and successfully reproduced similar issue
+>>     (choppy sound) on Odroid XU3-Lite. On current linux-next
+>>     (next-20150612) the sound is awful (choppy) after few seconds of play.
+>>     For example first four of:
+>>     $ aplay /usr/share/sounds/alsa/Front_Right.wav
+>>     work fine. But then it just gets worse and underruns are reported:
+>>     $ Playing WAVE '/usr/share/sounds/alsa/Front_Right.wav' : Signed 16
+>>     bit Little Endian, Rate 48000 Hz, Mono
+>>     $ underrun!!! (at least 0.095 ms long)
+>>
+>>     Reverting the commit aee4d1fac887 ("dmaengine: pl330: improve
+>>     pl330_tx_status() function") fixes this issue so this is not related
+>>     to missing "resume" function. At least this particular issue on my
+>>     Odroid is not related to missing resume but I did not try to play
+>>     sound for 24 hours.
+>>     My fix does not solve this. Probably "cc-stable" and "fixes" tags
+>>     should be dropped.
+>>
+>>     Anyway I'll try to investigate it more. If anyone has any ideas,
+>>     please share.
+>>
+>>     Best regards,
+>>     Krzysztof
+>>     --
+>>     To unsubscribe from this list: send the line "unsubscribe
+>>     linux-samsung-soc" in
+>>     the body of a message to majordomo@vger.kernel.org
+>>     <mailto:majordomo@vger.kernel.org>
+>>     More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>> I gave it a try by enabling following config flags.
+>>
+>> CONFIG_SND_SEQUENCER=m
+>> CONFIG_SND_SEQ_DUMMY=m
+>> CONFIG_SND_USB_AUDIO=m
+>>
+>> I am able to play mp3 songs on Odroid-XU3 boards on vlc.
+>> Could you give it a try.
+>
+> What do you mean? Which patch are you talking about? Are you aware that
+> I tried to fix this two times?
+>
+> I already tested the latest fix on Odroid XU3 - which I mentioned in
+> commit. However it would be nice to get confirmation for fixing original
+> bug report (that specific conditions on that board which Gabriel reported).
+>
+> Best regards,
+> Krzysztof
+
+Looks like I missed the fix. Or I overlooked it.
+
+sorry for the noise.
+
+-Anand Moon
