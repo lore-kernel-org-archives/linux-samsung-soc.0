@@ -1,1218 +1,293 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 23/23] drm/exynos: remove struct exynos_drm_encoder layer
-Date: Tue, 23 Jun 2015 18:35:36 -0300
-Message-ID: <1435095336-6196-24-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 21/23] drm/exynos: remove exynos_drm_create_enc_conn()
+Date: Tue, 23 Jun 2015 18:35:34 -0300
+Message-ID: <1435095336-6196-22-git-send-email-gustavo@padovan.org>
 References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f54.google.com ([209.85.192.54]:32940 "EHLO
-	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933050AbbFWVgv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jun 2015 17:36:51 -0400
-Received: by qged89 with SMTP id d89so8098550qge.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2015 14:36:51 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-struct exynos_drm_encoder was justing wrapping struct drm_encoder, it had
-only a drm_encoder member and the internal exynos_drm_encoders ops that
-was directly mapped to the drm_encoder helper funcs.
-
-So now exynos DRM uses struct drm_encoder directly, this removes
-completely the struct exynos_drm_encoder.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/Makefile             |   7 +-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c  |   2 +-
- drivers/gpu/drm/exynos/exynos_dp_core.c     |  68 ++++++++++++------
- drivers/gpu/drm/exynos/exynos_dp_core.h     |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_core.c    |   1 -
- drivers/gpu/drm/exynos/exynos_drm_crtc.c    |   1 -
- drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  51 ++++++++------
- drivers/gpu/drm/exynos/exynos_drm_drv.c     |   1 -
- drivers/gpu/drm/exynos/exynos_drm_drv.h     |  47 ++-----------
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  80 +++++++++++----------
- drivers/gpu/drm/exynos/exynos_drm_encoder.c | 105 ----------------------------
- drivers/gpu/drm/exynos/exynos_drm_encoder.h |  22 ------
- drivers/gpu/drm/exynos/exynos_drm_fimd.c    |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  71 ++++++++++++++-----
- drivers/gpu/drm/exynos/exynos_hdmi.c        |  90 ++++++++++++++----------
- 15 files changed, 238 insertions(+), 312 deletions(-)
- delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.c
- delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.h
-
-diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
-index cc90679..ab488b6 100644
---- a/drivers/gpu/drm/exynos/Makefile
-+++ b/drivers/gpu/drm/exynos/Makefile
-@@ -3,10 +3,9 @@
- # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
- 
- ccflags-y := -Iinclude/drm -Idrivers/gpu/drm/exynos
--exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
--		exynos_drm_crtc.o exynos_drm_fbdev.o exynos_drm_fb.o \
--		exynos_drm_buf.o exynos_drm_gem.o exynos_drm_core.o \
--		exynos_drm_plane.o exynos_drm_dmabuf.o
-+exynosdrm-y := exynos_drm_drv.o exynos_drm_crtc.o exynos_drm_fbdev.o \
-+		exynos_drm_fb.o exynos_drm_buf.o exynos_drm_gem.o \
-+		exynos_drm_core.o exynos_drm_plane.o exynos_drm_dmabuf.o
- 
- exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
- exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)	+= exynos_drm_fimd.o
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 2949bd4..561aee1 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -61,7 +61,7 @@ struct decon_context {
- 	atomic_t			wait_vsync_event;
- 
- 	struct exynos_drm_panel_info panel;
--	struct exynos_drm_encoder *encoder;
-+	struct drm_encoder *encoder;
- };
- 
- static const struct of_device_id decon_driver_dt_match[] = {
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index f035944..32224a3 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -33,18 +33,18 @@
- #include <drm/bridge/ptn3460.h>
- 
- #include "exynos_dp_core.h"
--#include "exynos_drm_encoder.h"
-+#include "exynos_drm_crtc.h"
- 
- #define ctx_from_connector(c)	container_of(c, struct exynos_dp_device, \
- 					connector)
- 
- static inline struct exynos_drm_crtc *dp_to_crtc(struct exynos_dp_device *dp)
- {
--	return to_exynos_crtc(dp->encoder.base.crtc);
-+	return to_exynos_crtc(dp->encoder.crtc);
- }
- 
- static inline struct exynos_dp_device *encoder_to_dp(
--						struct exynos_drm_encoder *e)
-+						struct drm_encoder *e)
- {
- 	return container_of(e, struct exynos_dp_device, encoder);
- }
-@@ -890,7 +890,7 @@ static void exynos_dp_hotplug(struct work_struct *work)
- 		drm_helper_hpd_irq_event(dp->drm_dev);
- }
- 
--static void exynos_dp_commit(struct exynos_drm_encoder *encoder)
-+static void exynos_dp_commit(struct drm_encoder *encoder)
- {
- 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
- 	int ret;
-@@ -996,7 +996,7 @@ static struct drm_encoder *exynos_dp_best_encoder(
- {
- 	struct exynos_dp_device *dp = ctx_from_connector(connector);
- 
--	return &dp->encoder.base;
-+	return &dp->encoder;
- }
- 
- static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
-@@ -1021,10 +1021,9 @@ static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- 	return 0;
- }
- 
--static int exynos_dp_create_connector(struct exynos_drm_encoder *exynos_encoder)
-+static int exynos_dp_create_connector(struct drm_encoder *encoder)
- {
--	struct exynos_dp_device *dp = encoder_to_dp(exynos_encoder);
--	struct drm_encoder *encoder = &exynos_encoder->base;
-+	struct exynos_dp_device *dp = encoder_to_dp(encoder);
- 	struct drm_connector *connector = &dp->connector;
- 	int ret;
- 
-@@ -1054,7 +1053,20 @@ static int exynos_dp_create_connector(struct exynos_drm_encoder *exynos_encoder)
- 	return ret;
- }
- 
--static void exynos_dp_enable(struct exynos_drm_encoder *encoder)
-+static bool exynos_dp_mode_fixup(struct drm_encoder *encoder,
-+				 const struct drm_display_mode *mode,
-+				 struct drm_display_mode *adjusted_mode)
-+{
-+	return true;
-+}
-+
-+static void exynos_dp_mode_set(struct drm_encoder *encoder,
-+			       struct drm_display_mode *mode,
-+			       struct drm_display_mode *adjusted_mode)
-+{
-+}
-+
-+static void exynos_dp_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
- 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
-@@ -1079,7 +1091,7 @@ static void exynos_dp_enable(struct exynos_drm_encoder *encoder)
- 	exynos_dp_commit(&dp->encoder);
- }
- 
--static void exynos_dp_disable(struct exynos_drm_encoder *encoder)
-+static void exynos_dp_disable(struct drm_encoder *encoder)
- {
- 	struct exynos_dp_device *dp = encoder_to_dp(encoder);
- 	struct exynos_drm_crtc *crtc = dp_to_crtc(dp);
-@@ -1105,11 +1117,17 @@ static void exynos_dp_disable(struct exynos_drm_encoder *encoder)
- 	}
- }
- 
--static struct exynos_drm_encoder_ops exynos_dp_encoder_ops = {
-+static struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
-+	.mode_fixup = exynos_dp_mode_fixup,
-+	.mode_set = exynos_dp_mode_set,
- 	.enable = exynos_dp_enable,
- 	.disable = exynos_dp_disable,
- };
- 
-+static struct drm_encoder_funcs exynos_dp_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
- static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
- {
- 	struct device_node *dp_node = dev->of_node;
-@@ -1186,10 +1204,10 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct drm_device *drm_dev = data;
--	struct exynos_drm_encoder *exynos_encoder = &dp->encoder;
-+	struct drm_encoder *encoder = &dp->encoder;
- 	struct resource *res;
- 	unsigned int irq_flags;
--	int ret = 0;
-+	int pipe, ret = 0;
- 
- 	dp->dev = &pdev->dev;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
-@@ -1279,17 +1297,24 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 
- 	dp->drm_dev = drm_dev;
- 
--	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
--					EXYNOS_DISPLAY_TYPE_LCD);
--	if (ret) {
--		DRM_ERROR("failed to create encoder\n");
--		return ret;
--	}
-+	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
-+						  EXYNOS_DISPLAY_TYPE_LCD);
-+	if (pipe < 0)
-+		return pipe;
-+
-+	encoder->possible_crtcs = 1 << pipe;
-+
-+	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
-+
-+	drm_encoder_init(drm_dev, encoder, &exynos_dp_encoder_funcs,
-+			 DRM_MODE_ENCODER_TMDS);
-+
-+	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
- 
--	ret = exynos_dp_create_connector(exynos_encoder);
-+	ret = exynos_dp_create_connector(encoder);
- 	if (ret) {
- 		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(&exynos_encoder->base);
-+		drm_encoder_cleanup(encoder);
- 		return ret;
- 	}
- 
-@@ -1320,7 +1345,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (!dp)
- 		return -ENOMEM;
- 
--	dp->encoder.ops = &exynos_dp_encoder_ops;
- 	platform_set_drvdata(pdev, dp);
- 
- 	panel_node = of_parse_phandle(dev->of_node, "panel", 0);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index f8cc202..e413b6f 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -147,7 +147,7 @@ struct link_train {
- };
- 
- struct exynos_dp_device {
--	struct exynos_drm_encoder encoder;
-+	struct drm_encoder	encoder;
- 	struct device		*dev;
- 	struct drm_device	*drm_dev;
- 	struct drm_connector	connector;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_core.c b/drivers/gpu/drm/exynos/exynos_drm_core.c
-index 1f38a44..c68a6a2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_core.c
-@@ -15,7 +15,6 @@
- #include <drm/drmP.h>
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
--#include "exynos_drm_encoder.h"
- #include "exynos_drm_fbdev.h"
- 
- static LIST_HEAD(exynos_drm_subdrv_list);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index c872860..26db6df 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -19,7 +19,6 @@
- 
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_drv.h"
--#include "exynos_drm_encoder.h"
- #include "exynos_drm_plane.h"
- 
- static void exynos_drm_crtc_enable(struct drm_crtc *crtc)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index 6850ce5..0476260 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -20,11 +20,10 @@
- #include <video/of_videomode.h>
- #include <video/videomode.h>
- 
--#include "exynos_drm_encoder.h"
- #include "exynos_drm_crtc.h"
- 
- struct exynos_dpi {
--	struct exynos_drm_encoder encoder;
-+	struct drm_encoder encoder;
- 	struct device *dev;
- 	struct device_node *panel_node;
- 
-@@ -36,7 +35,7 @@ struct exynos_dpi {
- 
- #define connector_to_dpi(c) container_of(c, struct exynos_dpi, connector)
- 
--static inline struct exynos_dpi *encoder_to_dpi(struct exynos_drm_encoder *e)
-+static inline struct exynos_dpi *encoder_to_dpi(struct drm_encoder *e)
- {
- 	return container_of(e, struct exynos_dpi, encoder);
- }
-@@ -98,7 +97,7 @@ exynos_dpi_best_encoder(struct drm_connector *connector)
- {
- 	struct exynos_dpi *ctx = connector_to_dpi(connector);
- 
--	return &ctx->encoder.base;
-+	return &ctx->encoder;
- }
- 
- static struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
-@@ -106,11 +105,9 @@ static struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
- 	.best_encoder = exynos_dpi_best_encoder,
- };
- 
--static int exynos_dpi_create_connector(
--				struct exynos_drm_encoder *exynos_encoder)
-+static int exynos_dpi_create_connector(struct drm_encoder *encoder)
- {
--	struct exynos_dpi *ctx = encoder_to_dpi(exynos_encoder);
--	struct drm_encoder *encoder = &exynos_encoder->base;
-+	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
- 	struct drm_connector *connector = &ctx->connector;
- 	int ret;
- 
-@@ -131,7 +128,7 @@ static int exynos_dpi_create_connector(
- 	return 0;
- }
- 
--static void exynos_dpi_enable(struct exynos_drm_encoder *encoder)
-+static void exynos_dpi_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
- 
-@@ -141,7 +138,7 @@ static void exynos_dpi_enable(struct exynos_drm_encoder *encoder)
- 	}
- }
- 
--static void exynos_dpi_disable(struct exynos_drm_encoder *encoder)
-+static void exynos_dpi_disable(struct drm_encoder *encoder)
- {
- 	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
- 
-@@ -151,11 +148,15 @@ static void exynos_dpi_disable(struct exynos_drm_encoder *encoder)
- 	}
- }
- 
--static struct exynos_drm_encoder_ops exynos_dpi_encoder_ops = {
-+static struct drm_encoder_helper_funcs exynos_dpi_encoder_helper_funcs = {
- 	.enable = exynos_dpi_enable,
- 	.disable = exynos_dpi_disable,
- };
- 
-+static struct drm_encoder_funcs exynos_dpi_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
- /* of_* functions will be removed after merge of of_graph patches */
- static struct device_node *
- of_get_child_by_name_reg(struct device_node *parent, const char *name, u32 reg)
-@@ -280,29 +281,34 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
- 	return 0;
- }
- 
--int exynos_dpi_bind(struct drm_device *dev,
--		    struct exynos_drm_encoder *exynos_encoder)
-+int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder)
- {
- 	int ret;
- 
--	ret = exynos_drm_encoder_create(dev, exynos_encoder,
--					EXYNOS_DISPLAY_TYPE_LCD);
--	if (ret) {
--		DRM_ERROR("failed to create encoder\n");
-+	ret = exynos_drm_crtc_get_pipe_from_type(dev, EXYNOS_DISPLAY_TYPE_LCD);
-+	if (ret < 0)
- 		return ret;
--	}
- 
--	ret = exynos_dpi_create_connector(exynos_encoder);
-+	encoder->possible_crtcs = 1 << ret;
-+
-+	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
-+
-+	drm_encoder_init(dev, encoder, &exynos_dpi_encoder_funcs,
-+			 DRM_MODE_ENCODER_TMDS);
-+
-+	drm_encoder_helper_add(encoder, &exynos_dpi_encoder_helper_funcs);
-+
-+	ret = exynos_dpi_create_connector(encoder);
- 	if (ret) {
- 		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(&exynos_encoder->base);
-+		drm_encoder_cleanup(encoder);
- 		return ret;
- 	}
- 
- 	return 0;
- }
- 
--struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev)
-+struct drm_encoder *exynos_dpi_probe(struct device *dev)
- {
- 	struct exynos_dpi *ctx;
- 	int ret;
-@@ -311,7 +317,6 @@ struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev)
- 	if (!ctx)
- 		return ERR_PTR(-ENOMEM);
- 
--	ctx->encoder.ops = &exynos_dpi_encoder_ops;
- 	ctx->dev = dev;
- 
- 	ret = exynos_dpi_parse_dt(ctx);
-@@ -329,7 +334,7 @@ struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev)
- 	return &ctx->encoder;
- }
- 
--int exynos_dpi_remove(struct exynos_drm_encoder *encoder)
-+int exynos_dpi_remove(struct drm_encoder *encoder)
- {
- 	struct exynos_dpi *ctx = encoder_to_dpi(encoder);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 38fe108..faaa554 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -21,7 +21,6 @@
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
--#include "exynos_drm_encoder.h"
- #include "exynos_drm_fbdev.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_gem.h"
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 24a84fe..07e3165 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -22,7 +22,6 @@
- #define MAX_PLANE	5
- #define MAX_FB_BUFFER	4
- 
--#define to_exynos_encoder(x)	container_of(x, struct exynos_drm_encoder, base)
- #define to_exynos_crtc(x)	container_of(x, struct exynos_drm_crtc, base)
- #define to_exynos_plane(x)	container_of(x, struct exynos_drm_plane, base)
- 
-@@ -78,40 +77,6 @@ struct exynos_drm_plane {
- };
- 
- /*
-- * Exynos DRM Encoder Structure.
-- *	- this structure is common to analog tv, digital tv and lcd panel.
-- *
-- * @mode_fixup: fix mode data comparing to hw specific display mode.
-- * @mode_set: convert drm_display_mode to hw specific display mode and
-- *	      would be called by encoder->mode_set().
-- * @enable: display device on.
-- * @disable: display device off.
-- */
--struct exynos_drm_encoder;
--struct exynos_drm_encoder_ops {
--	void (*mode_fixup)(struct exynos_drm_encoder *encoder,
--				struct drm_connector *connector,
--				const struct drm_display_mode *mode,
--				struct drm_display_mode *adjusted_mode);
--	void (*mode_set)(struct exynos_drm_encoder *encoder,
--				struct drm_display_mode *mode);
--	void (*enable)(struct exynos_drm_encoder *encoder);
--	void (*disable)(struct exynos_drm_encoder *encoder);
--};
--
--/*
-- * exynos specific encoder structure.
-- *
-- * @drm_encoder: encoder object.
-- * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
-- * @ops: pointer to callbacks for exynos drm specific functionality
-- */
--struct exynos_drm_encoder {
--	struct drm_encoder		base;
--	struct exynos_drm_encoder_ops	*ops;
--};
--
--/*
-  * Exynos drm crtc ops
-  *
-  * @enable: enable the device
-@@ -258,18 +223,18 @@ int exynos_drm_subdrv_open(struct drm_device *dev, struct drm_file *file);
- void exynos_drm_subdrv_close(struct drm_device *dev, struct drm_file *file);
- 
- #ifdef CONFIG_DRM_EXYNOS_DPI
--struct exynos_drm_encoder *exynos_dpi_probe(struct device *dev);
--int exynos_dpi_remove(struct exynos_drm_encoder *encoder);
--int exynos_dpi_bind(struct drm_device *dev, struct exynos_drm_encoder *encoder);
-+struct drm_encoder *exynos_dpi_probe(struct device *dev);
-+int exynos_dpi_remove(struct drm_encoder *encoder);
-+int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder);
- #else
--static inline struct exynos_drm_encoder *
-+static inline struct drm_encoder *
- exynos_dpi_probe(struct device *dev) { return NULL; }
--static inline int exynos_dpi_remove(struct exynos_drm_encoder *encoder)
-+static inline int exynos_dpi_remove(struct drm_encoder *encoder)
- {
- 	return 0;
- }
- static inline int exynos_dpi_bind(struct drm_device *dev,
--				  struct exynos_drm_encoder *encoder)
-+				  struct drm_encoder *encoder)
- {
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 6561e42..9de2904 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -29,7 +29,6 @@
- #include <video/videomode.h>
- 
- #include "exynos_drm_crtc.h"
--#include "exynos_drm_encoder.h"
- #include "exynos_drm_drv.h"
- 
- /* returns true iff both arguments logically differs */
-@@ -271,7 +270,7 @@ struct exynos_dsi_driver_data {
- };
- 
- struct exynos_dsi {
--	struct exynos_drm_encoder encoder;
-+	struct drm_encoder encoder;
- 	struct mipi_dsi_host dsi_host;
- 	struct drm_connector connector;
- 	struct device_node *panel_node;
-@@ -307,7 +306,7 @@ struct exynos_dsi {
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
- #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
- 
--static inline struct exynos_dsi *encoder_to_dsi(struct exynos_drm_encoder *e)
-+static inline struct exynos_dsi *encoder_to_dsi(struct drm_encoder *e)
- {
- 	return container_of(e, struct exynos_dsi, encoder);
- }
-@@ -1119,7 +1118,7 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
- static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
- {
- 	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
--	struct drm_encoder *encoder = &dsi->encoder.base;
-+	struct drm_encoder *encoder = &dsi->encoder;
- 
- 	if (dsi->state & DSIM_STATE_VIDOUT_AVAILABLE)
- 		exynos_drm_crtc_te_handler(encoder->crtc);
-@@ -1364,7 +1363,7 @@ static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
- 		dev_err(dsi->dev, "cannot disable regulators %d\n", ret);
- }
- 
--static void exynos_dsi_enable(struct exynos_drm_encoder *encoder)
-+static void exynos_dsi_enable(struct drm_encoder *encoder)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 	int ret;
-@@ -1400,7 +1399,7 @@ static void exynos_dsi_enable(struct exynos_drm_encoder *encoder)
- 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
- }
- 
--static void exynos_dsi_disable(struct exynos_drm_encoder *encoder)
-+static void exynos_dsi_disable(struct drm_encoder *encoder)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 
-@@ -1428,7 +1427,7 @@ exynos_dsi_detect(struct drm_connector *connector, bool force)
- 		if (dsi->panel)
- 			drm_panel_attach(dsi->panel, &dsi->connector);
- 	} else if (!dsi->panel_node) {
--		struct exynos_drm_encoder *encoder;
-+		struct drm_encoder *encoder;
- 
- 		encoder = platform_get_drvdata(to_platform_device(dsi->dev));
- 		exynos_dsi_disable(encoder);
-@@ -1474,7 +1473,7 @@ exynos_dsi_best_encoder(struct drm_connector *connector)
- {
- 	struct exynos_dsi *dsi = connector_to_dsi(connector);
- 
--	return &dsi->encoder.base;
-+	return &dsi->encoder;
- }
- 
- static struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
-@@ -1482,11 +1481,9 @@ static struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
- 	.best_encoder = exynos_dsi_best_encoder,
- };
- 
--static int exynos_dsi_create_connector(
--				struct exynos_drm_encoder *exynos_encoder)
-+static int exynos_dsi_create_connector(struct drm_encoder *encoder)
- {
--	struct exynos_dsi *dsi = encoder_to_dsi(exynos_encoder);
--	struct drm_encoder *encoder = &exynos_encoder->base;
-+	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 	struct drm_connector *connector = &dsi->connector;
- 	int ret;
- 
-@@ -1507,28 +1504,34 @@ static int exynos_dsi_create_connector(
- 	return 0;
- }
- 
--static void exynos_dsi_mode_set(struct exynos_drm_encoder *encoder,
--			 struct drm_display_mode *mode)
-+static void exynos_dsi_mode_set(struct drm_encoder *encoder,
-+				struct drm_display_mode *mode,
-+				struct drm_display_mode *adjusted_mode)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 	struct videomode *vm = &dsi->vm;
--
--	vm->hactive = mode->hdisplay;
--	vm->vactive = mode->vdisplay;
--	vm->vfront_porch = mode->vsync_start - mode->vdisplay;
--	vm->vback_porch = mode->vtotal - mode->vsync_end;
--	vm->vsync_len = mode->vsync_end - mode->vsync_start;
--	vm->hfront_porch = mode->hsync_start - mode->hdisplay;
--	vm->hback_porch = mode->htotal - mode->hsync_end;
--	vm->hsync_len = mode->hsync_end - mode->hsync_start;
-+	struct drm_display_mode *m = adjusted_mode;
-+
-+	vm->hactive = m->hdisplay;
-+	vm->vactive = m->vdisplay;
-+	vm->vfront_porch = m->vsync_start - m->vdisplay;
-+	vm->vback_porch = m->vtotal - m->vsync_end;
-+	vm->vsync_len = m->vsync_end - m->vsync_start;
-+	vm->hfront_porch = m->hsync_start - m->hdisplay;
-+	vm->hback_porch = m->htotal - m->hsync_end;
-+	vm->hsync_len = m->hsync_end - m->hsync_start;
- }
- 
--static struct exynos_drm_encoder_ops exynos_dsi_encoder_ops = {
-+static struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
- 	.mode_set = exynos_dsi_mode_set,
- 	.enable = exynos_dsi_enable,
- 	.disable = exynos_dsi_disable,
- };
- 
-+static struct drm_encoder_funcs exynos_dsi_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
- MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
- 
- /* of_* functions will be removed after merge of of_graph patches */
-@@ -1634,22 +1637,29 @@ end:
- static int exynos_dsi_bind(struct device *dev, struct device *master,
- 				void *data)
- {
--	struct exynos_drm_encoder *exynos_encoder = dev_get_drvdata(dev);
--	struct exynos_dsi *dsi = encoder_to_dsi(exynos_encoder);
-+	struct drm_encoder *encoder = dev_get_drvdata(dev);
-+	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 	struct drm_device *drm_dev = data;
- 	int ret;
- 
--	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
--					EXYNOS_DISPLAY_TYPE_LCD);
--	if (ret) {
--		DRM_ERROR("failed to create encoder\n");
-+	ret = exynos_drm_crtc_get_pipe_from_type(drm_dev,
-+						  EXYNOS_DISPLAY_TYPE_LCD);
-+	if (ret < 0)
- 		return ret;
--	}
- 
--	ret = exynos_dsi_create_connector(exynos_encoder);
-+	encoder->possible_crtcs = 1 << ret;
-+
-+	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
-+
-+	drm_encoder_init(drm_dev, encoder, &exynos_dsi_encoder_funcs,
-+			 DRM_MODE_ENCODER_TMDS);
-+
-+	drm_encoder_helper_add(encoder, &exynos_dsi_encoder_helper_funcs);
-+
-+	ret = exynos_dsi_create_connector(encoder);
- 	if (ret) {
- 		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(&exynos_encoder->base);
-+		drm_encoder_cleanup(encoder);
- 		return ret;
- 	}
- 
-@@ -1659,7 +1669,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- static void exynos_dsi_unbind(struct device *dev, struct device *master,
- 				void *data)
- {
--	struct exynos_drm_encoder *encoder = dev_get_drvdata(dev);
-+	struct drm_encoder *encoder = dev_get_drvdata(dev);
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
- 
- 	exynos_dsi_disable(encoder);
-@@ -1683,8 +1693,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	if (!dsi)
- 		return -ENOMEM;
- 
--	dsi->encoder.ops = &exynos_dsi_encoder_ops;
--
- 	/* To be checked as invalid one */
- 	dsi->te_gpio = -ENOENT;
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-deleted file mode 100644
-index d45a5c5..0000000
---- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-+++ /dev/null
-@@ -1,105 +0,0 @@
--/* exynos_drm_encoder.c
-- *
-- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-- * Authors:
-- *	Inki Dae <inki.dae@samsung.com>
-- *	Joonyoung Shim <jy0922.shim@samsung.com>
-- *	Seung-Woo Kim <sw0312.kim@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
--
--#include <drm/drmP.h>
--#include <drm/drm_crtc_helper.h>
--
--#include "exynos_drm_drv.h"
--#include "exynos_drm_encoder.h"
--#include "exynos_drm_crtc.h"
--
--static bool
--exynos_drm_encoder_mode_fixup(struct drm_encoder *encoder,
--			       const struct drm_display_mode *mode,
--			       struct drm_display_mode *adjusted_mode)
--{
--	struct drm_device *dev = encoder->dev;
--	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
--	struct drm_connector *connector;
--
--	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
--		if (connector->encoder != encoder)
--			continue;
--
--		if (exynos_encoder->ops->mode_fixup)
--			exynos_encoder->ops->mode_fixup(exynos_encoder,
--							connector, mode,
--							adjusted_mode);
--	}
--
--	return true;
--}
--
--static void exynos_drm_encoder_mode_set(struct drm_encoder *encoder,
--					 struct drm_display_mode *mode,
--					 struct drm_display_mode *adjusted_mode)
--{
--	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
--
--	if (exynos_encoder->ops->mode_set)
--		exynos_encoder->ops->mode_set(exynos_encoder, adjusted_mode);
--}
--
--static void exynos_drm_encoder_enable(struct drm_encoder *encoder)
--{
--	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
--
--	if (exynos_encoder->ops->enable)
--		exynos_encoder->ops->enable(exynos_encoder);
--}
--
--static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
--{
--	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
--
--	if (exynos_encoder->ops->disable)
--		exynos_encoder->ops->disable(exynos_encoder);
--}
--
--static struct drm_encoder_helper_funcs exynos_encoder_helper_funcs = {
--	.mode_fixup	= exynos_drm_encoder_mode_fixup,
--	.mode_set	= exynos_drm_encoder_mode_set,
--	.enable		= exynos_drm_encoder_enable,
--	.disable	= exynos_drm_encoder_disable,
--};
--
--static struct drm_encoder_funcs exynos_encoder_funcs = {
--	.destroy = drm_encoder_cleanup,
--};
--
--int exynos_drm_encoder_create(struct drm_device *dev,
--			      struct exynos_drm_encoder *exynos_encoder,
--			      enum exynos_drm_output_type type)
--{
--	struct drm_encoder *encoder;
--	int pipe;
--
--	pipe = exynos_drm_crtc_get_pipe_from_type(dev, type);
--	if (pipe < 0)
--		return pipe;
--
--	encoder = &exynos_encoder->base;
--	encoder->possible_crtcs = 1 << pipe;
--
--	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
--
--	drm_encoder_init(dev, encoder, &exynos_encoder_funcs,
--			DRM_MODE_ENCODER_TMDS);
--
--	drm_encoder_helper_add(encoder, &exynos_encoder_helper_funcs);
--
--	DRM_DEBUG_KMS("encoder has been created\n");
--
--	return 0;
--}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.h b/drivers/gpu/drm/exynos/exynos_drm_encoder.h
-deleted file mode 100644
-index 6610dee..0000000
---- a/drivers/gpu/drm/exynos/exynos_drm_encoder.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/*
-- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-- * Authors:
-- *	Inki Dae <inki.dae@samsung.com>
-- *	Joonyoung Shim <jy0922.shim@samsung.com>
-- *	Seung-Woo Kim <sw0312.kim@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
--
--#ifndef _EXYNOS_DRM_ENCODER_H_
--#define _EXYNOS_DRM_ENCODER_H_
--
--#include "exynos_drm_drv.h"
--
--int exynos_drm_encoder_create(struct drm_device *dev, struct exynos_drm_encoder
--			      *encoder, enum exynos_drm_output_type type);
--
--#endif
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 42c3963..1202228 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -168,7 +168,7 @@ struct fimd_context {
- 
- 	struct exynos_drm_panel_info panel;
- 	struct fimd_driver_data *driver_data;
--	struct exynos_drm_encoder *encoder;
-+	struct drm_encoder *encoder;
- };
- 
- static const struct of_device_id fimd_driver_dt_match[] = {
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 9b64c77..581af35 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -25,7 +25,6 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_plane.h"
--#include "exynos_drm_encoder.h"
- #include "exynos_drm_vidi.h"
- 
- /* vidi has totally three virtual windows. */
-@@ -35,7 +34,7 @@
- 					connector)
- 
- struct vidi_context {
--	struct exynos_drm_encoder	encoder;
-+	struct drm_encoder		encoder;
- 	struct platform_device		*pdev;
- 	struct drm_device		*drm_dev;
- 	struct exynos_drm_crtc		*crtc;
-@@ -54,7 +53,7 @@ struct vidi_context {
- 	int				pipe;
- };
- 
--static inline struct vidi_context *encoder_to_vidi(struct exynos_drm_encoder *e)
-+static inline struct vidi_context *encoder_to_vidi(struct drm_encoder *e)
- {
- 	return container_of(e, struct vidi_context, encoder);
- }
-@@ -358,7 +357,7 @@ static struct drm_encoder *vidi_best_encoder(struct drm_connector *connector)
- {
- 	struct vidi_context *ctx = ctx_from_connector(connector);
- 
--	return &ctx->encoder.base;
-+	return &ctx->encoder;
- }
- 
- static struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
-@@ -366,10 +365,9 @@ static struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
- 	.best_encoder = vidi_best_encoder,
- };
- 
--static int vidi_create_connector(struct exynos_drm_encoder *exynos_encoder)
-+static int vidi_create_connector(struct drm_encoder *encoder)
- {
--	struct vidi_context *ctx = encoder_to_vidi(exynos_encoder);
--	struct drm_encoder *encoder = &exynos_encoder->base;
-+	struct vidi_context *ctx = encoder_to_vidi(encoder);
- 	struct drm_connector *connector = &ctx->connector;
- 	int ret;
- 
-@@ -389,15 +387,47 @@ static int vidi_create_connector(struct exynos_drm_encoder *exynos_encoder)
- 	return 0;
- }
- 
-+static bool exynos_vidi_mode_fixup(struct drm_encoder *encoder,
-+				 const struct drm_display_mode *mode,
-+				 struct drm_display_mode *adjusted_mode)
-+{
-+	return true;
-+}
-+
-+static void exynos_vidi_mode_set(struct drm_encoder *encoder,
-+			       struct drm_display_mode *mode,
-+			       struct drm_display_mode *adjusted_mode)
-+{
-+}
-+
-+static void exynos_vidi_enable(struct drm_encoder *encoder)
-+{
-+}
-+
-+static void exynos_vidi_disable(struct drm_encoder *encoder)
-+{
-+}
-+
-+static struct drm_encoder_helper_funcs exynos_vidi_encoder_helper_funcs = {
-+	.mode_fixup = exynos_vidi_mode_fixup,
-+	.mode_set = exynos_vidi_mode_set,
-+	.enable = exynos_vidi_enable,
-+	.disable = exynos_vidi_disable,
-+};
-+
-+static struct drm_encoder_funcs exynos_vidi_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
- static int vidi_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct vidi_context *ctx = dev_get_drvdata(dev);
- 	struct drm_device *drm_dev = data;
--	struct exynos_drm_encoder *exynos_encoder = &ctx->encoder;
-+	struct drm_encoder *encoder = &ctx->encoder;
- 	struct exynos_drm_plane *exynos_plane;
- 	enum drm_plane_type type;
- 	unsigned int zpos;
--	int ret;
-+	int pipe, ret;
- 
- 	vidi_ctx_initialize(ctx, drm_dev);
- 
-@@ -419,17 +449,24 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
- 		return PTR_ERR(ctx->crtc);
- 	}
- 
--	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
--					EXYNOS_DISPLAY_TYPE_VIDI);
--	if (ret) {
--		DRM_ERROR("failed to create encoder\n");
--		return ret;
--	}
-+	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
-+						  EXYNOS_DISPLAY_TYPE_VIDI);
-+	if (pipe < 0)
-+		return pipe;
-+
-+	encoder->possible_crtcs = 1 << pipe;
-+
-+	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
-+
-+	drm_encoder_init(drm_dev, encoder, &exynos_vidi_encoder_funcs,
-+			 DRM_MODE_ENCODER_TMDS);
-+
-+	drm_encoder_helper_add(encoder, &exynos_vidi_encoder_helper_funcs);
- 
--	ret = vidi_create_connector(exynos_encoder);
-+	ret = vidi_create_connector(encoder);
- 	if (ret) {
- 		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(&exynos_encoder->base);
-+		drm_encoder_cleanup(encoder);
- 		return ret;
- 	}
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 7d55070..2086b96 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -45,7 +45,6 @@
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
--#include "exynos_drm_encoder.h"
- #include "exynos_mixer.h"
- 
- #include <linux/gpio.h>
-@@ -183,7 +182,7 @@ struct hdmi_conf_regs {
- };
- 
- struct hdmi_context {
--	struct exynos_drm_encoder	encoder;
-+	struct drm_encoder		encoder;
- 	struct device			*dev;
- 	struct drm_device		*drm_dev;
- 	struct drm_connector		connector;
-@@ -214,7 +213,7 @@ struct hdmi_context {
- 	enum hdmi_type			type;
- };
- 
--static inline struct hdmi_context *encoder_to_hdmi(struct exynos_drm_encoder *e)
-+static inline struct hdmi_context *encoder_to_hdmi(struct drm_encoder *e)
- {
- 	return container_of(e, struct hdmi_context, encoder);
- }
-@@ -1120,7 +1119,7 @@ static struct drm_encoder *hdmi_best_encoder(struct drm_connector *connector)
- {
- 	struct hdmi_context *hdata = ctx_from_connector(connector);
- 
--	return &hdata->encoder.base;
-+	return &hdata->encoder;
- }
- 
- static struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
-@@ -1129,9 +1128,9 @@ static struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
- 	.best_encoder = hdmi_best_encoder,
- };
- 
--static int hdmi_create_connector(struct exynos_drm_encoder *exynos_encoder)
-+static int hdmi_create_connector(struct drm_encoder *encoder)
- {
--	struct hdmi_context *hdata = encoder_to_hdmi(exynos_encoder);
-+	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 	struct drm_connector *connector = &hdata->connector;
- 	int ret;
- 
-@@ -1147,28 +1146,35 @@ static int hdmi_create_connector(struct exynos_drm_encoder *exynos_encoder)
- 
- 	drm_connector_helper_add(connector, &hdmi_connector_helper_funcs);
- 	drm_connector_register(connector);
--	drm_mode_connector_attach_encoder(connector, &exynos_encoder->base);
-+	drm_mode_connector_attach_encoder(connector, encoder);
- 
- 	return 0;
- }
- 
--static void hdmi_mode_fixup(struct exynos_drm_encoder *encoder,
--				struct drm_connector *connector,
--				const struct drm_display_mode *mode,
--				struct drm_display_mode *adjusted_mode)
-+static bool hdmi_mode_fixup(struct drm_encoder *encoder,
-+			    const struct drm_display_mode *mode,
-+			    struct drm_display_mode *adjusted_mode)
- {
-+	struct drm_device *dev = encoder->dev;
-+	struct drm_connector *connector;
- 	struct drm_display_mode *m;
- 	int mode_ok;
- 
--	DRM_DEBUG_KMS("%s\n", __FILE__);
--
- 	drm_mode_set_crtcinfo(adjusted_mode, 0);
- 
-+	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
-+		if (connector->encoder == encoder)
-+			break;
-+	}
-+
-+	if (connector->encoder != encoder)
-+		return true;
-+
- 	mode_ok = hdmi_mode_valid(connector, adjusted_mode);
- 
- 	/* just return if user desired mode exists. */
- 	if (mode_ok == MODE_OK)
--		return;
-+		return true;
- 
- 	/*
- 	 * otherwise, find the most suitable mode among modes and change it
-@@ -1188,6 +1194,8 @@ static void hdmi_mode_fixup(struct exynos_drm_encoder *encoder,
- 			break;
- 		}
- 	}
-+
-+	return true;
- }
- 
- static void hdmi_set_acr(u32 freq, u8 *acr)
-@@ -2000,11 +2008,12 @@ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
- 	hdmi_set_reg(tg->tg_3d, 1, 0x0);
- }
- 
--static void hdmi_mode_set(struct exynos_drm_encoder *encoder,
--			struct drm_display_mode *mode)
-+static void hdmi_mode_set(struct drm_encoder *encoder,
-+			  struct drm_display_mode *mode,
-+			  struct drm_display_mode *adjusted_mode)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
--	struct drm_display_mode *m = mode;
-+	struct drm_display_mode *m = adjusted_mode;
- 
- 	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%s\n",
- 		m->hdisplay, m->vdisplay,
-@@ -2012,15 +2021,15 @@ static void hdmi_mode_set(struct exynos_drm_encoder *encoder,
- 		"INTERLACED" : "PROGRESSIVE");
- 
- 	/* preserve mode information for later use. */
--	drm_mode_copy(&hdata->current_mode, mode);
-+	drm_mode_copy(&hdata->current_mode, m);
- 
- 	if (hdata->type == HDMI_TYPE13)
--		hdmi_v13_mode_set(hdata, mode);
-+		hdmi_v13_mode_set(hdata, m);
- 	else
--		hdmi_v14_mode_set(hdata, mode);
-+		hdmi_v14_mode_set(hdata, m);
- }
- 
--static void hdmi_enable(struct exynos_drm_encoder *encoder)
-+static void hdmi_enable(struct drm_encoder *encoder)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 	struct hdmi_resources *res = &hdata->res;
-@@ -2051,11 +2060,11 @@ static void hdmi_enable(struct exynos_drm_encoder *encoder)
- 	hdmi_conf_apply(hdata);
- }
- 
--static void hdmi_disable(struct exynos_drm_encoder *encoder)
-+static void hdmi_disable(struct drm_encoder *encoder)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 	struct hdmi_resources *res = &hdata->res;
--	struct drm_crtc *crtc = hdata->encoder.base.crtc;
-+	struct drm_crtc *crtc = encoder->crtc;
- 	const struct drm_crtc_helper_funcs *funcs = NULL;
- 
- 	mutex_lock(&hdata->hdmi_mutex);
-@@ -2102,13 +2111,17 @@ out:
- 	mutex_unlock(&hdata->hdmi_mutex);
- }
- 
--static struct exynos_drm_encoder_ops hdmi_encoder_ops = {
-+static struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
- 	.mode_fixup	= hdmi_mode_fixup,
- 	.mode_set	= hdmi_mode_set,
- 	.enable		= hdmi_enable,
- 	.disable	= hdmi_disable,
- };
- 
-+static struct drm_encoder_funcs exynos_hdmi_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
- static void hdmi_hotplug_work_func(struct work_struct *work)
- {
- 	struct hdmi_context *hdata;
-@@ -2264,22 +2277,29 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct drm_device *drm_dev = data;
- 	struct hdmi_context *hdata = dev_get_drvdata(dev);
--	struct exynos_drm_encoder *exynos_encoder = &hdata->encoder;
--	int ret;
-+	struct drm_encoder *encoder = &hdata->encoder;
-+	int ret, pipe;
- 
- 	hdata->drm_dev = drm_dev;
- 
--	ret = exynos_drm_encoder_create(drm_dev, exynos_encoder,
--					EXYNOS_DISPLAY_TYPE_HDMI);
--	if (ret) {
--		DRM_ERROR("failed to create encoder\n");
--		return ret;
--	}
-+	pipe = exynos_drm_crtc_get_pipe_from_type(drm_dev,
-+						  EXYNOS_DISPLAY_TYPE_HDMI);
-+	if (pipe < 0)
-+		return pipe;
- 
--	hdmi_create_connector(exynos_encoder);
-+	encoder->possible_crtcs = 1 << pipe;
-+
-+	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
-+
-+	drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
-+			 DRM_MODE_ENCODER_TMDS);
-+
-+	drm_encoder_helper_add(encoder, &exynos_hdmi_encoder_helper_funcs);
-+
-+	ret = hdmi_create_connector(encoder);
- 	if (ret) {
- 		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(&exynos_encoder->base);
-+		drm_encoder_cleanup(encoder);
- 		return ret;
- 	}
- 
-@@ -2336,8 +2356,6 @@ static int hdmi_probe(struct platform_device *pdev)
- 	if (!hdata)
- 		return -ENOMEM;
- 
--	hdata->encoder.ops = &hdmi_encoder_ops;
--
- 	mutex_init(&hdata->hdmi_mutex);
- 
- 	platform_set_drvdata(pdev, hdata);
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhpcyBmdW5jdGlvbnMgd2FzIGp1c3QgaGlkaW5nIHRoZSBlbmNvZGVyIGFuZCBjb25uZWN0b3Ig
+Y3JlYXRpb24gaW4KYSB3YXkgdGhhdCB3YXMgbGVzcyBjbGVhbiB0aGFuIGlmIHdlIGdldCByaWQg
+b2YgaXQuIEZvciBleGFtcGxlLApleHlub3NfZW5jb2RlciBvcHMgaGFkIC5jcmVhdGVfY29ubmVj
+dG9yKCkgZGVmaW5lZCBvbmx5IGJlY2F1c2Ugd2Ugd2VyZQpoYW5kaW5nIG9mZiB0aGUgZW5jb2Rl
+ciBhbmQgY29ubmVjdG9yIGNyZWF0aW9uIHRvCmV4eW5vc19kcm1fY3JlYXRlX2VuY19jb25uKCku
+IFdpdGhvdXQgdGhpcyBmdW5jdGlvbiB3ZSBjYW4gZGlyZWN0bHkgY2FsbAp0aGUgY3JlYXRlX2Nv
+bm5lY3RvciBmdW5jdGlvbiBpbnRlcm5hbGx5IGluIHRoZSBjb2RlLCB3aXRob3V0IHRoZSBuZWVk
+IG9mCmFueSB2dGFibGUgYWNjZXNzLgoKSXQgYWxzbyBkb2VzIHNvbWUgcmVmYWN0b3JpbmcgaW4g
+dGhlIGNvZGUgbGlrZSBjcmVhdGluZyBhIGJpbmQgZnVuY3Rpb24KZm9yIGRwaSBkZXZpY2VzLgoK
+U2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3Jh
+LmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAg
+fCAgMyArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgICAgfCAy
+MCArKysrKysrKysrKysrKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Y29yZS5jICAgIHwgMzAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgfCAyNiArKysrKysrKysrKysrKysrKysr
+KysrKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICAgIHwgMTMg
+KysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAg
+ICB8IDIwICsrKysrKysrKysrKy0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9lbmNvZGVyLmMgfCAxMSArKysrKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2VuY29kZXIuaCB8ICA0ICsrKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9maW1kLmMgICAgfCAgMyArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV92aWRpLmMgICAgfCAyMCArKysrKysrKysrLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgIHwgMjEgKysrKysrKysrKysrKysrKystLS0KIDEx
+IGZpbGVzIGNoYW5nZWQsIDEwMSBpbnNlcnRpb25zKCspLCA3MCBkZWxldGlvbnMoLSkKCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKaW5kZXggZWE5OTk0MC4uMjk0
+OWJkNCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNv
+bi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwpAQCAt
+NjkxLDggKzY5MSw3IEBAIHN0YXRpYyBpbnQgZGVjb25fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYs
+IHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKIAl9CiAKIAlpZiAoY3R4LT5lbmNv
+ZGVyKQotCQlleHlub3NfZHJtX2NyZWF0ZV9lbmNfY29ubihkcm1fZGV2LCBjdHgtPmVuY29kZXIs
+Ci0JCQkJCSAgIEVYWU5PU19ESVNQTEFZX1RZUEVfTENEKTsKKwkJZXh5bm9zX2RwaV9iaW5kKGRy
+bV9kZXYsIGN0eC0+ZW5jb2Rlcik7CiAKIAlyZXR1cm4gMDsKIApkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHBfY29yZS5jCmluZGV4IGM4NTNiNDYuLmYwMzU5NDQgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKQEAgLTMzLDYgKzMzLDcgQEAKICNpbmNsdWRlIDxk
+cm0vYnJpZGdlL3B0bjM0NjAuaD4KIAogI2luY2x1ZGUgImV4eW5vc19kcF9jb3JlLmgiCisjaW5j
+bHVkZSAiZXh5bm9zX2RybV9lbmNvZGVyLmgiCiAKICNkZWZpbmUgY3R4X2Zyb21fY29ubmVjdG9y
+KGMpCWNvbnRhaW5lcl9vZihjLCBzdHJ1Y3QgZXh5bm9zX2RwX2RldmljZSwgXAogCQkJCQljb25u
+ZWN0b3IpCkBAIC0xMTA1LDcgKzExMDYsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHBfZGlzYWJs
+ZShzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICplbmNvZGVyKQogfQogCiBzdGF0aWMgc3RydWN0
+IGV4eW5vc19kcm1fZW5jb2Rlcl9vcHMgZXh5bm9zX2RwX2VuY29kZXJfb3BzID0gewotCS5jcmVh
+dGVfY29ubmVjdG9yID0gZXh5bm9zX2RwX2NyZWF0ZV9jb25uZWN0b3IsCiAJLmVuYWJsZSA9IGV4
+eW5vc19kcF9lbmFibGUsCiAJLmRpc2FibGUgPSBleHlub3NfZHBfZGlzYWJsZSwKIH07CkBAIC0x
+MTg2LDYgKzExODYsNyBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9iaW5kKHN0cnVjdCBkZXZpY2Ug
+KmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQogCXN0cnVjdCBleHlub3Nf
+ZHBfZGV2aWNlICpkcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwogCXN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYgPSB0b19wbGF0Zm9ybV9kZXZpY2UoZGV2KTsKIAlzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqZHJtX2RldiA9IGRhdGE7CisJc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZXh5bm9zX2Vu
+Y29kZXIgPSAmZHAtPmVuY29kZXI7CiAJc3RydWN0IHJlc291cmNlICpyZXM7CiAJdW5zaWduZWQg
+aW50IGlycV9mbGFnczsKIAlpbnQgcmV0ID0gMDsKQEAgLTEyNzgsOCArMTI3OSwyMSBAQCBzdGF0
+aWMgaW50IGV4eW5vc19kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAq
+bWFzdGVyLCB2b2lkICpkYXRhKQogCiAJZHAtPmRybV9kZXYgPSBkcm1fZGV2OwogCi0JcmV0dXJu
+IGV4eW5vc19kcm1fY3JlYXRlX2VuY19jb25uKGRybV9kZXYsICZkcC0+ZW5jb2RlciwKLQkJCQkJ
+ICBFWFlOT1NfRElTUExBWV9UWVBFX0xDRCk7CisJcmV0ID0gZXh5bm9zX2RybV9lbmNvZGVyX2Ny
+ZWF0ZShkcm1fZGV2LCBleHlub3NfZW5jb2RlciwKKwkJCQkJRVhZTk9TX0RJU1BMQVlfVFlQRV9M
+Q0QpOworCWlmIChyZXQpIHsKKwkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gY3JlYXRlIGVuY29kZXJc
+biIpOworCQlyZXR1cm4gcmV0OworCX0KKworCXJldCA9IGV4eW5vc19kcF9jcmVhdGVfY29ubmVj
+dG9yKGV4eW5vc19lbmNvZGVyKTsKKwlpZiAocmV0KSB7CisJCURSTV9FUlJPUigiZmFpbGVkIHRv
+IGNyZWF0ZSBjb25uZWN0b3IgcmV0ID0gJWRcbiIsIHJldCk7CisJCWRybV9lbmNvZGVyX2NsZWFu
+dXAoJmV4eW5vc19lbmNvZGVyLT5iYXNlKTsKKwkJcmV0dXJuIHJldDsKKwl9CisKKwlyZXR1cm4g
+MDsKIH0KIAogc3RhdGljIHZvaWQgZXh5bm9zX2RwX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYs
+IHN0cnVjdCBkZXZpY2UgKm1hc3RlciwKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+Y29yZS5jCmluZGV4IGUzODY0NTIuLjFmMzhhNDQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2NvcmUuYwpAQCAtMjAsMzYgKzIwLDYgQEAKIAogc3RhdGljIExJU1RfSEVBRChl
+eHlub3NfZHJtX3N1YmRydl9saXN0KTsKIAotaW50IGV4eW5vc19kcm1fY3JlYXRlX2VuY19jb25u
+KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCi0JCQkgICAgICAgc3RydWN0IGV4eW5vc19kcm1fZW5j
+b2RlciAqZXh5bm9zX2VuY29kZXIsCi0JCQkgICAgICAgZW51bSBleHlub3NfZHJtX291dHB1dF90
+eXBlIHR5cGUpCi17Ci0JaW50IHJldDsKLQl1bnNpZ25lZCBsb25nIHBvc3NpYmxlX2NydGNzID0g
+MDsKLQotCXJldCA9IGV4eW5vc19kcm1fY3J0Y19nZXRfcGlwZV9mcm9tX3R5cGUoZGV2LCB0eXBl
+KTsKLQlpZiAocmV0IDwgMCkKLQkJcmV0dXJuIHJldDsKLQotCXBvc3NpYmxlX2NydGNzIHw9IDEg
+PDwgcmV0OwotCi0JLyogY3JlYXRlIGFuZCBpbml0aWFsaXplIGEgZW5jb2RlciBmb3IgdGhpcyBz
+dWIgZHJpdmVyLiAqLwotCXJldCA9IGV4eW5vc19kcm1fZW5jb2Rlcl9jcmVhdGUoZGV2LCBleHlu
+b3NfZW5jb2RlciwgcG9zc2libGVfY3J0Y3MpOwotCWlmIChyZXQpIHsKLQkJRFJNX0VSUk9SKCJm
+YWlsZWQgdG8gY3JlYXRlIGVuY29kZXJcbiIpOwotCQlyZXR1cm4gcmV0OwotCX0KLQotCXJldCA9
+IGV4eW5vc19lbmNvZGVyLT5vcHMtPmNyZWF0ZV9jb25uZWN0b3IoZXh5bm9zX2VuY29kZXIpOwot
+CWlmIChyZXQpIHsKLQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gY3JlYXRlIGNvbm5lY3RvciByZXQg
+PSAlZFxuIiwgcmV0KTsKLQkJZHJtX2VuY29kZXJfY2xlYW51cCgmZXh5bm9zX2VuY29kZXItPmJh
+c2UpOwotCQlyZXR1cm4gcmV0OwotCX0KLQotCXJldHVybiAwOwotfQotCiBpbnQgZXh5bm9zX2Ry
+bV9zdWJkcnZfcmVnaXN0ZXIoc3RydWN0IGV4eW5vc19kcm1fc3ViZHJ2ICpzdWJkcnYpCiB7CiAJ
+aWYgKCFzdWJkcnYpCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHBpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMKaW5kZXgg
+NjBhMzE2MS4uNjg1MGNlNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RwaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGku
+YwpAQCAtMjAsNyArMjAsOCBAQAogI2luY2x1ZGUgPHZpZGVvL29mX3ZpZGVvbW9kZS5oPgogI2lu
+Y2x1ZGUgPHZpZGVvL3ZpZGVvbW9kZS5oPgogCi0jaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIK
+KyNpbmNsdWRlICJleHlub3NfZHJtX2VuY29kZXIuaCIKKyNpbmNsdWRlICJleHlub3NfZHJtX2Ny
+dGMuaCIKIAogc3RydWN0IGV4eW5vc19kcGkgewogCXN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIg
+ZW5jb2RlcjsKQEAgLTE1MSw3ICsxNTIsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHBpX2Rpc2Fi
+bGUoc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZW5jb2RlcikKIH0KIAogc3RhdGljIHN0cnVj
+dCBleHlub3NfZHJtX2VuY29kZXJfb3BzIGV4eW5vc19kcGlfZW5jb2Rlcl9vcHMgPSB7Ci0JLmNy
+ZWF0ZV9jb25uZWN0b3IgPSBleHlub3NfZHBpX2NyZWF0ZV9jb25uZWN0b3IsCiAJLmVuYWJsZSA9
+IGV4eW5vc19kcGlfZW5hYmxlLAogCS5kaXNhYmxlID0gZXh5bm9zX2RwaV9kaXNhYmxlLAogfTsK
+QEAgLTI4MCw2ICsyODAsMjggQEAgc3RhdGljIGludCBleHlub3NfZHBpX3BhcnNlX2R0KHN0cnVj
+dCBleHlub3NfZHBpICpjdHgpCiAJcmV0dXJuIDA7CiB9CiAKK2ludCBleHlub3NfZHBpX2JpbmQo
+c3RydWN0IGRybV9kZXZpY2UgKmRldiwKKwkJICAgIHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIg
+KmV4eW5vc19lbmNvZGVyKQoreworCWludCByZXQ7CisKKwlyZXQgPSBleHlub3NfZHJtX2VuY29k
+ZXJfY3JlYXRlKGRldiwgZXh5bm9zX2VuY29kZXIsCisJCQkJCUVYWU5PU19ESVNQTEFZX1RZUEVf
+TENEKTsKKwlpZiAocmV0KSB7CisJCURSTV9FUlJPUigiZmFpbGVkIHRvIGNyZWF0ZSBlbmNvZGVy
+XG4iKTsKKwkJcmV0dXJuIHJldDsKKwl9CisKKwlyZXQgPSBleHlub3NfZHBpX2NyZWF0ZV9jb25u
+ZWN0b3IoZXh5bm9zX2VuY29kZXIpOworCWlmIChyZXQpIHsKKwkJRFJNX0VSUk9SKCJmYWlsZWQg
+dG8gY3JlYXRlIGNvbm5lY3RvciByZXQgPSAlZFxuIiwgcmV0KTsKKwkJZHJtX2VuY29kZXJfY2xl
+YW51cCgmZXh5bm9zX2VuY29kZXItPmJhc2UpOworCQlyZXR1cm4gcmV0OworCX0KKworCXJldHVy
+biAwOworfQorCiBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICpleHlub3NfZHBpX3Byb2JlKHN0
+cnVjdCBkZXZpY2UgKmRldikKIHsKIAlzdHJ1Y3QgZXh5bm9zX2RwaSAqY3R4OwpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4IDc2MmI2MjUuLjI0YTg0ZmUgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTgxLDcgKzgxLDYgQEAgc3Ry
+dWN0IGV4eW5vc19kcm1fcGxhbmUgewogICogRXh5bm9zIERSTSBFbmNvZGVyIFN0cnVjdHVyZS4K
+ICAqCS0gdGhpcyBzdHJ1Y3R1cmUgaXMgY29tbW9uIHRvIGFuYWxvZyB0diwgZGlnaXRhbCB0diBh
+bmQgbGNkIHBhbmVsLgogICoKLSAqIEBjcmVhdGVfY29ubmVjdG9yOiBpbml0aWFsaXplIGFuZCBy
+ZWdpc3RlciBhIG5ldyBjb25uZWN0b3IKICAqIEBtb2RlX2ZpeHVwOiBmaXggbW9kZSBkYXRhIGNv
+bXBhcmluZyB0byBodyBzcGVjaWZpYyBkaXNwbGF5IG1vZGUuCiAgKiBAbW9kZV9zZXQ6IGNvbnZl
+cnQgZHJtX2Rpc3BsYXlfbW9kZSB0byBodyBzcGVjaWZpYyBkaXNwbGF5IG1vZGUgYW5kCiAgKgkg
+ICAgICB3b3VsZCBiZSBjYWxsZWQgYnkgZW5jb2Rlci0+bW9kZV9zZXQoKS4KQEAgLTkwLDcgKzg5
+LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgewogICovCiBzdHJ1Y3QgZXh5bm9zX2RybV9l
+bmNvZGVyOwogc3RydWN0IGV4eW5vc19kcm1fZW5jb2Rlcl9vcHMgewotCWludCAoKmNyZWF0ZV9j
+b25uZWN0b3IpKHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpOwogCXZvaWQgKCpt
+b2RlX2ZpeHVwKShzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICplbmNvZGVyLAogCQkJCXN0cnVj
+dCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsCiAJCQkJY29uc3Qgc3RydWN0IGRybV9kaXNwbGF5
+X21vZGUgKm1vZGUsCkBAIC0yNjIsNiArMjYwLDcgQEAgdm9pZCBleHlub3NfZHJtX3N1YmRydl9j
+bG9zZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGUpOwogI2lm
+ZGVmIENPTkZJR19EUk1fRVhZTk9TX0RQSQogc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZXh5
+bm9zX2RwaV9wcm9iZShzdHJ1Y3QgZGV2aWNlICpkZXYpOwogaW50IGV4eW5vc19kcGlfcmVtb3Zl
+KHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpOworaW50IGV4eW5vc19kcGlfYmlu
+ZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICplbmNv
+ZGVyKTsKICNlbHNlCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKgog
+ZXh5bm9zX2RwaV9wcm9iZShzdHJ1Y3QgZGV2aWNlICpkZXYpIHsgcmV0dXJuIE5VTEw7IH0KQEAg
+LTI2OSwxNSArMjY4LDE1IEBAIHN0YXRpYyBpbmxpbmUgaW50IGV4eW5vc19kcGlfcmVtb3ZlKHN0
+cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpCiB7CiAJcmV0dXJuIDA7CiB9CitzdGF0
+aWMgaW5saW5lIGludCBleHlub3NfZHBpX2JpbmQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwKKwkJ
+CQkgIHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpCit7CisJcmV0dXJuIDA7Cit9
+CiAjZW5kaWYKIAogdm9pZCBleHlub3NfZHJtX2F0b21pY193b3JrKHN0cnVjdCB3b3JrX3N0cnVj
+dCAqd29yayk7CiAKLS8qIFRoaXMgZnVuY3Rpb24gY3JlYXRlcyBhIGVuY29kZXIgYW5kIGEgY29u
+bmVjdG9yLCBhbmQgaW5pdGlhbGl6ZXMgdGhlbS4gKi8KLWludCBleHlub3NfZHJtX2NyZWF0ZV9l
+bmNfY29ubihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAotCQkJICAgICAgIHN0cnVjdCBleHlub3Nf
+ZHJtX2VuY29kZXIgKmVuY29kZXIsCi0JCQkgICAgICAgZW51bSBleHlub3NfZHJtX291dHB1dF90
+eXBlIHR5cGUpOwotCiBleHRlcm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBmaW1kX2RyaXZlcjsK
+IGV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGRlY29uX2RyaXZlcjsKIGV4dGVybiBzdHJ1
+Y3QgcGxhdGZvcm1fZHJpdmVyIGRwX2RyaXZlcjsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kc2kuYwppbmRleCA4ZWE2YmJmLi42NTYxZTQyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2RzaS5jCkBAIC0yOSw2ICsyOSw3IEBACiAjaW5jbHVkZSA8dmlkZW8vdmlk
+ZW9tb2RlLmg+CiAKICNpbmNsdWRlICJleHlub3NfZHJtX2NydGMuaCIKKyNpbmNsdWRlICJleHlu
+b3NfZHJtX2VuY29kZXIuaCIKICNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgogCiAvKiByZXR1
+cm5zIHRydWUgaWZmIGJvdGggYXJndW1lbnRzIGxvZ2ljYWxseSBkaWZmZXJzICovCkBAIC0xNTIz
+LDcgKzE1MjQsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHNpX21vZGVfc2V0KHN0cnVjdCBleHlu
+b3NfZHJtX2VuY29kZXIgKmVuY29kZXIsCiB9CiAKIHN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9l
+bmNvZGVyX29wcyBleHlub3NfZHNpX2VuY29kZXJfb3BzID0gewotCS5jcmVhdGVfY29ubmVjdG9y
+ID0gZXh5bm9zX2RzaV9jcmVhdGVfY29ubmVjdG9yLAogCS5tb2RlX3NldCA9IGV4eW5vc19kc2lf
+bW9kZV9zZXQsCiAJLmVuYWJsZSA9IGV4eW5vc19kc2lfZW5hYmxlLAogCS5kaXNhYmxlID0gZXh5
+bm9zX2RzaV9kaXNhYmxlLApAQCAtMTYzNCwxNiArMTYzNCwyMiBAQCBlbmQ6CiBzdGF0aWMgaW50
+IGV4eW5vc19kc2lfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rl
+ciwKIAkJCQl2b2lkICpkYXRhKQogewotCXN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29k
+ZXIgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKLQlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gZW5j
+b2Rlcl90b19kc2koZW5jb2Rlcik7CisJc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZXh5bm9z
+X2VuY29kZXIgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKKwlzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNp
+ID0gZW5jb2Rlcl90b19kc2koZXh5bm9zX2VuY29kZXIpOwogCXN0cnVjdCBkcm1fZGV2aWNlICpk
+cm1fZGV2ID0gZGF0YTsKIAlpbnQgcmV0OwogCi0JcmV0ID0gZXh5bm9zX2RybV9jcmVhdGVfZW5j
+X2Nvbm4oZHJtX2RldiwgZW5jb2RlciwKLQkJCQkJIEVYWU5PU19ESVNQTEFZX1RZUEVfTENEKTsK
+KwlyZXQgPSBleHlub3NfZHJtX2VuY29kZXJfY3JlYXRlKGRybV9kZXYsIGV4eW5vc19lbmNvZGVy
+LAorCQkJCQlFWFlOT1NfRElTUExBWV9UWVBFX0xDRCk7CisJaWYgKHJldCkgeworCQlEUk1fRVJS
+T1IoImZhaWxlZCB0byBjcmVhdGUgZW5jb2RlclxuIik7CisJCXJldHVybiByZXQ7CisJfQorCisJ
+cmV0ID0gZXh5bm9zX2RzaV9jcmVhdGVfY29ubmVjdG9yKGV4eW5vc19lbmNvZGVyKTsKIAlpZiAo
+cmV0KSB7Ci0JCURSTV9FUlJPUigiRW5jb2RlciBjcmVhdGUgWyVkXSBmYWlsZWQgd2l0aCAlZFxu
+IiwKLQkJCSAgRVhZTk9TX0RJU1BMQVlfVFlQRV9MQ0QsIHJldCk7CisJCURSTV9FUlJPUigiZmFp
+bGVkIHRvIGNyZWF0ZSBjb25uZWN0b3IgcmV0ID0gJWRcbiIsIHJldCk7CisJCWRybV9lbmNvZGVy
+X2NsZWFudXAoJmV4eW5vc19lbmNvZGVyLT5iYXNlKTsKIAkJcmV0dXJuIHJldDsKIAl9CiAKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCmluZGV4IGNlN2I5N2Uu
+LjRlZDM2MGIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9l
+bmNvZGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
+YwpAQCAtMTcsNiArMTcsNyBAQAogCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIKICNpbmNs
+dWRlICJleHlub3NfZHJtX2VuY29kZXIuaCIKKyNpbmNsdWRlICJleHlub3NfZHJtX2NydGMuaCIK
+IAogc3RhdGljIGJvb2wKIGV4eW5vc19kcm1fZW5jb2Rlcl9tb2RlX2ZpeHVwKHN0cnVjdCBkcm1f
+ZW5jb2RlciAqZW5jb2RlciwKQEAgLTkyLDE1ICs5MywxNyBAQCB2b2lkIGV4eW5vc19kcm1fZW5j
+b2Rlcl9zZXR1cChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQogCiBpbnQgZXh5bm9zX2RybV9lbmNv
+ZGVyX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkJICAgICAgc3RydWN0IGV4eW5v
+c19kcm1fZW5jb2RlciAqZXh5bm9zX2VuY29kZXIsCi0JCQkgICAgICB1bnNpZ25lZCBsb25nIHBv
+c3NpYmxlX2NydGNzKQorCQkJICAgICAgZW51bSBleHlub3NfZHJtX291dHB1dF90eXBlIHR5cGUp
+CiB7CiAJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyOworCWludCBwaXBlOwogCi0JaWYgKCFw
+b3NzaWJsZV9jcnRjcykKLQkJcmV0dXJuIC1FSU5WQUw7CisJcGlwZSA9IGV4eW5vc19kcm1fY3J0
+Y19nZXRfcGlwZV9mcm9tX3R5cGUoZGV2LCB0eXBlKTsKKwlpZiAocGlwZSA8IDApCisJCXJldHVy
+biBwaXBlOwogCiAJZW5jb2RlciA9ICZleHlub3NfZW5jb2Rlci0+YmFzZTsKLQllbmNvZGVyLT5w
+b3NzaWJsZV9jcnRjcyA9IHBvc3NpYmxlX2NydGNzOworCWVuY29kZXItPnBvc3NpYmxlX2NydGNz
+ID0gMSA8PCBwaXBlOwogCiAJRFJNX0RFQlVHX0tNUygicG9zc2libGVfY3J0Y3MgPSAweCV4XG4i
+LCBlbmNvZGVyLT5wb3NzaWJsZV9jcnRjcyk7CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZW5jb2Rlci5oCmluZGV4IDAwNWY1ODMuLmU5OThiODIgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmgKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIuaApAQCAtMTQsOCArMTQsMTAgQEAKICNp
+Zm5kZWYgX0VYWU5PU19EUk1fRU5DT0RFUl9IXwogI2RlZmluZSBfRVhZTk9TX0RSTV9FTkNPREVS
+X0hfCiAKKyNpbmNsdWRlICJleHlub3NfZHJtX2Rydi5oIgorCiB2b2lkIGV4eW5vc19kcm1fZW5j
+b2Rlcl9zZXR1cChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKIGludCBleHlub3NfZHJtX2VuY29k
+ZXJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBleHlub3NfZHJtX2VuY29k
+ZXIKLQkJCSAgICAgICplbmNvZGVyLCB1bnNpZ25lZCBsb25nIHBvc3NpYmxlX2NydGNzKTsKKwkJ
+CSAgICAgICplbmNvZGVyLCBlbnVtIGV4eW5vc19kcm1fb3V0cHV0X3R5cGUgdHlwZSk7CiAKICNl
+bmRpZgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKaW5kZXggNGE5NDhh
+Zi4uNDJjMzk2MyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCkBA
+IC05NzQsOCArOTc0LDcgQEAgc3RhdGljIGludCBmaW1kX2JpbmQoc3RydWN0IGRldmljZSAqZGV2
+LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCiAJCXJldHVybiBQVFJfRVJSKGN0
+eC0+Y3J0Yyk7CiAKIAlpZiAoY3R4LT5lbmNvZGVyKQotCQlleHlub3NfZHJtX2NyZWF0ZV9lbmNf
+Y29ubihkcm1fZGV2LCBjdHgtPmVuY29kZXIsCi0JCQkJCSAgIEVYWU5PU19ESVNQTEFZX1RZUEVf
+TENEKTsKKwkJZXh5bm9zX2RwaV9iaW5kKGRybV9kZXYsIGN0eC0+ZW5jb2Rlcik7CiAKIAlyZXR1
+cm4gZmltZF9pb21tdV9hdHRhY2hfZGV2aWNlcyhjdHgsIGRybV9kZXYpOwogfQpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggZDdmOTUwMS4uOWI2NGM3NyAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYworKysgYi9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCkBAIC0zODksMTUgKzM4OSwx
+MSBAQCBzdGF0aWMgaW50IHZpZGlfY3JlYXRlX2Nvbm5lY3RvcihzdHJ1Y3QgZXh5bm9zX2RybV9l
+bmNvZGVyICpleHlub3NfZW5jb2RlcikKIAlyZXR1cm4gMDsKIH0KIAotCi1zdGF0aWMgc3RydWN0
+IGV4eW5vc19kcm1fZW5jb2Rlcl9vcHMgdmlkaV9lbmNvZGVyX29wcyA9IHsKLQkuY3JlYXRlX2Nv
+bm5lY3RvciA9IHZpZGlfY3JlYXRlX2Nvbm5lY3RvciwKLX07Ci0KIHN0YXRpYyBpbnQgdmlkaV9i
+aW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRh
+KQogewogCXN0cnVjdCB2aWRpX2NvbnRleHQgKmN0eCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwog
+CXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKKwlzdHJ1Y3QgZXh5bm9zX2RybV9l
+bmNvZGVyICpleHlub3NfZW5jb2RlciA9ICZjdHgtPmVuY29kZXI7CiAJc3RydWN0IGV4eW5vc19k
+cm1fcGxhbmUgKmV4eW5vc19wbGFuZTsKIAllbnVtIGRybV9wbGFuZV90eXBlIHR5cGU7CiAJdW5z
+aWduZWQgaW50IHpwb3M7CkBAIC00MjMsMTAgKzQxOSwxNyBAQCBzdGF0aWMgaW50IHZpZGlfYmlu
+ZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkK
+IAkJcmV0dXJuIFBUUl9FUlIoY3R4LT5jcnRjKTsKIAl9CiAKLQlyZXQgPSBleHlub3NfZHJtX2Ny
+ZWF0ZV9lbmNfY29ubihkcm1fZGV2LCAmY3R4LT5lbmNvZGVyLAotCQkJCQkgRVhZTk9TX0RJU1BM
+QVlfVFlQRV9WSURJKTsKKwlyZXQgPSBleHlub3NfZHJtX2VuY29kZXJfY3JlYXRlKGRybV9kZXYs
+IGV4eW5vc19lbmNvZGVyLAorCQkJCQlFWFlOT1NfRElTUExBWV9UWVBFX1ZJREkpOworCWlmIChy
+ZXQpIHsKKwkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gY3JlYXRlIGVuY29kZXJcbiIpOworCQlyZXR1
+cm4gcmV0OworCX0KKworCXJldCA9IHZpZGlfY3JlYXRlX2Nvbm5lY3RvcihleHlub3NfZW5jb2Rl
+cik7CiAJaWYgKHJldCkgewotCQljdHgtPmNydGMtPmJhc2UuZnVuY3MtPmRlc3Ryb3koJmN0eC0+
+Y3J0Yy0+YmFzZSk7CisJCURSTV9FUlJPUigiZmFpbGVkIHRvIGNyZWF0ZSBjb25uZWN0b3IgcmV0
+ID0gJWRcbiIsIHJldCk7CisJCWRybV9lbmNvZGVyX2NsZWFudXAoJmV4eW5vc19lbmNvZGVyLT5i
+YXNlKTsKIAkJcmV0dXJuIHJldDsKIAl9CiAKQEAgLTQ1Miw3ICs0NTUsNiBAQCBzdGF0aWMgaW50
+IHZpZGlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlpZiAoIWN0eCkKIAkJ
+cmV0dXJuIC1FTk9NRU07CiAKLQljdHgtPmVuY29kZXIub3BzID0gJnZpZGlfZW5jb2Rlcl9vcHM7
+CiAJY3R4LT5kZWZhdWx0X3dpbiA9IDA7CiAJY3R4LT5wZGV2ID0gcGRldjsKIApkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfaGRtaS5jCmluZGV4IDFmYzAxZmUuLjdkNTUwNzAgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTQ1LDYgKzQ1LDcgQEAKIAogI2luY2x1ZGUgImV4
+eW5vc19kcm1fZHJ2LmgiCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9jcnRjLmgiCisjaW5jbHVkZSAi
+ZXh5bm9zX2RybV9lbmNvZGVyLmgiCiAjaW5jbHVkZSAiZXh5bm9zX21peGVyLmgiCiAKICNpbmNs
+dWRlIDxsaW51eC9ncGlvLmg+CkBAIC0yMTAyLDcgKzIxMDMsNiBAQCBvdXQ6CiB9CiAKIHN0YXRp
+YyBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyX29wcyBoZG1pX2VuY29kZXJfb3BzID0gewotCS5j
+cmVhdGVfY29ubmVjdG9yID0gaGRtaV9jcmVhdGVfY29ubmVjdG9yLAogCS5tb2RlX2ZpeHVwCT0g
+aGRtaV9tb2RlX2ZpeHVwLAogCS5tb2RlX3NldAk9IGhkbWlfbW9kZV9zZXQsCiAJLmVuYWJsZQkJ
+PSBoZG1pX2VuYWJsZSwKQEAgLTIyNjQsMTEgKzIyNjQsMjYgQEAgc3RhdGljIGludCBoZG1pX2Jp
+bmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEp
+CiB7CiAJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwogCXN0cnVjdCBoZG1pX2Nv
+bnRleHQgKmhkYXRhID0gZGV2X2dldF9kcnZkYXRhKGRldik7CisJc3RydWN0IGV4eW5vc19kcm1f
+ZW5jb2RlciAqZXh5bm9zX2VuY29kZXIgPSAmaGRhdGEtPmVuY29kZXI7CisJaW50IHJldDsKIAog
+CWhkYXRhLT5kcm1fZGV2ID0gZHJtX2RldjsKIAotCXJldHVybiBleHlub3NfZHJtX2NyZWF0ZV9l
+bmNfY29ubihkcm1fZGV2LCAmaGRhdGEtPmVuY29kZXIsCi0JCQkJCSAgRVhZTk9TX0RJU1BMQVlf
+VFlQRV9IRE1JKTsKKwlyZXQgPSBleHlub3NfZHJtX2VuY29kZXJfY3JlYXRlKGRybV9kZXYsIGV4
+eW5vc19lbmNvZGVyLAorCQkJCQlFWFlOT1NfRElTUExBWV9UWVBFX0hETUkpOworCWlmIChyZXQp
+IHsKKwkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gY3JlYXRlIGVuY29kZXJcbiIpOworCQlyZXR1cm4g
+cmV0OworCX0KKworCWhkbWlfY3JlYXRlX2Nvbm5lY3RvcihleHlub3NfZW5jb2Rlcik7CisJaWYg
+KHJldCkgeworCQlEUk1fRVJST1IoImZhaWxlZCB0byBjcmVhdGUgY29ubmVjdG9yIHJldCA9ICVk
+XG4iLCByZXQpOworCQlkcm1fZW5jb2Rlcl9jbGVhbnVwKCZleHlub3NfZW5jb2Rlci0+YmFzZSk7
+CisJCXJldHVybiByZXQ7CisJfQorCisJcmV0dXJuIDA7CiB9CiAKIHN0YXRpYyB2b2lkIGhkbWlf
+dW5iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpk
+YXRhKQotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
