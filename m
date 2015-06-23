@@ -1,120 +1,77 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
-Date: Tue, 23 Jun 2015 08:05:54 +0530
-Message-ID: <CANAwSgTK+7xxvE2RNCTn7TuhfD7ZE7o4cj2pX5i6XEhRNufvPw@mail.gmail.com>
-References: <5569F435.5040708@unseen.is> <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
- <556E0931.9030703@unseen.is> <556E44B7.10303@samsung.com> <5576CD40.8060301@unseen.is>
- <CAJKOXPeehj++Ojt2Zo4sgNjVASzZ8r_6OROM6FK_BRRQqVzcGg@mail.gmail.com>
- <557B53C6.8070600@unseen.is> <557BC3DB.1030906@samsung.com>
- <CAJKOXPcqgcKiZ_4=H9wEgpzoMy5LKUsgtaw82gp4DCbY6e=JFg@mail.gmail.com>
- <CANAwSgQKFTG+ts=kVrZ1fR1EBcZL+7dgXqH1WhoJ7kZzz8hS3Q@mail.gmail.com> <5588A0CF.6000807@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
+ to 'sclk_mipi'
+Date: Tue, 23 Jun 2015 13:00:14 +0900
+Message-ID: <5588D9CE.2090103@samsung.com>
+References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
+ <1434113958-15877-16-git-send-email-human.hwang@samsung.com>
+ <5587D111.9090602@samsung.com> <5587F4A1.2090502@samsung.com>
+ <CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
+ <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
+ <5588C444.1000301@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:33521 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932213AbbFWCgQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 22:36:16 -0400
-In-Reply-To: <5588A0CF.6000807@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <5588C444.1000301@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, gabriel@unseen.is, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Robert Baldyga <r.baldyga@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Krzysztof
-
-On 23 June 2015 at 05:27, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> On 23.06.2015 01:00, Anand Moon wrote:
->> Hi Krzysztof
->>
->> On 13 June 2015 at 13:45, Krzysztof Kozlowski <k.kozlowski@samsung.com
->> <mailto:k.kozlowski@samsung.com>> wrote:
->>
->>     2015-06-13 14:47 GMT+09:00 Krzysztof Kozlowski
->>     <k.kozlowski@samsung.com <mailto:k.kozlowski@samsung.com>>:
->>     > W dniu 13.06.2015 o 06:48, gabriel@unseen.is
->>     <mailto:gabriel@unseen.is> pisze:
->>     >> On 06/10/2015 10:22 AM, Krzysztof Kozlowski wrote:
->>     >>>
->>     >>> Gabriel,
->>     >>>
->>     >>> I sent a patch which should fix the issue. Could you give it a
->>     try? Of
->>     >>> course don't revert the other patches and don't use other
->>     workarounds.
->>     >>> Just apply the patch on clean (vanilla would be the best) kernel.
->>     >>> [RFT PATCH] dmaengine: Fix choppy sound because of unimplemented
->>     resume
->>     >>>
->>     >>
->>     >> hi krzysztof,
->>     >>
->>     >> thanks a lot for your work. having only that patch applied
->>     unfortunately
->>     >> brought back the problem after something more than one day. the sound
->>     >> became choppy/noisy again. I will now compile the -next kernel
->>     and give
->>     >> it a try.
->>     >
->>     > Thanks, I'll try to reproduce the issue on my Odroid. Can you
->>     share more
->>     > details how to reproduce it? The audio must play continuously or just
->>     > from time to time but the board must be turned on for more than
->>     one day?
->>
->>     I bought some audio cables and successfully reproduced similar issue
->>     (choppy sound) on Odroid XU3-Lite. On current linux-next
->>     (next-20150612) the sound is awful (choppy) after few seconds of play.
->>     For example first four of:
->>     $ aplay /usr/share/sounds/alsa/Front_Right.wav
->>     work fine. But then it just gets worse and underruns are reported:
->>     $ Playing WAVE '/usr/share/sounds/alsa/Front_Right.wav' : Signed 16
->>     bit Little Endian, Rate 48000 Hz, Mono
->>     $ underrun!!! (at least 0.095 ms long)
->>
->>     Reverting the commit aee4d1fac887 ("dmaengine: pl330: improve
->>     pl330_tx_status() function") fixes this issue so this is not related
->>     to missing "resume" function. At least this particular issue on my
->>     Odroid is not related to missing resume but I did not try to play
->>     sound for 24 hours.
->>     My fix does not solve this. Probably "cc-stable" and "fixes" tags
->>     should be dropped.
->>
->>     Anyway I'll try to investigate it more. If anyone has any ideas,
->>     please share.
->>
->>     Best regards,
->>     Krzysztof
->>     --
->>     To unsubscribe from this list: send the line "unsubscribe
->>     linux-samsung-soc" in
->>     the body of a message to majordomo@vger.kernel.org
->>     <mailto:majordomo@vger.kernel.org>
->>     More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->> I gave it a try by enabling following config flags.
->>
->> CONFIG_SND_SEQUENCER=m
->> CONFIG_SND_SEQ_DUMMY=m
->> CONFIG_SND_USB_AUDIO=m
->>
->> I am able to play mp3 songs on Odroid-XU3 boards on vlc.
->> Could you give it a try.
->
-> What do you mean? Which patch are you talking about? Are you aware that
-> I tried to fix this two times?
->
-> I already tested the latest fix on Odroid XU3 - which I mentioned in
-> commit. However it would be nice to get confirmation for fixing original
-> bug report (that specific conditions on that board which Gabriel reported).
->
-> Best regards,
-> Krzysztof
-
-Looks like I missed the fix. Or I overlooked it.
-
-sorry for the noise.
-
--Anand Moon
+T24gMjMuMDYuMjAxNSAxMToyOCwgSW5raSBEYWUgd3JvdGU6Cj4gT24gMjAxNeuFhCAwNuyblCAy
+M+ydvCAxMToxMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPj4gMjAxNS0wNi0yMiAyMToz
+NSBHTVQrMDk6MDAgS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+
+Ogo+Pj4gMjAxNS0wNi0yMiAyMDo0MiBHTVQrMDk6MDAgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1
+bmcuY29tPjoKPj4+PiArIEtyenlzenRvZgo+Pj4+Cj4+Pj4gT24gMjAxNeuFhCAwNuyblCAyMuyd
+vCAxODoxMCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+IE9uIDIwMTXrhYQgMDbsm5QgMTLsnbwgMjE6
+NTksIEh5dW5nd29uIEh3YW5nIHdyb3RlOgo+Pj4+Pj4gVGhlIGNsb2NrIHdoaWNoIHdhcyBuYW1l
+ZCBhcyAncGxsX2NsaycgaXMgYWN0dWFsbHkgbm90IHRoZSBjbG9jayBzb3VyY2UKPj4+Pj4+IG9m
+IFBMTCBpbiBNSVBJIERTSS4gVGhpcyBwYXRjaCBmaXhlcyB0aGlzIGRpc2FncmVlbWVudC4KPj4+
+Pj4KPj4+Pj4gTXIuIEt1a2ppbiBhbmQgS3J6eXN6dG9mLCBjYW4geW91IGdpdmUgbWUgQWNrZWQt
+Ynkgb3IgU2luZ2VkLW9mZi1ieT8gSSdkCj4+Pj4+IGxpa2UgdG8gbWVyZ2UgdGhpcyBwYXRjaCB0
+byBtYWlubGluZSB0aHJvdWdoIGRybS1uZXh0Lgo+Pj4KPj4+IFRoYW5rcyBmb3IgZm9yd2FyZGlu
+ZyBtZSBvdGhlciBuZWNlc3NhcnkgcGF0Y2guIEFsbCB0aGF0IGJ1cmRlbiBjb3VsZAo+Pj4gYmUg
+ZWFzaWx5IGF2b2lkZWQgYnkgc2VuZGluZyBldmVyeXRoaW5nIHRvIHNhbXN1bmctc29jIGFueXdh
+eS4KPj4+Cj4+PiBUaGUgcGF0Y2ggaXRzZWxmIGxvb2tzIGdvb2Q6Cj4+PiBBY2tlZC1ieTogS3J6
+eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Cj4+Pgo+Pj4gQmVzdCBy
+ZWdhcmRzLAo+Pj4gS3J6eXN6dG9mCj4+Cj4+IFRvIGNsYXJpZnkuIFRoZXJlIHdlcmUgc2V2ZW4g
+dmVyc2lvbnMgb2YgdGhpcyBwYXRjaCBhbmQgbm9uZSBvZiB0aGVtCj4+IHdlcmUgc2VudCB0byBz
+YW1zdW5nLXNvYyBsaXN0LCB0byBLdWtqaW4gS2ltIG9yIHRvIG1lLgo+Pgo+PiBJIGFsc28gd29u
+ZGVyIGFib3V0IHBhdGNoIDI6ICJvZjogYWRkIGhlbHBlciBmb3IgZ2V0dGluZyBlbmRwb2ludCBu
+b2RlCj4+IHdpdGggc3BlY2lmaWMgaWRlbnRpZmllcnMiCj4+IGZvciB3aGljaCBJIGNhbid0IGZp
+bmQgcmVzcGVjdGl2ZSBhY2sgZnJvbSBSb2IgSGVycmluZyAoK0NjKS4gSSBvbmx5IGZvdW5kIHRo
+aXM6Cj4+IGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvZGV2aWNldHJlZS9tc2c2OTMzNi5o
+dG1sCj4+IGJ1dCB0aGVyZSBhcmUgb25seSBjb21tZW50cywgbm90IGFuIGFjay4KPiAKPiBCZWxv
+dyBpcyB0aGUgY29tbWVudHMgZnJvbSBSb2IgSGVycmluZy4gSG93IGFib3V0IHN1YnNjcmliaW5n
+IGRldmljZQo+IHRyZWUgbWFpbmxpbmcgbGlzdD8gWW91IGFyZSBhIG1haW50YWluZXIgb2YgRXh5
+bm9zIFNvQy4gVGhpcyBwYXRjaCB3YXMKPiBwb3N0ZWQgdG8gZGV2aWNlIHRyZWUgbWFpbGluZyBs
+aXN0IGNjaW5nIEdyYW50IGFuZCBSb2IuIElmIHlvdSBsaXN0ZW4gdG8KPiBvbmx5IFNhbXN1bmcg
+U29DIG1haWxpbmcgbGlzdCB0aGVuIHlvdSBjb3VsZG4ndCBmaW5kIHRoaXMgcGF0Y2ggaW4geW91
+cgo+IGVtYWlsIGJveC4KClNvbWUgdGltZSBhZ28gSSB3YXMgc3Vic2NyaWJpbmcgZGV2aWNldHJl
+ZSwgYnV0IGFzIEkgYW0gbm90IGRldmljZSB0cmVlCm1haW50YWluZXIgYW5kIHRoZSB0cmFmZmlj
+IHRoZXJlIGlzIHJlYWxseSBodWdlLCBJIHVuc3Vic2NyaWJlZC4KCj4gCj4gIk9uIFN1biwgRmVi
+IDIyLCAyMDE1IGF0IDc6NDEgUE0sIEh5dW5nd29uIEh3YW5nCj4gPGh1bWFuLmh3YW5nQHNhbXN1
+bmcuY29tPiB3cm90ZToKPiAgPiBXaGVuIHRoZXJlIGFyZSBtdWx0aXBsZSBwb3J0cyBvciBtdWx0
+aXBsZSBlbmRwb2ludHMgaW4gYSBwb3J0LCB0aGV5Cj4gaGF2ZSB0byBiZQo+ICA+IGRpc3Rpbmd1
+aXNoZWQgYnkgdGhlIHZhbHVlIG9mIHJlZyBwcm9wZXJ0eS4gSXQgaXMgY29tbW9uLiBUaGUgZHJp
+dmVycwo+IGNhbiBnZXQKPiAgPiB0aGUgc3BlY2lmaWMgZW5kcG9pbnQgaW4gdGhlIHNwZWNpZmlj
+IHBvcnQgdmlhIHRoaXMgZnVuY3Rpb24uIE5vdyB0aGUKPiBkcml2ZXJzCj4gID4gaGF2ZSB0byBp
+bXBsZW1lbnQgdGhpcyBjb2RlIGluIHRoZW1zZWx2ZXMgb3IgaGF2ZSB0byBmb3JjZSB0aGUgb3Jk
+ZXIKPiBvZiBkdCBub2Rlcwo+ICA+IHRvIGdldCB0aGUgcmlnaHQgbm9kZS4KPiAgPgo+ICA+IFNp
+Z25lZC1vZmYtYnk6IEh5dW5nd29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5nLmNvbT4KPiAK
+PiBBY2tlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KPiAKPiAgSSdtIG5vdCBh
+cHBseWluZyBhcyB0aGVyZSBpcyBubyB1c2VyLCBzbyBhcHBseSB0aGlzIHBhdGNoIGFsb25nIHdp
+dGggYQo+ICB1c2VyIG9mIHRoZSBmdW5jdGlvbi4iCgpUaGFua3MhIFRoYXQgaGVscGVkIG1lIGZp
+bmRpbmcgaXQgaW4gdGhlIGFyY2hpdmVzLgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
