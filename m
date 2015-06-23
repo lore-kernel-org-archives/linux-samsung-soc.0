@@ -1,62 +1,74 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
  to 'sclk_mipi'
-Date: Tue, 23 Jun 2015 11:10:18 +0900
-Message-ID: <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
+Date: Tue, 23 Jun 2015 11:28:20 +0900
+Message-ID: <5588C444.1000301@samsung.com>
 References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
-	<1434113958-15877-16-git-send-email-human.hwang@samsung.com>
-	<5587D111.9090602@samsung.com>
-	<5587F4A1.2090502@samsung.com>
-	<CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
+ <1434113958-15877-16-git-send-email-human.hwang@samsung.com>
+ <5587D111.9090602@samsung.com> <5587F4A1.2090502@samsung.com>
+ <CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
+ <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f47.google.com ([209.85.216.47]:43158 "EHLO
-	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752713AbbFWCKT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 22:10:19 -0400
-In-Reply-To: <CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, daniel@fooishbar.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-06-22 21:35 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com=
->:
-> 2015-06-22 20:42 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
->> + Krzysztof
->>
->> On 2015=EB=85=84 06=EC=9B=94 22=EC=9D=BC 18:10, Inki Dae wrote:
->>> On 2015=EB=85=84 06=EC=9B=94 12=EC=9D=BC 21:59, Hyungwon Hwang wrot=
-e:
->>>> The clock which was named as 'pll_clk' is actually not the clock s=
-ource
->>>> of PLL in MIPI DSI. This patch fixes this disagreement.
->>>
->>> Mr. Kukjin and Krzysztof, can you give me Acked-by or Singed-off-by=
-? I'd
->>> like to merge this patch to mainline through drm-next.
->
-> Thanks for forwarding me other necessary patch. All that burden could
-> be easily avoided by sending everything to samsung-soc anyway.
->
-> The patch itself looks good:
-> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> Best regards,
-> Krzysztof
-
-To clarify. There were seven versions of this patch and none of them
-were sent to samsung-soc list, to Kukjin Kim or to me.
-
-I also wonder about patch 2: "of: add helper for getting endpoint node
-with specific identifiers"
-for which I can't find respective ack from Rob Herring (+Cc). I only fo=
-und this:
-http://www.spinics.net/lists/devicetree/msg69336.html
-but there are only comments, not an ack.
-
-Best regards,
-Krzysztof
+T24gMjAxNeuFhCAwNuyblCAyM+ydvCAxMToxMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
+PiAyMDE1LTA2LTIyIDIxOjM1IEdNVCswOTowMCBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxv
+d3NraUBzYW1zdW5nLmNvbT46Cj4+IDIwMTUtMDYtMjIgMjA6NDIgR01UKzA5OjAwIElua2kgRGFl
+IDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4+PiArIEtyenlzenRvZgo+Pj4KPj4+IE9uIDIwMTXr
+hYQgMDbsm5QgMjLsnbwgMTg6MTAsIElua2kgRGFlIHdyb3RlOgo+Pj4+IE9uIDIwMTXrhYQgMDbs
+m5QgMTLsnbwgMjE6NTksIEh5dW5nd29uIEh3YW5nIHdyb3RlOgo+Pj4+PiBUaGUgY2xvY2sgd2hp
+Y2ggd2FzIG5hbWVkIGFzICdwbGxfY2xrJyBpcyBhY3R1YWxseSBub3QgdGhlIGNsb2NrIHNvdXJj
+ZQo+Pj4+PiBvZiBQTEwgaW4gTUlQSSBEU0kuIFRoaXMgcGF0Y2ggZml4ZXMgdGhpcyBkaXNhZ3Jl
+ZW1lbnQuCj4+Pj4KPj4+PiBNci4gS3VramluIGFuZCBLcnp5c3p0b2YsIGNhbiB5b3UgZ2l2ZSBt
+ZSBBY2tlZC1ieSBvciBTaW5nZWQtb2ZmLWJ5PyBJJ2QKPj4+PiBsaWtlIHRvIG1lcmdlIHRoaXMg
+cGF0Y2ggdG8gbWFpbmxpbmUgdGhyb3VnaCBkcm0tbmV4dC4KPj4KPj4gVGhhbmtzIGZvciBmb3J3
+YXJkaW5nIG1lIG90aGVyIG5lY2Vzc2FyeSBwYXRjaC4gQWxsIHRoYXQgYnVyZGVuIGNvdWxkCj4+
+IGJlIGVhc2lseSBhdm9pZGVkIGJ5IHNlbmRpbmcgZXZlcnl0aGluZyB0byBzYW1zdW5nLXNvYyBh
+bnl3YXkuCj4+Cj4+IFRoZSBwYXRjaCBpdHNlbGYgbG9va3MgZ29vZDoKPj4gQWNrZWQtYnk6IEty
+enlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+Pgo+PiBCZXN0IHJl
+Z2FyZHMsCj4+IEtyenlzenRvZgo+IAo+IFRvIGNsYXJpZnkuIFRoZXJlIHdlcmUgc2V2ZW4gdmVy
+c2lvbnMgb2YgdGhpcyBwYXRjaCBhbmQgbm9uZSBvZiB0aGVtCj4gd2VyZSBzZW50IHRvIHNhbXN1
+bmctc29jIGxpc3QsIHRvIEt1a2ppbiBLaW0gb3IgdG8gbWUuCj4gCj4gSSBhbHNvIHdvbmRlciBh
+Ym91dCBwYXRjaCAyOiAib2Y6IGFkZCBoZWxwZXIgZm9yIGdldHRpbmcgZW5kcG9pbnQgbm9kZQo+
+IHdpdGggc3BlY2lmaWMgaWRlbnRpZmllcnMiCj4gZm9yIHdoaWNoIEkgY2FuJ3QgZmluZCByZXNw
+ZWN0aXZlIGFjayBmcm9tIFJvYiBIZXJyaW5nICgrQ2MpLiBJIG9ubHkgZm91bmQgdGhpczoKPiBo
+dHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2RldmljZXRyZWUvbXNnNjkzMzYuaHRtbAo+IGJ1
+dCB0aGVyZSBhcmUgb25seSBjb21tZW50cywgbm90IGFuIGFjay4KCkJlbG93IGlzIHRoZSBjb21t
+ZW50cyBmcm9tIFJvYiBIZXJyaW5nLiBIb3cgYWJvdXQgc3Vic2NyaWJpbmcgZGV2aWNlCnRyZWUg
+bWFpbmxpbmcgbGlzdD8gWW91IGFyZSBhIG1haW50YWluZXIgb2YgRXh5bm9zIFNvQy4gVGhpcyBw
+YXRjaCB3YXMKcG9zdGVkIHRvIGRldmljZSB0cmVlIG1haWxpbmcgbGlzdCBjY2luZyBHcmFudCBh
+bmQgUm9iLiBJZiB5b3UgbGlzdGVuIHRvCm9ubHkgU2Ftc3VuZyBTb0MgbWFpbGluZyBsaXN0IHRo
+ZW4geW91IGNvdWxkbid0IGZpbmQgdGhpcyBwYXRjaCBpbiB5b3VyCmVtYWlsIGJveC4KCiJPbiBT
+dW4sIEZlYiAyMiwgMjAxNSBhdCA3OjQxIFBNLCBIeXVuZ3dvbiBId2FuZwo8aHVtYW4uaHdhbmdA
+c2Ftc3VuZy5jb20+IHdyb3RlOgogPiBXaGVuIHRoZXJlIGFyZSBtdWx0aXBsZSBwb3J0cyBvciBt
+dWx0aXBsZSBlbmRwb2ludHMgaW4gYSBwb3J0LCB0aGV5CmhhdmUgdG8gYmUKID4gZGlzdGluZ3Vp
+c2hlZCBieSB0aGUgdmFsdWUgb2YgcmVnIHByb3BlcnR5LiBJdCBpcyBjb21tb24uIFRoZSBkcml2
+ZXJzCmNhbiBnZXQKID4gdGhlIHNwZWNpZmljIGVuZHBvaW50IGluIHRoZSBzcGVjaWZpYyBwb3J0
+IHZpYSB0aGlzIGZ1bmN0aW9uLiBOb3cgdGhlCmRyaXZlcnMKID4gaGF2ZSB0byBpbXBsZW1lbnQg
+dGhpcyBjb2RlIGluIHRoZW1zZWx2ZXMgb3IgaGF2ZSB0byBmb3JjZSB0aGUgb3JkZXIKb2YgZHQg
+bm9kZXMKID4gdG8gZ2V0IHRoZSByaWdodCBub2RlLgogPgogPiBTaWduZWQtb2ZmLWJ5OiBIeXVu
+Z3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3VuZy5jb20+CgpBY2tlZC1ieTogUm9iIEhlcnJp
+bmcgPHJvYmhAa2VybmVsLm9yZz4KCiBJJ20gbm90IGFwcGx5aW5nIGFzIHRoZXJlIGlzIG5vIHVz
+ZXIsIHNvIGFwcGx5IHRoaXMgcGF0Y2ggYWxvbmcgd2l0aCBhCiB1c2VyIG9mIHRoZSBmdW5jdGlv
+bi4iCgpUaGF0IGlzIHdoeSBJIG1lcmdlZCB0aGlzIHBhdGNoIHRvIGV4eW5vcy1kcm0tbmV4dC4K
+ClRoYW5rcywKSW5raSBEYWUKCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo+IC0tCj4g
+VG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJl
+IGRldmljZXRyZWUiIGluCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
