@@ -1,48 +1,90 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] Show proper respect for Heinrich Hertz by using the
- correct unit for frequency
-Date: Sat, 2 May 2015 16:59:47 +0200
-Message-ID: <20150502145947.GA8156@xo-6d-61-c0.localdomain>
-References: <20150511131952.GD2067@n2100.arm.linux.org.uk>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH 04/11] mtd: ofpart: do not fail probe when no partitions
+ exist
+Date: Tue, 23 Jun 2015 11:26:33 -0700
+Message-ID: <20150623182633.GO4917@ld-irv-0074>
+References: <cover.1433364398.git.hramrach@gmail.com>
+ <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58530 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754568AbbFWQvh (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:32971 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933113AbbFWS0n (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jun 2015 12:51:37 -0400
+	Tue, 23 Jun 2015 14:26:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20150511131952.GD2067@n2100.arm.linux.org.uk>
+In-Reply-To: <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Michal Suchanek <hramrach@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, David Woodhouse <dwmw2@infradead.org>, Han Xu <han.xu@freescale.com>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Marek Vasut <marex@denx.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alison Chaiken <alison_chaiken@mentor.com>, Huang Shijie <b32955@freescale.com>, Ben Hutchings <ben@decadent.org.uk>, Knut Wohlrab <knut.wohlrab@de.bosch.com>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "grmoore@altera.com" <grmoore@alter>
 
-Hi!
+On Wed, Jun 03, 2015 at 09:26:40PM -0000, Michal Suchanek wrote:
+> On Exynos it is necessary to set SPI controller parameters that apply to
+> a SPI slave in a DT subnode of the slave device. The ofpart code returns
+> an error when there are subnodes of the SPI flash but no partitions are
+> found. Change this condition to a warning so that flash without
+> partitions can be accessed on Exynos.
 
-> The SI unit of frequency is Hertz, named after Heinrich Hertz, and is
-> given the symbol "Hz" to denote this.  "hz" is not the unit of frequency,
-> and is in fact meaningless.
+So judging by the subsequent discussion, you're looking at handling
+nodes like this:
+
+	flash@... {
+		compatible = "m25p80";
+		...
+
+		controller-data {
+			samsung,spi-feedback-delay = <0>;
+		};
+	};
+
+Now, I'm not a real fan of this controller-data node in the first place
+(did that binding get reviewed?). But this is especially bad since
+we now have collisions on what to do with subnodes that don't have a
+compatible property. By legacy, ofpart has already claimed ownership of
+subnodes of an MTD node, where the subnode does not have a compatible
+property. See Documentation/devicetree/bindings/mtd/partition.txt:
+
+  "NOTE: if the sub-node has a compatible string, then it is not a
+  partition."
+
+So it seems the natural solution is to just define a proper
+compatibile property for this subnode, and ofpart.c will naturally
+handle this. See:
+
+commit e79265ba6bdb31437bd4c3e7911950f9d1262a07
+Author: Josh Wu <josh.wu@atmel.com>
+Date:   Mon Aug 5 19:14:38 2013 +0800
+
+    mtd: ofpart: add compatible check for child nodes
+
+
+
+Brian
+
+> Signed-off-by: Michal Suchanek <hramrach@gmail.com>
+> ---
+>  drivers/mtd/ofpart.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Fix arch/arm to correctly use "Hz", thereby acknowledging Heinrich Hertz
-> contribution to the modern world.
-> 
-
-> --- a/arch/arm/mach-ixp4xx/include/mach/platform.h
-> +++ b/arch/arm/mach-ixp4xx/include/mach/platform.h
-> @@ -74,7 +74,7 @@ extern unsigned long ixp4xx_exp_bus_size;
->  /*
->   * Clock Speed Definitions.
->   */
-> -#define IXP4XX_PERIPHERAL_BUS_CLOCK 	(66) /* 66Mhzi APB BUS   */ 
-> +#define IXP4XX_PERIPHERAL_BUS_CLOCK 	(66) /* 66MHzi APB BUS   */ 
->  #define IXP4XX_UART_XTAL        	14745600
+> diff --git a/drivers/mtd/ofpart.c b/drivers/mtd/ofpart.c
+> index aa26c32..a29d29f 100644
+> --- a/drivers/mtd/ofpart.c
+> +++ b/drivers/mtd/ofpart.c
+> @@ -94,10 +94,10 @@ static int parse_ofpart_partitions(struct mtd_info *master,
 >  
-
-Speaking about meaningless... What is MHzi supposed to mean?
-
-ACK for the rest.
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>  	if (!i) {
+>  		of_node_put(pp);
+> -		pr_err("No valid partition found on %s\n", node->full_name);
+> +		pr_warn("No valid partition found on %s\n", node->full_name);
+>  		kfree(*pparts);
+>  		*pparts = NULL;
+> -		return -EINVAL;
+> +		return 0;
+>  	}
+>  
+>  	return nr_parts;
+> -- 
+> 2.1.4
+> 
