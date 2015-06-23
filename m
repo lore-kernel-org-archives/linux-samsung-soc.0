@@ -1,44 +1,49 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 01/23] drm/exynos: pass the correct pipe number
-Date: Tue, 23 Jun 2015 18:35:14 -0300
-Message-ID: <1435095336-6196-2-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 04/23] drm/exynos: remove duplicated check for suspend
+Date: Tue, 23 Jun 2015 18:35:17 -0300
+Message-ID: <1435095336-6196-5-git-send-email-gustavo@padovan.org>
 References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f174.google.com ([209.85.220.174]:36334 "EHLO
-	mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932116AbbFWVfr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jun 2015 17:35:47 -0400
-Received: by qkfe185 with SMTP id e185so12173912qkf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2015 14:35:46 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Instead of giving -1 to as arg to  drm_send_vblank_event() pass the
-correct pipe number to it.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 644b4b7..22b9ca0 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -203,7 +203,7 @@ void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	if (exynos_crtc->event) {
- 
--		drm_send_vblank_event(dev, -1, exynos_crtc->event);
-+		drm_send_vblank_event(dev, pipe, exynos_crtc->event);
- 		drm_vblank_put(dev, pipe);
- 		wake_up(&exynos_crtc->pending_flip_queue);
- 
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlIHNhbWUgY2hlY2sgaXMgcGxhY2VkIHR3aWNlIGluIGZpbWQvZGVjb25fdXBkYXRlX3BsYW5l
+KCksIHJlbW92ZQpvbmUgb2YgdGhlbS4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8
+Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgfCAzIC0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyAgIHwgMyAtLS0KIDIgZmlsZXMgY2hhbmdlZCwgNiBkZWxldGlvbnMo
+LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29u
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKaW5kZXggNDNj
+MGFiNy4uYWU1MGJmNCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3
+X2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVj
+b24uYwpAQCAtNDEwLDkgKzQxMCw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX3dpbl9jb21taXQoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKIAogCXBsYW5lID0g
+JmN0eC0+cGxhbmVzW3dpbl07CiAKLQlpZiAoY3R4LT5zdXNwZW5kZWQpCi0JCXJldHVybjsKLQog
+CS8qCiAJICogU0hBRE9XQ09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBlbmFibGluZyB0
+aW1pbmcuCiAJICoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4
+IDY1OTk3NmMuLmZhZTI2M2VlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+aW1kLmMKQEAgLTY1NCw5ICs2NTQsNiBAQCBzdGF0aWMgdm9pZCBmaW1kX3dpbl9jb21taXQoc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKIAogCXBsYW5lID0g
+JmN0eC0+cGxhbmVzW3dpbl07CiAKLQlpZiAoY3R4LT5zdXNwZW5kZWQpCi0JCXJldHVybjsKLQog
+CS8qCiAJICogU0hBRE9XQ09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBlbmFibGluZyB0
+aW1pbmcuCiAJICoKLS0gCjIuMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
