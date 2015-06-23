@@ -1,90 +1,86 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH 04/11] mtd: ofpart: do not fail probe when no partitions
- exist
-Date: Tue, 23 Jun 2015 11:26:33 -0700
-Message-ID: <20150623182633.GO4917@ld-irv-0074>
-References: <cover.1433364398.git.hramrach@gmail.com>
- <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 00/23] drm/exynos: atomic improvements + exynos_encoder removal
+Date: Tue, 23 Jun 2015 18:35:13 -0300
+Message-ID: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:32971 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933113AbbFWS0n (ORCPT
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:35354 "EHLO
+	mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932116AbbFWVfo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jun 2015 14:26:43 -0400
-Content-Disposition: inline
-In-Reply-To: <36e315552c849a4d22ac0fcff7958f6ffcafb160.1433364398.git.hramrach@gmail.com>
+	Tue, 23 Jun 2015 17:35:44 -0400
+Received: by qkbp125 with SMTP id p125so12198759qkb.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2015 14:35:43 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, David Woodhouse <dwmw2@infradead.org>, Han Xu <han.xu@freescale.com>, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Marek Vasut <marex@denx.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alison Chaiken <alison_chaiken@mentor.com>, Huang Shijie <b32955@freescale.com>, Ben Hutchings <ben@decadent.org.uk>, Knut Wohlrab <knut.wohlrab@de.bosch.com>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "grmoore@altera.com" <grmoore@alter>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On Wed, Jun 03, 2015 at 09:26:40PM -0000, Michal Suchanek wrote:
-> On Exynos it is necessary to set SPI controller parameters that apply to
-> a SPI slave in a DT subnode of the slave device. The ofpart code returns
-> an error when there are subnodes of the SPI flash but no partitions are
-> found. Change this condition to a warning so that flash without
-> partitions can be accessed on Exynos.
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-So judging by the subsequent discussion, you're looking at handling
-nodes like this:
+Hi,
 
-	flash@... {
-		compatible = "m25p80";
-		...
+This set improves exynos in a number of ways. The first five patches are
+general clean up/fixes.
 
-		controller-data {
-			samsung,spi-feedback-delay = <0>;
-		};
-	};
+Patches 06 to 12 are improvements on top of the newly added atomic modesetting
+support.
 
-Now, I'm not a real fan of this controller-data node in the first place
-(did that binding get reviewed?). But this is especially bad since
-we now have collisions on what to do with subnodes that don't have a
-compatible property. By legacy, ofpart has already claimed ownership of
-subnodes of an MTD node, where the subnode does not have a compatible
-property. See Documentation/devicetree/bindings/mtd/partition.txt:
+Patches 13-23 are a big journey to completely remove the internal
+exynos_drm_encoder struct. Now exynos encoders register themselves directly
+with the drm core.
 
-  "NOTE: if the sub-node has a compatible string, then it is not a
-  partition."
+Please review!
 
-So it seems the natural solution is to just define a proper
-compatibile property for this subnode, and ofpart.c will naturally
-handle this. See:
+	Gustavo
 
-commit e79265ba6bdb31437bd4c3e7911950f9d1262a07
-Author: Josh Wu <josh.wu@atmel.com>
-Date:   Mon Aug 5 19:14:38 2013 +0800
+Gustavo Padovan (23):
+  drm/exynos: pass the correct pipe number
+  drm/exynos: calculate vrefresh instead of use a fixed value
+  drm/exynos: use KMS version of DRM vblanks functions
+  drm/exynos: remove duplicated check for suspend
+  drm/exynos: Kconfig: select DP if FIMD or DECON are selected
+  drm/exynos: add atomic asynchronous commit
+  drm/exynos: rename win_commit/disable to atomic-like names
+  drm/exynos: pass struct exynos_drm_plane in update/enable
+  drm/exynos: use drm atomic state directly
+  drm/exynos: remove unused fields from struct exynos_drm_plane
+  drm/exynos: unify exynos_drm_plane names with drm core
+  drm/exynos: don't track enabled state at exynos_crtc
+  drm/exynos: split display's .dpms() into .enable() and .disable()
+  drm/exynos: remove wrappers for phy_power_{on,off}
+  drm/exynos: remove unused .remove() and .check_mode() ops from display
+  drm/exynos: simplify calculation of possible CRTCs
+  drm/exynos: remove struct exynos_drm_display
+  drm/exynos: remove extra call to hdmi_commit()
+  drm/exynos: remove extra call to exynos_dp_commit()
+  drm/exynos: remove exynos_encoder's .commit() op
+  drm/exynos: remove exynos_drm_create_enc_conn()
+  drm/exynos: fold encoder setup into exynos_drm_load()
+  drm/exynos: remove struct exynos_drm_encoder layer
 
-    mtd: ofpart: add compatible check for child nodes
+ drivers/gpu/drm/exynos/Kconfig              |   4 +-
+ drivers/gpu/drm/exynos/Makefile             |   7 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c  |  86 +++++++-------
+ drivers/gpu/drm/exynos/exynos_dp_core.c     | 122 +++++++++----------
+ drivers/gpu/drm/exynos/exynos_dp_core.h     |   3 +-
+ drivers/gpu/drm/exynos/exynos_drm_core.c    |  36 ------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    |  33 ++----
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h    |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  96 ++++++++-------
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |  19 ++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     | 115 +++++-------------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 129 ++++++++++-----------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c | 174 ----------------------------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.h |  23 ----
+ drivers/gpu/drm/exynos/exynos_drm_fb.c      |  51 ++++++--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  99 +++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c   |  31 ++---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    | 107 +++++++++--------
+ drivers/gpu/drm/exynos/exynos_hdmi.c        | 168 +++++++++++++--------------
+ drivers/gpu/drm/exynos/exynos_mixer.c       | 111 +++++++++---------
+ 20 files changed, 572 insertions(+), 846 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.h
 
-
-
-Brian
-
-> Signed-off-by: Michal Suchanek <hramrach@gmail.com>
-> ---
->  drivers/mtd/ofpart.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/ofpart.c b/drivers/mtd/ofpart.c
-> index aa26c32..a29d29f 100644
-> --- a/drivers/mtd/ofpart.c
-> +++ b/drivers/mtd/ofpart.c
-> @@ -94,10 +94,10 @@ static int parse_ofpart_partitions(struct mtd_info *master,
->  
->  	if (!i) {
->  		of_node_put(pp);
-> -		pr_err("No valid partition found on %s\n", node->full_name);
-> +		pr_warn("No valid partition found on %s\n", node->full_name);
->  		kfree(*pparts);
->  		*pparts = NULL;
-> -		return -EINVAL;
-> +		return 0;
->  	}
->  
->  	return nr_parts;
-> -- 
-> 2.1.4
-> 
+-- 
+2.1.0
