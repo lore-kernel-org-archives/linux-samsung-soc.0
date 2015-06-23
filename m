@@ -1,194 +1,247 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 07/23] drm/exynos: rename win_commit/disable to atomic-like
- names
-Date: Tue, 23 Jun 2015 18:35:20 -0300
-Message-ID: <1435095336-6196-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 11/23] drm/exynos: unify exynos_drm_plane names with drm core
+Date: Tue, 23 Jun 2015 18:35:24 -0300
+Message-ID: <1435095336-6196-12-git-send-email-gustavo@padovan.org>
 References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:32788 "EHLO
+	mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933293AbbFWVgQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Jun 2015 17:36:16 -0400
+Received: by qkhu186 with SMTP id u186so12215199qkh.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2015 14:36:16 -0700 (PDT)
 In-Reply-To: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-UmVuYW1lIHdpbl9jb21taXQoKSBoZWxwZXIgdG8gdXBkYXRlX3BsYW5lKCkgYW5kIHdpbl9kaXNh
-YmxlKCkgdG8KZGlzYWJsZV9wbGFuZSgpLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFu
-IDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyB8IDEwICsrKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICB8ICA4ICsrKystLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgfCAxMCArKysrKy0tLS0tCiBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgfCAxMCArKysrKy0tLS0tCiBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgfCAgNiArKystLS0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgICAgICB8IDEwICsrKysrLS0tLS0KIDYgZmls
-ZXMgY2hhbmdlZCwgMjcgaW5zZXJ0aW9ucygrKSwgMjcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9kZWNvbi5jCmluZGV4IGFlNTBiZjQuLmM2OTk4NWUg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYwor
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKQEAgLTM5Miw3
-ICszOTIsNyBAQCBzdGF0aWMgdm9pZCBkZWNvbl9zaGFkb3dfcHJvdGVjdF93aW4oc3RydWN0IGRl
-Y29uX2NvbnRleHQgKmN0eCwKIAl3cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyBTSEFET1dDT04pOwog
-fQogCi1zdGF0aWMgdm9pZCBkZWNvbl93aW5fY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmNydGMsIHVuc2lnbmVkIGludCB3aW4pCitzdGF0aWMgdm9pZCBkZWNvbl91cGRhdGVfcGxhbmUo
-c3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKIHsKIAlzdHJ1
-Y3QgZGVjb25fY29udGV4dCAqY3R4ID0gY3J0Yy0+Y3R4OwogCXN0cnVjdCBkcm1fZGlzcGxheV9t
-b2RlICptb2RlID0gJmNydGMtPmJhc2Uuc3RhdGUtPmFkanVzdGVkX21vZGU7CkBAIC01MDIsNyAr
-NTAyLDcgQEAgc3RhdGljIHZvaWQgZGVjb25fd2luX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9j
-cnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQogCXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIERF
-Q09OX1VQREFURSk7CiB9CiAKLXN0YXRpYyB2b2lkIGRlY29uX3dpbl9kaXNhYmxlKHN0cnVjdCBl
-eHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGludCB3aW4pCitzdGF0aWMgdm9pZCBkZWNv
-bl9kaXNhYmxlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGlu
-dCB3aW4pCiB7CiAJc3RydWN0IGRlY29uX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKIAlzdHJ1
-Y3QgZXh5bm9zX2RybV9wbGFuZSAqcGxhbmU7CkBAIC02MDgsNyArNjA4LDcgQEAgc3RhdGljIHZv
-aWQgZGVjb25fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCSAqIGEgZGVz
-dHJveWVkIGJ1ZmZlciBsYXRlci4KIAkgKi8KIAlmb3IgKGkgPSAwOyBpIDwgV0lORE9XU19OUjsg
-aSsrKQotCQlkZWNvbl93aW5fZGlzYWJsZShjcnRjLCBpKTsKKwkJZGVjb25fZGlzYWJsZV9wbGFu
-ZShjcnRjLCBpKTsKIAogCWNsa19kaXNhYmxlX3VucHJlcGFyZShjdHgtPnZjbGspOwogCWNsa19k
-aXNhYmxlX3VucHJlcGFyZShjdHgtPmVjbGspOwpAQCAtNjI4LDggKzYyOCw4IEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyBkZWNvbl9jcnRjX29wcyA9IHsKIAkuZW5h
-YmxlX3ZibGFuayA9IGRlY29uX2VuYWJsZV92YmxhbmssCiAJLmRpc2FibGVfdmJsYW5rID0gZGVj
-b25fZGlzYWJsZV92YmxhbmssCiAJLndhaXRfZm9yX3ZibGFuayA9IGRlY29uX3dhaXRfZm9yX3Zi
-bGFuaywKLQkud2luX2NvbW1pdCA9IGRlY29uX3dpbl9jb21taXQsCi0JLndpbl9kaXNhYmxlID0g
-ZGVjb25fd2luX2Rpc2FibGUsCisJLnVwZGF0ZV9wbGFuZSA9IGRlY29uX3VwZGF0ZV9wbGFuZSwK
-KwkuZGlzYWJsZV9wbGFuZSA9IGRlY29uX2Rpc2FibGVfcGxhbmUsCiB9OwogCiAKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAppbmRleCBlOTRkNTI3Li42ZjQ0OTg4IDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCkBAIC0xNTMsOCArMTUzLDggQEAg
-c3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSB7CiAgKiBAZGlzYWJsZV92Ymxhbms6IHNwZWNpZmlj
-IGRyaXZlciBjYWxsYmFjayBmb3IgZGlzYWJsaW5nIHZibGFuayBpbnRlcnJ1cHQuCiAgKiBAd2Fp
-dF9mb3JfdmJsYW5rOiB3YWl0IGZvciB2YmxhbmsgaW50ZXJydXB0IHRvIG1ha2Ugc3VyZSB0aGF0
-CiAgKgloYXJkd2FyZSBvdmVybGF5IGlzIHVwZGF0ZWQuCi0gKiBAd2luX2NvbW1pdDogYXBwbHkg
-aGFyZHdhcmUgc3BlY2lmaWMgb3ZlcmxheSBkYXRhIHRvIHJlZ2lzdGVycy4KLSAqIEB3aW5fZGlz
-YWJsZTogZGlzYWJsZSBoYXJkd2FyZSBzcGVjaWZpYyBvdmVybGF5LgorICogQHVwZGF0ZV9wbGFu
-ZTogYXBwbHkgaGFyZHdhcmUgc3BlY2lmaWMgb3ZlcmxheSBkYXRhIHRvIHJlZ2lzdGVycy4KKyAq
-IEBkaXNhYmxlX3BsYW5lOiBkaXNhYmxlIGhhcmR3YXJlIHNwZWNpZmljIG92ZXJsYXkuCiAgKiBA
-dGVfaGFuZGxlcjogdHJpZ2dlciB0byB0cmFuc2ZlciB2aWRlbyBpbWFnZSBhdCB0aGUgdGVhcmlu
-ZyBlZmZlY3QKICAqCXN5bmNocm9uaXphdGlvbiBzaWduYWwgaWYgdGhlcmUgaXMgYSBwYWdlIGZs
-aXAgcmVxdWVzdC4KICAqIEBjbG9ja19lbmFibGU6IG9wdGlvbmFsIGZ1bmN0aW9uIGVuYWJsaW5n
-L2Rpc2FibGluZyBkaXNwbGF5IGRvbWFpbiBjbG9jaywKQEAgLTE3Myw4ICsxNzMsOCBAQCBzdHJ1
-Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB7CiAJaW50ICgqZW5hYmxlX3ZibGFuaykoc3RydWN0IGV4
-eW5vc19kcm1fY3J0YyAqY3J0Yyk7CiAJdm9pZCAoKmRpc2FibGVfdmJsYW5rKShzdHJ1Y3QgZXh5
-bm9zX2RybV9jcnRjICpjcnRjKTsKIAl2b2lkICgqd2FpdF9mb3JfdmJsYW5rKShzdHJ1Y3QgZXh5
-bm9zX2RybV9jcnRjICpjcnRjKTsKLQl2b2lkICgqd2luX2NvbW1pdCkoc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHpwb3MpOwotCXZvaWQgKCp3aW5fZGlzYWJsZSko
-c3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHpwb3MpOworCXZvaWQg
-KCp1cGRhdGVfcGxhbmUpKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGlu
-dCB6cG9zKTsKKwl2b2lkICgqZGlzYWJsZV9wbGFuZSkoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAq
-Y3J0YywgdW5zaWduZWQgaW50IHpwb3MpOwogCXZvaWQgKCp0ZV9oYW5kbGVyKShzdHJ1Y3QgZXh5
-bm9zX2RybV9jcnRjICpjcnRjKTsKIAl2b2lkICgqY2xvY2tfZW5hYmxlKShzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjICpjcnRjLCBib29sIGVuYWJsZSk7CiB9OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1kLmMKaW5kZXggZmFlMjYzZWUuLmU5NDFmMmEgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpAQCAtNjM4LDcgKzYzOCw3IEBAIHN0YXRpYyB2
-b2lkIGZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwKIAl3
-cml0ZWwodmFsLCBjdHgtPnJlZ3MgKyByZWcpOwogfQogCi1zdGF0aWMgdm9pZCBmaW1kX3dpbl9j
-b21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKK3N0
-YXRpYyB2b2lkIGZpbWRfdXBkYXRlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMs
-IHVuc2lnbmVkIGludCB3aW4pCiB7CiAJc3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gY3J0Yy0+
-Y3R4OwogCXN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFuZTsKQEAgLTc0Niw3ICs3NDYsNyBA
-QCBzdGF0aWMgdm9pZCBmaW1kX3dpbl9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
-YywgdW5zaWduZWQgaW50IHdpbikKIAkJYXRvbWljX3NldCgmY3R4LT53aW5fdXBkYXRlZCwgMSk7
-CiB9CiAKLXN0YXRpYyB2b2lkIGZpbWRfd2luX2Rpc2FibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0
-YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKK3N0YXRpYyB2b2lkIGZpbWRfZGlzYWJsZV9wbGFu
-ZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQogewogCXN0
-cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9IGNydGMtPmN0eDsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9w
-bGFuZSAqcGxhbmU7CkBAIC04MTYsNyArODE2LDcgQEAgc3RhdGljIHZvaWQgZmltZF9kaXNhYmxl
-KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJICogYSBkZXN0cm95ZWQgYnVmZmVyIGxh
-dGVyLgogCSAqLwogCWZvciAoaSA9IDA7IGkgPCBXSU5ET1dTX05SOyBpKyspCi0JCWZpbWRfd2lu
-X2Rpc2FibGUoY3J0YywgaSk7CisJCWZpbWRfZGlzYWJsZV9wbGFuZShjcnRjLCBpKTsKIAogCWZp
-bWRfZW5hYmxlX3ZibGFuayhjcnRjKTsKIAlmaW1kX3dhaXRfZm9yX3ZibGFuayhjcnRjKTsKQEAg
-LTkxMSw4ICs5MTEsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGV4eW5vc19kcm1fY3J0Y19vcHMg
-ZmltZF9jcnRjX29wcyA9IHsKIAkuZW5hYmxlX3ZibGFuayA9IGZpbWRfZW5hYmxlX3ZibGFuaywK
-IAkuZGlzYWJsZV92YmxhbmsgPSBmaW1kX2Rpc2FibGVfdmJsYW5rLAogCS53YWl0X2Zvcl92Ymxh
-bmsgPSBmaW1kX3dhaXRfZm9yX3ZibGFuaywKLQkud2luX2NvbW1pdCA9IGZpbWRfd2luX2NvbW1p
-dCwKLQkud2luX2Rpc2FibGUgPSBmaW1kX3dpbl9kaXNhYmxlLAorCS51cGRhdGVfcGxhbmUgPSBm
-aW1kX3VwZGF0ZV9wbGFuZSwKKwkuZGlzYWJsZV9wbGFuZSA9IGZpbWRfZGlzYWJsZV9wbGFuZSwK
-IAkudGVfaGFuZGxlciA9IGZpbWRfdGVfaGFuZGxlciwKIAkuY2xvY2tfZW5hYmxlID0gZmltZF9k
-cF9jbG9ja19lbmFibGUsCiB9OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX3BsYW5lLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxh
-bmUuYwppbmRleCBhNzI5OTgwLi5lYjllZWM5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fcGxhbmUuYwpAQCAtMTc5LDggKzE3OSw4IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19w
-bGFuZV9hdG9taWNfdXBkYXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogCQkJICAgICAgc3Rh
-dGUtPnNyY194ID4+IDE2LCBzdGF0ZS0+c3JjX3kgPj4gMTYsCiAJCQkgICAgICBzdGF0ZS0+c3Jj
-X3cgPj4gMTYsIHN0YXRlLT5zcmNfaCA+PiAxNik7CiAKLQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+
-d2luX2NvbW1pdCkKLQkJZXh5bm9zX2NydGMtPm9wcy0+d2luX2NvbW1pdChleHlub3NfY3J0Yywg
-ZXh5bm9zX3BsYW5lLT56cG9zKTsKKwlpZiAoZXh5bm9zX2NydGMtPm9wcy0+dXBkYXRlX3BsYW5l
-KQorCQlleHlub3NfY3J0Yy0+b3BzLT51cGRhdGVfcGxhbmUoZXh5bm9zX2NydGMsIGV4eW5vc19w
-bGFuZS0+enBvcyk7CiB9CiAKIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9hdG9taWNfZGlzYWJs
-ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKQEAgLTE5Miw5ICsxOTIsOSBAQCBzdGF0aWMgdm9p
-ZCBleHlub3NfcGxhbmVfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsCiAJ
-aWYgKCFvbGRfc3RhdGUtPmNydGMpCiAJCXJldHVybjsKIAotCWlmIChleHlub3NfY3J0Yy0+b3Bz
-LT53aW5fZGlzYWJsZSkKLQkJZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUoZXh5bm9zX2Ny
-dGMsCi0JCQkJCSAgICAgIGV4eW5vc19wbGFuZS0+enBvcyk7CisJaWYgKGV4eW5vc19jcnRjLT5v
-cHMtPmRpc2FibGVfcGxhbmUpCisJCWV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGVfcGxhbmUoZXh5
-bm9zX2NydGMsCisJCQkJCQlleHlub3NfcGxhbmUtPnpwb3MpOwogfQogCiBzdGF0aWMgY29uc3Qg
-c3RydWN0IGRybV9wbGFuZV9oZWxwZXJfZnVuY3MgcGxhbmVfaGVscGVyX2Z1bmNzID0gewpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggOWI5NzEwNS4uNTlkODVl
-ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYwor
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCkBAIC0xMDAsNyAr
-MTAwLDcgQEAgc3RhdGljIGludCB2aWRpX2VuYWJsZV92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1f
-Y3J0YyAqY3J0YykKIAkvKgogCSAqIGluIGNhc2Ugb2YgcGFnZSBmbGlwIHJlcXVlc3QsIHZpZGlf
-ZmluaXNoX3BhZ2VmbGlwIGZ1bmN0aW9uCiAJICogd2lsbCBub3QgYmUgY2FsbGVkIGJlY2F1c2Ug
-ZGlyZWN0X3ZibGFuayBpcyB0cnVlIGFuZCB0aGVuCi0JICogdGhhdCBmdW5jdGlvbiB3aWxsIGJl
-IGNhbGxlZCBieSBjcnRjX29wcy0+d2luX2NvbW1pdCBjYWxsYmFjaworCSAqIHRoYXQgZnVuY3Rp
-b24gd2lsbCBiZSBjYWxsZWQgYnkgY3J0Y19vcHMtPnVwZGF0ZV9wbGFuZSBjYWxsYmFjawogCSAq
-LwogCXNjaGVkdWxlX3dvcmsoJmN0eC0+d29yayk7CiAKQEAgLTExOCw3ICsxMTgsNyBAQCBzdGF0
-aWMgdm9pZCB2aWRpX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMp
-CiAJCWN0eC0+dmJsYW5rX29uID0gZmFsc2U7CiB9CiAKLXN0YXRpYyB2b2lkIHZpZGlfd2luX2Nv
-bW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQorc3Rh
-dGljIHZvaWQgdmlkaV91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0Yywg
-dW5zaWduZWQgaW50IHdpbikKIHsKIAlzdHJ1Y3QgdmlkaV9jb250ZXh0ICpjdHggPSBjcnRjLT5j
-dHg7CiAJc3RydWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5lOwpAQCAtMTc5LDcgKzE3OSw3IEBA
-IHN0YXRpYyBjb25zdCBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjX29wcyB2aWRpX2NydGNfb3BzID0g
-ewogCS5kaXNhYmxlID0gdmlkaV9kaXNhYmxlLAogCS5lbmFibGVfdmJsYW5rID0gdmlkaV9lbmFi
-bGVfdmJsYW5rLAogCS5kaXNhYmxlX3ZibGFuayA9IHZpZGlfZGlzYWJsZV92YmxhbmssCi0JLndp
-bl9jb21taXQgPSB2aWRpX3dpbl9jb21taXQsCisJLnVwZGF0ZV9wbGFuZSA9IHZpZGlfdXBkYXRl
-X3BsYW5lLAogfTsKIAogc3RhdGljIHZvaWQgdmlkaV9mYWtlX3ZibGFua19oYW5kbGVyKHN0cnVj
-dCB3b3JrX3N0cnVjdCAqd29yaykKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmlu
-ZGV4IGJiY2JjYmMuLjJhZDI1NDQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX21peGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIu
-YwpAQCAtOTIwLDcgKzkyMCw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2FibGVfdmJsYW5rKHN0
-cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCiAJbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1Y
-Ul9JTlRfRU4sIDAsIE1YUl9JTlRfRU5fVlNZTkMpOwogfQogCi1zdGF0aWMgdm9pZCBtaXhlcl93
-aW5fY29tbWl0KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsIHVuc2lnbmVkIGludCB3aW4p
-CitzdGF0aWMgdm9pZCBtaXhlcl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAq
-Y3J0YywgdW5zaWduZWQgaW50IHdpbikKIHsKIAlzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqbWl4ZXJf
-Y3R4ID0gY3J0Yy0+Y3R4OwogCkBAIC05MzksNyArOTM5LDcgQEAgc3RhdGljIHZvaWQgbWl4ZXJf
-d2luX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2lu
-KQogCQltaXhlcl9ncmFwaF9idWZmZXIobWl4ZXJfY3R4LCB3aW4pOwogfQogCi1zdGF0aWMgdm9p
-ZCBtaXhlcl93aW5fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25l
-ZCBpbnQgd2luKQorc3RhdGljIHZvaWQgbWl4ZXJfZGlzYWJsZV9wbGFuZShzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQogewogCXN0cnVjdCBtaXhlcl9jb250
-ZXh0ICptaXhlcl9jdHggPSBjcnRjLT5jdHg7CiAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVz
-ID0gJm1peGVyX2N0eC0+bWl4ZXJfcmVzOwpAQCAtMTA2Niw3ICsxMDY2LDcgQEAgc3RhdGljIHZv
-aWQgbWl4ZXJfZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCW1peGVyX3Jl
-Z3NfZHVtcChjdHgpOwogCiAJZm9yIChpID0gMDsgaSA8IE1JWEVSX1dJTl9OUjsgaSsrKQotCQlt
-aXhlcl93aW5fZGlzYWJsZShjcnRjLCBpKTsKKwkJbWl4ZXJfZGlzYWJsZV9wbGFuZShjcnRjLCBp
-KTsKIAogCWN0eC0+aW50X2VuID0gbWl4ZXJfcmVnX3JlYWQocmVzLCBNWFJfSU5UX0VOKTsKIApA
-QCAtMTExMSw4ICsxMTExLDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNf
-b3BzIG1peGVyX2NydGNfb3BzID0gewogCS5lbmFibGVfdmJsYW5rCQk9IG1peGVyX2VuYWJsZV92
-YmxhbmssCiAJLmRpc2FibGVfdmJsYW5rCQk9IG1peGVyX2Rpc2FibGVfdmJsYW5rLAogCS53YWl0
-X2Zvcl92YmxhbmsJPSBtaXhlcl93YWl0X2Zvcl92YmxhbmssCi0JLndpbl9jb21taXQJCT0gbWl4
-ZXJfd2luX2NvbW1pdCwKLQkud2luX2Rpc2FibGUJCT0gbWl4ZXJfd2luX2Rpc2FibGUsCisJLnVw
-ZGF0ZV9wbGFuZQkJPSBtaXhlcl91cGRhdGVfcGxhbmUsCisJLmRpc2FibGVfcGxhbmUJCT0gbWl4
-ZXJfZGlzYWJsZV9wbGFuZSwKIH07CiAKIHN0YXRpYyBzdHJ1Y3QgbWl4ZXJfZHJ2X2RhdGEgZXh5
-bm9zNTQyMF9teHJfZHJ2X2RhdGEgPSB7Ci0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Rename crtc_{widht,height} to crtc_{w,h} and src_{width,height} to
+src_{w,h} to make it similar to the atomic state names.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 14 +++++++-------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h    | 16 ++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 14 +++++++-------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c  | 11 ++++++-----
+ drivers/gpu/drm/exynos/exynos_mixer.c      | 22 +++++++++++-----------
+ 5 files changed, 39 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 9fa1cdc..5057d70 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -439,25 +439,25 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	DRM_DEBUG_KMS("start addr = 0x%lx\n",
+ 			(unsigned long)val);
+ 	DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
+-			plane->crtc_width, plane->crtc_height);
++			plane->crtc_w, plane->crtc_h);
+ 
+ 	/*
+ 	 * OSD position.
+ 	 * In case the window layout goes of LCD layout, DECON fails.
+ 	 */
+-	if ((plane->crtc_x + plane->crtc_width) > mode->hdisplay)
+-		plane->crtc_x = mode->hdisplay - plane->crtc_width;
+-	if ((plane->crtc_y + plane->crtc_height) > mode->vdisplay)
+-		plane->crtc_y = mode->vdisplay - plane->crtc_height;
++	if ((plane->crtc_x + plane->crtc_w) > mode->hdisplay)
++		plane->crtc_x = mode->hdisplay - plane->crtc_w;
++	if ((plane->crtc_y + plane->crtc_h) > mode->vdisplay)
++		plane->crtc_y = mode->vdisplay - plane->crtc_h;
+ 
+ 	val = VIDOSDxA_TOPLEFT_X(plane->crtc_x) |
+ 		VIDOSDxA_TOPLEFT_Y(plane->crtc_y);
+ 	writel(val, ctx->regs + VIDOSD_A(win));
+ 
+-	last_x = plane->crtc_x + plane->crtc_width;
++	last_x = plane->crtc_x + plane->crtc_w;
+ 	if (last_x)
+ 		last_x--;
+-	last_y = plane->crtc_y + plane->crtc_height;
++	last_y = plane->crtc_y + plane->crtc_h;
+ 	if (last_y)
+ 		last_y--;
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 7b97117..a729ea8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -44,12 +44,12 @@ enum exynos_drm_output_type {
+  *	- the unit is screen coordinates.
+  * @src_y: offset y on a framebuffer to be displayed.
+  *	- the unit is screen coordinates.
+- * @src_width: width of a partial image to be displayed from framebuffer.
+- * @src_height: height of a partial image to be displayed from framebuffer.
++ * @src_w: width of a partial image to be displayed from framebuffer.
++ * @src_h: height of a partial image to be displayed from framebuffer.
+  * @crtc_x: offset x on hardware screen.
+  * @crtc_y: offset y on hardware screen.
+- * @crtc_width: window width to be displayed (hardware screen).
+- * @crtc_height: window height to be displayed (hardware screen).
++ * @crtc_w: window width to be displayed (hardware screen).
++ * @crtc_h: window height to be displayed (hardware screen).
+  * @h_ratio: horizontal scaling ratio, 16.16 fixed point
+  * @v_ratio: vertical scaling ratio, 16.16 fixed point
+  * @dma_addr: array of bus(accessed by dma) address to the memory region
+@@ -64,12 +64,12 @@ struct exynos_drm_plane {
+ 	struct drm_plane base;
+ 	unsigned int src_x;
+ 	unsigned int src_y;
+-	unsigned int src_width;
+-	unsigned int src_height;
++	unsigned int src_w;
++	unsigned int src_h;
+ 	unsigned int crtc_x;
+ 	unsigned int crtc_y;
+-	unsigned int crtc_width;
+-	unsigned int crtc_height;
++	unsigned int crtc_w;
++	unsigned int crtc_h;
+ 	unsigned int h_ratio;
+ 	unsigned int v_ratio;
+ 	dma_addr_t dma_addr[MAX_FB_BUFFER];
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 8791488..359685f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -673,18 +673,18 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+ 	writel(val, ctx->regs + VIDWx_BUF_START(win, 0));
+ 
+ 	/* buffer end address */
+-	size = pitch * plane->crtc_height;
++	size = pitch * plane->crtc_h;
+ 	val = (unsigned long)(dma_addr + size);
+ 	writel(val, ctx->regs + VIDWx_BUF_END(win, 0));
+ 
+ 	DRM_DEBUG_KMS("start addr = 0x%lx, end addr = 0x%lx, size = 0x%lx\n",
+ 			(unsigned long)dma_addr, val, size);
+ 	DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
+-			plane->crtc_width, plane->crtc_height);
++			plane->crtc_w, plane->crtc_h);
+ 
+ 	/* buffer size */
+-	buf_offsize = pitch - (plane->crtc_width * bpp);
+-	line_size = plane->crtc_width * bpp;
++	buf_offsize = pitch - (plane->crtc_w * bpp);
++	line_size = plane->crtc_w * bpp;
+ 	val = VIDW_BUF_SIZE_OFFSET(buf_offsize) |
+ 		VIDW_BUF_SIZE_PAGEWIDTH(line_size) |
+ 		VIDW_BUF_SIZE_OFFSET_E(buf_offsize) |
+@@ -698,10 +698,10 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+ 		VIDOSDxA_TOPLEFT_Y_E(plane->crtc_y);
+ 	writel(val, ctx->regs + VIDOSD_A(win));
+ 
+-	last_x = plane->crtc_x + plane->crtc_width;
++	last_x = plane->crtc_x + plane->crtc_w;
+ 	if (last_x)
+ 		last_x--;
+-	last_y = plane->crtc_y + plane->crtc_height;
++	last_y = plane->crtc_y + plane->crtc_h;
+ 	if (last_y)
+ 		last_y--;
+ 
+@@ -718,7 +718,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+ 		u32 offset = VIDOSD_D(win);
+ 		if (win == 0)
+ 			offset = VIDOSD_C(win);
+-		val = plane->crtc_width * plane->crtc_height;
++		val = plane->crtc_w * plane->crtc_h;
+ 		writel(val, ctx->regs + offset);
+ 
+ 		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 9602797..bebc957 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -97,17 +97,18 @@ static void exynos_plane_mode_set(struct drm_plane *plane,
+ 	/* set drm framebuffer data. */
+ 	exynos_plane->src_x = src_x;
+ 	exynos_plane->src_y = src_y;
+-	exynos_plane->src_width = (actual_w * exynos_plane->h_ratio) >> 16;
+-	exynos_plane->src_height = (actual_h * exynos_plane->v_ratio) >> 16;
++	exynos_plane->src_w = (actual_w * exynos_plane->h_ratio) >> 16;
++	exynos_plane->src_h = (actual_h * exynos_plane->v_ratio) >> 16;
+ 
+ 	/* set plane range to be displayed. */
+ 	exynos_plane->crtc_x = crtc_x;
+ 	exynos_plane->crtc_y = crtc_y;
+-	exynos_plane->crtc_width = actual_w;
+-	exynos_plane->crtc_height = actual_h;
++	exynos_plane->crtc_w = actual_w;
++	exynos_plane->crtc_h = actual_h;
++
+ 	DRM_DEBUG_KMS("plane : offset_x/y(%d,%d), width/height(%d,%d)",
+ 			exynos_plane->crtc_x, exynos_plane->crtc_y,
+-			exynos_plane->crtc_width, exynos_plane->crtc_height);
++			exynos_plane->crtc_w, exynos_plane->crtc_h);
+ 
+ 	plane->crtc = crtc;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index bbbed10..12543f3 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -443,19 +443,19 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[0]) |
+ 		VP_IMG_VSIZE(fb->height / 2));
+ 
+-	vp_reg_write(res, VP_SRC_WIDTH, plane->src_width);
+-	vp_reg_write(res, VP_SRC_HEIGHT, plane->src_height);
++	vp_reg_write(res, VP_SRC_WIDTH, plane->src_w);
++	vp_reg_write(res, VP_SRC_HEIGHT, plane->src_h);
+ 	vp_reg_write(res, VP_SRC_H_POSITION,
+ 			VP_SRC_H_POSITION_VAL(plane->src_x));
+ 	vp_reg_write(res, VP_SRC_V_POSITION, plane->src_y);
+ 
+-	vp_reg_write(res, VP_DST_WIDTH, plane->crtc_width);
++	vp_reg_write(res, VP_DST_WIDTH, plane->crtc_w);
+ 	vp_reg_write(res, VP_DST_H_POSITION, plane->crtc_x);
+ 	if (ctx->interlace) {
+-		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_height / 2);
++		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_h / 2);
+ 		vp_reg_write(res, VP_DST_V_POSITION, plane->crtc_y / 2);
+ 	} else {
+-		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_height);
++		vp_reg_write(res, VP_DST_HEIGHT, plane->crtc_h);
+ 		vp_reg_write(res, VP_DST_V_POSITION, plane->crtc_y);
+ 	}
+ 
+@@ -492,15 +492,15 @@ static void mixer_layer_update(struct mixer_context *ctx)
+ static int mixer_setup_scale(const struct exynos_drm_plane *plane,
+ 		unsigned int *x_ratio, unsigned int *y_ratio)
+ {
+-	if (plane->crtc_width != plane->src_width) {
+-		if (plane->crtc_width == 2 * plane->src_width)
++	if (plane->crtc_w != plane->src_w) {
++		if (plane->crtc_w == 2 * plane->src_w)
+ 			*x_ratio = 1;
+ 		else
+ 			goto fail;
+ 	}
+ 
+-	if (plane->crtc_height != plane->src_height) {
+-		if (plane->crtc_height == 2 * plane->src_height)
++	if (plane->crtc_h != plane->src_h) {
++		if (plane->crtc_h == 2 * plane->src_h)
+ 			*y_ratio = 1;
+ 		else
+ 			goto fail;
+@@ -589,8 +589,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+ 		mixer_reg_write(res, MXR_RESOLUTION, val);
+ 	}
+ 
+-	val  = MXR_GRP_WH_WIDTH(plane->src_width);
+-	val |= MXR_GRP_WH_HEIGHT(plane->src_height);
++	val  = MXR_GRP_WH_WIDTH(plane->src_w);
++	val |= MXR_GRP_WH_HEIGHT(plane->src_h);
+ 	val |= MXR_GRP_WH_H_SCALE(x_ratio);
+ 	val |= MXR_GRP_WH_V_SCALE(y_ratio);
+ 	mixer_reg_write(res, MXR_GRAPHIC_WH(win), val);
+-- 
+2.1.0
