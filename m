@@ -1,78 +1,62 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 0/6] cpufreq: use generic cpufreq drivers for Exynos4x12
- platform
-Date: Tue, 23 Jun 2015 07:35:05 +0530
-Message-ID: <20150623020505.GA408@linux>
-References: <1428688742-15578-1-git-send-email-b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 15/15] ARM: dts: rename the clock of MIPI DSI 'pll_clk'
+ to 'sclk_mipi'
+Date: Tue, 23 Jun 2015 11:10:18 +0900
+Message-ID: <CAJKOXPeZY=RmFxozjGPoUbP+-LcnEOE=vEcj-gHDyaoYXLTS4Q@mail.gmail.com>
+References: <1434113958-15877-1-git-send-email-human.hwang@samsung.com>
+	<1434113958-15877-16-git-send-email-human.hwang@samsung.com>
+	<5587D111.9090602@samsung.com>
+	<5587F4A1.2090502@samsung.com>
+	<CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:33824 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753582AbbFWCFM (ORCPT
+Received: from mail-vn0-f47.google.com ([209.85.216.47]:43158 "EHLO
+	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752713AbbFWCKT convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 22:05:12 -0400
-Received: by pabvl15 with SMTP id vl15so99673157pab.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jun 2015 19:05:11 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1428688742-15578-1-git-send-email-b.zolnierkie@samsung.com>
+	Mon, 22 Jun 2015 22:10:19 -0400
+In-Reply-To: <CAJKOXPe-XJb2qCSWxY2gQnYpACGcN=6=1XmWHX5gF7s2a_UTPw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, rob.herring@linaro.org
-Cc: Thomas Abraham <thomas.ab@samsung.com>, rjw@rjwysocki.net, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Hyungwon Hwang <human.hwang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, daniel@fooishbar.org, sw0312.kim@samsung.com, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
 
-Hi Bartlomiej,
+2015-06-22 21:35 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com=
+>:
+> 2015-06-22 20:42 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
+>> + Krzysztof
+>>
+>> On 2015=EB=85=84 06=EC=9B=94 22=EC=9D=BC 18:10, Inki Dae wrote:
+>>> On 2015=EB=85=84 06=EC=9B=94 12=EC=9D=BC 21:59, Hyungwon Hwang wrot=
+e:
+>>>> The clock which was named as 'pll_clk' is actually not the clock s=
+ource
+>>>> of PLL in MIPI DSI. This patch fixes this disagreement.
+>>>
+>>> Mr. Kukjin and Krzysztof, can you give me Acked-by or Singed-off-by=
+? I'd
+>>> like to merge this patch to mainline through drm-next.
+>
+> Thanks for forwarding me other necessary patch. All that burden could
+> be easily avoided by sending everything to samsung-soc anyway.
+>
+> The patch itself looks good:
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> Best regards,
+> Krzysztof
 
-[Adding Rafael & Rob to cc list. Please don't forget for any PM
-specific patches :)]
+To clarify. There were seven versions of this patch and none of them
+were sent to samsung-soc list, to Kukjin Kim or to me.
 
-First of all, really sorry for missing this mail thread. Don't know
-how I missed it though. And please please please, do send a ping
-reminder (to me at least), if you think the mail thread is
-missed/ignored by the Maintainers.
+I also wonder about patch 2: "of: add helper for getting endpoint node
+with specific identifiers"
+for which I can't find respective ack from Rob Herring (+Cc). I only fo=
+und this:
+http://www.spinics.net/lists/devicetree/msg69336.html
+but there are only comments, not an ack.
 
-Its been two months, and not a single reminder :).. And I wouldn't
-have seen this email if you wouldn't have pinged me on IRC ..
-
-On 10-04-15, 19:58, Bartlomiej Zolnierkiewicz wrote:
-> This patch series removes the use of Exynos4x12 specific support
-> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
-> for this platform.
-
-Excellent.
-
-> In order to preserve support for Exynos4x12 'boost' mode cpufreq-dt
-> driver is made aware of 'boost' mode frequencies and boost-opps
-> binding is provided.
-
-That's good too..
-
-> boost-opps binding is currently limited to cpufreq-dt but once there is
-> a need for cpufreq wide and/or generic Linux device support for 'boost'
-> mode cpufreq-dt can be updated to handle the new code without changing
-> the binding itself.
-
-You already know that operating-points-v2 bindings are already
-accepted and applied by Rafael. Its not that the earlier bindings are
-discarded or obsolete now, but are only present for simple use cases.
-
-There are NO plans for extending the earlier OPP bindings Unless its
-really required. And what you are trying to do in cpufreq-dt's
-bindings, really belongs to OPP bindings.
-
-As the new bindings will be present in 4.2, getting the code (at least
-the basic code) for them into 4.3 wouldn't be that difficult. Anyway,
-your stuff isn't going out in 4.2 either and so you *shall* adopt
-to opp-v2 bindings in your next version.
-
-Migrating platforms to opp-v2 wouldn't be that difficult, mostly
-changes required only in dts files, unless you are using a driver of
-your own.
-
-I would be updating cpufreq-dt at the earlier to support basic
-features of opp-v2 for 4.3. Some code is already posted:
-
-http://permalink.gmane.org/gmane.linux.power-management.general/61326
-
--- 
-viresh
+Best regards,
+Krzysztof
