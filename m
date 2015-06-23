@@ -1,420 +1,72 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 09/23] drm/exynos: use drm atomic state directly
-Date: Tue, 23 Jun 2015 18:35:22 -0300
-Message-ID: <1435095336-6196-10-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 12/23] drm/exynos: don't track enabled state at exynos_crtc
+Date: Tue, 23 Jun 2015 18:35:25 -0300
+Message-ID: <1435095336-6196-13-git-send-email-gustavo@padovan.org>
 References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f50.google.com ([209.85.192.50]:33739 "EHLO
-	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933296AbbFWVgK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jun 2015 17:36:10 -0400
-Received: by qged89 with SMTP id d89so8093094qge.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2015 14:36:10 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-For some fields the use of struct exynos_drm_plane filled with data from
-the plane state just creates a source of duplicated information and
-overhead.  Here we change the crtc drivers to access the plane state
-directly simplifying the code by not relying on a exynos internal struct.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 23 ++++++-----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 29 +++++++------
- drivers/gpu/drm/exynos/exynos_drm_plane.c  | 12 ------
- drivers/gpu/drm/exynos/exynos_mixer.c      | 65 ++++++++++++++++--------------
- 4 files changed, 63 insertions(+), 66 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 1f5f5c7..9fa1cdc 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -281,16 +281,16 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
- 	}
- }
- 
--static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win)
-+static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
-+				 struct drm_framebuffer *fb)
- {
--	struct exynos_drm_plane *plane = &ctx->planes[win];
- 	unsigned long val;
- 	int padding;
- 
- 	val = readl(ctx->regs + WINCON(win));
- 	val &= ~WINCONx_BPPMODE_MASK;
- 
--	switch (plane->pixel_format) {
-+	switch (fb->pixel_format) {
- 	case DRM_FORMAT_RGB565:
- 		val |= WINCONx_BPPMODE_16BPP_565;
- 		val |= WINCONx_BURSTLEN_16WORD;
-@@ -339,7 +339,7 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win)
- 		break;
- 	}
- 
--	DRM_DEBUG_KMS("bpp = %d\n", plane->bpp);
-+	DRM_DEBUG_KMS("bpp = %d\n", fb->bits_per_pixel);
- 
- 	/*
- 	 * In case of exynos, setting dma-burst to 16Word causes permanent
-@@ -349,8 +349,8 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win)
- 	 * movement causes unstable DMA which results into iommu crash/tear.
- 	 */
- 
--	padding = (plane->pitch / (plane->bpp >> 3)) - plane->fb_width;
--	if (plane->fb_width + padding < MIN_FB_WIDTH_FOR_16WORD_BURST) {
-+	padding = (fb->pitches[0] / (fb->bits_per_pixel >> 3)) - fb->width;
-+	if (fb->width + padding < MIN_FB_WIDTH_FOR_16WORD_BURST) {
- 		val &= ~WINCONx_BURSTLEN_MASK;
- 		val |= WINCONx_BURSTLEN_8WORD;
- 	}
-@@ -397,11 +397,14 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- {
- 	struct decon_context *ctx = crtc->ctx;
- 	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
-+	struct drm_plane_state *state = plane->base.state;
- 	int padding;
- 	unsigned long val, alpha;
- 	unsigned int last_x;
- 	unsigned int last_y;
- 	unsigned int win = plane->zpos;
-+	unsigned int bpp = state->fb->bits_per_pixel >> 3;
-+	unsigned int pitch = state->fb->pitches[0];
- 
- 	if (ctx->suspended)
- 		return;
-@@ -423,11 +426,11 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 	val = (unsigned long)plane->dma_addr[0];
- 	writel(val, ctx->regs + VIDW_BUF_START(win));
- 
--	padding = (plane->pitch / (plane->bpp >> 3)) - plane->fb_width;
-+	padding = (pitch / bpp) - state->fb->width;
- 
- 	/* buffer size */
--	writel(plane->fb_width + padding, ctx->regs + VIDW_WHOLE_X(win));
--	writel(plane->fb_height, ctx->regs + VIDW_WHOLE_Y(win));
-+	writel(state->fb->width + padding, ctx->regs + VIDW_WHOLE_X(win));
-+	writel(state->fb->height, ctx->regs + VIDW_WHOLE_Y(win));
- 
- 	/* offset from the start of the buffer to read */
- 	writel(plane->src_x, ctx->regs + VIDW_OFFSET_X(win));
-@@ -478,7 +481,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 
- 	writel(alpha, ctx->regs + VIDOSD_D(win));
- 
--	decon_win_set_pixfmt(ctx, win);
-+	decon_win_set_pixfmt(ctx, win, state->fb);
- 
- 	/* hardware window 0 doesn't support color key. */
- 	if (win != 0)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 6073b61..8791488 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -510,9 +510,9 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
- }
- 
- 
--static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win)
-+static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
-+				struct drm_framebuffer *fb)
- {
--	struct exynos_drm_plane *plane = &ctx->planes[win];
- 	unsigned long val;
- 
- 	val = WINCONx_ENWIN;
-@@ -522,11 +522,11 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win)
- 	 * So the request format is ARGB8888 then change it to XRGB8888.
- 	 */
- 	if (ctx->driver_data->has_limited_fmt && !win) {
--		if (plane->pixel_format == DRM_FORMAT_ARGB8888)
--			plane->pixel_format = DRM_FORMAT_XRGB8888;
-+		if (fb->pixel_format == DRM_FORMAT_ARGB8888)
-+			fb->pixel_format = DRM_FORMAT_XRGB8888;
- 	}
- 
--	switch (plane->pixel_format) {
-+	switch (fb->pixel_format) {
- 	case DRM_FORMAT_C8:
- 		val |= WINCON0_BPPMODE_8BPP_PALETTE;
- 		val |= WINCONx_BURSTLEN_8WORD;
-@@ -562,7 +562,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win)
- 		break;
- 	}
- 
--	DRM_DEBUG_KMS("bpp = %d\n", plane->bpp);
-+	DRM_DEBUG_KMS("bpp = %d\n", fb->bits_per_pixel);
- 
- 	/*
- 	 * In case of exynos, setting dma-burst to 16Word causes permanent
-@@ -572,7 +572,7 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win)
- 	 * movement causes unstable DMA which results into iommu crash/tear.
- 	 */
- 
--	if (plane->fb_width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
-+	if (fb->width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
- 		val &= ~WINCONx_BURSTLEN_MASK;
- 		val |= WINCONx_BURSTLEN_4WORD;
- 	}
-@@ -642,10 +642,13 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 			      struct exynos_drm_plane *plane)
- {
- 	struct fimd_context *ctx = crtc->ctx;
-+	struct drm_plane_state *state = plane->base.state;
- 	dma_addr_t dma_addr;
- 	unsigned long val, size, offset;
- 	unsigned int last_x, last_y, buf_offsize, line_size;
- 	unsigned int win = plane->zpos;
-+	unsigned int bpp = state->fb->bits_per_pixel >> 3;
-+	unsigned int pitch = state->fb->pitches[0];
- 
- 	/*
- 	 * SHADOWCON/PRTCON register is used for enabling timing.
-@@ -661,8 +664,8 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 	fimd_shadow_protect_win(ctx, win, true);
- 
- 
--	offset = plane->src_x * (plane->bpp >> 3);
--	offset += plane->src_y * plane->pitch;
-+	offset = plane->src_x * bpp;
-+	offset += plane->src_y * pitch;
- 
- 	/* buffer start address */
- 	dma_addr = plane->dma_addr[0] + offset;
-@@ -670,7 +673,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 	writel(val, ctx->regs + VIDWx_BUF_START(win, 0));
- 
- 	/* buffer end address */
--	size = plane->pitch * plane->crtc_height;
-+	size = pitch * plane->crtc_height;
- 	val = (unsigned long)(dma_addr + size);
- 	writel(val, ctx->regs + VIDWx_BUF_END(win, 0));
- 
-@@ -680,8 +683,8 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 			plane->crtc_width, plane->crtc_height);
- 
- 	/* buffer size */
--	buf_offsize = plane->pitch - (plane->crtc_width * (plane->bpp >> 3));
--	line_size = plane->crtc_width * (plane->bpp >> 3);
-+	buf_offsize = pitch - (plane->crtc_width * bpp);
-+	line_size = plane->crtc_width * bpp;
- 	val = VIDW_BUF_SIZE_OFFSET(buf_offsize) |
- 		VIDW_BUF_SIZE_PAGEWIDTH(line_size) |
- 		VIDW_BUF_SIZE_OFFSET_E(buf_offsize) |
-@@ -721,7 +724,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
- 		DRM_DEBUG_KMS("osd size = 0x%x\n", (unsigned int)val);
- 	}
- 
--	fimd_win_set_pixfmt(ctx, win);
-+	fimd_win_set_pixfmt(ctx, win, state->fb);
- 
- 	/* hardware window 0 doesn't support color key. */
- 	if (win != 0)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index b5aa5b7..9602797 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -99,24 +99,12 @@ static void exynos_plane_mode_set(struct drm_plane *plane,
- 	exynos_plane->src_y = src_y;
- 	exynos_plane->src_width = (actual_w * exynos_plane->h_ratio) >> 16;
- 	exynos_plane->src_height = (actual_h * exynos_plane->v_ratio) >> 16;
--	exynos_plane->fb_width = fb->width;
--	exynos_plane->fb_height = fb->height;
--	exynos_plane->bpp = fb->bits_per_pixel;
--	exynos_plane->pitch = fb->pitches[0];
--	exynos_plane->pixel_format = fb->pixel_format;
- 
- 	/* set plane range to be displayed. */
- 	exynos_plane->crtc_x = crtc_x;
- 	exynos_plane->crtc_y = crtc_y;
- 	exynos_plane->crtc_width = actual_w;
- 	exynos_plane->crtc_height = actual_h;
--
--	/* set drm mode data. */
--	exynos_plane->mode_width = mode->hdisplay;
--	exynos_plane->mode_height = mode->vdisplay;
--	exynos_plane->refresh = mode->vrefresh;
--	exynos_plane->scan_flag = mode->flags;
--
- 	DRM_DEBUG_KMS("plane : offset_x/y(%d,%d), width/height(%d,%d)",
- 			exynos_plane->crtc_x, exynos_plane->crtc_y,
- 			exynos_plane->crtc_width, exynos_plane->crtc_height);
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 1f8613e..bbbed10 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -380,19 +380,20 @@ static void mixer_stop(struct mixer_context *ctx)
- 		usleep_range(10000, 12000);
- }
- 
--static void vp_video_buffer(struct mixer_context *ctx, unsigned int win)
-+static void vp_video_buffer(struct mixer_context *ctx,
-+			    struct exynos_drm_plane *plane)
- {
- 	struct mixer_resources *res = &ctx->mixer_res;
-+	struct drm_plane_state *state = plane->base.state;
-+	struct drm_framebuffer *fb = state->fb;
-+	struct drm_display_mode *mode = &state->crtc->mode;
- 	unsigned long flags;
--	struct exynos_drm_plane *plane;
- 	dma_addr_t luma_addr[2], chroma_addr[2];
- 	bool tiled_mode = false;
- 	bool crcb_mode = false;
- 	u32 val;
- 
--	plane = &ctx->planes[win];
--
--	switch (plane->pixel_format) {
-+	switch (fb->pixel_format) {
- 	case DRM_FORMAT_NV12:
- 		crcb_mode = false;
- 		break;
-@@ -401,21 +402,21 @@ static void vp_video_buffer(struct mixer_context *ctx, unsigned int win)
- 		break;
- 	default:
- 		DRM_ERROR("pixel format for vp is wrong [%d].\n",
--				plane->pixel_format);
-+				fb->pixel_format);
- 		return;
- 	}
- 
- 	luma_addr[0] = plane->dma_addr[0];
- 	chroma_addr[0] = plane->dma_addr[1];
- 
--	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE) {
-+	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
- 		ctx->interlace = true;
- 		if (tiled_mode) {
- 			luma_addr[1] = luma_addr[0] + 0x40;
- 			chroma_addr[1] = chroma_addr[0] + 0x40;
- 		} else {
--			luma_addr[1] = luma_addr[0] + plane->pitch;
--			chroma_addr[1] = chroma_addr[0] + plane->pitch;
-+			luma_addr[1] = luma_addr[0] + fb->pitches[0];
-+			chroma_addr[1] = chroma_addr[0] + fb->pitches[0];
- 		}
- 	} else {
- 		ctx->interlace = false;
-@@ -436,11 +437,11 @@ static void vp_video_buffer(struct mixer_context *ctx, unsigned int win)
- 	vp_reg_writemask(res, VP_MODE, val, VP_MODE_FMT_MASK);
- 
- 	/* setting size of input image */
--	vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(plane->pitch) |
--		VP_IMG_VSIZE(plane->fb_height));
-+	vp_reg_write(res, VP_IMG_SIZE_Y, VP_IMG_HSIZE(fb->pitches[0]) |
-+		VP_IMG_VSIZE(fb->height));
- 	/* chroma height has to reduced by 2 to avoid chroma distorions */
--	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(plane->pitch) |
--		VP_IMG_VSIZE(plane->fb_height / 2));
-+	vp_reg_write(res, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[0]) |
-+		VP_IMG_VSIZE(fb->height / 2));
- 
- 	vp_reg_write(res, VP_SRC_WIDTH, plane->src_width);
- 	vp_reg_write(res, VP_SRC_HEIGHT, plane->src_height);
-@@ -469,9 +470,9 @@ static void vp_video_buffer(struct mixer_context *ctx, unsigned int win)
- 	vp_reg_write(res, VP_TOP_C_PTR, chroma_addr[0]);
- 	vp_reg_write(res, VP_BOT_C_PTR, chroma_addr[1]);
- 
--	mixer_cfg_scan(ctx, plane->mode_height);
--	mixer_cfg_rgb_fmt(ctx, plane->mode_height);
--	mixer_cfg_layer(ctx, win, true);
-+	mixer_cfg_scan(ctx, mode->vdisplay);
-+	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
-+	mixer_cfg_layer(ctx, plane->zpos, true);
- 	mixer_run(ctx);
- 
- 	mixer_vsync_set_update(ctx, true);
-@@ -512,20 +513,22 @@ fail:
- 	return -ENOTSUPP;
- }
- 
--static void mixer_graph_buffer(struct mixer_context *ctx, unsigned int win)
-+static void mixer_graph_buffer(struct mixer_context *ctx,
-+			       struct exynos_drm_plane *plane)
- {
- 	struct mixer_resources *res = &ctx->mixer_res;
-+	struct drm_plane_state *state = plane->base.state;
-+	struct drm_framebuffer *fb = state->fb;
-+	struct drm_display_mode *mode = &state->crtc->mode;
- 	unsigned long flags;
--	struct exynos_drm_plane *plane;
-+	unsigned int win = plane->zpos;
- 	unsigned int x_ratio = 0, y_ratio = 0;
- 	unsigned int src_x_offset, src_y_offset, dst_x_offset, dst_y_offset;
- 	dma_addr_t dma_addr;
- 	unsigned int fmt;
- 	u32 val;
- 
--	plane = &ctx->planes[win];
--
--	switch (plane->pixel_format) {
-+	switch (fb->pixel_format) {
- 	case DRM_FORMAT_XRGB4444:
- 		fmt = MXR_FORMAT_ARGB4444;
- 		break;
-@@ -557,12 +560,12 @@ static void mixer_graph_buffer(struct mixer_context *ctx, unsigned int win)
- 
- 	/* converting dma address base and source offset */
- 	dma_addr = plane->dma_addr[0]
--		+ (plane->src_x * plane->bpp >> 3)
--		+ (plane->src_y * plane->pitch);
-+		+ (plane->src_x * fb->bits_per_pixel >> 3)
-+		+ (plane->src_y * fb->pitches[0]);
- 	src_x_offset = 0;
- 	src_y_offset = 0;
- 
--	if (plane->scan_flag & DRM_MODE_FLAG_INTERLACE)
-+	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
- 		ctx->interlace = true;
- 	else
- 		ctx->interlace = false;
-@@ -576,13 +579,13 @@ static void mixer_graph_buffer(struct mixer_context *ctx, unsigned int win)
- 
- 	/* setup geometry */
- 	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win),
--			plane->pitch / (plane->bpp >> 3));
-+			fb->pitches[0] / (fb->bits_per_pixel >> 3));
- 
- 	/* setup display size */
- 	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
- 		win == MIXER_DEFAULT_WIN) {
--		val  = MXR_MXR_RES_HEIGHT(plane->mode_height);
--		val |= MXR_MXR_RES_WIDTH(plane->mode_width);
-+		val  = MXR_MXR_RES_HEIGHT(mode->vdisplay);
-+		val |= MXR_MXR_RES_WIDTH(mode->hdisplay);
- 		mixer_reg_write(res, MXR_RESOLUTION, val);
- 	}
- 
-@@ -605,8 +608,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx, unsigned int win)
- 	/* set buffer address to mixer */
- 	mixer_reg_write(res, MXR_GRAPHIC_BASE(win), dma_addr);
- 
--	mixer_cfg_scan(ctx, plane->mode_height);
--	mixer_cfg_rgb_fmt(ctx, plane->mode_height);
-+	mixer_cfg_scan(ctx, mode->vdisplay);
-+	mixer_cfg_rgb_fmt(ctx, mode->vdisplay);
- 	mixer_cfg_layer(ctx, win, true);
- 
- 	/* layer update mandatory for mixer 16.0.33.0 */
-@@ -935,9 +938,9 @@ static void mixer_update_plane(struct exynos_drm_crtc *crtc,
- 	mutex_unlock(&mixer_ctx->mixer_mutex);
- 
- 	if (plane->zpos > 1 && mixer_ctx->vp_enabled)
--		vp_video_buffer(mixer_ctx, plane->zpos);
-+		vp_video_buffer(mixer_ctx, plane);
- 	else
--		mixer_graph_buffer(mixer_ctx, plane->zpos);
-+		mixer_graph_buffer(mixer_ctx, plane);
- }
- 
- static void mixer_disable_plane(struct exynos_drm_crtc *crtc,
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+c3RydWN0IGRybV9jcnRjIGFscmVhZHkgc3RvcmVzIHRoZSBlbmFibGVkIHN0YXRlIG9mIHRoZSBj
+cnRjCnRodXMgd2UgZG9uJ3QgbmVlZCB0byByZXBsaWNhdGUgZW5hYmxlZCBpbiBleHlub3NfZHJt
+X2NydGMuCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
+b2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ny
+dGMuYyB8IDE2IC0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcnYuaCAgfCAgMSAtCiAyIGZpbGVzIGNoYW5nZWQsIDE3IGRlbGV0aW9ucygtKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IGU5YzI5MWYuLjg4YTUw
+YjcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwpAQCAtMjYsMTQg
+KzI2LDkgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2VuYWJsZShzdHJ1Y3QgZHJtX2Ny
+dGMgKmNydGMpCiB7CiAJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19l
+eHlub3NfY3J0YyhjcnRjKTsKIAotCWlmIChleHlub3NfY3J0Yy0+ZW5hYmxlZCkKLQkJcmV0dXJu
+OwotCiAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmVuYWJsZSkKIAkJZXh5bm9zX2NydGMtPm9wcy0+
+ZW5hYmxlKGV4eW5vc19jcnRjKTsKIAotCWV4eW5vc19jcnRjLT5lbmFibGVkID0gdHJ1ZTsKLQog
+CWRybV9jcnRjX3ZibGFua19vbihjcnRjKTsKIH0KIApAQCAtNDEsOSArMzYsNiBAQCBzdGF0aWMg
+dm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCiB7CiAJ
+c3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRj
+KTsKIAotCWlmICghZXh5bm9zX2NydGMtPmVuYWJsZWQpCi0JCXJldHVybjsKLQogCS8qIHdhaXQg
+Zm9yIHRoZSBjb21wbGV0aW9uIG9mIHBhZ2UgZmxpcC4gKi8KIAlpZiAoIXdhaXRfZXZlbnRfdGlt
+ZW91dChleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwX3F1ZXVlLAogCQkJCShleHlub3NfY3J0Yy0+
+ZXZlbnQgPT0gTlVMTCksIEhaLzIwKSkKQEAgLTUzLDggKzQ1LDYgQEAgc3RhdGljIHZvaWQgZXh5
+bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQogCiAJaWYgKGV4eW5v
+c19jcnRjLT5vcHMtPmRpc2FibGUpCiAJCWV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGUoZXh5bm9z
+X2NydGMpOwotCi0JZXh5bm9zX2NydGMtPmVuYWJsZWQgPSBmYWxzZTsKIH0KIAogc3RhdGljIGJv
+b2wKQEAgLTE3MSw5ICsxNjEsNiBAQCBpbnQgZXh5bm9zX2RybV9jcnRjX2VuYWJsZV92Ymxhbmso
+c3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IHBpcGUpCiAJc3RydWN0IGV4eW5vc19kcm1fY3J0
+YyAqZXh5bm9zX2NydGMgPQogCQl0b19leHlub3NfY3J0Yyhwcml2YXRlLT5jcnRjW3BpcGVdKTsK
+IAotCWlmICghZXh5bm9zX2NydGMtPmVuYWJsZWQpCi0JCXJldHVybiAtRVBFUk07Ci0KIAlpZiAo
+ZXh5bm9zX2NydGMtPm9wcy0+ZW5hYmxlX3ZibGFuaykKIAkJZXh5bm9zX2NydGMtPm9wcy0+ZW5h
+YmxlX3ZibGFuayhleHlub3NfY3J0Yyk7CiAKQEAgLTE4Niw5ICsxNzMsNiBAQCB2b2lkIGV4eW5v
+c19kcm1fY3J0Y19kaXNhYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgcGlw
+ZSkKIAlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YyA9CiAJCXRvX2V4eW5vc19j
+cnRjKHByaXZhdGUtPmNydGNbcGlwZV0pOwogCi0JaWYgKCFleHlub3NfY3J0Yy0+ZW5hYmxlZCkK
+LQkJcmV0dXJuOwotCiAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGVfdmJsYW5rKQogCQll
+eHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlX3ZibGFuayhleHlub3NfY3J0Yyk7CiB9CmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggYTcyOWVhOC4uZTIwYjE4NyAxMDA2
+NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCisrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaApAQCAtMTg0LDcgKzE4NCw2IEBA
+IHN0cnVjdCBleHlub3NfZHJtX2NydGMgewogCXN0cnVjdCBkcm1fY3J0YwkJCWJhc2U7CiAJZW51
+bSBleHlub3NfZHJtX291dHB1dF90eXBlCXR5cGU7CiAJdW5zaWduZWQgaW50CQkJcGlwZTsKLQli
+b29sCQkJCWVuYWJsZWQ7CiAJd2FpdF9xdWV1ZV9oZWFkX3QJCXBlbmRpbmdfZmxpcF9xdWV1ZTsK
+IAlzdHJ1Y3QgZHJtX3BlbmRpbmdfdmJsYW5rX2V2ZW50CSpldmVudDsKIAljb25zdCBzdHJ1Y3Qg
+ZXh5bm9zX2RybV9jcnRjX29wcwkqb3BzOwotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
