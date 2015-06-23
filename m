@@ -1,129 +1,143 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: exynos4412: Audio dies after one day on kernel 4.0
-Date: Tue, 23 Jun 2015 08:57:03 +0900
-Message-ID: <5588A0CF.6000807@samsung.com>
-References: <5569F435.5040708@unseen.is>
- <CAJKOXPfV2HRMeVhT5uRO5An3pqALWBLBxX2wzP=WxN+eu4dr2A@mail.gmail.com>
- <556E0931.9030703@unseen.is> <556E44B7.10303@samsung.com>
- <5576CD40.8060301@unseen.is>
- <CAJKOXPeehj++Ojt2Zo4sgNjVASzZ8r_6OROM6FK_BRRQqVzcGg@mail.gmail.com>
- <557B53C6.8070600@unseen.is> <557BC3DB.1030906@samsung.com>
- <CAJKOXPcqgcKiZ_4=H9wEgpzoMy5LKUsgtaw82gp4DCbY6e=JFg@mail.gmail.com>
- <CANAwSgQKFTG+ts=kVrZ1fR1EBcZL+7dgXqH1WhoJ7kZzz8hS3Q@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Mon, 22 Jun 2015 19:01:32 -0500
+Message-ID: <CAL_JsqKAWs2McpAP-47UwDMtuBoR+0xkJYvu8+-7yOQwiUfvpw@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <CAAObsKCdv_X+YPFacO7NjbRMnvuDisAmiQOWE-Xb3xFFrn6Qog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55462 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752502AbbFVX5I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jun 2015 19:57:08 -0400
-In-reply-to: <CANAwSgQKFTG+ts=kVrZ1fR1EBcZL+7dgXqH1WhoJ7kZzz8hS3Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKCdv_X+YPFacO7NjbRMnvuDisAmiQOWE-Xb3xFFrn6Qog@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dan Williams <dan.j.williams@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.or>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, gabriel@unseen.is, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, sylvester.nawrocki@gmail.com, Robert Baldyga <r.baldyga@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 23.06.2015 01:00, Anand Moon wrote:
-> Hi Krzysztof
->=20
-> On 13 June 2015 at 13:45, Krzysztof Kozlowski <k.kozlowski@samsung.co=
-m
-> <mailto:k.kozlowski@samsung.com>> wrote:
->=20
->     2015-06-13 14:47 GMT+09:00 Krzysztof Kozlowski
->     <k.kozlowski@samsung.com <mailto:k.kozlowski@samsung.com>>:
->     > W dniu 13.06.2015 o 06:48, gabriel@unseen.is
->     <mailto:gabriel@unseen.is> pisze:
->     >> On 06/10/2015 10:22 AM, Krzysztof Kozlowski wrote:
->     >>>
->     >>> Gabriel,
->     >>>
->     >>> I sent a patch which should fix the issue. Could you give it =
-a
->     try? Of
->     >>> course don't revert the other patches and don't use other
->     workarounds.
->     >>> Just apply the patch on clean (vanilla would be the best) ker=
-nel.
->     >>> [RFT PATCH] dmaengine: Fix choppy sound because of unimplemen=
-ted
->     resume
->     >>>
->     >>
->     >> hi krzysztof,
->     >>
->     >> thanks a lot for your work. having only that patch applied
->     unfortunately
->     >> brought back the problem after something more than one day. th=
-e sound
->     >> became choppy/noisy again. I will now compile the -next kernel
->     and give
->     >> it a try.
->     >
->     > Thanks, I'll try to reproduce the issue on my Odroid. Can you
->     share more
->     > details how to reproduce it? The audio must play continuously o=
-r just
->     > from time to time but the board must be turned on for more than
->     one day?
->=20
->     I bought some audio cables and successfully reproduced similar is=
-sue
->     (choppy sound) on Odroid XU3-Lite. On current linux-next
->     (next-20150612) the sound is awful (choppy) after few seconds of =
-play.
->     For example first four of:
->     $ aplay /usr/share/sounds/alsa/Front_Right.wav
->     work fine. But then it just gets worse and underruns are reported=
-:
->     $ Playing WAVE '/usr/share/sounds/alsa/Front_Right.wav' : Signed =
-16
->     bit Little Endian, Rate 48000 Hz, Mono
->     $ underrun!!! (at least 0.095 ms long)
->=20
->     Reverting the commit aee4d1fac887 ("dmaengine: pl330: improve
->     pl330_tx_status() function") fixes this issue so this is not rela=
-ted
->     to missing "resume" function. At least this particular issue on m=
-y
->     Odroid is not related to missing resume but I did not try to play
->     sound for 24 hours.
->     My fix does not solve this. Probably "cc-stable" and "fixes" tags
->     should be dropped.
->=20
->     Anyway I'll try to investigate it more. If anyone has any ideas,
->     please share.
->=20
->     Best regards,
->     Krzysztof
->     --
->     To unsubscribe from this list: send the line "unsubscribe
->     linux-samsung-soc" in
->     the body of a message to majordomo@vger.kernel.org
->     <mailto:majordomo@vger.kernel.org>
->     More majordomo info at  http://vger.kernel.org/majordomo-info.htm=
+On Mon, Jun 22, 2015 at 10:23 AM, Tomeu Vizoso
+<tomeu.vizoso@collabora.com> wrote:
+> On 28 May 2015 at 06:33, Rob Herring <robherring2@gmail.com> wrote:
+>> On Mon, May 25, 2015 at 9:53 AM, Tomeu Vizoso
+>> <tomeu.vizoso@collabora.com> wrote:
+>>> Hello,
+>>>
+>>> I have a problem with the panel on my Tegra Chromebook taking longe=
+r than
+>>> expected to be ready during boot (St=C3=A9phane Marchesin reported =
+what is
+>>> basically the same issue in [0]), and have looked into ordered prob=
+ing as a
+>>> better way of solving this than moving nodes around in the DT or pl=
+aying with
+>>> initcall levels.
+>>>
+>>> While reading the thread [1] that Alexander Holler started with his=
+ series to
+>>> make probing order deterministic, it occurred to me that it should =
+be possible
+>>> to achieve the same by registering devices as they are referenced b=
+y other
+>>> devices.
+>>
+>> I like the concept and novel approach.
+>>
+>>> This basically reuses the information that is already implicit in t=
+he probe()
+>>> implementations, saving us from refactoring existing drivers or add=
+ing
+>>> information to DTBs.
+>>>
+>>> Something I'm not completely happy with is that I have had to move =
+the call to
+>>> of_platform_populate after all platform drivers have been registere=
+d.
+>>> Otherwise I don't see how I could register drivers on demand as we =
+don't have
+>>> yet each driver's compatible strings.
+>>
+>> Yeah, this is the opposite of what we'd really like.
+>
+> Can you elaborate on the reasons why we would like to have devices
+> registered before built-in drivers finish registering, even if we
+> don't probe them yet?
+
+My main thought was for modules we will almost always have devices
+appearing first. More generally, we can have devices and drivers
+coming or going at any point in time and should not put restrictions
+on ordering.
+
+Also, I think all the probe ordering and dependency tracking should be
+done within the driver core (i.e. dependencies are a list of struct
+devices). At some level it has to become firmware specific, but we
+want to minimize that part. I could be convinced otherwise and you
+have put more thought into this problem than I have.
+
+>> Ideally, we would
+>> have a solution that works for modules too. However, we're no worse
+>> off. We pretty much build-in dependencies to avoid module ordering
+>> problems.
+>
+> Nod, I haven't looked yet at requesting modules on-demand, but I gues=
+s
+> it should be doable. Modules that have dependencies described in the
+> firmware should get them probed automatically already though.
+>
+>> Perhaps we need to make the probing on-demand rather than simply on
+>> device<->driver match occurring.
+>
+> I'm afraid that too much old code depends on that. For example, Rafae=
 l
->=20
->=20
-> =E2=80=8BI gave it a try by enabling following config=E2=80=8B flags.
->=20
-> CONFIG_SND_SEQUENCER=3Dm
-> CONFIG_SND_SEQ_DUMMY=3Dm
-> CONFIG_SND_USB_AUDIO=3Dm
->=20
-> I am able to play mp3 songs on Odroid-XU3 boards on vlc.
-> Could you give it a try.
+> pointed out to the PNP subsystem, which registers a driver that will
+> probe devices with the EISA ID PNP0c02 to reserve memory regions for
+> devices that will be probed later.
+>
+> http://lxr.free-electrons.com/source/drivers/pnp/system.c
+>
+> My understanding is that probing of PNP0c02 devices must happen befor=
+e
+> the actual devices that depend on those regions are probed, so if we
+> decoupled the probing from the driver/device registration, we would b=
+e
+> breaking that assumption.
 
-What do you mean? Which patch are you talking about? Are you aware that
-I tried to fix this two times?
+That shouldn't matter as PNP matching is PNP specific. We already have
+different ways of matching with device/driver name or of_match_table
+for example. Changing how and when OF matching occurs would not affect
+PNP matching. We do matching on device and driver add currently. For
+the "when" part, we would need to add what I'll call async matching or
+deferred matching which in addition to matching on the of_match_table
+also matches on the dependency list having probed. Your last series
+essentially does this, but the difference is yours is not OF specific
+and I think it needs to be. I mean it is OF specific only in the
+aspect that matching already is. From a driver and subsystem
+standpoint, it should not be OF specific much like deferred probe is
+not OF specific, but in reality only occurs (currently) on OF probed
+drivers.
 
-I already tested the latest fix on Odroid XU3 - which I mentioned in
-commit. However it would be nice to get confirmation for fixing origina=
-l
-bug report (that specific conditions on that board which Gabriel report=
-ed).
+>>> For machs that don't move of_platform_populate() to a later point, =
+these
+>>> patches shouldn't cause any problems but it's not guaranteed that w=
+e'll avoid
+>>> all the deferred probes as some drivers may not be registered yet.
+>>
+>> Ideally, of_platform_populate is not explicitly called by each
+>> platform. So I think we need to make this work for the default case.
+>
+> The problem is that some platforms will need fixing because some
+> initcalls assume that some devices will have been registered already,
+> or even probed. I think removing those assumptions shouldn't be
+> problematic because I haven't had much trouble with this on the four
+> platforms I have tested with, but I cannot test every board that is
+> supported upstream.
+>
+> I can ask though the KernelCI folks to boot my branch in all their
+> boards and make sure that those work when of_platform_populate is
+> called in late_initcall.
 
-Best regards,
-Krzysztof
+I'd imagine Kevin would be happy to. That is still a subset of h/w, so
+we'd need a way to disable any solution.
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
