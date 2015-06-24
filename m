@@ -1,127 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] regulator: s2mps11: Added shutdown function to poweroff Odroid-XU3
-Date: Wed, 24 Jun 2015 19:57:00 +0900
-Message-ID: <CAJKOXPde5JivEEApNaGVHgLZfoK9qLWxa8hr-WASNwH00Rm_uw@mail.gmail.com>
-References: <1435130188-4087-1-git-send-email-linux.amoon@gmail.com>
-	<CAJKOXPewv=_aOjf=ot-n8hsE=FEmLzHGsafSQiRngLhMU2BjEg@mail.gmail.com>
-	<CANAwSgQSXRojp-EU_djnQv7w+3OBGQ500T8t_-8SGHUko2GkjQ@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH RESEND] regulator: s2mps11: Fix GPIO suspend enable shift
+ wrapping bug
+Date: Wed, 24 Jun 2015 12:25:18 +0100
+Message-ID: <20150624112518.GI14071@sirena.org.uk>
+References: <1435142923-31815-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KGc1k+SqnCbNkj2i"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vn0-f53.google.com ([209.85.216.53]:37338 "EHLO
-	mail-vn0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751061AbbFXK5C (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53651 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752060AbbFXLZX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jun 2015 06:57:02 -0400
-In-Reply-To: <CANAwSgQSXRojp-EU_djnQv7w+3OBGQ500T8t_-8SGHUko2GkjQ@mail.gmail.com>
+	Wed, 24 Jun 2015 07:25:23 -0400
+Content-Disposition: inline
+In-Reply-To: <1435142923-31815-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
 
-2015-06-24 19:32 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
-> Hi Krzysztof,
->
-> On 24 June 2015 at 13:27, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
->> 2015-06-24 16:16 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
->>> Added .shutdown function to s2mps11 to help poweroff the board succefully.
->>
->> s/succefully/successfully/
->>
->>> The device drivers set the register to turn off the PMIC.
->>
->> Driver or drivers?
->>
->>>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>> ---
->>> Changes fixes the poweroff
->>> root@odroidxu3:~# poweroff
->>>
->>> Broadcast message from root@odroidxu3
->>>         (/dev/ttySAC2) at 13:08 ...
->>>
->>> The system is going down for power off NOW!
->>> root@odroidxu3:~# wait-for-state stop/waiting
->>>  * Stopping rsync daemon rsync                                           [ OK ]
->>>  * Stopping RDP Session manager                                          [ OK ]
->>>  * Stopping NTP server ntpd                                              [ OK ]
->>>  * Asking all remaining processes to terminate...                        [ OK ]
->>>  * All processes ended within 1 seconds...                               [ OK ]
->>> nm-dispatcher.action: Caught signal 15, shutting down...
->>> ModemManager[2134]: <warn>  Could not acquire the 'org.freedesktop.ModemManager1' service name
->>>
->>> ModemManager[2134]: <info>  ModemManager is shut down
->>>
->>>  * Unmounting temporary filesystems...                                   [ OK ]
->>>  * Deactivating swap...                                                  [ OK ]
->>>  * Unmounting local filesystems...                                       [ OK ]
->>>  * Will now halt
->>> [  209.020280] reboot: Power down
->>> [  209.122039] Power down failed, please power off system manually.
->>> ---
->>>  drivers/regulator/s2mps11.c | 8 ++++++++
->>>  1 file changed, 8 insertions(+)
->>>
->>> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
->>> index ff82811..871f7b8 100644
->>> --- a/drivers/regulator/s2mps11.c
->>> +++ b/drivers/regulator/s2mps11.c
->>> @@ -1060,6 +1060,13 @@ out:
->>>         return ret;
->>>  }
->>>
->>> +static void s2mps11_pmic_shutdown(struct platform_device *pdev)
->>> +{
->>> +       struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
->>> +
->>> +       regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_CTRL1, 0xff, 0x00);
->>
->> This looks odd to me and interesting in the same time...
->> 1. Why clearing all of the fields from the register? Don't you want to
->> clear only one of it?
->
-> I have followed what the hardkernel source code point at this point.
-> I will look into which bit need to clear/set to power off successful.
 
-Following other tree is not enough, even when it solves some one
-problem. Drivers could be used on different boards, where hardkernel
-patches were not tested. This driver is used on many boards so please
-explain exactly what is the cause of problem, what have to be done and
-how patch achieves this. Such explanation helps understanding impact
-on other boards.
+--KGc1k+SqnCbNkj2i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->> 2. What exactly you want to do here? What is expected behaviour?
->
-> When you power off the board dose not power off cleanly.
-> [  209.122039] Power down failed, please power off system manually.
->
-> After this changes Its power off the board. Leaving the board with
-> solid red led blowing.
+On Wed, Jun 24, 2015 at 07:48:43PM +0900, Krzysztof Kozlowski wrote:
+> From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>=20
+> Status of enabling suspend mode for regulator was stored in bitmap-like
+> long integer.
 
-You described observable issue, which is nice, but I am asking for
-technical details. What exactly do you want to achieve here?
-Technically. What is expected behaviour. In technical details, not
-only observable. I am asking for these technical details not only
-because they are important but also because I do not know them.
+Applied, thanks.
 
->
->> 3. How this relates to PWRHOLD coming from AP to the PMIC?
->
-> No Idea right now about this right now. but will update you it I have
-> some thing.
+--KGc1k+SqnCbNkj2i
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-The PMIC receives two signals - PWREN and PWRHOLD. It seems strange
-that PMIC must override PWRHOLD... maybe there is an issue in
-mach-exynos code?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
->
->> 4. Why this is needed only for this driver and only for this board (Odroid XU3)?
->
-> Yes It could be generic not specific for the Odroid XU3 will correct
-> in next patch.
+iQEcBAEBCAAGBQJVipOdAAoJECTWi3JdVIfQE0cH/A8SF4TjeHWmYgjX0nAcZtvf
+VvQ5hEP3dVXAEsTaFT+zTjbY24w3+pYT+csD2VORvyo6kgIsYT70pj4Qvl81eVbU
+LRD3qzyTylkTz3aZA2v2FC8q6rgt7s1BHcqVBlvo6AK8j95I2iMj4sEPj0euaKIu
+CylttOjcQcP9uGGRS7uNlMn1JR7kwTINWilzjEtgjPBcAOPvRWNufcfOnWeT/BN6
+3SY8IGkWiRmC/lpZPngaffHclBdmVl8KmrpYsy1q9HYDDNipHhYYeBdTrOI8C9wn
+BYhEbA0hYAB9NO2Gi+2Kr57hqEuZFE0PpJ1AjhPBWiZLIZqwENYbVMhzA6EHUkc=
+=3VnE
+-----END PGP SIGNATURE-----
 
-Thanks,
-Best regards,
-Krzysztof
+--KGc1k+SqnCbNkj2i--
