@@ -1,61 +1,81 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: s2mps11: Fix GPIO suspend enable shift
- wrapping bug
-Date: Wed, 24 Jun 2015 10:31:44 +0100
-Message-ID: <20150624093144.GE14071@sirena.org.uk>
-References: <1432696928-4690-1-git-send-email-k.kozlowski@samsung.com>
- <20150528144449.GZ21577@sirena.org.uk>
- <CAJKOXPc3_uHBqKYShn603OT=UdLk-Q=i9Q84rwywtNpCTfUp=w@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 05/23] drm/exynos: Kconfig: select DP if FIMD or DECON
+ are selected
+Date: Wed, 24 Jun 2015 12:00:36 +0200
+Message-ID: <558A7FC4.8020805@samsung.com>
+References: <1435095336-6196-1-git-send-email-gustavo@padovan.org> <1435095336-6196-6-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="42wYT+Mt3aBUaKnv"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53540 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988AbbFXJbz (ORCPT
+Received: from plane.gmane.org ([80.91.229.3]:37229 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750882AbbFXKAn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jun 2015 05:31:55 -0400
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPc3_uHBqKYShn603OT=UdLk-Q=i9Q84rwywtNpCTfUp=w@mail.gmail.com>
+	Wed, 24 Jun 2015 06:00:43 -0400
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1Z7hU1-0006ok-Jv
+	for linux-samsung-soc@vger.kernel.org; Wed, 24 Jun 2015 12:00:41 +0200
+Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jun 2015 12:00:41 +0200
+Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jun 2015 12:00:41 +0200
+In-Reply-To: <1435095336-6196-6-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, stable@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 
+Hi Gustavo,
 
---42wYT+Mt3aBUaKnv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 06/23/2015 11:35 PM, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> DP is required if either FIMD or DECON are selected so select it
+> automatically.
 
-On Wed, Jun 24, 2015 at 01:02:28PM +0900, Krzysztof Kozlowski wrote:
-> 2015-05-28 23:44 GMT+09:00 Mark Brown <broonie@kernel.org>:
-> > On Wed, May 27, 2015 at 12:22:08PM +0900, Krzysztof Kozlowski wrote:
-> >> Status of enabling suspend mode for regulator was stored in bitmap-like
-> >> long integer.
+It is not true, there are even SoCs with FIMD/DECON and without DP.
 
-> > Applied, thanks.
+Regards
+Andrzej
 
-> Mark, what happened with this patch? I can't find it in your tree.
-
-I don't know.  If it's not there it's not there and you'll need to
-resend, sorry.  There were some problems with error handling for bad
-networks when pushing things but it looks like this was after I fixed
-those.
-
---42wYT+Mt3aBUaKnv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVinj/AAoJECTWi3JdVIfQ+iMH/RUmo0E8BgSJHV/+YYaVoDrS
-JN/UNk1aprkol854yoYyYEt5/Labb1HIUB4GkIobcJpJA/HWpb2mciYxw0J/xTUP
-3EiM2ssoovNGcWxxq2Z5pGCp91pJ4SqYe4a5fUUMRVB/Cx5QEh6hGRgGIf1+zpy8
-a8Y7zgqYtUiLkC8gES/HYyuNK0I2K7n9EMJp6WcTGOUPrMNLasOUqgFNxM8rs3rv
-4HNMa6RaLRLBMYui8Y+bD6nLBP65PWQV7u0//GtPxiv+zqQR6YR2C0FBw7UiocEv
-iNMACM5ebMa8i86Y34By0k898WAIIKGj3HZGBVkw25DD1pi1Jp8kGKgdqv+bYbM=
-=N3IV
------END PGP SIGNATURE-----
-
---42wYT+Mt3aBUaKnv--
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/Kconfig | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+> index 8203283..2d86304 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -20,6 +20,7 @@ config DRM_EXYNOS_FIMD
+>  	bool "Exynos DRM FIMD"
+>  	depends on DRM_EXYNOS && !FB_S3C
+>  	select FB_MODE_HELPERS
+> +	select DRM_EXYNOS_DP
+>  	select MFD_SYSCON
+>  	help
+>  	  Choose this option if you want to use Exynos FIMD for DRM.
+> @@ -28,6 +29,7 @@ config DRM_EXYNOS7_DECON
+>  	bool "Exynos DRM DECON"
+>  	depends on DRM_EXYNOS && !FB_S3C
+>  	select FB_MODE_HELPERS
+> +	select DRM_EXYNOS_DP
+>  	help
+>  	  Choose this option if you want to use Exynos DECON for DRM.
+>  
+> @@ -50,7 +52,7 @@ config DRM_EXYNOS_DSI
+>  
+>  config DRM_EXYNOS_DP
+>  	bool "EXYNOS DRM DP driver support"
+> -	depends on (DRM_EXYNOS_FIMD || DRM_EXYNOS7_DECON) && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
+> +	depends on ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
+>  	default DRM_EXYNOS
+>  	select DRM_PANEL
+>  	help
+> 
