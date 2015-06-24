@@ -1,105 +1,127 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH RESEND] regulator: s2mps11: Fix GPIO suspend enable shift wrapping bug
-Date: Wed, 24 Jun 2015 19:48:43 +0900
-Message-ID: <1435142923-31815-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: stable@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] regulator: s2mps11: Added shutdown function to poweroff Odroid-XU3
+Date: Wed, 24 Jun 2015 19:57:00 +0900
+Message-ID: <CAJKOXPde5JivEEApNaGVHgLZfoK9qLWxa8hr-WASNwH00Rm_uw@mail.gmail.com>
+References: <1435130188-4087-1-git-send-email-linux.amoon@gmail.com>
+	<CAJKOXPewv=_aOjf=ot-n8hsE=FEmLzHGsafSQiRngLhMU2BjEg@mail.gmail.com>
+	<CANAwSgQSXRojp-EU_djnQv7w+3OBGQ500T8t_-8SGHUko2GkjQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vn0-f53.google.com ([209.85.216.53]:37338 "EHLO
+	mail-vn0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751061AbbFXK5C (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Jun 2015 06:57:02 -0400
+In-Reply-To: <CANAwSgQSXRojp-EU_djnQv7w+3OBGQ500T8t_-8SGHUko2GkjQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Status of enabling suspend mode for regulator was stored in bitmap-like
-long integer.
+2015-06-24 19:32 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+> Hi Krzysztof,
+>
+> On 24 June 2015 at 13:27, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>> 2015-06-24 16:16 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>>> Added .shutdown function to s2mps11 to help poweroff the board succefully.
+>>
+>> s/succefully/successfully/
+>>
+>>> The device drivers set the register to turn off the PMIC.
+>>
+>> Driver or drivers?
+>>
+>>>
+>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>> ---
+>>> Changes fixes the poweroff
+>>> root@odroidxu3:~# poweroff
+>>>
+>>> Broadcast message from root@odroidxu3
+>>>         (/dev/ttySAC2) at 13:08 ...
+>>>
+>>> The system is going down for power off NOW!
+>>> root@odroidxu3:~# wait-for-state stop/waiting
+>>>  * Stopping rsync daemon rsync                                           [ OK ]
+>>>  * Stopping RDP Session manager                                          [ OK ]
+>>>  * Stopping NTP server ntpd                                              [ OK ]
+>>>  * Asking all remaining processes to terminate...                        [ OK ]
+>>>  * All processes ended within 1 seconds...                               [ OK ]
+>>> nm-dispatcher.action: Caught signal 15, shutting down...
+>>> ModemManager[2134]: <warn>  Could not acquire the 'org.freedesktop.ModemManager1' service name
+>>>
+>>> ModemManager[2134]: <info>  ModemManager is shut down
+>>>
+>>>  * Unmounting temporary filesystems...                                   [ OK ]
+>>>  * Deactivating swap...                                                  [ OK ]
+>>>  * Unmounting local filesystems...                                       [ OK ]
+>>>  * Will now halt
+>>> [  209.020280] reboot: Power down
+>>> [  209.122039] Power down failed, please power off system manually.
+>>> ---
+>>>  drivers/regulator/s2mps11.c | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+>>> index ff82811..871f7b8 100644
+>>> --- a/drivers/regulator/s2mps11.c
+>>> +++ b/drivers/regulator/s2mps11.c
+>>> @@ -1060,6 +1060,13 @@ out:
+>>>         return ret;
+>>>  }
+>>>
+>>> +static void s2mps11_pmic_shutdown(struct platform_device *pdev)
+>>> +{
+>>> +       struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>>> +
+>>> +       regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_CTRL1, 0xff, 0x00);
+>>
+>> This looks odd to me and interesting in the same time...
+>> 1. Why clearing all of the fields from the register? Don't you want to
+>> clear only one of it?
+>
+> I have followed what the hardkernel source code point at this point.
+> I will look into which bit need to clear/set to power off successful.
 
-However since adding support for S2MPU02 the number of regulators
-exceeded 32 so on devices with more than 32 regulators (S2MPU02 and
-S2MPS13) overflow happens when shifting the bit. This could lead to
-enabling suspend mode for completely different regulator than intended
-or to switching different regulator to other mode (e.g. from always
-enabled to controlled by PWRHOLD pin). Both cases could result in larger
-energy usage and issues when suspending to RAM.
+Following other tree is not enough, even when it solves some one
+problem. Drivers could be used on different boards, where hardkernel
+patches were not tested. This driver is used on many boards so please
+explain exactly what is the cause of problem, what have to be done and
+how patch achieves this. Such explanation helps understanding impact
+on other boards.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: <stable@vger.kernel.org>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 00e2573d2c10 ("regulator: s2mps11: Add support S2MPU02 regulator device")
----
- drivers/regulator/s2mps11.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+>
+>> 2. What exactly you want to do here? What is expected behaviour?
+>
+> When you power off the board dose not power off cleanly.
+> [  209.122039] Power down failed, please power off system manually.
+>
+> After this changes Its power off the board. Leaving the board with
+> solid red led blowing.
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 326ffb553371..72fc3c32db49 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -34,6 +34,8 @@
- #include <linux/mfd/samsung/s2mps14.h>
- #include <linux/mfd/samsung/s2mpu02.h>
- 
-+/* The highest number of possible regulators for supported devices. */
-+#define S2MPS_REGULATOR_MAX		S2MPS13_REGULATOR_MAX
- struct s2mps11_info {
- 	unsigned int rdev_num;
- 	int ramp_delay2;
-@@ -49,7 +51,7 @@ struct s2mps11_info {
- 	 * One bit for each S2MPS13/S2MPS14/S2MPU02 regulator whether
- 	 * the suspend mode was enabled.
- 	 */
--	unsigned long long s2mps14_suspend_state:50;
-+	DECLARE_BITMAP(suspend_state, S2MPS_REGULATOR_MAX);
- 
- 	/* Array of size rdev_num with GPIO-s for external sleep control */
- 	int *ext_control_gpio;
-@@ -500,7 +502,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
- 	switch (s2mps11->dev_type) {
- 	case S2MPS13X:
- 	case S2MPS14X:
--		if (s2mps11->s2mps14_suspend_state & (1 << rdev_get_id(rdev)))
-+		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
- 			val = S2MPS14_ENABLE_SUSPEND;
- 		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
- 			val = S2MPS14_ENABLE_EXT_CONTROL;
-@@ -508,7 +510,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
- 			val = rdev->desc->enable_mask;
- 		break;
- 	case S2MPU02:
--		if (s2mps11->s2mps14_suspend_state & (1 << rdev_get_id(rdev)))
-+		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
- 			val = S2MPU02_ENABLE_SUSPEND;
- 		else
- 			val = rdev->desc->enable_mask;
-@@ -562,7 +564,7 @@ static int s2mps14_regulator_set_suspend_disable(struct regulator_dev *rdev)
- 	if (ret < 0)
- 		return ret;
- 
--	s2mps11->s2mps14_suspend_state |= (1 << rdev_get_id(rdev));
-+	set_bit(rdev_get_id(rdev), s2mps11->suspend_state);
- 	/*
- 	 * Don't enable suspend mode if regulator is already disabled because
- 	 * this would effectively for a short time turn on the regulator after
-@@ -960,18 +962,22 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	case S2MPS11X:
- 		s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
- 		regulators = s2mps11_regulators;
-+		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
- 		break;
- 	case S2MPS13X:
- 		s2mps11->rdev_num = ARRAY_SIZE(s2mps13_regulators);
- 		regulators = s2mps13_regulators;
-+		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
- 		break;
- 	case S2MPS14X:
- 		s2mps11->rdev_num = ARRAY_SIZE(s2mps14_regulators);
- 		regulators = s2mps14_regulators;
-+		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
- 		break;
- 	case S2MPU02:
- 		s2mps11->rdev_num = ARRAY_SIZE(s2mpu02_regulators);
- 		regulators = s2mpu02_regulators;
-+		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "Invalid device type: %u\n",
--- 
-2.1.4
+You described observable issue, which is nice, but I am asking for
+technical details. What exactly do you want to achieve here?
+Technically. What is expected behaviour. In technical details, not
+only observable. I am asking for these technical details not only
+because they are important but also because I do not know them.
+
+>
+>> 3. How this relates to PWRHOLD coming from AP to the PMIC?
+>
+> No Idea right now about this right now. but will update you it I have
+> some thing.
+
+The PMIC receives two signals - PWREN and PWRHOLD. It seems strange
+that PMIC must override PWRHOLD... maybe there is an issue in
+mach-exynos code?
+
+>
+>> 4. Why this is needed only for this driver and only for this board (Odroid XU3)?
+>
+> Yes It could be generic not specific for the Odroid XU3 will correct
+> in next patch.
+
+Thanks,
+Best regards,
+Krzysztof
