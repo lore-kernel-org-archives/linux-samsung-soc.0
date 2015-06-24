@@ -1,42 +1,105 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] regulator: s2mps11: Fix GPIO suspend enable shift
- wrapping bug
-Date: Wed, 24 Jun 2015 19:43:58 +0900
-Message-ID: <CAJKOXPdOu_iHYthSLt=z0a+VMjY46_XaL0NxbHcjLBAjs4UJOg@mail.gmail.com>
-References: <1432696928-4690-1-git-send-email-k.kozlowski@samsung.com>
-	<20150528144449.GZ21577@sirena.org.uk>
-	<CAJKOXPc3_uHBqKYShn603OT=UdLk-Q=i9Q84rwywtNpCTfUp=w@mail.gmail.com>
-	<20150624093144.GE14071@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH RESEND] regulator: s2mps11: Fix GPIO suspend enable shift wrapping bug
+Date: Wed, 24 Jun 2015 19:48:43 +0900
+Message-ID: <1435142923-31815-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20150624093144.GE14071@sirena.org.uk>
 Sender: stable-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, stable@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-06-24 18:31 GMT+09:00 Mark Brown <broonie@kernel.org>:
-> On Wed, Jun 24, 2015 at 01:02:28PM +0900, Krzysztof Kozlowski wrote:
->> 2015-05-28 23:44 GMT+09:00 Mark Brown <broonie@kernel.org>:
->> > On Wed, May 27, 2015 at 12:22:08PM +0900, Krzysztof Kozlowski wrote:
->> >> Status of enabling suspend mode for regulator was stored in bitmap-like
->> >> long integer.
->
->> > Applied, thanks.
->
->> Mark, what happened with this patch? I can't find it in your tree.
->
-> I don't know.  If it's not there it's not there and you'll need to
-> resend, sorry.  There were some problems with error handling for bad
-> networks when pushing things but it looks like this was after I fixed
-> those.
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Okay, it happens. If you don't mind, I'll resend now, during merge
-window. If it is bad timing, then let me know or postpone the patch.
-This is a fix so in my humble opinion it's a candidate for 4.2-rc
-(although it would be nice if this could sit in linux-next for a
-while).
+Status of enabling suspend mode for regulator was stored in bitmap-like
+long integer.
 
-Best regards,
-Krzysztof
+However since adding support for S2MPU02 the number of regulators
+exceeded 32 so on devices with more than 32 regulators (S2MPU02 and
+S2MPS13) overflow happens when shifting the bit. This could lead to
+enabling suspend mode for completely different regulator than intended
+or to switching different regulator to other mode (e.g. from always
+enabled to controlled by PWRHOLD pin). Both cases could result in larger
+energy usage and issues when suspending to RAM.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 00e2573d2c10 ("regulator: s2mps11: Add support S2MPU02 regulator device")
+---
+ drivers/regulator/s2mps11.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 326ffb553371..72fc3c32db49 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -34,6 +34,8 @@
+ #include <linux/mfd/samsung/s2mps14.h>
+ #include <linux/mfd/samsung/s2mpu02.h>
+ 
++/* The highest number of possible regulators for supported devices. */
++#define S2MPS_REGULATOR_MAX		S2MPS13_REGULATOR_MAX
+ struct s2mps11_info {
+ 	unsigned int rdev_num;
+ 	int ramp_delay2;
+@@ -49,7 +51,7 @@ struct s2mps11_info {
+ 	 * One bit for each S2MPS13/S2MPS14/S2MPU02 regulator whether
+ 	 * the suspend mode was enabled.
+ 	 */
+-	unsigned long long s2mps14_suspend_state:50;
++	DECLARE_BITMAP(suspend_state, S2MPS_REGULATOR_MAX);
+ 
+ 	/* Array of size rdev_num with GPIO-s for external sleep control */
+ 	int *ext_control_gpio;
+@@ -500,7 +502,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 	switch (s2mps11->dev_type) {
+ 	case S2MPS13X:
+ 	case S2MPS14X:
+-		if (s2mps11->s2mps14_suspend_state & (1 << rdev_get_id(rdev)))
++		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+ 		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+@@ -508,7 +510,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 			val = rdev->desc->enable_mask;
+ 		break;
+ 	case S2MPU02:
+-		if (s2mps11->s2mps14_suspend_state & (1 << rdev_get_id(rdev)))
++		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPU02_ENABLE_SUSPEND;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -562,7 +564,7 @@ static int s2mps14_regulator_set_suspend_disable(struct regulator_dev *rdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	s2mps11->s2mps14_suspend_state |= (1 << rdev_get_id(rdev));
++	set_bit(rdev_get_id(rdev), s2mps11->suspend_state);
+ 	/*
+ 	 * Don't enable suspend mode if regulator is already disabled because
+ 	 * this would effectively for a short time turn on the regulator after
+@@ -960,18 +962,22 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	case S2MPS11X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps11_regulators);
+ 		regulators = s2mps11_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	case S2MPS13X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps13_regulators);
+ 		regulators = s2mps13_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	case S2MPS14X:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mps14_regulators);
+ 		regulators = s2mps14_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	case S2MPU02:
+ 		s2mps11->rdev_num = ARRAY_SIZE(s2mpu02_regulators);
+ 		regulators = s2mpu02_regulators;
++		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
+ 		break;
+ 	default:
+ 		dev_err(&pdev->dev, "Invalid device type: %u\n",
+-- 
+2.1.4
