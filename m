@@ -1,41 +1,53 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drm/exynos: iommu: fix potential NULL pointer dereference
-Date: Thu, 25 Jun 2015 15:10:12 +0200
-Message-ID: <1435237812-24959-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] iommu/exynos: Skip unsupported devices instead of returning
+ -ENODEV
+Date: Thu, 25 Jun 2015 15:10:44 +0200
+Message-ID: <1435237844-25004-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57657 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752005AbbFYNKz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Jun 2015 09:10:55 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NQI00K3K4M5HHB0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 25 Jun 2015 14:10:53 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-U29tZSBkcml2ZXJzIChsaWtlIEV4eW5vcyBtaXhlcikgY2FsbHMgZHJtX2lvbW11X2F0dGFjaF9k
-ZXZpY2VfaWZfcG9zc2libGUKYmVmb3JlIHJlZ2lzdGVyaW5nIGNydGMsIHNvIGFkZGl0aW9uYWwg
-Y2hlY2sgZm9yIE5VTEwgY3J0YyBwb2ludGVyIGlzCnJlcXVpcmVkLgoKU2lnbmVkLW9mZi1ieTog
-TWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQs
-IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1faW9tbXUuYwppbmRleCBkNGVjNzQ2NWU5Y2MuLmQ0ZWI3MzBiYTI1NCAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMKQEAgLTE1MSw3ICsxNTEsNyBA
-QCBpbnQgZHJtX2lvbW11X2F0dGFjaF9kZXZpY2VfaWZfcG9zc2libGUoc3RydWN0IGV4eW5vc19k
-cm1fY3J0YyAqZXh5bm9zX2NydGMsCiAJaW50IHJldCA9IDA7CiAKIAlpZiAoaXNfZHJtX2lvbW11
-X3N1cHBvcnRlZChkcm1fZGV2KSkgewotCQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+Y2xlYXJfY2hh
-bm5lbHMpCisJCWlmIChleHlub3NfY3J0YyAmJiBleHlub3NfY3J0Yy0+b3BzLT5jbGVhcl9jaGFu
-bmVscykKIAkJCWV4eW5vc19jcnRjLT5vcHMtPmNsZWFyX2NoYW5uZWxzKGV4eW5vc19jcnRjKTsK
-IAkJcmV0dXJuIGRybV9pb21tdV9hdHRhY2hfZGV2aWNlKGRybV9kZXYsIHN1YmRydl9kZXYpOwog
-CX0KLS0gCjEuOS4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+IOMMU core calls add_device() for every device on the given bus and
+since commit 19762d7095e6392b6ec56c363a6f29b2119488c2 ("iommu: Propagate
+error in add_iommu_group") all error from it are propagated to the iommu
+core. In case of platform bus there are many devices without sysmmu
+controller, so skip them gently instead of returning error, which would
+be propagated up to bus_set_iommu() and cause initialization failure.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Please queue this patch to v4.2-rcX line. It fixes regression introduced
+by a commit merged in parallel to the exynos iommu patches.
+---
+ drivers/iommu/exynos-iommu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 97c41b8ab5d9..e7f873253a6b 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1119,8 +1119,9 @@ static int exynos_iommu_add_device(struct device *dev)
+ 	struct iommu_group *group;
+ 	int ret;
+ 
++	/* skip devices which doesn't have sysmmu controller */
+ 	if (!has_sysmmu(dev))
+-		return -ENODEV;
++		return 0;
+ 
+ 	group = iommu_group_get(dev);
+ 
+-- 
+1.9.2
