@@ -1,53 +1,41 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM
-Date: Thu, 25 Jun 2015 10:44:28 +0200
-Message-ID: <558BBF6C.7000906@collabora.co.uk>
-References: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk> <1435191645-6022-3-git-send-email-javier.martinez@collabora.co.uk> <20150625083854.GV15013@x1>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: iommu: fix potential NULL pointer dereference
+Date: Thu, 25 Jun 2015 15:10:12 +0200
+Message-ID: <1435237812-24959-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:44407 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149AbbFYIoe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Jun 2015 04:44:34 -0400
-In-Reply-To: <20150625083854.GV15013@x1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, Gwendal Grignou <gwendal@google.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>
 
-Hello Lee,
-
-On 06/25/2015 10:38 AM, Lee Jones wrote:
-> On Thu, 25 Jun 2015, Javier Martinez Canillas wrote:
-> 
->> A dependency on X86 || ARM for MFD_CROS_EC was added to fix the warning:
->> 
->> (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
->> 
->> This happened because CHROME_PLATFORMS had a dependency on X86 || ARM but
->> that dependency was removed since there isn't a reason why the option can
->> not be selected on other architectures. So now the above warning will not
->> happen and the MFD_CROS_EC dependency can be removed since is not needed.
->> 
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
->> 
->>  drivers/mfd/Kconfig | 1 -
->>  1 file changed, 1 deletion(-)
-> 
-> Applied for v4.3, thanks.
-> 
-
-Thanks a lot.
-
-Olof,
-
-Could you please ack patch 1/3 so Lee can pick it through the mfd tree?
-Since both patches 1/3 and 2/3 are needed to fix the build warning for
-!X86 and !ARM architectures.
-
-Best regards,
-Javier
+U29tZSBkcml2ZXJzIChsaWtlIEV4eW5vcyBtaXhlcikgY2FsbHMgZHJtX2lvbW11X2F0dGFjaF9k
+ZXZpY2VfaWZfcG9zc2libGUKYmVmb3JlIHJlZ2lzdGVyaW5nIGNydGMsIHNvIGFkZGl0aW9uYWwg
+Y2hlY2sgZm9yIE5VTEwgY3J0YyBwb2ludGVyIGlzCnJlcXVpcmVkLgoKU2lnbmVkLW9mZi1ieTog
+TWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1faW9tbXUuYwppbmRleCBkNGVjNzQ2NWU5Y2MuLmQ0ZWI3MzBiYTI1NCAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMKKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMKQEAgLTE1MSw3ICsxNTEsNyBA
+QCBpbnQgZHJtX2lvbW11X2F0dGFjaF9kZXZpY2VfaWZfcG9zc2libGUoc3RydWN0IGV4eW5vc19k
+cm1fY3J0YyAqZXh5bm9zX2NydGMsCiAJaW50IHJldCA9IDA7CiAKIAlpZiAoaXNfZHJtX2lvbW11
+X3N1cHBvcnRlZChkcm1fZGV2KSkgewotCQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+Y2xlYXJfY2hh
+bm5lbHMpCisJCWlmIChleHlub3NfY3J0YyAmJiBleHlub3NfY3J0Yy0+b3BzLT5jbGVhcl9jaGFu
+bmVscykKIAkJCWV4eW5vc19jcnRjLT5vcHMtPmNsZWFyX2NoYW5uZWxzKGV4eW5vc19jcnRjKTsK
+IAkJcmV0dXJuIGRybV9pb21tdV9hdHRhY2hfZGV2aWNlKGRybV9kZXYsIHN1YmRydl9kZXYpOwog
+CX0KLS0gCjEuOS4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
