@@ -1,64 +1,42 @@
-From: Robert Baldyga <r.baldyga@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4: add DMA support for serial ports
-Date: Mon, 29 Jun 2015 15:22:34 +0200
-Message-ID: <1435584154-4969-1-git-send-email-r.baldyga@samsung.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH] iommu: Ignore -ENODEV errors from add_device call-back
+ returning -ENODEV
+Date: Mon, 29 Jun 2015 15:43:19 +0200
+Message-ID: <20150629134319.GJ18569@8bytes.org>
+References: <1435237844-25004-1-git-send-email-m.szyprowski@samsung.com>
+ <20150629083534.GG18569@8bytes.org>
+ <55910797.7090709@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56249 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752644AbbF2NWz (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:36648 "EHLO theia.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752902AbbF2NnV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jun 2015 09:22:55 -0400
+	Mon, 29 Jun 2015 09:43:21 -0400
+Content-Disposition: inline
+In-Reply-To: <55910797.7090709@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux@arm.linux.org.uk, kgene@kernel.org
-Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, Robert Baldyga <r.baldyga@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Inki Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Enable DMA transfers for serial ports.
+On Mon, Jun 29, 2015 at 10:53:43AM +0200, Marek Szyprowski wrote:
+> On 2015-06-29 10:35, Joerg Roedel wrote:
+> >The -ENODEV error just means that the device is not
+> >translated by an IOMMU. We shouldn't bail out of iommu
+> >driver initialization when that happens, as this is a common
+> >scenario on ARM.
+> >
+> >No returning -ENODEV in the drivers would be a bad idea, as
+> >the IOMMU core would have no indication whether a device is
+> >translated or not. This information is not used at the
+> >moment, but will probably be in the future.
+> >
+> >Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> 
+> Works fine!
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e20cdc2..21b839b 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -426,6 +426,8 @@
- 		interrupts = <0 52 0>;
- 		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
- 		clock-names = "uart", "clk_uart_baud0";
-+		dmas = <&pdma0 15>, <&pdma0 16>;
-+		dma-names = "rx", "tx";
- 		status = "disabled";
- 	};
- 
-@@ -435,6 +437,8 @@
- 		interrupts = <0 53 0>;
- 		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
- 		clock-names = "uart", "clk_uart_baud0";
-+		dmas = <&pdma1 15>, <&pdma1 16>;
-+		dma-names = "rx", "tx";
- 		status = "disabled";
- 	};
- 
-@@ -444,6 +448,8 @@
- 		interrupts = <0 54 0>;
- 		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
- 		clock-names = "uart", "clk_uart_baud0";
-+		dmas = <&pdma0 17>, <&pdma0 18>;
-+		dma-names = "rx", "tx";
- 		status = "disabled";
- 	};
- 
-@@ -453,6 +459,8 @@
- 		interrupts = <0 55 0>;
- 		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
- 		clock-names = "uart", "clk_uart_baud0";
-+		dmas = <&pdma1 17>, <&pdma1 18>;
-+		dma-names = "rx", "tx";
- 		status = "disabled";
- 	};
- 
--- 
-1.9.1
+Thanks for testing! The patch is queued now.
