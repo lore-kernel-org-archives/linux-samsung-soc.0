@@ -1,78 +1,50 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: samsung: fix cpu clock's flags checking
-Date: Mon, 29 Jun 2015 19:29:38 +0200
-Message-ID: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCHv7 05/15] input.h: add BUS_CEC type
+Date: Mon, 29 Jun 2015 12:24:20 -0700
+Message-ID: <20150629192420.GC22166@dtor-ws>
+References: <1435572900-56998-1-git-send-email-hans.verkuil@cisco.com>
+ <1435572900-56998-6-git-send-email-hans.verkuil@cisco.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:32881 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751343AbbF2TYZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 29 Jun 2015 15:24:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1435572900-56998-6-git-send-email-hans.verkuil@cisco.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org
 
-CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
-incorrectly used as a bit numbers.  Fix it.
+On Mon, Jun 29, 2015 at 12:14:50PM +0200, Hans Verkuil wrote:
+> Inputs can come in over the HDMI CEC bus, so add a new type for this.
+> 
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Tested on Exynos4210 based Origen board and on Exynos5250 based
-Arndale board.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/clk/samsung/clk-cpu.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> ---
+>  include/uapi/linux/input.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+> index 7430a3f..0af80b2 100644
+> --- a/include/uapi/linux/input.h
+> +++ b/include/uapi/linux/input.h
+> @@ -984,6 +984,7 @@ struct input_keymap_entry {
+>  #define BUS_GSC			0x1A
+>  #define BUS_ATARI		0x1B
+>  #define BUS_SPI			0x1C
+> +#define BUS_CEC			0x1D
+>  
+>  /*
+>   * MT_TOOL types
+> -- 
+> 2.1.4
+> 
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 3a1fe07..dd02356 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -161,7 +161,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
- 	 */
- 	div0 = cfg_data->div0;
--	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
- 		div1 = cfg_data->div1;
- 		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
- 			div1 = readl(base + E4210_DIV_CPU1) &
-@@ -182,7 +182,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 		alt_div = DIV_ROUND_UP(alt_prate, tmp_rate) - 1;
- 		WARN_ON(alt_div >= MAX_DIV);
- 
--		if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
-+		if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 			/*
- 			 * In Exynos4210, ATB clock parent is also mout_core. So
- 			 * ATB clock also needs to be mantained at safe speed.
-@@ -203,7 +203,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	writel(div0, base + E4210_DIV_CPU0);
- 	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
- 
--	if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_HAS_DIV1) {
- 		writel(div1, base + E4210_DIV_CPU1);
- 		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
- 				DIV_MASK_ALL);
-@@ -222,7 +222,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	unsigned long mux_reg;
- 
- 	/* find out the divider values to use for clock data */
--	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 		while ((cfg_data->prate * 1000) != ndata->new_rate) {
- 			if (cfg_data->prate == 0)
- 				return -EINVAL;
-@@ -237,7 +237,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
- 	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
- 
--	if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
-+	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
- 		div_mask |= E4210_DIV0_ATB_MASK;
- 	}
 -- 
-1.9.1
-
+Dmitry
