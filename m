@@ -1,79 +1,46 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: Re: [PATCH] GPU-DRM-Exynos: Delete unnecessary checks before two
- function calls
-Date: Sat, 27 Jun 2015 19:17:35 +0200
-Message-ID: <558EDAAF.30803@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <54D28870.3060400@users.sourceforge.net> <54D329D0.7050006@samsung.com>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH] drm/exynos: iommu: fix potential NULL pointer dereference
+Date: Mon, 29 Jun 2015 15:35:44 +0900
+Message-ID: <20150629153544.79046d24@hwh-ubuntu>
+References: <1435237812-24959-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:55139 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751073AbbF0RRy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 27 Jun 2015 13:17:54 -0400
-In-Reply-To: <54D329D0.7050006@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1435237812-24959-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Wed, 4 Feb 2015 21:54:45 +0100
->>
->> The functions phy_power_on() and vunmap() perform also input
->> parameter validation. Thus the test around their calls is not needed.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/gpu/drm/exynos/exynos_dp_core.c   | 6 ++----
->>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 2 +-
->>  2 files changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> index 34d46aa..306cf1d 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -1057,14 +1057,12 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
->>  
->>  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
->>  {
->> -	if (dp->phy)
->> -		phy_power_on(dp->phy);
->> +	phy_power_on(dp->phy);
->>  }
->>  
->>  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
->>  {
->> -	if (dp->phy)
->> -		phy_power_off(dp->phy);
->> +	phy_power_off(dp->phy);
->>  }
->>  
->>  static void exynos_dp_poweron(struct exynos_drm_display *display)
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> index e12ea90..0dd448a 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> @@ -313,7 +313,7 @@ static void exynos_drm_fbdev_destroy(struct drm_device *dev,
->>  	struct exynos_drm_gem_obj *exynos_gem_obj = exynos_fbd->exynos_gem_obj;
->>  	struct drm_framebuffer *fb;
->>  
->> -	if (is_drm_iommu_supported(dev) && exynos_gem_obj->buffer->kvaddr)
->> +	if (is_drm_iommu_supported(dev))
->>  		vunmap(exynos_gem_obj->buffer->kvaddr);
->>  
->>  	/* release drm framebuffer and real buffer */
->>
-> 
-> Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Do the chances increase to integrate this update suggestion
-into another source code repository?
-
-Regards,
-Markus
+RGVhciBNYXJlaywKCk9uIFRodSwgMjUgSnVuIDIwMTUgMTU6MTA6MTIgKzAyMDAKTWFyZWsgU3p5
+cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToKCj4gU29tZSBkcml2ZXJz
+IChsaWtlIEV4eW5vcyBtaXhlcikgY2FsbHMKPiBkcm1faW9tbXVfYXR0YWNoX2RldmljZV9pZl9w
+b3NzaWJsZSBiZWZvcmUgcmVnaXN0ZXJpbmcgY3J0Yywgc28KPiBhZGRpdGlvbmFsIGNoZWNrIGZv
+ciBOVUxMIGNydGMgcG9pbnRlciBpcyByZXF1aXJlZC4KCkl0IHNlZW1zIHJlYXNvbmFibGUuCgpS
+ZXZpZXdlZC1ieTogSHl1bmd3b24gSHdhbmcgPGh1bWFuLmh3YW5nQHNhbXN1bmcuY29tPgoKPiAK
+PiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5j
+b20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIHwg
+MiArLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPiAK
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmMK
+PiBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIGluZGV4Cj4gZDRl
+Yzc0NjVlOWNjLi5kNGViNzMwYmEyNTQgMTAwNjQ0IC0tLQo+IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2lvbW11LmMgKysrCj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1faW9tbXUuYyBAQCAtMTUxLDcgKzE1MSw3IEBAIGludAo+IGRybV9pb21tdV9hdHRh
+Y2hfZGV2aWNlX2lmX3Bvc3NpYmxlKHN0cnVjdCBleHlub3NfZHJtX2NydGMKPiAqZXh5bm9zX2Ny
+dGMsIGludCByZXQgPSAwOyAKPiAgCWlmIChpc19kcm1faW9tbXVfc3VwcG9ydGVkKGRybV9kZXYp
+KSB7Cj4gLQkJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmNsZWFyX2NoYW5uZWxzKQo+ICsJCWlmIChl
+eHlub3NfY3J0YyAmJiBleHlub3NfY3J0Yy0+b3BzLT5jbGVhcl9jaGFubmVscykKPiAgCQkJZXh5
+bm9zX2NydGMtPm9wcy0+Y2xlYXJfY2hhbm5lbHMoZXh5bm9zX2NydGMpOwo+ICAJCXJldHVybiBk
+cm1faW9tbXVfYXR0YWNoX2RldmljZShkcm1fZGV2LCBzdWJkcnZfZGV2KTsKPiAgCX0KCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
