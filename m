@@ -1,40 +1,64 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: fix for sleeping in
- atomic ctx handling cpu hotplug notif.
-Date: Mon, 29 Jun 2015 20:50:19 +0900
-Message-ID: <CAJKOXPdcBOqW=X8bhodQwO-qBoeTdh7NznmC8NXpB-LB_dPY5g@mail.gmail.com>
-References: <1426151496-5509-1-git-send-email-d.eppel@samsung.com>
-	<1435324984-7328-1-git-send-email-d.eppel@samsung.com>
-	<55910DA6.4070404@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <55910DA6.4070404@linaro.org>
-Sender: stable-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Damian Eppel <d.eppel@samsung.com>, tglx@linutronix.de, kgene@kernel.org, Kozik <k.kozlowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.jabrzyk@samsung.com, stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Robert Baldyga <r.baldyga@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4: add DMA support for serial ports
+Date: Mon, 29 Jun 2015 15:22:34 +0200
+Message-ID: <1435584154-4969-1-git-send-email-r.baldyga@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:56249 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752644AbbF2NWz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 29 Jun 2015 09:22:55 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux@arm.linux.org.uk, kgene@kernel.org
+Cc: k.kozlowski@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, Robert Baldyga <r.baldyga@samsung.com>
 
-2015-06-29 18:19 GMT+09:00 Daniel Lezcano <daniel.lezcano@linaro.org>:
-> On 06/26/2015 03:23 PM, Damian Eppel wrote:
->>
->> This is to fix an issue of sleeping in atomic context when processing
->> hotplug notifications in Exynos MCT(Multi-Core Timer).
->> The issue was reproducible on Exynos 3250 (Rinato board) and Exynos 5420
->> (Arndale Octa board).
->>
->> Whilst testing cpu hotplug events on kernel configured with DEBUG_PREEMPT
->> and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by calling
->> request_irq() and free_irq() in the context of hotplug notification
->> (which is in this case atomic context).
->
->
-> Applied as a 4.2 fix.
->
-> Should it be tagged stable@ ?
+Enable DMA transfers for serial ports.
 
-The patch and commit in tip have cc-stable and fixes tags, so
-everything is fine.
+Signed-off-by: Robert Baldyga <r.baldyga@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks!
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e20cdc2..21b839b 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -426,6 +426,8 @@
+ 		interrupts = <0 52 0>;
+ 		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 		clock-names = "uart", "clk_uart_baud0";
++		dmas = <&pdma0 15>, <&pdma0 16>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -435,6 +437,8 @@
+ 		interrupts = <0 53 0>;
+ 		clocks = <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
+ 		clock-names = "uart", "clk_uart_baud0";
++		dmas = <&pdma1 15>, <&pdma1 16>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -444,6 +448,8 @@
+ 		interrupts = <0 54 0>;
+ 		clocks = <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
+ 		clock-names = "uart", "clk_uart_baud0";
++		dmas = <&pdma0 17>, <&pdma0 18>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+@@ -453,6 +459,8 @@
+ 		interrupts = <0 55 0>;
+ 		clocks = <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
+ 		clock-names = "uart", "clk_uart_baud0";
++		dmas = <&pdma1 17>, <&pdma1 18>;
++		dma-names = "rx", "tx";
+ 		status = "disabled";
+ 	};
+ 
+-- 
+1.9.1
