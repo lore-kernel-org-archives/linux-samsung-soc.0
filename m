@@ -1,43 +1,39 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] clocksource: exynos_mct: remove unneeded container_of()
-Date: Mon, 29 Jun 2015 11:09:46 +0200
-Message-ID: <55910B5A.2090407@linaro.org>
-References: <1434322238.5390.16.camel@mtux> <1434919299.4096.1.camel@mtux>
+Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: fix for sleeping in
+ atomic ctx handling cpu hotplug notif.
+Date: Mon, 29 Jun 2015 11:19:34 +0200
+Message-ID: <55910DA6.4070404@linaro.org>
+References: <1426151496-5509-1-git-send-email-d.eppel@samsung.com> <1435324984-7328-1-git-send-email-d.eppel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
+Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:35021 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752547AbbF2JJm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jun 2015 05:09:42 -0400
-Received: by wgjx7 with SMTP id x7so62195278wgj.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2015 02:09:41 -0700 (PDT)
-In-Reply-To: <1434919299.4096.1.camel@mtux>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1435324984-7328-1-git-send-email-d.eppel@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Damian Eppel <d.eppel@samsung.com>, tglx@linutronix.de, kgene@kernel.org, k.kozlowski@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, m.jabrzyk@samsung.com, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexey Klimov <klimov.linux@gmail.com>, linux-samsung-soc@vger.kernel.org, k.kozlowski@samsung.com
-Cc: sboyd@codeaurora.org, t.dakhran@gmail.com, kgene@kernel.org
 
-On 06/21/2015 10:41 PM, Alexey Klimov wrote:
-> Patch removes unneeded container_of() macro
-> in exynos4_local_timer_setup(). Instead let's pass mevt pointer
-> to setup and stop functions from exynos4_mct_cpu_notify()
-> and let them get evt pointer.
+On 06/26/2015 03:23 PM, Damian Eppel wrote:
+> This is to fix an issue of sleeping in atomic context when processing
+> hotplug notifications in Exynos MCT(Multi-Core Timer).
+> The issue was reproducible on Exynos 3250 (Rinato board) and Exynos 5=
+420
+> (Arndale Octa board).
 >
-> Tested on odroid-xu3.
->
-> Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+> Whilst testing cpu hotplug events on kernel configured with DEBUG_PRE=
+EMPT
+> and DEBUG_ATOMIC_SLEEP we get following BUG message, caused by callin=
+g
+> request_irq() and free_irq() in the context of hotplug notification
+> (which is in this case atomic context).
 
-Applied to my tree for 4.3.
+Applied as a 4.2 fix.
 
-Thanks !
+Should it be tagged stable@ ?
 
-   -- Daniel
+
 
 --=20
   <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
