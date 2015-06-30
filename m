@@ -1,44 +1,56 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCHv7 04/15] HID: add HDMI CEC specific keycodes
-Date: Tue, 30 Jun 2015 09:43:28 -0700
-Message-ID: <20150630164328.GA16924@dtor-ws>
-References: <1435572900-56998-1-git-send-email-hans.verkuil@cisco.com>
- <1435572900-56998-5-git-send-email-hans.verkuil@cisco.com>
- <20150629192509.GD22166@dtor-ws>
- <55924711.9070001@xs4all.nl>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
+Date: Tue, 30 Jun 2015 19:17:51 +0200
+Message-ID: <7416838.2ZUPGjSqFp@amdc1976>
+References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
+ <5591DD9B.4030507@samsung.com>
+ <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:36424 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753684AbbF3Qnd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Jun 2015 12:43:33 -0400
-Content-Disposition: inline
-In-Reply-To: <55924711.9070001@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org
 
-On Tue, Jun 30, 2015 at 09:36:49AM +0200, Hans Verkuil wrote:
-> On 06/29/15 21:25, Dmitry Torokhov wrote:
-> > On Mon, Jun 29, 2015 at 12:14:49PM +0200, Hans Verkuil wrote:
-> >> From: Kamil Debski <kamil@wypas.org>
+
+Hi,
+
+On Tuesday, June 30, 2015 08:27:36 AM Javier Martinez Canillas wrote:
+> On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> > On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
+> >> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> >> incorrectly used as a bit numbers.  Fix it.
 > >>
-> >> Add HDMI CEC specific keycodes to the keycodes definition.
+> >> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> >> Arndale board.
 > >>
-> >> Signed-off-by: Kamil Debski <kamil@wypas.org>
-> >> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> > 
-> > Could you please describe the intended use for these keycodes for people
-> > who do not live and breathe CEC specs?
+> >> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> >> Cc: Michael Turquette <mturquette@baylibre.com>
+> >> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> >> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> ---
+> >>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >
 > 
-> Do you want this as comments in the patch or as the commit description?
+> Looks good to me as well.
+> 
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-In the patch would be preferable.
+Krzysztof has noted that I should use your @dowhile0.org e-mail address
+instead of @collabora.co.uk one, is this right?
 
-Thanks.
- 
--- 
-Dmitry
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
