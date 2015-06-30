@@ -1,67 +1,41 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCHv7 04/15] HID: add HDMI CEC specific keycodes
-Date: Mon, 29 Jun 2015 12:25:09 -0700
-Message-ID: <20150629192509.GD22166@dtor-ws>
-References: <1435572900-56998-1-git-send-email-hans.verkuil@cisco.com>
- <1435572900-56998-5-git-send-email-hans.verkuil@cisco.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
+Date: Tue, 30 Jun 2015 09:06:51 +0900
+Message-ID: <5591DD9B.4030507@samsung.com>
+References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:33781 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809AbbF2TZO (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22019 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753200AbbF3AG6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jun 2015 15:25:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1435572900-56998-5-git-send-email-hans.verkuil@cisco.com>
+	Mon, 29 Jun 2015 20:06:58 -0400
+In-reply-to: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 29, 2015 at 12:14:49PM +0200, Hans Verkuil wrote:
-> From: Kamil Debski <kamil@wypas.org>
+On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
+> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
+> incorrectly used as a bit numbers.  Fix it.
 > 
-> Add HDMI CEC specific keycodes to the keycodes definition.
+> Tested on Exynos4210 based Origen board and on Exynos5250 based
+> Arndale board.
 > 
-> Signed-off-by: Kamil Debski <kamil@wypas.org>
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Could you please describe the intended use for these keycodes for people
-who do not live and breathe CEC specs?
-
-Thanks!
-
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  include/uapi/linux/input.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
-> index 731417c..7430a3f 100644
-> --- a/include/uapi/linux/input.h
-> +++ b/include/uapi/linux/input.h
-> @@ -752,6 +752,18 @@ struct input_keymap_entry {
->  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
->  #define KEY_KBDINPUTASSIST_CANCEL		0x265
->  
-> +#define KEY_RIGHT_UP			0x266
-> +#define KEY_RIGHT_DOWN			0x267
-> +#define KEY_LEFT_UP			0x268
-> +#define KEY_LEFT_DOWN			0x269
-> +
-> +#define KEY_NEXT_FAVORITE		0x270
-> +#define KEY_STOP_RECORD			0x271
-> +#define KEY_PAUSE_RECORD		0x272
-> +#define KEY_VOD				0x273
-> +#define KEY_UNMUTE			0x274
-> +#define KEY_DVB				0x275
-> +
->  #define BTN_TRIGGER_HAPPY		0x2c0
->  #define BTN_TRIGGER_HAPPY1		0x2c0
->  #define BTN_TRIGGER_HAPPY2		0x2c1
-> -- 
-> 2.1.4
-> 
+>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
--- 
-Dmitry
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
