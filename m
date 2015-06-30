@@ -1,47 +1,70 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] clk: samsung: fix cpu clock's flags checking
-Date: Tue, 30 Jun 2015 08:27:36 +0200
-Message-ID: <CABxcv=kVL94rdFgNKcxx2JOi9WRFnvhMWrpjEDcEmx7q7cEsgQ@mail.gmail.com>
-References: <1435598978-21800-1-git-send-email-b.zolnierkie@samsung.com>
-	<5591DD9B.4030507@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCHv7 04/15] HID: add HDMI CEC specific keycodes
+Date: Tue, 30 Jun 2015 09:36:49 +0200
+Message-ID: <55924711.9070001@xs4all.nl>
+References: <1435572900-56998-1-git-send-email-hans.verkuil@cisco.com> <1435572900-56998-5-git-send-email-hans.verkuil@cisco.com> <20150629192509.GD22166@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <5591DD9B.4030507@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Dan Carpenter <dan.carpenter@oracle.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20150629192509.GD22166@dtor-ws>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, thomas@tommie-lie.de, sean@mess.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lars@opdenkamp.eu, kamil@wypas.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 30, 2015 at 2:06 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On 30.06.2015 02:29, Bartlomiej Zolnierkiewicz wrote:
->> CLK_CPU_HAS_DIV1 and CLK_CPU_NEEDS_DEBUG_ALT_DIV masks were
->> incorrectly used as a bit numbers.  Fix it.
+On 06/29/15 21:25, Dmitry Torokhov wrote:
+> On Mon, Jun 29, 2015 at 12:14:49PM +0200, Hans Verkuil wrote:
+>> From: Kamil Debski <kamil@wypas.org>
 >>
->> Tested on Exynos4210 based Origen board and on Exynos5250 based
->> Arndale board.
+>> Add HDMI CEC specific keycodes to the keycodes definition.
 >>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Cc: Thomas Abraham <thomas.ab@samsung.com>
->> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> Signed-off-by: Kamil Debski <kamil@wypas.org>
+>> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> 
+> Could you please describe the intended use for these keycodes for people
+> who do not live and breathe CEC specs?
+
+Do you want this as comments in the patch or as the commit description?
+
+I realized that this patch needs to be updated anyway since there are a few
+keys missing that were added for CEC 2.0.
+
+Regards,
+
+	Hans
+
+> 
+> Thanks!
+> 
 >> ---
->>  drivers/clk/samsung/clk-cpu.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-
-Looks good to me as well.
-
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-> Best regards,
-> Krzysztof
->
-
-Best regards,
-Javier
+>>  include/uapi/linux/input.h | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+>> index 731417c..7430a3f 100644
+>> --- a/include/uapi/linux/input.h
+>> +++ b/include/uapi/linux/input.h
+>> @@ -752,6 +752,18 @@ struct input_keymap_entry {
+>>  #define KEY_KBDINPUTASSIST_ACCEPT		0x264
+>>  #define KEY_KBDINPUTASSIST_CANCEL		0x265
+>>  
+>> +#define KEY_RIGHT_UP			0x266
+>> +#define KEY_RIGHT_DOWN			0x267
+>> +#define KEY_LEFT_UP			0x268
+>> +#define KEY_LEFT_DOWN			0x269
+>> +
+>> +#define KEY_NEXT_FAVORITE		0x270
+>> +#define KEY_STOP_RECORD			0x271
+>> +#define KEY_PAUSE_RECORD		0x272
+>> +#define KEY_VOD				0x273
+>> +#define KEY_UNMUTE			0x274
+>> +#define KEY_DVB				0x275
+>> +
+>>  #define BTN_TRIGGER_HAPPY		0x2c0
+>>  #define BTN_TRIGGER_HAPPY1		0x2c0
+>>  #define BTN_TRIGGER_HAPPY2		0x2c1
+>> -- 
+>> 2.1.4
+>>
+> 
