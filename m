@@ -1,103 +1,74 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
- mout_apll and mout_kpll clock.
-Date: Wed, 1 Jul 2015 11:42:19 +0530
-Message-ID: <CANAwSgQYxkHr5fvR0Ju67mWoYuGsqc2eNt2vmVXYxbf-WmOWvg@mail.gmail.com>
-References: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 0/4] cpufreq: use generic cpufreq drivers for Exynos5250
+ platform
+Date: Wed, 01 Jul 2015 15:10:34 +0200
+Message-ID: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:34850 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276AbbGAGMk (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:58828 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751090AbbGANMp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Jul 2015 02:12:40 -0400
-In-Reply-To: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+	Wed, 1 Jul 2015 09:12:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linux Kernel <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-Hi AlL,
+Hi,
+
+This patch series removes the use of Exynos5250 specific support
+from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+for this platform.
+
+This patch series has been tested on Exynos5250 based Arndale board.
+
+Changes since v1 (http://lkml.org/lkml/2015/4/13/611):
+- rebased on top of next-20150629 branch of linux-next kernel tree
+- dropped dependency on "[PATCH 0/6] cpufreq: use generic cpufreq
+  drivers for Exynos4x12 platform" patch series as it needs more
+  work (Viresh has requested porting of cpufreq-dt's boost mode
+  support over opp-v2 patches)
+
+Changes since v2 (http://lkml.org/lkml/2015/6/29/361):
+- put the new cpu nodes in alphabetical order
+- updated Javier's and Mike's e-mail adresses
+- removed Cc: tag with stale Sachin's e-mail adress
+- added Reviewed-by: tag from Krzysztof to patches #3 and #4
+
+Depends on:
+- next-20150629 branch of linux-next kernel tree
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
 
-On 8 May 2015 at 16:37, Anand Moon <linux.amoon@gmail.com> wrote:
-> Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
-> correct divider values are re-calculated after both pre/post
-> clock notifiers had run for mout_apll clock and mout_kpll clock.
->
-> Observation their is considerable improvement in cpufreq stats
-> after applying this patch.
->
-> Governer : "performance"
-> $ cpupower -c 1 frequency-info
->
-> Below is table format of the output.
-> cpufreq stats:  Frequency| Before | After  |
-> CPU 1
->                 200 MHz  | 22.07% | 46.57% |
->                 300 MHz  | 1.08%  | 8.18%  |
->                 400 MHz  | 0.17%  | 1.93%  |
->                 500 MHz  | 0.24%  | 3.51%  |
->                 600 MHz  | 0.37%  | 2.13%  |
->                 700 MHz  | 0.20%  | 0.88%  |
->                 800 MHz  | 0.09%  | 1.69%  |
->                 900 MHz  | 0.05%  | 1.02%  |
->                 1000 MHz | 0.02%  | 2.55%  |
->                 1.10 GHz | 0.12%  | 1.17%  |
->                 1.20 GHz | 0.05%  | 0.88%  |
->                 1.30 GHz | 0.07%  | 0.38%  |
->                 1.40 GHz | 0.04%  | 0.38%  |
->                 1.50 GHz | 0.02%  | 0.00%  |
->                 1.60 GHz | 0.00%  | 0.15%  |
->                 1.70 GHz | 0.00%  | 0.44%  |
->                 1.80 GHz | 75.43% | 28.26% |
->
-> Governer : "performance"
-> $ cpupower -c 0 frequency-info
->
-> Below is table format of the output.
-> cpufreq stats:  Frequency| Before | After  |
-> CPU0            200 MHz  | 33.95% | 60.31% |
->                 300 MHz  | 4.64%  | 2.13%  |
->                 400 MHz  | 1.50%  | 0.79%  |
->                 500 MHz  | 1.46%  | 0.49%  |
->                 600 MHz  | 0.05%  | 0.27%  |
->                 700 MHz  | 0.68%  | 0.21%  |
->                 800 MHz  | 0.08%  | 0.19%  |
->                 900 MHz  | 0.09%  | 0.12%  |
->                 1000 MHz | 0.20%  | 0.10%  |
->                 1.10 GHz | 0.21%  | 0.11%, |
->                 1.20 GHz | 0.51%  | 0.28%, |
->                 1.30 GHz | 56.64% | 35.01% |
->
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 462aaee..6c7458c 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
->         MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
->
->         MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> -             CLK_SET_RATE_PARENT, 0),
-> +             CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
->         MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
->         MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
-> -             CLK_SET_RATE_PARENT, 0),
-> +             CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
->         MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
->
->         MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
-> --
-> 1.9.1
->
+Bartlomiej Zolnierkiewicz (1):
+  cpufreq: exynos: remove Exynos5250 specific cpufreq driver support
 
-Any comments on this patch.
+Thomas Abraham (3):
+  clk: samsung: exynos5250: add cpu clock configuration data and
+    instantiate cpu clock
+  ARM: dts: Exynos5250: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos5250
 
--Anand Moon
+ arch/arm/boot/dts/exynos5250-arndale.dts  |   4 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   4 +
+ arch/arm/boot/dts/exynos5250-snow.dts     |   4 +
+ arch/arm/boot/dts/exynos5250-spring.dts   |   4 +
+ arch/arm/boot/dts/exynos5250.dtsi         |  22 ++++
+ arch/arm/mach-exynos/exynos.c             |   1 +
+ drivers/clk/samsung/clk-exynos5250.c      |  31 +++++
+ drivers/cpufreq/Kconfig.arm               |  11 --
+ drivers/cpufreq/Makefile                  |   1 -
+ drivers/cpufreq/exynos-cpufreq.c          |   3 -
+ drivers/cpufreq/exynos-cpufreq.h          |  17 ---
+ drivers/cpufreq/exynos5250-cpufreq.c      | 210 ------------------------------
+ include/dt-bindings/clock/exynos5250.h    |   1 +
+ 13 files changed, 71 insertions(+), 242 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+
+-- 
+1.9.1
