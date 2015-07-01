@@ -1,57 +1,38 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 2/4] ARM: dts: Exynos5250: add CPU OPP and regulator
- supply property
-Date: Thu, 02 Jul 2015 08:53:55 +0900
-Message-ID: <55947D93.3090606@samsung.com>
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
- <1435756238-845-3-git-send-email-b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v5 3/3] ARM: exynos: Add exynos3250 compatible to use
+ generic cpufreq driver
+Date: Thu, 02 Jul 2015 08:58:33 +0900
+Message-ID: <55947EA9.60204@samsung.com>
+References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
+ <1435756877-26736-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1435756238-845-3-git-send-email-b.zolnierkie@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, Andreas Faerber <afaerber@suse.de>, Javier Martinez Canillas <javier@dowhile0.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1435756877-26736-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01.07.2015 22:10, Bartlomiej Zolnierkiewicz wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
+On 01.07.2015 22:21, Chanwoo Choi wrote:
+> This patch add exynos3250 compatible string to exynos_cpufreq_matches
+> for supporting generic cpufreq driver on Exynos3250.
 > 
-> For Exynos5250 platforms, add CPU operating points and CPU
-> regulator supply properties for migrating from Exynos specific
-> cpufreq driver to using generic cpufreq driver.
-> 
-> Changes by Bartlomiej:
-> - split Exynos5250 support from the original patch
-> - added CPU regulator supply property for Google Spring board
-> - put the new cpu nodes in alphabetical order
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Andreas Faerber <afaerber@suse.de>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  arch/arm/boot/dts/exynos5250-arndale.dts  |  4 ++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |  4 ++++
->  arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
->  arch/arm/boot/dts/exynos5250-spring.dts   |  4 ++++
->  arch/arm/boot/dts/exynos5250.dtsi         | 22 ++++++++++++++++++++++
->  5 files changed, 38 insertions(+)
+>  arch/arm/mach-exynos/exynos.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Looks good, thanks!
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 Best regards,
 Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
