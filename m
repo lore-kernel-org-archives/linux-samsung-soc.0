@@ -1,55 +1,103 @@
-From: Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/2] spi/s3c24xx: remove unnecessary memset of s3c24xx_spi
-Date: Wed, 1 Jul 2015 12:25:44 +0800
-Message-ID: <CAGS+omAnwhxKzfBm18oETgCKM2r3qtVpS9VR=GzbQhU6ujzVrQ@mail.gmail.com>
-References: <1435687438.27701.12.camel@ceres>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCHv3] clk samsung exynos5420 add CLK_RECALC_NEW_RATES flag to
+ mout_apll and mout_kpll clock.
+Date: Wed, 1 Jul 2015 11:42:19 +0530
+Message-ID: <CANAwSgQYxkHr5fvR0Ju67mWoYuGsqc2eNt2vmVXYxbf-WmOWvg@mail.gmail.com>
+References: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1435687438.27701.12.camel@ceres>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexey Klimov <klimov.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?5p+v6aOe6ZuE?= <addy.ke-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:34850 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751276AbbGAGMk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Jul 2015 02:12:40 -0400
+In-Reply-To: <1431083247-3310-1-git-send-email-linux.amoon@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linux Kernel <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>
 
-On Wed, Jul 1, 2015 at 2:03 AM, Alexey Klimov <klimov.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Memory for this struct is allocated by spi_alloc_master() using
-> kzalloc() so it doesn't need to be set to 0 one more time.
+Hi AlL,
+
+
+On 8 May 2015 at 16:37, Anand Moon <linux.amoon@gmail.com> wrote:
+> Addition of CLK_RECALC_NEW_RATES flag to support Exynos5420 cpu clk so that
+> correct divider values are re-calculated after both pre/post
+> clock notifiers had run for mout_apll clock and mout_kpll clock.
 >
-> Signed-off-by: Alexey Klimov <klimov.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Yup, I just noticed this too when reviewing the mediatek SPI driver.
-
-For both patches:
-Reviewed-by: Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-
+> Observation their is considerable improvement in cpufreq stats
+> after applying this patch.
+>
+> Governer : "performance"
+> $ cpupower -c 1 frequency-info
+>
+> Below is table format of the output.
+> cpufreq stats:  Frequency| Before | After  |
+> CPU 1
+>                 200 MHz  | 22.07% | 46.57% |
+>                 300 MHz  | 1.08%  | 8.18%  |
+>                 400 MHz  | 0.17%  | 1.93%  |
+>                 500 MHz  | 0.24%  | 3.51%  |
+>                 600 MHz  | 0.37%  | 2.13%  |
+>                 700 MHz  | 0.20%  | 0.88%  |
+>                 800 MHz  | 0.09%  | 1.69%  |
+>                 900 MHz  | 0.05%  | 1.02%  |
+>                 1000 MHz | 0.02%  | 2.55%  |
+>                 1.10 GHz | 0.12%  | 1.17%  |
+>                 1.20 GHz | 0.05%  | 0.88%  |
+>                 1.30 GHz | 0.07%  | 0.38%  |
+>                 1.40 GHz | 0.04%  | 0.38%  |
+>                 1.50 GHz | 0.02%  | 0.00%  |
+>                 1.60 GHz | 0.00%  | 0.15%  |
+>                 1.70 GHz | 0.00%  | 0.44%  |
+>                 1.80 GHz | 75.43% | 28.26% |
+>
+> Governer : "performance"
+> $ cpupower -c 0 frequency-info
+>
+> Below is table format of the output.
+> cpufreq stats:  Frequency| Before | After  |
+> CPU0            200 MHz  | 33.95% | 60.31% |
+>                 300 MHz  | 4.64%  | 2.13%  |
+>                 400 MHz  | 1.50%  | 0.79%  |
+>                 500 MHz  | 1.46%  | 0.49%  |
+>                 600 MHz  | 0.05%  | 0.27%  |
+>                 700 MHz  | 0.68%  | 0.21%  |
+>                 800 MHz  | 0.08%  | 0.19%  |
+>                 900 MHz  | 0.09%  | 0.12%  |
+>                 1000 MHz | 0.20%  | 0.10%  |
+>                 1.10 GHz | 0.21%  | 0.11%, |
+>                 1.20 GHz | 0.51%  | 0.28%, |
+>                 1.30 GHz | 56.64% | 35.01% |
+>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
->  drivers/spi/spi-s3c24xx.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/clk/samsung/clk-exynos5420.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-> index f747ca2..f36bc32 100644
-> --- a/drivers/spi/spi-s3c24xx.c
-> +++ b/drivers/spi/spi-s3c24xx.c
-> @@ -501,7 +501,6 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
->         }
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 462aaee..6c7458c 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -618,10 +618,10 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+>         MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
 >
->         hw = spi_master_get_devdata(master);
-> -       memset(hw, 0, sizeof(struct s3c24xx_spi));
+>         MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> -             CLK_SET_RATE_PARENT, 0),
+> +             CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+>         MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+>         MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
+> -             CLK_SET_RATE_PARENT, 0),
+> +             CLK_SET_RATE_PARENT | CLK_RECALC_NEW_RATES, 0),
+>         MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
 >
->         hw->master = master;
->         hw->pdata = pdata = dev_get_platdata(&pdev->dev);
+>         MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
 > --
 > 1.9.1
 >
->
->
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Any comments on this patch.
+
+-Anand Moon
