@@ -1,53 +1,84 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] drm/exynos: iommu: fix potential NULL pointer dereference
-Date: Thu, 02 Jul 2015 21:46:46 +0900
-Message-ID: <559532B6.7020509@samsung.com>
-References: <1435237812-24959-1-git-send-email-m.szyprowski@samsung.com>
- <20150629153544.79046d24@hwh-ubuntu>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Thu, 02 Jul 2015 18:13:22 +0200
+Message-ID: <4464631.oZyVO4Z0Ov@amdc1976>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150629153544.79046d24@hwh-ubuntu>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Hyungwon Hwang <human.hwang@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:38481 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751263AbbGBQOp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jul 2015 12:14:45 -0400
+In-reply-to: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-T24gMDYvMjkvMjAxNSAwMzozNSBQTSwgSHl1bmd3b24gSHdhbmcgd3JvdGU6Cj4gRGVhciBNYXJl
-aywKPiAKPiBPbiBUaHUsIDI1IEp1biAyMDE1IDE1OjEwOjEyICswMjAwCj4gTWFyZWsgU3p5cHJv
-d3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToKPiAKPj4gU29tZSBkcml2ZXJz
-IChsaWtlIEV4eW5vcyBtaXhlcikgY2FsbHMKPj4gZHJtX2lvbW11X2F0dGFjaF9kZXZpY2VfaWZf
-cG9zc2libGUgYmVmb3JlIHJlZ2lzdGVyaW5nIGNydGMsIHNvCj4+IGFkZGl0aW9uYWwgY2hlY2sg
-Zm9yIE5VTEwgY3J0YyBwb2ludGVyIGlzIHJlcXVpcmVkLgo+IAo+IEl0IHNlZW1zIHJlYXNvbmFi
-bGUuCj4gCj4gUmV2aWV3ZWQtYnk6IEh5dW5nd29uIEh3YW5nIDxodW1hbi5od2FuZ0BzYW1zdW5n
-LmNvbT4KPiAKClRoaXMgcGF0Y2ggaXMgb2sgYnV0IGkgdGhpbmsgaXQgY2FuIHJlbW92ZSB0byB1
-c2UgY2xlYXJfY2hhbm5lbHMKZnVuY3Rpb24gcG9pbnRlciBhbmQgZHJtX2lvbW11X2F0dGFjaF9k
-ZXZpY2VfaWZfcG9zc2libGUgZnVuY3Rpb24KYmVjYXVzZSBhbHJlYWR5IGRybV9pb21tdV9hdHRh
-Y2hfZGV2aWNlIGZ1bmN0aW9uIGNoZWNrcyB3aGV0aGVyIHN1cHBvcnQKaW9tbXUgaW50ZXJuYWxs
-eS4KCkkgd2lsbCByZWFkeSByZWxhdGVkIHBhdGNoLgoKVGhhbmtzLgoKPj4KPj4gU2lnbmVkLW9m
-Zi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+PiAtLS0K
-Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIHwgMiArLQo+PiAg
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4+Cj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuYwo+PiBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pb21tdS5jIGluZGV4Cj4+IGQ0ZWM3NDY1
-ZTljYy4uZDRlYjczMGJhMjU0IDEwMDY0NCAtLS0KPj4gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1faW9tbXUuYyArKysKPj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1faW9tbXUuYyBAQCAtMTUxLDcgKzE1MSw3IEBAIGludAo+PiBkcm1faW9tbXVfYXR0YWNo
-X2RldmljZV9pZl9wb3NzaWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjCj4+ICpleHlub3NfY3J0
-YywgaW50IHJldCA9IDA7IAo+PiAgCWlmIChpc19kcm1faW9tbXVfc3VwcG9ydGVkKGRybV9kZXYp
-KSB7Cj4+IC0JCWlmIChleHlub3NfY3J0Yy0+b3BzLT5jbGVhcl9jaGFubmVscykKPj4gKwkJaWYg
-KGV4eW5vc19jcnRjICYmIGV4eW5vc19jcnRjLT5vcHMtPmNsZWFyX2NoYW5uZWxzKQo+PiAgCQkJ
-ZXh5bm9zX2NydGMtPm9wcy0+Y2xlYXJfY2hhbm5lbHMoZXh5bm9zX2NydGMpOwo+PiAgCQlyZXR1
-cm4gZHJtX2lvbW11X2F0dGFjaF9kZXZpY2UoZHJtX2Rldiwgc3ViZHJ2X2Rldik7Cj4+ICAJfQo+
-IAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+Hi,
+
+On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
+> This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
+> on Exynos3250-based Rinato board.
+> 
+> Depends on:
+> - next-20150701 tag (master branch) of linux-next kernel tree
+> - This patch-set is based on Exynos5250 patch-set[1] because two patch-set
+>   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
+>   [1] https://lkml.org/lkml/2015/6/29/361
+>   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
+> 
+> Changes from v5:
+> (https://lkml.org/lkml/2015/7/1/324)
+> - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
+> - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Changes from v4:
+> (https://lkml.org/lkml/2014/10/20/215)
+> - Rebased on latest linux-next git repository.
+> - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
+> 
+> Changes from v3:
+> - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
+>   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+>   - http://www.spinics.net/lists/arm-kernel/msg370412.html
+> 
+> Changes from v2:
+> - Rebased on new patchset of Thomas Abraham
+>   and for-next branch of samsunc-clk.git of Tomasz Figa
+> 
+> Changes from v1:
+> - Rebased on new patchset[1] by Thomas Abraham
+>   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+>   - http://www.spinics.net/lists/arm-kernel/msg364790.html
+> - Modify clk-cpu.c to support Exynos3250
+> - Drop documentation patch on previous patchset[2]
+>   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
+> - Add only operating-points for Exynos3250 without armclk-divider-table
+> 
+> Chanwoo Choi (3):
+>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+> 
+>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>  arch/arm/mach-exynos/exynos.c           |  1 +
+>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+>  include/dt-bindings/clock/exynos3250.h  |  1 +
+>  6 files changed, 55 insertions(+), 2 deletions(-)
+
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Thank you for working on this.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
