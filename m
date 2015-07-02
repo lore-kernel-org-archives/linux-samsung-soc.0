@@ -1,38 +1,104 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v5 3/3] ARM: exynos: Add exynos3250 compatible to use
- generic cpufreq driver
-Date: Thu, 02 Jul 2015 08:58:33 +0900
-Message-ID: <55947EA9.60204@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v5 2/3] ARM: dts: Add CPU OPP and regulator supply property
+ for Exynos3250
+Date: Thu, 02 Jul 2015 09:01:41 +0900
+Message-ID: <55947F65.8010404@samsung.com>
 References: <1435756877-26736-1-git-send-email-cw00.choi@samsung.com>
- <1435756877-26736-4-git-send-email-cw00.choi@samsung.com>
+ <1435756877-26736-3-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1435756877-26736-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57254 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753382AbbGBABn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Jul 2015 20:01:43 -0400
+In-reply-to: <1435756877-26736-3-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org
+Cc: thomas.ab@samsung.com, b.zolnierkie@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
 On 01.07.2015 22:21, Chanwoo Choi wrote:
-> This patch add exynos3250 compatible string to exynos_cpufreq_matches
-> for supporting generic cpufreq driver on Exynos3250.
+> This patch add CPU operating points which include CPU frequency and regulator
+> voltage to use generic cpufreq drivers.
 > 
-> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-exynos/exynos.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>  3 files changed, 23 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+The patch looks good. Could you put the 'cpu' nodes in alphabetical
+order? The order for Rinato board is already broken but still putting it
+after 'adc' node would be better.
+
+With the change above:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 Best regards,
 Krzysztof
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+> index a5863acc5fff..fc6604d68864 100644
+> --- a/arch/arm/boot/dts/exynos3250-monk.dts
+> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
+> @@ -118,6 +118,10 @@
+>  	};
+>  };
+>  
+> +&cpu0 {
+> +	cpu0-supply = <&buck2_reg>;
+> +};
+> +
+>  &adc {
+>  	vdd-supply = <&ldo3_reg>;
+>  	status = "okay";
+> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+> index 031853b75528..c8a083b376c9 100644
+> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+> @@ -109,6 +109,10 @@
+>  	};
+>  };
+>  
+> +&cpu0 {
+> +	cpu0-supply = <&buck2_reg>;
+> +};
+> +
+>  &adc {
+>  	vdd-supply = <&ldo3_reg>;
+>  	status = "okay";
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index d7201333e3bc..e0f3b2ed41a3 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -53,6 +53,21 @@
+>  			compatible = "arm,cortex-a7";
+>  			reg = <0>;
+>  			clock-frequency = <1000000000>;
+> +			clocks = <&cmu CLK_ARM_CLK>;
+> +			clock-names = "cpu";
+> +
+> +			operating-points = <
+> +				1000000 1150000
+> +				900000  1112500
+> +				800000  1075000
+> +				700000  1037500
+> +				600000  1000000
+> +				500000  962500
+> +				400000  925000
+> +				300000  887500
+> +				200000  850000
+> +				100000  850000
+> +			>;
+>  		};
+>  
+>  		cpu1: cpu@1 {
+> 
