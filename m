@@ -1,84 +1,79 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Thu, 02 Jul 2015 18:13:22 +0200
-Message-ID: <4464631.oZyVO4Z0Ov@amdc1976>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 02/23] drm/exynos: calculate vrefresh instead of use a
+ fixed value
+Date: Thu, 2 Jul 2015 18:18:18 -0300
+Message-ID: <20150702211818.GA8741@joana>
+References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
+ <1435095336-6196-3-git-send-email-gustavo@padovan.org>
+ <559530D5.60505@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38481 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751263AbbGBQOp (ORCPT
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:33849 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753059AbbGBVSX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jul 2015 12:14:45 -0400
-In-reply-to: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+	Thu, 2 Jul 2015 17:18:23 -0400
+Received: by qgii30 with SMTP id i30so39001614qgi.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jul 2015 14:18:23 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <559530D5.60505@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
+Hi Joonyoung,
 
-Hi,
+2015-07-02 Joonyoung Shim <jy0922.shim@samsung.com>:
 
-On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
-> This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
-> on Exynos3250-based Rinato board.
+> On 06/24/2015 06:35 AM, Gustavo Padovan wrote:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > 
+> > When mode's vrefresh is zero we should ask DRM core to calculate vrefresh
+> > for us so we can get the correct value instead of relying on fixed value
+> > defined in a macro. But if vrefresh is still zero we should fail the
+> > update.
+> > 
+> > Suggested-by: Daniel Stone <daniels@collabora.com>
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > index 1e3bb72..7ba348e 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > @@ -41,7 +41,6 @@
+> >   * CPU Interface.
+> >   */
+> >  
+> > -#define FIMD_DEFAULT_FRAMERATE 60
+> >  #define MIN_FB_WIDTH_FOR_16WORD_BURST 128
+> >  
+> >  /* position control register for hardware window 0, 2 ~ 4.*/
+> > @@ -403,7 +402,9 @@ static bool fimd_mode_fixup(struct exynos_drm_crtc *crtc,
+> >  		struct drm_display_mode *adjusted_mode)
+> >  {
+> >  	if (adjusted_mode->vrefresh == 0)
+> > -		adjusted_mode->vrefresh = FIMD_DEFAULT_FRAMERATE;
+> > +		adjusted_mode->vrefresh = drm_mode_vrefresh(mode);
+> > +	if (adjusted_mode->vrefresh == 0)
 > 
-> Depends on:
-> - next-20150701 tag (master branch) of linux-next kernel tree
-> - This patch-set is based on Exynos5250 patch-set[1] because two patch-set
->   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
->   [1] https://lkml.org/lkml/2015/6/29/361
->   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
+> If adjusted_mode->vrefresh is not 0, it will check two times whether it
+> is 0. Check it in first if statement.
 > 
-> Changes from v5:
-> (https://lkml.org/lkml/2015/7/1/324)
-> - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
-> - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Basically, i'm not sure, why should we check whether
+> adjusted_mode->vrefresh is 0 at first? Can't we use just
 > 
-> Changes from v4:
-> (https://lkml.org/lkml/2014/10/20/215)
-> - Rebased on latest linux-next git repository.
-> - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
+>         adjusted_mode->vrefresh = drm_mode_vrefresh(mode);
+> 	if (adjusted_mode->vrefresh == 0)
+> 		...
 > 
-> Changes from v3:
-> - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
->   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
->   - http://www.spinics.net/lists/arm-kernel/msg370412.html
-> 
-> Changes from v2:
-> - Rebased on new patchset of Thomas Abraham
->   and for-next branch of samsunc-clk.git of Tomasz Figa
-> 
-> Changes from v1:
-> - Rebased on new patchset[1] by Thomas Abraham
->   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
->   - http://www.spinics.net/lists/arm-kernel/msg364790.html
-> - Modify clk-cpu.c to support Exynos3250
-> - Drop documentation patch on previous patchset[2]
->   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
-> - Add only operating-points for Exynos3250 without armclk-divider-table
-> 
-> Chanwoo Choi (3):
->   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
->   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
->   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> 
->  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
->  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
->  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
->  arch/arm/mach-exynos/exynos.c           |  1 +
->  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
->  include/dt-bindings/clock/exynos3250.h  |  1 +
->  6 files changed, 55 insertions(+), 2 deletions(-)
+> without the first checking?
 
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Actually, I don't see why too. I'll remove this and make a second
+version. 
 
-Thank you for working on this.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+	Gustavo
