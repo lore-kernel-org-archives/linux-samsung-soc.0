@@ -1,60 +1,59 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v3 4/4] cpufreq: exynos: remove Exynos5250 specific
- cpufreq driver support
-Date: Thu, 2 Jul 2015 13:30:39 +0200
-Message-ID: <CABxcv=ky0ZeLWo0mqgGMOqjXwVySPUMnkx7orpyqGwEPLU9PNA@mail.gmail.com>
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
-	<1435756238-845-5-git-send-email-b.zolnierkie@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 02/23] drm/exynos: calculate vrefresh instead of use a
+ fixed value
+Date: Thu, 02 Jul 2015 21:38:45 +0900
+Message-ID: <559530D5.60505@samsung.com>
+References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
+ <1435095336-6196-3-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f179.google.com ([209.85.160.179]:34096 "EHLO
-	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbbGBLak (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jul 2015 07:30:40 -0400
-Received: by ykfy125 with SMTP id y125so65210740ykf.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jul 2015 04:30:39 -0700 (PDT)
-In-Reply-To: <1435756238-845-5-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1435095336-6196-3-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello Bartlomiej,
-
-On Wed, Jul 1, 2015 at 3:10 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> Exynos5250 based platforms have switched over to use generic
-> cpufreq driver for cpufreq functionality. So the Exynos
-> specific cpufreq support for these platforms can be removed.
->
-> Based on the earlier work by Thomas Abraham.
->
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  11 --
->  drivers/cpufreq/Makefile             |   1 -
->  drivers/cpufreq/exynos-cpufreq.c     |   3 -
->  drivers/cpufreq/exynos-cpufreq.h     |  17 ---
->  drivers/cpufreq/exynos5250-cpufreq.c | 210 -----------------------------------
->  5 files changed, 242 deletions(-)
->  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
->
-
-Reviewed-by: Javier Martinez Canillas <javier@dowhile0.org>
-
-I also tested and on an Exynos5250 Snow Chromebook with
-exynos_defconfig + CONFIG_CPUFREQ_DT + CONFIG_CPU_FREQ_GOV_*, using
-different governors and see that the cpu0 and cpu1 frequencies are
-scaled and that the total number of CPU frequency transitions in
-total_trans are incremented.
-
-Tested-by: Javier Martinez Canillas <javier@dowhile0.org>
-
-Best regards,
-Javier
+T24gMDYvMjQvMjAxNSAwNjozNSBBTSwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZyb206IEd1
+c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAKPiBXaGVu
+IG1vZGUncyB2cmVmcmVzaCBpcyB6ZXJvIHdlIHNob3VsZCBhc2sgRFJNIGNvcmUgdG8gY2FsY3Vs
+YXRlIHZyZWZyZXNoCj4gZm9yIHVzIHNvIHdlIGNhbiBnZXQgdGhlIGNvcnJlY3QgdmFsdWUgaW5z
+dGVhZCBvZiByZWx5aW5nIG9uIGZpeGVkIHZhbHVlCj4gZGVmaW5lZCBpbiBhIG1hY3JvLiBCdXQg
+aWYgdnJlZnJlc2ggaXMgc3RpbGwgemVybyB3ZSBzaG91bGQgZmFpbCB0aGUKPiB1cGRhdGUuCj4g
+Cj4gU3VnZ2VzdGVkLWJ5OiBEYW5pZWwgU3RvbmUgPGRhbmllbHNAY29sbGFib3JhLmNvbT4KPiBT
+aWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEu
+Y28udWs+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMg
+fCA1ICsrKy0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9m
+aW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4gaW5kZXgg
+MWUzYmI3Mi4uN2JhMzQ4ZSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmltZC5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYwo+IEBAIC00MSw3ICs0MSw2IEBACj4gICAqIENQVSBJbnRlcmZhY2UuCj4gICAqLwo+
+ICAKPiAtI2RlZmluZSBGSU1EX0RFRkFVTFRfRlJBTUVSQVRFIDYwCj4gICNkZWZpbmUgTUlOX0ZC
+X1dJRFRIX0ZPUl8xNldPUkRfQlVSU1QgMTI4Cj4gIAo+ICAvKiBwb3NpdGlvbiBjb250cm9sIHJl
+Z2lzdGVyIGZvciBoYXJkd2FyZSB3aW5kb3cgMCwgMiB+IDQuKi8KPiBAQCAtNDAzLDcgKzQwMiw5
+IEBAIHN0YXRpYyBib29sIGZpbWRfbW9kZV9maXh1cChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpj
+cnRjLAo+ICAJCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICphZGp1c3RlZF9tb2RlKQo+ICB7Cj4g
+IAlpZiAoYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggPT0gMCkKPiAtCQlhZGp1c3RlZF9tb2RlLT52
+cmVmcmVzaCA9IEZJTURfREVGQVVMVF9GUkFNRVJBVEU7Cj4gKwkJYWRqdXN0ZWRfbW9kZS0+dnJl
+ZnJlc2ggPSBkcm1fbW9kZV92cmVmcmVzaChtb2RlKTsKPiArCWlmIChhZGp1c3RlZF9tb2RlLT52
+cmVmcmVzaCA9PSAwKQoKSWYgYWRqdXN0ZWRfbW9kZS0+dnJlZnJlc2ggaXMgbm90IDAsIGl0IHdp
+bGwgY2hlY2sgdHdvIHRpbWVzIHdoZXRoZXIgaXQKaXMgMC4gQ2hlY2sgaXQgaW4gZmlyc3QgaWYg
+c3RhdGVtZW50LgoKQmFzaWNhbGx5LCBpJ20gbm90IHN1cmUsIHdoeSBzaG91bGQgd2UgY2hlY2sg
+d2hldGhlcgphZGp1c3RlZF9tb2RlLT52cmVmcmVzaCBpcyAwIGF0IGZpcnN0PyBDYW4ndCB3ZSB1
+c2UganVzdAoKICAgICAgICBhZGp1c3RlZF9tb2RlLT52cmVmcmVzaCA9IGRybV9tb2RlX3ZyZWZy
+ZXNoKG1vZGUpOwoJaWYgKGFkanVzdGVkX21vZGUtPnZyZWZyZXNoID09IDApCgkJLi4uCgp3aXRo
+b3V0IHRoZSBmaXJzdCBjaGVja2luZz8KCj4gKwkJcmV0dXJuIGZhbHNlOwo+ICAKPiAgCXJldHVy
+biB0cnVlOwo+ICB9Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
