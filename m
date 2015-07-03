@@ -1,40 +1,83 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 19/23] drm/exynos: remove extra call to exynos_dp_commit()
-Date: Fri, 03 Jul 2015 18:00:53 +0900
-Message-ID: <55964F45.8000406@samsung.com>
-References: <1435095336-6196-1-git-send-email-gustavo@padovan.org>
- <1435095336-6196-20-git-send-email-gustavo@padovan.org>
- <55953112.9080400@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <55953112.9080400@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH] media: s5p-jpeg: Eliminate double kfree
+Date: Fri, 03 Jul 2015 12:04:38 +0200
+Message-ID: <1435917878-27545-1-git-send-email-andrzej.p@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgSHl1bmd3b24sCgpPbiAwNy8wMi8yMDE1IDA5OjM5IFBNLCBKb29ueW91bmcgU2hpbSB3cm90
-ZToKPiArQ2MgSHl1bmd3b24sCj4gCj4gT24gMDYvMjQvMjAxNSAwNjozNSBBTSwgR3VzdGF2byBQ
-YWRvdmFuIHdyb3RlOgo+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBj
-b2xsYWJvcmEuY28udWs+Cj4+Cj4+IGV4eW5vc19kcF9jb21taXQoKSB3YXMgZ2V0dGluZyBjYWxs
-ZWQgdHdpY2UgYnkgZXh5bm9zIGVuY29kZXIgY29yZSwgb25jZQo+PiBpbnNpZGUgdGhlIC5lbmFi
-bGUoKSBjYWxsIGFuZCBhbm90aGVyIHRpbWUgYnkgLmNvbW1pdCgpIGl0c2VsZi4KPj4KPj4gVGhl
-IHJlbW92ZSBvZiB0aGUgc2Vjb25kIGNhbGwgY2F1c2VkIHRoZSB3YWtlIG9mIGEgYnVnLCB0aGUg
-b3BlcmF0aW9ucwo+PiBvcmRlcnMgaW5zaWRlIGV4eW5vc19kcF9jb21taXQgd2FzIHdyb25nIGFu
-ZCB3ZSBoYWQgdG8gbW92ZQo+PiBleHlub3NfZHBfc3RhcnRfdmlkZW8oKSB0byBiZSB0aGUgbGFz
-dCBvcGVyYXRpb24gaW4gdGhlcmUuCj4+Cj4gCj4gSHl1bmd3b24sIGNhbiB5b3UgY2hlY2sgdGhp
-cz8KPiAKCkkgY29uZnVzZWQgdGhhdCB0aGlzIGlzIGFib3V0IGRzaSBhbmQgeW91IGludm9sdmVk
-IGluIGV4eW5vcyBkc2kgZHJpdmVyCmxhdGVseSwgc28gaSByZXF1ZXN0ZWQuCgpTb3JyeSBmb3Ig
-dGhhdC4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+video_unregister_device() calls device_unregister(), which calls
+put_device(), which calls kobject_put(), and if this is the last reference
+then kobject_release() is called, which calls kobject_cleanup(), which
+calls ktype's release method which happens to be device_release() in this
+case, which calls dev->release(), which happens to be
+v4l2_device_release() in this case, which calls vdev->release(), which
+happens to be video_device_release(). But video_device_release() is
+called explicitly both in error recovery path of s5p_jpeg_probe() and
+in s5p_jpeg_remove(). The pointers in question are not nullified between
+the two calls, so this is harmful.
+
+This patch fixes the driver so that video_device_release() is not called
+twice for the same object.
+
+Rebased onto Mauro's master.
+
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+---
+ drivers/media/platform/s5p-jpeg/jpeg-core.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index bfbf157..9690f9d 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -2544,7 +2544,8 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ 	ret = video_register_device(jpeg->vfd_encoder, VFL_TYPE_GRABBER, -1);
+ 	if (ret) {
+ 		v4l2_err(&jpeg->v4l2_dev, "Failed to register video device\n");
+-		goto enc_vdev_alloc_rollback;
++		video_device_release(jpeg->vfd_encoder);
++		goto vb2_allocator_rollback;
+ 	}
+ 
+ 	video_set_drvdata(jpeg->vfd_encoder, jpeg);
+@@ -2572,7 +2573,8 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ 	ret = video_register_device(jpeg->vfd_decoder, VFL_TYPE_GRABBER, -1);
+ 	if (ret) {
+ 		v4l2_err(&jpeg->v4l2_dev, "Failed to register video device\n");
+-		goto dec_vdev_alloc_rollback;
++		video_device_release(jpeg->vfd_decoder);
++		goto enc_vdev_register_rollback;
+ 	}
+ 
+ 	video_set_drvdata(jpeg->vfd_decoder, jpeg);
+@@ -2589,15 +2591,9 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-dec_vdev_alloc_rollback:
+-	video_device_release(jpeg->vfd_decoder);
+-
+ enc_vdev_register_rollback:
+ 	video_unregister_device(jpeg->vfd_encoder);
+ 
+-enc_vdev_alloc_rollback:
+-	video_device_release(jpeg->vfd_encoder);
+-
+ vb2_allocator_rollback:
+ 	vb2_dma_contig_cleanup_ctx(jpeg->alloc_ctx);
+ 
+@@ -2622,9 +2618,7 @@ static int s5p_jpeg_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(jpeg->dev);
+ 
+ 	video_unregister_device(jpeg->vfd_decoder);
+-	video_device_release(jpeg->vfd_decoder);
+ 	video_unregister_device(jpeg->vfd_encoder);
+-	video_device_release(jpeg->vfd_encoder);
+ 	vb2_dma_contig_cleanup_ctx(jpeg->alloc_ctx);
+ 	v4l2_m2m_release(jpeg->m2m_dev);
+ 	v4l2_device_unregister(&jpeg->v4l2_dev);
+-- 
+1.9.1
