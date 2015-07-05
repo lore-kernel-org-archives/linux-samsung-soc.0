@@ -1,83 +1,82 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCH] media: s5p-jpeg: Eliminate double kfree
-Date: Fri, 03 Jul 2015 12:04:38 +0200
-Message-ID: <1435917878-27545-1-git-send-email-andrzej.p@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH] Documentation: ARM: EXYNOS: Extend boot loader interface
+ documentation
+Date: Sun,  5 Jul 2015 11:56:51 +0900
+Message-ID: <1436065011-6999-1-git-send-email-k.kozlowski.k@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-video_unregister_device() calls device_unregister(), which calls
-put_device(), which calls kobject_put(), and if this is the last reference
-then kobject_release() is called, which calls kobject_cleanup(), which
-calls ktype's release method which happens to be device_release() in this
-case, which calls dev->release(), which happens to be
-v4l2_device_release() in this case, which calls vdev->release(), which
-happens to be video_device_release(). But video_device_release() is
-called explicitly both in error recovery path of s5p_jpeg_probe() and
-in s5p_jpeg_remove(). The pointers in question are not nullified between
-the two calls, so this is harmful.
+Extend the kernel-bootloader interface documentation with usage of
+register INFORM1 (0x0804) and different CPU resume address on Exynos542x
+family (with Multi-Cluster Power Management enabled).
 
-This patch fixes the driver so that video_device_release() is not called
-twice for the same object.
+Additionally add glossary and reformat section titles.
 
-Rebased onto Mauro's master.
-
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ Documentation/arm/Samsung/Bootloader-interface.txt | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index bfbf157..9690f9d 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -2544,7 +2544,8 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
- 	ret = video_register_device(jpeg->vfd_encoder, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
- 		v4l2_err(&jpeg->v4l2_dev, "Failed to register video device\n");
--		goto enc_vdev_alloc_rollback;
-+		video_device_release(jpeg->vfd_encoder);
-+		goto vb2_allocator_rollback;
- 	}
+diff --git a/Documentation/arm/Samsung/Bootloader-interface.txt b/Documentation/arm/Samsung/Bootloader-interface.txt
+index b96ead9a6919..df8d4fb85939 100644
+--- a/Documentation/arm/Samsung/Bootloader-interface.txt
++++ b/Documentation/arm/Samsung/Bootloader-interface.txt
+@@ -15,6 +15,7 @@ executing kernel.
  
- 	video_set_drvdata(jpeg->vfd_encoder, jpeg);
-@@ -2572,7 +2573,8 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
- 	ret = video_register_device(jpeg->vfd_decoder, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
- 		v4l2_err(&jpeg->v4l2_dev, "Failed to register video device\n");
--		goto dec_vdev_alloc_rollback;
-+		video_device_release(jpeg->vfd_decoder);
-+		goto enc_vdev_register_rollback;
- 	}
  
- 	video_set_drvdata(jpeg->vfd_decoder, jpeg);
-@@ -2589,15 +2591,9 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ 1. Non-Secure mode
++
+ Address:      sysram_ns_base_addr
+ Offset        Value                                        Purpose
+ =============================================================================
+@@ -28,6 +29,7 @@ Offset        Value                                        Purpose
  
- 	return 0;
  
--dec_vdev_alloc_rollback:
--	video_device_release(jpeg->vfd_decoder);
--
- enc_vdev_register_rollback:
- 	video_unregister_device(jpeg->vfd_encoder);
+ 2. Secure mode
++
+ Address:      sysram_base_addr
+ Offset        Value                                        Purpose
+ =============================================================================
+@@ -40,14 +42,25 @@ Offset        Value                                        Purpose
+ Address:      pmu_base_addr
+ Offset        Value                                        Purpose
+ =============================================================================
+-0x0800        exynos_cpu_resume                            AFTR
++0x0800        exynos_cpu_resume                            AFTR, suspend
++0x0800        mcpm_entry_point (Exynos542x with MCPM)      AFTR, suspend
++0x0804        0xfcba0d10 (Magic cookie)                    AFTR
++0x0804        0x00000bad (Magic cookie)                    System suspend
+ 0x0814        exynos4_secondary_startup (Exynos4210 r1.1)  Secondary CPU boot
+ 0x0818        0xfcba0d10 (Magic cookie, Exynos4210 r1.1)   AFTR
+ 0x081C        exynos_cpu_resume (Exynos4210 r1.1)          AFTR
  
--enc_vdev_alloc_rollback:
--	video_device_release(jpeg->vfd_encoder);
--
- vb2_allocator_rollback:
- 	vb2_dma_contig_cleanup_ctx(jpeg->alloc_ctx);
  
-@@ -2622,9 +2618,7 @@ static int s5p_jpeg_remove(struct platform_device *pdev)
- 	pm_runtime_disable(jpeg->dev);
- 
- 	video_unregister_device(jpeg->vfd_decoder);
--	video_device_release(jpeg->vfd_decoder);
- 	video_unregister_device(jpeg->vfd_encoder);
--	video_device_release(jpeg->vfd_encoder);
- 	vb2_dma_contig_cleanup_ctx(jpeg->alloc_ctx);
- 	v4l2_m2m_release(jpeg->m2m_dev);
- 	v4l2_device_unregister(&jpeg->v4l2_dev);
+ 3. Other (regardless of secure/non-secure mode)
++
+ Address:      pmu_base_addr
+ Offset        Value                           Purpose
+ =============================================================================
+ 0x0908        Non-zero (only Exynos3250)      Secondary CPU boot up indicator
++
++
++4. Glossary
++
++AFTR - ARM Off Top Running, a low power mode, Cortex cores and many other
++modules are power gated, except the TOP modules
++MCPM - Multi-Cluster Power Management
 -- 
-1.9.1
+2.1.4
