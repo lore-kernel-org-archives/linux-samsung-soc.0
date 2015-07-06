@@ -1,89 +1,54 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 12/23] drm/exynos: don't track enabled state at
- exynos_crtc
-Date: Mon, 6 Jul 2015 19:41:47 +0200
-Message-ID: <20150706174147.GB7568@phenom.ffwll.local>
-References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
- <1436192424-18194-13-git-send-email-gustavo@padovan.org>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH] thermal: consistently use int for temperatures
+Date: Mon, 6 Jul 2015 11:18:14 -0700
+Message-ID: <20150706181814.GB40907@vmdeb7>
+References: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1436192424-18194-13-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+In-Reply-To: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
+Sender: linux-pm-owner@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, lm-sensors@lm-sensors.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBKdWwgMDYsIDIwMTUgYXQgMTE6MjA6MTNBTSAtMDMwMCwgR3VzdGF2byBQYWRvdmFu
-IHdyb3RlOgo+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9y
-YS5jby51az4KPiAKPiBzdHJ1Y3QgZHJtX2NydGMgYWxyZWFkeSBzdG9yZXMgdGhlIGVuYWJsZWQg
-c3RhdGUgb2YgdGhlIGNydGMKPiB0aHVzIHdlIGRvbid0IG5lZWQgdG8gcmVwbGljYXRlIGVuYWJs
-ZWQgaW4gZXh5bm9zX2RybV9jcnRjLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3Zh
-biA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KCk5vdGUgdGhhdCBleHlub3NfY3J0
-Yy0+ZW5hYmxlZCBkb2Vzbid0IG1hdGNoIGRybV9jcnRjLT5lbmFibGVkIHBlcmZlY3RseQpzaW5j
-ZSB0aGUgZXh5bm9zIG9uZSByZWZsZWN0IGh3IHN0YXRlIChpbmNsdWRpbmcgZHBtcykuIFlvdSB3
-YW50IHRvIGxvb2sKYXQgY3J0Yy0+c3RhdGUtPmFjdGl2ZSBpbnN0ZWFkIG9uIGZ1bmN0aW9ucyBl
-bmFibGluZyBzdHVmZiwgYW5kCm9sZF9jcnRjX3N0YXRlLT5hY3RpdmUgb24gZnVuY3Rpb25zIGRp
-c2FibGluZyBzdHVmZiAod2UgZG9uJ3Qgd2lyZSB0aGF0CnRocm91Z2ggZXZlcnl3aGVyZSB5ZXQp
-LgotRGFuaWVsCgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
-Yy5jIHwgMTYgLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmggIHwgIDEgLQo+ICAyIGZpbGVzIGNoYW5nZWQsIDE3IGRlbGV0aW9ucygtKQo+
-IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
-IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+IGluZGV4IDliYzIz
-NTMuLjVhYjg5NzIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
-LmMKPiBAQCAtMjYsMTQgKzI2LDkgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV9jcnRjX2VuYWJs
-ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIHsKPiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAo+IC0JaWYgKGV4eW5vc19j
-cnRjLT5lbmFibGVkKQo+IC0JCXJldHVybjsKPiAtCj4gIAlpZiAoZXh5bm9zX2NydGMtPm9wcy0+
-ZW5hYmxlKQo+ICAJCWV4eW5vc19jcnRjLT5vcHMtPmVuYWJsZShleHlub3NfY3J0Yyk7Cj4gIAo+
-IC0JZXh5bm9zX2NydGMtPmVuYWJsZWQgPSB0cnVlOwo+IC0KPiAgCWRybV9jcnRjX3ZibGFua19v
-bihjcnRjKTsKPiAgfQo+ICAKPiBAQCAtNDEsOSArMzYsNiBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
-ZHJtX2NydGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIHsKPiAgCXN0cnVjdCBl
-eHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAo+
-IC0JaWYgKCFleHlub3NfY3J0Yy0+ZW5hYmxlZCkKPiAtCQlyZXR1cm47Cj4gLQo+ICAJLyogd2Fp
-dCBmb3IgdGhlIGNvbXBsZXRpb24gb2YgcGFnZSBmbGlwLiAqLwo+ICAJaWYgKCF3YWl0X2V2ZW50
-X3RpbWVvdXQoZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcF9xdWV1ZSwKPiAgCQkJCShleHlub3Nf
-Y3J0Yy0+ZXZlbnQgPT0gTlVMTCksIEhaLzIwKSkKPiBAQCAtNTMsOCArNDUsNiBAQCBzdGF0aWMg
-dm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIAo+
-ICAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmRpc2FibGUpCj4gIAkJZXh5bm9zX2NydGMtPm9wcy0+
-ZGlzYWJsZShleHlub3NfY3J0Yyk7Cj4gLQo+IC0JZXh5bm9zX2NydGMtPmVuYWJsZWQgPSBmYWxz
-ZTsKPiAgfQo+ICAKPiAgc3RhdGljIGJvb2wKPiBAQCAtMTcxLDkgKzE2MSw2IEBAIGludCBleHlu
-b3NfZHJtX2NydGNfZW5hYmxlX3ZibGFuayhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgcGlw
-ZSkKPiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0KPiAgCQl0b19leHlu
-b3NfY3J0Yyhwcml2YXRlLT5jcnRjW3BpcGVdKTsKPiAgCj4gLQlpZiAoIWV4eW5vc19jcnRjLT5l
-bmFibGVkKQo+IC0JCXJldHVybiAtRVBFUk07Cj4gLQo+ICAJaWYgKGV4eW5vc19jcnRjLT5vcHMt
-PmVuYWJsZV92YmxhbmspCj4gIAkJcmV0dXJuIGV4eW5vc19jcnRjLT5vcHMtPmVuYWJsZV92Ymxh
-bmsoZXh5bm9zX2NydGMpOwo+ICAKPiBAQCAtMTg2LDkgKzE3Myw2IEBAIHZvaWQgZXh5bm9zX2Ry
-bV9jcnRjX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBwaXBlKQo+
-ICAJc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPQo+ICAJCXRvX2V4eW5vc19j
-cnRjKHByaXZhdGUtPmNydGNbcGlwZV0pOwo+ICAKPiAtCWlmICghZXh5bm9zX2NydGMtPmVuYWJs
-ZWQpCj4gLQkJcmV0dXJuOwo+IC0KPiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlX3Zi
-bGFuaykKPiAgCQlleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlX3ZibGFuayhleHlub3NfY3J0Yyk7
-Cj4gIH0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ry
-di5oIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4gaW5kZXggNWJk
-MWQzYy4uZDNhOGYwYSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
-LmgKPiBAQCAtMTg1LDcgKzE4NSw2IEBAIHN0cnVjdCBleHlub3NfZHJtX2NydGMgewo+ICAJc3Ry
-dWN0IGRybV9jcnRjCQkJYmFzZTsKPiAgCWVudW0gZXh5bm9zX2RybV9vdXRwdXRfdHlwZQl0eXBl
-Owo+ICAJdW5zaWduZWQgaW50CQkJcGlwZTsKPiAtCWJvb2wJCQkJZW5hYmxlZDsKPiAgCXdhaXRf
-cXVldWVfaGVhZF90CQlwZW5kaW5nX2ZsaXBfcXVldWU7Cj4gIAlzdHJ1Y3QgZHJtX3BlbmRpbmdf
-dmJsYW5rX2V2ZW50CSpldmVudDsKPiAgCWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3Bz
-CSpvcHM7Cj4gLS0gCj4gMi4xLjAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Mon, Jul 06, 2015 at 09:19:49AM +0200, Sascha Hauer wrote:
+> The thermal code uses int, long and unsigned long for temperatures
+> in different places.
+>=20
+> Using an unsigned type limits the thermal framework to positive
+> temperatures without need. Also several drivers currently will report
+> temperatures near UINT_MAX for temperatures below 0=B0C. This will pr=
+obably
+> immediately shut the machine down due to overtemperature if started b=
+elow
+> 0=B0C.
+>=20
+> 'long' is 64bit on several architectures. This is not needed since IN=
+T_MAX =B0mC
+> is above the melting point of all known materials.
+>=20
+> Consistently use a plain 'int' for temperatures throughout the therma=
+l code and
+> the drivers. This only changes the places in the drivers where the te=
+mperature
+> is passed around as pointer, when drivers internally use another type=
+ this is
+> not changed.
+>=20
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+
+=2E..
+
+>  drivers/platform/x86/acerhdf.c                     |  9 ++++----
+>  drivers/platform/x86/intel_mid_thermal.c           |  9 ++++----
+
+=46or these two:
+
+Reviewed-by: Darren Hart <dvhart@linux.intel.com>
+
+--=20
+Darren Hart
+Intel Open Source Technology Center
