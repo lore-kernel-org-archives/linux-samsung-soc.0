@@ -1,343 +1,102 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 07/23] drm/exynos: pass struct exynos_drm_plane in update/enable
-Date: Mon,  6 Jul 2015 11:20:08 -0300
-Message-ID: <1436192424-18194-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 05/23] drm/exynos: add atomic asynchronous commit
+Date: Mon,  6 Jul 2015 11:20:06 -0300
+Message-ID: <1436192424-18194-6-git-send-email-gustavo@padovan.org>
 References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:34966 "EHLO
-	mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752725AbbGFOUx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jul 2015 10:20:53 -0400
-Received: by qkbp125 with SMTP id p125so117830550qkb.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2015 07:20:53 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-We already have the plane pointer in before calling .update_plane() or
-disable_plane() so pass it directly to those calls avoiding a new
-conversion from zpos to struct exynos_drm_plane.
-
-v2: don't remove check for suspended in FIMD (comment by Joonyoung)
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 22 +++++++---------------
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 22 +++++++---------------
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 ++++--
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 22 +++++++---------------
- drivers/gpu/drm/exynos/exynos_drm_plane.c     |  4 ++--
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  9 ++-------
- drivers/gpu/drm/exynos/exynos_mixer.c         | 20 +++++++++++---------
- 7 files changed, 40 insertions(+), 65 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index c7f3680..6dc2be2 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -219,17 +219,13 @@ static void decon_shadow_protect_win(struct decon_context *ctx, int win,
- 	writel(val, ctx->addr + DECON_SHADOWCON);
- }
- 
--static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void decon_update_plane(struct exynos_drm_crtc *crtc,
-+			       struct exynos_drm_plane *plane)
- {
- 	struct decon_context *ctx = crtc->ctx;
--	struct exynos_drm_plane *plane;
-+	unsigned int win = plane->zpos;
- 	u32 val;
- 
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
--
- 	if (ctx->suspended)
- 		return;
- 
-@@ -277,17 +273,13 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
- 		atomic_set(&ctx->win_updated, 1);
- }
- 
--static void decon_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void decon_disable_plane(struct exynos_drm_crtc *crtc,
-+				struct exynos_drm_plane *plane)
- {
- 	struct decon_context *ctx = crtc->ctx;
--	struct exynos_drm_plane *plane;
-+	unsigned int win = plane->zpos;
- 	u32 val;
- 
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
--
- 	if (ctx->suspended)
- 		return;
- 
-@@ -378,7 +370,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
- 	 * a destroyed buffer later.
- 	 */
- 	for (i = 0; i < WINDOWS_NR; i++)
--		decon_disable_plane(crtc, i);
-+		decon_disable_plane(crtc, &ctx->planes[i]);
- 
- 	decon_swreset(ctx);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 34da2a4..79b74d2 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -382,24 +382,20 @@ static void decon_shadow_protect_win(struct decon_context *ctx,
- 	writel(val, ctx->regs + SHADOWCON);
- }
- 
--static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void decon_update_plane(struct exynos_drm_crtc *crtc,
-+			       struct exynos_drm_plane *plane)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
--	struct exynos_drm_plane *plane;
- 	int padding;
- 	unsigned long val, alpha;
- 	unsigned int last_x;
- 	unsigned int last_y;
-+	unsigned int win = plane->zpos;
- 
- 	if (ctx->suspended)
- 		return;
- 
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
--
- 	/*
- 	 * SHADOWCON/PRTCON register is used for enabling timing.
- 	 *
-@@ -492,17 +488,13 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
- 	writel(val, ctx->regs + DECON_UPDATE);
- }
- 
--static void decon_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void decon_disable_plane(struct exynos_drm_crtc *crtc,
-+				struct exynos_drm_plane *plane)
- {
- 	struct decon_context *ctx = crtc->ctx;
--	struct exynos_drm_plane *plane;
-+	unsigned int win = plane->zpos;
- 	u32 val;
- 
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
--
- 	if (ctx->suspended)
- 		return;
- 
-@@ -598,7 +590,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
- 	 * a destroyed buffer later.
- 	 */
- 	for (i = 0; i < WINDOWS_NR; i++)
--		decon_disable_plane(crtc, i);
-+		decon_disable_plane(crtc, &ctx->planes[i]);
- 
- 	clk_disable_unprepare(ctx->vclk);
- 	clk_disable_unprepare(ctx->eclk);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index e3f2f2f..695f21b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -173,8 +173,10 @@ struct exynos_drm_crtc_ops {
- 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*wait_for_vblank)(struct exynos_drm_crtc *crtc);
--	void (*update_plane)(struct exynos_drm_crtc *crtc, unsigned int zpos);
--	void (*disable_plane)(struct exynos_drm_crtc *crtc, unsigned int zpos);
-+	void (*update_plane)(struct exynos_drm_crtc *crtc,
-+			     struct exynos_drm_plane *plane);
-+	void (*disable_plane)(struct exynos_drm_crtc *crtc,
-+			      struct exynos_drm_plane *plane);
- 	void (*te_handler)(struct exynos_drm_crtc *crtc);
- 	void (*clock_enable)(struct exynos_drm_crtc *crtc, bool enable);
- 	void (*clear_channels)(struct exynos_drm_crtc *crtc);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 396f94e..b7bcaf7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -614,22 +614,18 @@ static void fimd_shadow_protect_win(struct fimd_context *ctx,
- 	writel(val, ctx->regs + reg);
- }
- 
--static void fimd_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void fimd_update_plane(struct exynos_drm_crtc *crtc,
-+			      struct exynos_drm_plane *plane)
- {
- 	struct fimd_context *ctx = crtc->ctx;
--	struct exynos_drm_plane *plane;
- 	dma_addr_t dma_addr;
- 	unsigned long val, size, offset;
- 	unsigned int last_x, last_y, buf_offsize, line_size;
-+	unsigned int win = plane->zpos;
- 
- 	if (ctx->suspended)
- 		return;
- 
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
--
- 	/*
- 	 * SHADOWCON/PRTCON register is used for enabling timing.
- 	 *
-@@ -722,15 +718,11 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
- 		atomic_set(&ctx->win_updated, 1);
- }
- 
--static void fimd_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void fimd_disable_plane(struct exynos_drm_crtc *crtc,
-+			       struct exynos_drm_plane *plane)
- {
- 	struct fimd_context *ctx = crtc->ctx;
--	struct exynos_drm_plane *plane;
--
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
-+	unsigned int win = plane->zpos;
- 
- 	if (ctx->suspended)
- 		return;
-@@ -792,7 +784,7 @@ static void fimd_disable(struct exynos_drm_crtc *crtc)
- 	 * a destroyed buffer later.
- 	 */
- 	for (i = 0; i < WINDOWS_NR; i++)
--		fimd_disable_plane(crtc, i);
-+		fimd_disable_plane(crtc, &ctx->planes[i]);
- 
- 	fimd_enable_vblank(crtc);
- 	fimd_wait_for_vblank(crtc);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index eb9eec9..b5aa5b7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -180,7 +180,7 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
- 			      state->src_w >> 16, state->src_h >> 16);
- 
- 	if (exynos_crtc->ops->update_plane)
--		exynos_crtc->ops->update_plane(exynos_crtc, exynos_plane->zpos);
-+		exynos_crtc->ops->update_plane(exynos_crtc, exynos_plane);
- }
- 
- static void exynos_plane_atomic_disable(struct drm_plane *plane,
-@@ -194,7 +194,7 @@ static void exynos_plane_atomic_disable(struct drm_plane *plane,
- 
- 	if (exynos_crtc->ops->disable_plane)
- 		exynos_crtc->ops->disable_plane(exynos_crtc,
--						exynos_plane->zpos);
-+						exynos_plane);
- }
- 
- static const struct drm_plane_helper_funcs plane_helper_funcs = {
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 59d85ef..ade59ee 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -118,19 +118,14 @@ static void vidi_disable_vblank(struct exynos_drm_crtc *crtc)
- 		ctx->vblank_on = false;
- }
- 
--static void vidi_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void vidi_update_plane(struct exynos_drm_crtc *crtc,
-+			      struct exynos_drm_plane *plane)
- {
- 	struct vidi_context *ctx = crtc->ctx;
--	struct exynos_drm_plane *plane;
- 
- 	if (ctx->suspended)
- 		return;
- 
--	if (win < 0 || win >= WINDOWS_NR)
--		return;
--
--	plane = &ctx->planes[win];
--
- 	DRM_DEBUG_KMS("dma_addr = %pad\n", plane->dma_addr);
- 
- 	if (ctx->vblank_on)
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index b2b87aa..1f05b0d 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -922,11 +922,12 @@ static void mixer_disable_vblank(struct exynos_drm_crtc *crtc)
- 	mixer_reg_writemask(res, MXR_INT_EN, 0, MXR_INT_EN_VSYNC);
- }
- 
--static void mixer_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void mixer_update_plane(struct exynos_drm_crtc *crtc,
-+			       struct exynos_drm_plane *plane)
- {
- 	struct mixer_context *mixer_ctx = crtc->ctx;
- 
--	DRM_DEBUG_KMS("win: %d\n", win);
-+	DRM_DEBUG_KMS("win: %d\n", plane->zpos);
- 
- 	mutex_lock(&mixer_ctx->mixer_mutex);
- 	if (!mixer_ctx->powered) {
-@@ -935,19 +936,20 @@ static void mixer_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
- 	}
- 	mutex_unlock(&mixer_ctx->mixer_mutex);
- 
--	if (win > 1 && mixer_ctx->vp_enabled)
--		vp_video_buffer(mixer_ctx, win);
-+	if (plane->zpos > 1 && mixer_ctx->vp_enabled)
-+		vp_video_buffer(mixer_ctx, plane->zpos);
- 	else
--		mixer_graph_buffer(mixer_ctx, win);
-+		mixer_graph_buffer(mixer_ctx, plane->zpos);
- }
- 
--static void mixer_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
-+static void mixer_disable_plane(struct exynos_drm_crtc *crtc,
-+				struct exynos_drm_plane *plane)
- {
- 	struct mixer_context *mixer_ctx = crtc->ctx;
- 	struct mixer_resources *res = &mixer_ctx->mixer_res;
- 	unsigned long flags;
- 
--	DRM_DEBUG_KMS("win: %d\n", win);
-+	DRM_DEBUG_KMS("win: %d\n", plane->zpos);
- 
- 	mutex_lock(&mixer_ctx->mixer_mutex);
- 	if (!mixer_ctx->powered) {
-@@ -959,7 +961,7 @@ static void mixer_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
- 	spin_lock_irqsave(&res->reg_slock, flags);
- 	mixer_vsync_set_update(mixer_ctx, false);
- 
--	mixer_cfg_layer(mixer_ctx, win, false);
-+	mixer_cfg_layer(mixer_ctx, plane->zpos, false);
- 
- 	mixer_vsync_set_update(mixer_ctx, true);
- 	spin_unlock_irqrestore(&res->reg_slock, flags);
-@@ -1068,7 +1070,7 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
- 	mixer_regs_dump(ctx);
- 
- 	for (i = 0; i < MIXER_WIN_NR; i++)
--		mixer_disable_plane(crtc, i);
-+		mixer_disable_plane(crtc, &ctx->planes[i]);
- 
- 	ctx->int_en = mixer_reg_read(res, MXR_INT_EN);
- 
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlIGF0b21pYyBtb2Rlc2V0dGluZyBpbnRlcmZhY2VzIHN1cHBvcnRzIGFzeW5jIGNvbW1pdHMg
+dGhhdCBzaG91bGQgYmUKaW1wbGVtZW50ZWQgYnkgdGhlIGRyaXZlcnMuIElmIGRybSBjb3JlIHJl
+cXVlc3RzIGFuIGFzeW5jIGNvbW1pdApleHlub3NfYXRvbWljX2NvbW1pdCgpIHdpbGwgc2NoZWR1
+bGUgYSB3b3JrIHRhc2sgdG8gcnVuIHRoZSB1cGRhdGUgbGF0ZXIuCgpJdCBhbHNvIHdhaXRzIGFu
+IHVwZGF0ZSB0byBmaW5pc2ggYmVmb3JlIHNjaGVkdWxlIGEgbmV3IG9uZS4KClNpZ25lZC1vZmYt
+Ynk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgNiArKysrCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggfCAgNiArKysrCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgfCA1MSArKysrKysrKysrKysrKysrKysrKysr
+KysrKy0tLS0tLS0KIDMgZmlsZXMgY2hhbmdlZCwgNTIgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Ry
+di5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IDYzYTY4
+YzYuLjM1NDJmMmMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKQEAg
+LTQ3LDYgKzQ3LDkgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2xvYWQoc3RydWN0IGRybV9kZXZp
+Y2UgKmRldiwgdW5zaWduZWQgbG9uZyBmbGFncykKIAlpZiAoIXByaXZhdGUpCiAJCXJldHVybiAt
+RU5PTUVNOwogCisJSU5JVF9XT1JLKCZwcml2YXRlLT53b3JrLCBleHlub3NfZHJtX2F0b21pY193
+b3JrKTsKKwlwcml2YXRlLT5kZXYgPSBkZXY7CisKIAlkZXZfc2V0X2RydmRhdGEoZGV2LT5kZXYs
+IGRldik7CiAJZGV2LT5kZXZfcHJpdmF0ZSA9ICh2b2lkICopcHJpdmF0ZTsKIApAQCAtMTI3LDYg
+KzEzMCw4IEBAIGVycl9mcmVlX3ByaXZhdGU6CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RybV91bmxv
+YWQoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIHsKKwlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRl
+ICpwcml2YXRlID0gZGV2LT5kZXZfcHJpdmF0ZTsKKwogCWV4eW5vc19kcm1fZGV2aWNlX3N1YmRy
+dl9yZW1vdmUoZGV2KTsKIAogCWV4eW5vc19kcm1fZmJkZXZfZmluaShkZXYpOwpAQCAtMTM3LDYg
+KzE0Miw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV91bmxvYWQoc3RydWN0IGRybV9kZXZpY2Ug
+KmRldikKIAlkcm1fbW9kZV9jb25maWdfY2xlYW51cChkZXYpOwogCWRybV9yZWxlYXNlX2lvbW11
+X21hcHBpbmcoZGV2KTsKIAorCWZsdXNoX3dvcmsoJnByaXZhdGUtPndvcmspOwogCWtmcmVlKGRl
+di0+ZGV2X3ByaXZhdGUpOwogCWRldi0+ZGV2X3ByaXZhdGUgPSBOVUxMOwogCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggZGQwMGYxNi4uZDlmZDhlMSAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCisrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaApAQCAtMjQ0LDYgKzI0NCwxMCBAQCBz
+dHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlIHsKIAl1bnNpZ25lZCBsb25nIGRhX3NwYWNlX3NpemU7
+CiAKIAl1bnNpZ25lZCBpbnQgcGlwZTsKKworCXN0cnVjdCBkcm1fZGV2aWNlICpkZXY7CisJc3Ry
+dWN0IHdvcmtfc3RydWN0IHdvcms7CisJc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlOwog
+fTsKIAogLyoKQEAgLTI5Niw2ICszMDAsOCBAQCBzdGF0aWMgaW5saW5lIGludCBleHlub3NfZHBp
+X3JlbW92ZShzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KQogfQogI2VuZGlmCiAK
+K3ZvaWQgZXh5bm9zX2RybV9hdG9taWNfd29yayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspOwor
+CiAvKiBUaGlzIGZ1bmN0aW9uIGNyZWF0ZXMgYSBlbmNvZGVyIGFuZCBhIGNvbm5lY3RvciwgYW5k
+IGluaXRpYWxpemVzIHRoZW0uICovCiBpbnQgZXh5bm9zX2RybV9jcmVhdGVfZW5jX2Nvbm4oc3Ry
+dWN0IGRybV9kZXZpY2UgKmRldiwKIAkJCQlzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNw
+bGF5KTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5j
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKaW5kZXggMmI2MzIwZS4u
+YWQ2YjhhYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zi
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKQEAgLTI2Nywy
+MCArMjY3LDE4IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fb3V0cHV0X3BvbGxfY2hhbmdlZChz
+dHJ1Y3QgZHJtX2RldmljZSAqZGV2KQogCQlleHlub3NfZHJtX2ZiZGV2X2luaXQoZGV2KTsKIH0K
+IAotc3RhdGljIGludCBleHlub3NfYXRvbWljX2NvbW1pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
+LAotCQkJCXN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSwKLQkJCQlib29sIGFzeW5jKQor
+c3RhdGljIHZvaWQgZXh5bm9zX2F0b21pY19jb21taXRfc2NoZWR1bGUoc3RydWN0IGRybV9kZXZp
+Y2UgKmRldiwKKwkJCQlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCiB7Ci0JaW50IHJl
+dDsKLQotCXJldCA9IGRybV9hdG9taWNfaGVscGVyX3ByZXBhcmVfcGxhbmVzKGRldiwgc3RhdGUp
+OwotCWlmIChyZXQpCi0JCXJldHVybiByZXQ7Ci0KLQkvKiBUaGlzIGlzIHRoZSBwb2ludCBvZiBu
+byByZXR1cm4gKi8KKwlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlICpwcml2YXRlID0gZGV2LT5k
+ZXZfcHJpdmF0ZTsKIAotCWRybV9hdG9taWNfaGVscGVyX3N3YXBfc3RhdGUoZGV2LCBzdGF0ZSk7
+CisJcHJpdmF0ZS0+c3RhdGUgPSBzdGF0ZTsKKwlzY2hlZHVsZV93b3JrKCZwcml2YXRlLT53b3Jr
+KTsKK30KIAorc3RhdGljIHZvaWQgZXh5bm9zX2F0b21pY19jb21taXRfY29tcGxldGUoc3RydWN0
+IGRybV9kZXZpY2UgKmRldiwKKwkJCQkJICBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUp
+Cit7CiAJZHJtX2F0b21pY19oZWxwZXJfY29tbWl0X21vZGVzZXRfZGlzYWJsZXMoZGV2LCBzdGF0
+ZSk7CiAKIAlkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9kZXNldF9lbmFibGVzKGRldiwgc3Rh
+dGUpOwpAQCAtMjk4LDYgKzI5NiwzNyBAQCBzdGF0aWMgaW50IGV4eW5vc19hdG9taWNfY29tbWl0
+KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJZHJtX2F0b21pY19oZWxwZXJfY2xlYW51cF9wbGFu
+ZXMoZGV2LCBzdGF0ZSk7CiAKIAlkcm1fYXRvbWljX3N0YXRlX2ZyZWUoc3RhdGUpOworfQorCit2
+b2lkIGV4eW5vc19kcm1fYXRvbWljX3dvcmsoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQorewor
+CXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXZhdGUgPSBjb250YWluZXJfb2Yod29yaywK
+KwkJCQlzdHJ1Y3QgZXh5bm9zX2RybV9wcml2YXRlLCB3b3JrKTsKKworCWV4eW5vc19hdG9taWNf
+Y29tbWl0X2NvbXBsZXRlKHByaXZhdGUtPmRldiwgcHJpdmF0ZS0+c3RhdGUpOworfQorCitzdGF0
+aWMgaW50IGV4eW5vc19hdG9taWNfY29tbWl0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCisJCQkJ
+c3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlLAorCQkJCWJvb2wgYXN5bmMpCit7CisJc3Ry
+dWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAqcHJpdmF0ZSA9IGRldi0+ZGV2X3ByaXZhdGU7CisJaW50
+IHJldDsKKworCXJldCA9IGRybV9hdG9taWNfaGVscGVyX3ByZXBhcmVfcGxhbmVzKGRldiwgc3Rh
+dGUpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CisKKwkvKiBUaGlzIGlzIHRoZSBwb2ludCBv
+ZiBubyByZXR1cm4gKi8KKworCWZsdXNoX3dvcmsoJnByaXZhdGUtPndvcmspOworCisJZHJtX2F0
+b21pY19oZWxwZXJfc3dhcF9zdGF0ZShkZXYsIHN0YXRlKTsKKworCWlmIChhc3luYykKKwkJZXh5
+bm9zX2F0b21pY19jb21taXRfc2NoZWR1bGUoZGV2LCBzdGF0ZSk7CisJZWxzZQorCQlleHlub3Nf
+YXRvbWljX2NvbW1pdF9jb21wbGV0ZShkZXYsIHN0YXRlKTsKIAogCXJldHVybiAwOwogfQotLSAK
+Mi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
