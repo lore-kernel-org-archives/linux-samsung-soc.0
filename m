@@ -1,51 +1,201 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 02/23] drm/exynos: calculate vrefresh instead of use a
- fixed value
-Date: Mon,  6 Jul 2015 11:20:03 -0300
-Message-ID: <1436192424-18194-3-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 03/23] drm/exynos: use KMS version of DRM vblanks functions
+Date: Mon,  6 Jul 2015 11:20:04 -0300
+Message-ID: <1436192424-18194-4-git-send-email-gustavo@padovan.org>
 References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:36327 "EHLO
+	mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753047AbbGFOUm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Jul 2015 10:20:42 -0400
+Received: by qkei195 with SMTP id i195so117942723qke.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2015 07:20:41 -0700 (PDT)
 In-Reply-To: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-V2hlbiBtb2RlJ3MgdnJlZnJlc2ggaXMgemVybyB3ZSBzaG91bGQgYXNrIERSTSBjb3JlIHRvIGNh
-bGN1bGF0ZSB2cmVmcmVzaApmb3IgdXMgc28gd2UgY2FuIGdldCB0aGUgY29ycmVjdCB2YWx1ZSBp
-bnN0ZWFkIG9mIHJlbHlpbmcgb24gZml4ZWQgdmFsdWUKZGVmaW5lZCBpbiBhIG1hY3JvLiBCdXQg
-aWYgdnJlZnJlc2ggaXMgc3RpbGwgemVybyB3ZSBzaG91bGQgZmFpbCB0aGUKdXBkYXRlLgoKdjI6
-IGZpeCBjb21tZW50IGJ5IEpvb255b3VuZwoJLSBhc3NpZ24gdnJlZnJlc2ggZGlyZWN0bHkgd2l0
-aG91dCBjaGVja2luZyBmb3IgemVybwoKU3VnZ2VzdGVkLWJ5OiBEYW5pZWwgU3RvbmUgPGRhbmll
-bHNAY29sbGFib3JhLmNvbT4KU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZv
-LnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9maW1kLmMgfCA0ICsrLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyks
-IDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMK
-aW5kZXggNzk0ZTU2Yy4uNTFiNmEyNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZpbWQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmltZC5jCkBAIC00MSw3ICs0MSw2IEBACiAgKiBDUFUgSW50ZXJmYWNlLgogICovCiAKLSNk
-ZWZpbmUgRklNRF9ERUZBVUxUX0ZSQU1FUkFURSA2MAogI2RlZmluZSBNSU5fRkJfV0lEVEhfRk9S
-XzE2V09SRF9CVVJTVCAxMjgKIAogLyogcG9zaXRpb24gY29udHJvbCByZWdpc3RlciBmb3IgaGFy
-ZHdhcmUgd2luZG93IDAsIDIgfiA0LiovCkBAIC0zNzksOCArMzc4LDkgQEAgc3RhdGljIGJvb2wg
-ZmltZF9tb2RlX2ZpeHVwKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMsCiAJCWNvbnN0IHN0
-cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAogCQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAq
-YWRqdXN0ZWRfbW9kZSkKIHsKKwlhZGp1c3RlZF9tb2RlLT52cmVmcmVzaCA9IGRybV9tb2RlX3Zy
-ZWZyZXNoKG1vZGUpOwogCWlmIChhZGp1c3RlZF9tb2RlLT52cmVmcmVzaCA9PSAwKQotCQlhZGp1
-c3RlZF9tb2RlLT52cmVmcmVzaCA9IEZJTURfREVGQVVMVF9GUkFNRVJBVEU7CisJCXJldHVybiBm
-YWxzZTsKIAogCXJldHVybiB0cnVlOwogfQotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Get rid of legacy DRM vblank function that are less clear to use.
+The new ones basically requires only the crtc as parameters.
+
+It also clean ups exynos_drm_crtc_finish_pageflip() parameters as a
+consequence.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  6 +++---
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 14 ++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h      |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  8 ++++----
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  4 ++--
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  4 ++--
+ 7 files changed, 20 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 8b1225f..61e6e4a 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -407,7 +407,7 @@ void decon_te_irq_handler(struct exynos_drm_crtc *crtc)
+ 		writel(val, ctx->addr + DECON_TRIGCON);
+ 	}
+ 
+-	drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++	drm_crtc_handle_vblank(&ctx->crtc->base);
+ }
+ 
+ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+@@ -533,7 +533,7 @@ static irqreturn_t decon_vsync_irq_handler(int irq, void *dev_id)
+ 
+ 	val = readl(ctx->addr + DECON_VIDINTCON1);
+ 	if (val & VIDINTCON1_INTFRMPEND) {
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++		drm_crtc_handle_vblank(&ctx->crtc->base);
+ 
+ 		/* clear */
+ 		writel(VIDINTCON1_INTFRMPEND, ctx->addr + DECON_VIDINTCON1);
+@@ -553,7 +553,7 @@ static irqreturn_t decon_lcd_sys_irq_handler(int irq, void *dev_id)
+ 
+ 	val = readl(ctx->addr + DECON_VIDINTCON1);
+ 	if (val & VIDINTCON1_INTFRMDONEPEND) {
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		exynos_drm_crtc_finish_pageflip(ctx->crtc);
+ 
+ 		/* clear */
+ 		writel(VIDINTCON1_INTFRMDONEPEND,
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 362532a..5a1174a 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -643,8 +643,8 @@ static irqreturn_t decon_irq_handler(int irq, void *dev_id)
+ 		goto out;
+ 
+ 	if (!ctx->i80_if) {
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		drm_crtc_handle_vblank(&ctx->crtc->base);
++		exynos_drm_crtc_finish_pageflip(ctx->crtc);
+ 
+ 		/* set wait vsync event to zero and wake up queue. */
+ 		if (atomic_read(&ctx->wait_vsync_event)) {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 22b9ca0..e9c291f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -193,24 +193,22 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe)
+ 		exynos_crtc->ops->disable_vblank(exynos_crtc);
+ }
+ 
+-void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
++void exynos_drm_crtc_finish_pageflip(struct exynos_drm_crtc *exynos_crtc)
+ {
+-	struct exynos_drm_private *dev_priv = dev->dev_private;
+-	struct drm_crtc *drm_crtc = dev_priv->crtc[pipe];
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(drm_crtc);
++	struct drm_crtc *crtc = &exynos_crtc->base;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&dev->event_lock, flags);
++	spin_lock_irqsave(&crtc->dev->event_lock, flags);
+ 	if (exynos_crtc->event) {
+ 
+-		drm_send_vblank_event(dev, pipe, exynos_crtc->event);
+-		drm_vblank_put(dev, pipe);
++		drm_crtc_send_vblank_event(crtc, exynos_crtc->event);
++		drm_crtc_vblank_put(crtc);
+ 		wake_up(&exynos_crtc->pending_flip_queue);
+ 
+ 	}
+ 
+ 	exynos_crtc->event = NULL;
+-	spin_unlock_irqrestore(&dev->event_lock, flags);
++	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+ }
+ 
+ void exynos_drm_crtc_complete_scanout(struct drm_framebuffer *fb)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 0f3aa70..d01d49a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -25,7 +25,7 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+ 					void *context);
+ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe);
+ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe);
+-void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe);
++void exynos_drm_crtc_finish_pageflip(struct exynos_drm_crtc *exynos_crtc);
+ void exynos_drm_crtc_complete_scanout(struct drm_framebuffer *fb);
+ 
+ /* This function gets pipe value to crtc device matched with out_type. */
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 51b6a27..c69fa22 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -862,7 +862,7 @@ static void fimd_te_handler(struct exynos_drm_crtc *crtc)
+ 	}
+ 
+ 	if (test_bit(0, &ctx->irq_flags))
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++		drm_crtc_handle_vblank(&ctx->crtc->base);
+ }
+ 
+ static void fimd_dp_clock_enable(struct exynos_drm_crtc *crtc, bool enable)
+@@ -913,13 +913,13 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+ 		goto out;
+ 
+ 	if (ctx->i80_if) {
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		exynos_drm_crtc_finish_pageflip(ctx->crtc);
+ 
+ 		/* Exits triggering mode */
+ 		atomic_set(&ctx->triggering, 0);
+ 	} else {
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		drm_crtc_handle_vblank(&ctx->crtc->base);
++		exynos_drm_crtc_finish_pageflip(ctx->crtc);
+ 
+ 		/* set wait vsync event to zero and wake up queue. */
+ 		if (atomic_read(&ctx->wait_vsync_event)) {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 3413393..9b97105 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -196,7 +196,7 @@ static void vidi_fake_vblank_handler(struct work_struct *work)
+ 	mutex_lock(&ctx->lock);
+ 
+ 	if (ctx->direct_vblank) {
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++		drm_crtc_handle_vblank(&ctx->crtc->base);
+ 		ctx->direct_vblank = false;
+ 		mutex_unlock(&ctx->lock);
+ 		return;
+@@ -204,7 +204,7 @@ static void vidi_fake_vblank_handler(struct work_struct *work)
+ 
+ 	mutex_unlock(&ctx->lock);
+ 
+-	exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++	exynos_drm_crtc_finish_pageflip(ctx->crtc);
+ }
+ 
+ static int vidi_show_connection(struct device *dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index cae98db..f8af72c 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -731,8 +731,8 @@ static irqreturn_t mixer_irq_handler(int irq, void *arg)
+ 				goto out;
+ 		}
+ 
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		drm_crtc_handle_vblank(&ctx->crtc->base);
++		exynos_drm_crtc_finish_pageflip(ctx->crtc);
+ 
+ 		/* set wait vsync event to zero and wake up queue. */
+ 		if (atomic_read(&ctx->wait_vsync_event)) {
+-- 
+2.1.0
