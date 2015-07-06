@@ -1,103 +1,44 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 00/23] drm/exynos: atomic improvements + exynos_encoder
- removal
-Date: Mon,  6 Jul 2015 11:20:01 -0300
-Message-ID: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 01/23] drm/exynos: pass the correct pipe number
+Date: Mon,  6 Jul 2015 11:20:02 -0300
+Message-ID: <1436192424-18194-2-git-send-email-gustavo@padovan.org>
+References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:35688 "EHLO
+	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753047AbbGFOUg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Jul 2015 10:20:36 -0400
+Received: by qkbp125 with SMTP id p125so117823341qkb.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2015 07:20:35 -0700 (PDT)
+In-Reply-To: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-SGksICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKVGhpcyBzZXQg
-aW1wcm92ZXMgZXh5bm9zIGluIGEgbnVtYmVyIG9mIHdheXMuIFRoZSBmaXJzdCBmaXZlIHBhdGNo
-ZXMgYXJlICAgICAgICAKZ2VuZXJhbCBjbGVhbiB1cC9maXhlcy4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAKUGF0Y2hlcyAwNiB0byAxMiBhcmUgaW1wcm92ZW1lbnRzIG9uIHRvcCBvZiB0aGUgbmV3
-bHkgYWRkZWQgYXRvbWljIG1vZGVzZXR0aW5nICAKc3VwcG9ydC4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAKUGF0Y2hlcyAxMy0yMyBhcmUgYSBiaWcgam91cm5leSB0byBj
-b21wbGV0ZWx5IHJlbW92ZSB0aGUgaW50ZXJuYWwgICAgICAgICAgICAgICAKZXh5bm9zX2RybV9l
-bmNvZGVyIHN0cnVjdC4gTm93IGV4eW5vcyBlbmNvZGVycyByZWdpc3RlciB0aGVtc2VsdmVzIGRp
-cmVjdGx5ICAgICAKd2l0aCB0aGUgZHJtIGNvcmUuICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAKdjI6IEZpeCBjb21tZW50cyBieSBKb29ueW91bmcgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAtIGFkZCBhbiBleHRyYSBjb21taXQg
-dG8gY2hlY2sgY3J0Yy0+ZW5hYmxlX3ZibGFuaygpIHZhbHVlICAgICAgICAgICAgICAKICAgICAg
-ICAtIGRpcmVjdGx5IGFzc2lnbiB0aGUgdnJlZnJlc2ggd2l0aG91dCBjaGVja2luZyBmb3IgemVy
-byAgICAgICAgICAgICAgICAKICAgICAgICAtIGRvbid0IHJlbW92ZSBGSU1EIGN0Yy0+c3VzcGVu
-ZGVkIGNoZWNrICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAKUGxlYXNlIHJldmlldyEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK
-ICAgICAgICBHdXN0YXZvCgpHdXN0YXZvIFBhZG92YW4gKDIzKToKICBkcm0vZXh5bm9zOiBwYXNz
-IHRoZSBjb3JyZWN0IHBpcGUgbnVtYmVyCiAgZHJtL2V4eW5vczogY2FsY3VsYXRlIHZyZWZyZXNo
-IGluc3RlYWQgb2YgdXNlIGEgZml4ZWQgdmFsdWUKICBkcm0vZXh5bm9zOiB1c2UgS01TIHZlcnNp
-b24gb2YgRFJNIHZibGFua3MgZnVuY3Rpb25zCiAgZHJtL2V4eW5vczogcmVtb3ZlIGR1cGxpY2F0
-ZWQgY2hlY2sgZm9yIHN1c3BlbmQKICBkcm0vZXh5bm9zOiBhZGQgYXRvbWljIGFzeW5jaHJvbm91
-cyBjb21taXQKICBkcm0vZXh5bm9zOiByZW5hbWUgd2luX2NvbW1pdC9kaXNhYmxlIHRvIGF0b21p
-Yy1saWtlIG5hbWVzCiAgZHJtL2V4eW5vczogcGFzcyBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSBp
-biB1cGRhdGUvZW5hYmxlCiAgZHJtL2V4eW5vczogdXNlIGRybSBhdG9taWMgc3RhdGUgZGlyZWN0
-bHkKICBkcm0vZXh5bm9zOiByZW1vdmUgdW51c2VkIGZpZWxkcyBmcm9tIHN0cnVjdCBleHlub3Nf
-ZHJtX3BsYW5lCiAgZHJtL2V4eW5vczogdW5pZnkgZXh5bm9zX2RybV9wbGFuZSBuYW1lcyB3aXRo
-IGRybSBjb3JlCiAgZHJtL2V4eW5vczogcmV0dXJuIHJldHVybiB2YWx1ZSBvZiBleHlub3NfY3J0
-Yy0+ZW5hYmxlX3ZibGFuawogIGRybS9leHlub3M6IGRvbid0IHRyYWNrIGVuYWJsZWQgc3RhdGUg
-YXQgZXh5bm9zX2NydGMKICBkcm0vZXh5bm9zOiBzcGxpdCBkaXNwbGF5J3MgLmRwbXMoKSBpbnRv
-IC5lbmFibGUoKSBhbmQgLmRpc2FibGUoKQogIGRybS9leHlub3M6IHJlbW92ZSB3cmFwcGVycyBm
-b3IgcGh5X3Bvd2VyX3tvbixvZmZ9CiAgZHJtL2V4eW5vczogcmVtb3ZlIHVudXNlZCAucmVtb3Zl
-KCkgYW5kIC5jaGVja19tb2RlKCkgb3BzIGZyb20gZGlzcGxheQogIGRybS9leHlub3M6IHNpbXBs
-aWZ5IGNhbGN1bGF0aW9uIG9mIHBvc3NpYmxlIENSVENzCiAgZHJtL2V4eW5vczogcmVtb3ZlIHN0
-cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkKICBkcm0vZXh5bm9zOiByZW1vdmUgZXh0cmEgY2FsbCB0
-byBoZG1pX2NvbW1pdCgpCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4dHJhIGNhbGwgdG8gZXh5bm9z
-X2RwX2NvbW1pdCgpCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19lbmNvZGVyJ3MgLmNvbW1p
-dCgpIG9wCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19kcm1fY3JlYXRlX2VuY19jb25uKCkK
-ICBkcm0vZXh5bm9zOiBmb2xkIGVuY29kZXIgc2V0dXAgaW50byBleHlub3NfZHJtX2xvYWQoKQog
-IGRybS9leHlub3M6IHJlbW92ZSBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyIGxheWVyCgogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICA3ICstCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgNTcgKysrKy0tLS0t
-CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAgODYgKysr
-KysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAgICAg
-IHwgMTIyICsrKysrKysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHBfY29yZS5oICAgICAgIHwgICAzICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fY29yZS5jICAgICAgfCAgMzYgLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jICAgICAgfCAgMzUgKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fY3J0Yy5oICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kcGkuYyAgICAgICB8ICA5NiArKysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICAgIHwgIDE5ICsrLQogZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAgIHwgMTE1ICsrKysrLS0tLS0tLS0tLS0tCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgfCAxMjkgKysrKysr
-KysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
-YyAgIHwgMTc0IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5oICAgfCAgMjMgLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2ZiLmMgICAgICAgIHwgIDUxICsrKysrKy0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAgOTUgKysrKysrKy0tLS0tLS0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8ICAzMSArKy0tLQog
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICAgIHwgMTA3ICsrKysr
-KysrKy0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAg
-ICB8IDE2OCArKysrKysrKysrKystLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19taXhlci5jICAgICAgICAgfCAxMTEgKysrKysrKystLS0tLS0tLQogMjAgZmlsZXMg
-Y2hhbmdlZCwgNTk1IGluc2VydGlvbnMoKyksIDg3NCBkZWxldGlvbnMoLSkKIGRlbGV0ZSBtb2Rl
-IDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCiBkZWxl
-dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
-aAoKLS0gCjIuMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Instead of giving -1 to as arg to  drm_send_vblank_event() pass the
+correct pipe number to it.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 644b4b7..22b9ca0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -203,7 +203,7 @@ void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
+ 	spin_lock_irqsave(&dev->event_lock, flags);
+ 	if (exynos_crtc->event) {
+ 
+-		drm_send_vblank_event(dev, -1, exynos_crtc->event);
++		drm_send_vblank_event(dev, pipe, exynos_crtc->event);
+ 		drm_vblank_put(dev, pipe);
+ 		wake_up(&exynos_crtc->pending_flip_queue);
+ 
+-- 
+2.1.0
