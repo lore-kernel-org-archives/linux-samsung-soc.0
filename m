@@ -1,137 +1,75 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add CPU cooling binding for Exynos3250-based
- Rinato/Monk board
-Date: Mon, 6 Jul 2015 10:08:48 +0900
-Message-ID: <CAJKOXPfknRZ0ewSv=awo1ay4uWHAXM_kCiLPN4MpxN2-bSNq0g@mail.gmail.com>
-References: <1435815465-501-1-git-send-email-cw00.choi@samsung.com>
-	<5594D22C.4040206@samsung.com>
-	<5594D5F4.3060508@samsung.com>
-	<5594E57C.2010300@samsung.com>
+Subject: Re: [PATCH] thermal: exynos: Disable the regulator on probe failure
+Date: Mon, 6 Jul 2015 13:00:46 +0900
+Message-ID: <CAJKOXPfwSB03YQZA2HZHJLebxq7WTK2fObxHNegdYO+3MM_pfw@mail.gmail.com>
+References: <1433727349-23330-1-git-send-email-k.kozlowski@samsung.com>
+	<20150608181459.454c9067@amdc2363>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:33634 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753355AbbGFBIt (ORCPT
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:35763 "EHLO
+	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750728AbbGFEAr convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Jul 2015 21:08:49 -0400
-Received: by qgef3 with SMTP id f3so13032500qge.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jul 2015 18:08:48 -0700 (PDT)
-In-Reply-To: <5594E57C.2010300@samsung.com>
+	Mon, 6 Jul 2015 00:00:47 -0400
+In-Reply-To: <20150608181459.454c9067@amdc2363>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?=C5=81ukasz_Majewski?= <l.majewski@samsung.com>, kyungmin.park@samsung.com, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-2015-07-02 16:17 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> On 02.07.2015 15:11, Chanwoo Choi wrote:
->> On 07/02/2015 02:54 PM, Krzysztof Kozlowski wrote:
->>> On 02.07.2015 14:37, Chanwoo Choi wrote:
->>>> This patch add the cooling device to control the overheating issue on
->>>> Exynos3250-based Rinato/Monk board.
->>>>
->>>> Cc: Kukjin Kim <kgene@kernel.org>
->>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>> ---
->>>> Depends on:
->>>> This patch needs the cpufreq support of Exynos3250 SoC. So, this patch has the
->>>> dependency on patch[1] which support the generic cpufreq for Exynos3250 SoC.
->>>> [1] https://lkml.org/lkml/2015/7/1/696
->>>>     : [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
->>>>
->>>>  arch/arm/boot/dts/exynos3250-monk.dts   | 15 +++++++++++++++
->>>>  arch/arm/boot/dts/exynos3250-rinato.dts | 15 +++++++++++++++
->>>>  arch/arm/boot/dts/exynos3250.dtsi       |  1 +
->>>>  3 files changed, 31 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
->>>> index 7863265d4868..540a0adf2be6 100644
->>>> --- a/arch/arm/boot/dts/exynos3250-monk.dts
->>>> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
->>>> @@ -116,6 +116,21 @@
->>>>             min-microvolt = <1100000>;
->>>>             max-microvolt = <2700000>;
->>>>     };
->>>> +
->>>> +   thermal-zones {
->>>> +           cpu_thermal: cpu-thermal {
->>>> +                   cooling-maps {
->>>> +                           map0 {
->>>> +                                   /* Correspond to 500MHz at freq_table */
->>>> +                                   cooling-device = <&cpu0 5 5>;
->>>> +                           };
->>>> +                           map1 {
->>>> +                                   /* Correspond to 200MHz at freq_table */
->>>> +                                   cooling-device = <&cpu0 8 8>;
->>>> +                           };
->>>> +                   };
->>>> +           };
->>>> +   };
->>>>  };
->>>>
->>>>  &adc {
->>>> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
->>>> index ddd7ac283045..0e62a6435e07 100644
->>>> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
->>>> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
->>>> @@ -107,6 +107,21 @@
->>>>             min-microvolt = <1100000>;
->>>>             max-microvolt = <2700000>;
->>>>     };
->>>> +
->>>> +   thermal-zones {
->>>> +           cpu_thermal: cpu-thermal {
->>>> +                   cooling-maps {
->>>> +                           map0 {
->>>> +                                   /* Corresponds to 500MHz */
->>>> +                                   cooling-device = <&cpu0 5 5>;
->>>> +                           };
->>>> +                           map1 {
->>>> +                                   /* Corresponds to 200MHz */
->>>> +                                   cooling-device = <&cpu0 8 8>;
->>>> +                           };
->>>> +                   };
->>>> +           };
->>>> +   };
->>>>  };
->>>>
->>>>  &adc {
->>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->>>> index e0f3b2ed41a3..a4931b660ddb 100644
->>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->>>> @@ -55,6 +55,7 @@
->>>>                     clock-frequency = <1000000000>;
->>>>                     clocks = <&cmu CLK_ARM_CLK>;
->>>>                     clock-names = "cpu";
->>>> +                   #cooling-cells = <2>;
->>>>
->>>
->>> Don't you need also cooling-{min,max}-state properties?
->>
->> Yes, it is well working without cooling-{min,max}-state or cooling-{min,max}-level.
->>
->> I look for the some code to parse "cooling-{min,max}-state or cooling-{min,max}-level"
->> in drivers/thermal/*. But, there are no any code to parse it.
->>
->> But, Documentation/devicetree/bindings/thermal/thermal.txt contains just the 'cooling-{min,max}-state.
->>
->> I think that there are mismatch between document and thermal core driver.
+2015-06-09 1:14 GMT+09:00 Lukasz Majewski <l.majewski@samsung.com>:
+> Hi Krzysztof,
 >
-> Thanks for explanation, looks good.
-> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> During probe the regulator (if present) was enabled but not disabled
+>> in case of failure. So an unsuccessful probe lead to enabling the
+>> regulator which was actually not needed because the device was not
+>> enabled.
+>>
+>> Additionally each deferred probe lead to increase of regulator enabl=
+e
+>> count so it would not be effectively disabled during removal of the
+>> device.
 >
-> Best regards,
-> Krzysztof
+> Thanks for catching this.
+>
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Fixes: 498d22f616f6 ("thermal: exynos: Support for TMU regulator
+>> defined at device tree") Cc: <stable@vger.kernel.org>
+>>
+>> ---
+>>
+>> I am not entirely convinced that this should go to stable. Leaving a
+>> regulator enabled in case of probe failure (no exynos TMU device) or
+>> after deferred probe (regulator won't be disabled during device
+>> removal) is not a critical issue, just leaks power.
+>> ---
+>>  drivers/thermal/samsung/exynos_tmu.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+>> b/drivers/thermal/samsung/exynos_tmu.c index
+>> 531f4b179871..13c3aceed19d 100644 ---
+>> a/drivers/thermal/samsung/exynos_tmu.c +++
+>> b/drivers/thermal/samsung/exynos_tmu.c @@ -1392,6 +1392,8 @@
+>> err_clk_sec: if (!IS_ERR(data->clk_sec))
+>>               clk_unprepare(data->clk_sec);
+>>  err_sensor:
+>> +     if (!IS_ERR_OR_NULL(data->regulator))
+>> +             regulator_disable(data->regulator);
+>>       thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+>>
+>>       return ret;
+>
+> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+>
+> I will test it and afterwards add to samsung-thermal tree.
 
-Dear Kukjin,
+Hi =C5=81ukasz,
 
-Recent four patchsets (4210 CPU OPP in DTS, cpufreq-dt 5250,
-cpufreq-dt 3250, this patch) are actually an one continuous chain.
-Dependencies are already in mainline. Are you gonna to pick up
-everything?
+I can't find this patch in v4.2-rc1 or your tree. What happened?
 
 Best regards,
 Krzysztof
