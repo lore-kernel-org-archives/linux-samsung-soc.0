@@ -1,20 +1,19 @@
-From: Darren Hart <dvhart@infradead.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 Subject: Re: [PATCH] thermal: consistently use int for temperatures
-Date: Mon, 6 Jul 2015 11:18:14 -0700
-Message-ID: <20150706181814.GB40907@vmdeb7>
+Date: Mon, 06 Jul 2015 21:07:49 +0200
+Message-ID: <14808775.AMIXvBTC8g@diego>
 References: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
+Return-path: <linux-acpi-owner@vger.kernel.org>
 In-Reply-To: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
-Sender: linux-pm-owner@vger.kernel.org
+Sender: linux-acpi-owner@vger.kernel.org
 To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, lm-sensors@lm-sensors.org
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 06, 2015 at 09:19:49AM +0200, Sascha Hauer wrote:
+Am Montag, 6. Juli 2015, 09:19:49 schrieb Sascha Hauer:
 > The thermal code uses int, long and unsigned long for temperatures
 > in different places.
 >=20
@@ -27,28 +26,47 @@ elow
 > 0=B0C.
 >=20
 > 'long' is 64bit on several architectures. This is not needed since IN=
-T_MAX =B0mC
-> is above the melting point of all known materials.
+T_MAX
+> =B0mC is above the melting point of all known materials.
 >=20
 > Consistently use a plain 'int' for temperatures throughout the therma=
-l code and
-> the drivers. This only changes the places in the drivers where the te=
-mperature
-> is passed around as pointer, when drivers internally use another type=
- this is
-> not changed.
+l code
+> and the drivers. This only changes the places in the drivers where th=
+e
+> temperature is passed around as pointer, when drivers internally use
+> another type this is not changed.
 >=20
 > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Eduardo Valentin <edubezval@gmail.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Jean Delvare <jdelvare@suse.de>
+> Cc: Peter Feuerer <peter@piie.net>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Lukasz Majewski <l.majewski@samsung.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: linux-acpi@vger.kernel.org
+> Cc: platform-driver-x86@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Darren Hart <dvhart@infradead.org>
+> Cc: lm-sensors@lm-sensors.org
+> ---
 
-=2E..
+=46or
 
->  drivers/platform/x86/acerhdf.c                     |  9 ++++----
->  drivers/platform/x86/intel_mid_thermal.c           |  9 ++++----
+>  drivers/thermal/rockchip_thermal.c                 | 10 ++++----
 
-=46or these two:
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Reviewed-by: Darren Hart <dvhart@linux.intel.com>
-
---=20
-Darren Hart
-Intel Open Source Technology Center
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
