@@ -1,51 +1,76 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH] thermal: consistently use int for temperatures
-Date: Mon, 06 Jul 2015 12:26:40 +0200
-Message-ID: <20150706122640.2a61ca05@amdc2363>
-References: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
+From: Chanho Park <parkch98@gmail.com>
+Subject: Re: [PATCHv4] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+Date: Mon, 6 Jul 2015 23:03:13 +0900
+Message-ID: <CAPTzV16xOB6PiasmNXx7nwORd_OsLU_jRwzxhJDpWqhoS5Wz0A@mail.gmail.com>
+References: <1436106556-19134-1-git-send-email-chanho61.park@samsung.com>
+	<5599D144.7040001@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:38248 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750945AbbGFODO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Jul 2015 10:03:14 -0400
+Received: by igrv9 with SMTP id v9so115874293igr.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2015 07:03:14 -0700 (PDT)
+In-Reply-To: <5599D144.7040001@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chanho Park <chanho61.park@samsung.com>
 
-Hi Sascha,
+Hi,
 
-> The thermal code uses int, long and unsigned long for temperatures
-> in different places.
->=20
-> Using an unsigned type limits the thermal framework to positive
-> temperatures without need. Also several drivers currently will report
-> temperatures near UINT_MAX for temperatures below 0=C2=B0C. This will
-> probably immediately shut the machine down due to overtemperature if
-> started below 0=C2=B0C.
->=20
-> 'long' is 64bit on several architectures. This is not needed since
-> INT_MAX =C2=B0mC is above the melting point of all known materials.
->=20
-> Consistently use a plain 'int' for temperatures throughout the
-> thermal code and the drivers. This only changes the places in the
-> drivers where the temperature is passed around as pointer, when
-> drivers internally use another type this is not changed.
->=20
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+On Mon, Jul 6, 2015 at 9:52 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On 05.07.2015 23:29, Chanho Park wrote:
+>> The odroid-xu3 board which is based on exynos5422 not exynos5800 is
+>> booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
+>> is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
+>> cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
+>> and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
+>> cpu4-7 are cortex-a15.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>> ---
+>> Changes from v3:
+>>  - include this exynos5422-cpus.dtsi in the exynos5422-odroidxu3-common.dtsi
+>>
+>> Changes from v2:
+>>  - drop inclusion of exynos5420.dtsi from exynos5422-cpus.dtsi
+>>  - drop compatibles from exynos5422-cpus.dtsi
+>>
+>> Changes from v1:
+>>  - rename exynos5422.dtsi to exynos5422-cpus.dtsi
+>>  - include the dtsi file top of the exynos5422-odroidxu3.dts
+>>
+>> Secondary cpu booting problem[1] is not resolved yet. Below temporal patch is
+>> required to see 8 cores booting.
+>>
+>> --- a/arch/arm/mach-exynos/platsmp.c
+>> +++ b/arch/arm/mach-exynos/platsmp.c
+>> @@ -124,6 +124,7 @@ void exynos_cpu_power_up(int cpu)
+>>         if (soc_is_exynos3250())
+>>                 core_conf |= S5P_CORE_AUTOWAKEUP_EN;
+>>
+>> +       pmu_raw_writel(1, S5P_PMU_SPARE2);
+>>         pmu_raw_writel(core_conf,
+>>                         EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+>>  }
+>>
+>> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg45525.html
+>
+> $ git am ...
+> Applying: ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+> error: patch failed: arch/arm/mach-exynos/platsmp.c:124
+> error: arch/arm/mach-exynos/platsmp.c: patch does not apply
+>
+> The diff above confuses 'git am'.
 
-Sascha, thanks for this cleanup work.=20
+Oops. I'll re-send patch without the codes.
 
-Reviewed-by: Lukasz Majewski <l.majewski@samsung.com>
-
---=20
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Best Regards,
+Chanho Park
