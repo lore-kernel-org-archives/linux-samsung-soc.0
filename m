@@ -1,152 +1,103 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: [PATCHv5] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
-Date: Mon,  6 Jul 2015 23:12:35 +0900
-Message-ID: <1436191955-3650-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:32783 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756173AbbGFOM4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Jul 2015 10:12:56 -0400
-Received: by pacws9 with SMTP id ws9so97601641pac.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2015 07:12:56 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH v2 00/23] drm/exynos: atomic improvements + exynos_encoder
+ removal
+Date: Mon,  6 Jul 2015 11:20:01 -0300
+Message-ID: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, k.kozlowski@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chanho Park <chanho61.park@samsung.com>
 
-The odroid-xu3 board which is based on exynos5422 not exynos5800 is
-booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
-is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
-cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
-and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
-cpu4-7 are cortex-a15.
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
-Changes from v4:
- - Remove temporal patch in e-mail body
-
-Changes from v3:
- - include this exynos5422-cpus.dtsi in the exynos5422-odroidxu3-common.dtsi
-
-Changes from v2:
- - drop inclusion of exynos5420.dtsi from exynos5422-cpus.dtsi
- - drop compatibles from exynos5422-cpus.dtsi
-
-Changes from v1:
- - rename exynos5422.dtsi to exynos5422-cpus.dtsi
- - include the dtsi file top of the exynos5422-odroidxu3.dts
-
-Secondary cpu booting problem[1] is not resolved yet. Need more investigations
-to work booting 8 cores correctly.
-
-[1]: http://www.spinics.net/lists/linux-samsung-soc/msg45525.html
-
- arch/arm/boot/dts/exynos5422-cpus.dtsi             | 81 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
- 2 files changed, 82 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5422-cpus.dtsi
-
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-new file mode 100644
-index 0000000..b7f60c8
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -0,0 +1,81 @@
-+/*
-+ * SAMSUNG EXYNOS5422 SoC cpu device tree source
-+ *
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * The only difference between EXYNOS5422 and EXYNOS5800 is cpu ordering. The
-+ * EXYNOS5422 is booting from Cortex-A7 core while the EXYNOS5800 is booting
-+ * from Cortex-A15 core.
-+ *
-+ * EXYNOS5422 based board files can include this file to provide cpu ordering
-+ * which could boot a cortex-a7 from cpu0.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+&cpu0 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x100>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu1 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x101>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu2 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x102>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu3 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a7";
-+	reg = <0x103>;
-+	clock-frequency = <1000000000>;
-+	cci-control-port = <&cci_control0>;
-+};
-+
-+&cpu4 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x0>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu5 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x1>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu6 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x2>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-+
-+&cpu7 {
-+	device_type = "cpu";
-+	compatible = "arm,cortex-a15";
-+	reg = <0x3>;
-+	clock-frequency = <1800000000>;
-+	cci-control-port = <&cci_control1>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 8adf455..f603133 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -15,6 +15,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5800.dtsi"
-+#include "exynos5422-cpus.dtsi"
- 
- / {
- 	memory {
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+SGksICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKVGhpcyBzZXQg
+aW1wcm92ZXMgZXh5bm9zIGluIGEgbnVtYmVyIG9mIHdheXMuIFRoZSBmaXJzdCBmaXZlIHBhdGNo
+ZXMgYXJlICAgICAgICAKZ2VuZXJhbCBjbGVhbiB1cC9maXhlcy4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAKUGF0Y2hlcyAwNiB0byAxMiBhcmUgaW1wcm92ZW1lbnRzIG9uIHRvcCBvZiB0aGUgbmV3
+bHkgYWRkZWQgYXRvbWljIG1vZGVzZXR0aW5nICAKc3VwcG9ydC4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAKUGF0Y2hlcyAxMy0yMyBhcmUgYSBiaWcgam91cm5leSB0byBj
+b21wbGV0ZWx5IHJlbW92ZSB0aGUgaW50ZXJuYWwgICAgICAgICAgICAgICAKZXh5bm9zX2RybV9l
+bmNvZGVyIHN0cnVjdC4gTm93IGV4eW5vcyBlbmNvZGVycyByZWdpc3RlciB0aGVtc2VsdmVzIGRp
+cmVjdGx5ICAgICAKd2l0aCB0aGUgZHJtIGNvcmUuICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAKdjI6IEZpeCBjb21tZW50cyBieSBKb29ueW91bmcgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAtIGFkZCBhbiBleHRyYSBjb21taXQg
+dG8gY2hlY2sgY3J0Yy0+ZW5hYmxlX3ZibGFuaygpIHZhbHVlICAgICAgICAgICAgICAKICAgICAg
+ICAtIGRpcmVjdGx5IGFzc2lnbiB0aGUgdnJlZnJlc2ggd2l0aG91dCBjaGVja2luZyBmb3IgemVy
+byAgICAgICAgICAgICAgICAKICAgICAgICAtIGRvbid0IHJlbW92ZSBGSU1EIGN0Yy0+c3VzcGVu
+ZGVkIGNoZWNrICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAKUGxlYXNlIHJldmlldyEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK
+ICAgICAgICBHdXN0YXZvCgpHdXN0YXZvIFBhZG92YW4gKDIzKToKICBkcm0vZXh5bm9zOiBwYXNz
+IHRoZSBjb3JyZWN0IHBpcGUgbnVtYmVyCiAgZHJtL2V4eW5vczogY2FsY3VsYXRlIHZyZWZyZXNo
+IGluc3RlYWQgb2YgdXNlIGEgZml4ZWQgdmFsdWUKICBkcm0vZXh5bm9zOiB1c2UgS01TIHZlcnNp
+b24gb2YgRFJNIHZibGFua3MgZnVuY3Rpb25zCiAgZHJtL2V4eW5vczogcmVtb3ZlIGR1cGxpY2F0
+ZWQgY2hlY2sgZm9yIHN1c3BlbmQKICBkcm0vZXh5bm9zOiBhZGQgYXRvbWljIGFzeW5jaHJvbm91
+cyBjb21taXQKICBkcm0vZXh5bm9zOiByZW5hbWUgd2luX2NvbW1pdC9kaXNhYmxlIHRvIGF0b21p
+Yy1saWtlIG5hbWVzCiAgZHJtL2V4eW5vczogcGFzcyBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSBp
+biB1cGRhdGUvZW5hYmxlCiAgZHJtL2V4eW5vczogdXNlIGRybSBhdG9taWMgc3RhdGUgZGlyZWN0
+bHkKICBkcm0vZXh5bm9zOiByZW1vdmUgdW51c2VkIGZpZWxkcyBmcm9tIHN0cnVjdCBleHlub3Nf
+ZHJtX3BsYW5lCiAgZHJtL2V4eW5vczogdW5pZnkgZXh5bm9zX2RybV9wbGFuZSBuYW1lcyB3aXRo
+IGRybSBjb3JlCiAgZHJtL2V4eW5vczogcmV0dXJuIHJldHVybiB2YWx1ZSBvZiBleHlub3NfY3J0
+Yy0+ZW5hYmxlX3ZibGFuawogIGRybS9leHlub3M6IGRvbid0IHRyYWNrIGVuYWJsZWQgc3RhdGUg
+YXQgZXh5bm9zX2NydGMKICBkcm0vZXh5bm9zOiBzcGxpdCBkaXNwbGF5J3MgLmRwbXMoKSBpbnRv
+IC5lbmFibGUoKSBhbmQgLmRpc2FibGUoKQogIGRybS9leHlub3M6IHJlbW92ZSB3cmFwcGVycyBm
+b3IgcGh5X3Bvd2VyX3tvbixvZmZ9CiAgZHJtL2V4eW5vczogcmVtb3ZlIHVudXNlZCAucmVtb3Zl
+KCkgYW5kIC5jaGVja19tb2RlKCkgb3BzIGZyb20gZGlzcGxheQogIGRybS9leHlub3M6IHNpbXBs
+aWZ5IGNhbGN1bGF0aW9uIG9mIHBvc3NpYmxlIENSVENzCiAgZHJtL2V4eW5vczogcmVtb3ZlIHN0
+cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkKICBkcm0vZXh5bm9zOiByZW1vdmUgZXh0cmEgY2FsbCB0
+byBoZG1pX2NvbW1pdCgpCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4dHJhIGNhbGwgdG8gZXh5bm9z
+X2RwX2NvbW1pdCgpCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19lbmNvZGVyJ3MgLmNvbW1p
+dCgpIG9wCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19kcm1fY3JlYXRlX2VuY19jb25uKCkK
+ICBkcm0vZXh5bm9zOiBmb2xkIGVuY29kZXIgc2V0dXAgaW50byBleHlub3NfZHJtX2xvYWQoKQog
+IGRybS9leHlub3M6IHJlbW92ZSBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyIGxheWVyCgogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9NYWtlZmlsZSAgICAgICAgICAgICAgIHwgICA3ICstCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJtX2RlY29uLmMgfCAgNTcgKysrKy0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgICAgfCAgODYgKysr
+KysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jICAgICAg
+IHwgMTIyICsrKysrKysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHBfY29yZS5oICAgICAgIHwgICAzICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fY29yZS5jICAgICAgfCAgMzYgLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fY3J0Yy5jICAgICAgfCAgMzUgKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fY3J0Yy5oICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kcGkuYyAgICAgICB8ICA5NiArKysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICAgICAgIHwgIDE5ICsrLQogZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAgIHwgMTE1ICsrKysrLS0tLS0tLS0tLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAgfCAxMjkgKysrKysr
+KysrKy0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
+YyAgIHwgMTc0IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5oICAgfCAgMjMgLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZiLmMgICAgICAgIHwgIDUxICsrKysrKy0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAgOTUgKysrKysrKy0tLS0tLS0KIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8ICAzMSArKy0tLQog
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICAgIHwgMTA3ICsrKysr
+KysrKy0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAg
+ICB8IDE2OCArKysrKysrKysrKystLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19taXhlci5jICAgICAgICAgfCAxMTEgKysrKysrKystLS0tLS0tLQogMjAgZmlsZXMg
+Y2hhbmdlZCwgNTk1IGluc2VydGlvbnMoKyksIDg3NCBkZWxldGlvbnMoLSkKIGRlbGV0ZSBtb2Rl
+IDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCiBkZWxl
+dGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2VuY29kZXIu
+aAoKLS0gCjIuMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
