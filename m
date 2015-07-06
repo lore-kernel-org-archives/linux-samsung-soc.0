@@ -1,49 +1,343 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 04/23] drm/exynos: remove duplicated check for suspend
-Date: Mon,  6 Jul 2015 11:20:05 -0300
-Message-ID: <1436192424-18194-5-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 07/23] drm/exynos: pass struct exynos_drm_plane in update/enable
+Date: Mon,  6 Jul 2015 11:20:08 -0300
+Message-ID: <1436192424-18194-8-git-send-email-gustavo@padovan.org>
 References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:34966 "EHLO
+	mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752725AbbGFOUx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Jul 2015 10:20:53 -0400
+Received: by qkbp125 with SMTP id p125so117830550qkb.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2015 07:20:53 -0700 (PDT)
 In-Reply-To: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIHNhbWUgY2hlY2sgaXMgcGxhY2VkIHR3aWNlIGluIGZpbWQvZGVjb25fdXBkYXRlX3BsYW5l
-KCksIHJlbW92ZQpvbmUgb2YgdGhlbS4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8
-Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vczdfZHJtX2RlY29uLmMgfCAzIC0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2ZpbWQuYyAgIHwgMyAtLS0KIDIgZmlsZXMgY2hhbmdlZCwgNiBkZWxldGlvbnMo
-LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29u
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMKaW5kZXggNWEx
-MTc0YS4uZjcyMGYyYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3
-X2RybV9kZWNvbi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVj
-b24uYwpAQCAtNDAwLDkgKzQwMCw2IEBAIHN0YXRpYyB2b2lkIGRlY29uX3dpbl9jb21taXQoc3Ry
-dWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YywgdW5zaWduZWQgaW50IHdpbikKIAogCXBsYW5lID0g
-JmN0eC0+cGxhbmVzW3dpbl07CiAKLQlpZiAoY3R4LT5zdXNwZW5kZWQpCi0JCXJldHVybjsKLQog
-CS8qCiAJICogU0hBRE9XQ09OL1BSVENPTiByZWdpc3RlciBpcyB1c2VkIGZvciBlbmFibGluZyB0
-aW1pbmcuCiAJICoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4
-IGM2OWZhMjIuLmJhMDcwNTEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
-bWQuYwpAQCAtNjMwLDkgKzYzMCw2IEBAIHN0YXRpYyB2b2lkIGZpbWRfd2luX2NvbW1pdChzdHJ1
-Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgd2luKQogCiAJcGxhbmUgPSAm
-Y3R4LT5wbGFuZXNbd2luXTsKIAotCWlmIChjdHgtPnN1c3BlbmRlZCkKLQkJcmV0dXJuOwotCiAJ
-LyoKIAkgKiBTSEFET1dDT04vUFJUQ09OIHJlZ2lzdGVyIGlzIHVzZWQgZm9yIGVuYWJsaW5nIHRp
-bWluZy4KIAkgKgotLSAKMi4xLjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+We already have the plane pointer in before calling .update_plane() or
+disable_plane() so pass it directly to those calls avoiding a new
+conversion from zpos to struct exynos_drm_plane.
+
+v2: don't remove check for suspended in FIMD (comment by Joonyoung)
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 22 +++++++---------------
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 22 +++++++---------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 ++++--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 22 +++++++---------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c     |  4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  9 ++-------
+ drivers/gpu/drm/exynos/exynos_mixer.c         | 20 +++++++++++---------
+ 7 files changed, 40 insertions(+), 65 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index c7f3680..6dc2be2 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -219,17 +219,13 @@ static void decon_shadow_protect_win(struct decon_context *ctx, int win,
+ 	writel(val, ctx->addr + DECON_SHADOWCON);
+ }
+ 
+-static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void decon_update_plane(struct exynos_drm_crtc *crtc,
++			       struct exynos_drm_plane *plane)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+-	struct exynos_drm_plane *plane;
++	unsigned int win = plane->zpos;
+ 	u32 val;
+ 
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
+-
+ 	if (ctx->suspended)
+ 		return;
+ 
+@@ -277,17 +273,13 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
+ 		atomic_set(&ctx->win_updated, 1);
+ }
+ 
+-static void decon_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void decon_disable_plane(struct exynos_drm_crtc *crtc,
++				struct exynos_drm_plane *plane)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+-	struct exynos_drm_plane *plane;
++	unsigned int win = plane->zpos;
+ 	u32 val;
+ 
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
+-
+ 	if (ctx->suspended)
+ 		return;
+ 
+@@ -378,7 +370,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	 * a destroyed buffer later.
+ 	 */
+ 	for (i = 0; i < WINDOWS_NR; i++)
+-		decon_disable_plane(crtc, i);
++		decon_disable_plane(crtc, &ctx->planes[i]);
+ 
+ 	decon_swreset(ctx);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 34da2a4..79b74d2 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -382,24 +382,20 @@ static void decon_shadow_protect_win(struct decon_context *ctx,
+ 	writel(val, ctx->regs + SHADOWCON);
+ }
+ 
+-static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void decon_update_plane(struct exynos_drm_crtc *crtc,
++			       struct exynos_drm_plane *plane)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+ 	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
+-	struct exynos_drm_plane *plane;
+ 	int padding;
+ 	unsigned long val, alpha;
+ 	unsigned int last_x;
+ 	unsigned int last_y;
++	unsigned int win = plane->zpos;
+ 
+ 	if (ctx->suspended)
+ 		return;
+ 
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
+-
+ 	/*
+ 	 * SHADOWCON/PRTCON register is used for enabling timing.
+ 	 *
+@@ -492,17 +488,13 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
+ 	writel(val, ctx->regs + DECON_UPDATE);
+ }
+ 
+-static void decon_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void decon_disable_plane(struct exynos_drm_crtc *crtc,
++				struct exynos_drm_plane *plane)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+-	struct exynos_drm_plane *plane;
++	unsigned int win = plane->zpos;
+ 	u32 val;
+ 
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
+-
+ 	if (ctx->suspended)
+ 		return;
+ 
+@@ -598,7 +590,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+ 	 * a destroyed buffer later.
+ 	 */
+ 	for (i = 0; i < WINDOWS_NR; i++)
+-		decon_disable_plane(crtc, i);
++		decon_disable_plane(crtc, &ctx->planes[i]);
+ 
+ 	clk_disable_unprepare(ctx->vclk);
+ 	clk_disable_unprepare(ctx->eclk);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index e3f2f2f..695f21b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -173,8 +173,10 @@ struct exynos_drm_crtc_ops {
+ 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*wait_for_vblank)(struct exynos_drm_crtc *crtc);
+-	void (*update_plane)(struct exynos_drm_crtc *crtc, unsigned int zpos);
+-	void (*disable_plane)(struct exynos_drm_crtc *crtc, unsigned int zpos);
++	void (*update_plane)(struct exynos_drm_crtc *crtc,
++			     struct exynos_drm_plane *plane);
++	void (*disable_plane)(struct exynos_drm_crtc *crtc,
++			      struct exynos_drm_plane *plane);
+ 	void (*te_handler)(struct exynos_drm_crtc *crtc);
+ 	void (*clock_enable)(struct exynos_drm_crtc *crtc, bool enable);
+ 	void (*clear_channels)(struct exynos_drm_crtc *crtc);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 396f94e..b7bcaf7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -614,22 +614,18 @@ static void fimd_shadow_protect_win(struct fimd_context *ctx,
+ 	writel(val, ctx->regs + reg);
+ }
+ 
+-static void fimd_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void fimd_update_plane(struct exynos_drm_crtc *crtc,
++			      struct exynos_drm_plane *plane)
+ {
+ 	struct fimd_context *ctx = crtc->ctx;
+-	struct exynos_drm_plane *plane;
+ 	dma_addr_t dma_addr;
+ 	unsigned long val, size, offset;
+ 	unsigned int last_x, last_y, buf_offsize, line_size;
++	unsigned int win = plane->zpos;
+ 
+ 	if (ctx->suspended)
+ 		return;
+ 
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
+-
+ 	/*
+ 	 * SHADOWCON/PRTCON register is used for enabling timing.
+ 	 *
+@@ -722,15 +718,11 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
+ 		atomic_set(&ctx->win_updated, 1);
+ }
+ 
+-static void fimd_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void fimd_disable_plane(struct exynos_drm_crtc *crtc,
++			       struct exynos_drm_plane *plane)
+ {
+ 	struct fimd_context *ctx = crtc->ctx;
+-	struct exynos_drm_plane *plane;
+-
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
++	unsigned int win = plane->zpos;
+ 
+ 	if (ctx->suspended)
+ 		return;
+@@ -792,7 +784,7 @@ static void fimd_disable(struct exynos_drm_crtc *crtc)
+ 	 * a destroyed buffer later.
+ 	 */
+ 	for (i = 0; i < WINDOWS_NR; i++)
+-		fimd_disable_plane(crtc, i);
++		fimd_disable_plane(crtc, &ctx->planes[i]);
+ 
+ 	fimd_enable_vblank(crtc);
+ 	fimd_wait_for_vblank(crtc);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index eb9eec9..b5aa5b7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -180,7 +180,7 @@ static void exynos_plane_atomic_update(struct drm_plane *plane,
+ 			      state->src_w >> 16, state->src_h >> 16);
+ 
+ 	if (exynos_crtc->ops->update_plane)
+-		exynos_crtc->ops->update_plane(exynos_crtc, exynos_plane->zpos);
++		exynos_crtc->ops->update_plane(exynos_crtc, exynos_plane);
+ }
+ 
+ static void exynos_plane_atomic_disable(struct drm_plane *plane,
+@@ -194,7 +194,7 @@ static void exynos_plane_atomic_disable(struct drm_plane *plane,
+ 
+ 	if (exynos_crtc->ops->disable_plane)
+ 		exynos_crtc->ops->disable_plane(exynos_crtc,
+-						exynos_plane->zpos);
++						exynos_plane);
+ }
+ 
+ static const struct drm_plane_helper_funcs plane_helper_funcs = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 59d85ef..ade59ee 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -118,19 +118,14 @@ static void vidi_disable_vblank(struct exynos_drm_crtc *crtc)
+ 		ctx->vblank_on = false;
+ }
+ 
+-static void vidi_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void vidi_update_plane(struct exynos_drm_crtc *crtc,
++			      struct exynos_drm_plane *plane)
+ {
+ 	struct vidi_context *ctx = crtc->ctx;
+-	struct exynos_drm_plane *plane;
+ 
+ 	if (ctx->suspended)
+ 		return;
+ 
+-	if (win < 0 || win >= WINDOWS_NR)
+-		return;
+-
+-	plane = &ctx->planes[win];
+-
+ 	DRM_DEBUG_KMS("dma_addr = %pad\n", plane->dma_addr);
+ 
+ 	if (ctx->vblank_on)
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index b2b87aa..1f05b0d 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -922,11 +922,12 @@ static void mixer_disable_vblank(struct exynos_drm_crtc *crtc)
+ 	mixer_reg_writemask(res, MXR_INT_EN, 0, MXR_INT_EN_VSYNC);
+ }
+ 
+-static void mixer_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void mixer_update_plane(struct exynos_drm_crtc *crtc,
++			       struct exynos_drm_plane *plane)
+ {
+ 	struct mixer_context *mixer_ctx = crtc->ctx;
+ 
+-	DRM_DEBUG_KMS("win: %d\n", win);
++	DRM_DEBUG_KMS("win: %d\n", plane->zpos);
+ 
+ 	mutex_lock(&mixer_ctx->mixer_mutex);
+ 	if (!mixer_ctx->powered) {
+@@ -935,19 +936,20 @@ static void mixer_update_plane(struct exynos_drm_crtc *crtc, unsigned int win)
+ 	}
+ 	mutex_unlock(&mixer_ctx->mixer_mutex);
+ 
+-	if (win > 1 && mixer_ctx->vp_enabled)
+-		vp_video_buffer(mixer_ctx, win);
++	if (plane->zpos > 1 && mixer_ctx->vp_enabled)
++		vp_video_buffer(mixer_ctx, plane->zpos);
+ 	else
+-		mixer_graph_buffer(mixer_ctx, win);
++		mixer_graph_buffer(mixer_ctx, plane->zpos);
+ }
+ 
+-static void mixer_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
++static void mixer_disable_plane(struct exynos_drm_crtc *crtc,
++				struct exynos_drm_plane *plane)
+ {
+ 	struct mixer_context *mixer_ctx = crtc->ctx;
+ 	struct mixer_resources *res = &mixer_ctx->mixer_res;
+ 	unsigned long flags;
+ 
+-	DRM_DEBUG_KMS("win: %d\n", win);
++	DRM_DEBUG_KMS("win: %d\n", plane->zpos);
+ 
+ 	mutex_lock(&mixer_ctx->mixer_mutex);
+ 	if (!mixer_ctx->powered) {
+@@ -959,7 +961,7 @@ static void mixer_disable_plane(struct exynos_drm_crtc *crtc, unsigned int win)
+ 	spin_lock_irqsave(&res->reg_slock, flags);
+ 	mixer_vsync_set_update(mixer_ctx, false);
+ 
+-	mixer_cfg_layer(mixer_ctx, win, false);
++	mixer_cfg_layer(mixer_ctx, plane->zpos, false);
+ 
+ 	mixer_vsync_set_update(mixer_ctx, true);
+ 	spin_unlock_irqrestore(&res->reg_slock, flags);
+@@ -1068,7 +1070,7 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
+ 	mixer_regs_dump(ctx);
+ 
+ 	for (i = 0; i < MIXER_WIN_NR; i++)
+-		mixer_disable_plane(crtc, i);
++		mixer_disable_plane(crtc, &ctx->planes[i]);
+ 
+ 	ctx->int_en = mixer_reg_read(res, MXR_INT_EN);
+ 
+-- 
+2.1.0
