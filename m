@@ -1,107 +1,77 @@
-From: Joel Porquet <joel@porquet.org>
-Subject: [PATCH] arm:irqchip: IRQCHIP_DECLARE macro is now accessible
-Date: Tue,  7 Jul 2015 16:02:53 -0400
-Message-ID: <1436299411-12329-1-git-send-email-joel@porquet.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv5] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
+Date: Wed, 08 Jul 2015 08:41:19 +0900
+Message-ID: <559C639F.1010607@samsung.com>
+References: <1436191955-3650-1-git-send-email-chanho61.park@samsung.com>
+ <559B2F0C.5010603@samsung.com> <08c001d0b8c1$844d4600$8ce7d200$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Joel Porquet <joel@porquet.org>, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, linux-omap@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24648 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757126AbbGGXlX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Jul 2015 19:41:23 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NR500BMT5SWUX60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Jul 2015 00:41:20 +0100 (BST)
+In-reply-to: <08c001d0b8c1$844d4600$8ce7d200$@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, 'Chanho Park' <parkch98@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Chanho Park' <chanho61.park@samsung.com>
 
-The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', making it
-globally accessible.
+On 07.07.2015 23:30, Kukjin Kim wrote:
+> Krzysztof Kozlowski wrote:
+>>
+>> On 06.07.2015 23:12, Chanho Park wrote:
+>>> The odroid-xu3 board which is based on exynos5422 not exynos5800 is
+>>> booted from cortex-a7 core unlike exynos5800. The odroid-xu3's cpu order
+>>> is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu1-4 are
+>>> cortex-a15 cores. To correct this mis-odering, I added exynos5422.dtsi
+>>> and reversing cpu orders from exynos5420. Now, cpu0-3 are cortex-a7 and
+>>> cpu4-7 are cortex-a15.
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>>> ---
+>>> Changes from v4:
+>>>  - Remove temporal patch in e-mail body
+>>>
+>>> Changes from v3:
+>>>  - include this exynos5422-cpus.dtsi in the exynos5422-odroidxu3-common.dtsi
+>>>
+>>> Changes from v2:
+>>>  - drop inclusion of exynos5420.dtsi from exynos5422-cpus.dtsi
+>>>  - drop compatibles from exynos5422-cpus.dtsi
+>>>
+>>> Changes from v1:
+>>>  - rename exynos5422.dtsi to exynos5422-cpus.dtsi
+>>>  - include the dtsi file top of the exynos5422-odroidxu3.dts
+>>>
+>>> Secondary cpu booting problem[1] is not resolved yet. Need more investigations
+>>> to work booting 8 cores correctly.
+>>>
+>>> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg45525.html
+>>>
+>>>  arch/arm/boot/dts/exynos5422-cpus.dtsi             | 81 ++++++++++++++++++++++
+>>>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+>>>  2 files changed, 82 insertions(+)
+>>>  create mode 100644 arch/arm/boot/dts/exynos5422-cpus.dtsi
+>>
+>> Thanks, applied to my tree. I'll sent it to Kukjin later for 4.3 unless
+>> he picks it up from LKML.
+>>
+> Hi Krzysztof,
+> 
+> If you're OK, I'd like to pick this up into Samsung tree with your ack based on
+> 4.2-rc1.
 
-See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d
-("irqchip: Move IRQCHIP_DECLARE macro to include/linux/irqchip.h").
+Yes, please go ahead. It already has my reviewed-by tag. However the sob
+does not match author so it should be resent once again.
 
-This patch adds inclusions of 'include/linux/irqchip.h' and replaces uses of
-macro OF_DECLARE_2 with IRQCHIP_DECLARE.
-
-Signed-off-by: Joel Porquet <joel@porquet.org>
----
- arch/arm/mach-exynos/suspend.c       | 3 ++-
- arch/arm/mach-imx/gpc.c              | 7 ++-----
- arch/arm/mach-omap2/omap-wakeupgen.c | 7 ++-----
- 3 files changed, 6 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index f572219..78484ab 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -19,6 +19,7 @@
- #include <linux/cpu_pm.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/irqchip.h>
- #include <linux/irqdomain.h>
- #include <linux/of_address.h>
- #include <linux/err.h>
-@@ -264,7 +265,7 @@ static int __init exynos_pmu_irq_init(struct device_node *node,
- 	return 0;
- }
- 
--#define EXYNOS_PMU_IRQ(symbol, name)	OF_DECLARE_2(irqchip, symbol, name, exynos_pmu_irq_init)
-+#define EXYNOS_PMU_IRQ(symbol, name)	IRQCHIP_DECLARE(symbol, name, exynos_pmu_irq_init)
- 
- EXYNOS_PMU_IRQ(exynos3250_pmu_irq, "samsung,exynos3250-pmu");
- EXYNOS_PMU_IRQ(exynos4210_pmu_irq, "samsung,exynos4210-pmu");
-diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
-index 80bad29..32c26f5 100644
---- a/arch/arm/mach-imx/gpc.c
-+++ b/arch/arm/mach-imx/gpc.c
-@@ -14,6 +14,7 @@
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/irqchip.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-@@ -269,11 +270,7 @@ static int __init imx_gpc_init(struct device_node *node,
- 	return 0;
- }
- 
--/*
-- * We cannot use the IRQCHIP_DECLARE macro that lives in
-- * drivers/irqchip, so we're forced to roll our own. Not very nice.
-- */
--OF_DECLARE_2(irqchip, imx_gpc, "fsl,imx6q-gpc", imx_gpc_init);
-+IRQCHIP_DECLARE(imx_gpc, "fsl,imx6q-gpc", imx_gpc_init);
- 
- void __init imx_gpc_check_dt(void)
- {
-diff --git a/arch/arm/mach-omap2/omap-wakeupgen.c b/arch/arm/mach-omap2/omap-wakeupgen.c
-index 8e52621..e6a889f 100644
---- a/arch/arm/mach-omap2/omap-wakeupgen.c
-+++ b/arch/arm/mach-omap2/omap-wakeupgen.c
-@@ -20,6 +20,7 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/irqchip.h>
- #include <linux/irqdomain.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-@@ -537,8 +538,4 @@ static int __init wakeupgen_init(struct device_node *node,
- 	return 0;
- }
- 
--/*
-- * We cannot use the IRQCHIP_DECLARE macro that lives in
-- * drivers/irqchip, so we're forced to roll our own. Not very nice.
-- */
--OF_DECLARE_2(irqchip, ti_wakeupgen, "ti,omap4-wugen-mpu", wakeupgen_init);
-+IRQCHIP_DECLARE(ti_wakeupgen, "ti,omap4-wugen-mpu", wakeupgen_init);
--- 
-2.4.5
+Best regards,
+Krzysztof
