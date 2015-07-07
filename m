@@ -1,86 +1,107 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Tue, 07 Jul 2015 23:43:31 +0900
-Message-ID: <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <4464631.oZyVO4Z0Ov@amdc1976>
+From: Joel Porquet <joel@porquet.org>
+Subject: [PATCH] arm:irqchip: IRQCHIP_DECLARE macro is now accessible
+Date: Tue,  7 Jul 2015 16:02:53 -0400
+Message-ID: <1436299411-12329-1-git-send-email-joel@porquet.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <4464631.oZyVO4Z0Ov@amdc1976>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Joel Porquet <joel@porquet.org>, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, linux-omap@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
->
-Hi,
+The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', making it
+globally accessible.
 
-> On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
-> > This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
-> > on Exynos3250-based Rinato board.
-> >
-> > Depends on:
-> > - next-20150701 tag (master branch) of linux-next kernel tree
-> > - This patch-set is based on Exynos5250 patch-set[1] because two patch-set
-> >   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
-> >   [1] https://lkml.org/lkml/2015/6/29/361
-> >   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
-> >
-> > Changes from v5:
-> > (https://lkml.org/lkml/2015/7/1/324)
-> > - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
-> > - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >
-> > Changes from v4:
-> > (https://lkml.org/lkml/2014/10/20/215)
-> > - Rebased on latest linux-next git repository.
-> > - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
-> >
-> > Changes from v3:
-> > - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
-> >   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-> >   - http://www.spinics.net/lists/arm-kernel/msg370412.html
-> >
-> > Changes from v2:
-> > - Rebased on new patchset of Thomas Abraham
-> >   and for-next branch of samsunc-clk.git of Tomasz Figa
-> >
-> > Changes from v1:
-> > - Rebased on new patchset[1] by Thomas Abraham
-> >   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-> >   - http://www.spinics.net/lists/arm-kernel/msg364790.html
-> > - Modify clk-cpu.c to support Exynos3250
-> > - Drop documentation patch on previous patchset[2]
-> >   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
-> > - Add only operating-points for Exynos3250 without armclk-divider-table
-> >
-> > Chanwoo Choi (3):
-> >   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
-> >   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
-> >   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> >
-> >  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
-> >  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
-> >  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
-> >  arch/arm/mach-exynos/exynos.c           |  1 +
-> >  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
-> >  include/dt-bindings/clock/exynos3250.h  |  1 +
-> >  6 files changed, 55 insertions(+), 2 deletions(-)
-> 
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
-> Thank you for working on this.
-> 
-+1 Thanks.
+See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d
+("irqchip: Move IRQCHIP_DECLARE macro to include/linux/irqchip.h").
 
-Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
-tree together. And if you want, I could provide topic branch for clk tree.
+This patch adds inclusions of 'include/linux/irqchip.h' and replaces uses of
+macro OF_DECLARE_2 with IRQCHIP_DECLARE.
 
-Thanks,
-Kukjin
+Signed-off-by: Joel Porquet <joel@porquet.org>
+---
+ arch/arm/mach-exynos/suspend.c       | 3 ++-
+ arch/arm/mach-imx/gpc.c              | 7 ++-----
+ arch/arm/mach-omap2/omap-wakeupgen.c | 7 ++-----
+ 3 files changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index f572219..78484ab 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -19,6 +19,7 @@
+ #include <linux/cpu_pm.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
++#include <linux/irqchip.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
+ #include <linux/err.h>
+@@ -264,7 +265,7 @@ static int __init exynos_pmu_irq_init(struct device_node *node,
+ 	return 0;
+ }
+ 
+-#define EXYNOS_PMU_IRQ(symbol, name)	OF_DECLARE_2(irqchip, symbol, name, exynos_pmu_irq_init)
++#define EXYNOS_PMU_IRQ(symbol, name)	IRQCHIP_DECLARE(symbol, name, exynos_pmu_irq_init)
+ 
+ EXYNOS_PMU_IRQ(exynos3250_pmu_irq, "samsung,exynos3250-pmu");
+ EXYNOS_PMU_IRQ(exynos4210_pmu_irq, "samsung,exynos4210-pmu");
+diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
+index 80bad29..32c26f5 100644
+--- a/arch/arm/mach-imx/gpc.c
++++ b/arch/arm/mach-imx/gpc.c
+@@ -14,6 +14,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
++#include <linux/irqchip.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+@@ -269,11 +270,7 @@ static int __init imx_gpc_init(struct device_node *node,
+ 	return 0;
+ }
+ 
+-/*
+- * We cannot use the IRQCHIP_DECLARE macro that lives in
+- * drivers/irqchip, so we're forced to roll our own. Not very nice.
+- */
+-OF_DECLARE_2(irqchip, imx_gpc, "fsl,imx6q-gpc", imx_gpc_init);
++IRQCHIP_DECLARE(imx_gpc, "fsl,imx6q-gpc", imx_gpc_init);
+ 
+ void __init imx_gpc_check_dt(void)
+ {
+diff --git a/arch/arm/mach-omap2/omap-wakeupgen.c b/arch/arm/mach-omap2/omap-wakeupgen.c
+index 8e52621..e6a889f 100644
+--- a/arch/arm/mach-omap2/omap-wakeupgen.c
++++ b/arch/arm/mach-omap2/omap-wakeupgen.c
+@@ -20,6 +20,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
++#include <linux/irqchip.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+@@ -537,8 +538,4 @@ static int __init wakeupgen_init(struct device_node *node,
+ 	return 0;
+ }
+ 
+-/*
+- * We cannot use the IRQCHIP_DECLARE macro that lives in
+- * drivers/irqchip, so we're forced to roll our own. Not very nice.
+- */
+-OF_DECLARE_2(irqchip, ti_wakeupgen, "ti,omap4-wugen-mpu", wakeupgen_init);
++IRQCHIP_DECLARE(ti_wakeupgen, "ti,omap4-wugen-mpu", wakeupgen_init);
+-- 
+2.4.5
