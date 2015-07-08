@@ -1,21 +1,25 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/4] ARM: dts: Extend exynos5250-pinctrl nodes using labels
+Subject: Re: [PATCH 4/4] ARM: dts: Extend exynos5420-pinctrl nodes using labels
  instead of paths
-Date: Wed, 08 Jul 2015 17:29:26 +0900
-Message-ID: <559CDF66.6080609@samsung.com>
-References: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
- <1436333790-18219-3-git-send-email-javier@osg.samsung.com>
+Date: Wed, 08 Jul 2015 17:30:50 +0900
+Message-ID: <559CDFBA.40103@samsung.com>
+References: <1436334389-18779-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1436333790-18219-3-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:40815 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934720AbbGHIaz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jul 2015 04:30:55 -0400
+In-reply-to: <1436334389-18779-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08.07.2015 14:36, Javier Martinez Canillas wrote:
+On 08.07.2015 14:46, Javier Martinez Canillas wrote:
 > A previously defined Device Tree node, can be extended either by defining
 > a node using the same full path or by creating a label for the node and
 > referencing to it.
@@ -31,14 +35,11 @@ s/misstyped/mistyped/
 > makes it easier to detect the mistake since happens at build-time instead.
 > 
 > Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
 > ---
 > 
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 1600 ++++++++++++++---------------
->  1 file changed, 799 insertions(+), 801 deletions(-)
-> 
-
-I didn't look carefully enough to call it a review (I trust the 'diff'
-of yours) but it seems fine to me:
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 1411 ++++++++++++++---------------
+>  1 file changed, 705 insertions(+), 706 deletions(-)
 
 Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
