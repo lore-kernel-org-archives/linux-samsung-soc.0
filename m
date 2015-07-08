@@ -1,14 +1,17 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/4] ARM: dts: Extend exynos5250-pinctrl nodes using labels instead of paths
-Date: Tue,  7 Jul 2015 22:36:28 -0700
-Message-ID: <1436333790-18219-3-git-send-email-javier@osg.samsung.com>
-References: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 4/4] ARM: dts: Extend exynos5420-pinctrl nodes using labels instead of paths
+Date: Tue,  7 Jul 2015 22:46:29 -0700
+Message-ID: <1436334389-18779-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:56944 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932387AbbGHFqm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Jul 2015 01:46:42 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 A previously defined Device Tree node, can be extended either by defining
 a node using the same full path or by creating a label for the node and
@@ -22,34 +25,23 @@ A misstyped label on the other hand, will cause a dtc compile error which
 makes it easier to detect the mistake since happens at build-time instead.
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
 
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 1600 ++++++++++++++---------------
- 1 file changed, 799 insertions(+), 801 deletions(-)
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi | 1411 ++++++++++++++---------------
+ 1 file changed, 705 insertions(+), 706 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index 886cfca044ac..880917e508b2 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -12,807 +12,805 @@
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index 8b153166ebdb..130563b2ca95 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -12,711 +12,710 @@
   * published by the Free Software Foundation.
  */
  
 -/ {
--	pinctrl@11400000 {
--		gpa0: gpa0 {
--			gpio-controller;
--			#gpio-cells = <2>;
-+&pinctrl_0 {
-+	gpa0: gpa0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
--		gpa1: gpa1 {
+-	pinctrl@13400000 {
+-		gpy7: gpy7 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -57,7 +49,29 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpa2: gpa2 {
+-		gpx0: gpx0 {
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-
+-			interrupt-controller;
+-			interrupt-parent = <&combiner>;
+-			#interrupt-cells = <2>;
+-			interrupts = <23 0>, <24 0>, <25 0>, <25 1>,
+-				     <26 0>, <26 1>, <27 0>, <27 1>;
+-		};
+-
+-		gpx1: gpx1 {
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-
+-			interrupt-controller;
+-			interrupt-parent = <&combiner>;
+-			#interrupt-cells = <2>;
+-			interrupts = <28 0>, <28 1>, <29 0>, <29 1>,
+-				     <30 0>, <30 1>, <31 0>, <31 1>;
+-		};
+-
+-		gpx2: gpx2 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -65,7 +79,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpb0: gpb0 {
+-		gpx3: gpx3 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -73,30 +87,15 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpb1: gpb1 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
+-		dp_hpd: dp_hpd {
+-			samsung,pins = "gpx0-7";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
 -		};
+-	};
 -
--		gpb2: gpb2 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
--		gpb3: gpb3 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
+-	pinctrl@13410000 {
 -		gpc0: gpc0 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
@@ -129,7 +128,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpd0: gpd0 {
+-		gpc4: gpc4 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -180,267 +179,6 @@ index 886cfca044ac..880917e508b2 100644
 -			#gpio-cells = <2>;
 -		};
 -
--		gpc4: gpc4 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
--		gpx0: gpx0 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			interrupt-parent = <&combiner>;
--			#interrupt-cells = <2>;
--			interrupts = <23 0>, <24 0>, <25 0>, <25 1>,
--				     <26 0>, <26 1>, <27 0>, <27 1>;
--		};
--
--		gpx1: gpx1 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			interrupt-parent = <&combiner>;
--			#interrupt-cells = <2>;
--			interrupts = <28 0>, <28 1>, <29 0>, <29 1>,
--				     <30 0>, <30 1>, <31 0>, <31 1>;
--		};
--
--		gpx2: gpx2 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
--		gpx3: gpx3 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
--		uart0_data: uart0-data {
--			samsung,pins = "gpa0-0", "gpa0-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		uart0_fctl: uart0-fctl {
--			samsung,pins = "gpa0-2", "gpa0-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c2_bus: i2c2-bus {
--			samsung,pins = "gpa0-6", "gpa0-7";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c2_hs_bus: i2c2-hs-bus {
--			samsung,pins = "gpa0-6", "gpa0-7";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		uart2_data: uart2-data {
--			samsung,pins = "gpa1-0", "gpa1-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		uart2_fctl: uart2-fctl {
--			samsung,pins = "gpa1-2", "gpa1-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c3_bus: i2c3-bus {
--			samsung,pins = "gpa1-2", "gpa1-3";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c3_hs_bus: i2c3-hs-bus {
--			samsung,pins = "gpa1-2", "gpa1-3";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		uart3_data: uart3-data {
--			samsung,pins = "gpa1-4", "gpa1-4";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		spi0_bus: spi0-bus {
--			samsung,pins = "gpa2-0", "gpa2-2", "gpa2-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c4_bus: i2c4-bus {
--			samsung,pins = "gpa2-0", "gpa2-1";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c5_bus: i2c5-bus {
--			samsung,pins = "gpa2-2", "gpa2-3";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		spi1_bus: spi1-bus {
--			samsung,pins = "gpa2-4", "gpa2-6", "gpa2-7";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2s1_bus: i2s1-bus {
--			samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
--					"gpb0-4";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		pcm1_bus: pcm1-bus {
--			samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
--					"gpb0-4";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		ac97_bus: ac97-bus {
--			samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
--					"gpb0-4";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2s2_bus: i2s2-bus {
--			samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
--					"gpb1-4";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		pcm2_bus: pcm2-bus {
--			samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
--					"gpb1-4";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		spdif_bus: spdif-bus {
--			samsung,pins = "gpb1-0", "gpb1-1";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		spi2_bus: spi2-bus {
--			samsung,pins = "gpb1-1", "gpb1-3", "gpb1-4";
--			samsung,pin-function = <5>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c6_bus: i2c6-bus {
--			samsung,pins = "gpb1-3", "gpb1-4";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		pwm0_out: pwm0-out {
--			samsung,pins = "gpb2-0";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		pwm1_out: pwm1-out {
--			samsung,pins = "gpb2-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		pwm2_out: pwm2-out {
--			samsung,pins = "gpb2-2";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		pwm3_out: pwm3-out {
--			samsung,pins = "gpb2-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c7_bus: i2c7-bus {
--			samsung,pins = "gpb2-2", "gpb2-3";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c0_bus: i2c0-bus {
--			samsung,pins = "gpb3-0", "gpb3-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c1_bus: i2c1-bus {
--			samsung,pins = "gpb3-2", "gpb3-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c0_hs_bus: i2c0-hs-bus {
--			samsung,pins = "gpb3-0", "gpb3-1";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
--		i2c1_hs_bus: i2c1-hs-bus {
--			samsung,pins = "gpb3-2", "gpb3-3";
--			samsung,pin-function = <4>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <0>;
--		};
--
 -		sd0_clk: sd0-clk {
 -			samsung,pins = "gpc0-0";
 -			samsung,pin-function = <2>;
@@ -470,154 +208,112 @@ index 886cfca044ac..880917e508b2 100644
 -		};
 -
 -		sd0_bus4: sd0-bus-width4 {
--			samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6";
+-			samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd0_bus8: sd0-bus-width8 {
--			samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3";
+-			samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd1_clk: sd1-clk {
--			samsung,pins = "gpc2-0";
+-			samsung,pins = "gpc1-0";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <3>;
 -		};
 -
+-		sd0_rclk: sd0-rclk {
+-			samsung,pins = "gpc0-7";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <1>;
+-			samsung,pin-drv = <3>;
+-		};
+-
 -		sd1_cmd: sd1-cmd {
--			samsung,pins = "gpc2-1";
+-			samsung,pins = "gpc1-1";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd1_cd: sd1-cd {
--			samsung,pins = "gpc2-2";
+-			samsung,pins = "gpc1-2";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
+-		sd1_int: sd1-int {
+-			samsung,pins = "gpd1-1";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
 -		sd1_bus1: sd1-bus-width1 {
--			samsung,pins = "gpc2-3";
+-			samsung,pins = "gpc1-3";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd1_bus4: sd1-bus-width4 {
--			samsung,pins = "gpc2-3", "gpc2-4", "gpc2-5", "gpc2-6";
+-			samsung,pins = "gpc1-4", "gpc1-5", "gpc1-6";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <3>;
+-		};
+-
+-		sd1_bus8: sd1-bus-width8 {
+-			samsung,pins = "gpd1-4", "gpd1-5", "gpd1-6", "gpd1-7";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd2_clk: sd2-clk {
--			samsung,pins = "gpc3-0";
+-			samsung,pins = "gpc2-0";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd2_cmd: sd2-cmd {
--			samsung,pins = "gpc3-1";
+-			samsung,pins = "gpc2-1";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd2_cd: sd2-cd {
--			samsung,pins = "gpc3-2";
+-			samsung,pins = "gpc2-2";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd2_bus1: sd2-bus-width1 {
--			samsung,pins = "gpc3-3";
+-			samsung,pins = "gpc2-3";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
 -		};
 -
 -		sd2_bus4: sd2-bus-width4 {
--			samsung,pins = "gpc3-3", "gpc3-4", "gpc3-5", "gpc3-6";
+-			samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <3>;
--		};
--
--		sd2_bus8: sd2-bus-width8 {
--			samsung,pins = "gpc4-3", "gpc4-4", "gpc4-5", "gpc4-6";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <3>;
--		};
--
--		sd3_clk: sd3-clk {
--			samsung,pins = "gpc4-0";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <3>;
--		};
--
--		sd3_cmd: sd3-cmd {
--			samsung,pins = "gpc4-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <3>;
--		};
--
--		sd3_cd: sd3-cd {
--			samsung,pins = "gpc4-2";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <3>;
--		};
--
--		sd3_bus1: sd3-bus-width1 {
--			samsung,pins = "gpc4-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <3>;
--		};
--
--		sd3_bus4: sd3-bus-width4 {
--			samsung,pins = "gpc4-3", "gpc4-4", "gpc4-5", "gpc4-6";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
--			samsung,pin-drv = <3>;
--		};
--
--		uart1_data: uart1-data {
--			samsung,pins = "gpd0-0", "gpd0-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		uart1_fctl: uart1-fctl {
--			samsung,pins = "gpd0-2", "gpd0-3";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		dp_hpd: dp_hpd {
--			samsung,pins = "gpx0-7";
--			samsung,pin-function = <3>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
 -		};
 -	};
 -
--	pinctrl@13400000 {
+-	pinctrl@14000000 {
 -		gpe0: gpe0 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
@@ -674,15 +370,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gph0: gph0 {
--			gpio-controller;
--			#gpio-cells = <2>;
--
--			interrupt-controller;
--			#interrupt-cells = <2>;
--		};
--
--		gph1: gph1 {
+-		gpj4: gpj4 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -708,12 +396,11 @@ index 886cfca044ac..880917e508b2 100644
 -		};
 -
 -		cam_i2c2_bus: cam-i2c2-bus {
--			samsung,pins = "gpe0-6", "gpe1-0";
--			samsung,pin-function = <4>;
+-			samsung,pins = "gpf0-4", "gpf0-5";
+-			samsung,pin-function = <2>;
 -			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <0>;
 -		};
--
 -		cam_spi1_bus: cam-spi1-bus {
 -			samsung,pins = "gpe0-4", "gpe0-5", "gpf0-2", "gpf0-3";
 -			samsung,pin-function = <4>;
@@ -747,24 +434,15 @@ index 886cfca044ac..880917e508b2 100644
 -				       "gpg0-4", "gpg0-5", "gpg0-6", "gpg0-7",
 -				       "gpg1-0", "gpg1-1", "gpg1-2", "gpg1-3",
 -				       "gpg1-4", "gpg1-5", "gpg1-6", "gpg1-7",
--				       "gpg2-0", "gpg2-1";
--			samsung,pin-function = <2>;
--			samsung,pin-pud = <0>;
--			samsung,pin-drv = <0>;
--		};
--
--		cam_port_a: cam-port-a {
--			samsung,pins = "gph0-0", "gph0-1", "gph0-2", "gph0-3",
--				       "gph1-0", "gph1-1", "gph1-2", "gph1-3",
--				       "gph1-4", "gph1-5", "gph1-6", "gph1-7";
+-				       "gpg2-0";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <0>;
 -		};
 -	};
 -
--	pinctrl@10d10000 {
--		gpv0: gpv0 {
+-	pinctrl@14010000 {
+-		gpa0: gpa0 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -772,7 +450,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpv1: gpv1 {
+-		gpa1: gpa1 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -780,7 +458,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpv2: gpv2 {
+-		gpa2: gpa2 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -788,7 +466,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpv3: gpv3 {
+-		gpb0: gpb0 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -796,7 +474,7 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		gpv4: gpv4 {
+-		gpb1: gpb1 {
 -			gpio-controller;
 -			#gpio-cells = <2>;
 -
@@ -804,23 +482,249 @@ index 886cfca044ac..880917e508b2 100644
 -			#interrupt-cells = <2>;
 -		};
 -
--		c2c_rxd: c2c-rxd {
--			samsung,pins = "gpv0-0", "gpv0-1", "gpv0-2", "gpv0-3",
--				       "gpv0-4", "gpv0-5", "gpv0-6", "gpv0-7",
--				       "gpv1-0", "gpv1-1", "gpv1-2", "gpv1-3",
--				       "gpv1-4", "gpv1-5", "gpv1-6", "gpv1-7";
+-		gpb2: gpb2 {
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-
+-			interrupt-controller;
+-			#interrupt-cells = <2>;
+-		};
+-
+-		gpb3: gpb3 {
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-
+-			interrupt-controller;
+-			#interrupt-cells = <2>;
+-		};
+-
+-		gpb4: gpb4 {
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-
+-			interrupt-controller;
+-			#interrupt-cells = <2>;
+-		};
+-
+-		gph0: gph0 {
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-
+-			interrupt-controller;
+-			#interrupt-cells = <2>;
+-		};
+-
+-		uart0_data: uart0-data {
+-			samsung,pins = "gpa0-0", "gpa0-1";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <0>;
 -		};
 -
--		c2c_txd: c2c-txd {
--			samsung,pins = "gpv2-0", "gpv2-1", "gpv2-2", "gpv2-3",
--				       "gpv2-4", "gpv2-5", "gpv2-6", "gpv2-7",
--				       "gpv3-0", "gpv3-1", "gpv3-2", "gpv3-3",
--				       "gpv3-4", "gpv3-5", "gpv3-6", "gpv3-7";
+-		uart0_fctl: uart0-fctl {
+-			samsung,pins = "gpa0-2", "gpa0-3";
 -			samsung,pin-function = <2>;
 -			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		uart1_data: uart1-data {
+-			samsung,pins = "gpa0-4", "gpa0-5";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		uart1_fctl: uart1-fctl {
+-			samsung,pins = "gpa0-6", "gpa0-7";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c2_bus: i2c2-bus {
+-			samsung,pins = "gpa0-6", "gpa0-7";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		uart2_data: uart2-data {
+-			samsung,pins = "gpa1-0", "gpa1-1";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		uart2_fctl: uart2-fctl {
+-			samsung,pins = "gpa1-2", "gpa1-3";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c3_bus: i2c3-bus {
+-			samsung,pins = "gpa1-2", "gpa1-3";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		uart3_data: uart3-data {
+-			samsung,pins = "gpa1-4", "gpa1-5";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		spi0_bus: spi0-bus {
+-			samsung,pins = "gpa2-0", "gpa2-1", "gpa2-2", "gpa2-3";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		spi1_bus: spi1-bus {
+-			samsung,pins = "gpa2-4", "gpa2-6", "gpa2-7";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c4_hs_bus: i2c4-hs-bus {
+-			samsung,pins = "gpa2-0", "gpa2-1";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c5_hs_bus: i2c5-hs-bus {
+-			samsung,pins = "gpa2-2", "gpa2-3";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2s1_bus: i2s1-bus {
+-			samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
+-					"gpb0-4";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		pcm1_bus: pcm1-bus {
+-			samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
+-					"gpb0-4";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2s2_bus: i2s2-bus {
+-			samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
+-					"gpb1-4";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		pcm2_bus: pcm2-bus {
+-			samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
+-					"gpb1-4";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		spdif_bus: spdif-bus {
+-			samsung,pins = "gpb1-0", "gpb1-1";
+-			samsung,pin-function = <4>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		spi2_bus: spi2-bus {
+-			samsung,pins = "gpb1-1", "gpb1-3", "gpb1-4";
+-			samsung,pin-function = <5>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c6_hs_bus: i2c6-hs-bus {
+-			samsung,pins = "gpb1-3", "gpb1-4";
+-			samsung,pin-function = <4>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		pwm0_out: pwm0-out {
+-			samsung,pins = "gpb2-0";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		pwm1_out: pwm1-out {
+-			samsung,pins = "gpb2-1";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		pwm2_out: pwm2-out {
+-			samsung,pins = "gpb2-2";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		pwm3_out: pwm3-out {
+-			samsung,pins = "gpb2-3";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <0>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c7_hs_bus: i2c7-hs-bus {
+-			samsung,pins = "gpb2-2", "gpb2-3";
+-			samsung,pin-function = <3>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c0_bus: i2c0-bus {
+-			samsung,pins = "gpb3-0", "gpb3-1";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c1_bus: i2c1-bus {
+-			samsung,pins = "gpb3-2", "gpb3-3";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c8_hs_bus: i2c8-hs-bus {
+-			samsung,pins = "gpb3-4", "gpb3-5";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c9_hs_bus: i2c9-hs-bus {
+-			samsung,pins = "gpb3-6", "gpb3-7";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
+-			samsung,pin-drv = <0>;
+-		};
+-
+-		i2c10_hs_bus: i2c10-hs-bus {
+-			samsung,pins = "gpb4-0", "gpb4-1";
+-			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
 -			samsung,pin-drv = <0>;
 -		};
 -	};
@@ -841,11 +745,8 @@ index 886cfca044ac..880917e508b2 100644
 -			samsung,pin-pud = <0>;
 -			samsung,pin-drv = <0>;
 -		};
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpa1: gpa1 {
++&pinctrl_0 {
++	gpy7: gpy7 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
 +
@@ -853,7 +754,29 @@ index 886cfca044ac..880917e508b2 100644
 +		#interrupt-cells = <2>;
 +	};
 +
-+	gpa2: gpa2 {
++	gpx0: gpx0 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		interrupt-parent = <&combiner>;
++		#interrupt-cells = <2>;
++		interrupts = <23 0>, <24 0>, <25 0>, <25 1>,
++			     <26 0>, <26 1>, <27 0>, <27 1>;
++	};
++
++	gpx1: gpx1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		interrupt-parent = <&combiner>;
++		#interrupt-cells = <2>;
++		interrupts = <28 0>, <28 1>, <29 0>, <29 1>,
++			     <30 0>, <30 1>, <31 0>, <31 1>;
++	};
++
++	gpx2: gpx2 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
 +
@@ -861,7 +784,7 @@ index 886cfca044ac..880917e508b2 100644
 +		#interrupt-cells = <2>;
 +	};
 +
-+	gpb0: gpb0 {
++	gpx3: gpx3 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
 +
@@ -869,30 +792,15 @@ index 886cfca044ac..880917e508b2 100644
 +		#interrupt-cells = <2>;
 +	};
 +
-+	gpb1: gpb1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
++	dp_hpd: dp_hpd {
++		samsung,pins = "gpx0-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
 +	};
++};
 +
-+	gpb2: gpb2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb3: gpb3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
++&pinctrl_1 {
 +	gpc0: gpc0 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
@@ -925,7 +833,7 @@ index 886cfca044ac..880917e508b2 100644
 +		#interrupt-cells = <2>;
 +	};
 +
-+	gpd0: gpd0 {
++	gpc4: gpc4 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
 +
@@ -976,267 +884,6 @@ index 886cfca044ac..880917e508b2 100644
 +		#gpio-cells = <2>;
 +	};
 +
-+	gpc4: gpc4 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpx0: gpx0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&combiner>;
-+		#interrupt-cells = <2>;
-+		interrupts = <23 0>, <24 0>, <25 0>, <25 1>,
-+			     <26 0>, <26 1>, <27 0>, <27 1>;
-+	};
-+
-+	gpx1: gpx1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		interrupt-parent = <&combiner>;
-+		#interrupt-cells = <2>;
-+		interrupts = <28 0>, <28 1>, <29 0>, <29 1>,
-+			     <30 0>, <30 1>, <31 0>, <31 1>;
-+	};
-+
-+	gpx2: gpx2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpx3: gpx3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	uart0_data: uart0-data {
-+		samsung,pins = "gpa0-0", "gpa0-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart0_fctl: uart0-fctl {
-+		samsung,pins = "gpa0-2", "gpa0-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c2_bus: i2c2-bus {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c2_hs_bus: i2c2-hs-bus {
-+		samsung,pins = "gpa0-6", "gpa0-7";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart2_data: uart2-data {
-+		samsung,pins = "gpa1-0", "gpa1-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart2_fctl: uart2-fctl {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c3_bus: i2c3-bus {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c3_hs_bus: i2c3-hs-bus {
-+		samsung,pins = "gpa1-2", "gpa1-3";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart3_data: uart3-data {
-+		samsung,pins = "gpa1-4", "gpa1-4";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	spi0_bus: spi0-bus {
-+		samsung,pins = "gpa2-0", "gpa2-2", "gpa2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c4_bus: i2c4-bus {
-+		samsung,pins = "gpa2-0", "gpa2-1";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c5_bus: i2c5-bus {
-+		samsung,pins = "gpa2-2", "gpa2-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	spi1_bus: spi1-bus {
-+		samsung,pins = "gpa2-4", "gpa2-6", "gpa2-7";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2s1_bus: i2s1-bus {
-+		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
-+			       "gpb0-4";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pcm1_bus: pcm1-bus {
-+		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
-+			       "gpb0-4";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	ac97_bus: ac97-bus {
-+		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
-+			       "gpb0-4";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2s2_bus: i2s2-bus {
-+		samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
-+			       "gpb1-4";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pcm2_bus: pcm2-bus {
-+		samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
-+			       "gpb1-4";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	spdif_bus: spdif-bus {
-+		samsung,pins = "gpb1-0", "gpb1-1";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	spi2_bus: spi2-bus {
-+		samsung,pins = "gpb1-1", "gpb1-3", "gpb1-4";
-+		samsung,pin-function = <5>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c6_bus: i2c6-bus {
-+		samsung,pins = "gpb1-3", "gpb1-4";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm0_out: pwm0-out {
-+		samsung,pins = "gpb2-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm1_out: pwm1-out {
-+		samsung,pins = "gpb2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm2_out: pwm2-out {
-+		samsung,pins = "gpb2-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pwm3_out: pwm3-out {
-+		samsung,pins = "gpb2-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c7_bus: i2c7-bus {
-+		samsung,pins = "gpb2-2", "gpb2-3";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c0_bus: i2c0-bus {
-+		samsung,pins = "gpb3-0", "gpb3-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c1_bus: i2c1-bus {
-+		samsung,pins = "gpb3-2", "gpb3-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c0_hs_bus: i2c0-hs-bus {
-+		samsung,pins = "gpb3-0", "gpb3-1";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	i2c1_hs_bus: i2c1-hs-bus {
-+		samsung,pins = "gpb3-2", "gpb3-3";
-+		samsung,pin-function = <4>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
 +	sd0_clk: sd0-clk {
 +		samsung,pins = "gpc0-0";
 +		samsung,pin-function = <2>;
@@ -1266,154 +913,112 @@ index 886cfca044ac..880917e508b2 100644
 +	};
 +
 +	sd0_bus4: sd0-bus-width4 {
-+		samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6";
++		samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd0_bus8: sd0-bus-width8 {
-+		samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3";
++		samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd1_clk: sd1-clk {
-+		samsung,pins = "gpc2-0";
++		samsung,pins = "gpc1-0";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <3>;
 +	};
 +
++	sd0_rclk: sd0-rclk {
++		samsung,pins = "gpc0-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <3>;
++	};
++
 +	sd1_cmd: sd1-cmd {
-+		samsung,pins = "gpc2-1";
++		samsung,pins = "gpc1-1";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd1_cd: sd1-cd {
-+		samsung,pins = "gpc2-2";
++		samsung,pins = "gpc1-2";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
++	sd1_int: sd1-int {
++		samsung,pins = "gpd1-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
 +	sd1_bus1: sd1-bus-width1 {
-+		samsung,pins = "gpc2-3";
++		samsung,pins = "gpc1-3";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd1_bus4: sd1-bus-width4 {
-+		samsung,pins = "gpc2-3", "gpc2-4", "gpc2-5", "gpc2-6";
++		samsung,pins = "gpc1-4", "gpc1-5", "gpc1-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <3>;
++	};
++
++	sd1_bus8: sd1-bus-width8 {
++		samsung,pins = "gpd1-4", "gpd1-5", "gpd1-6", "gpd1-7";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd2_clk: sd2-clk {
-+		samsung,pins = "gpc3-0";
++		samsung,pins = "gpc2-0";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd2_cmd: sd2-cmd {
-+		samsung,pins = "gpc3-1";
++		samsung,pins = "gpc2-1";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd2_cd: sd2-cd {
-+		samsung,pins = "gpc3-2";
++		samsung,pins = "gpc2-2";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd2_bus1: sd2-bus-width1 {
-+		samsung,pins = "gpc3-3";
++		samsung,pins = "gpc2-3";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
 +	};
 +
 +	sd2_bus4: sd2-bus-width4 {
-+		samsung,pins = "gpc3-3", "gpc3-4", "gpc3-5", "gpc3-6";
++		samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <3>;
-+	};
-+
-+	sd2_bus8: sd2-bus-width8 {
-+		samsung,pins = "gpc4-3", "gpc4-4", "gpc4-5", "gpc4-6";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd3_clk: sd3-clk {
-+		samsung,pins = "gpc4-0";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd3_cmd: sd3-cmd {
-+		samsung,pins = "gpc4-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd3_cd: sd3-cd {
-+		samsung,pins = "gpc4-2";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd3_bus1: sd3-bus-width1 {
-+		samsung,pins = "gpc4-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	sd3_bus4: sd3-bus-width4 {
-+		samsung,pins = "gpc4-3", "gpc4-4", "gpc4-5", "gpc4-6";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <3>;
-+	};
-+
-+	uart1_data: uart1-data {
-+		samsung,pins = "gpd0-0", "gpd0-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	uart1_fctl: uart1-fctl {
-+		samsung,pins = "gpd0-2", "gpd0-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	dp_hpd: dp_hpd {
-+		samsung,pins = "gpx0-7";
-+		samsung,pin-function = <3>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
 +	};
 +};
 +
-+&pinctrl_1 {
++&pinctrl_2 {
 +	gpe0: gpe0 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
@@ -1470,15 +1075,7 @@ index 886cfca044ac..880917e508b2 100644
 +		#interrupt-cells = <2>;
 +	};
 +
-+	gph0: gph0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gph1: gph1 {
++	gpj4: gpj4 {
 +		gpio-controller;
 +		#gpio-cells = <2>;
 +
@@ -1504,8 +1101,8 @@ index 886cfca044ac..880917e508b2 100644
 +	};
 +
 +	cam_i2c2_bus: cam-i2c2-bus {
-+		samsung,pins = "gpe0-6", "gpe1-0";
-+		samsung,pin-function = <4>;
++		samsung,pins = "gpf0-4", "gpf0-5";
++		samsung,pin-function = <2>;
 +		samsung,pin-pud = <3>;
 +		samsung,pin-drv = <0>;
 +	};
@@ -1543,78 +1140,7 @@ index 886cfca044ac..880917e508b2 100644
 +			       "gpg0-4", "gpg0-5", "gpg0-6", "gpg0-7",
 +			       "gpg1-0", "gpg1-1", "gpg1-2", "gpg1-3",
 +			       "gpg1-4", "gpg1-5", "gpg1-6", "gpg1-7",
-+			       "gpg2-0", "gpg2-1";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	cam_port_a: cam-port-a {
-+		samsung,pins = "gph0-0", "gph0-1", "gph0-2", "gph0-3",
-+			       "gph1-0", "gph1-1", "gph1-2", "gph1-3",
-+			       "gph1-4", "gph1-5", "gph1-6", "gph1-7";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&pinctrl_2 {
-+	gpv0: gpv0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpv1: gpv1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpv2: gpv2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpv3: gpv3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpv4: gpv4 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	c2c_rxd: c2c-rxd {
-+		samsung,pins = "gpv0-0", "gpv0-1", "gpv0-2", "gpv0-3",
-+			       "gpv0-4", "gpv0-5", "gpv0-6", "gpv0-7",
-+			       "gpv1-0", "gpv1-1", "gpv1-2", "gpv1-3",
-+			       "gpv1-4", "gpv1-5", "gpv1-6", "gpv1-7";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	c2c_txd: c2c-txd {
-+		samsung,pins = "gpv2-0", "gpv2-1", "gpv2-2", "gpv2-3",
-+			       "gpv2-4", "gpv2-5", "gpv2-6", "gpv2-7",
-+			       "gpv3-0", "gpv3-1", "gpv3-2", "gpv3-3",
-+			       "gpv3-4", "gpv3-5", "gpv3-6", "gpv3-7";
++			       "gpg2-0";
 +		samsung,pin-function = <2>;
 +		samsung,pin-pud = <0>;
 +		samsung,pin-drv = <0>;
@@ -1622,6 +1148,294 @@ index 886cfca044ac..880917e508b2 100644
 +};
 +
 +&pinctrl_3 {
++	gpa0: gpa0 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpa1: gpa1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpa2: gpa2 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpb0: gpb0 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpb1: gpb1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpb2: gpb2 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpb3: gpb3 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpb4: gpb4 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gph0: gph0 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	uart0_data: uart0-data {
++		samsung,pins = "gpa0-0", "gpa0-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart0_fctl: uart0-fctl {
++		samsung,pins = "gpa0-2", "gpa0-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart1_data: uart1-data {
++		samsung,pins = "gpa0-4", "gpa0-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart1_fctl: uart1-fctl {
++		samsung,pins = "gpa0-6", "gpa0-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c2_bus: i2c2-bus {
++		samsung,pins = "gpa0-6", "gpa0-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart2_data: uart2-data {
++		samsung,pins = "gpa1-0", "gpa1-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart2_fctl: uart2-fctl {
++		samsung,pins = "gpa1-2", "gpa1-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c3_bus: i2c3-bus {
++		samsung,pins = "gpa1-2", "gpa1-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	uart3_data: uart3-data {
++		samsung,pins = "gpa1-4", "gpa1-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	spi0_bus: spi0-bus {
++		samsung,pins = "gpa2-0", "gpa2-1", "gpa2-2", "gpa2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	spi1_bus: spi1-bus {
++		samsung,pins = "gpa2-4", "gpa2-6", "gpa2-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c4_hs_bus: i2c4-hs-bus {
++		samsung,pins = "gpa2-0", "gpa2-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c5_hs_bus: i2c5-hs-bus {
++		samsung,pins = "gpa2-2", "gpa2-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2s1_bus: i2s1-bus {
++		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
++			       "gpb0-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pcm1_bus: pcm1-bus {
++		samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2", "gpb0-3",
++			       "gpb0-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2s2_bus: i2s2-bus {
++		samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
++			       "gpb1-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pcm2_bus: pcm2-bus {
++		samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2", "gpb1-3",
++			       "gpb1-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	spdif_bus: spdif-bus {
++		samsung,pins = "gpb1-0", "gpb1-1";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	spi2_bus: spi2-bus {
++		samsung,pins = "gpb1-1", "gpb1-3", "gpb1-4";
++		samsung,pin-function = <5>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c6_hs_bus: i2c6-hs-bus {
++		samsung,pins = "gpb1-3", "gpb1-4";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm0_out: pwm0-out {
++		samsung,pins = "gpb2-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm1_out: pwm1-out {
++		samsung,pins = "gpb2-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm2_out: pwm2-out {
++		samsung,pins = "gpb2-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	pwm3_out: pwm3-out {
++		samsung,pins = "gpb2-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c7_hs_bus: i2c7-hs-bus {
++		samsung,pins = "gpb2-2", "gpb2-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c0_bus: i2c0-bus {
++		samsung,pins = "gpb3-0", "gpb3-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c1_bus: i2c1-bus {
++		samsung,pins = "gpb3-2", "gpb3-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c8_hs_bus: i2c8-hs-bus {
++		samsung,pins = "gpb3-4", "gpb3-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c9_hs_bus: i2c9-hs-bus {
++		samsung,pins = "gpb3-6", "gpb3-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++
++	i2c10_hs_bus: i2c10-hs-bus {
++		samsung,pins = "gpb4-0", "gpb4-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <3>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&pinctrl_4 {
 +	gpz: gpz {
 +		gpio-controller;
 +		#gpio-cells = <2>;
