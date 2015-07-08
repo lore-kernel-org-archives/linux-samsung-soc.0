@@ -1,13 +1,15 @@
-From: Peter Feuerer <peter@piie.net>
-Subject: Re: [PATCH] thermal: consistently use int for temperatures
-Date: Wed, 08 Jul 2015 10:11:24 +0200
-Message-ID: <cone.1436343084.787318.20214.1000@mups>
-References: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: dts: Include exynos5250-pinctrl after the nodes
+ were defined
+Date: Wed, 08 Jul 2015 17:24:42 +0900
+Message-ID: <559CDE4A.5090009@samsung.com>
+References: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
+ <1436333790-18219-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
+In-reply-to: <1436333790-18219-2-git-send-email-javier@osg.samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,44 +19,45 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, lm-sensors@lm-sensors.org, Stephen Warren <swarren@wwwdotorg.org>, Rafael =?UTF-8?B?Si4=?= Wysocki <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-acpi@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Guenter Roeck <linux@roeck-us.net>, linux-arm-kernel@lists.infradead.org, Darren Hart <dvhart@infradead.org>, Zhang Rui <rui.zhang@intel.com>, linux-omap@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean Delvare <jdelvare@suse.de>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U2FzY2hhIEhhdWVyIHdyaXRlczoKCj4gVGhlIHRoZXJtYWwgY29kZSB1c2VzIGludCwgbG9uZyBh
-bmQgdW5zaWduZWQgbG9uZyBmb3IgdGVtcGVyYXR1cmVzCj4gaW4gZGlmZmVyZW50IHBsYWNlcy4K
-PiAKPiBVc2luZyBhbiB1bnNpZ25lZCB0eXBlIGxpbWl0cyB0aGUgdGhlcm1hbCBmcmFtZXdvcmsg
-dG8gcG9zaXRpdmUKPiB0ZW1wZXJhdHVyZXMgd2l0aG91dCBuZWVkLiBBbHNvIHNldmVyYWwgZHJp
-dmVycyBjdXJyZW50bHkgd2lsbCByZXBvcnQKPiB0ZW1wZXJhdHVyZXMgbmVhciBVSU5UX01BWCBm
-b3IgdGVtcGVyYXR1cmVzIGJlbG93IDDCsEMuIFRoaXMgd2lsbCBwcm9iYWJseQo+IGltbWVkaWF0
-ZWx5IHNodXQgdGhlIG1hY2hpbmUgZG93biBkdWUgdG8gb3ZlcnRlbXBlcmF0dXJlIGlmIHN0YXJ0
-ZWQgYmVsb3cKPiAwwrBDLgo+IAo+ICdsb25nJyBpcyA2NGJpdCBvbiBzZXZlcmFsIGFyY2hpdGVj
-dHVyZXMuIFRoaXMgaXMgbm90IG5lZWRlZCBzaW5jZSBJTlRfTUFYIMKwbUMKPiBpcyBhYm92ZSB0
-aGUgbWVsdGluZyBwb2ludCBvZiBhbGwga25vd24gbWF0ZXJpYWxzLgo+IAo+IENvbnNpc3RlbnRs
-eSB1c2UgYSBwbGFpbiAnaW50JyBmb3IgdGVtcGVyYXR1cmVzIHRocm91Z2hvdXQgdGhlIHRoZXJt
-YWwgY29kZSBhbmQKPiB0aGUgZHJpdmVycy4gVGhpcyBvbmx5IGNoYW5nZXMgdGhlIHBsYWNlcyBp
-biB0aGUgZHJpdmVycyB3aGVyZSB0aGUgdGVtcGVyYXR1cmUKPiBpcyBwYXNzZWQgYXJvdW5kIGFz
-IHBvaW50ZXIsIHdoZW4gZHJpdmVycyBpbnRlcm5hbGx5IHVzZSBhbm90aGVyIHR5cGUgdGhpcyBp
-cwo+IG5vdCBjaGFuZ2VkLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFNhc2NoYSBIYXVlciA8cy5oYXVl
-ckBwZW5ndXRyb25peC5kZT4KPiBDYzogWmhhbmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPgo+
-IENjOiBFZHVhcmRvIFZhbGVudGluIDxlZHViZXp2YWxAZ21haWwuY29tPgo+IENjOiBsaW51eC1w
-bUB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZwo+IENj
-OiBKZWFuIERlbHZhcmUgPGpkZWx2YXJlQHN1c2UuZGU+Cj4gQ2M6IFBldGVyIEZldWVyZXIgPHBl
-dGVyQHBpaWUubmV0Pgo+IENjOiBIZWlrbyBTdHVlYm5lciA8aGVpa29Ac250ZWNoLmRlPgo+IENj
-OiBMdWthc3ogTWFqZXdza2kgPGwubWFqZXdza2lAc2Ftc3VuZy5jb20+Cj4gQ2M6IFN0ZXBoZW4g
-V2FycmVuIDxzd2FycmVuQHd3d2RvdG9yZy5vcmc+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGll
-cnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwub3JnCj4g
-Q2M6IHBsYXRmb3JtLWRyaXZlci14ODZAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1vbWFwQHZnZXIua2VybmVsLm9y
-Zwo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcKPiBDYzogR3VlbnRlciBS
-b2VjayA8bGludXhAcm9lY2stdXMubmV0Pgo+IENjOiBSYWZhZWwgSi4gV3lzb2NraSA8cmp3QHJq
-d3lzb2NraS5uZXQ+Cj4gQ2M6IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVj
-dHJvbnMuY29tPgo+IENjOiBEYXJyZW4gSGFydCA8ZHZoYXJ0QGluZnJhZGVhZC5vcmc+Cj4gQ2M6
-IGxtLXNlbnNvcnNAbG0tc2Vuc29ycy5vcmcKPiAtLS0KClsuLi5dCgpGb3I6Cgo+ICBkcml2ZXJz
-L3BsYXRmb3JtL3g4Ni9hY2VyaGRmLmMgICAgICAgICAgICAgICAgICAgICB8ICA5ICsrKystLS0t
-Cj4gIGRyaXZlcnMvdGhlcm1hbC9nb3ZfYmFuZ19iYW5nLmMgICAgICAgICAgICAgICAgICAgIHwg
-IDUgKystLQoKUmV2aWV3ZWQtYnk6IFBldGVyIEZldWVyZXIgPHBldGVyQHBpaWUubmV0PgoKWy4u
-Ll0KCgotLSAKLS1wZXRlcjsKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxA
-bGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On 08.07.2015 14:36, Javier Martinez Canillas wrote:
+> The dtc compiler combines all the defined nodes that have the same path
+> so a device node definition can be in one file and later be extended in
+> another one.
+> 
+> That's the case of the Exynos5250 pinctrl device nodes that are defined
+> in the exynos5250.dtsi file and extended in exynos5250-pinctrl.dtsi.
+> 
+> But since the exynos5250.dtsi file includes the exynos5250-pinctrl.dtsi
+> before the pinctrl device nodes are actually defined, the definition of
+> the pinctrl device nodes happens in exynos5250-pinctrl.dtsi and are
+> extended in exynos5250.dtsi.
+> 
+> That is the opposite of the original intention so even when there is no
+> difference in practice, the exynos5250-pinctrl.dtsi include should be
+> moved at the end of the exynos5250.dtsi file after the pinctrl device
+> nodes have been already defined.
+> 
+> This will also allow to later change the exynos5250-pinctrl.dtsi file
+> to use labels instead of full paths to extend the pinctrl nodes. Since
+> keeping the include at the top, would cause a dtc build error due the
+> pinctrl labels not being defined yet.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  arch/arm/boot/dts/exynos5250.dtsi | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+
+Yeah, I stomped on this too. I left it as is because it is more natural
+to have all includes at the beginning... but DTSI for Exynos3250 and
+4415 already follow such convention and extending by labels is nice too,
+so overall I agree:
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
