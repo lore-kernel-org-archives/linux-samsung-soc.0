@@ -1,41 +1,56 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
-Date: Wed,  8 Jul 2015 15:40:46 -0700
-Message-ID: <1436395246-17540-1-git-send-email-javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 0/4] ARM: dts: Use labels instead of full paths for Exynos5
+ pinctrl nodes
+Date: Thu, 09 Jul 2015 08:51:53 +0900
+Message-ID: <559DB799.3040800@samsung.com>
+References: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
+ <559CDEDA.50608@samsung.com> <559D308E.3020809@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:33493 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751475AbbGHWk5 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:11999 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751424AbbGHXvy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jul 2015 18:40:57 -0400
+	Wed, 8 Jul 2015 19:51:54 -0400
+In-reply-to: <559D308E.3020809@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-The old drivers/usb/phy/phy-samsung-usb{2,3} are now deleted since
-were replaced by newers drivers that use the Generic PHY framework
-but their Kconfig options were left over in multi_v7_defconfig.
+On 08.07.2015 23:15, Javier Martinez Canillas wrote:
+> Krzysztof,
+> 
+> On 07/08/2015 01:27 AM, Krzysztof Kozlowski wrote:
+>> On 08.07.2015 14:36, Javier Martinez Canillas wrote:
+>>> Hello Kukjin and Krzysztof,
+>>>
+>>> This is a trivial series that changes Exynos5 pinctrl dtsi files to extend
+>>> the pinctrl nodes using labels instead of full paths.
+>>>
+>>> Using labels is less error prone since a misstyped label leads to a build
+>>> error while full paths can lead to the creation of a new node instead of
+>>> overriding the original which makes the mistake harder to detect.
+>>>
+>>> I tested the changes by decompiling the Exynos5* dtbs and comparing before
+>>> and after. The resulting dts were identical modulo some node ordering due
+>>> the pinctrl include change.
+>>
+>> Is the DTB before and after the same? It should not change by re-ordering.
+>>
+> 
+> The DTB differ but I'm not that familiar with how dtc represents the FDT
+> to know what is changing in the binary.
+> 
+> But as mentioned, the decompiled DTS only changes in which position the
+> pinctrl are defined and both DTS are identical if I do:
+> 
+> $ cat decompiled.dts | sort
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Right, the DTB may differ because of change of definition's location. If
+sorting fixes this then I'm convinced.
 
----
-
- arch/arm/configs/multi_v7_defconfig | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 77f4b76d16e9..e3fdc3dd02f6 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -493,8 +493,6 @@ CONFIG_USB_CHIPIDEA_HOST=y
- CONFIG_AB8500_USB=y
- CONFIG_KEYSTONE_USB_PHY=y
- CONFIG_OMAP_USB3=y
--CONFIG_SAMSUNG_USB2PHY=y
--CONFIG_SAMSUNG_USB3PHY=y
- CONFIG_USB_GPIO_VBUS=y
- CONFIG_USB_ISP1301=y
- CONFIG_USB_MXS_PHY=y
--- 
-2.4.3
+Best regards,
+Krzysztof
