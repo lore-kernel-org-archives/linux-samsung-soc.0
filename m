@@ -1,64 +1,72 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH 03/10] drm: exynos_hdmi: use of_get_i2c_adapter_by_node interface
-Date: Wed, 8 Jul 2015 15:59:34 +0300
-Message-ID: <1436360374-9275-1-git-send-email-vladimir_zapolskiy@mentor.com>
-References: <1436360095-9065-1-git-send-email-vladimir_zapolskiy@mentor.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH 2/4] ARM: dts: Extend exynos5250-pinctrl nodes using
+ labels instead of paths
+Date: Wed, 8 Jul 2015 07:05:45 -0700
+Message-ID: <559D2E39.6060602@osg.samsung.com>
+References: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
+ <1436333790-18219-3-git-send-email-javier@osg.samsung.com>
+ <559CDF66.6080609@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:47696 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932306AbbGHNAd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jul 2015 09:00:33 -0400
-In-Reply-To: <1436360095-9065-1-git-send-email-vladimir_zapolskiy@mentor.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <559CDF66.6080609-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: David Airlie <airlied@linux.ie>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This change is needed to properly lock I2C bus driver, which serves DDC.
+Hello Krzysztof,
 
-On release of_get_i2c_adapter_by_node() requires i2c_put_adapter() call,
-which replaces put_device(). By the way added of_node_put(ddc_node) to
-eliminate memory leak, if OF_DYNAMIC is enabled.
+On 07/08/2015 01:29 AM, Krzysztof Kozlowski wrote:
+> On 08.07.2015 14:36, Javier Martinez Canillas wrote:
+>> A previously defined Device Tree node, can be extended either by defining
+>> a node using the same full path or by creating a label for the node and
+>> referencing to it.
+>>
+>> Using full paths is more error prone since if there was a typo error, a
+>> new node will be created instead of extending the node as it was desired.
+>> This will lead to run-time errors that could be hard to detect.
+>>
+>> A misstyped label on the other hand, will cause a dtc compile error which
+> 
+> s/misstyped/mistyped/
+>
 
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+sigh, it's so ironic that I mistyped that.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 99e2864..399eff9 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2407,7 +2407,8 @@ static int hdmi_probe(struct platform_device *pdev)
- 	}
- 
- out_get_ddc_adpt:
--	hdata->ddc_adpt = of_find_i2c_adapter_by_node(ddc_node);
-+	hdata->ddc_adpt = of_get_i2c_adapter_by_node(ddc_node);
-+	of_node_put(ddc_node);
- 	if (!hdata->ddc_adpt) {
- 		DRM_ERROR("Failed to get ddc i2c adapter by node\n");
- 		return -EPROBE_DEFER;
-@@ -2485,7 +2486,7 @@ err_hdmiphy:
- 	if (hdata->hdmiphy_port)
- 		put_device(&hdata->hdmiphy_port->dev);
- err_ddc:
--	put_device(&hdata->ddc_adpt->dev);
-+	i2c_put_adapter(hdata->ddc_adpt);
- 
- 	return ret;
- }
-@@ -2501,7 +2502,7 @@ static int hdmi_remove(struct platform_device *pdev)
- 
- 	if (hdata->hdmiphy_port)
- 		put_device(&hdata->hdmiphy_port->dev);
--	put_device(&hdata->ddc_adpt->dev);
-+	i2c_put_adapter(hdata->ddc_adpt);
- 
- 	pm_runtime_disable(&pdev->dev);
- 	component_del(&pdev->dev, &hdmi_component_ops);
+Do you want me to re-post the whole series with the typo fixed or you /
+Kukjin would fix in both patches when applying?
+
+>> makes it easier to detect the mistake since happens at build-time instead.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+>> ---
+>>
+>>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 1600 ++++++++++++++---------------
+>>  1 file changed, 799 insertions(+), 801 deletions(-)
+>>
+> 
+> I didn't look carefully enough to call it a review (I trust the 'diff'
+> of yours) but it seems fine to me:
+> 
+> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+
+Thanks a lot for.
+
+> Best regards,
+> Krzysztof
+>
+
+Best regards,
+
 -- 
-2.1.4
+Javier Martinez Canillas
+Sr. Linux Kernel Developer
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
