@@ -1,65 +1,51 @@
 From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 2/4] ARM: dts: Extend exynos5250-pinctrl nodes using
- labels instead of paths
-Date: Wed, 8 Jul 2015 07:05:45 -0700
-Message-ID: <559D2E39.6060602@osg.samsung.com>
+Subject: Re: [PATCH 0/4] ARM: dts: Use labels instead of full paths for
+ Exynos5 pinctrl nodes
+Date: Wed, 8 Jul 2015 07:15:42 -0700
+Message-ID: <559D308E.3020809@osg.samsung.com>
 References: <1436333790-18219-1-git-send-email-javier@osg.samsung.com>
- <1436333790-18219-3-git-send-email-javier@osg.samsung.com>
- <559CDF66.6080609@samsung.com>
+ <559CDEDA.50608@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <559CDF66.6080609-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <559CDEDA.50608-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Krzysztof,
 
-On 07/08/2015 01:29 AM, Krzysztof Kozlowski wrote:
+On 07/08/2015 01:27 AM, Krzysztof Kozlowski wrote:
 > On 08.07.2015 14:36, Javier Martinez Canillas wrote:
->> A previously defined Device Tree node, can be extended either by defining
->> a node using the same full path or by creating a label for the node and
->> referencing to it.
+>> Hello Kukjin and Krzysztof,
 >>
->> Using full paths is more error prone since if there was a typo error, a
->> new node will be created instead of extending the node as it was desired.
->> This will lead to run-time errors that could be hard to detect.
+>> This is a trivial series that changes Exynos5 pinctrl dtsi files to extend
+>> the pinctrl nodes using labels instead of full paths.
 >>
->> A misstyped label on the other hand, will cause a dtc compile error which
+>> Using labels is less error prone since a misstyped label leads to a build
+>> error while full paths can lead to the creation of a new node instead of
+>> overriding the original which makes the mistake harder to detect.
+>>
+>> I tested the changes by decompiling the Exynos5* dtbs and comparing before
+>> and after. The resulting dts were identical modulo some node ordering due
+>> the pinctrl include change.
 > 
-> s/misstyped/mistyped/
+> Is the DTB before and after the same? It should not change by re-ordering.
 >
 
-sigh, it's so ironic that I mistyped that.
+The DTB differ but I'm not that familiar with how dtc represents the FDT
+to know what is changing in the binary.
 
-Do you want me to re-post the whole series with the typo fixed or you /
-Kukjin would fix in both patches when applying?
+But as mentioned, the decompiled DTS only changes in which position the
+pinctrl are defined and both DTS are identical if I do:
 
->> makes it easier to detect the mistake since happens at build-time instead.
->>
->> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->> ---
->>
->>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 1600 ++++++++++++++---------------
->>  1 file changed, 799 insertions(+), 801 deletions(-)
->>
-> 
-> I didn't look carefully enough to call it a review (I trust the 'diff'
-> of yours) but it seems fine to me:
-> 
-> Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-
-Thanks a lot for.
+$ cat decompiled.dts | sort
 
 > Best regards,
 > Krzysztof
->
-
-Best regards,
+> 
 
 -- 
 Javier Martinez Canillas
