@@ -1,131 +1,186 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/7] drm/exynos/hdmi: add driver data pointer to private
- context
-Date: Thu, 09 Jul 2015 16:28:09 +0200
-Message-ID: <1436452092-20757-5-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 5/7] drm/exynos/hdmi: remove redundant configuration fields
+Date: Thu, 09 Jul 2015 16:28:10 +0200
+Message-ID: <1436452092-20757-6-git-send-email-a.hajda@samsung.com>
 References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46354 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752670AbbGIO20 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jul 2015 10:28:26 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NR800ETW5JD3G70@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Jul 2015 15:28:25 +0100 (BST)
 In-reply-to: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-VGhlIHBhdGNoIHJlcGxhY2VzIGR1cGxpY2F0ZWQgZHJpdmVyIGRhdGEgZmllbGRzIGluIHByaXZh
-dGUgY29udGV4dCB3aXRoCnBvaW50ZXIgdG8gZHJpdmVyIGRhdGEuIEl0IGFsc28gc2ltcGxpZmll
-cyBkcml2ZXIgZGF0YSBsb29rdXAgY29kZS4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEg
-PGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-aGRtaS5jIHwgNDkgKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUg
-Y2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfaGRtaS5jCmluZGV4IGYyZTkwOWQuLmY5YzRkZTEgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTMyLDggKzMyLDggQEAKICNpbmNsdWRlIDxsaW51eC9j
-bGsuaD4KICNpbmNsdWRlIDxsaW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4KICNpbmNsdWRlIDxs
-aW51eC9pby5oPgotI2luY2x1ZGUgPGxpbnV4L29mLmg+CiAjaW5jbHVkZSA8bGludXgvb2ZfYWRk
-cmVzcy5oPgorI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPgogI2luY2x1ZGUgPGxpbnV4L29m
-X2dwaW8uaD4KICNpbmNsdWRlIDxsaW51eC9oZG1pLmg+CiAjaW5jbHVkZSA8bGludXgvY29tcG9u
-ZW50Lmg+CkBAIC0yMDAsMTQgKzIwMCwxMiBAQCBzdHJ1Y3QgaGRtaV9jb250ZXh0IHsKIAlzdHJ1
-Y3QgaGRtaV9jb25mX3JlZ3MJCW1vZGVfY29uZjsKIAogCXN0cnVjdCBoZG1pX3Jlc291cmNlcwkJ
-cmVzOworCWNvbnN0IHN0cnVjdCBoZG1pX2RyaXZlcl9kYXRhCSpkcnZfZGF0YTsKIAogCWludAkJ
-CQlocGRfZ3BpbzsKIAl2b2lkIF9faW9tZW0JCQkqcmVnc19oZG1pcGh5OwotCWNvbnN0IHN0cnVj
-dCBoZG1pcGh5X2NvbmZpZwkJKnBoeV9jb25mczsKLQl1bnNpZ25lZCBpbnQJCQlwaHlfY29uZl9j
-b3VudDsKIAogCXN0cnVjdCByZWdtYXAJCQkqcG11cmVnOwotCWVudW0gaGRtaV90eXBlCQkJdHlw
-ZTsKIH07CiAKIHN0YXRpYyBpbmxpbmUgc3RydWN0IGhkbWlfY29udGV4dCAqZGlzcGxheV90b19o
-ZG1pKHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmQpCkBAIC05MjYsNyArOTI0LDcgQEAgc3Rh
-dGljIHZvaWQgaGRtaV92MTRfcmVnc19kdW1wKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBj
-aGFyICpwcmVmaXgpCiAKIHN0YXRpYyB2b2lkIGhkbWlfcmVnc19kdW1wKHN0cnVjdCBoZG1pX2Nv
-bnRleHQgKmhkYXRhLCBjaGFyICpwcmVmaXgpCiB7Ci0JaWYgKGhkYXRhLT50eXBlID09IEhETUlf
-VFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpCiAJCWhk
-bWlfdjEzX3JlZ3NfZHVtcChoZGF0YSwgcHJlZml4KTsKIAllbHNlCiAJCWhkbWlfdjE0X3JlZ3Nf
-ZHVtcChoZGF0YSwgcHJlZml4KTsKQEAgLTEwODcsOCArMTA4NSw4IEBAIHN0YXRpYyBpbnQgaGRt
-aV9maW5kX3BoeV9jb25mKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCB1MzIgcGl4ZWxfY2xv
-Y2spCiB7CiAJaW50IGk7CiAKLQlmb3IgKGkgPSAwOyBpIDwgaGRhdGEtPnBoeV9jb25mX2NvdW50
-OyBpKyspCi0JCWlmIChoZGF0YS0+cGh5X2NvbmZzW2ldLnBpeGVsX2Nsb2NrID09IHBpeGVsX2Ns
-b2NrKQorCWZvciAoaSA9IDA7IGkgPCBoZGF0YS0+ZHJ2X2RhdGEtPnBoeV9jb25mX2NvdW50OyBp
-KyspCisJCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnBoeV9jb25mc1tpXS5waXhlbF9jbG9jayA9PSBw
-aXhlbF9jbG9jaykKIAkJCXJldHVybiBpOwogCiAJRFJNX0RFQlVHX0tNUygiQ291bGQgbm90IGZp
-bmQgcGh5IGNvbmZpZyBmb3IgJWRcbiIsIHBpeGVsX2Nsb2NrKTsKQEAgLTEyNTMsNyArMTI1MSw3
-IEBAIHN0YXRpYyB2b2lkIGhkbWlfcmVnX2FjcihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwg
-dTggKmFjcikKIAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQUNSX0NUUzEsIGFjclsyXSk7
-CiAJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FDUl9DVFMyLCBhY3JbMV0pOwogCi0JaWYg
-KGhkYXRhLT50eXBlID09IEhETUlfVFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUg
-PT0gSERNSV9UWVBFMTMpCiAJCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WMTNfQUNSX0NP
-TiwgNCk7CiAJZWxzZQogCQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQUNSX0NPTiwgNCk7
-CkBAIC0xMzg3LDcgKzEzODUsNyBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbmZfaW5pdChzdHJ1Y3Qg
-aGRtaV9jb250ZXh0ICpoZGF0YSkKIAkJCQlIRE1JX1ZJRF9QUkVBTUJMRV9ESVMgfCBIRE1JX0dV
-QVJEX0JBTkRfRElTKTsKIAl9CiAKLQlpZiAoaGRhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpIHsK
-KwlpZiAoaGRhdGEtPmRydl9kYXRhLT50eXBlID09IEhETUlfVFlQRTEzKSB7CiAJCS8qIGNob29z
-ZSBibHVlc2NyZWVuIChmZWNhbCkgY29sb3IgKi8KIAkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
-RE1JX1YxM19CTFVFX1NDUkVFTl8wLCAweDEyKTsKIAkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
-RE1JX1YxM19CTFVFX1NDUkVFTl8xLCAweDM0KTsKQEAgLTE2NjYsNyArMTY2NCw3IEBAIHN0YXRp
-YyB2b2lkIGhkbWlfdjE0X21vZGVfYXBwbHkoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiAK
-IHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkK
-IHsKLQlpZiAoaGRhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpCisJaWYgKGhkYXRhLT5kcnZfZGF0
-YS0+dHlwZSA9PSBIRE1JX1RZUEUxMykKIAkJaGRtaV92MTNfbW9kZV9hcHBseShoZGF0YSk7CiAJ
-ZWxzZQogCQloZG1pX3YxNF9tb2RlX2FwcGx5KGhkYXRhKTsKQEAgLTE2ODQsNyArMTY4Miw3IEBA
-IHN0YXRpYyB2b2lkIGhkbWlwaHlfY29uZl9yZXNldChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0
-YSkKIAloZG1pcGh5X3JlZ193cml0ZWIoaGRhdGEsIEhETUlQSFlfTU9ERV9TRVRfRE9ORSwKIAkJ
-CQlIRE1JX1BIWV9FTkFCTEVfTU9ERV9TRVQpOwogCi0JaWYgKGhkYXRhLT50eXBlID09IEhETUlf
-VFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpCiAJCXJl
-ZyA9IEhETUlfVjEzX1BIWV9SU1RPVVQ7CiAJZWxzZQogCQlyZWcgPSBIRE1JX1BIWV9SU1RPVVQ7
-CkBAIC0xNjk4LDcgKzE2OTYsNyBAQCBzdGF0aWMgdm9pZCBoZG1pcGh5X2NvbmZfcmVzZXQoc3Ry
-dWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiAKIHN0YXRpYyB2b2lkIGhkbWlwaHlfcG93ZXJvbihz
-dHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsKLQlpZiAoaGRhdGEtPnR5cGUgIT0gSERNSV9U
-WVBFMTQpCisJaWYgKGhkYXRhLT5kcnZfZGF0YS0+dHlwZSAhPSBIRE1JX1RZUEUxNCkKIAkJcmV0
-dXJuOwogCiAJRFJNX0RFQlVHX0tNUygiXG4iKTsKQEAgLTE3MTgsNyArMTcxNiw3IEBAIHN0YXRp
-YyB2b2lkIGhkbWlwaHlfcG93ZXJvbihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIAogc3Rh
-dGljIHZvaWQgaGRtaXBoeV9wb3dlcm9mZihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsK
-LQlpZiAoaGRhdGEtPnR5cGUgIT0gSERNSV9UWVBFMTQpCisJaWYgKGhkYXRhLT5kcnZfZGF0YS0+
-dHlwZSAhPSBIRE1JX1RZUEUxNCkKIAkJcmV0dXJuOwogCiAJRFJNX0RFQlVHX0tNUygiXG4iKTsK
-QEAgLTE3NTAsNyArMTc0OCw4IEBAIHN0YXRpYyB2b2lkIGhkbWlwaHlfY29uZl9hcHBseShzdHJ1
-Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIAkJcmV0dXJuOwogCX0KIAotCXJldCA9IGhkbWlwaHlf
-cmVnX3dyaXRlX2J1ZihoZGF0YSwgMCwgaGRhdGEtPnBoeV9jb25mc1tpXS5jb25mLCAzMik7CisJ
-cmV0ID0gaGRtaXBoeV9yZWdfd3JpdGVfYnVmKGhkYXRhLCAwLAorCQkJaGRhdGEtPmRydl9kYXRh
-LT5waHlfY29uZnNbaV0uY29uZiwgMzIpOwogCWlmIChyZXQpIHsKIAkJRFJNX0VSUk9SKCJmYWls
-ZWQgdG8gY29uZmlndXJlIGhkbWlwaHlcbiIpOwogCQlyZXR1cm47CkBAIC0yMDE1LDcgKzIwMTQs
-NyBAQCBzdGF0aWMgdm9pZCBoZG1pX21vZGVfc2V0KHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkg
-KmRpc3BsYXksCiAJLyogcHJlc2VydmUgbW9kZSBpbmZvcm1hdGlvbiBmb3IgbGF0ZXIgdXNlLiAq
-LwogCWRybV9tb2RlX2NvcHkoJmhkYXRhLT5jdXJyZW50X21vZGUsIG1vZGUpOwogCi0JaWYgKGhk
-YXRhLT50eXBlID09IEhETUlfVFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUgPT0g
-SERNSV9UWVBFMTMpCiAJCWhkbWlfdjEzX21vZGVfc2V0KGhkYXRhLCBtb2RlKTsKIAllbHNlCiAJ
-CWhkbWlfdjE0X21vZGVfc2V0KGhkYXRhLCBtb2RlKTsKQEAgLTIyOTQsMzQgKzIyOTMsMjYgQEAg
-c3RhdGljIHN0cnVjdCBkZXZpY2Vfbm9kZSAqaGRtaV9sZWdhY3lfcGh5X2R0X2JpbmRpbmcoc3Ry
-dWN0IGRldmljZSAqZGV2KQogc3RhdGljIGludCBoZG1pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0IGRldmljZV9ub2RlICpkZGNfbm9kZSwgKnBoeV9ub2Rl
-OwotCXN0cnVjdCBoZG1pX2RyaXZlcl9kYXRhICpkcnZfZGF0YTsKIAljb25zdCBzdHJ1Y3Qgb2Zf
-ZGV2aWNlX2lkICptYXRjaDsKIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2OwogCXN0
-cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhOwogCXN0cnVjdCByZXNvdXJjZSAqcmVzOwogCWludCBy
-ZXQ7CiAKLQlpZiAoIWRldi0+b2Zfbm9kZSkKLQkJcmV0dXJuIC1FTk9ERVY7Ci0KIAloZGF0YSA9
-IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZihzdHJ1Y3QgaGRtaV9jb250ZXh0KSwgR0ZQX0tFUk5F
-TCk7CiAJaWYgKCFoZGF0YSkKIAkJcmV0dXJuIC1FTk9NRU07CiAKKwltYXRjaCA9IG9mX21hdGNo
-X2RldmljZShoZG1pX21hdGNoX3R5cGVzLCBkZXYpOworCWlmICghbWF0Y2gpCisJCXJldHVybiAt
-RU5PREVWOworCisJaGRhdGEtPmRydl9kYXRhID0gbWF0Y2gtPmRhdGE7CiAJaGRhdGEtPmRpc3Bs
-YXkudHlwZSA9IEVYWU5PU19ESVNQTEFZX1RZUEVfSERNSTsKIAloZGF0YS0+ZGlzcGxheS5vcHMg
-PSAmaGRtaV9kaXNwbGF5X29wczsKIAogCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIGhkYXRh
-KTsKIAotCW1hdGNoID0gb2ZfbWF0Y2hfbm9kZShoZG1pX21hdGNoX3R5cGVzLCBkZXYtPm9mX25v
-ZGUpOwotCWlmICghbWF0Y2gpCi0JCXJldHVybiAtRU5PREVWOwotCi0JZHJ2X2RhdGEgPSAoc3Ry
-dWN0IGhkbWlfZHJpdmVyX2RhdGEgKiltYXRjaC0+ZGF0YTsKLQloZGF0YS0+dHlwZSA9IGRydl9k
-YXRhLT50eXBlOwotCWhkYXRhLT5waHlfY29uZnMgPSBkcnZfZGF0YS0+cGh5X2NvbmZzOwotCWhk
-YXRhLT5waHlfY29uZl9jb3VudCA9IGRydl9kYXRhLT5waHlfY29uZl9jb3VudDsKLQogCWhkYXRh
-LT5kZXYgPSBkZXY7CiAJaGRhdGEtPmhwZF9ncGlvID0gb2ZfZ2V0X25hbWVkX2dwaW8oZGV2LT5v
-Zl9ub2RlLCAiaHBkLWdwaW8iLCAwKTsKIAlpZiAoaGRhdGEtPmhwZF9ncGlvIDwgMCkgewpAQCAt
-MjM3OSw3ICsyMzcwLDcgQEAgb3V0X2dldF9kZGNfYWRwdDoKIAl9CiAKIG91dF9nZXRfcGh5X3Bv
-cnQ6Ci0JaWYgKGRydl9kYXRhLT5pc19hcGJfcGh5KSB7CisJaWYgKGhkYXRhLT5kcnZfZGF0YS0+
-aXNfYXBiX3BoeSkgewogCQloZGF0YS0+cmVnc19oZG1pcGh5ID0gb2ZfaW9tYXAocGh5X25vZGUs
-IDApOwogCQlpZiAoIWhkYXRhLT5yZWdzX2hkbWlwaHkpIHsKIAkJCURSTV9FUlJPUigiZmFpbGVk
-IHRvIGlvcmVtYXAgaGRtaSBwaHlcbiIpOwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+The patch removes redundant fields from hdmi_conf_regs. Their values
+can be calculated from current_mode. This patch is the first step to remove
+whole hdmi_conf_regs structure.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 68 +++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index f9c4de1..a3fe2f0 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -169,14 +169,9 @@ struct hdmi_v14_conf {
+ 	struct hdmi_tg_regs tg;
+ };
+ 
+-struct hdmi_conf_regs {
+-	int pixel_clock;
+-	int cea_video_id;
+-	enum hdmi_picture_aspect aspect_ratio;
+-	union {
+-		struct hdmi_v13_conf v13_conf;
+-		struct hdmi_v14_conf v14_conf;
+-	} conf;
++union hdmi_conf_regs {
++	struct hdmi_v13_conf v13_conf;
++	struct hdmi_v14_conf v14_conf;
+ };
+ 
+ struct hdmi_context {
+@@ -197,7 +192,8 @@ struct hdmi_context {
+ 
+ 	/* current hdmiphy conf regs */
+ 	struct drm_display_mode		current_mode;
+-	struct hdmi_conf_regs		mode_conf;
++	u8				cea_video_id;
++	union hdmi_conf_regs		mode_conf;
+ 
+ 	struct hdmi_resources		res;
+ 	const struct hdmi_driver_data	*drv_data;
+@@ -951,7 +947,7 @@ static void hdmi_reg_infoframe(struct hdmi_context *hdata,
+ 	u32 hdr_sum;
+ 	u8 chksum;
+ 	u32 mod;
+-	u32 vic;
++	u8 ar;
+ 
+ 	mod = hdmi_reg_read(hdata, HDMI_MODE_SEL);
+ 	if (hdata->dvi_mode) {
+@@ -982,27 +978,22 @@ static void hdmi_reg_infoframe(struct hdmi_context *hdata,
+ 		 * Set the aspect ratio as per the mode, mentioned in
+ 		 * Table 9 AVI InfoFrame Data Byte 2 of CEA-861-D Standard
+ 		 */
+-		switch (hdata->mode_conf.aspect_ratio) {
++		ar = hdata->current_mode.picture_aspect_ratio;
++		switch (ar) {
+ 		case HDMI_PICTURE_ASPECT_4_3:
+-			hdmi_reg_writeb(hdata, HDMI_AVI_BYTE(2),
+-					hdata->mode_conf.aspect_ratio |
+-					AVI_4_3_CENTER_RATIO);
++			ar |= AVI_4_3_CENTER_RATIO;
+ 			break;
+ 		case HDMI_PICTURE_ASPECT_16_9:
+-			hdmi_reg_writeb(hdata, HDMI_AVI_BYTE(2),
+-					hdata->mode_conf.aspect_ratio |
+-					AVI_16_9_CENTER_RATIO);
++			ar |= AVI_16_9_CENTER_RATIO;
+ 			break;
+ 		case HDMI_PICTURE_ASPECT_NONE:
+ 		default:
+-			hdmi_reg_writeb(hdata, HDMI_AVI_BYTE(2),
+-					hdata->mode_conf.aspect_ratio |
+-					AVI_SAME_AS_PIC_ASPECT_RATIO);
++			ar |= AVI_SAME_AS_PIC_ASPECT_RATIO;
+ 			break;
+ 		}
++		hdmi_reg_writeb(hdata, HDMI_AVI_BYTE(2), ar);
+ 
+-		vic = hdata->mode_conf.cea_video_id;
+-		hdmi_reg_writeb(hdata, HDMI_AVI_BYTE(4), vic);
++		hdmi_reg_writeb(hdata, HDMI_AVI_BYTE(4), hdata->cea_video_id);
+ 
+ 		chksum = hdmi_chksum(hdata, HDMI_AVI_BYTE(1),
+ 					infoframe->any.length, hdr_sum);
+@@ -1418,9 +1409,8 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
+ 
+ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ {
+-	const struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v13_conf.tg;
+-	const struct hdmi_v13_core_regs *core =
+-		&hdata->mode_conf.conf.v13_conf.core;
++	const struct hdmi_tg_regs *tg = &hdata->mode_conf.v13_conf.tg;
++	const struct hdmi_v13_core_regs *core = &hdata->mode_conf.v13_conf.core;
+ 	int tries;
+ 
+ 	/* setting core registers */
+@@ -1502,9 +1492,8 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ 
+ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ {
+-	const struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v14_conf.tg;
+-	const struct hdmi_v14_core_regs *core =
+-		&hdata->mode_conf.conf.v14_conf.core;
++	const struct hdmi_tg_regs *tg = &hdata->mode_conf.v14_conf.tg;
++	const struct hdmi_v14_core_regs *core = &hdata->mode_conf.v14_conf.core;
+ 	int tries;
+ 
+ 	/* setting core registers */
+@@ -1742,7 +1731,7 @@ static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+ 	int i;
+ 
+ 	/* pixel clock */
+-	i = hdmi_find_phy_conf(hdata, hdata->mode_conf.pixel_clock);
++	i = hdmi_find_phy_conf(hdata, hdata->current_mode.clock * 1000);
+ 	if (i < 0) {
+ 		DRM_ERROR("failed to find hdmiphy conf\n");
+ 		return;
+@@ -1794,15 +1783,10 @@ static void hdmi_set_reg(u8 *reg_pair, int num_bytes, u32 value)
+ static void hdmi_v13_mode_set(struct hdmi_context *hdata,
+ 			struct drm_display_mode *m)
+ {
+-	struct hdmi_v13_core_regs *core = &hdata->mode_conf.conf.v13_conf.core;
+-	struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v13_conf.tg;
++	struct hdmi_v13_core_regs *core = &hdata->mode_conf.v13_conf.core;
++	struct hdmi_tg_regs *tg = &hdata->mode_conf.v13_conf.tg;
+ 	unsigned int val;
+ 
+-	hdata->mode_conf.cea_video_id =
+-		drm_match_cea_mode((struct drm_display_mode *)m);
+-	hdata->mode_conf.pixel_clock = m->clock * 1000;
+-	hdata->mode_conf.aspect_ratio = m->picture_aspect_ratio;
+-
+ 	hdmi_set_reg(core->h_blank, 2, m->htotal - m->hdisplay);
+ 	hdmi_set_reg(core->h_v_line, 3, (m->htotal << 12) | m->vtotal);
+ 
+@@ -1891,14 +1875,8 @@ static void hdmi_v13_mode_set(struct hdmi_context *hdata,
+ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
+ 			struct drm_display_mode *m)
+ {
+-	struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v14_conf.tg;
+-	struct hdmi_v14_core_regs *core =
+-		&hdata->mode_conf.conf.v14_conf.core;
+-
+-	hdata->mode_conf.cea_video_id =
+-		drm_match_cea_mode((struct drm_display_mode *)m);
+-	hdata->mode_conf.pixel_clock = m->clock * 1000;
+-	hdata->mode_conf.aspect_ratio = m->picture_aspect_ratio;
++	struct hdmi_tg_regs *tg = &hdata->mode_conf.v14_conf.tg;
++	struct hdmi_v14_core_regs *core = &hdata->mode_conf.v14_conf.core;
+ 
+ 	hdmi_set_reg(core->h_blank, 2, m->htotal - m->hdisplay);
+ 	hdmi_set_reg(core->v_line, 2, m->vtotal);
+@@ -2014,6 +1992,8 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
+ 	/* preserve mode information for later use. */
+ 	drm_mode_copy(&hdata->current_mode, mode);
+ 
++	hdata->cea_video_id = drm_match_cea_mode(mode);
++
+ 	if (hdata->drv_data->type == HDMI_TYPE13)
+ 		hdmi_v13_mode_set(hdata, mode);
+ 	else
+-- 
+1.9.1
