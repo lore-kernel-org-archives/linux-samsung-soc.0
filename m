@@ -1,40 +1,82 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v3 0/4] cpufreq: use generic cpufreq drivers for
- Exynos5250 platform
-Date: Thu, 9 Jul 2015 15:52:54 +0530
-Message-ID: <20150709102254.GA5627@linux>
-References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/10 v6] Helper to abstract vma handling in media layer
+Date: Thu, 9 Jul 2015 13:48:48 +0200
+Message-ID: <20150709114848.GA9189@quack.suse.cz>
+References: <1434636520-25116-1-git-send-email-jack@suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:42236 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752594AbbGILsx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Jul 2015 07:48:53 -0400
 Content-Disposition: inline
-In-Reply-To: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1434636520-25116-1-git-send-email-jack@suse.cz>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
 
-On 01-07-15, 15:10, Bartlomiej Zolnierkiewicz wrote:
-> This patch series removes the use of Exynos5250 specific support
-> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
-> for this platform.
-> 
-> This patch series has been tested on Exynos5250 based Arndale board.
-> 
-> Changes since v1 (http://lkml.org/lkml/2015/4/13/611):
-> - rebased on top of next-20150629 branch of linux-next kernel tree
-> - dropped dependency on "[PATCH 0/6] cpufreq: use generic cpufreq
->   drivers for Exynos4x12 platform" patch series as it needs more
->   work (Viresh has requested porting of cpufreq-dt's boost mode
->   support over opp-v2 patches)
-> 
-> Changes since v2 (http://lkml.org/lkml/2015/6/29/361):
-> - put the new cpu nodes in alphabetical order
-> - updated Javier's and Mike's e-mail adresses
-> - removed Cc: tag with stale Sachin's e-mail adress
-> - added Reviewed-by: tag from Krzysztof to patches #3 and #4
+  Hello,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+  Hans, did you have a chance to look at these patches? I have tested them
+with the vivid driver but it would be good if you could run them through
+your standard testing procedure as well. Andrew has updated the patches in
+his tree but some ack from you would be welcome...
 
+								Honza
+On Thu 18-06-15 16:08:30, Jan Kara wrote:
+>   Hello,
+> 
+> I'm sending the sixth version of my patch series to abstract vma handling from
+> the various media drivers. Since the previous version I have added a patch to
+> move mm helpers into a separate file and behind a config option. I also
+> changed patch pushing mmap_sem down in videobuf2 core to avoid lockdep warning
+> and NULL dereference Hans found in his testing. I've also included small
+> fixups Andrew was carrying.
+> 
+> After this patch set drivers have to know much less details about vmas, their
+> types, and locking. Also quite some code is removed from them. As a bonus
+> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
+> this series is to remove knowledge about mmap_sem locking from as many places a
+> possible so that we can change it with reasonable effort.
+> 
+> The core of the series is the new helper get_vaddr_frames() which is given a
+> virtual address and it fills in PFNs / struct page pointers (depending on VMA
+> type) into the provided array. If PFNs correspond to normal pages it also grabs
+> references to these pages. The difference from get_user_pages() is that this
+> function can also deal with pfnmap, and io mappings which is what the media
+> drivers need.
+> 
+> I have tested the patches with vivid driver so at least vb2 code got some
+> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
+> exynos driver which is only for Samsung platform is completely untested).
+> 
+> Andrew, can you please update the patches in mm three? Thanks!
+> 
+> 								Honza
+> 
+> Changes since v5:
+> * Moved mm helper into a separate file and behind a config option
+> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
+>   possible deadlock
+> 
+> Changes since v4:
+> * Minor cleanups and fixes pointed out by Mel and Vlasta
+> * Added Acked-by tags
+> 
+> Changes since v3:
+> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
+> * Fixed error path for exynos driver
+> 
+> Changes since v2:
+> * Renamed functions and structures as Mel suggested
+> * Other minor changes suggested by Mel
+> * Rebased on top of 4.1-rc2
+> * Changed functions to get pointer to array of pages / pfns to perform
+>   conversion if necessary. This fixes possible issue in the omap I may have
+>   introduced in v2 and generally makes the API less errorprone.
 -- 
-viresh
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
