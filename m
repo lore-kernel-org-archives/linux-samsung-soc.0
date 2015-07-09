@@ -1,78 +1,96 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-Date: Thu, 9 Jul 2015 09:23:32 +0900
-Message-ID: <CAJKOXPeGMTabQ6CEfMrd1S1dFYTfNoaf2XKvJwoEZzaiTUfq7A@mail.gmail.com>
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
-	<CABxcv=mQfcb3jsRzOcWXAbNRf-dumoHS8X-2TEeOdB2E_T5BMQ@mail.gmail.com>
-	<CAJKOXPeFxABcm27_tmriY6RreaRYZiEPvUvFav4DK-AoNbUs=Q@mail.gmail.com>
-	<CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2 12/23] drm/exynos: don't track enabled state at
+ exynos_crtc
+Date: Thu, 09 Jul 2015 17:09:48 +0900
+Message-ID: <559E2C4C.9030603@samsung.com>
+References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
+ <1436192424-18194-13-git-send-email-gustavo@padovan.org>
+ <20150706174147.GB7568@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <CA+Ln22HHpdKD8+_zSzX10FBM_aDByePfA3_vactLOxh_J961tA@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Javier Martinez Canillas <javier@dowhile0.org>, stable@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150706174147.GB7568@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>, Gustavo Padovan <gustavo@padovan.org>
+Cc: tjakobi@math.uni-bielefeld.de, linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-07-06 14:12 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
-> 2015-07-06 13:03 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> 2015-06-12 14:46 GMT+09:00 Javier Martinez Canillas <javier@dowhile0.org>:
->>> Hello Krzysztof,
->>>
->>> On Fri, Jun 12, 2015 at 3:53 AM, Krzysztof Kozlowski
->>> <k.kozlowski@samsung.com> wrote:
->>>> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
->>>> However TSADC is present only on Exynos4210 so on Trats2 board (with
->>>> Exynos4412 SoC) the exynos-adc driver could not be probed:
->>>>    ERROR: could not get clock /adc@126C0000:adc(0)
->>>>    exynos-adc 126c0000.adc: failed getting clock, err = -2
->>>>    exynos-adc: probe of 126c0000.adc failed with error -2
->>>>
->>>> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
->>>> Converter is located in different register and it is named in datasheet
->>>> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
->>>> is the same as purpose of TSADC from Exynos4210.
->>>>
->>>> The patch adds gate clock for Exynos4x12 using the proper register so
->>>> backward compatibility is preserved. This fixes the probe of exynos-adc
->>>> driver on Exynos4x12 boards and allows accessing sensors connected to it
->>>> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> Cc: <stable@vger.kernel.org>
->>>> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
->>>> Link: https://lkml.org/lkml/2015/6/11/85
->>>>
->>>> ---
->>>>
->>>> Changes since v1:
->>>> 1. After discussion on LKML this solution was chosen because it smaller,
->>>>    simpler, self-contained (one patch to fix issue) and maintains backward
->>>>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
->>>>    valuable comments.
->>>> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
->>>>    will be used on all Exynos4 boards.
->>>> 3. Added CC-stable.
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>
->>> Patch looks good to me.
->>>
->>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>
->> Hi Tomasz and Sylwester,
->>
->> Any comments on this version of patch?
->> Tomasz, you gave me comments on previous version. Are their satisfied?
->
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Thanks for ack.
-
-Sylwester, are you gonna to pick it up or this should go through other tree?
-
-Best regards,
-Krzysztof
+K0NjIEFuZHJ6ZWosCgpPbiAwNy8wNy8yMDE1IDAyOjQxIEFNLCBEYW5pZWwgVmV0dGVyIHdyb3Rl
+Ogo+IE9uIE1vbiwgSnVsIDA2LCAyMDE1IGF0IDExOjIwOjEzQU0gLTAzMDAsIEd1c3Rhdm8gUGFk
+b3ZhbiB3cm90ZToKPj4gRnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
+bGFib3JhLmNvLnVrPgo+Pgo+PiBzdHJ1Y3QgZHJtX2NydGMgYWxyZWFkeSBzdG9yZXMgdGhlIGVu
+YWJsZWQgc3RhdGUgb2YgdGhlIGNydGMKPj4gdGh1cyB3ZSBkb24ndCBuZWVkIHRvIHJlcGxpY2F0
+ZSBlbmFibGVkIGluIGV4eW5vc19kcm1fY3J0Yy4KPj4KCkkgdGhpbmsgZXh5bm9zX2NydGMtPmVu
+YWJsZWQgY2FuIHJlcGxhY2UgZmxhZ3MgZm9yIHBvd2VyIHN0YXRlIG9mIGVhY2gKaHcgZHJpdmVy
+KGUuZy4gInBvd2VyZWQiIG9mIG1peGVyIGRyaXZlciwgInN1c3BlbmRlZCIgb2YgZmltZCBkcml2
+ZXIpLgpGdXJ0aGVyLCB3ZSBjYW4gYWRkIG90aGVyIGZsYWcgYml0IGZvciBpbnN0ZWFkIG9mIHVz
+aW5nIHNwZWNpYWwgZmxhZwppbiBodyBkcml2ZXIgbGlrZSB2c3luYyBzdGF0ZSgiaW50X2VuIiBv
+ZiBtaXhlciBkcml2ZXIsICJpcnFfZmxhZ3MiIG9mCmZpbWQgZHJpdmVyLikKCj4+IFNpZ25lZC1v
+ZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4K
+PiAKPiBOb3RlIHRoYXQgZXh5bm9zX2NydGMtPmVuYWJsZWQgZG9lc24ndCBtYXRjaCBkcm1fY3J0
+Yy0+ZW5hYmxlZCBwZXJmZWN0bHkKPiBzaW5jZSB0aGUgZXh5bm9zIG9uZSByZWZsZWN0IGh3IHN0
+YXRlIChpbmNsdWRpbmcgZHBtcykuIFlvdSB3YW50IHRvIGxvb2sKPiBhdCBjcnRjLT5zdGF0ZS0+
+YWN0aXZlIGluc3RlYWQgb24gZnVuY3Rpb25zIGVuYWJsaW5nIHN0dWZmLCBhbmQKPiBvbGRfY3J0
+Y19zdGF0ZS0+YWN0aXZlIG9uIGZ1bmN0aW9ucyBkaXNhYmxpbmcgc3R1ZmYgKHdlIGRvbid0IHdp
+cmUgdGhhdAo+IHRocm91Z2ggZXZlcnl3aGVyZSB5ZXQpLgo+IC1EYW5pZWwKPiAKPj4gLS0tCj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIHwgMTYgLS0tLS0tLS0t
+LS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICB8ICAx
+IC0KPj4gIDIgZmlsZXMgY2hhbmdlZCwgMTcgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+PiBpbmRleCA5YmMyMzUzLi41YWI4OTcyIDEw
+MDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPj4gQEAgLTI2
+LDE0ICsyNiw5IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19lbmFibGUoc3RydWN0IGRy
+bV9jcnRjICpjcnRjKQo+PiAgewo+PiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19j
+cnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4+ICAKPj4gLQlpZiAoZXh5bm9zX2NydGMtPmVu
+YWJsZWQpCj4+IC0JCXJldHVybjsKPj4gLQo+PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5lbmFi
+bGUpCj4+ICAJCWV4eW5vc19jcnRjLT5vcHMtPmVuYWJsZShleHlub3NfY3J0Yyk7Cj4+ICAKPj4g
+LQlleHlub3NfY3J0Yy0+ZW5hYmxlZCA9IHRydWU7Cj4+IC0KPj4gIAlkcm1fY3J0Y192Ymxhbmtf
+b24oY3J0Yyk7Cj4+ICB9Cj4+ICAKPj4gQEAgLTQxLDkgKzM2LDYgQEAgc3RhdGljIHZvaWQgZXh5
+bm9zX2RybV9jcnRjX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjKQo+PiAgewo+PiAgCXN0
+cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7
+Cj4+ICAKPj4gLQlpZiAoIWV4eW5vc19jcnRjLT5lbmFibGVkKQo+PiAtCQlyZXR1cm47Cj4+IC0K
+Pj4gIAkvKiB3YWl0IGZvciB0aGUgY29tcGxldGlvbiBvZiBwYWdlIGZsaXAuICovCj4+ICAJaWYg
+KCF3YWl0X2V2ZW50X3RpbWVvdXQoZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcF9xdWV1ZSwKPj4g
+IAkJCQkoZXh5bm9zX2NydGMtPmV2ZW50ID09IE5VTEwpLCBIWi8yMCkpCj4+IEBAIC01Myw4ICs0
+NSw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fY3J0Y19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0
+YyAqY3J0YykKPj4gIAo+PiAgCWlmIChleHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlKQo+PiAgCQll
+eHlub3NfY3J0Yy0+b3BzLT5kaXNhYmxlKGV4eW5vc19jcnRjKTsKPj4gLQo+PiAtCWV4eW5vc19j
+cnRjLT5lbmFibGVkID0gZmFsc2U7Cj4+ICB9Cj4+ICAKPj4gIHN0YXRpYyBib29sCj4+IEBAIC0x
+NzEsOSArMTYxLDYgQEAgaW50IGV4eW5vc19kcm1fY3J0Y19lbmFibGVfdmJsYW5rKHN0cnVjdCBk
+cm1fZGV2aWNlICpkZXYsIGludCBwaXBlKQo+PiAgCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4
+eW5vc19jcnRjID0KPj4gIAkJdG9fZXh5bm9zX2NydGMocHJpdmF0ZS0+Y3J0Y1twaXBlXSk7Cj4+
+ICAKPj4gLQlpZiAoIWV4eW5vc19jcnRjLT5lbmFibGVkKQo+PiAtCQlyZXR1cm4gLUVQRVJNOwo+
+PiAtCj4+ICAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPmVuYWJsZV92YmxhbmspCj4+ICAJCXJldHVy
+biBleHlub3NfY3J0Yy0+b3BzLT5lbmFibGVfdmJsYW5rKGV4eW5vc19jcnRjKTsKPj4gIAo+PiBA
+QCAtMTg2LDkgKzE3Myw2IEBAIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGVfdmJsYW5rKHN0
+cnVjdCBkcm1fZGV2aWNlICpkZXYsIGludCBwaXBlKQo+PiAgCXN0cnVjdCBleHlub3NfZHJtX2Ny
+dGMgKmV4eW5vc19jcnRjID0KPj4gIAkJdG9fZXh5bm9zX2NydGMocHJpdmF0ZS0+Y3J0Y1twaXBl
+XSk7Cj4+ICAKPj4gLQlpZiAoIWV4eW5vc19jcnRjLT5lbmFibGVkKQo+PiAtCQlyZXR1cm47Cj4+
+IC0KPj4gIAlpZiAoZXh5bm9zX2NydGMtPm9wcy0+ZGlzYWJsZV92YmxhbmspCj4+ICAJCWV4eW5v
+c19jcnRjLT5vcHMtPmRpc2FibGVfdmJsYW5rKGV4eW5vc19jcnRjKTsKPj4gIH0KPj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+PiBpbmRleCA1YmQxZDNjLi5kM2E4ZjBh
+IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgK
+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+IEBAIC0x
+ODUsNyArMTg1LDYgQEAgc3RydWN0IGV4eW5vc19kcm1fY3J0YyB7Cj4+ICAJc3RydWN0IGRybV9j
+cnRjCQkJYmFzZTsKPj4gIAllbnVtIGV4eW5vc19kcm1fb3V0cHV0X3R5cGUJdHlwZTsKPj4gIAl1
+bnNpZ25lZCBpbnQJCQlwaXBlOwo+PiAtCWJvb2wJCQkJZW5hYmxlZDsKPj4gIAl3YWl0X3F1ZXVl
+X2hlYWRfdAkJcGVuZGluZ19mbGlwX3F1ZXVlOwo+PiAgCXN0cnVjdCBkcm1fcGVuZGluZ192Ymxh
+bmtfZXZlbnQJKmV2ZW50Owo+PiAgCWNvbnN0IHN0cnVjdCBleHlub3NfZHJtX2NydGNfb3BzCSpv
+cHM7Cj4+IC0tIAo+PiAyLjEuMAo+Pgo+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
