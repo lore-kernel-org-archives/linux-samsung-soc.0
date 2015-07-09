@@ -1,108 +1,131 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/7] drm/exynos/hdmi: remove old platform data code
-Date: Thu, 09 Jul 2015 16:28:06 +0200
-Message-ID: <1436452092-20757-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 4/7] drm/exynos/hdmi: add driver data pointer to private
+ context
+Date: Thu, 09 Jul 2015 16:28:09 +0200
+Message-ID: <1436452092-20757-5-git-send-email-a.hajda@samsung.com>
 References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44869 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752638AbbGIO2Z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jul 2015 10:28:25 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NR800CV75J8OI70@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Jul 2015 15:28:20 +0100 (BST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-s5p_hdmi_platform_data were used before device tree introduction.
-As HDMI driver is DT only we can drop this struct completely.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 36 +++++-------------------------------
- 1 file changed, 5 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 4a00990..3cf09bb 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -48,7 +48,6 @@
- #include "exynos_mixer.h"
- 
- #include <linux/gpio.h>
--#include <media/s5p_hdmi.h>
- 
- #define ctx_from_connector(c)	container_of(c, struct hdmi_context, connector)
- 
-@@ -2259,30 +2258,6 @@ fail:
- 	return ret;
- }
- 
--static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
--					(struct device *dev)
--{
--	struct device_node *np = dev->of_node;
--	struct s5p_hdmi_platform_data *pd;
--	u32 value;
--
--	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
--	if (!pd)
--		goto err_data;
--
--	if (!of_find_property(np, "hpd-gpio", &value)) {
--		DRM_ERROR("no hpd gpio property found\n");
--		goto err_data;
--	}
--
--	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
--
--	return pd;
--
--err_data:
--	return NULL;
--}
--
- static struct of_device_id hdmi_match_types[] = {
- 	{
- 		.compatible = "samsung,exynos5-hdmi",
-@@ -2343,7 +2318,6 @@ static struct device_node *hdmi_legacy_phy_dt_binding(struct device *dev)
- static int hdmi_probe(struct platform_device *pdev)
- {
- 	struct device_node *ddc_node, *phy_node;
--	struct s5p_hdmi_platform_data *pdata;
- 	struct hdmi_driver_data *drv_data;
- 	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
-@@ -2354,10 +2328,6 @@ static int hdmi_probe(struct platform_device *pdev)
- 	if (!dev->of_node)
- 		return -ENODEV;
- 
--	pdata = drm_hdmi_dt_parse_pdata(dev);
--	if (!pdata)
--		return -EINVAL;
--
- 	hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
- 	if (!hdata)
- 		return -ENOMEM;
-@@ -2378,8 +2348,12 @@ static int hdmi_probe(struct platform_device *pdev)
- 	hdata->phy_confs = drv_data->phy_confs;
- 	hdata->phy_conf_count = drv_data->phy_conf_count;
- 
--	hdata->hpd_gpio = pdata->hpd_gpio;
- 	hdata->dev = dev;
-+	hdata->hpd_gpio = of_get_named_gpio(dev->of_node, "hpd-gpio", 0);
-+	if (hdata->hpd_gpio < 0) {
-+		DRM_ERROR("cannot get hpd gpio property\n");
-+		return hdata->hpd_gpio;
-+	}
- 
- 	ret = hdmi_resources_init(hdata);
- 	if (ret) {
--- 
-1.9.1
+VGhlIHBhdGNoIHJlcGxhY2VzIGR1cGxpY2F0ZWQgZHJpdmVyIGRhdGEgZmllbGRzIGluIHByaXZh
+dGUgY29udGV4dCB3aXRoCnBvaW50ZXIgdG8gZHJpdmVyIGRhdGEuIEl0IGFsc28gc2ltcGxpZmll
+cyBkcml2ZXIgZGF0YSBsb29rdXAgY29kZS4KClNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEg
+PGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+aGRtaS5jIHwgNDkgKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUg
+Y2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfaGRtaS5jCmluZGV4IGYyZTkwOWQuLmY5YzRkZTEgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19oZG1pLmMKQEAgLTMyLDggKzMyLDggQEAKICNpbmNsdWRlIDxsaW51eC9j
+bGsuaD4KICNpbmNsdWRlIDxsaW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4KICNpbmNsdWRlIDxs
+aW51eC9pby5oPgotI2luY2x1ZGUgPGxpbnV4L29mLmg+CiAjaW5jbHVkZSA8bGludXgvb2ZfYWRk
+cmVzcy5oPgorI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPgogI2luY2x1ZGUgPGxpbnV4L29m
+X2dwaW8uaD4KICNpbmNsdWRlIDxsaW51eC9oZG1pLmg+CiAjaW5jbHVkZSA8bGludXgvY29tcG9u
+ZW50Lmg+CkBAIC0yMDAsMTQgKzIwMCwxMiBAQCBzdHJ1Y3QgaGRtaV9jb250ZXh0IHsKIAlzdHJ1
+Y3QgaGRtaV9jb25mX3JlZ3MJCW1vZGVfY29uZjsKIAogCXN0cnVjdCBoZG1pX3Jlc291cmNlcwkJ
+cmVzOworCWNvbnN0IHN0cnVjdCBoZG1pX2RyaXZlcl9kYXRhCSpkcnZfZGF0YTsKIAogCWludAkJ
+CQlocGRfZ3BpbzsKIAl2b2lkIF9faW9tZW0JCQkqcmVnc19oZG1pcGh5OwotCWNvbnN0IHN0cnVj
+dCBoZG1pcGh5X2NvbmZpZwkJKnBoeV9jb25mczsKLQl1bnNpZ25lZCBpbnQJCQlwaHlfY29uZl9j
+b3VudDsKIAogCXN0cnVjdCByZWdtYXAJCQkqcG11cmVnOwotCWVudW0gaGRtaV90eXBlCQkJdHlw
+ZTsKIH07CiAKIHN0YXRpYyBpbmxpbmUgc3RydWN0IGhkbWlfY29udGV4dCAqZGlzcGxheV90b19o
+ZG1pKHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmQpCkBAIC05MjYsNyArOTI0LDcgQEAgc3Rh
+dGljIHZvaWQgaGRtaV92MTRfcmVnc19kdW1wKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCBj
+aGFyICpwcmVmaXgpCiAKIHN0YXRpYyB2b2lkIGhkbWlfcmVnc19kdW1wKHN0cnVjdCBoZG1pX2Nv
+bnRleHQgKmhkYXRhLCBjaGFyICpwcmVmaXgpCiB7Ci0JaWYgKGhkYXRhLT50eXBlID09IEhETUlf
+VFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpCiAJCWhk
+bWlfdjEzX3JlZ3NfZHVtcChoZGF0YSwgcHJlZml4KTsKIAllbHNlCiAJCWhkbWlfdjE0X3JlZ3Nf
+ZHVtcChoZGF0YSwgcHJlZml4KTsKQEAgLTEwODcsOCArMTA4NSw4IEBAIHN0YXRpYyBpbnQgaGRt
+aV9maW5kX3BoeV9jb25mKHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLCB1MzIgcGl4ZWxfY2xv
+Y2spCiB7CiAJaW50IGk7CiAKLQlmb3IgKGkgPSAwOyBpIDwgaGRhdGEtPnBoeV9jb25mX2NvdW50
+OyBpKyspCi0JCWlmIChoZGF0YS0+cGh5X2NvbmZzW2ldLnBpeGVsX2Nsb2NrID09IHBpeGVsX2Ns
+b2NrKQorCWZvciAoaSA9IDA7IGkgPCBoZGF0YS0+ZHJ2X2RhdGEtPnBoeV9jb25mX2NvdW50OyBp
+KyspCisJCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnBoeV9jb25mc1tpXS5waXhlbF9jbG9jayA9PSBw
+aXhlbF9jbG9jaykKIAkJCXJldHVybiBpOwogCiAJRFJNX0RFQlVHX0tNUygiQ291bGQgbm90IGZp
+bmQgcGh5IGNvbmZpZyBmb3IgJWRcbiIsIHBpeGVsX2Nsb2NrKTsKQEAgLTEyNTMsNyArMTI1MSw3
+IEBAIHN0YXRpYyB2b2lkIGhkbWlfcmVnX2FjcihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwg
+dTggKmFjcikKIAloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQUNSX0NUUzEsIGFjclsyXSk7
+CiAJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0FDUl9DVFMyLCBhY3JbMV0pOwogCi0JaWYg
+KGhkYXRhLT50eXBlID09IEhETUlfVFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUg
+PT0gSERNSV9UWVBFMTMpCiAJCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WMTNfQUNSX0NP
+TiwgNCk7CiAJZWxzZQogCQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfQUNSX0NPTiwgNCk7
+CkBAIC0xMzg3LDcgKzEzODUsNyBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbmZfaW5pdChzdHJ1Y3Qg
+aGRtaV9jb250ZXh0ICpoZGF0YSkKIAkJCQlIRE1JX1ZJRF9QUkVBTUJMRV9ESVMgfCBIRE1JX0dV
+QVJEX0JBTkRfRElTKTsKIAl9CiAKLQlpZiAoaGRhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpIHsK
+KwlpZiAoaGRhdGEtPmRydl9kYXRhLT50eXBlID09IEhETUlfVFlQRTEzKSB7CiAJCS8qIGNob29z
+ZSBibHVlc2NyZWVuIChmZWNhbCkgY29sb3IgKi8KIAkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
+RE1JX1YxM19CTFVFX1NDUkVFTl8wLCAweDEyKTsKIAkJaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
+RE1JX1YxM19CTFVFX1NDUkVFTl8xLCAweDM0KTsKQEAgLTE2NjYsNyArMTY2NCw3IEBAIHN0YXRp
+YyB2b2lkIGhkbWlfdjE0X21vZGVfYXBwbHkoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiAK
+IHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkK
+IHsKLQlpZiAoaGRhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpCisJaWYgKGhkYXRhLT5kcnZfZGF0
+YS0+dHlwZSA9PSBIRE1JX1RZUEUxMykKIAkJaGRtaV92MTNfbW9kZV9hcHBseShoZGF0YSk7CiAJ
+ZWxzZQogCQloZG1pX3YxNF9tb2RlX2FwcGx5KGhkYXRhKTsKQEAgLTE2ODQsNyArMTY4Miw3IEBA
+IHN0YXRpYyB2b2lkIGhkbWlwaHlfY29uZl9yZXNldChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0
+YSkKIAloZG1pcGh5X3JlZ193cml0ZWIoaGRhdGEsIEhETUlQSFlfTU9ERV9TRVRfRE9ORSwKIAkJ
+CQlIRE1JX1BIWV9FTkFCTEVfTU9ERV9TRVQpOwogCi0JaWYgKGhkYXRhLT50eXBlID09IEhETUlf
+VFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUgPT0gSERNSV9UWVBFMTMpCiAJCXJl
+ZyA9IEhETUlfVjEzX1BIWV9SU1RPVVQ7CiAJZWxzZQogCQlyZWcgPSBIRE1JX1BIWV9SU1RPVVQ7
+CkBAIC0xNjk4LDcgKzE2OTYsNyBAQCBzdGF0aWMgdm9pZCBoZG1pcGh5X2NvbmZfcmVzZXQoc3Ry
+dWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCiAKIHN0YXRpYyB2b2lkIGhkbWlwaHlfcG93ZXJvbihz
+dHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsKLQlpZiAoaGRhdGEtPnR5cGUgIT0gSERNSV9U
+WVBFMTQpCisJaWYgKGhkYXRhLT5kcnZfZGF0YS0+dHlwZSAhPSBIRE1JX1RZUEUxNCkKIAkJcmV0
+dXJuOwogCiAJRFJNX0RFQlVHX0tNUygiXG4iKTsKQEAgLTE3MTgsNyArMTcxNiw3IEBAIHN0YXRp
+YyB2b2lkIGhkbWlwaHlfcG93ZXJvbihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIAogc3Rh
+dGljIHZvaWQgaGRtaXBoeV9wb3dlcm9mZihzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIHsK
+LQlpZiAoaGRhdGEtPnR5cGUgIT0gSERNSV9UWVBFMTQpCisJaWYgKGhkYXRhLT5kcnZfZGF0YS0+
+dHlwZSAhPSBIRE1JX1RZUEUxNCkKIAkJcmV0dXJuOwogCiAJRFJNX0RFQlVHX0tNUygiXG4iKTsK
+QEAgLTE3NTAsNyArMTc0OCw4IEBAIHN0YXRpYyB2b2lkIGhkbWlwaHlfY29uZl9hcHBseShzdHJ1
+Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSkKIAkJcmV0dXJuOwogCX0KIAotCXJldCA9IGhkbWlwaHlf
+cmVnX3dyaXRlX2J1ZihoZGF0YSwgMCwgaGRhdGEtPnBoeV9jb25mc1tpXS5jb25mLCAzMik7CisJ
+cmV0ID0gaGRtaXBoeV9yZWdfd3JpdGVfYnVmKGhkYXRhLCAwLAorCQkJaGRhdGEtPmRydl9kYXRh
+LT5waHlfY29uZnNbaV0uY29uZiwgMzIpOwogCWlmIChyZXQpIHsKIAkJRFJNX0VSUk9SKCJmYWls
+ZWQgdG8gY29uZmlndXJlIGhkbWlwaHlcbiIpOwogCQlyZXR1cm47CkBAIC0yMDE1LDcgKzIwMTQs
+NyBAQCBzdGF0aWMgdm9pZCBoZG1pX21vZGVfc2V0KHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkg
+KmRpc3BsYXksCiAJLyogcHJlc2VydmUgbW9kZSBpbmZvcm1hdGlvbiBmb3IgbGF0ZXIgdXNlLiAq
+LwogCWRybV9tb2RlX2NvcHkoJmhkYXRhLT5jdXJyZW50X21vZGUsIG1vZGUpOwogCi0JaWYgKGhk
+YXRhLT50eXBlID09IEhETUlfVFlQRTEzKQorCWlmIChoZGF0YS0+ZHJ2X2RhdGEtPnR5cGUgPT0g
+SERNSV9UWVBFMTMpCiAJCWhkbWlfdjEzX21vZGVfc2V0KGhkYXRhLCBtb2RlKTsKIAllbHNlCiAJ
+CWhkbWlfdjE0X21vZGVfc2V0KGhkYXRhLCBtb2RlKTsKQEAgLTIyOTQsMzQgKzIyOTMsMjYgQEAg
+c3RhdGljIHN0cnVjdCBkZXZpY2Vfbm9kZSAqaGRtaV9sZWdhY3lfcGh5X2R0X2JpbmRpbmcoc3Ry
+dWN0IGRldmljZSAqZGV2KQogc3RhdGljIGludCBoZG1pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
+ZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0IGRldmljZV9ub2RlICpkZGNfbm9kZSwgKnBoeV9ub2Rl
+OwotCXN0cnVjdCBoZG1pX2RyaXZlcl9kYXRhICpkcnZfZGF0YTsKIAljb25zdCBzdHJ1Y3Qgb2Zf
+ZGV2aWNlX2lkICptYXRjaDsKIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2OwogCXN0
+cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhOwogCXN0cnVjdCByZXNvdXJjZSAqcmVzOwogCWludCBy
+ZXQ7CiAKLQlpZiAoIWRldi0+b2Zfbm9kZSkKLQkJcmV0dXJuIC1FTk9ERVY7Ci0KIAloZGF0YSA9
+IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZihzdHJ1Y3QgaGRtaV9jb250ZXh0KSwgR0ZQX0tFUk5F
+TCk7CiAJaWYgKCFoZGF0YSkKIAkJcmV0dXJuIC1FTk9NRU07CiAKKwltYXRjaCA9IG9mX21hdGNo
+X2RldmljZShoZG1pX21hdGNoX3R5cGVzLCBkZXYpOworCWlmICghbWF0Y2gpCisJCXJldHVybiAt
+RU5PREVWOworCisJaGRhdGEtPmRydl9kYXRhID0gbWF0Y2gtPmRhdGE7CiAJaGRhdGEtPmRpc3Bs
+YXkudHlwZSA9IEVYWU5PU19ESVNQTEFZX1RZUEVfSERNSTsKIAloZGF0YS0+ZGlzcGxheS5vcHMg
+PSAmaGRtaV9kaXNwbGF5X29wczsKIAogCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIGhkYXRh
+KTsKIAotCW1hdGNoID0gb2ZfbWF0Y2hfbm9kZShoZG1pX21hdGNoX3R5cGVzLCBkZXYtPm9mX25v
+ZGUpOwotCWlmICghbWF0Y2gpCi0JCXJldHVybiAtRU5PREVWOwotCi0JZHJ2X2RhdGEgPSAoc3Ry
+dWN0IGhkbWlfZHJpdmVyX2RhdGEgKiltYXRjaC0+ZGF0YTsKLQloZGF0YS0+dHlwZSA9IGRydl9k
+YXRhLT50eXBlOwotCWhkYXRhLT5waHlfY29uZnMgPSBkcnZfZGF0YS0+cGh5X2NvbmZzOwotCWhk
+YXRhLT5waHlfY29uZl9jb3VudCA9IGRydl9kYXRhLT5waHlfY29uZl9jb3VudDsKLQogCWhkYXRh
+LT5kZXYgPSBkZXY7CiAJaGRhdGEtPmhwZF9ncGlvID0gb2ZfZ2V0X25hbWVkX2dwaW8oZGV2LT5v
+Zl9ub2RlLCAiaHBkLWdwaW8iLCAwKTsKIAlpZiAoaGRhdGEtPmhwZF9ncGlvIDwgMCkgewpAQCAt
+MjM3OSw3ICsyMzcwLDcgQEAgb3V0X2dldF9kZGNfYWRwdDoKIAl9CiAKIG91dF9nZXRfcGh5X3Bv
+cnQ6Ci0JaWYgKGRydl9kYXRhLT5pc19hcGJfcGh5KSB7CisJaWYgKGhkYXRhLT5kcnZfZGF0YS0+
+aXNfYXBiX3BoeSkgewogCQloZGF0YS0+cmVnc19oZG1pcGh5ID0gb2ZfaW9tYXAocGh5X25vZGUs
+IDApOwogCQlpZiAoIWhkYXRhLT5yZWdzX2hkbWlwaHkpIHsKIAkJCURSTV9FUlJPUigiZmFpbGVk
+IHRvIGlvcmVtYXAgaGRtaSBwaHlcbiIpOwotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
