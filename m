@@ -1,383 +1,395 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/7] drm/exynos/hdmi: remove hdmi_v13_conf struct
-Date: Thu, 09 Jul 2015 16:28:11 +0200
-Message-ID: <1436452092-20757-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 7/7] drm/exynos/hdmi: remove hdmi_v14_conf struct
+Date: Thu, 09 Jul 2015 16:28:12 +0200
+Message-ID: <1436452092-20757-8-git-send-email-a.hajda@samsung.com>
 References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46354 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752732AbbGIO2a (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jul 2015 10:28:30 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NR800DWS5JE2F70@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Jul 2015 15:28:26 +0100 (BST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch removes intermediate struct for HDMIv13 register configuration,
-instead registry values are calculated on the fly.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 280 +++++++++++++----------------------
- 1 file changed, 101 insertions(+), 179 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index a3fe2f0..60663ad 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -107,19 +107,6 @@ struct hdmi_tg_regs {
- 	u8 tg_3d[1];
- };
- 
--struct hdmi_v13_core_regs {
--	u8 h_blank[2];
--	u8 v_blank[3];
--	u8 h_v_line[3];
--	u8 vsync_pol[1];
--	u8 int_pro_mode[1];
--	u8 v_blank_f[3];
--	u8 h_sync_gen[3];
--	u8 v_sync_gen1[3];
--	u8 v_sync_gen2[3];
--	u8 v_sync_gen3[3];
--};
--
- struct hdmi_v14_core_regs {
- 	u8 h_blank[2];
- 	u8 v2_blank[2];
-@@ -159,21 +146,11 @@ struct hdmi_v14_core_regs {
- 	u8 vact_space_6[2];
- };
- 
--struct hdmi_v13_conf {
--	struct hdmi_v13_core_regs core;
--	struct hdmi_tg_regs tg;
--};
--
- struct hdmi_v14_conf {
- 	struct hdmi_v14_core_regs core;
- 	struct hdmi_tg_regs tg;
- };
- 
--union hdmi_conf_regs {
--	struct hdmi_v13_conf v13_conf;
--	struct hdmi_v14_conf v14_conf;
--};
--
- struct hdmi_context {
- 	struct exynos_drm_display	display;
- 	struct device			*dev;
-@@ -193,7 +170,7 @@ struct hdmi_context {
- 	/* current hdmiphy conf regs */
- 	struct drm_display_mode		current_mode;
- 	u8				cea_video_id;
--	union hdmi_conf_regs		mode_conf;
-+	struct hdmi_v14_conf		mode_conf;
- 
- 	struct hdmi_resources		res;
- 	const struct hdmi_driver_data	*drv_data;
-@@ -614,6 +591,16 @@ static inline void hdmi_reg_writeb(struct hdmi_context *hdata,
- 	writeb(value, hdata->regs + reg_id);
- }
- 
-+static inline void hdmi_reg_writev(struct hdmi_context *hdata, u32 reg_id,
-+				   int bytes, u32 val)
-+{
-+	while (--bytes >= 0) {
-+		writeb(val & 0xff, hdata->regs + reg_id);
-+		val >>= 8;
-+		reg_id += 4;
-+	}
-+}
-+
- static inline void hdmi_reg_writemask(struct hdmi_context *hdata,
- 				 u32 reg_id, u32 value, u32 mask)
- {
-@@ -1409,65 +1396,94 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
- 
- static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- {
--	const struct hdmi_tg_regs *tg = &hdata->mode_conf.v13_conf.tg;
--	const struct hdmi_v13_core_regs *core = &hdata->mode_conf.v13_conf.core;
-+	struct drm_display_mode *m = &hdata->current_mode;
-+	unsigned int val;
- 	int tries;
- 
--	/* setting core registers */
--	hdmi_reg_writeb(hdata, HDMI_H_BLANK_0, core->h_blank[0]);
--	hdmi_reg_writeb(hdata, HDMI_H_BLANK_1, core->h_blank[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_BLANK_0, core->v_blank[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_BLANK_1, core->v_blank[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_BLANK_2, core->v_blank[2]);
--	hdmi_reg_writeb(hdata, HDMI_V13_H_V_LINE_0, core->h_v_line[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_H_V_LINE_1, core->h_v_line[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_H_V_LINE_2, core->h_v_line[2]);
--	hdmi_reg_writeb(hdata, HDMI_VSYNC_POL, core->vsync_pol[0]);
--	hdmi_reg_writeb(hdata, HDMI_INT_PRO_MODE, core->int_pro_mode[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_BLANK_F_0, core->v_blank_f[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_BLANK_F_1, core->v_blank_f[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_BLANK_F_2, core->v_blank_f[2]);
--	hdmi_reg_writeb(hdata, HDMI_V13_H_SYNC_GEN_0, core->h_sync_gen[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_H_SYNC_GEN_1, core->h_sync_gen[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_H_SYNC_GEN_2, core->h_sync_gen[2]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_1_0, core->v_sync_gen1[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_1_1, core->v_sync_gen1[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_1_2, core->v_sync_gen1[2]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_2_0, core->v_sync_gen2[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_2_1, core->v_sync_gen2[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_2_2, core->v_sync_gen2[2]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_3_0, core->v_sync_gen3[0]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_3_1, core->v_sync_gen3[1]);
--	hdmi_reg_writeb(hdata, HDMI_V13_V_SYNC_GEN_3_2, core->v_sync_gen3[2]);
-+	hdmi_reg_writev(hdata, HDMI_H_BLANK_0, 2, m->htotal - m->hdisplay);
-+	hdmi_reg_writev(hdata, HDMI_V13_H_V_LINE_0, 3,
-+			(m->htotal << 12) | m->vtotal);
-+
-+	val = (m->flags & DRM_MODE_FLAG_NVSYNC) ? 1 : 0;
-+	hdmi_reg_writev(hdata, HDMI_VSYNC_POL, 1, val);
-+
-+	val = (m->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0;
-+	hdmi_reg_writev(hdata, HDMI_INT_PRO_MODE, 1, val);
-+
-+	val = (m->hsync_start - m->hdisplay - 2);
-+	val |= ((m->hsync_end - m->hdisplay - 2) << 10);
-+	val |= ((m->flags & DRM_MODE_FLAG_NHSYNC)  ? 1 : 0)<<20;
-+	hdmi_reg_writev(hdata, HDMI_V13_H_SYNC_GEN_0, 3, val);
-+
-+	/*
-+	 * Quirk requirement for exynos HDMI IP design,
-+	 * 2 pixels less than the actual calculation for hsync_start
-+	 * and end.
-+	 */
-+
-+	/* Following values & calculations differ for different type of modes */
-+	if (m->flags & DRM_MODE_FLAG_INTERLACE) {
-+		/* Interlaced Mode */
-+		val = ((m->vsync_end - m->vdisplay) / 2);
-+		val |= ((m->vsync_start - m->vdisplay) / 2) << 12;
-+		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_1_0, 3, val);
-+
-+		val = m->vtotal / 2;
-+		val |= ((m->vtotal - m->vdisplay) / 2) << 11;
-+		hdmi_reg_writev(hdata, HDMI_V13_V_BLANK_0, 3, val);
-+
-+		val = (m->vtotal +
-+			((m->vsync_end - m->vsync_start) * 4) + 5) / 2;
-+		val |= m->vtotal << 11;
-+		hdmi_reg_writev(hdata, HDMI_V13_V_BLANK_F_0, 3, val);
-+
-+		val = ((m->vtotal / 2) + 7);
-+		val |= ((m->vtotal / 2) + 2) << 12;
-+		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_2_0, 3, val);
-+
-+		val = ((m->htotal / 2) + (m->hsync_start - m->hdisplay));
-+		val |= ((m->htotal / 2) +
-+			(m->hsync_start - m->hdisplay)) << 12;
-+		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_3_0, 3, val);
-+
-+		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST_L, 2,
-+				(m->vtotal - m->vdisplay) / 2);
-+		hdmi_reg_writev(hdata, HDMI_TG_VACT_SZ_L, 2, m->vdisplay / 2);
-+
-+		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST2_L, 2, 0x249);
-+	} else {
-+		/* Progressive Mode */
-+
-+		val = m->vtotal;
-+		val |= (m->vtotal - m->vdisplay) << 11;
-+		hdmi_reg_writev(hdata, HDMI_V13_V_BLANK_0, 3, val);
-+
-+		hdmi_reg_writev(hdata, HDMI_V13_V_BLANK_F_0, 3, 0);
-+
-+		val = (m->vsync_end - m->vdisplay);
-+		val |= ((m->vsync_start - m->vdisplay) << 12);
-+		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_1_0, 3, val);
-+
-+		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_2_0, 3, 0x1001);
-+		hdmi_reg_writev(hdata, HDMI_V13_V_SYNC_GEN_3_0, 3, 0x1001);
-+		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST_L, 2,
-+				m->vtotal - m->vdisplay);
-+		hdmi_reg_writev(hdata, HDMI_TG_VACT_SZ_L, 2, m->vdisplay);
-+		hdmi_reg_writev(hdata, HDMI_TG_VACT_ST2_L, 2, 0x248);
-+	}
-+
- 	/* Timing generator registers */
--	hdmi_reg_writeb(hdata, HDMI_TG_H_FSZ_L, tg->h_fsz[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_H_FSZ_H, tg->h_fsz[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_HACT_ST_L, tg->hact_st[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_HACT_ST_H, tg->hact_st[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_HACT_SZ_L, tg->hact_sz[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_HACT_SZ_H, tg->hact_sz[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_V_FSZ_L, tg->v_fsz[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_V_FSZ_H, tg->v_fsz[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC_L, tg->vsync[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC_H, tg->vsync[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC2_L, tg->vsync2[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC2_H, tg->vsync2[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VACT_ST_L, tg->vact_st[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VACT_ST_H, tg->vact_st[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VACT_SZ_L, tg->vact_sz[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VACT_SZ_H, tg->vact_sz[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_FIELD_CHG_L, tg->field_chg[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_FIELD_CHG_H, tg->field_chg[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VACT_ST2_L, tg->vact_st2[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VACT_ST2_H, tg->vact_st2[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC_TOP_HDMI_L, tg->vsync_top_hdmi[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC_TOP_HDMI_H, tg->vsync_top_hdmi[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC_BOT_HDMI_L, tg->vsync_bot_hdmi[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_VSYNC_BOT_HDMI_H, tg->vsync_bot_hdmi[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_FIELD_TOP_HDMI_L, tg->field_top_hdmi[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_FIELD_TOP_HDMI_H, tg->field_top_hdmi[1]);
--	hdmi_reg_writeb(hdata, HDMI_TG_FIELD_BOT_HDMI_L, tg->field_bot_hdmi[0]);
--	hdmi_reg_writeb(hdata, HDMI_TG_FIELD_BOT_HDMI_H, tg->field_bot_hdmi[1]);
-+	hdmi_reg_writev(hdata, HDMI_TG_H_FSZ_L, 2, m->htotal);
-+	hdmi_reg_writev(hdata, HDMI_TG_HACT_ST_L, 2, m->htotal - m->hdisplay);
-+	hdmi_reg_writev(hdata, HDMI_TG_HACT_SZ_L, 2, m->hdisplay);
-+	hdmi_reg_writev(hdata, HDMI_TG_V_FSZ_L, 2, m->vtotal);
-+	hdmi_reg_writev(hdata, HDMI_TG_VSYNC_L, 2, 0x1);
-+	hdmi_reg_writev(hdata, HDMI_TG_VSYNC2_L, 2, 0x233);
-+	hdmi_reg_writev(hdata, HDMI_TG_FIELD_CHG_L, 2, 0x233);
-+	hdmi_reg_writev(hdata, HDMI_TG_VSYNC_TOP_HDMI_L, 2, 0x1);
-+	hdmi_reg_writev(hdata, HDMI_TG_VSYNC_BOT_HDMI_L, 2, 0x233);
-+	hdmi_reg_writev(hdata, HDMI_TG_FIELD_TOP_HDMI_L, 2, 0x1);
-+	hdmi_reg_writev(hdata, HDMI_TG_FIELD_BOT_HDMI_L, 2, 0x233);
- 
- 	/* waiting for HDMIPHY's PLL to get to steady state */
- 	for (tries = 100; tries; --tries) {
-@@ -1492,8 +1508,8 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
- 
- static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
- {
--	const struct hdmi_tg_regs *tg = &hdata->mode_conf.v14_conf.tg;
--	const struct hdmi_v14_core_regs *core = &hdata->mode_conf.v14_conf.core;
-+	const struct hdmi_tg_regs *tg = &hdata->mode_conf.tg;
-+	const struct hdmi_v14_core_regs *core = &hdata->mode_conf.core;
- 	int tries;
- 
- 	/* setting core registers */
-@@ -1780,103 +1796,11 @@ static void hdmi_set_reg(u8 *reg_pair, int num_bytes, u32 value)
- 		reg_pair[i] = (value >> (8 * i)) & 0xff;
- }
- 
--static void hdmi_v13_mode_set(struct hdmi_context *hdata,
--			struct drm_display_mode *m)
--{
--	struct hdmi_v13_core_regs *core = &hdata->mode_conf.v13_conf.core;
--	struct hdmi_tg_regs *tg = &hdata->mode_conf.v13_conf.tg;
--	unsigned int val;
--
--	hdmi_set_reg(core->h_blank, 2, m->htotal - m->hdisplay);
--	hdmi_set_reg(core->h_v_line, 3, (m->htotal << 12) | m->vtotal);
--
--	val = (m->flags & DRM_MODE_FLAG_NVSYNC) ? 1 : 0;
--	hdmi_set_reg(core->vsync_pol, 1, val);
--
--	val = (m->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0;
--	hdmi_set_reg(core->int_pro_mode, 1, val);
--
--	val = (m->hsync_start - m->hdisplay - 2);
--	val |= ((m->hsync_end - m->hdisplay - 2) << 10);
--	val |= ((m->flags & DRM_MODE_FLAG_NHSYNC)  ? 1 : 0)<<20;
--	hdmi_set_reg(core->h_sync_gen, 3, val);
--
--	/*
--	 * Quirk requirement for exynos HDMI IP design,
--	 * 2 pixels less than the actual calculation for hsync_start
--	 * and end.
--	 */
--
--	/* Following values & calculations differ for different type of modes */
--	if (m->flags & DRM_MODE_FLAG_INTERLACE) {
--		/* Interlaced Mode */
--		val = ((m->vsync_end - m->vdisplay) / 2);
--		val |= ((m->vsync_start - m->vdisplay) / 2) << 12;
--		hdmi_set_reg(core->v_sync_gen1, 3, val);
--
--		val = m->vtotal / 2;
--		val |= ((m->vtotal - m->vdisplay) / 2) << 11;
--		hdmi_set_reg(core->v_blank, 3, val);
--
--		val = (m->vtotal +
--			((m->vsync_end - m->vsync_start) * 4) + 5) / 2;
--		val |= m->vtotal << 11;
--		hdmi_set_reg(core->v_blank_f, 3, val);
--
--		val = ((m->vtotal / 2) + 7);
--		val |= ((m->vtotal / 2) + 2) << 12;
--		hdmi_set_reg(core->v_sync_gen2, 3, val);
--
--		val = ((m->htotal / 2) + (m->hsync_start - m->hdisplay));
--		val |= ((m->htotal / 2) +
--			(m->hsync_start - m->hdisplay)) << 12;
--		hdmi_set_reg(core->v_sync_gen3, 3, val);
--
--		hdmi_set_reg(tg->vact_st, 2, (m->vtotal - m->vdisplay) / 2);
--		hdmi_set_reg(tg->vact_sz, 2, m->vdisplay / 2);
--
--		hdmi_set_reg(tg->vact_st2, 2, 0x249);/* Reset value + 1*/
--	} else {
--		/* Progressive Mode */
--
--		val = m->vtotal;
--		val |= (m->vtotal - m->vdisplay) << 11;
--		hdmi_set_reg(core->v_blank, 3, val);
--
--		hdmi_set_reg(core->v_blank_f, 3, 0);
--
--		val = (m->vsync_end - m->vdisplay);
--		val |= ((m->vsync_start - m->vdisplay) << 12);
--		hdmi_set_reg(core->v_sync_gen1, 3, val);
--
--		hdmi_set_reg(core->v_sync_gen2, 3, 0x1001);/* Reset value  */
--		hdmi_set_reg(core->v_sync_gen3, 3, 0x1001);/* Reset value  */
--		hdmi_set_reg(tg->vact_st, 2, m->vtotal - m->vdisplay);
--		hdmi_set_reg(tg->vact_sz, 2, m->vdisplay);
--		hdmi_set_reg(tg->vact_st2, 2, 0x248); /* Reset value */
--	}
--
--	/* Timing generator registers */
--	hdmi_set_reg(tg->cmd, 1, 0x0);
--	hdmi_set_reg(tg->h_fsz, 2, m->htotal);
--	hdmi_set_reg(tg->hact_st, 2, m->htotal - m->hdisplay);
--	hdmi_set_reg(tg->hact_sz, 2, m->hdisplay);
--	hdmi_set_reg(tg->v_fsz, 2, m->vtotal);
--	hdmi_set_reg(tg->vsync, 2, 0x1);
--	hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
--	hdmi_set_reg(tg->field_chg, 2, 0x233); /* Reset value */
--	hdmi_set_reg(tg->vsync_top_hdmi, 2, 0x1); /* Reset value */
--	hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
--	hdmi_set_reg(tg->field_top_hdmi, 2, 0x1); /* Reset value */
--	hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
--	hdmi_set_reg(tg->tg_3d, 1, 0x0); /* Not used */
--}
--
- static void hdmi_v14_mode_set(struct hdmi_context *hdata,
- 			struct drm_display_mode *m)
- {
--	struct hdmi_tg_regs *tg = &hdata->mode_conf.v14_conf.tg;
--	struct hdmi_v14_core_regs *core = &hdata->mode_conf.v14_conf.core;
-+	struct hdmi_tg_regs *tg = &hdata->mode_conf.tg;
-+	struct hdmi_v14_core_regs *core = &hdata->mode_conf.core;
- 
- 	hdmi_set_reg(core->h_blank, 2, m->htotal - m->hdisplay);
- 	hdmi_set_reg(core->v_line, 2, m->vtotal);
-@@ -1994,9 +1918,7 @@ static void hdmi_mode_set(struct exynos_drm_display *display,
- 
- 	hdata->cea_video_id = drm_match_cea_mode(mode);
- 
--	if (hdata->drv_data->type == HDMI_TYPE13)
--		hdmi_v13_mode_set(hdata, mode);
--	else
-+	if (hdata->drv_data->type == HDMI_TYPE14)
- 		hdmi_v14_mode_set(hdata, mode);
- }
- 
--- 
-1.9.1
+VGhlIHBhdGNoIHJlbW92ZXMgaW50ZXJtZWRpYXRlIHN0cnVjdCBmb3IgSERNSXYxNCByZWdpc3Rl
+ciBjb25maWd1cmF0aW9uLAppbnN0ZWFkIHJlZ2lzdHJ5IHZhbHVlcyBhcmUgY2FsY3VsYXRlZCBv
+biB0aGUgZmx5LgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5n
+LmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCA0MjcgKysr
+KysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxMDkgaW5z
+ZXJ0aW9ucygrKSwgMzE4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
+bWkuYwppbmRleCA2MDY2M2FkLi40NDhmNTM0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19oZG1pLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+aGRtaS5jCkBAIC04Niw3MSArODYsNiBAQCBzdHJ1Y3QgaGRtaV9yZXNvdXJjZXMgewogCWludAkJ
+CQlyZWd1bF9jb3VudDsKIH07CiAKLXN0cnVjdCBoZG1pX3RnX3JlZ3MgewotCXU4IGNtZFsxXTsK
+LQl1OCBoX2ZzelsyXTsKLQl1OCBoYWN0X3N0WzJdOwotCXU4IGhhY3Rfc3pbMl07Ci0JdTggdl9m
+c3pbMl07Ci0JdTggdnN5bmNbMl07Ci0JdTggdnN5bmMyWzJdOwotCXU4IHZhY3Rfc3RbMl07Ci0J
+dTggdmFjdF9zelsyXTsKLQl1OCBmaWVsZF9jaGdbMl07Ci0JdTggdmFjdF9zdDJbMl07Ci0JdTgg
+dmFjdF9zdDNbMl07Ci0JdTggdmFjdF9zdDRbMl07Ci0JdTggdnN5bmNfdG9wX2hkbWlbMl07Ci0J
+dTggdnN5bmNfYm90X2hkbWlbMl07Ci0JdTggZmllbGRfdG9wX2hkbWlbMl07Ci0JdTggZmllbGRf
+Ym90X2hkbWlbMl07Ci0JdTggdGdfM2RbMV07Ci19OwotCi1zdHJ1Y3QgaGRtaV92MTRfY29yZV9y
+ZWdzIHsKLQl1OCBoX2JsYW5rWzJdOwotCXU4IHYyX2JsYW5rWzJdOwotCXU4IHYxX2JsYW5rWzJd
+OwotCXU4IHZfbGluZVsyXTsKLQl1OCBoX2xpbmVbMl07Ci0JdTggaHN5bmNfcG9sWzFdOwotCXU4
+IHZzeW5jX3BvbFsxXTsKLQl1OCBpbnRfcHJvX21vZGVbMV07Ci0JdTggdl9ibGFua19mMFsyXTsK
+LQl1OCB2X2JsYW5rX2YxWzJdOwotCXU4IGhfc3luY19zdGFydFsyXTsKLQl1OCBoX3N5bmNfZW5k
+WzJdOwotCXU4IHZfc3luY19saW5lX2JlZl8yWzJdOwotCXU4IHZfc3luY19saW5lX2JlZl8xWzJd
+OwotCXU4IHZfc3luY19saW5lX2FmdF8yWzJdOwotCXU4IHZfc3luY19saW5lX2FmdF8xWzJdOwot
+CXU4IHZfc3luY19saW5lX2FmdF9weGxfMlsyXTsKLQl1OCB2X3N5bmNfbGluZV9hZnRfcHhsXzFb
+Ml07Ci0JdTggdl9ibGFua19mMlsyXTsgLyogZm9yIDNEIG1vZGUgKi8KLQl1OCB2X2JsYW5rX2Yz
+WzJdOyAvKiBmb3IgM0QgbW9kZSAqLwotCXU4IHZfYmxhbmtfZjRbMl07IC8qIGZvciAzRCBtb2Rl
+ICovCi0JdTggdl9ibGFua19mNVsyXTsgLyogZm9yIDNEIG1vZGUgKi8KLQl1OCB2X3N5bmNfbGlu
+ZV9hZnRfM1syXTsKLQl1OCB2X3N5bmNfbGluZV9hZnRfNFsyXTsKLQl1OCB2X3N5bmNfbGluZV9h
+ZnRfNVsyXTsKLQl1OCB2X3N5bmNfbGluZV9hZnRfNlsyXTsKLQl1OCB2X3N5bmNfbGluZV9hZnRf
+cHhsXzNbMl07Ci0JdTggdl9zeW5jX2xpbmVfYWZ0X3B4bF80WzJdOwotCXU4IHZfc3luY19saW5l
+X2FmdF9weGxfNVsyXTsKLQl1OCB2X3N5bmNfbGluZV9hZnRfcHhsXzZbMl07Ci0JdTggdmFjdF9z
+cGFjZV8xWzJdOwotCXU4IHZhY3Rfc3BhY2VfMlsyXTsKLQl1OCB2YWN0X3NwYWNlXzNbMl07Ci0J
+dTggdmFjdF9zcGFjZV80WzJdOwotCXU4IHZhY3Rfc3BhY2VfNVsyXTsKLQl1OCB2YWN0X3NwYWNl
+XzZbMl07Ci19OwotCi1zdHJ1Y3QgaGRtaV92MTRfY29uZiB7Ci0Jc3RydWN0IGhkbWlfdjE0X2Nv
+cmVfcmVncyBjb3JlOwotCXN0cnVjdCBoZG1pX3RnX3JlZ3MgdGc7Ci19OwotCiBzdHJ1Y3QgaGRt
+aV9jb250ZXh0IHsKIAlzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5CWRpc3BsYXk7CiAJc3RydWN0
+IGRldmljZQkJCSpkZXY7CkBAIC0xNzAsNyArMTA1LDYgQEAgc3RydWN0IGhkbWlfY29udGV4dCB7
+CiAJLyogY3VycmVudCBoZG1pcGh5IGNvbmYgcmVncyAqLwogCXN0cnVjdCBkcm1fZGlzcGxheV9t
+b2RlCQljdXJyZW50X21vZGU7CiAJdTgJCQkJY2VhX3ZpZGVvX2lkOwotCXN0cnVjdCBoZG1pX3Yx
+NF9jb25mCQltb2RlX2NvbmY7CiAKIAlzdHJ1Y3QgaGRtaV9yZXNvdXJjZXMJCXJlczsKIAljb25z
+dCBzdHJ1Y3QgaGRtaV9kcml2ZXJfZGF0YQkqZHJ2X2RhdGE7CkBAIC0xNTA4LDE0MyArMTQ0Miwx
+MTkgQEAgc3RhdGljIHZvaWQgaGRtaV92MTNfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9jb250ZXh0
+ICpoZGF0YSkKIAogc3RhdGljIHZvaWQgaGRtaV92MTRfbW9kZV9hcHBseShzdHJ1Y3QgaGRtaV9j
+b250ZXh0ICpoZGF0YSkKIHsKLQljb25zdCBzdHJ1Y3QgaGRtaV90Z19yZWdzICp0ZyA9ICZoZGF0
+YS0+bW9kZV9jb25mLnRnOwotCWNvbnN0IHN0cnVjdCBoZG1pX3YxNF9jb3JlX3JlZ3MgKmNvcmUg
+PSAmaGRhdGEtPm1vZGVfY29uZi5jb3JlOworCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptID0g
+JmhkYXRhLT5jdXJyZW50X21vZGU7CiAJaW50IHRyaWVzOwogCi0JLyogc2V0dGluZyBjb3JlIHJl
+Z2lzdGVycyAqLwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9IX0JMQU5LXzAsIGNvcmUt
+PmhfYmxhbmtbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9IX0JMQU5LXzEsIGNv
+cmUtPmhfYmxhbmtbMV0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WMl9CTEFOS18w
+LCBjb3JlLT52Ml9ibGFua1swXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1YyX0JM
+QU5LXzEsIGNvcmUtPnYyX2JsYW5rWzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlf
+VjFfQkxBTktfMCwgY29yZS0+djFfYmxhbmtbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwg
+SERNSV9WMV9CTEFOS18xLCBjb3JlLT52MV9ibGFua1sxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhk
+YXRhLCBIRE1JX1ZfTElORV8wLCBjb3JlLT52X2xpbmVbMF0pOwotCWhkbWlfcmVnX3dyaXRlYiho
+ZGF0YSwgSERNSV9WX0xJTkVfMSwgY29yZS0+dl9saW5lWzFdKTsKLQloZG1pX3JlZ193cml0ZWIo
+aGRhdGEsIEhETUlfSF9MSU5FXzAsIGNvcmUtPmhfbGluZVswXSk7Ci0JaGRtaV9yZWdfd3JpdGVi
+KGhkYXRhLCBIRE1JX0hfTElORV8xLCBjb3JlLT5oX2xpbmVbMV0pOwotCWhkbWlfcmVnX3dyaXRl
+YihoZGF0YSwgSERNSV9IU1lOQ19QT0wsIGNvcmUtPmhzeW5jX3BvbFswXSk7Ci0JaGRtaV9yZWdf
+d3JpdGViKGhkYXRhLCBIRE1JX1ZTWU5DX1BPTCwgY29yZS0+dnN5bmNfcG9sWzBdKTsKLQloZG1p
+X3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSU5UX1BST19NT0RFLCBjb3JlLT5pbnRfcHJvX21vZGVb
+MF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WX0JMQU5LX0YwXzAsIGNvcmUtPnZf
+YmxhbmtfZjBbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WX0JMQU5LX0YwXzEs
+IGNvcmUtPnZfYmxhbmtfZjBbMV0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WX0JM
+QU5LX0YxXzAsIGNvcmUtPnZfYmxhbmtfZjFbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwg
+SERNSV9WX0JMQU5LX0YxXzEsIGNvcmUtPnZfYmxhbmtfZjFbMV0pOwotCWhkbWlfcmVnX3dyaXRl
+YihoZGF0YSwgSERNSV9IX1NZTkNfU1RBUlRfMCwgY29yZS0+aF9zeW5jX3N0YXJ0WzBdKTsKLQlo
+ZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfSF9TWU5DX1NUQVJUXzEsIGNvcmUtPmhfc3luY19z
+dGFydFsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0hfU1lOQ19FTkRfMCwgY29y
+ZS0+aF9zeW5jX2VuZFswXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX0hfU1lOQ19F
+TkRfMSwgY29yZS0+aF9zeW5jX2VuZFsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1J
+X1ZfU1lOQ19MSU5FX0JFRl8yXzAsCi0JCQljb3JlLT52X3N5bmNfbGluZV9iZWZfMlswXSk7Ci0J
+aGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0JFRl8yXzEsCi0JCQljb3Jl
+LT52X3N5bmNfbGluZV9iZWZfMlsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1Zf
+U1lOQ19MSU5FX0JFRl8xXzAsCi0JCQljb3JlLT52X3N5bmNfbGluZV9iZWZfMVswXSk7Ci0JaGRt
+aV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0JFRl8xXzEsCi0JCQljb3JlLT52
+X3N5bmNfbGluZV9iZWZfMVsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lO
+Q19MSU5FX0FGVF8yXzAsCi0JCQljb3JlLT52X3N5bmNfbGluZV9hZnRfMlswXSk7Ci0JaGRtaV9y
+ZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF8yXzEsCi0JCQljb3JlLT52X3N5
+bmNfbGluZV9hZnRfMlsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19M
+SU5FX0FGVF8xXzAsCi0JCQljb3JlLT52X3N5bmNfbGluZV9hZnRfMVswXSk7Ci0JaGRtaV9yZWdf
+d3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF8xXzEsCi0JCQljb3JlLT52X3N5bmNf
+bGluZV9hZnRfMVsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5F
+X0FGVF9QWExfMl8wLAotCQkJY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF8yWzBdKTsKLQloZG1p
+X3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF8yXzEsCi0JCQljb3Jl
+LT52X3N5bmNfbGluZV9hZnRfcHhsXzJbMV0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERN
+SV9WX1NZTkNfTElORV9BRlRfUFhMXzFfMCwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF9weGxf
+MVswXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExf
+MV8xLAotCQkJY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF8xWzFdKTsKLQloZG1pX3JlZ193cml0
+ZWIoaGRhdGEsIEhETUlfVl9CTEFOS19GMl8wLCBjb3JlLT52X2JsYW5rX2YyWzBdKTsKLQloZG1p
+X3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9CTEFOS19GMl8xLCBjb3JlLT52X2JsYW5rX2YyWzFd
+KTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9CTEFOS19GM18wLCBjb3JlLT52X2Js
+YW5rX2YzWzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9CTEFOS19GM18xLCBj
+b3JlLT52X2JsYW5rX2YzWzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9CTEFO
+S19GNF8wLCBjb3JlLT52X2JsYW5rX2Y0WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhE
+TUlfVl9CTEFOS19GNF8xLCBjb3JlLT52X2JsYW5rX2Y0WzFdKTsKLQloZG1pX3JlZ193cml0ZWIo
+aGRhdGEsIEhETUlfVl9CTEFOS19GNV8wLCBjb3JlLT52X2JsYW5rX2Y1WzBdKTsKLQloZG1pX3Jl
+Z193cml0ZWIoaGRhdGEsIEhETUlfVl9CTEFOS19GNV8xLCBjb3JlLT52X2JsYW5rX2Y1WzFdKTsK
+LQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUXzNfMCwKLQkJCWNv
+cmUtPnZfc3luY19saW5lX2FmdF8zWzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlf
+Vl9TWU5DX0xJTkVfQUZUXzNfMSwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF8zWzFdKTsKLQlo
+ZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUXzRfMCwKLQkJCWNvcmUt
+PnZfc3luY19saW5lX2FmdF80WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9T
+WU5DX0xJTkVfQUZUXzRfMSwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF80WzFdKTsKLQloZG1p
+X3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUXzVfMCwKLQkJCWNvcmUtPnZf
+c3luY19saW5lX2FmdF81WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5D
+X0xJTkVfQUZUXzVfMSwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF81WzFdKTsKLQloZG1pX3Jl
+Z193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUXzZfMCwKLQkJCWNvcmUtPnZfc3lu
+Y19saW5lX2FmdF82WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJ
+TkVfQUZUXzZfMSwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF82WzFdKTsKLQloZG1pX3JlZ193
+cml0ZWIoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF8zXzAsCi0JCQljb3JlLT52X3N5
+bmNfbGluZV9hZnRfcHhsXzNbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WX1NZ
+TkNfTElORV9BRlRfUFhMXzNfMSwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF9weGxfM1sxXSk7
+Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExfNF8wLAot
+CQkJY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF80WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRh
+dGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF80XzEsCi0JCQljb3JlLT52X3N5bmNfbGluZV9h
+ZnRfcHhsXzRbMV0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WX1NZTkNfTElORV9B
+RlRfUFhMXzVfMCwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF9weGxfNVswXSk7Ci0JaGRtaV9y
+ZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExfNV8xLAotCQkJY29yZS0+
+dl9zeW5jX2xpbmVfYWZ0X3B4bF81WzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlf
+Vl9TWU5DX0xJTkVfQUZUX1BYTF82XzAsCi0JCQljb3JlLT52X3N5bmNfbGluZV9hZnRfcHhsXzZb
+MF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WX1NZTkNfTElORV9BRlRfUFhMXzZf
+MSwKLQkJCWNvcmUtPnZfc3luY19saW5lX2FmdF9weGxfNlsxXSk7Ci0JaGRtaV9yZWdfd3JpdGVi
+KGhkYXRhLCBIRE1JX1ZBQ1RfU1BBQ0VfMV8wLCBjb3JlLT52YWN0X3NwYWNlXzFbMF0pOwotCWhk
+bWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WQUNUX1NQQUNFXzFfMSwgY29yZS0+dmFjdF9zcGFj
+ZV8xWzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVkFDVF9TUEFDRV8yXzAsIGNv
+cmUtPnZhY3Rfc3BhY2VfMlswXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZBQ1Rf
+U1BBQ0VfMl8xLCBjb3JlLT52YWN0X3NwYWNlXzJbMV0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0
+YSwgSERNSV9WQUNUX1NQQUNFXzNfMCwgY29yZS0+dmFjdF9zcGFjZV8zWzBdKTsKLQloZG1pX3Jl
+Z193cml0ZWIoaGRhdGEsIEhETUlfVkFDVF9TUEFDRV8zXzEsIGNvcmUtPnZhY3Rfc3BhY2VfM1sx
+XSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1ZBQ1RfU1BBQ0VfNF8wLCBjb3JlLT52
+YWN0X3NwYWNlXzRbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WQUNUX1NQQUNF
+XzRfMSwgY29yZS0+dmFjdF9zcGFjZV80WzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhE
+TUlfVkFDVF9TUEFDRV81XzAsIGNvcmUtPnZhY3Rfc3BhY2VfNVswXSk7Ci0JaGRtaV9yZWdfd3Jp
+dGViKGhkYXRhLCBIRE1JX1ZBQ1RfU1BBQ0VfNV8xLCBjb3JlLT52YWN0X3NwYWNlXzVbMV0pOwot
+CWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9WQUNUX1NQQUNFXzZfMCwgY29yZS0+dmFjdF9z
+cGFjZV82WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVkFDVF9TUEFDRV82XzEs
+IGNvcmUtPnZhY3Rfc3BhY2VfNlsxXSk7CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX0hf
+QkxBTktfMCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkpOworCWhkbWlfcmVnX3dyaXRldiho
+ZGF0YSwgSERNSV9WX0xJTkVfMCwgMiwgbS0+dnRvdGFsKTsKKwloZG1pX3JlZ193cml0ZXYoaGRh
+dGEsIEhETUlfSF9MSU5FXzAsIDIsIG0tPmh0b3RhbCk7CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRh
+LCBIRE1JX0hTWU5DX1BPTCwgMSwKKwkJCShtLT5mbGFncyAmIERSTV9NT0RFX0ZMQUdfTkhTWU5D
+KSAgPyAxIDogMCk7CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZTWU5DX1BPTCwgMSwK
+KwkJCShtLT5mbGFncyAmIERSTV9NT0RFX0ZMQUdfTlZTWU5DKSA/IDEgOiAwKTsKKwloZG1pX3Jl
+Z193cml0ZXYoaGRhdGEsIEhETUlfSU5UX1BST19NT0RFLCAxLAorCQkJKG0tPmZsYWdzICYgRFJN
+X01PREVfRkxBR19JTlRFUkxBQ0UpID8gMSA6IDApOworCisJLyoKKwkgKiBRdWlyayByZXF1aXJl
+bWVudCBmb3IgZXh5bm9zIDUgSERNSSBJUCBkZXNpZ24sCisJICogMiBwaXhlbHMgbGVzcyB0aGFu
+IHRoZSBhY3R1YWwgY2FsY3VsYXRpb24gZm9yIGhzeW5jX3N0YXJ0CisJICogYW5kIGVuZC4KKwkg
+Ki8KKworCS8qIEZvbGxvd2luZyB2YWx1ZXMgJiBjYWxjdWxhdGlvbnMgZGlmZmVyIGZvciBkaWZm
+ZXJlbnQgdHlwZSBvZiBtb2RlcyAqLworCWlmIChtLT5mbGFncyAmIERSTV9NT0RFX0ZMQUdfSU5U
+RVJMQUNFKSB7CisJCS8qIEludGVybGFjZWQgTW9kZSAqLworCQloZG1pX3JlZ193cml0ZXYoaGRh
+dGEsIEhETUlfVl9TWU5DX0xJTkVfQkVGXzJfMCwgMiwKKwkJCShtLT52c3luY19lbmQgLSBtLT52
+ZGlzcGxheSkgLyAyKTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5F
+X0JFRl8xXzAsIDIsCisJCQkobS0+dnN5bmNfc3RhcnQgLSBtLT52ZGlzcGxheSkgLyAyKTsKKwkJ
+aGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1YyX0JMQU5LXzAsIDIsIG0tPnZ0b3RhbCAvIDIp
+OworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVjFfQkxBTktfMCwgMiwKKwkJCQkobS0+
+dnRvdGFsIC0gbS0+dmRpc3BsYXkpIC8gMik7CisJCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERN
+SV9WX0JMQU5LX0YwXzAsIDIsCisJCQkJbS0+dnRvdGFsIC0gbS0+dmRpc3BsYXkgLyAyKTsKKwkJ
+aGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfQkxBTktfRjFfMCwgMiwgbS0+dnRvdGFsKTsK
+KwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF8yXzAsIDIsCisJ
+CQkJKG0tPnZ0b3RhbCAvIDIpICsgNyk7CisJCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9W
+X1NZTkNfTElORV9BRlRfMV8wLCAyLAorCQkJCShtLT52dG90YWwgLyAyKSArIDIpOworCQloZG1p
+X3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF8yXzAsIDIsCisJCQko
+bS0+aHRvdGFsIC8gMikgKyAobS0+aHN5bmNfc3RhcnQgLSBtLT5oZGlzcGxheSkpOworCQloZG1p
+X3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF8xXzAsIDIsCisJCQko
+bS0+aHRvdGFsIC8gMikgKyAobS0+aHN5bmNfc3RhcnQgLSBtLT5oZGlzcGxheSkpOworCQloZG1p
+X3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVkFDVF9TVF9MLCAyLAorCQkJCShtLT52dG90YWwg
+LSBtLT52ZGlzcGxheSkgLyAyKTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX1ZB
+Q1RfU1pfTCwgMiwgbS0+dmRpc3BsYXkgLyAyKTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBI
+RE1JX1RHX1ZBQ1RfU1QyX0wsIDIsCisJCQkJbS0+dnRvdGFsIC0gbS0+dmRpc3BsYXkgLyAyKTsK
+KwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX1ZTWU5DMl9MLCAyLAorCQkJCShtLT52
+dG90YWwgLyAyKSArIDEpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVlNZTkNf
+Qk9UX0hETUlfTCwgMiwKKwkJCQkobS0+dnRvdGFsIC8gMikgKyAxKTsKKwkJaGRtaV9yZWdfd3Jp
+dGV2KGhkYXRhLCBIRE1JX1RHX0ZJRUxEX0JPVF9IRE1JX0wsIDIsCisJCQkJKG0tPnZ0b3RhbCAv
+IDIpICsgMSk7CisJCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9UR19WQUNUX1NUM19MLCAy
+LCAweDApOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVkFDVF9TVDRfTCwgMiwg
+MHgwKTsKKwl9IGVsc2UgeworCQkvKiBQcm9ncmVzc2l2ZSBNb2RlICovCisJCWhkbWlfcmVnX3dy
+aXRldihoZGF0YSwgSERNSV9WX1NZTkNfTElORV9CRUZfMl8wLCAyLAorCQkJbS0+dnN5bmNfZW5k
+IC0gbS0+dmRpc3BsYXkpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJ
+TkVfQkVGXzFfMCwgMiwKKwkJCW0tPnZzeW5jX3N0YXJ0IC0gbS0+dmRpc3BsYXkpOworCQloZG1p
+X3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVjJfQkxBTktfMCwgMiwgbS0+dnRvdGFsKTsKKwkJaGRt
+aV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1YxX0JMQU5LXzAsIDIsCisJCQkJbS0+dnRvdGFsIC0g
+bS0+dmRpc3BsYXkpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9CTEFOS19GMF8w
+LCAyLCAweGZmZmYpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9CTEFOS19GMV8w
+LCAyLCAweGZmZmYpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVf
+QUZUXzJfMCwgMiwgMHhmZmZmKTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfU1lO
+Q19MSU5FX0FGVF8xXzAsIDIsIDB4ZmZmZik7CisJCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERN
+SV9WX1NZTkNfTElORV9BRlRfUFhMXzJfMCwgMiwgMHhmZmZmKTsKKwkJaGRtaV9yZWdfd3JpdGV2
+KGhkYXRhLCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExfMV8wLCAyLCAweGZmZmYpOworCQloZG1p
+X3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVkFDVF9TVF9MLCAyLAorCQkJCW0tPnZ0b3RhbCAt
+IG0tPnZkaXNwbGF5KTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX1ZBQ1RfU1pf
+TCwgMiwgbS0+dmRpc3BsYXkpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVkFD
+VF9TVDJfTCwgMiwgMHgyNDgpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVkFD
+VF9TVDNfTCwgMiwgMHg0N2IpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVkFD
+VF9TVDRfTCwgMiwgMHg2YWUpOworCQloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVlNZ
+TkMyX0wsIDIsIDB4MjMzKTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RHX1ZTWU5D
+X0JPVF9IRE1JX0wsIDIsIDB4MjMzKTsKKwkJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1RH
+X0ZJRUxEX0JPVF9IRE1JX0wsIDIsIDB4MjMzKTsKKwl9CisKKwkvKiBGb2xsb3dpbmcgdmFsdWVz
+ICYgY2FsY3VsYXRpb25zIGFyZSBzYW1lIGlycmVzcGVjdGl2ZSBvZiBtb2RlIHR5cGUgKi8KKwlo
+ZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfSF9TWU5DX1NUQVJUXzAsIDIsCisJCQltLT5oc3lu
+Y19zdGFydCAtIG0tPmhkaXNwbGF5IC0gMik7CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1J
+X0hfU1lOQ19FTkRfMCwgMiwKKwkJCW0tPmhzeW5jX2VuZCAtIG0tPmhkaXNwbGF5IC0gMik7CisJ
+aGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZBQ1RfU1BBQ0VfMV8wLCAyLCAweGZmZmYpOwor
+CWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9WQUNUX1NQQUNFXzJfMCwgMiwgMHhmZmZmKTsK
+KwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVkFDVF9TUEFDRV8zXzAsIDIsIDB4ZmZmZik7
+CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZBQ1RfU1BBQ0VfNF8wLCAyLCAweGZmZmYp
+OworCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9WQUNUX1NQQUNFXzVfMCwgMiwgMHhmZmZm
+KTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVkFDVF9TUEFDRV82XzAsIDIsIDB4ZmZm
+Zik7CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfQkxBTktfRjJfMCwgMiwgMHhmZmZm
+KTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9CTEFOS19GM18wLCAyLCAweGZmZmYp
+OworCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9WX0JMQU5LX0Y0XzAsIDIsIDB4ZmZmZik7
+CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRhLCBIRE1JX1ZfQkxBTktfRjVfMCwgMiwgMHhmZmZmKTsK
+KwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUXzNfMCwgMiwgMHhm
+ZmZmKTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUXzRfMCwg
+MiwgMHhmZmZmKTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZU
+XzVfMCwgMiwgMHhmZmZmKTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJ
+TkVfQUZUXzZfMCwgMiwgMHhmZmZmKTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9T
+WU5DX0xJTkVfQUZUX1BYTF8zXzAsIDIsIDB4ZmZmZik7CisJaGRtaV9yZWdfd3JpdGV2KGhkYXRh
+LCBIRE1JX1ZfU1lOQ19MSU5FX0FGVF9QWExfNF8wLCAyLCAweGZmZmYpOworCWhkbWlfcmVnX3dy
+aXRldihoZGF0YSwgSERNSV9WX1NZTkNfTElORV9BRlRfUFhMXzVfMCwgMiwgMHhmZmZmKTsKKwlo
+ZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVl9TWU5DX0xJTkVfQUZUX1BYTF82XzAsIDIsIDB4
+ZmZmZik7CiAKIAkvKiBUaW1pbmcgZ2VuZXJhdG9yIHJlZ2lzdGVycyAqLwotCWhkbWlfcmVnX3dy
+aXRlYihoZGF0YSwgSERNSV9UR19IX0ZTWl9MLCB0Zy0+aF9mc3pbMF0pOwotCWhkbWlfcmVnX3dy
+aXRlYihoZGF0YSwgSERNSV9UR19IX0ZTWl9ILCB0Zy0+aF9mc3pbMV0pOwotCWhkbWlfcmVnX3dy
+aXRlYihoZGF0YSwgSERNSV9UR19IQUNUX1NUX0wsIHRnLT5oYWN0X3N0WzBdKTsKLQloZG1pX3Jl
+Z193cml0ZWIoaGRhdGEsIEhETUlfVEdfSEFDVF9TVF9ILCB0Zy0+aGFjdF9zdFsxXSk7Ci0JaGRt
+aV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1pfTCwgdGctPmhhY3Rfc3pbMF0pOwot
+CWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9UR19IQUNUX1NaX0gsIHRnLT5oYWN0X3N6WzFd
+KTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVl9GU1pfTCwgdGctPnZfZnN6WzBd
+KTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVl9GU1pfSCwgdGctPnZfZnN6WzFd
+KTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVlNZTkNfTCwgdGctPnZzeW5jWzBd
+KTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVlNZTkNfSCwgdGctPnZzeW5jWzFd
+KTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVlNZTkMyX0wsIHRnLT52c3luYzJb
+MF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9UR19WU1lOQzJfSCwgdGctPnZzeW5j
+MlsxXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1RHX1ZBQ1RfU1RfTCwgdGctPnZh
+Y3Rfc3RbMF0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9UR19WQUNUX1NUX0gsIHRn
+LT52YWN0X3N0WzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVkFDVF9TWl9M
+LCB0Zy0+dmFjdF9zelswXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBIRE1JX1RHX1ZBQ1Rf
+U1pfSCwgdGctPnZhY3Rfc3pbMV0pOwotCWhkbWlfcmVnX3dyaXRlYihoZGF0YSwgSERNSV9UR19G
+SUVMRF9DSEdfTCwgdGctPmZpZWxkX2NoZ1swXSk7Ci0JaGRtaV9yZWdfd3JpdGViKGhkYXRhLCBI
+RE1JX1RHX0ZJRUxEX0NIR19ILCB0Zy0+ZmllbGRfY2hnWzFdKTsKLQloZG1pX3JlZ193cml0ZWIo
+aGRhdGEsIEhETUlfVEdfVkFDVF9TVDJfTCwgdGctPnZhY3Rfc3QyWzBdKTsKLQloZG1pX3JlZ193
+cml0ZWIoaGRhdGEsIEhETUlfVEdfVkFDVF9TVDJfSCwgdGctPnZhY3Rfc3QyWzFdKTsKLQloZG1p
+X3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVkFDVF9TVDNfTCwgdGctPnZhY3Rfc3QzWzBdKTsK
+LQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVkFDVF9TVDNfSCwgdGctPnZhY3Rfc3Qz
+WzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVkFDVF9TVDRfTCwgdGctPnZh
+Y3Rfc3Q0WzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVkFDVF9TVDRfSCwg
+dGctPnZhY3Rfc3Q0WzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVlNZTkNf
+VE9QX0hETUlfTCwgdGctPnZzeW5jX3RvcF9oZG1pWzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRh
+dGEsIEhETUlfVEdfVlNZTkNfVE9QX0hETUlfSCwgdGctPnZzeW5jX3RvcF9oZG1pWzFdKTsKLQlo
+ZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVlNZTkNfQk9UX0hETUlfTCwgdGctPnZzeW5j
+X2JvdF9oZG1pWzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfVlNZTkNfQk9U
+X0hETUlfSCwgdGctPnZzeW5jX2JvdF9oZG1pWzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEs
+IEhETUlfVEdfRklFTERfVE9QX0hETUlfTCwgdGctPmZpZWxkX3RvcF9oZG1pWzBdKTsKLQloZG1p
+X3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfRklFTERfVE9QX0hETUlfSCwgdGctPmZpZWxkX3Rv
+cF9oZG1pWzFdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhETUlfVEdfRklFTERfQk9UX0hE
+TUlfTCwgdGctPmZpZWxkX2JvdF9oZG1pWzBdKTsKLQloZG1pX3JlZ193cml0ZWIoaGRhdGEsIEhE
+TUlfVEdfRklFTERfQk9UX0hETUlfSCwgdGctPmZpZWxkX2JvdF9oZG1pWzFdKTsKLQloZG1pX3Jl
+Z193cml0ZWIoaGRhdGEsIEhETUlfVEdfM0QsIHRnLT50Z18zZFswXSk7CisJaGRtaV9yZWdfd3Jp
+dGV2KGhkYXRhLCBIRE1JX1RHX0hfRlNaX0wsIDIsIG0tPmh0b3RhbCk7CisJaGRtaV9yZWdfd3Jp
+dGV2KGhkYXRhLCBIRE1JX1RHX0hBQ1RfU1RfTCwgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkp
+OworCWhkbWlfcmVnX3dyaXRldihoZGF0YSwgSERNSV9UR19IQUNUX1NaX0wsIDIsIG0tPmhkaXNw
+bGF5KTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVl9GU1pfTCwgMiwgbS0+dnRv
+dGFsKTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVlNZTkNfTCwgMiwgMHgxKTsK
+KwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfRklFTERfQ0hHX0wsIDIsIDB4MjMzKTsK
+KwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfVlNZTkNfVE9QX0hETUlfTCwgMiwgMHgx
+KTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfRklFTERfVE9QX0hETUlfTCwgMiwg
+MHgxKTsKKwloZG1pX3JlZ193cml0ZXYoaGRhdGEsIEhETUlfVEdfM0QsIDEsIDB4MCk7CiAKIAkv
+KiB3YWl0aW5nIGZvciBIRE1JUEhZJ3MgUExMIHRvIGdldCB0byBzdGVhZHkgc3RhdGUgKi8KIAlm
+b3IgKHRyaWVzID0gMTAwOyB0cmllczsgLS10cmllcykgewpAQCAtMTc4OCwxMjAgKzE2OTgsNiBA
+QCBzdGF0aWMgdm9pZCBoZG1pX2NvbmZfYXBwbHkoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEp
+CiAJaGRtaV9yZWdzX2R1bXAoaGRhdGEsICJzdGFydCIpOwogfQogCi1zdGF0aWMgdm9pZCBoZG1p
+X3NldF9yZWcodTggKnJlZ19wYWlyLCBpbnQgbnVtX2J5dGVzLCB1MzIgdmFsdWUpCi17Ci0JaW50
+IGk7Ci0JQlVHX09OKG51bV9ieXRlcyA+IDQpOwotCWZvciAoaSA9IDA7IGkgPCBudW1fYnl0ZXM7
+IGkrKykKLQkJcmVnX3BhaXJbaV0gPSAodmFsdWUgPj4gKDggKiBpKSkgJiAweGZmOwotfQotCi1z
+dGF0aWMgdm9pZCBoZG1pX3YxNF9tb2RlX3NldChzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSwK
+LQkJCXN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptKQotewotCXN0cnVjdCBoZG1pX3RnX3JlZ3Mg
+KnRnID0gJmhkYXRhLT5tb2RlX2NvbmYudGc7Ci0Jc3RydWN0IGhkbWlfdjE0X2NvcmVfcmVncyAq
+Y29yZSA9ICZoZGF0YS0+bW9kZV9jb25mLmNvcmU7Ci0KLQloZG1pX3NldF9yZWcoY29yZS0+aF9i
+bGFuaywgMiwgbS0+aHRvdGFsIC0gbS0+aGRpc3BsYXkpOwotCWhkbWlfc2V0X3JlZyhjb3JlLT52
+X2xpbmUsIDIsIG0tPnZ0b3RhbCk7Ci0JaGRtaV9zZXRfcmVnKGNvcmUtPmhfbGluZSwgMiwgbS0+
+aHRvdGFsKTsKLQloZG1pX3NldF9yZWcoY29yZS0+aHN5bmNfcG9sLCAxLAotCQkJKG0tPmZsYWdz
+ICYgRFJNX01PREVfRkxBR19OSFNZTkMpICA/IDEgOiAwKTsKLQloZG1pX3NldF9yZWcoY29yZS0+
+dnN5bmNfcG9sLCAxLAotCQkJKG0tPmZsYWdzICYgRFJNX01PREVfRkxBR19OVlNZTkMpID8gMSA6
+IDApOwotCWhkbWlfc2V0X3JlZyhjb3JlLT5pbnRfcHJvX21vZGUsIDEsCi0JCQkobS0+ZmxhZ3Mg
+JiBEUk1fTU9ERV9GTEFHX0lOVEVSTEFDRSkgPyAxIDogMCk7Ci0KLQkvKgotCSAqIFF1aXJrIHJl
+cXVpcmVtZW50IGZvciBleHlub3MgNSBIRE1JIElQIGRlc2lnbiwKLQkgKiAyIHBpeGVscyBsZXNz
+IHRoYW4gdGhlIGFjdHVhbCBjYWxjdWxhdGlvbiBmb3IgaHN5bmNfc3RhcnQKLQkgKiBhbmQgZW5k
+LgotCSAqLwotCi0JLyogRm9sbG93aW5nIHZhbHVlcyAmIGNhbGN1bGF0aW9ucyBkaWZmZXIgZm9y
+IGRpZmZlcmVudCB0eXBlIG9mIG1vZGVzICovCi0JaWYgKG0tPmZsYWdzICYgRFJNX01PREVfRkxB
+R19JTlRFUkxBQ0UpIHsKLQkJLyogSW50ZXJsYWNlZCBNb2RlICovCi0JCWhkbWlfc2V0X3JlZyhj
+b3JlLT52X3N5bmNfbGluZV9iZWZfMiwgMiwKLQkJCShtLT52c3luY19lbmQgLSBtLT52ZGlzcGxh
+eSkgLyAyKTsKLQkJaGRtaV9zZXRfcmVnKGNvcmUtPnZfc3luY19saW5lX2JlZl8xLCAyLAotCQkJ
+KG0tPnZzeW5jX3N0YXJ0IC0gbS0+dmRpc3BsYXkpIC8gMik7Ci0JCWhkbWlfc2V0X3JlZyhjb3Jl
+LT52Ml9ibGFuaywgMiwgbS0+dnRvdGFsIC8gMik7Ci0JCWhkbWlfc2V0X3JlZyhjb3JlLT52MV9i
+bGFuaywgMiwgKG0tPnZ0b3RhbCAtIG0tPnZkaXNwbGF5KSAvIDIpOwotCQloZG1pX3NldF9yZWco
+Y29yZS0+dl9ibGFua19mMCwgMiwgbS0+dnRvdGFsIC0gbS0+dmRpc3BsYXkgLyAyKTsKLQkJaGRt
+aV9zZXRfcmVnKGNvcmUtPnZfYmxhbmtfZjEsIDIsIG0tPnZ0b3RhbCk7Ci0JCWhkbWlfc2V0X3Jl
+Zyhjb3JlLT52X3N5bmNfbGluZV9hZnRfMiwgMiwgKG0tPnZ0b3RhbCAvIDIpICsgNyk7Ci0JCWhk
+bWlfc2V0X3JlZyhjb3JlLT52X3N5bmNfbGluZV9hZnRfMSwgMiwgKG0tPnZ0b3RhbCAvIDIpICsg
+Mik7Ci0JCWhkbWlfc2V0X3JlZyhjb3JlLT52X3N5bmNfbGluZV9hZnRfcHhsXzIsIDIsCi0JCQko
+bS0+aHRvdGFsIC8gMikgKyAobS0+aHN5bmNfc3RhcnQgLSBtLT5oZGlzcGxheSkpOwotCQloZG1p
+X3NldF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF8xLCAyLAotCQkJKG0tPmh0b3RhbCAv
+IDIpICsgKG0tPmhzeW5jX3N0YXJ0IC0gbS0+aGRpc3BsYXkpKTsKLQkJaGRtaV9zZXRfcmVnKHRn
+LT52YWN0X3N0LCAyLCAobS0+dnRvdGFsIC0gbS0+dmRpc3BsYXkpIC8gMik7Ci0JCWhkbWlfc2V0
+X3JlZyh0Zy0+dmFjdF9zeiwgMiwgbS0+dmRpc3BsYXkgLyAyKTsKLQkJaGRtaV9zZXRfcmVnKHRn
+LT52YWN0X3N0MiwgMiwgbS0+dnRvdGFsIC0gbS0+dmRpc3BsYXkgLyAyKTsKLQkJaGRtaV9zZXRf
+cmVnKHRnLT52c3luYzIsIDIsIChtLT52dG90YWwgLyAyKSArIDEpOwotCQloZG1pX3NldF9yZWco
+dGctPnZzeW5jX2JvdF9oZG1pLCAyLCAobS0+dnRvdGFsIC8gMikgKyAxKTsKLQkJaGRtaV9zZXRf
+cmVnKHRnLT5maWVsZF9ib3RfaGRtaSwgMiwgKG0tPnZ0b3RhbCAvIDIpICsgMSk7Ci0JCWhkbWlf
+c2V0X3JlZyh0Zy0+dmFjdF9zdDMsIDIsIDB4MCk7Ci0JCWhkbWlfc2V0X3JlZyh0Zy0+dmFjdF9z
+dDQsIDIsIDB4MCk7Ci0JfSBlbHNlIHsKLQkJLyogUHJvZ3Jlc3NpdmUgTW9kZSAqLwotCQloZG1p
+X3NldF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYmVmXzIsIDIsCi0JCQltLT52c3luY19lbmQgLSBt
+LT52ZGlzcGxheSk7Ci0JCWhkbWlfc2V0X3JlZyhjb3JlLT52X3N5bmNfbGluZV9iZWZfMSwgMiwK
+LQkJCW0tPnZzeW5jX3N0YXJ0IC0gbS0+dmRpc3BsYXkpOwotCQloZG1pX3NldF9yZWcoY29yZS0+
+djJfYmxhbmssIDIsIG0tPnZ0b3RhbCk7Ci0JCWhkbWlfc2V0X3JlZyhjb3JlLT52MV9ibGFuaywg
+MiwgbS0+dnRvdGFsIC0gbS0+dmRpc3BsYXkpOwotCQloZG1pX3NldF9yZWcoY29yZS0+dl9ibGFu
+a19mMCwgMiwgMHhmZmZmKTsKLQkJaGRtaV9zZXRfcmVnKGNvcmUtPnZfYmxhbmtfZjEsIDIsIDB4
+ZmZmZik7Ci0JCWhkbWlfc2V0X3JlZyhjb3JlLT52X3N5bmNfbGluZV9hZnRfMiwgMiwgMHhmZmZm
+KTsKLQkJaGRtaV9zZXRfcmVnKGNvcmUtPnZfc3luY19saW5lX2FmdF8xLCAyLCAweGZmZmYpOwot
+CQloZG1pX3NldF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF8yLCAyLCAweGZmZmYpOwot
+CQloZG1pX3NldF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF8xLCAyLCAweGZmZmYpOwot
+CQloZG1pX3NldF9yZWcodGctPnZhY3Rfc3QsIDIsIG0tPnZ0b3RhbCAtIG0tPnZkaXNwbGF5KTsK
+LQkJaGRtaV9zZXRfcmVnKHRnLT52YWN0X3N6LCAyLCBtLT52ZGlzcGxheSk7Ci0JCWhkbWlfc2V0
+X3JlZyh0Zy0+dmFjdF9zdDIsIDIsIDB4MjQ4KTsgLyogUmVzZXQgdmFsdWUgKi8KLQkJaGRtaV9z
+ZXRfcmVnKHRnLT52YWN0X3N0MywgMiwgMHg0N2IpOyAvKiBSZXNldCB2YWx1ZSAqLwotCQloZG1p
+X3NldF9yZWcodGctPnZhY3Rfc3Q0LCAyLCAweDZhZSk7IC8qIFJlc2V0IHZhbHVlICovCi0JCWhk
+bWlfc2V0X3JlZyh0Zy0+dnN5bmMyLCAyLCAweDIzMyk7IC8qIFJlc2V0IHZhbHVlICovCi0JCWhk
+bWlfc2V0X3JlZyh0Zy0+dnN5bmNfYm90X2hkbWksIDIsIDB4MjMzKTsgLyogUmVzZXQgdmFsdWUg
+Ki8KLQkJaGRtaV9zZXRfcmVnKHRnLT5maWVsZF9ib3RfaGRtaSwgMiwgMHgyMzMpOyAvKiBSZXNl
+dCB2YWx1ZSAqLwotCX0KLQotCS8qIEZvbGxvd2luZyB2YWx1ZXMgJiBjYWxjdWxhdGlvbnMgYXJl
+IHNhbWUgaXJyZXNwZWN0aXZlIG9mIG1vZGUgdHlwZSAqLwotCWhkbWlfc2V0X3JlZyhjb3JlLT5o
+X3N5bmNfc3RhcnQsIDIsIG0tPmhzeW5jX3N0YXJ0IC0gbS0+aGRpc3BsYXkgLSAyKTsKLQloZG1p
+X3NldF9yZWcoY29yZS0+aF9zeW5jX2VuZCwgMiwgbS0+aHN5bmNfZW5kIC0gbS0+aGRpc3BsYXkg
+LSAyKTsKLQloZG1pX3NldF9yZWcoY29yZS0+dmFjdF9zcGFjZV8xLCAyLCAweGZmZmYpOwotCWhk
+bWlfc2V0X3JlZyhjb3JlLT52YWN0X3NwYWNlXzIsIDIsIDB4ZmZmZik7Ci0JaGRtaV9zZXRfcmVn
+KGNvcmUtPnZhY3Rfc3BhY2VfMywgMiwgMHhmZmZmKTsKLQloZG1pX3NldF9yZWcoY29yZS0+dmFj
+dF9zcGFjZV80LCAyLCAweGZmZmYpOwotCWhkbWlfc2V0X3JlZyhjb3JlLT52YWN0X3NwYWNlXzUs
+IDIsIDB4ZmZmZik7Ci0JaGRtaV9zZXRfcmVnKGNvcmUtPnZhY3Rfc3BhY2VfNiwgMiwgMHhmZmZm
+KTsKLQloZG1pX3NldF9yZWcoY29yZS0+dl9ibGFua19mMiwgMiwgMHhmZmZmKTsKLQloZG1pX3Nl
+dF9yZWcoY29yZS0+dl9ibGFua19mMywgMiwgMHhmZmZmKTsKLQloZG1pX3NldF9yZWcoY29yZS0+
+dl9ibGFua19mNCwgMiwgMHhmZmZmKTsKLQloZG1pX3NldF9yZWcoY29yZS0+dl9ibGFua19mNSwg
+MiwgMHhmZmZmKTsKLQloZG1pX3NldF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYWZ0XzMsIDIsIDB4
+ZmZmZik7Ci0JaGRtaV9zZXRfcmVnKGNvcmUtPnZfc3luY19saW5lX2FmdF80LCAyLCAweGZmZmYp
+OwotCWhkbWlfc2V0X3JlZyhjb3JlLT52X3N5bmNfbGluZV9hZnRfNSwgMiwgMHhmZmZmKTsKLQlo
+ZG1pX3NldF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYWZ0XzYsIDIsIDB4ZmZmZik7Ci0JaGRtaV9z
+ZXRfcmVnKGNvcmUtPnZfc3luY19saW5lX2FmdF9weGxfMywgMiwgMHhmZmZmKTsKLQloZG1pX3Nl
+dF9yZWcoY29yZS0+dl9zeW5jX2xpbmVfYWZ0X3B4bF80LCAyLCAweGZmZmYpOwotCWhkbWlfc2V0
+X3JlZyhjb3JlLT52X3N5bmNfbGluZV9hZnRfcHhsXzUsIDIsIDB4ZmZmZik7Ci0JaGRtaV9zZXRf
+cmVnKGNvcmUtPnZfc3luY19saW5lX2FmdF9weGxfNiwgMiwgMHhmZmZmKTsKLQotCS8qIFRpbWlu
+ZyBnZW5lcmF0b3IgcmVnaXN0ZXJzICovCi0JaGRtaV9zZXRfcmVnKHRnLT5jbWQsIDEsIDB4MCk7
+Ci0JaGRtaV9zZXRfcmVnKHRnLT5oX2ZzeiwgMiwgbS0+aHRvdGFsKTsKLQloZG1pX3NldF9yZWco
+dGctPmhhY3Rfc3QsIDIsIG0tPmh0b3RhbCAtIG0tPmhkaXNwbGF5KTsKLQloZG1pX3NldF9yZWco
+dGctPmhhY3Rfc3osIDIsIG0tPmhkaXNwbGF5KTsKLQloZG1pX3NldF9yZWcodGctPnZfZnN6LCAy
+LCBtLT52dG90YWwpOwotCWhkbWlfc2V0X3JlZyh0Zy0+dnN5bmMsIDIsIDB4MSk7Ci0JaGRtaV9z
+ZXRfcmVnKHRnLT5maWVsZF9jaGcsIDIsIDB4MjMzKTsgLyogUmVzZXQgdmFsdWUgKi8KLQloZG1p
+X3NldF9yZWcodGctPnZzeW5jX3RvcF9oZG1pLCAyLCAweDEpOyAvKiBSZXNldCB2YWx1ZSAqLwot
+CWhkbWlfc2V0X3JlZyh0Zy0+ZmllbGRfdG9wX2hkbWksIDIsIDB4MSk7IC8qIFJlc2V0IHZhbHVl
+ICovCi0JaGRtaV9zZXRfcmVnKHRnLT50Z18zZCwgMSwgMHgwKTsKLX0KLQogc3RhdGljIHZvaWQg
+aGRtaV9tb2RlX3NldChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5LAogCQkJc3Ry
+dWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUpCiB7CkBAIC0xOTEzLDEzICsxNzA5LDggQEAgc3Rh
+dGljIHZvaWQgaGRtaV9tb2RlX3NldChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5
+LAogCQltLT52cmVmcmVzaCwgKG0tPmZsYWdzICYgRFJNX01PREVfRkxBR19JTlRFUkxBQ0UpID8K
+IAkJIklOVEVSTEFDRUQiIDogIlBST0dSRVNTSVZFIik7CiAKLQkvKiBwcmVzZXJ2ZSBtb2RlIGlu
+Zm9ybWF0aW9uIGZvciBsYXRlciB1c2UuICovCiAJZHJtX21vZGVfY29weSgmaGRhdGEtPmN1cnJl
+bnRfbW9kZSwgbW9kZSk7Ci0KIAloZGF0YS0+Y2VhX3ZpZGVvX2lkID0gZHJtX21hdGNoX2NlYV9t
+b2RlKG1vZGUpOwotCi0JaWYgKGhkYXRhLT5kcnZfZGF0YS0+dHlwZSA9PSBIRE1JX1RZUEUxNCkK
+LQkJaGRtaV92MTRfbW9kZV9zZXQoaGRhdGEsIG1vZGUpOwogfQogCiBzdGF0aWMgdm9pZCBoZG1p
+X2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KQotLSAKMS45LjEKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
