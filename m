@@ -1,59 +1,107 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2 12/23] drm/exynos: don't track enabled state at
- exynos_crtc
-Date: Fri, 10 Jul 2015 09:47:37 +0900
-Message-ID: <559F1629.2060300@samsung.com>
-References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
- <1436192424-18194-13-git-send-email-gustavo@padovan.org>
- <20150706174147.GB7568@phenom.ffwll.local> <559E2C4C.9030603@samsung.com>
- <20150709225600.GA2000@joana>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/7] opp: add dev_pm_opp_get_turbo_mode_setting() helper
+Date: Fri, 10 Jul 2015 11:17:54 +0900
+Message-ID: <559F2B52.4060903@samsung.com>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53586 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751390AbbGJArb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jul 2015 20:47:31 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NR8020LDY765G80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jul 2015 09:47:30 +0900 (KST)
-In-reply-to: <20150709225600.GA2000@joana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1436456621-29839-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>, Daniel Vetter <daniel@ffwll.ch>, linux-samsung-soc@vger.kernel.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>
 
-On 07/10/2015 07:56 AM, Gustavo Padovan wrote:
-> 2015-07-09 Joonyoung Shim <jy0922.shim@samsung.com>:
+On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
+> Add dev_pm_opp_get_turbo_mode_setting() helper for getting turbo
+> mode setting for a given opp.
 > 
->> +Cc Andrzej,
->>
->> On 07/07/2015 02:41 AM, Daniel Vetter wrote:
->>> On Mon, Jul 06, 2015 at 11:20:13AM -0300, Gustavo Padovan wrote:
->>>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->>>>
->>>> struct drm_crtc already stores the enabled state of the crtc
->>>> thus we don't need to replicate enabled in exynos_drm_crtc.
->>>>
->>
->> I think exynos_crtc->enabled can replace flags for power state of each
->> hw driver(e.g. "powered" of mixer driver, "suspended" of fimd driver).
->> Further, we can add other flag bit for instead of using special flag
->> in hw driver like vsync state("int_en" of mixer driver, "irq_flags" of
->> fimd driver.)
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/base/power/opp.c | 31 +++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h   |  7 +++++++
+>  2 files changed, 38 insertions(+)
 > 
-> The reason I removed it is because crtc->state->active already stores
-> the same information as exynos_crtc->enabled. I think we could rely
-> on active as well for mixer powered and suspended.
+> diff --git a/drivers/base/power/opp.c b/drivers/base/power/opp.c
+> index e24502a2..6b34b2a 100644
+> --- a/drivers/base/power/opp.c
+> +++ b/drivers/base/power/opp.c
+> @@ -287,6 +287,37 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
+>  
+>  /**
+> + * dev_pm_opp_get_turbo_mode_setting() - Gets the turbo setting
+> + * @opp:	opp for which turbo mode setting has to be returned for
+> + *
+> + * Return: turbo mode setting corresponding to the opp (true or false)
+> + *
+> + * Locking: This function must be called under rcu_read_lock(). opp is a rcu
+> + * protected pointer. This means that opp which could have been fetched by
+> + * opp_find_freq_{exact,ceil,floor} functions is valid as long as we are
+> + * under RCU lock. The pointer returned by the opp_find_freq family must be
+> + * used in the same section as the usage of this function with the pointer
+> + * prior to unlocking with rcu_read_unlock() to maintain the integrity of the
+> + * pointer.
+> + */
+> +bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp)
+
+It is just true or false, so maybe dev_pm_opp_is_turbo_mode()?
+
+Everything else looks good to me.
+
+Best regards,
+Krzysztof
+
+> +{
+> +	struct dev_pm_opp *tmp_opp;
+> +	bool f = false;
+> +
+> +	opp_rcu_lockdep_assert();
+> +
+> +	tmp_opp = rcu_dereference(opp);
+> +	if (unlikely(IS_ERR_OR_NULL(tmp_opp)) || !tmp_opp->available)
+> +		pr_err("%s: Invalid parameters\n", __func__);
+> +	else
+> +		f = tmp_opp->turbo;
+> +
+> +	return f;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_get_turbo_mode_setting);
+> +
+> +/**
+>   * dev_pm_opp_get_max_clock_latency() - Get max clock latency in nanoseconds
+>   * @dev:	device for which we do this operation
+>   *
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index bb52fae..7856baf 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -30,6 +30,8 @@ unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp);
+>  
+>  unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp);
+>  
+> +bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp);
+> +
+>  int dev_pm_opp_get_opp_count(struct device *dev);
+>  unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev);
+>  
+> @@ -63,6 +65,11 @@ static inline unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
+>  	return 0;
+>  }
+>  
+> +static inline bool dev_pm_opp_get_turbo_mode_setting(struct dev_pm_opp *opp)
+> +{
+> +	return false;
+> +}
+> +
+>  static inline int dev_pm_opp_get_opp_count(struct device *dev)
+>  {
+>  	return 0;
 > 
-
-Then it may need another stuff on struct exynos_crtc if we try to
-replace other hw flag like int_en or irq_flags.
-
-Anyway, the reason that you remove it is ok to me now.
-
-Thanks.
