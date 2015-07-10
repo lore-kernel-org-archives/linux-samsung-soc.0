@@ -1,49 +1,88 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH v2 12/23] drm/exynos: don't track enabled state at
- exynos_crtc
-Date: Thu, 9 Jul 2015 19:56:00 -0300
-Message-ID: <20150709225600.GA2000@joana>
-References: <1436192424-18194-1-git-send-email-gustavo@padovan.org>
- <1436192424-18194-13-git-send-email-gustavo@padovan.org>
- <20150706174147.GB7568@phenom.ffwll.local>
- <559E2C4C.9030603@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 0/7] cpufreq: use generic cpufreq drivers for
+ Exynos4x12 platform
+Date: Thu, 9 Jul 2015 17:07:04 -0700
+Message-ID: <559F0CA8.1060906@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:36259 "EHLO
-	mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750978AbbGIW4F (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:43594 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751399AbbGJAHH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jul 2015 18:56:05 -0400
-Received: by qkdv3 with SMTP id v3so905850qkd.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jul 2015 15:56:04 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <559E2C4C.9030603@samsung.com>
+	Thu, 9 Jul 2015 20:07:07 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, linux-samsung-soc@vger.kernel.org, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.or>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-2015-07-09 Joonyoung Shim <jy0922.shim@samsung.com>:
+Hello Bartlomiej,
 
-> +Cc Andrzej,
-> 
-> On 07/07/2015 02:41 AM, Daniel Vetter wrote:
-> > On Mon, Jul 06, 2015 at 11:20:13AM -0300, Gustavo Padovan wrote:
-> >> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >>
-> >> struct drm_crtc already stores the enabled state of the crtc
-> >> thus we don't need to replicate enabled in exynos_drm_crtc.
-> >>
-> 
-> I think exynos_crtc->enabled can replace flags for power state of each
-> hw driver(e.g. "powered" of mixer driver, "suspended" of fimd driver).
-> Further, we can add other flag bit for instead of using special flag
-> in hw driver like vsync state("int_en" of mixer driver, "irq_flags" of
-> fimd driver.)
+On Thu, Jul 9, 2015 at 8:43 AM, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
+> Hi,
+>
+> This patch series removes the use of Exynos4x12 specific support
+> from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+> for this platform.
+>
+> In order to preserve support for Exynos4x12 'boost' mode cpufreq-dt
+> driver is made aware of cpufreq 'boost' mode infrastructure.  Once
+> it is done (+ turbo modes handling is fixed, please see below for
+> details) the driver starts to use turbo mode frequencies (defined
+> using opp-v2 bindings) as 'boost' mode frequecies.
+>
+> Patches #1-2 are needed to fix handling of turbo modes in cpufreq
+> core and without them cpufreq-dt treats turbo modes as normal modes
+> (IOW they are used by default as normal modes even if they are defined
+> in DTS file as turbo modes).  Ideally these patches should be added
+> into "[PATCH 00/10] OPP: Add code to support operating-points-v2
+> bindings" patch series before patch #10 ("[PATCH 10/10] cpufreq-dt:
+> Add support for operating-points-v2 bindings").
+>
+> This patch series has been tested on Exynos4412 based Odroid-U3 and
+> Trats2 boards.
+>
+> Depends on:
+> - next-20150629 branch of linux-next kernel tree
+> - "[PATCH v3 0/4] cpufreq: use generic cpufreq drivers for Exynos5250
+>   platform" (http://lkml.org/lkml/2015/7/1/311)
+> - "PATCH 00/10] OPP: Add code to support operating-points-v2 bindings"
+>   (http://www.spinics.net/lists/arm-kernel/msg425517.html)
+>
+> Changes since v1
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
+> - rebased on top of next-20150629 branch of linux-next kernel tree
+> - rebased on top of Exynos5250 cpufreq-dt support patch series
+> - fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
+> - ported over opp-v2 bindings (requested by Viresh Kumar)
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>
+> Bartlomiej Zolnierkiewicz (7):
+>   opp: add dev_pm_opp_get_turbo_mode_setting() helper
+>   cpufreq: opp: fix handling of turbo modes
+>   cpufreq-dt: add turbo modes support
+>   clk: samsung: exynos4x12: add cpu clock configuration data and
+>     instantiate cpu clock
+>   ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
+>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
+>   cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+>
 
-The reason I removed it is because crtc->state->active already stores
-the same information as exynos_crtc->enabled. I think we could rely
-on active as well for mixer powered and suspended.
+I don't have access to an Exynos4x12 board to test but I've reviewed
+the patches and they look good to me. So for the complete series:
 
-	Gustavo
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Sr. Linux Kernel Developer
+Open Source Group
+Samsung Research America
