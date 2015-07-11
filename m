@@ -1,132 +1,147 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock
- configuration data and instantiate cpu clock
-Date: Sat, 11 Jul 2015 15:36:35 +0900
-Message-ID: <CAJKOXPeziDFrxHcKL8LPTcT9nVbeZqbjGjEL6ioSaWHVdpF_vQ@mail.gmail.com>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
-	<1436456621-29839-5-git-send-email-b.zolnierkie@samsung.com>
-	<559F82AE.8070108@samsung.com>
-	<559FEEE2.6060608@osg.samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH] regulator: s2mps11: Added shutdown function to poweroff Odroid-XU3
+Date: Sat, 11 Jul 2015 12:42:56 +0530
+Message-ID: <CANAwSgThkgK9wsNLigsFrvw8U0gJqFdNVOMPkJ5-Sw+BYiQw_w@mail.gmail.com>
+References: <1435130188-4087-1-git-send-email-linux.amoon@gmail.com>
+ <CAJKOXPewv=_aOjf=ot-n8hsE=FEmLzHGsafSQiRngLhMU2BjEg@mail.gmail.com>
+ <CANAwSgQSXRojp-EU_djnQv7w+3OBGQ500T8t_-8SGHUko2GkjQ@mail.gmail.com> <CAJKOXPde5JivEEApNaGVHgLZfoK9qLWxa8hr-WASNwH00Rm_uw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <559FEEE2.6060608@osg.samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPde5JivEEApNaGVHgLZfoK9qLWxa8hr-WASNwH00Rm_uw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-07-11 1:12 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
-> Hello Krzysztof,
->
-> On 07/10/2015 01:30 AM, Krzysztof Kozlowski wrote:
->> On 10.07.2015 00:43, Bartlomiej Zolnierkiewicz wrote:
->>> With the addition of the new Samsung specific cpu-clock type, the
->>> arm clock can be represented as a cpu-clock type. Add the CPU clock
->>> configuration data and instantiate the CPU clock type for Exynos4x12.
->>>
->>> Based on the earlier work by Thomas Abraham.
->>>
->>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->>> Cc: Michael Turquette <mturquette@baylibre.com>
->>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
->>> Cc: Thomas Abraham <thomas.ab@samsung.com>
->>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>> ---
->>>  drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 50 insertions(+)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->>> index cae2c048..3071260 100644
->>> --- a/drivers/clk/samsung/clk-exynos4.c
->>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>> @@ -1396,6 +1396,45 @@ static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
->>>      {  0 },
->>>  };
->>>
->>> +static const struct exynos_cpuclk_cfg_data e4212_armclk_d[] __initconst = {
->>> +    { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
->>> +    { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4210_CPU_DIV1(2, 6), },
->>> +    { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
->>> +    { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4210_CPU_DIV1(2, 5), },
->>> +    { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4210_CPU_DIV1(2, 4), },
->>> +    { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4210_CPU_DIV1(2, 4), },
->>> +    {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4210_CPU_DIV1(2, 3), },
->>> +    {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4210_CPU_DIV1(2, 3), },
->>> +    {  0 },
->>> +};
->>> +
->>> +#define E4412_CPU_DIV1(cores, hpm, copy)                            \
->>> +            (((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
->>> +
->>> +static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
->>> +    { 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
->>> +    { 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
->>> +    { 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
->>> +    { 1200000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(5, 0, 5), },
->>> +    { 1100000, E4210_CPU_DIV0(2, 1, 4, 0, 6, 3), E4412_CPU_DIV1(5, 0, 4), },
->>> +    { 1000000, E4210_CPU_DIV0(1, 1, 4, 0, 5, 2), E4412_CPU_DIV1(4, 0, 4), },
->>> +    {  900000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(4, 0, 3), },
->>> +    {  800000, E4210_CPU_DIV0(1, 1, 3, 0, 5, 2), E4412_CPU_DIV1(3, 0, 3), },
->>> +    {  700000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(3, 0, 3), },
->>> +    {  600000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
->>> +    {  500000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(2, 0, 3), },
->>> +    {  400000, E4210_CPU_DIV0(1, 1, 3, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
->>> +    {  300000, E4210_CPU_DIV0(1, 1, 2, 0, 4, 2), E4412_CPU_DIV1(1, 0, 3), },
->>> +    {  200000, E4210_CPU_DIV0(1, 1, 1, 0, 3, 1), E4412_CPU_DIV1(0, 0, 3), },
->>> +    {  0 },
->>> +};
->>
->> Numbers look fine!
->>
->>> +
->>>  /* register exynos4 clocks */
->>>  static void __init exynos4_clk_init(struct device_node *np,
->>>                                  enum exynos4_soc soc)
->>> @@ -1489,6 +1528,17 @@ static void __init exynos4_clk_init(struct device_node *np,
->>>              samsung_clk_register_fixed_factor(ctx,
->>>                      exynos4x12_fixed_factor_clks,
->>>                      ARRAY_SIZE(exynos4x12_fixed_factor_clks));
->>> +            if (of_machine_is_compatible("samsung,exynos4412")) {
->>
->> The driver uses here enum exynos4_soc to differentiate between SoC
->> (unless I missed some changes). This of_machine_is_compatible() makes
->> sense but introduces inconsistency. I would prefer sticking to one
->> convention: always enum or switch everything (before this patch) to
->> of_compatible.
->>
->
-> When reviewing this patch I also ran into the same thing because as you
-> said, it's not consistent. But digging a little bit I found that is not
-> that easy since the two are not checking exactly the same.
->
-> The enum is to differentiate between "samsung,exynos4412-clock" and
-> "samsung,exynos4210-clock" while the of_machine_is_compatible() is for
-> "samsung,exynos4412" and "samsung,exynos4212".
->
-> The problem is that both exynos4412 and exynos4212 use the same
-> "samsung,exynos4412-clock" compatible for their clock controller nodes.
-> But there are differences so it would had been better to also have a
-> "samsung,exynos4212-clock" to avoid the of_machine_is_compatible() but
-> that is not possible anymore without breaking DT backward compatibility.
->
-> On the other hand, if of_machine_is_compatible() is used for everything,
-> then there is no point anymore to have both "samsung,exynos4412-clock"
-> and "samsung,exynos4210-clock". A single "samsung,exynos4-clock" plus
-> checking the SoC would had been enough.
->
-> That's why I thought that Bart's approach was sensible although is true
-> that the of_compatible() check can be moved to exynos4412_clk_init()
-> and the enum be extended so at least exynos4_clk_init() is consistent.
+Hi Krzysztof,
 
-You're right, I missed that difference. Thanks for explaining, I agree now:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 24 June 2015 at 16:27, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> 2015-06-24 19:32 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>> Hi Krzysztof,
+>>
+>> On 24 June 2015 at 13:27, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+>>> 2015-06-24 16:16 GMT+09:00 Anand Moon <linux.amoon@gmail.com>:
+>>>> Added .shutdown function to s2mps11 to help poweroff the board succefully.
+>>>
+>>> s/succefully/successfully/
+>>>
+>>>> The device drivers set the register to turn off the PMIC.
+>>>
+>>> Driver or drivers?
+>>>
+>>>>
+>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>>> ---
+>>>> Changes fixes the poweroff
+>>>> root@odroidxu3:~# poweroff
+>>>>
+>>>> Broadcast message from root@odroidxu3
+>>>>         (/dev/ttySAC2) at 13:08 ...
+>>>>
+>>>> The system is going down for power off NOW!
+>>>> root@odroidxu3:~# wait-for-state stop/waiting
+>>>>  * Stopping rsync daemon rsync                                           [ OK ]
+>>>>  * Stopping RDP Session manager                                          [ OK ]
+>>>>  * Stopping NTP server ntpd                                              [ OK ]
+>>>>  * Asking all remaining processes to terminate...                        [ OK ]
+>>>>  * All processes ended within 1 seconds...                               [ OK ]
+>>>> nm-dispatcher.action: Caught signal 15, shutting down...
+>>>> ModemManager[2134]: <warn>  Could not acquire the 'org.freedesktop.ModemManager1' service name
+>>>>
+>>>> ModemManager[2134]: <info>  ModemManager is shut down
+>>>>
+>>>>  * Unmounting temporary filesystems...                                   [ OK ]
+>>>>  * Deactivating swap...                                                  [ OK ]
+>>>>  * Unmounting local filesystems...                                       [ OK ]
+>>>>  * Will now halt
+>>>> [  209.020280] reboot: Power down
+>>>> [  209.122039] Power down failed, please power off system manually.
+>>>> ---
+>>>>  drivers/regulator/s2mps11.c | 8 ++++++++
+>>>>  1 file changed, 8 insertions(+)
+>>>>
+>>>> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+>>>> index ff82811..871f7b8 100644
+>>>> --- a/drivers/regulator/s2mps11.c
+>>>> +++ b/drivers/regulator/s2mps11.c
+>>>> @@ -1060,6 +1060,13 @@ out:
+>>>>         return ret;
+>>>>  }
+>>>>
+>>>> +static void s2mps11_pmic_shutdown(struct platform_device *pdev)
+>>>> +{
+>>>> +       struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>>>> +
+>>>> +       regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_CTRL1, 0xff, 0x00);
+>>>
+>>> This looks odd to me and interesting in the same time...
+>>> 1. Why clearing all of the fields from the register? Don't you want to
+>>> clear only one of it?
+>>
+>> I have followed what the hardkernel source code point at this point.
+>> I will look into which bit need to clear/set to power off successful.
+>
+> Following other tree is not enough, even when it solves some one
+> problem. Drivers could be used on different boards, where hardkernel
+> patches were not tested. This driver is used on many boards so please
+> explain exactly what is the cause of problem, what have to be done and
+> how patch achieves this. Such explanation helps understanding impact
+> on other boards.
+>
+>>
+>>> 2. What exactly you want to do here? What is expected behaviour?
+>>
+>> When you power off the board dose not power off cleanly.
+>> [  209.122039] Power down failed, please power off system manually.
+>>
+>> After this changes Its power off the board. Leaving the board with
+>> solid red led blowing.
+>
+> You described observable issue, which is nice, but I am asking for
+> technical details. What exactly do you want to achieve here?
+> Technically. What is expected behaviour. In technical details, not
+> only observable. I am asking for these technical details not only
+> because they are important but also because I do not know them.
+>
+>>
+>>> 3. How this relates to PWRHOLD coming from AP to the PMIC?
+>>
+>> No Idea right now about this right now. but will update you it I have
+>> some thing.
+>
+> The PMIC receives two signals - PWREN and PWRHOLD. It seems strange
+> that PMIC must override PWRHOLD... maybe there is an issue in
+> mach-exynos code?
+>
+>>
+>>> 4. Why this is needed only for this driver and only for this board (Odroid XU3)?
+>>
+>> Yes It could be generic not specific for the Odroid XU3 will correct
+>> in next patch.
+>
+> Thanks,
+> Best regards,
+> Krzysztof
 
-Best regards,
-Krzysztof
+I don't have much technical knowlegde on the arch side PMIC.
+
+Problem that I am trying to addressed is unclean shutdown. i.e. CPU is
+still running in busy loop.
+which leads external HDD not able to clean umount or power-off of the board.
+
+[   27.427485] reboot: Power down
+[   27.529236] Power down failed, please power off system manually.
+
+My investigation lead to the following.
+Reading the control register S2MPS11_REG_CTRL1 of s2mps11-pmic shown below.
+
+[   27.411231] s2mps11-pmic s2mps11-pmic: reg value
+16:00000000000000000000000000010000
+
+clearing the bit of the control register S2MPS11_REG_CTRL1 which lead
+to proper shutdown of board.
+
+Please share you thought on this.
+
+-Anand Moon
