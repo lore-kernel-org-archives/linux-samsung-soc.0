@@ -1,48 +1,95 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH] drm/exynos/fimc: fix runtime pm support
-Date: Sun, 12 Jul 2015 18:24:59 +0200
-Message-ID: <55A294DB.7090800@math.uni-bielefeld.de>
-References: <1428569160-20628-1-git-send-email-m.szyprowski@samsung.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
+Date: Sun, 12 Jul 2015 18:43:56 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1507121737030.20072@nanos>
+References: <1436711211-18223-1-git-send-email-robh@kernel.org> <1436711211-18223-7-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1428569160-20628-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1436711211-18223-7-git-send-email-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, arm@kernel.org, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGVsbG8sCgpsb29rcyBsaWtlIHRoaXMgcGF0Y2ggd2FzIGZvcmdvdHRlbi4gQXQgbGVhc3QgSSBj
-YW4ndCBmaW5kIGl0IGluIDQuMi1yYzEuCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgpNYXJl
-ayBTenlwcm93c2tpIHdyb3RlOgo+IE9uY2UgcG1fcnVudGltZV9zZXRfYWN0aXZlKCkgZ2V0cyBj
-YWxsZWQsIHRoZSBrZXJuZWwgYXNzdW1lcyB0aGF0IGdpdmVuCj4gZGV2aWNlIGhhcyBhbHJlYWR5
-IGVuYWJsZWQgcnVudGltZSBwbSBhbmQgd2lsbCBjYWxsIHBtX3J1bnRpbWVfc3VzcGVuZCgpCj4g
-d2l0aG91dCBtYXRjaGluZyBwbV9ydW50aW1lX3Jlc3VtZSgpLiBJbiBjYXNlIG9mIERSTSBGSU1D
-IElQUCBkcml2ZXIsCj4gdGhpcyB3aWxsIHJlc3VsdCBpbiBjYWxsaW5nIGNsa19kaXNhYmxlKCkg
-d2l0aG91dCByZXNwZWN0aXZlIGNhbGwgdG8KPiBjbGtfZW5hYmxlKCkuIFRoaXMgcGF0Y2ggcmVt
-b3ZlcyBjYWxsIHRvIHBtX3J1bnRpbWVfc2V0X2FjdGl2ZSgpIHRvCj4gZW5zdXJlIHRoYXQgcG1f
-cnVudGltZV9zdXNwZW5kL3Jlc3VtZSBjYWxscyB3aWxsIG1hdGNoLgo+IAo+IFNpZ25lZC1vZmYt
-Ynk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyB8IDEgLQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgMSBkZWxldGlvbigtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2ZpbWMuYwo+IGluZGV4IDg0MmQ2YjhkYzNjNC4uMmE2NTIzNTlhZjY0IDEwMDY0NAo+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiArKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jCj4gQEAgLTE3NDUsNyArMTc0NSw2
-IEBAIHN0YXRpYyBpbnQgZmltY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+
-ICAJc3Bpbl9sb2NrX2luaXQoJmN0eC0+bG9jayk7Cj4gIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShw
-ZGV2LCBjdHgpOwo+ICAKPiAtCXBtX3J1bnRpbWVfc2V0X2FjdGl2ZShkZXYpOwo+ICAJcG1fcnVu
-dGltZV9lbmFibGUoZGV2KTsKPiAgCj4gIAlyZXQgPSBleHlub3NfZHJtX2lwcGRydl9yZWdpc3Rl
-cihpcHBkcnYpOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+On Sun, 12 Jul 2015, Rob Herring wrote:
+
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+> 
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> 
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also set IRQ_NOPROBE and this has been maintained although it is not
+
+clear IRQ_NOPROBE, right?
+
+> clear that is really needed. There appears to be a great deal of blind
+> copy and paste of this code.
+
+Looking at the irq probe users:
+
+drivers/input/touchscreen/ucb1400_ts.c
+drivers/mfd/ucb1x00-core.c
+
+The probe function was added in the initial implementation of the
+driver (2006), so it predates device tree.
+
+drivers/net/appletalk/ltpc.c
+drivers/net/arcnet/com20020-isa.c
+drivers/net/arcnet/com90io.c
+drivers/net/arcnet/com90xx.c
+
+Surely not stuff you find on todays ARM systems
+
+drivers/net/ethernet/8390/ne.c
+drivers/net/ethernet/8390/wd.c
+drivers/net/ethernet/amd/lance.c
+drivers/net/ethernet/amd/ni65.c
+drivers/net/ethernet/amd/pcnet32.c
+
+Ditto
+
+drivers/net/ethernet/smsc/smc911x.c
+drivers/net/ethernet/smsc/smc9194.c
+drivers/net/ethernet/smsc/smc91x.c
+
+Those might still be, but on the DT based boards the probing should be
+completely irrelevant
+
+drivers/net/hamradio/dmascc.c
+drivers/net/wan/cosa.c
+drivers/net/wan/sbni.c
+drivers/parport/parport_pc.c
+
+Surely not stuff you find on todays ARM systems
+
+drivers/pcmcia/yenta_socket.c
+
+Russell might still use that.
+
+drivers/scsi/NCR53c406a.c
+drivers/scsi/sym53c416.c
+drivers/tty/cyclades.c
+
+Surely not stuff you find on todays ARM systems
+
+drivers/tty/serial/8250/8250_core.c
+
+The irq probing is used by
+
+    mach-imx/mach-mx31ads.c
+    mach-iop32x/n2100.c
+
+    and X86
+
+So in most of the irqchip drivers, this is irrelevant.
+
+Thanks,
+
+	tglx
