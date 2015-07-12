@@ -1,17 +1,17 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH 0/7] drm/exynos/hdmi: refactoring/cleanup patches
-Date: Sun, 12 Jul 2015 17:34:57 +0200
-Message-ID: <55A28921.60802@gmx.net>
+Date: Sun, 12 Jul 2015 18:06:22 +0200
+Message-ID: <55A2907E.9000507@math.uni-bielefeld.de>
 References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout-xforward.gmx.net ([82.165.159.42]:59799 "EHLO
-	mout-xforward.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751074AbbGLPzX (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:48468 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750770AbbGLQG3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Jul 2015 11:55:23 -0400
+	Sun, 12 Jul 2015 12:06:29 -0400
 In-Reply-To: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
