@@ -1,75 +1,48 @@
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 0/7] drm/exynos/hdmi: refactoring/cleanup patches
-Date: Sun, 12 Jul 2015 18:06:22 +0200
-Message-ID: <55A2907E.9000507@math.uni-bielefeld.de>
-References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos/fimc: fix runtime pm support
+Date: Sun, 12 Jul 2015 18:24:59 +0200
+Message-ID: <55A294DB.7090800@math.uni-bielefeld.de>
+References: <1428569160-20628-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:48468 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750770AbbGLQG3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Jul 2015 12:06:29 -0400
-In-Reply-To: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1428569160-20628-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hello Andrzej!
-
-Just some small comments.
-
-It seems like linux-samsung-soc wasn't put into Cc for '[PATCH RESEND
-0/6] drm/exynos: HDMI related fixes' (even though this series was),
-maybe you should also forward the other series to this list.
-
-This series doesn't apply cleanly when 'drm/exynos: HDMI related fixes'
-is applied. E.g. the 'powered' boolean was removed by that series, but
-here in patch 2/7 ('drm/exynos/hdmi: Simplify HPD gpio handling') it's
-still there.
-
-I also noticed that some of the patches ('drm/exynos/hdmi: remove
-private lock code') clash with Gustavo's latest cleanup series [1]. E.g.
-your patch 3/7 ('drm/exynos/hdmi: remove private lock code') touches
-hdmi_commit() which was removed by Gustavo. Maybe you should coordinate
-things with him?
-
-
-With best wishes,
-Tobias
-
-
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg45787.html
-
-
-Andrzej Hajda wrote:
-> Hi Inki, Joonyoung,
-> 
-> These patches removes obsolete and old structures, to simplify further
-> development. They should not change behavior of the driver.
-> 
-> The patchset is based on exynos-drm-next plus my HDMI related fixes [1].
-> 
-> The patchset was tested on Universal and Odroid U3.
-> 
-> [1]: http://permalink.gmane.org/gmane.comp.video.dri.devel/132348
-> 
-> Regards
-> Andrzej
-> 
-> 
-> Andrzej Hajda (7):
->   drm/exynos/hdmi: remove old platform data code
->   drm/exynos/hdmi: Simplify HPD gpio handling
->   drm/exynos/hdmi: remove private lock code
->   drm/exynos/hdmi: add driver data pointer to private context
->   drm/exynos/hdmi: remove redundant configuration fields
->   drm/exynos/hdmi: remove hdmi_v13_conf struct
->   drm/exynos/hdmi: remove hdmi_v14_conf struct
-> 
->  drivers/gpu/drm/exynos/exynos_hdmi.c | 860 ++++++++++-------------------------
->  1 file changed, 245 insertions(+), 615 deletions(-)
-> 
+SGVsbG8sCgpsb29rcyBsaWtlIHRoaXMgcGF0Y2ggd2FzIGZvcmdvdHRlbi4gQXQgbGVhc3QgSSBj
+YW4ndCBmaW5kIGl0IGluIDQuMi1yYzEuCgpXaXRoIGJlc3Qgd2lzaGVzLApUb2JpYXMKCgpNYXJl
+ayBTenlwcm93c2tpIHdyb3RlOgo+IE9uY2UgcG1fcnVudGltZV9zZXRfYWN0aXZlKCkgZ2V0cyBj
+YWxsZWQsIHRoZSBrZXJuZWwgYXNzdW1lcyB0aGF0IGdpdmVuCj4gZGV2aWNlIGhhcyBhbHJlYWR5
+IGVuYWJsZWQgcnVudGltZSBwbSBhbmQgd2lsbCBjYWxsIHBtX3J1bnRpbWVfc3VzcGVuZCgpCj4g
+d2l0aG91dCBtYXRjaGluZyBwbV9ydW50aW1lX3Jlc3VtZSgpLiBJbiBjYXNlIG9mIERSTSBGSU1D
+IElQUCBkcml2ZXIsCj4gdGhpcyB3aWxsIHJlc3VsdCBpbiBjYWxsaW5nIGNsa19kaXNhYmxlKCkg
+d2l0aG91dCByZXNwZWN0aXZlIGNhbGwgdG8KPiBjbGtfZW5hYmxlKCkuIFRoaXMgcGF0Y2ggcmVt
+b3ZlcyBjYWxsIHRvIHBtX3J1bnRpbWVfc2V0X2FjdGl2ZSgpIHRvCj4gZW5zdXJlIHRoYXQgcG1f
+cnVudGltZV9zdXNwZW5kL3Jlc3VtZSBjYWxscyB3aWxsIG1hdGNoLgo+IAo+IFNpZ25lZC1vZmYt
+Ynk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyB8IDEgLQo+ICAxIGZpbGUg
+Y2hhbmdlZCwgMSBkZWxldGlvbigtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZpbWMuYwo+IGluZGV4IDg0MmQ2YjhkYzNjNC4uMmE2NTIzNTlhZjY0IDEwMDY0NAo+IC0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMKPiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltYy5jCj4gQEAgLTE3NDUsNyArMTc0NSw2
+IEBAIHN0YXRpYyBpbnQgZmltY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+
+ICAJc3Bpbl9sb2NrX2luaXQoJmN0eC0+bG9jayk7Cj4gIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShw
+ZGV2LCBjdHgpOwo+ICAKPiAtCXBtX3J1bnRpbWVfc2V0X2FjdGl2ZShkZXYpOwo+ICAJcG1fcnVu
+dGltZV9lbmFibGUoZGV2KTsKPiAgCj4gIAlyZXQgPSBleHlub3NfZHJtX2lwcGRydl9yZWdpc3Rl
+cihpcHBkcnYpOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
