@@ -1,83 +1,35 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 0/9 v7] Helper to abstract vma handling in media layer
-Date: Mon, 13 Jul 2015 16:59:27 +0200
-Message-ID: <55A3D24F.6090208@xs4all.nl>
-References: <1436799351-21975-1-git-send-email-jack@suse.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] arm:irqchip: IRQCHIP_DECLARE macro is now accessible
+Date: Mon, 13 Jul 2015 23:20:35 +0800
+Message-ID: <20150713152035.GD26642@tiger>
+References: <1436299411-12329-1-git-send-email-joel@porquet.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1436799351-21975-1-git-send-email-jack@suse.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jan Kara <jack@suse.com>
-Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1436299411-12329-1-git-send-email-joel@porquet.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joel Porquet <joel@porquet.org>
+Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/13/2015 04:55 PM, Jan Kara wrote:
-> From: Jan Kara <jack@suse.cz>
+On Tue, Jul 07, 2015 at 04:02:53PM -0400, Joel Porquet wrote:
+> The IRQCHIP_DECLARE macro migrated to 'include/linux/irqchip.h', making it
+> globally accessible.
 > 
->   Hello,
+> See commit 91e20b5040c67c51aad88cf87db4305c5bd7f79d
+> ("irqchip: Move IRQCHIP_DECLARE macro to include/linux/irqchip.h").
 > 
-> I'm sending the seventh version of my patch series to abstract vma handling
-> from the various media drivers. Since the previous version there are just
-> minor cleanups and fixes (see detailed changelog at the end of the email).
+> This patch adds inclusions of 'include/linux/irqchip.h' and replaces uses of
+> macro OF_DECLARE_2 with IRQCHIP_DECLARE.
 > 
-> After this patch set drivers have to know much less details about vmas, their
-> types, and locking. Also quite some code is removed from them. As a bonus
-> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
-> this series is to remove knowledge about mmap_sem locking from as many places a
-> possible so that we can change it with reasonable effort.
-> 
-> The core of the series is the new helper get_vaddr_frames() which is given a
-> virtual address and it fills in PFNs / struct page pointers (depending on VMA
-> type) into the provided array. If PFNs correspond to normal pages it also grabs
-> references to these pages. The difference from get_user_pages() is that this
-> function can also deal with pfnmap, and io mappings which is what the media
-> drivers need.
-> 
-> I have tested the patches with vivid driver so at least vb2 code got some
-> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
-> exynos driver which is only for Samsung platform is completely untested).
-> 
-> Hans, can you please pull the changes? Thanks!
+> Signed-off-by: Joel Porquet <joel@porquet.org>
+> ---
+...
+>  arch/arm/mach-imx/gpc.c              | 7 ++-----
 
-Scheduled for Friday or the following Monday!
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-Thanks,
+How will this patch be sent to upstream?
 
-	Hans
-
-> 
-> 								Honza
-> 
-> Changes since v6:
-> * Fixed compilation error introduced into exynos driver
-> * Folded patch allowing get_vaddr_pfn() code to be selected by a config option
->   into previous patches
-> * Rebased on top of linux-media tree
-> 
-> Changes since v5:
-> * Moved mm helper into a separate file and behind a config option
-> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
->   possible deadlock
-> 
-> Changes since v4:
-> * Minor cleanups and fixes pointed out by Mel and Vlasta
-> * Added Acked-by tags
-> 
-> Changes since v3:
-> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
-> * Fixed error path for exynos driver
-> 
-> Changes since v2:
-> * Renamed functions and structures as Mel suggested
-> * Other minor changes suggested by Mel
-> * Rebased on top of 4.1-rc2
-> * Changed functions to get pointer to array of pages / pfns to perform
->   conversion if necessary. This fixes possible issue in the omap I may have
->   introduced in v2 and generally makes the API less errorprone.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Shawn
