@@ -1,112 +1,136 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 0/10 v6] Helper to abstract vma handling in media layer
-Date: Mon, 13 Jul 2015 15:36:07 +0200
-Message-ID: <20150713133607.GA17075@quack.suse.cz>
-References: <1434636520-25116-1-git-send-email-jack@suse.cz>
- <20150709114848.GA9189@quack.suse.cz>
- <559E6538.9080100@xs4all.nl>
- <55A37AA5.1020809@xs4all.nl>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 4/6] ARM: dts: Exynos4210: add CPU OPP and regulator supply
+ property
+Date: Mon, 13 Jul 2015 16:27:51 +0200
+Message-ID: <2096384.dMD4qgzAC2@amdc1976>
+References: <'@samsung.com>
+ <CAJKOXPcX83C+=D-Fpstgu8N1y7-TFM3tXki_YfUyKkU1q3EfSA@mail.gmail.com>
+ <1549704.AH5CyPJE5q@amdc1976>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:39737 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751115AbbGMNgL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jul 2015 09:36:11 -0400
-Content-Disposition: inline
-In-Reply-To: <55A37AA5.1020809@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1549704.AH5CyPJE5q@amdc1976>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Kevin Hilman <khilman@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andreas Faerber <afaerber@suse.de>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Jan Kara <jack@suse.cz>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon 13-07-15 10:45:25, Hans Verkuil wrote:
-> On 07/09/2015 02:12 PM, Hans Verkuil wrote:
-> > On 07/09/2015 01:48 PM, Jan Kara wrote:
-> >>   Hello,
-> >>
-> >>   Hans, did you have a chance to look at these patches? I have tested them
-> >> with the vivid driver but it would be good if you could run them through
-> >> your standard testing procedure as well. Andrew has updated the patches in
-> >> his tree but some ack from you would be welcome...
+On Monday, July 13, 2015 01:20:41 PM Bartlomiej Zolnierkiewicz wrote:
+> On Monday, July 13, 2015 08:10:21 PM Krzysztof Kozlowski wrote:
+> > 2015-07-13 20:02 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+> > >
+> > > Hi,
+> > >
+> > > On Tuesday, June 23, 2015 09:24:40 AM Krzysztof Kozlowski wrote:
+> > >> On 23.06.2015 08:46, Krzysztof Kozlowski wrote:
+> > >> > On 23.06.2015 00:04, Michael Turquette wrote:
+> > >> >> Quoting Kukjin Kim (2015-06-21 18:46:26)
+> > >> >>> Krzysztof Kozlowski wrote:
+> > >> >>>>
+> > >> >>>> On 22.06.2015 10:38, Kukjin Kim wrote:
+> > >> >>>>> Krzysztof Kozlowski wrote:
+> > >> >>>>>> 2015-05-08 9:18 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> > >> >>>>>>> 2015-04-04 1:43 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+> > >> >>>>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+> > >> >>>>>>>>
+> > >> >>>>>>>> For Exynos4210 platforms, add CPU operating points and CPU
+> > >> >>>>>>>> regulator supply properties for migrating from Exynos specific
+> > >> >>>>>>>> cpufreq driver to using generic cpufreq driver.
+> > >> >>>>>>>>
+> > >> >>>>>>>> Changes by Bartlomiej:
+> > >> >>>>>>>> - removed Exynos5250 and Exynos5420 support for now
+> > >> >>>>>>>>
+> > >> >>>>>>>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> > >> >>>>>>>> Cc: Doug Anderson <dianders@chromium.org>
+> > >> >>>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > >> >>>>>>>> Cc: Andreas Faerber <afaerber@suse.de>
+> > >> >>>>>>>> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+> > >> >>>>>>>> Cc: Andreas Farber <afaerber@suse.de>
+> > >> >>>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > >> >>>>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> > >> >>>>>>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > >> >>>>>>>
+> > >> >>>>>>> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > >> >>>>>>
+> > >> >>>>>> Rebased and applied to my tree, I'll sent it later to Kukjin unless he
+> > >> >>>>>> picks it by himself from LKML.
+> > >> >>>>>>
+> > >> >>>>> Hi, as far as I know, this is for v4.2 not v4.1 so it will be applied based on
+> > >> >>>>> v4.2-rc1 after v4.2-rc1 release.
+> > >> >>>>
+> > >> >>>> You mean it is for v4.3, not v4.2?
+> > >> >>>>
+> > >> >>> Oops, yes v4.3.
+> > >> >>>
+> > >> >>> Thanks for the correction.
+> > >> >>
+> > >> >> Kukjin & Krzysztof,
+> > >> >>
+> > >> >> I'm confused on this point. I was planning to take patches 1, 2, 3, 5
+> > >> >> and 6 towards 4.2 (e.g. in the pull request that I'll send out this
+> > >> >> week).
+> > >> >>
+> > >> >> Is patch 4 going out for 4.2 or 4.3?
+> > >> >
+> > >> > It is quite late for sending pull request to arm-soc for 4.2.
+> > >> > For example SoCFPGA pull request from last week was rejected:
+> > >> > http://comments.gmane.org/gmane.linux.ports.arm.kernel/417980
+> > >>
+> > >> Oh, that was wrong link. Here it is:
+> > >> http://www.spinics.net/lists/arm-kernel/msg425911.html
+> > >>
+> > >> > If you want to take it for 4.2 then I am fine with it but this will
+> > >> > cause some easy but annoying conflicts. There aren't difficult - just
+> > >> > most of nodes in board DTS changed their place.
+> > >> >
+> > >> > Example of resolution (target file after merge, with cpu nodes reordered
+> > >> > alphabetically):
+> > >> > https://github.com/krzk/linux/commit/2cec3cb48abaf44848c62f1c0836b772eb4680dd
+> > >
+> > > This patch is needed for v4.2 as other changes has been already
+> > > merged.
+> > >
+> > > Krzysztof/Kukjin, could you please take care of it?
 > > 
-> > I've planned a 'patch day' for Monday. So hopefully you'll see a pull request
-> > by then.
+> > Of course! It is already in my queue. I'll send it later to Kukjin for
+> > 4.3 (unless he picks it also).
 > 
-> OK, I'm confused. I thought the non-vb2 patches would go in for 4.2? That
-> didn't happen, so I guess the plan is to merge the whole lot for 4.3 via
-> our media tree? If that's the case, can you post a new patch series on
-
-I guess Andrew wasn't sure what to push and what not so he just chose the
-safe option to not push anything.
-
-> top of the master branch of the media tree? I want to make sure I use the
-> right patches. Also, if you do make a new patch series, then it would be
-> better if patch 10/10 is folded into patch 2/10.
-
-OK, I'll rebase patches on top of media tree.
-
-								Honza
-
-> >> On Thu 18-06-15 16:08:30, Jan Kara wrote:
-> >>>   Hello,
-> >>>
-> >>> I'm sending the sixth version of my patch series to abstract vma handling from
-> >>> the various media drivers. Since the previous version I have added a patch to
-> >>> move mm helpers into a separate file and behind a config option. I also
-> >>> changed patch pushing mmap_sem down in videobuf2 core to avoid lockdep warning
-> >>> and NULL dereference Hans found in his testing. I've also included small
-> >>> fixups Andrew was carrying.
-> >>>
-> >>> After this patch set drivers have to know much less details about vmas, their
-> >>> types, and locking. Also quite some code is removed from them. As a bonus
-> >>> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
-> >>> this series is to remove knowledge about mmap_sem locking from as many places a
-> >>> possible so that we can change it with reasonable effort.
-> >>>
-> >>> The core of the series is the new helper get_vaddr_frames() which is given a
-> >>> virtual address and it fills in PFNs / struct page pointers (depending on VMA
-> >>> type) into the provided array. If PFNs correspond to normal pages it also grabs
-> >>> references to these pages. The difference from get_user_pages() is that this
-> >>> function can also deal with pfnmap, and io mappings which is what the media
-> >>> drivers need.
-> >>>
-> >>> I have tested the patches with vivid driver so at least vb2 code got some
-> >>> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
-> >>> exynos driver which is only for Samsung platform is completely untested).
-> >>>
-> >>> Andrew, can you please update the patches in mm three? Thanks!
-> >>>
-> >>> 								Honza
-> >>>
-> >>> Changes since v5:
-> >>> * Moved mm helper into a separate file and behind a config option
-> >>> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
-> >>>   possible deadlock
-> >>>
-> >>> Changes since v4:
-> >>> * Minor cleanups and fixes pointed out by Mel and Vlasta
-> >>> * Added Acked-by tags
-> >>>
-> >>> Changes since v3:
-> >>> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
-> >>> * Fixed error path for exynos driver
-> >>>
-> >>> Changes since v2:
-> >>> * Renamed functions and structures as Mel suggested
-> >>> * Other minor changes suggested by Mel
-> >>> * Rebased on top of 4.1-rc2
-> >>> * Changed functions to get pointer to array of pages / pfns to perform
-> >>>   conversion if necessary. This fixes possible issue in the omap I may have
-> >>>   introduced in v2 and generally makes the API less errorprone.
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
+> It is in your queue for v4.3 but the patch is needed for v4.2,
+> without it cpufreq support will not work for Exynos4210 platforms.
 > 
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+> > BTW for other patchsets you still need acks from Samsung clock
+> > maintainers. Did you poke Sylwester or Tomasz about it?
+> 
+> Sylwester, please review/ack Samsung specific clock changes in
+> Exynos5250 cpufreq and Exynos4x12 cpufreq patch series.
+> 
+> Patch series:
+> 
+> * [PATCH v3 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
+>   (http://lkml.org/lkml/2015/7/1/311)
+> 
+> * [PATCH v2 0/7] cpufreq: use generic cpufreq drivers for Exynos4x12 platform
+>   (http://lkml.org/lkml/2015/7/9/419)
+> 
+> Samsung clock specific changes:
+> 
+> * [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock configuration data
+>   and instantiate cpu clock
+>   (http://lkml.org/lkml/2015/7/1/313)
+> 
+> * [PATCH v2 4/7] clk: samsung: exynos4x12: add cpu clock configuration data
+>   and instantiate cpu clock
+>   (http://lkml.org/lkml/2015/7/9/424)
+
+BTW corresponding changes for Exynos4210 has already been merged and 2 above
+patches are quite obvious so review should be very quick & simple.
+
+[ Unfortunately Sylwester is currently very busy with a more priority work so
+  it may still take some time to get his ACKs. ]
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
