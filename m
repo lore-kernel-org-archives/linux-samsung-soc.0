@@ -1,118 +1,145 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
-Date: Mon, 13 Jul 2015 11:26:55 -0500
-Message-ID: <CAL_JsqJfDdDAQ1gr1w3w8_FVqKzxqDag-PHnwguaPfT+6zqszw@mail.gmail.com>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org>
- <1436711211-18223-7-git-send-email-robh@kernel.org> <alpine.DEB.2.11.1507121737030.20072@nanos>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 0/7] drm/exynos/hdmi: refactoring/cleanup patches
+Date: Mon, 13 Jul 2015 20:20:29 +0200
+Message-ID: <55A4016D.2000204@math.uni-bielefeld.de>
+References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com> <55A2907E.9000507@math.uni-bielefeld.de> <55A361BF.8030904@samsung.com> <55A37F0C.7030907@math.uni-bielefeld.de> <55A385DA.8040805@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f179.google.com ([209.85.160.179]:35227 "EHLO
-	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792AbbGMQ1P (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:50035 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751671AbbGMSUc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jul 2015 12:27:15 -0400
-In-Reply-To: <alpine.DEB.2.11.1507121737030.20072@nanos>
+	Mon, 13 Jul 2015 14:20:32 -0400
+In-Reply-To: <55A385DA.8040805@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sun, Jul 12, 2015 at 11:43 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Sun, 12 Jul 2015, Rob Herring wrote:
->
->> set_irq_flags is ARM specific with custom flags which have genirq
->> equivalents. Convert drivers to use the genirq interfaces directly, so we
->> can kill off set_irq_flags. The translation of flags is as follows:
+Hello!
+
+
+Andrzej Hajda wrote:
+> On 07/13/2015 11:04 AM, Tobias Jakobi wrote:
+>> Hello,
 >>
->> IRQF_VALID -> !IRQ_NOREQUEST
->> IRQF_PROBE -> !IRQ_NOPROBE
->> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>> Andrzej Hajda wrote:
+>>> Hi Tobias,
+>>>
+>>> On 07/12/2015 06:06 PM, Tobias Jakobi wrote:
+>>>> Hello Andrzej!
+>>>>
+>>>> Just some small comments.
+>>>>
+>>>> It seems like linux-samsung-soc wasn't put into Cc for '[PATCH RESEND
+>>>> 0/6] drm/exynos: HDMI related fixes' (even though this series was),
+>>>> maybe you should also forward the other series to this list.
+>>> Yes, I forgot about it.
+>>>
+>>>> This series doesn't apply cleanly when 'drm/exynos: HDMI related fixes'
+>>>> is applied. E.g. the 'powered' boolean was removed by that series, but
+>>>> here in patch 2/7 ('drm/exynos/hdmi: Simplify HPD gpio handling') it's
+>>>> still there.
+>>> 'drm/exynos: HDMI related fixes' removes powered field from
+>>> mixer driver, and powered field in the patch 2/7 is from hdmi driver.
+>>> So they should not interfere and for sure they do not interfere in my local git :)
+>>> Have you any warning when you tried to apply those patches.
+>> yes of course, otherwise I wouldn't point this out. The specific hunks
+>> just fail.
 >>
->> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
->> and setting IRQ_NOREQUEST already, so there is no need to do this in
->> .map() functions and we can simply remove the set_irq_flags calls. Some
->> users also set IRQ_NOPROBE and this has been maintained although it is not
->
-> clear IRQ_NOPROBE, right?
+>> Which is kinda obvious:
+>>> @@ -186,7 +186,6 @@  struct hdmi_context {
+>>>  	struct drm_device		*drm_dev;
+>>>  	struct drm_connector		connector;
+>>>  	struct drm_encoder		*encoder;
+>>> -	bool				hpd;
+>>>  	bool				powered;
+>>>  	bool				dvi_mode;
+>>>  	struct mutex			hdmi_mutex;
+>> This doesn't apply when 'powered' is no longer ther.
+> 
+> I have this field still present in my tree which is build of following components:
+> - current exynos-drm-next,
+> - drm/exynos: HDMI related fixes,
+> - this patchset
+> 
+> Could you show me exactly which patch removes this field?
+> 
+> As I mentioned one patch removes similar field from mixer driver, but not from hdmi.
+You're right, looks like I'm mixing up fields from mixer and hdmi. Hmm,
+now I'm confused -- I did have some problems applying the patches, but
+with this now ruled out I can't really recall anything else that may
+have caused this.
 
-Both set and clear really. The state of IRQ_NOPROBE is a don't care in
-most cases as you have outlined below. Are the cases of setting
-IRQ_NOPROBE really needed or simply a bunch of copy and paste?
+Guess I have to repeat the steps. So until further notice, just
+disregard everything I said! *g*
 
-I've noticed I have a few places wrong with probe setting though, so
-I'll be sending a v3.
 
->> clear that is really needed. There appears to be a great deal of blind
->> copy and paste of this code.
->
-> Looking at the irq probe users:
->
-> drivers/input/touchscreen/ucb1400_ts.c
-> drivers/mfd/ucb1x00-core.c
->
-> The probe function was added in the initial implementation of the
-> driver (2006), so it predates device tree.
+With best wishes,
+Tobias
 
-We still have lots of platforms which are not (and probably never will
-be) DT. Certainly, DT only irqchips should be easy to make consistent.
-The older stuff is harder and not frequently tested.
 
-> drivers/net/appletalk/ltpc.c
-> drivers/net/arcnet/com20020-isa.c
-> drivers/net/arcnet/com90io.c
-> drivers/net/arcnet/com90xx.c
->
-> Surely not stuff you find on todays ARM systems
->
-> drivers/net/ethernet/8390/ne.c
-> drivers/net/ethernet/8390/wd.c
-> drivers/net/ethernet/amd/lance.c
-> drivers/net/ethernet/amd/ni65.c
-> drivers/net/ethernet/amd/pcnet32.c
->
-> Ditto
->
-> drivers/net/ethernet/smsc/smc911x.c
-> drivers/net/ethernet/smsc/smc9194.c
-> drivers/net/ethernet/smsc/smc91x.c
->
-> Those might still be, but on the DT based boards the probing should be
-> completely irrelevant
 
-Yes, these are quite common on ARM boards, and probably few if any
-rely on irq probing regardless of DT.
 
-> drivers/net/hamradio/dmascc.c
-> drivers/net/wan/cosa.c
-> drivers/net/wan/sbni.c
-> drivers/parport/parport_pc.c
->
-> Surely not stuff you find on todays ARM systems
->
-> drivers/pcmcia/yenta_socket.c
->
-> Russell might still use that.
->
-> drivers/scsi/NCR53c406a.c
-> drivers/scsi/sym53c416.c
-> drivers/tty/cyclades.c
->
-> Surely not stuff you find on todays ARM systems
->
-> drivers/tty/serial/8250/8250_core.c
->
-> The irq probing is used by
->
->     mach-imx/mach-mx31ads.c
->     mach-iop32x/n2100.c
->
->     and X86
->
-> So in most of the irqchip drivers, this is irrelevant.
-
-Agreed, but that's a separate series I think. I'm trying not to change
-behavior with this series. Are you proposing I do something different
-with this patch?
-
-Rob
+> 
+> Regards
+> Andrzej
+> 
+> 
+>>
+>>
+>>
+>> With best wishes,
+>> Tobias
+>>
+>>>> I also noticed that some of the patches ('drm/exynos/hdmi: remove
+>>>> private lock code') clash with Gustavo's latest cleanup series [1]. E.g.
+>>>> your patch 3/7 ('drm/exynos/hdmi: remove private lock code') touches
+>>>> hdmi_commit() which was removed by Gustavo. Maybe you should coordinate
+>>>> things with him?
+>>> This is always problematic :) I can try to rebase my patches on Gustavo's
+>>> if necessary. Gustavo, Inki what is your opinion?
+>>>
+>>> Regards
+>>> Andrzej
+>>>
+>>>>
+>>>> With best wishes,
+>>>> Tobias
+>>>>
+>>>>
+>>>> [1] http://www.spinics.net/lists/linux-samsung-soc/msg45787.html
+>>>>
+>>>>
+>>>> Andrzej Hajda wrote:
+>>>>> Hi Inki, Joonyoung,
+>>>>>
+>>>>> These patches removes obsolete and old structures, to simplify further
+>>>>> development. They should not change behavior of the driver.
+>>>>>
+>>>>> The patchset is based on exynos-drm-next plus my HDMI related fixes [1].
+>>>>>
+>>>>> The patchset was tested on Universal and Odroid U3.
+>>>>>
+>>>>> [1]: http://permalink.gmane.org/gmane.comp.video.dri.devel/132348
+>>>>>
+>>>>> Regards
+>>>>> Andrzej
+>>>>>
+>>>>>
+>>>>> Andrzej Hajda (7):
+>>>>>   drm/exynos/hdmi: remove old platform data code
+>>>>>   drm/exynos/hdmi: Simplify HPD gpio handling
+>>>>>   drm/exynos/hdmi: remove private lock code
+>>>>>   drm/exynos/hdmi: add driver data pointer to private context
+>>>>>   drm/exynos/hdmi: remove redundant configuration fields
+>>>>>   drm/exynos/hdmi: remove hdmi_v13_conf struct
+>>>>>   drm/exynos/hdmi: remove hdmi_v14_conf struct
+>>>>>
+>>>>>  drivers/gpu/drm/exynos/exynos_hdmi.c | 860 ++++++++++-------------------------
+>>>>>  1 file changed, 245 insertions(+), 615 deletions(-)
+>>>>>
+>>
+> 
