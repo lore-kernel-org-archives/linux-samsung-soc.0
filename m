@@ -1,39 +1,69 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] PM / devfreq: event: Remove incorrect property in exynos-ppmu DT binding
-Date: Mon, 13 Jul 2015 08:58:51 +0200
-Message-ID: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:52572 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751171AbbGMG7D (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jul 2015 02:59:03 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 0/7] drm/exynos/hdmi: refactoring/cleanup patches
+Date: Mon, 13 Jul 2015 08:59:11 +0200
+Message-ID: <55A361BF.8030904@samsung.com>
+References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
+ <55A2907E.9000507@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <55A2907E.9000507@math.uni-bielefeld.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-The exynos-ppmu driver is only a clock consumer and not a clock provider
-but its Device Tree binding listed #clock-cells as an optional property.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
- Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-index b54bf3a2ff57..aed486692880 100644
---- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-+++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-@@ -17,7 +17,6 @@ Required properties:
- Optional properties:
- - clock-names : the name of clock used by the PPMU, "ppmu"
- - clocks : phandles for clock specified in "clock-names" property
--- #clock-cells: should be 1.
- 
- Example1 : PPMU nodes in exynos3250.dtsi are listed below.
- 
--- 
-2.4.3
+SGkgVG9iaWFzLAoKT24gMDcvMTIvMjAxNSAwNjowNiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToK
+PiBIZWxsbyBBbmRyemVqIQo+Cj4gSnVzdCBzb21lIHNtYWxsIGNvbW1lbnRzLgo+Cj4gSXQgc2Vl
+bXMgbGlrZSBsaW51eC1zYW1zdW5nLXNvYyB3YXNuJ3QgcHV0IGludG8gQ2MgZm9yICdbUEFUQ0gg
+UkVTRU5ECj4gMC82XSBkcm0vZXh5bm9zOiBIRE1JIHJlbGF0ZWQgZml4ZXMnIChldmVuIHRob3Vn
+aCB0aGlzIHNlcmllcyB3YXMpLAo+IG1heWJlIHlvdSBzaG91bGQgYWxzbyBmb3J3YXJkIHRoZSBv
+dGhlciBzZXJpZXMgdG8gdGhpcyBsaXN0LgoKWWVzLCBJIGZvcmdvdCBhYm91dCBpdC4KCj4KPiBU
+aGlzIHNlcmllcyBkb2Vzbid0IGFwcGx5IGNsZWFubHkgd2hlbiAnZHJtL2V4eW5vczogSERNSSBy
+ZWxhdGVkIGZpeGVzJwo+IGlzIGFwcGxpZWQuIEUuZy4gdGhlICdwb3dlcmVkJyBib29sZWFuIHdh
+cyByZW1vdmVkIGJ5IHRoYXQgc2VyaWVzLCBidXQKPiBoZXJlIGluIHBhdGNoIDIvNyAoJ2RybS9l
+eHlub3MvaGRtaTogU2ltcGxpZnkgSFBEIGdwaW8gaGFuZGxpbmcnKSBpdCdzCj4gc3RpbGwgdGhl
+cmUuCgonZHJtL2V4eW5vczogSERNSSByZWxhdGVkIGZpeGVzJyByZW1vdmVzIHBvd2VyZWQgZmll
+bGQgZnJvbQptaXhlciBkcml2ZXIsIGFuZCBwb3dlcmVkIGZpZWxkIGluIHRoZSBwYXRjaCAyLzcg
+aXMgZnJvbSBoZG1pIGRyaXZlci4KU28gdGhleSBzaG91bGQgbm90IGludGVyZmVyZSBhbmQgZm9y
+IHN1cmUgdGhleSBkbyBub3QgaW50ZXJmZXJlIGluIG15IGxvY2FsIGdpdCA6KQpIYXZlIHlvdSBh
+bnkgd2FybmluZyB3aGVuIHlvdSB0cmllZCB0byBhcHBseSB0aG9zZSBwYXRjaGVzLgoKPgo+IEkg
+YWxzbyBub3RpY2VkIHRoYXQgc29tZSBvZiB0aGUgcGF0Y2hlcyAoJ2RybS9leHlub3MvaGRtaTog
+cmVtb3ZlCj4gcHJpdmF0ZSBsb2NrIGNvZGUnKSBjbGFzaCB3aXRoIEd1c3Rhdm8ncyBsYXRlc3Qg
+Y2xlYW51cCBzZXJpZXMgWzFdLiBFLmcuCj4geW91ciBwYXRjaCAzLzcgKCdkcm0vZXh5bm9zL2hk
+bWk6IHJlbW92ZSBwcml2YXRlIGxvY2sgY29kZScpIHRvdWNoZXMKPiBoZG1pX2NvbW1pdCgpIHdo
+aWNoIHdhcyByZW1vdmVkIGJ5IEd1c3Rhdm8uIE1heWJlIHlvdSBzaG91bGQgY29vcmRpbmF0ZQo+
+IHRoaW5ncyB3aXRoIGhpbT8KClRoaXMgaXMgYWx3YXlzIHByb2JsZW1hdGljIDopIEkgY2FuIHRy
+eSB0byByZWJhc2UgbXkgcGF0Y2hlcyBvbiBHdXN0YXZvJ3MKaWYgbmVjZXNzYXJ5LiBHdXN0YXZv
+LCBJbmtpIHdoYXQgaXMgeW91ciBvcGluaW9uPwoKUmVnYXJkcwpBbmRyemVqCgo+Cj4KPiBXaXRo
+IGJlc3Qgd2lzaGVzLAo+IFRvYmlhcwo+Cj4KPiBbMV0gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9s
+aXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2c0NTc4Ny5odG1sCj4KPgo+IEFuZHJ6ZWogSGFqZGEg
+d3JvdGU6Cj4+IEhpIElua2ksIEpvb255b3VuZywKPj4KPj4gVGhlc2UgcGF0Y2hlcyByZW1vdmVz
+IG9ic29sZXRlIGFuZCBvbGQgc3RydWN0dXJlcywgdG8gc2ltcGxpZnkgZnVydGhlcgo+PiBkZXZl
+bG9wbWVudC4gVGhleSBzaG91bGQgbm90IGNoYW5nZSBiZWhhdmlvciBvZiB0aGUgZHJpdmVyLgo+
+Pgo+PiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gZXh5bm9zLWRybS1uZXh0IHBsdXMgbXkgSERN
+SSByZWxhdGVkIGZpeGVzIFsxXS4KPj4KPj4gVGhlIHBhdGNoc2V0IHdhcyB0ZXN0ZWQgb24gVW5p
+dmVyc2FsIGFuZCBPZHJvaWQgVTMuCj4+Cj4+IFsxXTogaHR0cDovL3Blcm1hbGluay5nbWFuZS5v
+cmcvZ21hbmUuY29tcC52aWRlby5kcmkuZGV2ZWwvMTMyMzQ4Cj4+Cj4+IFJlZ2FyZHMKPj4gQW5k
+cnplago+Pgo+Pgo+PiBBbmRyemVqIEhhamRhICg3KToKPj4gICBkcm0vZXh5bm9zL2hkbWk6IHJl
+bW92ZSBvbGQgcGxhdGZvcm0gZGF0YSBjb2RlCj4+ICAgZHJtL2V4eW5vcy9oZG1pOiBTaW1wbGlm
+eSBIUEQgZ3BpbyBoYW5kbGluZwo+PiAgIGRybS9leHlub3MvaGRtaTogcmVtb3ZlIHByaXZhdGUg
+bG9jayBjb2RlCj4+ICAgZHJtL2V4eW5vcy9oZG1pOiBhZGQgZHJpdmVyIGRhdGEgcG9pbnRlciB0
+byBwcml2YXRlIGNvbnRleHQKPj4gICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92ZSByZWR1bmRhbnQg
+Y29uZmlndXJhdGlvbiBmaWVsZHMKPj4gICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92ZSBoZG1pX3Yx
+M19jb25mIHN0cnVjdAo+PiAgIGRybS9leHlub3MvaGRtaTogcmVtb3ZlIGhkbWlfdjE0X2NvbmYg
+c3RydWN0Cj4+Cj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCA4NjAg
+KysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAy
+NDUgaW5zZXJ0aW9ucygrKSwgNjE1IGRlbGV0aW9ucygtKQo+Pgo+CgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
