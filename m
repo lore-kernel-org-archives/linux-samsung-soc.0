@@ -1,87 +1,97 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/7] drm/exynos/hdmi: refactoring/cleanup patches
-Date: Mon, 13 Jul 2015 11:33:14 +0200
-Message-ID: <55A385DA.8040805@samsung.com>
-References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
- <55A2907E.9000507@math.uni-bielefeld.de> <55A361BF.8030904@samsung.com>
- <55A37F0C.7030907@math.uni-bielefeld.de>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 4/6] ARM: dts: Exynos4210: add CPU OPP and regulator supply
+ property
+Date: Mon, 13 Jul 2015 13:02:42 +0200
+Message-ID: <4721448.dpAUKITTdt@amdc1976>
+References: <'@samsung.com> <55889E59.1070001@samsung.com>
+ <5588A748.2070407@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <55A37F0C.7030907@math.uni-bielefeld.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <5588A748.2070407@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Kevin Hilman' <khilman@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Andreas Faerber' <afaerber@suse.de>, 'Doug Anderson' <dianders@chromium.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDcvMTMvMjAxNSAxMTowNCBBTSwgVG9iaWFzIEpha29iaSB3cm90ZToKPiBIZWxsbywKPgo+
-IEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+IEhpIFRvYmlhcywKPj4KPj4gT24gMDcvMTIvMjAxNSAw
-NjowNiBQTSwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4+IEhlbGxvIEFuZHJ6ZWohCj4+Pgo+Pj4g
-SnVzdCBzb21lIHNtYWxsIGNvbW1lbnRzLgo+Pj4KPj4+IEl0IHNlZW1zIGxpa2UgbGludXgtc2Ft
-c3VuZy1zb2Mgd2Fzbid0IHB1dCBpbnRvIENjIGZvciAnW1BBVENIIFJFU0VORAo+Pj4gMC82XSBk
-cm0vZXh5bm9zOiBIRE1JIHJlbGF0ZWQgZml4ZXMnIChldmVuIHRob3VnaCB0aGlzIHNlcmllcyB3
-YXMpLAo+Pj4gbWF5YmUgeW91IHNob3VsZCBhbHNvIGZvcndhcmQgdGhlIG90aGVyIHNlcmllcyB0
-byB0aGlzIGxpc3QuCj4+IFllcywgSSBmb3Jnb3QgYWJvdXQgaXQuCj4+Cj4+PiBUaGlzIHNlcmll
-cyBkb2Vzbid0IGFwcGx5IGNsZWFubHkgd2hlbiAnZHJtL2V4eW5vczogSERNSSByZWxhdGVkIGZp
-eGVzJwo+Pj4gaXMgYXBwbGllZC4gRS5nLiB0aGUgJ3Bvd2VyZWQnIGJvb2xlYW4gd2FzIHJlbW92
-ZWQgYnkgdGhhdCBzZXJpZXMsIGJ1dAo+Pj4gaGVyZSBpbiBwYXRjaCAyLzcgKCdkcm0vZXh5bm9z
-L2hkbWk6IFNpbXBsaWZ5IEhQRCBncGlvIGhhbmRsaW5nJykgaXQncwo+Pj4gc3RpbGwgdGhlcmUu
-Cj4+ICdkcm0vZXh5bm9zOiBIRE1JIHJlbGF0ZWQgZml4ZXMnIHJlbW92ZXMgcG93ZXJlZCBmaWVs
-ZCBmcm9tCj4+IG1peGVyIGRyaXZlciwgYW5kIHBvd2VyZWQgZmllbGQgaW4gdGhlIHBhdGNoIDIv
-NyBpcyBmcm9tIGhkbWkgZHJpdmVyLgo+PiBTbyB0aGV5IHNob3VsZCBub3QgaW50ZXJmZXJlIGFu
-ZCBmb3Igc3VyZSB0aGV5IGRvIG5vdCBpbnRlcmZlcmUgaW4gbXkgbG9jYWwgZ2l0IDopCj4+IEhh
-dmUgeW91IGFueSB3YXJuaW5nIHdoZW4geW91IHRyaWVkIHRvIGFwcGx5IHRob3NlIHBhdGNoZXMu
-Cj4geWVzIG9mIGNvdXJzZSwgb3RoZXJ3aXNlIEkgd291bGRuJ3QgcG9pbnQgdGhpcyBvdXQuIFRo
-ZSBzcGVjaWZpYyBodW5rcwo+IGp1c3QgZmFpbC4KPgo+IFdoaWNoIGlzIGtpbmRhIG9idmlvdXM6
-Cj4+IEBAIC0xODYsNyArMTg2LDYgQEAgIHN0cnVjdCBoZG1pX2NvbnRleHQgewo+PiAgCXN0cnVj
-dCBkcm1fZGV2aWNlCQkqZHJtX2RldjsKPj4gIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvcgkJY29ubmVj
-dG9yOwo+PiAgCXN0cnVjdCBkcm1fZW5jb2RlcgkJKmVuY29kZXI7Cj4+IC0JYm9vbAkJCQlocGQ7
-Cj4+ICAJYm9vbAkJCQlwb3dlcmVkOwo+PiAgCWJvb2wJCQkJZHZpX21vZGU7Cj4+ICAJc3RydWN0
-IG11dGV4CQkJaGRtaV9tdXRleDsKPiBUaGlzIGRvZXNuJ3QgYXBwbHkgd2hlbiAncG93ZXJlZCcg
-aXMgbm8gbG9uZ2VyIHRoZXIuCgpJIGhhdmUgdGhpcyBmaWVsZCBzdGlsbCBwcmVzZW50IGluIG15
-IHRyZWUgd2hpY2ggaXMgYnVpbGQgb2YgZm9sbG93aW5nIGNvbXBvbmVudHM6Ci0gY3VycmVudCBl
-eHlub3MtZHJtLW5leHQsCi0gZHJtL2V4eW5vczogSERNSSByZWxhdGVkIGZpeGVzLAotIHRoaXMg
-cGF0Y2hzZXQKCkNvdWxkIHlvdSBzaG93IG1lIGV4YWN0bHkgd2hpY2ggcGF0Y2ggcmVtb3ZlcyB0
-aGlzIGZpZWxkPwoKQXMgSSBtZW50aW9uZWQgb25lIHBhdGNoIHJlbW92ZXMgc2ltaWxhciBmaWVs
-ZCBmcm9tIG1peGVyIGRyaXZlciwgYnV0IG5vdCBmcm9tIGhkbWkuCgpSZWdhcmRzCkFuZHJ6ZWoK
-Cgo+Cj4KPgo+IFdpdGggYmVzdCB3aXNoZXMsCj4gVG9iaWFzCj4KPj4+IEkgYWxzbyBub3RpY2Vk
-IHRoYXQgc29tZSBvZiB0aGUgcGF0Y2hlcyAoJ2RybS9leHlub3MvaGRtaTogcmVtb3ZlCj4+PiBw
-cml2YXRlIGxvY2sgY29kZScpIGNsYXNoIHdpdGggR3VzdGF2bydzIGxhdGVzdCBjbGVhbnVwIHNl
-cmllcyBbMV0uIEUuZy4KPj4+IHlvdXIgcGF0Y2ggMy83ICgnZHJtL2V4eW5vcy9oZG1pOiByZW1v
-dmUgcHJpdmF0ZSBsb2NrIGNvZGUnKSB0b3VjaGVzCj4+PiBoZG1pX2NvbW1pdCgpIHdoaWNoIHdh
-cyByZW1vdmVkIGJ5IEd1c3Rhdm8uIE1heWJlIHlvdSBzaG91bGQgY29vcmRpbmF0ZQo+Pj4gdGhp
-bmdzIHdpdGggaGltPwo+PiBUaGlzIGlzIGFsd2F5cyBwcm9ibGVtYXRpYyA6KSBJIGNhbiB0cnkg
-dG8gcmViYXNlIG15IHBhdGNoZXMgb24gR3VzdGF2bydzCj4+IGlmIG5lY2Vzc2FyeS4gR3VzdGF2
-bywgSW5raSB3aGF0IGlzIHlvdXIgb3Bpbmlvbj8KPj4KPj4gUmVnYXJkcwo+PiBBbmRyemVqCj4+
-Cj4+Pgo+Pj4gV2l0aCBiZXN0IHdpc2hlcywKPj4+IFRvYmlhcwo+Pj4KPj4+Cj4+PiBbMV0gaHR0
-cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2c0NTc4Ny5odG1s
-Cj4+Pgo+Pj4KPj4+IEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+Pj4gSGkgSW5raSwgSm9vbnlvdW5n
-LAo+Pj4+Cj4+Pj4gVGhlc2UgcGF0Y2hlcyByZW1vdmVzIG9ic29sZXRlIGFuZCBvbGQgc3RydWN0
-dXJlcywgdG8gc2ltcGxpZnkgZnVydGhlcgo+Pj4+IGRldmVsb3BtZW50LiBUaGV5IHNob3VsZCBu
-b3QgY2hhbmdlIGJlaGF2aW9yIG9mIHRoZSBkcml2ZXIuCj4+Pj4KPj4+PiBUaGUgcGF0Y2hzZXQg
-aXMgYmFzZWQgb24gZXh5bm9zLWRybS1uZXh0IHBsdXMgbXkgSERNSSByZWxhdGVkIGZpeGVzIFsx
-XS4KPj4+Pgo+Pj4+IFRoZSBwYXRjaHNldCB3YXMgdGVzdGVkIG9uIFVuaXZlcnNhbCBhbmQgT2Ry
-b2lkIFUzLgo+Pj4+Cj4+Pj4gWzFdOiBodHRwOi8vcGVybWFsaW5rLmdtYW5lLm9yZy9nbWFuZS5j
-b21wLnZpZGVvLmRyaS5kZXZlbC8xMzIzNDgKPj4+Pgo+Pj4+IFJlZ2FyZHMKPj4+PiBBbmRyemVq
-Cj4+Pj4KPj4+Pgo+Pj4+IEFuZHJ6ZWogSGFqZGEgKDcpOgo+Pj4+ICAgZHJtL2V4eW5vcy9oZG1p
-OiByZW1vdmUgb2xkIHBsYXRmb3JtIGRhdGEgY29kZQo+Pj4+ICAgZHJtL2V4eW5vcy9oZG1pOiBT
-aW1wbGlmeSBIUEQgZ3BpbyBoYW5kbGluZwo+Pj4+ICAgZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUg
-cHJpdmF0ZSBsb2NrIGNvZGUKPj4+PiAgIGRybS9leHlub3MvaGRtaTogYWRkIGRyaXZlciBkYXRh
-IHBvaW50ZXIgdG8gcHJpdmF0ZSBjb250ZXh0Cj4+Pj4gICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92
-ZSByZWR1bmRhbnQgY29uZmlndXJhdGlvbiBmaWVsZHMKPj4+PiAgIGRybS9leHlub3MvaGRtaTog
-cmVtb3ZlIGhkbWlfdjEzX2NvbmYgc3RydWN0Cj4+Pj4gICBkcm0vZXh5bm9zL2hkbWk6IHJlbW92
-ZSBoZG1pX3YxNF9jb25mIHN0cnVjdAo+Pj4+Cj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2hkbWkuYyB8IDg2MCArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
-Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMjQ1IGluc2VydGlvbnMoKyksIDYxNSBkZWxldGlvbnMoLSkK
-Pj4+Pgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+Hi,
+
+On Tuesday, June 23, 2015 09:24:40 AM Krzysztof Kozlowski wrote:
+> On 23.06.2015 08:46, Krzysztof Kozlowski wrote:
+> > On 23.06.2015 00:04, Michael Turquette wrote:
+> >> Quoting Kukjin Kim (2015-06-21 18:46:26)
+> >>> Krzysztof Kozlowski wrote:
+> >>>>
+> >>>> On 22.06.2015 10:38, Kukjin Kim wrote:
+> >>>>> Krzysztof Kozlowski wrote:
+> >>>>>> 2015-05-08 9:18 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> >>>>>>> 2015-04-04 1:43 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
+> >>>>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+> >>>>>>>>
+> >>>>>>>> For Exynos4210 platforms, add CPU operating points and CPU
+> >>>>>>>> regulator supply properties for migrating from Exynos specific
+> >>>>>>>> cpufreq driver to using generic cpufreq driver.
+> >>>>>>>>
+> >>>>>>>> Changes by Bartlomiej:
+> >>>>>>>> - removed Exynos5250 and Exynos5420 support for now
+> >>>>>>>>
+> >>>>>>>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> >>>>>>>> Cc: Doug Anderson <dianders@chromium.org>
+> >>>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >>>>>>>> Cc: Andreas Faerber <afaerber@suse.de>
+> >>>>>>>> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+> >>>>>>>> Cc: Andreas Farber <afaerber@suse.de>
+> >>>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >>>>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> >>>>>>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >>>>>>>
+> >>>>>>> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >>>>>>
+> >>>>>> Rebased and applied to my tree, I'll sent it later to Kukjin unless he
+> >>>>>> picks it by himself from LKML.
+> >>>>>>
+> >>>>> Hi, as far as I know, this is for v4.2 not v4.1 so it will be applied based on
+> >>>>> v4.2-rc1 after v4.2-rc1 release.
+> >>>>
+> >>>> You mean it is for v4.3, not v4.2?
+> >>>>
+> >>> Oops, yes v4.3.
+> >>>
+> >>> Thanks for the correction.
+> >>
+> >> Kukjin & Krzysztof,
+> >>
+> >> I'm confused on this point. I was planning to take patches 1, 2, 3, 5
+> >> and 6 towards 4.2 (e.g. in the pull request that I'll send out this
+> >> week).
+> >>
+> >> Is patch 4 going out for 4.2 or 4.3?
+> > 
+> > It is quite late for sending pull request to arm-soc for 4.2.
+> > For example SoCFPGA pull request from last week was rejected:
+> > http://comments.gmane.org/gmane.linux.ports.arm.kernel/417980
+> 
+> Oh, that was wrong link. Here it is:
+> http://www.spinics.net/lists/arm-kernel/msg425911.html
+> 
+> > If you want to take it for 4.2 then I am fine with it but this will
+> > cause some easy but annoying conflicts. There aren't difficult - just
+> > most of nodes in board DTS changed their place.
+> > 
+> > Example of resolution (target file after merge, with cpu nodes reordered
+> > alphabetically):
+> > https://github.com/krzk/linux/commit/2cec3cb48abaf44848c62f1c0836b772eb4680dd
+
+This patch is needed for v4.2 as other changes has been already
+merged.
+
+Krzysztof/Kukjin, could you please take care of it?
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
