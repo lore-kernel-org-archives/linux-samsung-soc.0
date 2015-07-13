@@ -1,51 +1,37 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 0/3] mfd: Improve DT binding docs for max77686 and max77802
-Date: Mon, 13 Jul 2015 09:42:25 +0200
-Message-ID: <1436773348-15316-1-git-send-email-javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/3] mfd: max77686: Don't suggest in binding to use a
+ deprecated property
+Date: Mon, 13 Jul 2015 16:48:37 +0900
+Message-ID: <55A36D55.4070400@samsung.com>
+References: <1436773348-15316-1-git-send-email-javier@osg.samsung.com>
+ <1436773348-15316-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28406 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750792AbbGMHsn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jul 2015 03:48:43 -0400
+In-reply-to: <1436773348-15316-2-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello Lee,
+On 13.07.2015 16:42, Javier Martinez Canillas wrote:
+> The regulator-compatible property from the regulator DT binding was
+> deprecated. But the max77686 DT binding doc still suggest to use it
+> instead of the regulator node name's which is the correct approach.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> ---
+> 
+>  Documentation/devicetree/bindings/mfd/max77686.txt | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
 
-This series contains some improvements for the Device Tree bindings of
-the Maxim MAX77686 and MAX77802 multi-function devices.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Patch #1 changes the max77686 binding to not suggest using a deprecated
-property of the regulator DT binding.
-
-Patch #2 adds a DT binding for the mfd portion of the max77802 that was
-missing.
-
-Patch #3 moves the regulator portion of the max77686 to the regulator's
-DT binding sub-directory since it is a better fit for this information.
-This third patch needs an ack from the regulator sub-system maintainer.
-
-
-Javier Martinez Canillas (3):
-  mfd: max77686: Don't suggest in binding to use a deprecated property
-  mfd: Add DT binding for Maxim MAX77802 IC
-  mfd: max77686: Split out regulator part from the DT binding
-
- Documentation/devicetree/bindings/mfd/max77686.txt | 61 +------------------
- Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++
- .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
- 3 files changed, 100 insertions(+), 58 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
-
--- 
-2.4.3
+Best regards,
+Krzysztof
