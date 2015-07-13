@@ -1,83 +1,112 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH 2/3] mfd: Add DT binding for Maxim MAX77802 IC
-Date: Mon, 13 Jul 2015 15:26:58 +0200
-Message-ID: <55A3BCA2.7040505@osg.samsung.com>
-References: <1436773348-15316-1-git-send-email-javier@osg.samsung.com>
- <1436773348-15316-3-git-send-email-javier@osg.samsung.com>
- <55A3B910.9040009@cogentembedded.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/10 v6] Helper to abstract vma handling in media layer
+Date: Mon, 13 Jul 2015 15:36:07 +0200
+Message-ID: <20150713133607.GA17075@quack.suse.cz>
+References: <1434636520-25116-1-git-send-email-jack@suse.cz>
+ <20150709114848.GA9189@quack.suse.cz>
+ <559E6538.9080100@xs4all.nl>
+ <55A37AA5.1020809@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55A3B910.9040009-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:39737 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751115AbbGMNgL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jul 2015 09:36:11 -0400
+Content-Disposition: inline
+In-Reply-To: <55A37AA5.1020809@xs4all.nl>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Jan Kara <jack@suse.cz>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
 
-Hello Sergei,
+On Mon 13-07-15 10:45:25, Hans Verkuil wrote:
+> On 07/09/2015 02:12 PM, Hans Verkuil wrote:
+> > On 07/09/2015 01:48 PM, Jan Kara wrote:
+> >>   Hello,
+> >>
+> >>   Hans, did you have a chance to look at these patches? I have tested them
+> >> with the vivid driver but it would be good if you could run them through
+> >> your standard testing procedure as well. Andrew has updated the patches in
+> >> his tree but some ack from you would be welcome...
+> > 
+> > I've planned a 'patch day' for Monday. So hopefully you'll see a pull request
+> > by then.
+> 
+> OK, I'm confused. I thought the non-vb2 patches would go in for 4.2? That
+> didn't happen, so I guess the plan is to merge the whole lot for 4.3 via
+> our media tree? If that's the case, can you post a new patch series on
 
-On 07/13/2015 03:11 PM, Sergei Shtylyov wrote:
-> Hello.
-> 
-> On 7/13/2015 10:42 AM, Javier Martinez Canillas wrote:
-> 
->> The MAX77802 is a chip that contains regulators, 2 32kHz clocks,
->> a RTC and an I2C interface to program the individual components.
-> 
->> The are already DT bindings for the regulators and clocks and
->> these reference to a bindings/mfd/max77802.txt file, that didn't
->> exist, for the details about the PMIC.
-> 
->> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->> ---
->>
->>   Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
-> 
->> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
->> new file mode 100644
->> index 000000000000..875ebebbc5b0
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
->> @@ -0,0 +1,26 @@
->> +Maxim MAX77802 multi-function device
->> +
->> +The Maxim MAX77802 is a power management chip (PMIC) that contains 10 high
->> +efficiency Buck regulators, 32 Low-dropout (LDO) regulators used to power
->> +up application processors and peripherals, a 2-channel 32kHz clock outputs,
->> +a Real-Time-Clock (RTC) and a I2C interface to program the individual
->> +regulators, clocks outputs and the RTC.
->> +
->> +Binding for the built-in 32k clock generator block is defined separately
->> +in the bindings/clk/maxim,max77802.txt file and binding for the regulators
->> +is defined in the bindings/regulator/max77802.txt file.
->> +
->> +Required properties:
->> +- compatible : Must be "maxim,max77686";
->> +- reg : Specifies the i2c slave address of PMIC block.
->> +- interrupts : This i2c device has an IRQ line connected to the main SoC.
->> +- interrupt-parent : The parent interrupt controller.
->> +
->> +Example:
->> +
->> +    max77802@09 {
-> 
->    Sigh, I'm tired of saying this over and over again: please don't name the nodes with teh chip names. The ePAPR standard says: "The name of a node should be somewhat generic, reflecting the function of the device and not its 3 precise programming model."
-> 
+I guess Andrew wasn't sure what to push and what not so he just chose the
+safe option to not push anything.
 
-Ok, I'll change this to be pmic@ when re-spinning the patches.
+> top of the master branch of the media tree? I want to make sure I use the
+> right patches. Also, if you do make a new patch series, then it would be
+> better if patch 10/10 is folded into patch 2/10.
 
-> WBR, Sergei
+OK, I'll rebase patches on top of media tree.
+
+								Honza
+
+> >> On Thu 18-06-15 16:08:30, Jan Kara wrote:
+> >>>   Hello,
+> >>>
+> >>> I'm sending the sixth version of my patch series to abstract vma handling from
+> >>> the various media drivers. Since the previous version I have added a patch to
+> >>> move mm helpers into a separate file and behind a config option. I also
+> >>> changed patch pushing mmap_sem down in videobuf2 core to avoid lockdep warning
+> >>> and NULL dereference Hans found in his testing. I've also included small
+> >>> fixups Andrew was carrying.
+> >>>
+> >>> After this patch set drivers have to know much less details about vmas, their
+> >>> types, and locking. Also quite some code is removed from them. As a bonus
+> >>> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
+> >>> this series is to remove knowledge about mmap_sem locking from as many places a
+> >>> possible so that we can change it with reasonable effort.
+> >>>
+> >>> The core of the series is the new helper get_vaddr_frames() which is given a
+> >>> virtual address and it fills in PFNs / struct page pointers (depending on VMA
+> >>> type) into the provided array. If PFNs correspond to normal pages it also grabs
+> >>> references to these pages. The difference from get_user_pages() is that this
+> >>> function can also deal with pfnmap, and io mappings which is what the media
+> >>> drivers need.
+> >>>
+> >>> I have tested the patches with vivid driver so at least vb2 code got some
+> >>> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
+> >>> exynos driver which is only for Samsung platform is completely untested).
+> >>>
+> >>> Andrew, can you please update the patches in mm three? Thanks!
+> >>>
+> >>> 								Honza
+> >>>
+> >>> Changes since v5:
+> >>> * Moved mm helper into a separate file and behind a config option
+> >>> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
+> >>>   possible deadlock
+> >>>
+> >>> Changes since v4:
+> >>> * Minor cleanups and fixes pointed out by Mel and Vlasta
+> >>> * Added Acked-by tags
+> >>>
+> >>> Changes since v3:
+> >>> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
+> >>> * Fixed error path for exynos driver
+> >>>
+> >>> Changes since v2:
+> >>> * Renamed functions and structures as Mel suggested
+> >>> * Other minor changes suggested by Mel
+> >>> * Rebased on top of 4.1-rc2
+> >>> * Changed functions to get pointer to array of pages / pfns to perform
+> >>>   conversion if necessary. This fixes possible issue in the omap I may have
+> >>>   introduced in v2 and generally makes the API less errorprone.
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
 > 
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
