@@ -1,65 +1,39 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 01/13] ARM: kill off set_irq_flags usage
-Date: Mon, 13 Jul 2015 11:19:01 +0800
-Message-ID: <20150713031901.GM23464@tiger>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org>
- <1436711211-18223-2-git-send-email-robh@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1436711211-18223-2-git-send-email-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, Greg Ungerer <gerg@uclinux.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Roland Stigge <stigge@antcom.de>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, arm@kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-omap@vger.kernel.org, Simtec Linux Team <linux@simtec.co.uk>, Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Daniel Mack <daniel@zonque.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] PM / devfreq: event: Remove incorrect property in exynos-ppmu DT binding
+Date: Mon, 13 Jul 2015 08:58:51 +0200
+Message-ID: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:52572 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751171AbbGMG7D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jul 2015 02:59:03 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On Sun, Jul 12, 2015 at 09:26:39AM -0500, Rob Herring wrote:
-> set_irq_flags is ARM specific with custom flags which have genirq
-> equivalents. Convert drivers to use the genirq interfaces directly, so we
-> can kill off set_irq_flags. The translation of flags is as follows:
-> 
-> IRQF_VALID -> !IRQ_NOREQUEST
-> IRQF_PROBE -> !IRQ_NOPROBE
-> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
-> 
-> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-> and setting IRQ_NOREQUEST already, so there is no need to do this in
-> .map() functions and we can simply remove the set_irq_flags calls. Some
-> users also set IRQ_NOPROBE and this has been maintained although it is not
-> clear that is really needed. There appears to be a great deal of blind
-> copy and paste of this code.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Kevin Hilman <khilman@deeprootsystems.com>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Gregory Clement <gregory.clement@free-electrons.com>
-> Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-> Cc: Shawn Guo <shawn.guo@linaro.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Imre Kaloz <kaloz@openwrt.org>
-> Acked-by: Krzysztof Halasa <khalasa@piap.pl>
-> Cc: Greg Ungerer <gerg@uclinux.org>
-> Cc: Roland Stigge <stigge@antcom.de>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Daniel Mack <daniel@zonque.org>
-> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-> Cc: Simtec Linux Team <linux@simtec.co.uk>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Acked-by: Wan ZongShun <mcuos.com@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Tested-by: Kevin Hilman <khilman@linaro.org>
-> ---
-...
->  arch/arm/mach-imx/3ds_debugboard.c   |  2 +-
->  arch/arm/mach-imx/mach-mx31ads.c     |  2 +-
+The exynos-ppmu driver is only a clock consumer and not a clock provider
+but its Device Tree binding listed #clock-cells as an optional property.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+---
+
+ Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+index b54bf3a2ff57..aed486692880 100644
+--- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
++++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+@@ -17,7 +17,6 @@ Required properties:
+ Optional properties:
+ - clock-names : the name of clock used by the PPMU, "ppmu"
+ - clocks : phandles for clock specified in "clock-names" property
+-- #clock-cells: should be 1.
+ 
+ Example1 : PPMU nodes in exynos3250.dtsi are listed below.
+ 
+-- 
+2.4.3
