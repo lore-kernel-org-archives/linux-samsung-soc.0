@@ -1,87 +1,104 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 3/3] mfd: max77686: Split out regulator part from the DT
- binding
-Date: Mon, 13 Jul 2015 10:20:24 +0200
-Message-ID: <55A374C8.8020103@osg.samsung.com>
-References: <1436773348-15316-1-git-send-email-javier@osg.samsung.com>
- <1436773348-15316-4-git-send-email-javier@osg.samsung.com>
- <55A370CE.6080904@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 0/10 v6] Helper to abstract vma handling in media layer
+Date: Mon, 13 Jul 2015 10:45:25 +0200
+Message-ID: <55A37AA5.1020809@xs4all.nl>
+References: <1434636520-25116-1-git-send-email-jack@suse.cz> <20150709114848.GA9189@quack.suse.cz> <559E6538.9080100@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:52652 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751292AbbGMIU3 (ORCPT
+Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:36991 "EHLO
+	lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751596AbbGMIqW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jul 2015 04:20:29 -0400
-In-Reply-To: <55A370CE.6080904@samsung.com>
+	Mon, 13 Jul 2015 04:46:22 -0400
+In-Reply-To: <559E6538.9080100@xs4all.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
 
-Hello Krzysztof,
-
-On 07/13/2015 10:03 AM, Krzysztof Kozlowski wrote:
-> On 13.07.2015 16:42, Javier Martinez Canillas wrote:
->> The Maxim MAX77686 PMIC is a multi-function device with regulators,
->> clocks and a RTC. The DT bindings for the clocks are in a separate
->> file but the bindings for the regulators are inside the mfd part.
+On 07/09/2015 02:12 PM, Hans Verkuil wrote:
+> On 07/09/2015 01:48 PM, Jan Kara wrote:
+>>   Hello,
 >>
->> To make it consistent with the clocks portion of the binding and
->> because is more natural to look for regulator bindings under the
->> bindings/regulator sub-directory, split the regulator portion of
->> the DT binding and add it as a separate file.
+>>   Hans, did you have a chance to look at these patches? I have tested them
+>> with the vivid driver but it would be good if you could run them through
+>> your standard testing procedure as well. Andrew has updated the patches in
+>> his tree but some ack from you would be welcome...
+> 
+> I've planned a 'patch day' for Monday. So hopefully you'll see a pull request
+> by then.
+
+OK, I'm confused. I thought the non-vb2 patches would go in for 4.2? That didn't
+happen, so I guess the plan is to merge the whole lot for 4.3 via our media
+tree? If that's the case, can you post a new patch series on top of the master
+branch of the media tree? I want to make sure I use the right patches. Also, if
+you do make a new patch series, then it would be better if patch 10/10 is folded
+into patch 2/10.
+
+If that's not the case, then you have to let me know what I should do.
+
+Regards,
+
+	Hans
+
 >>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
->> ---
->>
->>  Documentation/devicetree/bindings/mfd/max77686.txt | 58 +-----------------
->>  .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
->>  2 files changed, 74 insertions(+), 55 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
+>> 								Honza
+>> On Thu 18-06-15 16:08:30, Jan Kara wrote:
+>>>   Hello,
+>>>
+>>> I'm sending the sixth version of my patch series to abstract vma handling from
+>>> the various media drivers. Since the previous version I have added a patch to
+>>> move mm helpers into a separate file and behind a config option. I also
+>>> changed patch pushing mmap_sem down in videobuf2 core to avoid lockdep warning
+>>> and NULL dereference Hans found in his testing. I've also included small
+>>> fixups Andrew was carrying.
+>>>
+>>> After this patch set drivers have to know much less details about vmas, their
+>>> types, and locking. Also quite some code is removed from them. As a bonus
+>>> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
+>>> this series is to remove knowledge about mmap_sem locking from as many places a
+>>> possible so that we can change it with reasonable effort.
+>>>
+>>> The core of the series is the new helper get_vaddr_frames() which is given a
+>>> virtual address and it fills in PFNs / struct page pointers (depending on VMA
+>>> type) into the provided array. If PFNs correspond to normal pages it also grabs
+>>> references to these pages. The difference from get_user_pages() is that this
+>>> function can also deal with pfnmap, and io mappings which is what the media
+>>> drivers need.
+>>>
+>>> I have tested the patches with vivid driver so at least vb2 code got some
+>>> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
+>>> exynos driver which is only for Samsung platform is completely untested).
+>>>
+>>> Andrew, can you please update the patches in mm three? Thanks!
+>>>
+>>> 								Honza
+>>>
+>>> Changes since v5:
+>>> * Moved mm helper into a separate file and behind a config option
+>>> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
+>>>   possible deadlock
+>>>
+>>> Changes since v4:
+>>> * Minor cleanups and fixes pointed out by Mel and Vlasta
+>>> * Added Acked-by tags
+>>>
+>>> Changes since v3:
+>>> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
+>>> * Fixed error path for exynos driver
+>>>
+>>> Changes since v2:
+>>> * Renamed functions and structures as Mel suggested
+>>> * Other minor changes suggested by Mel
+>>> * Rebased on top of 4.1-rc2
+>>> * Changed functions to get pointer to array of pages / pfns to perform
+>>>   conversion if necessary. This fixes possible issue in the omap I may have
+>>>   introduced in v2 and generally makes the API less errorprone.
 > 
-> Actually I would prefer the opposite - merging everything into one file
-> (clocks, regulators -> mfd) because:
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> 1. Separate files introduce some duplication (like introduction and
-> common part of example node).
-> 
-> 2. It is easier to track the changes and update them. For example when
-> adding a new chipset to the driver one may forgot about updating other
-> files. When moving files one may forgot to update hard-coded path in
-> some other file.
-> 
-> 3. When comparing existing DTS with documentation or when creating new
-> DTS for the device it is just faster to fetch everything (knowledge,
-> example node) from one file.
->
-
-Yes, I also wondered about going the opposite way but then thought
-that is more natural to look for clock bindings under bindings/clock
-and for regulators drivers under bindings/regulator...
- 
-> However I understand that such opinion may be not suited for the idea of
-> MFD...
->
-
-...but I don't have a strong opinion and can do the other way if folks
-are more fond with that single file approach.
-
-What I think is that it should be consistent, either everything is in mfd
-for all PMICs or everything is split.
-
-The max77686 for example has a somehow arbitrary split since the clocks
-are in another file but the regulators are in the same mfd binding doc.
-
-> Best regards,
-> Krzysztof
->
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
