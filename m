@@ -1,221 +1,94 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/3] mfd: max77686: Split out regulator part from the DT
- binding
-Date: Mon, 13 Jul 2015 17:03:26 +0900
-Message-ID: <55A370CE.6080904@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/3] mfd: Add DT binding for Maxim MAX77802 IC
+Date: Mon, 13 Jul 2015 10:11:15 +0200
+Message-ID: <55A372A3.3030101@osg.samsung.com>
 References: <1436773348-15316-1-git-send-email-javier@osg.samsung.com>
- <1436773348-15316-4-git-send-email-javier@osg.samsung.com>
+ <1436773348-15316-3-git-send-email-javier@osg.samsung.com>
+ <55A36E95.8030509@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1436773348-15316-4-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:52648 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751743AbbGMILU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jul 2015 04:11:20 -0400
+In-Reply-To: <55A36E95.8030509@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 13.07.2015 16:42, Javier Martinez Canillas wrote:
-> The Maxim MAX77686 PMIC is a multi-function device with regulators,
-> clocks and a RTC. The DT bindings for the clocks are in a separate
-> file but the bindings for the regulators are inside the mfd part.
+Hello Krzysztof,
+
+Thanks a lot for the feedback.
+
+On 07/13/2015 09:53 AM, Krzysztof Kozlowski wrote:
+> On 13.07.2015 16:42, Javier Martinez Canillas wrote:
+>> The MAX77802 is a chip that contains regulators, 2 32kHz clocks,
+>> a RTC and an I2C interface to program the individual components.
+>>
+>> The are already DT bindings for the regulators and clocks and
+>> these reference to a bindings/mfd/max77802.txt file, that didn't
+>> exist, for the details about the PMIC.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>> ---
+>>
+>>  Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
 > 
-> To make it consistent with the clocks portion of the binding and
-> because is more natural to look for regulator bindings under the
-> bindings/regulator sub-directory, split the regulator portion of
-> the DT binding and add it as a separate file.
+> I wonder what happened with previous email...
+> http://www.spinics.net/lists/kernel/msg1784726.html
+>
+
+The story is that in v9 I split the series to add the max77802 clock and
+regulators support as different series to avoid the cross subsystem churn:
+
+[PATCH v9 0/6] Add Maxim 77802 clocks support
+https://lwn.net/Articles/608834/
+
+[PATCH v9 0/2] Add Maxim 77802 regulator support
+https://lkml.org/lkml/2014/8/18/71
+
+But then forgot to add the common DT binding for the PMIC in bindings/mfd...
+
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
+>> new file mode 100644
+>> index 000000000000..875ebebbc5b0
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
+>> @@ -0,0 +1,26 @@
+>> +Maxim MAX77802 multi-function device
+>> +
+>> +The Maxim MAX77802 is a power management chip (PMIC) that contains 10 high
+>> +efficiency Buck regulators, 32 Low-dropout (LDO) regulators used to power
+>> +up application processors and peripherals, a 2-channel 32kHz clock outputs,
+>> +a Real-Time-Clock (RTC) and a I2C interface to program the individual
+>> +regulators, clocks outputs and the RTC.
+>> +
+>> +Binding for the built-in 32k clock generator block is defined separately
+>> +in the bindings/clk/maxim,max77802.txt file and binding for the regulators
+>> +is defined in the bindings/regulator/max77802.txt file.
+>> +
+>> +Required properties:
+>> +- compatible : Must be "maxim,max77686";
 > 
-> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> Shouldn't this be 77802?
+>
+
+right, thanks for pointing out this. It is a copy & paste error. I'll wait a
+couple of days for more feedback and re-post.
+
+> Best regards,
+> Krzysztof
 > 
-> ---
-> 
->  Documentation/devicetree/bindings/mfd/max77686.txt | 58 +-----------------
->  .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
->  2 files changed, 74 insertions(+), 55 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
-
-Actually I would prefer the opposite - merging everything into one file
-(clocks, regulators -> mfd) because:
-
-1. Separate files introduce some duplication (like introduction and
-common part of example node).
-
-2. It is easier to track the changes and update them. For example when
-adding a new chipset to the driver one may forgot about updating other
-files. When moving files one may forgot to update hard-coded path in
-some other file.
-
-3. When comparing existing DTS with documentation or when creating new
-DTS for the device it is just faster to fetch everything (knowledge,
-example node) from one file.
-
-However I understand that such opinion may be not suited for the idea of
-MFD...
 
 Best regards,
-Krzysztof
-
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-> index 8221102d3fc2..8a276dd5ea46 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77686.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> @@ -8,7 +8,8 @@ client while probing.This document describes the binding for mfd device and
->  PMIC submodule.
->  
->  Binding for the built-in 32k clock generator block is defined separately
-> -in bindings/clk/maxim,max77686.txt file.
-> +in the bindings/clk/maxim,max77686.txt file and binding for the regulators
-> +is defined in the bindings/regulator/max77686.txt file.
->  
->  Required properties:
->  - compatible : Must be "maxim,max77686";
-> @@ -16,36 +17,6 @@ Required properties:
->  - interrupts : This i2c device has an IRQ line connected to the main SoC.
->  - interrupt-parent : The parent interrupt controller.
->  
-> -Optional node:
-> -- voltage-regulators : The regulators of max77686 have to be instantiated
-> -  under subnode named "voltage-regulators" using the following format.
-> -
-> -	regulator_name {
-> -		regulator-compatible = LDOn/BUCKn
-> -		standard regulator constraints....
-> -	};
-> -	refer Documentation/devicetree/bindings/regulator/regulator.txt
-> -
-> -  The regulator node's name should be initialized with a string
-> -to get matched with their hardware counterparts as follow:
-> -
-> -	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
-> -		 	example: LDO1, LDO2, LDO26.
-> -	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
-> -			example: BUCK1, BUCK5, BUCK9.
-> -
-> -  Regulators which can be turned off during system suspend:
-> -	-LDOn	:	2, 6-8, 10-12, 14-16,
-> -	-BUCKn	:	1-4.
-> -  Use standard regulator bindings for it ('regulator-off-in-suspend').
-> -
-> -  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
-> -  control. To turn this feature on this property must be added to the regulator
-> -  sub-node:
-> -	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-> -				flags are actually ignored and always
-> -				ACTIVE_HIGH is used)
-> -
->  Example:
->  
->  	max77686@09 {
-> @@ -53,27 +24,4 @@ Example:
->  		interrupt-parent = <&wakeup_eint>;
->  		interrupts = <26 0>;
->  		reg = <0x09>;
-> -
-> -		voltage-regulators {
-> -			ldo11_reg: LDO11 {
-> -				regulator-name = "vdd_ldo11";
-> -				regulator-min-microvolt = <1900000>;
-> -				regulator-max-microvolt = <1900000>;
-> -				regulator-always-on;
-> -			};
-> -
-> -			buck1_reg: BUCK1 {
-> -				regulator-name = "vdd_mif";
-> -				regulator-min-microvolt = <950000>;
-> -				regulator-max-microvolt = <1300000>;
-> -				regulator-always-on;
-> -				regulator-boot-on;
-> -			};
-> -
-> -			buck9_reg: BUCK9 {
-> -				regulator-name = "CAM_ISP_CORE_1.2V";
-> -				regulator-min-microvolt = <1000000>;
-> -				regulator-max-microvolt = <1200000>;
-> -				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-> -			};
-> -	}
-> +	};
-> diff --git a/Documentation/devicetree/bindings/regulator/max77686.txt b/Documentation/devicetree/bindings/regulator/max77686.txt
-> new file mode 100644
-> index 000000000000..04b7604c219e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/max77686.txt
-> @@ -0,0 +1,71 @@
-> +Binding for Maxim MAX77686 regulators
-> +
-> +This is a part of the device tree bindings of MAX77686 multi-function device.
-> +More information can be found in bindings/mfd/max77686.txt file.
-> +
-> +The MAX77802 PMIC has 9 high-efficiency Buck and 26 Low-dropout (LDO)
-> +regulators that can be controlled over I2C.
-> +
-> +Following properties should be present in main device node of the MFD chip.
-> +
-> +Optional node:
-> +- voltage-regulators : The regulators of max77686 have to be instantiated
-> +  under subnode named "voltage-regulators" using the following format.
-> +
-> +	regulator_name {
-> +		regulator-compatible = LDOn/BUCKn
-> +		standard regulator constraints....
-> +	};
-> +	refer Documentation/devicetree/bindings/regulator/regulator.txt
-> +
-> +  The regulator node's name should be initialized with a string
-> +to get matched with their hardware counterparts as follow:
-> +
-> +	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
-> +			example: LDO1, LDO2, LDO26.
-> +	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
-> +			example: BUCK1, BUCK5, BUCK9.
-> +
-> +  Regulators which can be turned off during system suspend:
-> +	-LDOn	:	2, 6-8, 10-12, 14-16,
-> +	-BUCKn	:	1-4.
-> +  Use standard regulator bindings for it ('regulator-off-in-suspend').
-> +
-> +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
-> +  control. To turn this feature on this property must be added to the regulator
-> +  sub-node:
-> +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-> +				flags are actually ignored and always
-> +				ACTIVE_HIGH is used)
-> +
-> +Example:
-> +
-> +	max77686@09 {
-> +		compatible = "maxim,max77686";
-> +		interrupt-parent = <&wakeup_eint>;
-> +		interrupts = <26 0>;
-> +		reg = <0x09>;
-> +
-> +		voltage-regulators {
-> +			ldo11_reg: LDO11 {
-> +				regulator-name = "vdd_ldo11";
-> +				regulator-min-microvolt = <1900000>;
-> +				regulator-max-microvolt = <1900000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			buck1_reg: BUCK1 {
-> +				regulator-name = "vdd_mif";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1300000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			buck9_reg: BUCK9 {
-> +				regulator-name = "CAM_ISP_CORE_1.2V";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-> +			};
-> +	};
-> 
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
