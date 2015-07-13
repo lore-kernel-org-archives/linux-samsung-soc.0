@@ -1,104 +1,79 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 0/10 v6] Helper to abstract vma handling in media layer
-Date: Mon, 13 Jul 2015 10:45:25 +0200
-Message-ID: <55A37AA5.1020809@xs4all.nl>
-References: <1434636520-25116-1-git-send-email-jack@suse.cz> <20150709114848.GA9189@quack.suse.cz> <559E6538.9080100@xs4all.nl>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 0/7] drm/exynos/hdmi: refactoring/cleanup patches
+Date: Mon, 13 Jul 2015 11:04:12 +0200
+Message-ID: <55A37F0C.7030907@math.uni-bielefeld.de>
+References: <1436452092-20757-1-git-send-email-a.hajda@samsung.com>
+ <55A2907E.9000507@math.uni-bielefeld.de> <55A361BF.8030904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:36991 "EHLO
-	lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751596AbbGMIqW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jul 2015 04:46:22 -0400
-In-Reply-To: <559E6538.9080100@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <55A361BF.8030904@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
 
-On 07/09/2015 02:12 PM, Hans Verkuil wrote:
-> On 07/09/2015 01:48 PM, Jan Kara wrote:
->>   Hello,
->>
->>   Hans, did you have a chance to look at these patches? I have tested them
->> with the vivid driver but it would be good if you could run them through
->> your standard testing procedure as well. Andrew has updated the patches in
->> his tree but some ack from you would be welcome...
-> 
-> I've planned a 'patch day' for Monday. So hopefully you'll see a pull request
-> by then.
-
-OK, I'm confused. I thought the non-vb2 patches would go in for 4.2? That didn't
-happen, so I guess the plan is to merge the whole lot for 4.3 via our media
-tree? If that's the case, can you post a new patch series on top of the master
-branch of the media tree? I want to make sure I use the right patches. Also, if
-you do make a new patch series, then it would be better if patch 10/10 is folded
-into patch 2/10.
-
-If that's not the case, then you have to let me know what I should do.
-
-Regards,
-
-	Hans
-
->>
->> 								Honza
->> On Thu 18-06-15 16:08:30, Jan Kara wrote:
->>>   Hello,
->>>
->>> I'm sending the sixth version of my patch series to abstract vma handling from
->>> the various media drivers. Since the previous version I have added a patch to
->>> move mm helpers into a separate file and behind a config option. I also
->>> changed patch pushing mmap_sem down in videobuf2 core to avoid lockdep warning
->>> and NULL dereference Hans found in his testing. I've also included small
->>> fixups Andrew was carrying.
->>>
->>> After this patch set drivers have to know much less details about vmas, their
->>> types, and locking. Also quite some code is removed from them. As a bonus
->>> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
->>> this series is to remove knowledge about mmap_sem locking from as many places a
->>> possible so that we can change it with reasonable effort.
->>>
->>> The core of the series is the new helper get_vaddr_frames() which is given a
->>> virtual address and it fills in PFNs / struct page pointers (depending on VMA
->>> type) into the provided array. If PFNs correspond to normal pages it also grabs
->>> references to these pages. The difference from get_user_pages() is that this
->>> function can also deal with pfnmap, and io mappings which is what the media
->>> drivers need.
->>>
->>> I have tested the patches with vivid driver so at least vb2 code got some
->>> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
->>> exynos driver which is only for Samsung platform is completely untested).
->>>
->>> Andrew, can you please update the patches in mm three? Thanks!
->>>
->>> 								Honza
->>>
->>> Changes since v5:
->>> * Moved mm helper into a separate file and behind a config option
->>> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
->>>   possible deadlock
->>>
->>> Changes since v4:
->>> * Minor cleanups and fixes pointed out by Mel and Vlasta
->>> * Added Acked-by tags
->>>
->>> Changes since v3:
->>> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
->>> * Fixed error path for exynos driver
->>>
->>> Changes since v2:
->>> * Renamed functions and structures as Mel suggested
->>> * Other minor changes suggested by Mel
->>> * Rebased on top of 4.1-rc2
->>> * Changed functions to get pointer to array of pages / pfns to perform
->>>   conversion if necessary. This fixes possible issue in the omap I may have
->>>   introduced in v2 and generally makes the API less errorprone.
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+SGVsbG8sCgpBbmRyemVqIEhhamRhIHdyb3RlOgo+IEhpIFRvYmlhcywKPiAKPiBPbiAwNy8xMi8y
+MDE1IDA2OjA2IFBNLCBUb2JpYXMgSmFrb2JpIHdyb3RlOgo+PiBIZWxsbyBBbmRyemVqIQo+Pgo+
+PiBKdXN0IHNvbWUgc21hbGwgY29tbWVudHMuCj4+Cj4+IEl0IHNlZW1zIGxpa2UgbGludXgtc2Ft
+c3VuZy1zb2Mgd2Fzbid0IHB1dCBpbnRvIENjIGZvciAnW1BBVENIIFJFU0VORAo+PiAwLzZdIGRy
+bS9leHlub3M6IEhETUkgcmVsYXRlZCBmaXhlcycgKGV2ZW4gdGhvdWdoIHRoaXMgc2VyaWVzIHdh
+cyksCj4+IG1heWJlIHlvdSBzaG91bGQgYWxzbyBmb3J3YXJkIHRoZSBvdGhlciBzZXJpZXMgdG8g
+dGhpcyBsaXN0Lgo+IAo+IFllcywgSSBmb3Jnb3QgYWJvdXQgaXQuCj4gCj4+Cj4+IFRoaXMgc2Vy
+aWVzIGRvZXNuJ3QgYXBwbHkgY2xlYW5seSB3aGVuICdkcm0vZXh5bm9zOiBIRE1JIHJlbGF0ZWQg
+Zml4ZXMnCj4+IGlzIGFwcGxpZWQuIEUuZy4gdGhlICdwb3dlcmVkJyBib29sZWFuIHdhcyByZW1v
+dmVkIGJ5IHRoYXQgc2VyaWVzLCBidXQKPj4gaGVyZSBpbiBwYXRjaCAyLzcgKCdkcm0vZXh5bm9z
+L2hkbWk6IFNpbXBsaWZ5IEhQRCBncGlvIGhhbmRsaW5nJykgaXQncwo+PiBzdGlsbCB0aGVyZS4K
+PiAKPiAnZHJtL2V4eW5vczogSERNSSByZWxhdGVkIGZpeGVzJyByZW1vdmVzIHBvd2VyZWQgZmll
+bGQgZnJvbQo+IG1peGVyIGRyaXZlciwgYW5kIHBvd2VyZWQgZmllbGQgaW4gdGhlIHBhdGNoIDIv
+NyBpcyBmcm9tIGhkbWkgZHJpdmVyLgo+IFNvIHRoZXkgc2hvdWxkIG5vdCBpbnRlcmZlcmUgYW5k
+IGZvciBzdXJlIHRoZXkgZG8gbm90IGludGVyZmVyZSBpbiBteSBsb2NhbCBnaXQgOikKPiBIYXZl
+IHlvdSBhbnkgd2FybmluZyB3aGVuIHlvdSB0cmllZCB0byBhcHBseSB0aG9zZSBwYXRjaGVzLgp5
+ZXMgb2YgY291cnNlLCBvdGhlcndpc2UgSSB3b3VsZG4ndCBwb2ludCB0aGlzIG91dC4gVGhlIHNw
+ZWNpZmljIGh1bmtzCmp1c3QgZmFpbC4KCldoaWNoIGlzIGtpbmRhIG9idmlvdXM6Cj4gQEAgLTE4
+Niw3ICsxODYsNiBAQCAgc3RydWN0IGhkbWlfY29udGV4dCB7Cj4gIAlzdHJ1Y3QgZHJtX2Rldmlj
+ZQkJKmRybV9kZXY7Cj4gIAlzdHJ1Y3QgZHJtX2Nvbm5lY3RvcgkJY29ubmVjdG9yOwo+ICAJc3Ry
+dWN0IGRybV9lbmNvZGVyCQkqZW5jb2RlcjsKPiAtCWJvb2wJCQkJaHBkOwo+ICAJYm9vbAkJCQlw
+b3dlcmVkOwo+ICAJYm9vbAkJCQlkdmlfbW9kZTsKPiAgCXN0cnVjdCBtdXRleAkJCWhkbWlfbXV0
+ZXg7CgpUaGlzIGRvZXNuJ3QgYXBwbHkgd2hlbiAncG93ZXJlZCcgaXMgbm8gbG9uZ2VyIHRoZXIu
+CgoKCldpdGggYmVzdCB3aXNoZXMsClRvYmlhcwoKPiAKPj4KPj4gSSBhbHNvIG5vdGljZWQgdGhh
+dCBzb21lIG9mIHRoZSBwYXRjaGVzICgnZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUKPj4gcHJpdmF0
+ZSBsb2NrIGNvZGUnKSBjbGFzaCB3aXRoIEd1c3Rhdm8ncyBsYXRlc3QgY2xlYW51cCBzZXJpZXMg
+WzFdLiBFLmcuCj4+IHlvdXIgcGF0Y2ggMy83ICgnZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUgcHJp
+dmF0ZSBsb2NrIGNvZGUnKSB0b3VjaGVzCj4+IGhkbWlfY29tbWl0KCkgd2hpY2ggd2FzIHJlbW92
+ZWQgYnkgR3VzdGF2by4gTWF5YmUgeW91IHNob3VsZCBjb29yZGluYXRlCj4+IHRoaW5ncyB3aXRo
+IGhpbT8KPiAKPiBUaGlzIGlzIGFsd2F5cyBwcm9ibGVtYXRpYyA6KSBJIGNhbiB0cnkgdG8gcmVi
+YXNlIG15IHBhdGNoZXMgb24gR3VzdGF2bydzCj4gaWYgbmVjZXNzYXJ5LiBHdXN0YXZvLCBJbmtp
+IHdoYXQgaXMgeW91ciBvcGluaW9uPwo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+Cj4+Cj4+
+IFdpdGggYmVzdCB3aXNoZXMsCj4+IFRvYmlhcwo+Pgo+Pgo+PiBbMV0gaHR0cDovL3d3dy5zcGlu
+aWNzLm5ldC9saXN0cy9saW51eC1zYW1zdW5nLXNvYy9tc2c0NTc4Ny5odG1sCj4+Cj4+Cj4+IEFu
+ZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+PiBIaSBJbmtpLCBKb29ueW91bmcsCj4+Pgo+Pj4gVGhlc2Ug
+cGF0Y2hlcyByZW1vdmVzIG9ic29sZXRlIGFuZCBvbGQgc3RydWN0dXJlcywgdG8gc2ltcGxpZnkg
+ZnVydGhlcgo+Pj4gZGV2ZWxvcG1lbnQuIFRoZXkgc2hvdWxkIG5vdCBjaGFuZ2UgYmVoYXZpb3Ig
+b2YgdGhlIGRyaXZlci4KPj4+Cj4+PiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gZXh5bm9zLWRy
+bS1uZXh0IHBsdXMgbXkgSERNSSByZWxhdGVkIGZpeGVzIFsxXS4KPj4+Cj4+PiBUaGUgcGF0Y2hz
+ZXQgd2FzIHRlc3RlZCBvbiBVbml2ZXJzYWwgYW5kIE9kcm9pZCBVMy4KPj4+Cj4+PiBbMV06IGh0
+dHA6Ly9wZXJtYWxpbmsuZ21hbmUub3JnL2dtYW5lLmNvbXAudmlkZW8uZHJpLmRldmVsLzEzMjM0
+OAo+Pj4KPj4+IFJlZ2FyZHMKPj4+IEFuZHJ6ZWoKPj4+Cj4+Pgo+Pj4gQW5kcnplaiBIYWpkYSAo
+Nyk6Cj4+PiAgIGRybS9leHlub3MvaGRtaTogcmVtb3ZlIG9sZCBwbGF0Zm9ybSBkYXRhIGNvZGUK
+Pj4+ICAgZHJtL2V4eW5vcy9oZG1pOiBTaW1wbGlmeSBIUEQgZ3BpbyBoYW5kbGluZwo+Pj4gICBk
+cm0vZXh5bm9zL2hkbWk6IHJlbW92ZSBwcml2YXRlIGxvY2sgY29kZQo+Pj4gICBkcm0vZXh5bm9z
+L2hkbWk6IGFkZCBkcml2ZXIgZGF0YSBwb2ludGVyIHRvIHByaXZhdGUgY29udGV4dAo+Pj4gICBk
+cm0vZXh5bm9zL2hkbWk6IHJlbW92ZSByZWR1bmRhbnQgY29uZmlndXJhdGlvbiBmaWVsZHMKPj4+
+ICAgZHJtL2V4eW5vcy9oZG1pOiByZW1vdmUgaGRtaV92MTNfY29uZiBzdHJ1Y3QKPj4+ICAgZHJt
+L2V4eW5vcy9oZG1pOiByZW1vdmUgaGRtaV92MTRfY29uZiBzdHJ1Y3QKPj4+Cj4+PiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jIHwgODYwICsrKysrKysrKystLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDI0NSBpbnNlcnRpb25zKCspLCA2
+MTUgZGVsZXRpb25zKC0pCj4+Pgo+Pgo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
