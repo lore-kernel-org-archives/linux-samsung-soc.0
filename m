@@ -1,19 +1,20 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
-Date: Sun, 12 Jul 2015 18:43:56 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1507121737030.20072@nanos>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org> <1436711211-18223-7-git-send-email-robh@kernel.org>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 01/13] ARM: kill off set_irq_flags usage
+Date: Mon, 13 Jul 2015 11:19:01 +0800
+Message-ID: <20150713031901.GM23464@tiger>
+References: <1436711211-18223-1-git-send-email-robh@kernel.org>
+ <1436711211-18223-2-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436711211-18223-7-git-send-email-robh@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1436711211-18223-2-git-send-email-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, arm@kernel.org, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, Greg Ungerer <gerg@uclinux.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Roland Stigge <stigge@antcom.de>, linux-samsung-soc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, arm@kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-omap@vger.kernel.org, Simtec Linux Team <linux@simtec.co.uk>, Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Daniel Mack <daniel@zonque.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, 12 Jul 2015, Rob Herring wrote:
-
+On Sun, Jul 12, 2015 at 09:26:39AM -0500, Rob Herring wrote:
 > set_irq_flags is ARM specific with custom flags which have genirq
 > equivalents. Convert drivers to use the genirq interfaces directly, so we
 > can kill off set_irq_flags. The translation of flags is as follows:
@@ -26,70 +27,39 @@ On Sun, 12 Jul 2015, Rob Herring wrote:
 > and setting IRQ_NOREQUEST already, so there is no need to do this in
 > .map() functions and we can simply remove the set_irq_flags calls. Some
 > users also set IRQ_NOPROBE and this has been maintained although it is not
-
-clear IRQ_NOPROBE, right?
-
 > clear that is really needed. There appears to be a great deal of blind
 > copy and paste of this code.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Kevin Hilman <khilman@deeprootsystems.com>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Gregory Clement <gregory.clement@free-electrons.com>
+> Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Imre Kaloz <kaloz@openwrt.org>
+> Acked-by: Krzysztof Halasa <khalasa@piap.pl>
+> Cc: Greg Ungerer <gerg@uclinux.org>
+> Cc: Roland Stigge <stigge@antcom.de>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+> Cc: Simtec Linux Team <linux@simtec.co.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Acked-by: Wan ZongShun <mcuos.com@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> ---
+...
+>  arch/arm/mach-imx/3ds_debugboard.c   |  2 +-
+>  arch/arm/mach-imx/mach-mx31ads.c     |  2 +-
 
-Looking at the irq probe users:
-
-drivers/input/touchscreen/ucb1400_ts.c
-drivers/mfd/ucb1x00-core.c
-
-The probe function was added in the initial implementation of the
-driver (2006), so it predates device tree.
-
-drivers/net/appletalk/ltpc.c
-drivers/net/arcnet/com20020-isa.c
-drivers/net/arcnet/com90io.c
-drivers/net/arcnet/com90xx.c
-
-Surely not stuff you find on todays ARM systems
-
-drivers/net/ethernet/8390/ne.c
-drivers/net/ethernet/8390/wd.c
-drivers/net/ethernet/amd/lance.c
-drivers/net/ethernet/amd/ni65.c
-drivers/net/ethernet/amd/pcnet32.c
-
-Ditto
-
-drivers/net/ethernet/smsc/smc911x.c
-drivers/net/ethernet/smsc/smc9194.c
-drivers/net/ethernet/smsc/smc91x.c
-
-Those might still be, but on the DT based boards the probing should be
-completely irrelevant
-
-drivers/net/hamradio/dmascc.c
-drivers/net/wan/cosa.c
-drivers/net/wan/sbni.c
-drivers/parport/parport_pc.c
-
-Surely not stuff you find on todays ARM systems
-
-drivers/pcmcia/yenta_socket.c
-
-Russell might still use that.
-
-drivers/scsi/NCR53c406a.c
-drivers/scsi/sym53c416.c
-drivers/tty/cyclades.c
-
-Surely not stuff you find on todays ARM systems
-
-drivers/tty/serial/8250/8250_core.c
-
-The irq probing is used by
-
-    mach-imx/mach-mx31ads.c
-    mach-iop32x/n2100.c
-
-    and X86
-
-So in most of the irqchip drivers, this is irrelevant.
-
-Thanks,
-
-	tglx
+Acked-by: Shawn Guo <shawnguo@kernel.org>
