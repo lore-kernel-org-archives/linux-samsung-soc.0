@@ -1,60 +1,56 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Wed, 15 Jul 2015 13:52:27 +0200
-Message-ID: <201507151352.27689.marex@denx.de>
-References: <cover.1433364398.git.hramrach@gmail.com> <20150604171547.GA1530@localhost.localdomain> <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
+ rtc and clock drivers
+Date: Wed, 15 Jul 2015 17:38:26 +0200
+Message-ID: <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:34798 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751938AbbGOMhO (ORCPT
+Received: from mail-yk0-f176.google.com ([209.85.160.176]:35807 "EHLO
+	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830AbbGOPi0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 08:37:14 -0400
-In-Reply-To: <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
+	Wed, 15 Jul 2015 11:38:26 -0400
+Received: by ykdu72 with SMTP id u72so39579891ykd.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2015 08:38:26 -0700 (PDT)
+In-Reply-To: <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Dan
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Wednesday, July 15, 2015 at 11:45:07 AM, Michal Suchanek wrote:
-> On 4 June 2015 at 19:15, Richard Cochran <richardcochran@gmail.com> wrote:
-> > On Thu, Jun 04, 2015 at 10:31:45AM +0200, Michal Suchanek wrote:
-> >> You might want to try to run the bus at 60MHz or 80MHz and then the
-> >> values would probably again be different.
-> >> 
-> >> The first two values are set in DT so the logical place for setting
-> >> the third is also in DT.
-> >> 
-> >> Otherwise you would need some in-kernel table of these settings.
-> > 
-> > Or a formula.
-> 
-> This formula probably needs to take into account
-> 
->  - the unknown reason for the pl330 to fail transfer
+Hello,
 
-Shouldn't that be fixed at the PL330 level ? This looks like fixing
-a problem at the wrong place :)
+On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> The Maxim max77802 Power Management IC is used on many Exynos machines.
+> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
+> and 2-channel 32kHz clock outputs.
+>
+> Enable the kernel config options to have the drivers for these devices
+> built as a module.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  arch/arm/configs/multi_v7_defconfig | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index 2349584b6e08..080120fe5580 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
+>  CONFIG_REGULATOR_MAX8907=y
+>  CONFIG_REGULATOR_MAX8973=y
+>  CONFIG_REGULATOR_MAX77686=y
+> +CONFIG_REGULATOR_MAX77802=m
 
->  - the device transfer speed and transfer phase as set in DT
->  - possibly device-specific latency and board-specific trace design
-> and assembly tolerances
-
-If the design is broken, then cap the speed as for normal SPI device.
-
-> Seriously, until I have at least a vague idea why the transfer fails I
-> am not comfortable pulling some formula out of thin air and pretending
-> I have a working patch.
-> 
-> On the other hand, a parameter you can set in the DT and which comes
-> with a suggested value which can be tuned depending on the system
-> seems more viable.
-
-The problem is, if you add a new DT binding, you'd have to support it
-forever, no matter how bad idea that binding turned out to be.
+I noticed that the version that landed in 4.2-rc1 as commit
+f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
+and clock drivers") doesn't include this symbol. I guess it was caused
+by a wrong resolved conflict? I'll post a patch to enable the
+regulator again.
 
 Best regards,
-Marek Vasut
+Javier
