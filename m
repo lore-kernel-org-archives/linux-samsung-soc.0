@@ -1,142 +1,61 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCHv2] regulator: s2mps11: Added shutdown function to poweroff
-Date: Wed, 15 Jul 2015 08:12:07 +0530
-Message-ID: <CANAwSgTaVLiDNnEHVXW=xbOAjeV2d9kqXJ50xSm7uW8HmRFDYA@mail.gmail.com>
-References: <1436888477-3841-1-git-send-email-linux.amoon@gmail.com> <55A5B16F.9000003@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
+Date: Wed, 15 Jul 2015 12:42:30 +0900
+Message-ID: <55A5D6A6.8080604@samsung.com>
+References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
+ <55A5BB5A.2040807@samsung.com>
+ <CAPTzV16VFu_0BN1xpuki3gN3btB-zFwuj+A8ibza14JKqaXXfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:34450 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751189AbbGOCm2 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43528 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750996AbbGODme (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jul 2015 22:42:28 -0400
-In-Reply-To: <55A5B16F.9000003@samsung.com>
+	Tue, 14 Jul 2015 23:42:34 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NRI00BCOFMVAL50@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 15 Jul 2015 04:42:31 +0100 (BST)
+In-reply-to: <CAPTzV16VFu_0BN1xpuki3gN3btB-zFwuj+A8ibza14JKqaXXfA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: chanho61.park@samsung.com
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-hi Krzysztof,
+On 15.07.2015 11:31, Chanho Park wrote:
+> Hi,
+> 
+> On Wed, Jul 15, 2015 at 10:46 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+>> On 15.07.2015 10:36, Chanho Park wrote:
+>>> The cpu booting of exynos5422 has been still broken since we discussed
+>>> it in last year[1]. I found this resetting codes from odroid-xu3 kernel of
+>>> hardkernel, it could help to boot 8 cores well. This patch need to have
+>>> more test like STR and other SoC especially exynos5800 which is variant
+>>> of exynos5422. If this patch is broken on exynos5800, I'll find another
+>>> way to check exynos5422.
+>>>
+>>> This patch is top of my previous exynos5422 cpu ordering patch[2] and
+>>> need to enable CONFIG_EXYNOS5420_MCPM=y
+>>
+>> 1. Why the ordering patch is required? It seems unrelated...
+> 
+> Because it related with my booting log :)
+> 
+>> 2. I tried this already (as in vendor sources from
+>> opensource.samsung.com) and it did not help on my Odroid. Are you sure
+>> that this patch solely fixes the problem?
+> 
+> If you turned on CONFIG_DEBUG_LL, you'll need Joonyoung's patch to
+> correct uart address of exynos5422.
+> http://www.spinics.net/lists/linux-samsung-soc/msg37318.html
 
-On 15 July 2015 at 06:33, Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
-> On 15.07.2015 00:41, Anand Moon wrote:
->> Added .shutdown function to s2mps11 to help poweroff the board successfully.
->
-> Which board does not poweroff? The PMIC is used on multiple boards, did
-> you observed this on all of them?
->
->>
->> s2mps11-pmic: S2MPS11_REG_CTRL1 reg value 16:00000000000000000000000000010000
->>
->> The device driver clears the register to turn off the PMIC.
->
-> This is not sufficient explanation for commit message.
->
-> I already raised concerns that this does not look to me as a proper way
-> of doing poweroff. Unfortunately you did not resolved these concerns.
->
-> The main questions are unanswered: Why you have to do this and why
-> "standard" way does not work?
-> How can you properly fix some problem if you don't know the cause of
-> problem? It is blind shooting which may hurt other boards.
->
->
->>
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>
->> ---
->> Console log for improper shutdown.
->> root@odroidxu3:~# poweroff
->> ...
->>   * Unmounting temporary filesystems...                                   [ OK ]
->>   * Deactivating swap...                                                  [ OK ]
->>   * Unmounting local filesystems...                                       [ OK ]
->>   * Will now halt
->>   [  209.020280] reboot: Power down
->>   [  209.122039] Power down failed, please power off system manually.
->>
->> Console log for proper shutdown.
->> root@odroidxu3:~# poweroff
->> ...
->>   * Unmounting temporary filesystems...                                   [ OK ]
->>   * Deactivating swap...                                                  [ OK ]
->>   * Unmounting local filesystems...                                       [ OK ]
->>   * Will now halt
->>   [  476.283071] reboo
->> ---
->>  drivers/regulator/s2mps11.c | 26 ++++++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
->> index 326ffb5..823180e 100644
->> --- a/drivers/regulator/s2mps11.c
->> +++ b/drivers/regulator/s2mps11.c
->> @@ -1060,6 +1060,31 @@ out:
->>       return ret;
->>  }
->>
->> +static void s2mps11_pmic_shutdown(struct platform_device *pdev)
->> +{
->> +     struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
->> +     unsigned int reg_val, ret;
->> +
->> +     ret = regmap_read(iodev->regmap_pmic, S2MPS11_REG_CTRL1, &reg_val);
->> +     if (ret < 0) {
->
-> regmap_read() returns an int which you assign to an unsigned int which
-> then you compare against <0? This does not look good.
->
->> +             dev_crit(&pdev->dev, "could not read S2MPS11_REG_CTRL1 value\n");
->> +     } else {
->> +             /*
->> +              * s2mps11-pmic: S2MPS11_REG_CTRL1 reg value
->> +              * is 00000000000000000000000000010000
->> +              * clear the S2MPS11_REG_CTRL1 0x10 value to shutdown.
->> +              */
->> +             if (reg_val & BIT(4)) {
->> +                     ret = regmap_update_bits(iodev->regmap_pmic,
->> +                                              S2MPS11_REG_CTRL1,
->> +                                              BIT(4), BIT(0));
->
-> I don't understand. You want to update BIT(4) but the value is BIT(0)?
-> This will clear BIT(4) but is totally unreadable.
->
->> +                     if (ret)
->> +                             dev_crit(&pdev->dev,
->> +                                      "could not write S2MPS11_REG_CTRL1 value\n");
->> +             }
->> +     }
->
-> The code is not readable, to many unnecessary indentations.
->
->> +}
->> +
->>  static const struct platform_device_id s2mps11_pmic_id[] = {
->>       { "s2mps11-pmic", S2MPS11X},
->>       { "s2mps13-pmic", S2MPS13X},
->> @@ -1074,6 +1099,7 @@ static struct platform_driver s2mps11_pmic_driver = {
->>               .name = "s2mps11-pmic",
->>       },
->>       .probe = s2mps11_pmic_probe,
->> +     .shutdown = s2mps11_pmic_shutdown,
->
-> The purpose of shutdown function is not to shutdown the system but to
-> prepare the system for shutdown.
->
-> The patch is just wrong and you did not answered the major question -
-> WHY you have to do this? Don't fix the problem blindly (or because some
-> hardkernel tree for some of the boards use such patch).
->
-> Best regards,
-> Krzysztof
->
->>       .id_table = s2mps11_pmic_id,
->>  };
->>
->>
->
+I mean that you don't need anything else to fix the problem? I'll give
+it a try later on my board but I was quite sure that I checked this
+before :) .
 
-I might me missing the bigger picture. So drop it.
-
--Anand Moon
+Best regards,
+Krzysztof
