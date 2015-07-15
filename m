@@ -1,37 +1,36 @@
-From: Anand Moon <linux.amoon@gmail.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
 Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
-Date: Wed, 15 Jul 2015 10:50:53 +0530
-Message-ID: <CANAwSgQayHCka26zZ+E_jnERmVdSaG-1jFmGPX2dqcoT52HHNw@mail.gmail.com>
+Date: Wed, 15 Jul 2015 10:24:38 +0200
+Message-ID: <55A618C6.3020603@osg.samsung.com>
 References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:36924 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750972AbbGOFVO (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:52909 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750861AbbGOIYo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 01:21:14 -0400
-Received: by wibud3 with SMTP id ud3so30375351wib.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jul 2015 22:21:13 -0700 (PDT)
+	Wed, 15 Jul 2015 04:24:44 -0400
 In-Reply-To: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <parkch98@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanho Park <chanho61.park@samsung.com>
+To: Chanho Park <parkch98@gmail.com>, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanho Park <chanho61.park@samsung.com>
 
-Hi Chanho,
+Hello Chanho,
 
-On 15 July 2015 at 07:06, Chanho Park <parkch98@gmail.com> wrote:
+On 07/15/2015 03:36 AM, Chanho Park wrote:
 > The cpu booting of exynos5422 has been still broken since we discussed
 > it in last year[1]. I found this resetting codes from odroid-xu3 kernel of
 > hardkernel, it could help to boot 8 cores well. This patch need to have
 > more test like STR and other SoC especially exynos5800 which is variant
 > of exynos5422. If this patch is broken on exynos5800, I'll find another
 > way to check exynos5422.
->
+> 
 > This patch is top of my previous exynos5422 cpu ordering patch[2] and
 > need to enable CONFIG_EXYNOS5420_MCPM=y
->
+> 
 > [    0.047509] CPU0: update cpu_capacity 448
 > [    0.047534] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
 > [    0.047874] Setting up static identity map for 0x400082c0 -
@@ -53,10 +52,10 @@ On 15 July 2015 at 07:06, Chanho Park <parkch98@gmail.com> wrote:
 > [    0.095585] CPU7: update cpu_capacity 1535
 > [    0.095593] CPU7: thread -1, cpu 3, socket 0, mpidr 80000003
 > [    0.095720] Brought up 8 CPUs
->
+> 
 > [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
 > [2]:https://patchwork.kernel.org/patch/6782891/
->
+> 
 > Cc: Joonyoung Shim <jy0922.shim@samsung.com>
 > Cc: Chanwoo Choi <cw00.choi@samsung.com>
 > Cc: Kevin Hilman <khilman@kernel.org>
@@ -72,56 +71,42 @@ On 15 July 2015 at 07:06, Chanho Park <parkch98@gmail.com> wrote:
 >  arch/arm/mach-exynos/mcpm-exynos.c | 13 ++++++++++++-
 >  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
 >  2 files changed, 18 insertions(+), 1 deletion(-)
->
+> 
 > diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
 > index 9bdf547..a076dde 100644
 > --- a/arch/arm/mach-exynos/mcpm-exynos.c
 > +++ b/arch/arm/mach-exynos/mcpm-exynos.c
 > @@ -70,7 +70,18 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
->                 cluster >= EXYNOS5420_NR_CLUSTERS)
->                 return -EINVAL;
->
-> -       exynos_cpu_power_up(cpunr);
-> +       if (!exynos_cpu_power_state(cpunr)) {
-> +               exynos_cpu_power_up(cpunr);
+>  		cluster >= EXYNOS5420_NR_CLUSTERS)
+>  		return -EINVAL;
+> 
+> -	exynos_cpu_power_up(cpunr);
+> +	if (!exynos_cpu_power_state(cpunr)) {
+> +		exynos_cpu_power_up(cpunr);
 > +
-> +               if (soc_is_exynos5800() && cluster) {
-> +                       while (!pmu_raw_readl(S5P_PMU_SPARE2))
-> +                               udelay(10);
-> +
-> +                       pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
-> +                                       EXYNOS_SWRESET);
-> +               }
-> +       }
-> +
->         return 0;
->  }
->
-> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-> index b761433..fba9068 100644
-> --- a/arch/arm/mach-exynos/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/regs-pmu.h
-> @@ -513,6 +513,12 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
->  #define SPREAD_ENABLE                                          0xF
->  #define SPREAD_USE_STANDWFI                                    0xF
->
-> +#define EXYNOS5420_KFC_CORE_RESET0                             BIT(8)
-> +#define EXYNOS5420_KFC_ETM_RESET0                              BIT(20)
-> +
-> +#define EXYNOS5420_KFC_CORE_RESET(_nr)                         \
-> +       ((EXYNOS5420_KFC_CORE_RESET0 | EXYNOS5420_KFC_ETM_RESET0) << (_nr))
-> +
->  #define EXYNOS5420_BB_CON1                                     0x0784
->  #define EXYNOS5420_BB_SEL_EN                                   BIT(31)
->  #define EXYNOS5420_BB_PMOS_EN                                  BIT(7)
-> --
-> 2.1.0
->
+> +		if (soc_is_exynos5800() && cluster) {
 
-It brought all the 8 core up on my Odroid-XU3
+I believe of_machine_is_compatible("samsung,exynos5800") is preferred
+nowadays over soc_is_exynos5800().
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Now, is correct to do this for all Exynos5422/5800 based boards? AFAIU
+from the previous discussions, this behavior is specific to the Odroid
+XU3 so maybe of_machine_is_compatible("hardkernel,odroid-xu3") instead?
+
+I know this can affect other Exynos5800 boards that are shipped with a
+similar binary BL1/BL2 blobs that also use SPARE2 as a sync mechanism
+but maybe is better to add more exceptions later rather than do it for
+all Exynos5800?
+
+The Exynos5800 based Chromebook doesn't have this issue for example and
+all the 8 cores are brought up correctly.
+
+Having said that, I tested this patch on an Exynos5800 Peach Pi and all
+the 8 cores are up and also after a S2R so seems to be a no-op when the
+PMU_SPARE2 is not used for this.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
