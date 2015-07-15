@@ -1,112 +1,51 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
-Date: Wed, 15 Jul 2015 10:24:38 +0200
-Message-ID: <55A618C6.3020603@osg.samsung.com>
-References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
+From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Wed, 15 Jul 2015 11:45:07 +0200
+Message-ID: <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
+References: <cover.1433364398.git.hramrach@gmail.com> <8fc4b9f5291a509c4c35782a1337bf536f1019af.1433364398.git.hramrach@gmail.com>
+ <CAMuHMdVT2M7pPHDDHmoNF_zVXhz1PUm5PiYxDKcAjSAcfSDiZg@mail.gmail.com>
+ <CAOMqctS6KNrTATB6MYCZLBnZUQmX=e0qQvGf78YtLaF8pkibhQ@mail.gmail.com> <20150604171547.GA1530@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:52909 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750861AbbGOIYo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 04:24:44 -0400
-In-Reply-To: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150604171547.GA1530-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dan Williams <dan.j.williams@i>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <parkch98@gmail.com>, kgene@kernel.org, k.kozlowski@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanho Park <chanho61.park@samsung.com>
 
-Hello Chanho,
+On 4 June 2015 at 19:15, Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Jun 04, 2015 at 10:31:45AM +0200, Michal Suchanek wrote:
+>> You might want to try to run the bus at 60MHz or 80MHz and then the
+>> values would probably again be different.
+>>
+>> The first two values are set in DT so the logical place for setting
+>> the third is also in DT.
+>>
+>> Otherwise you would need some in-kernel table of these settings.
+>
+> Or a formula.
+>
 
-On 07/15/2015 03:36 AM, Chanho Park wrote:
-> The cpu booting of exynos5422 has been still broken since we discussed
-> it in last year[1]. I found this resetting codes from odroid-xu3 kernel of
-> hardkernel, it could help to boot 8 cores well. This patch need to have
-> more test like STR and other SoC especially exynos5800 which is variant
-> of exynos5422. If this patch is broken on exynos5800, I'll find another
-> way to check exynos5422.
-> 
-> This patch is top of my previous exynos5422 cpu ordering patch[2] and
-> need to enable CONFIG_EXYNOS5420_MCPM=y
-> 
-> [    0.047509] CPU0: update cpu_capacity 448
-> [    0.047534] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
-> [    0.047874] Setting up static identity map for 0x400082c0 -
-> 0x40008318
-> [    0.048340] ARM CCI driver probed
-> [    0.048597] Exynos MCPM support installed
-> [    0.065676] CPU1: update cpu_capacity 448
-> [    0.065685] CPU1: thread -1, cpu 1, socket 1, mpidr 80000101
-> [    0.070672] CPU2: update cpu_capacity 448
-> [    0.070680] CPU2: thread -1, cpu 2, socket 1, mpidr 80000102
-> [    0.075644] CPU3: update cpu_capacity 448
-> [    0.075653] CPU3: thread -1, cpu 3, socket 1, mpidr 80000103
-> [    0.080590] CPU4: update cpu_capacity 1535
-> [    0.080600] CPU4: thread -1, cpu 0, socket 0, mpidr 80000000
-> [    0.085591] CPU5: update cpu_capacity 1535
-> [    0.085599] CPU5: thread -1, cpu 1, socket 0, mpidr 80000001
-> [    0.090590] CPU6: update cpu_capacity 1535
-> [    0.090598] CPU6: thread -1, cpu 2, socket 0, mpidr 80000002
-> [    0.095585] CPU7: update cpu_capacity 1535
-> [    0.095593] CPU7: thread -1, cpu 3, socket 0, mpidr 80000003
-> [    0.095720] Brought up 8 CPUs
-> 
-> [1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
-> [2]:https://patchwork.kernel.org/patch/6782891/
-> 
-> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Heesub Shin <heesub.shin@samsung.com>
-> Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
-> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-> Cc: Przemyslaw Marczak <p.marczak@samsung.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> Signed-off-by: Chanho Park <parkch98@gmail.com>
-> ---
->  arch/arm/mach-exynos/mcpm-exynos.c | 13 ++++++++++++-
->  arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
->  2 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-> index 9bdf547..a076dde 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -70,7 +70,18 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
->  		cluster >= EXYNOS5420_NR_CLUSTERS)
->  		return -EINVAL;
-> 
-> -	exynos_cpu_power_up(cpunr);
-> +	if (!exynos_cpu_power_state(cpunr)) {
-> +		exynos_cpu_power_up(cpunr);
-> +
-> +		if (soc_is_exynos5800() && cluster) {
+This formula probably needs to take into account
 
-I believe of_machine_is_compatible("samsung,exynos5800") is preferred
-nowadays over soc_is_exynos5800().
+ - the unknown reason for the pl330 to fail transfer
+ - the device transfer speed and transfer phase as set in DT
+ - possibly device-specific latency and board-specific trace design
+and assembly tolerances
 
-Now, is correct to do this for all Exynos5422/5800 based boards? AFAIU
-from the previous discussions, this behavior is specific to the Odroid
-XU3 so maybe of_machine_is_compatible("hardkernel,odroid-xu3") instead?
+Seriously, until I have at least a vague idea why the transfer fails I
+am not comfortable pulling some formula out of thin air and pretending
+I have a working patch.
 
-I know this can affect other Exynos5800 boards that are shipped with a
-similar binary BL1/BL2 blobs that also use SPARE2 as a sync mechanism
-but maybe is better to add more exceptions later rather than do it for
-all Exynos5800?
+On the other hand, a parameter you can set in the DT and which comes
+with a suggested value which can be tuned depending on the system
+seems more viable.
 
-The Exynos5800 based Chromebook doesn't have this issue for example and
-all the 8 cores are brought up correctly.
+Thanks
 
-Having said that, I tested this patch on an Exynos5800 Peach Pi and all
-the 8 cores are up and also after a S2R so seems to be a no-op when the
-PMU_SPARE2 is not used for this.
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Michal
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
