@@ -1,135 +1,111 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCHv2] regulator: s2mps11: Added shutdown function to poweroff
-Date: Wed, 15 Jul 2015 10:03:43 +0900
-Message-ID: <55A5B16F.9000003@samsung.com>
-References: <1436888477-3841-1-git-send-email-linux.amoon@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Chanho Park <parkch98@gmail.com>
+Subject: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
+Date: Wed, 15 Jul 2015 10:36:53 +0900
+Message-ID: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48587 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241AbbGOBDr (ORCPT
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:34456 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751799AbbGOBhR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jul 2015 21:03:47 -0400
-In-reply-to: <1436888477-3841-1-git-send-email-linux.amoon@gmail.com>
+	Tue, 14 Jul 2015 21:37:17 -0400
+Received: by pacan13 with SMTP id an13so14610477pac.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jul 2015 18:37:17 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org, k.kozlowski@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanho Park <parkch98@gmail.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanho Park <chanho61.park@samsung.com>
 
-On 15.07.2015 00:41, Anand Moon wrote:
-> Added .shutdown function to s2mps11 to help poweroff the board successfully.
+The cpu booting of exynos5422 has been still broken since we discussed
+it in last year[1]. I found this resetting codes from odroid-xu3 kernel of
+hardkernel, it could help to boot 8 cores well. This patch need to have
+more test like STR and other SoC especially exynos5800 which is variant
+of exynos5422. If this patch is broken on exynos5800, I'll find another
+way to check exynos5422.
 
-Which board does not poweroff? The PMIC is used on multiple boards, did
-you observed this on all of them?
+This patch is top of my previous exynos5422 cpu ordering patch[2] and
+need to enable CONFIG_EXYNOS5420_MCPM=y
 
-> 
-> s2mps11-pmic: S2MPS11_REG_CTRL1 reg value 16:00000000000000000000000000010000
-> 
-> The device driver clears the register to turn off the PMIC.
+[    0.047509] CPU0: update cpu_capacity 448
+[    0.047534] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
+[    0.047874] Setting up static identity map for 0x400082c0 -
+0x40008318
+[    0.048340] ARM CCI driver probed
+[    0.048597] Exynos MCPM support installed
+[    0.065676] CPU1: update cpu_capacity 448
+[    0.065685] CPU1: thread -1, cpu 1, socket 1, mpidr 80000101
+[    0.070672] CPU2: update cpu_capacity 448
+[    0.070680] CPU2: thread -1, cpu 2, socket 1, mpidr 80000102
+[    0.075644] CPU3: update cpu_capacity 448
+[    0.075653] CPU3: thread -1, cpu 3, socket 1, mpidr 80000103
+[    0.080590] CPU4: update cpu_capacity 1535
+[    0.080600] CPU4: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.085591] CPU5: update cpu_capacity 1535
+[    0.085599] CPU5: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.090590] CPU6: update cpu_capacity 1535
+[    0.090598] CPU6: thread -1, cpu 2, socket 0, mpidr 80000002
+[    0.095585] CPU7: update cpu_capacity 1535
+[    0.095593] CPU7: thread -1, cpu 3, socket 0, mpidr 80000003
+[    0.095720] Brought up 8 CPUs
 
-This is not sufficient explanation for commit message.
+[1]:http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/350632.html
+[2]:https://patchwork.kernel.org/patch/6782891/
 
-I already raised concerns that this does not look to me as a proper way
-of doing poweroff. Unfortunately you did not resolved these concerns.
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kevin Hilman <khilman@kernel.org>
+Cc: Heesub Shin <heesub.shin@samsung.com>
+Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: Przemyslaw Marczak <p.marczak@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Chanho Park <parkch98@gmail.com>
+---
+ arch/arm/mach-exynos/mcpm-exynos.c | 13 ++++++++++++-
+ arch/arm/mach-exynos/regs-pmu.h    |  6 ++++++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-The main questions are unanswered: Why you have to do this and why
-"standard" way does not work?
-How can you properly fix some problem if you don't know the cause of
-problem? It is blind shooting which may hurt other boards.
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index 9bdf547..a076dde 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -70,7 +70,18 @@ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+ 		cluster >= EXYNOS5420_NR_CLUSTERS)
+ 		return -EINVAL;
 
-
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> 
-> ---
-> Console log for improper shutdown.
-> root@odroidxu3:~# poweroff
-> ...
->   * Unmounting temporary filesystems...                                   [ OK ]
->   * Deactivating swap...                                                  [ OK ]
->   * Unmounting local filesystems...                                       [ OK ]
->   * Will now halt
->   [  209.020280] reboot: Power down
->   [  209.122039] Power down failed, please power off system manually.
-> 
-> Console log for proper shutdown.
-> root@odroidxu3:~# poweroff
-> ...
->   * Unmounting temporary filesystems...                                   [ OK ]
->   * Deactivating swap...                                                  [ OK ]
->   * Unmounting local filesystems...                                       [ OK ]
->   * Will now halt
->   [  476.283071] reboo
-> ---
->  drivers/regulator/s2mps11.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-> index 326ffb5..823180e 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -1060,6 +1060,31 @@ out:
->  	return ret;
->  }
->  
-> +static void s2mps11_pmic_shutdown(struct platform_device *pdev)
-> +{
-> +	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-> +	unsigned int reg_val, ret;
-> +
-> +	ret = regmap_read(iodev->regmap_pmic, S2MPS11_REG_CTRL1, &reg_val);
-> +	if (ret < 0) {
-
-regmap_read() returns an int which you assign to an unsigned int which
-then you compare against <0? This does not look good.
-
-> +		dev_crit(&pdev->dev, "could not read S2MPS11_REG_CTRL1 value\n");
-> +	} else {
-> +		/*
-> +		 * s2mps11-pmic: S2MPS11_REG_CTRL1 reg value
-> +		 * is 00000000000000000000000000010000
-> +		 * clear the S2MPS11_REG_CTRL1 0x10 value to shutdown.
-> +		 */
-> +		if (reg_val & BIT(4)) {
-> +			ret = regmap_update_bits(iodev->regmap_pmic,
-> +						 S2MPS11_REG_CTRL1,
-> +						 BIT(4), BIT(0));
-
-I don't understand. You want to update BIT(4) but the value is BIT(0)?
-This will clear BIT(4) but is totally unreadable.
-
-> +			if (ret)
-> +				dev_crit(&pdev->dev,
-> +					 "could not write S2MPS11_REG_CTRL1 value\n");
-> +		}
-> +	}
-
-The code is not readable, to many unnecessary indentations.
-
-> +}
-> +
->  static const struct platform_device_id s2mps11_pmic_id[] = {
->  	{ "s2mps11-pmic", S2MPS11X},
->  	{ "s2mps13-pmic", S2MPS13X},
-> @@ -1074,6 +1099,7 @@ static struct platform_driver s2mps11_pmic_driver = {
->  		.name = "s2mps11-pmic",
->  	},
->  	.probe = s2mps11_pmic_probe,
-> +	.shutdown = s2mps11_pmic_shutdown,
-
-The purpose of shutdown function is not to shutdown the system but to
-prepare the system for shutdown.
-
-The patch is just wrong and you did not answered the major question -
-WHY you have to do this? Don't fix the problem blindly (or because some
-hardkernel tree for some of the boards use such patch).
-
-Best regards,
-Krzysztof
-
->  	.id_table = s2mps11_pmic_id,
->  };
->  
-> 
+-	exynos_cpu_power_up(cpunr);
++	if (!exynos_cpu_power_state(cpunr)) {
++		exynos_cpu_power_up(cpunr);
++
++		if (soc_is_exynos5800() && cluster) {
++			while (!pmu_raw_readl(S5P_PMU_SPARE2))
++				udelay(10);
++
++			pmu_raw_writel(EXYNOS5420_KFC_CORE_RESET(cpu),
++					EXYNOS_SWRESET);
++		}
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index b761433..fba9068 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -513,6 +513,12 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+ #define SPREAD_ENABLE						0xF
+ #define SPREAD_USE_STANDWFI					0xF
+ 
++#define EXYNOS5420_KFC_CORE_RESET0				BIT(8)
++#define EXYNOS5420_KFC_ETM_RESET0				BIT(20)
++
++#define EXYNOS5420_KFC_CORE_RESET(_nr)				\
++	((EXYNOS5420_KFC_CORE_RESET0 | EXYNOS5420_KFC_ETM_RESET0) << (_nr))
++
+ #define EXYNOS5420_BB_CON1					0x0784
+ #define EXYNOS5420_BB_SEL_EN					BIT(31)
+ #define EXYNOS5420_BB_PMOS_EN					BIT(7)
+-- 
+2.1.0
