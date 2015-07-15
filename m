@@ -1,56 +1,49 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
- rtc and clock drivers
-Date: Wed, 15 Jul 2015 17:38:26 +0200
-Message-ID: <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
-References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
+From: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Wed, 15 Jul 2015 08:59:46 -0700
+Message-ID: <20150715155946.GB21362@localhost>
+References: <cover.1433364398.git.hramrach@gmail.com>
+ <20150604171547.GA1530@localhost.localdomain>
+ <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
+ <201507151352.27689.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:35807 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751830AbbGOPi0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 11:38:26 -0400
-Received: by ykdu72 with SMTP id u72so39579891ykd.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2015 08:38:26 -0700 (PDT)
-In-Reply-To: <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <201507151352.27689.marex-ynQEQJNshbs@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Cc: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello,
+Hi Michal,
 
-On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> The Maxim max77802 Power Management IC is used on many Exynos machines.
-> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
-> and 2-channel 32kHz clock outputs.
->
-> Enable the kernel config options to have the drivers for these devices
-> built as a module.
->
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  arch/arm/configs/multi_v7_defconfig | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 2349584b6e08..080120fe5580 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
->  CONFIG_REGULATOR_MAX8907=y
->  CONFIG_REGULATOR_MAX8973=y
->  CONFIG_REGULATOR_MAX77686=y
-> +CONFIG_REGULATOR_MAX77802=m
+On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
+> The problem is, if you add a new DT binding, you'd have to support it
+> forever, no matter how bad idea that binding turned out to be.
 
-I noticed that the version that landed in 4.2-rc1 as commit
-f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
-and clock drivers") doesn't include this symbol. I guess it was caused
-by a wrong resolved conflict? I'll post a patch to enable the
-regulator again.
+Agreed, and a solid NAK to this patch. I could have sworn I gave such a
+response when this was originally being discussed a month ago.
 
-Best regards,
-Javier
+AFAICT, you have one of two general approaches available to you:
+
+1. Fix up the SPI driver so that it knows how to break large SPI
+transfers up into smaller segments that its constituent hardware (DMA
+controllers, fast clocks, etc.) can handle.
+
+2. Utilize/create a parameter within the SPI subsystem to communicate
+that the SPI master has a limited max transfer size (notably: NOT a
+per-device DT property, but a SPI API property), and modify SPI device
+drivers (like m25p80) to honor it. Mark Brown seemed open to this, and I
+thought he suggested it somewhere.
+
+It is most definitely wrong to put this information solely in the slave
+device DT (i.e., for the flash), when it is not a property of the flash
+device at all. It's a property of the SPI master and/or its clocks and
+DMA controllers.
+
+Brian
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
