@@ -1,58 +1,47 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Remove old Samsung USB PHY
- configs
-Date: Wed, 15 Jul 2015 18:43:43 +0200
-Message-ID: <55A68DBF.3070309@osg.samsung.com>
-References: <1436395246-17540-1-git-send-email-javier@osg.samsung.com>
- <07fa01d0be1d$4ea7c050$ebf740f0$@kernel.org>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Wed, 15 Jul 2015 19:15:50 +0200
+Message-ID: <201507151915.50677.marex@denx.de>
+References: <cover.1433364398.git.hramrach@gmail.com> <201507151352.27689.marex@denx.de> <20150715155946.GB21362@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:53015 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752821AbbGOQns (ORCPT
+Received: from mail-out.m-online.net ([212.18.0.10]:58400 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753118AbbGORqR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 12:43:48 -0400
-In-Reply-To: <07fa01d0be1d$4ea7c050$ebf740f0$@kernel.org>
+	Wed, 15 Jul 2015 13:46:17 -0400
+In-Reply-To: <20150715155946.GB21362@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>, linux-kernel@vger.kernel.org, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: hramrach@gmail.com, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broon>
 
-Hello Kukjin,
+On Wednesday, July 15, 2015 at 05:59:46 PM, Brian Norris wrote:
+> Hi Michal,
 
-On 07/14/2015 12:10 PM, Kukjin Kim wrote:
-> Javier Martinez Canillas wrote:
->>
->> The old drivers/usb/phy/phy-samsung-usb{2,3} are now deleted since
->> were replaced by newers drivers that use the Generic PHY framework
->> but their Kconfig options were left over in multi_v7_defconfig.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
-> Acked-by: Kukjin Kim <kgene@kernel.org>
+Hi all,
+
+> On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
+> > The problem is, if you add a new DT binding, you'd have to support it
+> > forever, no matter how bad idea that binding turned out to be.
 > 
-> I think, this can be handled by arm-soc guy directly.
->
+> Agreed, and a solid NAK to this patch. I could have sworn I gave such a
+> response when this was originally being discussed a month ago.
+> 
+> AFAICT, you have one of two general approaches available to you:
+> 
+> 1. Fix up the SPI driver so that it knows how to break large SPI
+> transfers up into smaller segments that its constituent hardware (DMA
+> controllers, fast clocks, etc.) can handle.
 
-As far as I know, arm-soc maintainers now wanted sub-arch maintainers
-to pick the multi_v7_defconfig patches for them and send it as a part
-of the SoC specific pull requests.
-
-I just posted another series that includes 2 more multi_v7_defconfig
-patches for Exynos [0]. Please let me know if you prefer post to the
-arm-soc maintainers instead so I can split the exynos_defconfig part
-and the multi_v7_defconfig patches send to arm@kernel.org.
-
-> Thanks,
-> Kukjin
->
-
-[0]: http://www.spinics.net/lists/arm-kernel/msg431822.html
+I think this might actually be easier -- just do a transfer where you
+don't toggle CS and just stops the clock at the last bit, then do another
+(multiple) transfers which don't toggle CS at all, then finally do a
+transfer which toggles a CS at the end. This should be pretty trivial
+to do and I think for example spi-mxs.c does this.
 
 Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Marek Vasut
