@@ -1,31 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch v2 2/2] pinctrl: samsung: remove "out of memory" messages
-Date: Thu, 16 Jul 2015 10:22:33 +0200
-Message-ID: <CACRpkdaKn+vv2Mf=G=YpisokpvQfxGaHMkgA4aGNpL9-zr9Vqg@mail.gmail.com>
-References: <20150619085203.GO28762@mwanda>
-	<20150622151315.GB14156@mwanda>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
+Date: Thu, 16 Jul 2015 13:10:18 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1507161309370.18576@nanos>
+References: <1436711211-18223-1-git-send-email-robh@kernel.org> <1436711211-18223-7-git-send-email-robh@kernel.org> <alpine.DEB.2.11.1507121737030.20072@nanos> <CAL_JsqJfDdDAQ1gr1w3w8_FVqKzxqDag-PHnwguaPfT+6zqszw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20150622151315.GB14156@mwanda>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:41776 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752224AbbGPLKq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jul 2015 07:10:46 -0400
+In-Reply-To: <CAL_JsqJfDdDAQ1gr1w3w8_FVqKzxqDag-PHnwguaPfT+6zqszw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org
 
-On Mon, Jun 22, 2015 at 5:13 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Mon, 13 Jul 2015, Rob Herring wrote:
+> On Sun, Jul 12, 2015 at 11:43 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > So in most of the irqchip drivers, this is irrelevant.
+> 
+> Agreed, but that's a separate series I think. I'm trying not to change
+> behavior with this series. Are you proposing I do something different
+> with this patch?
 
-> Checkpatch.pl complains about these:
->
-> WARNING: Possible unnecessary 'out of memory' message
->
-> The messages use a little extra RAM and they add a few extra lines of
-> code.  We're probably never going to hit these out of memory situations
-> but if we did then kmalloc() has pretty good error messages built-in.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+No, consolidating it with no functional change is certainly the right
+thing to do first.
 
-Patch applied with Krzysztof's review tag.
+Thanks,
 
-Yours,
-Linus Walleij
+	tglx
