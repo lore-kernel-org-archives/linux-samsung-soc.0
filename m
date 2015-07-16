@@ -1,52 +1,60 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
-Date: Thu, 16 Jul 2015 09:51:28 +0900
-Message-ID: <55A70010.1060701@samsung.com>
-References: <1436395246-17540-1-git-send-email-javier@osg.samsung.com>
- <07fa01d0be1d$4ea7c050$ebf740f0$@kernel.org> <55A68DBF.3070309@osg.samsung.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Wed, 15 Jul 2015 18:19:35 -0700
+Message-ID: <20150716011935.GB9033@localhost>
+References: <cover.1433364398.git.hramrach@gmail.com>
+ <201507151352.27689.marex@denx.de>
+ <20150715155946.GB21362@localhost>
+ <201507151915.50677.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:27975 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751529AbbGPAv3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 20:51:29 -0400
-In-reply-to: <55A68DBF.3070309@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <201507151915.50677.marex@denx.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Vasut <marex@denx.de>
+Cc: hramrach@gmail.com, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>, linux-kernel@vger.kernel.org, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-On 16.07.2015 01:43, Javier Martinez Canillas wrote:
-> Hello Kukjin,
-> 
-> On 07/14/2015 12:10 PM, Kukjin Kim wrote:
->> Javier Martinez Canillas wrote:
->>>
->>> The old drivers/usb/phy/phy-samsung-usb{2,3} are now deleted since
->>> were replaced by newers drivers that use the Generic PHY framework
->>> but their Kconfig options were left over in multi_v7_defconfig.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>
->> Acked-by: Kukjin Kim <kgene@kernel.org>
->>
->> I think, this can be handled by arm-soc guy directly.
->>
-> 
-> As far as I know, arm-soc maintainers now wanted sub-arch maintainers
-> to pick the multi_v7_defconfig patches for them and send it as a part
-> of the SoC specific pull requests.
-> 
-> I just posted another series that includes 2 more multi_v7_defconfig
-> patches for Exynos [0]. Please let me know if you prefer post to the
-> arm-soc maintainers instead so I can split the exynos_defconfig part
-> and the multi_v7_defconfig patches send to arm@kernel.org.
+On Wed, Jul 15, 2015 at 07:15:50PM +0200, Marek Vasut wrote:
+> On Wednesday, July 15, 2015 at 05:59:46 PM, Brian Norris wrote:
+> > 1. Fix up the SPI driver so that it knows how to break large SPI
+> > transfers up into smaller segments that its constituent hardware (DMA
+> > controllers, fast clocks, etc.) can handle.
 
-Especially that there is already a defconfig patch from Anand Moon.
-Let's handle all of them in samsung-soc.
+BTW, Mark Brown already commented on this approach:
 
-Best regards,
-Krzysztof
+http://lists.infradead.org/pipermail/linux-mtd/2015-May/059364.html
+
+I quote:
+
+| With modern drivers using transfer_one() where we have control of the
+| chip select we do also have the ability to add support to the core for
+| chopping large transfers up into smaller ones that the hardware can
+| handle transparently.  That won't for everything though since it depends
+| on us being able to manually control the chip select which not all
+| hardware can do.
+
+> I think this might actually be easier -- just do a transfer where you
+> don't toggle CS and just stops the clock at the last bit, then do another
+> (multiple) transfers which don't toggle CS at all, then finally do a
+> transfer which toggles a CS at the end.
+
+Sounds OK to me. And as Mark noted, this could probably be done in the
+core. I suppose Mark could suggest whether the most expedient path is to
+hack the buggy driver to do this, or whether reworking the SPI core to
+have the appropriate spi_master field(s) (and caveats) to support this.
+
+> This should be pretty trivial
+> to do and I think for example spi-mxs.c does this.
+
+I don't think spi-mxs.c really does this; it chooses between PIO and DMA
+based on length, but with either option, it runs through each SPI
+transfer in one go. You might be confused by the fact that this driver
+implements ->transfer_one_message instead of ->transfer_one, so it has
+to loop through all transfers in the message.
+
+(IIUC, spi-mxs.c could easily be rewritten to use ->transfer, and some
+of that not-too-complicated boilerplate could be killed off.)
+
+Brian
