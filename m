@@ -1,67 +1,43 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
-Date: Thu, 16 Jul 2015 14:26:32 +0100
-Message-ID: <20150716132632.GK7557@n2100.arm.linux.org.uk>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org>
- <1436711211-18223-7-git-send-email-robh@kernel.org>
- <alpine.DEB.2.11.1507121737030.20072@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH v3 1/9] drm/exynos: pass the correct pipe number
+Date: Thu, 16 Jul 2015 12:23:31 -0300
+Message-ID: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:46702 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753498AbbGPN0x (ORCPT
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:32822 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753132AbbGPPXq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Jul 2015 09:26:53 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.11.1507121737030.20072@nanos>
+	Thu, 16 Jul 2015 11:23:46 -0400
+Received: by qged69 with SMTP id d69so4714693qge.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jul 2015 08:23:46 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rob Herring <robh@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, arm@kernel.org, Jason Cooper <jason@lakedaemon.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On Sun, Jul 12, 2015 at 06:43:56PM +0200, Thomas Gleixner wrote:
-> The probe function was added in the initial implementation of the
-> driver (2006), so it predates device tree.
-> 
-> drivers/net/appletalk/ltpc.c
-> drivers/net/arcnet/com20020-isa.c
-> drivers/net/arcnet/com90io.c
-> drivers/net/arcnet/com90xx.c
-> 
-> Surely not stuff you find on todays ARM systems
-> 
-> drivers/net/ethernet/8390/ne.c
-> drivers/net/ethernet/8390/wd.c
-> drivers/net/ethernet/amd/lance.c
-> drivers/net/ethernet/amd/ni65.c
-> drivers/net/ethernet/amd/pcnet32.c
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-pcnet32 is used on the Netwinder, which we still have supported in the ARM
-tree.  Even worse, the Netwinder has the Cyberpro capture IRQ missing a
-resistor, so it defaults to "asserted" and can trigger a stuck-IRQ, so
-it's best not to allow probing of that known bad IRQ.
+Instead of giving -1 to as arg to  drm_send_vblank_event() pass the
+correct pipe number to it.
 
-> Ditto
-> 
-> drivers/net/ethernet/smsc/smc911x.c
-> drivers/net/ethernet/smsc/smc9194.c
-> drivers/net/ethernet/smsc/smc91x.c
-> 
-> Those might still be, but on the DT based boards the probing should be
-> completely irrelevant
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-SA11x0 stuff uses smc91x.c
-
-> drivers/pcmcia/yenta_socket.c
-> 
-> Russell might still use that.
-
-Some EBSA285 systems use that, Compaq Personal Server (which is my wireless
-AP using hostap) does.
-
-ucb1x00.c definitely uses IRQ probing on SA11x0 platforms.
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 644b4b7..22b9ca0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -203,7 +203,7 @@ void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
+ 	spin_lock_irqsave(&dev->event_lock, flags);
+ 	if (exynos_crtc->event) {
+ 
+-		drm_send_vblank_event(dev, -1, exynos_crtc->event);
++		drm_send_vblank_event(dev, pipe, exynos_crtc->event);
+ 		drm_vblank_put(dev, pipe);
+ 		wake_up(&exynos_crtc->pending_flip_queue);
+ 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+2.1.0
