@@ -1,47 +1,50 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Wed, 15 Jul 2015 19:15:50 +0200
-Message-ID: <201507151915.50677.marex@denx.de>
-References: <cover.1433364398.git.hramrach@gmail.com> <201507151352.27689.marex@denx.de> <20150715155946.GB21362@localhost>
+From: Chanho Park <parkch98@gmail.com>
+Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
+Date: Thu, 16 Jul 2015 09:34:02 +0900
+Message-ID: <CAPTzV15kQjrnJCuwXGBdzzY6rjP1495Q=PbuCYHic0JakxD2QQ@mail.gmail.com>
+References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
+	<55A618C6.3020603@osg.samsung.com>
+Reply-To: chanho61.park@samsung.com
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:58400 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753118AbbGORqR (ORCPT
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:38841 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754424AbbGPAeD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 13:46:17 -0400
-In-Reply-To: <20150715155946.GB21362@localhost>
+	Wed, 15 Jul 2015 20:34:03 -0400
+Received: by iggf3 with SMTP id f3so2153014igg.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2015 17:34:02 -0700 (PDT)
+In-Reply-To: <55A618C6.3020603@osg.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: hramrach@gmail.com, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broon>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wednesday, July 15, 2015 at 05:59:46 PM, Brian Norris wrote:
-> Hi Michal,
+Hello Javier,
 
-Hi all,
+> I believe of_machine_is_compatible("samsung,exynos5800") is preferred
+> nowadays over soc_is_exynos5800().
+>
+> Now, is correct to do this for all Exynos5422/5800 based boards? AFAIU
+> from the previous discussions, this behavior is specific to the Odroid
+> XU3 so maybe of_machine_is_compatible("hardkernel,odroid-xu3") instead?
+>
+> I know this can affect other Exynos5800 boards that are shipped with a
+> similar binary BL1/BL2 blobs that also use SPARE2 as a sync mechanism
+> but maybe is better to add more exceptions later rather than do it for
+> all Exynos5800?
+>
+> The Exynos5800 based Chromebook doesn't have this issue for example and
+> all the 8 cores are brought up correctly.
+>
+> Having said that, I tested this patch on an Exynos5800 Peach Pi and all
+> the 8 cores are up and also after a S2R so seems to be a no-op when the
+> PMU_SPARE2 is not used for this.
 
-> On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
-> > The problem is, if you add a new DT binding, you'd have to support it
-> > forever, no matter how bad idea that binding turned out to be.
-> 
-> Agreed, and a solid NAK to this patch. I could have sworn I gave such a
-> response when this was originally being discussed a month ago.
-> 
-> AFAICT, you have one of two general approaches available to you:
-> 
-> 1. Fix up the SPI driver so that it knows how to break large SPI
-> transfers up into smaller segments that its constituent hardware (DMA
-> controllers, fast clocks, etc.) can handle.
+Thanks for the testing. I'll find more proper way it could be applied
+only for exynos5422 boards.
 
-I think this might actually be easier -- just do a transfer where you
-don't toggle CS and just stops the clock at the last bit, then do another
-(multiple) transfers which don't toggle CS at all, then finally do a
-transfer which toggles a CS at the end. This should be pretty trivial
-to do and I think for example spi-mxs.c does this.
-
-Best regards,
-Marek Vasut
+-- 
+Best Regards,
+Chanho Park
