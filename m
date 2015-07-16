@@ -1,62 +1,129 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v2 1/3] ARM: multi_v7_defconfig: Enable max77802 regulator
-Date: Thu, 16 Jul 2015 08:39:42 +0200
-Message-ID: <1437028784-22189-2-git-send-email-javier@osg.samsung.com>
-References: <1437028784-22189-1-git-send-email-javier@osg.samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 1/3] clk: samsung: exynos3250: Add cpu clock
+ configuration data and instaniate cpu clock
+Date: Thu, 16 Jul 2015 16:46:56 +0900
+Message-ID: <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+	<1435797761-3339-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1437028784-22189-1-git-send-email-javier@osg.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:36214 "EHLO
+	mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753885AbbGPHq5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jul 2015 03:46:57 -0400
+In-Reply-To: <1435797761-3339-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, Kozik <k.kozlowski@samsung.com>, thomas.ab@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-The Exynos5420 based Peach Pit and Exynos5800 based Peach Pi Chromebooks
-use the Maxim max77802 Power Management IC (PMIC). This PMIC has besides
-other devices, a set of regulators that can be controller over I2C.
+2015-07-02 9:42 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+> This patch add CPU clock configuration data and instantiate the CPU clock type
+> for Exynos3250 to support Samsung specific cpu-clock type.
+>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
+>  include/dt-bindings/clock/exynos3250.h |  1 +
 
-Commit f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator,
-rtc and clock drivers") was supposed to enable the config option for the
-regulator driver as a module but the final version that landed did not
-include this. The commit was modified and the REGULATOR_MAX77802 removed
-since it was thought to be useless.
+Sylwester,
 
-Unfortunately that's not the case for the mentioned reason above so this
-patch enables the needed Kconfig option.
+I think this patch also waits for your review or ack.
+The patchset is rebased on Bartlomiej's series for Exynos5250 cpufreq
+so the easiest way would be to take it through samsung-soc tree.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Best regards,
+Krzysztof
 
----
 
-Changes in v2:
-- Better explanation why the max77802 regulator config option is needed.
-- Add Krzysztof Kozlowski Reviewed-by tag in patch #1
-
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 4b93761d58d2..b07493997993 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -402,6 +402,7 @@ CONFIG_REGULATOR_MAX14577=m
- CONFIG_REGULATOR_MAX8907=y
- CONFIG_REGULATOR_MAX8973=y
- CONFIG_REGULATOR_MAX77686=y
-+CONFIG_REGULATOR_MAX77802=m
- CONFIG_REGULATOR_MAX77693=m
- CONFIG_REGULATOR_PALMAS=y
- CONFIG_REGULATOR_S2MPS11=y
--- 
-2.4.3
+>  2 files changed, 31 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+> index 538de66a759e..378ad5ad3492 100644
+> --- a/drivers/clk/samsung/clk-exynos3250.c
+> +++ b/drivers/clk/samsung/clk-exynos3250.c
+> @@ -19,6 +19,7 @@
+>  #include <dt-bindings/clock/exynos3250.h>
+>
+>  #include "clk.h"
+> +#include "clk-cpu.h"
+>  #include "clk-pll.h"
+>
+>  #define SRC_LEFTBUS            0x4200
+> @@ -319,8 +320,10 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+>         MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p,
+>             SRC_CPU, 24, 1),
+>         MUX(CLK_MOUT_HPM, "mout_hpm", mout_hpm_p, SRC_CPU, 20, 1),
+> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1),
+> -       MUX(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+> +       MUX_F(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1,
+> +                       CLK_SET_RATE_PARENT, 0),
+> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> +                       CLK_SET_RATE_PARENT, 0),
+>  };
+>
+>  static struct samsung_div_clock div_clks[] __initdata = {
+> @@ -772,6 +775,26 @@ static struct samsung_cmu_info cmu_info __initdata = {
+>         .nr_clk_regs            = ARRAY_SIZE(exynos3250_cmu_clk_regs),
+>  };
+>
+> +#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)                     \
+> +               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
+> +               ((corem) << 4))
+> +#define E3250_CPU_DIV1(hpm, copy)                                      \
+> +               (((hpm) << 4) | ((copy) << 0))
+> +
+> +static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
+> +       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },
+> +       {  0 },
+> +};
+> +
+>  static void __init exynos3250_cmu_init(struct device_node *np)
+>  {
+>         struct samsung_clk_provider *ctx;
+> @@ -780,6 +803,11 @@ static void __init exynos3250_cmu_init(struct device_node *np)
+>         if (!ctx)
+>                 return;
+>
+> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> +                       mout_core_p[0], mout_core_p[1], 0x14200,
+> +                       e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
+> +                       CLK_CPU_HAS_DIV1);
+> +
+>         exynos3_core_down_clock(ctx->reg_base);
+>  }
+>  CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
+> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+> index aab088d30199..63d01c15d2b3 100644
+> --- a/include/dt-bindings/clock/exynos3250.h
+> +++ b/include/dt-bindings/clock/exynos3250.h
+> @@ -31,6 +31,7 @@
+>  #define CLK_FOUT_VPLL                  4
+>  #define CLK_FOUT_UPLL                  5
+>  #define CLK_FOUT_MPLL                  6
+> +#define CLK_ARM_CLK                    7
+>
+>  /* Muxes */
+>  #define CLK_MOUT_MPLL_USER_L           16
+> --
+> 1.8.5.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
