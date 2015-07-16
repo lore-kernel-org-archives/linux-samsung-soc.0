@@ -1,86 +1,81 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [GIT PULL] ARM: EXYNOS: mach: Improvements for 4.3
-Date: Thu, 16 Jul 2015 11:41:59 +0900
-Message-ID: <1437014519-19571-2-git-send-email-k.kozlowski@samsung.com>
-References: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
+ rtc and clock drivers
+Date: Thu, 16 Jul 2015 07:30:44 +0200
+Message-ID: <55A74184.5050900@osg.samsung.com>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
+ <55A6FE07.7000604@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:27143 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753946AbbGPCmM (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:53172 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752150AbbGPFat (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 22:42:12 -0400
-In-reply-to: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
+	Thu, 16 Jul 2015 01:30:49 -0400
+In-Reply-To: <55A6FE07.7000604@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Dear Kukjin,
+Hello Krzysztof,
 
-Exynos mach-code related improvements. Description along with a tag.
-You can find them also on the lists with my reviewed-by.
+On 07/16/2015 02:42 AM, Krzysztof Kozlowski wrote:
+> On 16.07.2015 00:38, Javier Martinez Canillas wrote:
+>> Hello,
+>>
+>> On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>>> The Maxim max77802 Power Management IC is used on many Exynos machines.
+>>> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
+>>> and 2-channel 32kHz clock outputs.
+>>>
+>>> Enable the kernel config options to have the drivers for these devices
+>>> built as a module.
+>>>
+>>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>> ---
+>>>  arch/arm/configs/multi_v7_defconfig | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+>>> index 2349584b6e08..080120fe5580 100644
+>>> --- a/arch/arm/configs/multi_v7_defconfig
+>>> +++ b/arch/arm/configs/multi_v7_defconfig
+>>> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
+>>>  CONFIG_REGULATOR_MAX8907=y
+>>>  CONFIG_REGULATOR_MAX8973=y
+>>>  CONFIG_REGULATOR_MAX77686=y
+>>> +CONFIG_REGULATOR_MAX77802=m
+>>
+>> I noticed that the version that landed in 4.2-rc1 as commit
+>> f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
+>> and clock drivers") doesn't include this symbol. I guess it was caused
+>> by a wrong resolved conflict? I'll post a patch to enable the
+>> regulator again.
+> 
+> As you can see in mentioned mainline commit Kukjin removed it manually:
+> [kgene@kernel.org: removing useless REGULATOR_MAX77802 config]
+>
+
+Oh, I missed that in the commit message. I thought it was a merge / conflict
+error, not something done on purpose.
+ 
+> I wonder why?
+>
+
+Me too.
+
+> Best regards,
+> Krzysztof
+> --
 
 Best regards,
-Krzysztof
-
-
-The following changes since commit 1c4c7159ed2468f3ac4ce5a7f08d79663d381a93:
-
-  Merge tag 'ext4_for_linus_stable' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4 (2015-07-05 16:24:54 -0700)
-
-are available in the git repository at:
-
-
-  https://github.com/krzk/linux.git tags/samsung-mach-4.3
-
-for you to fetch changes up to 70f83b6716ea0e5944071c12ff1716f93a9c2d8d:
-
-  cpufreq: exynos: remove Exynos5250 specific cpufreq driver support (2015-07-16 10:39:56 +0900)
-
-----------------------------------------------------------------
-Improvements for Exynos based boards:
-1. Switch to generic cpufreq-dt driver for Exynos5250. The old driver
-   is removed.
-2. Fix memory leak in cpufreq error path.
-3. Cleanups: remove duplicated define with bootloader's sleep magic
-   constant, staticize local function, drop 'owner' from
-   platform driver, fix cast of iomem to ERR_PTR.
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      cpufreq: exynos: remove Exynos5250 specific cpufreq driver support
-
-Krzysztof Kozlowski (4):
-      ARM: EXYNOS: pmu: Make local function static
-      ARM: EXYNOS: Remove duplicated define of SLEEP_MAGIC
-      ARM: EXYNOS: pmu: Drop owner assignment
-      ARM: EXYNOS: Use IOMEM_ERR_PTR when function returns iomem
-
-Shailendra Verma (1):
-      cpufreq: exynos: Fix for memory leak in case SOC name does not match
-
-Thomas Abraham (3):
-      clk: samsung: exynos5250: add cpu clock configuration data and instantiate cpu clock
-      ARM: dts: Exynos5250: add CPU OPP and regulator supply property
-      ARM: Exynos: switch to using generic cpufreq driver for Exynos5250
-
- arch/arm/boot/dts/exynos5250-arndale.dts  |   4 +
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   4 +
- arch/arm/boot/dts/exynos5250-snow.dts     |   4 +
- arch/arm/boot/dts/exynos5250-spring.dts   |   4 +
- arch/arm/boot/dts/exynos5250.dtsi         |  22 ++++
- arch/arm/mach-exynos/common.h             |   6 +
- arch/arm/mach-exynos/exynos.c             |   1 +
- arch/arm/mach-exynos/firmware.c           |   2 -
- arch/arm/mach-exynos/platsmp.c            |   2 +-
- arch/arm/mach-exynos/pmu.c                |   3 +-
- arch/arm/mach-exynos/suspend.c            |   4 +-
- drivers/clk/samsung/clk-exynos5250.c      |  31 +++++
- drivers/cpufreq/Kconfig.arm               |  11 --
- drivers/cpufreq/Makefile                  |   1 -
- drivers/cpufreq/exynos-cpufreq.c          |   9 +-
- drivers/cpufreq/exynos-cpufreq.h          |  17 ---
- drivers/cpufreq/exynos5250-cpufreq.c      | 210 ------------------------------
- include/dt-bindings/clock/exynos5250.h    |   1 +
- 18 files changed, 84 insertions(+), 252 deletions(-)
- delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
