@@ -1,38 +1,46 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
-Date: Thu, 16 Jul 2015 21:32:20 +0200
-Message-ID: <87pp3rj3uj.fsf@belgarion.home>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org>
-	<1436711211-18223-7-git-send-email-robh@kernel.org>
-	<alpine.DEB.2.11.1507121737030.20072@nanos>
-	<20150716132632.GK7557@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Alexander Shiyan <shc_work@mail.ru>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-rpi-kernel@lists.infradead.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Jason Cooper <jason@lakedaemon.net>
+From: Laurent Navet <laurent.navet@gmail.com>
+Subject: [PATCH] i2c: s3c2410: remove unused variable
+Date: Thu, 16 Jul 2015 22:36:16 +0200
+Message-ID: <1437078976-29145-1-git-send-email-laurent.navet@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f196.google.com ([209.85.212.196]:36478 "EHLO
+	mail-wi0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751078AbbGPU2h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Jul 2015 16:28:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org, k.kozlowski@samsung.com, wsa@the-dreams.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Navet <laurent.navet@gmail.com>
 
-Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
+ret is assigned zero and just used to return. remove it.
+Found by using coccinelle.
 
->> drivers/net/ethernet/smsc/smc911x.c
->> drivers/net/ethernet/smsc/smc9194.c
->> drivers/net/ethernet/smsc/smc91x.c
->> 
->> Those might still be, but on the DT based boards the probing should be
->> completely irrelevant
->
-> SA11x0 stuff uses smc91x.c
-PXA uses it also for lubbock, mainstone and zylonite boards, which are not yet
-converted to DT, and won't drop platform_data, even if they are DT converted.
-I remember testing this patchset on lubbock at least.
+Signed-off-by: Laurent Navet <laurent.navet@gmail.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ucb1x00.c definitely uses IRQ probing on SA11x0 platforms.
-For PXA I must admit I don't yet know. I know lubbock has an UCB1400, but I
-don't have it working yet, so I can't foresee the problems yet.
-
-Cheers.
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 50bfd8c..cf3c6c0 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -409,7 +409,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ {
+ 	unsigned long tmp;
+ 	unsigned char byte;
+-	int ret = 0;
+ 
+ 	switch (i2c->state) {
+ 
+@@ -565,7 +564,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ 	tmp &= ~S3C2410_IICCON_IRQPEND;
+ 	writel(tmp, i2c->regs + S3C2410_IICCON);
+  out:
+-	return ret;
++	return 0;
+ }
+ 
+ /* s3c24xx_i2c_irq
 -- 
-Robert
+2.1.4
