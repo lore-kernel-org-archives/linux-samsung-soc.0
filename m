@@ -1,50 +1,63 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: Re: [RFC] ARM: EXYNOS: reset KFC cores when cpu is up
-Date: Thu, 16 Jul 2015 09:34:02 +0900
-Message-ID: <CAPTzV15kQjrnJCuwXGBdzzY6rjP1495Q=PbuCYHic0JakxD2QQ@mail.gmail.com>
-References: <1436924213-29732-1-git-send-email-parkch98@gmail.com>
-	<55A618C6.3020603@osg.samsung.com>
-Reply-To: chanho61.park@samsung.com
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
+ rtc and clock drivers
+Date: Thu, 16 Jul 2015 09:42:47 +0900
+Message-ID: <55A6FE07.7000604@samsung.com>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:38841 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754424AbbGPAeD (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:27312 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752469AbbGPAms (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jul 2015 20:34:03 -0400
-Received: by iggf3 with SMTP id f3so2153014igg.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2015 17:34:02 -0700 (PDT)
-In-Reply-To: <55A618C6.3020603@osg.samsung.com>
+	Wed, 15 Jul 2015 20:42:48 -0400
+In-reply-to: <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello Javier,
+On 16.07.2015 00:38, Javier Martinez Canillas wrote:
+> Hello,
+> 
+> On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>> The Maxim max77802 Power Management IC is used on many Exynos machines.
+>> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
+>> and 2-channel 32kHz clock outputs.
+>>
+>> Enable the kernel config options to have the drivers for these devices
+>> built as a module.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>>  arch/arm/configs/multi_v7_defconfig | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+>> index 2349584b6e08..080120fe5580 100644
+>> --- a/arch/arm/configs/multi_v7_defconfig
+>> +++ b/arch/arm/configs/multi_v7_defconfig
+>> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
+>>  CONFIG_REGULATOR_MAX8907=y
+>>  CONFIG_REGULATOR_MAX8973=y
+>>  CONFIG_REGULATOR_MAX77686=y
+>> +CONFIG_REGULATOR_MAX77802=m
+> 
+> I noticed that the version that landed in 4.2-rc1 as commit
+> f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
+> and clock drivers") doesn't include this symbol. I guess it was caused
+> by a wrong resolved conflict? I'll post a patch to enable the
+> regulator again.
 
-> I believe of_machine_is_compatible("samsung,exynos5800") is preferred
-> nowadays over soc_is_exynos5800().
->
-> Now, is correct to do this for all Exynos5422/5800 based boards? AFAIU
-> from the previous discussions, this behavior is specific to the Odroid
-> XU3 so maybe of_machine_is_compatible("hardkernel,odroid-xu3") instead?
->
-> I know this can affect other Exynos5800 boards that are shipped with a
-> similar binary BL1/BL2 blobs that also use SPARE2 as a sync mechanism
-> but maybe is better to add more exceptions later rather than do it for
-> all Exynos5800?
->
-> The Exynos5800 based Chromebook doesn't have this issue for example and
-> all the 8 cores are brought up correctly.
->
-> Having said that, I tested this patch on an Exynos5800 Peach Pi and all
-> the 8 cores are up and also after a S2R so seems to be a no-op when the
-> PMU_SPARE2 is not used for this.
+As you can see in mentioned mainline commit Kukjin removed it manually:
+[kgene@kernel.org: removing useless REGULATOR_MAX77802 config]
 
-Thanks for the testing. I'll find more proper way it could be applied
-only for exynos5422 boards.
+I wonder why?
 
--- 
-Best Regards,
-Chanho Park
+Best regards,
+Krzysztof
