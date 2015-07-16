@@ -1,78 +1,60 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
- rtc and clock drivers
-Date: Thu, 16 Jul 2015 07:30:44 +0200
-Message-ID: <55A74184.5050900@osg.samsung.com>
-References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
- <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
- <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
- <55A6FE07.7000604@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: multi_v7_defconfig: Enable max77802 regulator
+Date: Thu, 16 Jul 2015 07:44:41 +0200
+Message-ID: <55A744C9.6040703@osg.samsung.com>
+References: <1436977965-7078-1-git-send-email-javier@osg.samsung.com>
+ <1436977965-7078-2-git-send-email-javier@osg.samsung.com>
+ <55A6FEA0.8090202@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:53172 "EHLO lists.s-osg.org"
+Received: from lists.s-osg.org ([54.187.51.154]:53179 "EHLO lists.s-osg.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752150AbbGPFat (ORCPT
+	id S1752068AbbGPFoq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Jul 2015 01:30:49 -0400
-In-Reply-To: <55A6FE07.7000604@samsung.com>
+	Thu, 16 Jul 2015 01:44:46 -0400
+In-Reply-To: <55A6FEA0.8090202@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
 Hello Krzysztof,
 
-On 07/16/2015 02:42 AM, Krzysztof Kozlowski wrote:
-> On 16.07.2015 00:38, Javier Martinez Canillas wrote:
->> Hello,
+Thanks for the feedback.
+
+On 07/16/2015 02:45 AM, Krzysztof Kozlowski wrote:
+> On 16.07.2015 01:32, Javier Martinez Canillas wrote:
+>> The Maxim max77802 Power Management IC has besides other devices, a set of
+>> regulators. Commit f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802
+>> regulator, rtc and clock drivers") was supposed to enable the config option
+>> for the regulator driver as a module but the final version that landed did
+>> not include this. So this patch enables the needed Kconfig option.
 >>
->> On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
->> <javier.martinez@collabora.co.uk> wrote:
->>> The Maxim max77802 Power Management IC is used on many Exynos machines.
->>> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
->>> and 2-channel 32kHz clock outputs.
->>>
->>> Enable the kernel config options to have the drivers for these devices
->>> built as a module.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>> ---
->>>  arch/arm/configs/multi_v7_defconfig | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
->>> index 2349584b6e08..080120fe5580 100644
->>> --- a/arch/arm/configs/multi_v7_defconfig
->>> +++ b/arch/arm/configs/multi_v7_defconfig
->>> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
->>>  CONFIG_REGULATOR_MAX8907=y
->>>  CONFIG_REGULATOR_MAX8973=y
->>>  CONFIG_REGULATOR_MAX77686=y
->>> +CONFIG_REGULATOR_MAX77802=m
->>
->> I noticed that the version that landed in 4.2-rc1 as commit
->> f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
->> and clock drivers") doesn't include this symbol. I guess it was caused
->> by a wrong resolved conflict? I'll post a patch to enable the
->> regulator again.
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
-> As you can see in mentioned mainline commit Kukjin removed it manually:
-> [kgene@kernel.org: removing useless REGULATOR_MAX77802 config]
+> Please describe why do you want to enable it (IOW who will benefit from
+> enabling it?). This symbol was removed by Kukjin from your commit:
+> 	[kgene@kernel.org: removing useless REGULATOR_MAX77802 config]
+> so justification would be welcomed.
 >
 
-Oh, I missed that in the commit message. I thought it was a merge / conflict
-error, not something done on purpose.
+You are right, sorry for not making the commit message clear. This PMIC
+is used by a couple of Exynos5 based boars such as the Peach Pit and Pi
+Chromebooks. I expect it to be found in other designs too just like the
+max77686 is found in many Exynos5 based boards.
+
+I'll add this to the commit message on v2.
  
-> I wonder why?
+> Beside the commit description I agree with the patch.
 >
 
-Me too.
+Does this mean I can add your Reviewed-by to this patch as well?
 
 > Best regards,
 > Krzysztof
-> --
+> 
 
 Best regards,
 -- 
