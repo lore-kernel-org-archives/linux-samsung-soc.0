@@ -1,91 +1,72 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 0/9 v7] Helper to abstract vma handling in media layer
-Date: Fri, 17 Jul 2015 14:08:56 +0200
-Message-ID: <55A8F058.7030503@xs4all.nl>
-References: <1436799351-21975-1-git-send-email-jack@suse.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
+ rtc and clock drivers
+Date: Fri, 17 Jul 2015 09:49:27 -0700
+Message-ID: <20150717164927.GA21691@localhost>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
+ <55A6FE07.7000604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud6.xs4all.net ([194.109.24.28]:45956 "EHLO
-	lb2-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751622AbbGQMJ6 (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:34584 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755233AbbGQRaP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Jul 2015 08:09:58 -0400
-In-Reply-To: <1436799351-21975-1-git-send-email-jack@suse.com>
+	Fri, 17 Jul 2015 13:30:15 -0400
+Received: by pdbbh15 with SMTP id bh15so19370280pdb.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2015 10:30:14 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <55A6FE07.7000604@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jan Kara <jack@suse.com>
-Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Jan,
+On Thu, Jul 16, 2015 at 09:42:47AM +0900, Krzysztof Kozlowski wrote:
+> On 16.07.2015 00:38, Javier Martinez Canillas wrote:
+> > Hello,
+> > 
+> > On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
+> > <javier.martinez@collabora.co.uk> wrote:
+> >> The Maxim max77802 Power Management IC is used on many Exynos machines.
+> >> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
+> >> and 2-channel 32kHz clock outputs.
+> >>
+> >> Enable the kernel config options to have the drivers for these devices
+> >> built as a module.
+> >>
+> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> ---
+> >>  arch/arm/configs/multi_v7_defconfig | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> >> index 2349584b6e08..080120fe5580 100644
+> >> --- a/arch/arm/configs/multi_v7_defconfig
+> >> +++ b/arch/arm/configs/multi_v7_defconfig
+> >> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
+> >>  CONFIG_REGULATOR_MAX8907=y
+> >>  CONFIG_REGULATOR_MAX8973=y
+> >>  CONFIG_REGULATOR_MAX77686=y
+> >> +CONFIG_REGULATOR_MAX77802=m
+> > 
+> > I noticed that the version that landed in 4.2-rc1 as commit
+> > f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
+> > and clock drivers") doesn't include this symbol. I guess it was caused
+> > by a wrong resolved conflict? I'll post a patch to enable the
+> > regulator again.
+> 
+> As you can see in mentioned mainline commit Kukjin removed it manually:
+> [kgene@kernel.org: removing useless REGULATOR_MAX77802 config]
+> 
+> I wonder why?
 
-On 07/13/2015 04:55 PM, Jan Kara wrote:
-> From: Jan Kara <jack@suse.cz>
-> 
->   Hello,
-> 
-> I'm sending the seventh version of my patch series to abstract vma handling
-> from the various media drivers. Since the previous version there are just
-> minor cleanups and fixes (see detailed changelog at the end of the email).
-> 
-> After this patch set drivers have to know much less details about vmas, their
-> types, and locking. Also quite some code is removed from them. As a bonus
-> drivers get automatically VM_FAULT_RETRY handling. The primary motivation for
-> this series is to remove knowledge about mmap_sem locking from as many places a
-> possible so that we can change it with reasonable effort.
-> 
-> The core of the series is the new helper get_vaddr_frames() which is given a
-> virtual address and it fills in PFNs / struct page pointers (depending on VMA
-> type) into the provided array. If PFNs correspond to normal pages it also grabs
-> references to these pages. The difference from get_user_pages() is that this
-> function can also deal with pfnmap, and io mappings which is what the media
-> drivers need.
-> 
-> I have tested the patches with vivid driver so at least vb2 code got some
-> exposure. Conversion of other drivers was just compile-tested (for x86 so e.g.
-> exynos driver which is only for Samsung platform is completely untested).
-> 
-> Hans, can you please pull the changes? Thanks!
+Seems odd. exynos_defconfig still enables it.
 
-I've done some testing myself and it all looks fine to me. All I need is an
-additional Ack for the mm patch from Andrew or other mm maintainers.
+Javier or Krzysztof, please send an incremental fix to enable and I'll pick
+it up as a fix.
 
-Regards,
 
-	Hans
-
-> 
-> 								Honza
-> 
-> Changes since v6:
-> * Fixed compilation error introduced into exynos driver
-> * Folded patch allowing get_vaddr_pfn() code to be selected by a config option
->   into previous patches
-> * Rebased on top of linux-media tree
-> 
-> Changes since v5:
-> * Moved mm helper into a separate file and behind a config option
-> * Changed the first patch pushing mmap_sem down in videobuf2 core to avoid
->   possible deadlock
-> 
-> Changes since v4:
-> * Minor cleanups and fixes pointed out by Mel and Vlasta
-> * Added Acked-by tags
-> 
-> Changes since v3:
-> * Added include <linux/vmalloc.h> into mm/gup.c as it's needed for some archs
-> * Fixed error path for exynos driver
-> 
-> Changes since v2:
-> * Renamed functions and structures as Mel suggested
-> * Other minor changes suggested by Mel
-> * Rebased on top of 4.1-rc2
-> * Changed functions to get pointer to array of pages / pfns to perform
->   conversion if necessary. This fixes possible issue in the omap I may have
->   introduced in v2 and generally makes the API less errorprone.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+-Olof
