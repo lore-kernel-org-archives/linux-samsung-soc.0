@@ -1,39 +1,35 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 1/2] MAINTAINERS: add Device Tree binding doc for max77686 regulator
-Date: Fri, 17 Jul 2015 10:17:57 +0200
-Message-ID: <1437121078-26409-2-git-send-email-javier@osg.samsung.com>
-References: <1437121078-26409-1-git-send-email-javier@osg.samsung.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2 2/4] mfd: max77686: Use a generic name for the PMIC
+ node in the example
+Date: Fri, 17 Jul 2015 12:11:14 +0300
+Message-ID: <55A8C6B2.5020109@cogentembedded.com>
+References: <1437114567-17629-1-git-send-email-javier@osg.samsung.com>
+ <1437114567-17629-3-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1437121078-26409-1-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <1437114567-17629-3-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Device Tree binding documentation for the Maxim max77686 regulators
-has been moved from the Multi-Function Device DT binding section to its
-own Documentation/devicetree/bindings/regulator/max77686.txt file.
+Hello.
 
-Use a wilcard so both the mfd and regulator DT bindings are resolved.
+On 7/17/2015 9:29 AM, Javier Martinez Canillas wrote:
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
+> The ePAR standard says that: "the name of a node should be somewhat
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    ePAPR.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2af741410533..d802d19a4ecc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6583,7 +6583,7 @@ F:	drivers/extcon/extcon-max77693.c
- F:	drivers/rtc/rtc-max77686.c
- F:	drivers/clk/clk-max77686.c
- F:	Documentation/devicetree/bindings/mfd/max14577.txt
--F:	Documentation/devicetree/bindings/mfd/max77686.txt
-+F:	Documentation/devicetree/bindings/*/max77686.txt
- F:	Documentation/devicetree/bindings/mfd/max77693.txt
- F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
- F:	include/linux/mfd/max14577*.h
--- 
-2.4.3
+> generic, reflecting the function of the device and not its precise
+> programming model."
+
+> So, change the max77686 binding document example to use a generic
+> node name instead of using the chip's name.
+
+> Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+MBR, Sergei
