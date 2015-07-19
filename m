@@ -1,408 +1,86 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
- get_vaddr_frames()
-Date: Sat, 18 Jul 2015 12:14:12 +0900
-Message-ID: <55A9C484.2090707@samsung.com>
-References: <1436799351-21975-1-git-send-email-jack@suse.com>
- <1436799351-21975-10-git-send-email-jack@suse.com>
- <55A8D700.9080203@xs4all.nl> <55A8D903.2080102@samsung.com>
- <55A8D96F.5000704@xs4all.nl>
+From: Michal Suchanek <hramrach@gmail.com>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Sun, 19 Jul 2015 21:01:34 +0200
+Message-ID: <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com>
+References: <cover.1433364398.git.hramrach@gmail.com> <20150604171547.GA1530@localhost.localdomain>
+ <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
+ <201507151352.27689.marex@denx.de> <20150715155946.GB21362@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44791 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751869AbbGRDOY (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:34401 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753501AbbGSTCQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Jul 2015 23:14:24 -0400
-In-reply-to: <55A8D96F.5000704@xs4all.nl>
+	Sun, 19 Jul 2015 15:02:16 -0400
+In-Reply-To: <20150715155946.GB21362@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.com>
-Cc: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Marek Vasut <marex@denx.de>, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <brooni>
 
-On 2015=EB=85=84 07=EC=9B=94 17=EC=9D=BC 19:31, Hans Verkuil wrote:
-> On 07/17/2015 12:29 PM, Inki Dae wrote:
->> On 2015=EB=85=84 07=EC=9B=94 17=EC=9D=BC 19:20, Hans Verkuil wrote:
->>> On 07/13/2015 04:55 PM, Jan Kara wrote:
->>>> From: Jan Kara <jack@suse.cz>
->>>>
->>>> Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_fr=
-ames().
->>>> This removes the knowledge about vmas and mmap_sem locking from ex=
-ynos
->>>> driver. Also it fixes a problem that the function has been mapping=
- user
->>>> provided address without holding mmap_sem.
->>>
->>> I'd like to see an Ack from one of the exynos drm driver maintainer=
-s before
->>> I merge this.
->>>
->>> Inki, Marek?
->>
->> I already gave Ack but it seems that Jan missed it while updating.
->>
->> Anyway,
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->=20
-> Thanks!
+Hello,
 
-Oops, sorry. This patch would incur a build warning. Below is my commen=
-t.
+On 15 July 2015 at 17:59, Brian Norris <computersforpeace@gmail.com> wrote:
+> Hi Michal,
+>
+> On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
+>> The problem is, if you add a new DT binding, you'd have to support it
+>> forever, no matter how bad idea that binding turned out to be.
+>
+> Agreed, and a solid NAK to this patch. I could have sworn I gave such a
+> response when this was originally being discussed a month ago.
+>
+> AFAICT, you have one of two general approaches available to you:
+>
+> 1. Fix up the SPI driver so that it knows how to break large SPI
+> transfers up into smaller segments that its constituent hardware (DMA
+> controllers, fast clocks, etc.) can handle.
+>
+> 2. Utilize/create a parameter within the SPI subsystem to communicate
+> that the SPI master has a limited max transfer size (notably: NOT a
+> per-device DT property, but a SPI API property), and modify SPI device
+> drivers (like m25p80) to honor it. Mark Brown seemed open to this, and I
+> thought he suggested it somewhere.
 
->=20
-> BTW, I didn't see your earlier Ack either. Was it posted to the linux=
--media list as well?
-> It didn't turn up there.
+It is not known what exactly is limited here.
 
-I thought posted but I couldn't find the email in my mailbox so I may
-mistake.
+It seems that the pl330 fails but it is not possible to transfer that
+much data over the spi bus in one go without the help of the pl330.
 
->=20
-> Regards,
->=20
-> 	Hans
->=20
->>
->> Thanks,
->> Inki Dae
->>
->>>
->>> Regards,
->>>
->>> 	Hans
->>>
->>>>
->>>> Signed-off-by: Jan Kara <jack@suse.cz>
->>>> ---
->>>>  drivers/gpu/drm/exynos/Kconfig          |  1 +
->>>>  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 91 ++++++++++----------=
------------
->>>>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 --------------------=
--------------
->>>>  3 files changed, 30 insertions(+), 159 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exyn=
-os/Kconfig
->>>> index 43003c4ad80b..b364562dc6c1 100644
->>>> --- a/drivers/gpu/drm/exynos/Kconfig
->>>> +++ b/drivers/gpu/drm/exynos/Kconfig
->>>> @@ -77,6 +77,7 @@ config DRM_EXYNOS_VIDI
->>>>  config DRM_EXYNOS_G2D
->>>>  	bool "Exynos DRM G2D"
->>>>  	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_G2D
->>>> +	select FRAME_VECTOR
->>>>  	help
->>>>  	  Choose this option if you want to use Exynos G2D for DRM.
->>>> =20
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu=
-/drm/exynos/exynos_drm_g2d.c
->>>> index 81a250830808..1d8d9a508373 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
->>>> @@ -190,10 +190,8 @@ struct g2d_cmdlist_userptr {
->>>>  	dma_addr_t		dma_addr;
->>>>  	unsigned long		userptr;
->>>>  	unsigned long		size;
->>>> -	struct page		**pages;
->>>> -	unsigned int		npages;
->>>> +	struct frame_vector	*vec;
->>>>  	struct sg_table		*sgt;
->>>> -	struct vm_area_struct	*vma;
->>>>  	atomic_t		refcount;
->>>>  	bool			in_pool;
->>>>  	bool			out_of_list;
->>>> @@ -363,6 +361,7 @@ static void g2d_userptr_put_dma_addr(struct dr=
-m_device *drm_dev,
->>>>  {
->>>>  	struct g2d_cmdlist_userptr *g2d_userptr =3D
->>>>  					(struct g2d_cmdlist_userptr *)obj;
->>>> +	struct page **pages;
->>>> =20
->>>>  	if (!obj)
->>>>  		return;
->>>> @@ -382,19 +381,21 @@ out:
->>>>  	exynos_gem_unmap_sgt_from_dma(drm_dev, g2d_userptr->sgt,
->>>>  					DMA_BIDIRECTIONAL);
->>>> =20
->>>> -	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
->>>> -					g2d_userptr->npages,
->>>> -					g2d_userptr->vma);
->>>> +	pages =3D frame_vector_pages(g2d_userptr->vec);
->>>> +	if (!IS_ERR(pages)) {
->>>> +		int i;
->>>> =20
->>>> -	exynos_gem_put_vma(g2d_userptr->vma);
->>>> +		for (i =3D 0; i < frame_vector_count(g2d_userptr->vec); i++)
->>>> +			set_page_dirty_lock(pages[i]);
->>>> +	}
->>>> +	put_vaddr_frames(g2d_userptr->vec);
->>>> +	frame_vector_destroy(g2d_userptr->vec);
->>>> =20
->>>>  	if (!g2d_userptr->out_of_list)
->>>>  		list_del_init(&g2d_userptr->list);
->>>> =20
->>>>  	sg_free_table(g2d_userptr->sgt);
->>>>  	kfree(g2d_userptr->sgt);
->>>> -
->>>> -	drm_free_large(g2d_userptr->pages);
->>>>  	kfree(g2d_userptr);
->>>>  }
->>>> =20
->>>> @@ -408,9 +409,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(st=
-ruct drm_device *drm_dev,
->>>>  	struct exynos_drm_g2d_private *g2d_priv =3D file_priv->g2d_priv;
->>>>  	struct g2d_cmdlist_userptr *g2d_userptr;
->>>>  	struct g2d_data *g2d;
->>>> -	struct page **pages;
->>>>  	struct sg_table	*sgt;
->>>> -	struct vm_area_struct *vma;
->>>>  	unsigned long start, end;
->>>>  	unsigned int npages, offset;
->>>>  	int ret;
->>>> @@ -456,65 +455,38 @@ static dma_addr_t *g2d_userptr_get_dma_addr(=
-struct drm_device *drm_dev,
->>>>  		return ERR_PTR(-ENOMEM);
->>>> =20
->>>>  	atomic_set(&g2d_userptr->refcount, 1);
->>>> +	g2d_userptr->size =3D size;
->>>> =20
->>>>  	start =3D userptr & PAGE_MASK;
->>>>  	offset =3D userptr & ~PAGE_MASK;
->>>>  	end =3D PAGE_ALIGN(userptr + size);
->>>>  	npages =3D (end - start) >> PAGE_SHIFT;
->>>> -	g2d_userptr->npages =3D npages;
->>>> -
->>>> -	pages =3D drm_calloc_large(npages, sizeof(struct page *));
->>>> -	if (!pages) {
->>>> -		DRM_ERROR("failed to allocate pages.\n");
->>>> -		ret =3D -ENOMEM;
->>>> +	g2d_userptr->vec =3D frame_vector_create(npages);
->>>> +	if (!g2d_userptr->vec)
+With either approach the limit depends on the SPI transfer settings
+which are known the the SPI driver. The pl330 driver is oblivious to
+these because it just transfers data from one port to another port and
+has no idea that the port is wired to SPI in the SoC.
 
-You would need ret =3D -EFAULT here. And below is a patch posted alread=
-y,
-	http://www.spinics.net/lists/dri-devel/msg85321.html
+On the other hand, AFAICT the SPI driver only allocates a DMA channel
+which it receives through DT binding and is oblivious to the fact the
+DMA channel lives on a pl330. It could probably determine that the
+channel is indeed driven by a pl330. I don't think it's a great idea
+to add device-specific handling to a generic dmaengine driver or a
+dmaengine-spiecific handling to a SPI driver.
 
-ps. please, ignore the codes related to build error in the patch.
+It's technically possible to pass SPI transfer parameters to the
+dmaengine driver prior to transfer and the dmaengine could impose some
+limitation based on those parameters. However, generalising this to
+drivers other than SPI might be problematic. Should this interface
+also handle i2c parameters, VE parameters, audio parameters, ethernet
+parameters, etc?
 
-With the change, Acked-by: Inki Dae <inki.dae@samsung.com>
+In the DT you have the information that this particular device is
+connected to a Samsung SPI controller connected to a pl330 dma engine.
 
-Thanks,
-Inki Dae
+>
+> It is most definitely wrong to put this information solely in the slave
+> device DT (i.e., for the flash), when it is not a property of the flash
+> device at all. It's a property of the SPI master and/or its clocks and
+> DMA controllers.
 
->>>>  		goto err_free;
->>>> -	}
->>>> =20
->>>> -	down_read(&current->mm->mmap_sem);
->>>> -	vma =3D find_vma(current->mm, userptr);
->>>> -	if (!vma) {
->>>> -		up_read(&current->mm->mmap_sem);
->>>> -		DRM_ERROR("failed to get vm region.\n");
->>>> +	ret =3D get_vaddr_frames(start, npages, true, true, g2d_userptr-=
->vec);
->>>> +	if (ret !=3D npages) {
->>>> +		DRM_ERROR("failed to get user pages from userptr.\n");
->>>> +		if (ret < 0)
->>>> +			goto err_destroy_framevec;
->>>>  		ret =3D -EFAULT;
->>>> -		goto err_free_pages;
->>>> +		goto err_put_framevec;
->>>>  	}
->>>> -
->>>> -	if (vma->vm_end < userptr + size) {
->>>> -		up_read(&current->mm->mmap_sem);
->>>> -		DRM_ERROR("vma is too small.\n");
->>>> +	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
->>>>  		ret =3D -EFAULT;
->>>> -		goto err_free_pages;
->>>> +		goto err_put_framevec;
->>>>  	}
->>>> =20
->>>> -	g2d_userptr->vma =3D exynos_gem_get_vma(vma);
->>>> -	if (!g2d_userptr->vma) {
->>>> -		up_read(&current->mm->mmap_sem);
->>>> -		DRM_ERROR("failed to copy vma.\n");
->>>> -		ret =3D -ENOMEM;
->>>> -		goto err_free_pages;
->>>> -	}
->>>> -
->>>> -	g2d_userptr->size =3D size;
->>>> -
->>>> -	ret =3D exynos_gem_get_pages_from_userptr(start & PAGE_MASK,
->>>> -						npages, pages, vma);
->>>> -	if (ret < 0) {
->>>> -		up_read(&current->mm->mmap_sem);
->>>> -		DRM_ERROR("failed to get user pages from userptr.\n");
->>>> -		goto err_put_vma;
->>>> -	}
->>>> -
->>>> -	up_read(&current->mm->mmap_sem);
->>>> -	g2d_userptr->pages =3D pages;
->>>> -
->>>>  	sgt =3D kzalloc(sizeof(*sgt), GFP_KERNEL);
->>>>  	if (!sgt) {
->>>>  		ret =3D -ENOMEM;
->>>> -		goto err_free_userptr;
->>>> +		goto err_put_framevec;
->>>>  	}
->>>> =20
->>>> -	ret =3D sg_alloc_table_from_pages(sgt, pages, npages, offset,
->>>> -					size, GFP_KERNEL);
->>>> +	ret =3D sg_alloc_table_from_pages(sgt,
->>>> +					frame_vector_pages(g2d_userptr->vec),
->>>> +					npages, offset, size, GFP_KERNEL);
->>>>  	if (ret < 0) {
->>>>  		DRM_ERROR("failed to get sgt from pages.\n");
->>>>  		goto err_free_sgt;
->>>> @@ -549,16 +521,11 @@ err_sg_free_table:
->>>>  err_free_sgt:
->>>>  	kfree(sgt);
->>>> =20
->>>> -err_free_userptr:
->>>> -	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
->>>> -					g2d_userptr->npages,
->>>> -					g2d_userptr->vma);
->>>> -
->>>> -err_put_vma:
->>>> -	exynos_gem_put_vma(g2d_userptr->vma);
->>>> +err_put_framevec:
->>>> +	put_vaddr_frames(g2d_userptr->vec);
->>>> =20
->>>> -err_free_pages:
->>>> -	drm_free_large(pages);
->>>> +err_destroy_framevec:
->>>> +	frame_vector_destroy(g2d_userptr->vec);
->>>> =20
->>>>  err_free:
->>>>  	kfree(g2d_userptr);
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu=
-/drm/exynos/exynos_drm_gem.c
->>>> index 0d5b9698d384..47068ae44ced 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
->>>> @@ -378,103 +378,6 @@ int exynos_drm_gem_get_ioctl(struct drm_devi=
-ce *dev, void *data,
->>>>  	return 0;
->>>>  }
->>>> =20
->>>> -struct vm_area_struct *exynos_gem_get_vma(struct vm_area_struct *=
-vma)
->>>> -{
->>>> -	struct vm_area_struct *vma_copy;
->>>> -
->>>> -	vma_copy =3D kmalloc(sizeof(*vma_copy), GFP_KERNEL);
->>>> -	if (!vma_copy)
->>>> -		return NULL;
->>>> -
->>>> -	if (vma->vm_ops && vma->vm_ops->open)
->>>> -		vma->vm_ops->open(vma);
->>>> -
->>>> -	if (vma->vm_file)
->>>> -		get_file(vma->vm_file);
->>>> -
->>>> -	memcpy(vma_copy, vma, sizeof(*vma));
->>>> -
->>>> -	vma_copy->vm_mm =3D NULL;
->>>> -	vma_copy->vm_next =3D NULL;
->>>> -	vma_copy->vm_prev =3D NULL;
->>>> -
->>>> -	return vma_copy;
->>>> -}
->>>> -
->>>> -void exynos_gem_put_vma(struct vm_area_struct *vma)
->>>> -{
->>>> -	if (!vma)
->>>> -		return;
->>>> -
->>>> -	if (vma->vm_ops && vma->vm_ops->close)
->>>> -		vma->vm_ops->close(vma);
->>>> -
->>>> -	if (vma->vm_file)
->>>> -		fput(vma->vm_file);
->>>> -
->>>> -	kfree(vma);
->>>> -}
->>>> -
->>>> -int exynos_gem_get_pages_from_userptr(unsigned long start,
->>>> -						unsigned int npages,
->>>> -						struct page **pages,
->>>> -						struct vm_area_struct *vma)
->>>> -{
->>>> -	int get_npages;
->>>> -
->>>> -	/* the memory region mmaped with VM_PFNMAP. */
->>>> -	if (vma_is_io(vma)) {
->>>> -		unsigned int i;
->>>> -
->>>> -		for (i =3D 0; i < npages; ++i, start +=3D PAGE_SIZE) {
->>>> -			unsigned long pfn;
->>>> -			int ret =3D follow_pfn(vma, start, &pfn);
->>>> -			if (ret)
->>>> -				return ret;
->>>> -
->>>> -			pages[i] =3D pfn_to_page(pfn);
->>>> -		}
->>>> -
->>>> -		if (i !=3D npages) {
->>>> -			DRM_ERROR("failed to get user_pages.\n");
->>>> -			return -EINVAL;
->>>> -		}
->>>> -
->>>> -		return 0;
->>>> -	}
->>>> -
->>>> -	get_npages =3D get_user_pages(current, current->mm, start,
->>>> -					npages, 1, 1, pages, NULL);
->>>> -	get_npages =3D max(get_npages, 0);
->>>> -	if (get_npages !=3D npages) {
->>>> -		DRM_ERROR("failed to get user_pages.\n");
->>>> -		while (get_npages)
->>>> -			put_page(pages[--get_npages]);
->>>> -		return -EFAULT;
->>>> -	}
->>>> -
->>>> -	return 0;
->>>> -}
->>>> -
->>>> -void exynos_gem_put_pages_to_userptr(struct page **pages,
->>>> -					unsigned int npages,
->>>> -					struct vm_area_struct *vma)
->>>> -{
->>>> -	if (!vma_is_io(vma)) {
->>>> -		unsigned int i;
->>>> -
->>>> -		for (i =3D 0; i < npages; i++) {
->>>> -			set_page_dirty_lock(pages[i]);
->>>> -
->>>> -			/*
->>>> -			 * undo the reference we took when populating
->>>> -			 * the table.
->>>> -			 */
->>>> -			put_page(pages[i]);
->>>> -		}
->>>> -	}
->>>> -}
->>>> -
->>>>  int exynos_gem_map_sgt_with_dma(struct drm_device *drm_dev,
->>>>  				struct sg_table *sgt,
->>>>  				enum dma_data_direction dir)
->>>>
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-sam=
-sung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-medi=
-a" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->=20
->=20
+However, the clocks are set by the parameters of the device, not the
+parameters of the master. So the limitation applies for the master
+with the settings of the particular slave device. Different slave
+settings do impose different master limitations.
+
+Thanks
+
+Michal
