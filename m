@@ -1,89 +1,64 @@
-From: Lee Jones <lee.jones@linaro.org>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 Subject: Re: [PATCH v2 1/4] mfd: max77686: Don't suggest in binding to use a
  deprecated property
-Date: Mon, 20 Jul 2015 09:10:20 +0100
-Message-ID: <20150720081020.GD3061@x1>
+Date: Mon, 20 Jul 2015 12:12:22 +0200
+Message-ID: <55ACC986.5040408@osg.samsung.com>
 References: <1437114567-17629-1-git-send-email-javier@osg.samsung.com>
  <1437114567-17629-2-git-send-email-javier@osg.samsung.com>
+ <20150720081020.GD3061@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1437114567-17629-2-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150720081020.GD3061@x1>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 17 Jul 2015, Javier Martinez Canillas wrote:
+Hello Lee,
 
-> The regulator-compatible property from the regulator DT binding was
-> deprecated. But the max77686 DT binding doc still suggest to use it
-> instead of the regulator node name's which is the correct approach.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Thanks a lot for your feedback.
 
-By convention shouldn't this be buck@1, or something?
+On 07/20/2015 10:10 AM, Lee Jones wrote:
+> On Fri, 17 Jul 2015, Javier Martinez Canillas wrote:
+> 
+>> The regulator-compatible property from the regulator DT binding was
+>> deprecated. But the max77686 DT binding doc still suggest to use it
+>> instead of the regulator node name's which is the correct approach.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> By convention shouldn't this be buck@1, or something?
+>
+> Need Mark to look at this.
+>
 
-Need Mark to look at this.
+That's a very good question, the ePAPR doc says:
 
-> ---
->=20
-> Changes in v2:
-> - Add Krzysztof Kozlowski Reviewed-by tag in patch #1.
->=20
->  Documentation/devicetree/bindings/mfd/max77686.txt | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Doc=
-umentation/devicetree/bindings/mfd/max77686.txt
-> index 163bd81a4607..8221102d3fc2 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77686.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> @@ -26,7 +26,7 @@ Optional node:
->  	};
->  	refer Documentation/devicetree/bindings/regulator/regulator.txt
-> =20
-> -  The regulator-compatible property of regulator should initialized =
-with string
-> +  The regulator node's name should be initialized with a string
->  to get matched with their hardware counterparts as follow:
-> =20
->  	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
-> @@ -55,16 +55,14 @@ Example:
->  		reg =3D <0x09>;
-> =20
->  		voltage-regulators {
-> -			ldo11_reg {
-> -				regulator-compatible =3D "LDO11";
-> +			ldo11_reg: LDO11 {
->  				regulator-name =3D "vdd_ldo11";
->  				regulator-min-microvolt =3D <1900000>;
->  				regulator-max-microvolt =3D <1900000>;
->  				regulator-always-on;
->  			};
-> =20
-> -			buck1_reg {
-> -				regulator-compatible =3D "BUCK1";
-> +			buck1_reg: BUCK1 {
->  				regulator-name =3D "vdd_mif";
->  				regulator-min-microvolt =3D <950000>;
->  				regulator-max-microvolt =3D <1300000>;
-> @@ -72,8 +70,7 @@ Example:
->  				regulator-boot-on;
->  			};
-> =20
-> -			buck9_reg {
-> -				regulator-compatible =3D "BUCK9";
-> +			buck9_reg: BUCK9 {
->  				regulator-name =3D "CAM_ISP_CORE_1.2V";
->  				regulator-min-microvolt =3D <1000000>;
->  				regulator-max-microvolt =3D <1200000>;
+"The unit-address must match the first address specified in the reg property
+of the node. If the node has no reg property, the @ and unit-address must be
+omitted and the node-name alone differentiates the node from other nodes at
+the same level in the tree"
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+This PMIC uses a single I2C address for all the regulators and these are
+controlled by writing to different I2C register addresses. So the regulator
+nodes don't have a reg property in this case.
+
+By looking at other regulators bindings, besides the generic regulator.txt
+and fixed-regulator.txt DT bindings, there are only 5 (out of 40) that use
+the node-name@unit-address convention mentioned in the ePAPR document.
+
+AFAICT all these are for regulators that are actually in different addresses
+but I could be wrong so let's see what Mark says.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
