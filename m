@@ -1,147 +1,236 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v6 1/3] clk: samsung: exynos3250: Add cpu clock
- configuration data and instaniate cpu clock
-Date: Mon, 20 Jul 2015 09:23:20 +0900
-Message-ID: <55AC3F78.3050108@samsung.com>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <1435797761-3339-2-git-send-email-cw00.choi@samsung.com>
- <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] mfd: max77686: Split out regulator part from the
+ DT binding
+Date: Mon, 20 Jul 2015 09:08:10 +0100
+Message-ID: <20150720080810.GC3061@x1>
+References: <1437114567-17629-1-git-send-email-javier@osg.samsung.com>
+ <1437114567-17629-5-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, mturquette@baylibre.com, sboyd@codeaurora.org, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, thomas.ab@samsung.com, kgene@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1437114567-17629-5-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+On Fri, 17 Jul 2015, Javier Martinez Canillas wrote:
 
-Please review this patch.
+> The Maxim MAX77686 PMIC is a multi-function device with regulators,
+> clocks and a RTC. The DT bindings for the clocks are in a separate
+> file but the bindings for the regulators are inside the mfd part.
+>=20
+> To make it consistent with the clocks portion of the binding and
+> because is more natural to look for regulator bindings under the
+> bindings/regulator sub-directory, split the regulator portion of
+> the DT binding and add it as a separate file.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+>=20
+> ---
+>=20
+> Changes in v2:
+> - Use a generic name for the max77686 node in the regulator example.
+>=20
+>  Documentation/devicetree/bindings/mfd/max77686.txt | 58 +-----------=
+------
+>  .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++=
+++++++++++
+>  2 files changed, 74 insertions(+), 55 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/max77=
+686.txt
 
-Best Regards,
-Chanwoo Choi
+I'm fine with this, but still needs Marks Ack before I can do anything
+with it.
 
-On 07/16/2015 04:46 PM, Krzysztof Kozlowski wrote:
-> 2015-07-02 9:42 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
->> This patch add CPU clock configuration data and instantiate the CPU clock type
->> for Exynos3250 to support Samsung specific cpu-clock type.
->>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
->>  include/dt-bindings/clock/exynos3250.h |  1 +
-> 
-> Sylwester,
-> 
-> I think this patch also waits for your review or ack.
-> The patchset is rebased on Bartlomiej's series for Exynos5250 cpufreq
-> so the easiest way would be to take it through samsung-soc tree.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
->>  2 files changed, 31 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
->> index 538de66a759e..378ad5ad3492 100644
->> --- a/drivers/clk/samsung/clk-exynos3250.c
->> +++ b/drivers/clk/samsung/clk-exynos3250.c
->> @@ -19,6 +19,7 @@
->>  #include <dt-bindings/clock/exynos3250.h>
->>
->>  #include "clk.h"
->> +#include "clk-cpu.h"
->>  #include "clk-pll.h"
->>
->>  #define SRC_LEFTBUS            0x4200
->> @@ -319,8 +320,10 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
->>         MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p,
->>             SRC_CPU, 24, 1),
->>         MUX(CLK_MOUT_HPM, "mout_hpm", mout_hpm_p, SRC_CPU, 20, 1),
->> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1),
->> -       MUX(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
->> +       MUX_F(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1,
->> +                       CLK_SET_RATE_PARENT, 0),
->> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->> +                       CLK_SET_RATE_PARENT, 0),
->>  };
->>
->>  static struct samsung_div_clock div_clks[] __initdata = {
->> @@ -772,6 +775,26 @@ static struct samsung_cmu_info cmu_info __initdata = {
->>         .nr_clk_regs            = ARRAY_SIZE(exynos3250_cmu_clk_regs),
->>  };
->>
->> +#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)                     \
->> +               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
->> +               ((corem) << 4))
->> +#define E3250_CPU_DIV1(hpm, copy)                                      \
->> +               (((hpm) << 4) | ((copy) << 0))
->> +
->> +static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
->> +       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },
->> +       {  0 },
->> +};
->> +
->>  static void __init exynos3250_cmu_init(struct device_node *np)
->>  {
->>         struct samsung_clk_provider *ctx;
->> @@ -780,6 +803,11 @@ static void __init exynos3250_cmu_init(struct device_node *np)
->>         if (!ctx)
->>                 return;
->>
->> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
->> +                       mout_core_p[0], mout_core_p[1], 0x14200,
->> +                       e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
->> +                       CLK_CPU_HAS_DIV1);
->> +
->>         exynos3_core_down_clock(ctx->reg_base);
->>  }
->>  CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
->> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
->> index aab088d30199..63d01c15d2b3 100644
->> --- a/include/dt-bindings/clock/exynos3250.h
->> +++ b/include/dt-bindings/clock/exynos3250.h
->> @@ -31,6 +31,7 @@
->>  #define CLK_FOUT_VPLL                  4
->>  #define CLK_FOUT_UPLL                  5
->>  #define CLK_FOUT_MPLL                  6
->> +#define CLK_ARM_CLK                    7
->>
->>  /* Muxes */
->>  #define CLK_MOUT_MPLL_USER_L           16
->> --
->> 1.8.5.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+> diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Doc=
+umentation/devicetree/bindings/mfd/max77686.txt
+> index d2ed3c20a5c3..c5aeca609b1f 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77686.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
+> @@ -8,7 +8,8 @@ client while probing.This document describes the bind=
+ing for mfd device and
+>  PMIC submodule.
+> =20
+>  Binding for the built-in 32k clock generator block is defined separa=
+tely
+> -in bindings/clk/maxim,max77686.txt file.
+> +in the bindings/clk/maxim,max77686.txt file and binding for the regu=
+lators
+> +is defined in the bindings/regulator/max77686.txt file.
+> =20
+>  Required properties:
+>  - compatible : Must be "maxim,max77686";
+> @@ -16,36 +17,6 @@ Required properties:
+>  - interrupts : This i2c device has an IRQ line connected to the main=
+ SoC.
+>  - interrupt-parent : The parent interrupt controller.
+> =20
+> -Optional node:
+> -- voltage-regulators : The regulators of max77686 have to be instant=
+iated
+> -  under subnode named "voltage-regulators" using the following forma=
+t.
+> -
+> -	regulator_name {
+> -		regulator-compatible =3D LDOn/BUCKn
+> -		standard regulator constraints....
+> -	};
+> -	refer Documentation/devicetree/bindings/regulator/regulator.txt
+> -
+> -  The regulator node's name should be initialized with a string
+> -to get matched with their hardware counterparts as follow:
+> -
+> -	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
+> -		 	example: LDO1, LDO2, LDO26.
+> -	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
+> -			example: BUCK1, BUCK5, BUCK9.
+> -
+> -  Regulators which can be turned off during system suspend:
+> -	-LDOn	:	2, 6-8, 10-12, 14-16,
+> -	-BUCKn	:	1-4.
+> -  Use standard regulator bindings for it ('regulator-off-in-suspend'=
+).
+> -
+> -  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO ena=
+ble
+> -  control. To turn this feature on this property must be added to th=
+e regulator
+> -  sub-node:
+> -	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
+> -				flags are actually ignored and always
+> -				ACTIVE_HIGH is used)
+> -
+>  Example:
+> =20
+>  	max77686: pmic@09 {
+> @@ -53,27 +24,4 @@ Example:
+>  		interrupt-parent =3D <&wakeup_eint>;
+>  		interrupts =3D <26 0>;
+>  		reg =3D <0x09>;
+> -
+> -		voltage-regulators {
+> -			ldo11_reg: LDO11 {
+> -				regulator-name =3D "vdd_ldo11";
+> -				regulator-min-microvolt =3D <1900000>;
+> -				regulator-max-microvolt =3D <1900000>;
+> -				regulator-always-on;
+> -			};
+> -
+> -			buck1_reg: BUCK1 {
+> -				regulator-name =3D "vdd_mif";
+> -				regulator-min-microvolt =3D <950000>;
+> -				regulator-max-microvolt =3D <1300000>;
+> -				regulator-always-on;
+> -				regulator-boot-on;
+> -			};
+> -
+> -			buck9_reg: BUCK9 {
+> -				regulator-name =3D "CAM_ISP_CORE_1.2V";
+> -				regulator-min-microvolt =3D <1000000>;
+> -				regulator-max-microvolt =3D <1200000>;
+> -				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> -			};
+> -	}
+> +	};
+> diff --git a/Documentation/devicetree/bindings/regulator/max77686.txt=
+ b/Documentation/devicetree/bindings/regulator/max77686.txt
+> new file mode 100644
+> index 000000000000..831cbd3cd965
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/max77686.txt
+> @@ -0,0 +1,71 @@
+> +Binding for Maxim MAX77686 regulators
+> +
+> +This is a part of the device tree bindings of MAX77686 multi-functio=
+n device.
+> +More information can be found in bindings/mfd/max77686.txt file.
+> +
+> +The MAX77686 PMIC has 9 high-efficiency Buck and 26 Low-dropout (LDO=
+)
+> +regulators that can be controlled over I2C.
+> +
+> +Following properties should be present in main device node of the MF=
+D chip.
+> +
+> +Optional node:
+> +- voltage-regulators : The regulators of max77686 have to be instant=
+iated
+> +  under subnode named "voltage-regulators" using the following forma=
+t.
+> +
+> +	regulator_name {
+> +		regulator-compatible =3D LDOn/BUCKn
+> +		standard regulator constraints....
+> +	};
+> +	refer Documentation/devicetree/bindings/regulator/regulator.txt
+> +
+> +  The regulator node's name should be initialized with a string
+> +to get matched with their hardware counterparts as follow:
+> +
+> +	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
+> +			example: LDO1, LDO2, LDO26.
+> +	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
+> +			example: BUCK1, BUCK5, BUCK9.
+> +
+> +  Regulators which can be turned off during system suspend:
+> +	-LDOn	:	2, 6-8, 10-12, 14-16,
+> +	-BUCKn	:	1-4.
+> +  Use standard regulator bindings for it ('regulator-off-in-suspend'=
+).
+> +
+> +  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO ena=
+ble
+> +  control. To turn this feature on this property must be added to th=
+e regulator
+> +  sub-node:
+> +	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
+> +				flags are actually ignored and always
+> +				ACTIVE_HIGH is used)
+> +
+> +Example:
+> +
+> +	max77686: pmic@09 {
+> +		compatible =3D "maxim,max77686";
+> +		interrupt-parent =3D <&wakeup_eint>;
+> +		interrupts =3D <26 0>;
+> +		reg =3D <0x09>;
+> +
+> +		voltage-regulators {
+> +			ldo11_reg: LDO11 {
+> +				regulator-name =3D "vdd_ldo11";
+> +				regulator-min-microvolt =3D <1900000>;
+> +				regulator-max-microvolt =3D <1900000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			buck1_reg: BUCK1 {
+> +				regulator-name =3D "vdd_mif";
+> +				regulator-min-microvolt =3D <950000>;
+> +				regulator-max-microvolt =3D <1300000>;
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +			};
+> +
+> +			buck9_reg: BUCK9 {
+> +				regulator-name =3D "CAM_ISP_CORE_1.2V";
+> +				regulator-min-microvolt =3D <1000000>;
+> +				regulator-max-microvolt =3D <1200000>;
+> +				maxim,ena-gpios =3D <&gpm0 3 GPIO_ACTIVE_HIGH>;
+> +			};
+> +	};
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
