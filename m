@@ -1,200 +1,416 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Subject: RE: [PATCH v2] thermal: consistently use int for temperatures
-Date: Tue, 21 Jul 2015 13:35:31 +0000
-Message-ID: <744357E9AAD1214791ACBA4B0B9092630153E699@SHSMSX101.ccr.corp.intel.com>
-References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
- <9hhk2tteqb3.fsf@e105922-lin.cambridge.arm.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to
+ use get_vaddr_frames()
+Date: Mon, 20 Jul 2015 10:03:35 +0200
+Message-ID: <20150720080335.GB3131@quack.suse.cz>
+References: <1436799351-21975-1-git-send-email-jack@suse.com>
+ <1436799351-21975-10-git-send-email-jack@suse.com>
+ <55A8D700.9080203@xs4all.nl>
+ <55A8D903.2080102@samsung.com>
+ <55A8D96F.5000704@xs4all.nl>
+ <55A9C484.2090707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <9hhk2tteqb3.fsf@e105922-lin.cambridge.arm.com>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Punit Agrawal <punit.agrawal@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>Darren Hart <d>
+Content-Type: multipart/mixed; boundary="6TrnltStXW4iwmi0"
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <55A9C484.2090707@samsung.com>
+Sender: owner-linux-mm@kvack.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUHVuaXQgQWdyYXdhbCBb
-bWFpbHRvOnB1bml0LmFncmF3YWxAYXJtLmNvbV0NCj4gU2VudDogVHVlc2RheSwgSnVseSAyMSwg
-MjAxNSA2OjUyIFBNDQo+IFRvOiBTYXNjaGEgSGF1ZXINCj4gQ2M6IGxpbnV4LXBtQHZnZXIua2Vy
-bmVsLm9yZzsgWmhhbmcsIFJ1aTsgRWR1YXJkbyBWYWxlbnRpbjsgbGludXgtDQo+IGtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmc7IEplYW4gRGVsdmFyZTsgUGV0ZXIgRmV1ZXJlcjsgSGVpa28gU3R1ZWJu
-ZXI7DQo+IEx1a2FzeiBNYWpld3NraTsgU3RlcGhlbiBXYXJyZW47IFRoaWVycnkgUmVkaW5nOyBs
-aW51eC0NCj4gYWNwaUB2Z2VyLmtlcm5lbC5vcmc7IHBsYXRmb3JtLWRyaXZlci14ODZAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51
-eC1vbWFwQHZnZXIua2VybmVsLm9yZzsgbGludXgtc2Ftc3VuZy0NCj4gc29jQHZnZXIua2VybmVs
-Lm9yZzsgR3VlbnRlciBSb2VjazsgUmFmYWVsIEouIFd5c29ja2k7IE1heGltZSBSaXBhcmQ7DQo+
-IERhcnJlbiBIYXJ0OyBsbS1zZW5zb3JzQGxtLXNlbnNvcnMub3JnDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjJdIHRoZXJtYWw6IGNvbnNpc3RlbnRseSB1c2UgaW50IGZvciB0ZW1wZXJhdHVyZXMN
-Cj4gSW1wb3J0YW5jZTogSGlnaA0KPiANCj4gSGkgU2FzY2hhLA0KPiANCj4gU2FzY2hhIEhhdWVy
-IDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPiB3cml0ZXM6DQo+IA0KPiA+IFRoZSB0aGVybWFsIGNv
-ZGUgdXNlcyBpbnQsIGxvbmcgYW5kIHVuc2lnbmVkIGxvbmcgZm9yIHRlbXBlcmF0dXJlcyBpbg0K
-PiA+IGRpZmZlcmVudCBwbGFjZXMuDQo+ID4NCj4gPiBVc2luZyBhbiB1bnNpZ25lZCB0eXBlIGxp
-bWl0cyB0aGUgdGhlcm1hbCBmcmFtZXdvcmsgdG8gcG9zaXRpdmUNCj4gPiB0ZW1wZXJhdHVyZXMg
-d2l0aG91dCBuZWVkLiBBbHNvIHNldmVyYWwgZHJpdmVycyBjdXJyZW50bHkgd2lsbCByZXBvcnQN
-Cj4gPiB0ZW1wZXJhdHVyZXMgbmVhciBVSU5UX01BWCBmb3IgdGVtcGVyYXR1cmVzIGJlbG93IDDC
-sEMuIFRoaXMgd2lsbA0KPiA+IHByb2JhYmx5IGltbWVkaWF0ZWx5IHNodXQgdGhlIG1hY2hpbmUg
-ZG93biBkdWUgdG8gb3ZlcnRlbXBlcmF0dXJlIGlmDQo+ID4gc3RhcnRlZCBiZWxvdyAwwrBDLg0K
-PiA+DQo+ID4gJ2xvbmcnIGlzIDY0Yml0IG9uIHNldmVyYWwgYXJjaGl0ZWN0dXJlcy4gVGhpcyBp
-cyBub3QgbmVlZGVkIHNpbmNlDQo+ID4gSU5UX01BWCDCsG1DIGlzIGFib3ZlIHRoZSBtZWx0aW5n
-IHBvaW50IG9mIGFsbCBrbm93biBtYXRlcmlhbHMuDQo+ID4NCj4gPiBDb25zaXN0ZW50bHkgdXNl
-IGEgcGxhaW4gJ2ludCcgZm9yIHRlbXBlcmF0dXJlcyB0aHJvdWdob3V0IHRoZSB0aGVybWFsDQo+
-ID4gY29kZSBhbmQgdGhlIGRyaXZlcnMuIFRoaXMgb25seSBjaGFuZ2VzIHRoZSBwbGFjZXMgaW4g
-dGhlIGRyaXZlcnMNCj4gPiB3aGVyZSB0aGUgdGVtcGVyYXR1cmUgaXMgcGFzc2VkIGFyb3VuZCBh
-cyBwb2ludGVyLCB3aGVuIGRyaXZlcnMNCj4gPiBpbnRlcm5hbGx5IHVzZSBhbm90aGVyIHR5cGUg
-dGhpcyBpcyBub3QgY2hhbmdlZC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNhc2NoYSBIYXVl
-ciA8cy5oYXVlckBwZW5ndXRyb25peC5kZT4NCj4gPiBBY2tlZC1ieTogR2VlcnQgVXl0dGVyaG9l
-dmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4gPiBSZXZpZXdlZC1ieTogSmVhbiBEZWx2
-YXJlIDxqZGVsdmFyZUBzdXNlLmRlPg0KPiA+IFJldmlld2VkLWJ5OiBMdWthc3ogTWFqZXdza2kg
-PGwubWFqZXdza2lAc2Ftc3VuZy5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IERhcnJlbiBIYXJ0IDxk
-dmhhcnRAbGludXguaW50ZWwuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBIZWlrbyBTdHVlYm5lciA8
-aGVpa29Ac250ZWNoLmRlPg0KPiA+IFJldmlld2VkLWJ5OiBQZXRlciBGZXVlcmVyIDxwZXRlckBw
-aWllLm5ldD4NCj4gPiBDYzogUHVuaXQgQWdyYXdhbCA8cHVuaXQuYWdyYXdhbEBhcm0uY29tPg0K
-PiANCj4gVGhlIGNoYW5nZXMgYmVsb3cgbG9vayBnb29kLg0KPiANCj4gRm9yIHRoZSBwb3dlcl9h
-bGxvY2F0b3IgZ292ZXJub3IgYW5kIGNvcnJlc3BvbmRpbmcgdHJhY2UgZXZlbnRzLA0KPiANCj4g
-UmV2aWV3ZWQtYnk6IFB1bml0IEFncmF3YWwgPHB1bml0LmFncmF3YWxAYXJtLmNvbT4NCj4gDQo+
-IFRoYW5rcw0KPiANCj4gPiBDYzogWmhhbmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPg0KPiA+
-IENjOiBFZHVhcmRvIFZhbGVudGluIDxlZHViZXp2YWxAZ21haWwuY29tPg0KPiA+IENjOiBsaW51
-eC1wbUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-Zw0KPiA+IENjOiBKZWFuIERlbHZhcmUgPGpkZWx2YXJlQHN1c2UuZGU+DQo+ID4gQ2M6IFBldGVy
-IEZldWVyZXIgPHBldGVyQHBpaWUubmV0Pg0KPiA+IENjOiBIZWlrbyBTdHVlYm5lciA8aGVpa29A
-c250ZWNoLmRlPg0KPiA+IENjOiBMdWthc3ogTWFqZXdza2kgPGwubWFqZXdza2lAc2Ftc3VuZy5j
-b20+DQo+ID4gQ2M6IFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQHd3d2RvdG9yZy5vcmc+DQo+ID4g
-Q2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+DQo+ID4gQ2M6IGxp
-bnV4LWFjcGlAdmdlci5rZXJuZWwub3JnDQo+ID4gQ2M6IHBsYXRmb3JtLWRyaXZlci14ODZAdmdl
-ci5rZXJuZWwub3JnDQo+ID4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-Zw0KPiA+IENjOiBsaW51eC1vbWFwQHZnZXIua2VybmVsLm9yZw0KPiA+IENjOiBsaW51eC1zYW1z
-dW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogR3VlbnRlciBSb2VjayA8bGludXhAcm9l
-Y2stdXMubmV0Pg0KPiA+IENjOiBSYWZhZWwgSi4gV3lzb2NraSA8cmp3QHJqd3lzb2NraS5uZXQ+
-DQo+ID4gQ2M6IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29t
-Pg0KPiA+IENjOiBEYXJyZW4gSGFydCA8ZHZoYXJ0QGluZnJhZGVhZC5vcmc+DQo+ID4gQ2M6IGxt
-LXNlbnNvcnNAbG0tc2Vuc29ycy5vcmcNCj4gPiAtLS0NCj4gPg0KUGF0Y2ggYXBwbGllZC4NCg0K
-VGhhbmtzLA0KcnVpDQo+ID4gY2hhbmdlcyBzaW5jZSB2MToNCj4gPiAtIEFkZCBtaXNzaW5nIHBp
-ZWNlcyBmb3IgcG93ZXJfYWxsb2NhdG9yIGRyaXZlcg0KPiA+DQo+ID4gIGRyaXZlcnMvYWNwaS90
-aGVybWFsLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMTIgKysrKystLS0tLQ0KPiA+
-ICBkcml2ZXJzL2h3bW9uL2xtNzUuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAy
-ICstDQo+ID4gIGRyaXZlcnMvaHdtb24vbnRjX3RoZXJtaXN0b3IuYyAgICAgICAgICAgICAgICAg
-ICAgIHwgIDIgKy0NCj4gPiAgZHJpdmVycy9od21vbi90bXAxMDIuYyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgfCAgMiArLQ0KPiA+ICBkcml2ZXJzL2lucHV0L3RvdWNoc2NyZWVuL3N1bjRp
-LXRzLmMgICAgICAgICAgICAgICB8ICA4ICsrKy0tLS0NCj4gPiAgZHJpdmVycy9wbGF0Zm9ybS94
-ODYvYWNlcmhkZi5jICAgICAgICAgICAgICAgICAgICAgfCAgOSArKysrLS0tLQ0KPiA+ICBkcml2
-ZXJzL3BsYXRmb3JtL3g4Ni9pbnRlbF9taWRfdGhlcm1hbC5jICAgICAgICAgICB8ICA5ICsrKyst
-LS0tDQo+ID4gIGRyaXZlcnMvcG93ZXIvcG93ZXJfc3VwcGx5X2NvcmUuYyAgICAgICAgICAgICAg
-ICAgIHwgIDIgKy0NCj4gPiAgZHJpdmVycy90aGVybWFsL2FybWFkYV90aGVybWFsLmMgICAgICAg
-ICAgICAgICAgICAgfCAgMiArLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvZGI4NTAwX3RoZXJtYWwu
-YyAgICAgICAgICAgICAgICAgICB8ICA3ICsrKy0tLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvZG92
-ZV90aGVybWFsLmMgICAgICAgICAgICAgICAgICAgICB8ICAyICstDQo+ID4gIGRyaXZlcnMvdGhl
-cm1hbC9mYWlyX3NoYXJlLmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0NCj4gPiAgZHJp
-dmVycy90aGVybWFsL2dvdl9iYW5nX2JhbmcuYyAgICAgICAgICAgICAgICAgICAgfCAgNSArKy0t
-DQo+ID4gIGRyaXZlcnMvdGhlcm1hbC9oaXNpX3RoZXJtYWwuYyAgICAgICAgICAgICAgICAgICAg
-IHwgIDQgKystLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvaW14X3RoZXJtYWwuYyAgICAgICAgICAg
-ICAgICAgICAgICB8IDI3ICsrKysrKysrKysrLS0tLS0tLS0tLS0NCj4gPiAgZHJpdmVycy90aGVy
-bWFsL2ludDM0MHhfdGhlcm1hbC9pbnQzNDAwX3RoZXJtYWwuYyAgfCAgMiArLQ0KPiA+IC4uLi90
-aGVybWFsL2ludDM0MHhfdGhlcm1hbC9pbnQzNDB4X3RoZXJtYWxfem9uZS5jIHwgMTAgKysrKy0t
-LS0NCj4gPiAuLi4vdGhlcm1hbC9pbnQzNDB4X3RoZXJtYWwvaW50MzQweF90aGVybWFsX3pvbmUu
-aCB8ICA4ICsrKy0tLS0NCj4gPiAgLi4uL2ludDM0MHhfdGhlcm1hbC9wcm9jZXNzb3JfdGhlcm1h
-bF9kZXZpY2UuYyAgICAgfCAgNCArKy0tDQo+ID4gIGRyaXZlcnMvdGhlcm1hbC9pbnRlbF9xdWFy
-a19kdHNfdGhlcm1hbC5jICAgICAgICAgIHwgMTMgKysrKystLS0tLS0NCj4gPiAgZHJpdmVycy90
-aGVybWFsL2ludGVsX3NvY19kdHNfaW9zZi5jICAgICAgICAgICAgICAgfCAgOCArKystLS0tDQo+
-ID4gIGRyaXZlcnMvdGhlcm1hbC9raXJrd29vZF90aGVybWFsLmMgICAgICAgICAgICAgICAgIHwg
-IDIgKy0NCj4gPiAgZHJpdmVycy90aGVybWFsL29mLXRoZXJtYWwuYyAgICAgICAgICAgICAgICAg
-ICAgICAgfCAxNCArKysrKy0tLS0tLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvcG93ZXJfYWxsb2Nh
-dG9yLmMgICAgICAgICAgICAgICAgICB8IDE2ICsrKysrKy0tLS0tLS0NCj4gPiAgZHJpdmVycy90
-aGVybWFsL3Fjb20tc3BtaS10ZW1wLWFsYXJtLmMgICAgICAgICAgICAgfCAgMiArLQ0KPiA+ICBk
-cml2ZXJzL3RoZXJtYWwvcmNhcl90aGVybWFsLmMgICAgICAgICAgICAgICAgICAgICB8ICA3ICsr
-Ky0tLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvcm9ja2NoaXBfdGhlcm1hbC5jICAgICAgICAgICAg
-ICAgICB8IDEwICsrKystLS0tDQo+ID4gIGRyaXZlcnMvdGhlcm1hbC9zYW1zdW5nL2V4eW5vc190
-bXUuYyAgICAgICAgICAgICAgIHwgMjMgKysrKysrKysrLS0tLS0tLS0tDQo+ID4gIGRyaXZlcnMv
-dGhlcm1hbC9zcGVhcl90aGVybWFsLmMgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0NCj4gPiAg
-ZHJpdmVycy90aGVybWFsL3N0L3N0X3RoZXJtYWwuYyAgICAgICAgICAgICAgICAgICAgfCAgNSAr
-Ky0tDQo+ID4gIGRyaXZlcnMvdGhlcm1hbC9zdGVwX3dpc2UuYyAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgIDQgKystLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvdGVncmFfc29jdGhlcm0uYyAgICAg
-ICAgICAgICAgICAgICB8ICA0ICsrLS0NCj4gPiAgZHJpdmVycy90aGVybWFsL3RoZXJtYWxfY29y
-ZS5jICAgICAgICAgICAgICAgICAgICAgfCAyNiArKysrKysrKysrLS0tLS0tLS0tLS0NCj4gPiAg
-ZHJpdmVycy90aGVybWFsL3RoZXJtYWxfaHdtb24uYyAgICAgICAgICAgICAgICAgICAgfCAxMCAr
-KysrLS0tLQ0KPiA+ICBkcml2ZXJzL3RoZXJtYWwvdGktc29jLXRoZXJtYWwvdGktdGhlcm1hbC1j
-b21tb24uYyB8IDEwICsrKystLS0tDQo+ID4gIGRyaXZlcnMvdGhlcm1hbC94ODZfcGtnX3RlbXBf
-dGhlcm1hbC5jICAgICAgICAgICAgIHwgMTAgKysrKy0tLS0NCj4gPiAgaW5jbHVkZS9saW51eC90
-aGVybWFsLmggICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyNiArKysrKysrKystLS0tLS0t
-LS0tLS0NCj4gPiAgaW5jbHVkZS90cmFjZS9ldmVudHMvdGhlcm1hbF9wb3dlcl9hbGxvY2F0b3Iu
-aCAgICAgfCAgNiArKy0tLQ0KPiA+ICAzOCBmaWxlcyBjaGFuZ2VkLCAxNTEgaW5zZXJ0aW9ucygr
-KSwgMTY2IGRlbGV0aW9ucygtKQ0KPiA+DQo+IA0KPiBbLi4uXQ0KPiANCj4gPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy90aGVybWFsL3Bvd2VyX2FsbG9jYXRvci5jDQo+ID4gYi9kcml2ZXJzL3RoZXJt
-YWwvcG93ZXJfYWxsb2NhdG9yLmMNCj4gPiBpbmRleCA0NjcyMjUwLi4wNDVhZWE1OSAxMDA2NDQN
-Cj4gPiAtLS0gYS9kcml2ZXJzL3RoZXJtYWwvcG93ZXJfYWxsb2NhdG9yLmMNCj4gPiArKysgYi9k
-cml2ZXJzL3RoZXJtYWwvcG93ZXJfYWxsb2NhdG9yLmMNCj4gPiBAQCAtOTIsOCArOTIsOCBAQCBz
-dHJ1Y3QgcG93ZXJfYWxsb2NhdG9yX3BhcmFtcyB7DQo+ID4gICAqIFJldHVybjogVGhlIHBvd2Vy
-IGJ1ZGdldCBmb3IgdGhlIG5leHQgcGVyaW9kLg0KPiA+ICAgKi8NCj4gPiAgc3RhdGljIHUzMiBw
-aWRfY29udHJvbGxlcihzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHosDQo+ID4gLQkJCSAg
-dW5zaWduZWQgbG9uZyBjdXJyZW50X3RlbXAsDQo+ID4gLQkJCSAgdW5zaWduZWQgbG9uZyBjb250
-cm9sX3RlbXAsDQo+ID4gKwkJCSAgaW50IGN1cnJlbnRfdGVtcCwNCj4gPiArCQkJICBpbnQgY29u
-dHJvbF90ZW1wLA0KPiA+ICAJCQkgIHUzMiBtYXhfYWxsb2NhdGFibGVfcG93ZXIpDQo+ID4gIHsN
-Cj4gPiAgCXM2NCBwLCBpLCBkLCBwb3dlcl9yYW5nZTsNCj4gPiBAQCAtMTAyLDcgKzEwMiw3IEBA
-IHN0YXRpYyB1MzIgcGlkX2NvbnRyb2xsZXIoc3RydWN0DQo+ID4gdGhlcm1hbF96b25lX2Rldmlj
-ZSAqdHosDQo+ID4NCj4gPiAgCW1heF9wb3dlcl9mcmFjID0gaW50X3RvX2ZyYWMobWF4X2FsbG9j
-YXRhYmxlX3Bvd2VyKTsNCj4gPg0KPiA+IC0JZXJyID0gKChzMzIpY29udHJvbF90ZW1wIC0gKHMz
-MiljdXJyZW50X3RlbXApOw0KPiA+ICsJZXJyID0gY29udHJvbF90ZW1wIC0gY3VycmVudF90ZW1w
-Ow0KPiA+ICAJZXJyID0gaW50X3RvX2ZyYWMoZXJyKTsNCj4gPg0KPiA+ICAJLyogQ2FsY3VsYXRl
-IHRoZSBwcm9wb3J0aW9uYWwgdGVybSAqLyBAQCAtMjIzLDggKzIyMyw4IEBAIHN0YXRpYw0KPiA+
-IHZvaWQgZGl2dnlfdXBfcG93ZXIodTMyICpyZXFfcG93ZXIsIHUzMiAqbWF4X3Bvd2VyLCBpbnQN
-Cj4gbnVtX2FjdG9ycywgIH0NCj4gPg0KPiA+ICBzdGF0aWMgaW50IGFsbG9jYXRlX3Bvd2VyKHN0
-cnVjdCB0aGVybWFsX3pvbmVfZGV2aWNlICp0eiwNCj4gPiAtCQkJICB1bnNpZ25lZCBsb25nIGN1
-cnJlbnRfdGVtcCwNCj4gPiAtCQkJICB1bnNpZ25lZCBsb25nIGNvbnRyb2xfdGVtcCkNCj4gPiAr
-CQkJICBpbnQgY3VycmVudF90ZW1wLA0KPiA+ICsJCQkgIGludCBjb250cm9sX3RlbXApDQo+ID4g
-IHsNCj4gPiAgCXN0cnVjdCB0aGVybWFsX2luc3RhbmNlICppbnN0YW5jZTsNCj4gPiAgCXN0cnVj
-dCBwb3dlcl9hbGxvY2F0b3JfcGFyYW1zICpwYXJhbXMgPSB0ei0+Z292ZXJub3JfZGF0YTsgQEAg
-LQ0KPiAzMjYsNw0KPiA+ICszMjYsNyBAQCBzdGF0aWMgaW50IGFsbG9jYXRlX3Bvd2VyKHN0cnVj
-dCB0aGVybWFsX3pvbmVfZGV2aWNlICp0eiwNCj4gPiAgCQkJCSAgICAgIGdyYW50ZWRfcG93ZXIs
-IHRvdGFsX2dyYW50ZWRfcG93ZXIsDQo+ID4gIAkJCQkgICAgICBudW1fYWN0b3JzLCBwb3dlcl9y
-YW5nZSwNCj4gPiAgCQkJCSAgICAgIG1heF9hbGxvY2F0YWJsZV9wb3dlciwgY3VycmVudF90ZW1w
-LA0KPiA+IC0JCQkJICAgICAgKHMzMiljb250cm9sX3RlbXAgLSAoczMyKWN1cnJlbnRfdGVtcCk7
-DQo+ID4gKwkJCQkgICAgICBjb250cm9sX3RlbXAgLSBjdXJyZW50X3RlbXApOw0KPiA+DQo+ID4g
-IAlkZXZtX2tmcmVlKCZ0ei0+ZGV2aWNlLCByZXFfcG93ZXIpOw0KPiA+ICB1bmxvY2s6DQo+ID4g
-QEAgLTQxMSw3ICs0MTEsNyBAQCBzdGF0aWMgaW50IHBvd2VyX2FsbG9jYXRvcl9iaW5kKHN0cnVj
-dA0KPiA+IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6KSAgew0KPiA+ICAJaW50IHJldDsNCj4gPiAg
-CXN0cnVjdCBwb3dlcl9hbGxvY2F0b3JfcGFyYW1zICpwYXJhbXM7DQo+ID4gLQl1bnNpZ25lZCBs
-b25nIHN3aXRjaF9vbl90ZW1wLCBjb250cm9sX3RlbXA7DQo+ID4gKwlpbnQgc3dpdGNoX29uX3Rl
-bXAsIGNvbnRyb2xfdGVtcDsNCj4gPiAgCXUzMiB0ZW1wZXJhdHVyZV90aHJlc2hvbGQ7DQo+ID4N
-Cj4gPiAgCWlmICghdHotPnR6cCB8fCAhdHotPnR6cC0+c3VzdGFpbmFibGVfcG93ZXIpIHsgQEAg
-LTQ3Niw3ICs0NzYsNyBAQA0KPiA+IHN0YXRpYyB2b2lkIHBvd2VyX2FsbG9jYXRvcl91bmJpbmQo
-c3RydWN0IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6KQ0KPiA+IHN0YXRpYyBpbnQgcG93ZXJfYWxs
-b2NhdG9yX3Rocm90dGxlKHN0cnVjdCB0aGVybWFsX3pvbmVfZGV2aWNlICp0eiwNCj4gPiBpbnQg
-dHJpcCkgIHsNCj4gPiAgCWludCByZXQ7DQo+ID4gLQl1bnNpZ25lZCBsb25nIHN3aXRjaF9vbl90
-ZW1wLCBjb250cm9sX3RlbXAsIGN1cnJlbnRfdGVtcDsNCj4gPiArCWludCBzd2l0Y2hfb25fdGVt
-cCwgY29udHJvbF90ZW1wLCBjdXJyZW50X3RlbXA7DQo+ID4gIAlzdHJ1Y3QgcG93ZXJfYWxsb2Nh
-dG9yX3BhcmFtcyAqcGFyYW1zID0gdHotPmdvdmVybm9yX2RhdGE7DQo+ID4NCj4gPiAgCS8qDQo+
-IA0KPiBbLi4uXQ0KPiANCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS90cmFjZS9ldmVudHMvdGhl
-cm1hbF9wb3dlcl9hbGxvY2F0b3IuaA0KPiA+IGIvaW5jbHVkZS90cmFjZS9ldmVudHMvdGhlcm1h
-bF9wb3dlcl9hbGxvY2F0b3IuaA0KPiA+IGluZGV4IDEyZTEzMjEuLjVhZmFlOGYgMTAwNjQ0DQo+
-ID4gLS0tIGEvaW5jbHVkZS90cmFjZS9ldmVudHMvdGhlcm1hbF9wb3dlcl9hbGxvY2F0b3IuaA0K
-PiA+ICsrKyBiL2luY2x1ZGUvdHJhY2UvZXZlbnRzL3RoZXJtYWxfcG93ZXJfYWxsb2NhdG9yLmgN
-Cj4gPiBAQCAtMTEsNyArMTEsNyBAQCBUUkFDRV9FVkVOVCh0aGVybWFsX3Bvd2VyX2FsbG9jYXRv
-ciwNCj4gPiAgCQkgdTMyIHRvdGFsX3JlcV9wb3dlciwgdTMyICpncmFudGVkX3Bvd2VyLA0KPiA+
-ICAJCSB1MzIgdG90YWxfZ3JhbnRlZF9wb3dlciwgc2l6ZV90IG51bV9hY3RvcnMsDQo+ID4gIAkJ
-IHUzMiBwb3dlcl9yYW5nZSwgdTMyIG1heF9hbGxvY2F0YWJsZV9wb3dlciwNCj4gPiAtCQkgdW5z
-aWduZWQgbG9uZyBjdXJyZW50X3RlbXAsIHMzMiBkZWx0YV90ZW1wKSwNCj4gPiArCQkgaW50IGN1
-cnJlbnRfdGVtcCwgczMyIGRlbHRhX3RlbXApLA0KPiA+ICAJVFBfQVJHUyh0eiwgcmVxX3Bvd2Vy
-LCB0b3RhbF9yZXFfcG93ZXIsIGdyYW50ZWRfcG93ZXIsDQo+ID4gIAkJdG90YWxfZ3JhbnRlZF9w
-b3dlciwgbnVtX2FjdG9ycywgcG93ZXJfcmFuZ2UsDQo+ID4gIAkJbWF4X2FsbG9jYXRhYmxlX3Bv
-d2VyLCBjdXJyZW50X3RlbXAsIGRlbHRhX3RlbXApLCBAQCAtDQo+IDI0LDcgKzI0LDcgQEANCj4g
-PiBUUkFDRV9FVkVOVCh0aGVybWFsX3Bvd2VyX2FsbG9jYXRvciwNCj4gPiAgCQlfX2ZpZWxkKHNp
-emVfdCwgICAgICAgIG51bV9hY3RvcnMgICAgICAgICAgICAgICApDQo+ID4gIAkJX19maWVsZCh1
-MzIsICAgICAgICAgICBwb3dlcl9yYW5nZSAgICAgICAgICAgICAgKQ0KPiA+ICAJCV9fZmllbGQo
-dTMyLCAgICAgICAgICAgbWF4X2FsbG9jYXRhYmxlX3Bvd2VyICAgICkNCj4gPiAtCQlfX2ZpZWxk
-KHVuc2lnbmVkIGxvbmcsIGN1cnJlbnRfdGVtcCAgICAgICAgICAgICApDQo+ID4gKwkJX19maWVs
-ZChpbnQsICAgICAgICAgICBjdXJyZW50X3RlbXAgICAgICAgICAgICAgKQ0KPiA+ICAJCV9fZmll
-bGQoczMyLCAgICAgICAgICAgZGVsdGFfdGVtcCAgICAgICAgICAgICAgICkNCj4gPiAgCSksDQo+
-ID4gIAlUUF9mYXN0X2Fzc2lnbigNCj4gPiBAQCAtNDIsNyArNDIsNyBAQCBUUkFDRV9FVkVOVCh0
-aGVybWFsX3Bvd2VyX2FsbG9jYXRvciwNCj4gPiAgCQlfX2VudHJ5LT5kZWx0YV90ZW1wID0gZGVs
-dGFfdGVtcDsNCj4gPiAgCSksDQo+ID4NCj4gPiAtCVRQX3ByaW50aygidGhlcm1hbF96b25lX2lk
-PSVkIHJlcV9wb3dlcj17JXN9DQo+IHRvdGFsX3JlcV9wb3dlcj0ldSBncmFudGVkX3Bvd2VyPXsl
-c30gdG90YWxfZ3JhbnRlZF9wb3dlcj0ldQ0KPiBwb3dlcl9yYW5nZT0ldSBtYXhfYWxsb2NhdGFi
-bGVfcG93ZXI9JXUgY3VycmVudF90ZW1wZXJhdHVyZT0lbHUNCj4gZGVsdGFfdGVtcGVyYXR1cmU9
-JWQiLA0KPiA+ICsJVFBfcHJpbnRrKCJ0aGVybWFsX3pvbmVfaWQ9JWQgcmVxX3Bvd2VyPXslc30N
-Cj4gdG90YWxfcmVxX3Bvd2VyPSV1DQo+ID4gK2dyYW50ZWRfcG93ZXI9eyVzfSB0b3RhbF9ncmFu
-dGVkX3Bvd2VyPSV1IHBvd2VyX3JhbmdlPSV1DQo+ID4gK21heF9hbGxvY2F0YWJsZV9wb3dlcj0l
-dSBjdXJyZW50X3RlbXBlcmF0dXJlPSVkDQo+ID4gK2RlbHRhX3RlbXBlcmF0dXJlPSVkIiwNCj4g
-PiAgCQlfX2VudHJ5LT50el9pZCwNCj4gPiAgCQlfX3ByaW50X2FycmF5KF9fZ2V0X2R5bmFtaWNf
-YXJyYXkocmVxX3Bvd2VyKSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgX19l
-bnRyeS0+bnVtX2FjdG9ycywgNCksDQo=
+
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat 18-07-15 12:14:12, Inki Dae wrote:
+> On 2015=EB=85=84 07=EC=9B=94 17=EC=9D=BC 19:31, Hans Verkuil wrote:
+> > On 07/17/2015 12:29 PM, Inki Dae wrote:
+> >> On 2015=EB=85=84 07=EC=9B=94 17=EC=9D=BC 19:20, Hans Verkuil wrote:
+> >>> On 07/13/2015 04:55 PM, Jan Kara wrote:
+> >>>> From: Jan Kara <jack@suse.cz>
+> >>>>
+> >>>> Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_fr=
+ames().
+> >>>> This removes the knowledge about vmas and mmap_sem locking from ex=
+ynos
+> >>>> driver. Also it fixes a problem that the function has been mapping=
+ user
+> >>>> provided address without holding mmap_sem.
+> >>>
+> >>> I'd like to see an Ack from one of the exynos drm driver maintainer=
+s before
+> >>> I merge this.
+> >>>
+> >>> Inki, Marek?
+> >>
+> >> I already gave Ack but it seems that Jan missed it while updating.
+> >>
+> >> Anyway,
+> >> Acked-by: Inki Dae <inki.dae@samsung.com>
+> >=20
+> > Thanks!
+>=20
+> Oops, sorry. This patch would incur a build warning. Below is my commen=
+t.
+>=20
+> >>>> @@ -456,65 +455,38 @@ static dma_addr_t *g2d_userptr_get_dma_addr(=
+struct drm_device *drm_dev,
+> >>>>  		return ERR_PTR(-ENOMEM);
+> >>>> =20
+> >>>>  	atomic_set(&g2d_userptr->refcount, 1);
+> >>>> +	g2d_userptr->size =3D size;
+> >>>> =20
+> >>>>  	start =3D userptr & PAGE_MASK;
+> >>>>  	offset =3D userptr & ~PAGE_MASK;
+> >>>>  	end =3D PAGE_ALIGN(userptr + size);
+> >>>>  	npages =3D (end - start) >> PAGE_SHIFT;
+> >>>> -	g2d_userptr->npages =3D npages;
+> >>>> -
+> >>>> -	pages =3D drm_calloc_large(npages, sizeof(struct page *));
+> >>>> -	if (!pages) {
+> >>>> -		DRM_ERROR("failed to allocate pages.\n");
+> >>>> -		ret =3D -ENOMEM;
+> >>>> +	g2d_userptr->vec =3D frame_vector_create(npages);
+> >>>> +	if (!g2d_userptr->vec)
+>=20
+> You would need ret =3D -EFAULT here. And below is a patch posted alread=
+y,
+> 	http://www.spinics.net/lists/dri-devel/msg85321.html
+
+The error should IMHO be -ENOMEM because frame_vector_create() fails only
+if we fail to allocate the structure. Attached is the updated version of
+the patch. Hans, can you please pick this one?
+=20
+> ps. please, ignore the codes related to build error in the patch.
+>=20
+> With the change, Acked-by: Inki Dae <inki.dae@samsung.com>
+
+Thanks and sorry for making so many stupid mistakes in the Exynos driver.
+
+								Honza
+--=20
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
+
+--6TrnltStXW4iwmi0
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0009-drm-exynos-Convert-g2d_userptr_get_dma_addr-to-use-g.patch"
+
+>From e1ce3781eb0a3ffe045055f4145bc60ee7b2a6b5 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 4 Dec 2013 14:41:22 +0100
+Subject: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
+ get_vaddr_frames()
+
+Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_frames().
+This removes the knowledge about vmas and mmap_sem locking from exynos
+driver. Also it fixes a problem that the function has been mapping user
+provided address without holding mmap_sem.
+
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ drivers/gpu/drm/exynos/Kconfig          |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 89 ++++++++++--------------------
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 ---------------------------------
+ 3 files changed, 30 insertions(+), 157 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 43003c4ad80b..b364562dc6c1 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -77,6 +77,7 @@ config DRM_EXYNOS_VIDI
+ config DRM_EXYNOS_G2D
+ 	bool "Exynos DRM G2D"
+ 	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_G2D
++	select FRAME_VECTOR
+ 	help
+ 	  Choose this option if you want to use Exynos G2D for DRM.
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 81a250830808..7584834a53c9 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -190,10 +190,8 @@ struct g2d_cmdlist_userptr {
+ 	dma_addr_t		dma_addr;
+ 	unsigned long		userptr;
+ 	unsigned long		size;
+-	struct page		**pages;
+-	unsigned int		npages;
++	struct frame_vector	*vec;
+ 	struct sg_table		*sgt;
+-	struct vm_area_struct	*vma;
+ 	atomic_t		refcount;
+ 	bool			in_pool;
+ 	bool			out_of_list;
+@@ -363,6 +361,7 @@ static void g2d_userptr_put_dma_addr(struct drm_device *drm_dev,
+ {
+ 	struct g2d_cmdlist_userptr *g2d_userptr =
+ 					(struct g2d_cmdlist_userptr *)obj;
++	struct page **pages;
+ 
+ 	if (!obj)
+ 		return;
+@@ -382,19 +381,21 @@ out:
+ 	exynos_gem_unmap_sgt_from_dma(drm_dev, g2d_userptr->sgt,
+ 					DMA_BIDIRECTIONAL);
+ 
+-	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
+-					g2d_userptr->npages,
+-					g2d_userptr->vma);
++	pages = frame_vector_pages(g2d_userptr->vec);
++	if (!IS_ERR(pages)) {
++		int i;
+ 
+-	exynos_gem_put_vma(g2d_userptr->vma);
++		for (i = 0; i < frame_vector_count(g2d_userptr->vec); i++)
++			set_page_dirty_lock(pages[i]);
++	}
++	put_vaddr_frames(g2d_userptr->vec);
++	frame_vector_destroy(g2d_userptr->vec);
+ 
+ 	if (!g2d_userptr->out_of_list)
+ 		list_del_init(&g2d_userptr->list);
+ 
+ 	sg_free_table(g2d_userptr->sgt);
+ 	kfree(g2d_userptr->sgt);
+-
+-	drm_free_large(g2d_userptr->pages);
+ 	kfree(g2d_userptr);
+ }
+ 
+@@ -408,9 +409,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 	struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
+ 	struct g2d_cmdlist_userptr *g2d_userptr;
+ 	struct g2d_data *g2d;
+-	struct page **pages;
+ 	struct sg_table	*sgt;
+-	struct vm_area_struct *vma;
+ 	unsigned long start, end;
+ 	unsigned int npages, offset;
+ 	int ret;
+@@ -456,65 +455,40 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	atomic_set(&g2d_userptr->refcount, 1);
++	g2d_userptr->size = size;
+ 
+ 	start = userptr & PAGE_MASK;
+ 	offset = userptr & ~PAGE_MASK;
+ 	end = PAGE_ALIGN(userptr + size);
+ 	npages = (end - start) >> PAGE_SHIFT;
+-	g2d_userptr->npages = npages;
+-
+-	pages = drm_calloc_large(npages, sizeof(struct page *));
+-	if (!pages) {
+-		DRM_ERROR("failed to allocate pages.\n");
++	g2d_userptr->vec = frame_vector_create(npages);
++	if (!g2d_userptr->vec) {
+ 		ret = -ENOMEM;
+ 		goto err_free;
+ 	}
+ 
+-	down_read(&current->mm->mmap_sem);
+-	vma = find_vma(current->mm, userptr);
+-	if (!vma) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("failed to get vm region.\n");
++	ret = get_vaddr_frames(start, npages, true, true, g2d_userptr->vec);
++	if (ret != npages) {
++		DRM_ERROR("failed to get user pages from userptr.\n");
++		if (ret < 0)
++			goto err_destroy_framevec;
+ 		ret = -EFAULT;
+-		goto err_free_pages;
++		goto err_put_framevec;
+ 	}
+-
+-	if (vma->vm_end < userptr + size) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("vma is too small.\n");
++	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
+ 		ret = -EFAULT;
+-		goto err_free_pages;
+-	}
+-
+-	g2d_userptr->vma = exynos_gem_get_vma(vma);
+-	if (!g2d_userptr->vma) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("failed to copy vma.\n");
+-		ret = -ENOMEM;
+-		goto err_free_pages;
+-	}
+-
+-	g2d_userptr->size = size;
+-
+-	ret = exynos_gem_get_pages_from_userptr(start & PAGE_MASK,
+-						npages, pages, vma);
+-	if (ret < 0) {
+-		up_read(&current->mm->mmap_sem);
+-		DRM_ERROR("failed to get user pages from userptr.\n");
+-		goto err_put_vma;
++		goto err_put_framevec;
+ 	}
+ 
+-	up_read(&current->mm->mmap_sem);
+-	g2d_userptr->pages = pages;
+-
+ 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+ 	if (!sgt) {
+ 		ret = -ENOMEM;
+-		goto err_free_userptr;
++		goto err_put_framevec;
+ 	}
+ 
+-	ret = sg_alloc_table_from_pages(sgt, pages, npages, offset,
+-					size, GFP_KERNEL);
++	ret = sg_alloc_table_from_pages(sgt,
++					frame_vector_pages(g2d_userptr->vec),
++					npages, offset, size, GFP_KERNEL);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to get sgt from pages.\n");
+ 		goto err_free_sgt;
+@@ -549,16 +523,11 @@ err_sg_free_table:
+ err_free_sgt:
+ 	kfree(sgt);
+ 
+-err_free_userptr:
+-	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
+-					g2d_userptr->npages,
+-					g2d_userptr->vma);
+-
+-err_put_vma:
+-	exynos_gem_put_vma(g2d_userptr->vma);
++err_put_framevec:
++	put_vaddr_frames(g2d_userptr->vec);
+ 
+-err_free_pages:
+-	drm_free_large(pages);
++err_destroy_framevec:
++	frame_vector_destroy(g2d_userptr->vec);
+ 
+ err_free:
+ 	kfree(g2d_userptr);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 0d5b9698d384..47068ae44ced 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -378,103 +378,6 @@ int exynos_drm_gem_get_ioctl(struct drm_device *dev, void *data,
+ 	return 0;
+ }
+ 
+-struct vm_area_struct *exynos_gem_get_vma(struct vm_area_struct *vma)
+-{
+-	struct vm_area_struct *vma_copy;
+-
+-	vma_copy = kmalloc(sizeof(*vma_copy), GFP_KERNEL);
+-	if (!vma_copy)
+-		return NULL;
+-
+-	if (vma->vm_ops && vma->vm_ops->open)
+-		vma->vm_ops->open(vma);
+-
+-	if (vma->vm_file)
+-		get_file(vma->vm_file);
+-
+-	memcpy(vma_copy, vma, sizeof(*vma));
+-
+-	vma_copy->vm_mm = NULL;
+-	vma_copy->vm_next = NULL;
+-	vma_copy->vm_prev = NULL;
+-
+-	return vma_copy;
+-}
+-
+-void exynos_gem_put_vma(struct vm_area_struct *vma)
+-{
+-	if (!vma)
+-		return;
+-
+-	if (vma->vm_ops && vma->vm_ops->close)
+-		vma->vm_ops->close(vma);
+-
+-	if (vma->vm_file)
+-		fput(vma->vm_file);
+-
+-	kfree(vma);
+-}
+-
+-int exynos_gem_get_pages_from_userptr(unsigned long start,
+-						unsigned int npages,
+-						struct page **pages,
+-						struct vm_area_struct *vma)
+-{
+-	int get_npages;
+-
+-	/* the memory region mmaped with VM_PFNMAP. */
+-	if (vma_is_io(vma)) {
+-		unsigned int i;
+-
+-		for (i = 0; i < npages; ++i, start += PAGE_SIZE) {
+-			unsigned long pfn;
+-			int ret = follow_pfn(vma, start, &pfn);
+-			if (ret)
+-				return ret;
+-
+-			pages[i] = pfn_to_page(pfn);
+-		}
+-
+-		if (i != npages) {
+-			DRM_ERROR("failed to get user_pages.\n");
+-			return -EINVAL;
+-		}
+-
+-		return 0;
+-	}
+-
+-	get_npages = get_user_pages(current, current->mm, start,
+-					npages, 1, 1, pages, NULL);
+-	get_npages = max(get_npages, 0);
+-	if (get_npages != npages) {
+-		DRM_ERROR("failed to get user_pages.\n");
+-		while (get_npages)
+-			put_page(pages[--get_npages]);
+-		return -EFAULT;
+-	}
+-
+-	return 0;
+-}
+-
+-void exynos_gem_put_pages_to_userptr(struct page **pages,
+-					unsigned int npages,
+-					struct vm_area_struct *vma)
+-{
+-	if (!vma_is_io(vma)) {
+-		unsigned int i;
+-
+-		for (i = 0; i < npages; i++) {
+-			set_page_dirty_lock(pages[i]);
+-
+-			/*
+-			 * undo the reference we took when populating
+-			 * the table.
+-			 */
+-			put_page(pages[i]);
+-		}
+-	}
+-}
+-
+ int exynos_gem_map_sgt_with_dma(struct drm_device *drm_dev,
+ 				struct sg_table *sgt,
+ 				enum dma_data_direction dir)
+-- 
+2.1.4
+
+
+--6TrnltStXW4iwmi0--
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
