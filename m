@@ -1,86 +1,147 @@
-From: Michal Suchanek <hramrach@gmail.com>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Sun, 19 Jul 2015 21:01:34 +0200
-Message-ID: <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com>
-References: <cover.1433364398.git.hramrach@gmail.com> <20150604171547.GA1530@localhost.localdomain>
- <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
- <201507151352.27689.marex@denx.de> <20150715155946.GB21362@localhost>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v6 1/3] clk: samsung: exynos3250: Add cpu clock
+ configuration data and instaniate cpu clock
+Date: Mon, 20 Jul 2015 09:23:20 +0900
+Message-ID: <55AC3F78.3050108@samsung.com>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+ <1435797761-3339-2-git-send-email-cw00.choi@samsung.com>
+ <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:34401 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753501AbbGSTCQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 19 Jul 2015 15:02:16 -0400
-In-Reply-To: <20150715155946.GB21362@localhost>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, mturquette@baylibre.com, sboyd@codeaurora.org, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, thomas.ab@samsung.com, kgene@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: Marek Vasut <marex@denx.de>, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <brooni>
 
-Hello,
+Hi Sylwester,
 
-On 15 July 2015 at 17:59, Brian Norris <computersforpeace@gmail.com> wrote:
-> Hi Michal,
->
-> On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
->> The problem is, if you add a new DT binding, you'd have to support it
->> forever, no matter how bad idea that binding turned out to be.
->
-> Agreed, and a solid NAK to this patch. I could have sworn I gave such a
-> response when this was originally being discussed a month ago.
->
-> AFAICT, you have one of two general approaches available to you:
->
-> 1. Fix up the SPI driver so that it knows how to break large SPI
-> transfers up into smaller segments that its constituent hardware (DMA
-> controllers, fast clocks, etc.) can handle.
->
-> 2. Utilize/create a parameter within the SPI subsystem to communicate
-> that the SPI master has a limited max transfer size (notably: NOT a
-> per-device DT property, but a SPI API property), and modify SPI device
-> drivers (like m25p80) to honor it. Mark Brown seemed open to this, and I
-> thought he suggested it somewhere.
+Please review this patch.
 
-It is not known what exactly is limited here.
+Best Regards,
+Chanwoo Choi
 
-It seems that the pl330 fails but it is not possible to transfer that
-much data over the spi bus in one go without the help of the pl330.
-
-With either approach the limit depends on the SPI transfer settings
-which are known the the SPI driver. The pl330 driver is oblivious to
-these because it just transfers data from one port to another port and
-has no idea that the port is wired to SPI in the SoC.
-
-On the other hand, AFAICT the SPI driver only allocates a DMA channel
-which it receives through DT binding and is oblivious to the fact the
-DMA channel lives on a pl330. It could probably determine that the
-channel is indeed driven by a pl330. I don't think it's a great idea
-to add device-specific handling to a generic dmaengine driver or a
-dmaengine-spiecific handling to a SPI driver.
-
-It's technically possible to pass SPI transfer parameters to the
-dmaengine driver prior to transfer and the dmaengine could impose some
-limitation based on those parameters. However, generalising this to
-drivers other than SPI might be problematic. Should this interface
-also handle i2c parameters, VE parameters, audio parameters, ethernet
-parameters, etc?
-
-In the DT you have the information that this particular device is
-connected to a Samsung SPI controller connected to a pl330 dma engine.
-
->
-> It is most definitely wrong to put this information solely in the slave
-> device DT (i.e., for the flash), when it is not a property of the flash
-> device at all. It's a property of the SPI master and/or its clocks and
-> DMA controllers.
-
-However, the clocks are set by the parameters of the device, not the
-parameters of the master. So the limitation applies for the master
-with the settings of the particular slave device. Different slave
-settings do impose different master limitations.
-
-Thanks
-
-Michal
+On 07/16/2015 04:46 PM, Krzysztof Kozlowski wrote:
+> 2015-07-02 9:42 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
+>> This patch add CPU clock configuration data and instantiate the CPU clock type
+>> for Exynos3250 to support Samsung specific cpu-clock type.
+>>
+>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
+>>  include/dt-bindings/clock/exynos3250.h |  1 +
+> 
+> Sylwester,
+> 
+> I think this patch also waits for your review or ack.
+> The patchset is rebased on Bartlomiej's series for Exynos5250 cpufreq
+> so the easiest way would be to take it through samsung-soc tree.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+>>  2 files changed, 31 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+>> index 538de66a759e..378ad5ad3492 100644
+>> --- a/drivers/clk/samsung/clk-exynos3250.c
+>> +++ b/drivers/clk/samsung/clk-exynos3250.c
+>> @@ -19,6 +19,7 @@
+>>  #include <dt-bindings/clock/exynos3250.h>
+>>
+>>  #include "clk.h"
+>> +#include "clk-cpu.h"
+>>  #include "clk-pll.h"
+>>
+>>  #define SRC_LEFTBUS            0x4200
+>> @@ -319,8 +320,10 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+>>         MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p,
+>>             SRC_CPU, 24, 1),
+>>         MUX(CLK_MOUT_HPM, "mout_hpm", mout_hpm_p, SRC_CPU, 20, 1),
+>> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1),
+>> -       MUX(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+>> +       MUX_F(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1,
+>> +                       CLK_SET_RATE_PARENT, 0),
+>> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+>> +                       CLK_SET_RATE_PARENT, 0),
+>>  };
+>>
+>>  static struct samsung_div_clock div_clks[] __initdata = {
+>> @@ -772,6 +775,26 @@ static struct samsung_cmu_info cmu_info __initdata = {
+>>         .nr_clk_regs            = ARRAY_SIZE(exynos3250_cmu_clk_regs),
+>>  };
+>>
+>> +#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)                     \
+>> +               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
+>> +               ((corem) << 4))
+>> +#define E3250_CPU_DIV1(hpm, copy)                                      \
+>> +               (((hpm) << 4) | ((copy) << 0))
+>> +
+>> +static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
+>> +       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },
+>> +       {  0 },
+>> +};
+>> +
+>>  static void __init exynos3250_cmu_init(struct device_node *np)
+>>  {
+>>         struct samsung_clk_provider *ctx;
+>> @@ -780,6 +803,11 @@ static void __init exynos3250_cmu_init(struct device_node *np)
+>>         if (!ctx)
+>>                 return;
+>>
+>> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+>> +                       mout_core_p[0], mout_core_p[1], 0x14200,
+>> +                       e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
+>> +                       CLK_CPU_HAS_DIV1);
+>> +
+>>         exynos3_core_down_clock(ctx->reg_base);
+>>  }
+>>  CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
+>> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+>> index aab088d30199..63d01c15d2b3 100644
+>> --- a/include/dt-bindings/clock/exynos3250.h
+>> +++ b/include/dt-bindings/clock/exynos3250.h
+>> @@ -31,6 +31,7 @@
+>>  #define CLK_FOUT_VPLL                  4
+>>  #define CLK_FOUT_UPLL                  5
+>>  #define CLK_FOUT_MPLL                  6
+>> +#define CLK_ARM_CLK                    7
+>>
+>>  /* Muxes */
+>>  #define CLK_MOUT_MPLL_USER_L           16
+>> --
+>> 1.8.5.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
