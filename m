@@ -1,74 +1,47 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH] thermal: consistently use int for temperatures
-Date: Tue, 21 Jul 2015 09:31:11 +0200
-Message-ID: <20150721073111.GH5161@pengutronix.de>
-References: <1436167189-29835-1-git-send-email-s.hauer@pengutronix.de>
- <9hhd1zrc9yb.fsf@e105922-lin.cambridge.arm.com>
+From: Wang Long <long.wanglong@huawei.com>
+Subject: [PATCH] drivers/irqchip: replace pr_warning by pr_warn
+Date: Tue, 21 Jul 2015 08:11:01 +0000
+Message-ID: <1437466261-147373-1-git-send-email-long.wanglong@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9hhd1zrc9yb.fsf@e105922-lin.cambridge.arm.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Punit Agrawal <punit.agrawal@arm.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:62632 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751431AbbGUILb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jul 2015 04:11:31 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: tglx@linutronix.de, jason@lakedaemon.net, kgene@kernel.org, k.kozlowski@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, long.wanglong@huawei.com, wanglong@laoqinren.net, peifeiyue@huawei.com
 
-Hi Punit,
+Update the last pr_warning callsite in drivers/irqchip.
 
-On Fri, Jul 17, 2015 at 12:14:36PM +0100, Punit Agrawal wrote:
-> Hi Sascha,
->=20
-> Sascha Hauer <s.hauer@pengutronix.de> writes:
->=20
-> > The thermal code uses int, long and unsigned long for temperatures
-> > in different places.
-> >
-> > Using an unsigned type limits the thermal framework to positive
-> > temperatures without need. Also several drivers currently will repo=
-rt
-> > temperatures near UINT_MAX for temperatures below 0=B0C. This will =
-probably
-> > immediately shut the machine down due to overtemperature if started=
- below
-> > 0=B0C.
-> >
-> > 'long' is 64bit on several architectures. This is not needed since =
-INT_MAX =B0mC
-> > is above the melting point of all known materials.
-> >
-> > Consistently use a plain 'int' for temperatures throughout the ther=
-mal code and
-> > the drivers. This only changes the places in the drivers where the =
-temperature
-> > is passed around as pointer, when drivers internally use another ty=
-pe this is
-> > not changed.
-> >
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
->=20
-> Thanks for moving over the thermal sub-system in Linux to consistentl=
-y
-> use a single type.
->=20
-> In your patch, you missed migrating over power_allocator governor and
-> it's associated trace events. It got merged for v4.2.
->=20
-> Could you incorporate something like below in your next version?
+Signed-off-by: Wang Long <long.wanglong@huawei.com>
+---
+ drivers/irqchip/exynos-combiner.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It seems I have changed drivers/thermal/power_allocator.c but missed
-include/trace/events/thermal_power_allocator.h. Please check out the v2
-patch I just sent.
-
-Sascha
-
---=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index 5c82e3b..80104f9 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -185,14 +185,14 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 
+ 	combiner_data = kcalloc(max_nr, sizeof (*combiner_data), GFP_KERNEL);
+ 	if (!combiner_data) {
+-		pr_warning("%s: could not allocate combiner data\n", __func__);
++		pr_warn("%s: could not allocate combiner data\n", __func__);
+ 		return;
+ 	}
+ 
+ 	combiner_irq_domain = irq_domain_add_linear(np, nr_irq,
+ 				&combiner_irq_domain_ops, combiner_data);
+ 	if (WARN_ON(!combiner_irq_domain)) {
+-		pr_warning("%s: irq domain init failed\n", __func__);
++		pr_warn("%s: irq domain init failed\n", __func__);
+ 		return;
+ 	}
+ 
+-- 
+1.8.3.4
