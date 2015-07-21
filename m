@@ -1,64 +1,66 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Subject: Re: [PATCH v2 1/4] mfd: max77686: Don't suggest in binding to use a
- deprecated property
-Date: Mon, 20 Jul 2015 12:12:22 +0200
-Message-ID: <55ACC986.5040408@osg.samsung.com>
-References: <1437114567-17629-1-git-send-email-javier@osg.samsung.com>
- <1437114567-17629-2-git-send-email-javier@osg.samsung.com>
- <20150720081020.GD3061@x1>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL] Samsung 1st fixes for v4.2
+Date: Tue, 21 Jul 2015 12:40:04 +0900
+Message-ID: <55ADBF14.30304@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150720081020.GD3061@x1>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:48361 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752590AbbGUDkS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Jul 2015 23:40:18 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello Lee,
+Hi,
 
-Thanks a lot for your feedback.
+Please pull samsung fixes for v4.2.
 
-On 07/20/2015 10:10 AM, Lee Jones wrote:
-> On Fri, 17 Jul 2015, Javier Martinez Canillas wrote:
-> 
->> The regulator-compatible property from the regulator DT binding was
->> deprecated. But the max77686 DT binding doc still suggest to use it
->> instead of the regulator node name's which is the correct approach.
->>
->> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> By convention shouldn't this be buck@1, or something?
->
-> Need Mark to look at this.
->
+Thanks,
+Kukjin
 
-That's a very good question, the ePAPR doc says:
+The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
-"The unit-address must match the first address specified in the reg property
-of the node. If the node has no reg property, the @ and unit-address must be
-omitted and the node-name alone differentiates the node from other nodes at
-the same level in the tree"
+  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
 
-This PMIC uses a single I2C address for all the regulators and these are
-controlled by writing to different I2C register addresses. So the regulator
-nodes don't have a reg property in this case.
+are available in the git repository at:
 
-By looking at other regulators bindings, besides the generic regulator.txt
-and fixed-regulator.txt DT bindings, there are only 5 (out of 40) that use
-the node-name@unit-address convention mentioned in the ePAPR document.
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-fixes-1
 
-AFAICT all these are for regulators that are actually in different addresses
-but I could be wrong so let's see what Mark says.
+for you to fetch changes up to 300bde79f3d86b1af6fcde7b7b2439ecffccbff4:
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+  ARM: dts: add CPU OPP and regulator supply property for exynos4210
+(2015-07-21 12:32:29 +0900)
+
+----------------------------------------------------------------
+Samsung fixes for v4.2
+
+>From Krzysztof Kozlowski:
+1. Fix exynos3250 MIPI DSI display and MIPI CSIS-2 camera sensorx
+   after adding support for PMU regmap in exynos-video-mipi driver
+   (issue introduced in v4.0).
+2. Bring back cpufreq for exynos4210 after incomplete switch to
+   cpufreq-dt driver in 4.2 merge window. The necessary DT changes
+   for exynos4210 cpufreq was not applied to the same tree as rest
+   of patchset because of multiple conflicts between clk and arm-soc
+   trees. Unfortunately without the change the exynos4210 boards
+   loose cpufreq feature.
+
+----------------------------------------------------------------
+Beata Michalska (1):
+      ARM: dts: Update video-phy node with syscon phandle for exynos3250
+
+Thomas Abraham (1):
+      ARM: dts: add CPU OPP and regulator supply property for exynos4210
+
+ arch/arm/boot/dts/exynos3250.dtsi               |  2 +-
+ arch/arm/boot/dts/exynos4210-origen.dts         |  4 ++++
+ arch/arm/boot/dts/exynos4210-trats.dts          |  4 ++++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |  4 ++++
+ arch/arm/boot/dts/exynos4210.dtsi               | 12 ++++++++++++
+ 5 files changed, 25 insertions(+), 1 deletion(-)
