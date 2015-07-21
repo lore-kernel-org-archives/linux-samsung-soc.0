@@ -1,86 +1,113 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Tue, 21 Jul 2015 09:59:32 +0530
-Message-ID: <20150721042932.GF23525@localhost>
-References: <cover.1433364398.git.hramrach@gmail.com>
- <20150604171547.GA1530@localhost.localdomain>
- <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
- <201507151352.27689.marex@denx.de>
- <20150715155946.GB21362@localhost>
- <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL] ARM: EXYNOS: dts: Improvements for 4.3
+Date: Tue, 21 Jul 2015 13:56:03 +0900
+Message-ID: <06b401d0c371$8b7a6740$a26f35c0$@kernel.org>
+References: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marex@denx.de>, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:37400 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751122AbbGUE4F convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jul 2015 00:56:05 -0400
+In-reply-to: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jul 19, 2015 at 09:01:34PM +0200, Michal Suchanek wrote:
-> Hello,
-> 
-> On 15 July 2015 at 17:59, Brian Norris <computersforpeace@gmail.com> wrote:
-> > Hi Michal,
-> >
-> > On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
-> >> The problem is, if you add a new DT binding, you'd have to support it
-> >> forever, no matter how bad idea that binding turned out to be.
-> >
-> > Agreed, and a solid NAK to this patch. I could have sworn I gave such a
-> > response when this was originally being discussed a month ago.
-> >
-> > AFAICT, you have one of two general approaches available to you:
-> >
-> > 1. Fix up the SPI driver so that it knows how to break large SPI
-> > transfers up into smaller segments that its constituent hardware (DMA
-> > controllers, fast clocks, etc.) can handle.
-> >
-> > 2. Utilize/create a parameter within the SPI subsystem to communicate
-> > that the SPI master has a limited max transfer size (notably: NOT a
-> > per-device DT property, but a SPI API property), and modify SPI device
-> > drivers (like m25p80) to honor it. Mark Brown seemed open to this, and I
-> > thought he suggested it somewhere.
-> 
-> It is not known what exactly is limited here.
-> 
-> It seems that the pl330 fails but it is not possible to transfer that
-> much data over the spi bus in one go without the help of the pl330.
-> 
-> With either approach the limit depends on the SPI transfer settings
-> which are known the the SPI driver. The pl330 driver is oblivious to
-> these because it just transfers data from one port to another port and
-> has no idea that the port is wired to SPI in the SoC.
-> 
-> On the other hand, AFAICT the SPI driver only allocates a DMA channel
-> which it receives through DT binding and is oblivious to the fact the
-> DMA channel lives on a pl330. It could probably determine that the
-> channel is indeed driven by a pl330. I don't think it's a great idea
-> to add device-specific handling to a generic dmaengine driver or a
-> dmaengine-spiecific handling to a SPI driver.
-> 
-> It's technically possible to pass SPI transfer parameters to the
-> dmaengine driver prior to transfer and the dmaengine could impose some
-> limitation based on those parameters. However, generalising this to
-> drivers other than SPI might be problematic. Should this interface
-> also handle i2c parameters, VE parameters, audio parameters, ethernet
-> parameters, etc?
-Or alternatively we could publish the limitations of the channel using
-capabilities so SPI knows I have a dmaengine channel and it can transfer max N
-length transfers so would be able to break rather than guessing it or coding
-in DT. Yes it may come from DT but that should be dmaengine driver rather
-than client driver :)
+Krzysztof Kozlowski wrote:
+>=20
+> Dear Kukjin,
+>=20
+Hi Krzysztof,
 
-This can be done by dma_get_slave_caps(chan, &caps)
+> DTS related improvements. Description along with a tag.
+> You can find them also on the lists with my reviewed-by.
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit a419d78a6f97f8c977fe55d5d590cd0654=
+ecd1ee:
+>=20
+>   ARM: dts: Exynos4210: add CPU OPP and regulator supply property (20=
+15-07-13 21:16:05 +0900)
+>=20
+> are available in the git repository at:
+>=20
+>   https://github.com/krzk/linux.git tags/samsung-dt-4.3
+>=20
+> for you to fetch changes up to cd0b551be420d49c2bde8dcf5ea147278dc89f=
+fb:
+>=20
+>   ARM: dts: Extend exynos5420-pinctrl nodes using labels instead of p=
+aths (2015-07-16 11:22:11 +0900)
+>=20
+> ----------------------------------------------------------------
+> Device Tree improvements for Exynos based boards:
+> 1. Enable proper USB 3.0 regulators on Odroid XU3 board.
+> 2. Set over-heat and over-voltage thresholds for Trats2 board fuel
+>    gauge.
+> 3. Fix missing display frequency on Exynos3250 Rinato board
+>    (necessary to fix the display).
+> 4. Enable thermal management and fan control on Odroid XU3 board.
+>    The speed of fan is adjusted to current temperature of SoC.
+> 5. Cleanups and usage of label-notation for overriding nodes.
+>=20
+> ----------------------------------------------------------------
+> Anand Moon (5):
+>       ARM: dts: odroidxu3: Enable USB3 regulators
+>       ARM: dts: exynos5422-odroidxu3: Add pwm-fan node
+>       ARM: dts: exynos5422-odroidxu3: Enable TMU at Exynos5422 base
+>       ARM: dts: exynos5422-odroidxu3: Define default thermal-zones
+>       ARM: dts: exynos5422-odroidxu3: Enable thermal-zones
+>=20
+> Andreas F=C3=A4rber (1):
+>       ARM: dts: Clean up exynos5410-smdk5410 indentation
+>=20
+> Hyungwon Hwang (1):
+>       ARM: dts: fix the clock-frequency of exynos3250-rinato board's =
+panel
+>=20
+> Javier Martinez Canillas (4):
+>       ARM: dts: Include exynos5250-pinctrl after the nodes were defin=
+ed
+>       ARM: dts: Extend exynos5250-pinctrl nodes using labels instead =
+of paths
+>       ARM: dts: Include exynos5420-pinctrl after the nodes were defin=
+ed
+>       ARM: dts: Extend exynos5420-pinctrl nodes using labels instead =
+of paths
+>=20
+> Krzysztof Kozlowski (2):
+>       ARM: dts: Set max17047 over heat and over voltage thresholds
+>       ARM: dts: Use labels for overriding nodes in exynos4210-univers=
+al
+>=20
+>  arch/arm/boot/dts/exynos3250-rinato.dts            |    2 +-
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts    |  620 ++++----
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |    3 +
+>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi          | 1600 ++++++++++=
+----------
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts          |    6 +-
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 1411 +++++++++-=
+-------
+>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
+>  arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi      |   59 +
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |   46 +
+>  10 files changed, 1930 insertions(+), 1823 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos5422-cpu-thermal.dtsi
+> --
 
-And we add max_length as one more parameter to existing set
+Applied all of changes into fixes/non-critical and next/dt-samsung.
 
-Also all this could be handled in generic SPI-dmaengine layer so that
-individual drivers don't have to code it in
+Note will be sent out to arm-soc in a couple of days.
 
-Let me know if this idea is okay, I can push the dmaengine bits...
-
-Thanks
--- 
-~Vinod
+Thanks,
+Kukjin
