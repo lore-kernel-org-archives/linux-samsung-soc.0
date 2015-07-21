@@ -1,92 +1,186 @@
-From: Michal Suchanek <hramrach@gmail.com>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Tue, 21 Jul 2015 10:14:11 +0200
-Message-ID: <CAOMqctSzzUV1J8Vj03XJ3Y70R9ynVErP4RZVtbjarDcZ9JLnaw@mail.gmail.com>
-References: <cover.1433364398.git.hramrach@gmail.com> <20150604171547.GA1530@localhost.localdomain>
- <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
- <201507151352.27689.marex@denx.de> <20150715155946.GB21362@localhost>
- <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com> <20150721042932.GF23525@localhost>
+From: Punit Agrawal <punit.agrawal@arm.com>
+Subject: Re: [PATCH v2] thermal: consistently use int for temperatures
+Date: Tue, 21 Jul 2015 11:52:00 +0100
+Message-ID: <9hhk2tteqb3.fsf@e105922-lin.cambridge.arm.com>
+References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150721042932.GF23525@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marex@denx.de>, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>Mark
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
+ (Sascha Hauer's message of "Tue, 21 Jul 2015 09:21:32 +0200")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, lm-sensors@lm-sensors.org, Stephen Warren <swarren@wwwdotorg.org>, Peter Feuerer <peter@piie.net>, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-acpi@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Guenter Roeck <linux@roeck-us.net>, linux-arm-kernel@lists.infradead.org, Darren Hart <dvhart@infradead.org>, Zhang Rui <rui.zhang@intel.com>, linux-omap@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean Delvare <jdelvare@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On 21 July 2015 at 06:29, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Sun, Jul 19, 2015 at 09:01:34PM +0200, Michal Suchanek wrote:
->> Hello,
->>
->> On 15 July 2015 at 17:59, Brian Norris <computersforpeace@gmail.com> wrote:
->> > Hi Michal,
->> >
->> > On Wed, Jul 15, 2015 at 01:52:27PM +0200, Marek Vasut wrote:
->> >> The problem is, if you add a new DT binding, you'd have to support it
->> >> forever, no matter how bad idea that binding turned out to be.
->> >
->> > Agreed, and a solid NAK to this patch. I could have sworn I gave such a
->> > response when this was originally being discussed a month ago.
->> >
->> > AFAICT, you have one of two general approaches available to you:
->> >
->> > 1. Fix up the SPI driver so that it knows how to break large SPI
->> > transfers up into smaller segments that its constituent hardware (DMA
->> > controllers, fast clocks, etc.) can handle.
->> >
->> > 2. Utilize/create a parameter within the SPI subsystem to communicate
->> > that the SPI master has a limited max transfer size (notably: NOT a
->> > per-device DT property, but a SPI API property), and modify SPI device
->> > drivers (like m25p80) to honor it. Mark Brown seemed open to this, and I
->> > thought he suggested it somewhere.
->>
->> It is not known what exactly is limited here.
->>
->> It seems that the pl330 fails but it is not possible to transfer that
->> much data over the spi bus in one go without the help of the pl330.
->>
->> With either approach the limit depends on the SPI transfer settings
->> which are known the the SPI driver. The pl330 driver is oblivious to
->> these because it just transfers data from one port to another port and
->> has no idea that the port is wired to SPI in the SoC.
->>
->> On the other hand, AFAICT the SPI driver only allocates a DMA channel
->> which it receives through DT binding and is oblivious to the fact the
->> DMA channel lives on a pl330. It could probably determine that the
->> channel is indeed driven by a pl330. I don't think it's a great idea
->> to add device-specific handling to a generic dmaengine driver or a
->> dmaengine-spiecific handling to a SPI driver.
->>
->> It's technically possible to pass SPI transfer parameters to the
->> dmaengine driver prior to transfer and the dmaengine could impose some
->> limitation based on those parameters. However, generalising this to
->> drivers other than SPI might be problematic. Should this interface
->> also handle i2c parameters, VE parameters, audio parameters, ethernet
->> parameters, etc?
-> Or alternatively we could publish the limitations of the channel using
-> capabilities so SPI knows I have a dmaengine channel and it can transfer max N
-> length transfers so would be able to break rather than guessing it or coding
-> in DT. Yes it may come from DT but that should be dmaengine driver rather
-> than client driver :)
->
-> This can be done by dma_get_slave_caps(chan, &caps)
->
-> And we add max_length as one more parameter to existing set
->
-> Also all this could be handled in generic SPI-dmaengine layer so that
-> individual drivers don't have to code it in
->
-> Let me know if this idea is okay, I can push the dmaengine bits...
->
-
-It would be ok if there was a fixed limit. However, the limit depends
-on SPI slave settings. Presumably for other buses using the dmaengine
-the limit would depend on the bus or slave settings as well. I do not
-see a sane way of passing this all the way to the dmaengine driver.
-
-Thanks
-
-Michal
+SGkgU2FzY2hhLAoKU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPiB3cml0ZXM6
+Cgo+IFRoZSB0aGVybWFsIGNvZGUgdXNlcyBpbnQsIGxvbmcgYW5kIHVuc2lnbmVkIGxvbmcgZm9y
+IHRlbXBlcmF0dXJlcwo+IGluIGRpZmZlcmVudCBwbGFjZXMuCj4KPiBVc2luZyBhbiB1bnNpZ25l
+ZCB0eXBlIGxpbWl0cyB0aGUgdGhlcm1hbCBmcmFtZXdvcmsgdG8gcG9zaXRpdmUKPiB0ZW1wZXJh
+dHVyZXMgd2l0aG91dCBuZWVkLiBBbHNvIHNldmVyYWwgZHJpdmVycyBjdXJyZW50bHkgd2lsbCBy
+ZXBvcnQKPiB0ZW1wZXJhdHVyZXMgbmVhciBVSU5UX01BWCBmb3IgdGVtcGVyYXR1cmVzIGJlbG93
+IDDCsEMuIFRoaXMgd2lsbCBwcm9iYWJseQo+IGltbWVkaWF0ZWx5IHNodXQgdGhlIG1hY2hpbmUg
+ZG93biBkdWUgdG8gb3ZlcnRlbXBlcmF0dXJlIGlmIHN0YXJ0ZWQgYmVsb3cKPiAwwrBDLgo+Cj4g
+J2xvbmcnIGlzIDY0Yml0IG9uIHNldmVyYWwgYXJjaGl0ZWN0dXJlcy4gVGhpcyBpcyBub3QgbmVl
+ZGVkIHNpbmNlIElOVF9NQVggwrBtQwo+IGlzIGFib3ZlIHRoZSBtZWx0aW5nIHBvaW50IG9mIGFs
+bCBrbm93biBtYXRlcmlhbHMuCj4KPiBDb25zaXN0ZW50bHkgdXNlIGEgcGxhaW4gJ2ludCcgZm9y
+IHRlbXBlcmF0dXJlcyB0aHJvdWdob3V0IHRoZSB0aGVybWFsIGNvZGUgYW5kCj4gdGhlIGRyaXZl
+cnMuIFRoaXMgb25seSBjaGFuZ2VzIHRoZSBwbGFjZXMgaW4gdGhlIGRyaXZlcnMgd2hlcmUgdGhl
+IHRlbXBlcmF0dXJlCj4gaXMgcGFzc2VkIGFyb3VuZCBhcyBwb2ludGVyLCB3aGVuIGRyaXZlcnMg
+aW50ZXJuYWxseSB1c2UgYW5vdGhlciB0eXBlIHRoaXMgaXMKPiBub3QgY2hhbmdlZC4KPgo+IFNp
+Z25lZC1vZmYtYnk6IFNhc2NoYSBIYXVlciA8cy5oYXVlckBwZW5ndXRyb25peC5kZT4KPiBBY2tl
+ZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4KPiBSZXZp
+ZXdlZC1ieTogSmVhbiBEZWx2YXJlIDxqZGVsdmFyZUBzdXNlLmRlPgo+IFJldmlld2VkLWJ5OiBM
+dWthc3ogTWFqZXdza2kgPGwubWFqZXdza2lAc2Ftc3VuZy5jb20+Cj4gUmV2aWV3ZWQtYnk6IERh
+cnJlbiBIYXJ0IDxkdmhhcnRAbGludXguaW50ZWwuY29tPgo+IFJldmlld2VkLWJ5OiBIZWlrbyBT
+dHVlYm5lciA8aGVpa29Ac250ZWNoLmRlPgo+IFJldmlld2VkLWJ5OiBQZXRlciBGZXVlcmVyIDxw
+ZXRlckBwaWllLm5ldD4KPiBDYzogUHVuaXQgQWdyYXdhbCA8cHVuaXQuYWdyYXdhbEBhcm0uY29t
+PgoKVGhlIGNoYW5nZXMgYmVsb3cgbG9vayBnb29kLgoKRm9yIHRoZSBwb3dlcl9hbGxvY2F0b3Ig
+Z292ZXJub3IgYW5kIGNvcnJlc3BvbmRpbmcgdHJhY2UgZXZlbnRzLAoKUmV2aWV3ZWQtYnk6IFB1
+bml0IEFncmF3YWwgPHB1bml0LmFncmF3YWxAYXJtLmNvbT4KClRoYW5rcwoKPiBDYzogWmhhbmcg
+UnVpIDxydWkuemhhbmdAaW50ZWwuY29tPgo+IENjOiBFZHVhcmRvIFZhbGVudGluIDxlZHViZXp2
+YWxAZ21haWwuY29tPgo+IENjOiBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZwo+IENjOiBKZWFuIERlbHZhcmUgPGpkZWx2YXJlQHN1c2Uu
+ZGU+Cj4gQ2M6IFBldGVyIEZldWVyZXIgPHBldGVyQHBpaWUubmV0Pgo+IENjOiBIZWlrbyBTdHVl
+Ym5lciA8aGVpa29Ac250ZWNoLmRlPgo+IENjOiBMdWthc3ogTWFqZXdza2kgPGwubWFqZXdza2lA
+c2Ftc3VuZy5jb20+Cj4gQ2M6IFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQHd3d2RvdG9yZy5vcmc+
+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IGxp
+bnV4LWFjcGlAdmdlci5rZXJuZWwub3JnCj4gQ2M6IHBsYXRmb3JtLWRyaXZlci14ODZAdmdlci5r
+ZXJuZWwub3JnCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENj
+OiBsaW51eC1vbWFwQHZnZXIua2VybmVsLm9yZwo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2Vy
+Lmtlcm5lbC5vcmcKPiBDYzogR3VlbnRlciBSb2VjayA8bGludXhAcm9lY2stdXMubmV0Pgo+IENj
+OiBSYWZhZWwgSi4gV3lzb2NraSA8cmp3QHJqd3lzb2NraS5uZXQ+Cj4gQ2M6IE1heGltZSBSaXBh
+cmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+IENjOiBEYXJyZW4gSGFydCA8
+ZHZoYXJ0QGluZnJhZGVhZC5vcmc+Cj4gQ2M6IGxtLXNlbnNvcnNAbG0tc2Vuc29ycy5vcmcKPiAt
+LS0KPgo+IGNoYW5nZXMgc2luY2UgdjE6Cj4gLSBBZGQgbWlzc2luZyBwaWVjZXMgZm9yIHBvd2Vy
+X2FsbG9jYXRvciBkcml2ZXIgCj4KPiAgZHJpdmVycy9hY3BpL3RoZXJtYWwuYyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAxMiArKysrKy0tLS0tCj4gIGRyaXZlcnMvaHdtb24vbG03NS5j
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy9od21vbi9u
+dGNfdGhlcm1pc3Rvci5jICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL2h3
+bW9uL3RtcDEwMi5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZl
+cnMvaW5wdXQvdG91Y2hzY3JlZW4vc3VuNGktdHMuYyAgICAgICAgICAgICAgIHwgIDggKysrLS0t
+LQo+ICBkcml2ZXJzL3BsYXRmb3JtL3g4Ni9hY2VyaGRmLmMgICAgICAgICAgICAgICAgICAgICB8
+ICA5ICsrKystLS0tCj4gIGRyaXZlcnMvcGxhdGZvcm0veDg2L2ludGVsX21pZF90aGVybWFsLmMg
+ICAgICAgICAgIHwgIDkgKysrKy0tLS0KPiAgZHJpdmVycy9wb3dlci9wb3dlcl9zdXBwbHlfY29y
+ZS5jICAgICAgICAgICAgICAgICAgfCAgMiArLQo+ICBkcml2ZXJzL3RoZXJtYWwvYXJtYWRhX3Ro
+ZXJtYWwuYyAgICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZlcnMvdGhlcm1hbC9kYjg1
+MDBfdGhlcm1hbC5jICAgICAgICAgICAgICAgICAgIHwgIDcgKysrLS0tCj4gIGRyaXZlcnMvdGhl
+cm1hbC9kb3ZlX3RoZXJtYWwuYyAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVy
+cy90aGVybWFsL2ZhaXJfc2hhcmUuYyAgICAgICAgICAgICAgICAgICAgICAgfCAgMiArLQo+ICBk
+cml2ZXJzL3RoZXJtYWwvZ292X2JhbmdfYmFuZy5jICAgICAgICAgICAgICAgICAgICB8ICA1ICsr
+LS0KPiAgZHJpdmVycy90aGVybWFsL2hpc2lfdGhlcm1hbC5jICAgICAgICAgICAgICAgICAgICAg
+fCAgNCArKy0tCj4gIGRyaXZlcnMvdGhlcm1hbC9pbXhfdGhlcm1hbC5jICAgICAgICAgICAgICAg
+ICAgICAgIHwgMjcgKysrKysrKysrKystLS0tLS0tLS0tLQo+ICBkcml2ZXJzL3RoZXJtYWwvaW50
+MzQweF90aGVybWFsL2ludDM0MDBfdGhlcm1hbC5jICB8ICAyICstCj4gIC4uLi90aGVybWFsL2lu
+dDM0MHhfdGhlcm1hbC9pbnQzNDB4X3RoZXJtYWxfem9uZS5jIHwgMTAgKysrKy0tLS0KPiAgLi4u
+L3RoZXJtYWwvaW50MzQweF90aGVybWFsL2ludDM0MHhfdGhlcm1hbF96b25lLmggfCAgOCArKyst
+LS0tCj4gIC4uLi9pbnQzNDB4X3RoZXJtYWwvcHJvY2Vzc29yX3RoZXJtYWxfZGV2aWNlLmMgICAg
+IHwgIDQgKystLQo+ICBkcml2ZXJzL3RoZXJtYWwvaW50ZWxfcXVhcmtfZHRzX3RoZXJtYWwuYyAg
+ICAgICAgICB8IDEzICsrKysrLS0tLS0tCj4gIGRyaXZlcnMvdGhlcm1hbC9pbnRlbF9zb2NfZHRz
+X2lvc2YuYyAgICAgICAgICAgICAgIHwgIDggKysrLS0tLQo+ICBkcml2ZXJzL3RoZXJtYWwva2ly
+a3dvb2RfdGhlcm1hbC5jICAgICAgICAgICAgICAgICB8ICAyICstCj4gIGRyaXZlcnMvdGhlcm1h
+bC9vZi10aGVybWFsLmMgICAgICAgICAgICAgICAgICAgICAgIHwgMTQgKysrKystLS0tLS0KPiAg
+ZHJpdmVycy90aGVybWFsL3Bvd2VyX2FsbG9jYXRvci5jICAgICAgICAgICAgICAgICAgfCAxNiAr
+KysrKystLS0tLS0tCj4gIGRyaXZlcnMvdGhlcm1hbC9xY29tLXNwbWktdGVtcC1hbGFybS5jICAg
+ICAgICAgICAgIHwgIDIgKy0KPiAgZHJpdmVycy90aGVybWFsL3JjYXJfdGhlcm1hbC5jICAgICAg
+ICAgICAgICAgICAgICAgfCAgNyArKystLS0KPiAgZHJpdmVycy90aGVybWFsL3JvY2tjaGlwX3Ro
+ZXJtYWwuYyAgICAgICAgICAgICAgICAgfCAxMCArKysrLS0tLQo+ICBkcml2ZXJzL3RoZXJtYWwv
+c2Ftc3VuZy9leHlub3NfdG11LmMgICAgICAgICAgICAgICB8IDIzICsrKysrKysrKy0tLS0tLS0t
+LQo+ICBkcml2ZXJzL3RoZXJtYWwvc3BlYXJfdGhlcm1hbC5jICAgICAgICAgICAgICAgICAgICB8
+ICAyICstCj4gIGRyaXZlcnMvdGhlcm1hbC9zdC9zdF90aGVybWFsLmMgICAgICAgICAgICAgICAg
+ICAgIHwgIDUgKystLQo+ICBkcml2ZXJzL3RoZXJtYWwvc3RlcF93aXNlLmMgICAgICAgICAgICAg
+ICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy90aGVybWFsL3RlZ3JhX3NvY3RoZXJtLmMg
+ICAgICAgICAgICAgICAgICAgfCAgNCArKy0tCj4gIGRyaXZlcnMvdGhlcm1hbC90aGVybWFsX2Nv
+cmUuYyAgICAgICAgICAgICAgICAgICAgIHwgMjYgKysrKysrKysrKy0tLS0tLS0tLS0tCj4gIGRy
+aXZlcnMvdGhlcm1hbC90aGVybWFsX2h3bW9uLmMgICAgICAgICAgICAgICAgICAgIHwgMTAgKysr
+Ky0tLS0KPiAgZHJpdmVycy90aGVybWFsL3RpLXNvYy10aGVybWFsL3RpLXRoZXJtYWwtY29tbW9u
+LmMgfCAxMCArKysrLS0tLQo+ICBkcml2ZXJzL3RoZXJtYWwveDg2X3BrZ190ZW1wX3RoZXJtYWwu
+YyAgICAgICAgICAgICB8IDEwICsrKystLS0tCj4gIGluY2x1ZGUvbGludXgvdGhlcm1hbC5oICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHwgMjYgKysrKysrKysrLS0tLS0tLS0tLS0tCj4gIGlu
+Y2x1ZGUvdHJhY2UvZXZlbnRzL3RoZXJtYWxfcG93ZXJfYWxsb2NhdG9yLmggICAgIHwgIDYgKyst
+LS0KPiAgMzggZmlsZXMgY2hhbmdlZCwgMTUxIGluc2VydGlvbnMoKyksIDE2NiBkZWxldGlvbnMo
+LSkKPgoKWy4uLl0KCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdGhlcm1hbC9wb3dlcl9hbGxvY2F0
+b3IuYyBiL2RyaXZlcnMvdGhlcm1hbC9wb3dlcl9hbGxvY2F0b3IuYwo+IGluZGV4IDQ2NzIyNTAu
+LjA0NWFlYTU5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvdGhlcm1hbC9wb3dlcl9hbGxvY2F0b3Iu
+Ywo+ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC9wb3dlcl9hbGxvY2F0b3IuYwo+IEBAIC05Miw4ICs5
+Miw4IEBAIHN0cnVjdCBwb3dlcl9hbGxvY2F0b3JfcGFyYW1zIHsKPiAgICogUmV0dXJuOiBUaGUg
+cG93ZXIgYnVkZ2V0IGZvciB0aGUgbmV4dCBwZXJpb2QuCj4gICAqLwo+ICBzdGF0aWMgdTMyIHBp
+ZF9jb250cm9sbGVyKHN0cnVjdCB0aGVybWFsX3pvbmVfZGV2aWNlICp0eiwKPiAtCQkJICB1bnNp
+Z25lZCBsb25nIGN1cnJlbnRfdGVtcCwKPiAtCQkJICB1bnNpZ25lZCBsb25nIGNvbnRyb2xfdGVt
+cCwKPiArCQkJICBpbnQgY3VycmVudF90ZW1wLAo+ICsJCQkgIGludCBjb250cm9sX3RlbXAsCj4g
+IAkJCSAgdTMyIG1heF9hbGxvY2F0YWJsZV9wb3dlcikKPiAgewo+ICAJczY0IHAsIGksIGQsIHBv
+d2VyX3JhbmdlOwo+IEBAIC0xMDIsNyArMTAyLDcgQEAgc3RhdGljIHUzMiBwaWRfY29udHJvbGxl
+cihzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHosCj4gIAo+ICAJbWF4X3Bvd2VyX2ZyYWMg
+PSBpbnRfdG9fZnJhYyhtYXhfYWxsb2NhdGFibGVfcG93ZXIpOwo+ICAKPiAtCWVyciA9ICgoczMy
+KWNvbnRyb2xfdGVtcCAtIChzMzIpY3VycmVudF90ZW1wKTsKPiArCWVyciA9IGNvbnRyb2xfdGVt
+cCAtIGN1cnJlbnRfdGVtcDsKPiAgCWVyciA9IGludF90b19mcmFjKGVycik7Cj4gIAo+ICAJLyog
+Q2FsY3VsYXRlIHRoZSBwcm9wb3J0aW9uYWwgdGVybSAqLwo+IEBAIC0yMjMsOCArMjIzLDggQEAg
+c3RhdGljIHZvaWQgZGl2dnlfdXBfcG93ZXIodTMyICpyZXFfcG93ZXIsIHUzMiAqbWF4X3Bvd2Vy
+LCBpbnQgbnVtX2FjdG9ycywKPiAgfQo+ICAKPiAgc3RhdGljIGludCBhbGxvY2F0ZV9wb3dlcihz
+dHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHosCj4gLQkJCSAgdW5zaWduZWQgbG9uZyBjdXJy
+ZW50X3RlbXAsCj4gLQkJCSAgdW5zaWduZWQgbG9uZyBjb250cm9sX3RlbXApCj4gKwkJCSAgaW50
+IGN1cnJlbnRfdGVtcCwKPiArCQkJICBpbnQgY29udHJvbF90ZW1wKQo+ICB7Cj4gIAlzdHJ1Y3Qg
+dGhlcm1hbF9pbnN0YW5jZSAqaW5zdGFuY2U7Cj4gIAlzdHJ1Y3QgcG93ZXJfYWxsb2NhdG9yX3Bh
+cmFtcyAqcGFyYW1zID0gdHotPmdvdmVybm9yX2RhdGE7Cj4gQEAgLTMyNiw3ICszMjYsNyBAQCBz
+dGF0aWMgaW50IGFsbG9jYXRlX3Bvd2VyKHN0cnVjdCB0aGVybWFsX3pvbmVfZGV2aWNlICp0eiwK
+PiAgCQkJCSAgICAgIGdyYW50ZWRfcG93ZXIsIHRvdGFsX2dyYW50ZWRfcG93ZXIsCj4gIAkJCQkg
+ICAgICBudW1fYWN0b3JzLCBwb3dlcl9yYW5nZSwKPiAgCQkJCSAgICAgIG1heF9hbGxvY2F0YWJs
+ZV9wb3dlciwgY3VycmVudF90ZW1wLAo+IC0JCQkJICAgICAgKHMzMiljb250cm9sX3RlbXAgLSAo
+czMyKWN1cnJlbnRfdGVtcCk7Cj4gKwkJCQkgICAgICBjb250cm9sX3RlbXAgLSBjdXJyZW50X3Rl
+bXApOwo+ICAKPiAgCWRldm1fa2ZyZWUoJnR6LT5kZXZpY2UsIHJlcV9wb3dlcik7Cj4gIHVubG9j
+azoKPiBAQCAtNDExLDcgKzQxMSw3IEBAIHN0YXRpYyBpbnQgcG93ZXJfYWxsb2NhdG9yX2JpbmQo
+c3RydWN0IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6KQo+ICB7Cj4gIAlpbnQgcmV0Owo+ICAJc3Ry
+dWN0IHBvd2VyX2FsbG9jYXRvcl9wYXJhbXMgKnBhcmFtczsKPiAtCXVuc2lnbmVkIGxvbmcgc3dp
+dGNoX29uX3RlbXAsIGNvbnRyb2xfdGVtcDsKPiArCWludCBzd2l0Y2hfb25fdGVtcCwgY29udHJv
+bF90ZW1wOwo+ICAJdTMyIHRlbXBlcmF0dXJlX3RocmVzaG9sZDsKPiAgCj4gIAlpZiAoIXR6LT50
+enAgfHwgIXR6LT50enAtPnN1c3RhaW5hYmxlX3Bvd2VyKSB7Cj4gQEAgLTQ3Niw3ICs0NzYsNyBA
+QCBzdGF0aWMgdm9pZCBwb3dlcl9hbGxvY2F0b3JfdW5iaW5kKHN0cnVjdCB0aGVybWFsX3pvbmVf
+ZGV2aWNlICp0eikKPiAgc3RhdGljIGludCBwb3dlcl9hbGxvY2F0b3JfdGhyb3R0bGUoc3RydWN0
+IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6LCBpbnQgdHJpcCkKPiAgewo+ICAJaW50IHJldDsKPiAt
+CXVuc2lnbmVkIGxvbmcgc3dpdGNoX29uX3RlbXAsIGNvbnRyb2xfdGVtcCwgY3VycmVudF90ZW1w
+Owo+ICsJaW50IHN3aXRjaF9vbl90ZW1wLCBjb250cm9sX3RlbXAsIGN1cnJlbnRfdGVtcDsKPiAg
+CXN0cnVjdCBwb3dlcl9hbGxvY2F0b3JfcGFyYW1zICpwYXJhbXMgPSB0ei0+Z292ZXJub3JfZGF0
+YTsKPiAgCj4gIAkvKgoKWy4uLl0KCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvdHJhY2UvZXZlbnRz
+L3RoZXJtYWxfcG93ZXJfYWxsb2NhdG9yLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy90aGVybWFs
+X3Bvd2VyX2FsbG9jYXRvci5oCj4gaW5kZXggMTJlMTMyMS4uNWFmYWU4ZiAxMDA2NDQKPiAtLS0g
+YS9pbmNsdWRlL3RyYWNlL2V2ZW50cy90aGVybWFsX3Bvd2VyX2FsbG9jYXRvci5oCj4gKysrIGIv
+aW5jbHVkZS90cmFjZS9ldmVudHMvdGhlcm1hbF9wb3dlcl9hbGxvY2F0b3IuaAo+IEBAIC0xMSw3
+ICsxMSw3IEBAIFRSQUNFX0VWRU5UKHRoZXJtYWxfcG93ZXJfYWxsb2NhdG9yLAo+ICAJCSB1MzIg
+dG90YWxfcmVxX3Bvd2VyLCB1MzIgKmdyYW50ZWRfcG93ZXIsCj4gIAkJIHUzMiB0b3RhbF9ncmFu
+dGVkX3Bvd2VyLCBzaXplX3QgbnVtX2FjdG9ycywKPiAgCQkgdTMyIHBvd2VyX3JhbmdlLCB1MzIg
+bWF4X2FsbG9jYXRhYmxlX3Bvd2VyLAo+IC0JCSB1bnNpZ25lZCBsb25nIGN1cnJlbnRfdGVtcCwg
+czMyIGRlbHRhX3RlbXApLAo+ICsJCSBpbnQgY3VycmVudF90ZW1wLCBzMzIgZGVsdGFfdGVtcCks
+Cj4gIAlUUF9BUkdTKHR6LCByZXFfcG93ZXIsIHRvdGFsX3JlcV9wb3dlciwgZ3JhbnRlZF9wb3dl
+ciwKPiAgCQl0b3RhbF9ncmFudGVkX3Bvd2VyLCBudW1fYWN0b3JzLCBwb3dlcl9yYW5nZSwKPiAg
+CQltYXhfYWxsb2NhdGFibGVfcG93ZXIsIGN1cnJlbnRfdGVtcCwgZGVsdGFfdGVtcCksCj4gQEAg
+LTI0LDcgKzI0LDcgQEAgVFJBQ0VfRVZFTlQodGhlcm1hbF9wb3dlcl9hbGxvY2F0b3IsCj4gIAkJ
+X19maWVsZChzaXplX3QsICAgICAgICBudW1fYWN0b3JzICAgICAgICAgICAgICAgKQo+ICAJCV9f
+ZmllbGQodTMyLCAgICAgICAgICAgcG93ZXJfcmFuZ2UgICAgICAgICAgICAgICkKPiAgCQlfX2Zp
+ZWxkKHUzMiwgICAgICAgICAgIG1heF9hbGxvY2F0YWJsZV9wb3dlciAgICApCj4gLQkJX19maWVs
+ZCh1bnNpZ25lZCBsb25nLCBjdXJyZW50X3RlbXAgICAgICAgICAgICAgKQo+ICsJCV9fZmllbGQo
+aW50LCAgICAgICAgICAgY3VycmVudF90ZW1wICAgICAgICAgICAgICkKPiAgCQlfX2ZpZWxkKHMz
+MiwgICAgICAgICAgIGRlbHRhX3RlbXAgICAgICAgICAgICAgICApCj4gIAkpLAo+ICAJVFBfZmFz
+dF9hc3NpZ24oCj4gQEAgLTQyLDcgKzQyLDcgQEAgVFJBQ0VfRVZFTlQodGhlcm1hbF9wb3dlcl9h
+bGxvY2F0b3IsCj4gIAkJX19lbnRyeS0+ZGVsdGFfdGVtcCA9IGRlbHRhX3RlbXA7Cj4gIAkpLAo+
+ICAKPiAtCVRQX3ByaW50aygidGhlcm1hbF96b25lX2lkPSVkIHJlcV9wb3dlcj17JXN9IHRvdGFs
+X3JlcV9wb3dlcj0ldSBncmFudGVkX3Bvd2VyPXslc30gdG90YWxfZ3JhbnRlZF9wb3dlcj0ldSBw
+b3dlcl9yYW5nZT0ldSBtYXhfYWxsb2NhdGFibGVfcG93ZXI9JXUgY3VycmVudF90ZW1wZXJhdHVy
+ZT0lbHUgZGVsdGFfdGVtcGVyYXR1cmU9JWQiLAo+ICsJVFBfcHJpbnRrKCJ0aGVybWFsX3pvbmVf
+aWQ9JWQgcmVxX3Bvd2VyPXslc30gdG90YWxfcmVxX3Bvd2VyPSV1IGdyYW50ZWRfcG93ZXI9eyVz
+fSB0b3RhbF9ncmFudGVkX3Bvd2VyPSV1IHBvd2VyX3JhbmdlPSV1IG1heF9hbGxvY2F0YWJsZV9w
+b3dlcj0ldSBjdXJyZW50X3RlbXBlcmF0dXJlPSVkIGRlbHRhX3RlbXBlcmF0dXJlPSVkIiwKPiAg
+CQlfX2VudHJ5LT50el9pZCwKPiAgCQlfX3ByaW50X2FycmF5KF9fZ2V0X2R5bmFtaWNfYXJyYXko
+cmVxX3Bvd2VyKSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgX19lbnRyeS0+bnVt
+X2FjdG9ycywgNCksCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9saW51eC1hcm0ta2VybmVsCg==
