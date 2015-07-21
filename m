@@ -1,416 +1,59 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to
- use get_vaddr_frames()
-Date: Mon, 20 Jul 2015 10:03:35 +0200
-Message-ID: <20150720080335.GB3131@quack.suse.cz>
-References: <1436799351-21975-1-git-send-email-jack@suse.com>
- <1436799351-21975-10-git-send-email-jack@suse.com>
- <55A8D700.9080203@xs4all.nl>
- <55A8D903.2080102@samsung.com>
- <55A8D96F.5000704@xs4all.nl>
- <55A9C484.2090707@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung 1st fixes for v4.2
+Date: Tue, 21 Jul 2015 14:05:42 -0700
+Message-ID: <20150721210542.GA13353@localhost>
+References: <55ADBF14.30304@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="6TrnltStXW4iwmi0"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:34116 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754802AbbGUVKj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jul 2015 17:10:39 -0400
+Received: by pacan13 with SMTP id an13so127466303pac.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jul 2015 14:10:39 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <55A9C484.2090707@samsung.com>
-Sender: owner-linux-mm@kvack.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Jan Kara <jack@suse.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>, Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <55ADBF14.30304@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Hi Kukjin,
+
+On Tue, Jul 21, 2015 at 12:40:04PM +0900, Kukjin Kim wrote:
+> Hi,
+> 
+> Please pull samsung fixes for v4.2.
+> 
+> Thanks,
+> Kukjin
+> 
+> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+> 
+>   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-fixes-1
+> 
+> for you to fetch changes up to 300bde79f3d86b1af6fcde7b7b2439ecffccbff4:
+> 
+>   ARM: dts: add CPU OPP and regulator supply property for exynos4210
+> (2015-07-21 12:32:29 +0900)
+
+Was there a reason you rebased Krzystztof's branch? The contents is identical.
+
+In cases like those, feel free to just forward the pull request to us
+and we can do it directly. If you have more patches you want to add into
+the same fixes branch then you can just merge his in and apply yours on
+top. That's for example how Tony Lindgren tends to handle OMAP -- he'll
+forward a pull request from Paul Walmsley if that's the only contents
+he has.
+
+Anyway, merged.
 
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat 18-07-15 12:14:12, Inki Dae wrote:
-> On 2015=EB=85=84 07=EC=9B=94 17=EC=9D=BC 19:31, Hans Verkuil wrote:
-> > On 07/17/2015 12:29 PM, Inki Dae wrote:
-> >> On 2015=EB=85=84 07=EC=9B=94 17=EC=9D=BC 19:20, Hans Verkuil wrote:
-> >>> On 07/13/2015 04:55 PM, Jan Kara wrote:
-> >>>> From: Jan Kara <jack@suse.cz>
-> >>>>
-> >>>> Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_fr=
-ames().
-> >>>> This removes the knowledge about vmas and mmap_sem locking from ex=
-ynos
-> >>>> driver. Also it fixes a problem that the function has been mapping=
- user
-> >>>> provided address without holding mmap_sem.
-> >>>
-> >>> I'd like to see an Ack from one of the exynos drm driver maintainer=
-s before
-> >>> I merge this.
-> >>>
-> >>> Inki, Marek?
-> >>
-> >> I already gave Ack but it seems that Jan missed it while updating.
-> >>
-> >> Anyway,
-> >> Acked-by: Inki Dae <inki.dae@samsung.com>
-> >=20
-> > Thanks!
->=20
-> Oops, sorry. This patch would incur a build warning. Below is my commen=
-t.
->=20
-> >>>> @@ -456,65 +455,38 @@ static dma_addr_t *g2d_userptr_get_dma_addr(=
-struct drm_device *drm_dev,
-> >>>>  		return ERR_PTR(-ENOMEM);
-> >>>> =20
-> >>>>  	atomic_set(&g2d_userptr->refcount, 1);
-> >>>> +	g2d_userptr->size =3D size;
-> >>>> =20
-> >>>>  	start =3D userptr & PAGE_MASK;
-> >>>>  	offset =3D userptr & ~PAGE_MASK;
-> >>>>  	end =3D PAGE_ALIGN(userptr + size);
-> >>>>  	npages =3D (end - start) >> PAGE_SHIFT;
-> >>>> -	g2d_userptr->npages =3D npages;
-> >>>> -
-> >>>> -	pages =3D drm_calloc_large(npages, sizeof(struct page *));
-> >>>> -	if (!pages) {
-> >>>> -		DRM_ERROR("failed to allocate pages.\n");
-> >>>> -		ret =3D -ENOMEM;
-> >>>> +	g2d_userptr->vec =3D frame_vector_create(npages);
-> >>>> +	if (!g2d_userptr->vec)
->=20
-> You would need ret =3D -EFAULT here. And below is a patch posted alread=
-y,
-> 	http://www.spinics.net/lists/dri-devel/msg85321.html
-
-The error should IMHO be -ENOMEM because frame_vector_create() fails only
-if we fail to allocate the structure. Attached is the updated version of
-the patch. Hans, can you please pick this one?
-=20
-> ps. please, ignore the codes related to build error in the patch.
->=20
-> With the change, Acked-by: Inki Dae <inki.dae@samsung.com>
-
-Thanks and sorry for making so many stupid mistakes in the Exynos driver.
-
-								Honza
---=20
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
-
---6TrnltStXW4iwmi0
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0009-drm-exynos-Convert-g2d_userptr_get_dma_addr-to-use-g.patch"
-
->From e1ce3781eb0a3ffe045055f4145bc60ee7b2a6b5 Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 4 Dec 2013 14:41:22 +0100
-Subject: [PATCH 9/9] drm/exynos: Convert g2d_userptr_get_dma_addr() to use
- get_vaddr_frames()
-
-Convert g2d_userptr_get_dma_addr() to pin pages using get_vaddr_frames().
-This removes the knowledge about vmas and mmap_sem locking from exynos
-driver. Also it fixes a problem that the function has been mapping user
-provided address without holding mmap_sem.
-
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- drivers/gpu/drm/exynos/Kconfig          |  1 +
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 89 ++++++++++--------------------
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 97 ---------------------------------
- 3 files changed, 30 insertions(+), 157 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 43003c4ad80b..b364562dc6c1 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -77,6 +77,7 @@ config DRM_EXYNOS_VIDI
- config DRM_EXYNOS_G2D
- 	bool "Exynos DRM G2D"
- 	depends on DRM_EXYNOS && !VIDEO_SAMSUNG_S5P_G2D
-+	select FRAME_VECTOR
- 	help
- 	  Choose this option if you want to use Exynos G2D for DRM.
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 81a250830808..7584834a53c9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -190,10 +190,8 @@ struct g2d_cmdlist_userptr {
- 	dma_addr_t		dma_addr;
- 	unsigned long		userptr;
- 	unsigned long		size;
--	struct page		**pages;
--	unsigned int		npages;
-+	struct frame_vector	*vec;
- 	struct sg_table		*sgt;
--	struct vm_area_struct	*vma;
- 	atomic_t		refcount;
- 	bool			in_pool;
- 	bool			out_of_list;
-@@ -363,6 +361,7 @@ static void g2d_userptr_put_dma_addr(struct drm_device *drm_dev,
- {
- 	struct g2d_cmdlist_userptr *g2d_userptr =
- 					(struct g2d_cmdlist_userptr *)obj;
-+	struct page **pages;
- 
- 	if (!obj)
- 		return;
-@@ -382,19 +381,21 @@ out:
- 	exynos_gem_unmap_sgt_from_dma(drm_dev, g2d_userptr->sgt,
- 					DMA_BIDIRECTIONAL);
- 
--	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
--					g2d_userptr->npages,
--					g2d_userptr->vma);
-+	pages = frame_vector_pages(g2d_userptr->vec);
-+	if (!IS_ERR(pages)) {
-+		int i;
- 
--	exynos_gem_put_vma(g2d_userptr->vma);
-+		for (i = 0; i < frame_vector_count(g2d_userptr->vec); i++)
-+			set_page_dirty_lock(pages[i]);
-+	}
-+	put_vaddr_frames(g2d_userptr->vec);
-+	frame_vector_destroy(g2d_userptr->vec);
- 
- 	if (!g2d_userptr->out_of_list)
- 		list_del_init(&g2d_userptr->list);
- 
- 	sg_free_table(g2d_userptr->sgt);
- 	kfree(g2d_userptr->sgt);
--
--	drm_free_large(g2d_userptr->pages);
- 	kfree(g2d_userptr);
- }
- 
-@@ -408,9 +409,7 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
- 	struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
- 	struct g2d_cmdlist_userptr *g2d_userptr;
- 	struct g2d_data *g2d;
--	struct page **pages;
- 	struct sg_table	*sgt;
--	struct vm_area_struct *vma;
- 	unsigned long start, end;
- 	unsigned int npages, offset;
- 	int ret;
-@@ -456,65 +455,40 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct drm_device *drm_dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	atomic_set(&g2d_userptr->refcount, 1);
-+	g2d_userptr->size = size;
- 
- 	start = userptr & PAGE_MASK;
- 	offset = userptr & ~PAGE_MASK;
- 	end = PAGE_ALIGN(userptr + size);
- 	npages = (end - start) >> PAGE_SHIFT;
--	g2d_userptr->npages = npages;
--
--	pages = drm_calloc_large(npages, sizeof(struct page *));
--	if (!pages) {
--		DRM_ERROR("failed to allocate pages.\n");
-+	g2d_userptr->vec = frame_vector_create(npages);
-+	if (!g2d_userptr->vec) {
- 		ret = -ENOMEM;
- 		goto err_free;
- 	}
- 
--	down_read(&current->mm->mmap_sem);
--	vma = find_vma(current->mm, userptr);
--	if (!vma) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("failed to get vm region.\n");
-+	ret = get_vaddr_frames(start, npages, true, true, g2d_userptr->vec);
-+	if (ret != npages) {
-+		DRM_ERROR("failed to get user pages from userptr.\n");
-+		if (ret < 0)
-+			goto err_destroy_framevec;
- 		ret = -EFAULT;
--		goto err_free_pages;
-+		goto err_put_framevec;
- 	}
--
--	if (vma->vm_end < userptr + size) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("vma is too small.\n");
-+	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
- 		ret = -EFAULT;
--		goto err_free_pages;
--	}
--
--	g2d_userptr->vma = exynos_gem_get_vma(vma);
--	if (!g2d_userptr->vma) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("failed to copy vma.\n");
--		ret = -ENOMEM;
--		goto err_free_pages;
--	}
--
--	g2d_userptr->size = size;
--
--	ret = exynos_gem_get_pages_from_userptr(start & PAGE_MASK,
--						npages, pages, vma);
--	if (ret < 0) {
--		up_read(&current->mm->mmap_sem);
--		DRM_ERROR("failed to get user pages from userptr.\n");
--		goto err_put_vma;
-+		goto err_put_framevec;
- 	}
- 
--	up_read(&current->mm->mmap_sem);
--	g2d_userptr->pages = pages;
--
- 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
- 	if (!sgt) {
- 		ret = -ENOMEM;
--		goto err_free_userptr;
-+		goto err_put_framevec;
- 	}
- 
--	ret = sg_alloc_table_from_pages(sgt, pages, npages, offset,
--					size, GFP_KERNEL);
-+	ret = sg_alloc_table_from_pages(sgt,
-+					frame_vector_pages(g2d_userptr->vec),
-+					npages, offset, size, GFP_KERNEL);
- 	if (ret < 0) {
- 		DRM_ERROR("failed to get sgt from pages.\n");
- 		goto err_free_sgt;
-@@ -549,16 +523,11 @@ err_sg_free_table:
- err_free_sgt:
- 	kfree(sgt);
- 
--err_free_userptr:
--	exynos_gem_put_pages_to_userptr(g2d_userptr->pages,
--					g2d_userptr->npages,
--					g2d_userptr->vma);
--
--err_put_vma:
--	exynos_gem_put_vma(g2d_userptr->vma);
-+err_put_framevec:
-+	put_vaddr_frames(g2d_userptr->vec);
- 
--err_free_pages:
--	drm_free_large(pages);
-+err_destroy_framevec:
-+	frame_vector_destroy(g2d_userptr->vec);
- 
- err_free:
- 	kfree(g2d_userptr);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 0d5b9698d384..47068ae44ced 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -378,103 +378,6 @@ int exynos_drm_gem_get_ioctl(struct drm_device *dev, void *data,
- 	return 0;
- }
- 
--struct vm_area_struct *exynos_gem_get_vma(struct vm_area_struct *vma)
--{
--	struct vm_area_struct *vma_copy;
--
--	vma_copy = kmalloc(sizeof(*vma_copy), GFP_KERNEL);
--	if (!vma_copy)
--		return NULL;
--
--	if (vma->vm_ops && vma->vm_ops->open)
--		vma->vm_ops->open(vma);
--
--	if (vma->vm_file)
--		get_file(vma->vm_file);
--
--	memcpy(vma_copy, vma, sizeof(*vma));
--
--	vma_copy->vm_mm = NULL;
--	vma_copy->vm_next = NULL;
--	vma_copy->vm_prev = NULL;
--
--	return vma_copy;
--}
--
--void exynos_gem_put_vma(struct vm_area_struct *vma)
--{
--	if (!vma)
--		return;
--
--	if (vma->vm_ops && vma->vm_ops->close)
--		vma->vm_ops->close(vma);
--
--	if (vma->vm_file)
--		fput(vma->vm_file);
--
--	kfree(vma);
--}
--
--int exynos_gem_get_pages_from_userptr(unsigned long start,
--						unsigned int npages,
--						struct page **pages,
--						struct vm_area_struct *vma)
--{
--	int get_npages;
--
--	/* the memory region mmaped with VM_PFNMAP. */
--	if (vma_is_io(vma)) {
--		unsigned int i;
--
--		for (i = 0; i < npages; ++i, start += PAGE_SIZE) {
--			unsigned long pfn;
--			int ret = follow_pfn(vma, start, &pfn);
--			if (ret)
--				return ret;
--
--			pages[i] = pfn_to_page(pfn);
--		}
--
--		if (i != npages) {
--			DRM_ERROR("failed to get user_pages.\n");
--			return -EINVAL;
--		}
--
--		return 0;
--	}
--
--	get_npages = get_user_pages(current, current->mm, start,
--					npages, 1, 1, pages, NULL);
--	get_npages = max(get_npages, 0);
--	if (get_npages != npages) {
--		DRM_ERROR("failed to get user_pages.\n");
--		while (get_npages)
--			put_page(pages[--get_npages]);
--		return -EFAULT;
--	}
--
--	return 0;
--}
--
--void exynos_gem_put_pages_to_userptr(struct page **pages,
--					unsigned int npages,
--					struct vm_area_struct *vma)
--{
--	if (!vma_is_io(vma)) {
--		unsigned int i;
--
--		for (i = 0; i < npages; i++) {
--			set_page_dirty_lock(pages[i]);
--
--			/*
--			 * undo the reference we took when populating
--			 * the table.
--			 */
--			put_page(pages[i]);
--		}
--	}
--}
--
- int exynos_gem_map_sgt_with_dma(struct drm_device *drm_dev,
- 				struct sg_table *sgt,
- 				enum dma_data_direction dir)
--- 
-2.1.4
-
-
---6TrnltStXW4iwmi0--
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+-Olof
