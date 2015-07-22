@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 15/19] media: v4l-core add v4l_enable_media_tuner() to check for tuner availability
-Date: Wed, 22 Jul 2015 16:42:16 -0600
-Message-ID: <1647341b774540fd9afbc7bb58e1a76510893ad4.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 10/19] media: platform xilinx: Update graph_mutex to graph_lock spinlock
+Date: Wed, 22 Jul 2015 16:42:11 -0600
+Message-ID: <845e6c9ee33c7d81a4e2ab428f4b03f8328a4d86.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,65 +12,35 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add a new interface to be used by v4l-core to invoke enable_source
-handler in the media_device to find tuner entity connected to the
-decoder and check is it is available. enable_source handler will
-activate the link if tuner is available.
+Update graph_mutex to graph_lock spinlock to be in sync with
+the Media Conttroller change for the same.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/v4l2-core/v4l2-dev.c | 17 +++++++++++++++++
- include/media/v4l2-dev.h           |  3 +++
- 2 files changed, 20 insertions(+)
+ drivers/media/platform/xilinx/xilinx-dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-index 71a1b93..00fc71d 100644
---- a/drivers/media/v4l2-core/v4l2-dev.c
-+++ b/drivers/media/v4l2-core/v4l2-dev.c
-@@ -230,6 +230,23 @@ struct video_device *video_devdata(struct file *file)
- }
- EXPORT_SYMBOL(video_devdata);
+diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
+index 98e50e4..784f7a4 100644
+--- a/drivers/media/platform/xilinx/xilinx-dma.c
++++ b/drivers/media/platform/xilinx/xilinx-dma.c
+@@ -185,7 +185,7 @@ static int xvip_pipeline_validate(struct xvip_pipeline *pipe,
+ 	unsigned int num_inputs = 0;
+ 	unsigned int num_outputs = 0;
  
-+int v4l_enable_media_tuner(struct video_device *vdev)
-+{
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	struct media_device *mdev = vdev->decoder->parent;
-+	int ret;
-+
-+	/* decoder */
-+	if (!mdev || !mdev->enable_source)
-+			return 0;
-+	ret = mdev->enable_source(vdev->decoder);
-+	if (ret)
-+		return -EBUSY;
-+	return 0;
-+#endif /* CONFIG_MEDIA_CONTROLLER */
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(v4l_enable_media_tuner);
+-	mutex_lock(&mdev->graph_mutex);
++	spin_lock(&mdev->graph_lock);
  
- /* Priority handling */
+ 	/* Walk the graph to locate the video nodes. */
+ 	media_entity_graph_walk_start(&graph, entity);
+@@ -206,7 +206,7 @@ static int xvip_pipeline_validate(struct xvip_pipeline *pipe,
+ 		}
+ 	}
  
-diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
-index acbcd2f..eff3852 100644
---- a/include/media/v4l2-dev.h
-+++ b/include/media/v4l2-dev.h
-@@ -86,6 +86,7 @@ struct video_device
- {
- #if defined(CONFIG_MEDIA_CONTROLLER)
- 	struct media_entity entity;
-+	struct media_entity *decoder;
- #endif
- 	/* device ops */
- 	const struct v4l2_file_operations *fops;
-@@ -178,6 +179,8 @@ struct video_device * __must_check video_device_alloc(void);
- /* this release function frees the vdev pointer */
- void video_device_release(struct video_device *vdev);
+-	mutex_unlock(&mdev->graph_mutex);
++	spin_unlock(&mdev->graph_lock);
  
-+int v4l_enable_media_tuner(struct video_device *vdev);
-+
- /* this release function does nothing, use when the video_device is a
-    static global struct. Note that having a static video_device is
-    a dubious construction at best. */
+ 	/* We need exactly one output and zero or one input. */
+ 	if (num_outputs != 1 || num_inputs > 1)
 -- 
 2.1.4
