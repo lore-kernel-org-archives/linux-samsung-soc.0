@@ -1,62 +1,72 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/3] platform/chrome: Don't make CHROME_PLATFORMS depends
- on X86 || ARM
-Date: Wed, 22 Jul 2015 08:16:40 +0100
-Message-ID: <20150722071640.GR3061@x1>
+Subject: Re: [PATCH 3/3] mfd: Remove MFD_CROS_EC_SPI depends on OF
+Date: Wed, 22 Jul 2015 08:17:11 +0100
+Message-ID: <20150722071711.GS3061@x1>
 References: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk>
- <1435191645-6022-2-git-send-email-javier.martinez@collabora.co.uk>
+ <1435191645-6022-4-git-send-email-javier.martinez@collabora.co.uk>
+ <20150625083830.GU15013@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:36789 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932478AbbGVHQp (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:35407 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755862AbbGVHRQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jul 2015 03:16:45 -0400
-Received: by wicgb10 with SMTP id gb10so84506931wic.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jul 2015 00:16:44 -0700 (PDT)
+	Wed, 22 Jul 2015 03:17:16 -0400
+Received: by wibxm9 with SMTP id xm9so149655109wib.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jul 2015 00:17:14 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1435191645-6022-2-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <20150625083830.GU15013@x1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, Gwendal Grignou <gwendal@google.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Olof Johansson <olof@lixom.net>
 
-On Thu, 25 Jun 2015, Javier Martinez Canillas wrote:
+On Thu, 25 Jun 2015, Lee Jones wrote:
 
-> The Chrome platform support depends on X86 || ARM because there are
-> only Chromebooks using those architectures. But only some drivers
-> depend on a given architecture, and the ones that do already have
-> a dependency on their specific Kconfig symbol entries.
+> On Thu, 25 Jun 2015, Javier Martinez Canillas wrote:
 >=20
-> An option is to also make CHROME_PLATFORMS depends on || COMPILE_TEST
-> but is more future proof to remove the dependency and let the drivers
-> be built in all architectures if possible to have more build coverage=
-=2E
+> > The ChromeOS EC SPI transport driver has a dependency on OF because=
+ it
+> > uses some OF helpers from the <linux/of.h> header. But there isn't =
+a
+> > need for an explicit dependency since the header has stub functions=
+ if
+> > CONFIG_OF is not defined.
+> >=20
+> > Also, MFD_CROS_EC_SPI already depends on MFD_CROS_EC which in turn =
+has
+> > a dependency on OF so in practice can't be selected without CONFIG_=
+OF.
+> >=20
+> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.=
+co.uk>
+> >=20
+> > ---
+> >=20
+> >  drivers/mfd/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> ---
->=20
->  drivers/platform/chrome/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
+> Applied for v4.3, thanks.
 
-Applied for v4.2, thanks.
+Now applied for v4.2, thanks.
 
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrom=
-e/Kconfig
-> index cb1329919527..3271cd1abe7c 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -4,7 +4,6 @@
-> =20
->  menuconfig CHROME_PLATFORMS
->  	bool "Platform support for Chrome hardware"
-> -	depends on X86 || ARM
->  	---help---
->  	  Say Y here to get to see options for platform support for
->  	  various Chromebooks and Chromeboxes. This option alone does
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 653815950aa2..3f68dd251ce8 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -115,7 +115,7 @@ config MFD_CROS_EC_I2C
+> > =20
+> >  config MFD_CROS_EC_SPI
+> >  	tristate "ChromeOS Embedded Controller (SPI)"
+> > -	depends on MFD_CROS_EC && CROS_EC_PROTO && SPI && OF
+> > +	depends on MFD_CROS_EC && CROS_EC_PROTO && SPI
+> > =20
+> >  	---help---
+> >  	  If you say Y here, you get support for talking to the ChromeOS =
+EC
+>=20
 
 --=20
 Lee Jones
