@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 12/19] staging media: omap4iss: Update graph_mutex to graph_lock spinlock
-Date: Wed, 22 Jul 2015 16:42:13 -0600
-Message-ID: <13f40d9fa030ad84ee1e5332132eabf15fee3293.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 08/19] media: platform s3c-camif: Update graph_mutex to graph_lock spinlock
+Date: Wed, 22 Jul 2015 16:42:09 -0600
+Message-ID: <8e89eac538be404ecf4ba6b3f1d202e9d989f3df.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -17,53 +17,36 @@ the Media Conttroller change for the same.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/staging/media/omap4iss/iss.c       | 4 ++--
- drivers/staging/media/omap4iss/iss_video.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/platform/s3c-camif/camif-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
-index 9bfb725..017ef74 100644
---- a/drivers/staging/media/omap4iss/iss.c
-+++ b/drivers/staging/media/omap4iss/iss.c
-@@ -494,7 +494,7 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
- 	int change = use ? 1 : -1;
- 	int ret;
- 
--	mutex_lock(&entity->parent->graph_mutex);
-+	spin_lock(&entity->parent->graph_lock);
- 
- 	/* Apply use count to node. */
- 	entity->use_count += change;
-@@ -505,7 +505,7 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index f47b332..90dd781 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -495,7 +495,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
  	if (ret < 0)
- 		entity->use_count -= change;
+ 		goto err_sens;
  
--	mutex_unlock(&entity->parent->graph_mutex);
-+	spin_unlock(&entity->parent->graph_lock);
+-	mutex_lock(&camif->media_dev.graph_mutex);
++	spin_lock(&camif->media_dev.graph_lock);
  
- 	return ret;
- }
-diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
-index 85c54fe..2db9d16 100644
---- a/drivers/staging/media/omap4iss/iss_video.c
-+++ b/drivers/staging/media/omap4iss/iss_video.c
-@@ -210,7 +210,7 @@ iss_video_far_end(struct iss_video *video)
- 	struct media_device *mdev = entity->parent;
- 	struct iss_video *far_end = NULL;
+ 	ret = v4l2_device_register_subdev_nodes(&camif->v4l2_dev);
+ 	if (ret < 0)
+@@ -509,12 +509,12 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_unlock;
  
--	mutex_lock(&mdev->graph_mutex);
-+	spin_lock(&mdev->graph_lock);
- 	media_entity_graph_walk_start(&graph, entity);
+-	mutex_unlock(&camif->media_dev.graph_mutex);
++	spin_unlock(&camif->media_dev.graph_lock);
+ 	pm_runtime_put(dev);
+ 	return 0;
  
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
-@@ -227,7 +227,7 @@ iss_video_far_end(struct iss_video *video)
- 		far_end = NULL;
- 	}
- 
--	mutex_unlock(&mdev->graph_mutex);
-+	spin_unlock(&mdev->graph_lock);
- 	return far_end;
- }
- 
+ err_unlock:
+-	mutex_unlock(&camif->media_dev.graph_mutex);
++	spin_unlock(&camif->media_dev.graph_lock);
+ err_sens:
+ 	v4l2_device_unregister(&camif->v4l2_dev);
+ 	media_device_unregister(&camif->media_dev);
 -- 
 2.1.4
