@@ -1,53 +1,68 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Wed, 22 Jul 2015 10:19:25 +0530
-Message-ID: <20150722044925.GN23525@localhost>
-References: <cover.1433364398.git.hramrach@gmail.com>
- <20150604171547.GA1530@localhost.localdomain>
- <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
- <201507151352.27689.marex@denx.de>
- <20150715155946.GB21362@localhost>
- <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com>
- <20150721042932.GF23525@localhost>
- <CAOMqctSzzUV1J8Vj03XJ3Y70R9ynVErP4RZVtbjarDcZ9JLnaw@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: Linux-next, Exynos Octa boot fail,
+ bisected to: "drm/exynos: remove drm_iommu_attach_device_if_possible"
+Date: Wed, 22 Jul 2015 13:55:11 +0900
+Message-ID: <55AF222F.1060303@samsung.com>
+References: <CAJKOXPehvV2jbxaiBmdgj98T59Y5aeK+6px6zTHR9Z=SdTDC8w@mail.gmail.com>
+ <55AEF9AD.6090709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOMqctSzzUV1J8Vj03XJ3Y70R9ynVErP4RZVtbjarDcZ9JLnaw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <55AEF9AD.6090709@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 21, 2015 at 10:14:11AM +0200, Michal Suchanek wrote:
-> > Or alternatively we could publish the limitations of the channel using
-> > capabilities so SPI knows I have a dmaengine channel and it can transfer max N
-> > length transfers so would be able to break rather than guessing it or coding
-> > in DT. Yes it may come from DT but that should be dmaengine driver rather
-> > than client driver :)
-> >
-> > This can be done by dma_get_slave_caps(chan, &caps)
-> >
-> > And we add max_length as one more parameter to existing set
-> >
-> > Also all this could be handled in generic SPI-dmaengine layer so that
-> > individual drivers don't have to code it in
-> >
-> > Let me know if this idea is okay, I can push the dmaengine bits...
-> 
-> It would be ok if there was a fixed limit. However, the limit depends
-> on SPI slave settings. Presumably for other buses using the dmaengine
-> the limit would depend on the bus or slave settings as well. I do not
-> see a sane way of passing this all the way to the dmaengine driver.
-I don't see why this should be client (SPI) dependent. The max length
-supported is a dmaengine constraint, typically flowing from max
-blocks/length it can transfer. Know this limit can allow clients to split
-transfers.
-
--- 
-~Vinod
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMjAxNeuFhCAwN+yblCAyMuydvCAxMTowMiwgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gT24g
+MDcvMjEvMjAxNSAxMDoxOSBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPj4gSGksCj4+
+Cj4+IFRvZGF5J3MgbGludXgtbmV4dCAobmV4dC0yMDE1MDcyMSkgZW5jb3VudGVycyBib290IGZh
+aWx1cmVzIG9uIEV4eW5vcwo+PiBPY3RhIChFeHlub3M1NDIyKSBiYXNlZCBib2FyZHMuIFRoZSBi
+b2FyZHMgaGFuZ3MuIEkgYmlzZWN0ZWQgaXQgdG86Cj4+Cj4+IGQ4MDE2N2I4NTAyNDk4MmM1ZjE4
+ZDA0ODFhNWMyNDgxMDAzNjAxMTggaXMgdGhlIGZpcnN0IGJhZCBjb21taXQKPj4gY29tbWl0IGQ4
+MDE2N2I4NTAyNDk4MmM1ZjE4ZDA0ODFhNWMyNDgxMDAzNjAxMTgKPj4gQXV0aG9yOiBKb29ueW91
+bmcgU2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4+IERhdGU6ICAgVGh1IEp1bCAyIDIx
+OjQ5OjM5IDIwMTUgKzA5MDAKPj4KPj4gICAgIGRybS9leHlub3M6IHJlbW92ZSBkcm1faW9tbXVf
+YXR0YWNoX2RldmljZV9pZl9wb3NzaWJsZQo+Pgo+PiAgICAgQWxyZWFkeSBkcm1faW9tbXVfYXR0
+YWNoX2RldmljZSBjaGVja3Mgd2hldGhlciBzdXBwb3J0IGlvbW11IGludGVybmFsbHkuCj4+ICAg
+ICBJdCBzaG91bGQgY2xlYXIgY2hhbm5lbHMgYWx3YXlzIHJlZ2FyZGxlc3MgaW9tbXUgc3VwcG9y
+dC4gV2UgZGlkbid0IGtub3cKPj4gICAgIGJlY2F1c2Ugd2UgY2FuIGRldGVjdCB0aGUgcHJvYmxl
+bSB3aGVuIGlvbW11IGlzIGVuYWJsZWQsIHNvIHdlIGRvbid0Cj4+ICAgICBoYXZlIHRvIHVzZSBk
+cm1faW9tbXVfYXR0YWNoX2RldmljZV9pZl9wb3NzaWJsZSBhbmQgdGhlbiB3ZSBjYW4gcmVtb3Zl
+Cj4+ICAgICBkcm1faW9tbXVfYXR0YWNoX2RldmljZV9pZl9wb3NzaWJsZSBhbmQgY2xlYXJfY2hh
+bm5lbHMgZnVuY3Rpb24gcG9pbnRlci4KPj4KPj4gICAgIFNpZ25lZC1vZmYtYnk6IEpvb255b3Vu
+ZyBTaGltIDxqeTA5MjIuc2hpbUBzYW1zdW5nLmNvbT4KPj4gICAgIFRlc3RlZC1ieTogTWFyZWsg
+U3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+PiAgICAgU2lnbmVkLW9mZi1i
+eTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+Pgo+PiA6MDQwMDAwIDA0MDAwMCA4
+MzM3OWVmYmY0OTYwZjU4ZDY4MDM3MTYyOGVjMDQzODc5MzViZDUzCj4+IGRhMDNjMzM4Yjg4ZTdj
+YjZiZGE4OTViM2RkNTJkNzhkOWI2ZWJhMzAgTSBkcml2ZXJzCj4+Cj4+Cj4+IENvbmZpZzogZXh5
+bm9zCj4+IEJvb3QgbG9nIGZyb20gT2Ryb2lkIFhVMy1MaXRlIGF0dGFjaGVkLgo+Pgo+PiBBbnkg
+aGludHMgb3IgaWRlYXM/Cj4gCj4gVGhlIHBvaW50IHRoYXQgaGFuZ3MgaXMgd2hlbiBhY2Nlc3Nl
+cyBmaW1kIHJlZ2lzdGVyIGluCj4gZmltZF9jbGVhcl9jaGFubmVscyBmdW5jdGlvbiwgc28gaSBk
+b3VidCBjbG9jayBzZXR0aW5nIGZvciBmaW1kLgo+IAo+IEl0J3MgZ29uZSBzb21ldGhpbmcgdGhh
+dCBoYW5ncyBhZnRlciBpIGVuYWJsZSBnYXRpbmcgZm9yIEFDTEtfMjAwX0RJU1AxCj4gY2xvY2su
+Cj4gCj4gSWYgQUNMS18yMDBfRElTUDEgY2xvY2sgbmVlZHMgZm9yIGZpbWQgcmVhbGx5LCBpJ20g
+dGhpbmtpbmcgaG93IGNhbiBpdAo+IHN1cHBvcnQuIEFueSBpZGVhcz8KCkkgdGhpbmsgYm9vdGxv
+YWRlciBzaG91bGQgaGF2ZSBlbmFibGVkIEFDTEtfMjAwX0RJU1AxIGNsb2NrIGFuZCBhbHNvCmRl
+dmljZSBkcml2ZXIgc2hvdWxkIGVuYWJsZSBhbGwgcmVsZXZhbnQgY2xvY2tzIGJlZm9yZSB0aGUg
+ZGV2aWNlCmFjY2Vzc2VzIGl0cyBvd24gcmVnaXN0ZXJzLgoKQmVzdCB3YXkgd291bGQgYmUgdGhh
+dCB0aGUgY2xvY2sgaXMgZW5hYmxlZCBieSBjb21tb24gY2xvY2sgZnJhbWV3b3JrCmJ1dCBpdCBz
+ZWVtcyB0aGVyZSBpcyBubyBhbnl0aGluZyB0aGF0IHRoZSBjbG9jayBmcmFtZXdvcmsgY2FuIGRv
+IGl0LiBTbwpJIHRoaW5rIHdoYXQgd2UgaGF2ZSB0byBkbyBpcyB0byBhZGQgdGhlIGNsb2NrIHN1
+cHBvcnQgdG8gZGV2aWNlIHRyZWUuCgpPdGhlciBpZGVhPwoKVGhhbmtzLApJbmtpIERhZQoKPiAK
+PiBUaGFua3MuCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUg
+bGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBt
+ZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZv
+IGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
