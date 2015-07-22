@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 02/19] media: Media Controller register/unregister entity_notify API
-Date: Wed, 22 Jul 2015 16:42:03 -0600
-Message-ID: <21da4006a0f95ec7aad81539e58df5ef04a173cb.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 03/19] media: Add ALSA Media Controller devnodes
+Date: Wed, 22 Jul 2015 16:42:04 -0600
+Message-ID: <78cb5dd3bb7d5e531c66384c48ee35aa89903b75.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,171 +12,35 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add new interfaces to register and unregister entity_notify
-hook to media device to allow drivers to take appropriate
-actions when as new entities get added to the shared media
-device.When a new entity is registered, all registered
-entity_notify hooks are invoked to allow drivers or modules
-that registered hook to take appropriate action. For example,
-ALSA driver registers an entity_notify hook to parse the list
-of registered entities to determine if decoder has been linked
-to ALSA entity. au0828 bridge driver registers an entity_notify
-hook to create media graph for the device.
+Add ALSA Media Controller capture, playback, and mixer
+devnode defines.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/media-device.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
- include/media/media-device.h | 23 ++++++++++++++++++++++
- 2 files changed, 68 insertions(+)
+ include/uapi/linux/media.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index c55ab50..22565a8 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -381,6 +381,7 @@ int __must_check __media_device_register(struct media_device *mdev,
+diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+index 4e816be..4a30ea3 100644
+--- a/include/uapi/linux/media.h
++++ b/include/uapi/linux/media.h
+@@ -49,12 +49,17 @@ struct media_device_info {
+ #define MEDIA_ENT_T_DEVNODE		(1 << MEDIA_ENT_TYPE_SHIFT)
+ #define MEDIA_ENT_T_DEVNODE_V4L		(MEDIA_ENT_T_DEVNODE + 1)
+ #define MEDIA_ENT_T_DEVNODE_FB		(MEDIA_ENT_T_DEVNODE + 2)
++/* Legacy ALSA symbol. Keep it to avoid userspace compilation breakages */
+ #define MEDIA_ENT_T_DEVNODE_ALSA	(MEDIA_ENT_T_DEVNODE + 3)
+ #define MEDIA_ENT_T_DEVNODE_DVB_FE	(MEDIA_ENT_T_DEVNODE + 4)
+ #define MEDIA_ENT_T_DEVNODE_DVB_DEMUX	(MEDIA_ENT_T_DEVNODE + 5)
+ #define MEDIA_ENT_T_DEVNODE_DVB_DVR	(MEDIA_ENT_T_DEVNODE + 6)
+ #define MEDIA_ENT_T_DEVNODE_DVB_CA	(MEDIA_ENT_T_DEVNODE + 7)
+ #define MEDIA_ENT_T_DEVNODE_DVB_NET	(MEDIA_ENT_T_DEVNODE + 8)
++/* ALSA devnodes */
++#define MEDIA_ENT_T_DEVNODE_ALSA_CAPTURE	(MEDIA_ENT_T_DEVNODE + 9)
++#define MEDIA_ENT_T_DEVNODE_ALSA_PLAYBACK	(MEDIA_ENT_T_DEVNODE + 10)
++#define MEDIA_ENT_T_DEVNODE_ALSA_MIXER		(MEDIA_ENT_T_DEVNODE + 11)
  
- 	mdev->entity_id = 1;
- 	INIT_LIST_HEAD(&mdev->entities);
-+	INIT_LIST_HEAD(&mdev->entity_notify);
- 	spin_lock_init(&mdev->lock);
- 	mutex_init(&mdev->graph_mutex);
- 
-@@ -411,9 +412,12 @@ void media_device_unregister(struct media_device *mdev)
- {
- 	struct media_entity *entity;
- 	struct media_entity *next;
-+	struct media_entity_notify *notify, *nextp;
- 
- 	list_for_each_entry_safe(entity, next, &mdev->entities, list)
- 		media_device_unregister_entity(entity);
-+	list_for_each_entry_safe(notify, nextp, &mdev->entity_notify, list)
-+		media_device_unregister_entity_notify(mdev, notify);
- 
- 	device_remove_file(&mdev->devnode.dev, &dev_attr_model);
- 	media_devnode_unregister(&mdev->devnode);
-@@ -421,6 +425,39 @@ void media_device_unregister(struct media_device *mdev)
- EXPORT_SYMBOL_GPL(media_device_unregister);
- 
- /**
-+ * media_device_register_entity_notify - Register a media entity notify
-+ * callback with a media device. When a new entity is registered, all
-+ * the registered media_entity_notify callbacks are invoked.
-+ * @mdev:	The media device
-+ * @nptr:	The media_entity_notify
-+ */
-+int __must_check media_device_register_entity_notify(struct media_device *mdev,
-+					struct media_entity_notify *nptr)
-+{
-+	spin_lock(&mdev->lock);
-+	list_add_tail(&nptr->list, &mdev->entity_notify);
-+	spin_unlock(&mdev->lock);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(media_device_register_entity_notify);
-+
-+/**
-+ * media_device_unregister_entity_notify - Unregister a media entity notify
-+ * callback with a media device. When a new entity is registered, all
-+ * the registered media_entity_notify callbacks are invoked.
-+ * @mdev:	The media device
-+ * @nptr:	The media_entity_notify
-+ */
-+void media_device_unregister_entity_notify(struct media_device *mdev,
-+					struct media_entity_notify *nptr)
-+{
-+	spin_lock(&mdev->lock);
-+	list_del(&nptr->list);
-+	spin_unlock(&mdev->lock);
-+}
-+EXPORT_SYMBOL_GPL(media_device_unregister_entity_notify);
-+
-+/**
-  * media_device_register_entity - Register an entity with a media device
-  * @mdev:	The media device
-  * @entity:	The entity
-@@ -428,6 +465,8 @@ EXPORT_SYMBOL_GPL(media_device_unregister);
- int __must_check media_device_register_entity(struct media_device *mdev,
- 					      struct media_entity *entity)
- {
-+	struct media_entity_notify *notify, *next;
-+
- 	/* Warn if we apparently re-register an entity */
- 	WARN_ON(entity->parent != NULL);
- 	entity->parent = mdev;
-@@ -440,6 +479,11 @@ int __must_check media_device_register_entity(struct media_device *mdev,
- 	list_add_tail(&entity->list, &mdev->entities);
- 	spin_unlock(&mdev->lock);
- 
-+	/* invoke entity_notify callbacks */
-+	list_for_each_entry_safe(notify, next, &mdev->entity_notify, list) {
-+		(notify)->notify(entity, notify->notify_data);
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(media_device_register_entity);
-@@ -462,6 +506,7 @@ void media_device_unregister_entity(struct media_entity *entity)
- 	list_del(&entity->list);
- 	spin_unlock(&mdev->lock);
- 	entity->parent = NULL;
-+	/* invoke entity_notify callbacks to handle entity removal?? */
- }
- EXPORT_SYMBOL_GPL(media_device_unregister_entity);
- 
-diff --git a/include/media/media-device.h b/include/media/media-device.h
-index a44f18f..a3854f6 100644
---- a/include/media/media-device.h
-+++ b/include/media/media-device.h
-@@ -32,6 +32,12 @@
- 
- struct device;
- 
-+struct media_entity_notify {
-+	struct list_head list;
-+	void *notify_data;
-+	void (*notify)(struct media_entity *entity, void *notify_data);
-+};
-+
- /**
-  * struct media_device - Media device
-  * @dev:	Parent device
-@@ -70,6 +76,8 @@ struct media_device {
- 
- 	u32 entity_id;
- 	struct list_head entities;
-+	/* notify callback list invoked when a new entity is registered */
-+	struct list_head entity_notify;
- 
- 	/* Protects the entities list */
- 	spinlock_t lock;
-@@ -94,6 +102,10 @@ int __must_check __media_device_register(struct media_device *mdev,
- #define media_device_register(mdev) __media_device_register(mdev, THIS_MODULE)
- void media_device_unregister(struct media_device *mdev);
- 
-+int __must_check media_device_register_entity_notify(struct media_device *mdev,
-+					struct media_entity_notify *nptr);
-+void media_device_unregister_entity_notify(struct media_device *mdev,
-+					struct media_entity_notify *nptr);
- int __must_check media_device_register_entity(struct media_device *mdev,
- 					      struct media_entity *entity);
- void media_device_unregister_entity(struct media_entity *entity);
-@@ -112,6 +124,17 @@ static inline int media_device_register(struct media_device *mdev)
- static inline void media_device_unregister(struct media_device *mdev)
- {
- }
-+static inline int media_device_register_entity_notify(
-+					struct media_device *mdev,
-+					struct media_entity_notify *nptr)
-+{
-+	return 0;
-+}
-+static inline void media_device_unregister_entity_notify(
-+					struct media_device *mdev,
-+					struct media_entity_notify *nptr)
-+{
-+}
- static inline int media_device_register_entity(struct media_device *mdev,
- 						struct media_entity *entity)
- {
+ /* Legacy symbol. Use it to avoid userspace compilation breakages */
+ #define MEDIA_ENT_T_DEVNODE_DVB		MEDIA_ENT_T_DEVNODE_DVB_FE
 -- 
 2.1.4
