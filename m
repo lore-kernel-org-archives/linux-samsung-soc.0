@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 16/19] media: Change v4l-core to check for tuner availability
-Date: Wed, 22 Jul 2015 16:42:17 -0600
-Message-ID: <690e2d0882325f1f4b67688a42bb8056f46dec7e.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 06/19] media: platform exynos4-is: Update graph_mutex to graph_lock spinlock
+Date: Wed, 22 Jul 2015 16:42:07 -0600
+Message-ID: <5a8cfe7719b00195cfca2d140ff1030eca5e9fbd.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,124 +12,160 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change s_input, s_fmt, s_tuner, s_frequency, querystd,
-s_hw_freq_seek, and vb2_streamon interfaces that alter
-the tuner configuration to check for tuner availability
-by calling v4l_enable_media_tuner(). If tuner isn't free,
-return -EBUSY.
+Update graph_mutex to graph_lock spinlock to be in sync with
+the Media Conttroller change for the same.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c     | 29 +++++++++++++++++++++++++++++
- drivers/media/v4l2-core/videobuf2-core.c |  5 +++++
- 2 files changed, 34 insertions(+)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |  8 ++++----
+ drivers/media/platform/exynos4-is/fimc-lite.c      |  8 ++++----
+ drivers/media/platform/exynos4-is/media-dev.c      | 14 +++++++-------
+ drivers/media/platform/exynos4-is/media-dev.h      |  4 ++--
+ 4 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 85de455..deffc1b 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1035,6 +1035,12 @@ static int v4l_querycap(const struct v4l2_ioctl_ops *ops,
- static int v4l_s_input(const struct v4l2_ioctl_ops *ops,
- 				struct file *file, void *fh, void *arg)
- {
-+	struct video_device *vfd = video_devdata(file);
-+	int ret;
-+
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	return ops->vidioc_s_input(file, fh, *(unsigned int *)arg);
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index 76b6b4d..5ff0a54 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -288,7 +288,7 @@ static int isp_video_open(struct file *file)
+ 		goto rel_fh;
+ 
+ 	if (v4l2_fh_is_singular_file(file)) {
+-		mutex_lock(&me->parent->graph_mutex);
++		spin_lock(&me->parent->graph_lock);
+ 
+ 		ret = fimc_pipeline_call(ve, open, me, true);
+ 
+@@ -296,7 +296,7 @@ static int isp_video_open(struct file *file)
+ 		if (ret == 0)
+ 			me->use_count++;
+ 
+-		mutex_unlock(&me->parent->graph_mutex);
++		spin_unlock(&me->parent->graph_lock);
+ 	}
+ 	if (!ret)
+ 		goto unlock;
+@@ -326,9 +326,9 @@ static int isp_video_release(struct file *file)
+ 	if (v4l2_fh_is_singular_file(file)) {
+ 		fimc_pipeline_call(&ivc->ve, close);
+ 
+-		mutex_lock(&mdev->graph_mutex);
++		spin_lock(&mdev->graph_lock);
+ 		entity->use_count--;
+-		mutex_unlock(&mdev->graph_mutex);
++		spin_unlock(&mdev->graph_lock);
+ 	}
+ 
+ 	pm_runtime_put(&isp->pdev->dev);
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index ca6261a..cb1ea29 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -500,7 +500,7 @@ static int fimc_lite_open(struct file *file)
+ 	    atomic_read(&fimc->out_path) != FIMC_IO_DMA)
+ 		goto unlock;
+ 
+-	mutex_lock(&me->parent->graph_mutex);
++	spin_lock(&me->parent->graph_lock);
+ 
+ 	ret = fimc_pipeline_call(&fimc->ve, open, me, true);
+ 
+@@ -508,7 +508,7 @@ static int fimc_lite_open(struct file *file)
+ 	if (ret == 0)
+ 		me->use_count++;
+ 
+-	mutex_unlock(&me->parent->graph_mutex);
++	spin_unlock(&me->parent->graph_lock);
+ 
+ 	if (!ret) {
+ 		fimc_lite_clear_event_counters(fimc);
+@@ -541,9 +541,9 @@ static int fimc_lite_release(struct file *file)
+ 		fimc_pipeline_call(&fimc->ve, close);
+ 		clear_bit(ST_FLITE_IN_USE, &fimc->state);
+ 
+-		mutex_lock(&entity->parent->graph_mutex);
++		spin_lock(&entity->parent->graph_lock);
+ 		entity->use_count--;
+-		mutex_unlock(&entity->parent->graph_mutex);
++		spin_unlock(&entity->parent->graph_lock);
+ 	}
+ 
+ 	_vb2_fop_release(file, NULL);
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 4f5586a..3e296e8 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1046,7 +1046,7 @@ static int __fimc_md_modify_pipeline(struct media_entity *entity, bool enable)
+ 	return ret;
  }
  
-@@ -1433,6 +1439,9 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops,
- 	bool is_tx = vfd->vfl_dir != VFL_DIR_RX;
+-/* Locking: called with entity->parent->graph_mutex mutex held. */
++/* Locking: called with entity->parent->graph_lock lock held. */
+ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable)
+ {
+ 	struct media_entity *entity_err = entity;
+@@ -1305,7 +1305,7 @@ static int subdev_notifier_complete(struct v4l2_async_notifier *notifier)
+ 	struct fimc_md *fmd = notifier_to_fimc_md(notifier);
  	int ret;
  
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	v4l_sanitize_format(p);
+-	mutex_lock(&fmd->media_dev.graph_mutex);
++	spin_lock(&fmd->media_dev.graph_lock);
  
- 	switch (p->type) {
-@@ -1612,7 +1621,11 @@ static int v4l_s_tuner(const struct v4l2_ioctl_ops *ops,
- {
- 	struct video_device *vfd = video_devdata(file);
- 	struct v4l2_tuner *p = arg;
-+	int ret;
+ 	ret = fimc_md_create_links(fmd);
+ 	if (ret < 0)
+@@ -1313,7 +1313,7 @@ static int subdev_notifier_complete(struct v4l2_async_notifier *notifier)
  
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	p->type = (vfd->vfl_type == VFL_TYPE_RADIO) ?
- 			V4L2_TUNER_RADIO : V4L2_TUNER_ANALOG_TV;
- 	return ops->vidioc_s_tuner(file, fh, p);
-@@ -1650,7 +1663,11 @@ static int v4l_s_frequency(const struct v4l2_ioctl_ops *ops,
- 	struct video_device *vfd = video_devdata(file);
- 	const struct v4l2_frequency *p = arg;
- 	enum v4l2_tuner_type type;
-+	int ret;
- 
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	if (vfd->vfl_type == VFL_TYPE_SDR) {
- 		if (p->type != V4L2_TUNER_ADC && p->type != V4L2_TUNER_RF)
- 			return -EINVAL;
-@@ -1705,7 +1722,11 @@ static int v4l_s_std(const struct v4l2_ioctl_ops *ops,
- {
- 	struct video_device *vfd = video_devdata(file);
- 	v4l2_std_id id = *(v4l2_std_id *)arg, norm;
-+	int ret;
- 
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	norm = id & vfd->tvnorms;
- 	if (vfd->tvnorms && !norm)	/* Check if std is supported */
- 		return -EINVAL;
-@@ -1719,7 +1740,11 @@ static int v4l_querystd(const struct v4l2_ioctl_ops *ops,
- {
- 	struct video_device *vfd = video_devdata(file);
- 	v4l2_std_id *p = arg;
-+	int ret;
- 
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	/*
- 	 * If no signal is detected, then the driver should return
- 	 * V4L2_STD_UNKNOWN. Otherwise it should return tvnorms with
-@@ -1738,7 +1763,11 @@ static int v4l_s_hw_freq_seek(const struct v4l2_ioctl_ops *ops,
- 	struct video_device *vfd = video_devdata(file);
- 	struct v4l2_hw_freq_seek *p = arg;
- 	enum v4l2_tuner_type type;
-+	int ret;
- 
-+	ret = v4l_enable_media_tuner(vfd);
-+	if (ret)
-+		return ret;
- 	/* s_hw_freq_seek is not supported for SDR for now */
- 	if (vfd->vfl_type == VFL_TYPE_SDR)
- 		return -EINVAL;
-diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-index d835814..f2711e4 100644
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -2300,10 +2300,15 @@ EXPORT_SYMBOL_GPL(vb2_queue_error);
-  */
- int vb2_streamon(struct vb2_queue *q, enum v4l2_buf_type type)
- {
-+	int ret;
-+
- 	if (vb2_fileio_is_active(q)) {
- 		dprintk(1, "file io in progress\n");
- 		return -EBUSY;
- 	}
-+	ret = v4l_enable_media_tuner(q->owner->vdev);
-+	if (ret)
-+		return ret;
- 	return vb2_internal_streamon(q, type);
+ 	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
+ unlock:
+-	mutex_unlock(&fmd->media_dev.graph_mutex);
++	spin_unlock(&fmd->media_dev.graph_lock);
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(vb2_streamon);
+ 
+@@ -1371,21 +1371,21 @@ static int fimc_md_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, fmd);
+ 
+ 	/* Protect the media graph while we're registering entities */
+-	mutex_lock(&fmd->media_dev.graph_mutex);
++	spin_lock(&fmd->media_dev.graph_lock);
+ 
+ 	ret = fimc_md_register_platform_entities(fmd, dev->of_node);
+ 	if (ret) {
+-		mutex_unlock(&fmd->media_dev.graph_mutex);
++		spin_unlock(&fmd->media_dev.graph_lock);
+ 		goto err_clk;
+ 	}
+ 
+ 	ret = fimc_md_register_sensor_entities(fmd);
+ 	if (ret) {
+-		mutex_unlock(&fmd->media_dev.graph_mutex);
++		spin_unlock(&fmd->media_dev.graph_lock);
+ 		goto err_m_ent;
+ 	}
+ 
+-	mutex_unlock(&fmd->media_dev.graph_mutex);
++	spin_unlock(&fmd->media_dev.graph_lock);
+ 
+ 	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
+ 	if (ret)
+diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
+index 0321454..91edd9b 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.h
++++ b/drivers/media/platform/exynos4-is/media-dev.h
+@@ -175,12 +175,12 @@ static inline struct fimc_md *notifier_to_fimc_md(struct v4l2_async_notifier *n)
+ 
+ static inline void fimc_md_graph_lock(struct exynos_video_entity *ve)
+ {
+-	mutex_lock(&ve->vdev.entity.parent->graph_mutex);
++	spin_lock(&ve->vdev.entity.parent->graph_lock);
+ }
+ 
+ static inline void fimc_md_graph_unlock(struct exynos_video_entity *ve)
+ {
+-	mutex_unlock(&ve->vdev.entity.parent->graph_mutex);
++	spin_unlock(&ve->vdev.entity.parent->graph_lock);
+ }
+ 
+ int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
 -- 
 2.1.4
