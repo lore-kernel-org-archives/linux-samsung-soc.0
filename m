@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 09/19] media: platform vsp1: Update graph_mutex to graph_lock spinlock
-Date: Wed, 22 Jul 2015 16:42:10 -0600
-Message-ID: <9a7ee207c921530df11f50903ab812fd4d25a3e1.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 11/19] staging media: davinci_vpfe: Update graph_mutex to graph_lock spinlock
+Date: Wed, 22 Jul 2015 16:42:12 -0600
+Message-ID: <8e4896bee216cc4aa30a16d799b6ea896e99c919.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -17,30 +17,66 @@ the Media Conttroller change for the same.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/platform/vsp1/vsp1_video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/media/davinci_vpfe/vpfe_video.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index d91f19a..c012fb8 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -413,7 +413,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
- 	unsigned int i;
- 	int ret;
+diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+index 87048a1..2511614 100644
+--- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
++++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+@@ -143,7 +143,7 @@ static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
+ 	else
+ 		pipe->outputs[pipe->output_num++] = video;
  
 -	mutex_lock(&mdev->graph_mutex);
 +	spin_lock(&mdev->graph_lock);
- 
- 	/* Walk the graph to locate the entities and video nodes. */
  	media_entity_graph_walk_start(&graph, entity);
-@@ -447,7 +447,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
- 		}
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+ 		if (entity == &video->video_dev.entity)
+@@ -156,7 +156,7 @@ static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
+ 		else
+ 			pipe->outputs[pipe->output_num++] = far_end;
  	}
+-	mutex_unlock(&mdev->graph_mutex);
++	spin_unlock(&mdev->graph_lock);
+ }
  
+ /* update pipe state selected by user */
+@@ -289,7 +289,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
+ 		entity = &pipe->inputs[0]->video_dev.entity;
+ 
+ 	mdev = entity->parent;
+-	mutex_lock(&mdev->graph_mutex);
++	spin_lock(&mdev->graph_lock);
+ 	media_entity_graph_walk_start(&graph, entity);
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+ 
+@@ -300,7 +300,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
+ 		if (ret < 0 && ret != -ENOIOCTLCMD)
+ 			break;
+ 	}
+-	mutex_unlock(&mdev->graph_mutex);
++	spin_unlock(&mdev->graph_lock);
+ 	return ret;
+ }
+ 
+@@ -329,7 +329,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
+ 		entity = &pipe->inputs[0]->video_dev.entity;
+ 
+ 	mdev = entity->parent;
+-	mutex_lock(&mdev->graph_mutex);
++	spin_lock(&mdev->graph_lock);
+ 	media_entity_graph_walk_start(&graph, entity);
+ 
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+@@ -341,7 +341,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
+ 		if (ret < 0 && ret != -ENOIOCTLCMD)
+ 			break;
+ 	}
 -	mutex_unlock(&mdev->graph_mutex);
 +	spin_unlock(&mdev->graph_lock);
  
- 	/* We need one output and at least one input. */
- 	if (pipe->num_inputs == 0 || !pipe->output) {
+ 	return ret ? -ETIMEDOUT : 0;
+ }
 -- 
 2.1.4
