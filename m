@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 18/19] media: au0828 change to use Managed Media Controller API
-Date: Wed, 22 Jul 2015 16:42:19 -0600
-Message-ID: <08112dc4fdb45c72c23723898c865805ff249f3e.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 19/19] sound/usb: Update ALSA driver to use Managed Media Controller API
+Date: Wed, 22 Jul 2015 16:42:20 -0600
+Message-ID: <ebd141fd5758cd1dba9ccba0ddd9aeb029459123.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,416 +12,559 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change au0828 to use Managed Media Controller API to coordinate
-creating/deleting media device on parent usb device it shares
-with the snd-usb-audio driver. With this change, au0828 uses
-media_device_get_devres() to allocate a new media device devres
-or return an existing one, if it finds one.
+Change ALSA driver to use Managed ~media Managed Controller
+API to share tuner with DVB and V4L2 drivers that control
+AU0828 media device.  Media device is created based on a
+newly added field value in the struct snd_usb_audio_quirk.
+Using this approach, the media controller API usage can be
+added for a specific device. In this patch, Media Controller
+API is enabled for AU0828 hw. snd_usb_create_quirk() will
+check this new field, if set will create a media device using
+media_device_get_devres() interface.
 
-au0828 registers entity_notify hook to create media graph for
-the device. It creates necessary links from video, vbi, and
-ALSA entities to decoder and links tuner and decoder entities.
+media_device_get_devres() will allocate a new media device
+devres or return an existing one, if it finds one.
 
-Implements enable_source hanlder for other drivers to use to
-check for tuner connected to the decoder and activate the link
-if tuner is free. In addition, au0828-video will populate decoder
-field struct video_device for v4l-core to use it when it invokes
-enable_source hanlder. au0828 is changed to use enable_source
-hanlder to check for tuner availability from vidioc_g_tuner(),
-au0828_v4l2_close(), and queue_setup() prior to changing tuner
-settings. If tuner isn't free, return busy condition.
+During probe, media usb driver could have created the media
+device devres. It will then register the media device if it
+isn't already registered. Media device unregister is done from
+usb_audio_disconnect().
+
+During probe, media usb driver could have created the
+media device devres. It will then register the media
+device if it isn't already registered. Media device
+unregister is done from usb_audio_disconnect().
+
+New structure media_ctl is added to group the new
+fields to support media entity and links. This new
+structure is added to struct snd_usb_substream.
+
+A new entity_notify hook and a new ALSA capture media
+entity are registered from snd_usb_pcm_open() after
+setting up hardware information for the PCM device.
+
+When a new entity is registered, Media Controller API
+interface media_device_register_entity() invokes all
+registered entity_notify hooks for the media device.
+ALSA entity_notify hook parses all the entity list to
+find a link from decoder it ALSA entity. This indicates
+that the bridge driver created a link from decoder to
+ALSA capture entity.
+
+ALSA will attempt to enable the tuner to link the tuner
+to the decoder calling enable_source handler if one is
+provided by the bridge driver prior to starting Media
+pipeline from snd_usb_substream_capture_trigger(). If
+enable_source returns with tuner busy condition, then
+SNDRV_PCM_TRIGGER_START will fail with -EBUSY. Media
+pipeline is stopped in response to SNDRV_PCM_TRIGGER_STOP.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/usb/au0828/au0828-core.c  | 184 +++++++++++++++++++++++---------
- drivers/media/usb/au0828/au0828-video.c |  72 ++++---------
- drivers/media/usb/au0828/au0828.h       |   5 +
- 3 files changed, 155 insertions(+), 106 deletions(-)
+ sound/usb/Makefile       |  15 +++-
+ sound/usb/card.c         |   5 ++
+ sound/usb/card.h         |   1 +
+ sound/usb/media.c        | 227 +++++++++++++++++++++++++++++++++++++++++++++++
+ sound/usb/media.h        |  52 +++++++++++
+ sound/usb/pcm.c          |  15 +++-
+ sound/usb/quirks-table.h |   1 +
+ sound/usb/quirks.c       |   9 +-
+ sound/usb/stream.c       |   2 +
+ sound/usb/usbaudio.h     |   1 +
+ 10 files changed, 324 insertions(+), 4 deletions(-)
+ create mode 100644 sound/usb/media.c
+ create mode 100644 sound/usb/media.h
 
-diff --git a/drivers/media/usb/au0828/au0828-core.c b/drivers/media/usb/au0828/au0828-core.c
-index 0378a2c..ffdde58 100644
---- a/drivers/media/usb/au0828/au0828-core.c
-+++ b/drivers/media/usb/au0828/au0828-core.c
-@@ -20,6 +20,7 @@
-  */
+diff --git a/sound/usb/Makefile b/sound/usb/Makefile
+index 2d2d122..665fdd9 100644
+--- a/sound/usb/Makefile
++++ b/sound/usb/Makefile
+@@ -2,6 +2,18 @@
+ # Makefile for ALSA
+ #
  
- #include "au0828.h"
-+#include "au8522.h"
- 
- #include <linux/module.h>
- #include <linux/slab.h>
-@@ -129,12 +130,13 @@ static int recv_control_msg(struct au0828_dev *dev, u16 request, u32 value,
- 
- static void au0828_unregister_media_device(struct au0828_dev *dev)
- {
--
- #ifdef CONFIG_MEDIA_CONTROLLER
--	if (dev->media_dev) {
--		media_device_unregister(dev->media_dev);
--		kfree(dev->media_dev);
--		dev->media_dev = NULL;
-+	if (dev->media_dev &&
-+	    media_devnode_is_registered(&dev->media_dev->devnode)) {
-+		media_device_unregister_entity_notify(dev->media_dev,
-+						      &dev->entity_notify);
-+			media_device_unregister(dev->media_dev);
-+			dev->media_dev = NULL;
- 	}
- #endif
- }
-@@ -196,53 +198,23 @@ static void au0828_usb_disconnect(struct usb_interface *interface)
- 	au0828_usb_release(dev);
- }
- 
--static void au0828_media_device_register(struct au0828_dev *dev,
--					  struct usb_device *udev)
--{
--#ifdef CONFIG_MEDIA_CONTROLLER
--	struct media_device *mdev;
--	int ret;
--
--	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
--	if (!mdev)
--		return;
--
--	mdev->dev = &udev->dev;
--
--	if (!dev->board.name)
--		strlcpy(mdev->model, "unknown au0828", sizeof(mdev->model));
--	else
--		strlcpy(mdev->model, dev->board.name, sizeof(mdev->model));
--	if (udev->serial)
--		strlcpy(mdev->serial, udev->serial, sizeof(mdev->serial));
--	strcpy(mdev->bus_info, udev->devpath);
--	mdev->hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
--	mdev->driver_version = LINUX_VERSION_CODE;
--
--	ret = media_device_register(mdev);
--	if (ret) {
--		pr_err(
--			"Couldn't create a media device. Error: %d\n",
--			ret);
--		kfree(mdev);
--		return;
--	}
--
--	dev->media_dev = mdev;
--#endif
--}
--
--
--static void au0828_create_media_graph(struct au0828_dev *dev)
-+void au0828_create_media_graph(struct media_entity *new, void *notify_data)
- {
- #ifdef CONFIG_MEDIA_CONTROLLER
-+	struct au0828_dev *dev = (struct au0828_dev *) notify_data;
- 	struct media_device *mdev = dev->media_dev;
- 	struct media_entity *entity;
- 	struct media_entity *tuner = NULL, *decoder = NULL;
-+	struct media_entity *alsa_capture = NULL;
-+	int ret = 0;
- 
- 	if (!mdev)
- 		return;
- 
-+	if (dev->tuner_linked && dev->vdev_linked && dev->vbi_linked &&
-+		dev->alsa_capture_linked)
-+		return;
++# Media Controller
++ifeq ($(CONFIG_MEDIA_CONTROLLER),y)
++  ifeq ($(CONFIG_MEDIA_SUPPORT),y)
++        KBUILD_CFLAGS += -DUSE_MEDIA_CONTROLLER
++  endif
++  ifeq ($(CONFIG_MEDIA_SUPPORT_MODULE),y)
++    ifeq ($(MODULE),y)
++          KBUILD_CFLAGS += -DUSE_MEDIA_CONTROLLER
++    endif
++  endif
++endif
 +
- 	media_device_for_each_entity(entity, mdev) {
- 		switch (entity->type) {
- 		case MEDIA_ENT_T_V4L2_SUBDEV_TUNER:
-@@ -251,6 +223,9 @@ static void au0828_create_media_graph(struct au0828_dev *dev)
- 		case MEDIA_ENT_T_V4L2_SUBDEV_DECODER:
- 			decoder = entity;
- 			break;
-+		case MEDIA_ENT_T_DEVNODE_ALSA_CAPTURE:
-+			alsa_capture = entity;
-+			break;
+ snd-usb-audio-objs := 	card.o \
+ 			clock.o \
+ 			endpoint.o \
+@@ -13,7 +25,8 @@ snd-usb-audio-objs := 	card.o \
+ 			pcm.o \
+ 			proc.o \
+ 			quirks.o \
+-			stream.o
++			stream.o \
++			media.o
+ 
+ snd-usbmidi-lib-objs := midi.o
+ 
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 1fab977..469d2bf 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -66,6 +66,7 @@
+ #include "format.h"
+ #include "power.h"
+ #include "stream.h"
++#include "media.h"
+ 
+ MODULE_AUTHOR("Takashi Iwai <tiwai@suse.de>");
+ MODULE_DESCRIPTION("USB Audio");
+@@ -619,6 +620,10 @@ static void usb_audio_disconnect(struct usb_interface *intf)
+ 		list_for_each_entry(mixer, &chip->mixer_list, list) {
+ 			snd_usb_mixer_disconnect(mixer);
  		}
++		/* Nice to check quirk && quirk->media_device
++		 * need some special handlings. Doesn't look like
++		 * we have access to quirk here */
++		media_device_delete(intf);
  	}
  
-@@ -259,15 +234,120 @@ static void au0828_create_media_graph(struct au0828_dev *dev)
- 	if (!decoder)
- 		return;
+ 	chip->num_interfaces--;
+diff --git a/sound/usb/card.h b/sound/usb/card.h
+index ef580b4..235a85f 100644
+--- a/sound/usb/card.h
++++ b/sound/usb/card.h
+@@ -155,6 +155,7 @@ struct snd_usb_substream {
+ 	} dsd_dop;
  
--	if (tuner)
--		media_entity_create_link(tuner, 0, decoder, 0,
-+	if (tuner && !dev->tuner_linked) {
-+		ret = media_entity_create_link(tuner, 0, decoder, 0,
- 					 MEDIA_LNK_FL_ENABLED);
--	if (dev->vdev.entity.links)
--		media_entity_create_link(decoder, 1, &dev->vdev.entity, 0,
--				 MEDIA_LNK_FL_ENABLED);
--	if (dev->vbi_dev.entity.links)
--		media_entity_create_link(decoder, 2, &dev->vbi_dev.entity, 0,
--				 MEDIA_LNK_FL_ENABLED);
-+		if (ret == 0)
-+			dev->tuner_linked = 1;
-+	}
-+	if (dev->vdev.entity.links && !dev->vdev_linked) {
-+		ret = media_entity_create_link(decoder, AU8522_PAD_VID_OUT,
-+				&dev->vdev.entity, 0, MEDIA_LNK_FL_ENABLED);
-+		if (ret == 0)
-+			dev->vdev_linked = 1;
-+	}
-+	if (dev->vbi_dev.entity.links && !dev->vbi_linked) {
-+		ret = media_entity_create_link(decoder, AU8522_PAD_VBI_OUT,
-+				&dev->vbi_dev.entity, 0, MEDIA_LNK_FL_ENABLED);
-+		if (ret == 0)
-+			dev->vbi_linked = 1;
-+	}
-+	if (alsa_capture && !dev->alsa_capture_linked) {
-+		ret = media_entity_create_link(decoder, AU8522_PAD_AUDIO_OUT,
-+						alsa_capture, 0,
-+						MEDIA_LNK_FL_ENABLED);
-+		if (ret == 0)
-+			dev->alsa_capture_linked = 1;
-+	}
-+#endif
-+}
+ 	bool trigger_tstamp_pending_update; /* trigger timestamp being updated from initial estimate */
++	void *media_ctl;
+ };
+ 
+ struct snd_usb_stream {
+diff --git a/sound/usb/media.c b/sound/usb/media.c
+new file mode 100644
+index 0000000..ffc028a
+--- /dev/null
++++ b/sound/usb/media.c
+@@ -0,0 +1,227 @@
++/*
++ * media.c - Media Controller specific ALSA driver code
++ *
++ * Copyright (c) 2015 Shuah Khan <shuahkh@osg.samsung.com>
++ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
++ *
++ * This file is released under the GPLv2.
++ */
 +
-+int au0828_enable_source(struct media_entity *enable_sink)
++/*
++ * This file adds Media Controller support to ALSA driver
++ * to use the Media Controller API to share tuner with DVB
++ * and V4L2 drivers that control media device. Media device
++ * is created based on existing quirks framework. Using this
++ * approach, the media controller API usage can be added for
++ * a specific device.
++*/
++
++#include <linux/init.h>
++#include <linux/list.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++#include <linux/ctype.h>
++#include <linux/usb.h>
++#include <linux/moduleparam.h>
++#include <linux/mutex.h>
++#include <linux/usb/audio.h>
++#include <linux/usb/audio-v2.h>
++#include <linux/module.h>
++
++#include <sound/control.h>
++#include <sound/core.h>
++#include <sound/info.h>
++#include <sound/pcm.h>
++#include <sound/pcm_params.h>
++#include <sound/initval.h>
++
++#include "usbaudio.h"
++#include "card.h"
++#include "midi.h"
++#include "mixer.h"
++#include "proc.h"
++#include "quirks.h"
++#include "endpoint.h"
++#include "helper.h"
++#include "debug.h"
++#include "pcm.h"
++#include "format.h"
++#include "power.h"
++#include "stream.h"
++#include "media.h"
++
++#ifdef USE_MEDIA_CONTROLLER
++int media_device_init(struct usb_interface *iface)
 +{
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	struct media_entity  *source;
-+	struct media_link *link, *found_link = NULL;
-+	int i, ret, active_links = 0, n_links = 0;
++	struct media_device *mdev;
++	struct usb_device *usbdev = interface_to_usbdev(iface);
++	int ret;
 +
-+	for (i = 0; i < enable_sink->num_links; i++) {
-+		link = &enable_sink->links[i];
-+		if (link->sink->entity == enable_sink) {
-+			found_link = link;
-+			n_links++;
-+			if (link->flags & MEDIA_LNK_FL_ENABLED)
-+				active_links++;
-+			break;
-+		}
-+	}
-+
-+	if (!n_links || active_links == 1 || !found_link)
-+		return 0;
-+
-+	source = found_link->source->entity;
-+	for (i = 0; i < source->num_links; i++) {
-+		struct media_entity *sink;
-+		int flags = 0;
-+
-+		link = &source->links[i];
-+		sink = link->sink->entity;
-+
-+		if (sink == enable_sink)
-+			flags = MEDIA_LNK_FL_ENABLED;
-+
-+		ret = media_entity_setup_link(link, flags);
++	mdev = media_device_get_devres(&usbdev->dev);
++	if (!mdev)
++		return -ENOMEM;
++	if (!media_devnode_is_registered(&mdev->devnode)) {
++		/* register media device */
++		mdev->dev = &usbdev->dev;
++		if (usbdev->product)
++			strlcpy(mdev->model, usbdev->product,
++				sizeof(mdev->model));
++		if (usbdev->serial)
++			strlcpy(mdev->serial, usbdev->serial,
++				sizeof(mdev->serial));
++		strcpy(mdev->bus_info, usbdev->devpath);
++		mdev->hw_revision = le16_to_cpu(usbdev->descriptor.bcdDevice);
++		ret = media_device_register(mdev);
 +		if (ret) {
-+			pr_err(
-+				"Change tuner link %s->%s to %s. Error %d\n",
-+				source->name, sink->name,
-+				flags ? "enabled" : "disabled",
++			dev_err(&usbdev->dev,
++				"Couldn't create a media device. Error: %d\n",
 +				ret);
 +			return ret;
 +		}
 +	}
 +	return 0;
-+#endif
++}
++
++void media_device_delete(struct usb_interface *iface)
++{
++	struct media_device *mdev;
++	struct usb_device *usbdev = interface_to_usbdev(iface);
++
++	mdev = media_device_find_devres(&usbdev->dev);
++	if (mdev && media_devnode_is_registered(&mdev->devnode))
++		media_device_unregister(mdev);
++}
++
++static void media_entity_alsa_create_link(struct media_entity *entity,
++					void *notify_data)
++{
++	struct snd_usb_substream *subs;
++	struct media_ctl *mctl;
++	struct media_entity *eptr;
++
++	/* private and mctl should be valid for ALSA DEVNODEs */
++	subs = (struct snd_usb_substream *) notify_data;
++	mctl = (struct media_ctl *) subs->media_ctl;
++
++	if (mctl->decoder_linked)
++		return;
++
++	media_device_for_each_entity(eptr, mctl->media_dev) {
++		if (eptr->type == MEDIA_ENT_T_V4L2_SUBDEV_DECODER) {
++			int i;
++
++			for (i = 0; i < eptr->num_links; i++) {
++				struct media_link *link = &eptr->links[i];
++				struct media_entity *sink = link->sink->entity;
++
++				if (!(link->flags & MEDIA_LNK_FL_ENABLED))
++					continue;
++				if (sink == &mctl->media_entity) {
++					mctl->decoder_linked = 1;
++					mctl->decoder = eptr;
++				}
++			}
++		}
++	}
++}
++
++static int media_enable_tuner(struct media_ctl *mctl)
++{
++	int ret;
++
++	if (mctl && mctl->decoder && mctl->media_dev->enable_source) {
++		ret = mctl->media_dev->enable_source(mctl->decoder);
++		if (ret) {
++			mctl->tuner_enabled = 0;
++			return ret;
++		}
++		mctl->tuner_enabled = 1;
++	}
 +	return 0;
 +}
 +
-+static void au0828_media_device_register(struct au0828_dev *dev,
-+					  struct usb_device *udev)
++void media_stream_init(struct snd_usb_substream *subs, struct snd_pcm *pcm,
++			int stream)
 +{
-+#ifdef CONFIG_MEDIA_CONTROLLER
 +	struct media_device *mdev;
-+	int ret;
++	struct media_ctl *mctl;
++	struct device *pcm_dev = &pcm->streams[stream].dev;
 +
-+	mdev = media_device_get_devres(&udev->dev);
++	mdev = media_device_find_devres(&subs->dev->dev);
 +	if (!mdev)
 +		return;
 +
-+	if (!media_devnode_is_registered(&mdev->devnode)) {
-+		/* register media device */
-+		mdev->dev = &udev->dev;
-+		if (udev->product)
-+			strlcpy(mdev->model, udev->product,
-+				sizeof(mdev->model));
-+		if (udev->serial)
-+			strlcpy(mdev->serial, udev->serial,
-+				sizeof(mdev->serial));
-+		strcpy(mdev->bus_info, udev->devpath);
-+		mdev->hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
-+		mdev->enable_source = au0828_enable_source;
-+		ret = media_device_register(mdev);
-+		if (ret) {
-+			dev_err(&udev->dev,
-+				"Couldn't create a media device. Error: %d\n",
-+				ret);
-+			return;
-+		}
-+		/* register entity_notify callback */
-+		dev->entity_notify.notify_data = (void *) dev;
-+		dev->entity_notify.notify = au0828_create_media_graph;
-+		media_device_register_entity_notify(mdev, &dev->entity_notify);
-+	}
-+	/* If ALSA registered the media device - set enable_source */
-+	if (!mdev->enable_source)
-+		mdev->enable_source = au0828_enable_source;
-+	dev->media_dev = mdev;
- #endif
- }
- 
-@@ -383,8 +463,6 @@ static int au0828_usb_probe(struct usb_interface *interface,
- 
- 	mutex_unlock(&dev->lock);
- 
--	au0828_create_media_graph(dev);
--
- 	return retval;
- }
- 
-diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-index 939b2ad..de3140e 100644
---- a/drivers/media/usb/au0828/au0828-video.c
-+++ b/drivers/media/usb/au0828/au0828-video.c
-@@ -641,58 +641,10 @@ static int au0828_enable_analog_tuner(struct au0828_dev *dev)
- {
- #ifdef CONFIG_MEDIA_CONTROLLER
- 	struct media_device *mdev = dev->media_dev;
--	struct media_entity  *entity, *source;
--	struct media_link *link, *found_link = NULL;
--	int i, ret, active_links = 0;
- 
--	if (!mdev || !dev->decoder)
-+	if (!mdev || !dev->decoder || !mdev->enable_source)
- 		return 0;
--
--	/*
--	 * This will find the tuner that is connected into the decoder.
--	 * Technically, this is not 100% correct, as the device may be
--	 * using an analog input instead of the tuner. However, as we can't
--	 * do DVB streaming while the DMA engine is being used for V4L2,
--	 * this should be enough for the actual needs.
--	 */
--	for (i = 0; i < dev->decoder->num_links; i++) {
--		link = &dev->decoder->links[i];
--		if (link->sink->entity == dev->decoder) {
--			found_link = link;
--			if (link->flags & MEDIA_LNK_FL_ENABLED)
--				active_links++;
--			break;
--		}
--	}
--
--	if (active_links == 1 || !found_link)
--		return 0;
--
--	source = found_link->source->entity;
--	for (i = 0; i < source->num_links; i++) {
--		struct media_entity *sink;
--		int flags = 0;
--
--		link = &source->links[i];
--		sink = link->sink->entity;
--
--		if (sink == entity)
--			flags = MEDIA_LNK_FL_ENABLED;
--
--		ret = media_entity_setup_link(link, flags);
--		if (ret) {
--			pr_err(
--				"Couldn't change link %s->%s to %s. Error %d\n",
--				source->name, sink->name,
--				flags ? "enabled" : "disabled",
--				ret);
--			return ret;
--		} else
--			au0828_isocdbg(
--				"link %s->%s was %s\n",
--				source->name, sink->name,
--				flags ? "ENABLED" : "disabled");
--	}
-+	return mdev->enable_source(dev->decoder);
- #endif
- 	return 0;
- }
-@@ -704,6 +656,7 @@ static int queue_setup(struct vb2_queue *vq, const struct v4l2_format *fmt,
- 	struct au0828_dev *dev = vb2_get_drv_priv(vq);
- 	unsigned long img_size = dev->height * dev->bytesperline;
- 	unsigned long size;
-+	int ret;
- 
- 	size = fmt ? fmt->fmt.pix.sizeimage : img_size;
- 	if (size < img_size)
-@@ -712,7 +665,9 @@ static int queue_setup(struct vb2_queue *vq, const struct v4l2_format *fmt,
- 	*nplanes = 1;
- 	sizes[0] = size;
- 
--	au0828_enable_analog_tuner(dev);
-+	ret = au0828_enable_analog_tuner(dev);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
-@@ -1067,8 +1022,12 @@ static int au0828_v4l2_close(struct file *filp)
- 		goto end;
- 
- 	if (dev->users == 1) {
--		/* Save some power by putting tuner to sleep */
--		v4l2_device_call_all(&dev->v4l2_dev, 0, core, s_power, 0);
-+		/* Save some power by putting tuner to sleep, if it is free */
-+		/* What happens when radio is using tuner?? */
-+		ret = au0828_enable_analog_tuner(dev);
-+		if (ret == 0)
-+			v4l2_device_call_all(&dev->v4l2_dev, 0, core,
-+						s_power, 0);
- 		dev->std_set_in_tuner_core = 0;
- 
- 		/* When close the device, set the usb intf0 into alt0 to free
-@@ -1469,10 +1428,15 @@ static int vidioc_s_audio(struct file *file, void *priv, const struct v4l2_audio
- static int vidioc_g_tuner(struct file *file, void *priv, struct v4l2_tuner *t)
- {
- 	struct au0828_dev *dev = video_drvdata(file);
-+	int ret;
- 
- 	if (t->index != 0)
- 		return -EINVAL;
- 
-+	ret = au0828_enable_analog_tuner(dev);
-+	if (ret)
-+		return ret;
++	if (subs->media_ctl)
++		return;
 +
- 	dprintk(1, "%s called std_set %d dev_state %d\n", __func__,
- 		dev->std_set_in_tuner_core, dev->dev_state);
- 
-@@ -1884,11 +1848,13 @@ int au0828_analog_register(struct au0828_dev *dev,
- 	strcpy(dev->vbi_dev.name, "au0828a vbi");
- 
- #if defined(CONFIG_MEDIA_CONTROLLER)
-+	dev->vdev.decoder = dev->decoder;
- 	dev->video_pad.flags = MEDIA_PAD_FL_SINK;
- 	ret = media_entity_init(&dev->vdev.entity, 1, &dev->video_pad, 0);
- 	if (ret < 0)
- 		pr_err("failed to initialize video media entity!\n");
- 
-+	dev->vbi_dev.decoder = dev->decoder;
- 	dev->vbi_pad.flags = MEDIA_PAD_FL_SINK;
- 	ret = media_entity_init(&dev->vbi_dev.entity, 1, &dev->vbi_pad, 0);
- 	if (ret < 0)
-diff --git a/drivers/media/usb/au0828/au0828.h b/drivers/media/usb/au0828/au0828.h
-index d3644b3..a59ba08 100644
---- a/drivers/media/usb/au0828/au0828.h
-+++ b/drivers/media/usb/au0828/au0828.h
-@@ -281,6 +281,11 @@ struct au0828_dev {
- 	struct media_device *media_dev;
- 	struct media_pad video_pad, vbi_pad;
- 	struct media_entity *decoder;
++	/* allocate media_ctl */
++	mctl = kzalloc(sizeof(struct media_ctl), GFP_KERNEL);
++	if (!mctl)
++		return;
++
++	subs->media_ctl = (void *) mctl;
++	mctl->media_dev = mdev;
++	mctl->entity_notify.notify_data = (void *) subs;
++	mctl->entity_notify.notify = media_entity_alsa_create_link;
++	media_device_register_entity_notify(mctl->media_dev,
++							&mctl->entity_notify);
++	if (stream == SNDRV_PCM_STREAM_PLAYBACK)
++		mctl->media_entity.type = MEDIA_ENT_T_DEVNODE_ALSA_PLAYBACK;
++	else
++		mctl->media_entity.type = MEDIA_ENT_T_DEVNODE_ALSA_CAPTURE;
++	mctl->media_entity.name = pcm->name;
++	mctl->media_entity.info.dev.major = MAJOR(pcm_dev->devt);
++	mctl->media_entity.info.dev.minor = MINOR(pcm_dev->devt);
++	mctl->media_pad.flags = MEDIA_PAD_FL_SINK;
++	media_entity_init(&mctl->media_entity, 1, &mctl->media_pad, 0);
++	media_device_register_entity(mctl->media_dev, &mctl->media_entity);
++}
++
++void media_stream_delete(struct snd_usb_substream *subs)
++{
++	struct media_ctl *mctl = (struct media_ctl *) subs->media_ctl;
++
++	if (mctl && mctl->media_dev) {
++		struct media_device *mdev;
++
++		mdev = media_device_find_devres(&subs->dev->dev);
++		if (mdev) {
++			media_entity_remove_links(&mctl->media_entity);
++			media_device_unregister_entity(&mctl->media_entity);
++			media_entity_cleanup(&mctl->media_entity);
++			media_device_unregister_entity_notify(mctl->media_dev,
++							&mctl->entity_notify);
++		}
++		mctl->media_dev = NULL;
++		mctl->decoder_linked = 0;
++		mctl->decoder = NULL;
++		mctl->tuner_enabled = 0;
++		kfree(mctl);
++		subs->media_ctl = NULL;
++	}
++}
++
++int media_start_pipeline(struct snd_usb_substream *subs)
++{
++	struct media_ctl *mctl = (struct media_ctl *) subs->media_ctl;
++	int ret;
++
++	if (!mctl)
++		return 0;
++
++	ret = media_enable_tuner(mctl);
++	if (ret)
++		return ret;
++	ret = media_entity_pipeline_start_irq(&mctl->media_entity,
++						&mctl->media_pipe);
++	return ret;
++}
++
++void media_stop_pipeline(struct snd_usb_substream *subs)
++{
++	struct media_ctl *mctl = (struct media_ctl *) subs->media_ctl;
++
++	if (mctl && mctl->decoder_linked && mctl->tuner_enabled)
++		media_entity_pipeline_stop_irq(&mctl->media_entity);
++}
++#endif
+diff --git a/sound/usb/media.h b/sound/usb/media.h
+new file mode 100644
+index 0000000..07799b4
+--- /dev/null
++++ b/sound/usb/media.h
+@@ -0,0 +1,52 @@
++/*
++ * media.h - Media Controller specific ALSA driver code
++ *
++ * Copyright (c) 2015 Shuah Khan <shuahkh@osg.samsung.com>
++ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
++ *
++ * This file is released under the GPLv2.
++ */
++
++/*
++ * This file adds Media Controller support to ALSA driver
++ * to use the Media Controller API to share tuner with DVB
++ * and V4L2 drivers that control media device. Media device
++ * is created based on existing quirks framework. Using this
++ * approach, the media controller API usage can be added for
++ * a specific device.
++*/
++#ifndef __MEDIA_H
++
++#ifdef USE_MEDIA_CONTROLLER
++#include <media/media-device.h>
++#include <media/media-entity.h>
++
++struct media_ctl {
++	struct media_device *media_dev;
 +	struct media_entity_notify entity_notify;
-+	bool tuner_linked;
-+	bool vdev_linked;
-+	bool vbi_linked;
-+	bool alsa_capture_linked;
- #endif
++	struct media_entity media_entity;
++	struct media_pad media_pad;
++	struct media_pipeline media_pipe;
++	struct media_entity *decoder;
++	bool   decoder_linked;
++	bool   tuner_enabled;
++};
++
++int media_device_init(struct usb_interface *iface);
++void media_device_delete(struct usb_interface *iface);
++void media_stream_init(struct snd_usb_substream *subs, struct snd_pcm *pcm,
++			int stream);
++void media_stream_delete(struct snd_usb_substream *subs);
++int media_start_pipeline(struct snd_usb_substream *subs);
++void media_stop_pipeline(struct snd_usb_substream *subs);
++#else
++static inline int media_device_init(struct usb_interface *iface) { return 0; }
++static inline void media_device_delete(struct usb_interface *iface) { }
++static inline void media_stream_init(struct snd_usb_substream *subs,
++					struct snd_pcm *pcm, int stream) { }
++static inline void media_stream_delete(struct snd_usb_substream *subs) { }
++static inline int media_start_pipeline(struct snd_usb_substream *subs)
++					{ return 0; }
++static inline void media_stop_pipeline(struct snd_usb_substream *subs) { }
++#endif
++#endif /* __MEDIA_H */
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index b4ef410..0e73a3a 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -35,6 +35,7 @@
+ #include "pcm.h"
+ #include "clock.h"
+ #include "power.h"
++#include "media.h"
+ 
+ #define SUBSTREAM_FLAG_DATA_EP_STARTED	0
+ #define SUBSTREAM_FLAG_SYNC_EP_STARTED	1
+@@ -1195,6 +1196,7 @@ static int snd_usb_pcm_open(struct snd_pcm_substream *substream, int direction)
+ 	struct snd_usb_stream *as = snd_pcm_substream_chip(substream);
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct snd_usb_substream *subs = &as->substream[direction];
++	int ret;
+ 
+ 	subs->interface = -1;
+ 	subs->altset_idx = 0;
+@@ -1208,7 +1210,10 @@ static int snd_usb_pcm_open(struct snd_pcm_substream *substream, int direction)
+ 	subs->dsd_dop.channel = 0;
+ 	subs->dsd_dop.marker = 1;
+ 
+-	return setup_hw_info(runtime, subs);
++	ret = setup_hw_info(runtime, subs);
++	if (ret == 0)
++		media_stream_init(subs, as->pcm, direction);
++	return ret;
+ }
+ 
+ static int snd_usb_pcm_close(struct snd_pcm_substream *substream, int direction)
+@@ -1587,9 +1592,14 @@ static int snd_usb_substream_capture_trigger(struct snd_pcm_substream *substream
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
++		err = media_start_pipeline(subs);
++		if (err)
++			return err;
+ 		err = start_endpoints(subs, false);
+-		if (err < 0)
++		if (err < 0) {
++			media_stop_pipeline(subs);
+ 			return err;
++		}
+ 
+ 		subs->data_endpoint->retire_data_urb = retire_capture_urb;
+ 		subs->running = 1;
+@@ -1597,6 +1607,7 @@ static int snd_usb_substream_capture_trigger(struct snd_pcm_substream *substream
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 		stop_endpoints(subs, false);
+ 		subs->running = 0;
++		media_stop_pipeline(subs);
+ 		return 0;
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 		subs->data_endpoint->retire_data_urb = NULL;
+diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
+index 2f6d3e9..51c544f 100644
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -2798,6 +2798,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
+ 		.product_name = pname, \
+ 		.ifnum = QUIRK_ANY_INTERFACE, \
+ 		.type = QUIRK_AUDIO_ALIGN_TRANSFER, \
++		.media_device = 1, \
+ 	} \
+ }
+ 
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 7c5a701..e9a2009 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -36,6 +36,7 @@
+ #include "pcm.h"
+ #include "clock.h"
+ #include "stream.h"
++#include "media.h"
+ 
+ /*
+  * handle the quirks for the contained interfaces
+@@ -541,13 +542,19 @@ int snd_usb_create_quirk(struct snd_usb_audio *chip,
+ 		[QUIRK_AUDIO_ALIGN_TRANSFER] = create_align_transfer_quirk,
+ 		[QUIRK_AUDIO_STANDARD_MIXER] = create_standard_mixer_quirk,
+ 	};
++	int ret;
+ 
++	if (quirk->media_device) {
++		/* don't want to fail when media_device_init() doesn't work */
++		media_device_init(iface);
++	}
+ 	if (quirk->type < QUIRK_TYPE_COUNT) {
+-		return quirk_funcs[quirk->type](chip, iface, driver, quirk);
++		ret = quirk_funcs[quirk->type](chip, iface, driver, quirk);
+ 	} else {
+ 		usb_audio_err(chip, "invalid quirk type %d\n", quirk->type);
+ 		return -ENXIO;
+ 	}
++	return ret;
+ }
+ 
+ /*
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 310a382..6d01c47 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -36,6 +36,7 @@
+ #include "format.h"
+ #include "clock.h"
+ #include "stream.h"
++#include "media.h"
+ 
+ /*
+  * free a substream
+@@ -52,6 +53,7 @@ static void free_substream(struct snd_usb_substream *subs)
+ 		kfree(fp);
+ 	}
+ 	kfree(subs->rate_list.list);
++	media_stream_delete(subs);
+ }
+ 
+ 
+diff --git a/sound/usb/usbaudio.h b/sound/usb/usbaudio.h
+index 91d0380..c2dbf1d 100644
+--- a/sound/usb/usbaudio.h
++++ b/sound/usb/usbaudio.h
+@@ -108,6 +108,7 @@ struct snd_usb_audio_quirk {
+ 	const char *product_name;
+ 	int16_t ifnum;
+ 	uint16_t type;
++	bool media_device;
+ 	const void *data;
  };
  
 -- 
