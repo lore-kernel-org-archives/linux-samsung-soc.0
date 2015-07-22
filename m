@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 01/19] Revert "[media] media: media controller entity framework enhancements for ALSA"
-Date: Wed, 22 Jul 2015 16:42:02 -0600
-Message-ID: <49da931303fc040178a22dc46c161eeaf0d7a350.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 02/19] media: Media Controller register/unregister entity_notify API
+Date: Wed, 22 Jul 2015 16:42:03 -0600
+Message-ID: <21da4006a0f95ec7aad81539e58df5ef04a173cb.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,69 +12,171 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This reverts commit ed64cf1e182fb30fe67652386c0880fcf3302f97.
-This patch is no longer necessary as the entity register
-callback is implemented at media_device level.
+Add new interfaces to register and unregister entity_notify
+hook to media device to allow drivers to take appropriate
+actions when as new entities get added to the shared media
+device.When a new entity is registered, all registered
+entity_notify hooks are invoked to allow drivers or modules
+that registered hook to take appropriate action. For example,
+ALSA driver registers an entity_notify hook to parse the list
+of registered entities to determine if decoder has been linked
+to ALSA entity. au0828 bridge driver registers an entity_notify
+hook to create media graph for the device.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/media-device.c | 7 -------
- include/media/media-entity.h | 4 ----
- 2 files changed, 11 deletions(-)
+ drivers/media/media-device.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+ include/media/media-device.h | 23 ++++++++++++++++++++++
+ 2 files changed, 68 insertions(+)
 
 diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index 76590ba..c55ab50 100644
+index c55ab50..22565a8 100644
 --- a/drivers/media/media-device.c
 +++ b/drivers/media/media-device.c
-@@ -428,8 +428,6 @@ EXPORT_SYMBOL_GPL(media_device_unregister);
+@@ -381,6 +381,7 @@ int __must_check __media_device_register(struct media_device *mdev,
+ 
+ 	mdev->entity_id = 1;
+ 	INIT_LIST_HEAD(&mdev->entities);
++	INIT_LIST_HEAD(&mdev->entity_notify);
+ 	spin_lock_init(&mdev->lock);
+ 	mutex_init(&mdev->graph_mutex);
+ 
+@@ -411,9 +412,12 @@ void media_device_unregister(struct media_device *mdev)
+ {
+ 	struct media_entity *entity;
+ 	struct media_entity *next;
++	struct media_entity_notify *notify, *nextp;
+ 
+ 	list_for_each_entry_safe(entity, next, &mdev->entities, list)
+ 		media_device_unregister_entity(entity);
++	list_for_each_entry_safe(notify, nextp, &mdev->entity_notify, list)
++		media_device_unregister_entity_notify(mdev, notify);
+ 
+ 	device_remove_file(&mdev->devnode.dev, &dev_attr_model);
+ 	media_devnode_unregister(&mdev->devnode);
+@@ -421,6 +425,39 @@ void media_device_unregister(struct media_device *mdev)
+ EXPORT_SYMBOL_GPL(media_device_unregister);
+ 
+ /**
++ * media_device_register_entity_notify - Register a media entity notify
++ * callback with a media device. When a new entity is registered, all
++ * the registered media_entity_notify callbacks are invoked.
++ * @mdev:	The media device
++ * @nptr:	The media_entity_notify
++ */
++int __must_check media_device_register_entity_notify(struct media_device *mdev,
++					struct media_entity_notify *nptr)
++{
++	spin_lock(&mdev->lock);
++	list_add_tail(&nptr->list, &mdev->entity_notify);
++	spin_unlock(&mdev->lock);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(media_device_register_entity_notify);
++
++/**
++ * media_device_unregister_entity_notify - Unregister a media entity notify
++ * callback with a media device. When a new entity is registered, all
++ * the registered media_entity_notify callbacks are invoked.
++ * @mdev:	The media device
++ * @nptr:	The media_entity_notify
++ */
++void media_device_unregister_entity_notify(struct media_device *mdev,
++					struct media_entity_notify *nptr)
++{
++	spin_lock(&mdev->lock);
++	list_del(&nptr->list);
++	spin_unlock(&mdev->lock);
++}
++EXPORT_SYMBOL_GPL(media_device_unregister_entity_notify);
++
++/**
+  * media_device_register_entity - Register an entity with a media device
+  * @mdev:	The media device
+  * @entity:	The entity
+@@ -428,6 +465,8 @@ EXPORT_SYMBOL_GPL(media_device_unregister);
  int __must_check media_device_register_entity(struct media_device *mdev,
  					      struct media_entity *entity)
  {
--	struct media_entity *eptr;
--
++	struct media_entity_notify *notify, *next;
++
  	/* Warn if we apparently re-register an entity */
  	WARN_ON(entity->parent != NULL);
  	entity->parent = mdev;
-@@ -442,11 +440,6 @@ int __must_check media_device_register_entity(struct media_device *mdev,
+@@ -440,6 +479,11 @@ int __must_check media_device_register_entity(struct media_device *mdev,
  	list_add_tail(&entity->list, &mdev->entities);
  	spin_unlock(&mdev->lock);
  
--	media_device_for_each_entity(eptr, mdev) {
--		if (eptr != entity)
--			media_entity_call(eptr, register_notify);
--	}
--
++	/* invoke entity_notify callbacks */
++	list_for_each_entry_safe(notify, next, &mdev->entity_notify, list) {
++		(notify)->notify(entity, notify->notify_data);
++	}
++
  	return 0;
  }
  EXPORT_SYMBOL_GPL(media_device_register_entity);
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 0bc4c2f..0c003d8 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -46,7 +46,6 @@ struct media_pad {
+@@ -462,6 +506,7 @@ void media_device_unregister_entity(struct media_entity *entity)
+ 	list_del(&entity->list);
+ 	spin_unlock(&mdev->lock);
+ 	entity->parent = NULL;
++	/* invoke entity_notify callbacks to handle entity removal?? */
+ }
+ EXPORT_SYMBOL_GPL(media_device_unregister_entity);
  
+diff --git a/include/media/media-device.h b/include/media/media-device.h
+index a44f18f..a3854f6 100644
+--- a/include/media/media-device.h
++++ b/include/media/media-device.h
+@@ -32,6 +32,12 @@
+ 
+ struct device;
+ 
++struct media_entity_notify {
++	struct list_head list;
++	void *notify_data;
++	void (*notify)(struct media_entity *entity, void *notify_data);
++};
++
  /**
-  * struct media_entity_operations - Media entity operations
-- * @register_notify	Notify entity of newly registered entity
-  * @link_setup:		Notify the entity of link changes. The operation can
-  *			return an error, in which case link setup will be
-  *			cancelled. Optional.
-@@ -55,7 +54,6 @@ struct media_pad {
-  *			validates all links by calling this operation. Optional.
-  */
- struct media_entity_operations {
--	int (*register_notify)(struct media_entity *entity);
- 	int (*link_setup)(struct media_entity *entity,
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
-@@ -103,8 +101,6 @@ struct media_entity {
- 		/* Sub-device specifications */
- 		/* Nothing needed yet */
- 	} info;
--
--	void *private;			/* private data for the entity */
- };
+  * struct media_device - Media device
+  * @dev:	Parent device
+@@ -70,6 +76,8 @@ struct media_device {
  
- static inline u32 media_entity_type(struct media_entity *entity)
+ 	u32 entity_id;
+ 	struct list_head entities;
++	/* notify callback list invoked when a new entity is registered */
++	struct list_head entity_notify;
+ 
+ 	/* Protects the entities list */
+ 	spinlock_t lock;
+@@ -94,6 +102,10 @@ int __must_check __media_device_register(struct media_device *mdev,
+ #define media_device_register(mdev) __media_device_register(mdev, THIS_MODULE)
+ void media_device_unregister(struct media_device *mdev);
+ 
++int __must_check media_device_register_entity_notify(struct media_device *mdev,
++					struct media_entity_notify *nptr);
++void media_device_unregister_entity_notify(struct media_device *mdev,
++					struct media_entity_notify *nptr);
+ int __must_check media_device_register_entity(struct media_device *mdev,
+ 					      struct media_entity *entity);
+ void media_device_unregister_entity(struct media_entity *entity);
+@@ -112,6 +124,17 @@ static inline int media_device_register(struct media_device *mdev)
+ static inline void media_device_unregister(struct media_device *mdev)
+ {
+ }
++static inline int media_device_register_entity_notify(
++					struct media_device *mdev,
++					struct media_entity_notify *nptr)
++{
++	return 0;
++}
++static inline void media_device_unregister_entity_notify(
++					struct media_device *mdev,
++					struct media_entity_notify *nptr)
++{
++}
+ static inline int media_device_register_entity(struct media_device *mdev,
+ 						struct media_entity *entity)
+ {
 -- 
 2.1.4
