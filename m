@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 07/19] media: platform omap3isp: Update graph_mutex to graph_lock spinlock
-Date: Wed, 22 Jul 2015 16:42:08 -0600
-Message-ID: <37d1b3c4cfa07bd17daa30e649c500671153280a.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 09/19] media: platform vsp1: Update graph_mutex to graph_lock spinlock
+Date: Wed, 22 Jul 2015 16:42:10 -0600
+Message-ID: <9a7ee207c921530df11f50903ab812fd4d25a3e1.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -17,53 +17,30 @@ the Media Conttroller change for the same.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/platform/omap3isp/isp.c      | 4 ++--
- drivers/media/platform/omap3isp/ispvideo.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index 18d0a87..a6e7f92 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -789,7 +789,7 @@ int omap3isp_pipeline_pm_use(struct media_entity *entity, int use)
- 	int change = use ? 1 : -1;
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index d91f19a..c012fb8 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -413,7 +413,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
+ 	unsigned int i;
  	int ret;
- 
--	mutex_lock(&entity->parent->graph_mutex);
-+	spin_lock(&entity->parent->graph_lock);
- 
- 	/* Apply use count to node. */
- 	entity->use_count += change;
-@@ -800,7 +800,7 @@ int omap3isp_pipeline_pm_use(struct media_entity *entity, int use)
- 	if (ret < 0)
- 		entity->use_count -= change;
- 
--	mutex_unlock(&entity->parent->graph_mutex);
-+	spin_unlock(&entity->parent->graph_lock);
- 
- 	return ret;
- }
-diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/platform/omap3isp/ispvideo.c
-index d285af1..9ec3bb7 100644
---- a/drivers/media/platform/omap3isp/ispvideo.c
-+++ b/drivers/media/platform/omap3isp/ispvideo.c
-@@ -229,7 +229,7 @@ static int isp_video_get_graph_data(struct isp_video *video,
- 	struct media_device *mdev = entity->parent;
- 	struct isp_video *far_end = NULL;
  
 -	mutex_lock(&mdev->graph_mutex);
 +	spin_lock(&mdev->graph_lock);
- 	media_entity_graph_walk_start(&graph, entity);
  
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
-@@ -251,7 +251,7 @@ static int isp_video_get_graph_data(struct isp_video *video,
- 			far_end = __video;
+ 	/* Walk the graph to locate the entities and video nodes. */
+ 	media_entity_graph_walk_start(&graph, entity);
+@@ -447,7 +447,7 @@ static int vsp1_pipeline_validate(struct vsp1_pipeline *pipe,
+ 		}
  	}
  
 -	mutex_unlock(&mdev->graph_mutex);
 +	spin_unlock(&mdev->graph_lock);
  
- 	if (video->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
- 		pipe->input = far_end;
+ 	/* We need one output and at least one input. */
+ 	if (pipe->num_inputs == 0 || !pipe->output) {
 -- 
 2.1.4
