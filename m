@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 11/19] staging media: davinci_vpfe: Update graph_mutex to graph_lock spinlock
-Date: Wed, 22 Jul 2015 16:42:12 -0600
-Message-ID: <8e4896bee216cc4aa30a16d799b6ea896e99c919.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 12/19] staging media: omap4iss: Update graph_mutex to graph_lock spinlock
+Date: Wed, 22 Jul 2015 16:42:13 -0600
+Message-ID: <13f40d9fa030ad84ee1e5332132eabf15fee3293.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -17,66 +17,53 @@ the Media Conttroller change for the same.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/staging/media/davinci_vpfe/vpfe_video.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/media/omap4iss/iss.c       | 4 ++--
+ drivers/staging/media/omap4iss/iss_video.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-index 87048a1..2511614 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-@@ -143,7 +143,7 @@ static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
- 	else
- 		pipe->outputs[pipe->output_num++] = video;
+diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
+index 9bfb725..017ef74 100644
+--- a/drivers/staging/media/omap4iss/iss.c
++++ b/drivers/staging/media/omap4iss/iss.c
+@@ -494,7 +494,7 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
+ 	int change = use ? 1 : -1;
+ 	int ret;
  
--	mutex_lock(&mdev->graph_mutex);
-+	spin_lock(&mdev->graph_lock);
- 	media_entity_graph_walk_start(&graph, entity);
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
- 		if (entity == &video->video_dev.entity)
-@@ -156,7 +156,7 @@ static void vpfe_prepare_pipeline(struct vpfe_video_device *video)
- 		else
- 			pipe->outputs[pipe->output_num++] = far_end;
- 	}
--	mutex_unlock(&mdev->graph_mutex);
-+	spin_unlock(&mdev->graph_lock);
- }
+-	mutex_lock(&entity->parent->graph_mutex);
++	spin_lock(&entity->parent->graph_lock);
  
- /* update pipe state selected by user */
-@@ -289,7 +289,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
- 		entity = &pipe->inputs[0]->video_dev.entity;
+ 	/* Apply use count to node. */
+ 	entity->use_count += change;
+@@ -505,7 +505,7 @@ int omap4iss_pipeline_pm_use(struct media_entity *entity, int use)
+ 	if (ret < 0)
+ 		entity->use_count -= change;
  
- 	mdev = entity->parent;
--	mutex_lock(&mdev->graph_mutex);
-+	spin_lock(&mdev->graph_lock);
- 	media_entity_graph_walk_start(&graph, entity);
- 	while ((entity = media_entity_graph_walk_next(&graph))) {
+-	mutex_unlock(&entity->parent->graph_mutex);
++	spin_unlock(&entity->parent->graph_lock);
  
-@@ -300,7 +300,7 @@ static int vpfe_pipeline_enable(struct vpfe_pipeline *pipe)
- 		if (ret < 0 && ret != -ENOIOCTLCMD)
- 			break;
- 	}
--	mutex_unlock(&mdev->graph_mutex);
-+	spin_unlock(&mdev->graph_lock);
  	return ret;
  }
+diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging/media/omap4iss/iss_video.c
+index 85c54fe..2db9d16 100644
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -210,7 +210,7 @@ iss_video_far_end(struct iss_video *video)
+ 	struct media_device *mdev = entity->parent;
+ 	struct iss_video *far_end = NULL;
  
-@@ -329,7 +329,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
- 		entity = &pipe->inputs[0]->video_dev.entity;
- 
- 	mdev = entity->parent;
 -	mutex_lock(&mdev->graph_mutex);
 +	spin_lock(&mdev->graph_lock);
  	media_entity_graph_walk_start(&graph, entity);
  
  	while ((entity = media_entity_graph_walk_next(&graph))) {
-@@ -341,7 +341,7 @@ static int vpfe_pipeline_disable(struct vpfe_pipeline *pipe)
- 		if (ret < 0 && ret != -ENOIOCTLCMD)
- 			break;
+@@ -227,7 +227,7 @@ iss_video_far_end(struct iss_video *video)
+ 		far_end = NULL;
  	}
+ 
 -	mutex_unlock(&mdev->graph_mutex);
 +	spin_unlock(&mdev->graph_lock);
- 
- 	return ret ? -ETIMEDOUT : 0;
+ 	return far_end;
  }
+ 
 -- 
 2.1.4
