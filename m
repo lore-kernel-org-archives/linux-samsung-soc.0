@@ -1,91 +1,93 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: Linux-next, Exynos Octa boot fail,
- bisected to: "drm/exynos: remove drm_iommu_attach_device_if_possible"
-Date: Wed, 22 Jul 2015 17:12:08 +0900
-Message-ID: <55AF5058.3060106@samsung.com>
-References: <CAJKOXPehvV2jbxaiBmdgj98T59Y5aeK+6px6zTHR9Z=SdTDC8w@mail.gmail.com>
- <55AEF9AD.6090709@samsung.com> <55AF222F.1060303@samsung.com>
+From: Michal Suchanek <hramrach@gmail.com>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Wed, 22 Jul 2015 10:18:04 +0200
+Message-ID: <CAOMqctQ13JE+GHyj+hU4XL3Uz4+Yt_X6BFU=NO8jXcpRtzMyzQ@mail.gmail.com>
+References: <cover.1433364398.git.hramrach@gmail.com> <201507220933.19752.marex@denx.de>
+ <CAOMqctTmRy0gOchdUQ+VnoV-oJz0v9NpUPLi1pxO_O9QrLXsZA@mail.gmail.com> <201507220958.00231.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <55AF222F.1060303@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:34689 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755720AbbGVISp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jul 2015 04:18:45 -0400
+In-Reply-To: <201507220958.00231.marex@denx.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Vasut <marex@denx.de>
+Cc: Vinod Koul <vinod.koul@intel.com>, Brian Norris <computersforpeace@gmail.com>, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, =?UTF-8?B?QmVhbiBIdW8g6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>Mar
 
-T24gMDcvMjIvMjAxNSAwMTo1NSBQTSwgSW5raSBEYWUgd3JvdGU6Cj4gT24gMjAxNeuFhCAwN+yb
-lCAyMuydvCAxMTowMiwgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4+IE9uIDA3LzIxLzIwMTUgMTA6
-MTkgUE0sIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6Cj4+PiBIaSwKPj4+Cj4+PiBUb2RheSdz
-IGxpbnV4LW5leHQgKG5leHQtMjAxNTA3MjEpIGVuY291bnRlcnMgYm9vdCBmYWlsdXJlcyBvbiBF
-eHlub3MKPj4+IE9jdGEgKEV4eW5vczU0MjIpIGJhc2VkIGJvYXJkcy4gVGhlIGJvYXJkcyBoYW5n
-cy4gSSBiaXNlY3RlZCBpdCB0bzoKPj4+Cj4+PiBkODAxNjdiODUwMjQ5ODJjNWYxOGQwNDgxYTVj
-MjQ4MTAwMzYwMTE4IGlzIHRoZSBmaXJzdCBiYWQgY29tbWl0Cj4+PiBjb21taXQgZDgwMTY3Yjg1
-MDI0OTgyYzVmMThkMDQ4MWE1YzI0ODEwMDM2MDExOAo+Pj4gQXV0aG9yOiBKb29ueW91bmcgU2hp
-bSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4+PiBEYXRlOiAgIFRodSBKdWwgMiAyMTo0OToz
-OSAyMDE1ICswOTAwCj4+Pgo+Pj4gICAgIGRybS9leHlub3M6IHJlbW92ZSBkcm1faW9tbXVfYXR0
-YWNoX2RldmljZV9pZl9wb3NzaWJsZQo+Pj4KPj4+ICAgICBBbHJlYWR5IGRybV9pb21tdV9hdHRh
-Y2hfZGV2aWNlIGNoZWNrcyB3aGV0aGVyIHN1cHBvcnQgaW9tbXUgaW50ZXJuYWxseS4KPj4+ICAg
-ICBJdCBzaG91bGQgY2xlYXIgY2hhbm5lbHMgYWx3YXlzIHJlZ2FyZGxlc3MgaW9tbXUgc3VwcG9y
-dC4gV2UgZGlkbid0IGtub3cKPj4+ICAgICBiZWNhdXNlIHdlIGNhbiBkZXRlY3QgdGhlIHByb2Js
-ZW0gd2hlbiBpb21tdSBpcyBlbmFibGVkLCBzbyB3ZSBkb24ndAo+Pj4gICAgIGhhdmUgdG8gdXNl
-IGRybV9pb21tdV9hdHRhY2hfZGV2aWNlX2lmX3Bvc3NpYmxlIGFuZCB0aGVuIHdlIGNhbiByZW1v
-dmUKPj4+ICAgICBkcm1faW9tbXVfYXR0YWNoX2RldmljZV9pZl9wb3NzaWJsZSBhbmQgY2xlYXJf
-Y2hhbm5lbHMgZnVuY3Rpb24gcG9pbnRlci4KPj4+Cj4+PiAgICAgU2lnbmVkLW9mZi1ieTogSm9v
-bnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+Pj4gICAgIFRlc3RlZC1ieTog
-TWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+Pj4gICAgIFNpZ25l
-ZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4+Cj4+PiA6MDQwMDAw
-IDA0MDAwMCA4MzM3OWVmYmY0OTYwZjU4ZDY4MDM3MTYyOGVjMDQzODc5MzViZDUzCj4+PiBkYTAz
-YzMzOGI4OGU3Y2I2YmRhODk1YjNkZDUyZDc4ZDliNmViYTMwIE0gZHJpdmVycwo+Pj4KPj4+Cj4+
-PiBDb25maWc6IGV4eW5vcwo+Pj4gQm9vdCBsb2cgZnJvbSBPZHJvaWQgWFUzLUxpdGUgYXR0YWNo
-ZWQuCj4+Pgo+Pj4gQW55IGhpbnRzIG9yIGlkZWFzPwo+Pgo+PiBUaGUgcG9pbnQgdGhhdCBoYW5n
-cyBpcyB3aGVuIGFjY2Vzc2VzIGZpbWQgcmVnaXN0ZXIgaW4KPj4gZmltZF9jbGVhcl9jaGFubmVs
-cyBmdW5jdGlvbiwgc28gaSBkb3VidCBjbG9jayBzZXR0aW5nIGZvciBmaW1kLgo+Pgo+PiBJdCdz
-IGdvbmUgc29tZXRoaW5nIHRoYXQgaGFuZ3MgYWZ0ZXIgaSBlbmFibGUgZ2F0aW5nIGZvciBBQ0xL
-XzIwMF9ESVNQMQo+PiBjbG9jay4KPj4KPj4gSWYgQUNMS18yMDBfRElTUDEgY2xvY2sgbmVlZHMg
-Zm9yIGZpbWQgcmVhbGx5LCBpJ20gdGhpbmtpbmcgaG93IGNhbiBpdAo+PiBzdXBwb3J0LiBBbnkg
-aWRlYXM/Cj4gCj4gSSB0aGluayBib290bG9hZGVyIHNob3VsZCBoYXZlIGVuYWJsZWQgQUNMS18y
-MDBfRElTUDEgY2xvY2sgYW5kIGFsc28KPiBkZXZpY2UgZHJpdmVyIHNob3VsZCBlbmFibGUgYWxs
-IHJlbGV2YW50IGNsb2NrcyBiZWZvcmUgdGhlIGRldmljZQo+IGFjY2Vzc2VzIGl0cyBvd24gcmVn
-aXN0ZXJzLgo+IAo+IEJlc3Qgd2F5IHdvdWxkIGJlIHRoYXQgdGhlIGNsb2NrIGlzIGVuYWJsZWQg
-YnkgY29tbW9uIGNsb2NrIGZyYW1ld29yawo+IGJ1dCBpdCBzZWVtcyB0aGVyZSBpcyBubyBhbnl0
-aGluZyB0aGF0IHRoZSBjbG9jayBmcmFtZXdvcmsgY2FuIGRvIGl0LiBTbwo+IEkgdGhpbmsgd2hh
-dCB3ZSBoYXZlIHRvIGRvIGlzIHRvIGFkZCB0aGUgY2xvY2sgc3VwcG9ydCB0byBkZXZpY2UgdHJl
-ZS4KCkl0J3Mgbm90IGVhc3kgcHJvYmxlbSB0byBtZS4gU2hvdWxkIHdlIGFkZCB3aGljaCBjbG9j
-az8gSSB0aGluayB3ZQpjYW5ub3QgY29udHJvbCBBQ0xLXzIwMF9ESVNQMSBvciBDTEtESVYyX0RJ
-U1AxX0JMSyBkaXJlY3RseSBieSBiZWxvdwpoaWVyYXJjaHksIHJpZ2h0PyBUaGVuIHdlIHNob3Vs
-ZCBjb250cm9sIGdhdGUgY2xvY2tzLCBidXQgd2UgaGF2ZSBub3QKY29udHJvbGxlZCBhbnkgZ2F0
-ZSBjbG9ja3MgdXNpbmcgQlRTXyBwcmVmaXguCgpUaGUgY2xvY2sgaGllcmFyY2h5IGZyb20gRXh5
-bm9zNTQyMiB1c2VyIG1hbnVhbCwKQUNMS18yMDBfRElTUDEgLS0gQ0xLRElWMl9ESVNQMV9CTEsg
-LS0gSERNSSBMSU5LCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEhETUkg
-UEhZCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE1JQzEKICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRFNJTTEKICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgRFBUWCBMSU5LCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIE1ETklFMQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBT
-WVNNTVVfTUlYRVIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgU1lTTU1V
-X0ZJTUQxX00wCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFNZU01NVV9G
-SU1EMV9NMQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBCVFNfVFZNMAog
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBCVFNfVFZNMQogICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBCVFNfRklNRDFfTTAKICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgQlRTX0ZJTUQxX00xCgpPdGhlciB3YXksIElNSE8sIGZp
-bWQgZHJpdmVyIGRvZXNuJ3QgaGF2ZSB0byBlbmFibGUgQUNMS18yMDBfRElTUDEgY2xvY2ssCmp1
-c3QgaXQgc2hvdWxkIGJlIGNvbnRyb2xsZWQgYnkgY29ubmVjdG9yIGRyaXZlcnMsIGUuZy4gZHNp
-LCBkcCBiZWNhdXNlCmZpbWQgb25seSBjYW5ub3Qgb3BlcmF0ZSwgc28gZHNpIG9yIGRwIG11c3Qg
-bmVlZCAoQWN0dWFsbHkgaSdtIG5vdCBzdXJlCmFib3V0IHRoaXMsIGp1c3QgaSB0aG91Z2h0IHRo
-YXQgRXh5bm9zNSBTb0NzIGRvbid0IGhhdmUgYW55IGdwaW9zIGZvcgpkcGksIHNvIHRoZXkgY2Fu
-bm90IHVzZSBkcGksIHJpZ2h0PykuCgpJdCBuZWVkcyB0byBwcm9iZSBjb25uZWN0b3IgZHJpdmVy
-IGxpa2UgZHNpIG9yIGRwIGVhcmxpZXIgdGhhbiBmaW1kIGFuZApmaW1kX2JpbmQgZnVuY3Rpb24g
-c2hvdWxkIHJldHVybiBlcnJvciBpZiBjb25uZWN0b3IgZHJpdmVyIGxpa2UgZHNpIG9yCmRwIHdh
-cyBub3QgcHJvYmVkLiBUaGlzIGlzIGFsc28gbm90IGVhc3kgdG8gbWUuCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 22 July 2015 at 09:58, Marek Vasut <marex@denx.de> wrote:
+> On Wednesday, July 22, 2015 at 09:45:27 AM, Michal Suchanek wrote:
+>> On 22 July 2015 at 09:33, Marek Vasut <marex@denx.de> wrote:
+>> > On Wednesday, July 22, 2015 at 09:30:54 AM, Michal Suchanek wrote:
+>> >> On 22 July 2015 at 06:49, Vinod Koul <vinod.koul@intel.com> wrote:
+>> >> > On Tue, Jul 21, 2015 at 10:14:11AM +0200, Michal Suchanek wrote:
+>> >> >> > Or alternatively we could publish the limitations of the channel
+>> >> >> > using capabilities so SPI knows I have a dmaengine channel and it
+>> >> >> > can transfer max N length transfers so would be able to break
+>> >> >> > rather than guessing it or coding in DT. Yes it may come from DT
+>> >> >> > but that should be dmaengine driver rather than client driver :)
+>> >> >> >
+>> >> >> > This can be done by dma_get_slave_caps(chan, &caps)
+>> >> >> >
+>> >> >> > And we add max_length as one more parameter to existing set
+>> >> >> >
+>> >> >> > Also all this could be handled in generic SPI-dmaengine layer so
+>> >> >> > that individual drivers don't have to code it in
+>> >> >> >
+>> >> >> > Let me know if this idea is okay, I can push the dmaengine bits...
+>> >> >>
+>> >> >> It would be ok if there was a fixed limit. However, the limit depends
+>> >> >> on SPI slave settings. Presumably for other buses using the dmaengine
+>> >> >> the limit would depend on the bus or slave settings as well. I do not
+>> >> >> see a sane way of passing this all the way to the dmaengine driver.
+>> >> >
+>> >> > I don't see why this should be client (SPI) dependent. The max length
+>> >> > supported is a dmaengine constraint, typically flowing from max
+>> >> > blocks/length it can transfer. Know this limit can allow clients to
+>> >> > split transfers.
+>> >>
+>> >> In practice on the board I have the maximum transfer length before it
+>> >> fails depends on SPI bus speed which is set up per slave. I did not
+>> >> try searching the space of possible settings thorougly and settled for
+>> >> a setting that gives reasonable speed and transfer length.
+>> >
+>> > This looks more like a signal integrity issue though.
+>>
+>> It certainly does on the surface. However, when wrong data is
+>> delivered over the SPI bus (such as when I use wrong phase setting)
+>> the SPI controller happily delivers wrong data over PIO.
+>>
+>> The failure I am seeing is that the pl330 DMA program which repeatedly
+>> waits for data from the SPI controller never finishes the read loop
+>> and does not signal the interrupt. It seems it also leaves some data
+>> in a FIFO somewhere so next command on the flash returns garbage and
+>> fails.
+>
+> I observed something similar on MXS (mx28) SPI block. Do you use mixed
+> PIO/DMA mode perhaps ?
+
+The SPI driver uses PIO for short transfers and DMA for transfers
+longer than the controller FIFO. This seems to be the standard way to
+do things.It works flawlessly so long as submitting overly long DMA
+programs is avoided.
+
+> Do you have the option to connect a bus analyzer?
+> I can probably offer you some tools, I'm in Prague ...
+
+The flash chip is accessible when removing the bottom cover. It is
+VSOP8 package slightly lower than SOP8 so attaching clips to it might
+be a bit problematic. That's the only accessible part. Everything
+other than SPI is inside the SoC.
+
+Since SPI has no verification whatsoever the chip might be completely
+dead and you can still read fine all zeroes or all ones when
+attempting a read from it. I observed this behaviour when I used a
+flash chip in a socket and it was not firmly seated. It was with a
+different SPI controller, though.
+
+Thanks
+
+Michal
