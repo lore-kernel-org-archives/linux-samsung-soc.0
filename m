@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 08/19] media: platform s3c-camif: Update graph_mutex to graph_lock spinlock
-Date: Wed, 22 Jul 2015 16:42:09 -0600
-Message-ID: <8e89eac538be404ecf4ba6b3f1d202e9d989f3df.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 13/19] media: Add irq safe Media Controller start/stop pipeline API
+Date: Wed, 22 Jul 2015 16:42:14 -0600
+Message-ID: <84442c1c9f7f725189a935936751fc4117ae9c5f.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,41 +12,175 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Update graph_mutex to graph_lock spinlock to be in sync with
-the Media Conttroller change for the same.
+Add irq safe Media Controller start/stop pipeline API
+media_entity_pipeline_start_irq()
+media_entity_pipeline_stop_irq()
+to be used from inside interrupt context.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/platform/s3c-camif/camif-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/media-entity.c | 80 +++++++++++++++++++++++++++++++++++++-------
+ include/media/media-entity.h |  3 ++
+ 2 files changed, 70 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index f47b332..90dd781 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -495,7 +495,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_sens;
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 31132573..293cf25 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -210,6 +210,8 @@ EXPORT_SYMBOL_GPL(media_entity_graph_walk_next);
  
--	mutex_lock(&camif->media_dev.graph_mutex);
-+	spin_lock(&camif->media_dev.graph_lock);
+ /**
+  * media_entity_pipeline_start - Mark a pipeline as streaming
++ * media_entity_pipeline_start_irq - Mark a pipeline as streaming
++ *			(safe to be used from inside interrupt context)
+  * @entity: Starting entity
+  * @pipe: Media pipeline to be assigned to all entities in the pipeline.
+  *
+@@ -222,16 +224,18 @@ EXPORT_SYMBOL_GPL(media_entity_graph_walk_next);
+  * pipeline pointer must be identical for all nested calls to
+  * media_entity_pipeline_start().
+  */
+-__must_check int media_entity_pipeline_start(struct media_entity *entity,
+-					     struct media_pipeline *pipe)
++/*
++ * __media_entity_pipeline_start()
++ * Should be called with graph_lock held
++*/
++static __must_check int __media_entity_pipeline_start(
++						struct media_entity *entity,
++						struct media_pipeline *pipe)
+ {
+-	struct media_device *mdev = entity->parent;
+ 	struct media_entity_graph graph;
+ 	struct media_entity *entity_err = entity;
+ 	int ret;
  
- 	ret = v4l2_device_register_subdev_nodes(&camif->v4l2_dev);
- 	if (ret < 0)
-@@ -509,12 +509,12 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_unlock;
+-	spin_lock(&mdev->graph_lock);
+-
+ 	media_entity_graph_walk_start(&graph, entity);
  
--	mutex_unlock(&camif->media_dev.graph_mutex);
-+	spin_unlock(&camif->media_dev.graph_lock);
- 	pm_runtime_put(dev);
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+@@ -303,8 +307,6 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
+ 		}
+ 	}
+ 
+-	spin_unlock(&mdev->graph_lock);
+-
  	return 0;
  
- err_unlock:
--	mutex_unlock(&camif->media_dev.graph_mutex);
-+	spin_unlock(&camif->media_dev.graph_lock);
- err_sens:
- 	v4l2_device_unregister(&camif->v4l2_dev);
- 	media_device_unregister(&camif->media_dev);
+ error:
+@@ -327,14 +329,46 @@ error:
+ 			break;
+ 	}
+ 
+-	spin_unlock(&mdev->graph_lock);
++	return ret;
++}
+ 
++/*
++ * media_entity_pipeline_start - Mark a pipeline as streaming
++ *			(unsafe to be used from inside interrupt context)
++*/
++__must_check int media_entity_pipeline_start(struct media_entity *entity,
++					     struct media_pipeline *pipe)
++{
++	int ret;
++
++	spin_lock(&entity->parent->graph_lock);
++	ret = __media_entity_pipeline_start(entity, pipe);
++	spin_unlock(&entity->parent->graph_lock);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(media_entity_pipeline_start);
+ 
++/*
++ * media_entity_pipeline_start_irq - Mark a pipeline as streaming
++ *			(safe to be used from inside interrupt context)
++*/
++__must_check int media_entity_pipeline_start_irq(struct media_entity *entity,
++						 struct media_pipeline *pipe)
++{
++	int ret;
++	unsigned long flags;
++
++	spin_lock_irqsave(&entity->parent->graph_lock, flags);
++	ret = __media_entity_pipeline_start(entity, pipe);
++	spin_unlock_irqrestore(&entity->parent->graph_lock, flags);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(media_entity_pipeline_start_irq);
++
+ /**
+  * media_entity_pipeline_stop - Mark a pipeline as not streaming
++ * media_entity_pipeline_stop_irq - Mark a pipeline as not streaming
++ *			(safe to be used from inside interrupt context)
+  * @entity: Starting entity
+  *
+  * Mark all entities connected to a given entity through enabled links, either
+@@ -345,13 +379,10 @@ EXPORT_SYMBOL_GPL(media_entity_pipeline_start);
+  * number of calls to this function are required to mark the pipeline as not
+  * streaming.
+  */
+-void media_entity_pipeline_stop(struct media_entity *entity)
++static void __media_entity_pipeline_stop(struct media_entity *entity)
+ {
+-	struct media_device *mdev = entity->parent;
+ 	struct media_entity_graph graph;
+ 
+-	spin_lock(&mdev->graph_lock);
+-
+ 	media_entity_graph_walk_start(&graph, entity);
+ 
+ 	while ((entity = media_entity_graph_walk_next(&graph))) {
+@@ -359,11 +390,34 @@ void media_entity_pipeline_stop(struct media_entity *entity)
+ 		if (entity->stream_count == 0)
+ 			entity->pipe = NULL;
+ 	}
++}
+ 
+-	spin_unlock(&mdev->graph_lock);
++/*
++ * media_entity_pipeline_stop - Mark a pipeline as not streaming
++ *			(unsafe to be used from inside interrupt context)
++*/
++void media_entity_pipeline_stop(struct media_entity *entity)
++{
++	spin_lock(&entity->parent->graph_lock);
++	__media_entity_pipeline_stop(entity);
++	spin_unlock(&entity->parent->graph_lock);
+ }
+ EXPORT_SYMBOL_GPL(media_entity_pipeline_stop);
+ 
++/*
++ * media_entity_pipeline_stop_irq - Mark a pipeline as not streaming
++ *			(safe to be used from inside interrupt context)
++*/
++void media_entity_pipeline_stop_irq(struct media_entity *entity)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&entity->parent->graph_lock, flags);
++	__media_entity_pipeline_stop(entity);
++	spin_unlock_irqrestore(&entity->parent->graph_lock, flags);
++}
++EXPORT_SYMBOL_GPL(media_entity_pipeline_stop_irq);
++
+ /* -----------------------------------------------------------------------------
+  * Module use count
+  */
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 0c003d8..a4be306 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -151,6 +151,9 @@ media_entity_graph_walk_next(struct media_entity_graph *graph);
+ __must_check int media_entity_pipeline_start(struct media_entity *entity,
+ 					     struct media_pipeline *pipe);
+ void media_entity_pipeline_stop(struct media_entity *entity);
++__must_check int media_entity_pipeline_start_irq(struct media_entity *entity,
++					     struct media_pipeline *pipe);
++void media_entity_pipeline_stop_irq(struct media_entity *entity);
+ 
+ #define media_entity_call(entity, operation, args...)			\
+ 	(((entity)->ops && (entity)->ops->operation) ?			\
 -- 
 2.1.4
