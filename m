@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 04/19] media: au8522 change to create MC pad for ALSA Audio Out
-Date: Wed, 22 Jul 2015 16:42:05 -0600
-Message-ID: <7d2f03591bcd3e9bfd5ebad865b0055a61c8027e.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 05/19] media: Convert graph_mutex to a spinlock and call it graph_lock
+Date: Wed, 22 Jul 2015 16:42:06 -0600
+Message-ID: <50c4c93ef0cd505e46d18c66b7ce6343f7fa0722.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,66 +12,162 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add new pad for ALSA Audio Out to au8522_media_pads. Move the
-au8522_media_pads enum to au8522.h from au8522_priv.h. This will
-allow au0828-core to use these defines instead of hard-coding the
-pad values when it creates media graph linking decode pads to other
-entities.
+ALSA driver calls Media Controller start/stop pipeline
+interfaces from IRQ handler. Start/stop pipeline lock
+graph_mutex which is unsafe from a IRQ handler. Convert
+graph_mutex into a spinlock and call it graph_lock. IRQ
+safe start/stop pipeline interfaces will be added based
+on this change.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/dvb-frontends/au8522.h         | 8 ++++++++
- drivers/media/dvb-frontends/au8522_decoder.c | 1 +
- drivers/media/dvb-frontends/au8522_priv.h    | 8 --------
- 3 files changed, 9 insertions(+), 8 deletions(-)
+ drivers/media/media-device.c | 14 +++++++-------
+ drivers/media/media-entity.c | 18 +++++++++---------
+ include/media/media-device.h |  4 ++--
+ 3 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/au8522.h b/drivers/media/dvb-frontends/au8522.h
-index dde6158..d7a997f 100644
---- a/drivers/media/dvb-frontends/au8522.h
-+++ b/drivers/media/dvb-frontends/au8522.h
-@@ -90,4 +90,12 @@ enum au8522_audio_input {
- 	AU8522_AUDIO_SIF,
- };
+diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+index 22565a8..b0fafd7 100644
+--- a/drivers/media/media-device.c
++++ b/drivers/media/media-device.c
+@@ -251,17 +251,17 @@ static long media_device_ioctl(struct file *filp, unsigned int cmd,
+ 		break;
  
-+enum au8522_media_pads {
-+	AU8522_PAD_INPUT,
-+	AU8522_PAD_VID_OUT,
-+	AU8522_PAD_VBI_OUT,
-+	AU8522_PAD_AUDIO_OUT,
-+
-+	AU8522_NUM_PADS
-+};
- #endif /* __AU8522_H__ */
-diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
-index 24990db..01d8fe7 100644
---- a/drivers/media/dvb-frontends/au8522_decoder.c
-+++ b/drivers/media/dvb-frontends/au8522_decoder.c
-@@ -775,6 +775,7 @@ static int au8522_probe(struct i2c_client *client,
- 	state->pads[AU8522_PAD_INPUT].flags = MEDIA_PAD_FL_SINK;
- 	state->pads[AU8522_PAD_VID_OUT].flags = MEDIA_PAD_FL_SOURCE;
- 	state->pads[AU8522_PAD_VBI_OUT].flags = MEDIA_PAD_FL_SOURCE;
-+	state->pads[AU8522_PAD_AUDIO_OUT].flags = MEDIA_PAD_FL_SINK;
- 	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV_DECODER;
+ 	case MEDIA_IOC_ENUM_LINKS:
+-		mutex_lock(&dev->graph_mutex);
++		spin_lock(&dev->graph_lock);
+ 		ret = media_device_enum_links(dev,
+ 				(struct media_links_enum __user *)arg);
+-		mutex_unlock(&dev->graph_mutex);
++		spin_unlock(&dev->graph_lock);
+ 		break;
  
- 	ret = media_entity_init(&sd->entity, ARRAY_SIZE(state->pads),
-diff --git a/drivers/media/dvb-frontends/au8522_priv.h b/drivers/media/dvb-frontends/au8522_priv.h
-index d6209d9..4c2a6ed 100644
---- a/drivers/media/dvb-frontends/au8522_priv.h
-+++ b/drivers/media/dvb-frontends/au8522_priv.h
-@@ -39,14 +39,6 @@
- #define AU8522_DIGITAL_MODE 1
- #define AU8522_SUSPEND_MODE 2
+ 	case MEDIA_IOC_SETUP_LINK:
+-		mutex_lock(&dev->graph_mutex);
++		spin_lock(&dev->graph_lock);
+ 		ret = media_device_setup_link(dev,
+ 				(struct media_link_desc __user *)arg);
+-		mutex_unlock(&dev->graph_mutex);
++		spin_unlock(&dev->graph_lock);
+ 		break;
  
--enum au8522_media_pads {
--	AU8522_PAD_INPUT,
--	AU8522_PAD_VID_OUT,
--	AU8522_PAD_VBI_OUT,
--
--	AU8522_NUM_PADS
--};
--
- struct au8522_state {
- 	struct i2c_client *c;
- 	struct i2c_adapter *i2c;
+ 	default:
+@@ -315,10 +315,10 @@ static long media_device_compat_ioctl(struct file *filp, unsigned int cmd,
+ 		return media_device_ioctl(filp, cmd, arg);
+ 
+ 	case MEDIA_IOC_ENUM_LINKS32:
+-		mutex_lock(&dev->graph_mutex);
++		spin_lock(&dev->graph_lock);
+ 		ret = media_device_enum_links32(dev,
+ 				(struct media_links_enum32 __user *)arg);
+-		mutex_unlock(&dev->graph_mutex);
++		spin_unlock(&dev->graph_lock);
+ 		break;
+ 
+ 	default:
+@@ -383,7 +383,7 @@ int __must_check __media_device_register(struct media_device *mdev,
+ 	INIT_LIST_HEAD(&mdev->entities);
+ 	INIT_LIST_HEAD(&mdev->entity_notify);
+ 	spin_lock_init(&mdev->lock);
+-	mutex_init(&mdev->graph_mutex);
++	spin_lock_init(&mdev->graph_lock);
+ 
+ 	/* Register the device node. */
+ 	mdev->devnode.fops = &media_device_fops;
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 4d8e01c..31132573 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -230,7 +230,7 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
+ 	struct media_entity *entity_err = entity;
+ 	int ret;
+ 
+-	mutex_lock(&mdev->graph_mutex);
++	spin_lock(&mdev->graph_lock);
+ 
+ 	media_entity_graph_walk_start(&graph, entity);
+ 
+@@ -303,7 +303,7 @@ __must_check int media_entity_pipeline_start(struct media_entity *entity,
+ 		}
+ 	}
+ 
+-	mutex_unlock(&mdev->graph_mutex);
++	spin_unlock(&mdev->graph_lock);
+ 
+ 	return 0;
+ 
+@@ -327,7 +327,7 @@ error:
+ 			break;
+ 	}
+ 
+-	mutex_unlock(&mdev->graph_mutex);
++	spin_unlock(&mdev->graph_lock);
+ 
+ 	return ret;
+ }
+@@ -350,7 +350,7 @@ void media_entity_pipeline_stop(struct media_entity *entity)
+ 	struct media_device *mdev = entity->parent;
+ 	struct media_entity_graph graph;
+ 
+-	mutex_lock(&mdev->graph_mutex);
++	spin_lock(&mdev->graph_lock);
+ 
+ 	media_entity_graph_walk_start(&graph, entity);
+ 
+@@ -360,7 +360,7 @@ void media_entity_pipeline_stop(struct media_entity *entity)
+ 			entity->pipe = NULL;
+ 	}
+ 
+-	mutex_unlock(&mdev->graph_mutex);
++	spin_unlock(&mdev->graph_lock);
+ }
+ EXPORT_SYMBOL_GPL(media_entity_pipeline_stop);
+ 
+@@ -519,9 +519,9 @@ void media_entity_remove_links(struct media_entity *entity)
+ 	if (entity->parent == NULL)
+ 		return;
+ 
+-	mutex_lock(&entity->parent->graph_mutex);
++	spin_lock(&entity->parent->graph_lock);
+ 	__media_entity_remove_links(entity);
+-	mutex_unlock(&entity->parent->graph_mutex);
++	spin_unlock(&entity->parent->graph_lock);
+ }
+ EXPORT_SYMBOL_GPL(media_entity_remove_links);
+ 
+@@ -611,9 +611,9 @@ int media_entity_setup_link(struct media_link *link, u32 flags)
+ {
+ 	int ret;
+ 
+-	mutex_lock(&link->source->entity->parent->graph_mutex);
++	spin_lock(&link->source->entity->parent->graph_lock);
+ 	ret = __media_entity_setup_link(link, flags);
+-	mutex_unlock(&link->source->entity->parent->graph_mutex);
++	spin_unlock(&link->source->entity->parent->graph_lock);
+ 
+ 	return ret;
+ }
+diff --git a/include/media/media-device.h b/include/media/media-device.h
+index a3854f6..e73642c 100644
+--- a/include/media/media-device.h
++++ b/include/media/media-device.h
+@@ -50,7 +50,7 @@ struct media_entity_notify {
+  * @entity_id:	ID of the next entity to be registered
+  * @entities:	List of registered entities
+  * @lock:	Entities list lock
+- * @graph_mutex: Entities graph operation lock
++ * @graph_lock: Entities graph operation lock
+  * @link_notify: Link state change notification callback
+  *
+  * This structure represents an abstract high-level media device. It allows easy
+@@ -82,7 +82,7 @@ struct media_device {
+ 	/* Protects the entities list */
+ 	spinlock_t lock;
+ 	/* Serializes graph operations. */
+-	struct mutex graph_mutex;
++	spinlock_t graph_lock;
+ 
+ 	int (*link_notify)(struct media_link *link, u32 flags,
+ 			   unsigned int notification);
 -- 
 2.1.4
