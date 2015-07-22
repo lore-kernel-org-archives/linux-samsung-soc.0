@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 17/19] media: dvb-frontend change to check for tuner availability from open
-Date: Wed, 22 Jul 2015 16:42:18 -0600
-Message-ID: <0d159793e88737e4b1774ebcb4eb8a1d2f8ed1a0.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 14/19] media: Add enable_source handler field to struct media_device
+Date: Wed, 22 Jul 2015 16:42:15 -0600
+Message-ID: <352c24377393df058cf5e72dc988a02029e3bbda.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,97 +12,44 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Checking for tuner availability from frontend thread start
-disrupts video stream. Change to check for tuner and start
-pipeline from frontend open instead and stop pipeline from
-frontend release.
+Add a new field to enable_source handler to find source entity
+for the sink entity and check if it is available, and activate
+the link using media_entity_setup_link() interface. Bridge driver
+is expected to implement and set the handler when media_device is
+registered or when bridge driver finds the media_device during
+probe. This is to enable the use-case to find tuner entity
+connected to the decoder entity and check if it is available,
+and activate the using media_entity_setup_link() if it is available.
+This hanlder can be invoked from media core (v4l-core, dvb-core)
+as well as other drivers such as ALSA that control the media device.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- drivers/media/dvb-core/dvb_frontend.c | 43 ++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 24 deletions(-)
+ include/media/media-device.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index 842b9c8..b394e1e 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -694,10 +694,6 @@ static int dvb_frontend_thread(void *data)
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
- 	enum fe_status s;
- 	enum dvbfe_algo algo;
--#ifdef CONFIG_MEDIA_CONTROLLER_DVB
--	int ret;
--#endif
--
- 	bool re_tune = false;
- 	bool semheld = false;
+diff --git a/include/media/media-device.h b/include/media/media-device.h
+index e73642c..377102b 100644
+--- a/include/media/media-device.h
++++ b/include/media/media-device.h
+@@ -84,6 +84,18 @@ struct media_device {
+ 	/* Serializes graph operations. */
+ 	spinlock_t graph_lock;
  
-@@ -710,20 +706,6 @@ static int dvb_frontend_thread(void *data)
- 	fepriv->wakeup = 0;
- 	fepriv->reinitialise = 0;
- 
--#ifdef CONFIG_MEDIA_CONTROLLER_DVB
--	ret = dvb_enable_media_tuner(fe);
--	if (ret) {
--		/* FIXME: return an error if it fails */
--		dev_info(fe->dvb->device,
--			"proceeding with FE task\n");
--	} else if (fepriv->pipe_start_entity) {
--		ret = media_entity_pipeline_start(fepriv->pipe_start_entity,
--						  &fepriv->pipe);
--		if (ret)
--			return ret;
--	}
--#endif
--
- 	dvb_frontend_init(fe);
- 
- 	set_freezable();
-@@ -833,12 +815,6 @@ restart:
- 		}
- 	}
- 
--#ifdef CONFIG_MEDIA_CONTROLLER_DVB
--	if (fepriv->pipe_start_entity)
--		media_entity_pipeline_stop(fepriv->pipe_start_entity);
--	fepriv->pipe_start_entity = NULL;
--#endif
--
- 	if (dvb_powerdown_on_sleep) {
- 		if (fe->ops.set_voltage)
- 			fe->ops.set_voltage(fe, SEC_VOLTAGE_OFF);
-@@ -2616,6 +2592,20 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
- 		fepriv->tone = -1;
- 		fepriv->voltage = -1;
- 
-+#ifdef CONFIG_MEDIA_CONTROLLER_DVB
-+		ret = dvb_enable_media_tuner(fe);
-+		if (ret) {
-+			dev_err(fe->dvb->device,
-+				"Tuner is busy. Error %d\n", ret);
-+			goto err1;
-+		} else if (fepriv->pipe_start_entity) {
-+			ret = media_entity_pipeline_start(
-+						fepriv->pipe_start_entity,
-+						&fepriv->pipe);
-+			if (ret)
-+				goto err1;
-+		}
-+#endif
- 		ret = dvb_frontend_start (fe);
- 		if (ret)
- 			goto err2;
-@@ -2659,6 +2649,11 @@ static int dvb_frontend_release(struct inode *inode, struct file *file)
- 		wake_up(&fepriv->wait_queue);
- 		if (fe->exit != DVB_FE_NO_EXIT)
- 			wake_up(&dvbdev->wait_queue);
-+#ifdef CONFIG_MEDIA_CONTROLLER_DVB
-+		if (fepriv->pipe_start_entity)
-+			media_entity_pipeline_stop(fepriv->pipe_start_entity);
-+		fepriv->pipe_start_entity = NULL;
-+#endif
- 		if (fe->ops.ts_bus_ctrl)
- 			fe->ops.ts_bus_ctrl(fe, 0);
- 	}
++	/* Handler to find source entity for the sink entity and
++	 * check if it is available, and activate the link using
++	 * media_entity_setup_link() interface.
++	 * Bridge driver is expected to implement and set the
++	 * handler when media_device is registered or when
++	 * bridge driver finds the media_device during probe.
++	 *
++	 * Use-case: find tuner entity connected to the decoder
++	 * entity and check if it is available, and activate the
++	 * using media_entity_setup_link() if it is available.
++	*/
++	int (*enable_source)(struct media_entity *sink);
+ 	int (*link_notify)(struct media_link *link, u32 flags,
+ 			   unsigned int notification);
+ };
 -- 
 2.1.4
