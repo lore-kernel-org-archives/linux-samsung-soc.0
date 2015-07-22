@@ -1,144 +1,85 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [GIT PULL] ARM: EXYNOS: mach: Improvements for 4.3
-Date: Wed, 22 Jul 2015 08:45:26 +0900
-Message-ID: <55AED996.9090208@samsung.com>
-References: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
- <1437014519-19571-2-git-send-email-k.kozlowski@samsung.com>
- <06bb01d0c372$756f2250$604d66f0$@kernel.org>
- <CAJKOXPeHu7WB7ZJJsjMSPXgiB24ryqufSuPDhFxiXoYDMjLHcg@mail.gmail.com>
- <CAJKOXPeJyoG1sw_Oxznx75WPrk2CcQMxtXrq_MiPHm15E7k+8g@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM
+Date: Tue, 21 Jul 2015 21:13:00 -0400
+Message-ID: <20150722011300.GF4477@windriver.com>
+References: <1435191645-6022-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1435191645-6022-3-git-send-email-javier.martinez@collabora.co.uk>
+ <20150625083854.GV15013@x1>
+ <558BBF6C.7000906@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:40703 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933665AbbGUXp3 (ORCPT
+Received: from mail1.windriver.com ([147.11.146.13]:40870 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934139AbbGVBP1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jul 2015 19:45:29 -0400
-In-reply-to: <CAJKOXPeJyoG1sw_Oxznx75WPrk2CcQMxtXrq_MiPHm15E7k+8g@mail.gmail.com>
+	Tue, 21 Jul 2015 21:15:27 -0400
+Content-Disposition: inline
+In-Reply-To: <558BBF6C.7000906@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Gwendal Grignou <gwendal@google.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On 21.07.2015 14:21, Krzysztof Kozlowski wrote:
-> 2015-07-21 14:13 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> 2015-07-21 14:02 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
->>> Krzysztof Kozlowski wrote:
->>>>
->>>> Dear Kukjin,
->>>>
->>>> Exynos mach-code related improvements. Description along with a tag.
->>>> You can find them also on the lists with my reviewed-by.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>>
->>>> The following changes since commit 1c4c7159ed2468f3ac4ce5a7f08d79663d381a93:
->>>>
->>>>   Merge tag 'ext4_for_linus_stable' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4 (2015-
->>>> 07-05 16:24:54 -0700)
->>>>
->>>> are available in the git repository at:
->>>>
->>>>
->>>>   https://github.com/krzk/linux.git tags/samsung-mach-4.3
->>>>
->>>> for you to fetch changes up to 70f83b6716ea0e5944071c12ff1716f93a9c2d8d:
->>>>
->>>>   cpufreq: exynos: remove Exynos5250 specific cpufreq driver support (2015-07-16 10:39:56 +0900)
->>>>
->>>> ----------------------------------------------------------------
->>>> Improvements for Exynos based boards:
->>>> 1. Switch to generic cpufreq-dt driver for Exynos5250. The old driver
->>>>    is removed.
->>>> 2. Fix memory leak in cpufreq error path.
->>>> 3. Cleanups: remove duplicated define with bootloader's sleep magic
->>>>    constant, staticize local function, drop 'owner' from
->>>>    platform driver, fix cast of iomem to ERR_PTR.
->>>>
->>>> ----------------------------------------------------------------
->>>> Bartlomiej Zolnierkiewicz (1):
->>>>       cpufreq: exynos: remove Exynos5250 specific cpufreq driver support
->>>>
->>>> Krzysztof Kozlowski (4):
->>>>       ARM: EXYNOS: pmu: Make local function static
->>>>       ARM: EXYNOS: Remove duplicated define of SLEEP_MAGIC
->>>>       ARM: EXYNOS: pmu: Drop owner assignment
->>>>       ARM: EXYNOS: Use IOMEM_ERR_PTR when function returns iomem
->>>>
->>>> Shailendra Verma (1):
->>>>       cpufreq: exynos: Fix for memory leak in case SOC name does not match
->>>>
->>>> Thomas Abraham (3):
->>>>       clk: samsung: exynos5250: add cpu clock configuration data and instantiate cpu clock
->>>>       ARM: dts: Exynos5250: add CPU OPP and regulator supply property
->>>>       ARM: Exynos: switch to using generic cpufreq driver for Exynos5250
->>>>
->>>>  arch/arm/boot/dts/exynos5250-arndale.dts  |   4 +
->>>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   4 +
->>>>  arch/arm/boot/dts/exynos5250-snow.dts     |   4 +
->>>>  arch/arm/boot/dts/exynos5250-spring.dts   |   4 +
->>>>  arch/arm/boot/dts/exynos5250.dtsi         |  22 ++++
->>>>  arch/arm/mach-exynos/common.h             |   6 +
->>>>  arch/arm/mach-exynos/exynos.c             |   1 +
->>>>  arch/arm/mach-exynos/firmware.c           |   2 -
->>>>  arch/arm/mach-exynos/platsmp.c            |   2 +-
->>>>  arch/arm/mach-exynos/pmu.c                |   3 +-
->>>>  arch/arm/mach-exynos/suspend.c            |   4 +-
->>>>  drivers/clk/samsung/clk-exynos5250.c      |  31 +++++
->>>>  drivers/cpufreq/Kconfig.arm               |  11 --
->>>>  drivers/cpufreq/Makefile                  |   1 -
->>>>  drivers/cpufreq/exynos-cpufreq.c          |   9 +-
->>>>  drivers/cpufreq/exynos-cpufreq.h          |  17 ---
->>>>  drivers/cpufreq/exynos5250-cpufreq.c      | 210 ------------------------------
->>>>  include/dt-bindings/clock/exynos5250.h    |   1 +
->>>>  18 files changed, 84 insertions(+), 252 deletions(-)
->>>>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
->>>> --
->>>
->>> Applied above changes into fixes/non-critical, next/cleanup-samsung,
->>> next/dt-samsung and next/cpufreq-clk-samsung according to the change.
+[Re: [PATCH 2/3] mfd: Remove MFD_CROS_EC depends on X86 || ARM] On 25/06/2015 (Thu 10:44) Javier Martinez Canillas wrote:
+
+> Hello Lee,
 > 
-> Cc-ed Bartlomiej,
+> On 06/25/2015 10:38 AM, Lee Jones wrote:
+> > On Thu, 25 Jun 2015, Javier Martinez Canillas wrote:
+> > 
+> >> A dependency on X86 || ARM for MFD_CROS_EC was added to fix the warning:
+> >> 
+> >> (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+> >> 
+> >> This happened because CHROME_PLATFORMS had a dependency on X86 || ARM but
+> >> that dependency was removed since there isn't a reason why the option can
+> >> not be selected on other architectures. So now the above warning will not
+> >> happen and the MFD_CROS_EC dependency can be removed since is not needed.
+> >> 
+> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >> ---
+> >> 
+> >>  drivers/mfd/Kconfig | 1 -
+> >>  1 file changed, 1 deletion(-)
+> > 
+> > Applied for v4.3, thanks.
+> > 
 > 
-> One issue found: splitting DTS change for Exynos 5250 cpufreq to
-> separate branch will break bisectability. The commit "ARM: dts:
-> Exynos5250: add CPU OPP and regulator supply property":
-> 1. MUST be put after "clk: samsung: exynos5250: add cpu clock
-> configuration data and instantiate cpu clock" to prevent build
-> failures,
-> 2. should be put before "ARM: Exynos: switch to using generic cpufreq
-> driver for Exynos5250" to prevent lost cpufreq functionality.
+> Thanks a lot.
 > 
-> Doing otherwise would lose bisectability which is really unfortunate
-> when you can simply avoid it. This should remain in the same branch -
-> next/cpufreq-clk-samsung.
+> Olof,
+> 
+> Could you please ack patch 1/3 so Lee can pick it through the mfd tree?
+> Since both patches 1/3 and 2/3 are needed to fix the build warning for
+> !X86 and !ARM architectures.
 
-Dear Kukjin,
+Hi all,
 
-Nothing changed since yesterday... so let me point this in a more clear
-way. The way you divided the patchset causes build errors:
+Wondering if this fell through the cracks.  It used to be just a
+linux-next issue, but now it is a mainline issue.  This _really_ should
+be fixed and fed to Linus ASAP.  Ideally it should have been fixed before 
+going to mainline as it was reported in plenty of time ; that is the
+whole point of linux-next.... to fix unanticipated fallout and revise.
 
---------------
-HEAD is now at 565872a601c4... ARM: dts: add CPU OPP and regulator
-supply property for exynos5250
+------------------
+paul@builder:~/git/linux-head$ git describe 
+v4.2-rc3
+paul@builder:~/git/linux-head$ echo $ARCH
+sparc64
+paul@builder:~/git/linux-head$ make allyesconfig
+scripts/kconfig/conf  --allyesconfig Kconfig
+warning: (MFD_CROS_EC) selects CHROME_PLATFORMS which has unmet direct dependencies (X86 || ARM)
+#
+# configuration written to .config
+#
+paul@builder:~/git/linux-head$ 
+------------------
 
-ERROR: Failed build: -A arm -c exynos on
-565872a601c4d91a75b917b1fb40ff27ad7ebb08
+Thanks,
+Paul.
+--
 
-LOGS:
-Error: ../arch/arm/boot/dts/exynos5250.dtsi:65.21-22 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [arch/arm/boot/dts/exynos5250-arndale.dtb] Error 1
-make[1]: *** [dtbs] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [sub-make] Error 2
---------------
-
-This breaks bisectability without any special valid reason.
-
-Best regards,
-Krzysztof
+> 
+> Best regards,
+> Javier
