@@ -1,130 +1,90 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Wed, 22 Jul 2015 11:01:56 +0200
-Message-ID: <201507221101.56441.marex@denx.de>
-References: <cover.1433364398.git.hramrach@gmail.com> <201507221024.05496.marex@denx.de> <CAOMqctTyHF1ciN3-0yg1smYJ5kbuwfT_kmavTL8ARuZ69wSgAg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:47341 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932731AbbGVJCF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jul 2015 05:02:05 -0400
-In-Reply-To: <CAOMqctTyHF1ciN3-0yg1smYJ5kbuwfT_kmavTL8ARuZ69wSgAg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array allocation
+Date: Wed, 22 Jul 2015 15:04:53 +0530
+Message-ID: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "open list:SAMSUNG MULTIFUNCTION PMIC
+	DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "open list:SAMSUNG MULTIFUNCTION PMIC
+	DEVICE DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, Brian Norris <computersforpeace@gmail.com>, Richard Cochran <richardcochran@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, MTD Maling List <linux-mtd@lists.infradead.org>, Alison Chaiken <alison_chaiken@mentor.com>, "Bean Huo =?utf-8?q?=E9=9C=8D=E6=96=8C=E6=96=8C?= (beanhuo)" <beanhuo@micron.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, Kukjin Kim <kgene@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora>
 
-On Wednesday, July 22, 2015 at 10:38:14 AM, Michal Suchanek wrote:
-> On 22 July 2015 at 10:24, Marek Vasut <marex@denx.de> wrote:
-> > On Wednesday, July 22, 2015 at 10:18:04 AM, Michal Suchanek wrote:
-> >> On 22 July 2015 at 09:58, Marek Vasut <marex@denx.de> wrote:
-> >> > On Wednesday, July 22, 2015 at 09:45:27 AM, Michal Suchanek wrote:
-> >> >> On 22 July 2015 at 09:33, Marek Vasut <marex@denx.de> wrote:
-> >> >> > On Wednesday, July 22, 2015 at 09:30:54 AM, Michal Suchanek wrote:
-> >> >> >> On 22 July 2015 at 06:49, Vinod Koul <vinod.koul@intel.com> wrote:
-> >> >> >> > On Tue, Jul 21, 2015 at 10:14:11AM +0200, Michal Suchanek wrote:
-> >> >> >> >> > Or alternatively we could publish the limitations of the
-> >> >> >> >> > channel using capabilities so SPI knows I have a dmaengine
-> >> >> >> >> > channel and it can transfer max N length transfers so would
-> >> >> >> >> > be able to break rather than guessing it or coding in DT.
-> >> >> >> >> > Yes it may come from DT but that should be dmaengine driver
-> >> >> >> >> > rather than client driver :)
-> >> >> >> >> > 
-> >> >> >> >> > This can be done by dma_get_slave_caps(chan, &caps)
-> >> >> >> >> > 
-> >> >> >> >> > And we add max_length as one more parameter to existing set
-> >> >> >> >> > 
-> >> >> >> >> > Also all this could be handled in generic SPI-dmaengine layer
-> >> >> >> >> > so that individual drivers don't have to code it in
-> >> >> >> >> > 
-> >> >> >> >> > Let me know if this idea is okay, I can push the dmaengine
-> >> >> >> >> > bits...
-> >> >> >> >> 
-> >> >> >> >> It would be ok if there was a fixed limit. However, the limit
-> >> >> >> >> depends on SPI slave settings. Presumably for other buses using
-> >> >> >> >> the dmaengine the limit would depend on the bus or slave
-> >> >> >> >> settings as well. I do not see a sane way of passing this all
-> >> >> >> >> the way to the dmaengine driver.
-> >> >> >> > 
-> >> >> >> > I don't see why this should be client (SPI) dependent. The max
-> >> >> >> > length supported is a dmaengine constraint, typically flowing
-> >> >> >> > from max blocks/length it can transfer. Know this limit can
-> >> >> >> > allow clients to split transfers.
-> >> >> >> 
-> >> >> >> In practice on the board I have the maximum transfer length before
-> >> >> >> it fails depends on SPI bus speed which is set up per slave. I
-> >> >> >> did not try searching the space of possible settings thorougly
-> >> >> >> and settled for a setting that gives reasonable speed and
-> >> >> >> transfer length.
-> >> >> > 
-> >> >> > This looks more like a signal integrity issue though.
-> >> >> 
-> >> >> It certainly does on the surface. However, when wrong data is
-> >> >> delivered over the SPI bus (such as when I use wrong phase setting)
-> >> >> the SPI controller happily delivers wrong data over PIO.
-> >> >> 
-> >> >> The failure I am seeing is that the pl330 DMA program which
-> >> >> repeatedly waits for data from the SPI controller never finishes the
-> >> >> read loop and does not signal the interrupt. It seems it also leaves
-> >> >> some data in a FIFO somewhere so next command on the flash returns
-> >> >> garbage and fails.
-> >> > 
-> >> > I observed something similar on MXS (mx28) SPI block. Do you use mixed
-> >> > PIO/DMA mode perhaps ?
-> >> 
-> >> The SPI driver uses PIO for short transfers and DMA for transfers
-> >> longer than the controller FIFO. This seems to be the standard way to
-> >> do things.It works flawlessly so long as submitting overly long DMA
-> >> programs is avoided.
-> > 
-> > Can you try doing JUST DMA, no PIO ? I remember seeing some bus
-> > synchronisation issues when I did mixed PIO/DMA on the MXS and it was
-> > nasty to track down. Just give pure DMA a go to see if the thing
-> > stabilizes somehow.
-> 
-> It's probably slower to set up DMA for 2-byte commands but it might
-> work nonetheless.
+This patch cleans up the driver for,
 
-It is, the overhead will be considerable. It might help the stability
-though. I'm really looking forward to the results!
+  - Use devm_kcalloc varient instead of devm_kzalloc for array
+    allocation.
+  - clk_prepare/unprepare, remove "ret" variable as it is not required
+  - use __exit for cleanup function
 
-> I will give it a go.
-> 
-> >> > Do you have the option to connect a bus analyzer?
-> >> > I can probably offer you some tools, I'm in Prague ...
-> >> 
-> >> The flash chip is accessible when removing the bottom cover. It is
-> >> VSOP8 package slightly lower than SOP8 so attaching clips to it might
-> >> be a bit problematic. That's the only accessible part. Everything
-> >> other than SPI is inside the SoC.
-> > 
-> > That might be doable, though you might want to try the above thing first.
-> > 
-> >> Since SPI has no verification whatsoever the chip might be completely
-> >> dead and you can still read fine all zeroes or all ones when
-> >> attempting a read from it. I observed this behaviour when I used a
-> >> flash chip in a socket and it was not firmly seated. It was with a
-> >> different SPI controller, though.
-> > 
-> > You should run into issues as soon as the SPI NOR framework tries to read
-> > status register, no ?
-> 
-> Yes, when the DMA transfer fails the next command fails due to garbage
-> lying around. However, you can unload the SPI NOR driver, load spidev
-> driver, and read enough garbage to empty the fifos. Then the flash
-> identifies as normal again and you can access it.
+As I am referring this driver as a reference for my 88pm800 clk driver,
+applying same changes here as well.
 
-Yikes :(
+Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+---
+Since I do not have platform to test, it would be helpful if someone
+tests it for me.
+I have build tested it.
 
-> When the flash is not seated properly and acts autistic you get all
-> 0xff or all 0 back whatever you send to it, obvously. The
-> identification by the SPI NOR driver fails then.
-> 
-> Thanks
-> 
-> Michal
+ drivers/clk/clk-s2mps11.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 9b13a30..e17c66a 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -58,21 +58,17 @@ static struct s2mps11_clk *to_s2mps11_clk(struct clk_hw *hw)
+ static int s2mps11_clk_prepare(struct clk_hw *hw)
+ {
+ 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+-	int ret;
+ 
+-	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
++	return regmap_update_bits(s2mps11->iodev->regmap_pmic,
+ 				 s2mps11->reg,
+ 				 s2mps11->mask, s2mps11->mask);
+-
+-	return ret;
+ }
+ 
+ static void s2mps11_clk_unprepare(struct clk_hw *hw)
+ {
+ 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+-	int ret;
+ 
+-	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
++	regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+ 			   s2mps11->mask, ~s2mps11->mask);
+ }
+ 
+@@ -186,15 +182,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	struct clk_init_data *clks_init;
+ 	int i, ret = 0;
+ 
+-	s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
+-					S2MPS11_CLKS_NUM, GFP_KERNEL);
++	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
++				sizeof(*s2mps11_clk), GFP_KERNEL);
+ 	if (!s2mps11_clks)
+ 		return -ENOMEM;
+ 
+ 	s2mps11_clk = s2mps11_clks;
+ 
+-	clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
+-				 S2MPS11_CLKS_NUM, GFP_KERNEL);
++	clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
++				sizeof(struct clk *), GFP_KERNEL);
+ 	if (!clk_table)
+ 		return -ENOMEM;
+ 
+@@ -322,7 +318,7 @@ static int __init s2mps11_clk_init(void)
+ }
+ subsys_initcall(s2mps11_clk_init);
+ 
+-static void __init s2mps11_clk_cleanup(void)
++static void __exit s2mps11_clk_cleanup(void)
+ {
+ 	platform_driver_unregister(&s2mps11_clk_driver);
+ }
+-- 
+1.9.1
