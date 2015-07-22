@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 03/19] media: Add ALSA Media Controller devnodes
-Date: Wed, 22 Jul 2015 16:42:04 -0600
-Message-ID: <78cb5dd3bb7d5e531c66384c48ee35aa89903b75.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 04/19] media: au8522 change to create MC pad for ALSA Audio Out
+Date: Wed, 22 Jul 2015 16:42:05 -0600
+Message-ID: <7d2f03591bcd3e9bfd5ebad865b0055a61c8027e.1437599281.git.shuahkh@osg.samsung.com>
 References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
@@ -12,35 +12,66 @@ To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboa
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add ALSA Media Controller capture, playback, and mixer
-devnode defines.
+Add new pad for ALSA Audio Out to au8522_media_pads. Move the
+au8522_media_pads enum to au8522.h from au8522_priv.h. This will
+allow au0828-core to use these defines instead of hard-coding the
+pad values when it creates media graph linking decode pads to other
+entities.
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- include/uapi/linux/media.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/dvb-frontends/au8522.h         | 8 ++++++++
+ drivers/media/dvb-frontends/au8522_decoder.c | 1 +
+ drivers/media/dvb-frontends/au8522_priv.h    | 8 --------
+ 3 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index 4e816be..4a30ea3 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -49,12 +49,17 @@ struct media_device_info {
- #define MEDIA_ENT_T_DEVNODE		(1 << MEDIA_ENT_TYPE_SHIFT)
- #define MEDIA_ENT_T_DEVNODE_V4L		(MEDIA_ENT_T_DEVNODE + 1)
- #define MEDIA_ENT_T_DEVNODE_FB		(MEDIA_ENT_T_DEVNODE + 2)
-+/* Legacy ALSA symbol. Keep it to avoid userspace compilation breakages */
- #define MEDIA_ENT_T_DEVNODE_ALSA	(MEDIA_ENT_T_DEVNODE + 3)
- #define MEDIA_ENT_T_DEVNODE_DVB_FE	(MEDIA_ENT_T_DEVNODE + 4)
- #define MEDIA_ENT_T_DEVNODE_DVB_DEMUX	(MEDIA_ENT_T_DEVNODE + 5)
- #define MEDIA_ENT_T_DEVNODE_DVB_DVR	(MEDIA_ENT_T_DEVNODE + 6)
- #define MEDIA_ENT_T_DEVNODE_DVB_CA	(MEDIA_ENT_T_DEVNODE + 7)
- #define MEDIA_ENT_T_DEVNODE_DVB_NET	(MEDIA_ENT_T_DEVNODE + 8)
-+/* ALSA devnodes */
-+#define MEDIA_ENT_T_DEVNODE_ALSA_CAPTURE	(MEDIA_ENT_T_DEVNODE + 9)
-+#define MEDIA_ENT_T_DEVNODE_ALSA_PLAYBACK	(MEDIA_ENT_T_DEVNODE + 10)
-+#define MEDIA_ENT_T_DEVNODE_ALSA_MIXER		(MEDIA_ENT_T_DEVNODE + 11)
+diff --git a/drivers/media/dvb-frontends/au8522.h b/drivers/media/dvb-frontends/au8522.h
+index dde6158..d7a997f 100644
+--- a/drivers/media/dvb-frontends/au8522.h
++++ b/drivers/media/dvb-frontends/au8522.h
+@@ -90,4 +90,12 @@ enum au8522_audio_input {
+ 	AU8522_AUDIO_SIF,
+ };
  
- /* Legacy symbol. Use it to avoid userspace compilation breakages */
- #define MEDIA_ENT_T_DEVNODE_DVB		MEDIA_ENT_T_DEVNODE_DVB_FE
++enum au8522_media_pads {
++	AU8522_PAD_INPUT,
++	AU8522_PAD_VID_OUT,
++	AU8522_PAD_VBI_OUT,
++	AU8522_PAD_AUDIO_OUT,
++
++	AU8522_NUM_PADS
++};
+ #endif /* __AU8522_H__ */
+diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
+index 24990db..01d8fe7 100644
+--- a/drivers/media/dvb-frontends/au8522_decoder.c
++++ b/drivers/media/dvb-frontends/au8522_decoder.c
+@@ -775,6 +775,7 @@ static int au8522_probe(struct i2c_client *client,
+ 	state->pads[AU8522_PAD_INPUT].flags = MEDIA_PAD_FL_SINK;
+ 	state->pads[AU8522_PAD_VID_OUT].flags = MEDIA_PAD_FL_SOURCE;
+ 	state->pads[AU8522_PAD_VBI_OUT].flags = MEDIA_PAD_FL_SOURCE;
++	state->pads[AU8522_PAD_AUDIO_OUT].flags = MEDIA_PAD_FL_SINK;
+ 	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV_DECODER;
+ 
+ 	ret = media_entity_init(&sd->entity, ARRAY_SIZE(state->pads),
+diff --git a/drivers/media/dvb-frontends/au8522_priv.h b/drivers/media/dvb-frontends/au8522_priv.h
+index d6209d9..4c2a6ed 100644
+--- a/drivers/media/dvb-frontends/au8522_priv.h
++++ b/drivers/media/dvb-frontends/au8522_priv.h
+@@ -39,14 +39,6 @@
+ #define AU8522_DIGITAL_MODE 1
+ #define AU8522_SUSPEND_MODE 2
+ 
+-enum au8522_media_pads {
+-	AU8522_PAD_INPUT,
+-	AU8522_PAD_VID_OUT,
+-	AU8522_PAD_VBI_OUT,
+-
+-	AU8522_NUM_PADS
+-};
+-
+ struct au8522_state {
+ 	struct i2c_client *c;
+ 	struct i2c_adapter *i2c;
 -- 
 2.1.4
