@@ -1,55 +1,53 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: Linux-next, Exynos Octa boot fail,
- bisected to: "drm/exynos: remove drm_iommu_attach_device_if_possible"
-Date: Wed, 22 Jul 2015 11:02:21 +0900
-Message-ID: <55AEF9AD.6090709@samsung.com>
-References: <CAJKOXPehvV2jbxaiBmdgj98T59Y5aeK+6px6zTHR9Z=SdTDC8w@mail.gmail.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Wed, 22 Jul 2015 10:19:25 +0530
+Message-ID: <20150722044925.GN23525@localhost>
+References: <cover.1433364398.git.hramrach@gmail.com>
+ <20150604171547.GA1530@localhost.localdomain>
+ <CAOMqctSCL9E-kCBryeaMvtssSP12RY=kyfPuwSYx9wc=Lv9kGQ@mail.gmail.com>
+ <201507151352.27689.marex@denx.de>
+ <20150715155946.GB21362@localhost>
+ <CAOMqctTJEg7EauKfrqW-6rUQ-QOmtkTfkgOyz0rCuyh_-XrW5w@mail.gmail.com>
+ <20150721042932.GF23525@localhost>
+ <CAOMqctSzzUV1J8Vj03XJ3Y70R9ynVErP4RZVtbjarDcZ9JLnaw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAJKOXPehvV2jbxaiBmdgj98T59Y5aeK+6px6zTHR9Z=SdTDC8w@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAOMqctSzzUV1J8Vj03XJ3Y70R9ynVErP4RZVtbjarDcZ9JLnaw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alison Chaiken <alison_chaiken-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Bean Huo =?utf-8?B?6ZyN5paM5paMIChiZWFuaHVvKQ==?= <beanhuo-AL4WhLSQfzjQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDcvMjEvMjAxNSAxMDoxOSBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBIaSwK
-PiAKPiBUb2RheSdzIGxpbnV4LW5leHQgKG5leHQtMjAxNTA3MjEpIGVuY291bnRlcnMgYm9vdCBm
-YWlsdXJlcyBvbiBFeHlub3MKPiBPY3RhIChFeHlub3M1NDIyKSBiYXNlZCBib2FyZHMuIFRoZSBi
-b2FyZHMgaGFuZ3MuIEkgYmlzZWN0ZWQgaXQgdG86Cj4gCj4gZDgwMTY3Yjg1MDI0OTgyYzVmMThk
-MDQ4MWE1YzI0ODEwMDM2MDExOCBpcyB0aGUgZmlyc3QgYmFkIGNvbW1pdAo+IGNvbW1pdCBkODAx
-NjdiODUwMjQ5ODJjNWYxOGQwNDgxYTVjMjQ4MTAwMzYwMTE4Cj4gQXV0aG9yOiBKb29ueW91bmcg
-U2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4gRGF0ZTogICBUaHUgSnVsIDIgMjE6NDk6
-MzkgMjAxNSArMDkwMAo+IAo+ICAgICBkcm0vZXh5bm9zOiByZW1vdmUgZHJtX2lvbW11X2F0dGFj
-aF9kZXZpY2VfaWZfcG9zc2libGUKPiAKPiAgICAgQWxyZWFkeSBkcm1faW9tbXVfYXR0YWNoX2Rl
-dmljZSBjaGVja3Mgd2hldGhlciBzdXBwb3J0IGlvbW11IGludGVybmFsbHkuCj4gICAgIEl0IHNo
-b3VsZCBjbGVhciBjaGFubmVscyBhbHdheXMgcmVnYXJkbGVzcyBpb21tdSBzdXBwb3J0LiBXZSBk
-aWRuJ3Qga25vdwo+ICAgICBiZWNhdXNlIHdlIGNhbiBkZXRlY3QgdGhlIHByb2JsZW0gd2hlbiBp
-b21tdSBpcyBlbmFibGVkLCBzbyB3ZSBkb24ndAo+ICAgICBoYXZlIHRvIHVzZSBkcm1faW9tbXVf
-YXR0YWNoX2RldmljZV9pZl9wb3NzaWJsZSBhbmQgdGhlbiB3ZSBjYW4gcmVtb3ZlCj4gICAgIGRy
-bV9pb21tdV9hdHRhY2hfZGV2aWNlX2lmX3Bvc3NpYmxlIGFuZCBjbGVhcl9jaGFubmVscyBmdW5j
-dGlvbiBwb2ludGVyLgo+IAo+ICAgICBTaWduZWQtb2ZmLWJ5OiBKb29ueW91bmcgU2hpbSA8ankw
-OTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4gICAgIFRlc3RlZC1ieTogTWFyZWsgU3p5cHJvd3NraSA8
-bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+ICAgICBTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8
-aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gCj4gOjA0MDAwMCAwNDAwMDAgODMzNzllZmJmNDk2MGY1
-OGQ2ODAzNzE2MjhlYzA0Mzg3OTM1YmQ1Mwo+IGRhMDNjMzM4Yjg4ZTdjYjZiZGE4OTViM2RkNTJk
-NzhkOWI2ZWJhMzAgTSBkcml2ZXJzCj4gCj4gCj4gQ29uZmlnOiBleHlub3MKPiBCb290IGxvZyBm
-cm9tIE9kcm9pZCBYVTMtTGl0ZSBhdHRhY2hlZC4KPiAKPiBBbnkgaGludHMgb3IgaWRlYXM/CgpU
-aGUgcG9pbnQgdGhhdCBoYW5ncyBpcyB3aGVuIGFjY2Vzc2VzIGZpbWQgcmVnaXN0ZXIgaW4KZmlt
-ZF9jbGVhcl9jaGFubmVscyBmdW5jdGlvbiwgc28gaSBkb3VidCBjbG9jayBzZXR0aW5nIGZvciBm
-aW1kLgoKSXQncyBnb25lIHNvbWV0aGluZyB0aGF0IGhhbmdzIGFmdGVyIGkgZW5hYmxlIGdhdGlu
-ZyBmb3IgQUNMS18yMDBfRElTUDEKY2xvY2suCgpJZiBBQ0xLXzIwMF9ESVNQMSBjbG9jayBuZWVk
-cyBmb3IgZmltZCByZWFsbHksIGknbSB0aGlua2luZyBob3cgY2FuIGl0CnN1cHBvcnQuIEFueSBp
-ZGVhcz8KClRoYW5rcy4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+On Tue, Jul 21, 2015 at 10:14:11AM +0200, Michal Suchanek wrote:
+> > Or alternatively we could publish the limitations of the channel using
+> > capabilities so SPI knows I have a dmaengine channel and it can transfer max N
+> > length transfers so would be able to break rather than guessing it or coding
+> > in DT. Yes it may come from DT but that should be dmaengine driver rather
+> > than client driver :)
+> >
+> > This can be done by dma_get_slave_caps(chan, &caps)
+> >
+> > And we add max_length as one more parameter to existing set
+> >
+> > Also all this could be handled in generic SPI-dmaengine layer so that
+> > individual drivers don't have to code it in
+> >
+> > Let me know if this idea is okay, I can push the dmaengine bits...
+> 
+> It would be ok if there was a fixed limit. However, the limit depends
+> on SPI slave settings. Presumably for other buses using the dmaengine
+> the limit would depend on the bus or slave settings as well. I do not
+> see a sane way of passing this all the way to the dmaengine driver.
+I don't see why this should be client (SPI) dependent. The max length
+supported is a dmaengine constraint, typically flowing from max
+blocks/length it can transfer. Know this limit can allow clients to split
+transfers.
+
+-- 
+~Vinod
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
