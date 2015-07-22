@@ -1,145 +1,80 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH v2 00/19] Update ALSA, and au0828 drivers to use Managed Media Controller API
-Date: Wed, 22 Jul 2015 16:42:01 -0600
-Message-ID: <cover.1437599281.git.shuahkh@osg.samsung.com>
+Subject: [PATCH v2 01/19] Revert "[media] media: media controller entity framework enhancements for ALSA"
+Date: Wed, 22 Jul 2015 16:42:02 -0600
+Message-ID: <49da931303fc040178a22dc46c161eeaf0d7a350.1437599281.git.shuahkh@osg.samsung.com>
+References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
+In-Reply-To: <cover.1437599281.git.shuahkh@osg.samsung.com>
+References: <cover.1437599281.git.shuahkh@osg.samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: mchehab@osg.samsung.com, hans.verkuil@cisco.com, laurent.pinchart@ideasonboard.com, tiwai@suse.de, sakari.ailus@linux.intel.com, perex@perex.cz, crope@iki.fi, arnd@arndb.de, stefanr@s5r6.in-berlin.de, ruchandani.tina@gmail.com, chehabrafael@gmail.com, dan.carpenter@oracle.com, prabhakar.csengg@gmail.com, chris.j.arges@canonical.com, agoode@google.com, pierre-louis.bossart@linux.intel.com, gtmkramer@xs4all.nl, clemens@ladisch.de, daniel@zonque.org, vladcatoi@gmail.com, misterpib@gmail.com, damien@zamaudio.com, pmatilai@laiskiainen.org, takamichiho@gmail.com, normalperson@yhbt.net, bugzilla.frnkcg@spamgourmet.com, joe@oampo.co.uk, calcprogrammer1@gmail.com, jussi@sonarnerd.net, kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org, hyun.kwon@xilinx.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, pawel@osciak.com, m.szyprowski@samsung.com, gregkh@
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series updates ALSA driver, and au0828 core driver to
-use Managed Media controller API to share tuner. Please note that
-Managed Media Controller API and DVB and V4L2 drivers updates to
-use Media Controller API have been added in a prior patch series.
+This reverts commit ed64cf1e182fb30fe67652386c0880fcf3302f97.
+This patch is no longer necessary as the entity register
+callback is implemented at media_device level.
 
-Media Controller API is enhanced with two new interfaces to
-register and unregister entity_notify hooks to allow drivers
-to take appropriate actions when as new entities get added to
-the shared media device.
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
+ drivers/media/media-device.c | 7 -------
+ include/media/media-entity.h | 4 ----
+ 2 files changed, 11 deletions(-)
 
-Tested exclusion between digital, analog, and audio to ensure
-when tuner has an active link to DVB FE, analog, and audio will
-detect and honor the tuner busy conditions and vice versa.
-
-Changes since v1:
-Link to v1: http://www.spinics.net/lists/linux-media/msg91697.html
-
-1. Fixed Open Issue:
-
-ALSA has makes media_entity_pipeline_start() call in irq
-path. I am seeing warnings that the graph_mutex is unsafe
-irq lock. Media Controller API updates to start/stop pipeline
-to be irq safe might be necessary. Maybe there are other MC
-interfaces that need to be irq safe, but I haven't seen any
-problems with my testing.
-
-graph_mutex is changed to a spinlock. Changed drivers that
-directly hold the lock for graph walks.
-
-media_entity_setup_link() might need to be made IRQ safe.
-I am running more tests to ensure there is no lock warns
-when dvb, video, and audio apps. run at the sametime and
-use MC API (that holds graph_lock) to check for tuner
-availability. Initial testing looked good so far.
-
-2. Add enable_source handler field to struct media_device
-
-Add a new field to enable handler to find source entity for the
-sink entity and check if it is available, and activate the link
-using media_entity_setup_link() interface. Bridge driver is
-expected to implement and set the handler when media_device is
-registered or when bridge driver finds the media_device during
-probe. This is to enable the use-case to find tuner entity
-connected to the decoder entity and check if it is available,
-and activate the using media_entity_setup_link() if it is available.
-This hanlder can be invoked from media core (v4l-core, dvb-core)
-as well as other drivers such as ALSA that control the media device.
-
-3. Changes to v4l2-core, ALSA to use enable_source handler
-
-4. Changes to au0828 bridge driver to implement enable_source handler
-
-Note: This series includes a revert to a patch that added media
-controller entity framework enhancements that implemented entity
-ops for entity_notify functionality. Entity ops for entity_notify
-doesn't handle and cover entity create ordering variations that
-could occur during boot. entity_notify list has been moved to media
-device level which makes the entity_notify calls to work correctly.
-
-History:
-This patch series has been updated to address comments from
-3 previous versions of this series. Links to v3 version
-for reference are:
-
-https://www.mail-archive.com/linux-media%40vger.kernel.org/msg89491.html
-https://www.mail-archive.com/linux-media@vger.kernel.org/msg89492.html
-https://www.mail-archive.com/linux-media%40vger.kernel.org/msg89493.html
-
-Shuah Khan (19):
-  Revert "[media] media: media controller entity framework enhancements
-    for ALSA"
-  media: Media Controller register/unregister entity_notify API
-  media: Add ALSA Media Controller devnodes
-  media: au8522 change to create MC pad for ALSA Audio Out
-  media: Convert graph_mutex to a spinlock and call it graph_lock
-  media: platform exynos4-is: Update graph_mutex to graph_lock spinlock
-  media: platform omap3isp: Update graph_mutex to graph_lock spinlock
-  media: platform s3c-camif: Update graph_mutex to graph_lock spinlock
-  media: platform vsp1: Update graph_mutex to graph_lock spinlock
-  media: platform xilinx: Update graph_mutex to graph_lock spinlock
-  staging media: davinci_vpfe: Update graph_mutex to graph_lock spinlock
-  staging media: omap4iss: Update graph_mutex to graph_lock spinlock
-  media: Add irq safe Media Controller start/stop pipeline API
-  media: Add enable_source handler field to struct media_device
-  media: v4l-core add v4l_enable_media_tuner() to check for tuner
-    availability
-  media: Change v4l-core to check for tuner availability
-  media: dvb-frontend change to check for tuner availability from open
-  media: au0828 change to use Managed Media Controller API
-  sound/usb: Update ALSA driver to use Managed Media Controller API
-
- drivers/media/dvb-core/dvb_frontend.c              |  43 ++--
- drivers/media/dvb-frontends/au8522.h               |   8 +
- drivers/media/dvb-frontends/au8522_decoder.c       |   1 +
- drivers/media/dvb-frontends/au8522_priv.h          |   8 -
- drivers/media/media-device.c                       |  60 +++++-
- drivers/media/media-entity.c                       |  88 ++++++--
- drivers/media/platform/exynos4-is/fimc-isp-video.c |   8 +-
- drivers/media/platform/exynos4-is/fimc-lite.c      |   8 +-
- drivers/media/platform/exynos4-is/media-dev.c      |  14 +-
- drivers/media/platform/exynos4-is/media-dev.h      |   4 +-
- drivers/media/platform/omap3isp/isp.c              |   4 +-
- drivers/media/platform/omap3isp/ispvideo.c         |   4 +-
- drivers/media/platform/s3c-camif/camif-core.c      |   6 +-
- drivers/media/platform/vsp1/vsp1_video.c           |   4 +-
- drivers/media/platform/xilinx/xilinx-dma.c         |   4 +-
- drivers/media/usb/au0828/au0828-core.c             | 184 ++++++++++++-----
- drivers/media/usb/au0828/au0828-video.c            |  72 ++-----
- drivers/media/usb/au0828/au0828.h                  |   5 +
- drivers/media/v4l2-core/v4l2-dev.c                 |  17 ++
- drivers/media/v4l2-core/v4l2-ioctl.c               |  29 +++
- drivers/media/v4l2-core/videobuf2-core.c           |   5 +
- drivers/staging/media/davinci_vpfe/vpfe_video.c    |  12 +-
- drivers/staging/media/omap4iss/iss.c               |   4 +-
- drivers/staging/media/omap4iss/iss_video.c         |   4 +-
- include/media/media-device.h                       |  41 +++-
- include/media/media-entity.h                       |   7 +-
- include/media/v4l2-dev.h                           |   3 +
- include/uapi/linux/media.h                         |   5 +
- sound/usb/Makefile                                 |  15 +-
- sound/usb/card.c                                   |   5 +
- sound/usb/card.h                                   |   1 +
- sound/usb/media.c                                  | 227 +++++++++++++++++++++
- sound/usb/media.h                                  |  52 +++++
- sound/usb/pcm.c                                    |  15 +-
- sound/usb/quirks-table.h                           |   1 +
- sound/usb/quirks.c                                 |   9 +-
- sound/usb/stream.c                                 |   2 +
- sound/usb/usbaudio.h                               |   1 +
- 38 files changed, 765 insertions(+), 215 deletions(-)
- create mode 100644 sound/usb/media.c
- create mode 100644 sound/usb/media.h
-
+diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+index 76590ba..c55ab50 100644
+--- a/drivers/media/media-device.c
++++ b/drivers/media/media-device.c
+@@ -428,8 +428,6 @@ EXPORT_SYMBOL_GPL(media_device_unregister);
+ int __must_check media_device_register_entity(struct media_device *mdev,
+ 					      struct media_entity *entity)
+ {
+-	struct media_entity *eptr;
+-
+ 	/* Warn if we apparently re-register an entity */
+ 	WARN_ON(entity->parent != NULL);
+ 	entity->parent = mdev;
+@@ -442,11 +440,6 @@ int __must_check media_device_register_entity(struct media_device *mdev,
+ 	list_add_tail(&entity->list, &mdev->entities);
+ 	spin_unlock(&mdev->lock);
+ 
+-	media_device_for_each_entity(eptr, mdev) {
+-		if (eptr != entity)
+-			media_entity_call(eptr, register_notify);
+-	}
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(media_device_register_entity);
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 0bc4c2f..0c003d8 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -46,7 +46,6 @@ struct media_pad {
+ 
+ /**
+  * struct media_entity_operations - Media entity operations
+- * @register_notify	Notify entity of newly registered entity
+  * @link_setup:		Notify the entity of link changes. The operation can
+  *			return an error, in which case link setup will be
+  *			cancelled. Optional.
+@@ -55,7 +54,6 @@ struct media_pad {
+  *			validates all links by calling this operation. Optional.
+  */
+ struct media_entity_operations {
+-	int (*register_notify)(struct media_entity *entity);
+ 	int (*link_setup)(struct media_entity *entity,
+ 			  const struct media_pad *local,
+ 			  const struct media_pad *remote, u32 flags);
+@@ -103,8 +101,6 @@ struct media_entity {
+ 		/* Sub-device specifications */
+ 		/* Nothing needed yet */
+ 	} info;
+-
+-	void *private;			/* private data for the entity */
+ };
+ 
+ static inline u32 media_entity_type(struct media_entity *entity)
 -- 
 2.1.4
