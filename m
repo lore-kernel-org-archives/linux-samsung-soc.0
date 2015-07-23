@@ -1,40 +1,67 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 1/2] PM / devfreq: exynos-ppmu: Add the support of PPMUv2
- for Exynos5433
-Date: Thu, 23 Jul 2015 16:17:12 +0200
-Message-ID: <CAGTfZH0zpUy66dpFH1hvJ2DnTVCKU7F7ThbVLMJ4d6JUKPcUiw@mail.gmail.com>
-References: <1437616639-7448-1-git-send-email-cw00.choi@samsung.com>
-	<1437616639-7448-2-git-send-email-cw00.choi@samsung.com>
-	<20150723094324.GP5422@mwanda>
-Reply-To: cw00.choi@samsung.com
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/2] MAINTAINERS: add an entry for the Maxim MAX77802
+ PMIC drivers
+Date: Thu, 23 Jul 2015 15:45:06 +0100
+Message-ID: <20150723144506.GE3436@x1>
+References: <1437121078-26409-1-git-send-email-javier@osg.samsung.com>
+ <1437121078-26409-3-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150723094324.GP5422@mwanda>
-Sender: linux-pm-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:37477 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753330AbbGWOpL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jul 2015 10:45:11 -0400
+Received: by wibud3 with SMTP id ud3so222660492wib.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2015 07:45:10 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1437121078-26409-3-git-send-email-javier@osg.samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Thu, Jul 23, 2015 at 11:43 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> On Thu, Jul 23, 2015 at 10:57:18AM +0900, Chanwoo Choi wrote:
->> +static int exynos_ppmu_v2_disable(struct devfreq_event_dev *edev)
->> +{
->> +     struct exynos_ppmu *info = devfreq_event_get_drvdata(edev);
->> +     u32 pmnc, clear;
->> +
->> +     /* Disable all counters */
->> +     clear = (PPMU_CCNT_MASK | PPMU_PMCNT0_MASK | PPMU_PMCNT1_MASK
->> +             | PPMU_PMCNT2_MASK | PPMU_PMCNT3_MASK);
->> +
->> +     __raw_writel(clear, info->ppmu.base + PPMUv2_FLAG);
->
-> Why aren't you using normal readl()/writel()?  What are the endiannesses
-> here?
+On Fri, 17 Jul 2015, Javier Martinez Canillas wrote:
 
-There are no special reason. Usually I used the __raw_readl/writel to
-access the SFR registers
+> I added support for the max77802 drivers and have been maintaining th=
+em.
+> So add an entry for these drivers to make tools like get_maintainer.p=
+l
+> to work and make people submitting patches add me to the CC list.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>=20
+> ---
+>=20
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-Thanks,
-Chanwoo Choi
+Applied, thanks.
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d802d19a4ecc..5d964568f207 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6570,6 +6570,14 @@ S:	Supported
+>  F:	drivers/power/max14577_charger.c
+>  F:	drivers/power/max77693_charger.c
+> =20
+> +MAXIM MAX77802 MULTIFUNCTION PMIC DEVICE DRIVERS
+> +M:	Javier Martinez Canillas <javier@osg.samsung.com>
+> +L:	linux-kernel@vger.kernel.org
+> +S:	Supported
+> +F:	drivers/*/*max77802.c
+> +F:	Documentation/devicetree/bindings/*/*max77802.txt
+> +F:	include/dt-bindings/*/*max77802.h
+> +
+>  MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
+>  M:	Chanwoo Choi <cw00.choi@samsung.com>
+>  M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
