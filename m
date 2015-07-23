@@ -1,69 +1,218 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL] Samsung 1st fixes for v4.2
-Date: Thu, 23 Jul 2015 17:15:01 +0900
-Message-ID: <02fb01d0c51f$ac4649d0$04d2dd70$@kernel.org>
-References: <55ADBF14.30304@kernel.org> <20150721210542.GA13353@localhost>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/2] PM / devfreq: exynos-ppmu: Add the support of PPMUv2
+ for Exynos5433
+Date: Thu, 23 Jul 2015 17:14:35 +0900
+Message-ID: <55B0A26B.1000601@samsung.com>
+References: <1437616639-7448-1-git-send-email-cw00.choi@samsung.com>
+ <1437616639-7448-2-git-send-email-cw00.choi@samsung.com>
+ <55B0979B.50401@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20150721210542.GA13353@localhost>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:38219 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751325AbbGWIO4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jul 2015 04:14:56 -0400
+In-reply-to: <55B0979B.50401@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, dan.carpenter@oracle.com, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Olof Johansson wrote:
-> 
-> Hi Kukjin,
-> 
-Hi Olof,
+Hi Krzysztof,
 
-> On Tue, Jul 21, 2015 at 12:40:04PM +0900, Kukjin Kim wrote:
-> > Hi,
-> >
-> > Please pull samsung fixes for v4.2.
-> >
-> > Thanks,
-> > Kukjin
-> >
-> > The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
-> >
-> >   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
-> >
-> > are available in the git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tags/samsung-fixes-1
-> >
-> > for you to fetch changes up to 300bde79f3d86b1af6fcde7b7b2439ecffccbff4:
-> >
-> >   ARM: dts: add CPU OPP and regulator supply property for exynos4210
-> > (2015-07-21 12:32:29 +0900)
+On 07/23/2015 04:28 PM, Krzysztof Kozlowski wrote:
+> On 23.07.2015 10:57, Chanwoo Choi wrote:
+>> This patch adds the support for PPMU (Platform Performance Monitoring Unit)
+>> version 2.0 for Exynos5433 SoC. Exynos5433 SoC must need PPMUv2 which is
+>> quite different from PPMUv1.1. The exynos-ppmu.c driver supports both PPMUv1.1
+>> and PPMUv2.
+>>
+>> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 > 
-> Was there a reason you rebased Krzystztof's branch? The contents is identical.
+> Hi,
 > 
-> In cases like those, feel free to just forward the pull request to us
-> and we can do it directly. If you have more patches you want to add into
-> the same fixes branch then you can just merge his in and apply yours on
-> top. That's for example how Tony Lindgren tends to handle OMAP -- he'll
-> forward a pull request from Paul Walmsley if that's the only contents
-> he has.
+> Few comments at the end.
 > 
-Yeah, I know what you're saying and I agreed. Actually the OMAP model would be
-helpful. BTW in this case, I wanted to change the subject title that's why I
-did cherry-pick.
+>> ---
+>>  drivers/devfreq/event/exynos-ppmu.c | 168 ++++++++++++++++++++++++++++++++++--
+>>  drivers/devfreq/event/exynos-ppmu.h |  70 +++++++++++++++
+>>  2 files changed, 231 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+>> index 7d99d13bacd8..6066dc18fc73 100644
+>> --- a/drivers/devfreq/event/exynos-ppmu.c
+>> +++ b/drivers/devfreq/event/exynos-ppmu.c
+>> @@ -1,7 +1,7 @@
+>>  /*
+>>   * exynos_ppmu.c - EXYNOS PPMU (Platform Performance Monitoring Unit) support
+>>   *
+>> - * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
+>>   * Author : Chanwoo Choi <cw00.choi@samsung.com>
+>>   *
+>>   * This program is free software; you can redistribute it and/or modify
+>> @@ -82,6 +82,15 @@ struct __exynos_ppmu_events {
+>>  	PPMU_EVENT(mscl),
+>>  	PPMU_EVENT(fimd0x),
+>>  	PPMU_EVENT(fimd1x),
 
-> Anyway, merged.
+(snip)
+
+>> +static int exynos_ppmu_v2_get_event(struct devfreq_event_dev *edev,
+>> +				    struct devfreq_event_data *edata)
+>> +{
+>> +	struct exynos_ppmu *info = devfreq_event_get_drvdata(edev);
+>> +	int id = exynos_ppmu_find_ppmu_id(edev);
+>> +	u32 pmnc, cntenc;
+>> +	u32 pmcnt_high, pmcnt_low;
+>> +	u64 load_count = 0;
+>> +
+>> +	/* Disable PPMU */
+>> +	pmnc = __raw_readl(info->ppmu.base + PPMUv2_PMNC);
+>> +	pmnc &= ~PPMU_PMNC_ENABLE_MASK;
+>> +	__raw_writel(pmnc, info->ppmu.base + PPMUv2_PMNC);
+>> +
+>> +	/* Read cycle count and performance count */
+>> +	edata->total_count = __raw_readl(info->ppmu.base + PPMUv2_CCNT);
+>> +
+>> +	switch (id) {
+>> +	case PPMU_PMNCNT0:
+>> +	case PPMU_PMNCNT1:
+>> +	case PPMU_PMNCNT2:
+>> +		load_count = __raw_readl(info->ppmu.base + PPMUv2_PMNCT(id));
+>> +		break;
+>> +	case PPMU_PMNCNT3:
+>> +		pmcnt_high = __raw_readl(info->ppmu.base + PPMUv2_PMCNT3_HIGH);
+>> +		pmcnt_low = __raw_readl(info->ppmu.base + PPMUv2_PMCNT3_LOW);
+>> +		load_count = (u64)((pmcnt_high & 0xff) << 32) + (u64)pmcnt_low;
+>> +		break;
+>> +	}
+>> +	edata->load_count = load_count;
+>> +
+>> +	/* Disable all counters */
+>> +	cntenc = __raw_readl(info->ppmu.base + PPMUv2_CNTENC);
+>> +	cntenc |= (PPMU_CCNT_MASK | (PPMU_ENABLE << id));
+>> +	__raw_writel(cntenc, info->ppmu.base + PPMUv2_CNTENC);
+>> +
+>> +	dev_dbg(&edev->dev, "%25s (load: %ld / %ld)\n", edev->desc->name,
+>> +					edata->load_count, edata->total_count);
+>> +	return 0;
+>> +}
+>> +
+>> +static struct devfreq_event_ops exynos_ppmu_v2_ops = {
 > 
-Thanks,
-Kukjin
+> This can be const.
+
+OK.
+
+> 
+>> +	.disable = exynos_ppmu_v2_disable,
+>> +	.set_event = exynos_ppmu_v2_set_event,
+>> +	.get_event = exynos_ppmu_v2_get_event,
+>> +};
+>> +
+>> +static struct of_device_id exynos_ppmu_id_match[] = {
+> 
+> In the previous patch this was not present but now it can be made 'const'.
+
+OK for adding the 'const'. 
+The original 'exynos_ppmu_id_match' is located on below of this patch.
+
+> 
+>> +	{
+>> +		.compatible = "samsung,exynos-ppmu",
+>> +		.data = (void *)&exynos_ppmu_ops,
+>> +	}, {
+>> +		.compatible = "samsung,exynos-ppmu-v2",
+>> +		.data = (void *)&exynos_ppmu_v2_ops,
+>> +	},
+>> +	{ /* sentinel */ },
+>> +};
+>> +
+>> +static struct devfreq_event_ops *exynos_bus_get_ops(struct device_node *np)
+>> +{
+>> +	const struct of_device_id *match;
+>> +
+>> +	match = of_match_node(exynos_ppmu_id_match, np);
+>> +	return (struct devfreq_event_ops *)match->data;
+>> +}
+>> +
+>>  static int of_get_devfreq_events(struct device_node *np,
+>>  				 struct exynos_ppmu *info)
+>>  {
+>> @@ -238,7 +397,7 @@ static int of_get_devfreq_events(struct device_node *np,
+>>  			continue;
+>>  		}
+>>  
+>> -		desc[j].ops = &exynos_ppmu_ops;
+>> +		desc[j].ops = exynos_bus_get_ops(np);
+> 
+> So for each ops callback (get/set/disable) you will have another layer
+> of indirection where you will be matching the device each time?
+> 
+> That seems like a waste of CPU time. Just match it once here and use
+> either old ops or new ops_v2.
+
+OK. I'll rework to reduce the unneeded operation.
+
+> 
+> 
+>>  		desc[j].driver_data = info;
+>>  
+>>  		of_property_read_string(node, "event-name", &desc[j].name);
+>> @@ -354,11 +513,6 @@ static int exynos_ppmu_remove(struct platform_device *pdev)
+>>  	return 0;
+>>  }
+>>  
+>> -static struct of_device_id exynos_ppmu_id_match[] = {
+>> -	{ .compatible = "samsung,exynos-ppmu", },
+>> -	{ /* sentinel */ },
+>> -};
+>> -
+>>  static struct platform_driver exynos_ppmu_driver = {
+>>  	.probe	= exynos_ppmu_probe,
+>>  	.remove	= exynos_ppmu_remove,
+>> diff --git a/drivers/devfreq/event/exynos-ppmu.h b/drivers/devfreq/event/exynos-ppmu.h
+>> index 4e831d48c138..9a7cf6394f37 100644
+>> --- a/drivers/devfreq/event/exynos-ppmu.h
+>> +++ b/drivers/devfreq/event/exynos-ppmu.h
+>> @@ -26,6 +26,9 @@ enum ppmu_counter {
+>>  	PPMU_PMNCNT_MAX,
+>>  };
+>>  
+>> +/***
+>> + * PPMUv1.1 Definitions
+>> + */
+>>  enum ppmu_event_type {
+>>  	PPMU_RO_BUSY_CYCLE_CNT	= 0x0,
+>>  	PPMU_WO_BUSY_CYCLE_CNT	= 0x1,
+>> @@ -90,4 +93,71 @@ enum ppmu_reg {
+>>  #define PPMU_PMNCT(x)			(PPMU_PMCNT0 + (0x10 * x))
+>>  #define PPMU_BEVTxSEL(x)		(PPMU_BEVT0SEL + (0x100 * x))
+>>  
+>> +/***
+>> + * PPMUv2.0 definitions
+>> + */
+>> +enum ppmuv2_mode {
+>> +	PPMUv2_MODE_MANUAL = 0,
+>> +	PPMUv2_MODE_AUTO = 1,
+>> +	PPMUv2_MODE_CIG = 2,	/* CIG (Conditional Interrupt Generation) */
+> 
+> Mixing lower-upper case looks odd to me. How about:
+> PPMU2_MODE_MANUAL = 0,
+> or
+> PPMU_V2_MODE_MANUAL = 0,
+> ?
+> 
+> (here and everywhere below)
+
+As you know, after deciding the compatible name about using '-v2',
+we can decide the correct register name.
+
+Best Regards,
+Chanwoo Choi
