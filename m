@@ -1,218 +1,94 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/2] PM / devfreq: exynos-ppmu: Add the support of PPMUv2
- for Exynos5433
-Date: Thu, 23 Jul 2015 17:14:35 +0900
-Message-ID: <55B0A26B.1000601@samsung.com>
-References: <1437616639-7448-1-git-send-email-cw00.choi@samsung.com>
- <1437616639-7448-2-git-send-email-cw00.choi@samsung.com>
- <55B0979B.50401@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL] ARM: EXYNOS: mach: Improvements for 4.3
+Date: Thu, 23 Jul 2015 17:18:38 +0900
+Message-ID: <55B0A35E.1000405@samsung.com>
+References: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
+ <1437014519-19571-2-git-send-email-k.kozlowski@samsung.com>
+ <06bb01d0c372$756f2250$604d66f0$@kernel.org>
+ <CAJKOXPeHu7WB7ZJJsjMSPXgiB24ryqufSuPDhFxiXoYDMjLHcg@mail.gmail.com>
+ <CAJKOXPeJyoG1sw_Oxznx75WPrk2CcQMxtXrq_MiPHm15E7k+8g@mail.gmail.com>
+ <55AED996.9090208@samsung.com> <028b01d0c51d$553710e0$ffa532a0$@kernel.org>
+ <02f701d0c51f$29219870$7b64c950$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38219 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751325AbbGWIO4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jul 2015 04:14:56 -0400
-In-reply-to: <55B0979B.50401@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <02f701d0c51f$29219870$7b64c950$@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?J0JhcnTFgm9taWVqIMW7b8WCbmllcmtpZXdpY3on?= <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, dan.carpenter@oracle.com, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-On 07/23/2015 04:28 PM, Krzysztof Kozlowski wrote:
-> On 23.07.2015 10:57, Chanwoo Choi wrote:
->> This patch adds the support for PPMU (Platform Performance Monitoring Unit)
->> version 2.0 for Exynos5433 SoC. Exynos5433 SoC must need PPMUv2 which is
->> quite different from PPMUv1.1. The exynos-ppmu.c driver supports both PPMUv1.1
->> and PPMUv2.
+On 23.07.2015 17:11, Kukjin Kim wrote:
+> Kukjin Kim wrote:
 >>
->> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> Hi,
-> 
-> Few comments at the end.
-> 
->> ---
->>  drivers/devfreq/event/exynos-ppmu.c | 168 ++++++++++++++++++++++++++++++++++--
->>  drivers/devfreq/event/exynos-ppmu.h |  70 +++++++++++++++
->>  2 files changed, 231 insertions(+), 7 deletions(-)
+>> Krzysztof Kozlowski wrote:
+>>>
+>>> On 21.07.2015 14:21, Krzysztof Kozlowski wrote:
+>>>> 2015-07-21 14:13 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+>>>>> 2015-07-21 14:02 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+>>>>>> Krzysztof Kozlowski wrote:
 >>
->> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
->> index 7d99d13bacd8..6066dc18fc73 100644
->> --- a/drivers/devfreq/event/exynos-ppmu.c
->> +++ b/drivers/devfreq/event/exynos-ppmu.c
->> @@ -1,7 +1,7 @@
->>  /*
->>   * exynos_ppmu.c - EXYNOS PPMU (Platform Performance Monitoring Unit) support
->>   *
->> - * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
->>   * Author : Chanwoo Choi <cw00.choi@samsung.com>
->>   *
->>   * This program is free software; you can redistribute it and/or modify
->> @@ -82,6 +82,15 @@ struct __exynos_ppmu_events {
->>  	PPMU_EVENT(mscl),
->>  	PPMU_EVENT(fimd0x),
->>  	PPMU_EVENT(fimd1x),
-
-(snip)
-
->> +static int exynos_ppmu_v2_get_event(struct devfreq_event_dev *edev,
->> +				    struct devfreq_event_data *edata)
->> +{
->> +	struct exynos_ppmu *info = devfreq_event_get_drvdata(edev);
->> +	int id = exynos_ppmu_find_ppmu_id(edev);
->> +	u32 pmnc, cntenc;
->> +	u32 pmcnt_high, pmcnt_low;
->> +	u64 load_count = 0;
->> +
->> +	/* Disable PPMU */
->> +	pmnc = __raw_readl(info->ppmu.base + PPMUv2_PMNC);
->> +	pmnc &= ~PPMU_PMNC_ENABLE_MASK;
->> +	__raw_writel(pmnc, info->ppmu.base + PPMUv2_PMNC);
->> +
->> +	/* Read cycle count and performance count */
->> +	edata->total_count = __raw_readl(info->ppmu.base + PPMUv2_CCNT);
->> +
->> +	switch (id) {
->> +	case PPMU_PMNCNT0:
->> +	case PPMU_PMNCNT1:
->> +	case PPMU_PMNCNT2:
->> +		load_count = __raw_readl(info->ppmu.base + PPMUv2_PMNCT(id));
->> +		break;
->> +	case PPMU_PMNCNT3:
->> +		pmcnt_high = __raw_readl(info->ppmu.base + PPMUv2_PMCNT3_HIGH);
->> +		pmcnt_low = __raw_readl(info->ppmu.base + PPMUv2_PMCNT3_LOW);
->> +		load_count = (u64)((pmcnt_high & 0xff) << 32) + (u64)pmcnt_low;
->> +		break;
->> +	}
->> +	edata->load_count = load_count;
->> +
->> +	/* Disable all counters */
->> +	cntenc = __raw_readl(info->ppmu.base + PPMUv2_CNTENC);
->> +	cntenc |= (PPMU_CCNT_MASK | (PPMU_ENABLE << id));
->> +	__raw_writel(cntenc, info->ppmu.base + PPMUv2_CNTENC);
->> +
->> +	dev_dbg(&edev->dev, "%25s (load: %ld / %ld)\n", edev->desc->name,
->> +					edata->load_count, edata->total_count);
->> +	return 0;
->> +}
->> +
->> +static struct devfreq_event_ops exynos_ppmu_v2_ops = {
+>> [...]
+>>
+>>>>>>> --
+>>>>>>
+>>>>>> Applied above changes into fixes/non-critical, next/cleanup-samsung,
+>>>>>> next/dt-samsung and next/cpufreq-clk-samsung according to the change.
+>>>>
+>>>> Cc-ed Bartlomiej,
+>>>>
+>>>> One issue found: splitting DTS change for Exynos 5250 cpufreq to
+>>>> separate branch will break bisectability. The commit "ARM: dts:
+>>>> Exynos5250: add CPU OPP and regulator supply property":
+>>>> 1. MUST be put after "clk: samsung: exynos5250: add cpu clock
+>>>> configuration data and instantiate cpu clock" to prevent build
+>>>> failures,
+>>>> 2. should be put before "ARM: Exynos: switch to using generic cpufreq
+>>>> driver for Exynos5250" to prevent lost cpufreq functionality.
+>>>>
+>>>> Doing otherwise would lose bisectability which is really unfortunate
+>>>> when you can simply avoid it. This should remain in the same branch -
+>>>> next/cpufreq-clk-samsung.
+>>>
+>>> Dear Kukjin,
+>>>
+>>> Nothing changed since yesterday... so let me point this in a more clear
+>>> way. The way you divided the patchset causes build errors:
+>>>
+>>> --------------
+>>> HEAD is now at 565872a601c4... ARM: dts: add CPU OPP and regulator
+>>> supply property for exynos5250
+>>>
+>>> ERROR: Failed build: -A arm -c exynos on
+>>> 565872a601c4d91a75b917b1fb40ff27ad7ebb08
+>>>
+>>> LOGS:
+>>> Error: ../arch/arm/boot/dts/exynos5250.dtsi:65.21-22 syntax error
+>>> FATAL ERROR: Unable to parse input tree
+>>> make[2]: *** [arch/arm/boot/dts/exynos5250-arndale.dtb] Error 1
+>>> make[1]: *** [dtbs] Error 2
+>>> make[1]: *** Waiting for unfinished jobs....
+>>> make: *** [sub-make] Error 2
+>>> --------------
+>>>
+>>> This breaks bisectability without any special valid reason.
+>>>
+>> Hi,
+>>
+>> I couldn't check e-mail yesterday because of annual health check.
+>> Anyway, I'll look at the error and handle it soon.
+>>
+> OK, the change for the include/dt-bindings/clock/exynos5250.h file which is in
+> next/cpufreq-clk-samsung branch should be provided in next/dt-samsung branch.
+> It should be fine tonight in my time.
 > 
-> This can be const.
+> One more thing, the splitting changes into dt and driver side would be required
+> generally and if it has dependency like this, proper merge topic branch is
+> required by maintainer. But I've missed last action :(
 
-OK.
+You prepared a topic branch - next/cpufreq-clk-samsung. I think
+everything can be put in it and this would solve any issues.
 
-> 
->> +	.disable = exynos_ppmu_v2_disable,
->> +	.set_event = exynos_ppmu_v2_set_event,
->> +	.get_event = exynos_ppmu_v2_get_event,
->> +};
->> +
->> +static struct of_device_id exynos_ppmu_id_match[] = {
-> 
-> In the previous patch this was not present but now it can be made 'const'.
-
-OK for adding the 'const'. 
-The original 'exynos_ppmu_id_match' is located on below of this patch.
-
-> 
->> +	{
->> +		.compatible = "samsung,exynos-ppmu",
->> +		.data = (void *)&exynos_ppmu_ops,
->> +	}, {
->> +		.compatible = "samsung,exynos-ppmu-v2",
->> +		.data = (void *)&exynos_ppmu_v2_ops,
->> +	},
->> +	{ /* sentinel */ },
->> +};
->> +
->> +static struct devfreq_event_ops *exynos_bus_get_ops(struct device_node *np)
->> +{
->> +	const struct of_device_id *match;
->> +
->> +	match = of_match_node(exynos_ppmu_id_match, np);
->> +	return (struct devfreq_event_ops *)match->data;
->> +}
->> +
->>  static int of_get_devfreq_events(struct device_node *np,
->>  				 struct exynos_ppmu *info)
->>  {
->> @@ -238,7 +397,7 @@ static int of_get_devfreq_events(struct device_node *np,
->>  			continue;
->>  		}
->>  
->> -		desc[j].ops = &exynos_ppmu_ops;
->> +		desc[j].ops = exynos_bus_get_ops(np);
-> 
-> So for each ops callback (get/set/disable) you will have another layer
-> of indirection where you will be matching the device each time?
-> 
-> That seems like a waste of CPU time. Just match it once here and use
-> either old ops or new ops_v2.
-
-OK. I'll rework to reduce the unneeded operation.
-
-> 
-> 
->>  		desc[j].driver_data = info;
->>  
->>  		of_property_read_string(node, "event-name", &desc[j].name);
->> @@ -354,11 +513,6 @@ static int exynos_ppmu_remove(struct platform_device *pdev)
->>  	return 0;
->>  }
->>  
->> -static struct of_device_id exynos_ppmu_id_match[] = {
->> -	{ .compatible = "samsung,exynos-ppmu", },
->> -	{ /* sentinel */ },
->> -};
->> -
->>  static struct platform_driver exynos_ppmu_driver = {
->>  	.probe	= exynos_ppmu_probe,
->>  	.remove	= exynos_ppmu_remove,
->> diff --git a/drivers/devfreq/event/exynos-ppmu.h b/drivers/devfreq/event/exynos-ppmu.h
->> index 4e831d48c138..9a7cf6394f37 100644
->> --- a/drivers/devfreq/event/exynos-ppmu.h
->> +++ b/drivers/devfreq/event/exynos-ppmu.h
->> @@ -26,6 +26,9 @@ enum ppmu_counter {
->>  	PPMU_PMNCNT_MAX,
->>  };
->>  
->> +/***
->> + * PPMUv1.1 Definitions
->> + */
->>  enum ppmu_event_type {
->>  	PPMU_RO_BUSY_CYCLE_CNT	= 0x0,
->>  	PPMU_WO_BUSY_CYCLE_CNT	= 0x1,
->> @@ -90,4 +93,71 @@ enum ppmu_reg {
->>  #define PPMU_PMNCT(x)			(PPMU_PMCNT0 + (0x10 * x))
->>  #define PPMU_BEVTxSEL(x)		(PPMU_BEVT0SEL + (0x100 * x))
->>  
->> +/***
->> + * PPMUv2.0 definitions
->> + */
->> +enum ppmuv2_mode {
->> +	PPMUv2_MODE_MANUAL = 0,
->> +	PPMUv2_MODE_AUTO = 1,
->> +	PPMUv2_MODE_CIG = 2,	/* CIG (Conditional Interrupt Generation) */
-> 
-> Mixing lower-upper case looks odd to me. How about:
-> PPMU2_MODE_MANUAL = 0,
-> or
-> PPMU_V2_MODE_MANUAL = 0,
-> ?
-> 
-> (here and everywhere below)
-
-As you know, after deciding the compatible name about using '-v2',
-we can decide the correct register name.
-
-Best Regards,
-Chanwoo Choi
+Best regards,
+Krzysztof
