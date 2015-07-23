@@ -1,67 +1,110 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 2/2] MAINTAINERS: add an entry for the Maxim MAX77802
- PMIC drivers
-Date: Thu, 23 Jul 2015 15:45:06 +0100
-Message-ID: <20150723144506.GE3436@x1>
-References: <1437121078-26409-1-git-send-email-javier@osg.samsung.com>
- <1437121078-26409-3-git-send-email-javier@osg.samsung.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/4] mfd: Add DT binding for Maxim MAX77802 IC
+Date: Thu, 23 Jul 2015 16:16:52 +0100
+Message-ID: <20150723151652.GK3436@x1>
+References: <1437114567-17629-1-git-send-email-javier@osg.samsung.com>
+ <1437114567-17629-4-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:37477 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753330AbbGWOpL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jul 2015 10:45:11 -0400
-Received: by wibud3 with SMTP id ud3so222660492wib.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2015 07:45:10 -0700 (PDT)
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1437121078-26409-3-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1437114567-17629-4-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
 
 On Fri, 17 Jul 2015, Javier Martinez Canillas wrote:
 
-> I added support for the max77802 drivers and have been maintaining th=
-em.
-> So add an entry for these drivers to make tools like get_maintainer.p=
-l
-> to work and make people submitting patches add me to the CC list.
+> The MAX77802 is a chip that contains regulators, 2 32kHz clocks,
+> a RTC and an I2C interface to program the individual components.
 >=20
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> The are already DT bindings for the regulators and clocks and
+> these reference to a bindings/mfd/max77802.txt file, that didn't
+> exist, for the details about the PMIC.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 >=20
 > ---
 >=20
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-
-Applied, thanks.
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d802d19a4ecc..5d964568f207 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6570,6 +6570,14 @@ S:	Supported
->  F:	drivers/power/max14577_charger.c
->  F:	drivers/power/max77693_charger.c
-> =20
-> +MAXIM MAX77802 MULTIFUNCTION PMIC DEVICE DRIVERS
-> +M:	Javier Martinez Canillas <javier@osg.samsung.com>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/*/*max77802.c
-> +F:	Documentation/devicetree/bindings/*/*max77802.txt
-> +F:	include/dt-bindings/*/*max77802.h
+> Changes in v2:
+> - Use the correct "maxim,max77802" compatible string.
+>   Suggested by Krzysztof Kozlowski
+> - Use a pmic generic node name for the max77802 node example.
+>   Suggested by Sergei Shtylyov.
+>=20
+>  Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++++++=
+++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.tx=
+t
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Doc=
+umentation/devicetree/bindings/mfd/max77802.txt
+> new file mode 100644
+> index 000000000000..c60cdec50d36
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
+> @@ -0,0 +1,26 @@
+> +Maxim MAX77802 multi-function device
 > +
->  MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
->  M:	Chanwoo Choi <cw00.choi@samsung.com>
->  M:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> +The Maxim MAX77802 is a power management chip (PMIC) that contains 1=
+0 high
+> +efficiency Buck regulators, 32 Low-dropout (LDO) regulators used to =
+power
+
+Would be good to capitalise the works in the acronyms, so
+"Low-DropOut" and "Power Management IC".
+
+> +up application processors and peripherals, a 2-channel 32kHz clock o=
+utputs,
+> +a Real-Time-Clock (RTC) and a I2C interface to program the individua=
+l
+> +regulators, clocks outputs and the RTC.
+> +
+> +Binding for the built-in 32k clock generator block is defined separa=
+tely
+> +in the bindings/clk/maxim,max77802.txt file and binding for the regu=
+lators
+
+s/bindings/../
+
+> +is defined in the bindings/regulator/max77802.txt file.
+> +
+> +Required properties:
+> +- compatible : Must be "maxim,max77802";
+> +- reg : Specifies the i2c slave address of PMIC block.
+
+s/i2c/I2C/
+
+> +- interrupts : This i2c device has an IRQ line connected to the main=
+ SoC.
+
+As above.
+
+> +- interrupt-parent : The parent interrupt controller.
+> +
+> +Example:
+> +
+> +	max77802: pmic@09 {
+> +		compatible =3D "maxim,max77802";
+> +		interrupt-parent =3D <&intc>;
+> +		interrupts =3D <26 0>;
+
+Is there a define in include/dt-bindings/interrupt-controller to
+replace 0?  IRQ_TYPE_NONE perhaps.
+
+> +		reg =3D <0x09>;
+> +	};
 
 --=20
 Lee Jones
 Linaro STMicroelectronics Landing Team Lead
 Linaro.org =E2=94=82 Open source software for ARM SoCs
 =46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
