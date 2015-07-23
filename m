@@ -1,47 +1,35 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
- allocation
-Date: Thu, 23 Jul 2015 09:38:21 +0900
-Message-ID: <55B0377D.10908@samsung.com>
-References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 0/2] PM / devfreq: exynos-ppmu: Add the support of PPMUv2
+Date: Thu, 23 Jul 2015 10:57:17 +0900
+Message-ID: <1437616639-7448-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29789 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751236AbbGWAiZ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:48940 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752589AbbGWB5W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jul 2015 20:38:25 -0400
-In-reply-to: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+	Wed, 22 Jul 2015 21:57:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, cw00.choi@samsung.com, dan.carpenter@oracle.com, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 22.07.2015 18:34, Vaibhav Hiremath wrote:
-> This patch cleans up the driver for,
-> 
->   - Use devm_kcalloc varient instead of devm_kzalloc for array
->     allocation.
->   - clk_prepare/unprepare, remove "ret" variable as it is not required
->   - use __exit for cleanup function
-> 
-> As I am referring this driver as a reference for my 88pm800 clk driver,
-> applying same changes here as well.
-> 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> ---
-> Since I do not have platform to test, it would be helpful if someone
-> tests it for me.
-> I have build tested it.
-> 
->  drivers/clk/clk-s2mps11.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
+This patch-set add the support of PPMU ((Platform Performance Monitoring Unit)
+version 2.0 which is used on Exynos5433. The exynos-ppmu.c driver supports
+both PPMUv1.1 and PPMUv2. This patch-set is testd on Exynos5433-based board.
 
-Looks good, simplifies the code and fixes the __init/__exit.
+The SoC list using PPMUv1.1
+- Exynos4210/4212/4412, Exynos3250, Exynos5260
+The SoC list using PPMUv2
+- Exynos5433, Exynos7420
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Chanwoo Choi (2):
+  PM / devfreq: exynos-ppmu: Add the support of PPMUv2 for Exynos5433
+  PM / devfreq: exynos-ppmu: Update documentation to support PPMUv2
 
-Best regards,
-Krzysztof
+ .../bindings/devfreq/event/exynos-ppmu.txt         |  42 +++++-
+ drivers/devfreq/event/exynos-ppmu.c                | 168 ++++++++++++++++++++-
+ drivers/devfreq/event/exynos-ppmu.h                |  70 +++++++++
+ 3 files changed, 271 insertions(+), 9 deletions(-)
+
+-- 
+1.8.5.5
