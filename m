@@ -1,129 +1,85 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] PM / devfreq: exynos-ppmu: Update documentation to
- support PPMUv2
-Date: Thu, 23 Jul 2015 16:58:18 +0900
-Message-ID: <55B09E9A.2020107@samsung.com>
-References: <1437616639-7448-1-git-send-email-cw00.choi@samsung.com>
- <1437616639-7448-3-git-send-email-cw00.choi@samsung.com>
- <55B0999E.6070708@samsung.com> <55B09C56.30701@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL] ARM: EXYNOS: mach: Improvements for 4.3
+Date: Thu, 23 Jul 2015 16:58:16 +0900
+Message-ID: <028b01d0c51d$553710e0$ffa532a0$@kernel.org>
+References: <1437014519-19571-1-git-send-email-k.kozlowski@samsung.com>
+ <1437014519-19571-2-git-send-email-k.kozlowski@samsung.com>
+ <06bb01d0c372$756f2250$604d66f0$@kernel.org>
+ <CAJKOXPeHu7WB7ZJJsjMSPXgiB24ryqufSuPDhFxiXoYDMjLHcg@mail.gmail.com>
+ <CAJKOXPeJyoG1sw_Oxznx75WPrk2CcQMxtXrq_MiPHm15E7k+8g@mail.gmail.com>
+ <55AED996.9090208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <55B09C56.30701@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, dan.carpenter@oracle.com, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:41577 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbbGWH6T (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jul 2015 03:58:19 -0400
+In-reply-to: <55AED996.9090208@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?Q?'Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz'?= <b.zolnierkie@samsung.com>
 
-On 23.07.2015 16:48, Chanwoo Choi wrote:
-> On 07/23/2015 04:37 PM, Krzysztof Kozlowski wrote:
->> On 23.07.2015 10:57, Chanwoo Choi wrote:
->>> This patch updates the documentation to include the information of PPMUv2.
->>> The PPMUv2 is used for Exynos5433 and Exynos7420 to monitor the performance
->>> of each IP in Exynos SoC.
->>>
->>> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>>  .../bindings/devfreq/event/exynos-ppmu.txt         | 42 ++++++++++++++++++++--
->>>  1 file changed, 40 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
->>> index b54bf3a2ff57..e8fa6b6a1827 100644
->>> --- a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
->>> +++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
->>> @@ -11,7 +11,7 @@ to various devfreq devices. The devfreq devices would use the event data when
->>>  derterming the current state of each IP.
->>>  
->>>  Required properties:
->>> -- compatible: Should be "samsung,exynos-ppmu".
->>> +- compatible: Should be "samsung,exynos-ppmu" or "samsung,exynos-ppmu-v2.
->>
->> I have doubts about "-v2" suffix. Why not using SoCs compatible suffix?
->> Is it related to ARM Performance Monitoring Unit v2 or maybe Samsung
->> just labelled it v2 for marketing purposes?
+Krzysztof Kozlowski wrote:
 > 
-> As I knew, the version of PPMU was decided by SoC designer without any dependency.
-> 
-> If we prefer to use the SoC name instead of '-v2' version on compatible name,
-> we can change them as following:
-> - samsung,exynos-ppmu -> samsung,exynos4210-ppmu
->   (because Exynos4210 used the PPMU v1 for the first time)
-> - samsung,exynos-ppmu-v2 -> samsung,exynos5433-ppmu
->   (because Exynos5433 used the PPMU v2 for the first time)
+> On 21.07.2015 14:21, Krzysztof Kozlowski wrote:
+> > 2015-07-21 14:13 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> >> 2015-07-21 14:02 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+> >>> Krzysztof Kozlowski wrote:
 
-Does the Exynos5433 datasheet mention the "version 2"? I could not find
-such annotation in mine.
+[...]
 
-Krzysztof
+> >>>> --
+> >>>
+> >>> Applied above changes into fixes/non-critical, next/cleanup-samsung,
+> >>> next/dt-samsung and next/cpufreq-clk-samsung according to the change.
+> >
+> > Cc-ed Bartlomiej,
+> >
+> > One issue found: splitting DTS change for Exynos 5250 cpufreq to
+> > separate branch will break bisectability. The commit "ARM: dts:
+> > Exynos5250: add CPU OPP and regulator supply property":
+> > 1. MUST be put after "clk: samsung: exynos5250: add cpu clock
+> > configuration data and instantiate cpu clock" to prevent build
+> > failures,
+> > 2. should be put before "ARM: Exynos: switch to using generic cpufreq
+> > driver for Exynos5250" to prevent lost cpufreq functionality.
+> >
+> > Doing otherwise would lose bisectability which is really unfortunate
+> > when you can simply avoid it. This should remain in the same branch -
+> > next/cpufreq-clk-samsung.
+> 
+> Dear Kukjin,
+> 
+> Nothing changed since yesterday... so let me point this in a more clear
+> way. The way you divided the patchset causes build errors:
+> 
+> --------------
+> HEAD is now at 565872a601c4... ARM: dts: add CPU OPP and regulator
+> supply property for exynos5250
+> 
+> ERROR: Failed build: -A arm -c exynos on
+> 565872a601c4d91a75b917b1fb40ff27ad7ebb08
+> 
+> LOGS:
+> Error: ../arch/arm/boot/dts/exynos5250.dtsi:65.21-22 syntax error
+> FATAL ERROR: Unable to parse input tree
+> make[2]: *** [arch/arm/boot/dts/exynos5250-arndale.dtb] Error 1
+> make[1]: *** [dtbs] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [sub-make] Error 2
+> --------------
+> 
+> This breaks bisectability without any special valid reason.
+> 
+Hi,
 
-> 
-> Best Regards,
-> Chanwoo Choi
-> 
->>
->> Best regards,
->> Krzysztof
->>
->>>  - reg: physical base address of each PPMU and length of memory mapped region.
->>>  
->>>  Optional properties:
->>> @@ -19,7 +19,7 @@ Optional properties:
->>>  - clocks : phandles for clock specified in "clock-names" property
->>>  - #clock-cells: should be 1.
->>>  
->>> -Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->>> +Example1 : PPMUv1 nodes in exynos3250.dtsi are listed below.
->>>  
->>>  		ppmu_dmc0: ppmu_dmc0@106a0000 {
->>>  			compatible = "samsung,exynos-ppmu";
->>> @@ -108,3 +108,41 @@ Example2 : Events of each PPMU node in exynos3250-rinato.dts are listed below.
->>>  			};
->>>  		};
->>>  	};
->>> +
->>> +Example3 : PPMUv2 nodes in exynos5433.dtsi are listed below.
->>> +
->>> +		ppmu_d0_cpu: ppmu_d0_cpu@10480000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x10480000 0x2000>;
->>> +			status = "disabled";
->>> +		};
->>> +
->>> +		ppmu_d0_general: ppmu_d0_general@10490000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x10490000 0x2000>;
->>> +			status = "disabled";
->>> +		};
->>> +
->>> +		ppmu_d0_rt: ppmu_d0_rt@104a0000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x104a0000 0x2000>;
->>> +			status = "disabled";
->>> +		};
->>> +
->>> +		ppmu_d1_cpu: ppmu_d1_cpu@104b0000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x104b0000 0x2000>;
->>> +			status = "disabled";
->>> +		};
->>> +
->>> +		ppmu_d1_general: ppmu_d1_general@104c0000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x104c0000 0x2000>;
->>> +			status = "disabled";
->>> +		};
->>> +
->>> +		ppmu_d1_rt: ppmu_d1_rt@104d0000 {
->>> +			compatible = "samsung,exynos-ppmu-v2";
->>> +			reg = <0x104d0000 0x2000>;
->>> +			status = "disabled";
->>> +		};
->>>
->>
->>
-> 
-> 
+I couldn't check e-mail yesterday because of annual health check.
+Anyway, I'll look at the error and handle it soon.
 
+Thanks for your check.
+Kukjin
