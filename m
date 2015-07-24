@@ -1,107 +1,122 @@
 From: Michael Turquette <mturquette@baylibre.com>
-Subject: RE: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Thu, 23 Jul 2015 17:30:05 -0700
-Message-ID: <20150724003005.642.21781@quantum>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
+Subject: Re: [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock configuration
+ data and instantiate cpu clock
+Date: Thu, 23 Jul 2015 17:39:18 -0700
+Message-ID: <20150724003918.642.78653@quantum>
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com>
+ <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:33338 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751794AbbGXAaJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jul 2015 20:30:09 -0400
-Received: by pdbnt7 with SMTP id nt7so4260057pdb.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2015 17:30:09 -0700 (PDT)
-In-Reply-To: <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org, kgene@kernel.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Quoting Kukjin Kim (2015-07-07 07:43:31)
-> Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> >
-> Hi,
+Quoting Bartlomiej Zolnierkiewicz (2015-07-01 06:10:35)
+> From: Thomas Abraham <thomas.ab@samsung.com>
 > 
-> > On Thursday, July 02, 2015 09:42:38 AM Chanwoo Choi wrote:
-> > > This patchset use cpufreq-dt driver to support Exynos3250 cpufreq and tested it
-> > > on Exynos3250-based Rinato board.
-> > >
-> > > Depends on:
-> > > - next-20150701 tag (master branch) of linux-next kernel tree
-> > > - This patch-set is based on Exynos5250 patch-set[1] because two patch-set
-> > >   modify the 'arch/arm/mach-exynos/exynos.c' to add the compatible string.
-> > >   [1] https://lkml.org/lkml/2015/6/29/361
-> > >   : [PATCH v2 0/4] cpufreq: use generic cpufreq drivers for Exynos5250 platform
-> > >
-> > > Changes from v5:
-> > > (https://lkml.org/lkml/2015/7/1/324)
-> > > - Reorder the cpu dt node in exynos3250-rinato/monk.dts alpabetically.
-> > > - Add reviewed-by tag of Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > >
-> > > Changes from v4:
-> > > (https://lkml.org/lkml/2014/10/20/215)
-> > > - Rebased on latest linux-next git repository.
-> > > - Remove unnecessary divider clock flag from divider of DIV_CPU0/DIV_CPU1 register
-> > >
-> > > Changes from v3:
-> > > - This patchset is based on 3.18-rc1 with new patchset[3] of Thomas Abraham
-> > >   [3] [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-> > >   - http://www.spinics.net/lists/arm-kernel/msg370412.html
-> > >
-> > > Changes from v2:
-> > > - Rebased on new patchset of Thomas Abraham
-> > >   and for-next branch of samsunc-clk.git of Tomasz Figa
-> > >
-> > > Changes from v1:
-> > > - Rebased on new patchset[1] by Thomas Abraham
-> > >   [1] [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-> > >   - http://www.spinics.net/lists/arm-kernel/msg364790.html
-> > > - Modify clk-cpu.c to support Exynos3250
-> > > - Drop documentation patch on previous patchset[2]
-> > >   [2] http://www.spinics.net/lists/cpufreq/msg10265.html
-> > > - Add only operating-points for Exynos3250 without armclk-divider-table
-> > >
-> > > Chanwoo Choi (3):
-> > >   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
-> > >   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
-> > >   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> > >
-> > >  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
-> > >  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
-> > >  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
-> > >  arch/arm/mach-exynos/exynos.c           |  1 +
-> > >  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
-> > >  include/dt-bindings/clock/exynos3250.h  |  1 +
-> > >  6 files changed, 55 insertions(+), 2 deletions(-)
-> > 
-> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > 
-> > Thank you for working on this.
-> > 
-> +1 Thanks.
+> With the addition of the new Samsung specific cpu-clock type, the
+> arm clock can be represented as a cpu-clock type. Add the CPU clock
+> configuration data and instantiate the CPU clock type for Exynos5250.
 > 
-> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
-> tree together. And if you want, I could provide topic branch for clk tree.
+> Changes by Bartlomiej:
+> - split Exynos5250 support from the original patch
+> - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Kukjin,
+Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-A topic branch would be great.
+If Kukjin wants to merge this through the samsung tree then an immutable
+branch would be much appreciated.
 
-Thanks,
+Regards,
 Mike
 
+> ---
+>  drivers/clk/samsung/clk-exynos5250.c   | 31 +++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/exynos5250.h |  1 +
+>  2 files changed, 32 insertions(+)
 > 
-> Thanks,
-> Kukjin
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index 70ec3d2..d87f34d 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/syscore_ops.h>
+>  
+>  #include "clk.h"
+> +#include "clk-cpu.h"
+>  
+>  #define APLL_LOCK              0x0
+>  #define APLL_CON0              0x100
+> @@ -748,6 +749,32 @@ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
+>                 VPLL_LOCK, VPLL_CON0, NULL),
+>  };
+>  
+> +#define E5250_CPU_DIV0(apll, pclk_dbg, atb, periph, acp, cpud)         \
+> +               ((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) | \
+> +                ((periph) << 12) | ((acp) << 8) | ((cpud) << 4)))
+> +#define E5250_CPU_DIV1(hpm, copy)                                      \
+> +               (((hpm) << 4) | (copy))
+> +
+> +static const struct exynos_cpuclk_cfg_data exynos5250_armclk_d[] __initconst = {
+> +       { 1700000, E5250_CPU_DIV0(5, 3, 7, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
+> +       { 1600000, E5250_CPU_DIV0(4, 1, 7, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
+> +       { 1500000, E5250_CPU_DIV0(4, 1, 7, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
+> +       { 1400000, E5250_CPU_DIV0(4, 1, 6, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
+> +       { 1300000, E5250_CPU_DIV0(3, 1, 6, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
+> +       { 1200000, E5250_CPU_DIV0(3, 1, 5, 7, 7, 2), E5250_CPU_DIV1(2, 0), },
+> +       { 1100000, E5250_CPU_DIV0(3, 1, 5, 7, 7, 3), E5250_CPU_DIV1(2, 0), },
+> +       { 1000000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  900000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  800000, E5250_CPU_DIV0(2, 1, 4, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  700000, E5250_CPU_DIV0(1, 1, 3, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  600000, E5250_CPU_DIV0(1, 1, 3, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  500000, E5250_CPU_DIV0(1, 1, 2, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  400000, E5250_CPU_DIV0(1, 1, 2, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  300000, E5250_CPU_DIV0(1, 1, 1, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  200000, E5250_CPU_DIV0(1, 1, 1, 7, 7, 1), E5250_CPU_DIV1(2, 0), },
+> +       {  0 },
+> +};
+> +
+>  static const struct of_device_id ext_clk_match[] __initconst = {
+>         { .compatible = "samsung,clock-xxti", .data = (void *)0, },
+>         { },
+> @@ -797,6 +824,10 @@ static void __init exynos5250_clk_init(struct device_node *np)
+>                         ARRAY_SIZE(exynos5250_div_clks));
+>         samsung_clk_register_gate(ctx, exynos5250_gate_clks,
+>                         ARRAY_SIZE(exynos5250_gate_clks));
+> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+> +                       mout_cpu_p[0], mout_cpu_p[1], 0x200,
+> +                       exynos5250_armclk_d, ARRAY_SIZE(exynos5250_armclk_d),
+> +                       CLK_CPU_HAS_DIV1);
+>  
+>         /*
+>          * Enable arm clock down (in idle) and set arm divider
+> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
+> index 4273891d..8183d1c 100644
+> --- a/include/dt-bindings/clock/exynos5250.h
+> +++ b/include/dt-bindings/clock/exynos5250.h
+> @@ -21,6 +21,7 @@
+>  #define CLK_FOUT_CPLL          6
+>  #define CLK_FOUT_EPLL          7
+>  #define CLK_FOUT_VPLL          8
+> +#define CLK_ARM_CLK            9
+>  
+>  /* gate for special clocks (sclk) */
+>  #define CLK_SCLK_CAM_BAYER     128
+> -- 
+> 1.9.1
 > 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
