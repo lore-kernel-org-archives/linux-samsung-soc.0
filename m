@@ -1,40 +1,62 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
- allocation
-Date: Fri, 24 Jul 2015 14:39:00 -0700
-Message-ID: <20150724213900.GG15042@codeaurora.org>
-References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] thermal: consistently use int for temperatures
+Date: Sat, 25 Jul 2015 00:11:02 +0200
+Message-ID: <20150724221102.GA31517@amd>
+References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
+ <20150723120759.GA17690@amd>
+ <20150724062948.GK18700@pengutronix.de>
+ <55B244BE.1060203@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36649 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752539AbbGXVjC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jul 2015 17:39:02 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <55B244BE.1060203@roeck-us.net>
+Sender: linux-pm-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, "open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
 
-On 07/22, Vaibhav Hiremath wrote:
-> This patch cleans up the driver for,
-> 
->   - Use devm_kcalloc varient instead of devm_kzalloc for array
->     allocation.
->   - clk_prepare/unprepare, remove "ret" variable as it is not required
->   - use __exit for cleanup function
-> 
-> As I am referring this driver as a reference for my 88pm800 clk driver,
-> applying same changes here as well.
-> 
-> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-> ---
+On Fri 2015-07-24 06:59:26, Guenter Roeck wrote:
+> On 07/23/2015 11:29 PM, Sascha Hauer wrote:
+> >On Thu, Jul 23, 2015 at 02:07:59PM +0200, Pavel Machek wrote:
+> >>On Tue 2015-07-21 09:21:32, Sascha Hauer wrote:
+> >>>The thermal code uses int, long and unsigned long for temperatures
+> >>>in different places.
+> >>>
+> >>>Using an unsigned type limits the thermal framework to positive
+> >>>temperatures without need. Also several drivers currently will rep=
+ort
+> >>>temperatures near UINT_MAX for temperatures below 0=B0C. This will=
+ probably
+> >>>immediately shut the machine down due to overtemperature if starte=
+d below
+> >>>0=B0C.
+> >>>
+> >>>'long' is 64bit on several architectures. This is not needed since=
+ INT_MAX =B0mC
+> >>>is above the melting point of all known materials.
+> >>
+> >>Can we do something like
+> >>
+> >>typedef millicelsius_t int;
+> >>
+> >>...to document the units?
+> >
+> >I am not very fond of typedefs and I am not sure this adds any value=
+=2E I
+> >could change it when more people ask for it, but I just sent the new
+> >version without this.
+> >
+>=20
+> I thought we are supposed to not introduce new typedefs anyway.
 
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+You are not supposed to typedef struct, but typedef for millicelsius_t
+would be ok. And it is your only chance if you want people to pay
+attention. If you make it int, someone will pass it to long or
+something else..
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
+/blog.html
