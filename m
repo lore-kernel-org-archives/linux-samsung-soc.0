@@ -1,72 +1,40 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Fri, 24 Jul 2015 11:30:20 -0700
-Message-ID: <20150724183020.642.56856@quantum>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
- <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
- <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
- <55B1BA3B.3080906@kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk: s2mps11: Use kcalloc instead of kzalloc for array
+ allocation
+Date: Fri, 24 Jul 2015 14:39:00 -0700
+Message-ID: <20150724213900.GG15042@codeaurora.org>
+References: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55B1BA3B.3080906@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>Kukjin Kim <kgene@kernel.org>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:36649 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539AbbGXVjC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 24 Jul 2015 17:39:02 -0400
+Content-Disposition: inline
+In-Reply-To: <1437557693-29433-1-git-send-email-vaibhav.hiremath@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, "open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-kernel@vger.kernel.org>, "open list:SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
 
-Quoting Kukjin Kim (2015-07-23 21:08:27)
-> On 07/24/15 12:40, Kukjin Kim wrote:
-> > On 07/24/15 09:30, Michael Turquette wrote:
-> >> Quoting Kukjin Kim (2015-07-07 07:43:31)
-> >>> Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > [...]
-> > 
-> >>>>> Chanwoo Choi (3):
-> >>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
-> >>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
-> >>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
-> >>>>>
-> >>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
-> >>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
-> >>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
-> >>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
-> >>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
-> >>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
-> >>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >>>>
-> >>>> Thank you for working on this.
-> >>>>
-> >>> +1 Thanks.
-> >>>
-> >>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
-> >>> tree together. And if you want, I could provide topic branch for clk tree.
-> >>
-> >> Kukjin,
-> >>
-> >> A topic branch would be great.
-> >>
-> > Sure, BTW it means you did 'ack' on this clk change? If not, please let
-> > em know ;-) I'll let you know once the topic branch is ready.
-> > 
-> Mike,
+On 07/22, Vaibhav Hiremath wrote:
+> This patch cleans up the driver for,
 > 
-> Done, the topic branch 'v4.3-topic/clk-samsung' in samsung tree is for
-> your clk tree.
-
-Thanks!
-
-Mike
-
+>   - Use devm_kcalloc varient instead of devm_kzalloc for array
+>     allocation.
+>   - clk_prepare/unprepare, remove "ret" variable as it is not required
+>   - use __exit for cleanup function
 > 
-> Thanks,
-> Kukjin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> As I am referring this driver as a reference for my 88pm800 clk driver,
+> applying same changes here as well.
+> 
+> Signed-off-by: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+> ---
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
