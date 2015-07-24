@@ -1,62 +1,37 @@
-From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Fri, 24 Jul 2015 13:08:27 +0900
-Message-ID: <55B1BA3B.3080906@kernel.org>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com> <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org> <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55B1B3B0.8090106-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Chanwoo Choi' <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 0/2] PM / devfreq: exynos-ppmu: Add the support of PPMUv2
+Date: Fri, 24 Jul 2015 13:17:23 +0900
+Message-ID: <1437711445-7386-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Cc: kgene@kernel.org, k.kozlowski@samsung.com, cw00.choi@samsung.com, dan.carpenter@oracle.com, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/24/15 12:40, Kukjin Kim wrote:
-> On 07/24/15 09:30, Michael Turquette wrote:
->> Quoting Kukjin Kim (2015-07-07 07:43:31)
->>> Bartlomiej Zolnierkiewicz wrote:
-> 
-> [...]
-> 
->>>>> Chanwoo Choi (3):
->>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
->>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
->>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
->>>>>
->>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
->>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
->>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
->>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
->>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
->>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
->>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
->>>>
->>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>
->>>> Thank you for working on this.
->>>>
->>> +1 Thanks.
->>>
->>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
->>> tree together. And if you want, I could provide topic branch for clk tree.
->>
->> Kukjin,
->>
->> A topic branch would be great.
->>
-> Sure, BTW it means you did 'ack' on this clk change? If not, please let
-> em know ;-) I'll let you know once the topic branch is ready.
-> 
-Mike,
+This patch-set add the support of PPMU ((Platform Performance Monitoring Unit)
+version 2.0 which is used on Exynos5433. The exynos-ppmu.c driver supports
+both PPMUv1.1 and PPMUv2. This patch-set is testd on Exynos5433-based board.
 
-Done, the topic branch 'v4.3-topic/clk-samsung' in samsung tree is for
-your clk tree.
+The SoC list using PPMUv1.1
+- Exynos4210/4212/4412, Exynos3250, Exynos5260
+The SoC list using PPMUv2
+- Exynos5433, Exynos7420
 
-Thanks,
-Kukjin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes from v1:
+(https://lkml.org/lkml/2015/7/22/834)
+- Add const keyword to the instance of struct devfreq_event_ops/of_device_id
+- Modify the register name of PPMU v2 ('PPMUv2_*' -> 'PPMU_V2_*')
+- Reduce the unneed call function of exynos_bus_get_ops()
+
+Chanwoo Choi (2):
+  PM / devfreq: exynos-ppmu: Add the support of PPMUv2 for Exynos5433
+  PM / devfreq: exynos-ppmu: Update documentation to support PPMUv2
+
+ .../bindings/devfreq/event/exynos-ppmu.txt         |  42 ++++-
+ drivers/devfreq/event/exynos-ppmu.c                | 170 ++++++++++++++++++++-
+ drivers/devfreq/event/exynos-ppmu.h                |  70 +++++++++
+ 3 files changed, 273 insertions(+), 9 deletions(-)
+
+-- 
+1.8.5.5
+
