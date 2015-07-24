@@ -1,57 +1,63 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
-Date: Fri, 24 Jul 2015 12:40:32 +0900
-Message-ID: <55B1B3B0.8090106@kernel.org>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com> <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org> <20150724003005.642.21781@quantum>
+Subject: Re: [PATCH v3 1/4] clk: samsung: exynos5250: add cpu clock configuration
+ data and instantiate cpu clock
+Date: Fri, 24 Jul 2015 12:48:37 +0900
+Message-ID: <55B1B595.4040906@kernel.org>
+References: <1435756238-845-1-git-send-email-b.zolnierkie@samsung.com> <1435756238-845-2-git-send-email-b.zolnierkie@samsung.com> <20150724003918.642.78653@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54545 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:54899 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752894AbbGXDko (ORCPT
+	id S1752218AbbGXDsr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jul 2015 23:40:44 -0400
-In-Reply-To: <20150724003005.642.21781@quantum>
+	Thu, 23 Jul 2015 23:48:47 -0400
+In-Reply-To: <20150724003918.642.78653@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Michael Turquette <mturquette@baylibre.com>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 07/24/15 09:30, Michael Turquette wrote:
-> Quoting Kukjin Kim (2015-07-07 07:43:31)
->> Bartlomiej Zolnierkiewicz wrote:
-
-[...]
-
->>>> Chanwoo Choi (3):
->>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
->>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
->>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
->>>>
->>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
->>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
->>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
->>>>  arch/arm/mach-exynos/exynos.c           |  1 +
->>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
->>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
->>>>  6 files changed, 55 insertions(+), 2 deletions(-)
->>>
->>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>>
->>> Thank you for working on this.
->>>
->> +1 Thanks.
+On 07/24/15 09:39, Michael Turquette wrote:
+> Quoting Bartlomiej Zolnierkiewicz (2015-07-01 06:10:35)
+>> From: Thomas Abraham <thomas.ab@samsung.com>
 >>
->> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
->> tree together. And if you want, I could provide topic branch for clk tree.
+>> With the addition of the new Samsung specific cpu-clock type, the
+>> arm clock can be represented as a cpu-clock type. Add the CPU clock
+>> configuration data and instantiate the CPU clock type for Exynos5250.
+>>
+>> Changes by Bartlomiej:
+>> - split Exynos5250 support from the original patch
+>> - moved E5250_CPU_DIV[0,1]() macros to clk-exynos5250.c
+>>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > 
-> Kukjin,
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
 > 
-> A topic branch would be great.
+Thanks, Mike.
+
+> If Kukjin wants to merge this through the samsung tree then an immutable
+> branch would be much appreciated.
 > 
-Sure, BTW it means you did 'ack' on this clk change? If not, please let
-em know ;-) I'll let you know once the topic branch is ready.
+Here is the topic branch for clk tree and it will not be rebased.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v4.3-topic/clk-samsung
+
+If any problems, please kindly let me know.
 
 Thanks,
 Kukjin
+
+> Regards,
+> Mike
+> 
+>> ---
+>>  drivers/clk/samsung/clk-exynos5250.c   | 31 +++++++++++++++++++++++++++++++
+>>  include/dt-bindings/clock/exynos5250.h |  1 +
+>>  2 files changed, 32 insertions(+)
