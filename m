@@ -1,72 +1,57 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Subject: RE: [PATCH v2] thermal: consistently use int for temperatures
-Date: Fri, 24 Jul 2015 01:31:36 +0000
-Message-ID: <744357E9AAD1214791ACBA4B0B9092631DD16EED@SHSMSX101.ccr.corp.intel.com>
-References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
- <9hhk2tteqb3.fsf@e105922-lin.cambridge.arm.com>
- <744357E9AAD1214791ACBA4B0B9092630153E699@SHSMSX101.ccr.corp.intel.com>
- <20150723103758.GI18700@pengutronix.de>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Fri, 24 Jul 2015 12:40:32 +0900
+Message-ID: <55B1B3B0.8090106@kernel.org>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com> <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org> <20150724003005.642.21781@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150723103758.GI18700@pengutronix.de>
-Content-Language: en-US
-Sender: linux-pm-owner@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Punit Agrawal <punit.agrawal@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:54545 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752894AbbGXDko (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jul 2015 23:40:44 -0400
+In-Reply-To: <20150724003005.642.21781@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Kukjin Kim <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-QXMgdGhlIG9yaWdpbmFsIHBhdGNoIGhhcyBub3QgYmVlbiBpbiB1cHN0cmVhbSwgSSdkIHByZWZl
-ciBhIHJlZnJlc2hlZCBwYXRjaCwgcmF0aGVyIHRoYW4gYW4gaW5jcmVtZW50YWwgZml4Lg0KDQpU
-aGFua3MsDQpydWkNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTYXNj
-aGEgSGF1ZXIgW21haWx0bzpzLmhhdWVyQHBlbmd1dHJvbml4LmRlXQ0KPiBTZW50OiBUaHVyc2Rh
-eSwgSnVseSAyMywgMjAxNSA2OjM4IFBNDQo+IFRvOiBaaGFuZywgUnVpDQo+IENjOiBQdW5pdCBB
-Z3Jhd2FsOyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IEVkdWFyZG8gVmFsZW50aW47IGxpbnV4
-LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKZWFuIERlbHZhcmU7IFBldGVyIEZldWVyZXI7
-IEhlaWtvIFN0dWVibmVyOw0KPiBMdWthc3ogTWFqZXdza2k7IFN0ZXBoZW4gV2FycmVuOyBUaGll
-cnJ5IFJlZGluZzsgbGludXgtDQo+IGFjcGlAdmdlci5rZXJuZWwub3JnOyBwbGF0Zm9ybS1kcml2
-ZXIteDg2QHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZzsgbGludXgtb21hcEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNhbXN1bmctDQo+IHNv
-Y0B2Z2VyLmtlcm5lbC5vcmc7IEd1ZW50ZXIgUm9lY2s7IFJhZmFlbCBKLiBXeXNvY2tpOyBNYXhp
-bWUgUmlwYXJkOw0KPiBEYXJyZW4gSGFydDsgbG0tc2Vuc29yc0BsbS1zZW5zb3JzLm9yZw0KPiBT
-dWJqZWN0OiBSZTogW1BBVENIIHYyXSB0aGVybWFsOiBjb25zaXN0ZW50bHkgdXNlIGludCBmb3Ig
-dGVtcGVyYXR1cmVzDQo+IEltcG9ydGFuY2U6IEhpZ2gNCj4gDQo+IEhpIFpoYW5nLA0KPiANCj4g
-T24gVHVlLCBKdWwgMjEsIDIwMTUgYXQgMDE6MzU6MzFQTSArMDAwMCwgWmhhbmcsIFJ1aSB3cm90
-ZToNCj4gPiA+ID4NCj4gPiBQYXRjaCBhcHBsaWVkLg0KPiANCj4gVGhhbmtzIGZvciBhcHBseWlu
-Zy4gSSBtaXNzZWQgdG8gY29udmVydCBhbm90aGVyIHBsYWNlLCBzbyB3ZSBnZXQgYSBuZXcNCj4g
-Y29tcGlsZXIgd2FybmluZy4gVGhlIGF0dGFjaGVkIHBhdGNoIGZpeGVzIHRoaXMgKHN1aXRhYmxl
-IGZvciBnaXQgcmViYXNlIC0tDQo+IGF1dG9zcXVhc2gpLiBQbGVhc2UgbGV0IG1lIGtub3cgaWYg
-eW91IGNhbiBoYW5kbGUgdGhpcyBvciBpZiB5b3UgcHJlZmVyIGEgbmV3DQo+IHBhdGNoIGluc3Rl
-YWQuDQo+IA0KPiBUaGFua3MNCj4gIFNhc2NoYQ0KPiANCj4gDQo+IC0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tODwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0K
-PiBGcm9tIDQ5MDdhN2MzMmZkMTZlYWY5ZjMxZDlmOTA0Mjc2YzlhMDE3NmI3MTcgTW9uIFNlcCAx
-NyAwMDowMDowMCAyMDAxDQo+IEZyb206IFNhc2NoYSBIYXVlciA8cy5oYXVlckBwZW5ndXRyb25p
-eC5kZT4NCj4gRGF0ZTogVGh1LCAyMyBKdWwgMjAxNSAxMjozMjozMSArMDIwMA0KPiBTdWJqZWN0
-OiBbUEFUQ0hdIGZpeHVwISB0aGVybWFsOiBjb25zaXN0ZW50bHkgdXNlIGludCBmb3IgdGVtcGVy
-YXR1cmVzDQo+IE1JTUUtVmVyc2lvbjogMS4wDQo+IENvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsg
-Y2hhcnNldD1VVEYtOA0KPiBDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA4Yml0DQo+IA0KPiBm
-aXhlczoNCj4gZHJpdmVycy9wb3dlci9jaGFyZ2VyLW1hbmFnZXIuYzogSW4gZnVuY3Rpb24NCj4g
-4oCYY21fZ2V0X2JhdHRlcnlfdGVtcGVyYXR1cmXigJk6DQo+IGRyaXZlcnMvcG93ZXIvY2hhcmdl
-ci1tYW5hZ2VyLmM6NjIyOjQ1OiB3YXJuaW5nOiBwYXNzaW5nIGFyZ3VtZW50IDIgb2YNCj4g4oCY
-dGhlcm1hbF96b25lX2dldF90ZW1w4oCZIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZQ0K
-PiAgICByZXQgPSB0aGVybWFsX3pvbmVfZ2V0X3RlbXAoY20tPnR6ZF9iYXR0LCAodW5zaWduZWQg
-bG9uZyAqKXRlbXApOw0KPiANCj4gU2lnbmVkLW9mZi1ieTogU2FzY2hhIEhhdWVyIDxzLmhhdWVy
-QHBlbmd1dHJvbml4LmRlPg0KPiAtLS0NCj4gIGRyaXZlcnMvcG93ZXIvY2hhcmdlci1tYW5hZ2Vy
-LmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24o
-LSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Bvd2VyL2NoYXJnZXItbWFuYWdlci5jIGIv
-ZHJpdmVycy9wb3dlci9jaGFyZ2VyLQ0KPiBtYW5hZ2VyLmMgaW5kZXggMWMyMDJjYy4uOTA3Mjkz
-ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9wb3dlci9jaGFyZ2VyLW1hbmFnZXIuYw0KPiArKysg
-Yi9kcml2ZXJzL3Bvd2VyL2NoYXJnZXItbWFuYWdlci5jDQo+IEBAIC02MTksNyArNjE5LDcgQEAg
-c3RhdGljIGludCBjbV9nZXRfYmF0dGVyeV90ZW1wZXJhdHVyZShzdHJ1Y3QNCj4gY2hhcmdlcl9t
-YW5hZ2VyICpjbSwNCj4gDQo+ICAjaWZkZWYgQ09ORklHX1RIRVJNQUwNCj4gIAlpZiAoY20tPnR6
-ZF9iYXR0KSB7DQo+IC0JCXJldCA9IHRoZXJtYWxfem9uZV9nZXRfdGVtcChjbS0+dHpkX2JhdHQs
-ICh1bnNpZ25lZCBsb25nDQo+ICopdGVtcCk7DQo+ICsJCXJldCA9IHRoZXJtYWxfem9uZV9nZXRf
-dGVtcChjbS0+dHpkX2JhdHQsIHRlbXApOw0KPiAgCQlpZiAoIXJldCkNCj4gIAkJCS8qIENhbGli
-cmF0ZSB0ZW1wZXJhdHVyZSB1bml0ICovDQo+ICAJCQkqdGVtcCAvPSAxMDA7DQo+IC0tDQo+IDIu
-MS40DQo+IA0KPiANCj4gLS0NCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4gSW5kdXN0cmlhbCBMaW51
-eCBTb2x1dGlvbnMgICAgICAgICAgICAgICAgIHwgaHR0cDovL3d3dy5wZW5ndXRyb25peC5kZS8g
-IHwNCj4gUGVpbmVyIFN0ci4gNi04LCAzMTEzNyBIaWxkZXNoZWltLCBHZXJtYW55IHwgUGhvbmU6
-ICs0OS01MTIxLTIwNjkxNy0wICAgIHwNCj4gQW10c2dlcmljaHQgSGlsZGVzaGVpbSwgSFJBIDI2
-ODYgICAgICAgICAgIHwgRmF4OiAgICs0OS01MTIxLTIwNjkxNy01NTU1IHwNCg==
+On 07/24/15 09:30, Michael Turquette wrote:
+> Quoting Kukjin Kim (2015-07-07 07:43:31)
+>> Bartlomiej Zolnierkiewicz wrote:
+
+[...]
+
+>>>> Chanwoo Choi (3):
+>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+>>>>
+>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
+>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
+>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
+>>>
+>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>>
+>>> Thank you for working on this.
+>>>
+>> +1 Thanks.
+>>
+>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
+>> tree together. And if you want, I could provide topic branch for clk tree.
+> 
+> Kukjin,
+> 
+> A topic branch would be great.
+> 
+Sure, BTW it means you did 'ack' on this clk change? If not, please let
+em know ;-) I'll let you know once the topic branch is ready.
+
+Thanks,
+Kukjin
