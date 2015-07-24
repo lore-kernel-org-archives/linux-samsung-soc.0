@@ -1,52 +1,72 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] thermal: consistently use int for temperatures
-Date: Fri, 24 Jul 2015 06:59:26 -0700
-Message-ID: <55B244BE.1060203@roeck-us.net>
-References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de> <20150723120759.GA17690@amd> <20150724062948.GK18700@pengutronix.de>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Fri, 24 Jul 2015 11:30:20 -0700
+Message-ID: <20150724183020.642.56856@quantum>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+ <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
+ <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
+ <55B1BA3B.3080906@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150724062948.GK18700@pengutronix.de>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55B1BA3B.3080906@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>Kukjin Kim <kgene@kernel.org>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, s.nawrocki@samsung.com, tomasz.figa@gmail.com, sboyd@codeaurora.org, k.kozlowski@samsung.com, thomas.ab@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/23/2015 11:29 PM, Sascha Hauer wrote:
-> On Thu, Jul 23, 2015 at 02:07:59PM +0200, Pavel Machek wrote:
->> On Tue 2015-07-21 09:21:32, Sascha Hauer wrote:
->>> The thermal code uses int, long and unsigned long for temperatures
->>> in different places.
->>>
->>> Using an unsigned type limits the thermal framework to positive
->>> temperatures without need. Also several drivers currently will repo=
-rt
->>> temperatures near UINT_MAX for temperatures below 0=B0C. This will =
-probably
->>> immediately shut the machine down due to overtemperature if started=
- below
->>> 0=B0C.
->>>
->>> 'long' is 64bit on several architectures. This is not needed since =
-INT_MAX =B0mC
->>> is above the melting point of all known materials.
->>
->> Can we do something like
->>
->> typedef millicelsius_t int;
->>
->> ...to document the units?
->
-> I am not very fond of typedefs and I am not sure this adds any value.=
- I
-> could change it when more people ask for it, but I just sent the new
-> version without this.
->
+Quoting Kukjin Kim (2015-07-23 21:08:27)
+> On 07/24/15 12:40, Kukjin Kim wrote:
+> > On 07/24/15 09:30, Michael Turquette wrote:
+> >> Quoting Kukjin Kim (2015-07-07 07:43:31)
+> >>> Bartlomiej Zolnierkiewicz wrote:
+> > 
+> > [...]
+> > 
+> >>>>> Chanwoo Choi (3):
+> >>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+> >>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+> >>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+> >>>>>
+> >>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+> >>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+> >>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+> >>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
+> >>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+> >>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
+> >>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >>>>
+> >>>> Thank you for working on this.
+> >>>>
+> >>> +1 Thanks.
+> >>>
+> >>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
+> >>> tree together. And if you want, I could provide topic branch for clk tree.
+> >>
+> >> Kukjin,
+> >>
+> >> A topic branch would be great.
+> >>
+> > Sure, BTW it means you did 'ack' on this clk change? If not, please let
+> > em know ;-) I'll let you know once the topic branch is ready.
+> > 
+> Mike,
+> 
+> Done, the topic branch 'v4.3-topic/clk-samsung' in samsung tree is for
+> your clk tree.
 
-I thought we are supposed to not introduce new typedefs anyway.
+Thanks!
 
-Guenter
+Mike
 
-
+> 
+> Thanks,
+> Kukjin
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
