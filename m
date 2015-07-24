@@ -1,204 +1,62 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v6 1/3] clk: samsung: exynos3250: Add cpu clock configuration
- data and instaniate cpu clock
-Date: Fri, 24 Jul 2015 12:51:05 +0900
-Message-ID: <55B1B629.6000800@kernel.org>
-References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com> <1435797761-3339-2-git-send-email-cw00.choi@samsung.com> <CAJKOXPczs6OL-JH0hfQg7QtONzJKVRq=e_3JQ8bs7S+OiMOr-w@mail.gmail.com> <55AC3F78.3050108@samsung.com>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Fri, 24 Jul 2015 13:08:27 +0900
+Message-ID: <55B1BA3B.3080906@kernel.org>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com> <4464631.oZyVO4Z0Ov@amdc1976> <093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org> <20150724003005.642.21781@quantum> <55B1B3B0.8090106@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55AC3F78.3050108@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org, kgene@kernel.org, thomas.ab@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYI=?= =?UTF-8?B?bmllcmtpZXdpY3o=?= <b.zolnierkie@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55B1B3B0.8090106-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Chanwoo Choi' <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/20/15 09:23, Chanwoo Choi wrote:
-> Hi Sylwester,
+On 07/24/15 12:40, Kukjin Kim wrote:
+> On 07/24/15 09:30, Michael Turquette wrote:
+>> Quoting Kukjin Kim (2015-07-07 07:43:31)
+>>> Bartlomiej Zolnierkiewicz wrote:
 > 
-Hi Chanwoo,
+> [...]
+> 
+>>>>> Chanwoo Choi (3):
+>>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+>>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+>>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+>>>>>
+>>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
+>>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+>>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
+>>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
+>>>>
+>>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>
+>>>> Thank you for working on this.
+>>>>
+>>> +1 Thanks.
+>>>
+>>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
+>>> tree together. And if you want, I could provide topic branch for clk tree.
+>>
+>> Kukjin,
+>>
+>> A topic branch would be great.
+>>
+> Sure, BTW it means you did 'ack' on this clk change? If not, please let
+> em know ;-) I'll let you know once the topic branch is ready.
+> 
+Mike,
 
-> Please review this patch.
-> 
-Applied with Mike's ack BTW please make sure your patch has no problem
-with checkpatch before submitting....I've fixed them when I applied.
+Done, the topic branch 'v4.3-topic/clk-samsung' in samsung tree is for
+your clk tree.
 
 Thanks,
 Kukjin
-
-ERROR: code indent should use tabs where possible
-#49: FILE: drivers/clk/samsung/clk-exynos3250.c:779:
-+               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \$
-
-WARNING: please, no spaces at the start of a line
-#49: FILE: drivers/clk/samsung/clk-exynos3250.c:779:
-+               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \$
-
-ERROR: code indent should use tabs where possible
-#50: FILE: drivers/clk/samsung/clk-exynos3250.c:780:
-+               ((corem) << 4))$
-
-WARNING: please, no spaces at the start of a line
-#50: FILE: drivers/clk/samsung/clk-exynos3250.c:780:
-+               ((corem) << 4))$
-
-WARNING: please, no spaces at the start of a line
-#55: FILE: drivers/clk/samsung/clk-exynos3250.c:785:
-+       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#56: FILE: drivers/clk/samsung/clk-exynos3250.c:786:
-+       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#57: FILE: drivers/clk/samsung/clk-exynos3250.c:787:
-+       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#58: FILE: drivers/clk/samsung/clk-exynos3250.c:788:
-+       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#59: FILE: drivers/clk/samsung/clk-exynos3250.c:789:
-+       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#60: FILE: drivers/clk/samsung/clk-exynos3250.c:790:
-+       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#61: FILE: drivers/clk/samsung/clk-exynos3250.c:791:
-+       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#62: FILE: drivers/clk/samsung/clk-exynos3250.c:792:
-+       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#63: FILE: drivers/clk/samsung/clk-exynos3250.c:793:
-+       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#64: FILE: drivers/clk/samsung/clk-exynos3250.c:794:
-+       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },$
-
-WARNING: please, no spaces at the start of a line
-#65: FILE: drivers/clk/samsung/clk-exynos3250.c:795:
-+       {  0 },$
-
-total: 2 errors, 13 warnings, 63 lines checked
-
-NOTE: Whitespace errors detected.
-      You may wish to use scripts/cleanpatch or scripts/cleanfile
-
-[PATCH v6 1_3] clk: samsung: exynos3250: Add cpu clock configuration
-data and instaniate cpu clock.eml has style problems, please review.
-
-
-> Best Regards,
-> Chanwoo Choi
-> 
-> On 07/16/2015 04:46 PM, Krzysztof Kozlowski wrote:
->> 2015-07-02 9:42 GMT+09:00 Chanwoo Choi <cw00.choi@samsung.com>:
->>> This patch add CPU clock configuration data and instantiate the CPU clock type
->>> for Exynos3250 to support Samsung specific cpu-clock type.
->>>
->>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> ---
->>>  drivers/clk/samsung/clk-exynos3250.c   | 32 ++++++++++++++++++++++++++++++--
->>>  include/dt-bindings/clock/exynos3250.h |  1 +
->>
->> Sylwester,
->>
->> I think this patch also waits for your review or ack.
->> The patchset is rebased on Bartlomiej's series for Exynos5250 cpufreq
->> so the easiest way would be to take it through samsung-soc tree.
->>
->> Best regards,
->> Krzysztof
->>
->>
->>>  2 files changed, 31 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
->>> index 538de66a759e..378ad5ad3492 100644
->>> --- a/drivers/clk/samsung/clk-exynos3250.c
->>> +++ b/drivers/clk/samsung/clk-exynos3250.c
->>> @@ -19,6 +19,7 @@
->>>  #include <dt-bindings/clock/exynos3250.h>
->>>
->>>  #include "clk.h"
->>> +#include "clk-cpu.h"
->>>  #include "clk-pll.h"
->>>
->>>  #define SRC_LEFTBUS            0x4200
->>> @@ -319,8 +320,10 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
->>>         MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p,
->>>             SRC_CPU, 24, 1),
->>>         MUX(CLK_MOUT_HPM, "mout_hpm", mout_hpm_p, SRC_CPU, 20, 1),
->>> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1),
->>> -       MUX(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
->>> +       MUX_F(CLK_MOUT_CORE, "mout_core", mout_core_p, SRC_CPU, 16, 1,
->>> +                       CLK_SET_RATE_PARENT, 0),
->>> +       MUX_F(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->>> +                       CLK_SET_RATE_PARENT, 0),
->>>  };
->>>
->>>  static struct samsung_div_clock div_clks[] __initdata = {
->>> @@ -772,6 +775,26 @@ static struct samsung_cmu_info cmu_info __initdata = {
->>>         .nr_clk_regs            = ARRAY_SIZE(exynos3250_cmu_clk_regs),
->>>  };
->>>
->>> +#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)                     \
->>> +               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
->>> +               ((corem) << 4))
->>> +#define E3250_CPU_DIV1(hpm, copy)                                      \
->>> +               (((hpm) << 4) | ((copy) << 0))
->>> +
->>> +static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
->>> +       { 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  900000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  800000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  700000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  600000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  500000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  400000, E3250_CPU_DIV0(1, 7, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  300000, E3250_CPU_DIV0(1, 5, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  200000, E3250_CPU_DIV0(1, 3, 3, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  100000, E3250_CPU_DIV0(1, 1, 1, 1), E3250_CPU_DIV1(7, 7), },
->>> +       {  0 },
->>> +};
->>> +
->>>  static void __init exynos3250_cmu_init(struct device_node *np)
->>>  {
->>>         struct samsung_clk_provider *ctx;
->>> @@ -780,6 +803,11 @@ static void __init exynos3250_cmu_init(struct device_node *np)
->>>         if (!ctx)
->>>                 return;
->>>
->>> +       exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
->>> +                       mout_core_p[0], mout_core_p[1], 0x14200,
->>> +                       e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
->>> +                       CLK_CPU_HAS_DIV1);
->>> +
->>>         exynos3_core_down_clock(ctx->reg_base);
->>>  }
->>>  CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
->>> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
->>> index aab088d30199..63d01c15d2b3 100644
->>> --- a/include/dt-bindings/clock/exynos3250.h
->>> +++ b/include/dt-bindings/clock/exynos3250.h
->>> @@ -31,6 +31,7 @@
->>>  #define CLK_FOUT_VPLL                  4
->>>  #define CLK_FOUT_UPLL                  5
->>>  #define CLK_FOUT_MPLL                  6
->>> +#define CLK_ARM_CLK                    7
->>>
->>>  /* Muxes */
->>>  #define CLK_MOUT_MPLL_USER_L           16
->>> --
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
