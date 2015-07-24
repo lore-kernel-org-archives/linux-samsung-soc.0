@@ -1,77 +1,105 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [GIT PULL] Non-critical fixes for v4.3
-Date: Fri, 24 Jul 2015 13:04:58 +0200
-Message-ID: <359442387.iGIak59Qte@amdc1976>
-References: <1437719695-22340-1-git-send-email-k.kozlowski@samsung.com>
+From: Michal Suchanek <hramrach@gmail.com>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Fri, 24 Jul 2015 13:20:32 +0200
+Message-ID: <CAOMqctR-bGJVrfbEK39eodDeZ5Nzf-EXxrGZ9iC+C09Tic8_VA@mail.gmail.com>
+References: <cover.1433364398.git.hramrach@gmail.com> <CAOMqctRnh2RsUYiRr2-+wucaq5NArTNrzPpqdPs+ETrFe9UrZA@mail.gmail.com>
+ <CAOMqctREShUrBR=aQM2Vc6MhVezCP9rnNfUNq=m2-GH_gbYxFw@mail.gmail.com> <201507241034.15406.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34703 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750734AbbGXLFp (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:33577 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbbGXLVN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jul 2015 07:05:45 -0400
-In-reply-to: <1437719695-22340-1-git-send-email-k.kozlowski@samsung.com>
+	Fri, 24 Jul 2015 07:21:13 -0400
+In-Reply-To: <201507241034.15406.marex@denx.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marek Vasut <marex@denx.de>
+Cc: Vinod Koul <vinod.koul@intel.com>, MTD Maling List <linux-mtd@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, dmaengine <dmaengine@vger.kernel.org>
 
+On 24 July 2015 at 10:34, Marek Vasut <marex@denx.de> wrote:
+> On Thursday, July 23, 2015 at 07:03:47 PM, Michal Suchanek wrote:
+>
+> Hi!
+>
+> [...]
+>
+>> >>> It's probably slower to set up DMA for 2-byte commands but it might
+>> >>> work nonetheless.
+>> >>
+>> >> It is, the overhead will be considerable. It might help the stability
+>> >> though. I'm really looking forward to the results!
+>> >
+>> > Hello,
+>> >
+>> > this does not quite work.
+>> >
+>> > My test with spidev:
+>> >
+>> > # ./spinor /dev/spidev1.0
+>> > Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> > Received 00 ff c8 60 16 c8 60 16 c8 60 16 c8 60 16 c8 60
+>> > Sending 90 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> > Received 00 ff ff ff ff c8 15 c8 15 c8 15 c8 15 c8 15 c8
+>> > Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> > Received 00 ff c8 60 16 c8 60 16 c8 60 16 c8 60 16 c8 60
+>> >
+>> > I receive correct ID but spi-nor complains it does not know ID 00 c8 60.
+>> > IIRC garbage should be sent only at the time command is transferred so
+>> > only one byte of garbage should be received. Also the garbage tends to
+>> > be the last state of the data output - all 0 or all 1.
+>> > So it seems using DMA for all transfers including 1-byte commands
+>> > results in (some?) received data getting an extra 00 prefix.
+>> >
+>> >
+>> > I also managed to lock up the controller completely since there is
+>> > some error passing the SPI speed somewhere :(
+>> >
+>> > [ 1352.977530] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max -->
+>> > 0 [ 1352.977540] spidev spi1.0: spi mode 0
+>> > [ 1352.977576] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max -->
+>> > 0 [ 1352.977582] spidev spi1.0: msb first
+>> > [ 1352.977614] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max -->
+>> > 0 [ 1352.977620] spidev spi1.0: 0 bits per word
+>> > [ 1352.977652] spidev spi1.0: setup mode 0, 8 bits/w, 2690588672 Hz max
+>> > --> 0 [ 1352.977726] spi_master spi1: s3c64xx_spi_config: clk_from_cmu 1
+>> > src_clk sclk_spi1 mode bpw 8
+>> > [ 1352.977753] spi_master spi1: spi1.0 s3c64xx_spi_transfer_one: xfer
+>> > bpw 8 speed -1604378624
+>> > [ 1352.977760] spi_master spi1: s3c64xx_spi_config: clk_from_cmu 1
+>> > src_clk sclk_spi1 mode bpw 8
+>> > [ 1352.977781] spi_master spi1: spi1.0 s3c64xx_spi_transfer_one: using
+>> > dma [ 1352.977797] dma-pl330 121b0000.pdma: setting up request on thread
+>> > 1
+>>
+>> Hmm, on a second thought it probably works as expected more or less.
+>>
+>> The nonsensical value was passed from application and there is no
+>> guard against that.
+>>
+>> Since I don't do PIO the controller remains locked up indefinitely.
+>
+> I have to admit, I don't quite understand the above. I also don't quite know
+> what your spidev test does.
 
-Hi,
+It does a full duplex transfer sending what is printed and printing
+what is received.
 
-On Friday, July 24, 2015 03:34:55 PM Krzysztof Kozlowski wrote:
-> Dear Kukjin,
-> 
-> Previously you did not picked up the fix for cpufreq memory leak.
-> I am sending it again with respective acks from LKML. Also another
-> minor improvement in the set.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> The following changes since commit 1c4c7159ed2468f3ac4ce5a7f08d79663d381a93:
-> 
->   Merge tag 'ext4_for_linus_stable' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4 (2015-07-05 16:24:54 -0700)
-> 
-> are available in the git repository at:
-> 
-> 
->   https://github.com/krzk/linux.git tags/samsung-fixes-non-critical-v4.3-2
-> 
-> for you to fetch changes up to 434213f727c12fab8657c8db3d23da4b0463365d:
-> 
->   video: fbdev: s3c-fb: Constify platform_device_id (2015-07-24 15:17:32 +0900)
-> 
-> ----------------------------------------------------------------
-> Improvements for Exynos boards:
-> 1. Fix memory leak in cpufreq error path.
-> 2. Constify platform_device_id in video/fbdev/s3c-fb.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (1):
->       video: fbdev: s3c-fb: Constify platform_device_id
-> 
-> Shailendra Verma (1):
->       cpufreq: exynos: Fix for memory leak in case SOC name does not match
+> Can you possibly just bind a regular SPI NOR driver
+> and run mtdtests to see if it is stable ?
 
-I would suggest merging this fix in v4.2 not v4.3:
+I can if I use PIO for short transfers. Using DMA for all transfers
+results in the received data prefixed with 00 so the NOR flash
+identification fails. Admittedly I have no idea what the flash memory
+actually contains so if all DMA reads were always prefixed with 00 I
+could not tell. I vaguely recall reading the whole content and parsing
+the
 
-- it is obvious and touches only error paths
+I can probably make the minimum length for DMA configurable so I can
+fall back to PIO when the controler locks up. It seems setting up a
+PIO transfer makes it work again.
 
-- (hopefully) in v4.3 the exynos-cpufreq driver will be completely
-  replaced by using cpufreq-dt for Exynos platforms (thus there will be
-  no benefits of having this fix in v4.3 but there will be potential
-  risk of merge conflicts due to exynos-cpufreq driver removal)
+Thanks
 
->  drivers/cpufreq/exynos-cpufreq.c | 6 ++++--
->  drivers/video/fbdev/s3c-fb.c     | 2 +-
->  2 files changed, 5 insertions(+), 3 deletions(-)
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Michal
