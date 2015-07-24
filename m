@@ -1,56 +1,75 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH v2] thermal: consistently use int for temperatures
-Date: Fri, 24 Jul 2015 08:29:48 +0200
-Message-ID: <20150724062948.GK18700@pengutronix.de>
-References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
- <20150723120759.GA17690@amd>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [GIT PULL] ARM: defconfig: Improvements for 4.3
+Date: Fri, 24 Jul 2015 15:34:14 +0900
+Message-ID: <CAJKOXPc0h=U_XyQ+HkP6vHmAdm6jjg4iHComktP3339VWhYALw@mail.gmail.com>
+References: <1437115877-22010-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150723120759.GA17690@amd>
-Sender: linux-pm-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f50.google.com ([209.85.192.50]:35539 "EHLO
+	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249AbbGXGeP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 24 Jul 2015 02:34:15 -0400
+In-Reply-To: <1437115877-22010-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 23, 2015 at 02:07:59PM +0200, Pavel Machek wrote:
-> On Tue 2015-07-21 09:21:32, Sascha Hauer wrote:
-> > The thermal code uses int, long and unsigned long for temperatures
-> > in different places.
-> >=20
-> > Using an unsigned type limits the thermal framework to positive
-> > temperatures without need. Also several drivers currently will repo=
-rt
-> > temperatures near UINT_MAX for temperatures below 0=B0C. This will =
-probably
-> > immediately shut the machine down due to overtemperature if started=
- below
-> > 0=B0C.
-> >=20
-> > 'long' is 64bit on several architectures. This is not needed since =
-INT_MAX =B0mC
-> > is above the melting point of all known materials.
->=20
-> Can we do something like
->=20
-> typedef millicelsius_t int;
->=20
-> ...to document the units?
+2015-07-17 15:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> Dear Kukjin,
+>
+> Few defconfig related changes.
+>
+> Description along with a tag.
+> You can find them also on the lists with my reviewed-by.
+>
+> Best regards,
+> Krzysztof
 
-I am not very fond of typedefs and I am not sure this adds any value. I
-could change it when more people ask for it, but I just sent the new
-version without this.
+Any comments on this pull request?
 
-Sascha
+Best regards,
+Krzysztof
 
---=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+
+>
+>
+> The following changes since commit 1c4c7159ed2468f3ac4ce5a7f08d79663d381a93:
+>
+>   Merge tag 'ext4_for_linus_stable' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4 (2015-07-05 16:24:54 -0700)
+>
+> are available in the git repository at:
+>
+>
+>   https://github.com/krzk/linux.git tags/samsung-defconfig-4.3
+>
+> for you to fetch changes up to 5efedc7617df7add295702f21f11dd7e7a67b76e:
+>
+>   ARM: multi_v7_defconfig: Enable max77802 regulator (2015-07-16 15:57:31 +0900)
+>
+> ----------------------------------------------------------------
+> Defconfig changes around Exynos based boards:
+> 1. Enable sound on Odroid XU3 on exynos defconfig.
+> 2. Enable NTC thermistors for Chromebooks on exynos and multi_v7.
+> 3. Enable main PMIC regulator for Chromebooks on multi_v7.
+> 4. Clean up in multi_v7 - remove old (non-existing) configs.
+>
+> ----------------------------------------------------------------
+> Anand Moon (1):
+>       ARM: exynos_defconfig: Enable CONFIG_SND_SOC_ODROIDX2 for Odroid-XU3
+>
+> Javier Martinez Canillas (4):
+>       ARM: multi_v7_defconfig: Remove old Samsung USB PHY configs
+>       ARM: multi_v7_defconfig: Enable NTC Thermistors support
+>       ARM: exynos_defconfig: Enable NTC Thermistors support
+>       ARM: multi_v7_defconfig: Enable max77802 regulator
+>
+>  arch/arm/configs/exynos_defconfig   | 3 +++
+>  arch/arm/configs/multi_v7_defconfig | 5 +++--
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
