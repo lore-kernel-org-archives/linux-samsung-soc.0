@@ -1,91 +1,103 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL] Non-critical fixes for v4.3
-Date: Sat, 25 Jul 2015 10:49:54 +0900
-Message-ID: <058101d0c67c$367e0fe0$a37a2fa0$@kernel.org>
-References: <1437719695-22340-1-git-send-email-k.kozlowski@samsung.com>
- <359442387.iGIak59Qte@amdc1976>
- <CAJKOXPcEFmOnffViq8X+NxmAB=_wLKj9oLHy28dpYqp4z4QnQQ@mail.gmail.com>
+Subject: RE: [PATCH 2/9] ARM: multi_v7_defconfig: Enable max77802 regulator,
+ rtc and clock drivers
+Date: Sat, 25 Jul 2015 11:01:34 +0900
+Message-ID: <05ac01d0c67d$d581a740$8084f5c0$@kernel.org>
+References: <1431618016-2087-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1431618016-2087-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CABxcv=maAMu=+JcRfkErBHUdz+Y6CWg5S1qCg=YnRJc6TqPsVg@mail.gmail.com>
+ <55A6FE07.7000604@samsung.com> <20150717164927.GA21691@localhost>
+ <CABxcv=kXmFs7SfdbB9y5HzfxX3QPfpvSANmUKZGFnMRnB6Rv2A@mail.gmail.com>
+ <CAOesGMjBgbsPZujB=kQgv-pUuFs3Qvufz1_1TsDVA0dYzs1Cdw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39618 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753030AbbGYBuC (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:32857 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753145AbbGYCBh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jul 2015 21:50:02 -0400
-In-reply-to: <CAJKOXPcEFmOnffViq8X+NxmAB=_wLKj9oLHy28dpYqp4z4QnQQ@mail.gmail.com>
+	Fri, 24 Jul 2015 22:01:37 -0400
+In-reply-to: <CAOesGMjBgbsPZujB=kQgv-pUuFs3Qvufz1_1TsDVA0dYzs1Cdw@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Olof Johansson' <olof@lixom.net>, 'Javier Martinez Canillas' <javier@dowhile0.org>
+Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, 'Doug Anderson' <dianders@chromium.org>, 'Kukjin Kim' <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, 'Linux Kernel' <linux-kernel@vger.kernel.org>
 
-Krzysztof Kozlowski wrote:
+Olof Johansson wrote:
 > 
-> 2015-07-24 20:04 GMT+09:00 Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>:
-> >
-> > Hi,
-> >
-> > On Friday, July 24, 2015 03:34:55 PM Krzysztof Kozlowski wrote:
-> >> Dear Kukjin,
-> >>
-> >> Previously you did not picked up the fix for cpufreq memory leak.
-> >> I am sending it again with respective acks from LKML. Also another
-> >> minor improvement in the set.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> >>
-> >> The following changes since commit 1c4c7159ed2468f3ac4ce5a7f08d79663d381a93:
-> >>
-> >>   Merge tag 'ext4_for_linus_stable' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4
-> (2015-07-05 16:24:54 -0700)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>
-> >>   https://github.com/krzk/linux.git tags/samsung-fixes-non-critical-v4.3-2
-> >>
-> >> for you to fetch changes up to 434213f727c12fab8657c8db3d23da4b0463365d:
-> >>
-> >>   video: fbdev: s3c-fb: Constify platform_device_id (2015-07-24 15:17:32 +0900)
-> >>
-> >> ----------------------------------------------------------------
-> >> Improvements for Exynos boards:
-> >> 1. Fix memory leak in cpufreq error path.
-> >> 2. Constify platform_device_id in video/fbdev/s3c-fb.
-> >>
-> >> ----------------------------------------------------------------
-> >> Krzysztof Kozlowski (1):
-> >>       video: fbdev: s3c-fb: Constify platform_device_id
-> >>
-> >> Shailendra Verma (1):
-> >>       cpufreq: exynos: Fix for memory leak in case SOC name does not match
-> >
-> > I would suggest merging this fix in v4.2 not v4.3:
-> >
-> > - it is obvious and touches only error paths
+> Hi,
 > 
-> Indeed, good point, thanks for pointing this. Although these are not
-> regressions for issues introduced in current release but they are are
-> non-intrusive.
-> 
-> Kukjin, do you agree? Can you pull them for second round of v4.2 fixes (not 4.3)
-> 
-Agreed. OK.
+Hi,
 
-> > - (hopefully) in v4.3 the exynos-cpufreq driver will be completely
-> >   replaced by using cpufreq-dt for Exynos platforms (thus there will be
-> >   no benefits of having this fix in v4.3 but there will be potential
-> >   risk of merge conflicts due to exynos-cpufreq driver removal)
+> On Fri, Jul 17, 2015 at 11:47 AM, Javier Martinez Canillas
+> <javier@dowhile0.org> wrote:
+> > Hello Olof,
 > >
-> 
-> We'll see... The Exynos 4x12 requires OPP patches. Are these ready for 4.3?
-> 
-I think, if any conflicts based on fixes during -rc, can be handled by
-maintainer.
+> > On Fri, Jul 17, 2015 at 6:49 PM, Olof Johansson <olof@lixom.net> wrote:
+> >> On Thu, Jul 16, 2015 at 09:42:47AM +0900, Krzysztof Kozlowski wrote:
+> >>> On 16.07.2015 00:38, Javier Martinez Canillas wrote:
+> >>> > Hello,
+> >>> >
+> >>> > On Thu, May 14, 2015 at 5:40 PM, Javier Martinez Canillas
+> >>> > <javier.martinez@collabora.co.uk> wrote:
+> >>> >> The Maxim max77802 Power Management IC is used on many Exynos machines.
+> >>> >> Besides a bunch of regulators, this chip has a Real-Time-Clock (RTC)
+> >>> >> and 2-channel 32kHz clock outputs.
+> >>> >>
+> >>> >> Enable the kernel config options to have the drivers for these devices
+> >>> >> built as a module.
+> >>> >>
+> >>> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> >>> >> ---
+> >>> >>  arch/arm/configs/multi_v7_defconfig | 3 +++
+> >>> >>  1 file changed, 3 insertions(+)
+> >>> >>
+> >>> >> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> >>> >> index 2349584b6e08..080120fe5580 100644
+> >>> >> --- a/arch/arm/configs/multi_v7_defconfig
+> >>> >> +++ b/arch/arm/configs/multi_v7_defconfig
+> >>> >> @@ -373,6 +373,7 @@ CONFIG_POWER_RESET_SYSCON=y
+> >>> >>  CONFIG_REGULATOR_MAX8907=y
+> >>> >>  CONFIG_REGULATOR_MAX8973=y
+> >>> >>  CONFIG_REGULATOR_MAX77686=y
+> >>> >> +CONFIG_REGULATOR_MAX77802=m
+> >>> >
+> >>> > I noticed that the version that landed in 4.2-rc1 as commit
+> >>> > f3caa529c6f5 ("ARM: multi_v7_defconfig: Enable max77802 regulator, rtc
+> >>> > and clock drivers") doesn't include this symbol. I guess it was caused
+> >>> > by a wrong resolved conflict? I'll post a patch to enable the
+> >>> > regulator again.
+> >>>
+> >>> As you can see in mentioned mainline commit Kukjin removed it manually:
+> >>> [kgene@kernel.org: removing useless REGULATOR_MAX77802 config]
+> >>>
+> >>> I wonder why?
+> >>
+> >> Seems odd. exynos_defconfig still enables it.
+> >>
+It has been removed when I did 'make savedefconfig' at that time maybe because
+of dependency with other configs...
 
+> > Yeah since it is needed for at least the Exynos5420 Peach Pit and
+> > Exynos5800 Peach Pi Chromebooks that use this PMIC.
+> >
+> >> Javier or Krzysztof, please send an incremental fix to enable and I'll pick
+> >> it up as a fix.
+> >>
+> >
+> > I already posted an incremental patch [0] and Krzysztof is pushing it
+> > through Kukjin for 4.3 [1].
+> >
+Yes. I'll send it out to arm-soc in this weekend.
+
+> > I guess that's OK and there is no need to add it as a fix for the 4.2
+> > -rc cycle since this is not really a regression. I mean, the max77802
+> > regulator driver was never enabled for multi_v7_defconfig before.
+> 
+> Yeah, I came across those emails a little further down. :-) It's all
+> good, we'll see it come in later.
+> 
 Thanks,
 Kukjin
