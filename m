@@ -1,100 +1,79 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: [PATCH 3/3] ARM: SAMSUNG: make local s5p-dev-mfc in mach-exynos
-Date: Sat, 25 Jul 2015 11:28:30 +0900
-Message-ID: <065001d0c681$98b6ebf0$ca24c3d0$@kernel.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] thermal: consistently use int for temperatures
+Date: Sat, 25 Jul 2015 09:01:32 +0200
+Message-ID: <20150725070132.GA18328@amd>
+References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
+ <20150723120759.GA17690@amd>
+ <20150724062948.GK18700@pengutronix.de>
+ <55B244BE.1060203@roeck-us.net>
+ <20150724221102.GA31517@amd>
+ <55B2C105.3040600@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41516 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753030AbbGYC2c (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jul 2015 22:28:32 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NS0033PKUVJ8G20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 25 Jul 2015 11:28:31 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <55B2C105.3040600@roeck-us.net>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+On Fri 2015-07-24 15:49:41, Guenter Roeck wrote:
+> On 07/24/2015 03:11 PM, Pavel Machek wrote:
+> >On Fri 2015-07-24 06:59:26, Guenter Roeck wrote:
+> >>On 07/23/2015 11:29 PM, Sascha Hauer wrote:
+> >>>On Thu, Jul 23, 2015 at 02:07:59PM +0200, Pavel Machek wrote:
+> >>>>On Tue 2015-07-21 09:21:32, Sascha Hauer wrote:
+> >>>>>The thermal code uses int, long and unsigned long for temperatur=
+es
+> >>>>>in different places.
+> >>>>>
+> >>>>>Using an unsigned type limits the thermal framework to positive
+> >>>>>temperatures without need. Also several drivers currently will r=
+eport
+> >>>>>temperatures near UINT_MAX for temperatures below 0=B0C. This wi=
+ll probably
+> >>>>>immediately shut the machine down due to overtemperature if star=
+ted below
+> >>>>>0=B0C.
+> >>>>>
+> >>>>>'long' is 64bit on several architectures. This is not needed sin=
+ce INT_MAX =B0mC
+> >>>>>is above the melting point of all known materials.
+> >>>>
+> >>>>Can we do something like
+> >>>>
+> >>>>typedef millicelsius_t int;
+> >>>>
+> >>>>...to document the units?
+> >>>
+> >>>I am not very fond of typedefs and I am not sure this adds any val=
+ue. I
+> >>>could change it when more people ask for it, but I just sent the n=
+ew
+> >>>version without this.
+> >>>
+> >>
+> >>I thought we are supposed to not introduce new typedefs anyway.
+> >
+> >You are not supposed to typedef struct, but typedef for millicelsius=
+_t
+> >would be ok. And it is your only chance if you want people to pay
+> >attention. If you make it int, someone will pass it to long or
+> >something else..
+>=20
+> Seems to me that would be just lazyness. The same person might use 'l=
+ong'
+> even if millicelsius_t is defined. A typedef doesn't preclude people
+> from ignoring it.
 
-This patch moves s5p-dev-mfc from plat-samsung into mach-exynos
-because it is used for only exynos no other platforms.
-
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/Kconfig                         | 5 +++++
- arch/arm/mach-exynos/Makefile                        | 2 ++
- arch/arm/{plat-samsung => mach-exynos}/s5p-dev-mfc.c | 0
- arch/arm/plat-samsung/Kconfig                        | 5 -----
- arch/arm/plat-samsung/Makefile                       | 1 -
- 5 files changed, 7 insertions(+), 6 deletions(-)
- rename arch/arm/{plat-samsung => mach-exynos}/s5p-dev-mfc.c (100%)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 81064cd..4c4858c 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -30,6 +30,11 @@ menuconfig ARCH_EXYNOS
- 
- if ARCH_EXYNOS
- 
-+config S5P_DEV_MFC
-+	bool
-+	help
-+	  Compile in setup memory (init) code for MFC
-+
- config ARCH_EXYNOS3
- 	bool "SAMSUNG EXYNOS3"
- 	select ARM_CPU_SUSPEND if PM
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index bcefb54..2f30676 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -23,3 +23,5 @@ AFLAGS_sleep.o			:=-Wa,-march=armv7-a$(plus_sec)
- 
- obj-$(CONFIG_EXYNOS5420_MCPM)	+= mcpm-exynos.o
- CFLAGS_mcpm-exynos.o		+= -march=armv7-a
-+
-+obj-$(CONFIG_S5P_DEV_MFC)	+= s5p-dev-mfc.o
-diff --git a/arch/arm/plat-samsung/s5p-dev-mfc.c b/arch/arm/mach-exynos/s5p-dev-mfc.c
-similarity index 100%
-rename from arch/arm/plat-samsung/s5p-dev-mfc.c
-rename to arch/arm/mach-exynos/s5p-dev-mfc.c
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 0e1874c..57729b9 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -233,11 +233,6 @@ config SAMSUNG_PM_GPIO
- 	  pinctrl-samsung driver.
- endif
- 
--config S5P_DEV_MFC
--	bool
--	help
--	  Compile in setup memory (init) code for MFC
--
- comment "Power management"
- 
- config SAMSUNG_PM_DEBUG
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 624f5db..8c91176 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -20,7 +20,6 @@ obj-$(CONFIG_SAMSUNG_ATAGS)	+= platformdata.o
- 
- obj-$(CONFIG_SAMSUNG_ATAGS)	+= devs.o
- obj-$(CONFIG_SAMSUNG_ATAGS)	+= dev-uart.o
--obj-$(CONFIG_S5P_DEV_MFC)	+= s5p-dev-mfc.o
- 
- # PM support
- 
--- 
-2.0.0
+Well,  millicelsius_t will tell people that this is temperature, and
+being "special" type, they'll try to preserve it. (And you could check
+with sparse if you really wanted). int and long are common enough so
+that people will not notice...
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
+/blog.html
