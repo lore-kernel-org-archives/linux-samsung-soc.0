@@ -1,79 +1,87 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2] thermal: consistently use int for temperatures
-Date: Sat, 25 Jul 2015 09:01:32 +0200
-Message-ID: <20150725070132.GA18328@amd>
-References: <1437463292-24844-1-git-send-email-s.hauer@pengutronix.de>
- <20150723120759.GA17690@amd>
- <20150724062948.GK18700@pengutronix.de>
- <55B244BE.1060203@roeck-us.net>
- <20150724221102.GA31517@amd>
- <55B2C105.3040600@roeck-us.net>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
+Date: Sat, 25 Jul 2015 09:42:18 +0200
+Message-ID: <55B33DDA.9020605@samsung.com>
+References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55B2C105.3040600@roeck-us.net>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, linux-kernel@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>, Jean Delvare <jdelvare@suse.de>, Peter Feuerer <peter@piie.net>, Heiko Stuebner <heiko@sntech.de>, Lukasz Majewski <l.majewski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Darren Hart <dvhart@infradead.org>, lm-sensors@lm-sensors.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri 2015-07-24 15:49:41, Guenter Roeck wrote:
-> On 07/24/2015 03:11 PM, Pavel Machek wrote:
-> >On Fri 2015-07-24 06:59:26, Guenter Roeck wrote:
-> >>On 07/23/2015 11:29 PM, Sascha Hauer wrote:
-> >>>On Thu, Jul 23, 2015 at 02:07:59PM +0200, Pavel Machek wrote:
-> >>>>On Tue 2015-07-21 09:21:32, Sascha Hauer wrote:
-> >>>>>The thermal code uses int, long and unsigned long for temperatur=
-es
-> >>>>>in different places.
-> >>>>>
-> >>>>>Using an unsigned type limits the thermal framework to positive
-> >>>>>temperatures without need. Also several drivers currently will r=
-eport
-> >>>>>temperatures near UINT_MAX for temperatures below 0=B0C. This wi=
-ll probably
-> >>>>>immediately shut the machine down due to overtemperature if star=
-ted below
-> >>>>>0=B0C.
-> >>>>>
-> >>>>>'long' is 64bit on several architectures. This is not needed sin=
-ce INT_MAX =B0mC
-> >>>>>is above the melting point of all known materials.
-> >>>>
-> >>>>Can we do something like
-> >>>>
-> >>>>typedef millicelsius_t int;
-> >>>>
-> >>>>...to document the units?
-> >>>
-> >>>I am not very fond of typedefs and I am not sure this adds any val=
-ue. I
-> >>>could change it when more people ask for it, but I just sent the n=
-ew
-> >>>version without this.
-> >>>
-> >>
-> >>I thought we are supposed to not introduce new typedefs anyway.
-> >
-> >You are not supposed to typedef struct, but typedef for millicelsius=
-_t
-> >would be ok. And it is your only chance if you want people to pay
-> >attention. If you make it int, someone will pass it to long or
-> >something else..
->=20
-> Seems to me that would be just lazyness. The same person might use 'l=
-ong'
-> even if millicelsius_t is defined. A typedef doesn't preclude people
-> from ignoring it.
+On 12/06/15 03:53, Krzysztof Kozlowski wrote:
+> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
+> However TSADC is present only on Exynos4210 so on Trats2 board (with
+> Exynos4412 SoC) the exynos-adc driver could not be probed:
+>    ERROR: could not get clock /adc@126C0000:adc(0)
+>    exynos-adc 126c0000.adc: failed getting clock, err = -2
+>    exynos-adc: probe of 126c0000.adc failed with error -2
+> 
+> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
+> Converter is located in different register and it is named in datasheet
+> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
+> is the same as purpose of TSADC from Exynos4210.
+> 
+> The patch adds gate clock for Exynos4x12 using the proper register so
+> backward compatibility is preserved. This fixes the probe of exynos-adc
+> driver on Exynos4x12 boards and allows accessing sensors connected to it
+> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
+> Link: https://lkml.org/lkml/2015/6/11/85
 
-Well,  millicelsius_t will tell people that this is temperature, and
-being "special" type, they'll try to preserve it. (And you could check
-with sparse if you really wanted). int and long are common enough so
-that people will not notice...
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
-/blog.html
+Mike, could you apply this patch directly? I can't seem to find any
+more independent patches for clk/samsung pull request.
+Alternatively here is a branch you could cherry-pick it from with
+all Acked/Reviewed tags:
+
+git://linuxtv.org/snawrocki/samsung.git for-v4.2/clk/fixes-1
+
+--
+Regards,
+Sylwester
+
+> Changes since v1:
+> 1. After discussion on LKML this solution was chosen because it smaller,
+>    simpler, self-contained (one patch to fix issue) and maintains backward
+>    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
+>    valuable comments.
+> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
+>    will be used on all Exynos4 boards.
+> 3. Added CC-stable.
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 714d6ba782c8..f7890bf652e6 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -85,6 +85,7 @@
+>  #define DIV_PERIL4		0xc560
+>  #define DIV_PERIL5		0xc564
+>  #define E4X12_DIV_CAM1		0xc568
+> +#define E4X12_GATE_BUS_FSYS1	0xc744
+>  #define GATE_SCLK_CAM		0xc820
+>  #define GATE_IP_CAM		0xc920
+>  #define GATE_IP_TV		0xc924
+> @@ -1095,6 +1096,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>  		0),
+>  	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
+>  		0),
+> +	GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0),
+>  	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+>  	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+>  	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+> 
+
+
+-- 
+Sylwester Nawrocki
+Samsung R&D Institute Poland
