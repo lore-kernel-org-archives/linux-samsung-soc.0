@@ -1,87 +1,91 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-Date: Sat, 25 Jul 2015 09:42:18 +0200
-Message-ID: <55B33DDA.9020605@samsung.com>
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
+Date: Sat, 25 Jul 2015 15:34:03 +0200
+Message-ID: <55B3904B.3050408@free-electrons.com>
+References: <1436711211-18223-1-git-send-email-robh@kernel.org> <1436711211-18223-7-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, stable@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:49954 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754370AbbGYNeI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 25 Jul 2015 09:34:08 -0400
+In-Reply-To: <1436711211-18223-7-git-send-email-robh@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Alexander Shiyan <shc_work@mail.ru>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-rpi-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
 
-On 12/06/15 03:53, Krzysztof Kozlowski wrote:
-> The TSADC gate clock was used in Exynos4x12 DTSI for exynos-adc driver.
-> However TSADC is present only on Exynos4210 so on Trats2 board (with
-> Exynos4412 SoC) the exynos-adc driver could not be probed:
->    ERROR: could not get clock /adc@126C0000:adc(0)
->    exynos-adc 126c0000.adc: failed getting clock, err = -2
->    exynos-adc: probe of 126c0000.adc failed with error -2
+Hi Rob,
+
+On 12/07/2015 16:26, Rob Herring wrote:
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
 > 
-> Instead on Exynos4x12 SoCs the main clock used by Analog to Digital
-> Converter is located in different register and it is named in datasheet
-> as PCLK_ADC. Regardless of the name the purpose of this PCLK_ADC clock
-> is the same as purpose of TSADC from Exynos4210.
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
 > 
-> The patch adds gate clock for Exynos4x12 using the proper register so
-> backward compatibility is preserved. This fixes the probe of exynos-adc
-> driver on Exynos4x12 boards and allows accessing sensors connected to it
-> on Trats2 board (ntc,ncp15wb473 AP and battery thermistors).
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also set IRQ_NOPROBE and this has been maintained although it is not
+> clear that is really needed. There appears to be a great deal of blind
+> copy and paste of this code.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
-> Link: https://lkml.org/lkml/2015/6/11/85
-
-Mike, could you apply this patch directly? I can't seem to find any
-more independent patches for clk/samsung pull request.
-Alternatively here is a branch you could cherry-pick it from with
-all Acked/Reviewed tags:
-
-git://linuxtv.org/snawrocki/samsung.git for-v4.2/clk/fixes-1
-
---
-Regards,
-Sylwester
-
-> Changes since v1:
-> 1. After discussion on LKML this solution was chosen because it smaller,
->    simpler, self-contained (one patch to fix issue) and maintains backward
->    compatibility. Thanks to Javier Martinez Canillas and Tomasz Figa for
->    valuable comments.
-> 2. Dropped patch 2/2 because now it is not needed. The clock id "TSADC"
->    will be used on all Exynos4 boards.
-> 3. Added CC-stable.
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Lee Jones <lee@kernel.org>
+> Cc: Alexander Shiyan <shc_work@mail.ru>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
 > ---
->  drivers/clk/samsung/clk-exynos4.c | 2 ++
->  1 file changed, 2 insertions(+)
+> v2:
+> - Fix build error on clps711x
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 714d6ba782c8..f7890bf652e6 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -85,6 +85,7 @@
->  #define DIV_PERIL4		0xc560
->  #define DIV_PERIL5		0xc564
->  #define E4X12_DIV_CAM1		0xc568
-> +#define E4X12_GATE_BUS_FSYS1	0xc744
->  #define GATE_SCLK_CAM		0xc820
->  #define GATE_IP_CAM		0xc920
->  #define GATE_IP_TV		0xc924
-> @@ -1095,6 +1096,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->  		0),
->  	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
->  		0),
-> +	GATE(CLK_TSADC, "tsadc", "aclk133", E4X12_GATE_BUS_FSYS1, 16, 0, 0),
->  	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
->  	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
->  	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+[...]
+
+> diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+> index 0d3b0fe..b8bf8b0 100644
+> --- a/drivers/irqchip/irq-armada-370-xp.c
+> +++ b/drivers/irqchip/irq-armada-370-xp.c
+> @@ -201,7 +201,6 @@ static int armada_370_xp_msi_map(struct irq_domain *domain, unsigned int virq,
+>  {
+>  	irq_set_chip_and_handler(virq, &armada_370_xp_msi_irq_chip,
+>  				 handle_simple_irq);
+> -	set_irq_flags(virq, IRQF_VALID);
+
+OK
+
 > 
+>  	return 0;
+>  }
+> @@ -318,7 +317,7 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain *h,
+>  		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
+>  					handle_level_irq);
+>  	}
+> -	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
+> +	irq_set_noprobe(virq);
+
+I think it should be irq_set_probe(virq), I don't see why you inverted the probe flag.
+
+
+Thanks,
+
+Gregory
 
 
 -- 
-Sylwester Nawrocki
-Samsung R&D Institute Poland
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
