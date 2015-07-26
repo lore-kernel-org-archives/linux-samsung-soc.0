@@ -1,91 +1,75 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
-Date: Sat, 25 Jul 2015 15:34:03 +0200
-Message-ID: <55B3904B.3050408@free-electrons.com>
-References: <1436711211-18223-1-git-send-email-robh@kernel.org> <1436711211-18223-7-git-send-email-robh@kernel.org>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+Date: Sun, 26 Jul 2015 11:41:16 +0900
+Message-ID: <CAGTfZH1_4tgU6Sk2hfZoe8mjbwh7LdNt=41Pc=7PAQAZ=t9Usg@mail.gmail.com>
+References: <1435797761-3339-1-git-send-email-cw00.choi@samsung.com>
+	<4464631.oZyVO4Z0Ov@amdc1976>
+	<093101d0b8c3$4b5d3ec0$e217bc40$@kernel.org>
+	<20150724003005.642.21781@quantum>
+	<55B1B3B0.8090106@kernel.org>
+	<55B1D9A3.8060301@samsung.com>
+	<060201d0c67f$3a0cfba0$ae26f2e0$@kernel.org>
+Reply-To: cw00.choi@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:49954 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754370AbbGYNeI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 25 Jul 2015 09:34:08 -0400
-In-Reply-To: <1436711211-18223-7-git-send-email-robh@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <060201d0c67f$3a0cfba0$ae26f2e0$@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, thomas.ab@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Alexander Shiyan <shc_work@mail.ru>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-rpi-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
 
-Hi Rob,
+Dear Kukjin,
 
-On 12/07/2015 16:26, Rob Herring wrote:
-> set_irq_flags is ARM specific with custom flags which have genirq
-> equivalents. Convert drivers to use the genirq interfaces directly, so we
-> can kill off set_irq_flags. The translation of flags is as follows:
-> 
-> IRQF_VALID -> !IRQ_NOREQUEST
-> IRQF_PROBE -> !IRQ_NOPROBE
-> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
-> 
-> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-> and setting IRQ_NOREQUEST already, so there is no need to do this in
-> .map() functions and we can simply remove the set_irq_flags calls. Some
-> users also set IRQ_NOPROBE and this has been maintained although it is not
-> clear that is really needed. There appears to be a great deal of blind
-> copy and paste of this code.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: Alexander Shiyan <shc_work@mail.ru>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-rpi-kernel@lists.infradead.org
-> ---
-> v2:
-> - Fix build error on clps711x
-> 
-[...]
+On Sat, Jul 25, 2015 at 11:11 AM, Kukjin Kim <kgene@kernel.org> wrote:
+> Krzysztof Kozlowski wrote:
+>>
+>> On 24.07.2015 12:40, Kukjin Kim wrote:
+>> > On 07/24/15 09:30, Michael Turquette wrote:
+>> >> Quoting Kukjin Kim (2015-07-07 07:43:31)
+>> >>> Bartlomiej Zolnierkiewicz wrote:
+>> >
+>> > [...]
+>> >
+>> >>>>> Chanwoo Choi (3):
+>> >>>>>   clk: samsung: exynos3250: Add cpu clock configuration data and instaniate cpu clock
+>> >>>>>   ARM: dts: Add CPU OPP and regulator supply property for Exynos3250
+>> >>>>>   ARM: exynos: Add exynos3250 compatible to use generic cpufreq driver
+>> >>>>>
+>> >>>>>  arch/arm/boot/dts/exynos3250-monk.dts   |  4 ++++
+>> >>>>>  arch/arm/boot/dts/exynos3250-rinato.dts |  4 ++++
+>> >>>>>  arch/arm/boot/dts/exynos3250.dtsi       | 15 +++++++++++++++
+>> >>>>>  arch/arm/mach-exynos/exynos.c           |  1 +
+>> >>>>>  drivers/clk/samsung/clk-exynos3250.c    | 32 ++++++++++++++++++++++++++++++--
+>> >>>>>  include/dt-bindings/clock/exynos3250.h  |  1 +
+>> >>>>>  6 files changed, 55 insertions(+), 2 deletions(-)
+>> >>>>
+>> >>>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> >>>>
+>> >>>> Thank you for working on this.
+>> >>>>
+>> >>> +1 Thanks.
+>> >>>
+>> >>> Mike and Sylwester, if you're OK on this series, I'd like to pick up in Samsung
+>> >>> tree together. And if you want, I could provide topic branch for clk tree.
+>> >>
+>> >> Kukjin,
+>> >>
+>> >> A topic branch would be great.
+>> >>
+>> > Sure, BTW it means you did 'ack' on this clk change? If not, please let
+>> > em know ;-) I'll let you know once the topic branch is ready.
+>>
+>> Dear Kukjin,
+>>
+>> Will you handle this patchset and dependants (ARM: dts: Add CPU cooling
+>> binding for Exynos3250-based Rinato/Monk board) for v4.3?
+>>
+> You mean Chanwoo's patch. Yes, I'll. Thanks for your gentle reminder.
 
-> diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
-> index 0d3b0fe..b8bf8b0 100644
-> --- a/drivers/irqchip/irq-armada-370-xp.c
-> +++ b/drivers/irqchip/irq-armada-370-xp.c
-> @@ -201,7 +201,6 @@ static int armada_370_xp_msi_map(struct irq_domain *domain, unsigned int virq,
->  {
->  	irq_set_chip_and_handler(virq, &armada_370_xp_msi_irq_chip,
->  				 handle_simple_irq);
-> -	set_irq_flags(virq, IRQF_VALID);
+Please pick following patch[1] kindly. Following patch is about cooling device
+for Exynos3250-based Rinato/Monk board.
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/354693.html
 
-OK
-
-> 
->  	return 0;
->  }
-> @@ -318,7 +317,7 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain *h,
->  		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
->  					handle_level_irq);
->  	}
-> -	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
-> +	irq_set_noprobe(virq);
-
-I think it should be irq_set_probe(virq), I don't see why you inverted the probe flag.
-
-
-Thanks,
-
-Gregory
-
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Best Regards,
+Chanwoo Choi
