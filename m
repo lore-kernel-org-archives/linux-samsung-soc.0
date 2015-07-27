@@ -1,135 +1,68 @@
-From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Mon, 27 Jul 2015 11:46:25 +0200
-Message-ID: <CAOMqctTsA5ZxBWFTzirqhQBoR2sO6B+uMFXWMHuSVb_EygCDvw@mail.gmail.com>
-References: <cover.1433364398.git.hramrach@gmail.com> <CAOMqctRnh2RsUYiRr2-+wucaq5NArTNrzPpqdPs+ETrFe9UrZA@mail.gmail.com>
- <CAOMqctREShUrBR=aQM2Vc6MhVezCP9rnNfUNq=m2-GH_gbYxFw@mail.gmail.com> <201507241034.15406.marex@denx.de>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Mon, 27 Jul 2015 12:24:30 +0200
+Message-ID: <1595601.YD6UTxy5Qg@amdc1976>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+ <20150727083531.GC31611@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201507241034.15406.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dmaengine <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20150727083531.GC31611@linux>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 24 July 2015 at 10:34, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
-> On Thursday, July 23, 2015 at 07:03:47 PM, Michal Suchanek wrote:
->
-> Hi!
->
-> [...]
->
->> >>> It's probably slower to set up DMA for 2-byte commands but it might
->> >>> work nonetheless.
->> >>
->> >> It is, the overhead will be considerable. It might help the stability
->> >> though. I'm really looking forward to the results!
->> >
->> > Hello,
->> >
->> > this does not quite work.
->> >
->> > My test with spidev:
->> >
->> > # ./spinor /dev/spidev1.0
->> > Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> > Received 00 ff c8 60 16 c8 60 16 c8 60 16 c8 60 16 c8 60
->> > Sending 90 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> > Received 00 ff ff ff ff c8 15 c8 15 c8 15 c8 15 c8 15 c8
->> > Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> > Received 00 ff c8 60 16 c8 60 16 c8 60 16 c8 60 16 c8 60
->> >
->> > I receive correct ID but spi-nor complains it does not know ID 00 c8 60.
->> > IIRC garbage should be sent only at the time command is transferred so
->> > only one byte of garbage should be received. Also the garbage tends to
->> > be the last state of the data output - all 0 or all 1.
->> > So it seems using DMA for all transfers including 1-byte commands
->> > results in (some?) received data getting an extra 00 prefix.
->> >
->> >
->> > I also managed to lock up the controller completely since there is
->> > some error passing the SPI speed somewhere :(
->> >
->> > [ 1352.977530] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max -->
->> > 0 [ 1352.977540] spidev spi1.0: spi mode 0
->> > [ 1352.977576] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max -->
->> > 0 [ 1352.977582] spidev spi1.0: msb first
->> > [ 1352.977614] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max -->
->> > 0 [ 1352.977620] spidev spi1.0: 0 bits per word
->> > [ 1352.977652] spidev spi1.0: setup mode 0, 8 bits/w, 2690588672 Hz max
->> > --> 0 [ 1352.977726] spi_master spi1: s3c64xx_spi_config: clk_from_cmu 1
->> > src_clk sclk_spi1 mode bpw 8
->> > [ 1352.977753] spi_master spi1: spi1.0 s3c64xx_spi_transfer_one: xfer
->> > bpw 8 speed -1604378624
->> > [ 1352.977760] spi_master spi1: s3c64xx_spi_config: clk_from_cmu 1
->> > src_clk sclk_spi1 mode bpw 8
->> > [ 1352.977781] spi_master spi1: spi1.0 s3c64xx_spi_transfer_one: using
->> > dma [ 1352.977797] dma-pl330 121b0000.pdma: setting up request on thread
->> > 1
->>
->> Hmm, on a second thought it probably works as expected more or less.
->>
->> The nonsensical value was passed from application and there is no
->> guard against that.
->>
->> Since I don't do PIO the controller remains locked up indefinitely.
->
-> I have to admit, I don't quite understand the above. I also don't quite know
-> what your spidev test does. Can you possibly just bind a regular SPI NOR driver
-> and run mtdtests to see if it is stable ?
 
-Ok, so here is some summary.
+Hi,
 
-I have a NOR flash attached to a s3c64xx SPI controller with 64byte
-fifo and a pl330 dma controller.
+On Monday, July 27, 2015 02:05:31 PM Viresh Kumar wrote:
+> $subject is a bit wrong, we aren't fixing any issue here. We are
+> supporting a new feature and so it should be like:
 
-Normally DMA controller is used for transfers that do not fit into the FIFO.
+Have you read my explanation of the issue?
 
-I tried adding the flash memory ID to the spi-nor driver table and
-adding a DT node for it.
+With your OPP-v2 patches cpufreq-dt picks turbo frequencies and uses
+them as normal ones.
 
-The flash is rated at 120MHz so I used that speed but the ID was
-bit-shifted and identification failed. There is DT property
-samsung,spi-feedback-delay for addressing this and at 120MHz it must
-be 2 or 3 on this board. 40MHz works with default value 0.
+(More at: http://www.spinics.net/lists/arm-kernel/msg430397.html)
 
-The next step after identification worked was to try reading the flash
-content. For this the DMA controller is used because data is
-transferred in blocks larger than 64 bytes. When reading the whole 4MB
-flash the transfer failed silently. I got a 4MB file of all ones or
-all zeroes.
-
-It turns out that
-
- - the pl330 locks up when transfering large amount of data.
-Specifically, the maximum power of 2 sized transfer at 120MHz is 128
-bytes and 64k at 40MHz. Transferring more than this results in the
-pl330 locking up and never signalling completion of the transfer. Data
-is left in FIFO which causes subsequent commands to fail since garbage
-is returned instead of command reply. Also subsequent read may cause
-I/O error or or return an empty page depending on the garbage around.
-
-- the I/O errors are not checked in spi-nor at all which leads to
-silent data corruption.
-
-On a suggestion that this may improve reliability I changed the
-s3c64xx driver to use DMA for all transfers. This caused
-identification to fail in spin-nor because the ID was prefixed with
-extra 00  byte. Testing with spidev confirmed that everything is
-prefixed with extra 00. Also when the DMA controller locked up no
-transfers were possible anymore. When DMA was not used for sending
-commands the controller would recover on next command. I made the
-option to always use DMA configurable and it turns out that the
-returned data is prefixed with 00 only when no transfer without DMA
-was ever made. Loading the spi-nor driver with the dma-only option off
-and then with dma-only option on results in correct operation. Only
-loading the dma-only driver first causes the 00 prefix.
-
-Thanks
-
-Michal
+Best regards,
 --
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> cpufreq: Mark boost frequencies based on OPP's turbo mode
+> 
+> On 09-07-15, 17:43, Bartlomiej Zolnierkiewicz wrote:
+> > Turbo modes should be marked with CPUFREQ_BOOST_FREQ flag in
+> > the frequency table entry.
+> > 
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> > Cc: Thomas Abraham <thomas.ab@samsung.com>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/cpufreq/cpufreq_opp.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
+> > index 773bcde..f0cf502 100644
+> > --- a/drivers/cpufreq/cpufreq_opp.c
+> > +++ b/drivers/cpufreq/cpufreq_opp.c
+> > @@ -75,6 +75,8 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
+> >  		}
+> >  		freq_table[i].driver_data = i;
+> >  		freq_table[i].frequency = rate / 1000;
+> > +		if (dev_pm_opp_get_turbo_mode_setting(opp) == true)
+> > +			freq_table[i].flags |= CPUFREQ_BOOST_FREQ;
+> >  	}
+> >  
+> >  	freq_table[i].driver_data = i;
+> 
+> Rest look fine.
