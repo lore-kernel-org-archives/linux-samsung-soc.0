@@ -1,46 +1,111 @@
-From: Michal Suchanek <hramrach@gmail.com>
-Subject: [PATCH v2] ARM: dts: Add SPI CS on exynos5250-snow
-Date: 27 Jul 2015 20:11:31 -0000
-Message-ID: <a5054dfad3d48c582b062b0536125c9bcff41f31.1438027526.git.hramrach@gmail.com>
+From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
+Date: Mon, 27 Jul 2015 22:43:05 +0200
+Message-ID: <CAOMqctRPOv3_YZqS-g+SuuMT5UpOJMFs1OtBuZAhLR_SZnfTyw@mail.gmail.com>
+References: <cover.1433364398.git.hramrach@gmail.com> <201507241034.15406.marex@denx.de>
+ <CAOMqctTsA5ZxBWFTzirqhQBoR2sO6B+uMFXWMHuSVb_EygCDvw@mail.gmail.com> <201507271943.32453.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201507271943.32453.marex-ynQEQJNshbs@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dmaengine <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Although there is only one choice of chipselect it is necessary to
-specify it. The driver cannot claim the gpio otherwise.
+On 27 July 2015 at 19:43, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
+> On Monday, July 27, 2015 at 11:46:25 AM, Michal Suchanek wrote:
+>> On 24 July 2015 at 10:34, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
+>> > On Thursday, July 23, 2015 at 07:03:47 PM, Michal Suchanek wrote:
+>> >
+>> Ok, so here is some summary.
+>>
+>> I have a NOR flash attached to a s3c64xx SPI controller with 64byte
+>> fifo and a pl330 dma controller.
+>>
+>> Normally DMA controller is used for transfers that do not fit into the
+>> FIFO.
+>>
+>> I tried adding the flash memory ID to the spi-nor driver table and
+>> adding a DT node for it.
+>>
+>> The flash is rated at 120MHz so I used that speed but the ID was
+>> bit-shifted and identification failed. There is DT property
+>> samsung,spi-feedback-delay for addressing this and at 120MHz it must
+>> be 2 or 3 on this board. 40MHz works with default value 0.
+>>
+>> The next step after identification worked was to try reading the flash
+>> content. For this the DMA controller is used because data is
+>> transferred in blocks larger than 64 bytes. When reading the whole 4MB
+>> flash the transfer failed silently. I got a 4MB file of all ones or
+>> all zeroes.
+>>
+>> It turns out that
+>>
+>>  - the pl330 locks up when transfering large amount of data.
+>> Specifically, the maximum power of 2 sized transfer at 120MHz is 128
+>> bytes and 64k at 40MHz. Transferring more than this results in the
+>> pl330 locking up and never signalling completion of the transfer.
+>
+> Hypothesis:
+> I think this might just be that the controller didn't catch all the
+> inbound clock ticks and thus counted less inbound data than it was
+> set up to receive. The controller thus waits for more data.
 
-Signed-off-by: Michal Suchanek <hramrach@gmail.com>
+The flash chip can transfer data as long as you keep the clock going,
+especially when you transfer 64k off a 4M flash.
 
+The read command is bound just by stopping the clock. There is always
+more data to be had.
+
+>
+>> Data
+>> is left in FIFO which causes subsequent commands to fail since garbage
+>> is returned instead of command reply. Also subsequent read may cause
+>> I/O error or or return an empty page depending on the garbage around.
+>
+> So the driver for the DMA controller might need to be augmented to handle
+> this case -- add a timeout and in case DMA times out, drain the FIFO to
+> make sure subsequent transfers do not fail.
+
+There is no way to add timeout in the DMA driver since it does not
+know the SPI clock.
+
+The timeout is handled by the SPI driver and it should be possible to
+augment it to drain the FIFO when DMA fails so long as FIFO level is
+readable somewhere.
+
+>
+>> - the I/O errors are not checked in spi-nor at all which leads to
+>> silent data corruption.
+>>
+>> On a suggestion that this may improve reliability I changed the
+>> s3c64xx driver to use DMA for all transfers. This caused
+>> identification to fail in spin-nor because the ID was prefixed with
+>> extra 00  byte. Testing with spidev confirmed that everything is
+>> prefixed with extra 00.
+>
+> The determinism of this is in fact excellent news.
+>
+>> Also when the DMA controller locked up no
+>> transfers were possible anymore. When DMA was not used for sending
+>> commands the controller would recover on next command. I made the
+>> option to always use DMA configurable and it turns out that the
+>> returned data is prefixed with 00 only when no transfer without DMA
+>> was ever made. Loading the spi-nor driver with the dma-only option off
+>> and then with dma-only option on results in correct operation. Only
+>> loading the dma-only driver first causes the 00 prefix.
+>
+> Can we conclude that the PIO codepath somehow programs a register somewhere
+> which gets rid of this 0x00 prefix ? If so, this should then also be part
+> of the DMA codepath, or even better, this should be set in probe() somewhere.
+
+Yes, it looks like it.
+
+Thanks
+
+Michal
 --
-v2
- - don't move unrelated line
----
- arch/arm/boot/dts/exynos5250-snow.dts | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index b7f4122..62be08a 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -688,6 +688,7 @@
- 	status = "okay";
- 	samsung,spi-src-clk = <0>;
- 	num-cs = <1>;
-+	cs-gpios = <&gpa2 5 0>;
- };
- 
- &usbdrd_dwc3 {
--- 
-2.1.4
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
