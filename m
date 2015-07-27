@@ -1,150 +1,89 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Mon, 27 Jul 2015 19:43:32 +0200
-Message-ID: <201507271943.32453.marex@denx.de>
-References: <cover.1433364398.git.hramrach@gmail.com> <201507241034.15406.marex@denx.de> <CAOMqctTsA5ZxBWFTzirqhQBoR2sO6B+uMFXWMHuSVb_EygCDvw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 06/13] irqchip: kill off set_irq_flags usage
+Date: Mon, 27 Jul 2015 13:39:05 -0500
+Message-ID: <CAL_JsqKJgYYEghd3PHZawkHnrqBp1+ok0Fj45a8roipMDmCQjw@mail.gmail.com>
+References: <1436711211-18223-1-git-send-email-robh@kernel.org>
+ <1436711211-18223-7-git-send-email-robh@kernel.org> <55B3904B.3050408@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOMqctTsA5ZxBWFTzirqhQBoR2sO6B+uMFXWMHuSVb_EygCDvw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Suchanek <hramrach@gmail.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, MTD Maling List <linux-mtd@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, dmaengine <dmaengine@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f174.google.com ([209.85.160.174]:33386 "EHLO
+	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbbG0SjZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jul 2015 14:39:25 -0400
+In-Reply-To: <55B3904B.3050408@free-electrons.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <linux@arm.linux.org.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-rpi-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
 
-On Monday, July 27, 2015 at 11:46:25 AM, Michal Suchanek wrote:
-> On 24 July 2015 at 10:34, Marek Vasut <marex@denx.de> wrote:
-> > On Thursday, July 23, 2015 at 07:03:47 PM, Michal Suchanek wrote:
-> > 
-> > Hi!
-> > 
-> > [...]
-> > 
-> >> >>> It's probably slower to set up DMA for 2-byte commands but it might
-> >> >>> work nonetheless.
-> >> >> 
-> >> >> It is, the overhead will be considerable. It might help the stability
-> >> >> though. I'm really looking forward to the results!
-> >> > 
-> >> > Hello,
-> >> > 
-> >> > this does not quite work.
-> >> > 
-> >> > My test with spidev:
-> >> > 
-> >> > # ./spinor /dev/spidev1.0
-> >> > Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >> > Received 00 ff c8 60 16 c8 60 16 c8 60 16 c8 60 16 c8 60
-> >> > Sending 90 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >> > Received 00 ff ff ff ff c8 15 c8 15 c8 15 c8 15 c8 15 c8
-> >> > Sending 9f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >> > Received 00 ff c8 60 16 c8 60 16 c8 60 16 c8 60 16 c8 60
-> >> > 
-> >> > I receive correct ID but spi-nor complains it does not know ID 00 c8
-> >> > 60. IIRC garbage should be sent only at the time command is
-> >> > transferred so only one byte of garbage should be received. Also the
-> >> > garbage tends to be the last state of the data output - all 0 or all
-> >> > 1.
-> >> > So it seems using DMA for all transfers including 1-byte commands
-> >> > results in (some?) received data getting an extra 00 prefix.
-> >> > 
-> >> > 
-> >> > I also managed to lock up the controller completely since there is
-> >> > some error passing the SPI speed somewhere :(
-> >> > 
-> >> > [ 1352.977530] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max
-> >> > --> 0 [ 1352.977540] spidev spi1.0: spi mode 0
-> >> > [ 1352.977576] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max
-> >> > --> 0 [ 1352.977582] spidev spi1.0: msb first
-> >> > [ 1352.977614] spidev spi1.0: setup mode 0, 8 bits/w, 80000000 Hz max
-> >> > --> 0 [ 1352.977620] spidev spi1.0: 0 bits per word
-> >> > [ 1352.977652] spidev spi1.0: setup mode 0, 8 bits/w, 2690588672 Hz
-> >> > max --> 0 [ 1352.977726] spi_master spi1: s3c64xx_spi_config:
-> >> > clk_from_cmu 1 src_clk sclk_spi1 mode bpw 8
-> >> > [ 1352.977753] spi_master spi1: spi1.0 s3c64xx_spi_transfer_one: xfer
-> >> > bpw 8 speed -1604378624
-> >> > [ 1352.977760] spi_master spi1: s3c64xx_spi_config: clk_from_cmu 1
-> >> > src_clk sclk_spi1 mode bpw 8
-> >> > [ 1352.977781] spi_master spi1: spi1.0 s3c64xx_spi_transfer_one: using
-> >> > dma [ 1352.977797] dma-pl330 121b0000.pdma: setting up request on
-> >> > thread 1
-> >> 
-> >> Hmm, on a second thought it probably works as expected more or less.
-> >> 
-> >> The nonsensical value was passed from application and there is no
-> >> guard against that.
-> >> 
-> >> Since I don't do PIO the controller remains locked up indefinitely.
-> > 
-> > I have to admit, I don't quite understand the above. I also don't quite
-> > know what your spidev test does. Can you possibly just bind a regular
-> > SPI NOR driver and run mtdtests to see if it is stable ?
-> 
-> Ok, so here is some summary.
-> 
-> I have a NOR flash attached to a s3c64xx SPI controller with 64byte
-> fifo and a pl330 dma controller.
-> 
-> Normally DMA controller is used for transfers that do not fit into the
-> FIFO.
-> 
-> I tried adding the flash memory ID to the spi-nor driver table and
-> adding a DT node for it.
-> 
-> The flash is rated at 120MHz so I used that speed but the ID was
-> bit-shifted and identification failed. There is DT property
-> samsung,spi-feedback-delay for addressing this and at 120MHz it must
-> be 2 or 3 on this board. 40MHz works with default value 0.
-> 
-> The next step after identification worked was to try reading the flash
-> content. For this the DMA controller is used because data is
-> transferred in blocks larger than 64 bytes. When reading the whole 4MB
-> flash the transfer failed silently. I got a 4MB file of all ones or
-> all zeroes.
-> 
-> It turns out that
-> 
->  - the pl330 locks up when transfering large amount of data.
-> Specifically, the maximum power of 2 sized transfer at 120MHz is 128
-> bytes and 64k at 40MHz. Transferring more than this results in the
-> pl330 locking up and never signalling completion of the transfer.
+On Sat, Jul 25, 2015 at 8:34 AM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+> Hi Rob,
+>
+> On 12/07/2015 16:26, Rob Herring wrote:
+>> set_irq_flags is ARM specific with custom flags which have genirq
+>> equivalents. Convert drivers to use the genirq interfaces directly, so we
+>> can kill off set_irq_flags. The translation of flags is as follows:
+>>
+>> IRQF_VALID -> !IRQ_NOREQUEST
+>> IRQF_PROBE -> !IRQ_NOPROBE
+>> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>>
+>> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+>> and setting IRQ_NOREQUEST already, so there is no need to do this in
+>> .map() functions and we can simply remove the set_irq_flags calls. Some
+>> users also set IRQ_NOPROBE and this has been maintained although it is not
+>> clear that is really needed. There appears to be a great deal of blind
+>> copy and paste of this code.
+>>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Jason Cooper <jason@lakedaemon.net>
+>> Cc: Kukjin Kim <kgene@kernel.org>
+>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Cc: Stephen Warren <swarren@wwwdotorg.org>
+>> Cc: Lee Jones <lee@kernel.org>
+>> Cc: Alexander Shiyan <shc_work@mail.ru>
+>> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> Cc: linux-rpi-kernel@lists.infradead.org
+>> ---
+>> v2:
+>> - Fix build error on clps711x
+>>
+> [...]
+>
+>> diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+>> index 0d3b0fe..b8bf8b0 100644
+>> --- a/drivers/irqchip/irq-armada-370-xp.c
+>> +++ b/drivers/irqchip/irq-armada-370-xp.c
+>> @@ -201,7 +201,6 @@ static int armada_370_xp_msi_map(struct irq_domain *domain, unsigned int virq,
+>>  {
+>>       irq_set_chip_and_handler(virq, &armada_370_xp_msi_irq_chip,
+>>                                handle_simple_irq);
+>> -     set_irq_flags(virq, IRQF_VALID);
+>
+> OK
+>
+>>
+>>       return 0;
+>>  }
+>> @@ -318,7 +317,7 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain *h,
+>>               irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
+>>                                       handle_level_irq);
+>>       }
+>> -     set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
+>> +     irq_set_noprobe(virq);
+>
+> I think it should be irq_set_probe(virq), I don't see why you inverted the probe flag.
 
-Hypothesis:
-I think this might just be that the controller didn't catch all the
-inbound clock ticks and thus counted less inbound data than it was
-set up to receive. The controller thus waits for more data.
+Yes, this translation and similar ones are messed up. I've gone back
+thru and fixed these.
 
-> Data
-> is left in FIFO which causes subsequent commands to fail since garbage
-> is returned instead of command reply. Also subsequent read may cause
-> I/O error or or return an empty page depending on the garbage around.
+However, it is questionable whether you really want to enable probing
+on these lines or care either way.
 
-So the driver for the DMA controller might need to be augmented to handle
-this case -- add a timeout and in case DMA times out, drain the FIFO to
-make sure subsequent transfers do not fail.
-
-> - the I/O errors are not checked in spi-nor at all which leads to
-> silent data corruption.
-> 
-> On a suggestion that this may improve reliability I changed the
-> s3c64xx driver to use DMA for all transfers. This caused
-> identification to fail in spin-nor because the ID was prefixed with
-> extra 00  byte. Testing with spidev confirmed that everything is
-> prefixed with extra 00.
-
-The determinism of this is in fact excellent news.
-
-> Also when the DMA controller locked up no
-> transfers were possible anymore. When DMA was not used for sending
-> commands the controller would recover on next command. I made the
-> option to always use DMA configurable and it turns out that the
-> returned data is prefixed with 00 only when no transfer without DMA
-> was ever made. Loading the spi-nor driver with the dma-only option off
-> and then with dma-only option on results in correct operation. Only
-> loading the dma-only driver first causes the 00 prefix.
-
-Can we conclude that the PIO codepath somehow programs a register somewhere
-which gets rid of this 0x00 prefix ? If so, this should then also be part
-of the DMA codepath, or even better, this should be set in probe() somewhere.
+Rob
