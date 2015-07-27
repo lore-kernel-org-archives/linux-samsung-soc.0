@@ -1,172 +1,57 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH v3] pinctrl: kill off set_irq_flags usage
-Date: Mon, 27 Jul 2015 15:55:22 -0500
-Message-ID: <1438030523-15853-10-git-send-email-robh@kernel.org>
-References: <1438030523-15853-1-git-send-email-robh@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:34495 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753864AbbG0Uzq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jul 2015 16:55:46 -0400
-In-Reply-To: <1438030523-15853-1-git-send-email-robh@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: dts: Add SPI CS on exynos5250-snow
+Date: Mon, 27 Jul 2015 23:24:54 +0200
+Message-ID: <CABxcv=kHgvXgVSzLj=bABqO26r3w7T7ezAUfdh0n4S_N3ZM-Mw@mail.gmail.com>
+References: <a5054dfad3d48c582b062b0536125c9bcff41f31.1438027526.git.hramrach@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a5054dfad3d48c582b062b0536125c9bcff41f31.1438027526.git.hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-set_irq_flags is ARM specific with custom flags which have genirq
-equivalents. Convert drivers to use the genirq interfaces directly, so we
-can kill off set_irq_flags. The translation of flags is as follows:
+Hello Michal,
 
-IRQF_VALID -> !IRQ_NOREQUEST
-IRQF_PROBE -> !IRQ_NOPROBE
-IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+The patch looks good to me, just one small comment below.
 
-For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-and setting IRQ_NOREQUEST already, so there is no need to do this in
-.map() functions and we can simply remove the set_irq_flags calls. Some
-users also modify IRQ_NOPROBE and this has been maintained although it
-is not clear that is really needed. There appears to be a great deal of
-blind copy and paste of this code.
+On Mon, Jul 27, 2015 at 10:11 PM, Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Although there is only one choice of chipselect it is necessary to
+> specify it. The driver cannot claim the gpio otherwise.
+>
+> Signed-off-by: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>
+> --
+> v2
+>  - don't move unrelated line
+> ---
+>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index b7f4122..62be08a 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -688,6 +688,7 @@
+>         status = "okay";
+>         samsung,spi-src-clk = <0>;
+>         num-cs = <1>;
+> +       cs-gpios = <&gpa2 5 0>;
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Lee Jones <lee@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
-Thomas asked that this be merged thru subsystem trees instead of arm-soc,
-so please apply this to your tree.
+NIT: this should be GPIO_ACTIVE_HIGH instead of 0 but maybe Kukjin or
+Krzysztof can fixup when applying it?
 
-Rob
+>  };
+>
+>  &usbdrd_dwc3 {
+> --
 
- drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 1 -
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 --
- drivers/pinctrl/pinctrl-single.c              | 5 -----
- drivers/pinctrl/samsung/pinctrl-exynos.c      | 1 -
- drivers/pinctrl/samsung/pinctrl-exynos5440.c  | 1 -
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c     | 2 --
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c     | 2 --
- 7 files changed, 14 deletions(-)
+Acked-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 6177315..29e2203 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -989,7 +989,6 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 		irq_set_chip_and_handler(irq, &bcm2835_gpio_irq_chip,
- 				handle_level_irq);
- 		irq_set_chip_data(irq, pc);
--		set_irq_flags(irq, IRQF_VALID);
- 	}
-
- 	for (i = 0; i < BCM2835_NUM_BANKS; i++) {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index ad1ea16..661677c 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1348,11 +1348,9 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 		irq_set_chip_and_handler(virq, &mtk_pinctrl_irq_chip,
- 			handle_level_irq);
- 		irq_set_chip_data(virq, pctl);
--		set_irq_flags(virq, IRQF_VALID);
- 	};
-
- 	irq_set_chained_handler_and_data(irq, mtk_eint_irq_handler, pctl);
--	set_irq_flags(irq, IRQF_VALID);
- 	return 0;
-
- chip_error:
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 0b8d480..123a9ff 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1716,12 +1716,7 @@ static int pcs_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 	irq_set_chip_data(irq, pcs_soc);
- 	irq_set_chip_and_handler(irq, &pcs->chip,
- 				 handle_level_irq);
--
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, IRQF_VALID);
--#else
- 	irq_set_noprobe(irq);
--#endif
-
- 	return 0;
- }
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index b18dabb..0e8add9 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -256,7 +256,6 @@ static int exynos_eint_irq_map(struct irq_domain *h, unsigned int virq,
- 	irq_set_chip_data(virq, b);
- 	irq_set_chip_and_handler(virq, &b->irq_chip->chip,
- 					handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 	return 0;
- }
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index f5619fb..e7d1c9e 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -929,7 +929,6 @@ static int exynos5440_gpio_irq_map(struct irq_domain *h, unsigned int virq,
- 	irq_set_chip_data(virq, d);
- 	irq_set_chip_and_handler(virq, &exynos5440_gpio_irq_chip,
- 					handle_level_irq);
--	set_irq_flags(virq, IRQF_VALID);
- 	return 0;
- }
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index 01b43db..f218be7 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -437,7 +437,6 @@ static int s3c24xx_gpf_irq_map(struct irq_domain *h, unsigned int virq,
- 					 handle_edge_irq);
- 	}
- 	irq_set_chip_data(virq, bank);
--	set_irq_flags(virq, IRQF_VALID);
- 	return 0;
- }
-
-@@ -457,7 +456,6 @@ static int s3c24xx_gpg_irq_map(struct irq_domain *h, unsigned int virq,
-
- 	irq_set_chip_and_handler(virq, &s3c24xx_eint_chip, handle_edge_irq);
- 	irq_set_chip_data(virq, bank);
--	set_irq_flags(virq, IRQF_VALID);
- 	return 0;
- }
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index ec8cc3b..1a4dd01 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -395,7 +395,6 @@ static int s3c64xx_gpio_irq_map(struct irq_domain *h, unsigned int virq,
- 	irq_set_chip_and_handler(virq,
- 				&s3c64xx_gpio_irq_chip, handle_level_irq);
- 	irq_set_chip_data(virq, bank);
--	set_irq_flags(virq, IRQF_VALID);
-
- 	return 0;
- }
-@@ -673,7 +672,6 @@ static int s3c64xx_eint0_irq_map(struct irq_domain *h, unsigned int virq,
- 	irq_set_chip_and_handler(virq,
- 				&s3c64xx_eint0_irq_chip, handle_level_irq);
- 	irq_set_chip_data(virq, ddata);
--	set_irq_flags(virq, IRQF_VALID);
-
- 	return 0;
- }
+Best regards,
+Javier
 --
-2.1.0
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
