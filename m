@@ -1,44 +1,37 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v2] clk: exynos4: Fix wrong clock for Exynos4x12 ADC
-Date: Sun, 26 Jul 2015 14:40:23 +0900
-Message-ID: <55B472C7.5000109@gmail.com>
-References: <1434074005-18846-1-git-send-email-k.kozlowski@samsung.com> <20150721224235.GA30021@codeaurora.org> <55AED88D.2060009@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v2 2/2] PM / devfreq: exynos-ppmu: Update documentation to
+ support PPMUv2
+Date: Mon, 27 Jul 2015 05:26:08 +0000 (GMT)
+Message-ID: <8282547.36111437974766469.JavaMail.weblogic@epmlwas08d>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55AED88D.2060009@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:37091 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750776AbbG0F0K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jul 2015 01:26:10 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NS401UIRSFK1T00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Jul 2015 14:26:08 +0900 (KST)
+MIME-version: 1.0
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>
+Cc: "kgene@kernel.org" <kgene@kernel.org>, =?utf-8?Q?=ED=81=AC=EC=89=AC=EC=8B=9C=ED=86=A0=ED=94=84?= <k.kozlowski@samsung.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 07/22/2015 08:41 AM, Krzysztof Kozlowski wrote:
-> On 22.07.2015 07:42, Stephen Boyd wrote:
->> >On 06/12, Krzysztof Kozlowski wrote:
-[...]
->>> >>Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
->>> >>Cc:<stable@vger.kernel.org>
->>> >>Fixes: c63c57433003 ("ARM: dts: Add ADC's dt data to read raw data for exynos4x12")
->>> >>Link:https://lkml.org/lkml/2015/6/11/85
->> >
->> >Did you want clk maintainers to apply this? The To: list is not
->> >helping so I'm not sure what's going on and it seems to have
->> >slipped through the cracks.
- >
-> Thank you for being proactive! I appreciate this.
-> Some time ago Sylwester replied that he took care about this patch so I
-> think this will go through Samsung clock tree.
->
-> Sylwester, are you planning to send this as fix for 4.2-rc?
-
-I think it qualifies for 4.3, it's not a new regression and will be
-backported to -stable anyway.
-I would prefer clk maintainers have applied this, otherwise I would
-need to make a (questionable) pull request with only one patch, since
-all patches except this one after the last merge window were part
-of bigger series touching multiple subsystems and applied through
-the samsung soc tree.
-
-Thanks,
-Sylwester
+PiAgIA0KPiAgVGhpcyBwYXRjaCB1cGRhdGVzIHRoZSBkb2N1bWVudGF0aW9uIHRvIGluY2x1ZGUg
+dGhlIGluZm9ybWF0aW9uIG9mIFBQTVV2Mi4NCj4gVGhlIFBQTVV2MiBpcyB1c2VkIGZvciBFeHlu
+b3M1NDMzIGFuZCBFeHlub3M3NDIwIHRvIG1vbml0b3IgdGhlIHBlcmZvcm1hbmNlDQo+IG9mIGVh
+Y2ggSVAgaW4gRXh5bm9zIFNvQy4NCj4gDQo+IENjOiBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhh
+bUBzYW1zdW5nLmNvbT4NCj4gQ2M6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3Vu
+Zy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcu
+Y29tPg0KDQpBY2tlZC1ieTogTXl1bmdKb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+
+DQoNCj4gLS0tDQo+ICAuLi4vYmluZGluZ3MvZGV2ZnJlcS9ldmVudC9leHlub3MtcHBtdS50eHQg
+ICAgICAgICB8IDQyICsrKysrKysrKysrKysrKysrKysrLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA0
+MCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCg==
