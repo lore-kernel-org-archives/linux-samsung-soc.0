@@ -1,22 +1,22 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [PATCH 01/12] ARM: SAMSUNG: local regs-srom header in mach-exynos
-Date: Mon, 27 Jul 2015 23:57:09 +0900
-Message-ID: <013a01d0c87c$854d4d00$8fe7e700$@kernel.org>
+Subject: [PATCH 02/12] ARM: SAMSUNG: local fb-core header in mach-s3c24xx
+Date: Mon, 27 Jul 2015 23:57:27 +0900
+Message-ID: <013b01d0c87c$8dbc6b60$a9354220$@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39481 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:35331 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753840AbbG0O5P (ORCPT
+	with ESMTP id S1753645AbbG0O53 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jul 2015 10:57:15 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
+	Mon, 27 Jul 2015 10:57:29 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
  by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0NS501567IVDXSC0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 27 Jul 2015 23:57:13 +0900 (KST)
+ with ESMTP id <0NS5015AGIVSVUC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Jul 2015 23:57:28 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -24,47 +24,66 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
 
-This patch moves regs-srom header file into mach-exynos.
+This patch moves fb-core header file into mach-s3c24xx.
 
-c: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Signed-off-by: Kukjin Kim <kgene@kernel.org>
 ---
- arch/arm/{plat-samsung/include/plat => mach-exynos}/regs-srom.h | 3 +--
- arch/arm/mach-exynos/suspend.c                                  | 4 ++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
- rename arch/arm/{plat-samsung/include/plat => mach-exynos}/regs-srom.h (96%)
+ arch/arm/{plat-samsung/include/plat => mach-s3c24xx}/fb-core.h | 2 --
+ arch/arm/mach-s3c24xx/s3c2416.c                                | 2 +-
+ arch/arm/mach-s3c24xx/s3c2443.c                                | 3 ++-
+ 3 files changed, 3 insertions(+), 4 deletions(-)
+ rename arch/arm/{plat-samsung/include/plat => mach-s3c24xx}/fb-core.h (93%)
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-srom.h b/arch/arm/mach-exynos/regs-srom.h
-similarity index 96%
-rename from arch/arm/plat-samsung/include/plat/regs-srom.h
-rename to arch/arm/mach-exynos/regs-srom.h
-index 9b6729c..5c4d442 100644
---- a/arch/arm/plat-samsung/include/plat/regs-srom.h
-+++ b/arch/arm/mach-exynos/regs-srom.h
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-samsung/include/plat/regs-srom.h
+diff --git a/arch/arm/plat-samsung/include/plat/fb-core.h b/arch/arm/mach-s3c24xx/fb-core.h
+similarity index 93%
+rename from arch/arm/plat-samsung/include/plat/fb-core.h
+rename to arch/arm/mach-s3c24xx/fb-core.h
+index bca383e..103bdba 100644
+--- a/arch/arm/plat-samsung/include/plat/fb-core.h
++++ b/arch/arm/mach-s3c24xx/fb-core.h
+@@ -1,6 +1,4 @@
+ /*
+- * arch/arm/plat-samsung/include/plat/fb-core.h
 - *
-+/*
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
+  * Copyright 2010 Samsung Electronics Co., Ltd.
+  *	Pawel Osciak <p.osciak@samsung.com>
   *
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index c506f8e..e00eb39 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -32,11 +32,11 @@
- #include <asm/suspend.h>
+diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
+index 3f8ca2a..b911851 100644
+--- a/arch/arm/mach-s3c24xx/s3c2416.c
++++ b/arch/arm/mach-s3c24xx/s3c2416.c
+@@ -59,12 +59,12 @@
+ #include <plat/pm.h>
  
- #include <plat/pm-common.h>
--#include <plat/regs-srom.h>
+ #include <plat/iic-core.h>
+-#include <plat/fb-core.h>
+ #include <plat/nand-core.h>
+ #include <plat/adc-core.h>
+ #include <plat/spi-core.h>
  
  #include "common.h"
--#include "regs-pmu.h"
- #include "exynos-pmu.h"
-+#include "regs-pmu.h"
-+#include "regs-srom.h"
++#include "fb-core.h"
  
- #define REG_TABLE_END (-1U)
+ static struct map_desc s3c2416_iodesc[] __initdata = {
+ 	IODESC_ENT(WATCHDOG),
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index 87b6b89..91dd964 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -41,11 +41,12 @@
+ #include <plat/gpio-cfg-helpers.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/fb-core.h>
+ #include <plat/nand-core.h>
+ #include <plat/adc-core.h>
+ #include <plat/spi-core.h>
  
++#include "fb-core.h"
++
+ static struct map_desc s3c2443_iodesc[] __initdata = {
+ 	IODESC_ENT(WATCHDOG),
+ 	IODESC_ENT(CLKPWR),
 -- 
 2.0.0
