@@ -1,29 +1,70 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2 3/7] cpufreq-dt: add turbo modes support
-Date: Mon, 27 Jul 2015 17:31:37 +0530
-Message-ID: <20150727120137.GD10181@linux>
-References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
- <15810554.2OjPyuYJBt@amdc1976>
- <20150727113340.GA10181@linux>
- <2522396.6jWphaZxGp@amdc1976>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [PATCH 01/12] ARM: SAMSUNG: local regs-srom header in mach-exynos
+Date: Mon, 27 Jul 2015 23:57:09 +0900
+Message-ID: <013a01d0c87c$854d4d00$8fe7e700$@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2522396.6jWphaZxGp@amdc1976>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:39481 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753840AbbG0O5P (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jul 2015 10:57:15 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NS501567IVDXSC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Jul 2015 23:57:13 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On 27-07-15, 13:58, Bartlomiej Zolnierkiewicz wrote:
-> Thank you.  This is exactly the case here (I would like to get
-> Exynos4x12 conversion to use cpufreq-dt + exynos-cpufreq removal
-> in v4.3 if possible and adding new DT bindings will most likely
-> slow down the process considerably).
 
-Heh, I never asked you to add new DT bindings, I said we can solve it
-with DT. We already have turbo properties in DT.
+This patch moves regs-srom header file into mach-exynos.
 
+c: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Kukjin Kim <kgene@kernel.org>
+---
+ arch/arm/{plat-samsung/include/plat => mach-exynos}/regs-srom.h | 3 +--
+ arch/arm/mach-exynos/suspend.c                                  | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+ rename arch/arm/{plat-samsung/include/plat => mach-exynos}/regs-srom.h (96%)
+
+diff --git a/arch/arm/plat-samsung/include/plat/regs-srom.h b/arch/arm/mach-exynos/regs-srom.h
+similarity index 96%
+rename from arch/arm/plat-samsung/include/plat/regs-srom.h
+rename to arch/arm/mach-exynos/regs-srom.h
+index 9b6729c..5c4d442 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-srom.h
++++ b/arch/arm/mach-exynos/regs-srom.h
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/plat-samsung/include/plat/regs-srom.h
+- *
++/*
+  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index c506f8e..e00eb39 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -32,11 +32,11 @@
+ #include <asm/suspend.h>
+ 
+ #include <plat/pm-common.h>
+-#include <plat/regs-srom.h>
+ 
+ #include "common.h"
+-#include "regs-pmu.h"
+ #include "exynos-pmu.h"
++#include "regs-pmu.h"
++#include "regs-srom.h"
+ 
+ #define REG_TABLE_END (-1U)
+ 
 -- 
-viresh
+2.0.0
