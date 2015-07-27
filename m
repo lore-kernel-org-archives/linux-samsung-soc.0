@@ -1,111 +1,403 @@
-From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/11] MTD: m25p80: Add option to limit SPI transfer size.
-Date: Mon, 27 Jul 2015 22:43:05 +0200
-Message-ID: <CAOMqctRPOv3_YZqS-g+SuuMT5UpOJMFs1OtBuZAhLR_SZnfTyw@mail.gmail.com>
-References: <cover.1433364398.git.hramrach@gmail.com> <201507241034.15406.marex@denx.de>
- <CAOMqctTsA5ZxBWFTzirqhQBoR2sO6B+uMFXWMHuSVb_EygCDvw@mail.gmail.com> <201507271943.32453.marex@denx.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201507271943.32453.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dmaengine <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH v3] irqchip: kill off set_irq_flags usage
+Date: Mon, 27 Jul 2015 15:55:18 -0500
+Message-ID: <1438030523-15853-6-git-send-email-robh@kernel.org>
+References: <1438030523-15853-1-git-send-email-robh@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:32885 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753864AbbG0Uzk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jul 2015 16:55:40 -0400
+Received: by obdeg2 with SMTP id eg2so69204824obd.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2015 13:55:39 -0700 (PDT)
+In-Reply-To: <1438030523-15853-1-git-send-email-robh@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 
-On 27 July 2015 at 19:43, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
-> On Monday, July 27, 2015 at 11:46:25 AM, Michal Suchanek wrote:
->> On 24 July 2015 at 10:34, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org> wrote:
->> > On Thursday, July 23, 2015 at 07:03:47 PM, Michal Suchanek wrote:
->> >
->> Ok, so here is some summary.
->>
->> I have a NOR flash attached to a s3c64xx SPI controller with 64byte
->> fifo and a pl330 dma controller.
->>
->> Normally DMA controller is used for transfers that do not fit into the
->> FIFO.
->>
->> I tried adding the flash memory ID to the spi-nor driver table and
->> adding a DT node for it.
->>
->> The flash is rated at 120MHz so I used that speed but the ID was
->> bit-shifted and identification failed. There is DT property
->> samsung,spi-feedback-delay for addressing this and at 120MHz it must
->> be 2 or 3 on this board. 40MHz works with default value 0.
->>
->> The next step after identification worked was to try reading the flash
->> content. For this the DMA controller is used because data is
->> transferred in blocks larger than 64 bytes. When reading the whole 4MB
->> flash the transfer failed silently. I got a 4MB file of all ones or
->> all zeroes.
->>
->> It turns out that
->>
->>  - the pl330 locks up when transfering large amount of data.
->> Specifically, the maximum power of 2 sized transfer at 120MHz is 128
->> bytes and 64k at 40MHz. Transferring more than this results in the
->> pl330 locking up and never signalling completion of the transfer.
->
-> Hypothesis:
-> I think this might just be that the controller didn't catch all the
-> inbound clock ticks and thus counted less inbound data than it was
-> set up to receive. The controller thus waits for more data.
+set_irq_flags is ARM specific with custom flags which have genirq
+equivalents. Convert drivers to use the genirq interfaces directly, so we
+can kill off set_irq_flags. The translation of flags is as follows:
 
-The flash chip can transfer data as long as you keep the clock going,
-especially when you transfer 64k off a 4M flash.
+IRQF_VALID -> !IRQ_NOREQUEST
+IRQF_PROBE -> !IRQ_NOPROBE
+IRQF_NOAUTOEN -> IRQ_NOAUTOEN
 
-The read command is bound just by stopping the clock. There is always
-more data to be had.
+For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+and setting IRQ_NOREQUEST already, so there is no need to do this in
+.map() functions and we can simply remove the set_irq_flags calls. Some
+users also modify IRQ_NOPROBE and this has been maintained although it
+is not clear that is really needed. There appears to be a great deal of
+blind copy and paste of this code.
 
->
->> Data
->> is left in FIFO which causes subsequent commands to fail since garbage
->> is returned instead of command reply. Also subsequent read may cause
->> I/O error or or return an empty page depending on the garbage around.
->
-> So the driver for the DMA controller might need to be augmented to handle
-> this case -- add a timeout and in case DMA times out, drain the FIFO to
-> make sure subsequent transfers do not fail.
+Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Lee Jones <lee@kernel.org>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+---
+Thomas asked that this be merged thru subsystem trees instead of arm-soc,
+so please apply this to your tree.
 
-There is no way to add timeout in the DMA driver since it does not
-know the SPI clock.
+Rob
 
-The timeout is handled by the SPI driver and it should be possible to
-augment it to drain the FIFO when DMA fails so long as FIFO level is
-readable somewhere.
+ drivers/irqchip/exynos-combiner.c         |  2 +-
+ drivers/irqchip/irq-armada-370-xp.c       |  3 +--
+ drivers/irqchip/irq-bcm2835.c             |  2 +-
+ drivers/irqchip/irq-clps711x.c            |  6 +++---
+ drivers/irqchip/irq-gic-v3.c              |  5 ++---
+ drivers/irqchip/irq-gic.c                 |  4 ++--
+ drivers/irqchip/irq-hip04.c               |  4 ++--
+ drivers/irqchip/irq-keystone.c            |  2 +-
+ drivers/irqchip/irq-mmp.c                 |  3 ---
+ drivers/irqchip/irq-mxs.c                 |  1 -
+ drivers/irqchip/irq-renesas-intc-irqpin.c |  1 -
+ drivers/irqchip/irq-renesas-irqc.c        |  1 -
+ drivers/irqchip/irq-s3c24xx.c             | 14 ++------------
+ drivers/irqchip/irq-sun4i.c               |  2 +-
+ drivers/irqchip/irq-versatile-fpga.c      |  2 +-
+ drivers/irqchip/irq-vic.c                 |  2 +-
+ drivers/irqchip/irq-vt8500.c              |  1 -
+ drivers/irqchip/spear-shirq.c             |  1 -
+ 18 files changed, 18 insertions(+), 38 deletions(-)
 
->
->> - the I/O errors are not checked in spi-nor at all which leads to
->> silent data corruption.
->>
->> On a suggestion that this may improve reliability I changed the
->> s3c64xx driver to use DMA for all transfers. This caused
->> identification to fail in spin-nor because the ID was prefixed with
->> extra 00  byte. Testing with spidev confirmed that everything is
->> prefixed with extra 00.
->
-> The determinism of this is in fact excellent news.
->
->> Also when the DMA controller locked up no
->> transfers were possible anymore. When DMA was not used for sending
->> commands the controller would recover on next command. I made the
->> option to always use DMA configurable and it turns out that the
->> returned data is prefixed with 00 only when no transfer without DMA
->> was ever made. Loading the spi-nor driver with the dma-only option off
->> and then with dma-only option on results in correct operation. Only
->> loading the dma-only driver first causes the 00 prefix.
->
-> Can we conclude that the PIO codepath somehow programs a register somewhere
-> which gets rid of this 0x00 prefix ? If so, this should then also be part
-> of the DMA codepath, or even better, this should be set in probe() somewhere.
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index 5c82e3b..a62cfd3 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -165,7 +165,7 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
 
-Yes, it looks like it.
+ 	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
+ 	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(irq);
 
-Thanks
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada-370-xp.c
+index 0d3b0fe..017f881 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -201,7 +201,6 @@ static int armada_370_xp_msi_map(struct irq_domain *domain, unsigned int virq,
+ {
+ 	irq_set_chip_and_handler(virq, &armada_370_xp_msi_irq_chip,
+ 				 handle_simple_irq);
+-	set_irq_flags(virq, IRQF_VALID);
 
-Michal
+ 	return 0;
+ }
+@@ -318,7 +317,7 @@ static int armada_370_xp_mpic_irq_map(struct irq_domain *h,
+ 		irq_set_chip_and_handler(virq, &armada_370_xp_irq_chip,
+ 					handle_level_irq);
+ 	}
+-	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(virq);
+
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
+index e68c3b6..9c4ba16 100644
+--- a/drivers/irqchip/irq-bcm2835.c
++++ b/drivers/irqchip/irq-bcm2835.c
+@@ -165,7 +165,7 @@ static int __init armctrl_of_init(struct device_node *node,
+ 			BUG_ON(irq <= 0);
+ 			irq_set_chip_and_handler(irq, &armctrl_chip,
+ 				handle_level_irq);
+-			set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++			irq_set_probe(irq);
+ 		}
+ 	}
+
+diff --git a/drivers/irqchip/irq-clps711x.c b/drivers/irqchip/irq-clps711x.c
+index 33127f1..2e74e81 100644
+--- a/drivers/irqchip/irq-clps711x.c
++++ b/drivers/irqchip/irq-clps711x.c
+@@ -133,14 +133,14 @@ static int __init clps711x_intc_irq_map(struct irq_domain *h, unsigned int virq,
+ 					irq_hw_number_t hw)
+ {
+ 	irq_flow_handler_t handler = handle_level_irq;
+-	unsigned int flags = IRQF_VALID | IRQF_PROBE;
++	unsigned int flags = 0;
+
+ 	if (!clps711x_irqs[hw].flags)
+ 		return 0;
+
+ 	if (clps711x_irqs[hw].flags & CLPS711X_FLAG_FIQ) {
+ 		handler = handle_bad_irq;
+-		flags |= IRQF_NOAUTOEN;
++		flags |= IRQ_NOAUTOEN;
+ 	} else if (clps711x_irqs[hw].eoi) {
+ 		handler = handle_fasteoi_irq;
+ 	}
+@@ -150,7 +150,7 @@ static int __init clps711x_intc_irq_map(struct irq_domain *h, unsigned int virq,
+ 		writel_relaxed(0, clps711x_intc->base + clps711x_irqs[hw].eoi);
+
+ 	irq_set_chip_and_handler(virq, &clps711x_intc_chip, handler);
+-	set_irq_flags(virq, flags);
++	irq_modify_status(virq, IRQ_NOPROBE, flags);
+
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index c52f7ba..16f9028 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -681,13 +681,13 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 		irq_set_percpu_devid(irq);
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_percpu_devid_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
++		irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	}
+ 	/* SPIs */
+ 	if (hw >= 32 && hw < gic_data.irq_nr) {
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_fasteoi_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++		irq_set_probe(irq);
+ 	}
+ 	/* LPIs */
+ 	if (hw >= 8192 && hw < GIC_ID_NR) {
+@@ -695,7 +695,6 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 			return -EPERM;
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_fasteoi_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID);
+ 	}
+
+ 	return 0;
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 4dd8826..d6a1ba1 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -793,11 +793,11 @@ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 		irq_set_percpu_devid(irq);
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_percpu_devid_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
++		irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	} else {
+ 		irq_domain_set_info(d, irq, hw, &gic_chip, d->host_data,
+ 				    handle_fasteoi_irq, NULL, NULL);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++		irq_set_probe(irq);
+ 	}
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
+index 0cae45d..469fba6 100644
+--- a/drivers/irqchip/irq-hip04.c
++++ b/drivers/irqchip/irq-hip04.c
+@@ -305,11 +305,11 @@ static int hip04_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 		irq_set_percpu_devid(irq);
+ 		irq_set_chip_and_handler(irq, &hip04_irq_chip,
+ 					 handle_percpu_devid_irq);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_NOAUTOEN);
++		irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	} else {
+ 		irq_set_chip_and_handler(irq, &hip04_irq_chip,
+ 					 handle_fasteoi_irq);
+-		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++		irq_set_probe(irq);
+ 	}
+ 	irq_set_chip_data(irq, d->host_data);
+ 	return 0;
+diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
+index 81e3cf5..e7090ec 100644
+--- a/drivers/irqchip/irq-keystone.c
++++ b/drivers/irqchip/irq-keystone.c
+@@ -127,7 +127,7 @@ static int keystone_irq_map(struct irq_domain *h, unsigned int virq,
+
+ 	irq_set_chip_data(virq, kirq);
+ 	irq_set_chip_and_handler(virq, &kirq->chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(virq);
+ 	return 0;
+ }
+
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index c0da57b..3dfef63 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -164,7 +164,6 @@ static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 			      irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(irq, &icu_irq_chip, handle_level_irq);
+-	set_irq_flags(irq, IRQF_VALID);
+ 	return 0;
+ }
+
+@@ -234,7 +233,6 @@ void __init icu_init_irq(void)
+ 	for (irq = 0; irq < 64; irq++) {
+ 		icu_mask_irq(irq_get_irq_data(irq));
+ 		irq_set_chip_and_handler(irq, &icu_irq_chip, handle_level_irq);
+-		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 	irq_set_default_host(icu_data[0].domain);
+ 	set_handle_irq(mmp_handle_irq);
+@@ -337,7 +335,6 @@ void __init mmp2_init_icu(void)
+ 			irq_set_chip_and_handler(irq, &icu_irq_chip,
+ 						 handle_level_irq);
+ 		}
+-		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 	irq_set_default_host(icu_data[0].domain);
+ 	set_handle_irq(mmp2_handle_irq);
+diff --git a/drivers/irqchip/irq-mxs.c b/drivers/irqchip/irq-mxs.c
+index 04bf97b..ffe85d6 100644
+--- a/drivers/irqchip/irq-mxs.c
++++ b/drivers/irqchip/irq-mxs.c
+@@ -85,7 +85,6 @@ static int icoll_irq_domain_map(struct irq_domain *d, unsigned int virq,
+ 				irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(virq, &mxs_icoll_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID);
+
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
+index 0670ab4..20a86de 100644
+--- a/drivers/irqchip/irq-renesas-intc-irqpin.c
++++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
+@@ -343,7 +343,6 @@ static int intc_irqpin_irq_domain_map(struct irq_domain *h, unsigned int virq,
+ 	intc_irqpin_dbg(&p->irq[hw], "map");
+ 	irq_set_chip_data(virq, h->host_data);
+ 	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID); /* kill me now */
+ 	return 0;
+ }
+
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index 778bd07..74e980f 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -162,7 +162,6 @@ static int irqc_irq_domain_map(struct irq_domain *h, unsigned int virq,
+ 	irqc_dbg(&p->irq[hw], "map");
+ 	irq_set_chip_data(virq, h->host_data);
+ 	irq_set_chip_and_handler(virq, &p->irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID); /* kill me now */
+ 	return 0;
+ }
+
+diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
+index e96717f..19d1fc4 100644
+--- a/drivers/irqchip/irq-s3c24xx.c
++++ b/drivers/irqchip/irq-s3c24xx.c
+@@ -469,13 +469,11 @@ static int s3c24xx_irq_map(struct irq_domain *h, unsigned int virq,
+
+ 	irq_set_chip_data(virq, irq_data);
+
+-	set_irq_flags(virq, IRQF_VALID);
+-
+ 	if (parent_intc && irq_data->type != S3C_IRQTYPE_NONE) {
+ 		if (irq_data->parent_irq > 31) {
+ 			pr_err("irq-s3c24xx: parent irq %lu is out of range\n",
+ 			       irq_data->parent_irq);
+-			goto err;
++			return -EINVAL;
+ 		}
+
+ 		parent_irq_data = &parent_intc->irqs[irq_data->parent_irq];
+@@ -488,18 +486,12 @@ static int s3c24xx_irq_map(struct irq_domain *h, unsigned int virq,
+ 		if (!irqno) {
+ 			pr_err("irq-s3c24xx: could not find mapping for parent irq %lu\n",
+ 			       irq_data->parent_irq);
+-			goto err;
++			return -EINVAL;
+ 		}
+ 		irq_set_chained_handler(irqno, s3c_irq_demux);
+ 	}
+
+ 	return 0;
+-
+-err:
+-	set_irq_flags(virq, 0);
+-
+-	/* the only error can result from bad mapping data*/
+-	return -EINVAL;
+ }
+
+ static const struct irq_domain_ops s3c24xx_irq_ops = {
+@@ -1177,8 +1169,6 @@ static int s3c24xx_irq_map_of(struct irq_domain *h, unsigned int virq,
+
+ 	irq_set_chip_data(virq, irq_data);
+
+-	set_irq_flags(virq, IRQF_VALID);
+-
+ 	return 0;
+ }
+
+diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+index 83d6aa6..f1f401c 100644
+--- a/drivers/irqchip/irq-sun4i.c
++++ b/drivers/irqchip/irq-sun4i.c
+@@ -84,7 +84,7 @@ static int sun4i_irq_map(struct irq_domain *d, unsigned int virq,
+ 			 irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(virq, &sun4i_irq_chip, handle_fasteoi_irq);
+-	set_irq_flags(virq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(virq);
+
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+index 888111b..e96b4fe 100644
+--- a/drivers/irqchip/irq-versatile-fpga.c
++++ b/drivers/irqchip/irq-versatile-fpga.c
+@@ -128,7 +128,7 @@ static int fpga_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 	irq_set_chip_data(irq, f);
+ 	irq_set_chip_and_handler(irq, &f->chip,
+ 				handle_level_irq);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(irq);
+ 	return 0;
+ }
+
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index d4ce331..401561c 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -202,7 +202,7 @@ static int vic_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 		return -EPERM;
+ 	irq_set_chip_and_handler(irq, &vic_chip, handle_level_irq);
+ 	irq_set_chip_data(irq, v->base);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++	irq_set_probe(irq);
+ 	return 0;
+ }
+
+diff --git a/drivers/irqchip/irq-vt8500.c b/drivers/irqchip/irq-vt8500.c
+index 0b29700..8b235c9 100644
+--- a/drivers/irqchip/irq-vt8500.c
++++ b/drivers/irqchip/irq-vt8500.c
+@@ -168,7 +168,6 @@ static int vt8500_irq_map(struct irq_domain *h, unsigned int virq,
+ 							irq_hw_number_t hw)
+ {
+ 	irq_set_chip_and_handler(virq, &vt8500_irq_chip, handle_level_irq);
+-	set_irq_flags(virq, IRQF_VALID);
+
+ 	return 0;
+ }
+diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
+index acb721b..e2b4e99 100644
+--- a/drivers/irqchip/spear-shirq.c
++++ b/drivers/irqchip/spear-shirq.c
+@@ -212,7 +212,6 @@ static void __init spear_shirq_register(struct spear_shirq *shirq,
+ 	for (i = 0; i < shirq->nr_irqs; i++) {
+ 		irq_set_chip_and_handler(shirq->virq_base + i,
+ 					 shirq->irq_chip, handle_simple_irq);
+-		set_irq_flags(shirq->virq_base + i, IRQF_VALID);
+ 		irq_set_chip_data(shirq->virq_base + i, shirq);
+ 	}
+ }
 --
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.1.0
