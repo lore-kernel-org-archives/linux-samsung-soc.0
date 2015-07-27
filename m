@@ -1,67 +1,37 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 1/4] mfd: max77686: Don't suggest in binding to use a
- deprecated property
-Date: Mon, 27 Jul 2015 11:33:16 +0100
-Message-ID: <20150727103316.GV11162@sirena.org.uk>
-References: <1437114567-17629-1-git-send-email-javier@osg.samsung.com>
- <1437114567-17629-2-git-send-email-javier@osg.samsung.com>
- <20150720081020.GD3061@x1>
- <55ACC986.5040408@osg.samsung.com>
- <55B607B7.6050803@osg.samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Mon, 27 Jul 2015 16:05:21 +0530
+Message-ID: <20150727103521.GA4103@linux>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <1436456621-29839-3-git-send-email-b.zolnierkie@samsung.com>
+ <20150727083531.GC31611@linux>
+ <1595601.YD6UTxy5Qg@amdc1976>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YBvFKvyrw8Qeqs3/"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41655 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751071AbbG0Kdb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jul 2015 06:33:31 -0400
-Content-Disposition: inline
-In-Reply-To: <55B607B7.6050803@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org
-
-
---YBvFKvyrw8Qeqs3/
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <1595601.YD6UTxy5Qg@amdc1976>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 27, 2015 at 12:28:07PM +0200, Javier Martinez Canillas wrote:
-> On 07/20/2015 12:12 PM, Javier Martinez Canillas wrote:
+On 27-07-15, 12:24, Bartlomiej Zolnierkiewicz wrote:
+> Have you read my explanation of the issue?
+> 
+> With your OPP-v2 patches cpufreq-dt picks turbo frequencies and uses
+> them as normal ones.
+> 
+> (More at: http://www.spinics.net/lists/arm-kernel/msg430397.html)
 
-> > This PMIC uses a single I2C address for all the regulators and these are
-> > controlled by writing to different I2C register addresses. So the regulator
-> > nodes don't have a reg property in this case.
+Yes I did. I understand that the turbo frequencies are not considered
+as such by OPP/cpufreq core and it requires your changes to get it
+working.
 
-> > By looking at other regulators bindings, besides the generic regulator.txt
-> > and fixed-regulator.txt DT bindings, there are only 5 (out of 40) that use
-> > the node-name@unit-address convention mentioned in the ePAPR document.
+But its not an issue or bug we are fixing, the problem is that the
+code for opp-v2 isn't complete yet and your patches is putting things
+in place. So, we are still doing the bring up here and not fixing a
+bug really.
 
-> > AFAICT all these are for regulators that are actually in different addresses
-> > but I could be wrong so let's see what Mark says.
-
-> Any opinions on this?
-
-I just don't care, this is just syntactic noise which has no practical
-meaning as far as I can tell.
-
---YBvFKvyrw8Qeqs3/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVtgjrAAoJECTWi3JdVIfQvp8H/1gEvXFldCKHKzcAkeyiPUIW
-bo8kxMF7QfbucXqSU7ebsYqCI7roO7CbQCuSCSyjGsc78vchcacAdKaFs523FXbc
-tx27XDN5sbUx2ifpk8n9yt9lGbrghw0FZVn4HVbsk8Ku+ueAJbX7BKx1h2dy42gA
-qcGtWKq0nqDZLhjEcdr+t1SkNEfG1ViN/F3vfY0qPLB8b6Tv8ljQMEYZ1MlqITOh
-gnfyfIUzU4Xt4FXybI+4LyFdwTRC5mYlJrXJurVdR7cfSUtj6bnqiU9w2g9WAVAc
-7WX7kmgn20xAclWfodeqz7syLDYu3YCY+jo3XuvalqxAGM1wM6RbOc7ZxPg0drI=
-=g0EG
------END PGP SIGNATURE-----
-
---YBvFKvyrw8Qeqs3/--
+-- 
+viresh
