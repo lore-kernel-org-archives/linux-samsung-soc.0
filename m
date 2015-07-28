@@ -1,66 +1,230 @@
 From: Alexey Klimov <klimov.linux@gmail.com>
-Subject: Re: [RFC PATCH 3/3] ARM: dts: add MCT property use-cp15-phys-counter
- for exynos5422-odroidxu3
-Date: Tue, 28 Jul 2015 15:34:34 +0300
-Message-ID: <CALW4P+K2gHqL8H_rDHuu4pNXtAEJOGZVvCv+erD4k7WkTP+Muw@mail.gmail.com>
-References: <1438032528.17734.49.camel@gmail.com>
-	<55B718CA.3050103@samsung.com>
+Subject: Re: [RFC PATCH 1/3] clocksource: exynos_mct: allow mct to read
+ counter from coprocessor
+Date: Tue, 28 Jul 2015 15:49:32 +0300
+Message-ID: <CALW4P++8rohnRvu=S5RcRJ0VPJj4OqdAXBypUaSoW_RvjwD7PA@mail.gmail.com>
+References: <1438032512.17734.47.camel@gmail.com>
+	<55B71D10.4060505@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:35109 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbbG1Mef (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:36520 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752113AbbG1Mtd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Jul 2015 08:34:35 -0400
-Received: by wibxm9 with SMTP id xm9so155109841wib.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jul 2015 05:34:34 -0700 (PDT)
-In-Reply-To: <55B718CA.3050103@samsung.com>
+	Tue, 28 Jul 2015 08:49:33 -0400
+Received: by wicgb10 with SMTP id gb10so155172160wic.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jul 2015 05:49:32 -0700 (PDT)
+In-Reply-To: <55B71D10.4060505@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Douglas Anderson <dianders@chromium.org>, chirantan@chromium.org, Tarek Dakhran <t.dakhran@gmail.com>, kgene@kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Yury Norov <yury.norov@gmail.com>
 
-Hi Krzysztof,
-
-On Tue, Jul 28, 2015 at 8:53 AM, Krzysztof Kozlowski
+On Tue, Jul 28, 2015 at 9:11 AM, Krzysztof Kozlowski
 <k.kozlowski@samsung.com> wrote:
 > On 28.07.2015 06:28, Alexey Klimov wrote:
->> Speedup MCT operation on odroid-xu3 dev board by using
->> coprocessor 64-bit counter instead of reading same counter
->> located in mmio region.
+>> It was discovered that 64-bit mmio MCT counter holds
+>> the same value as ARM arch timer 64-bit physical counter.
+>> Even more: arch timer and MCT are same underlying hardware
+>> timer.
 >>
->> Tested on Odroid-xu3.
+>> Patch adds code to MCT to allow it to read 64-bit counter
+>> from coprocessor cp15 registers since it's way more
+>> faster than reading the same counter from MCT mmio region.
+>>
+>> That functionality triggers only if special property
+>> use-cp15-phys-counter is present in device tree,
+>> only on 32-bit ARMv7 systems and only if HYP mode is
+>> available.
+>
+> Hi,
+>
+> It would be nice to put here also the measurements from cover letter.
+> This would be the justification for the commit.
+
+Ok, I will add them. I will try to find time to perform more precise
+measurements.
+
+> I guess same optimization could be done for ARMv8 Exynos SoCs?
+
+I honestly don't know, don't have access to ARMv8 Exynos SoCs.
+If i remember correctly there are no public-available 64-bit Exynos
+boards yet. Exynos7420 is on the way to be released.
+
+The main concern is that MCT probably not enabled for arm64 and
+some cleanup/re-factoring is required for cycles_t variable. See
+message in exynos4_read_current_timer() in MCT.
+Also ARMv8 requires arm generic timer to be available and fully
+operational. So for me it looks like current upstream kernel will work
+on top of arm arch timer.
+
+>> Idea of rewriting accessors is taken from arm_arch_timer.c.
+>>
+>> By default MCT will read counter from mmio since it's
+>> guaranteed to work.
 >>
 >> Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
 >> ---
->>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 4 ++++
->
-> Please do this in Odroid XU3 common DTSI:
-> arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-
-
->>  1 file changed, 4 insertions(+)
+>>  drivers/clocksource/exynos_mct.c | 77 ++++++++++++++++++++++++++++++++++------
+>>  1 file changed, 67 insertions(+), 10 deletions(-)
 >>
->> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> index 78e6a50..b7f6c8f 100644
->> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> @@ -18,6 +18,10 @@
->>       compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
->>  };
+>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+>> index 9064ff7..039b41c 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> @@ -26,6 +26,9 @@
+>>  #include <linux/clocksource.h>
+>>  #include <linux/sched_clock.h>
 >>
->> +&mct {
->> +     use-cp15-phys-counter;
->> +};
+>> +#include <asm/arch_timer.h>  /* for cp15 physical arch timer counter */
+>> +#include <asm/virt.h>                /* for checking HYP mode */
 >> +
+>>  #define EXYNOS4_MCTREG(x)            (x)
+>>  #define EXYNOS4_MCT_G_CNT_L          EXYNOS4_MCTREG(0x100)
+>>  #define EXYNOS4_MCT_G_CNT_U          EXYNOS4_MCTREG(0x104)
+>> @@ -82,6 +85,17 @@ static unsigned long clk_rate;
+>>  static unsigned int mct_int_type;
+>>  static int mct_irqs[MCT_NR_IRQS];
+>>
+>> +static u32 notrace __exynos4_read_count_32(void);
+>> +static u64 __exynos4_read_count_64(void);
+>> +
+>> +/*
+>> + * Default to __exynos4_read_count_{32,64} functions that reads counter from
+>> + * MCT mmio region and this method is guaranteed
+>> + * to exist (if MCT was successfully initialized).
+>> + */
+>> +u32 (*exynos4_read_count_32)(void) = __exynos4_read_count_32;
+>> +u64 (*exynos4_read_count_64)(void) = __exynos4_read_count_64;
 >
-> Put the node in alphabetical position.
+> I think these could be static.
+
+Yeah. Will fix it right away.
+
+>> +
+>>  struct mct_clock_event_device {
+>>       struct clock_event_device evt;
+>>       unsigned long base;
+>> @@ -163,16 +177,16 @@ static void exynos4_mct_frc_start(void)
+>>  }
+>>
+>>  /**
+>> - * exynos4_read_count_64 - Read all 64-bits of the global counter
+>> + * __exynos4_read_count_64 - Read all 64-bits of the global counter
+>>   *
+>> - * This will read all 64-bits of the global counter taking care to make sure
+>> - * that the upper and lower half match.  Note that reading the MCT can be quite
+>> - * slow (hundreds of nanoseconds) so you should use the 32-bit (lower half
+>> - * only) version when possible.
+>> + * This will read all 64-bits of the global counter from MCT mmio region
+>> + * taking care to make sure that the upper and lower half match.
+>> + * Note that reading the MCT can be quite slow (hundreds of nanoseconds)
+>> + * so you should use the 32-bit (lower half only) version when possible.
+>>   *
+>>   * Returns the number of cycles in the global counter.
+>>   */
+>> -static u64 exynos4_read_count_64(void)
+>> +static u64 __exynos4_read_count_64(void)
+>>  {
+>>       unsigned int lo, hi;
+>>       u32 hi2 = readl_relaxed(reg_base + EXYNOS4_MCT_G_CNT_U);
+>> @@ -187,18 +201,45 @@ static u64 exynos4_read_count_64(void)
+>>  }
+>>
+>>  /**
+>> - * exynos4_read_count_32 - Read the lower 32-bits of the global counter
+>> + * __exynos4_read_cp15_count_64 - Read all 64-bits of the global counter
+>> + * from coprocessor regisers.
+>>   *
+>> - * This will read just the lower 32-bits of the global counter.  This is marked
+>> - * as notrace so it can be used by the scheduler clock.
+>> + * Note that reading here is faster than reading from MCT mmio region.
+>> + *
+>> + * Returns the number of cycles in the global counter.
+>> + */
+>> +static u64 __exynos4_read_cp15_count_64(void)
+>> +{
+>> +     return arch_counter_get_cntpct();
+>> +}
+>> +
+>> +/**
+>> + * __exynos4_read_count_32 - Read the lower 32-bits of the global counter
+>> + *
+>> + * This will read just the lower 32-bits of the global counter from
+>> + * MCT mmio region.
+>> + * This is marked as notrace so it can be used by the scheduler clock.
+>>   *
+>>   * Returns the number of cycles in the global counter (lower 32 bits).
+>>   */
+>> -static u32 notrace exynos4_read_count_32(void)
+>> +static u32 notrace __exynos4_read_count_32(void)
+>>  {
+>>       return readl_relaxed(reg_base + EXYNOS4_MCT_G_CNT_L);
+>>  }
+>>
+>> +/**
+>> + * __exynos4_read_cp15_count_32 - Read the lower 32-bits of the global counter
+>> + *
+>> + * This will read global counter from coprocessor regisers.
+>
+> s/regisers/registers/
+
+Will fix it.
+
+>> + * This is marked as notrace so it can be used by the scheduler clock.
+>> + *
+>> + * Returns the number of cycles in the global counter (lower 32 bits).
+>> + */
+>> +static u32 notrace __exynos4_read_cp15_count_32(void)
+>> +{
+>> +     return arch_counter_get_cntpct();
+>> +}
+>> +
+>>  static cycle_t exynos4_frc_read(struct clocksource *cs)
+>>  {
+>>       return exynos4_read_count_32();
+>> @@ -599,6 +640,22 @@ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
+>>       for (i = MCT_L0_IRQ; i < nr_irqs; i++)
+>>               mct_irqs[i] = irq_of_parse_and_map(np, i);
+>>
+>> +     /*
+>> +      * If use-cp15-phys-counter property is present in device tree
+>> +      * then use CP15 ARM arch timer 64-bit physical counter
+>> +      * to speedup reading since it keeps the same value like
+>> +      * 64-bit counter in MCT mmio region.
+>> +      * If HYP mode is available we can rely on physical
+>> +      * timer counter to be accessible from PL1.
+>> +      */
+>> +     if (IS_ENABLED(CONFIG_ARM) && is_hyp_mode_available() &&
+>> +             of_property_read_bool(np, "use-cp15-phys-counter")) {
+>
+> This looks like a property specific to Exynos. Add a "samsung," prefix.
 >
 > Best regards,
 > Krzysztof
 
-Thanks. Will do it.
+Agree.
+
+Thanks for comments and review.
+
+Best regards,
+Alexey Klimov.
+
+
+>> +
+>> +             /* point MCT functions to read counter from coprocessor */
+>> +             exynos4_read_count_32 = __exynos4_read_cp15_count_32;
+>> +             exynos4_read_count_64 = __exynos4_read_cp15_count_64;
+>> +     }
+>> +
+>>       exynos4_timer_resources(np, of_iomap(np, 0));
+>>       exynos4_clocksource_init();
+>>       exynos4_clockevent_init();
+>>
+>
+
+
 
 -- 
 Best regards, Klimov Alexey
