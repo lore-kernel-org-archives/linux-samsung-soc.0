@@ -1,49 +1,65 @@
-From: Alexey Klimov <klimov.linux@gmail.com>
-Subject: [RFC PATCH 2/3] documentation: dt: mct: add desc of optional
- property use-cp15-phys-counter
-Date: Tue, 28 Jul 2015 00:28:44 +0300
-Message-ID: <1438032524.17734.48.camel@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Add SPI CS on exynos5250-snow
+Date: Tue, 28 Jul 2015 09:36:58 +0900
+Message-ID: <55B6CEAA.7050904@samsung.com>
+References: <a5054dfad3d48c582b062b0536125c9bcff41f31.1438027526.git.hramrach@gmail.com>
+ <CABxcv=kHgvXgVSzLj=bABqO26r3w7T7ezAUfdh0n4S_N3ZM-Mw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:36409 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754525AbbG0V2r (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:12862 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754525AbbG1AhI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jul 2015 17:28:47 -0400
-Received: by lagw2 with SMTP id w2so57068720lag.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2015 14:28:46 -0700 (PDT)
+	Mon, 27 Jul 2015 20:37:08 -0400
+In-reply-to: <CABxcv=kHgvXgVSzLj=bABqO26r3w7T7ezAUfdh0n4S_N3ZM-Mw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org, dianders@chromium.org, chirantan@chromium.org
-Cc: klimov.linux@gmail.com, t.dakhran@gmail.com, k.kozlowski@samsung.com, kgene@kernel.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, yury.norov@gmail.com
+To: Javier Martinez Canillas <javier@dowhile0.org>, Michal Suchanek <hramrach@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
----
- .../devicetree/bindings/timer/samsung,exynos4210-mct.txt       | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On 28.07.2015 06:24, Javier Martinez Canillas wrote:
+> Hello Michal,
+> 
+> The patch looks good to me, just one small comment below.
+> 
+> On Mon, Jul 27, 2015 at 10:11 PM, Michal Suchanek <hramrach@gmail.com> wrote:
+>> Although there is only one choice of chipselect it is necessary to
+>> specify it. The driver cannot claim the gpio otherwise.
+>>
+>> Signed-off-by: Michal Suchanek <hramrach@gmail.com>
+>>
+>> --
+>> v2
+>>  - don't move unrelated line
+>> ---
+>>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index b7f4122..62be08a 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -688,6 +688,7 @@
+>>         status = "okay";
+>>         samsung,spi-src-clk = <0>;
+>>         num-cs = <1>;
+>> +       cs-gpios = <&gpa2 5 0>;
+> 
+> NIT: this should be GPIO_ACTIVE_HIGH instead of 0 but maybe Kukjin or
+> Krzysztof can fixup when applying it?
+> 
+>>  };
+>>
+>>  &usbdrd_dwc3 {
+>> --
+> 
+> Acked-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-index 167d5da..c7f6354 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
-@@ -36,6 +36,16 @@ Required properties:
-   interrupt might be specified, meaning that all local timers use the same
-   per processor interrupt.
- 
-+Optional properties:
-+
-+- use-cp15-phys-counter : set to advise mct clocksource driver to use ARM
-+  arch timer 64-bit counter as main counter. Access to this coprocessor
-+  counter is faster than access to same counter in mct mmio region.
-+  It was discovered that mct and ARM arch timer are same underlying hardware
-+  on some SoCs.
-+  Only supported for Exynos5-based 32-bit systems which follow the ARMv7
-+  architecture.
-+
- Example 1: In this example, the IP contains two local timers, using separate
- 	   interrupts, so two local timer interrupts have been specified,
- 	   in addition to four global timer interrupts.
--- 
-2.1.4
+Yes, the GPIO_ACTIVE_HIGH would be better. Can you re-spin the patch
+with this change and respective Acks? Including mine ack:
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
