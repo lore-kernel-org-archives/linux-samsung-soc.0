@@ -1,83 +1,64 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 01/12] ARM: SAMSUNG: local regs-srom header in mach-exynos
-Date: Tue, 28 Jul 2015 09:40:50 +0900
-Message-ID: <55B6CF92.8050904@samsung.com>
-References: <013a01d0c87c$854d4d00$8fe7e700$@kernel.org>
+Subject: Re: [RFC PATCH 3/3] ARM: dts: add MCT property use-cp15-phys-counter
+ for exynos5422-odroidxu3
+Date: Tue, 28 Jul 2015 14:53:14 +0900
+Message-ID: <55B718CA.3050103@samsung.com>
+References: <1438032528.17734.49.camel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12880 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753190AbbG1Akx (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:17364 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751152AbbG1FxU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jul 2015 20:40:53 -0400
+	Tue, 28 Jul 2015 01:53:20 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NS6006IA9W39H70@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Jul 2015 01:40:51 +0100 (BST)
-In-reply-to: <013a01d0c87c$854d4d00$8fe7e700$@kernel.org>
+ with ESMTP id <0NS600D2GOCT6KA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Jul 2015 06:53:17 +0100 (BST)
+In-reply-to: <1438032528.17734.49.camel@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+To: Alexey Klimov <klimov.linux@gmail.com>, linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org, dianders@chromium.org, chirantan@chromium.org
+Cc: t.dakhran@gmail.com, kgene@kernel.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, yury.norov@gmail.com
 
-On 27.07.2015 23:57, Kukjin Kim wrote:
+On 28.07.2015 06:28, Alexey Klimov wrote:
+> Speedup MCT operation on odroid-xu3 dev board by using
+> coprocessor 64-bit counter instead of reading same counter
+> located in mmio region.
 > 
-> This patch moves regs-srom header file into mach-exynos.
-
-Hi,
-
-Minor nits:
-1. Could you trim it and remove unnecessary empty line before description?
-2. Could you answer in commit message: Why? Why are you moving the headers?
-
-
+> Tested on Odroid-xu3.
 > 
-> c: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 4 ++++
 
-Malformed "Cc:" tag.
+Please do this in Odroid XU3 common DTSI:
+arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> index 78e6a50..b7f6c8f 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -18,6 +18,10 @@
+>  	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
+>  };
+>  
+> +&mct {
+> +	use-cp15-phys-counter;
+> +};
+> +
+
+Put the node in alphabetical position.
 
 Best regards,
 Krzysztof
 
-> Signed-off-by: Kukjin Kim <kgene@kernel.org>
-> ---
->  arch/arm/{plat-samsung/include/plat => mach-exynos}/regs-srom.h | 3 +--
->  arch/arm/mach-exynos/suspend.c                                  | 4 ++--
->  2 files changed, 3 insertions(+), 4 deletions(-)
->  rename arch/arm/{plat-samsung/include/plat => mach-exynos}/regs-srom.h (96%)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-srom.h b/arch/arm/mach-exynos/regs-srom.h
-> similarity index 96%
-> rename from arch/arm/plat-samsung/include/plat/regs-srom.h
-> rename to arch/arm/mach-exynos/regs-srom.h
-> index 9b6729c..5c4d442 100644
-> --- a/arch/arm/plat-samsung/include/plat/regs-srom.h
-> +++ b/arch/arm/mach-exynos/regs-srom.h
-> @@ -1,5 +1,4 @@
-> -/* linux/arch/arm/plat-samsung/include/plat/regs-srom.h
-> - *
-> +/*
->   * Copyright (c) 2010 Samsung Electronics Co., Ltd.
->   *		http://www.samsung.com
->   *
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index c506f8e..e00eb39 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -32,11 +32,11 @@
->  #include <asm/suspend.h>
->  
->  #include <plat/pm-common.h>
-> -#include <plat/regs-srom.h>
->  
->  #include "common.h"
-> -#include "regs-pmu.h"
->  #include "exynos-pmu.h"
-> +#include "regs-pmu.h"
-> +#include "regs-srom.h"
->  
->  #define REG_TABLE_END (-1U)
+>  &i2c_0 {
+>  	status = "okay";
 >  
 > 
