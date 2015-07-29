@@ -1,164 +1,166 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCHv6] ARM: dts: add exynos5422-cpus.dtsi to correct cpu order
-Date: Wed, 29 Jul 2015 10:05:22 +0900
-Message-ID: <044601d0c99a$a5218b90$ef64a2b0$@kernel.org>
-References: <1436833441-8405-1-git-send-email-parkch98@gmail.com>
- <55A45C63.2030907@samsung.com> <06b101d0bdf2$8aad8fb0$a008af10$@kernel.org>
- <CAPTzV15+BWEo6PjJMwHVjqVdUnZuJ=PBAUprF_vZaSRTYiuNXw@mail.gmail.com>
- <075c01d0be0e$587fe260$097fa720$@kernel.org>
- <CAPTzV14nPH0PcRqf1na7a7wJTu23r8bZmCwGiEafAFbMyoRM2Q@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add CPU cooling binding for Exynos3250-based
+ Rinato/Monk board
+Date: Wed, 29 Jul 2015 15:35:00 +0900
+Message-ID: <55B87414.10800@samsung.com>
+References: <1435815465-501-1-git-send-email-cw00.choi@samsung.com>
+ <5594D22C.4040206@samsung.com> <5594D5F4.3060508@samsung.com>
+ <5594E57C.2010300@samsung.com>
+ <CAJKOXPfknRZ0ewSv=awo1ay4uWHAXM_kCiLPN4MpxN2-bSNq0g@mail.gmail.com>
+ <092101d0b8c2$e2b39310$a81ab930$@kernel.org> <559C6C8E.2070309@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57449 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932AbbG2BFY convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:35364 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752970AbbG2GfC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Jul 2015 21:05:24 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	Wed, 29 Jul 2015 02:35:02 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0NS802Z3C5OYJT00@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Jul 2015 10:05:22 +0900 (KST)
-In-reply-to: <CAPTzV14nPH0PcRqf1na7a7wJTu23r8bZmCwGiEafAFbMyoRM2Q@mail.gmail.com>
-Content-language: ko
+ with ESMTP id <0NS800RYDKYCYD70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Jul 2015 15:35:00 +0900 (KST)
+In-reply-to: <559C6C8E.2070309@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: chanho61.park@samsung.com, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?J0JhcnTFgm9taWVqIMW7b8WCbmll?= =?UTF-8?B?cmtpZXdpY3on?= <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?J8WBdWthc3ogTWFqZXdza2kn?= <l.majewski@samsung.com>, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Chanho Park wrote:
->=20
-> Hi,
->=20
-> On Tue, Jul 14, 2015 at 5:23 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> > Chanho Park wrote:
-> >>
-> >> Hi Kukjin,
-> >>
-> >> On Tue, Jul 14, 2015 at 2:04 PM, Kukjin Kim <kgene@kernel.org> wro=
-te:
-> >> > Krzysztof Kozlowski wrote:
-> >> >>
-> >> >> On 14.07.2015 09:24, Chanho Park wrote:
-> >> >> > The odroid-xu3 board which is based on exynos5422 not exynos5=
-800 is
-> >> >> > booted from cortex-a7 core unlike exynos5800. The odroid-xu3'=
-s cpu order
-> >> >> > is quite strange. cpu0 and cpu5-7 are cortex-a7 cores and cpu=
-1-4 are
-> >> >> > cortex-a15 cores. To correct this mis-odering, I added exynos=
-5422-cpus.dtsi
-> >> >> > and reversing cpu orders from exynos5420. Now, cpu0-3 are cor=
-tex-a7 and
-> >> >> > cpu4-7 are cortex-a15.
-> >> >> >
-> >> >> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >> >> > Signed-off-by: Chanho Park <parkch98@gmail.com>
-> >> >> > ---
-> >
-> > [...]
-> >
-> >> >> >
-> >> >> > Secondary cpu booting problem[1] is not resolved yet. Need mo=
-re investigations
-> >> >> > to work booting 8 cores correctly.
-> >> >> >
-> >> >> > [1]: http://www.spinics.net/lists/linux-samsung-soc/msg45525.=
-html
-> >> >> >
-> >> >> >  arch/arm/boot/dts/exynos5422-cpus.dtsi             | 81 ++++=
-++++++++++++++++++
-> >> >> >  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
-> >> >> >  2 files changed, 82 insertions(+)
-> >> >> >  create mode 100644 arch/arm/boot/dts/exynos5422-cpus.dtsi
-> >> >>
-> >> >> Thanks, applied to my tree. I'll send it to Kukjin for v4.3 unl=
-ess he
-> >> >> picks it also.
-> >> >>
-> >> > Well, let me see. I'm thinking we need to sort out the cpu order=
-ing and dtsi
-> >> > inclusions for exynos5420, 5422 and 5800 related to DT files.
-> >> >
-> >> > See,
-> >> >
-> >> > 1) exynos5420 DT (cpu0~3: a15, cpu 4~7: a7)
-> >> > 2) exynos5800 DT is including exynos5420 DT
-> >> > 3) exynos5422 and exynos5800 based boards are including exynos58=
-00 DT.
-> >> >
-> >> > Then making exynos5422-cpus DT for exynos5422 based boards?
-> >> > (cpu0~3: a7, cpu4~7: a15)
-> >> >
-> >> > I think, it could cause confusion when new board based on them a=
-re added
-> >> > because it's not clear and the boot cpu could be selected by boo=
-tloader part.
-> >>
-> >> The iROM will check the GPIO pin to select which core is run as cp=
-u0.
-> >> I think no one will change the GPIO pin if a new board which is ba=
-sed
-> >> on exynos5422 :)
-> >>
-> > Yes, I know the boot sequence and it means it depends on board conf=
-iguration
-> > not SoC. That=E2=80=99s why I'm saying it should be handled in boar=
-d DT file. I think,
-> > most of current exynos big.LITTLE model should do if it could be ch=
-anged
-> > according to board configuration.
->=20
-> I also agreed it's not a SoC configuration since second
-> patch(exynos5422.dtsi -> exynos5422-cpu.dtsi).
->=20
-> >
-> >> >
-> >> > So how about creating exynos5422-cpus and exynos5420-cpus then i=
-ncluding the
-> >> > cpus DT file in each board accordingly?
-> >> >
-> >> > Or more clear way to avoid confusion?
-> >>
-> >> In this situation, all exynos5422 boards(odroid xu3 series and mob=
-ile
-> >> phone) have same cpu configurations. If we move the exynos5420 cpu
-> >> configuration from exynos5420.dtsi, we should change all dts which
-> >> including exynos5420.dtsi.
-> >
-> > Maybe same board configuration. Just adding inclusion should be fin=
-e at this
-> > moment.
-> >
-> >> I think we'd better to defer the change until a new exynos5422 boa=
-rd
-> >> which has different cpu configurations is added.
-> >>
-> > I mean, according to current inclusion of exynos5422 based boards' =
-DT file, it
-> > is including exynos5420 DT via exynos5800 DT and then override diff=
-erent cpu
-> > ordering (5422-cpu DT) because of different board configuration (ju=
-st GPIO
-> > value) and it is not a good way in this case.
->=20
-> Actually, I don't want to disturb current dts hierarchy even though i=
-t
-> looks strange. The common features of exynos5800 and exynos5422 shoul=
-d
-> be in the exynos5800.dtsi because they shared many things except the
-> cpu order.
-> Please consider the exynos5422-cpu.dtsi is just board configurations
-> to represent cpu order.
->=20
-Yeah, strange and it can cause some confusing...but OK, we don't have m=
-uch
-choice at the moment, so applied to support it even we need some re-wor=
-k
-'current dts hierarchy' next time.
+Dear Kukjin,
+
+Please pick this patch because exynos3250-cpufreq patch-set
+was already merged on linux-samsung.git.
 
 Thanks,
-Kukjin
+Chanwoo Choi
+
+On 07/08/2015 09:19 AM, Krzysztof Kozlowski wrote:
+> On 07.07.2015 23:40, Kukjin Kim wrote:
+>> Krzysztof Kozlowski wrote:
+>>>
+>>> 2015-07-02 16:17 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+>>>> On 02.07.2015 15:11, Chanwoo Choi wrote:
+>>>>> On 07/02/2015 02:54 PM, Krzysztof Kozlowski wrote:
+>>>>>> On 02.07.2015 14:37, Chanwoo Choi wrote:
+>>>>>>> This patch add the cooling device to control the overheating issue on
+>>>>>>> Exynos3250-based Rinato/Monk board.
+>>>>>>>
+>>>>>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>>>> ---
+>>>>>>> Depends on:
+>>>>>>> This patch needs the cpufreq support of Exynos3250 SoC. So, this patch has the
+>>>>>>> dependency on patch[1] which support the generic cpufreq for Exynos3250 SoC.
+>>>>>>> [1] https://lkml.org/lkml/2015/7/1/696
+>>>>>>>     : [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
+>>>>>>>
+>>>>>>>  arch/arm/boot/dts/exynos3250-monk.dts   | 15 +++++++++++++++
+>>>>>>>  arch/arm/boot/dts/exynos3250-rinato.dts | 15 +++++++++++++++
+>>>>>>>  arch/arm/boot/dts/exynos3250.dtsi       |  1 +
+>>>>>>>  3 files changed, 31 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+>>>>>>> index 7863265d4868..540a0adf2be6 100644
+>>>>>>> --- a/arch/arm/boot/dts/exynos3250-monk.dts
+>>>>>>> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
+>>>>>>> @@ -116,6 +116,21 @@
+>>>>>>>             min-microvolt = <1100000>;
+>>>>>>>             max-microvolt = <2700000>;
+>>>>>>>     };
+>>>>>>> +
+>>>>>>> +   thermal-zones {
+>>>>>>> +           cpu_thermal: cpu-thermal {
+>>>>>>> +                   cooling-maps {
+>>>>>>> +                           map0 {
+>>>>>>> +                                   /* Correspond to 500MHz at freq_table */
+>>>>>>> +                                   cooling-device = <&cpu0 5 5>;
+>>>>>>> +                           };
+>>>>>>> +                           map1 {
+>>>>>>> +                                   /* Correspond to 200MHz at freq_table */
+>>>>>>> +                                   cooling-device = <&cpu0 8 8>;
+>>>>>>> +                           };
+>>>>>>> +                   };
+>>>>>>> +           };
+>>>>>>> +   };
+>>>>>>>  };
+>>>>>>>
+>>>>>>>  &adc {
+>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+>>>>>>> index ddd7ac283045..0e62a6435e07 100644
+>>>>>>> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+>>>>>>> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+>>>>>>> @@ -107,6 +107,21 @@
+>>>>>>>             min-microvolt = <1100000>;
+>>>>>>>             max-microvolt = <2700000>;
+>>>>>>>     };
+>>>>>>> +
+>>>>>>> +   thermal-zones {
+>>>>>>> +           cpu_thermal: cpu-thermal {
+>>>>>>> +                   cooling-maps {
+>>>>>>> +                           map0 {
+>>>>>>> +                                   /* Corresponds to 500MHz */
+>>>>>>> +                                   cooling-device = <&cpu0 5 5>;
+>>>>>>> +                           };
+>>>>>>> +                           map1 {
+>>>>>>> +                                   /* Corresponds to 200MHz */
+>>>>>>> +                                   cooling-device = <&cpu0 8 8>;
+>>>>>>> +                           };
+>>>>>>> +                   };
+>>>>>>> +           };
+>>>>>>> +   };
+>>>>>>>  };
+>>>>>>>
+>>>>>>>  &adc {
+>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+>>>>>>> index e0f3b2ed41a3..a4931b660ddb 100644
+>>>>>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>>>>>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>>>>>>> @@ -55,6 +55,7 @@
+>>>>>>>                     clock-frequency = <1000000000>;
+>>>>>>>                     clocks = <&cmu CLK_ARM_CLK>;
+>>>>>>>                     clock-names = "cpu";
+>>>>>>> +                   #cooling-cells = <2>;
+>>>>>>>
+>>>>>>
+>>>>>> Don't you need also cooling-{min,max}-state properties?
+>>>>>
+>>>>> Yes, it is well working without cooling-{min,max}-state or cooling-{min,max}-level.
+>>>>>
+>>>>> I look for the some code to parse "cooling-{min,max}-state or cooling-{min,max}-level"
+>>>>> in drivers/thermal/*. But, there are no any code to parse it.
+>>>>>
+>>>>> But, Documentation/devicetree/bindings/thermal/thermal.txt contains just the 'cooling-{min,max}-
+>>> state.
+>>>>>
+>>>>> I think that there are mismatch between document and thermal core driver.
+>>>>
+>>>> Thanks for explanation, looks good.
+>>>> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> Dear Kukjin,
+>>>
+>>> Recent four patchsets (4210 CPU OPP in DTS, cpufreq-dt 5250,
+>>> cpufreq-dt 3250, this patch) are actually an one continuous chain.
+>>> Dependencies are already in mainline. Are you gonna to pick up
+>>> everything?
+>>>
+>> Yes, I want and I will. BTW maybe clk change is required together? If so, as you
+>> know we need to get ack from clk guy. Is my understanding right?
+> 
+> Right. I think the samsung clock and cpufreq patches still need acks.
+> 
+> Best regards,
+> Krzysztof
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
