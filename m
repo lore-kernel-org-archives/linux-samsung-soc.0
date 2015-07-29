@@ -1,57 +1,66 @@
-From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to controller-data
-Date: Wed, 29 Jul 2015 18:19:24 +0200
-Message-ID: <CAOMqctTZVET=U=2o65HpWSm4W660XZtYYbBND2k4u9CnfjfMhQ@mail.gmail.com>
-References: <cover.1438170519.git.hramrach@gmail.com> <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to
+ controller-data
+Date: Wed, 29 Jul 2015 10:16:01 -0700
+Message-ID: <20150729171601.GT8876@google.com>
+References: <cover.1438170519.git.hramrach@gmail.com>
+ <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
  <20150729140046.GB11082@sirena.org.uk>
+ <CAOMqctTZVET=U=2o65HpWSm4W660XZtYYbBND2k4u9CnfjfMhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150729140046.GB11082-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:35370 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751105AbbG2RQH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Jul 2015 13:16:07 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOMqctTZVET=U=2o65HpWSm4W660XZtYYbBND2k4u9CnfjfMhQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Michal Suchanek <hramrach@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, David Woodhouse <dwmw2@infradead.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Padmavathi Venna <padma.kvr@gmail.com>, Boris BREZILLON <boris.brezillon@free-electrons.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, MTD Maling List <linux-mtd@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>
 
-On 29 July 2015 at 16:00, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, Jul 29, 2015 at 12:19:57PM +0200, Michal Suchanek wrote:
->
-> Please use subject lines matching the style for the subsytsem so people
-> can spot that the patch is in some way relevant.
->
->> The controller-data subnode has no compatible. This can lead to other
->> drivers getting confused by it. Add a compatible to make devicetreee
->> unambiguous.
->
-> I can't tell from this commit message what the issue you're trying to
-> fix is, sorry.  Nodes without compatible strings are entirely normal and
-> don't need compatible strings.  It sounds like a bug in whatever other
-> driver is becoming confused.
+On Wed, Jul 29, 2015 at 06:19:24PM +0200, Michal Suchanek wrote:
+> On 29 July 2015 at 16:00, Mark Brown <broonie@kernel.org> wrote:
+> > On Wed, Jul 29, 2015 at 12:19:57PM +0200, Michal Suchanek wrote:
+> >
+> > Please use subject lines matching the style for the subsytsem so people
+> > can spot that the patch is in some way relevant.
+> >
+> >> The controller-data subnode has no compatible. This can lead to other
+> >> drivers getting confused by it. Add a compatible to make devicetreee
+> >> unambiguous.
+> >
+> > I can't tell from this commit message what the issue you're trying to
+> > fix is, sorry.  Nodes without compatible strings are entirely normal and
+> > don't need compatible strings.  It sounds like a bug in whatever other
+> > driver is becoming confused.
+> 
+> The driver that gets confused is ofpart.
+> 
+> The two-line patch to allow it to just ignore controller-data has been
+> rejected on the basis that s3c64xx should use a compatible string
 
-The driver that gets confused is ofpart.
+It wasn't outright rejected, but it was questioned.
 
-The two-line patch to allow it to just ignore controller-data has been
-rejected on the basis that s3c64xx should use a compatible string
-because ofpart monopolizes all nodes without compatible which are
-children of a mtd device. Devicetrees containing such nodes that are
-not partitions are presumably invalid and should be rejected when
-ofpart is compiled into the kernel.
+> because ofpart monopolizes all nodes without compatible which are
+> children of a mtd device. Devicetrees containing such nodes that are
+> not partitions are presumably invalid and should be rejected when
+> ofpart is compiled into the kernel.
 
->
->> +     if (!of_get_property(data_np, "compatible", NULL) ||
->> +         strcmp(of_get_property(data_np, "compatible", NULL),
->> +                "samsung,s3c-controller-data"))
->> +             dev_err(&spi->dev, "child node 'controller-data' does not have correct compatible\n");
->
-> This will break all existing users which is not acceptable for
-> mainline, we need to preserve compatibility with existing device trees.
+That characterization is currently correct. I'm not a fan of what ofpart
+does in the first place; I'd really like it if its binding was written
+in a way that made it more precise, but we have to live with what we
+have.
 
-It will not break anything. It will just spam dmesg.
+I also didn't like that you were designing your system such that we were
+now keying off the fact that your node has no 'reg' property. This
+seemed awfully fragile. (Admittedly, so is ofpart.c.)
 
-Thanks
+All in all, if you have better suggestions, I'm all ears. (At first
+glance, I'm liking your patch 1 to help disambiguate both MTD partitions
+and the 'controller-data' node going forward.)
 
-Michal
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Brian
