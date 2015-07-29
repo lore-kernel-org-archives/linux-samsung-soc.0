@@ -1,68 +1,59 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to
- controller-data
-Date: Wed, 29 Jul 2015 19:40:43 +0100
-Message-ID: <20150729184043.GL11162@sirena.org.uk>
-References: <cover.1438170519.git.hramrach@gmail.com>
- <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
- <20150729140046.GB11082@sirena.org.uk>
- <CAOMqctTZVET=U=2o65HpWSm4W660XZtYYbBND2k4u9CnfjfMhQ@mail.gmail.com>
- <20150729171613.GI11162@sirena.org.uk>
- <CAOMqctQzh69RCQu8pK1EuuYkrZsh6mg34+YWJFzSvimcK3B0rA@mail.gmail.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v3 1/9] drm/exynos: pass the correct pipe number
+Date: Wed, 29 Jul 2015 17:11:04 -0300
+Message-ID: <20150729201104.GA15429@joana>
+References: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="akWijmsqBEgP5JG6"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOMqctQzh69RCQu8pK1EuuYkrZsh6mg34+YWJFzSvimcK3B0rA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---akWijmsqBEgP5JG6
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:33785 "EHLO
+	mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752331AbbG2ULK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Jul 2015 16:11:10 -0400
+Received: by qkdg63 with SMTP id g63so10417075qkd.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2015 13:11:09 -0700 (PDT)
 Content-Disposition: inline
+In-Reply-To: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On Wed, Jul 29, 2015 at 08:21:34PM +0200, Michal Suchanek wrote:
-> On 29 July 2015 at 19:16, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+Hi Inki,
 
-> >> It will not break anything. It will just spam dmesg.
+Any comments about this series?
 
-> > I'm confused - if all this change does is to spam dmesg then what's the
-> > point?
+Thanks,
+	
+	Gustavo
 
-> Presumably when your SPI NOR flash fails to probe this message will be
-> just above and you will look into the binding doc and add the
-> compatible.
+2015-07-16 Gustavo Padovan <gustavo@padovan.org>:
 
-If you're looking to add a warning message when the flash device fails
-to probe then add that in the flash driver when it detects an error,
-this will cause needless noise for everyone else using this controller
-purely to work around the broken binding.
-
-And like I say compatible really seems like it isn't an appropriate
-property here.
-
---akWijmsqBEgP5JG6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVuR4qAAoJECTWi3JdVIfQw84H+gIG06W1d5C+xW+3hdwVcySH
-U+hKQACjqxbhWce28likOpb+KV3qC8Vqp4vRNYrfTgQbpJfnI4Sz/0q6UW28FL2y
-ybxkDt3/XMC9D4fWRodIDZYUxEm/76Z0/y1h0VAwXSHMS8bziwltgiTVMfpxRhPv
-yXOFjuhdMDHQcoTzj34vBpep1c6RT6ymMw0C0szqmElwDUvcMvh1GTidkDTTk/nQ
-o/IrC2dXrjQF12YpuwRPpth98ZR2b38WkVa/Fd/nyCTbvRWiwdAY7Yn3tBTD/Hns
-w1GsUiOys9kPykg/qeBOI5sLr/Y2GmYeYzz4hUdfENXDo3CCm2T62riqAjUfNng=
-=+uJe
------END PGP SIGNATURE-----
-
---akWijmsqBEgP5JG6--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> Instead of giving -1 to as arg to  drm_send_vblank_event() pass the
+> correct pipe number to it.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 644b4b7..22b9ca0 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -203,7 +203,7 @@ void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
+>  	spin_lock_irqsave(&dev->event_lock, flags);
+>  	if (exynos_crtc->event) {
+>  
+> -		drm_send_vblank_event(dev, -1, exynos_crtc->event);
+> +		drm_send_vblank_event(dev, pipe, exynos_crtc->event);
+>  		drm_vblank_put(dev, pipe);
+>  		wake_up(&exynos_crtc->pending_flip_queue);
+>  
+> -- 
+> 2.1.0
+> 
