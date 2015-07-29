@@ -1,81 +1,66 @@
-From: Michal Suchanek <hramrach@gmail.com>
-Subject: [RFC PATCH 0/2] disambiguate s3c64xx controller-data and ofpart
- partition nodes
-Date: Wed, 29 Jul 2015 13:14:44 +0200
-Message-ID: <cover.1438168484.git.hramrach@gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to
+ controller-data
+Date: Wed, 29 Jul 2015 15:00:46 +0100
+Message-ID: <20150729140046.GB11082@sirena.org.uk>
+References: <cover.1438170519.git.hramrach@gmail.com>
+ <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Michal Suchanek <hramrach@gmail.com>, Padmavathi Venna <padma.kvr@gmail.com>, Boris BREZILLON <boris.brezillon@free-electrons.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
 
-the ofpart partition nodes and s3c64xx controller-data nodes are both subnodes
-of MTD SPI slaves such as spi-nor.
+--98e8jtXdkpgskNou
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When ofpart is compiled-in and no partitions are defined on a MTD SPI slave
-ofpart tries to parse the controller-data node, gets confused, mtd probe fails,
-and the mtd device is inaccessible.
+On Wed, Jul 29, 2015 at 12:19:57PM +0200, Michal Suchanek wrote:
 
-ofpart claims all subnodes of mtd devices which have no compatible and when
-there is a subnode but no partitions are found it reports error which is then
-propagated to mtd probe.
+Please use subject lines matching the style for the subsytsem so people
+can spot that the patch is in some way relevant.
 
-A simple fix that turns the error into a warning was rejected on the basis that
-the ofpart parser could then accept invalid devicetree as fallback.
+> The controller-data subnode has no compatible. This can lead to other
+> drivers getting confused by it. Add a compatible to make devicetreee
+> unambiguous.
 
-https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg941351.html
+I can't tell from this commit message what the issue you're trying to
+fix is, sorry.  Nodes without compatible strings are entirely normal and
+don't need compatible strings.  It sounds like a bug in whatever other
+driver is becoming confused.
 
-Firstly, the ofpart parser already does accept 'invalid' trees as fallback.
-Looking at the code it only requires that there is one mtd subnode that parses
-as partition and there can be arbitrary number of other nodes which were not
-understood. It only singles out the case when there are subnodes but none is
-understood as partition.
+> +	if (!of_get_property(data_np, "compatible", NULL) ||
+> +	    strcmp(of_get_property(data_np, "compatible", NULL),
+> +		   "samsung,s3c-controller-data"))
+> +		dev_err(&spi->dev, "child node 'controller-data' does not have correct compatible\n");
 
-Secondly, the fact that a devicetree node is not understood by a particular
-driver does not make it 'invalid'.
+This will break all existing users which is not acceptable for
+mainline, we need to preserve compatibility with existing device trees.
 
-In my view either it is acceptable that nodes without compatible property exist
-and then drivers using such nodes should be ready to gracefully handle nodes
-that do not have compatible property but are meant for another driver. The
-s3c64xx driver already does this but ofpart does not.
+--98e8jtXdkpgskNou
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-On the other hand, if not using a compatible property is not acceptable then
-both drivers should use a compatible property to reserve their subnodes for
-themselves and avoid any conflict.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Either way I would like the maintainers of the conflicting drivers to agree on
-where compatible property should be and where not so that compiling-in ofpart
-does not make valid MTD devices inaccessible.
+iQEcBAEBCAAGBQJVuNyNAAoJECTWi3JdVIfQncsH/0G7MS0/qfSwdPHn0o6yz8aR
+q6xkpNSqE5FpL28c5k57qt8dHrL1yuXpXVYn6c0rqGwLYA92iuDEOoqM8Zs6y3IQ
+9v26r0JcA2RBko7VYCB/OhVGCu+4adCy6kVhdHRulRoEsbhT126hO/b05vcf9/DK
+HQT9omMnBttIVQvoQembTmMLnjepBasqL6N5CE00OQFcR/zNXrPNqmrC8JAAuAy1
+jK9H/UgkrBrITvpvA6wgiy4+1797Z1ovgqT9YefUqn+nBHFhcvo29VV/wxrZDqnG
+JHRT4qzJsMfav5GRZN7fhKw8rt+Mqsrw4aLP2SDLchzDUuoprW3MG80hHSHOQmA=
+=RsyY
+-----END PGP SIGNATURE-----
 
-The patches are only for illustration and are not meant to be included
-anywhere. They are not tested and miss adding the properties to tens of binding
-docs and dts files.
-
-Thanks
-
-Michal
-
-Michal Suchanek (2):
-  dt: mtd: ofpart: use compatible for partitions
-  dt: spi: s3c64xx: add compatible to controller-data
-
- .../devicetree/bindings/mtd/partition.txt          |  7 +++++-
- .../devicetree/bindings/spi/spi-samsung.txt        |  3 +++
- drivers/mtd/ofpart.c                               | 26 +++++++++++++---------
- drivers/spi/spi-s3c64xx.c                          |  4 ++++
- 4 files changed, 29 insertions(+), 11 deletions(-)
-
--- 
-2.1.4
+--98e8jtXdkpgskNou--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
