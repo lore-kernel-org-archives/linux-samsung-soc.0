@@ -1,66 +1,68 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 01/12] ARM: SAMSUNG: local regs-srom header in mach-exynos
-Date: Wed, 29 Jul 2015 09:48:44 +0900
-Message-ID: <040801d0c998$525c3150$f71493f0$@kernel.org>
-References: <013a01d0c87c$854d4d00$8fe7e700$@kernel.org>
- <55B6CF92.8050904@samsung.com>
+Subject: RE: [PATCH v3] ARM: dts: Add SPI CS on exynos5250-snow
+Date: Wed, 29 Jul 2015 09:57:29 +0900
+Message-ID: <041501d0c999$8af92f30$a0eb8d90$@kernel.org>
+References: <a5054dfad3d48c582b062b0536125c9bcff41f31.1438027526.git.hramrach@gmail.com>
+ <e1952e8c102a3b7a7f3f79c759c44093e0d11dc7.1438073049.git.hramrach@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55728 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752032AbbG2AtA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:49986 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751232AbbG2A5b (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Jul 2015 20:49:00 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit (built May  5 2014))
- with ESMTP id <0NS802KOZ4X9FK10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Jul 2015 09:48:45 +0900 (KST)
-In-reply-to: <55B6CF92.8050904@samsung.com>
+	Tue, 28 Jul 2015 20:57:31 -0400
+In-reply-to: <e1952e8c102a3b7a7f3f79c759c44093e0d11dc7.1438073049.git.hramrach@gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+To: 'Michal Suchanek' <hramrach@gmail.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene@kernel.org>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Krzysztof Kozlowski wrote:
+Michal Suchanek wrote:
 > 
-> On 27.07.2015 23:57, Kukjin Kim wrote:
-> >
-> > This patch moves regs-srom header file into mach-exynos.
+> Although there is only one choice of chipselect it is necessary to
+> specify it. The driver cannot claim the gpio otherwise.
 > 
-> Hi,
+> Signed-off-by: Michal Suchanek <hramrach@gmail.com>
+> Acked-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > 
-Hi,
 
-> Minor nits:
-> 1. Could you trim it and remove unnecessary empty line before description?
+>From here ---8<--------8<-----------
 
-Yeah, actually I couldn't use git send-email when I submitted but just used
-e-mail. It should be fine in my local branch.
+> --
+>  - don't move unrelated line
+>  - use symbolic GPIO_ACTIVE_HIGH
 
-> 2. Could you answer in commit message: Why? Why are you moving the headers?
-> 
-OK, basically we don't need to keep headers in <mach/xxx> and <plat/xxx> if it
-is not required. For example, actually common.h files in mach-xxxx/ have been
-made/moved because of the reason before. Someday we did because it was required
-to support multi_v7 as well. Anyway it is still required and note that I have
-some more patches to move headers which are used only for under drivers/ not
-arch side into drivers/. And next step is removing some definitions which are
-not used more.
+to here  ---8<--------8<-----------
 
-> >
-> > c: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Malformed "Cc:" tag.
-> 
-Oh, OK. Thanks.
+should be added under the following '---'.
 
-One more thing, please ignore patch "[09/12] ARM: SAMSUNG: local keypad header
-in mach-s3c64xx" in this series because the header is used in plat-samsung as
-well.
+Please add some additional comments like above 'changes since previous version'
+under the following '---' not '--', because all comments will be logged before
+the '---' and I don't want to keep the changes basically.
 
-Anyway, thanks,
+Anyway, applied with removing above comments.
+
+Thanks,
 Kukjin
+
+> ---
+>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index b7f4122..2d6a976 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -688,6 +688,7 @@
+>  	status = "okay";
+>  	samsung,spi-src-clk = <0>;
+>  	num-cs = <1>;
+> +	cs-gpios = <&gpa2 5 GPIO_ACTIVE_HIGH>;
+>  };
+> 
+>  &usbdrd_dwc3 {
+> --
+> 2.1.4
