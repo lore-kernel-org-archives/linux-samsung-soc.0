@@ -1,90 +1,66 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RFC PATCH 0/3] clocksource: exynos_mct: allow mct to use 64-bit
- counter from coprocessor
-Date: Tue, 28 Jul 2015 16:29:40 -0700
-Message-ID: <CAD=FV=VMEGrS7XdVDLTM89WHVd_zQtjs0aM2CaWCecE3WqG9Uw@mail.gmail.com>
-References: <1438032507.17734.46.camel@gmail.com>
-	<CAD=FV=W0PM57UJBQ1Vw4PNTapnPDvU1xtKP=9gdX6GBy+6yh1A@mail.gmail.com>
-	<CALW4P+LqjhQ+Puadz4W-n_v=KEnwvQiUkk5jkDLRxhjVQGwFyw@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH 01/12] ARM: SAMSUNG: local regs-srom header in mach-exynos
+Date: Wed, 29 Jul 2015 09:48:44 +0900
+Message-ID: <040801d0c998$525c3150$f71493f0$@kernel.org>
+References: <013a01d0c87c$854d4d00$8fe7e700$@kernel.org>
+ <55B6CF92.8050904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:37340 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739AbbG1X3m (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:55728 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752032AbbG2AtA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Jul 2015 19:29:42 -0400
-Received: by wibud3 with SMTP id ud3so3219518wib.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jul 2015 16:29:40 -0700 (PDT)
-In-Reply-To: <CALW4P+LqjhQ+Puadz4W-n_v=KEnwvQiUkk5jkDLRxhjVQGwFyw@mail.gmail.com>
+	Tue, 28 Jul 2015 20:49:00 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NS802KOZ4X9FK10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Jul 2015 09:48:45 +0900 (KST)
+In-reply-to: <55B6CF92.8050904@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexey Klimov <klimov.linux@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, Tarek Dakhran <t.dakhran@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, kgene <kgene@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yury Norov <yury.norov@gmail.com>, Alim Akhtar <alim.akhtar@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
 
+Krzysztof Kozlowski wrote:
+> 
+> On 27.07.2015 23:57, Kukjin Kim wrote:
+> >
+> > This patch moves regs-srom header file into mach-exynos.
+> 
+> Hi,
+> 
 Hi,
 
-On Tue, Jul 28, 2015 at 9:20 AM, Alexey Klimov <klimov.linux@gmail.com> wrote:
-> Hi Doug,
->
-> On Tue, Jul 28, 2015 at 6:24 PM, Doug Anderson <dianders@chromium.org> wrote:
->> Alexey,
->>
->> On Mon, Jul 27, 2015 at 2:28 PM, Alexey Klimov <klimov.linux@gmail.com> wrote:
->>> Hi all,
->>>
->>> year(s) ago it was discovered that MCT timer and ARM architectured
->>> timer
->>> are the same hardware with different interface. Here [1].
->>>
->>> I followed mail-list discussions about removing MCT and using arch
->>> timer for Exynos5-based SoCs but things aren't moving at least latest
->>> upstream kernel on odroid-xu3 will use MCT as default timers.
->>> Maybe the reason are some power-management related things that very
->>> specific to Samsung. I don't know.
->>>
->>>
->>> Idea of this draft patchset comes from Doug patches when he tried to
->>> optimize read of 64-bit counter located in mmio. [2]
->>> Why not using cp15 counter instead if possible?
->>
->> I hate to burst your bubble here, but...
->>
->> ...I think it would be a bad idea to use the cp15 counter on exynos
->> 5422.  According to Samsung, there are issues where using cp15 could
->> sometimes return the wrong value, especially if you happen to read it
->> while on an A7 instead of an A15.  It will tend to work pretty well,
->> but Samsung claimed that it might not work right on some CPUs or at
->> some temperatures.
->
-> I think this is right time when I can say "If only I had known about
-> it before!".
+> Minor nits:
+> 1. Could you trim it and remove unnecessary empty line before description?
 
-Yeah, we spent a whole lot of time on this too before giving up after
-we found out it was not possible to use.
+Yeah, actually I couldn't use git send-email when I submitted but just used
+e-mail. It should be fine in my local branch.
 
+> 2. Could you answer in commit message: Why? Why are you moving the headers?
+> 
+OK, basically we don't need to keep headers in <mach/xxx> and <plat/xxx> if it
+is not required. For example, actually common.h files in mach-xxxx/ have been
+made/moved because of the reason before. Someday we did because it was required
+to support multi_v7 as well. Anyway it is still required and note that I have
+some more patches to move headers which are used only for under drivers/ not
+arch side into drivers/. And next step is removing some definitions which are
+not used more.
 
-> That's quite interesting especially about temperature issues.
-> Maybe it's worth to insert comments in driver/docs about this.
+> >
+> > c: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Malformed "Cc:" tag.
+> 
+Oh, OK. Thanks.
 
-Maybe not a bad idea.  Depends if you think someone else will try to
-do this...  ...and if they do, will they check mailing list traffic.
+One more thing, please ignore patch "[09/12] ARM: SAMSUNG: local keypad header
+in mach-s3c64xx" in this series because the header is used in plat-samsung as
+well.
 
-
->> Generally I'd say that if the arch timer works for you: use the arch
->> timer.  If the arch timer doesn't work for you, use the MCT.
->>
->> -Doug
->
-> I possess no knowledge if there're any different hw revisions of
-> odroid-xu3 on the field
-> but looks like arch timer works fine for me on odroid-xu3 Exynos5422
-> SoC with upstream kernel.
-
-Well, it looked like it worked for us too.  In fact, I never saw a
-failure.  All I know is that Samsung said: don't do this, it's not a
-good idea.  The performance gain wasn't enough to go against that...
-That's when I started trying to optimize the MCT a little bit.  ;)
-
-
--Doug
+Anyway, thanks,
+Kukjin
