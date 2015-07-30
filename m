@@ -1,129 +1,53 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: pd: fix resource deallocation on error path
-Date: Thu, 30 Jul 2015 09:55:13 +0900
-Message-ID: <55B975F1.5080408@samsung.com>
-References: <1438200913-10532-1-git-send-email-vz@mleia.com>
- <CAJKOXPeWgXR0SuRzZyXHSiewZDuuJXXFmjyWasXDFxDAQUzyqA@mail.gmail.com>
- <55B96A86.8000502@mleia.com> <55B96C9C.8010908@samsung.com>
- <55B97147.7000202@mleia.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3 1/9] drm/exynos: pass the correct pipe number
+Date: Thu, 30 Jul 2015 13:26:48 +0900
+Message-ID: <55B9A788.1010006@samsung.com>
+References: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
+ <20150729201104.GA15429@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54261 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751371AbbG3AzO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jul 2015 20:55:14 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0NS900A62ZW0ZY20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Jul 2015 01:55:12 +0100 (BST)
-In-reply-to: <55B97147.7000202@mleia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150729201104.GA15429@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 30.07.2015 09:35, Vladimir Zapolskiy wrote:
-> On 30.07.2015 03:15, Krzysztof Kozlowski wrote:
->> On 30.07.2015 09:06, Vladimir Zapolskiy wrote:
->>> On 30.07.2015 02:37, Krzysztof Kozlowski wrote:
->>>> 2015-07-30 5:15 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
->>>>> The change fixes a bug introduced by 2be2a3ff42a5, memory allocated
->>>>> by kstrdup_const() must be always deallocated with kfree_const(),
->>>>> otherwise there is a risk of kfree'ing ro memory.
->>>>
->>>> This looks good. Can you provide also Cc-stable and fixes tags?
->>>
->>> Since the change fixes two independent issues I decided not to add a
->>> particular commit to Fixes tag. I can split the commit of course, but I
->>> feel reluctant to send a series in this particular case.
->>>
->>> Let me know your decision with respect to my comments.
->>
->> Although this is only error-path but still this applies for backporting
->> to stable. Please split it up and add respective fixes tags. This helps
->> companies/people using stable trees, including LTS.
-> 
-> Okay, I'll resend the split changes tomorrow.
-> 
->>>
->>>>>
->>>>> Also remove unneeded of_node_put(), if for_each_compatible_node() body
->>>>> execution is not terminated, this prevents from double kfree() in
->>>>> OF_DYNAMIC build.
->>>>
->>>> Each iteration of for_each_compatible_node() has a check:
->>>> (dn = of_find_compatible_node(dn, type, compatible))
->>>> this increases the references to 'np'. 
->>>
->>> Correct.
->>>
->>>> If loop continues then previous 'np' is not of_node_put().
->>>
->>> This I don't understand. The previous 'np' is of_node_put() on next
->>> iteration of the loop, i.e. if and only if loop continues. Please elaborate.
->>
->> Step by step, if I get it right:
->> 1. initialization: dn = of_find_compatible_node(NULL, type, compatible);
->> 1a. if (!pd->base) then we want to drop that reference.
->> 1b. if not, then loop itself
->> 3. increase value: dn = of_find_compatible_node(dn, type, compatible)
->> 4. next iteration of loop, now we have 'dn' from last 'increase value'
->> 5. if (!pd->base) then we want to drop that reference.
-> 
-> It is quite basic but it might be more visual, if the questionable
-> expression is preprocessed and some C99 magic is applied on top:
-> 
-> 
-> for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-> ...	
-> 	continue;
-> ...
-> }
-> 
-> stands for
-> 
-> for (dn = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-pd");
-> dn; \
->      dn = of_find_compatible_node(np, NULL, "samsung,exynos4210-pd")) {
-> ...
-> 	continue;
-> ...
-> }
-> 
-> stands for
-> 
-> for (dn = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-pd");
-> dn; \
->      dn = of_find_compatible_node(np, NULL, "samsung,exynos4210-pd")) {
-> ...
-> 	goto contin;
-> ...
-> contin:
-> }
-> 
-> stands for
-> 
-> dn = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-pd");
-> while (dn) {
-> 	...
-> 	goto contin;
-> 	...
-> contin:
-> 	dn = of_find_compatible_node(np, NULL, "samsung,exynos4210-pd")
-> };
-> 
-> 
-> then np reference counter is decremented inside closing
-> of_find_compatible_node() as usual, there is no need to decrement it two
-> times.
-> 
-> Do I miss something?
-
-Yes, you are right. Thanks for patience!
-
-Best regards,
-Krzysztof
+SGkgR3VzdGF2bywKCgpPbiAyMDE164WEIDA37JuUIDMw7J28IDA1OjExLCBHdXN0YXZvIFBhZG92
+YW4gd3JvdGU6Cj4gSGkgSW5raSwKPiAKPiBBbnkgY29tbWVudHMgYWJvdXQgdGhpcyBzZXJpZXM/
+CgpXaWxsIHJldmlldyBhbGwgb2YgdGhlbS4gTm93IHdlIGFyZSByZXZpZXdpbmcgZml4LXVwIGFu
+ZCBjbGVhbi11cCBwYXRjaGVzLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBUaGFua3MsCj4gCQo+
+IAlHdXN0YXZvCj4gCj4gMjAxNS0wNy0xNiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFkb3Zh
+bi5vcmc+Ogo+IAo+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xs
+YWJvcmEuY28udWs+Cj4+Cj4+IEluc3RlYWQgb2YgZ2l2aW5nIC0xIHRvIGFzIGFyZyB0byAgZHJt
+X3NlbmRfdmJsYW5rX2V2ZW50KCkgcGFzcyB0aGUKPj4gY29ycmVjdCBwaXBlIG51bWJlciB0byBp
+dC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5A
+Y29sbGFib3JhLmNvLnVrPgo+PiBSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5z
+aGltQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9jcnRjLmMgfCAyICstCj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
+ZGVsZXRpb24oLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
+Cj4+IGluZGV4IDY0NGI0YjcuLjIyYjljYTAgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NydGMuYwo+PiBAQCAtMjAzLDcgKzIwMyw3IEBAIHZvaWQgZXh5bm9zX2Ry
+bV9jcnRjX2ZpbmlzaF9wYWdlZmxpcChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgcGlwZSkK
+Pj4gIAlzcGluX2xvY2tfaXJxc2F2ZSgmZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4+ICAJaWYg
+KGV4eW5vc19jcnRjLT5ldmVudCkgewo+PiAgCj4+IC0JCWRybV9zZW5kX3ZibGFua19ldmVudChk
+ZXYsIC0xLCBleHlub3NfY3J0Yy0+ZXZlbnQpOwo+PiArCQlkcm1fc2VuZF92YmxhbmtfZXZlbnQo
+ZGV2LCBwaXBlLCBleHlub3NfY3J0Yy0+ZXZlbnQpOwo+PiAgCQlkcm1fdmJsYW5rX3B1dChkZXYs
+IHBpcGUpOwo+PiAgCQl3YWtlX3VwKCZleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwX3F1ZXVlKTsK
+Pj4gIAo+PiAtLSAKPj4gMi4xLjAKPj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
+aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0
+aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUg
+bWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8u
+aHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
