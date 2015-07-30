@@ -1,156 +1,98 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Add CPU cooling binding for Exynos3250-based
- Rinato/Monk board
-Date: Thu, 30 Jul 2015 23:03:46 +0900
-Message-ID: <55BA2EC2.8050906@kernel.org>
-References: <1435815465-501-1-git-send-email-cw00.choi@samsung.com> <5594D22C.4040206@samsung.com> <5594D5F4.3060508@samsung.com> <5594E57C.2010300@samsung.com> <CAJKOXPfknRZ0ewSv=awo1ay4uWHAXM_kCiLPN4MpxN2-bSNq0g@mail.gmail.com> <092101d0b8c2$e2b39310$a81ab930$@kernel.org> <559C6C8E.2070309@samsung.com> <55B87414.10800@samsung.com>
+Subject: Re: [RFC PATCH 0/3] clocksource: exynos_mct: allow mct to use 64-bit
+ counter from coprocessor
+Date: Thu, 30 Jul 2015 23:25:12 +0900
+Message-ID: <55BA33C8.30502@kernel.org>
+References: <1438032507.17734.46.camel@gmail.com>	<CAD=FV=W0PM57UJBQ1Vw4PNTapnPDvU1xtKP=9gdX6GBy+6yh1A@mail.gmail.com>	<CALW4P+LqjhQ+Puadz4W-n_v=KEnwvQiUkk5jkDLRxhjVQGwFyw@mail.gmail.com> <CAD=FV=VMEGrS7XdVDLTM89WHVd_zQtjs0aM2CaWCecE3WqG9Uw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58119 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:59396 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752570AbbG3OEC (ORCPT
+	id S1752577AbbG3OZU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jul 2015 10:04:02 -0400
-In-Reply-To: <55B87414.10800@samsung.com>
+	Thu, 30 Jul 2015 10:25:20 -0400
+In-Reply-To: <CAD=FV=VMEGrS7XdVDLTM89WHVd_zQtjs0aM2CaWCecE3WqG9Uw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?J0JhcnTFgm9taWVqIMW7b8WCbmllcmtpZXdpY3on?= <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, =?UTF-8?B?J8WBdWthc3ogTWFqZXdza2kn?= <l.majewski@samsung.com>, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Alexey Klimov <klimov.linux@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, Tarek Dakhran <t.dakhran@gmail.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dzaw==?= =?UTF-8?B?aQ==?= <k.kozlowski@samsung.com>, kgene <kgene@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yury Norov <yury.norov@gmail.com>, Alim Akhtar <alim.akhtar@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>
 
-On 07/29/15 15:35, Chanwoo Choi wrote:
-> Dear Kukjin,
+On 07/29/15 08:29, Doug Anderson wrote:
+> Hi,
 > 
-> Please pick this patch because exynos3250-cpufreq patch-set
-> was already merged on linux-samsung.git.
+Hi,
+
+> On Tue, Jul 28, 2015 at 9:20 AM, Alexey Klimov <klimov.linux@gmail.com> wrote:
+>> Hi Doug,
+>>
+>> On Tue, Jul 28, 2015 at 6:24 PM, Doug Anderson <dianders@chromium.org> wrote:
+>>> Alexey,
+>>>
+>>> On Mon, Jul 27, 2015 at 2:28 PM, Alexey Klimov <klimov.linux@gmail.com> wrote:
+>>>> Hi all,
+>>>>
+>>>> year(s) ago it was discovered that MCT timer and ARM architectured
+>>>> timer
+>>>> are the same hardware with different interface. Here [1].
+>>>>
+>>>> I followed mail-list discussions about removing MCT and using arch
+>>>> timer for Exynos5-based SoCs but things aren't moving at least latest
+>>>> upstream kernel on odroid-xu3 will use MCT as default timers.
+>>>> Maybe the reason are some power-management related things that very
+>>>> specific to Samsung. I don't know.
+>>>>
+>>>>
+>>>> Idea of this draft patchset comes from Doug patches when he tried to
+>>>> optimize read of 64-bit counter located in mmio. [2]
+>>>> Why not using cp15 counter instead if possible?
+>>>
+>>> I hate to burst your bubble here, but...
+>>>
+>>> ...I think it would be a bad idea to use the cp15 counter on exynos
+>>> 5422.  According to Samsung, there are issues where using cp15 could
+>>> sometimes return the wrong value, especially if you happen to read it
+>>> while on an A7 instead of an A15.  It will tend to work pretty well,
+>>> but Samsung claimed that it might not work right on some CPUs or at
+>>> some temperatures.
+>>
+>> I think this is right time when I can say "If only I had known about
+>> it before!".
 > 
-Applied, thanks.
+> Yeah, we spent a whole lot of time on this too before giving up after
+> we found out it was not possible to use.
+> 
+> 
+>> That's quite interesting especially about temperature issues.
+>> Maybe it's worth to insert comments in driver/docs about this.
+> 
+> Maybe not a bad idea.  Depends if you think someone else will try to
+> do this...  ...and if they do, will they check mailing list traffic.
+> 
+> 
+>>> Generally I'd say that if the arch timer works for you: use the arch
+>>> timer.  If the arch timer doesn't work for you, use the MCT.
+>>>
+One more thing, if you change it for your own private platform, it's up
+to you but if not, i.e., for mass product, please don't change it.
+Because it's not guaranteed even you haven't seen its failure...
+
+>>> -Doug
+>>
+>> I possess no knowledge if there're any different hw revisions of
+>> odroid-xu3 on the field
+>> but looks like arch timer works fine for me on odroid-xu3 Exynos5422
+>> SoC with upstream kernel.
+> 
+> Well, it looked like it worked for us too.  In fact, I never saw a
+> failure.  All I know is that Samsung said: don't do this, it's not a
+> good idea.  The performance gain wasn't enough to go against that...
+> That's when I started trying to optimize the MCT a little bit.  ;)
+> 
+Yeah and it was tough time for me when I discussed about that with
+hardware designer at that time ... haha...
+
+Thanks, Doug.
 
 - Kukjin
-
-> Thanks,
-> Chanwoo Choi
-> 
-> On 07/08/2015 09:19 AM, Krzysztof Kozlowski wrote:
->> On 07.07.2015 23:40, Kukjin Kim wrote:
->>> Krzysztof Kozlowski wrote:
->>>>
->>>> 2015-07-02 16:17 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->>>>> On 02.07.2015 15:11, Chanwoo Choi wrote:
->>>>>> On 07/02/2015 02:54 PM, Krzysztof Kozlowski wrote:
->>>>>>> On 02.07.2015 14:37, Chanwoo Choi wrote:
->>>>>>>> This patch add the cooling device to control the overheating issue on
->>>>>>>> Exynos3250-based Rinato/Monk board.
->>>>>>>>
->>>>>>>> Cc: Kukjin Kim <kgene@kernel.org>
->>>>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>>>>> ---
->>>>>>>> Depends on:
->>>>>>>> This patch needs the cpufreq support of Exynos3250 SoC. So, this patch has the
->>>>>>>> dependency on patch[1] which support the generic cpufreq for Exynos3250 SoC.
->>>>>>>> [1] https://lkml.org/lkml/2015/7/1/696
->>>>>>>>     : [PATCH v6 0/3] cpufreq: Use cpufreq-dt driver for Exynos3250
->>>>>>>>
->>>>>>>>  arch/arm/boot/dts/exynos3250-monk.dts   | 15 +++++++++++++++
->>>>>>>>  arch/arm/boot/dts/exynos3250-rinato.dts | 15 +++++++++++++++
->>>>>>>>  arch/arm/boot/dts/exynos3250.dtsi       |  1 +
->>>>>>>>  3 files changed, 31 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
->>>>>>>> index 7863265d4868..540a0adf2be6 100644
->>>>>>>> --- a/arch/arm/boot/dts/exynos3250-monk.dts
->>>>>>>> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
->>>>>>>> @@ -116,6 +116,21 @@
->>>>>>>>             min-microvolt = <1100000>;
->>>>>>>>             max-microvolt = <2700000>;
->>>>>>>>     };
->>>>>>>> +
->>>>>>>> +   thermal-zones {
->>>>>>>> +           cpu_thermal: cpu-thermal {
->>>>>>>> +                   cooling-maps {
->>>>>>>> +                           map0 {
->>>>>>>> +                                   /* Correspond to 500MHz at freq_table */
->>>>>>>> +                                   cooling-device = <&cpu0 5 5>;
->>>>>>>> +                           };
->>>>>>>> +                           map1 {
->>>>>>>> +                                   /* Correspond to 200MHz at freq_table */
->>>>>>>> +                                   cooling-device = <&cpu0 8 8>;
->>>>>>>> +                           };
->>>>>>>> +                   };
->>>>>>>> +           };
->>>>>>>> +   };
->>>>>>>>  };
->>>>>>>>
->>>>>>>>  &adc {
->>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
->>>>>>>> index ddd7ac283045..0e62a6435e07 100644
->>>>>>>> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
->>>>>>>> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
->>>>>>>> @@ -107,6 +107,21 @@
->>>>>>>>             min-microvolt = <1100000>;
->>>>>>>>             max-microvolt = <2700000>;
->>>>>>>>     };
->>>>>>>> +
->>>>>>>> +   thermal-zones {
->>>>>>>> +           cpu_thermal: cpu-thermal {
->>>>>>>> +                   cooling-maps {
->>>>>>>> +                           map0 {
->>>>>>>> +                                   /* Corresponds to 500MHz */
->>>>>>>> +                                   cooling-device = <&cpu0 5 5>;
->>>>>>>> +                           };
->>>>>>>> +                           map1 {
->>>>>>>> +                                   /* Corresponds to 200MHz */
->>>>>>>> +                                   cooling-device = <&cpu0 8 8>;
->>>>>>>> +                           };
->>>>>>>> +                   };
->>>>>>>> +           };
->>>>>>>> +   };
->>>>>>>>  };
->>>>>>>>
->>>>>>>>  &adc {
->>>>>>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->>>>>>>> index e0f3b2ed41a3..a4931b660ddb 100644
->>>>>>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
->>>>>>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->>>>>>>> @@ -55,6 +55,7 @@
->>>>>>>>                     clock-frequency = <1000000000>;
->>>>>>>>                     clocks = <&cmu CLK_ARM_CLK>;
->>>>>>>>                     clock-names = "cpu";
->>>>>>>> +                   #cooling-cells = <2>;
->>>>>>>>
->>>>>>>
->>>>>>> Don't you need also cooling-{min,max}-state properties?
->>>>>>
->>>>>> Yes, it is well working without cooling-{min,max}-state or cooling-{min,max}-level.
->>>>>>
->>>>>> I look for the some code to parse "cooling-{min,max}-state or cooling-{min,max}-level"
->>>>>> in drivers/thermal/*. But, there are no any code to parse it.
->>>>>>
->>>>>> But, Documentation/devicetree/bindings/thermal/thermal.txt contains just the 'cooling-{min,max}-
->>>> state.
->>>>>>
->>>>>> I think that there are mismatch between document and thermal core driver.
->>>>>
->>>>> Thanks for explanation, looks good.
->>>>> Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>>
->>>>> Best regards,
->>>>> Krzysztof
->>>>
->>>> Dear Kukjin,
->>>>
->>>> Recent four patchsets (4210 CPU OPP in DTS, cpufreq-dt 5250,
->>>> cpufreq-dt 3250, this patch) are actually an one continuous chain.
->>>> Dependencies are already in mainline. Are you gonna to pick up
->>>> everything?
->>>>
->>> Yes, I want and I will. BTW maybe clk change is required together? If so, as you
->>> know we need to get ack from clk guy. Is my understanding right?
->>
->> Right. I think the samsung clock and cpufreq patches still need acks.
->>
->> Best regards,
->> Krzysztof
