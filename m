@@ -1,203 +1,51 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH v3 4/4] mfd: max77686: Split out regulator part from the DT binding
-Date: Thu, 30 Jul 2015 12:32:07 +0200
-Message-ID: <1438252327-28427-5-git-send-email-javier@osg.samsung.com>
-References: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:54963 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754983AbbG3Kc2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jul 2015 06:32:28 -0400
-In-Reply-To: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to
+ controller-data
+Date: Thu, 30 Jul 2015 11:51:54 +0100
+Message-ID: <20150730105154.GN11162@sirena.org.uk>
+References: <cover.1438170519.git.hramrach@gmail.com>
+ <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
+ <20150730095051.06eff8b1@bbrezillon>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GS4hgKuWjO35gvSO"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150730095051.06eff8b1@bbrezillon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Michal Suchanek <hramrach@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Padmavathi Venna <padma.kvr@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-The Maxim MAX77686 PMIC is a multi-function device with regulators,
-clocks and a RTC. The DT bindings for the clocks are in a separate
-file but the bindings for the regulators are inside the mfd part.
 
-To make it consistent with the clocks portion of the binding and
-because is more natural to look for regulator bindings under the
-bindings/regulator sub-directory, split the regulator portion of
-the DT binding and add it as a separate file.
+--GS4hgKuWjO35gvSO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+On Thu, Jul 30, 2015 at 09:50:51AM +0200, Boris Brezillon wrote:
 
----
+> Since you have to patch your DTs anyway, how about putting your
+> partitions in a subnode and patch the ofpart code to parse this subnode
+> if it is present (see the following patch).
 
-Changes in v3:
-- Add Krzysztof Kozlowski Reviewed-by tag to patch #4.
-- Add Lee Jones Acked-by tag to patch #4.
+This is the best idea, yes - if we're changing the DT for the system
+anyway then making a sane binding and using that seems better than
+trying to mitigate problems with the old bindings.
 
-Changes in v2:
-- Use a generic name for the max77686 node in the regulator example.
+--GS4hgKuWjO35gvSO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
- Documentation/devicetree/bindings/mfd/max77686.txt | 58 +-----------------
- .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
- 2 files changed, 74 insertions(+), 55 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index d2ed3c20a5c3..1225547523e6 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -8,7 +8,8 @@ client while probing.This document describes the binding for mfd device and
- PMIC submodule.
- 
- Binding for the built-in 32k clock generator block is defined separately
--in bindings/clk/maxim,max77686.txt file.
-+in the ../clk/maxim,max77686.txt file and binding for the regulators
-+is defined in the ../regulator/max77686.txt file.
- 
- Required properties:
- - compatible : Must be "maxim,max77686";
-@@ -16,36 +17,6 @@ Required properties:
- - interrupts : This i2c device has an IRQ line connected to the main SoC.
- - interrupt-parent : The parent interrupt controller.
- 
--Optional node:
--- voltage-regulators : The regulators of max77686 have to be instantiated
--  under subnode named "voltage-regulators" using the following format.
--
--	regulator_name {
--		regulator-compatible = LDOn/BUCKn
--		standard regulator constraints....
--	};
--	refer Documentation/devicetree/bindings/regulator/regulator.txt
--
--  The regulator node's name should be initialized with a string
--to get matched with their hardware counterparts as follow:
--
--	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
--		 	example: LDO1, LDO2, LDO26.
--	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
--			example: BUCK1, BUCK5, BUCK9.
--
--  Regulators which can be turned off during system suspend:
--	-LDOn	:	2, 6-8, 10-12, 14-16,
--	-BUCKn	:	1-4.
--  Use standard regulator bindings for it ('regulator-off-in-suspend').
--
--  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
--  control. To turn this feature on this property must be added to the regulator
--  sub-node:
--	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
--				flags are actually ignored and always
--				ACTIVE_HIGH is used)
--
- Example:
- 
- 	max77686: pmic@09 {
-@@ -53,27 +24,4 @@ Example:
- 		interrupt-parent = <&wakeup_eint>;
- 		interrupts = <26 0>;
- 		reg = <0x09>;
--
--		voltage-regulators {
--			ldo11_reg: LDO11 {
--				regulator-name = "vdd_ldo11";
--				regulator-min-microvolt = <1900000>;
--				regulator-max-microvolt = <1900000>;
--				regulator-always-on;
--			};
--
--			buck1_reg: BUCK1 {
--				regulator-name = "vdd_mif";
--				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt = <1300000>;
--				regulator-always-on;
--				regulator-boot-on;
--			};
--
--			buck9_reg: BUCK9 {
--				regulator-name = "CAM_ISP_CORE_1.2V";
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <1200000>;
--				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
--			};
--	}
-+	};
-diff --git a/Documentation/devicetree/bindings/regulator/max77686.txt b/Documentation/devicetree/bindings/regulator/max77686.txt
-new file mode 100644
-index 000000000000..0dded64d89d3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/max77686.txt
-@@ -0,0 +1,71 @@
-+Binding for Maxim MAX77686 regulators
-+
-+This is a part of the device tree bindings of MAX77686 multi-function device.
-+More information can be found in ../mfd/max77686.txt file.
-+
-+The MAX77686 PMIC has 9 high-efficiency Buck and 26 Low-DropOut (LDO)
-+regulators that can be controlled over I2C.
-+
-+Following properties should be present in main device node of the MFD chip.
-+
-+Optional node:
-+- voltage-regulators : The regulators of max77686 have to be instantiated
-+  under subnode named "voltage-regulators" using the following format.
-+
-+	regulator_name {
-+		regulator-compatible = LDOn/BUCKn
-+		standard regulator constraints....
-+	};
-+	refer Documentation/devicetree/bindings/regulator/regulator.txt
-+
-+  The regulator node's name should be initialized with a string
-+to get matched with their hardware counterparts as follow:
-+
-+	-LDOn 	:	for LDOs, where n can lie in range 1 to 26.
-+			example: LDO1, LDO2, LDO26.
-+	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
-+			example: BUCK1, BUCK5, BUCK9.
-+
-+  Regulators which can be turned off during system suspend:
-+	-LDOn	:	2, 6-8, 10-12, 14-16,
-+	-BUCKn	:	1-4.
-+  Use standard regulator bindings for it ('regulator-off-in-suspend').
-+
-+  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
-+  control. To turn this feature on this property must be added to the regulator
-+  sub-node:
-+	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-+				flags are actually ignored and always
-+				ACTIVE_HIGH is used)
-+
-+Example:
-+
-+	max77686: pmic@09 {
-+		compatible = "maxim,max77686";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 IRQ_TYPE_NONE>;
-+		reg = <0x09>;
-+
-+		voltage-regulators {
-+			ldo11_reg: LDO11 {
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1900000>;
-+				regulator-max-microvolt = <1900000>;
-+				regulator-always-on;
-+			};
-+
-+			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
-+			buck9_reg: BUCK9 {
-+				regulator-name = "CAM_ISP_CORE_1.2V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1200000>;
-+				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-+			};
-+	};
--- 
-2.4.3
+iQEcBAEBCAAGBQJVugHFAAoJECTWi3JdVIfQH9cH/1S6NbHQrmi/jf+A98rqZo3l
+81E0I2rLeyM1yprSA9pKVHUga36sXGu6+/Dpwib19s8xr3O0qj8CLEtPguL5itz/
+5X6lBKOPrXWDb6rWoRIaU9sR1iMSuwHCrfooX5Buxp+hiTiGYRWQ62/F+da1B/sm
+MMFStwQdxwsDjEBuK2Lk2nAyQC0ROwn37p8zqjgbJVZ7jY6JDDKduWpnHfEU4hft
+jacOBSj8kG3W4ADEyTt3fagD/HuM6HYpvvxE+HINgISrYgcmlGwkT33YxCPaB0z2
+CrskLgl3DnG21WMB20O82Ru/5BpV/jp+6XjpmPJiv6klfRPEXcLaL7Z2aecRnCE=
+=ynHd
+-----END PGP SIGNATURE-----
+
+--GS4hgKuWjO35gvSO--
