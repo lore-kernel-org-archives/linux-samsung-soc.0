@@ -1,98 +1,42 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [RFC PATCH 0/3] clocksource: exynos_mct: allow mct to use 64-bit
- counter from coprocessor
-Date: Thu, 30 Jul 2015 23:25:12 +0900
-Message-ID: <55BA33C8.30502@kernel.org>
-References: <1438032507.17734.46.camel@gmail.com>	<CAD=FV=W0PM57UJBQ1Vw4PNTapnPDvU1xtKP=9gdX6GBy+6yh1A@mail.gmail.com>	<CALW4P+LqjhQ+Puadz4W-n_v=KEnwvQiUkk5jkDLRxhjVQGwFyw@mail.gmail.com> <CAD=FV=VMEGrS7XdVDLTM89WHVd_zQtjs0aM2CaWCecE3WqG9Uw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Thu, 30 Jul 2015 23:37:27 +0900
+Message-ID: <55BA36A7.3050107@kernel.org>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com> <3141301.RS9TLygaba@amdc1976> <20150727113641.GB10181@linux> <2681271.3UazeZ9PAQ@amdc1976>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:59396 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752577AbbG3OZU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jul 2015 10:25:20 -0400
-In-Reply-To: <CAD=FV=VMEGrS7XdVDLTM89WHVd_zQtjs0aM2CaWCecE3WqG9Uw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <2681271.3UazeZ9PAQ@amdc1976>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Alexey Klimov <klimov.linux@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, Tarek Dakhran <t.dakhran@gmail.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dzaw==?= =?UTF-8?B?aQ==?= <k.kozlowski@samsung.com>, kgene <kgene@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yury Norov <yury.norov@gmail.com>, Alim Akhtar <alim.akhtar@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>
 
-On 07/29/15 08:29, Doug Anderson wrote:
-> Hi,
-> 
-Hi,
-
-> On Tue, Jul 28, 2015 at 9:20 AM, Alexey Klimov <klimov.linux@gmail.com> wrote:
->> Hi Doug,
+On 07/27/15 20:47, Bartlomiej Zolnierkiewicz wrote:
+> On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
+>> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
+>>> Sorry but you don't seem to understand the issue.
 >>
->> On Tue, Jul 28, 2015 at 6:24 PM, Doug Anderson <dianders@chromium.org> wrote:
->>> Alexey,
->>>
->>> On Mon, Jul 27, 2015 at 2:28 PM, Alexey Klimov <klimov.linux@gmail.com> wrote:
->>>> Hi all,
->>>>
->>>> year(s) ago it was discovered that MCT timer and ARM architectured
->>>> timer
->>>> are the same hardware with different interface. Here [1].
->>>>
->>>> I followed mail-list discussions about removing MCT and using arch
->>>> timer for Exynos5-based SoCs but things aren't moving at least latest
->>>> upstream kernel on odroid-xu3 will use MCT as default timers.
->>>> Maybe the reason are some power-management related things that very
->>>> specific to Samsung. I don't know.
->>>>
->>>>
->>>> Idea of this draft patchset comes from Doug patches when he tried to
->>>> optimize read of 64-bit counter located in mmio. [2]
->>>> Why not using cp15 counter instead if possible?
->>>
->>> I hate to burst your bubble here, but...
->>>
->>> ...I think it would be a bad idea to use the cp15 counter on exynos
->>> 5422.  According to Samsung, there are issues where using cp15 could
->>> sometimes return the wrong value, especially if you happen to read it
->>> while on an A7 instead of an A15.  It will tend to work pretty well,
->>> but Samsung claimed that it might not work right on some CPUs or at
->>> some temperatures.
+>> :)
 >>
->> I think this is right time when I can say "If only I had known about
->> it before!".
-> 
-> Yeah, we spent a whole lot of time on this too before giving up after
-> we found out it was not possible to use.
-> 
-> 
->> That's quite interesting especially about temperature issues.
->> Maybe it's worth to insert comments in driver/docs about this.
-> 
-> Maybe not a bad idea.  Depends if you think someone else will try to
-> do this...  ...and if they do, will they check mailing list traffic.
-> 
-> 
->>> Generally I'd say that if the arch timer works for you: use the arch
->>> timer.  If the arch timer doesn't work for you, use the MCT.
->>>
-One more thing, if you change it for your own private platform, it's up
-to you but if not, i.e., for mass product, please don't change it.
-Because it's not guaranteed even you haven't seen its failure...
-
->>> -Doug
+>> No, I did. I understand that if someone uses opp bindings today with
+>> some entries as turbo OPPs, cpufreq will use them as normal
+>> frequencies. And that may harm the board.
 >>
->> I possess no knowledge if there're any different hw revisions of
->> odroid-xu3 on the field
->> but looks like arch timer works fine for me on odroid-xu3 Exynos5422
->> SoC with upstream kernel.
+>> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
+>> what all is implemented before trying to use them.
 > 
-> Well, it looked like it worked for us too.  In fact, I never saw a
-> failure.  All I know is that Samsung said: don't do this, it's not a
-> good idea.  The performance gain wasn't enough to go against that...
-> That's when I started trying to optimize the MCT a little bit.  ;)
+> OK.
 > 
-Yeah and it was tough time for me when I discussed about that with
-hardware designer at that time ... haha...
+>> All I was saying is, this isn't a FIX as we haven't introduced the
+>> feature yet. Otherwise I had no issues with the patch.
+> 
+> I will update the description for the next patchset revision.
+> 
+Hi Bart,
 
-Thanks, Doug.
+When will you re-post v3? Because I have a plan to send a pull-request
+to arm-soc until this weekend...
 
 - Kukjin
