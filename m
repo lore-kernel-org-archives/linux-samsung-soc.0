@@ -1,84 +1,111 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Subject: Re: [PATCH] ARM: EXYNOS: pd: fix resource deallocation on error path
-Date: Thu, 30 Jul 2015 03:06:30 +0300
-Message-ID: <55B96A86.8000502@mleia.com>
-References: <1438200913-10532-1-git-send-email-vz@mleia.com> <CAJKOXPeWgXR0SuRzZyXHSiewZDuuJXXFmjyWasXDFxDAQUzyqA@mail.gmail.com>
+Date: Thu, 30 Jul 2015 09:15:24 +0900
+Message-ID: <55B96C9C.8010908@samsung.com>
+References: <1438200913-10532-1-git-send-email-vz@mleia.com>
+ <CAJKOXPeWgXR0SuRzZyXHSiewZDuuJXXFmjyWasXDFxDAQUzyqA@mail.gmail.com>
+ <55B96A86.8000502@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:38326 "EHLO
-	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753827AbbG3AGc (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:53928 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752911AbbG3AP0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jul 2015 20:06:32 -0400
-In-Reply-To: <CAJKOXPeWgXR0SuRzZyXHSiewZDuuJXXFmjyWasXDFxDAQUzyqA@mail.gmail.com>
+	Wed, 29 Jul 2015 20:15:26 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NS900AYEY1NZY10@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jul 2015 01:15:23 +0100 (BST)
+In-reply-to: <55B96A86.8000502@mleia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
 Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 30.07.2015 02:37, Krzysztof Kozlowski wrote:
-> 2015-07-30 5:15 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
->> The change fixes a bug introduced by 2be2a3ff42a5, memory allocated
->> by kstrdup_const() must be always deallocated with kfree_const(),
->> otherwise there is a risk of kfree'ing ro memory.
-> 
-> This looks good. Can you provide also Cc-stable and fixes tags?
-
-Since the change fixes two independent issues I decided not to add a
-particular commit to Fixes tag. I can split the commit of course, but I
-feel reluctant to send a series in this particular case.
-
-Let me know your decision with respect to my comments.
-
+On 30.07.2015 09:06, Vladimir Zapolskiy wrote:
+> On 30.07.2015 02:37, Krzysztof Kozlowski wrote:
+>> 2015-07-30 5:15 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
+>>> The change fixes a bug introduced by 2be2a3ff42a5, memory allocated
+>>> by kstrdup_const() must be always deallocated with kfree_const(),
+>>> otherwise there is a risk of kfree'ing ro memory.
 >>
->> Also remove unneeded of_node_put(), if for_each_compatible_node() body
->> execution is not terminated, this prevents from double kfree() in
->> OF_DYNAMIC build.
+>> This looks good. Can you provide also Cc-stable and fixes tags?
 > 
-> Each iteration of for_each_compatible_node() has a check:
-> (dn = of_find_compatible_node(dn, type, compatible))
-> this increases the references to 'np'. 
+> Since the change fixes two independent issues I decided not to add a
+> particular commit to Fixes tag. I can split the commit of course, but I
+> feel reluctant to send a series in this particular case.
+> 
+> Let me know your decision with respect to my comments.
 
-Correct.
-
-> If loop continues then previous 'np' is not of_node_put().
-
-This I don't understand. The previous 'np' is of_node_put() on next
-iteration of the loop, i.e. if and only if loop continues. Please elaborate.
-
---
-With best wishes,
-Vladimir
+Although this is only error-path but still this applies for backporting
+to stable. Please split it up and add respective fixes tags. This helps
+companies/people using stable trees, including LTS.
 
 > 
+>>>
+>>> Also remove unneeded of_node_put(), if for_each_compatible_node() body
+>>> execution is not terminated, this prevents from double kfree() in
+>>> OF_DYNAMIC build.
 >>
->> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
->> ---
->>  arch/arm/mach-exynos/pm_domains.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
+>> Each iteration of for_each_compatible_node() has a check:
+>> (dn = of_find_compatible_node(dn, type, compatible))
+>> this increases the references to 'np'. 
+> 
+> Correct.
+> 
+>> If loop continues then previous 'np' is not of_node_put().
+> 
+> This I don't understand. The previous 'np' is of_node_put() on next
+> iteration of the loop, i.e. if and only if loop continues. Please elaborate.
+
+Step by step, if I get it right:
+1. initialization: dn = of_find_compatible_node(NULL, type, compatible);
+1a. if (!pd->base) then we want to drop that reference.
+1b. if not, then loop itself
+3. increase value: dn = of_find_compatible_node(dn, type, compatible)
+4. next iteration of loop, now we have 'dn' from last 'increase value'
+5. if (!pd->base) then we want to drop that reference.
+
+Best regards,
+Krzysztof
+
+
+> 
+> --
+> With best wishes,
+> Vladimir
+> 
 >>
->> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
->> index 6001f1c..4a87e86 100644
->> --- a/arch/arm/mach-exynos/pm_domains.c
->> +++ b/arch/arm/mach-exynos/pm_domains.c
->> @@ -146,9 +146,8 @@ static __init int exynos4_pm_init_power_domain(void)
->>                 pd->base = of_iomap(np, 0);
->>                 if (!pd->base) {
->>                         pr_warn("%s: failed to map memory\n", __func__);
->> -                       kfree(pd->pd.name);
->> +                       kfree_const(pd->pd.name);
->>                         kfree(pd);
->> -                       of_node_put(np);
->>                         continue;
->>                 }
->>
->> --
->> 2.1.4
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>>
+>>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+>>> ---
+>>>  arch/arm/mach-exynos/pm_domains.c | 3 +--
+>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+>>> index 6001f1c..4a87e86 100644
+>>> --- a/arch/arm/mach-exynos/pm_domains.c
+>>> +++ b/arch/arm/mach-exynos/pm_domains.c
+>>> @@ -146,9 +146,8 @@ static __init int exynos4_pm_init_power_domain(void)
+>>>                 pd->base = of_iomap(np, 0);
+>>>                 if (!pd->base) {
+>>>                         pr_warn("%s: failed to map memory\n", __func__);
+>>> -                       kfree(pd->pd.name);
+>>> +                       kfree_const(pd->pd.name);
+>>>                         kfree(pd);
+>>> -                       of_node_put(np);
+>>>                         continue;
+>>>                 }
+>>>
+>>> --
+>>> 2.1.4
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
