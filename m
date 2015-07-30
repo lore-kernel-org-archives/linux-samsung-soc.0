@@ -1,53 +1,99 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 1/9] drm/exynos: pass the correct pipe number
-Date: Thu, 30 Jul 2015 13:26:48 +0900
-Message-ID: <55B9A788.1010006@samsung.com>
-References: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
- <20150729201104.GA15429@joana>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to
+ controller-data
+Date: Thu, 30 Jul 2015 09:50:51 +0200
+Message-ID: <20150730095051.06eff8b1@bbrezillon>
+References: <cover.1438170519.git.hramrach@gmail.com>
+	<557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150729201104.GA15429@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Suchanek <hramrach@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mark Brown <broonie@kernel.org>, Padmavathi Venna <padma.kvr@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgR3VzdGF2bywKCgpPbiAyMDE164WEIDA37JuUIDMw7J28IDA1OjExLCBHdXN0YXZvIFBhZG92
-YW4gd3JvdGU6Cj4gSGkgSW5raSwKPiAKPiBBbnkgY29tbWVudHMgYWJvdXQgdGhpcyBzZXJpZXM/
-CgpXaWxsIHJldmlldyBhbGwgb2YgdGhlbS4gTm93IHdlIGFyZSByZXZpZXdpbmcgZml4LXVwIGFu
-ZCBjbGVhbi11cCBwYXRjaGVzLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBUaGFua3MsCj4gCQo+
-IAlHdXN0YXZvCj4gCj4gMjAxNS0wNy0xNiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFkb3Zh
-bi5vcmc+Ogo+IAo+PiBGcm9tOiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xs
-YWJvcmEuY28udWs+Cj4+Cj4+IEluc3RlYWQgb2YgZ2l2aW5nIC0xIHRvIGFzIGFyZyB0byAgZHJt
-X3NlbmRfdmJsYW5rX2V2ZW50KCkgcGFzcyB0aGUKPj4gY29ycmVjdCBwaXBlIG51bWJlciB0byBp
-dC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5A
-Y29sbGFib3JhLmNvLnVrPgo+PiBSZXZpZXdlZC1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5z
-aGltQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMgfCAyICstCj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
-ZGVsZXRpb24oLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5j
-Cj4+IGluZGV4IDY0NGI0YjcuLjIyYjljYTAgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2NydGMuYwo+PiBAQCAtMjAzLDcgKzIwMyw3IEBAIHZvaWQgZXh5bm9zX2Ry
-bV9jcnRjX2ZpbmlzaF9wYWdlZmxpcChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgcGlwZSkK
-Pj4gIAlzcGluX2xvY2tfaXJxc2F2ZSgmZGV2LT5ldmVudF9sb2NrLCBmbGFncyk7Cj4+ICAJaWYg
-KGV4eW5vc19jcnRjLT5ldmVudCkgewo+PiAgCj4+IC0JCWRybV9zZW5kX3ZibGFua19ldmVudChk
-ZXYsIC0xLCBleHlub3NfY3J0Yy0+ZXZlbnQpOwo+PiArCQlkcm1fc2VuZF92YmxhbmtfZXZlbnQo
-ZGV2LCBwaXBlLCBleHlub3NfY3J0Yy0+ZXZlbnQpOwo+PiAgCQlkcm1fdmJsYW5rX3B1dChkZXYs
-IHBpcGUpOwo+PiAgCQl3YWtlX3VwKCZleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwX3F1ZXVlKTsK
-Pj4gIAo+PiAtLSAKPj4gMi4xLjAKPj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
-aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0
-aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUg
-bWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8u
-aHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Michal,
+
+On Wed, 29 Jul 2015 12:19:57 +0200
+Michal Suchanek <hramrach@gmail.com> wrote:
+
+> The controller-data subnode has no compatible. This can lead to other
+> drivers getting confused by it. Add a compatible to make devicetreee
+> unambiguous.
+> 
+> Signed-off-by: Michal Suchanek <hramrach@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/spi/spi-samsung.txt | 3 +++
+>  drivers/spi/spi-s3c64xx.c                             | 4 ++++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> index 6dbdeb3..b1e98d1 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> @@ -92,16 +92,19 @@ Example:
+>  			spi-max-frequency = <10000>;
+>  
+>  			controller-data {
+> +				compatible = "samsung,s3c-controller-data";
+
+AFAIK compatible should (as much as possible :-)) only be used to encode
+HW type, and here you're using it to expose what you want to do with
+your data in Linux.
+
+>  				samsung,spi-feedback-delay = <0>;
+>  			};
+>  
+>  			partition@0 {
+> +				compatible = "linux,ofpart-partition";
+
+Ditto.
+
+Since you have to patch your DTs anyway, how about putting your
+partitions in a subnode and patch the ofpart code to parse this subnode
+if it is present (see the following patch).
+
+Best Regards,
+
+Boris
+
+--- >8 ---
+
+>From e342860932bda3a6354a0a6e17540db5c85a14e0 Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Date: Thu, 30 Jul 2015 09:44:07 +0200
+Subject: [PATCH] mtd: ofpart: search for a partitions node
+
+The DT partition parser currently assumes the parition definitions are
+directly stored in the MTD device node, but sometime this device node
+contains other child nodes used to store device specific information.
+
+Search for a partitions subnode containing the partition definitions,
+if it is not there, parse the definitions in the device node.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/mtd/ofpart.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/ofpart.c b/drivers/mtd/ofpart.c
+index 8a06cfb..ba52b88 100644
+--- a/drivers/mtd/ofpart.c
++++ b/drivers/mtd/ofpart.c
+@@ -38,7 +38,10 @@ static int parse_ofpart_partitions(struct mtd_info *master,
+ 	if (!data)
+ 		return 0;
+ 
+-	node = data->of_node;
++	node = of_get_child_by_name(data->of_node, "partitions");
++	if (!node)
++		node = data->of_node;
++
+ 	if (!node)
+ 		return 0;
+ 
+-- 
+1.9.1
