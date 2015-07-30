@@ -1,83 +1,68 @@
-From: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 2/2] dt: spi: s3c64xx: add compatible to controller-data
-Date: Thu, 30 Jul 2015 10:24:37 +0200
-Message-ID: <CAOMqctQTc-8_rU6URCPHXno-OqH6wf_rHY4mW+Sf-epNhCwhFQ@mail.gmail.com>
-References: <cover.1438170519.git.hramrach@gmail.com> <557c1962448393b2a8736f26bfa2a3a5ba4aeb7a.1438170519.git.hramrach@gmail.com>
- <20150729140046.GB11082@sirena.org.uk> <CAOMqctTZVET=U=2o65HpWSm4W660XZtYYbBND2k4u9CnfjfMhQ@mail.gmail.com>
- <20150729171613.GI11162@sirena.org.uk> <CAOMqctQzh69RCQu8pK1EuuYkrZsh6mg34+YWJFzSvimcK3B0rA@mail.gmail.com>
- <20150729184043.GL11162@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150729184043.GL11162-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, MTD Maling List <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v3 0/4] mfd: Improve DT binding docs for max77686 and max77802
+Date: Thu, 30 Jul 2015 12:32:03 +0200
+Message-ID: <1438252327-28427-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:54932 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754416AbbG3KcS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Jul 2015 06:32:18 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 29 July 2015 at 20:40, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, Jul 29, 2015 at 08:21:34PM +0200, Michal Suchanek wrote:
->> On 29 July 2015 at 19:16, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->
->> >> It will not break anything. It will just spam dmesg.
->
->> > I'm confused - if all this change does is to spam dmesg then what's the
->> > point?
->
->> Presumably when your SPI NOR flash fails to probe this message will be
->> just above and you will look into the binding doc and add the
->> compatible.
->
-> If you're looking to add a warning message when the flash device fails
-> to probe then add that in the flash driver when it detects an error,
-> this will cause needless noise for everyone else using this controller
-> purely to work around the broken binding.
+Hello Lee,
 
-Technically nobody needs to see the warning with in-tree boards since
-the dts can be amended with the compatible.
+This series contains some improvements for the Device Tree bindings of
+the Maxim MAX77686 and MAX77802 multi-function devices.
 
-There is no error in flash device driver.
+This is the third version of the series that addresses issues pointed
+out by Sergei Shtylyov and you.
 
-There is only error parsing partition scheme. In my opinion this
-should never cause an error. With disk drives failure to parse
-partition table results in unpartitioned disk. As there are number of
-partitioning schemes failure to parse one still does not prevent other
-in succeding.
+Patch #1 changes the max77686 binding to not suggest using a deprecated
+property of the regulator DT binding.
 
->
-> And like I say compatible really seems like it isn't an appropriate
-> property here.
+Patch #2 changes the max77686 example to use a generic node name instead
+of the chip's name.
 
-So to sum up the discussion adding compatible to s3c64xx
-controller-data is not desirable and making ofpart more robust is
-desirable.
+Patch #3 adds a DT binding for the mfd portion of the max77802 that was
+missing.
 
-I think the suggestion to use a subnode for ofpart gives the most
-robust solution.
+Patch #4 moves the regulator portion of the max77686 to the regulator's
+DT binding sub-directory since it is a better fit for this information.
+This fourth patch needs an ack from the regulator sub-system maintainer.
 
-Even adding compatibles to the partition subnodes ofpart still
-monopolizes the address and cells property of the mtd node which does
-not pass the 'if another driver did the same would it work together?'
-test.
+Changes in v3:
+ - Fix typo in ePAPR document name. Suggested by Sergei Shtylyov
+- Add Krzysztof Kozlowski Reviewed-by tag to patch #3.
+- Capitalise all acronyms. Suggested by Lee Jones.
+- Use relative path to refer other bindings. Suggested by Lee Jones.
+- Use IRQ_TYPE_NONE instead of 0 in example. Suggested by Lee Jones.
+- Add Krzysztof Kozlowski Reviewed-by tag to patch #4.
+- Add Lee Jones Acked-by tag to patch #4.
 
-So my suggestion is to
+Changes in v2:
+- Add Krzysztof Kozlowski Reviewed-by tag in patch #1.
+- Use the correct "maxim,max77802" compatible string.
+  Suggested by Krzysztof Kozlowski
+- Use a pmic generic node name for the max77802 node example.
+  Suggested by Sergei Shtylyov.
+- Use a generic name for the max77686 node in the regulator example.
 
-1) search of ofpart subnode in mtd node. If present read address and
-reg from it and search partitions as subnodes of the ofpart node. In
-this case unknown nodes can cause error.
+Javier Martinez Canillas (4):
+  mfd: max77686: Don't suggest in binding to use a deprecated property
+  mfd: max77686: Use a generic name for the PMIC node in the example
+  mfd: Add DT binding for Maxim MAX77802 IC
+  mfd: max77686: Split out regulator part from the DT binding
 
-2) failing that issue a warning and try to parse ofpart partitions
-from the mtd node itself. In this case unknown nodes cannot cause
-error for compatibility with other drivers including the already
-exisitn s3c64xx controller-data node.
+ Documentation/devicetree/bindings/mfd/max77686.txt | 63 ++-----------------
+ Documentation/devicetree/bindings/mfd/max77802.txt | 26 ++++++++
+ .../devicetree/bindings/regulator/max77686.txt     | 71 ++++++++++++++++++++++
+ 3 files changed, 101 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/max77686.txt
 
-The parser code can be the same for both cases and only operate on
-different node with a flag to reject unknown subnodes or not.
-
-Thanks
-
-Michal
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+2.4.3
