@@ -1,59 +1,53 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 5/5] cpufreq: remove no longer needed CPU_FREQ_BOOST_SW
- config option
-Date: Fri, 31 Jul 2015 20:49:17 +0200
-Message-ID: <1438368557-2352-6-git-send-email-b.zolnierkie@samsung.com>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH v2 2/7] cpufreq: opp: fix handling of turbo modes
+Date: Fri, 31 Jul 2015 20:58:06 +0200
+Message-ID: <55330300.1udBI120uH@amdc1976>
+References: <1436456621-29839-1-git-send-email-b.zolnierkie@samsung.com>
+ <2681271.3UazeZ9PAQ@amdc1976> <55BA36A7.3050107@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <55BA36A7.3050107@kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove no longer needed CPU_FREQ_BOOST_SW config option.
+On Thursday, July 30, 2015 11:37:27 PM Kukjin Kim wrote:
+> On 07/27/15 20:47, Bartlomiej Zolnierkiewicz wrote:
+> > On Monday, July 27, 2015 05:06:41 PM Viresh Kumar wrote:
+> >> On 27-07-15, 13:14, Bartlomiej Zolnierkiewicz wrote:
+> >>> Sorry but you don't seem to understand the issue.
+> >>
+> >> :)
+> >>
+> >> No, I did. I understand that if someone uses opp bindings today with
+> >> some entries as turbo OPPs, cpufreq will use them as normal
+> >> frequencies. And that may harm the board.
+> >>
+> >> BUT, opp-v2 code isn't ready to be used yet. And platforms should see
+> >> what all is implemented before trying to use them.
+> > 
+> > OK.
+> > 
+> >> All I was saying is, this isn't a FIX as we haven't introduced the
+> >> feature yet. Otherwise I had no issues with the patch.
+> > 
+> > I will update the description for the next patchset revision.
+> > 
+> Hi Bart,
 
-As a result scaling_boost_freqs sysfs attribute is available
-when cpufreq-dt driver is used and boost support is enabled.
+Hi,
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/cpufreq/Kconfig      | 4 ----
- drivers/cpufreq/freq_table.c | 2 --
- 2 files changed, 6 deletions(-)
+> When will you re-post v3? Because I have a plan to send a pull-request
+> to arm-soc until this weekend...
 
-diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-index bf6d596..de00a52 100644
---- a/drivers/cpufreq/Kconfig
-+++ b/drivers/cpufreq/Kconfig
-@@ -21,10 +21,6 @@ if CPU_FREQ
- config CPU_FREQ_GOV_COMMON
- 	bool
- 
--config CPU_FREQ_BOOST_SW
--	bool
--	depends on THERMAL
--
- config CPU_FREQ_STAT
- 	tristate "CPU frequency translation statistics"
- 	default y
-diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-index a8f1daf..4c5de5b 100644
---- a/drivers/cpufreq/freq_table.c
-+++ b/drivers/cpufreq/freq_table.c
-@@ -293,9 +293,7 @@ EXPORT_SYMBOL_GPL(cpufreq_freq_attr_scaling_boost_freqs);
- 
- struct freq_attr *cpufreq_generic_attr[] = {
- 	&cpufreq_freq_attr_scaling_available_freqs,
--#ifdef CONFIG_CPU_FREQ_BOOST_SW
- 	&cpufreq_freq_attr_scaling_boost_freqs,
--#endif
- 	NULL,
- };
- EXPORT_SYMBOL_GPL(cpufreq_generic_attr);
--- 
-1.9.1
+I have just posted v3.  I hope that it is not too late..
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
