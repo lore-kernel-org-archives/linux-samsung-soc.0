@@ -1,81 +1,77 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
- exynos-ppmu DT binding
-Date: Fri, 31 Jul 2015 11:37:41 +0200
-Message-ID: <55BB41E5.8010209@osg.samsung.com>
-References: <1436770732-9430-1-git-send-email-javier@osg.samsung.com>
- <55B0A376.2080906@samsung.com> <55B0A616.2070608@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:55298 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750970AbbGaJhr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Jul 2015 05:37:47 -0400
-In-Reply-To: <55B0A616.2070608@osg.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 0/5] cpufreq: use generic cpufreq drivers for Exynos4x12
+ platform
+Date: Fri, 31 Jul 2015 20:49:12 +0200
+Message-ID: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello Myungjoo,
+Hi,
 
-On 07/23/2015 10:30 AM, Javier Martinez Canillas wrote:
-> Hello Chanwoo,
-> 
-> On 07/23/2015 10:19 AM, Chanwoo Choi wrote:
->> Hi Javier,
->>
->> On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
->>> The exynos-ppmu driver is only a clock consumer and not a clock
->>> provider but its Device Tree binding listed #clock-cells as an
->>> optional property.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>
->>> ---
->>>
->>> Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt | 1
->>> - 1 file changed, 1 deletion(-)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
->>> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->>> index b54bf3a2ff57..aed486692880 100644 ---
->>> a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->>> +++
->>> b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt 
->>> @@ -17,7 +17,6 @@ Required properties: Optional properties: -
->>> clock-names : the name of clock used by the PPMU, "ppmu" - clocks :
->>> phandles for clock specified in "clock-names" property --
->>> #clock-cells: should be 1.
->>>
->>> Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->>>
->>>
->>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>
->> + Devfreq maintainer (Myungjoo Ham)
-> 
-> Thanks for the review and for cc'ing Myungjoo. The get_maintainer.pl script
-> didn't tell me that so I think Documentation/devicetree/bindings/devfreq/
-> sub-dir should be added to the DEVICE FREQUENCY (DEVFREQ) entry in the
-> MAINTAINERS file.
-> 
->> I think that this patch will be more appropriate on devfreq git tree 
->> than linux-samsung git tree.
->>
-> 
-> Agreed.
-> 
+This patch series removes the use of Exynos4x12 specific support
+from cpufreq-exynos driver and enables the use of cpufreq-dt driver
+for this platform.
 
-Any comments about this patch?
+This patch series has been tested on Exynos4412 based Odroid-U3 and
+Trats2 boards.
+
+Depends on:
+- next-20150730 branch of linux-next kernel tree
+- "[PATCH V3 00/16] OPP: Add code to support operating-points-v2 bindings"
+  (http://www.spinics.net/lists/arm-kernel/msg435408.html)
+
+Changes since v2
+(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/46653):
+- rebased on top of next-20150730 branch of linux-next kernel tree
+- ported over V3 of opp-v2 bindings support patch series
+- put cpu0 nodes in alphabetical order in dts files
+- added Reviewed-by tags from Javier and Krzysztof
+- added Acked-by tag from Sylwester
+
+Changes since v1
+(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/44361):
+- rebased on top of next-20150629 branch of linux-next kernel tree
+- rebased on top of Exynos5250 cpufreq-dt support patch series
+- fixed if-statement in exynos4_clk_init() (noticed by Tobias Jakobi)
+- ported over opp-v2 bindings (requested by Viresh Kumar)
 
 Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (5):
+  clk: samsung: exynos4x12: add cpu clock configuration data and
+    instantiate cpu clock
+  ARM: dts: Exynos4x12: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos4x12
+  cpufreq: exynos: remove Exynos4x12 specific cpufreq driver support
+  cpufreq: remove no longer needed CPU_FREQ_BOOST_SW config option
+
+ arch/arm/boot/dts/exynos4212.dtsi               |  81 ++++++++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+ arch/arm/boot/dts/exynos4412-origen.dts         |   4 +
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   4 +
+ arch/arm/boot/dts/exynos4412.dtsi               |  83 +++++++++
+ arch/arm/mach-exynos/exynos.c                   |   2 +
+ drivers/clk/samsung/clk-exynos4.c               |  50 +++++
+ drivers/cpufreq/Kconfig                         |   5 +-
+ drivers/cpufreq/Kconfig.arm                     |  38 ----
+ drivers/cpufreq/Makefile                        |   2 -
+ drivers/cpufreq/exynos-cpufreq.c                | 236 ------------------------
+ drivers/cpufreq/exynos-cpufreq.h                |  72 --------
+ drivers/cpufreq/exynos4x12-cpufreq.c            | 236 ------------------------
+ drivers/cpufreq/freq_table.c                    |   2 -
+ 14 files changed, 229 insertions(+), 590 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+ delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+ delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
+
