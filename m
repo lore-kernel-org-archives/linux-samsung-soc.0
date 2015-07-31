@@ -1,44 +1,67 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH v2 2/2] ARM: EXYNOS: fix double of_node_put() on error path
-Date: Fri, 31 Jul 2015 03:09:50 +0300
-Message-ID: <1438301390-7397-3-git-send-email-vz@mleia.com>
-References: <1438301390-7397-1-git-send-email-vz@mleia.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos: clear channels only when iommu is enabled
+Date: Fri, 31 Jul 2015 09:32:43 +0900
+Message-ID: <55BAC22B.4090605@samsung.com>
+References: <1438073462-32560-1-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:42177 "EHLO
-	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751120AbbGaAJ5 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37659 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbbGaAcn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jul 2015 20:09:57 -0400
-In-Reply-To: <1438301390-7397-1-git-send-email-vz@mleia.com>
+	Thu, 30 Jul 2015 20:32:43 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
+ with ESMTP id <0NSB0063KTIH0LB0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 31 Jul 2015 01:32:41 +0100 (BST)
+In-reply-to: <1438073462-32560-1-git-send-email-jy0922.shim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: inki.dae@samsung.com, sw0312.kim@samsung.com, m.szyprowski@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The change removes the second of_node_put(), if
-for_each_compatible_node() body execution is not terminated. This
-prevents from object refcounter overflow over zero in OF_DYNAMIC
-build.
+On 28.07.2015 17:51, Joonyoung Shim wrote:
+> This is simplest solution about reported problem[1]. It's no problem to
+> clear channel only when iommu is enabled, if we consider that we cannot
+> recognize iommu errors when iommu is disabled and it have been valid
+> until now. But this cannot be nice solution.
+> 
+> [1] https://lkml.org/lkml/2015/7/21/404
+> 
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
-Changes from v1 to v2:
-* split a single change v1 into two
+I tested this patch on my Odroid XU3-Lite with hardkernel u-boot and it
+fixes the booting hang. Thanks!
 
- arch/arm/mach-exynos/pm_domains.c | 1 -
- 1 file changed, 1 deletion(-)
+The test was not thorough - only booting and without any display output
+(HDMI).
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 5121baa..4a87e86 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -148,7 +148,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 			pr_warn("%s: failed to map memory\n", __func__);
- 			kfree_const(pd->pd.name);
- 			kfree(pd);
--			of_node_put(np);
- 			continue;
- 		}
- 
--- 
-2.1.4
+Best regards,
+Krzysztof
+
+
+> ---
+> v2: add Reported-by.
+> 
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 8d362b9..337af02 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -956,7 +956,8 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+>  	if (ctx->display)
+>  		exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>  
+> -	fimd_clear_channels(ctx->crtc);
+> +	if (is_drm_iommu_supported(drm_dev))
+> +		fimd_clear_channels(ctx->crtc);
+>  
+>  	ret = drm_iommu_attach_device(drm_dev, dev);
+>  	if (ret)
+> 
