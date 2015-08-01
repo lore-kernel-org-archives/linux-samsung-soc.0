@@ -1,73 +1,146 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4x12
-Date: Sat, 01 Aug 2015 16:43:58 +0900
-Message-ID: <55BC78BE.5020102@samsung.com>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com> <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v3 2/5] ARM: dts: Exynos4x12: add CPU OPP and regulator
+ supply property
+Date: Sat, 1 Aug 2015 16:18:25 +0530
+Message-ID: <20150801104825.GF899@linux>
+References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
+ <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1438368557-2352-3-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-W dniu 01.08.2015 o 03:49, Bartlomiej Zolnierkiewicz pisze:
-> The new CPU clock type allows the use of generic CPUfreq driver.
-> Switch Exynos4x12 to using generic cpufreq driver.
+On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
+> For Exynos4x12 platforms, add CPU operating points (using
+> opp-v2 bindings) and CPU regulator supply properties for
+> migrating from Exynos specific cpufreq driver to using
+> generic cpufreq driver.
 > 
-> Also make CPUFREQ_DT config option select Exynos thermal driver
-> if Exynos platform support is enabled.
-
-Why? I think this wasn't in your previous patch.
-
-Best regards,
-Krzysztof
-
-
+> Based on the earlier work by Thomas Abraham.
 > 
-> Please also note that the switch to use the generic cpufreq-dt
-> driver fixes the minor issue present with the old code (support
-> for 'boost' mode in the exynos-cpufreq driver was enabled for
-> all supported SoCs even though 'boost' frequency was provided
-> only for Exynos4x12 ones).
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
 > Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Andreas Faerber <afaerber@suse.de>
 > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  arch/arm/mach-exynos/exynos.c | 2 ++
->  drivers/cpufreq/Kconfig       | 1 +
->  2 files changed, 3 insertions(+)
+>  arch/arm/boot/dts/exynos4212.dtsi               | 81 ++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 ++
+>  arch/arm/boot/dts/exynos4412-origen.dts         |  4 ++
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |  4 ++
+>  arch/arm/boot/dts/exynos4412.dtsi               | 83 +++++++++++++++++++++++++
+>  5 files changed, 176 insertions(+)
 > 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 77ac021..1c47aee 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
->  static const struct of_device_id exynos_cpufreq_matches[] = {
->  	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
->  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
-> +	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
-> +	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
->  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
->  	{ /* sentinel */ }
+> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+> index d9c8efee..5389011 100644
+> --- a/arch/arm/boot/dts/exynos4212.dtsi
+> +++ b/arch/arm/boot/dts/exynos4212.dtsi
+> @@ -30,6 +30,9 @@
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <0xA00>;
+> +			clocks = <&clock CLK_ARM_CLK>;
+> +			clock-names = "cpu";
+> +			operating-points-v2 = <&cpu0_opp_table>;
+>  			cooling-min-level = <13>;
+>  			cooling-max-level = <7>;
+>  			#cooling-cells = <2>; /* min followed by max */
+> @@ -39,6 +42,84 @@
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <0xA01>;
+> +			operating-points-v2 = <&cpu0_opp_table>;
+> +		};
+> +	};
+> +
+> +	cpu0_opp_table: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp00 {
+> +			opp-hz = /bits/ 64 <200000000>;
+> +			opp-microvolt = <900000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp01 {
+> +			opp-hz = /bits/ 64 <300000000>;
+> +			opp-microvolt = <900000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp02 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-microvolt = <925000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp03 {
+> +			opp-hz = /bits/ 64 <500000000>;
+> +			opp-microvolt = <950000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp04 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-microvolt = <975000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp05 {
+> +			opp-hz = /bits/ 64 <700000000>;
+> +			opp-microvolt = <987500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp06 {
+> +			opp-hz = /bits/ 64 <800000000>;
+> +			opp-microvolt = <1000000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp07 {
+> +			opp-hz = /bits/ 64 <900000000>;
+> +			opp-microvolt = <1037500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp08 {
+> +			opp-hz = /bits/ 64 <1000000000>;
+> +			opp-microvolt = <1087500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp09 {
+> +			opp-hz = /bits/ 64 <1100000000>;
+> +			opp-microvolt = <1137500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp10 {
+> +			opp-hz = /bits/ 64 <1200000000>;
+> +			opp-microvolt = <1187500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp11 {
+> +			opp-hz = /bits/ 64 <1300000000>;
+> +			opp-microvolt = <1250000>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp12 {
+> +			opp-hz = /bits/ 64 <1400000000>;
+> +			opp-microvolt = <1287500>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +		opp13 {
+> +			opp-hz = /bits/ 64 <1500000000>;
+> +			opp-microvolt = <1350000>;
+> +			clock-latency-ns = <200000>;
+> +			turbo-mode;
+>  		};
+>  	};
 >  };
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 659879a..bf6d596 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -191,6 +191,7 @@ config CPUFREQ_DT
->  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
->  	depends on !CPU_THERMAL || THERMAL
->  	select PM_OPP
-> +	select EXYNOS_THERMAL if ARCH_EXYNOS
->  	help
->  	  This adds a generic DT based cpufreq driver for frequency management.
->  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
-> 
 
+I'm lovin' it :)
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
