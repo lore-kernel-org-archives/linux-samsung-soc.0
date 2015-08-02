@@ -1,43 +1,55 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4x12
-Date: Sat, 1 Aug 2015 16:47:21 +0530
-Message-ID: <20150801111721.GI899@linux>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH V2] i2c: s3c2410: remove unused variable
+Date: Sun, 2 Aug 2015 03:59:00 +0200
+Message-ID: <20150802015900.GA1726@katana>
+References: <1437164839-9287-1-git-send-email-laurent.navet@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:35326 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277AbbHALR1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Aug 2015 07:17:27 -0400
-Received: by pdrg1 with SMTP id g1so54548064pdr.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Aug 2015 04:17:26 -0700 (PDT)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1438368557-2352-4-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1437164839-9287-1-git-send-email-laurent.navet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laurent Navet <laurent.navet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>
 
-On 31-07-15, 20:49, Bartlomiej Zolnierkiewicz wrote:
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 659879a..bf6d596 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -191,6 +191,7 @@ config CPUFREQ_DT
->  	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
->  	depends on !CPU_THERMAL || THERMAL
->  	select PM_OPP
-> +	select EXYNOS_THERMAL if ARCH_EXYNOS
->  	help
->  	  This adds a generic DT based cpufreq driver for frequency management.
->  	  It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
 
-No, we shouldn't pollute generic Kconfig options with platform specific stuff.
-Why don't you enable thermal in your .config?
+--r5Pyd7+fXNt84Ff3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-viresh
+
+> @@ -565,7 +564,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+>  	tmp &= ~S3C2410_IICCON_IRQPEND;
+>  	writel(tmp, i2c->regs + S3C2410_IICCON);
+>   out:
+> -	return ret;
+> +	return;
+
+What about removing out: and return as well?
+
+
+--r5Pyd7+fXNt84Ff3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVvXlkAAoJEBQN5MwUoCm27tgQAJszIQLQsHbt8ro+TU6OtUO/
+t+Apz4JoB+D2Rlw9dSPLB0gGsazr8SRZuXFG/s3EGvDsdR+8MxCJJPQ+KHKI7URV
+T7sqPJOfaRnZKOxVittsDv7Yw/i9XRp0I+pe/1an543SxqaJRnGD9pvEjumg3PRV
+fT0635zDtkVHmZeNLGApRYLXPaGcKANDepIPDCmmxkPcw1bevdjgtSzeKOiSXsHl
+ozRNQO2sqASJSts7PRbuBk/rSRg7gYArpVfhV9qolYNlAesDxW/Fd6RwgX+YN4VC
+BqcYuTo6L1gw9t+tcrSlxf1y5AEwdegRpHRWYEm0SL31ICDFUrSsEPNSN3EJbFqU
+VIbVyU2k29BNu/utDR8YLvB+iHJUwhbrDaL0Oet2/0AlmnT//NPCXplL1nJNLlak
+zMRz4SouPM+s/FFy2kiKZjA9T1ef0RzmcjuYzioSYY/3PfS2vd7n50NGnbx1kgDa
+X17QFaQNnnFpn3pdXbMQcbRqKR9+XKfmJ/wNFQ5q6U6kvFYVXeWPr3cmVCqpEVnt
+Nf3gKcIZ9UIsiBpFOWPV3RonRyil0iOUBMvkVWvGdoYK5WPxE36bqPxyI7BpDZ7j
+F7OFczW0RRKxfFsUJZQXvmSFMzrOjYz/XstpWv7+fsLL8vxIeiPbz0nvBz0HVOB5
+ouN2I33nbeqaXbRR504n
+=rZ45
+-----END PGP SIGNATURE-----
+
+--r5Pyd7+fXNt84Ff3--
