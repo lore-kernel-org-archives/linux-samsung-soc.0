@@ -1,78 +1,56 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 04/11] drm/exynos: simplify calculation of possible CRTCs
-Date: Mon,  3 Aug 2015 16:09:51 -0300
-Message-ID: <1438628998-3435-5-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 08/11] drm/exynos: remove exynos_encoder's .commit() op
+Date: Mon,  3 Aug 2015 16:09:55 -0300
+Message-ID: <1438628998-3435-9-git-send-email-gustavo@padovan.org>
 References: <1438628998-3435-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f174.google.com ([209.85.160.174]:35221 "EHLO
-	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754854AbbHCTKP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Aug 2015 15:10:15 -0400
-Received: by ykdu72 with SMTP id u72so118816914ykd.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Aug 2015 12:10:14 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1438628998-3435-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-All CRTCs can only be LCD, HDMI or VIDI, so basically all CRTCs will be a
-possible CRTCs. This patch removes an extra function with switch that was
-only checking if the CRTC type was one of those three above.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_encoder.c | 29 +++++------------------------
- 1 file changed, 5 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-index 0aa4a58..7ba3a2d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
-@@ -105,36 +105,17 @@ static struct drm_encoder_funcs exynos_encoder_funcs = {
- 	.destroy = exynos_drm_encoder_destroy,
- };
- 
--static unsigned int exynos_drm_encoder_clones(struct drm_encoder *encoder)
-+void exynos_drm_encoder_setup(struct drm_device *dev)
- {
--	struct drm_encoder *clone;
--	struct drm_device *dev = encoder->dev;
--	struct exynos_drm_encoder *exynos_encoder = to_exynos_encoder(encoder);
--	struct exynos_drm_display *display = exynos_encoder->display;
-+	struct drm_encoder *encoder;
- 	unsigned int clone_mask = 0;
- 	int cnt = 0;
- 
--	list_for_each_entry(clone, &dev->mode_config.encoder_list, head) {
--		switch (display->type) {
--		case EXYNOS_DISPLAY_TYPE_LCD:
--		case EXYNOS_DISPLAY_TYPE_HDMI:
--		case EXYNOS_DISPLAY_TYPE_VIDI:
--			clone_mask |= (1 << (cnt++));
--			break;
--		default:
--			continue;
--		}
--	}
--
--	return clone_mask;
--}
--
--void exynos_drm_encoder_setup(struct drm_device *dev)
--{
--	struct drm_encoder *encoder;
-+	list_for_each_entry(encoder, &dev->mode_config.encoder_list, head)
-+		clone_mask |= (1 << (cnt++));
- 
- 	list_for_each_entry(encoder, &dev->mode_config.encoder_list, head)
--		encoder->possible_clones = exynos_drm_encoder_clones(encoder);
-+		encoder->possible_clones = clone_mask;
- }
- 
- struct drm_encoder *
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+LmNvbW1pdCgpIGlzIG5vdCB1c2VkIGFueW1vcmUsIEV4eW5vcyBlbmNvZGVycyBub3cgZm9sbG93
+IHRoZQouZW5hYmxlKCkvLmRpc2FibGUoKSBzZW1hbnRpY3MgZnJvbSBkcm0gYXRvbWljIGNvcmUs
+IHNvIHJlbW92ZSB0aGlzCmNhbGxiYWNrLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFu
+IDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kcnYuaCAgICAgfCAyIC0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZW5jb2Rlci5jIHwgMyAtLS0KIDIgZmlsZXMgY2hhbmdlZCwgNSBkZWxldGlv
+bnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
+LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggNDkzMTE5
+My4uNzZlZDZhMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaApAQCAt
+ODcsNyArODcsNiBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSB7CiAgKgkgICAgICB3b3VsZCBi
+ZSBjYWxsZWQgYnkgZW5jb2Rlci0+bW9kZV9zZXQoKS4KICAqIEBlbmFibGU6IGRpc3BsYXkgZGV2
+aWNlIG9uLgogICogQGRpc2FibGU6IGRpc3BsYXkgZGV2aWNlIG9mZi4KLSAqIEBjb21taXQ6IGFw
+cGx5IGNoYW5nZXMgdG8gaHcKICAqLwogc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlcjsKIHN0cnVj
+dCBleHlub3NfZHJtX2VuY29kZXJfb3BzIHsKQEAgLTEwMCw3ICs5OSw2IEBAIHN0cnVjdCBleHlu
+b3NfZHJtX2VuY29kZXJfb3BzIHsKIAkJCQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSk7
+CiAJdm9pZCAoKmVuYWJsZSkoc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZW5jb2Rlcik7CiAJ
+dm9pZCAoKmRpc2FibGUpKHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpOwotCXZv
+aWQgKCpjb21taXQpKHN0cnVjdCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpOwogfTsKIAog
+LyoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVy
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZW5jb2Rlci5jCmluZGV4IGI5
+YTFjOTMuLmNlN2I5N2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9lbmNvZGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Vu
+Y29kZXIuYwpAQCAtNTYsOSArNTYsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2VuY29kZXJf
+ZW5hYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKIAogCWlmIChleHlub3NfZW5jb2Rl
+ci0+b3BzLT5lbmFibGUpCiAJCWV4eW5vc19lbmNvZGVyLT5vcHMtPmVuYWJsZShleHlub3NfZW5j
+b2Rlcik7Ci0KLQlpZiAoZXh5bm9zX2VuY29kZXItPm9wcy0+Y29tbWl0KQotCQlleHlub3NfZW5j
+b2Rlci0+b3BzLT5jb21taXQoZXh5bm9zX2VuY29kZXIpOwogfQogCiBzdGF0aWMgdm9pZCBleHlu
+b3NfZHJtX2VuY29kZXJfZGlzYWJsZShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCi0tIAoy
+LjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
