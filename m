@@ -1,159 +1,69 @@
-From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] mfd: s2mps11: Add manual shutdown method for Odroid XU3
-Date: Tue, 4 Aug 2015 00:22:00 +0530
-Message-ID: <CANAwSgSSdiTWDhkeGgYtPzWXDJ8EpD6YN_W05W6GEyF4Y4AFng@mail.gmail.com>
-References: <1438605447-6836-1-git-send-email-k.kozlowski.k@gmail.com> <1438605447-6836-2-git-send-email-k.kozlowski.k@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1438605447-6836-2-git-send-email-k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 00/11] drm/exynos: remove exynos_drm_display and exynos_drm_encoder
+Date: Mon,  3 Aug 2015 16:09:47 -0300
+Message-ID: <1438628998-3435-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f180.google.com ([209.85.160.180]:33699 "EHLO
+	mail-yk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754650AbbHCTKF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Aug 2015 15:10:05 -0400
+Received: by ykoo205 with SMTP id o205so28722714yko.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Aug 2015 12:10:04 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hi Krzysztof,
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On 3 August 2015 at 18:07, Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Odroid XU3 board (with S2MPS11 PMIC) the PWRHOLD bit in CTRL1
-> register must be manually set to 0 before initiating power off sequence.
->
-> One of usual power down methods for Exynos based devices looks like:
-> 1. PWRHOLD pin of PMIC is connected to PSHOLD of Exynos.
-> 2. Exynos holds up this pin during system operation.
-> 3. ACOKB pin of PMIC is pulled up to VBATT and optionally to pin in
->    other device.
-> 4. When PWRHOLD/PSHOLD goes low, the PMIC will turn off the power if
->    ACOKB goes high.
->
-> On Odroid XU3 family the difference is in (3) - the ACOKB is grounded.
-> This means that PMIC must manually set PWRHOLD field to low and then
-> wait for signal from Application Processor (the usual change in
-> PWRHOLD/PSHOLD pin will actually cut off the power).
->
-> The patch adds respective binding allowing Odroid XU3 device to be
-> powered off.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Reported-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->
-> ---
->
-> Patch is losely based on patch in Hardkernel repository [0] and previous
-> work of Anand Moon [1].
->
-> [0] https://github.com/hardkernel/linux/commit/6897e62ba328bd1c8c095d918101863250cd73e7
-> [1] http://www.spinics.net/lists/linux-samsung-soc/msg45959.html
-> ---
->  Documentation/devicetree/bindings/mfd/s2mps11.txt |  4 +++
->  drivers/mfd/sec-core.c                            | 31 +++++++++++++++++++++++
->  include/linux/mfd/samsung/core.h                  |  2 ++
->  include/linux/mfd/samsung/s2mps11.h               |  1 +
->  4 files changed, 38 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> index 57a045016fca..90eaef393325 100644
-> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> @@ -15,6 +15,10 @@ Optional properties:
->  - interrupt-parent: Specifies the phandle of the interrupt controller to which
->    the interrupts from s2mps11 are delivered to.
->  - interrupts: Interrupt specifiers for interrupt sources.
-> +- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
-> +  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
-> +  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
-> +  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
->
->  Optional nodes:
->  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index d206a3e8fe87..a56ab2102a32 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -278,6 +278,8 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
->          * not parsed here.
->          */
->
-> +       pd->manual_poweroff = of_property_read_bool(dev->of_node,
-> +                                               "samsung,s2mps11-acokb-ground");
->         return pd;
->  }
->  #else
-> @@ -440,6 +442,34 @@ static int sec_pmic_remove(struct i2c_client *i2c)
->         return 0;
->  }
->
-> +static void sec_pmic_shutdown(struct i2c_client *i2c)
-> +{
-> +       struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
-> +       unsigned int reg, mask;
-> +
-> +       if (!sec_pmic->pdata->manual_poweroff)
-> +               return;
-> +
-> +       switch (sec_pmic->device_type) {
-> +       case S2MPS11X:
-> +               reg = S2MPS11_REG_CTRL1;
-> +               mask = S2MPS11_CTRL1_PWRHOLD_MASK;
-> +               break;
-> +       default:
-> +               /*
-> +                * Currently only one board with S2MPS11 needs this, so just
-> +                * ignore the rest.
-> +                */
-> +               dev_warn(sec_pmic->dev,
-> +                       "Unsupported device %lu for manual power off\n",
-> +                       sec_pmic->device_type);
-> +               return;
-> +       }
-> +
-> +       regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
-> +}
-> +
-> +
->  #ifdef CONFIG_PM_SLEEP
->  static int sec_pmic_suspend(struct device *dev)
->  {
-> @@ -491,6 +521,7 @@ static struct i2c_driver sec_pmic_driver = {
->         },
->         .probe = sec_pmic_probe,
->         .remove = sec_pmic_remove,
-> +       .shutdown = sec_pmic_shutdown,
->         .id_table = sec_pmic_id,
->  };
->
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index 75115384f3fc..aa78957e092f 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -132,6 +132,8 @@ struct sec_platform_data {
->         int                             buck2_init;
->         int                             buck3_init;
->         int                             buck4_init;
-> +       /* Whether or not manually set PWRHOLD to low during shutdown. */
-> +       bool                            manual_poweroff;
->  };
->
->  /**
-> diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mfd/samsung/s2mps11.h
-> index 7981a9d77d3f..b288965e8101 100644
-> --- a/include/linux/mfd/samsung/s2mps11.h
-> +++ b/include/linux/mfd/samsung/s2mps11.h
-> @@ -179,6 +179,7 @@ enum s2mps11_regulators {
->  #define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
->  #define S2MPS11_RAMP_DELAY     25000           /* uV/us */
->
-> +#define S2MPS11_CTRL1_PWRHOLD_MASK     BIT(4)
->
->  #define S2MPS11_BUCK2_RAMP_SHIFT       6
->  #define S2MPS11_BUCK34_RAMP_SHIFT      4
-> --
-> 2.1.4
->
-Thanks. Tested on Odroid-XU3 board.
+Hi,
 
-Tested-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patchset is another important step in the exynos clean up, it removes
+two exynos internal structs in favor of wider use of struct drm_encoder.
+
+Structs exynos_drm_display and exynos_drm_encoder were doing exactly what
+struct drm_encoder does so remove them makes the code cleaner, easier
+to understand and less error prone.
+
+Please review,
+
+       Gustavo
+
+
+---
+Gustavo Padovan (11):
+  drm/exynos: split display's .dpms() into .enable() and .disable()
+  drm/exynos: remove wrappers for phy_power_{on,off}
+  drm/exynos: remove unused .remove() and .check_mode() ops from display
+  drm/exynos: simplify calculation of possible CRTCs
+  drm/exynos: remove struct exynos_drm_display
+  drm/exynos: remove extra call to hdmi_commit()
+  drm/exynos: remove extra call to exynos_dp_commit()
+  drm/exynos: remove exynos_encoder's .commit() op
+  drm/exynos: remove exynos_drm_create_enc_conn()
+  drm/exynos: fold encoder setup into exynos_drm_load()
+  drm/exynos: remove struct exynos_drm_encoder layer
+
+ drivers/gpu/drm/exynos/Makefile             |   7 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c  |  16 +--
+ drivers/gpu/drm/exynos/exynos_dp_core.c     | 122 +++++++++----------
+ drivers/gpu/drm/exynos/exynos_dp_core.h     |   3 +-
+ drivers/gpu/drm/exynos/exynos_drm_core.c    |  36 ------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c    |   3 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h    |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c     |  96 ++++++++-------
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |  13 ++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |  65 ++---------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 130 ++++++++++-----------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c | 174 ----------------------------
+ drivers/gpu/drm/exynos/exynos_drm_encoder.h |  23 ----
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  17 ++-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  90 ++++++++------
+ drivers/gpu/drm/exynos/exynos_hdmi.c        | 160 ++++++++++++-------------
+ 16 files changed, 355 insertions(+), 602 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_drm_encoder.h
+
+-- 
+2.1.0
