@@ -1,81 +1,52 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] PM / devfreq: event: Remove incorrect property in
- exynos-ppmu DT binding
-Date: Mon, 3 Aug 2015 09:38:28 +0200
-Message-ID: <55BF1A74.50105@osg.samsung.com>
-References: <1733224792.341671438577931309.JavaMail.weblogic@epmlwas06d>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3 1/9] drm/exynos: pass the correct pipe number
+Date: Mon, 03 Aug 2015 17:11:37 +0900
+Message-ID: <55BF2239.6080000@samsung.com>
+References: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
+ <20150729201104.GA15429@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:55741 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752750AbbHCHie (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Aug 2015 03:38:34 -0400
-In-Reply-To: <1733224792.341671438577931309.JavaMail.weblogic@epmlwas06d>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20150729201104.GA15429@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?7YGs7Ims7Iuc7Yag7ZSE?= <k.kozlowski@samsung.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello MyungJoo,
-
-On 08/03/2015 06:58 AM, MyungJoo Ham wrote:
->> Hello Myungjoo,
->>
->> On 07/23/2015 10:30 AM, Javier Martinez Canillas wrote:
->>> Hello Chanwoo,
->>>
->>> On 07/23/2015 10:19 AM, Chanwoo Choi wrote:
->>>> Hi Javier,
->>>>
->>>> On 07/13/2015 03:58 PM, Javier Martinez Canillas wrote:
->>>>> The exynos-ppmu driver is only a clock consumer and not a clock
->>>>> provider but its Device Tree binding listed #clock-cells as an
->>>>> optional property.
->>>>>
->>>>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>>>>
-> []
->>>>>
->>>>> Example1 : PPMU nodes in exynos3250.dtsi are listed below.
->>>>>
->>>>>
->>>>
->>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>
->>>> + Devfreq maintainer (Myungjoo Ham)
->>>
->>> Thanks for the review and for cc'ing Myungjoo. The get_maintainer.pl script
->>> didn't tell me that so I think Documentation/devicetree/bindings/devfreq/
->>> sub-dir should be added to the DEVICE FREQUENCY (DEVFREQ) entry in the
->>> MAINTAINERS file.
->>>
->>>> I think that this patch will be more appropriate on devfreq git tree
->>>> than linux-samsung git tree.
->>>>
->>>
->>> Agreed.
->>>
->>
->> Any comments about this patch?
-> 
-> Nope. It's applied.
-> 
-> 
-> Thanks.
-> 
->
-
-Great, thanks a lot.
- 
-> 
-> MyungJoo
-> 
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+SGkgR3VzdGF2bywKCkZvciAxIHRocm91Z2ggOSBtZXJnZWQuIEFuZCBJIGd1ZXNzIHlvdSBoYXZl
+IHRoZSByZXN0IHdlIGhhdmUgdG8gcmV2aWV3CmJ1dCB0aGlzIHBhdGNoIHNlcmllcyBkb2Vzbid0
+IGhhdmUgY29uc2lzdGVuY3kgb2YgcHJldmlvdXMsIHYyLgoKU28gcGxlYXNlLCBwb3N0IHRoZSBy
+ZXN0IGFnYWluIHJlLWJhc2luZyBvbiB0b3Agb2YgZXh5bm9zLWRybS1uZXh0LgoKVGhhbmtzLApJ
+bmtpIERhZQoKT24gMjAxNeuFhCAwN+yblCAzMOydvCAwNToxMSwgR3VzdGF2byBQYWRvdmFuIHdy
+b3RlOgo+IEhpIElua2ksCj4gCj4gQW55IGNvbW1lbnRzIGFib3V0IHRoaXMgc2VyaWVzPwo+IAo+
+IFRoYW5rcywKPiAJCj4gCUd1c3Rhdm8KPiAKPiAyMDE1LTA3LTE2IEd1c3Rhdm8gUGFkb3ZhbiA8
+Z3VzdGF2b0BwYWRvdmFuLm9yZz46Cj4gCj4+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2
+by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPj4KPj4gSW5zdGVhZCBvZiBnaXZpbmcgLTEgdG8g
+YXMgYXJnIHRvICBkcm1fc2VuZF92YmxhbmtfZXZlbnQoKSBwYXNzIHRoZQo+PiBjb3JyZWN0IHBp
+cGUgbnVtYmVyIHRvIGl0Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1
+c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+IFJldmlld2VkLWJ5OiBKb29ueW91bmcg
+U2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDIgKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
+c2VydGlvbigrKSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMKPj4gaW5kZXggNjQ0YjRiNy4uMjJiOWNhMCAxMDA2NDQKPj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+PiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+IEBAIC0yMDMsNyArMjAzLDcgQEAg
+dm9pZCBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKHN0cnVjdCBkcm1fZGV2aWNlICpk
+ZXYsIGludCBwaXBlKQo+PiAgCXNwaW5fbG9ja19pcnFzYXZlKCZkZXYtPmV2ZW50X2xvY2ssIGZs
+YWdzKTsKPj4gIAlpZiAoZXh5bm9zX2NydGMtPmV2ZW50KSB7Cj4+ICAKPj4gLQkJZHJtX3NlbmRf
+dmJsYW5rX2V2ZW50KGRldiwgLTEsIGV4eW5vc19jcnRjLT5ldmVudCk7Cj4+ICsJCWRybV9zZW5k
+X3ZibGFua19ldmVudChkZXYsIHBpcGUsIGV4eW5vc19jcnRjLT5ldmVudCk7Cj4+ICAJCWRybV92
+YmxhbmtfcHV0KGRldiwgcGlwZSk7Cj4+ICAJCXdha2VfdXAoJmV4eW5vc19jcnRjLT5wZW5kaW5n
+X2ZsaXBfcXVldWUpOwo+PiAgCj4+IC0tIAo+PiAyLjEuMAo+Pgo+IAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
