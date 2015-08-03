@@ -1,71 +1,61 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v3 3/5] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4x12
-Date: Mon, 03 Aug 2015 17:57:36 +0200
-Message-ID: <1560319.pWyQuLxb1l@amdc1976>
+From: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
+Subject: Re: [PATCH v3 5/5] cpufreq: remove no longer needed
+ CPU_FREQ_BOOST_SW config option
+Date: Mon, 3 Aug 2015 17:12:03 +0000
+Message-ID: <1438621775.17718.22.camel@spandruv-DESK3.jf.intel.com>
 References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
- <2347616.SxxJmTVssu@amdc1976> <20150803155041.GE21529@linux>
+	 <1438368557-2352-6-git-send-email-b.zolnierkie@samsung.com>
+	 <20150801111537.GH899@linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54201 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753514AbbHCP6c (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Aug 2015 11:58:32 -0400
-In-reply-to: <20150803155041.GE21529@linux>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150801111537.GH899@linux>
+Content-Language: en-US
+Content-ID: <D7F6D62146BE8B4A8330BF97ECD48FD4@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+Cc: "heiko@sntech.de" <heiko@sntech.de>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "javier@osg.samsung.com" <javier@osg.samsung.com>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene@kernel.org" <kgene@kernel.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 
-On Monday, August 03, 2015 09:20:41 PM Viresh Kumar wrote:
-> On 03-08-15, 15:55, Bartlomiej Zolnierkiewicz wrote:
-> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> > index 81064cd..491914c 100644
-> > --- a/arch/arm/mach-exynos/Kconfig
-> > +++ b/arch/arm/mach-exynos/Kconfig
-> > @@ -25,6 +25,8 @@ menuconfig ARCH_EXYNOS
-> >  	select S5P_DEV_MFC
-> >  	select SRAM
-> >  	select MFD_SYSCON
-> > +	select THERMAL
-> > +	select EXYNOS_THERMAL
-> 
-> Why do you need to select both of them?
-
-Because otherwise you can disable the whole THERMAL subsystem support
-(effectively disabling EXYNOS_THERMAL in the process).
-
-This is the same way in which ARCH_EXYNOS handles PINCTRL_EXYNOS
-support currently (it also selects PINCTRL subsystem).
-
-> >  	help
-> >  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
-> >  
-> > diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> > index 77ac021..1c47aee 100644
-> > --- a/arch/arm/mach-exynos/exynos.c
-> > +++ b/arch/arm/mach-exynos/exynos.c
-> > @@ -227,6 +227,8 @@ static void __init exynos_init_irq(void)
-> >  static const struct of_device_id exynos_cpufreq_matches[] = {
-> >  	{ .compatible = "samsung,exynos3250", .data = "cpufreq-dt" },
-> >  	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
-> > +	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
-> > +	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
-> >  	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
-> >  	{ /* sentinel */ }
-> >  };
-> 
-> Otherwise looks fine:
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Thanks!
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+T24gU2F0LCAyMDE1LTA4LTAxIGF0IDE2OjQ1ICswNTMwLCBWaXJlc2ggS3VtYXIgd3JvdGU6DQo+
+IE9uIDMxLTA3LTE1LCAyMDo0OSwgQmFydGxvbWllaiBab2xuaWVya2lld2ljeiB3cm90ZToNCj4g
+PiBSZW1vdmUgbm8gbG9uZ2VyIG5lZWRlZCBDUFVfRlJFUV9CT09TVF9TVyBjb25maWcgb3B0aW9u
+Lg0KPiA+IA0KPiA+IEFzIGEgcmVzdWx0IHNjYWxpbmdfYm9vc3RfZnJlcXMgc3lzZnMgYXR0cmli
+dXRlIGlzIGF2YWlsYWJsZQ0KPiA+IHdoZW4gY3B1ZnJlcS1kdCBkcml2ZXIgaXMgdXNlZCBhbmQg
+Ym9vc3Qgc3VwcG9ydCBpcyBlbmFibGVkLg0KPiA+IA0KPiA+IENjOiBWaXJlc2ggS3VtYXIgPHZp
+cmVzaC5rdW1hckBsaW5hcm8ub3JnPg0KPiA+IENjOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFzLmFi
+QHNhbXN1bmcuY29tPg0KPiA+IENjOiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBv
+c2cuc2Ftc3VuZy5jb20+DQo+ID4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tp
+QHNhbXN1bmcuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJhcnRsb21pZWogWm9sbmllcmtpZXdp
+Y3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jcHVm
+cmVxL0tjb25maWcgICAgICB8IDQgLS0tLQ0KPiA+ICBkcml2ZXJzL2NwdWZyZXEvZnJlcV90YWJs
+ZS5jIHwgMiAtLQ0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDYgZGVsZXRpb25zKC0pDQo+ID4gDQo+
+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9LY29uZmlnIGIvZHJpdmVycy9jcHVmcmVx
+L0tjb25maWcNCj4gPiBpbmRleCBiZjZkNTk2Li5kZTAwYTUyIDEwMDY0NA0KPiA+IC0tLSBhL2Ry
+aXZlcnMvY3B1ZnJlcS9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9jcHVmcmVxL0tjb25maWcN
+Cj4gPiBAQCAtMjEsMTAgKzIxLDYgQEAgaWYgQ1BVX0ZSRVENCj4gPiAgY29uZmlnIENQVV9GUkVR
+X0dPVl9DT01NT04NCj4gPiAgCWJvb2wNCj4gPiAgDQo+ID4gLWNvbmZpZyBDUFVfRlJFUV9CT09T
+VF9TVw0KPiA+IC0JYm9vbA0KPiA+IC0JZGVwZW5kcyBvbiBUSEVSTUFMDQo+ID4gLQ0KPiA+ICBj
+b25maWcgQ1BVX0ZSRVFfU1RBVA0KPiA+ICAJdHJpc3RhdGUgIkNQVSBmcmVxdWVuY3kgdHJhbnNs
+YXRpb24gc3RhdGlzdGljcyINCj4gPiAgCWRlZmF1bHQgeQ0KPiA+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2NwdWZyZXEvZnJlcV90YWJsZS5jIGIvZHJpdmVycy9jcHVmcmVxL2ZyZXFfdGFibGUuYw0K
+PiA+IGluZGV4IGE4ZjFkYWYuLjRjNWRlNWIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jcHVm
+cmVxL2ZyZXFfdGFibGUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY3B1ZnJlcS9mcmVxX3RhYmxlLmMN
+Cj4gPiBAQCAtMjkzLDkgKzI5Myw3IEBAIEVYUE9SVF9TWU1CT0xfR1BMKGNwdWZyZXFfZnJlcV9h
+dHRyX3NjYWxpbmdfYm9vc3RfZnJlcXMpOw0KPiA+ICANCj4gPiAgc3RydWN0IGZyZXFfYXR0ciAq
+Y3B1ZnJlcV9nZW5lcmljX2F0dHJbXSA9IHsNCj4gPiAgCSZjcHVmcmVxX2ZyZXFfYXR0cl9zY2Fs
+aW5nX2F2YWlsYWJsZV9mcmVxcywNCj4gPiAtI2lmZGVmIENPTkZJR19DUFVfRlJFUV9CT09TVF9T
+Vw0KPiA+ICAJJmNwdWZyZXFfZnJlcV9hdHRyX3NjYWxpbmdfYm9vc3RfZnJlcXMsDQo+ID4gLSNl
+bmRpZg0KPiA+ICAJTlVMTCwNCj4gPiAgfTsNCj4gPiAgRVhQT1JUX1NZTUJPTF9HUEwoY3B1ZnJl
+cV9nZW5lcmljX2F0dHIpOw0KPiANCj4gU28sIHRoaXMgd2lsbCBzdGFydCBhcHBlYXJpbmcgZm9y
+IGFsbCBwbGF0Zm9ybXMgdGhhdCB1c2UgY3B1ZnJlcV9nZW5lcmljX2F0dHINCj4gYW5kIHRoYXQg
+bWF5IG5vdCBiZSB0aGUgcmlnaHQgdGhpbmcuIFdlIG1heSBvbmx5IHdhbnQgdG8gc2hvdyBib29z
+dCBmcmVxdWVuY2llcw0KPiBvbmx5IGlmIHRoZSBkcml2ZXIgc3VwcG9ydHMgaXQuDQpJIGFncmVl
+LiBBbHRob3VnaCBhY3BpLWNwdWZyZXEgb3IgSW50ZWwgUCBzdGF0ZSBkcml2ZXIgaXMgbm90IHVz
+aW5nDQpnZW5lcmljX2F0dHIsIGJ1dCB3ZSBoYXZlIGEgcGxhbiB0byBzaG93IGJvb3N0IGZyZXF1
+ZW5jaWVzIG9uIHBsYXRmb3JtcywNCndoZXJlIHdlIGhhdmUgc29tZSBjb250cm9sLiBTdXBwb3J0
+IG9mIGJvb3N0IG1vZGUgZG9lc24ndCBtZWFuIHRoYXQgd2UNCmNhbiBzZWxlY3QgdGhlIGJvb3N0
+IGZyZXF1ZW5jeSwgc28gaW4gdGhhdCBjYXNlIHdlIHdpbGwgYXZvaWQgc2hvd2luZw0KdGhlbS4N
+Cg0KVGhhbmtzLA0KU3Jpbml2YXMNCj4gDQo+IEBSYWZhZWw6IFdoYXQgZG8geW91IHNheT8NCj4g
+DQoNCg==
