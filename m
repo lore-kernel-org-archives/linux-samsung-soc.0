@@ -1,61 +1,159 @@
-From: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
-Subject: Re: [PATCH v3 5/5] cpufreq: remove no longer needed
- CPU_FREQ_BOOST_SW config option
-Date: Mon, 3 Aug 2015 17:12:03 +0000
-Message-ID: <1438621775.17718.22.camel@spandruv-DESK3.jf.intel.com>
-References: <1438368557-2352-1-git-send-email-b.zolnierkie@samsung.com>
-	 <1438368557-2352-6-git-send-email-b.zolnierkie@samsung.com>
-	 <20150801111537.GH899@linux>
+From: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] mfd: s2mps11: Add manual shutdown method for Odroid XU3
+Date: Tue, 4 Aug 2015 00:22:00 +0530
+Message-ID: <CANAwSgSSdiTWDhkeGgYtPzWXDJ8EpD6YN_W05W6GEyF4Y4AFng@mail.gmail.com>
+References: <1438605447-6836-1-git-send-email-k.kozlowski.k@gmail.com> <1438605447-6836-2-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150801111537.GH899@linux>
-Content-Language: en-US
-Content-ID: <D7F6D62146BE8B4A8330BF97ECD48FD4@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
-Cc: "heiko@sntech.de" <heiko@sntech.de>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "javier@osg.samsung.com" <javier@osg.samsung.com>, "linux.amoon@gmail.com" <linux.amoon@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene@kernel.org" <kgene@kernel.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1438605447-6836-2-git-send-email-k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU2F0LCAyMDE1LTA4LTAxIGF0IDE2OjQ1ICswNTMwLCBWaXJlc2ggS3VtYXIgd3JvdGU6DQo+
-IE9uIDMxLTA3LTE1LCAyMDo0OSwgQmFydGxvbWllaiBab2xuaWVya2lld2ljeiB3cm90ZToNCj4g
-PiBSZW1vdmUgbm8gbG9uZ2VyIG5lZWRlZCBDUFVfRlJFUV9CT09TVF9TVyBjb25maWcgb3B0aW9u
-Lg0KPiA+IA0KPiA+IEFzIGEgcmVzdWx0IHNjYWxpbmdfYm9vc3RfZnJlcXMgc3lzZnMgYXR0cmli
-dXRlIGlzIGF2YWlsYWJsZQ0KPiA+IHdoZW4gY3B1ZnJlcS1kdCBkcml2ZXIgaXMgdXNlZCBhbmQg
-Ym9vc3Qgc3VwcG9ydCBpcyBlbmFibGVkLg0KPiA+IA0KPiA+IENjOiBWaXJlc2ggS3VtYXIgPHZp
-cmVzaC5rdW1hckBsaW5hcm8ub3JnPg0KPiA+IENjOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFzLmFi
-QHNhbXN1bmcuY29tPg0KPiA+IENjOiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPGphdmllckBv
-c2cuc2Ftc3VuZy5jb20+DQo+ID4gQ2M6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tp
-QHNhbXN1bmcuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJhcnRsb21pZWogWm9sbmllcmtpZXdp
-Y3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jcHVm
-cmVxL0tjb25maWcgICAgICB8IDQgLS0tLQ0KPiA+ICBkcml2ZXJzL2NwdWZyZXEvZnJlcV90YWJs
-ZS5jIHwgMiAtLQ0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDYgZGVsZXRpb25zKC0pDQo+ID4gDQo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1ZnJlcS9LY29uZmlnIGIvZHJpdmVycy9jcHVmcmVx
-L0tjb25maWcNCj4gPiBpbmRleCBiZjZkNTk2Li5kZTAwYTUyIDEwMDY0NA0KPiA+IC0tLSBhL2Ry
-aXZlcnMvY3B1ZnJlcS9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9jcHVmcmVxL0tjb25maWcN
-Cj4gPiBAQCAtMjEsMTAgKzIxLDYgQEAgaWYgQ1BVX0ZSRVENCj4gPiAgY29uZmlnIENQVV9GUkVR
-X0dPVl9DT01NT04NCj4gPiAgCWJvb2wNCj4gPiAgDQo+ID4gLWNvbmZpZyBDUFVfRlJFUV9CT09T
-VF9TVw0KPiA+IC0JYm9vbA0KPiA+IC0JZGVwZW5kcyBvbiBUSEVSTUFMDQo+ID4gLQ0KPiA+ICBj
-b25maWcgQ1BVX0ZSRVFfU1RBVA0KPiA+ICAJdHJpc3RhdGUgIkNQVSBmcmVxdWVuY3kgdHJhbnNs
-YXRpb24gc3RhdGlzdGljcyINCj4gPiAgCWRlZmF1bHQgeQ0KPiA+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2NwdWZyZXEvZnJlcV90YWJsZS5jIGIvZHJpdmVycy9jcHVmcmVxL2ZyZXFfdGFibGUuYw0K
-PiA+IGluZGV4IGE4ZjFkYWYuLjRjNWRlNWIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jcHVm
-cmVxL2ZyZXFfdGFibGUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY3B1ZnJlcS9mcmVxX3RhYmxlLmMN
-Cj4gPiBAQCAtMjkzLDkgKzI5Myw3IEBAIEVYUE9SVF9TWU1CT0xfR1BMKGNwdWZyZXFfZnJlcV9h
-dHRyX3NjYWxpbmdfYm9vc3RfZnJlcXMpOw0KPiA+ICANCj4gPiAgc3RydWN0IGZyZXFfYXR0ciAq
-Y3B1ZnJlcV9nZW5lcmljX2F0dHJbXSA9IHsNCj4gPiAgCSZjcHVmcmVxX2ZyZXFfYXR0cl9zY2Fs
-aW5nX2F2YWlsYWJsZV9mcmVxcywNCj4gPiAtI2lmZGVmIENPTkZJR19DUFVfRlJFUV9CT09TVF9T
-Vw0KPiA+ICAJJmNwdWZyZXFfZnJlcV9hdHRyX3NjYWxpbmdfYm9vc3RfZnJlcXMsDQo+ID4gLSNl
-bmRpZg0KPiA+ICAJTlVMTCwNCj4gPiAgfTsNCj4gPiAgRVhQT1JUX1NZTUJPTF9HUEwoY3B1ZnJl
-cV9nZW5lcmljX2F0dHIpOw0KPiANCj4gU28sIHRoaXMgd2lsbCBzdGFydCBhcHBlYXJpbmcgZm9y
-IGFsbCBwbGF0Zm9ybXMgdGhhdCB1c2UgY3B1ZnJlcV9nZW5lcmljX2F0dHINCj4gYW5kIHRoYXQg
-bWF5IG5vdCBiZSB0aGUgcmlnaHQgdGhpbmcuIFdlIG1heSBvbmx5IHdhbnQgdG8gc2hvdyBib29z
-dCBmcmVxdWVuY2llcw0KPiBvbmx5IGlmIHRoZSBkcml2ZXIgc3VwcG9ydHMgaXQuDQpJIGFncmVl
-LiBBbHRob3VnaCBhY3BpLWNwdWZyZXEgb3IgSW50ZWwgUCBzdGF0ZSBkcml2ZXIgaXMgbm90IHVz
-aW5nDQpnZW5lcmljX2F0dHIsIGJ1dCB3ZSBoYXZlIGEgcGxhbiB0byBzaG93IGJvb3N0IGZyZXF1
-ZW5jaWVzIG9uIHBsYXRmb3JtcywNCndoZXJlIHdlIGhhdmUgc29tZSBjb250cm9sLiBTdXBwb3J0
-IG9mIGJvb3N0IG1vZGUgZG9lc24ndCBtZWFuIHRoYXQgd2UNCmNhbiBzZWxlY3QgdGhlIGJvb3N0
-IGZyZXF1ZW5jeSwgc28gaW4gdGhhdCBjYXNlIHdlIHdpbGwgYXZvaWQgc2hvd2luZw0KdGhlbS4N
-Cg0KVGhhbmtzLA0KU3Jpbml2YXMNCj4gDQo+IEBSYWZhZWw6IFdoYXQgZG8geW91IHNheT8NCj4g
-DQoNCg==
+Hi Krzysztof,
+
+On 3 August 2015 at 18:07, Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Odroid XU3 board (with S2MPS11 PMIC) the PWRHOLD bit in CTRL1
+> register must be manually set to 0 before initiating power off sequence.
+>
+> One of usual power down methods for Exynos based devices looks like:
+> 1. PWRHOLD pin of PMIC is connected to PSHOLD of Exynos.
+> 2. Exynos holds up this pin during system operation.
+> 3. ACOKB pin of PMIC is pulled up to VBATT and optionally to pin in
+>    other device.
+> 4. When PWRHOLD/PSHOLD goes low, the PMIC will turn off the power if
+>    ACOKB goes high.
+>
+> On Odroid XU3 family the difference is in (3) - the ACOKB is grounded.
+> This means that PMIC must manually set PWRHOLD field to low and then
+> wait for signal from Application Processor (the usual change in
+> PWRHOLD/PSHOLD pin will actually cut off the power).
+>
+> The patch adds respective binding allowing Odroid XU3 device to be
+> powered off.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Reported-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>
+> ---
+>
+> Patch is losely based on patch in Hardkernel repository [0] and previous
+> work of Anand Moon [1].
+>
+> [0] https://github.com/hardkernel/linux/commit/6897e62ba328bd1c8c095d918101863250cd73e7
+> [1] http://www.spinics.net/lists/linux-samsung-soc/msg45959.html
+> ---
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt |  4 +++
+>  drivers/mfd/sec-core.c                            | 31 +++++++++++++++++++++++
+>  include/linux/mfd/samsung/core.h                  |  2 ++
+>  include/linux/mfd/samsung/s2mps11.h               |  1 +
+>  4 files changed, 38 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> index 57a045016fca..90eaef393325 100644
+> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> @@ -15,6 +15,10 @@ Optional properties:
+>  - interrupt-parent: Specifies the phandle of the interrupt controller to which
+>    the interrupts from s2mps11 are delivered to.
+>  - interrupts: Interrupt specifiers for interrupt sources.
+> +- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
+> +  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
+> +  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
+> +  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
+>
+>  Optional nodes:
+>  - clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index d206a3e8fe87..a56ab2102a32 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -278,6 +278,8 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+>          * not parsed here.
+>          */
+>
+> +       pd->manual_poweroff = of_property_read_bool(dev->of_node,
+> +                                               "samsung,s2mps11-acokb-ground");
+>         return pd;
+>  }
+>  #else
+> @@ -440,6 +442,34 @@ static int sec_pmic_remove(struct i2c_client *i2c)
+>         return 0;
+>  }
+>
+> +static void sec_pmic_shutdown(struct i2c_client *i2c)
+> +{
+> +       struct sec_pmic_dev *sec_pmic = i2c_get_clientdata(i2c);
+> +       unsigned int reg, mask;
+> +
+> +       if (!sec_pmic->pdata->manual_poweroff)
+> +               return;
+> +
+> +       switch (sec_pmic->device_type) {
+> +       case S2MPS11X:
+> +               reg = S2MPS11_REG_CTRL1;
+> +               mask = S2MPS11_CTRL1_PWRHOLD_MASK;
+> +               break;
+> +       default:
+> +               /*
+> +                * Currently only one board with S2MPS11 needs this, so just
+> +                * ignore the rest.
+> +                */
+> +               dev_warn(sec_pmic->dev,
+> +                       "Unsupported device %lu for manual power off\n",
+> +                       sec_pmic->device_type);
+> +               return;
+> +       }
+> +
+> +       regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
+> +}
+> +
+> +
+>  #ifdef CONFIG_PM_SLEEP
+>  static int sec_pmic_suspend(struct device *dev)
+>  {
+> @@ -491,6 +521,7 @@ static struct i2c_driver sec_pmic_driver = {
+>         },
+>         .probe = sec_pmic_probe,
+>         .remove = sec_pmic_remove,
+> +       .shutdown = sec_pmic_shutdown,
+>         .id_table = sec_pmic_id,
+>  };
+>
+> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+> index 75115384f3fc..aa78957e092f 100644
+> --- a/include/linux/mfd/samsung/core.h
+> +++ b/include/linux/mfd/samsung/core.h
+> @@ -132,6 +132,8 @@ struct sec_platform_data {
+>         int                             buck2_init;
+>         int                             buck3_init;
+>         int                             buck4_init;
+> +       /* Whether or not manually set PWRHOLD to low during shutdown. */
+> +       bool                            manual_poweroff;
+>  };
+>
+>  /**
+> diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mfd/samsung/s2mps11.h
+> index 7981a9d77d3f..b288965e8101 100644
+> --- a/include/linux/mfd/samsung/s2mps11.h
+> +++ b/include/linux/mfd/samsung/s2mps11.h
+> @@ -179,6 +179,7 @@ enum s2mps11_regulators {
+>  #define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
+>  #define S2MPS11_RAMP_DELAY     25000           /* uV/us */
+>
+> +#define S2MPS11_CTRL1_PWRHOLD_MASK     BIT(4)
+>
+>  #define S2MPS11_BUCK2_RAMP_SHIFT       6
+>  #define S2MPS11_BUCK34_RAMP_SHIFT      4
+> --
+> 2.1.4
+>
+Thanks. Tested on Odroid-XU3 board.
+
+Tested-by: Anand Moon <linux.amoon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
