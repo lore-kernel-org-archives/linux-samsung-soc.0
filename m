@@ -1,52 +1,115 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 1/9] drm/exynos: pass the correct pipe number
-Date: Mon, 03 Aug 2015 17:11:37 +0900
-Message-ID: <55BF2239.6080000@samsung.com>
-References: <1437060219-32278-1-git-send-email-gustavo@padovan.org>
- <20150729201104.GA15429@joana>
+Subject: Re: [PATCH v2] drm/exynos: clear channels only when iommu is enabled
+Date: Mon, 03 Aug 2015 17:46:28 +0900
+Message-ID: <55BF2A64.9000108@samsung.com>
+References: <1438073462-32560-1-git-send-email-jy0922.shim@samsung.com>
+ <55BAC22B.4090605@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20150729201104.GA15429@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:48040 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751629AbbHCIqb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Aug 2015 04:46:31 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+ 64bit (built May  5 2014))
+ with ESMTP id <0NSI0237I0DH7J00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 03 Aug 2015 17:46:29 +0900 (KST)
+In-reply-to: <55BAC22B.4090605@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: sw0312.kim@samsung.com, m.szyprowski@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-SGkgR3VzdGF2bywKCkZvciAxIHRocm91Z2ggOSBtZXJnZWQuIEFuZCBJIGd1ZXNzIHlvdSBoYXZl
-IHRoZSByZXN0IHdlIGhhdmUgdG8gcmV2aWV3CmJ1dCB0aGlzIHBhdGNoIHNlcmllcyBkb2Vzbid0
-IGhhdmUgY29uc2lzdGVuY3kgb2YgcHJldmlvdXMsIHYyLgoKU28gcGxlYXNlLCBwb3N0IHRoZSBy
-ZXN0IGFnYWluIHJlLWJhc2luZyBvbiB0b3Agb2YgZXh5bm9zLWRybS1uZXh0LgoKVGhhbmtzLApJ
-bmtpIERhZQoKT24gMjAxNeuFhCAwN+yblCAzMOydvCAwNToxMSwgR3VzdGF2byBQYWRvdmFuIHdy
-b3RlOgo+IEhpIElua2ksCj4gCj4gQW55IGNvbW1lbnRzIGFib3V0IHRoaXMgc2VyaWVzPwo+IAo+
-IFRoYW5rcywKPiAJCj4gCUd1c3Rhdm8KPiAKPiAyMDE1LTA3LTE2IEd1c3Rhdm8gUGFkb3ZhbiA8
-Z3VzdGF2b0BwYWRvdmFuLm9yZz46Cj4gCj4+IEZyb206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2
-by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPj4KPj4gSW5zdGVhZCBvZiBnaXZpbmcgLTEgdG8g
-YXMgYXJnIHRvICBkcm1fc2VuZF92YmxhbmtfZXZlbnQoKSBwYXNzIHRoZQo+PiBjb3JyZWN0IHBp
-cGUgbnVtYmVyIHRvIGl0Lgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1
-c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4+IFJldmlld2VkLWJ5OiBKb29ueW91bmcg
-U2hpbSA8ankwOTIyLnNoaW1Ac2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDIgKy0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGlu
-c2VydGlvbigrKSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMKPj4gaW5kZXggNjQ0YjRiNy4uMjJiOWNhMCAxMDA2NDQKPj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+PiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+IEBAIC0yMDMsNyArMjAzLDcgQEAg
-dm9pZCBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKHN0cnVjdCBkcm1fZGV2aWNlICpk
-ZXYsIGludCBwaXBlKQo+PiAgCXNwaW5fbG9ja19pcnFzYXZlKCZkZXYtPmV2ZW50X2xvY2ssIGZs
-YWdzKTsKPj4gIAlpZiAoZXh5bm9zX2NydGMtPmV2ZW50KSB7Cj4+ICAKPj4gLQkJZHJtX3NlbmRf
-dmJsYW5rX2V2ZW50KGRldiwgLTEsIGV4eW5vc19jcnRjLT5ldmVudCk7Cj4+ICsJCWRybV9zZW5k
-X3ZibGFua19ldmVudChkZXYsIHBpcGUsIGV4eW5vc19jcnRjLT5ldmVudCk7Cj4+ICAJCWRybV92
-YmxhbmtfcHV0KGRldiwgcGlwZSk7Cj4+ICAJCXdha2VfdXAoJmV4eW5vc19jcnRjLT5wZW5kaW5n
-X2ZsaXBfcXVldWUpOwo+PiAgCj4+IC0tIAo+PiAyLjEuMAo+Pgo+IAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 2015=EB=85=84 07=EC=9B=94 31=EC=9D=BC 09:32, Krzysztof Kozlowski wro=
+te:
+> On 28.07.2015 17:51, Joonyoung Shim wrote:
+>> This is simplest solution about reported problem[1]. It's no problem=
+ to
+>> clear channel only when iommu is enabled, if we consider that we can=
+not
+>> recognize iommu errors when iommu is disabled and it have been valid
+>> until now. But this cannot be nice solution.
+>>
+>> [1] https://lkml.org/lkml/2015/7/21/404
+>>
+>> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>=20
+> I tested this patch on my Odroid XU3-Lite with hardkernel u-boot and =
+it
+> fixes the booting hang. Thanks!
+
+Thanks for the test.
+
+This patch fixes the booting hang issue but I'm not sure of this patch
+being able to resolve the issue clearly.
+
+In relation to this, I tried to resolve the issue using sub driver
+stuff, which makes a probe callback for fimd sub driver to be called
+after crtc and connector binding is completed.
+
+I guessed that with this, ACLK_200_DISP1 would be enabled by connector
+driver - mipi dsi or panel driver. However, the moment that the clock i=
+s
+enabled is at mode setting operation so the patch doesn't resolve the
+issue because the callback I added will be called before mode setting
+operation.
+
+So the solution we could try would be to make FIMD driver to enable
+relevant clock in case of Exynos5422 SoC. However, this way is also not
+clear to me because it is required for additional device tree binding.
+
+Anyway, I merged below patch so let's resolve this issue with more
+generic way later.
+
+P.s., I removed the patch which incurred the kernel hang issue from
+exynos-drm-fixes, and moved it to exynos-drm-next with below patch so
+now there must be no any problem with exynos-drm-fixes.
+
+Thanks,
+Inki Dae
+
+>=20
+> The test was not thorough - only booting and without any display outp=
+ut
+> (HDMI).
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+>> ---
+>> v2: add Reported-by.
+>>
+>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/=
+drm/exynos/exynos_drm_fimd.c
+>> index 8d362b9..337af02 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> @@ -956,7 +956,8 @@ static int fimd_bind(struct device *dev, struct =
+device *master, void *data)
+>>  	if (ctx->display)
+>>  		exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>> =20
+>> -	fimd_clear_channels(ctx->crtc);
+>> +	if (is_drm_iommu_supported(drm_dev))
+>> +		fimd_clear_channels(ctx->crtc);
+>> =20
+>>  	ret =3D drm_iommu_attach_device(drm_dev, dev);
+>>  	if (ret)
+>>
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
