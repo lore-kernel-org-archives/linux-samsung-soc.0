@@ -1,99 +1,123 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL 1/5] Samsung non-critical-fixes for v4.3
-Date: Tue, 04 Aug 2015 17:11:26 +0900
-Message-ID: <053301d0ce8d$293eda80$7bbc8f80$@kernel.org>
-References: <55C06995.2030600@kernel.org> <55C06C2D.2010804@samsung.com>
- <052201d0ce8a$aba37790$02ea66b0$@kernel.org> <55C0704E.7020907@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 09/11] drm/exynos: remove exynos_drm_create_enc_conn()
+Date: Tue, 04 Aug 2015 18:41:38 +0900
+Message-ID: <55C088D2.1090008@samsung.com>
+References: <1438628998-3435-1-git-send-email-gustavo@padovan.org>
+ <1438628998-3435-10-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37253 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755182AbbHDILm (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56849 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754495AbbHDJl4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Aug 2015 04:11:42 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	Tue, 4 Aug 2015 05:41:56 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
  64bit (built May  5 2014))
- with ESMTP id <0NSJ00S7STF3DH10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 04 Aug 2015 17:11:27 +0900 (KST)
-In-reply-to: <55C0704E.7020907@samsung.com>
-Content-language: ko
+ with ESMTP id <0NSJ01ETTXLE2A10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 04 Aug 2015 18:41:38 +0900 (KST)
+In-reply-to: <1438628998-3435-10-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Krzysztof Kozlowski wrote:
-> 
-> On 04.08.2015 16:53, Kukjin Kim wrote:
-> > Krzysztof Kozlowski wrote:
-> >>
-> >> On 04.08.2015 16:28, Kukjin Kim wrote:
-> >>> Hi Arnd, Olof, Kevin,
-> >>>
-> >>> Here is Samsung non-critical-fixes for v4.3.
-> >>> Please pull.
-> >>>
-> >>> Thanks,
-> >>> Kukjin
-> >>>
-> >>> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
-> >>>
-> >>>   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
-> >>>
-> >>> are available in the git repository at:
-> >>>
-> >>>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> >>> tags/samsung-non-critical-1
-> >>>
-> >>> for you to fetch changes up to 2cc6b813579415c4f627b08a043079bdc5b87a33:
-> >>>
-> >>>   ARM: EXYNOS: Use IOMEM_ERR_PTR when function returns iomem (2015-07-21
-> >>> 13:19:06 +0900)
-> >>>
-> >>> ----------------------------------------------------------------
-> >>> Samsung non-critical fixes for v4.3
-> >>>
-> >>> - fix sparse warning for returning iomem
-> >>> - fix clock-frequency of display timing0 for exynos3250-rinato
-> >>
-> > Hi,
-> >
-Hi,
+On 2015=EB=85=84 08=EC=9B=94 04=EC=9D=BC 04:09, Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>=20
+> This functions was just hiding the encoder and connector creation in
+> a way that was less clean than if we get rid of it. For example,
+> exynos_encoder ops had .create_connector() defined only because we we=
+re
+> handing off the encoder and connector creation to
+> exynos_drm_create_enc_conn(). Without this function we can directly c=
+all
+> the create_connector function internally in the code, without the nee=
+d of
+> any vtable access.
+>=20
+> It also does some refactoring in the code like creating a bind functi=
+on
+> for dpi devices.
+>=20
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c  |  3 +--
+>  drivers/gpu/drm/exynos/exynos_dp_core.c     | 20 ++++++++++++++++---
+>  drivers/gpu/drm/exynos/exynos_drm_core.c    | 30 -------------------=
+----------
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c     | 26 +++++++++++++++++++=
+++++--
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h     | 12 ++++++------
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 20 ++++++++++++-------
+>  drivers/gpu/drm/exynos/exynos_drm_encoder.c | 11 +++++++----
+>  drivers/gpu/drm/exynos/exynos_drm_encoder.h |  4 +++-
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  3 +--
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c    | 20 ++++++++++---------
+>  drivers/gpu/drm/exynos/exynos_hdmi.c        | 21 +++++++++++++++++--=
+-
+>  11 files changed, 101 insertions(+), 69 deletions(-)
+>=20
 
-> >> One more set, which we agreed for pushing to v4.2, is missing:
-> >> 1. cpufreq: exynos: Fix for memory leak in case SOC name does not match
-> >
-> > As you can see in ml, I've sent it to Rafael because it would be handled in
-> > cpufreq tree not samsung tree/arm-soc tree.
-> >
-> >> 2. video: fbdev: s3c-fb: Constify platform_device_id (this can actually
-> >
-> > Same as above, this would be handled in fb tree? Can you please send it?
-> 
-> This was on LKML for 3 months (including a resend). As this is S3C frame
-> buffer I think this can go via samsung-soc tree, since fb guys did not
-> picked it.
-> 
-Oh, OK. Let me look at its status again. Thanks.
+[-- SNIP --]
 
-> On list of patches few more are also missing:
-> 1. cpufreq: exynos: remove Exynos5250 specific cpufreq driver support
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/e=
+xynos/exynos_hdmi.c
+> index 11bac50..f72ceeb 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -44,6 +44,7 @@
+> =20
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_crtc.h"
+> +#include "exynos_drm_encoder.h"
+>  #include "exynos_mixer.h"
+> =20
+>  #include <linux/gpio.h>
+> @@ -1783,7 +1784,6 @@ static void hdmi_disable(struct exynos_drm_enco=
+der *encoder)
+>  }
+> =20
+>  static struct exynos_drm_encoder_ops hdmi_encoder_ops =3D {
+> -	.create_connector =3D hdmi_create_connector,
+>  	.mode_fixup	=3D hdmi_mode_fixup,
+>  	.mode_set	=3D hdmi_mode_set,
+>  	.enable		=3D hdmi_enable,
+> @@ -1917,11 +1917,26 @@ static int hdmi_bind(struct device *dev, stru=
+ct device *master, void *data)
+>  {
+>  	struct drm_device *drm_dev =3D data;
+>  	struct hdmi_context *hdata =3D dev_get_drvdata(dev);
+> +	struct exynos_drm_encoder *exynos_encoder =3D &hdata->encoder;
+> +	int ret;
+> =20
+>  	hdata->drm_dev =3D drm_dev;
+> =20
+> -	return exynos_drm_create_enc_conn(drm_dev, &hdata->encoder,
+> -					  EXYNOS_DISPLAY_TYPE_HDMI);
+> +	ret =3D exynos_drm_encoder_create(drm_dev, exynos_encoder,
+> +					EXYNOS_DISPLAY_TYPE_HDMI);
+> +	if (ret) {
+> +		DRM_ERROR("failed to create encoder\n");
+> +		return ret;
+> +	}
+> +
+> +	hdmi_create_connector(exynos_encoder);
 
-This is included in tags/samsung-driver...let me note in the pull-request to
-clarify.
+ret =3D hdmi_create_connector(exynos_encoder);
 
-> 2. clk: samsung: exynos5250: add cpu clock configuration data and
-> instantiate cpu clock
-
-Yeah, I'm aware of that and I need to sort it out soon.
-
-> 3. defconfig changes (separate pull request?)
-> 
-Yeah, I'm sorting out some other defconfig updates and it will be sent out soon.
-
-Thanks,
-Kukjin
+> +	if (ret) {
+> +		DRM_ERROR("failed to create connector ret =3D %d\n", ret);
+> +		drm_encoder_cleanup(&exynos_encoder->base);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+>  }
+> =20
+>  static void hdmi_unbind(struct device *dev, struct device *master, v=
+oid *data)
+>=20
