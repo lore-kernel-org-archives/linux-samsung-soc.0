@@ -1,41 +1,56 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Subject: [PATCH 3/3] spi: s3c24xx: Convert spinlock to mutex
-Date: Tue,  4 Aug 2015 14:09:58 +0800
-Message-ID: <1438668598-6678-3-git-send-email-drinkcat@chromium.org>
-References: <1438668598-6678-1-git-send-email-drinkcat@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438668598-6678-1-git-send-email-drinkcat@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL 1/5] Samsung non-critical-fixes for v4.3
+Date: Tue, 04 Aug 2015 16:28:21 +0900
+Message-ID: <55C06995.2030600@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:36651 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755087AbbHDH2e (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Aug 2015 03:28:34 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-bitbang->lock is now a mutex: replace spinlock function calls
-by mutex functions.
+Hi Arnd, Olof, Kevin,
 
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
----
- drivers/spi/spi-s3c24xx.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Here is Samsung non-critical-fixes for v4.3.
+Please pull.
 
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index f36bc32..b1d03e5 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -198,12 +198,11 @@ static int s3c24xx_spi_setup(struct spi_device *spi)
- 	if (ret)
- 		return ret;
- 
--	spin_lock(&hw->bitbang.lock);
--	if (!hw->bitbang.busy) {
-+	if (mutex_trylock(&hw->bitbang.lock)) {
- 		hw->bitbang.chipselect(spi, BITBANG_CS_INACTIVE);
- 		/* need to ndelay for 0.5 clocktick ? */
-+		mutex_unlock(&hw->bitbang.lock);
- 	}
--	spin_unlock(&hw->bitbang.lock);
- 
- 	return 0;
- }
--- 
-2.5.0.rc2.392.g76e840b
+Thanks,
+Kukjin
+
+The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+
+  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-non-critical-1
+
+for you to fetch changes up to 2cc6b813579415c4f627b08a043079bdc5b87a33:
+
+  ARM: EXYNOS: Use IOMEM_ERR_PTR when function returns iomem (2015-07-21
+13:19:06 +0900)
+
+----------------------------------------------------------------
+Samsung non-critical fixes for v4.3
+
+- fix sparse warning for returning iomem
+- fix clock-frequency of display timing0 for exynos3250-rinato
+
+----------------------------------------------------------------
+Hyungwon Hwang (1):
+      ARM: dts: fix clock-frequency of display timing0 for exynos3250-rinato
+
+Krzysztof Kozlowski (1):
+      ARM: EXYNOS: Use IOMEM_ERR_PTR when function returns iomem
+
+ arch/arm/boot/dts/exynos3250-rinato.dts | 2 +-
+ arch/arm/mach-exynos/platsmp.c          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
