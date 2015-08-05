@@ -1,54 +1,67 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 06/11] drm/exynos: remove extra call to hdmi_commit()
-Date: Wed,  5 Aug 2015 20:24:17 -0300
-Message-ID: <1438817060-22164-7-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 08/11] drm/exynos: remove exynos_encoder's .commit() op
+Date: Wed,  5 Aug 2015 20:24:19 -0300
+Message-ID: <1438817060-22164-9-git-send-email-gustavo@padovan.org>
 References: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f180.google.com ([209.85.160.180]:34338 "EHLO
+	mail-yk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752784AbbHEXYt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Aug 2015 19:24:49 -0400
+Received: by ykax123 with SMTP id x123so49203563yka.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Aug 2015 16:24:48 -0700 (PDT)
 In-Reply-To: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-aGRtaV9jb21taXQoKSB3YXMgZ2V0dGluZyBjYWxsZWQgdHdpY2UgYnkgZXh5bm9zIGVuY29kZXIg
-Y29yZSwgb25jZSBpbnNpZGUKdGhlIC5lbmFibGUoKSBjYWxsIGFuZCBhbm90aGVyIHRpbWUgYnkg
-LmNvbW1pdCgpIGl0c2VsZi4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2
-by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19oZG1pLmMgfCAxMyArLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
-b24oKyksIDEyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpp
-bmRleCAxYWVkN2VhLi4xMWJhYzUwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19oZG1pLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-CkBAIC0xNzExLDE2ICsxNzExLDYgQEAgc3RhdGljIHZvaWQgaGRtaV9tb2RlX3NldChzdHJ1Y3Qg
-ZXh5bm9zX2RybV9lbmNvZGVyICplbmNvZGVyLAogCWhkYXRhLT5jZWFfdmlkZW9faWQgPSBkcm1f
-bWF0Y2hfY2VhX21vZGUobW9kZSk7CiB9CiAKLXN0YXRpYyB2b2lkIGhkbWlfY29tbWl0KHN0cnVj
-dCBleHlub3NfZHJtX2VuY29kZXIgKmVuY29kZXIpCi17Ci0Jc3RydWN0IGhkbWlfY29udGV4dCAq
-aGRhdGEgPSBlbmNvZGVyX3RvX2hkbWkoZW5jb2Rlcik7Ci0KLQlpZiAoIWhkYXRhLT5wb3dlcmVk
-KQotCQlyZXR1cm47Ci0KLQloZG1pX2NvbmZfYXBwbHkoaGRhdGEpOwotfQotCiBzdGF0aWMgdm9p
-ZCBoZG1pX2VuYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyICplbmNvZGVyKQogewogCXN0
-cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhID0gZW5jb2Rlcl90b19oZG1pKGVuY29kZXIpOwpAQCAt
-MTc0NCw3ICsxNzM0LDcgQEAgc3RhdGljIHZvaWQgaGRtaV9lbmFibGUoc3RydWN0IGV4eW5vc19k
-cm1fZW5jb2RlciAqZW5jb2RlcikKIAljbGtfcHJlcGFyZV9lbmFibGUocmVzLT5zY2xrX2hkbWkp
-OwogCiAJaGRtaXBoeV9wb3dlcm9uKGhkYXRhKTsKLQloZG1pX2NvbW1pdChlbmNvZGVyKTsKKwlo
-ZG1pX2NvbmZfYXBwbHkoaGRhdGEpOwogfQogCiBzdGF0aWMgdm9pZCBoZG1pX2Rpc2FibGUoc3Ry
-dWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZW5jb2RlcikKQEAgLTE3OTgsNyArMTc4OCw2IEBAIHN0
-YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9lbmNvZGVyX29wcyBoZG1pX2VuY29kZXJfb3BzID0gewog
-CS5tb2RlX3NldAk9IGhkbWlfbW9kZV9zZXQsCiAJLmVuYWJsZQkJPSBoZG1pX2VuYWJsZSwKIAku
-ZGlzYWJsZQk9IGhkbWlfZGlzYWJsZSwKLQkuY29tbWl0CQk9IGhkbWlfY29tbWl0LAogfTsKIAog
-c3RhdGljIHZvaWQgaGRtaV9ob3RwbHVnX3dvcmtfZnVuYyhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndv
-cmspCi0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+.commit() is not used anymore, Exynos encoders now follow the
+.enable()/.disable() semantics from drm atomic core, so remove this
+callback.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     | 2 --
+ drivers/gpu/drm/exynos/exynos_drm_encoder.c | 3 ---
+ 2 files changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 4931193..76ed6a1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -87,7 +87,6 @@ struct exynos_drm_plane {
+  *	      would be called by encoder->mode_set().
+  * @enable: display device on.
+  * @disable: display device off.
+- * @commit: apply changes to hw
+  */
+ struct exynos_drm_encoder;
+ struct exynos_drm_encoder_ops {
+@@ -100,7 +99,6 @@ struct exynos_drm_encoder_ops {
+ 				struct drm_display_mode *mode);
+ 	void (*enable)(struct exynos_drm_encoder *encoder);
+ 	void (*disable)(struct exynos_drm_encoder *encoder);
+-	void (*commit)(struct exynos_drm_encoder *encoder);
+ };
+ 
+ /*
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_encoder.c b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+index b9a1c93..ce7b97e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_encoder.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_encoder.c
+@@ -56,9 +56,6 @@ static void exynos_drm_encoder_enable(struct drm_encoder *encoder)
+ 
+ 	if (exynos_encoder->ops->enable)
+ 		exynos_encoder->ops->enable(exynos_encoder);
+-
+-	if (exynos_encoder->ops->commit)
+-		exynos_encoder->ops->commit(exynos_encoder);
+ }
+ 
+ static void exynos_drm_encoder_disable(struct drm_encoder *encoder)
+-- 
+2.1.0
