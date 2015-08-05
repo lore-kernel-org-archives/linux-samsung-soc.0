@@ -1,67 +1,61 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 07/11] drm/exynos: remove extra call to exynos_dp_commit()
-Date: Wed,  5 Aug 2015 20:24:18 -0300
-Message-ID: <1438817060-22164-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 04/11] drm/exynos: simplify calculation of possible CRTCs
+Date: Wed,  5 Aug 2015 20:24:15 -0300
+Message-ID: <1438817060-22164-5-git-send-email-gustavo@padovan.org>
 References: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f169.google.com ([209.85.160.169]:33258 "EHLO
-	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753093AbbHEXYr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Aug 2015 19:24:47 -0400
-Received: by ykoo205 with SMTP id o205so49047563yko.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Aug 2015 16:24:46 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-exynos_dp_commit() was getting called twice by exynos encoder core, once
-inside the .enable() call and another time by .commit() itself.
-
-The remove of the second call caused the wake of a bug, the operations
-orders inside exynos_dp_commit was wrong and we had to move
-exynos_dp_start_video() to be the last operation in there.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_dp_core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 002a233..6d9d115 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -795,9 +795,6 @@ static int exynos_dp_config_video(struct exynos_dp_device *dp)
- 	/* Configure video slave mode */
- 	exynos_dp_enable_video_master(dp, 0);
- 
--	/* Enable video */
--	exynos_dp_start_video(dp);
--
- 	timeout_loop = 0;
- 
- 	for (;;) {
-@@ -938,6 +935,9 @@ static void exynos_dp_commit(struct exynos_drm_encoder *encoder)
- 		if (drm_panel_enable(dp->panel))
- 			DRM_ERROR("failed to enable the panel\n");
- 	}
-+
-+	/* Enable video */
-+	exynos_dp_start_video(dp);
- }
- 
- static enum drm_connector_status exynos_dp_detect(
-@@ -1110,7 +1110,6 @@ static struct exynos_drm_encoder_ops exynos_dp_encoder_ops = {
- 	.create_connector = exynos_dp_create_connector,
- 	.enable = exynos_dp_enable,
- 	.disable = exynos_dp_disable,
--	.commit = exynos_dp_commit,
- };
- 
- static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
--- 
-2.1.0
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+QWxsIENSVENzIGNhbiBvbmx5IGJlIExDRCwgSERNSSBvciBWSURJLCBzbyBiYXNpY2FsbHkgYWxs
+IENSVENzIHdpbGwgYmUgYQpwb3NzaWJsZSBDUlRDcy4gVGhpcyBwYXRjaCByZW1vdmVzIGFuIGV4
+dHJhIGZ1bmN0aW9uIHdpdGggc3dpdGNoIHRoYXQgd2FzCm9ubHkgY2hlY2tpbmcgaWYgdGhlIENS
+VEMgdHlwZSB3YXMgb25lIG9mIHRob3NlIHRocmVlIGFib3ZlLgoKU2lnbmVkLW9mZi1ieTogR3Vz
+dGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMgfCAyOSArKysrKy0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMjQgZGVs
+ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2VuY29kZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9lbmNvZGVyLmMK
+aW5kZXggMGFhNGE1OC4uN2JhM2EyZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2VuY29kZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZW5jb2Rlci5jCkBAIC0xMDUsMzYgKzEwNSwxNyBAQCBzdGF0aWMgc3RydWN0IGRybV9l
+bmNvZGVyX2Z1bmNzIGV4eW5vc19lbmNvZGVyX2Z1bmNzID0gewogCS5kZXN0cm95ID0gZXh5bm9z
+X2RybV9lbmNvZGVyX2Rlc3Ryb3ksCiB9OwogCi1zdGF0aWMgdW5zaWduZWQgaW50IGV4eW5vc19k
+cm1fZW5jb2Rlcl9jbG9uZXMoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQordm9pZCBleHlu
+b3NfZHJtX2VuY29kZXJfc2V0dXAoc3RydWN0IGRybV9kZXZpY2UgKmRldikKIHsKLQlzdHJ1Y3Qg
+ZHJtX2VuY29kZXIgKmNsb25lOwotCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBlbmNvZGVyLT5k
+ZXY7Ci0Jc3RydWN0IGV4eW5vc19kcm1fZW5jb2RlciAqZXh5bm9zX2VuY29kZXIgPSB0b19leHlu
+b3NfZW5jb2RlcihlbmNvZGVyKTsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5
+ID0gZXh5bm9zX2VuY29kZXItPmRpc3BsYXk7CisJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVy
+OwogCXVuc2lnbmVkIGludCBjbG9uZV9tYXNrID0gMDsKIAlpbnQgY250ID0gMDsKIAotCWxpc3Rf
+Zm9yX2VhY2hfZW50cnkoY2xvbmUsICZkZXYtPm1vZGVfY29uZmlnLmVuY29kZXJfbGlzdCwgaGVh
+ZCkgewotCQlzd2l0Y2ggKGRpc3BsYXktPnR5cGUpIHsKLQkJY2FzZSBFWFlOT1NfRElTUExBWV9U
+WVBFX0xDRDoKLQkJY2FzZSBFWFlOT1NfRElTUExBWV9UWVBFX0hETUk6Ci0JCWNhc2UgRVhZTk9T
+X0RJU1BMQVlfVFlQRV9WSURJOgotCQkJY2xvbmVfbWFzayB8PSAoMSA8PCAoY250KyspKTsKLQkJ
+CWJyZWFrOwotCQlkZWZhdWx0OgotCQkJY29udGludWU7Ci0JCX0KLQl9Ci0KLQlyZXR1cm4gY2xv
+bmVfbWFzazsKLX0KLQotdm9pZCBleHlub3NfZHJtX2VuY29kZXJfc2V0dXAoc3RydWN0IGRybV9k
+ZXZpY2UgKmRldikKLXsKLQlzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXI7CisJbGlzdF9mb3Jf
+ZWFjaF9lbnRyeShlbmNvZGVyLCAmZGV2LT5tb2RlX2NvbmZpZy5lbmNvZGVyX2xpc3QsIGhlYWQp
+CisJCWNsb25lX21hc2sgfD0gKDEgPDwgKGNudCsrKSk7CiAKIAlsaXN0X2Zvcl9lYWNoX2VudHJ5
+KGVuY29kZXIsICZkZXYtPm1vZGVfY29uZmlnLmVuY29kZXJfbGlzdCwgaGVhZCkKLQkJZW5jb2Rl
+ci0+cG9zc2libGVfY2xvbmVzID0gZXh5bm9zX2RybV9lbmNvZGVyX2Nsb25lcyhlbmNvZGVyKTsK
+KwkJZW5jb2Rlci0+cG9zc2libGVfY2xvbmVzID0gY2xvbmVfbWFzazsKIH0KIAogc3RydWN0IGRy
+bV9lbmNvZGVyICoKLS0gCjIuMS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
