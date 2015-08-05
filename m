@@ -1,86 +1,74 @@
-From: Nicolas Boichat <drinkcat@chromium.org>
-Subject: Re: [PATCH 1/3] spi: bitbang: Replace spinlock by mutex when calling chipselect
-Date: Wed, 5 Aug 2015 18:24:05 +0800
-Message-ID: <CANMq1KB2zxPPCbxh4K-REUgp-83s=MPcGRjz-p1fK1PQMzyLdw@mail.gmail.com>
-References: <1438668598-6678-1-git-send-email-drinkcat@chromium.org>
-	<20150804105957.GI20873@sirena.org.uk>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH 1/2] mfd: s2mps11: Add manual shutdown method for Odroid
+ XU3
+Date: Wed, 5 Aug 2015 12:53:20 +0200
+Message-ID: <55C1EB20.3040400@osg.samsung.com>
+References: <1438605447-6836-1-git-send-email-k.kozlowski.k@gmail.com>
+ <1438605447-6836-2-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:32844 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751218AbbHEKYG (ORCPT
+Received: from lists.s-osg.org ([54.187.51.154]:56109 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750980AbbHEKx2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Aug 2015 06:24:06 -0400
-Received: by obdeg2 with SMTP id eg2so28091311obd.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Aug 2015 03:24:05 -0700 (PDT)
-In-Reply-To: <20150804105957.GI20873@sirena.org.uk>
+	Wed, 5 Aug 2015 06:53:28 -0400
+In-Reply-To: <1438605447-6836-2-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: Anand Moon <linux.amoon@gmail.com>
 
-On Tue, Aug 4, 2015 at 6:59 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Aug 04, 2015 at 02:09:56PM +0800, Nicolas Boichat wrote:
-[snip]
->> Actually, I'm not sure if I understand the existing code: why are we not
->> waiting for busy to go down to 0, then call chipselect, instead of not calling
->> it at all if the bus happens to be busy when we setup the device? With the
->> current approach, it would be easy to just use an unconditional mutex_lock.
+Hello Krzysztof,
+
+On 08/03/2015 02:37 PM, Krzysztof Kozlowski wrote:
+> On Odroid XU3 board (with S2MPS11 PMIC) the PWRHOLD bit in CTRL1
+> register must be manually set to 0 before initiating power off sequence.
+> 
+> One of usual power down methods for Exynos based devices looks like:
+> 1. PWRHOLD pin of PMIC is connected to PSHOLD of Exynos.
+> 2. Exynos holds up this pin during system operation.
+> 3. ACOKB pin of PMIC is pulled up to VBATT and optionally to pin in
+>    other device.
+> 4. When PWRHOLD/PSHOLD goes low, the PMIC will turn off the power if
+>    ACOKB goes high.
+> 
+> On Odroid XU3 family the difference is in (3) - the ACOKB is grounded.
+> This means that PMIC must manually set PWRHOLD field to low and then
+> wait for signal from Application Processor (the usual change in
+> PWRHOLD/PSHOLD pin will actually cut off the power).
 >
-> We shouldn't be blocking waiting for the bus to become free, that's not
-> how the interface works.
 
-Noted.
-
->> Also, is it harmful to deactivate the newly setup device in spi_bitbang_setup,
->> even if the bus is busy with another device? chipselect should be independent
->> for each device (or is it not?). So I'm not clear why we need any locking at
->> all...
+Is nice to finally have an explanation about why this is needed.
+ 
+> The patch adds respective binding allowing Odroid XU3 device to be
+> powered off.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> Reported-by: Anand Moon <linux.amoon@gmail.com>
+> 
+> ---
+> 
+> Patch is losely based on patch in Hardkernel repository [0] and previous
+> work of Anand Moon [1].
+> 
+> [0] https://github.com/hardkernel/linux/commit/6897e62ba328bd1c8c095d918101863250cd73e7
+> [1] http://www.spinics.net/lists/linux-samsung-soc/msg45959.html
+> ---
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt |  4 +++
+>  drivers/mfd/sec-core.c                            | 31 +++++++++++++++++++++++
+>  include/linux/mfd/samsung/core.h                  |  2 ++
+>  include/linux/mfd/samsung/s2mps11.h               |  1 +
+>  4 files changed, 38 insertions(+)
 >
-> If you assert chip select on one device while another device is still
-> being interacted with then the new device will see the traffic for the
-> old device and become confused.
 
-Here in spi_bitbang_setup, we do:
-bitbang->chipselect(spi, BITBANG_CS_INACTIVE);
-That is, we make sure that the current device is _not_ selected.
+The patch looks good to me.
 
-Looking a bit more into this, the issue here is that some drivers use
-chipselect to chip select individual devices separately, while, on
-others, the above command unselects all devices (which is a bad idea
-if the bus is currently transferring data...). So, in short, it's
-probably better not to touch this code.
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
->> Anyway, this patch series does not change the existing behaviour, applies on
->> top of broonie-sound/for-next, and, along with the 2 follow-up patches, was
->> compile-tested on x86-64/arm (allyesconfig) and ppc44x (defconfig+SPI driver),
->> and runtime-tested on an arm platform.
->
-> I'm not seeing enough analysis in the commit log of what's being locked
-> and why - I don't fully understand what the busy stuff is for either
-> (not that I've looked at the code in detail just now) but I think that's
-> going to be the key thing here.
-
-Regarding deleting prepare/unprepare and moving the lock into transfer_one.
-
-spi.c:__spi_pump_messages, which calls these functions, does the following:
- - If no more messages need to be sent, call unprepare_transfer_hardware
- - If messages need to be sent:
-   + call prepare_transfer_hardware
-   + call prepare_message (NULL for bitbang)
-   + call transfer_one_message
-
-I don't think it makes a big difference if we set busy (or hold a
-mutex) in prepare/unprepare, or we just do it in transfer_one_message,
-since chipselect is only set in transfer_one_message, and is
-deselected at the end of the function anyway (in most cases, and if
-it's not, it will be selected again at the next transfer anyway).
-
-Anyway, the "safer" way to fix this would be to keep the
-prepare/unprepare functions, busy variable, and just protect it with a
-mutex instead of a spinlock...
-
-Thanks.
-
-Best,
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
