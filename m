@@ -1,86 +1,86 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [RFC PATCH v3 5/5] ARM: dts: add supports-idmac property
-Date: Wed, 5 Aug 2015 17:25:47 +0800
-Message-ID: <55C1D69B.4060308@rock-chips.com>
-References: <1438762614-22154-1-git-send-email-shawn.lin@rock-chips.com>
- <1438762730-22368-1-git-send-email-shawn.lin@rock-chips.com>
- <1438764734.3504.9.camel@synopsys.com>
+From: Nicolas Boichat <drinkcat@chromium.org>
+Subject: Re: [PATCH 1/3] spi: bitbang: Replace spinlock by mutex when calling chipselect
+Date: Wed, 5 Aug 2015 18:24:05 +0800
+Message-ID: <CANMq1KB2zxPPCbxh4K-REUgp-83s=MPcGRjz-p1fK1PQMzyLdw@mail.gmail.com>
+References: <1438668598-6678-1-git-send-email-drinkcat@chromium.org>
+	<20150804105957.GI20873@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-        format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1438764734.3504.9.camel@synopsys.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: shawn.lin@rock-chips.com, "dianders@chromium.org" <dianders@chromium.org>, "wangzhou.bry@gmail.com" <wangzhou.bry@gmail.com>, "tomeu.vizoso@collabora.com" <tomeu.vizoso@collabora.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "javier.martinez@collabora.co.uk" <javier.martinez@collabora.co.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "haokexin@gmail.com" <haokexin@gmail.com>, "stefan@agner.ch" <stefan@agner.ch>, "addy.ke@rock-chips.com" <addy.ke@rock-chips.com>, "galak@codeaurora.org" <galak@codeaurora.org>, "olof@lixom.net" <olof@lixom.net>, "long.wanglong@huawei.com" <long.wanglong@huawei.com>, "peter.griffin@linaro.org" <peter.griffin@linaro.org>, mark.rut
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:32844 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751218AbbHEKYG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Aug 2015 06:24:06 -0400
+Received: by obdeg2 with SMTP id eg2so28091311obd.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Aug 2015 03:24:05 -0700 (PDT)
+In-Reply-To: <20150804105957.GI20873@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-=E5=9C=A8 2015/8/5 16:52, Alexey Brodkin =E5=86=99=E9=81=93:
-> Hi Shawn,
+On Tue, Aug 4, 2015 at 6:59 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Aug 04, 2015 at 02:09:56PM +0800, Nicolas Boichat wrote:
+[snip]
+>> Actually, I'm not sure if I understand the existing code: why are we not
+>> waiting for busy to go down to 0, then call chipselect, instead of not calling
+>> it at all if the bus happens to be busy when we setup the device? With the
+>> current approach, it would be easy to just use an unconditional mutex_lock.
 >
-> On Wed, 2015-08-05 at 16:18 +0800, Shawn Lin wrote:
->> DesignWare MMC Controller's transfer mode should be decided
->> at runtime instead of compile-time. Add "supports-idmac" for
->> all platforms that use internal dma mode to enable this feature
->> at runtime.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->> ---
->>
->> Changes in v3: None
->> Changes in v2: None
->>
->>   arch/arm/boot/dts/exynos3250-monk.dts              | 1 +
->>   arch/arm/boot/dts/exynos3250-rinato.dts            | 1 +
->>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 1 +
->>   arch/arm/boot/dts/exynos4412-origen.dts            | 1 +
->>   arch/arm/boot/dts/exynos4412-trats2.dts            | 1 +
->>   arch/arm/boot/dts/exynos4x12.dtsi                  | 1 +
->>   arch/arm/boot/dts/exynos5250-arndale.dts           | 2 ++
->>   arch/arm/boot/dts/exynos5250-smdk5250.dts          | 2 ++
->>   arch/arm/boot/dts/exynos5250-snow.dts              | 3 +++
->>   arch/arm/boot/dts/exynos5250-spring.dts            | 2 ++
->>   arch/arm/boot/dts/exynos5260-xyref5260.dts         | 2 ++
->>   arch/arm/boot/dts/exynos5410-smdk5410.dts          | 2 ++
->>   arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 2 ++
->>   arch/arm/boot/dts/exynos5420-peach-pit.dts         | 3 +++
->>   arch/arm/boot/dts/exynos5420-smdk5420.dts          | 2 ++
->>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 ++
->>   arch/arm/boot/dts/exynos5800-peach-pi.dts          | 3 +++
->>   arch/arm/boot/dts/hisi-x5hd2.dtsi                  | 2 ++
->>   arch/arm/boot/dts/rk3288-evb.dtsi                  | 2 ++
->>   arch/arm/boot/dts/rk3288-firefly.dtsi              | 3 +++
->>   arch/arm/boot/dts/rk3288-popmetal.dts              | 2 ++
->>   arch/arm64/boot/dts/exynos/exynos7-espresso.dts    | 2 ++
->>   22 files changed, 42 insertions(+)
-> I'm wondering if you're going to care about other platforms
-> that use DW MMC?
->
-> Just grep for "snps,dw-mshc", "altr,socfpga-dw-mshc",
-> "img,pistachio-dw-mshc" and you'll see more dt* files to
-> be updated.
-   Thanks,  Alexey.
-   Yes,  I missed some ARC dt*  files just as Vineet told me. It will b=
-e=20
-fixed in v4.
-   Btw, I cannot find "img,pistachio-dw-mshc" in 4.2.0-rc3. And no more=
-=20
-"dw-mshc" or "dwmmc"
-   is found.
+> We shouldn't be blocking waiting for the bus to become free, that's not
+> how the interface works.
 
-> -Alexey
->
->
+Noted.
 
+>> Also, is it harmful to deactivate the newly setup device in spi_bitbang_setup,
+>> even if the bus is busy with another device? chipselect should be independent
+>> for each device (or is it not?). So I'm not clear why we need any locking at
+>> all...
+>
+> If you assert chip select on one device while another device is still
+> being interacted with then the new device will see the traffic for the
+> old device and become confused.
 
---=20
-Shawn Lin
+Here in spi_bitbang_setup, we do:
+bitbang->chipselect(spi, BITBANG_CS_INACTIVE);
+That is, we make sure that the current device is _not_ selected.
+
+Looking a bit more into this, the issue here is that some drivers use
+chipselect to chip select individual devices separately, while, on
+others, the above command unselects all devices (which is a bad idea
+if the bus is currently transferring data...). So, in short, it's
+probably better not to touch this code.
+
+>> Anyway, this patch series does not change the existing behaviour, applies on
+>> top of broonie-sound/for-next, and, along with the 2 follow-up patches, was
+>> compile-tested on x86-64/arm (allyesconfig) and ppc44x (defconfig+SPI driver),
+>> and runtime-tested on an arm platform.
+>
+> I'm not seeing enough analysis in the commit log of what's being locked
+> and why - I don't fully understand what the busy stuff is for either
+> (not that I've looked at the code in detail just now) but I think that's
+> going to be the key thing here.
+
+Regarding deleting prepare/unprepare and moving the lock into transfer_one.
+
+spi.c:__spi_pump_messages, which calls these functions, does the following:
+ - If no more messages need to be sent, call unprepare_transfer_hardware
+ - If messages need to be sent:
+   + call prepare_transfer_hardware
+   + call prepare_message (NULL for bitbang)
+   + call transfer_one_message
+
+I don't think it makes a big difference if we set busy (or hold a
+mutex) in prepare/unprepare, or we just do it in transfer_one_message,
+since chipselect is only set in transfer_one_message, and is
+deselected at the end of the function anyway (in most cases, and if
+it's not, it will be selected again at the next transfer anyway).
+
+Anyway, the "safer" way to fix this would be to keep the
+prepare/unprepare functions, busy variable, and just protect it with a
+mutex instead of a spinlock...
+
+Thanks.
+
+Best,
