@@ -1,61 +1,67 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2 02/11] drm/exynos: remove wrappers for phy_power_{on,off}
-Date: Wed,  5 Aug 2015 20:24:13 -0300
-Message-ID: <1438817060-22164-3-git-send-email-gustavo@padovan.org>
+Subject: [PATCH v2 07/11] drm/exynos: remove extra call to exynos_dp_commit()
+Date: Wed,  5 Aug 2015 20:24:18 -0300
+Message-ID: <1438817060-22164-8-git-send-email-gustavo@padovan.org>
 References: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:33258 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753093AbbHEXYr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Aug 2015 19:24:47 -0400
+Received: by ykoo205 with SMTP id o205so49047563yko.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Aug 2015 16:24:46 -0700 (PDT)
 In-Reply-To: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-cGh5X3Bvd2VyX29uKCkgYW5kIHBoeV9wb3dlcl9vZmYoKSBhbHJlYWR5IGNoZWNrcyBmb3IgTlVM
-TCBwb2ludGVyLgpUaGlzIHBhdGNoIHJlbW92ZXMgdGhlIHdyYXBwZXJzIGV4eW5vc19kcF9waHlf
-aW5pdCgpIGFuZApleHlub3NfZHBfcGh5X2V4aXQoKSBzaW5jZSB0aGUgb25seSB0aGluayB0aGV5
-IHdlcmUgZG9pbmcgd2FzIGEgY2hlY2sgZm9yCk5VTEwgcGh5LgoKU2lnbmVkLW9mZi1ieTogR3Vz
-dGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyB8IDE4ICsrKy0tLS0tLS0tLS0tLS0t
-LQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMTUgZGVsZXRpb25zKC0pCgpkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCmluZGV4IGIzYmYyMTAuLjU0ZjkxZTcg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYworKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKQEAgLTEwNTQsMTggKzEw
-NTQsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9jcmVhdGVfY29ubmVjdG9yKHN0cnVjdCBleHlu
-b3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksCiAJcmV0dXJuIHJldDsKIH0KIAotc3RhdGljIHZvaWQg
-ZXh5bm9zX2RwX3BoeV9pbml0KHN0cnVjdCBleHlub3NfZHBfZGV2aWNlICpkcCkKLXsKLQlpZiAo
-ZHAtPnBoeSkKLQkJcGh5X3Bvd2VyX29uKGRwLT5waHkpOwotfQotCi1zdGF0aWMgdm9pZCBleHlu
-b3NfZHBfcGh5X2V4aXQoc3RydWN0IGV4eW5vc19kcF9kZXZpY2UgKmRwKQotewotCWlmIChkcC0+
-cGh5KQotCQlwaHlfcG93ZXJfb2ZmKGRwLT5waHkpOwotfQotCiBzdGF0aWMgdm9pZCBleHlub3Nf
-ZHBfZW5hYmxlKHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXkpCiB7CiAJc3RydWN0
-IGV4eW5vc19kcF9kZXZpY2UgKmRwID0gZGlzcGxheV90b19kcChkaXNwbGF5KTsKQEAgLTEwODUs
-NyArMTA3Myw3IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19kcF9lbmFibGUoc3RydWN0IGV4eW5vc19k
-cm1fZGlzcGxheSAqZGlzcGxheSkKIAkJY3J0Yy0+b3BzLT5jbG9ja19lbmFibGUoZHBfdG9fY3J0
-YyhkcCksIHRydWUpOwogCiAJY2xrX3ByZXBhcmVfZW5hYmxlKGRwLT5jbG9jayk7Ci0JZXh5bm9z
-X2RwX3BoeV9pbml0KGRwKTsKKwlwaHlfcG93ZXJfb24oZHAtPnBoeSk7CiAJZXh5bm9zX2RwX2lu
-aXRfZHAoZHApOwogCWVuYWJsZV9pcnEoZHAtPmlycSk7CiAJZXh5bm9zX2RwX2NvbW1pdCgmZHAt
-PmRpc3BsYXkpOwpAQCAtMTEwOCw3ICsxMDk2LDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RwX2Rp
-c2FibGUoc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkKIAogCWRpc2FibGVfaXJx
-KGRwLT5pcnEpOwogCWZsdXNoX3dvcmsoJmRwLT5ob3RwbHVnX3dvcmspOwotCWV4eW5vc19kcF9w
-aHlfZXhpdChkcCk7CisJcGh5X3Bvd2VyX29mZihkcC0+cGh5KTsKIAljbGtfZGlzYWJsZV91bnBy
-ZXBhcmUoZHAtPmNsb2NrKTsKIAogCWlmIChjcnRjLT5vcHMtPmNsb2NrX2VuYWJsZSkKQEAgLTEy
-ODEsNyArMTI2OSw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RwX2JpbmQoc3RydWN0IGRldmljZSAq
-ZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpCiAKIAlJTklUX1dPUksoJmRw
-LT5ob3RwbHVnX3dvcmssIGV4eW5vc19kcF9ob3RwbHVnKTsKIAotCWV4eW5vc19kcF9waHlfaW5p
-dChkcCk7CisJcGh5X3Bvd2VyX29uKGRwLT5waHkpOwogCiAJZXh5bm9zX2RwX2luaXRfZHAoZHAp
-OwogCi0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+exynos_dp_commit() was getting called twice by exynos encoder core, once
+inside the .enable() call and another time by .commit() itself.
+
+The remove of the second call caused the wake of a bug, the operations
+orders inside exynos_dp_commit was wrong and we had to move
+exynos_dp_start_video() to be the last operation in there.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_dp_core.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 002a233..6d9d115 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -795,9 +795,6 @@ static int exynos_dp_config_video(struct exynos_dp_device *dp)
+ 	/* Configure video slave mode */
+ 	exynos_dp_enable_video_master(dp, 0);
+ 
+-	/* Enable video */
+-	exynos_dp_start_video(dp);
+-
+ 	timeout_loop = 0;
+ 
+ 	for (;;) {
+@@ -938,6 +935,9 @@ static void exynos_dp_commit(struct exynos_drm_encoder *encoder)
+ 		if (drm_panel_enable(dp->panel))
+ 			DRM_ERROR("failed to enable the panel\n");
+ 	}
++
++	/* Enable video */
++	exynos_dp_start_video(dp);
+ }
+ 
+ static enum drm_connector_status exynos_dp_detect(
+@@ -1110,7 +1110,6 @@ static struct exynos_drm_encoder_ops exynos_dp_encoder_ops = {
+ 	.create_connector = exynos_dp_create_connector,
+ 	.enable = exynos_dp_enable,
+ 	.disable = exynos_dp_disable,
+-	.commit = exynos_dp_commit,
+ };
+ 
+ static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
+-- 
+2.1.0
