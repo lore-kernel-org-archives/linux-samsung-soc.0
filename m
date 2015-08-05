@@ -1,61 +1,31 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Fix power off method on
- exynos5422-odroidxu3
-Date: Wed, 5 Aug 2015 12:54:30 +0200
-Message-ID: <55C1EB66.4030706@osg.samsung.com>
-References: <1438605447-6836-1-git-send-email-k.kozlowski.k@gmail.com>
- <1438605447-6836-3-git-send-email-k.kozlowski.k@gmail.com>
+From: Thomas Pietrowski <thopiekar@gmail.com>
+Subject: Re: Feedback on hardware support for Odroid U3
+Date: Wed, 5 Aug 2015 15:07:53 +0200
+Message-ID: <CAE-5t2sRjsD=NFdfOdtu6t1o=tb4TGKnhxPa5+rEXaWXm3P6nw@mail.gmail.com>
+References: <CAE-5t2tKeYTjS_1qiQ4oAZS1g5yheA2G1g0CMHRaHdY3Z84NBw@mail.gmail.com>
+	<557BC91C.10007@gmail.com>
+	<16487700.5L20qaootX@home>
+	<557BFEAA.1090802@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:56114 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752627AbbHEKyg (ORCPT
+Received: from mail-yk0-f172.google.com ([209.85.160.172]:34643 "EHLO
+	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751390AbbHENHx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Aug 2015 06:54:36 -0400
-In-Reply-To: <1438605447-6836-3-git-send-email-k.kozlowski.k@gmail.com>
+	Wed, 5 Aug 2015 09:07:53 -0400
+Received: by ykax123 with SMTP id x123so34608753yka.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Aug 2015 06:07:53 -0700 (PDT)
+In-Reply-To: <557BFEAA.1090802@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: Anand Moon <linux.amoon@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Sorry for the long delay. Got now linux-stable 4.2.0-rc5 running here,
+but I still miss the fan support.
+Searched the web again for the patch and found this on LKML:
+https://lkml.org/lkml/2014/12/18/138
 
-On 08/03/2015 02:37 PM, Krzysztof Kozlowski wrote:
-> The Odroid XU3 family boards have ACOKB pin of PMIC grounded, instead of
-> pulled up as usual. This means that PMIC must manually set PWRHOLD field
-> in its CTRL1 register to low before initiating power down.
-> 
-> This fixes Odroid XU3 powering off:
-> [   25.966053] reboot: Power down
-> [   25.967679] Power down.
-> [   26.070174] Power down failed, please power off system manually.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-> Reported-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 1565667e6f69..48cecc8cf26e 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -159,6 +159,7 @@
->  		s2mps11,buck2-ramp-enable = <1>;
->  		s2mps11,buck3-ramp-enable = <1>;
->  		s2mps11,buck4-ramp-enable = <1>;
-> +		samsung,s2mps11-acokb-ground;
->  
->  		interrupt-parent = <&gpx0>;
->  		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> 
-
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Then looked at the "arm-soc" repository but found this patch nowhere.
+Are you planing to add this in future releases?
