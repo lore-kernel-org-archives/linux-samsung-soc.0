@@ -1,29 +1,61 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [RFC PATCH v4 3/9] mips: pistachio_defconfig: remove
- CONFIG_MMC_DW_IDMAC
-Date: Thu, 6 Aug 2015 15:17:36 +0200
-Message-ID: <20150806131736.GE7055@linux-mips.org>
-References: <1438843469-23807-1-git-send-email-shawn.lin@rock-chips.com>
- <1438843515-23935-1-git-send-email-shawn.lin@rock-chips.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH v2 00/11] drm/exynos: remove exynos_drm_display and
+ exynos_drm_encoder
+Date: Thu, 6 Aug 2015 10:27:41 -0300
+Message-ID: <20150806132741.GD8125@joana>
+References: <1438817060-22164-1-git-send-email-gustavo@padovan.org>
+ <55C34B30.4030904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eddie.linux-mips.org ([148.251.95.138]:42814 "EHLO
-	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752677AbbHFNSD (ORCPT
+Received: from mail-yk0-f173.google.com ([209.85.160.173]:35284 "EHLO
+	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbbHFN1p convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Aug 2015 09:18:03 -0400
+	Thu, 6 Aug 2015 09:27:45 -0400
+Received: by ykcq64 with SMTP id q64so57022227ykc.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Aug 2015 06:27:45 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1438843515-23935-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <55C34B30.4030904@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: jh80.chung@samsung.com, ulf.hansson@linaro.org, heiko@sntech.de, dianders@chromium.org, Vineet.Gupta1@synopsys.com, Wei Xu <xuwei5@hisilicon.com>, Joachim Eastwood <manabian@gmail.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jun Nie <jun.nie@linaro.org>, Govindraj Raja <govindraj.raja@imgtec.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, jy0922.shim@samsung.com, tjakobi@math.uni-bielefeld.de, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-On Thu, Aug 06, 2015 at 02:45:15PM +0800, Shawn Lin wrote:
+Hi Inki,
 
->  arch/mips/configs/pistachio_defconfig | 1 -
+2015-08-06 Inki Dae <inki.dae@samsung.com>:
 
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
+> On 2015=EB=85=84 08=EC=9B=94 06=EC=9D=BC 08:24, Gustavo Padovan wrote=
+:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >
+> > Hi,
+> >
+> > This patchset is another important step in the exynos clean up, it =
+removes
+> > two exynos internal structs in favor of wider use of struct drm_enc=
+oder.
+> >
+> > Structs exynos_drm_display and exynos_drm_encoder were doing exactl=
+y what
+> > struct drm_encoder does so remove them makes the code cleaner, easi=
+er
+> > to understand and less error prone.
+> >
+> > Please review,
+> >
+> >        Gustavo
+> >
+> > ---
+> > v2:  - check ret value of hdmi_create_connector()
+> >      - set dp->dpms_mode after enable/disable
+>=20
+> I don't see patch v2 10/11 and 11/11 in my mailbox. Did you miss them=
+?
 
-  Ralf
+Hmm, yeah. I've used 000* to send my patches, which excluded 10 and 11.
+I'll append them here.
+
+	Gustavo
