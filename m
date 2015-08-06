@@ -1,245 +1,342 @@
-From: Yakir Yang <ykk@rock-chips.com>
-Subject: [RFC PATCH 4/8] drm: rockchip/dp: add rockchip platform dp driver
-Date: Thu,  6 Aug 2015 09:19:38 -0500
-Message-ID: <1438870778-23847-1-git-send-email-ykk@rock-chips.com>
-References: <1438868947-22132-1-git-send-email-ykk@rock-chips.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [RFC PATCH 2/8] drm: exynos/dp: convert to drm bridge mode
+Date: Thu, 6 Aug 2015 23:19:35 +0900
+Message-ID: <000001d0d052$f44fa3a0$dceeeae0$@com>
+References: <1438868947-22132-1-git-send-email-ykk@rock-chips.com> <1438870041-23130-1-git-send-email-ykk@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1438868947-22132-1-git-send-email-ykk@rock-chips.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Heiko Stuebner <heiko@sntech.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Fabio Estevam <fabio.estevam@freescale.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Yakir Yang <ykk@rock-chips.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Thierry Reding <treding@nvidia.com>, dianders@google.com, linux-arm-kernel@lists.infradead.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, djkurtz@google.com, Andy Yan <andy.yan@rock-chips.com>
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:33450 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754478AbbHFOTw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Aug 2015 10:19:52 -0400
+In-Reply-To: <1438870041-23130-1-git-send-email-ykk@rock-chips.com>
+Content-Language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Yakir Yang' <ykk@rock-chips.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Fabio Estevam' <fabio.estevam@freescale.com>, 'Inki Dae' <inki.dae@samsung.com>
+Cc: djkurtz@google.com, dianders@google.com, 'Takashi Iwai' <tiwai@suse.de>, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Thierry Reding' <treding@nvidia.com>, 'Philipp Zabel' <p.zabel@pengutronix.de>, 'David Airlie' <airlied@linux.ie>, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Mark Yao' <mark.yao@rock-chips.com>, 'Andy Yan' <andy.yan@rock-chips.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 'Jing
 
-Um9ja2NoaXAgaGF2ZSB0aHJlZSBjbG9ja3MgZm9yIGRwIGNvbnRyb2xsZXIsIHdlIGxlYXZlIHBj
-bGtfZWRwCnRvIGFuYWxvZ2l4X2RwIGRyaXZlciBjb250cm9sLCBhbmQga2VlcCB0aGUgc2Nsa19l
-ZHBfMjRtIGFuZApzY2xrX2VkcCBpbiBwbGF0Zm9ybSBkcml2ZXIuCgpTaWduZWQtb2ZmLWJ5OiBZ
-YWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL0tjb25maWcgICAgICAgICAgICAgICAgfCAgMTAgKwogZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL01ha2VmaWxlICAgICAgICAgICAgICAgfCAgIDEgKwogZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMgfCA0MTkgKysrKysrKysrKysrKysrKysrKysrKysr
-CiAzIGZpbGVzIGNoYW5nZWQsIDQzMCBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL2FuYWxvZ2l4X2RwLXJvY2tjaGlwLmMKCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvS2NvbmZpZyBiL2RyaXZlcnMvZ3B1L2RybS9y
-b2NrY2hpcC9LY29uZmlnCmluZGV4IDM1MjE1ZjYuLjA5NmVkNzcgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9LY29uZmlnCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
-cC9LY29uZmlnCkBAIC0yNSwzICsyNSwxMyBAQCBjb25maWcgUk9DS0NISVBfRFdfSERNSQogCSAg
-Zm9yIHRoZSBTeW5vcHN5cyBEZXNpZ25XYXJlIEhETUkgZHJpdmVyLiBJZiB5b3Ugd2FudCB0bwog
-CSAgZW5hYmxlIEhETUkgb24gUkszMjg4IGJhc2VkIFNvQywgeW91IHNob3VsZCBzZWxldCB0aGlz
-CiAJICBvcHRpb24uCisKKworY29uZmlnIFJPQ0tDSElQX0FOQUxPR0lYX0RQCisgICAgICAgIHRy
-aXN0YXRlICJSb2NrY2hpcCBzcGVjaWZpYyBleHRlbnNpb25zIGZvciBBbmFsb2dpeCBEUCBkcml2
-ZXIiCisgICAgICAgIGRlcGVuZHMgb24gRFJNX1JPQ0tDSElQCisgICAgICAgIHNlbGVjdCBEUk1f
-QU5BTE9HSVhfRFAKKyAgICAgICAgaGVscAorCSAgVGhpcyBzZWxlY3RzIHN1cHBvcnQgZm9yIFJv
-Y2tjaGlwIFNvQyBzcGVjaWZpYyBleHRlbnNpb25zCisJICBmb3IgdGhlIEFuYWxvZ2l4IENvcmUg
-RFAgZHJpdmVyLiBJZiB5b3Ugd2FudCB0byBlbmFibGUgRFAKKwkgIG9uIFJLMzI4OCBiYXNlZCBT
-b0MsIHlvdSBzaG91bGQgc2VsZXQgdGhpcyBvcHRpb24uCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vcm9ja2NoaXAvTWFrZWZpbGUgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvTWFrZWZp
-bGUKaW5kZXggZjNkOGExOS4uOGFkMDFmYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Jv
-Y2tjaGlwL01ha2VmaWxlCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9NYWtlZmlsZQpA
-QCAtNiw1ICs2LDYgQEAgcm9ja2NoaXBkcm0teSA6PSByb2NrY2hpcF9kcm1fZHJ2Lm8gcm9ja2No
-aXBfZHJtX2ZiLm8gcm9ja2NoaXBfZHJtX2ZiZGV2Lm8gXAogCQlyb2NrY2hpcF9kcm1fZ2VtLm8K
-IAogb2JqLSQoQ09ORklHX1JPQ0tDSElQX0RXX0hETUkpICs9IGR3X2hkbWktcm9ja2NoaXAubwor
-b2JqLSQoQ09ORklHX1JPQ0tDSElQX0FOQUxPR0lYX0RQKSArPSBhbmFsb2dpeF9kcC1yb2NrY2hp
-cC5vCiAKIG9iai0kKENPTkZJR19EUk1fUk9DS0NISVApICs9IHJvY2tjaGlwZHJtLm8gcm9ja2No
-aXBfZHJtX3ZvcC5vCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9n
-aXhfZHAtcm9ja2NoaXAuYyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9hbmFsb2dpeF9kcC1y
-b2NrY2hpcC5jCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLjgwNDA0OGMKLS0t
-IC9kZXYvbnVsbAorKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvYW5hbG9naXhfZHAtcm9j
-a2NoaXAuYwpAQCAtMCwwICsxLDQxOSBAQAorLyoKKyAqIFJvY2tjaGlwIFNvQyBEUCAoRGlzcGxh
-eSBQb3J0KSBpbnRlcmZhY2UgZHJpdmVyLgorICoKKyAqIENvcHlyaWdodCAoQykgRnV6aG91IFJv
-Y2tjaGlwIEVsZWN0cm9uaWNzIENvLiwgTHRkLgorICogQXV0aG9yOiBBbmR5IFlhbiA8YW5keS55
-YW5Acm9jay1jaGlwcy5jb20+CisgKiAgICAgICAgIEplZmYgQ2hlbiA8amVmZi5jaGVuQHJvY2st
-Y2hpcHMuY29tPgorICogICAgICAgICBZYWtpciBZYW5nIDx5a2tAcm9jay1jaGlwcy5jb20+Cisg
-KgorICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRl
-IGl0IGFuZC9vciBtb2RpZnkgaXQKKyAqIHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVy
-YWwgUHVibGljIExpY2Vuc2UgYXMgcHVibGlzaGVkIGJ5IHRoZQorICogRnJlZSBTb2Z0d2FyZSBG
-b3VuZGF0aW9uOyBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSBMaWNlbnNlLCBvciAoYXQgeW91cgor
-ICogb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4KKyAqLworI2luY2x1ZGUgPGRybS9kcm1QLmg+
-CisjaW5jbHVkZSA8ZHJtL2RybV9jcnRjX2hlbHBlci5oPgorI2luY2x1ZGUgPGRybS9kcm1fcGFu
-ZWwuaD4KKyNpbmNsdWRlIDxkcm0vZHJtX29mLmg+CisjaW5jbHVkZSA8ZHJtL2RybV9kcF9oZWxw
-ZXIuaD4KKworI2luY2x1ZGUgPGxpbnV4L2NvbXBvbmVudC5oPgorI2luY2x1ZGUgPGxpbnV4L2Ns
-ay5oPgorI2luY2x1ZGUgPGxpbnV4L21mZC9zeXNjb24uaD4KKyNpbmNsdWRlIDxsaW51eC9yZWdt
-YXAuaD4KKyNpbmNsdWRlIDxsaW51eC9yZXNldC5oPgorCisjaW5jbHVkZSA8dmlkZW8vb2Zfdmlk
-ZW9tb2RlLmg+CisjaW5jbHVkZSA8dmlkZW8vdmlkZW9tb2RlLmg+CisKKyNpbmNsdWRlIDxkcm0v
-YnJpZGdlL2FuYWxvZ2l4X2RwLmg+CisKKyNpbmNsdWRlICJyb2NrY2hpcF9kcm1fZHJ2LmgiCisj
-aW5jbHVkZSAicm9ja2NoaXBfZHJtX3ZvcC5oIgorCisjZGVmaW5lIGVuY29kZXJfdG9fZHAoYykg
-XAorCQljb250YWluZXJfb2YoYywgc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSwgZW5jb2RlcikK
-KworI2RlZmluZSBwbGF0X2RhdGFfdG9fZHAocGQpIFwKKwkJY29udGFpbmVyX29mKHBkLCBzdHJ1
-Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlLCBwbGF0X2RhdGEpCisKKy8qIGRwIGdyZiByZWdpc3RlciBv
-ZmZzZXQgKi8KKyNkZWZpbmUgRFBfVk9QX1NFTCAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IDB4MDI1YyAvKiBncmZfc29jX2NvbjYgKi8KKyNkZWZpbmUgRFBfUkVGX0NMS19TRUwgICAgICAg
-ICAgICAgICAgICAgICAgICAgIDB4MDI3NCAvKiBncmZfc29jX2NvbjEyICovCisKKyNkZWZpbmUg
-R1JGX0RQX1JFRl9DTEtfU0VMX0lOVEVSICAgICAgICAgICAgICAgIEJJVCg0KQorI2RlZmluZSBE
-UF9TRUxfVk9QX0xJVAkJCQlCSVQoNSkKKworc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSB7CisJ
-c3RydWN0IGRybV9kZXZpY2UgICAgICAgICpkcm1fZGV2OworCXN0cnVjdCBkZXZpY2UgICAgICAg
-ICAgICAqZGV2OworCXN0cnVjdCBkcm1fZW5jb2RlciAgICAgICBlbmNvZGVyOworCXN0cnVjdCBk
-cm1fZGlzcGxheV9tb2RlICBtb2RlOworCisJc3RydWN0IGNsayAgICAgICAgICAgICAgICpjbGtf
-ZHA7CisJc3RydWN0IGNsayAgICAgICAgICAgICAgICpjbGtfMjRtX3BhcmVudDsKKwlzdHJ1Y3Qg
-Y2xrICAgICAgICAgICAgICAgKmNsa18yNG07CisJc3RydWN0IHJlZ21hcCAgICAgICAgICAgICpn
-cmY7CisJc3RydWN0IHJlc2V0X2NvbnRyb2wgICAgICpyc3Q7CisKKwlzdHJ1Y3QgYW5hbG9naXhf
-ZHBfcGxhdF9kYXRhIHBsYXRfZGF0YTsKK307CisKK3N0YXRpYyBpbnQgcm9ja2NoaXBfZHBfY2xr
-X2VuYWJsZShzdHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCkKK3sKKwlpbnQgcmV0ID0gMDsK
-KworCXJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShkcC0+Y2xrX2RwKTsKKwlpZiAocmV0IDwgMCkg
-eworCQlkZXZfZXJyKGRwLT5kZXYsICJjYW5ub3QgZW5hYmxlIGNsa19kcCAlZFxuIiwgcmV0KTsK
-KwkJZ290byBlcnJfY2xrX2RwOworCX0KKworCXJldCA9IGNsa19zZXRfcmF0ZShkcC0+Y2xrXzI0
-bSwgMjQwMDAwMDApOworCWlmIChyZXQgPCAwKSB7CisJCWRldl9lcnIoZHAtPmRldiwgImNhbm5v
-dCBzZXQgZHAgY2xrXzI0bSAlZFxuIiwKKwkJCXJldCk7CisJCWdvdG8gZXJyX2Nsa18yNG07CisJ
-fQorCisJcmV0ID0gY2xrX3ByZXBhcmVfZW5hYmxlKGRwLT5jbGtfMjRtKTsKKwlpZiAocmV0IDwg
-MCkgeworCQlkZXZfZXJyKGRwLT5kZXYsICJjYW5ub3QgZW5hYmxlIGRwIGNsa18yNG0gJWRcbiIs
-CisJCQlyZXQpOworCQlnb3RvIGVycl9jbGtfMjRtOworCX0KKworCXJldHVybiAwOworCitlcnJf
-Y2xrXzI0bToKKwljbGtfZGlzYWJsZV91bnByZXBhcmUoZHAtPmNsa19kcCk7CitlcnJfY2xrX2Rw
-OgorCXJldHVybiByZXQ7Cit9CisKK3N0YXRpYyBpbnQgcm9ja2NoaXBfZHBfY2xrX2Rpc2FibGUo
-c3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHApCit7CisJY2xrX2Rpc2FibGVfdW5wcmVwYXJl
-KGRwLT5jbGtfZHApOworCWNsa19kaXNhYmxlX3VucHJlcGFyZShkcC0+Y2xrXzI0bSk7CisKKwly
-ZXR1cm4gMDsKK30KKworc3RhdGljIGludCByb2NrY2hpcF9kcF9wcmVfaW5pdChzdHJ1Y3Qgcm9j
-a2NoaXBfZHBfZGV2aWNlICpkcCkKK3sKKwl1MzIgdmFsOworCWludCByZXQ7CisKKwl2YWwgPSBH
-UkZfRFBfUkVGX0NMS19TRUxfSU5URVIgfCAoR1JGX0RQX1JFRl9DTEtfU0VMX0lOVEVSIDw8IDE2
-KTsKKwlyZXQgPSByZWdtYXBfd3JpdGUoZHAtPmdyZiwgRFBfUkVGX0NMS19TRUwsIHZhbCk7CisJ
-aWYgKHJldCAhPSAwKSB7CisJCWRldl9lcnIoZHAtPmRldiwgIkNvdWxkIG5vdCB3cml0ZSB0byBH
-UkY6ICVkXG4iLCByZXQpOworCQlyZXR1cm4gcmV0OworCX0KKworCXJlc2V0X2NvbnRyb2xfYXNz
-ZXJ0KGRwLT5yc3QpOworCXVzbGVlcF9yYW5nZSgxMCwgMjApOworCXJlc2V0X2NvbnRyb2xfZGVh
-c3NlcnQoZHAtPnJzdCk7CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGludCByb2NrY2hpcF9k
-cF9wb3dlcm9uKHN0cnVjdCBhbmFsb2dpeF9kcF9wbGF0X2RhdGEgKnBsYXRfZGF0YSkKK3sKKwlz
-dHJ1Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCA9IHBsYXRfZGF0YV90b19kcChwbGF0X2RhdGEp
-OworCWludCByZXQ7CisKKwlyZXQgPSByb2NrY2hpcF9kcF9jbGtfZW5hYmxlKGRwKTsKKwlpZiAo
-cmV0IDwgMCkgeworCQlkZXZfZXJyKGRwLT5kZXYsICJjYW5ub3QgZW5hYmxlIGRwIGNsayAlZFxu
-IiwgcmV0KTsKKwkJcmV0dXJuIC0xOworCX0KKworCXJldCA9IHJvY2tjaGlwX2RwX3ByZV9pbml0
-KGRwKTsKKwlpZiAocmV0IDwgMCkgeworCQlkZXZfZXJyKGRwLT5kZXYsICJkcCBwcmUgaW5pdCBm
-YWlsICVkXG4iLCByZXQpOworCQlyZXR1cm4gLTE7CisJfQorCisJcmV0dXJuIDA7Cit9CisKK3N0
-YXRpYyBpbnQgcm9ja2NoaXBfZHBfcG93ZXJvZmYoc3RydWN0IGFuYWxvZ2l4X2RwX3BsYXRfZGF0
-YSAqcGxhdF9kYXRhKQoreworCXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwID0gcGxhdF9k
-YXRhX3RvX2RwKHBsYXRfZGF0YSk7CisKKwlyb2NrY2hpcF9kcF9jbGtfZGlzYWJsZShkcCk7CisK
-KwlyZXR1cm4gMDsKK30KKworc3RhdGljIGJvb2wKK3JvY2tjaGlwX2RwX2RybV9lbmNvZGVyX21v
-ZGVfZml4dXAoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyLAorCQkJCSAgIGNvbnN0IHN0cnVj
-dCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAorCQkJCSAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2Rl
-ICphZGp1c3RlZF9tb2RlKQoreworCS8qIGRvIG5vdGhpbmcgKi8KKwlyZXR1cm4gdHJ1ZTsKK30K
-Kworc3RhdGljIHZvaWQgcm9ja2NoaXBfZHBfZHJtX2VuY29kZXJfbW9kZV9zZXQoc3RydWN0IGRy
-bV9lbmNvZGVyICplbmNvZGVyLAorCQkJCQkgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICpt
-b2RlLAorCQkJCQkgICAgIHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICphZGp1c3RlZCkKK3sKKwkv
-KiBkbyBub3RoaW5nICovCit9CisKK3N0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX2RybV9lbmNvZGVy
-X3ByZXBhcmUoc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQoreworCXN0cnVjdCByb2NrY2hp
-cF9kcF9kZXZpY2UgKmRwID0gZW5jb2Rlcl90b19kcChlbmNvZGVyKTsKKwl1MzIgdmFsOworCWlu
-dCByZXQ7CisKKwlyZXQgPSByb2NrY2hpcF9kcm1fY3J0Y19tb2RlX2NvbmZpZyhlbmNvZGVyLT5j
-cnRjLAorCQkJCQkgICAgRFJNX01PREVfQ09OTkVDVE9SX2VEUCwKKwkJCQkJICAgIFJPQ0tDSElQ
-X09VVF9NT0RFX0FBQUEpOworCWlmIChyZXQgPCAwKSB7CisJCWRldl9lcnIoZHAtPmRldiwgIkNv
-dWxkIG5vdCBzZXQgY3J0YyBtb2RlIGNvbmZpZzogJWQuXG4iLCByZXQpOworCQlyZXR1cm47CisJ
-fQorCisJcmV0ID0gcm9ja2NoaXBfZHJtX2VuY29kZXJfZ2V0X211eF9pZChkcC0+ZGV2LT5vZl9u
-b2RlLCBlbmNvZGVyKTsKKwlpZiAocmV0IDwgMCkKKwkJcmV0dXJuOworCisJaWYgKHJldCkKKwkJ
-dmFsID0gRFBfU0VMX1ZPUF9MSVQgfCAoRFBfU0VMX1ZPUF9MSVQgPDwgMTYpOworCWVsc2UKKwkJ
-dmFsID0gRFBfU0VMX1ZPUF9MSVQgPDwgMTY7CisKKwlkZXZfaW5mbyhkcC0+ZGV2LCAidm9wICVz
-IG91dHB1dCB0byBkcFxuIiwgKHJldCkgPyAiTElUIiA6ICJCSUciKTsKKworCXJldCA9IHJlZ21h
-cF93cml0ZShkcC0+Z3JmLCBEUF9WT1BfU0VMLCB2YWwpOworCWlmIChyZXQgIT0gMCkgeworCQlk
-ZXZfZXJyKGRwLT5kZXYsICJDb3VsZCBub3Qgd3JpdGUgdG8gR1JGOiAlZFxuIiwgcmV0KTsKKwkJ
-cmV0dXJuOworCX0KK30KKworc3RhdGljIHZvaWQgcm9ja2NoaXBfZHBfZHJtX2VuY29kZXJfbm9w
-KHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKK3sKKwkvKiBkbyBub3RoaW5nICovCit9CisK
-K3N0YXRpYyBzdHJ1Y3QgZHJtX2VuY29kZXJfaGVscGVyX2Z1bmNzIHJvY2tjaGlwX2RwX2VuY29k
-ZXJfaGVscGVyX2Z1bmNzID0geworCS5tb2RlX2ZpeHVwID0gcm9ja2NoaXBfZHBfZHJtX2VuY29k
-ZXJfbW9kZV9maXh1cCwKKwkubW9kZV9zZXQgPSByb2NrY2hpcF9kcF9kcm1fZW5jb2Rlcl9tb2Rl
-X3NldCwKKwkucHJlcGFyZSA9IHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX3ByZXBhcmUsCisJLmNv
-bW1pdCA9IHJvY2tjaGlwX2RwX2RybV9lbmNvZGVyX25vcCwKKwkuZGlzYWJsZSA9IHJvY2tjaGlw
-X2RwX2RybV9lbmNvZGVyX25vcCwKK307CisKK3N0YXRpYyB2b2lkIHJvY2tjaGlwX2RwX2RybV9l
-bmNvZGVyX2Rlc3Ryb3koc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQoreworCWRybV9lbmNv
-ZGVyX2NsZWFudXAoZW5jb2Rlcik7Cit9CisKK3N0YXRpYyBzdHJ1Y3QgZHJtX2VuY29kZXJfZnVu
-Y3Mgcm9ja2NoaXBfZHBfZW5jb2Rlcl9mdW5jcyA9IHsKKwkuZGVzdHJveSA9IHJvY2tjaGlwX2Rw
-X2RybV9lbmNvZGVyX2Rlc3Ryb3ksCit9OworCitzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2luaXQo
-c3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHApCit7CisJc3RydWN0IGRldmljZSAqZGV2ID0g
-ZHAtPmRldjsKKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2LT5vZl9ub2RlOworCWludCBy
-ZXQ7CisKKwlkcC0+Z3JmID0gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGhhbmRsZShucCwgInJv
-Y2tjaGlwLGdyZiIpOworCWlmIChJU19FUlIoZHAtPmdyZikpIHsKKwkJZGV2X2VycihkZXYsCisJ
-CQkicmszMjg4LWRwIG5lZWRzIHJvY2tjaGlwLGdyZiBwcm9wZXJ0eVxuIik7CisJCXJldHVybiBQ
-VFJfRVJSKGRwLT5ncmYpOworCX0KKworCWRwLT5jbGtfZHAgPSBkZXZtX2Nsa19nZXQoZGV2LCAi
-Y2xrX2RwIik7CisJaWYgKElTX0VSUihkcC0+Y2xrX2RwKSkgeworCQlkZXZfZXJyKGRldiwgImNh
-bm5vdCBnZXQgY2xrX2RwXG4iKTsKKwkJcmV0dXJuIFBUUl9FUlIoZHAtPmNsa19kcCk7CisJfQor
-CisJZHAtPmNsa18yNG0gPSBkZXZtX2Nsa19nZXQoZGV2LCAiY2xrX2RwXzI0bSIpOworCWlmIChJ
-U19FUlIoZHAtPmNsa18yNG0pKSB7CisJCWRldl9lcnIoZGV2LCAiY2Fubm90IGdldCBjbGtfZHBf
-MjRtXG4iKTsKKwkJcmV0dXJuIFBUUl9FUlIoZHAtPmNsa18yNG0pOworCX0KKworCWRwLT5yc3Qg
-PSBkZXZtX3Jlc2V0X2NvbnRyb2xfZ2V0KGRldiwgImRwIik7CisJaWYgKElTX0VSUihkcC0+cnN0
-KSkgeworCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQgcmVzZXRcbiIpOworCQlyZXR1cm4g
-UFRSX0VSUihkcC0+cnN0KTsKKwl9CisKKwlyZXQgPSByb2NrY2hpcF9kcF9jbGtfZW5hYmxlKGRw
-KTsKKwlpZiAocmV0IDwgMCkgeworCQlkZXZfZXJyKGRwLT5kZXYsICJjYW5ub3QgZW5hYmxlIGRw
-IGNsayAlZFxuIiwgcmV0KTsKKwkJcmV0dXJuIHJldDsKKwl9CisKKwlyZXQgPSByb2NrY2hpcF9k
-cF9wcmVfaW5pdChkcCk7CisJaWYgKHJldCA8IDApIHsKKwkJZGV2X2VycihkcC0+ZGV2LCAiZmFp
-bGVkIHRvIHByZSBpbml0ICVkXG4iLCByZXQpOworCQlyZXR1cm4gcmV0OworCX0KKworCXJldHVy
-biAwOworfQorCitzdGF0aWMgaW50IHJvY2tjaGlwX2RwX2RybV9jcmVhdGVfZW5jb2RlcihzdHJ1
-Y3Qgcm9ja2NoaXBfZHBfZGV2aWNlICpkcCkKK3sKKwlzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29k
-ZXIgPSAmZHAtPmVuY29kZXI7CisJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkcC0+ZHJt
-X2RldjsKKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBkcC0+ZGV2OworCWludCByZXQ7CisKKwllbmNv
-ZGVyLT5wb3NzaWJsZV9jcnRjcyA9IGRybV9vZl9maW5kX3Bvc3NpYmxlX2NydGNzKGRybV9kZXYs
-CisJCQkJCQkJICAgICBkZXYtPm9mX25vZGUpOworCURSTV9ERUJVR19LTVMoInBvc3NpYmxlX2Ny
-dGNzID0gMHgleFxuIiwgZW5jb2Rlci0+cG9zc2libGVfY3J0Y3MpOworCisJcmV0ID0gZHJtX2Vu
-Y29kZXJfaW5pdChkcm1fZGV2LCBlbmNvZGVyLCAmcm9ja2NoaXBfZHBfZW5jb2Rlcl9mdW5jcywK
-KwkJCSAgICAgICBEUk1fTU9ERV9FTkNPREVSX1RNRFMpOworCWlmIChyZXQpIHsKKwkJRFJNX0VS
-Uk9SKCJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBlbmNvZGVyIHdpdGggZHJtXG4iKTsKKwkJcmV0dXJu
-IHJldDsKKwl9CisKKwlkcm1fZW5jb2Rlcl9oZWxwZXJfYWRkKGVuY29kZXIsICZyb2NrY2hpcF9k
-cF9lbmNvZGVyX2hlbHBlcl9mdW5jcyk7CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGludCBy
-b2NrY2hpcF9kcF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVy
-LAorCQkJICAgIHZvaWQgKmRhdGEpCit7CisJc3RydWN0IHJvY2tjaGlwX2RwX2RldmljZSAqZHAg
-PSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKKwlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiA9IGRh
-dGE7CisJaW50IHJldDsKKworCS8qCisJICogSnVzdCBsaWtlIHRoZSBwcm9iZSBmdW5jdGlvbiBz
-YWlkLCB3ZSBkb24ndCBuZWVkIHRoZQorCSAqIGRldmljZSBkcnZyYXRlIGFueW1vcmUsIHdlIHNo
-b3VsZCBsZWF2ZSB0aGUgY2hhcmdlIHRvCisJICogYW5hbG9naXggZHAgZHJpdmVyLCBzZXQgdGhl
-IGRldmljZSBkcnZkYXRhIHRvIE5VTEwuCisJICovCisJZGV2X3NldF9kcnZkYXRhKGRldiwgTlVM
-TCk7CisKKwlyZXQgPSByb2NrY2hpcF9kcF9pbml0KGRwKTsKKwlpZiAocmV0IDwgMCkKKwkJcmV0
-dXJuIHJldDsKKworCWRwLT5kcm1fZGV2ID0gZHJtX2RldjsKKworCXJldCA9IHJvY2tjaGlwX2Rw
-X2RybV9jcmVhdGVfZW5jb2RlcihkcCk7CisJaWYgKHJldCkgeworCQlEUk1fRVJST1IoImZhaWxl
-ZCB0byBjcmVhdGUgZHJtIGVuY29kZXJcbiIpOworCQlyZXR1cm4gcmV0OworCX0KKworCWRwLT5w
-bGF0X2RhdGEuYXR0YWNoID0gTlVMTDsKKwlkcC0+cGxhdF9kYXRhLnBvd2VyX29uID0gcm9ja2No
-aXBfZHBfcG93ZXJvbjsKKwlkcC0+cGxhdF9kYXRhLnBvd2VyX29mZiA9IHJvY2tjaGlwX2RwX3Bv
-d2Vyb2ZmOworCisJcmV0dXJuIGFuYWxvZ2l4X2RwX2JpbmQoZGV2LCBkcC0+ZHJtX2RldiwgJmRw
-LT5lbmNvZGVyLAorCQkJCSZkcC0+cGxhdF9kYXRhKTsKK30KKworc3RhdGljIHZvaWQgcm9ja2No
-aXBfZHBfdW5iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLAor
-CQkJICAgICAgIHZvaWQgKmRhdGEpCit7CisJcmV0dXJuIGFuYWxvZ2l4X2RwX3VuYmluZChkZXYs
-IG1hc3RlciwgZGF0YSk7Cit9CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgY29tcG9uZW50X29wcyBy
-b2NrY2hpcF9kcF9jb21wb25lbnRfb3BzID0geworCS5iaW5kID0gcm9ja2NoaXBfZHBfYmluZCwK
-KwkudW5iaW5kID0gcm9ja2NoaXBfZHBfdW5iaW5kLAorfTsKKworc3RhdGljIGludCByb2NrY2hp
-cF9kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQoreworCXN0cnVjdCBkZXZp
-Y2UgKmRldiA9ICZwZGV2LT5kZXY7CisJc3RydWN0IGRldmljZV9ub2RlICpwYW5lbF9ub2RlOwor
-CXN0cnVjdCByb2NrY2hpcF9kcF9kZXZpY2UgKmRwOworCXN0cnVjdCBkcm1fcGFuZWwgKnBhbmVs
-OworCisJcGFuZWxfbm9kZSA9IG9mX3BhcnNlX3BoYW5kbGUoZGV2LT5vZl9ub2RlLCAicm9ja2No
-aXAscGFuZWwiLCAwKTsKKwlpZiAoIXBhbmVsX25vZGUpIHsKKwkJRFJNX0VSUk9SKCJmYWlsZWQg
-dG8gZmluZCByb2NrY2hpcCxwYW5lbCBkdCBub2RlXG4iKTsKKwkJcmV0dXJuIC1FTk9ERVY7CisJ
-fQorCisJcGFuZWwgPSBvZl9kcm1fZmluZF9wYW5lbChwYW5lbF9ub2RlKTsKKwlpZiAoIXBhbmVs
-KSB7CisJCURSTV9FUlJPUigiZmFpbGVkIHRvIGZpbmQgcGFuZWxcbiIpOworCQlvZl9ub2RlX3B1
-dChwYW5lbF9ub2RlKTsKKwkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CisJfQorCisJb2Zfbm9kZV9w
-dXQocGFuZWxfbm9kZSk7CisKKwlkcCA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqZHApLCBH
-RlBfS0VSTkVMKTsKKwlpZiAoIWRwKQorCQlyZXR1cm4gLUVOT01FTTsKKworCWRwLT5kZXYgPSBk
-ZXY7CisKKwlkcC0+cGxhdF9kYXRhLnBhbmVsID0gcGFuZWw7CisKKwkvKgorCSAqIFdlIGp1c3Qg
-dXNlIHRoZSBkcnZkYXRhIHVudGlsIGRyaXZlciBydW4gaW50byBjb21wb25lbnQKKwkgKiBhZGQg
-ZnVuY3Rpb24sIGFuZCB0aGVuIHdlIHdvdWxkIHNldCBkcnZkYXRhIHRvIG51bGwsIHNvCisJICog
-dGhhdCBhbmFsb2dpeCBkcCBkcml2ZXIgY291bGQgdGFrZSBjaGFyZ2Ugb2YgdGhlIGRydmRhdGEu
-CisJICovCisJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHApOworCisJcmV0dXJuIGNvbXBv
-bmVudF9hZGQoZGV2LCAmcm9ja2NoaXBfZHBfY29tcG9uZW50X29wcyk7Cit9CisKK3N0YXRpYyBp
-bnQgcm9ja2NoaXBfZHBfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCit7CisJ
-Y29tcG9uZW50X2RlbCgmcGRldi0+ZGV2LCAmcm9ja2NoaXBfZHBfY29tcG9uZW50X29wcyk7CisK
-KwlyZXR1cm4gMDsKK30KKworI2lmZGVmIENPTkZJR19QTV9TTEVFUAorc3RhdGljIGludCByb2Nr
-Y2hpcF9kcF9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKK3sKKwlyZXR1cm4gYW5hbG9naXhf
-ZHBfc3VzcGVuZChkZXYpOworfQorCitzdGF0aWMgaW50IHJvY2tjaGlwX2RwX3Jlc3VtZShzdHJ1
-Y3QgZGV2aWNlICpkZXYpCit7CisJcmV0dXJuIGFuYWxvZ2l4X2RwX3Jlc3VtZShkZXYpOworfQor
-I2VuZGlmCisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyByb2NrY2hpcF9kcF9wbV9v
-cHMgPSB7CisJU0VUX1NZU1RFTV9TTEVFUF9QTV9PUFMocm9ja2NoaXBfZHBfc3VzcGVuZCwgcm9j
-a2NoaXBfZHBfcmVzdW1lKQorfTsKKworc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
-cm9ja2NoaXBfZHBfZHRfaWRzW10gPSB7CisJey5jb21wYXRpYmxlID0gInJvY2tjaGlwLHJrMzI4
-OC1kcCIsfSwKKwl7fQorfTsKK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHJvY2tjaGlwX2RwX2R0
-X2lkcyk7CisKK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHJvY2tjaGlwX2RwX2RyaXZl
-ciA9IHsKKwkucHJvYmUgPSByb2NrY2hpcF9kcF9wcm9iZSwKKwkucmVtb3ZlID0gcm9ja2NoaXBf
-ZHBfcmVtb3ZlLAorCS5kcml2ZXIgPSB7CisJCSAgIC5uYW1lID0gInJvY2tjaGlwLWRwIiwKKwkJ
-ICAgLm93bmVyID0gVEhJU19NT0RVTEUsCisJCSAgIC5wbSA9ICZyb2NrY2hpcF9kcF9wbV9vcHMs
-CisJCSAgIC5vZl9tYXRjaF90YWJsZSA9IG9mX21hdGNoX3B0cihyb2NrY2hpcF9kcF9kdF9pZHMp
-LAorCX0sCit9OworCittb2R1bGVfcGxhdGZvcm1fZHJpdmVyKHJvY2tjaGlwX2RwX2RyaXZlcik7
-CisKK01PRFVMRV9BVVRIT1IoIkplZmYgY2hlbiA8amVmZi5jaGVuQHJvY2stY2hpcHMuY29tPiIp
-OworTU9EVUxFX0FVVEhPUigiWWFraXIgWWFuZyA8eWtrQHJvY2stY2hpcHMuY29tPiIpOworTU9E
-VUxFX0RFU0NSSVBUSU9OKCJSb2NrY2hpcCBTcGVjaWZpYyBBbmFsb2dpeC1EUCBEcml2ZXIgRXh0
-ZW5zaW9uIik7CitNT0RVTEVfTElDRU5TRSgiR1BMIHYyIik7Ci0tIAoyLjEuMgoKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Thursday, August 06, 2015 11:07 PM, Yakir Yang wrote:
+> 
+> In order to move exynos dp code to bridge directory,
+> we need to convert driver drm bridge mode first. As
+> dp driver already have a ptn3460 bridge, so we need
+> to move ptn bridge to the next bridge of dp bridge.
+> 
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp_core.c | 196 ++++++++++++++++++++------------
+>  drivers/gpu/drm/exynos/exynos_dp_core.h |   2 +
+>  2 files changed, 126 insertions(+), 72 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index a8097a4..aa99e23 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -3,6 +3,7 @@
+>   *
+>   * Copyright (C) 2012 Samsung Electronics Co., Ltd.
+>   * Author: Jingoo Han <jg1.han@samsung.com>
+> + *         Yakir Yang <ykk@rock-chips.com>
+
+Please don't add this.
+You just fixed some parts of this code. I don't find the reason
+why you have to be added to author for this file.
+If you want the title for an author, please send the patch
+for a new IP, instead of modifying the exiting codes.
+
+>   *
+>   * This program is free software; you can redistribute it and/or modify it
+>   * under the terms of the GNU General Public License as published by the
+> @@ -998,59 +999,6 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
+>  	.best_encoder = exynos_dp_best_encoder,
+>  };
+> 
+> -/* returns the number of bridges attached */
+> -static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
+> -					struct drm_encoder *encoder)
+> -{
+> -	int ret;
+> -
+> -	encoder->bridge = dp->bridge;
+> -	dp->bridge->encoder = encoder;
+> -	ret = drm_bridge_attach(encoder->dev, dp->bridge);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to attach bridge to drm\n");
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int exynos_dp_create_connector(struct exynos_drm_display *display,
+> -				      struct drm_encoder *encoder)
+> -{
+> -	struct exynos_dp_device *dp = display_to_dp(display);
+> -	struct drm_connector *connector = &dp->connector;
+> -	int ret;
+> -
+> -	dp->encoder = encoder;
+> -
+> -	/* Pre-empt DP connector creation if there's a bridge */
+> -	if (dp->bridge) {
+> -		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
+> -		if (!ret)
+> -			return 0;
+> -	}
+> -
+> -	connector->polled = DRM_CONNECTOR_POLL_HPD;
+> -
+> -	ret = drm_connector_init(dp->drm_dev, connector,
+> -				 &exynos_dp_connector_funcs,
+> -				 DRM_MODE_CONNECTOR_eDP);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to initialize connector with drm\n");
+> -		return ret;
+> -	}
+> -
+> -	drm_connector_helper_add(connector, &exynos_dp_connector_helper_funcs);
+> -	drm_connector_register(connector);
+> -	drm_mode_connector_attach_encoder(connector, encoder);
+> -
+> -	if (dp->panel)
+> -		ret = drm_panel_attach(dp->panel, &dp->connector);
+> -
+> -	return ret;
+> -}
+> -
+>  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
+>  {
+>  	if (dp->phy)
+> @@ -1115,23 +1063,126 @@ static void exynos_dp_poweroff(struct exynos_dp_device *dp)
+>  	}
+>  }
+> 
+> -static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
+> +/* returns the number of bridges attached */
+> +static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
+> +		struct drm_encoder *encoder)
+> +{
+> +	int ret;
+> +
+> +	dp->bridge->next = dp->ptn_bridge;
+> +	dp->bridge->encoder = encoder;
+> +	ret = drm_bridge_attach(encoder->dev, dp->bridge);
+> +	if (ret) {
+> +		DRM_ERROR("Failed to attach ptn bridge to drm\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_dp_bridge_attach(struct drm_bridge *bridge)
+> +{
+> +
+> +	struct exynos_dp_device *dp = bridge->driver_private;
+> +	struct drm_encoder *encoder = dp->encoder;
+> +	struct drm_connector *connector = &dp->connector;
+> +	int ret;
+> +
+> +	if (!bridge->encoder) {
+> +		DRM_ERROR("Parent encoder object not found");
+> +		return -ENODEV;
+> +	}
+> +
+> +	encoder->bridge = bridge;
+> +
+> +	/* Pre-empt DP connector creation if there's a bridge */
+> +	if (dp->ptn_bridge) {
+> +		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
+> +		if (ret)
+> +			return -ENODEV;
+> +	}
+> +
+> +	connector->polled = DRM_CONNECTOR_POLL_HPD;
+> +
+> +	ret = drm_connector_init(dp->drm_dev, connector,
+> +			&exynos_dp_connector_funcs, DRM_MODE_CONNECTOR_eDP);
+> +	if (ret) {
+> +		DRM_ERROR("Failed to initialize connector with drm\n");
+> +		return ret;
+> +	}
+> +
+> +	drm_connector_helper_add(connector, &exynos_dp_connector_helper_funcs);
+> +	drm_connector_register(connector);
+> +	drm_mode_connector_attach_encoder(connector, encoder);
+> +
+> +	if (dp->panel)
+> +		ret = drm_panel_attach(dp->panel, &dp->connector);
+> +
+> +	return ret;
+> +}
+> +
+> +static void exynos_dp_bridge_nop(struct drm_bridge *bridge)
+> +{
+> +	/* do nothing */
+> +}
+> +
+> +static void exynos_dp_bridge_enable(struct drm_bridge *bridge)
+> +{
+> +	struct exynos_dp_device *dp = bridge->driver_private;
+> +
+> +	exynos_dp_poweron(dp);
+> +	dp->dpms_mode = DRM_MODE_DPMS_ON;
+> +}
+> +
+> +static void exynos_dp_bridge_disable(struct drm_bridge *bridge)
+> +{
+> +	struct exynos_dp_device *dp = bridge->driver_private;
+> +
+> +	exynos_dp_poweroff(dp);
+> +	dp->dpms_mode = DRM_MODE_DPMS_OFF;
+> +}
+> +
+> +static const struct drm_bridge_funcs exynos_dp_bridge_funcs = {
+> +	.enable = exynos_dp_bridge_enable,
+> +	.disable = exynos_dp_bridge_disable,
+> +	.pre_enable = exynos_dp_bridge_nop,
+> +	.post_disable = exynos_dp_bridge_nop,
+> +	.attach = exynos_dp_bridge_attach,
+> +};
+> +
+> +static int exynos_dp_create_connector(struct exynos_drm_display *display,
+> +				struct drm_encoder *encoder)
+>  {
+>  	struct exynos_dp_device *dp = display_to_dp(display);
+> +	struct drm_device *drm_dev = dp->drm_dev;
+> +	struct drm_bridge *bridge;
+> +	int ret;
+> 
+> -	switch (mode) {
+> -	case DRM_MODE_DPMS_ON:
+> -		exynos_dp_poweron(dp);
+> -		break;
+> -	case DRM_MODE_DPMS_STANDBY:
+> -	case DRM_MODE_DPMS_SUSPEND:
+> -	case DRM_MODE_DPMS_OFF:
+> -		exynos_dp_poweroff(dp);
+> -		break;
+> -	default:
+> -		break;
+> +	bridge = devm_kzalloc(drm_dev->dev, sizeof(*bridge), GFP_KERNEL);
+> +	if (!bridge) {
+> +		DRM_ERROR("failed to allocate for drm bridge\n");
+> +		return -ENOMEM;
+>  	}
+> -	dp->dpms_mode = mode;
+> +
+> +	dp->bridge = bridge;
+> +	dp->encoder = encoder;
+> +
+> +	bridge->driver_private = dp;
+> +	bridge->encoder = dp->encoder;
+> +	bridge->funcs = &exynos_dp_bridge_funcs;
+> +
+> +	ret = drm_bridge_attach(drm_dev, bridge);
+> +	if (ret) {
+> +		DRM_ERROR("failed to attach drm bridge\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
+> +{
+> +	/* do nothing */
+>  }
+> 
+>  static struct exynos_drm_display_ops exynos_dp_display_ops = {
+> @@ -1243,7 +1294,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+>  		}
+>  	}
+> 
+> -	if (!dp->panel && !dp->bridge) {
+> +	if (!dp->panel && !dp->ptn_bridge) {
+>  		ret = exynos_dp_dt_parse_panel(dp);
+>  		if (ret)
+>  			return ret;
+> @@ -1316,7 +1367,7 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
+>  {
+>  	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+> 
+> -	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_OFF);
+> +	exynos_dp_bridge_disable(dp->bridge);
+>  }
+> 
+>  static const struct component_ops exynos_dp_ops = {
+> @@ -1351,9 +1402,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>  	if (endpoint) {
+>  		bridge_node = of_graph_get_remote_port_parent(endpoint);
+>  		if (bridge_node) {
+> -			dp->bridge = of_drm_find_bridge(bridge_node);
+> +			dp->ptn_bridge = of_drm_find_bridge(bridge_node);
+>  			of_node_put(bridge_node);
+> -			if (!dp->bridge)
+> +			if (!dp->ptn_bridge)
+>  				return -EPROBE_DEFER;
+>  		} else {
+>  			return -EPROBE_DEFER;
+> @@ -1375,7 +1426,7 @@ static int exynos_dp_suspend(struct device *dev)
+>  {
+>  	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+> 
+> -	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_OFF);
+> +	exynos_dp_bridge_disable(dp->bridge);
+>  	return 0;
+>  }
+> 
+> @@ -1383,7 +1434,7 @@ static int exynos_dp_resume(struct device *dev)
+>  {
+>  	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+> 
+> -	exynos_dp_dpms(&dp->display, DRM_MODE_DPMS_ON);
+> +	exynos_dp_bridge_enable(dp->bridge);
+>  	return 0;
+>  }
+>  #endif
+> @@ -1410,5 +1461,6 @@ struct platform_driver dp_driver = {
+>  };
+> 
+>  MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
+> +MODULE_AUTHOR("Yakir Yang <ykk@rock-chips.com>");
+
+The same as above.
+
+>  MODULE_DESCRIPTION("Samsung SoC DP Driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
+> index c321ad5..f2584b8 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.h
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
+> @@ -3,6 +3,7 @@
+>   *
+>   * Copyright (C) 2012 Samsung Electronics Co., Ltd.
+>   * Author: Jingoo Han <jg1.han@samsung.com>
+> + *         Yakir Yang <ykk@rock-chips.com>
+
+The same as above.
+Here, you just added 1 line. If we add someone to author
+in this way, a lot of people should be added to author.
+
+Best regards,
+Jingoo Han
+
+>   *
+>   * This program is free software; you can redistribute it and/or modify it
+>   * under the terms of the GNU General Public License as published by the
+> @@ -154,6 +155,7 @@ struct exynos_dp_device {
+>  	struct drm_encoder	*encoder;
+>  	struct drm_panel	*panel;
+>  	struct drm_bridge	*bridge;
+> +	struct drm_bridge	*ptn_bridge;
+>  	struct clk		*clock;
+>  	unsigned int		irq;
+>  	void __iomem		*reg_base;
+> --
+> 2.1.2
